@@ -1,11 +1,19 @@
 Notes on OpenWBEM ACLs (Access Control Lists).
 ==============================================
 
-OpenWBEM utilizes ACLs in a manner similar to Sun's CIMOM.
 ACLs are implemented with namespace granularity.  In order
-to activate the ACLs, import the file mof/OpenWBEM_Acl1.0.mof
-into the /root/security namespace.  This will make two concrete
-classes available: OpenWBEM_NamespaceACL and OpenWBEM_UserACL.
+to activate the ACLs:
+ - Turn on the super-user. Edit the config file and enter your username
+   for the owcimomd.ACL_superuser config item. Restart the daemon 
+   (Sending a SIGHUP will work).
+ - Create the root/security namespace.
+   owcreatenamespace localhost root/security
+ - import the file mof/OpenWBEM_Acl1.0.mof
+   owmofc localhost root/security mof/OpenWBEM_Acl1.0.mof
+ - Optional: turn off the super-user in the config file. Restart owcimomd.
+
+This will make two concrete classes available: 
+OpenWBEM_NamespaceACL and OpenWBEM_UserACL.
 Each of these classes contain the string datatypes of "capability"
 and "nspace".  The OpenWBEM_UserACL class also has a string datatype
 "username".  If these classes are found, ACLs are enabled.  If they
