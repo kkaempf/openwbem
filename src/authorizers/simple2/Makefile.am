@@ -3,7 +3,7 @@ include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
-EXPORT_PREFIX=createAuthorizer
+EXPORT_PREFIX=createAuthorizer2
 
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs

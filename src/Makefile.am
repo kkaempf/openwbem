@@ -87,6 +87,7 @@ endif
 
 STATIC_SERVICE_FILES= \
 $(top_builddir)/src/authorizers/simple/libowsimpleauthorizer.a \
+$(top_builddir)/src/authorizers/simple2/libowsimpleauthorizer2.a \
 $(PAM_FILES) \
 $(AIX_AUTH_FILES) \
 $(top_builddir)/src/authenticators/simple/libsimpleauthentication.a \
