@@ -164,7 +164,7 @@ public:
 		getIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env) const;
 
 	/**
-	 * @return all available indication trigger providers from the available
+	 * @return all available polled providers from the available
 	 * provider interfaces.
 	 */
 	OW_PolledProviderIFCRefArray
