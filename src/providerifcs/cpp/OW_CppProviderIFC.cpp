@@ -740,8 +740,14 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 
 void CppProviderIFC::doShuttingDown()
 {
-	ProviderMap::iterator it, itend = m_provs.end();
-	for (it = m_provs.begin(); it != itend; ++it)
+	// Need to lock m_guard while accessing m_provs, but we can't leave the mutex locked
+	// while calling shuttingDown(), since that might cause a deadlock, so make a copy.
+	MutexLock l(m_guard);
+	ProviderMap provsCopy(m_provs);
+	l.release();
+
+	ProviderMap::iterator it, itend = provsCopy.end();
+	for (it = provsCopy.begin(); it != itend; ++it)
 	{
 		it->second->getProvider()->shuttingDown();
 	}
