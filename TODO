@@ -30,9 +30,7 @@ Fix problems:
     - Add tests in configure.in for -W flags supported.
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
-    - Name dirs/libs such that OW 2.0 and 3.0 can coexist on the same machine.
     - To prevent DNS attacks, set a limit on incoming data.
-    - Add the version to the PACKAGE_PREFIX (for install paths, etc.)
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -69,16 +67,10 @@ New features:
       - CIM_SystemInNamespace
       - CIM_IdentificationOfManagedSystem
       - CIM_CIMOMStatisticalData
-    - Update SLP provider to use the new standard template.
-      - config item for interop namespace
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
     - Add support for running under inetd
-    - Add a function for providers to store/retrieve data(OW_Array<OW_UInt8>).
     - Create provider base classes which will make writing providers easier
-      - Have the simple associator providers only have to
-        implement references (or instance provider functions).  
-        The base class can easily do the rest.
       - Template method base class for weak to ComputerSystem(anything?) providers (almost all hardware)
       - Use ideas from SBLIM: http://oss.software.ibm.com/developerworks/oss/sblim/doc/ProviderArchitecture.pdf
       - Review all providers and simplify & re-use & move any ideas into common functionality.
@@ -86,8 +78,6 @@ New features:
     - Create a repository debugger so you can easily inspect what's in a repository.
     - Pass language down to providers
     - Add an option to the CIM Listener to run in single threaded mode.
-
-Post 3.0
     - Add support for TCP wrappers (/etc/{hosts.allow,hosts.deny}).
     - rewrite the repository with libdb 3 or 4 with support for transactions
       and recovery.
@@ -107,16 +97,6 @@ Post 3.0
       Look at unicode.org http://www.unicode.org/Public/ALPHA/CVTUTF-1-1/ConvertUTF.{c,h}
     - Add better error handling/messages to the MOF compiler.
     - Binary Indications (Possibly re-factor and use CIMXMLListener)
-    - CMPI
-    - Fix the lexer of the MOF compiler to parse unicode MOF files.  
-        - Replace the input functions so that they translate from Unicode to
-          UTF8, and fix the lexer to handle UTF8 strings and identifiers.
-        - Or replace the lexer with something that can handle unicode,
-          possibly the slex lexer from spirit.
-    - Have an option for the mof compiler to parse a string.  Add interfaces
-      such as OW_CIMQualifierType createQualifierType(const OW_String& qualMof)
-      and OW_CIMClass createClass(const OW_String& clsMof) to the MOFCompiler
-      class.
     - Use Boost.Python to create a python binding to the client library, to
       allow for easy scripting or dynamic CIMOM interaction.
     - Write a config file provider so the CIMOM config can be programatically
@@ -143,14 +123,11 @@ Post 3.0
       - Specify a file containing a list of MOFs to compile
       - output XML only to stdout.
       - Ignore double #includes so that you don't have to be so careful.
-    - Add an option for user to specify which interfaces to listen on.
     - ModifyInstance (deprecate empty PropertyList and ignore includeQualifiers)
     - New advanced errors.
     - Async. methods.
     - Implement new versions of DTD & CIM/XML and support backward 
       compatibility on client & server
-    - Support for arrays of references (not currently legal, but there's no
-      reason why not)
     - Overriding a method cannot add a required parameter.
     - Deprecate TOINSTANCE (don't send as XML, & ignore on incoming XML)
     - Use libcwd to improve the new segfault handler on linux.  De-mangle names
@@ -160,7 +137,6 @@ Post 3.0
     - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Add config items and code to do ssl client authentication.
     - Config item for slp renewal time.
-    - Create a config item so people can use a custom repository.
     - Change ACL checking to use the new CIM access schema (if appropriate)
       - Needed features: granularity down to the property level (currently
          it's namespace level)
@@ -182,7 +158,7 @@ Post 3.0
     - Add capability for real (not string properties) embedded objects.
 
 Refactorings:
-    - Remove *E functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
+    - Remove *E,*A functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
       that return OW_Enumeration<T> and OW_Array<T>.
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
     - XML Things:
@@ -222,7 +198,6 @@ Documentation:
       - Thread safety
       - Exception safety
     - Define/document invariants for classes (especially OW_CIM*)
-    - Stick the website into CVS.
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
@@ -247,8 +222,4 @@ Optimizations:
       a provider.  Let the provider ifc/provider do all the work.
     - Have OW_CIMClass store a list of base classes.  Then remove some of the
       algorithms that have to run up the chain by doing a repeated getClass.
-    - OW_CIMXMLCimomHandle: Only send optional parameters if they aren't the
-      default to save transmission bytes.
-    - Change enabling/disabling of ACLs to be via a config item instead of the
-      presence of the schema.  It's more efficient to check a bool once
-      instead of doing a getClass on every operation.
+
