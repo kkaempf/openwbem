@@ -262,6 +262,12 @@ public:
 		const OW_Map<Key, T, Compare>& y);
 };
 
+template <class Key, class T, class Compare>
+std::map<Key, T, Compare>* OW_COWReferenceClone(std::map<Key, T, Compare>* obj)
+{
+    return new std::map<Key, T, Compare>(*obj);
+}
+
 template<class Key, class T, class Compare>
 inline bool operator==(const OW_Map<Key, T, Compare>& x,
 	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/

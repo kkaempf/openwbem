@@ -49,6 +49,8 @@ struct OW_CIMQualifier::QUALData
 	OW_CIMQualifierType m_qualifierType;
 	OW_Bool m_propagated;
 	OW_CIMFlavorArray m_flavors;
+
+    QUALData* clone() const { return new QUALData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

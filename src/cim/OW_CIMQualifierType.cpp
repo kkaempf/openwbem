@@ -51,6 +51,8 @@ struct OW_CIMQualifierType::QUALTData
 	OW_CIMScopeArray m_scope;
 	OW_CIMFlavorArray m_flavor;
 	OW_CIMValue m_defaultValue;
+
+    QUALTData* clone() const { return new QUALTData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

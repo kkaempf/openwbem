@@ -56,6 +56,8 @@ struct OW_CIMMethod::METHData
 	OW_String m_originClass;
 	OW_String m_override;
 	OW_Bool m_propagated;
+
+    METHData* clone() const { return new METHData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////													

@@ -86,16 +86,14 @@ class OW_String::ByteBuf
 public:
 
 	ByteBuf(const char* s) :
-		m_len(::strlen(s)), m_buf(NULL)
+		m_len(::strlen(s)), m_buf(new char[m_len+1])
 	{
-		m_buf = new char[m_len+1];
 		strcpy(m_buf, s);
 	}
 
 	ByteBuf(const ByteBuf& arg) :
-		m_len(arg.m_len), m_buf(NULL)
+		m_len(arg.m_len), m_buf(new char[m_len+1])
 	{
-		m_buf = new char[m_len+1];
 		strcpy(m_buf, arg.m_buf);
 	}
 
@@ -117,6 +115,8 @@ public:
 
 	size_t length() const { return m_len; }
 	char* data() const { return m_buf; }
+
+    ByteBuf* clone() const { return new ByteBuf(*this); }
 
 private:
 	size_t m_len;

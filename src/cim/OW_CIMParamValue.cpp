@@ -41,6 +41,8 @@ struct OW_CIMParamValue::Data
 {
 	OW_String m_name;
 	OW_CIMValue m_val;
+
+    Data* clone() const { return new Data(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

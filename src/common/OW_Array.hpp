@@ -230,6 +230,12 @@ private:
 #endif
 };
 
+template <class T>
+std::vector<T>* OW_COWReferenceClone(std::vector<T>* obj)
+{
+    return new std::vector<T>(*obj);
+}
+
 template<class T>
 inline bool operator==(const OW_Array<T>& x, const OW_Array<T>& y)
 {

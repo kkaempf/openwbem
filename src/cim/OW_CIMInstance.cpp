@@ -48,6 +48,8 @@ struct OW_CIMInstance::INSTData
 	OW_CIMPropertyArray m_keys;
 	OW_CIMPropertyArray m_properties;
 	OW_CIMQualifierArray m_qualifiers;
+
+    INSTData* clone() const { return new INSTData(*this); }
 };
 
 bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData& y)

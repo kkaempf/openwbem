@@ -128,6 +128,8 @@ public:
 		OW_UInt32 m_microSeconds;
 		OW_Int16 m_utc;
 		OW_UInt8 m_isInterval;
+
+        OW_DateTimeData* clone() const { return new OW_DateTimeData(*this); }
 	};
 	
 

@@ -63,6 +63,8 @@ struct OW_CIMProperty::PROPData
 
 	// propagated means inherited without change
 	OW_Bool m_propagated;
+
+    PROPData* clone() const { return new PROPData(*this); }
 };
 
 OW_CIMProperty::PROPData::PROPData() :

@@ -57,6 +57,8 @@ struct OW_CIMUrl::URLData
 	OW_String m_file;
 	OW_String m_ref;
 	OW_Bool m_localHost;
+
+    URLData* clone() { return new URLData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

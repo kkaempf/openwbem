@@ -58,6 +58,8 @@ struct OW_CIMObjectPath::OPData
 	OW_CIMNameSpace m_nameSpace;
 	OW_String m_objectName;
 	OW_CIMPropertyArray m_keys;
+
+    OPData* clone() const { return new OPData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

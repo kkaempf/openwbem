@@ -45,6 +45,8 @@ struct OW_CIMParameter::PARMData
 	OW_String m_name;
 	OW_CIMDataType m_dataType;
 	OW_CIMQualifierArray m_qualifiers;
+
+    PARMData* clone() const { return new PARMData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

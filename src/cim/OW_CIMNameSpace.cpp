@@ -41,18 +41,10 @@ struct OW_CIMNameSpace::NSData
 	NSData() :
 		m_nameSpace(), m_url(OW_Bool(true)) {}
 
-	NSData(const NSData& x) :
-		m_nameSpace(x.m_nameSpace), m_url(x.m_url) {  }
-
-	NSData& operator= (const NSData& x)
-	{
-		m_nameSpace = x.m_nameSpace;
-		m_url = x.m_url;
-		return *this;
-	}
-
 	OW_String m_nameSpace;
 	OW_CIMUrl m_url;
+
+    NSData* clone() const { return new NSData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

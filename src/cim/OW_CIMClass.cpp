@@ -59,6 +59,8 @@ struct OW_CIMClass::CLSData
 	OW_CIMMethodArray m_methods;
 	OW_Bool m_associationFlag;
 	OW_Bool m_isKeyed;
+
+    CLSData* clone() const { return new CLSData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////

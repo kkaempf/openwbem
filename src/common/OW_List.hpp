@@ -344,5 +344,11 @@ inline void swap(OW_List<T>& x, OW_List<T>& y) /*throw (std::exception)*/
 	x.swap(y);
 }
 
+template <class T>
+std::list<T>* OW_COWReferenceClone(std::list<T>* obj)
+{
+    return new std::list<T>(*obj);
+}
+
 #endif	// __OW_LIST_HPP__
 

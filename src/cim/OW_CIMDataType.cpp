@@ -49,6 +49,8 @@ struct OW_CIMDataType::DTData
 	OW_Int32 m_numberOfElements;
 	OW_Int32 m_sizeRange;
 	OW_String m_reference;
+
+    DTData* clone() const { return new DTData(*this); }
 };
 
 //////////////////////////////////////////////////////////////////////////////
