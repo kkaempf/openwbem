@@ -777,6 +777,9 @@ dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast
 ],[
 	CFLAGS="$CFLAGS -DNDEBUG $PLAT_OPTFLAGS"
 	CXXFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
+	# SUSE ships with some experimental gcc optimization patches, and the -fweb option gets enabled 
+	# at -O3 causes some of the libdb code (thus only CFLAGS are set) to be miscompiled.
+	OW_CHECK_COMPILER_FLAG(fno-web,[CFLAGS="$CFLAGS -fno-web"])
 ])
 
 dnl Check to see if fake libraries and static services are requested.
