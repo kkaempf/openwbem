@@ -965,11 +965,11 @@ main(int argc, char* argv[])
 		
 		// start this all off by enumerating namespaces
 		NamespaceResultHandler namespaceResultHandler;
-		rch.enumNameSpace(namespaceResultHandler);
+		rch.enumCIM_Namespace(namespaceResultHandler);
 
 		if (repeatMode == FOREVER)
 		{
-			while (true) 
+			while (true)
 			{
 				// Need to wait to avoid causing a deadlock
 				// because all our threads are doing an
@@ -983,7 +983,7 @@ main(int argc, char* argv[])
 						pool->waitForEmptyQueue();
 					break;
 				}
-				rch.enumNameSpace(namespaceResultHandler);
+				rch.enumCIM_Namespace(namespaceResultHandler);
 			}
 		}
 

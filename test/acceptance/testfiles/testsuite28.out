@@ -1,11 +1,7 @@
 *** Doing testSingleton() ***
 *** Doing createNameSpace() ***
 *** Doing enumNamespace() ***
-deep = false
-Namespace: root/testsuite
-Namespace: root/testsuite/sub1
-Namespace: root/testsuite/Sub1
-deep = true
+Namespace: root
 Namespace: root/testsuite
 Namespace: root/testsuite/sub1
 Namespace: root/testsuite/sub1/test

@@ -518,8 +518,8 @@ testModifyProviderQualifier(CIMClient& hdl)
 		TEST_ASSERT(enu.numberOfElements() == 0);
 		
 
-		// now test the old behavior.  Create a new class that the provider 
-		// didn't register for, but we'll have the qualifier point to the 
+		// now test the old behavior.  Create a new class that the provider
+		// didn't register for, but we'll have the qualifier point to the
 		// provider.
 		cc = hdl.getClass( "testinstance");
 		cc.setName("testinstance2");
@@ -541,7 +541,7 @@ testModifyProviderQualifier(CIMClient& hdl)
 
 		try
 		{
-			// should throw since we removed the qualifier and the provider 
+			// should throw since we removed the qualifier and the provider
 			// won't be called
 			ci = hdl.getInstance(cop1);
 			TEST_ASSERT(0);
@@ -1482,15 +1482,7 @@ enumNameSpace(CIMClient& hdl)
 
 	try
 	{
-		cout << "deep = false" << endl;
-		StringArray rval = hdl.enumNameSpaceE(E_SHALLOW);
-		for (size_t i = 0; i < rval.size(); i++)
-		{
-			cout << "Namespace: " << rval[i] << endl;
-		}
-		
-		cout << "deep = true" << endl;
-		rval = hdl.enumNameSpaceE(E_DEEP);
+		StringArray rval = hdl.enumCIM_NamespaceE();
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
