@@ -71,6 +71,7 @@ Install()
 			-e "s!owcimomd.wql_lib = \(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.so!g" \
 			-e "s!;http_server.enable_deflate = .*!http_server.enable_deflate = false!g" \
 			-e "s!;owcimomd.disable_indications = .*!owcimomd.disable_indications = true!g" \
+			-e "s!;http_server.timeout = .*!http_server.timeout = 3000!g" \
 		openwbem.conf > openwbem.conf-t
 
 	cd $STAGEDIR
