@@ -55,12 +55,6 @@
 #include "OW_UserUtils.hpp"
 #include "OW_ServiceIFCNames.hpp"
 
-extern "C"
-{
-#include <unistd.h>
-#include <pwd.h>
-#include <sys/types.h>
-}
 #include <exception>
 
 namespace OpenWBEM

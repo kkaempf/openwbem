@@ -51,7 +51,7 @@ namespace OpenWBEM
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class AssociatorProviderIFC: public ProviderBaseIFC
+class OW_PROVIDER_API AssociatorProviderIFC: public ProviderBaseIFC
 {
 	public:
 		virtual ~AssociatorProviderIFC();

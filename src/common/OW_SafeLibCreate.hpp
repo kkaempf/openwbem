@@ -120,7 +120,11 @@ public:
 			SignalScope r4( OW_SIGBUS,  theSignalHandler );
 #endif
 			SignalScope r5( OW_SIGABRT, theSignalHandler );
+#ifdef WIN32
+			sigtype = setjmp(theLoaderBuf);
+#else
 			sigtype = sigsetjmp(theLoaderBuf, 1);
+#endif
 			if ( sigtype == 0 )
 			{
 				versionFunc_t versFunc;
@@ -190,7 +194,11 @@ private:
 	//extern "C" {
 	static void theSignalHandler(int sig)
 	{
+#ifdef WIN32
+		longjmp(theLoaderBuf, sig);
+#else
 		siglongjmp(theLoaderBuf, sig);
+#endif
 	}
 	
 	//} // extern "C"

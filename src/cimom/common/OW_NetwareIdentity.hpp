@@ -50,7 +50,7 @@ extern "C"
 namespace OpenWBEM
 {
 
-class NetwareIdentity : public OperationContext::Data
+class OW_CIMOMCOMMON_API NetwareIdentity : public OperationContext::Data
 {
 public:
 	NetwareIdentity();

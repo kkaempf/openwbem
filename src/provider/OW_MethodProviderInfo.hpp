@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class MethodProviderInfo
+class OW_PROVIDER_API MethodProviderInfo
 {
 public:
 	struct ClassInfo

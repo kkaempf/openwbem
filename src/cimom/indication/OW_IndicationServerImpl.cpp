@@ -735,8 +735,12 @@ IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 						m_subscriptions.equal_range(key);
 					OW_LOG_DEBUG(m_logger, Format("found %1 items", distance(range.first, range.second)));
 					
-					// make a copy so we can free the lock, otherwise we may cause a deadlock.
-					subscriptions_copy_t subs(range.first, range.second);
+					// make a copy of the subscriptions so we can free the lock, otherwise we may cause a deadlock.
+					subscriptions_copy_t subs;
+					for (subscriptions_t::iterator curSub = range.first; curSub != range.second; ++curSub)
+					{
+						subs.insert(subscriptions_copy_t::value_type(curSub->first, SubscriptionRef(new Subscription(*curSub->second))));
+					}
 
 					lock.release();
 					_processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
@@ -1438,14 +1442,14 @@ IndicationServerImplThread::doCooperativeCancel()
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-extern "C" OpenWBEM::IndicationServer*
+extern "C" OW_EXPORT OpenWBEM::IndicationServer*
 createIndicationServer()
 {
 	return new OpenWBEM::IndicationServerImpl();
 }
 //////////////////////////////////////////////////////////////////////////////
 #if !defined(OW_STATIC_SERVICES)
-extern "C" const char*
+extern "C" OW_EXPORT const char*
 getOWVersion()
 {
 	return OW_VERSION;

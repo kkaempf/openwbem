@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class AuthorizerManager : public ServiceIFC
+class OW_CIMOMCOMMON_API AuthorizerManager : public ServiceIFC
 {
 public:
 

@@ -86,8 +86,11 @@ doLock(HANDLE hFile, bool doWait)
 /////////////////////////////////////////////////////////////////////////////
 File::File(const File& x) : m_hdl(OW_INVALID_FILEHANDLE)
 {
-	DuplicateHandle(GetCurrentProcess(), x.m_hdl, GetCurrentProcess(),
-		&m_hdl , 0, FALSE, DUPLICATE_SAME_ACCESS);
+	if( x.m_hdl != OW_INVALID_FILEHANDLE )
+	{
+		DuplicateHandle(GetCurrentProcess(), x.m_hdl, GetCurrentProcess(),
+			&m_hdl , 0, FALSE, DUPLICATE_SAME_ACCESS);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 int 

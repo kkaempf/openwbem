@@ -51,7 +51,7 @@ namespace OpenWBEM
  * This class implements a bridge from the CIMOM's ProviderManager to the
  * C++ providers.  It's main function is location and creation of providers.
  */
-class CppProviderIFC : public ProviderIFCBaseIFC
+class OW_CPPPROVIFC_API CppProviderIFC : public ProviderIFCBaseIFC
 {
 public:
 	static const char* const CREATIONFUNC;

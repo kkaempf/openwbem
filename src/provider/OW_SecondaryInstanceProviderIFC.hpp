@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class SecondaryInstanceProviderIFC: public ProviderBaseIFC
+class OW_PROVIDER_API SecondaryInstanceProviderIFC: public ProviderBaseIFC
 {
 public:
 	virtual ~SecondaryInstanceProviderIFC();

@@ -47,8 +47,6 @@
 #include <iostream> // for cout
 #include <new> // for new handler stuff
 
-#include <unistd.h> // for execv
-
 using namespace OpenWBEM;
 
 namespace
@@ -58,11 +56,13 @@ bool processCommandLine(int argc, char* argv[],
 	CIMOMEnvironmentRef env);
 void printUsage(std::ostream& ostrm);
 
-void owcimomd_new_handler();
-
 const String COMPONENT_NAME("ow.owcimomd");
 
 }
+
+OW_EXPORT
+void owcimomd_new_handler();
+
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
@@ -255,7 +255,9 @@ printUsage(std::ostream& ostrm)
 	ostrm << "\t-h, --help   Print this help information" << std::endl;
 }
 
+} // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
+OW_EXPORT
 void owcimomd_new_handler()
 {
 #if defined (OW_DEBUG)  || defined (OW_NETWARE)
@@ -266,4 +268,3 @@ void owcimomd_new_handler()
 	throw std::bad_alloc();
 }
 
-} // end unnamed namespace

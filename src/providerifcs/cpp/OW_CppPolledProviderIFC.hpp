@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class CppPolledProviderIFC : public virtual CppProviderBaseIFC
+class OW_CPPPROVIFC_API CppPolledProviderIFC : public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppPolledProviderIFC();

@@ -47,7 +47,7 @@ namespace OpenWBEM
  * This class can be part of a multiple-inerhitance diamond.  
  * Thus the "public virtual" inheritance.
  */
-class CppSimpleInstanceProviderIFC : public virtual CppInstanceProviderIFC
+class OW_CPPPROVIFC_API CppSimpleInstanceProviderIFC : public virtual CppInstanceProviderIFC
 {
 public:
 	virtual CIMInstance getInstance(

@@ -49,7 +49,7 @@
 namespace OpenWBEM
 {
 
-class ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
+class OW_PROVIDERAGENT_API ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
 {
 public:
 	ProviderAgentProviderEnvironment(

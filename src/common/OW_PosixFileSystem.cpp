@@ -134,7 +134,7 @@ createFile(const String& path)
 {
 #ifdef OW_WIN32
 	HANDLE fh = ::CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
-		FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_NEW,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
 #else
@@ -279,8 +279,15 @@ getDirectoryContents(const String& path,
 #ifdef OW_WIN32
 	struct _finddata_t dentry;
 	long hFile;
+	String _path = path;
+
 	// Find first directory entry
-	if ((hFile = _findfirst( "*", &dentry)) == -1L)
+	if (!_path.endsWith(OW_FILENAME_SEPARATOR))
+	{
+		_path += OW_FILENAME_SEPARATOR;
+	}
+	_path += "*";
+    if ((hFile = _findfirst( _path.c_str(), &dentry)) == -1L)
 	{
 		return false;
 	}
@@ -529,9 +536,9 @@ namespace Path
 String realPath(const String& path)
 {
 #ifdef OW_WIN32
-	char c, *bfr, *pname, *pathcstr;
+	char c, *bfr, *pname;
+	const char *pathcstr;
 	DWORD cc;
-	String rstr;
 
 	pathcstr = path.c_str();
 	while (*pathcstr == '/' || *pathcstr == '\\')
@@ -546,17 +553,17 @@ String realPath(const String& path)
 		--pathcstr;
 	}
 		
-	cc = GetFullPathName(path.c_str(), 1, &c &pname);
+	cc = GetFullPathName(path.c_str(), 1, &c, &pname);
 	if(!cc)
 	{
-		OW_THROW(FileSystemException);
+		OW_THROW(FileSystemException, Format("Can't get full path name for path %s", path).c_str());
 	}
 	bfr = new char[cc];
-	cc = GetFullPathName(path.c_str(), cc, bfr &pname);
+	cc = GetFullPathName(path.c_str(), cc, bfr, &pname);
 	if(!cc)
 	{
 		delete [] bfr;
-		OW_THROW(FileSystemException);
+		OW_THROW(FileSystemException, Format("Can't get full path name for path %s", path).c_str());
 	}
 	String rstr(bfr);
 	delete [] bfr;

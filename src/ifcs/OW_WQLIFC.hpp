@@ -65,12 +65,12 @@ public:
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_WQLFACTORY(derived,wqlname) \
-extern "C" const char* \
+extern "C" OW_EXPORT const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
-extern "C" OpenWBEM::WQLIFC* \
+extern "C" OW_EXPORT OpenWBEM::WQLIFC* \
 createWQL() \
 { \
 	return new derived; \

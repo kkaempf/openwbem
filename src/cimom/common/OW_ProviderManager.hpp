@@ -60,7 +60,7 @@ namespace OpenWBEM
  * It will keep the list of provider interfaces and query them when searching
  * for providers.
  */
-class ProviderManager : public ServiceIFC
+class OW_CIMOMCOMMON_API ProviderManager : public ServiceIFC
 {
 public:
 	/**

@@ -55,7 +55,7 @@
 namespace OpenWBEM
 {
 
-class OW_HTTP_API HTTPSvrConnection: public Runnable
+class OW_HTTPSVC_API HTTPSvrConnection: public Runnable
 {
 public:
 #ifdef OW_WIN32

@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class CppIndicationExportProviderIFC : public virtual CppProviderBaseIFC
+class OW_CPPPROVIFC_API CppIndicationExportProviderIFC : public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppIndicationExportProviderIFC();

@@ -1,26 +1,314 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopenwbem", "libopenwbem\libopenwbem.vcproj", "{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopenwbem", "common\libopenwbem.vcproj", "{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowdb", "libowdb\libowdb.vcproj", "{C567CA5C-6EC4-4F2E-9050-2B04E7346CEF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowclient", "client\libowclient.vcproj", "{6DF67DC6-3E96-4CE8-9E6B-6E10E933CFCE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowhttpxmllistener", "cimxmllistener\libowhttpxmllistener.vcproj", "{C58AC5AA-26F2-4CFF-A418-FF5763653591}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowdb", "db\db\libowdb.vcproj", "{C0187E72-355A-475D-BFBB-585B19B64F85}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowmofc", "mof\libowmofc.vcproj", "{FF72B1E0-F623-41D4-ADE5-75E358154EEF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowrepositoryhdb", "repositories\hdb\libowrepositoryhdb.vcproj", "{28AAF05C-0CE6-4FCE-88CF-C30894A775C0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowwql", "wql\libowwql.vcproj", "{BA803A9D-83C7-4FB7-BB42-8A61750A2716}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowwqlcommon", "wql\common\libowwqlcommon.vcproj", "{12974A83-A411-4C2C-9118-BC3CDD572D17}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowxml", "xml\libowxml.vcproj", "{5555608B-4C99-48C9-B9DF-6A3F3E0BAD93}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowhttpcommon", "http\common\libowhttpcommon.vcproj", "{AD8DD729-DBB6-4F8E-9048-3318F03E0736}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowhttpclient", "http\client\libowhttpclient.vcproj", "{B90ECD5D-3467-447D-838B-A6993F43D79A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowservicehttp", "services\http\libowservicehttp.vcproj", "{7EA93C9A-D1F4-46B3-AD3D-08029F7DB83C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowprovider", "provider\libowprovider.vcproj", "{EDE819A9-08A8-4DAE-9B71-43F3C445D1E0}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowprovideragent", "provideragent\libowprovideragent.vcproj", "{87D99BAE-4C34-470D-B2C9-DB17271FCA47}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cimom", "cimom\cimom.vcproj", "{2B161023-8D11-49B6-8D70-D95958D48A84}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowcimomcommon", "cimom\common\libowcimomcommon.vcproj", "{F641F778-27CE-4902-8EC1-1A9B46973C36}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowserver", "cimom\server\libowserver.vcproj", "{87B1E5A1-565C-4200-9CD7-D6FE16A79712}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowwql2", "wql\wql2\libowwql2.vcproj", "{F6515847-8849-4460-90D6-B72264A83979}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbtree", "db\btree\libbtree.vcproj", "{DBD24580-B10E-4D51-8821-85804CB8F8FE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmpool", "db\mpool\libmpool.vcproj", "{710FA9C0-50F3-487E-98E7-9585C3325824}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowmofc2", "mof\mof2\libowmofc2.vcproj", "{9C64B69C-57EB-4207-8EED-2ADB476BA417}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowcppprovifc", "providerifcs\cpp\libowcppprovifc.vcproj", "{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowindicationserver", "cimom\indication\libowindicationserver\libowindicationserver.vcproj", "{B47478CA-E31D-4DA5-A281-1A1DC32B424E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowindicationreplayer", "cimom\indication\libowindicationreplayer\libowindicationreplayer.vcproj", "{ACDB1E8C-96C3-45E2-ABF0-B445AC44FD0A}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libnonauthenticatingauthentication", "authenticators\nonauthenticating\libnonauthenticatingauthentication.vcproj", "{A61E3EB3-C717-4B98-95BC-7F4BB4CF01C5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowrequesthandlercimxml", "requesthandlers\cimxml\libowrequesthandlercimxml.vcproj", "{FE77F67C-82B5-4509-BC21-BF6FD78FD1DF}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowrequesthandlerbinary", "requesthandlers\binary\libowrequesthandlerbinary.vcproj", "{ECF475A4-BEDD-4C6A-9275-00565AB2B95C}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowprovinstOW_NameSpace", "providers\cpp\instance\OW_NameSpace\libowprovinstOW_NameSpace.vcproj", "{5A6E0DF4-6BA8-4125-A8F4-903DF718D877}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libowprovinstCIM_Namespace", "providers\cpp\instance\CIM_Namespace\libowprovinstCIM_Namespace.vcproj", "{4A9C2179-248C-4D2A-9BB5-FD0B33767BC3}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owmofc", "tools\owmofc\owmofc.vcproj", "{BAC49A64-18DC-4481-89B0-5A2EB253F2FB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owexecwql", "tools\owexecwql\owexecwql.vcproj", "{9BBD985F-52A3-454F-86E2-522F12E29FD2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owenumnamespace", "tools\owenumnamespace\owenumnamespace.vcproj", "{164D5683-C87B-41EC-82E6-41D14DEB0982}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owcreatenamespace", "tools\owcreatenamespace\owcreatenamespace.vcproj", "{389D2AE0-B6FF-4510-8197-50B727E433BD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owdeletenamespace", "tools\owdeletenamespace\owdeletenamespace.vcproj", "{25F2A93B-31CC-41CF-A296-9A29705AD5B6}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owcimindicationlistener", "tools\owcimindicationlistener\owcimindicationlistener.vcproj", "{F50C1C88-1D39-4E87-AD01-AC7F4C61AC15}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owenumqualifiers", "tools\owenumqualifiers\owenumqualifiers.vcproj", "{2A692FC8-0F21-4C09-83A6-9A3456821D60}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owenumclassnames", "tools\owenumclassnames\owenumclassnames.vcproj", "{FEEE43B7-C424-4818-BD48-74417EF316DD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "owenumclasses", "tools\owenumclasses\owenumclasses.vcproj", "{0F0E3184-AFB1-423A-BCF1-B99D7CA5C005}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+		Debug DLL = Debug DLL
+		Release DLL = Release DLL
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Debug.ActiveCfg = Debug|Win32
-		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Debug.Build.0 = Debug|Win32
-		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Release.ActiveCfg = Release|Win32
-		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Release.Build.0 = Release|Win32
-		{C567CA5C-6EC4-4F2E-9050-2B04E7346CEF}.Debug.ActiveCfg = Debug|Win32
-		{C567CA5C-6EC4-4F2E-9050-2B04E7346CEF}.Debug.Build.0 = Debug|Win32
-		{C567CA5C-6EC4-4F2E-9050-2B04E7346CEF}.Release.ActiveCfg = Release|Win32
-		{C567CA5C-6EC4-4F2E-9050-2B04E7346CEF}.Release.Build.0 = Release|Win32
+		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Debug DLL.Build.0 = Debug DLL|Win32
+		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Release DLL.ActiveCfg = Release DLL|Win32
+		{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}.Release DLL.Build.0 = Release DLL|Win32
+		{6DF67DC6-3E96-4CE8-9E6B-6E10E933CFCE}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{6DF67DC6-3E96-4CE8-9E6B-6E10E933CFCE}.Debug DLL.Build.0 = Debug DLL|Win32
+		{6DF67DC6-3E96-4CE8-9E6B-6E10E933CFCE}.Release DLL.ActiveCfg = Release DLL|Win32
+		{6DF67DC6-3E96-4CE8-9E6B-6E10E933CFCE}.Release DLL.Build.0 = Release DLL|Win32
+		{C58AC5AA-26F2-4CFF-A418-FF5763653591}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{C58AC5AA-26F2-4CFF-A418-FF5763653591}.Debug DLL.Build.0 = Debug DLL|Win32
+		{C58AC5AA-26F2-4CFF-A418-FF5763653591}.Release DLL.ActiveCfg = Release DLL|Win32
+		{C58AC5AA-26F2-4CFF-A418-FF5763653591}.Release DLL.Build.0 = Release DLL|Win32
+		{C0187E72-355A-475D-BFBB-585B19B64F85}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{C0187E72-355A-475D-BFBB-585B19B64F85}.Debug DLL.Build.0 = Debug DLL|Win32
+		{C0187E72-355A-475D-BFBB-585B19B64F85}.Release DLL.ActiveCfg = Release DLL|Win32
+		{C0187E72-355A-475D-BFBB-585B19B64F85}.Release DLL.Build.0 = Release DLL|Win32
+		{FF72B1E0-F623-41D4-ADE5-75E358154EEF}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{FF72B1E0-F623-41D4-ADE5-75E358154EEF}.Debug DLL.Build.0 = Debug DLL|Win32
+		{FF72B1E0-F623-41D4-ADE5-75E358154EEF}.Release DLL.ActiveCfg = Release DLL|Win32
+		{FF72B1E0-F623-41D4-ADE5-75E358154EEF}.Release DLL.Build.0 = Release DLL|Win32
+		{28AAF05C-0CE6-4FCE-88CF-C30894A775C0}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{28AAF05C-0CE6-4FCE-88CF-C30894A775C0}.Debug DLL.Build.0 = Debug DLL|Win32
+		{28AAF05C-0CE6-4FCE-88CF-C30894A775C0}.Release DLL.ActiveCfg = Release DLL|Win32
+		{28AAF05C-0CE6-4FCE-88CF-C30894A775C0}.Release DLL.Build.0 = Release DLL|Win32
+		{BA803A9D-83C7-4FB7-BB42-8A61750A2716}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{BA803A9D-83C7-4FB7-BB42-8A61750A2716}.Debug DLL.Build.0 = Debug DLL|Win32
+		{BA803A9D-83C7-4FB7-BB42-8A61750A2716}.Release DLL.ActiveCfg = Release DLL|Win32
+		{BA803A9D-83C7-4FB7-BB42-8A61750A2716}.Release DLL.Build.0 = Release DLL|Win32
+		{12974A83-A411-4C2C-9118-BC3CDD572D17}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{12974A83-A411-4C2C-9118-BC3CDD572D17}.Debug DLL.Build.0 = Debug DLL|Win32
+		{12974A83-A411-4C2C-9118-BC3CDD572D17}.Release DLL.ActiveCfg = Release DLL|Win32
+		{12974A83-A411-4C2C-9118-BC3CDD572D17}.Release DLL.Build.0 = Release DLL|Win32
+		{5555608B-4C99-48C9-B9DF-6A3F3E0BAD93}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{5555608B-4C99-48C9-B9DF-6A3F3E0BAD93}.Debug DLL.Build.0 = Debug DLL|Win32
+		{5555608B-4C99-48C9-B9DF-6A3F3E0BAD93}.Release DLL.ActiveCfg = Release DLL|Win32
+		{5555608B-4C99-48C9-B9DF-6A3F3E0BAD93}.Release DLL.Build.0 = Release DLL|Win32
+		{AD8DD729-DBB6-4F8E-9048-3318F03E0736}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{AD8DD729-DBB6-4F8E-9048-3318F03E0736}.Debug DLL.Build.0 = Debug DLL|Win32
+		{AD8DD729-DBB6-4F8E-9048-3318F03E0736}.Release DLL.ActiveCfg = Release DLL|Win32
+		{AD8DD729-DBB6-4F8E-9048-3318F03E0736}.Release DLL.Build.0 = Release DLL|Win32
+		{B90ECD5D-3467-447D-838B-A6993F43D79A}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{B90ECD5D-3467-447D-838B-A6993F43D79A}.Debug DLL.Build.0 = Debug DLL|Win32
+		{B90ECD5D-3467-447D-838B-A6993F43D79A}.Release DLL.ActiveCfg = Release DLL|Win32
+		{B90ECD5D-3467-447D-838B-A6993F43D79A}.Release DLL.Build.0 = Release DLL|Win32
+		{7EA93C9A-D1F4-46B3-AD3D-08029F7DB83C}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{7EA93C9A-D1F4-46B3-AD3D-08029F7DB83C}.Debug DLL.Build.0 = Debug DLL|Win32
+		{7EA93C9A-D1F4-46B3-AD3D-08029F7DB83C}.Release DLL.ActiveCfg = Release DLL|Win32
+		{7EA93C9A-D1F4-46B3-AD3D-08029F7DB83C}.Release DLL.Build.0 = Release DLL|Win32
+		{EDE819A9-08A8-4DAE-9B71-43F3C445D1E0}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{EDE819A9-08A8-4DAE-9B71-43F3C445D1E0}.Debug DLL.Build.0 = Debug DLL|Win32
+		{EDE819A9-08A8-4DAE-9B71-43F3C445D1E0}.Release DLL.ActiveCfg = Release DLL|Win32
+		{EDE819A9-08A8-4DAE-9B71-43F3C445D1E0}.Release DLL.Build.0 = Release DLL|Win32
+		{87D99BAE-4C34-470D-B2C9-DB17271FCA47}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{87D99BAE-4C34-470D-B2C9-DB17271FCA47}.Debug DLL.Build.0 = Debug DLL|Win32
+		{87D99BAE-4C34-470D-B2C9-DB17271FCA47}.Release DLL.ActiveCfg = Release DLL|Win32
+		{87D99BAE-4C34-470D-B2C9-DB17271FCA47}.Release DLL.Build.0 = Release DLL|Win32
+		{2B161023-8D11-49B6-8D70-D95958D48A84}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{2B161023-8D11-49B6-8D70-D95958D48A84}.Debug DLL.Build.0 = Debug DLL|Win32
+		{2B161023-8D11-49B6-8D70-D95958D48A84}.Release DLL.ActiveCfg = Release DLL|Win32
+		{2B161023-8D11-49B6-8D70-D95958D48A84}.Release DLL.Build.0 = Release DLL|Win32
+		{F641F778-27CE-4902-8EC1-1A9B46973C36}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{F641F778-27CE-4902-8EC1-1A9B46973C36}.Debug DLL.Build.0 = Debug DLL|Win32
+		{F641F778-27CE-4902-8EC1-1A9B46973C36}.Release DLL.ActiveCfg = Release DLL|Win32
+		{F641F778-27CE-4902-8EC1-1A9B46973C36}.Release DLL.Build.0 = Release DLL|Win32
+		{87B1E5A1-565C-4200-9CD7-D6FE16A79712}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{87B1E5A1-565C-4200-9CD7-D6FE16A79712}.Debug DLL.Build.0 = Debug DLL|Win32
+		{87B1E5A1-565C-4200-9CD7-D6FE16A79712}.Release DLL.ActiveCfg = Release DLL|Win32
+		{87B1E5A1-565C-4200-9CD7-D6FE16A79712}.Release DLL.Build.0 = Release DLL|Win32
+		{F6515847-8849-4460-90D6-B72264A83979}.Debug DLL.ActiveCfg = Debug Static|Win32
+		{F6515847-8849-4460-90D6-B72264A83979}.Debug DLL.Build.0 = Debug Static|Win32
+		{F6515847-8849-4460-90D6-B72264A83979}.Release DLL.ActiveCfg = Release Static|Win32
+		{F6515847-8849-4460-90D6-B72264A83979}.Release DLL.Build.0 = Release Static|Win32
+		{DBD24580-B10E-4D51-8821-85804CB8F8FE}.Debug DLL.ActiveCfg = Debug Static|Win32
+		{DBD24580-B10E-4D51-8821-85804CB8F8FE}.Debug DLL.Build.0 = Debug Static|Win32
+		{DBD24580-B10E-4D51-8821-85804CB8F8FE}.Release DLL.ActiveCfg = Release Static|Win32
+		{DBD24580-B10E-4D51-8821-85804CB8F8FE}.Release DLL.Build.0 = Release Static|Win32
+		{710FA9C0-50F3-487E-98E7-9585C3325824}.Debug DLL.ActiveCfg = Debug Static|Win32
+		{710FA9C0-50F3-487E-98E7-9585C3325824}.Debug DLL.Build.0 = Debug Static|Win32
+		{710FA9C0-50F3-487E-98E7-9585C3325824}.Release DLL.ActiveCfg = Release Static|Win32
+		{710FA9C0-50F3-487E-98E7-9585C3325824}.Release DLL.Build.0 = Release Static|Win32
+		{9C64B69C-57EB-4207-8EED-2ADB476BA417}.Debug DLL.ActiveCfg = Debug Static|Win32
+		{9C64B69C-57EB-4207-8EED-2ADB476BA417}.Debug DLL.Build.0 = Debug Static|Win32
+		{9C64B69C-57EB-4207-8EED-2ADB476BA417}.Release DLL.ActiveCfg = Release Static|Win32
+		{9C64B69C-57EB-4207-8EED-2ADB476BA417}.Release DLL.Build.0 = Release Static|Win32
+		{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}.Debug DLL.Build.0 = Debug DLL|Win32
+		{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}.Release DLL.ActiveCfg = Release DLL|Win32
+		{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}.Release DLL.Build.0 = Release DLL|Win32
+		{B47478CA-E31D-4DA5-A281-1A1DC32B424E}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{B47478CA-E31D-4DA5-A281-1A1DC32B424E}.Debug DLL.Build.0 = Debug DLL|Win32
+		{B47478CA-E31D-4DA5-A281-1A1DC32B424E}.Release DLL.ActiveCfg = Release DLL|Win32
+		{B47478CA-E31D-4DA5-A281-1A1DC32B424E}.Release DLL.Build.0 = Release DLL|Win32
+		{ACDB1E8C-96C3-45E2-ABF0-B445AC44FD0A}.Debug DLL.ActiveCfg = DebugDLL|Win32
+		{ACDB1E8C-96C3-45E2-ABF0-B445AC44FD0A}.Debug DLL.Build.0 = DebugDLL|Win32
+		{ACDB1E8C-96C3-45E2-ABF0-B445AC44FD0A}.Release DLL.ActiveCfg = Release DLL|Win32
+		{ACDB1E8C-96C3-45E2-ABF0-B445AC44FD0A}.Release DLL.Build.0 = Release DLL|Win32
+		{A61E3EB3-C717-4B98-95BC-7F4BB4CF01C5}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{A61E3EB3-C717-4B98-95BC-7F4BB4CF01C5}.Debug DLL.Build.0 = Debug DLL|Win32
+		{A61E3EB3-C717-4B98-95BC-7F4BB4CF01C5}.Release DLL.ActiveCfg = Release DLL|Win32
+		{A61E3EB3-C717-4B98-95BC-7F4BB4CF01C5}.Release DLL.Build.0 = Release DLL|Win32
+		{FE77F67C-82B5-4509-BC21-BF6FD78FD1DF}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{FE77F67C-82B5-4509-BC21-BF6FD78FD1DF}.Debug DLL.Build.0 = Debug DLL|Win32
+		{FE77F67C-82B5-4509-BC21-BF6FD78FD1DF}.Release DLL.ActiveCfg = Release DLL|Win32
+		{FE77F67C-82B5-4509-BC21-BF6FD78FD1DF}.Release DLL.Build.0 = Release DLL|Win32
+		{ECF475A4-BEDD-4C6A-9275-00565AB2B95C}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{ECF475A4-BEDD-4C6A-9275-00565AB2B95C}.Debug DLL.Build.0 = Debug DLL|Win32
+		{ECF475A4-BEDD-4C6A-9275-00565AB2B95C}.Release DLL.ActiveCfg = Release DLL|Win32
+		{ECF475A4-BEDD-4C6A-9275-00565AB2B95C}.Release DLL.Build.0 = Release DLL|Win32
+		{5A6E0DF4-6BA8-4125-A8F4-903DF718D877}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{5A6E0DF4-6BA8-4125-A8F4-903DF718D877}.Debug DLL.Build.0 = Debug DLL|Win32
+		{5A6E0DF4-6BA8-4125-A8F4-903DF718D877}.Release DLL.ActiveCfg = Release DLL|Win32
+		{5A6E0DF4-6BA8-4125-A8F4-903DF718D877}.Release DLL.Build.0 = Release DLL|Win32
+		{4A9C2179-248C-4D2A-9BB5-FD0B33767BC3}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{4A9C2179-248C-4D2A-9BB5-FD0B33767BC3}.Debug DLL.Build.0 = Debug DLL|Win32
+		{4A9C2179-248C-4D2A-9BB5-FD0B33767BC3}.Release DLL.ActiveCfg = Release DLL|Win32
+		{4A9C2179-248C-4D2A-9BB5-FD0B33767BC3}.Release DLL.Build.0 = Release DLL|Win32
+		{BAC49A64-18DC-4481-89B0-5A2EB253F2FB}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{BAC49A64-18DC-4481-89B0-5A2EB253F2FB}.Debug DLL.Build.0 = Debug DLL|Win32
+		{BAC49A64-18DC-4481-89B0-5A2EB253F2FB}.Release DLL.ActiveCfg = Release DLL|Win32
+		{BAC49A64-18DC-4481-89B0-5A2EB253F2FB}.Release DLL.Build.0 = Release DLL|Win32
+		{9BBD985F-52A3-454F-86E2-522F12E29FD2}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{9BBD985F-52A3-454F-86E2-522F12E29FD2}.Debug DLL.Build.0 = Debug DLL|Win32
+		{9BBD985F-52A3-454F-86E2-522F12E29FD2}.Release DLL.ActiveCfg = Release DLL|Win32
+		{9BBD985F-52A3-454F-86E2-522F12E29FD2}.Release DLL.Build.0 = Release DLL|Win32
+		{164D5683-C87B-41EC-82E6-41D14DEB0982}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{164D5683-C87B-41EC-82E6-41D14DEB0982}.Debug DLL.Build.0 = Debug DLL|Win32
+		{164D5683-C87B-41EC-82E6-41D14DEB0982}.Release DLL.ActiveCfg = Release DLL|Win32
+		{164D5683-C87B-41EC-82E6-41D14DEB0982}.Release DLL.Build.0 = Release DLL|Win32
+		{389D2AE0-B6FF-4510-8197-50B727E433BD}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{389D2AE0-B6FF-4510-8197-50B727E433BD}.Debug DLL.Build.0 = Debug DLL|Win32
+		{389D2AE0-B6FF-4510-8197-50B727E433BD}.Release DLL.ActiveCfg = Release DLL|Win32
+		{389D2AE0-B6FF-4510-8197-50B727E433BD}.Release DLL.Build.0 = Release DLL|Win32
+		{25F2A93B-31CC-41CF-A296-9A29705AD5B6}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{25F2A93B-31CC-41CF-A296-9A29705AD5B6}.Debug DLL.Build.0 = Debug DLL|Win32
+		{25F2A93B-31CC-41CF-A296-9A29705AD5B6}.Release DLL.ActiveCfg = Release DLL|Win32
+		{25F2A93B-31CC-41CF-A296-9A29705AD5B6}.Release DLL.Build.0 = Release DLL|Win32
+		{F50C1C88-1D39-4E87-AD01-AC7F4C61AC15}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{F50C1C88-1D39-4E87-AD01-AC7F4C61AC15}.Debug DLL.Build.0 = Debug DLL|Win32
+		{F50C1C88-1D39-4E87-AD01-AC7F4C61AC15}.Release DLL.ActiveCfg = Release DLL|Win32
+		{F50C1C88-1D39-4E87-AD01-AC7F4C61AC15}.Release DLL.Build.0 = Release DLL|Win32
+		{2A692FC8-0F21-4C09-83A6-9A3456821D60}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{2A692FC8-0F21-4C09-83A6-9A3456821D60}.Debug DLL.Build.0 = Debug DLL|Win32
+		{2A692FC8-0F21-4C09-83A6-9A3456821D60}.Release DLL.ActiveCfg = Release DLL|Win32
+		{2A692FC8-0F21-4C09-83A6-9A3456821D60}.Release DLL.Build.0 = Release DLL|Win32
+		{FEEE43B7-C424-4818-BD48-74417EF316DD}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{FEEE43B7-C424-4818-BD48-74417EF316DD}.Debug DLL.Build.0 = Debug DLL|Win32
+		{FEEE43B7-C424-4818-BD48-74417EF316DD}.Release DLL.ActiveCfg = Release DLL|Win32
+		{FEEE43B7-C424-4818-BD48-74417EF316DD}.Release DLL.Build.0 = Release DLL|Win32
+		{0F0E3184-AFB1-423A-BCF1-B99D7CA5C005}.Debug DLL.ActiveCfg = Debug DLL|Win32
+		{0F0E3184-AFB1-423A-BCF1-B99D7CA5C005}.Debug DLL.Build.0 = Debug DLL|Win32
+		{0F0E3184-AFB1-423A-BCF1-B99D7CA5C005}.Release DLL.ActiveCfg = Release DLL|Win32
+		{0F0E3184-AFB1-423A-BCF1-B99D7CA5C005}.Release DLL.Build.0 = Release DLL|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

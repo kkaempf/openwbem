@@ -427,14 +427,14 @@ private:
 #pragma warning (pop)
 #endif
 
-	friend bool operator<(const CIMClass& x, const CIMClass& y);
-	friend bool operator==(const CIMClass& x, const CIMClass& y);
+	friend OW_COMMON_API bool operator<(const CIMClass& x, const CIMClass& y);
+	friend OW_COMMON_API bool operator==(const CIMClass& x, const CIMClass& y);
 };
 
-bool operator<=(const CIMClass& x, const CIMClass& y);
-bool operator>(const CIMClass& x, const CIMClass& y);
-bool operator>=(const CIMClass& x, const CIMClass& y);
-bool operator!=(const CIMClass& x, const CIMClass& y);
+OW_COMMON_API bool operator<=(const CIMClass& x, const CIMClass& y);
+OW_COMMON_API bool operator>(const CIMClass& x, const CIMClass& y);
+OW_COMMON_API bool operator>=(const CIMClass& x, const CIMClass& y);
+OW_COMMON_API bool operator!=(const CIMClass& x, const CIMClass& y);
 
 } // end namespace OpenWBEM
 

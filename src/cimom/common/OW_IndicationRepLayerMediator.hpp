@@ -46,7 +46,7 @@ namespace OpenWBEM
  * The purpose of this class is to serve as an always present bridge between
  * IndicationRepLayerImpl and provIndicationRepLayer
  */
-class IndicationRepLayerMediator : public IntrusiveCountableBase
+class OW_CIMOMCOMMON_API IndicationRepLayerMediator : public IntrusiveCountableBase
 {
 public:
 	UInt32 getClassCreationSubscriptionCount();

@@ -62,7 +62,12 @@ public:
 	virtual Select_t getSelectObj() const;
 private:
 	int m_fds[2];
+#ifdef OW_WIN32
+	int m_events[2];
+	EBlockingMode m_blocking[2];
+#else
 	EBlockingMode m_blocking;
+#endif
 };
 typedef IntrusiveReference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 

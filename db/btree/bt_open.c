@@ -213,6 +213,9 @@ __bt_open(fname, flags, mode, openinfo, dflags)
 			goto einval;
 		}
 		
+#ifdef OW_WIN32
+		flags |= _O_BINARY;
+#endif
 		if ((t->bt_fd = open(fname, flags, mode)) < 0)
 			goto err;
 

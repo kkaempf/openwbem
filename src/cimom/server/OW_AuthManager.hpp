@@ -41,7 +41,7 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(AuthManager)
 
-class AuthManager : public ServiceIFC
+class OW_CIMOMSERVER_API AuthManager : public ServiceIFC
 {
 public:
 	AuthManager();

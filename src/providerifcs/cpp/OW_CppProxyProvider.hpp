@@ -62,7 +62,7 @@ namespace OpenWBEM
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
-class CppAssociatorProviderProxy : public AssociatorProviderIFC
+class OW_CPPPROVIFC_API CppAssociatorProviderProxy : public AssociatorProviderIFC
 {
 public:
 	CppAssociatorProviderProxy(CppAssociatorProviderIFCRef pProv);
@@ -110,7 +110,7 @@ private:
 };
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
-class CppInstanceProviderProxy : public InstanceProviderIFC
+class OW_CPPPROVIFC_API CppInstanceProviderProxy : public InstanceProviderIFC
 {
 public:
 	CppInstanceProviderProxy(CppInstanceProviderIFCRef pProv);
@@ -163,7 +163,7 @@ private:
 	CppInstanceProviderIFCRef m_pProv;
 };
 
-class CppSecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
+class OW_CPPPROVIFC_API CppSecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
 {
 public:
 	CppSecondaryInstanceProviderProxy(CppSecondaryInstanceProviderIFCRef pProv);
@@ -177,7 +177,7 @@ private:
 	CppSecondaryInstanceProviderIFCRef m_pProv;
 };
 
-class CppMethodProviderProxy : public MethodProviderIFC
+class OW_CPPPROVIFC_API CppMethodProviderProxy : public MethodProviderIFC
 {
 public:
 	CppMethodProviderProxy(CppMethodProviderIFCRef pProv);
@@ -191,7 +191,7 @@ public:
 private:
 	CppMethodProviderIFCRef m_pProv;
 };
-class CppIndicationExportProviderProxy : public IndicationExportProviderIFC
+class OW_CPPPROVIFC_API CppIndicationExportProviderProxy : public IndicationExportProviderIFC
 {
 public:
 	CppIndicationExportProviderProxy(CppIndicationExportProviderIFCRef pProv) :
@@ -219,7 +219,7 @@ public:
 private:
 	CppIndicationExportProviderIFCRef m_pProv;
 };
-class CppPolledProviderProxy : public PolledProviderIFC
+class OW_CPPPROVIFC_API CppPolledProviderProxy : public PolledProviderIFC
 {
 public:
 	CppPolledProviderProxy(CppPolledProviderIFCRef pProv) :
@@ -239,7 +239,7 @@ public:
 private:
 	CppPolledProviderIFCRef m_pProv;
 };
-class CppIndicationProviderProxy : public IndicationProviderIFC
+class OW_CPPPROVIFC_API CppIndicationProviderProxy : public IndicationProviderIFC
 {
 public:
 	CppIndicationProviderProxy(CppIndicationProviderIFCRef pProv)

@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class WQLFilterRep : public RepositoryIFC
+class OW_CIMOMCOMMON_API WQLFilterRep : public RepositoryIFC
 {
 public:
 	WQLFilterRep(const CIMInstance& inst, const RepositoryIFCRef& cimServer);

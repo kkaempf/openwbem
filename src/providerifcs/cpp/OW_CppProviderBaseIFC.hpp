@@ -69,7 +69,7 @@ class CppIndicationProviderIFC;
  * DO NOT put inline functions in this class, they will be duplicated in
  * every provider and cause code bloat.
  */
-class CppProviderBaseIFC : public virtual IntrusiveCountableBase
+class OW_CPPPROVIFC_API CppProviderBaseIFC : public virtual IntrusiveCountableBase
 {
 public:
 
@@ -139,12 +139,12 @@ typedef SharedLibraryReference< IntrusiveReference<CppProviderBaseIFC> > CppProv
 // This macro is deprecated in 3.2.0, use OW_PROVIDERFACTORY instead.
 #define OW_PROVIDERFACTORY_NOID(prov, name) OW_PROVIDERFACTORY(prov, NO_ID)
 #define OW_PROVIDERFACTORY(prov, name) \
-extern "C" const char* \
+extern "C" OW_EXPORT const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
-extern "C" OpenWBEM::CppProviderBaseIFC* \
+extern "C" OW_EXPORT OpenWBEM::CppProviderBaseIFC* \
 createProvider##name() \
 { \
 	return new prov; \

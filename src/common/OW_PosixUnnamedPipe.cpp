@@ -209,8 +209,13 @@ UnnamedPipe::createUnnamedPipe(EOpen doOpen)
 }
 //////////////////////////////////////////////////////////////////////////////
 PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
+#ifndef OW_WIN32
 	: m_blocking(E_BLOCKING)
+#endif
 {
+#ifdef OW_WIN32
+	m_blocking[0] = m_blocking[1] = E_BLOCKING;
+#endif
 	m_fds[0] = m_fds[1] = -1;
 	if (doOpen)
 	{
@@ -230,12 +235,17 @@ void
 PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 {
 #ifdef OW_WIN32
+	// precondition
+	OW_ASSERT(m_fds[0] != -1 && m_fds[1] != -1);
+
+	m_blocking[0] = outputIsBlocking;
+	m_blocking[1] = outputIsBlocking;
 	// Unnamed pipes on Win32 cannot do non-blocking i/o (aka async, overlapped)
 	// Only named pipes can. If this becomes a problem in the future, then
 	// PosixUnnamedPipe can be implemented with NamedPipes. I know this can be
 	// a problem with the signal handling mechanism that is used in the daemon
 	// code, but I plan on do that differently on Win32
-	OW_ASSERT(outputIsBlocking);
+//	OW_ASSERT(outputIsBlocking);
 	return;
 #else
 	// precondition
@@ -271,12 +281,16 @@ void
 PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 {
 #ifdef OW_WIN32
+	// precondition
+	OW_ASSERT(m_fds[1] != -1);
+	
+	m_blocking[1] = outputIsBlocking ? E_BLOCKING : E_NONBLOCKING ;
 	// Unnamed pipes on Win32 cannot do non-blocking i/o (aka async, overlapped)
 	// Only named pipes can. If this becomes a problem in the future, then
 	// PosixUnnamedPipe can be implemented with NamedPipes. I know this can be
 	// a problem with the signal handling mechanism that is used in the daemon
 	// code, but I plan on do that differently on Win32
-	OW_ASSERT(outputIsBlocking);
+//	OW_ASSERT(outputIsBlocking);
 	return;
 #else
 	// precondition
@@ -311,7 +325,55 @@ PosixUnnamedPipe::open()
 		close();
 	}
 #if defined(OW_WIN32)
-	if (::_pipe(m_fds, 2560, _O_BINARY) == -1)
+	HANDLE pipe = CreateNamedPipe( "\\\\.\\pipe\\TestPipe",
+		PIPE_ACCESS_OUTBOUND | FILE_FLAG_OVERLAPPED,
+		PIPE_TYPE_MESSAGE,
+		PIPE_UNLIMITED_INSTANCES,
+		2560,
+		2560,
+		NMPWAIT_USE_DEFAULT_WAIT,
+		NULL );
+
+	HANDLE client = CreateFile( "\\\\.\\pipe\\TestPipe",
+		GENERIC_READ,
+		FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_OVERLAPPED,
+		NULL );
+
+	HANDLE event1 = CreateEvent(NULL, TRUE, FALSE, NULL);
+	HANDLE event2 = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	// Should return immediately since the client connection is open.
+	BOOL bConnected = ConnectNamedPipe( pipe, NULL );
+	if( !bConnected && GetLastError() == ERROR_PIPE_CONNECTED )
+		bConnected = TRUE;
+
+	BOOL bSuccess = 
+		pipe != INVALID_HANDLE_VALUE && 
+		client != INVALID_HANDLE_VALUE && 
+		event1 != INVALID_HANDLE_VALUE &&
+		event2 != INVALID_HANDLE_VALUE &&
+		bConnected;
+
+	if( !bSuccess )
+	{
+		CloseHandle(pipe);
+		CloseHandle(client);
+		CloseHandle(event1);
+		CloseHandle(event2);
+	}
+	else
+	{
+		m_fds[0] = (int)client;		// read descriptor
+		m_fds[1] = (int)pipe;		// write descriptor
+		m_events[0] = (int)event1;
+		m_events[1] = (int)event2;
+	}
+
+	if( !bSuccess )
+//	if (::_pipe(m_fds, 2560, _O_BINARY) == -1)
 #elif defined(OW_NETWARE)
 	if (_pipe(m_fds) == -1)
 #else
@@ -329,12 +391,26 @@ PosixUnnamedPipe::close()
 	int rc = -1;
 	if (m_fds[0] != -1)
 	{
+#ifdef OW_WIN32
+		HANDLE h = (HANDLE)m_fds[0];
+		HANDLE e = (HANDLE)m_events[0];
+		if( CloseHandle(h) && CloseHandle(e) )
+			rc = 0;
+#else
 		rc = _CLOSE(m_fds[0]);
+#endif
 		m_fds[0] = -1;
 	}
 	if (m_fds[1] != -1)
 	{
+#ifdef OW_WIN32
+		HANDLE h = (HANDLE)m_fds[1];
+		HANDLE e = (HANDLE)m_events[1];
+		if( CloseHandle(h) && CloseHandle(e) )
+			rc = 0;
+#else
 		rc = _CLOSE(m_fds[1]);
+#endif
 		m_fds[1] = -1;
 	}
 	return rc;
@@ -346,7 +422,14 @@ PosixUnnamedPipe::closeInputHandle()
 	int rc = -1;
 	if (m_fds[0] != -1)
 	{
+#ifdef OW_WIN32
+		HANDLE h = (HANDLE)m_fds[0];
+		HANDLE e = (HANDLE)m_events[0];
+		if( CloseHandle(h) && CloseHandle(e) )
+			rc = 0;
+#else
 		rc = _CLOSE(m_fds[0]);
+#endif
 		m_fds[0] = -1;
 	}
 	return rc;
@@ -358,7 +441,14 @@ PosixUnnamedPipe::closeOutputHandle()
 	int rc = -1;
 	if (m_fds[1] != -1)
 	{
+#ifdef OW_WIN32
+		HANDLE h = (HANDLE)m_fds[1];
+		HANDLE e = (HANDLE)m_events[1];
+		if( CloseHandle(h) && CloseHandle(e) )
+			rc = 0;
+#else
 		rc = _CLOSE(m_fds[1]);
+#endif
 		m_fds[1] = -1;
 	}
 	return rc;
@@ -386,8 +476,31 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 				}
 			}
 		}
-#endif
 		rc = _WRITE(m_fds[1], data, dataLen);
+#else
+		BOOL bSuccess = FALSE;
+
+		OVERLAPPED ovl;
+
+		ovl.hEvent = (HANDLE)m_events[1];
+		ovl.Offset = 0;
+		ovl.OffsetHigh = 0;
+
+		bSuccess = WriteFile(
+			(HANDLE)m_fds[1],
+			data,
+			dataLen,
+			NULL,
+			&ovl);
+
+		if( bSuccess && m_blocking[1] == E_BLOCKING )
+		{
+			bSuccess = WaitForSingleObject( (HANDLE)m_events[1], INFINITE ) == WAIT_OBJECT_0;
+		}
+
+		if( bSuccess )
+			rc = 0;
+#endif
 	}
 	if (errorAsException && rc == -1)
 	{
@@ -418,8 +531,31 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 				}
 			}
 		}
-#endif
 		rc = _READ(m_fds[0], buffer, bufferLen);
+#else
+		BOOL bSuccess = FALSE;
+
+		OVERLAPPED ovl;
+
+		ovl.hEvent = (HANDLE)m_events[0];
+		ovl.Offset = 0;
+		ovl.OffsetHigh = 0;
+
+		bSuccess = ReadFile(
+			(HANDLE)m_fds[0],
+			buffer,
+			bufferLen,
+			NULL,
+			&ovl);
+
+		if( bSuccess && m_blocking[0] == E_BLOCKING )
+		{
+			bSuccess = WaitForSingleObject( (HANDLE)m_events[0], INFINITE ) == WAIT_OBJECT_0;
+		}
+
+		if( bSuccess )
+			rc = 0;
+#endif
 	}
 	if (errorAsException && rc == -1)
 	{
@@ -432,9 +568,16 @@ Select_t
 PosixUnnamedPipe::getSelectObj() const
 {
 #ifdef OW_WIN32
-	// Can't select on an unnamed pipe
-	OW_ASSERT(false);
-	return Select_t();
+//	// Can't select on an unnamed pipe
+//	OW_ASSERT(false);
+//	return Select_t();
+	Select_t selectObj;
+	selectObj.event = (HANDLE)m_events[1];
+	selectObj.sockfd = INVALID_SOCKET;
+	selectObj.networkevents = 0;
+	selectObj.doreset = false;
+
+	return selectObj;
 #else
 	return m_fds[0];
 #endif

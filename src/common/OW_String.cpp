@@ -64,6 +64,12 @@
 #include <cmath> // for HUGE_VAL
 #include <cfloat> // for DBL_MANT_DIG
 
+#ifdef OW_WIN32
+#define SNPRINTF _snprintf
+#else
+#define SNPRINTF snprintf
+#endif
+
 namespace OpenWBEM
 {
 
@@ -244,9 +250,9 @@ String::String(Real32 val) :
 	char tmpbuf[128];
 #if FLT_RADIX == 2
 #if defined(OW_REAL32_IS_FLOAT)
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", FLT_MANT_DIG * 3 / 10 + 1, static_cast<double>(val));
+	::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*g", FLT_MANT_DIG * 3 / 10 + 1, static_cast<double>(val));
 #elif defined(OW_REAL32_IS_DOUBLE)
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
+	::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
 #endif
 #else
 #error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
@@ -260,9 +266,9 @@ String::String(Real64 val) :
 	char tmpbuf[128];
 #if FLT_RADIX == 2
 #if defined(OW_REAL64_IS_DOUBLE)
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
+	::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
 #elif defined(OW_REAL64_IS_LONG_DOUBLE)
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, val);
+	::SNPRINTF(tmpbuf, sizeof(tmpbuf), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, val);
 #endif
 #else
 #error "The formula for computing the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"

@@ -50,7 +50,7 @@ namespace OpenWBEM
  * The LocalCIMOMHandle class is a derivitive of the CIMOMHandleIFC that
  * is used by all components that need access to CIM Services.
  */
-class LocalCIMOMHandle : public RepositoryCIMOMHandle
+class OW_CIMOMCOMMON_API LocalCIMOMHandle : public RepositoryCIMOMHandle
 {
 public:
 

@@ -53,7 +53,7 @@ namespace OpenWBEM
  * This base class does the work of providing the CIMOM with the four 
  * original functions based on what is returned from doReferences. 
  */ 
-    class CppSimpleAssociatorProviderIFC : public CppAssociatorProviderIFC
+    class OW_CPPPROVIFC_API CppSimpleAssociatorProviderIFC : public CppAssociatorProviderIFC
     {
     protected:
 

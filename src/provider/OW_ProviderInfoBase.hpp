@@ -45,7 +45,7 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-struct InstClassInfo
+struct OW_PROVIDER_API InstClassInfo
 {
 	explicit InstClassInfo(String const& className_);
 	InstClassInfo(String const& className_, StringArray const& namespaces_);

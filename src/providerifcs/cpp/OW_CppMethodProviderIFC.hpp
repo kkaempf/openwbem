@@ -48,7 +48,7 @@ namespace OpenWBEM
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class CppMethodProviderIFC: public virtual CppProviderBaseIFC
+class OW_CPPPROVIFC_API CppMethodProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppMethodProviderIFC();

@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class IndicationExportProviderIFC : public ProviderBaseIFC
+class OW_PROVIDER_API IndicationExportProviderIFC : public ProviderBaseIFC
 {
 public:
 	virtual ~IndicationExportProviderIFC();

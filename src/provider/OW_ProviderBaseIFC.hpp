@@ -44,7 +44,7 @@ namespace OpenWBEM
 /**
  * This is the base class implemented by all providers.
  */
-class ProviderBaseIFC : public virtual IntrusiveCountableBase
+class OW_PROVIDER_API ProviderBaseIFC : public virtual IntrusiveCountableBase
 {
 	public:
 		virtual ~ProviderBaseIFC();

@@ -39,11 +39,11 @@
 namespace OpenWBEM
 {
 
-class HTTPChunkedIStream;
-class HTTPChunkedOStream;
+class OW_HTTP_API HTTPChunkedIStream;
+class OW_HTTP_API HTTPChunkedOStream;
 #ifdef OW_HAVE_ZLIB_H
-class HTTPDeflateIStream;
-class HTTPDeflateOStream;
+class OW_HTTP_API HTTPDeflateIStream;
+class OW_HTTP_API HTTPDeflateOStream;
 #endif
 
 } // end namespace OpenWBEM

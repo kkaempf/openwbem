@@ -48,7 +48,7 @@ namespace OpenWBEM
  * This class can be part of a multiple-inerhitance diamond.  
  * Thus the "public virtual" inheritance.
  */
-class CppReadOnlyInstanceProviderIFC : public virtual CppInstanceProviderIFC
+class OW_CPPPROVIFC_API CppReadOnlyInstanceProviderIFC : public virtual CppInstanceProviderIFC
 {
 	virtual void deleteInstance(
 		const ProviderEnvironmentIFCRef& env,

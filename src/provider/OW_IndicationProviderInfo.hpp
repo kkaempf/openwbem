@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-struct IndicationProviderInfoEntry
+struct OW_PROVIDER_API IndicationProviderInfoEntry
 {
 	explicit IndicationProviderInfoEntry(String const& indicationName_)
 		: indicationName(indicationName_)
@@ -55,7 +55,7 @@ struct IndicationProviderInfoEntry
 	StringArray classes;
 };
 
-class IndicationProviderInfo : public ProviderInfoBase<IndicationProviderInfoEntry>
+class OW_PROVIDER_API IndicationProviderInfo : public ProviderInfoBase<IndicationProviderInfoEntry>
 {
 public:
 	// pull the names into this class

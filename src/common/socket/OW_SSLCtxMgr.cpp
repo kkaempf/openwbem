@@ -54,8 +54,10 @@
 #include <openssl/err.h>
 #include <cstring>
 #include <csignal>
+#ifndef OW_WIN32
 #include <sys/time.h>
 #include <sys/resource.h>
+#endif
 #include <fcntl.h>
 
 #ifdef OW_HAVE_SYS_TYPES_H
@@ -278,6 +280,7 @@ static void randomALRMHandler(int sig)
 
 Mutex g_randomTimerGuard;
 
+#ifndef OW_WIN32
 // This function will continue to iterate until *iterations <= 0. *iterations may be set by another thread. *iterations should not be < 8.
 void generateRandomTimerData(unsigned char* data, int size, int* iterations)
 {
@@ -533,6 +536,7 @@ class RandomTimerThread : public Thread
 		return 0;
 	}
 };
+#endif
 
 void loadRandomness()
 {
@@ -555,7 +559,7 @@ void loadRandomness()
 		CryptReleaseContext(hProvider, 0);
 	}
 	RAND_screen(); // provided by OpenSSL. Try doing something in addition to CryptGenRandom(), since we can't trust closed source.
-#endif
+#else
 
 	// OpenSSL 0.9.7 does this automatically, so only try if we've got an older version of OpenSSL.
 	if (SSLeay() < 0x00907000L)
@@ -679,6 +683,7 @@ void loadRandomness()
 	randomTimerThread.join();
 
 	generateRandomDataFromTime(0.1);
+#endif
 }
 
 } // end unnamed namespace

@@ -48,7 +48,7 @@ namespace OpenWBEM
  * Classes wishing to implement an instance provider must derive from this
  * class.
  */
-class CppInstanceProviderIFC: public virtual CppProviderBaseIFC
+class OW_CPPPROVIFC_API CppInstanceProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppInstanceProviderIFC();

@@ -42,7 +42,7 @@
 namespace OpenWBEM
 {
 
-class SecondaryInstanceProviderInfo : public ProviderInfoBase<InstClassInfo>
+class OW_PROVIDER_API SecondaryInstanceProviderInfo : public ProviderInfoBase<InstClassInfo>
 {
 public:
 	// pull the names into this class

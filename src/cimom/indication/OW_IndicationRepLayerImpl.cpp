@@ -534,14 +534,14 @@ void IndicationRepLayerImpl::exportIndication(const CIMInstance& instance,
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-extern "C" OpenWBEM::IndicationRepLayer*
+extern "C" OW_EXPORT OpenWBEM::IndicationRepLayer*
 createIndicationRepLayer()
 {
 	return new OpenWBEM::IndicationRepLayerImpl;
 }
 //////////////////////////////////////////////////////////////////////////////
 #if !defined(OW_STATIC_SERVICES)
-extern "C" const char*
+extern "C" OW_EXPORT const char*
 getOWVersion()
 {
 	return OW_VERSION;

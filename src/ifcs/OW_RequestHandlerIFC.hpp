@@ -152,12 +152,12 @@ private:
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_REQUEST_HANDLER_FACTORY(derived, handlerName) \
-extern "C" OpenWBEM::RequestHandlerIFC* \
+extern "C" OW_EXPORT OpenWBEM::RequestHandlerIFC* \
 createRequestHandler() \
 { \
 	return new derived; \
 } \
-extern "C" const char* \
+extern "C" OW_EXPORT const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \

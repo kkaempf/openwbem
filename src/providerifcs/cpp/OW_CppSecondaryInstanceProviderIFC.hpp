@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class CppSecondaryInstanceProviderIFC: public virtual CppProviderBaseIFC
+class OW_CPPPROVIFC_API CppSecondaryInstanceProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppSecondaryInstanceProviderIFC();

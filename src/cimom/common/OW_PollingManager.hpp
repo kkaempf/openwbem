@@ -55,7 +55,7 @@ namespace OpenWBEM
 {
 class PollingManagerThread;
 
-class PollingManager : public ServiceIFC
+class OW_CIMOMCOMMON_API PollingManager : public ServiceIFC
 {
 public:
 	PollingManager(const ProviderManagerRef& providerManager);
@@ -72,7 +72,7 @@ private:
 	IntrusiveReference<PollingManagerThread> m_pollingManagerThread;
 };
 
-class PollingManagerThread : public Thread
+class OW_CIMOMCOMMON_API PollingManagerThread : public Thread
 {
 public:
 	PollingManagerThread(const ProviderManagerRef& providerManager);

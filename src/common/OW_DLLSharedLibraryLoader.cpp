@@ -41,14 +41,36 @@
 #include "OW_Format.hpp"
 #include "OW_System.hpp"
 
+namespace
+{
+using namespace OpenWBEM;
+
+// Too bad C++ doesn't have static constructors!
+void SetDllSearchPath(const String& path)
+{
+	::SetCurrentDirectory(path.c_str());
+}
+
+}
+
 namespace OpenWBEM
 {
 
+///////////////////////////////////////////////////////////////////////////////
+DLLSharedLibraryLoader::DLLSharedLibraryLoader()
+{
+	SetDllSearchPath(String(OW_DEFAULT_LIB_DIR));
+}
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef
 DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	const LoggerRef& logger) const
 {
+	if( filename.endsWith("libopenwbem.dll") )
+	{
+		return SharedLibraryRef(0);
+	}
+
 	HINSTANCE libhandle = ::LoadLibrary(filename.c_str());
 	if (libhandle)
 	{

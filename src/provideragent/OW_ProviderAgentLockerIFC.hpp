@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class ProviderAgentLockerIFC : public IntrusiveCountableBase
+class OW_PROVIDERAGENT_API ProviderAgentLockerIFC : public IntrusiveCountableBase
 {
 public: 
 	ProviderAgentLockerIFC(); 

@@ -57,12 +57,12 @@ public:
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
-extern "C" OpenWBEM::AuthorizerIFC* \
+extern "C" OW_EXPORT OpenWBEM::AuthorizerIFC* \
 createAuthorizer() \
 { \
 	return new derived; \
 } \
-extern "C" const char* \
+extern "C" OW_EXPORT const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \

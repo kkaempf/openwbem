@@ -54,7 +54,7 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 
-class ProviderAgentCIMOMHandle : public CIMOMHandleIFC
+class OW_PROVIDERAGENT_API ProviderAgentCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 	ProviderAgentCIMOMHandle(const Map<String, CppProviderBaseIFCRef>& assocProvs, 

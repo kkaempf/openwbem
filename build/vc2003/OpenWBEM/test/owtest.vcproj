@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="Debug DLL"
+			IntermediateDirectory="Debug DLL"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
@@ -68,8 +68,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="Release DLL"
+			IntermediateDirectory="Release DLL"
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool

@@ -12,26 +12,35 @@
 #endif
 
 /* The system doesn't have OpenSSL */
-/* #undef OW_NO_SSL */
+#undef OW_NO_SSL
+
+#ifndef OW_DEFAULT_INSTALLDIR
+#define OW_DEFAULT_INSTALLDIR "C:\\Program Files\\Vintela\\VSM"
+#endif
 
 #ifndef OW_DEFAULT_SYSCONF_DIR 
-#define OW_DEFAULT_SYSCONF_DIR  "/usr/local/etc" 
+//#define OW_DEFAULT_SYSCONF_DIR  "/usr/local/etc" 
+#define OW_DEFAULT_SYSCONF_DIR  OW_DEFAULT_INSTALLDIR "\\etc" 
 #endif
 
 #ifndef OW_DEFAULT_STATE_DIR 
-#define OW_DEFAULT_STATE_DIR  "/usr/local/var" 
+//#define OW_DEFAULT_STATE_DIR  "/usr/local/var" 
+#define OW_DEFAULT_STATE_DIR  OW_DEFAULT_INSTALLDIR "\\var" 
 #endif
 
 #ifndef OW_DEFAULT_LIB_DIR 
-#define OW_DEFAULT_LIB_DIR  "/usr/local/lib" 
+//#define OW_DEFAULT_LIB_DIR  "/usr/local/lib" 
+#define OW_DEFAULT_LIB_DIR  OW_DEFAULT_INSTALLDIR "\\lib" 
 #endif
 
 #ifndef OW_DEFAULT_LIBEXEC_DIR 
-#define OW_DEFAULT_LIBEXEC_DIR  "/usr/local/libexec" 
+//#define OW_DEFAULT_LIBEXEC_DIR  "/usr/local/libexec" 
+#define OW_DEFAULT_LIBEXEC_DIR  OW_DEFAULT_INSTALLDIR "\\libexec" 
 #endif
 
 #ifndef OW_PIDFILE_DIR 
-#define OW_PIDFILE_DIR  "/var/run" 
+//#define OW_PIDFILE_DIR  "/var/run" 
+#define OW_PIDFILE_DIR  OW_DEFAULT_INSTALLDIR "\\run" 
 #endif
 
 /* #undef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS */
@@ -538,9 +547,9 @@
 #undef OW_HAVE_SLP_H
 #endif
 
-#ifndef OW_DISABLE_DIGEST
-#define OW_DISABLE_DIGEST
-#endif
+//#ifndef OW_DISABLE_DIGEST
+//#define OW_DISABLE_DIGEST
+//#endif
 
 // Statements like:
 // #pragma message(Reminder "Fix this problem!")
@@ -567,8 +576,13 @@ typedef long off_t;
 // Including winsock2.h should also bring in windows.h
 #include <winsock2.h>
 
+#ifdef OW_STATIC_BUILD
+#define OW_EXPORT
+#define OW_IMPORT
+#else
 #define OW_EXPORT __declspec(dllexport)
 #define OW_IMPORT __declspec(dllimport)
+#endif
 
 #ifdef OW_COMMON_BUILD
 #define OW_COMMON_API OW_EXPORT
@@ -592,6 +606,12 @@ typedef long off_t;
 #define OW_HTTP_API OW_EXPORT
 #else
 #define OW_HTTP_API OW_IMPORT
+#endif
+
+#ifdef OW_HTTPSVC_BUILD
+#define OW_HTTPSVC_API OW_EXPORT
+#else
+#define OW_HTTPSVC_API OW_IMPORT
 #endif
 
 #ifdef OW_CLIENT_BUILD
@@ -630,8 +650,51 @@ typedef long off_t;
 #define OW_WQLCOMMON_API OW_IMPORT
 #endif
 
+#ifdef OW_PROVIDER_BUILD
+#define OW_PROVIDER_API OW_EXPORT
+#else
+#define OW_PROVIDER_API OW_IMPORT
+#endif
+
+#ifdef OW_CPPPROVIFC_BUILD
+#define OW_CPPPROVIFC_API OW_EXPORT
+#else
+#define OW_CPPPROVIFC_API OW_IMPORT
+#endif
+
+#ifdef OW_CIMOMSERVER_BUILD
+#define OW_CIMOMSERVER_API OW_EXPORT
+#else
+#define OW_CIMOMSERVER_API OW_IMPORT
+#endif
+
+#ifdef OW_CIMOMCOMMON_BUILD
+#define OW_CIMOMCOMMON_API OW_EXPORT
+#else
+#define OW_CIMOMCOMMON_API OW_IMPORT
+#endif
+
+#ifdef OW_INDICATIONSERVER_BUILD
+#define OW_INDICATIONSERVER_API OW_EXPORT
+#else
+#define OW_INDICATIONSERVER_API OW_IMPORT
+#endif
+
+#ifdef OW_INDICATIONREPLAYER_BUILD
+#define OW_INDICATIONREPLAYER_API OW_EXPORT
+#else
+#define OW_INDICATIONREPLAYER_API OW_IMPORT
+#endif
+
+#ifdef OW_PROVIDERAGENT_BUILD
+#define OW_PROVIDERAGENT_API OW_EXPORT
+#else
+#define OW_PROVIDERAGENT_API OW_IMPORT
+#endif
+
 #pragma warning (disable: 4297)
 #pragma warning (disable: 4355)
+#pragma warning (disable: 4006)
 
 
 /* __SRC_COMMON_OW_CONFIG_H */

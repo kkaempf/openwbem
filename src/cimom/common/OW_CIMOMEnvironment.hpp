@@ -60,7 +60,7 @@
 namespace OpenWBEM
 {
 
-class CIMOMEnvironment : public ServiceEnvironmentIFC
+class OW_CIMOMCOMMON_API CIMOMEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	CIMOMEnvironment();

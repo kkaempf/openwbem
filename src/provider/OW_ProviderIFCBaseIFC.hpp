@@ -77,7 +77,7 @@ namespace OpenWBEM
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class ProviderIFCBaseIFC : public IntrusiveCountableBase
+class OW_PROVIDER_API ProviderIFCBaseIFC : public IntrusiveCountableBase
 {
 public:
 	ProviderIFCBaseIFC();
@@ -234,12 +234,12 @@ typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > Provide
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_PROVIDERIFCFACTORY(prov, name) \
-extern "C" OpenWBEM::ProviderIFCBaseIFC* \
+extern "C" OW_EXPORT OpenWBEM::ProviderIFCBaseIFC* \
 createProviderIFC() \
 { \
 	return new prov; \
 } \
-extern "C" const char* \
+extern "C" OW_EXPORT const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \

@@ -53,7 +53,7 @@ namespace OpenWBEM
 {
 
 
-class ProviderAgent
+class OW_PROVIDERAGENT_API ProviderAgent
 {
 public:
 	// option which specifies the locking strategy.

@@ -48,7 +48,7 @@ namespace OpenWBEM
  * This is the interface implemented by method providers.  These providers are
  * used to provide implementation for all methods of CIM classes.
  */
-class MethodProviderIFC: public ProviderBaseIFC
+class OW_PROVIDER_API MethodProviderIFC: public ProviderBaseIFC
 {
 public:
 	virtual ~MethodProviderIFC();

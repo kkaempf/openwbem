@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-class IndicationRepLayer : public RepositoryIFC
+class /*OW_INDICATIONREPLAYER_API*/ IndicationRepLayer : public RepositoryIFC
 {
 public:
 	virtual ~IndicationRepLayer();

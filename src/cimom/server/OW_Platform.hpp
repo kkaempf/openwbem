@@ -49,17 +49,17 @@ namespace OpenWBEM
 OW_DECLARE_EXCEPTION(Daemon);
 namespace Platform
 {
-	enum
+	OW_CIMOMSERVER_API enum
 	{
 		DAEMONIZE_SUCCESS, 
 		DAEMONIZE_FAIL 
 	}; 
-	enum
+	OW_CIMOMSERVER_API enum
 	{
 		SHUTDOWN,
 		REINIT
 	};
-	struct Options
+	OW_CIMOMSERVER_API struct Options
 	{
 		Options()
 		: debug(false)
@@ -74,19 +74,19 @@ namespace Platform
 		bool help;
 		bool error;
 	};
-	Options daemonInit( int argc, char* argv[] );
+	OW_CIMOMSERVER_API Options daemonInit( int argc, char* argv[] );
 	/**
 	 * @throws DaemonException on error
 	 */
-	void daemonize(bool dbgFlg, const String& daemonName);
-	int daemonShutdown(const String& daemonName);
-	void initDaemonizePipe();
-	void sendDaemonizeStatus(int status);
-	void initSig();
-	void pushSig(int sig);
-	int popSig();
-	void shutdownSig();
-	SelectableIFCRef getSigSelectable();
+	OW_CIMOMSERVER_API void daemonize(bool dbgFlg, const String& daemonName);
+	OW_CIMOMSERVER_API int daemonShutdown(const String& daemonName);
+	OW_CIMOMSERVER_API void initDaemonizePipe();
+	OW_CIMOMSERVER_API void sendDaemonizeStatus(int status);
+	OW_CIMOMSERVER_API void initSig();
+	OW_CIMOMSERVER_API void pushSig(int sig);
+	OW_CIMOMSERVER_API int popSig();
+	OW_CIMOMSERVER_API void shutdownSig();
+	OW_CIMOMSERVER_API SelectableIFCRef getSigSelectable();
 	using UserUtils::getCurrentUserName;
 
 	/** 
@@ -99,16 +99,16 @@ namespace Platform
 	 * 
 	 * @throws DaemonException in the case execv() fails.
 	 */
-	void rerunDaemon();
+	OW_CIMOMSERVER_API void rerunDaemon();
 
 	/**
 	 * Restart the daemon. This initiates the restart process. On POSIX
 	 * platforms, it just sends a SIGHUP to the main process.
 	 */
-	void restartDaemon();
+	OW_CIMOMSERVER_API void restartDaemon();
 
-	void installFatalSignalHandlers();
-	void removeFatalSignalHandlers();
+	OW_CIMOMSERVER_API void installFatalSignalHandlers();
+	OW_CIMOMSERVER_API void removeFatalSignalHandlers();
 }; // end namespace Platform
 
 

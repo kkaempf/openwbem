@@ -52,7 +52,7 @@ namespace OpenWBEM
  * ProviderEnvironmentIFC object is valid only for the lifetime of the
  * referenced OperationContext.
  */
-class ProviderEnvironmentIFC : public IntrusiveCountableBase
+class OW_PROVIDER_API ProviderEnvironmentIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ProviderEnvironmentIFC();

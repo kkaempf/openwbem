@@ -44,7 +44,7 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class IndicationServer : public ServiceIFC
+class OW_CIMOMCOMMON_API IndicationServer : public ServiceIFC
 {
 public:
 	IndicationServer() {}

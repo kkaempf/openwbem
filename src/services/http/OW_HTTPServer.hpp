@@ -53,7 +53,7 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(HTTPServer)
 
-class OW_HTTP_API HTTPServer : public ServiceIFC
+class OW_HTTPSVC_API HTTPServer : public ServiceIFC
 {
 public:
 	HTTPServer();

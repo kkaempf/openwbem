@@ -52,7 +52,7 @@ class CIMRepository;
 
 // This class is responsible for:
 // 1. calling either providers/or the CIM Repository
-class CIMServer : public RepositoryIFC
+class OW_CIMOMCOMMON_API CIMServer : public RepositoryIFC
 {
 public:
 	static const char* const INST_REPOS_NAME;

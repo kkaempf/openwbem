@@ -58,11 +58,20 @@ extern "C"
 #else
 #include <stdlib.h> // for getopt on Solaris
 #endif
+#ifdef WIN32
+#include <process.h>
+#define getpid _getpid
+#else
 #include <unistd.h> // for getpid, getuid, etc.
+#endif
 #include <signal.h>
 #include <fcntl.h>
+#if defined (OW_HAVE_PWD_H)
 #include <pwd.h>
+#endif
+#if defined (OW_HAVE_SYS_RESOURCE_H)
 #include <sys/resource.h>
+#endif
 
 #ifdef OW_NETWARE
 #include <nks/vm.h>
@@ -129,6 +138,7 @@ daemonInit( int argc, char* argv[] )
 void
 daemonize(bool dbgFlg, const String& daemonName)
 {
+#ifndef WIN32
 #ifdef OW_NETWARE
 	{
 		NonRecursiveMutexLock l(g_shutdownGuard); 
@@ -155,7 +165,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 #endif
 	if (!dbgFlg)
 	{
-#if !defined(OW_NETWARE)
+#if !defined(OW_NETWARE) && !defined(WIN32)
 		pid = fork();
 		switch (pid)
 		{
@@ -207,15 +217,23 @@ daemonize(bool dbgFlg, const String& daemonName)
 	}
 	umask(0077); // ensure all files we create are only accessible by us.
 #if !defined(OW_NETWARE)
-	PidFile::writePid(pidFile.c_str());
+	if (PidFile::writePid(pidFile.c_str()) == -1)
+	{
+//		OW_THROW_ERRNO_MSG(DaemonException,
+//			"Failed to write the pid file.");
+	}
+#endif
 #endif
 	initSig();
+#ifndef WIN32
 	setupSigHandler(dbgFlg);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 daemonShutdown(const String& daemonName)
 {
+#ifndef WIN32
 #if defined(OW_NETWARE)
 	(void)daemonName; 
 	{
@@ -236,6 +254,7 @@ daemonShutdown(const String& daemonName)
 	pidFile += ".pid";
 	PidFile::removePid(pidFile.c_str());
 #endif
+#endif
 	shutdownSig();
 	return 0;
 }
@@ -255,6 +274,7 @@ static Options
 processCommandLineOptions(int argc, char** argv)
 {
 	Options rval;
+#ifndef WIN32
 #ifdef OW_HAVE_GETOPT_LONG
 	int optndx = 0;
 	optind = 1;
@@ -288,12 +308,14 @@ processCommandLineOptions(int argc, char** argv)
 		c = getopt(argc, argv, short_options);
 #endif
 	}
+#endif
 	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void rerunDaemon()
 {
+#ifndef WIN32
 #ifdef OW_HAVE_PTHREAD_KILL_OTHER_THREADS_NP
 	// do this, since it seems that on some distros (debian sarge for instance) 
 	// it doesn't happen when calling execv(), and it shouldn't hurt if it's 
@@ -346,6 +368,7 @@ void rerunDaemon()
 	sigset_t emptymask;
 	sigemptyset(&emptymask);
 	::sigprocmask(SIG_SETMASK, &emptymask, 0);
+#endif
 
 	// This doesn't return. execv() will replace the current process with a
 	// new copy of g_argv[0] (owcimomd).
@@ -358,9 +381,14 @@ void rerunDaemon()
 //////////////////////////////////////////////////////////////////////////////
 void restartDaemon()
 {
+#ifdef WIN32
+	rerunDaemon();
+#else
 	::kill(::getpid(), SIGHUP);
+#endif
 }
 
+#ifndef WIN32
 //////////////////////////////////////////////////////////////////////////////
 #if !defined(OW_HAVE_SIGHANDLER_T)
 typedef void (*sighandler_t)(int);
@@ -404,6 +432,9 @@ ignoreSignal(int sig)
 {
 	handleSignalAux(sig, SIG_IGN);
 }
+
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 extern "C" {
 static void
@@ -420,15 +451,19 @@ theSigHandler(int sig)
 #endif
 				pushSig(SHUTDOWN);
 				break;
+#ifndef OW_WIN32
 			case SIGHUP:
 				pushSig(REINIT);
 				break;
+#endif
 		}
 	}
 	catch (...) // can't let exceptions escape from here or we'll segfault.
 	{
 	}
 }
+
+#ifndef WIN32
 
 static void 
 abortHandler(int sig)
@@ -471,7 +506,9 @@ netwareShutDownEventHandler(void*,
 }
 #endif
 
+#endif
 } // extern "C"
+#ifndef WIN32
 //////////////////////////////////////////////////////////////////////////////
 static void
 setupSigHandler(bool dbgFlg)
@@ -593,6 +630,25 @@ void removeFatalSignalHandlers()
 	handleSignalAux(SIGSEGV, SIG_DFL);
 	handleSignalAux(SIGFPE, SIG_DFL);
 }
+#else // WIN32
+
+BOOL WINAPI CtrlHandlerRoutine(DWORD dwCtrlType)
+{
+	theSigHandler(SIGTERM);
+	return TRUE;
+}
+
+void installFatalSignalHandlers()
+{
+	::SetConsoleCtrlHandler(CtrlHandlerRoutine, TRUE);
+}
+
+void removeFatalSignalHandlers()
+{
+	::SetConsoleCtrlHandler(CtrlHandlerRoutine, FALSE);
+}
+
+#endif // WIN32
 
 //////////////////////////////////////////////////////////////////////////////
 void initDaemonizePipe()

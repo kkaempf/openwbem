@@ -372,7 +372,12 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 
 	String libPathsStr = env->getConfigItem(
 		ConfigOpts::CPPIFC_PROV_LOC_opt, OW_DEFAULT_CPP_PROVIDER_LOCATION);
+#ifndef OW_WIN32
 	StringArray paths = libPathsStr.tokenize(";:");
+#else
+	// On win32, can't use the : separator because that's the drive letter separator
+	StringArray paths = libPathsStr.tokenize(";");
+#endif
 	for (StringArray::size_type i1 = 0; i1 < paths.size(); i1++)
 	{
 		StringArray dirEntries;
@@ -454,6 +459,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), msg);
 					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "****************************************");
 					OW_THROW(CppProviderIFCException, msg.c_str());
+					continue;
 				}
 
 				// The named provider may also be an indication export or a

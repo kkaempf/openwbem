@@ -55,7 +55,7 @@ namespace OpenWBEM
  * overridden, and then the createProviderIFCFromLib function can be used to
  * actually load the shared library.
  */
-class ProviderIFCLoaderBase : public IntrusiveCountableBase
+class OW_CIMOMCOMMON_API ProviderIFCLoaderBase : public IntrusiveCountableBase
 {
 public:
 	ProviderIFCLoaderBase(SharedLibraryLoaderRef sll,
@@ -126,7 +126,7 @@ private:
 	ServiceEnvironmentIFCRef m_env;
 };
 
-class ProviderIFCLoader : public ProviderIFCLoaderBase
+class OW_CIMOMCOMMON_API ProviderIFCLoader : public ProviderIFCLoaderBase
 {
 public:
 	ProviderIFCLoader(SharedLibraryLoaderRef sll,

@@ -51,7 +51,7 @@
 namespace OpenWBEM
 {
 
-class InstanceProviderProxy : public InstanceProviderIFC
+class OW_CIMOMCOMMON_API InstanceProviderProxy : public InstanceProviderIFC
 {
 public:
 	InstanceProviderProxy(InstanceProviderIFCRef pProv,
@@ -120,7 +120,7 @@ private:
 #endif
 };
 
-class SecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
+class OW_CIMOMCOMMON_API SecondaryInstanceProviderProxy : public SecondaryInstanceProviderIFC
 {
 public:
 	SecondaryInstanceProviderProxy(SecondaryInstanceProviderIFCRef pProv,
@@ -142,7 +142,7 @@ private:
 #endif
 };
 
-class MethodProviderProxy : public MethodProviderIFC
+class OW_CIMOMCOMMON_API MethodProviderProxy : public MethodProviderIFC
 {
 public:
 	MethodProviderProxy(MethodProviderIFCRef pProv,
@@ -167,7 +167,7 @@ private:
 };
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-class AssociatorProviderProxy : public AssociatorProviderIFC
+class OW_CIMOMCOMMON_API AssociatorProviderProxy : public AssociatorProviderIFC
 {
 public:
 	AssociatorProviderProxy(AssociatorProviderIFCRef pProv,

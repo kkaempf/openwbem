@@ -46,7 +46,7 @@ class WQLSelectStatement;
 /**
  * This is the interface implemented by indication providers.
  */
-class CppIndicationProviderIFC: public virtual CppProviderBaseIFC
+class OW_CPPPROVIFC_API CppIndicationProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
 	virtual ~CppIndicationProviderIFC();

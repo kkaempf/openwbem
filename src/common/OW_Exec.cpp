@@ -50,8 +50,10 @@ extern "C"
 #ifdef OW_HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
+#ifndef OW_WIN32
 #include <unistd.h>
 #include <sys/wait.h>
+#endif
 #include <errno.h>
 #include <stdio.h> // for perror
 #include <signal.h>
@@ -70,6 +72,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(ExecTimeout);
 OW_DEFINE_EXCEPTION_WITH_ID(ExecBufferFull);
 OW_DEFINE_EXCEPTION_WITH_ID(ExecError);
 
+#ifndef OW_WIN32
 class PopenStreamsImpl : public IntrusiveCountableBase
 {
 public:
@@ -850,5 +853,6 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 
 
 } // end namespace Exec
+#endif
 } // end namespace OpenWBEM
 

@@ -1,0 +1,9 @@
+SrcDir=$(SolutionDir)\..\..\..\src
+DbDir=$(SolutionDir)\..\..\..\db
+
+OpenSSL=C:\OpenSSL
+Zlib=C:\Zlib
+
+Flex=C:\usr\local\wbin\flex
+Bison=C:\usr\local\wbin\bison
+Sed=C:\usr\local\wbin\sed

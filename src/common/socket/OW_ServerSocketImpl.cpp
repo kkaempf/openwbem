@@ -300,6 +300,22 @@ ServerSocketImpl::accept(int timeoutSecs)
 		}
 	}
 
+	// Unregister for any events.  necessary to put us back in blocking mode.
+	if(::WSAEventSelect(clntfd, NULL, 0) != 0)
+	{
+		OW_THROW(SocketException,
+			Format("WSAEventSelect failed in accept: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
+
+	// set socket back to blocking; otherwise it'll inherit non-blocking from the listening socket
+	unsigned long cmdArg = 0;
+	if (::ioctlsocket(clntfd, FIONBIO, &cmdArg) == SOCKET_ERROR)
+	{
+		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
+
 	if (!m_sslCtx && m_isSSL == SocketFlags::E_SSL)
 	{
 		return Socket(clntfd, m_localAddress.getType(), m_isSSL);

@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-class SharedLibraryRepository : public RepositoryIFC
+class OW_CIMOMCOMMON_API SharedLibraryRepository : public RepositoryIFC
 {
 public:
 	SharedLibraryRepository(SharedLibraryRepositoryIFCRef ref);

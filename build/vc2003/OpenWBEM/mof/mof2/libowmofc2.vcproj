@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="libowmofc2"
+	ProjectGUID="{9C64B69C-57EB-4207-8EED-2ADB476BA417}"
+	RootNamespace="libowmofc2"
+	Keyword="Win32Proj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug Static|Win32"
+			OutputDirectory="Debug Static"
+			IntermediateDirectory="Debug Static"
+			ConfigurationType="4"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;OW_STATIC_BUILD"
+				StringPooling="TRUE"
+				MinimalRebuild="TRUE"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="TRUE"
+				RuntimeTypeInfo="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="0"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libowmofc2.lib"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release Static|Win32"
+			OutputDirectory="Release Static"
+			IntermediateDirectory="Release Static"
+			ConfigurationType="4"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;OW_STATIC_BUILD"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				ForceConformanceInForLoopScope="TRUE"
+				RuntimeTypeInfo="TRUE"
+				UsePrecompiledHeader="0"
+				WarningLevel="0"
+				Detect64BitPortabilityProblems="TRUE"
+				DebugInformationFormat="3"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="$(OutDir)/libowmofc2.lib"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath=".\blank.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\src\mof\OW_MOFLexer.ll">
+				<FileConfiguration
+					Name="Debug Static|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_MOFLexer.cpp 2&gt;nul
+@echo #define YY_NEVER_INTERACTIVE 1 &gt; ..\OW_MOFLexer.cpp
+$(Flex) -it -Cfe -Powmof $(InputDir)\OW_MOFLexer.ll | $(Sed) &quot;/unistd/d&quot; &gt;&gt; ..\OW_MOFLexer.cpp
+"
+						Outputs="..\OW_MOFLexer.cpp"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Static|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_MOFLexer.cpp 2&gt;nul
+@echo #define YY_NEVER_INTERACTIVE 1 &gt; ..\OW_MOFLexer.cpp
+$(Flex) -it -Cfe -Powmof $(InputDir)\OW_MOFLexer.ll | $(Sed) &quot;/unistd/d&quot; &gt;&gt; ..\OW_MOFLexer.cpp
+"
+						Outputs="..\OW_MOFLexer.cpp"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\src\mof\OW_MOFParser.yy">
+				<FileConfiguration
+					Name="Debug Static|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_MOFParser.cpp 2&gt;nul
+@del ..\OW_MOFParser.h 2&gt;nul
+$(Bison) -y -d -powmof $(InputDir)\OW_MOFParser.yy
+$(Sed) &quot;/\#line/d&quot; y.tab.c &gt;&gt; ..\OW_MOFParser.cpp
+@move y.tab.h ..\OW_MOFParser.h
+@del y.tab.c 2&gt;nul
+"
+						Outputs="..\OW_MOFParser.cpp;..\OW_MOFParser.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Static|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="@del ..\OW_MOFParser.cpp 2&gt;nul
+@del ..\OW_MOFParser.h 2&gt;nul
+$(Bison) -y -d -powmof $(InputDir)\OW_MOFParser.yy
+$(Sed) &quot;/\#line/d&quot; y.tab.c &gt;&gt; ..\OW_MOFParser.cpp
+@move y.tab.h ..\OW_MOFParser.h
+@del y.tab.c 2&gt;nul
+"
+						Outputs="..\OW_MOFParser.cpp;..\OW_MOFParser.h"/>
+				</FileConfiguration>
+			</File>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+		</Filter>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-class AssociatorProviderInfo : public ProviderInfoBase<InstClassInfo>
+class OW_PROVIDER_API AssociatorProviderInfo : public ProviderInfoBase<InstClassInfo>
 {
 public:
 	// pull the names into this class

@@ -49,7 +49,7 @@ namespace OpenWBEM
  * class.  Provider interfaces will usually create a proxy between this
  * interface and their own interface.
  */
-class InstanceProviderIFC: public ProviderBaseIFC
+class OW_PROVIDER_API InstanceProviderIFC: public ProviderBaseIFC
 {
 public:
 	virtual ~InstanceProviderIFC();

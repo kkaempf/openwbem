@@ -62,7 +62,7 @@ typedef IntrusiveReference<Logger> LoggerRef;
 class LogAppender;
 typedef IntrusiveReference<LogAppender> LogAppenderRef;
 
-class OW_COMMON_API String;
+class String;
 typedef Array<String> StringArray;
 
 class Char16;

@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class IndicationRepLayerImpl : public IndicationRepLayer
+class OW_INDICATIONREPLAYER_API IndicationRepLayerImpl : public IndicationRepLayer
 {
 public:
 	IndicationRepLayerImpl();

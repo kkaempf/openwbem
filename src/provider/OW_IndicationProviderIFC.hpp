@@ -48,7 +48,7 @@ class WQLSelectStatement;
 /**
  * This is the interface implemented by indication providers.
  */
-class IndicationProviderIFC: public ProviderBaseIFC
+class OW_PROVIDER_API IndicationProviderIFC: public ProviderBaseIFC
 {
 public:
 	virtual ~IndicationProviderIFC();
