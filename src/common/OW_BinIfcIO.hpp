@@ -243,6 +243,12 @@ public:
 		val = OW_ntoh32(val);
 	}
 
+	static void read(std::istream& istrm, OW_UInt32& val)
+	{
+		OW_BinIfcIO::read(istrm, (void*)&val, sizeof(val));
+		val = OW_ntoh32(val);
+	}
+
 
 	static void readObject(std::istream& istrm, OW_Int32 validSig,
 		OW_CIMBase& obj)
