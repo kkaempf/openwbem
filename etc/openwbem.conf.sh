@@ -116,6 +116,13 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
+# One of the provider interfaces provided with owcimomd is the NPI provider
+# interface. The npiprovifc.prov_location option specifies where the NPI
+# provider interface will load it's providers from. The default for this option
+# is "/usr/local/lib/openwbem/npiproviders"
+npiprovifc.prov_location = @libdir@/openwbem/npiproviders
+
+################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
 # The default for this option is "/usr/local/lib/libowwql.so"

@@ -366,11 +366,11 @@ OW_NPIProviderIFC::getProvider(
 	}
 
 	OW_String libPath = env->getConfigItem(
-		OW_ConfigOpts::CPPIFC_PROV_LOC_opt);
+		OW_ConfigOpts::NPIIFC_PROV_LOC_opt);
 
 	if(libPath.length() == 0)
 	{
-		libPath = DEFAULT_CPP_PROVIDER_LOCATION;
+		libPath = DEFAULT_NPI_PROVIDER_LOCATION;
 	}
 
 	OW_SharedLibraryLoaderRef ldr =
@@ -378,7 +378,7 @@ OW_NPIProviderIFC::getProvider(
 
 	if(ldr.isNull())
 	{
-		env->getLogger()->logError("NPI:C++ provider ifc failed to get shared lib loader");
+		env->getLogger()->logError("NPI: provider ifc failed to get shared lib loader");
 		return OW_FTABLERef();
 	}
 
@@ -396,7 +396,7 @@ OW_NPIProviderIFC::getProvider(
 
 	if(theLib.isNull())
 	{
-		env->getLogger()->logError(format("C++ provider ifc failed to load library: %1 "
+		env->getLogger()->logError(format("NPI provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));
 		return OW_FTABLERef();
 	}
@@ -406,7 +406,7 @@ OW_NPIProviderIFC::getProvider(
 
 	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
 	{
-		env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
+		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
 		return OW_FTABLERef();
 	}
@@ -415,12 +415,12 @@ OW_NPIProviderIFC::getProvider(
 
 	if(!fTable.fp_initialize)
 	{
-		env->getLogger()->logError(format("C++ provider ifc: Libary %1 - %2 returned null"
+		env->getLogger()->logError(format("NPI provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));
 		return OW_FTABLERef();
 	}
 
-	env->getLogger()->logDebug(format("C++ provider ifc loaded library %1. Calling initialize"
+	env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Calling initialize"
 		" for provider %2", libName, provId));
 
 	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
@@ -429,7 +429,7 @@ OW_NPIProviderIFC::getProvider(
 	//OW_Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
 	fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
 
-	env->getLogger()->logDebug(format("C++ provider ifc: provider %1 loaded and initialized",
+	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
 		provId));
 
 	m_provs[provId] = OW_FTABLERef(theLib, new ::FTABLE(fTable));

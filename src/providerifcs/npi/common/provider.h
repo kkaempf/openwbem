@@ -39,7 +39,8 @@ static void cleanup ( NPIHandle * );
 #ifdef INSTANCE_PROVIDER
 #define _INCLUDE_INSTANCE_PROVIDER_METHODS \
             enumInstanceNames, enumInstances, \
-            getInstance, createInstance, setInstance, deleteInstance, execQuery,
+            getInstance, createInstance, setInstance, deleteInstance, 0,
+//            getInstance, createInstance, setInstance, deleteInstance, execQuery,
 #else
 #define _INCLUDE_INSTANCE_PROVIDER_METHODS \
             0, 0, 0, 0, 0, 0, 0,
@@ -52,8 +53,8 @@ static CIMObjectPath createInstance ( NPIHandle *, CIMObjectPath,
 				      CIMInstance );
 static void setInstance ( NPIHandle *, CIMObjectPath, CIMInstance );
 static void deleteInstance ( NPIHandle *, CIMObjectPath );
-static Vector execQuery ( NPIHandle *, CIMObjectPath, const char *, int, 
-			  CIMClass );
+/*static Vector execQuery ( NPIHandle *, CIMObjectPath, const char *, int, 
+			  CIMClass );*/
 
 /* 
  * This part defines the AssociatorProvider methods and their function 
@@ -62,11 +63,6 @@ static Vector execQuery ( NPIHandle *, CIMObjectPath, const char *, int,
 #ifdef ASSOCIATOR_PROVIDER
 #define _INCLUDE_ASSOCIATOR_PROVIDER_METHODS \
             associators, associatorNames, references, referenceNames,
-#else
-#define _INCLUDE_ASSOCIATOR_PROVIDER_METHODS \
-            0, 0, 0, 0,
-#endif
-
 static Vector associators ( NPIHandle *, CIMObjectPath, CIMObjectPath,
 			    const char *, const char *, const char *,
 			    int, int, const char * [], int);
@@ -76,19 +72,23 @@ static Vector references ( NPIHandle *, CIMObjectPath, CIMObjectPath,
 			   const char *, int, int, const char * [], int);
 static Vector referenceNames ( NPIHandle *, CIMObjectPath, CIMObjectPath, 
 			       const char * );
+#else
+#define _INCLUDE_ASSOCIATOR_PROVIDER_METHODS \
+            0, 0, 0, 0,
+#endif
+
 /* 
  * This part defines the MethodProvider interface 
  */
 #ifdef METHOD_PROVIDER
 #define _INCLUDE_METHOD_PROVIDER_METHODS \
             invokeMethod,
+static CIMValue invokeMethod ( NPIHandle *, CIMObjectPath, 
+			       const char *, Vector, Vector);
 #else
 #define _INCLUDE_METHOD_PROVIDER_METHODS \
             0,
 #endif
-
-static CIMValue invokeMethod ( NPIHandle *, CIMObjectPath, 
-			       const char *, Vector, Vector);
 
 
 
@@ -106,3 +106,6 @@ static CIMValue invokeMethod ( NPIHandle *, CIMObjectPath,
     }
 
 #endif
+
+
+

@@ -1,1 +1,1 @@
-SUBDIRS = CppUnit unit c++providers acceptance
+SUBDIRS = CppUnit unit c++providers acceptance npiproviders

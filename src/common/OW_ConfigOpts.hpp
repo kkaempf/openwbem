@@ -64,6 +64,10 @@
 #define DEFAULT_CPP_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/c++providers"
 #endif
 
+#ifndef DEFAULT_NPI_PROVIDER_LOCATION
+#define DEFAULT_NPI_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/npiproviders"
+#endif
+
 #ifndef DEFAULT_AUTH_MOD
 #define DEFAULT_AUTH_MOD DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
 #endif
@@ -139,6 +143,7 @@ namespace OW_ConfigOpts
 	static const char* const AUTH_MOD_opt = "owcimomd.authentication_module";
 	static const char* const DUMP_SOCKET_IO_opt = "owcimomd.dump_socket_io";
 	static const char* const CPPIFC_PROV_LOC_opt = "cppprovifc.prov_location";
+	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
 	static const char* const DISABLE_INDICATIONS_opt = "owcimomd.disable_indications";
 	static const char* const WQL_LIB_opt = "owcimomd.wql_lib";
 	static const char* const ACL_SUPERUSER_opt = "owcimomd.ACL_superuser";

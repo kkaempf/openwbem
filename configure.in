@@ -605,6 +605,7 @@ AC_OUTPUT(./Makefile
 ./test/c++providers/property/Makefile
 ./test/c++providers/trigger/Makefile
 ./test/c++providers/instance/Makefile
+./test/npiproviders/Makefile
 ./test/unit/Makefile)
 
 AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/common/OW_config.h], OW, [config.h])
