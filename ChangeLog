@@ -1,3 +1,13 @@
+Fri May 16 12:50:33 MDT 2003
+- Fixed some problems with the association database index.
+- Fixed a problem in OW_CIMServer that caused associations to be broken in
+  certain cases.
+- Removed _validatePropagatedKeys from OW_CIMServer because it doesn't work
+  right.
+- Fixed a couple of problems with xml generation where an object path wasn't
+  being done correctly.
+- Fixed the simple c++ provider interface name.
+
 Tue Dec  3 11:25:46 MST 2002
 - Fixed mof compiler wrt default qualifiers (see cim spec 4.7).  Now the CIM
   2.7 schema imports without errors.
