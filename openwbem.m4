@@ -32,6 +32,8 @@ done
 dnl ------------------------------------------------------------------------
 dnl Try to find the OpenWBEM headers and libraries.
 dnl ------------------------------------------------------------------------
+dnl   Usage:   CHECK_OPENWBEM([REQUIRED-VERSION
+dnl                      [,ACTION-IF-FOUND[,ACTION-IF-NOT-FOUND]]])
 dnl
 AC_DEFUN(CHECK_OPENWBEM,
 [
@@ -41,6 +43,7 @@ OPENWBEM_PROVIDER_LIBS="-lopenwbem -lowprovider -lowcppprovifc"
 ac_OPENWBEM_includes=NO ac_OPENWBEM_libraries=NO
 OPENWBEM_libraries=""
 OPENWBEM_includes=""
+openwbem_error=""
 AC_ARG_WITH(openwbem-dir,
 	[  --with-openwbem-dir=DIR      where the root of OpenWBEM is installed],
 	[  ac_OPENWBEM_includes="$withval"/include
@@ -76,6 +79,7 @@ if test $want_OPENWBEM = yes; then
 
 		if test "$ac_OPENWBEM_includes" = NO || test "$ac_OPENWBEM_libraries" = NO; then
 			have_OPENWBEM=no
+			openwbem_error="OpenWBEM not found"
 		else
 			have_OPENWBEM=yes;
 		fi
@@ -88,6 +92,7 @@ if test $want_OPENWBEM = yes; then
 
 else
 	have_OPENWBEM=no
+	openwbem_error="OpenWBEM not found"
 fi
 
 if test "$ac_OPENWBEM_includes" = "/usr/include" || test  "$ac_OPENWBEM_includes" = "/usr/local/include" || test -z "$ac_OPENWBEM_includes"; then
@@ -106,10 +111,12 @@ fi
 dnl check REQUIRED-VERSION
 ifelse([$1], , [], [
 
-	# only check version of OpenWBEM has been found
+	# only check version if OpenWBEM has been found
 	if test "x$openwbem_error" = "x" ; then
 		OPENWBEM_REQUEST_VERSION="$1"
 		AC_MSG_CHECKING(OpenWBEM version)
+
+		AC_REQUIRE([AC_PROG_EGREP])
 
 		changequote(<<, >>)
 		openwbem_version=`$EGREP "define OW_VERSION" $ac_OPENWBEM_includes/openwbem/OW_config.h 2>&1 | sed 's/.* "\([^"]*\)".*/\1/p; d'`
