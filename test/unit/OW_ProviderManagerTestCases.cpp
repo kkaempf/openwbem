@@ -310,58 +310,69 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
+	StringArray noLifeCycleClasses;
 	// self-registering provider all namespaces
 	IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", "SelfReg", "");
+		createProvEnvRef(hdl), "root", "SelfReg", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", "SelfReg", "");
+		createProvEnvRef(hdl), "root/foo", "SelfReg", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", "SelfReg2", "");
+		createProvEnvRef(hdl), "root", "SelfReg2", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 2);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", "SelfReg2", "");
+		createProvEnvRef(hdl), "root/foo", "SelfReg2", noLifeCycleClasses);
 	unitAssert(provRefs.size() == 2);
 	
 	// self-registering provider two namespaces
 	String c4("SelfRegTwoNamespaces");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", c4, "");
+		createProvEnvRef(hdl), "root", c4, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/foo", c4, "");
+		createProvEnvRef(hdl), "root/foo", c4, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 0);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/good", c4, "");
+		createProvEnvRef(hdl), "root/good", c4, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	
 	// nothing
 	String c5("Nothing");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root", c5, "");
+		createProvEnvRef(hdl), "root", c5, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 0);
 
 	// self-registering provider all namespaces - case insensitivity
 	String c6("selFreG");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "Root", c6, "");
+		createProvEnvRef(hdl), "Root", c6, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "rooT/fOo", c6, "");
+		createProvEnvRef(hdl), "rooT/fOo", c6, noLifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
 
 	// lifecycle providers
+	StringArray lifeCycleClasses;
+	lifeCycleClasses.push_back("TestClass1");
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", "TestClass1");
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstCreation", lifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
+	
+	lifeCycleClasses[0] = "TestClass2";
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstModification", "TestClass2");
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstModification", lifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
+	
+	lifeCycleClasses[0] = "TestClass3";
 	provRefs = mgr.getIndicationProviders(
-		createProvEnvRef(hdl), "root/cimv2", "CIM_InstDeletion", "TestClass3");
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstDeletion", lifeCycleClasses);
 	unitAssert(provRefs.size() == 1);
+
+	provRefs = mgr.getIndicationProviders(
+		createProvEnvRef(hdl), "root/cimv2", "CIM_InstDeletion", noLifeCycleClasses);
+	unitAssert(provRefs.size() == 2);
 }
 
 Test* OW_ProviderManagerTestCases::suite()

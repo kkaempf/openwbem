@@ -967,25 +967,25 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 
 	// find providers that support this query. If none are found, throw an exception.
 	ProviderManagerRef pm (m_env->getProviderManager());
-	IndicationProviderIFCRefArray providers =
-		pm->getIndicationProviders(createProvEnvRef(m_env), ns,
-			indicationClassName, "");
+	IndicationProviderIFCRefArray providers;
+
 	if (!isaClassNames.empty())
 	{
-		for (size_t i = 0; i < isaClassNames.size(); ++i)
-		{
-			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env),
-				ns, indicationClassName, isaClassNames[i]));
-		}
+		providers = pm->getIndicationProviders(createProvEnvRef(m_env),
+			ns, indicationClassName, isaClassNames);
 	}
-	// get rid of duplicate providers - unique() requires that the range be sorted
-	std::sort(providers.begin(), providers.end());
-	providers.erase(std::unique(providers.begin(), providers.end()), providers.end());
+	else
+	{
+		providers = pm->getIndicationProviders(createProvEnvRef(m_env), ns,
+			indicationClassName, StringArray());
+	}
+	
 	log->logDebug(Format("Found %1 providers for the subscription", providers.size()));
 	if (providers.empty())
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "No indication provider found for this subscription");
 	}
+
 	// verify that there is an indication export provider that can handle the handler for the subscription
 	CIMObjectPath handlerPath = subInst.getProperty("Handler").getValueT().toCIMObjectPath();
 	String handlerClass = handlerPath.getClassName();

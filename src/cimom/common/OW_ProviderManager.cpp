@@ -103,9 +103,11 @@ void registerProviderInfo(
 	reg.provName = providerName;
 	regMap.insert(std::make_pair(name, reg));
 }
+
 //////////////////////////////////////////////////////////////////////////////
-// Overloaded of the map type.  Indication registrations use a multi-map, since
-// multiple indication providers can register for the same class.
+// Overloaded of the map type.  registrations use a multi-map, since
+// multiple providers can register for the same class.  This is applicable
+// for indication and secondary instance providers.
 void registerProviderInfo(
 	const ProviderEnvironmentIFCRef& env,
 	const String& name_,
@@ -122,6 +124,7 @@ void registerProviderInfo(
 	reg.provName = providerName;
 	regMap.insert(std::make_pair(name, reg));
 }
+
 //////////////////////////////////////////////////////////////////////////////
 // This handles method & property names
 void processProviderClassExtraInfo(
@@ -162,11 +165,10 @@ void processProviderClassExtraInfo(
 	const String& providerName,
 	ProviderManager::MultiProvRegMap_t& regMap)
 {
-	{
-		registerProviderInfo(env, name, ifc, providerName, regMap);
-	}
 	if (!extra.empty())
 	{
+		// The "/*" identifies the registration as a lifecycle provider.
+		registerProviderInfo(env, name + "/*", ifc, providerName, regMap);
 		for (size_t i = 0; i < extra.size(); ++i)
 		{
 			String extraName = extra[i];
@@ -177,8 +179,13 @@ void processProviderClassExtraInfo(
 					name, ifc->getName(), providerName));
 				continue;
 			}
-			registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
+			registerProviderInfo(env, name + '/' + extraName, ifc, providerName, regMap);
 		}
+	}
+	else
+	{
+		// The lack of "/*" identifies the registration as a non-lifecycle provider.
+		registerProviderInfo(env, name, ifc, providerName, regMap);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -648,67 +655,80 @@ ProviderManager::getPolledProviders(
 	}
 	return rv;
 }
-//////////////////////////////////////////////////////////////////////////////
-IndicationProviderIFCRefArray
-ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
-	const String& ns, const String& indicationClassName,
-	const String& monitoredClassName) const
+
+namespace
 {
-	String lowerName = indicationClassName;
-	lowerName.toLowerCase();
-	MultiProvRegMap_t::const_iterator lci;
-	MultiProvRegMap_t::const_iterator uci;
-	if (monitoredClassName.empty())
+void findIndicationProviders(const ProviderEnvironmentIFCRef& env,
+	const String& ns, 
+	const String& className, 
+	const ProviderManager::MultiProvRegMap_t& indProvs, 
+	IndicationProviderIFCRefArray& rval)
+{
+	// lookup just the class className to see if a provider registered for the
+	// class in all classNamespaces.
+	typedef ProviderManager::MultiProvRegMap_t::const_iterator citer_t;
+	std::pair<citer_t, citer_t> range = indProvs.equal_range(className);
+	citer_t lci = range.first;
+	citer_t uci = range.second;
+	if (lci == indProvs.end())
 	{
-		// lookup just the class name to see if a provider registered for the
-		// class in all namespaces.
-		std::pair<MultiProvRegMap_t::const_iterator, MultiProvRegMap_t::const_iterator>
-			range = m_registeredIndProvs.equal_range(lowerName);
-		lci = range.first;
-		uci = range.second;
-		if (lci == m_registeredIndProvs.end())
-		{
-			// didn't find any, so
-			// next lookup namespace:classname to see if we've got one for the
-			// specific namespace
-			String nsAndClassName = ns + ':' + lowerName;
-			nsAndClassName.toLowerCase();
-			range = m_registeredIndProvs.equal_range(nsAndClassName);
-			lci = range.first;
-			uci = range.second;
-		}
-	}
-	else
-	{
-		// lookup indicationClassName/monitoredClassName
-		String nsAndClassName = lowerName + '/' + monitoredClassName;
+		// didn't find any, so
+		// next lookup Namespace:className to see if we've got one for the
+		// specific Namespace
+		String nsAndClassName = ns + ':' + className;
 		nsAndClassName.toLowerCase();
-		std::pair<MultiProvRegMap_t::const_iterator, MultiProvRegMap_t::const_iterator>
-			range = m_registeredIndProvs.equal_range(nsAndClassName);
+		range = indProvs.equal_range(nsAndClassName);
 		lci = range.first;
 		uci = range.second;
-		if (lci == m_registeredIndProvs.end())
-		{
-			// didn't find any, so
-			// next lookup namespace:indicationClassName/monitoredClassName to see if we've got one for the
-			// specific namespace
-			String nsAndClassName = ns + ':' + lowerName + '/' + monitoredClassName;
-			nsAndClassName.toLowerCase();
-			range = m_registeredIndProvs.equal_range(nsAndClassName);
-			lci = range.first;
-			uci = range.second;
-		}
 	}
-	IndicationProviderIFCRefArray rval;
-	if (lci != m_registeredIndProvs.end())
+	if (lci != indProvs.end())
 	{
 		// loop through the matching range and put them in rval
-		for (MultiProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
+		for (citer_t tci = lci; tci != uci; ++tci)
 		{
 			rval.push_back(tci->second.ifc->getIndicationProvider(env, tci->second.provName.c_str()));
 		}
 	}
-	return rval;
+}
+
+} // end anonymous namespace
+
+//////////////////////////////////////////////////////////////////////////////
+IndicationProviderIFCRefArray
+ProviderManager::getIndicationProviders(const ProviderEnvironmentIFCRef& env,
+	const String& ns, const String& indicationClassName,
+	const StringArray& monitoredClassNames) const
+{
+	IndicationProviderIFCRefArray providers;
+	String lowerName = indicationClassName;
+	lowerName.toLowerCase();
+
+	// first get all the non-lifecycle indication providers
+	findIndicationProviders(env, ns, lowerName, m_registeredIndProvs, providers);
+
+	if (monitoredClassNames.empty())
+	{
+		// find any lifecycle indication providers which may match indicationClassName
+		findIndicationProviders(env, ns, lowerName + "/*", m_registeredIndProvs, providers);
+	}
+	else
+	{
+		// find all the desired lifecycle indication providers
+		for (size_t i = 0; i < monitoredClassNames.size(); ++i)
+		{
+			// lookup indicationClassName/monitoredClassName
+			String key = lowerName + '/' + monitoredClassNames[i];
+			key.toLowerCase();
+			findIndicationProviders(env, ns, key, m_registeredIndProvs, providers);
+		}
+
+	}
+
+	// get rid of duplicate providers - unique() requires that the range be sorted
+	std::sort(providers.begin(), providers.end());
+	providers.erase(std::unique(providers.begin(), providers.end()), providers.end());
+
+	return providers;
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -163,11 +163,13 @@ public:
 	 * @return all available indication providers from the available
 	 * provider interfaces, which are interested in exporting indications of
 	 * indicationClassName in namespace ns.
+	 * @param monitoredClassNames If lifecycle indications are being requested,
+	 *  they will be passed in this parameter.
 	 */
 	IndicationProviderIFCRefArray
 		getIndicationProviders(const ProviderEnvironmentIFCRef& env, 
 			const String& ns, const String& indicationClassName,
-			const String& monitoredClassName) const;
+			const StringArray& monitoredClassNames) const;
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been
 	 * used for a while
@@ -205,7 +207,8 @@ private:
 	// The key must be: [namespace:]className[:propertyname]
 	ProvRegMap_t m_registeredPropProvs;
 	// The key must be: a classname if the provider supports any namespace,
-	// or namespace:classname for a specific namespace.
+	// namespace:classname for a specific namespace.
+	// For a lifecycle provider, /* and /classname entries are made for each lifecycle class.
 	MultiProvRegMap_t m_registeredIndProvs;
 };
 typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
