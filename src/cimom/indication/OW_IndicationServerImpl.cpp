@@ -58,6 +58,7 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_LifecycleIndicationPoller.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 
 #include <iterator>
 
@@ -729,12 +730,11 @@ IndicationServerImplThread::_processIndicationRange(
 			Subscription& sub = first->second;
 			CIMInstance filterInst = sub.m_filter;
 			String queryLanguage = sub.m_filter.getPropertyT("QueryLanguage").getValueT().toString();
-// TODO: Fix this to handle namespace portability problems, such as initial /
-//			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
-//			{
-//				OW_LOG_DEBUG(m_logger, Format("skipping sub because namespace doesn't match. Filter ns = %1, Sub ns = %2", sub.m_filterSourceNameSpace, instNS));
-//				continue;
-//			}
+			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
+			{
+				OW_LOG_DEBUG(m_logger, Format("skipping sub because namespace doesn't match. Filter ns = %1, Sub ns = %2", sub.m_filterSourceNameSpace, instNS));
+				continue;
+			}
 			//-----------------------------------------------------------------
 			// Here we need to call into the WQL process with the query string
 			// and the indication instance
@@ -907,7 +907,7 @@ String getSourceNameSpace(const CIMInstance& inst)
 {
 	try
 	{
-		return inst.getPropertyT("SourceNamespace").getValueT().toString();
+		return CIMNameSpaceUtils::prepareNamespace(inst.getPropertyT("SourceNamespace").getValueT().toString());
 	}
 	catch (const NoSuchPropertyException& e)
 	{
@@ -1084,7 +1084,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 		}
 		catch (CIMException& e)
 		{
-			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3", filterSourceNameSpace, isaClassNames[i], e);
+			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3", filterSourceNameSpace, isaClassNames[i], e.getMessage());
 			OW_LOG_ERROR(m_logger, msg);
 			OW_THROWCIMMSG_SUBEX(CIMException::FAILED, msg.c_str(), e);
 		}
