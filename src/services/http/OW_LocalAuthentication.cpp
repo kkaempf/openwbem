@@ -58,6 +58,9 @@
 #ifdef OW_HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
+#ifdef OW_HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 #include <cerrno>
 
 namespace OW_NAMESPACE
