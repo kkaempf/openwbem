@@ -29,6 +29,33 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt32_overloads, OW_String::t
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toUInt64_overloads, OW_String::toUInt64, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_String_toInt64_overloads, OW_String::toInt64, 0, 1)
 
+OW_String OW_String_getslice(const OW_String& s, int i, int j)
+{
+    int len = s.length();
+    while (i < 0)
+    {
+        i += len;
+    }
+    while (j < 0)
+    {
+        j += len;
+    }
+    if (i > j)
+        return "";
+    return s.substring(i, j - i);
+}
+
+OW_String OW_String_copy(const OW_String& s)
+{
+    return s;
+}
+
+PyObject* OW_String_repr(const OW_String& s)
+{
+    OW_String str("owclient.OW_String(\"" + s + "\")");
+    return Py_BuildValue("s#", str.c_str(), str.length());
+}
+
 BOOST_PYTHON_MODULE(owclient)
 {
     class_<OW_String>("OW_String")
@@ -45,13 +72,16 @@ BOOST_PYTHON_MODULE(owclient)
         .def(init<const OW_CIMObjectPath&>())
         .def(init<OW_Bool, char*, size_t>())
         .def(init<const char*, size_t>())
-        .def(init<const OW_String&>()) // need copy ctor?
+        .def("copy", &OW_String_copy) // need copy ctor?
 // this seems to prevent the const char* ctor from working, and we don't
 // really need it since a char and a char* are the same in python.
 //        .def(init<char>())
+// We don't need this function since it's just for NPI anyway.
 //        .def("allocateCString", &OW_String::allocateCString)
         .def("length", &OW_String::length)
+        .def("__len__", &OW_String::length)
         .def("empty", &OW_String::empty)
+// Can't wrap variable argument functions
 //        .def("format", &OW_String::format)
         .def("tokenize", &OW_String::tokenize, OW_String_tokenize_overloads(args("delims", "returnTokens")))
         .def("c_str", &OW_String::c_str)
@@ -70,6 +100,8 @@ BOOST_PYTHON_MODULE(owclient)
         .def("lastIndexOf", (int (OW_String::*)(const OW_String&, int) const)(&OW_String::lastIndexOf), OW_String_lastIndexOf_overloads(args("arg", "fromIndex")))
         .def("startsWith", &OW_String::startsWith, OW_String_startsWith_overloads(args("arg", "ignoreCase")))
         .def("substring", &OW_String::substring, OW_String_substring_overloads(args("beginIndex", "length")))
+        .def("__getslice__", &OW_String_getslice)
+        // TODO: add __setslice__ and __delslice__
         .def("isSpaces", &OW_String::isSpaces)
         .def("toLowerCase", &OW_String::toLowerCase, return_internal_reference<>())
         .def("toUpperCase", &OW_String::toUpperCase, return_internal_reference<>())
@@ -78,8 +110,7 @@ BOOST_PYTHON_MODULE(owclient)
         .def("trim", &OW_String::trim, return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)())(&OW_String::erase), return_internal_reference<>())
         .def("erase", (OW_String& (OW_String::*)(size_t, size_t))(&OW_String::erase), OW_String_erase_overloads(args("idx", "len"))[return_internal_reference<>()])
-        // assignment operator
-//        .def(self[size_t()])
+        .def("__getitem__", &OW_String::operator[])
         .def(self += self)
         .def("readObject", &OW_String::readObject)
         .def("writeObject", &OW_String::writeObject)
@@ -99,9 +130,9 @@ BOOST_PYTHON_MODULE(owclient)
         .def("toDateTime", &OW_String::toDateTime)
         .def("strtoull", &OW_String::strtoull)
         .def("strtoll", &OW_String::strtoll)
-// ?        .def("strchr", &OW_String::strchr, return_internal_reference<1>())
         .def("getLine", &OW_String::getLine)
-//        .def(str(self))
+        .def(self_ns::str(self))
+        .def("__repr__", &OW_String_repr)
         .def(self + self)
         .def((const char*)0 + self)
         .def(self + (const char*)0)
@@ -128,6 +159,6 @@ BOOST_PYTHON_MODULE(owclient)
         ;
 
     to_python_converter<OW_Bool, OW_BoolToPython>();
-// hmm, this doesn't seem to work    implicitly_convertible<char*,OW_String>();
+    implicitly_convertible<char*,OW_String>();
 }
 
