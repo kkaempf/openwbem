@@ -845,5 +845,12 @@ void HTTPClient::assumeBasicAuth()
 	m_responseHeaders["www-authenticate"] = "Basic"; 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void HTTPClient::close()
+{
+	m_socket.disconnect();
+	m_needsConnect = true;
+}
+
 } // end namespace OpenWBEM
 

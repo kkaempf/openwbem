@@ -115,6 +115,13 @@ public:
 	 * @return An SocketAddress corresponding to the peer connection
 	 */
 	virtual SocketAddress getPeerAddress()  const = 0;
+
+	/**
+	 * Close the connetion to the CIMOM. This will free resources used for the
+	 * client session.
+	 */
+	virtual void close() = 0;
+
 protected:
 	ClientAuthCBIFCRef m_loginCB;
 	String m_contentType;

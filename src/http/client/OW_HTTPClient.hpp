@@ -140,6 +140,12 @@ class HTTPClient : public CIMProtocolIFC
 		 */
 		void assumeBasicAuth();
 
+		/**
+		 * Close the connetion to the CIMOM. This will free resources used for the
+		 * client session.
+		 */
+		virtual void close();
+
 	private:
 		void setUrl();
 		void cleanUpIStreams();
