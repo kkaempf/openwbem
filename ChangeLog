@@ -1,3 +1,8 @@
+Sat Nov  9 22:10:51 MST 2002
+- Added a test for more than 1 propagated key.  
+- Fixed a bug in _validatePropagatedKeys when there was more than 1.  
+- Fixed instanceExists to catch exceptions thrown from makeInstanceKey.
+
 Mon Nov  4 10:44:51 MST 2002
 - Fixed OW_CIMClientCL.cpp to work property in non-debug mode.
 - Refactored OW_Reference and OW_COWReference to help minimize code bloat
