@@ -1,0 +1,20 @@
+// ===================================================================
+// Title      : Master MOF
+// Filename   : CIM_Schema23.mof
+// Version    : 2.3
+// Date       : 04/18/2000
+// Author     : DMTF Technical Committee
+// Description: 
+// ===================================================================
+// ===================================================================
+// Includes
+// ===================================================================
+#pragma include ("CIM_Core23.mof")
+#pragma include ("CIM_User23.mof")
+#pragma include ("CIM_Application23.mof")
+#pragma include ("CIM_System23.mof")
+#pragma include ("CIM_Device23.mof")
+#pragma include ("CIM_Physical23.mof")
+#pragma include ("CIM_Network23.mof")
+#pragma include ("CIM_Dap23.mof")
+#pragma include ("CIM_Support23.mof")

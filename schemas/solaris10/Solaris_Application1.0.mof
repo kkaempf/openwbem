@@ -1,0 +1,222 @@
+// ===================================================================
+// Title:       Solaris Application MOF specification 1.0
+// Filename:    Solaris_Application1.0.mof
+// Version:     1.0
+// Author:      Sun Microsystems, Inc.
+// Date:        02/01/1999
+// Description:
+// ===================================================================
+
+// ==================================================================
+// Pragmas
+// ==================================================================
+#pragma Locale ("en-US")
+
+//==================================================================
+//	Solaris_Package
+//==================================================================
+  [provider("com.sun.wbem.solarisprovider.packaging.Solaris_Package"), 
+   Description (
+                "Solaris is distributed as a series of packages, containers of files "
+                "such as Java class files and graphics files that form the basis of"
+                "applications. Packages can be installed or removed individually."
+                "Dependency between packages is stored as part of the package format."
+                "Full products and third-party software, such as device drivers,"
+                "can be delivered as packages. Packages enable software"
+                "to be installed and removed using a standard mechanism.")]
+
+class Solaris_Package:CIM_SoftwareElement
+{
+
+  [Description("The Category is a free-form string. It normally contains"
+               "either 'system' or 'application'. It can also take an additional value"
+               "separated by a comma. Values include ALE, graphics, java, video, JFP, SyMON"
+               "This is the CATEGORY field reported by pkginfo.")
+  ]
+  string Category ;
+
+  [read,
+   Description("The Architecture indicates what system architecture the package"
+               "applies to. A generic text package, such as header files or man pages, may have"
+               "an architecture of 'all'. Binaries are specific to a processor type"
+               "such as 'sparc' or 'i386'. Kernel packages are for a subclass of the"
+               "processor type, such as 'sparc.sun4u'"
+               "This is the ARCH field reported by pkginfo")
+  ]
+
+   //      This could easily be an enumeration.
+
+  string Architecture ;
+
+  [read, 
+   Description("The Base Dir indicates the top level where the package"
+               "was installed. It is a valid UNIX path. "
+               "This is the BASEDIR field reported by pkginfo")
+  ]
+  string BaseDir ;
+
+ [Description("SupportInfo gives information about who to contact for support"
+              "This is the HOTLINE field reported by pkginfo")
+ ]
+ string SupportInfo ;
+};
+
+//==================================================================
+//Solaris_Patch
+//==================================================================
+  [Provider("com.sun.wbem.solarisprovider.patch.Solaris_Patch"),
+   Description (
+                "Software updates are normally issued in the form of a 'patch'."
+                "Like packages, patches can be added and removed, and their status queried."
+                "There is a lot of information available when a patch is installed,"
+                "but that information doesn't seem to be stored in the system."
+                "The only information that is stored is the patch ID, the packages"
+                "to which the patch applies, and a list of patches that are required by,"
+                "incompatible with, or obsoleted by this patch.")]
+
+class Solaris_Patch : CIM_SoftwareElement
+{
+
+ [Description("Obsoletes are the patches that are rendered obsolete or are"
+              "accumulated into this patch."
+              "This information is available from showrev -p")]
+
+ string Obsoletes;
+
+ [Description("Requires are the patches that are required in order for this"
+              "patch to work. This patch usually cannot be accumulated into the required"
+              "patch because it applies to an optional module."
+              "This information is available from showrev -p")]
+
+ string Requires;
+
+ [Description("Incompatibles are patches that conflict"
+              "with this patch for any reason."
+              "This information is available from showrev -p")]
+
+ string Incompatibles;
+
+ [Description("The list of packages that this patch patches"
+              "This information is available from showrev -p")]
+
+ string Packages;
+
+
+};
+
+  [Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_SoftwareFeature")]
+class Solaris_SoftwareFeature : CIM_SoftwareFeature
+{
+	// if we have instance number, it'll have to be concatenated
+	// to version internally.
+	
+	string InstanceNumber; 
+	string BackwardCompatible[];
+
+	// Info about any component this might be dependent on
+	string DependsOnID[];
+	string DependsOnVersion[];
+	string ParentID;
+	
+	string Keys[];
+	string Values[];
+};
+
+	[Association, 
+  		Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_ProductSoftwareFeatures")
+	]
+class Solaris_ProductSoftwareFeatures : CIM_ProductSoftwareFeatures
+{
+	[override("Product"), Min (1), Max(1)]
+	Solaris_Product REF Product;
+
+	[override("Component"), Min(0), Max(NULL), Weak]
+	Solaris_SoftwareFeature REF Feature;
+};
+
+	[Association, 
+  		Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_SoftwareFeatureProductDependency")
+	]
+class Solaris_SoftwareFeatureProductDependency 
+{
+	Solaris_SoftwareFeature REF DependentFeature;
+
+	Solaris_Product REF RequiredProduct;
+
+};
+
+
+
+  [Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_SoftwareElement")]
+class Solaris_SoftwareElement : CIM_SoftwareElement
+{
+	// InstanceNumber has to be a key if products,features and
+	// elements have to look the same - just concatenate it to
+	// version internally.
+	string InstanceNumber;
+	string BackwardCompatible[];
+	string InstalledLocation;
+	string Uninstaller;
+	string VendorName;
+
+	// Info about any component this might be dependent on
+	string DependsOnID[];
+	string DependsOnVersion[];
+	string ParentID;
+
+	string Keys[];
+	string Values[];
+};
+
+	[Association, 
+  		Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_SoftwareFeatureSoftwareElements")
+	]
+class Solaris_SoftwareFeatureSoftwareElements : CIM_SoftwareFeatureSoftwareElements
+{
+	[override("GroupComponent")]
+	Solaris_SoftwareFeature REF Feature;
+
+	[override("PartComponent")]
+	Solaris_SoftwareElement REF Package;
+};
+
+	[Association, 
+  		Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_SoftwareFeatureDependency")
+	]
+class Solaris_SoftwareFeatureDependency 
+{
+	Solaris_SoftwareFeature REF RequiredFeature;
+
+	Solaris_SoftwareFeature REF DependentFeature;
+};
+
+	[Association, 
+  		Provider("com.sun.wbem.solarisprovider.productregistry.Solaris_SoftwareElementDependency")
+	]
+class Solaris_SoftwareElementDependency 
+{
+	Solaris_SoftwareElement REF RequiredElement;
+
+	Solaris_SoftwareElement REF DependentElement;
+};
+
+//	[Association, 
+// 		Provider("com.sun.wbem.solarisprovider.common.Solaris")
+//	]
+//
+//class Solaris_SoftwareElementProduct
+//{
+//	Solaris_Product REF RequiredProduct;
+//
+//	Solaris_SoftwareElement REF DependentElement;
+//};
+
+//==================================================================
+//Solaris_InstalledSoftwareElement
+//==================================================================
+  [Provider("com.sun.wbem.solarisprovider.assoc.Solaris_InstalledSoftwareElement"),
+   Description ("An association linking a Solaris_SoftwareElement"
+                " and the Solaris_ComputerSystem that it is installed on.")]
+
+class Solaris_InstalledSoftwareElement : CIM_InstalledSoftwareElement{
+};

@@ -1,0 +1,260 @@
+// ===================================================================
+// Title:       Time 2.7
+// Filename:    System27_Time.mof
+// Version:     2.7.0
+// Release:     Preliminary 
+// Date:        06/09/02
+// ===================================================================
+// Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
+// All rights reserved.  
+// DMTF is a not-for-profit association of industry members dedicated 
+// to promoting enterprise and systems management and interoperability. 
+// DMTF specifications and documents may be reproduced for uses
+// consistent with this purpose by members and non-members, 
+// provided that correct attribution is given. 
+// As DMTF specifications may be revised from time to time, 
+// the particular version and release date should always be noted.
+//
+// Implementation of certain elements of this standard or proposed 
+// standard may be subject to third party patent rights, including 
+// provisional patent rights (herein "patent rights"). DMTF makes 
+// no representations to users of the standard as to the existence 
+// of such rights, and is not responsible to recognize, disclose, or
+// identify any or all such third party patent right, owners or 
+// claimants, nor for any incomplete or inaccurate identification or 
+// disclosure of such rights, owners or claimants. DMTF shall have no 
+// liability to any party, in any manner or circumstance, under any 
+// legal theory whatsoever, for failure to recognize, disclose, or 
+// identify any such third party patent rights, or for such party’s
+// reliance on the standard or incorporation thereof in its product, 
+// protocols or testing procedures. DMTF shall have no liability to 
+// any party implementing such standard, whether such implementation 
+// is foreseeable or not, nor to any patent owner or claimant, and shall 
+// have no liability or responsibility for costs or losses incurred if 
+// a standard is withdrawn or modified after publication, and shall be
+// indemnified and held harmless by any party implementing the 
+// standard from any and all claims of infringement by a patent owner 
+// for such implementations.
+//
+// For information about patents held by third-parties which have 
+// notified the DMTF that, in their opinion, such patent may relate to 
+// or impact implementations of DMTF standards, visit 
+// http://www.dmtf.org/about/policies/disclosures.php.
+// ===================================================================
+// Description: The System Model defines system related management 
+//              concepts. 
+//              This System file defines the more specific concepts for
+//              Time.
+//
+//              The object classes below are listed in an order that
+//              avoids forward references. Required objects, defined 
+//              by other working groups, are omitted.
+// ==================================================================
+// Prerequisite:  Core27_Qualifiers
+//                Core27_CoreElements
+//                
+// ==================================================================
+// Change Log for v2.7
+// ===================================================================
+//
+// ==================================================================
+
+#pragma locale ("en_US")
+
+// ===================================================================
+// CIM_TimeZone
+// =================================================================== 
+[Version("2.6.0"), Description (
+    "A TimeZone is a presentation of the properties used to describe "
+    "a time zone.  These properties include the concepts of daylight "
+    "saving time.") ]
+class CIM_TimeZone : CIM_Setting {
+    [Key, Description (
+        "Time zone identifier. TimeZoneId MAY be expressed as the "
+        "form 'area name/city name' (e.g. America/New_York) instead of "
+        "a time zone name depending on a date (e.g. EST or EDT).") ]
+    string TimeZoneID;
+    
+    [Key, Description (
+        "The date and time at which this time zone definition "
+        "takes effect. Specify it in UTC.") ]
+    datetime TimeZoneStartDate;
+    
+    [Description (
+        "Full name of the time zone (e.g. U.S. East Standard "
+        "Time) of the standard time name "
+        "in a format suitable for presentation "
+        "to the user in the default locale.") ]
+    string StandardName;
+    
+    [Description (
+        "Short name of the time zone (e.g. EST) "
+        "of the standard time name "
+        "in a format suitable for presentation "
+        "to the user in the default locale. ") ]
+    string StandardCaption;
+    
+    [Description (
+        "The number of minutes by which this standard time "
+        "differs from UTC. For example, U.S. EST differs "
+        "from UTC by -5.0 hours or -300 minutes whereas "
+        "Australia Adelaide Standard Time differs by 9.5 hours "
+        "or 570 minutes. "), 
+        Units ("Minutes") ]
+    sint32 StandardOffset;
+    
+    [Description (
+        "The month in which daylight saving time ends. "
+        "Specify 0 for January, 1 for February, and so on."), 
+        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
+            "10", "11"},  
+        Values {"January", "February", "March", "April",
+            "May", "June", "July", "August", "September",
+            "October", "November", "December" },
+        ModelCorrespondence {"CIM_TimeZone.StandardDay" } ]
+    uint8 StandardMonth;
+    
+    [MinValue (-31), MaxValue (31), Description (
+        "The day-in-month on which daylight "
+        "saving time ends, if StandardDayOfWeek is 0. "
+        "Specify a positive or negative integer to indicate "
+        "whether the StandardDay should be calculated "
+        "from the beginning of the month or the end of the "
+        "month. For example, 5 indicates the fifth day in the "
+        "StandardMonth and -1 indicates the last day in the "
+        "StandardMonth. \n"
+        "\n"
+        "The day-in-month from which the StandardDayOfWeek "
+        "is calculated, if StandardDayOfWeek is not 0. "
+        "If StandardDay is 15 and StandardDayOfWeek is "
+        "Saturday, then this indicates the first Saturday on or "
+        "after the 15th day in the StandardMonth (i.e. third "
+        "Saturday in the StandardMonth). "
+        "If StandardDay is 20 and StandardDayOfWeek is "
+        "-Saturday, then this indicates the first Saturday on or "
+        "before the 20th day in the StandardMonth."
+        "If StandardDay is -1 and StandardDayOfWeek is "
+        "-Sunday, then this indicates the last Sunday "
+        "in the StandardMonth."),
+        ModelCorrespondence {"CIM_TimeZone.StandardDayOfWeek" } ]
+    sint8 StandardDay;
+     
+    [Description (
+        "Positive or negative integer used in conjunction "
+        "with StandardDay to indicate the day of the week "
+        "on which daylight saving time ends. Set "
+        "StandardDayOfWeek to 0 to indicate an exact day of "
+        "month, such as March 1. "
+        "Positive integer (Sunday, Monday, ..., Saturday) means "
+        "that the day of week is found on or after StandardDay. "
+        "Negative integer (-Sunday, -Monday, ..., -Saturday) "
+        "means that the day of week is found on or before "
+        "StandardDay. "),
+        ValueMap {"-7", "-6", "-5", "-4", "-3", "-2", "-1",
+            "0", "1", "2", "3", "4", "5", "6", "7" },
+        Values {"-Saturday", "-Friday", "-Thursday", "-Wednesday",
+            "-Tuesday", "-Monday", "-Sunday", "ExactDayOfMonth",
+            "Sunday", "Monday", "Tuesday", "Wednesday",
+            "Thursday", "Friday", "Saturday" },
+        ModelCorrespondence {"CIM_TimeZone.StandardDay" } ]
+    sint8 StandardDayOfWeek;
+    
+    [Description (
+        "The time interval after midnight when daylight "
+        "saving time ends. For example: \n"
+        "   00000000020000.000000:000 indicates \n"
+        "   daylight saving time ends at two o'clock in \n"
+        "   the local time (usually, daylight saving time).") ]
+    datetime StandardStartInterval;
+    
+    [Description (
+        "Full name of the time zone (e.g. U.S. East Daylight "
+        "Saving Time) of the daylight saving time name "
+        "in a format suitable for presentation "
+        "to the user in the default locale.") ]
+    string DaylightName;
+    
+    [Description (
+        "Short name of the time zone (e.g. EDT) "
+        "of the daylight saving time name "
+        "in a format suitable for presentation "
+        "to the user in the default locale. ") ]
+    string DaylightCaption;
+    
+    [Description (
+        "The number of minutes by which this daylight saving time "
+        "differs from UTC. For example, U.S. EDT differs "
+        "from UTC by -4.0 hours or -240 minutes whereas "
+        "Australia Adelaide Daylight Time differs by 10.5 hours "
+        "or 630 minutes. "), 
+        Units ("Minutes") ]
+    sint32 DaylightOffset;
+    
+    [Description (
+        "The month in which daylight saving time starts. "
+        "Specify 0 for January, 1 for February, and so on."), 
+        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
+            "10", "11"},  
+        Values {"January", "February", "March", "April",
+            "May", "June", "July", "August", "September",
+            "October", "November", "December" },
+        ModelCorrespondence {"CIM_TimeZone.DaylightDay" } ]
+    uint8 DaylightMonth;
+    
+    [MinValue (-31), MaxValue (31), Description (
+        "The day-in-month on which daylight "
+        "saving time starts, if DaylightDayOfWeek is 0. "
+        "Specify a positive or negative integer to indicate "
+        "whether the DaylightDay should be calculated "
+        "from the beginning of the month or the end of the "
+        "month. For example, 5 indicates the fifth day in the "
+        "DaylightMonth and -1 indicates the last day in the "
+        "DaylightMonth. \n"
+        "\n"
+        "The day-in-month from which the DaylightDayOfWeek "
+        "is calculated, if DaylightDayOfWeek is not 0. "
+        "If DaylightDay is 15 and DaylightDayOfWeek is "
+        "Saturday, then this indicates the first Saturday on or "
+        "after the 15th day in the DaylightMonth (i.e. third "
+        "Saturday in the DaylightMonth). "
+        "If DaylightDay is 20 and DaylightDayOfWeek is "
+        "-Saturday, then this indicates the first Saturday on or "
+        "before the 20th day in the DaylightMonth."
+        "If DaylightDay is -1 and DaylightDayOfWeek is "
+        "-Sunday, then this indicates the last Sunday "
+        "in the DaylightMonth."),
+        ModelCorrespondence {"CIM_TimeZone.DaylightDayOfWeek" } ]
+    sint8 DaylightDay;
+    
+    [Description (
+        "Positive or negative integer used in conjunction "
+        "with DaylightDay to indicate the day of the week "
+        "on which daylight saving time starts. Set "
+        "DaylightDayOfWeek to 0 to indicate an exact day of "
+        "month, such as March 1. "
+        "Positive integer (Sunday, Monday, ..., Saturday) means "
+        "that the day of week is found on or after DaylightDay. "
+        "Negative integer (-Sunday, -Monday, ..., -Saturday) "
+        "means that the day of week is found on or before "
+        "DaylightDay. "), 
+        ValueMap {"-7", "-6", "-5", "-4", "-3", "-2", "-1",
+            "0", "1", "2", "3", "4", "5", "6", "7" },
+        Values {"-Saturday", "-Friday", "-Thursday", "-Wednesday",
+            "-Tuesday", "-Monday", "-Sunday", "ExactDayOfMonth",
+            "Sunday", "Monday", "Tuesday", "Wednesday",
+            "Thursday", "Friday", "Saturday" },
+        ModelCorrespondence {"CIM_TimeZone.DaylightDay" } ]
+    sint8 DaylightDayOfWeek;
+    
+    [Description (
+        "The time interval after midnight when daylight "
+        "saving time starts. For example: \n"
+        "   00000000020000.000000:000 indicates \n"
+        "   daylight saving time starts at two o'clock in \n"
+        "   the local time (usually, standard time).") ]
+    datetime DaylightStartInterval;
+};  
+
+// ===================================================================
+// end of file
+// ===================================================================

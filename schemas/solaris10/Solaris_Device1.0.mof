@@ -1,0 +1,515 @@
+// ===================================================================
+// Title:     	Solaris Devices MOF specification 1.0
+// Filename:  	Solaris_Device1.0.mof
+// Version:   	1.0
+// Author:    	Sun Microsystems, Inc.
+// Date:      	06/01/1999
+// Description:
+// ===================================================================
+
+// ==================================================================
+// Pragmas
+// ==================================================================
+#pragma Locale ("en-US")
+
+// ==================================================================
+// Solaris_Processor
+// ==================================================================
+ 
+ [Provider("com.sun.wbem.solarisprovider.processor.Solaris_Processor"),
+  Description (
+               "The CPU is considered to be a separate card. On most systems the "
+               "individual CPU is a FRU. In Ultra class machines it sits on the UPA bus, "
+               " whereas in older machines the CPU attaches to the MBus.") 
+ ]
+class Solaris_Processor:CIM_Processor
+{
+    string Description;
+    string Architecture;
+    string ClockSpeed;
+    string SparcVersion;
+};
+
+// ==================================================================
+// Solaris_MediaPresent
+// ==================================================================
+ [Description (
+               "Solaris_MediaPresent is an association between a"
+               "Solaris_DiskDrive and Solaris_DiskPartition"
+               "This will link each partition to the disk drive"
+               "where the partion is located.") 
+ ]
+class Solaris_MediaPresent : CIM_MediaPresent
+{
+};
+
+// ==================================================================
+// Solaris_DiskDrive
+// ==================================================================
+[Provider("com.sun.wbem.solarisprovider.diskdrive.Solaris_DiskDrive"),
+ Description ( 
+              "This mof describes a Solaris_DiskDrive.")
+ ]
+
+class Solaris_DiskDrive : CIM_DiskDrive {
+        [MaxLen (256), Description (
+         "A string describing the type of disk.") ] 
+    string DiskType;
+        [MaxLen (256), Description (
+         "A string containing a user defined label for the disk.") ] 
+    string DiskLabel;
+        [Description (
+         "The number of sectors per cylinder.") ] 
+    uint32 SectorsPerCylinder;
+        [Description (
+         "The number of heads per cylinder.") ] 
+    uint32 HeadsPerCylinder;
+        [Description (
+         "The number of sectors per track.") ] 
+    uint32 SectorsPerTrack;
+        [Description (
+         "The size of a cylinder in bytes.") ] 
+    uint32 BytesPerCylinder;
+        [Description (
+         "The number of cylinders for this disk.") ] 
+    uint32 PhysicalCylinders;
+        [Description (
+         "The number of cylinders available for partitions.") ] 
+    uint32 DataCylinders;
+        [Description (
+         "The number of reserved cylinders.") ] 
+    uint32 AlternateCylinders;
+        [Description (
+         "Does this disk require fdisk partitions."
+         "Solaris i386 machines require a disk to"
+         "contain fdisk partitions.") ]
+    boolean FdiskRequired;
+        [Description (
+         "Does this disk contain fdisk partitions.") ] 
+    boolean FdiskPresent;
+        [Description (
+         "Label the disk with the given string."
+         "The string should contain a short label for the"
+         "disk of up to 8 characters.") ]
+    boolean LabelDisk(String label);
+        [Description (
+         "Create fdisk partitions on this disk") ]
+    boolean CreateFdiskPartitions(uint16 DiskParameters[]);
+        [Description (
+         "Create one  Solaris fdisk partition that"
+	 "uses the whole disk") ]
+    boolean CreateDefaultFdiskPartition();
+        [Description (
+         "Retrieve the current fdisk partitions for this disk") ]
+    boolean GetFdiskPartitions();
+};
+
+// ==================================================================
+// Solaris_DiskPartition
+// ==================================================================
+[Provider("com.sun.wbem.solarisprovider.diskpartition.Solaris_DiskPartition"),
+ Description ( 
+              "This mof describes a Solaris_DiskPartition")]
+class Solaris_DiskPartition : CIM_DiskPartition {
+        [Description (
+         "The block count for this partition") ] 
+    uint32 Blocks;
+        [Description (
+         "The size in bytes of this partition") ] 
+    uint32 PartitionSize;
+        [Description (
+         "The Starting cylinder for this partition") ] 
+    uint32 StartCylinder;
+        [Description (
+         "The ending cylinder for this partition") ] 
+    uint32 EndCylinder;
+        [Description (
+         "The number of cylinders for this partition") ] 
+    uint32 TotalCylinders;
+        [MaxLen (256), Description (
+         "A string containing the deviceID of the scoping disk.") ] 
+    string DiskID;
+        [Description (
+         "The FLAG for this partition. The Flag describes"
+         "how the partition is to be mounted."
+         "0x00 Mountable Read Write"
+         "0x01 Not Mountable"
+         "0x10 Mountable Read Only") ] 
+    uint8 Flag;
+        [Description (
+         "The TAG for this partition. The Tag describes"
+         "the type of partiion"
+         "Unassigned   0x00"
+         "Boot         0x01"
+         "Root         0x02"
+         "Swap         0x03"
+         "Usr          0x04"
+         "Backup       0x05"
+         "Stand        0x06"
+         "Var          0x07"
+         "Home         0x08"
+         "Altsctr      0x09"
+         "Cache        0x0a") ] 
+
+    uint8 Tag;
+        [Description (
+         "Is there an existing file system on this partition") ] 
+    boolean ValidFileSystem;
+        [Description (
+         "Create file system on this partition using the default"
+         "parameters. Returns TRUE if successful.") ] 
+    boolean CreateFileSystem();
+        [Description (
+         "Create partition on this disk. Partitions are created"
+         "based on the instance of Solaris_DiskPartition that"
+         "are associated with this Solaris_DiskDrive instance.") ]
+    boolean CreatePartitions(uint16 DiskParameters[]);
+
+};
+
+// ==================================================================
+// Solaris_SerialPort
+// ==================================================================
+ 
+ [Provider("com.sun.wbem.solarisprovider.serialport.Solaris_SerialPort"),
+  Description (
+               "This is the MOF file that defines a Solaris serial port.")
+ ]
+class Solaris_SerialPort:CIM_SerialController
+{
+	[read]
+    boolean ServiceEnabled;
+	[read]
+    boolean SettableBaudRate;
+        [read] 
+    boolean SettableDataBits;
+        [read] 
+    boolean SettableFlowControl;
+        [read] 
+    boolean SettableParity;
+        [read] 
+    boolean SettableParityCheck;
+        [read] 
+    boolean SettableStopBits;
+        [read] 
+    boolean SupportsParityCheck;
+        [read] 
+    boolean SupportsXOnXOff;
+        [read] 
+    boolean SupportsXOnXOffSet;
+	[read]
+    string PortMonitor;
+	[read]
+    string ServiceTag;
+	[read]
+    string Comment;
+
+    boolean DisablePortService();
+};
+
+
+        [Provider
+		("com.sun.wbem.solarisprovider.serialport.Solaris_SerialPortConfiguration") ] 
+class Solaris_SerialPortConfiguration:CIM_Setting
+{
+	[read, write(true)]
+    boolean ServiceEnabled;
+	[read]
+    boolean PortDeleted;
+	[read, write(true)]
+    string BaudRate;
+	[read, write(true)]
+    string TerminalType;
+	[read, write(true)]
+    boolean TTYFlag_Init;
+	[read, write(true)]
+    boolean TTYFlag_Bidirectional;
+	[read, write(true)]
+    boolean TTYFlag_CarrierConnect;
+	[read, write(true)]
+    boolean SoftwareCarrier;
+	[read, write(true)]
+    boolean CreateUtmp;
+	[read, write(true)]
+    string LoginPrompt;
+	[read, write(true)]
+    string Comment;
+	[read, key]
+    string ServiceTag;
+	[read, key]
+    string PortName;
+	[read]
+    string deviceName;
+	[read, write(true)]
+    string PortmonTag;
+	[read, write(true)]
+    string ServiceProgram;
+	[read, write(true)]
+    string StreamsModules;
+	[read, write(true)]
+    string Timeout;
+};
+
+// ==================================================================
+//   SerialPort Setting 
+// ==================================================================
+        [Provider ("com.sun.wbem.solarisprovider.serialport.Solaris_SerialPortSetting")] 
+class Solaris_SerialPortSetting:CIM_ElementSetting
+{
+        [override("Element")] 
+    Solaris_SerialPort REF Element;
+       [override("Setting")] 
+    Solaris_SerialPortConfiguration REF Setting;
+};
+
+
+        [Provider ("com.sun.wbem.solarisprovider.environment.Solaris_Environment") ] 
+class Solaris_Environment:CIM_SystemResource
+{
+	[key, Override("Name"), write(true)]
+    string Name;
+    	[read, write(true)]
+    string Value;
+};
+
+
+
+ 
+// ==================================================================
+// Solaris_Printer
+// ==================================================================
+
+ [Provider("com.sun.wbem.solarisprovider.printer.Solaris_Printer"),
+  Description ("Solaris Print Provider inherited from CIM_Printer")
+ ]
+
+class Solaris_Printer : CIM_Printer
+{
+	[Description("A setting indicating what printserver is in use, if any")]
+    string PrintServer;	
+	[Description("Setting indicating if printer is local or remote")]
+    boolean LocalPrinter;
+    	[Description("A setting indicating if printer is the default printer")]
+    boolean DefaultPrinter;
+};
+
+// ================================================================
+// Solaris_PrintJob
+// ===============================================================
+
+[Provider("com.sun.wbem.solarisprovider.printer.Solaris_PrintJob"),
+        Description ("Solaris Print Job Provider inherited from CIM_PrintJob")
+   ]
+
+class Solaris_PrintJob : CIM_PrintJob
+{
+
+};
+
+// ================================================================
+// Solaris_PrintService
+// ===============================================================
+
+[Provider("com.sun.wbem.solarisprovider.printer.Solaris_PrintService"),
+        Description ("Solaris Print Service Provider inherited from CIM_Service")
+   ]
+
+class Solaris_PrintService : CIM_PrintService
+{
+
+};
+
+// ================================================================
+// Solaris_PrintQueue
+// ===============================================================
+ 
+[Provider("com.sun.wbem.solarisprovider.printer.Solaris_PrintQueue"),
+        Description ("Solaris Print Service Provider inherited from CIM_PrintQueue")
+   ]
+ 
+class Solaris_PrintQueue : CIM_PrintQueue
+ 
+{
+	[Description("A setting indicating what printserver is in use, if any")]      
+    string PrintServer;  
+        [Description("Setting indicating if printer is local or remote")] 
+    boolean LocalPrinter; 
+        [Description("A setting indicating if printer is the default printer")] 
+    boolean DefaultPrinter;
+         
+};
+ 
+ 
+// ===================================================================
+// Solaris_QueueForPrintService
+// ===================================================================
+   [Association,
+       Provider("com.sun.wbem.solarisprovider.printer.Solaris_QueueForPrintService"),
+    Description (
+       "This association indicates that a PrintService utilizes a "
+       "particular PrintQueue.")
+   ]
+ 
+ 
+class Solaris_QueueForPrintService : CIM_QueueForPrintService
+{
+      [Override ("Antecedent"),
+       Description ("The PrintQueue that the Service utilizes.")
+      ]
+   Solaris_PrintQueue REF Antecedent;
+      [Override ("Dependent"),
+       Description ("The PrintService that puts Jobs on the Queue.")
+      ]
+   Solaris_PrintService REF Dependent;
+};
+
+[Association,
+        Provider
+	("com.sun.wbem.solarisprovider.printer.Solaris_OwningPrintQueue")]
+ 
+class Solaris_OwningPrintQueue: CIM_OwningPrintQueue
+{
+};
+
+// ================================================================
+// Solaris_PrinterServicingQueue
+// ===============================================================
+ 
+[Association,Provider("com.sun.wbem.solarisprovider.printer.Solaris_PrinterServicingQueue"),
+        Description ("Solaris Print Service Provider inherited from CIM_PrinterServicingQueue")
+   ]
+ 
+class Solaris_PrinterServicingQueue : CIM_PrinterServicingQueue
+{
+
+        [Override("Antecedent")]
+    Solaris_Printer  REF Antecedent;
+       [Override("Dependent")]
+    Solaris_PrintQueue REF Dependent;
+
+};
+
+
+ [Provider ("com.sun.wbem.solarisprovider.tz.Solaris_TimeZone")]
+class Solaris_TimeZone:CIM_Setting
+{
+    sint32 Offset;
+    sint32 DaylightOffset;
+    string DaylightName;
+    string DaylightID;
+    uint32 DaylightYear;
+        [ ValueMap {"0", "1", "2", "3", "4", "5", "6", "7",
+                    "8", "9", "10", "11" },
+          Values {"January", "February", "March", "April",
+                  "May", "June", "July", "August", "September",
+                  "October", "November", "December" }
+        ]
+    uint32 DaylightMonth;
+    uint32 DaylightDay;
+        [ ValueMap {"0", "1", "2", "3", "4", "5", "6"  },
+          Values {"Sunday", "Monday", "Tuesday", "Wednesday",
+                  "Thursday", "Friday", "Saturday" }
+        ]
+    uint32 DaylightDayOfWeek;
+uint32 DaylightHour;
+    uint32 DaylightMinute;
+    uint32 DaylightSecond;
+    uint32 DaylightMillisecond;
+        [ key
+        ]
+    string StandardName;
+        [ Values {"MIT", "HST", "AST", "PST", "PNT", "MST", "CST",
+           "EST", "IET", "PRT", "CNT", "AGT", "BET", "CAT", "GMT",
+           "ECT", "EET", "ART", "EAT", "MET", "NET", "PLT", "IST",
+           "BST", "VST", "CTT", "JST", "ACT", "AET", "SST", "NST" }
+        ]
+    string StandardID;
+    uint32 StandardYear;
+        [ ValueMap {"0", "1", "2", "3", "4", "5", "6", "7",
+                    "8", "9", "10", "11" },
+          Values {"January", "February", "March", "April",
+                  "May", "June", "July", "August", "September",
+                  "October", "November", "December" }
+        ]
+    uint32 StandardMonth;
+    sint32 StandardDay;
+        [ ValueMap {"0", "1", "2", "3", "4", "5", "6"  },
+          Values {"Sunday", "Monday", "Tuesday", "Wednesday",
+                  "Thursday", "Friday", "Saturday" }
+        ]
+    uint32 StandardDayOfWeek;
+    uint32 StandardHour;
+    uint32 StandardMinute;
+    uint32 StandardSecond;
+    uint32 StandardMillisecond;
+    
+};  
+
+ [Association,
+	Provider ("com.sun.wbem.solarisprovider.tz.Solaris_SystemTimeZone")]
+class Solaris_SystemTimeZone:Solaris_SystemSetting
+{
+       [override("Element")]
+    Solaris_ComputerSystem REF Element;
+       [override("Setting")]
+    Solaris_TimeZone REF Setting;
+};     
+
+// ===================================================================
+// Solaris_PrintSAP
+// ===================================================================
+
+[Provider("com.sun.wbem.solarisprovider.printer.Solaris_PrintSAP"),
+        Description ("The ServiceAccessPoint for a printing Service.") ]
+class Solaris_PrintSAP : CIM_PrintSAP
+{
+
+};
+
+// ===================================================================
+// Solaris_EthernetAdapter
+// ===================================================================
+
+[Provider("com.sun.wbem.solarisprovider.ether.Solaris_EthernetAdapter"),
+Description ("The Solaris Ethernet Adapter provider.") ]
+
+class Solaris_EthernetAdapter : CIM_EthernetAdapter
+{
+};
+
+
+
+// =============================================================
+// Solaris Keyboard
+// =============================================================
+
+[Provider ("com.sun.wbem.solarisprovider.keyboard.Solaris_Keyboard"), 
+Description ("Solaris_Keyboard Provider inherited from CIM_Keyboard.")] 
+class Solaris_Keyboard:CIM_Keyboard
+{
+};
+
+
+// =============================================================
+// Solaris_SoundDevice
+// =============================================================
+
+[Provider ("com.sun.wbem.solarisprovider.sound.Solaris_SoundDevice"), 
+Description ("Solaris_SoundDevice Provider inherited from CIM_LogicalDevice.")]
+class Solaris_SoundDevice:CIM_LogicalDevice
+{
+
+    // Properties
+     [Description("a short identifying string")]
+    string DeviceName;
+
+     [Description("identifies the current version of the device")]
+    string Version;
+
+     [Description("identifies the specific configuration of the audio stream")]
+    string Configuration;
+        
+     [Description("identifies the manufacturer  of the audio device")]
+    string Manufacturer;
+
+};
