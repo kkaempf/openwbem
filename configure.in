@@ -749,10 +749,12 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
  
 		# Basic test to check for compatible version and correct linking
 		# *does not* test for RSA - that comes later.
-		AC_TRY_RUN(
+		AC_TRY_COMPILE(
 		[
 #include <string.h>
 #include <openssl/rand.h>
+		],
+		[
 int main(void)
 {
 	char a[2048];
@@ -767,10 +769,8 @@ int main(void)
 		], 
 		[
 			did_not_find_crypt=0
-		], 
-		[
-			did_not_find_crypt=0
-		])
+		] 
+		)
  
 		if test ! -z "$found_crypto" ; then
 			break;
@@ -876,10 +876,12 @@ then
   LIBS="$DYNAMIC_LINK_FLAGS -pthread $CURRENT_LINK_MODE_FLAGS $LIBS"
 fi
 AC_MSG_CHECKING("pthread_mutexattr_settype")
-AC_TRY_RUN(
+AC_TRY_COMPILE(
 	[
 #include <pthread.h>
 #include <assert.h>
+	],
+	[
 int main()
 {
 	pthread_mutexattr_t attr;
@@ -898,21 +900,18 @@ int main()
 		AC_DEFINE(HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 		AC_MSG_RESULT("yes")
 	],
-	[ AC_MSG_RESULT("no") ],
 	[ AC_MSG_RESULT("no") ]
 )
 
 AC_MSG_CHECKING("pthread_spin_lock")
-AC_TRY_RUN(
+AC_TRY_COMPILE(
 	[
 #include <pthread.h>
 #include <assert.h>
+	],
+	[
 int main()
 {
-/* glibc has buggy pthread_spin_lock on PPC & we don't need it anyway. */
-#if defined(__ppc__) && defined(__GNUC__)
-	return 1;
-#endif
 
 	pthread_spinlock_t spinlock;
 	if (pthread_spin_init(&spinlock, 0) != 0)
@@ -928,15 +927,16 @@ int main()
 		AC_DEFINE(HAVE_PTHREAD_SPIN_LOCK)
 		AC_MSG_RESULT("yes")
 	],
-	[ AC_MSG_RESULT("no") ],
 	[ AC_MSG_RESULT("no") ]
 )
 
 AC_MSG_CHECKING("pthread_barrier_init")
-AC_TRY_RUN(
+AC_TRY_COMPILE(
 	[
 #include <pthread.h>
 #include <assert.h>
+	],
+	[
 int main()
 {
 	pthread_barrier_t barrier;
@@ -950,15 +950,16 @@ int main()
 		AC_DEFINE(HAVE_PTHREAD_BARRIER)
 		AC_MSG_RESULT("yes")
 	],
-	[ AC_MSG_RESULT("no") ],
 	[ AC_MSG_RESULT("no") ]
 )
 
 AC_MSG_CHECKING("pthread_kill_other_threads_np")
-AC_TRY_RUN(
+AC_TRY_COMPILE(
 	[
 #include <pthread.h>
 #include <assert.h>
+	],
+	[
 int main()
 {
 	pthread_kill_other_threads_np();
@@ -969,7 +970,6 @@ int main()
 		AC_DEFINE(HAVE_PTHREAD_KILL_OTHER_THREADS_NP)
 		AC_MSG_RESULT("yes")
 	],
-	[ AC_MSG_RESULT("no") ],
 	[ AC_MSG_RESULT("no") ]
 )
 
