@@ -226,14 +226,15 @@ public:
 	 */
 	CIMPropertyArray getKeyValuePairs() const;
 	/**
-	 * Update the property values for this instance
+	 * Update the property values for this instance. Does not add properties
+	 * if they don't exist.
 	 * @param props An CIMPropertyArray that contains the properties to update
 	 *		this instance's properties with.
 	 * @return a reference to *this
 	 */
 	CIMInstance& updatePropertyValues(const CIMPropertyArray& props);
 	/**
-	 * Update a single property value.
+	 * Update a single property value. Does not add prop is it doesn't exist.
 	 * @param prop	The CIMProperty to update in this instance. This
 	 *		CIMProperty with contain the new value.
 	 * @return a reference to *this
@@ -241,6 +242,9 @@ public:
 	CIMInstance& updatePropertyValue(const CIMProperty& prop);
 	/**
 	 * Update the value of a property if it exists. Otherwise add a new one.
+	 * In most cases, updatePropertyValue() should be called instead of this
+	 * function, because it won't add a new property. An instance is 
+	 * initialized will all it's properties by CIMClass::newInstance().
 	 * @param name	The name of the property to add or update.
 	 * @param cv The CIMValue that contains the new value for the property.
 	 * @return a reference to *this
@@ -250,7 +254,8 @@ public:
 	 * Update a property in the property list if it exists. Otherwise add a
 	 * new one.
 	 * In most cases, updatePropertyValue() should be called instead of this
-	 * function.
+	 * function, because it won't add a new property. An instance is 
+	 * initialized will all it's properties by CIMClass::newInstance().
 	 * @param prop The property to add or update.
 	 * @return a reference to *this
 	 */
