@@ -95,7 +95,7 @@ namespace
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
-			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+			OW_CIMInstance ci = hdl->getInstance(ns,
 				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
@@ -104,7 +104,7 @@ namespace
 				return;
 
 			// All other instances of the other class are associated.
-			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(assocName.getNameSpace(),destClass, true);
+			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(ns,destClass, true);
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
@@ -132,7 +132,7 @@ namespace
 				role, resultRole));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+			OW_CIMInstance ci = hdl->getInstance(ns,
 				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
@@ -143,12 +143,12 @@ namespace
 			}
 
 			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(
-				assocName.getNameSpace(), destClass, true, false);
+				ns, destClass, true, false);
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
 				OW_CIMObjectPath cop(ci);
-				cop.setNameSpace(assocName.getNameSpace());
+				cop.setNameSpace(ns);
 				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
@@ -173,7 +173,7 @@ namespace
 				includeQualifiers, includeClassOrigin, propertyList));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+			OW_CIMInstance ci = hdl->getInstance(ns,
 				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
@@ -182,16 +182,17 @@ namespace
 				return;
 
 			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(
-				assocName.getNameSpace(), destClass, true);
+				ns, destClass, true);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(assocName.getNameSpace(),
+				OW_CIMClass cc = hdl->getClass(ns,
 					assocName.getObjectName(), false);
 				OW_CIMInstance newInstance = cc.newInstance();
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ci);
+				path.setNameSpace(ns);
 
 				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
 
@@ -216,7 +217,7 @@ namespace
 				ns, assocName.toString(), objectName.toString(), role));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(objectName.getNameSpace(),
+			OW_CIMInstance ci = hdl->getInstance(ns,
 				objectName, false);
 
 			OW_String destClass = getDestClass(ci);
@@ -224,17 +225,18 @@ namespace
 			if (destClass.length() == 0)
 				return;
 
-			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(assocName.getNameSpace(), destClass, true, false);
+			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(ns, destClass, true, false);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(assocName.getNameSpace(),
+				OW_CIMClass cc = hdl->getClass(ns,
 					assocName.getObjectName(), false);
 				OW_CIMInstance newInstance = cc.newInstance();
 
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ci);
+				path.setNameSpace(ns);
 
 				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
 
@@ -242,7 +244,7 @@ namespace
 
 				OW_CIMObjectPath newPath(newInstance);
 
-				newPath.setNameSpace(assocName.getNameSpace());
+				newPath.setNameSpace(ns);
 				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}

@@ -300,7 +300,7 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "/root/acltest");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
@@ -345,7 +345,7 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "/root/acltest");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 		hdl.deleteInstance("/root/acltest", cop);
@@ -433,7 +433,7 @@ void associatorNames(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing associatorNames() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
@@ -458,7 +458,7 @@ void associators(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing associators() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 
@@ -485,7 +485,7 @@ void referenceNames(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "/root/acltest");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
@@ -510,7 +510,7 @@ void references(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing references() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
@@ -610,7 +610,7 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 	cout << "\n\n******* Doing invokeMethod() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BartComputerSystem");
+		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root/acltest");
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
@@ -696,7 +696,7 @@ void getProperty(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "/root/acltest");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
@@ -719,7 +719,7 @@ void setProperty(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "/root/acltest");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
