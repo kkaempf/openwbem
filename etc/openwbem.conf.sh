@@ -5,7 +5,7 @@
 #
 #  All of the options in this file are read by owcimomd at start up. The file
 #  will only be re-read on restart when a SIGHUP is received.
-#  The options that are prefixed with "owcimomd." are meant specifically for 
+#  The options that are prefixed with "owcimomd." are meant specifically for
 #  owcimomd.
 #  Other options are prefixed with an identifier of the component that is
 #  specifically interested in the options. For example the
@@ -21,9 +21,9 @@
 ;owcimomd.allow_anonymous = false
 
 ################################################################################
-# log.main.type specifies the type of the main log used by owcimomd. If this 
+# log.main.type specifies the type of the main log used by owcimomd. If this
 # option is set to:
-# "syslog" - owcimomd will log all messages through the syslog interface 
+# "syslog" - owcimomd will log all messages through the syslog interface
 #            (Recommended).
 # "null"   - logging will be disabled completely.
 # "file"   - log messages will be written to the file identified by the
@@ -34,41 +34,41 @@
 ################################################################################
 # log.main.location specifies the location of the log file
 # (if the type == "file".)
-;log.main.location = 
+;log.main.location =
 
 ################################################################################
-# An unsigned integer. The log file's maximum size in KB. 0 means unlimited. 
+# An unsigned integer. The log file's maximum size in KB. 0 means unlimited.
 # The default is "0"
 ;log.main.max_file_size = 0
 
 ################################################################################
-# An unsigned integer. Determines how many backup files are kept before the 
+# An unsigned integer. Determines how many backup files are kept before the
 # oldest is erased. If set to 0, no backup files will be made and the log file
-# will be truncated when it reaches max_file_size. 
+# will be truncated when it reaches max_file_size.
 # Default is "1"
 ;log.main.max_backup_index = 1
 
 ################################################################################
-# A space delimited list of the components the log will output.  
+# A space delimited list of the components the log will output.
 # Components used in owcimomd:
 #   owcimomd
 #
 # Providers may use their own components.
-# "*" means all components.  
+# "*" means all components.
 # The default is "*"
 ;log.main.components = *
 
 ################################################################################
-# A space delimited list of the categories the log will output. 
+# A space delimited list of the categories the log will output.
 # Categories used in owcimomd:
 #   FATAL
 #   ERROR
 #   INFO
 #   DEBUG
 #
-# "*" means all categories. 
-# If specified in this item, the predefined categores are not treated as 
-# levels, but as independent categories. No default is available, and if not 
+# "*" means all categories.
+# If specified in this item, the predefined categores are not treated as
+# levels, but as independent categories. No default is available, and if not
 # set, no categories will be logged, and the level config item will be used.
 ;log.main.categories = *
 
@@ -79,32 +79,32 @@
 #   "ERROR" - All error and fatal error messages are logged. This is the default.
 #   "INFO"  - All info, error and fatal error messages are logged
 #   "DEBUG" - All debug, info, error and fatal error messages are logged
-# If set, the log will output all predefined categories at and above the 
+# If set, the log will output all predefined categories at and above the
 # specified level.
 # The default is "ERROR"
 ;log.main.level = ERROR
 
 ################################################################################
-# Specifies the format of the log messages. Text mixed with printf() style 
+# Specifies the format of the log messages. Text mixed with printf() style
 # conversion specifiers.
 # Available conversion specifiers:
 # %c - The component (e.g. owcimomd)
-# %d - The date. May be followed by a date format specifier enclosed between 
-#      braces. For example, %d{%H:%M:%S} or %d{%d %b %Y %H:%M:%S}. If no date 
-#      format specifier is given then ISO8601 format is assumed. 
-#      For more information of the date format specifiers, lookup the 
+# %d - The date. May be followed by a date format specifier enclosed between
+#      braces. For example, %d{%H:%M:%S} or %d{%d %b %Y %H:%M:%S}. If no date
+#      format specifier is given then ISO8601 format is assumed.
+#      For more information of the date format specifiers, lookup the
 #      documentation for the strftime() function found in the <ctime> header.
 #      The only addition is %Q, which is the number of milliseconds.
 # %F - The file name
 # %l - The filename and line number. e.g. file.cpp(100)
 # %L - The line number
-# %M - The method name where the logging request was issued (only works on 
+# %M - The method name where the logging request was issued (only works on
 #      C++ compilers which support __PRETTY_FUNCTION__ or C99's __func__)
 # %m - The message
 # %e - The message as XML CDATA. This includes the "<![CDATA[" and ending "]]>"
 # %n - The platform dependent line separator character (\n) or characters (\r\n)
 # %p - category, aka level, aka priority
-# %r - The number of milliseconds elapsed since the start of the application 
+# %r - The number of milliseconds elapsed since the start of the application
 #      until the creation of the logging event
 # %t - Thread id
 # %% - %
@@ -114,20 +114,20 @@
 # \\ - \
 # \x<hexDigits> - The character represented in hexadecimal.
 #
-#   It is possible to change the minimum field width, the maximum field width 
-# and justification. The optional format modifier is placed between the 
+#   It is possible to change the minimum field width, the maximum field width
+# and justification. The optional format modifier is placed between the
 # percent sign and the conversion character.
-#   The first optional format modifier is the left justification flag which is 
-# the minus (-) character. The optional minimum field width modifier follows. 
-# It is an integer that represents the minimum number of characters to 
-# output. If the data item requires fewer characters, it is padded with 
-# spaces on either the left or the right, according to the justification 
-# flag. If the data item is larger than the minimum field width, the field 
+#   The first optional format modifier is the left justification flag which is
+# the minus (-) character. The optional minimum field width modifier follows.
+# It is an integer that represents the minimum number of characters to
+# output. If the data item requires fewer characters, it is padded with
+# spaces on either the left or the right, according to the justification
+# flag. If the data item is larger than the minimum field width, the field
 # is expanded to accommodate the data.
-#   The maximum field width modifier is designated by a period followed by a 
-# decimal constant. If the data item is longer than the maximum field, then 
-# the extra characters are removed from the beginning of the data item 
-# (by default), or from the end if the left justification flag was specified. 
+#   The maximum field width modifier is designated by a period followed by a
+# decimal constant. If the data item is longer than the maximum field, then
+# the extra characters are removed from the beginning of the data item
+# (by default), or from the end if the left justification flag was specified.
 #
 # Examples:
 #   Log4j TTCC layout:
@@ -141,7 +141,7 @@
 #   "<log4j:event logger="%c" timestamp="%d{%s%Q}" level="%p" thread="%t">
 #    <log4j:message>%e</log4j:message>
 #    <log4j:locationInfo class="" method="" file="%F" line="%L"/>
-#    </log4j:event>" 
+#    </log4j:event>"
 #
 # The default is "[%t]%m"
 ;log.main.format = [%t]%m
@@ -177,7 +177,7 @@ log.debug.format = [%t] %m
 
 
 ################################################################################
-# A space separated list of names for each additional log to configure.  For 
+# A space separated list of names for each additional log to configure.  For
 # each log name, the following config items will apply:
 # log.<log name>.components
 # log.<log name>.categories
@@ -187,7 +187,7 @@ log.debug.format = [%t] %m
 # log.<log name>.max_file_size
 # log.<log name>.max_backup_index
 #
-;owcimomd.additional_logs = 
+;owcimomd.additional_logs =
 
 ################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
@@ -226,9 +226,9 @@ owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthenti
 
 ################################################################################
 # A space delimited list of system users who are allowed to acces the CIMOM
-# The special value * to allow all users to authenticate (for instance, if 
-# you choose to control access with ACLs instead). 
-# This option is enforced for all authentication methods. If 
+# The special value * to allow all users to authenticate (for instance, if
+# you choose to control access with ACLs instead).
+# This option is enforced for all authentication methods. If
 # owcimomd.allow_anonymous = true, it is not enforced.
 # The default is *
 owcimomd.allowed_users = root
@@ -240,7 +240,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 
 ################################################################################
 # When this variable is set to true, the cimom will not attempt to
-# deliver indications.  
+# deliver indications.
 # The default is false
 ;owcimomd.disable_indications = false
 
@@ -255,7 +255,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ################################################################################
 # owcimomd.request_handler_TTL specifies how many minutes the request
 # handlers will stay loaded after they are accessed.  If the value of this
-# option is -1, the request handlers will never be unloaded.  
+# option is -1, the request handlers will never be unloaded.
 # The default is 5
 ;owcimomd.request_handler_TTL = 5
 
@@ -269,15 +269,15 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.check_referential_integrity = false
 
 ################################################################################
-# owcimomd.polling_manager_max_threads specifies the maximum number of 
+# owcimomd.polling_manager_max_threads specifies the maximum number of
 # concurrent threads that will be allowed to run by the polling manager.
 # This should only be a concern if the cimom has a lot of polled providers.
 # The default is 256
 ;owcimomd.polling_manager_max_threads = 256
 
 ################################################################################
-# owcimomd.max_indication_export_threads specifies the maximum number of 
-# concurrent threads to export indications that will be allowed to run by the 
+# owcimomd.max_indication_export_threads specifies the maximum number of
+# concurrent threads to export indications that will be allowed to run by the
 # indication server.
 # This may need to be increased if a lot of indications are being exported.
 # The default is 30
@@ -312,7 +312,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 
 ################################################################################
 # owcimomd.interop_schema_namespace specifies the namespace which contains the
-# CIM Interop schema. 
+# CIM Interop schema.
 # The default is root
 ;owcimomd.interop_schema_namespace = root
 
@@ -321,15 +321,15 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # will keep a provider in memory.  If a provider has not been accessed for
 # longer than this value, it will be unloaded and the memory associated with
 # it will be freed.  If the value of this option is -1, the providers will
-# never be unloaded.  
+# never be unloaded.
 # The default is 5
 ;cppprovifc.prov_TTL = 5
 
 ################################################################################
-# The remote provider interface uses a connection pool to re-use remote 
+# The remote provider interface uses a connection pool to re-use remote
 # connections. remoteprovifc.max_connections_per_url specifies the maximum
 # number of connections per url that will be pooled.  The value must be a
-# non-negative integer.  
+# non-negative integer.
 # The default is 5
 ;remoteprovifc.max_connections_per_url = 5
 
@@ -372,15 +372,15 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ################################################################################
 # http_server.SSL_cert specifies the location of the file that contains the
 # host's private key and certificate that will be used by Open SSL for HTTPS
-# communications. 
+# communications.
 # The default is @sysconfdir@/openwbem/hostkey+cert.pem
 http_server.SSL_cert = @sysconfdir@/openwbem/hostkey+cert.pem
 
 ################################################################################
 # Tell the http server to use Digest authentication
-# Digest will bypass the Basic authentication mechanism.  
+# Digest will bypass the Basic authentication mechanism.
 # You must set up the digest password file using owdigestgenpass to use digest.
-# Digest doesn't use the authentication module specified by the 
+# Digest doesn't use the authentication module specified by the
 # owcimomd.authentication_module config item.
 # If this option is true, then Basic will not be used.
 # If this option is false, then Basic will be used.
@@ -402,22 +402,22 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 
 ################################################################################
 # Determines if the server should attempt to authenticate clients
-# with SSL Client Certificate verification. 
+# with SSL Client Certificate verification.
 # disabled: no client certificate checking will take place.
 # optional: A trusted cert is authenticated (no HTTP auth necessary)
 #   An untrusted cert still passes the SSL handshake, but the client
 #   will have to pass HTTP authentication.
 # autoupdate: Same as optional, but previously unknown client certificates
 #   which pass HTTP authentication are added to the trust store, so that
-#   subsequent client connections with the same certificate won't 
-#   require HTTP authentication. 
+#   subsequent client connections with the same certificate won't
+#   require HTTP authentication.
 # required: A trusted cert is required for the the SSL handshake to
 #   succeed.
 # The default is disabled
 ;http_server.ssl_client_verification = disabled
 
 ################################################################################
-# Specify the directory containing the OpenSSL trust store. 
+# Specify the directory containing the OpenSSL trust store.
 # The default is "@sysconfdir@/openwbem/truststore"
 ;http_server.ssl_trust_store = @sysconfdir@/openwbem/truststore
 
@@ -425,27 +425,27 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # http_server.single_thread specifies whether or not owcimomd process connection
 # in a separate thread or in the same thread as the server. This option is
 # really only for debug purposes and should not be of any use to the
-# typical user. 
+# typical user.
 # The default is false
 ;http_server.single_thread = false
 
 ################################################################################
 # http_server.use_UDS specifies whether the http server will listen on a
-# Unix Domain Socket.  
+# Unix Domain Socket.
 # The default is true
 ;http_server.use_UDS = true
 
 ################################################################################
-# http_server.reuse_addr specifies whether the http server will set the 
+# http_server.reuse_addr specifies whether the http server will set the
 # SO_REUSEADDR flag when it listens on a socket.  This is provided because some
 # Unix kernels have security problems when this option is set.
 # If this option is not turned on, you may not be able to immediately restart
 # the daemon because it can't listen on the port until the kernel releases it.
 # It's OK to use on current linux versions.  Definitely not on
-# OLD (kernel < 1.3.60) ones. 
+# OLD (kernel < 1.3.60) ones.
 # See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
 # or just google for "bind() Security Problems"
-# If you specify interfaces to listen on other than 0.0.0.0 using the 
+# If you specify interfaces to listen on other than 0.0.0.0 using the
 # http_server.listen_addresses option, then there is no security problem with
 # enabling this option.
 # The default is true
@@ -505,7 +505,7 @@ owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
 # owcimomd.datadir specifies the directory where owcimomd will place its data
-# file (repositories). 
+# file (repositories).
 # You probably don't need to modify this option.
 # The default is "@localstatedir@/openwbem"
 owcimomd.datadir = @localstatedir@/openwbem
@@ -514,7 +514,7 @@ owcimomd.datadir = @localstatedir@/openwbem
 # owcimomd.provider_ifc_libs specifies the location where all the provider
 # interfaces will be loaded from. owcimomd assumes all shared libraries in
 # this directory are provider interfaces. If a shared library in this directory
-# does not support the provider interface api, it will be rejected. 
+# does not support the provider interface api, it will be rejected.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/provifcs"
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
@@ -523,7 +523,7 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from.  Multiple directories
-# can be specified, separated by ':' or ';'.  
+# can be specified, separated by ':' or ';'.
 # You probably don't need to modify this option.
 # The default is "@libdir@/openwbem/c++providers"
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
@@ -538,24 +538,29 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the NPI provider
 # interface. The npiprovifc.prov_location option specifies where the NPI
-# provider interface will load it's providers from. 
+# provider interface will load it's providers from.
 # The default is "@libdir@/openwbem/npiproviders"
 npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the CMPI provider
 # interface. The cmpiprovifc.prov_location option specifies where the CMPI
-# provider interface will load it's providers from. 
+# provider interface will load it's providers from.
 # The default is "@libdir@/openwbem/cmpiproviders"
 cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the perl provider
 # interface. The perlprovifc.prov_location option specifies where the perl
-# provider interface will load it's providers from. 
+# provider interface will load it's providers from.
 # The default is "@libdir@/openwbem/perlproviders"
 perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 
+################################################################################
+# The default built in provider interface is loaded and initialized by default.
+# Set this option to true to disable it.
+# The default is "false"
+;owcimomd.disable_cpp_provider_interface = false
 
 ################################################################################
 # The following options are deprecated
@@ -568,8 +573,8 @@ perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 # This option is only enforced by the pam authentication module, and has no
 # effect if you are not using http Basic authentication together with the
 # pam authentication module.
-# Set this value to * to allow all users to authenticate (for instance, if 
-# you choose to control access with ACLs instead). 
+# Set this value to * to allow all users to authenticate (for instance, if
+# you choose to control access with ACLs instead).
 pam.allowed_users = *
 
 ################################################################################
@@ -579,7 +584,7 @@ pam.allowed_users = *
 # all messages through the syslog interface (Recommended). If this option
 # is set to null, logging will be disabled completely.  If this option
 # is set to anything else, it is assumed it is an absolute path to a file
-# that owcimomd will write its log messages to. 
+# that owcimomd will write its log messages to.
 # The default is syslog
 ;owcimomd.log_location = syslog
 

@@ -70,7 +70,7 @@ public:
 	 * @param ifcLoader the class that will actually load and instantiate the
 	 * 	ProviderIFCBaseIFC classes.
 	 */
-	void load(const ProviderIFCLoaderRef& ifcLoader);
+	void load(const ProviderIFCLoaderRef& ifcLoader, const ServiceEnvironmentIFCRef& env);
 
 	virtual String getName() const;
 	/**

@@ -196,6 +196,9 @@
 #ifndef OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX
 #define OW_DEFAULT_LOG_1_MAX_BACKUP_INDEX "1"
 #endif
+#ifndef OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE
+#define OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE "false"
+#endif
 
 
 namespace OpenWBEM
@@ -264,6 +267,7 @@ namespace ConfigOpts
 	static const char* const HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt = "http_server.ssl_client_verification";
 	static const char* const HTTP_SERVER_SSL_TRUST_STORE = "http_server.ssl_trust_store";
 	static const char* const ADDITIONAL_LOGS_opt = "owcimomd.additional_logs";
+	static const char* const DISABLE_CPP_PROVIDER_INTERFACE_opt = "owcimomd.disable_cpp_provider_interface";
 	// These aren't a whole config option, but log names, which are substituted as part of the log options
 	static const char* const LOG_DEBUG_LOG_NAME = "debug";
 	static const char* const LOG_MAIN_LOG_NAME = "main";

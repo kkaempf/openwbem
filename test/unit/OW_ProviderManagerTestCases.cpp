@@ -55,6 +55,9 @@ void OW_ProviderManagerTestCases::setUp()
 		ConfigOpts::CPPIFC_PROV_LOC_opt,
 		"this is set to a dummy value so that the default won't be used, "
 		"which may break things, if providers are actually installed there." );
+
+	g_testEnvironment->setConfigItem(
+		ConfigOpts::DISABLE_CPP_PROVIDER_INTERFACE_opt, "true");
 }
 
 void OW_ProviderManagerTestCases::tearDown()
@@ -64,7 +67,7 @@ void OW_ProviderManagerTestCases::tearDown()
 void OW_ProviderManagerTestCases::testInit()
 {
 	ProviderManager pm;
-	pm.load(testCreateMuxLoader());
+	pm.load(testCreateMuxLoader(), g_testEnvironment);
 }
 
 namespace
@@ -92,7 +95,7 @@ ServiceEnvironmentIFCRef createServiceEnvRef()
 void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
 	ProviderManager mgr;
-	mgr.load(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader(), g_testEnvironment);
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
@@ -155,7 +158,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 void OW_ProviderManagerTestCases::testGetMethodProvider()
 {
 	ProviderManager mgr;
-	mgr.load(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader(), g_testEnvironment);
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
@@ -264,7 +267,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
 	ProviderManager mgr;
-	mgr.load(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader(), g_testEnvironment);
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());
@@ -326,7 +329,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 void OW_ProviderManagerTestCases::testGetIndicationProvider()
 {
 	ProviderManager mgr;
-	mgr.load(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader(), g_testEnvironment);
 	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createServiceEnvRef());

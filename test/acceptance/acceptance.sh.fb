@@ -80,21 +80,21 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
 	sed \
 			-e "s!= /!= $STAGEDIR/!g" \
-			-e 's!;http_server.http_port = \(.*\)!http_server.http_port = 30926!g' \
-			-e 's!;http_server.https_port = \(.*\)!http_server.https_port = 30927!g' \
-			-e "s!;log.main.type = \(.*\)!log.main.type = file!g" \
-			-e "s!;log.main.location = \(.*\)!log.main.location = $RESULTDIR/logfile!g" \
-			-e "s!;log.main.categories = \(.*\)!log.main.categories = *!g" \
-			-e "s!;owcimomd.dump_socket_io = \(.*\)!owcimomd.dump_socket_io = $RESULTDIR!g" \
+			-e 's!;http_server.http_port =\(.*\)!http_server.http_port = 30926!g' \
+			-e 's!;http_server.https_port =\(.*\)!http_server.https_port = 30927!g' \
+			-e "s!;log.main.type =\(.*\)!log.main.type = file!g" \
+			-e "s!;log.main.location =\(.*\)!log.main.location = $RESULTDIR/logfile!g" \
+			-e "s!;log.main.categories =\(.*\)!log.main.categories = *!g" \
+			-e "s!;owcimomd.dump_socket_io =\(.*\)!owcimomd.dump_socket_io = $RESULTDIR!g" \
 			-e "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
-			-e "s!owcimomd.wql_lib = \(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.@lib_ext@!g" \
-			-e "s!;http_server.enable_deflate = .*!http_server.enable_deflate = false!g" \
-			-e "s!;owcimomd.disable_indications = .*!owcimomd.disable_indications = true!g" \
-			-e "s!;http_server.timeout = .*!http_server.timeout = 3000!g" \
-			-e "s!;owcimomd.restart_on_error = .*!owcimomd.restart_on_error = false!g" \
-			-e "s!owcimomd.allowed_users = .*!owcimomd.allowed_users = test test1 test2 test3 $USER!g" \
-			-e "s!;http_server.ssl_trust_store = .*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
-			-e "s!;owcimomd.check_referential_integrity = .*!owcimomd.check_referential_integrity = true!g" \
+			-e "s!owcimomd.wql_lib =\(.*\)!owcimomd.wql_lib = $STAGEDIR$OWLIBDIR/libowwql.@lib_ext@!g" \
+			-e "s!;http_server.enable_deflate =.*!http_server.enable_deflate = false!g" \
+			-e "s!;owcimomd.disable_indications =.*!owcimomd.disable_indications = true!g" \
+			-e "s!;http_server.timeout =.*!http_server.timeout = 3000!g" \
+			-e "s!;owcimomd.restart_on_error =.*!owcimomd.restart_on_error = false!g" \
+			-e "s!owcimomd.allowed_users =.*!owcimomd.allowed_users = test test1 test2 test3 $USER!g" \
+			-e "s!;http_server.ssl_trust_store =.*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
+			-e "s!;owcimomd.check_referential_integrity =.*!owcimomd.check_referential_integrity = true!g" \
 		openwbem.conf > openwbem.conf-t
 	cd $STAGEDIR
 	# undo the change for the UDS, since the client won't know to use the

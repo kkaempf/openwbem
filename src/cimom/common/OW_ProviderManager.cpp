@@ -50,6 +50,7 @@
 #include "OW_Platform.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_ConfigOpts.hpp"
 
 namespace OpenWBEM
 {
@@ -63,14 +64,19 @@ ProviderManager::getName() const
 	return ServiceIFCNames::ProviderManager;
 }
 //////////////////////////////////////////////////////////////////////////////
-void ProviderManager::load(const ProviderIFCLoaderRef& IFCLoader)
+void ProviderManager::load(const ProviderIFCLoaderRef& IFCLoader, const ServiceEnvironmentIFCRef& env)
 {
 	IFCLoader->loadIFCs(m_IFCArray);
-	// now the CPP provider is linked to the cimom, not loaded dynamically, So
-	// we have to create it here.
-	ProviderIFCBaseIFCRef::element_type cpppi(new CppProviderIFC);
-	// 0 because there is no shared library.
-	m_IFCArray.push_back(ProviderIFCBaseIFCRef(SharedLibraryRef(0), cpppi));
+
+	// the config can disable this.
+	if (env->getConfigItem(ConfigOpts::DISABLE_CPP_PROVIDER_INTERFACE_opt, OW_DEFAULT_DISABLE_CPP_PROVIDER_INTERFACE) != "true")
+	{
+		// now the CPP provider is linked to the cimom, not loaded dynamically, So
+		// we have to create it here.
+		ProviderIFCBaseIFCRef::element_type cpppi(new CppProviderIFC);
+		// 0 because there is no shared library.
+		m_IFCArray.push_back(ProviderIFCBaseIFCRef(SharedLibraryRef(0), cpppi));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

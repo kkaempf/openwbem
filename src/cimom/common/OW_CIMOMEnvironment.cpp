@@ -265,7 +265,7 @@ CIMOMEnvironment::startServices()
 
 	m_providerManager = new ProviderManager;
 	m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
-		this));
+		this), this);
 	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_providerManager));
 
 	m_cimRepository = new CIMRepository;

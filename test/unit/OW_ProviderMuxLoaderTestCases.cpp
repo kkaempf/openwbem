@@ -75,19 +75,6 @@ void OW_ProviderMuxLoaderTestCases::testFailLoadIFCs()
 	unitAssert( muxarray.size() == 0 );
 }
 
-void OW_ProviderMuxLoaderTestCases::testLoadCppIFC()
-{
-	Array<ProviderIFCBaseIFCRef> muxarray;
-	g_testEnvironment->setConfigItem(
-			ConfigOpts::PROVIDER_IFC_LIBS_opt,
-			"../../src/providerifcs/cpp" );
-	ProviderIFCLoaderRef pml = ProviderIFCLoader::createProviderIFCLoader(g_testEnvironment);
-	unitAssertNoThrow( pml->loadIFCs( muxarray ) );
-	cout << "muxarray.size() = " << muxarray.size() << endl;
-	unitAssert( muxarray.size() == 1 );
-	unitAssert( muxarray[0]->getName() == String("c++") );
-}
-
 Test* OW_ProviderMuxLoaderTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_ProviderIFCLoader");
@@ -98,10 +85,6 @@ Test* OW_ProviderMuxLoaderTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_ProviderMuxLoaderTestCases>
 			("testFailLoadIFCs",
 			&OW_ProviderMuxLoaderTestCases::testFailLoadIFCs));
-	// Test doesn't work anymore since the cpp ifc is now a non-loadable ifc.
-	//testSuite->addTest (new TestCaller <OW_ProviderMuxLoaderTestCases>
-	//		("testLoadCppIFC",
-	//		&OW_ProviderMuxLoaderTestCases::testLoadCppIFC));
 
 	return testSuite;
 }
