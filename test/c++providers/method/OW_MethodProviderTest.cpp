@@ -177,7 +177,7 @@ MethodProviderTest::invokeMethod(
 		OW_ASSERT(out[5].getName() == "nullParam");
 		OW_ASSERT(out[5].getValue() == in[4].getValue());
 		out[0].setValue(CIMValue(true));
-		out[1].setValue(CIMValue(Real64(9.876543210987654321e32l)));
+		out[1].setValue(CIMValue(Real64(9.87654321098765e32l)));
 		out[2].setValue(CIMValue(Int16(555)));
 		out[3].setValue(CIMValue(String(
 			Format("MethodProviderTest::invokeMethod.  in[0] = %1, "

@@ -17701,9 +17701,9 @@ invokeMethod: setstate("off")
 invokeMethod: getstate(): off
 6 out params:
 param 0: CIMParamValue(b): true
-param 1: CIMParamValue(r64): 987654321098765468844613993234432
+param 1: CIMParamValue(r64): 9.87654321098765e+32
 param 2: CIMParamValue(io16): 555
-param 3: CIMParamValue(msg): MethodProviderTest::invokeMethod.  in[0] = CIMParamValue(s): input string, in[1] = CIMParamValue(uint8array): 1,255,0,128,0, in[2] = CIMParamValue(io16): 16, in[3] = CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo", in[4] = CIMParamValue(nullParam): (null), out[0] = CIMParamValue(b): true, out[1] = CIMParamValue(r64): 987654321098765468844613993234432, out[2] = CIMParamValue(io16): 555, out[4] = CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo"
+param 3: CIMParamValue(msg): MethodProviderTest::invokeMethod.  in[0] = CIMParamValue(s): input string, in[1] = CIMParamValue(uint8array): 1,255,0,128,0, in[2] = CIMParamValue(io16): 16, in[3] = CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo", in[4] = CIMParamValue(nullParam): (null), out[0] = CIMParamValue(b): true, out[1] = CIMParamValue(r64): 9.87654321098765e+32, out[2] = CIMParamValue(io16): 555, out[4] = CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo"
 param 4: CIMParamValue(paths): /root/testsuite:EXP_BartComputerSystem,/root/testsuite:EXP_BartComputerSystem.name="foo"
 param 5: CIMParamValue(nullParam): (null)
 *** Doing invokeMethod() ***

@@ -62,7 +62,7 @@
 #include <iostream>
 #endif
 #include <cmath> // for HUGE_VAL
-#include <cfloat> // for macros DBL_MANT_DIG and friends
+#include <cfloat> // for DBL_MANT_DIG
 
 namespace OpenWBEM
 {
@@ -237,14 +237,16 @@ String::String(UInt64 val) :
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
-#define OW_STRINGIZE_AUX(x) #x
-#define OW_STRINGIZE(x) OW_STRINGIZE_AUX(x)
-
+// decimal digits = ceiling((bits)*ln(2)/ln(10))
 String::String(Real32 val) :
 	m_buf(NULL)
 {
 	char tmpbuf[128];
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", static_cast<double>(val));
+#if defined(OW_REAL32_IS_FLOAT)
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", FLT_MANT_DIG * 3 / 10 + 1, static_cast<double>(val));
+#elif defined(OW_REAL32_IS_DOUBLE)
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
+#endif
 	m_buf = new ByteBuf(tmpbuf);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -253,9 +255,9 @@ String::String(Real64 val) :
 {
 	char tmpbuf[128];
 #if defined(OW_REAL64_IS_DOUBLE)
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", val);
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, val);
 #elif defined(OW_REAL64_IS_LONG_DOUBLE)
-	::snprintf(tmpbuf, sizeof(tmpbuf), "%." OW_STRINGIZE(LDBL_MANT_DIG) "Lg", val);
+	::snprintf(tmpbuf, sizeof(tmpbuf), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, val);
 #endif
 	m_buf = new ByteBuf(tmpbuf);
 }

@@ -238,7 +238,7 @@ void OW_StringTestCases::testTokenize()
 
 void OW_StringTestCases::testRealConstructors()
 {
-	unitAssert(String(Real32(-32897.23828125)).startsWith("-32897.23828125"));
+	unitAssert(String(Real32(-32897.238)).startsWith("-32897.238"));
 	unitAssert(String(Real64(-32897.23828125)).startsWith("-32897.23828125"));
 }
 

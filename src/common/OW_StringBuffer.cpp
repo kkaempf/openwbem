@@ -39,6 +39,7 @@
 #include "OW_Char16.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMDateTime.hpp"
+
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -237,14 +238,16 @@ StringBuffer::operator += (Int64 v)
 	return append(bfr);
 }
 //////////////////////////////////////////////////////////////////////////////
-#define OW_STRINGIZE_AUX(x) #x
-#define OW_STRINGIZE(x) OW_STRINGIZE_AUX(x)
-
+// decimal digits = ceiling((bits)*ln(2)/ln(10))
 StringBuffer&
 StringBuffer::operator += (Real32 v)
 {
 	char bfr[128];
-	::snprintf(bfr, sizeof(bfr), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", static_cast<double>(v));
+#if defined(OW_REAL32_IS_FLOAT)
+	::snprintf(bfr, sizeof(bfr), "%.*g", FLT_MANT_DIG * 3 / 10 + 1, static_cast<double>(v));
+#elif defined(OW_REAL32_IS_DOUBLE)
+	::snprintf(bfr, sizeof(bfr), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, v);
+#endif
 	return append(bfr);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -253,9 +256,9 @@ StringBuffer::operator += (Real64 v)
 {
 	char bfr[32];
 #if defined(OW_REAL64_IS_DOUBLE)
-	::snprintf(bfr, sizeof(bfr), "%." OW_STRINGIZE(DBL_MANT_DIG) "g", v);
+	::snprintf(bfr, sizeof(bfr), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, v);
 #elif defined(OW_REAL64_IS_LONG_DOUBLE)
-	::snprintf(bfr, sizeof(bfr), "%." OW_STRINGIZE(LDBL_MANT_DIG) "Lg", v);
+	::snprintf(bfr, sizeof(bfr), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, v);
 #endif
 	return append(bfr);
 }

@@ -72,7 +72,7 @@ instance of wqlTestClass
 {
 	name = "test9";
 
-	realData = 123.4567890000000005557012627832591533660888671875;
+	realData = 123.456789;
 };
 
 instance of wqlTestClass
