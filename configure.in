@@ -262,6 +262,7 @@ case "$host" in
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
+	AM_CONDITIONAL(OW_NETWARE_INSTALL, true)
 	PLATFORMDIR="posix"
 	AC_DEFINE(USE_FAKE_LIBS, 1, Fake libraries are enabled)
 	STATIC_SERVICES=1
