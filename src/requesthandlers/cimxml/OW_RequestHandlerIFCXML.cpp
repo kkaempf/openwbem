@@ -37,6 +37,7 @@
 #include "OW_CIMErrorException.hpp"
 #include "OW_XMLOperationGeneric.hpp"
 #include "OW_Format.hpp"
+#include "OW_ConfigOpts.hpp"
 
 using std::istream;
 using std::ostream;
@@ -49,7 +50,7 @@ OW_RequestHandlerIFCXML::OW_RequestHandlerIFCXML()
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
-	ostream* ostrError, const OW_String& userName)
+	ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
 {
 
 	OW_ASSERT(ostrEntity);
@@ -84,6 +85,13 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		OW_THROW(OW_CIMErrorException, "failed to find <MESSAGE> tag");
 	}
 
+	OW_String userName;
+	OW_SortedVector<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+	if (i != handlerVars.end())
+	{
+		userName = (*i).second;
+	}
+
 	executeXML(node, ostrEntity, ostrError, userName);
 }
 
@@ -99,7 +107,7 @@ OW_RequestHandlerIFCXML::makeXMLHeader(const OW_String& messageID, ostream& ostr
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray 
+OW_StringArray
 OW_RequestHandlerIFCXML::getSupportedContentTypes() const
 {
 	OW_StringArray rval;
@@ -109,7 +117,7 @@ OW_RequestHandlerIFCXML::getSupportedContentTypes() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String 
+OW_String
 OW_RequestHandlerIFCXML::getContentType() const
 {
 	return OW_String("application/xml");

@@ -44,9 +44,9 @@ OW_RequestHandlerIFC::~OW_RequestHandlerIFC()
 
 ///////////////////////////////////////////////////////////////////////////////
 void OW_RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
-	std::ostream* ostrError, const OW_String& userName)
+	std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
 {
-	doProcess(istr, ostrEntity, ostrError, userName);
+	doProcess(istr, ostrEntity, ostrError, handlerVars);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,13 +54,6 @@ OW_Bool
 OW_RequestHandlerIFC::hasError()
 {
 	return doHasError();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_RequestHandlerIFC::getId() const
-{
-	return doGetId();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

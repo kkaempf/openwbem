@@ -72,7 +72,7 @@ protected:
          * @param userName the name of the user performing the action.
          */
         virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-            std::ostream *ostrError, const OW_String& userName);
+            std::ostream *ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars);
 
 	/**
 	 * After doProcess is called, and the XML is parsed, executeXML
@@ -97,12 +97,7 @@ protected:
 	 * @param cf a OW_CIMFeatures object to fill out.
 	 * @param path the path of inquiry.
 	 */
-	virtual void doOptions(OW_CIMFeatures &cf);
-
-	virtual OW_String doGetId() const
-	{
-		return "OW_XMLListener";
-	}
+	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVector<OW_String, OW_String>& handlerVars);
 
 	void setPath(const OW_String& id);
 private:

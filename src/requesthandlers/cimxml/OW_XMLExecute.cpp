@@ -154,12 +154,6 @@ OW_XMLExecute::OW_XMLExecute()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_XMLExecute::doGetId() const
-{
-	return OW_CIMXML_ID;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 // Private
 int
 OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
@@ -1428,7 +1422,8 @@ OW_XMLExecute::doLogError(const OW_String& message)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLExecute::doOptions(OW_CIMFeatures& cf)
+OW_XMLExecute::doOptions(OW_CIMFeatures& cf,
+	const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
 {
 	//OW_ACLInfo acl("");
 	//cf = OW_Environment::getCIMOMHandle(acl, false).getServerFeatures();

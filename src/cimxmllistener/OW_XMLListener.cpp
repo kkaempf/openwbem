@@ -56,11 +56,17 @@ OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLListener::doProcess(istream* istr, ostream* ostrEntity,
-	ostream* ostrError, const OW_String& userName)
+	ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
 {
 
 	OW_ASSERT(ostrEntity);
 	OW_ASSERT(ostrError);
+
+	OW_SortedVector<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::HTTP_PATH_opt);
+	if (i != handlerVars.end())
+	{
+		setPath((*i).second);
+	}
 
 	OW_XMLNode node;
 	try
@@ -89,6 +95,13 @@ OW_XMLListener::doProcess(istream* istr, ostream* ostrEntity,
 	if (!node)
 	{
 		OW_THROW(OW_CIMErrorException, "failed to find <MESSAGE> tag");
+	}
+
+	OW_String userName;
+	i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+	if (i != handlerVars.end())
+	{
+		userName = (*i).second;
 	}
 
 	executeXML(node, ostrEntity, ostrError, userName);
@@ -173,7 +186,7 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::doOptions(OW_CIMFeatures &cf)
+OW_XMLListener::doOptions(OW_CIMFeatures &cf, const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
 {
 	cf.extURL = "http://www.dmtf.org/cim/mapping/http/v1.0";
 	cf.cimProduct = OW_CIMFeatures::LISTENER;
@@ -203,9 +216,7 @@ OW_XMLListener::processSimpleExpReq(const OW_XMLNode& startNode,
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_IPARAMVALUE);
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_INSTANCE);
 		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(node);
-		OW_String path = getEnvironment()->getConfigItem(
-			OW_ConfigOpts::HTTP_PATH_opt);
-		m_callback->indicationOccurred(inst, path);
+		m_callback->indicationOccurred(inst, m_path);
 		ostrEntity << "<SIMPLEEXPRSP>\r\n";
 		ostrEntity << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">\r\n";
 
@@ -251,7 +262,7 @@ OW_XMLListener::setPath(const OW_String& id)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray 
+OW_StringArray
 OW_XMLListener::getSupportedContentTypes() const
 {
 	OW_StringArray rval;
@@ -261,7 +272,7 @@ OW_XMLListener::getSupportedContentTypes() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String 
+OW_String
 OW_XMLListener::getContentType() const
 {
 	return OW_String("application/xml");

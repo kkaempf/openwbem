@@ -36,10 +36,12 @@
 #include "OW_Select.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_TempFileStream.hpp"
+#include "OW_ConfigOpts.hpp"
 
 #include <iostream>
 #include <cstring>
 
+/*
 class OW_IPCServiceEnvironment : public OW_ServiceEnvironmentIFC
 {
 public:
@@ -56,7 +58,7 @@ public:
 
 	virtual OW_String getConfigItem(const OW_String &name) const
 	{
-		return (name.equals(OW_BINARY_USER_NAME_OPT)) ? m_userName
+		return (name.equals(OW_ConfigOpts::)) ? m_userName
 			: m_env->getConfigItem(name);
 	}
 
@@ -99,6 +101,7 @@ private:
 	OW_ServiceEnvironmentIFCRef m_env;
 	OW_String m_userName;
 };
+*/
 
 
 class IPCSelectableCallback : public OW_SelectableCallbackIFC
@@ -108,7 +111,7 @@ public:
 		: OW_SelectableCallbackIFC(), m_pservice(pservice) {}
 
 protected:
-	virtual void doSelected(OW_SelectableIFCRef& selectedObject) 
+	virtual void doSelected(OW_SelectableIFCRef& selectedObject)
 			{ (void)selectedObject; m_pservice->doSelected(); }
 	OW_IPCService* m_pservice;
 };
@@ -318,11 +321,12 @@ OW_IPCConnectionHandler::run()
 								" for %1: No Request Handler Available", m_conn.getUserName()));
 							return;
 						}
-						handler->setEnvironment(OW_ServiceEnvironmentIFCRef(
-							new OW_IPCServiceEnvironment(env, userName)));
+						handler->setEnvironment(env);
 
 						OW_TempFileStream tfs;
-						handler->process(&istrm, &ostrm, &tfs, userName);
+						OW_SortedVector<OW_String, OW_String> handlerVars;
+						handlerVars[OW_ConfigOpts::USER_NAME_opt] = userName;
+						handler->process(&istrm, &ostrm, &tfs, handlerVars);
 						if(handler->hasError())
 						{
 							ostrm << tfs.rdbuf() << flush;

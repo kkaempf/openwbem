@@ -71,7 +71,7 @@
 #ifndef DEFAULT_AUTH_MOD
 #define DEFAULT_AUTH_MOD DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
 #endif
-									   
+									
 #ifndef DEFAULT_AUTHORIZER_LIBS_LOCATION
 #define DEFAULT_AUTHORIZER_LIBS_LOCATION DEFAULT_OWLIB_DIR"/auth_mods"
 #endif
@@ -149,7 +149,6 @@ namespace OW_ConfigOpts
 	static const char* const ACL_SUPERUSER_opt = "owcimomd.ACL_superuser";
 	static const char* const ENABLE_DEFLATE_opt = "http_server.enable_deflate";
 	static const char* const HTTP_USE_DIGEST_opt = "http_server.use_digest";
-	static const char* const HTTP_PATH_opt = "internal.http.Path";
 	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
 	static const char* const REQUEST_HANDLER_LIB_PATH_opt = "daemon.request_handler_lib_path";
 
@@ -157,6 +156,8 @@ namespace OW_ConfigOpts
 	static const char* const CIMOM_SERVICES_LOCATION_opt = "owcimomd.services_path";
 	static const char* const CIMOM_REQUEST_HANDLER_LOCATION_opt = "owcimomd.request_handler_path";
 	static const char* const HTTP_SLP_DISABLED_opt = "http_server.disable.slp";
+	static const char* const HTTP_PATH_opt = "internal.http.Path";
+	static const char* const USER_NAME_opt = "internal.user.Name";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__

@@ -48,6 +48,7 @@
 #include "OW_CIMFeatures.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_SortedVector.hpp"
 
 using std::ios;
 using std::istream;
@@ -901,6 +902,7 @@ OW_HTTPSvrConnection::trace()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+/*
 namespace
 {
 
@@ -973,7 +975,7 @@ private:
 };
 
 }
-
+*/
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_HTTPSvrConnection::post(istream& istr)
@@ -995,19 +997,15 @@ OW_HTTPSvrConnection::post(istream& istr)
 */
 
 
-	// create a wrapper environment that will report the path to the
-	// request handler
-	OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
-		m_options.env));
-	wrapperEnv->setConfigItem(
-		OW_ConfigOpts::HTTP_PATH_opt, m_requestLine[1]);
-
-	m_requestHandler->setEnvironment(wrapperEnv);
+	m_requestHandler->setEnvironment(m_options.env);
 
 	beginPostResponse();
 
 	// process the request
-	m_requestHandler->process(&istr, ostrEntity, &ostrError, m_userName);
+	OW_SortedVector<OW_String, OW_String> handlerVars;
+	handlerVars[OW_ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
+	handlerVars[OW_ConfigOpts::USER_NAME_opt] = m_userName;
+	m_requestHandler->process(&istr, ostrEntity, &ostrError, handlerVars);
 
 	sendPostResponse(ostrEntity, ostrError);
 
@@ -1040,16 +1038,14 @@ OW_HTTPSvrConnection::options(istream& istr)
 		OW_HTTP_THROW(OW_HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
 	}
 
-	// create a wrapper environment that will report the path to the
-	// request handler
-	OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
-		m_options.env));
-	wrapperEnv->setConfigItem(
-		OW_ConfigOpts::HTTP_PATH_opt, m_requestLine[1]);
+	m_requestHandler->setEnvironment(m_options.env);
 
-	m_requestHandler->setEnvironment(wrapperEnv);
-
-	m_requestHandler->options(cf);
+	OW_SortedVector<OW_String, OW_String> handlerVars;
+	handlerVars[OW_ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
+	handlerVars[OW_ConfigOpts::USER_NAME_opt] = m_userName;
+	
+	m_requestHandler->options(cf, handlerVars);
+	
 	addHeader("Opt", cf.extURL + " ; ns=" + hp);
 	hp += "-";
 	addHeader(hp + "CIMProtocolVersion", cf.protocolVersion);

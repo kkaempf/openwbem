@@ -62,7 +62,7 @@ protected:
 	 * @param userName the name of the user performing the action.
 	 */
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-		std::ostream *ostrError, const OW_String& userName);
+		std::ostream *ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars);
 
 
 	/**

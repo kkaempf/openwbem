@@ -72,19 +72,12 @@ void
 OW_BinaryRequestHandler::setEnvironment(OW_ServiceEnvironmentIFCRef env)
 {
 	OW_RequestHandlerIFC::setEnvironment(env);
-	OW_String userName = env->getConfigItem(OW_BINARY_USER_NAME_OPT);
-	if(userName.length())
-	{
-		if(!OW_OS::getUserId(userName, m_userId))
-		{
-			m_userId = OW_UserId(-1);
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf)
+OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
+	const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
 {
 	cf.cimom = "openwbem";
 	cf.cimProduct = OW_CIMFeatures::SERVER;
@@ -98,16 +91,24 @@ OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_BinaryRequestHandler::doGetId() const
-{
-	return OW_BINARY_ID;
-}
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
-	std::ostream* ostrError, const OW_String& userName)
+	std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars)
 {
+	OW_String userName;
+	OW_SortedVector<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+	if (i != handlerVars.end())
+	{
+		userName = (*i).second;
+	}
+	if(userName.length())
+	{
+		if(!OW_OS::getUserId(userName, m_userId))
+		{
+			m_userId = OW_UserId(-1);
+		}
+	}
+
 	OW_Int32 funcNo = 0;
 
 	OW_Bool doIndications = !(getEnvironment()->getConfigItem(
@@ -301,6 +302,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		lgr->logError(format("File: %1", e.getFile()));
 		lgr->logError(format("Line: %1", e.getLine()));
 		lgr->logError(format("Msg: %1", e.getMessage()));
+		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e).c_str());
 		m_isError = true;
 		
 	}
@@ -308,11 +310,13 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	{
 		lgr->logError(format("Caught %1 exception in OW_BinaryRequestHandler",
 			e.what()));
+		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e.what()).c_str());
 		m_isError = true;
 	}
 	catch(...)
 	{
 		lgr->logError("Unknown exception caught in OW_BinaryRequestHandler");
+		writeError(*ostrError, "OW_BinaryRequestHandler caught unknown exception");
 		m_isError = true;
 	}
 }
@@ -967,7 +971,7 @@ OW_BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray 
+OW_StringArray
 OW_BinaryRequestHandler::getSupportedContentTypes() const
 {
 	OW_StringArray rval;
@@ -976,7 +980,7 @@ OW_BinaryRequestHandler::getSupportedContentTypes() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String 
+OW_String
 OW_BinaryRequestHandler::getContentType() const
 {
 	return OW_String("application/owbinary");

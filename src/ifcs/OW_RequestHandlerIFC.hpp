@@ -36,6 +36,7 @@
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_SortedVector.hpp"
 #include <iosfwd>
 
 class OW_CIMFeatures;
@@ -71,7 +72,7 @@ public:
 	 * @userName the name of the user accessing the CIM Product.
 	 */
 	void process(std::istream* istr, std::ostream* ostrEntity,
-		std::ostream* ostrError, const OW_String& userName);
+		std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars);
 
 	/**
 	 * Did an error occur during process()?  (should ostrEntity
@@ -85,14 +86,8 @@ public:
 	 * What options are available for a particular path?
 	 * @param cf a OW_CIMFeatures object to fill out.
 	 */
-	void options(OW_CIMFeatures& cf)
-		{  doOptions(cf); }
-
-	/**
-	 * Get the identifier of this request handler
-	 * @return the path.
-	 */
-	OW_String getId() const;
+	void options(OW_CIMFeatures& cf, const OW_SortedVector<OW_String, OW_String>& handlerVars)
+		{  doOptions(cf, handlerVars); }
 
 	virtual OW_RequestHandlerIFC* clone() const = 0;
 
@@ -116,7 +111,7 @@ protected:
 	 * @userName the name of the user accessing the CIM Product.
 	 */
 	virtual void doProcess(std::istream* istr, std::ostream* ostrEntity,
-		std::ostream* ostrError, const OW_String& userName) = 0;
+		std::ostream* ostrError, const OW_SortedVector<OW_String, OW_String>& handlerVars) = 0;
 
 	/**
 	 * Did an error occur during process()?  (should ostrEntity
@@ -130,17 +125,15 @@ protected:
 	 * @param cf The features to fill out.
 	 * @param path The requested path
 	 */
-	virtual void doOptions(OW_CIMFeatures& cf) = 0;
-
-	virtual OW_String doGetId() const = 0;
+	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVector<OW_String, OW_String>& handlerVars) = 0;
 
 private:
 	OW_ServiceEnvironmentIFCRef m_env;
 };
 
-#define OW_CIMXML_ID "CIM/XML"
-#define OW_BINARY_ID "OWBINARY"
-#define OW_BINARY_USER_NAME_OPT "OW_BINARY_USER_NAME_OPT"
+//#define OW_CIMXML_ID "CIM/XML"
+//#define OW_BINARY_ID "OWBINARY"
+//#define OW_BINARY_USER_NAME_OPT "OW_BINARY_USER_NAME_OPT"
 
 #define OW_REQUEST_HANDLER_FACTORY(derived) \
 extern "C" OW_RequestHandlerIFC* \
