@@ -42,10 +42,9 @@
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::createNameSpace(const OW_CIMNameSpace &ns)
+OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 {
-	OW_String nameSpace = ns.getNameSpace();
-	int index = nameSpace.lastIndexOf('/');
+	int index = ns.lastIndexOf('/');
 
 	if(index==-1)
 	{
@@ -53,8 +52,8 @@ OW_ClientCIMOMHandle::createNameSpace(const OW_CIMNameSpace &ns)
 			"A Namespace must only be created in an existing Namespace");
 	}
 
-	OW_String parentPath = nameSpace.substring(0, index);
-	OW_String newNameSpace = nameSpace.substring(index + 1);
+	OW_String parentPath = ns.substring(0, index);
+	OW_String newNameSpace = ns.substring(index + 1);
 	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, parentPath);
 
 	OW_CIMClass cimClass = getClass(path, false);

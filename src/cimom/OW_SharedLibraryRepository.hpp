@@ -57,7 +57,7 @@ public:
 		return m_ref->getEnvironment();
 	}
 
-	virtual void createNameSpace(const OW_CIMNameSpace &ns,
+	virtual void createNameSpace(const OW_String& ns,
 		const OW_ACLInfo &aclInfo)
 	{
 		m_ref->createNameSpace(ns, aclInfo);

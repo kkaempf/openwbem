@@ -82,7 +82,7 @@ OW_LocalCIMOMHandle::operator= (const OW_LocalCIMOMHandle& arg)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::createNameSpace(const OW_CIMNameSpace& ns)
+OW_LocalCIMOMHandle::createNameSpace(const OW_String& ns)
 {
 	OW_WriteLock wl = getWriteLock();
 	m_pServer->createNameSpace(ns, m_aclInfo);

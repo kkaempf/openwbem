@@ -58,8 +58,7 @@ int main( int iArgC, char *asArgV[] )
 		OW_CIMObjectPath ClassPath( "MyClass" );
 		OW_CIMObjectPath InstancePath( "MyClass" );
 		
-		OW_CIMUrl Url( "http", "DigitalLoom", "/cimom", 5988 );
-		OW_CIMNameSpace NameSpace( Url, "root/cimv2" );
+		OW_String NameSpace( "root/cimv2" );
 		pClient->createNameSpace( NameSpace );
 
 		pClient->enumNameSpace( RootPath, true );

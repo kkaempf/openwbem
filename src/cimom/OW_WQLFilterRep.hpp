@@ -92,11 +92,10 @@ public:
 
 	/**
 	 * Create a cim namespace.
-	 * @param ns 	The OW_CIMNameSpace object that specified a string for the
-	 *					host and a string for the namespace.
+	 * @param ns 	The namespace to be created.
 	 * @exception OW_CIMException If the namespace already exists.
 	 */
-	virtual void createNameSpace(const OW_CIMNameSpace &ns,
+	virtual void createNameSpace(const OW_String& ns,
 		const OW_ACLInfo& aclInfo);
 
 	/**

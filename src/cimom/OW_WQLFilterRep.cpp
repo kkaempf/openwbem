@@ -75,7 +75,7 @@ OW_WQLFilterRep::enumNameSpace(const OW_CIMNameSpace& /*path*/,
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::createNameSpace(const OW_CIMNameSpace &/*ns*/,
+OW_WQLFilterRep::createNameSpace(const OW_String& /*ns*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

@@ -116,8 +116,7 @@ int main(int argc, char* argv[])
 		}
 
 
-		OW_CIMUrl nsurl(url);
-		OW_CIMNameSpace toCreate(url, ns);
+		OW_String toCreate(ns);
 
 		cout << "Creating namespace (" << ns << ")" << endl;
 		rch->createNameSpace(toCreate);

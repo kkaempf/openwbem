@@ -68,6 +68,7 @@ Refactorings:
       commonly used classes.
     - XMLExecute has handling of flags like localonly, etc.  remove this
       and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
+    - Add empty() call to OW_String and change all length() == 0 to empty()
 
 Documentation:
     - Write developer documentation (similar to "SNIA CIM Object Manager 

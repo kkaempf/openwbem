@@ -253,7 +253,7 @@ OW_NameSpaceProvider::createInstance(
 	env->getLogger()->logDebug(format("OW_NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
 
-	env->getCIMOMHandle()->createNameSpace(OW_CIMNameSpace(OW_CIMUrl(), newNameSpace));
+	env->getCIMOMHandle()->createNameSpace(newNameSpace);
 
 	return cop;
 }

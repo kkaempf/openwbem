@@ -668,9 +668,7 @@ void createNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing createNameSpace() *******\n" << endl;
 	try
 	{
-		OW_CIMNameSpace ns(true);
-		ns.setNameSpace("/root/acltest/Caldera");
-		hdl.createNameSpace(ns);
+		hdl.createNameSpace("/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

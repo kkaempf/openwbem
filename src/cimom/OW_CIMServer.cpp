@@ -410,16 +410,15 @@ OW_CIMServer::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::createNameSpace(const OW_CIMNameSpace& ns,
+OW_CIMServer::createNameSpace(const OW_String& ns,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_String nsName = ns.getNameSpace();
-	if(nsName.length() == 0)
+	if(ns.length() == 0)
 	{
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
 
-	OW_StringArray nameComps = nsName.tokenize("/");
+	OW_StringArray nameComps = ns.tokenize("/");
 
 	OW_String parns;
 	size_t sz = nameComps.size() - 1;
@@ -436,12 +435,12 @@ OW_CIMServer::createNameSpace(const OW_CIMNameSpace& ns,
 	// Check to see if user has rights to create the namespace
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATENAMESPACE, parns, aclInfo);
 
-	m_env->logDebug(format("OW_CIMServer creating namespace: %1", nsName));
+	m_env->logDebug(format("OW_CIMServer creating namespace: %1", ns));
 
 	if(m_nStore.createNameSpace(nameComps) == -1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS,
-			ns.getNameSpace().c_str());
+			ns.c_str());
 	}
 
 	m_iStore.createNameSpace(nameComps, true);

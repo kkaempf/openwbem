@@ -1291,12 +1291,8 @@ createNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace ns(true);
-		ns.setNameSpace("/root/Caldera");
-		hdl.createNameSpace(ns);
-
-		ns.setNameSpace("/root/Caldera/test");
-		hdl.createNameSpace(ns);
+		hdl.createNameSpace("/root/Caldera");
+		hdl.createNameSpace("/root/Caldera/test");
 	}
 	catch (OW_CIMException& e)
 	{
