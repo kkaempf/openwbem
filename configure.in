@@ -336,6 +336,8 @@ netinet/in.h \
 sys/un.h \
 stropts.h \
 alloca.h \
+sys/types.h \
+pwd.h \
 )
 
 # check for C++ headers
