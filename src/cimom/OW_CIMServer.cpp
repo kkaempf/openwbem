@@ -1487,7 +1487,7 @@ OW_CIMServer::createInstance(
 				}
 			}
 
-			_validatePropagatedKeys(ns, lci, theClass);
+// This is broken			_validatePropagatedKeys(ns, lci, theClass);
 			m_iStore.createInstance(ns, theClass, lci);
 		}
 
@@ -3070,6 +3070,8 @@ OW_CIMServer::_isDynamicAssoc(const OW_CIMClass& cc)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// This is broken
+#if 0
 void
 OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 	const OW_CIMInstance& ci, const OW_CIMClass& theClass)
@@ -3174,6 +3176,7 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 		it++;
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 void

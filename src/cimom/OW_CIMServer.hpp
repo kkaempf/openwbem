@@ -718,8 +718,8 @@ private:
 	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_CIMClass& cls);
 	OW_PropertyProviderIFCRef _getPropertyProvider(const OW_CIMProperty& cls);
 
-	void _validatePropagatedKeys(const OW_String& ns,
-		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
+//	void _validatePropagatedKeys(const OW_String& ns,
+//		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
 
 	void _setProviderProperties(const OW_String& ns,
 		const OW_CIMInstance& ci, const OW_CIMClass& theClass,
