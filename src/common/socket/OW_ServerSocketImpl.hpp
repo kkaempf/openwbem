@@ -81,7 +81,7 @@ private:
 	SocketAddress m_localAddress;
 	bool m_isActive;
 	ServerSocketImpl(const ServerSocketImpl& arg);
-	ServerSocketImpl operator=(const ServerSocketImpl& arg);
+	ServerSocketImpl& operator=(const ServerSocketImpl& arg);
 	SocketFlags::ESSLFlag m_isSSL;
 #if defined(OW_WIN32)
 	HANDLE m_event;

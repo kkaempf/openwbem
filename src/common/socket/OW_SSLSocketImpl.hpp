@@ -81,7 +81,7 @@ private:
 	SSL* m_ssl;
 	BIO* m_sbio;
 	SSLSocketImpl(const SSLSocketImpl& arg);
-	SSLSocketImpl operator =(const SSLSocketImpl& arg);
+	SSLSocketImpl& operator =(const SSLSocketImpl& arg);
 };
 
 } // end namespace OpenWBEM

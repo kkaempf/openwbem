@@ -63,7 +63,7 @@ class HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 		HTTPChunkedIStream* m_pChunker;
 		// don't allow copying.
 		HTTPChunkedIStreamBuffer(const HTTPChunkedIStreamBuffer&);
-		HTTPChunkedIStreamBuffer operator=(const HTTPChunkedIStreamBuffer&);
+		HTTPChunkedIStreamBuffer& operator=(const HTTPChunkedIStreamBuffer&);
 };
 class HTTPChunkedIStreamBase 
 {
