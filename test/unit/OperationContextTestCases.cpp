@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,65 +27,38 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_OPERATION_CONTEXT_HPP_INCLUDE_GUARD_
-#define OW_OPERATION_CONTEXT_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Reference.hpp"
-#include "OW_SortedVectorMap.hpp"
-#include "OW_Exception.hpp"
+#include "TestSuite.hpp"
+#include "TestCaller.hpp"
+#include "OperationContextTestCases.hpp"
+#include "OW_OperationContext.hpp"
 
-namespace OpenWBEM
+using namespace OpenWBEM;
+
+void OperationContextTestCases::setUp()
 {
+}
 
-class UserInfo;
-
-OW_DECLARE_EXCEPTION(ContextDataNotFound);
-
-/////////////////////////////////////////////////////////////////////////////
-class OperationContext
+void OperationContextTestCases::tearDown()
 {
-public:
-	
-	class Data {
-	public:
-		virtual ~Data(); // subclasses can clean-up & free memory
-	};
+}
 
-	typedef Reference<Data> DataRef;
-	
-	OperationContext();
+void OperationContextTestCases::testStringData()
+{
+	OperationContext context;
+	context.setStringData("key", "value");
+	String val;
+	unitAssertNoThrow(val = context.getStringData("key"));
+	unitAssert(val == "value");
+}
 
-	// caller creats a subclass of Data and passes it in.
-	void setData(const String& key, const DataRef& data);
-	
-	// caller uses Reference::cast_to<>() on the return value to attempt to
-	// recover the original type passed into storeData.
-	DataRef getData(const String& key) const;
-	
-	// These are be for convenience, and are implemented in terms of
-	// the first 2 functions.
-	void setStringData(const String& key, const String& str);
-	// @throws ContextDataNotFound if key is not found
-	String getStringData(const String& key) const;
-	
-	// Keys values we use.
-	static const char* const USER_NAME;
-	static const char* const HTTP_PATH;
+Test* OperationContextTestCases::suite()
+{
+	TestSuite *testSuite = new TestSuite ("OperationContext");
 
-	UserInfo getUserInfo() const;
+	ADD_TEST_TO_SUITE(OperationContextTestCases, testStringData);
 
-private:
-	SortedVectorMap<String, DataRef> m_data;
-
-
-	// non-copyable
-	OperationContext(const OperationContext&);
-	OperationContext& operator=(const OperationContext&);
-};
-
-} // end namespace OpenWBEM
-
-#endif
-
+	return testSuite;
+}
 

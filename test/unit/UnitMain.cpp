@@ -35,6 +35,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OperationContextTestCases.hpp"
 #include "MOFCompilerTestCases.hpp"
 #include "OW_HTTPUtilsTestCases.hpp"
 #include "OW_CIMDateTimeTestCases.hpp"
@@ -88,6 +89,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OperationContext", OperationContextTestCases::suite());
 	runner.addTest( "MOFCompiler", MOFCompilerTestCases::suite());
 	runner.addTest( "OW_HTTPUtils", OW_HTTPUtilsTestCases::suite());
 	runner.addTest( "OW_CIMDateTime", OW_CIMDateTimeTestCases::suite());
