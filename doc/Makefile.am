@@ -8,6 +8,7 @@ HowToCreateAMinimalOpenWBEM \
 PORTING.txt \
 ProviderInterface.HOWTO \
 openwbem-faq.html \
-pg.tex
+pg.tex \
+PerlIFC.sxw
 
 
