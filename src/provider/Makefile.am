@@ -10,6 +10,8 @@ OW_SHARED_LIBS = libowprovider.so
 
 noinst_LIBRARIES = libowprovider.a
 
+thelibdir = $(libdir)
+
 if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_PROVIDER_S=
 else
