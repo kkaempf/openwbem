@@ -68,6 +68,7 @@ RemoteSecondaryInstanceProvider::~RemoteSecondaryInstanceProvider()
 {
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void 
 RemoteSecondaryInstanceProvider::modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, 
@@ -130,6 +131,7 @@ RemoteSecondaryInstanceProvider::deleteInstance(const ProviderEnvironmentIFCRef 
 		// dont: OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -199,6 +201,7 @@ RemoteSecondaryInstanceProvider::filterInstances(const ProviderEnvironmentIFCRef
 	}
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
@@ -229,6 +232,7 @@ RemoteSecondaryInstanceProvider::createInstance(const ProviderEnvironmentIFCRef 
 		// dont: OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
 } // end namespace OpenWBEM
