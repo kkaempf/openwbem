@@ -39,61 +39,95 @@
 #include "OW_ACLInfo.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
+struct OW_NotifyTrans
+{
+	OW_NotifyTrans() : m_provider(0) {}
+
+	OW_NotifyTrans(
+		const OW_String& ns,
+		const OW_CIMInstance& indication,
+		const OW_CIMInstance& handler,
+		const OW_IndicationExportProviderIFCRef provider) :
+			m_ns(ns), m_indication(indication), m_handler(handler), m_provider(provider) {}
+
+	OW_String m_ns;
+	OW_CIMInstance m_indication;
+	OW_CIMInstance m_handler;
+	OW_IndicationExportProviderIFCRef m_provider;
+};
+
+//////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class IndicationServerProviderEnvironment : public OW_ProviderEnvironmentIFC
+//////////////////////////////////////////////////////////////////////////////
+class OW_Notifier : public OW_Runnable
+{
+public:
+	OW_Notifier(OW_IndicationServerImpl* pmgr, OW_NotifyTrans& ntrans, OW_ACLInfo const& aclInfo) :
+		m_pmgr(pmgr), m_trans(ntrans), m_aclInfo(aclInfo) {}
+
+	void start();
+
+	virtual void run();
+
+private:
+	OW_IndicationServerImpl* m_pmgr;
+	OW_NotifyTrans m_trans;
+	OW_ACLInfo m_aclInfo;
+};
+
+class IndicationServerProviderEnvironment : public OW_ProviderEnvironmentIFC
+{
+public:
+
+	IndicationServerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
+		OW_CIMOMEnvironmentRef env)
+		: OW_ProviderEnvironmentIFC()
+		, m_ch(ch)
+		, m_env(env)
+	{}
+
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
 	{
-	public:
-
-		IndicationServerProviderEnvironment(const OW_CIMOMHandleIFCRef& ch,
-			OW_CIMOMEnvironmentRef env)
-			: OW_ProviderEnvironmentIFC()
-			, m_ch(ch)
-			, m_env(env)
-		{}
-
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
-		{
-			return m_ch;
-		}
-
-		virtual OW_String getConfigItem(const OW_String& name) const
-		{
-			return m_env->getConfigItem(name);
-		}
-		
-		virtual OW_LoggerRef getLogger() const
-		{
-			return m_env->getLogger();
-		}
-
-	private:
-		OW_CIMOMHandleIFCRef m_ch;
-		OW_CIMOMEnvironmentRef m_env;
-	};
-
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
-		const OW_CIMOMHandleIFCRef& ch)
-	{
-		return OW_ProviderEnvironmentIFCRef(
-			new IndicationServerProviderEnvironment(ch, env));
+		return m_ch;
 	}
 
-	class runCountDecrementer : public OW_ThreadDoneCallback
+	virtual OW_String getConfigItem(const OW_String& name) const
 	{
-	public:
-		runCountDecrementer(OW_IndicationServerImpl* i_)
-		: i(i_)
-		{}
-	protected:
-		virtual void doNotifyThreadDone(OW_Thread *)
-		{
-			i->decRunCount();
-		}
-	private:
-		OW_IndicationServerImpl* i;
-	};
+		return m_env->getConfigItem(name);
+	}
+	
+	virtual OW_LoggerRef getLogger() const
+	{
+		return m_env->getLogger();
+	}
+
+private:
+	OW_CIMOMHandleIFCRef m_ch;
+	OW_CIMOMEnvironmentRef m_env;
+};
+
+OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
+	const OW_CIMOMHandleIFCRef& ch)
+{
+	return OW_ProviderEnvironmentIFCRef(
+		new IndicationServerProviderEnvironment(ch, env));
 }
+
+class runCountDecrementer : public OW_ThreadDoneCallback
+{
+public:
+	runCountDecrementer(OW_IndicationServerImpl* i_)
+	: i(i_)
+	{}
+protected:
+	virtual void doNotifyThreadDone(OW_Thread *)
+	{
+		i->decRunCount();
+	}
+private:
+	OW_IndicationServerImpl* i;
+};
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -113,17 +147,16 @@ OW_Notifier::start()
 void
 OW_Notifier::run()
 {
-	OW_ACLInfo aclInfo;
 	OW_CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
-	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle(aclInfo, false);
+	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle(m_aclInfo, false);
 
-	while(true)
+	while (true)
 	{
 		try
 		{
-			m_trans->m_provider->exportIndication(createProvEnvRef(
-				m_pmgr->getEnvironment(), lch), m_trans->m_ns, m_trans->m_handler,
-				m_trans->m_indication);
+			m_trans.m_provider->exportIndication(createProvEnvRef(
+				m_pmgr->getEnvironment(), lch), m_trans.m_ns, m_trans.m_handler,
+				m_trans.m_indication);
 		}
 		catch(OW_Exception& e)
 		{
@@ -136,26 +169,20 @@ OW_Notifier::run()
 		{
 			env->logError("Unknown exception caught in OW_Notifier::run");
 		}
-
-		// delete the transaction before we notifyDone, to avoid a race
-		// condition between the transaction destructor and the CIMOM unloading
-		// the indication library.
-		m_trans.reset();
-		OW_NotifyTrans* t = 0;
-		if(!m_pmgr->notifyDone(t))
+		if(!m_pmgr->getNewTrans(m_trans))
 		{
 			break;
 		}
-		m_trans = t;
 	}
 }
+
+} // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationServerImpl::OW_IndicationServerImpl()
 	: OW_IndicationServer()
-	, m_runCount(0)
 	, m_shuttingDown(false)
-	, m_running(false)
+	, m_runCount(0)
 {
 }
 
@@ -211,65 +238,52 @@ OW_IndicationServerImpl::~OW_IndicationServerImpl()
 void
 OW_IndicationServerImpl::run()
 {
-	m_shuttingDown = false;
-	m_running = true;
-	m_wakeEvent.reset();
-
-	while(!m_shuttingDown)
 	{
-		m_wakeEvent.waitForSignal();
-		m_wakeEvent.reset();
-
-		try
+		OW_MutexLock l(m_mainLoopGuard);
+		while(!m_shuttingDown)
 		{
-			OW_MutexLock ml(m_procTransGuard);
-			while(m_procTrans.size() > 0 && !m_shuttingDown)
+			m_mainLoopCondition.wait(l);
+			
+			try
 			{
-				ProcIndicationTrans trans = m_procTrans[0];
-				m_procTrans.remove(0);
-				
-				ml.release();
-				_processIndication(trans.instance, trans.nameSpace);
-				ml.lock();
+				while(!m_procTrans.empty() && !m_shuttingDown)
+				{
+					ProcIndicationTrans trans = m_procTrans.front();
+					m_procTrans.pop_front();
+
+					l.release();
+					_processIndication(trans.instance, trans.nameSpace);
+					l.lock();
+				}
+			}
+			catch(...)
+			{
+				m_env->logError("OW_IndicationServerImpl::run caught unknown"
+					" exception");
+				// Ignore?
 			}
 		}
-		catch(...)
-		{
-			m_env->logError("OW_IndicationServerImpl::run caught unknown"
-				" exception");
-			// Ignore?
-		}
-
-		if(m_shuttingDown)
-		{
-			m_env->logDebug("OW_IndicationServerImpl::run shutting down");
-			break;
-		}
 	}
 
-	// Wait for notify manager to complete any pending notifications
-	while(getRunCount() > 0)
+	m_env->logDebug("OW_IndicationServerImpl::run shutting down");
+
+	// Wait for OW_Notifier threads to complete any pending notifications
 	{
-		OW_Thread::yield();
+		OW_MutexLock runCountLock(m_runCountGuard);
+		while(getRunCount() > 0)
+		{
+			m_runCountCondition.wait(runCountLock);
+		}
 	}
-
-	m_running = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::shutdown()
 {
-	if(m_running)
-	{
-		m_shuttingDown = true;
-		m_wakeEvent.signal();
-		while(m_running)
-		{
-			OW_Thread::yield();
-		}
-		OW_Thread::yield();
-	}
+	OW_MutexLock l(m_mainLoopGuard);
+	m_shuttingDown = true;
+	m_mainLoopCondition.notifyOne();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -277,10 +291,10 @@ void
 OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 	const OW_String& instNS)
 {
-	OW_MutexLock ml(m_procTransGuard);
+	OW_MutexLock ml(m_mainLoopGuard);
 	ProcIndicationTrans trans(instanceArg, instNS);
 	m_procTrans.push_back(trans);
-	m_wakeEvent.signal();
+	m_mainLoopCondition.notifyOne();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -321,6 +335,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	//		2. Don't start with the subscriptions.  Get the filters, and test
 	//			each filter.  If the filter passes, call associators to get
 	//			the handler instances and then deliver the indication.
+	//		3. Cache the compiled filters to avoid redundant work.
 	//	Gotcha: We'll need to make sure that we're re-entrant if the
 	//		enumInstances callback calls associators.
 
@@ -468,36 +483,35 @@ OW_IndicationServerImpl::addTrans(
 	const OW_CIMInstance& indication,
 	const OW_CIMInstance& handler, OW_IndicationExportProviderIFCRef provider)
 {
-	OW_MutexLock ml(m_guard);
+	OW_MutexLock ml(m_transGuard);
 
 	OW_NotifyTrans trans(ns, indication, handler, provider);
 	if(getRunCount() < MAX_NOTIFIERS)
 	{
-		OW_Notifier* pnotifier = new OW_Notifier(this, trans);
+		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_ACLInfo());
 		incRunCount();
 		pnotifier->start();
 	}
 	else
 	{
-		m_trans.append(trans);
+		m_trans.push_back(trans);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_IndicationServerImpl::notifyDone(OW_NotifyTrans*& outTrans)
+bool
+OW_IndicationServerImpl::getNewTrans(OW_NotifyTrans& outTrans)
 {
-	OW_MutexLock ml(m_guard);
+	OW_MutexLock ml(m_transGuard);
 
-	OW_Bool rv = false;
-	if(m_trans.size() > 0)
+	if(!m_trans.empty())
 	{
-		outTrans = new OW_NotifyTrans(m_trans[0]);
-		m_trans.remove(0);
-		rv = true;
+		outTrans = m_trans.front();
+		m_trans.pop_front();
+		return true;
 	}
 
-	return rv;
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -532,12 +546,5 @@ getOWVersion()
 {
 	return OW_VERSION;
 }
-/*
-#include <stdio.h>
-extern "C"
-void _fini(void)
-{
-	printf("_fini of indication server lib");
-}
-*/
+
 

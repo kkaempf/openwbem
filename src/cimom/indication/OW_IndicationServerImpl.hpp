@@ -34,55 +34,18 @@
 #include "OW_Types.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Map.hpp"
-#include "OW_Array.hpp"
+#include "OW_List.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_Thread.hpp"
-#include "OW_ThreadEvent.hpp"
+#include "OW_Condition.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_AutoPtr.hpp"
 
-class OW_IndicationServerImpl;
 
-//////////////////////////////////////////////////////////////////////////////
-struct OW_NotifyTrans
-{
-	OW_NotifyTrans() : m_provider(0) {}
-
-	OW_NotifyTrans(
-		const OW_String& ns,
-		const OW_CIMInstance& indication,
-		const OW_CIMInstance& handler,
-		const OW_IndicationExportProviderIFCRef provider) :
-			m_ns(ns), m_indication(indication), m_handler(handler), m_provider(provider) {}
-
-	OW_String m_ns;
-	OW_CIMInstance m_indication;
-	OW_CIMInstance m_handler;
-	OW_IndicationExportProviderIFCRef m_provider;
-};
-
-//////////////////////////////////////////////////////////////////////////////
-class OW_Notifier : public OW_Runnable
-{
-public:
-	OW_Notifier(OW_IndicationServerImpl* pmgr, OW_NotifyTrans& ntrans) :
-		m_pmgr(pmgr), m_trans(new OW_NotifyTrans(ntrans)) {}
-
-	void start();
-
-	virtual void run();
-
-private:
-	OW_IndicationServerImpl* m_pmgr;
-	OW_AutoPtr<OW_NotifyTrans> m_trans; // This is an AutoPtr so we can delete
-	// the transaction before we notifyDone, to avoid a race
-	// condition between the transaction destructor and the CIMOM unloading
-	// the indication library.
-
-};
+class OW_NotifyTrans;
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_IndicationServerImpl : public OW_IndicationServer
@@ -105,10 +68,23 @@ public:
 		const OW_String& instNS);
 
 	int getRunCount() { OW_MutexLock ml(m_runCountGuard); return m_runCount; }
-	void incRunCount() { OW_MutexLock ml(m_runCountGuard); ++m_runCount; }
-	void decRunCount() { OW_MutexLock ml(m_runCountGuard); --m_runCount; }
+	void incRunCount() 
+	{ 
+		OW_MutexLock ml(m_runCountGuard); 
+		++m_runCount; 
+		m_runCountCondition.notifyOne(); 
+	}
+
+	void decRunCount() 
+	{ 
+		OW_MutexLock ml(m_runCountGuard); 
+		--m_runCount; 
+		m_runCountCondition.notifyOne(); 
+	}
 
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
+
+	bool getNewTrans(OW_NotifyTrans& outTrans);
 
 private:
 
@@ -122,8 +98,6 @@ private:
 
 	OW_IndicationExportProviderIFCRef getProvider(const OW_String& className);
 
-	OW_Bool notifyDone(OW_NotifyTrans*& outTrans);
-
 	struct ProcIndicationTrans
 	{
 		ProcIndicationTrans(const OW_CIMInstance& inst,
@@ -135,21 +109,29 @@ private:
 		OW_String nameSpace;
 	};
 
-	int m_runCount;
 	OW_Map<OW_String, OW_IndicationExportProviderIFCRef> m_providers;
-	OW_Array<OW_NotifyTrans> m_trans;
-	OW_Mutex m_guard;
+	
+	// m_procTrans is where new indications to be delivered are put.
+	// Both m_procTrans and m_shuttingDown are protected by the same condition
+	OW_List<ProcIndicationTrans> m_procTrans;
 	OW_Bool m_shuttingDown;
-	OW_ThreadEvent m_wakeEvent;
-	OW_Mutex m_procTransGuard;
-	OW_Mutex m_runCountGuard;
-	OW_Array<ProcIndicationTrans> m_procTrans;
-	OW_Bool m_running;
-	OW_CIMOMEnvironmentRef m_env;
+	OW_Mutex m_mainLoopGuard;
+	OW_Condition m_mainLoopCondition;
 
-	friend class OW_Notifier;
+	// This is where the indications get placed if the number of notify 
+	// threads maxes out, and they need to be pooled somewhere.
+	OW_List<OW_NotifyTrans> m_trans;
+	OW_Mutex m_transGuard;
+
+	// these 3 are grouped together.  m_runCount is the number of running 
+	// threads delivering indications.
+	int m_runCount;
+	OW_Mutex m_runCountGuard;
+	OW_Condition m_runCountCondition;
+
+	OW_CIMOMEnvironmentRef m_env;
 };
 
-#endif	// __OW_NOTIFYMANAGER_HPP__
+#endif
 
 
