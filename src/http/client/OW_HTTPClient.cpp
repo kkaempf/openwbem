@@ -80,8 +80,10 @@ HTTPClient::HTTPClient( const String &sURL )
 	m_istr.exceptions(std::ios::goodbit);
 	m_ostr.exceptions(std::ios::goodbit);
 
+#ifndef OW_WIN32
 	// TODO: figure out a better way to do this.
 	signal(SIGPIPE, SIG_IGN);
+#endif
 
 	setUrl();
 	addHeaderPersistent("Host", m_url.host);
@@ -201,7 +203,11 @@ void HTTPClient::setUrl()
 	if (m_url.port.equalsIgnoreCase(URL::OWIPC) 
 		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated in 3.0.0 and will be removed!
 	{
+#ifdef OW_WIN32
+		OW_THROW(SocketException, "IPC Method not currently available on Win32");
+#else
 		m_serverAddress = SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
+#endif
 	}
 	else if (isUInt16(m_url.port))
 	{
@@ -210,7 +216,11 @@ void HTTPClient::setUrl()
 	}
 	else // port may be a path to the UDS
 	{
+#ifdef OW_WIN32
+		OW_THROW(SocketException, "IPC Method not currently available on Win32");
+#else
 		m_serverAddress = SocketAddress::getUDS(HTTPUtils::unescapeForURL(m_url.port));
+#endif
 	}
 
 	if ((m_url.host == "localhost" || m_url.host == "127.0.0.1") && m_url.principal.empty() && m_url.credential.empty())
