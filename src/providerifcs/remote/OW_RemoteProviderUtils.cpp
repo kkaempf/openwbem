@@ -50,7 +50,7 @@ namespace RemoteProviderUtils
 {
 
 /////////////////////////////////////////////////////////////////////////////
-ClientCIMOMHandleRef getRemoteClientCIMOMHandle(const String& remoteUrl, 
+ClientCIMOMHandleRef getRemoteClientCIMOMHandle(String& remoteUrl, 
 	bool useConnectionCredentials, const ProviderEnvironmentIFCRef &env,
 	const ClientCIMOMHandleConnectionPoolRef& pool, bool alwaysSendCredentials)
 {
@@ -64,6 +64,7 @@ ClientCIMOMHandleRef getRemoteClientCIMOMHandle(const String& remoteUrl,
 			{
 				url.principal = env->getOperationContext().getStringData(OperationContext::USER_NAME);
 				url.credential = env->getOperationContext().getStringData("remote_provider.user_credentials");
+				remoteUrl = url.toString();
 			}
 			catch (ContextDataNotFoundException& e)
 			{
