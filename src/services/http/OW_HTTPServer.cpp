@@ -340,7 +340,19 @@ HTTPServer::startService()
 	}
 	if (m_options.httpsPort >= 0)
 	{
-#ifndef OW_NO_SSL
+#ifdef OW_NO_SSL
+            if (m_options.httpPort < 0 && !m_options.useUDS)
+            {
+                    OW_THROW(SocketException, "No ports to listen on.  "
+                            "SSL unavailable (OpenWBEM not built with SSL support) "
+                            "and no http port defined.");
+            }
+            else
+            {
+                lgr->logError(format("Unable to listen on port %1.  "
+                        "OpenWBEM not built with SSL support.", m_options.httpsPort));
+            }
+#else
 		try
 		{
 			String keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
