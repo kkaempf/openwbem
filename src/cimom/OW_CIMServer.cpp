@@ -1396,7 +1396,6 @@ OW_CIMServer::createInstance(
 	const OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMObjectPath rval(ci);
 
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, ns, aclInfo);
@@ -1427,6 +1426,8 @@ OW_CIMServer::createInstance(
 		// Make sure instance jives with class definition
 		OW_CIMInstance lci(ci);
 		lci.syncWithClass(theClass, false);
+
+		OW_CIMObjectPath rval(lci);
 
 		m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
 			"instance = %2", ns, lci.toMOF()));
