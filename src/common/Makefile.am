@@ -64,6 +64,7 @@ OW_TmpFile.cpp \
 OW_URL.cpp \
 OW_dlSharedLibrary.cpp \
 OW_dlSharedLibraryLoader.cpp \
+OW_Blob.cpp \
 OW_UnnamedPipe.cpp
 
 pkginclude_HEADERS =	\
@@ -131,6 +132,7 @@ OW_SignalScope.hpp \
 OW_dlSharedLibrary.hpp \
 OW_dlSharedLibraryLoader.hpp \
 OW_SharedLibraryReference.hpp \
+OW_Blob.hpp \
 OW_config.h
 
 libopenwbem_a_LIBADD = \

@@ -27,51 +27,74 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __NPIBASEPROVIDER_HPP__
-#define __NPIBASEPROVIDER_HPP__
 
 #include "OW_config.h"
-#include "NPIExternal.hpp"
-#include <Pegasus/Provider2/CIMInstanceProvider.h>
+#include "OW_Types.h"
+#include "OW_Blob.hpp"
 
+#include <cstring>
 
-PEGASUS_NAMESPACE_BEGIN
+using std::streambuf;
 
-class PEGASUS_PROVIDER_LINKAGE NPIBaseProvider : public virtual CIMBaseProvider
+//////////////////////////////////////////////////////////////////////////////
+OW_BlobOStreamBuf::OW_BlobOStreamBuf(int incSize)
+	: streambuf()
+	, m_incSize(incSize < MIN_INCSIZE ? MIN_INCSIZE : incSize)
+	, m_blob((OW_Blob*) ::malloc(m_incSize + sizeof(OW_Blob)))
+	, m_size(m_incSize)
+	, m_forgetMemory(false)
+
 {
-public:
+	m_blob->len = 0;
+}
 
-    NPIBaseProvider();
-    //virtual ~NPIBaseProvider();
-    ~NPIBaseProvider();
+//////////////////////////////////////////////////////////////////////////////
+OW_BlobOStreamBuf::~OW_BlobOStreamBuf()
+{
+	if(!m_forgetMemory)
+	{
+		::free(m_blob);
+	}
+}
 
-    //CIMBaseProvider Interface
-    virtual void initialize(CIMOMHandle & cimom) {}
-    virtual void terminate() {}
-    void NPI_initialize(CIMOMHandle & cimom, char * libraryName);
-    void NPI_terminate();
+//////////////////////////////////////////////////////////////////////////////
+OW_Blob*
+OW_BlobOStreamBuf::getBlob(OW_Bool forgetMemory)
+{
+	m_forgetMemory = forgetMemory;
+	return m_blob;
+}
 
-    // this function is introduced to be overloaded if necessary
+//////////////////////////////////////////////////////////////////////////////
+int 
+OW_BlobOStreamBuf::overflow(int c)
+{
+	if(m_blob->len == size_t(m_size))
+	{
+		m_size += m_incSize;
+		OW_Blob* blb = (OW_Blob*) malloc(m_size + 
+			sizeof(OW_Blob));
+		blb->len = m_blob->len;
+		::memcpy(blb->bfr, m_blob->bfr, m_blob->len);
+		::free(m_blob);
+		m_blob = blb;
+	}
 
-    char * getOperationContext();
-    void setOperationContext(char * oc);
+	m_blob->bfr[m_blob->len++] = (unsigned char) c;
+	return 0;
+}
 
-protected:
+//////////////////////////////////////////////////////////////////////////////
+void 
+OW_BlobOStreamBuf::clear()
+{
+	if(m_size != m_incSize)
+	{
+		::free(m_blob);
+		m_blob = (OW_Blob*) ::malloc(m_incSize + sizeof(OW_Blob));
+		m_size = m_incSize;
+	}
+	m_blob->len = 0;
+}
 
-    NPIHandle * _npiHandle;
-    CIMOMHandle _cimomHandle;
-    CIMRepository * _repository;
-    // necessary to construct cimomhandle with synchronous message queue
-    //MessageQueue * _NPIoutputQueue;
-    NPIenv * _env;
-    int _libraryCount;
-    void * _libraryHandle;
-    FTABLE _functionTable;
-
-    char * _operationContext; // needed for perl
-};
-
-PEGASUS_NAMESPACE_END
-
-#endif // __NPIBASEPROVIDER_HPP__
 

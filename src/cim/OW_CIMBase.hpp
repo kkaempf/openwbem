@@ -33,6 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ByteSwap.hpp"
+#include "OW_Blob.hpp"
 
 #include <iosfwd>
 
@@ -122,6 +123,19 @@ public:
 	 * @return The XML representation of this class as an OW_String.
 	 */
 	//OW_String convertToXML() const;
+
+	/**
+	 * Convert this object to an OW_Blob object.
+	 * @return A pointer to an OW_Blob object. The caller is responsible for
+	 *		freeing the memory returned from this call with ::free not delete.
+	 */
+	 virtual OW_Blob* toBlob() const;
+
+	 /**
+	  * Create this object from the contents of an OW_Blob
+	  * @param blob The OW_Blob object to initialize this object with.
+	  */
+	 virtual void fromBlob(OW_Blob* blob);
 };
 
 ///////////////////////////////////////////////////////////////////////////////

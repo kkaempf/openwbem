@@ -300,6 +300,17 @@ OW_String::~OW_String()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+char*
+OW_String::allocateCString(size_t extraBytes) const
+{
+	size_t len = length() + + extraBytes + 1;
+	char* str = new char[len];
+	::memset(str, 0, len);
+	::strcpy(str, c_str());
+	return str;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 size_t
 OW_String::length() const
 {

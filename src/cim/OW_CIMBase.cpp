@@ -52,17 +52,34 @@ OW_CIMBase::convertToXML() const
 }
 */
 
-
 //////////////////////////////////////////////////////////////////////////////		
 union OW_CIMSignature
 {
 	OW_UInt32	val;
-	char			chars[4];
+	char		chars[4];
 };
 
 //////////////////////////////////////////////////////////////////////////////		
+OW_Blob*
+OW_CIMBase::toBlob() const
+{
+	OW_BlobOStream ostrm;
+	writeObject(ostrm);
+	return ostrm.getBlob(true);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+void
+OW_CIMBase::fromBlob(OW_Blob* blob)
+{
+	OW_BlobIStream istrm(blob);
+	readObject(istrm);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
 // static
-void OW_CIMBase::readSig( istream& istr, const char* const sig )
+void
+OW_CIMBase::readSig( istream& istr, const char* const sig )
 {
 	OW_CIMSignature expected, read;
 	OW_ASSERT( strlen(sig) == 4 );
@@ -84,6 +101,8 @@ void OW_CIMBase::readSig( istream& istr, const char* const sig )
 				OW_String(read.chars, sizeof(read.chars)), sig).c_str() );
 	}
 }
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -38,23 +38,23 @@
 #endif
 
 typedef struct {
-    char * operationContext;
-    //Pegasus::CIMOMHandle * _cimomhandle;
-    Pegasus::CIMRepository * _cimomhandle;
-    Pegasus::OperationContext _context;
+    char* operationContext;
+	OW_CIMOMHandleIFCRef _cimomhandle;
+    //Pegasus::CIMRepository * _cimomhandle;
+    //Pegasus::OperationContext _context;
     Pegasus::String _nameSpace;
 } NPIenv;
 
 #define PROVIDER_ENTRY \
-_npiHandle->thisObject = (void *)CreateEnv(_repository, nameSpace); \
+_npiHandle->thisObject = (void *)createEnv(_repository, nameSpace); \
 ((NPIenv *)_npiHandle->thisObject)->operationContext = getOperationContext(); \
 handler.processing();
 
 #define PROVIDER_EXIT \
-DeleteEnv((NPIenv *)_npiHandle->thisObject); \
+deleteEnv((NPIenv *)_npiHandle->thisObject); \
 handler.complete();
 
 
-typedef Pegasus::Array<char *> charVect;
+typedef OW_Array<char *> charVect;
 
 #endif /* PegasusProvider_NPIProvider_h */
