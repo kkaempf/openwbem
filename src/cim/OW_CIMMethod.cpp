@@ -43,9 +43,8 @@ using std::istream;
 //////////////////////////////////////////////////////////////////////////////													
 struct OW_CIMMethod::METHData
 {
-	METHData() :
-		m_returnDatatype(true),
-		m_propagated(false)
+	METHData() 
+		: m_propagated(false)
 	{
 	}
 
@@ -337,7 +336,7 @@ void
 OW_CIMMethod::readObject(istream &istrm)
 {
 	OW_String name;
-	OW_CIMDataType returnDatatype;
+	OW_CIMDataType returnDatatype(OW_CIMNULL);
 	OW_CIMQualifierArray qualifiers;
 	OW_CIMParameterArray parameters;
 	OW_String originClass;

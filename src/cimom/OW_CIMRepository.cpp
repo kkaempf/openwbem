@@ -319,7 +319,7 @@ OW_CIMRepository::getClass(
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
 			m_env->logDebug(format("OW_CIMRepository got class: %1 from "
-				"namespace: %2", theClass.toMOF(), ns));
+				"namespace: %2", theClass.getName(), ns));
 		}
 
 		return theClass;

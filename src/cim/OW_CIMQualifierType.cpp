@@ -41,11 +41,6 @@ using std::ostream;
 
 struct OW_CIMQualifierType::QUALTData
 {
-	QUALTData()
-		: m_dataType(true)
-	{
-	}
-
 	OW_String m_name;
 	OW_CIMDataType m_dataType;
 	OW_CIMScopeArray m_scope;
@@ -367,7 +362,7 @@ void
 OW_CIMQualifierType::readObject(istream &istrm)
 {
 	OW_String name;
-	OW_CIMDataType dataType;
+	OW_CIMDataType dataType(OW_CIMNULL);
 	OW_CIMScopeArray scope;
 	OW_CIMFlavorArray flavor;
 	OW_CIMValue defaultValue;

@@ -34,6 +34,7 @@
 #include "OW_Bool.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
+#include "OW_CIMNULL.hpp"
 #include <iosfwd>
 
 class OW_String;
@@ -81,10 +82,14 @@ public:
 
 	/**
 	 * Create an OW_CIMDataType
-	 * @param notNull	If false, object will have a NULL implementation.
+	 */
+	OW_CIMDataType();
+
+	/**
+	 * Create a NULL OW_CIMDataType
 	 * No operations should be attempted on a NULL OW_CIMDataType.
 	 */
-	explicit OW_CIMDataType(OW_Bool notNull=OW_Bool(false));
+	explicit OW_CIMDataType(OW_CIMNULL_t);
 
 	/**
 	 * Create a new OW_CIMDataType object represent the given type.

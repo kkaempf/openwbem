@@ -73,23 +73,24 @@ bool operator<(const OW_CIMDataType::DTData& x, const OW_CIMDataType::DTData& y)
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(OW_Bool notNull) :
+OW_CIMDataType::OW_CIMDataType() :
+	OW_CIMBase(), m_pdata(new DTData)
+{
+	m_pdata->m_type = CIMNULL;
+	m_pdata->m_numberOfElements = 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDataType::OW_CIMDataType(OW_CIMNULL_t) :
 	OW_CIMBase(), m_pdata(NULL)
 {
-	if(notNull)
-	{
-		m_pdata = new DTData;
-		m_pdata->m_type = CIMNULL;
-		m_pdata->m_numberOfElements = 0;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type) :
-	OW_CIMBase(), m_pdata(NULL)
+	OW_CIMBase(), m_pdata(new DTData)
 {
 	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
-	m_pdata = new DTData;
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = 1;
 	m_pdata->m_sizeRange = SIZE_SINGLE;
@@ -97,11 +98,10 @@ OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type) :
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type, OW_Int32 size) :
-	OW_CIMBase(), m_pdata(NULL)
+	OW_CIMBase(), m_pdata(new DTData)
 {
 	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
 
-	m_pdata = new DTData;
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
 	m_pdata->m_sizeRange = m_pdata->m_numberOfElements >= 1 ? SIZE_LIMITED
@@ -443,7 +443,7 @@ OW_CIMDataType::getDataType(const OW_String& strType)
 {
 	if(strType.empty())
 	{
-		return OW_CIMDataType(true);
+		return OW_CIMDataType();
 	}
 
 	Type type = strToSimpleType(strType);
@@ -452,7 +452,7 @@ OW_CIMDataType::getDataType(const OW_String& strType)
 		return OW_CIMDataType(type);
 	}
 
-	return OW_CIMDataType();
+	return OW_CIMDataType(OW_CIMNULL);
 }
 
 bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y)

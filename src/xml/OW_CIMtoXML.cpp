@@ -999,13 +999,11 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	OW_CIMtoXMLFlags::local_only_flag const& localOnly)
 {
 	OW_CIMFlavor fv;
-	OW_CIMDataType dt;
-
+	
 	if(cq.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "qualifier must have a name");
 	}
-
 
 	//
 	// If only local definitions are required and this is a propagated
@@ -1019,7 +1017,7 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	}
 
 	OW_CIMValue dv = cq.getDefaults().getDefaultValue();
-	dt = cq.getDefaults().getDataType();
+	OW_CIMDataType dt = cq.getDefaults().getDataType();
 	OW_CIMValue cv = cq.getValue();
 	if(!cv)
 	{

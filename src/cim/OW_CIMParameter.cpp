@@ -39,9 +39,6 @@ using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMParameter::PARMData
 {
-	PARMData() :
-		m_dataType(true) {}
-
 	OW_String m_name;
 	OW_CIMDataType m_dataType;
 	OW_CIMQualifierArray m_qualifiers;
@@ -189,7 +186,7 @@ void
 OW_CIMParameter::readObject(istream &istrm)
 {
 	OW_String name;
-	OW_CIMDataType dataType;
+	OW_CIMDataType dataType(OW_CIMNULL);
 	OW_CIMQualifierArray qualifiers;
 
 	OW_CIMBase::readSig( istrm, OW_CIMPARAMETERSIG );

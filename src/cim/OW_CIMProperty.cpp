@@ -69,7 +69,7 @@ struct OW_CIMProperty::PROPData
 };
 
 OW_CIMProperty::PROPData::PROPData() :
-	m_propertyDataType(true), m_sizeDataType(-1), m_propagated(false)
+	m_sizeDataType(-1), m_propagated(false)
 {
 }
 
@@ -526,7 +526,7 @@ OW_CIMProperty::readObject(istream &istrm)
 	OW_String override;
 	OW_String originClass;
 	OW_CIMValue cimValue;
-	OW_CIMDataType propertyDataType;
+	OW_CIMDataType propertyDataType(OW_CIMNULL);
 	OW_Int32 sizeDataType;
 	OW_Bool propagated;
 	OW_CIMQualifierArray qualifiers;

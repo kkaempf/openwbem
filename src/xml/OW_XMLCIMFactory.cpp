@@ -706,7 +706,7 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 
 	OW_CIMQualifier rval(true);
 
-	OW_CIMDataType dt;
+	OW_CIMDataType dt(OW_CIMNULL);
 
 	OW_String name = parser.mustGetAttribute(OW_XMLParameters::paramName);
 
