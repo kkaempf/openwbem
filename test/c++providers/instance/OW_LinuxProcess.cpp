@@ -116,12 +116,12 @@ public:
 
 		OW_String cmd = "/bin/ps ax --no-heading -eo pid,vsize,pcpu,comm";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+		OW_String output = pos.out()->readAll();
 		if (pos.getExitStatus() != 0)
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
 		}
 
-		OW_String output = pos.out()->readAll();
 		OW_StringArray lines = output.tokenize("\n");
 		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); iter++)
@@ -175,12 +175,12 @@ public:
 		cmd += pid;
 		cmd += " --no-headers -o vsize,pcpu,comm";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+		OW_StringArray proc = pos.out()->readAll().tokenize();
 		if (pos.getExitStatus() != 0)
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 				"The Instance does not (any longer) exist");
 		}
-		OW_StringArray proc = pos.out()->readAll().tokenize();
 		inst.setProperty(OW_String("Name"), OW_CIMValue(proc[2]));
 		try
 		{
