@@ -95,7 +95,8 @@ OWBI1_SecondaryInstanceProviderIFC.cpp \
 OWBI1_ReadOnlyInstanceProviderIFC.cpp
 
 
-pkginclude_HEADERS = \
+owbi1includedir=$(includedir)/owbi1
+owbi1include_HEADERS = \
 common/OWBI1_SortedVectorSet.hpp \
 cim/OWBI1_CIMParamValue.hpp \
 common/OWBI1_SessionLanguage.hpp \
