@@ -28,19 +28,19 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_MUTEX_IMPL_INCLUDE_GUARD_HPP_
-#define OW_MUTEX_IMPL_INCLUDE_GUARD_HPP_
+#ifndef OW_NON_RECURSIVE_MUTEX_IMPL_INCLUDE_GUARD_HPP_
+#define OW_NON_RECURSIVE_MUTEX_IMPL_INCLUDE_GUARD_HPP_
 
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 
 /**
- * The OW_MutexImpl class represents the functionality needed by the
- * OpenWbem Mutex class (OW_Mutex). The implementation for this class
+ * The OW_NonRecursiveMutexImpl class represents the functionality needed by the
+ * OpenWbem non recursive Mutex class (OW_NonRecursiveMutex). The implementation for this class
  * must be provided on all platforms that OpenWbem runs on. It is essentially
  * an abstraction layer over another mutex implementation.
  */
-class OW_MutexImpl
+class OW_NonRecursiveMutexImpl
 {
 public:
 
@@ -50,7 +50,7 @@ public:
 	 * @param isRecursive Specified whether to create a recursive mutex
 	 * @return 0 on success. Otherwise -1.
 	 */
-	static int createMutex(OW_Mutex_t& handle);
+	static int createMutex(OW_NonRecursiveMutex_t& handle);
 
 	/**
 	 * Destroy a mutex previously created with createMutex.
@@ -61,7 +61,7 @@ public:
 	 *				locked.
 	 *		-2:	All other error conditions
 	 */
-	static int destroyMutex(OW_Mutex_t& handle);
+	static int destroyMutex(OW_NonRecursiveMutex_t& handle);
 
 	/**
 	 * Acquire the mutex specified by a given mutex handle. This method should
@@ -71,7 +71,7 @@ public:
 	 * @param handle The mutex to acquire.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int acquireMutex(OW_Mutex_t& handle);
+	static int acquireMutex(OW_NonRecursiveMutex_t& handle);
 
 	/**
 	 * Release a mutex that was previously acquired with the acquireMutex
@@ -79,8 +79,10 @@ public:
 	 * @param handle The handle to the mutex that is being released.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int releaseMutex(OW_Mutex_t& handle);
+	static int releaseMutex(OW_NonRecursiveMutex_t& handle);
 	
+	static int conditionPreWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state);
+	static int conditionPostWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state);
 };
 
 #endif

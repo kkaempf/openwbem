@@ -30,7 +30,7 @@
 
 #include "OW_config.h"
 #include "OW_PollingManager.hpp"
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Format.hpp"
@@ -122,7 +122,7 @@ OW_PollingManager::run()
 
 	{
 		// Get initial polling interval from all polled providers
-		OW_MutexLock ml(m_triggerGuard);
+		OW_NonRecursiveMutexLock ml(m_triggerGuard);
 
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
@@ -145,7 +145,7 @@ OW_PollingManager::run()
 	}
 
 	{
-		OW_MutexLock l(m_triggerGuard);
+		OW_NonRecursiveMutexLock l(m_triggerGuard);
 		while (!m_shuttingDown)
 		{
 			OW_Bool rightNow;
@@ -183,8 +183,6 @@ OW_PollingManager::calcSleepTime(OW_Bool& rightNow, OW_Bool doInit)
 	time_t leastTime = LONG_MAX;
 	int checkedCount = 0;
 
-	OW_MutexLock ml(m_triggerGuard);
-
 	for(size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
 		if(m_triggerRunners[i].m_isRunning
@@ -219,8 +217,6 @@ OW_PollingManager::calcSleepTime(OW_Bool& rightNow, OW_Bool doInit)
 void
 OW_PollingManager::processTriggers()
 {
-	OW_MutexLock ml(m_triggerGuard);
-
 	OW_DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
@@ -251,7 +247,7 @@ void
 OW_PollingManager::shutdown()
 {
 	{
-		OW_MutexLock l(m_triggerGuard);
+		OW_NonRecursiveMutexLock l(m_triggerGuard);
 		m_shuttingDown = true;
 		m_triggerCondition.notifyAll();
 	}
@@ -263,7 +259,7 @@ OW_PollingManager::shutdown()
 void
 OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 {
-	OW_MutexLock l(m_triggerGuard);
+	OW_NonRecursiveMutexLock l(m_triggerGuard);
 	if (m_shuttingDown)
 		return;
 
@@ -335,7 +331,7 @@ OW_PollingManager::TriggerRunner::run()
 		m_env->logError("Caught Unknown Exception while running poll");
 	}
 
-	OW_MutexLock l(m_pollMan->m_triggerGuard);
+	OW_NonRecursiveMutexLock l(m_pollMan->m_triggerGuard);
 
 	if(nextInterval == 0 || m_pollInterval == 0) // m_pollInterval == 0 means this poller has been instructed to stop
 	{

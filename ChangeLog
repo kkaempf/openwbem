@@ -1,3 +1,6 @@
+Thu Mar 27 21:28:31 MST 2003
+- Created a non-recursive mutex, and use it with condition variables,
+
 Mon Feb 10 17:00:23 MST 2003    
 - Made it harder to create NULL CIM objects.  Removed the bool constructor
   and add a explicit OW_CIMNULL_t constructor.  (e.g. OW_CIMClass c; won't

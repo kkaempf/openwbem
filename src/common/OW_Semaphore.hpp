@@ -33,9 +33,9 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_Mutex.hpp"
+#include "OW_NonRecursiveMutex.hpp"
 #include "OW_Condition.hpp"
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 class OW_Semaphore
 {
@@ -49,7 +49,7 @@ public:
 
 	void wait()
 	{
-		OW_MutexLock l(m_mutex);
+		OW_NonRecursiveMutexLock l(m_mutex);
 
 		while (m_curCount <= 0)
 		{
@@ -63,7 +63,7 @@ public:
 	{
 		bool ret = true;
 
-		OW_MutexLock l(m_mutex);
+		OW_NonRecursiveMutexLock l(m_mutex);
 
 		while (m_curCount <= 0 && ret == true)
 		{
@@ -80,14 +80,14 @@ public:
 
 	void signal()
 	{
-		OW_MutexLock l(m_mutex);
+		OW_NonRecursiveMutexLock l(m_mutex);
 		++m_curCount;
 		m_cond.notifyAll();
 	}
 
 	OW_Int32 getCount()
 	{
-		OW_MutexLock l(m_mutex);
+		OW_NonRecursiveMutexLock l(m_mutex);
 		return m_curCount;
 	}
 
@@ -95,7 +95,7 @@ private:
 	OW_Int32 m_curCount;
 
 	OW_Condition m_cond;
-	OW_Mutex m_mutex;
+	OW_NonRecursiveMutex m_mutex;
 
 	// noncopyable
 	OW_Semaphore(const OW_Semaphore&);

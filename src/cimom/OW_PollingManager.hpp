@@ -86,7 +86,7 @@ private:
 
 	OW_Array<TriggerRunner> m_triggerRunners;
 	OW_Bool m_shuttingDown;
-	OW_Mutex m_triggerGuard;
+	OW_NonRecursiveMutex m_triggerGuard;
 	OW_Condition m_triggerCondition;
 	
 	OW_ThreadCounterRef m_threadCount;
@@ -95,7 +95,9 @@ private:
 
 	OW_Semaphore* m_startedSem;
 
+    // m_triggerGuard must be locked before calling this function.
 	OW_UInt32 calcSleepTime(OW_Bool& rightNow, OW_Bool doInit);
+    // m_triggerGuard must be locked before calling this function.
 	void processTriggers();
 
 	friend class TriggerRunner;

@@ -27,46 +27,76 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_CONDITION_HPP_INCLUDE_GUARD_
-#define OW_CONDITION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_ThreadTypes.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_ThreadImpl.hpp"
+#include "OW_Assertion.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Types.h"
+#include "OW_Format.hpp"
+#include "OW_NonRecursiveMutexImpl.hpp"
 
-class OW_NonRecursiveMutexLock;
-class OW_NonRecursiveMutex;
+#include <cstring>
 
-DECLARE_EXCEPTION(ConditionLock);
-DECLARE_EXCEPTION(ConditionResource);
 
-class OW_Condition
+DEFINE_EXCEPTION(Deadlock)
+
+OW_NonRecursiveMutex::OW_NonRecursiveMutex()
 {
-public:
-	OW_Condition();
-	~OW_Condition();
+	if(OW_NonRecursiveMutexImpl::createMutex(m_mutex) != 0)
+	{
+		OW_THROW(OW_Assertion, "OW_NonRecursiveMutexImpl::createMutex failed");
+	}
+}
 
-	void notifyOne();
-	void notifyAll();
-
-	void wait(OW_NonRecursiveMutexLock& lock);
-
-	// returns true if the lock was acquired, false if timeout occurred
-	bool timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
-
-private:
-
-	// unimplemented
-	OW_Condition(const OW_Condition&);
-	OW_Condition& operator=(const OW_Condition&);
+OW_NonRecursiveMutex::~OW_NonRecursiveMutex()
+{
+	if(OW_NonRecursiveMutexImpl::destroyMutex(m_mutex) == -1)
+	{
+		OW_NonRecursiveMutexImpl::releaseMutex(m_mutex);
+		OW_NonRecursiveMutexImpl::destroyMutex(m_mutex);
+	}
+}
 
 
-	void doWait(OW_NonRecursiveMutex& mutex);
-	bool doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	OW_ConditionVar_t m_condition;
-};
+void 
+OW_NonRecursiveMutex::acquire()
+{
+	int rv = OW_NonRecursiveMutexImpl::acquireMutex(m_mutex);
+	if (rv != 0)
+	{
+		OW_THROW(OW_Assertion,
+			"OW_NonRecursiveMutexImpl::acquireMutex returned with error");
+	}
+}
 
-#endif
 
+bool
+OW_NonRecursiveMutex::release()
+{
+    int rc = OW_NonRecursiveMutexImpl::releaseMutex(m_mutex);
+	if (rc != 0)
+	{
+		OW_THROW(OW_Assertion, format("OW_NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
+	}
+	return true;
+}
+
+void 
+OW_NonRecursiveMutex::conditionPreWait(OW_NonRecursiveMutexLockState& state)
+{
+	if (OW_NonRecursiveMutexImpl::conditionPreWait(m_mutex, state) != 0)
+	{
+		OW_THROW(OW_Assertion, "OW_NonRecursiveMutexImpl::releaseMutex returned with error");
+	}
+}
+
+void
+OW_NonRecursiveMutex::conditionPostWait(OW_NonRecursiveMutexLockState& state)
+{
+	if (OW_NonRecursiveMutexImpl::conditionPostWait(m_mutex, state) != 0)
+	{
+		OW_THROW(OW_Assertion, "OW_NonRecursiveMutexImpl::releaseMutex returned with error");
+	}
+}
 

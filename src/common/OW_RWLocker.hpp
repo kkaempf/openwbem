@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_Exception.hpp"
 
@@ -63,7 +63,7 @@ private:
 	int         m_num_waiting_readers;
 	int			m_readers_next;
 	
-	OW_Mutex	m_guard;
+	OW_NonRecursiveMutex	m_guard;
 
 	// -1 means writer has lock.  0 means no one has the lock. 
 	// > 0 means readers have the lock.

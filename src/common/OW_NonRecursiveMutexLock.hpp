@@ -27,46 +27,87 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_CONDITION_HPP_INCLUDE_GUARD_
-#define OW_CONDITION_HPP_INCLUDE_GUARD_
+
+#ifndef OW_NON_RECURSIVE_MUTEXLOCK_HPP_INCLUDE_GUARD_
+#define OW_NON_RECURSIVE_MUTEXLOCK_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_ThreadTypes.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Types.h"
+#include "OW_NonRecursiveMutex.hpp"
+#include <cassert>
 
-class OW_NonRecursiveMutexLock;
-class OW_NonRecursiveMutex;
-
-DECLARE_EXCEPTION(ConditionLock);
-DECLARE_EXCEPTION(ConditionResource);
-
-class OW_Condition
+//////////////////////////////////////////////////////////////////////////////
+class OW_NonRecursiveMutexLock
 {
 public:
-	OW_Condition();
-	~OW_Condition();
+	explicit OW_NonRecursiveMutexLock(OW_NonRecursiveMutex& mutex, bool initially_locked=true)
+		: m_mutex(&mutex), m_locked(false)
+	{
+		if(initially_locked)
+		{
+			lock();
+		}
+	}
 
-	void notifyOne();
-	void notifyAll();
+	~OW_NonRecursiveMutexLock()
+	{
+		try
+		{
+			if (m_locked)
+			{
+				release();
+			}
+		}
+		catch (...)
+		{
+			// don't let exceptions escape
+		}
+	}
 
-	void wait(OW_NonRecursiveMutexLock& lock);
+	void lock()
+	{
+		assert(m_locked == false);
+		m_mutex->acquire();
+		m_locked = true;
+	}
 
-	// returns true if the lock was acquired, false if timeout occurred
-	bool timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
+	void release()
+	{
+		assert(m_locked == true);
+		m_mutex->release();
+		m_locked = false;
+	}
+
+	OW_NonRecursiveMutexLock(const OW_NonRecursiveMutexLock& arg)
+		: m_mutex(arg.m_mutex), m_locked(arg.m_locked)
+	{
+		arg.m_locked = false;
+	}
+
+	bool isLocked() const
+	{
+		return m_locked;
+	}
+
+	/*
+	OW_NonRecursiveMutexLock& operator= (const OW_NonRecursiveMutexLock& arg)
+	{
+		release();
+		m_locked = arg.m_locked;
+		m_mutex = arg.m_mutex;
+		arg.m_locked = false;
+		return *this;
+	}
+	*/
 
 private:
 
-	// unimplemented
-	OW_Condition(const OW_Condition&);
-	OW_Condition& operator=(const OW_Condition&);
 
+	OW_NonRecursiveMutex* m_mutex;
+	mutable bool m_locked;
 
-	void doWait(OW_NonRecursiveMutex& mutex);
-	bool doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	OW_ConditionVar_t m_condition;
+	friend class OW_Condition;
 };
 
-#endif
 
+#endif
 

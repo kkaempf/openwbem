@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_MutexImpl.hpp"
+#include "OW_NonRecursiveMutexImpl.hpp"
 
 #include <cerrno>
 #include <cassert>
@@ -42,7 +42,7 @@
  */
 // static 
 int
-OW_MutexImpl::createMutex(OW_Mutex_t& handle)
+OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	OW_ThreadImpl::initThreads();
@@ -60,29 +60,11 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
     if (res != 0)
         return -1;
  
-#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    assert(res == 0);
-    if (res != 0)
-        return -1;
-#endif
- 
     res = pthread_mutex_init(&handle.mutex, &attr);
     if (res != 0)
         return -1;
  
-#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_cond_init(&handle.unlocked, 0);
-    if (res != 0)
-    {
-        pthread_mutex_destroy(&handle.mutex);
-        return -1;
-    }
-	
-	handle.valid_id = false;
-	handle.count = 0;
-#endif
-
+    handle.valid_id = false;
 	return 0;
 #endif
 }
@@ -99,7 +81,7 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
  */
 // static
 int
-OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
+OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
@@ -111,22 +93,17 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 			break;
 
 		case EBUSY:
-			//cerr << "OW_MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
+			//cerr << "OW_NonRecursiveMutexImpl::destroyMutex - got EBUSY on destroy" << endl;
 			return -1;
 			break;
 
 		default:
-			//cerr << "OW_MutexImpl::destroyMutex - Error on destroy: "
+			//cerr << "OW_NonRecursiveMutexImpl::destroyMutex - Error on destroy: "
 			//	<< cc << endl;
 			return -2;
 	}
 
-	int res = 0;
-#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_cond_destroy(&handle.unlocked);
-    assert(res == 0);
-#endif
-	return res;
+	return 0;
 #endif
 }
 
@@ -141,36 +118,24 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
  */
 // static
 int
-OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
+OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
 #else
 
-    int res = pthread_mutex_lock(&handle.mutex);
-    assert(res == 0);
- 
-#if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
     pthread_t tid = pthread_self();
     if (handle.valid_id && pthread_equal(handle.thread_id, tid))
-        ++handle.count;
-    else
-    {
-        while (handle.valid_id)
-        {
-            res = pthread_cond_wait(&handle.unlocked, &handle.mutex);
-            assert(res == 0);
-        }
- 
-        handle.thread_id = tid;
-        handle.valid_id = true;
-        handle.count = 1;
-    }
- 
-    res = pthread_mutex_unlock(&handle.mutex);
+        //OW_THROW(OW_DeadlockException, "Trying to lock a non-recursive mutex that this thread already has locked");
+        return -1;
+
+    int res = pthread_mutex_lock(&handle.mutex);
     assert(res == 0);
-#endif
+
+    handle.valid_id = true;
+    handle.thread_id = tid;
+
 	return res;
 #endif
 }
@@ -184,45 +149,52 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
  */
 // static
 int
-OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
+OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	// TODO: ?!?!
 	(void)handle;
 	return 0;
 #else
-#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+    pthread_t tid = pthread_self();
+    if (!handle.valid_id)
+    {
+        return -3;
+    }
+
+    if (!pthread_equal(handle.thread_id, tid))
+    {
+        return -2;
+    }
+
 	int res = pthread_mutex_unlock(&handle.mutex);
 	assert(res == 0);
+
+    handle.valid_id = false;
+
 	return res;
-#else
-    int res = 0;
-    res = pthread_mutex_lock(&handle.mutex);
-    assert(res == 0);
  
-    pthread_t tid = pthread_self();
-    if (handle.valid_id && !pthread_equal(handle.thread_id, tid))
-    {
-        res = pthread_mutex_unlock(&handle.mutex);
-        assert(res == 0);
-        return -1;
-    }
- 
-    if (--handle.count == 0)
-    {
-        assert(handle.valid_id);
-        handle.valid_id = false;
- 
-        res = pthread_cond_signal(&handle.unlocked);
-        assert(res == 0);
-    }
- 
-    res = pthread_mutex_unlock(&handle.mutex);
-    assert(res == 0);
-	return res;
-#endif
 #endif
 }
 
 
+// static
+int
+OW_NonRecursiveMutexImpl::conditionPreWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state)
+{
+    state.pmutex = &handle.mutex;
+    state.thread_id = handle.thread_id;
+    assert(handle.valid_id); // must have been locked
+    handle.valid_id = false;
+	return 0;
+}
+
+// static
+int
+OW_NonRecursiveMutexImpl::conditionPostWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state)
+{
+    handle.thread_id = state.thread_id;
+	handle.valid_id = true;
+	return 0;
+}
 

@@ -29,7 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_Condition.hpp"
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 
 #include <cassert>
 #include <cerrno>
@@ -88,7 +88,7 @@ OW_Condition::notifyAll()
 
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::wait(OW_MutexLock& lock)
+OW_Condition::wait(OW_NonRecursiveMutexLock& lock)
 {
 	if (!lock.isLocked())
 	{
@@ -99,7 +99,7 @@ OW_Condition::wait(OW_MutexLock& lock)
 
 /////////////////////////////////////////////////////////////////////////////
 bool 
-OW_Condition::timedWait(OW_MutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+OW_Condition::timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 {
 	if (!lock.isLocked())
 	{
@@ -110,10 +110,10 @@ OW_Condition::timedWait(OW_MutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTime
 
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::doWait(OW_Mutex& mutex)
+OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
 {
 	int res;
-	OW_MutexLockState state;
+	OW_NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	#ifdef OW_USE_GNU_PTH
 	res = pth_cond_wait(&m_condition, state.pmutex);
@@ -126,10 +126,10 @@ OW_Condition::doWait(OW_Mutex& mutex)
 
 /////////////////////////////////////////////////////////////////////////////
 bool 
-OW_Condition::doTimedWait(OW_Mutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 {
 	int res;
-	OW_MutexLockState state;
+	OW_NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	bool ret = false;
 	timespec ts;

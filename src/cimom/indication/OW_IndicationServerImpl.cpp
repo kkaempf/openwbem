@@ -305,7 +305,7 @@ OW_IndicationServerImpl::run()
 	m_startedSem->signal();
 
 	{
-		OW_MutexLock l(m_mainLoopGuard);
+		OW_NonRecursiveMutexLock l(m_mainLoopGuard);
 		while(!m_shuttingDown)
 		{
 			m_mainLoopCondition.wait(l);
@@ -322,6 +322,11 @@ OW_IndicationServerImpl::run()
 					l.lock();
 				}
 			}
+            catch (const OW_Exception& e)
+            {
+				m_env->logError(format("OW_IndicationServerImpl::run caught "
+					" exception %1", e));
+            }
 			catch(...)
 			{
 				m_env->logError("OW_IndicationServerImpl::run caught unknown"
@@ -342,7 +347,7 @@ void
 OW_IndicationServerImpl::shutdown()
 {
 	{
-		OW_MutexLock l(m_mainLoopGuard);
+		OW_NonRecursiveMutexLock l(m_mainLoopGuard);
 		m_shuttingDown = true;
 		m_mainLoopCondition.notifyAll();
 	}
@@ -355,7 +360,7 @@ void
 OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 	const OW_String& instNS)
 {
-	OW_MutexLock ml(m_mainLoopGuard);
+	OW_NonRecursiveMutexLock ml(m_mainLoopGuard);
 	ProcIndicationTrans trans(instanceArg, instNS);
 	m_procTrans.push_back(trans);
 	m_mainLoopCondition.notifyOne();

@@ -64,7 +64,6 @@ public:
 	 * Release ownership of this OW_Mutex object. If another thread is waiting
 	 * to acquire the ownership of this mutex it will stop blocking and acquire
 	 * ownership when this call returns.
-	 * @return ?
 	 */
 	bool release();
 
@@ -75,10 +74,6 @@ private:
 	OW_Mutex(const OW_Mutex&);
 	OW_Mutex operator = (const OW_Mutex&);
 
-	friend class OW_Condition;
-
-	void conditionPreWait(OW_MutexLockState& state);
-	void conditionPostWait(OW_MutexLockState& state);
 };
 
 

@@ -46,6 +46,7 @@ typedef pth_t			OW_Thread_t;
 // Platform specific mutex type
 typedef pth_mutex_t	OW_Mutex_t;
 typedef pth_mutex_t OW_NativeMutex_t;
+typedef pth_mutex_t	OW_NonRecursiveMutex_t;
 
 // Platform specific conditional variable type
 typedef pth_cond_t	OW_ConditionVar_t;
@@ -63,6 +64,12 @@ extern "C"
 typedef pthread_t					OW_Thread_t;
 
 typedef pthread_mutex_t OW_NativeMutex_t;
+struct OW_NonRecursiveMutex_t
+{
+    pthread_mutex_t mutex;
+    pthread_t thread_id;
+    bool valid_id;
+};
 
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 // Platform specific mutex type
@@ -91,9 +98,9 @@ typedef pthread_cond_t 			OW_ConditionVar_t;
 
 #endif	// #ifdef OW_USE_GNU_PTH
 
-struct OW_MutexLockState
+struct OW_NonRecursiveMutexLockState
 {
-	long count;
+    pthread_t thread_id;
 	OW_NativeMutex_t* pmutex;
 };
 				

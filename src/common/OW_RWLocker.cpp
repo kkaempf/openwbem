@@ -64,7 +64,7 @@ OW_RWLocker::~OW_RWLocker()
 void
 OW_RWLocker::getReadLock()
 {
-    OW_MutexLock l(m_guard);
+    OW_NonRecursiveMutexLock l(m_guard);
     
     // Wait until no exclusive lock is held.
     //
@@ -85,7 +85,7 @@ OW_RWLocker::getReadLock()
 void
 OW_RWLocker::getWriteLock()
 {
-    OW_MutexLock l(m_guard);
+    OW_NonRecursiveMutexLock l(m_guard);
 
     // Wait until no exclusive lock is held.
     //
@@ -104,7 +104,7 @@ OW_RWLocker::getWriteLock()
 void
 OW_RWLocker::releaseReadLock()
 {
-    OW_MutexLock l(m_guard);
+    OW_NonRecursiveMutexLock l(m_guard);
     if(m_state > 0)        // Release a reader.
         --m_state;
     else
@@ -121,7 +121,7 @@ OW_RWLocker::releaseReadLock()
 void
 OW_RWLocker::releaseWriteLock()
 {
-    OW_MutexLock l(m_guard);
+    OW_NonRecursiveMutexLock l(m_guard);
     if(m_state == -1)
         m_state = 0;
     else

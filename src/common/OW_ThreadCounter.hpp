@@ -31,7 +31,7 @@
 #define OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_Mutex.hpp"
+#include "OW_NonRecursiveMutex.hpp"
 #include "OW_Condition.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Thread.hpp"
@@ -54,7 +54,7 @@ public:
 private:
 	OW_Int32 m_maxThreads;
 	OW_Int32 m_runCount;
-	OW_Mutex m_runCountGuard;
+	OW_NonRecursiveMutex m_runCountGuard;
 	OW_Condition m_runCountCondition;
 
 	// noncopyable

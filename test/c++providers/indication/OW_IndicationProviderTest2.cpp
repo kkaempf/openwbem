@@ -41,7 +41,8 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_Thread.hpp"
-#include "OW_Mutex.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
 
@@ -90,51 +91,51 @@ public:
 
 	void shutdown()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		m_shuttingDown = true;
 		m_cond.notifyAll(); // wake up run() so it will exit.
 	}
 
 	void addCreationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		++m_creationFilterCount;
 	}
 
 	void addModificationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		++m_modificationFilterCount;
 	}
 
 	void addDeletionFilter()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		++m_deletionFilterCount;
 	}
 
 	void removeCreationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		--m_creationFilterCount;
 	}
 
 	void removeModificationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		--m_modificationFilterCount;
 	}
 
 	void removeDeletionFilter()
 	{
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		--m_deletionFilterCount;
 	}
 
 protected:
 	virtual void run();
 
-	OW_Mutex m_guard;
+	OW_NonRecursiveMutex m_guard;
 	OW_Condition m_cond;
 	bool m_shuttingDown;
 	int m_creationFilterCount;
@@ -352,7 +353,7 @@ public:
 		}
 
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		if (id < 0 || OW_UInt32(id) >= m_insts.size())
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("Invalid DeviceID property: %1", id).c_str());
@@ -376,7 +377,7 @@ public:
 		(void)ns; (void)className;
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::enumInstances");
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
 		{
 			result.handle(m_insts[i].clone(localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass));
@@ -393,7 +394,7 @@ public:
 		(void)ns; (void)className; (void)cimClass;
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
 		{
 			result.handle(OW_CIMObjectPath(m_insts[i]));
@@ -439,8 +440,10 @@ public:
 		{
 			m_theClass = hdl->getClass("root/testsuite", "OW_IndicationProviderTest2");
 		}
+
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		OW_NonRecursiveMutexLock l(m_guard);
+
 		if (m_insts.size() == 5)
 		{
 			if (del > 0)
@@ -498,14 +501,14 @@ private:
 
 	// this is a reference so we can pass in a cimom handle to it's constructor.  We can't get a cimom handle in our constructor, so we have to wait until initialize is called.
 	OW_Reference<OW_TestProviderThread> m_thread;
-	OW_Mutex m_guard;
+	OW_NonRecursiveMutex m_guard;
 	OW_CIMClass m_theClass;
 };
 
 
 void OW_TestProviderThread::run()
 {
-	OW_MutexLock l(m_guard);
+	OW_NonRecursiveMutexLock l(m_guard);
 	while (!m_shuttingDown)
 	{
 		m_pProv->updateInstancesAndSendIndications(m_hdl, m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);

@@ -51,6 +51,8 @@ OW_IOIFCStreamBuffer.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
 OW_MutexImpl.cpp \
+OW_NonRecursiveMutex.cpp \
+OW_NonRecursiveMutexImpl.cpp \
 OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
 OW_NULLValueException.cpp \
@@ -115,7 +117,10 @@ OW_MemTracer.hpp \
 OW_Memory.hpp \
 OW_Mutex.hpp \
 OW_MutexImpl.hpp \
+OW_NonRecursiveMutex.hpp \
+OW_NonRecursiveMutexImpl.hpp \
 OW_MutexLock.hpp \
+OW_NonRecursiveMutexLock.hpp \
 OW_NetworkTypes.hpp \
 OW_OS.hpp \
 OW_PosixUnnamedPipe.hpp \

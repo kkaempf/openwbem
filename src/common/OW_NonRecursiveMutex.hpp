@@ -27,46 +27,60 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_CONDITION_HPP_INCLUDE_GUARD_
-#define OW_CONDITION_HPP_INCLUDE_GUARD_
+
+#ifndef OW_NON_RECURSIVE_MUTEX_INCLUDE_GUARD_HPP_
+#define OW_NON_RECURSIVE_MUTEX_INCLUDE_GUARD_HPP_
 
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Types.h"
 
-class OW_NonRecursiveMutexLock;
-class OW_NonRecursiveMutex;
+DECLARE_EXCEPTION(Deadlock)
 
-DECLARE_EXCEPTION(ConditionLock);
-DECLARE_EXCEPTION(ConditionResource);
 
-class OW_Condition
+class OW_NonRecursiveMutex
 {
 public:
-	OW_Condition();
-	~OW_Condition();
 
-	void notifyOne();
-	void notifyAll();
+	/**
+	 * Create a new OW_NonRecursiveMutex object.
+	 */
+	OW_NonRecursiveMutex();
 
-	void wait(OW_NonRecursiveMutexLock& lock);
+	/**
+	 * Destroy this OW_NonRecursiveMutex object.
+	 */
+	~OW_NonRecursiveMutex();
 
-	// returns true if the lock was acquired, false if timeout occurred
-	bool timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
+	/**
+	 * Acquire ownership of this OW_NonRecursiveMutex object.
+	 * This call will block if another thread has
+	 * ownership of this OW_NonRecursiveMutex. When it returns, the current thread will be
+	 * the owner of this OW_NonRecursiveMutex object.
+	 * If this thread is the owner of the mutex, then an OW_Deadlock 
+	 * exception will be thrown.
+	 */
+	void acquire();
+
+	/**
+	 * Release ownership of this OW_NonRecursiveMutex object. If another thread is waiting
+	 * to acquire the ownership of this mutex it will stop blocking and acquire
+	 * ownership when this call returns.
+	 */
+	bool release();
 
 private:
+	OW_NonRecursiveMutex_t m_mutex;
 
-	// unimplemented
-	OW_Condition(const OW_Condition&);
-	OW_Condition& operator=(const OW_Condition&);
+	// noncopyable
+	OW_NonRecursiveMutex(const OW_NonRecursiveMutex&);
+	OW_NonRecursiveMutex operator = (const OW_NonRecursiveMutex&);
 
+	friend class OW_Condition;
 
-	void doWait(OW_NonRecursiveMutex& mutex);
-	bool doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	OW_ConditionVar_t m_condition;
+	void conditionPreWait(OW_NonRecursiveMutexLockState& state);
+	void conditionPostWait(OW_NonRecursiveMutexLockState& state);
 };
 
+
 #endif
-
-

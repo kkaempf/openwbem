@@ -39,7 +39,7 @@
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Condition.hpp"
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -142,7 +142,7 @@ private:
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
 	OW_List<ProcIndicationTrans> m_procTrans;
 	OW_Bool m_shuttingDown;
-	OW_Mutex m_mainLoopGuard;
+	OW_NonRecursiveMutex m_mainLoopGuard;
 	OW_Condition m_mainLoopCondition;
 
 	// This is where the indications get placed if the number of notify 

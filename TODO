@@ -15,14 +15,6 @@ Testing:
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
 
 Fix problems:
-    - Fix memory leak in npi.
-    - Create a non-recursive mutex, and use it with condition variables,
-      since using a recursive mutex with condition variables can deadlock
-      "because  the  implicit  unlock  performed for a 
-      pthread_cond_wait() or pthread_cond_timedwait()
-      will not actually release the mutex (if it had  been  locked
-      multiple times). If this occurs, no other thread can satisfy
-      the condition of the predicate."
     - Have a mechanism in the read-write locker to detect simple deadlock,
       the case where one thread acquired a write lock and then later tried
       to acquire a read lock, which would block.

@@ -101,7 +101,7 @@ void OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
 void OW_CIMInstancePathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, ostream& ostr);
+void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMClass const& cc, std::ostream& ostr,
