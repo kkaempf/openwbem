@@ -9,7 +9,12 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.so
+if DONT_NEED_LIBDL
+SHAREDLIBADD = 
+else
 SHAREDLIBADD = -ldl
+endif
+
 
 
 noinst_LIBRARIES = libopenwbem.a
