@@ -109,6 +109,9 @@ static char** g_argv = 0;
 static Condition g_shutdownCond; 
 static bool g_shutDown = false; 
 static NonRecursiveMutex g_shutdownGuard; 
+static void* WarnFuncRef = NULL;
+static rtag_t EventRTag;
+static event_handle_t DownEvent;
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -218,7 +221,8 @@ daemonShutdown(const String& daemonName)
 		NonRecursiveMutexLock l(g_shutdownGuard); 
 		g_shutDown = true; 
 		g_shutdownCond.notifyAll(); 
-		pthread_yield(); 
+		pthread_yield();
+		UnRegisterEventNotification(DownEvent);
 	}
 #else
 	String pidFile(OW_PIDFILE_DIR);
@@ -446,10 +450,6 @@ netwareExitHandler(void*)
 		g_shutdownCond.wait(l); 
 	}
 }
-
-static void* WarnFuncRef = NULL;
-static rtag_t EventRTag;
-static event_handle_t DownEvent;
 
 static int
 netwareShutDownEventHandler(void*,
