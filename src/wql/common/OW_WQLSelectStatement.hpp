@@ -166,6 +166,7 @@ public:
 	*/
 	void print(std::ostream& ostr) const;
 
+	OW_String toString() const;
 
 	void compileWhereClause(const OW_WQLPropertySource* source, OW_WQLCompile& wcl);
 

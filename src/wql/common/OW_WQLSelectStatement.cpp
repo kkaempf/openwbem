@@ -28,6 +28,7 @@
 //%/////////////////////////////////////////////////////////////////////////////
 
 #include "OW_config.h"
+#include "OW_StringBuffer.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_Stack.hpp"
 #include "OW_WQLCompile.hpp"
@@ -357,7 +358,6 @@ void OW_WQLSelectStatement::print(std::ostream& ostr) const
 	ostr << "}" << std::endl;
 }
 
-/*
 OW_String OW_WQLSelectStatement::toString() const
 {
 	OW_StringBuffer buf("select ");
@@ -385,15 +385,15 @@ OW_String OW_WQLSelectStatement::toString() const
 	for (size_t i = 0; i < _operStack.size(); i++)
 	{
 		if (i == 0)
-			ostr << '\n';
+			buf += "\n";
 
-		ostr << "	_operStack[" << i << "]: ";
-		ostr << '"' << _operStack[i].toString() << '"' << '\n';
+		buf += " _operStack[" + OW_String(i) + "]: ";
+		buf += "\"" + _operStack[i].toString() + "\"\n";
 	}
 
-	ostr << "}" << std::endl;
+	buf += ")";
+	return buf.toString();
 }
-*/
 
 void OW_WQLSelectStatement::compileWhereClause(
 		const OW_WQLPropertySource* /*source*/, OW_WQLCompile& wcl)
