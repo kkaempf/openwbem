@@ -34,6 +34,8 @@
 #include "OW_XMLUnescape.hpp"
 #include <iostream>
 
+#define TESTSTRING "&amp;&quot;&lt;&gt;&#9;&apos;"
+
 void OW_XMLUnescapeTestCases::setUp()
 {
 }
@@ -44,7 +46,7 @@ void OW_XMLUnescapeTestCases::tearDown()
 
 void OW_XMLUnescapeTestCases::test()
 {
-	unitAssert( OW_XMLUnescape("&amp;&quot;&lt;&gt;&#9;&apos;") == "&\"<>\x9'" );
+	unitAssert( OW_XMLUnescape(TESTSTRING, strlen(TESTSTRING)) == "&\"<>\x9'" );
 }
 
 Test* OW_XMLUnescapeTestCases::suite()
