@@ -33,6 +33,45 @@ Projects</a><br>
   <hr>
   <h3><a name="NEWS"></a>News</h3>
   <ul>
+    <li>Mon May 31 2004: OpenWBEM 3.0.2 has been released.&nbsp; Here's
+what has changed from 3.0.0:</li>
+    <ul>
+      <li>Now owcimomd will return non-zero if the daemon fails to
+initialize -- like if the config file is bad.&nbsp; Before it always
+returned zero even if the cimom did not start.</li>
+      <li>Fixed some potential memory leaks.</li>
+      <li>Added --enable-valgrind-support configure option to make it
+easier to use valgrind.</li>
+      <li>Fixed some bugs in the CMPI Provider Interface.</li>
+      <li>Now support HP-UX with aCC.</li>
+      <li>Support gcc 3.4.0.</li>
+      <li>Support Apple OSX.</li>
+      <li>Enhancements to the Exception class.</li>
+      <li>Added --disable-property-operation configure option.</li>
+      <li>Improved NPI and perlNPI error handling.</li>
+      <li>Support FreeBSD.</li>
+      <li>Fixed FILE leakage in MOFCompiler.</li>
+      <li>Added --enable-static-services configure option which will
+setup the build system to statically link everything into one
+binary.&nbsp; This is necessary for AIX support and has<br>
+also been tested on Linux.</li>
+      <li>Fixed interop providers to still work if
+OpenWBEM_ObjectManager isn't available.</li>
+      <li>Changed the Repository so that static associations can point
+to dynamic instances.</li>
+      <li>OpenWBEM_ObjectManager: Changed EnabledStatus to EnabledState
+since it changed in the mof since the provider was written against a
+preliminary version.</li>
+      <li>Fixed HTTPClient to reconnect on a timeout.</li>
+      <li>Cleaned up and organized the config file.</li>
+      <li>Modified client namespace enumeration to understand the
+response from OpenPegasus.</li>
+      <li>Fixed some filesystem functions to be 64-bit correct.</li>
+      <li>HTTPClient: Added the ability to specify the path to the UDS
+in the port portion of the URL.<br>
+        <br>
+      </li>
+    </ul>
     <li>Mon Apr 26 2004: OpenWBEM 3.0.0 has been released.&nbsp;
 There's too much good stuff to list here.&nbsp; Check out the <a
  href="http://sourceforge.net/project/shownotes.php?release_id=234133">release
@@ -56,7 +95,7 @@ Some of the main features of OpenWBEM are:
   <ul>
     <li>CIM Server</li>
     <ul>
-      <li>Fast and small.  See <a href="CIMOMBenchMarks.pdf">this</a>.</li>
+      <li>Fast and small. See <a href="CIMOMBenchMarks.pdf">this</a>.</li>
       <li>CIM Operations over HTTP 1.1 is fully supported, including
 ExecQuery &amp; batch operations.</li>
       <li>CIM 2.2 is supported, including embedded instances, which are
@@ -77,10 +116,11 @@ Berkely DB library.</li>
 plug-ins</li>
       <ul>
         <li>C++</li>
+        <li><a href="http://wbemsource.org/">CMPI</a>. Thanks to Jon
+Carey/Novell</li>
         <li><a href="http://www-124.ibm.com/sblim/npidoc.html">NPI</a>
 Provider
 Interface.</li>
-        <li>CMPI. Thanks to Jon Carey/Novell</li>
         <li>Perl based on NPI.</li>
         <li>Perl using SWIG, created by Jason Long.&nbsp; Located at (<a
  href="http://jason.long.name/owperl/">http://jason.long.name/owperl/</a>).<br>
@@ -95,7 +135,8 @@ correctly write providers.</li>
         <li>Providers run in a transactional environment, making it
 much easier to write a robust provider free from deadlocks and race
 conditions.</li>
-        <li>Providers are automatically detected, so there is no need
+        <li>OpenWBEM C++ Providers are automatically detected, so there
+is no need
 to use the provider qualifier or registration schema.</li>
         <li>Instance</li>
         <li>Secondary Instance<br>
@@ -288,13 +329,17 @@ as the SNIA CIM Browser.</li>
 <hr style="width: 100%; height: 2px;"><br>
 <h3><a name="Development"></a><font face="Arial,Helvetica">Development</font></h3>
 <blockquote>OpenWBEM is a complete implementation of WBEM maintained
-by <a href="http://www.vintela.com/">Vintela, Inc.</a>&nbsp; The
-current version is completely usable,
-and there are many interesting features and optimizations that can
+by <a href="http://www.vintela.com/">Vintela</a>, <a
+ href="http://www.novell.com/">Novell</a>, and other volunteers. The
+current version is completely stable and usable. There are many
+interesting features and optimizations that can
 still be implemented.
 OpenWBEM is an open-source project, and participation is open to anyone
 willing to help out and contribute.
-Follow the links below if you are interested in working on OpenWBEM.
+Any contribution is welcome, from bug reports, to patches, to new
+features.&nbsp; If you want to join the project, post a note to the
+openwbem-devel list.&nbsp; If you are interested in working on
+OpenWBEM, follow the links below for more information.
   <ul>
     <li> <a
  href="http://cvs.openwbem.org/cgi-bin/viewcvs.cgi/openwbem20/TODO?rev=HEAD&amp;content-type=text/vnd.viewcvs-markup">Current
@@ -323,7 +368,15 @@ page on SourceForge</a></li>
         <td><img src="http://www.vintela.com/images/logo.jpg"></td>
         <td>
         <blockquote><a href="http://www.vintela.com/">Vintela, Inc</a>
-is the main OpenWBEM project maintainer.</blockquote>
+is the OpenWBEM project maintainer.</blockquote>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: top;"><br>
+        </td>
+        <td>
+        <blockquote><a href="http://www.novell.com/">Novell</a> is an
+OpenWBEM project contributor.</blockquote>
         </td>
       </tr>
       <tr>
