@@ -48,6 +48,7 @@
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_Bool.hpp"
+#include "OW_XMLParseException.hpp"
 #include <algorithm> // for find_if
 
 namespace OpenWBEM
@@ -852,7 +853,7 @@ bool isKnownEmbeddedObjectName(String name)
 	// an EmbeddedObject(true) qualifier.
 	// If this list gets much bigger, use a HashMap
 	name.toLowerCase();
-	return 
+	return
 		name.equals("sourceinstance") ||
 		name.equals("previousinstance") ||
 		name.equals("methodparameters") ||
@@ -958,7 +959,7 @@ createProperty(CIMXMLParser& parser)
 	// Unfortunately qualifiers usually aren't on instances, and we don't
 	// want to always try to convert any string property to an embedded
 	// instance, so we just settle for known cases.  SourceInstance is
-	// the name of the embedded 
+	// the name of the embedded
 	if ((rval.hasTrueQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
 		rval.getDataType().getType() == CIMDataType::STRING &&
 		rval.getValue()) ||

@@ -29,7 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_XMLPrettyPrint.hpp"
-#include "OW_XMLParser.hpp"
+#include "OW_XMLParserCore.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
@@ -57,7 +57,7 @@ static void outputAttrs(StringBuffer& sb, const XMLToken& tok)
 }
 String XMLPrettyPrint(std::istream& istr)
 {
-	XMLParser p(istr);
+	XMLParserCore p(istr);
 	StringBuffer rval;
 	int indent = 0;
 	XMLToken tok;

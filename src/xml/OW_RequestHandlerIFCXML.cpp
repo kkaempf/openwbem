@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_RequestHandlerIFCXML.hpp"
-#include "OW_XMLParser.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_XMLOperationGeneric.hpp"
@@ -37,6 +36,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ThreadCancelledException.hpp"
+#include "OW_XMLParseException.hpp"
 
 namespace OpenWBEM
 {

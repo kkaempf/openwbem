@@ -16,7 +16,7 @@ thelibdir = $(libdir)
 libowxml_a_SOURCES = \
 OW_CIMXMLParser.cpp \
 OW_RequestHandlerIFCXML.cpp \
-OW_XMLParser.cpp \
+OW_XMLParserCore.cpp \
 OW_XMLOperationGeneric.cpp \
 OW_Param.cpp \
 OW_XMLClass.cpp \
@@ -26,7 +26,8 @@ OW_XMLEscape.cpp \
 OW_XMLUnescape.cpp \
 OW_XMLCIMFactory.cpp \
 OW_CIMtoXML.cpp \
-OW_XMLPrettyPrint.cpp
+OW_XMLPrettyPrint.cpp \
+OW_XMLParseException.cpp
 
 pkginclude_HEADERS = \
 OW_CIMXMLParser.hpp \
@@ -35,13 +36,14 @@ OW_Param.hpp         \
 OW_XMLClass.hpp \
 OW_XMLOperationGeneric.hpp \
 OW_XMLParameters.hpp \
-OW_XMLParser.hpp \
+OW_XMLParserCore.hpp \
 OW_XMLQualifier.hpp \
 OW_XMLEscape.hpp \
 OW_XMLUnescape.hpp \
 OW_XMLCIMFactory.hpp \
 OW_CIMtoXML.hpp \
-OW_XMLPrettyPrint.hpp
+OW_XMLPrettyPrint.hpp \
+OW_XMLParseException.hpp
 
 
 

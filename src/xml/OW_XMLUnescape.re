@@ -32,7 +32,7 @@
 #include "OW_config.h"
 #include "OW_XMLUnescape.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_XMLParser.hpp" // for OW_XMLParseException
+#include "OW_XMLParseException.hpp"
 #include "OW_Format.hpp"
 
 #include <limits.h> // for CHAR_MAX

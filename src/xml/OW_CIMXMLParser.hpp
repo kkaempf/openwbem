@@ -33,7 +33,7 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_String.hpp"
-#include "OW_XMLParser.hpp"
+#include "OW_XMLParserCore.hpp"
 #ifdef OW_HAVE_ISTREAM
 #include <istream>
 #else
@@ -158,7 +158,7 @@ public:
 	bool isData() const;
 private:
 	AutoPtr<TempFileStream> m_ptfs;
-	XMLParser m_parser;
+	XMLParserCore m_parser;
 	XMLToken m_curTok;
 	bool m_good;
 	void prime();

@@ -29,10 +29,6 @@ Testing:
       distribution as well.
 
 Fix problems:
-    - Implement a "compatibility mode" in the client if the server doesn't 
-      support the latest version(s) of the spec(s). We only need to do this
-      for PROTOCOLVERSION="1.1" instead of 1.0, we can leave CIMVERSION and
-      DTDVERSION the same.
     - The new redhat pthread_cancel() throws an exception that seems to clobber 
       owcimomd.  Need to figure out how to prevent this from happening.
       The error printed is: "FATAL: exception not rethrown".
@@ -184,6 +180,11 @@ Post 3.0
         instead of doing a getClass on every operation.
     - Figure out a better scheme for authentication to allow for simple,
       digest, pki, kerberos, or user defined.
+    - Verify that classes maintain their invariant.
+    - Implement a "compatibility mode" in the client if the server doesn't 
+      support the latest version(s) of the spec(s). We only need to do this
+      for PROTOCOLVERSION="1.1" instead of 1.0, we can leave CIMVERSION and
+      DTDVERSION the same.
 
 Refactorings:
     - Remove *E functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
@@ -200,6 +201,9 @@ Refactorings:
 
     Post 3.0
     - Create a base class for all the common code in the provider interfaces.
+    - Templatetize/inline the mutex lock classes.
+    - Split the http client/server classes into 2 layers, one that just deals
+      with plain http, and another layer that knows about wbem http.
 
     Interface breaking, but of questionable value.
     - Clean up CIM naming. Create a CIM class/instance path, local object path,
@@ -210,10 +214,6 @@ Refactorings:
     - simplify the provider manager lookup structure
     - rename cimom to wbem server
     - Rename OW_NonRecursiveMutex -> OW_Mutex and OW_Mutex -> OW_RecursiveMutex
-    - Templatetize/inline the mutex lock classes.
-    - Verify that classes maintain their invariant.
-    - Split the http client/server classes into 2 layers, one that just deals
-      with plain http, and another layer that knows about wbem http.
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 

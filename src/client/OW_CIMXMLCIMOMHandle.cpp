@@ -51,6 +51,8 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_XMLParseException.hpp"
+
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
