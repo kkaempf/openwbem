@@ -60,7 +60,8 @@ OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
 OW_CppIndicationProviderIFC.hpp \
 OW_CppSimpleInstanceProviderIFC.hpp \
-OW_CppReadOnlyInstanceProviderIFC.hpp
+OW_CppReadOnlyInstanceProviderIFC.hpp \
+OW_CppProviderIncludes.hpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
