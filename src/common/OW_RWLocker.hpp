@@ -47,8 +47,8 @@ public:
 	OW_RWLocker();
 	~OW_RWLocker();
 
-	void getReadLock();
-	void getWriteLock();
+	void getReadLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
+	void getWriteLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
 
 	void releaseReadLock();
 	void releaseWriteLock();
@@ -78,11 +78,11 @@ private:
 class OW_ReadLock
 {
 public:
-	OW_ReadLock(OW_RWLocker& locker)
+	OW_ReadLock(OW_RWLocker& locker, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
 		: m_locker(&locker)
 		, m_released(false)
 	{
-		m_locker->getReadLock();
+		m_locker->getReadLock(sTimeout, usTimeout);
 	}
 
 	~OW_ReadLock()
@@ -90,11 +90,11 @@ public:
 		release();
 	}
 
-	void lock()
+	void lock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
 	{
 		if(m_released)
 		{
-			m_locker->getReadLock();
+			m_locker->getReadLock(sTimeout, usTimeout);
 			m_released = false;
 		}
 	}
@@ -121,11 +121,11 @@ private:
 class OW_WriteLock
 {
 public:
-	OW_WriteLock(OW_RWLocker& locker)
+	OW_WriteLock(OW_RWLocker& locker, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
 		: m_locker(&locker)
 		, m_released(false)
 	{
-		m_locker->getWriteLock();
+		m_locker->getWriteLock(sTimeout, usTimeout);
 	}
 
 	~OW_WriteLock()
@@ -133,11 +133,11 @@ public:
 		release();
 	}
 
-	void lock()
+	void lock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
 	{
 		if(m_released)
 		{
-			m_locker->getWriteLock();
+			m_locker->getWriteLock(sTimeout, usTimeout);
 			m_released = false;
 		}
 	}

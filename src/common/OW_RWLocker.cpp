@@ -63,7 +63,7 @@ OW_RWLocker::~OW_RWLocker()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::getReadLock()
+OW_RWLocker::getReadLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 {
     OW_NonRecursiveMutexLock l(m_guard);
     
@@ -86,7 +86,12 @@ OW_RWLocker::getReadLock()
     while(m_state < 0)
     {
         ++m_num_waiting_readers;
-        m_waiting_readers.wait(l);
+        //m_waiting_readers.wait(l);
+		if (!m_waiting_readers.timedWait(l, sTimeout, usTimeout))
+		{
+			--m_num_waiting_readers;
+			OW_THROW(OW_DeadlockException, "Timeout while waiting for read lock.");
+		}
         --m_num_waiting_readers;
     }
     
@@ -98,7 +103,7 @@ OW_RWLocker::getReadLock()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::getWriteLock()
+OW_RWLocker::getWriteLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 {
     OW_NonRecursiveMutexLock l(m_guard);
 
@@ -124,7 +129,11 @@ OW_RWLocker::getWriteLock()
     while(m_state != 0)
     {
         ++m_num_waiting_writers;
-        m_waiting_writers.wait(l);
+        if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
+		{
+			--m_num_waiting_writers;
+			OW_THROW(OW_DeadlockException, "Timeout while waiting for write lock.");
+		}
         --m_num_waiting_writers;
     }
     m_state = -1;

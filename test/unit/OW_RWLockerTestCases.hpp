@@ -46,6 +46,7 @@ public:
 private:
 	// test methods
 	void testDeadlock();
+	void testTimeout();
 };
 
 #endif

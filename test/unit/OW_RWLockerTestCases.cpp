@@ -32,6 +32,8 @@
 #include "TestCaller.hpp"
 #include "OW_RWLockerTestCases.hpp"
 #include "OW_RWLocker.hpp"
+#include "OW_Thread.hpp"
+#include "OW_Semaphore.hpp"
 
 void OW_RWLockerTestCases::setUp()
 {
@@ -44,11 +46,11 @@ void OW_RWLockerTestCases::tearDown()
 void OW_RWLockerTestCases::testDeadlock()
 {
 	OW_RWLocker locker;
-	locker.getReadLock();
+	locker.getReadLock(100);
 	try
 	{
 		// this should throw
-		locker.getWriteLock();
+		locker.getWriteLock(100);
 		unitAssert(0);
 	}
 	catch (const OW_DeadlockException& e)
@@ -56,11 +58,11 @@ void OW_RWLockerTestCases::testDeadlock()
 	}
 	locker.releaseReadLock();
 
-	locker.getWriteLock();
+	locker.getWriteLock(100);
 	try
 	{
 		// this should throw
-		locker.getReadLock();
+		locker.getReadLock(100);
 		unitAssert(0);
 	}
 	catch (const OW_DeadlockException& e)
@@ -70,11 +72,73 @@ void OW_RWLockerTestCases::testDeadlock()
 	locker.releaseWriteLock();
 }
 
+class testThread : public OW_Thread
+{
+public:
+	testThread(OW_RWLocker* locker, OW_Semaphore* sem)
+		: OW_Thread(true) // joinable
+		, m_locker(locker)
+		, m_sem(sem)
+	{
+	}
+
+protected:
+	virtual void run() 
+	{
+		m_locker->getReadLock(0);
+		m_sem->signal();
+		OW_Thread::sleep(10);
+		m_locker->releaseReadLock();
+
+		m_locker->getWriteLock(0);
+		m_sem->signal();
+		OW_Thread::sleep(10);
+		m_locker->releaseWriteLock();
+	}
+
+	OW_RWLocker* m_locker;
+	OW_Semaphore* m_sem;
+};
+
+void OW_RWLockerTestCases::testTimeout()
+{
+	OW_RWLocker locker;
+	OW_Semaphore sem;
+	testThread t1(&locker, &sem);
+	t1.start();
+	sem.wait(); // wait for the thread to start. It's already got the read lock, and will keep it for 10 ms.
+	
+	// now try to get a write lock.  But we'll use a short timeout to make sure an exception is thrown.
+	try
+	{
+		locker.getWriteLock(0,1);
+		unitAssert(0);
+	}
+	catch (const OW_DeadlockException& e)
+	{
+	}
+
+	sem.wait(); // wait for the thread to release the read lock and get a write lock.
+
+	// now try to get a read lock.  But we'll use a short timeout to make sure an exception is thrown.
+	try
+	{
+		locker.getReadLock(0,1);
+		unitAssert(0);
+	}
+	catch (const OW_DeadlockException& e)
+	{
+	}
+
+	t1.join();
+}
+
 Test* OW_RWLockerTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_RWLocker");
 
 	ADD_TEST_TO_SUITE(OW_RWLockerTestCases, testDeadlock);
+	ADD_TEST_TO_SUITE(OW_RWLockerTestCases, testTimeout);
 
 	return testSuite;
 }

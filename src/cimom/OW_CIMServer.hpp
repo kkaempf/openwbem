@@ -41,6 +41,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_RWLocker.hpp"
 
+const OW_UInt32 OW_LockTimeout = 10; // seconds
 
 #if !defined(OW_DISABLE_ACLS)
 class OW_AccessMgr;
@@ -595,12 +596,12 @@ public:
 		const OW_String &query, const OW_String& queryLanguage,
 		const OW_UserInfo& aclInfo);
 
-	virtual void getSchemaReadLock() { m_rwSchemaLocker.getReadLock(); }
-	virtual void getSchemaWriteLock() { m_rwSchemaLocker.getWriteLock(); }
+	virtual void getSchemaReadLock() { m_rwSchemaLocker.getReadLock(OW_LockTimeout); }
+	virtual void getSchemaWriteLock() { m_rwSchemaLocker.getWriteLock(OW_LockTimeout); }
 	virtual void releaseSchemaReadLock() { m_rwSchemaLocker.releaseReadLock(); }
 	virtual void releaseSchemaWriteLock() { m_rwSchemaLocker.releaseWriteLock(); }
-	virtual void getInstanceReadLock() { m_rwInstanceLocker.getReadLock(); }
-	virtual void getInstanceWriteLock() { m_rwInstanceLocker.getWriteLock(); }
+	virtual void getInstanceReadLock() { m_rwInstanceLocker.getReadLock(OW_LockTimeout); }
+	virtual void getInstanceWriteLock() { m_rwInstanceLocker.getWriteLock(OW_LockTimeout); }
 	virtual void releaseInstanceReadLock() { m_rwInstanceLocker.releaseReadLock(); }
 	virtual void releaseInstanceWriteLock() { m_rwInstanceLocker.releaseWriteLock(); }
 
