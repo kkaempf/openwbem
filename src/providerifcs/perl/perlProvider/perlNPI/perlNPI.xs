@@ -447,7 +447,7 @@ char *	CIMObjectPathGetRefKeyValue(npiHandle, cop, key)
 	OUTPUT:
 	RETVAL
 
-char *	SelectExpSelectString(npiHandle, sxp)
+char *	SelectExpGetSelectString(npiHandle, sxp)
 	char * npiHandle
 	char * sxp
 	PREINIT:
