@@ -179,7 +179,7 @@ namespace Exec
 
 	/**
 	 * The use of initialInput is deprecated, because it's not safe to use it in a
-	 * portable manner. Either use the input parameter to gatherOutput or do it
+	 * portable manner. Either use the input parameter to processInputOutput or do it
 	 * manually (not that you must be careful not to cause a deadlock).
 	 */
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command,

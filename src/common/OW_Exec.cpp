@@ -55,11 +55,19 @@ extern "C"
 #ifndef OW_WIN32
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #endif
 #include <errno.h>
 #include <stdio.h> // for perror
 #include <signal.h>
 }
+
+// according to man environ:
+// This variable must be declared in the user program, but is
+// declared in the header file unistd.h in case the header files came from
+// libc4 or libc5, and in case they came from glibc and _GNU_SOURCE was
+// defined.
+extern char **environ;
 
 #include <cerrno>
 #include <iostream>	// for cerr
@@ -394,68 +402,74 @@ safeSystem(const Array<String>& command)
 	}
 	if (pid == 0)
 	{
-		// Close all file handle from parent process
-		rlimit rl;
-		int i = sysconf(_SC_OPEN_MAX);
-		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
+		try
 		{
-		  if ( i < 0 )
-		  {
-		    i = rl.rlim_max;
-		  }
-		  else
-		  {
-		    i = std::min<int>(rl.rlim_max, i);
-		  }
-		}
-		while (i > 2)
-		{
-			close(i);
-			i--;
-		}
 
-		// according to susv3:
-		//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
-		//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
-		//        unchanged  across an exec. This is consistent with historical implemen-
-		//        tations, and it permits some useful functionality, such  as  the  nohup
-		//        command.  However,  it  should be noted that many existing applications
-		//        wrongly assume that they start with certain signals set to the  default
-		//        action  and/or  unblocked.  In  particular, applications written with a
-		//        simpler signal model that does not include blocking of signals, such as
-		//        the  one in the ISO C standard, may not behave properly if invoked with
-		//        some signals blocked. Therefore, it is best not to block or ignore sig-
-		//        nals  across execs without explicit reason to do so, and especially not
-		//        to block signals across execs of arbitrary (not  closely  co-operating)
-		//        programs.
-
-		// so we'll reset the signal mask and all SIG_IGN signal handlers to SIG_DFL
-		sigset_t emptymask;
-		sigemptyset(&emptymask);
-		::sigprocmask(SIG_SETMASK, &emptymask, 0);
-
-		for (size_t sig = 1; sig <= NSIG; ++sig)
-		{
-			struct sigaction temp;
-			sigaction(sig, 0, &temp);
-			if (temp.sa_handler == SIG_IGN)
+			// according to susv3:
+			//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
+			//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
+			//        unchanged  across an exec. This is consistent with historical implemen-
+			//        tations, and it permits some useful functionality, such  as  the  nohup
+			//        command.  However,  it  should be noted that many existing applications
+			//        wrongly assume that they start with certain signals set to the  default
+			//        action  and/or  unblocked.  In  particular, applications written with a
+			//        simpler signal model that does not include blocking of signals, such as
+			//        the  one in the ISO C standard, may not behave properly if invoked with
+			//        some signals blocked. Therefore, it is best not to block or ignore sig-
+			//        nals  across execs without explicit reason to do so, and especially not
+			//        to block signals across execs of arbitrary (not  closely  co-operating)
+			//        programs.
+	
+			// so we'll reset the signal mask and all signal handlers to SIG_DFL. We set them all
+			// just in case the current handlers may misbehave now that we've fork()ed.
+			sigset_t emptymask;
+			sigemptyset(&emptymask);
+			::sigprocmask(SIG_SETMASK, &emptymask, 0);
+	
+			for (size_t sig = 1; sig <= NSIG; ++sig)
 			{
+				struct sigaction temp;
+				sigaction(sig, 0, &temp);
 				temp.sa_handler = SIG_DFL;
 				sigaction(sig, &temp, NULL);
 			}
+	
+			// Close all file handle from parent process
+			rlimit rl;
+			int i = sysconf(_SC_OPEN_MAX);
+			if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
+			{
+				if ( i < 0 )
+				{
+					i = rl.rlim_max;
+				}
+				else
+				{
+					i = std::min<int>(rl.rlim_max, i);
+				}
+			}
+			while (i > 2)
+			{
+				close(i);
+				i--;
+			}
+	
+	
+			char** argv = new char*[command.size() + 1];
+			for (size_t i = 0; i < command.size(); i++)
+			{
+				argv[i] = strdup(command[i].c_str());
+			}
+			argv[command.size()] = 0;
+			int rval = execv(argv[0], argv);
+			cerr << Format( "Exec::safeSystem: execv failed for program "
+					"%1, rval is %2", argv[0], rval);
 		}
-
-
-		char** argv = new char*[command.size() + 1];
-		for (size_t i = 0; i < command.size(); i++)
+		catch (...)
 		{
-			argv[i] = strdup(command[i].c_str());
+			cerr << "something threw an exception after fork()!";
 		}
-		argv[command.size()] = 0;
-		int rval = execv(argv[0], argv);
-		cerr << Format( "Exec::safeSystem: execv failed for program "
-				"%1, rval is %2", argv[0], rval);
-		_exit(1);
+		_exit(127);
 	}
 	do
 	{
@@ -496,16 +510,25 @@ safePopen(const Array<String>& command,
 PopenStreams
 safePopen(const Array<String>& command, const char* const envp[])
 {
+	// sent over the execErrorPipe if an exception is caught after fork()ing.
+	// Negative because errno values are positive. Maybe this is a bad assumption? 
+	// The worst that could happen is reporting an unknown exception instead of the real errno value.
+	const int UNKNOWN_EXCEPTION = -2000; 
+
+	if (command.size() == 0)
+	{
+		OW_THROW(ExecErrorException, "Exec::safePopen: command is empty");
+	}
+	
 	PopenStreams retval;
 	retval.in( UnnamedPipe::createUnnamedPipe() );
 	UnnamedPipeRef upipeOut = UnnamedPipe::createUnnamedPipe();
 	retval.out( upipeOut );
 	UnnamedPipeRef upipeErr = UnnamedPipe::createUnnamedPipe();
 	retval.err( upipeErr );
-	if (command.size() == 0)
-	{
-		OW_THROW(ExecErrorException, "Exec::safePopen: command is empty");
-	}
+
+	UnnamedPipeRef execErrorPipe = UnnamedPipe::createUnnamedPipe();
+
 	pid_t forkrv = ::fork();
 	if (forkrv == -1)
 	{
@@ -513,99 +536,125 @@ safePopen(const Array<String>& command, const char* const envp[])
 	}
 	if (forkrv == 0)
 	{
-		// child process
-		// Close stdin, stdout, and stderr.
-		close(0);
-		close(1);
-		close(2);
-		// this should only fail because of programmer error.
-		UnnamedPipeRef foo1 = retval.in();
-		PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
-
-		UnnamedPipeRef foo2 = retval.out();
-		PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
-
-		UnnamedPipeRef foo3 = retval.err();
-		PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
-		
-		OW_ASSERT(in);
-		OW_ASSERT(out);
-		OW_ASSERT(err);
-		// connect stdin, stdout, and stderr to the return pipes.
-		dup2(in->getInputHandle(), 0);
-		dup2(out->getOutputHandle(), 1);
-		dup2(err->getOutputHandle(), 2);
-		// Close all other file handle from parent process
-		rlimit rl;
-		int i = sysconf(_SC_OPEN_MAX);
-		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
+		int execErrorFd = -1;
+		try
 		{
-			if ( i < 0 )
-			{
-				i = rl.rlim_max;
-			}
-			else
-			{
-				i = std::min<int>(rl.rlim_max, i);
-			}
-		}
-		while (i > 2)
-		{
-			close(i);
-			i--;
-		}
 
-		// according to susv3:
-		//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
-		//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
-		//        unchanged  across an exec. This is consistent with historical implemen-
-		//        tations, and it permits some useful functionality, such  as  the  nohup
-		//        command.  However,  it  should be noted that many existing applications
-		//        wrongly assume that they start with certain signals set to the  default
-		//        action  and/or  unblocked.  In  particular, applications written with a
-		//        simpler signal model that does not include blocking of signals, such as
-		//        the  one in the ISO C standard, may not behave properly if invoked with
-		//        some signals blocked. Therefore, it is best not to block or ignore sig-
-		//        nals  across execs without explicit reason to do so, and especially not
-		//        to block signals across execs of arbitrary (not  closely  co-operating)
-		//        programs.
-
-		// so we'll reset the signal mask and all SIG_IGN signal handlers to SIG_DFL
-		sigset_t emptymask;
-		sigemptyset(&emptymask);
-		::sigprocmask(SIG_SETMASK, &emptymask, 0);
-
-		for (size_t sig = 1; sig <= NSIG; ++sig)
-		{
-			struct sigaction temp;
-			sigaction(sig, 0, &temp);
-			if (temp.sa_handler == SIG_IGN)
+			// child process
+			// according to susv3:
+			//        This  volume  of  IEEE Std 1003.1-2001  specifies  that  signals set to
+			//        SIG_IGN remain set to SIG_IGN, and that  the  process  signal  mask  be
+			//        unchanged  across an exec. This is consistent with historical implemen-
+			//        tations, and it permits some useful functionality, such  as  the  nohup
+			//        command.  However,  it  should be noted that many existing applications
+			//        wrongly assume that they start with certain signals set to the  default
+			//        action  and/or  unblocked.  In  particular, applications written with a
+			//        simpler signal model that does not include blocking of signals, such as
+			//        the  one in the ISO C standard, may not behave properly if invoked with
+			//        some signals blocked. Therefore, it is best not to block or ignore sig-
+			//        nals  across execs without explicit reason to do so, and especially not
+			//        to block signals across execs of arbitrary (not  closely  co-operating)
+			//        programs.
+	
+			// so we'll reset the signal mask and all signal handlers to SIG_DFL. We set them all
+			// just in case the current handlers may misbehave now that we've fork()ed.
+			sigset_t emptymask;
+			sigemptyset(&emptymask);
+			::sigprocmask(SIG_SETMASK, &emptymask, 0);
+	
+			for (size_t sig = 1; sig <= NSIG; ++sig)
 			{
+				struct sigaction temp;
+				sigaction(sig, 0, &temp);
 				temp.sa_handler = SIG_DFL;
 				sigaction(sig, &temp, NULL);
 			}
-		}
+	
+			// Close stdin, stdout, and stderr.
+			close(0);
+			close(1);
+			close(2);
+
+			// this should only fail because of programmer error.
+			UnnamedPipeRef foo1 = retval.in();
+			PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
+	
+			UnnamedPipeRef foo2 = retval.out();
+			PosixUnnamedPipeRef out = foo2.cast_to<PosixUnnamedPipe>();
+	
+			UnnamedPipeRef foo3 = retval.err();
+			PosixUnnamedPipeRef err = foo3.cast_to<PosixUnnamedPipe>();
+
+			
+			OW_ASSERT(in);
+			OW_ASSERT(out);
+			OW_ASSERT(err);
+			// connect stdin, stdout, and stderr to the return pipes.
+			int rv = dup2(in->getInputHandle(), 0);
+			OW_ASSERT(rv != -1);
+			rv = dup2(out->getOutputHandle(), 1);
+			OW_ASSERT(rv != -1);
+			rv = dup2(err->getOutputHandle(), 2);
+			OW_ASSERT(rv != -1);
+
+			// set up the execError fd
+			PosixUnnamedPipeRef execError = execErrorPipe.cast_to<PosixUnnamedPipe>();
+			OW_ASSERT(execError);
+			execErrorFd = execError->getOutputHandle();
+			// set it to close on exec so the parent can detect a close when exec() works.
+			::fcntl(execErrorFd, F_SETFD, FD_CLOEXEC);
 
 
-		char** argv = new char*[command.size() + 1];
-		for (size_t i = 0; i < command.size(); i++)
-		{
-			argv[i] = strdup(command[i].c_str());
+			// Close all other file handle from parent process
+			rlimit rl;
+			int i = sysconf(_SC_OPEN_MAX);
+			if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
+			{
+				if ( i < 0 )
+				{
+					i = rl.rlim_max;
+				}
+				else
+				{
+					i = std::min<int>(rl.rlim_max, i);
+				}
+			}
+			while (i > 2)
+			{
+				if (i != execErrorFd)
+				{
+					close(i);
+				}
+				i--;
+			}
+	
+			char** argv = new char*[command.size() + 1];
+			for (size_t i = 0; i < command.size(); i++)
+			{
+				argv[i] = strdup(command[i].c_str());
+			}
+			argv[command.size()] = 0;
+			int rval = 0;
+			if (envp)
+			{
+				rval = execve(argv[0], argv, const_cast<char* const*>(envp));
+			}
+			else
+			{
+				rval = execv(argv[0], argv);
+			}
+			// send errno over the pipe
+			int lerrno = errno;
+			write(execErrorFd, &lerrno, sizeof(lerrno));
 		}
-		argv[command.size()] = 0;
-		int rval = 0;
-		if (envp)
+		catch (...)
 		{
-			rval = execve(argv[0], argv, const_cast<char* const*>(envp));
+			int errorVal = UNKNOWN_EXCEPTION;
+			write(execErrorFd, &errorVal, sizeof(errorVal));
 		}
-		else
-		{
-			rval = execv(argv[0], argv);
-		}
-		cerr << Format( "Exec::safePopen: execv failed for program "
-				"%1, rval is %2", argv[0], rval);
 		_exit(127);
 	}
+
 	// parent process
 	retval.pid (forkrv);
 
@@ -623,6 +672,38 @@ safePopen(const Array<String>& command, const char* const envp[])
 	in->closeInputHandle();
 	out->closeOutputHandle();
 	err->closeOutputHandle();
+	
+	PosixUnnamedPipeRef execErrorPosixPipe = execErrorPipe.cast_to<PosixUnnamedPipe>();
+	OW_ASSERT(execErrorPosixPipe);
+	// we need to close the parent's output side so that when the child's output side is closed, it can be detected.
+	execErrorPosixPipe->closeOutputHandle();
+
+	const int SECONDS_TO_WAIT_FOR_CHILD_TO_EXEC = 10; // 10 seconds should be plenty for the child to go from fork() to execv()
+	execErrorPipe->setReadTimeout(SECONDS_TO_WAIT_FOR_CHILD_TO_EXEC);
+
+	int childErrorCode = 0;
+	int bytesRead = execErrorPipe->read(&childErrorCode, sizeof(childErrorCode));
+	// 0 bytes means execv() happened successfully.
+	if (bytesRead == ETIMEDOUT) // broken interface... grumble, grumble...
+	{
+		// for some reason the child never ran exec(). Must've deadlocked or the system is *really* loaded down.
+		// Kill it forcefully.
+		kill(forkrv, SIGKILL);
+		OW_THROW(ExecErrorException, "Exec::safePopen: timed out waiting for child process to exec()");
+	}
+	if (bytesRead > 0)
+	{
+		// exec failed
+		if (childErrorCode == UNKNOWN_EXCEPTION)
+		{
+			OW_THROW(ExecErrorException, "Exec::safePopen: child process caught an exception before reaching exec()");
+		}
+		else
+		{
+			errno = childErrorCode;
+			OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::safePopen: child process failed running exec()");
+		}
+	}
 
 	return retval;
 }
@@ -1016,7 +1097,6 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 		}
 	}
 }
-
 
 } // end namespace Exec
 #endif

@@ -69,6 +69,8 @@ void OW_ExecTestCases::testSafePopen()
 	String out = rval.out()->readAll();
 	rval.getExitStatus();
 	unitAssert(out == "hello world\n");
+
+	unitAssertThrows(Exec::safePopen(String("/a/non-existent/binary").tokenize()));
 }
 
 void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
