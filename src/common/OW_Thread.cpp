@@ -193,70 +193,51 @@ OW_Thread::run(OW_RunnableRef theRunnable, OW_Bool separateThread, OW_Reference<
 void*
 OW_Thread::threadRunner(void* paramPtr)
 {
-	OW_ASSERT(paramPtr != NULL);
-
-	OW_ThreadParam* pParam = (OW_ThreadParam*)paramPtr;
-	OW_Thread* pTheThread = pParam->thread;
-	OW_Thread_t theThreadID = pTheThread->m_id;
-	pTheThread->m_isRunning = true;
-	OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
-
-	while(pTheThread->m_isStarting)
-	{
-		yield();
-	}
-
+	OW_Thread_t theThreadID;
 	try
 	{
+		// scope is important so destructors will run before the thread is clobbered by exitThread
+		OW_ASSERT(paramPtr != NULL);
+
+		OW_ThreadParam* pParam = (OW_ThreadParam*)paramPtr;
+		OW_Thread* pTheThread = pParam->thread;
+		theThreadID = pTheThread->m_id;
+		pTheThread->m_isRunning = true;
+		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
+
+		while(pTheThread->m_isStarting)
+		{
+			yield();
+		}
+
 		pTheThread->run();
-	}
-	catch(OW_Exception& ex)
-	{
-		/*
-		OW_TRACE("!!! Exception: %s caught in OW_Thread class\n", ex.type());
-		OW_TRACE("File: %s\n", ex.getFile());
-		OW_TRACE("Line: %d\n", ex.getLine());
-		OW_TRACE("Msg: %s\n", ex.getMessage());
-		*/
-	}
-	catch(...)
-	{
-		/*
-		OW_TRACE("!!! Unknown exception caught in OW_Thread class\n");
-		*/
-	}
 
-	try
-	{
 		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
 		if(pTheThread->getSelfDelete() == true)
 		{
 			delete pTheThread;
 		}
+
+		delete pParam;
+
+		if (cb)
+		{
+			cb->notifyThreadDone(pTheThread);
+		}
 	}
 	catch(OW_Exception& ex)
 	{
-		/*
-		OW_TRACE("!!! Exception: %s caught in OW_Thread class\n", ex.type());
-		OW_TRACE("File: %s\n", ex.getFile());
-		OW_TRACE("Line: %d\n", ex.getLine());
-		OW_TRACE("Msg: %s\n", ex.getMessage());
-		*/
+#ifdef OW_DEBUG		
+		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread class\n";
+		std::cerr << ex << std::endl;
+#endif
 	}
 	catch(...)
 	{
-		/*
-		OW_TRACE("!!! Unknown exception caught in OW_Thread class deleting "
-			"thread\n");
-		*/
-	}
-	
-	delete pParam;
-
-	if (cb)
-	{
-		cb->notifyThreadDone(pTheThread);
+#ifdef OW_DEBUG		
+		std::cerr << "!!! Unknown Exception caught in OW_Thread class" << std::endl;
+#endif
 	}
 
 	// end the thread.  exitThread never returns.
