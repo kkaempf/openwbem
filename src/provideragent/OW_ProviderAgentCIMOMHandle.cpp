@@ -280,7 +280,7 @@ ProviderAgentCIMOMHandle::createInstance(const String &ns, const CIMInstance &in
 	{
 		OW_THROWCIM(CIMException::NOT_SUPPORTED); 
 	}
-	CIMObjectPath rval(CIMNULL); 
+	CIMObjectPath rval(ns, instance); // Not CIMNULL since we have to return something for the seconday instance provider.
 	{
 		PAWriteLock wl(m_locker); 
 		if (pInstProv)
