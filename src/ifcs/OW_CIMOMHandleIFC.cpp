@@ -214,6 +214,7 @@ OW_CIMOMHandleIFC::enumQualifierTypesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMOMHandleIFC::associatorNamesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& objectName,
 		const OW_String& assocClass,
 		const OW_String& resultClass,
@@ -222,13 +223,14 @@ OW_CIMOMHandleIFC::associatorNamesE(
 {
 	OW_CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
-	associatorNames(objectName,handler,assocClass,resultClass,role,resultRole);
+	associatorNames(ns,objectName,handler,assocClass,resultClass,role,resultRole);
 	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_CIMOMHandleIFC::associatorsE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& assocClass,
 		const OW_String& resultClass,
@@ -240,7 +242,7 @@ OW_CIMOMHandleIFC::associatorsE(
 {
 	OW_CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
-	associators(path, handler, assocClass, resultClass, role, resultRole,
+	associators(ns, path, handler, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }

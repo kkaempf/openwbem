@@ -56,6 +56,7 @@ public:
 	
 	virtual void associators(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMInstanceResultHandlerIFC& result,
@@ -66,7 +67,7 @@ public:
 			const OW_Bool& includeClassOrigin,
 			const OW_StringArray* propertyList)
 	{
-		m_pProv->associators(env,assocName,objectName,result,resultClass,role,
+		m_pProv->associators(env,ns,assocName,objectName,result,resultClass,role,
 			resultRole,includeQualifiers,includeClassOrigin,propertyList);
 	}
 

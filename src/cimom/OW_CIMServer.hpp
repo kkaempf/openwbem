@@ -524,6 +524,7 @@ public:
 		const OW_String& resultRole, const OW_ACLInfo& aclInfo);
 
 	virtual void associators(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& assocClass,
@@ -607,7 +608,9 @@ public:
 	OW_Bool _isDynamicAssoc(const OW_CIMClass& cc, const OW_ACLInfo& aclInfo);
 
 private:
-	void _commonAssociators(const OW_CIMObjectPath& path,
+	void _commonAssociators(
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		const OW_String& assocClassName, const OW_String& resultClass,
 		const OW_String& role, const OW_String& resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,

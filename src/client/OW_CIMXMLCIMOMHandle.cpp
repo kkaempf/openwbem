@@ -1192,12 +1192,14 @@ OW_CIMXMLCIMOMHandle::associatorNames(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
-						OW_CIMInstanceResultHandlerIFC& result,
-		 	 			 const OW_String& assocClass, const OW_String& resultClass,
-		 	 			 const OW_String& role, const OW_String& resultRole,
-		 	 			 OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		 				 const OW_StringArray* propertyList)
+OW_CIMXMLCIMOMHandle::associators(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	if (path.getKeys().size() == 0)
 	{
@@ -1205,7 +1207,7 @@ OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
 			"associators requires an instance path not a class path");
 	}
 
-	associatorsCommon(path, &result, 0, assocClass, resultClass, role,
+	associatorsCommon(ns, path, &result, 0, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 
@@ -1224,7 +1226,7 @@ OW_CIMXMLCIMOMHandle::associatorsClasses(const OW_CIMObjectPath& path,
 			"associatorsClasses requires a class path not an instance path");
 	}
 
-	associatorsCommon(path, 0, &result, assocClass, resultClass, role,
+	associatorsCommon(path.getNameSpace(), path, 0, &result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 
@@ -1279,7 +1281,9 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::associatorsCommon(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC* iresult,
 	OW_CIMClassResultHandlerIFC* cresult,
 	const OW_String& assocClass, const OW_String& resultClass,
@@ -1332,8 +1336,8 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 		"\"/></IPARAMVALUE>";
 	}
 
-	objectWithPathOp op(iresult,cresult,path.getNameSpace());
-	intrinsicMethod(path.getNameSpace(), commandName, op, params, extra.toString());
+	objectWithPathOp op(iresult, cresult, ns);
+	intrinsicMethod(ns, commandName, op, params, extra.toString());
 
 }
 

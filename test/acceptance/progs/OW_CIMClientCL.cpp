@@ -755,13 +755,13 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
-					assocClass, resultClass, role, resultRole);
+		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(
+			"root/testsuite", cop, assocClass, resultClass, role, resultRole);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
@@ -794,10 +794,10 @@ associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		
-		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
-					assocClass, resultClass, role, resultRole);
+		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(
+			"root/testsuite", cop, assocClass, resultClass, role, resultRole);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
@@ -834,13 +834,13 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.associatorsE(cop,
+		OW_CIMInstanceEnumeration enu = hdl.associatorsE("root/testsuite", cop,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
 

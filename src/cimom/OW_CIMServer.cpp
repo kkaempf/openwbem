@@ -2261,7 +2261,9 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::associators(const OW_CIMObjectPath& path,
+OW_CIMServer::associators(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
@@ -2271,7 +2273,7 @@ OW_CIMServer::associators(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path.getNameSpace(), aclInfo);
 
-	_commonAssociators(path, assocClass, resultClass, role, resultRole,
+	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,
 		aclInfo);
 }
@@ -2288,7 +2290,7 @@ OW_CIMServer::associatorsClasses(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path.getNameSpace(), aclInfo);
 
-	_commonAssociators(path, assocClass, resultClass, role, resultRole,
+	_commonAssociators(path.getNameSpace(), path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
 		aclInfo);
 }
@@ -2306,9 +2308,7 @@ OW_CIMServer::associatorNames(
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path.getNameSpace(), aclInfo);
 
-	OW_CIMObjectPath pathWithNS(path);
-	pathWithNS.setNameSpace(ns);
-	_commonAssociators(pathWithNS, assocClass, resultClass, role, resultRole,
+	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		false, false, 0, 0, &result, 0, aclInfo);
 }
 
@@ -2707,7 +2707,8 @@ OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_commonAssociators(
-	const OW_CIMObjectPath& path,
+	const OW_String& ns,
+	const OW_CIMObjectPath& path_,
 	const OW_String& assocClassName, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -2718,7 +2719,8 @@ OW_CIMServer::_commonAssociators(
 	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMClass assocClass;
-	OW_String ns = path.getNameSpace();
+	OW_CIMObjectPath path(path_);
+	path.setNameSpace(ns);
 	if (!m_nStore.nameSpaceExists(ns))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
@@ -2830,7 +2832,7 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 
 		if(piresult != 0)
 		{
-			assocP->associators(createProvEnvRef(real_ch),
+			assocP->associators(createProvEnvRef(real_ch), path.getNameSpace(),
 				assocClassPath, path, *piresult, resultClass, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList);
 		}

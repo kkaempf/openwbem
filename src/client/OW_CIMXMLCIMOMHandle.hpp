@@ -435,7 +435,9 @@ public:
 	 * otherwise incorrect parameters) CIM_ERR_FAILED (some other unspecified
 	 * error occurred)
 	 */
-	virtual void associators(const OW_CIMObjectPath &path,
+	virtual void associators(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
@@ -650,7 +652,9 @@ private:
 		const OW_Array<OW_Param>& params = OW_Array<OW_Param>(),
 		const OW_String& extra = OW_String());
 	
-	void associatorsCommon(const OW_CIMObjectPath& path,
+	void associatorsCommon(
+		const OW_String& ns,
+		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC* iresult,
 		OW_CIMClassResultHandlerIFC* cresult,
 		const OW_String& assocClass, const OW_String& resultClass,

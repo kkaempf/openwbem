@@ -546,6 +546,8 @@ void
 OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
+
 	OW_Array<param> params;
 	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
 	params.push_back(param(XMLP_ASSOCCLASS, true, param::CLASSNAME));
@@ -555,10 +557,7 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-
-	path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
+	OW_CIMObjectPath objectName = params[0].val.toCIMObjectPath();
 
 	OW_String assocClass;
 	if (params[1].isSet)
@@ -573,7 +572,7 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 
 	CIMObjectPathXMLOutputter handler(ostr);
-	hdl.associatorNames(path, handler, assocClass, resultClass,
+	hdl.associatorNames(ns, objectName, handler, assocClass, resultClass,
 		params[3].val.toString(), params[4].val.toString());
 }
 
@@ -666,6 +665,8 @@ namespace
 void OW_XMLExecute::associators(ostream& ostr,
 	OW_CIMXMLParser& parser, OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
+
 	OW_Array<param> params;
 	params.push_back(param(XMLP_OBJECTNAME, false, param::OBJECTNAME));
 	params.push_back(param(XMLP_ASSOCCLASS, true, param::CLASSNAME));
@@ -678,10 +679,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-
-	path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
+	OW_CIMObjectPath objectName = params[0].val.toCIMObjectPath();
 
 	OW_String assocClass;
 	if (params[1].isSet)
@@ -717,7 +715,8 @@ void OW_XMLExecute::associators(ostream& ostr,
 		AssocCIMClassXMLOutputter handler(ostr, path, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
-		hdl.associatorsClasses(path, handler,
+		objectName.setNameSpace(ns);
+		hdl.associatorsClasses(objectName, handler,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, pPropList);
 	}
@@ -727,7 +726,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 		AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
 			includeClassOrigin, isPropertyList, propertyList);
 
-		hdl.associators(path, handler,
+		hdl.associators(ns, objectName, handler,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, pPropList);
 	}

@@ -44,6 +44,7 @@ OW_CppAssociatorProviderProxy::OW_CppAssociatorProviderProxy(
 void
 OW_CppAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMInstanceResultHandlerIFC& result,
@@ -55,7 +56,7 @@ OW_CppAssociatorProviderProxy::associators(
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->associators(env, assocName, objectName, result, resultClass, role,
+	m_pProv->associators(env, ns, assocName, objectName, result, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 
@@ -63,6 +64,7 @@ OW_CppAssociatorProviderProxy::associators(
 void
 OW_CppAssociatorProviderProxy::associatorNames(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
@@ -71,7 +73,7 @@ OW_CppAssociatorProviderProxy::associatorNames(
 		const OW_String& resultRole)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->associatorNames(env, assocName, objectName, result, resultClass,
+	m_pProv->associatorNames(env, ns, assocName, objectName, result, resultClass,
 			role, resultRole);
 }
 

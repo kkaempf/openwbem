@@ -266,7 +266,9 @@ OW_WQLFilterRep::modifyInstance(const OW_String&, const OW_CIMInstance&,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::associators(const OW_CIMObjectPath &/*path*/,
+OW_WQLFilterRep::associators(
+	const OW_String&,
+	const OW_CIMObjectPath &/*path*/,
 	OW_CIMInstanceResultHandlerIFC&,
 	const OW_String &/*assocClass*/, const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, const OW_String &/*resultRole*/,

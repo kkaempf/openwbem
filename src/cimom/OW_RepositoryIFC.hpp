@@ -439,6 +439,7 @@ public:
 		const OW_String& resultRole, const OW_ACLInfo& aclInfo) = 0;
 
 	virtual void associators(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& assocClass,

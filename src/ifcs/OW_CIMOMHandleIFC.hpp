@@ -527,6 +527,7 @@ public:
 	 * @exception OW_CIMException - as defined in the associator method
 	 */
 	virtual void associatorNames(
+		const OW_String& ns,
 		const OW_CIMObjectPath& objectName,
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& assocClass=OW_String(),
@@ -535,6 +536,7 @@ public:
 		const OW_String& resultRole=OW_String()) = 0;
 
 	virtual OW_CIMObjectPathEnumeration associatorNamesE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& objectName,
 		const OW_String& assocClass=OW_String(),
 		const OW_String& resultClass=OW_String(),
@@ -615,6 +617,7 @@ public:
 	 * error occurred)
 	 */
 	virtual void associators(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& assocClass=OW_String(),
@@ -626,6 +629,7 @@ public:
 		const OW_StringArray* propertyList=0) = 0;
 
 	virtual OW_CIMInstanceEnumeration associatorsE(
+		const OW_String& ns,
 		const OW_CIMObjectPath& path,
 		const OW_String& assocClass=OW_String(),
 		const OW_String& resultClass=OW_String(),

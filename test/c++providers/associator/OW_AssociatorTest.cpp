@@ -73,6 +73,7 @@ namespace
 
 		virtual void associators(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMInstanceResultHandlerIFC& result,
@@ -84,10 +85,10 @@ namespace
 			const OW_StringArray* propertyList)
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest associators called "
-				"assocName = %1, objectName = %2, resultClass = %3, "
-				"role = %4, resultRole = %5, includeQualifiers = %6, "
-				"includeClassOrigin = %7, propertyList = %8",
-				assocName.toString(), objectName.toString(),
+				"ns = %1, assocName = %2, objectName = %3, resultClass = %4, "
+				"role = %5, resultRole = %6, includeQualifiers = %7, "
+				"includeClassOrigin = %8, propertyList = %9",
+				ns, assocName.toString(), objectName.toString(),
 				resultClass, role, resultRole, includeQualifiers,
 				includeClassOrigin, propertyList));
 
@@ -108,6 +109,7 @@ namespace
 
 		virtual void associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
 			OW_CIMObjectPathResultHandlerIFC& result,
@@ -116,9 +118,9 @@ namespace
 			const OW_String& resultRole )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest associatorNames called "
-				"assocName = %1, objectName = %2, resultClass = %3, "
-				"role = %4, resultRole = %5",
-				assocName.toString(), objectName.toString(), resultClass,
+				"ns = %1, assocName = %2, objectName = %3, resultClass = %4, "
+				"role = %4, resultRole = %6",
+				ns, assocName.toString(), objectName.toString(), resultClass,
 				role, resultRole));
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();

@@ -431,13 +431,13 @@ void associatorNames(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing associatorNames() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
-					"CIM_Component", "", "", "");
+		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(
+			"/root/acltest", cop, "CIM_Component", "", "", "");
 
 		if (mode != "r" && mode != "rw")
 			assert(0);
@@ -456,13 +456,13 @@ void associators(OW_CIMOMHandleIFC& hdl)
 	cout << "\n ***** Doing associators() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.associatorsE(cop,
+		OW_CIMInstanceEnumeration enu = hdl.associatorsE("/root/acltest", cop,
 									"CIM_Component", "", "", "", true, true, NULL);
 
 		if (mode != "r" && mode != "rw")

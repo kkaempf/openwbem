@@ -801,6 +801,7 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 	OW_StringArray propList;
 	OW_StringArray* propListPtr = 0;
 
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String assocClass(OW_BinIfcIO::readString(istrm));
 	OW_String resultClass(OW_BinIfcIO::readString(istrm));
@@ -821,6 +822,7 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 		// class path
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
+		op.setNameSpace(ns);
 		chdl->associatorsClasses(op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
 		OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
@@ -831,7 +833,7 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 		// instance path
 		OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
 		BinaryCIMInstanceWriter handler(ostrm);
-		chdl->associators(op, handler, assocClass, resultClass,
+		chdl->associators(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
 		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 		OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
@@ -843,6 +845,7 @@ void
 OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String assocClass(OW_BinIfcIO::readString(istrm));
 	OW_String resultClass(OW_BinIfcIO::readString(istrm));
@@ -852,7 +855,7 @@ OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm);
-	chdl->associatorNames(op, handler, assocClass,
+	chdl->associatorNames(ns, op, handler, assocClass,
 		resultClass, role, resultRole);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
