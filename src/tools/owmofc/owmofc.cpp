@@ -44,9 +44,9 @@
 #include "OW_MOFCompCIMOMHandle.hpp"
 
 #ifdef OW_ENABLE_DB4_REPOSITORY
-#include "OW_CIMRepository2.hpp"
+	#include "OW_CIMRepository2.hpp"
 #else
-#include "OW_CIMRepository.hpp"
+	#include "OW_CIMRepository.hpp"
 #endif
 
 #include "OW_RequestHandlerIFC.hpp"
@@ -72,25 +72,29 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 class GetLoginInfo : public ClientAuthCBIFC
 {
-	public:
-		bool getCredentials(const String& realm, String& name,
-				String& passwd, const String& details)
-		{
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = String::getLine(cin);
-			passwd = GetPass::getPass("Enter the password for " +
-				name + ": ");
-			return true;
-		}
+public:
+	bool getCredentials(const String& realm, String& name,
+						String& passwd, const String& details)
+	{
+		cout << "Authentication required for " << realm << endl;
+		cout << "Enter the user name: ";
+		name = String::getLine(cin);
+		passwd = GetPass::getPass("Enter the password for " +
+								  name + ": ");
+		return true;
+	}
 };
 
 //////////////////////////////////////////////////////////////////////////////
 class TheErrorHandler: public ParserErrorHandlerIFC
 {
 public:
-	TheErrorHandler() : ParserErrorHandlerIFC() {}
-	virtual ~TheErrorHandler(){}
+	TheErrorHandler() : ParserErrorHandlerIFC()
+	{
+	}
+	virtual ~TheErrorHandler()
+	{
+	}
 protected:
 	virtual void doFatalError(const char *error, const LineInfo& li )
 	{
@@ -123,7 +127,7 @@ StringArray g_filelist;
 enum 
 {
 	E_OPThelp,
-    E_OPTversion,
+	E_OPTversion,
 	E_OPTdirect,
 	E_OPTurl,
 	E_OPTnamespace,
@@ -144,46 +148,46 @@ enum
 
 CmdLineParser::Option options[] = 
 {
-    { E_OPThelp, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options." },
-	{ E_OPTversion, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information." },
-    { E_OPTdirect, 'd', "direct", CmdLineParser::E_REQUIRED_ARG, 0,  
-        "Create a repository in the specified directory without connecting to a cimom. "
-        "Be extremely cautious using this option. Bypassing "
-        "the cimom can have the following negative consequences:\n"
-        "- Instances may incorrectly bypass providers.\n"
-        "- The repository will be corrupted if the cimom is running simultaneously." },
-    { E_OPTurl, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, 
-        "The url of the cimom. Default is http://localhost/root/cimv2 if not specified." },
-    { E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0, 
-        "Remove all the Description qualifiers to save space." },
-    { E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0, 
-        "If the namespace doesn't exist, create it" },
-    { E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, 
-        "This option is deprecated (in 3.1.0) in favor of the URL namespace. The initial namespace "
-        "to use. Default is root/cimv2 if not specified via this option or in the URL" }, 
-    { E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0, 
-        "This option is deprecated (in 3.1.0) in favor of the URL scheme. "
-        "Specify the encoding, valid values are cimxml and owbinary. "
-		"This can also be specified by using the owbinary.wbem URI scheme." },
-    { E_OPTcheck_syntax, 's', "check-syntax", CmdLineParser::E_NO_ARG, 0, 
-        "Only parse the mof, don't actually do anything <UNIMPLEMENTED>" },
-    { E_OPTdump_xml, 'x', "dump-xml", CmdLineParser::E_REQUIRED_ARG, 0, 
-        "Write the xml to the specified file <UNIMPLEMENTED>" },
-    { E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0, 
-        "Instead of creating classes and instances, remove them <UNIMPLEMENTED>" },
-    { E_OPTpreserve, 'p', "preserve", CmdLineParser::E_NO_ARG, 0, 
-        "If a class or instance already exists, don't overwrite it with the one in the mof <UNIMPLEMENTED>" },
-    { E_OPTupgrade, 'g', "upgrade", CmdLineParser::E_NO_ARG, 0, 
-        "Overwrite a class only if it has a larger Version qualifier <UNIMPLEMENTED>" },
-    { E_OPTsuppress_warnings, 'w', "suppress-warnings", CmdLineParser::E_NO_ARG, 0, 
-        "Only print errors <UNIMPLEMENTED>" },
-    { E_OPTquiet, 'q', "quiet", CmdLineParser::E_NO_ARG, 0, 
-        "Don't print anything <UNIMPLEMENTED>" },
-    { E_OPTinclude, 'I', "include", CmdLineParser::E_REQUIRED_ARG, 0, 
-        "Add the specifed directory to the include search path <UNIMPLEMENTED>" },
-    { E_OPTignore_double_includes, 'i', "ignore-double-includes", CmdLineParser::E_NO_ARG, 0, 
-        "If a mof file has already been included, don't parse it again <UNIMPLEMENTED>" },
-    { 0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0 }
+	{ E_OPThelp, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{ E_OPTversion, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{ E_OPTdirect, 'd', "direct", CmdLineParser::E_REQUIRED_ARG, 0,  
+		"Create a repository in the specified directory without connecting to a cimom. "
+		"Be extremely cautious using this option. Bypassing "
+		"the cimom can have the following negative consequences:\n"
+		"- Instances may incorrectly bypass providers.\n"
+		"- The repository will be corrupted if the cimom is running simultaneously."},
+	{ E_OPTurl, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, 
+		"The url of the cimom. Default is http://localhost/root/cimv2 if not specified."},
+	{ E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0, 
+		"Remove all the Description qualifiers to save space."},
+	{ E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0, 
+		"If the namespace doesn't exist, create it"},
+	{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, 
+		"This option is deprecated (in 3.1.0) in favor of the URL namespace. The initial namespace "
+		"to use. Default is root/cimv2 if not specified via this option or in the URL"}, 
+	{ E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0, 
+		"This option is deprecated (in 3.1.0) in favor of the URL scheme. "
+		"Specify the encoding, valid values are cimxml and owbinary. "
+		"This can also be specified by using the owbinary.wbem URI scheme."},
+	{ E_OPTcheck_syntax, 's', "check-syntax", CmdLineParser::E_NO_ARG, 0, 
+		"Only parse the mof, don't actually do anything <UNIMPLEMENTED>"},
+	{ E_OPTdump_xml, 'x', "dump-xml", CmdLineParser::E_REQUIRED_ARG, 0, 
+		"Write the xml to the specified file <UNIMPLEMENTED>"},
+	{ E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0, 
+		"Instead of creating classes and instances, remove them <UNIMPLEMENTED>"},
+	{ E_OPTpreserve, 'p', "preserve", CmdLineParser::E_NO_ARG, 0, 
+		"If a class or instance already exists, don't overwrite it with the one in the mof <UNIMPLEMENTED>"},
+	{ E_OPTupgrade, 'g', "upgrade", CmdLineParser::E_NO_ARG, 0, 
+		"Overwrite a class only if it has a larger Version qualifier <UNIMPLEMENTED>"},
+	{ E_OPTsuppress_warnings, 'w', "suppress-warnings", CmdLineParser::E_NO_ARG, 0, 
+		"Only print errors <UNIMPLEMENTED>"},
+	{ E_OPTquiet, 'q', "quiet", CmdLineParser::E_NO_ARG, 0, 
+		"Don't print anything <UNIMPLEMENTED>"},
+	{ E_OPTinclude, 'I', "include", CmdLineParser::E_REQUIRED_ARG, 0, 
+		"Add the specifed directory to the include search path <UNIMPLEMENTED>"},
+	{ E_OPTignore_double_includes, 'i', "ignore-double-includes", CmdLineParser::E_NO_ARG, 0, 
+		"If a mof file has already been included, don't parse it again <UNIMPLEMENTED>"},
+	{ 0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
 };
 
 void usage()
@@ -215,10 +219,10 @@ processCommandLineOptions(int argc, char** argv)
 	try
 	{
 		CmdLineParser parser(argc, argv, options);
-		if(parser.isSet(E_OPThelp))
+		if (parser.isSet(E_OPThelp))
 		{
 			usage();
-            return false;
+			return false;
 		}
 		if (parser.isSet(E_OPTversion))
 		{
@@ -226,32 +230,32 @@ processCommandLineOptions(int argc, char** argv)
 			cout << "Written by Dan Nuffer.\n";
 			return 0;
 		}
-		if(parser.isSet(E_OPTdirect))
+		if (parser.isSet(E_OPTdirect))
 		{
 			g_useCimRepository = true;
 			g_repositoryDir = parser.getOptionValue(E_OPTdirect);
 		}
-		if(parser.isSet(E_OPTurl))
+		if (parser.isSet(E_OPTurl))
 		{
 			g_url = parser.getOptionValue(E_OPTurl);
 		}
-		if(parser.isSet(E_OPTnamespace))
+		if (parser.isSet(E_OPTnamespace))
 		{
 			g_opts.m_namespace = parser.getOptionValue(E_OPTnamespace);
 		}
-		if(parser.isSet(E_OPTencoding))
+		if (parser.isSet(E_OPTencoding))
 		{
 			g_encoding = parser.getOptionValue(E_OPTencoding);
 		}
-		if(parser.isSet(E_OPTcreate_namespaces))
+		if (parser.isSet(E_OPTcreate_namespaces))
 		{
 			g_opts.m_createNamespaces = true;
 		}
-		if(parser.isSet(E_OPTremove_descriptions))
+		if (parser.isSet(E_OPTremove_descriptions))
 		{
 			g_opts.m_removeDescriptions = true;
 		}
-		
+
 		g_filelist.appendArray(parser.getNonOptionArgs());
 		if (g_filelist.empty())
 		{
@@ -259,26 +263,26 @@ processCommandLineOptions(int argc, char** argv)
 			return false;
 		}
 	}
-	catch(CmdLineParserException& e)
+	catch (CmdLineParserException& e)
 	{
 		switch (e.getErrorCode())
 		{
 			case CmdLineParser::E_INVALID_OPTION:
 				cerr << "unknown option: " << e.getMessage() << '\n';
-			break;
+				break;
 			case CmdLineParser::E_MISSING_ARGUMENT:
 				cerr << "missing argument for option: " << e.getMessage() << '\n';
-			break;
+				break;
 			default:
 				cerr << "failed parsing command line options\n";
-			break;
+				break;
 		}
-        usage();
-        return false;
+		usage();
+		return false;
 	}
 
 	// Set default namespace, this is a bit strange to maintain backward compat.
-    // This was deprecated in 3.1.0, remove it later.
+	// This was deprecated in 3.1.0, remove it later.
 	if (g_opts.m_namespace.empty())
 	{
 		URL url(g_url);
@@ -291,7 +295,7 @@ processCommandLineOptions(int argc, char** argv)
 			g_opts.m_namespace = url.namespaceName;
 		}
 	}
-    return true;
+	return true;
 }
 
 class coutLogger : public Logger
@@ -406,11 +410,11 @@ int main(int argc, char** argv)
 			errors += theCompiler.compile(g_filelist[i]);
 		}
 		cout
-			<< "Compilation finished.  "
-			<< errors
-			<< " errors occurred." << endl;
+		<< "Compilation finished.  "
+		<< errors
+		<< " errors occurred." << endl;
 	}
-	catch(Exception& e)
+	catch (Exception& e)
 	{
 		cerr << "Caught Exception: " << e.type() << endl;
 		cerr << "File: " << e.getFile() << endl;
@@ -418,7 +422,7 @@ int main(int argc, char** argv)
 		cerr << "Msg: " << e.getMessage() << endl;
 		++errors;
 	}
-	catch(...)
+	catch (...)
 	{
 		cerr << "Caught unknown exception" << endl;
 		++errors;
