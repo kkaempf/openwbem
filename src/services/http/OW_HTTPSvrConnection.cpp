@@ -187,10 +187,6 @@ HTTPSvrConnection::run()
 			   sendError(m_resCode);
 			   return;
 			}
-			if (selType != 1)	// If this isn't the socket - something is wrong
-			{
-			   OW_THROW(Assertion, "Unexpected return code from select");
-			}
 			if (!HTTPUtils::parseHeader(m_requestHeaders, m_requestLine, m_istr))
 			{
 				if (Socket::gotShutDown())
@@ -513,7 +509,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			clientSpecified);
 		if (setByProvider || clientSpecified)
 		{
-			OW_LOGDEBUG(format("HTTPSvrConnection::sendPostResponse (chunk)"
+			OW_LOGDEBUG(Format("HTTPSvrConnection::sendPostResponse (chunk)"
 				" setting Content-Language to %1", clang).c_str());
 
 			ostrChunk->addTrailer("Content-Language", clang);
