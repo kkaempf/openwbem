@@ -305,48 +305,52 @@ OW_LocalCIMOMHandle::setProperty(const OW_CIMObjectPath& name,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_LocalCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->associatorNames(path, assocClass, resultClass, role,
+	m_pServer->associatorNames(path, result, assocClass, resultClass, role,
 		resultRole, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_LocalCIMOMHandle::associators(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->associators(path, assocClass, resultClass, role,
+	m_pServer->associators(path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_LocalCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->referenceNames(path, resultClass, role, m_aclInfo);
+	m_pServer->referenceNames(path, result, resultClass, role, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_LocalCIMOMHandle::references(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->references(path, resultClass, role,
+	m_pServer->references(path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
 

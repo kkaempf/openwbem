@@ -71,10 +71,11 @@ namespace
 	public:
 		~OW_AssociatorTest();
 
-		virtual OW_CIMInstanceEnumeration associators(
+		virtual void associators(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole,
@@ -94,23 +95,24 @@ namespace
 
 			OW_CIMInstance ci = hdl->getInstance(objectName, false);
 			if (!ci)
-				return OW_CIMInstanceEnumeration();
+				return;
 
 			OW_String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
-				return OW_CIMInstanceEnumeration();
+				return;
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
 			// Just assume that all other instances of the other class are associated!
-			return hdl->enumInstancesE(classOne, true);
+			hdl->enumInstances(classOne, result, true);
 
 		}
 
-		virtual OW_CIMObjectPathEnumeration associatorNames(
+		virtual void associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole )
@@ -121,19 +123,18 @@ namespace
 				assocName.toString(), objectName.toString(), resultClass,
 				role, resultRole));
 
-			OW_CIMObjectPathEnumeration retval;
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(objectName, false);
 			if (!ci)
 			{
-				return retval;
+				return;
 			}
 
 			OW_String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
 			{
-				return retval;
+				return;
 			}
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
@@ -142,16 +143,15 @@ namespace
 			{
 				OW_CIMInstance ci = instances.nextElement();
 				OW_CIMObjectPath cop(ci.getClassName(), ci.getKeyValuePairs());
-				retval.addElement(cop);
+				result.handleObjectPath(cop);
 			}
-
-			return retval;
 		}
 
-		virtual OW_CIMInstanceEnumeration references(
+		virtual void references(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_String& role,
 			const OW_Bool& includeQualifiers,
 			const OW_Bool& includeClassOrigin,
@@ -164,17 +164,15 @@ namespace
 				assocName.toString(), objectName.toString(), role,
 				includeQualifiers, includeClassOrigin, propertyList));
 
-			OW_CIMInstanceEnumeration retval;
-
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(objectName, false);
 			if (!ci)
-				return retval;
+				return;
 
 			OW_String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
-				return retval;
+				return;
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
 			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(classOne, true);
@@ -192,32 +190,30 @@ namespace
 
 				newInstance.setProperty("secondRef", OW_CIMValue(path));
 
-				retval.addElement(newInstance);
+				result.handleInstance(newInstance);
 			}
-			return retval;
 		}
 
-		virtual OW_CIMObjectPathEnumeration referenceNames(
+		virtual void referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_String& role )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest referenceNames called "
 				"assocName = %1, objectName = %2, role = %3",
 				assocName.toString(), objectName.toString(), role));
 
-			OW_CIMObjectPathEnumeration retval;
-
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(objectName, false);
 			if (!ci)
-				return retval;
+				return;
 
 			OW_String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
-				return retval;
+				return;
 
 			OW_CIMObjectPath classOne(destClass, assocName.getNameSpace());
 			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(classOne, true, false);
@@ -240,9 +236,8 @@ namespace
 					newInstance.getKeyValuePairs());
 
 				newPath.setNameSpace(assocName.getNameSpace());
-				retval.addElement(newPath);
+				result.handleObjectPath(newPath);
 			}
-			return retval;
 		}
 
 		virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);

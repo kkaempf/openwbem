@@ -187,12 +187,13 @@ public:
 		return m_ref->deleteInstance(cop, aclInfo);
 	}
 
-	virtual OW_CIMInstanceEnumeration references(const OW_CIMObjectPath &path,
+	virtual void references(const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->references(path, resultClass, role, includeQualifiers,
+		m_ref->references(path, result, resultClass, role, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
@@ -215,31 +216,36 @@ public:
 		return m_ref->getProperty(name, propertyName, aclInfo);
 	}
 
-	virtual OW_CIMObjectPathEnumeration associatorNames(
-		const OW_CIMObjectPath &path, const OW_String &assocClass,
+	virtual void associatorNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
 		const OW_String &resultRole, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->associatorNames(path, assocClass, resultClass, role,
+		m_ref->associatorNames(path, result, assocClass, resultClass, role,
 			resultRole, aclInfo);
 	}
 
-	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path,
+	virtual void associators(const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->associators(path, assocClass, resultClass, role,
+		m_ref->associators(path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList,
 			aclInfo);
 	}
 
-	virtual OW_CIMObjectPathEnumeration referenceNames(
-		const OW_CIMObjectPath &path, const OW_String &resultClass,
+	virtual void referenceNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &resultClass,
 		const OW_String &role, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->referenceNames(path, resultClass, role, aclInfo);
+		m_ref->referenceNames(path, result, resultClass, role, aclInfo);
 	}
 
 	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace &ns,

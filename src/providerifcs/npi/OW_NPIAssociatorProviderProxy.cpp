@@ -36,17 +36,16 @@
 #include "OW_NPIProviderIFCUtils.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_NPIAssociatorProviderProxy::associatorNames(
-   const OW_ProviderEnvironmentIFCRef &env, 
+   const OW_ProviderEnvironmentIFCRef &env,
 	const OW_CIMObjectPath& assocName,
-   const OW_CIMObjectPath& objectName, 
-	const OW_String& resultClass, 
+   const OW_CIMObjectPath& objectName,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& resultClass,
 	const OW_String& role,
    const OW_String& resultRole)
 {
-    OW_CIMObjectPathEnumeration rval;
-
     env->getLogger()->
         logDebug("OW_NPIAssociatorProviderProxy::associatorNames()");
 
@@ -83,31 +82,29 @@ OW_NPIAssociatorProviderProxy::associatorNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath *>(cop.ptr) );
 
-            rval.addElement(ow_cop);
+			result.handleObjectPath(ow_cop);
         }
     }
     else
     {
         OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
     }
-    return rval;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_NPIAssociatorProviderProxy::associators(
-   const OW_ProviderEnvironmentIFCRef &env, 
+   const OW_ProviderEnvironmentIFCRef &env,
 	const OW_CIMObjectPath& assocName,
-   const OW_CIMObjectPath& objectName, 
-	const OW_String& resultClass, 
+   const OW_CIMObjectPath& objectName,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& resultClass,
 	const OW_String& role,
-   const OW_String& resultRole, 
+   const OW_String& resultRole,
 	const OW_Bool& includeQualifiers,
-   const OW_Bool& includeClassOrigin, 
+   const OW_Bool& includeClassOrigin,
 	const OW_StringArray *propertyList)
 {
-    OW_CIMInstanceEnumeration rval;
-
     env->getLogger()->
         logDebug("OW_NPIAssociatorProviderProxy::associators()");
 
@@ -168,31 +165,27 @@ OW_NPIAssociatorProviderProxy::associators(
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-            rval.addElement(ow_inst);
+			result.handleInstance(ow_inst);
         }
     }
     else
     {
         OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
     }
-
-
-    return rval;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_NPIAssociatorProviderProxy::references(
-   const OW_ProviderEnvironmentIFCRef &env, 
+   const OW_ProviderEnvironmentIFCRef &env,
 	const OW_CIMObjectPath& assocName,
-   const OW_CIMObjectPath& objectName, 
-	const OW_String& role, 
+   const OW_CIMObjectPath& objectName,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& role,
 	const OW_Bool& includeQualifiers,
-   const OW_Bool& includeClassOrigin, 
+   const OW_Bool& includeClassOrigin,
 	const OW_StringArray *propertyList)
 {
-    OW_CIMInstanceEnumeration rval;
-
     env->getLogger()->logDebug("OW_NPIAssociatorProviderProxy::references()");
 
     if (m_ftable->fp_references != NULL)
@@ -251,27 +244,24 @@ OW_NPIAssociatorProviderProxy::references(
             OW_CIMInstance ow_inst(*
                 static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-            rval.addElement(ow_inst);
+			result.handleInstance(ow_inst);
         }
     }
     else
     {
         OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
     }
-
-    return rval;
 }
 
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_NPIAssociatorProviderProxy::referenceNames(
-   const OW_ProviderEnvironmentIFCRef &env, 
+   const OW_ProviderEnvironmentIFCRef &env,
 	const OW_CIMObjectPath& assocName,
-   const OW_CIMObjectPath& objectName, 
+   const OW_CIMObjectPath& objectName,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& role)
 {
-    OW_CIMObjectPathEnumeration rval;
-
     env->getLogger()->
         logDebug("OW_NPIAssociatorProviderProxy::referenceNames()");
 
@@ -310,14 +300,12 @@ OW_NPIAssociatorProviderProxy::referenceNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath*>(my_cop.ptr) );
 
-            rval.addElement(ow_cop);
+			result.handleObjectPath(ow_cop);
         }
     }
     else
     {
         OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
     }
-
-    return rval;
 }
 

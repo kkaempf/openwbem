@@ -189,7 +189,8 @@ public:
 	 * @param ns	The namespace to enumerate
 	 * @return An enumeration of classes that are associations.
 	 */
-	OW_CIMClassEnumeration getTopLevelAssociations(const OW_String& ns);
+	void getTopLevelAssociations(const OW_String& ns,
+		OW_CIMClassResultHandlerIFC& result);
 
 	/**
 	 * Delete the given namespace and all object contained within it.

@@ -421,7 +421,8 @@ public:
 	 * otherwise incorrect parameters) CIM_ERR_FAILED (some other unspecified
 	 * error occurred)
 	 */
-	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path,
+	virtual void associators(const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -468,7 +469,8 @@ public:
 	 *
 	 * @exception OW_CIMException - as defined for associators method.
 	 */
-	virtual OW_CIMInstanceEnumeration references(const OW_CIMObjectPath &path,
+	virtual void references(const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
@@ -512,8 +514,10 @@ public:
 	 *
 	 * @exception OW_CIMException - as defined in the associator method
 	 */
-	virtual OW_CIMObjectPathEnumeration associatorNames(
-		const OW_CIMObjectPath &path, const OW_String &assocClass,
+	virtual void associatorNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
 		const OW_String &resultRole);
 
@@ -580,8 +584,10 @@ public:
 	 *
 	 * @exception OW_CIMException As defined for associators method.
 	 */
-	virtual OW_CIMObjectPathEnumeration referenceNames(
-		const OW_CIMObjectPath &path, const OW_String &resultClass,
+	virtual void referenceNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &resultClass,
 		const OW_String &role);
 
 	virtual OW_CIMFeatures getServerFeatures();

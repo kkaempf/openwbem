@@ -456,7 +456,7 @@ void associatorNames(OW_CIMOMHandleIFC& hdl)
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.associatorNames(cop,
+		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
 					"CIM_Component", "", "", "");
 
 		if (mode != "r" && mode != "rw")
@@ -482,7 +482,7 @@ void associators(OW_CIMOMHandleIFC& hdl)
 
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.associators(cop,
+		OW_CIMInstanceEnumeration enu = hdl.associatorsE(cop,
 									"CIM_Component", "", "", "", true, true, NULL);
 
 		if (mode != "r" && mode != "rw")
@@ -508,7 +508,7 @@ void referenceNames(OW_CIMOMHandleIFC& hdl)
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNames(cop,
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
 			"CIM_Component", "");
 
 		if (mode != "r" && mode != "rw")
@@ -533,7 +533,7 @@ void references(OW_CIMOMHandleIFC& hdl)
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.references(cop,
+		OW_CIMInstanceEnumeration enu = hdl.referencesE(cop,
 									"CIM_Component", "", true, true, NULL);
 
 		if (mode != "r" && mode != "rw")

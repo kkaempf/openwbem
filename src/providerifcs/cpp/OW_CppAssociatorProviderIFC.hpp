@@ -133,10 +133,11 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * 	unrecognized or otherwise incorrect parameters)
 		 * 	CIM_ERR_FAILED (some other unspecifed error occurred)
 		 */
-		virtual OW_CIMInstanceEnumeration associators(
+		virtual void associators(
 				const OW_ProviderEnvironmentIFCRef& env,
 				const OW_CIMObjectPath& assocName,
 				const OW_CIMObjectPath& objectName,
+				OW_CIMInstanceResultHandlerIFC& result,
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole,
@@ -160,10 +161,11 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * 	Instance of Objects meeting the requested criteria.
 		 * @throws OW_CIMException - as defined in the associator method
 		 */
-		virtual OW_CIMObjectPathEnumeration associatorNames(
+		virtual void associatorNames(
 				const OW_ProviderEnvironmentIFCRef& env,
 				const OW_CIMObjectPath& assocName,
 				const OW_CIMObjectPath& objectName,
+				OW_CIMObjectPathResultHandlerIFC& result,
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole ) = 0;
@@ -198,10 +200,11 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 *
 		 * @throws OW_CIMException - as defined for the associators method.
 		 */
-		virtual OW_CIMInstanceEnumeration references(
+		virtual void references(
 				const OW_ProviderEnvironmentIFCRef& env,
 				const OW_CIMObjectPath& assocName,
 				const OW_CIMObjectPath& objectName,
+				OW_CIMInstanceResultHandlerIFC& result,
 				const OW_String& role,
 				const OW_Bool& includeQualifiers,
 				const OW_Bool& includeClassOrigin,
@@ -221,10 +224,11 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 		 * full CIM Instance paths of Objects meeting the requested criteria.
 		 * @throws OW_CIMException - as defined for associators method.
 		 */
-		virtual OW_CIMObjectPathEnumeration referenceNames(
+		virtual void referenceNames(
 				const OW_ProviderEnvironmentIFCRef& env,
 				const OW_CIMObjectPath& assocName,
 				const OW_CIMObjectPath& objectName,
+				OW_CIMObjectPathResultHandlerIFC& result,
 				const OW_String& role ) = 0;
 
 		virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return this; }

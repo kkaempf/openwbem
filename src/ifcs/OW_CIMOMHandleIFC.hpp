@@ -516,12 +516,20 @@ public:
 	 *
 	 * @exception OW_CIMException - as defined in the associator method
 	 */
-	virtual OW_CIMObjectPathEnumeration associatorNames(
+	virtual void associatorNames(
 		const OW_CIMObjectPath& objectName,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole) = 0;
+
+	virtual OW_CIMObjectPathEnumeration associatorNamesE(
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole);
 
 	/**
 	 * This operation is used to enumerate CIMInstances
@@ -597,8 +605,9 @@ public:
 	 * otherwise incorrect parameters) CIM_ERR_FAILED (some other unspecified
 	 * error occurred)
 	 */
-	virtual OW_CIMInstanceEnumeration associators(
+	virtual void associators(
 		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& assocClass,
 		const OW_String& resultClass,
 		const OW_String& role,
@@ -606,6 +615,16 @@ public:
 		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) = 0;
+
+	virtual OW_CIMInstanceEnumeration associatorsE(
+		const OW_CIMObjectPath& path,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
 
 	/**
 	 * This operation is used to enumerate the association objects that refer to
@@ -620,10 +639,16 @@ public:
 	 *
 	 * @exception OW_CIMException As defined for associators method.
 	 */
-	virtual OW_CIMObjectPathEnumeration referenceNames(
+	virtual void referenceNames(
 		const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& resultClass,
 		const OW_String& role) = 0;
+
+	virtual OW_CIMObjectPathEnumeration referenceNamesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& resultClass,
+		const OW_String& role);
 
 	/**
 	 * This operation is used to enumerate the association objects that refer to
@@ -655,13 +680,22 @@ public:
 	 *
 	 * @exception OW_CIMException - as defined for associators method.
 	 */
-	virtual OW_CIMInstanceEnumeration references(
+	virtual void references(
 		const OW_CIMObjectPath& path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& resultClass,
 		const OW_String& role,
 		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) = 0;
+
+	virtual OW_CIMInstanceEnumeration referencesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& resultClass,
+		const OW_String& role,
+		OW_Bool includeQualifiers=EXCLUDE_QUALIFIERS,
+		OW_Bool includeClassOrigin=EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList=0);
 
 	/**
 	 * Executes a query to retrieve or modify objects.

@@ -2054,8 +2054,9 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns, const OW_String &query,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_CIMServer::associators(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -2064,17 +2065,15 @@ OW_CIMServer::associators(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, path, aclInfo);
 
-	OW_CIMInstanceEnumeration ienum;
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
-		includeQualifiers, includeClassOrigin, propertyList, &ienum, NULL,
+		includeQualifiers, includeClassOrigin, propertyList, &result, NULL,
 		aclInfo);
-
-	return ienum;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_CIMServer::associatorNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	const OW_ACLInfo& aclInfo)
@@ -2082,16 +2081,14 @@ OW_CIMServer::associatorNames(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, path, aclInfo);
 
-	OW_CIMObjectPathEnumeration ope;
 	_commonAssociators(path, assocClass, resultClass, role, resultRole,
-		false, false, NULL, NULL, &ope, aclInfo);
-
-	return ope;
+		false, false, NULL, NULL, &result, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_CIMServer::references(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
@@ -2099,36 +2096,66 @@ OW_CIMServer::references(const OW_CIMObjectPath& path,
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, path, aclInfo);
 
-	OW_CIMInstanceEnumeration ie;
 	_commonReferences(path, resultClass, role, includeQualifiers,
-		includeClassOrigin, propertyList, &ie, NULL, aclInfo);
-
-	return ie;
+		includeClassOrigin, propertyList, &result, NULL, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_CIMServer::referenceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get associators
 	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCENAMES, path, aclInfo);
 
-	OW_CIMObjectPathEnumeration ope;
-	_commonReferences(path, resultClass, role, false, false, NULL, NULL, &ope,
+	_commonReferences(path, resultClass, role, false, false, NULL, NULL, &result,
 		aclInfo);
-
-	return ope;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class assocClassSeparator : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		assocClassSeparator(
+			OW_CIMClassArray& staticAssocs_,
+			OW_CIMClassArray& dynamicAssocs_,
+			OW_CIMServer& server_,
+			const OW_ACLInfo& aclInfo_)
+		: staticAssocs(staticAssocs_)
+		, dynamicAssocs(dynamicAssocs_)
+		, server(server_)
+		, aclInfo(aclInfo_)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &cc)
+		{
+			// Now separate the association classes that have associator provider from
+			// the ones that don't
+			OW_CIMClassArray* pra = (server._isDynamicAssoc(cc, aclInfo)) ? &dynamicAssocs
+				: &staticAssocs;
+			pra->append(cc);
+		}
+	private:
+		OW_CIMClassArray& staticAssocs;
+		OW_CIMClassArray& dynamicAssocs;
+		OW_CIMServer& server;
+		const OW_ACLInfo& aclInfo;
+	};
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_commonReferences(const OW_CIMObjectPath& path,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceEnumeration* pienum,
-	OW_CIMObjectPathEnumeration* poenum, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
 {
 	OW_CIMClass assocClass;
 	OW_String ns = path.getNameSpace();
@@ -2136,30 +2163,20 @@ OW_CIMServer::_commonReferences(const OW_CIMObjectPath& path,
 	// Get all association classes from the repository
 	// If the assoc class was specified, only children of it will be
 	// returned.
-	OW_CIMClassEnumeration assocClassEnum = _getAssociationClasses(ns,
-		resultClass);
 
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 
-	// Now separate the association classes that have associator provider from
-	// the ones that don't
-	while(assocClassEnum.hasMoreElements())
-	{
-		OW_CIMClass cc = assocClassEnum.nextElement();
-		OW_CIMClassArray* pra = (_isDynamicAssoc(cc, aclInfo)) ? &dynamicAssocs
-			: &staticAssocs;
-		pra->append(cc);
-	}
+	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
+	_getAssociationClasses(ns, resultClass, assocClassResult);
 
 	// Process all of the association classes without providers
-	OW_CIMInstanceEnumeration renum;
 	_staticReferences(path, staticAssocs, role, includeQualifiers,
-		includeClassOrigin, propertyList, pienum, poenum, aclInfo);
+		includeClassOrigin, propertyList, piresult, popresult, aclInfo);
 
 	// Process all of the association classes with providers
 	_dynamicReferences(path, dynamicAssocs, role, includeQualifiers,
-		includeClassOrigin, propertyList, pienum, poenum, aclInfo);
+		includeClassOrigin, propertyList, piresult, popresult, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2167,8 +2184,8 @@ void
 OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 	const OW_CIMClassArray& assocClasses, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceEnumeration* pienum,
-	OW_CIMObjectPathEnumeration* poenum, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
 {
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
@@ -2207,28 +2224,22 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 
 		// If the object path enumeration pointer is null, then assume we
 		// are doing references and not referenceNames
-		if(poenum == NULL)
+		if(piresult != 0)
 		{
-			OW_CIMInstanceEnumeration provienum = assocP->references(
+			assocP->references(
 				createProvEnvRef(real_ch),
-				assocClassPath, path, role, includeQualifiers,
+				assocClassPath, path, *piresult, role, includeQualifiers,
 				includeClassOrigin, propertyList);
-
-			while(provienum.hasMoreElements())
-			{
-				pienum->addElement(provienum.nextElement());
-			}
+		}
+		else if (popresult != 0)
+		{
+			assocP->referenceNames(
+				createProvEnvRef(real_ch),
+				assocClassPath, path, *popresult, role);
 		}
 		else
 		{
-			OW_CIMObjectPathEnumeration provoenum = assocP->referenceNames(
-				createProvEnvRef(real_ch),
-				assocClassPath, path, role);
-
-			while(provoenum.hasMoreElements())
-			{
-				poenum->addElement(provoenum.nextElement());
-			}
+			OW_ASSERT(0);
 		}
 	}
 }
@@ -2238,8 +2249,8 @@ void
 OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 	const OW_CIMClassArray& refClasses, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceEnumeration* pienum,
-	OW_CIMObjectPathEnumeration* poenum, const OW_ACLInfo& /*aclInfo*/)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& /*aclInfo*/)
 {
 	// refClasses should always have something in it
 	if(refClasses.size() == 0)
@@ -2278,15 +2289,19 @@ OW_CIMServer::_staticReferences(const OW_CIMObjectPath& path,
 		}
 
 		ainst.syncWithClass(cc, includeQualifiers);
-		if(poenum != NULL)
+		if(popresult != 0)
 		{
 			assocPath.setKeys(ainst.getKeyValuePairs());
-			poenum->addElement(assocPath);
+			popresult->handleObjectPath(assocPath);
+		}
+		else if (piresult != 0)
+		{
+			piresult->handleInstance(ainst.clone(false, includeQualifiers,
+				includeClassOrigin, propertyList));
 		}
 		else
 		{
-			pienum->addElement(ainst.clone(false, includeQualifiers,
-				includeClassOrigin, propertyList));
+			OW_ASSERT(0);
 		}
 	}
 }
@@ -2297,8 +2312,8 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 	const OW_String& assocClassName, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceEnumeration* pienum,
-	OW_CIMObjectPathEnumeration* poenum, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
 {
 	OW_CIMClass assocClass;
 	OW_String ns = path.getNameSpace();
@@ -2306,21 +2321,10 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 	// Get all association classes from the repository
 	// If the assoc class was specified, only children of it will be
 	// returned.
-	OW_CIMClassEnumeration assocClassEnum = _getAssociationClasses(ns,
-		assocClassName);
-
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
-
-	// Now separate the association classes that have associator provider from
-	// the ones that don't
-	while(assocClassEnum.hasMoreElements())
-	{
-		OW_CIMClass cc = assocClassEnum.nextElement();
-		OW_CIMClassArray* pra = (_isDynamicAssoc(cc, aclInfo)) ? &dynamicAssocs
-			: &staticAssocs;
-		pra->append(cc);
-	}
+	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
+	_getAssociationClasses(ns, assocClassName, assocClassResult);
 
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
@@ -2332,14 +2336,13 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 	}
 
 	// Process all of the association classes without providers
-	OW_CIMInstanceEnumeration renum;
 	_staticAssociators(path, staticAssocs, resultClassNames, role, resultRole,
-		includeQualifiers, includeClassOrigin, propertyList, pienum, poenum,
+		includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
 		aclInfo);
 
 	// Process all of the association classes with providers
 	_dynamicAssociators(path, dynamicAssocs, resultClass, role, resultRole,
-		includeQualifiers, includeClassOrigin, propertyList, pienum, poenum,
+		includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
 		aclInfo);
 }
 
@@ -2349,8 +2352,8 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 	const OW_CIMClassArray& assocClasses, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceEnumeration* pienum,
-	OW_CIMObjectPathEnumeration* poenum, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
 {
 	// AssocClasses should always have something in it
 	if(assocClasses.size() == 0)
@@ -2387,28 +2390,20 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 		OW_CIMObjectPath assocClassPath(assocClasses[i].getName(),
 			path.getNameSpace());
 
-		if(poenum == NULL)
+		if(piresult != 0)
 		{
-			OW_CIMInstanceEnumeration provienum = assocP->associators(
-				createProvEnvRef(real_ch),
-				assocClassPath, path, resultClass, role, resultRole,
+			assocP->associators(createProvEnvRef(real_ch),
+				assocClassPath, path, *piresult, resultClass, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList);
-
-			while(provienum.hasMoreElements())
-			{
-				pienum->addElement(provienum.nextElement());
-			}
+		}
+		else if (popresult != 0)
+		{
+			assocP->associatorNames(createProvEnvRef(real_ch),
+				assocClassPath, path, *popresult, resultClass, role, resultRole);
 		}
 		else
 		{
-			OW_CIMObjectPathEnumeration provoenum = assocP->associatorNames(
-				createProvEnvRef(real_ch),
-				assocClassPath, path, resultClass, role, resultRole);
-
-			while(provoenum.hasMoreElements())
-			{
-				poenum->addElement(provoenum.nextElement());
-			}
+			OW_ASSERT(0);
 		}
 	}
 }
@@ -2419,8 +2414,8 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 	const OW_CIMClassArray& assocClasses, const OW_StringArray& resultClasses,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceEnumeration* pienum,
-	OW_CIMObjectPathEnumeration* poenum, const OW_ACLInfo& /*aclInfo*/)
+	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
+	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& /*aclInfo*/)
 {
 	// AssocClasses should always have something in it
 	if(assocClasses.size() == 0)
@@ -2519,53 +2514,72 @@ OW_CIMServer::_staticAssociators(const OW_CIMObjectPath& path,
 
 			ci.syncWithClass(cc, includeQualifiers);
 
-			if(poenum != NULL)
+			if(popresult != 0)
 			{
 				op.setKeys(ci.getKeyValuePairs());
-				poenum->addElement(op);
+				popresult->handleObjectPath(op);
+			}
+			else if (piresult != 0)
+			{
+				piresult->handleInstance(ci.clone(false, includeQualifiers,
+					includeClassOrigin, propertyList));
 			}
 			else
 			{
-				pienum->addElement(ci.clone(false, includeQualifiers,
-					includeClassOrigin, propertyList));
+				OW_ASSERT(0);
 			}
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_CIMServer::_getAssociationClasses(const OW_String& ns,
-	const OW_String& className)
+namespace
 {
-	// TODO: Optimize this, it's rather inefficient
-	OW_CIMClassEnumeration renum;
+	class assocHelper : public OW_CIMClassResultHandlerIFC
+	{
+	public:
+		assocHelper(
+			OW_CIMClassResultHandlerIFC& handler_,
+			OW_MetaRepository& m_mStore_,
+			const OW_String& ns_)
+		: handler(handler_)
+		, m_mStore(m_mStore_)
+		, ns(ns_)
+		{}
+	protected:
+		virtual void doHandleClass(const OW_CIMClass &cc)
+		{
+			handler.handleClass(cc);
+			m_mStore.enumClass(ns, cc.getName(), handler, true, false, true, true);
+		}
+	private:
+		OW_CIMClassResultHandlerIFC& handler;
+		OW_MetaRepository& m_mStore;
+		const OW_String& ns;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::_getAssociationClasses(const OW_String& ns,
+	const OW_String& className, OW_CIMClassResultHandlerIFC& result)
+{
 	if(className.length() > 0)
 	{
-		CIMClassEnumerationBuilder handler(renum);
-		m_mStore.enumClass(ns, className, handler, true, false, true, true);
+		m_mStore.enumClass(ns, className, result, true, false, true, true);
 		OW_CIMClass cc;
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
 			OW_THROWCIM(OW_CIMException::FAILED);
 		}
-		renum.addElement(cc);
+		result.handleClass(cc);
 	}
 	else
 	{
-		OW_CIMClassEnumeration topAssocs = m_mStore.getTopLevelAssociations(ns);
-
-		while(topAssocs.hasMoreElements())
-		{
-			OW_CIMClass cc = topAssocs.nextElement();
-			renum.addElement(cc);
-			CIMClassEnumerationBuilder handler(renum);
-			m_mStore.enumClass(ns, cc.getName(), handler, true, false, true, true);
-		}
+		assocHelper handler(result, m_mStore, ns);
+		m_mStore.getTopLevelAssociations(ns, handler);
 	}
-
-	return renum;
 }
 
 //////////////////////////////////////////////////////////////////////////////

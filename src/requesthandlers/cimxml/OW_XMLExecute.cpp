@@ -434,12 +434,30 @@ OW_XMLExecute::outputError(const OW_CIMException& ce, ostream& ostr)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMObjectPathXMLOutputter : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		CIMObjectPathXMLOutputter(ostream& ostr_)
+		: ostr(ostr_)
+		{}
+	protected:
+		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		{
+			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
+		}
+	private:
+		ostream& ostr;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
-	OW_CIMObjectPathEnumeration assocNames;
 
 	OW_String role = node.extractParameterValue(XMLP_ROLE, OW_String());
 	OW_String resultRole = node.extractParameterValue(XMLP_RESULTROLE,
@@ -483,17 +501,51 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 		XMLP_ASSOCCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME,
 		paramName);
 
-	// If you wish to change the code below, you may wish to make
-	// similar changes to XMLReferenceNames
-	assocNames = hdl.associatorNames(path, assocClass, resultClass, role,
+	CIMObjectPathXMLOutputter handler(ostr);
+	hdl.associatorNames(path, handler, assocClass, resultClass, role,
 		resultRole);
+}
 
-	while(assocNames.hasMoreElements())
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class AssocCIMInstanceXMLOutputter : public OW_CIMInstanceResultHandlerIFC
 	{
-		OW_CIMObjectPath cop = assocNames.nextElement();
+	public:
+		AssocCIMInstanceXMLOutputter(
+			std::ostream& ostr_,
+			OW_CIMObjectPath& path_,
+			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
+			OW_StringArray& propertyList_)
+		: ostr(ostr_)
+		, path(path_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, isPropertyList(isPropertyList_)
+		, propertyList(propertyList_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &ci)
+		{
+			ostr <<  "<VALUE.OBJECTWITHPATH>\r\n";
 
-		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
-	}
+			OW_CIMObjectPath cop( ci.getClassName(), ci.getKeyValuePairs() );
+			cop.setNameSpace( path.getNameSpace() );
+
+			OW_CIMtoXML(ci, ostr, cop, OW_CIMtoXMLFlags::notLocalOnly,
+				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
+				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
+				propertyList, (isPropertyList && propertyList.size() == 0));
+
+			ostr << "</VALUE.OBJECTWITHPATH>\r\n";
+		
+		}
+		std::ostream& ostr;
+		OW_CIMObjectPath& path;
+		bool includeQualifiers, includeClassOrigin, isPropertyList;
+		OW_StringArray& propertyList;
+
+	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -549,24 +601,12 @@ void OW_XMLExecute::associators(ostream& ostr,
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
 
-	OW_CIMInstanceEnumeration associators = hdl.associators( path, assocClass,
-		resultClass, role, resultRole, includeQualifiers, includeClassOrigin,
-		pPropList);
+	AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
+		includeClassOrigin, isPropertyList, propertyList);
 
-	while (associators.hasMoreElements())
-	{
-		OW_CIMInstance ci = associators.nextElement();
-		ostr <<  "<VALUE.OBJECTWITHPATH>\r\n";
-		OW_CIMObjectPath cop( ci.getClassName(), ci.getKeyValuePairs() );
-		cop.setNameSpace( path.getNameSpace() );
-
-		OW_CIMtoXML(ci, ostr, cop, OW_CIMtoXMLFlags::notLocalOnly,
-			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-			propertyList, (isPropertyList && propertyList.size() == 0));
-
-		ostr << "</VALUE.OBJECTWITHPATH>\r\n";
-	}
+	hdl.associators(path, handler,
+		assocClass, resultClass, role, resultRole, includeQualifiers,
+		includeClassOrigin, pPropList);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1169,18 +1209,8 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
 	OW_String resultClass = node.extractParameterValueAttr(XMLP_RESULTCLASS,
 		OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
 
-	OW_CIMObjectPathEnumeration enu = hdl.referenceNames(path,resultClass,role);
-
-	//
-	// If you change the below code, you may wish to make similar
-	// changes to XMLAssociatorNames...
-	//
-	while (enu.hasMoreElements())
-	{
-		OW_CIMObjectPath cop = enu.nextElement();
-
-		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
-	}
+	CIMObjectPathXMLOutputter handler(ostr);
+	hdl.referenceNames(path, handler, resultClass, role);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1232,23 +1262,12 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 		XMLP_RESULTCLASS, OW_XMLNode::XML_ELEMENT_CLASSNAME, paramName);
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
-	OW_CIMInstanceEnumeration enu = hdl.references(path, resultClass,
+	
+	AssocCIMInstanceXMLOutputter handler(ostr, path, includeQualifiers,
+		includeClassOrigin, isPropertyList, propertyList);
+	
+	hdl.references(path, handler, resultClass,
 		role, includeQualifiers, includeClassOrigin, pPropList);
-
-	while (enu.hasMoreElements())
-	{
-		OW_CIMInstance ci = enu.nextElement();
-		ostr << "<VALUE.OBJECTWITHPATH>\r\n";
-
-		OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(ci.getClassName(),ci.
-			getKeyValuePairs()),
-			OW_CIMtoXMLFlags::notLocalOnly,
-			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-			propertyList, (isPropertyList && propertyList.size() == 0));
-
-		ostr << "</VALUE.OBJECTWITHPATH>\r\n";
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -484,45 +484,50 @@ OW_IndicationRepLayerImpl::setProperty(const OW_CIMObjectPath& name,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_IndicationRepLayerImpl::associatorNames(const OW_CIMObjectPath& path,
-	const OW_String& assocClass, const OW_String& resultClass,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& assocClass,
+	const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->associatorNames(path, assocClass, resultClass, role,
+	m_pServer->associatorNames(path, result, assocClass, resultClass, role,
 		resultRole, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_IndicationRepLayerImpl::associators(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->associators(path, assocClass, resultClass, role,
+	m_pServer->associators(path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_IndicationRepLayerImpl::referenceNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->referenceNames(path, resultClass, role, aclInfo);
+	m_pServer->referenceNames(path, result, resultClass, role, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_IndicationRepLayerImpl::references(const OW_CIMObjectPath& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->references(path, resultClass, role,
+	m_pServer->references(path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 }
 

@@ -918,8 +918,9 @@ OW_MetaRepository::modifyClass(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_MetaRepository::getTopLevelAssociations(const OW_String& ns)
+void
+OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
+	OW_CIMClassResultHandlerIFC& result)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
@@ -928,7 +929,6 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
 	}
-	OW_CIMClassEnumeration cenum;
 	node = hdl->getFirstChild(node);
 	while(node)
 	{
@@ -940,12 +940,10 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns)
 
 			OW_ASSERT(cc.isAssociation());
 
-			cenum.addElement(cc);
+			result.handleClass(cc);
 		}
 		node = hdl->getNextSibling(node);
 	}
-
-	return cenum;
 }
 
 //////////////////////////////////////////////////////////////////////////////

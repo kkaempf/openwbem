@@ -940,8 +940,9 @@ OW_CIMXMLCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
+				OW_CIMObjectPathResultHandlerIFC& result,
 				const OW_String& assocClass, const OW_String& resultClass,
 				const OW_String& role, const OW_String& resultRole)
 {
@@ -988,7 +989,6 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 	OW_XMLNode node = intrinsicMethod(path, commandName, params,
 												 extra.toString());
 
-	OW_CIMObjectPathEnumeration retVal;
 	OW_XMLNode tmp;
 	node = node.getChild();
 
@@ -1007,15 +1007,14 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 			default:
 				break;
 		} // switch
-		retVal.addElement(cop);
+		result.handleObjectPath(cop);
 	}
-
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
+						OW_CIMInstanceResultHandlerIFC& result,
 		 	 			 const OW_String& assocClass, const OW_String& resultClass,
 		 	 			 const OW_String& role, const OW_String& resultRole,
 		 	 			 OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -1080,7 +1079,6 @@ OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
 												 extra.toString());
 
 	node = node.getChild();
-	OW_CIMInstanceEnumeration retVal;
 
 	for (; node; node = node.getNext())
 	{
@@ -1094,18 +1092,17 @@ OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
 				OW_THROWCIMMSG(OW_CIMException::FAILED, "getObjectWithPath "
 									"returned multiple values.");
 			}
-			retVal.addElement(cia[0]);
+			result.handleInstance(cia[0]);
 		}
 	}
-
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
-												 const OW_String& resultClass,
-												 const OW_String& role)
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String& resultClass,
+		const OW_String& role)
 {
 	static const char* const commandName = "ReferenceNames";
 	OW_Array<OW_Param> params;
@@ -1138,8 +1135,6 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	OW_XMLNode node = intrinsicMethod(path, commandName, params,
 												 extra.toString());
 
-	OW_CIMObjectPathEnumeration retVal;
-
 	node = node.getChild();
 	OW_XMLNode tmp;
 	for (; node; node = node.getNext())
@@ -1157,17 +1152,17 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 			default:
 				break;
 		} // switch
-		retVal.addElement(cop);
+		result.handleObjectPath(cop);
 	}
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
-		 						const OW_String& resultClass, const OW_String& role,
-		 						OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-								const OW_StringArray* propertyList)
+		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& resultClass, const OW_String& role,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "References";
 
@@ -1219,7 +1214,6 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 	node = node.getChild();
 
 	OW_XMLNode tmpNode;
-	OW_CIMInstanceEnumeration retVal;
 
 	for (; node; node = node.getNext())
 	{
@@ -1233,11 +1227,9 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 				OW_THROWCIMMSG(OW_CIMException::FAILED, "getObjectWithName "
 									"returned multiple values.");
 			}
-			retVal.addElement(cia[0]);
+			result.handleInstance(cia[0]);
 		}
 	}
-
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////

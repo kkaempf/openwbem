@@ -204,3 +204,69 @@ OW_CIMOMHandleIFC::enumQualifierTypesE(
 	return rval;
 }
 
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPathEnumeration
+OW_CIMOMHandleIFC::associatorNamesE(
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole)
+{
+	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumBuilder handler(rval);
+	associatorNames(objectName,handler,assocClass,resultClass,role,resultRole);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceEnumeration
+OW_CIMOMHandleIFC::associatorsE(
+		const OW_CIMObjectPath& path,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumBuilder handler(rval);
+	associators(path, handler, assocClass, resultClass, role, resultRole,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPathEnumeration
+OW_CIMOMHandleIFC::referenceNamesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& resultClass,
+		const OW_String& role)
+{
+	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumBuilder handler(rval);
+	referenceNames(path,handler,resultClass,role);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceEnumeration
+OW_CIMOMHandleIFC::referencesE(
+		const OW_CIMObjectPath& path,
+		const OW_String& resultClass,
+		const OW_String& role,
+		OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList)
+{
+	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumBuilder handler(rval);
+	references(path, handler, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+

@@ -197,7 +197,8 @@ OW_WQLFilterRep::enumClassNames(const OW_CIMObjectPath &/*path*/,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
+	OW_CIMInstanceResultHandlerIFC& result,
+	OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
@@ -273,8 +274,9 @@ OW_WQLFilterRep::modifyInstance(const OW_CIMObjectPath &/*cop*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_WQLFilterRep::associators(const OW_CIMObjectPath &/*path*/,
+	OW_CIMInstanceResultHandlerIFC&,
 	const OW_String &/*assocClass*/, const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, const OW_String &/*resultRole*/,
 	OW_Bool /*includeQualifiers*/, OW_Bool /*includeClassOrigin*/,
@@ -295,9 +297,11 @@ OW_WQLFilterRep::setProperty(const OW_CIMObjectPath &/*name*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_WQLFilterRep::referenceNames(
-	const OW_CIMObjectPath &/*path*/, const OW_String &/*resultClass*/,
+	const OW_CIMObjectPath &/*path*/,
+	OW_CIMObjectPathResultHandlerIFC&,
+	const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -324,9 +328,11 @@ OW_WQLFilterRep::invokeMethod(const OW_CIMObjectPath &/*name*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_WQLFilterRep::associatorNames(
-	const OW_CIMObjectPath &/*path*/, const OW_String &/*assocClass*/,
+	const OW_CIMObjectPath &/*path*/,
+	OW_CIMObjectPathResultHandlerIFC&,
+	const OW_String &/*assocClass*/,
 	const OW_String &/*resultClass*/, const OW_String &/*role*/,
 	const OW_String &/*resultRole*/, const OW_ACLInfo& /*aclInfo*/)
 {
@@ -335,8 +341,11 @@ OW_WQLFilterRep::associatorNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration OW_WQLFilterRep::references(
-	const OW_CIMObjectPath &/*path*/, const OW_String &/*resultClass*/,
+void
+OW_WQLFilterRep::references(
+	const OW_CIMObjectPath &/*path*/,
+	OW_CIMInstanceResultHandlerIFC&,
+	const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, OW_Bool /*includeQualifiers*/,
 	OW_Bool /*includeClassOrigin*/, const OW_StringArray*  /*propertyList*/,
 	const OW_ACLInfo& /*aclInfo*/)

@@ -844,7 +844,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->associators(OW_CIMObjectPath("foo", "badNamespace"),"","","","");
+		hdl->associatorsE(OW_CIMObjectPath("foo", "badNamespace"),"","","","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -862,7 +862,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMObjectPath cop("foo", "badNamespace");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->associatorNames(cop, "", "", "", "");
+		hdl->associatorNamesE(cop, "", "", "", "");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -879,7 +879,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMObjectPath cop("foo", "badNamespace");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->references(cop,"","");
+		hdl->referencesE(cop,"","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -896,7 +896,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMObjectPath cop("foo", "badNamespace");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
-		hdl->referenceNames(cop,"","");
+		hdl->referenceNamesE(cop,"","");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

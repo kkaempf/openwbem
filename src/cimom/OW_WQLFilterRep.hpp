@@ -370,7 +370,8 @@ public:
 	virtual OW_CIMInstance modifyInstance(const OW_CIMObjectPath &cop,
 		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceEnumeration associators(const OW_CIMObjectPath &path,
+	virtual void associators(const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &assocClass, const OW_String &resultClass,
 		const OW_String &role, const OW_String &resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
@@ -388,8 +389,10 @@ public:
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMObjectPathEnumeration referenceNames(
-		const OW_CIMObjectPath &path, const OW_String &resultClass,
+	virtual void referenceNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &resultClass,
 		const OW_String &role, const OW_ACLInfo& aclInfo);
 
 	/**
@@ -421,12 +424,15 @@ public:
 		const OW_String &methodName, const OW_CIMValueArray &inParams,
 		OW_CIMValueArray &outParams, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMObjectPathEnumeration associatorNames(
-		const OW_CIMObjectPath &path, const OW_String &assocClass,
+	virtual void associatorNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
 		const OW_String &resultRole, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMInstanceEnumeration references(const OW_CIMObjectPath &path,
+	virtual void references(const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_ACLInfo& aclInfo);

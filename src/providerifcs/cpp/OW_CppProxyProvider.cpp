@@ -41,11 +41,12 @@ OW_CppAssociatorProviderProxy::OW_CppAssociatorProviderProxy(
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMInstanceEnumeration
+void
 OW_CppAssociatorProviderProxy::associators(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole,
@@ -54,51 +55,54 @@ OW_CppAssociatorProviderProxy::associators(
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->associators(env, assocName, objectName, resultClass, role,
+	m_pProv->associators(env, assocName, objectName, result, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMObjectPathEnumeration
+void
 OW_CppAssociatorProviderProxy::associatorNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& resultClass,
 		const OW_String& role,
 		const OW_String& resultRole)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->associatorNames(env, assocName, objectName, resultClass,
+	m_pProv->associatorNames(env, assocName, objectName, result, resultClass,
 			role, resultRole);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMInstanceEnumeration
+void
 OW_CppAssociatorProviderProxy::references(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& role,
 		const OW_Bool& includeQualifiers,
 		const OW_Bool& includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->references(env, assocName, objectName, role,
+	m_pProv->references(env, assocName, objectName, result, role,
 			includeQualifiers, includeClassOrigin, propertyList);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMObjectPathEnumeration
+void
 OW_CppAssociatorProviderProxy::referenceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& assocName,
 		const OW_CIMObjectPath& objectName,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String& role)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->referenceNames(env, assocName, objectName, role);
+	m_pProv->referenceNames(env, assocName, objectName, result, role);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -808,11 +808,13 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 		propListPtr = &propList;
 	}
 
-	OW_CIMInstanceEnumeration en = chdl->associators(op, assocClass, resultClass,
-		role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
-
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeInstanceEnum(ostrm, en);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
+	BinaryCIMInstanceWriter handler(ostrm);
+	chdl->associators(op, handler, assocClass, resultClass,
+		role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -826,11 +828,13 @@ OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleIFCRef chdl,
 	OW_String role(OW_BinIfcIO::readString(istrm));
 	OW_String resultRole(OW_BinIfcIO::readString(istrm));
 
-	OW_CIMObjectPathEnumeration en = chdl->associatorNames(op, assocClass,
-		resultClass, role, resultRole);
-
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeObjectPathEnum(ostrm, en);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
+	BinaryCIMObjectPathWriter handler(ostrm);
+	chdl->associatorNames(op, handler, assocClass,
+		resultClass, role, resultRole);
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -853,11 +857,13 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 		propListPtr = &propList;
 	}
 
-	OW_CIMInstanceEnumeration en = chdl->references(op, resultClass, role,
-		includeQualifiers, includeClassOrigin, propListPtr);
-
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeInstanceEnum(ostrm, en);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
+	BinaryCIMInstanceWriter handler(ostrm);
+	chdl->references(op, handler, resultClass, role,
+		includeQualifiers, includeClassOrigin, propListPtr);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -869,9 +875,12 @@ OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
 	OW_String resultClass(OW_BinIfcIO::readString(istrm));
 	OW_String role(OW_BinIfcIO::readString(istrm));
 
-	OW_CIMObjectPathEnumeration en = chdl->referenceNames(op, resultClass, role);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeObjectPathEnum(ostrm, en);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
+	BinaryCIMObjectPathWriter handler(ostrm);
+	chdl->referenceNames(op, handler, resultClass, role);
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -897,63 +906,6 @@ OW_BinaryRequestHandler::writeError(std::ostream& ostrm, const char* msg)
 {
 	OW_BinIfcIO::write(ostrm, OW_BIN_ERROR);
 	OW_BinIfcIO::write(ostrm, msg);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::writeObjectPathEnum(std::ostream& ostrm,
-	OW_CIMObjectPathEnumeration& en)
-{
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
-
-	OW_Bool enumWritten = false;
-	if(en.usingTempFile() && m_userId != OW_UserId(-1))
-	{
-		OW_String tfileName = en.releaseFile();
-		if(!(enumWritten = writeFileName(ostrm, tfileName)))
-		{
-			en = OW_CIMObjectPathEnumeration(tfileName);
-		}
-	}
-
-	if(!enumWritten)
-	{
-		OW_BinIfcIO::write(ostrm, OW_Int32(en.numberOfElements()));
-
-		while(en.hasMoreElements())
-		{
-			OW_BinIfcIO::writeObjectPath(ostrm, en.nextElement());
-		}
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::writeInstanceEnum(std::ostream& ostrm,
-	OW_CIMInstanceEnumeration& enu)
-{
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
-
-	OW_Bool enumWritten = false;
-	if(enu.usingTempFile() && m_userId != OW_UserId(-1))
-	{
-		OW_String tfileName = enu.releaseFile();
-		if(!(enumWritten = writeFileName(ostrm, tfileName)))
-		{
-			enu = OW_CIMInstanceEnumeration(tfileName);
-		}
-	}
-
-	if(!enumWritten)
-	{
-		OW_BinIfcIO::write(ostrm, OW_Int32(enu.numberOfElements()));
-
-		while(enu.hasMoreElements())
-		{
-			OW_CIMInstance cimInstance = enu.nextElement();
-			OW_BinIfcIO::writeInstance(ostrm, cimInstance);
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

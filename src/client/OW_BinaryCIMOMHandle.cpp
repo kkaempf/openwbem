@@ -635,8 +635,9 @@ OW_BinaryCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_BinaryCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
+				OW_CIMObjectPathResultHandlerIFC& result,
 				const OW_String& assocClass, const OW_String& resultClass,
 				const OW_String& role, const OW_String& resultRole)
 {
@@ -652,16 +653,17 @@ OW_BinaryCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "AssociatorNames", path.getNameSpace());
 
-	return readCIMObject<OW_CIMObjectPathEnumeration>(in);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_BinaryCIMOMHandle::associators(const OW_CIMObjectPath& path,
-		 	 			 const OW_String& assocClass, const OW_String& resultClass,
-		 	 			 const OW_String& role, const OW_String& resultRole,
-		 	 			 OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		 				 const OW_StringArray* propertyList)
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& assocClass, const OW_String& resultClass,
+	const OW_String& role, const OW_String& resultRole,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"Associators", path.getNameSpace());;
@@ -683,14 +685,15 @@ OW_BinaryCIMOMHandle::associators(const OW_CIMObjectPath& path,
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "Associators", path.getNameSpace());
 
-	return readCIMObject<OW_CIMInstanceEnumeration>(in);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_BinaryCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
-												 const OW_String& resultClass,
-												 const OW_String& role)
+	OW_CIMObjectPathResultHandlerIFC& result,
+	const OW_String& resultClass,
+	const OW_String& role)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", path.getNameSpace());;
@@ -702,12 +705,13 @@ OW_BinaryCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
 
-	return readCIMObject<OW_CIMObjectPathEnumeration>(in);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
+void
 OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
+								OW_CIMInstanceResultHandlerIFC& result,
 		 						const OW_String& resultClass, const OW_String& role,
 		 						OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 								const OW_StringArray* propertyList)
@@ -730,7 +734,7 @@ OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ReferenceNames", path.getNameSpace());
 	
-	return readCIMObject<OW_CIMInstanceEnumeration>(in);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

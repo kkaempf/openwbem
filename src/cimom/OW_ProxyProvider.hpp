@@ -51,10 +51,11 @@ public:
 
 	OW_AssociatorProviderProxy(OW_CppAssociatorProviderIFCRef pProv);
 	
-	virtual OW_CIMInstanceEnumeration associators(
+	virtual void associators(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole,
@@ -62,27 +63,30 @@ public:
 			const OW_Bool& includeClassOrigin,
 			const OW_StringArray* propertyList);
 
-	virtual OW_CIMObjectPathEnumeration associatorNames(
+	virtual void associatorNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole);
 
-	virtual OW_CIMInstanceEnumeration references(
+	virtual void references(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMInstanceResultHandlerIFC& result,
 			const OW_String& role,
 			const OW_Bool& includeQualifiers,
 			const OW_Bool& includeClassOrigin,
 			const OW_StringArray* propertyList);
 
-	virtual OW_CIMObjectPathEnumeration referenceNames(
+	virtual void referenceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& assocName,
 			const OW_CIMObjectPath& objectName,
+			OW_CIMObjectPathResultHandlerIFC& result,
 			const OW_String& role);
 
 private:

@@ -135,11 +135,6 @@ private:
 
 	void writeError(std::ostream& ostrm, const char* msg);
 
-	void writeObjectPathEnum(std::ostream& ostrm,
-		OW_CIMObjectPathEnumeration& en);
-
-	void writeInstanceEnum(std::ostream& ostrm, OW_CIMInstanceEnumeration& enu);
-
 	OW_Bool writeFileName(std::ostream& ostrm, const OW_String& fname);
 
 	OW_Bool m_isError;
