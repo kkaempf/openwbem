@@ -45,10 +45,13 @@
 #include "OW_IntrusiveReference.hpp"
 
 #include <utility> // for std::pair
-#include <setjmp.h> // for setjmp, longjmp and jmp_buf
+#include <setjmp.h> // for sigsetjmp, siglongjmp and jmp_buf
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
+
+// Note that using setjmp/longjmp will fail to reset the blocked signal mask after the first time this fails.
+// using sigsetjmp/siglongjmp fixes this problem.
 
 namespace OpenWBEM
 {
@@ -117,10 +120,8 @@ public:
 			SignalScope r4( OW_SIGBUS,  theSignalHandler );
 #endif
 			SignalScope r5( OW_SIGABRT, theSignalHandler );
-#ifndef OW_FREEBSD			
-			sigtype = setjmp(theLoaderBuf);
+			sigtype = sigsetjmp(theLoaderBuf, 1);
 			if ( sigtype == 0 )
-#endif
 			{
 				versionFunc_t versFunc;
 				if (!sl->getFunctionPointer( "getOWVersion", versFunc))
@@ -133,58 +134,35 @@ public:
 	
 				const char* strVer = 0;
 				strVer = (*versFunc)();
-#ifdef OW_FREEBSD
-				//FIXME.
-				//Do we get a signal if we try to look at this pointer?
-				//note, this still doesn't work.
-				char c= *strVer;
-				if (! segfault)
+				if (!strVer || strncmp(strVer, OW_VERSION,strlen(OW_VERSION)) != 0)
 				{
-#endif 
-					if (!strVer || strncmp(strVer, OW_VERSION,strlen(OW_VERSION)) != 0)
-					{
-						logger->logError("safeLibCreate::create -"
-							" Invalid version returned from \"getOWVersion\"");
-						return 0;
-					}
-					else
-					{
-						createFunc_t createFunc;
-						if (!sl->getFunctionPointer( createFuncName
-							, createFunc ))
-						{
-							logger->logError(Format("safeLibCreate::create failed"
-								" getting function pointer to \"%1\" from"
-								" library", createFuncName));
-
-							return 0;
-						}
-
-						T* ptr = (*createFunc)();
-
-						return ptr;
-					}
-#ifdef OW_FREEBSD			
+					logger->logError("safeLibCreate::create -"
+						" Invalid version returned from \"getOWVersion\"");
+					return 0;
 				}
 				else
 				{
-					logger->logError(Format("safeLibCreate::create setjmp call"
-														 " returned != 0, we caught a segfault.  "
-														 "getOWVersion() or %1() is misbehaving", createFuncName));
-	
-					return 0;
+					createFunc_t createFunc;
+					if (!sl->getFunctionPointer( createFuncName
+						, createFunc ))
+					{
+						logger->logError(Format("safeLibCreate::create failed"
+							" getting function pointer to \"%1\" from"
+							" library", createFuncName));
+
+						return 0;
+					}
+
+					T* ptr = (*createFunc)();
+
+					return ptr;
 				}
-#endif
 			}
-#ifndef OW_FREEBSD			
 			else
-#else
-			if (segfault)
-#endif
 			{
-				logger->logError(Format("safeLibCreate::create setjmp call"
-					" returned != 0, we caught a segfault.  "
-					"getOWVersion() or %1() is misbehaving", createFuncName));
+				logger->logError(Format("safeLibCreate::create sigsetjmp call"
+					" returned %1, we caught a segfault.  "
+					"getOWVersion() or %2() is misbehaving", sigtype, createFuncName));
 	
 				return 0;
 			}
@@ -207,7 +185,6 @@ public:
 	
 private:
 	static jmp_buf theLoaderBuf;
-	static sig_atomic_t volatile segfault;
 	
 	// this is commented out because it won't compile.  As it is, it may
 	// invoke undefined behavior if the C calling convention is different
@@ -216,20 +193,7 @@ private:
 	//extern "C" {
 	static void theSignalHandler(int sig)
 	{
-#ifndef OW_FREEBSD
-		longjmp(theLoaderBuf, sig);
-#else
-		/*
-		   The single unix standard says the behavior of calling longjmp from
-		    a signal handler is undefined; see the list of signal-safe functions in
-		    2.4.3, Signal Actions, at:
-		    http://www.opengroup.org/onlinepubs/009695399/functions/xsh_chap02_04.html
-
-		  Apparently, many unices allow longjmping out of signal handlers anyway,
-		    but for FreeBSD, which doesn't, we set a flag and return.
-		*/
-		segfault= 1;
-#endif
+		siglongjmp(theLoaderBuf, sig);
 	}
 	
 	//} // extern "C"
@@ -238,9 +202,6 @@ private:
 template <typename T>
 jmp_buf SafeLibCreate<T>::theLoaderBuf;
 	
-template <typename T>
-sig_atomic_t volatile SafeLibCreate<T>::segfault;
-
 } // end namespace OpenWBEM
 
 #endif
