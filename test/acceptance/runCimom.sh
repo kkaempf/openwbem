@@ -11,7 +11,9 @@ export LD_LIBRARY_PATH
 
 if [ "$1" = "vg" ]; then
   valgrind \
+	--tool=memcheck \
 	--leak-check=yes \
+	--show-reachable=yes \
 	--error-limit=no \
 	--num-callers=99 \
 	--logfile-fd=9 \
