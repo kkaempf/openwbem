@@ -133,7 +133,6 @@ private:
 
 
 #if !defined(OW_STATIC_SERVICES)
-#WARNING OW_STATIC_SERVICES IS NOT DEFINED!
 #define OW_REQUEST_HANDLER_FACTORY(derived, handlerName) \
 extern "C" OpenWBEM::RequestHandlerIFC* \
 createRequestHandler() \
