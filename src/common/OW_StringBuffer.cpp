@@ -53,7 +53,7 @@
 namespace OpenWBEM
 {
 
-#if defined(OW_AIX)  
+#if defined(OW_AIX)
 const size_t StringBuffer::OW_DEFAULT_ALLOCATION_UNIT = 128;
 #endif // OW_AIX
 //////////////////////////////////////////////////////////////////////////////
@@ -273,6 +273,13 @@ StringBuffer::equals(const char* arg) const
 
 //////////////////////////////////////////////////////////////////////////////
 bool
+StringBuffer::equals(const StringBuffer& arg) const
+{
+	return ::strcmp(arg.m_bfr, m_bfr) == 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
 StringBuffer::endsWith(char ch) const
 {
 	return (m_len && m_bfr[m_len-1] == ch);
@@ -374,6 +381,42 @@ std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b)
 {
 	ostr << b.c_str();
 	return ostr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator==(const StringBuffer& x, const StringBuffer& y)
+{
+	return x.equals(y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator!=(const StringBuffer& x, const StringBuffer& y)
+{
+	return !(x == y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator==(const StringBuffer& x, const String& y)
+{
+	return x.equals(y.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator!=(const StringBuffer& x, const String& y)
+{
+	return !(x == y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator==(const String& x, const StringBuffer& y)
+{
+	return x.equals(y.c_str());
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator!=(const String& x, const StringBuffer& y)
+{
+	return !(x == y);
 }
 
 } // end namespace OpenWBEM

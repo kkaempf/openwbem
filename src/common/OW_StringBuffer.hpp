@@ -154,6 +154,7 @@ public:
 	void reset();
 	const char* c_str() const {  return m_bfr; }
 	bool equals(const char* arg) const;
+	bool equals(const StringBuffer& arg) const;
 	friend OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b);
 private:
 	void checkAvail(size_t len=1)
@@ -174,6 +175,13 @@ private:
 	size_t m_allocated;
 	char* m_bfr;
 };
+
+bool operator==(const StringBuffer& x, const StringBuffer& y);
+bool operator!=(const StringBuffer& x, const StringBuffer& y);
+bool operator==(const StringBuffer& x, const String& y);
+bool operator!=(const StringBuffer& x, const String& y);
+bool operator==(const String& x, const StringBuffer& y);
+bool operator!=(const String& x, const StringBuffer& y);
 
 } // end namespace OpenWBEM
 
