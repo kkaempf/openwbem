@@ -230,7 +230,7 @@ private:
 	void _addQualifierType(const String& ns, const CIMQualifierType& qt,
 		HDBHandle* phdl=0);
 #endif
-	void _getClassNodes(CIMClassResultHandlerIFC& result, HDBNode node,
+	void _getClassNodes(const String& ns, CIMClassResultHandlerIFC& result, HDBNode node,
 		HDBHandle hdl, 
 		WBEMFlags::EDeepFlag deep, 
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
@@ -249,7 +249,7 @@ private:
 		HDBHandle hdl);
 #endif
 	CIMClass _getClassFromNode(HDBNode& node, HDBHandle hdl,
-		const String& ns=String());
+		const String& ns);
 	String _getClassNameFromNode(HDBNode& node);
 	//void _throwIfBadClass(const CIMClass& cc, const CIMClass& parentClass);
 	Cache<CIMClass> m_classCache;

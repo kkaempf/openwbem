@@ -322,7 +322,7 @@ MetaRepository::getCIMClass(const String& ns, const String& className,
 		if(node)
 		{
 			// _getClassFromNode throws if unable to get class.
-			cc = _getClassFromNode(node, hdl.getHandle());
+			cc = _getClassFromNode(node, hdl.getHandle(), ns);
 			if (!cc)
 			{
 				return CIMException::FAILED;
@@ -903,7 +903,7 @@ MetaRepository::enumClass(const String& ns, const String& className,
 	{
 		if(!pnode.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
-			_getClassNodes(result, pnode, hdl.getHandle(), deep, localOnly,
+			_getClassNodes(ns, result, pnode, hdl.getHandle(), deep, localOnly,
 				includeQualifiers, includeClassOrigin);
 		}
 		pnode = hdl->getNextSibling(pnode);
@@ -911,11 +911,11 @@ MetaRepository::enumClass(const String& ns, const String& className,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-MetaRepository::_getClassNodes(CIMClassResultHandlerIFC& result, HDBNode node,
+MetaRepository::_getClassNodes(const String& ns, CIMClassResultHandlerIFC& result, HDBNode node,
 	HDBHandle hdl, EDeepFlag deep, ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
-	CIMClass cimCls = _getClassFromNode(node, hdl);
+	CIMClass cimCls = _getClassFromNode(node, hdl, ns);
 	// TODO: Check cimCls for NULL?
 	result.handle(cimCls.clone(localOnly, includeQualifiers,
 		includeClassOrigin));
@@ -924,7 +924,7 @@ MetaRepository::_getClassNodes(CIMClassResultHandlerIFC& result, HDBNode node,
 		node = hdl.getFirstChild(node);
 		while(node)
 		{
-			_getClassNodes(result, node, hdl, deep, localOnly, includeQualifiers,
+			_getClassNodes(ns, result, node, hdl, deep, localOnly, includeQualifiers,
 				includeClassOrigin);
 			node = hdl.getNextSibling(node);
 		}
