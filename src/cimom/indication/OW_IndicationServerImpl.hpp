@@ -96,7 +96,7 @@ public:
 		MAX_NOTIFIERS = 10
 	};
 
-	OW_IndicationServerImpl(OW_SharedLibraryRef lib);
+	OW_IndicationServerImpl();
 	~OW_IndicationServerImpl();
 
 	virtual void init(OW_CIMOMEnvironmentRef env);

@@ -39,6 +39,7 @@
 #include "OW_SharedLibrary.hpp"
 #include "OW_Map.hpp"
 #include "OW_Array.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 class OW_CIMServer;
 class OW_CIMOMHandleIFC;
@@ -72,7 +73,7 @@ typedef OW_Reference<OW_IndicationRepLayer> OW_IndicationRepLayerRef;
 typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
 typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
 typedef OW_Reference<OW_PollingManager> OW_PollingManagerRef;
-typedef OW_Reference<OW_IndicationServer> OW_IndicationServerRef;
+typedef OW_SharedLibraryReference<OW_IndicationServer> OW_IndicationServerRef;
 typedef OW_Reference<OW_ServiceIFC> OW_ServiceIFCRef;
 typedef OW_Reference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 

@@ -28,36 +28,54 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_SHAREDLIBRARYOBJECT_HPP_
-#define OW_SHAREDLIBRARYOBJECT_HPP_
+#ifndef OW_SHARED_LIBRARY_REFERENCE_HPP_
+#define OW_SHARED_LIBRARY_REFERENCE_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Reference.hpp"
 #include "OW_SharedLibrary.hpp"
 
-class OW_SharedLibraryObject
+template <class T>
+class OW_SharedLibraryReference
 {
 public:
-	virtual ~OW_SharedLibraryObject() {}
+	OW_SharedLibraryReference(OW_SharedLibraryRef lib, OW_Reference<T> obj)
+	: m_sharedLib(lib), m_obj(obj)
+	{}
 
-protected:
-	OW_SharedLibraryObject(OW_SharedLibraryRef lib) : m_lib(lib) {}
-	OW_SharedLibraryObject(const OW_SharedLibraryObject& arg)
-		: m_lib(arg.m_lib) {}
-	OW_SharedLibraryObject& operator= (const OW_SharedLibraryObject& arg)
+	OW_SharedLibraryReference(OW_SharedLibraryRef lib, T* obj)
+	: m_sharedLib(lib), m_obj(OW_Reference<T>(obj))
+	{}
+
+	OW_SharedLibraryReference()
+	: m_sharedLib(), m_obj()
+	{}
+
+	~OW_SharedLibraryReference()
 	{
-		m_lib = arg.m_lib;
-		return *this;
+		m_obj = 0;
+		m_sharedLib = 0;
 	}
 
-	OW_SharedLibraryRef m_lib;
+	T* operator->() const
+	{
+		return &*m_obj;
+	}
+	
+	operator void*() const
+	{
+		return (void*)m_obj;
+	}
+
+	void setNull()
+	{
+		m_obj = 0;
+		m_sharedLib = 0;
+	}
 
 private:
-	OW_SharedLibraryObject() {}
+	OW_SharedLibraryRef m_sharedLib;
+	OW_Reference<T> m_obj;
 };
 
-typedef OW_Reference<OW_SharedLibraryObject> OW_SharedLibraryObjectRef;
-
-#endif	// OW_SHAREDLIBRARYOBJECT_HPP_
-
-
+#endif

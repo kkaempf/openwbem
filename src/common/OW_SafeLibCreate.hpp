@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include "OW_SharedLibrary.hpp"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_Format.hpp"
@@ -44,13 +44,12 @@ template <typename T>
 class OW_SafeLibCreate
 {
 	typedef T* (*createFunc_t)();
-	typedef T* (*createLibObjFunc_t)(OW_SharedLibraryRef);
 	typedef const char* (*versionFunc_t)();
 
 public:
 
 	typedef std::pair<OW_Reference<T>, OW_SharedLibraryRef> return_type;
-	typedef OW_Reference<T> return_obj;
+	typedef OW_SharedLibraryReference<T> return_obj;
 	
 	static return_type
 	loadAndCreate(OW_String const& libname, OW_String const& createFuncName,
@@ -90,7 +89,7 @@ public:
 				" FAILED loading library %1", libname));
 		}
 
-		return return_obj(ptr);
+		return return_obj(sl, ptr);
 	}
 
 	static T*
@@ -128,7 +127,7 @@ public:
 				}
 				else
 				{
-					createLibObjFunc_t createFunc;
+					createFunc_t createFunc;
 					if (!OW_SharedLibrary::getFunctionPointer( sl, createFuncName
 						, createFunc ))
 					{
@@ -139,7 +138,7 @@ public:
 						return 0;
 					}
 	
-					T* ptr = (*createFunc)(sl);
+					T* ptr = (*createFunc)();
 					return ptr;
 				}
 			}

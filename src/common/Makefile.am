@@ -130,7 +130,7 @@ OW_SharedLibraryLoader.hpp \
 OW_SignalScope.hpp \
 OW_dlSharedLibrary.hpp \
 OW_dlSharedLibraryLoader.hpp \
-OW_SharedLibraryObject.hpp \
+OW_SharedLibraryReference.hpp \
 OW_config.h
 
 libopenwbem_a_LIBADD = \

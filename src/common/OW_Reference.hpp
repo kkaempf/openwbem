@@ -35,6 +35,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Exception.hpp"
 
+#include <iostream>
 //////////////////////////////////////////////////////////////////////////////
 
 struct OW_RefCount
@@ -178,6 +179,7 @@ void OW_Reference<T>::decRef()
 			l.release();
 			delete m_pRefCount;
 			m_pRefCount = 0;
+cout << "About to delete: " << __PRETTY_FUNCTION__ << endl;
 			delete m_pObj;
 		}
 		else

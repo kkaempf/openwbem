@@ -105,6 +105,7 @@ OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
 {
 	m_socket.disconnect();
 	m_pHTTPServer->decThreadCount();
+	cout << "~OW_HTTPSvrConnection.  thread count=" << m_pHTTPServer->m_threadCountSemaphore->getCount() << endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -32,19 +32,17 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include "OW_Thread.hpp"
 #include "OW_CIMOMEnvironment.hpp"
-#include "OW_SharedLibraryObject.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_IndicationServer : public OW_Thread, public OW_SharedLibraryObject
+class OW_IndicationServer : public OW_Thread
 {
 public:
 
-	OW_IndicationServer(OW_SharedLibraryRef lib)
+	OW_IndicationServer()
 		: OW_Thread(true)
-		, OW_SharedLibraryObject(lib)
 	{}
 
 	virtual ~OW_IndicationServer() {}
@@ -61,7 +59,7 @@ public:
 protected:
 };
 
-typedef OW_Reference<OW_IndicationServer> OW_IndicationServerRef;
+typedef OW_SharedLibraryReference<OW_IndicationServer> OW_IndicationServerRef;
 
 #endif	// __OW_NOTIFYMANAGER_HPP__
 
