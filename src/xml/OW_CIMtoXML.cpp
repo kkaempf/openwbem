@@ -630,7 +630,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 {
 	if (!cv)
 	{
-		return;
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "CIM value is NULL");
 	}
 	if(cv.isArray())
 	{
