@@ -134,18 +134,18 @@ ServerSocketImpl::getSelectObj() const
 //////////////////////////////////////////////////////////////////////////////
 void
 ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
-	int queueSize, const String& listenAddr, 
+	int queueSize, const String& listenAddr,
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
 	m_isSSL = isSSL;
-	doListen(port, queueSize,listenAddr, reuseAddr); 
+	doListen(port, queueSize,listenAddr, reuseAddr);
 }
 
 #if defined(OW_WIN32)
 //////////////////////////////////////////////////////////////////////////////
 void
-ServerSocketImpl::doListen(UInt16 port, 
-	int queueSize, const String& listenAddr, 
+ServerSocketImpl::doListen(UInt16 port,
+	int queueSize, const String& listenAddr,
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
@@ -167,7 +167,7 @@ ServerSocketImpl::doListen(UInt16 port,
 	if (reuseAddr)
 	{
 		DWORD reuse = 1;
-		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, 
+		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR,
 			(const char*)&reuse, sizeof(reuse));
 	}
 		
@@ -199,7 +199,7 @@ ServerSocketImpl::doListen(UInt16 port,
 	m_isActive = true;
 }
 
-namespace 
+namespace
 {
 
 int
@@ -214,7 +214,7 @@ waitForAcceptIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 	{
 		if(::WSAEventSelect(fd, eventArg, networkEvents) != 0)
 		{
-			OW_THROW(SocketException, 
+			OW_THROW(SocketException,
 				Format("WSAEventSelect failed in waitForAcceptIO: %1",
 				System::lastErrorMsg(true)).c_str());
 		}
@@ -254,7 +254,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 	// Register interest in FD_ACCEPT events
 	if(::WSAEventSelect(m_sockfd, m_event, FD_ACCEPT) != 0)
 	{
-		OW_THROW(SocketException, 
+		OW_THROW(SocketException,
 			Format("WSAEventSelect failed in accept: %1",
 			System::lastErrorMsg(true)).c_str());
 	}
@@ -310,8 +310,8 @@ ServerSocketImpl::accept(int timeoutSecs)
 #else
 //////////////////////////////////////////////////////////////////////////////
 void
-ServerSocketImpl::doListen(UInt16 port, 
-	int queueSize, const String& listenAddr, 
+ServerSocketImpl::doListen(UInt16 port,
+	int queueSize, const String& listenAddr,
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
@@ -442,21 +442,13 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 				strerror(errno)).c_str());
 	}
 	// give anybody access to the socket
-#if defined(OW_HPUX) || defined(OW_DARWIN) || defined(OW_AIX) // on hpux, darwin, and aixX, fchmod() doesn't work on a UDS
+	// unfortunately, fchmod() doesn't work on a UDS
 	if (::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: chmod failed: %1",
 				strerror(errno)).c_str());
 	}
-#else
-	if (::fchmod(m_sockfd, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
-	{
-		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl: fchmod failed: %1",
-				strerror(errno)).c_str());
-	}
-#endif
 	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
@@ -468,7 +460,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-ServerSocketImpl::waitForIO(int fd, int timeOutSecs, 
+ServerSocketImpl::waitForIO(int fd, int timeOutSecs,
 	SocketFlags::EWaitDirectionFlag forInput)
 {
 	return SocketUtils::waitForIO(fd, timeOutSecs, forInput) == 0;
@@ -542,11 +534,11 @@ ServerSocketImpl::accept(int timeoutSecs)
 		{
 			::fcntl(clntfd, F_SETFL, fdflags ^ O_NONBLOCK);
 		}
-		// TODO, how to make this bw compatible? 
+		// TODO, how to make this bw compatible?
 		//return Socket(clntfd, m_localAddress.getType(), m_isSSL);
 		if (!m_sslCtx && m_isSSL == SocketFlags::E_SSL)
 		{
-			return Socket(clntfd, m_localAddress.getType(), m_isSSL); // for bw compat. 
+			return Socket(clntfd, m_localAddress.getType(), m_isSSL); // for bw compat.
 		}
 		return Socket(clntfd, m_localAddress.getType(), m_sslCtx);
 	}
