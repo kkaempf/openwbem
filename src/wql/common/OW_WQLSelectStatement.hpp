@@ -151,7 +151,7 @@ public:
 
 	/** Prints out the members of this class.
 	*/
-	void print() const;
+	void print(std::ostream& ostr) const;
 
 	void compileWhereClause(const OW_WQLPropertySource* source, OW_WQLCompile& wcl);
 

@@ -328,67 +328,65 @@ bool OW_WQLSelectStatement::evaluateWhereClause(
 	return stack.top();
 }
 
-void OW_WQLSelectStatement::print() const
+void OW_WQLSelectStatement::print(std::ostream& ostr) const
 {
-	#if 0
 	//
 	// Print the header:
 	//
 
-	cout << "OW_WQLSelectStatement" << endl;
-	cout << "{" << endl;
+	ostr << "OW_WQLSelectStatement\n";
+	ostr << "{\n";
 
 	//
 	// Print the class name:
 	//
 
-	cout << "	_className: \"" << _className << '"' << endl;
+	ostr << "	_className: \"" << _className << "\"\n";
 
 	// 
 	// Print the property:
 	//
 
-	for (Uint32 i = 0; i < _selectPropertyNames.size(); i++)
+	for (size_t i = 0; i < _selectPropertyNames.size(); i++)
 	{
 		if (i == 0)
-			cout << endl;
+			ostr << '\n';
 
-		cout << "	_selectPropertyNames[" << i << "]: ";
-		cout << '"' << _selectPropertyNames[i] << '"' << endl;
+		ostr << "	_selectPropertyNames[" << i << "]: ";
+		ostr << '"' << _selectPropertyNames[i] << '"' << '\n';
 	}
 
 	//
 	// Print the operations:
 	//
 
-	for (Uint32 i = 0; i < _operations.size(); i++)
+	for (size_t i = 0; i < _operations.size(); i++)
 	{
 		if (i == 0)
-			cout << endl;
+			ostr << '\n';
 
-		cout << "	_operations[" << i << "]: ";
-		cout << '"' << WQLOperationToString(_operations[i]) << '"' << endl;
+		ostr << "	_operations[" << i << "]: ";
+		ostr << '"' << OW_WQLOperationToString(_operations[i]) << '"' << '\n';
 	}
 
 	//
 	// Print the operands:
 	//
 
-	for (Uint32 i = 0; i < _operands.size(); i++)
+	for (size_t i = 0; i < _operands.size(); i++)
 	{
 		if (i == 0)
-			cout << endl;
+			ostr << '\n';
 
-		cout << "	_operands[" << i << "]: ";
-		cout << '"' << _operands[i].toString() << '"' << endl;
+		ostr << "	_operands[" << i << "]: ";
+		ostr << '"' << _operands[i].toString() << '"' << '\n';
 	}
 
 	//
 	// Print the trailer:
 	//
 
-	cout << "}" << endl;
-	#endif
+	ostr << "}" << std::endl;
 }
 
 void OW_WQLSelectStatement::compileWhereClause(

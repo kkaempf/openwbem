@@ -136,9 +136,9 @@ public:
 
     bool evaluate(OW_WQLPropertySource * source) const;
 
-    void print();
+    void print(std::ostream& ostr);
 
-    void printTableau();
+    void printTableau(std::ostream& ostr);
 
 
 protected:

@@ -29,44 +29,39 @@
 
 #include "OW_config.h"
 #include "OW_WQLOperand.hpp"
+#include "OW_StringBuffer.hpp"
 
 OW_String OW_WQLOperand::toString() const
 {
-	return OW_String();
-	#if 0
-	OW_String result;
+	OW_StringBuffer result;
 
 	switch (_type)
 	{
 	case PROPERTY_NAME:
 		{
 			result = "PROPERTY_NAME: ";
-			result.append(*((OW_String*)_propertyName));
+			result += _propertyName;
 			break;
 		}
 
 	case STRING_VALUE:
 		{
 			result = "STRING_VALUE: ";
-			result.append(*((OW_String*)_stringValue));
+			result += _stringValue;
 			break;
 		}
 
 	case INTEGER_VALUE:
 		{
 			result = "INTEGER_VALUE: ";
-			char buffer[32];
-			sprintf(buffer, "%d", _integerValue);
-			result.append(buffer);
+			result += _integerValue;
 			break;
 		}
 
 	case DOUBLE_VALUE:
 		{
 			result = "DOUBLE_VALUE: ";
-			char buffer[32];
-			sprintf(buffer, "%f", _doubleValue);
-			result.append(buffer);
+			result += _doubleValue;
 			break;
 		} 
 
@@ -75,9 +70,9 @@ OW_String OW_WQLOperand::toString() const
 			result = "BOOLEAN_VALUE: ";
 
 			if (_booleanValue)
-				result.append("TRUE");
+				result += "TRUE";
 			else
-				result.append("FALSE");
+				result += "FALSE";
 
 			break;
 		}
@@ -87,8 +82,7 @@ OW_String OW_WQLOperand::toString() const
 		break;
 	}
 
-	return result;
-	#endif
+	return result.releaseString();
 }
 
 

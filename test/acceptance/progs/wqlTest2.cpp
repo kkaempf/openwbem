@@ -1,6 +1,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_WQLImpl.hpp"
 #include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
 
 #include <iostream>
 #include <assert.h>
@@ -21,7 +22,11 @@ void testQuery(const char* query)
 	OW_Reference<OW_WQLIFC> wql(new OW_WQLImpl);
 
 	OW_WQLSelectStatement stmt = wql->createSelectStatement(query);
+	stmt.print(cout);
 
+	OW_WQLCompile comp(stmt);
+	comp.print(cout);
+	comp.printTableau(cout);
 }
 
 } // end anonymous namespace
@@ -169,6 +174,29 @@ int main(int , char**)
 		testQuery("select * from wqlTestClass where name = \"test11\"");
 		testQuery("select * from wqlTestClass where name = \"test12\"");
 
+		// test ISA and embedded properties
+		testQuery("select * from wqlTestClass where embed ISA fooClass");
+		testQuery("select * from wqlTestClass where embed ISA \"fooClass\"");
+		testQuery("select * from wqlTestClass where wqlTestClass.embed ISA \"fooClass\"");
+		testQuery("select * from wqlTestClass where wqlTestClass.embed.embed2 ISA \"fooClass\"");
+		testQuery("select * from wqlTestClass where embed.embed2 ISA \"fooClass\"");
+		testQuery("select embed from wqlTestClass where embed.embed2 ISA \"fooClass\"");
+		testQuery("select embed from wqlTestClass where wqlTestClass.embed.embedInt = 1");
+		testQuery("select embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1");
+		testQuery("select wqlTestClass.embed.Name from wqlTestClass where wqlTestClass.embed.embedInt = 1");
+
+		// Markus' tests
+		testQuery("SELECT x,y,z FROM myclass WHERE x > 5 AND y < 25 AND z > 1.2");
+		testQuery("SELECT x,y,z,a FROM myclass WHERE (x > 5) AND ((y < 25) OR (a = \"Foo\")) AND (z > 1.2)");
+		testQuery("SELECT x,y,z,a FROM myclass WHERE (y > x) AND (((y < 25) OR (a = \"Bar\")) OR (z > 1.2))");
+		testQuery("SELECT w,x,y,z FROM ClassName");
+		testQuery("SELECT w,x,y,z FROM ClassName WHERE w = TRUE OR w = FALSE");
+		testQuery("SELECT w,x,y,z FROM ClassName WHERE w = TRUE AND x >= 10 AND y <= 13.10 AND z = \"Ten\"");
+		testQuery("SELECT * FROM ClassName WHERE (w = TRUE AND x >= 10 AND y <= 13.10 AND z = \"Ten\") AND NOT w = TRUE IS NOT TRUE");
+		testQuery("SELECT * FROM ClassName WHERE NOT NOT NOT x < 5");
+		testQuery("SELECT * FROM ClassName WHERE v IS NULL");
+		testQuery("SELECT * FROM myclass WHERE (NOT (x>5) OR (y<1.0) AND (z = \"BLAH\")) AND NOT ((x<10) OR (y>4.0))");
+		testQuery("SELECT * FROM myclass WHERE NOT NOT( NOT (NOT (5>x) OR (y<1.0) AND NOT (z = \"BLAH\")) AND NOT NOT ((x<10) OR (y>4.0)))");
 		return 0;
 	}
 	catch(OW_Exception& e)

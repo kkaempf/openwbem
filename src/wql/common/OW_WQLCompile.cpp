@@ -29,7 +29,11 @@
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLCompile.hpp"
 
-using namespace std;
+#ifdef OW_HAVE_OSTREAM
+#include <ostream>
+#else
+#include <iostream>
+#endif
 
 //
 // Terminal element methods 
@@ -296,48 +300,49 @@ bool OW_WQLCompile::evaluate(OW_WQLPropertySource * source) const
 	return false;
 }
 
-void OW_WQLCompile::print(void)
+void OW_WQLCompile::print(std::ostream& ostr)
 {
-#if 0
 	for (OW_UInt32 i=0, n=eval_heap.size();i < n;i++)
 	{
 		OW_WQLOperation wop = eval_heap[i].op; 
-		if (wop == WQL_IS_TRUE)	continue;
-		cout << "Eval element " << i << ": "; 
-		if (eval_heap[i].is_terminal1) cout << "T(";
-		else cout << "E("; 
-		cout << eval_heap[i].opn1 << ") "; 
-		cout << WQLOperationToString(eval_heap[i].op); 
-		if (eval_heap[i].is_terminal2) cout << " T(";
-		else cout << " E("; 
-		cout << eval_heap[i].opn2 << ")" << endl; 
+		if (wop == WQL_IS_TRUE)	
+			continue;
+		ostr << "Eval element " << i << ": "; 
+		if (eval_heap[i].is_terminal1) 
+			ostr << "T(";
+		else 
+			ostr << "E("; 
+		ostr << eval_heap[i].opn1 << ") "; 
+		ostr << OW_WQLOperationToString(eval_heap[i].op); 
+		if (eval_heap[i].is_terminal2) 
+			ostr << " T(";
+		else 
+			ostr << " E("; 
+		ostr << eval_heap[i].opn2 << ")" << std::endl; 
 	} 
 	for (OW_UInt32 i=0, n=terminal_heap.size();i < n;i++)
 	{
-		cout << "Terminal expression " << i << ": "; 
-		cout << terminal_heap[i].opn1.toString() << " "; 
-		cout << WQLOperationToString(terminal_heap[i].op) << " " 
-		<< terminal_heap[i].opn2.toString() << endl; 
+		ostr << "Terminal expression " << i << ": "; 
+		ostr << terminal_heap[i].opn1.toString() << " "; 
+		ostr << OW_WQLOperationToString(terminal_heap[i].op) << " " 
+			<< terminal_heap[i].opn2.toString() << std::endl; 
 	}
-#endif
 }
 
-void OW_WQLCompile::printTableau(void)
+void OW_WQLCompile::printTableau(std::ostream& ostr)
 {
-#if 0
-	for (Uint32 i=0,n = _tableau.size(); i < n; i++)
+	for (OW_UInt32 i=0, n = _tableau.size(); i < n; i++)
 	{
-		cout << "Tableau " << i << endl;
+		ostr << "Tableau " << i << std::endl;
 		TableauRow tr = _tableau[i];
-		for (Uint32 j=0,m = tr.size(); j < m; j++)
+		for (OW_UInt32 j=0, m = tr.size(); j < m; j++)
 		{
-			cout << tr[j].opn1.toString() << " "; 
-			cout << WQLOperationToString(tr[j].op) << " " 
-			<< tr[j].opn2.toString() << endl; 
+			ostr << tr[j].opn1.toString() << " "; 
+			ostr << OW_WQLOperationToString(tr[j].op) << " " 
+				<< tr[j].opn2.toString() << std::endl; 
 		}
 
 	}
-#endif
 }
 
 void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)

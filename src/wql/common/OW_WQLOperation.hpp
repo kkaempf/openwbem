@@ -31,6 +31,7 @@
 #define OW_WQL_OPERATION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_String.hpp"
 
 /** Represents SQL where clause operators.
 
@@ -117,6 +118,46 @@ enum OW_WQLOperation
 	WQL_IS_NOT_FALSE,
 	WQL_ISA
 };
+
+inline OW_String OW_WQLOperationToString(OW_WQLOperation op)
+{
+	switch (op)
+	{
+		case WQL_OR:
+			return "OR";
+		case WQL_AND:
+			return "AND";
+		case WQL_NOT:
+			return "NOT";
+		case WQL_EQ:
+			return "=";
+		case WQL_NE:
+			return "<>";
+		case WQL_LT:
+			return "<";
+		case WQL_LE:
+			return "<=";
+		case WQL_GT:
+			return ">";
+		case WQL_GE:
+			return ">=";
+		case WQL_IS_NULL:
+			return "IS NULL";
+		case WQL_IS_NOT_NULL:
+			return "IS NOT NULL";
+		case WQL_IS_TRUE:
+			return "IS TRUE";
+		case WQL_IS_NOT_TRUE:
+			return "IS NOT TRUE";
+		case WQL_IS_FALSE:
+			return "IS FALSE";
+		case WQL_IS_NOT_FALSE:
+			return "IS NOT FALSE";
+		case WQL_ISA:
+			return "ISA";
+	}
+	return "Unknown";
+}
 
 #endif
 
