@@ -59,8 +59,6 @@ extern "C"
 using std::cerr;
 using std::endl;
 
-typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
-
 DEFINE_EXCEPTION(ExecTimeout);
 DEFINE_EXCEPTION(ExecBufferFull);
 DEFINE_EXCEPTION(ExecError);

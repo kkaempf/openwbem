@@ -33,6 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_UnnamedPipe.hpp"
+#include "OW_Reference.hpp"
 
 class OW_PosixUnnamedPipe : public OW_UnnamedPipe
 {
@@ -53,5 +54,7 @@ public:
 private:
 	int m_fds[2];
 };
+
+typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
 
 #endif

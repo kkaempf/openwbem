@@ -72,7 +72,6 @@ inetAddrToString(OW_UInt64 addr)
 	#define OW_MAX(A,B) (((A) > (B))? (A): (B))
 #endif
 //////////////////////////////////////////////////////////////////////////////
-typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
 
 int
 waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
