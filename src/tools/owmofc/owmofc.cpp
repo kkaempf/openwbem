@@ -112,6 +112,8 @@ static String g_url;
 static String g_encoding;
 static StringArray g_filelist;
 
+
+// TODO: switch all this junk to use the new CmdLineParser class.
 #ifdef OW_HAVE_GETOPT_LONG
 //////////////////////////////////////////////////////////////////////////////
 static struct option   long_options[] =
