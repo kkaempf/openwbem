@@ -36,6 +36,8 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 
+class OW_WQLSelectStatement;
+
 /**
  * This is the interface implemented by indication providers.
  */
@@ -58,8 +60,9 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getProviderInfo(OW_IndicationProviderInfo&)
+	virtual void getProviderInfo(OW_IndicationProviderInfo& info)
 	{
+		(void)info;
 	}
 	
 	virtual void activateFilter(
