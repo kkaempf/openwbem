@@ -365,4 +365,17 @@ with Array<> actually raised code size significantly, because *all* the
 member functions get instantiated, whereas normally only functions which are
 actually called get instantiated.
 -----------------------------------------------------------------------------
+#ifdefs
+For porting to different platforms it's necessary to use preprocessor #if
+statements.  We don't have any preference wrt whether you use #ifdef,
+#if defined OW_FOO or #if defined(OW_FOO).
+If you are simply testing for the presense of a header, add a check to
+configure.in and then use #ifdef OW_HAVE_HEADER_H.
+Also when using a non-portable function, test for it as well.  In general
+try to test for features in configure.in and then #ifdef on the presense
+of the feature.  Sometime this is pointless, as in the case of win32 threads
+which are completely different, so just a whole chunk of the file is
+enclosed inside an #ifdef OW_WIN32.  Also sometimes the build system does
+the selection of code using automake conditionals.  
+-----------------------------------------------------------------------------
 
