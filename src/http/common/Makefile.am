@@ -24,8 +24,7 @@ OW_HTTPDeflateIStream.cpp \
 OW_HTTPDeflateOStream.cpp \
 OW_HTTPException.cpp \
 OW_HTTPLenLimitIStream.cpp \
-OW_HTTPUtils.cpp \
-OW_MD5.cpp
+OW_HTTPUtils.cpp 
 
 
 pkginclude_HEADERS =	\
@@ -39,8 +38,7 @@ OW_HTTPDeflateOStream.hpp \
 OW_HTTPException.hpp \
 OW_HTTPLenLimitIStream.hpp \
 OW_HTTPStatusCodes.hpp \
-OW_HTTPUtils.hpp \
-OW_MD5.hpp
+OW_HTTPUtils.hpp 
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

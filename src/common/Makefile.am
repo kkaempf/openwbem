@@ -58,6 +58,7 @@ OW_IOException.cpp \
 OW_IOIFCStreamBuffer.cpp \
 OW_Logger.cpp \
 OW_LoggerImpls.cpp \
+OW_MD5.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
 OW_MutexImpl.cpp \
@@ -161,6 +162,7 @@ OW_List.hpp \
 OW_Logger.hpp \
 OW_LogLevel.hpp \
 OW_Map.hpp \
+OW_MD5.hpp \
 OW_MemTracer.hpp \
 OW_Mutex.hpp \
 OW_MutexImpl.hpp \

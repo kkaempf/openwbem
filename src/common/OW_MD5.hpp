@@ -74,13 +74,13 @@ documentation and/or software.
 namespace OpenWBEM
 {
 
-OW_DECLARE_APIEXCEPTION(MD5, OW_HTTP_API)
+OW_DECLARE_APIEXCEPTION(MD5, OW_COMMON_API)
 
 const int MD5HASHLEN = 16;
 class String;
 class MD5;
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTP_API MD5StreamBuffer : public std::streambuf
+class OW_COMMON_API MD5StreamBuffer : public std::streambuf
 {
 public: 
 	MD5StreamBuffer(MD5* md5);
@@ -90,14 +90,14 @@ protected:
 	virtual std::streamsize xsputn(const char* s, std::streamsize num);
 };
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTP_API MD5OStreamBase 
+class OW_COMMON_API MD5OStreamBase 
 {
 public:
 	MD5StreamBuffer _buf;
 	MD5OStreamBase(MD5* md5);
 };
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTP_API MD5 : private MD5OStreamBase, public std::ostream
+class OW_COMMON_API MD5 : private MD5OStreamBase, public std::ostream
 {
 /* MD5 context. */
 public:
@@ -126,11 +126,11 @@ public:
 	 */
 	String toString();
 	unsigned char* getDigest();
+	static String convertBinToHex( const unsigned char* sBin);
 private:
 	MD5_CTX m_ctx;
 	unsigned char m_digest[16];
 	bool m_finished;
-	String convertBinToHex( const unsigned char* sBin);
 	static void MD5Init(MD5_CTX * md5ctx);
 	static void MD5Update(MD5_CTX *md5ctx, const unsigned char* input,
 		UInt32 inputLen);
