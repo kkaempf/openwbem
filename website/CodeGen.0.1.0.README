@@ -1,0 +1,125 @@
+CodeGen
+======
+
+CodeGen is a tool that can be used to generate output from templates that is
+driven by a CIM class.  Some examples of what can be generated are provider 
+stub code, a client CIM instance wrapper, or a documentation skeleton.
+
+The actual driver code is rather simple, it does a getClass to retrieve
+a CIM class from a CIMOM, and then the class is added to the velocity context,
+and then the velocity engine is run on a specified template.
+
+Some files in this package are Copyright 2003 Center 7, Inc.
+The code in snia.jar is licensed under the SNIA Public License Version 1.0,
+and the Gnu Public License (HTTPClient sub-library).
+The velocity and xerces jars are licensed under The Apache Software License.
+
+The CodeGen project is a sub-project of OpenWBEM which is hosted by SourceForge
+http://openwbem.sourceforge.net/
+
+Dependencies
+============
+
+All dependencies are distributed with CodeGen.
+-Velocity
+ I wanted to use Velocity (http://jakarta.apache.org/velocity/) for this
+ project because it allows for easy modification of templates, and its
+ macro language is simple and easy to learn yet powerful because of Java
+ reflection capabilities.
+-SNIA
+ There are 2 open-source cim client libraries, WBEMServices from Sun, and
+ the SNIA code.  WBEMServices had a couple of bugs which prevented effective
+ usage, and so I currently use SNIA.  The Java CIM client api is being 
+ standardized, so its a trivial task to switch between the two.
+-Xerces
+ The SNIA code depends on Xerces 1.4
+
+Building
+========
+
+Use javac to compile CodeGen.java.  Add snia.jar, velocity-dep-1.3.1.jar and
+xerces.jar to the CLASSPATH.  I use a small script called compile.sh to
+accomplish this.
+
+Running
+=======
+When CodeGen runs it has to connect to a running cimom.  This means that
+before you can generate something for your CIM class, you have to import 
+the class mof into the cimom.
+CodeGen is not connected to a mof parser because it's too much of a pain to 
+massage the mof into a workable format.  To work propertly, the mof would
+have to include all qualifiers and base classes. Also a mof compiler doesn't 
+check/resolve as much as a cimom does.
+
+Command Line Args
+ host user password namespace classname templatefile propertiesfile [rmi|http]
+
+  host - The url to connect to (e.g. http://localhost/cimom)
+  user - The username to use to authenticate to the cimom
+  password - The password to authenticate to the cimom
+  namespace - The namespace in the cimom that contains the class (e.g. 
+              root/cimv2)
+  classname - The name of the class to retrieve from the cimom (e.g.
+              CIM_LogicalDevice)
+  templatefile - The name of the velocity template that will be merged.
+  propertiesfile - The name of a Java properties file.  The properties
+                   will be inserted into the velocity context for use by
+                   templates.
+  [rmi|http] - Specify the connection method to the cimom.
+
+Properties File
+ You can make additional information available to the template by using the
+ properties file. A template may have this variable: $copyright.  You could
+ create a properties file that has the line:
+ copyright=// Copyright (C) 2003 Foobar, Inc. All rights reserved.
+ And the appropriate text would be output.
+
+Velocity Templates
+==================
+
+Provided in templates directory
+ - openwbem_instance_provider.vm - Generates a read-only instance provider
+   skeleton for the OpenWBEM cimom.
+ - openwbem_instance_wrapper.vm - Incomplete. Generates a class that wraps
+   an OW_CIMInstance of the class. Member functions are created that
+   manipulate the properties and call the methods.
+ - javabean.vm - Incomplete. Generates a Java class that is a JavaBean similar
+   to WBEMServices' mof2bean. Java counterpart of openwbem_instance_wrapper.vm.
+
+Building Custom Templates
+ One of the main design criteria for CodeGen was to make it easy for users
+to customize the output and create their own templates. The easiest first
+step is to modify one of the existing templates for your own needs. To
+effectively create your own template, you'll need to learn about Velocity
+at http://jakarta.apache.org/velocity/.  Since the templates use the Java
+objects that are placed in the velocity context, it's also necessary to
+reference the Java CIM API.  I read the SNIA code (available in an open
+CVS server.  See http://www.opengroup.org/snia-cimom/).  You could also
+refer to Sun's javadoc at 
+http://wbemservices.sourceforge.net/javadoc/api/index.html
+
+Current State
+=============
+
+ CodeGen 0.1 is basically a functional prototype.  In the spirit of "release
+early, release often" I wanted to get it out so people can take a look at it
+and give useful feedback.  Please send any suggestions, questions, bugs,
+complaints, patches, new templates, etc. to 
+openwbem-public@lists.sourceforge.net
+
+Possible Futures
+================
+Here's the tentative TODO list in no particular order.
+ - Improve command line argument handling. Have flags so order is unimportant.
+   Have good defaults.
+ - Allow multiple properties files to be used at once.
+ - Allow multiple template files to be processed in one command.
+ - Allow specification of the output file, instead of printing the output.
+ - Create templates for:
+   - OpenWBEM method providers.
+   - OpenWBEM read-write instance providers.
+   - OpenWBEM instance/method providers.
+   - OpenWBEM instance/associator providers.
+   - OpenWBEM instance/indication providers.
+
+

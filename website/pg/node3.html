@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with jLaTeX2HTML 2002 (1.62) JA patch-1.4
+patched version by:  Kenshi Muto, Debian Project.
+LaTeX2HTML 2002 (1.62),
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Selecting a Protocol</TITLE>
+<META NAME="description" CONTENT="Selecting a Protocol">
+<META NAME="keywords" CONTENT="pg">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="jLaTeX2HTML v2002 JA patch-1.4">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="pg.css">
+
+<LINK REL="next" HREF="node4.html">
+<LINK REL="previous" HREF="node2.html">
+<LINK REL="up" HREF="node2.html">
+<LINK REL="next" HREF="node4.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html70"
+  HREF="node4.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html66"
+  HREF="node2.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html60"
+  HREF="node2.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A> 
+<A NAME="tex2html68"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html71"
+  HREF="node4.html">Choosing the Encoding</A>
+<B> Up:</B> <A NAME="tex2html67"
+  HREF="node2.html">CIM Client API</A>
+<B> Previous:</B> <A NAME="tex2html61"
+  HREF="node2.html">CIM Client API</A>
+ &nbsp <B>  <A NAME="tex2html69"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00021000000000000000">
+Selecting a Protocol</A>
+</H2>
+The first step is to define the means of communication between the
+client and the CIMOM.  Currently the only protocol supported is 
+HTTP.  An OW_CIMProtocolIFCRef must be created as this will
+be passed to the encoding mechanism.  This can be done in the
+following manner: 
+<BR><TT>OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));</TT>.
+The constructor of 
+OW_HTTPClient takes a single argument: an OW_String that is the 
+URL to the CIMOM.  
+
+<P>
+A URL takes the form 
+<BR><TT>[protocol://][username:password@]&lt;hostname&gt;[:port][path]</TT>.
+The protocol can be http, https, or ipc (Unix Domain Socket).  If the
+protocol is not given, http is assumed.  Username and password are optional.
+If not provided, and authentication is required, the username
+and password can be obtained through a callback which will be described 
+shortly.  The hostname is the name or IP address of the computer where 
+the CIMOM is running.  If the port is not given, 5988 is assumed if 
+the protocol is http, and 5989 is assumed if the protocol is https.  
+The path specifies the location of the CIM Server.  This is normally /cimom.
+The OpenWBEM cimom ignores the path, but it may matter to some others.
+
+<P>
+At this point a callback can be provided to obtain a username and 
+password if the CIM Server requests authentication.  A callback for 
+username and password is created by deriving from OW_ClientAuthCBIFC.
+Suppose the new derived class is called GetLoginInfo.  The callback 
+would be provided to the HTTP Client in the following manner: 
+<BR><TT>OW_CIMClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);</TT>
+<BR><TT>httpClient-&gt;setLoginCallBack(getLoginInfo);</TT>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html70"
+  HREF="node4.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html66"
+  HREF="node2.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html60"
+  HREF="node2.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A> 
+<A NAME="tex2html68"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html71"
+  HREF="node4.html">Choosing the Encoding</A>
+<B> Up:</B> <A NAME="tex2html67"
+  HREF="node2.html">CIM Client API</A>
+<B> Previous:</B> <A NAME="tex2html61"
+  HREF="node2.html">CIM Client API</A>
+ &nbsp <B>  <A NAME="tex2html69"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Bart Whiteley
+2002-12-12
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,134 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+<title>
+OpenWBEM FAQ
+</title>
+</head>
+<body>
+
+<center>
+<h1>
+OpenWBEM Frequently Asked Questions</h1></center>
+
+<h2>
+Table of contents:</h2>
+
+<blockquote>
+<li>
+<a href="#q3">What do I need to build OpenWBEM?</a></li>
+<li>
+<a href="#q1">How do I link a binary to the OpenWBEM libraries?</a></li>
+
+<li>
+<a href="#q2">make check failed.&nbsp; What do I do now?</a></li>
+<li><a href="#q4">Why can't I authenticate using Linux-PAM authentication?</a></li>
+<li><a href="#q5">Why doesn't the configure script detect OpenSSL?</a></li>
+<li><a href="#q6">How do I build from OpenWBEM from CVS?</a></li>
+</blockquote>
+
+<hr>
+<!-------------------------------------------------------->
+<a NAME="q3"></a><h3>What do I need to build OpenWBEM?</h3>
+<blockquote>
+To build OpenWBEM, you need gcc version 2.91.66 or higher,
+GNU make, and flex. &nbsp;Note that
+you currently can't use gcc 3.0.x due to some problems that gcc 3.0.x has
+with iostreams. gcc 3.1.x and 3.2 have been verified to work correctly.
+&nbsp;On OSR5, you will also need the 
+<a href="http://www.gnu.org/software/pth/">GNU pth </a>
+cooperative thread library. &nbsp;Optionally, you may also want
+<a href="http://www.openssl.org/">OpenSSL</a> if you want to support 
+HTTPS, and <a href="http://www.gzip.org/zlib/">zlib</a> if you want to 
+support zlib (deflate) compression. 
+</blockquote>
+<p>
+<!-------------------------------------------------------->
+<a NAME="q1"></a><h3>How do I link a binary to the OpenWBEM libraries?</h3>
+<blockquote>
+All applications using OpenWBEM will need to link with libopenwbem.so.  
+This is accomplished by adding <tt>-lopenwbem</tt> to your link flags. &nbsp;
+In addition, you may need some of the following flags, depending on how
+OpenWBEM was built.
+<blockquote>
+<li><tt>-lssl -lcrypto</tt> if OpenWBEM was built with OpenSSL.</li>
+<li><tt>-lz</tt> if OpenWBEM was built with zlib.</li>
+<li><tt>-lpthread</tt> if OpenWBEM was built with pthreads. &nbsp;This should 
+be done on Linux only. &nbsp;On Unixware/OpenUnix, add <tt>-pthread</tt> to 
+both the compile and link flags. &nbsp;On Solaris, add <tt>-pthreads</tt>
+to both the compile and link flags.</li>
+<li><tt>-lpth</tt> if OpenWBEM was built with the GNU pth library (OSR5)</li>
+<li><tt>-lsocket -lnsl</tt> if building on Solaris.</li>
+<li><tt>-lsocket</tt> if building on UnixWare/OpenUnix</li>
+</blockquote>
+This should be all that is needed
+for a program utilizing the OpenWBEM client API.
+<p>
+If your program needs to use the server components of OpenWBEM
+(i.e. you are writing a provider or an authentication module), you 
+need to add the following link flags: <tt>-lowserver -lowdb</tt>.
+<p>
+If you are writing an application that uses the OpenWBEM mof compiler
+library, add <tt>-lowmofc</tt> to your link flags.
+
+</blockquote>
+<p>
+<!-------------------------------------------------------->
+<a NAME="q2"></a><h3>make check failed.&nbsp; What do I do now?</h3>
+<blockquote>
+If the acceptance test script failed, there are several log files
+which may help you determine what went wrong. &nbsp;The acceptance
+script installs OpenWBEM in test/acceptance/stage. &nbsp;The directory
+test/acceptance/stage/results contains the output from the various
+tests performed by the acceptance test script. &nbsp;You might start with
+owcimomd.output. &nbsp;You can also look in test/acceptance/stage for 
+core files. &nbsp;If you are familiar with gdb, please create a backtrace
+from the core file(s) and email it to <a href="mailto:openwbem-devel@lists.sourceforge.net">openwbem-devel@lists.sourceforge.net</a>.
+</blockquote>
+<p>
+<!-------------------------------------------------------->
+<a NAME="q4"></a><h3>Why can't I authenticate using Linux-PAM authentication?</h3>
+<blockquote>
+Make sure you have a /etc/pam.d/openwbem file that works. &nbsp;You should
+be able to copy the one from etc/pam.d/ in the source tar file. &nbsp;Also,
+make sure you are authenticating as a user listed in the pam.allowed_users
+variable in openwbem.conf. &nbsp;For additional information, see the file
+AuthModule.HOWTO in the source tar file.
+</blockquote>
+<p>
+<!-------------------------------------------------------->
+<a NAME="q5"></a><h3>Why doesn't the configure script detect OpenSSL?</h3>
+<blockquote>
+The configure script will look in the following places the the OpenSSL headers and libraries: <tt>/usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/pkg /opt /opt/openssl</tt>
+If you have installed OpenSSL in another directory, then you must use the --with-ssl-dir switch to 
+specify the path to the OpenSSL "installation", not the headers.
+This should be the directory containing <tt>./include</tt> and <tt>./lib</tt>.
+If you installed OpenSSL from the source tarball distribution, the default location is <tt>/usr/local/ssl</tt>, and should be found automatically.
+<br>
+If OpenSSL is installed in one of the locations listed above, and the configure script is not finding it, then most likely you don't have the OpenSSL library directory in your <tt>LD_LIBRARY_PATH</tt>.  If OpenSSL is installed in <tt>/usr/local/ssl</tt>, then <tt>/usr/local/ssl/lib</tt> must be in your <tt>LD_LIBRARY_PATH</tt>.  configure tries to
+compile and run a small ssl program.  If the program doesn't run, then the configure script will not detect OpenSSL.
+With <tt>/usr/local/ssl/lib</tt> in your <tt>LD_LIBRARY_PATH</tt>,
+the small test program should work, and configure will "find"
+OpenSSL in <tt>/usr/local/ssl</tt> automatically.
+
+
+</blockquote>
+<p>
+<!-------------------------------------------------------->
+<a NAME="q6"></a><h3>How do I build from OpenWBEM from CVS?</h3>
+<blockquote>
+First run the cvsbootstrap.sh script, which will generate the Makefile.in files and the configure script.  You must have autoconf and automake installed for this to work.  Then you can run configure and finally make.
+</blockquote>
+<p>
+<!-------------------------------------------------------->
+<br>
+<hr>
+<font size=-2><center>Last modified
+<br>
+Tue Oct  8 11:55:45 MDT 2002
+</center></font>
+
+</body>
+</html>
+
+
