@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Diagnostics 2.7
+// Title:       System Diagnostics 2.7
 // Filename:    System27_Diagnostics.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,51 +42,51 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
+//              concepts. This file defines the specific concepts for
 //              Diagnostics.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-//                
-// ==================================================================
 // Change Log for v2.7
 // CR725 - Add the following 3 properties LoopControlParameter,
 //         LoopControl, and OtherLoopControlDescription to 
-//         DiagnosticSetting and DiagnosticResult.
+//         DiagnosticSetting and DiagnosticResult
 // CR726 - Add LogOptions, OtherLogOptionDescriptions to 
-//         DiagnosticSetting and DiagnosticResult.
+//         DiagnosticSetting and DiagnosticResult
 //         Deprecate ReportSoftErrors and ReportStatusMessages from
-//         DiagnosticSetting and DiagnosticResult.
+//         DiagnosticSetting and DiagnosticResult
 // CR749 - Deprecate DiagnosticTestInPackage, DiagnosticResultInPackage,
-//         and DiagnosticResult.IsPackage.
+//         and DiagnosticResult.IsPackage
 // CR764 - Add DiagnosticService
 //       - Change subclassing of DiagnosticTest from Service to 
 //         DiagnosticService
 //       - Deprecation DiagnosticTest.ResourcesUsed and DiagnosticTest.
-//         IsInUse.
+//         IsInUse
 //       - Fix the Class Name in the ModelCorrespondence string for
 //         DiagnosticTest.OtherCharacteristicDescription
 // CR765 - Update the the DiagnoticTest and DiagnosticResults 
-//         LogOptions property.
+//         LogOptions property
 //       - Modify the description of DiagnosticResults.TestResults
 // CR766 - Add the following properties to DiagnosticResults:
-//         ErrorCode, ErrorCount, LoopsFailed, LoopsPassed.
+//         ErrorCode, ErrorCount, LoopsFailed, LoopsPassed
 // CR778 - Add property ResultPersistence to DiagnosticSetting and
-//         DiagnosticResults.
+//         DiagnosticResults
 // CR779 - Add DiagnosticService.RunDiagnostic()
 //       - Deprecate DiagnosticTest.RunTest()
 //       - Deprecate DiagnosticTest.DiscontinueTest()
-//       - Update class description for DiagnosticTest.
+//       - Update class description for DiagnosticTest
 // CR780 - Add DiagnosticServiceCapabilities
 // CR781 - Add DiagnosticServiceRecord
+// CR887 - Fix the DiagnosticService.RunDiagnostic return range for
+//         Method Reserved. 
+// CR888 - Correct DateTime format in the description of 
+//         DiagnosticResult.TestResults
+// CR889 - For consistency change the deprecation statement in 
+//         RunTest to reference the class where the RunDiagnostic 
+//         is defined (DiagnosticService).
 // ===================================================================
-//
-// ==================================================================
 
 #pragma locale ("en_US")
 
@@ -383,7 +383,7 @@ class CIM_DiagnosticSetting : CIM_Setting {
 
 
 // ==================================================================
-//    DiagnosticResult
+// DiagnosticResult
 // ==================================================================
 [Version ("2.7.0"), Description(
     "When a DiagnosticTest Service is running, test results "
@@ -420,13 +420,13 @@ class CIM_DiagnosticResult {
         Description (
             "The Unique identifier for an instance of Diagnostic"
             "Results.") ]
-    string ExecutionID ; 
+    string ExecutionID; 
     
     [Description (
         "The date and time the result was last updated.") ]
     datetime TimeStamp;
     
-    [Deprecated {"No Value"}, Description (
+    [Deprecated {"No value"}, Description (
         "This property is being deprecated. Tests should be" 
         "grouped at the test level, not by the model. /n"
         "If this property is TRUE, then this DiagnosticResult "
@@ -495,18 +495,21 @@ class CIM_DiagnosticResult {
         "One entry is considered a cell location in the array. Each "
         "entry is time stamped and contains the following "
         "information, in the following format: \n"
-        "LogOption|yyymmddhhttssoutc|TestName|message_text \n"
+        "LogOption|DateTime|TestName|message_text \n"
         "Where: \n"
         "  LogOption = string identical to the LogOption value " 
         "  in DiagnosticSetting that was used to enable logging "
         "  this message. \n"
-        "  yyy = year, e.g. 2000 \n"
+        "  CIM DateTime has the following format: "
+        "yyyymmddhhmmss.mmmmmmsutc, where \n"
+        "  yyyy = year, e.g. 2000 \n"
         "  mm = month (01 - 12) \n"
         "  dd = day (01 - 31) \n" 
         "  hh = hour (00 - 24) \n"
-        "  tt = minute (00-59) \n"
+        "  mm = minute (00-59) \n"
         "  ss = second (00-59) \n"
-        "  o = \"+\" or \"-\" indicating the sign of the UTC "
+        "  mmmmmm = microsecond (000000-999999) \n"
+        "  s = \"+\" or \"-\" indicating the sign of the UTC "
         "correction field \n"
         "  utc = offset from UTC (Universal Coordinated Time) "
         "in minutes \n"
@@ -514,7 +517,7 @@ class CIM_DiagnosticResult {
         "name that sent the message.\n"
         "  Textual message = free form string that is the 'test "
         "result'."), 
-        ArrayType ("Ordered")]
+       ArrayType ("Ordered")]
     string TestResults[];
 
     [Units ("Percent"), MinValue (0), MaxValue (100), Description (
@@ -849,7 +852,7 @@ class CIM_DiagnosticResult {
 
 
 // ==================================================================
-//    DiagnosticService
+// DiagnosticService
 // ==================================================================
 [Abstract, Experimental, Version ("2.7.0"), Description (
     "The CIM_DiagnosticService class provides the ability to "
@@ -880,7 +883,7 @@ class CIM_DiagnosticService : CIM_Service {
         "no ConcreteJob instance is created. If 0x1000 a "
         "ConcreteJob will be started."),
         ValueMap {"0", "1", "2", "3", "4", "5", "..", "0x1000",
-            "0x1001..0x7777", "0x8000.."},
+            "..", "0x8000.."},
         Values {"Job completed with no error", "Not Supported", "Unknown",
             "Timeout", "Failed", "Invalid Parameter", "DMTF Reserved",
             "Method parameters checked - job started",
@@ -986,18 +989,18 @@ class CIM_DiagnosticTest : CIM_DiagnosticService {
             "XIO Bus", "HIO Bus", "PMC Bus", "SIO Bus"} ]
     uint16 ResourcesUsed[];
     
-    [Deprecated {"CIM_DiagnosticTest.RunDiagnostic"}, Description(
+    [Deprecated {"CIM_DiagnosticService.RunDiagnostic"}, Description(
         "The RunTest method executes this test for the specified "
         "ManagedSystemElement.  The use of this method has been "
         "deprecated.  Instead, the RunDiagnostic method (inherited "
         "from DiagnosticService) should be used.") ]
     uint32 RunTest(
         [IN] 
-        CIM_ManagedSystemElement ref SystemElement, 
+        CIM_ManagedSystemElement REF SystemElement, 
         [IN] 
-        CIM_DiagnosticSetting ref Setting, 
+        CIM_DiagnosticSetting REF Setting, 
         [IN (false), OUT] 
-        CIM_DiagnosticResult ref Result);   
+        CIM_DiagnosticResult REF Result);   
     
     [Description(
         "Execution of this method will delete all instances of the "
@@ -1031,7 +1034,7 @@ class CIM_DiagnosticTest : CIM_DiagnosticService {
         "qualifier.") ]
     uint32 ClearResults(
         [IN] 
-        CIM_ManagedSystemElement ref SystemElement, 
+        CIM_ManagedSystemElement REF SystemElement, 
         [IN (false), OUT] 
         String ResultsNotCleared[]);   
       
@@ -1045,9 +1048,9 @@ class CIM_DiagnosticTest : CIM_DiagnosticService {
         "execution of the test.") ] 
     uint32 DiscontinueTest(
         [IN] 
-        CIM_ManagedSystemElement ref SystemElement, 
+        CIM_ManagedSystemElement REF SystemElement, 
         [IN] 
-        CIM_DiagnosticResult ref Result, 
+        CIM_DiagnosticResult REF Result, 
         [IN (false), OUT] 
         Boolean TestingStopped);   
 };
@@ -1137,8 +1140,8 @@ class CIM_DiagnosticTestForMSE : CIM_ProvidesServiceToElement {
 // ==================================================================
 // DiagnosticTestInPackage
 // ==================================================================
-[Association, Aggregation, Version ("2.7.0"), Deprecated {"No Value"}, 
-    Description (
+[Association, Aggregation, Version ("2.7.0"), 
+    Deprecated {"No value"}, Description (
     "This class is being deprecated. Tests should be " 
     "grouped at the test level, not in the model. /n"
     "This is an association class that identifies a Diagnostic"
@@ -1150,13 +1153,13 @@ class CIM_DiagnosticTestForMSE : CIM_ProvidesServiceToElement {
 class CIM_DiagnosticTestInPackage : CIM_Component {
 
     [Override("GroupComponent"), Aggregate, 
-        Deprecated {"No Value"}, Description (
+        Deprecated {"No value"}, Description (
             "The DiagnosticTest object that acts as the "
             "container for all the tests of the package.") ]
     CIM_DiagnosticTest REF GroupComponent;
     
     [Override("PartComponent"), 
-        Deprecated {"No Value"}, Description (
+        Deprecated {"No value"}, Description (
             "The DiagnosticTest object that is one of the elements of "
             "the package.") ]
     CIM_DiagnosticTest REF PartComponent;  
@@ -1166,8 +1169,8 @@ class CIM_DiagnosticTestInPackage : CIM_Component {
 // ==================================================================
 // DiagnosticResultInPackage
 // ==================================================================
-[Association, Aggregation, Version ("2.7.0"), Deprecated {"No Value"}, 
-    Description (
+[Association, Aggregation, Version ("2.7.0"), 
+    Deprecated {"No value"}, Description (
     "This class is being deprecated. Tests should be " 
     "grouped at the test level, not by the model. /n"
     "This is an association class that identifies a Diagnostic"
@@ -1177,12 +1180,12 @@ class CIM_DiagnosticTestInPackage : CIM_Component {
     "set to TRUE.") ]
 class CIM_DiagnosticResultInPackage {
       
-    [Key, Aggregate, Deprecated {"No Value"}, Description (
+    [Key, Aggregate, Deprecated {"No value"}, Description (
         "The DiagnosticResult object that acts as the container "
         "for all the results of the package.") ]
     CIM_DiagnosticResult REF PackageResult;
       
-    [Key, Deprecated {"No Value"}, Description (
+    [Key, Deprecated {"No value"}, Description (
         "The DiagnosticResult object that is one of the elements of "
         "the package.") ]
     CIM_DiagnosticResult REF Result; 

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Network Adapters 2.7
+// Title:       Device Network Adapters 2.7
 // Filename:    Device27_NetworkAdapter.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        08/05/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,38 +42,28 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file refines the original concepts related to
-//              representing network ports as adapters.
+//              are related to LogicalDevices. This file refines 
+//              the original concepts related to representing 
+//              network ports as adapters.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
-// CR632 - Add ModulePort
 // CR630 - Deprecate the statistical properties in NetworkAdapter
-//       - Deprecate FibreChannelAdapter,
-//       - Deprecate FibreChannelAdapter       
-//       - Deprecate FCAdapterEventCounters    
-//       - Deprecate FibrePort                 
-//       - Deprecate FibrePortEventCounters    
-//       - Deprecate FibrePortOnFCAdapter      
-//       - Deprecate FibrePortActiveLogin      
-//       - Deprecate CIM_FibrePortActiveLogin
-// CR783 - Deprecate NetworkAdapter
-//       - Deprecate EthernetAdapter.
-//       - Deprecate TokenRingAdapter.
-//       - Deprecate OOBAlertServiceOnNetworkAdapter 
-//       - Deprecate WakeUpServiceOnNetworkAdapter
-//       - Deprecate NetworkVirtualAdapter
-//       - Deprecate NetworkAdapterRedundancyComponent
-//       - Deprecate AdapterActiveConnection
-//
+//       - Deprecate FibreChannelAdapter, FCAdapterEventCounters,    
+//         FibrePort, FibrePortEventCounters, FibrePortOnFCAdapter      
+//         and FibrePortActiveLogin      
+// CR783 - Deprecate NetworkAdapter, EthernetAdapter, 
+//         TokenRingAdapter, OOBAlertServiceOnNetworkAdapter, 
+//         WakeUpServiceOnNetworkAdapter, NetworkVirtualAdapter
+//         and NetworkAdapterRedundancyComponent
+// CR845 - Deprecate AdapterActiveConnection
+//       - Change deprecation of NetworkVirtualAdapter to 
+//         ConcreteIdentity
+// CR860 - Add the Deprecated qualifier to the individual properties
+//         of the Deprecated Fibre Channel classes
 // ================================================================== 
 
 #pragma locale ("en_US")
@@ -85,7 +75,8 @@
 [Abstract, Deprecated {"CIM_NetworkPort"}, Version ("2.7.0"), 
     Description (
         "The use of the CIM_NetworkAdpater class has been "
-        "deprecated.  Instead use the CIM_NetworkPort class."
+        "deprecated in lieu of CIM_NetworkPort. This better reflects "
+        "that the hardware of a single port is described and managed. "
         "NetworkAdapter is an Abstract class defining general "
         "networking hardware concepts (for example, PermanentAddress "
         "or Speed of operation).") ]
@@ -161,13 +152,15 @@ class CIM_NetworkAdapter : CIM_LogicalDevice {
 // ===================================================================
 // EthernetAdapter
 // ===================================================================
-[Deprecated {"CIM_ EthernetAdapter "}, Version ("2.7.0"), Description (
-    "The use of the CIM_ EthernetAdapter class has been "
-    "deprecated.  Instead use the CIM_EthernetPort class."
-    "Capabilities and management of an EthernetAdapter.") ]
+[Deprecated {"CIM_ EthernetAdapter"}, Version ("2.7.0"), 
+    Description (
+        "The use of the CIM_EthernetAdapter class has been deprecated, "
+        "consistent with NetworkAdapter. Instead use the CIM_"
+        "EthernetPort class. This class describes the capabilities "
+        "and management aspects of an EthernetAdapter.") ]
 class CIM_EthernetAdapter : CIM_NetworkAdapter {
  
-    [Deprecated {"CIM_EthernetPort.NetworkAddresses "}, 
+    [Deprecated {"CIM_EthernetPort.NetworkAddresses"}, 
         Override ("NetworkAddresses"), 
         Description (
         "Ethernet/802.3 MAC addresses formatted as twelve hexadecimal "
@@ -369,7 +362,7 @@ class CIM_EthernetAdapter : CIM_NetworkAdapter {
     uint32 InternalMACTransmitErrors;
  
     [Deprecated {"CIM_EthernetPortStatistics."
-            "InternalMACReceiveErrors "}, 
+            "InternalMACReceiveErrors"}, 
         Description (
         "A count of frames for which reception on a particular "
         "interface fails due to an internal MAC sublayer receive "
@@ -386,7 +379,7 @@ class CIM_EthernetAdapter : CIM_NetworkAdapter {
         Counter ] 
     uint32 InternalMACReceiveErrors;
  
-    [Deprecated {"CIM_EthernetPortStatistics.CarrierSenseErrors "}, 
+    [Deprecated {"CIM_EthernetPortStatistics.CarrierSenseErrors"}, 
         Description (
         "The number of times that the carrier sense condition was "
         "lost or never asserted when attempting to transmit a frame "
@@ -420,10 +413,12 @@ class CIM_EthernetAdapter : CIM_NetworkAdapter {
 // ===================================================================
 // TokenRingAdapter
 // ===================================================================
-[Deprecated {"CIM_TokenRingAdapter"}, Version ("2.7.0"), Description (
-    "The use of the CIM_TokenRingAdapter class has been "
-    "deprecated.  Instead use the CIM_TokenRingPort class."
-    "Capabilities and management of a TokenRingAdapter.") ]
+[Deprecated {"CIM_TokenRingAdapter"}, Version ("2.7.0"), 
+    Description (
+        "The use of the CIM_TokenRingAdapter class has been "
+        "deprecated, consistent with NetworkAdapter. Instead use "
+        "the CIM_TokenRingPort class. This class describes the "
+        "capabilities and management aspects of a TokenRingAdapter.") ]
 class CIM_TokenRingAdapter : CIM_NetworkAdapter {
  
     [Deprecated {"CIM_TokenRingAdapter.NetworkAddresses"}, 
@@ -504,7 +499,7 @@ class CIM_TokenRingAdapter : CIM_NetworkAdapter {
     [Deprecated {"CIM_TokenRingPort.RingState"}, 
         Description (
         "The current Device state with respect to entering or leaving "
-        "the ring." ), 
+        "the ring."), 
         ValueMap {"0", "1", "2", "3", "4", "5"},
         Values {"Opened", "Closed", "Opening", "Closing", 
             "Open Failure", "Ring Failure"}, 
@@ -516,7 +511,7 @@ class CIM_TokenRingAdapter : CIM_NetworkAdapter {
         Description (
         "This property indicates the success, or the reason for "
         "failure, of the station's most recent attempt to enter "
-        "the ring." ), 
+        "the ring."), 
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
             "10"},
         Values {"No Open Attempted", "Bad Parameter", "Lobe Failed", 
@@ -641,7 +636,7 @@ class CIM_TokenRingAdapter : CIM_NetworkAdapter {
         "The number of times this Device has detected an immediately "
         "recoverable fatal error. It denotes the number of times this "
         "Device is either transmitting or receiving beacon MAC "
-        "frames. "),
+        "frames."),
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsHardErrors"}, 
         Counter ]
@@ -710,7 +705,7 @@ class CIM_TokenRingAdapter : CIM_NetworkAdapter {
         Counter ]
     uint32 Singles;
  
-    [Deprecated {"CIM_TokenRingPortStatistics.FrequencyErrors "}, 
+    [Deprecated {"CIM_TokenRingPortStatistics.FrequencyErrors"}, 
         Description (
         "The number of times the Device has detected that the "
         "frequency of the incoming signal differs from the expected "
@@ -729,11 +724,12 @@ class CIM_TokenRingAdapter : CIM_NetworkAdapter {
 [Association, Deprecated {"CIM_OOBAlertServiceOnNetworkPort"}, 
     Version ("2.7.0"), Description (
         "The use of the CIM_OOBAlertServiceOnNetworkAdapter class "
-        "has been deprecated.  Instead use the CIM_OOBAlertServiceOn"
-        "NetworkPort class. OOBAlertServiceOnNetworkAdapter defines "
-        "where the out of band alerting Service is implemented. ") ]
+        "has been deprecated, since NetworkAdapter has been deprecated. "
+        "Instead use the CIM_OOBAlertServiceOnNetworkPort class. "
+        "OOBAlertServiceOnNetworkAdapter defines where the "
+        "out of band alerting Service is implemented.") ]
 class CIM_OOBAlertServiceOnNetworkAdapter : 
-CIM_DeviceServiceImplementation {
+ CIM_DeviceServiceImplementation {
  
     [Override ("Antecedent"), Max (1), Deprecated {
         "CIM_OOBAlertServiceOnNetworkPort.Antecedant"}, 
@@ -755,11 +751,12 @@ CIM_DeviceServiceImplementation {
 [Association, Deprecated {"CIM_WakeUpServiceOnNetworkPort"}, 
     Version ("2.7.0"), Description (
         "The use of the CIM_WakeUpServiceOnNetworkAdapter class has "
-        "been deprecated.  Instead use the CIM_WakeUpServiceOn"
-        "NetworkPort class. WakeUpServiceOnNetworkAdapter defines "
-        "where the WakeUpService is implemented. ") ]
+        "been deprecated, since NetworkAdapter is deprecated. Instead "
+        "use the CIM_WakeUpServiceOnNetworkPort class. "
+        "WakeUpServiceOnNetworkAdapter defines where the "
+        "WakeUpService is implemented.") ]
 class CIM_WakeUpServiceOnNetworkAdapter : 
-CIM_DeviceServiceImplementation {
+ CIM_DeviceServiceImplementation {
  
     [Override ("Antecedent"), Max (1), Deprecated {
         "CIM_WakeUpServiceOnNetworkPort.Antecedent"}, 
@@ -781,7 +778,8 @@ CIM_DeviceServiceImplementation {
 [Association, Deprecated {"CIM_OrderedMemberOfCollection"}, 
     Version ("2.7.0"), Description (
         "The use of the CIM_NetworkAdapterRedundancyComponent class "
-        "has been deprecated.  Instead use the CIM_ OrderedMemberOf"
+        "has been deprecated since a specific association is not "
+        "needed. Instead use the CIM_ OrderedMemberOf"
         "Collection class. CIM_NetworkAdapterRedundancyComponent "
         "indicates the role that a NetworkAdapter plays in a "
         "ExtraCapacityGroup, providing load balancing.") ]
@@ -801,7 +799,7 @@ class CIM_NetworkAdapterRedundancyComponent : CIM_RedundancyComponent {
             "RedundancyGroup.") ]
     CIM_NetworkAdapter REF PartComponent;
  
-    [Deprecated {"No Value"}, Description (
+    [Deprecated {"No value"}, Description (
         "Indicates the scope of load balancing for the NetworkAdapters "
         "involved in the RedundancyGroup. Load balancing may be "
         "restricted to transmitting data only (value=1), "
@@ -828,22 +826,23 @@ class CIM_NetworkAdapterRedundancyComponent : CIM_RedundancyComponent {
 // ===================================================================
 // NetworkVirtualAdapter
 // ===================================================================
-[Association, Deprecated {"CIM_NetworkVirtualPort"}, Version ("2.7.0"),
+[Association, Deprecated {"CIM_ConcreteIdentity"}, Version ("2.7.0"),
     Description (
         "The use of the CIM_NetworkVirtualAdapter class has been "
-        "deprecated.  Instead use the CIM_ NetworkVirtualPort class. "
-        "NetworkVirtualAdapter describes that an instance of Network"
-        "Adapter is actually the result of several Adapters "
+        "deprecated. A specific association is not needed. Instead "
+        "use the CIM_ConcreteIdentity class. NetworkVirtual"
+        "Adapter describes that an instance of NetworkAdapter "
+        "is actually the result of several Adapters "
         "participating in a load balanced RedundancyGroup.") ]
 class CIM_NetworkVirtualAdapter : CIM_LogicalIdentity {
     
     [Override ("SystemElement"), 
-        Deprecated {"CIM_NetworkVirtualPort.SystemElement"}, 
+        Deprecated {"CIM_ConcreteIdentity.SystemElement"}, 
         Description ("The 'virtual' NetworkAdapter.") ]
     CIM_NetworkAdapter REF SystemElement;
     
     [Override ("SameElement"), 
-        Deprecated {"CIM_NetworkVirtualPort.SameElement"}, 
+        Deprecated {"CIM_ConcreteIdentity.SameElement"}, 
         Description (
             "The ExtraCapacity RedundancyGroup that describes the "
             "load balancing. The result of the load balancing is "
@@ -857,14 +856,17 @@ class CIM_NetworkVirtualAdapter : CIM_LogicalIdentity {
 // ===================================================================
 [Association, Deprecated {"CIM_PortActiveConnection"}, 
     Version ("2.7.0"), Description (
-    "The AdapterActiveConnection relationship indicates that a "
-    "NetworkAdapter is using the referenced PhysicalConnector "
-    "to output to the network. This relationship is important when "
-    "the Adapter can choose to output from one of several "
-    "Connectors. The Connectors may be associated with the "
-    "NetworkAdapter in a Realizes relationship - but this is not "
-    "required. This association provides additional information "
-    "(i.e., 'in use for communication') different than Realizes.") ]
+        "The use of the CIM_AdapterActiveConnection class has been "
+        "deprecated, since NetworkAdapter is deprecated. Instead "
+        "use the CIM_PortActiveConnection class. The "
+        "AdapterActiveConnection relationship indicates that a "
+        "NetworkAdapter is using the referenced PhysicalConnector "
+        "to output to the network. This relationship is important when "
+        "the Adapter can choose to output from one of several "
+        "Connectors. The Connectors may be associated with the "
+        "NetworkAdapter in a Realizes relationship - but this is not "
+        "required. This association provides additional information "
+        "(i.e., 'in use for communication') different than Realizes.") ]
 class CIM_AdapterActiveConnection : CIM_Dependency {
     
     [Override ("Antecedent"), 
@@ -886,17 +888,19 @@ class CIM_AdapterActiveConnection : CIM_Dependency {
 // FibreChannelAdapter 
 // ==================================================================
 [Version ("2.7.0"), Deprecated {"CIM_FCPort"}, Description (
-    "The use of the FibreChannelAdapter class is deprecated.  "
-    " FCPort should be used instead.  Capabilities and management "
-    "of a Fibre Channel Adapter.") ]
+    "The use of the CIM_FibreChannelAdapter class is deprecated, "
+    "consistent with the deprecation of NetworkAdapter. Instead "
+    "use CIM_FCPort. This class describes the capabilities "
+    "and management aspects of a Fibre Channel Adapter.") ]
 class CIM_FibreChannelAdapter : CIM_NetworkAdapter {
 
-   [Description (
-       "The maximum frame size, in bytes, supported by the Adapter."), 
-    Units ("Bytes") ]
+   [Deprecated {"CIM_NetworkPort.SupportedMaximumTransmissionUnit"}, 
+       Description (
+           "The maximum frame size, in bytes, supported by the Adapter."), 
+       Units ("Bytes") ]
    uint64 MaxFrameSize;
 
-   [Description (
+   [Deprecated {"CIM_FCPort.SupportedCOS"}, Description (
        "The Fibre Channel Classes of Service that are supported by "
        "the Adapter, on its Ports. The currently negotiated COS for a "
        "connection is a property (NegotiatedCOS) on the FibrePort"
@@ -905,7 +909,7 @@ class CIM_FibreChannelAdapter : CIM_NetworkAdapter {
        Values {"Unknown", "1", "2", "3", "4", "6", "F"} ]
    uint16 SupportedCOS[];
 
-   [Description (
+   [Deprecated {"CIM_FCPort.SupportedFC4Types"}, Description (
        "An array of integers indicating the Fibre Channel FC-4 "
        "protocols supported by the Adapter. The protocols that are "
        "active and running are indicated in the CurrentFC4Types "
@@ -930,18 +934,21 @@ class CIM_FibreChannelAdapter : CIM_NetworkAdapter {
            "BBL FDDI Encapsulated LAN PDU", 
            "BBL 802.3 Encapsulated LAN PDU", "FC - VI", "FC - AV", 
            "Vendor Unique"}, 
-    ModelCorrespondence {
-       "CIM_FibreChannelAdapter.FC4VendorUniqueTypes"} ]
+       ModelCorrespondence {
+           "CIM_FibreChannelAdapter.FC4VendorUniqueTypes"} ]
    uint16 FC4TypesSupported[];
 
-   [MinValue (240), MaxValue (255), Description (
-       "When the FC4TypesSupported array contains the value 255 "
-       "(\"Vendor Unique\"), then the property, FC4VendorUniqueTypes, "
-       "lists of all the vendor specific protocols supported by the "
-       "Adapter. These values are in the range, 0xE0 to 0xFF.") ]
+   [MinValue (240), MaxValue (255), 
+       Deprecated {"CIM_FCPort.SupportedFC4Types"}, 
+       Description (
+           "When the FC4TypesSupported array contains the value 255 "
+           "(\"Vendor Unique\"), then the property, FC4Vendor"
+           "UniqueTypes, lists of all the vendor specific protocols "
+           "supported by the Adapter. These values are in the range, "
+           "0xE0 to 0xFF.") ]
    uint16 FC4VendorUniqueTypes[];
 
-   [Description (
+   [Deprecated {"CIM_FCPort.ActiveFC4Type"}, Description (
        "An array of integers indicating the Fibre Channel FC-4 "
        "protocols currently running on the Adapter. A list of all "
        "protocols supported by the Adapter is indicated in the "
@@ -955,33 +962,35 @@ class CIM_FibreChannelAdapter : CIM_NetworkAdapter {
        ValueMap {"0", "1", "4", "5", "8", "9", "17", "18", "19", "21", 
            "22", "23", "25", "26", "27", "28", "32", "34", "36", 
            "64", "80", "81", "82", "88", "96", "255"}, 
-        Values {"Unknown", "Other", "ISO/IEC 8802 - 2 LLC", 
-            "IP over FC", "SCSI - FCP", "SCSI - GPP", 
-            "IPI - 3 Master", "IPI - 3 Slave", "IPI - 3 Peer", 
-            "CP IPI - 3 Master", "CP IPI - 3 Slave", 
-            "CP IPI - 3 Peer", "SBCCS Channel", 
-            "SBCCS Control Unit", "FC-SB-2 Channel", 
-            "FC-SB-2 Control Unit", 
-            "Fibre Channel Services (FC-GS, FC-GS-2, FC-GS-3)", 
-            "FC-SW", "FC - SNMP", "HIPPI - FP", "BBL Control", 
-            "BBL FDDI Encapsulated LAN PDU", 
-            "BBL 802.3 Encapsulated LAN PDU", "FC - VI", "FC - AV", 
-            "Vendor Unique"}, 
-    ModelCorrespondence {
-       "CIM_FibreChannelAdapter.FC4TypesSupported", 
-       "CIM_FibreChannelAdapter.CurrentFC4VendorTypes"} ]
+       Values {"Unknown", "Other", "ISO/IEC 8802 - 2 LLC", 
+           "IP over FC", "SCSI - FCP", "SCSI - GPP", 
+           "IPI - 3 Master", "IPI - 3 Slave", "IPI - 3 Peer", 
+           "CP IPI - 3 Master", "CP IPI - 3 Slave", 
+           "CP IPI - 3 Peer", "SBCCS Channel", 
+           "SBCCS Control Unit", "FC-SB-2 Channel", 
+           "FC-SB-2 Control Unit", 
+           "Fibre Channel Services (FC-GS, FC-GS-2, FC-GS-3)", 
+           "FC-SW", "FC - SNMP", "HIPPI - FP", "BBL Control", 
+           "BBL FDDI Encapsulated LAN PDU", 
+           "BBL 802.3 Encapsulated LAN PDU", "FC - VI", "FC - AV", 
+           "Vendor Unique"}, 
+       ModelCorrespondence {
+           "CIM_FibreChannelAdapter.FC4TypesSupported", 
+           "CIM_FibreChannelAdapter.CurrentFC4VendorTypes"} ]
    uint16 CurrentFC4Types[];
 
-   [MinValue (240), MaxValue (255), Description (
-       "When the CurrentFC4Types array contains the value 255 "
-       "(\"Vendor Unique\"), then the property, CurrentFC4VendorTypes, "
-       "lists all the vendor specific protocols running on the "
-       "Adapter. These values are in the range, 0xE0 to 0xFF."), 
-    ModelCorrespondence {
-       "CIM_FibreChannelAdapter.FC4VendorUniqueTypes"} ]
+   [MinValue (240), MaxValue (255), 
+       Deprecated {"CIM_FCPort.ActiveFC4Type"}, Description (
+           "When the CurrentFC4Types array contains the value 255 "
+           "(\"Vendor Unique\"), then the property, CurrentFC4"
+           "VendorTypes, lists all the vendor specific protocols "
+           "running on the Adapter. These values are in the range, "
+           "0xE0 to 0xFF."), 
+       ModelCorrespondence {
+           "CIM_FibreChannelAdapter.FC4VendorUniqueTypes"} ]
    uint16 CurrentFC4VendorTypes[];
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "A list of the Capabilities of the Fibre Channel Adapter. "
        "For example, that the Adapter utilizes the Directory Server, "
        "or that it generates State Change Notifications can be "
@@ -989,169 +998,163 @@ class CIM_FibreChannelAdapter : CIM_NetworkAdapter {
        ArrayType ("Indexed"), 
        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
             "10", "11", "12", "13", "14", "15"},  
-        Values {"Unknown", "Other", "Utilizes the Directory Server", 
-             "Utilizes the Time Server", 
-             "Utilizes the Management Server", 
-             "Utilizes the Alias Server", 
-             "Utilizes the Security Key Distribution Server", 
-             "Utilizes the Clock Synchronization Server", 
-             "Utilizes the Multicast Server", 
-             "Utilizes QoS Facilitator", 
-             "Utilizes Broadcast Services", 
-             "Supports Fabric Login Server", 
-             "Generates State Change Notifications", 
-             "Registers for State Change Notifications", 
-             "Responds to Read Connection Status", 
-             "Supports Third Party Process Logout"} ]
+       Values {"Unknown", "Other", "Utilizes the Directory Server", 
+            "Utilizes the Time Server", 
+            "Utilizes the Management Server", 
+            "Utilizes the Alias Server", 
+            "Utilizes the Security Key Distribution Server", 
+            "Utilizes the Clock Synchronization Server", 
+            "Utilizes the Multicast Server", 
+            "Utilizes QoS Facilitator", 
+            "Utilizes Broadcast Services", 
+            "Supports Fabric Login Server", 
+            "Generates State Change Notifications", 
+            "Registers for State Change Notifications", 
+            "Responds to Read Connection Status", 
+            "Supports Third Party Process Logout"} ]
    uint16 Capabilities[];
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "An array of free-form strings providing more detailed "
        "explanations for any of the Adapter features indicated in "
        "the Capabilities array. Note, each entry of this array "
        "is related to the entry in the Capabilities array that "
        "is located at the same index."),
-    ArrayType ("Indexed"),
-    ModelCorrespondence {"CIM_FibreChannelAdapter.Capabilities"} ]
+       ArrayType ("Indexed"),
+       ModelCorrespondence {"CIM_FibreChannelAdapter.Capabilities"} ]
    string CapabilityDescriptions[];
 
-   [Description (
-       "The number of times that a frame was received but no "
-       "buffer was available."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.ErrorFrames"}, Counter, 
+       Description (
+           "The number of times that a frame was received but no "
+           "buffer was available.") ]
    uint64 ReceiveBufferErrors;
 
-   [Description (
-       "The number of times that a frame was received but no "
-       "end-to-end credit was available."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.ErrorFrames"}, Counter, 
+       Description (
+           "The number of times that a frame was received but no "
+           "end-to-end credit was available.") ]
    uint64 ReceiveEndErrors;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "A 'long' timeout value (in milliseconds) for determining "
        "when to reinstate a Recovery_Qualifier. The default value "
        "is 120 seconds (120000 milliseconds). It is typically set "
        "to the ErrorDetectTimeout value + 2*(fabric delay time)."), 
-    Units ("MilliSeconds") ]
+       Units ("MilliSeconds") ]
    uint64 ResourceAllocationTimeout;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "A 'short' timeout value (in milliseconds) for determining "
        "that an error has occurred. The default value is 10 "
        "seconds (10000 milliseconds)."), 
-    Units ("MilliSeconds") ]
+       Units ("MilliSeconds") ]
    uint64 ErrorDetectTimeout;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "Number of Class 1 sequences sent since last reset of the "
-       "Device."), 
-    Counter ]
+       "Device.") ]
    uint64 Class1SequencesSent;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "Number of Class 2 sequences sent since last reset of the "
-       "Device."),
-    Counter ]
+       "Device.") ]
    uint64 Class2SequencesSent;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "Number of Class 3 sequences sent since last reset of the "
-       "Device."),
-    Counter ]
+       "Device.") ]
    uint64 Class3SequencesSent;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "Number of Class 4 sequences sent since last reset of the "
-       "Device."),
-    Counter ]
+       "Device.") ]
    uint64 Class4SequencesSent;
 
-   [Description (
-       "Number of octets received by the Adapter when running "
-       "Class 2 service."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.BytesReceived"}, Counter, 
+       Description (
+           "Number of octets received by the Adapter when running "
+           "Class 2 service.") ]
    uint64 Class2OctetsReceived;
 
-   [Description (
-       "Number of octets transmitted by the Adapter when running "
-       "Class 2 service."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.BytesTransmitted"}, Counter, 
+       Description (
+           "Number of octets transmitted by the Adapter when running "
+           "Class 2 service.") ]
    uint64 Class2OctetsTransmitted;
 
-   [Description (
-       "Number of frames received by the Adapter when running "
-       "Class 2 service."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.PacketsReceived"}, Counter, 
+       Description (
+           "Number of frames received by the Adapter when running "
+           "Class 2 service.") ]
    uint64 Class2FramesReceived;
 
-   [Description (
-       "Number of frames transmitted by the Adapter when running "
-       "Class 2 service."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.PacketsTransmitted"}, Counter, 
+       Description (
+           "Number of frames transmitted by the Adapter when running "
+           "Class 2 service.") ]
    uint64 Class2FramesTransmitted;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "Number of frames discarded by the Adapter when running "
-       "Class 2 service."),
-    Counter ]
+       "Class 2 service.") ]
    uint64 Class2DiscardFrames;
 
-   [Description (
-       "Number of octets received by the Adapter when running "
-       "Class 3 service."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.BytesReceived"}, Counter,
+       Description (
+           "Number of octets received by the Adapter when running "
+           "Class 3 service.") ]
    uint64 Class3OctetsReceived;
 
-   [Description (
-       "Number of octets transmitted by the Adapter when running "
-       "Class 3 service."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.BytesTransmitted"}, Counter, 
+       Description (
+           "Number of octets transmitted by the Adapter when running "
+           "Class 3 service.") ]
    uint64 Class3OctetsTransmitted;
 
-   [Description (
-       "Number of frames received by the Adapter when running "
-       "Class 3 service."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.PacketsReceived"}, Counter, 
+       Description (
+           "Number of frames received by the Adapter when running "
+           "Class 3 service.") ]
    uint64 Class3FramesReceived;
 
-   [Description (
-       "Number of frames transmitted by the Adapter when running "
-       "Class 3 service."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.PacketsTransmitted"}, Counter, 
+       Description (
+           "Number of frames transmitted by the Adapter when running "
+           "Class 3 service.") ]
    uint64 Class3FramesTransmitted;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "Number of frames discarded by the Adapter when running "
-       "Class 3 service."),
-    Counter ]
+       "Class 3 service.") ]
    uint64 Class3DiscardFrames;
 
-   [Description (
-       "Number of parity errors detected somewhere in the "
-       "data path."),
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.ErrorFrames"}, Counter, 
+       Description (
+           "Number of parity errors detected somewhere in the "
+           "data path.") ]
    uint64 ParityErrors;
 
-   [Description (
-       "Number of Class 1 or 2 frames that are not ACKed "
-       "within the time indicated by ErrorDetectTimeout."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.ErrorFrames"}, Counter,
+       Description (
+           "Number of Class 1 or 2 frames that are not ACKed "
+           "within the time indicated by ErrorDetectTimeout.") ]
    uint64 FrameTimeouts;
 
-   [Description (
-       "Number of times that the Device has been without a "
-       "buffer credit for a time longer than ErrorDetectTimeout."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.BufferCreditNotProvided"}, 
+       Counter, Description (
+           "Number of times that the Device has been without a "
+           "buffer credit for a time longer than ErrorDetectTimeout.") ]
    uint64 BufferCreditErrors;
 
-   [Description (
-       "Number of times that the Device has been without an end "
-       "credit for a time longer than ErrorDetectTimeout."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.BufferCreditNotReceived"}, 
+       Counter, Description (
+           "Number of times that the Device has been without an end "
+           "credit for a time longer than ErrorDetectTimeout.") ]
    uint64 EndCreditErrors;
 
-   [Description ("Number of frames received out of order."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.DelimiterErrors"}, Counter, 
+       Description ("Number of frames received out of order.") ]
    uint64 OutOfOrderFramesReceived;
 };
 
@@ -1160,12 +1163,15 @@ class CIM_FibreChannelAdapter : CIM_NetworkAdapter {
 // FibrePort 
 // ==================================================================
 [Version ("2.7.0"), Deprecated {"CIM_FCPort"}, Description (
-    "The use of the FibrePort class is deprecated.  FCPort should "
-    " be used instead. Capabilities and management of a Fibre "
-    "Channel Port Device.") ]
+    "The use of the FibrePort class is deprecated, since FibreChannel "
+    "Adapter has been deprecated in lieu of FCPort.  And, this "
+    "class overlaps with FCPort.  The new FCPort class should "
+    "be used in lieu of both FibreChannelAdapter and FibrePort. "
+    "FibrePort describes the capabilities and management aspects "
+    "of a Fibre Channel Port Device.") ]
 class CIM_FibrePort : CIM_LogicalPort {
 
-   [Description (
+   [Deprecated {"CIM_FCPort.PermanentAddress"}, Description (
        "An address value used to identify the source (S_ID) or "
        "destination (D_ID) of a frame. The FC-SW standard includes a "
        "table of special address identifier values and their "
@@ -1173,7 +1179,7 @@ class CIM_FibrePort : CIM_LogicalPort {
        "information.") ]
    uint32 AddressIdentifier;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "An array indicating the modes in which the Port can operate. "
        "PortType values describe the role and behavior of the Fibre "
        "Channel entity: \"N\" = Node Port, \"NL\" = Node Port "
@@ -1188,159 +1194,157 @@ class CIM_FibrePort : CIM_LogicalPort {
        "defined in the PortTypeVersions property. Note that each "
        "entry of the SupportedPortTypes array is related to the entry "
        "in PortTypeVersions that is located at the same index."), 
-    ArrayType ("Indexed"), 
-    ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},  
-    Values {"Unknown", "N", "NL-Private", "NL-Public", "E", "F", 
-       "FL", "B"}, 
-    ModelCorrespondence {"CIM_FibrePort.PortTypeVersions"} ]
+       ArrayType ("Indexed"), 
+       ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},  
+       Values {"Unknown", "N", "NL-Private", "NL-Public", "E", "F", 
+           "FL", "B"}, 
+       ModelCorrespondence {"CIM_FibrePort.PortTypeVersions"} ]
    uint16 SupportedPortTypes[];
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "Version information for each of the SupportedPortTypes. A "
        "particular PortType (mode) may be listed multiple times in "
        "the SupportedPortTypes array in order to define multiple, "
        "unique version levels. Note that each entry of this array "
        "is related to the entry in SupportedPortTypes that is "
        "located at the same index."), 
-    ArrayType ("Indexed"), 
-    ModelCorrespondence {"CIM_FibrePort.SupportedPortTypes"} ]
+       ArrayType ("Indexed"), 
+       ModelCorrespondence {"CIM_FibrePort.SupportedPortTypes"} ]
    string PortTypeVersions[];
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "The specific modes currently enabled for the Port. The "
        "values are equal to, or a subset of the values in the Supported"
        "PortTypes array."), 
-    ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},  
-    Values {"Unknown", "N", "NL-Private", "NL-Public", "E", "F", 
-       "FL", "B"}, 
-    ModelCorrespondence {"CIM_FibrePort.SupportedPortTypes", 
-       "CIM_FibrePort.EnabledVersions"} ]
+       ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},  
+       Values {"Unknown", "N", "NL-Private", "NL-Public", "E", "F", 
+           "FL", "B"}, 
+       ModelCorrespondence {"CIM_FibrePort.SupportedPortTypes", 
+           "CIM_FibrePort.EnabledVersions"} ]
    uint16 EnabledPortTypes[];
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "Version information for each of the EnabledPortTypes. A "
        "particular PortType (mode) may be listed multiple times in "
        "the EnabledPortTypes array in order to define multiple, "
        "unique version levels. Note that each entry of this array "
        "is related to the entry in EnabledPortTypes that is located "
        "at the same index."), 
-    ArrayType ("Indexed"), 
-    ModelCorrespondence {"CIM_FibrePort.EnabledPortTypes"} ]
+       ArrayType ("Indexed"), 
+       ModelCorrespondence {"CIM_FibrePort.EnabledPortTypes"} ]
    string EnabledVersions[];
 
-   [Description (
+   [Deprecated {"CIM_FCPort.PortType"}, Description (
        "The specific mode in which the Port is currently running. The "
        "value is one of the entries in the EnabledPortTypes array. The "
        "current port type/mode is dependent on the fibre technology. "
        "For example, in a public loop network, you might indicate a "
        "port type of \"FL\" (value=6) or \"NL\" (value=2)."), 
-    ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},  
-    Values {"Unknown", "N", "NL-Private", "NL-Public", "E", "F", 
-       "FL", "B"}, 
-    ModelCorrespondence {"CIM_FibrePort.EnabledPortTypes", 
-       "CIM_FibrePort.CurrentVersion"} ]
+       ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},  
+       Values {"Unknown", "N", "NL-Private", "NL-Public", "E", "F", 
+           "FL", "B"}, 
+       ModelCorrespondence {"CIM_FibrePort.EnabledPortTypes", 
+           "CIM_FibrePort.CurrentVersion"} ]
    uint16 CurrentPortType;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "Version information for the CurrentPortType that is active."), 
-    ModelCorrespondence {"CIM_FibrePort.CurrentPortType"} ]
+       ModelCorrespondence {"CIM_FibrePort.CurrentPortType"} ]
    string CurrentVersion;
 
-   [Description (
+   [Deprecated {"CIM_FCPort.NetworkAddresses"}, Description (
        "One or more address identifiers that may be recognized by "
        "the Port, in addition to its port-specific identifier. "
        "Multicast or hunt group addresses that are recognized by "
        "the Port would be identified in this array.") ]
    uint32 AliasAddresses[];
 
-   [Description (
-       "Number of times that signal is lost on the Port since last "
-       "reset of the Device."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.LossOfSignalCounter"}, 
+       Counter, Description (
+           "Number of times that signal is lost on the Port since "
+           "last reset of the Device.") ]
    uint64 LossOfSignalCounter;
 
-   [Description (
-       "Number of times that synchronization is lost on the Port "
-       "since last reset of the Device. Synchronization is assumed "
-       "lost after a timeout period identified by the Receiver"
-       "TransmitterTimeout property."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.LossOfSyncCounter"}, 
+       Counter, Description (
+           "Number of times that synchronization is lost on the Port "
+           "since last reset of the Device. Synchronization is assumed "
+           "lost after a timeout period identified by the Receiver"
+           "TransmitterTimeout property.") ]
    uint64 LossOfSyncCounter;
 
-   [Description (
-       "Number of times that the CRC in a frame does not match the "
-       "CRC computed by the receiver."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.CRCErrors"}, Counter, 
+       Description (
+           "Number of times that the CRC in a frame does not match the "
+           "CRC computed by the receiver.") ]
    uint64 CRCErrors;
 
-   [Description (
-       "The number of transmission words that had an 8b10b code "
-       "violation in one or more of its characters, had a "
-       "K28.5 in its second, third or fourth character positions, "
-       "and/or was an ordered set that had an incorrect Beginning "
-       "Running Disparity."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.InvalidTransmissionWords"}, 
+       Counter, Description (
+           "The number of transmission words that had an 8b10b code "
+           "violation in one or more of its characters, had a "
+           "K28.5 in its second, third or fourth character positions, "
+           "and/or was an ordered set that had an incorrect Beginning "
+           "Running Disparity.") ]
    uint64 InvalidTransmissionWords;
 
-   [Description (
-       "The number of frames received that were shorter than 28 "
-       "octets. The value of 28 is calculated based on an "
-       "assumption of 24 header bytes plus 4 CRC bytes. The "
-       "count does not include SOF/EOF bytes which are not data."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.FramesTooShort"}, 
+       Counter, Description (
+           "The number of frames received that were shorter than 28 "
+           "octets. The value of 28 is calculated based on an "
+           "assumption of 24 header bytes plus 4 CRC bytes. The "
+           "count does not include SOF/EOF bytes which are not data.") ]
    uint64 FramesTooShort;
 
-   [Description (
-       "The number of frames received that were longer than 2140 "
-       "octets. The value of 2140 is calculated based on an "
-       "assumption of 24 header bytes plus 4 CRC bytes and 2112 "
-       "bytes of payload."), 
-    Counter ]
+   [Deprecated {"CIM_FCPortStatistics.FramesTooLong"}, 
+       Counter, Description (
+           "The number of frames received that were longer than 2140 "
+           "octets. The value of 2140 is calculated based on an "
+           "assumption of 24 header bytes plus 4 CRC bytes and 2112 "
+           "bytes of payload.") ]
    uint64 FramesTooLong;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "The number of times that a fill word could not be "
        "inserted, when required. The Elasticity Buffer is defined "
        "in FC-AL. This event might cause data corruption and may "
-       "indicate a configuration error or a device out of spec."), 
-    Counter ]
+       "indicate a configuration error or a device out of spec.") ]
    uint64 ElasticityBufferUnderruns;
 
-   [Description (
+   [Deprecated {"No value"}, Counter, Description (
        "The number of times that a fill word could not be deleted, "
        "when required. The Elasticity Buffer is defined in FC-AL. "
        "This event might cause data corruption and may indicate a "
-       "configuration error or a device out of spec."), 
-    Counter ]
+       "configuration error or a device out of spec.") ]
    uint64 ElasticityBufferOverruns;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "Timeout value in milliseconds used to determine when "
        "loss of synchronization has occurred. The typical default "
        "is 100 msec."), 
-    Units ("Milliseconds") ]
+       Units ("Milliseconds") ]
    uint64 ReceiverTransmitterTimeout;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "Indication of whether the Port is currently bypassed "
        "(value=2) or not (value=1). A value of 3 (\"Forced Insert\") "
        "describes that the Port is forced active, when it would "
        "otherwise be \"Bypassed\"."), 
-    ValueMap {"0", "1", "2", "3"},  
-    Values {"Unknown", "Not Bypassed", "Bypassed", 
-       "Forced Insert"} ]
+       ValueMap {"0", "1", "2", "3"},  
+       Values {"Unknown", "Not Bypassed", "Bypassed", 
+           "Forced Insert"} ]
    uint16 BypassedState;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "The type of cabling as sensed by the Port. Not all Fibre"
        "Ports are capable of providing this information. In this "
        "case, a value of 0, \"Unknown\", will be returned. Also, "
        "when single or multi-mode fiber cabling can not be "
        "distinguished, the more general value - 4, \"Fiber-optic\" "
        "- can be specified."), 
-    ValueMap {"0", "1", "2", "3", "4", "5", "6"},  
-    Values {"Unknown", "Other", "No Media", "Copper/Twinaxial", 
-       "Fiber-optic", "Fiber Single Mode", "Fiber Multimode"} ] 
+       ValueMap {"0", "1", "2", "3", "4", "5", "6"},  
+       Values {"Unknown", "Other", "No Media", "Copper/Twinaxial", 
+           "Fiber-optic", "Fiber Single Mode", "Fiber Multimode"} ] 
    uint16 ConnectedMedia;
 };
 
@@ -1348,20 +1352,21 @@ class CIM_FibrePort : CIM_LogicalPort {
 // ===================================================================
 // FibrePortOnFCAdapter
 // ===================================================================
-[Association, Version ("2.7.0"), Deprecated {"No Value"}, 
+[Association, Version ("2.7.0"), Deprecated {"No value"}, 
     Description (
-        "The use of the FibrePortOnFCAdapter is deprecated.  No "
-        "replacement is needed, since the 2 classes are combined "
+        "The use of FibrePortOnFCAdapter is deprecated since "
+        "both FibrePort and FibreChannelAdapter have been deprecated. "
+        "No replacement is needed, since the 2 classes are combined "
         "into a single class.  FibrePortOnFCAdapter associates a "
-        "FibrePort with a FibreChannelAdapter. ") ]
+        "FibrePort with a FibreChannelAdapter.") ]
 class CIM_FibrePortOnFCAdapter : CIM_PortOnDevice {
 
-    [Override ("Antecedent"), Deprecated {"No Value"},  Max (1), 
+    [Override ("Antecedent"), Deprecated {"No value"},  Max (1), 
         Description (
             "The FibreChannelAdapter that includes the Port.") ]
     CIM_FibreChannelAdapter REF Antecedent;
 
-    [Override ("Dependent"), Max (1), Deprecated {"No Value"},  
+    [Override ("Dependent"), Max (1), Deprecated {"No value"},  
         Description ("The FibrePort on the Adapter.") ]
     CIM_FibrePort REF Dependent;
 };
@@ -1370,24 +1375,28 @@ class CIM_FibrePortOnFCAdapter : CIM_PortOnDevice {
 // ==================================================================
 // FibrePortActiveLogin
 // ==================================================================
-[Association, Version ("2.7.0"), Deprecated {"CIM_ActiveConnection"},  
+[Association, Version ("2.7.0"), 
+    Deprecated {"CIM_ActiveConnection", "CIM_FCPort"},  
     Description (
-        "The use of the FibrePortOnFCAdapter is deprecated.  "
-        "ActiveConnection betweenFC ProtocolEndpoints should be "
-        "used instead.  FibrePortActiveLogin indicates that two "
+        "The use of FibrePortActiveLogin is deprecated since "
+        "FibrePort is deprecated. Its information is found by "
+        "examining the individual FCPorts, and an ActiveConnection "
+        "between the FCProtocolEndpoints associated with the ports. "
+        "FibrePortActiveLogin indicates that two "
         "FibrePorts are connected via a login and have negotiated "
         "their Class Of Service, frame size and other link "
         "characteristics, as specified by an instance of this class.") ]
 class CIM_FibrePortActiveLogin  {
 
-    [Key, Deprecated {""},
+    [Key, Deprecated {"CIM_ActiveConnection.Dependent"}, 
         Description ("The originator of the login.") ]
     CIM_FibrePort REF LoginOriginator;
 
-    [Key, Description ("The responder to the login.") ]
+    [Key, Deprecated {"CIM_ActiveConnection.Antecedent"}, 
+        Description ("The responder to the login.") ]
     CIM_FibrePort REF LoginResponder;
 
-    [Key, Description (
+    [Key, Deprecated {"CIM_FCPort.ActiveCOS"}, Description (
         "The Fibre Channel Class of Service that is currently running "
         "between the Ports. Since two Ports can be simultaneously "
         "connected at different Classes of Service, this property had "
@@ -1400,40 +1409,41 @@ class CIM_FibrePortActiveLogin  {
             "MIF.DMTF|Fibre Channel Bus Port Extensions|001.5"} ]
     uint16 NegotiatedCOS;
 
-   [Description (
-       "The Fibre Channel frame size, in bytes, that is currently "
-       "negotiated between the two Ports."), 
-    Units ("Bytes") ]
+   [Deprecated {"CIM_FCPort.ActiveMaximumTransmissionUnit"}, 
+       Description (
+           "The Fibre Channel frame size, in bytes, that is currently "
+           "negotiated between the two Ports."), 
+       Units ("Bytes") ]
    uint64 NegotiatedFrameSize;
 
-   [Description (
+   [Deprecated {"CIM_FCPort.Speed"}, Description (
        "The speed for communications that is currently negotiated "
        "between the two Ports. Speed is specified in bits per second. "
        "If this information is not available, the property should be "
        "set to 0."), 
-    Units ("Bits per Second") ]
+       Units ("Bits per Second") ]
    uint64 NegotiatedSpeed;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "Acknowledgement model negotiated during Port login. For "
        "example, ACK-1 indicates that each frame should be "
        "acknowledged."), 
-    ValueMap {"0", "1", "2", "3"},  
-    Values {"Unknown", "ACK-0", "ACK-1", "ACK-N"},
-    MappingStrings {
-       "MIF.DMTF|Fibre Channel Bus Port Extensions|001.6"} ]
+       ValueMap {"0", "1", "2", "3"},  
+       Values {"Unknown", "ACK-0", "ACK-1", "ACK-N"},
+       MappingStrings {
+           "MIF.DMTF|Fibre Channel Bus Port Extensions|001.6"} ]
    uint16 ACKModel;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "The buffer-to-buffer model negotiated during Port login. "
        "Either the model defined by the FC-PH standard is used "
        "(value=1, \"Regular\"), or an \"Alternate\" model is "
        "negotiated."), 
-    ValueMap {"0", "1", "2"},  
-    Values {"Unknown", "Regular", "Alternate"} ]
+       ValueMap {"0", "1", "2"},  
+       Values {"Unknown", "Regular", "Alternate"} ]
    uint16 BufferToBufferModel;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "OriginatorBufferCredit reflects the buffer credit of the "
        "Port defined as the LoginOriginator. It is the number of "
        "frame buffers made available BY the originating Port, TO "
@@ -1441,11 +1451,11 @@ class CIM_FibrePortActiveLogin  {
        "point connections, when an NL-Local Port is logged into "
        "another NL-Local Port, and when Nx Ports are logged into "
        "Fx Ports. In other scenarios, this value is undefined."),
-    MappingStrings {
-       "MIF.DMTF|Fibre Channel Bus Port Extensions|001.3"} ]
+       MappingStrings {
+           "MIF.DMTF|Fibre Channel Bus Port Extensions|001.3"} ]
    uint64 OriginatorBufferCredit;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "ResponderBufferCredit reflects the buffer credit of the "
        "Port defined as the LoginResponder. It is the number of "
        "frame buffers made available BY the responder Port, TO "
@@ -1453,11 +1463,11 @@ class CIM_FibrePortActiveLogin  {
        "point connections, when an NL-Local Port is logged into "
        "another NL-Local Port, and when Nx Ports are logged into "
        "Fx Ports. In other scenarios, this value is undefined."),
-    MappingStrings {
-       "MIF.DMTF|Fibre Channel Bus Port Extensions|001.3"} ]
+       MappingStrings {
+           "MIF.DMTF|Fibre Channel Bus Port Extensions|001.3"} ]
    uint64 ResponderBufferCredit;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "OriginatorEndCredit reflects the end credit of the Port "
        "defined as the LoginOriginator. It is the number of frame "
        "buffers made available BY the originating Port, TO the "
@@ -1465,11 +1475,11 @@ class CIM_FibrePortActiveLogin  {
        "connections, when an NL-Local Port is logged into another "
        "NL-Local Port, and when Nx Ports are logged into remote "
        "Nx Ports. In other scenarios, this value is undefined."),
-    MappingStrings {
-       "MIF.DMTF|Fibre Channel Bus Port Extensions|001.2"} ]
+       MappingStrings {
+           "MIF.DMTF|Fibre Channel Bus Port Extensions|001.2"} ]
    uint64 OriginatorEndCredit;
 
-   [Description (
+   [Deprecated {"No value"}, Description (
        "ResponderEndCredit reflects the end credit of the Port "
        "defined as the LoginResponder. It is the number of frame "
        "buffers made available BY the responder Port, TO the "
@@ -1477,8 +1487,8 @@ class CIM_FibrePortActiveLogin  {
        "connections, when an NL-Local Port is logged into another "
        "NL-Local Port, and when Nx Ports are logged into remote "
        "Nx Ports. In other scenarios, this value is undefined."),
-    MappingStrings {
-       "MIF.DMTF|Fibre Channel Bus Port Extensions|001.2"} ]
+       MappingStrings {
+           "MIF.DMTF|Fibre Channel Bus Port Extensions|001.2"} ]
    uint64 ResponderEndCredit;
 };
 
@@ -1486,67 +1496,66 @@ class CIM_FibrePortActiveLogin  {
 // ==================================================================
 // FCAdapterEventCounters 
 // ==================================================================
-[Version ("2.7.0"), Deprecated {"CIM_FCPortStatistics"}, Description (
-    "The use of the FCAdapterEventCounters class is deprecated.  "
-    " FCPortStatistics should be used instead. Error and event "
-    "counters specific to a Fibre Channel Adapter.") ]
+[Version ("2.7.0"), Deprecated {"CIM_FCPortStatistics"}, 
+    Description (
+        "The use of the FCAdapterEventCounters class is deprecated "
+        "since FibreChannelAdapter is deprecated. FCPortStatistics "
+        "should be used instead, but redefines the level at which "
+        "data is collected. This is why there is no direct translation "
+        "of the individual counters between the two classes. This "
+        "object describes event counters specific to a "
+        "FibreChannelAdapter.") ]
 class CIM_FCAdapterEventCounters : CIM_DeviceStatisticalInformation {
 
-    [Description ("The number of Abort sequence frames received."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, 
+        Description ("The number of Abort sequence frames received.") ]
     uint64 ABTSFramesReceived;
 
-    [Description ("The number of Abort sequence frames sent."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, 
+        Description ("The number of Abort sequence frames sent.") ]
     uint64 ABTSFramesSent;
 
-    [Description ("The number of frames busied by the Fabric."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, 
+        Description ("The number of frames busied by the Fabric.") ]
     uint64 FBSYsReceived;
 
-    [Description (
-        "The number of frames busied by the receiving Node."),
-        Counter ]
+    [Deprecated {"No value"}, Counter, 
+        Description (
+            "The number of frames busied by the receiving Node.") ]
     uint64 PBSYsReceived;
 
-    [Description (
-        "The number of frames busied by the Adapter itself."),
-        Counter ]
+    [Deprecated {"No value"}, Counter, Description (
+        "The number of frames busied by the Adapter itself.") ]
     uint64 PBSYsSent;
 
-    [Description ("The number of frames rejected by the Fabric."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, 
+        Description ("The number of frames rejected by the Fabric.") ]
     uint64 FRJTsReceived;
 
-    [Description (
-        "The number of frames rejected by the receiving Node."),
-        Counter ]
+    [Deprecated {"No value"}, Counter, Description (
+        "The number of frames rejected by the receiving Node.") ]
     uint64 PRJTsReceived;
 
-    [Description (
-        "The number of frames rejected by the Adapter itself."),
-        Counter ]
+    [Deprecated {"No value"}, Counter, Description (
+        "The number of frames rejected by the Adapter itself.") ]
     uint64 PRJTsSent;
 
-    [Description (
+    [Deprecated {"No value"}, Counter, Description (
         "The number of PRLI frames sent where the response was "
-        "LS_RJT."), 
-        Counter ]
+        "LS_RJT.") ]
     uint64 PRLIsRejected;
 
-    [Description (
+    [Deprecated {"No value"}, Counter, Description (
         "The number of PRLO frames sent where the response was "
-        "LS_RJT."), 
-        Counter ]
+        "LS_RJT.") ]
     uint64 PRLOsRejected;
 
-    [Description (
+    [Deprecated {"No value"}, Counter, Description (
         "The number of Abort sequence frames sent where the response "
-        "was BA_RJT."), 
-        Counter ]
+        "was BA_RJT.") ]
     uint64 ABTSFramesRejected;
 
-    [Description (
+    [Deprecated {"FCPortStatistics.ResetSelectedStats()"}, Description (
         "Method to reset the Adapter event counters. The method " 
         "takes one parameter as input - an integer indicating which "
         "counter to reset. For this input parameter, 0 indicates all, "
@@ -1579,52 +1588,50 @@ class CIM_FCAdapterEventCounters : CIM_DeviceStatisticalInformation {
 // ==================================================================
 [Version ("2.7.0"), Deprecated {"CIM_FCPortStatistics"}, 
     Description (
-        "The use of the FibrePortEventCounters class is deprecated. "
-        "FCPortStatistics should be used instead.  Error and event "
-        "counters specific to a Fibre Channel Port (connection "
-        "point).") ]
+        "The use of the FibrePortEventCounters class is deprecated, "
+        "since FibrePort is deprecated. FCPortStatistics "
+        "should be used instead, but redefines the level at which "
+        "data is collected. This is why there is no direct translation "
+        "of the individual counters between the two classes. This "
+        "object defines error counters specific to a FibrePort") ]
 class CIM_FibrePortEventCounters : CIM_DeviceStatisticalInformation {
 
-    [Description ("The number of login frames received."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter,  
+        Description ("The number of login frames received.") ]
     uint64 PLOGIsReceived;
 
-    [Description ("The number of login frames sent."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, 
+        Description ("The number of login frames sent.") ]
     uint64 PLOGIsSent;
 
-    [Description (
-        "Number of frames received containing 'EOF Abort'."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, Description (
+        "Number of frames received containing 'EOF Abort'.") ]
     uint64 EOFAbortsReceived;
 
-    [Description (
-        "Number of frames transmitted containing 'EOF Abort'."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, Description (
+        "Number of frames transmitted containing 'EOF Abort'.") ]
     uint64 EOFAbortsTransmitted;
 
-    [Description (
-        "The number of logouts received from various targets."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter, Description (
+        "The number of logouts received from various targets.") ]
     uint64 PLOGOsReceived;
 
-    [Description ("The number of logout frames sent."), 
-        Counter ]
+    [Deprecated {"No value"}, Counter,  
+        Description ("The number of logout frames sent.") ]
     uint64 PLOGOsSent;
 
-    [Description (
+    [Deprecated {"No value"}, Counter, Description (
         "The number of PLOGI frames sent where the response was "
-        "LS_RJT."), 
-        Counter ]
+        "LS_RJT.") ]
     uint64 PLOGIsRejected;
  
-    [Description (
+    [Deprecated {"No value"}, Counter, Description (
         "The number of PLOGO frames sent where the response was "
-        "LS_RJT."), 
-        Counter ]
+        "LS_RJT.") ]
     uint64 PLOGOsRejected;
  
-    [Description (
+    [Deprecated {"CIM_FCPortStatistics.ResetSelectedStats"}, 
+        Description (
         "Method to reset the Port event counters. The method " 
         "takes one parameter as input - an integer indicating which "
         "counter to reset. For this input parameter, 0 indicates all, "
@@ -1648,6 +1655,7 @@ class CIM_FibrePortEventCounters : CIM_DeviceStatisticalInformation {
                 "PLOGOsRejected"} ] 
        uint16 SelectedCounter);
 };
+
 
 // ===================================================================
 // end of file

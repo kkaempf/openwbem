@@ -3,7 +3,7 @@
 // Filename:    CIM_Database27.mof
 // Version:     2.7.0
 // Status:      Preliminary
-// Date:        06/10/2002
+// Date:        07/30/2002
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -71,11 +71,21 @@
 //       avoids forward references. Required objects that have been 
 //       defined by other working groups are omitted.
 // ==================================================================
+// Change Log for v2.7
+// CR776 - Initial submission of the Database Model 
+// CR847 - InstanceID is the Key of CommonDatabase
+// ==================================================================
+
+#pragma Locale ("en-US")
+
 
 // ==================================================================
-// Pragmas
+// Compile prerequisite:  Core, User-Security, Application and
+//                        System MOFs
+// User-Security MOF required - User27_Org.mof
+// Application MOF required - Application27_DeploymentModel.mof
+// System MOF required - System27_SystemResources.mof
 // ==================================================================
-#pragma Locale ("en-US")
 
 
 // ==================================================================
@@ -122,24 +132,28 @@ class CIM_DatabaseSystem : CIM_ApplicationSystem {
           "database services is provided in the description of the "
           "CIM_DatabaseService class."
           "\n") ] 
-class CIM_CommonDatabase : CIM_LogicalElement {
+class CIM_CommonDatabase : CIM_EnabledLogicalElement {
 
-      [Key, MaxLen (256),
-       Description 
-         ("CreationClassName indicates the name of the class or the "
-          "subclass used in the creation of an instance. When used "
-          "with the other key properties of this class, this property "
-          "allows all instances of this class and its subclasses to "
-          "be uniquely identified.") ]
-    string CreationClassName;    
-
-      [Override ("Name"), Key, MaxLen (1024),
-       Description 
-         ("The inherited Name serves as part of the key that uniquely "
-          "identifies an instance in the CIM_CommonDatabase class. A "
-          "unique database identifier (such as a full path name) is "
-          "required for the Name value.") ]
-    string Name;
+      [Key, Description(
+        "InstanceID opaquely identifies a specific instance of "
+        "CommonDatabase.  The InstanceID must be unique within a "
+        "namespace. In order to ensure uniqueness, the value of "
+        "InstanceID SHOULD be constructed in the following manner: \n"
+        "<Vendor ID><ID> \n"
+        "   <Vendor ID> MUST include a copyrighted, trademarked "
+        "or otherwise unique name that is owned by the business "
+        "entity or a registered ID that is assigned to the business "
+        "entity that is defining the InstanceID. (This is similar to "
+        "the <Schema Name>_<Class Name> structure of Schema class "
+        "names.) The purpose of <Vendor ID> is to ensure that <ID> "
+        "is truly unique across multiple vendor implementations.  "
+        "If such a name is not used, the defining entity MUST assure "
+        "that the <ID> portion of the Instance ID is unique when "
+        "compared with other instance providers. For DMTF defined "
+        "instances, the <Vendor ID> is 'CIM'. \n"
+        "   <ID> MUST include a vendor specified unique "
+        "identifier.") ]        
+    string InstanceID;
 
       [Description 
          ("The version number for the database.  If the version is not "

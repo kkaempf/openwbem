@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       System Resources2.7
+// Title:       System Resources 2.7
 // Filename:    System27_SystemResources.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/30/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,34 +42,29 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
-//              System Resources.
+//              concepts. This file defines the specific concepts for
+//              identifying and managing system hardware and 
+//              software resources.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-//                
-// ==================================================================
 // Change Log for v2.7
-//
 // CR757 - Change the subclassing of SystemResource from LogicalElement
-//         to EnabledLogicalElement.
-// CR769 - Update decription of SystemResource
+//         to EnabledLogicalElement
+// CR769 - Update the Decription of SystemResource
 //       - Add property SystemResource.ImplementationInfo
 //       - Add ResourceOfSystem
 //       - Change subclassing of ComputerSystemResource to Resource
-//         OfSystem.
-// CR771 - Add the composition qualifer to ComputerSystemResource,
+//         OfSystem
+// CR771 - Add the Composition qualifer to ComputerSystemResource,
 //         CIM_ComputerSystemIRQ, CIM_ComputerSystemMappedIO,
-//         and CIM_ComputerSystemDMA.
-//
+//         and CIM_ComputerSystemDMA
 // ==================================================================
 
 #pragma locale ("en_US")
+
 
 // ===================================================================
 // SystemResource
@@ -378,8 +373,8 @@ class CIM_DMA : CIM_SystemResource {
 // ===================================================================
 // ResourceOfSystem
 // ===================================================================
-[Association, Aggregation, Composition, Experimental, Version ("2.7.0"), 
-    Description (
+[Association, Aggregation, Composition, Experimental, 
+    Version ("2.7.0"), Description (
     "An association between a System and a SystemResource that "
     "exists and is allocated in the context of the System.") ]
 class CIM_ResourceOfSystem : CIM_SystemComponent {
@@ -424,6 +419,10 @@ class CIM_ComputerSystemResource : CIM_ResourceOfSystem {
         "available on it.") ]
 class CIM_ComputerSystemIRQ : CIM_ComputerSystemResource {
 
+    [Override ("GroupComponent"), Aggregate,
+        Min (1), Max (1), Description ("The ComputerSystem.") ]
+    CIM_ComputerSystem REF GroupComponent;
+
     [Override ("PartComponent"), Weak,
         Description ("An IRQ of the ComputerSystem.") ]
     CIM_IRQ REF PartComponent;
@@ -438,6 +437,10 @@ class CIM_ComputerSystemIRQ : CIM_ComputerSystemResource {
         "An association between a ComputerSystem and the Memory "
         "Mapped I/O ports available on it.") ]
 class CIM_ComputerSystemMappedIO : CIM_ComputerSystemResource {
+
+    [Override ("GroupComponent"), Aggregate,
+        Min (1), Max (1), Description ("The ComputerSystem.") ]
+    CIM_ComputerSystem REF GroupComponent;
 
     [Override ("PartComponent"), Weak,
         Description (
@@ -454,6 +457,10 @@ class CIM_ComputerSystemMappedIO : CIM_ComputerSystemResource {
         "An association between a ComputerSystem and the DMA channels "
         "available on it.") ]
 class CIM_ComputerSystemDMA : CIM_ComputerSystemResource {
+
+    [Override ("GroupComponent"), Aggregate,
+        Min (1), Max (1), Description ("The ComputerSystem.") ]
+    CIM_ComputerSystem REF GroupComponent;
 
     [Override ("PartComponent"), Weak,
         Description ("A DMA channel of the ComputerSystem.") ]
@@ -492,6 +499,11 @@ class CIM_AllocatedDMA : CIM_AllocatedResource {
     [Override ("Antecedent"), 
         Description ("The DMA Channel.") ] 
     CIM_DMA REF Antecedent; 
+
+    [Override ("Dependent"),
+        Description (
+            "The LogicalDevice to which the Resource is assigned.") ]
+    CIM_LogicalDevice REF Dependent;
 
     [Description ( 
         "Boolean indicating whether the LogicalDevice can act as a " 

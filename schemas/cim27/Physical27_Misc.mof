@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Physcial 2.7 Replacement Sets, Capacity, and Statistics 
+// Title:       Physical Replacement Sets and Capacity 2.7 
 // Filename:    Physical27_Misc.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,24 +42,18 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Physical Model defines modeling concepts related
-//              to actual boxes and packaging.
-//              This Physical file defines the concepts related to
-//              replacement sets, capacity, and statisics.
+//              to actual boxes and packaging. This file defines the 
+//              concepts related to sets of physical entities that are 
+//              replaced at the same time/together, and capacity.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-// ==================================================================
-// Change Log for v2.7
+// Change Log for v2.7 
 //
-// CR721 - Add MediaPhysicalStatData that subclasses off of the new
-//         statistics hierarchy.
-// 
+// CR901 - Clarify the description for PhysicalCapacity
 // ==================================================================
-
 
 #pragma locale ("en_US")
 
@@ -105,12 +99,19 @@ class CIM_ParticipatesInSet {
 // ==================================================================
 // PhysicalCapacity
 // ==================================================================
-[Abstract, Version ("2.6.0"), Description (
+[Abstract, Version ("2.7.0"), Description (
     "PhysicalCapacity is an abstract class describing "
     "a PhysicalElement's minimum/maximum requirements and "
     "ability to support different types of hardware. For example, "
     "minimum and maximum memory requirements can be modeled as a "
-    "subclass of CIM_PhysicalCapacity.") ]
+    "subclass of CIM_PhysicalCapacity. \n"
+    "\n"
+    "Note that the items described in subclasses of PhysicalCapacity, "
+    "for example the class ConfigurationCapacity, are either directly "
+    "PhysicalElements (such as I/O slots or storage library magazines)"
+    " or closely associated to PhysicalElements via the Realizes "
+    "relationship (i.e., LogicalDevices such as batteries or "
+    "processors).") ]
 class CIM_PhysicalCapacity : CIM_ManagedElement {
     
     [MaxLen (256), Description (
@@ -277,148 +278,6 @@ class CIM_ConfigurationCapacity : CIM_PhysicalCapacity {
     [Description ("Increment in which Elements must be added or "
         "removed.") ]
     uint32 Increment;
-};
-
-
-// ===================================================================
-// MediaPhysicalStatInfo
-// ===================================================================
-[Version ("2.6.0"), Description (
-    "Statistics related to reading physical labels and picks/puts "
-    "at a specific StorageMediaLocation, or for a specific piece "
-    "of PhysicalMedia. Although the same class is used to represent "
-    "this data, at the instance level the object holds information "
-    "for the Location (independent of the Media), OR for the Media "
-    "(independent of its StorageMediaLocation).") ]
-class CIM_MediaPhysicalStatInfo : CIM_PhysicalStatisticalInformation {
-    
-    [Description (
-        "The number of successful physical label scans."),
-        Counter]
-    uint64 ScanSuccesses;
-    
-    [Description (
-        "The number of failed physical label scans."),
-        Counter]
-    uint64 ScanFailures;
-    
-    [Description (
-        "The number of retried physical label scans."),
-        Counter]
-    uint64 ScanRetries;
-    
-    [Description (
-        "The number of successful picks."),
-        Counter]
-    uint64 PickSuccesses;
-    
-    [Description (
-        "The number of failed picks."),
-        Counter]
-    uint64 PickFailures;
-    
-    [Description (
-        "The number of retried picks."),
-        Counter]
-    uint64 PickRetries;
-    
-    [Description (
-        "The number of successful puts."),
-        Counter]
-    uint64 PutSuccesses;
-   
-    [Description (
-        "The number of failed puts."),
-        Counter]
-    uint64 PutFailures;
-    
-    [Description (
-        "The number of retried puts."),
-        Counter]
-    uint64 PutRetries;
-    
-    [Description (
-        "Method to reset the statistical counters. The method "
-        "takes one parameter as input - an integer indicating which "
-        "counter to reset. For this input parameter, 0 indicates all, "
-        "1-3 reset the scan-related counters, 4-6 reset the "
-        "'pick'-related counters, and 7-9 reset the 'put'-related "
-        "counters. The method returns 0 if successful, 1 if not "
-        "supported, and any other value if an error occurred. A method "
-        "is specified so that the Element's instrumentation can also "
-        "reset its internal processing and counters. The set of "
-        "possible return codes should be specified in a ValueMap "
-        "qualifier on the method. The strings to which the ValueMap "
-        "contents are 'translated' should be specified as a Values "
-        "array qualifier on the method.") ]
-    uint32 ResetCounter (
-        [IN, 
-            ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
-            Values {"All", "Scan Successes", "Scan Failures", 
-                "Scan Retries", "Pick Successes", "Pick Failures", 
-                "Pick Retries", "Put Successes", "Put Failures", 
-                "Put Retries"} ] 
-        uint16 SelectedCounter);
-};
-
-
-// ===================================================================
-// MediaPhysicalStatData
-// ===================================================================
-[Experimental, Version ("2.7.0"), Description (
-    "Statistics related to reading physical labels and picks/puts "
-    "at a specific StorageMediaLocation, or for a specific piece "
-    "of PhysicalMedia. The same class is used to represent "
-    "this data - whether for a Location (independent of the Media), "
-    "OR for the Media (independent of its StorageMediaLocation). "
-    "The element whose statistics are described is associated "
-    "using the relationship, ElementStatisticalData.") ]
-class CIM_MediaPhysicalStatData : CIM_StatisticalData {
-
-    [Description (
-        "The number of successful physical label scans."),
-        Counter]
-    uint64 ScanSuccesses;
-
-    [Description (
-        "The number of failed physical label scans."),
-        Counter]
-    uint64 ScanFailures;
-
-    [Description (
-        "The number of retried physical label scans."),
-        Counter]
-    uint64 ScanRetries;
-
-    [Description (
-        "The number of successful picks."),
-        Counter]
-    uint64 PickSuccesses;
-
-    [Description (
-        "The number of failed picks."),
-        Counter]
-    uint64 PickFailures;
-
-    [Description (
-        "The number of retried picks."),
-        Counter]
-    uint64 PickRetries;
-
-    [Description (
-        "The number of successful puts."),
-        Counter]
-    uint64 PutSuccesses;
-
-    [Description (
-        "The number of failed puts."),
-        Counter]
-    uint64 PutFailures;
-
-    [Description (
-        "The number of retried puts."),
-        Counter]
-    uint64 PutRetries;
 };
 
 

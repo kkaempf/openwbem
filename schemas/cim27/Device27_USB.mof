@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       USB 2.7
+// Title:       Device USB 2.7
 // Filename:    Device27_USB.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/17/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,17 +42,14 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for USB devices.
+//              are related to LogicalDevices. This file defines 
+//              the modeling constructs to manage USB devices.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
-// Change Log for v2.7
+// Change Log for v2.7 - None
 // ================================================================== 
 
 #pragma locale ("en_US")
@@ -62,8 +59,8 @@
 // USBDevice
 // ===================================================================
 [Version ("2.6.0"), Description (
-    "The management characterisitics of a USB Device. These ") ]
-class CIM_USBDevice: CIM_LogicalDevice {
+    "The management characterisitics of a USB Device.") ]
+class CIM_USBDevice : CIM_LogicalDevice {
 
     [Description (
         "Indicates the latest USB Version supported by the USB Device. "

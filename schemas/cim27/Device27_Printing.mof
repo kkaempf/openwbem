@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Printing 2.7
+// Title:       Device Printing 2.7
 // Filename:    Device27_Printing.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/23/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,27 +42,23 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for printer and
-//              managing the printing process (queues, jobs, etc.)
+//              are related to LogicalDevices. This file defines 
+//              the concepts to manage printers and the printing 
+//              process (queues, jobs, etc.)
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-// CR617 - Remove ArrayType qualifier from PrintJob.Language property.
+// CR617 - Remove ArrayType qualifier from PrintJob.Language property
 // CR675 - Extend Printer.LanguagesSupport, Printer.CurrentLanguages,
 //         Printer.DefaultLanguage, PrintSerivce.LanguagesSupported,
 //         and PrintJob.Language to include "TIPSI", "Prescribe", 
 //         "LinePrinter", "IDP", "XJCL", "PDF", "RPDL", "IntermecIPL", 
 //         "UBIFingerprint", "UBIDirectProtocol", "Fujitsu", and 
-//         "PCLXL".
+//         "PCLXL"
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -114,20 +110,29 @@ class CIM_Printer : CIM_LogicalDevice {
             "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", 
             "70", "71", "72", "73", "74", "75"},
         Values {"Unknown", "Other", "A", "B", "C", "D", "E", 
-            "Letter", "Legal", "NA-10x13-Envelope", "NA-9x12-Envelope", 
-            "NA-Number-10-Envelope", "NA-7x9-Envelope", 
-            "NA-9x11-Envelope", "NA-10x14-Envelope",
+            "Letter", "Legal", "NA-10x13-Envelope", 
+            // 10
+            "NA-9x12-Envelope", "NA-Number-10-Envelope", 
+            "NA-7x9-Envelope", "NA-9x11-Envelope", "NA-10x14-Envelope",
             "NA-Number-9-Envelope", "NA-6x9-Envelope",
-            "NA-10x15-Envelope", "A0", "A1", "A2", "A3", "A4", "A5",
-            "A6", "A7", "A8", "A9" "A10", "B0", "B1", "B2", "B3", "B4",
-            "B5", "B6", "B7", "B8", "B9", "B10", "C0", "C1", "C2" "C3",
-            "C4", "C5", "C6", "C7", "C8", "ISO-Designated", "JIS B0",
-            "JIS B1", "JIS B2", "JIS B3", "JIS B4", "JIS B5", "JIS B6",
-            "JIS B7", "JIS B8", "JIS B9", "JIS B10", 
-            "NA-Letter", "NA-Legal", "B4-Envelope", "B5-Envelope", 
-            "C3-Envelope", "C4-Envelope", "C5-Envelope", "C6-Envelope", 
-            "Designated-Long-Envelope", "Monarch-Envelope", 
-            "Executive", "Folio", "Invoice", "Ledger", "Quarto"} ]
+            "NA-10x15-Envelope", "A0", "A1", 
+            // 20
+            "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "B0", 
+            // 30
+            "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", 
+            // 40
+            "C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", 
+            "ISO-Designated", 
+            // 50
+            "JIS B0", "JIS B1", "JIS B2", "JIS B3", "JIS B4", "JIS B5", 
+            "JIS B6", "JIS B7", "JIS B8", "JIS B9", 
+            // 60
+            "JIS B10", "NA-Letter", "NA-Legal", "B4-Envelope", 
+            "B5-Envelope", "C3-Envelope", "C4-Envelope", "C5-Envelope", 
+            "C6-Envelope", "Designated-Long-Envelope", 
+            // 70
+            "Monarch-Envelope", "Executive", "Folio", "Invoice", 
+            "Ledger", "Quarto"} ]
     uint16 PaperSizesSupported[];
 
     [Description (

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Network Ports 2.7
+// Title:       Device Ports 2.7
 // Filename:    Device27_Ports.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,33 +42,31 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for network
-//              port devices.
+//              are related to LogicalDevices. This file defines the 
+//              concepts and classes needed to manage port devices, 
+//              connecting to communications media and networks.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
-// CR632 - Add ModulePort
 // CR630 - Remove NetworkAdapterStatistics and Add NetworkPortStatistics
 //       - Add Port
-//       - Deprecate the statistical properties in NetworkAdapter
-// CR632 - Add LogicalModule
-// CR783 - Remove Port and Add NetworkPort.
-//       - Add EthernetPort, EthernetPortStatistics
-//       - Add TokenRingPort and TokenRingStatistics
-//       - Add OOBAlertServiceOnNetworkPort
-//       - Add WakeUpServiceOnNetworkPort
+// CR632 - Add LogicalModule and ModulePort
+// CR639 - Add LogicalPortGroup
+// CR783 - Remove Port and Add NetworkPort
+//       - Add EthernetPort, EthernetPortStatistics, TokenRingPort, 
+//         TokenRingStatistics, OOBAlertServiceOnNetworkPort and
+//         WakeUpServiceOnNetworkPort
 //       - Modify ModulePort Ref from Port to NetworkPort
 //       - Add NetworkVirtualPort 
-//       - Add PortActiveConnection
-//
+// CR845 - Add PortActiveConnection
+//       - Remove NetworkVirtualPort
+// CR852 - Change the superclass of NetworkPortStatistics to 
+//         StatisticalData
+// CR896 - Clarify the meaning of Speed in LogicalPort and its 
+//         subclass NetworkPort
 // ================================================================== 
 
 #pragma locale ("en_US")
@@ -77,21 +75,19 @@
 // ===================================================================
 // LogicalPort 
 // ===================================================================
-[Version ("2.6.0"), Description (
+[Version ("2.7.0"), Description (
     "The abstraction of a port or connection point of a Device. "
     "This object should be instantiated when the Port has "
     "independent management characteristics from the Device that "
-    "includes it. Examples are a Fibre Channel Port and a USB Port. "
-    "This class would not be instantiated for an Ethernet Port which "
-    "is not managed independently of the EthernetAdapter.") ]
+    "includes it. Examples are a Fibre Channel Port and a USB Port.") ]
 class CIM_LogicalPort : CIM_LogicalDevice {
 
-    [Description ("The speed of the Port in Bits per Second."), 
+    [Description ("The bandwidth of the Port in Bits per Second."), 
         Units ("Bits per Second") ]
     uint64 Speed;
 
     [Description (
-        "The max speed of the Port in Bits per Second."), 
+        "The maximum bandwidth of the Port in Bits per Second."), 
         Units ("Bits per Second") ]
     uint64 MaxSpeed;
 };
@@ -136,15 +132,38 @@ class CIM_PortOnDevice : CIM_Dependency {
 
 
 // ==================================================================
-//    NetworkPort
+// LogicalPortGroup
+// ==================================================================
+[Experimental, Version ("2.7.0"), Description (
+    "A collection of one or more ports logically grouped for "
+    "administrative purposes.  This class is created for specific "
+    "ease of query when a Port is associated to more than one "
+    "SystemSpecificCollection.  In FibreChannel, this is the case "
+    "(e.g. Node, Zone, ZoneSet).") ] 
+class CIM_LogicalPortGroup: CIM_SystemSpecificCollection {
+};
+
+
+// ==================================================================
+// NetworkPort
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "NetworkPort is the logical representation of network "
     "communications hardware - a physical connector and the "
     "setup/operation of the network chips, at the lowest layers "
-    "of a network stack. ") ] 
+    "of a network stack.") ] 
 class CIM_NetworkPort : CIM_LogicalPort {
     
+    [Override ("Speed"), Description (
+        "The current bandwidth of the Port in Bits per Second. "
+        "For ports that vary in bandwidth or for those where "
+        "no accurate estimation can be made, this property should "
+        "contain the nominal bandwidth."),
+        Units ("Bits per Second"), 
+        MappingStrings {"MIB.IETF|MIB-II.ifSpeed", 
+            "MIF.DMTF|Network Adapter 802 Port|001.5"} ]
+    uint64 Speed;
+ 
     [Description (
         "PortType is defined to force consistent naming of the 'type' "
         "property in subclasses and to guarantee unique enum values "
@@ -202,16 +221,6 @@ class CIM_NetworkPort : CIM_LogicalPort {
         MappingStrings {"MIF.DMTF|Network Adapter 802 Port|001.3"} ]
     string NetworkAddresses[]; 
  
-    [Override ("Speed"), Description (
-        "An estimate of the current bandwidth in Bits per Second. "
-        "For ports that vary in bandwidth or for those where "
-        "no accurate estimation can be made, this property should "
-        "contain the nominal bandwidth."),
-        Units ("Bits per Second"), 
-        MappingStrings {"MIB.IETF|MIB-II.ifSpeed", 
-            "MIF.DMTF|Network Adapter 802 Port|001.5"} ]
-    uint64 Speed;
- 
     [Description (
         "Boolean indicating that the port is operating in "
         "full duplex mode.") ]
@@ -231,7 +240,7 @@ class CIM_NetworkPort : CIM_LogicalPort {
  
     [Description (
         "The active or negotiated maximum transmission unit (MTU) that "
-        "can be supported. "), 
+        "can be supported."), 
         Units ("Bytes") ] 
     uint64 ActiveMaximumTransmissionUnit;
 };
@@ -312,7 +321,6 @@ class CIM_EthernetPort : CIM_NetworkPort {
         ArrayType ("Indexed"), 
         ModelCorrespondence {"CIM_EthernetPort.EnabledCapabilities"} ]
     string OtherEnabledCapabilities[];
- 
 };
  
  
@@ -404,7 +412,7 @@ class CIM_TokenRingPort : CIM_NetworkPort {
  
     [Description (
         "The current Device state with respect to entering or leaving "
-        "the ring." ), 
+        "the ring."), 
         ValueMap {"0", "1", "2", "3", "4", "5"},
         Values {"Opened", "Closed", "Opening", "Closing", 
             "Open Failure", "Ring Failure"}, 
@@ -415,7 +423,7 @@ class CIM_TokenRingPort : CIM_NetworkPort {
     [Description (
         "This property indicates the success, or the reason for "
         "failure, of the station's most recent attempt to enter the "
-        "ring." ), 
+        "ring."), 
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
             "10"},
         Values {"No Open Attempted", "Bad Parameter", "Lobe Failed", 
@@ -435,7 +443,6 @@ class CIM_TokenRingPort : CIM_NetworkPort {
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5RingSpeed"} ]
     uint16 RingSpeed;
- 
 };
  
  
@@ -494,30 +501,30 @@ class CIM_WakeUpServiceOnNetworkPort : CIM_DeviceServiceImplementation {
         "The wakeup Service provided on the NetworkPort.") ]
     CIM_WakeUpService REF Dependent;
 };
- 
- 
-// ===================================================================
-// NetworkVirtualPort
-// ===================================================================
-[Association, Experimental, Version ("2.7.0"), Description (
-    "NetworkVirtualPort describes that an instance of "
-    "NetworkPort is actually the result of several NetworkPorts "
-    "participating in a load balanced RedundancyGroup.") ]
-class CIM_NetworkVirtualPort : CIM_LogicalIdentity {
-    
-    [Override ("SystemElement"), 
-        Description ("The 'virtual' NetworkPort.") ]
-    CIM_NetworkPort REF SystemElement;
-    
-    [Override ("SameElement"), 
-        Description (
-        "The ExtraCapacity RedundancyGroup that describes the load "
-        "balancing. The result of the load balancing is the 'virtual' "
-        "port.")  ]
-    CIM_ExtraCapacityGroup REF SameElement;
-};
 
 
+// =================================================================== 
+// PortImplementsEndpoint 
+// =================================================================== 
+[Association, Version ("2.6.0"), Description ( 
+    "PortImplementsEndpoint associates a LogicalPort with one or " 
+    "more ProtocolEndpoints that are implemented on it. This "
+    "class specializes the DeviceSAPImplementation association. "
+    "It indicates that the referenced Endpoint is dependent on the "
+    "operations of the Port Device.") ]
+class CIM_PortImplementsEndpoint : CIM_DeviceSAPImplementation { 
+
+    [Override ("Antecedent"), Description (
+        "The LogicalPort that represents the Device behind " 
+        "the ProtocolEndpoint.") ] 
+    CIM_LogicalPort REF Antecedent; 
+
+    [Override ("Dependent"), Description (
+        "The ProtocolEndpoint implemented on the LogicalPort.") ] 
+    CIM_ProtocolEndpoint REF Dependent; 
+}; 
+ 
+ 
 // ===================================================================
 // PortActiveConnection 
 // ===================================================================
@@ -546,72 +553,67 @@ class CIM_PortActiveConnection : CIM_Dependency {
 
 
 // ==================================================================
-//    NetworkPortStatistics
+// NetworkPortStatistics
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
-    "NetworkPortStatistics is the statistics for the NetworkPort. ") ]
-class CIM_NetworkPortStatistics : CIM_DeviceStatisticalInformation {
+    "The NetworkPortStatistics class describes the statistics "
+    "for the NetworkPort.") ]
+class CIM_NetworkPortStatistics : CIM_StatisticalData {
     
-    [Description (
+    [Counter, Description (
         "The total number of bytes transmitted, including framing "
         "characters."),
         Mappingstrings {"MIB.IETF|MIB-II.ifOutOctets", 
             "MIF.DMTF|Network Adapter 802 Port|001.7"}, 
-        Counter,
         Units ("Bytes") ] 
     uint64 BytesTransmitted;
     
-    [Description (
+    [Counter, Description (
           "The total number of bytes received, including framing "
           "characters."),
           Mappingstrings {"MIB.IETF|MIB-II.ifInOctets",
               "MIF.DMTF|Network Adapter 802 Port|001.9"}, 
-          Counter,
           Units ("Bytes") ] 
     uint64 BytesReceived;
     
-    [Description (
-        "The total number of packets transmitted."), 
-        Counter ] 
+    [Counter, Description (
+        "The total number of packets transmitted.") ]
     uint64 PacketsTransmitted;
     
-    [Description (
-        "The total number of packets received."), 
-        Counter ] 
+    [Counter, Description (
+        "The total number of packets received.") ] 
     uint64 PacketsReceived;
 };
  
  
 // ==================================================================
-//    EthernetPortStatistics
+// EthernetPortStatistics
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
-    "EthernetPortStatistics is the statistics for the "
-    "EthernetPort. ") ]
+    "The EthernetPortStatistics class describes the statistics for "
+    "the EthernetPort.") ]
 class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
  
-    [Description (
+    [Override ("PacketsTransmitted"), Counter, Description (
+        "The total number of packets transmitted."), 
+        MappingStrings {"MIF.DMTF|Network Adapter 802 Port|001.6"} ] 
+    uint64 PacketsTransmitted;
+ 
+    [Override ("PacketsReceived"), Counter, Description (
+        "The total number of packets received."), 
+        MappingStrings {"MIF.DMTF|Network Adapter 802 Port|001.8"} ]
+    uint64 PacketsReceived;
+ 
+    [Counter, Description (
         "The number of times there was an invalid data symbol when "
         "a valid carrier was present. The count is incremented at "
         "most once per carrier event, even if multiple symbol "
         "errors occur during the carrier event."), 
-        MappingStrings {"MIB.IETF|EtherLike-MIB.dot3StatsSymbolErrors"}, 
-        Counter ] 
+        MappingStrings {
+            "MIB.IETF|EtherLike-MIB.dot3StatsSymbolErrors"} ] 
     uint32 SymbolErrors;
  
-    [Override ("PacketsTransmitted"), Description (
-        "The total number of packets transmitted."), 
-        MappingStrings {"MIF.DMTF|Network Adapter 802 Port|001.6"}, 
-        Counter ] 
-    uint64 PacketsTransmitted;
- 
-    [Override ("PacketsReceived"), Description (
-        "The total number of packets received."), 
-        MappingStrings {"MIF.DMTF|Network Adapter 802 Port|001.8"}, 
-        Counter ] 
-    uint64 PacketsReceived;
- 
-    [Description (
+    [Counter, Description (
         "A count of frames received on a particular interface "
         "that are not an integral number of octets in length and do "
         "not pass the FCS check. The count represented by an "
@@ -622,11 +624,10 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "802.3 Layer Management, counted exclusively according to "
         "the error status presented to the LLC."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsAlignmentErrors"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsAlignmentErrors"} ] 
     uint32 AlignmentErrors;
  
-    [Description (
+    [Counter, Description (
         "A count of frames received on a particular interface "
         "that are an integral number of octets in length but do "
         "not pass the FCS check. The count represented by an "
@@ -638,54 +639,49 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "exclusively according to the error status presented to "
         "the LLC."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsFCSErrors"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsFCSErrors"} ]
     uint32 FCSErrors;
  
-    [Description (
+    [Counter, Description (
         "A count of successfully transmitted frames on a particular "
         "interface for which transmission is inhibited by exactly "
         "one collision. A frame that is counted by an instance of "
         "this object is not counted by the corresponding instance "
         "of the MultipleCollisionFrames property."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsSingleCollisionFrames"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsSingleCollisionFrames"} ] 
     uint32 SingleCollisionFrames;
  
-    [Description (
+    [Counter, Description (
         "A count of successfully transmitted frames on a particular "
         "interface for which transmission is inhibited by more than "
         "one collision. A frame that is counted by an instance of "
         "this object is not counted by the corresponding instance "
         "of the SingleCollisionFrames property."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsMultipleCollisionFrames"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsMultipleCollisionFrames"} ]
     uint32 MultipleCollisionFrames;
  
-    [Description (
+    [Counter, Description (
         "A count of times that the SQE TEST ERROR message is "
         "generated by the PLS sublayer for a particular interface. "
         "The SQE TEST ERROR message is defined in section "
         "7.2.2.2.4 of ANSI/IEEE 802.3-1985 and its generation is "
         "described in section 7.2.4.6 of the same document."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsSQETestErrors"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsSQETestErrors"} ]
     uint32 SQETestErrors;
  
-    [Description (
+    [Counter, Description (
         "A count of frames for which the first transmission "
         "attempt on a particular interface is delayed because the "
         "medium is busy. The count represented by an instance of "
         "this object does not include frames involved in collisions."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsDeferredTransmissions"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsDeferredTransmissions"} ]
     uint32 DeferredTransmissions;
  
-    [Description (
+    [Counter, Description (
         "The number of times that a collision is detected on a "
         "particular interface later than 512 bit-times into the "
         "transmission of a packet. Five hundred and twelve bit-"
@@ -695,19 +691,17 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "considered as a (generic) collision for purposes of "
         "other collision-related statistics."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsLateCollisions"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsLateCollisions"} ]
     uint32 LateCollisions;
  
-    [Description (
+    [Counter, Description (
         "A count of frames for which transmission on a particular "
         "interface fails due to excessive collisions."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsExcessiveCollisions"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsExcessiveCollisions"} ]
     uint32 ExcessiveCollisions;
  
-    [Description (
+    [Counter, Description (
         "A count of frames for which transmission on a particular "
         "interface fails due to an internal MAC sublayer transmit "
         "error. A frame is only counted by an instance of this "
@@ -721,11 +715,10 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "not otherwise counted."),
         Mappingstrings {
             "MIB.IETF|EtherLike-MIB."
-            "dot3StatsInternalMacTransmitErrors"}, 
-        Counter ] 
+            "dot3StatsInternalMacTransmitErrors"} ]
     uint32 InternalMACTransmitErrors;
  
-    [Description (
+    [Counter, Description (
         "A count of frames for which reception on a particular "
         "interface fails due to an internal MAC sublayer receive "
         "error. A frame is only counted by an instance of this "
@@ -737,11 +730,10 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "this object may represent a count of receive errors on a "
         "particular interface that are not otherwise counted."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsInternalMacReceiveErrors"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsInternalMacReceiveErrors"} ]
     uint32 InternalMACReceiveErrors;
  
-    [Description (
+    [Counter, Description (
         "The number of times that the carrier sense condition was "
         "lost or never asserted when attempting to transmit a frame "
         "on a particular interface. The count represented by an "
@@ -749,11 +741,10 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "transmission attempt, even if the carrier sense condition "
         "fluctuates during a transmission attempt."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsCarrierSenseErrors"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsCarrierSenseErrors"} ]
     uint32 CarrierSenseErrors;
  
-    [Description (
+    [Counter, Description (
         "A count of frames received on a particular interface that "
         "exceed the maximum permitted frame size. The count "
         "represented by an instance of this object is incremented "
@@ -764,184 +755,166 @@ class CIM_EthernetPortStatistics : CIM_NetworkPortStatistics {
         "exclusively according to the error status presented to "
         "the LLC."),
         Mappingstrings {
-            "MIB.IETF|EtherLike-MIB.dot3StatsFrameTooLongs"}, 
-        Counter ] 
+            "MIB.IETF|EtherLike-MIB.dot3StatsFrameTooLongs"} ]
     uint32 FrameTooLongs;
 };
 
 
 // ==================================================================
-//    TokenRingPortStatistics
+// TokenRingPortStatistics
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
-    "TokenRingPortStatistics is the statistics for the "
-    "TokenRingPort. ") ]
+    "The TokenRingPortStatistics class describes the statistics for "
+    "the TokenRingPort.") ]
 class CIM_TokenRingPortStatistics : CIM_NetworkPortStatistics {
     
-    [Experimental, Description (
+    [Experimental, Counter, Description (
         "This counter is incremented when a station detects the "
         "absence of transitions for five half-bit timers (burst-five "
         "errors)."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsBurstErrors"}, 
-        Counter ] 
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsBurstErrors"} ] 
     uint32 BurstErrors;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station receives an AMP or "
         "SMP frame in which A is equal to C is equal to 0, and then "
         "receives another SMP frame with A equal to C equal to 0 "
         "without first receiving an AMP frame. It denotes a station "
         "that cannot set the AC bits properly."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsACErrors"}, 
-        Counter ] 
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsACErrors"} ] 
     uint32 ACErrors;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station transmits an abort "
         "delimiter while transmitting data."), 
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB."
-            "dot5StatsAbortTransErrors"}, 
-        Counter ] 
+            "dot5StatsAbortTransErrors"} ] 
     uint32 AbortTransErrors;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station recognizes an "
         "internal error."), 
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB."
-            "dot5StatsInternalErrors"}, 
-        Counter ] 
+            "dot5StatsInternalErrors"} ] 
     uint32 InternalErrors;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station is transmitting "
         "and its TRR timer expires. This denotes a condition where a "
         "transmitting station in strip mode does not receive the "
         "trailer of the frame before the TRR timer goes off."), 
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB."
-            "dot5StatsLostFrameErrors"}, 
-        Counter ] 
+            "dot5StatsLostFrameErrors"} ] 
     uint32 LostFrameErrors;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station recognizes a frame "
         "addressed to its specific address, but has no available "
         "buffer space - indicating that the station is congested."), 
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB."
-            "dot5StatsReceiveCongestions"}, 
-        Counter ] 
+            "dot5StatsReceiveCongestions"} ] 
     uint32 ReceiveCongestions;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station recognizes a frame "
         "addressed to its specific address and detects that the FS "
         "field A bits are set to 1 indicating a possible line hit or "
         "duplicate address."), 
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB."
-            "dot5StatsFrameCopiedErrors"}, 
-        Counter ] 
+            "dot5StatsFrameCopiedErrors"} ] 
     uint32 FrameCopiedErrors;
  
-    [Description (
+    [Counter, Description (
         "This counter is incremented when a station acting as the "
         "active monitor recognizes an error condition that needs a "
         "token transmitted."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsTokenErrors"},
-       Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsTokenErrors"} ]
     uint32 TokenErrors;
  
-    [Description (
+    [Counter, Description (
         "The number of Soft Errors that the Device has detected. It "
         "directly corresponds to the number of Report Error MAC frames "
         "that this Device has transmitted. Soft Errors are those which "
         "are recoverable by the MAC layer protocols."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsSoftErrors"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsSoftErrors"} ] 
     uint32 SoftErrors;
  
-    [Description (
+    [Counter, Description (
         "The number of times this Device has detected an immediately "
         "recoverable fatal error. It denotes the number of times this "
         "Device is either transmitting or receiving beacon MAC "
-        "frames. "), 
+        "frames."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsHardErrors"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsHardErrors"} ] 
     uint32 HardErrors;
  
-    [Description (
+    [Counter, Description (
         "The number of times this Device has detected the loss of "
         "signal condition from the ring."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsSignalLoss"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsSignalLoss"} ] 
     uint32 SignalLossCount;
  
-    [Description (
+    [Counter, Description (
         "The number of times this Device has transmitted a beacon "
         "frame."), 
         MappingStrings {
             "MIB.IETF|IEEE 802.5 Token Ring MIB."
-            "dot5StatsTransmitBeacons"}, 
-        Counter ]
+            "dot5StatsTransmitBeacons"} ] 
     uint32 TransmittedBeacons;
  
-    [Description (
+    [Counter, Description (
         "The number of Claim Token MAC frames received or transmitted "
         "after the Device has received a Ring Purge MAC frame. This "
         "counter signifies the number of times the ring has been "
         "purged and is being recovered back into a normal operating "
         "state."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsRecoverys"}, 
-       Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsRecoverys"} ] 
     uint32 Recoverys;
  
-    [Description (
+    [Counter, Description (
         "The number of times the Device has detected an open or short "
         "circuit in the lobe data path. The port will be closed and "
         "RingState will signify this condition."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsLobeWires"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsLobeWires"} ] 
     uint32 LobeWires;
  
-    [Description (
+    [Counter, Description (
         "The number of times the Device has received a Remove Ring "
         "Station MAC frame request. When this frame is received, the "
         "Device will enter the close state and RingState will "
         "signify this condition."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsRemoves"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsRemoves"} ] 
     uint32 Removes;
  
-    [Description (
+    [Counter, Description (
         "The number of times the Device has sensed that it is the "
         "only station on the ring. This will happen if the Device "
         "is the first one up on a ring, or if there is a hardware "
         "problem."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsSingles"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsSingles"} ] 
     uint32 Singles;
  
-    [Description (
+    [Counter, Description (
         "The number of times the Device has detected that the "
         "frequency of the incoming signal differs from the expected "
         "frequency by more than that specified by the IEEE 802.5 "
         "standard."), 
         MappingStrings {
-            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsFreqErrors"}, 
-        Counter ]
+            "MIB.IETF|IEEE 802.5 Token Ring MIB.dot5StatsFreqErrors"} ] 
     uint32 FrequencyErrors;
 };
 

@@ -1,9 +1,9 @@
 //====================================================================
-// Title:      Event MOF Specification 2.7 Preliminary
+// Title:      Event MOF Specification 2.7 
 // Filename:   CIM_Event27.mof
 // Version:    2.7.0
 // Status:     Preliminary
-// Date:       06/10/2002
+// Date:       09/23/2002
 // ===================================================================
 // Copyright 2001-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -49,19 +49,21 @@
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
-//	          by other working groups, are omitted. 
+//              by other working groups, are omitted. 
 // ===================================================================
-// 05/24/2002 - 2.7 Preliminary
-//		CR811 - Add values to ProbableCause to align with 
-//			ITU-T M.3100 and ITU-IANA-ALARM-TC
-//		CR709 - Move IndicationIdentifier and 
-//			IndicationCorrelation to CIM_Indication.
-//	      CR652 - Changes to CIM_AlertIndication to consolidate 
-//			and capture Event data
-//		CR651 - Add RepeatNotification properties to 
-//			CIM_IndicationSubscription
+// 09/23/2002 - 2.7 Preliminary
+//          CR869 - Fix the Description for IndicationHandlerCIMXML.
+//                      Destination Description
+//          CR811 - Add values to ProbableCause to align with 
+//                      ITU-T M.3100 and ITU-IANA-ALARM-TC
+//          CR709 - Move IndicationIdentifier and 
+//                      IndicationCorrelation to CIM_Indication
+//          CR652 - Changes to CIM_AlertIndication to consolidate 
+//                      and capture Event data
+//          CR651 - Add RepeatNotification properties to 
+//                      CIM_IndicationSubscription
 //          CR650 - Extend CIM_SubscriptionIndication and 
-//			CIM_HandlerIndication 
+//                      CIM_HandlerIndication 
 //          CR647 - Add ErrorHandling to CIM_IndicationSubscription
 // 05/09/2002 - 2.6 Final
 // ===================================================================
@@ -69,9 +71,14 @@
 #pragma Locale ("en_US")
 
 
-//====================================================================
-//  CIM_Indication
-//====================================================================
+// ==================================================================
+// Compile prerequisite:  Core MOF
+// ==================================================================
+
+
+// ====================================================================
+// Indication
+// ====================================================================
 [Indication, Abstract, Version("2.7.0"), Description (
     "CIM_Indication is the abstract root class for all notifications "
     "about changes in schema, objects and their data, and about "
@@ -114,9 +121,9 @@ class CIM_Indication {
 };
 
 
-//====================================================================
-//  CIM_ClassIndication
-//====================================================================
+// ====================================================================
+// ClassIndication
+// ====================================================================
 [Indication, Abstract, Version("2.6.0"), Description (
     "CIM_ClassIndication is an abstract superclass describing changes "
     "in the definition of the schema. Subclasses represent specific "
@@ -133,9 +140,9 @@ class CIM_ClassIndication : CIM_Indication {
 };
 
 
-//====================================================================
-//  CIM_ClassCreation
-//====================================================================
+// ====================================================================
+// ClassCreation
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_ClassCreation notifies when a new class is defined in the "
     "schema.") ]
@@ -143,9 +150,9 @@ class CIM_ClassCreation : CIM_ClassIndication {
 };
 
 
-//====================================================================
-//  CIM_ClassDeletion
-//====================================================================
+// ====================================================================
+// ClassDeletion
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_ClassDeletion notifies when a class is deleted from the "
     "schema.") ]
@@ -153,9 +160,9 @@ class CIM_ClassDeletion : CIM_ClassIndication {
 };
 
 
-//====================================================================
-//  CIM_ClassModification
-//====================================================================
+// ====================================================================
+// ClassModification
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_ClassModification notifies when a class definition in the "
     "schema is modified.") ]
@@ -171,9 +178,9 @@ class CIM_ClassModification : CIM_ClassIndication {
 };
 
 
-//====================================================================
-//  CIM_InstIndication
-//====================================================================
+// ====================================================================
+// InstIndication
+// ====================================================================
 [Indication, Abstract, Version("2.6.0"), Description (
     "CIM_InstIndication is an abstract superclass describing changes "
     "to instances. Subclasses represent specific types of change "
@@ -192,27 +199,27 @@ class CIM_InstIndication : CIM_Indication {
 };
 
 
-//====================================================================
-//  CIM_InstCreation
-//====================================================================
+// ====================================================================
+// InstCreation
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_InstCreation notifies when a new instance is created.") ]
 class CIM_InstCreation : CIM_InstIndication {
 };
 
 
-//====================================================================
-//  CIM_InstDeletion
-//====================================================================
+// ====================================================================
+// InstDeletion
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_InstDeletion notifies when an existing instance is deleted.") ]
 class CIM_InstDeletion : CIM_InstIndication {
 };
 
 
-//====================================================================
-//  CIM_InstModification
-//====================================================================
+// ====================================================================
+// InstModification
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
      "CIM_InstModification notifies when an instance is modified.") ]
 class CIM_InstModification : CIM_InstIndication {
@@ -226,49 +233,49 @@ class CIM_InstModification : CIM_InstIndication {
 };
 
 
-//====================================================================
-//  CIM_InstMethodCall
-//====================================================================
+// ====================================================================
+// InstMethodCall
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_InstMethodCall notifies when an instance's method is "
     "invoked.") ]
 class CIM_InstMethodCall : CIM_InstIndication {
 
     [Required, Description (
-      "The name of the method invoked.") ]
+        "The name of the method invoked.") ]
     string MethodName;
 
     [EmbeddedObject, Description (
-      "The parameters of the method, formatted as an "
-      "EmbeddedObject (with a predefined class name of "
-      "\"__MethodParameters\".") ]
+        "The parameters of the method, formatted as an "
+        "EmbeddedObject (with a predefined class name of "
+        "\"__MethodParameters\".") ]
     string MethodParameters;
 
     [Description (
-      "ReturnValue's data is dependent on the PreCall property. "
-      "When PreCall is TRUE, this property is NULL describing that "
-      "there is no method return value (since the method has not yet "
-      "executed). When PreCall is FALSE, ReturnValue contains a "
-      "string representation of the method's return value."), 
-     ModelCorrespondence {"CIM_InstMethodCall.PreCall"} ]
+        "ReturnValue's data is dependent on the PreCall property. "
+        "When PreCall is TRUE, this property is NULL describing that "
+        "there is no method return value (since the method has not yet "
+        "executed). When PreCall is FALSE, ReturnValue contains a "
+        "string representation of the method's return value."), 
+        ModelCorrespondence {"CIM_InstMethodCall.PreCall"} ]
     string ReturnValue;
 
     [Required, Description (
-      "Boolean indicating whether the Indication is sent before "
-      "the method begins executing (TRUE) or when the method "
-      "completes (FALSE). When TRUE, the inherited property "
-      "SourceInstance contains the value of the instance (the "
-      "properties defined by the Filter's Query clause), "
-      "before execution of the method. When PreCall is FALSE, "
-      "SourceInstance embeds the instance as it appears after "
-      "the completion of the method.") ]
+        "Boolean indicating whether the Indication is sent before "
+        "the method begins executing (TRUE) or when the method "
+        "completes (FALSE). When TRUE, the inherited property "
+        "SourceInstance contains the value of the instance (the "
+        "properties defined by the Filter's Query clause), "
+        "before execution of the method. When PreCall is FALSE, "
+        "SourceInstance embeds the instance as it appears after "
+        "the completion of the method.") ]
     boolean PreCall;
 };
 
 
-//====================================================================
-//  CIM_InstRead
-//====================================================================
+// ====================================================================
+// InstRead
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "CIM_InstRead notifies when an instance is read but not "
     "modified.") ]
@@ -276,9 +283,9 @@ class CIM_InstRead : CIM_InstIndication {
 };
 
 
-//====================================================================
-//  CIM_ProcessIndication
-//====================================================================
+// ====================================================================
+// ProcessIndication
+// ====================================================================
 [Indication, Abstract, Version("2.6.0"), Description (
     "An abstract superclass for specialized Indication classes, "
     "addressing specific changes and alerts published by providers "
@@ -288,9 +295,10 @@ class CIM_InstRead : CIM_InstIndication {
 class CIM_ProcessIndication : CIM_Indication {
 };
 
-//====================================================================
-//  CIM_SNMPTrapIndication
-//====================================================================
+
+// ====================================================================
+// SNMPTrapIndication
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
     "A concrete  class for mapping an SNMP Trap to CIM based on the "
     "IETF RFC 1157. The usefulness of this class is to describe "
@@ -352,7 +360,7 @@ class CIM_SNMPTrapIndication : CIM_ProcessIndication {
         Values {"Cold Start", "Warm Start", "Link Down", "Link Up", 
                 "Authentication Failure", "EGP Neighbor Loss", 
                 "Enterprise Specific"},
-       Mappingstrings {"PDU.IETF|RFC1157-TRAP-PDU.generic-trap"} ]
+        Mappingstrings {"PDU.IETF|RFC1157-TRAP-PDU.generic-trap"} ]
     uint16 GenericTrap;
 
     [Description ("Specific trap code."), 
@@ -366,54 +374,57 @@ class CIM_SNMPTrapIndication : CIM_ProcessIndication {
     datetime TimeStamp;
 
     [Description (
-      "Object naming information (an OID) from the 'variable "
-      "binding' portion of the Trap. This array is correlated "
-      "with the VarBindSyntaxes and VarBindValues arrays. Each "
-      "entry is related to the entries in the other arrays, "
-      "that are located at the same index. In this way, the "
-      "variable binding's name/syntax/value tuple can be "
-      "constructed."), ArrayType ("Indexed"), 
-     ModelCorrespondence {"CIM_SNMPTrapIndication.VarBindSyntaxes",
-      "CIM_SNMPTrapIndication.VarBindValues"},
-     Mappingstrings {"PDU.IETF|RFC1157-TRAP-PDU.variable-bindings"} ]
+        "Object naming information (an OID) from the 'variable "
+        "binding' portion of the Trap. This array is correlated "
+        "with the VarBindSyntaxes and VarBindValues arrays. Each "
+        "entry is related to the entries in the other arrays, "
+        "that are located at the same index. In this way, the "
+        "variable binding's name/syntax/value tuple can be "
+        "constructed."), ArrayType ("Indexed"), 
+        ModelCorrespondence {
+           "CIM_SNMPTrapIndication.VarBindSyntaxes",
+           "CIM_SNMPTrapIndication.VarBindValues"},
+        Mappingstrings {
+           "PDU.IETF|RFC1157-TRAP-PDU.variable-bindings"} ]
     string VarBindNames[];
 
     [Description (
-      "Object syntax information (defined as an enumerated value) "
-      "from the 'variable binding' portion of the Trap. This array "
-      "is correlated with the VarBindNames and VarBindValues "
-      "arrays. Each entry is related to the entries in the other "
-      "arrays, that are located at the same index. In this way, "
-      "the variable binding's name/syntax/value tuple can be "
-      "constructed."), ArrayType ("Indexed"), 
-     ValueMap {"1", "2", "3", "4", "5", "6", "7", "8"}, 
-     Values {"Integer", "OctetString", "ObjectIdentifier",
-             "NetworkAddress", "Counter", "Gauge",
-             "TimeTicks", "Opaque"}, 
-     ModelCorrespondence {"CIM_SNMPTrapIndication.VarBindNames",
-      "CIM_SNMPTrapIndication.VarBindValues"},
-     Mappingstrings {"PDU.IETF|RFC1157-TRAP-PDU.variable-bindings"} ]
+        "Object syntax information (defined as an enumerated value) "
+        "from the 'variable binding' portion of the Trap. This array "
+        "is correlated with the VarBindNames and VarBindValues "
+        "arrays. Each entry is related to the entries in the other "
+        "arrays, that are located at the same index. In this way, "
+        "the variable binding's name/syntax/value tuple can be "
+        "constructed."), ArrayType ("Indexed"), 
+        ValueMap {"1", "2", "3", "4", "5", "6", "7", "8"}, 
+        Values {"Integer", "OctetString", "ObjectIdentifier",
+                "NetworkAddress", "Counter", "Gauge",
+                "TimeTicks", "Opaque"}, 
+        ModelCorrespondence {"CIM_SNMPTrapIndication.VarBindNames",
+           "CIM_SNMPTrapIndication.VarBindValues"},
+        Mappingstrings {
+           "PDU.IETF|RFC1157-TRAP-PDU.variable-bindings"} ]
     uint16 VarBindSyntaxes[];
 
     [Description (
-      "An OctetString representing object value information "
-      "from the 'variable binding' portion of the Trap. This "
-      "array is correlated with the VarBindNames and "
-      "VarBindSyntaxes arrays. Each entry is related to the "
-      "entries in the other arrays, that are located at the "
-      "same index. In this way, the variable binding's "
-      "name/syntax/value tuple can be constructed."), 
-     ArrayType ("Indexed"), OctetString,  
-     ModelCorrespondence {"CIM_SNMPTrapIndication.VarBindNames",
-      "CIM_SNMPTrapIndication.VarBindSyntaxes"},
-     Mappingstrings {"PDU.IETF|RFC1157-TRAP-PDU.variable-bindings"} ]
+        "An OctetString representing object value information "
+        "from the 'variable binding' portion of the Trap. This "
+        "array is correlated with the VarBindNames and "
+        "VarBindSyntaxes arrays. Each entry is related to the "
+        "entries in the other arrays, that are located at the "
+        "same index. In this way, the variable binding's "
+        "name/syntax/value tuple can be constructed."), 
+        ArrayType ("Indexed"), OctetString,  
+        ModelCorrespondence {"CIM_SNMPTrapIndication.VarBindNames",
+           "CIM_SNMPTrapIndication.VarBindSyntaxes"},
+        Mappingstrings {"PDU.IETF|RFC1157-TRAP-PDU.variable-bindings"} ]
     string VarBindValues[];
 };
 
 
-//====================================================================
-//  CIM_AlertIndication
-//====================================================================
+// ====================================================================
+// AlertIndication
+// ====================================================================
 [Indication, Version("2.7.0"), Description (
     "A concrete superclass for CIM Alert notifications.  An "
     "AlertIndication is a specialized type of CIM_Indication that "
@@ -449,7 +460,7 @@ class CIM_AlertIndication : CIM_ProcessIndication {
         "3 - Quality of Service Alert. An Indication of this type is "
         "principally associated with a degradation or errors in the "
         "performance or function of an entity. \n"
-	  "4 - Processing Error. An Indication of this type is "
+        "4 - Processing Error. An Indication of this type is "
         "principally associated with a software or processing fault. \n"
         "5 - Device Alert. An Indication of this type is principally "
         "associated with an equipment or hardware fault. \n"
@@ -466,9 +477,9 @@ class CIM_AlertIndication : CIM_ProcessIndication {
         "issues."),
         ValueMap {"1", "2", "3", "4", "5", "6", "7", "8"},
         Values {"Other", "Communications Alert", 
-	        "Quality of Service Alert", "Processing Error", 
-	        "Device Alert", "Environmental Alert", "Model Change",
-              "Security Alert"},
+                "Quality of Service Alert", "Processing Error", 
+                "Device Alert", "Environmental Alert", "Model Change",
+                "Security Alert"},
         MappingStrings {"Recommendation.ITU|X733.Event type"} ]
     uint16 AlertType;
 
@@ -527,7 +538,7 @@ class CIM_AlertIndication : CIM_ProcessIndication {
             "121", "122", "123", "124", "125", "126", "127", "128", 
             "129", "130"}, 
          Values {"Unknown", "Other", "Adapter/Card Error", 
-	      "Application Subsystem Failure", "Bandwidth Reduced", 
+            "Application Subsystem Failure", "Bandwidth Reduced", 
             "Connection Establishment Error", 
             "Communications Protocol Error", 
             "Communications Subsystem Failure", 
@@ -562,7 +573,7 @@ class CIM_AlertIndication : CIM_ProcessIndication {
             "Login Attempts Failed", "Software Virus Detected", 
             "Hardware Security Breached", "Denial of Service Detected", 
             "Security Credential MisMatch", "Unauthorized Access", 
-		"Alarm Received", "Loss of Pointer", "Payload Mismatch", 
+            "Alarm Received", "Loss of Pointer", "Payload Mismatch", 
             "Transmission Error", "Excessive Error Rate", "Trace Problem", 
             "Element Unavailable", "Element Missing", "Loss of Multi Frame", 
             "Broadcast Channel Failure", "Invalid Message Received", 
@@ -577,7 +588,7 @@ class CIM_AlertIndication : CIM_ProcessIndication {
             "Commercial Power Problem", "Fan Failure", 
             "Engine Failure", "Sensor Failure", "Fuse Failure", 
             "Generator Failure", "Low Battery", "Low Fuel", "Low Water", 
-		"Explosive Gas", "High Winds", "Ice Buildup", "Smoke", 
+            "Explosive Gas", "High Winds", "Ice Buildup", "Smoke", 
             "Memory Mismatch", "Out of CPU Cycles", 
             "Software Environment Problem", "Software Download Failure", 
             "Element Reinitialized", "Timeout", "Logging Problems", 
@@ -591,17 +602,18 @@ class CIM_AlertIndication : CIM_ProcessIndication {
             "Non-Repudiation Failure", "Out of Hours Activity", 
             "Out of Service", "Procedural Error", "Unexpected Information"}, 
         MappingStrings {"Recommendation.ITU|X733.Probable cause",
-			"Recommendation.ITU|M3100.probableCause",
-			"ITU-IANA-ALARM-TC"},
-	ModelCorrespondence {"CIM_AlertIndication.ProbableCauseDescription",
-			    "CIM_AlertIndication.EventID",
-			    "CIM_AlertIndication.EventTime"} ]
+           "Recommendation.ITU|M3100.probableCause",
+           "ITU-IANA-ALARM-TC"},
+        ModelCorrespondence {
+           "CIM_AlertIndication.ProbableCauseDescription",
+           "CIM_AlertIndication.EventID", 
+           "CIM_AlertIndication.EventTime"} ]
     uint16 ProbableCause;
 
     [Description (
-	"Provides additional information related to the "
+        "Provides additional information related to the "
         "ProbableCause."), 
-	ModelCorrespondence {"CIM_AlertIndication.ProbableCause"} ]
+        ModelCorrespondence {"CIM_AlertIndication.ProbableCause"} ]
     string ProbableCauseDescription;
 
     [Description (
@@ -640,24 +652,25 @@ class CIM_AlertIndication : CIM_ProcessIndication {
         ModelCorrespondence {"CIM_AlertIndication.ProbableCause"} ] 
     datetime EventTime; 
 
-    [Experimental, MaxLen (256), Description ("The scoping System's " 
-        "CreationClassName for the Provider generating this " 
-        "Indication.") ] 
+    [Experimental, MaxLen (256), Description (
+        "The scoping System's CreationClassName for the Provider "
+        "generating this Indication.") ] 
     string SystemCreationClassName; 
 
-    [Experimental, MaxLen (256), Description ("The scoping System's " 
-        "Name for the Provider generating this Indication.") ] 
+    [Experimental, MaxLen (256), Description (
+        "The scoping System's Name for the Provider generating "
+        "this Indication.") ] 
     string SystemName; 
 
-    [Experimental, MaxLen (256), Description ("The name of the Provider " 
-        "generating this Indication.") ] 
+    [Experimental, MaxLen (256), Description (
+        "The name of the Provider generating this Indication.") ] 
     string ProviderName; 
 };
 
 
-//====================================================================
-//  CIM_ThresholdIndication
-//====================================================================
+// ====================================================================
+// ThresholdIndication
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
      "A subclass of CIM_AlertIndications carrying additional threshold "
      "information related to the notification. This subclass is used "
@@ -666,32 +679,35 @@ class CIM_AlertIndication : CIM_ProcessIndication {
 class CIM_ThresholdIndication : CIM_AlertIndication {
 
     [Description (
-      "A string describing the threshold or naming the property that "
-      "represents the threshold, if modeled in the CIM hierarchy. In "
-      "the latter case, the value should be written as <schema name>_"
-      "<class name>.<property name>."), 
-     MappingStrings {"Recommendation.ITU|X733.Threshold information"} ]
+        "A string describing the threshold or naming the property that "
+        "represents the threshold, if modeled in the CIM hierarchy. In "
+        "the latter case, the value should be written as <schema name>_"
+        "<class name>.<property name>."), 
+        MappingStrings {
+           "Recommendation.ITU|X733.Threshold information"} ]
     string ThresholdIdentifier;
 
     [Description (
-      "A string holding the current value of the threshold.  This is "
-      "modeled as a string for universal mapping, similar to the "
-      "CIM_Sensor properties in the Device Model."),
-     MappingStrings {"Recommendation.ITU|X733.Threshold information"} ]
+        "A string holding the current value of the threshold.  This is "
+        "modeled as a string for universal mapping, similar to the "
+        "CIM_Sensor properties in the Device Model."),
+        MappingStrings {
+           "Recommendation.ITU|X733.Threshold information"} ]
     string ThresholdValue;
 
     [Description (
-      "A string holding the current reading value that exceeds the "
-      "threshold.  This is modeled as a string for universal mapping, "
-      "similar to the CIM_Sensor properties in the Device Model."),
-     MappingStrings {"Recommendation.ITU|X733.Threshold information"} ]
+        "A string holding the current reading value that exceeds the "
+        "threshold.  This is modeled as a string for universal mapping, "
+        "similar to the CIM_Sensor properties in the Device Model."),
+        MappingStrings {
+           "Recommendation.ITU|X733.Threshold information"} ]
     string ObservedValue;
 };
 
 
-//====================================================================
-//  CIM_AlertInstIndication
-//====================================================================
+// ====================================================================
+// AlertInstIndication
+// ====================================================================
 [Indication, Version("2.6.0"), Description (
      "A subclass of CIM_AlertIndication that embeds a CIM_Inst"
      "Indication. It is used when adding AlertIndication data to a "
@@ -699,25 +715,24 @@ class CIM_ThresholdIndication : CIM_AlertIndication {
 class CIM_AlertInstIndication : CIM_AlertIndication {
 
     [Override ("AlertType"), Description (
-      "The primary classification of the Indication, defaulted "
-      "to 7, \"Model Change\", for this class. This is done "
-      "because: 1) the primary purpose of AlertInstIndication is "
-      "to add Alert data to a LifeCycle Indication; and 2) LifeCycle "
-      "Indications deal with 'model changes'.") ]
+        "The primary classification of the Indication, defaulted "
+        "to 7, \"Model Change\", for this class. This is done "
+        "because: 1) the primary purpose of AlertInstIndication is "
+        "to add Alert data to a LifeCycle Indication; and 2) LifeCycle "
+        "Indications deal with 'model changes'.") ]
     uint16 AlertType = 7;
 
-    [EmbeddedObject, Required, 
-     Description (
-      "Embeds the InstIndication that is part of this Alert"
-      "Indication. Only the properties selected by the Indication"
-      "Filter's Query are included.") ]
+    [EmbeddedObject, Required, Description (
+        "Embeds the InstIndication that is part of this Alert"
+        "Indication. Only the properties selected by the Indication"
+        "Filter's Query are included.") ]
     string IndObject;
 };
 
 
-//====================================================================
-//  CIM_IndicationFilter
-//====================================================================
+// ====================================================================
+// IndicationFilter
+// ====================================================================
 [Version("2.6.0"), Description (
     "CIM_IndicationFilter defines the criteria for generating an "
     "Indication and what data should be returned in the Indication. "
@@ -779,9 +794,9 @@ class CIM_IndicationFilter: CIM_ManagedElement {
 };
 
 
-//====================================================================
-//  CIM_IndicationHandler
-//====================================================================
+// ====================================================================
+// IndicationHandler
+// ====================================================================
 [Abstract, Version("2.7.0"), Description (
     "CIM_IndicationHandler is an abstract superclass describing how "
     "an Indication is to be processd/delivered/'handled'. This may "
@@ -844,7 +859,7 @@ class CIM_IndicationHandler: CIM_ManagedElement {
         ValueMap {"1", "2", "3"}, 
         Values {"Other", "Permanent", "Transient"},
         ModelCorrespondence {
-         "CIM_IndicationHandler.OtherPersistenceType"} ]
+           "CIM_IndicationHandler.OtherPersistenceType"} ]
     uint16 PersistenceType;
 
     [Experimental, Description (
@@ -858,9 +873,9 @@ class CIM_IndicationHandler: CIM_ManagedElement {
 };
 
 
-//====================================================================
-//  CIM_IndicationHandlerCIMXML
-//====================================================================
+// ====================================================================
+// IndicationHandlerCIMXML
+// ====================================================================
 [Version("2.6.0"), Description (
     "CIM_IndicationHandlerCIMXML describes the destination for "
     "Indications to be delivered via CIM-XML.") ]
@@ -868,14 +883,15 @@ class CIM_IndicationHandlerCIMXML : CIM_IndicationHandler {
 
     [Required, Description (
         "The destination URL to which CIM-XML Indication messages "
-        "are to be delivered. The scheme prefix is implied and is not "
-        "required, but must be 'http:' if specified.") ]
+        "are to be delivered. The scheme prefix MUST be consistent "
+        "with the DMTF CIM-XML Specifications. If a scheme prefix "
+        "is not specified, the scheme \"http:\" MUST be assumed.") ]
     string Destination;
 };
 
 
 // ===================================================================
-// CIM_IndicationSubscription
+// IndicationSubscription
 // ===================================================================
 [Association, Version("2.7.0"), Description (
     "CIM_IndicationSubscription describes a flow of Indications. "
@@ -889,13 +905,13 @@ class CIM_IndicationHandlerCIMXML : CIM_IndicationHandler {
 class CIM_IndicationSubscription {
 
     [Key, Description (
-      "The Filter that defines the criteria and data of the possible "
-      "Indications of this subscription.") ]
+        "The Filter that defines the criteria and data of the "
+        "possible Indications of this subscription.") ]
     CIM_IndicationFilter REF Filter;
 
     [Key, Description (
-      "The Handler addressing delivery of the possible Indications of "
-      "this subscription.") ]
+        "The Handler addressing delivery of the possible Indications "
+        "of this subscription.") ]
     CIM_IndicationHandler REF Handler;
 
     [Experimental, Description (
@@ -968,15 +984,14 @@ class CIM_IndicationSubscription {
         Units ("Seconds") ]
     uint64 SubscriptionDuration;
 
-    [Experimental, Write(false), Description (
+    [Experimental, Write (false), Description (
         "SubscriptionStartTime is the time the subscription was "
-        "started. The value of this property is based on "
-        "the notion of date and time of the Managed "
-        "System Element running the Indication processing " 
-        "subcomponents.") ]
+        "started. The value of this property is computed based on "
+        "the notion of date and time of the ManagedSystemElement "
+        "running the Indication processing subcomponents.") ]
     datetime SubscriptionStartTime;
 
-    [Experimental, Write(false), Description (
+    [Experimental, Write (false), Description (
         "SubscriptionTimeRemaining is a computed value that"
         "provides a snapshot of the time remaining in the"
         "Subscription."), Units ("Seconds") ]
@@ -1023,7 +1038,7 @@ class CIM_IndicationSubscription {
     uint16 RepeatNotificationPolicy;
 
     [Experimental, Description (
-	"A string defining \"Other\" "
+        "A string defining \"Other\" "
         "values for RepeatNotificationPolicy.  This value MUST "
         "be set to a non NULL value when RepeatNotificationPolicy "
         "is set to a value of 1 (\"Other\"). For all other values, "
@@ -1031,9 +1046,9 @@ class CIM_IndicationSubscription {
     string OtherRepeatNotificationPolicy;
 
     [Experimental, Description (
-	"Defines the time interval for the repeat " 
+        "Defines the time interval for the repeat " 
         "notification policy calculation."),
-      Units ("Seconds") ]
+        Units ("Seconds") ]
     uint64 RepeatNotificationInterval;
 
     [Experimental, Description (
@@ -1043,10 +1058,11 @@ class CIM_IndicationSubscription {
     uint64 RepeatNotificationGap;
 
     [Experimental, Description (
-	"Defines the count property for the repeat " 
+        "Defines the count property for the repeat " 
         "notification policy calculation.") ] 
     uint16 RepeatNotificationCount;
 };
+
 
 // ==================================================================
 // end of file

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Storage Extents 2.7
+// Title:       Device Storage Extents 2.7
 // Filename:    Device27_StorgaeExtents.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,24 +42,22 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for modeling
-//              a storage hierarchy (extents, volumes, partitions, etc.).
+//              are related to LogicalDevices. This file describes 
+//              the modeling of storage hierarchies (extents, 
+//              volumes, partitions, etc.).
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
 // CR722 - Add ProtectedExtentBasedOn, CompositeExtent, and 
 //         CompositeExtentBasedOn
-//
+// CR882 - Deprecate Snapshot and SnapshotOfExtent. Therefore moved
+//         definitions to SccExtents.mof
+// CR884 - Move RAID centric properties from StorageExtent to 
+//         StorageVolume
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -133,6 +131,10 @@ class CIM_RealizedOnSide : CIM_RealizesExtent {
         "The PhysicalMedia on which the Extent is realized.") ]
     CIM_PhysicalMedia REF Antecedent;
     
+    [Override ("Dependent"), Description (
+        "The StorageExtent that is located on the Component.") ]
+    CIM_StorageExtent REF Dependent;
+
     [Description (
         "An enumeration expressing on which 'Side' the Extent is "
         "realized. Since sides can be named by various schemes (0/1 or "
@@ -147,7 +149,7 @@ class CIM_RealizedOnSide : CIM_RealizesExtent {
 // ===================================================================
 // StorageVolume 
 // ===================================================================
-[Version ("2.6.0"), Description (
+[Version ("2.7.0"), Description (
     "A StorageVolume is an Extent that is presented to the Operating"
     "System (for example, by a hardware RAID cabinet), to a File"
     "System (for example, by a software volume manager) or to another "
@@ -155,6 +157,22 @@ class CIM_RealizedOnSide : CIM_RealizesExtent {
     "Groups. They are directly Realized in hardware or are the end "
     "result of assembling lower level Extents.") ]
 class CIM_StorageVolume : CIM_StorageExtent {
+    
+    [Experimental, Description (
+        "Indicates whether or not there exists no single point of failure.")]
+    boolean NoSinglePointOfFailure;
+
+    [Experimental, Description (
+        "Number of complete copies of data maintained.")]
+    uint16 DataRedundancy;
+
+    [Experimental, Description (
+        "How many disk spindles can fail without data loss.")]
+    uint16 SpindleRedundancy;
+
+    [Experimental, MinValue (1), MaxValue (100), Description (
+        "Current value for Delta reservation. ") ]
+    uint16 DeltaReservation;
 };
 
 
@@ -168,7 +186,7 @@ class CIM_StorageVolume : CIM_StorageExtent {
     "an application.  This class is a common superclass for Disk and "
     "TapePartions. Partitions are directly realized by Physical"
     "Media (indicated by the RealizesExtent association) or built "
-    "on StorageVolumes (indicated by the BasedOn association.") ] 
+    "on StorageVolumes (indicated by the BasedOn association).") ] 
 class CIM_MediaPartition : CIM_StorageExtent {
 
     [Description (
@@ -196,7 +214,7 @@ class CIM_MediaPartition : CIM_StorageExtent {
     [Description (
         "A free-form string describing the algorithm used to "
         "define the Partition Signature. The value of this property "
-        "is dependent on the Signature's State. "),
+        "is dependent on the Signature's State."),
         ModelCorrespondence {"CIM_MediaPartition.Signature", 
             "CIM_MediaPartition.SignatureState"} ]
     string SignatureAlgorithm;
@@ -458,7 +476,11 @@ class CIM_LogicalDiskBasedOnVolume : CIM_LogicalDiskBasedOnExtent {
 
     [Override ("Antecedent"), Max (1), Description (
         "The StorageVolume.") ]
-    CIM_StorageVolume REF Antecedent; 
+    CIM_StorageVolume REF Antecedent;
+
+    [Override ("Dependent"), Description (
+        "The LogicalDisk which is built on the StorageExtent.") ]
+    CIM_LogicalDisk REF Dependent;
 };
 
 
@@ -484,75 +506,10 @@ class CIM_LogicalDiskBasedOnPartition : CIM_LogicalDiskBasedOnExtent {
     [Override ("Antecedent"), Max (1), Description (
         "The DiskPartition.") ]
     CIM_DiskPartition REF Antecedent;
-};
-
-
-// ===================================================================
-// Snapshot 
-// ===================================================================
-[Version ("2.6.0"), Description (
-    "The Snapshot class is an optional construct. It can be "
-    "used to represent an Extent that contains a full copy of "
-    "another Extent, or the changes to that Extent when performing "
-    "a delta-based (delta before or delta after) copy. \n"
-    "Snapshot's definition in CIM is not equivalent to the act "
-    "of creating a volume or file-based snapshot, or a point in "
-    "time copy. It is at a much lower level and represents the "
-    "use of storage to hold a copied image of an Extent, or to hold "
-    "changes to an Extent.  Use of the Snapshot object when making "
-    "a full copy is only recommended if the purpose is to describe "
-    "the existence of a copy. (This use will be very infrequent.) "
-    "The problem with describing an Extent solely as a 'snapshot' "
-    "is that when the snapshot/copy is broken, the object must be "
-    "destroyed. Typically, this object still holds valid data, and "
-    "would have to be reinstantiated. If the 'full copy' object "
-    "is to be treated as a StorageVolume or more general Extent, "
-    "then it should be modeled as such from the beginning - "
-    "i.e., not as an instance of Snapshot but as an instance of a "
-    "generic StorageExtent or StorageVolume. In this case, the "
-    "Synchronized association would be used to describe that one "
-    "StorageExtent is synchronized with another. \n"
-    "When describing a delta-based snapshot/point in time copy, "
-    "the Snapshot object represents the store holding the before/after "
-    "image changes to the original Extent. For example, when doing a "
-    "'delta before' Snapshot, the resultant target would be modeled "
-    "as a StorageExtent that is BasedOn the original Extent and the "
-    "instance of Snapshot (that holds the changes to the original "
-    "Extent).") ]
-class CIM_Snapshot : CIM_StorageExtent {
-
-    [Description (
-        "True indicates that the snapshot is synced.") ]
-    boolean IsSynced;
-
-    [Description (
-        "The time stamp indicating when the sync occurred.") ]
-    datetime SyncTime;
-};
-
-
-// ===================================================================
-// SnapshotOfExtent
-// ===================================================================
-[Association, Version ("2.6.0"), Description (
-    "SnapshotOfExtent is an association between an Extent and "
-    "its Snapshot. This relationship is made explicit in this "
-    "association.") ]
-class CIM_SnapshotOfExtent : CIM_Dependency {
-
-    [Override ("Antecedent"), Max (1), Description (
-        "The StorageExtent.") ]
-    CIM_StorageExtent REF Antecedent;
 
     [Override ("Dependent"), Description (
-        "The Snapshot.") ]
-    CIM_Snapshot REF Dependent;
-
-    [Description ("The type of snapshot."), 
-        ValueMap {"0", "1", "2", "3", "4"},  
-        Values {"Other", "Unknown", "Copy", "Before Delta", 
-            "After Delta"} ]
-    uint16 SnapshotType;
+        "The LogicalDisk which is built on the StorageExtent.") ]
+    CIM_LogicalDisk REF Dependent;
 };
 
 
@@ -648,16 +605,15 @@ class CIM_RealizesDiskPartition : CIM_RealizesExtent {
     "Protected StorageExtents map to an underlying "
     "StorageExtent. This mapping includes information about "
     "the placement of check data on the underlying extent. "
-    "The mapping is made explicit in this association.")] 
+    "The mapping is made explicit in this association.") ] 
 class CIM_ProtectedExtentBasedOn : CIM_BasedOn {
 
     [Override ("Antecedent"), Description (
-        "The underlying StorageExtent.")]
+        "The underlying StorageExtent.") ]
     CIM_StorageExtent REF Antecedent;
 
     [Override ("Dependent"), Description (
-        "The Protected Space is built on this StorageExtent.  It "
-        "is also a StorageExtent.")]
+        "The Protected Space is built on this StorageExtent.") ]
     CIM_StorageExtent REF Dependent;
 
     [Override ("StartingAddress"), Description (
@@ -665,40 +621,45 @@ class CIM_ProtectedExtentBasedOn : CIM_BasedOn {
         "StorageExtent from which this protected StorageExtent is "
         "derived. In SCC, this is equivalent to the START LBA_P "
         "field in the Redundancy Group P_Extent Descriptor."),
-        MappingStrings {"MIF.DMTF|Physical Extent|001.2"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.2"} ]
     uint64 StartingAddress;
 
-    [Description ("Limited by Antecedent->NumberOfBlocks. "
-        "but is included explicitly to provide for the DMTF "
+    [Description (
+        "The size of the protected space. Note that this is "
+        "limited by the Antecedent->NumberOfBlocks, but "
+        "is included explicitly to provide for the DMTF "
         "MIF mapping. In SCC, this is equivalent to the "
         "NUMBER OF LBA_P(s) field in the Redundancy Group "
         "P_Extent Descriptor."),
         ModelCorrespondence {"CIM_StorageExtent.NumberOfBlocks"},
-        MappingStrings {"MIF.DMTF|Physical Extent|001.3"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.3"} ]
     uint64 NumberOfBlocks;
 
-    [Description ("Limited by Antecedent->BlockSize. "
-        "In SCC, this is equivalent to the NUMBER OF BYTES "
-        "PER LBA_P field in the Redundancy Group P_Extent Descriptor."), 
+    [Description (
+        "The block size of the protected space. Note that this "
+        "is limited by the Antecedent->BlockSize. In SCC, "
+        "this is equivalent to the NUMBER OF BYTES PER LBA_P "
+        "field in the Redundancy Group P_Extent Descriptor."), 
         ModelCorrespondence {"CIM_StorageExtent.BlockSize"},
         MappingStrings {"MIF.DMTF|Physical Extent|001.4"},
         Units ("Bytes") ]
     uint64 BlockSize;
 
-    [Description ("Number of bytes of user data to skip before "
+    [Description (
+        "Number of bytes of user data to skip before "
         "starting the check data interleave."),
         Units ("Bytes"),
-        MappingStrings {"MIF.DMTF|Physical Extent|001.6"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.6"} ]
     uint64 UnitsBeforeCheckDataInterleave;
 
     [Description ("Number of bytes to be reserved for check data."),
         Units ("Bytes"), 
-        MappingStrings {"MIF.DMTF|Physical Extent|001.7"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.7"} ]
     uint64 UnitsOfCheckData;
 
     [Description ("Number of bytes to be reserved for user data."),
         Units ("Bytes"),
-        MappingStrings {"MIF.DMTF|Physical Extent|001.8"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.8"} ]
     uint64 UnitsOfUserData;
 
 };
@@ -715,30 +676,33 @@ class CIM_ProtectedExtentBasedOn : CIM_BasedOn {
     "blocks. CompositeExtents may overlap, however, the underlying "
     "StorageExtents within the overlap shall not contain any "
     "check data. Distribution of check data may be specified using "
-    "the CompositeExtentBasedOn association")] 
+    "the CompositeExtentBasedOn association.") ] 
 class CIM_CompositeExtent : CIM_StorageExtent {
 
     [Override ("NumberOfBlocks"), 
-        MappingStrings {"MIF.DMTF|Volume Set|001.3"}]
+        MappingStrings {"MIF.DMTF|Volume Set|001.3"} ]
     uint64 NumberOfBlocks;
 
-    [Description ("Number of contiguous underlying StorageExtents "
+    [Description (
+        "Number of contiguous underlying StorageExtents "
         "counted before looping back to the first underlying "
         "StorageExtent of the current stripe. It is the number of "
         "StorageExtents forming the user data stripe."),
-        MappingStrings {"MIF.DMTF|Volume Set|001.4"}]
+        MappingStrings {"MIF.DMTF|Volume Set|001.4"} ]
     uint64 ExtentStripeLength;
   
-    [Description ("Number of StorageExtents to stripe as a "
-        "collective set. In SCC, this value is defined as the number "
-        "of stripes to count before continuing to map into the next "
+    [Description (
+        "Number of StorageExtents to stripe as a collective "
+        "set. In SCC, this value is defined as the number of "
+        "stripes to count before continuing to map into the next "
         "contiguous set of Extents, beyond the current stripe."), 
-        MappingStrings {"MIF.DMTF|Volume Set|001.5"}]
+        MappingStrings {"MIF.DMTF|Volume Set|001.5"} ]
     uint64 ExtentInterleaveDepth;
 
 
-    [Description ("True indicates that the data is concatenated "
-        "across the various StorageExtents in the Group.")]
+    [Description (
+        "True indicates that the data is concatenated "
+        "across the various StorageExtents in the Group.") ]
     boolean IsConcatenated;
 };
 
@@ -749,85 +713,91 @@ class CIM_CompositeExtent : CIM_StorageExtent {
 [Association, Experimental, Version ("2.7.0"), Description (
     "This specialization defines how data is striped across "
     "StorageExtents.  Additionally, it includes information on "
-    "distribution of check data so that the usual case RAID devices "
-    "can be created in one step. ")]
+    "distribution of check data so that the 'usual case' RAID "
+    "devices can be created in one step.") ]
 class CIM_CompositeExtentBasedOn : CIM_BasedOn { 
 
-    [Override ("Antecedent"), 
-        Min (1) ]
+    [Override ("Antecedent"), Min (1), Description (
+        "The underlying StorageExtent.") ]
     CIM_StorageExtent REF Antecedent;
 
     [Override ("Dependent"), 
-        Description ("The CompositeExtent which is built on the "
-            "StorageExtent.")]
+        Description (
+            "The CompositeExtent which is built on the "
+            "StorageExtent.") ]
     CIM_CompositeExtent REF Dependent;
 
     [Override ("OrderIndex"), Required, Description (
         "Order matters to CompositeExtents. An example of the use of "
-        "this property is to define a RAID-0 striped array of 3 disks. "
-        "The resultant RAID array is a CompositeExtent that is "
-        "dependent on (CompositeExtentBasedOn) the StorageExtents "
-        "that describe each of the 3 disks. The OrderIndex of each "
-        "CompositeExtentBasedOn association from the disk Extents "
-        "to the RAID array could be specified as 1, 2 and 3 to "
-        "indicate the order in which the disk Extents are used to "
-        "access the RAID data."),
-        MappingStrings {"MIF.DMTF|Protected Space Extent|001.1"}]
+        "this property is when defining a RAID-0 striped array of "
+        "3 disks. The resultant RAID array is a CompositeExtent that "
+        "is dependent on (as described by CompositeExtentBasedOn) the "
+        "StorageExtents that represent each of the 3 disks. The "
+        "OrderIndex of each CompositeExtentBasedOn association from "
+        "the disk Extents to the RAID array could be specified as 1, "
+        "2 and 3 to indicate the order in which the disk Extents are "
+        "used to access the RAID data."),
+        MappingStrings {"MIF.DMTF|Protected Space Extent|001.1"} ]
     uint16 OrderIndex;
 
     [Description (
         "True if logical blocks in the underlying StorageExtents are "
         "mapped in decrementing order. This property corresponds to "
         "the INCDEC value in the SCC-2 Volume Set PS_Extent "
-        "Descriptor.")]
+        "Descriptor.") ]
     boolean LBAsMappedByDecrementing;
 
-    [Description ("True if the logical block mapping algorithm "
-        "includes check data bytes. This property corresponds to the "
+    [Description (
+        "True if the logical block mapping algorithm includes "
+        "check data bytes. This property corresponds to the "
         "NOCHKSKIP attribute in the SCC-2 Volume Set PS_Extent "
-        "Descriptor.")]
+        "Descriptor.") ]
     boolean LBAMappingIncludesCheckData;
 
-    [Description ("The total number of blocks that will be consumed "
-        "on the dependent Extent. Limited by Antecedent->"
-        "NumberOfBlocks. But is included explicitly to provide for "
+    [Description (
+        "The total number of blocks that will be consumed on "
+        "the Dependent Extent. This is limited by the Antecedent's "
+        "NumberOfBlocks, but is included explicitly to provide for "
         "the DMTF MIF mapping. In SCC, this is equivalent to the "
         "NUMBER OF LBA_PS(s) field in the Volume Set PS_Extent "
         "Descriptor."),
         ModelCorrespondence {"CIM_StorageExtent.NumberOfBlocks"},
-        MappingStrings {"MIF.DMTF|Protected Space Extent|001.3"}]
+        MappingStrings {"MIF.DMTF|Protected Space Extent|001.3"} ]
     uint64 NumberOfBlocks;
 
-    [Description ("Limited by Antecedent->BlockSize. In SCC, this "
-        "is equivalent to the NUMBER OF BYTES PER LBA_PS field in the "
-        "Redundancy Group P_Extent Descriptor."), 
+    [Description (
+        "The Dependent's BlockSize is limited by the Antecedent's. "
+        "In SCC, this is equivalent to the NUMBER OF BYTES PER "
+        "LBA_PS field in the RedundancyGroup P_Extent Descriptor."), 
         ModelCorrespondence {"CIM_StorageExtent.BlockSize"},       
         MappingStrings {"MIF.DMTF|Protected Space Extent|001.4"},
         Units ("Bytes") ]
     uint64 BlockSize;
 
-    [Description ("Number of bytes which form the stripe size for "
-        "this StorageExtent.  If the CompositeExtent is concatenated "
-        "instead of stripped, then UserDataStripeDepth should be "
-        "set to zero."),
+    [Description (
+        "Number of bytes which form the stripe size for the "
+        "Dependent StorageExtent. If the CompositeExtent is "
+        "concatenated instead of striped, then UserDataStripeDepth "
+        "should be set to zero."),
         Units ("Bytes"),
-        MappingStrings {"MIF.DMTF|Protected Space Extent|001.6"}]
+        MappingStrings {"MIF.DMTF|Protected Space Extent|001.6"} ]
     uint64 UserDataStripeDepth;
 
-    [Description ("Number of bytes of user data to skip before "
+    [Description (
+        "Number of bytes of user data to skip before "
         "starting the check data interleave."),
         Units ("Bytes"),
-        MappingStrings {"MIF.DMTF|Physical Extent|001.6"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.6"} ]
     uint64 UnitsBeforeCheckDataInterleave;
 
     [Description ("Number of bytes to be reserved for check data."),
         Units ("Bytes"), 
-        MappingStrings {"MIF.DMTF|Physical Extent|001.7"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.7"} ]
     uint64 UnitsOfCheckData;
 
     [Description ("Number of bytes to be reserved for user data."),
         Units ("Bytes"),
-        MappingStrings {"MIF.DMTF|Physical Extent|001.8"}]
+        MappingStrings {"MIF.DMTF|Physical Extent|001.8"} ]
     uint64 UnitsOfUserData;
 };
 

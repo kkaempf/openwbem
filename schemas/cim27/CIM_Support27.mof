@@ -3,7 +3,7 @@
 // Filename:    CIM_Support27.MOF
 // Version:     2.7.0 (CIM), 1.3 (Exchange Standard)
 // Status:      Preliminary
-// Date:        06/10/2002
+// Date:        07/07/2002
 // ===================================================================
 // Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -45,10 +45,14 @@
 //          for the exchange of knowledge.  The Service Incident Exchange
 //          Standard (SIS) adds a transaction model to SES.
 //
-//		The object classes below are listed in an order that
+//          The object classes below are listed in an order that
 //          avoids forward references. Required objects, defined 
 //          by other working groups, are omitted.
 // ===================================================================
+// 07/07/2002   Re-declared the inherited Min (1) qualifier on Contact
+//              Organization and ContactPerson; Repeated Antecedent 
+//              references where inherited (for clarification purposes
+//              only - no semantic change)
 // 05/09/2002   Version 1.4
 //              CR836: Cleaned up formatting, Descriptions and MOF errors
 // 03/19/2002   Version 1.3
@@ -76,8 +80,8 @@
 //                PRS_Statement.Relevance 
 //              Broke long lines over two lines
 // 08/08/2000   Version 1.2i  CR525
-//              Added missing Association qualifier to both PRS_ContactOrganization and
-//              PRS_ContactPerson.
+//              Added missing Association qualifier to both PRS_ContactOrganization 
+//              and PRS_ContactPerson.
 // 05/02/2000   Version 1.2h
 //              Converted all CIM_Dependency children to use original property names:
 //                Antecedent and Dependent
@@ -108,11 +112,12 @@
 //                  
 // ==================================================================
 
+#pragma Locale ("en-US")
+
 
 // ==================================================================
-// Pragmas
+// Compile prerequisite:  Core MOF
 // ==================================================================
-#pragma locale ("en_US")
 
 
 // ================================================================== 
@@ -327,6 +332,10 @@ class PRS_SolutionHasElement : CIM_Dependency {
       "Solution.") ]
 class PRS_SolutionReference : PRS_SolutionHasElement {
 
+    [Override ("Antecedent"), Aggregate, Min (1), 
+     Description ("The PRS_Solution root object of the Solution.") ]
+    PRS_Solution REF Antecedent;
+
     [Override ("Dependent"), 
      Description ("The PRS_Reference aggregated into the Solution.") ]
     PRS_Reference REF Dependent;
@@ -340,6 +349,10 @@ class PRS_SolutionReference : PRS_SolutionHasElement {
     Description (
       "PRS_SolutionProblem aggregates a Problem into a Solution.") ]
 class PRS_SolutionProblem : PRS_SolutionHasElement {
+
+    [Override ("Antecedent"), Aggregate, Min (1), 
+     Description ("The PRS_Solution root object of the Solution.") ]
+    PRS_Solution REF Antecedent;
 
     [Override ("Dependent"), 
      Description ("The PRS_Problem aggregated into the Solution.") ]
@@ -355,6 +368,10 @@ class PRS_SolutionProblem : PRS_SolutionHasElement {
       "PRS_SolutionResolution aggregates a Resolution into a "
       "Solution.") ]
 class PRS_SolutionResolution : PRS_SolutionHasElement {
+
+    [Override ("Antecedent"), Aggregate, Min (1), 
+     Description ("The PRS_Solution root object of the Solution.") ]
+    PRS_Solution REF Antecedent;
 
     [Override ("Dependent"), 
      Description ("The PRS_Solution aggregated into the Solution.") ]
@@ -871,7 +888,7 @@ class PRS_Administrative : PRS_ExchangeElement {
       "and is not to be released externally. If 'Internal', information "
       "is for internal use only. If 'Partner', information is only "
       "available to contracted partners. If 'Public', information is "
-      "available to anyone.")	]
+      "available to anyone.")   ]
     uint8 Distribution;
 
     [Description ("Language used in the associated information.") ]
@@ -1120,7 +1137,11 @@ class PRS_ContactContactItem : CIM_Dependency {
     Description ("Associates PRS_Contact and PRS_Organization.") ]
 class PRS_ContactOrganization : PRS_ContactContactItem {
 
-    [Override ("Dependent"), 
+    [Override ("Antecedent"), Min (1), 
+     Description ("The PRS_Contact.") ]
+    PRS_Contact REF Antecedent;
+
+    [Override ("Dependent"), Min (1),
      Description ("The PRS_Organization.") ]
     PRS_Organization REF Dependent;
 };
@@ -1133,7 +1154,11 @@ class PRS_ContactOrganization : PRS_ContactContactItem {
     Description ("Associates PRS_Contact and PRS_Person.") ]
 class PRS_ContactPerson : PRS_ContactContactItem {
 
-    [Override ("Dependent"), 
+    [Override ("Antecedent"), Min (1), 
+     Description ("The PRS_Contact.") ]
+    PRS_Contact REF Antecedent;
+
+    [Override ("Dependent"), Min (1), 
      Description ("The PRS_Person.") ]
     PRS_Person REF Dependent;
 };
@@ -1331,7 +1356,7 @@ class PRS_ServiceIncident : PRS_ExchangeElement {
       "The unique identifier for this incident assigned by the "
       "Requester.") ]
     string RequesterID;
-	
+        
     [Description (
       "The unique identifier for this incident assigned by the "
       "Provider.") ]
@@ -1375,7 +1400,7 @@ class PRS_ServiceIncident : PRS_ExchangeElement {
     [ValueMap {"0", "1", "254", "255"},
      Values {"Yes", "No", "Other", "Unknown"}, 
      Description (
-      "Is the Requester entitled to service or not?")	]
+      "Is the Requester entitled to service or not?")   ]
     uint8 Entitled;
 
     [ValueMap {"0", "1", "254", "255"},
@@ -1534,8 +1559,8 @@ class PRS_Activity : PRS_ExchangeElement {
 
     [Deprecated {
       "PRS_Activity.NewKeys",
-	"PRS_Activity.Deleted",
-	"PRS_Activity.Modified"}, 
+      "PRS_Activity.Deleted",
+      "PRS_Activity.Modified"}, 
      Description (
       "The key fields for the objects in the associated Transaction. "
       "The use of this property is deprecated.  The PRS_SISService "
@@ -1724,8 +1749,7 @@ class PRS_SISService : CIM_Service {
       "all other bits in the return value must be zero, indicating "
       "successful completion of the method (or Transaction).") ]
     uint32 StartSISTransaction (
-
-	  [IN, ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
+        [IN, ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
                        "10", "11", "254", "255"},
          Values {"Service_Request", "Entitlement", "Problem_Submittal", 
                  "Accept_Problem", "Problem_Resolution", 
@@ -1736,7 +1760,7 @@ class PRS_SISService : CIM_Service {
                  "Request_Closure", "Other", "Unknown"} ] 
         uint8 TransactionType,
 
-	  [IN] 
+        [IN] 
         PRS_Activity REF ActivityRef,
 
         [IN, OUT] 

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Infiniband 2.7
+// Title:       Device Infiniband 2.7
 // Filename:    Device27_IB.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/17/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,26 +42,19 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for Infiniband
-//              devices.
+//              are related to LogicalDevices. This file defines the 
+//              classes to manage Infiniband devices.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
 // CR631 - Add IBPortStatistics
 // CR633 - Add IBPort
 // CR783 - Add IBPortController
 //       - Modify IBPort
-//
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -156,7 +149,7 @@ class CIM_IBPortController : CIM_PortController {
 // ===================================================================
 // IBSubnetManager
 // =================================================================== 
-[Description (
+[Version("2.7.0"), Description (
     "An Infiniband Subnet Manager (SM) is an entity responsible "
     "for configuring and managing an IB subnet. It uses Subnet "
     "Management Agents (SMA) to access and manage individual "
@@ -199,62 +192,55 @@ class CIM_IBSubnetManager : CIM_Service {
     "the IBPort.") ]
 class CIM_IBPortStatistics : CIM_NetworkPortStatistics {
       
-    [Description (
+    [Counter, Description (
         "Total number of symbol errors detected on one or more "
         "VLs."),
-        Mappingstrings {"MAD.IBTA | PortCounters | SymbolErrorCounter"},
-        Counter ]
+        Mappingstrings {"MAD.IBTA | PortCounters | SymbolErrorCounter"} ]
     uint16 SymbolErrorCounter;
     
-    [Description (
+    [Counter, Description (
         "Total number of times the Port Training state machine "
         "has successfully completed the link error recovery "
         "process."), 
         Mappingstrings {
-            "MAD.IBTA | PortCounters | LinkErrorRecoveryCounter"},
-        Counter ]
+            "MAD.IBTA | PortCounters | LinkErrorRecoveryCounter"} ]
     uint16 LinkErrorRecoveryCounter;
     
-    [Description (
+    [Counter, Description (
         "Total number of times the Port Training state machine "
         "has failed the link error recovery process and downed "
         "the link."), 
-        Mappingstrings {"MAD.IBTA | PortCounters | LinkDownedCounter"},
-        Counter ]
+        Mappingstrings {"MAD.IBTA | PortCounters | LinkDownedCounter"} ]
     uint16 LinkDownedCounter;
     
-    [Description (
+    [Counter, Description (
         "Total number of packets containing an error that were "
         "received on the port."),
-        Mappingstrings {"MAD.IBTA | PortCounters | PortRcvErrors"}, 
-        Counter ]
+        Mappingstrings {"MAD.IBTA | PortCounters | PortRcvErrors"} ]
     uint16 PortRcvErrors;
     
-    [Description (
+    [Counter, Description (
         "Total number of packets marked with the EBP delimiter "
         "received on the port."), 
         Mappingstrings {
-            "MAD.IBTA | PortCounters | PortRcvRemotePhysicalErrors"},
-        Counter ]
+            "MAD.IBTA | PortCounters | PortRcvRemotePhysicalErrors"} ]
     uint16 PortRcvRemotePhysicalErrors;
       
-    [Description (
+    [Counter, Description (
         "Total number of packets received on the port that "
         "were discarded because they could not be forwarded "
         "by the switch relay."), 
         Mappingstrings {
-            "MAD.IBTA | PortCounters | PortRcvSwitchRelayErrors"},
-       Counter ]
+            "MAD.IBTA | PortCounters | PortRcvSwitchRelayErrors"} ]
     uint16 PortRcvSwitchRelayErrors;
       
-    [Description (
+    [Counter, Description (
         "Total number of outbound packets discarded by the "
         "port because the port is down or congested."), 
-        Mappingstrings {"MAD.IBTA | PortCounters | PortXmitDiscards"},
-        Counter ]
+        Mappingstrings {"MAD.IBTA | PortCounters | PortXmitDiscards"} ]
     uint16 PortXmitDiscards;
       
-    [Description (
+    [Counter, Description (
         "Total number of packets not transmitted from the port "
         "for any of the following reasons: \n"
         "  - FilterRawOutbound is true and packet is raw \n"
@@ -262,11 +248,10 @@ class CIM_IBPortStatistics : CIM_NetworkPortStatistics {
         "fails partition key check, IP version check, or \n"
         "transport header version check."),
         Mappingstrings {
-            "MAD.IBTA | PortCounters | PortXmitConstraintErrors"}, 
-        Counter ]
+            "MAD.IBTA | PortCounters | PortXmitConstraintErrors"} ]
     uint16 PortXmitConstraintErrors;
  
-    [Description (
+    [Counter, Description (
         "Total number of packets received on the port that are "
         "discarded for any of the following reasons: \n"
         "  - FilterRawInbound is true and packet is raw "
@@ -274,32 +259,28 @@ class CIM_IBPortStatistics : CIM_NetworkPortStatistics {
         "fails partition key check, IP version check, or "
         "transport header version check."),
         Mappingstrings {
-            "MAD.IBTA | PortCounters | PortRcvConstraintErrors"}, 
-        Counter ]
+            "MAD.IBTA | PortCounters | PortRcvConstraintErrors"} ]
     uint16 PortRcvConstraintErrors;
       
-    [Description (
+    [Counter, Description (
         "The number of times that the frequency of packets "
         "containing local physical errors exceeded "
         "the local physical error threshold."),
         Mappingstrings {
-            "MAD.IBTA | PortCounters | LocalLinkIntegrityErrors"}, 
-        Counter ]
+            "MAD.IBTA | PortCounters | LocalLinkIntegrityErrors"} ]
     uint16 LocalLinkIntegrityErrors;
       
-    [Description (
+    [Counter, Description (
         "The number of times that consecutive flow control "
         "update periods had at least one overrun error."),
         Mappingstrings {
-            "MAD.IBTA | PortCounters | ExcessiveBufferOverrunErrors"}, 
-        Counter ]
+            "MAD.IBTA | PortCounters | ExcessiveBufferOverrunErrors"} ]
     uint16 ExcessiveBufferOverrunErrors;
       
-    [Description (
+    [Counter, Description (
         "Number of incoming VL15 packets dropped due to "
         "resource limitations (due to lack of buffers)."),
-        Mappingstrings {"MAD.IBTA | PortCounters | VL15Dropped"}, 
-        Counter ]
+        Mappingstrings {"MAD.IBTA | PortCounters | VL15Dropped"} ]
     uint16 VL15Dropped;
 };
 

@@ -1,9 +1,9 @@
 // ===================================================================
 // Title:       Core Elements 2.7
-// Filename:    Core27_Elements.mof
+// Filename:    Core27_CoreElements.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/13/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,63 +42,65 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Core Model defines basic management concepts. 
-//              This Core file defines the concepts for the top of the
-//              CIM hierarchy (ManagedElement, ManagedSystemElement,
-//              LogicalElement, Systems, Services, and etc.).  Along 
-//              with defining the top associations (Dependency, 
-//              Component, LogicalIdentity, and etc.)
+//              This file defines the concepts for the top of the CIM
+//              object hierarchies (ManagedElement, ManagedSystemElement,
+//              LogicalElement, Systems, Services, etc.) and the 'top'
+//              associations (Dependency, Component, 
+//              LogicalIdentity, ...).
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-// ==================================================================
 // Change Log for v2.7
 // CR641 - Add ConcreteDependency
-// CR643 - Promote Component to ManagedElement
-//       - Add ConcreteComponent.
+// CR643 - Promote Component to ManagedElement, and add 
+//         ConcreteComponent
 // CR660 - Add RemoteServiceAccessPoint and RemotePort
-// CR670 - Promote LogicalIdentity to MamangedElement
-//         Add ConcreteIdentity
+// CR663 - Update the Description of ActiveConnection and some of 
+//         its properties.  Deprecate the properties, TrafficType 
+//         and OtherTrafficDescription 
+// CR670 - Promote LogicalIdentity to ManagedElement, and add
+//         ConcreteIdentity
 // CR671 - Deprecate ProvidesServiceToElement
 //       - Add ServiceAvailableToElement
 //       - Update description for ServiceServiceDependency
 // CR672 - Update description for SystemComponent to clarify its use
 // CR677 - Add the array property OperationalStatus & OtherStatus
 //         Description, and deprecate the existing Status property of
-//         ManagedSystemElement.
-//       - Add the property AutomaticallyStarted and deprecate 
-//         StartMode in Service.
+//         ManagedSystemElement
+//       - Deprecate StartMode in Service
 // CR717 - Clarify description of System.Roles
 // CR747 - Add the Write Qualifier and update description of System.
 //         Roles
 // CR751 - Promote ActiveConnection from ProtocolEndpoint to 
-//         ServiceAccessPoint.
-//       - CR663 - Update the Description of ActiveConnection and 
-//                 some of its properties.  Descriptions to clarify 
-//                 usage.  Also, deprecate the properties TrafficType 
-//                 and OtherTrafficDescription.  
+//         ServiceAccessPoint
 // CR757 - Add EnabledLogicalElement
 //       - Change subclass of System, Service, and ServiceAccessPoint
-//         from LogicalElement to EnabledLogicalElement.
+//         from LogicalElement to EnabledLogicalElement
 //       - Update the descriptions to Service.StartService() and
-//         Service.StopService() to explain the overlap with the
-//         RequestedStatus.
-//       - Do not add Service.AutomaticallyStarted (CR677) and
-//         update the deprecation of Service.StartMode to 
+//         Service.StopService() to explain the overlap with 
+//         RequestedStatus
+//       - Update the deprecation of Service.StartMode to 
 //         EnabledDefault
 // CR758 - Add ElementName to ManagedElement
 // CR764 - Add ServiceAffectsElement
 // CR779 - Extend ManagedSystemElement.OperationalStatus to include
-//         "Completed".
+//         "Completed"
+// CR804 - Update the enumeration for ProtocolEndpoint.ProtocolType
 // CR833 - Extend EnabledLogicalElement.EnabledStatus & .Requested
-//         Status to include "In Test" and "Test" respectively.
+//         Status to include "In Test" and "Test" respectively
 // CR834 - Extend ManagedSystemElement.OperationalStatus to include 
-//         "Aborted", "Dormant", and "Supported Entity in Error".
+//         "Aborted", "Dormant", and "Supported Entity in Error"
+// CR844 - Add PrimaryOwnerName and PrimaryOwnerContact to Service;
+//         Add Write qualifier to the same properties in System
+// CR894 - Clarify the description for System.
+// CR898 - Extend MaxLen qualifier on ManagedSystemElement.Name 
+//         from 256 to 1024 (to match subclassing requriements)
 // ==================================================================
 
 #pragma locale ("en_US")
+
 
 // ==================================================================
 // ManagedElement
@@ -267,12 +269,12 @@ class CIM_LogicalIdentity {
         "role name could not be changed without deprecating the "
         "entire association. This was not deemed necessary just to "
         "correct the role name.") ]
-    CIM_ManagedElement ref SystemElement;
+    CIM_ManagedElement REF SystemElement;
    
     [Key, Description (
         "SameElement represents an alternate aspect of the "
         "ManagedElement.") ]
-    CIM_ManagedElement ref SameElement;
+    CIM_ManagedElement REF SameElement;
 };
 
 
@@ -326,7 +328,7 @@ class CIM_ManagedSystemElement : CIM_ManagedElement {
         MappingStrings {"MIF.DMTF|ComponentID|001.5"} ] 
     datetime InstallDate;
     
-    [MaxLen (256), Description (
+    [MaxLen (1024), Description (
         "The Name property defines the label by which the object is "
         "known. When subclassed, the Name property can be overridden "
         "to be a Key property.") ] 
@@ -438,40 +440,6 @@ class CIM_ManagedSystemElement : CIM_ManagedElement {
 class CIM_LogicalElement : CIM_ManagedSystemElement {
 };
 
-     
-// ==================================================================
-// Synchrononized
-// ==================================================================
-[Association, Version ("2.6.0"), Description (
-    "Indicates that two LogicalElements were aligned or made to "
-    "be equivalent at the specified point in time. If the boolean "
-    "property SyncMaintained is TRUE, then synchronization "
-    "of the Elements is preserved. Both like and unlike objects "
-    "may be synchronized. For example, two WatchDog timers may be "
-    "aligned, or the contents of a LogicalFile may be synchronized "
-    "with the contents of a StorageExtent.") ]
-class CIM_Synchronized {
-      
-    [Key, Description (
-        "SystemElement represents one LogicalElement that is "
-        "synchronized with the entity referenced as SyncedElement.") ]
-    CIM_LogicalElement ref SystemElement;
-    
-    [Key, Description (
-        "SyncedElement represents another LogicalElement that is "
-        "synchronized with the entity referenced as SystemElement.") ]
-    CIM_LogicalElement ref SyncedElement;
-    
-    [Description (
-        "The point in time that the Elements were synchronized.") ]
-    datetime WhenSynced;
-    
-    [Description (
-        "Boolean indicating whether synchronization is "
-        "maintained.") ]
-    boolean SyncMaintained;
-};
-
 
 // ==================================================================
 // EnabledLogicalElement
@@ -488,9 +456,10 @@ class CIM_EnabledLogicalElement : CIM_LogicalElement {
         "or in an enabled (value = 2) or disabled (value = 3) "
         "state.  In various situations, an element that is being "
         "tested is neither enabled or disabled - this is addressed "
-        "by the value \"In Test\" (7). If this property does not "
-        "apply to an instance of EnabledLogicalElement, the value 5 "
-        "(\"Not  Applicable\"), is used."),
+        "by the value \"In Test\" (7). It is possible that a "
+        "particular instance of a LogicalDevice, SAP, etc. may not "
+        "support being enabled/disabled. If this occurs, the value 5 "
+        "(\"Not  Applicable\") is used."),
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"}, 
         Values {"Unknown", "Other", "Enabled", "Disabled", 
             "Shutting Down", "Not Applicable", "Enabled but Offline",
@@ -532,9 +501,212 @@ class CIM_EnabledLogicalElement : CIM_LogicalElement {
     uint16 EnabledDefault = 2;
 };
 
+     
+// ==================================================================
+// Synchrononized
+// ==================================================================
+[Association, Version ("2.6.0"), Description (
+    "Indicates that two LogicalElements were aligned or made to "
+    "be equivalent at the specified point in time. If the boolean "
+    "property SyncMaintained is TRUE, then synchronization "
+    "of the Elements is preserved. Both like and unlike objects "
+    "may be synchronized. For example, two WatchDog timers may be "
+    "aligned, or the contents of a LogicalFile may be synchronized "
+    "with the contents of a StorageExtent.") ]
+class CIM_Synchronized {
+      
+    [Key, Description (
+        "SystemElement represents one LogicalElement that is "
+        "synchronized with the entity referenced as SyncedElement.") ]
+    CIM_LogicalElement REF SystemElement;
+    
+    [Key, Description (
+        "SyncedElement represents another LogicalElement that is "
+        "synchronized with the entity referenced as SystemElement.") ]
+    CIM_LogicalElement REF SyncedElement;
+    
+    [Description (
+        "The point in time that the Elements were synchronized.") ]
+    datetime WhenSynced;
+    
+    [Description (
+        "Boolean indicating whether synchronization is "
+        "maintained.") ]
+    boolean SyncMaintained;
+};
+
 
 // ==================================================================
-//    Service
+// System
+// ==================================================================
+[Abstract, Version ("2.7.0"), Description (
+    "CIM_System represents an entity made up of component "
+    "parts (defined by the SystemComponent relationship), that "
+    "operates as a 'functional whole'. Systems are top level "
+    "objects in the CIM hierarchy, requiring no scoping or weak "
+    "relationships in order to exist and have context. It should "
+    "be reasonable to uniquely name and manage a System at an "
+    "enterprise level. For example, a ComputerSystem is a kind of "
+    "System that can be uniquely named and independently managed "
+    "in an enterprise. However, this is not true for the power "
+    "supply (or the power supply sub-'system') within "
+    "the computer. \n"
+    "\n"
+    "Although a System may be viewed as a Collection, this is "
+    "not the correct model. A Collection is simply a 'bag' "
+    "that 'holds' its members. A System is a higher level "
+    "abstraction, built out of its individual components. It "
+    "is more than a sum of its parts. Note that System is a "
+    "subclass of EnabledLogicalElement which allows the entire "
+    "abstraction to be functionally enabled/disabled - at a higher "
+    "level than enabling/disabling its component parts.") ]
+class CIM_System : CIM_EnabledLogicalElement {
+    
+    [Key, MaxLen (256), Description (
+        "CreationClassName indicates the name of the class or the "
+        "subclass used in the creation of an instance. When used "
+        "with the other key properties of this class, this property "
+        "allows all instances of this class and its subclasses to "
+        "be uniquely identified.") ]
+    string CreationClassName;
+    
+    [Key, MaxLen (256), Override ("Name"), Description (
+        "The inherited Name serves as key of a System instance in " 
+        "an enterprise environment.") ] 
+    string Name;
+    
+    [MaxLen (64), Description (
+        "The System object and its derivatives are Top Level Objects "
+        "of CIM. They provide the scope for numerous components. " 
+        "Having unique System keys is required. A heuristic can be "
+        "defined in individual System subclasses to attempt to always "
+        "generate the same System Name Key. The NameFormat property "
+        "identifies how the System name was generated, using "
+        "the subclass' heuristic.") ] 
+    string NameFormat;
+    
+    [MaxLen (64), Write, Description (
+        "The name of the primary system owner. The system owner "
+        "is the primary user of the system."),
+        MappingStrings {
+            "MIF.DMTF|General Information|001.3"} ]  
+    string PrimaryOwnerName;
+    
+    [MaxLen (256), Write, Description (
+        "A string that provides information on how the primary system "
+        "owner can be reached (e.g. phone number, email address, "
+        "...)."),
+        MappingStrings {
+            "MIF.DMTF|General Information|001.4"} ] 
+    string PrimaryOwnerContact;
+    
+    [Write, Description (
+        "  An array (bag) of strings that specify the administrator"
+        "-defined roles this System plays in the managed environment. "
+        "Examples might be 'Building 8 print server' or 'Boise user "
+        "directories'. A single system may perform multiple roles. \n"
+        "  Note that instrumentation's view of a System's 'roles' is "
+        "defined by instantiating a specific subclass of System and/"
+        "or by properties in a subclass.  For example, a "
+        "ComputerSystem's purpose is defined using the Dedicated and "
+        "OtherDedicatedDescription properties.") ]
+    string Roles[];
+};
+
+
+// ==================================================================
+// SystemComponent
+// ==================================================================
+[Association, Aggregation, Version ("2.7.0"), Description (
+    "CIM_SystemComponent is a specialization of the CIM_Component "
+    "association that establishes 'part of' relationships between "
+    "a System and any ManagedSystemElements of which it is "
+    "composed. \n" 
+    "The use of this association is cautioned - versus the use "
+    "of a subclass such as SystemDevice, or a peer association such "
+    "as HostedService.  This class is very broadly defined which can "
+    "lead to erroneous use.  For example, Access Points that are "
+    "dependent on (and hosted on) a System are NOT Components of the "
+    "System. The System is not made up of any AccessPoint 'parts', "
+    "which is why a Dependency association, HostedAccessPoint, was "
+    "defined.  Similarly, a PhysicalPackage is not a 'part' of a "
+    "System, since the physical element exists independently of any "
+    "internal components, software, etc. In fact, again, a Dependency "
+    "relationship is true - where a ComputerSystem is Dependent on its "
+    "packaging, as described by the ComputerSystemPackage "
+    "association.") ] 
+class CIM_SystemComponent : CIM_Component {
+      
+    [Override ("GroupComponent"), Aggregate, 
+        Description ("The parent System in the Association.") ] 
+    CIM_System REF GroupComponent;
+      
+    [Override ("PartComponent"), Description (
+        "The child element that is a component of a System.") ] 
+    CIM_ManagedSystemElement REF PartComponent;
+}; 
+     
+
+// ==================================================================
+// AdminDomain
+// ==================================================================
+[Version ("2.6.0"), Description (
+    "  This is a special grouping of ManagedSystemElements. The "
+    "grouping is viewed as a single entity, reflecting that all "
+    "of its components are administered similarly - either by "
+    "the same user, group of users or policy. It serves as "
+    "an aggregation point to associate one or more of the "
+    "following elements: network devices, such as routers and "
+    "switches, servers, and other resources that can be "
+    "accessed by end systems. This grouping of devices "
+    "plays an essential role in ensuring that the same "
+    "administrative policy and actions are applied to all "
+    "of the devices in the grouping. The specific behavior "
+    "and/or semantics of the AdminDomain can be identified "
+    "through its aggregated and associated entities. \n") ]
+class CIM_AdminDomain : CIM_System {
+    
+    [Override ("NameFormat"), Description (
+        "The NameFormat property identifies how the Name of the "
+        "AdminDomain is generated, using the heuristic specified "
+        "in the CIM V2 System Model spec. It assumes that the "
+        "documented rules are traversed in order, to determine and "
+        "assign a Name. The NameFormat Values list defines the "
+        "precedence order for assigning the Name of the "
+        "AdminDomain."), 
+        ValueMap {"Other", "AS", "NAP", "NOC", "POP", "RNP", "IP",
+            "IPX", "SNA", "Dial", "WAN", "LAN", "ISDN", "Frame Relay",
+            "ATM", "E.164", "IB", "FC", "Policy Repository"},
+        Values {"Other", "Autonomous System",
+            "Network Access Provider", "Network Operations Center",
+            "Point of Presence", "Regional Network Provider",
+            "IP", "IPX", "SNA", "Dial", "WAN", "LAN", "ISDN",
+            "Frame Relay", "ATM", "E.164", "Infiniband", 
+            "Fibre Channel", "Policy Repository"} ]
+    string NameFormat;
+};
+
+
+// ==================================================================
+// ContainedDomain
+// ==================================================================
+[Association, Aggregation, Version ("2.6.0"), Description (
+    "A relationship that aggregates one or more lower-level "
+    "AdminDomain instances into a higher-level AdminDomain.") ]
+class CIM_ContainedDomain: CIM_SystemComponent {
+    
+    [Override ("GroupComponent"), Aggregate, Description (
+        "An AdminDomain that aggregates other AdminDomains.") ]
+    CIM_AdminDomain REF GroupComponent;
+    
+    [Override ("PartComponent"), Description (
+        "An AdminDomain aggregated by another AdminDomain.") ]
+    CIM_AdminDomain REF PartComponent;
+};
+
+
+// ==================================================================
+// Service
 // ==================================================================  
 [Abstract, Version ("2.7.0"), Description (
     "A CIM_Service is a Logical Element that contains the "
@@ -570,6 +742,20 @@ class CIM_Service : CIM_EnabledLogicalElement {
         "the object's Description property.") ] 
     string Name;
        
+    [Experimental, MaxLen (64), Write, Description (
+        "The name of the primary owner for the service, if "
+        "one is defined. The primary owner is the initial "
+        "support contact for the Service."),
+        MappingStrings {"MIF.DMTF|General Information|001.3"} ]  
+    string PrimaryOwnerName;
+
+    [Experimental, MaxLen (256), Write, Description (
+        "A string that provides information on how the primary "
+        "owner of the Service can be reached (e.g. phone "
+        "number, email address, ...)."),
+        MappingStrings {"MIF.DMTF|General Information|001.4"} ] 
+    string PrimaryOwnerContact;
+    
     [MaxLen (10), 
         Deprecated {"CIM_Service.EnabledDefault"}, 
         Description (
@@ -628,6 +814,33 @@ class CIM_Service : CIM_EnabledLogicalElement {
 
      
 // ==================================================================
+// HostedService
+// ==================================================================
+[Association, Version ("2.6.0"), Description (
+    "CIM_HostedService is an association between a Service and "
+    "the System on which the functionality resides.  The "
+    "cardinality of this association is 1-to-many.  A System may "
+    "host many Services. Services are weak with respect to their "
+    "hosting System. Heuristic:  A Service is hosted on the "
+    "System where the LogicalDevices or SoftwareFeatures that "
+    "implement the Service are located.  The model does not "
+    "represent Services hosted across multiple systems. This is "
+    "modeled as an ApplicationSystem that acts as an aggregation "
+    "point for Services, that are each located on a single "
+    "host.") ] 
+class CIM_HostedService : CIM_Dependency {
+    
+    [Override ("Antecedent"), Max (1), Min (1),
+        Description ("The hosting System.") ] 
+    CIM_System REF Antecedent;
+    
+    [Override ("Dependent"), Weak,
+        Description ("The Service hosted on the System.") ] 
+    CIM_Service REF Dependent;
+};
+
+     
+// ==================================================================
 // ProvidesServiceToElement
 // ==================================================================
 [Association, Deprecated {"CIM_ServiceAvailableToElement"}, 
@@ -653,12 +866,12 @@ class CIM_ProvidesServiceToElement : CIM_Dependency {
     [Override ("Antecedent"), 
         Deprecated {"CIM_ServiceAvailableToElement.ServiceProvided"}, 
         Description ("The Service provided.") ]
-    CIM_Service ref Antecedent;
+    CIM_Service REF Antecedent;
  
     [Override ("Dependent"), 
         Deprecated {"CIM_ServiceAvailableToElement.UserOfService"},
         Description ("The ManagedElement dependent on the Service.") ]
-    CIM_ManagedElement ref Dependent;
+    CIM_ManagedElement REF Dependent;
 };
 
  
@@ -681,11 +894,11 @@ class CIM_ServiceAvailableToElement {
  
     [Key, Description (
         "The Service that is available.") ]
-    CIM_Service ref ServiceProvided;
+    CIM_Service REF ServiceProvided;
  
     [Key, Description (
         "The ManagedElement that may use the Service.") ]
-    CIM_ManagedElement ref UserOfService;
+    CIM_ManagedElement REF UserOfService;
 };
 
  
@@ -712,7 +925,7 @@ class CIM_ServiceAffectsElement {
     [Description (
         "An enumeration describing the 'effect' on the "
         "ManagedElement. This array corresponds to the "
-        "ElementEffectsDescriptions array, where the "
+        "OtherElementEffectsDescriptions array, where the "
         "latter provides details related to the high-level "
         "'effects' enumerated by this property. Additional "
         "detail is required if the ElementEffects array contains "
@@ -722,7 +935,7 @@ class CIM_ServiceAffectsElement {
         Values {"Unknown", "Other", "Exclusive Use", 
             "Performance Impact", "Element Integrity"},
         ModelCorrespondence {
-            "CIM_DiagnosticService.OtherElementEffectsDescriptions"}]
+        "CIM_ServiceAffectsElement.OtherElementEffectsDescriptions"} ]
     uint16 ElementEffects[];
 
     [Description (
@@ -730,7 +943,8 @@ class CIM_ServiceAffectsElement {
         "position in ElementEffects. This information is required "
         "ElementEffects contains the value 1 (\"Other\")."),
         ArrayType ("Indexed"),
-        ModelCorrespondence {"CIM_DiagnosticService.ElementEffects"}]
+        ModelCorrespondence {
+            "CIM_ServiceAffectsElement.ElementEffects"} ]
     string OtherElementEffectsDescriptions[];
 };
 
@@ -836,6 +1050,30 @@ class CIM_ServiceAccessPoint : CIM_EnabledLogicalElement {
 
      
 // ==================================================================
+// HostedAccessPoint
+// ==================================================================
+[Association, Version ("2.6.0"), Description (
+    "CIM_HostedAccessPoint is an association between a Service"
+    "AccessPoint and the System on which it is provided. The "
+    "cardinality of this association is 1-to-many and is weak "
+    "with respect to the System. Each System may host many "
+    "ServiceAccessPoints.  Heuristic:  If the implementation of "
+    "the ServiceAccessPoint is modeled, it must be "
+    "implemented by a Device or SoftwareFeature that is part of "
+    "the System hosting the ServiceAccessPoint.") ] 
+class CIM_HostedAccessPoint:CIM_Dependency {
+   
+    [Override ("Antecedent"), Max (1), Min (1), 
+        Description ("The hosting System.") ] 
+    CIM_System REF Antecedent;
+    
+    [Override ("Dependent"), Weak,
+        Description ("The SAP(s) that are hosted on this System.") ] 
+    CIM_ServiceAccessPoint REF Dependent;
+};
+   
+
+// ==================================================================
 // ServiceSAPDependency
 // ==================================================================
 [Association, Version ("2.6.0"), Description (
@@ -899,6 +1137,72 @@ class CIM_SAPSAPDependency : CIM_Dependency {
         "The ServiceAccessPoint that is dependent on an underlying "
         "SAP.") ] 
     CIM_ServiceAccessPoint REF Dependent;
+};
+
+
+// ==================================================================
+// ActiveConnection
+// ==================================================================
+[Association, Version ("2.7.0"), Description (
+    "This association defines a connection that is currently "
+    "communicating, or is configured to communicate, "
+    "between two ServiceAccessPoints. It is used when the "
+    "connection is not treated as a ManagedElement itself "
+    "(i.e., with Status, statistics, etc.), but its "
+    "existence is known. The SAPs that are connected are "
+    "typically at the same networking or application layer.") ]
+class CIM_ActiveConnection : CIM_SAPSAPDependency {
+        
+    [Override ("Antecedent"), Description (
+        "A ServiceAccessPoint that is configured to communicate "
+        "and/or is actively communicating with the Dependent "
+        "SAP. In a unidirectional connection, this is the "
+        "SAP which is transmitting.") ]
+    CIM_ServiceAccessPoint REF Antecedent;
+        
+    [Override ("Dependent"), Description (
+        "A second SeriveAccessPoint that is/can communicate "
+        "with the Antecedent SAP. In a unidirectional "
+        "connection, this is the SAP that is receiving the "
+        "communication.") ] 
+    CIM_ServiceAccessPoint REF Dependent;
+        
+    [Deprecated {"No value"}, Description (
+        "The type of traffic that is carried over this "
+        "connection. This property is deprecated since it is "
+        "incorrectly placed on the association. Unicast, "
+        "broadcast or other traffic types are not a function "
+        "of the connection between the referenced endpoints, "
+        "but on the addressing, protocol, and basic functionality "
+        "of the endpoints."),
+        ValueMap {"0", "1", "2", "3", "4", "5" },
+        Values {"Unknown", "Other", "Unicast", "Broadcast",
+            "Multicast", "Anycast"},
+        ModelCorrespondence {
+            "CIM_ActiveConnection.OtherTrafficDescription" } ]
+    uint16 TrafficType;
+        
+    [Deprecated {"No value"}, MaxLen(64), Description (
+        "A string describing the type of traffic that is being "
+        "carried over this instance when its Type property is set "
+        "to 1 (e.g., 'Other'). This property is deprecated since it is "
+        "incorrectly placed on the association. Unicast, "
+        "broadcast or other traffic types are not a function "
+        "of the connection between the referenced endpoints, "
+        "but on the addressing, protocol, and basic functionality "
+        "of the endpoints."),
+        ModelCorrespondence {
+            "CIM_ActiveConnection.TrafficType" } ]
+    string OtherTrafficDescription;
+       
+    [Description (
+        "TRUE means that this connection is uni-directional; FALSE "
+        "means that this connection is bi-directional. When the "
+        "connection is unidirectional, the 'speaker' should be "
+        "defined as the Antecedent reference. In a bidirectional "
+        "connection, the selection of which AccessPoint is the "
+        "Antecedent or Dependent is immaterial.") ]
+    boolean IsUnidirectional;
 };
 
 
@@ -990,273 +1294,109 @@ class CIM_RemotePort : CIM_RemoteServiceAccessPoint {
 
 
 // ==================================================================
-// ActiveConnection
+// ProtocolEndpoint
+// ==================================================================
+[Version ("2.7.0"), Description (
+    "A communication point from which data may be sent or "
+    "received. ProtocolEndpoints link system/computer interfaces "
+    "to LogicalNetworks.") ]
+class CIM_ProtocolEndpoint : CIM_ServiceAccessPoint {
+
+    [Override ("Name"), MaxLen(256), Description (
+        "A string which identifies this ProtocolEndpoint with either "
+        "a port or an interface on a device. To ensure uniqueness, "
+        "the Name property should be prepended or appended with "
+        "information from the Type or OtherTypeDescription "
+        "properties. The method chosen is described in the "
+        "NameFormat property of this class.") ]
+    string Name;
+
+    [MaxLen (256), Description (
+        "NameFormat contains the naming heuristic that is chosen to "
+        "ensure that the value of the Name property is unique. For "
+        "example, one might choose to prepend the name of the port "
+        "or interface with the Type of ProtocolEndpoint that this "
+        "instance is (e.g., IPv4) followed by an underscore.") ]
+    string NameFormat;
+
+    [Description (
+        "ProtocolType is an enumeration providing information to "
+        "categorize and classify different instances of this class. "
+        "For most instances, information in this enumeration and the "
+        "subclass' definition overlap. However, there are several cases "
+        "where a specific subclass of ProtocolEndpoint is not required "
+        "(for example, there is no Fibre Channel Endpoint). Hence, this "
+        "property is needed to define the type of Endpoint. Note that "
+        "in a future major release of the CIM Schema, it is likely "
+        "that ProtocolEndpoint will be ABSTRACT, forcing "
+        "subclassing and removing the need for this property."), 
+        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
+            "10", "11", "12", "13", "14", "15", "16", "17", "18", 
+            "19", "20", "21", "22", "23", "24", "25", "26", "27"},
+        Values {"Unknown", "Other", "IPv4", "IPv6", "IPX", 
+            "AppleTalk", "DECnet", "SNA", "CONP", "CLNP",
+            "VINES", "XNS", "ATM", "Frame Relay",
+            "Ethernet", "TokenRing", "FDDI", "Infiniband", 
+            "Fibre Channel", "ISDN BRI Endpoint", 
+            "ISDN B Channel Endpoint", "ISDN D Channel Endpoint", 
+            // 22
+            "IPv4/v6", "BGP", "OSPF", "MPLS", "UDP", "TCP"},
+        ModelCorrespondence {
+            "CIM_ProtocolEndpoint.OtherTypeDescription"} ] 
+    uint16 ProtocolType;
+
+    [MaxLen(64), Description (
+        "A string describing the type of ProtocolEndpoint when "
+        "the Type property of this class (or any of its "
+        "subclasses) is set to 1 (i.e., \"Other\"). This "
+        "property should be set to NULL when the Type property "
+        "is any value other than 1."),
+        ModelCorrespondence {"CIM_ProtocolEndpoint.ProtocolType"} ]
+    string OtherTypeDescription;
+};
+
+
+// ==================================================================
+// BindsTo
+// ==================================================================
+[Association, Version ("2.6.0"), Description (
+    "This association establishes a ServiceAccessPoint "
+    "as a requestor of protocol services from a "
+    "ProtocolEndpoint. Typically, this association runs "
+    "between SAPs and endpoints on a single system. Since a "
+    "ProtocolEndpoint is a kind of ServiceAccessPoint, this "
+    "binding can be used to establish a layering of two "
+    "protocols, the upper layer represented by the Dependent "
+    "and the lower layer represented by the Antecedent.") ]
+class CIM_BindsTo : CIM_SAPSAPDependency {
+
+    [Override ("Antecedent"), Description (
+        "The lower-level endpoint which is accessed by the SAP.") ]
+    CIM_ProtocolEndpoint REF Antecedent;
+
+    [Override ("Dependent"), Description (
+        "The AccessPoint or ProtocolEndpoint dependent on the "
+        "lower level endpoint.") ]
+    CIM_ServiceAccessPoint REF Dependent;
+};
+
+
+// ==================================================================
+// ProvidesEndpoint
 // ==================================================================
 [Association, Version ("2.7.0"), Description (
-    "This association defines a connection that is currently "
-    "communicating, or is configured to communicate, "
-    "between two ServiceAccessPoints. It is used when the "
-    "connection is not treated as a ManagedElement itself "
-    "(i.e., with Status, statistics, etc.), but its "
-    "existence is known. The SAPs that are connected are "
-    "typically at the same networking or application layer.") ]
-class CIM_ActiveConnection : CIM_SAPSAPDependency {
-        
+    "This association represents a ProtocolEndpoint provided "
+    "by a Service, to allow access to the Service.") ]
+class CIM_ProvidesEndpoint : CIM_ServiceAccessBySAP {
+
     [Override ("Antecedent"), Description (
-        "A ServiceAccessPoint that is configured to communicate "
-        "and/or is actively communicating with the Dependent "
-        "SAP. In a unidirectional connection, this is the "
-        "SAP which is transmitting.") ]
-    CIM_ServiceAccessPoint REF Antecedent;
-        
+        "The Service that is accessed by the ProtocolEndpoint.") ]
+    CIM_Service REF Antecedent;
+
     [Override ("Dependent"), Description (
-        "A second SeriveAccessPoint that is/can communicate "
-        "with the Antecedent SAP. In a unidirectional "
-        "connection, this is the SAP that is receiving the "
-        "communication.") ] 
-    CIM_ServiceAccessPoint REF Dependent;
-        
-    [Deprecated {"No Value"}, Description (
-        "The type of traffic that is carried over this "
-        "connection. This property is deprecated since it is "
-        "incorrectly placed on the association. Unicast, "
-        "broadcast or other traffic types are not a function "
-        "of the connection between the referenced endpoints, "
-        "but on the addressing, protocol, and basic functionality "
-        "of the endpoints."),
-        ValueMap {"0", "1", "2", "3", "4", "5" },
-        Values {"Unknown", "Other", "Unicast", "Broadcast",
-            "Multicast", "Anycast"},
-        ModelCorrespondence {
-            "CIM_ActiveConnection.OtherTrafficDescription" } ]
-    uint16 TrafficType;
-        
-    [Deprecated {"No Value"}, MaxLen(64), Description (
-        "A string describing the type of traffic that is being "
-        "carried over this instance when its Type property is set "
-        "to 1 (e.g., 'Other'). This property is deprecated since it is "
-        "incorrectly placed on the association. Unicast, "
-        "broadcast or other traffic types are not a function "
-        "of the connection between the referenced endpoints, "
-        "but on the addressing, protocol, and basic functionality "
-        "of the endpoints."),
-        ModelCorrespondence {
-            "CIM_ActiveConnection.TrafficType" } ]
-    string OtherTrafficDescription;
-       
-    [Description (
-        "TRUE means that this connection is uni-directional; FALSE "
-        "means that this connection is bi-directional. When the "
-        "connection is unidirectional, the 'speaker' should be "
-        "defined as the Antecedent reference. In a bidirectional "
-        "connection, the selection of which AccessPoint is the "
-        "Antecedent or Dependent is immaterial.") ]
-    boolean IsUnidirectional;
-};
-
-
-// ==================================================================
-// System
-// ==================================================================
-[Abstract, Version ("2.7.0"), Description (
-    "A CIM_System is a LogicalElement that aggregates an "
-    "enumerable set of Managed System Elements. The aggregation "
-    "operates as a functional whole. Within any particular "
-    "subclass of System, there is a well-defined list of "
-    "Managed System Element classes whose instances must be "
-    "aggregated.") ] 
-class CIM_System : CIM_EnabledLogicalElement {
-    
-    [Key, MaxLen (256), Description (
-        "CreationClassName indicates the name of the class or the "
-        "subclass used in the creation of an instance. When used "
-        "with the other key properties of this class, this property "
-        "allows all instances of this class and its subclasses to "
-        "be uniquely identified.") ]
-    string CreationClassName;
-    
-    [Key, MaxLen (256), Override ("Name"), Description (
-        "The inherited Name serves as key of a System instance in " 
-        "an enterprise environment.") ] 
-    string Name;
-    
-    [MaxLen (64), Description (
-        "The System object and its derivatives are Top Level Objects "
-        "of CIM. They provide the scope for numerous components. " 
-        "Having unique System keys is required. A heuristic can be "
-        "defined in individual System subclasses to attempt to always "
-        "generate the same System Name Key. The NameFormat property "
-        "identifies how the System name was generated, using "
-        "the subclass' heuristic.") ] 
-    string NameFormat;
-    
-    [MaxLen (64), Description (
-        "The name of the primary system owner."),
-        MappingStrings {
-            "MIF.DMTF|General Information|001.3"} ]  
-    string PrimaryOwnerName;
-    
-    [MaxLen (256), Description (
-        "A string that provides information on how the primary system "
-        "owner can be reached (e.g. phone number, email address, "
-        "...)."),
-        MappingStrings {
-            "MIF.DMTF|General Information|001.4"} ] 
-    string PrimaryOwnerContact;
-    
-    [Write, Description (
-        "  An array (bag) of strings that specify the administrator"
-        "-defined roles this System plays in the managed environment. "
-        "Examples might be 'Building 8 print server' or 'Boise user "
-        "directories'. A single system may perform multiple roles. \n"
-        "  Note that instrumentation's view of a System's 'roles' is "
-        "defined by instantiating a specific subclass of System and/"
-        "or by properties in a subclass.  For example, a "
-        "ComputerSystem's purpose is defined using the Dedicated and "
-        "OtherDedicatedDescription properties.") ]
-    string Roles[];
-};
-
-
-// ==================================================================
-// HostedService
-// ==================================================================
-[Association, Version ("2.6.0"), Description (
-    "CIM_HostedService is an association between a Service and "
-    "the System on which the functionality resides.  The "
-    "cardinality of this association is 1-to-many.  A System may "
-    "host many Services. Services are weak with respect to their "
-    "hosting System. Heuristic:  A Service is hosted on the "
-    "System where the LogicalDevices or SoftwareFeatures that "
-    "implement the Service are located.  The model does not "
-    "represent Services hosted across multiple systems. This is "
-    "modeled as an ApplicationSystem that acts as an aggregation "
-    "point for Services, that are each located on a single "
-    "host.") ] 
-class CIM_HostedService : CIM_Dependency {
-    
-    [Override ("Antecedent"), Max (1), Min (1),
-        Description ("The hosting System.") ] 
-    CIM_System REF Antecedent;
-    
-    [Override ("Dependent"), Weak,
-        Description ("The Service hosted on the System.") ] 
-    CIM_Service REF Dependent;
-};
-
-     
-// ==================================================================
-// HostedAccessPoint
-// ==================================================================
-[Association, Version ("2.6.0"), Description (
-    "CIM_HostedAccessPoint is an association between a Service"
-    "AccessPoint and the System on which it is provided. The "
-    "cardinality of this association is 1-to-many and is weak "
-    "with respect to the System. Each System may host many "
-    "ServiceAccessPoints.  Heuristic:  If the implementation of "
-    "the ServiceAccessPoint is modeled, it must be "
-    "implemented by a Device or SoftwareFeature that is part of "
-    "the System hosting the ServiceAccessPoint.") ] 
-class CIM_HostedAccessPoint:CIM_Dependency {
-   
-    [Override ("Antecedent"), Max (1), Min (1), 
-        Description ("The hosting System.") ] 
-    CIM_System REF Antecedent;
-    
-    [Override ("Dependent"), Weak,
-        Description ("The SAP(s) that are hosted on this System.") ] 
-    CIM_ServiceAccessPoint REF Dependent;
-};
-   
-
-// ==================================================================
-// SystemComponent
-// ==================================================================
-[Association, Aggregation, Version ("2.7.0"), Description (
-    "CIM_SystemComponent is a specialization of the CIM_Component "
-    "association that establishes 'part of' relationships between "
-    "a System and any ManagedSystemElements of which it is "
-    "composed. \n" 
-    "The use of this association is cautioned - versus the use "
-    "of a subclass such as SystemDevice, or a peer association such "
-    "as HostedService.  This class is very broadly defined which can "
-    "lead to erroneous use.  For example, Access Points that are "
-    "dependent on (and hosted on) a System are NOT Components of the "
-    "System. The System is not made up of any AccessPoint 'parts', "
-    "which is why a Dependency association, HostedAccessPoint, was "
-    "defined.  Similarly, a PhysicalPackage is not a 'part' of a "
-    "System, since the physical element exists independently of any "
-    "internal components, software, etc. In fact, again, a Dependency "
-    "relationship is true - where a ComputerSystem is Dependent on its "
-    "packaging, as described by the ComputerSystemPackage "
-    "association.") ] 
-class CIM_SystemComponent : CIM_Component {
-      
-    [Override ("GroupComponent"), Aggregate, 
-        Description ("The parent System in the Association.") ] 
-    CIM_System REF GroupComponent;
-      
-    [Override ("PartComponent"), Description (
-        "The child element that is a component of a System.") ] 
-    CIM_ManagedSystemElement REF PartComponent;
-}; 
-     
-
-// ==================================================================
-// AdminDomain
-// ==================================================================
-[Version ("2.6.0"), Description (
-    "  This is a special grouping of ManagedSystemElements. The "
-    "grouping is viewed as a single entity, reflecting that all "
-    "of its components are administered similarly - either by "
-    "the same user, group of users or policy. It serves as "
-    "an aggregation point to associate one or more of the "
-    "following elements: network devices, such as routers and "
-    "switches, servers, and other resources that can be "
-    "accessed by end systems. This grouping of devices "
-    "plays an essential role in ensuring that the same "
-    "administrative policy and actions are applied to all "
-    "of the devices in the grouping. The specific behavior "
-    "and/or semantics of the AdminDomain can be identified "
-    "through its aggregated and associated entities. \n") ]
-class CIM_AdminDomain : CIM_System {
-    
-    [Override ("NameFormat"), Description (
-        "The NameFormat property identifies how the Name of the "
-        "AdminDomain is generated, using the heuristic specified "
-        "in the CIM V2 System Model spec. It assumes that the "
-        "documented rules are traversed in order, to determine and "
-        "assign a Name. The NameFormat Values list defines the "
-        "precedence order for assigning the Name of the "
-        "AdminDomain."), 
-        ValueMap {"Other", "AS", "NAP", "NOC", "POP", "RNP", "IP",
-            "IPX", "SNA", "Dial", "WAN", "LAN", "ISDN", "Frame Relay",
-            "ATM", "E.164", "IB", "FC", "Policy Repository"},
-        Values {"Other", "Autonomous System",
-            "Network Access Provider", "Network Operations Center",
-            "Point of Presence", "Regional Network Provider",
-            "IP", "IPX", "SNA", "Dial", "WAN", "LAN", "ISDN",
-            "Frame Relay", "ATM", "E.164", "Infiniband", 
-            "Fibre Channel", "Policy Repository"} ]
-    string NameFormat;
-};
-
-
-// ==================================================================
-// ContainedDomain
-// ==================================================================
-[Association, Aggregation, Version ("2.6.0"), Description (
-    "A relationship that aggregates one or more lower-level "
-    "AdminDomain instances into a higher-level AdminDomain.") ]
-class CIM_ContainedDomain: CIM_SystemComponent {
-    
-    [Override ("GroupComponent"), Aggregate, Description (
-        "An AdminDomain that aggregates other AdminDomains.") ]
-    CIM_AdminDomain REF GroupComponent;
-    
-    [Override ("PartComponent"), Description (
-        "An AdminDomain aggregated by another AdminDomain.") ]
-    CIM_AdminDomain REF PartComponent;
+        "The ProtocolEndpoint that provides access to the "
+        "Service.") ] 
+    CIM_ProtocolEndpoint REF Dependent;
 };
 
 

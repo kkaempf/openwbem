@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       File Elements 2.7
+// Title:       System File Elements 2.7
 // Filename:    System27_FileElements.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/08/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,33 +42,29 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
-//              File Systems.
+//              concepts. This file defines the specific concepts to 
+//              manage file systems.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-// ==================================================================
 // Change Log for v2.7
-//
 // CR598 - Add Share, NFSShare, CIFSShare, SharedElement, 
-//         ImportedShare, and HostedShare.
-// CR644 - Modify Share, NFSShare, CIFSShare, and ImportedShare.
+//         ImportedShare, and HostedShare
+// CR644 - Modify Share, NFSShare, CIFSShare, and ImportedShare
 //       - Add FileShare
 // CR748 - Promote HostedFileSystem.GroupComponent from ComputerSystem
 //         to System.  Fix the class description and the propagated 
 //         key descriptions in FileSystem.
 // CR757 - Change the subclassing of FileSystem from LogicalElement
-//         to EnabledLogicalElement.
+//         to EnabledLogicalElement
 // CR767 - Add the Compostion qualifer to DirectoryContainsFile,
-//         FileStorage, and HostedFileSystem.
+//         FileStorage, and HostedFileSystem
 // ==================================================================
 
 #pragma locale ("en_US")
+
 
 // ===================================================================
 // FileSystem
@@ -549,7 +545,8 @@ class CIM_DeviceAccessedByFile : CIM_Dependency {
 // ===================================================================
 // DirectoryContainsFile
 // ===================================================================
-[Association, Aggregation,  Composition, Version ("2.7.0"), Description (
+[Association, Aggregation, Composition, 
+ Version ("2.7.0"), Description (
     "Specifies the hierarchical arrangement of LogicalFiles in a "
     "Directory.") ]
 class CIM_DirectoryContainsFile : CIM_Component {   
@@ -787,13 +784,13 @@ class CIM_CIFSShare: CIM_FileShare {
     "that is being exported.")     ]
 class CIM_SharedElement: CIM_LogicalIdentity {
           
-    [Override("SystemElement"), Key, Max (1), 
+    [Override("SystemElement"), Max (1), 
         Description ("The Directory that is Shared.") ] 
     CIM_LogicalElement REF SystemElement;
 
-    [Override("SameElement"), Key, Description (
+    [Override("SameElement"), Description (
         "The Shared view of the Directory.") ]
-    CIM_Share ref SameElement;
+    CIM_Share REF SameElement;
 };
 
 
@@ -812,12 +809,12 @@ class CIM_ImportedShare : CIM_LogicalIdentity {
 
     [Override("SameElement"), Max (1), Description (
         "The Share that the LogicalFile is a surrogate for.") ]
-    CIM_Share ref SameElement;
+    CIM_Share REF SameElement;
 };
 
 
 // ==================================================================
-//    HostedShare
+// HostedShare
 // ==================================================================
 [Association, Experimental, Version ("2.7.0"), Description (
     "CIM_HostedShare is an association between a Share and "
@@ -837,6 +834,7 @@ class CIM_HostedShare:CIM_Dependency {
         Description ("The Share hosted on the System.") ] 
     CIM_Share REF Dependent;
 };
+
 
 // ===================================================================
 // end of file

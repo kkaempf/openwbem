@@ -3,7 +3,7 @@
 // Filename:  CIM_Policy27.MOF
 // Version:   2.7.0 
 // Status:    Preliminary 
-// Date:      06/10/2002
+// Date:      09/23/2002
 // ===================================================================
 // Copyright 2000-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -47,8 +47,16 @@
 // 
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined
-//		    by other working groups, are omitted.
+//                  by other working groups, are omitted.
 // ===================================================================
+//     CIMCR906 - Add text to PolicySetComponent's Description and the
+//          class' Priority property to indicate that the values 
+//          of Priority must be unique
+//
+//     With promotion of Component to ManagedElement,
+//          added CIM_Component as superclass of CIM_PolicyComponent
+//          (there is no other change to the semantics or syntax)
+//  
 //     CIMCR625 - Add CompoundPolicyCondition as PolicyCondition subclass 
 //          - Add PolicyConditionStructure abstract aggregation as a 
 //            subclass of PolicyComponent 
@@ -73,31 +81,29 @@
 //            subclass of PolicyActionStructure 
 //
 //     CIMCR597a - PCIMe updates for 2.6
-//		- Edit Policy description
-//		- Add PolicySet & derive PolicyGroup & PolicyRule
-//		- Deprecate PolicyRule.Priority for 
-//		  PolicySetComponent.Priority
-//		- Remove PolicyRule.PolicyRoles (it's in PolicySet)
-//		- Add PolicyRule.ExecutionStrategy
-//		- Deprecate PolicyRepository & replace with 
-//		  ReusablePolicyContainer
-//		- Add PolicySetInSystem 
-//		- Add PolicySetComponent & deprecate ...InPolicyGroup
-//		  & derive PolicyGroupInSystem & PolicyRuleInSystem
-//		- Add ContainedDomain (to Core)
-//		  & deprecate PolicyRepositoryInPolicyRepository
-//		- Add ReusablePolicy & deprecate ...InPolicyRepository
-//
-//     CIMCR516a - Rooted the model associations under Policy
-//        	Component or PolicyInSystem.  Corrected PolicyCondition/
-//        	PolicyActionInPolicyRepository to subclass from 
-//        	PolicyInSystem (similar to Groups and Roles 'InSystem')
-//
-//     CIMCR746 - Add the Version ("2.6.0") qualifier
+//              - Edit Policy description
+//              - Add PolicySet & derive PolicyGroup & PolicyRule
+//              - Deprecate PolicyRule.Priority for 
+//                PolicySetComponent.Priority
+//              - Remove PolicyRule.PolicyRoles (it's in PolicySet)
+//              - Add PolicyRule.ExecutionStrategy
+//              - Deprecate PolicyRepository & replace with 
+//                ReusablePolicyContainer
+//              - Add PolicySetInSystem 
+//              - Add PolicySetComponent & deprecate ...InPolicyGroup
+//                & derive PolicyGroupInSystem & PolicyRuleInSystem
+//              - Add ContainedDomain (to Core)
+//                & deprecate PolicyRepositoryInPolicyRepository
+//              - Add ReusablePolicy & deprecate ...InPolicyRepository
 //
 // ==================================================================
 
 #pragma Locale ("en-US")
+
+
+// ==================================================================
+// Compile prerequisite:  Core MOF
+// ==================================================================
 
 
 // ==================================================================
@@ -148,16 +154,16 @@ class CIM_Policy : CIM_ManagedElement {
    "PolicyGroup and PolicyRule.") ]
 class CIM_PolicySet : CIM_Policy {
         [Description ("PolicyDecisionStrategy defines the evaluation "
-	  "method used for policies contained in the PolicySet.  "
-	  "FirstMatching enforces the actions of the first rule that "
-	  "evaluates to TRUE.  It is the only value currently defined."),
-	  ValueMap {"1"},
-	  Values {"FirstMatching"} ]
+        "method used for policies contained in the PolicySet.  "
+        "FirstMatching enforces the actions of the first rule that "
+        "evaluates to TRUE.  It is the only value currently defined."),
+        ValueMap {"1"},
+        Values {"FirstMatching"} ]
     uint16 PolicyDecisionStrategy;
-	  [Description (
-	  "The PolicyRoles property represents the roles and role "
-	  "combinations associated with a PolicySet.  All contained "
-	  "PolicySet instances inherit the values of the PolicyRoles of "
+        [Description (
+        "The PolicyRoles property represents the roles and role "
+        "combinations associated with a PolicySet.  All contained "
+        "PolicySet instances inherit the values of the PolicyRoles of "
         "the aggregating PolicySet but the values are not copied. "
         "A contained PolicySet instance may, however, add additional "
         "PolicyRoles to those it inherits from its aggregating "
@@ -430,7 +436,7 @@ class CIM_PolicyRepository : CIM_AdminDomain {
    "abstract.") ]
 class CIM_PolicyCondition : CIM_Policy {
         [Key, MaxLen (256), Description (
-        "  The name of the class or the subclass used in the "
+        "The name of the class or the subclass used in the "
         "creation of the System object in whose scope this "
         "PolicyCondition is defined. \n"
         "\n"
@@ -536,14 +542,14 @@ class CIM_PolicyCondition : CIM_Policy {
    "day-of-the-week mask that selects Fridays; and a time "
    "of day range of 0800 through 1600 would be represented "
    "using the following time periods: \n"
-   "   Friday, March  5, 2000, from 0800 through 1600; \n "
-   "   Friday, March 12, 2000, from 0800 through 1600; \n "
-   "   Friday, March 19, 2000, from 0800 through 1600; \n "
-   "   Friday, March 26, 2000, from 0800 through 1600; \n "
-   "   Friday, April  2, 2000, from 0800 through 1600; \n "
-   "   Friday, April  9, 2000, from 0800 through 1600; \n "
-   "   Friday, April 16, 2000, from 0800 through 1600; \n "
-   "   Friday, April 23, 2000, from 0800 through 1600; \n "
+   "   Friday, March  5, 2000, from 0800 through 1600; \n"
+   "   Friday, March 12, 2000, from 0800 through 1600; \n"
+   "   Friday, March 19, 2000, from 0800 through 1600; \n"
+   "   Friday, March 26, 2000, from 0800 through 1600; \n"
+   "   Friday, April  2, 2000, from 0800 through 1600; \n"
+   "   Friday, April  9, 2000, from 0800 through 1600; \n"
+   "   Friday, April 16, 2000, from 0800 through 1600; \n"
+   "   Friday, April 23, 2000, from 0800 through 1600; \n"
    "   Friday, April 30, 2000, from 0800 through 1600. \n"
    "\n"
    "Properties not present in an instance of "
@@ -575,7 +581,7 @@ class CIM_PolicyTimePeriodCondition : CIM_PolicyCondition {
         "\n"
         "There are also two special cases in which one of the "
         "date/time strings is replaced with a special string defined "
-        "in RFC 2445. \n "
+        "in RFC 2445. \n"
         "   o If the first date/time is replaced with the string "
         "     'THISANDPRIOR', then the property indicates that a "
         "     PolicyRule is valid [from now] until the date/time "
@@ -634,7 +640,7 @@ class CIM_PolicyTimePeriodCondition : CIM_PolicyCondition {
         "in which the PolicyRule is valid, and the DayOfMonthMask used "
         "to pick out the days of the month during which the Rule "
         "is valid. \n"
-        "\n "
+        "\n"
         "This property is formatted as an octet string, structured "
         "as follows: \n"
         "   o a 4-octet length field, indicating the length of the "
@@ -651,7 +657,7 @@ class CIM_PolicyTimePeriodCondition : CIM_PolicyCondition {
         "The value 0x0000000C8000000100000000, for example, "
         "indicates that a PolicyRule is valid on the first and "
         "last days of the month. \n"
-        "\n "
+        "\n"
         "For months with fewer than 31 days, the digits corresponding "
         "to days that the months do not have (counting in both "
         "directions) are ignored. \n"
@@ -673,9 +679,9 @@ class CIM_PolicyTimePeriodCondition : CIM_PolicyCondition {
         "in which the PolicyRule is valid, and the DayOfWeekMask used "
         "to pick out the days of the week during which the Rule "
         "is valid. \n"
-        "\n "
+        "\n"
         "This property is formatted as an octet string, structured "
-        "as follows: \n "
+        "as follows: \n"
         "  o a 4-octet length field, indicating the length of the "
         "    entire octet string; this field is always set to "
         "    0x00000005 for this property; \n"
@@ -970,8 +976,8 @@ class CIM_CompoundPolicyAction : CIM_PolicyAction {
         "                   order, until the first failure in \n"
         "                   execution of an action instance. \n"
         "The default value is 2 (\"Do All\")."),
-      ValueMap {"1", "2", "3"},
-      Values {"Do Until Success", "Do All", "Do Until Failure"} ]
+        ValueMap {"1", "2", "3"},
+        Values {"Do Until Success", "Do All", "Do Until Failure"} ]
    uint16 ExecutionStrategy;
 };
 
@@ -991,9 +997,10 @@ class CIM_CompoundPolicyAction : CIM_PolicyAction {
    "are aggregated into the Collection via the "
    "ElementInPolicyRoleCollection association.") ]
 class CIM_PolicyRoleCollection : CIM_Collection {
-        [Key, Description ("The PolicyRole property role name for the "
-        "managed elements aggregated into the PolicyRoleCollection. "
-        "This role name is the same role name that appears in related "
+        [Key, Description (
+        "The PolicyRole property role name for the managed "
+        "elements aggregated into the PolicyRoleCollection. This "
+        "role name is the same role name that appears in related "
         "PolicySet instances.") ]
     string PolicyRole;
 };
@@ -1014,11 +1021,11 @@ class CIM_PolicyRoleCollection : CIM_Collection {
    "CIM_Policy. For example, the PolicyConditionInPolicyRule "
    "association defines that PolicyConditions are part of a "
    "PolicyRule.") ]
-class CIM_PolicyComponent {
-        [Aggregate, Key, Description (
+class CIM_PolicyComponent : CIM_Component {
+        [Aggregate, Override ("GroupComponent"), Description (
         "The parent Policy in the association.") ]
     CIM_Policy REF GroupComponent;
-        [Key, Description (
+        [Override ("PartComponent"), Description (
         "The child/part Policy in the association.") ]
     CIM_Policy REF PartComponent;
 };
@@ -1073,9 +1080,9 @@ class CIM_PolicySetInSystem : CIM_PolicyInSystem {
         [Override ("Dependent"), Description (
         "A PolicySet named within the scope of a System.") ]
     CIM_PolicySet REF Dependent;
-	  [Description (
-	  "The Priority property is used to specify the relative "
-	  "priority of the referenced PolicySet when there are more "
+        [Description (
+        "The Priority property is used to specify the relative "
+        "priority of the referenced PolicySet when there are more "
         "than one PolicySet instances applied to a managed resource "
         "that are not PolicySetComponents and, therefore, have no "
         "other relative priority defined.  The priority is a "
@@ -1121,10 +1128,21 @@ class CIM_PolicyRuleInSystem : CIM_PolicySetInSystem {
 // PolicySetComponent 
 // ==================================================================
    [Association, Aggregation, Version ("2.6.0"), Description (
-   "PolicySetComponent is a concrete aggregation class that "
-   "collects instances of PolicySet subclasses (PolicyGroups and "
-   "PolicyRules) into coherent sets of policies that have the same "
-   "decision strategy and are prioritized within the set.") ]
+   "PolicySetComponent is a concrete aggregation that "
+   "collects instances of the subclasses of PolicySet (i.e., "
+   "PolicyGroups and PolicyRules). Instances are collected in "
+   "sets that use the same decision strategy. They are "
+   "prioritized relative to each other, within the set, "
+   "using the Priority property of this aggregation. \n"
+   "\n"
+   "Together, the PolicySet.PolicyDecisionStrategy and PolicySet"
+   "Component.Priority properties determine the processing "
+   "for the groups and rules contained in a PolicySet. A larger "
+   "priority value represents a higher priority. Note that "
+   "the Priority property MUST have a unique value when "
+   "compared with others defined for the same aggregating "
+   "PolicySet. Thus, the evaluation of rules within a set "
+   "is deterministically specified.") ]
 class CIM_PolicySetComponent : CIM_PolicyComponent {
         [Override ("GroupComponent"), Aggregate, Description (
         "A PolicySet that aggregates other PolicySet instances.") ]
@@ -1133,9 +1151,11 @@ class CIM_PolicySetComponent : CIM_PolicyComponent {
         "A PolicySet aggregated into a PolicySet.") ]
     CIM_PolicySet REF PartComponent;
         [Description (
-        "A non-negative integer for prioritizing this PolicySet"
-        "component relative to components of the same PolicySet. A "
-        "larger value indicates a higher priority.") ]
+        "A non-negative integer for prioritizing this PolicySet "
+        "component relative to other elements of the same PolicySet. "
+        "A larger value indicates a higher priority. The "
+        "Priority property MUST have a unique value when compared "
+        "with others defined for the same aggregating PolicySet.") ]
     uint16 Priority;
 };
 
@@ -1440,7 +1460,7 @@ class CIM_PolicyActionInPolicyAction : CIM_PolicyActionStructure {
 class CIM_PolicyContainerInPolicyContainer: CIM_SystemComponent {
         [Override ("GroupComponent"), Aggregate, Description (
         "A ReusablePolicyContainer that aggregates other "
-	  "ReusablePolicyContainers.") ]
+        "ReusablePolicyContainers.") ]
     CIM_ReusablePolicyContainer REF GroupComponent;
         [Override ("PartComponent"), Description (
         "A ReusablePolicyContainer aggregated by another "
@@ -1468,7 +1488,7 @@ class CIM_PolicyRepositoryInPolicyRepository : CIM_SystemComponent {
         "A PolicyRepository that aggregates other Repositories.") ]
     CIM_PolicyRepository REF GroupComponent;
         [Override ("PartComponent"), Description (
-         "A PolicyRepository aggregated by another Repository.") ]
+        "A PolicyRepository aggregated by another Repository.") ]
     CIM_PolicyRepository REF PartComponent;
 };
 
@@ -1482,11 +1502,11 @@ class CIM_PolicyRepositoryInPolicyRepository : CIM_SystemComponent {
 class CIM_ReusablePolicy : CIM_PolicyInSystem {
         [Override ("Antecedent"), Max (1), Description (
         "This property identifies a ReusablePolicyContainer that "
-	  "provides the administrative scope for the reuse of the "
-	  "referenced policy element.") ]
+        "provides the administrative scope for the reuse of the "
+        "referenced policy element.") ]
     CIM_ReusablePolicyContainer REF Antecedent;
         [Override ("Dependent"), Description (
-	  "A reusable policy element.") ]
+        "A reusable policy element.") ]
     CIM_Policy REF Dependent;
 };
 

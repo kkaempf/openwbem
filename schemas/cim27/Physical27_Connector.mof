@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Physical Connector 2.7
+// Title:       Physical Connectors 2.7
 // Filename:    Physical27_Connector.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,23 +42,19 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Physical Model defines modeling concepts related
-//              to actual boxes and packaging.
-//              This Physical file defines the concepts related to 
-//              connectors and links.
+//              to actual boxes and packaging. This file defines the 
+//              concepts related to connectors.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-// ==================================================================
 // Change Log for v2.7
 // CR623 - Fix the DMI mapping string to include the attribute number
 //         PhysicalConnector.ConnectorType and .OtherTypeDescription.
 // CR676 - Deprecate Slot.Powered
+// CR877 - Add AGP8X enumeration to PhysicalConnector.ConnectorType 
 // ==================================================================
-
 
 #pragma locale ("en_US")
 
@@ -99,7 +95,7 @@ class CIM_PhysicalConnector : CIM_PhysicalElement {
             "91", "92", "93", "94", "95", "96", "97", "98", "99", "100", 
             "101", "102", "103", "104", "105", "106", "107", "108", "109", 
             "110", "111", "112", "113", "114", "115", "116", "117", "118", 
-            "119", "120", "121"}, 
+            "119", "120", "121", "122"}, 
         Values {"Unknown", "Other", "Male", "Female", "Shielded",
             "Unshielded", "SCSI (A) High-Density (50 pins)",
             "SCSI (A) Low-Density (50 pins)",
@@ -145,7 +141,7 @@ class CIM_PhysicalConnector : CIM_PhysicalElement {
             "SC", "SG", "Electrical", "Optical", "Ribbon", "GLM", 
             "1x9", "Mini SG", "LC", "HSSC",
             // 120 
-            "VHDCI Shielded (68 pins)", "InfiniBand"},
+            "VHDCI Shielded (68 pins)", "InfiniBand", "AGP8X"},
         MappingStrings {"MIF.DMTF|Bus Port|004.10"}, 
         ModelCorrespondence {
             "CIM_PhysicalConnector.OtherTypeDescription"} ]
@@ -359,86 +355,84 @@ class CIM_AdjacentSlots {
     boolean SharedSlots;
 };
 
-
 // ==================================================================
-// PhysicalLink
+// PackageInConnector 
 // ==================================================================
-[Version ("2.6.0"), Description (
-    "The PhysicalLink class represents the cabling of "
-    "PhysicalElements together. For example, serial or Ethernet "
-    "cables, and infrared Links would be subclasses (if additional "
-    "properties or associations are defined) or instances of "
-    "PhysicalLink. In many cases, the numerous physical cables "
-    "within a PhysicalPackage or Network will not be modeled. "
-    "However, where these cables or Links are critical components, "
-    "or are tagged assets of the company, these objects can be "
-    "instantiated using this class or one of its descendent "
-    "classes.") ]
-class CIM_PhysicalLink : CIM_PhysicalElement {
-    
-    [Description ("The maximum length of the PhysicalLink in feet."),
-        Units ("Feet") ]
-    real64 MaxLength;
-    
-    [Description (
-        "The current length of the PhysicalLink in feet. For some "
-        "connections, especially wireless technologies, this property "
-        "may not be applicable and should be left uninitialized."),
-        Units ("Feet") ]
-    real64 Length;
-    
-    [Description (
-        "Boolean indicating whether the PhysicalLink is an actual "
-        "cable (TRUE) or a wireless connection (FALSE).") ]
-    boolean Wired;
-    
-    [Description("The MediaType property defines the particular "
-        "type of Media through which transmission signals pass. "
-        "Common network media include twisted-pair (value=11 or 12), "
-        "coaxial (7, 8 or 9) and fiber-optic cable (10)."), 
-        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", 
-            "10", "11", "12", "13", "14", "15", "16", "17"},  
-        Values {"Unknown", "Other", "Cat1", "Cat2", "Cat3", "Cat4", 
-            "Cat5", "50-ohm Coaxial", "75-ohm Coaxial", 
-            "100-ohm Coaxial", "Fiber-optic", "UTP", "STP", 
-            "Ribbon Cable", "Twinaxial", "Optical 9um", 
-            "Optical 50um", "Optical 62.5um"},
-        MappingStrings {
-            "MIF.DMTF|Fibre Channel Bus Port Extensions|001.4"} ]
-    uint16 MediaType;
-};
-
-
-// ===================================================================
-// ElementsLinked
-// ===================================================================
 [Association, Version ("2.6.0"), Description (
-    "The ElementsLinked association indicates which Physical"
-    "Elements are cabled together by a PhysicalLink.") ]
-class CIM_ElementsLinked : CIM_Dependency {
+    "Adapter cards and other 'packaging' are plugged into System "
+    "Connectors for power and/or to transfer data. This "
+    "relationship is defined by PackageInConnector. For example, "
+    "it would be used to describe the insertion of a daughtercard "
+    "onto another Card. Various subclasses of PackageInConnector "
+    "are also defined. PackageInSlot and its subclass, "
+    "CardInSlot, are two examples of subclasses.") ]
+class CIM_PackageInConnector : CIM_Dependency {
     
-    [Override ("Antecedent"),
-        Description ("The PhysicalLink.") ]
-    CIM_PhysicalLink REF Antecedent;
+    [Override ("Antecedent"), Description (
+        "The Connector into which the Package is inserted.") ]
+    CIM_PhysicalConnector REF Antecedent;
     
-    [Override ("Dependent"), 
-        Description ("The PhysicalElement that is linked.") ]
-    CIM_PhysicalElement REF Dependent;
+    [Override ("Dependent"), Max (1), 
+       Description ("The Package in the Connector.") ]
+    CIM_PhysicalPackage REF Dependent;
 };
 
 
 // ==================================================================
-// LinkHasConnector 
+// PackageInSlot 
+// ==================================================================
+[Association, Version ("2.6.0"), Description (
+    "Complex networking devices often are Chassis-based. "
+    "These Chassis allow for enhancement and/or augmentation of "
+    "their base functionality by accepting additional Chassis "
+    "devices, similar to accepting functionality in the form of "
+    "adding Cards. This association models this capability.") ]
+class CIM_PackageInSlot : CIM_PackageInConnector {
+    
+    [Override ("Antecedent"), Description (
+        "The Slot into which the PhysicalPackage is inserted.") ]
+    CIM_Slot REF Antecedent;
+    
+    [Override ("Dependent"), Max (1), Description (
+        "The Package in the Slot.") ]
+    CIM_PhysicalPackage REF Dependent;
+};
+
+
+// ==================================================================
+// CardInSlot 
+// ==================================================================
+[Association, Version ("2.6.0"), Description (
+    "Slots are special types of Connectors into which adapter "
+    "Cards are inserted. This relationship of a Card in a Slot "
+    "is made explicit using the CardInSlot association."),
+    MappingStrings {"MIF.DMTF|System Slot|005.4"} ]
+class CIM_CardInSlot : CIM_PackageInSlot {
+    
+    [Override ("Antecedent"), Description (
+        "The Slot into which the Card is inserted.") ]
+    CIM_Slot REF Antecedent;
+    
+    [Override ("Dependent"), Max (1), Description (
+        "The Card in the Slot.") ]
+    CIM_Card REF Dependent;
+};
+
+
+// ==================================================================
+// ConnectorOnPackage 
 // ==================================================================
 [Association, Aggregation, Version ("2.6.0"), Description (
-    "Cables and Links utilize PhysicalConnectors to actually "
-    "'connect' PhysicalElements. This association explicitly "
-    "defines this relationship of Connectors for PhysicalLinks.") ]
-class CIM_LinkHasConnector : CIM_Component {
+    "PhysicalPackages contain Connectors as well as other "
+    "PhysicalElements. The ConnectorOnPackage association makes "
+    "explicit the containment relationship between Connectors and "
+    "Packages.") ]
+class CIM_ConnectorOnPackage : CIM_Container {
     
-    [Override ("GroupComponent"), Aggregate, Max (1), Description (
-        "The PhysicalLink that has a Connector.") ]
-    CIM_PhysicalLink REF GroupComponent;
+    [Override ("GroupComponent"), Aggregate, Max (1),
+        Description (
+            "The PhysicalPackage that has a Connector.") ]
+    CIM_PhysicalPackage REF GroupComponent;
     
     [Override ("PartComponent"), Description (
         "The PhysicalConnector.") ]

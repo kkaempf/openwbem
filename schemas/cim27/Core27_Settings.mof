@@ -3,7 +3,7 @@
 // Filename:    Core27_Settings.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/03/02
+// Date:        07/01/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,27 +42,26 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Core Model defines basic management concepts. 
-//              This Core file defines the CIM qualifiers.
+//              This file defines Settings/SettingData and their  
+//              groupings, Profiles and Configurations.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
-// ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME, MSE, LE, Sys)
-//                Core27_Collections (CollectionOfMSEs)
 // ==================================================================
 // Change Log for v2.7
 // CR723 - Introduce SettingData, ScopedSetttingData, ScopedSetting,
 //         and ElementSettingData.
 //       - Clarify the description of Setting to reconcile with 
 //         SettingData.
+// CR642 - Add Profile and ElementProfile
 // ==================================================================
 
 #pragma locale ("en_US")
 
+
 // ===================================================================
-//    SettingData
+// SettingData
 // ===================================================================
 [Abstract, Experimental, Version ("2.7.0"), Description (
     "  The SettingData class represents configuration-related and "
@@ -114,7 +113,7 @@ class CIM_SettingData : CIM_ManagedElement {
 
 
 // ===================================================================
-//    ScopedSettingData
+// ScopedSettingData
 // ===================================================================
 [Abstract, Experimental, Version ("2.7.0"), Description (
     "The ScopedSettingData class represents the general concept of "
@@ -187,8 +186,72 @@ class CIM_ElementSettingData {
 };
 
 
+// ==================================================================
+// Profile
+// ================================================================== 
+[Experimental, Version ("2.7.0"), Description (   
+    "   Profile specifies a general collection of Settings/SettingData "
+    "that are logically grouped together. Note that the CIM_Profile "
+    "class uses simplified naming/identity and collection algorithms, "
+    "as compared to CIM_Configuration.  The settings are 'collected' "
+    "into the Profile using the MemberOfCollection association. One "
+    "example of a Profile is to define the collection of settings "
+    "for a particular person. Another is to define the collection "
+    "of settings appropriate when initializing a system."
+    "Profile is tied to a ManagedElement using the ElementProfile "
+    "association.  Note that the cardinality of the ManagedElement "
+    "reference is Min(1), Max(1). This cardinality mandates the "
+    "instantiation of the ElementProfile association for the "
+    "referenced instance of Profile. ElementProfile describes the "
+    "existence requirements and context for the referenced instance "
+    "of ManagedElement. Specifically, the ManagedElement MUST exist "
+    "and provides the context for the Profile.") ] 
+class CIM_Profile : CIM_Collection {
+
+    [Key, Description (
+        "InstanceID opaquely identifies a unique instance of "
+        "Profile.  The InstanceID must be unique within a namespace. "
+        "In order to ensure uniqueness, the value of InstanceID "
+        "should be constructed in the following manner:  \n"
+        "<Vendor ID><ID> \n"
+        "   <Vendor ID> MUST include a copyrighted, trademarked "
+        "or otherwise unique name that is owned by the business entity or a "
+        "registered ID that is assigned to the business entity that is defining "
+        "the InstanceID. (This is similar to the <Schema Name>_<Class Name> "
+        "structure of Schema class names.) The purpose of <Vendor ID> "
+        "is to ensure that <ID> is truly unique across multiple "
+        "vendor implementations.   If such a name is not "
+        "used, the defining entity MUST assure that the <ID> "
+        "portion of the Instance ID is unique when compared with "
+        "other instance providers. For DMTF defined instances, the "
+        "<Vendor ID> is 'CIM'. \n"
+        "   <ID> MUST include a vendor specified unique "
+        "identifier.") ]    
+    string InstanceID;
+};
+
+ 
 // ===================================================================
-//    Setting
+// ElementProfile
+// ===================================================================
+[Association, Experimental, Version ("2.7.0"), Description (
+    "ElementProfile represents the association between "
+    "ManagedElements and the Profiles (collection of "
+    "settings) defined for them.") ]
+class CIM_ElementProfile {
+
+   [Key, Min(1), Max(1), Description (
+       "The managed element.") ]
+   CIM_ManagedElement REF ManagedElement;
+
+   [Key, Description (
+       "The Profile object associated with the element.") ]
+    CIM_Profile REF Profile;
+};
+
+
+// ===================================================================
+// Setting
 // ===================================================================
 [Abstract, Version ("2.7.0"), Description (
     "  The Setting class represents configuration-related and "
@@ -231,7 +294,7 @@ class CIM_Setting : CIM_ManagedElement {
         "ValueMap contents are 'translated' may also be specified in "
         "the subclass as a Values array qualifier.") ]
     uint32 VerifyOKToApplyToMSE(
-        [IN] CIM_ManagedSystemElement ref MSE, 
+        [IN] CIM_ManagedSystemElement REF MSE, 
         [IN] datetime TimeToApply, 
         [IN] datetime MustBeCompletedBy);
       
@@ -260,7 +323,7 @@ class CIM_Setting : CIM_ManagedElement {
         "when the 'Apply' attempt began. That is, the Element "
         "should NOT be left in an indeterminate state.") ]
     uint32 ApplyToMSE(
-        [IN] CIM_ManagedSystemElement ref MSE, 
+        [IN] CIM_ManagedSystemElement REF MSE, 
         [IN] datetime TimeToApply, 
         [IN] datetime MustBeCompletedBy);
       
@@ -292,7 +355,7 @@ class CIM_Setting : CIM_ManagedElement {
         "also be specified in the subclass as a Values array "
         "qualifier.") ] 
     uint32 VerifyOKToApplyToCollection (
-        [IN] CIM_CollectionOfMSEs ref Collection,
+        [IN] CIM_CollectionOfMSEs REF Collection,
         [IN] datetime TimeToApply, 
         [IN] datetime MustBeCompletedBy,
         [IN (false), OUT] string CanNotApply[]);
@@ -341,7 +404,7 @@ class CIM_Setting : CIM_ManagedElement {
         "configured as when the 'Apply' attempt began. That is, the "
         "Element should NOT be left in an indeterminate state.") ]
     uint32 ApplyToCollection(
-        [IN] CIM_CollectionOfMSEs ref Collection, 
+        [IN] CIM_CollectionOfMSEs REF Collection, 
         [IN] datetime TimeToApply, 
         [IN] boolean ContinueOnError,
         [IN] datetime MustBeCompletedBy, 
@@ -372,7 +435,7 @@ class CIM_Setting : CIM_ManagedElement {
         "ValueMap contents are 'translated' may also be specified in " 
         "the subclass as a Values array qualifier.") ] 
     uint32 VerifyOKToApplyIncrementalChangeToMSE( 
-        [IN] CIM_ManagedSystemElement ref MSE, 
+        [IN] CIM_ManagedSystemElement REF MSE, 
         [IN] datetime TimeToApply, 
         [IN] datetime MustBeCompletedBy, 
         [IN] string PropertiesToApply[]); 
@@ -410,7 +473,7 @@ class CIM_Setting : CIM_ManagedElement {
         "when the 'Apply' attempt began. That is, the Element " 
         "should NOT be left in an indeterminate state.") ] 
     uint32 ApplyIncrementalChangeToMSE( 
-        [IN] CIM_ManagedSystemElement ref MSE, 
+        [IN] CIM_ManagedSystemElement REF MSE, 
         [IN] datetime TimeToApply, 
         [IN] datetime MustBeCompletedBy, 
         [IN] string PropertiesToApply[]); 
@@ -451,7 +514,7 @@ class CIM_Setting : CIM_ManagedElement {
         "also be specified in the subclass as a Values array " 
         "qualifier.") ] 
     uint32 VerifyOKToApplyIncrementalChangeToCollection ( 
-        [IN] CIM_CollectionOfMSEs ref Collection, 
+        [IN] CIM_CollectionOfMSEs REF Collection, 
         [IN] datetime TimeToApply, 
         [IN] datetime MustBeCompletedBy, 
         [IN] string PropertiesToApply[], 
@@ -510,7 +573,7 @@ class CIM_Setting : CIM_ManagedElement {
         "configured as when the 'Apply' attempt began. That is, the " 
         "Element should NOT be left in an indeterminate state.") ] 
     uint32 ApplyIncrementalChangeToCollection( 
-        [IN] CIM_CollectionOfMSEs ref Collection, 
+        [IN] CIM_CollectionOfMSEs REF Collection, 
         [IN] datetime TimeToApply, 
         [IN] boolean ContinueOnError, 
         [IN] datetime MustBeCompletedBy, 
@@ -534,24 +597,6 @@ class CIM_ElementSetting {
     [Key, Description (
         "The Setting object associated with the ManagedSystem"
         "Element.") ]
-    CIM_Setting REF Setting;
-};
-
-
-// ===================================================================
-// CollectionSetting
-// ===================================================================
-[Association, Version ("2.6.0"), Description (
-    "CollectionSetting represents the association between a "
-    "CollectionOfMSEs class and the Setting class(es) defined for "
-    "them.") ]
-class CIM_CollectionSetting {
-    [Key, Description (
-        "The CollectionOfMSEs.") ]
-    CIM_CollectionOfMSEs REF Collection;
-      
-    [Key, Description (
-        "The Setting object associated with the Collection.") ]
     CIM_Setting REF Setting;
 };
 
@@ -624,12 +669,15 @@ class CIM_SettingForSystem : CIM_Dependency {
 // Configuration
 // ===================================================================
 [Version ("2.6.0"), Description (
-     "The Configuration object allows the grouping of sets of "
+     "   The Configuration object allows the grouping of sets of "
      "parameters (defined in Setting objects) and dependencies for "
-     "one or more ManagedSystemElements. The Configuration object "
-     "represents a certain behavior, or a desired functional state "
-     "for the ManagedSystemElements. The desired functional state "
-     "is typically driven by external requirements such as time or "
+     "one or more ManagedSystemElements. It represents a certain "
+     "behavior, or a desired functional state for the ManagedSystem"
+     "Elements. Note that the CIM_Profile class uses simplified "
+     "naming/identity and collection algorithms as compared to "
+     "CIM_Configuration. \n"
+     "   The desired functional state of the Configuration is "
+     "typically driven by external requirements such as time or "
      "location. For example, to connect to a Mail System from "
      "'home', a dependency on a modem exists, but a dependency on "
      "a network adapter exists at 'work'. Settings for the "
@@ -761,6 +809,24 @@ class CIM_SettingContext {
 };
 
 
+// ===================================================================
+// CollectionSetting
+// ===================================================================
+[Association, Version ("2.6.0"), Description (
+    "CollectionSetting represents the association between a "
+    "CollectionOfMSEs class and the Setting class(es) defined for "
+    "them.") ]
+class CIM_CollectionSetting {
+    [Key, Description (
+        "The CollectionOfMSEs.") ]
+    CIM_CollectionOfMSEs REF Collection;
+      
+    [Key, Description (
+        "The Setting object associated with the Collection.") ]
+    CIM_Setting REF Setting;
+};
+
+
 // ==================================================================
 // SystemConfiguration
 // ==================================================================
@@ -830,116 +896,6 @@ class CIM_SystemSettingContext {
         "An aggregated Setting.") ]
     CIM_SystemSetting REF Setting;
 };
-
-
-// ================================================================== 
-// MethodParameters 
-// ================================================================== 
-[Abstract, Version ("2.6.0"), Description (
-    "  CIM_MethodParameters represents a set of values to be used "
-    "as the parameters of a method. These parameters may be passed "
-    "to the method, diretly used by the method in its invocation, "
-    "or accessed by the method when it is called. The properties "
-    "of a concrete subclass of MethodParameters are mapped to the "
-    "parameters of a method by the method itself or by the method "
-    "caller. This is an implementation detail independent of the "
-    "definition of the class. For ease of use, property names "
-    "should match parameter names. \n"
-    "  Property values should be set before the method is invoked. " 
-    "The ModelCorrespondence qualifier can be used to indicate " 
-    "if the property value should come from another class's property. " 
-    "The instances that the property values should be gleaned from " 
-    "should be associated with MethodParameters using the Parameter"
-    "ValueSources association. If the property is declared as an "
-    "array, then the same property value (identified by the Model"
-    "Correspondence) will be retrieved from all appropriate "
-    "ParameterValueSources instances and stored in the array. If "
-    "the property is declared as an array and the Model"
-    "Correspondence is to an array property, then only one instance "
-    "of the array will be copied from one ParameterValueSource. " 
-    "If the property is not declared as an array and there are " 
-    "multiple instances of the class and property associated with " 
-    "it through ModelCorrespondence where the values are not all "
-    "the same, then an error will occur and the property's value "
-    "will not be set. Several MethodParameters instances can be "
-    "associated with any ManagedElement's methods. This allows the " 
-    "maintenance of 'canned' method invocation and reduces the " 
-    "overhead of recreating all method parameters for every method " 
-    "invocation.") ] 
-class CIM_MethodParameters : CIM_ManagedElement { 
-    
-    [Maxlen (256) , Description ( 
-        "The identifier by which the MethodParameters object is "
-        "known.") ]
-    string MethodParametersId; 
-    
-    [Description ( 
-        "The resetValues method updates the values of the properties "
-        "of MethodParameters which have ModelCorrespondence to the " 
-        "SourceME ManagedElement. This allows the association of " 
-        "several source candidates with the MethodParameters with " 
-        "one being chosen as the source for this set of values. " 
-        "If resetValues is invoked and sourceME is null, then all " 
-        "associated MEs in ParameterValueSources will be used " 
-        "to set the values of the MethodParameters properties.") ]
-     uint32 ResetValues(
-         [IN] CIM_ManagedElement ref SourceME); 
-}; 
-
-
-// =================================================================== 
-// ParameterValueSources 
-// =================================================================== 
-[Association, Version ("2.6.0"), Description ( 
-    "ParameterValueSources represents the association between " 
-    "a MethodParameters instance and the ManagedElement instances " 
-    "which contain properties to be used to create values " 
-    "for the MethodParameters properties.") ] 
-class CIM_ParameterValueSources {        
-      
-    [Key, Description ( 
-        "The MethodParameters instance whose property values "
-        "are to be set.") ] 
-    CIM_MethodParameters ref Parameters; 
-    
-    [Key, Description (
-        "The ManagedElement which contains properties to be used " 
-        "to populate the values of the properties of the "
-        "MethodParameters instance.") ] 
-    CIM_ManagedElement ref ValueSource; 
-}; 
-
-
-// =================================================================== 
-// ParametersForMethod 
-// =================================================================== 
-[Association, Version ("2.6.0"), Description ( 
-    "ParametersForMethod represents the association between "
-    "MethodParameters class(es) and a ManagedElement which has a "
-    "method that may use the MethodParameters during its "
-    "invocation. This association is optional, as the Method"
-    "Parameters instance may be passed as a parameter to a method " 
-    "or used to create a method signature before the method is "
-    "invoked. This association is useful for finding all the valid "
-    "MethodParameters instances for a particular method. It may "
-    "be particularly useful for user-oriented interfaces and "
-    "automated or policy driven method invocations.") ] 
-class CIM_ParametersForMethod {       
-    
-    [Key, Description (
-        "The MethodParameters instance which may be used by the "
-        "ParametersForMethod's method invocation.") ]
-    CIM_MethodParameters ref Parameters;
-    
-    [Key, Description ("The ManagedElement which has "
-        "a method that may use this instance of MethodParameters.") ]
-    CIM_ManagedElement ref TheMethod;
-    
-    [Key, MaxLen(64),Description ("The name of the method that "
-        "may use the referenced instance of MethodParameters during "
-        "its invocation.") ]
-    string MethodName;
-}; 
 
 
 // ===================================================================

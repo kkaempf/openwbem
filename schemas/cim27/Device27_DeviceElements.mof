@@ -3,7 +3,7 @@
 // Filename:    Device27_Elements.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/13/02
+// Date:        07/30/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,29 +42,25 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the basic concepts that apply 
-//              towards managing all devices, such as connections.
+//              are related to LogicalDevices. This file defines the 
+//              basic concepts that generally apply to all devices, 
+//              such as error statistics and connections between devices.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
 // CR621 - Add PackageDependency
 // CR622 - Fix the DMI mapping string to include the attribute number
 //         DeviceErrorCounts.CriticalErrorCount, .MajorErrorCount, &
-//            .WarningCount.
+//         .WarningCount
 // CR721 - Add DeviceErrorCountData that is part of the new statistics
-//         hierarchy.
-//
+//         hierarchy
 // ================================================================== 
 
 #pragma locale ("en_US")
+
 
 // ===================================================================
 // DeviceConnection
@@ -142,11 +138,11 @@ class CIM_DeviceIdentity: CIM_LogicalIdentity {
 // ==================================================================
 // PackageDependency
 // ==================================================================
-[Association, Description (
+[Association, Version ("2.6.0"), Description (
     "A LogicalDevice is installed in a Package such as "
     "a Chassis or a Rack, not for a specific Device, but to "
     "function with the Package in general.  This relationship "
-    "is described by the PackageDependency association.")]
+    "is described by the PackageDependency association.") ]
 class CIM_PackageDependency : CIM_Dependency {
     
     [Override ("Antecedent"), Description (
@@ -217,7 +213,11 @@ class CIM_DeviceSoftware : CIM_Dependency {
 [Version ("2.7.0"), Description (
     "DeviceErrorCounts is a statistical class containing error-" 
     "related counters for a LogicalDevice. The types of errors " 
-    "are as defined by CCITT (Rec X.733) and ISO (IEC 10164-4).") ]
+    "are as defined by CCITT (Rec X.733) and ISO (IEC 10164-4). "
+    "Note that the CIM_DeviceErrorCountData class uses a "
+    "simplified naming/identity algorithm as compared to this class. "
+    "DeviceErrorCounts is not deprecated since its naming algorithm "
+    "is still in use in various implementations.") ] 
 class CIM_DeviceErrorCounts : CIM_StatisticalInformation {
 
     [Propagated ("CIM_LogicalDevice.SystemCreationClassName"), 
@@ -316,6 +316,7 @@ class CIM_ErrorCountersForDevice : CIM_Statistics {
     CIM_LogicalDevice REF Element;
 };
 
+
 // ==================================================================
 // DeviceErrorCountData
 // ==================================================================
@@ -324,7 +325,9 @@ class CIM_ErrorCountersForDevice : CIM_Statistics {
     "related counters for a LogicalDevice. The types of errors " 
     "are as defined by CCITT (Rec X.733) and ISO (IEC 10164-4)."
     "The element whose statistics are described is associated "
-    "using the relationship, ElementStatisticalData.") ]
+    "using the relationship, ElementStatisticalData. Note that "
+    "this class uses a simplified identity/naming algorithm over "
+    "CIM_DeviceErrorCounts.") ]
 class CIM_DeviceErrorCountData : CIM_StatisticalData {
 
     [Description ("Count of the indeterminate errors. "),

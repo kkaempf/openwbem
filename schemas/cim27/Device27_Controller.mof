@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Controller 2.7
+// Title:       Device Controller 2.7
 // Filename:    Device27_Contoller.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,38 +42,32 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for Controllers.
+//              are related to LogicalDevices. This file defines 
+//              the concepts and classes for Controllers.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
 // CR622 - Fix the DMI mapping string to include the attribute number
-//         Controller.ProtocolSupported, .MaxNumberControlled, &
-//            .ProtocolDescription and
-//         SCSIController.MaxDataWidth & .MaxTransferRate and
-//         SCSIInterface.InitiatorId, .TargetId & .SCSISignal.
+//         for Controller.ProtocolSupported, .MaxNumberControlled, &
+//            .ProtocolDescription, 
+//         SCSIController.MaxDataWidth & .MaxTransferRate, 
+//         SCSIInterface.InitiatorId, .TargetId & .SCSISignal
 // CR632 - Add PortController
-// CR654 - Revise description for Controller.
+// CR654 - Update the description for Controller
 //       - Add Controller.PortNumber
-//       - UpdateDescription for ControlledBy
+//       - Update the Description for ControlledBy
 //       - Add ControlledBy.DeviceNumber
 //       - Add SCSILUN
-// CR830 - Revice description for ControlledBy
+// CR830 - Update the Description for ControlledBy
 //       - Modify type of ControlledBy.DeviceNumber from uint64 to 
 //         a string
-//       - Add ControlledBy.AccessMode
-//       - Add ControlledBy.AccessPriority
+//       - Add ControlledBy.AccessMode and ControlledBy.AccessPriority
 //       - Update SCSILUN.DeviceNumber to match change to ContolledBy
-//
+// CR892 - Fix the subclassing inconsistency of VideoController
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -596,6 +590,7 @@ class CIM_SerialInterface : CIM_ControlledBy {
     uint16 FlowControlInfo;
 };
 
+
 // ===================================================================
 // SSAController 
 // ===================================================================
@@ -644,7 +639,7 @@ class CIM_USBController : CIM_Controller {
 // ===================================================================
 // VideoController
 // ===================================================================
-[Version ("2.6.0"), Description (
+[Version ("2.7.0"), Description (
     "Capabilities and management of the VideoController.") ]
 class CIM_VideoController : CIM_Controller   {
 
@@ -681,9 +676,12 @@ class CIM_VideoController : CIM_Controller   {
     [Description (
         "An array of integers indicating the graphics and 3D "
         "capabilities of the VideoController."),
-        ValueMap {"0", "1", "2", "3"},
+        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8"},
         Values {"Unknown", "Other", "Graphics Accelerator",
-            "3D Accelerator"},
+            "3D Accelerator", "PCI Fast Write", 
+            "MultiMonitor Support", "PCI Mastering", 
+            "Second Monochrome Adapter Support", 
+            "Large Memory Address Support"}, 
         ModelCorrespondence {
             "CIM_VideoController.CapabilityDescriptions"} ]
     uint16 AcceleratorCapabilities[];
@@ -791,11 +789,14 @@ class CIM_PCVideoController : CIM_VideoController   {
 // ===================================================================
 // AGPVideoController
 // ===================================================================
-[Version ("2.6.0"), Description (
+[Version ("2.7.0"), Description (
     "Capabilities and management of an AGPVideoController.") ]
 class CIM_AGPVideoController: CIM_VideoController {
 
-    [Description (
+    [Deprecated {"VideoController.AcceleratorCapabilities"},
+        Description (
+        "This property has been incorporated into the inherited "
+        "AcceleratorCapabilities property.  "
         "Capabilities of the AGP Graphics Controller. For example, "
         "the Device may support multiple monitors, PCI Mastering and "
         "large memory addresses. In this case, the values 3, 4 and 6 "
@@ -809,16 +810,6 @@ class CIM_AGPVideoController: CIM_VideoController {
         ModelCorrespondence {
             "CIM_AGPVideoController.CapabilityDescriptions"} ]
     uint16 Capabilities[];
-
-    [Description (
-        "An array of free form strings providing more detailed "
-        "explanations for any of the entries in the Capabilities "
-        "array. Note, each entry of this array is related to the "
-        "entry in the Capabilities array that is located at the "
-        "same index."), 
-        ArrayType("Indexed"), 
-        ModelCorrespondence {"CIM_AGPVideoController.Capabilities"} ]
-    string CapabilityDescriptions[];
 
     [Description (
         "Size of the non-local video memory in KB."), 
@@ -886,10 +877,99 @@ class CIM_AGPVideoController: CIM_VideoController {
 
 
 // ===================================================================
-//
-//    PCI Controllers, Devices, and Bridges
-//
+// VideoControllerResolution
 // ===================================================================
+[Version ("2.6.0"), Description (
+    "VideoControllerResolution describes the various video modes "
+    "that a VideoController can support. Video modes are defined by "
+    "the possible horizontal and vertical resolutions, refresh "
+    "rate, scan mode and number of colors settings supported by a "
+    "Controller. The actual resolutions, etc. that are in use, are "
+    "the values specified in the VideoController object.") ]
+class CIM_VideoControllerResolution : CIM_Setting {
+
+    [Override ("SettingID"), Key, MaxLen (256), Description (
+        "The inherited SettingID serves as part of the key for a "
+        "VideoControllerResolution instance.") ]
+    string SettingID;
+
+    [Description (
+        "Controller's horizontal resolution in Pixels."), 
+        Units ("Pixels"), 
+        ModelCorrespondence {
+            "CIM_VideoController.CurrentHorizontalResolution"}, 
+        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.2"} ]
+    uint32 HorizontalResolution;
+
+    [Description (
+        "Controller's vertical resolution in Pixels."), 
+        Units ("Pixels"), 
+        ModelCorrespondence {
+            "CIM_VideoController.CurrentVerticalResolution"}, 
+        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.3"} ]
+    uint32 VerticalResolution;
+
+    [Description (
+        "Refresh rate in Hertz. If a range of rates is supported, use "
+        "the MinRefreshRate and MaxRefreshRate properties, and set "
+        "RefreshRate (this property) to 0."), 
+        Units ("Hertz"), 
+        ModelCorrespondence {"CIM_VideoController.CurrentRefreshRate"}, 
+        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.4"} ]
+    uint32 RefreshRate;
+
+    [Description (
+        "Minimum refresh rate in Hertz, when a range of rates is "
+        "supported at the specified resolutions."), 
+        Units ("Hertz"), 
+        ModelCorrespondence {"CIM_VideoController.MinRefreshRate"}, 
+        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.6"} ]
+    uint32 MinRefreshRate;
+
+    [Description (
+        "Maximum refresh rate in Hertz, when a range of rates is "
+        "supported at the specified resolutions."), 
+        Units ("Hertz"), 
+        ModelCorrespondence {"CIM_VideoController.MaxRefreshRate"}, 
+        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.7"} ]
+    uint32 MaxRefreshRate;
+
+    [Description (
+        "Integer indicating whether the Controller operates in "
+        "interlaced (value=5) or non-interlaced (4) mode."), 
+        ValueMap {"1", "2", "3", "4", "5"}, 
+        Values {"Other", "Unknown", "Not Supported", 
+            "Non-Interlaced Operation", "Interlaced Operation"}, 
+        ModelCorrespondence {"CIM_VideoController.CurrentScanMode"}, 
+        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.5"} ]
+    uint16 ScanMode;
+
+    [Description (
+        "Number of colors supported at the current resolutions."), 
+        ModelCorrespondence {
+            "CIM_VideoController.CurrentNumberOfColors"} ]
+    uint64 NumberOfColors;
+};
+
+
+// ===================================================================
+// VideoSetting
+// ===================================================================
+[Association, Version ("2.6.0"), Description (
+    "VideoSetting associates the VideoControllerResolution Setting "
+    "with the Controller(s) to which it applies.") ]
+class CIM_VideoSetting : CIM_ElementSetting {
+
+    [Override ("Element"), Description (
+        "The VideoController.") ]
+    CIM_VideoController REF Element;
+
+    [Override ("Setting"), Description (
+        "The resolutions, refresh rates, scan mode and number of "
+        "colors that can be set for the Controller.") ]
+    CIM_VideoControllerResolution REF Setting;
+};
+
 
 // ===================================================================
 // PCIController
@@ -1174,101 +1254,6 @@ class CIM_PCIBridge : CIM_PCIController {
         "I/O addressing is used. The lower 16 bits are assumed to be "
         "0.") ]
     uint16 IOBaseUpper16;
-};
-
-
-// ===================================================================
-// VideoControllerResolution
-// ===================================================================
-[Version ("2.6.0"), Description (
-    "VideoControllerResolution describes the various video modes "
-    "that a VideoController can support. Video modes are defined by "
-    "the possible horizontal and vertical resolutions, refresh "
-    "rate, scan mode and number of colors settings supported by a "
-    "Controller. The actual resolutions, etc. that are in use, are "
-    "the values specified in the VideoController object.") ]
-class CIM_VideoControllerResolution : CIM_Setting {
-
-    [Override ("SettingID"), Key, MaxLen (256), Description (
-        "The inherited SettingID serves as part of the key for a "
-        "VideoControllerResolution instance.") ]
-    string SettingID;
-
-    [Description (
-        "Controller's horizontal resolution in Pixels."), 
-        Units ("Pixels"), 
-        ModelCorrespondence {
-            "CIM_VideoController.CurrentHorizontalResolution"}, 
-        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.2"} ]
-    uint32 HorizontalResolution;
-
-    [Description (
-        "Controller's vertical resolution in Pixels."), 
-        Units ("Pixels"), 
-        ModelCorrespondence {
-            "CIM_VideoController.CurrentVerticalResolution"}, 
-        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.3"} ]
-    uint32 VerticalResolution;
-
-    [Description (
-        "Refresh rate in Hertz. If a range of rates is supported, use "
-        "the MinRefreshRate and MaxRefreshRate properties, and set "
-        "RefreshRate (this property) to 0."), 
-        Units ("Hertz"), 
-        ModelCorrespondence {"CIM_VideoController.CurrentRefreshRate"}, 
-        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.4"} ]
-    uint32 RefreshRate;
-
-    [Description (
-        "Minimum refresh rate in Hertz, when a range of rates is "
-        "supported at the specified resolutions."), 
-        Units ("Hertz"), 
-        ModelCorrespondence {"CIM_VideoController.MinRefreshRate"}, 
-        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.6"} ]
-    uint32 MinRefreshRate;
-
-    [Description (
-        "Maximum refresh rate in Hertz, when a range of rates is "
-        "supported at the specified resolutions."), 
-        Units ("Hertz"), 
-        ModelCorrespondence {"CIM_VideoController.MaxRefreshRate"}, 
-        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.7"} ]
-    uint32 MaxRefreshRate;
-
-    [Description (
-        "Integer indicating whether the Controller operates in "
-        "interlaced (value=5) or non-interlaced (4) mode."), 
-        ValueMap {"1", "2", "3", "4", "5"}, 
-        Values {"Other", "Unknown", "Not Supported", 
-            "Non-Interlaced Operation", "Interlaced Operation"}, 
-        ModelCorrespondence {"CIM_VideoController.CurrentScanMode"}, 
-        MappingStrings {"MIF.DMTF|Monitor Resolutions|002.5"} ]
-    uint16 ScanMode;
-
-    [Description (
-        "Number of colors supported at the current resolutions."), 
-        ModelCorrespondence {
-            "CIM_VideoController.CurrentNumberOfColors"} ]
-    uint64 NumberOfColors;
-};
-
-
-// ===================================================================
-// VideoSetting
-// ===================================================================
-[Association, Version ("2.6.0"), Description (
-    "VideoSetting associates the VideoControllerResolution Setting "
-    "with the Controller(s) to which it applies.") ]
-class CIM_VideoSetting : CIM_ElementSetting {
-
-    [Override ("Element"), Description (
-        "The VideoController.") ]
-    CIM_VideoController REF Element;
-
-    [Override ("Setting"), Description (
-        "The resolutions, refresh rates, scan mode and number of "
-        "colors that can be set for the Controller.") ]
-    CIM_VideoControllerResolution REF Setting;
 };
 
 

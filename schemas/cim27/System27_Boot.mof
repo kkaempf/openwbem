@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Boot 2.7
+// Title:       System Boot 2.7
 // Filename:    System27_Boot.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/08/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,21 +42,16 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
+//              concepts. This file defines the specific concepts for
 //              booting a system.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-//                
-// ==================================================================
 // Change Log for v2.7
 // CR718 - Promote HostedBootSAP.Antecedent from UnitaryComputer
-//         System to ComputerSystem.
+//         System to ComputerSystem
 // ===================================================================
 
 #pragma locale ("en_US")
@@ -89,6 +84,7 @@ class CIM_BootSAP : CIM_ServiceAccessPoint {
     "BootServiceAccessBySAP is the relationship between a Boot"
     "Service and its access points.") ]
 class CIM_BootServiceAccessBySAP : CIM_ServiceAccessBySAP {
+
     [Override ("Antecedent"), 
         Description ("The BootService.") ]
     CIM_BootService REF Antecedent;
@@ -108,6 +104,11 @@ class CIM_BootServiceAccessBySAP : CIM_ServiceAccessBySAP {
     "Service, it inherits the scoping/naming scheme defined for "
     "Service - where a Service is weak to its hosting System.") ]
 class CIM_HostedBootService : CIM_HostedService {
+
+    [Override ("Antecedent"), Max (1), Min (1),
+        Description ("The hosting System.") ] 
+    CIM_System REF Antecedent;
+
     [Override ("Dependent"), 
         Description ("The BootService hosted on the System.") ]
     CIM_BootService REF Dependent;

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Storage Library 2.7
+// Title:       Device Storage Library 2.7
 // Filename:    Device27_StorageLib.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/17/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,26 +42,19 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for modeling a
-//              storage library.
+//              are related to LogicalDevices. This file defines the
+//              classes that model a storage library.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
 // CR721 - Add LabelReaderStatData and PickerStatData that are part 
-//         of the new statistics hierarcy.
+//         of the new statistics hierarcy
 // CR822 - Change the subclassing of LibraryPackage from
-//         Dependency to SystemPackaging.
-//
+//         Dependency to SystemPackaging
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -290,9 +283,8 @@ class CIM_ChangerDevice : CIM_MediaTransferDevice {
         "by the Changer.") ]
     boolean AuditInProgress;
 
-    [Description (
-        "A count of the number of audits performed by the Changer."), 
-        Counter ]
+    [Counter, Description (
+        "A count of the number of audits performed by the Changer.") ]
     uint64 AuditsPerformed;
 };
 
@@ -374,7 +366,7 @@ class CIM_LimitedAccessPort : CIM_MediaTransferDevice {
         "both (value=3)."),
         ValueMap {"0", "1", "2", "3"},
         Values {"Unknown", "Import", "Export", 
-        "Both Import and Export"} ]
+            "Both Import and Export"} ]
     uint16 Direction;
 };
 
@@ -397,16 +389,14 @@ class CIM_InterLibraryPort : CIM_MediaTransferDevice {
         "using the LibraryExchange association.") ]
     datetime LastAccessed;
 
-    [Description (
+    [Counter, Description (
         "The number of times that the InterLibraryPort was used to "
-        "move a PhysicalMedia into the System/StorageLibrary."),
-        Counter ]
+        "move a PhysicalMedia into the System/StorageLibrary.") ]
     uint64 ImportCount;
 
-    [Description (
+    [Counter, Description (
         "The number of times that the InterLibraryPort was used to "
-        "move a PhysicalMedia out of the System/StorageLibrary."),
-        Counter ]
+        "move a PhysicalMedia out of the System/StorageLibrary.") ]
     uint64 ExportCount;
 
     [Description (
@@ -490,7 +480,7 @@ class CIM_LabelReader : CIM_LogicalDevice {
 [Association, Version ("2.6.0"), Description (
     "A LogicalDevice may use or require one or more LabelReaders, to "
     "scan barcodes or otherwise identify entities. This relationship "
-    "is described by the AssociatedLabelReader dependency. ") ]
+    "is described by the AssociatedLabelReader dependency.") ]
 class CIM_AssociatedLabelReader : CIM_Dependency {
 
     [Override ("Antecedent"), Description (
@@ -512,6 +502,10 @@ class CIM_AssociatedLabelReader : CIM_Dependency {
     "PhysicalMedia as they are being picked/placed.") ]
 class CIM_PickerLabelReader : CIM_AssociatedLabelReader {
 
+    [Override ("Antecedent"), Description (
+        "The LabelReader.") ]
+    CIM_LabelReader REF Antecedent;
+
     [Override ("Dependent"), Description (
         "The PickerElement that is dependent on the Reader Device.") ]
     CIM_PickerElement REF Dependent;
@@ -526,6 +520,10 @@ class CIM_PickerLabelReader : CIM_AssociatedLabelReader {
     "Readers works in conjunction with MediaAccessDevices, "
     "to identify PhysicalMedia before read/write.") ]
 class CIM_AccessLabelReader : CIM_AssociatedLabelReader {
+
+    [Override ("Antecedent"), Description (
+        "The LabelReader.") ]
+    CIM_LabelReader REF Antecedent;
 
     [Override ("Dependent"),  Description (
         "The MediaAccessDevice that is dependent on the Reader "
@@ -542,17 +540,16 @@ class CIM_AccessLabelReader : CIM_AssociatedLabelReader {
     "failures and retries.") ]
 class CIM_LabelReaderStatInfo : CIM_DeviceStatisticalInformation {
 
-    [Description (
-        "The number of successful physical label scans."), 
-        Counter ]
+    [Counter, Description (
+        "The number of successful physical label scans.") ]
     uint64 ScanSuccesses;
 
-    [Description ("The number of failed physical label scans."), 
-        Counter ]
+    [Counter, 
+        Description ("The number of failed physical label scans.") ]
     uint64 ScanFailures;
 
-    [Description ("The number of retried physical label scans."), 
-        Counter ]
+    [Counter, 
+        Description ("The number of retried physical label scans.") ]
     uint64 ScanRetries;
 
     [Description (
@@ -585,28 +582,22 @@ class CIM_LabelReaderStatInfo : CIM_DeviceStatisticalInformation {
     "retries and failures.") ]
 class CIM_PickerStatInfo : CIM_DeviceStatisticalInformation {
 
-    [Description ("The number of successful picks."), 
-        Counter ]
+    [Counter, Description ("The number of successful picks.") ]
     uint64 PickSuccesses;
 
-    [Description ("The number of failed picks."), 
-        Counter ]
+    [Counter, Description ("The number of failed picks.") ]
     uint64 PickFailures;
 
-    [Description ("The number of retried picks."), 
-        Counter ]
+    [Counter, Description ("The number of retried picks.") ]
     uint64 PickRetries;
 
-    [Description ("The number of successful puts."), 
-        Counter ]
+    [Counter, Description ("The number of successful puts.") ]
     uint64 PutSuccesses;
 
-    [Description ("The number of failed puts."), 
-        Counter ]
+    [Counter, Description ("The number of failed puts.") ]
     uint64 PutFailures;
 
-    [Description ("The number of retried puts."), 
-        Counter ]
+    [Counter, Description ("The number of retried puts.") ]
     uint64 PutRetries;
 
     [Description (
@@ -641,20 +632,19 @@ class CIM_PickerStatInfo : CIM_DeviceStatisticalInformation {
     "ElementStatisticalData.") ]
 class CIM_LabelReaderStatData : CIM_StatisticalData {
 
-    [Description (
-        "The number of successful physical label scans."), 
-        Counter ]
+    [Counter, Description (
+        "The number of successful physical label scans.") ]
     uint64 ScanSuccesses;
 
-    [Description ("The number of failed physical label scans."), 
-        Counter ]
+    [Counter, 
+        Description ("The number of failed physical label scans.") ]
     uint64 ScanFailures;
 
-    [Description ("The number of retried physical label scans."), 
-        Counter ]
+    [Counter, 
+        Description ("The number of retried physical label scans.") ]
     uint64 ScanRetries;
-
 };
+
 
 // ===================================================================
 // PickerStatData
@@ -665,28 +655,22 @@ class CIM_LabelReaderStatData : CIM_StatisticalData {
     "is associated using the relationship, ElementStatisticalData.") ]
 class CIM_PickerStatData : CIM_StatisticalData {
 
-    [Description ("The number of successful picks."), 
-        Counter ]
+    [Counter, Description ("The number of successful picks.") ]
     uint64 PickSuccesses;
 
-    [Description ("The number of failed picks."), 
-        Counter ]
+    [Counter, Description ("The number of failed picks.") ]
     uint64 PickFailures;
 
-    [Description ("The number of retried picks."), 
-        Counter ]
+    [Counter, Description ("The number of retried picks.") ]
     uint64 PickRetries;
 
-    [Description ("The number of successful puts."), 
-        Counter ]
+    [Counter, Description ("The number of successful puts.") ]
     uint64 PutSuccesses;
 
-    [Description ("The number of failed puts."), 
-        Counter ]
+    [Counter, Description ("The number of failed puts.") ]
     uint64 PutFailures;
 
-    [Description ("The number of retried puts."), 
-        Counter ]
+    [Counter, Description ("The number of retried puts.") ]
     uint64 PutRetries;
 };
 

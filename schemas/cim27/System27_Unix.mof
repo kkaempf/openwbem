@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Unix 2.7
+// Title:       System Unix 2.7
 // Filename:    System27_Unix.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/08/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,19 +42,14 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
-//              Unix Systems.
+//              concepts. This file defines the specific subclasses 
+//              needed to manage Unix Systems.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-//                
-// ==================================================================
-// Change Log for v2.7
+// Change Log for v2.7 - None
 // ===================================================================
 
 #pragma locale ("en_US")
@@ -73,6 +68,7 @@
     "case of a Clustered File System. In this scenario, the " 
     "FileSystem is a LocalFileSystem, weak to the Cluster.") ]
 class CIM_UnixLocalFileSystem : CIM_LocalFileSystem {
+
     [Description (
         "The number of free inodes present in the file system.  "
         "This value is only valid if TotalSlots is non-zero."),
@@ -161,22 +157,20 @@ class CIM_UnixProcess : CIM_Process {
         "is \"Blocked\" or  \"SuspendedBlocked\"."),
         ModelCorrespondence {"CIM_Process.ExecutionState"} ]
     string ProcessWaitingForEvent;
-
 };
+
 
 // ===================================================================
 // UnixProcessStatisticalInformation
 // ===================================================================
 [Version ("2.6.0"), Description (
-    "The statistics associated with a Unix process. ") ]
+    "The statistics associated with a Unix process.") ]
 class CIM_UnixProcessStatisticalInformation : 
 CIM_StatisticalInformation {
     
     [Propagated("CIM_Process.CSCreationClassName"),
-        Key, MaxLen (256),
-        Description (
-            "The scoping Process's ComputerSystem "
-            "CreationClassName.") ]
+        Key, MaxLen (256), Description (
+            "The scoping Process's ComputerSystem CreationClassName.") ]
     string CSCreationClassName;
     
     [Propagated("CIM_Process.CSName"),
@@ -202,14 +196,13 @@ CIM_StatisticalInformation {
     string Handle;
     
     [Propagated("CIM_Process.CreationClassName"),
-        Key, MaxLen (256),
-        Description (
+        Key, MaxLen (256), Description (
             "The scoping Process's CreationClassName.") ]
     string ProcessCreationClassName;
     
-    [Key, MaxLen (256), Override ("Name"),
-        Description ("A string used "
-            "to identify the related statistics of a Process. ") ]
+    [Key, MaxLen (256), Override ("Name"), Description (
+         "A string used to identify the related statistics "
+         "of a Process.") ]
     string Name;
     
     [Description (
@@ -217,7 +210,7 @@ CIM_StatisticalInformation {
         "Process. This key allows multiple instances of statistics to "
         "correspond to a single process.  The multiple "
         "instances could be used in applications such as "
-        "time-sliced statistics. "),
+        "time-sliced statistics."),
         MappingStrings{"MIF.DMTF|Process Information|001.12"},
         Units("Percent") ]
     uint32 CPUTime;
@@ -286,23 +279,25 @@ CIM_StatisticalInformation {
     uint64 SystemTimeDeadChildren;
 };
 
+
 // ==================================================================
 // UnixProcessStatistics
 // ================================================================== 
 [Association, Version ("2.6.0"), Description ( 
     "CIM_UnixProcessStatistics is an association that relates a " 
-    "CIM_UnixProcess to its StatisticalInformation. ") ]
+    "CIM_UnixProcess to its StatisticalInformation.") ]
 class CIM_UnixProcessStatistics : CIM_Statistics { 
  
-    [Key, Override ("Element"), Min (1), Max (1), Description ( 
+    [Override ("Element"), Min (1), Max (1), Description ( 
         "The Process for which statistical or metric " 
         "data is defined.") ] 
     CIM_UnixProcess REF Element;
  
-    [Key, Override ("Stats"), Weak, Description (
+    [Override ("Stats"), Weak, Description (
         "The UNIX Process statistical information/object.") ] 
     CIM_UnixProcessStatisticalInformation REF Stats; 
 };
+
 
 // ===================================================================
 // UnixThread
@@ -463,7 +458,7 @@ class CIM_UnixFile : CIM_LogicalElement {
         "permissions.") ]
     boolean SetGid;
     
-    [Description ("The time that the Inode was last modified."
+    [Description ("The time that the Inode was last modified. "
         "This includes the Inode creation time, state modification, "
         "and etc.") ]
     datetime  LastModifiedInode;
@@ -474,13 +469,13 @@ class CIM_UnixFile : CIM_LogicalElement {
     uint64 LinkMax;  
     
     [Description ("Maximum number of bytes in a filename, not "
-        "including terminating null. "),
+        "including terminating null."),
         MinValue(14), Units ("Bytes"),
         MappingStrings {"POSIX.TOG|pathconf|_POSIX_NAME_MAX"} ]
     uint64 NameMax; 
     
     [Description ("Maximum number of bytes in a pathname, including "
-        "the terminating null character. "),
+        "the terminating null character."),
         MinValue(255), Units ("Bytes"),
         MappingStrings {"POSIX.TOG|pathconf|_POSIX_PATH_MAX"} ]
     uint64 PathMax;  
@@ -488,28 +483,28 @@ class CIM_UnixFile : CIM_LogicalElement {
     [Description ("The use of chown() is restricted to a process "
         "with appropriate privileges. chown() is used to change the "
         "group ID of a file. The group ID can be changed to the "
-        "effective group ID or one of its supplementary group IDs. "),
+        "effective group ID or one of its supplementary group IDs."),
         MappingStrings {"POSIX.TOG|pathconf|_PC_CHOWN_RESTRICTED"} ]
     uint64 PosixChownRestricted; 
     
-    [ Description ("Indicates whether pathname components longer "
-        "than NameMax generate an error. "),
+    [Description ("Indicates whether pathname components longer "
+        "than NameMax generate an error."),
         ModelCorrespondence {"CIM_UnixFile.NameMax"},
         MappingStrings {"POSIX.TOG|pathconf|_PC_NO_TRUNC"} ]
     uint64 PosixNoTrunc;  
     
     [Description ("Indicates whether asynchronous input or output "
-        "operations may be performed for the associated file. "),
+        "operations may be performed for the associated file."),
         MappingStrings {"POSIX.TOG|pathconf|_PC_ASYNC_IO"} ]
     uint64 PosixAsyncIo; 
     
     [Description ("Indicates whether prioritized input or output "
-        "operations may be performed for the associated file. "),
+        "operations may be performed for the associated file."),
         MappingStrings {"POSIX.TOG|pathconf|_PC_PRIO_IO"} ]
     uint64 PosixPrioIo; 
     
     [Description ("Indicates whether synchronised input or output "
-        "operations may be performed for the associated file. "),
+        "operations may be performed for the associated file."),
         MappingStrings {"POSIX.TOG|pathconf|_PC_SYNC_IO"} ]
     uint64 PosixSyncIo; 
 };
@@ -526,8 +521,8 @@ class CIM_UnixFile : CIM_LogicalElement {
     "the association's superclass, LogicalIdentity.") ]
 class CIM_FileIdentity : CIM_LogicalIdentity {
     
-    [Override ("SystemElement"), Min (1), Max (1), Description (
-        "The Logical File.") ]
+    [Override ("SystemElement"), Min (1), Max (1), 
+        Description ("The Logical File.") ]
     CIM_LogicalFile ref SystemElement;
     
     [Override ("SameElement"), Weak, Max (1), Description (
@@ -548,7 +543,7 @@ class CIM_UnixDirectory : CIM_Directory {
     [Description ("Minimum number of bits needed to represent "
         "the maximum size of a Unix file allowed in the specified "
         "directory, as a signed integer value. Thus, a value of 32 "
-        "indicates a maximum size of 2**31 bytes. "),
+        "indicates a maximum size of 2**31 bytes."),
         MinValue(32), Units ("Bits"),
         MappingStrings {"POSIX.TOG|pathconf|_PC_FILESIZEBITS"} ]
     uint64 FileSizeBits; 
@@ -575,9 +570,9 @@ class CIM_UnixDeviceFile : CIM_DeviceFile {
         ModelCorrespondence {"CIM_UnixDeviceFile.Type"} ] 
     string OtherTypeDescription;
     
-    [Required,
-        Description ("The device Identifier: this is the st_rdev field "
-            "in the stat structure.") ] 
+    [Required, Description (
+         "The device Identifier: this is the st_rdev field "
+         "in the stat structure.") ] 
     string DeviceId;
     
     [Description ("Additional information provided by the driver. "

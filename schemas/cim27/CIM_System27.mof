@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       System 2.7
+// Title:       System MOF Specification 2.7
 // Filename:    CIM_System27.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/31/02
 // ===================================================================
 // Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -41,8 +41,8 @@
 // or impact implementations of DMTF standards, visit 
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
-// Description: The System Model extends the basic management concepts
-//              that are related to a System and especially a Computer
+// Description: The System Model extends the management concepts that
+//              are related to a System, and especially a Computer
 //              System. This is the primary include file for the 
 //              basic segments of the DMTF System Model.  
 //
@@ -53,6 +53,12 @@
 
 #pragma locale ("en_US")
 
+
+// ==================================================================
+// Compile prerequisite:  Core and Physical MOFs
+// Physical MOF required for System27_SystemElements - Specifically,
+//    Physical27_Package.mof is needed
+// ==================================================================
 
 // ===================================================================
 // Subclasses of System (ComputerSystem, Virtual, Cluster, etc.)
@@ -65,9 +71,9 @@
 #pragma include ("System27_FileElements.mof")
 
 // ===================================================================
-// System Software (OperatingSystem, etc.)
+// Operating System
 // ===================================================================
-#pragma include ("System27_SystemSoftware.mof")
+#pragma include ("System27_OperatingSystem.mof")
 
 // ===================================================================
 // Processing (Processes, Threads and Jobs)
@@ -75,7 +81,7 @@
 #pragma include ("System27_Processing.mof")
 
 // ===================================================================
-// Boot services
+// Boot Services
 // ===================================================================
 #pragma include ("System27_Boot.mof")
 
@@ -85,12 +91,12 @@
 #pragma include ("System27_Time.mof")
 
 // ===================================================================
-// Unix extensions
+// Unix Extensions
 // ===================================================================
 #pragma include ("System27_Unix.mof")
 
 // ===================================================================
-// System Resources (DMA, IRQs, etc.)
+// System Resources (Hardware and Software)
 // ===================================================================
 #pragma include ("System27_SystemResources.mof")
 

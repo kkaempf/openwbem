@@ -3,7 +3,7 @@
 // Filename:    Core27_Qualifiers.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/10/02
+// Date:        07/01/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,7 +42,7 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Core Model defines basic management concepts. 
-//              This Core file defines the CIM qualifiers.
+//              This file defines the CIM qualifiers.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
@@ -68,6 +68,7 @@
 // ==================================================================
 
 #pragma locale ("en_US")
+
 
 // ==================================================================
 // Qualifiers

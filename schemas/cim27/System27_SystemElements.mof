@@ -3,7 +3,7 @@
 // Filename:    System27_SystemElements.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        10/04/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,8 +42,7 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
+//              concepts. This file defines the specific concepts for
 //              ComputerSystems (Virtual Systems, UnitaryComputerSystems, 
 //              Clusters, etc.).
 //
@@ -51,35 +50,34 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (System, 
-// ==================================================================
 // Change Log for v2.7
-//
 // CR640 - Add ComputerSystem.OtherDedicatedDescriptions
 //       - Add corresponding model correspondence to ComputerSystem.
-//         Dedicated.
+//         Dedicated
 // CR717 - Extend ComputerSystem.NameFormat to include "WWN"
 //       - Extend ComputerSystem.Dedicated to include "Block Server"
 //         and "File Server"
 //       - Clean up the description of ComputerSystem.ResetCapability
-//         to refer to ComptuerSystem vs. UnitaryComputerSystem.
+//         to refer to ComptuerSystem vs. UnitaryComputerSystem
 // CR718 - Remove the Abstract qualifier from ComputerSystem making
-//         it a concrete class.
+//         it a concrete class
 //       - Promote ComputerSystemPackage.Dependent from 
-//         UnitaryComputerSystem to ComputerSystem.
+//         UnitaryComputerSystem to ComputerSystem
 // CR720 - Deprecate the use of ComputerSystem.PowerManagement
 //         Capabilities & ComputerSystem.SetPowerState()
 //         Deprecate the use of UnitaryComputerSystem.PowerManagement
-//         Supported.
+//         Supported
 // CR767 - Add the Compostion qualifer to ComponentCS, SystemPartition
-// CR773 - Update the description ComputerSystem.Dedicated.
+// CR773 - Update the description ComputerSystem.Dedicated
 //         Extend the values of ComputerSystem.Dedicated to include 
-//         "Mobile User Device".
+//         "Mobile User Device"
 // CR822 - Change the subclassing of ComputerSystemPackage from
-//         Dependency to SystemPackaging.
-//
+//         Dependency to SystemPackaging
+// CR865 - Add ComputerSystemNodeCapabilities
 // ===================================================================
+
+#pragma locale ("en_US")
+
 
 // ===================================================================
 // ComputerSystem
@@ -221,6 +219,42 @@ class CIM_ComputerSystem : CIM_System {
         [IN] datetime Time);
 };
 
+
+// ==================================================================
+// ComputerSystemNodeCapabilities
+// ==================================================================
+[Experimental, Version ("2.7.0"), Description (
+    "Indicates general capabilities of a ComputerSystem node, such as "
+    "the ability to support a battery (and be portable), and ECC "
+    "memory. To tie these capabilities to a ComputerSystem instance, "
+    "the ElementCapabilities association is used.") ]
+class CIM_ComputerSystemNodeCapabilities : CIM_Capabilities {
+
+    [Required, Description (
+        "Enumeration indicating whether a battery is installable/"
+        "supportable on this System. This is independent of "
+        "whether one is currently installed. The latter is "
+        "indicated by an instance of the CIM_Battery class "
+        "associated using the SystemDevice relationship."), 
+        ValueMap {"0", "2", "3"}, 
+        Values {"Unknown", "Battery Supported", 
+            "Battery Not Supported"} ] 
+    uint16 BatterySupported;
+
+    [Required, Description (
+        "Enumeration indicating whether ECC single or multi-bit "
+        "memory is supported on this node. This is independent "
+        "of whether ECC memory is actually installed. The latter "
+        "is indicated by an instance of CIM_PhysicalMemory that "
+        "'Realizes' the CIM_Memory of the System (associated using "
+        "SystemDevice)."), 
+        ValueMap {"0", "2", "3"}, 
+        Values {"Unknown", "Single-bit ECC", "Multi-bit ECC"}, 
+        MappingStrings {"MIF.DMTF|Physical Memory|002.10"} ]
+    uint16 ECCSupported;
+};
+
+
 // ===================================================================
 // ComponentCS
 // ===================================================================
@@ -315,7 +349,7 @@ class CIM_UnitaryComputerSystem : CIM_ComputerSystem {
         "warning state, though also in a power save mode; and, values "
         "8 and 9 describe the ACPI \"Hibernate\" and \"Soft Off\" "
         "states."),
-        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8"},
+        ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
         Values {"Unknown", "Full Power", "Power Save - Low Power Mode", 
             "Power Save - Standby", "Power Save - Unknown", 
             "Power Cycle", "Power Off", "Power Save - Warning", 

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Sensors and Alarms 2.7
+// Title:       Device Sensors and Alarms 2.7
 // Filename:    Device27_Sensors.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/17/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,24 +42,19 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for sensors
-//              (including LEDs, Buzzers, WatchDog processors, etc.).
+//              are related to LogicalDevices. This file describes
+//              the management of sensors (including LEDs, Buzzers, 
+//              WatchDog processors, etc.).
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
 // CR621 - Promote subclassing of PackageTempSensor and PackageAlarm 
 //         from Dependency to PackageDependency and deprecate them.
 // CR771 - Add the composition qualifer to CollectionOfSensors
-//
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -139,7 +134,7 @@ class CIM_Sensor : CIM_LogicalDevice {
 [Association, Version ("2.6.0"), Description (
     "Many Devices include Sensors or have Sensors installed "
     "nearby, in order to measure critical input and output "
-    "properties.  This association indicates that relationship.") ] 
+    "properties. This association indicates that relationship.") ] 
 class CIM_AssociatedSensor : CIM_Dependency {
 
     [Override ("Antecedent"), 
@@ -905,13 +900,13 @@ class CIM_AssociatedSupplyCurrentSensor : CIM_AssociatedSensor {
 // ==================================================================
 // PackageTempSensor 
 // ==================================================================
-[Association, Version ("2.7.0"), Description (
-    "Often, a TemperatureSensor is installed in a Package such as "
-    "a Chassis or a Rack, not to measure any particular Device, but "
-    "the Package's environment in general.  The use of this "
-    "association has been deprecated.  Instead, use PackageDependency "
-    "to describe this relationship."),
-    Deprecated {"CIM_PackageDependency"} ]
+[Association, Version ("2.7.0"), Deprecated {"CIM_PackageDependency"}, 
+    Description (
+        "Often, a TemperatureSensor is installed in a Package such as "
+        "a Chassis or a Rack, not to measure any particular Device, "
+        "but the Package's environment in general.  The use of this "
+        "association has been deprecated.  Instead, use "
+        "PackageDependency to describe this relationship.") ]
 class CIM_PackageTempSensor : CIM_PackageDependency {
       
     [Override ("Antecedent"), 
@@ -933,15 +928,15 @@ class CIM_PackageTempSensor : CIM_PackageDependency {
 // ===================================================================
 [Version ("2.6.0"), Description (
     "An AlarmDevice is a type of Device that emits audible or " 
-    "visible indications related to a problem situation. ") ]
+    "visible indications related to a problem situation.") ]
 class CIM_AlarmDevice : CIM_LogicalDevice {
 
     [Description (
-        "Boolean indicating that the Alarm is audible. ") ]
+        "Boolean indicating that the Alarm is audible.") ]
     boolean AudibleAlarm;
 
     [Description (
-        "Boolean indicating that the Alarm is visible. ") ]
+        "Boolean indicating that the Alarm is visible.") ]
     boolean VisibleAlarm;
 
     [Description (
@@ -1054,15 +1049,15 @@ class CIM_AlarmDevice : CIM_LogicalDevice {
     "LogicalDevices may have one or more AlarmDevices " 
     "associated with them, in order to indicate problem situations. "
     "This relationship is indicated by the AssociatedAlarm "
-    "dependency. ") ]
+    "dependency.") ]
 class CIM_AssociatedAlarm : CIM_Dependency {
 
     [Override ("Antecedent"), 
-        Description ("The AlarmDevice. ") ] 
+        Description ("The AlarmDevice.") ] 
     CIM_AlarmDevice REF Antecedent;
 
     [Override ("Dependent"), 
-        Description ("The LogicalDevice that is alarmed. ") ]
+        Description ("The LogicalDevice that is alarmed.") ]
     CIM_LogicalDevice REF Dependent;
 };
 
@@ -1070,27 +1065,27 @@ class CIM_AssociatedAlarm : CIM_Dependency {
 // ==================================================================
 // PackageAlarm 
 // ==================================================================
-[Association, Version ("2.7.0"), Description (
-    "Often, an AlarmDevice is installed as part of a Package, "
-    "not to indicate issues with any particular LogicalDevice "
-    "or PhysicalComponent, but with the Package's environment "
-    "in general, its security state or its overall health. " 
-    "The use of this association has been deprecated.  Instead, "
-    "use PackageDependency to describe this relationship."),
-    Deprecated {"CIM_PackageDependency"} ]
+[Association, Version ("2.7.0"), Deprecated {"CIM_PackageDependency"},
+    Description (
+        "Often, an AlarmDevice is installed as part of a Package, "
+        "not to indicate issues with any particular LogicalDevice "
+        "or PhysicalComponent, but with the Package's environment "
+        "in general, its security state or its overall health. " 
+        "The use of this association has been deprecated.  Instead, "
+        "use PackageDependency to describe this relationship.") ]
 class CIM_PackageAlarm : CIM_PackageDependency {
     
     [Override ("Antecedent"), 
         Deprecated {"CIM_PackageDependency.Antecedent"}, 
         Description (
-            "The AlarmDevice for the Package. ") ]
+            "The AlarmDevice for the Package.") ]
     CIM_AlarmDevice REF Antecedent;
     
     [Override ("Dependent"), 
         Deprecated {"CIM_PackageDependency.Dependent"}, 
         Description (
             "The PhysicalPackage whose health, security, environment, "
-            "etc. is alarmed. ") ]
+            "etc. is alarmed.") ]
     CIM_PhysicalPackage REF Dependent;
 };
 

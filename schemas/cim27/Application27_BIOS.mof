@@ -1,10 +1,11 @@
 // ===================================================================
-// Title:       Application MOF Specification 2.7
+// Title:       Application MOF Specification 2.7, BIOS and 
+//              Device Driver Software
 // Filename:    Application27_BIOS.mof
 // Version:     2.7.0
 // Status:      Preliminary
-// Date:        06/09/2002 
-// CVS:         $Revision: 1.3 $           $Date: 2002/06/07 19:50:21 $
+// Date:        07/03/2002 
+// CVS:         $Revision: 1.4 $     $Date: $
 // ===================================================================
 // Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -26,7 +27,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,9 +43,9 @@
 // or impact implementations of DMTF standards, visit 
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
-// Description: These object classes represent objects associated with
-//      BIOS, which inherit from SoftareFeature and SofwareElement.
-//      They are maintained as a separate MOF file in the
+// Description: These classes represent BIOS and device driver-related
+//      objects inherited from SoftwareElements and SoftwareFeatures.   
+//      They are maintained as a separate MOF file in the 
 //      Application Model.
 //
 //      The object classes below are listed in an order that
@@ -62,6 +63,7 @@
 #pragma locale ("en_US")
 
 
+
 // ===================================================================
 // BIOSFeature
 // ===================================================================
@@ -70,6 +72,7 @@
      "software that is used to bring up and configure a Computer"
      "System.") ]
 class CIM_BIOSFeature : CIM_SoftwareFeature {
+
       [Description (
         "An array of integers that specify the features "
         "supported by the BIOS. For example, one can specify that "
@@ -100,6 +103,7 @@ class CIM_BIOSFeature : CIM_SoftwareFeature {
        ModelCorrespondence {
         "CIM_BIOSFeature.CharacteristicDescriptions"} ]
    uint16 Characteristics[];
+
       [Description (
         "An array of free-form strings providing more detailed "
         "explanations for any of the BIOS features indicated in the "
@@ -121,16 +125,20 @@ class CIM_BIOSFeature : CIM_SoftwareFeature {
      "into non-volatile storage and used to bring up and configure "
      "a ComputerSystem.") ]
 class CIM_BIOSElement : CIM_SoftwareElement {
+
       [Override ("Version"),
        MappingStrings {"MIF.DMTF|System BIOS|001.3"} ]
    string Version;
+
       [Override ("Manufacturer"),
        MappingStrings {"MIF.DMTF|System BIOS|001.2"} ]
-   string Manufacturer;     
+   string Manufacturer;   
+  
       [Description (
       "If true, this is the primary BIOS of the ComputerSystem."),
        MappingStrings {"MIF.DMTF|System BIOS|001.9"} ]
    boolean PrimaryBIOS;
+
       [Description (
         "A list of installable languages for the BIOS. This "
         "information can be obtained from SMBIOS, from the string list "
@@ -139,6 +147,7 @@ class CIM_BIOSElement : CIM_SoftwareElement {
         "The ISO 3166 Territory Name and the encoding method may also "
         "be specified, following the Language Name.") ]
    string ListOfLanguages[];
+
       [Description (
         "The currently selected language for the BIOS. This "
         "information can be obtained from SMBIOS, using the Current "
@@ -149,22 +158,26 @@ class CIM_BIOSElement : CIM_SoftwareElement {
         "method."),
        ModelCorrespondence {"CIM_BIOSElement.ListOfLanguages"} ]
    string CurrentLanguage;
+
       [Description (
         "The starting address of the memory which this BIOS "
         "occupies."), 
        MappingStrings {"MIF.DMTF|System BIOS|001.5"} ]
     uint64 LoadedStartingAddress;
+
       [Description (
         "The ending address of the memory which this BIOS "
         "occupies."),
        MappingStrings {"MIF.DMTF|System BIOS|001.6"} ]
     uint64 LoadedEndingAddress;
+
       [MaxLen (64), Description (
         "A free form string describing the BIOS flash/load utility "
         "that is required to update the BIOSElement. Version and "
         "other information may be indicated in this property."),
        MappingStrings {"MIF.DMTF|System BIOS|001.7"} ]
     string LoadUtilityInformation;
+
       [Description (
         "Date that this BIOS was released."),
        MappingStrings {"MIF.DMTF|System BIOS|001.8"} ]
@@ -178,10 +191,12 @@ class CIM_BIOSElement : CIM_SoftwareElement {
    [Association, Aggregation, Version ("2.6.0"), Description (
       "A link between BIOSFeature and its aggregated BIOSElements.") ]
 class CIM_BIOSFeatureBIOSElements : 
-CIM_SoftwareFeatureSoftwareElements {
+ CIM_SoftwareFeatureSoftwareElements {
+
       [Override ("GroupComponent"), Aggregate, 
        Description ("The BIOSFeature.") ]
    CIM_BIOSFeature REF GroupComponent;
+
       [Override ("PartComponent"),
        Description (
         "The BIOSElement that implements the capabilities described "
@@ -197,10 +212,12 @@ CIM_SoftwareFeatureSoftwareElements {
      "SystemBIOS associates a UnitaryComputerSystem's BIOS with the "
      "System itself.") ]
 class CIM_SystemBIOS : CIM_SystemComponent {
+
       [Override ("GroupComponent"), Max (1), Aggregate, 
        Description (
-        "The UnitaryComputerSystem that boots from the BIOS.") ]
+        "The ComputerSystem that boots from the BIOS.") ]
    CIM_ComputerSystem REF GroupComponent;
+
       [Override ("PartComponent"), 
        Description ("The System's BIOS.") ]
    CIM_BIOSElement REF PartComponent;
@@ -333,41 +350,6 @@ class CIM_AGPSoftwareFeature : CIM_SoftwareFeature {
     ArrayType ("Indexed"), 
     ModelCorrespondence {"CIM_AGPSoftwareFeature.Characteristics"} ]
    string CharacteristicDescriptions[];
-};
-
-// ==================================================================
-// OperatingSystemSoftwareFeature
-// ==================================================================
-   [Association, Aggregation, Version ("2.6.0"), Description (
-     "Indicates the SoftwareFeatures that make up the Operating"
-     "System. The SoftwareFeatures can be part of different "
-     "Products.") ]
-class CIM_OperatingSystemSoftwareFeature : CIM_Component {
-      [Override ("GroupComponent"), Aggregate,
-       Description ("The OperatingSystem.") ]
-    CIM_OperatingSystem REF GroupComponent;
-      [Override ("PartComponent"), Description (
-        "The SoftwareFeatures that make up the OperatingSystem.") ]
-    CIM_SoftwareFeature REF PartComponent;
-};
-
-
-// ==================================================================
-//    DiagnosticTestSoftware
-// ==================================================================
-   [Association, Version ("2.6.0"), Description(
-     "This is an association class relating DiagnosticTest to "
-     "the SoftwareElements that provide this test. SoftwareElement "
-     "describes vendor/version information and other deployment "
-     "data.") ]
-class CIM_DiagnosticTestSoftware : CIM_Dependency {
-      [Override ("Antecedent"), Description (
-        "Vendor/version and other information about the software "
-        "that runs as the DiagnosticTest.") ]
-   CIM_SoftwareElement REF Antecedent;
-      [Override ("Dependent"), Description (
-        "The DiagnosticTest whose software is described.") ]
-   CIM_DiagnosticTest REF Dependent;
 };
 
 

@@ -3,8 +3,8 @@
 // Filename:    CIM_Application27.mof
 // Version:     2.7.0
 // Status:      Preliminary
-// Date:        06/09/2002
-// CVS:         $Revision: 1.2 $     $Date: 2002/06/07 11:57:27 $
+// Date:        07/03/2002
+// CVS:         $Revision: 1.3 $     
 // ===================================================================
 // Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -26,7 +26,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -62,9 +62,17 @@
 
 
 // ==================================================================
-//  Application Model Includes
+// Application Model Includes 
+// Compile prerequisite:  Core and System MOFs 
+// System MOF required for the last 2 includes (SystemSoftware and
+//    BIOS) - Specifically, System27_SystemElements.mof, 
+//    System27_SystemSoftware.mof and System27_Diagnostics.mof
+//    are needed from the System MOF 
 // ==================================================================
-#pragma include ("Application27_General.mof")
+#pragma include ("Application27_DeploymentModel.mof")
+#pragma include ("Application27_InstalledProduct.mof")
+#pragma include ("Application27_CheckAction.mof")
+#pragma include ("Application27_SystemSoftware.mof")
 #pragma include ("Application27_BIOS.mof")
 
 

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Processor 2.7
+// Title:       Device Processor 2.7
 // Filename:    Device27_Processor.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,27 +42,26 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for processors.
+//              are related to LogicalDevices. This file defines the
+//              objects to manage watch dog timers and processors.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-// CR616 - Extend Processor.UpgradeMethod to include Socket 478.
+// CR616 - Extend Processor.UpgradeMethod to include Socket 478
 // CR622 - Fix the DMI mapping string to include the attribute number
 //         Processor.Family, .UpgradeMethod, .MaxClockSpeed, &
-//            .CurrentClockSpeed.
-// CR771 - Add the composition qualifer to ComputerSystemProcessor
-// CR773 - Extend Processor.Family to include AMD AthlonXP(TM) and
+//            .CurrentClockSpeed
+// CR771 - Add the Composition qualifer to ComputerSystemProcessor
+// CR772 - Extend Processor.Family to include AMD AthlonXP(TM) and
 //         AMD AthlonMP(TM) 
-//
+// CR839 - Add Itanium 2 to Processor.Family
+// CR893 - Add Intel(R) Pentium(R) 4 processor with HT Technology 
+//         to Processory.Family
+// CR897 - Deprecate the association, ComputerSystemProcessor
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -70,7 +69,7 @@
 // ===================================================================
 // WatchDog
 // ===================================================================
-[Version ("2.6.0"), Description (
+[Version ("2.7.0"), Description (
     "CIM_Watchdog is a timer implemented in system hardware. It "
     "allows the hardware to monitor the state of the Operating"
     "System, BIOS or a software component installed on the "
@@ -86,8 +85,8 @@ class CIM_Watchdog : CIM_LogicalDevice {
     [Description (
         "The entity that is currently being monitored by the WatchDog. "
         "This property is used to identify the module that is "
-        "responsible for re-arming the watchdog at periodic "
-        "intervals."),
+        "responsible for or whose information is used to re-arm "
+        "the watchdog at periodic intervals."),
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7", "8"},
         Values {"Unknown", "Other", "Operating System", 
             "Operating System Boot Process", 
@@ -98,7 +97,7 @@ class CIM_Watchdog : CIM_LogicalDevice {
 
     [MaxLen (256), Description (
         "A string describing more textual information about the "
-        "monitored entity ") ]
+        "monitored entity.") ]
     string MonitoredEntityDescription;
 
     [Description (
@@ -177,7 +176,7 @@ class CIM_Processor : CIM_LogicalDevice {
             "112", "120", "121", "128", "130", 
             "144", "145", "146", "147", "148", "149", "150", 
             "160", "176", "177", "178", "179", 
-            "180", "181", "182", "183", "184",
+            "180", "181", "182", "183", "184", "185",
             "190", "200", "201", "202", 
             "250", "251", "260", "261", "280", "281", 
             "300", "301", "302", "320", "350", "500"}, 
@@ -227,6 +226,7 @@ class CIM_Processor : CIM_LogicalDevice {
             "AS400 Family", "Intel(R) Xeon(TM) processor MP", 
             "AMD AthlonXP(TM) Family", "AMD AthlonMP(TM) Family",
             "Intel(R) Itanium(R) 2",
+            "Intel(R) Pentium(R) 4 processor with HT Technology",
             // 190 
             "K7", 
             // 200 
@@ -315,24 +315,28 @@ class CIM_Processor : CIM_LogicalDevice {
 // ===================================================================
 // ComputerSystemProcessor
 // ===================================================================
-[Association, Aggregation, Composition, Version ("2.7.0"), 
+[Association, Aggregation, Composition, 
+    Deprecated {"CIM_SystemDevice"}, Version ("2.7.0"), 
     Description (
-    "Association indicating the processor(s) of a Unitary"
-    "ComputerSystem. At least one processor is required. Note "
-    "that this relationship inherits from the SystemDevice "
-    "association, and therefore, the System Processor is weak to "
-    "the aggregating UnitaryComputerSystem.") ] 
+    "Association indicating the processor(s) of a UnitaryComputer"
+    "System. ComputerSystemProcessor is depreacted in lieu of its "
+    "superclass, SystemDevice, since it adds no detail and "
+    "changes none of the cardinalities in the superclass' "
+    "definition.") ]
 class CIM_ComputerSystemProcessor : CIM_SystemDevice {   
 
     [Override ("GroupComponent"), Aggregate,
+        Deprecated {"CIM_SystemDevice.GroupComponent"}, 
         Description ("The UnitaryComputerSystem.") ]
     CIM_UnitaryComputerSystem REF GroupComponent;
 
     [Override ("PartComponent"),
+        Deprecated {"CIM_SystemDevice.PartComponent"}, 
         Description (
         "The Processor which is part of the UnitaryComputerSystem.") ]
     CIM_Processor REF PartComponent;
 };
+
 
 // ===================================================================
 // end of file

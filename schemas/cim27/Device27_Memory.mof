@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Memory 2.7
+// Title:       Device Memory 2.7
 // Filename:    Device27_Memory.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/09/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,30 +42,27 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for memory.
+//              are related to LogicalDevices. This file defines the 
+//              concepts behind managing memory.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
 // CR622 - Fix the DMI mapping string to include the attribute number
-//         Memory.ErrorInfo, .CorrectableError, .ErrorAccess, 
+//         for Memory.ErrorInfo, .CorrectableError, .ErrorAccess, 
 //           .ErrorTransferSize, .ErrorData, .ErrorAddress, 
-//           .ErrorResolution & .AdditionalErrorData  and
-//         VolatileStorage.Cacheable & .CacheType, and
+//           .ErrorResolution & .AdditionalErrorData, 
+//         VolatileStorage.Cacheable & .CacheType, 
 //         CacheMemory.Level, .WritePolicy, .CacheType, .LineSize,
 //           .ReplacementPolicy, .ReadPolicy, .FlushTimer, &
-//           .Associativity.
-// CR771 - Add the composition qualifer to ComputerSystemMemory
-//
+//           .Associativity
+// CR771 - Add the Composition qualifer to ComputerSystemMemory
 // ================================================================== 
 
 #pragma locale ("en_US")
+
 
 // ===================================================================
 // Memory

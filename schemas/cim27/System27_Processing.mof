@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Processing 2.7
+// Title:       System Processing 2.7
 // Filename:    System27_Processing.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        09/20/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,29 +42,26 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The System Model defines system related management 
-//              concepts. 
-//              This System file defines the more specific concepts for
-//              Processes, Threads, and Jobs.
+//              concepts. This file defines the specific concepts to
+//              manage processes, threads, and jobs.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements
-//                
-// ==================================================================
 // Change Log for v2.7
 // CR757 - Change the subclassing of Process, Thread and Job from 
-//         LogicalElement to EnabledLogicalElement.
-// CR767 - Add the Compostion qualifer to OSProcess and ProcessThread.
+//         LogicalElement to EnabledLogicalElement
+// CR767 - Add the Compostion qualifer to OSProcess and ProcessThread
 // CR768 - Add ScheduledJob
 //       - Update class description and all property descriptions of
-//         Job.  Add new property ScheduledStartTime to Job.
+//         Job, and Add a new property ScheduledStartTime to Job
 //       - Add OwningJobElement
 //       - Add AffectedJobElement
 //       - Add ConcreteJob
 //       - Add ProcessOfJob
+// CR875 - Clarify description of Process .KernelModeTime and 
+//         .UserModeTime
 // ==================================================================
 
 #pragma locale ("en_US")
@@ -159,14 +156,19 @@ class CIM_Process : CIM_EnabledLogicalElement {
     
     [Description (
         "Time in kernel mode, in milliseconds. If this information "
-        "is not available, a value of 0 should be used."),
+        "is not available, or if the operating system does not "
+        "distinguish between time in kernel and in user mode, "
+        "a value of 0 should be used."),
         Units("MilliSeconds"), 
         MappingStrings {"MIF.DMTF|Process Information|001.13"} ]
     uint64 KernelModeTime;
     
     [Description (
         "Time in user mode, in milliseconds. If this information "
-        "is not available, a value of 0 should be used."),
+        "is not available, a value of 0 should be used. "
+        "If the operating system does not distinguish between "
+        "time in kernel mode and user mode, the time should be "
+        "returned in this property."),
         Units("MilliSeconds"), 
         MappingStrings {"MIF.DMTF|Process Information|001.14"} ]
     uint64 UserModeTime;
@@ -283,7 +285,7 @@ class CIM_Thread : CIM_EnabledLogicalElement {
     [Propagated("CIM_Process.CSCreationClassName"),
         Key, MaxLen (256), Description (
             "The scoping ComputerSystem's CreationClassName.") ]
-    string  CSCreationClassName;
+    string CSCreationClassName;
     
     [Propagated("CIM_Process.CSName"),
         Key, MaxLen (256), Description (
@@ -388,7 +390,7 @@ class CIM_ProcessThread : CIM_Component {
     "\"Is Current\".") ]
 class CIM_ScheduledJob : CIM_ScopedSettingData {
 
-    [Experimental, Write, Description (
+    [Write, Description (
         "The time that the ScheduledJob should start. This may "
         "be represented by an actual date and time, or an interval "
         "relative to the time that this property is requested. A value "
@@ -396,7 +398,7 @@ class CIM_ScheduledJob : CIM_ScopedSettingData {
         ModelCorrespondence {"CIM_Job.ScheduledStartTime"} ]
     datetime ScheduledStartTime;
 
-    [Experimental, Write, Description (
+    [Write, Description (
         "The length (represented as a time interval) of "
         "time between scheduled starts.  For example, if Scheduled"
         "StartTime indicates 8 pm, this property defines the intervals "
@@ -404,7 +406,7 @@ class CIM_ScheduledJob : CIM_ScopedSettingData {
         "weekly, monthly, etc.") ]
     datetime ReoccuringElapsedTime;
    
-    [Experimental, Write, Description (
+    [Write, Description (
         "The setting for a Job's UntilTime - the time after which an "
         "executing Job should be stopped or not be allowed to proceed. "
         "This may be represented by an actual date and time, or an "
@@ -412,27 +414,27 @@ class CIM_ScheduledJob : CIM_ScopedSettingData {
         ModelCorrespondence {"CIM_Job.UntilTime"} ]
     datetime UntilTime;
       
-    [Experimental, Write, Description (
+    [Write, Description (
         "The setting for a Job's Notify property - the user/email "
         "to be notified upon a scheduled Job's completion or failure."),
         ModelCorrespondence {"CIM_Job.Notify"} ]
     string Notify;
       
-    [Experimental, Write, Description (
+    [Write, Description (
         "The setting for a Job's Owner property - the user, service "
         "method, etc. that defined this setting data and causes the "
         "Job to be created."), 
         ModelCorrespondence {"CIM_Job.Owner"} ] 
     string Owner;
       
-    [Experimental, Write, Description (
+    [Write, Description (
         "Indicates the urgency or importance of execution of the "
         "Job, when it is scheduled. The lower the number, the "
         "higher the priority."),
         ModelCorrespondence {"CIM_Job.Priority"} ]
     uint32 Priority;
     
-    [Experimental, Write, Description(
+    [Write, Description(
         "Indicates whether or not the scheduled Job should be "
         "automatically deleted upon completion."),
         ModelCorrespondence {"CIM_Job.DeleteOnCompletion"} ]
@@ -600,7 +602,7 @@ class CIM_AffectedJobElement {
     [Description (
         "An enumeration describing the 'effect' on the "
         "ManagedElement. This array corresponds to the "
-        "ElementEffectsDescriptions array, where the "
+        "OtherElementEffectsDescriptions array, where the "
         "latter provides details related to the high-level "
         "'effects' enumerated by this property. Additional "
         "detail is required if the ElementEffects array contains "
@@ -610,15 +612,15 @@ class CIM_AffectedJobElement {
         Values {"Unknown", "Other", "Exclusive Use", "Performance Impact",
             "Element Integrity"},
         ModelCorrespondence {
-            "CIM_DiagnosticService.OtherElementEffectsDescriptions"}]
+            "CIM_AffectedJobElement.OtherElementEffectsDescriptions"}]
     uint16 ElementEffects[];
 
     [Description (
         "Provides details for the 'effect' at the corresponding array "
         "position in ElementEffects. This information is required "
-        "ElementEffects contains the value 1 (\"Other\")."),
+        "whenever ElementEffects contains the value 1 (\"Other\")."),
         ArrayType ("Indexed"),
-        ModelCorrespondence {"CIM_DiagnosticService.ElementEffects"}]
+        ModelCorrespondence {"CIM_AffectedJobElement.ElementEffects"}]
     string OtherElementEffectsDescriptions[];
 };
 

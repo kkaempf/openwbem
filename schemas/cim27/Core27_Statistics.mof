@@ -3,7 +3,7 @@
 // Filename:    Core27_Statistics.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/01/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,23 +42,20 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Core Model defines basic management concepts. 
-//              This Core file defines the top of the statistics
-//              hierarchy.
+//              This file defines the top of the Statistics/
+//              StatisticalData hierarchies.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME, PE, LE, Sys, LD, SAP, Ser)
-// ==================================================================
 // Change Log for v2.7
-//
 // CR721 - Introduce StatisticalData, ElementStatisticalData,
-//         and RelatedStatisticalData
+//         and ReleatedStatisticalData
 // ==================================================================
 
 #pragma locale ("en_US")
+
 
 // ==================================================================
 // StatisticalData
@@ -68,7 +65,9 @@
     "collection of statistical data and/or metrics applicable to " 
     "one or more ManagedElements.  These statistics MUST "
     "represent the most recent observations and MUST NOT be "
-    "provided if irrelevant or stale.") ] 
+    "provided if irrelevant or stale. Note that this class uses "
+    "a simplified naming/identity algorithm as compared to "
+    "CIM_StatisticalInformation.") ] 
 class CIM_StatisticalData : CIM_ManagedElement { 
 
     [Key, Description(
@@ -127,8 +126,8 @@ class CIM_StatisticalData : CIM_ManagedElement {
 // ElementStatisticalData
 // ================================================================== 
 [Association, Experimental, Version ("2.7.0"), Description ( 
-    "CIM_Statistics is an association that relates a Managed" 
-    "Element to its StatisticalData. Note that the "
+    "CIM_ElementStatisticalData is an association that relates a " 
+    "ManagedElement to its StatisticalData. Note that the "
     "cardinality of the ManagedElement reference is Min(1), "
     "Max(1). This cardinality mandates the instantiation of the "
     "ElementStatisticalData association for the referenced instance "
@@ -152,7 +151,7 @@ class CIM_ElementStatisticalData {
 // RelatedStatisticalData
 // ================================================================== 
 [Association, Experimental, Description( 
-    "CIM_RelatedStatistics is an association that defines " 
+    "CIM_RelatedStatisticalData is an association that defines " 
     "hierarchies and/or dependencies of related CIM_Statistical" 
     "Data classes.") ]
 class CIM_RelatedStatisticalData { 
@@ -178,7 +177,11 @@ class CIM_RelatedStatisticalData {
 [Abstract, Version ("2.6.0"), Description ( 
     "CIM_StatisticalInformation is a root class for any arbitrary " 
     "collection of statistical data and/or metrics applicable to " 
-    "one or more ManagedSystemElements.") ] 
+    "one or more ManagedSystemElements. Note that the CIM_"
+    "StatisticalData class uses a simplified naming/identity "
+    "algorithm as compared to this class.  StatisticalInformation "
+    "is not deprecated since its naming algorithm is still in use in "
+    "various implementations.") ] 
 class CIM_StatisticalInformation : CIM_ManagedElement { 
     
     [MaxLen (256), Description ( 

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Physical 2.7
+// Title:       Physical MOF Specification 2.7
 // Filename:    CIM_Physical27.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/03/02
 // ===================================================================
 // Copyright 1998-2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -53,11 +53,10 @@
 
 #pragma locale ("en_US")
 
+// ==================================================================
+// Compile prerequisite for all includes:  Core MOF 
+// ==================================================================
 
-// ==================================================================
-// Connectors & Links
-// ==================================================================
-#pragma include ("Physical27_Connector.mof")
 
 // ==================================================================
 // Packaging (Cards, Frames, Chassis)
@@ -65,12 +64,25 @@
 #pragma include ("Physical27_Package.mof")
 
 // ==================================================================
+// Storage Packages 
+// ==================================================================
+#pragma include ("Physical27_StoragePackage.mof")
+
+// ==================================================================
+// Connectors & Links
+// ==================================================================
+#pragma include ("Physical27_Connector.mof")
+#pragma include ("Physical27_Link.mof")
+
+// ==================================================================
 // Components (Chips, Media, Tapes)
 // ==================================================================
 #pragma include ("Physical27_Component.mof")
+#pragma include ("Physical27_PhysicalMedia.mof")
+
 
 // ==================================================================
-// Replacement Sets, Physical Capcity, Physical Statistics
+// Replacement Sets, Physical Capacity, Physical Statistics
 // ==================================================================
 #pragma include ("Physical27_Misc.mof")
 

@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Core Product & FRU 2.7
+// Title:       Core Products & FRUs 2.7
 // Filename:    Core27_ProductFRU.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/30/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,29 +42,26 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Core Model defines basic management concepts. 
-//              This Core file defines the concepts for products and
+//              This file defines the concepts for Products and
 //              FRUs (field replaceable units).
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME, PE)
-// ==================================================================
 // Change Log for v2.7
 // CR753 - Update description for Product and add ModelCorrespondence
 //         to the CIM Support Schema
-//       - Add ProductComponent, ProductPhysicalComponent, and
-//         ProductServiceComponent
-//       - Deprecate ProductPhysicalElements
+//       - Add ProductComponent, ProductPhysicalComponent, 
+//         ProductSoftwareComponent and ProductServiceComponent
+//       - Deprecate ProductPhysicalElementsComponent
 // CR761 - Add the Composition qualifier to ProductParentChild,
-//         ProductPhyscialElements, FRUPhysicalElements, and 
+//         ProductPhysicalElements, FRUPhysicalElements, and 
 //         FRUIncludesProduct
-//
 // ==================================================================
 
 #pragma locale ("en_US")
+
 
 // ==================================================================
 // Product
@@ -430,6 +427,25 @@ class CIM_ProductPhysicalComponent : CIM_Component {
     [Override ("PartComponent"), Description (
         "The PhysicalElement which is a part of the Product.") ]
     CIM_PhysicalElement REF PartComponent;
+};
+
+
+// ==================================================================
+// ProductSoftwareComponent
+// ==================================================================
+[Association, Aggregation, Composition, Experimental, 
+    Version ("2.7.0"), Description (
+        "Indicates that the referenced SoftwareIdentity is acquired "
+        "as part of a Product.") ]
+class CIM_ProductSoftwareComponent : CIM_Component {
+
+    [Override ("GroupComponent"), Max (1), Description (
+        "The Product.") ]
+    CIM_Product REF GroupComponent;
+
+    [Override ("PartComponent"), Description (
+        "The software which is a part of the Product.") ]
+    CIM_SoftwareIdentity REF PartComponent;
 };
 
  

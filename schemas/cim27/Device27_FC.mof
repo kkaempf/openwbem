@@ -1,9 +1,9 @@
 // ===================================================================
-// Title:       Fibre Channel 2.7
+// Title:       Device Fibre Channel 2.7
 // Filename:    Device27_FC.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/30/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,33 +42,26 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for Fibre
-//              Channel devices.
+//              are related to LogicalDevices. This file defines the 
+//              concepts and classes to manage Fibre Channel devices
+//              and Zones.
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
-//
-// CR630 - Add FCPort
-//       - Add FCPortStatistics
+// CR630 - Add FCPort and FCPortStatistics
 // CR674 - Add ZoneSet, Zone, ZoneAlias, ZoneMemberSettingData,
-//         ZoneService and ZoneCapabilities.
-// CR783 - Modify FCPort
-//       - Modify FCPortStatistics
-//
+//         ZoneService and ZoneCapabilities
+// CR783 - Modify FCPort and FCPortStatistics
 // ================================================================== 
 
 #pragma locale ("en_US")
 
 
 // ==================================================================
-//    FCPort
+// FCPort
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "Capabilities and management of a Fibre Channel Port Device") ] 
@@ -153,12 +146,12 @@ class CIM_FCPort : CIM_NetworkPort {
  
  
 // ==================================================================
-//    ZoneSet
+// ZoneSet
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "A ZoneSet is a group of zones that are managed collectively "
     "by the same domain.  The managing domain is indicated by the "
-    "HostedCollection association.  For example, for Fibre Channel "
+    "HostedCollection association.  For example, for Fibre Channel, "
     "this would indicate a set of zones that are part of a fabric.  "
     "The zones are only under zone enforcement by the fabric,"
     "if the zoneset is set to active.") ] 
@@ -180,7 +173,7 @@ class CIM_ZoneSet : CIM_SystemSpecificCollection {
  
  
 // ==================================================================
-//    Zone
+// Zone
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "A zone is a group of Ports, Endpoints, Nodes, Zones, and/or "
@@ -238,11 +231,11 @@ class CIM_Zone : CIM_SystemSpecificCollection {
  
  
 // ==================================================================
-//    ZoneAlias
+// ZoneAlias
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
-    "A zone is a group of Ports, Endpoints, Nodes, and/or Zones that "
-    "are managed collectively by the same domain.  The managing "
+    "A zone is a group of Ports, Endpoints, Nodes, and/or other Zones "
+    "that are managed collectively by the same domain. The managing "
     "domain is indicated by the HostedCollection association.") ]
 class CIM_ZoneAlias : CIM_SystemSpecificCollection { 
  
@@ -254,7 +247,7 @@ class CIM_ZoneAlias : CIM_SystemSpecificCollection {
  
  
 // ==================================================================
-//    ZoneMemberSettingData
+// ZoneMemberSettingData
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "ZoneMemberSettingData provides the identification criteria for "
@@ -291,7 +284,7 @@ class CIM_ZoneMemberSettingData : CIM_SettingData {
  
  
 // ==================================================================
-//    ZoneService
+// ZoneService
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "The ZoneService if responsible for managing the zone "
@@ -303,7 +296,7 @@ class CIM_ZoneService: CIM_Service {
  
 
 // ==================================================================
-//    ZoneCapabilities
+// ZoneCapabilities
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "ZoneCapabilities exposes the capabilities for zoning of an "
@@ -363,150 +356,129 @@ class CIM_FibreProtocolService : CIM_Service {
 
 
 // ==================================================================
-//    FCPortStatistics
+// FCPortStatistics
 // ==================================================================
 [Experimental, Version ("2.7.0"), Description (
     "FCPortStatistics is the statistics for the FCPort.") ]
 class CIM_FCPortStatistics : CIM_NetworkPortStatistics {
     
-    [Description (
+    [Counter, Description (
         "LIPCount is the number of LIP events that have occurred on "
-        "an arbitrated loop."), 
-        Counter ]
+        "an arbitrated loop.") ]
     uint64 LIPCount;
  
-    [Description (
+    [Counter, Description (
         "NOSCount is the number of NOS events that have occurred on "
-        "the switched fabric."), 
-        Counter ]
+        "the switched fabric.") ]
     uint64 NOSCount;
  
-    [Description (
+    [Counter, Description (
         "ErrorFrames is the number of frames that have been received "
-        "in error."), 
-        Counter ]
+        "in error.") ]
     uint64 ErrorFrames;
  
-    [Description (
+    [Counter, Description (
         "DumpedFrames is the number of frames that were lost due to "
-        "a lack of host buffers available."), 
-        Counter ]
+        "a lack of host buffers available.") ]
     uint64 DumpedFrames;
  
-    [Description (
+    [Counter, Description (
         "LinkFailure is the number of times a link error has "
         "occurred. This count is part of the Link Error "
-        "Status Block (LESB)."), 
-        Counter ]
+        "Status Block (LESB).") ]
     uint64 LinkFailures;
  
-    [Description (
+    [Counter, Description (
         "Number of times that signal is lost on the Port since last "
         "reset of the Device. This count is part of the Link Error "
-        "Status Block (LESB)."), 
-        Counter ]
+        "Status Block (LESB).") ]
     uint64 LossOfSignalCounter;
  
-    [Description (
+    [Counter, Description (
         "Number of times that synchronization is lost on the Port "
         "since last reset of the Device. Synchronization is assumed "
         "lost after a timeout period (identified by the Receiver"
         "TransmitterTimeout property) is exceeded. This count is part "
-        "of the Link Error Status Block (LESB)."), 
-        Counter ]
+        "of the Link Error Status Block (LESB).") ]
     uint64 LossOfSyncCounter;
  
-    [Description (
+    [Counter, Description (
         "Count of primitive sequence protocol errors detected at this "
         "port. This count is part of the Link Error Status Block "
-        "(LESB)."), 
-        Counter ]
+        "(LESB).") ]
     uint64 PrimitiveSeqProtocolErrCount;
  
-    [Description (
+    [Counter, Description (
         "Number of times that the CRC in a frame does not match the "
         "CRC computed by the receiver. This count is part of the "
-        "Link Error Status Block (LESB)."), 
-        Counter ]
+        "Link Error Status Block (LESB).") ]
     uint64 CRCErrors;
  
-    [Description (
+    [Counter, Description (
         "The number of transmission words that had an invalid "
         "character (8b10b code "
         "violation) in one or more of its characters, had a "
         "K28.5 (8b10b control) in its second, third or fourth "
         "character positions, and/or had an incorrect Beginning "
         "Running Disparity. This count is part of the Link Error "
-        "Status Block (LESB)."), 
-        Counter ]
+        "Status Block (LESB).") ]
     uint64 InvalidTransmissionWords;
  
-    [Description (
+    [Counter, Description (
         "The number of frames received that were shorter than 28 "
         "octets. The value of 28 is calculated based on an "
         "assumption of 24 header bytes plus 4 CRC bytes. The "
-        "count does not include SOF/EOF bytes which are not data."), 
-        Counter ]
+        "count does not include SOF/EOF bytes which are not data.") ]
     uint64 FramesTooShort;
  
-    [Description (
+    [Counter, Description (
         "The number of frames received that were longer than 2140 "
         "octets. The value of 2140 is calculated based on an "
         "assumption of 24 header bytes plus 4 CRC bytes and 2112 "
-        "bytes of payload."), 
-        Counter ]
+        "bytes of payload.") ]
     uint64 FramesTooLong;
  
-    [Description (
+    [Counter, Description (
         "Count of frames received with unknown addressing. An example "
         "is an unknown SID or DID. The SID or DID is not known to the "
-        "routing algorithm."), 
-        Counter ]
+        "routing algorithm.") ]
     uint64 AddressErrors;
  
-    [Description (
+    [Counter, Description (
         "Count of occurrences when all input buffers of a port were "
         "full and outbound buffer-to-buffer credit transitioned to "
-        "zero. There is no credit to provide to other side."), 
-        Counter ]
+        "zero. There is no credit to provide to other side.") ]
     uint64 BufferCreditNotProvided;
  
-    [Description (
+    [Counter, Description (
         "Count of transitions in/out of BBcredit zero state. The "
-        "other side is not providing any credit."), 
-        Counter ]
+        "other side is not providing any credit.") ]
     uint64 BufferCreditNotReceived;
  
-    [Description (
+    [Counter, Description (
         " Count of invalid frame delimiters received at this port. "
         "An example is a frame with a class 2 start and a class 3 "
-        "at the end."), 
-        Counter ]
+        "at the end.") ]
     uint64 DelimiterErrors;
  
-    [Description (
-        "Count of disparity errors received at this port."), 
-        Counter ]
+    [Counter, Description (
+        "Count of disparity errors received at this port.") ]
     uint64 EncodingDisparityErrors;
  
-    [Description (
-        "Count of Link resets. This is the number of LRs received."), 
-        Counter ]
+    [Counter, Description (
+        "Count of Link resets. This is the number of LRs received.") ]
     uint64 LinkResetsReceived;
  
-    [Description (
-        "Count of Link resets. This is the number of LRs transmitted."), 
-        Counter ]
+    [Counter, Description (
+        "Count of Link resets. This is the number of LRs transmitted.") ]
     uint64 LinkResetsTransmitted;
  
-    [Description (
-        "Count of Multicast Frames or Packets received."), 
-        Counter ]
+    [Counter, Description (
+        "Count of Multicast Frames or Packets received.") ]
     uint64 MulticastFramesReceived;
  
-    [Description (
-        "Count of Multicast Frames or Packets transmitted."), 
-        Counter ]
+    [Counter, Description (
+        "Count of Multicast Frames or Packets transmitted.") ]
     uint64 MulticastFramesTransmitted;
 };
  

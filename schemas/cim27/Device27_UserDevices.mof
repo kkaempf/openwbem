@@ -3,7 +3,7 @@
 // Filename:    Device27_User.mof
 // Version:     2.7.0
 // Release:     Preliminary 
-// Date:        06/09/02
+// Date:        07/17/02
 // ===================================================================
 // Copyright 2002 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -25,7 +25,7 @@
 // disclosure of such rights, owners or claimants. DMTF shall have no 
 // liability to any party, in any manner or circumstance, under any 
 // legal theory whatsoever, for failure to recognize, disclose, or 
-// identify any such third party patent rights, or for such party’s
+// identify any such third party patent rights, or for such party's
 // reliance on the standard or incorporation thereof in its product, 
 // protocols or testing procedures. DMTF shall have no liability to 
 // any party implementing such standard, whether such implementation 
@@ -42,23 +42,19 @@
 // http://www.dmtf.org/about/policies/disclosures.php.
 // ===================================================================
 // Description: The Device Model extends the management concepts that
-//              are related to LogicalDevices.
-//              This Device file defines the concepts for user devices
-//              (monitors, keyboards, pointing devices, etc.).
+//              are related to LogicalDevices. This file models
+//              user devices (monitors, keyboards, pointing devices, 
+//              etc.).
 //
 //              The object classes below are listed in an order that
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
-// Prerequisite:  Core27_Qualifiers
-//                Core27_CoreElements (ME & MSE)
-// ==================================================================
 // Change Log for v2.7
 // CR622 - Fix the DMI mapping string to include the attribute number
-//         PointingDevice.PointingType & .NumberOfButtons and 
+//         for PointingDevice.PointingType & .NumberOfButtons and 
 //         Keyboard.Layout
 // ================================================================== 
-
 
 #pragma locale ("en_US")
 
@@ -430,7 +426,6 @@ class CIM_MonitorSetting : CIM_ElementSetting {
         "The MonitorResolution associated with the DesktopMonitor.") ]   
     CIM_MonitorResolution REF Setting;
 };
-
 
 
 // ===================================================================
