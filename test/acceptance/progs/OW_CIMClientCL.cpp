@@ -402,8 +402,7 @@ testDynInstances(CIMClient& hdl)
 		params.push_back("one");
 		params.push_back("two");
 		ci.setProperty("params", CIMValue(params));
-		hdl.createInstance( ci);
-		CIMObjectPath cop1("root/testsuite", ci);
+		CIMObjectPath cop1 = hdl.createInstance( ci);
 		ci = hdl.getInstance(cop1);
 		TempFileStream tfs;
 		tfs << "<CIM>";
@@ -420,8 +419,7 @@ testDynInstances(CIMClient& hdl)
 		params.push_back("B");
 		params.push_back("C");
 		ci.setProperty("params", CIMValue(params));
-		hdl.createInstance( ci);
-		CIMObjectPath cop2("root/testsuite", ci);
+		CIMObjectPath cop2 = hdl.createInstance( ci);
 		ci = hdl.getInstance(cop2);
 		tfs.reset();
 		tfs << "<CIM>";
@@ -481,8 +479,7 @@ testModifyProviderQualifier(CIMClient& hdl)
 		params.push_back("one");
 		params.push_back("two");
 		ci.setProperty("params", CIMValue(params));
-		hdl.createInstance( ci);
-		CIMObjectPath cop1("root/testsuite", ci);
+		CIMObjectPath cop1 = hdl.createInstance( ci);
 		ci = hdl.getInstance(cop1);
 
 		CIMQualifier provQual = cc.getQualifier("provider");
@@ -520,8 +517,7 @@ testModifyProviderQualifier(CIMClient& hdl)
 		params.push_back("one");
 		params.push_back("two");
 		ci.setProperty("params", CIMValue(params));
-		hdl.createInstance( ci);
-		cop1 = CIMObjectPath("root/testsuite", ci);
+		cop1 = hdl.createInstance( ci);
 		ci = hdl.getInstance(cop1);
 
 		provQual = cc.getQualifier("provider");
@@ -576,7 +572,8 @@ createInstance(CIMClient& hdl, const String& fromClass, const String& newInstanc
 		newInst.setProperty("CreationClassName",
 								  CIMValue(fromClass));
 
-		hdl.createInstance( newInst);
+		CIMObjectPath cop = hdl.createInstance( newInst);
+		cout << "cop = " << cop << endl;
 	}
 	catch (CIMException& e)
 	{
@@ -1610,9 +1607,9 @@ testSingleton(CIMClient& hdl)
 		newInst.setProperty("Name", CIMValue("singleton"));
 		newInst.setProperty("OptionalArg", CIMValue(true));
 
-		hdl.createInstance(newInst);
+		CIMObjectPath cop = hdl.createInstance(newInst);
 
-		CIMInstance got = hdl.getInstance(CIMObjectPath("root/testsuite", newInst));
+		CIMInstance got = hdl.getInstance(cop);
 
 		TEST_ASSERT(got.getPropertyT("Name").getValueT() == CIMValue("singleton"));
 		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == CIMValue(true));
@@ -1622,7 +1619,7 @@ testSingleton(CIMClient& hdl)
 
 		hdl.modifyInstance(newInst);
 		
-		got = hdl.getInstance(CIMObjectPath("root/testsuite", newInst));
+		got = hdl.getInstance(cop);
 
 		TEST_ASSERT(got.getPropertyT("Name").getValueT() == CIMValue("singleton2"));
 		TEST_ASSERT(got.getPropertyT("OptionalArg").getValueT() == CIMValue(false));

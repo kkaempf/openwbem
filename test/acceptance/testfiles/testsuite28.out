@@ -2897,9 +2897,13 @@ CIMClass: class EXP_BionicComputerSystem:CIM_System
 
 
 *** Doing createInstance() ***
+cop = /root/testsuite:EXP_BionicComputerSystem.CreationClassName="EXP_BionicComputerSystem",Name="SixMillion"
 *** Doing createInstance() ***
+cop = /root/testsuite:EXP_BionicComputerSystem.CreationClassName="EXP_BionicComputerSystem",Name="SevenMillion"
 *** Doing createInstance() ***
+cop = /root/testsuite:EXP_BionicComputerSystem2.CreationClassName="EXP_BionicComputerSystem2",Name="SixMillion"
 *** Doing createInstance() ***
+cop = /root/testsuite:EXP_BionicComputerSystem2.CreationClassName="EXP_BionicComputerSystem2",Name="SevenMillion"
 *** Doing enumInstanceNames() ***
 /root/testsuite:EXP_BartComputerSystem.CreationClassName="EXP_BartComputerSystem",Name="test"
 <INSTANCEPATH>
