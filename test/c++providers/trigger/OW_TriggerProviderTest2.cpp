@@ -135,6 +135,10 @@ OW_TriggerProviderTest2::poll(const OW_ProviderEnvironmentIFCRef& env)
 	{
 		OW_CIMInstance ci = cc.newInstance();
 		ci.setProperty("indicationNumber", OW_CIMValue(count));
+		OW_CIMClass embeddedClass = lch->getClass(OW_CIMObjectPath("TestClass2", "root"));
+		OW_CIMInstance embeddedInst = embeddedClass.newInstance();
+		embeddedInst.setProperty("dummykey", OW_CIMValue(OW_String("foo")));
+		ci.setProperty("TheInstance", OW_CIMValue(embeddedInst));
 		lch->exportIndication(ci, OW_CIMNameSpace(true));
 	}
 	else

@@ -35,6 +35,13 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMtoXML.hpp"
+#include "OW_TempFileStream.hpp"
+#include "OW_CIMtoXML.hpp"
+#include "OW_XMLNode.hpp"
+#include "OW_XMLCIMFactory.hpp"
+#include "OW_XMLParser.hpp"
+#include "OW_CIMInstance.hpp"
 
 void OW_CIMPropertyTestCases::setUp()
 {
@@ -54,6 +61,46 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 	OW_CIMClass c2;
 	p1.getValue().get(c2);
 	unitAssert( c1 == c2 );
+
+	OW_TempFileStream ostr;
+	OW_CIMtoXML(p1, ostr, OW_CIMtoXMLFlags::notLocalOnly, OW_CIMtoXMLFlags::includeQualifiers,
+		OW_CIMtoXMLFlags::includeClassOrigin);
+	ostr.rewind();
+	OW_XMLParser parser(&ostr);
+
+	OW_XMLNode node;
+	unitAssertNoThrow(node = parser.parse());
+
+	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(node);
+
+	unitAssert(p1 == p2);
+
+}
+
+void OW_CIMPropertyTestCases::testEmbeddedInstance()
+{
+	OW_CIMInstance i1(true);
+	i1.setName("test");
+	i1.setQualifier(OW_CIMQualifier("Description"));
+
+	OW_CIMProperty p1("testprop", OW_CIMValue(i1));
+	OW_CIMInstance i2;
+	p1.getValue().get(i2);
+	unitAssert( i1 == i2 );
+
+	OW_TempFileStream ostr;
+	OW_CIMtoXML(p1, ostr, OW_CIMtoXMLFlags::notLocalOnly, OW_CIMtoXMLFlags::includeQualifiers,
+		OW_CIMtoXMLFlags::includeClassOrigin);
+	ostr.rewind();
+	OW_XMLParser parser(&ostr);
+
+	OW_XMLNode node;
+	unitAssertNoThrow(node = parser.parse());
+
+	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(node);
+
+	unitAssert(p1 == p2);
+
 }
 
 Test* OW_CIMPropertyTestCases::suite()
@@ -61,6 +108,7 @@ Test* OW_CIMPropertyTestCases::suite()
 	TestSuite *testSuite = new TestSuite ("OW_CIMProperty");
 
 	ADD_TEST_TO_SUITE(OW_CIMPropertyTestCases, testEmbeddedClass);
+	ADD_TEST_TO_SUITE(OW_CIMPropertyTestCases, testEmbeddedInstance);
 
 	return testSuite;
 }

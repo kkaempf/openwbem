@@ -76,7 +76,7 @@ void TextTestResult::printErrors (ostream& stream)
             CppUnitException        *e          = failure->thrownException ();
 				Test							*t				= failure->failedTest();
 
-            stream << i 
+            stream << i
                    << ") "
 						 << t->toString()
 						 << " line: ";
@@ -88,11 +88,12 @@ void TextTestResult::printErrors (ostream& stream)
                    << endl;
             i++;
         }
+        exit(1); // stop once we've reported the failed test.
     }
 
 }
 
-void TextTestResult::printFailures (ostream& stream) 
+void TextTestResult::printFailures (ostream& stream)
 {
     if (testFailures () != 0) {
         if (testFailures () == 1)
@@ -107,7 +108,7 @@ void TextTestResult::printFailures (ostream& stream)
             CppUnitException        *e          = failure->thrownException ();
 				Test							*t				= failure->failedTest();
 
-            stream << i 
+            stream << i
                    << ") "
 						 << t->toString()
                    << " line: ";
@@ -126,7 +127,7 @@ void TextTestResult::printFailures (ostream& stream)
 }
 
 
-void TextTestResult::print (ostream& stream) 
+void TextTestResult::print (ostream& stream)
 {
     printHeader (stream);
     printErrors (stream);

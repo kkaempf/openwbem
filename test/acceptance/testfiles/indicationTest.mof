@@ -1,4 +1,18 @@
 
+[Description("Test Class 1"), Abstract(false)]
+class TestClass1
+{
+    [Description("A dummy string"), Key]
+    string dummykey;
+};
+
+[Description("Test Class 2"), Abstract(false)]
+class TestClass2
+{
+    [Description("A dummy string"), Key]
+    string dummykey;
+};
+
 [Indication,
     Description (
      "OW_TestIndication1 is used for testing OpenWBEM") ]
@@ -8,6 +22,12 @@ class OW_TestIndication1 : CIM_Indication
      Description (
       "The number of the indication") ]
     UInt32 indicationNumber;
+	
+    [EmbeddedObject, Required,
+     Description (
+      "An Embedded class (TestClass1), so we can test ISA") ]
+    string TheClass;
+
 };
 
 [Indication,
@@ -19,5 +39,10 @@ class OW_TestIndication2 : CIM_Indication
      Description (
       "The number of the indication") ]
     UInt32 indicationNumber;
+
+	 [EmbeddedObject, Required,
+     Description (
+      "An Embedded instance (of TestClass2), so we can test ISA") ]
+    string TheInstance;
 };
 

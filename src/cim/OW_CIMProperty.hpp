@@ -79,12 +79,6 @@ public:
 	OW_CIMProperty(const OW_String& name, const OW_CIMValue& value);
 
 	/**
-	 * Create an OW_CIMProperty from an XML definition.
-	 * @param node	The OW_XMLNode that contains the definition for this property.
-	 */
-	//OW_CIMProperty(const OW_XMLNode& node);
-
-	/**
 	 * Copy constructor
 	 * @param arg The OW_CIMProperty to make this object a copy of.
 	 */

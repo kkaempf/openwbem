@@ -45,7 +45,11 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_XMLParser.hpp"
+#include "OW_XMLException.hpp"
+#include "OW_TempFileStream.hpp"
 
+#include <algorithm> // for find_if
 
 static void
 getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, const OW_XMLNode& node)
@@ -691,6 +695,69 @@ OW_XMLCIMFactory::createMethod(OW_XMLNode const& node)
 	return rval;
 }
 
+static OW_CIMValue
+convertXMLtoEmbeddedObject(const OW_String& str)
+{
+	OW_CIMValue rval;
+	// try to convert the string to an class or instance
+	OW_TempFileStream ostr;
+	ostr << str;
+	ostr.rewind();
+	OW_XMLParser parser(&ostr);
+
+	OW_XMLNode node;
+	try
+	{
+		node = parser.parse();
+	}
+	catch (OW_XMLException& xmlE)
+	{
+		// XML is no good, leave node null
+	}
+	if (node)
+	{
+		try
+		{
+			OW_CIMClass cc = OW_XMLCIMFactory::createClass(node);
+			rval = OW_CIMValue(cc);
+		}
+		catch (const OW_CIMException&)
+		{
+			// XML wasn't a class, so try an instance
+			try
+			{
+				OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(node);
+				rval = OW_CIMValue(ci);
+			}
+			catch (const OW_CIMException&)
+			{
+				// XML isn't a class or an instance, so just leave it alone
+			}
+		}
+	}
+	return rval;
+}
+
+namespace
+{
+struct valueIsEmbeddedInstance
+{
+	bool operator()(const OW_CIMValue& v)
+	{
+		return v.getType() == OW_CIMDataType::EMBEDDEDINSTANCE;
+	}
+};
+
+struct valueIsEmbeddedClass
+{
+	bool operator()(const OW_CIMValue& v)
+	{
+		return v.getType() == OW_CIMDataType::EMBEDDEDCLASS;
+	}
+};
+
+}
+
 ///////////////////////////////////
 OW_CIMProperty
 OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
@@ -780,8 +847,76 @@ OW_XMLCIMFactory::createProperty(OW_XMLNode const& node)
 		}
 	}
 
+	// handle embedded class or instance
+	if (rval.getQualifier(OW_CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
+		rval.getDataType().getType() == OW_CIMDataType::STRING &&
+		rval.getValue())
+	{
+		if (rval.getDataType().isArrayType())
+		{
+			OW_StringArray xmlstrings;
+			rval.getValue().get(xmlstrings);
+			OW_CIMValueArray values;
+			for (size_t i = 0; i < xmlstrings.size(); ++i)
+			{
+				OW_CIMValue v = convertXMLtoEmbeddedObject(xmlstrings[i]);
+				if (!v)
+				{
+					break;
+				}
+				values.push_back(v);
+			}
+			if (values.size() == xmlstrings.size() && values.size() > 0)
+			{
+				if (std::find_if(values.begin(), values.end(), valueIsEmbeddedInstance()) == values.end())
+				{
+					// no instances, so they all must be classes
+					OW_CIMClassArray classes;
+					for (size_t i = 0; i < values.size(); ++i)
+					{
+						OW_CIMClass c;
+						values[i].get(c);
+						classes.push_back(c);
+					}
+					rval.setValue(OW_CIMValue(classes));
+					OW_CIMDataType dt(OW_CIMDataType::EMBEDDEDCLASS, rval.getDataType().getSize());
+					rval.setDataType(dt);
+				}
+				else if (std::find_if(values.begin(), values.end(), valueIsEmbeddedClass()) == values.end())
+				{
+					// no classes, the all must be instances
+					OW_CIMInstanceArray instances;
+					for (size_t i = 0; i < values.size(); ++i)
+					{
+						OW_CIMInstance c;
+						values[i].get(c);
+						instances.push_back(c);
+					}
+					rval.setValue(OW_CIMValue(instances));
+					OW_CIMDataType dt(OW_CIMDataType::EMBEDDEDINSTANCE, rval.getDataType().getSize());
+					rval.setDataType(dt);
+				}
+				else
+				{
+					// there are both classes and instances - we cannot handle this!
+					// we'll just leave the property alone (as a string)
+				}
+			}
+		}
+		else
+		{
+			OW_CIMValue v = convertXMLtoEmbeddedObject(rval.getValue().toString());
+			if (v)
+			{
+				rval.setDataType(rval.getDataType());
+				rval.setValue(v);
+			}
+		}
+	}
+
 	return rval;
 }
+
 
 ///////////////////////////////////
 OW_CIMParameter

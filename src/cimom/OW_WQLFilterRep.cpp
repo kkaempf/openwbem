@@ -55,7 +55,7 @@ OW_WQLFilterRep::getEnvironment() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType 
+OW_CIMQualifierType
 OW_WQLFilterRep::getQualifierType(const OW_CIMObjectPath &/*objPath*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -64,8 +64,8 @@ OW_WQLFilterRep::getQualifierType(const OW_CIMObjectPath &/*objPath*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_StringArray 
-OW_WQLFilterRep::enumNameSpace(const OW_CIMNameSpace& /*path*/, 
+OW_StringArray
+OW_WQLFilterRep::enumNameSpace(const OW_CIMNameSpace& /*path*/,
 	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -73,7 +73,7 @@ OW_WQLFilterRep::enumNameSpace(const OW_CIMNameSpace& /*path*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_WQLFilterRep::createNameSpace(const OW_CIMNameSpace &/*ns*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -82,7 +82,7 @@ OW_WQLFilterRep::createNameSpace(const OW_CIMNameSpace &/*ns*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_WQLFilterRep::deleteNameSpace(const OW_CIMNameSpace &/*ns*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -91,8 +91,8 @@ OW_WQLFilterRep::deleteNameSpace(const OW_CIMNameSpace &/*ns*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
-OW_WQLFilterRep::addQualifierType(const OW_CIMObjectPath &/*name*/, 
+void
+OW_WQLFilterRep::addQualifierType(const OW_CIMObjectPath &/*name*/,
 	const OW_CIMQualifierType &/*qt*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -100,8 +100,8 @@ OW_WQLFilterRep::addQualifierType(const OW_CIMObjectPath &/*name*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
-OW_WQLFilterRep::updateQualifierType(const OW_CIMObjectPath &/*name*/, 
+void
+OW_WQLFilterRep::updateQualifierType(const OW_CIMObjectPath &/*name*/,
 	const OW_CIMQualifierType &/*qt*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -109,7 +109,7 @@ OW_WQLFilterRep::updateQualifierType(const OW_CIMObjectPath &/*name*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration 
+OW_CIMQualifierTypeEnumeration
 OW_WQLFilterRep::enumQualifierTypes(
 	const OW_CIMObjectPath &/*path*/, const OW_ACLInfo& /*aclInfo*/)
 {
@@ -118,7 +118,7 @@ OW_WQLFilterRep::enumQualifierTypes(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_WQLFilterRep::deleteQualifierType(const OW_CIMObjectPath &/*objPath*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -127,7 +127,7 @@ OW_WQLFilterRep::deleteQualifierType(const OW_CIMObjectPath &/*objPath*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_WQLFilterRep::createClass(const OW_CIMObjectPath &/*path*/,
 	OW_CIMClass &/*cimClass*/, const OW_ACLInfo& /*aclInfo*/)
 {
@@ -136,7 +136,7 @@ OW_WQLFilterRep::createClass(const OW_CIMObjectPath &/*path*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass 
+OW_CIMClass
 OW_WQLFilterRep::updateClass(const OW_CIMObjectPath &/*name*/,
 	OW_CIMClass &/*cc*/, const OW_ACLInfo& /*aclInfo*/)
 {
@@ -146,15 +146,15 @@ OW_WQLFilterRep::updateClass(const OW_CIMObjectPath &/*name*/,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_WQLFilterRep::getClass(const OW_CIMObjectPath&, OW_Bool, OW_Bool,
-	OW_Bool, const OW_StringArray*, const OW_ACLInfo&)
+OW_WQLFilterRep::getClass(const OW_CIMObjectPath& path, OW_Bool b1, OW_Bool b2,
+	OW_Bool b3, const OW_StringArray* sap, const OW_ACLInfo& ai)
 {
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
+	return m_pCIMServer->getClass(path, b1, b2, b3, sap,
+		ai);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass 
+OW_CIMClass
 OW_WQLFilterRep::deleteClass(const OW_CIMObjectPath &/*path*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -172,7 +172,7 @@ OW_WQLFilterRep::getCIMInstance(const OW_CIMObjectPath&, OW_Bool, OW_Bool,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance 
+OW_CIMInstance
 OW_WQLFilterRep::deleteInstance(const OW_CIMObjectPath &/*cop*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -190,8 +190,8 @@ OW_WQLFilterRep::enumClass(const OW_CIMObjectPath&, OW_Bool, OW_Bool, OW_Bool,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
-OW_WQLFilterRep::enumClassNames(const OW_CIMObjectPath &/*path*/, 
+OW_CIMObjectPathEnumeration
+OW_WQLFilterRep::enumClassNames(const OW_CIMObjectPath &/*path*/,
 	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -250,7 +250,7 @@ OW_WQLFilterRep::getCIMInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
+OW_CIMObjectPathEnumeration
 OW_WQLFilterRep::getCIMInstanceNames(
 	const OW_CIMObjectPath &/*path*/, OW_Bool /*deep*/,
 	const OW_ACLInfo& /*aclInfo*/)
@@ -260,7 +260,7 @@ OW_WQLFilterRep::getCIMInstanceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath 
+OW_CIMObjectPath
 OW_WQLFilterRep::createInstance(const OW_CIMObjectPath &/*cop*/,
 	OW_CIMInstance &/*ci*/, const OW_ACLInfo& /*aclInfo*/)
 {
@@ -269,8 +269,8 @@ OW_WQLFilterRep::createInstance(const OW_CIMObjectPath &/*cop*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance 
-OW_WQLFilterRep::updateInstance(const OW_CIMObjectPath &/*cop*/, 
+OW_CIMInstance
+OW_WQLFilterRep::updateInstance(const OW_CIMObjectPath &/*cop*/,
 	OW_CIMInstance &/*ci*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -278,11 +278,11 @@ OW_WQLFilterRep::updateInstance(const OW_CIMObjectPath &/*cop*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-OW_WQLFilterRep::associators(const OW_CIMObjectPath &/*path*/, 
-	const OW_String &/*assocClass*/, const OW_String &/*resultClass*/, 
-	const OW_String &/*role*/, const OW_String &/*resultRole*/, 
-	OW_Bool /*includeQualifiers*/, OW_Bool /*includeClassOrigin*/, 
+OW_CIMInstanceEnumeration
+OW_WQLFilterRep::associators(const OW_CIMObjectPath &/*path*/,
+	const OW_String &/*assocClass*/, const OW_String &/*resultClass*/,
+	const OW_String &/*role*/, const OW_String &/*resultRole*/,
+	OW_Bool /*includeQualifiers*/, OW_Bool /*includeClassOrigin*/,
 	const OW_StringArray* /*propertyList*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -290,8 +290,8 @@ OW_WQLFilterRep::associators(const OW_CIMObjectPath &/*path*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
-OW_WQLFilterRep::setProperty(const OW_CIMObjectPath &/*name*/, 
+void
+OW_WQLFilterRep::setProperty(const OW_CIMObjectPath &/*name*/,
 	const OW_String& /*propertyName*/, const OW_CIMValue &/*cv*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
@@ -300,9 +300,9 @@ OW_WQLFilterRep::setProperty(const OW_CIMObjectPath &/*name*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
+OW_CIMObjectPathEnumeration
 OW_WQLFilterRep::referenceNames(
-	const OW_CIMObjectPath &/*path*/, const OW_String &/*resultClass*/, 
+	const OW_CIMObjectPath &/*path*/, const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -310,8 +310,8 @@ OW_WQLFilterRep::referenceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue 
-OW_WQLFilterRep::getProperty(const OW_CIMObjectPath &/*name*/, 
+OW_CIMValue
+OW_WQLFilterRep::getProperty(const OW_CIMObjectPath &/*name*/,
 	const OW_String &/*propertyName*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -319,9 +319,9 @@ OW_WQLFilterRep::getProperty(const OW_CIMObjectPath &/*name*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue 
-OW_WQLFilterRep::invokeMethod(const OW_CIMObjectPath &/*name*/, 
-	const OW_String &/*methodName*/, const OW_CIMValueArray &/*inParams*/, 
+OW_CIMValue
+OW_WQLFilterRep::invokeMethod(const OW_CIMObjectPath &/*name*/,
+	const OW_String &/*methodName*/, const OW_CIMValueArray &/*inParams*/,
 	OW_CIMValueArray &/*outParams*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -329,10 +329,10 @@ OW_WQLFilterRep::invokeMethod(const OW_CIMObjectPath &/*name*/,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
+OW_CIMObjectPathEnumeration
 OW_WQLFilterRep::associatorNames(
-	const OW_CIMObjectPath &/*path*/, const OW_String &/*assocClass*/, 
-	const OW_String &/*resultClass*/, const OW_String &/*role*/, 
+	const OW_CIMObjectPath &/*path*/, const OW_String &/*assocClass*/,
+	const OW_String &/*resultClass*/, const OW_String &/*role*/,
 	const OW_String &/*resultRole*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -351,8 +351,8 @@ OW_CIMInstanceEnumeration OW_WQLFilterRep::references(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray 
-OW_WQLFilterRep::execQuery(const OW_CIMNameSpace& /*ns*/, 
+OW_CIMInstanceArray
+OW_WQLFilterRep::execQuery(const OW_CIMNameSpace& /*ns*/,
 	const OW_String &/*query*/, const OW_String &/*queryLanguage*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {

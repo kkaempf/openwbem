@@ -46,6 +46,7 @@ public:
 private:
 	// test methods
 	void testEmbeddedClass();
+	void testEmbeddedInstance();
 };
 
 #endif

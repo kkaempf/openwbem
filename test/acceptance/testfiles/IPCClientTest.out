@@ -875,6 +875,8 @@ CIMClass: CIM_BGPClustersInAS
 CIMClass: CIM_AFRelatedServices
 CIMClass: CIM_NextService
 CIMClass: CIM_NextServiceAfterMeter
+CIMClass: TestClass1
+CIMClass: TestClass2
 CIMClass: wqlTestClass
 Testing non-deep
 CIMClass: CIM_ManagedElement
@@ -941,6 +943,8 @@ CIMClass: CIM_NetworksInAdminDomain
 CIMClass: CIM_BGPClustersInAS
 CIMClass: CIM_AFRelatedServices
 CIMClass: CIM_NextService
+CIMClass: TestClass1
+CIMClass: TestClass2
 CIMClass: wqlTestClass
 *** Doing modifyClass() ***
 *** Doing getClass() ***

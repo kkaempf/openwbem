@@ -35,6 +35,7 @@
 #include "OW_CIM.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_StringStream.hpp"
 
 #include <iostream>
 
@@ -714,6 +715,43 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				OW_CIMObjectPathArray a;
 				cv.get(a);
 				raToXmlCOP(out, a);
+				break;
+			}
+			
+			case OW_CIMDataType::EMBEDDEDCLASS:
+			{
+				OW_CIMClassArray ca;
+				cv.get(ca);
+				OW_StringArray sa;
+				for (size_t i = 0; i < ca.size(); ++i)
+				{
+					OW_StringStream ss;
+					OW_CIMtoXML(ca[i], ss, OW_CIMtoXMLFlags::notLocalOnly,
+						OW_CIMtoXMLFlags::includeQualifiers,
+						OW_CIMtoXMLFlags::includeClassOrigin,
+						OW_StringArray());
+					sa.push_back(ss.toString());
+				}
+				raToXmlSA(out, sa);
+				break;
+			}
+			
+			case OW_CIMDataType::EMBEDDEDINSTANCE:
+			{
+				OW_CIMInstanceArray ia;
+				cv.get(ia);
+				OW_StringArray sa;
+				for (size_t i = 0; i < ia.size(); ++i)
+				{
+					OW_StringStream ss;
+					OW_CIMtoXML(ia[i],ss,OW_CIMObjectPath(),
+						OW_CIMtoXMLFlags::notLocalOnly,
+						OW_CIMtoXMLFlags::includeQualifiers,
+						OW_CIMtoXMLFlags::includeClassOrigin,
+						OW_StringArray());
+					sa.push_back(ss.toString());
+				}
+				raToXmlSA(out, sa);
 				break;
 			}
 		}

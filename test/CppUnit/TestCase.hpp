@@ -50,7 +50,7 @@ class TestResult;
  * Each test runs in its own fixture so there
  * can be no side effects among test runs.
  * Here is an example:
- * 
+ *
  * class MathTest : public TestCase {
  *     protected: int m_value1;
  *     protected: int m_value2;
@@ -64,17 +64,17 @@ class TestResult;
  *         m_value2 = 3;
  *     }
  * }
- * 
+ *
  *
  * For each test implement a method which interacts
  * with the fixture. Verify the expected results with assertions specified
  * by calling assert on the expression you want to test:
- * 
+ *
  *    protected: void testAdd () {
  *        int result = value1 + value2;
  *        assert (result == 5);
  *    }
- * 
+ *
  * Once the methods are defined you can run them. To do this, use
  * a TestCaller.
  *
@@ -86,14 +86,14 @@ class TestResult;
  * different test runners which can run a test suite and collect the results.
  * The test runners expect a static method suite as the entry
  * point to get a test to run.
- * 
+ *
  * public: static MathTest::suite () {
  *      TestSuite *suiteOfTests = new TestSuite;
  *      suiteOfTests->addTest(new TestCaller<MathTest>("testAdd", testAdd));
  *      suiteOfTests->addTest(new TestCaller<MathTest>("testDivideByZero", testDivideByZero));
  *      return suiteOfTests;
  *  }
- * 
+ *
  * Note that the caller of suite assumes lifetime control
  * for the returned suite.
  *
@@ -102,7 +102,7 @@ class TestResult;
  */
 
 
-class TestCase : public Test 
+class TestCase : public Test
 {
     REFERENCEOBJECT (TestCase)
 
@@ -127,29 +127,29 @@ protected:
     virtual void        runTest          ();
 
     TestResult          *defaultResult   ();
-    void                assertImplementation 
-                                         (bool         condition, 
+    void                assertImplementation
+                                         (bool         condition,
                                           const char*  conditionExpression,
                                           long         lineNumber,
                                           const char*  fileName);
 
-    void                assertEquals     (long         expected, 
+    void                assertEquals     (long         expected,
                                           long         actual,
                                           long         lineNumber,
                                           const char*  fileName);
 
-    void                assertEquals     (double       expected, 
-                                          double       actual, 
-                                          double       delta, 
+    void                assertEquals     (double       expected,
+                                          double       actual,
+                                          double       delta,
                                           long         lineNumber,
                                           const char*  fileName);
 
-    const char*         notEqualsMessage (long         expected, 
+    const char*         notEqualsMessage (long         expected,
                                           long         actual);
 
-    const char*         notEqualsMessage (double       expected, 
+    const char*         notEqualsMessage (double       expected,
                                           double       actual);
-    
+
 private:
     const char*   m_name;
 
@@ -192,12 +192,12 @@ private:
 				 __LINE__, __FILE__);\
 	     } catch (const CppUnitException& e){throw e;} \
 		  catch (...) {}
-		  
+		
 	#undef unitAssertNoThrow
 	#define unitAssertNoThrow(condition)\
 	try{condition;\
 	} catch (const CppUnitException& e){throw e;} \
-			catch( const std::exception& e ){ throw CppUnitException( e.what(), __LINE__, __FILE__);} \
+			catch( const std::exception& e ){ this->assertImplementation( false, #condition, __LINE__, __FILE__);} \
 	catch (...) { this->assertImplementation( false, #condition,\
 			__LINE__, __FILE__);}
 

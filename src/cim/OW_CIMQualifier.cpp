@@ -439,6 +439,7 @@ const char* const OW_CIMQualifier::CIM_QUAL_BITVALUES 		= "bitvalues";
 const char* const OW_CIMQualifier::CIM_QUAL_COUNTER 		= "counter";
 const char* const OW_CIMQualifier::CIM_QUAL_DESCRIPTION 	= "description";
 const char* const OW_CIMQualifier::CIM_QUAL_DISPLAYNAME 	= "displayname";
+const char* const OW_CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT 	= "embeddedobject";
 const char* const OW_CIMQualifier::CIM_QUAL_GAUGE 			= "gauge";
 const char* const OW_CIMQualifier::CIM_QUAL_IN 				= "in";
 const char* const OW_CIMQualifier::CIM_QUAL_KEY 			= "key";

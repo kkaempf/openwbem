@@ -66,6 +66,7 @@ public:
 	static const char* const CIM_QUAL_COUNTER;
 	static const char* const CIM_QUAL_DESCRIPTION;
 	static const char* const CIM_QUAL_DISPLAYNAME;
+	static const char* const CIM_QUAL_EMBEDDEDOBJECT;
 	static const char* const CIM_QUAL_GAUGE;
 	static const char* const CIM_QUAL_IN;
 	static const char* const CIM_QUAL_KEY;

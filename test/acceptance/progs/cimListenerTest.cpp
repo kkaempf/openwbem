@@ -365,10 +365,10 @@ int main(int argc, char* argv[])
 		OW_String handle;
 
 		
-		handle = hxcl.registerForIndication(url, cop, "select * from OW_TestIndication1", "wql1", test1cb);
+		handle = hxcl.registerForIndication(url, cop, "select * from OW_TestIndication1 where TheClass ISA \"TestClass1\"", "wql1", test1cb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from OW_TestIndication2", "wql1", test2cb);
+		handle = hxcl.registerForIndication(url, cop, "select * from OW_TestIndication2 where TheInstance ISA \"TestClass2\"", "wql1", test2cb);
 		registrationHandles.append(handle);
 
 		// Now wait for our test trigger providers to send out their indications.

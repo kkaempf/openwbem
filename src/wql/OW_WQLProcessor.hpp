@@ -932,6 +932,10 @@ private:
 	void doComparison(const DataType& lhs, const DataType& rhs, Compare compare);
 	void populateInstances(const OW_String& className);
 	void populateInstances();
+	bool instanceIsDerivedFrom(const OW_CIMInstance& inst,
+		const OW_String& className);
+	bool classIsDerivedFrom(const OW_String& cls,
+		const OW_String& className);
 };
 
 bool CIMInstanceSortCriterion( const OW_CIMInstance& lhs, const OW_CIMInstance& rhs);

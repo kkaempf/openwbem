@@ -1404,13 +1404,87 @@ void OW_WQLProcessor::visit_aExpr_aExpr_IS_NOT_TRUEP(
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
 }
 
+bool OW_WQLProcessor::instanceIsDerivedFrom(const OW_CIMInstance& inst,
+	const OW_String& className)
+{
+	return classIsDerivedFrom(inst.getClassName(), className);
+}
+
+bool OW_WQLProcessor::classIsDerivedFrom(const OW_String& cls,
+	const OW_String& className)
+{
+	OW_String curClassName = cls;
+	while (curClassName.length() > 0)
+	{
+		if (curClassName.equalsIgnoreCase(className))
+		{
+			return true;
+		}
+		// didn't match, so try the superclass of curClassName
+		OW_CIMObjectPath cop(curClassName, m_ns.getNameSpace());
+		OW_CIMClass cls2 = m_hdl->getClass(cop);
+		curClassName = cls2.getSuperClass();
+
+	}
+	return false;
+}
+
 void OW_WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 		const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
 		)
 {
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	paExpr_aExpr_ISA_aExpr->m_paExpr1->accept(this);
+	DataType lhs = m_exprValue;
+	if (lhs.type != DataType::ColumnNameType)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Invalid first parameter type for ISA (should be a property name)");
+	}
+	OW_String propName = lhs.str;
+
 	paExpr_aExpr_ISA_aExpr->m_paExpr3->accept(this);
+	DataType rhs = m_exprValue;
+	if (rhs.type != DataType::OW_StringType)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Invalid second parameter type for ISA (should be a string)");
+	}
+	OW_String className = rhs.str;
+
+	OW_CIMInstanceArray newInstances;
+	for (size_t i = 0; i < instances.size(); ++i)
+	{
+		OW_CIMInstance ci = instances[i];
+		if (ci)
+		{
+			OW_CIMProperty cp = ci.getProperty(propName);
+			if (cp)
+			{
+				OW_CIMValue cv = cp.getValue();
+				if (cv)
+				{
+					int valType = cv.getType();
+					if (valType == OW_CIMDataType::EMBEDDEDINSTANCE)
+					{
+						OW_CIMInstance embeddedinst;
+						cv.get(embeddedinst);
+						if (instanceIsDerivedFrom(embeddedinst, className))
+						{
+							newInstances.push_back(ci);
+						}
+					}
+					else if (valType == OW_CIMDataType::EMBEDDEDCLASS)
+					{
+						OW_CIMClass embeddedcls;
+						cv.get(embeddedcls);
+						if (classIsDerivedFrom(embeddedcls.getName(), className))
+						{
+							newInstances.push_back(ci);
+						}
+					}
+				}
+			}
+		}
+	}
+	m_exprValue = DataType(newInstances);
 }
 
 
@@ -2105,7 +2179,7 @@ void OW_WQLProcessor::visit_aExprConst_NULLP(
 
 
 OW_CIMInstanceArray
-	OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const OW_CIMValue& val, const Compare& compare)
+OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const OW_CIMValue& val, const Compare& compare)
 {
 	//OW_LOGDEBUG(format("OW_WQLProcessor::filterInstancesOnPropertyValue\n"
 	//	"\tFiltering instances on property: %1 %2 %3", propName, compare.c_str(), val ? val.toString() : "NULL" ));
