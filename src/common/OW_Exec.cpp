@@ -239,6 +239,7 @@ int PopenStreamsImpl::getExitStatus()
 					{
 						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
+						m_pid = -1;
 						OW_THROW_ERRNO_MSG(ExecErrorException, Format("PopenStreamsImpl::getExitStatus: Failed sending SIGKILL to process %1", m_pid).c_str());
 					}
 					// give the kernel 1 sec to clean it up, otherwise we bail.
@@ -248,6 +249,7 @@ int PopenStreamsImpl::getExitStatus()
 						milliSleep(10); // 1/100 of a second
 						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					}
+					m_pid = -1;
 					if (waitpidrv == 0)
 					{
 						OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: Child process has not exited after sending it a SIGKILL.");
@@ -259,6 +261,7 @@ int PopenStreamsImpl::getExitStatus()
 				}
 				else
 				{
+					m_pid = -1;
 					OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: second waitpid() failed.");
 				}
 			}
@@ -275,6 +278,7 @@ int PopenStreamsImpl::getExitStatus()
 		}
 		else
 		{
+			m_pid = -1;
 			OW_THROW_ERRNO_MSG(ExecErrorException, "PopenStreamsImpl::getExitStatus: first waitpid() failed.");
 		}
 	}
@@ -502,13 +506,14 @@ safePopen(const Array<String>& command, const char* const envp[])
 	{
 		OW_THROW(ExecErrorException, "Exec::safePopen: command is empty");
 	}
-	retval.pid ( fork() );
-	if (retval.pid() == -1)
+	pid_t forkrv = ::fork();
+	if (forkrv == -1)
 	{
 		OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::safePopen: fork() failed");
 	}
-	if (retval.pid() == 0)
+	if (rv == 0)
 	{
+		// child process
 		// Close stdin, stdout, and stderr.
 		close(0);
 		close(1);
@@ -601,6 +606,9 @@ safePopen(const Array<String>& command, const char* const envp[])
 				"%1, rval is %2", argv[0], rval);
 		_exit(127);
 	}
+	// parent process
+	retval.pid (forkrv);
+
 	// this should only fail because of programmer error.
 	UnnamedPipeRef foo1 = retval.in();
 	PosixUnnamedPipeRef in = foo1.cast_to<PosixUnnamedPipe>();
@@ -834,6 +842,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 				waitpidrv = waitpidNoINTR(streams[i].pid(), &processStatus, WNOHANG);
 				if (waitpidrv == -1)
 				{
+					streams[i].pid(-1);
 					OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: waitpid() failed");
 				}
 				else if (waitpidrv != 0)
