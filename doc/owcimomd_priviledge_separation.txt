@@ -1,0 +1,101 @@
+Currently the owcimomd process runs as root.
+On Linux there is a "feature" of owcimomd that takes advantage of a non-standard Linux behavior that allows threads to switch euid (seteuid only affects one
+thread instead of the whole process). The thread sets it's euid to be that of the user who authenticated.
+However this provides no protection once executing attacker's code (e.g. via a buffer overflow), it just makes it
+much easier to write providers that properly honor operating system permissions, which is a good benefit. However it only works on Linux and does nothing
+to address the issue of executing attacker's code.
+
+It should be noted that the nature of the owcimomd code is such that most code that deals with parsing client input is written in high-level C++ and
+doesn't deal with fixed size buffers, and so is unlikely to contain buffer overflow bugs. Nevertheless, bugs still may exist, and anyone running
+owcimomd cannot be expected to rely on our good coding skills.
+
+The goals are:
+Limit the amount of code running as root so that code audits can be focused on security critical code.
+Limit exposure: if an attacker compromises owcimomd, he can't do anything as root without providing proper credentials.
+Allow for providers to run as the user who authenticated so that provider code can be simplified (and thus more secure) by relying on the OS enforcing permissions.
+
+One valuable benefit gained from the architecture is that providers run in a separate process from owcimomd, so that a bug in the provider cannot crash owcimomd.
+
+
+Running owcimomd as a non-root user (owcimomd):
+This is currently implemented and possible to do with the current code in CVS. If none of the providers root privileges to perform their function,
+then the problem is solved, everything can run as user "owcimomd".  Unfortunately this isn't usually the case :-(
+I have written a small daemon called owprovideragent.  It's basically a wrapper around the ProviderAgent api, which was created for Nortel in order
+to accomodate out of process providers. Used in conjuction with the RemoteProvider interface, it's possible for requests to providers which need elevated
+privileges to be routed from owcimomd to owprovideragent. This assumes that owprovideragent is running as root. The communication happens over a UDS,
+and permissions for it as well as authentication can be configured so that only user owcimomd is allowed to connect and run operations.  Doing this doesn't
+significantly improve the security, because if an attacker compromises owcimomd, there is nothing stopping them from calling owprovideragent and performing
+provider operations as root.  Also a large amount of code is shared between owcimomd and owprovideragent, so if a buffer overflow exists in owcimomd, it is likely
+that the same bug exists in owprovideragent, thus allowing the attacker to gain full root access vs. only being able to call providers as root.
+
+owprovideragent currently has the following limitations:
+No support for polled, indication or indication export providers.
+Only handles c++ providers, OWBI1 or other types of providers aren't.
+To enable upcalls into the cimom, a new connection is created, this requires that owcimomd be configured to authenticate owprovideragent to allow that as
+well as providing an unsafe mechanism for client requests to bypass the read/write lock.
+
+setuid owprovideragent
+
+problem is that owprovideragent is very configurable so how to prevent any old user launching a owprovideragent that does what they want?
+owprovideragent just exits immediately if it was launched by any UID other than owcimomd UID, so, any old user can't do a darn thing with it. 
+Only owcimomd process can use it. However this doesn't help if owcimomd is compromised, the attacker could still do things as root.
+
+communication between owcimomd and owprovideragent:
+Using a UDS is problematic because of:
+1. permissions allow any "owcimomd" user in, even a compromised owcimomd process.
+2. If there is a new owprovideragent process for each request managing which UDS to connect to while preventing race-conditions or DOS attacks is hard.
+It'd be better to use pipes between owcimomd and owprovideragent, which avoid both of the above mentioned problems.
+
+userv
+sshd privilege separation 
+http://www.citi.umich.edu/u/provos/ssh/privsep.html
+http://www.citi.umich.edu/u/provos/papers/privsep.pdf
+
+Each provider invocation can happen in a new process. The process also may be run as the userid who authenticated to owcimomd. This has the advantage that a
+provider bug causing a crash won't cause owcimomd to restart.
+
+Some providers may need to be running for a lengthy period of time or have an expensive initialization process and so it wouldn't be practical to start
+a new process for each request.
+
+Using PKI between owcimomd and owprovideragent:
+Once an attacker compromises owcimomd, they have access to the private key and could access owprovideragent
+
+
+The idea is using pipes between owcimomd and owprovideragent.
+To establish them, use a child-parent non-root/root pair of owcimomd processes.
+
+
+If the provider manager forks a owprovideragent on the fly, and connects to stdin/stdout, the owprovideragent has to be setuid, which is a security problem,
+even if it doesn't do anything unless the process that executed it was the owcimomd UID, because once owcimomd is compromised, the attacker could then
+launch owprovideragent as root.
+
+The sshd privilege separation model could be applied to OW.
+parent process runs as root.  It forks off a child which runs as non-root.
+when the child need an owprovideragent it sends a command to the parent, and the parent popens it, then passes the fds to the child.
+parent also does authentication of the connection credentials so it knows that the user actually passed authentication and the child isn't lying (if it was hacked).
+all the work of parsing the connection is done in the child, and only a pre-configured set of owprovideragent cmd lines can be executed.
+that way owprovideragent doesn't have to be setuid, the set of providers it can call is finite, and an attacker can't just cause any provider to be called by compromising owcimomd.
+if the attacker doesn't have valid credentials it can't even cause an owprovideragent to be launched at all.
+the worst it could do is whatever the owcimomd user has access to, say clobber the repository or something.
+yeah, we can make the root owcimomd launch owprovider agent as whatever user authenticated or is configured.
+
+
+
+
+1. Handling calls back into CIMOM: One way of doing this that, after the CIMOM sends the request to the provider, it expects back either
+
+1. the response, or
+2. a call back into the CIMOM.
+
+If case (2) happens it carries out the request from the provider, sends the results back, and then waits for either (1) or (2) to happen again.  This probably needs to be recursive procedure (on both the CIMOM and provider sides) in case carrying out (2) results in another call to the provider.
+
+Likewise, when the provider sends off a call into the CIMOM, it has to allow for the possibility that, as part of carrying out that request, the CIMOM may call back in to the provider.
+
+
+2. Allowing multiple threads to call into an out-of-process provider: How about using sockets, but using AF_UNIX for the "family" parameter of socket instead of AF_INET.  This only allows connections on the same machine.  I'm not sure whether it's possible to further restrict connections to be from one particular process (or check the pid of the connecting process).
+
+
+
+
+
+
