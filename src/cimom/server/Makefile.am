@@ -24,7 +24,6 @@ INCLUDES = \
 libowserver_a_SOURCES =	\
 OW_AuthManager.cpp \
 OW_AuthManager.hpp \
-OW_LoggerImpls.cpp \
 OW_PidFile.cpp \
 OW_PidFile.hpp \
 OW_Platform.cpp \
