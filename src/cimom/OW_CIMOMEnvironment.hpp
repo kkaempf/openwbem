@@ -118,6 +118,8 @@ public:
 
 	OW_IndicationServerRef getIndicationServer() const;
 
+	OW_PollingManagerRef getPollingManager() const;
+
 	void clearConfigItems();
 
 	virtual void setConfigItem(const OW_String &item, const OW_String &value,

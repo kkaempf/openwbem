@@ -1028,6 +1028,13 @@ OW_CIMOMEnvironment::getIndicationServer() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_PollingManagerRef
+OW_CIMOMEnvironment::getPollingManager() const
+{
+	return m_pollingManager;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMEnvironment::clearConfigItems()
 {
