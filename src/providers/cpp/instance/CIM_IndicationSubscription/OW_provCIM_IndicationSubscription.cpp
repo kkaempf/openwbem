@@ -118,16 +118,16 @@ public:
 		EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 	{
 		(void)requestedClass; (void)cimClass;
-		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		rephdl->enumInstances(ns,className,result,deep,localOnly,includeQualifiers,includeClassOrigin,propertyList);
+		RepositoryIFCRef rephdl = env->getRepository();
+		rephdl->enumInstances(ns,className,result,deep,localOnly,includeQualifiers,includeClassOrigin,propertyList, E_DONT_ENUM_SUBCLASSES, env->getOperationContext());
 	}
 	
 	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMObjectPathResultHandlerIFC &result,
 		const CIMClass &cimClass)
 	{
 		(void)cimClass;
-		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		rephdl->enumInstanceNames(ns,className,result);
+		RepositoryIFCRef rephdl = env->getRepository();
+		rephdl->enumInstanceNames(ns,className,result, E_SHALLOW, env->getOperationContext());
 	}
 private:
 	bool indicationsEnabled;
