@@ -169,15 +169,35 @@ namespace testSchemaQuery
 		mkChildren2Level(rch, ns.c_str(), "ClassWithManyChildren2Level");
 	}
 	
-	namespace thisTests
+	void doesNotExist(CIMOMHandleIFCRef& rch, String const& schemaQueryOperator, String const& schemaQueryOperand)
 	{
-		void doesNotExist(CIMOMHandleIFCRef& rch, String thisName= String("__this"))
+		std::ostringstream query;
+		query << "SELECT \"*\" FROM meta_class WHERE " << schemaQueryOperand << " " << schemaQueryOperator << "  \"ClassWhichDoesNotExist\" ";
+		testQuery(rch, query.str().c_str(), 0);
+	}
+	void wrongOperator(CIMOMHandleIFCRef& rch, String const& schemaQueryOperator, String const& schemaQueryOperand)
+	{
+		try
 		{
 			std::ostringstream query;
-			query << "SELECT \"*\" FROM meta_class WHERE " << thisName << " ISA \"ClassWhichDoesNotExist\" ";
+			query << "SELECT \"*\" FROM meta_class WHERE " << schemaQueryOperand << " " << schemaQueryOperator << " \"ClassWhichDoesNotExist\" ";
 			testQuery(rch, query.str().c_str(), 0);
 		}
-		
+		catch(CIMException const& ex)
+		{
+			//This query is supposed to throw an exception.
+			return;
+		}
+		TEST_ASSERT(0);
+	}
+	void noChildren(CIMOMHandleIFCRef& rch, String const& schemaQueryOperator, String const& schemaQueryOperand)
+	{
+		std::ostringstream query;
+		query << "SELECT \"*\" FROM meta_class WHERE " << schemaQueryOperand << " " << schemaQueryOperator << " \"ClassWithNoChildren\" ";
+		testQuery(rch, query.str().c_str(), 1);
+	}
+	namespace thisTests
+	{
 		void caseInsensitive(CIMOMHandleIFCRef& rch)
 		{
 			size_t const sz= 3;
@@ -186,27 +206,8 @@ namespace testSchemaQuery
 
 			for(size_t i= 0; i < sz ; ++i)
 			{
-				doesNotExist(rch, thisCase[i]);
+				doesNotExist(rch, String("ISA"), thisCase[i]);
 			}
-		}
-
-		void withoutISA(CIMOMHandleIFCRef& rch)
-		{
-			try
-			{
-				testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this = \"ClassWhichDoesNotExist\" ", 0);
-			}
-			catch(CIMException const& ex)
-			{
-				//This query is supposed to throw an exception.
-				return;
-			}
-			TEST_ASSERT(0);
-		}
-
-		void noChildren(CIMOMHandleIFCRef& rch)
-		{
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithNoChildren\" ", 1);
 		}
 
 		void manyChildren(CIMOMHandleIFCRef& rch)
@@ -231,16 +232,106 @@ namespace testSchemaQuery
 		}
 		
 	}
+	namespace classTests
+	{
+		void caseInsensitive(CIMOMHandleIFCRef& rch)
+		{
+			size_t const sz= 3;
+			String thisCase[sz]=
+				{String("__class"), String("__Class"), String("__CLASS")};
+
+			for(size_t i= 0; i < sz ; ++i)
+			{
+				doesNotExist(rch, String("="), thisCase[i]);
+			}
+		}
+		
+		void noChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"ClassWithNoChildren\" ", 1);
+		}
+
+		void manyChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"ClassWithManyChildren\" ", 1);
+		}
+		
+		void manyLevelsOfChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"ClassWithManyChildren2Level\" ", 1);
+		}
+
+		void notRoot(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"Child1OfClassWithManyChildren2Level\" ", 1);
+		}
+	}
+	namespace dynastyTests
+	{
+		void caseInsensitive(CIMOMHandleIFCRef& rch)
+		{
+			size_t const sz= 3;
+			String thisCase[sz]=
+				{String("__dynasty"), String("__Dynasty"), String("__DYNASTY")};
+
+			for(size_t i= 0; i < sz ; ++i)
+			{
+				doesNotExist(rch, String("="), thisCase[i]);
+			}
+		}
+		
+		void noChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"ClassWithNoChildren\" ", 1);
+		}
+
+		void manyChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"ClassWithManyChildren\" ", 4);
+		}
+		
+		void manyLevelsOfChildren(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"ClassWithManyChildren2Level\" ", 13);
+		}
+
+		void notRoot(CIMOMHandleIFCRef& rch)
+		{
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"Child1OfClassWithManyChildren2Level\" ", 0);
+		}
+	}
 	void testThis(CIMOMHandleIFCRef& rch)
 	{
 		thisTests::caseInsensitive(rch);
-		thisTests::doesNotExist(rch);
-		thisTests::withoutISA(rch);
+		doesNotExist(rch, "ISA", "__this");
+		wrongOperator(rch, "=", "__this");
 		//thisTests::withoutMetaClass(rch);
-		thisTests::noChildren(rch);
+		noChildren(rch, "ISA", "__this");
 		thisTests::manyChildren(rch);
 		thisTests::manyLevelsOfChildren(rch);
 		thisTests::notRoot(rch);
+	}
+
+	void testClass(CIMOMHandleIFCRef& rch)
+	{
+		classTests::caseInsensitive(rch);
+		doesNotExist(rch, "=", "__class");
+		wrongOperator(rch, "ISA", "__class");
+		noChildren(rch, "=", "__class");
+		classTests::manyChildren(rch);
+		classTests::manyLevelsOfChildren(rch);
+		classTests::notRoot(rch);
+	}
+
+	void testDynasty(CIMOMHandleIFCRef& rch)
+	{
+		dynastyTests::caseInsensitive(rch);
+		doesNotExist(rch, "=", "__dynasty");
+		wrongOperator(rch, "ISA", "__dynasty");
+		noChildren(rch, "=", "__dynasty");
+		dynastyTests::manyChildren(rch);
+		dynastyTests::manyLevelsOfChildren(rch);
+		dynastyTests::notRoot(rch);
 	}
 }
 
