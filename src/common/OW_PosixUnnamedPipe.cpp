@@ -58,14 +58,14 @@ OW_PosixUnnamedPipe::OW_PosixUnnamedPipe(OW_Bool doOpen)
 	m_fds[0] = m_fds[1] = -1;
 	if(doOpen)
 	{
-		this->open();
+		open();
 	}
 }
 	
 //////////////////////////////////////////////////////////////////////////////
 OW_PosixUnnamedPipe::~OW_PosixUnnamedPipe()
 {
-	this->close();
+	close();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ OW_PosixUnnamedPipe::open()
 {
 	if(m_fds[0] != -1)
 	{
-		this->close();
+		close();
 	}
 
 	if(::pipe(m_fds) == -1)

@@ -187,6 +187,8 @@ OW_CIMOMEnvironment::startServices()
 void
 OW_CIMOMEnvironment::shutdown()
 {
+	logDebug("CIMOM Environment shutting down...");
+
 	OW_MutexLock ml(m_monitor);
 
 	// Shutdown the polling manager
@@ -238,8 +240,10 @@ OW_CIMOMEnvironment::shutdown()
 	// Delete the provider manager
 	m_providerManager = 0;
 
-	// Delete the loger
-	m_Logger = 0;
+	// We keep the logger around so all of the shutdown sequence can be
+	// logged
+
+	logDebug("CIMOM Environment has shut down");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -784,6 +788,49 @@ OW_CIMOMEnvironment::exportIndication(const OW_CIMInstance& instance,
 		m_indicationServer->processIndication(instance, instNS);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMOMEnvironment::logCustInfo(const OW_String& s) const
+{
+	if (m_Logger)
+	{
+		m_Logger->logCustInfo(s);
+	}
+	else
+	{
+		cout << s << endl;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMOMEnvironment::logDebug(const OW_String& s) const
+{
+	if (m_Logger)
+	{
+		m_Logger->logDebug(s);
+	}
+	else
+	{
+		cout << s << endl;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMOMEnvironment::logError(const OW_String& s) const
+{
+	if (m_Logger)
+	{
+		m_Logger->logError(s);
+	}
+	else
+	{
+		cerr << s << endl;
+	}
+}
+
 
 
 

@@ -62,12 +62,14 @@ int main(int argc, char* argv[])
 		catch (const OW_DaemonException& e)
 		{
 			env->logError(e.getMessage());
-			env->logError("Failed to initialize - aborting...");
+			env->logError("CIMOM failed to initialize. Aborting...");
 			return 1;
 		}
 
 		// Start all of the cimom services
 		env->startServices();
+
+		env->logCustInfo("CIMOM is now running!");
 
 		int sig;
 		OW_Bool shuttingDown(false);
@@ -81,19 +83,22 @@ int main(int argc, char* argv[])
 			{
 				case OW_Platform::SHUTDOWN:
 					shuttingDown = true;
-					env->logCustInfo("Open WBEM cimom received shutdown"
-						" notification");
+					env->logCustInfo("CIMOM received shutdown notification."
+						" Initiating shutdown");
+
 					env->shutdown();
 					break;
+
 				case OW_Platform::REINIT:
-					env->logCustInfo("Open WBEM cimom received restart"
-						" notification");
+					env->logCustInfo("CIMOM received restart notification."
+						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
 					processCommandLine(argc, argv, env);
 					env->init();
 					env->startServices();
 					break;
+
 				default:
 					break;
 			}
@@ -105,7 +110,7 @@ int main(int argc, char* argv[])
 	catch (OW_Assertion& e)
 	{
 		env->logError("**************************************************");
-		env->logError("* ASSERTION CAUGHT IN MAIN!");
+		env->logError("* ASSERTION CAUGHT IN CIMOM MAIN!");
 		env->logError(format("* Condition: %1", e.getMessage()));
 		env->logError(format("* File: %1", e.getFile()));
 		env->logError(format("* Line: %1", e.getLine()));
@@ -114,7 +119,7 @@ int main(int argc, char* argv[])
 	catch (OW_Exception& e)
 	{
 		env->logError("**************************************************");
-		env->logError("* EXCEPTION CAUGHT IN MAIN!");
+		env->logError("* EXCEPTION CAUGHT IN CIMOM MAIN!");
 		env->logError(format("* Type: %1", e.type()));
 		env->logError(format("* Msg: %1", e.getMessage()));
 		env->logError(format("* File: %1", e.getFile()));
@@ -125,17 +130,18 @@ int main(int argc, char* argv[])
 	catch (std::exception& se)
 	{
 		env->logError("**************************************************");
-		env->logError("* Standard EXCEPTION CAUGHT IN MAIN!");
+		env->logError("* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
 		env->logError(format("* Type: %1", se.what()));
 		env->logError("**************************************************");
 	}
 	catch(...)
 	{
 		env->logError("**************************************************");
-		env->logError("* UNKNOWN EXCEPTION CAUGHT MAIN!");
+		env->logError("* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
 		env->logError("**************************************************");
 	}
 
+	env->logCustInfo("CIMOM has shutdown");
 	return 0;
 }
 
@@ -152,7 +158,7 @@ processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
 	{
 		if (opts.error)
 		{
-			cout << "Unknown command line argument." << endl;
+			cout << "Unknown command line argument for CIMOM" << endl;
 		}
 		printUsage(cout);
 		exit(0);

@@ -37,6 +37,7 @@
 #include "OW_Reference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ServiceIFC.hpp"
+#include "OW_UnnamedPipe.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_IPCService : public OW_ServiceIFC
@@ -49,19 +50,24 @@ public:
 	virtual void setServiceEnvironment(OW_ServiceEnvironmentIFCRef env);
 	virtual void shutdown();
 	virtual void doSelected();
+	void incConnCount();
+	void decConnCount();
+	OW_UnnamedPipeRef getUPipe() { return m_upipe; }
+	OW_ServiceEnvironmentIFCRef getEnvironment() { return m_env; }
 
 private:
 	OW_IPCServer m_server;
 	OW_ServiceEnvironmentIFCRef m_env;
+	OW_UnnamedPipeRef m_upipe;
+	OW_Int32 m_connCount;
+	OW_Mutex m_countGuard;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_IPCConnectionHandler : public OW_Runnable
 {
 public:
-	OW_IPCConnectionHandler(OW_ServiceEnvironmentIFCRef env,
-		OW_IPCConnection conn);
-
+	OW_IPCConnectionHandler(OW_IPCService* pservice, OW_IPCConnection conn);
 	~OW_IPCConnectionHandler();
 
 	virtual void run();
@@ -71,7 +77,7 @@ public:
 
 private:
 
-	OW_ServiceEnvironmentIFCRef m_env;
+	OW_IPCService* m_pservice;
 	OW_IPCConnection m_conn;
 };
 

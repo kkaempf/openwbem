@@ -33,6 +33,8 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Format.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_Select.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -114,6 +116,9 @@ OW_IPCService::OW_IPCService()
 	: OW_ServiceIFC()
 	, m_server(true)
 	, m_env()
+	, m_upipe(0)
+	, m_connCount(0)
+	, m_countGuard()
 {
 }
 
@@ -126,14 +131,27 @@ OW_IPCService::~OW_IPCService()
 void
 OW_IPCService::shutdown()
 {
-	m_env->getLogger()->logDebug("OW_IPCService is shutting down");
+	m_env->getLogger()->logDebug("IPC Service is shutting down...");
+
+	// Send shutdown notification to connection handlers
+	m_upipe->write(int(-1));
+	while(m_connCount > 0)
+	{
+		OW_Thread::yield();
+	}
+
 	m_server.cleanup();
+	m_env->getLogger()->logDebug("IPC Service has shut down");
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IPCService::startService()
 {
+	m_env->getLogger()->logDebug("IPC Service starting...");
+
+	m_upipe = OW_UnnamedPipe::createUnnamedPipe(false);
+	m_upipe->open();
 	m_server.initialize();
 	if(m_env.getPtr())
 	{
@@ -141,6 +159,7 @@ OW_IPCService::startService()
 		m_env->addSelectable(sref, OW_SelectableCallbackIFCRef(
 			new IPCSelectableCallback(this)));
 	}
+	m_env->getLogger()->logDebug("IPC Service is now running");
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -168,15 +187,34 @@ OW_IPCService::doSelected()
 	lgr->logDebug(format("Received API connection. User: %1",
 		conn.getUserName()));
 
-	OW_RunnableRef rref(new OW_IPCConnectionHandler(m_env, conn));
+	OW_RunnableRef rref(new OW_IPCConnectionHandler(this, conn));
 	OW_Thread::run(rref, isSepThread);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_IPCConnectionHandler::OW_IPCConnectionHandler(
-	OW_ServiceEnvironmentIFCRef env, OW_IPCConnection conn)
+void
+OW_IPCService::incConnCount()
+{
+	OW_MutexLock ml(m_countGuard);
+	m_connCount++;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_IPCService::decConnCount()
+{
+	OW_MutexLock ml(m_countGuard);
+	if((--m_connCount) < 0)
+	{
+		m_connCount = 0;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IPCConnectionHandler::OW_IPCConnectionHandler(OW_IPCService* pservice,
+	OW_IPCConnection conn)
 	: OW_Runnable()
-	, m_env(env)
+	, m_pservice(pservice)
 	, m_conn(conn)
 {
 }
@@ -191,12 +229,33 @@ OW_IPCConnectionHandler::~OW_IPCConnectionHandler()
 void
 OW_IPCConnectionHandler::run()
 {
-	OW_LoggerRef lgr = m_env->getLogger();
+	class RunMonitor
+	{
+	public:
+		RunMonitor(OW_IPCService* pservice) : m_pservice(pservice)
+		{
+			m_pservice->incConnCount();
+		}
+
+		~RunMonitor()
+		{
+			m_pservice->decConnCount();
+			
+		}
+
+		OW_IPCService* m_pservice;
+	};
+	RunMonitor rm(m_pservice);
+	(void)rm;
+
+	OW_ServiceEnvironmentIFCRef env = m_pservice->getEnvironment();
+	OW_LoggerRef lgr = env->getLogger();
+	OW_UnnamedPipeRef upipe = m_pservice->getUPipe();
+
 	try
 	{
 		// TODO: put OW_BINARY_ID in the right spot
-		OW_RequestHandlerIFCRef handler = m_env->getRequestHandler(
-			OW_BINARY_ID);
+		OW_RequestHandlerIFCRef handler = env->getRequestHandler(OW_BINARY_ID);
 
 		if(!handler)
 		{
@@ -210,11 +269,31 @@ OW_IPCConnectionHandler::run()
 		OW_String userName = m_conn.getUserName();
 		
 		handler->setEnvironment(OW_ServiceEnvironmentIFCRef(
-			new OW_IPCServiceEnvironment(m_env, userName)));
+			new OW_IPCServiceEnvironment(env, userName)));
 
+		OW_SelectTypeArray selra;
+		selra.append(upipe->getSelectObj());
+		selra.append(m_conn.getSelectObj());
+		int selndx;
 		OW_Int32 actionValue = 0;
 		while(actionValue != OW_IPC_CLOSECONN)
 		{
+			if((selndx = OW_Select::select(selra)) < 0)
+			{
+				lgr->logError(format("IPC Service: Encountered error waiting"
+					" for client to respond. Closing conection to %1",
+					m_conn.getUserName()));
+				break;
+			}
+
+			if(selndx == 0)
+			{
+				lgr->logError(format("IPC Service: Received shutdown"
+					" notification. Closing connection to %1",
+					m_conn.getUserName()));
+				break;
+			}
+
 			OW_BinIfcIO::read(istrm, actionValue, OW_Bool(true));
 			switch(actionValue)
 			{
@@ -267,14 +346,15 @@ OW_String
 OW_IPCConnectionHandler::authenticate(std::ostream& ostrm, std::istream& istrm,
 	const OW_String& oldUser)
 {
-	OW_LoggerRef lgr = m_env->getLogger();
+	OW_ServiceEnvironmentIFCRef env = m_pservice->getEnvironment();
+	OW_LoggerRef lgr = env->getLogger();
 	OW_Bool authenticated = false;
 	OW_String details;
 	OW_String userName(OW_BinIfcIO::readString(istrm));
 	OW_String info(OW_BinIfcIO::readString(istrm));
 	if(userName.length())
 	{
-		if(m_env->getConfigItem(OW_ConfigOpts::ACL_SUPERUSER_opt).
+		if(env->getConfigItem(OW_ConfigOpts::ACL_SUPERUSER_opt).
 		   equalsIgnoreCase(oldUser) || oldUser == userName)
 		{
 			authenticated = true;
@@ -283,7 +363,7 @@ OW_IPCConnectionHandler::authenticate(std::ostream& ostrm, std::istream& istrm,
 		{
 			try
 			{
-				authenticated = m_env->authenticate(userName, info, details);
+				authenticated = env->authenticate(userName, info, details);
 			}
 			catch(OW_Exception& e)
 			{

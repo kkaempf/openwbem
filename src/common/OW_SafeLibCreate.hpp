@@ -96,9 +96,6 @@ public:
 	createObj(OW_SharedLibraryRef sl, OW_String const& createFuncName,
 		const OW_LoggerRef& logger)
 	{
-		logger->logDebug(format("safeLibCreate::create called.  createFuncName = %1",
-			createFuncName).c_str());
-		
 		try
 		{
 			int sigtype;

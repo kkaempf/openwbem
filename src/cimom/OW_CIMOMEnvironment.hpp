@@ -121,35 +121,9 @@ public:
 	void shutdown();
 	OW_ProviderManagerRef getProviderManager();
 	void runSelectEngine();
-
-	void logCustInfo(const OW_String& s) const
-	{
-		if (m_Logger)
-		{
-			m_Logger->logCustInfo(s);
-		}
-	}
-
-	void logDebug(const OW_String& s) const
-	{
-		if (m_Logger)
-		{
-			m_Logger->logDebug(s);
-		}
-	}
-
-	void logError(const OW_String& s) const
-	{
-		if (m_Logger)
-		{
-			m_Logger->logError(s);
-		}
-		else
-		{
-			cerr << s << endl;
-		}
-	}
-
+	void logCustInfo(const OW_String& s) const;
+	void logDebug(const OW_String& s) const;
+	void logError(const OW_String& s) const;
 	void exportIndication(const OW_CIMInstance& instance,
 		const OW_CIMNameSpace& instNS);
 
