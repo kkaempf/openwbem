@@ -38,6 +38,9 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
+#include "OW_IOException.hpp"
+#include "OW_Format.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 namespace OW_NAMESPACE
 {

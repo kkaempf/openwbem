@@ -39,16 +39,14 @@
 #include "OW_Types.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Bool.hpp"
-#include "OW_ResultHandlerIFC.hpp"
-#include "OW_IOException.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_Format.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_ByteSwap.hpp"
+#include "OW_IfcsFwd.hpp"
 
 #if defined(OW_HAVE_OSTREAM) && defined(OW_HAVE_ISTREAM)
 #include <ostream>
@@ -223,7 +221,7 @@ namespace BinarySerialization
 	/////////////////////////////////////////////////////////////////////////////
 	template <typename T>
 	inline void
-	readArray(std::istream& istr, Array<T>& a)
+	readArray(std::istream& istr, T& a)
 	{
 		a.clear();
 		UInt32 len;
@@ -232,7 +230,7 @@ namespace BinarySerialization
 		a.reserve(len);
 		for (UInt32 i = 0; i < len; i++)
 		{
-			T x;
+			typename T::value_type x;
 			x.readObject(istr);
 			a.push_back(x);
 		}
