@@ -695,7 +695,7 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 	{
 		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
-			m_pdata->m_properties[i].clearQualifiers();
+			m_pdata->m_properties[i].clearNonKeyQualifiers();
 		}
 	}
 	return *this;
