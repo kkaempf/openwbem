@@ -36,22 +36,11 @@
 namespace OpenWBEM
 {
 
-class StackTrace
+namespace StackTrace
 {
-	public:
-		static void getStackTrace();
-		friend std::ostream& operator<<(std::ostream& ostr, const StackTrace& out);
-		const char* c_str() const
-		{
-			return m_trace.c_str();
-		}
-	private:
-		StackTrace(const String& trace);
-		String m_trace;
-};
+	void printStackTrace();
+} // end namespace StackTrace
 
 } // end namespace OpenWBEM
-
-typedef OpenWBEM::StackTrace OW_StackTrace;
 
 #endif

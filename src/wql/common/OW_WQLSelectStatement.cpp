@@ -33,7 +33,12 @@
 #include "OW_Stack.hpp"
 #include "OW_WQLCompile.hpp"
 #include "OW_Assertion.hpp"
+
+#if defined(OW_HAVE_OSTREAM)
+#include <ostream>
+#else
 #include <iostream>
+#endif
 
 namespace OpenWBEM
 {

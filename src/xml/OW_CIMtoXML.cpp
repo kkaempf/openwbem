@@ -49,7 +49,11 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
+#ifdef OW_HAVE_OSTREAM
+#include <ostream>
+#else
 #include <iostream>
+#endif
 #include <algorithm>
 
 namespace OpenWBEM

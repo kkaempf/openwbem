@@ -30,9 +30,6 @@
 #include "OW_config.h"
 #include "OW_Runnable.hpp"
 #include "OW_Thread.hpp"
-#ifdef OW_DEBUG		
-#include <iostream>
-#endif
 
 namespace OpenWBEM
 {

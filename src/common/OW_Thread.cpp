@@ -36,7 +36,7 @@
 #include <cstring>
 #include <cstdio>
 #include <cerrno>
-#include <iostream>
+#include <iostream> // for cerr
 #include <csignal>
 
 namespace OpenWBEM
@@ -167,13 +167,29 @@ Thread::threadRunner(void* paramPtr)
 		ThreadBarrier barrier = pParam->barrier;
 		pTheThread->m_isRunning = true;
 		barrier.wait();
+
 		try
 		{
 			rval = pTheThread->run();
 		}
+		// make sure we get all exceptions so the thread is cleaned up properly
 		catch (ThreadCancelledException&)
 		{
 		}
+		catch (Exception& ex)
+		{
+#ifdef OW_DEBUG		
+			std::cerr << "!!! Exception: " << ex.type() << " caught in Thread class\n";
+			std::cerr << ex << std::endl;
+#endif
+		}
+		catch (...)
+		{
+#ifdef OW_DEBUG		
+			std::cerr << "!!! Unknown Exception caught in Thread class" << std::endl;
+#endif
+		}
+
 		{
 			NonRecursiveMutexLock l(pTheThread->m_cancelLock);
 			pTheThread->m_isRunning = pTheThread->m_isStarting = false;
@@ -181,12 +197,7 @@ Thread::threadRunner(void* paramPtr)
 			pTheThread->m_cancelCond.notifyAll();
 		}
 		delete pParam;
-		// Note that this *has* to come after the 'delete pTheThread' statement.
-		// This is because during shutdown the notifyThreadDone will decrement
-		// the # of threads running, which will allow shutdown to proceed once
-		// the # == 0, and then subsequently the library that contains the 
-		// thread's code will be unloaded.  If the destructor of pTheThread 
-		// runs after the library is unloaded, then *boom*, segfault.
+		
 		if (cb)
 		{
 			cb->notifyThreadDone(pTheThread);

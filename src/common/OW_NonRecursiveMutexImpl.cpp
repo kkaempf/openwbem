@@ -93,12 +93,9 @@ destroyMutex(NonRecursiveMutex_t& handle)
 		case 0:
 			break;
 		case EBUSY:
-			//cerr << "NonRecursiveMutexImpl::destroyMutex - got EBUSY on destroy" << endl;
 			return -1;
 			break;
 		default:
-			//cerr << "NonRecursiveMutexImpl::destroyMutex - Error on destroy: "
-			//	<< cc << endl;
 			return -2;
 	}
 	return 0;

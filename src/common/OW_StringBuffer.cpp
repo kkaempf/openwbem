@@ -35,7 +35,12 @@
 #include "OW_CIMDateTime.hpp"
 #include <cstring>
 #include <cstdio>
+#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
+#include <istream>
+#include <ostream>
+#else
 #include <iostream>
+#endif
 #include <algorithm> // for std::swap
 
 namespace OpenWBEM

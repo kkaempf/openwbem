@@ -51,7 +51,6 @@ extern "C"
 #endif
 #include <pwd.h>
 }
-#include <iostream>
 #include <cstring>
 #include <cstdio>
 

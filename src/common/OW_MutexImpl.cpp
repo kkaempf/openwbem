@@ -111,12 +111,9 @@ destroyMutex(Mutex_t& handle)
 		case 0:
 			break;
 		case EBUSY:
-			//cerr << "MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
 			return -1;
 			break;
 		default:
-			//cerr << "MutexImpl::destroyMutex - Error on destroy: "
-			//	<< cc << endl;
 			return -2;
 	}
 	int res = 0;

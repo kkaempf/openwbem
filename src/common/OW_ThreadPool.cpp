@@ -35,8 +35,9 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include <deque>
+
 #ifdef OW_DEBUG		
-#include <iostream>
+#include <iostream> // for cerr
 #endif
 
 namespace OpenWBEM

@@ -35,12 +35,6 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Format.hpp"
 #include <cassert>
-#if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
-#include <istream>
-#include <ostream>
-#else
-#include <iostream>
-#endif
 #include <cstring>
 extern "C"
 {

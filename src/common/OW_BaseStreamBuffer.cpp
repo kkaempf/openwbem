@@ -104,7 +104,7 @@ BaseStreamBuffer::buffer_out()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Caught exception in BaseStreamBuffer::buffer_out(): " << e.what() << std::endl;
+		std::cerr << "Caught std::exception in BaseStreamBuffer::buffer_out(): " << e.what() << std::endl;
 		return EOF;
 	}
 	catch (...)
@@ -173,7 +173,7 @@ BaseStreamBuffer::underflow()
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Caught exception in BaseStreamBuffer::underflow(): " << e.what() << std::endl;
+		std::cerr << "Caught std::exception in BaseStreamBuffer::underflow(): " << e.what() << std::endl;
 		return EOF;
 	}
 	catch (...)

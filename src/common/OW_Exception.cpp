@@ -70,7 +70,7 @@ Exception::Exception()
 	, m_msg(0)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	StackTrace::getStackTrace();
+	StackTrace::printStackTrace();
 #endif
 	m_mutex->acquire();
 }
@@ -82,7 +82,7 @@ Exception::Exception(const char* file, int line, const char* msg)
 	, m_msg(0)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	StackTrace::getStackTrace();
+	StackTrace::printStackTrace();
 #endif
 	m_mutex->acquire();
 	m_file = dupString(file);
@@ -96,7 +96,7 @@ Exception::Exception(const char* msg)
 	, m_msg(0)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	StackTrace::getStackTrace();
+	StackTrace::printStackTrace();
 #endif
 	m_mutex->acquire();
 	m_msg = dupString(msg);

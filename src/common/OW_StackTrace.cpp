@@ -34,7 +34,7 @@
 #include "OW_Format.hpp"
 #include "OW_Array.hpp"
 #include <fstream>
-#include <iostream>
+#include <iostream>	// for cerr
 #if defined(OW_HAVE_BACKTRACE)
 #include <execinfo.h>
 #endif
@@ -57,9 +57,8 @@ using std::flush;
 #endif
 
 // static
-void StackTrace::getStackTrace()
+void StackTrace::printStackTrace()
 {
-	StackTrace* retval = 0;
 	if (getenv("STACKTRACE"))
 	{
 		// if we have the GNU backtrace functions we use them.  They don't give
@@ -84,7 +83,7 @@ void StackTrace::getStackTrace()
 		
 		free (strings);
 		
-		retval = new StackTrace(bt);
+		std::cerr << bt << std::endl;
 #elif defined(OW_WIN32)
 #else
 		ifstream file(OW_DEFAULT_GDB_PATH);
@@ -121,23 +120,10 @@ void StackTrace::getStackTrace()
 			outputFile.close();
 			unlink(outputName.c_str());
 			unlink(scriptName.c_str());
-			retval = new StackTrace(output);
+			std::cerr << output << std::endl;
 		}
 #endif
 	}
-	if (retval)
-	{
-		std::cerr << *retval << std::endl;
-	}
-}
-StackTrace::StackTrace(const String& trace)
-	: m_trace(trace)
-{
-}
-std::ostream& operator<<(std::ostream& ostr, const StackTrace& out)
-{
-	ostr << out.m_trace;
-	return ostr;
 }
 
 } // end namespace OpenWBEM

@@ -344,7 +344,7 @@ static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
 CMPIString* mbEncGetMessage(CMPIBroker *mb, char *msgId, char *defMsg,
             CMPIStatus* rc, unsigned int count, ...) {
    MessageLoaderParms parms(msgId,defMsg);
-   cerr<<"::: mbEncGetMessage() count: "<<count<<endl;
+   //cout<<"::: mbEncGetMessage() count: "<<count<<endl;
    if (count>0) {
       va_list argptr;
       va_start(argptr,count);

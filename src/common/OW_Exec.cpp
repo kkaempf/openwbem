@@ -50,7 +50,7 @@ extern "C"
 #include <pth.h>
 #endif
 }
-#include <iostream>
+#include <iostream>	// for cerr
 
 namespace OpenWBEM
 {
