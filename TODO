@@ -57,6 +57,10 @@ New features:
     - Make the OW_*Repository classes into a shared library, and have a config
       item so people can use a custom repository.
     - Write an SQL repository.
+    - Make event system more scalable.
+      - Only parse queries once when they're created.
+      - Implement authorizeFilter, activateFilter, deactivateFilter on providers
+
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
