@@ -14,6 +14,8 @@ Testing:
     - Test storing 1 million instances.
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
     - Capture XML and run it through xmllint with the dtd.
+    - Create a test that does a createInstance with a class that has an 
+      infinite number of properties (to try and simulate a DNS attack)
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
@@ -22,9 +24,7 @@ Fix problems:
     - To avoid permanent deadlocks, change most locks to use a timeout.
       - If a timeout happens, certain places can retry the operation.
     - use DIST_SUBDIRS
-    - Write a cooperative thread cancellation mechanism. Send signals to cancelled thread to break it out of blocking system calls.
-      - Use TLS to store pointer to cancellation bool
-	  - on cancellation throw an exception that's not derived from anything.  Verify that all catch(...) are appropriate.
+    - Add an option to run as a different user and drop privelidges on startup.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
