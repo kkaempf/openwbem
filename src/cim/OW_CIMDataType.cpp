@@ -325,43 +325,46 @@ CIMDataType::toMOF() const
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 CIMDataType::Type
-CIMDataType::strToSimpleType(const String& strType)
+CIMDataType::strToSimpleType(const String& strType_)
 {
-	if(strType.empty())
+	if(strType_.empty())
 	{
 		return INVALID;
 	}
-	if(strType.equalsIgnoreCase("uint8"))
+	OW_String strType(strType_);
+	strType.toLowerCase();
+	// TODO: This function is heavily used.  See if creating a sorted array w/binary search would be faster.
+	if(strType == "uint8")
 		return UINT8;
-	else if(strType.equalsIgnoreCase("sint8"))
+	else if(strType == "sint8")
 		return SINT8;
-	else if(strType.equalsIgnoreCase("uint16"))
+	else if(strType == "uint16")
 		return UINT16;
-	else if(strType.equalsIgnoreCase("sint16"))
+	else if(strType == "sint16")
 		return SINT16;
-	else if(strType.equalsIgnoreCase("uint32"))
+	else if(strType == "uint32")
 		return UINT32;
-	else if(strType.equalsIgnoreCase("sint32"))
+	else if(strType == "sint32")
 		return SINT32;
-	else if(strType.equalsIgnoreCase("uint64"))
+	else if(strType == "uint64")
 		return UINT64;
-	else if(strType.equalsIgnoreCase("sint64"))
+	else if(strType == "sint64")
 		return SINT64;
-	else if(strType.equalsIgnoreCase("real64"))
+	else if(strType == "real64")
 		return REAL64;
-	else if(strType.equalsIgnoreCase("real32"))
+	else if(strType == "real32")
 		return REAL32;
-	else if(strType.equalsIgnoreCase("char16"))
+	else if(strType == "char16")
 		return CHAR16;
-	else if(strType.equalsIgnoreCase("string"))
+	else if(strType == "string")
 		return STRING;
-	else if(strType.equalsIgnoreCase("boolean"))
+	else if(strType == "boolean")
 		return BOOLEAN;
-	else if(strType.equalsIgnoreCase("datetime"))
+	else if(strType == "datetime")
 		return DATETIME;
-	else if(strType.equalsIgnoreCase("REF"))
+	else if(strType == "ref")
 		return REFERENCE;
-	else if(strType.equalsIgnoreCase("reference"))
+	else if(strType == "reference")
 		return REFERENCE;
 	return INVALID;
 }
