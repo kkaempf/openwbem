@@ -110,20 +110,22 @@ private:
 };
 
 /**
- * Throw a CIMException with error code errval
+ * Throw a CIMException with error code errval.
+ * Consider providing a message and using OW_THROWCIMMSG instead of this macro.
  * @param errval One of the CIMException::ErrNoType enumerated values
  */
 #define OW_THROWCIM(errval) \
 	throw CIMException(__FILE__, __LINE__, (errval))
 	
 /**
- * Throw a CIMException with error code errval, and a subexception
+ * Throw a CIMException with error code errval, and a subexception.
+ * subex.getMessage() will be used as the message for this exception
  * @param errval One of the CIMException::ErrNoType enumerated values
  * @param subex A sub-exception. A pointer to it will be passed to the
  *   exception constructor, which should clone() it.
  */
 #define OW_THROWCIM_SUBEX(errval, subex) \
-	throw CIMException(__FILE__, __LINE__, (errval), "", (subex))
+	throw CIMException(__FILE__, __LINE__, (errval), (subex).getMessage(), &(subex))
 	
 /**
  * Throw a CIMException with error code errval and a message
@@ -141,7 +143,7 @@ private:
  *   exception constructor, which should clone() it.
  */
 #define OW_THROWCIMMSG_SUBEX(errval, msg, subex) \
-	throw CIMException(__FILE__, __LINE__, (errval), (msg), (subex))
+	throw CIMException(__FILE__, __LINE__, (errval), (msg), &(subex))
 	
 } // end namespace OpenWBEM
 
