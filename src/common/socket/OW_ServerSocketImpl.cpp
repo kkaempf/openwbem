@@ -117,16 +117,6 @@ ServerSocketImpl::~ServerSocketImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-#ifdef OW_WIN32
-void
-ServerSocketImpl::shutDown()
-{
-	m_shuttingDown = true;
-	::SetEvent(m_event);
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////////
 Select_t
 ServerSocketImpl::getSelectObj() const
 {

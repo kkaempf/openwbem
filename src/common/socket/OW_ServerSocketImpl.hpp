@@ -75,12 +75,10 @@ public:
 		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
 		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
 
-#if !defined(OW_WIN32)
+#ifndef OW_WIN32
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr = true);
 	bool waitForIO(int fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput) OW_DEPRECATED; // in 3.1.0
-#else
-	void shutDown();
 #endif
 
 	Select_t getSelectObj() const;

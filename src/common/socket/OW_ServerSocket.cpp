@@ -84,13 +84,6 @@ ServerSocket::doListen(const String& filename, int queueSize, bool reuseAddr)
 {
 	m_impl->doListen(filename, queueSize, reuseAddr);
 }
-#else
-//////////////////////////////////////////////////////////////////////////////
-void 
-ServerSocket::shutDown()
-{
-	m_impl->shutDown();
-}
 #endif
 //////////////////////////////////////////////////////////////////////////////
 void 
