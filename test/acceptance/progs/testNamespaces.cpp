@@ -37,7 +37,6 @@
 
 #include <iostream>
 #include <algorithm> // for std::find
-#include <iterator>
 
 using std::cerr;
 using std::cin;
@@ -147,7 +146,6 @@ main(int argc, char* argv[])
 
 		OW_CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace");
 		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		std::copy(namespaces.begin(), namespaces.end(), std::ostream_iterator<OW_String>(std::cout, ", "));
 		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) != namespaces.end());
 		
 		OW_CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace/deep");
