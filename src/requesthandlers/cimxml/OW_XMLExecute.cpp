@@ -1575,7 +1575,9 @@ XMLExecute::shutdown()
 {
 	// clean up the instances we created in init()
 	ServiceEnvironmentIFCRef env(getEnvironment());
+	OW_ASSERT(env);
 	LoggerRef logger(env->getLogger(COMPONENT_NAME));
+	OW_ASSERT(logger);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	if (m_commMechPath)
