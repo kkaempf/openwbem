@@ -49,7 +49,7 @@
 #include "OW_Reference.hpp"
 
 #include <iostream>
-#ifdef OW_HAVE_GETOPT_H
+#if defined(OW_HAVE_GETOPT_H) && !defined(OW_GETOPT_AND_UNISTD_CONFLICT)
 #include <getopt.h>
 #else
 #include <stdlib.h> // for getopt on Solaris
