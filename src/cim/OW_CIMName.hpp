@@ -79,12 +79,14 @@ public:
 	
 	/**
 	 * Read the object from an input stream.
+	 * This function is equivalent to String::readObject()
 	 * @param istrm The input stream to read from.
 	 */
 	virtual void readObject(std::istream &istrm);
 	
 	/**
 	 * Write the object to an output stream
+	 * This function is equivalent to String::writeObject()
 	 * @param ostrm The output stream to write to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
