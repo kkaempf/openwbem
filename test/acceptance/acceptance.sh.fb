@@ -452,8 +452,7 @@ TestInstalledHeaders()
 #include <iostream>
 int main()
 {
-	OpenWBEM::String toPrint = "Executing Installed Headers Test main()";
-	std::cout << toPrint << std::endl;
+	std::cout << "Executing Installed Headers Test main()" << std::endl;
 	return 0;
 }
 EOS
