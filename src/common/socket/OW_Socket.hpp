@@ -63,29 +63,37 @@ OW_DECLARE_APIEXCEPTION(SocketTimeout, OW_COMMON_API)
 class OW_COMMON_API Socket : public SelectableIFC, public IOIFC
 {
 public:
-	/** Allocate a new  Socket
-	 * @param isSSL is it an ssl socket?
+	/** 
+	 * Construct a non-SSL Socket
+	 */
+	Socket(); 
+	/** 
+	 * Construct a Socket
+	 * @param sslCtx The SSL client context. If null, the socket will not use SSL.
 	 */
 	Socket(SSLClientCtxRef sslCtx); 
-	/** Allocate a new  Socket
+	/** 
+	 * Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	Socket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL) OW_DEPRECATED ;
+	Socket(SocketFlags::ESSLFlag isSSL) OW_DEPRECATED;
 	/**
+	 * TODO: Make a replacement for this function so it can be deprecated.
 	 * Allocate a new  Socket based on an existing handle.
 	 * This is used by ServerSocket::accept()
 	 * @param fd a handle to the existing socket
 	 * @param isSSL is it an SSL socket?
 	 */
 	Socket(SocketHandle_t fd, SocketAddress::AddressType addrType,
-		SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL); // OW_DEPRECATED;
+		SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL);
 	/**
+	 * TODO: Make a replacement for this function so it can be deprecated.
 	 * Allocate a new Socket and connect it to a peer machine
 	 * @param addr the address of the peer machine
 	 * @isSSL is it an SSL socket?
 	 * @exception SocketException
 	 */
-	Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL) OW_DEPRECATED;
+	Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL);
 	/**
 	 * Connect to a peer node
 	 * @param addr The address of the machine to connect to.

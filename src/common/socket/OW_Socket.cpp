@@ -55,6 +55,11 @@ OW_DEFINE_EXCEPTION_WITH_ID(SocketTimeout);
 Socket::ShutDownMechanism_t Socket::s_shutDownMechanism = 0;
 
 //////////////////////////////////////////////////////////////////////////////
+Socket::Socket()
+	: m_impl(new SocketImpl)
+{
+}
+//////////////////////////////////////////////////////////////////////////////
 Socket::Socket(SSLClientCtxRef sslCtx)
 {
 	if (sslCtx)
