@@ -97,12 +97,15 @@ BaseStreamBuffer::buffer_out()
 {
 	// NOTE: If an exception escapes this function, __terminate will be called
 	// for gcc 2.95.2
+#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 	try
 	{
+#endif
 		int cnt = pptr() - pbase();
 		int retval = buffer_to_device(m_outputBuffer, cnt);
 		pbump(-cnt);
 		return retval;
+#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 	}
 	catch (const Exception& e)
 	{
@@ -119,6 +122,7 @@ BaseStreamBuffer::buffer_out()
 		std::cerr << "Caught unknown exception in BaseStreamBuffer::buffer_out()" << std::endl;
 		return EOF;
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -168,8 +172,10 @@ BaseStreamBuffer::underflow()
 {
 	// NOTE: If an exception escapes this function, __terminate will be called
 	// for gcc 2.95.2
+#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 	try
 	{
+#endif
 		if (gptr() < egptr())
 		{
 			return static_cast<unsigned char>(*gptr());
@@ -182,6 +188,7 @@ BaseStreamBuffer::underflow()
 		{
 			return static_cast<unsigned char>(*gptr());
 		}
+#if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 	}
 	catch (const Exception& e)
 	{
@@ -198,6 +205,7 @@ BaseStreamBuffer::underflow()
 		std::cerr << "Caught unknown exception in BaseStreamBuffer::underflow()" << std::endl;
 		return EOF;
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
