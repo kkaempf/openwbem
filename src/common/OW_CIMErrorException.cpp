@@ -38,6 +38,22 @@
 namespace OpenWBEM
 {
 
+CIMErrorException::CIMErrorException(const char* file, int line, const char* msg)
+	: Exception(ExceptionIds::CIMErrorExceptionId, file, line, msg, Exception::UNKNOWN_ERROR_CODE) 
+{
+}
+
+CIMErrorException::~CIMErrorException()	throw()
+{
+}
+
+const char* 
+CIMErrorException::type() const 
+{ 
+	return "CIMErrorException";
+}
+
+
 const char* const CIMErrorException::unsupported_protocol_version = 
 	"unsupported-protocol-version";
 const char* const CIMErrorException::multiple_requests_unsupported = 

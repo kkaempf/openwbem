@@ -104,5 +104,23 @@ namespace OpenWBEM
         enumInstanceNames(env,ns ,className , rh,cimClass); 
     }
 
+///////////////////////////////////////////////////////////////////////////////
+	void 
+	CppInstanceProviderIFC::getInstanceProviderInfo(InstanceProviderInfo& info)
+	{
+	}
+
+///////////////////////////////////////////////////////////////////////////////
+	CppInstanceProviderIFC* 
+	CppInstanceProviderIFC::getInstanceProvider() 
+	{ 
+		return this; 
+	}
+
+///////////////////////////////////////////////////////////////////////////////
+	CppInstanceProviderIFC::~CppInstanceProviderIFC() 
+	{
+	}
+
 } // end namespace OpenWBEM
 

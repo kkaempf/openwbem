@@ -90,7 +90,7 @@ operator<< (std::ostream& ostrm, const Char16& arg)
 	UInt16 val = arg.getValue();
 	if (val > 0 && val <= 127)
 	{
-		ostrm << char(val);
+		ostrm << static_cast<char>(val);
 	}
 	else
 	{

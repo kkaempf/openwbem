@@ -55,10 +55,7 @@ public:
 	 */
 	XMLListener(CIMListenerCallback* callback);
 	virtual ~XMLListener();
-	virtual RequestHandlerIFC* clone() const
-	{
-		return new XMLListener(*this);
-	}
+	virtual RequestHandlerIFC* clone() const;
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;
 protected:

@@ -147,7 +147,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	{
 		if (FD_ISSET(selarray[i], &rfds))
 		{
-			return int(i);
+			return static_cast<int>(i);
 		}
 	}
 	OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");

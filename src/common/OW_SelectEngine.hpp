@@ -64,15 +64,9 @@ private:
 class SelectEngineStopper : public SelectableCallbackIFC
 {
 public:
-	SelectEngineStopper(SelectEngine& engine)
-		: SelectableCallbackIFC()
-		, m_engine(engine)
-	{}
+	SelectEngineStopper(SelectEngine& engine);
 protected:
-	virtual void doSelected(SelectableIFCRef& selectedObject)
-	{
-		m_engine.stop();
-	}
+	virtual void doSelected(SelectableIFCRef& selectedObject);
 private:
 	SelectEngine& m_engine;
 };

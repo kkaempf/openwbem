@@ -52,9 +52,7 @@ class RequestHandlerIFCXML : public RequestHandlerIFC
 {
 public:
 	RequestHandlerIFCXML(): m_path() {}
-	virtual ~RequestHandlerIFCXML()
-	{
-	}
+	virtual ~RequestHandlerIFCXML();
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;
 protected:

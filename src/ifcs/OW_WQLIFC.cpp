@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -29,37 +29,19 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
  * @author Dan Nuffer
  */
 
-#ifndef OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
-#define OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_HTTPStatusCodes.hpp"
-#include "OW_Exception.hpp"
-#include "OW_ExceptionIds.hpp"
+#include "OW_WQLIFC.hpp"
 
 namespace OpenWBEM
 {
 
-class HTTPException : public Exception
+WQLIFC::~WQLIFC()
 {
-public:
-	HTTPException(const char* file, int line, const char* msg);
-	HTTPException(const char* file, int line, const char* msg, int response);
-	virtual ~HTTPException() throw();
-	const char* getId();
-	int getErrorCode();
-	virtual const char* type() const;
-	virtual HTTPException* clone() const throw();
-private:
-	int m_response;
-};
+}
+
 } // end namespace OpenWBEM
 
-#define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 
-typedef OpenWBEM::HTTPException OW_HTTPException OW_DEPRECATED; // in 3.0.0
-
-#endif

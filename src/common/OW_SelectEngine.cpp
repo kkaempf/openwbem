@@ -85,5 +85,19 @@ SelectEngine::stop()
 	m_stopFlag = true;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+SelectEngineStopper::SelectEngineStopper(SelectEngine& engine)
+	: SelectableCallbackIFC()
+	, m_engine(engine)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+SelectEngineStopper::doSelected(SelectableIFCRef& selectedObject)
+{
+	m_engine.stop();
+}
+
 } // end namespace OpenWBEM
 

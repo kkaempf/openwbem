@@ -908,7 +908,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	}
 	WQLSelectStatement selectStmt(m_wqlRef->createSelectStatement(filterQuery));
 	WQLCompile compiledStmt(selectStmt);
-	WQLCompile::Tableau& tableau(compiledStmt.getTableau());
+	const WQLCompile::Tableau& tableau(compiledStmt.getTableau());
 	String indicationClassName = selectStmt.getClassName();
 	log->logDebug(Format("query is for indication class: %1", indicationClassName));
 	// collect up all the class names
@@ -919,8 +919,8 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		{
 			if (tableau[i][j].op == WQL_ISA)
 			{
-				WQLOperand& opn1(tableau[i][j].opn1);
-				WQLOperand& opn2(tableau[i][j].opn2);
+				const WQLOperand& opn1(tableau[i][j].opn1);
+				const WQLOperand& opn2(tableau[i][j].opn2);
 				if (opn1.getType() == WQLOperand::PROPERTY_NAME && opn1.getPropertyName().equalsIgnoreCase("SourceInstance"))
 				{
 					if (opn2.getType() == WQLOperand::PROPERTY_NAME)

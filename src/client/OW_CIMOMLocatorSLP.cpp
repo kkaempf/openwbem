@@ -58,14 +58,14 @@ SLPBoolean MySLPSrvURLCallback( SLPHandle /*hslp*/,
 	switch (errcode)
 	{
 		case SLP_OK:
-			((CBData*)cookie)->urls.push_back(srvurl);
-			((CBData*)cookie)->lifetimes.push_back(lifetime);
+			(static_cast<CBData*>(cookie))->urls.push_back(srvurl);
+			(static_cast<CBData*>(cookie))->lifetimes.push_back(lifetime);
 			break;
 		case SLP_LAST_CALL:
-			((CBData*)cookie)->errcode = SLP_OK; 
+			(static_cast<CBData*>(cookie))->errcode = SLP_OK; 
 			break;
 		default:
-			((CBData*)cookie)->errcode = errcode;
+			(static_cast<CBData*>(cookie))->errcode = errcode;
 			break;
 	}
 	/* return SLP_TRUE because we want to be called again */ 
@@ -80,7 +80,7 @@ SLPBoolean MySLPAttrCallback(SLPHandle /*hslp*/,
 { 
 	if (errcode == SLP_OK) 
 	{ 
-		(*(String*)cookie) = attrlist;
+		(*static_cast<String*>(cookie)) = attrlist;
 	} 
 	
 	return SLP_FALSE; 

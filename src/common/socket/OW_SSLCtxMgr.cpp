@@ -76,7 +76,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
 }
 static unsigned long id_function()
 {
-	return (unsigned long)OpenWBEM::ThreadImpl::currentThread();
+	return static_cast<unsigned long>(OpenWBEM::ThreadImpl::currentThread());
 }
 static void locking_function(int mode, int n, const char*, int)
 {

@@ -83,6 +83,7 @@ OW_SelectEngine.cpp \
 OW_SessionLanguage.cpp \
 OW_SharedLibrary.cpp \
 OW_SharedLibraryException.cpp \
+OW_SharedLibraryLoader.cpp \
 OW_shlSharedLibrary.cpp \
 OW_shlSharedLibraryLoader.cpp \
 OW_StackTrace.cpp \

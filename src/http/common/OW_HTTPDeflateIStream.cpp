@@ -124,13 +124,25 @@ HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 	*/
 }
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 HTTPDeflateIStream::HTTPDeflateIStream(
 			const CIMProtocolIStreamIFCRef& istr)
 	: HTTPDeflateIStreamBase(*istr)
 	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void HTTPDeflateIStream::checkForError() const 
+{ 
+	m_istr->checkForError(); 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMProtocolIStreamIFCRef
+HTTPDeflateIStream::getInputStreamOrig()
+{ 
+	return m_istr; 
 }
 
 } // end namespace OpenWBEM

@@ -86,8 +86,8 @@ public:
 	 * Get the original istream
 	 * @return the original istream.
 	 */
-	CIMProtocolIStreamIFCRef getInputStreamOrig() { return m_istr; };
-	virtual void checkForError() const { m_istr->checkForError(); }
+	CIMProtocolIStreamIFCRef getInputStreamOrig();
+	virtual void checkForError() const;
 private:
 	CIMProtocolIStreamIFCRef m_istr;
 	// don't allow copying and assigning

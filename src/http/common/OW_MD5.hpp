@@ -85,7 +85,7 @@ public:
 	MD5StreamBuffer(MD5* md5);
 protected:
 	MD5* _md5;
-	virtual int overflow(int c = EOF);
+	virtual int overflow(int c);
 	virtual std::streamsize xsputn(const char* s, std::streamsize num);
 };
 //////////////////////////////////////////////////////////////////////////////

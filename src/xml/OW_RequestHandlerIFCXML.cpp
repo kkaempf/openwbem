@@ -57,6 +57,10 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
+RequestHandlerIFCXML::~RequestHandlerIFCXML()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 	ostream* ostrError, OperationContext& context)

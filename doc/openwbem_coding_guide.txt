@@ -441,11 +441,12 @@ No:
 Always use the virtual keyword for virtual functions in derived classes to 
 document the fact that they are virtual.
 
-Don't make inline virtual functions, since the compiler can't inline them,
-but must instantiate them any *every* translation unit which #include's the
-header it causes code bloat.
+Don't write inline virtual functions in a header, since the compiler can't 
+inline them, and it must instantiate them any *every* translation unit which 
+#include's the header--it causes code bloat.
 
 No:
+	// header A.hpp
 	class A
 	{
 		virtual doSomething()

@@ -62,7 +62,7 @@ Bool::readObject(istream& istrm)
 {
 	UInt8 v;
 	BinarySerialization::read(istrm, v);
-	m_val = bool(v);
+	m_val = static_cast<bool>(v);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

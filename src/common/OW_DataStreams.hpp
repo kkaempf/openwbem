@@ -93,7 +93,7 @@ public:
 	int length() const { return m_bfr.size(); }
 	void clear() { m_bfr.clear(); }
 protected:
-	virtual int overflow(int c=EOF);
+	virtual int overflow(int c);
 	virtual std::streamsize xsputn(const char* s, std::streamsize n);
 private:
 	std::vector<unsigned char> m_bfr;

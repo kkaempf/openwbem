@@ -301,7 +301,7 @@ LanguageTag::setWeight(const char* arg)
 	else
 	{
 		fv *= 100.0;
-		m_weight = (Int32)fv;
+		m_weight = static_cast<Int32>(fv);
 	}
 	m_explicitQualityValue = true;
 	return arg;

@@ -94,6 +94,12 @@ CppSecondaryInstanceProviderIFC::deleteInstance(
 
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
+///////////////////////////////////////////////////////////////////////////////
+CppSecondaryInstanceProviderIFC* 
+CppSecondaryInstanceProviderIFC::getSecondaryInstanceProvider() 
+{ 
+	return this; 
+}
 
 } // end namespace OpenWBEM
 

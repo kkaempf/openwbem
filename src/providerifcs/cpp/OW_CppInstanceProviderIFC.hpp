@@ -64,9 +64,8 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
-	{
-	}
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info);
+
 	/**
 	 * This method enumerates all names of instances of the class which is
 	 * specified in cop.
@@ -194,7 +193,7 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual CppInstanceProviderIFC* getInstanceProvider() { return this; }
+	virtual CppInstanceProviderIFC* getInstanceProvider();
 };
 typedef SharedLibraryReference< IntrusiveReference<CppInstanceProviderIFC> > CppInstanceProviderIFCRef;
 

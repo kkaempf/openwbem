@@ -29,37 +29,22 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
+ * @author Jon Carey
  * @author Dan Nuffer
  */
 
-#ifndef OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
-#define OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_HTTPStatusCodes.hpp"
-#include "OW_Exception.hpp"
-#include "OW_ExceptionIds.hpp"
+#include "OW_CppAssociatorProviderIFC.hpp"
 
 namespace OpenWBEM
 {
 
-class HTTPException : public Exception
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+CppAssociatorProviderIFC::~CppAssociatorProviderIFC()
 {
-public:
-	HTTPException(const char* file, int line, const char* msg);
-	HTTPException(const char* file, int line, const char* msg, int response);
-	virtual ~HTTPException() throw();
-	const char* getId();
-	int getErrorCode();
-	virtual const char* type() const;
-	virtual HTTPException* clone() const throw();
-private:
-	int m_response;
-};
+}
+#endif
+
 } // end namespace OpenWBEM
 
-#define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 
-typedef OpenWBEM::HTTPException OW_HTTPException OW_DEPRECATED; // in 3.0.0
-
-#endif

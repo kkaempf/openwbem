@@ -18,9 +18,11 @@ owstatlibdir = $(thelibdir)
 libowhttpcommon_a_SOURCES =	\
 OW_HTTPChunkedIStream.cpp \
 OW_HTTPChunkedOStream.cpp \
+OW_HTTPChunkException.cpp \
 OW_HTTPCounter.cpp \
 OW_HTTPDeflateIStream.cpp \
 OW_HTTPDeflateOStream.cpp \
+OW_HTTPException.cpp \
 OW_HTTPLenLimitIStream.cpp \
 OW_HTTPUtils.cpp \
 OW_MD5.cpp

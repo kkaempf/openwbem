@@ -148,7 +148,7 @@ public:
 			const String& ns,
 			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider() { return this; }
+	virtual CppSecondaryInstanceProviderIFC* getSecondaryInstanceProvider();
 
 };
 

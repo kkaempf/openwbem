@@ -676,13 +676,6 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	}
 }
 // TODO: Move these into their own files.
-CppProviderBaseIFC::~CppProviderBaseIFC() {}
-void CppProviderBaseIFC::updateAccessTime() { m_dt.setToCurrent(); }
-CppInstanceProviderIFC::~CppInstanceProviderIFC() {}
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-CppAssociatorProviderIFC::~CppAssociatorProviderIFC(){}
-#endif
-CppIndicationExportProviderIFC::~CppIndicationExportProviderIFC(){}
 CppMethodProviderIFC::~CppMethodProviderIFC() {}
 CppPolledProviderIFC::~CppPolledProviderIFC() {}
 //OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)

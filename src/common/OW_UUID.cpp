@@ -103,9 +103,9 @@ void getSystemTime(uuid_time_t *uuid_time)
 	// UUID UTC base time is October 15, 1582.
 	// Unix base time is January 1, 1970.
 	*uuid_time = 
-		((unsigned long long)tp.tv_sec * 10000000) + 
+		(static_cast<unsigned long long>(tp.tv_sec) * 10000000) + 
 		(tp.tv_usec * 10) +
-		(((unsigned long long) 0x01B21DD2) << 32) + 
+		((static_cast<unsigned long long>(0x01B21DD2)) << 32) + 
 		0x13814000;
 }
 /////////////////////////////////////////////////////////////////////////////

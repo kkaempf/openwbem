@@ -53,9 +53,7 @@ typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
 class SharedLibraryLoader : public IntrusiveCountableBase
 {
 public:
-	virtual ~SharedLibraryLoader()
-	{
-	}
+	virtual ~SharedLibraryLoader();
 	/**
 	 * Load a shared library specified by filename.  If the operation fails,
 	 * the return value will be null ref counted pointer, and 

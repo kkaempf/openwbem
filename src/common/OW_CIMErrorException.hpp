@@ -45,9 +45,10 @@ namespace OpenWBEM
 class CIMErrorException: public Exception
 {
 public:
-	CIMErrorException(const char* file, int line, const char* msg)
-		: Exception(ExceptionIds::CIMErrorExceptionId, file, line, msg, Exception::UNKNOWN_ERROR_CODE) {}
-	virtual const char* type() const { return "CIMErrorException"; }
+	CIMErrorException(const char* file, int line, const char* msg);
+	virtual ~CIMErrorException() throw();
+	virtual const char* type() const;
+
 	static const char* const unsupported_protocol_version; 
 	static const char* const multiple_requests_unsupported; 
 	static const char* const unsupported_cim_version; 

@@ -58,7 +58,7 @@ public:
 	int search(const T& x) const
 	{
 		int i = find(x);
-		return (i >= 0) ? int(size()) - i : -1;
+		return (i >= 0) ? static_cast<int>(size()) - i : -1;
 	}
 	size_type size() const
 	{

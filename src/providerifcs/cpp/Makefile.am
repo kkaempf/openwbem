@@ -19,15 +19,18 @@ if DISABLE_ASSOCIATION_TRAVERSAL
 ASSOCIATION_S=
 else
 ASSOCIATION_S=\
-OW_CppSimpleAssociatorProviderIFC.cpp
+OW_CppSimpleAssociatorProviderIFC.cpp \
+OW_CppAssociatorProviderIFC.cpp
 endif
 
 libowcppprovifc_a_SOURCES = \
 $(ASSOCIATION_S) \
+OW_CppProviderBaseIFC.cpp \
 OW_CppProviderIFC.cpp \
 OW_CppProxyProvider.cpp \
 OW_CppProxyProvider.hpp \
 OW_CppProviderIFC.hpp \
+OW_CppIndicationExportProviderIFC.cpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
 OW_CppInstanceProviderIFC.cpp \

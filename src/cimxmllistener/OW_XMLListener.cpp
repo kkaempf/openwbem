@@ -61,6 +61,12 @@ XMLListener::~XMLListener()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
+RequestHandlerIFC* 
+XMLListener::clone() const
+{
+	return new XMLListener(*this);
+}
+//////////////////////////////////////////////////////////////////////////////
 int
 XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, OperationContext& context)

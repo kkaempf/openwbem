@@ -149,7 +149,7 @@ threadStarter(void* arg)
 	// killed if need be.
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-	LocalThreadParm* parg = (LocalThreadParm*)arg;
+	LocalThreadParm* parg = static_cast<LocalThreadParm*>(arg);
 	ThreadFunction func = parg->m_func;
 	void* funcParm = parg->m_funcParm;
 	delete parg;

@@ -124,7 +124,7 @@ public:
 	WQLCompile(const WQLSelectStatement& wqs);
 	~WQLCompile();
 	void compile (const WQLSelectStatement * wqs);
-	Tableau& getTableau() {return _tableau;}
+	const Tableau& getTableau() const {return _tableau;}
 	/** Evalautes the where clause using the symbol table to resolve symbols.
 	 * @return true or false if the source passes the query
 	 * @throws NoSuchPropertyException if the where clause references a 
@@ -136,7 +136,7 @@ public:
 	bool evaluate(const WQLPropertySource& source) const;
 	void print(std::ostream& ostr);
 	void printTableau(std::ostream& ostr);
-protected:
+private:
 	void _buildEvalHeap(const WQLSelectStatement * wqs);
 	void _pushNOTDown();
 	void _factoring();
