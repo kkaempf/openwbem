@@ -7,7 +7,7 @@
 %define owversion 3.1.0
 
 Name        	: openwbem
-Version     	: %{owversion}.pre3
+Version     	: %{owversion}
 Release     	: 1
 Group       	: Administration/System
 
