@@ -22,9 +22,10 @@ run make distcheck.
 		make dist.
 		update version to odd
 		commit
-		build RPMS with docs on OL
-		make a doc tarball called openwbem-doc-<version>.tar.gz
-		build RH RPMS.
+		if necessary, make a doc tarball called openwbem-doc-<version>.tar.gz
+		build RPMS. (cvs up -r RELEASE_x_x_x; ./cvsbootstrap; ./configure; make rpm)
+		sign RPMS. (rpm --addsign --define="_signature gpg" --define="_gpg_name dnuffer@vintela.com" <rpm>)
+		create a signature: gpg --detach-sign -a <tarball>
 		release on sourceforge. ftp://upload.sf.net:/incoming
 		update front page (& docs if need be) on openwbem website
 		release on freshmeat.
