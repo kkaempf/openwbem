@@ -32,10 +32,12 @@ OW_ProviderAgentEnvironment.hpp \
 OW_ProviderAgentEnvironment.cpp \
 OW_ProviderAgentProviderEnvironment.hpp \
 OW_ProviderAgentProviderEnvironment.cpp \
-OW_ProviderAgent.cpp
+OW_ProviderAgent.cpp \
+OW_ProviderAgentLockerIFC.cpp
 
 pkginclude_HEADERS = \
-OW_ProviderAgent.hpp
+OW_ProviderAgent.hpp \
+OW_ProviderAgentLockerIFC.hpp
 
 
 INCLUDES = \

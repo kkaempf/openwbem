@@ -44,6 +44,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_Map.hpp"
+#include "OW_ProviderAgentLockerIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -688,15 +689,15 @@ public:
 						   const String &query, const String &queryLanguage); 
 
 private: 
-	class PALocker : public IntrusiveCountableBase
+	class PALocker : public ProviderAgentLockerIFC
 	{
 	public: 
 		PALocker(ProviderAgentEnvironment::LockingType lt, UInt32 timeout); 
 		~PALocker(); 
-		void getReadLock(); 
-		void getWriteLock(); 
-		void releaseReadLock();
-		void releaseWriteLock();
+		virtual void doGetReadLock(); 
+		virtual void doGetWriteLock(); 
+		virtual void doReleaseReadLock();
+		virtual void doReleaseWriteLock();
 	private: 
 		//non-copyable
 		PALocker(const PALocker&);
@@ -708,23 +709,21 @@ private:
 		UInt32 m_timeout; 
 	}; 
 
-	typedef IntrusiveReference<PALocker> PALockerRef; 
-
 	class PAReadLock
 	{
 	public: 
-		PAReadLock(const PALockerRef& pl); 
+		PAReadLock(const ProviderAgentLockerIFCRef& pl); 
 		~PAReadLock(); 
 	private: 
-		PALockerRef m_locker; 
+		ProviderAgentLockerIFCRef m_locker; 
 	}; 
 	class PAWriteLock
 	{
 	public: 
-		PAWriteLock(const PALockerRef& pl); 
+		PAWriteLock(const ProviderAgentLockerIFCRef& pl); 
 		~PAWriteLock(); 
 	private: 
-		PALockerRef m_locker; 
+		ProviderAgentLockerIFCRef m_locker; 
 	}; 
 	Map<String, CppProviderBaseIFCRef> m_assocProvs; 
 	Map<String, CppProviderBaseIFCRef> m_instProvs; 
@@ -732,7 +731,7 @@ private:
 	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
 	Cache<CIMClass>& m_cimClasses; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
-	PALockerRef m_locker; 
+	ProviderAgentLockerIFCRef m_locker; 
 	ProviderAgentEnvironment::ClassRetrievalFlag m_classRetrieval; 
 
 	CppInstanceProviderIFC* getInstanceProvider(const String& ns, 

@@ -524,9 +524,6 @@ ProviderAgentCIMOMHandle::execQuery(const String &ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
 ProviderAgentCIMOMHandle::PALocker::PALocker(ProviderAgentEnvironment::LockingType lt, 
 											 UInt32 timeout)
 	: m_lt(lt)
@@ -562,7 +559,7 @@ ProviderAgentCIMOMHandle::PALocker::~PALocker()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(const PALockerRef& locker)
+ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(const ProviderAgentLockerIFCRef& locker)
 	: m_locker(locker)
 {
 	m_locker->getReadLock(); 
@@ -574,7 +571,7 @@ ProviderAgentCIMOMHandle::PAReadLock::~PAReadLock()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-ProviderAgentCIMOMHandle::PALocker::releaseReadLock()
+ProviderAgentCIMOMHandle::PALocker::doReleaseReadLock()
 {
 	switch (m_lt)
 	{
@@ -592,7 +589,7 @@ ProviderAgentCIMOMHandle::PALocker::releaseReadLock()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-ProviderAgentCIMOMHandle::PALocker::getReadLock()
+ProviderAgentCIMOMHandle::PALocker::doGetReadLock()
 {
 	switch (m_lt)
 	{
@@ -610,7 +607,7 @@ ProviderAgentCIMOMHandle::PALocker::getReadLock()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-ProviderAgentCIMOMHandle::PALocker::releaseWriteLock()
+ProviderAgentCIMOMHandle::PALocker::doReleaseWriteLock()
 {
 	switch (m_lt)
 	{
@@ -628,7 +625,7 @@ ProviderAgentCIMOMHandle::PALocker::releaseWriteLock()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-ProviderAgentCIMOMHandle::PALocker::getWriteLock()
+ProviderAgentCIMOMHandle::PALocker::doGetWriteLock()
 {
 	switch (m_lt)
 	{
@@ -645,7 +642,7 @@ ProviderAgentCIMOMHandle::PALocker::getWriteLock()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(const PALockerRef& locker)
+ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(const ProviderAgentLockerIFCRef& locker)
 	: m_locker(locker)
 {
 	m_locker->getWriteLock(); 
