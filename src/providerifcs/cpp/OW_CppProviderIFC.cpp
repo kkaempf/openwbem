@@ -424,7 +424,8 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			continue;
 		}
 
-
+		// TODO: Make this exception safe, so pProv gets deleted if any of the
+		// following throws.
 		OW_CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
 
 		OW_CppIndicationExportProviderIFC* p_iep =
