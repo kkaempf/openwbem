@@ -49,7 +49,10 @@ public:
 	virtual Reference<std::iostream> beginRequest(
 			const String& methodName, const String& nameSpace) = 0;
 
-	// these correspond to the various types of operations identified in the CIM Operations Over HTTP 1.1 Sec. 3
+	/**
+	 * These request types correspond to the various types of operations
+	 * identified in the CIM Operations Over HTTP 1.1 Sec. 3
+	 */
 	enum ERequestType
 	{
 		E_CIM_OPERATION_REQUEST,
@@ -64,21 +67,22 @@ public:
 	 * CIMOM and sends a request.  An istream& is returned containing
 	 * the response from the CIMOM, after protocol processing is done.
 	 * @param request An istream& containing the request to be send to
-	 * 	the CIMOM.
+	 *	the CIMOM.
 	 * @param methodName The CIM method that corresponds to the request.
-	 * @cimObject the CIM object the request applies to.
-	 *  If this is an intrinsic method, it must be a namespace.
-	 *  If an extrinsic method is being invoked, it must be a class
-	 *  or instance path in ObjectPath format.
+	 * @cimObject the CIM object the request applies to.  If this is an
+	 * 	intrinsic method, it must be a namespace.  If an extrinsic
+	 *	method is being invoked, it must be a class or instance path in
+	 *	ObjectPath format. 
 	 * @param requestType The type of request, currently must be one of
-	 *  E_CIM_OPERATION_REQUEST, E_CIM_EXPORT_REQUEST
-	 * @return an istream& containing the response from the server
+	 *	E_CIM_OPERATION_REQUEST, or E_CIM_EXPORT_REQUEST 
+	 * @return a CIMProtocolIstream (istream) reference containing the
+	 *	response from the server.
 	 * @exception HTTPException
 	 * @exception SocketException
 	 *
 	 */
 	virtual Reference<CIMProtocolIStreamIFC> endRequest(
-		Reference<std::iostream> request,
+			Reference<std::iostream> request,
 			const String& methodName, const String& cimObject, ERequestType requestType) = 0;
 	/**
 	 * Get the supported features of a CIMOM
@@ -88,8 +92,8 @@ public:
 	
 	/**
 	 * Assigns a login callback object.
-	 * @param loginCB A Reference to a ClientAuthCB object
-	 * 	containing the callback method.
+	 * @param loginCB A Reference to a ClientAuthCB object containing the
+	 *	callback method. 
 	 */
 	void setLoginCallBack(ClientAuthCBIFCRef loginCB)
 		{ m_loginCB = loginCB; }

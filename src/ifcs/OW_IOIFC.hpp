@@ -39,16 +39,19 @@ class IOIFC
 public:
 	virtual ~IOIFC();
 	/**
-	 * Read a specified number of bytes from the device that is exposing the
-	 * IOIFC interface.
+	 * Read a specified number of bytes from the device that is exposing
+	 * the IOIFC interface.
 	 *
-	 * @param dataIn A pointer to a location in memory to put the bytes that
-	 *		have been read.
-	 * @param dataInLen The number of bytes being requested from the device.
+	 * @param dataIn A pointer to a location in memory to put the bytes
+	 * 	that have been read. 
+	 * @param dataInLen The number of bytes being requested from the
+	 * 	device. 
 	 * @param errorAsException If true and an error occurs durring the read
-	 *		operation, then throw an exception.
+	 * 	operation, then throw an exception.
+	 * @exception An exception will be thrown upon an error condition if
+	 * 	errorAsException is true.
 	 * @return The number of bytes actually read from the device, or -1 on
-	 *		error.
+	 * 	error. 
 	 */
 	virtual int read(void* dataIn, int dataInLen,
 			bool errorAsException=false) = 0;
@@ -57,13 +60,16 @@ public:
 	 * Write a specified number of bytes to the device that is exposing the
 	 * IOIFC interface.
 	 *
-	 * @param dataOut A pointer to a location in memory that contains the bytes
-	 *		that will be written to the device.
-	 * @param dataOutLen The length of the data pointed to by the dataOut parm.
-	 * @param errorAsException If true and an error occurs durring the write
-	 *		operation, then throw an exception.
+	 * @param dataOut A pointer to a location in memory that contains the
+	 * 	bytes that will be written to the device.
+	 * @param dataOutLen The length of the data pointed to by the dataOut
+	 * 	param.
+	 * @param errorAsException If true and an error occurs durring the
+	 * 	write operation, then throw an exception.
+	 * @exception An exception will be thrown upon an error condition if
+	 * 	errorAsException is true.	 
 	 * @return The number of bytes actually written to the device. or -1 on
-	 *		error
+	 * 	error
 	 */
 	virtual int write(const void* dataOut, int dataOutLen,
 			bool errorAsException=false) = 0;

@@ -50,26 +50,28 @@ public:
 	virtual ~AuthenticatorIFC();
 	/**
 	 * Called when authenticator is loaded
-	 * @param env A reference to an ServiceEnvironment for the authenticator
-	 *		to use.
-	 * Exception is thrown because other classes which derive
-	 * from this may need to throw exceptions in init()
+	 * @param env A reference to an ServiceEnvironment for the
+	 *	authenticator to use.
+	 * @exception Any exception may be thrown because other classes which
+	 *	derive from this may need to throw exceptions in init() 
 	 */
 	void init(ServiceEnvironmentIFCRef env) { doInit(env); }
 	/**
 	 * Authenticates a user
 	 *
 	 * @param userName
-	 *   The name of the of the user being authenticated
+	 *	The name of the of the user being authenticated
 	 * @param type
-	 *   A string describing the type of authentication
+	 *	A string describing the type of authentication
 	 * @param info
-	 *   The authentication credentials
+	 *	The authentication credentials
 	 * @param details
 	 *	An out parameter used to provide information as to why the
-	 *   authentication failed.
+	 *	authentication failed.
+	 * @param context
+	 *	An operation context.
 	 * @return
-	 *   True if user is authenticated
+	 *	True if user is authenticated
 	 */
 	bool authenticate(String& userName, const String& info,
 		String& details, OperationContext& context)
@@ -77,27 +79,30 @@ public:
 		MutexLock lock(m_mutex);
 		return doAuthenticate(userName, info, details, context);
 	}
+private:
 	UInt32 signature;
 protected:
 	/**
 	 * Authenticates a user
 	 *
 	 * @param userName
-	 *   The name of the of the user being authenticated
+	 *	The name of the of the user being authenticated
 	 * @param info
-	 *   The authentication credentials
+	 *	The authentication credentials
 	 * @param details
 	 *	An out parameter used to provide information as to why the
-	 *   authentication failed.
+	 * 	authentication failed
+	 * @param context
+	 *	An operation context.	 .
 	 * @return
-	 *   True if user is authenticated
+	 *	True if user is authenticated
 	 */
 	virtual bool doAuthenticate(String& userName,
 		const String& info, String& details, OperationContext& context) = 0;
 	/**
 	 * Called when authenticator is loaded
-	 * Exception is thrown because other classes which derive
-	 * from this may need to throw exceptions in init()
+	 * @exception Any exception may be thrown because other classes which
+	 *	derive from this may need to throw exceptions in init()
 	 */
 	virtual void doInit(ServiceEnvironmentIFCRef) {}
 	Mutex m_mutex;

@@ -49,16 +49,15 @@ public:
 	 * The callback that is executed to retrieve the username and password.
 	 *
 	 * @param realm A string describing the server or area within the
-	 * 		server for which the client needs access (typically a URL)
-	 * @param name A non-const String&.  The function should assign
-	 * 		a valid user name here.
+	 * 	server for which the client needs access (typically a URL).
+	 * @param name A non-const String&.  The function should assign	a valid
+	 * 	user name here. 
 	 * @param passwd Similar to "name". The callback assigns the password
-	 * 		here.
+	 * 	here. 
 	 * @return true means the http client should retry the request with
-	 * 		the provided name/password.
-	 * 	false means a valid name/password were not obtained by the
-	 * 		callback, and to http client has no reason to retry the
-	 * 		request.
+	 *	the provided name/password.  false means a valid name/password
+	 *	were not obtained by the callback, and to http client has no
+	 *	reason to retry the request. 
 	 */
 	virtual bool getCredentials(const String& realm, String& name,
 			String& passwd, const String& details) = 0;

@@ -35,10 +35,19 @@
 namespace OpenWBEM
 {
 
+/*
+ * An abstract callback object to handle results from some form of operation.
+ */
 template <typename T>
 class ResultHandlerIFC
 {
 public:
+	/*
+	 * Handle a result.
+	 * An exception may be thrown by a derived class.
+	 *
+	 * @param x A value that needs to be handled.
+	 */
 	void handle(const T& x)
 	{
 		doHandle(x);
