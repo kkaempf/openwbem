@@ -169,6 +169,12 @@ CIMDataType::isReferenceType() const
 	return (m_pdata->m_type == REFERENCE);
 }
 //////////////////////////////////////////////////////////////////////////////
+bool
+CIMDataType::isEmbeddedObjectType() const
+{
+	return (m_pdata->m_type == EMBEDDEDINSTANCE || m_pdata->m_type == EMBEDDEDCLASS);
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMDataType::Type
 CIMDataType::getType() const
 {

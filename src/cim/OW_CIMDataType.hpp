@@ -161,6 +161,10 @@ public:
 	 */
 	bool isReferenceType() const;
 	/**
+	 * @return true if this data type represents an embedded object (EMBEDDEDCLASS or EMBEDDEDINSTANCE) data type.
+	 */
+	bool isEmbeddedObjectType() const;
+	/**
 	 * @return the type of this CIMDataType
 	 */
 	Type getType() const;
