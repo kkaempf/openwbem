@@ -18,7 +18,7 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 				{ print $$3 } }' | \
 			sort -u > $(@:%.so=%.exp)
 
-%.so %.sl : %.a
+%.so %.sl %.dylib : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
 	cd $(TMPLIBDIR) && \
@@ -28,20 +28,6 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
-
-# These rules are for Darwin/Mach-o and support both
-# the dynamic libs and the loadable modules (bundles)
-%.dylib : %.a
-	rm -rf $(TMPLIBDIR)
-	mkdir $(TMPLIBDIR)
-	cd $(TMPLIBDIR) && \
-	$(AR) x ../$< 
-	if [ "x$(AIX)" = "x1" ]; then $(CREATE_EXPORTS); fi
-	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
-	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
-	ln -s $(SOFILENAME) $@
-	chmod +x $(SOFILENAME)
-
 
 
 
