@@ -46,6 +46,8 @@
 #include <sys/time.h>
 #endif
 
+#include <cctype>
+
 namespace OpenWBEM
 {
 
@@ -160,8 +162,23 @@ inline bool isDOWValid(const char* str)
 	return good;
 }
 
+inline bool isLongDOWValid(const String& s)
+{
+  if( (s == "Sunday") ||
+      (s == "Monday") ||      
+      (s == "Tuesday") ||
+      (s == "Wednesday") ||
+      (s == "Thursday") ||
+      (s == "Friday") ||
+      (s == "Saturday") )
+  {
+    return true;
+  }
+  return false;
+}
+
 // returns -1 if the month is invalid, 1-12 otherwise
-inline int decodeMonth(const char* str)
+inline int decodeShortMonth(const char* str)
 {
 	// a little FSM to calculate the month
 	if (str[0] == 'J') // Jan, Jun, Jul
@@ -231,211 +248,609 @@ inline int decodeMonth(const char* str)
 	return -1;
 }
 
+// returns -1 if the month is invalid, 1-12 otherwise
+inline int decodeLongMonth(const String& str)
+{
+  if( str.equals("January") )
+  {
+    return 1;
+  }
+  else if( str.equals("February") )
+  {
+    return 2;
+  }
+  else if( str.equals("March") )
+  {
+    return 3;
+  }
+  else if( str.equals("April") )
+  {
+    return 4;
+  }
+  else if( str.equals("May") )
+  {
+    return 5;
+  }
+  else if( str.equals("June") )
+  {
+    return 6;
+  }
+  else if( str.equals("July") )
+  {
+    return 7;
+  }
+  else if( str.equals("August") )
+  {
+    return 8;
+  }
+  else if( str.equals("September") )
+  {
+    return 9;
+  }
+  else if( str.equals("October") )
+  {
+    return 10;
+  }
+  else if( str.equals("November") )
+  {
+    return 11;
+  }
+  else if( str.equals("December") )
+  {
+    return 12;
+  }  
+  return -1;
+}
+
+// Get the timezone offset (from UTC) for the given timezone.  Valid results
+// are in the range -12 to 12, except for the case where LOCAL_TIME_OFFSET is
+// returned, in which case UTC should not be used.
+const int LOCAL_TIME_OFFSET = -24;
+bool getTimeZoneOffset(const String& timezone, int& offset)
+{
+  int temp_offset = LOCAL_TIME_OFFSET -1;
+  if( timezone.length() == 1 )
+  {
+    // Single-letter abbrev.
+    // This could be simplified into a couple of if statements with some
+    // character math, but this should work for now. 
+    switch( timezone[0] )
+    {
+    case 'Y': // Yankee   UTC-12
+      temp_offset = -12; 
+      break; 
+    case 'X': // Xray     UTC-11
+      temp_offset = -11; 
+      break;
+    case 'W': // Whiskey  UTC-10
+      temp_offset = -10; 
+      break;
+    case 'V': // Victor   UTC-9
+      temp_offset = -9;
+      break;
+    case 'U': // Uniform  UTC-8
+      temp_offset = -8;
+      break; 
+    case 'T': // Tango    UTC-7
+      temp_offset = -7;
+      break; 
+    case 'S': // Sierra   UTC-6
+      temp_offset = -6;
+      break; 
+    case 'R': // Romeo    UTC-5
+      temp_offset = -5;
+      break; 
+    case 'Q': // Quebec   UTC-4
+      temp_offset = -4;
+      break; 
+    case 'P': // Papa     UTC-3
+      temp_offset = -3;
+      break; 
+    case 'O': // Oscar    UTC-2
+      temp_offset = -2;
+      break; 
+    case 'N': // November UTC-1
+      temp_offset = -1;
+      break; 
+    case 'Z': // Zulu     UTC
+      temp_offset = 0;
+      break; 
+    case 'A': // Aplpha   UTC+1
+      temp_offset = 1;
+      break; 
+    case 'B': // Bravo    UTC+2
+      temp_offset = 2;
+      break; 
+    case 'C': // Charlie  UTC+3
+      temp_offset = 3;
+      break; 
+    case 'D': // Delta    UTC+4
+      temp_offset = 4;
+      break; 
+    case 'E': // Echo     UTC+5
+      temp_offset = 5;
+      break; 
+    case 'F': // Foxtrot  UTC+6
+      temp_offset = 6;
+      break; 
+    case 'G': // Golf     UTC+7
+      temp_offset = 7;
+      break; 
+    case 'H': // Hotel    UTC+8
+      temp_offset = 8;
+      break; 
+    case 'I': // India    UTC+9
+      temp_offset = 9;
+      break; 
+    case 'K': // Kilo     UTC+10
+      temp_offset = 10;
+      break; 
+    case 'L': // Lima     UTC+11
+      temp_offset = 11;
+      break; 
+    case 'M': // Mike     UTC+12
+      temp_offset = 12;
+      break; 
+    case 'J': // Juliet   Always local time
+      temp_offset = LOCAL_TIME_OFFSET;
+      break;
+    default:
+      break;
+    }
+  }
+  else if( timezone == "UTC" ) // Universal Time Coordinated, civil time
+  {
+    temp_offset = 0; 
+  }
+  // European timezones
+  else if( timezone == "GMT" ) // Greenwich Mean Time   UTC
+  {
+    temp_offset = 0;
+  }
+  else if( timezone == "BST" ) // British Summer Time   UTC+1
+  {
+    temp_offset = 1;
+  }
+  else if( timezone == "IST" ) // Irish Summer Time     UTC+1
+  {
+    temp_offset = 1;
+  }
+  else if( timezone == "WET" ) // Western Europe Time   UTC
+  {
+    temp_offset = 0;
+  }
+  else if( timezone == "WEST" ) // Western Europe Summer Time   UTC+1
+  {
+    temp_offset = 1;
+  }
+  else if( timezone == "CET" ) // Central Europe Time   UTC+1
+  {
+    temp_offset = 1;
+  }
+  else if( timezone == "CEST" ) // Central Europe Summer Time   UTC+2
+  {
+    temp_offset = 2;
+  }
+  else if( timezone == "EET" ) // Eastern Europe Time   UTC+2
+  {
+    temp_offset = 2;
+  }
+  else if( timezone == "EEST" ) // Eastern Europe Summer Time   UTC+3
+  {
+    temp_offset = 3;
+  }
+  else if( timezone == "MSK" ) // Moscow Time   UTC+3
+  {
+    temp_offset = 3;
+  }
+  else if( timezone == "MSD" ) // Moscow Summer Time    UTC+4
+  {
+    temp_offset = 4;
+  }
+  // US and Canada
+  else if( timezone == "AST" ) // Atlantic Standard Time        UTC-4
+  {
+    temp_offset = -4;
+  }
+  else if( timezone == "ADT" ) // Atlantic Daylight Saving Time UTC-3
+  {
+    temp_offset = -3;
+  }
+  else if( timezone == "EST" ) // Eastern Standard Time         UTC-5
+  {
+    // CHECKME! This can also be Australian Eastern Standard Time UTC+10
+    // (UTC+11 in Summer) 
+    temp_offset = -5;
+  }
+  else if( timezone == "EDT" ) // Eastern Daylight Saving Time  UTC-4
+  {
+    temp_offset = -4;
+  }
+  else if( timezone == "ET" ) // Eastern Time, either as EST or EDT
+                              // depending on place and time of year
+  {
+    // CHECKME! Assuming standard time.
+    temp_offset = -5;
+  }
+  else if( timezone == "CST" ) // Central Standard Time         UTC-6
+  {
+    // CHECKME! This can also be Australian Central Standard Time UTC+9.5    
+    temp_offset = -6;
+  }
+  else if( timezone == "CDT" ) // Central Daylight Saving Time  UTC-5
+  {
+    temp_offset = -5;
+  }
+  else if( timezone == "CT" ) // Central Time, either as CST or CDT
+                              // depending on place and time of year
+  {
+    // CHECKME! Assuming standard time.
+    temp_offset = -6;
+  }
+  else if( timezone == "MST" ) // Mountain Standard Time        UTC-7
+  {
+    temp_offset = -7;
+  }
+  else if( timezone == "MDT" ) // Mountain Daylight Saving Time UTC-6
+  {
+    temp_offset = -6;
+  }
+  else if( timezone == "MT" ) // Mountain Time, either as MST or MDT
+                              // depending on place and time of year
+  {
+    // CHECKME! Assuming standard time.
+    temp_offset = -7;
+  }
+  else if( timezone == "PST" ) // Pacific Standard Time         UTC-8
+  {
+    temp_offset = -8;
+  }
+  else if( timezone == "PDT" ) // Pacific Daylight Saving Time  UTC-7
+  {
+    temp_offset = -7;
+  }
+  else if( timezone == "PT" ) // Pacific Time, either as PST or PDT
+                              // depending on place and time of year
+  {
+    // CHECKME! Assuming standard time.
+    temp_offset = -8;
+  }
+  else if( timezone == "HST" ) // Hawaiian Standard Time        UTC-10
+  {
+    temp_offset = -10;
+  }
+  else if( timezone == "AKST" ) // Alaska Standard Time         UTC-9
+  {
+    temp_offset = -9;
+  }
+  else if( timezone == "AKDT" ) // Alaska Standard Daylight Saving Time UTC-8
+  {
+    temp_offset = -8;
+  }
+  // Australia
+  else if( timezone == "WST" ) // Western Standard Time         UTC+8
+  {
+    temp_offset = 8;
+  }
+
+  // Check the results of that huge mess.
+  if( temp_offset >= LOCAL_TIME_OFFSET )
+  {
+    offset = temp_offset;
+    return true;
+  }
+  return false;
+}
+
+Int32 getDaysPerMonth(Int32 year, Int32 month)
+{
+  const Int32 normal_days_per_month[12] =
+    { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    
+  if( (month >= 1) && (month <= 12) )
+  {
+    if( month != 2 )
+    {
+      return normal_days_per_month[month - 1];
+    }
+
+    int leap_year_adjust = 0;
+    
+    if( (year % 4) == 0 )
+    {
+      // Possibly a leap year.
+      if( (year % 100) == 0 )
+      {
+        if( (year % 400) == 0 )
+        {
+          leap_year_adjust = 1;
+        }
+      }
+      else
+      {
+        leap_year_adjust = 1;
+      }
+    }
+
+    return normal_days_per_month[month - 1] + leap_year_adjust;
+    // Check to see if it's a leap year.
+  }
+  return 0;
+}
+
+// Adjust the time given (year, month, day, hour) for the given timezone
+// offset.
+// Note: this is converting FROM local time to UTC, so the timezone offset is
+// subtracted instead of added.
+void adjustTimeForTimeZone(Int32 timezone_offset, Int32& year, Int32& month,
+                           Int32& day, Int32& hour)
+{
+  if( timezone_offset < 0 )
+  {
+    hour -= timezone_offset;
+
+    if( hour > 23 )
+    {
+      ++day;
+      hour -= 24;
+    }
+    // This assumes that the timezone will not shove a date by more than one day.
+    if( day > getDaysPerMonth(year, month) )
+    {
+      ++month;
+      day = 1;
+    }
+    if( month > 12 )
+    {
+      month -= 12;
+      ++year;
+    }
+  }
+  else if( timezone_offset > 0 )
+  {
+    hour -= timezone_offset;
+
+    if( hour < 0 )
+    {
+      --day;
+      hour += 24;
+    }
+    // This assumes that the timezone will not shove a date by more than one day.    
+    if( day < 1 )
+    {
+      --month;
+      day += getDaysPerMonth(year, month);
+    }
+    if( month < 1 )
+    {
+      month += 12;
+      --year;
+    }    
+  }
+}
+
+
 } // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
 DateTime::DateTime(const String& str)
 {
-	// CIM DateTimes are 25 chars long, and ctime dates are 24 or 25 long
-	if (str.length() >= 24 && str.length() <= 25)
+  if( str.length() == 25 )
+  {
+	// validate required characters
+    if (  !(str[14] != '.' || (str[21] != '+' && str[21] != '-')) )
+    {
+      try
+      {
+	// in CIM, "Fields which are not significant must be 
+	// replaced with asterisk characters."  We'll convert
+	// asterisks to 0s so we can process them.
+	String strNoAsterisks(str);
+	for (size_t i = 0; i < strNoAsterisks.length(); ++i)
 	{
-		if (str[3] == ' ') // it's a ctime date
-		{
-			// validate required characters
-			if (str[7] != ' ' || str[10] != ' ' || str[13] != ':' || str[16] != ':' || str[19] != ' ')
-			{
-				badDateTime(str);
-			}
-			if (!isDOWValid(str.c_str()))
-			{
-				badDateTime(str);
-			}
-			int month = decodeMonth(str.c_str() + 4);
-			if (month == -1)
-			{
-				badDateTime(str);
-			}
-			try
-			{
-				Int32 day = str.substring(8, 2).toInt32();
-				Int32 hour = str.substring(11, 2).toInt32();
-				Int32 minute = str.substring(14, 2).toInt32();
-				Int32 second = str.substring(17, 2).toInt32();
-				Int32 year = str.substring(20, 4).toInt32();
-				UInt32 microseconds = 0;
-				validateRanges(year, month, day, hour, minute, second, microseconds, str);
-				set(year, month, day, hour, minute, second, 
-				    microseconds, E_LOCAL_TIME);
-			}
-			catch (StringConversionException&)
-			{
-				badDateTime(str);
-			}
-		}
-		else // it's a CIM DateTime string
-		{
-			// validate required characters
-			if (str[14] != '.' || (str[21] != '+' && str[21] != '-'))
-			{
-				badDateTime(str);
-			}
-
-			try
-			{
-				// in CIM, "Fields which are not significant must be 
-				// replaced with asterisk characters."  We'll convert
-				// asterisks to 0s so we can process them.
-				String strNoAsterisks(str);
-				for (size_t i = 0; i < strNoAsterisks.length(); ++i)
-				{
-					if (strNoAsterisks[i] == '*')
-						strNoAsterisks[i] = '0';
-				}
-				Int32 year = strNoAsterisks.substring(0, 4).toInt32();
-				Int32 month = strNoAsterisks.substring(4, 2).toInt32();
-				Int32 day = strNoAsterisks.substring(6, 2).toInt32();
-				Int32 hour = strNoAsterisks.substring(8, 2).toInt32();
-				Int32 minute = strNoAsterisks.substring(10, 2).toInt32();
-				Int32 second = strNoAsterisks.substring(12, 2).toInt32();
-				Int32 microseconds = strNoAsterisks.substring(15, 6).toInt32();
-
-				validateRanges(year, month, day, hour, minute, second, microseconds, str);
-
-				Int32 utc = strNoAsterisks.substring(22, 3).toInt32();
-				// adjust the time to utc.  According to the CIM spec:
-				// "utc is the offset from UTC in minutes"
-				if (str[21] == '+')
-				{
-					utc = 0 - utc;
-				}
-				minute += utc;
-
-				set(year, month, day, hour, minute, second, 
-				    microseconds, E_UTC_TIME);
-				return;
-			}
-			catch (StringConversionException&)
-			{
-				badDateTime(str);
-			}
-		}
+	  if (strNoAsterisks[i] == '*')
+	    strNoAsterisks[i] = '0';
 	}
-	else if (str.length() >= 26 && str.length() <= 28)
+	Int32 year = strNoAsterisks.substring(0, 4).toInt32();
+	Int32 month = strNoAsterisks.substring(4, 2).toInt32();
+	Int32 day = strNoAsterisks.substring(6, 2).toInt32();
+	Int32 hour = strNoAsterisks.substring(8, 2).toInt32();
+	Int32 minute = strNoAsterisks.substring(10, 2).toInt32();
+	Int32 second = strNoAsterisks.substring(12, 2).toInt32();
+	Int32 microseconds = strNoAsterisks.substring(15, 6).toInt32();
+	
+	validateRanges(year, month, day, hour, minute, second, microseconds, str);
+	
+	Int32 utc = strNoAsterisks.substring(22, 3).toInt32();
+	// adjust the time to utc.  According to the CIM spec:
+	// "utc is the offset from UTC in minutes"
+	if (str[21] == '+')
 	{
-		// Other acceptable time formats are of the form:
-		// Thu Jan 29 11:02:42 MST 2004
-		// Wed Oct 3 17:52:56 EDT 1998
-		// Sat Aug 15 5:41:26 PDT 1984          
-		// Tue Nov 7 13:35:03 GMT 2003
-		// Mon May 1 8:27:39 UTC 2003
+	  utc = 0 - utc;
+	}
+	minute += utc;
+	
+	set(year, month, day, hour, minute, second, 
+	    microseconds, E_UTC_TIME);
+	return;
+      }
+      catch (StringConversionException&)
+      {
+	// Instead of throwing another exception here, we'll try to parse it in
+	// a more general way below.
+      }    
+    }
+  }
 
-		// Note the variable field width.
+  // It didn't return from above, so it's not a CIM datetime.  Try to parse
+  // it as a free-form date string.
+  if( !str.empty() )
+  {
+    // This is a general method of extracting the date.
+    // It still assumes english names for months and days of week.
 
+    String weekday;
+    String day;
+    String time;
+    String timezone;
+    int timezone_number = LOCAL_TIME_OFFSET - 1;
+    Int32 month_number = -1;
+    String year;
+    
+    StringArray tokenized_date = str.tokenize();
 
-		// Before doing any work, verify the day of week and month.
-		if (!isDOWValid(str.c_str()))
-		{
-			badDateTime(str);
-		}
-		int month = decodeMonth(str.c_str() + 4);
-		if (month == -1)
-		{
-			badDateTime(str);
-		}
-
-		const size_t max_num_spaces = 5;
-		const size_t max_num_colons = 2;
-
-		// The default locations for spaces and colons.
-		size_t spaces[max_num_spaces] = {3, 7, 10, 19, 23};
-		size_t colons[max_num_colons] = {13, 16};
-
-		// The space fields that are variable in position.
-		const size_t vspace1 = 2;
-		const size_t vspace2 = 3;
-
-
-		// Adjust the spaces (and trailing colons), for variable widths
-		if( str[spaces[vspace1] - 1] == ' ' )
-		{
-			for( size_t i = vspace1; i < max_num_spaces; ++i )
-			{
-				--spaces[i];
-			}
-			for( size_t j = 0; j < max_num_colons; ++j )
-			{
-				--colons[j];
-			}
-		}
-		if( str[spaces[vspace2] - 1] == ' ' )
-		{
-			for( size_t i = vspace2; i < max_num_spaces; ++i )
-			{
-				--spaces[i];
-			}
-			for( size_t j = 0; j < max_num_colons; ++j )
-			{
-				--colons[j];
-			}
-		}
-
-		// Verify there are spaces in the correct locations.
-		for( size_t i = 0; i < max_num_spaces; ++i )
-		{
-			if( str[spaces[i]] != ' ' )
-			{
-				badDateTime(str);
-			}
-		}
-		// Verify there are colons in the correct locations.
-		for( size_t j = 0; j < max_num_colons; ++j )
-		{
-			if( str[colons[j]] != ':' )
-			{
-				badDateTime(str);
-			}
-		}
-
-		// We now know the locations of the spaces and colons.
-		try
-		{
-			String day_string = str.substring(spaces[1] + 1, spaces[2]-spaces[1]-1);
-			String hour_string = str.substring(spaces[2] + 1, colons[0]-spaces[2]-1);
-			String minute_string = str.substring(colons[0] + 1, 2);
-			String second_string = str.substring(colons[1] + 1, 2);
-			String year_string = str.substring(spaces[4] + 1, 4);
-
-			// Day is variable length
-			Int32 day = day_string.toInt32();
-			// Hour is variable length
-			Int32 hour = hour_string.toInt32();
-			// Everything else is fixed length.
-			Int32 minute = minute_string.toInt32();
-			Int32 second = second_string.toInt32();
-			Int32 year = year_string.toInt32();
-			UInt32 microseconds = 0;
-			validateRanges(year, month, day, hour, minute, second, microseconds, str);
-			String timezone = str.substring(spaces[3] + 1, 3);
-
-			if( (timezone == "UTC") || (timezone == "GMT") )
-			{
-				set(year, month, day, hour, minute, second, microseconds, E_UTC_TIME);
-			}
-			else
-			{
-				// FIXME! This assumes it is local, even though it could be something else.
-				set(year, month, day, hour, minute, second, microseconds, E_LOCAL_TIME);
-			}
-		}
-		catch (StringConversionException&)
-		{
-			badDateTime(str);
-		}
+    // Attempt to fill in the above list of strings...
+    for( StringArray::const_iterator date_token = tokenized_date.begin();
+	 date_token != tokenized_date.end();
+	 ++date_token )
+    {
+      // Check to see if it's a day of the week.
+      if( isDOWValid( date_token->c_str() ) )
+      {
+	if( weekday.empty() )
+	{
+	  if( date_token->length() > 3 )
+	  {
+	    if( isLongDOWValid( *date_token ) )
+	    {
+	      weekday = *date_token;
+	    }
+	    else
+	    {
+	      // Invalid long day of week
+	      badDateTime(str);
+	    }
+	  }
+	  else
+	  {
+	    weekday = *date_token;	    
+	  }
 	}
 	else
 	{
-		badDateTime(str);
+	  // Multiple weekdays.
+	  badDateTime(str);	  
 	}
+      }
+      // Only do this comparison if a month has not already been found.
+      else if( (month_number == -1) &&
+	       (month_number = decodeShortMonth( date_token->c_str() ) ) != -1 )
+      {
+	if( date_token->length() > 3 )
+	{
+	  month_number = decodeLongMonth( date_token->c_str() );
+
+	  if( month_number == -1 )
+	  {
+	    // Invalid characters in the long version of the month.
+	    badDateTime(str);
+	  }
+	}
+      }
+      // Get the time, if the time wasn't already set.
+      else if( time.empty() && (date_token->indexOf(":") != String::npos) )
+      {
+	// This will be checked below... Assume it's correct.
+	time = *date_token;
+      }
+      // If a day hasn't been found, and this is a number, assume it's the day.
+      else if( day.empty() && isdigit((*date_token)[0]) )
+      {
+	day = *date_token;
+      }
+      // If a year hasn't been found, and this is a number, assume it's the year.      
+      else if( year.empty() && isdigit((*date_token)[0]) )
+      {
+	year = *date_token;
+      }
+      else if( (timezone_number <= LOCAL_TIME_OFFSET) &&
+	       (date_token->length() >= 1) &&
+	       (date_token->length() <= 4) &&
+	       getTimeZoneOffset(*date_token, timezone_number) )
+      {
+	// Matched the timezone (nothing to do, it's already been set).
+      }
+      else
+      {
+	badDateTime(str);	
+      }
+	       
+    } // for each token.
+
+
+    // Done looking at tokens.  Verify that all the required fields are present.
+    if( (month_number >= 1) && !day.empty() && !time.empty() && !year.empty() )
+    {
+      // We've got enough to construct the date.
+      
+      // Parse the time
+      StringArray time_fields = time.tokenize(":");
+      
+      // We need at least the hour and minute, anything other than H:M:S should
+      // be in error.
+      if( (time_fields.size() < 2) || (time_fields.size() > 3) )
+      {
+	badDateTime(str);
+      }
+
+      try
+      {
+
+	Int32 hour;
+	Int32 minute;
+	Int32 second = 0;
+	UInt32 microseconds = 0;
+	Int32 year_number = year.toInt32();
+	Int32 day_number = day.toInt32();
+
+	hour = time_fields[0].toInt32();
+	minute = time_fields[1].toInt32();
+
+	if( time_fields.size() == 3 )
+	{
+	  second = time_fields[2].toInt32();
+	}
+
+	validateRanges(year_number, month_number, day_number,
+		       hour, minute, second, microseconds, str);
+
+	if( timezone_number <= LOCAL_TIME_OFFSET )
+	{
+	  set(year_number, month_number, day_number, hour,
+	      minute, second, microseconds, E_LOCAL_TIME);
+	}
+	else
+	{
+	  // Adjust the time for the timezone.
+	  // The current numbers have already been validated, so any changes
+	  // should not do anything unexpected.
+
+	  adjustTimeForTimeZone(timezone_number, year_number, month_number, day_number, hour);
+
+	  // Check again.
+	  validateRanges(year_number, month_number, day_number, hour,
+			 minute, second, microseconds, str);
+
+	  set(year_number, month_number, day_number, hour,
+	      minute, second, microseconds, E_UTC_TIME);	  
+	}
+      }
+      catch(const StringConversionException&)
+      {
+	badDateTime(str);
+      }
+    }
+    else
+    {
+      // Not all required fields available.
+      badDateTime(str);    
+    }
+  }
+  else
+  {
+    // An empty string.
+    badDateTime(str);    
+  }
 }
 //////////////////////////////////////////////////////////////////////////////									
 DateTime::DateTime(time_t t, UInt32 microseconds) 

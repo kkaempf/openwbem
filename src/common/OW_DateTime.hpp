@@ -91,14 +91,67 @@ public:
 	 * (1) a CIM DateTime formated string (e.g. "19980525133015.000000-300")
 	 * (2) a ctime() formatted string (e.g. "Wed Jun 30 21:49:08 1993")
 	 *     The current local timezone is assumed.
-	 * (3) a string in the format:
-	 *     Thu Jan 29 11:02:42 MST 2004
-	 *     Wed Oct 3 17:52:56 EDT 1998
-	 *     Sat Aug 15 5:41:26 PDT 1984	  
-	 *     Tue Nov 7 13:35:03 GMT 2003
-	 *     Mon May 1 8:27:39 UTC 2003	 
-	 *     If the timezone is not UTC or GMT, then it is assumed to be the local
-	 *     timezone.  This is a defect which may be fixed in the future.
+	 * (3) a free-form date which must have a month, day, year, and time.
+	 *     Optional fields are a weekday, and timezone, and the seconds
+	 *     subfield of the time field.
+	 *
+	 *     There are no restrictions on the ordering of fields, with the
+	 *     exception of the day of month and year.
+	 *
+	 *     Assumptions made:
+	 *     The first free-standing number found is assumed to be the day of
+	 *     month.  The second is the day of year.
+	 *
+	 *     Fields:
+	 *
+	 *       Month (required)
+	 *       The month field may be one of the three-letter English
+	 *       abbreviations (eg. Jan, Feb, Mar, etc), or the full English
+	 *       month name (eg. January, February, March, etc). Note that they
+	 *       are case sensitive, and only the first character is uppercase.
+	 *
+	 *
+	 *       Day of month (required)
+	 *       A number.  Currently, the first free-standing number found is
+	 *       assumed to be the day of month. 
+	 *
+	 *       Year (required)
+	 *       A number.  Currently, the second free-standing number found is
+	 *       assumed to be the year.
+	 *
+	 *       Time (required)
+	 *       The hours, minutes, and optionally seconds of the time.  It is
+	 *       in the form HH:MM or HH:MM:SS.  The hour is expressed in the
+	 *       24 hour format (eg. 4pm would be hour 16).
+	 *
+	 *       Day of week (optional)
+	 *       The day of week field may be one of the three-letter English
+	 *       abbreviations (eg. Sun, Mon, Tue, etc), or the full English
+	 *       day name (eg. Sunday, Monday, Tuesday, etc).  Note that they
+	 *       are case sensitive, and only the first character is uppercase.
+	 *
+	 *       Timezone (optional)
+	 *       The timezone of the date.  The date and time will be
+	 *       transformed into UTC by this time zone.  If the time zone is
+	 *       not present, then the date is assumed to be in local time.
+	 *
+	 *       The following time zones are recognized (case sensitive):
+	 *         UTC, GMT, BST, IST, WET, WEST, CET, CEST, EET, EEST, MSK,
+	 *         MSD, AST, ADT, EST, EDT, ET, CST, CDT, CT, MST, MDT, MT,
+	 *         PST, PDT, PT, HST, AKST, AKDT, WST, and single letters [A-Z]
+	 *
+	 *       Timezones ET, CT, MT, and PT are all assumed to be standard
+	 *       (not daylight) time.
+	 *       NOTE: Some Australian time zones (EST, and CST), which
+	 *       conflict with US time zones are assumed to be in the US.
+	 *
+	 *     Valid Examples of free-form date strings:
+	 *       Thu Jan 29 11:02:42 MST 2004
+	 *       Oct 3 17:52:56 EDT 1998
+	 *       5:41:26 PDT Aug 15 1984	  
+	 *       7 November 2003 13:35:03 GMT
+	 *       Monday May 1 8:27:39 UTC 2003
+	 *       June 1 23:49 2003	 
 	 *
 	 * Note that DateTime cannot hold an interval, so you cannot construct
 	 * one from an CIM DateTime interval.
