@@ -28,6 +28,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#ifndef OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
+#define OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
+
 #include "OW_CppAssociatorProviderIFC.hpp"
 
 
@@ -160,3 +163,4 @@ namespace OpenWBEM
     };
 } // end namespace OpenWBEM. 
 
+#endif // #ifndef OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
