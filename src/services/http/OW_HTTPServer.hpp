@@ -87,6 +87,11 @@ public:
 	SocketAddress getLocalHTTPAddress();
 	SocketAddress getLocalHTTPSAddress();
 	
+	enum EAuthenticationChallengeMethod
+	{
+		E_DIGEST,
+		E_BASIC
+	};
 	
 	struct Options
 	{
@@ -96,13 +101,15 @@ public:
 		Int32 maxConnections;
 		bool isSepThread;
 		bool enableDeflate;
-		bool useDigest;
+		EAuthenticationChallengeMethod defaultAuthChallenge;
+		bool allowDigestAuthentication;
+		bool allowBasicAuthentication;
+		bool allowLocalAuthentication;
 		bool allowAnonymous;
 		bool useUDS;
 		bool reuseAddr;
 		ServiceEnvironmentIFCRef env;
 		Int32 timeout;
-		bool useLocalAuthentication;
 	};
 private:
 	bool authenticate(HTTPSvrConnection* pconn,

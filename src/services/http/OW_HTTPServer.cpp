@@ -87,34 +87,38 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		String hostname = pconn->getHostName();
 		pconn->setErrorDetails("You must authenticate to access this"
 			" resource");
-                String authChallenge; 
-                if (m_options.useDigest)
-                {
+		String authChallenge;
+		switch (m_options.defaultAuthChallenge)
+		{
 #ifndef OW_DISABLE_DIGEST
-                    authChallenge = m_digestAuthentication->getChallenge(hostname); 
-#endif			
-                }
-                else
-                {
-                    authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
-                }
+			case E_DIGEST:
+				authChallenge = m_digestAuthentication->getChallenge(hostname); 
+				break;
+#endif
+			case E_BASIC:
+				authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
+				break;
+
+			default:
+				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
+		}
 
 		pconn->addHeader("WWW-Authenticate", authChallenge); 
 		return false;
 	}
 	
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
-	if (info.startsWith("OWLocal"))
+	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
 		return m_localAuthentication->authorize(userName, info, pconn);
 	}
-	else if (m_options.useDigest)
+	else if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
 		return m_digestAuthentication->authorize(userName, info, pconn);
 #endif
 	}
-	else // doing basic
+	else if (m_options.allowBasicAuthentication && info.startsWith("Basic"))
 	{
 		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
 		String password;
@@ -176,23 +180,32 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 		m_options.env = env;
 		
 		item = env->getConfigItem(ConfigOpts::HTTP_USE_DIGEST_opt, OW_DEFAULT_USE_DIGEST);
-		m_options.useDigest = !item.equalsIgnoreCase("false");
-		if (m_options.useDigest)
+		m_options.allowDigestAuthentication = !item.equalsIgnoreCase("false");
+		if (m_options.allowDigestAuthentication)
 		{
 #ifndef OW_DISABLE_DIGEST
 			String passwdFile = env->getConfigItem(
 				ConfigOpts::DIGEST_AUTH_FILE_opt, OW_DEFAULT_DIGEST_PASSWD_FILE);
 			m_digestAuthentication = Reference<DigestAuthentication>(
 				new DigestAuthentication(passwdFile));
+			m_options.defaultAuthChallenge = E_DIGEST;
 #else
 			OW_THROW(HTTPServerException, "Unable to initialize HTTP Server because"
 				" digest is enabled in the config file, but the digest code has been disabled");
 #endif
 		}
+		else
+		{
+			// TODO: deprecate ConfigOpts::HTTP_USE_DIGEST_opt and create a new option for the default auth challenge
+			m_options.defaultAuthChallenge = E_BASIC;
+		}
+		// TODO: right now basic and digest are mutually exclusive because of the config file setup.  
+		// When possible deprecate the existing config items and make them independent.
+		m_options.allowBasicAuthentication = !m_options.allowDigestAuthentication;
 		
 		item = env->getConfigItem(ConfigOpts::HTTP_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION);
-		m_options.useLocalAuthentication = !item.equalsIgnoreCase("false");
-		if (m_options.useLocalAuthentication)
+		m_options.allowLocalAuthentication = !item.equalsIgnoreCase("false");
+		if (m_options.allowLocalAuthentication)
 		{
 			m_localAuthentication = Reference<LocalAuthentication>(
 				new LocalAuthentication());
