@@ -246,10 +246,9 @@ public:
 	/**
 	 * Set the value of a qaulifier on this property.
 	 * @param qual	An OW_CIMQualifier to use to update the property qualifier.
-	 * @return An OW_CIMQualifier that represent the value of the
-	 * property after it is set.
+	 * @return a reference to *this
 	 */
-	OW_CIMQualifier setQualifier(const OW_CIMQualifier& qual);
+	OW_CIMProperty& setQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Add a qualifier to this property.

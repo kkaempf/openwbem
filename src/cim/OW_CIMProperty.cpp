@@ -329,28 +329,23 @@ OW_CIMProperty::getQualifier(const OW_String& name) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier
+OW_CIMProperty&
 OW_CIMProperty::setQualifier(const OW_CIMQualifier& qual)
 {
-	if(!qual)
-		return qual;
-
-	size_t tsize = m_pdata->m_qualifiers.size();
-	for(size_t i = 0; i < tsize; i++)
+	if(qual)
 	{
-		OW_CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if(nq.getName().equalsIgnoreCase(qual.getName()))
+		OW_String qualName = qual.getName();
+		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			m_pdata->m_qualifiers[i] = qual;
-			return qual;
+			if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
+			{
+				m_pdata->m_qualifiers[i] = qual;
+				return *this;
+			}
 		}
+		m_pdata->m_qualifiers.append(qual);
 	}
-
-	OW_String msg("Qualifier ");
-	msg += qual.getName();
-	msg += " not found";
-
-	OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, msg.c_str());
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
