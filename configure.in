@@ -235,7 +235,7 @@ case "$host" in
 	PLAT_CFLAGS="+Z -mt -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1"
 	PLAT_CXXFLAGS="-AA +Z -mt +p -D_XOPEN_SOURCE -D_XOPEN_SOURCE_EXTENDED=1 -D__HPACC_THREAD_SAFE_RB_TREE"
 	CPPFLAGS="-AA $CPPFLAGS" # need this so the configure tests work right.
-	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+b${libdir}:/usr/lib -Wl,+s"
+	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+b${libdir}:/usr/lib -Wl,+s -z"
 	CXXBINLINKFLAGS="$LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS="-b -Wl,+h,\$@.\$(LIBRARY_BINARY_VERSION)"
 	PLAT_OPTFLAGS="+O2"
@@ -372,7 +372,7 @@ OW_CHECK_COMPILER_FLAG(fno-enforce-eh-specs,
 	# -fno-enforce-eh-specs, because it will build and link if the flag
 	# is givien, but it emits an anoying and useless warning. This
 	# kludge eliminates that warning.
-	if  test $CC!="aCC"  ; then 
+	if test "x$CXX" != "xaCC"; then 
 		CXXFLAGS="-fno-enforce-eh-specs $CXXFLAGS"
 	fi
 ])
