@@ -47,9 +47,19 @@
 OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
 	: OW_Thread(true) // true means this thread will be joinable
 	, m_shuttingDown(false)
-	, m_threadCount(new OW_ThreadCounter(256)) // TODO: Make this maximum configurable
 	, m_env(env)
 {
+	OW_Int32 maxThreads;
+	try
+	{
+		maxThreads = env->getConfigItem(OW_ConfigOpts::POLLING_MANAGER_MAX_THREADS, OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
+	}
+	catch (const OW_StringConversionException&)
+	{
+		maxThreads = OW_String(OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
+	}
+	
+	m_threadCount = new OW_ThreadCounter(maxThreads);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -148,6 +148,13 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.check_referential_integrity = false
 
 ################################################################################
+# owcimomd.polling_manager_max_threads specifies the maximum number of 
+# concurrent threads that will be allowed to run by the polling manager.
+# This should only be a concern if the cimom has a lot of polled providers.
+# The default is 256
+;owcimomd.polling_manager_max_threads = 256
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option
