@@ -147,6 +147,13 @@ bool operator!=(const CIMName& x, const CIMName& y)
 	return !(x == y);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+std::ostream& operator<<(std::ostream& ostr, const CIMName& name)
+{
+	ostr << name.toString();
+	return ostr;
+}
+
 } // end namespace OpenWBEM
 
 

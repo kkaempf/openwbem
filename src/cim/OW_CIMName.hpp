@@ -38,6 +38,8 @@
 #include "OW_SerializableIFC.hpp"
 #include "OW_String.hpp"
 
+#include <iosfwd>
+
 namespace OpenWBEM
 {
 
@@ -111,6 +113,8 @@ bool operator<=(const CIMName& x, const CIMName& y);
 bool operator>(const CIMName& x, const CIMName& y);
 bool operator>=(const CIMName& x, const CIMName& y);
 bool operator!=(const CIMName& x, const CIMName& y);
+
+OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMName& name);
 
 } // end namespace OpenWBEM
 
