@@ -1424,7 +1424,7 @@ OW_CIMServer::createInstance(
 		lci.syncWithClass(theClass, false);
 
 		m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
-			"instance = %2", ns, lci.toString()));
+			"instance = %2", ns, lci.toMOF()));
 
 		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
 		if (instancep)
@@ -1482,8 +1482,8 @@ OW_CIMServer::createInstance(
 				}
 			}
 
-			m_iStore.createInstance(ns, theClass, lci);
 			_validatePropagatedKeys(ns, lci, theClass);
+			m_iStore.createInstance(ns, theClass, lci);
 		}
 
 		if(theClass.isAssociation())
@@ -3075,6 +3075,7 @@ void
 OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 	const OW_CIMInstance& ci, const OW_CIMClass& theClass)
 {
+	// TODO: Fix this method. It can't correctly handle a propagated key that has a different name.
 	OW_CIMObjectPathArray rv;
 	OW_CIMPropertyArray kprops = theClass.getKeys();
 	if(kprops.size() == 0)
@@ -3108,6 +3109,11 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 		if(cls.empty())
 		{
 			continue;
+		}
+		int idx = cls.indexOf('.');
+		if (idx != -1)
+		{
+			cls = cls.substring(0,idx);
 		}
 
 		OW_CIMProperty cp = ci.getProperty(kprops[i].getName());
@@ -3148,11 +3154,6 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 	{
 		OW_CIMClass cc;
 		OW_String clsname = it->first;
-		int idx = clsname.indexOf('.');
-		if (idx != -1)
-		{
-			clsname = clsname.substring(0,idx);
-		}
 		
 		op.setObjectName(clsname);
 		op.setKeys(it->second);

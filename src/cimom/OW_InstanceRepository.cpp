@@ -485,7 +485,16 @@ OW_InstanceRepository::instanceExists(const OW_String& ns,
 {
 	throwIfNotOpen();
 	OW_Bool cc = false;
-	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
+	OW_String instanceKey;
+	try
+	{
+		 instanceKey = makeInstanceKey(ns, cop, theClass);
+	}
+	catch (const OW_CIMException&)
+	{
+		return false;
+	}
+
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)
