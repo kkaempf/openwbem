@@ -356,7 +356,6 @@ int main(int argc, char** argv)
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository);
 #endif
 			cimRepository->init(mofCompEnvironment);
-			cimRepository->open(g_repositoryDir);
 			context = Reference<OperationContext>(new OperationContext);
 			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
 		}
