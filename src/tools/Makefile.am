@@ -50,7 +50,7 @@ $(BINLINKAPPENDFLAGS)
 
 owdigestgenpass_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owdigestgenpass
+-o owdigestgenpass$(EXEEXT)
 
 ### owexecwql
 owexecwql_SOURCES = owexecwql.cpp
@@ -66,7 +66,7 @@ $(BINLINKAPPENDFLAGS)
 
 owexecwql_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owexecwql
+-o owexecwql$(EXEEXT)
 
 ### owcreatenamespace
 owcreatenamespace_SOURCES = owcreatenamespace.cpp
@@ -82,7 +82,7 @@ $(BINLINKAPPENDFLAGS)
 
 owcreatenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owcreatenamespace
+-o owcreatenamespace$(EXEEXT)
 
 ### owdeletenamespace
 owdeletenamespace_SOURCES = owdeletenamespace.cpp
@@ -98,7 +98,7 @@ $(BINLINKAPPENDFLAGS)
 
 owdeletenamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owdeletenamespace
+-o owdeletenamespace$(EXEEXT)
 
 ### owenumnamespace
 owenumnamespace_SOURCES = owenumnamespace.cpp
@@ -114,7 +114,7 @@ $(BINLINKAPPENDFLAGS)
 
 owenumnamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owenumnamespace
+-o owenumnamespace$(EXEEXT)
 
 ### owenumqualifiers
 owenumqualifiers_SOURCES = owenumqualifiers.cpp
@@ -130,7 +130,7 @@ $(BINLINKAPPENDFLAGS)
 
 owenumqualifiers_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owenumqualifiers
+-o owenumqualifiers$(EXEEXT)
 
 ### owenumclassnames
 owenumclassnames_SOURCES = owenumclassnames.cpp
@@ -146,7 +146,7 @@ $(BINLINKAPPENDFLAGS)
 
 owenumclassnames_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owenumclassnames
+-o owenumclassnames$(EXEEXT)
 
 ### owenumclasses
 owenumclasses_SOURCES = owenumclasses.cpp
@@ -162,7 +162,7 @@ $(BINLINKAPPENDFLAGS)
 
 owenumclasses_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owenumclasses
+-o owenumclasses$(EXEEXT)
 
 ### owcimindicationlistener
 owcimindicationlistener_SOURCES = owcimindicationlistener.cpp
@@ -180,7 +180,7 @@ $(BINLINKAPPENDFLAGS)
 
 owcimindicationlistener_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owcimindicationlistener
+-o owcimindicationlistener$(EXEEXT)
 
 ### owrepositorydump
 owrepositorydump_SOURCES = owrepositorydump.cpp
@@ -193,7 +193,7 @@ $(BINLINKAPPENDFLAGS)
 
 owrepositorydump_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owrepositorydump
+-o owrepositorydump$(EXEEXT)
 
 
 

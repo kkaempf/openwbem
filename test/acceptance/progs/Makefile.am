@@ -57,14 +57,14 @@ $(BINLINKAPPENDFLAGS)
 
 owprovideragent_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owprovideragent
+-o owprovideragent$(EXEEXT)
 
 
 
 #CIMOMLocator
 CIMOMLocator_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o CIMOMLocator
+-o CIMOMLocator$(EXEEXT)
 
 CIMOMLocator_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
@@ -81,7 +81,7 @@ CIMOMLocator.cpp
 #cimlistener
 cimlistener_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o cimlistener
+-o cimlistener$(EXEEXT)
 
 cimlistener_LDADD = \
 -L$(top_builddir)/src/client -lowclient \
@@ -111,7 +111,7 @@ $(BINLINKAPPENDFLAGS)
 
 wqlTest1_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o wqlTest1
+-o wqlTest1$(EXEEXT)
 
 wqlTest1_SOURCES = \
 wqlTest1.cpp
@@ -126,7 +126,7 @@ $(BINLINKAPPENDFLAGS)
 
 wqlTest2_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o wqlTest2
+-o wqlTest2$(EXEEXT)
 
 wqlTest2_SOURCES = \
 wqlTest2.cpp
@@ -143,7 +143,7 @@ $(BINLINKAPPENDFLAGS)
 
 aclTest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o aclTest
+-o aclTest$(EXEEXT)
 
 aclTest_SOURCES = \
 aclTest.cpp
@@ -161,7 +161,7 @@ $(BINLINKAPPENDFLAGS)
 infiniteClient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 $(SSL_LIBS) \
--o infiniteClient
+-o infiniteClient$(EXEEXT)
 
 infiniteClient_SOURCES = \
 InfiniteClient.cpp
@@ -180,7 +180,7 @@ $(BINLINKAPPENDFLAGS)
 owcimclientcl_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 $(SSL_LIBS) \
--o owcimclientcl
+-o owcimclientcl$(EXEEXT)
 
 owcimclientcl_SOURCES = \
 OW_CIMClientCL.cpp
@@ -198,7 +198,7 @@ $(BINLINKAPPENDFLAGS)
 testinstprov_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 $(SSL_LIBS) \
--o testinstprov
+-o testinstprov$(EXEEXT)
 
 testinstprov_SOURCES = \
 OW_InstProvTest.cpp
@@ -216,7 +216,7 @@ $(BINLINKAPPENDFLAGS)
 fakeclient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 $(SSL_LIBS) \
--o fakeclient
+-o fakeclient$(EXEEXT)
 
 fakeclient_SOURCES = \
 fakeClient.cpp
@@ -233,7 +233,7 @@ $(BINLINKAPPENDFLAGS)
 
 testCIMExceptions_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o testCIMExceptions
+-o testCIMExceptions$(EXEEXT)
 
 testCIMExceptions_SOURCES = \
 testCIMExceptions.cpp
@@ -250,7 +250,7 @@ $(BINLINKAPPENDFLAGS)
 
 testNamespaces_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o testNamespaces
+-o testNamespaces$(EXEEXT)
 
 testNamespaces_SOURCES = \
 testNamespaces.cpp
@@ -267,7 +267,7 @@ $(BINLINKAPPENDFLAGS)
 
 testMisc_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o testMisc
+-o testMisc$(EXEEXT)
 
 testMisc_SOURCES = \
 testMisc.cpp
@@ -284,7 +284,7 @@ $(BINLINKAPPENDFLAGS)
 
 hammerClient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o hammerClient
+-o hammerClient$(EXEEXT)
 
 hammerClient_SOURCES = \
 hammerClient.cpp
@@ -301,7 +301,7 @@ $(BINLINKAPPENDFLAGS)
 
 testSecondaryInstanceProviders_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o testSecondaryInstanceProviders
+-o testSecondaryInstanceProviders$(EXEEXT)
 
 testSecondaryInstanceProviders_SOURCES = \
 testSecondaryInstanceProviders.cpp
@@ -318,7 +318,7 @@ $(BINLINKAPPENDFLAGS)
 
 testLargeRequest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o testLargeRequest
+-o testLargeRequest$(EXEEXT)
 
 testLargeRequest_SOURCES = \
 testLargeRequest.cpp

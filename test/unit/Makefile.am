@@ -9,7 +9,7 @@ $(BINLINKAPPENDFLAGS)
 
 MemTracerTest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o MemTracerTest
+-o MemTracerTest$(EXEEXT)
 
 MemTracerTest_SOURCES = \
 MemTracerTest.cpp
@@ -57,7 +57,7 @@ $(BINLINKAPPENDFLAGS)
 
 unitMain_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o unitMain
+-o unitMain$(EXEEXT)
 
 check_SCRIPTS = run_make_check.sh
 EXTRA_DIST = $(check_SCRIPTS)

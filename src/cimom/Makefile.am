@@ -8,7 +8,7 @@ cimombindir = $(sbindir)
 
 owcimomd_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owcimomd
+-o owcimomd$(EXEEXT)
 
 owcimomd_LDADD = \
 -L$(top_builddir)/src/cimom/common -lowcimomcommon \

@@ -19,7 +19,7 @@ OW_MOFCompCIMOMHandle.hpp
 
 owmofc_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
--o owmofc 
+-o owmofc$(EXEEXT) 
 
 owmofc_LDADD = \
 -L$(top_builddir)/src/mof -lowmofc \
