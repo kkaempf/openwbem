@@ -50,6 +50,9 @@ namespace OpenWBEM
 
 OW_DEFINE_EXCEPTION(UnknownHost);
 OW_DEFINE_EXCEPTION(SocketAddress);
+
+const char* const SocketAddress::ALL_LOCAL_ADDRESSES = "0.0.0.0";
+
 //static
 SocketAddress
 SocketAddress::getUDS(const String& filename)
@@ -158,6 +161,23 @@ const SocketAddress_t* SocketAddress::getNativeForm() const
 	}
 	else return 0;
 }
+
+const InetSocketAddress_t* SocketAddress::getInetAddress() const
+{
+	return &m_inetNativeAddress;
+}
+
+#if !defined(OW_WIN32)
+/**
+ * Get a pointer to the UnixSocketAddress_t
+ * precondition: getType() == UDS
+ */
+const UnixSocketAddress_t* SocketAddress::getUnixAddress() const
+{
+	return &m_UDSNativeAddress;
+}
+#endif
+
 SocketAddress
 SocketAddress::getAnyLocalHost(UInt16 port)
 {

@@ -286,7 +286,6 @@ HTTPServer::startService()
 	ServiceEnvironmentIFCRef env = m_options.env;
 	LoggerRef lgr = env->getLogger();
 	lgr->logDebug("HTTP Service is starting...");
-	bool gothttp = false, gothttps = false, gotuds = false;
 	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");
@@ -304,111 +303,117 @@ HTTPServer::startService()
 			SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
 				false, this, true));
 			env->addSelectable(m_pUDSServerSocket, cb);
-			gotuds = true;
 		}
 		catch (SocketException& e)
 		{
 			lgr->logError(format("HTTP Server failed to listen on UDS: %1", e));
+			throw;
 		}
 	}
-	if (m_options.httpPort >= 0)
+	String listenAddressesOpt = env->getConfigItem(ConfigOpts::LISTEN_ADDRESSES_opt, OW_DEFAULT_LISTEN_ADDRESSES);
+	StringArray listenAddresses = listenAddressesOpt.tokenize(" ");
+	if (listenAddresses.empty())
 	{
-		try
-		{
-			UInt16 lport = static_cast<UInt16>(m_options.httpPort);
-			m_pHttpServerSocket = new ServerSocket;
-			m_pHttpServerSocket->doListen(lport,
-				SocketFlags::E_NOT_SSL, 1000,
-				SocketFlags::E_ALL_INTERFACES,
-				m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
-			m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
-			lgr->logInfo(format("HTTP server listening on port: %1",
-			   m_options.httpPort));
-			String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
-				+ ":" + String(m_options.httpPort) + "/cimom";
-			addURL(URL(theURL));
-			
-			SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
-				false, this, false));
-			env->addSelectable(m_pHttpServerSocket, cb);
-			gothttp = true;
-		}
-		catch (SocketException& e)
-		{
-			lgr->logError(format("HTTP Server failed to listen on TCP port: %1.  Msg: %2", m_options.httpPort, e));
-		}
+		OW_THROW(HTTPServerException, "http_server.listen_addresses config item malformed");
 	}
-	if (m_options.httpsPort >= 0)
+	for (size_t i = 0; i < listenAddresses.size(); ++i)
 	{
-#ifdef OW_NO_SSL
-            if (m_options.httpPort < 0 && !m_options.useUDS)
-            {
-                    OW_THROW(SocketException, "No ports to listen on.  "
-                            "SSL unavailable (OpenWBEM not built with SSL support) "
-                            "and no http port defined.");
-            }
-            else
-            {
-                lgr->logError(format("Unable to listen on port %1.  "
-                        "OpenWBEM not built with SSL support.", m_options.httpsPort));
-            }
-#else
-		try
-		{
-			String keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
-			SSLCtxMgr::initServer(keyfile);
-		}
-		catch (SSLException& e)
-		{
-			lgr->logError(format("HTTP Service: Error initializing SSL: %1",
-				e.getMessage()));
-		}
-		
-		UInt16 lport = static_cast<UInt16>(m_options.httpsPort);
-		if (SSLCtxMgr::isServer())
+		const String& curAddress = listenAddresses[i];
+		if (m_options.httpPort >= 0)
 		{
 			try
 			{
-				m_pHttpsServerSocket = new ServerSocket;
-				m_pHttpsServerSocket->doListen(lport,
-				SocketFlags::E_SSL, 1000,
-				SocketFlags::E_ALL_INTERFACES,
-				m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
-				m_options.httpsPort =
-				   m_pHttpsServerSocket->getLocalAddress().getPort();
-				lgr->logInfo(format("HTTPS server listening on port: %1",
-				   m_options.httpsPort));
-				String theURL = "https://" +
-					SocketAddress::getAnyLocalHost().getName() + ":" +
-					String(m_options.httpsPort) + "/cimom";
+				UInt16 lport = static_cast<UInt16>(m_options.httpPort);
+				m_pHttpServerSocket = new ServerSocket;
+				m_pHttpServerSocket->doListen(lport,
+					SocketFlags::E_NOT_SSL, 1000,
+					curAddress,
+					m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
+				m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
+				lgr->logInfo(format("HTTP server listening on: %1:%2",
+				   curAddress, m_options.httpPort));
+				String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
+					+ ":" + String(m_options.httpPort) + "/cimom";
 				addURL(URL(theURL));
+
 				SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
-					true, this, false));
-				env->addSelectable(m_pHttpsServerSocket, cb);
-				gothttps = true;
+					false, this, false));
+				env->addSelectable(m_pHttpServerSocket, cb);
 			}
 			catch (SocketException& e)
 			{
-				lgr->logError(format("HTTP Server failed to listen on TCP port: %1.  Msg: %2", m_options.httpPort, e));
+				lgr->logError(format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
+				throw;
 			}
 		}
-		else
-#endif // #ifndef OW_NO_SSL
+		if (m_options.httpsPort >= 0)
 		{
+#ifdef OW_NO_SSL
 			if (m_options.httpPort < 0 && !m_options.useUDS)
 			{
 				OW_THROW(SocketException, "No ports to listen on.  "
-					"SSL unavailable (SSL not initialized in server mode) "
-					"and no http port defined.");
+						"SSL unavailable (OpenWBEM not built with SSL support) "
+						"and no http port defined.");
 			}
-			lgr->logError(format("Unable to listen on port %1.  "
-				"SSL not initialized in server mode.", m_options.httpsPort));
-		}
-	} // if (m_httpsPort > 0)
-	if (!gotuds && !gothttp && !gothttps)
-	{
-		lgr->logFatalError("HTTP Server failed to start any services");
-		OW_THROW(SocketException, "HTTP Server failed to start any services");
+			else
+			{
+				lgr->logError(format("Unable to listen on %1:%2.  "
+						"OpenWBEM not built with SSL support.", curAddress, m_options.httpsPort));
+			}
+#else
+			try
+			{
+				String keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
+				SSLCtxMgr::initServer(keyfile);
+			}
+			catch (SSLException& e)
+			{
+				lgr->logError(format("HTTP Service: Error initializing SSL: %1",
+					e.getMessage()));
+				throw;
+			}
+
+			UInt16 lport = static_cast<UInt16>(m_options.httpsPort);
+			if (SSLCtxMgr::isServer())
+			{
+				try
+				{
+					m_pHttpsServerSocket = new ServerSocket;
+					m_pHttpsServerSocket->doListen(lport,
+						SocketFlags::E_SSL, 1000,
+						curAddress,
+						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
+					m_options.httpsPort =
+					   m_pHttpsServerSocket->getLocalAddress().getPort();
+					lgr->logInfo(format("HTTPS server listening on: %1:%2",
+					   curAddress, m_options.httpsPort));
+					String theURL = "https://" +
+						SocketAddress::getAnyLocalHost().getName() + ":" +
+						String(m_options.httpsPort) + "/cimom";
+					addURL(URL(theURL));
+					SelectableCallbackIFCRef cb(new HTTPServerSelectableCallback(
+						true, this, false));
+					env->addSelectable(m_pHttpsServerSocket, cb);
+				}
+				catch (SocketException& e)
+				{
+					lgr->logError(format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
+					throw;
+				}
+			}
+			else
+#endif // #ifndef OW_NO_SSL
+			{
+				if (m_options.httpPort < 0 && !m_options.useUDS)
+				{
+					OW_THROW(SocketException, "No ports to listen on.  "
+						"SSL unavailable (SSL not initialized in server mode) "
+						"and no http port defined.");
+				}
+				lgr->logError(format("Unable to listen on: %1:%2.  "
+					"SSL not initialized in server mode.", curAddress, m_options.httpsPort));
+			}
+		} // if (m_httpsPort > 0)
 	}
 	lgr->logDebug("HTTP Service has started");
 }

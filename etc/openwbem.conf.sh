@@ -14,13 +14,11 @@
 ###############################################################################
 
 ################################################################################
-# 2.0
 # owcimomd.services_path Specifies the directory where all services
 # will be loaded by the CIMOM
 owcimomd.services_path = @libdir@/openwbem/services
 
 ################################################################################
-# 2.0
 # owcimomd.request_handler_path Specifies the location where all request
 # handlers will be loaded by the CIMOM
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
@@ -100,13 +98,11 @@ owcimomd.wql_lib = @libdir@/libowwql.so
 ;owcimomd.debugflag = false
 
 ################################################################################
-# 2.0
 # the authentication module to be used by owcimomd.  This should be a
 # an absolute path to the shared library containing the authentication module.
 owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.so
 
 ################################################################################
-# 2.0
 # the maximum number of classes that will be cached by the cimom.
 # The default is 128
 ;owcimomd.max_class_cache_size = 128
@@ -227,13 +223,11 @@ perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 ;http_server.enable_deflate = true
 
 ################################################################################
-# 2.0
-# http_server.disable.slp - If set to "true" and the HTTP service has been
-# configured to do slp registration, the slp registration will never take place.
-# If the HTTP service was not configured with slp registration, this config
-# item it ignored.
-# The default is false
-;http_server.disable.slp = false
+# http_server.listen_addresses option specifies the local addresses to listen
+# on.  The option is a space delimited list.  Each item is either a hostname
+# or an IP address.  The value 0.0.0.0 means to listen on all local addresses,
+# and is the default.
+;http_server.listen_addresses = 0.0.0.0
 
 ################################################################################
 # http_server.http_port option specifies the port number owcimomd will listen

@@ -75,10 +75,10 @@ public:
 	 * @throws SocketException
 	 */
 	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10,
-			SocketFlags::EAllInterfacesFlag allInterfaces = SocketFlags::E_NOT_ALL_INTERFACES, 
+			const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
 			SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR)
 	{
-		m_impl->doListen(port, isSSL, queueSize, allInterfaces, reuseAddr);
+		m_impl->doListen(port, isSSL, queueSize, listenAddr, reuseAddr);
 	}
 	/**
 	 * Start listening on a Unix Domain Socket

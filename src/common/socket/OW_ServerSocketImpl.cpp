@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_ServerSocketImpl.hpp"
-#include "OW_NwIface.hpp"
 #include "OW_Format.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_FileSystem.hpp"
@@ -85,7 +84,7 @@ ServerSocketImpl::getSelectObj() const
 //////////////////////////////////////////////////////////////////////////////
 void
 ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
-	int queueSize, SocketFlags::EAllInterfacesFlag allInterfaces, 
+	int queueSize, const String& listenAddr, 
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
@@ -124,14 +123,14 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 		
 	InetSocketAddress_t inetAddr;
 	inetAddr.sin_family = AF_INET;
-	if(allInterfaces)
+	if(listenAddr == SocketAddress::ALL_LOCAL_ADDRESSES)
 	{
 		inetAddr.sin_addr.s_addr = hton32(INADDR_ANY);
 	}
 	else
 	{
-		NwIface ifc;
-		inetAddr.sin_addr.s_addr = ifc.getIPAddress();
+		SocketAddress addr = SocketAddress::getByName(listenAddr);
+		inetAddr.sin_addr.s_addr = addr.getInetAddress()->sin_addr.s_addr;
 	}
 	inetAddr.sin_port = hton16(port);
 	if(bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)

@@ -44,6 +44,8 @@ OW_DECLARE_EXCEPTION(SocketAddress);
 class SocketAddress
 {
 public:
+	static const char* const ALL_LOCAL_ADDRESSES;
+
 	enum AddressType
 	{
 		UNSET,
@@ -104,6 +106,21 @@ public:
 	const String getAddress() const;
 	const SocketAddress_t* getNativeForm() const;
 	size_t getNativeFormSize() const;
+
+	/**
+	 * Get a pointer to the InetSocketAddress_t
+	 * precondition: getType() == INET
+	 */
+	const InetSocketAddress_t* getInetAddress() const;
+
+#if !defined(OW_WIN32)
+	/**
+	 * Get a pointer to the UnixSocketAddress_t
+	 * precondition: getType() == UDS
+	 */
+	const UnixSocketAddress_t* getUnixAddress() const;
+#endif
+
 	/**
 	 * Returns the IP address and the port with a colon in between.
 	 *

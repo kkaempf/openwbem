@@ -60,7 +60,7 @@ public:
 	SocketAddress getLocalAddress() { return m_localAddress; }
 	SocketHandle_t getfd() const { return m_sockfd; }
 	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10, 
-		SocketFlags::EAllInterfacesFlag allInterfaces = SocketFlags::E_NOT_ALL_INTERFACES, 
+		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
 		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr = true);

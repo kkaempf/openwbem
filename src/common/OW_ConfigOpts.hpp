@@ -134,6 +134,9 @@
 #ifndef OW_DEFAULT_RESTART_ON_ERROR
 #define OW_DEFAULT_RESTART_ON_ERROR "true"
 #endif
+#ifndef OW_DEFAULT_LISTEN_ADDRESSES
+#define OW_DEFAULT_LISTEN_ADDRESSES "0.0.0.0"
+#endif
 
 
 namespace OpenWBEM
@@ -164,7 +167,6 @@ namespace ConfigOpts
 	// 2.0 additions
 	static const char* const CIMOM_SERVICES_LOCATION_opt = "owcimomd.services_path";
 	static const char* const CIMOM_REQUEST_HANDLER_LOCATION_opt = "owcimomd.request_handler_path";
-	static const char* const HTTP_SLP_DISABLED_opt = "http_server.disable.slp";
 	static const char* const USE_UDS_opt = "http_server.use_UDS";
 	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
 	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
@@ -192,6 +194,7 @@ namespace ConfigOpts
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
 	static const char* const RESTART_ON_ERROR_opt = "owcimomd.restart_on_error";
 	static const char* const AUTHORIZATION_LIB_opt = "owcimomd.authorization_lib";
+    static const char* const LISTEN_ADDRESSES_opt = "http_server.listen_addresses";
 
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
