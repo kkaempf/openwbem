@@ -166,6 +166,7 @@ WaitForLogResults()
 
   echo "Waiting up to $MAX_WAIT seconds for \"$TEXT\"".
 
+  sleep 1
   let WAIT_LEFT=$MAX_WAIT
   while [ $WAIT_LEFT -gt 0 ]
   do
