@@ -32,8 +32,8 @@
  * @author Jon Carey
  */
 
-#ifndef OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
-#define OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
+#ifndef OW_SIMPLE_AUTHORIZER2_HPP_INCLUDE_GUARD_
+#define OW_SIMPLE_AUTHORIZER2_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Authorizer2IFC.hpp"
 
@@ -41,17 +41,17 @@ namespace OpenWBEM
 {
 
 // This class is responsible for Access control.
-class SimpleAuthorizer : public Authorizer2IFC
+class SimpleAuthorizer2 : public Authorizer2IFC
 {
 public:
 	/**
 	 * Create a new SimpleAuthorization object.
 	 */
-	SimpleAuthorizer();
+	SimpleAuthorizer2();
 	/**
 	 * Destroy this SimpleAuthorization object.
 	 */
-	virtual ~SimpleAuthorizer();
+	virtual ~SimpleAuthorizer2();
 
 	/**
 	 * Determine if a read of the given instance is allowed. The given

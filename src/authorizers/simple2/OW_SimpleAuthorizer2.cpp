@@ -64,18 +64,18 @@ const String ACCESS_READWRITE("rw");
 }
 	
 //////////////////////////////////////////////////////////////////////////////
-SimpleAuthorizer::SimpleAuthorizer()
+SimpleAuthorizer2::SimpleAuthorizer2()
 	: Authorizer2IFC()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-SimpleAuthorizer::~SimpleAuthorizer()
+SimpleAuthorizer2::~SimpleAuthorizer2()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
+SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	const ServiceEnvironmentIFCRef& env, OperationContext& context)
 {
 	OW_ASSERT(opType == ACCESS_READ || opType == ACCESS_WRITE
@@ -254,7 +254,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowReadInstance(
+SimpleAuthorizer2::doAllowReadInstance(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	const String& className,
@@ -267,7 +267,7 @@ SimpleAuthorizer::doAllowReadInstance(
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowWriteInstance(
+SimpleAuthorizer2::doAllowWriteInstance(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns, 
 	const CIMObjectPath& instanceName, 
@@ -280,7 +280,7 @@ SimpleAuthorizer::doAllowWriteInstance(
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowReadSchema(
+SimpleAuthorizer2::doAllowReadSchema(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	OperationContext& context)
@@ -290,7 +290,7 @@ SimpleAuthorizer::doAllowReadSchema(
 #if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowWriteSchema(
+SimpleAuthorizer2::doAllowWriteSchema(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns, 
 	Authorizer2IFC::EWriteFlag flag,
@@ -301,7 +301,7 @@ SimpleAuthorizer::doAllowWriteSchema(
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowAccessToNameSpace(
+SimpleAuthorizer2::doAllowAccessToNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
 	Authorizer2IFC::EAccessType accessType,
@@ -326,7 +326,7 @@ SimpleAuthorizer::doAllowAccessToNameSpace(
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowCreateNameSpace(
+SimpleAuthorizer2::doAllowCreateNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns_,
 	OperationContext& context)
@@ -336,7 +336,7 @@ SimpleAuthorizer::doAllowCreateNameSpace(
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowDeleteNameSpace(
+SimpleAuthorizer2::doAllowDeleteNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns_,
 	OperationContext& context)
@@ -347,7 +347,7 @@ SimpleAuthorizer::doAllowDeleteNameSpace(
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowEnumNameSpace(
+SimpleAuthorizer2::doAllowEnumNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	OperationContext& context)
 {
@@ -355,7 +355,7 @@ SimpleAuthorizer::doAllowEnumNameSpace(
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
-SimpleAuthorizer::doAllowMethodInvocation(
+SimpleAuthorizer2::doAllowMethodInvocation(
 	const ServiceEnvironmentIFCRef& env, 
 	const String& ns, 
 	const CIMObjectPath path, 
@@ -368,4 +368,4 @@ SimpleAuthorizer::doAllowMethodInvocation(
 } // end namespace OpenWBEM
 
 
-OW_AUTHORIZER2_FACTORY(OpenWBEM::SimpleAuthorizer, simple);
+OW_AUTHORIZER2_FACTORY(OpenWBEM::SimpleAuthorizer2, simple);
