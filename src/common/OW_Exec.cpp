@@ -43,6 +43,7 @@
 #include "OW_Select.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_DateTime.hpp"
 
 extern "C"
 {
@@ -55,7 +56,9 @@ extern "C"
 #include <stdio.h> // for perror
 #include <signal.h>
 }
+
 #include <iostream>	// for cerr
+
 
 namespace OpenWBEM
 {
@@ -520,7 +523,12 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 	bool outIsOpen = true;
 	bool errIsOpen = true;
 	bool got_child_return_code = false;
-	int cumulative_timeout = 0;
+
+	DateTime curTime;
+	curTime.setToCurrent();
+	DateTime timeoutEnd(curTime);
+	timeoutEnd += timeoutsecs;
+
 	while (outIsOpen || errIsOpen)
 	{
 		SelectTypeArray fdset;
@@ -572,8 +580,8 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 				}
 				else
 				{
-					++cumulative_timeout;
-					if (timeoutsecs >= 0 && cumulative_timeout >= (timeoutsecs * 10))
+					curTime.setToCurrent();
+					if (timeoutsecs >= 0 && curTime > timeoutEnd)
 					{
 						OW_THROW(ExecTimeoutException, "Exec::gatherOutput: timedout");
 					}
@@ -582,7 +590,10 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 			break;
 			default:
 			{
-				cumulative_timeout = 0;
+				curTime.setToCurrent();
+				timeoutEnd = curTime;
+				timeoutEnd += timeoutsecs;
+
 				UnnamedPipeRef readstream;
 				// if both have output, we'll get error first.
 				if (streams.err()->getSelectObj() == fdset[selectrval])
