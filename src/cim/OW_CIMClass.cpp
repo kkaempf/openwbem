@@ -470,6 +470,13 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 			m_pdata->m_associationFlag = true;
 		}
 	}
+
+    // TODO: Verify that the qualifier has class scope
+    //if (!qual.getDefaults().hasScope(OW_CIMScope::CLASS))
+    //{
+    //    OW_THROW
+    //}
+
 	m_pdata->m_qualifiers.append(qual);
 }
 

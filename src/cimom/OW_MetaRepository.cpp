@@ -795,6 +795,37 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 				{
 					propArray[i].setPropagated(true);
 				}
+
+                // now make sure any qualifiers are properly set
+                OW_CIMQualifierArray parentQuals = parentProp.getQualifiers();
+                for (size_t j = 0; j < parentQuals.size(); ++j)
+                {
+                    OW_CIMQualifier& qual = parentQuals[j];
+                    // If the qualifier has DisableOverride flavor, the 
+                    // subclass can't change it.  (e.g. Key). It gets the
+                    // parent qualifier.
+                    if (qual.hasFlavor(OW_CIMFlavor::DISABLEOVERRIDE))
+                    {
+                        if (!propArray[i].getQualifier(qual.getName()))
+                        {
+                            propArray[i].addQualifier(qual);
+                        }
+                        else
+                        {
+                            propArray[i].setQualifier(qual);
+                        }
+                    }
+                    // If the qualifier has ToSubclass (not Restricted), then
+                    // only propagate it down if it's not overridden in the
+                    // subclass.
+                    else if (!qual.hasFlavor(OW_CIMFlavor::RESTRICTED))
+                    {
+                        if (!propArray[i].getQualifier(qual.getName()))
+                        {
+                            propArray[i].addQualifier(qual);
+                        }
+                    }
+                }
 			}
 			else
 			{
