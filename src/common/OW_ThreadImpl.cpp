@@ -95,12 +95,13 @@ sleep(UInt32 milliSeconds)
 #else
 	timeval now, end;
 	unsigned long microSeconds = milliSeconds * 1000;
+	const UInt32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
 	gettimeofday(&now, NULL);
 	end = now;
 	end.tv_sec  += microSeconds / 1000000;
 	end.tv_usec += microSeconds % 1000000;
 	while ((now.tv_sec < end.tv_sec)
-			 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec)))
+		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec)))
 	{
 		timeval tv;
 		tv.tv_sec = end.tv_sec - now.tv_sec;
@@ -112,6 +113,11 @@ sleep(UInt32 milliSeconds)
 		{
 			tv.tv_sec--;
 			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
+		}
+		if (tv.tv_sec > 0 || tv.tv_usec > loopMicroSeconds)
+		{
+			tv.tv_sec = 0;
+			tv.tv_used = loopMicroSeconds;
 		}
 		ThreadImpl::testCancel();
 		select(0, NULL, NULL, NULL, &tv);
