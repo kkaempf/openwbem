@@ -1,5 +1,6 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,21 +12,21 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Vintela, Inc., Novell, Inc., nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
-* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc., Novell, Inc., OR THE 
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
 /**
@@ -40,6 +41,7 @@
 #include "OW_String.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_EnvVars.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -141,11 +143,46 @@ namespace Exec
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
 	 *
+	 * @param envp an array of strings  of the form "key=value", which are passed
+	 *  as environment to the new program. envp must be terminated by a null 
+	 *  pointer. envp may be 0, in which case the current process's environment
+	 *  variables will be used.
+	 *
 	 * @return 127 if the execve() call for command[0]
 	 * fails,  -1 if there was another error and the return code
 	 * of the command otherwise.
 	 */
-	OW_COMMON_API int safeSystem(const Array<String>& command);
+	OW_COMMON_API int safeSystem(const Array<String>& command,
+		const char* const envp[] = 0);
+
+	/**
+	 * Execute a command.
+	 * The command will inherit stdin, stdout, and stderr from the parent
+	 * process.  This function will not search the path for command[0], so
+	 * the absolute path to the binary should be specified.  If the path needs
+	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
+	 * and then fill in the rest of the array with the command you wish to
+	 * execute.
+	 * This function blocks until the child process exits.  Be careful that
+	 * the command you run doesn't hang.  It is recommended to use
+	 * executeProcessAndGatherOutput() if the command is untrusted.
+	 *
+	 * @param command
+	 *  command[0] is the binary to be executed.
+	 *  command[1] .. command[n] are the command line parameters to the command.
+	 *
+	 * @param envVars An EnvVars object that contains the environment variables
+	 *	which will be pass as the environment to the new process. If envVars
+	 *	doesn't contain any environment variables, then the current process's
+	 *	environment variables will be used.
+	 *
+	 * @return 127 if the execve() call for command[0]
+	 * fails,  -1 if there was another error and the return code
+	 * of the command otherwise.
+	 */
+	OW_COMMON_API int safeSystem(const Array<String>& command,
+		const EnvVars& envVars);
+	
 	/**
 	 * Execute a command.
 	 * The command's stdin, stdout, and stderr will be connected via pipes to
@@ -176,6 +213,37 @@ namespace Exec
 	 *         ExecErrorException If command.size() == 0 or if fork() fails.
 	 */
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command, const char* const envp[] = 0);
+
+	/**
+	 * Execute a command.
+	 * The command's stdin, stdout, and stderr will be connected via pipes to
+	 * the parent process that can be accessed from the return value.
+	 * This function will not search the path for command[0], so
+	 * the absolute path to the binary should be specified.  If the path needs
+	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
+	 * and then fill in the rest of the array with the command you wish to
+	 * execute.
+	 * This function does *not* block until the child process exits.
+	 * If the binary specified in command[0] does not exist, execv() will fail,
+	 * and the return code of the sub-process will be 127. However, this is not
+	 * distinguishable from the command process returning 127.
+	 *
+	 * @param command
+	 *  command[0] is the binary to be executed.
+	 *  command[1] .. command[n] are the command line parameters to the command.
+	 * 
+	 * @param envVars An EnvVars object that contains the environment variables
+	 *	which will be pass as the environment to the new process. If envVars
+	 *	doesn't contain any environment variables, then the current process's
+	 *	environment variables will be used.
+	 *
+	 * @return A PopenStreams object which can be used to access the child
+	 *  process and/or get it's return value.
+	 *
+	 * @throws IOException If writing initialInput to the child process input fails.
+	 *         ExecErrorException If command.size() == 0 or if fork() fails.
+	 */
+	OW_COMMON_API PopenStreams safePopen(const Array<String>& command, const EnvVars& envVars);
 
 	/**
 	 * The use of initialInput is deprecated, because it's not safe to use it in a
@@ -382,6 +450,75 @@ namespace Exec
 	OW_COMMON_API void executeProcessAndGatherOutput(
 		const Array<String>& command,
 		String& output, int& processstatus,
+		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1, const String& input = String());
+
+	/**
+	 * Run a process, collect the output, and wait for it to exit.  The
+	 * function returns when the
+	 * process exits. In the case that the child process doesn't exit, if a
+	 * timout is specified, then an ExecTimeoutException is thrown.
+	 * If the process outputs more bytes than outputlimit, an
+	 * ExecBufferFullException is thrown.
+	 * This function will not search the path for command[0], so
+	 * the absolute path to the binary should be specified.  If the path needs
+	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
+	 * and then fill in the rest of the array with the command you wish to
+	 * execute. Exercise caution when doing this, as you may be creating a
+	 * security hole.
+	 * If the process does not terminate by itself, or if an exception is
+	 * thrown because a limit has been reached (time or output), then the
+	 * the following steps will be taken to attempt to terminate the child
+	 * process.
+	 * 1. The input and output pipes will be closed.  This may cause the
+	 *    child to get a SIGPIPE which may terminate it.
+	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM
+	 *    is sent.
+	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
+	 *    is sent.
+	 *
+	 * @param command
+	 *  command[0] is the binary to be executed.
+	 *  command[1] .. command[n] are the command line parameters to the command.
+	 *
+	 * @param output An out parameter, the process output will be appended to
+	 *  this string.
+	 *
+	 * @param streams The connection to the child process.
+	 *
+	 * @param processstatus An out parameter, which will contain the process
+	 *  status.  It is only valid if the funtion returns. In the case an
+	 *  exception is thrown, it's undefined. It should be evaluated using the
+	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
+	 *
+	 * @param envVars An EnvVars object that contains the environment variables
+	 *	which will be pass as the environment to the new process. If envVars
+	 *	doesn't contain any environment variables, then the current process's
+	 *	environment variables will be used.
+	 *
+	 * @param timeoutsecs Specifies the number of seconds to wait for the
+	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
+	 *  an ExecTimeoutException will be thrown, and the process will be
+	 *  killed.
+	 *  If timeoutsecs == INFINITE_TIMEOUT, the timeout will be infinite, and a
+	 *  ExecTimeoutException will not be thrown.
+	 *
+	 * @param outputlimit Specifies the maximum size of the parameter output,
+	 *  in order to constrain possible memory usage.  If the process outputs
+	 *  more data than will fit into output, then an ExecBufferFullException
+	 *  is thrown, and the process will be killed.
+	 *  If outputlimit < 0, the limit will be infinite, and an
+	 *  ExecBufferFullException will not be thrown.
+	 *
+	 * @param input Data to be written to the child's stdin. After the data has been
+	 *  written, stdin will be closed.
+	 *
+	 * @throws ExecErrorException on error.
+	 * @throws ExecTimeoutException if the process hasn't finished within timeoutsecs.
+	 * @throws ExecBufferFullException if the process output exceeds outputlimit bytes.
+	 */
+	OW_COMMON_API void executeProcessAndGatherOutput(
+		const Array<String>& command,
+		String& output, int& processstatus, const EnvVars& envVars,
 		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1, const String& input = String());
 	
 	

@@ -1,5 +1,6 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,21 +12,21 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Vintela, Inc., Novell, Inc., nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc. OR THE CONTRIBUTORS
-* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
+* ARE DISCLAIMED. IN NO EVENT SHALL Vintela, Inc., Novell, Inc., OR THE 
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+* OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
 /**
@@ -61,13 +62,6 @@ extern "C"
 #include <stdio.h> // for perror
 #include <signal.h>
 }
-
-// according to man environ:
-// This variable must be declared in the user program, but is
-// declared in the header file unistd.h in case the header files came from
-// libc4 or libc5, and in case they came from glibc and _GNU_SOURCE was
-// defined.
-extern char **environ;
 
 #include <cerrno>
 #include <iostream>	// for cerr
@@ -386,8 +380,17 @@ bool operator==(const PopenStreams& x, const PopenStreams& y)
 namespace Exec
 {
 
+//////////////////////////////////////////////////////////////////////////////
+int 
+safeSystem(const Array<String>& command, const EnvVars& envVars)
+{
+	const char* const* envp = (envVars.size() > 0) ? envVars.getenvp() : 0;
+	return safeSystem(command, envp);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 int
-safeSystem(const Array<String>& command)
+safeSystem(const Array<String>& command, const char* const envp[])
 {
 	int status;
 	pid_t pid;
@@ -419,13 +422,13 @@ safeSystem(const Array<String>& command)
 			//        nals  across execs without explicit reason to do so, and especially not
 			//        to block signals across execs of arbitrary (not  closely  co-operating)
 			//        programs.
-	
+
 			// so we'll reset the signal mask and all signal handlers to SIG_DFL. We set them all
 			// just in case the current handlers may misbehave now that we've fork()ed.
 			sigset_t emptymask;
 			sigemptyset(&emptymask);
 			::sigprocmask(SIG_SETMASK, &emptymask, 0);
-	
+
 			for (size_t sig = 1; sig <= NSIG; ++sig)
 			{
 				struct sigaction temp;
@@ -433,7 +436,7 @@ safeSystem(const Array<String>& command)
 				temp.sa_handler = SIG_DFL;
 				sigaction(sig, &temp, NULL);
 			}
-	
+
 			// Close all file handle from parent process
 			rlimit rl;
 			int i = sysconf(_SC_OPEN_MAX);
@@ -453,15 +456,24 @@ safeSystem(const Array<String>& command)
 				close(i);
 				i--;
 			}
-	
-	
+
+
 			char** argv = new char*[command.size() + 1];
 			for (size_t i = 0; i < command.size(); i++)
 			{
 				argv[i] = strdup(command[i].c_str());
 			}
 			argv[command.size()] = 0;
-			int rval = execv(argv[0], argv);
+
+			int rval; 
+			if (envp)
+			{
+				rval = execve(argv[0], argv, const_cast<char* const*>(envp));
+			}
+			else
+			{
+				rval = execv(argv[0], argv);
+			}
 			cerr << Format( "Exec::safeSystem: execv failed for program "
 					"%1, rval is %2", argv[0], rval);
 		}
@@ -504,6 +516,14 @@ safePopen(const Array<String>& command,
 	}
 
 	return retval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+PopenStreams 
+safePopen(const Array<String>& command, const EnvVars& envVars)
+{
+	const char* const* envp = (envVars.size() > 0) ? envVars.getenvp() : 0;
+	return safePopen(command, envp);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -776,14 +796,29 @@ executeProcessAndGatherOutput(const Array<String>& command,
 	String& output, int& processStatus,
 	int timeoutSecs, int outputLimit, const String& input)
 {
+	executeProcessAndGatherOutput(command, output, processStatus, EnvVars(),
+		timeoutSecs, outputLimit, input);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void executeProcessAndGatherOutput(
+	const Array<String>& command,
+	String& output, 
+	int& processStatus, 
+	const EnvVars& envVars,
+	int timeoutSecs, 
+	int outputLimit, 
+	const String& input)
+{
 	processStatus = -1;
 	Array<PopenStreams> streams;
-	streams.push_back(safePopen(command));
+	streams.push_back(safePopen(command, envVars));
 	Array<ProcessStatus> processStatuses(1);
 	SingleStringInputCallback singleStringInputCallback(input);
 
 	StringOutputGatherer gatherer(output, outputLimit);
-	processInputOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
+	processInputOutput(gatherer, streams, processStatuses, 
+		singleStringInputCallback, timeoutSecs);
 
 	if (processStatuses[0].hasExited())
 	{
@@ -893,26 +928,31 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 
 	while (numOpenPipes > 0)
 	{
-		Select::SelectObjectArray inputSelObjs;
+		Select::SelectObjectArray selObjs; 
 		std::map<int, int> inputIndexProcessIndex;
-		Select::SelectObjectArray outputSelObjs;
 		std::map<int, int> outputIndexProcessIndex;
 		for (size_t i = 0; i < streams.size(); ++i)
 		{
 			if (processStates[i].outIsOpen)
 			{
-				inputSelObjs.push_back(streams[i].out()->getSelectObj());
-				inputIndexProcessIndex[inputSelObjs.size() - 1] = i;
+				Select::SelectObject selObj(streams[i].out()->getSelectObj()); 
+				selObj.rEvents = true; 
+				selObjs.push_back(selObj); 
+				inputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 			if (processStates[i].errIsOpen)
 			{
-				inputSelObjs.push_back(streams[i].err()->getSelectObj());
-				inputIndexProcessIndex[inputSelObjs.size() - 1] = i;
+				Select::SelectObject selObj(streams[i].err()->getSelectObj()); 
+				selObj.rEvents = true; 
+				selObjs.push_back(selObj); 
+				inputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 			if (processStates[i].inIsOpen && processStates[i].availableDataLen > 0)
 			{
-				outputSelObjs.push_back(streams[i].in()->getWriteSelectObj());
-				outputIndexProcessIndex[outputSelObjs.size() - 1] = i;
+				Select::SelectObject selObj(streams[i].in()->getWriteSelectObj()); 
+				selObj.wEvents = true; 
+				selObjs.push_back(selObj); 
+				outputIndexProcessIndex[selObjs.size() - 1] = i;
 			}
 
 			// check if the child has exited - the pid gets set to -1 once it's exited.
@@ -936,7 +976,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 		}
 
 		const int mstimeout = 100; // use 1/10 of a second
-		int selectrval = Select::selectRW(inputSelObjs, outputSelObjs, mstimeout);
+		int selectrval = Select::selectRW(selObjs, mstimeout);
 		switch (selectrval)
 		{
 			case Select::SELECT_INTERRUPTED:
@@ -990,9 +1030,9 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 				timeoutEnd = curTime;
 				timeoutEnd += timeoutsecs;
 
-				for (size_t i = 0; i < inputSelObjs.size() && availableToFind > 0; ++i)
+				for (size_t i = 0; i < selObjs.size() && availableToFind > 0; ++i)
 				{
-					if (!inputSelObjs[i].available)
+					if (!selObjs[i].rAvailable)
 					{
 						continue;
 					}
@@ -1004,7 +1044,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 					UnnamedPipeRef readstream;
 					if (processStates[streamIndex].outIsOpen)
 					{
-						if (streams[streamIndex].out()->getSelectObj() == inputSelObjs[i].s)
+						if (streams[streamIndex].out()->getSelectObj() == selObjs[i].s)
 						{
 							readstream = streams[streamIndex].out();
 						}
@@ -1012,7 +1052,7 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 
 					if (!readstream && processStates[streamIndex].errIsOpen)
 					{
-						if (streams[streamIndex].err()->getSelectObj() == inputSelObjs[i].s)
+						if (streams[streamIndex].err()->getSelectObj() == selObjs[i].s)
 						{
 							readstream = streams[streamIndex].err();
 						}
@@ -1052,9 +1092,9 @@ processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<P
 				}
 
 				// handle stdin for all processes which have data to send to them.
-				for (size_t i = 0; i < outputSelObjs.size() && availableToFind > 0; ++i)
+				for (size_t i = 0; i < selObjs.size() && availableToFind > 0; ++i)
 				{
-					if (!outputSelObjs[i].available)
+					if (!selObjs[i].wAvailable)
 					{
 						continue;
 					}

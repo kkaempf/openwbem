@@ -85,26 +85,30 @@ namespace Select
 	{
 		SelectObject(Select_t s_)
 		: s(s_)
-		, available(false)
+		, rEvents(false)
+		, wEvents(false)
+		, rAvailable(false)
+		, wAvailable(false)
+		, wasError(false)
 		{
 		}
 
 		Select_t s;
-		bool available;
+		bool rEvents; 
+		bool wEvents; 
+		bool rAvailable;
+		bool wAvailable;
+		bool wasError;
 	};
 	typedef Array<SelectObject> SelectObjectArray;
 
 	/**
-	 * Select returns as soon as input is available on any of the Select_t
-	 * objects that are in given input array or if any of the Select_t
-	 * objects in the output array are available for writing, or the
-	 * timeout has passed.
+	 * Select returns as soon as input or output is available on any 
+	 * of the Select_t objects that are in given array or the timeout 
+	 * has passed.
 	 *
-	 * @param input An array of Select_t objects that will be used while
-	 *	waiting for input to become available.
-	 *
-	 * @param output An array of Select_t objects that will be used while
-	 *	waiting for input to become available.
+	 * @param selarray An array of Select_t objects that will be used while
+	 *	waiting for input or output to become available.
 	 *
 	 * @param ms The timeout value specified in milliseconds
 	 *
@@ -112,8 +116,7 @@ namespace Select
 	 * SELECT_TIMEOUT if the given timeout value has expired. The input and output
 	 * out parameters are modified to indicate which descriptors are available.
 	 */
-	OW_COMMON_API int selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms = INFINITE_TIMEOUT);
-
+	OW_COMMON_API int selectRW(SelectObjectArray& selarray, UInt32 ms = INFINITE_TIMEOUT);
 
 } // end namespace Select
 

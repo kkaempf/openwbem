@@ -493,6 +493,8 @@ sys/param.h \
 dirent.h \
 sys/resource.h \
 sys/select.h \
+sys/poll.h \
+sys/epoll.h \
 sys/socket.h \
 netinet/in.h \
 sys/un.h \
