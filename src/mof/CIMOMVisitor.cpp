@@ -44,7 +44,7 @@
 CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns,
 		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler)
 : m_curClass()
-, m_curInstance(OW_Bool(true))
+, m_curInstance()
 , m_curValue()
 , m_curProperty(OW_Bool(true))
 , m_curMethod(OW_Bool(true))

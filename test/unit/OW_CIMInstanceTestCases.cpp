@@ -44,8 +44,8 @@ void OW_CIMInstanceTestCases::tearDown()
 
 void OW_CIMInstanceTestCases::testPropertiesEqualTo()
 {
-	OW_CIMInstance i1(true);
-	OW_CIMInstance i2(true);
+	OW_CIMInstance i1;
+	OW_CIMInstance i2;
 	i1.setProperty("foo", OW_CIMValue("x"));
 	i2.setProperty("foo", OW_CIMValue("x"));
 	unitAssert(i1.propertiesAreEqualTo(i2));

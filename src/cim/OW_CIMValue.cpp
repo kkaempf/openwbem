@@ -2812,7 +2812,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				break;
 
 			case OW_CIMDataType::DATETIME:
-				new(&m_obj) OW_CIMDateTime;
+				new(&m_obj) OW_CIMDateTime(OW_CIMNULL);
 				((OW_CIMDateTime*)&m_obj)->readObject(istrm);
 				break;
 
@@ -2827,7 +2827,7 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 				break;
 
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
-				new(&m_obj) OW_CIMInstance;
+				new(&m_obj) OW_CIMInstance(OW_CIMNULL);
 				((OW_CIMInstance*)&m_obj)->readObject(istrm);
 				break;
 			default:

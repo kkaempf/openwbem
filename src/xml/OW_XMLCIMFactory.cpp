@@ -353,7 +353,7 @@ OW_XMLCIMFactory::createClass(OW_CIMXMLParser& parser)
 OW_CIMInstance
 OW_XMLCIMFactory::createInstance(OW_CIMXMLParser& parser)
 {
-	OW_CIMInstance rval(true);
+	OW_CIMInstance rval;
 	if (!parser.tokenIs(OW_CIMXMLParser::E_INSTANCE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Not instance XML");
@@ -1085,7 +1085,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 					OW_CIMInstanceArray instances;
 					for (size_t i = 0; i < values.size(); ++i)
 					{
-						OW_CIMInstance c;
+						OW_CIMInstance c(OW_CIMNULL);
 						values[i].get(c);
 						instances.push_back(c);
 					}

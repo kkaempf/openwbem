@@ -44,7 +44,7 @@
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
 {
-	OW_NotifyTrans() : m_provider(0) {}
+	OW_NotifyTrans() : m_indication(OW_CIMNULL), m_handler(OW_CIMNULL), m_provider(0) {}
 
 	OW_NotifyTrans(
 		const OW_String& ns,

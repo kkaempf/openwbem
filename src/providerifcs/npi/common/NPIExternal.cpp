@@ -115,7 +115,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
 	OW_ProviderEnvironmentIFCRef * provenv =
 		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
-	OW_CIMInstance ci;
+	OW_CIMInstance ci(OW_CIMNULL);
 
 	try
 	{

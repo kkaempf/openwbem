@@ -368,7 +368,7 @@ private:
 				// send out CIM_InstDeletion indications
 				for (size_t i = 0; i < m_insts.size(); ++i)
 				{
-					OW_CIMInstance expInst(true);
+					OW_CIMInstance expInst;
 					expInst.setClassName("CIM_InstDeletion");
 					expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[i]));
 					hdl->exportIndication(expInst, "root/testsuite");
@@ -389,7 +389,7 @@ private:
 			if (m_creationFilterCount > 0)
 			{
 				// send out CIM_InstCreation indications
-				OW_CIMInstance expInst(true);
+				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
 				expInst.setProperty("SourceInstance", OW_CIMValue(iToAdd));
 				hdl->exportIndication(expInst, "root/testsuite");
@@ -404,7 +404,7 @@ private:
 			if (m_modificationFilterCount > 0)
 			{
 				// send out CIM_InstModification indications
-				OW_CIMInstance expInst(true);
+				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstModification");
 				expInst.setProperty("PreviousInstance", OW_CIMValue(prevInst));
 				expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[0]));

@@ -90,7 +90,7 @@ public:
 		const OW_StringArray* , 
 		const OW_CIMClass &)
 	{
-		return OW_CIMInstance();
+		return OW_CIMInstance(OW_CIMNULL);
 	}
 	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
 	{

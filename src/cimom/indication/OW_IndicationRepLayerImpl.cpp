@@ -157,7 +157,7 @@ OW_IndicationRepLayerImpl::invokeMethod(
 				return rval;
 			}
 
-			OW_CIMInstance ParamsEmbed(true);
+			OW_CIMInstance ParamsEmbed;
 			ParamsEmbed.setClassName("__MethodParameters");
 
 			for(size_t i = 0; i < inParams.size(); i++)

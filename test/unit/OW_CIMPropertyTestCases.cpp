@@ -90,7 +90,7 @@ void OW_CIMPropertyTestCases::testEmbeddedInstance()
 	OW_CIMInstance i1 = c1.newInstance();
 
 	OW_CIMProperty p1("testprop", OW_CIMValue(i1));
-	OW_CIMInstance i2;
+	OW_CIMInstance i2(OW_CIMNULL);
 	p1.getValue().get(i2);
 	unitAssert( i1 == i2 );
 

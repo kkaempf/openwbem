@@ -65,7 +65,7 @@ void usage(const char* name)
 
 OW_String mode;
 OW_CIMClass bionicClass(OW_CIMNULL);
-OW_CIMInstance bionicInstance;
+OW_CIMInstance bionicInstance(OW_CIMNULL);
 
 void createClass(OW_CIMOMHandleIFC& hdl)
 {

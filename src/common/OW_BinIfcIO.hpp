@@ -279,7 +279,7 @@ public:
 
 	static OW_CIMInstance readInstance(std::istream& istrm)
 	{
-		OW_CIMInstance ci;
+		OW_CIMInstance ci(OW_CIMNULL);
 		OW_BinIfcIO::readObject(istrm, OW_BINSIG_INST, ci);
 		return ci;
 	}

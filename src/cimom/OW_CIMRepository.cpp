@@ -737,7 +737,7 @@ OW_CIMRepository::getInstance(
 		lpropList = *propertyList;
 	}
 
-	OW_CIMInstance ci;
+	OW_CIMInstance ci(OW_CIMNULL);
 
 	OW_CIMClass cc(_instGetClass(ns, instanceName.getObjectName()));
 

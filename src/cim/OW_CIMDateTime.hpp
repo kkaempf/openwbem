@@ -36,6 +36,7 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Bool.hpp"
+#include "OW_CIMNULL.hpp"
 
 class OW_CIMDateTimeException : OW_CIMException
 {
@@ -135,9 +136,14 @@ public:
 
 	/**
 	 * Create a new interval type of OW_CIMDateTime set to 0's
-	 * @param notNull If false, then this object will have a null implementation.
 	 */
-	explicit OW_CIMDateTime(OW_Bool notNull=true);
+	OW_CIMDateTime();
+
+	/**
+	 * Create a new interval type of OW_CIMDateTime 
+	 * this object will have a null implementation.
+	 */
+	explicit OW_CIMDateTime(OW_CIMNULL_t);
 
 	/**
 	 * Create a new OW_CIMDateTime object that is a copy of another.

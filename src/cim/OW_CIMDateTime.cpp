@@ -98,8 +98,14 @@ bool operator<(const OW_CIMDateTime::OW_DateTimeData& x, const OW_CIMDateTime::O
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime(OW_Bool notNull)
-	: m_dptr(notNull ? new OW_DateTimeData : 0)
+OW_CIMDateTime::OW_CIMDateTime()
+	: m_dptr(new OW_DateTimeData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDateTime::OW_CIMDateTime(OW_CIMNULL_t)
+	: m_dptr(0)
 {
 }
 

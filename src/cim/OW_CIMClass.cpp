@@ -624,7 +624,7 @@ OW_CIMClass::setMethods(const OW_CIMMethodArray& meths)
 OW_CIMInstance
 OW_CIMClass::newInstance() const
 {
-	OW_CIMInstance cInstance(OW_Bool(true));
+	OW_CIMInstance cInstance;
 	cInstance.syncWithClass(*this, true);
 	cInstance.setClassName(m_pdata->m_name);
 	return cInstance;

@@ -209,7 +209,7 @@ makeValueArray(OW_CIMValue& theValue)
 
 		case OW_CIMDataType::DATETIME:
 		{
-			OW_CIMDateTime v;
+			OW_CIMDateTime v(OW_CIMNULL);
 			theValue.get(v);
 			theValue = OW_CIMValue(OW_CIMDateTimeArray(1, v));
 			break;

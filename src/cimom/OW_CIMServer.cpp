@@ -194,7 +194,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 			OW_CIMObjectPath cop("OpenWBEM_UserACL");
 			cop.addKey("username", OW_CIMValue(aclInfo.getUserName()));
 			cop.addKey("nspace", OW_CIMValue(lns));
-			OW_CIMInstance ci;
+			OW_CIMInstance ci(OW_CIMNULL);
 			try
 			{
 				ci = m_pServer->getInstance("root/security", cop, false, true, true, NULL,
@@ -259,7 +259,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 		}
 		OW_CIMObjectPath cop("OpenWBEM_NamespaceACL");
 		cop.addKey("nspace", OW_CIMValue(lns));
-		OW_CIMInstance ci;
+		OW_CIMInstance ci(OW_CIMNULL);
 		try
 		{
 			ci = m_pServer->getInstance("root/security", cop, false, true, true, NULL,
@@ -969,7 +969,7 @@ OW_CIMServer::getInstance(
 
 	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, cc);
 
-	OW_CIMInstance ci;
+	OW_CIMInstance ci(OW_CIMNULL);
 	if(instancep)
 	{
 		ci = instancep->getInstance(
@@ -1147,7 +1147,7 @@ OW_CIMServer::modifyInstance(
 {
 	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, ns, aclInfo);
 
-	OW_CIMInstance oldInst;
+	OW_CIMInstance oldInst(OW_CIMNULL);
 
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(), 

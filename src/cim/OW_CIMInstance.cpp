@@ -81,8 +81,14 @@ bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::OW_CIMInstance(OW_Bool notNull) :
-	OW_CIMElement(), m_pdata((notNull) ? new INSTData : NULL)
+OW_CIMInstance::OW_CIMInstance() :
+	OW_CIMElement(), m_pdata(new INSTData)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance::OW_CIMInstance(OW_CIMNULL_t) :
+	OW_CIMElement(), m_pdata(0)
 {
 }
 
@@ -513,7 +519,7 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 	OW_Bool includeClassOrigin, const OW_StringArray& propertyList,
 	OW_Bool noProps) const
 {
-	OW_CIMInstance ci(true);
+	OW_CIMInstance ci;
 	ci.m_pdata->m_name = m_pdata->m_name;
 	ci.m_pdata->m_aliasName = m_pdata->m_aliasName;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;

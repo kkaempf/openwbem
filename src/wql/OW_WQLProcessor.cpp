@@ -1445,7 +1445,7 @@ void OW_WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 					int valType = cv.getType();
 					if (valType == OW_CIMDataType::EMBEDDEDINSTANCE)
 					{
-						OW_CIMInstance embeddedinst;
+						OW_CIMInstance embeddedinst(OW_CIMNULL);
 						cv.get(embeddedinst);
 						if (instanceIsDerivedFrom(embeddedinst, className))
 						{

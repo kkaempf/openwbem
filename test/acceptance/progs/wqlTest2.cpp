@@ -174,7 +174,7 @@ int main(int , char**)
 		testQuery("select wqlTestClass.* from wqlTestClass");
 
 		// test some equals on the where clause
-		OW_CIMInstance inst(true);
+		OW_CIMInstance inst;
 		inst.setClassName("wqlTestClass");
 		inst.setProperty("name", OW_CIMValue("test1"));
 		testQuery("select * from wqlTestClass where name = \"test1\"", inst);

@@ -208,7 +208,7 @@ OW_NPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env
 	const OW_StringArray* propertyList, 
 	const OW_CIMClass& cimClass)
 {
-        OW_CIMInstance rval;
+        OW_CIMInstance rval(OW_CIMNULL);
 
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::getInstance()");

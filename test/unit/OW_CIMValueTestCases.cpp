@@ -54,11 +54,11 @@ void OW_CIMValueTestCases::testGetArraySize()
 	unitAssert( v1.getArraySize() == 3 );
 
     OW_CIMInstanceArray ia;
-    ia.push_back(OW_CIMInstance());
-    ia.push_back(OW_CIMInstance());
-    ia.push_back(OW_CIMInstance());
-    ia.push_back(OW_CIMInstance());
-    ia.push_back(OW_CIMInstance());
+    ia.push_back(OW_CIMInstance(OW_CIMNULL));
+    ia.push_back(OW_CIMInstance(OW_CIMNULL));
+    ia.push_back(OW_CIMInstance(OW_CIMNULL));
+    ia.push_back(OW_CIMInstance(OW_CIMNULL));
+    ia.push_back(OW_CIMInstance(OW_CIMNULL));
     OW_CIMValue v2(ia);
     unitAssert(v2.getArraySize() == 5);
 

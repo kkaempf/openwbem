@@ -1240,7 +1240,7 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	
 	bool includeQualifiers = params[1].val.toBool();
 
-	OW_CIMInstance modifiedInstance;
+	OW_CIMInstance modifiedInstance(OW_CIMNULL);
 	params[0].val.get(modifiedInstance);
 
 	hdl.modifyInstance(ns, modifiedInstance, includeQualifiers, pPropList);

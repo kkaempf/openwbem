@@ -920,7 +920,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 
 			case OW_CIMDataType::DATETIME:
 			{
-				OW_CIMDateTime a;
+				OW_CIMDateTime a(OW_CIMNULL);
 				cv.get(a);
 				out << a.toString();
 				break;
@@ -942,7 +942,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 			
 			case OW_CIMDataType::EMBEDDEDINSTANCE:
 			{
-				OW_CIMInstance i;
+				OW_CIMInstance i(OW_CIMNULL);
 				cv.get(i);
 				OW_String s;
 				OW_StringStream ss;

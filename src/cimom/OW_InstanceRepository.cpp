@@ -245,7 +245,7 @@ OW_InstanceRepository::getInstanceNames(const OW_String& ns,
 	OW_HDBNode node = hdl->getFirstChild(clsNode);
 	while(node)
 	{
-		OW_CIMInstance ci;
+		OW_CIMInstance ci(OW_CIMNULL);
 		nodeToCIMObject(ci, node);
 		OW_CIMObjectPath op(ci.getClassName(), ns);
 		op.setKeys(ci.getKeyValuePairs());
@@ -285,7 +285,7 @@ OW_InstanceRepository::getCIMInstances(
 	OW_HDBNode node = hdl->getFirstChild(clsNode);
 	while(node)
 	{
-		OW_CIMInstance ci;
+		OW_CIMInstance ci(OW_CIMNULL);
 		nodeToCIMObject(ci, node);
 		ci = ci.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,theClass);
 
@@ -315,7 +315,7 @@ OW_InstanceRepository::getCIMInstance(
 		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
 	}
 
-	OW_CIMInstance ci;
+	OW_CIMInstance ci(OW_CIMNULL);
 	nodeToCIMObject(ci, node);
 
 	ci.syncWithClass(theClass, true);
@@ -348,7 +348,7 @@ OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPat
 
 	// Ensure the node belongs to an OW_CIMInstance before we delete it.
 	// If it's not, an exception will be thrown
-	OW_CIMInstance ci;
+	OW_CIMInstance ci(OW_CIMNULL);
 	nodeToCIMObject(ci, node);
 
 	hdl->removeNode(node);
@@ -511,7 +511,7 @@ OW_InstanceRepository::instanceExists(const OW_String& ns,
 		/*
 		// Ensure this node is actually an OW_CIMInstance.
 		// If not, an exception will be thrown
-		OW_CIMInstance verifyInst;
+		OW_CIMInstance verifyInst(OW_CIMNULL);
 		nodeToCIMObject(verifyInst, node);
 		*/
 

@@ -175,7 +175,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			// *pi has been deleted
 			if (ops & POLL_FOR_INSTANCE_DELETION)
 			{
-				OW_CIMInstance expInst(true);
+				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstDeletion");
 				expInst.setProperty("SourceInstance", OW_CIMValue(*pi));
 				hdl->exportIndication(expInst, m_ns);
@@ -187,7 +187,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			// *ci is new
 			if (ops & POLL_FOR_INSTANCE_CREATION)
 			{
-				OW_CIMInstance expInst(true);
+				OW_CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
 				expInst.setProperty("SourceInstance", OW_CIMValue(*pi));
 				hdl->exportIndication(expInst, m_ns);
@@ -200,7 +200,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			{
 				if (!pi->propertiesAreEqualTo(*ci))
 				{
-					OW_CIMInstance expInst(true);
+					OW_CIMInstance expInst;
 					expInst.setClassName("CIM_InstModification");
 					expInst.setProperty("PreviousInstance", OW_CIMValue(*pi));
 					expInst.setProperty("SourceInstance", OW_CIMValue(*ci));

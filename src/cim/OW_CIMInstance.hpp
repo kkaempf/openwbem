@@ -65,12 +65,14 @@ public:
 
 	/**
 	 * Default ctor
-	 * @param notNull If false, This OW_CIMInstance object will not contain any
-	 * underlying implementation/data. All subsequent operations on an instance
-	 * of this type will fail. If true, this instance will be set to default
-	 * values.
 	 */
-	explicit OW_CIMInstance(OW_Bool notNull=false);
+	OW_CIMInstance();
+
+	/**
+	 * This OW_CIMInstance object will be NULL. All subsequent operations on 
+	 * an instance of this type will fail.
+	 */
+	explicit OW_CIMInstance(OW_CIMNULL_t);
 
 	/**
 	 * Copy ctor
