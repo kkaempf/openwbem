@@ -41,7 +41,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SortedVectorMap.hpp"
 #include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ServiceIFC.hpp"
 #include "OW_IfcsFwd.hpp"
 #include "OW_CommonFwd.hpp"
 
@@ -59,7 +59,7 @@ namespace OpenWBEM
  * to one of these.  When a [M-]POST or OPTIONS is done, the process() and
  * options() functions for this class are called, respectively.
  */
-class OW_COMMON_API RequestHandlerIFC : public IntrusiveCountableBase
+class OW_COMMON_API RequestHandlerIFC : public ServiceIFC
 {
 public:
 	RequestHandlerIFC();

@@ -60,6 +60,9 @@ protected:
 	virtual void doOptions(CIMFeatures& cf, OperationContext& context);
 	virtual void outputError(CIMException::ErrNoType errorCode,
 		const String& msg, std::ostream& ostr);
+
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
 private:
 	// These pointers will always be NULL when clone() is called
 	// (clone() insures this).  They are assigned in executeXML().

@@ -61,6 +61,9 @@ public:
 	virtual RequestHandlerIFC* clone() const;
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;
+
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
 protected:
 	/**
 	 * After doProcess is called, and the XML is parsed, executeXML

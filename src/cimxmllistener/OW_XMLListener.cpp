@@ -61,7 +61,7 @@ XMLListener::~XMLListener()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-RequestHandlerIFC* 
+RequestHandlerIFC*
 XMLListener::clone() const
 {
 	return new XMLListener(*this);
@@ -202,7 +202,18 @@ XMLListener::getContentType() const
 {
 	return String("application/xml");
 }
+
 //////////////////////////////////////////////////////////////////////////////
+void
+XMLListener::init(const ServiceEnvironmentIFCRef& env)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+XMLListener::shutdown()
+{
+}
 
 } // end namespace OpenWBEM
 

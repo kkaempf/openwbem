@@ -55,6 +55,9 @@ public:
 	virtual void setEnvironment(const ServiceEnvironmentIFCRef& env);
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;
+
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
 private:
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	void createClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
