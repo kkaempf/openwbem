@@ -61,5 +61,10 @@ OW_NPIAssociatorProviderProxy.hpp \
 OW_NPIInstanceProviderProxy.hpp \
 OW_NPIMethodProviderProxy.hpp \
 OW_NPIProviderIFC.hpp \
-OW_NPIProviderIFCUtils.hpp
+OW_NPIProviderIFCUtils.hpp \
+NPIAssociationProvider.hpp \
+NPIBaseProvider.hpp \
+NPIExternal.hpp \
+NPIInstanceProvider.hpp \
+NPIProvider.hpp
 
