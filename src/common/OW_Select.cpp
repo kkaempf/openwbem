@@ -155,6 +155,10 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			{
 				maxfd = selarray[i];
 			}
+			if (selarray[i] < 0 || selarray[i] >= FD_SETSIZE)
+			{
+				return Select::SELECT_ERROR;
+			}
 			FD_SET(selarray[i], &rfds);
 		}
 

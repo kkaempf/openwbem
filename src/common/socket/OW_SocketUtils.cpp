@@ -207,10 +207,15 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		FD_ZERO(&readfds);
 		FD_ZERO(&writefds);
 		int maxfd = fd;
-		if (pipefd != -1)
+		if (pipefd != -1 && pipefd < FD_SETSIZE)
 		{
 			FD_SET(pipefd, &readfds);
 			maxfd = MAX(fd, pipefd);
+		}
+		if (fd < 0 || fd >= FD_SETSIZE)
+		{
+			errno = EINVAL;
+			return -1;
 		}
 		if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
 		{

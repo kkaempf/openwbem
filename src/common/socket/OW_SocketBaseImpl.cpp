@@ -232,8 +232,12 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		do
 		{
 			FD_ZERO(&rset);
+			if (m_sockfd < 0 || m_sockfd >= FD_SETSIZE)
+			{
+				OW_THROW(SocketException, "Invalid fd (< 0 || >= FD_SETSIZE)");
+			}
 			FD_SET(m_sockfd, &rset);
-			if (pipefd != -1)
+			if (pipefd != -1 && pipefd < FD_SETSIZE)
 			{
 				FD_SET(pipefd, &rset);
 			}
