@@ -103,10 +103,10 @@ class OpenWBEM_RemoteProviderRegistration
         string Url;
 
         [Required]
-        bool AlwaysSendCredentials = false;
+        boolean AlwaysSendCredentials = false;
 
         [Required]
-        bool UseConnectionCredentials = false;
+        boolean UseConnectionCredentials = false;
 };
 
 
