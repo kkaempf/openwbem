@@ -12,7 +12,8 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * Contributors:
+ * 
+ * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: CMPIObjectPath support
  *
@@ -20,6 +21,8 @@
 
 #include <iostream>
 #include "cmpisrv.h"
+#include "OW_CIMException.hpp"
+#include "CmpiProviderBase.h"
 
 static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType type) {
    CMPIrc rc;
@@ -27,7 +30,6 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType t
    if (eRes->ft==CMPI_ResultMethOnStack_Ftab) {
       CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
       if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
-         //res->processing();
          ((CMPI_Result*)eRes)->flags|=RESULT_set;
       }
       res->handle(v);
@@ -35,7 +37,6 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType t
    else {
       CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
       if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
-         //res->processing();
          ((CMPI_Result*)eRes)->flags|=RESULT_set;
       }
       res->handle(v);
@@ -43,79 +44,129 @@ static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType t
    CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst) {
-   OW_CIMInstanceResultHandlerIFC * res =
-	static_cast<OW_CIMInstanceResultHandlerIFC *> (eRes->hdl);
-   const OW_CIMInstance& inst= * (static_cast<OW_CIMInstance *>(eInst->hdl));
-	std::cout << "inst to handle " << inst.toMOF() << std::endl;
-   res->handle(inst);
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst)
+{
+	OW_CIMInstanceResultHandlerIFC * res =
+		static_cast<OW_CIMInstanceResultHandlerIFC *> (eRes->hdl);
+	const OW_CIMInstance& inst =
+		 * (static_cast<OW_CIMInstance *>(eInst->hdl));
+	try {
+		std::cout << "inst to handle " << inst.toMOF() << std::endl;
+   		res->handle(inst);
+	}
+	catch (const OW_CIMException& e)
+	{
+		//CMReturnWithChars(CmpiProviderBase::getBroker(),
+		//		  (_CMPIrc)e.getErrNo(), e.getMessage());
+		CMReturn((_CMPIrc)e.getErrNo());
+	}
+	catch (...)
+	{
+		CMReturn(CMPI_RC_ERROR);
+	}
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst) {
-   OW_CIMInstanceResultHandlerIFC * res =
-	static_cast<OW_CIMInstanceResultHandlerIFC *> (eRes->hdl);
-   const OW_CIMInstance& inst= * (static_cast<OW_CIMInstance *>(eInst->hdl));
-	std::cout << "inst to handle " << inst.toMOF() << std::endl;
-   // BMMU - turn instance into object
-   res->handle(inst);
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst)
+{
+	OW_CIMInstanceResultHandlerIFC * res =
+		static_cast<OW_CIMInstanceResultHandlerIFC *> (eRes->hdl);
+	const OW_CIMInstance& inst =
+		* (static_cast<OW_CIMInstance *>(eInst->hdl));
+
+	try {
+		std::cout << "inst to handle " << inst.toMOF() << std::endl;
+   		// TODO - turn instance into object
+   		res->handle(inst);
+
+	}
+	catch (const OW_CIMException& e)
+	{
+		CMReturn((_CMPIrc)e.getErrNo());
+	}
+	catch (...)
+	{
+		CMReturn(CMPI_RC_ERROR);
+	}
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnObjectPath(CMPIResult* eRes, CMPIObjectPath* eRef) {
-   (void)eRef;
-
-   OW_CIMObjectPathResultHandlerIFC * res =
-	static_cast<OW_CIMObjectPathResultHandlerIFC *>(eRes->hdl);
+static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
+			 CMPIObjectPath* eRef)
+{
+	OW_CIMObjectPathResultHandlerIFC * res =
+		static_cast<OW_CIMObjectPathResultHandlerIFC *>(eRes->hdl);
    
-   const OW_CIMObjectPath& cop = *(static_cast<OW_CIMObjectPath *>(eRef->hdl));
-	std::cout << "cop to handle " << cop.toMOF() << std::endl;
-   res->handle(cop);
-   CMReturn(CMPI_RC_OK);
+	const OW_CIMObjectPath& cop =
+		* (static_cast<OW_CIMObjectPath *>(eRef->hdl));
+	try {
+		std::cout << "cop to handle " << cop.toMOF() << std::endl;
+		res->handle(cop);
+	}
+	catch (const OW_CIMException& e)
+	{
+		CMReturn((_CMPIrc)e.getErrNo());
+	}
+	catch (...)
+	{
+		CMReturn(CMPI_RC_ERROR);
+	}
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnInstDone(CMPIResult* eRes) {
-   (void) eRes;
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnInstDone(CMPIResult* eRes) 
+{
+	(void) eRes;
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnRefDone(CMPIResult* eRes) {
-   (void) eRes;
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnRefDone(CMPIResult* eRes)
+{
+	(void) eRes;
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnDataDone(CMPIResult* eRes) {
-   (void) eRes;
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnDataDone(CMPIResult* eRes)
+{
+	(void) eRes;
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultReturnMethDone(CMPIResult* eRes) {
-   (void) eRes;
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus resultReturnMethDone(CMPIResult* eRes)
+{
+	(void) eRes;
+	CMReturn(CMPI_RC_OK);
 }
-static CMPIStatus resultReturnObjDone(CMPIResult* eRes) {
-   (void) eRes;
-   CMReturn(CMPI_RC_OK);
-}
-
-
-static CMPIStatus resultBadReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType type) {
-   (void) eRes;
-   (void) data;
-   (void) type;
-   CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
+static CMPIStatus resultReturnObjDone(CMPIResult* eRes)
+{
+	(void) eRes;
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIStatus resultBadReturnInstance(CMPIResult* eRes, CMPIInstance* eInst) {
-   (void) eRes;
-   (void) eInst;
-   CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
+
+static CMPIStatus resultBadReturnData(CMPIResult* eRes,
+				 	CMPIValue* data, CMPIType type)
+{
+	(void) eRes;
+	(void) data;
+	(void) type;
+	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
-static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes, CMPIObjectPath* eRef) {
-   (void) eRes;
-   (void) eRef;
-   CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
+static CMPIStatus resultBadReturnInstance(CMPIResult* eRes,
+						 CMPIInstance* eInst)
+{
+	(void) eRes;
+	(void) eInst;
+	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
+}
+
+static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes,
+						 CMPIObjectPath* eRef)
+{
+	(void) eRes;
+	(void) eRef;
+	CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
 static CMPIResultFT resultMethOnStack_FT={
@@ -190,18 +241,20 @@ CMPIResultFT *CMPI_ResultResponseOnStack_Ftab=&resultResponseOnStack_FT;
 
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(
-	const OW_CIMObjectPathResultHandlerIFC & handler) {
-      hdl= (void *)(&handler);
-      ft=CMPI_ResultRefOnStack_Ftab;
-      flags=RESULT_ObjectPath;
-   }
+	const OW_CIMObjectPathResultHandlerIFC & handler)
+{
+	hdl = (void *)(&handler);
+	ft = CMPI_ResultRefOnStack_Ftab;
+	flags = RESULT_ObjectPath;
+}
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(
-	const OW_CIMInstanceResultHandlerIFC & handler) {
-      hdl= (void *)(&handler);
-      ft=CMPI_ResultInstOnStack_Ftab;
-      flags=RESULT_Instance;
-   }
+	const OW_CIMInstanceResultHandlerIFC & handler)
+{
+	hdl = (void *)(&handler);
+	ft = CMPI_ResultInstOnStack_Ftab;
+	flags = RESULT_Instance;
+}
 
 #if 0
 // ObjectResponseHandler
@@ -220,16 +273,20 @@ CMPI_ResultOnStack::CMPI_ResultOnStack(
    }
 #endif
 
-CMPI_ResultOnStack::CMPI_ResultOnStack(const CMPIObjectPathValueResultHandler& handler) {
-      hdl= (void *)&handler;
-      ft=CMPI_ResultResponseOnStack_Ftab;
-      flags=RESULT_Response;
+CMPI_ResultOnStack::CMPI_ResultOnStack(const
+				CMPIObjectPathValueResultHandler& handler)
+{
+	hdl = (void *)&handler;
+	ft = CMPI_ResultResponseOnStack_Ftab;
+	flags = RESULT_Response;
 }
 
-CMPI_ResultOnStack::CMPI_ResultOnStack(const CMPIValueValueResultHandler& handler) {
-      hdl= (void *)&handler;
-      ft=CMPI_ResultResponseOnStack_Ftab;
-      flags=RESULT_Response;
+CMPI_ResultOnStack::CMPI_ResultOnStack(
+				const CMPIValueValueResultHandler& handler)
+{
+	hdl = (void *)&handler;
+	ft = CMPI_ResultResponseOnStack_Ftab;
+	flags = RESULT_Response;
 }
 
 CMPI_ResultOnStack::CMPI_ResultOnStack() {
