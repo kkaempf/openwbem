@@ -54,6 +54,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_UserUtils.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_ResultHandlerIFC.hpp"
 
 #include <exception>
 
