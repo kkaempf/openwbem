@@ -38,6 +38,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
+#include <cstdio> // for SEEK_END
 
 using std::istream;
 using std::ostream;

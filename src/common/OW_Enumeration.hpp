@@ -41,6 +41,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <iterator>
+#include <cstdio> // for SEEK_END
 
 DEFINE_EXCEPTION(Enumeration);
 
