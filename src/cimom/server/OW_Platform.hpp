@@ -42,6 +42,7 @@
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 #include "OW_UserUtils.hpp"
+#include "OW_IfcsFwd.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -85,8 +86,8 @@ namespace Platform
 	/**
 	 * @throws DaemonException on error
 	 */
-	OW_CIMOMSERVER_API void daemonize(bool dbgFlg, const String& daemonName);
-	OW_CIMOMSERVER_API int daemonShutdown(const String& daemonName);
+	OW_CIMOMSERVER_API void daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef& env);
+	OW_CIMOMSERVER_API int daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env);
 	OW_CIMOMSERVER_API void initDaemonizePipe();
 	OW_CIMOMSERVER_API void sendDaemonizeStatus(int status);
 	OW_CIMOMSERVER_API void initSig();

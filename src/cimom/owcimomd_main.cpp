@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 		// Call platform specific code to become a daemon/service
 		try
 		{
-			Platform::daemonize(debugMode, OW_DAEMON_NAME);
+			Platform::daemonize(debugMode, OW_DAEMON_NAME, env);
 		}
 		catch (const DaemonException& e)
 		{
@@ -214,7 +214,7 @@ int main(int argc, char* argv[])
 	CIMOMEnvironment::instance() = 0;
 	
 	// Call platform specific shutdown routine
-	Platform::daemonShutdown(OW_DAEMON_NAME);
+	Platform::daemonShutdown(OW_DAEMON_NAME, env);
 
 	OW_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;

@@ -36,13 +36,12 @@
 
 #include "OW_config.h"
 #include "OW_Platform.hpp"
-//#include "OW_Environment.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 #include "OW_PidFile.hpp"
 #include "OW_ExceptionIds.hpp"
-
 #include "OW_PlatformSignal.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 
 #ifdef OW_NETWARE
 #include "OW_Condition.hpp"
@@ -138,7 +137,7 @@ daemonInit( int argc, char* argv[] )
  * Throws DaemonException on error.
  */
 void
-daemonize(bool dbgFlg, const String& daemonName)
+daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef& env)
 {
 #ifndef WIN32
 #ifdef OW_NETWARE
@@ -151,11 +150,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 
 	int pid = -1; 
 #if !defined(OW_NETWARE)
-	String pidFile(OW_PIDFILE_DIR);
-	pidFile += "/";
-	pidFile += OW_PACKAGE_PREFIX;
-	pidFile += daemonName;
-	pidFile += ".pid";
+	String pidFile(env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 	pid = PidFile::checkPid(pidFile.c_str());
 	// Is there already another instance of the cimom running?
 	if (pid != -1)
@@ -221,8 +216,9 @@ daemonize(bool dbgFlg, const String& daemonName)
 #if !defined(OW_NETWARE)
 	if (PidFile::writePid(pidFile.c_str()) == -1)
 	{
-//		OW_THROW_ERRNO_MSG(DaemonException,
-//			"Failed to write the pid file.");
+		sendDaemonizeStatus(DAEMONIZE_FAIL); 
+		OW_THROW_ERRNO_MSG(DaemonException,
+			Format("Failed to write the pid file (%1)", pidFile).c_str());
 	}
 #endif
 #endif
@@ -233,7 +229,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-daemonShutdown(const String& daemonName)
+daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 {
 #ifndef WIN32
 #if defined(OW_NETWARE)
@@ -249,11 +245,7 @@ daemonShutdown(const String& daemonName)
 		}
 	}
 #else
-	String pidFile(OW_PIDFILE_DIR);
-	pidFile += "/";
-	pidFile += OW_PACKAGE_PREFIX;
-	pidFile += daemonName;
-	pidFile += ".pid";
+	String pidFile(env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 	PidFile::removePid(pidFile.c_str());
 #endif
 #endif
