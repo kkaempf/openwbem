@@ -26,9 +26,13 @@ main()
 #	fi
 	
 	if [ $# -eq 0 ]; then
-		for t in 1 2 3 8 9 10 12 13; do
-			test$t
-		done
+        if [ $OWLONGTEST -eq 1 ]; then
+            for t in 1 2 3 8 9 10 12 13; do
+                test$t
+            done
+        else
+            test1
+        fi
 	else
 		while [ $# -gt 0 ]
 			do case "$1" in
