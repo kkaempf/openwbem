@@ -37,11 +37,11 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 
 	OpenWBEM::CIMObjectPath * cop = static_cast<OpenWBEM::CIMObjectPath *>(eCop->hdl);
 
-	OpenWBEM::CIMClass *cls=mbGetClass(mb,*cop);
+	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cls(mbGetClass(mb,*cop));
 
 	OpenWBEM::CIMInstance ci;
 
-	if (cls && *cls)
+	if (cls.get() && *cls)
 	{
 		//CMPIContext *ctx=CMPI_ThreadContext::getContext();
 		//CMPIFlags flgs = ctx->ft->getEntry(
@@ -219,7 +219,7 @@ static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
  
 	if (tcn == cop->getClassName()) return 1;
  
-	OpenWBEM::CIMClass *cc=mbGetClass(mb,*cop);
+	OpenWBEM::AutoPtr<OpenWBEM::CIMClass> cc(mbGetClass(mb,*cop));
 	OpenWBEM::CIMObjectPath  scp(*cop);
 	scp.setClassName(cc->getSuperClass());
 																				
