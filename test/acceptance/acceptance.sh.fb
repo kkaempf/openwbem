@@ -910,20 +910,20 @@ CoreCheck()
 }
 
 #############################################################################
-GatherResults()
-{
-	OLDDIR=`pwd`
-	cd $STAGEDIR
-	rm -f testresults.tar.gz
-	tar cf testresults.tar results
-	gzip testresults.tar
-	cd $OLDDIR
-}
+#GatherResults()
+#{
+#	OLDDIR=`pwd`
+#	cd $STAGEDIR
+#	rm -f testresults.tar.gz
+#	tar cf testresults.tar results
+#	gzip testresults.tar
+#	cd $OLDDIR
+#}
 
 #############################################################################
 Exit()
 {
-	GatherResults
+#	GatherResults
 	CoreCheck
 	exit $1
 }
