@@ -245,7 +245,7 @@ IndexImpl::find(const char* key)
 	}
 	DBT theKey, theRec;
 	theKey.data = const_cast<void*>(static_cast<const void*>(key));
-	theKey.size = ::strlen(key+1);
+	theKey.size = ::strlen(key)+1;
 	if (m_pDB->seq(m_pDB, &theKey, &theRec, R_CURSOR) == 0)
 	{
 		if (!::strcmp(reinterpret_cast<const char*>(theKey.data), key))
