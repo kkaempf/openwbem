@@ -306,9 +306,12 @@ public:
 	
 			OW_CIMInstance inst = cimClass.newInstance();
 
-			for (size_t i = 0; i < instanceName.getKeys().size(); ++i)
+			OW_CIMPropertyArray theKeys = instanceName.getKeys();
+			for (size_t i = 0; i < theKeys.size(); ++i)
 			{
-				inst.setProperty(instanceName.getKeys()[i]);
+				OW_CIMProperty& p = theKeys[i];
+				// Note the we can't use the setProperty(OW_CIMProperty) version, because we don't have the KEY qualifier attached to these properties.
+				inst.setProperty(p.getName(), p.getValue());
 			}
 			// This property is Required
 			inst.setProperty("ClassInfo", OW_CIMValue(0));

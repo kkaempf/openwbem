@@ -325,8 +325,10 @@ public:
 			if (op == objectName)
 			{
 				OW_CIMObjectPath toGet = i.getPropertyT("Dependent").getValueT().toCIMObjectPath();
-				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
-				assocInst.setKeys(toGet.getKeys());
+				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, true, true, 0);
+				assocInst.clone(false, includeQualifiers, includeClassOrigin, propertyList);
+				//OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
+				//assocInst.setKeys(toGet.getKeys());
 				result.handle(assocInst);
 				return;
 			}
@@ -335,8 +337,10 @@ public:
 			if (op == objectName)
 			{
 				OW_CIMObjectPath toGet = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
-				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
-				assocInst.setKeys(toGet.getKeys());
+				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, true, true, 0);
+				assocInst.clone(false, includeQualifiers, includeClassOrigin, propertyList);
+				//OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
+				//assocInst.setKeys(toGet.getKeys());
 				result.handle(assocInst);
 			}
 		}
