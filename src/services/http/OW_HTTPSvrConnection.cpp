@@ -63,6 +63,8 @@
 #undef BAD
 #endif
 
+#include <iostream>
+
 namespace OW_NAMESPACE
 {
 
@@ -70,6 +72,9 @@ using std::ios;
 using std::istream;
 using std::ostream;
 using std::flush;
+using std::cout;
+using std::cerr;
+using std::endl;
 
 namespace
 {
@@ -194,10 +199,6 @@ HTTPSvrConnection::run()
 				if (selType == Select::SELECT_ERROR)
 				{
 				   OW_THROW(SocketException, "Error occurred during select()");
-				}
-				if (selType == Select::SELECT_INTERRUPTED)
-				{
-				   OW_THROW(SocketException, "select() was interrupted.");
 				}
 				if (selType == Select::SELECT_TIMEOUT)
 				{
