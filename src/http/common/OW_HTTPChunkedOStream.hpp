@@ -51,7 +51,7 @@
 namespace OpenWBEM
 {
 
-class HTTPChunkedOStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPChunkedOStreamBuffer : public BaseStreamBuffer
 {
 public: 
 	HTTPChunkedOStreamBuffer(std::ostream& ostr);
@@ -69,7 +69,7 @@ private:
 	friend class HTTPChunkedOStream; // so it can call initPutBuffer()
 };
 //////////////////////////////////////////////////////////////////////////////
-class HTTPChunkedOStreamBase 
+class OW_HTTP_API HTTPChunkedOStreamBase 
 {
 public:
 	HTTPChunkedOStreamBase(std::ostream& ostr)
@@ -77,7 +77,7 @@ public:
 	HTTPChunkedOStreamBuffer m_strbuf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class HTTPChunkedOStream : private HTTPChunkedOStreamBase, 
+class OW_HTTP_API HTTPChunkedOStream : private HTTPChunkedOStreamBase, 
 	public std::ostream
 {
 public:

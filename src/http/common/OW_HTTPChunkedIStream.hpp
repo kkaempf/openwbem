@@ -47,7 +47,7 @@ namespace OpenWBEM
 {
 
 class HTTPChunkedIStream;
-class HTTPChunkedIStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 {
 	public:
 		HTTPChunkedIStreamBuffer(std::istream& istr,
@@ -65,14 +65,14 @@ class HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 		HTTPChunkedIStreamBuffer(const HTTPChunkedIStreamBuffer&);
 		HTTPChunkedIStreamBuffer& operator=(const HTTPChunkedIStreamBuffer&);
 };
-class HTTPChunkedIStreamBase 
+class OW_HTTP_API HTTPChunkedIStreamBase 
 {
 public:
 	HTTPChunkedIStreamBase(std::istream& istr, 
 		HTTPChunkedIStream* chunkedIStr) : m_strbuf(istr, chunkedIStr) {}
 	HTTPChunkedIStreamBuffer m_strbuf;
 };
-class HTTPChunkedIStream : private HTTPChunkedIStreamBase, 
+class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase, 
 	public CIMProtocolIStreamIFC
 {
 	public:

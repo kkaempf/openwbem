@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class HTTPLengthLimitStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPLengthLimitStreamBuffer : public BaseStreamBuffer
 {
 public:
 	HTTPLengthLimitStreamBuffer(std::istream& istr, Int64 length);
@@ -72,7 +72,7 @@ private:
 			const HTTPLengthLimitStreamBuffer& arg);
 };
 //////////////////////////////////////////////////////////////////////////////
-class HTTPLenLimitIStreamBase
+class OW_HTTP_API HTTPLenLimitIStreamBase
 {
 public:
 	HTTPLenLimitIStreamBase(std::istream& istr, Int64 length)
@@ -80,7 +80,7 @@ public:
 	HTTPLengthLimitStreamBuffer m_strbuf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class HTTPLenLimitIStream : private HTTPLenLimitIStreamBase,
+class OW_HTTP_API HTTPLenLimitIStream : private HTTPLenLimitIStreamBase,
 	public CIMProtocolIStreamIFC
 {
 public:

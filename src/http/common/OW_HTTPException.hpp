@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-class HTTPException : public Exception
+class OW_HTTP_API HTTPException : public Exception
 {
 public:
 	HTTPException(const char* file, int line, const char* msg);

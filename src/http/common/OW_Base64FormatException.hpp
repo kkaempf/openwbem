@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Base64Format);
+OW_DECLARE_APIEXCEPTION(Base64Format, OW_HTTP_API);
 
 } // end namespace OpenWBEM
 

@@ -54,7 +54,7 @@
 namespace OpenWBEM
 {
 
-class HTTPDeflateOStreamBuffer : public BaseStreamBuffer
+class OW_HTTP_API HTTPDeflateOStreamBuffer : public BaseStreamBuffer
 {
 public:
 	HTTPDeflateOStreamBuffer(std::ostream& ostr);
@@ -75,7 +75,7 @@ private:
 	HTTPDeflateOStreamBuffer& operator=(const HTTPDeflateOStreamBuffer&);
 };
 //////////////////////////////////////////////////////////////////////////////
-class HTTPDeflateOStreamBase
+class OW_HTTP_API HTTPDeflateOStreamBase
 {
 public:
 	HTTPDeflateOStreamBase(std::ostream& ostr)
@@ -83,7 +83,7 @@ public:
 	HTTPDeflateOStreamBuffer m_strbuf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class HTTPDeflateOStream : private HTTPDeflateOStreamBase, public std::ostream
+class OW_HTTP_API HTTPDeflateOStream : private HTTPDeflateOStreamBase, public std::ostream
 {
 public:
 	/**

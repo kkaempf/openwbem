@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class HTTPChunkException : public SocketException
+class OW_HTTP_API HTTPChunkException : public SocketException
 {
 public:
 	HTTPChunkException(const char* file, int line, const char* msg);

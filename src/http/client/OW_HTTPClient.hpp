@@ -59,7 +59,7 @@ class TempFileStream;
  * Copy semantics: Non-copyable.
  * Exception safety: Basic.
  */
-class HTTPClient : public CIMProtocolIFC
+class OW_HTTP_API HTTPClient : public CIMProtocolIFC
 {
 	public:
 		/**

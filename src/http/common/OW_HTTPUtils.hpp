@@ -48,9 +48,9 @@ namespace OpenWBEM
 typedef Map<String, String> HTTPHeaderMap;
 namespace HTTPUtils
 {
-	extern const char* const Header_BypassLocker; 
-	extern const char* const HeaderValue_true; 
-	extern const char* const HeaderValue_false; 
+	extern OW_HTTP_API const char* const Header_BypassLocker; 
+	extern OW_HTTP_API const char* const HeaderValue_true; 
+	extern OW_HTTP_API const char* const HeaderValue_false; 
 	/**
 	 * Read from an input stream, and fill out a <String, String> map and
 	 * String Array representing the status line.
@@ -60,7 +60,7 @@ namespace HTTPUtils
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	bool parseHeader(HTTPHeaderMap& map, Array<String>& array,
+	OW_HTTP_API bool parseHeader(HTTPHeaderMap& map, Array<String>& array,
 									std::istream& istr);
 	/**
 	 * Read from in input stream, parse HTTP headers into a <String,
@@ -69,55 +69,55 @@ namespace HTTPUtils
 	 * @param istr A istream& to read the headers from
 	 * @return true if no errors occurred, false if an error occurred.
 	 */
-	bool parseHeader(HTTPHeaderMap& map, std::istream& istr);
+	OW_HTTP_API bool parseHeader(HTTPHeaderMap& map, std::istream& istr);
 	/**
 	 * Get the date (for http headers)
 	 * @return a String representing the current date/time
 	 */
-	String date( void );
+	OW_HTTP_API String date( void );
 	/**
 	 * Return a descriptive string associated with a HTTP status code.
 	 * @param code the status code to interpret.
 	 * @return a String represetation of code
 	 */
-	String status2String(int code);
+	OW_HTTP_API String status2String(int code);
 	/**
 	 * Returns a two digit sequence for header counting.
 	 * @return String containing a two digit number
 	 */
-	String getCounterStr();
+	OW_HTTP_API String getCounterStr();
 	/**
 	 * Decode Base64 encoded arg
 	 * @throws (Base64FormatException)
 	 */
-	String base64Decode(const String& arg);
+	OW_HTTP_API String base64Decode(const String& arg);
 	/**
 	 * Decode Base64 encoded arg
 	 * @param src NULL-terminated string to be encoded
 	 * @throws (Base64FormatException)
 	 */
-	Array<char> base64Decode(const char* src);
+	OW_HTTP_API Array<char> base64Decode(const char* src);
 	/**
 	 * Encode src in Base64
 	 * @throws (Base64FormatException)
 	 */
-	String base64Encode(const String& arg);
+	OW_HTTP_API String base64Encode(const String& arg);
 	/**
 	 * Encode src in Base64
 	 * @param src NULL-terminated string to be encoded
 	 * @throws (Base64FormatException)
 	 */
-	String base64Encode(const char* src);
+	OW_HTTP_API String base64Encode(const char* src);
 	/**
 	 * @param src pointer to data to be encoded.  The data may contain any
 	 * value, including 0.
 	 * @param len The length of the data to be encoded.
 	 * @throws (Base64FormatException)
 	 */
-	String base64Encode(const UInt8* src, size_t len);
+	OW_HTTP_API String base64Encode(const UInt8* src, size_t len);
 #ifndef OW_DISABLE_DIGEST
 	/* calculate H(A1) as per HTTP Digest spec */
-	void DigestCalcHA1(
+	OW_HTTP_API void DigestCalcHA1(
 					const String &sAlg,
 					const String &sUserName,
 					const String &sRealm,
@@ -127,7 +127,7 @@ namespace HTTPUtils
 					String &sSessionKey
 					  );
 	/* calculate request-digest/response-digest as per HTTP Digest spec */
-	void DigestCalcResponse(
+	OW_HTTP_API void DigestCalcResponse(
 					const String &sHA1,			/* H(A1) */
 					const String &sNonce,		/* nonce from server */
 					const String &sNonceCount,	/* 8 hex digits */
@@ -145,7 +145,7 @@ namespace HTTPUtils
 	 * @param key the key to look for.
 	 * @return true if the headers contain the key
 	 */
-	bool headerHasKey(const HTTPHeaderMap& headers,
+	OW_HTTP_API bool headerHasKey(const HTTPHeaderMap& headers,
 		const String& key);
 	/**
 	 * Get a value (based on a key/value pair) from the http headers
@@ -153,7 +153,7 @@ namespace HTTPUtils
 	 * @param key The key to look for.
 	 * @return the value associated with the key
 	 */
-	String getHeaderValue(const HTTPHeaderMap& headers,
+	OW_HTTP_API String getHeaderValue(const HTTPHeaderMap& headers,
 		const String& key);
 	/**
 	 * Add a HTTP header
@@ -161,7 +161,7 @@ namespace HTTPUtils
 	 * @param key the key for the header (left of the ':')
 	 * @param value the value for the header (right of the ':')
 	 */
-	void addHeader(Array<String>& headers,
+	OW_HTTP_API void addHeader(Array<String>& headers,
 		const String& key, const String& value);
 	/**
 	 * Read from an input stream, until the end of the entity is reached.
@@ -171,7 +171,7 @@ namespace HTTPUtils
 	 * @param istr A istream& containing the entity (presumably a
 	 * 	HTTPChunkedIStream, HTTPLenLimitIStream, or TempFileStream)
 	 */
-	void eatEntity(std::istream& istr);
+	OW_HTTP_API void eatEntity(std::istream& istr);
 	/**
 	 * Base64Decode a user name/password.
 	 * @param info a base64 encoded representation of a "<name>:<password>"
@@ -179,19 +179,19 @@ namespace HTTPUtils
 	 * @param name The name gets assigned here.
 	 * @param password the password gets assigned here.
 	 */
-	void decodeBasicCreds(const String& info, String& name,
+	OW_HTTP_API void decodeBasicCreds(const String& info, String& name,
 		String& password);
 	
-	bool buildMap(HTTPHeaderMap& map, std::istream& istr);
+	OW_HTTP_API bool buildMap(HTTPHeaderMap& map, std::istream& istr);
 	/**
 	 * Apply the standard URI [RFC 2396, section 2] escaping mechanism to 
 	 * the char c, using the ""%" HEX HEX" convention)
 	 * @param c The char to escape
 	 * @return The escaped char
 	 */
-	String escapeCharForURL(char c);
+	OW_HTTP_API String escapeCharForURL(char c);
 
-	OW_DECLARE_EXCEPTION(UnescapeCharForURL);
+	OW_DECLARE_APIEXCEPTION(UnescapeCharForURL, OW_HTTP_API);
 	/**
 	 * Apply the standard URI [RFC 2396, section 2] unescaping mechanism to 
 	 * the String s, formatted in the ""%" HEX HEX" convention)
@@ -201,21 +201,21 @@ namespace HTTPUtils
 	 * @throws unEscapeCharForURLException If the string doesn't contain a 
 	 *  valid escape sequence
 	 */
-	char unescapeCharForURL(const char* str);
+	OW_HTTP_API char unescapeCharForURL(const char* str);
 	/**
 	 * Apply the standard URI [RFC 2396, section 2] escaping mechanism to 
 	 * the string input, using the ""%" HEX HEX" convention)
 	 * @param input The string to escape
 	 * @return The escaped string
 	 */
-	String escapeForURL(const String& input);
+	OW_HTTP_API String escapeForURL(const String& input);
 	/**
 	 * Apply the standard URI [RFC 2396, section 2] unescaping mechanism to 
 	 * the string input, using the ""%" HEX HEX" convention)
 	 * @param input The string to unescape
 	 * @return The unescaped string
 	 */
-	String unescapeForURL(const String& input);
+	OW_HTTP_API String unescapeForURL(const String& input);
 };
 
 } // end namespace OpenWBEM

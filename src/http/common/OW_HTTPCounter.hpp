@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class HTTPCounter
+class OW_HTTP_API HTTPCounter
 {
 public:
 	HTTPCounter();

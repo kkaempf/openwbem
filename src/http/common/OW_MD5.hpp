@@ -74,12 +74,13 @@ documentation and/or software.
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(MD5);
+OW_DECLARE_APIEXCEPTION(MD5, OW_HTTP_API)
+
 const int MD5HASHLEN = 16;
 class String;
 class MD5;
 //////////////////////////////////////////////////////////////////////////////
-class MD5StreamBuffer : public std::streambuf
+class OW_HTTP_API MD5StreamBuffer : public std::streambuf
 {
 public: 
 	MD5StreamBuffer(MD5* md5);
@@ -89,14 +90,14 @@ protected:
 	virtual std::streamsize xsputn(const char* s, std::streamsize num);
 };
 //////////////////////////////////////////////////////////////////////////////
-class MD5OStreamBase 
+class OW_HTTP_API MD5OStreamBase 
 {
 public:
 	MD5StreamBuffer _buf;
 	MD5OStreamBase(MD5* md5);
 };
 //////////////////////////////////////////////////////////////////////////////
-class MD5 : private MD5OStreamBase, public std::ostream
+class OW_HTTP_API MD5 : private MD5OStreamBase, public std::ostream
 {
 /* MD5 context. */
 public:
