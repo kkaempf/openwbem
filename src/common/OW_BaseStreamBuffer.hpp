@@ -56,6 +56,7 @@ class OW_COMMON_API BaseStreamBuffer : public std::streambuf
 public:
 	/**
 	 * Create a base stream buffer.
+	 * TODO: Make a different version of this ctor that doesn't use strings. Use an enum instead.
 	 * @param bufSize size of buffer
 	 * @param direction "in", "out", or "io"
 	 */
