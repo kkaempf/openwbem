@@ -37,6 +37,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMClass.hpp"
+#include <iostream>
 
 void OW_StringArrayPropertyTestCases::setUp()
 {
@@ -95,8 +96,8 @@ Test* OW_StringArrayPropertyTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_StringArrayProperty");
 
-	testSuite->addTest (new TestCaller <OW_StringArrayPropertyTestCases> 
-			("testSomething", 
+	testSuite->addTest (new TestCaller <OW_StringArrayPropertyTestCases>
+			("testSomething",
 			&OW_StringArrayPropertyTestCases::testSomething));
 
 	return testSuite;
