@@ -38,6 +38,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_ConfigOpts.hpp" // for OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE
 
 namespace OpenWBEM
 {
@@ -73,7 +74,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace already exists.
 	 */
 	void createCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, 
-		UInt16 classInfo = 0, const String& descriptionOfClassInfo = "", const String& interopNs = "root");
+		UInt16 classInfo = 0, const String& descriptionOfClassInfo = "", const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
 	 * CIM_Namespace class. The namespace must be empty of all classes and
@@ -87,7 +88,7 @@ namespace CIMNameSpaceUtils
 	 *  define them in another namespace."
 	 * @exception CIMException If the namespace does not exist.
 	 */
-	void deleteCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, const String& interopNs = "root");
+	void deleteCIM_Namespace(CIMOMHandleIFC& hdl, const String& ns, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -102,7 +103,7 @@ namespace CIMNameSpaceUtils
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	StringArray enumCIM_Namespace(CIMOMHandleIFC& hdl, const String& interopNs = "root");
+	StringArray enumCIM_Namespace(CIMOMHandleIFC& hdl, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * CIM_Namespace class.
@@ -118,7 +119,7 @@ namespace CIMNameSpaceUtils
 	 *		cannot be found in the specified namespace.
 	 */
 	void enumCIM_Namespace(CIMOMHandleIFC& hdl,
-		StringResultHandlerIFC& result, const String& interopNs = "root");
+		StringResultHandlerIFC& result, const String& interopNs = OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace by creating an instance of the __Namespace 
