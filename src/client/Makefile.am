@@ -25,7 +25,6 @@ clean-local:
 
 
 libowclient_a_SOURCES =	\
-OW_ClientAuthCBIFC.cpp \
 OW_CIMOMLocator.cpp \
 OW_CIMOMInfo.cpp	\
 OW_CIMClient.cpp \
@@ -35,7 +34,6 @@ OW_CIMXMLCIMOMHandle.cpp \
 OW_BinaryCIMOMHandle.cpp
 
 pkginclude_HEADERS =		\
-OW_ClientAuthCBIFC.hpp \
 OW_CIMOMLocator.hpp	\
 OW_CIMOMLocatorSLP.hpp	\
 OW_CIMOMInfo.hpp	\

@@ -119,7 +119,7 @@ public:
 				}
 	
 				const char* strVer = (*versFunc)();
-				if(strcmp(strVer, OW_VERSION))
+				if(!strVer || strcmp(strVer, OW_VERSION) != 0)
 				{
 					logger->logError("safeLibCreate::create -"
 						" Invalid version returned from \"getOWVersion\"");
