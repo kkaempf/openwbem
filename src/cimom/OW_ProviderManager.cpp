@@ -228,6 +228,7 @@ void
 OW_ProviderManager::addCIMOMProvider(const OW_CppProviderBaseIFCRef& pProv)
 {
 	m_internalIFC->addCIMOMProvider(pProv);
+	// TODO: Need to add the provider's info the registry if init has already been run.
 }
 
 //////////////////////////////////////////////////////////////////////////////
