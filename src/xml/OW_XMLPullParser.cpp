@@ -102,12 +102,12 @@ XMLPullParser::XMLPullParser()
 
 ///////////////////////////////////////////////////////////////////////////////
 String
-XMLPullParser::getAttribute(const char* const attrId, bool throwIfError)
+XMLPullParser::getAttribute(const char* const attrId, bool throwIfError) const
 {
 	OW_ASSERT(m_curTok.type == XMLToken::START_TAG);
 	for (unsigned i = 0; i < m_curTok.attributeCount; i++)
 	{
-		XMLToken::Attribute& attr = m_curTok.attributes[i];
+		const XMLToken::Attribute& attr = m_curTok.attributes[i];
 		// Should this be case insensentive? NO
 		if (attr.name.equals(attrId))
 		{

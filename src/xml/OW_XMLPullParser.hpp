@@ -57,12 +57,12 @@ public:
 	XMLPullParser();
 	virtual ~XMLPullParser();
 
-	String mustGetAttribute(const char* const attrName)
+	String mustGetAttribute(const char* const attrName) const
 	{
 		return getAttribute(attrName, true);
 	}
 	// TODO: Get rid of all these bool parameters!
-	String getAttribute(const char* const attrName, bool throwIfError = false);
+	String getAttribute(const char* const attrName, bool throwIfError = false) const;
 	void getChild();
 	void mustGetChild();
 	void getNextTag(bool throwIfError = false);
