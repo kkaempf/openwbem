@@ -113,8 +113,6 @@ public:
 	IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 	RepositoryIFCRef getRepository() const;
 	AuthorizerManagerRef getAuthorizerManager() const;
-	virtual CIMInstanceArray getInteropInstances(const String& className) const;
-	//virtual void setInteropInstance(const CIMInstance& inst);
 
 
 	// do not use this unless absolutely necessary!
@@ -193,10 +191,6 @@ private:
 	EEnvState m_state;
 	mutable Mutex m_stateGuard;
 	IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
-
-	mutable Mutex m_interopInstancesLock;
-	typedef HashMap<String, SortedVectorSet<CIMInstance> > interopInstances_t;
-	interopInstances_t m_interopInstances;
 
 	static String COMPONENT_NAME;
 };

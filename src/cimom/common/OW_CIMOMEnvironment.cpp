@@ -1232,49 +1232,6 @@ CIMOMEnvironment::getAuthorizerManager() const
 {
 	return m_authorizerManager;
 }
-//////////////////////////////////////////////////////////////////////////////
-CIMInstanceArray CIMOMEnvironment::getInteropInstances(const String& className) const
-{
-	MutexLock lock(m_interopInstancesLock);
-	interopInstances_t::const_iterator citer = m_interopInstances.find(className);
-	if (citer == m_interopInstances.end())
-	{
-		return CIMInstanceArray();
-	}
-
-	return CIMInstanceArray(citer->second.begin(), citer->second.end());
-}
-//////////////////////////////////////////////////////////////////////////////
-// void
-// CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
-// {
-//     String className = inst.getClassName();
-//
-//     MutexLock lock(m_interopInstancesLock);
-//     interopInstances_t::iterator iter = m_interopInstances.find(className);
-//     if (iter == m_interopInstances.end())
-//     {
-//         interopInstances_t::data_type s;
-//         s.insert(inst);
-//         m_interopInstances.insert(interopInstances_t::value_type(className, s));
-//     }
-//     else
-//     {
-//         // look for and erase a pre-existing instance with the same path first, to handle updates.
-//         CIMObjectPath newInstPath = CIMObjectPath(String(), inst);
-//         typedef interopInstances_t::data_type::const_iterator citer_t;
-//         for (citer_t curInstance = iter->second.begin(); curInstance != iter->second.end(); ++iter)
-//         {
-//             if (newInstPath == CIMObjectPath(String(), *curInstance))
-//             {
-//                 iter->second.erase(*curInstance);
-//                 break;
-//             }
-//         }
-//
-//         iter->second.insert(inst);
-//     }
-// }
 
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -109,9 +109,6 @@ public:
 	
 	virtual RepositoryIFCRef getRepository() const;
 
-	virtual CIMInstanceArray getInteropInstances(const String& className) const;
-	// TODO: Fix this to be a callback registration
-	//virtual void setInteropInstance(const CIMInstance& inst);
 	virtual WQLIFCRef getWQLRef() const;
 };
 

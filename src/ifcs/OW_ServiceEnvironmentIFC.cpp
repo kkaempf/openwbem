@@ -139,14 +139,6 @@ ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
 
 
 ///////////////////////////////////////////////////////////////////////////////
-CIMInstanceArray
-ServiceEnvironmentIFC::getInteropInstances(const String& className) const
-{
-	OW_ASSERTMSG(0, "Not Implemented");
-	return CIMInstanceArray();
-}
-
-///////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
 ServiceEnvironmentIFC::getWQLRef() const
 {

@@ -46,10 +46,6 @@ public:
 		return m_env->getRequestHandler(id);
 	}
 
-	virtual CIMInstanceArray getInteropInstances(const String &className) const
-	{
-		return m_env->getInteropInstances(className);
-	}
 	virtual void addSelectable(const SelectableIFCRef &obj,
 		const SelectableCallbackIFCRef &cb)
 	{
