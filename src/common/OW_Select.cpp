@@ -75,7 +75,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	size_t hcount = static_cast<DWORD>(selarray.size());
 	AutoPtrVec<HANDLE> hdls(new HANDLE[hcount]);
 
-	for(size_t i = 0; i < hcount; i++)
+	for (size_t i = 0; i < hcount; i++)
 	{
 		hdls[i] = selarray[i];
 	}
@@ -85,7 +85,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 	assert(cc != WAIT_ABANDONED);
 
-	switch(cc)
+	switch (cc)
 	{
 		case WAIT_FAILED:
 			rc = Select::SELECT_ERROR;
@@ -106,51 +106,52 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
-   fd_set rfds;
-   struct timeval tv;
-   int rc;
-   int maxfd = 0;
-   FD_ZERO(&rfds);
-   for(size_t i = 0; i < selarray.size(); i++)
-   {
-	  if(maxfd < selarray[i])
-	  {
-		 maxfd = selarray[i];
-	  }
-	  FD_SET(selarray[i], &rfds);
-   }
-   struct timeval* ptv = NULL;
-   if (ms != ~0U)
-   {
-	   ptv = &tv;
-	   tv.tv_sec = ms / 1000;
-	   tv.tv_usec = (ms % 1000) * 1000;
-   }
-   rc = ::select(maxfd+1, &rfds, NULL, NULL, ptv);
-   if(rc < 0)
-   {
-	   if (errno == EINTR)
-	   {
-		   return Select::SELECT_INTERRUPTED;
-	   }
-	   else
-	   {
-		   return Select::SELECT_ERROR;
-	   }
-   }
-   if(rc == 0)
-   {
-	   return Select::SELECT_TIMEOUT;
-   }
-   for(size_t i = 0; i < selarray.size(); i++)
-   {
-	  if(FD_ISSET(selarray[i], &rfds))
-	  {
-		 return int(i);
-	  }
-   }
-   OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");
-   return Select::SELECT_ERROR;
+	fd_set rfds;
+	struct timeval tv;
+	int rc;
+	int maxfd = 0;
+	FD_ZERO(&rfds);
+	for (size_t i = 0; i < selarray.size(); i++)
+	{
+		OW_ASSERT(selarray[i] >= 0);
+		if (maxfd < selarray[i])
+		{
+			maxfd = selarray[i];
+		}
+		FD_SET(selarray[i], &rfds);
+	}
+	struct timeval* ptv = NULL;
+	if (ms != ~0U)
+	{
+		ptv = &tv;
+		tv.tv_sec = ms / 1000;
+		tv.tv_usec = (ms % 1000) * 1000;
+	}
+	rc = ::select(maxfd+1, &rfds, NULL, NULL, ptv);
+	if (rc < 0)
+	{
+		if (errno == EINTR)
+		{
+			return Select::SELECT_INTERRUPTED;
+		}
+		else
+		{
+			return Select::SELECT_ERROR;
+		}
+	}
+	if (rc == 0)
+	{
+		return Select::SELECT_TIMEOUT;
+	}
+	for (size_t i = 0; i < selarray.size(); i++)
+	{
+		if (FD_ISSET(selarray[i], &rfds))
+		{
+			return int(i);
+		}
+	}
+	OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");
+	return Select::SELECT_ERROR;
 }
 #endif	// #else OW_WIN32
 
