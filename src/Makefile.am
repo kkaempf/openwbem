@@ -121,45 +121,37 @@ OPENWBEM_STATIC_ALL=libopenwbem_all.a
 EXTERNAL_PROVIDER_FILES=$(filter %.a,$(sort $(EXTERNAL_PROVIDERS:%.so=%.a) $(EXTERNAL_PROVIDERS:%.dylib=%.a) $(EXTERNAL_PROVIDERS:%.sl=%.a)))
 
 $(OPENWBEM_STATIC_ALL): $(STATIC_CIMOM_FILES) $(STATIC_SERVICE_FILES) $(STATIC_PROVIDER_FILES) $(STATIC_CLIENT_FILES) $(STATIC_IFC_FILES) $(EXTERNAL_PROVIDER_FILES)
-	@if test "x$(STATIC_SERVICES)" != "x"; then \
-		echo "External providers: $(EXTERNAL_PROVIDER_FILES)"; \
-		$(AR) cru $@ $^; \
-		if [ "x$(EXTERNAL_PROVIDER_FILES)" != "x" ]; then \
-			for i in $(EXTERNAL_PROVIDER_FILES) ""; do \
-				$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
-				LIB_BASE=`echo $$i | cut -f1 -d'.'`; \
-				FSL="$$LIB_BASE.fsl"; \
-				if [ -e "$$FSL" ]; then \
-					echo "Installing fake library for $$i"; \
-					$(INSTALL_PROGRAM) $FSL $(DESTDIR)$(thelibdir)/$$LIB_BASE.so; \
-					rm -f "$$FSL"; \
-				else \
-					echo "Not installing $$i because no exports were found."; \
-				fi; \
-			done; \
-		fi \
-	else \
-		touch $@; \
+	echo "External providers: $(EXTERNAL_PROVIDER_FILES)"; \
+	$(AR) cru $@ $^; \
+	if [ "x$(EXTERNAL_PROVIDER_FILES)" != "x" ]; then \
+		for i in $(EXTERNAL_PROVIDER_FILES) ""; do \
+			$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
+			LIB_BASE=`echo $$i | cut -f1 -d'.'`; \
+			FSL="$$LIB_BASE.fsl"; \
+			if [ -e "$$FSL" ]; then \
+				echo "Installing fake library for $$i"; \
+				$(INSTALL_PROGRAM) $FSL $(DESTDIR)$(thelibdir)/$$LIB_BASE.so; \
+				rm -f "$$FSL"; \
+			else \
+				echo "Not installing $$i because no exports were found."; \
+			fi; \
+		done; \
 	fi
 
 install-ow-static-lib: $(OPENWBEM_STATIC_ALL)
-	if test "x$(STATIC_SERVICES)" != "x"; then \
-		$(INSTALL) $^ $(DESTDIR)$(libdir); \
-	fi
+	$(INSTALL) $^ $(DESTDIR)$(libdir)
 
-TEMPOBJDIR=$@.libs
+TEMPOBJDIR=.libOWall
 CIMOMD_MAIN=$(top_builddir)/src/cimom/libowcimomd_main.a
 install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
-	@if test "x$(STATIC_SERVICES)" != "x"; then \
-		rm -rf $(TEMPOBJDIR); \
-		mkdir $(TEMPOBJDIR); \
-		cd $(TEMPOBJDIR) && ar x ../$(OPENWBEM_STATIC_ALL); \
-		cd ..; \
-		$(CXX) $(CXXBINLINKFLAGS) -o static_cimomd $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
-		rm -rf $(TEMPOBJDIR); \
-		echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
-		$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd; \
-	fi
+	rm -rf $(TEMPOBJDIR); \
+	mkdir $(TEMPOBJDIR); \
+	cd $(TEMPOBJDIR) && ar x ../$(OPENWBEM_STATIC_ALL); \
+	cd ..; \
+	$(CXX) $(CXXBINLINKFLAGS) -o static_cimomd $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
+	rm -rf $(TEMPOBJDIR); \
+	echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
+	$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd; \
 
 clean-local:
 	rm -f static_cimomd $(OPENWBEM_STATIC_ALL)
