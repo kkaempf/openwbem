@@ -139,18 +139,50 @@ int main(int argc, char* argv[])
 {
 	try
 	{
-		CmdLineParser parser(argc, argv, g_options);
-
-		if (parser.isSet(HELP_OPT))
+		String url;
+		String ns;
+		String query;
+		if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
 		{
-			Usage();
-			return 0;
+			url = argv[1];
+			ns = argv[2];
+			query = argv[3];
+			cerr << "This command line usage is deprecated." << endl; // TODO: Remove this, it was deprecated in 3.1.0
 		}
-		else if (parser.isSet(VERSION_OPT))
+		else
 		{
-			cout << "owcimindicationlistener (OpenWBEM) " << OW_VERSION << '\n';
-			cout << "Written by Dan Nuffer.\n";
-			return 0;
+			CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+
+			if (parser.isSet(HELP_OPT))
+			{
+				Usage();
+				return 0;
+			}
+			else if (parser.isSet(VERSION_OPT))
+			{
+				cout << "owcimindicationlistener (OpenWBEM) " << OW_VERSION << '\n';
+				cout << "Written by Dan Nuffer.\n";
+				return 0;
+			}
+			url = parser.getOptionValue(URL_OPT);
+			if (url.empty())
+			{
+				url = "http://localhost/root/cimv2";
+			}
+			query = parser.getOptionValue(FILTER_QUERY_OPT);
+			if (query.empty())
+			{
+				cerr << "The filter query must be specified." << endl;
+				Usage();
+				return 1;
+			}
+			ns = URL(url).namespaceName;
+			if (ns.empty())
+			{
+				cerr << "No namespace given as part of the url." << endl;
+				Usage();
+				return 1;
+			}
 		}
 	
 #ifdef OW_WIN32
@@ -171,25 +203,6 @@ int main(int argc, char* argv[])
 		::signal(SIGTERM, sig_handler);
 #endif
 
-		String url = parser.getOptionValue(URL_OPT);
-		if (url.empty())
-		{
-			url = "http://localhost/root/cimv2";
-		}
-		String query = parser.getOptionValue(FILTER_QUERY_OPT);
-		if (query.empty())
-		{
-			cerr << "The filter query must be specified." << endl;
-			Usage();
-			return 1;
-		}
-		String ns = URL(url).namespaceName;
-		if (ns.empty())
-		{
-			cerr << "No namespace given as part of the url." << endl;
-			Usage();
-			return 1;
-		}
 
 		CIMListenerCallbackRef mcb(new myCallBack);
 		LoggerRef logger(new CerrLogger);
@@ -220,8 +233,11 @@ int main(int argc, char* argv[])
 			case CmdLineParser::E_MISSING_ARGUMENT:
 				cerr << "missing argument for option: " << e.getMessage() << '\n';
 			break;
+			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
+				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
+			break;
 			default:
-				cerr << "failed parsing command line options\n";
+				cerr << "failed parsing command line options: " << e << "\n";
 			break;
 		}
 		Usage();

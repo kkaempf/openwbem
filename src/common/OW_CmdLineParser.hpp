@@ -65,8 +65,9 @@ public:
 	// errors codes that may be specified when a CmdLineParserException is thrown
 	enum EErrorCodes
 	{
-		E_INVALID_OPTION,  // an unknown option was specified
-		E_MISSING_ARGUMENT // an option for which argtype == E_REQUIRED_ARG did not have an argument
+		E_INVALID_OPTION,        // an unknown option was specified
+		E_MISSING_ARGUMENT,      // an option for which argtype == E_REQUIRED_ARG did not have an argument
+		E_INVALID_NON_OPTION_ARG // a non-option argument was specified, but they are not allowed
 	};
 
 	struct Option
@@ -79,14 +80,21 @@ public:
 		const char* description;   // description used by getUsage().  May be 0.
 	};
 
+	enum EAllowNonOptionArgsFlag
+	{
+		E_NON_OPTION_ARGS_ALLOWED,
+		E_NON_OPTION_ARGS_INVALID
+	};
+
 	/**
 	 * @param argc Count of pointers in argv.  Pass value from main().
 	 * @param argv Arguments.  Pass value from main(). Value is not saved.
 	 * @param options An array of Option terminated by a final entry that has a '\0' shortopt && 0 longopt.
 	 *   Value is not saved.
+	 * @param allowNonOptionArgs Indicate whether the presense of non-option arguments is an error.
 	 * @throws CmdLineParserException if the given command line is invalid.
 	 */
-	CmdLineParser(int argc, char const* const* const argv, const Option* options);
+	CmdLineParser(int argc, char const* const* const argv, const Option* options, EAllowNonOptionArgsFlag allowNonOptionArgs);
 
 	/**
 	 * Read out a string option.

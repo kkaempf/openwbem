@@ -54,7 +54,7 @@ void CmdLineParserTestCases::testSomething()
 		invalidOpt
 	};
 
-	CmdLineParser::Option options[] = 
+	CmdLineParser::Option options[] =
 	{
 		{opt1, '1', "one", CmdLineParser::E_NO_ARG, 0, "first description"},
 		{opt2, '2', "two", CmdLineParser::E_OPTIONAL_ARG, "optional", "second description"},
@@ -71,7 +71,7 @@ void CmdLineParserTestCases::testSomething()
 			"-",
 			"1"
 		};
-		CmdLineParser parser(argc, argv, options);
+		CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_ALLOWED);
 		unitAssert(parser.isSet(opt1));
 		unitAssert(parser.isSet(opt2));
 		unitAssert(!parser.isSet(opt3));
@@ -88,7 +88,7 @@ void CmdLineParserTestCases::testSomething()
 			"--two",
 			"abc"
 		};
-		CmdLineParser parser(argc, argv, options);
+		CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 		unitAssert(parser.isSet(opt2));
 		unitAssert(parser.getOptionValue(opt2) == "abc");
 		unitAssert(parser.getNonOptionCount() == 0);
@@ -99,7 +99,7 @@ void CmdLineParserTestCases::testSomething()
 			"progname",
 			"--two"
 		};
-		CmdLineParser parser(argc, argv, options);
+		CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 		unitAssert(parser.isSet(opt2));
 		unitAssert(parser.getOptionValue(opt2) == "optional");
 		unitAssert(parser.getNonOptionCount() == 0);
@@ -113,7 +113,7 @@ void CmdLineParserTestCases::testSomething()
 			"two",
 			"three"
 		};
-		CmdLineParser parser(argc, argv, options);
+		CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_ALLOWED);
 		unitAssert(parser.getNonOptionCount() == 3);
 		unitAssert(parser.getNonOptionArg(0) == "one");
 		unitAssert(parser.getNonOptionArg(1) == "two");
@@ -131,7 +131,7 @@ void CmdLineParserTestCases::testSomething()
 			"-2",
 			"fifth"
 		};
-		CmdLineParser parser(argc, argv, options);
+		CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_ALLOWED);
 		unitAssert(parser.getOptionValue(opt2) == "fifth");
 		StringArray opts = parser.getOptionValueList(opt2);
 		unitAssert(opts.size() == 5);
@@ -149,7 +149,7 @@ void CmdLineParserTestCases::testSomething()
 		};
 		try
 		{
-			CmdLineParser parser(argc, argv, options);
+			CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 			unitAssert(0);
 		}
 		catch (CmdLineParserException& e)
@@ -161,11 +161,27 @@ void CmdLineParserTestCases::testSomething()
 		int argc = 2;
 		const char* argv[] = {
 			"progname",
+			"invalid"
+		};
+		try
+		{
+			CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
+			unitAssert(0);
+		}
+		catch (CmdLineParserException& e)
+		{
+			unitAssert(e.getErrorCode() == CmdLineParser::E_INVALID_NON_OPTION_ARG);
+		}
+	}
+	{
+		int argc = 2;
+		const char* argv[] = {
+			"progname",
 			"--three"
 		};
 		try
 		{
-			CmdLineParser parser(argc, argv, options);
+			CmdLineParser parser(argc, argv, options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 			unitAssert(0);
 		}
 		catch (CmdLineParserException& e)
@@ -182,7 +198,7 @@ void CmdLineParserTestCases::testSomething()
 			);
 	}
 
-	CmdLineParser::Option options2[] = 
+	CmdLineParser::Option options2[] =
 	{
 		{opt1, '1', 0, CmdLineParser::E_NO_ARG, 0, "first description"},
 		{opt2, '\0', "two", CmdLineParser::E_OPTIONAL_ARG, "optional", "second description"},
@@ -199,7 +215,7 @@ void CmdLineParserTestCases::testSomething()
 			"-3",
 			"1"
 		};
-		CmdLineParser parser(argc, argv, options2);
+		CmdLineParser parser(argc, argv, options2, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 		unitAssert(parser.isSet(opt1));
 		unitAssert(parser.isSet(opt2));
 		unitAssert(parser.isSet(opt3));

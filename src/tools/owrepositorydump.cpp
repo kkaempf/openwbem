@@ -126,7 +126,7 @@ int main(int argc, char** argv)
 	try
 	{
 		
-		CmdLineParser parser(argc, argv, g_options);
+		CmdLineParser parser(argc, argv, g_options, CmdLineParser::E_NON_OPTION_ARGS_INVALID);
 	
 		if (parser.isSet(HELP_OPT))
 		{
@@ -186,8 +186,11 @@ int main(int argc, char** argv)
 			case CmdLineParser::E_MISSING_ARGUMENT:
 				cerr << "missing argument for option: " << e.getMessage() << '\n';
 			break;
+			case CmdLineParser::E_INVALID_NON_OPTION_ARG:
+				cerr << "invalid non-option argument: " << e.getMessage() << '\n';
+			break;
 			default:
-				cerr << "failed parsing command line options\n";
+				cerr << "failed parsing command line options: " << e << "\n";
 			break;
 		}
 		usage();

@@ -82,7 +82,7 @@ namespace
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Option* options)
+CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Option* options, EAllowNonOptionArgsFlag allowNonOptionArgs)
 {
 	OW_ASSERT(argc > 0); // have to get at least the name
 	OW_ASSERT(argv_ != 0);
@@ -175,7 +175,14 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 		}
 		else
 		{
-			m_nonOptionArgs.push_back(arg);
+			if (allowNonOptionArgs == E_NON_OPTION_ARGS_INVALID)
+			{
+				OW_THROW_ERR(CmdLineParserException, arg.c_str(), E_INVALID_NON_OPTION_ARG);
+			}
+			else
+			{
+				m_nonOptionArgs.push_back(arg);
+			}
 		}
 		++argv;
 	}
