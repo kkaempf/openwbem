@@ -17,7 +17,6 @@ Testing:
 Fix problems:
     - Man pages aren't getting included in the rpm.
     - Fix the error message to be more descriptive when doing SSL, and the cert file isn't there.
-    - Add binary interface versioning.
 
 New features:
     - Modifying existing filters will affect the indication server, and
