@@ -24,10 +24,10 @@
 # log.main.type specifies the type of the main log used by owcimomd. If this 
 # option is set to:
 # "syslog" - owcimomd will log all messages through the syslog interface 
-#  (Recommended).
-# "null" - logging will be disabled completely.
-# "file" - log messages will be written to the file identified by the
-#  log.main.location config item.
+#            (Recommended).
+# "null"   - logging will be disabled completely.
+# "file"   - log messages will be written to the file identified by the
+#            log.main.location config item.
 # The default is "syslog"
 ;log.main.type = syslog
 
@@ -62,10 +62,10 @@
 ################################################################################
 # The log.main.level option specifies the level of logging. This can be
 # any one of the following:
-#   "FATAL"    - Only fatal error messages are logged.
-#   "ERROR"    - All error and fatal error messages are logged. This is the default.
-#   "INFO"     - All info, error and fatal error messages are logged
-#   "DEBUG"    - All debug, info, error and fatal error messages are logged
+#   "FATAL" - Only fatal error messages are logged.
+#   "ERROR" - All error and fatal error messages are logged. This is the default.
+#   "INFO"  - All info, error and fatal error messages are logged
+#   "DEBUG" - All debug, info, error and fatal error messages are logged
 # If set, the log will output all predefined categories at and above the 
 # specified level.
 # The default is "ERROR"
@@ -121,7 +121,8 @@
 #   Similar to TTCC, but with some fixed size fields:
 #   "%-6r [%15.15t] %-5p %30.30c %x - %m"
 #
-#   XML output conforming to log4j.dtd 1.2 which can be processed by Chainsaw:
+#   XML output conforming to log4j.dtd 1.2 which can be processed by Chainsaw.
+#   If used, this has to be on one line, it's split up here for readability.
 #   "<log4j:event logger="%c" timestamp="%d" level="%p" thread="%t">
 #    <log4j:message>%e</log4j:message>
 #    <log4j:locationInfo file="%F" line="%L"/>
