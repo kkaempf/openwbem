@@ -41,6 +41,7 @@
 #include "OW_Socket.hpp"
 #include "OW_Format.hpp"
 #include "OW_Thread.hpp"
+#include "OW_System.hpp"
 
 #ifndef OW_HAVE_GETHOSTBYNAME_R
 #include "OW_Mutex.hpp"
@@ -77,33 +78,6 @@ namespace OpenWBEM
 
 namespace SocketUtils 
 {
-#if defined(OW_WIN32)
-//////////////////////////////////////////////////////////////////////////////
-String
-getLastErrorMsg()
-{
-	LPVOID lpMsgBuf;
-	if (!::FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
-				::WSAGetLastError(),
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(LPTSTR) &lpMsgBuf,
-				0,
-				NULL ))
-	{
-		return OpenWBEM::String();
-	}
-
-	OpenWBEM::String rmsg((const char*)lpMsgBuf);
-
-	// Free the buffer.
-	::LocalFree(lpMsgBuf);
-	return rmsg;
-}
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -351,7 +325,7 @@ String getFullyQualifiedHostName()
 	{
 		OW_THROW(SocketException, 
 			Format("SocketUtils::getFullyQualifiedHostName: gethostname failed: %1(%2)", 
-				WSAGetLastError(), getLastErrorMsg()).c_str());
+				WSAGetLastError(), System::lastErrorMsg(true)).c_str());
 	}
 
 	if(strchr(bfr, '.'))
@@ -365,7 +339,7 @@ String getFullyQualifiedHostName()
 		OW_THROW(SocketException, 
 			Format("SocketUtils::getFullyQualifiedHostName: gethostbyname"
 				" failed: %1(%2)", WSAGetLastError(),
-				getLastErrorMsg()).c_str());
+				System::lastErrorMsg(true)).c_str());
 	}
 
 	if(strchr(hostentp->h_name, '.'))

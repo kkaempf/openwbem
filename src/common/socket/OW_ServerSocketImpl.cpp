@@ -41,6 +41,7 @@
 #include "OW_File.hpp"
 #include "OW_Thread.hpp"
 #include "OW_SocketUtils.hpp"
+#include "OW_System.hpp"
 
 extern "C"
 {
@@ -120,7 +121,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
-			SocketUtils::getLastErrorMsg()).c_str());
+			System::lastErrorMsg(true)).c_str());
 	}
 
 	// Set listen socket to nonblocking
@@ -128,7 +129,7 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	if (::ioctlsocket(m_sockfd, FIONBIO, &cmdArg) == SOCKET_ERROR)
 	{
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
-			SocketUtils::getLastErrorMsg()).c_str());
+			System::lastErrorMsg(true)).c_str());
 	}
 
 	if (reuseAddr)
@@ -154,13 +155,13 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
-			SocketUtils::getLastErrorMsg()).c_str());
+			System::lastErrorMsg(true)).c_str());
 	}
 	if (::listen(m_sockfd, queueSize) == -1)
 	{
 		close();
 		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
-			SocketUtils::getLastErrorMsg()).c_str());
+			System::lastErrorMsg(true)).c_str());
 	}
 	fillAddrParms();
 	m_isActive = true;
@@ -199,7 +200,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 		if (::WSAGetLastError() != WSAEWOULDBLOCK)
 		{
 			OW_THROW(SocketException, Format("ServerSocketImpl: %1",
-				SocketUtils::getLastErrorMsg()).c_str());
+				System::lastErrorMsg(true)).c_str());
 		}
 
 

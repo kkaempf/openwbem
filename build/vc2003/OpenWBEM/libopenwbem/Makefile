@@ -109,6 +109,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_String.obj \
 	$(OBJDIR)\OW_StringBuffer.obj \
 	$(OBJDIR)\OW_StringStream.obj \
+	$(OBJDIR)\OW_System.obj \
 	$(OBJDIR)\OW_TempFileStream.obj \
 	$(OBJDIR)\OW_Thread.obj \
 	$(OBJDIR)\OW_ThreadBarrier.obj \
@@ -392,6 +393,9 @@ $(OBJDIR)\OW_StringBuffer.obj: $(COMMONSRCDIR)\OW_StringBuffer.cpp
 
 $(OBJDIR)\OW_StringStream.obj: $(COMMONSRCDIR)\OW_StringStream.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_StringStream.cpp
+
+$(OBJDIR)\OW_System.obj: $(COMMONSRCDIR)\OW_System.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_System.cpp
 
 $(OBJDIR)\OW_TempFileStream.obj: $(COMMONSRCDIR)\OW_TempFileStream.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_TempFileStream.cpp

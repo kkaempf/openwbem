@@ -106,6 +106,7 @@ OW_UserInfo.cpp \
 OW_UserUtils.cpp \
 OW_UTF8UtilscompareToIgnoreCase.cpp \
 OW_UTF8Utils.cpp \
+OW_System.cpp \
 OW_UUID.cpp
 
 pkginclude_HEADERS =	\
@@ -221,6 +222,7 @@ OW_UserUtils.hpp \
 OW_UTF8Utils.hpp \
 OW_UUID.hpp \
 OW_vector.hpp \
+OW_System.hpp \
 OW_WBEMFlags.hpp
 
 libopenwbem_a_LIBADD = \

@@ -40,6 +40,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
 #include "OW_Format.hpp"
+#include "OW_System.hpp"
 #include <cstring>
 #include <cstdlib>
 #include <cerrno>
@@ -67,42 +68,11 @@ closeFile(int fd)
 	return ::close(fd);
 }
 
-inline String
-getLastErrorMsg()
-{
-	return String(::strerror(errno));
-}
-
 #else
 inline int
 closeFile(HANDLE fh)
 {
 	return CloseHandle(fh) ? 0 : -1;
-}
-
-String
-getLastErrorMsg()
-{
-	LPVOID lpMsgBuf;
-	if (!::FormatMessage( 
-				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-				FORMAT_MESSAGE_FROM_SYSTEM | 
-				FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL,
-				::GetLastError(),
-				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-				(LPTSTR) &lpMsgBuf,
-				0,
-				NULL ))
-	{
-		return OpenWBEM::String();
-	}
-
-	OpenWBEM::String rmsg((const char*)lpMsgBuf);
-
-	// Free the buffer.
-	::LocalFree(lpMsgBuf);
-	return rmsg;
 }
 #endif
 
@@ -136,7 +106,7 @@ TmpFileImpl::TmpFileImpl(String const& filename)
 		delete[] m_filename;
 		m_filename = NULL;
 		OW_THROW(IOException, Format("Error opening file %1: %2", filename,
-			getLastErrorMsg()).c_str());
+			System::lastErrorMsg()).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -212,7 +182,7 @@ TmpFileImpl::open()
 	{
 		OW_THROW(IOException,
 			Format("Error generating temp file name: %1",
-				getLastErrorMsg()).c_str());
+				System::lastErrorMsg()).c_str());
 	}
 
 	size_t len = ::strlen(bfr);
@@ -230,7 +200,7 @@ TmpFileImpl::open()
 		delete[] m_filename;
 		m_filename = NULL;
 		OW_THROW(IOException, Format("Error opening temp file %1: %2", 
-			bfr, getLastErrorMsg()).c_str());
+			bfr, System::lastErrorMsg()).c_str());
 	}
 }
 #else

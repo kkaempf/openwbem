@@ -48,6 +48,7 @@
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Socket.hpp"
 #include "OW_Thread.hpp"
+#include "OW_System.hpp"
 
 #include <cstdio>
 #include <cerrno>
@@ -294,7 +295,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	{
 		OW_THROW(SocketException, 
 			Format("Failed to create a socket: %1",
-			SocketUtils::getLastErrorMsg()).c_str());
+			System::lastErrorMsg(true)).c_str());
 	}
 
 	int cc;
@@ -312,7 +313,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			_closeSocket(m_sockfd);
 			OW_THROW(SocketException,
 				Format("Failed to connect to: %1: %2(%3)", addr.toString(),
-				lastError, SocketUtils::getLastErrorMsg()).c_str());
+				lastError, System::lastErrorMsg(true)).c_str());
 		}
 
 		// Wait for connection event to come through
@@ -334,7 +335,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 						OW_THROW(SocketException, Format("SocketBaseImpl::"
 							"connect() wait failed: %1(%2)",
 							::WSAGetLastError(),
-							SocketUtils::getLastErrorMsg()).c_str());
+							System::lastErrorMsg(true)).c_str());
 				}
 			}
 
@@ -347,7 +348,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 					Format("SocketBaseImpl::connect()"
 						" failed getting network events: %1(%2)",
 						::WSAGetLastError(),
-						SocketUtils::getLastErrorMsg()).c_str());
+						System::lastErrorMsg(true)).c_str());
 			}
 
 			// Was it a connect event?
@@ -361,7 +362,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
                     OW_THROW(SocketException,
 						Format("SocketBaseImpl::connect() failed: %1(%2)",
 						::WSAGetLastError(),
-						SocketUtils::getLastErrorMsg()).c_str());
+						System::lastErrorMsg(true)).c_str());
 				}
 				break;
 			}

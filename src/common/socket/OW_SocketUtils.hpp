@@ -63,7 +63,6 @@ namespace SocketUtils
 	int waitForIO(SocketHandle_t fd, HANDLE event, int timeOutSecs,
 		  long networkEvents=-1L);
 
-	String getLastErrorMsg();
 #else
 	/**
 	 * Wait for input or output on a socket.
