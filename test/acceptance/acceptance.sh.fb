@@ -434,6 +434,7 @@ IAmRoot()
 #############################################################################
 TestInstalledHeaders()
 {
+	HEADERDIR=$1
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
 	 testHeaders >/dev/null 2>&1
 	then
@@ -444,7 +445,7 @@ TestInstalledHeaders()
 	cd $STAGEDIR
 	OUTFILE=testInstalledHeaders.cpp
 	echo "" > $OUTFILE
-	for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
+	for i in `ls $HEADERDIR/*`; do
 	  echo '#include "'"$i"'"' >> $OUTFILE
 	done
 	cat <<EOS >> $OUTFILE
@@ -457,7 +458,7 @@ int main()
 }
 EOS
 	echo "Compiling..."
-   g++ -o testInstalledHeaders.o -c $OUTFILE -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include || ExitWithFail "Failed to compile headers" 
+   g++ -o testInstalledHeaders.o -c $OUTFILE -I$HEADERDIR -I/usr/local/ssl/include || ExitWithFail "Failed to compile headers" 
 #	echo "Linking..."
 #	g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o testInstalledHeaders \
 #		testInstalledHeaders.o || ExitWithFail "Failed to link header test"
@@ -469,6 +470,7 @@ EOS
 #############################################################################
 TestInstalledHeadersOneByOne()
 {
+	HEADERDIR=$1
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
 		testIndividualHeaders >/dev/null 2>&1
 	then
@@ -482,7 +484,7 @@ TestInstalledHeadersOneByOne()
 	cd compilation
 	INCLUSION_FAIL_LIST=""
 
-	for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
+	for i in `ls $HEADERDIR/*`; do
 		EXECFILE=`basename $i`
 		OUTFILE=$EXECFILE.cpp
 		echo '#include "OW_config.h"' >> $OUTFILE
@@ -497,7 +499,7 @@ int main(int argc, char* argv[])
 }
 EOS
 		echo "$EXECFILE:."
-		g++ -o $EXECFILE.o -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include -c $OUTFILE \
+		g++ -o $EXECFILE.o -I$HEADERDIR -I/usr/local/ssl/include -c $OUTFILE \
 			|| ExitWithFail "Failed to compile header test"
 		echo "."
 
@@ -1280,8 +1282,10 @@ StopDaemon
 
 
 if [ "z$OWLONGTEST" = "z1" ]; then
-  TestInstalledHeaders
-  TestInstalledHeadersOneByOne
+  TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/openwbem/
+  TestInstalledHeaders $STAGEDIR/$OWINCLUDEDIR/owbi1/
+  TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/openwbem/
+  TestInstalledHeadersOneByOne $STAGEDIR/$OWINCLUDEDIR/owbi1/
 fi
 
 CoreCheck
