@@ -144,6 +144,13 @@ public:
 	String getAttribute(const String& name) const;
 	
 	/**
+	 * Adds the argument attribute to the Node's attribute array.
+	 *
+	 * @param attr   XMLAttribute to add.
+	 */
+	void addAttribute(const XMLAttribute& attr) const;
+	
+	/**
 	 * Same as getAttribute but if the attribute is not found
 	 * a CIMException will be thrown.
 	 *
@@ -420,6 +427,7 @@ public:
 	void assignText(const String& text);
 	void appendText(const String& text);
 	String getAttribute(const String& name, bool throwException = false) const;
+	void addAttribute(const XMLAttribute& attr);
 	XMLAttributeArray getAttrs() const;
 	String getText() const;
 	String getName() const;

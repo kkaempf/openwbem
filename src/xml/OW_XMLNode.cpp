@@ -36,6 +36,7 @@
 
 #include "OW_config.h"
 #include "OW_XMLNode.hpp"
+#include "OW_XMLAttribute.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
 #include "OW_StringStream.hpp"
@@ -110,6 +111,13 @@ XMLNodeImpl::getAttribute(const String& name, bool throwException) const
 	}
 
 	return String();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+XMLNodeImpl::addAttribute(const XMLAttribute & attribute)
+{
+	m_XMLAttributeArray.push_back(attribute);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -478,6 +486,13 @@ void
 XMLNode::appendText(const String& text) const
 {
 	m_impl->appendText(text);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+XMLNode::addAttribute(const XMLAttribute& attribute) const
+{
+	return m_impl->addAttribute(attribute);
 }
 
 //////////////////////////////////////////////////////////////////////////////
