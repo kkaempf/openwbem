@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,14 +32,45 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_TEMP_FILE_ENUMERATION_IMPL_BASE_HPP_INCLUDE_GUARD_
+#define OW_TEMP_FILE_ENUMERATION_IMPL_BASE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_EnumerationException.hpp"
-#include "OW_ExceptionIds.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_TempFileStream.hpp"
+
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION_WITH_ID(Enumeration);
+class TempFileEnumerationImplBase : public IntrusiveCountableBase
+{
+
+public:
+	TempFileEnumerationImplBase();
+	TempFileEnumerationImplBase(String const& filename);
+	virtual ~TempFileEnumerationImplBase();
+	bool hasMoreElements() const;
+	size_t numberOfElements() const;
+	void clear();
+	String releaseFile();
+	bool usingTempFile() const;
+private:
+	// Prevent copying or assignment
+	TempFileEnumerationImplBase( const TempFileEnumerationImplBase& );
+	TempFileEnumerationImplBase& operator=( const TempFileEnumerationImplBase& );
+	size_t readSize(String const& filename);
+
+protected:
+	void throwIfEmpty() const;
+
+protected:
+	size_t m_size;
+	TempFileStream m_Data;
+};
 
 } // end namespace OpenWBEM
+
+#endif
 

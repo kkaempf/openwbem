@@ -35,172 +35,49 @@
 #ifndef OW_ENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_ENUMERATION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Exception.hpp"
+#include "OW_TempFileEnumerationImplBase.hpp"
 #include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
-#include "OW_TempFileStream.hpp"
-#include "OW_File.hpp"
-#include "OW_FileSystem.hpp"
-#include <fstream>
-#include <cstdlib>
-#include <iterator>
-#include <cstdio> // for SEEK_END
 
 namespace OpenWBEM
 {
 
-// This signature was removed from the templated class to please broken linkers
-// (and/or compilers).
-const UInt32 OW_TEMPFILE_ENUMERATION_SIG = 0x4f57454e; // "OWEN"  
-  
-OW_DECLARE_EXCEPTION(Enumeration);
 template <class T>
-class TempFileEnumerationImpl : public IntrusiveCountableBase
+class TempFileEnumerationImpl : public TempFileEnumerationImplBase
 {
 public:
 	TempFileEnumerationImpl()
-	: m_size(0), m_Data()
 	{
-		m_Data.write(reinterpret_cast<const char*>(&OW_TEMPFILE_ENUMERATION_SIG), sizeof(OW_TEMPFILE_ENUMERATION_SIG));
-		if (!m_Data.good())
-		{
-			OW_THROW(EnumerationException, "Failed to write signature to "
-				"enumeration tempfile.");
-		}
-		// now we have to read the sig so that the temp file stream is
-		// positioned correctly
-		UInt32 tmpSig;
-		m_Data.read(reinterpret_cast<char*>(&tmpSig), sizeof(tmpSig));
-		if (!m_Data.good())
-		{
-			OW_THROW(EnumerationException, "Failed to read signature from "
-				"enumeration tempfile.");
-		}
 	}
 	TempFileEnumerationImpl(String const& filename)
-	: m_size(readSize(filename)), m_Data(filename)
-	{
-		// now we have to read the sig so that the temp file stream is
-		// positioned correctly
-		UInt32 tmpSig;
-		m_Data.read(reinterpret_cast<char*>(&tmpSig), sizeof(tmpSig));
-		if (!m_Data.good())
-		{
-			OW_THROW(EnumerationException, "Failed to write signature to "
-				"enumeration tempfile.");
-		}
-	}
-	~TempFileEnumerationImpl()
+	: TempFileEnumerationImplBase(filename)
 	{
 	}
-	bool hasMoreElements() const
+	virtual ~TempFileEnumerationImpl()
 	{
-		
-		return m_size > 0;
 	}
 	void nextElement(T& out)
 	{
-		if (hasMoreElements())
-		{
-			--m_size;
-			out.readObject(m_Data);
-		}
-		else
-			OW_THROW (EnumerationException, "Attempt to Extract from empty Enum");
+		throwIfEmpty();
+		out.readObject(m_Data);
+		--m_size;
 	}
 	T nextElement()
 	{
-		if (hasMoreElements())
-		{
-			--m_size;
-			T retval;
-			retval.readObject(m_Data);
-			return retval;
-		}
-		else
-			OW_THROW (EnumerationException, "Attempt to Extract from empty Enum");
-	}
-	size_t numberOfElements() const
-	{
-		return m_size;
+		throwIfEmpty();
+		T retval;
+		retval.readObject(m_Data);
+		--m_size;
+		return retval;
 	}
 	void addElement( const T& arg )
 	{
-		++m_size;
 		arg.writeObject(m_Data);
-	}
-	void clear()
-	{
-		m_size = 0;
-		m_Data.reset();
-	}
-	String releaseFile()
-	{
-		// Append the size onto the end of the stream so we can recover it
-		// when constructing from the file
-		m_Data.write(reinterpret_cast<char*>(&m_size), sizeof(m_size));
-		if (!m_Data.good())
-		{
-			OW_THROW(EnumerationException, "Failed to write size to "
-				"enumeration tempfile.");
-		}
-		String rval = m_Data.releaseFile();
-		clear();
-		return rval;
-	}
-	
-	bool usingTempFile() const
-	{
-		return m_Data.usingTempFile();
+		++m_size;
 	}
 private:
 	// Prevent copying or assignment
 	TempFileEnumerationImpl( const TempFileEnumerationImpl<T>& );
 	TempFileEnumerationImpl<T>& operator=( const TempFileEnumerationImpl<T>& );
-	size_t readSize(String const& filename)
-	{
-		size_t size;
-		// open the file and read the size that is written to the end of it.
-		File f = FileSystem::openFile(filename);
-		if (!f)
-		{
-			OW_THROW(EnumerationException, "Failed to open file");
-		}
-		
-		// Check that the correct signature is on the file
-		UInt32 fileSig;
-		if (f.read(reinterpret_cast<char*>(&fileSig), sizeof(fileSig)) != sizeof(fileSig))
-		{
-			OW_THROW(EnumerationException, "Failure to read enumeration "
-				"signature");
-		}
-		if (fileSig != OW_TEMPFILE_ENUMERATION_SIG)
-		{
-			OW_THROW(EnumerationException, "Attempted to construct an "
-				"enumeration from a file that does not have the correct "
-				"signature");
-		}
-		
-		off_t whence = f.seek(-static_cast<off_t>(sizeof(size)), SEEK_END);
-		if (whence == -1)
-		{
-			OW_THROW(EnumerationException, "Failure to seek");
-		}
-		if (f.read(reinterpret_cast<char*>(&size), sizeof(size), whence) != sizeof(size))
-		{
-			OW_THROW(EnumerationException, "Failure to read enumeration "
-				"size");
-		}
-		if (f.close() == -1)
-		{
-			OW_THROW(EnumerationException, "Failure to close enumeration "
-				"file");
-		}
-		return size;
-	}
-private:
-	size_t m_size;
-	TempFileStream m_Data;
 };
 
 template <class T>
@@ -215,14 +92,6 @@ public:
 	Enumeration(String const& filename)
 	: m_impl( new TempFileEnumerationImpl<T>(filename) )
 	{
-	}
-	Enumeration(const Enumeration<T>& arg): m_impl(arg.m_impl)
-	{
-	}
-	Enumeration<T>& operator=(const Enumeration<T>& arg)
-	{
-		m_impl = arg.m_impl;
-		return *this;
 	}
 	bool hasMoreElements() const
 	{
@@ -257,9 +126,6 @@ public:
 	bool usingTempFile() const
 	{
 		return m_impl->usingTempFile();
-	}
-	~Enumeration()
-	{
 	}
 private:
 	IntrusiveReference< TempFileEnumerationImpl<T> > m_impl;

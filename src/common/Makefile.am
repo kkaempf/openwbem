@@ -90,6 +90,7 @@ OW_StackTrace.cpp \
 OW_StringBuffer.cpp \
 OW_String.cpp \
 OW_StringStream.cpp \
+OW_TempFileEnumerationImplBase.cpp \
 OW_TempFileStream.cpp \
 OW_ThreadBarrier.cpp \
 OW_ThreadCancelledException.cpp \
@@ -141,6 +142,7 @@ OW_dlSharedLibraryLoader.hpp \
 OW_dyldSharedLibrary.hpp \
 OW_dyldSharedLibraryLoader.hpp \
 OW_Enumeration.hpp \
+OW_EnumerationException.hpp \
 OW_Exception.hpp \
 OW_ExceptionIds.hpp \
 OW_Exec.hpp \
@@ -202,6 +204,7 @@ OW_StringBuffer.hpp \
 OW_StringEnumeration.hpp \
 OW_String.hpp \
 OW_StringStream.hpp \
+OW_TempFileEnumerationImplBase.hpp \
 OW_TempFileStream.hpp \
 OW_ThreadBarrier.hpp \
 OW_ThreadCancelledException.hpp \
