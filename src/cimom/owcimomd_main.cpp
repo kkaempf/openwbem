@@ -68,12 +68,14 @@ int main(int argc, char* argv[])
 		env->logInfo("CIMOM is now running!");
 
 		// only do this in production mode. During development we want it to crash!
-#ifndef OW_DEBUG
+#if !defined(OW_DEBUG)
 		// Do this after initialization to prevent an infinite loop.
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
 			Platform::installFatalSignalHandlers();
 		}
+		std::unexpected_handler oldUnexpectedHandler = std::set_unexpected(Platform::restartDaemon);
+		std::terminate_handler oldTerminateHandler = std::set_terminate(Platform::restartDaemon);
 #endif
 
 		int sig;
@@ -89,8 +91,12 @@ int main(int argc, char* argv[])
 				case Platform::SHUTDOWN:
 					shuttingDown = true;
 
+#if !defined(OW_DEBUG)
 					// need to remove them so we don't restart while shutting down.
 					Platform::removeFatalSignalHandlers(); 
+					std::set_unexpected(oldUnexpectedHandler);
+					std::set_terminate(oldTerminateHandler);
+#endif
 
 					env->logInfo("CIMOM received shutdown notification."
 						" Initiating shutdown");

@@ -753,6 +753,26 @@ int main()
 	[ AC_MSG_RESULT("no") ]
 )
 
+AC_MSG_CHECKING("pthread_kill_other_threads_np")
+AC_TRY_RUN(
+	[
+#include <pthread.h>
+#include <assert.h>
+int main()
+{
+	pthread_kill_other_threads_np();
+	return 0;
+}
+	],
+	[
+		AC_DEFINE(HAVE_PTHREAD_KILL_OTHER_THREADS_NP)
+		AC_MSG_RESULT("yes")
+	],
+	[ AC_MSG_RESULT("no") ],
+	[ AC_MSG_RESULT("no") ]
+)
+
+# restore flags after pthread tests
 LIBS=$OLD_LIBS
  
 #####################################################

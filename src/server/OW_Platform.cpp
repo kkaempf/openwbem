@@ -234,6 +234,12 @@ processCommandLineOptions(int argc, char** argv)
 //////////////////////////////////////////////////////////////////////////////
 void restartDaemon()
 {
+#ifdef OW_HAVE_PTHREAD_KILL_OTHER_THREADS_NP
+	// do this, since it seems that on some distros (debian sarge for instance) 
+	// it doesn't happen when calling execv(), and it should hurt if it's 
+	// called twice.
+	pthread_kill_other_threads_np();
+#endif
 	// It would be good to close all file handles > 2, but we can't do it.
 	// On Linux pthreads will kill off all the threads when we call
 	// execv().  If we close all the fds, then that breaks pthreads and
