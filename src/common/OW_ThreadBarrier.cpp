@@ -107,7 +107,7 @@ public:
 		Condition m_cond;
 	};
 	ThreadBarrierImpl(UInt32 threshold)
-		: m_threshold(threshold),
+		: m_threshold(threshold)
     		, m_curSubBarrier(0)
 	{
 	}
