@@ -46,7 +46,7 @@ $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
--L$(top_builddir)/db/db -lowdb -ldl \
+-L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/mof -lowmofc
 
