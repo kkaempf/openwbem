@@ -17,7 +17,6 @@ Testing:
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
 
 Fix problems:
-    - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Man pages aren't getting included in the rpm.
     - Fix memory leak in npi.
     - Create a non-recursive mutex, and use it with condition variables,
@@ -48,22 +47,30 @@ New features:
       X Indication/polled providers need a way to stop/restart polling.
         To stop: return 0 from poll().  To start: call addPolledProvider().
       X OW_IndicationServerImpl::deleteSubscription
-      - OW_IndicationServerImpl::createSubscription
-        - Only allow subscriptions if a) There is a provider capable of
+      X OW_IndicationServerImpl::createSubscription
+        X Only allow subscriptions if a) There is a provider capable of
           generating the requested Indication in the filter. And
           b) There is a provider that can handle the requested 
              IndicationHandler.
-      - OW_IndicationServerImpl::modifySubscription
+      X OW_IndicationServerImpl::modifySubscription
       - OW_IndicationServerImpl::_processIndication
         - Create a wql filter property source.
       - Add example of types of indication providers: 
         X indication (mustPoll = true) OW_IndicationProviderTest1
         X indication (mustPoll = false) w/ extra thread
         X indication/polled (mustPoll = false) and no extra thread.
-        - Remove OW_TriggerProviderTest*.
+        X Remove OW_TriggerProviderTest*.
         - Fix cimListener.cpp to use the new indication providers.
       - OW_IndicationRepLayer needs an indication provider to interface with
         it to indicate whether it should generate intrinsic indications.
+		- Modifying existing filters will affect the indication server, and
+		  may mean that indication providers need to be notified, etc. So:
+		  Create an CIM_IndicationFilter pass-thru provider so we can either:
+		  1. Prevent modifications to existing filters, or
+		  2. Do the work to re-initialize everything correctly in 
+		     OW_IndicationServerImpl.
+	   - Handle the various options in the CIM_IndicationSubscription and
+		  CIM_IndicationHandler classes.
     - Add an option to the mof compiler to output provider skeleton code for
       a MOF class.
     - Add an option to the mof compiler to output a client class that wraps
@@ -145,6 +152,7 @@ New features:
 	   and print filename/line numbers.
     - Add a page to the website similar to http://cygwin.com/bugs.html
 	 - Add rbac authentication
+    - Validate the "Required" qualifier on properties during create & modifyInstance.
 
 Refactorings:
 	 - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,

@@ -73,7 +73,15 @@ public:
 
 		// delete it from the repository
 		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		rephdl->deleteInstance(ns, cop);
+		try
+		{
+			rephdl->deleteInstance(ns, cop);
+		}
+		catch (...)
+		{
+			indicationServer->createSubscription(ns, rephdl->getInstance(ns,cop));
+			throw;
+		}
 	}
 
 	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance)
@@ -87,7 +95,15 @@ public:
 		indicationServer->createSubscription(ns, cimInstance);
 
 		// now create it in the repository.
-		return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
+		try
+		{
+			return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
+		}
+		catch (...)
+		{
+			indicationServer->deleteSubscription(ns, OW_CIMObjectPath(cimInstance));
+			throw;
+		}
 	}
 
 	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, OW_Bool localOnly, OW_Bool includeQualifiers,
@@ -127,7 +143,14 @@ public:
 		indicationServer->modifySubscription(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
 
 		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
+		try
+		{
+			rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
+		}
+		catch (...)
+		{
+			indicationServer->modifySubscription(ns, previousInstance);
+		}
 	}
 
 private:

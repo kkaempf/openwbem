@@ -147,7 +147,7 @@ void testQuery(const char* query, const OW_CIMInstance& passingInstance)
 		abort();
 	}
 
-	if (comp.evaluate(&source))
+	if (comp.evaluate(source))
 	{
 		cout << "comp.evaluate(&source): passed\n";
 	}

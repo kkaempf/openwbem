@@ -145,7 +145,7 @@ public:
 	 *		the where clause or if the property type of the source property
 	 *		doesn't match the query.
 	 */
-    bool evaluate(OW_WQLPropertySource * source) const;
+    bool evaluate(const OW_WQLPropertySource& source) const;
 
     void print(std::ostream& ostr);
 
@@ -169,7 +169,7 @@ protected:
 
     static inline void _ResolveProperty(
         OW_WQLOperand& op,
-        const OW_WQLPropertySource* source)
+        const OW_WQLPropertySource& source)
     {
         //
         // Resolve the operand: if it's a property name, look up its value:
@@ -179,7 +179,7 @@ protected:
         {
             const OW_String& propertyName = op.getPropertyName();
 
-            if (!source->getValue(propertyName, op))
+            if (!source.getValue(propertyName, op))
 				OW_THROW(OW_NoSuchPropertyException, "No such property");
         }
     }

@@ -263,7 +263,7 @@ void OW_WQLCompile::compile(const OW_WQLSelectStatement * wqs)
 	_sortTableau();
 }
 
-bool OW_WQLCompile::evaluate(OW_WQLPropertySource * source) const
+bool OW_WQLCompile::evaluate(const OW_WQLPropertySource& source) const
 {
 	bool b = false;
 	OW_WQLOperand lhs, rhs;

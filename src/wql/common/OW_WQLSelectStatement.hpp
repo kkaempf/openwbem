@@ -92,6 +92,13 @@ public:
 		return _selectPropertyNames[i];
 	}
 
+	/** Gets the selected property names in the list.
+	 */
+	const OW_StringArray& getSelectPropertyNames() const
+	{
+		return _selectPropertyNames;
+	}
+
 	/** Appends a property name to the property name list. This user should
 	  not call this method; it should only be called by the parser.
 	 */

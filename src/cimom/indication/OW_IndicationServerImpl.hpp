@@ -36,6 +36,7 @@
 #include "OW_Map.hpp"
 #include "OW_List.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
+#include "OW_IndicationProviderIFC.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Condition.hpp"
 #include "OW_MutexLock.hpp"
@@ -46,6 +47,8 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_ThreadCounter.hpp"
 #include "OW_HashMultiMap.hpp"
+#include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
 
 
 class OW_NotifyTrans;
@@ -129,6 +132,12 @@ private:
 		{}
 
 		OW_CIMObjectPath m_subPath;
+		OW_CIMInstance m_sub;
+		OW_IndicationProviderIFCRefArray m_providers;
+		OW_CIMInstance m_filter;
+		OW_WQLSelectStatement m_selectStmt;
+		OW_WQLCompile m_compiledStmt;
+		OW_StringArray m_classes;
 	};
 
 	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"

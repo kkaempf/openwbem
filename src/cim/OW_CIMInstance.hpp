@@ -294,7 +294,7 @@ public:
 	 * criteria
 	 * @param localOnly If true, all inherited properties and qualifiers will be
 	 *		omitted.
-	 * @param includeQualifiers If true, all quailifiers will be omitted.
+	 * @param includeQualifiers If false, all quailifiers will be omitted.
 	 * @param includeClassOrigin If true, all element names will include the
 	 *		class origin.
 	 * @param propertyList An array of property names that specifies the only
@@ -314,7 +314,7 @@ public:
 	 * criteria
 	 * @param localOnly If true, all inherited properties and qualifiers will be
 	 *		omitted.
-	 * @param includeQualifiers If true, all quailifiers will be omitted.
+	 * @param includeQualifiers If false, all quailifiers will be omitted.
 	 * @param includeClassOrigin If true, all element names will include the
 	 *		class origin.
 	 * @param propertyList A pointer to an array of property names that
@@ -335,7 +335,7 @@ public:
 	 * @param localOnly If true, all inherited properties and qualifiers will be
 	 *		omitted.
 	 * @param deep If false, all derived properties and qualifiers will be omitted.
-	 * @param includeQualifiers If true, all quailifiers will be omitted.
+	 * @param includeQualifiers If false, all quailifiers will be omitted.
 	 * @param includeClassOrigin If true, all element names will include the
 	 *		class origin.
 	 * @param propertyList A pointer to an array of property names that

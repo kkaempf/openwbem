@@ -38,8 +38,7 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_ACLInfo.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_WQLSelectStatement.hpp"
-#include "OW_WQLCompile.hpp"
+#include "OW_CIMValueCast.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
@@ -118,11 +117,11 @@ private:
 	OW_CIMOMHandleIFCRef m_repch;
 };
 
-OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env,
-	const OW_CIMOMHandleIFCRef& ch, const OW_CIMOMHandleIFCRef& repch)
+OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env)
 {
 	return OW_ProviderEnvironmentIFCRef(
-		new IndicationServerProviderEnvironment(ch, env, repch));
+		new IndicationServerProviderEnvironment(
+			env->getCIMOMHandle(), env, env->getRepositoryCIMOMHandle()));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -144,15 +143,13 @@ void
 OW_Notifier::run()
 {
 	OW_CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
-	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle(m_aclInfo, false);
-	OW_CIMOMHandleIFCRef repch = env->getCIMOMHandle(m_aclInfo, false, true);
 
 	while (true)
 	{
 		try
 		{
 			m_trans.m_provider->exportIndication(createProvEnvRef(
-				m_pmgr->getEnvironment(), lch, repch), m_trans.m_ns, m_trans.m_handler,
+				m_pmgr->getEnvironment()), m_trans.m_ns, m_trans.m_handler,
 				m_trans.m_indication);
 		}
 		catch(OW_Exception& e)
@@ -183,6 +180,51 @@ OW_IndicationServerImpl::OW_IndicationServerImpl()
 {
 }
 
+namespace
+{
+//////////////////////////////////////////////////////////////////////////////
+class instanceEnumerator : public OW_CIMInstanceResultHandlerIFC
+{
+public:
+	instanceEnumerator(OW_IndicationServerImpl* is_,
+		const OW_String& ns_)
+		: is(is_)
+		, ns(ns_)
+	{}
+
+private:
+	void doHandle(const OW_CIMInstance& i)
+	{
+		is->createSubscription(ns, i);
+	}
+	OW_IndicationServerImpl* is;
+	OW_String ns;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class namespaceEnumerator : public OW_StringResultHandlerIFC
+{
+public:
+	namespaceEnumerator(
+		const OW_CIMOMHandleIFCRef& ch_,
+		OW_IndicationServerImpl* is_)
+		: ch(ch_)
+		, is(is_)
+	{}
+
+private:
+	void doHandle(const OW_String& ns)
+	{
+		instanceEnumerator ie(is, ns);
+		ch->enumInstances(ns,"CIM_IndicationSubscription", ie);
+	}
+
+	OW_CIMOMHandleIFCRef ch;
+	OW_IndicationServerImpl* is;
+};
+
+} // end anonymous namespace
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
@@ -196,10 +238,9 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	OW_ProviderManagerRef pProvMgr = m_env->getProviderManager();
 
 	OW_CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(aclInfo, false);
-	OW_CIMOMHandleIFCRef repch = env->getCIMOMHandle(aclInfo, false, true);
 
 	OW_IndicationExportProviderIFCRefArray pra =
-		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env, lch, repch));
+		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
 
 	m_env->logDebug(format("OW_IndicationServerImpl: %1 export providers found",
 		pra.size()));
@@ -216,6 +257,12 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 				" indication type %1", clsNames[j]));
 		}
 	}
+
+	// Now initialize for all the subscriptions that exist in the repository.
+	// This calls createSubscription for every instance of 
+	// CIM_IndicationSubscription in all namespaces.
+	namespaceEnumerator nsHandler(lch, this);
+	lch->enumNameSpace("", nsHandler);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -306,21 +353,183 @@ OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class CIMInstanceArrayBuilder : public OW_CIMInstanceResultHandlerIFC
+
+class InstancePropertySource : public OW_WQLPropertySource
+{
+public:
+	InstancePropertySource(const OW_CIMInstance& ci_,
+		const OW_CIMOMHandleIFCRef& hdl,
+		const OW_String& ns)
+		: ci(ci_)
+		, m_hdl(hdl)
+		, m_ns(ns)
 	{
-	public:
-		CIMInstanceArrayBuilder(OW_CIMInstanceArray& cia_)
-		: cia(cia_)
-		{}
-	protected:
-		virtual void doHandle(const OW_CIMInstance &i)
+	}
+
+	virtual bool evaluateISA(const OW_String &propertyName, const OW_String &className) const 
+	{
+		OW_StringArray propNames = propertyName.tokenize(".");
+		if (propNames.empty())
 		{
-			cia.push_back(i);
+			return false;
 		}
-	private:
-		OW_CIMInstanceArray& cia;
-	};
-}
+
+		if (propNames[0] == ci.getClassName())
+		{
+			propNames.remove(0);
+		}
+
+		return evaluateISAAux(ci, propNames, className);
+	}
+
+	virtual bool getValue(const OW_String &propertyName, OW_WQLOperand &value) const 
+	{
+		OW_StringArray propNames = propertyName.tokenize(".");
+		if (propNames.empty())
+		{
+			return false;
+		}
+
+		if (propNames[0] == ci.getClassName())
+		{
+			propNames.remove(0);
+		}
+
+		return getValueAux(ci, propNames, value);
+	}
+
+private:
+	// This is for recursion on embedded instances
+	bool evaluateISAAux(const OW_CIMInstance& ci, OW_StringArray propNames, const OW_String &className) const 
+	{
+		if (propNames.empty())
+		{
+			return classIsDerivedFrom(ci.getClassName(), className);
+		}
+
+		OW_CIMProperty p = ci.getProperty(propNames[0]);
+		if (!p)
+		{
+			return false;
+		}
+
+		OW_CIMValue v = p.getValue();
+		switch (v.getType())
+		{
+			case OW_CIMDataType::EMBEDDEDINSTANCE:
+			{
+				propNames.remove(0);
+				OW_CIMInstance embed;
+				v.get(embed);
+				return evaluateISAAux(embed, propNames, className);
+			}
+			default:
+				return false;
+		}
+	}
+
+	bool classIsDerivedFrom(const OW_String& cls, const OW_String& className) const
+	{
+		OW_String curClassName = cls;
+		while (!curClassName.empty())
+		{
+			if (curClassName.equalsIgnoreCase(className))
+			{
+				return true;
+			}
+			// didn't match, so try the superclass of curClassName
+			OW_CIMClass cls2 = m_hdl->getClass(m_ns, curClassName);
+			curClassName = cls2.getSuperClass();
+	
+		}
+		return false;
+	}
+
+	// This is for recursion on embedded instances
+	static bool getValueAux(const OW_CIMInstance& ci, OW_StringArray propNames, OW_WQLOperand& value)
+	{
+		if (propNames.empty())
+		{
+			return false;
+		}
+
+		OW_CIMProperty p = ci.getProperty(propNames[0]);
+		if (!p)
+		{
+			return false;
+		}
+
+		OW_CIMValue v = p.getValue();
+		switch (v.getType())
+		{
+			case OW_CIMDataType::DATETIME:
+			case OW_CIMDataType::CIMNULL:
+				value = OW_WQLOperand();
+				break;
+			case OW_CIMDataType::UINT8:
+			case OW_CIMDataType::SINT8:
+			case OW_CIMDataType::UINT16:
+			case OW_CIMDataType::SINT16:
+			case OW_CIMDataType::UINT32:
+			case OW_CIMDataType::SINT32:
+			case OW_CIMDataType::UINT64:
+			case OW_CIMDataType::SINT64:
+			case OW_CIMDataType::CHAR16:
+			{
+				OW_Int64 x;
+				OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::SINT64).get(x);
+				value = OW_WQLOperand(x, WQL_INTEGER_VALUE_TAG);
+				break;
+			}
+			case OW_CIMDataType::STRING:
+				value = OW_WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
+				break;
+			case OW_CIMDataType::BOOLEAN:
+			{
+				OW_Bool b;
+				v.get(b);
+				value = OW_WQLOperand(b, WQL_BOOLEAN_VALUE_TAG);
+				break;
+			}
+			case OW_CIMDataType::REAL32:
+			case OW_CIMDataType::REAL64:
+			{
+				OW_Real64 x;
+				OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::REAL64).get(x);
+				value = OW_WQLOperand(x, WQL_DOUBLE_VALUE_TAG);
+				break;
+			}
+			case OW_CIMDataType::REFERENCE:
+				value = OW_WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
+				break;
+			case OW_CIMDataType::EMBEDDEDCLASS:
+				value = OW_WQLOperand();
+				break;
+			case OW_CIMDataType::EMBEDDEDINSTANCE:
+			{
+				propNames.remove(0);
+				OW_CIMInstance embed;
+				v.get(embed);
+				return getValueAux(embed, propNames, value);
+			}
+			break;
+			default:
+				value = OW_WQLOperand();
+				break;
+		}
+
+		return true;
+	}
+
+private:
+	OW_CIMInstance ci;
+	OW_CIMOMHandleIFCRef m_hdl;
+	OW_String m_ns;
+};
+
+} // end anonymous namespace
+
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
@@ -330,46 +539,15 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 		"instanceArg = %1 instNS = %2", instanceArg.toString(), instNS));
 	OW_ACLInfo aclInfo;
 
-	OW_CIMInstance instance(instanceArg);
-	OW_DateTime dtm;
-	dtm.setToCurrent();
-	OW_CIMDateTime cdt(dtm);
+	// TODO: Figure out if we should really set the IndicationTime property
+	// of if it's the provider's responsibility.
+	//OW_CIMInstance instance(instanceArg);
+	//OW_DateTime dtm;
+	//dtm.setToCurrent();
+	//OW_CIMDateTime cdt(dtm);
+	//instance.setProperty("IndicationTime", OW_CIMValue(cdt));
 
-	instance.setProperty("IndicationTime", OW_CIMValue(cdt));
 	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
-
-	// TODO: Make this function much more efficient.
-	//		1. Put the code into a callback so we don't have to build an enumeration.
-	//		2. Don't start with the subscriptions.  Get the filters, and test
-	//			each filter.  If the filter passes, call associators to get
-	//			the handler instances and then deliver the indication.
-	//		3. Cache the compiled filters to avoid redundant work.
-	//	Gotcha: We'll need to make sure that we're re-entrant if the
-	//		enumInstances callback calls associators.
-
-	OW_CIMInstanceEnumeration subscriptions;
-	try
-	{
-		subscriptions = hdl->enumInstancesE(instNS,
-			OW_String("CIM_IndicationSubscription"), true);
-	}
-	catch(OW_CIMException& e)
-	{
-		m_env->logError(format("%1 caught in OW_IndicationServerImpl::_processIndication", e.type()));
-		m_env->logError(format("File: %1", e.getFile()));
-		m_env->logError(format("Line: %1", e.getLine()));
-		m_env->logError(format("Msg: %1", e.getMessage()));
-		return;
-	}
-
-	OW_CIMOMHandleIFCRef wqllch = m_env->getWQLFilterCIMOMHandle(instance,
-		aclInfo);
-	if (!wqllch)
-	{
-		m_env->logError("Cannot process indications, because there is no "
-			"WQL library.");
-		return;
-	}
 
 	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
 
@@ -380,121 +558,60 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 		return;
 	}
 
-	while(subscriptions.hasMoreElements())
+	OW_String key = instanceArg.getClassName();
+    OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
+	if (prop)
+	{
+		OW_CIMValue v = prop.getValue();
+		if (v)
+		{
+			if (v.getType() == OW_CIMDataType::EMBEDDEDINSTANCE)
+			{
+				OW_CIMInstance embed;
+				v.get(embed);
+				key += ":";
+				key += embed.getClassName();
+			}
+		}
+	}
+
+	OW_MutexLock lock(m_subGuard);
+	std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+		m_subscriptions.equal_range(key);
+	subscriptions_t::iterator first = range.first;
+	subscriptions_t::iterator last = range.second;
+
+	while(first != last)
 	{
 		try
 		{
-			OW_CIMInstance subscription = subscriptions.nextElement();
-			OW_CIMObjectPath cop(OW_CIMNULL);
+			Subscription& sub = first->second;
+			OW_CIMInstance filterInst = sub.m_filter;
 
-			// Get object path to filter object
-			OW_CIMProperty filterProp = subscription.getProperty("Filter");
-			if (!filterProp)
-			{
-				m_env->logError("Indication subscription has no Filter property");
-				continue;
-			}
-			OW_CIMValue fpv = filterProp.getValue();
-			if (!fpv)
-			{
-				m_env->logError("Indication subscription Filter property is NULL");
-				continue;
-			}
-			fpv.get(cop);
-
-			OW_CIMInstance filterInst = hdl->getInstance(cop.getNameSpace(), cop);
-
-			// Get query string
-			OW_String query;
-			OW_CIMProperty queryProp = filterInst.getProperty("Query");
-			if (!queryProp)
-			{
-				m_env->logError("Indication subscription has no Query property");
-				continue;
-			}
-			OW_CIMValue qpv = queryProp.getValue();
-			if (!qpv)
-			{
-				m_env->logError("Indication subscription Query property is NULL");
-				continue;
-			}
-			qpv.get(query);
-
-			// Get query language
-			OW_String queryLanguage;
-			OW_CIMProperty queryLangProp = filterInst.getProperty("QueryLanguage");
-			if (!queryLangProp)
-			{
-				m_env->logDebug("Indication subscription has no Query property, assuming wql1");
-				queryLanguage = "wql1";
-			}
-			else
-			{
-				OW_CIMValue qlpv = queryLangProp.getValue();
-				if (!qlpv || qlpv.getType() != OW_CIMDataType::STRING)
-				{
-					m_env->logDebug("Indication subscription has NULL Query property, assuming wql1");
-					queryLanguage = "wql1";
-				}
-				else
-				{
-					qlpv.get(queryLanguage);
-				}
-			}
-
-			// TEMP
-			OW_CIMInstance filteredInstance = instance;
+			OW_String queryLanguage = sub.m_filter.getPropertyT("Filter").getValueT().toString();
 
 			//-----------------------------------------------------------------
 			// Here we need to call into the WQL process with the query string
 			// and the indication instance
 			//-----------------------------------------------------------------
-			if (wqlRef->supportsQueryLanguage(queryLanguage))
+			InstancePropertySource propSource(instanceArg, hdl, instNS);
+			if (!sub.m_compiledStmt.evaluate(propSource))
 			{
-				OW_CIMInstanceArray cia;
-				CIMInstanceArrayBuilder handler(cia);
-				wqlRef->evaluate(instNS, handler, query,
-					queryLanguage, wqllch);
-
-				if(cia.size() != 1)
-				{
-					continue;
-				}
-
-				filteredInstance = cia[0];
-			}
-			else
-			{
-				m_env->logError(format("Filter uses queryLanguage %1, which is"
-					" not supported", queryLanguage));
 				continue;
 			}
-			
+
+			// TODO: This won't work for queries that select embedded properties such as: 
+			// "SELECT myClass.embeddedInstance.embeddedPropName ..."
+			OW_CIMInstance filteredInstance(instanceArg.clone(
+				OW_CIMOMHandleIFC::NOT_LOCAL_ONLY, 
+				OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS, 
+				OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN, 
+				sub.m_selectStmt.getSelectPropertyNames()));
 
 			// Now get the export handler for this indication subscription
-			OW_CIMObjectPath handlerCOP(OW_CIMNULL);
-			OW_CIMProperty cp = subscription.getProperty("Handler");
-			if(!cp)
-			{
-				m_env->logError("Handler property does not exist");
-				continue;
-			}
+			OW_CIMObjectPath handlerCOP = 
+				sub.m_subPath.getKeyT("Handler").getValueT().toCIMObjectPath();
 
-			OW_CIMValue cv = cp.getValue();
-			if(!cv)
-			{
-				m_env->logError("Handler property has no value");
-				continue;
-			}
-
-			if(cv.getType() != OW_CIMDataType::REFERENCE)
-			{
-				m_env->logError(format("Handler property is not reference type."
-                    " Type = %1", OW_CIMDataType(cv.getType()).toString()));
-				continue;
-			}
-
-			cv.get(handlerCOP);
 			OW_CIMInstance handler = hdl->getInstance(handlerCOP.getNameSpace(),
 				handlerCOP);
 
@@ -524,6 +641,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			m_env->logError(format("Error occurred while exporting indications:"
 				" %1", e).c_str());
 		}
+		++first;
 	}
 }
 
@@ -596,7 +714,22 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 	{
 		if (cop.equals(iter->second.m_subPath))
 		{
-			// TODO: call deleteFilter on the provider(s)
+			Subscription& sub = iter->second;
+			for (size_t i = 0; i < sub.m_providers.size(); ++i)
+			{
+				try
+				{
+					OW_IndicationProviderIFCRef p = sub.m_providers[i];
+					bool lastActivation = false; // TODO: Figure this out
+					p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes, lastActivation);
+				}
+				catch (const OW_Exception& e)
+				{
+				}
+				catch (...)
+				{
+				}
+			}
 			m_subscriptions.erase(iter++);
 		}
 		else
@@ -677,16 +810,14 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	OW_IndicationProviderIFCRefArray providers;
 	if (isaClassNames.empty())
 	{
-		providers = pm->getIndicationProviders(createProvEnvRef(m_env, 
-			m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()), ns, 
+		providers = pm->getIndicationProviders(createProvEnvRef(m_env), ns, 
 			indicationClassName, "");
 	}
 	else
 	{
 		for (size_t i = 0; i < isaClassNames.size(); ++i)
 		{
-			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env, 
-				m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()), 
+			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env), 
 				ns, indicationClassName, isaClassNames[i]));
 		}
 	}
@@ -708,13 +839,19 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	// call authorizeFilter on all the indication providers
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
-		providers[i]->authorizeFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
+		providers[i]->authorizeFilter(createProvEnvRef(m_env),
 			selectStmt, indicationClassName, ns, isaClassNames, ""); // TODO: figure out the user name
 	}
 
-	// create a subscription (save the compiled filter)
+	// create a subscription (save the compiled filter and other info)
 	Subscription sub;
 	sub.m_subPath = OW_CIMObjectPath(subInst);
+	sub.m_sub = subInst;
+	sub.m_providers = providers;
+	sub.m_filter = filterInst;
+	sub.m_selectStmt = selectStmt;
+	sub.m_compiledStmt = compiledStmt;
+	sub.m_classes = isaClassNames;
 
 	// get the lock and put it in m_subscriptions
 	{
@@ -746,7 +883,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		bool firstActivation = true; // TODO: Figure out firstActivation
 		try
 		{
-			providers[i]->activateFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
+			providers[i]->activateFilter(createProvEnvRef(m_env),
 				selectStmt, indicationClassName, ns, isaClassNames, firstActivation);
 			
 			++successfulActivations;
@@ -767,7 +904,27 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 void
 OW_IndicationServerImpl::modifySubscription(const OW_String& ns, const OW_CIMInstance& subInst)
 {
-	(void)ns; (void)subInst;
+	// since you can't modify an instance's path which includes the paths to
+	// the filter and the handler, if a subscription was modified, it will
+	// have only really changed the non-key, non-ref properties, so we can just
+	// find it in the subscriptions map and update it.
+	OW_CIMObjectPath cop(subInst);
+	cop.setNameSpace(ns);
+	
+	OW_MutexLock l(m_subGuard);
+	for (subscriptions_t::iterator iter = m_subscriptions.begin(); 
+		 iter != m_subscriptions.end(); ++iter)
+	{
+		if (cop.equals(iter->second.m_subPath))
+		{
+			Subscription& sub = iter->second;
+			for (size_t i = 0; i < sub.m_providers.size(); ++i)
+			{
+				sub.m_sub = subInst;
+			}
+		}
+	}
+
 }
 
 
