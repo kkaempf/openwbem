@@ -37,6 +37,7 @@
 #include "OW_File.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_Format.hpp"
 
 extern "C"
 {
@@ -271,10 +272,10 @@ OW_FileSystem::flush(OW_FileHandle&)
 void
 OW_FileSystem::initRandomFile(const OW_String& filename)
 {
-	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY | O_EXCL, 0600);
+	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	if (hdl == -1)
 	{
-		OW_THROW(OW_Exception, "Can't open random file for writing");
+		OW_THROW(OW_Exception, format("Can't open random file %1 for writing", filename).c_str());
 	}
 	OW_RandomNumber rnum(0, 0xFF);
 	for (size_t i = 0; i < 1024; ++i)
