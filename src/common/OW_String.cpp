@@ -1073,7 +1073,7 @@ String::toDateTime() const
 }
 //////////////////////////////////////////////////////////////////////////////
 StringArray
-String::tokenize(const char* delims, EReturnTokensFlag returnTokens, EEmptyTokenReturnFlag returnEmptyTokens) const
+String::tokenize(const char* delims, EReturnTokensFlag returnDelimitersAsTokens, EEmptyTokenReturnFlag returnEmptyTokens) const
 {
 	StringArray ra;
 	if(length() == 0 || delims == 0)
@@ -1105,7 +1105,7 @@ String::tokenize(const char* delims, EReturnTokensFlag returnTokens, EEmptyToken
 			{
 				ra.append(String());
 			}
-			if( returnTokens == E_RETURN_TOKENS )
+			if( returnDelimitersAsTokens == E_RETURN_TOKENS )
 			{
 				ra.append(String(*pstr));
 			}			

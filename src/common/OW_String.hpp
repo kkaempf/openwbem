@@ -229,7 +229,7 @@ public:
 	 * Tokenize this String object using the given delimeters.
 	 * @param delims	A pointer to a char array of delimeters that separate
 	 * 	the tokens in this String object.
-	 * @param returnTokens If this flag is E_RETURN_TOKENS, then the
+	 * @param returnDelimitersAsTokens If this flag is E_RETURN_TOKENS, then the
 	 * 	delimiter characters are also returned as tokens, otherwise the
 	 * 	delimiters are removed.
 	 * @param returnEmptyTokens If this flag is E_RETURN_EMPTY_TOKENS, then
@@ -239,7 +239,7 @@ public:
 	 * object. If there are no tokens the StringArray will be empty.
 	 */
 	StringArray tokenize(const char* delims = " \n\r\t\v",
-		EReturnTokensFlag returnTokens = E_DISCARD_TOKENS,
+		EReturnTokensFlag returnDelimitersAsTokens = E_DISCARD_TOKENS,
 		EEmptyTokenReturnFlag returnEmptyTokens = E_SKIP_EMPTY_TOKENS ) const;
 	/**
 	 * @return The c string representation of this String object. This
