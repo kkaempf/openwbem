@@ -39,6 +39,7 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_Format.hpp"
 #include "OW_ThreadImpl.hpp"
+#include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_ExceptionIds.hpp"
 
@@ -55,6 +56,45 @@
 #endif
 
 #include <cctype>
+
+
+#ifndef OW_HAVE_LOCALTIME_R
+namespace
+{
+	OpenWBEM::Mutex localtimeMutex;
+}
+struct tm *localtime_r(const time_t *timep, struct tm *result)
+{
+	OpenWBEM::MutexLock lock(localtimeMutex);
+	struct tm *p = localtime(timep);
+	
+	if (p)
+	{
+		*(result) = *p;
+	}
+	
+	return p;
+}
+#endif
+
+#ifndef OW_HAVE_GMTIME_R
+namespace
+{
+	OpenWBEM::Mutex gmtimeMutex;
+}
+struct tm *gmtime_r(const time_t *timep, struct tm *result)
+{
+	OpenWBEM::MutexLock lock(gmtimeMutex);
+	struct tm *p = gmtime(timep);
+	
+	if (p)
+	{
+		*(result) = *p;
+	}
+	
+	return p;
+}
+#endif
 
 namespace OpenWBEM
 {
@@ -930,25 +970,15 @@ DateTime::getTm(ETimeOffset timeOffset) const
 {
 	if (timeOffset == E_LOCAL_TIME)
 	{
-#ifdef OW_HAVE_LOCALTIME_R
 		tm theTime;
 		localtime_r(&m_time, &theTime);
 		return theTime;
-#else
-		tm* theTime = localtime(&m_time);
-		return *theTime;
-#endif
 	}
 	else // timeOffset == E_UTC_TIME
 	{
-#ifdef OW_HAVE_GMTIME_R
 		tm theTime;
 		gmtime_r(&m_time, &theTime);
 		return theTime;
-#else
-		tm* theTime = gmtime(&m_time);
-		return *theTime;
-#endif
 	}
 }
 
@@ -1197,40 +1227,6 @@ DateTime::toStringGMT() const
 { 
 	return toString(E_UTC_TIME); 
 }
-
-#if 0
-//////////////////////////////////////////////////////////////////////////////
-namespace {
-Int16 gmtOffset = 0;
-bool offsetComputed = false;
-Mutex tzmutex;
-} // end anonymous namespace
-//////////////////////////////////////////////////////////////////////////////
-// static
-Int16
-DateTime::getGMTOffset()
-{
-	ThreadImpl::memoryBarrier();
-	if (!offsetComputed)
-	{
-		// double-checked locking
-		MutexLock ml(tzmutex);
-		if (!offsetComputed)
-		{
-			time_t tm = time(NULL);
-			struct tm* ptmlc = gmtime(&tm);
-			ptmlc->tm_isdst = -1; // have to let the C library adjust for DST
-			time_t gmt = mktime(ptmlc);
-			ptmlc = localtime(&tm);
-			ptmlc->tm_isdst = -1;
-			time_t lctm = mktime(ptmlc);
-			gmtOffset = ((lctm - gmt) / 60) / 60;
-			offsetComputed = true;
-		}
-	}
-	return gmtOffset;
-}
-#endif
 
 Int16 DateTime::localTimeAndOffset(time_t t, struct tm & t_loc)
 {
