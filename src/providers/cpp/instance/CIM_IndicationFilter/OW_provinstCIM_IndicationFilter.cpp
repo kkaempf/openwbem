@@ -79,7 +79,20 @@ public:
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
 		}
-		return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
+
+		// TODO: Remove this or do something better.
+		// wbemservices tries to create an instance without any keys.
+		CIMInstance newInstance(cimInstance);
+		if (!newInstance.propertyHasValue("SystemCreationClassName"))
+			newInstance.setProperty("SystemCreationClassName", CIMValue("foo"));
+		if (!newInstance.propertyHasValue("SystemName"))
+			newInstance.setProperty("SystemName", CIMValue("foo"));
+		if (!newInstance.propertyHasValue("CreationClassName"))
+			newInstance.setProperty("CreationClassName", CIMValue("foo"));
+		if (!newInstance.propertyHasValue("Name"))
+			newInstance.setProperty("Name", CIMValue("foo"));
+
+		return env->getRepositoryCIMOMHandle()->createInstance(ns, newInstance);
 	}
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
 			EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
