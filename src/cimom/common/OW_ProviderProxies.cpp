@@ -898,6 +898,14 @@ namespace
 			return m_env->getOperationContext();
 		}
 
+		virtual ProviderEnvironmentIFCRef clone() const
+		{
+			// just give back a copy of the original env, since a cloned env
+			// shouldn't do any user switching, because it will be called by
+			// another thread.
+			return m_env->clone();
+		}
+
 	private:
 
 #if defined(OW_GNU_LINUX)
