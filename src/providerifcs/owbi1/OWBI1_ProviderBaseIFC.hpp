@@ -34,6 +34,7 @@
 
 #ifndef OWBI1_PROVIDERBASEIFC_HPP_
 #define OWBI1_PROVIDERBASEIFC_HPP_
+#include "OWBI1_config.h"
 #include "OWBI1_ProviderFwd.hpp"
 #include "OWBI1_DateTime.hpp"
 #include "OWBI1_IntrusiveCountableBase.hpp"
