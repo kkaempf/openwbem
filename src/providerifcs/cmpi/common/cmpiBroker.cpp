@@ -111,7 +111,7 @@ static CMPIInstance* mbGetInstance(CMPIBroker *, CMPIContext *ctx,
 	CM_LOGGER()->logDebug("CMPIBroker: mbGetInstance()");
 
 	CMPIFlags flgs =
-		ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
+		ctx->ft->getEntry(ctx,const_cast<char*>(CMPIInvocationFlags),NULL).value.uint32;
 
 	OpenWBEM::StringArray props;
 	OpenWBEM::StringArray *pProps = getList(properties, props);
@@ -195,7 +195,7 @@ static CMPIStatus mbSetInstance(CMPIBroker *, CMPIContext *ctx,
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	CMPIFlags flgs =
-		ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
+		ctx->ft->getEntry(ctx,const_cast<char*>(CMPIInvocationFlags),NULL).value.uint32;
 	OpenWBEM::StringArray sProps;
 	try
 	{
@@ -303,7 +303,7 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *, CMPIContext *ctx,
 	CM_LOGGER()->logDebug("CMPIBroker: mbEnumInstances()");
 
 	CMPIFlags flgs = ctx->ft->getEntry(
-		ctx,CMPIInvocationFlags,NULL).value.uint32;
+		ctx,const_cast<char*>(CMPIInvocationFlags),NULL).value.uint32;
 
 	OpenWBEM::StringArray props;
 	OpenWBEM::StringArray *pProps = getList(properties, props);
@@ -393,7 +393,7 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *, CMPIContext *ctx,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	CMPIFlags flgs = ctx->ft->getEntry(
-		ctx,CMPIInvocationFlags,NULL).value.uint32;
+		ctx,const_cast<char*>(CMPIInvocationFlags),NULL).value.uint32;
 
 	OpenWBEM::StringArray props;
 	OpenWBEM::StringArray *pProps = getList(properties, props);
@@ -497,7 +497,7 @@ static CMPIEnumeration* mbReferences(CMPIBroker *, CMPIContext *ctx,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	CMPIFlags flgs = ctx->ft->getEntry(
-		ctx,CMPIInvocationFlags,NULL).value.uint32;
+		ctx,const_cast<char*>(CMPIInvocationFlags),NULL).value.uint32;
 
 	OpenWBEM::StringArray props;
 	OpenWBEM::StringArray *pProps = getList(properties, props);
@@ -679,7 +679,7 @@ static CMPIData mbGetProperty(CMPIBroker *, CMPIContext *ctx,
 static CMPIBrokerFT broker_FT={
 	0, // brokerClassification;
 	CMPICurrentVersion,
-	"OpenWBEM",
+	const_cast<char*>("OpenWBEM"),
 	NULL,
 	NULL,
 	NULL,

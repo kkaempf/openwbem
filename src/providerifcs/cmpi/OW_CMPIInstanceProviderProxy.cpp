@@ -77,7 +77,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
 		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue*)&flgs,CMPI_uint32);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
@@ -150,7 +150,7 @@ CMPIInstanceProviderProxy::enumInstances(
 		if (includeClassOrigin)
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags, (CMPIValue*)&flgs,
+		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
 			CMPI_uint32);
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
@@ -220,7 +220,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 		if (includeClassOrigin)
 			flgs |= CMPI_FLAG_IncludeClassOrigin;
 
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags, (CMPIValue*)&flgs,
+		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags), (CMPIValue*)&flgs,
 			CMPI_uint32);
 
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
@@ -266,7 +266,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 		CMPI_ObjectPathOnStack eRef(copWithNS);
 		CMPI_ResultOnStack eRes;
 		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue*)&flgs,CMPI_uint32);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
@@ -308,7 +308,7 @@ CIMObjectPath
 		CMPIObjectPathValueResultHandler coprh;
 		CMPI_ResultOnStack eRes(coprh);
 		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue*)&flgs,CMPI_uint32);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 // Cheating
@@ -359,7 +359,7 @@ void
 		CMPI_ResultOnStack eRes;
 		CMPIFlags flgs=0;
 		//if (includeQualifier) flgs|=CMPI_FLAG_IncludeQualifiers;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx,const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue*)&flgs,CMPI_uint32);
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 		rc = m_ftable->miVector.instMI->ft->setInstance(

@@ -87,7 +87,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 		char *_resultRole = const_cast<char*>(resultRole.empty() ? 0 :
 			resultRole.c_str());
 
-		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue *)&flgs, CMPI_uint32);
 
 		::CMPIAssociationMI *mi = m_ftable->miVector.assocMI;
@@ -177,7 +177,7 @@ void CMPIAssociatorProviderProxy::associators(
 		char * _resultRole = const_cast<char*>(resultRole.empty() ? 0 :
 			resultRole.c_str());
 	
-		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue *)&flgs, CMPI_uint32);
 	
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;
@@ -263,7 +263,7 @@ void CMPIAssociatorProviderProxy::references(
 		}
 
 		char *_role = const_cast<char*>(role.empty() ? 0 : role.c_str());
-		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue *)&flgs, CMPI_uint32);
 
 		::CMPIAssociationMI *mi = m_ftable->miVector.assocMI;
@@ -314,7 +314,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 		char* aClass = const_cast<char*>(resultClass.c_str());
 		CMPIFlags flgs = 0;
 		char* _role = const_cast<char*>(role.empty() ? 0 : role.c_str());
-		eCtx.ft->addEntry(&eCtx, CMPIInvocationFlags,
+		eCtx.ft->addEntry(&eCtx, const_cast<char*>(CMPIInvocationFlags),
 			(CMPIValue *)&flgs, CMPI_uint32);
 
 		::CMPIAssociationMI * mi = m_ftable->miVector.assocMI;

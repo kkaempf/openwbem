@@ -55,7 +55,7 @@ OW_DEFINE_EXCEPTION(MOFParser)
 
 // Lexer functions
 void lexIncludeFile( void* context, const String& filename );
-void yyerror( char* );
+void yyerror( const char* );
 
 /* This is so we can avoid static variables and pass a pointer into yyparse */
 #define YYPARSE_PARAM context
@@ -921,7 +921,7 @@ IDENTIFIER:
 	;
 
 %%
-void yyerror(char* string)
+void yyerror(const char* string)
 {
 	OW_THROW(MOFParserException, string);
 }

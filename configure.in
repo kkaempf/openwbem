@@ -707,6 +707,7 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 	OW_CHECK_COMPILER_FLAG(Wno-unused-label,[CXXFLAGS="$CXXFLAGS -Wno-unused-label"])
 	OW_CHECK_COMPILER_FLAG(Wno-unused-parameter,[CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
 	OW_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="$CXXFLAGS -Wno-long-long"])
+	OW_CHECK_COMPILER_FLAG(Wwrite-strings,[CXXFLAGS="$CXXFLAGS -Wwrite-strings"])
 	OW_CHECK_COMPILER_FLAG(ansi,[CXXFLAGS="$CXXFLAGS -ansi"])
 dnl I wish we could enable this, but unfortunately network macros cause it to blow chunks.
 dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast"])

@@ -264,9 +264,9 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 	CMSetStatus(rc,CMPI_RC_OK);
 																				
 	if (obj->ftab==(void*)CMPI_Instance_Ftab)
-		return mb->eft->newString(mb,"CMPIInstance",rc);
+		return mb->eft->newString(mb,const_cast<char*>("CMPIInstance"),rc);
 	if (obj->ftab!=(void*)CMPI_ObjectPath_Ftab)
-		return mb->eft->newString(mb,"CMPIObjectPath",rc);
+		return mb->eft->newString(mb,const_cast<char*>("CMPIObjectPath"),rc);
 	/* if (obj->ftab!=(void*)CMPI_SelectExp_Ftab)
 		return mb->eft->newString(mb,"CMPISelectExp",rc);
 	if (obj->ftab!=(void*)CMPI_SelectCondDoc_Ftab)
@@ -279,7 +279,7 @@ static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc)
 		return mb->eft->newString(mb,"CMPIPredicate",rc);
 	*/
 	if (obj->ftab!=(void*)CMPI_Array_Ftab)
-		return mb->eft->newString(mb,"CMPIArray",rc);
+		return mb->eft->newString(mb,const_cast<char*>("CMPIArray"),rc);
 																				
 	sprintf(msg,"** Object not recognized (%p) **",o);
 	CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg);

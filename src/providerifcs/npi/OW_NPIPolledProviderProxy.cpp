@@ -65,7 +65,7 @@ NPIPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-		char * expo = "SourceInstance.PercentageSpaceUse 80";
+		char * expo = const_cast<char*>("SourceInstance.PercentageSpaceUse 80");
 		SelectExp exp = {expo};
 		::CIMObjectPath cop = {NULL};
 		m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
