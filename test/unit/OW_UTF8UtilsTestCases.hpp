@@ -48,6 +48,8 @@ private:
 	void testCharCount();
 	void testUTF8toUCS2();
 	void testUCS2toUTF8();
+	void testUTF8toUCS4();
+	void testUCS4toUTF8();
 };
 
 #endif

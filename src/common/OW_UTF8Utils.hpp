@@ -49,9 +49,9 @@ size_t charCount(const char* utf8str);
 /**
  * Convert one UTF-8 char (possibly multiple bytes) into a UCS2 16-bit char
  * @param utc8char pointer to the UTF-8 char to convert
- * @return The corresponding UCS2 char.  Undefined if utf8char points to an
+ * @return The corresponding UCS2 char.  0xFFFF if utf8char points to an
  *  invalid UTF-8 sequence.  Not all UTF-8 chars are handled. UTF-8 chars 
- *  outside the range of a UCS2 char will produce undefined results.
+ *  outside the range of a UCS2 char will produce 0xFFFF.
  */
 UInt16 UTF8toUCS2(const char* utf8char);
 /**
@@ -60,6 +60,19 @@ UInt16 UTF8toUCS2(const char* utf8char);
  * @return The corresponding UTF-8 char.
  */
 String UCS2toUTF8(UInt16 ucs2char);
+/**
+ * Convert one UTF-8 char (possibly multiple bytes) into a UCS4 32-bit char
+ * @param utc8char pointer to the UTF-8 char to convert
+ * @return The corresponding UCS4 char.  0xFFFFFFFF if utf8char points to an
+ *  invalid UTF-8 sequence.
+ */
+UInt32 UTF8toUCS4(const char* utf8char);
+/**
+ * Convert one UCS4 32-bit char into a UTF-8 char (possibly multiple bytes)
+ * @param ucs4char UCS4 char to convert.
+ * @return The corresponding UTF-8 char.
+ */
+String UCS4toUTF8(UInt32 ucs4char);
 } // end namespace UTF8Utils
 
 } // end namespace OpenWBEM

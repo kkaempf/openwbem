@@ -93,6 +93,24 @@ void OW_UTF8UtilsTestCases::testUCS2toUTF8()
 	unitAssert(UTF8Utils::UCS2toUTF8(0xFFFF) == "￿");
 }
 
+void OW_UTF8UtilsTestCases::testUTF8toUCS4()
+{
+	unitAssert(UTF8Utils::UTF8toUCS4("a") == 'a');
+	unitAssert(UTF8Utils::UTF8toUCS4("") == 0x80);
+	unitAssert(UTF8Utils::UTF8toUCS4("ࠀ") == 0x800);
+	unitAssert(UTF8Utils::UTF8toUCS4("￿") == 0xFFFF);
+	// TODO: add some 3&4 byte tests here
+}
+
+void OW_UTF8UtilsTestCases::testUCS4toUTF8()
+{
+	unitAssert(UTF8Utils::UCS4toUTF8('a') == "a");
+	unitAssert(UTF8Utils::UCS4toUTF8(0x80) == "");
+	unitAssert(UTF8Utils::UCS4toUTF8(0x800) == "ࠀ");
+	unitAssert(UTF8Utils::UCS4toUTF8(0xFFFF) == "￿");
+	// TODO: add some 3&4 byte tests here
+}
+
 Test* OW_UTF8UtilsTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_UTF8Utils");
@@ -100,6 +118,8 @@ Test* OW_UTF8UtilsTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testCharCount);
 	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testUTF8toUCS2);
 	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testUCS2toUTF8);
+	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testUTF8toUCS4);
+	ADD_TEST_TO_SUITE(OW_UTF8UtilsTestCases, testUCS4toUTF8);
 
 	return testSuite;
 }

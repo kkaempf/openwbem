@@ -100,55 +100,16 @@ size_t charCount(const char* utf8str)
 	}
 	return count;
 }
+/////////////////////////////////////////////////////////////////////////////
 UInt16 UTF8toUCS2(const char* utf8char)
 {
-	OW_ASSERT(utf8char != 0);
-	OW_ASSERT(utf8char[0] != '\0');
-	const char* p = utf8char;
-	const UInt32 c0 = static_cast<UInt8>(p[0]);
-	switch (SequenceLengthTable[c0])
-	{
-		case 1:
-		{
-			return c0;
-		}
-		case 2:
-		{
-			// check for short (invalid) utf8 sequence
-			if (p[1] == '\0')
-				return c0;
-			const UInt32 c1 = static_cast<UInt8>(p[1]);
-			return ((c0 & 0x1fu) << 6) | (c1 & 0x3fu);
-		}
-		case 3:
-		{
-			// check for short (invalid) utf8 sequence
-			if (p[1] == '\0' || p[2] == '\0')
-				return c0;
-			const UInt32 c1 = static_cast<UInt8>(p[1]);
-			const UInt32 c2 = static_cast<UInt8>(p[2]);
-			return ((c0 & 0x0fu) << 12) | ((c1 & 0x3fu) << 6) | (c2 & 0x3fu);
-		}
-		case 4:
-		{
-			// check for short (invalid) utf8 sequence
-			if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
-				return c0;
-			
-			const UInt32 c1 = static_cast<UInt8>(p[1]);
-			const UInt32 c2 = static_cast<UInt8>(p[2]);
-			const UInt32 c3 = static_cast<UInt8>(p[3]);
-			
-			return ((c0 & 0x03u) << 18) | ((c1 & 0x3fu) << 12) | ((c2 & 0x3fu) << 6) | (c3 & 0x3fu);
-		}
-		default:
-		{
-			// invalid, just skip it
-			break;
-		}
-	}
-	return c0;
+	UInt32 c = UTF8toUCS4(utf8char);
+	if (c > 0xFFFF)
+		return 0xFFFF;
+	else
+		return static_cast<UInt16>(c);
 }
+/////////////////////////////////////////////////////////////////////////////
 String UCS2toUTF8(UInt16 ucs2char)
 {
 	char rval[4] = {0,0,0,0};
@@ -167,6 +128,86 @@ String UCS2toUTF8(UInt16 ucs2char)
 		rval[0] = static_cast<char>(static_cast<UInt8>(0xe0u | (ucs2char >> 12)));
 		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs2char >> 6) & 0x3fu)));
 		rval[2] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs2char & 0x3fu)));
+	}
+	return rval;
+}
+/////////////////////////////////////////////////////////////////////////////
+UInt32 UTF8toUCS4(const char* utf8char)
+{
+	OW_ASSERT(utf8char != 0);
+	OW_ASSERT(utf8char[0] != '\0');
+	const char* p = utf8char;
+	const UInt32 c0 = static_cast<UInt8>(p[0]);
+	const UInt32 bad = 0xFFFFFFFF;
+	switch (SequenceLengthTable[c0])
+	{
+		case 1:
+		{
+			return c0;
+		}
+		case 2:
+		{
+			// check for short (invalid) utf8 sequence
+			if (p[1] == '\0')
+				return bad;
+			const UInt32 c1 = static_cast<UInt8>(p[1]);
+			return ((c0 & 0x1fu) << 6) | (c1 & 0x3fu);
+		}
+		case 3:
+		{
+			// check for short (invalid) utf8 sequence
+			if (p[1] == '\0' || p[2] == '\0')
+				return bad;
+			const UInt32 c1 = static_cast<UInt8>(p[1]);
+			const UInt32 c2 = static_cast<UInt8>(p[2]);
+			return ((c0 & 0x0fu) << 12) | ((c1 & 0x3fu) << 6) | (c2 & 0x3fu);
+		}
+		case 4:
+		{
+			// check for short (invalid) utf8 sequence
+			if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
+				return bad;
+			
+			const UInt32 c1 = static_cast<UInt8>(p[1]);
+			const UInt32 c2 = static_cast<UInt8>(p[2]);
+			const UInt32 c3 = static_cast<UInt8>(p[3]);
+			
+			return ((c0 & 0x03u) << 18) | ((c1 & 0x3fu) << 12) | ((c2 & 0x3fu) << 6) | (c3 & 0x3fu);
+		}
+		default:
+		{
+			// invalid, just skip it
+			break;
+		}
+	}
+	return bad;
+}
+/////////////////////////////////////////////////////////////////////////////
+String UCS4toUTF8(UInt32 ucs4char)
+{
+	char rval[5] = {0,0,0,0,0};
+	if(ucs4char < 0x80u)
+	{
+		// one byte
+		rval[0] = static_cast<char>(static_cast<UInt8>(ucs4char));
+	}
+	else if(ucs4char < 0x800u)
+	{
+		rval[0] = static_cast<char>(static_cast<UInt8>(0xc0u | (ucs4char >> 6)));
+		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
+	}
+	else if(ucs4char < 0x10000u)
+	{
+		rval[0] = static_cast<char>(static_cast<UInt8>(0xe0u | (ucs4char >> 12)));
+		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));
+		rval[2] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
+	}
+	else
+	{
+		rval[0] = static_cast<char>(static_cast<UInt8>(0xf0u | (ucs4char >> 18)));
+		rval[1] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 12) & 0x3fu)));
+		rval[2] = static_cast<char>(static_cast<UInt8>(0x80u | ((ucs4char >> 6) & 0x3fu)));
+		rval[3] = static_cast<char>(static_cast<UInt8>(0x80u | (ucs4char & 0x3fu)));
 	}
 	return rval;
 }
