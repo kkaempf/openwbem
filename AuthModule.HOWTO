@@ -5,7 +5,7 @@ CONTENTS
     1.0 - Introduction
     2.0 - Specifying Authentication Modules in the Configuration File
     3.0 - Writing a new authentication module
-      3.1 - Deriving from the Base Class OW_Authorizer
+      3.1 - Deriving from the Base Class OW_AuthenticatorIFC
       3.2 - Creating a shared library
     4.0 - An Example: SimpleAuthentication
     
@@ -39,15 +39,15 @@ would allow users Bill and Alice to access the CIMOM.
 3.0 Writing a new Authentication Module
 
 To create a new authentication module, a new class must be derived from the 
-base class OW_Authorizer.  This class must be contained within a library
+base class OW_AuthenticatorIFC.  This class must be contained within a library
 which will be dynamically loaded by OW_AuthManager when OW_HTTPServer is 
 initialized.  
 
 --------------------------------------------------------------------------------
-3.1 Deriving From the Base Class OW_Authorizer
+3.1 Deriving From the Base Class OW_AuthenticatorIFC
 
-Authentication modules must derive from the base class OW_Authorizer.
-OW_Authorizer has the following public methods:
+Authentication modules must derive from the base class OW_AuthenticatorIFC.
+OW_AuthenticatorIFC has the following public methods:
 
     init()
     authenticate(const OW_String& info, OW_HTTPSvrConnection& htcon)
@@ -78,7 +78,7 @@ Two functions are needed outside of the derived class for the authentication
 module shared library to load. For the OW_SimpleAuthorization module, these 
 functions look like this:
 
-    extern "C" OW_Authorizer*
+    extern "C" OW_AuthenticatorIFC*
     createAuthorizer()
     {
         return new OW_SimpleAuthorization();
