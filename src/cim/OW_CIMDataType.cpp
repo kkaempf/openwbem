@@ -382,7 +382,7 @@ OW_CIMDataType::toMOF() const
 OW_CIMDataType::Type
 OW_CIMDataType::strToSimpleType(const OW_String& strType)
 {
-	if(strType.length() == 0)
+	if(strType.empty())
 	{
 		return INVALID;
 	}
@@ -443,7 +443,7 @@ OW_CIMDataType::strToSimpleType(const OW_String& strType)
 OW_CIMDataType
 OW_CIMDataType::getDataType(const OW_String& strType)
 {
-	if(strType.length() == 0)
+	if(strType.empty())
 	{
 		return OW_CIMDataType(true);
 	}

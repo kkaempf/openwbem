@@ -271,7 +271,7 @@ OW_XMLExecute::getParameters(OW_CIMXMLParser& parser,
 	{
 		OW_String parameterName = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
 		OW_String parameterType = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
-		if (parameterType.length() == 0)
+		if (parameterType.empty())
 		{
 			parameterType = "string";
 		}

@@ -37,11 +37,11 @@ OW_String
 OW_URL::toString() const
 {
 	OW_String retval;
-	if (this->protocol.length() > 0)
+	if (!this->protocol.empty())
 	{
 		retval = this->protocol + "://";
 	}
-	if ( this->username.length() > 0 )
+	if ( !this->username.empty())
 	{
 		retval += this->username + ":" + this->password + "@";
 	}
@@ -50,7 +50,7 @@ OW_URL::toString() const
 	{
 		retval += ":" + OW_String((OW_UInt32)this->port);
 	}
-	if ( this->path.length() > 0 )
+	if ( !this->path.empty())
 	{
 		retval += this->path;
 	}
@@ -91,7 +91,7 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 			if ( iBeginIndex < iEndIndex-1 )
 				password = sNamePass.substring( iBeginIndex + 1 );
 		}
-		else if ( sNamePass.length() )
+		else if ( !sNamePass.empty())
 			username = sNamePass;
 		iBeginIndex = iEndIndex + 1;
 	}
@@ -121,7 +121,7 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 			}
 		}
 	}
-	else if ( iBeginIndex && sURL.length() )
+	else if ( iBeginIndex && !sURL.empty() )
 		host = sURL;
 	else
 	{

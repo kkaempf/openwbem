@@ -655,7 +655,7 @@ OW_HDBHandle::getFirstRoot()
 OW_HDBNode
 OW_HDBHandle::getNode(const OW_String& key)
 {
-	if(key.length() > 0)
+	if(!key.empty())
 	{
 		return OW_HDBNode(key.c_str(), *this);
 	}
@@ -810,7 +810,7 @@ OW_HDBHandle::addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode)
 OW_Bool
 OW_HDBHandle::addChild(const OW_String& parentKey, OW_HDBNode& childNode)
 {
-	if(parentKey.length() == 0)
+	if(parentKey.empty())
 	{
 		return false;
 	}
@@ -845,7 +845,7 @@ OW_Bool
 OW_HDBHandle::removeNode(const OW_String& key)
 {
 	OW_Bool cc = false;
-	if(key.length() > 0)
+	if(!key.empty())
 	{
 		OW_HDBNode node(key.c_str(), *this);
 		if(node)

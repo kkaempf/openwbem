@@ -176,7 +176,7 @@ OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	parser.mustGetChild(OW_CIMXMLParser::E_EXPMETHODRESPONSE);
 
 	OW_String nameOfMethod = parser.getAttribute(OW_CIMXMLParser::A_NAME);
-	if (nameOfMethod.length() < 1)
+	if (nameOfMethod.empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							"Response had no method name");

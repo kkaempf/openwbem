@@ -615,7 +615,7 @@ void OW_HTTPUtils::DigestCalcResponse(
 	md5new.update(":");
 	md5new.update(sNonce);
 	md5new.update(":");
-	if ( sQop.length() )
+	if ( !sQop.empty())
 	{
 		md5new.update(sNonceCount);
 		md5new.update(":");
@@ -672,7 +672,7 @@ OW_HTTPUtils::addHeader(OW_Array<OW_String>& headers,
 {
 	OW_String tmpKey = key;
 	tmpKey.trim();
-	if ( tmpKey.length() > 0 )
+	if ( !tmpKey.empty())
 	{
 		headers.push_back(key + ": " + value);
 	}

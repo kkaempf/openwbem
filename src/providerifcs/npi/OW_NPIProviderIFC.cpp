@@ -238,7 +238,7 @@ OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 //
 //     OW_String libPath = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_LOC_opt);
 //
-//     if(libPath.length() == 0)
+//     if(libPath.empty())
 //     {
 //         libPath = DEFAULT_CPP_PROVIDER_LOCATION;
 //     }
@@ -368,7 +368,7 @@ OW_NPIProviderIFC::getProvider(
 	OW_String libPath = env->getConfigItem(
 		OW_ConfigOpts::NPIIFC_PROV_LOC_opt);
 
-	if(libPath.length() == 0)
+	if(libPath.empty())
 	{
 		libPath = DEFAULT_NPI_PROVIDER_LOCATION;
 	}

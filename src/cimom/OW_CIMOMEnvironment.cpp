@@ -424,7 +424,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 	OW_String libPath = getConfigItem(
 		OW_ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt);
 
-	if(libPath.length() == 0)
+	if(libPath.empty())
 	{
 		libPath = DEFAULT_CIMOM_REQHANDLER_LOCATION;
 	}
@@ -501,7 +501,7 @@ OW_CIMOMEnvironment::_loadServices()
 	OW_String libPath = getConfigItem(
 		OW_ConfigOpts::CIMOM_SERVICES_LOCATION_opt);
 
-	if(libPath.length() == 0)
+	if(libPath.empty())
 	{
 		libPath = DEFAULT_CIMOM_SERVICES_LOCATION;
 	}
@@ -591,7 +591,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 	{
 		lineNum++;
 		line = OW_String::getLine(file);
-		if (line.length() > 0)
+		if (!line.empty())
 		{
 			// If comment line, ignore
 			if (line[0] == '#' || line[0] == ';')
@@ -605,7 +605,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 				if(idx + 1 < line.length())
 				{
 					OW_String itemValue = line.substring(idx + 1).trim();
-					if(itemValue.length() > 0)
+					if(!itemValue.empty())
 					{
 						setConfigItem(line.substring(0, idx).trim(), itemValue,
 							false);

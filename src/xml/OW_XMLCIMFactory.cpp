@@ -66,9 +66,9 @@ getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 	while(parser.tokenIs(OW_CIMXMLParser::E_NAMESPACE))	
 	{
 		OW_String nscomp = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
-		if(nscomp.length() > 0)
+		if(!nscomp.empty())
 		{
-			if(ns.length() != 0)
+			if(!ns.empty() )
 			{
 				ns += "/";
 			}
@@ -80,7 +80,7 @@ getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 		parser.mustGetEndTag(); // pass </NAMESPACE>
 	}
 
-	if(ns.length() == 0)
+	if(ns.empty())
 	{
 		ns = "root";
 	}
@@ -303,7 +303,7 @@ OW_XMLCIMFactory::createClass(OW_CIMXMLParser& parser)
 	rval.setName(inClassName);
 
 	superClassName = parser.getAttribute(OW_XMLParameters::paramSuperName);
-	if(superClassName.length() > 0)
+	if(!superClassName.empty())
 	{
 		rval.setSuperClass(superClassName);
 	}
@@ -739,7 +739,7 @@ OW_XMLCIMFactory::createQualifier(OW_CIMXMLParser& parser)
 	//
 	// Build qualifier
 	//
-	if(cimType.length() > 0)
+	if(!cimType.empty())
 	{
 		dt = OW_CIMDataType::getDataType(cimType);
 	}
@@ -819,7 +819,7 @@ OW_XMLCIMFactory::createMethod(OW_CIMXMLParser& parser)
 	//
 	// A method name must be given
 	//
-	if(methodName.length() == 0)
+	if(methodName.empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"No method name in XML");
@@ -828,14 +828,14 @@ OW_XMLCIMFactory::createMethod(OW_CIMXMLParser& parser)
 	//
 	// If no return data type, then method returns nothing (void)
 	//
-	if(cimType.length() != 0)
+	if(!cimType.empty())
 	{
 		rval.setReturnType(OW_CIMDataType::getDataType(cimType));
 	}
 
 	rval.setName(methodName);
 
-	if(classOrigin.length() != 0)
+	if(!classOrigin.empty())
 	{
 		rval.setOriginClass(classOrigin);
 	}
@@ -959,7 +959,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 		rval.setDataType(OW_CIMDataType(parser.getAttribute(
 			OW_XMLParameters::paramReferenceClass)));
 	}
-	else if(cimType.length() != 0)
+	else if(!cimType.empty())
 	{
 		rval.setDataType(OW_CIMDataType::getDataType(cimType));
 	}
@@ -978,7 +978,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 			OW_XMLParameters::paramArraySize);
 
 		OW_CIMDataType dt = rval.getDataType();
-		if (arraySize.length())
+		if (!arraySize.empty())
 		{
 			OW_Int32 aSize = 0;
 			try
@@ -1000,7 +1000,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 	}
 
 	rval.setOriginClass(classOrigin);
-	rval.setPropagated(propagate.length() != 0 && propagate.equalsIgnoreCase("true"));
+	rval.setPropagated(!propagate.empty() && propagate.equalsIgnoreCase("true"));
 
 	//
 	// See if there are qualifiers

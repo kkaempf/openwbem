@@ -371,7 +371,7 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, OW_Bool errorAsExc
 		else
 		{
 			rc = writeAux(dataOut, dataOutLen);
-			if(m_traceFileOut.length() > 0 && rc > 0)
+			if(!m_traceFileOut.empty() && rc > 0)
 			{
 				OW_MutexLock ml(guard);
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
@@ -423,7 +423,7 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, OW_Bool errorAsException)
 		else
 		{
 			rc = readAux(dataIn, dataInLen);
-			if(m_traceFileIn.length() > 0 && rc > 0)
+			if(!m_traceFileIn.empty() && rc > 0)
 			{
 				OW_MutexLock ml(guard);
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);

@@ -182,7 +182,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 	OW_String lns(ns);
 	for(;;)
 	{
-		if (aclInfo.getUserName().length() > 0)
+		if (!aclInfo.getUserName().empty())
 		{
 			OW_String superUser =
 				m_env->getConfigItem(OW_ConfigOpts::ACL_SUPERUSER_opt);
@@ -414,7 +414,7 @@ void
 OW_CIMServer::createNameSpace(const OW_String& ns,
 	const OW_ACLInfo& aclInfo)
 {
-	if(ns.length() == 0)
+	if(ns.empty())
 	{
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
@@ -425,7 +425,7 @@ OW_CIMServer::createNameSpace(const OW_String& ns,
 	size_t sz = nameComps.size() - 1;
 	for(size_t i = 0; i < sz; i++)
 	{
-		if(parns.length() > 0)
+		if(!parns.empty())
 		{
 			parns += "/";
 		}
@@ -456,7 +456,7 @@ OW_CIMServer::deleteNameSpace(const OW_String& ns,
 	// Check to see if user has rights to delete the namespace
 	m_accessMgr->checkAccess(OW_AccessMgr::DELETENAMESPACE, ns, aclInfo);
 
-	if(ns.length() == 0)
+	if(ns.empty())
 	{
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
@@ -2123,7 +2123,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 			createProvEnvRef(ch), cq);
 	}
 
-	while(className.length() > 0)
+	while(!className.empty())
 	{
 		try
 		{
@@ -2414,7 +2414,7 @@ OW_CIMServer::_commonReferences(const OW_CIMObjectPath& path,
 		// it's a class path
 		// Process all of the association classes without providers
 		_staticReferencesClass(path,
-			resultClass.length() == 0 ? 0 : &resultClassNamesSet,
+			resultClass.empty() ? 0 : &resultClassNamesSet,
 			role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult);
 	}
 	else // it's an instance path
@@ -2424,14 +2424,14 @@ OW_CIMServer::_commonReferences(const OW_CIMObjectPath& path,
 		{
 			// do instances
 			_staticReferences(path,
-				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role,
+				resultClass.empty() ? 0 : &resultClassNamesSet, role,
 				includeQualifiers, includeClassOrigin, propertyList, *piresult);
 		}
 		else if (popresult != 0)
 		{
 			// do names (object paths)
 			_staticReferences(path,
-				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role,
+				resultClass.empty() ? 0 : &resultClassNamesSet, role,
 				*popresult);
 		}
 		else
@@ -2554,7 +2554,7 @@ namespace
 		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath cop = e.getAssociationPath();
-			if (cop.getNameSpace().length() == 0)
+			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
 			}
@@ -2699,7 +2699,7 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
 	OW_StringArray resultClassNames;
-	if(resultClass.length() > 0)
+	if(!resultClass.empty())
 	{
 		resultClassNames = m_mStore.getClassChildren(ns, resultClass);
 		resultClassNames.append(resultClass);
@@ -2717,8 +2717,8 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 	{
 		// it's a class path
 		// Process all of the association classes without providers
-		_staticAssociatorsClass(path, assocClassName.length() == 0 ? 0 : &assocClassNamesSet,
-			resultClass.length() == 0 ? 0 : &resultClassNamesSet,
+		_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+			resultClass.empty() ? 0 : &resultClassNamesSet,
 			role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult);
 	}
 	else // it's an instance path
@@ -2727,15 +2727,15 @@ OW_CIMServer::_commonAssociators(const OW_CIMObjectPath& path,
 		if (piresult != 0)
 		{
 			// do instances
-			_staticAssociators(path, assocClassName.length() == 0 ? 0 : &assocClassNamesSet,
-				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role, resultRole,
+			_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+				resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
 				includeQualifiers, includeClassOrigin, propertyList, *piresult);
 		}
 		else if (popresult != 0)
 		{
 			// do names (object paths)
-			_staticAssociators(path, assocClassName.length() == 0 ? 0 : &assocClassNamesSet,
-				resultClass.length() == 0 ? 0 : &resultClassNamesSet, role, resultRole,
+			_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+				resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
 				*popresult);
 		}
 		else
@@ -2874,7 +2874,7 @@ namespace
 		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath cop = e.getAssociatedObject();
-			if (cop.getNameSpace().length() == 0)
+			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
 			}
@@ -2924,7 +2924,7 @@ OW_CIMServer::_staticAssociatorsClass(const OW_CIMObjectPath& path,
 	// need to run the query for every superclass of the class arg.
 	OW_String curClsName = path.getObjectName();
 	OW_CIMObjectPath curPath = path;
-	while (curClsName.length())
+	while (!curClsName.empty())
 	{
 		if (popresult != 0)
 		{
@@ -2973,7 +2973,7 @@ OW_CIMServer::_staticReferencesClass(const OW_CIMObjectPath& path,
 	// need to run the query for every superclass of the class arg.
 	OW_String curClsName = path.getObjectName();
 	OW_CIMObjectPath curPath = path;
-	while (curClsName.length())
+	while (!curClsName.empty())
 	{
 		if (popresult != 0)
 		{
@@ -3040,7 +3040,7 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 	const OW_String& className, OW_CIMClassResultHandlerIFC& result,
 	const OW_String& role)
 {
-	if(className.length() > 0)
+	if(!className.empty())
 	{
 		m_mStore.enumClass(ns, className, result, true, false, true, true);
 		OW_CIMClass cc;
@@ -3132,7 +3132,7 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 
 		OW_String cls;
 		cv.get(cls);
-		if(cls.length() == 0)
+		if(cls.empty())
 		{
 			continue;
 		}

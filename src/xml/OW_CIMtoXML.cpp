@@ -49,7 +49,7 @@ void OW_CIMtoXML(OW_CIMNameSpace const& ns, ostream& ostr,
 {
 	OW_String name = ns.getNameSpace();
 
-	if(name.length() == 0)
+	if(name.empty())
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Namespace not set");
 
 	if(dolocal == OW_CIMtoXMLFlags::dontDoLocal)
@@ -97,7 +97,7 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 {
 	OW_CIMFlavor fv;
 
-	if(cqt.getName().length() == 0)
+	if(cqt.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "qualifierType must have a name");
 	}
@@ -384,14 +384,14 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	OW_StringArray const& propertyList,
 	bool noProps)
 {
-	if(cc.getName().length() == 0)
+	if(cc.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "class must have name");
 	}
 
 	ostr << "<CLASS NAME=\"";
 	ostr << cc.getName();
-	if(cc.getSuperClass().length() != 0)
+	if(!cc.getSuperClass().empty())
 	{
 		ostr << "\" SUPERCLASS=\"";
 		ostr << cc.getSuperClass();
@@ -483,7 +483,7 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 	//
 	// NOTE: don't write the object path here!
 	//
-	if(ci.getClassName().length() != 0)
+	if(!ci.getClassName().empty())
 	{
 		ostr << "<INSTANCE CLASSNAME=\"";
 		ostr << ci.getClassName() << "\">";
@@ -1000,7 +1000,7 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	OW_CIMFlavor fv;
 	OW_CIMDataType dt;
 
-	if(cq.getName().length() == 0)
+	if(cq.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "qualifier must have a name");
 	}
@@ -1131,7 +1131,7 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 	OW_Bool isArray = false;
 	OW_Bool isRef = false;
 
-	if(cp.getName().length() == 0)
+	if(cp.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "property must have a name");
 	}
@@ -1197,7 +1197,7 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 	}
 
 	if(includeClassOrigin == OW_CIMtoXMLFlags::includeClassOrigin
-	   && cp.getOriginClass().length() > 0)
+	   && !cp.getOriginClass().empty())
 	{
 		ostr
 			<< "CLASSORIGIN=\""
@@ -1258,7 +1258,7 @@ OW_CIMtoXML(OW_CIMMethod const& cm, ostream& ostr,
 
 	ostr << "<METHOD ";
 
-	if(cm.getName().length() == 0)
+	if(cm.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "method must have a name");
 	}
@@ -1276,7 +1276,7 @@ OW_CIMtoXML(OW_CIMMethod const& cm, ostream& ostr,
 	}
 
 	if(includeClassOrigin == OW_CIMtoXMLFlags::includeClassOrigin
-	   && cm.getOriginClass().length() > 0)
+	   && !cm.getOriginClass().empty())
 	{
 		ostr
 			<< "CLASSORIGIN=\""
@@ -1327,7 +1327,7 @@ qualifierXML(OW_CIMParameter const& cp, ostream& ostr)
 void
 OW_CIMtoXML(OW_CIMParameter const& cp, ostream& ostr)
 {
-	if(cp.getName().length() == 0)
+	if(cp.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"parameter must have a name");
@@ -1348,7 +1348,7 @@ OW_CIMtoXML(OW_CIMParameter const& cp, ostream& ostr)
 		//
 		OW_String classref = cp.getType().getRefClassName();
 
-		if(classref.length() > 0)
+		if(!classref.empty())
 		{
 			classref = "REFERENCECLASS=\"" + classref + "\"";
 		}

@@ -172,16 +172,16 @@ void OW_HTTPChunkedIStream::checkForError() const
 {
 	OW_String errorStr;
 	errorStr = getTrailer("CIMError");
-	if (errorStr.length() > 0)
+	if (!errorStr.empty())
 	{
 		OW_THROW(OW_CIMErrorException, errorStr.c_str());
 	}
 	errorStr = getTrailer("CIMErrorCode");
-	if (errorStr.length() > 0)
+	if (!errorStr.empty())
 	{
 		OW_String descr;
 		descr = getTrailer("CIMErrorDescription");
-		if (descr.length() > 0)
+		if (!descr.empty())
 		{
 			OW_THROWCIMMSG(OW_CIMException::ErrNoType(errorStr.toInt32()), 
 				descr.c_str());

@@ -50,7 +50,7 @@ OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 	while (parser.tokenIs(OW_CIMXMLParser::E_NAMESPACE))
 	{
 		OW_String pname = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
-		if(pname.length() == 0)
+		if(pname.empty())
 		{
 			OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 		}

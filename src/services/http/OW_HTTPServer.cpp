@@ -72,7 +72,7 @@ OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 {
 	OW_MutexLock lock(m_authGuard);
 	
-	if (info.length() < 1)
+	if (info.empty())
 	{
 		OW_String hostname = pconn->getHostName();
 		pconn->setErrorDetails("You must authenticate to access this"
@@ -127,49 +127,49 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 	try
 	{
 		OW_String item = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = DEFAULT_HTTP_PORT;
 		}
 		m_options.httpPort = item.toInt32();
 
 		item = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = DEFAULT_HTTPS_PORT;
 		}
 		m_options.httpsPort = item.toInt32();
 
 		item = env->getConfigItem(OW_ConfigOpts::USE_UDS_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = DEFAULT_USE_UDS;
 		}
 		m_options.useUDS = item.equalsIgnoreCase("true");
 
 		item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = DEFAULT_MAX_CONNECTIONS;
 		}
 		m_options.maxConnections = item.toInt32() + 1;
 
 		item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = "false";
 		}
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
 
 		item = env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = "true";
 		}
 		m_options.enableDeflate = !item.equalsIgnoreCase("false");
 
 		item = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt);
-		if (item.length() == 0)
+		if (item.empty())
 		{
 			item = "true";
 		}
@@ -191,7 +191,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 		}
 
 		OW_String dumpPrefix = env->getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt);
-		if (dumpPrefix.length() > 0)
+		if (!dumpPrefix.empty())
 		{
 			OW_SocketBaseImpl::setDumpFiles(
 				dumpPrefix + "/owHTTPSockDumpIn",

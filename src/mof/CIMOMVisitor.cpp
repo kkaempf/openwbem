@@ -124,7 +124,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocal"))
 	{
-		if (m_nonLocalType.length())
+		if (!m_nonLocalType.empty())
 		{
 			// report an error, both nonlocal and nonlocaltype cannot be set.
 			MofCompiler::theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocal ignored",
@@ -134,7 +134,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocaltype"))
 	{
-		if (m_nonLocal.length())
+		if (!m_nonLocal.empty())
 		{
 			// report an error, both nonlocal and nonlocaltype cannot be set.
 			MofCompiler::theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocaltype ignored",
@@ -144,7 +144,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("source"))
 	{
-		if (m_sourceType.length())
+		if (!m_sourceType.empty())
 		{
 			// report an error, both source and sourcetype cannot be set
 			MofCompiler::theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma source ignored",
@@ -154,7 +154,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("sourcetype"))
 	{
-		if (m_source.length())
+		if (!m_source.empty())
 		{
 			// report an error, both source and sourcetype cannot be set
 			MofCompiler::theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma sourcetype ignored",
@@ -317,7 +317,7 @@ void CIMOMVisitor::VisitAlias( const Alias * )
 void CIMOMVisitor::VisitAliasIdentifier( const AliasIdentifier *pAliasIdentifier )
 {
 	OW_String alias = m_aliasMap[*pAliasIdentifier->pAliasIdentifier];
-	if (alias.length() == 0)
+	if (alias.empty())
 	{
 		MofCompiler::theErrorHandler->recoverableError(format("Invalid alias: %1", *pAliasIdentifier->pAliasIdentifier).c_str(),
 			pAliasIdentifier->theLineInfo);

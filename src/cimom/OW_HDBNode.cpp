@@ -114,7 +114,7 @@ OW_HDBNode::OW_HDBNode(const OW_String& key, int dataLen,
 	const unsigned char* data) :
 	m_pdata(NULL)
 {
-	if(key.length() == 0)
+	if(key.empty())
 	{
 		return;
 	}

@@ -85,7 +85,7 @@ private:
 OW_Bool
 OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details)
 {
-	if (info.length() < 1)
+	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
 		return OW_Bool(false);

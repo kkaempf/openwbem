@@ -98,7 +98,7 @@ OW_CIMUrl::OW_CIMUrl(const OW_CIMUrl& context, const OW_String& spec) :
 {
 	m_pdata->m_spec = spec;
 	setComponents();
-	if(m_pdata->m_protocol.length() == 0)
+	if(m_pdata->m_protocol.empty())
 	{
 		m_pdata->m_protocol = context.getProtocol();
 	}
@@ -179,7 +179,7 @@ OW_CIMUrl::setLocalHost()
 {
 	m_pdata->m_localHost = false;
 	m_pdata->m_host.trim();
-	if(m_pdata->m_host.length() == 0
+	if(m_pdata->m_host.empty()
 		|| m_pdata->m_host.equals("127.0.0.1")
 		|| m_pdata->m_host.equalsIgnoreCase("localhost"))
 	{
@@ -194,7 +194,7 @@ void
 OW_CIMUrl::setDefaultValues()
 {
 	m_pdata->m_protocol.trim();
-	if(m_pdata->m_protocol.length() == 0)
+	if(m_pdata->m_protocol.empty())
 	{
 		m_pdata->m_protocol = "http";
 	}
@@ -206,7 +206,7 @@ OW_CIMUrl::setDefaultValues()
 	}
 
 	m_pdata->m_file.trim();
-	if(m_pdata->m_file.length() == 0)
+	if(m_pdata->m_file.empty())
 	{
 		m_pdata->m_file = "cimom";
 		m_pdata->m_ref = OW_String();
@@ -263,7 +263,7 @@ OW_CIMUrl::sameFile(const OW_CIMUrl& arg) const
 void
 OW_CIMUrl::setComponents()
 {
-	if(m_pdata->m_spec.length() == 0)
+	if(m_pdata->m_spec.empty())
 		return;
 
 	OW_String spec(m_pdata->m_spec);
@@ -323,7 +323,7 @@ OW_CIMUrl::setComponents()
 void
 OW_CIMUrl::checkRef()
 {
-	if(m_pdata->m_file.length() > 0)
+	if(!m_pdata->m_file.empty())
 	{
 		int ndx = m_pdata->m_file.indexOf('#');
 		if(ndx != -1)
@@ -345,12 +345,12 @@ OW_CIMUrl::buildSpec()
 		m_pdata->m_spec += ":" + OW_String(m_pdata->m_port);
 	}
 
-	if(m_pdata->m_file.length() > 0)
+	if(!m_pdata->m_file.empty())
 	{
 		m_pdata->m_spec += "/" + m_pdata->m_file;
 	}
 
-	if(m_pdata->m_ref.length() > 0)
+	if(!m_pdata->m_ref.empty())
 	{
 		m_pdata->m_spec += "#" + m_pdata->m_ref;
 	}

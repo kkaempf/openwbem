@@ -246,13 +246,13 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMInstance& 
 					// and create index entries.
 					OW_CIMObjectPath objectName;
 					propValue1.get(objectName);
-					if (objectName.getNameSpace().length() == 0)
+					if (objectName.getNameSpace().empty())
 					{
 						objectName.setNameSpace(ns);
 					}
 					OW_CIMObjectPath associatedObject;
 					propValue2.get(associatedObject);
-					if (associatedObject.getNameSpace().length() == 0)
+					if (associatedObject.getNameSpace().empty())
 					{
 						objectName.setNameSpace(ns);
 					}

@@ -258,7 +258,7 @@ OW_HTTPSvrConnection::run()
 	catch (OW_CIMErrorException& cee)
 	{
 		addHeader("CIMError", cee.getMessage());
-		if (m_errDetails.length() < 1)
+		if (m_errDetails.empty())
 		{
 			m_errDetails = OW_String("CIMError: ") + cee.getMessage();
 		}
@@ -399,7 +399,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			addHeader("Content-Encoding", "deflate");
 			sendHeaders(m_resCode, -1);
 		}
-		if (m_requestHandler->getCIMError().length() > 0)
+		if (!m_requestHandler->getCIMError().empty())
 		{
 			addHeader(m_respHeaderPrefix + "CIMError",
 				m_requestHandler->getCIMError());
@@ -473,12 +473,12 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		{
 			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorCode", 
 				OW_String(errCode));
-			if (errDescr.length() > 0)
+			if (!errDescr.empty())
 			{
 				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorDescription", 
 					errDescr);
 			}
-			if (m_requestHandler->getCIMError().length() > 0)
+			if (!m_requestHandler->getCIMError().empty())
 			{
 				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError",
 					m_requestHandler->getCIMError());
@@ -622,7 +622,7 @@ OW_HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Content-Length"))
 		{
 			OW_String cLen = getHeaderValue("Content-Length");
-			if (cLen.length() > 0)
+			if (!cLen.empty())
 			{
 				m_contentLength = cLen.toInt64();
 			}
@@ -1105,12 +1105,12 @@ OW_HTTPSvrConnection::options()
 	}
 	addHeader(headerKey, headerVal);
 
-	if (cf.cimom.length() > 0)
+	if (!cf.cimom.empty())
 	{
 		addHeader(hp + "CIMOM", cf.cimom);
 	}
 
-	if (cf.validation.length() > 0)
+	if (!cf.validation.empty())
 	{
 		addHeader(hp + "CIMValidation", cf.validation);
 	}

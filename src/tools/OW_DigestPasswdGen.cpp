@@ -83,13 +83,13 @@ int main(int argc, char* argv[])
 		c = getopt(argc, argv, short_options);
 	}
 
-	if (filename.length() < 1 || name.length() < 1)
+	if (filename.empty() || name.empty() )
 	{
 		usage(argv[0]);
 		exit(1);
 	}
 
-	if (hostname.length() == 0)
+	if (hostname.empty())
 	{
 		OW_SocketAddress iaddr = OW_SocketAddress::getAnyLocalHost();
 		hostname = iaddr.getName();
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	if (passwd.length() == 0)
+	if (passwd.empty())
 	{
 		for(;;)
 		{

@@ -74,7 +74,7 @@ OW_NameSpaceProvider::deleteInstance(
 	OW_String nsName;
 	cv.get(nsName);
 
-	if(nsName.length() == 0)
+	if(nsName.empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED,
 			"Name property contains an empty value");

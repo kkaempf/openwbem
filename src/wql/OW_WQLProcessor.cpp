@@ -1413,7 +1413,7 @@ bool OW_WQLProcessor::classIsDerivedFrom(const OW_String& cls,
 	const OW_String& className)
 {
 	OW_String curClassName = cls;
-	while (curClassName.length() > 0)
+	while (!curClassName.empty())
 	{
 		if (curClassName.equalsIgnoreCase(className))
 		{

@@ -55,7 +55,7 @@ OW_DigestAuthentication::OW_DigestAuthentication(const OW_String& passwdFile)
 	, m_aDateTimes()
 	, m_passwdMap()
 {
-	if(passwdFile.length() < 1)
+	if(passwdFile.empty())
 	{
 		OW_THROW(OW_AuthenticationException, "No password file given for "
 			"digest authentication.");
@@ -177,7 +177,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 		const OW_String& info, OW_HTTPSvrConnection* htcon)
 {
 	OW_String hostname = htcon->getHostName();
-	if (info.length() < 1)
+	if (info.empty())
 	{
 		htcon->setErrorDetails("You must authenticate to access this resource");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
@@ -190,7 +190,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	OW_String sNonce = infoMap["nonce"];
 
 	bool nonceFound = false;
-	if ( sNonce.length() )
+	if ( !sNonce.empty())
 	{
 		for (size_t iNonce = 0; iNonce < m_asNonces.size(); ++iNonce)
 		{
@@ -211,7 +211,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	}
 
 	userName = infoMap["username"];
-	if ( !userName.length() )
+	if ( userName.empty() )
 	{
 		htcon->setErrorDetails("No user name was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
@@ -219,7 +219,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	}
 
 	OW_String sRealm = infoMap["realm"];
-	if ( !sRealm.length() )
+	if ( sRealm.empty() )
 	{
 		htcon->setErrorDetails("No realm was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
@@ -227,7 +227,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	}
 
 	OW_String sNonceCount = infoMap["nc"];
-	if ( !sNonceCount.length() )
+	if ( sNonceCount.empty() )
 	{
 		htcon->setErrorDetails("No Nonce Count was provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
@@ -236,7 +236,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 
 	// TODO isn't cnonce optional?
 	OW_String sCNonce = infoMap["cnonce"];
-	if ( !sCNonce.length() )
+	if ( sCNonce.empty() )
 	{
 		htcon->setErrorDetails("No cnonce value provided");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));
@@ -244,7 +244,7 @@ OW_DigestAuthentication::authorize(OW_String& userName,
 	}
 
 	OW_String sResponse = infoMap["response"];
-	if ( !sResponse.length() )
+	if ( sResponse.empty() )
 	{
 		htcon->setErrorDetails("The response was zero length");
 		htcon->addHeader("WWW-Authenticate", getChallenge(hostname));

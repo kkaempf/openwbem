@@ -72,7 +72,7 @@ OW_CIMNameSpace::OW_CIMNameSpace(const OW_CIMUrl& hostUrl,
 	OW_CIMBase(), m_pdata(new NSData)
 {
 	m_pdata->m_url = hostUrl;
-	if(nameSpace.length() == 0)
+	if(nameSpace.empty())
 	{
 		m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
 	}
@@ -86,7 +86,7 @@ OW_CIMNameSpace::OW_CIMNameSpace(const OW_CIMUrl& hostUrl,
 OW_CIMNameSpace::OW_CIMNameSpace(const OW_String& nameSpace) :
 	OW_CIMBase(), m_pdata(new NSData)
 {
-	if(nameSpace.length() == 0)
+	if(nameSpace.empty())
 	{
 		m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
 	}

@@ -325,7 +325,7 @@ OW_CIMXMLCIMOMHandle::deleteClass(const OW_String& nameSpace, const OW_String& c
 
 	OW_Array<OW_Param> params;
 
-	if (className.length() > 0)
+	if (!className.empty())
 	{
 		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
@@ -412,7 +412,7 @@ OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 
 	OW_String className = path.getObjectName();
 	OW_Array<OW_Param> params;
-	if (className.length() > 0)
+	if (!className.empty())
 	{
 		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
@@ -455,7 +455,7 @@ OW_CIMXMLCIMOMHandle::enumClass(const OW_String& ns,
 
 	OW_Array<OW_Param> params;
 
-	if (className.length() > 0)
+	if (!className.empty())
 	{
 		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
@@ -505,7 +505,7 @@ OW_CIMXMLCIMOMHandle::enumInstanceNames(const OW_CIMObjectPath& path,
 	OW_String className = path.getObjectName();
 	OW_Array<OW_Param> params;
 
-	if (className.length() > 0)
+	if (!className.empty())
 	{
 		params.push_back(OW_Param(XMLP_CLASSNAME, OW_Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
@@ -559,7 +559,7 @@ OW_CIMXMLCIMOMHandle::enumInstances(const OW_CIMObjectPath& path,
 	OW_String className = path.getObjectName();
 	OW_Array<OW_Param> params;
 
-	if(className.length() == 0)
+	if(className.empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Class was empty in "
 			"EnumerateInstances");
@@ -651,7 +651,7 @@ OW_CIMXMLCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 	OW_Array<OW_Param> params;
 	OW_String className = path.getObjectName();
 
-	if (className.length() > 0)
+	if (!className.empty())
 	{
 		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
 			"<CLASSNAME NAME=\""+className+"\"/>"));
@@ -757,7 +757,7 @@ namespace
 			if (parser.tokenIs(OW_CIMXMLParser::E_RETURNVALUE))
 			{
 				OW_String returnType = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
-				if (returnType.length() == 0)
+				if (returnType.empty())
 				{
 					returnType = "string";
 				}
@@ -780,7 +780,7 @@ namespace
 			{
 				OW_String name = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
 				OW_String type = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
-				if (type.length() == 0)
+				if (type.empty())
 				{
 					type = "string";
 				}
@@ -1141,11 +1141,11 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 
 	OW_Array<OW_Param> params;
 	OW_StringStream extra(1000);
-	if (role.length() > 0)
+	if (!role.empty())
 	{
 		params.push_back(OW_Param(XMLP_ROLE, role));
 	}
-	if (resultRole.length() > 0)
+	if (!resultRole.empty())
 	{
 		params.push_back(OW_Param(XMLP_RESULTROLE, resultRole));
 	}
@@ -1163,14 +1163,14 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 		"\"/></IPARAMVALUE>";
 	}
 
-	if (assocClass.length() > 0)
+	if (!assocClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_ASSOCCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << assocClass <<
 		"\"/></IPARAMVALUE>";
 	}
 
-	if (resultClass.length() > 0)
+	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
@@ -1284,11 +1284,11 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 	OW_Array<OW_Param> params;
 	OW_StringStream extra(1000);
 
-	if (role.length() > 0)
+	if (!role.empty())
 	{
 		params.push_back(OW_Param(XMLP_ROLE, role));
 	}
-	if (resultRole.length() > 0)
+	if (!resultRole.empty())
 	{
 		params.push_back(OW_Param(XMLP_RESULTROLE, resultRole));
 	}
@@ -1319,14 +1319,14 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 		"\"/></IPARAMVALUE>";
 	}
 
-	if (assocClass.length() > 0)
+	if (!assocClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_ASSOCCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << assocClass <<
 		"\"/></IPARAMVALUE>";
 	}
 
-	if (resultClass.length() > 0)
+	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
@@ -1348,7 +1348,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	static const char* const commandName = "ReferenceNames";
 	OW_Array<OW_Param> params;
 	OW_StringStream extra(1000);
-	if (role.length() > 0)
+	if (!role.empty())
 	{
 		params.push_back(OW_Param(XMLP_ROLE, role));
 	}
@@ -1366,7 +1366,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 
-	if (resultClass.length() > 0)
+	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
@@ -1428,7 +1428,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 	OW_Array<OW_Param> params;
 	OW_StringStream extra(1000);
 
-	if (role.length() > 0)
+	if (!role.empty())
 	{
 		params.push_back(OW_Param(XMLP_ROLE, role));
 	}
@@ -1460,7 +1460,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 		<< "\"></CLASSNAME></IPARAMVALUE>";
 	}
 
-	if (resultClass.length() > 0)
+	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">"
 		<< "<CLASSNAME NAME=\"" << resultClass <<
@@ -1520,7 +1520,7 @@ OW_CIMXMLCIMOMHandle::intrinsicMethod(
 		iostr << "<IPARAMVALUE NAME=\"" << params[i].getArgName()
 		<< "\">" << params[i].getArgValue() << "</IPARAMVALUE>";
 	}
-	if (extra.length() > 0)
+	if (!extra.empty())
 	{
 		iostr << extra;
 	}

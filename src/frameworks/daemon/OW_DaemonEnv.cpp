@@ -88,7 +88,7 @@ OW_DaemonEnv::init()
 
 	// set up socket dump files
 	OW_String dumpPrefix = getConfigItem(OW_ConfigOpts::DUMP_SOCKET_IO_opt);
-	if (dumpPrefix.length() > 0)
+	if (!dumpPrefix.empty())
 	{
 		OW_SocketBaseImpl::setDumpFiles(dumpPrefix + "/owSockDumpIn",
 			dumpPrefix + "/owSockDumpOut");
@@ -275,7 +275,7 @@ OW_DaemonEnv::loadConfigItemsFromFile( const OW_String& filename )
 	{
 		lineNum++;
 		line = OW_String::getLine(file);
-		if (line.length() > 0)
+		if (!line.empty())
 		{
 			if (line[0] == '#' || line[0] == ';')
 			{
@@ -287,7 +287,7 @@ OW_DaemonEnv::loadConfigItemsFromFile( const OW_String& filename )
 				if(idx + 1 < line.length())
 				{
 					OW_String itemValue = line.substring(idx + 1).trim();
-					if(itemValue.length() > 0)
+					if(!itemValue.empty())
 					{
 						setConfigItem(line.substring(0, idx).trim(), itemValue,
 							false);

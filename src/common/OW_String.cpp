@@ -418,7 +418,7 @@ OW_String::compareToIgnoreCase(const OW_String& arg) const
 OW_String&
 OW_String::concat(const OW_String& arg)
 {
-	if(arg.length() > 0)
+	if(!arg.empty())
 	{
 		size_t len = length() + arg.length();
 		char* bfr = new char[len+1];
@@ -441,7 +441,7 @@ OW_String::concat(const OW_String& arg)
 OW_Bool
 OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 {
-	if(arg.length() == 0)
+	if(arg.empty())
 	{
 		return (arg.length() == length());
 	}
@@ -642,7 +642,7 @@ OW_String::startsWith(const OW_String& arg, OW_Bool ignoreCase) const
 {
 	OW_Bool cc = false;
 
-	if(arg.length() == 0)
+	if(arg.empty())
 	{
 		return (arg.length() == length());
 	}

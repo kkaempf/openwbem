@@ -118,7 +118,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 	}
 
 	OW_String oclass = kprops[0].getOriginClass().toLowerCase();
-	if(oclass.length() == 0)
+	if(oclass.empty())
 	{
 		OW_THROW(OW_Exception,
 			format("No orgin class for key property on class: %1",
@@ -158,7 +158,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 		// If only one key property in object path, ensure it is
 		// a key property in the class
 		OW_String pname = pra[0].getName().toLowerCase();
-		if(pname.length() > 0 && !pname.equalsIgnoreCase(kprops[0].getName()))
+		if(!pname.empty() && !pname.equalsIgnoreCase(kprops[0].getName()))
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				format("Property in model path is not a key: %1", pname).c_str());

@@ -197,7 +197,7 @@ OW_CIMClass::getProperty(const OW_String& prpName) const
 	// and if it is, work to find real origin class
 	//
 	oClass = splitName1(propName);
-	if(oClass.length() > 0)
+	if(!oClass.empty())
 	{
 		propName = splitName2(propName);
 		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
@@ -245,7 +245,7 @@ OW_CIMClass::getMethod(const OW_String& name) const
 	//
 	oClass = splitName1(name);
 
-	if(oClass.length() > 0)
+	if(!oClass.empty())
 	{
 		int tsize = m_pdata->m_methods.size();
 		for(int i = 0; i < tsize; i++)
@@ -852,7 +852,7 @@ OW_CIMClass::toMOF() const
 	rv += "class ";
 	rv += getName();
 
-	if(m_pdata->m_parentClassName.length() > 0)
+	if(!m_pdata->m_parentClassName.empty())
 	{
 		rv += ':';
 		rv += m_pdata->m_parentClassName;

@@ -95,7 +95,7 @@ OW_HTTPClient::cleanUpIStreams()
 //////////////////////////////////////////////////////////////////////////////
 void OW_HTTPClient::setUrl()
 {
-	if (m_url.protocol.length() == 0)
+	if (m_url.protocol.empty())
 	{
 		m_url.protocol = "http";
 	}
@@ -131,7 +131,7 @@ void OW_HTTPClient::setUrl()
 			m_url.port);
 	}
 
-	if( m_url.path.length() == 0)
+	if( m_url.path.empty())
 	{
 		m_url.path = "/cimom";
 	}
@@ -170,7 +170,7 @@ OW_HTTPClient::receiveAuthentication()
 		m_sRealm = "";
 	}
 
-	if (m_url.username.length() == 0)
+	if (m_url.username.empty())
 	{
 		if (!m_loginCB)
 		{
@@ -179,7 +179,7 @@ OW_HTTPClient::receiveAuthentication()
 		else
 		{
 			OW_String realm;
-			if (m_sRealm.length() == 0)
+			if (m_sRealm.empty())
 			{
 				realm = m_url.toString();
 			}
@@ -250,7 +250,7 @@ OW_HTTPClient::receiveAuthentication()
 //////////////////////////////////////////////////////////////////////////////
 void OW_HTTPClient::sendAuthorization()
 {
-	if( m_sAuthorization.length() )
+	if( !m_sAuthorization.empty())
 	{
 		OW_StringStream ostr;
 		ostr << m_sAuthorization << " ";
@@ -370,7 +370,7 @@ OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& 
 
 	// add common headers
 	prepareHeaders();
-	OW_ASSERT(m_contentType.length() > 0);
+	OW_ASSERT(!m_contentType.empty());
 	addHeaderCommon("Content-Type", m_contentType);
 	addHeaderCommon("Content-Length", OW_String(len));
 
@@ -735,7 +735,7 @@ OW_HTTPClient::checkResponse(Resp_t& rt)
 		{
 			statusLine = OW_String::getLine(m_istr);
 		}
-		while(statusLine.trim().length() < 1 && m_istr);
+		while(statusLine.trim().empty() && m_istr);
 		if (!m_istr)
 		{
 			m_needsConnect = true;

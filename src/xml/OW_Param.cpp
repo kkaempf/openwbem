@@ -62,7 +62,7 @@ OW_Param::getArgName() const
 OW_String
 OW_Param::getArgValue() const 
 {
-	if(m_argValue.length() > 0)
+	if(!m_argValue.empty())
 	{
 		if (m_argMode==VALUENOTSET)
 			return(OW_String("<VALUE>"+m_argValue+"</VALUE>"));

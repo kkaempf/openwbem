@@ -66,7 +66,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	if(qualISARRAY.equalsIgnoreCase("true"))
 	{
 		OW_String qualArraySize = parser.getAttribute(paramArraySize);
-		if(qualArraySize.length() > 0)
+		if(!qualArraySize.empty())
 		{
 			try
 			{
@@ -159,7 +159,7 @@ OW_XMLQualifier::processScope(OW_CIMXMLParser& parser,
 		OW_CIMScope::Scope scopeValue)
 {
 	OW_String scope = parser.getAttribute(attrName);
-	if(scope.length() == 0)
+	if(scope.empty())
 	{
 		return;
 	}

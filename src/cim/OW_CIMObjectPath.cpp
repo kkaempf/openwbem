@@ -338,7 +338,7 @@ OW_CIMObjectPath::toString() const
 
 		rv += "://";
 		OW_String str = m_pdata->m_nameSpace.getHost();
-		if(str.length() == 0)
+		if(str.empty())
 		{
 			str = "localhost";
 		}
@@ -352,7 +352,7 @@ OW_CIMObjectPath::toString() const
 
 	OW_String strns = m_pdata->m_nameSpace.getNameSpace();
 
-	if(strns.length() == 0)
+	if(strns.empty())
 	{
 		strns = "root";
 	}
@@ -411,7 +411,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 {
 	OW_String instanceName(instanceNameArg);
 	instanceName.trim();
-	if(instanceName.length() == 0)
+	if(instanceName.empty())
 	{
 		return OW_CIMObjectPath();
 	}

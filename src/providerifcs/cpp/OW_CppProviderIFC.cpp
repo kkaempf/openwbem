@@ -247,7 +247,7 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
 	OW_String libPath = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_LOC_opt);
 
-	if(libPath.length() == 0)
+	if(libPath.empty())
 	{
 		libPath = DEFAULT_CPP_PROVIDER_LOCATION;
 	}
@@ -373,7 +373,7 @@ OW_CppProviderIFC::getProvider(
 	OW_String libPath = env->getConfigItem(
 		OW_ConfigOpts::CPPIFC_PROV_LOC_opt);
 
-	if(libPath.length() == 0)
+	if(libPath.empty())
 	{
 		libPath = DEFAULT_CPP_PROVIDER_LOCATION;
 	}
@@ -459,7 +459,7 @@ void
 OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	OW_String timeWindow = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_TTL_opt);
-	if (timeWindow.length() == 0)
+	if (timeWindow.empty())
 	{
 		timeWindow = DEFAULT_CPPIFC_PROV_TTL;
 	}

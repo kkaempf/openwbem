@@ -190,7 +190,7 @@ public:
 	/**
 	 * @return true if this OW_IndexEntry contains a value.
 	 */
-	operator bool() const { return (offset != -1 && key.length() > 0); }
+	operator bool() const { return (offset != -1 && !key.empty()); }
 
 	/**
 	 * Assignment operator.

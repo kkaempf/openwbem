@@ -154,7 +154,7 @@ OW_HDBNode
 OW_MetaRepository::_getQualContainer(OW_HDBHandleLock& hdl, const OW_String& ns)
 {
 	OW_String qcontk(QUAL_CONTAINER);
-	if(ns.length() > 0)
+	if(!ns.empty())
 	{
 		qcontk += "/";
 		qcontk += ns;
@@ -174,12 +174,12 @@ OW_MetaRepository::_makeQualPath(const OW_String& ns_, const OW_String& qualName
 	}
 
 	OW_String qp(QUAL_CONTAINER "/");
-	if(ns.length() > 0)
+	if(!ns.empty())
 	{
 		qp += ns;
 	}
 
-	if(qualName.length() > 0)
+	if(!qualName.empty())
 	{
 		qp += "/";
 		qp += qualName;
@@ -194,11 +194,11 @@ OW_MetaRepository::_makeClassPath(const OW_String& ns,
 	const OW_String& className)
 {
 	OW_String cp(ns);
-	while (cp.length() > 0 && cp[0] == '/')
+	while (!cp.empty() && cp[0] == '/')
 	{
 		cp = cp.substring(1);
 	}
-	if(cp.length() > 0)
+	if(!cp.empty() )
 	{
 		cp += "/";
 	}
@@ -343,7 +343,7 @@ OW_MetaRepository::_addQualifierType(const OW_String& ns,
 	if(node)
 	{
 		OW_String msg(ns);
-		if(ns.length() > 0)
+		if(!ns.empty())
 		{
 			msg += "/";
 		}
@@ -473,7 +473,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 
 	// If class doesn't have a super class - don't propagate anything
 	// Should always have a parent because of namespaces
-	if(superID.length() == 0)
+	if(superID.empty())
 	{
 		return;
 	}
@@ -694,7 +694,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 	OW_CIMClass parentClass;
 	OW_HDBNode parentNode;
 
-	if(parentName.length() > 0)
+	if(!parentName.empty())
 	{
 		// Get the parent class
 		OW_String superID = _makeClassPath(ns, parentName);
@@ -787,7 +787,7 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 		{
 			if (propArray[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OVERRIDE))
 			{
-				if (propArray[i].getOriginClass().length() == 0)
+				if (propArray[i].getOriginClass().empty())
 				{
 					propArray[i].setOriginClass(childName);
 					propArray[i].setPropagated(false);
@@ -927,7 +927,7 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode pnode;
 
-	if(className.length() > 0)
+	if(!className.empty())
 	{
 		OW_String ckey = _makeClassPath(ns, className);
 		pnode = hdl->getNode(ckey);

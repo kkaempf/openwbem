@@ -265,7 +265,7 @@ OW_CIMInstance::getProperty(const OW_String& name,
 OW_CIMProperty
 OW_CIMInstance::getProperty(const OW_String& propertyName) const
 {
-	if(propertyName.length() == 0)
+	if(propertyName.empty())
 		return OW_CIMProperty();
 
 	int tsize = m_pdata->m_properties.size();
@@ -800,7 +800,7 @@ OW_CIMInstance::toMOF() const
 	rv += "INSTANCE OF ";
 	rv += m_pdata->m_owningClassName;
 
-	if(m_pdata->m_aliasName.length() > 0)
+	if(!m_pdata->m_aliasName.empty())
 	{
 		rv += "AS";
 		rv += m_pdata->m_aliasName;

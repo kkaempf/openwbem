@@ -115,7 +115,7 @@ OW_HTTPChunkedOStream::addTrailer(const OW_String& key, const OW_String& value)
 {
 	OW_String tmpKey = key;
 	tmpKey.trim();
-	if (tmpKey.length() > 0)
+	if (!tmpKey.empty())
 	{
 		m_trailers.push_back(key + ": " + value);
 	}

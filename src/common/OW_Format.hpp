@@ -74,7 +74,7 @@ public:
 		OW_Format(const char* ca, const A& a) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '1'))
 				{
@@ -86,7 +86,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '2'))
 				{
@@ -99,7 +99,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '3'))
 				{
@@ -113,7 +113,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '4'))
 				{
@@ -128,7 +128,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '5'))
 				{
@@ -144,7 +144,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '6'))
 				{
@@ -162,7 +162,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '7'))
 				{
@@ -181,7 +181,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '8'))
 				{
@@ -201,7 +201,7 @@ public:
 		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i) : oss()
 		{
 			OW_String fmt(ca);
-			while (fmt.length() > 0)
+			while (!fmt.empty())
 			{
 				switch (process(fmt, '9'))
 				{

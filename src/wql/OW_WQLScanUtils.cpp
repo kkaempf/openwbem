@@ -42,8 +42,10 @@
 OW_String
 RemoveEscapes(const OW_String& s)
 {
-	if (s.length() == 0)
+	if (s.empty())
+	{
 		return s;
+	}
 
 	OW_StringBuffer newStr(s.length());
 

@@ -184,7 +184,7 @@ OW_SimpleCppProviderIFC::getProvider(
 	OW_String libPath = env->getConfigItem(
 		OW_ConfigOpts::SIMPLECPPIFC_PROV_LOC_opt);
 
-	if(libPath.length() == 0)
+	if(libPath.empty())
 	{
 		libPath = DEFAULT_SIMPLE_CPP_PROVIDER_LOCATION;
 	}
@@ -270,7 +270,7 @@ void
 OW_SimpleCppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
 	OW_String timeWindow = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_TTL_opt);
-	if (timeWindow.length() == 0)
+	if (timeWindow.empty())
 	{
 		timeWindow = DEFAULT_CPPIFC_PROV_TTL;
 	}

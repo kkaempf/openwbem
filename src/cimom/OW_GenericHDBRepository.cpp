@@ -152,7 +152,7 @@ OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
 	const OW_String& key)
 {
 	OW_String ck(key);
-	if(ck.length() == 0)
+	if(ck.empty())
 	{
 		ck = OW_ROOT_CONTAINER;
 	}
@@ -210,7 +210,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 	size_t sz = nameComps.size() - 1;
 	for(size_t i = 0; i < sz; i++)
 	{
-		if(ks.length() > 0)
+		if(!ks.empty())
 		{
 			ks += "/";
 		}
@@ -246,7 +246,7 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 
 	OW_ASSERT(pnode);
 
-	if(ks.length() > 0)
+	if(!ks.empty())
 	{
 		ks += "/";
 	}

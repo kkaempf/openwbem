@@ -93,7 +93,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	{
 		userName = (*i).second;
 	}
-	if(userName.length())
+	if(!userName.empty())
 	{
 		if(!OW_OS::getUserId(userName, m_userId))
 		{

@@ -53,7 +53,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 	OW_String authLib = env->getConfigItem(
 		OW_ConfigOpts::AUTH_MOD_opt);
 
-	if(authLib.length() == 0)
+	if(authLib.empty())
 	{
 		authLib = DEFAULT_AUTH_MOD;
 	}

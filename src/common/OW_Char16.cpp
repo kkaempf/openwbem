@@ -51,7 +51,7 @@ using std::ostream;
 OW_Char16::OW_Char16(const OW_String& x) :
 	m_value(0)
 {
-	if(x.length() > 0)
+	if(!x.empty())
 	{
 		m_value = (OW_UInt16) x.charAt(0);
 	}

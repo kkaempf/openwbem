@@ -205,6 +205,11 @@ public:
 	size_t length() const;
 
 	/**
+	 * @return True if empty string, false otherwise
+	 */
+	OW_Bool empty() const { return length() == 0; }
+
+	/**
 	 * Format this string according to the given format and variable
 	 * argument list (printf style)
 	 * @param fmt	The format to use during the operation

@@ -26,6 +26,7 @@ x fix execQuery XML
 x pretty-print the XML in the test suites.
 x add a test for extrinsic methods with OUT and IN/OUT parameters
 x Add executeMethod fail tests to testCIMExceptions
+x Add empty() call to OW_String and change all length() == 0 to empty()
 
 
 Testing:
@@ -70,7 +71,6 @@ Refactorings:
       commonly used classes.
     - XMLExecute has handling of flags like localonly, etc.  remove this
       and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
-    - Add empty() call to OW_String and change all length() == 0 to empty()
 
 Documentation:
     - Write developer documentation (similar to "SNIA CIM Object Manager 

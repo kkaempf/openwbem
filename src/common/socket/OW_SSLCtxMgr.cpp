@@ -63,7 +63,7 @@ OW_SSLCtxMgr::initCtx(const OW_String& keyfile)
 
 
 	SSL_CTX_set_default_passwd_cb(ctx, pem_passwd_cb);
-	if (keyfile.length() > 0)
+	if (!keyfile.empty())
 	{
 		if (!(SSL_CTX_use_certificate_chain_file(ctx, keyfile.c_str())))
 		{
@@ -238,7 +238,7 @@ OW_SSLCtxMgr::pem_passwd_cb(char* buf, int size, int /*rwflag*/,
 	OW_String passwd;
 	// TODO OW_String = GlobalConfig.getSSLCertificatePassword();
 	
-	if (passwd.length() < 1)
+	if (passwd.empty())
 	{
 		passwd = OW_GetPass::getPass(
 			"Enter the password for the SSL certificate: ");

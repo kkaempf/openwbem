@@ -84,7 +84,7 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjec
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
-		exportIndication(expInst, path.getFullNameSpace());
+		exportIndication(expInst, OW_CIMNameSpace(ns));
 	}
 	catch (OW_CIMException&)
 	{

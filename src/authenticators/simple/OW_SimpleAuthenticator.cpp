@@ -94,7 +94,7 @@ OW_SimpleAuthenticator::doAuthenticate(OW_String& userName,
 {
 	OW_Bool rval = false;
 
-	if (info.length() < 1)
+	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
 		return rval;
@@ -137,7 +137,7 @@ OW_SimpleAuthenticator::loadPasswordFile(OW_ServiceEnvironmentIFCRef env)
 	OW_String passwdFile = env->getConfigItem(
 		OW_ConfigOpts::SIMPLE_AUTH_FILE_opt);
 
-	if (passwdFile.length() == 0)
+	if (passwdFile.empty())
 	{
 		OW_THROW(OW_AuthenticationException, "No password file given for "
 			"simple authorization module");
@@ -160,7 +160,7 @@ OW_SimpleAuthenticator::loadPasswordFile(OW_ServiceEnvironmentIFCRef env)
 		line = OW_String::getLine(infile);
 		lineCount++;
 		line.trim();
-		if (line.length() == 0) // skip blank lines
+		if (line.empty()) // skip blank lines
 		{
 			continue;
 		}

@@ -205,7 +205,7 @@ OW_WQLFilterRep::enumInstances(const OW_CIMObjectPath& path,
 {
 	OW_String superClassName = m_inst.getClassName();
 
-	while (superClassName.length() > 0)
+	while (!superClassName.empty())
 	{
 		if (superClassName.equalsIgnoreCase(path.getObjectName()))
 		{
