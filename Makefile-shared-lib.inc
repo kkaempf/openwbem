@@ -37,7 +37,7 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 %.dylib : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
-	if [ -d $(BNDLIBDIR) ]; then mkdir $(BNDLIBDIR); fi
+	if [ ! -d $(BNDLIBDIR) ]; then mkdir $(BNDLIBDIR); fi
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$< 
 	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
