@@ -30,7 +30,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMServer.hpp"
-#include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_CIMValue.hpp"
@@ -39,7 +38,6 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMMethod.hpp"
-#include "OW_CIMtoXML.hpp"
 #include "OW_IndicationRepLayerImpl.hpp"
 
 #include <iostream>
@@ -108,13 +106,7 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_CIMObjectPath& path,
 		if(expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_StringStream ss;
-			OW_CIMtoXML(cc, ss, OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin, OW_StringArray(), false);
-
-			//cc.toXML(ss);
-			expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
+			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 			exportIndication(expInst, path.getFullNameSpace());
 		}
 		else
@@ -143,14 +135,7 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_CIMObjectPath& path,
 		if (instOrig && expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_StringStream ss;
-			OW_CIMtoXML(instOrig, ss, OW_CIMObjectPath(),
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
-			//instOrig.toXML(ss);
-			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
 			exportIndication(expInst, path.getFullNameSpace());
 		}
 		else
@@ -250,14 +235,7 @@ OW_IndicationRepLayerImpl::getCIMInstance(const OW_CIMObjectPath& name,
 		if (expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_StringStream ss;
-			OW_CIMtoXML(theInst, ss, OW_CIMObjectPath(),
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
-			//theInst.toXML(ss);
-			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			expInst.setProperty("SourceInstance", OW_CIMValue(theInst));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
 		else
@@ -347,21 +325,9 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 				inParamsEmbed.addProperty(prop);
 			}
 
-			OW_StringStream ss;
-			OW_CIMtoXML(theInst, ss, OW_CIMObjectPath(),
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
-
-			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
-			ss.reset();
-			OW_CIMtoXML(inParamsEmbed, ss, OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray(), false);
 
 			expInst.setProperty("MethodName", OW_CIMValue(methodName));
-			expInst.setProperty("MethodParameters", OW_CIMValue(ss.toString()));
+			expInst.setProperty("MethodParameters", OW_CIMValue(inParamsEmbed));
 			expInst.setProperty("PreCall", OW_CIMValue(OW_Bool(false)));
 			expInst.setProperty("ReturnValue", OW_CIMValue(rval.toString()));
 			exportIndication(expInst, name.getFullNameSpace());
@@ -418,18 +384,8 @@ OW_IndicationRepLayerImpl::updateClass(const OW_CIMObjectPath& name,
 		if (expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_StringStream ss;
-			OW_CIMtoXML(CCOrig, ss, OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray(), false);
-			//CCOrig.toXML(ss);
-			expInst.setProperty("PreviousClassDefinition", OW_CIMValue(ss.toString()));
-			ss.reset();
-			OW_CIMtoXML(lcc, ss, OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray(), false);
-			//lcc.toXML(ss);
-			expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
+			expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
+			expInst.setProperty("ClassDefinition", OW_CIMValue(lcc));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
 		else
@@ -457,12 +413,7 @@ OW_IndicationRepLayerImpl::createClass(const OW_CIMObjectPath& name,
 	if(expCC)
 	{
 		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(cc, ss, OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray(), false);
-		//cc.toXML(ss);
-		expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
+		expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 		exportIndication(expInst, name.getFullNameSpace());
 	}
 	else
@@ -490,23 +441,9 @@ OW_IndicationRepLayerImpl::updateInstance(const OW_CIMObjectPath& name,
 		if (expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_StringStream ss;
-			OW_CIMtoXML(ciOrig, ss, OW_CIMObjectPath(),
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
-			//ciOrig.toXML(ss);
-			expInst.setProperty("PreviousInstance", OW_CIMValue(ss.toString()));
-			ss.reset();
-			OW_CIMtoXML(lci, ss, OW_CIMObjectPath(),
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
-			//lci.toXML(ss);
+			expInst.setProperty("PreviousInstance", OW_CIMValue(ciOrig));
 			// TODO refer to MOF.  What about filtering the properties in ss?
-			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			expInst.setProperty("SourceInstance", OW_CIMValue(lci));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
 		else
@@ -540,15 +477,8 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 		if (expCC)
 		{
 			OW_CIMInstance expInst = expCC.newInstance();
-			OW_StringStream ss;
-			OW_CIMtoXML(lci, ss, OW_CIMObjectPath(),
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
-			//lci.toXML(ss);
 			// TODO refer to MOF.  What about filtering the properties in ss?
-			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			expInst.setProperty("SourceInstance", OW_CIMValue(lci));
 			exportIndication(expInst, name.getFullNameSpace());
 		}
 		else
