@@ -42,7 +42,8 @@ $(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
 Time_pthread_once_SOURCES = \
-Time_pthread_once.cpp
+Time_pthread_once.cpp \
+PerformanceCommon.hpp
 
 
 INCLUDES = \
