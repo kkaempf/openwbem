@@ -1,6 +1,9 @@
+use threads;
 use perlNPI;
 
 print "I shan't be printed.";
+
+#$thr;
  
 sub initialize {
     print time;
@@ -331,3 +334,73 @@ sub referenceNames {
         #perlNPI::_VectorAddTo($npiHandle, $_[1], $ci);
     }
 }
+
+sub fsWatcher {
+   my ($npiHandle, $expr) = @_;
+   perlNPI::CIMOMAttachThread($npiHandle);
+   
+   while (true) {
+      my @filesystems = `df -T | grep '/'|tr -s ' ' `;
+      print "fsWatcher\n";
+
+      foreach my $item (@filesystems) {
+         @filesys = split(/ /, $item);
+         print "WATCH Filesystem :", $filesys[0]," ",$filesys[1],"\n";
+         if ($filesys[5] > 60) {
+            print "Event for Filesystem :", $filesys[0], "\n";
+            my $cop =
+               perlNPI::CIMObjectPathNew($npiHandle, "CIM_InstModification");
+            perlNPI::CIMObjectPathSetNameSpace($npiHandle, $cop, "root/cimv2");
+            my $cls = perlNPI::CIMOMGetClass($npiHandle, $cop, 0);
+            # no errorcheck
+            my $acp =
+               perlNPI::CIMObjectPathNew($npiHandle, "CIM_LocalFileSystem");
+            perlNPI::CIMObjectPathSetNameSpace($npiHandle, $acp, "root/cimv2");
+            my $acls = perlNPI::CIMOMGetClass($npiHandle, $acp, 0);
+            my $ci_mod = perlNPI::CIMClassNewInstance($npiHandle, $cls);
+            my $ci_act = perlNPI::CIMClassNewInstance($npiHandle, $acls);
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_act, 
+              "CSCreationClassName", "se habla blah");
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_act, 
+              "CSName", "my_sysname");
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_act, 
+              "CreationClassName", "CIM_LocalFileSystem");
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_act, 
+              "Name", $filesys[0]);
+            perlNPI::CIMInstanceSetIntegerProperty($npiHandle, $ci_act, 
+              "Name", sprintf("%d", $filesys[5]));
+            my $ci_prev = perlNPI::CIMClassNewInstance($npiHandle, $acls);
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_prev, 
+              "CSCreationClassName", "se habla blah");
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_prev, 
+              "CSName", "my_sysname");
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_prev, 
+              "CreationClassName", "CIM_LocalFileSystem");
+            perlNPI::CIMInstanceSetStringProperty($npiHandle, $ci_prev, 
+              "Name", $filesys[0]);
+            perlNPI::CIMInstanceSetIntegerProperty($npiHandle, $ci_prev, 
+              "Name", 55);
+            perlNPI::CIMOMDeliverInstanceEvent($npiHandle, "root/cimv2",
+                    $ci_mod, $ci_act, $ci_prev);
+         }
+      }
+   }
+}
+
+sub activateFilter {
+    my ($npiHandle, $exp, $eventType, $cop, $lastAct) = @_;
+    print "activate Filter of type",$eventType,"\n";
+    if ((index($eventType, "CIM_InstModification") > 0) |
+        (index($eventType, "CIM_InstCreation") > 0)) {
+       print "start thread\n";
+       my $sxpr = PerlNPI::SelectExpGetSelectString($npiHandle, $exp);
+       print "start thread for expr ", $sxpr, "\n";
+       my $thr = threads->new(\&fsWatcher, $npiHandle, $sxpr);       
+    }
+}
+
+sub deactivateFilter {
+    my ($npiHandle, $exp, $eventType, $cop, $lastAct) = @_;
+    print "deactivate Filter of type",$eventType,"\n";
+}
+
