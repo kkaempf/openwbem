@@ -88,7 +88,7 @@ class Logger : public IntrusiveCountableBase
 		/**
 		 * @return The current logging level
 		 */
-		ELogLevel getLogLevel() {  return m_level; }
+		ELogLevel getLogLevel() const {  return m_level; }
 		/**
 		 * Create a concrete logger depending on the type string passed in.
 		 * On Linux, if type == "syslog" a logger the writes to the syslog
