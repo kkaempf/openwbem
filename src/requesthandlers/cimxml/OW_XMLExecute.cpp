@@ -50,12 +50,20 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMParamValue.hpp"
+DEFINE_EXCEPTION(BadStream)
 
 #include <algorithm>
 
 using std::ostream;
 
 
+template<typename T> inline static void checkStream(T& str)
+{
+	if (!str.good())
+	{
+		OW_THROW(OW_BadStreamException, "The stream is bad");
+	}
+}
 
 OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
 {
@@ -348,6 +356,7 @@ namespace
 		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
+			checkStream(ostr);
 		}
 	private:
 		ostream& ostr;
@@ -627,6 +636,7 @@ namespace
 				propertyList, (isPropertyList && propertyList.size() == 0));
 
 			ostr << "</VALUE.OBJECTWITHPATH>\n";
+			checkStream(ostr);
 		
 		}
 		std::ostream& ostr;
@@ -665,6 +675,7 @@ namespace
 				propertyList, (isPropertyList && propertyList.size() == 0));
 
 			ostr << "</VALUE.OBJECTWITHPATH>\n";
+			checkStream(ostr);
 		
 		}
 		std::ostream& ostr;
@@ -868,6 +879,7 @@ namespace
 		{
 			ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() <<
 				"\"/>";
+			checkStream(ostr);
 		}
 	private:
 		std::ostream& ostr;
@@ -914,6 +926,7 @@ namespace
 				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 				OW_StringArray());
+			checkStream(ostr);
 		}
 	private:
 		ostream& ostr;
@@ -963,6 +976,7 @@ namespace
 		virtual void doHandle(const OW_CIMObjectPath &cop)
 		{
 			OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isInstanceName);
+			checkStream(ostr);
 		}
 	private:
 		ostream& ostr;
@@ -1021,6 +1035,7 @@ namespace
 				propertyList,
 				(isPropertyList && propertyList.size() == 0));
 			ostr << "</VALUE.NAMEDINSTANCE>";
+			checkStream(ostr);
 		}
 		std::ostream& ostr;
 		OW_CIMObjectPath& path;
@@ -1081,6 +1096,7 @@ namespace
 		virtual void doHandle(const OW_CIMQualifierType &i)
 		{
 			OW_CIMtoXML(i, ostr);
+			checkStream(ostr);
 		}
 		std::ostream& ostr;
 	};
@@ -1401,6 +1417,7 @@ namespace
 				OW_CIMtoXMLFlags::includeClassOrigin,
 				OW_StringArray());
 			ostr << "</VALUE.OBJECTWITHPATH>";
+			checkStream(ostr);
 		}
 	private:
 		std::ostream& ostr;

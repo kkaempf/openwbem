@@ -345,10 +345,12 @@ OW_HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 	if (m_chunkedOut)
 	{
 		ostrEntity = new OW_HTTPChunkedOStream(m_ostr);
+		ostrEntity->exceptions(std::ios::badbit);
 		if (m_deflateCompressionOut)
 		{
 #ifdef OW_HAVE_ZLIB_H
 			ostrEntity = new OW_HTTPDeflateOStream(*ostrEntity);
+			ostrEntity->exceptions(std::ios::badbit);
 #else
 			OW_THROW(OW_HTTPException, "Trying to deflate output, but no zlib!");
 #endif
@@ -357,6 +359,7 @@ OW_HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 	else
 	{
 		ostrEntity = new OW_TempFileStream;
+		ostrEntity->exceptions(std::ios::badbit);
 	}
 }
 
