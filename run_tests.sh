@@ -13,7 +13,7 @@ set -u
 
 killowcimomd()
 {
-	kill $(ps -C owcimomd -o pid=)
+	kill $(ps -C owcimomd -o pid=) || true
 }
 
 doMakeDistCheck()
