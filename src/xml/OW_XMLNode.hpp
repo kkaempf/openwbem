@@ -35,6 +35,8 @@
 #include "OW_Reference.hpp"
 #include "OW_XMLAttribute.hpp"
 
+#include <iosfwd>
+
 namespace OpenWBEM
 {
 
@@ -142,7 +144,7 @@ public:
 	 * @exception CIMException
 	 *                   thrown if the attribute name is not found
 	 */
-	String mustGetAttribute(const String& name) const /*throw (CIMException)*/;
+	String mustGetAttribute(const String& name) const; 
 	
 	/**
 	 * Gets the attribute array for the currrent node
@@ -183,7 +185,7 @@ public:
 	 * @exception CIMException
 	 *                   Thrown if the elementToken is not matched
 	 */
-	XMLNode mustFindElement(const char* elementName) const  /*throw (CIMException)*/;
+	XMLNode mustFindElement(const char* elementName) const;
 	
 	/**
 	 * Gets the next XMLNode unless it does not exist or the
@@ -208,7 +210,7 @@ public:
 	 *                   Thrown if either the next node is NULL or the elementToken
 	 *                   does not match
 	 */
-	XMLNode mustNextElement(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustNextElement(const char* elementName) const;
 	
 	/**
 	 * Matches elementToken with the current node or throws an
@@ -218,7 +220,7 @@ public:
 	 *               int set to the elementToken to match
 	 * @exception CIMException
 	 */
-	void mustElement(const char* elementName) const /*throw (CIMException)*/;
+	void mustElement(const char* elementName) const;
 	
 	/**
 	 * Same as mustElement but returns the child of the current
@@ -232,7 +234,7 @@ public:
 	 *                   Thrown if either the elementToken did not match the current
 	 *                   node or the child node is NULL.
 	 */
-	XMLNode mustElementChild(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustElementChild(const char* elementName) const;
 	
 	/**
 	 * Returns the child node of the current node if the child
@@ -247,7 +249,7 @@ public:
 	 *                   the child of the current node is null,
 	 *                   the child of the current node does not match the elementToken
 	 */
-	XMLNode mustChildElement(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustChildElement(const char* elementName) const;
 	
 	/**
 	 * Returns the current node's child's child if the current
@@ -263,7 +265,7 @@ public:
 	 *                   The child of the current node does not match elementToken
 	 *                   The child of the child of the current node is NULL
 	 */
-	XMLNode mustChildElementChild(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustChildElementChild(const char* elementName) const;
 	
 	/**
 	 * Gets the child of the current node and search the child
@@ -279,7 +281,7 @@ public:
 	 *                   the child of the current node is NULL
 	 *                   the elementToken is not matched
 	 */
-	XMLNode mustChildFindElement(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustChildFindElement(const char* elementName) const;
 	
 	/**
 	 * Same as findElement but it returns the child of the
@@ -302,7 +304,7 @@ public:
 	 *                   Thrown if the XMLNode is not going to be one that
 	 *                   matched the elementToken
 	 */
-	XMLNode mustFindElementChild(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustFindElementChild(const char* elementName) const;
 	
 	/**
 	 * Same as mustFindElementChild but it starts the search
@@ -315,7 +317,7 @@ public:
 	 *                   Thrown if the XMLNode is not going to be one that
 	 *                   matched the elementToken
 	 */
-	XMLNode mustChildFindElementChild(const char* elementName) const /*throw (CIMException)*/;
+	XMLNode mustChildFindElementChild(const char* elementName) const;
 	
 	/**
 	 * Sets the current node's next sibling to node
@@ -357,7 +359,7 @@ public:
 	 * @exception CIMException
 	 *                   Thrown if the child of the current node is NULL.
 	 */
-	XMLNode mustGetChild() const /*throw (CIMException)*/;
+	XMLNode mustGetChild() const;
 
 	/**
 	 * Gets the current node's children.
@@ -365,7 +367,24 @@ public:
 	 * @return XMLNodeArray containing child nodes
 	 */
 	XMLNodeArray getChildren() const;
-	
+
+	/**
+	 * Prints the node in UTF8 format
+	 * 
+	 * @param iostream& to print to
+	 * 
+	 */
+	void printNode( std::ostream& ostr ) const;
+
+	/**
+	 * Returns formatted xml representation of node in String
+	 * 
+	 * @param XMLNode node to format
+	 * 
+	 * @returns String containing formatted xml
+	 */
+	String toString() const;
+
 private:
 	struct dummy
 	{
@@ -389,6 +408,7 @@ private:
 	friend class XMLNodeImpl;
 };
 
+std::ostream& operator<<(std::ostream& ostr, const XMLNode& node);
 
 class XMLNodeImpl
 {
@@ -396,32 +416,34 @@ public:
 	XMLNodeImpl(const String& name, const XMLAttributeArray& attrArray);
 	XMLNodeImpl(const String& name);
 	XMLNodeImpl();
-	String getNodeName();
+	String getNodeName() const;
 	void assignText(const String& text);
 	void appendText(const String& text);
-	String getAttribute(const String& name, bool throwException = false) /*throw (CIMException)*/;
-	XMLAttributeArray getAttrs();
-	String getText();
-	String getName();
+	String getAttribute(const String& name, bool throwException = false) const;
+	XMLAttributeArray getAttrs() const;
+	String getText() const;
+	String getName() const;
 	
-	void mustElement(const char* elementName) /*throw (CIMException)*/;
-	XMLNodeImplRef findElement(const char* elementName, bool throwException = false) /*throw (CIMException)*/;
-	XMLNodeImplRef nextElement(const char* elementName, bool throwException = false) /*throw (CIMException)*/;
-	XMLNodeImplRef findElementChild(const char* elementName, bool throwException = false) /*throw (CIMException)*/;
-	XMLNodeImplRef mustNextElement(const char* elementName) /*throw (CIMException)*/;
-	XMLNodeImplRef mustElementChild(const char* elementName) /*throw (CIMException)*/;
-	XMLNodeImplRef mustChildElement(const char* elementName) /*throw (CIMException)*/;
-	XMLNodeImplRef mustChildElementChild(const char* elementName) /*throw (CIMException)*/;
-	XMLNodeImplRef mustChildFindElement(const char* elementName) /*throw (CIMException)*/;
-	XMLNodeImplRef mustChildFindElementChild(const char* elementName) /*throw (CIMException)*/;
+	void mustElement(const char* elementName) const;
+	XMLNodeImplRef findElement(const char* elementName, bool throwException = false) const;
+	XMLNodeImplRef nextElement(const char* elementName, bool throwException = false) const;
+	XMLNodeImplRef findElementChild(const char* elementName, bool throwException = false) const;
+	XMLNodeImplRef mustNextElement(const char* elementName) const;
+	XMLNodeImplRef mustElementChild(const char* elementName) const;
+	XMLNodeImplRef mustChildElement(const char* elementName) const;
+	XMLNodeImplRef mustChildElementChild(const char* elementName) const;
+	XMLNodeImplRef mustChildFindElement(const char* elementName) const;
+	XMLNodeImplRef mustChildFindElementChild(const char* elementName) const;
 	
 	void setNext(XMLNodeImplRef node);
-	XMLNodeImplRef getNext();
+	XMLNodeImplRef getNext() const;
 	void addChild(const XMLNodeImplRef& node);
 
-	XMLNodeImplRef mustGetChild() /*throw (CIMException)*/;
-	XMLNodeImplRef getChild();
-	XMLNodeArray getChildren();
+	XMLNodeImplRef mustGetChild() const;
+	XMLNodeImplRef getChild() const;
+	XMLNodeArray getChildren() const;
+	void printNode( std::ostream& ostr ) const;
+	String toString() const;
 
 protected:
 	XMLNodeImplRef m_nextNode;

@@ -32,6 +32,14 @@
 #include "OW_XMLNode.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
+#include "OW_StringStream.hpp"
+#include "OW_XMLEscape.hpp"
+
+#ifdef OW_HAVE_OSTREAM
+#include <ostream>
+#else
+#include <iostream>
+#endif
 
 namespace OpenWBEM
 {
@@ -74,7 +82,7 @@ XMLNodeImpl::appendText(const String& text)
 
 //////////////////////////////////////////////////////////////////////////////
 String
-XMLNodeImpl::getAttribute(const String& name, bool throwException)
+XMLNodeImpl::getAttribute(const String& name, bool throwException) const
 {
 	int arraySize = m_XMLAttributeArray.size();
 
@@ -100,28 +108,28 @@ XMLNodeImpl::getAttribute(const String& name, bool throwException)
 
 //////////////////////////////////////////////////////////////////////////////
 XMLAttributeArray
-XMLNodeImpl::getAttrs()
+XMLNodeImpl::getAttrs() const
 {
 	return m_XMLAttributeArray;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 String
-XMLNodeImpl::getText()
+XMLNodeImpl::getText() const
 {
 	return m_strText;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 String 
-XMLNodeImpl::getName()
+XMLNodeImpl::getName() const
 {
 	return m_strName;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::findElement(const char* elementName, bool throwException) /*throw (CIMException)*/
+XMLNodeImpl::findElement(const char* elementName, bool throwException) const
 {
 	XMLNodeImplRef tmpRef(new XMLNodeImpl(*this));
 
@@ -143,7 +151,7 @@ XMLNodeImpl::findElement(const char* elementName, bool throwException) /*throw (
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::nextElement(const char* elementName, bool throwException) /*throw (CIMException)*/
+XMLNodeImpl::nextElement(const char* elementName, bool throwException) const
 {
 	if (m_nextNode.isNull())
 	{
@@ -174,7 +182,7 @@ XMLNodeImpl::nextElement(const char* elementName, bool throwException) /*throw (
 
 //////////////////////////////////////////////////////////////////////////////
 void
-XMLNodeImpl::mustElement(const char* elementName) /*throw (CIMException)*/
+XMLNodeImpl::mustElement(const char* elementName) const
 {
 	if (elementName != getName())
 		OW_THROWCIMMSG(CIMException::FAILED,
@@ -184,7 +192,7 @@ XMLNodeImpl::mustElement(const char* elementName) /*throw (CIMException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::mustElementChild(const char* elementName)	/*throw (CIMException)*/
+XMLNodeImpl::mustElementChild(const char* elementName)	const
 {
 	mustElement(elementName);
 
@@ -201,7 +209,7 @@ XMLNodeImpl::mustElementChild(const char* elementName)	/*throw (CIMException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::mustChildElement(const char* elementName)	/*throw (CIMException)*/
+XMLNodeImpl::mustChildElement(const char* elementName)	const
 {
 	if (m_childNode.isNull())
 	{
@@ -224,7 +232,7 @@ XMLNodeImpl::mustChildElement(const char* elementName)	/*throw (CIMException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::mustChildElementChild(const char* elementName) /*throw (CIMException)*/
+XMLNodeImpl::mustChildElementChild(const char* elementName) const
 {
 	if (m_childNode.isNull())
 	{
@@ -257,7 +265,7 @@ XMLNodeImpl::mustChildElementChild(const char* elementName) /*throw (CIMExceptio
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::mustChildFindElement(const char* elementName) /*throw (CIMException)*/
+XMLNodeImpl::mustChildFindElement(const char* elementName) const
 {
 	if (m_childNode.isNull())
 	{
@@ -272,7 +280,7 @@ XMLNodeImpl::mustChildFindElement(const char* elementName) /*throw (CIMException
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::findElementChild(const char* elementName, bool throwException)	/*throw (CIMException)*/
+XMLNodeImpl::findElementChild(const char* elementName, bool throwException)	const
 {
 	XMLNodeImplRef tmpRef = findElement(elementName, throwException);
 
@@ -284,7 +292,7 @@ XMLNodeImpl::findElementChild(const char* elementName, bool throwException)	/*th
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::mustChildFindElementChild(const char* elementName)	/*throw (CIMException)*/
+XMLNodeImpl::mustChildFindElementChild(const char* elementName)	const
 {
 	return m_childNode->findElementChild(elementName, true);
 }
@@ -298,7 +306,7 @@ XMLNodeImpl::setNext(XMLNodeImplRef node)
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::getNext()
+XMLNodeImpl::getNext() const
 {
 	return m_nextNode;
 }
@@ -321,7 +329,7 @@ XMLNodeImpl::addChild(const XMLNodeImplRef& node)
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::mustGetChild() /*throw (CIMException)*/
+XMLNodeImpl::mustGetChild() const
 {
 	if (m_childNode.isNull())
 	{
@@ -334,14 +342,14 @@ XMLNodeImpl::mustGetChild() /*throw (CIMException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeImplRef
-XMLNodeImpl::getChild()
+XMLNodeImpl::getChild() const
 {
 	return m_childNode;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNodeArray
-XMLNodeImpl::getChildren()
+XMLNodeImpl::getChildren() const
 {
 	XMLNodeArray ar;
 	if( m_childNode.isNull() )
@@ -355,6 +363,40 @@ XMLNodeImpl::getChildren()
 
 	return ar;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+XMLNodeImpl::printNode( std::ostream& ostr ) const
+{
+	String name = getName();
+	XMLAttributeArray aa = getAttrs();
+
+	ostr << "<" << name;
+	for( XMLAttributeArray::const_iterator aiter = aa.begin();
+			aiter != aa.end(); ++aiter )
+	{
+		ostr << " " << aiter->getName() << "=\"" << XMLEscape(aiter->getValue()) << '"';
+	}
+	ostr << ">";
+	ostr << XMLEscape(getText());
+	XMLNode curChild = getChild();
+	while (curChild)
+	{
+		curChild.printNode(ostr);
+		curChild = curChild.getNext();
+	}
+	ostr << "</" << name << ">";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+XMLNodeImpl::toString() const
+{
+	OStringStream ss;
+	printNode( ss );
+	return ss.releaseString();
+}
+
 
 //*************************************************************************
 // XMLNode Implementation
@@ -433,7 +475,7 @@ XMLNode::getAttribute(const String& name) const
 
 //////////////////////////////////////////////////////////////////////////////
 String
-XMLNode::mustGetAttribute(const String& name) const /*throw (CIMException)*/
+XMLNode::mustGetAttribute(const String& name) const 
 {
 	return m_impl->getAttribute(name, true);
 }
@@ -468,7 +510,7 @@ XMLNode::findElement(const char* elementName) const
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustFindElement(const char* elementName) const  /*throw (CIMException)*/
+XMLNode::mustFindElement(const char* elementName) const  
 {
 	return XMLNode(m_impl->findElement(elementName, true));
 }
@@ -482,42 +524,42 @@ XMLNode::nextElement(const char* elementName)
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustNextElement(const char* elementName) const /*throw (CIMException)*/
+XMLNode::mustNextElement(const char* elementName) const 
 {
 	return XMLNode(m_impl->nextElement(elementName, true));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-XMLNode::mustElement(const char* elementName) const	/*throw (CIMException)*/
+XMLNode::mustElement(const char* elementName) const	
 {
 	m_impl->mustElement(elementName);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustElementChild(const char* elementName) const /*throw (CIMException)*/
+XMLNode::mustElementChild(const char* elementName) const 
 {
 	return XMLNode(m_impl->mustElementChild(elementName));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustChildElement(const char* elementName) const /*throw (CIMException)*/
+XMLNode::mustChildElement(const char* elementName) const 
 {
 	return XMLNode(m_impl->mustChildElement(elementName));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustChildElementChild(const char* elementName) const /*throw (CIMException)*/
+XMLNode::mustChildElementChild(const char* elementName) const 
 {
 	return XMLNode(m_impl->mustChildElementChild(elementName));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustChildFindElement(const char* elementName) const	/*throw (CIMException)*/
+XMLNode::mustChildFindElement(const char* elementName) const	
 {
 	return XMLNode(m_impl->mustChildFindElement(elementName));
 }
@@ -531,14 +573,14 @@ XMLNode::findElementChild(const char* elementName) const
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustFindElementChild(const char* elementName) const	/*throw (CIMException)*/
+XMLNode::mustFindElementChild(const char* elementName) const	
 {
 	return XMLNode(m_impl->findElementChild(elementName, true));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustChildFindElementChild(const char* elementName) const /*throw (CIMException)*/
+XMLNode::mustChildFindElementChild(const char* elementName) const 
 {
 	return XMLNode(m_impl->mustChildFindElementChild(elementName));
 }
@@ -566,7 +608,7 @@ XMLNode::addChild(const XMLNode& node) const
 
 //////////////////////////////////////////////////////////////////////////////
 XMLNode
-XMLNode::mustGetChild() const	/*throw (CIMException)*/
+XMLNode::mustGetChild() const
 {
 	return XMLNode(m_impl->mustGetChild());
 }
@@ -584,6 +626,29 @@ XMLNode::getChildren() const
 {
 	return m_impl->getChildren();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+XMLNode::printNode( std::ostream& ostr ) const 
+{
+	m_impl->printNode( ostr );
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String
+XMLNode::toString() const
+{
+	return m_impl->toString();
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+std::ostream& operator<<(std::ostream& ostr, const XMLNode& node)
+{
+	node.printNode(ostr);
+	return ostr;
+}
+
 
 } // end namespace OpenWBEM
 
