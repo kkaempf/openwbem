@@ -50,11 +50,6 @@ OW_IndicationRepLayer::~OW_IndicationRepLayer()
 }
 
 
-// TODO: Should we really do a getClass for all the intrinsic indication classes?
-// or should we just create an instance and set the class name?
-// - by using getClass we will only export the indication if the schema is loaded
-//   in the operation's namespace.  Is this desireable?
-											
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_IndicationRepLayerImpl::getInstance(
@@ -68,13 +63,9 @@ OW_IndicationRepLayerImpl::getInstance(
 	
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstReadSubscriptionCount() > 0)
 	{
-		OW_UserInfo intAclInfo;
-	
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(ns,
-				"CIM_InstRead", false, true, true, NULL, intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_InstRead");
 			expInst.setProperty("SourceInstance", OW_CIMValue(theInst));
 			exportIndication(expInst, ns);
 		}
@@ -103,13 +94,11 @@ OW_IndicationRepLayerImpl::invokeMethod(
 	{
 		if (path.getKeys().size() > 0) // process the indication only if instance.
 		{
-			OW_UserInfo intAclInfo;
 			try
 			{
-				OW_CIMClass expCC = m_pServer->getClass(ns,
-						"CIM_InstMethodCall", false, true, true, NULL,
-						intAclInfo);
-				OW_CIMInstance expInst = expCC.newInstance();
+				OW_CIMInstance expInst("CIM_InstMethodCall");
+
+				OW_UserInfo intAclInfo;
 				OW_CIMInstance theInst = m_pServer->getInstance(ns, path, false,
 					true, true, NULL, intAclInfo);
 	
@@ -163,14 +152,10 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_String &ns,
 	
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassModificationSubscriptionCount() > 0)
 	{
-		OW_UserInfo intAclInfo;
 	
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(ns,
-				"CIM_ClassModification", false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_ClassModification");
 			expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
 			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 			exportIndication(expInst, ns);
@@ -193,14 +178,10 @@ OW_IndicationRepLayerImpl::createClass(const OW_String& ns,
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassCreationSubscriptionCount() > 0)
 	{
-		OW_UserInfo intAclInfo;
 	
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(ns,
-				"CIM_ClassCreation", false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_ClassCreation");
 			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 			exportIndication(expInst, ns);
 		}
@@ -221,14 +202,9 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& cla
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassDeletionSubscriptionCount() > 0)
 	{
-		OW_UserInfo intAclInfo;
-
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_ClassDeletion",
-				false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_ClassDeletion");
 			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
 			exportIndication(expInst, ns);
 		}
@@ -258,16 +234,12 @@ OW_IndicationRepLayerImpl::modifyInstance(
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstModificationSubscriptionCount() > 0)
 	{
-		OW_UserInfo intAclInfo;
-	
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(ns,
-				"CIM_InstModification", false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_InstModification");
 			expInst.setProperty("PreviousInstance", OW_CIMValue(ciOrig));
-			// TODO refer to MOF.  What about filtering the properties in ss?
+			// Filtering the properties in ss is done per the CIM_Interop 
+			// schema MOF by the indication server, we don't need to do it here.
 			expInst.setProperty("SourceInstance", OW_CIMValue(modifiedInstance));
 			exportIndication(expInst, ns);
 		}
@@ -291,11 +263,7 @@ OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
 	{
 		try
 		{
-			OW_UserInfo intAclInfo;
-			OW_CIMClass expCC = m_pServer->getClass(ns,
-				"CIM_InstCreation", false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_InstCreation");
 			expInst.setProperty("SourceInstance", OW_CIMValue(ci));
 			exportIndication(expInst, ns);
 		}
@@ -317,14 +285,9 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjec
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstDeletionSubscriptionCount() > 0)
 	{
-		OW_UserInfo intAclInfo;
-	
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_InstDeletion",
-				false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
+			OW_CIMInstance expInst("CIM_InstDeletion");
 			expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
 			exportIndication(expInst, ns);
 		}
