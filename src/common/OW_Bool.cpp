@@ -48,16 +48,16 @@ using std::istream;
 void
 OW_Bool::writeObject(ostream& ostrm) const
 {
-	unsigned char v = m_val;
-	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
+	OW_UInt8 v = m_val;
+	OW_BinIfcIO::write(ostrm, v);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_Bool::readObject(istream& istrm)
 {
-	unsigned char v;
-	OW_BinIfcIO::read(istrm, &v, sizeof(v));
+	OW_UInt8 v;
+	OW_BinIfcIO::read(istrm, v);
 	m_val = bool(v);
 }
 

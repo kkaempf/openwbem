@@ -53,7 +53,7 @@
 
 
 // Values for local API calls
-const OW_UInt32 OW_BinaryProtocolVersion = 3000001;
+const OW_UInt32 OW_BinaryProtocolVersion = 3000003; // This should be kept in sync with the repository version in OW_HDBCommon.hpp
 
 const OW_UInt8 OW_BIN_OK =				0;		// Success returned from server
 const OW_UInt8 OW_BIN_ERROR =			1;		// Error returned from server

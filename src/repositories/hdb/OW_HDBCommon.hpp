@@ -52,7 +52,7 @@ public:
 
 #define OW_HDBSIGNATURE "OWHIERARCHICALDB"
 const int OW_HDBSIGLEN = 17;
-const OW_UInt32 OW_HDBVERSION = 3000002;
+const OW_UInt32 OW_HDBVERSION = 3000003; // This should be kept in sync with the binary ifc version in OW_BinIfcIO.hpp
 
 /**
  * The OW_HDBHeaderBlock structure represent the header information for

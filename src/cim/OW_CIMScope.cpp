@@ -67,17 +67,17 @@ OW_CIMScope::toMOF() const
 void
 OW_CIMScope::readObject(istream &istrm)
 {
-	OW_CIMBase::readSig( istrm, OW_CIMSCOPESIG );
-	OW_BinIfcIO::read(istrm, &m_val, sizeof(m_val));
-	m_val = Scope(OW_ntoh32(m_val));
+	// Don't do this, it'll double the size OW_CIMBase::readSig( istrm, OW_CIMSCOPESIG );
+	OW_UInt32 v;
+	OW_BinIfcIO::readLen(istrm, v);
+	m_val = Scope(v);
 }
 
 //////////////////////////////////////////////////////////////////////////////					
 void
 OW_CIMScope::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMSCOPESIG );
-	OW_Int32 nv = OW_hton32(m_val);
-	OW_BinIfcIO::write(ostrm, &nv, sizeof(nv));
+	// Don't do this, it'll double the size OW_CIMBase::writeSig( ostrm, OW_CIMSCOPESIG );
+	OW_BinIfcIO::writeLen(ostrm, m_val);
 }
 

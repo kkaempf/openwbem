@@ -75,21 +75,20 @@ OW_CIMFlavor::toMOF() const
 void
 OW_CIMFlavor::readObject(istream &istrm)
 {
-	OW_CIMBase::readSig( istrm, OW_CIMFLAVORSIG );
+	// Don't do this, it'll double the size OW_CIMBase::readSig( istrm, OW_CIMFLAVORSIG );
 
-	OW_BinIfcIO::read(istrm, &m_flavor, sizeof(m_flavor));
-
-	m_flavor = OW_ntoh32(m_flavor);
+	OW_UInt32 f;
+	OW_BinIfcIO::readLen(istrm, f);
+	m_flavor = f;
 }
 
 //////////////////////////////////////////////////////////////////////////////		
 void
 OW_CIMFlavor::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMFLAVORSIG );
+	// Don't do this, it'll double the size OW_CIMBase::writeSig( ostrm, OW_CIMFLAVORSIG );
 
-	OW_Int32 nflavor = OW_hton32(m_flavor);
-	OW_BinIfcIO::write(ostrm, &nflavor, sizeof(nflavor));
+	OW_BinIfcIO::writeLen(ostrm, m_flavor);
 }
 
 

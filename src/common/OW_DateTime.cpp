@@ -285,16 +285,16 @@ OW_DateTime::toStringGMT() const
 void
 OW_DateTime::writeObject(ostream &ostrm) const /*throw (OW_IOException)*/
 {
-	OW_Int32 v = OW_hton32(m_time);
-	OW_BinIfcIO::write(ostrm, &v, sizeof(v));
+	OW_BinIfcIO::write(ostrm, OW_UInt32(m_time));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_DateTime::readObject(istream &istrm) /*throw (OW_IOException)*/
 {
-	OW_BinIfcIO::read(istrm, &m_time, sizeof(m_time));
-	m_time = OW_ntoh32(m_time);
+	OW_UInt32 tmp;
+	OW_BinIfcIO::read(istrm, tmp);
+	m_time = tmp;
 }
 
 //////////////////////////////////////////////////////////////////////////////

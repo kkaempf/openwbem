@@ -187,7 +187,7 @@ private:
 
 	union OW_CIMValueData
 	{
-		bool			m_booleanValue;
+		OW_UInt8	m_booleanValue;
 		OW_UInt8 	m_uint8Value;
 		OW_Int8 		m_sint8Value;
 		OW_UInt16 	m_uint16Value;
@@ -2577,10 +2577,10 @@ void
 readArray(istream& istrm, T& ra, int convType)
 {
 	ra.clear();
-	OW_Int32 sz;
+	OW_UInt32 sz;
 
-	readValue(istrm, sz, 2);
-	for(OW_Int32 i = 0; i < sz; i++)
+	OW_BinIfcIO::readLen(istrm, sz);
+	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 
@@ -2601,10 +2601,10 @@ static void
 readReal32Array(istream& istrm, OW_Array<OW_Real32>& ra)
 {
 	ra.clear();
-	OW_Int32 sz;
+	OW_UInt32 sz;
 
-	readValue(istrm, sz, 2);
-	for(OW_Int32 i = 0; i < sz; i++)
+	OW_BinIfcIO::readLen(istrm, sz);
+	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		OW_Real32 v = readRealValue(istrm);
 		ra.push_back(v);
@@ -2615,10 +2615,10 @@ static void
 readReal64Array(istream& istrm, OW_Array<OW_Real64>& ra)
 {
 	ra.clear();
-	OW_Int32 sz;
+	OW_UInt32 sz;
 
-	readValue(istrm, sz, 2);
-	for(OW_Int32 i = 0; i < sz; i++)
+	OW_BinIfcIO::readLen(istrm, sz);
+	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		OW_Real64 v = readRealValue(istrm);
 		ra.push_back(v);
@@ -2630,16 +2630,17 @@ template<class T>
 void
 readObjectArray(istream& istrm, T& ra)
 {
-	ra.clear();
-	OW_Int32 sz;
+	ra.readObject(istrm);
+//	ra.clear();
+//	OW_Int32 sz;
 
-	readValue(istrm, sz, 2);
-	for(OW_Int32 i = 0; i < sz; i++)
-	{
-		typename T::value_type v;
-		v.readObject(istrm);
-		ra.push_back(v);
-	}
+//	readValue(istrm, sz, 2);
+//	for(OW_Int32 i = 0; i < sz; i++)
+//	{
+//		typename T::value_type v;
+//		v.readObject(istrm);
+//		ra.push_back(v);
+//	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2649,7 +2650,9 @@ OW_CIMValue::OW_CIMValueImpl::readObject(istream &istrm)
 	OW_CIMBase::readSig( istrm, OW_CIMVALUESIG );
 	destroyObject();
 	m_objDestroyed = false;
-	readValue(istrm, m_type, 2);
+	OW_UInt32 tmp;
+	OW_BinIfcIO::readLen(istrm, tmp);
+	m_type = OW_CIMDataType::Type(tmp);
 	m_isArray.readObject(istrm);
 
 	if(m_isArray)
@@ -2864,10 +2867,10 @@ template<class T>
 void
 writeArray(ostream& ostrm, const T& ra, int convType)
 {
-	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, 2);
+	OW_UInt32 sz = ra.size();
+	OW_BinIfcIO::writeLen(ostrm, sz);
 
-	for(OW_Int32 i = 0; i < sz; i++)
+	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		typename T::value_type v;
 		switch(convType)
@@ -2885,10 +2888,10 @@ writeArray(ostream& ostrm, const T& ra, int convType)
 static void
 writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra)
 {
-	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, 2);
+	OW_UInt32 sz = ra.size();
+	OW_BinIfcIO::writeLen(ostrm, sz);
 
-	for(OW_Int32 i = 0; i < sz; i++)
+	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		writeRealValue(ostrm, static_cast<OW_Real64>(ra[i]));
 	}
@@ -2897,10 +2900,10 @@ writeArray(ostream& ostrm, const OW_Array<OW_Real32>& ra)
 static void
 writeArray(ostream& ostrm, const OW_Array<OW_Real64>& ra)
 {
-	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, 2);
+	OW_UInt32 sz = ra.size();
+	OW_BinIfcIO::writeLen(ostrm, sz);
 
-	for(OW_Int32 i = 0; i < sz; i++)
+	for(OW_UInt32 i = 0; i < sz; i++)
 	{
 		writeRealValue(ostrm, ra[i]);
 	}
@@ -2911,13 +2914,14 @@ template<class T>
 void
 writeObjectArray(ostream& ostrm, const T& ra)
 {
-	OW_Int32 sz = ra.size();
-	writeValue(ostrm, sz, 2);
+	ra.writeObject(ostrm);
+//	OW_Int32 sz = ra.size();
+//	writeValue(ostrm, sz, 2);
 
-	for(OW_Int32 i = 0; i < sz; i++)
-	{
-		ra[i].writeObject(ostrm);
-	}
+//	for(OW_Int32 i = 0; i < sz; i++)
+//	{
+//		ra[i].writeObject(ostrm);
+//	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2925,7 +2929,7 @@ void
 OW_CIMValue::OW_CIMValueImpl::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig(ostrm, OW_CIMVALUESIG);
-	writeValue(ostrm, m_type, 2);
+	OW_BinIfcIO::writeLen(ostrm, m_type);
 	m_isArray.writeObject(ostrm);
 
 	if(m_isArray)
