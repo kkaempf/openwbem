@@ -692,7 +692,7 @@ void removeFatalSignalHandlers()
 
 BOOL WINAPI CtrlHandlerRoutine(DWORD dwCtrlType)
 {
-	theSigHandler(SIGTERM);
+	theSigHandler(SIGTERM, 0, 0);
 	return TRUE;
 }
 

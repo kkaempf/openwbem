@@ -67,7 +67,7 @@ namespace OW_NAMESPACE
 			 * independence from the oddities of the specific platforms (most
 			 * platforms use horrible unions inside the siginfo_t structure).
 			 */
-			struct SignalInformation
+			struct OW_CIMOMSERVER_API SignalInformation
 			{
 				SignalInformation();    // This only zeroes out everything.
 
@@ -88,7 +88,7 @@ namespace OW_NAMESPACE
 			/**
 			 * Given a siginfo_t structure, complete a SignalInformation structure.
 			 */
-			void extractSignalInformation(const siginfo_t& source, SignalInformation& dest);
+			void OW_CIMOMSERVER_API extractSignalInformation(const siginfo_t& source, SignalInformation& dest);
 
 			/**
 			 * These functions serve only to flatten and unflatten information for
@@ -99,8 +99,8 @@ namespace OW_NAMESPACE
 			 * @returns true iff the structures could be flattened or unflattened.
 			 *
 			 */
-			bool flattenSignalInformation(const SignalInformation& source, UnnamedPipeRef& destPipe);
-			bool unflattenSignalInformation(SignalInformation& dest, UnnamedPipeRef& sourcePipe);
+			bool OW_CIMOMSERVER_API flattenSignalInformation(const SignalInformation& source, UnnamedPipeRef& destPipe);
+			bool OW_CIMOMSERVER_API unflattenSignalInformation(SignalInformation& dest, UnnamedPipeRef& sourcePipe);
 
 			/**
 			 * A function to dump a signal to a stream.  Mostly useful for
@@ -112,7 +112,7 @@ namespace OW_NAMESPACE
 			 * an abort, signal deadlock, or some other unfriendly action to
 			 * occur.
 			 */
-			std::ostream& operator<<(std::ostream& o, const SignalInformation& sig);
+			OW_CIMOMSERVER_API std::ostream& operator<<(std::ostream& o, const SignalInformation& sig);
 		}
 	}
 }

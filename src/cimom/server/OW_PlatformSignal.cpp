@@ -68,6 +68,7 @@ namespace OW_NAMESPACE
 				// Clear out everything.
 				dest = SignalInformation();
 
+#ifndef OW_WIN32
 				// These three are the only ones guaranteed to always be set in the
 				// struct.  Everything else may be set, depending on the values for
 				// these three fields.
@@ -121,6 +122,7 @@ namespace OW_NAMESPACE
 						break;
 					}
 				}
+#endif
 			}
 
 			namespace
@@ -257,6 +259,7 @@ namespace OW_NAMESPACE
 					const char* signal_type_text;
 				};
 
+#ifndef OW_WIN32
 				// TODO: The signal code conversion into something that is
 				// human readable.  This is partially done below.
 				// Check the signal code table at
@@ -330,6 +333,9 @@ namespace OW_NAMESPACE
 						}
 					}
 				}
+#else
+				signal_type = "UNKNOWN";
+#endif
 
 				o << "  Signal Type: " << signal_type << " (" << sig.signalCode << ")" << std::endl;
 

@@ -155,7 +155,9 @@ typedef HANDLE FileHandle;
 #define OW_INVALID_FILEHANDLE INVALID_HANDLE_VALUE
 typedef int UserId;
 typedef int uid_t;
+typedef DWORD pid_t;
 typedef DWORD ProcId;
+typedef struct {} siginfo_t;
 #else
 typedef int FileHandle;
 #define OW_INVALID_FILEHANDLE -1
