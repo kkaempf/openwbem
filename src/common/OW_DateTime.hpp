@@ -49,7 +49,7 @@ class OW_DateTime
 {
 public:
 	/**
-	 * Create a new OW_DateTime object that represents the current time
+	 * Create a new OW_DateTime object that represents a 0 length interval.
 	 */
 	OW_DateTime();
 
@@ -66,14 +66,6 @@ public:
 	 * @param t      The epoch time that this OW_DateTime object will respresent
 	 */
 	OW_DateTime(time_t t);
-
-	/**
-	 * Create a new OW_DateTime object that is a copy of the given OW_DateTime
-	 * object
-	 *
-	 * @param t      The OW_DateTime object to create a copy of.
-	 */
-	OW_DateTime(const OW_DateTime& t);
 
 	/**
 	 * Create a new OW_DateTime object that represent the given date and time
@@ -199,6 +191,7 @@ public:
 	void set(time_t t)
 	{
 		m_time = t;
+		m_isInterval = false;
 	}
 
 	/**
@@ -267,26 +260,6 @@ public:
 	 * @param hours The number of hours to add to this object.
 	 */
 	void addHours(long hours) {  m_time += hours * 60 * 60; }
-
-	/**
-	 * long operator
-	 * @return The value of this OW_DateTime object as a long value that
-	 * represents the number of seconds since Jan 1, 1970.
-	 */
-	operator long () const
-	{
-		return m_time;
-	}
-
-	/**
-	 * unsigned long operator
-	 * @return The value of this OW_DateTime object as an unsigned long value
-	 * that represents the number of seconds since Jan 1, 1970.
-	 */
-	operator unsigned long () const
-	{
-		return m_time;
-	}
 
 	/**
 	 * Less than operator
@@ -384,18 +357,6 @@ public:
 	}
 
 	/**
-	 * Write this object to an output stream.
-	 * @param ostrm The output stream to write this object to.
-	 */
-	void writeObject(std::ostream &ostrm) const;
-
-	/**
-	 * Read this object from an input stream.
-	 * @param istrm The input stream to read this object from.
-	 */
-	void readObject(std::istream &istrm);
-
-	/**
 	 * @return The string representation of this OW_DateTime object.
 	 */
 	OW_String toString() const;
@@ -409,7 +370,7 @@ public:
 private:
 
 	time_t	m_time;
-	OW_Bool		m_isInterval;
+	bool	m_isInterval;
 
 	tm getTm() const;
 };

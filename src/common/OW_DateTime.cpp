@@ -69,12 +69,6 @@ OW_DateTime::OW_DateTime(time_t t) :
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////									
-OW_DateTime::OW_DateTime(const OW_DateTime& t) :
-	m_time(t.m_time), m_isInterval(false)
-{
-}
-
 //////////////////////////////////////////////////////////////////////////////
 OW_DateTime::OW_DateTime(int year, int month, int day, int hour, int minute,
 	int second) :
@@ -228,6 +222,7 @@ void
 OW_DateTime::setToCurrent()
 {
 	m_time = time(NULL);
+	m_isInterval = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -279,22 +274,6 @@ OW_DateTime::toStringGMT() const
 	asctime_r(&theTime, buff);
 	OW_String s(buff);
 	return s;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_DateTime::writeObject(ostream &ostrm) const /*throw (OW_IOException)*/
-{
-	OW_BinIfcIO::write(ostrm, OW_UInt32(m_time));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_DateTime::readObject(istream &istrm) /*throw (OW_IOException)*/
-{
-	OW_UInt32 tmp;
-	OW_BinIfcIO::read(istrm, tmp);
-	m_time = tmp;
 }
 
 //////////////////////////////////////////////////////////////////////////////
