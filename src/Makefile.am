@@ -160,4 +160,6 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 		$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd; \
 	fi
 
-# FIXME! Add a clean rule to remove: static_cimomd $(OPENWBEM_STATIC_ALL)
+clean-local:
+	rm -f static_cimomd $(OPENWBEM_STATIC_ALL)
+
