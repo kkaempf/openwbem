@@ -178,7 +178,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMClass cimClass = hdl.getClass("root/testsuite",
-		"EXP_IndicationTestComputerSystem", false);
+		"EXP_IndicationTestComputerSystem");
 	OW_CIMProperty cimProp;
 	cimProp.setDataType(OW_CIMDataType::STRING);
 	cimProp.setName("BrandNewProperty");
@@ -191,7 +191,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 {
 	OW_String fromClass = "EXP_IndicationTestComputerSystem";
 
-	OW_CIMClass cimClass = hdl.getClass("root/testsuite", fromClass, false);
+	OW_CIMClass cimClass = hdl.getClass("root/testsuite", fromClass);
 
 	OW_CIMInstance newInst = cimClass.newInstance();
 
@@ -211,7 +211,7 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
 
-	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, false);
+	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop);
 	//cout << in.toMOF();
 }
 
@@ -222,7 +222,7 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
 
-	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, false);
+	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop);
 
 	in.setProperty(OW_CIMProperty("BrandNewProperty",
 											OW_CIMValue(OW_Bool(true))));

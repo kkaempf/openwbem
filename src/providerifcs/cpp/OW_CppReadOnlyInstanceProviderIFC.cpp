@@ -49,8 +49,16 @@ OW_CppReadOnlyInstanceProviderIFC::createInstance(const OW_ProviderEnvironmentIF
 
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppReadOnlyInstanceProviderIFC::modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &, const OW_CIMInstance &, OW_Bool , const OW_StringArray *, const OW_CIMClass &)
+OW_CppReadOnlyInstanceProviderIFC::modifyInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		const OW_CIMInstance& previousInstance,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass)
 {
+	(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "DeleteInstance not supported by provider");
 }
 

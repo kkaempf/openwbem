@@ -158,8 +158,10 @@ OW_LocalCIMOMHandle::close()
 void
 OW_LocalCIMOMHandle::enumClass(const OW_String& ns,
 	const OW_String& className,
-	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
+	OW_CIMClassResultHandlerIFC& result, 
+	OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, 
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
 {
 	OW_CIMServerSchemaReadLocker rl(this);
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
@@ -171,7 +173,7 @@ void
 OW_LocalCIMOMHandle::enumClassNames(const OW_String& ns,
 		const OW_String& className,
 		OW_StringResultHandlerIFC& result,
-		OW_Bool deep)
+		OW_WBEMFlags::EDeepFlag deep)
 {
 	OW_CIMServerSchemaReadLocker rl(this);
 	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);
@@ -182,8 +184,8 @@ void
 OW_LocalCIMOMHandle::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_CIMInstanceResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -201,7 +203,7 @@ OW_LocalCIMOMHandle::enumInstanceNames(
 {
 	OW_CIMServerSchemaReadLocker srl(this);
 	OW_CIMServerInstanceReadLocker irl(this);
-	return m_pServer->enumInstanceNames(ns, className, result, true, m_aclInfo);
+	return m_pServer->enumInstanceNames(ns, className, result, OW_WBEMFlags::E_DEEP, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -247,8 +249,8 @@ OW_CIMClass
 OW_LocalCIMOMHandle::getClass(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -262,9 +264,9 @@ OW_CIMInstance
 OW_LocalCIMOMHandle::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -329,7 +331,7 @@ void
 OW_LocalCIMOMHandle::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -406,7 +408,7 @@ OW_LocalCIMOMHandle::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -424,7 +426,7 @@ OW_LocalCIMOMHandle::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -453,7 +455,7 @@ OW_LocalCIMOMHandle::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
@@ -469,7 +471,7 @@ OW_LocalCIMOMHandle::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_CIMServerSchemaReadLocker srl(this);

@@ -43,6 +43,8 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_UserInfo.hpp"
 
+using namespace OW_WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -207,7 +209,7 @@ OW_NameSpaceProvider::enumInstanceNames(
 		const OW_CIMClass& cimClass)
 {
 	CIMInstanceToObjectPath handler(result, ns, className);
-	enumInstances(env, ns, className, handler, false, false, false, false, 0, cimClass, cimClass);
+	enumInstances(env, ns, className, handler, E_NOT_LOCAL_ONLY, E_SHALLOW, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, cimClass, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -258,16 +260,17 @@ void
 OW_NameSpaceProvider::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
-		const OW_String& /*className*/,
+		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool /*localOnly*/, 
-		OW_Bool /*deep*/, 
-		OW_Bool /*includeQualifiers*/, 
-		OW_Bool /*includeClassOrigin*/,
-		const OW_StringArray* /*propertyList*/,
-		const OW_CIMClass& /*requestedClass*/,
+		ELocalOnlyFlag localOnly, 
+		EDeepFlag deep, 
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass)
 {
+	(void)className; (void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass;
 	NameSpaceEnumBuilder handler(result, cimClass);
 	enumNameSpace(env, ns, handler, false);
 }
@@ -278,12 +281,13 @@ OW_NameSpaceProvider::getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		OW_Bool /*localOnly*/,
-		OW_Bool /*includeQualifiers*/, 
-		OW_Bool /*includeClassOrigin*/,
-		const OW_StringArray* /*propertyList*/, 
+		ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass)
 {
+	(void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	OW_CIMProperty cp = instanceName.getKey(OW_CIMProperty::NAME_PROPERTY);
 	OW_CIMValue nsVal(OW_CIMNULL);
 	if (cp)
@@ -296,7 +300,7 @@ OW_NameSpaceProvider::getInstance(
 		OW_CIMInstanceEnumeration cie;
 		CIMInstanceEnumBuilder handler(cie);
 		enumInstances(env, ns, instanceName.getObjectName(), handler,
-			false, false, false, false, 0, cimClass,
+			E_NOT_LOCAL_ONLY, E_SHALLOW, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, cimClass,
 			cimClass);
 		
 		while (cie.hasMoreElements())
@@ -362,14 +366,15 @@ OW_NameSpaceProvider::createInstance(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_NameSpaceProvider::modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& /*env*/,
-		const OW_String&,
-		const OW_CIMInstance&,
-		const OW_CIMInstance&,
-		OW_Bool,
-		const OW_StringArray*,
-		const OW_CIMClass&)
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		const OW_CIMInstance& previousInstance,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass)
 {
+	(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

@@ -44,6 +44,8 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_IOException.hpp"
 
+using namespace OW_WBEMFlags;
+
 class UtilKeyArray
 {
 public:
@@ -292,8 +294,8 @@ OW_InstanceRepository::getCIMInstances(
 	const OW_String& className,
 	const OW_CIMClass& requestedClass,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
+	OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
 
@@ -327,8 +329,8 @@ OW_CIMInstance
 OW_InstanceRepository::getCIMInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	const OW_CIMClass& theClass, OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_CIMClass& theClass, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
@@ -346,7 +348,7 @@ OW_InstanceRepository::getCIMInstance(
 	OW_CIMInstance ci(OW_CIMNULL);
 	nodeToCIMObject(ci, node);
 
-	ci.syncWithClass(theClass, true);
+	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	
 	// only filter if we need to
 	if (propertyList || localOnly == true || includeQualifiers == false || includeClassOrigin == false)
@@ -446,7 +448,7 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass, const OW_CIMInstance& ci_,
 	const OW_CIMInstance& oldInst,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
@@ -457,7 +459,7 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	// Now sync the new instance with the class. This will remove any properties
 	// that shouldn't be on the instance and add properties that should be
 	// there.
-	ci.syncWithClass(theClass, false);
+	ci.syncWithClass(theClass, E_EXCLUDE_QUALIFIERS);
 
 	// Ensure key values haven't changed
 	OW_CIMPropertyArray oldKeys = oldInst.getKeyValuePairs();

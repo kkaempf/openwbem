@@ -48,6 +48,8 @@
 #include "OW_CIMClass.hpp"
 #include "OW_WQLInstancePropertySource.hpp"
 
+using namespace OW_WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationServer::~OW_IndicationServer() 
 {
@@ -445,9 +447,9 @@ void splitUpProps(const OW_StringArray& props,
 
 OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArray& props)
 {
-	OW_CIMInstance rval(toFilter.clone(OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-		OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS, 
-		OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN));
+	OW_CIMInstance rval(toFilter.clone(E_NOT_LOCAL_ONLY,
+		E_EXCLUDE_QUALIFIERS, 
+		OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN));
 
 	if (props.empty())
 	{

@@ -40,6 +40,7 @@
 #include "OW_CIMDataType.hpp" // for OW_CIMDataType::INVALID
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_WBEMFlags.hpp"
 
 /**
  * The OW_CIMInstance class encapsulates all information pertinent to a
@@ -272,7 +273,7 @@ public:
 	 * that designate keys will be retained.
 	 */
 	OW_CIMInstance filterProperties(const OW_StringArray& propertyList,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		OW_Bool ignorePropertyList=false) const;
 
 	/**
@@ -290,8 +291,8 @@ public:
 	 * @return An OW_CIMInstance object based on this one, filtered according
 	 *		to the specified criteria.
 	 */
-	OW_CIMInstance clone(OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin,
+	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray& propertyList=OW_StringArray(),
 		OW_Bool noProps=false) const;
 
@@ -311,8 +312,8 @@ public:
 	 * @return An OW_CIMInstance object based on this one, filtered according
 	 *		to the specified criteria.
 	 */
-	OW_CIMInstance clone(OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList) const;
+	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList) const;
 
 	/**
 	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified
@@ -336,8 +337,8 @@ public:
 	 * @return An OW_CIMInstance object based on this one, filtered according
 	 *		to the specified criteria.
 	 */
-	OW_CIMInstance clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_CIMClass& requestedClass, const OW_CIMClass& cimClass) const;
 
 	/**
@@ -352,7 +353,8 @@ public:
 	 *		kept in the instance.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& syncWithClass(const OW_CIMClass& cc, OW_Bool includeQualifiers=false);
+	OW_CIMInstance& syncWithClass(const OW_CIMClass& cc, 
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_EXCLUDE_QUALIFIERS);
 
 	/**
 	 * Create an instance with the set of changes that will occur for a 
@@ -378,7 +380,7 @@ public:
 	 */
 	OW_CIMInstance createModifiedInstance(
 		const OW_CIMInstance& previousInstance,
-		OW_Bool includeQualifiers,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass) const;
 

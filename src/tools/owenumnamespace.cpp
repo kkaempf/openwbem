@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
 			rch = new OW_CIMXMLCIMOMHandle(client);
 		}
 
-        bool deep = true; // TODO: get this from a command line argument
+		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_DEEP; // TODO: get this from a command line argument
 		
 		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(rch, ns, deep);
         copy(rval.begin(), rval.end(), std::ostream_iterator<OW_String>(cout, "\n"));
@@ -127,10 +127,10 @@ int main(int argc, char* argv[])
 	{
 		cerr << e << endl;
 	}
-    catch(const std::exception& e)
-    {
-        cerr << e.what() << endl;
-    }
+	catch(const std::exception& e)
+	{
+		cerr << e.what() << endl;
+	}
 	catch(...)
 	{
 		cerr << "Caught unknown exception in main" << endl;

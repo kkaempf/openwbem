@@ -49,6 +49,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::find;
+using namespace OW_WBEMFlags;
 
 // create our own TEST_ASSERT, because assert and OW_ASSERT will be turned off
 // in non-debug mode.
@@ -93,8 +94,8 @@ void testInstanceLevelQualifier(OW_CIMOMHandleIFCRef& chRef)
 	i.setProperty(p);
 	chRef->createInstance(ns,i);
 	i = chRef->getInstance(ns, OW_CIMObjectPath(ns, i), 
-		OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-		OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS);
+		E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS);
 
 	p = i.getPropertyT("p");
 	OW_CIMQualifier q = p.getQualifier("MaxValue");

@@ -161,6 +161,7 @@ OW_URL.hpp \
 OW_UnnamedPipe.hpp \
 OW_UserInfo.hpp \
 OW_UUID.hpp \
+OW_WBEMFlags.hpp \
 OW_SafeLibCreate.hpp \
 OW_SharedLibrary.hpp \
 OW_SharedLibraryException.hpp \

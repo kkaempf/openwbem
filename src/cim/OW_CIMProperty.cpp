@@ -42,6 +42,7 @@
 
 using std::istream;
 using std::ostream;
+using namespace OW_WBEMFlags;
 
 struct OW_CIMProperty::PROPData
 {
@@ -165,12 +166,12 @@ OW_CIMProperty::operator= (const OW_CIMProperty& x)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMProperty
-OW_CIMProperty::clone(OW_Bool includeQualifier,
-	OW_Bool includeClassOrigin) const
+OW_CIMProperty::clone(EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin) const
 {
 	OW_CIMProperty cp;
 
-	if(includeQualifier)
+	if(includeQualifiers)
 	{
 		cp.m_pdata->m_qualifiers = m_pdata->m_qualifiers;
 	}
@@ -426,7 +427,7 @@ OW_CIMProperty::isKey() const
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMProperty
-OW_CIMProperty::filter(OW_Bool localOnly, OW_Bool includeQualifiers) const
+OW_CIMProperty::filter(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers) const
 {
 	//
 	// If only local definitions are required and this is a propagated
@@ -495,12 +496,12 @@ OW_CIMProperty::clearQualifiers()
 void
 OW_CIMProperty::writeObject(ostream &ostrm) const
 {
-	writeObject(ostrm, true);
+	writeObject(ostrm, E_INCLUDE_QUALIFIERS);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
+OW_CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifiers) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMPROPERTYSIG );
 	m_pdata->m_name.writeObject(ostrm);

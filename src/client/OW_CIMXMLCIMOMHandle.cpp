@@ -363,7 +363,7 @@ OW_CIMXMLCIMOMHandle::enumClassNames(
 		const OW_String& ns,
 		const OW_String& className,
 		OW_StringResultHandlerIFC& result,
-		OW_Bool deep)
+		OW_WBEMFlags::EDeepFlag deep)
 {
 	static const char* const commandName = "EnumerateClassNames";
 
@@ -404,8 +404,11 @@ namespace
 void
 OW_CIMXMLCIMOMHandle::enumClass(const OW_String& ns,
 	const OW_String& className,
-	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
+	OW_CIMClassResultHandlerIFC& result, 
+	OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, 
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
 {
 	static const char* const commandName = "EnumerateClasses";
 
@@ -525,8 +528,8 @@ void
 OW_CIMXMLCIMOMHandle::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_CIMInstanceResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "EnumerateInstances";
@@ -576,8 +579,8 @@ OW_CIMClass
 OW_CIMXMLCIMOMHandle::getClass(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_Bool localOnly,
-    OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+    OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "GetClass";
@@ -630,7 +633,7 @@ OW_CIMInstance
 OW_CIMXMLCIMOMHandle::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "GetInstance";
@@ -946,7 +949,7 @@ void
 OW_CIMXMLCIMOMHandle::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "ModifyInstance";
@@ -1258,7 +1261,7 @@ OW_CIMXMLCIMOMHandle::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	if (!path.isInstancePath())
@@ -1279,7 +1282,7 @@ OW_CIMXMLCIMOMHandle::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	if (!path.isClassPath())
@@ -1301,7 +1304,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(
 	OW_CIMClassResultHandlerIFC* cresult,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "Associators";
@@ -1402,7 +1405,7 @@ OW_CIMXMLCIMOMHandle::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	if (!path.isInstancePath())
@@ -1422,7 +1425,7 @@ OW_CIMXMLCIMOMHandle::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	if (!path.isClassPath())
@@ -1444,7 +1447,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(
 	OW_CIMClassResultHandlerIFC* cresult,
 	const OW_String& resultClass,
 	const OW_String& role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "References";

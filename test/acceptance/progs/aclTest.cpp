@@ -58,6 +58,7 @@
 using std::cerr;
 using std::endl;
 using std::cout;
+using namespace OW_WBEMFlags;
 
 void usage(const char* name)
 {
@@ -151,7 +152,7 @@ void enumClassNames(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumClassNames() *******\n" << endl;
 	try
 	{
-		OW_StringEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", true);
+		OW_StringEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -169,7 +170,7 @@ void enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumClasses() *******\n" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE("root/acltest", "", true, false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE("root/acltest", "", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -213,7 +214,7 @@ void getClass(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMClass cimClass = hdl.getClass("/root/acltest",
-			"EXP_BionicComputerSystem", false);
+			"EXP_BionicComputerSystem");
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -282,7 +283,7 @@ void enumerateInstances(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("/root/acltest", ofClass, true);
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("/root/acltest", ofClass, E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -305,7 +306,7 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance("/root/acltest", cop, false);
+		OW_CIMInstance in = hdl.getInstance("/root/acltest", cop);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
@@ -466,7 +467,7 @@ void associators(OW_CIMOMHandleIFC& hdl)
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
 		OW_CIMInstanceEnumeration enu = hdl.associatorsE("/root/acltest", cop,
-									"CIM_Component", "", "", "", true, true, NULL);
+									"CIM_Component", "", "", "", E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL);
 
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
@@ -517,7 +518,7 @@ void references(OW_CIMOMHandleIFC& hdl)
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
 		OW_CIMInstanceEnumeration enu = hdl.referencesE("/root/acltest", cop,
-									"CIM_Component", "", true, true, NULL);
+									"CIM_Component", "", E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL);
 
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
@@ -661,7 +662,7 @@ void enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumNameSpace() *******\n" << endl;
 	try
 	{
-		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest", true);
+		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}

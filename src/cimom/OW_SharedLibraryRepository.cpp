@@ -105,8 +105,8 @@ void OW_SharedLibraryRepository::setQualifierType(const OW_String& ns,
 OW_CIMClass OW_SharedLibraryRepository::getClass(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList,
 	const OW_UserInfo &aclInfo)
 {
 	return m_ref->getClass(ns, className, localOnly, includeQualifiers,
@@ -123,7 +123,7 @@ OW_CIMObjectPath OW_SharedLibraryRepository::createInstance(const OW_String& ns,
 OW_CIMInstance OW_SharedLibraryRepository::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_UserInfo &aclInfo)
 {
@@ -152,8 +152,8 @@ void OW_SharedLibraryRepository::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, OW_Bool enumSubClasses, 
 	const OW_UserInfo &aclInfo)
 {
@@ -184,8 +184,8 @@ OW_CIMClass OW_SharedLibraryRepository::deleteClass(const OW_String& ns, const O
 void OW_SharedLibraryRepository::enumClasses(const OW_String& ns,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_UserInfo &aclInfo)
+	OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo &aclInfo)
 {
 	return m_ref->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, aclInfo);
@@ -195,7 +195,7 @@ void OW_SharedLibraryRepository::enumClassNames(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_StringResultHandlerIFC& result,
-	OW_Bool deep, const OW_UserInfo &aclInfo)
+	OW_WBEMFlags::EDeepFlag deep, const OW_UserInfo &aclInfo)
 {
 	m_ref->enumClassNames(ns, className, result, deep, aclInfo);
 }
@@ -214,7 +214,7 @@ void OW_SharedLibraryRepository::enumInstanceNames(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep, const OW_UserInfo &aclInfo)
+	OW_WBEMFlags::EDeepFlag deep, const OW_UserInfo &aclInfo)
 {
 	return m_ref->enumInstanceNames(ns, className, result, deep, aclInfo);
 }
@@ -222,8 +222,8 @@ void OW_SharedLibraryRepository::enumInstanceNames(
 OW_CIMInstance OW_SharedLibraryRepository::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList,
 	const OW_UserInfo &aclInfo)
 {
 	return m_ref->getInstance(ns, instanceName, localOnly, includeQualifiers,
@@ -236,7 +236,7 @@ void OW_SharedLibraryRepository::references(
 	const OW_CIMObjectPath &path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String &resultClass, const OW_String &role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 {
 	m_ref->references(ns, path, result, resultClass, role, includeQualifiers,
@@ -248,7 +248,7 @@ void OW_SharedLibraryRepository::referencesClasses(
 	const OW_CIMObjectPath &path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String &resultClass, const OW_String &role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 {
 	m_ref->referencesClasses(ns, path, result, resultClass, role, includeQualifiers,
@@ -283,7 +283,7 @@ void OW_SharedLibraryRepository::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String &assocClass, const OW_String &resultClass,
 	const OW_String &role, const OW_String &resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 {
 	m_ref->associators(ns, path, result, assocClass, resultClass, role,
@@ -297,7 +297,7 @@ void OW_SharedLibraryRepository::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String &assocClass, const OW_String &resultClass,
 	const OW_String &role, const OW_String &resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray *propertyList, const OW_UserInfo &aclInfo)
 {
 	m_ref->associatorsClasses(ns, path, result, assocClass, resultClass, role,

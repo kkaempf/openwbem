@@ -168,7 +168,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		const OW_CIMInstance& previousInstance,
-		OW_Bool includeQualifiers,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass)
 	{
@@ -199,7 +199,7 @@ public:
 
 			// The client can't delete a non-empty namespace.  If we find any class names, we'll throw an exception
 			DeleteHandler handler;
-			rep->enumClassNames(name,"", handler, false, OW_UserInfo(env->getUserName()));
+			rep->enumClassNames(name,"", handler, OW_WBEMFlags::E_SHALLOW, OW_UserInfo(env->getUserName()));
 
 			rep->deleteNameSpace(name, OW_UserInfo(env->getUserName()));
 		}

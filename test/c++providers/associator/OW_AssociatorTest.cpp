@@ -50,6 +50,7 @@ namespace
 	// conflict whens the library is dynamically loaded
 
 	using std::ifstream;
+	using namespace OW_WBEMFlags;
 
 	static OW_String getDestClass(const OW_CIMInstance& ci)
 	{
@@ -83,8 +84,8 @@ namespace
 			const OW_String& resultClass,
 			const OW_String& role,
 			const OW_String& resultRole,
-			const OW_Bool& includeQualifiers,
-			const OW_Bool& includeClassOrigin,
+			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const OW_StringArray* propertyList)
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest associators called "
@@ -98,7 +99,7 @@ namespace
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
 			OW_CIMInstance ci = hdl->getInstance(ns,
-				objectName, false);
+				objectName);
 
 			OW_String destClass = getDestClass(ci);
 
@@ -106,13 +107,13 @@ namespace
 				return;
 
 			// All other instances of the other class are associated.
-			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(ns,destClass, true);
+			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(ns,destClass, E_DEEP);
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
 				ci.setProperty("producedByAssocTest", OW_CIMValue(true));
 				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", ci));
-				result.handle(ci.clone(false,includeQualifiers,includeClassOrigin,propertyList));
+				result.handle(ci.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 
 		}
@@ -135,7 +136,7 @@ namespace
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(ns,
-				objectName, false);
+				objectName);
 
 			OW_String destClass = getDestClass(ci);
 
@@ -145,7 +146,7 @@ namespace
 			}
 
 			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(
-				ns, destClass, true, false);
+				ns, destClass);
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
@@ -162,8 +163,8 @@ namespace
 			const OW_CIMObjectPath& objectName,
 			const OW_String& resultClass,
 			const OW_String& role,
-			const OW_Bool& includeQualifiers,
-			const OW_Bool& includeClassOrigin,
+			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const OW_StringArray* propertyList )
 		{
 			env->getLogger()->logDebug(format("OW_AssociatorTest references called "
@@ -175,7 +176,7 @@ namespace
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(ns,
-				objectName, false);
+				objectName);
 
 			OW_String destClass = getDestClass(ci);
 
@@ -183,13 +184,13 @@ namespace
 				return;
 
 			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(
-				ns, destClass, true);
+				ns, destClass);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
 				OW_CIMClass cc = hdl->getClass(ns,
-					resultClass, false);
+					resultClass);
 				OW_CIMInstance newInstance = cc.newInstance();
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ns, ci);
@@ -200,7 +201,7 @@ namespace
 				newInstance.setProperty("producedByAssocTest", OW_CIMValue(true));
 
 				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newInstance));
-				result.handle(newInstance.clone(false,includeQualifiers,includeClassOrigin,propertyList));
+				result.handle(newInstance.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 		}
 
@@ -218,20 +219,19 @@ namespace
 
 			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 			OW_CIMInstance ci = hdl->getInstance(ns,
-				objectName, false);
+				objectName);
 
 			OW_String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
 				return;
 
-			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(ns, destClass, true, false);
+			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(ns, destClass);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(ns,
-					resultClass, false);
+				OW_CIMClass cc = hdl->getClass(ns, resultClass);
 				OW_CIMInstance newInstance = cc.newInstance();
 
 				OW_CIMInstance ci = e1.nextElement();
@@ -264,13 +264,13 @@ namespace
 
 			try
 			{
-				OW_CIMInstanceEnumeration insts1e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem", true, false);
+				OW_CIMInstanceEnumeration insts1e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem");
 				OW_CIMInstanceArray insts1;
 				while (insts1e.hasMoreElements())
 				{
 					insts1.push_back(insts1e.nextElement());
 				}
-				OW_CIMInstanceEnumeration insts2e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem2", true, false);
+				OW_CIMInstanceEnumeration insts2e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem2");
 				OW_CIMInstanceArray insts2;
 				while (insts2e.hasMoreElements())
 				{
@@ -308,8 +308,16 @@ namespace
 			return OW_CIMObjectPath(ns, inst);
 		}
 
-		void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &, const OW_CIMInstance &, OW_Bool , const OW_StringArray *, const OW_CIMClass &)
+		void modifyInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
+			const OW_CIMInstance& modifiedInstance,
+			const OW_CIMInstance& previousInstance,
+			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			const OW_StringArray* propertyList,
+			const OW_CIMClass& theClass)
 		{
+			(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 			// do nothing.
 		}
 	};

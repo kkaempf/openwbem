@@ -33,11 +33,12 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-//#include "OW_UserInfo.hpp"
-class OW_UserInfo;
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_WBEMFlags.hpp"
+
+class OW_UserInfo;
 
 class OW_RepositoryIFC
 {
@@ -160,8 +161,8 @@ public:
 	virtual OW_CIMClass getClass(
 		const OW_String& ns,
 		const OW_String& className,
-		OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -228,8 +229,8 @@ public:
 	virtual void enumClasses(const OW_String& ns,
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
-		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_UserInfo& aclInfo) = 0;
+		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo) = 0;
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -245,7 +246,7 @@ public:
 	virtual void enumClassNames(const OW_String& ns,
 		const OW_String& className,
 		OW_StringResultHandlerIFC& result,
-		OW_Bool deep, const OW_UserInfo& aclInfo) = 0;
+		OW_WBEMFlags::EDeepFlag deep, const OW_UserInfo& aclInfo) = 0;
 
 	/**
 	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular
@@ -276,8 +277,8 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool deep, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
 		const OW_UserInfo& aclInfo) = 0;
 
@@ -301,7 +302,7 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_Bool deep,
+		OW_WBEMFlags::EDeepFlag deep,
 		const OW_UserInfo& aclInfo) = 0;
 
 	/**
@@ -326,8 +327,8 @@ public:
 	virtual OW_CIMInstance getInstance(
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -374,7 +375,7 @@ public:
 	virtual OW_CIMInstance modifyInstance(
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
-		OW_Bool includeQualifiers,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 
@@ -440,8 +441,8 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
-		const OW_String& resultRole,  OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_String& resultRole,  OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 
 	virtual void associatorsClasses(
@@ -450,8 +451,8 @@ public:
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
-		const OW_String& resultRole,  OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_String& resultRole,  OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 
 	virtual void referenceNames(
@@ -466,8 +467,8 @@ public:
 		const OW_CIMObjectPath& path,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& resultClass,
-		const OW_String& role, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_String& role, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 	
 	virtual void referencesClasses(
@@ -475,8 +476,8 @@ public:
 		const OW_CIMObjectPath& path,
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& resultClass,
-		const OW_String& role, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_String& role, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

@@ -776,7 +776,7 @@ public:
 	{
 		OW_CIMClient rch(url, m_ns);
 		ClassResultHandler classResultHandler(m_ns);
-		rch.enumClass("", classResultHandler, OW_CIMOMHandleIFC::DEEP);
+		rch.enumClass("", classResultHandler, OW_WBEMFlags::E_DEEP);
 	}
 
 private:

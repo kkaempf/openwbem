@@ -1303,7 +1303,7 @@ CIMClass: class EXP_BionicComputerSystem:CIM_ComputerSystem
     </KEYBINDING>
   </INSTANCENAME>
 </INSTANCEPATH>
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 0, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 0, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
   CreationClassName="EXP_BartComputerSystem";
@@ -1514,230 +1514,7 @@ INSTANCE OF EXP_BionicComputerSystem2
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
-INSTANCE OF EXP_BartComputerSystem
-{
-  CreationClassName="EXP_BartComputerSystem";
-  Name="test";
-};
-
-<INSTANCE CLASSNAME="EXP_BartComputerSystem">
-  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      EXP_BartComputerSystem
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      test
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-</INSTANCE>
-
-
-INSTANCE OF EXP_BionicComputerSystem
-{
-  CreationClassName="EXP_BionicComputerSystem";
-  Name="SixMillion";
-};
-
-<INSTANCE CLASSNAME="EXP_BionicComputerSystem">
-  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      EXP_BionicComputerSystem
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      SixMillion
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="OptionalArg" TYPE="boolean">
-  </PROPERTY>
-  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="BrandNewProperty" TYPE="string">
-  </PROPERTY>
-</INSTANCE>
-
-
-INSTANCE OF EXP_BionicComputerSystem
-{
-  CreationClassName="EXP_BionicComputerSystem";
-  Name="SevenMillion";
-};
-
-<INSTANCE CLASSNAME="EXP_BionicComputerSystem">
-  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      EXP_BionicComputerSystem
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      SevenMillion
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="OptionalArg" TYPE="boolean">
-  </PROPERTY>
-  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="BrandNewProperty" TYPE="string">
-  </PROPERTY>
-</INSTANCE>
-
-
-INSTANCE OF EXP_BionicComputerSystem2
-{
-  CreationClassName="EXP_BionicComputerSystem2";
-  Name="SixMillion";
-};
-
-<INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
-  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      EXP_BionicComputerSystem2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      SixMillion
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="OptionalArg" TYPE="boolean">
-  </PROPERTY>
-  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-</INSTANCE>
-
-
-INSTANCE OF EXP_BionicComputerSystem2
-{
-  CreationClassName="EXP_BionicComputerSystem2";
-  Name="SevenMillion";
-};
-
-<INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
-  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      EXP_BionicComputerSystem2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
-    <VALUE>
-      SevenMillion
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="OptionalArg" TYPE="boolean">
-  </PROPERTY>
-  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
-  </PROPERTY.ARRAY>
-  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
-  </PROPERTY>
-</INSTANCE>
-
-
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 0, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
   CreationClassName="EXP_BartComputerSystem";
@@ -1960,7 +1737,230 @@ INSTANCE OF EXP_BionicComputerSystem2
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 1, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 0, propertyList? 0) ***
+INSTANCE OF EXP_BartComputerSystem
+{
+  CreationClassName="EXP_BartComputerSystem";
+  Name="test";
+};
+
+<INSTANCE CLASSNAME="EXP_BartComputerSystem">
+  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      EXP_BartComputerSystem
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      test
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+</INSTANCE>
+
+
+INSTANCE OF EXP_BionicComputerSystem
+{
+  CreationClassName="EXP_BionicComputerSystem";
+  Name="SixMillion";
+};
+
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem">
+  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      EXP_BionicComputerSystem
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      SixMillion
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="OptionalArg" TYPE="boolean">
+  </PROPERTY>
+  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="BrandNewProperty" TYPE="string">
+  </PROPERTY>
+</INSTANCE>
+
+
+INSTANCE OF EXP_BionicComputerSystem
+{
+  CreationClassName="EXP_BionicComputerSystem";
+  Name="SevenMillion";
+};
+
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem">
+  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      EXP_BionicComputerSystem
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      SevenMillion
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="OptionalArg" TYPE="boolean">
+  </PROPERTY>
+  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="BrandNewProperty" TYPE="string">
+  </PROPERTY>
+</INSTANCE>
+
+
+INSTANCE OF EXP_BionicComputerSystem2
+{
+  CreationClassName="EXP_BionicComputerSystem2";
+  Name="SixMillion";
+};
+
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
+  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      EXP_BionicComputerSystem2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      SixMillion
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="OptionalArg" TYPE="boolean">
+  </PROPERTY>
+  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+</INSTANCE>
+
+
+INSTANCE OF EXP_BionicComputerSystem2
+{
+  CreationClassName="EXP_BionicComputerSystem2";
+  Name="SevenMillion";
+};
+
+<INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
+  <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      EXP_BionicComputerSystem2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="Name" TYPE="string" PROPAGATED="true">
+    <VALUE>
+      SevenMillion
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="OptionalArg" TYPE="boolean">
+  </PROPERTY>
+  <PROPERTY NAME="NameFormat" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="IdentifyingDescriptions" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY.ARRAY NAME="Dedicated" TYPE="uint16" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="PrimaryOwnerContact" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="PrimaryOwnerName" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY.ARRAY NAME="Roles" TYPE="string" PROPAGATED="true">
+  </PROPERTY.ARRAY>
+  <PROPERTY NAME="InstallDate" TYPE="datetime" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Status" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Caption" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+  <PROPERTY NAME="Description" TYPE="string" PROPAGATED="true">
+  </PROPERTY>
+</INSTANCE>
+
+
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 1, localOnly = 0, includeQualifiers = 1, includeClassOrigin = 0, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
   [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
@@ -3733,7 +3733,7 @@ INSTANCE OF EXP_BionicComputerSystem2
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
   CreationClassName="EXP_BartComputerSystem";
@@ -3956,7 +3956,7 @@ INSTANCE OF EXP_BionicComputerSystem2
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = false, propertyList? 1) ***
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 0, propertyList? 1) ***
 INSTANCE OF EXP_BartComputerSystem
 {
 };
@@ -3997,7 +3997,7 @@ INSTANCE OF EXP_BionicComputerSystem2
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = false, propertyList? 1) ***
+*** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 0, propertyList? 1) ***
 INSTANCE OF EXP_BartComputerSystem
 {
 };
@@ -4042,7 +4042,7 @@ INSTANCE OF EXP_BionicComputerSystem2
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C1, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C1, deep = 1, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
   CK1="1k1";
@@ -4193,7 +4193,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C1, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C1, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
   CK1="1k1";
@@ -4344,7 +4344,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C1, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C1, deep = 0, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
   CK1="1k1";
@@ -4477,7 +4477,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C1, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C1, deep = 0, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
   CK1="1k1";
@@ -4610,7 +4610,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C2, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C2, deep = 1, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C2
 {
   P2="2p2";
@@ -4663,155 +4663,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C2, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
-INSTANCE OF Example_C2
-{
-  P2="2p2";
-  P4="2p4";
-  CK1="2k1";
-  CK2="2k2";
-  CK3="2k3";
-  P1="2p1";
-  P3="2p3";
-};
-
-<INSTANCE CLASSNAME="Example_C2">
-  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C2">
-    <VALUE>
-      2p2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2">
-    <VALUE>
-      2p4
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      2k1
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      2k2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      2k3
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      2p1
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      2p3
-    </VALUE>
-  </PROPERTY>
-</INSTANCE>
-
-
-INSTANCE OF Example_C3
-{
-  P2="3p2";
-  P3="3p3";
-  P5="3p5";
-  P4="3p4";
-  CK1="3k1";
-  CK2="3k2";
-  CK3="3k3";
-  P1="3p1";
-};
-
-<INSTANCE CLASSNAME="Example_C3">
-  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p3
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P5" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p5
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2" PROPAGATED="true">
-    <VALUE>
-      3p4
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3k1
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3k2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3k3
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3p1
-    </VALUE>
-  </PROPERTY>
-</INSTANCE>
-
-
-*** Doing enumInstances(ofClass = Example_C2, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
-INSTANCE OF Example_C2
-{
-  P2="2p2";
-  P4="2p4";
-};
-
-<INSTANCE CLASSNAME="Example_C2">
-  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C2">
-    <VALUE>
-      2p2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2">
-    <VALUE>
-      2p4
-    </VALUE>
-  </PROPERTY>
-</INSTANCE>
-
-
-INSTANCE OF Example_C3
-{
-  P2="3p2";
-  P4="3p4";
-};
-
-<INSTANCE CLASSNAME="Example_C3">
-  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2" PROPAGATED="true">
-    <VALUE>
-      3p4
-    </VALUE>
-  </PROPERTY>
-</INSTANCE>
-
-
-*** Doing enumInstances(ofClass = Example_C2, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C2, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C2
 {
   P2="2p2";
@@ -4866,84 +4718,6 @@ INSTANCE OF Example_C3
 {
   P2="3p2";
   P3="3p3";
-  P4="3p4";
-  CK1="3k1";
-  CK2="3k2";
-  CK3="3k3";
-  P1="3p1";
-};
-
-<INSTANCE CLASSNAME="Example_C3">
-  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p3
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2" PROPAGATED="true">
-    <VALUE>
-      3p4
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3k1
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3k2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3k3
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
-    <VALUE>
-      3p1
-    </VALUE>
-  </PROPERTY>
-</INSTANCE>
-
-
-*** Doing enumInstances(ofClass = Example_C3, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
-INSTANCE OF Example_C3
-{
-  P2="3p2";
-  P3="3p3";
-  P5="3p5";
-};
-
-<INSTANCE CLASSNAME="Example_C3">
-  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p2
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p3
-    </VALUE>
-  </PROPERTY>
-  <PROPERTY NAME="P5" TYPE="string" CLASSORIGIN="Example_C3">
-    <VALUE>
-      3p5
-    </VALUE>
-  </PROPERTY>
-</INSTANCE>
-
-
-*** Doing enumInstances(ofClass = Example_C3, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
-INSTANCE OF Example_C3
-{
-  P2="3p2";
-  P3="3p3";
   P5="3p5";
   P4="3p4";
   CK1="3k1";
@@ -4996,7 +4770,149 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C3, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C2, deep = 0, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
+INSTANCE OF Example_C2
+{
+  P2="2p2";
+  P4="2p4";
+};
+
+<INSTANCE CLASSNAME="Example_C2">
+  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C2">
+    <VALUE>
+      2p2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2">
+    <VALUE>
+      2p4
+    </VALUE>
+  </PROPERTY>
+</INSTANCE>
+
+
+INSTANCE OF Example_C3
+{
+  P2="3p2";
+  P4="3p4";
+};
+
+<INSTANCE CLASSNAME="Example_C3">
+  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2" PROPAGATED="true">
+    <VALUE>
+      3p4
+    </VALUE>
+  </PROPERTY>
+</INSTANCE>
+
+
+*** Doing enumInstances(ofClass = Example_C2, deep = 0, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
+INSTANCE OF Example_C2
+{
+  P2="2p2";
+  P4="2p4";
+  CK1="2k1";
+  CK2="2k2";
+  CK3="2k3";
+  P1="2p1";
+  P3="2p3";
+};
+
+<INSTANCE CLASSNAME="Example_C2">
+  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C2">
+    <VALUE>
+      2p2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2">
+    <VALUE>
+      2p4
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      2k1
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      2k2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      2k3
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      2p1
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      2p3
+    </VALUE>
+  </PROPERTY>
+</INSTANCE>
+
+
+INSTANCE OF Example_C3
+{
+  P2="3p2";
+  P3="3p3";
+  P4="3p4";
+  CK1="3k1";
+  CK2="3k2";
+  CK3="3k3";
+  P1="3p1";
+};
+
+<INSTANCE CLASSNAME="Example_C3">
+  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p3
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2" PROPAGATED="true">
+    <VALUE>
+      3p4
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3k1
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3k2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3k3
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3p1
+    </VALUE>
+  </PROPERTY>
+</INSTANCE>
+
+
+*** Doing enumInstances(ofClass = Example_C3, deep = 1, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C3
 {
   P2="3p2";
@@ -5023,7 +4939,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing enumInstances(ofClass = Example_C3, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C3, deep = 1, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
 INSTANCE OF Example_C3
 {
   P2="3p2";
@@ -5080,7 +4996,91 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing enumInstances(ofClass = Example_C3, deep = 0, localOnly = 1, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
+INSTANCE OF Example_C3
+{
+  P2="3p2";
+  P3="3p3";
+  P5="3p5";
+};
+
+<INSTANCE CLASSNAME="Example_C3">
+  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p3
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P5" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p5
+    </VALUE>
+  </PROPERTY>
+</INSTANCE>
+
+
+*** Doing enumInstances(ofClass = Example_C3, deep = 0, localOnly = 0, includeQualifiers = 0, includeClassOrigin = 1, propertyList? 0) ***
+INSTANCE OF Example_C3
+{
+  P2="3p2";
+  P3="3p3";
+  P5="3p5";
+  P4="3p4";
+  CK1="3k1";
+  CK2="3k2";
+  CK3="3k3";
+  P1="3p1";
+};
+
+<INSTANCE CLASSNAME="Example_C3">
+  <PROPERTY NAME="P2" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P3" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p3
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P5" TYPE="string" CLASSORIGIN="Example_C3">
+    <VALUE>
+      3p5
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P4" TYPE="string" CLASSORIGIN="Example_C2" PROPAGATED="true">
+    <VALUE>
+      3p4
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3k1
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK2" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3k2
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="CK3" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3k3
+    </VALUE>
+  </PROPERTY>
+  <PROPERTY NAME="P1" TYPE="string" CLASSORIGIN="Example_C1" PROPAGATED="true">
+    <VALUE>
+      3p1
+    </VALUE>
+  </PROPERTY>
+</INSTANCE>
+
+
+*** Doing getInstance(localOnly = 0, includeQualifiers=0, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
     <VALUE>
@@ -5121,7 +5121,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 0, includeQualifiers=0, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
     <VALUE>
@@ -5162,7 +5162,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = true, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=0, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5171,7 +5171,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = false, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 0, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
     <QUALIFIER NAME="Key" TYPE="boolean">
@@ -5520,7 +5520,7 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = true, propertyList? 0) ***
+*** Doing getInstance(localOnly = 0, includeQualifiers=0, includeClassOrigin = 1, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="CreationClassName" TYPE="string" CLASSORIGIN="CIM_System" PROPAGATED="true">
     <VALUE>
@@ -5561,12 +5561,12 @@ INSTANCE OF Example_C3
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 1) ***
+*** Doing getInstance(localOnly = 0, includeQualifiers=0, includeClassOrigin = 0, propertyList? 1) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
 </INSTANCE>
 
 
-*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 1) ***
+*** Doing getInstance(localOnly = 0, includeQualifiers=0, includeClassOrigin = 0, propertyList? 1) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="BrandNewProperty" TYPE="string">
   </PROPERTY>
@@ -5574,7 +5574,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=1, propertyList? 0, addProperty = 1, addQualifier = 1) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <QUALIFIER NAME="Version" TYPE="string">
     <VALUE>
@@ -5592,7 +5592,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=1, propertyList? 0, addProperty = 1, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5605,7 +5605,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=1, propertyList? 0, addProperty = 0, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5615,7 +5615,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=1, propertyList? 0, addProperty = 0, addQualifier = 1) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <QUALIFIER NAME="Version" TYPE="string">
     <VALUE>
@@ -5630,7 +5630,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=0, propertyList? 0, addProperty = 1, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <QUALIFIER NAME="Version" TYPE="string">
     <VALUE>
@@ -5648,7 +5648,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=1, propertyList? 0, addProperty = 0, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5658,7 +5658,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=1, propertyList? 1, addProperty = 1, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5668,7 +5668,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=0, propertyList? 1, addProperty = 1, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5681,7 +5681,7 @@ INSTANCE OF Example_C3
 
 
 *** Doing modifyInstance(includeQualifiers=0, propertyList? 1, addProperty = 1, addQualifier = 0) ***
-*** Doing getInstance(localOnly = true, includeQualifiers=true, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 1, includeQualifiers=1, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="OptionalArg" TYPE="boolean">
   </PROPERTY>
@@ -5699,7 +5699,7 @@ INSTANCE OF Example_C3
 <VALUE>
   true
 </VALUE>
-*** Doing getInstance(localOnly = false, includeQualifiers=false, includeClassOrigin = false, propertyList? 0) ***
+*** Doing getInstance(localOnly = 0, includeQualifiers=0, includeClassOrigin = 0, propertyList? 0) ***
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
   <PROPERTY NAME="CreationClassName" TYPE="string" PROPAGATED="true">
     <VALUE>

@@ -44,6 +44,7 @@
 
 using std::istream;
 using std::ostream;
+using namespace OW_WBEMFlags;
 
 #include <algorithm>
 
@@ -612,7 +613,7 @@ OW_CIMInstance
 OW_CIMClass::newInstance() const
 {
 	OW_CIMInstance cInstance;
-	cInstance.syncWithClass(*this, true);
+	cInstance.syncWithClass(*this, E_INCLUDE_QUALIFIERS);
 	cInstance.setClassName(m_pdata->m_name);
 	return cInstance;
 }
@@ -620,16 +621,16 @@ OW_CIMClass::newInstance() const
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_CIMClass::filterProperties(const OW_StringArray& propertyList,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin) const
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const
 {
-	return clone(false, includeQualifiers, includeClassOrigin, propertyList,
+	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList,
 		false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMClass::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray& propertyList,
+OW_CIMClass::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
 	OW_Bool noProps) const
 {
 	if(m_pdata.isNull())
@@ -922,7 +923,7 @@ const char* const OW_CIMClass::NAMESPACECLASS = "__Namespace";
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-OW_CIMClass::getCloneProps(OW_Bool localOnly, OW_Bool deep,
+OW_CIMClass::getCloneProps(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EDeepFlag deep,
 	const OW_StringArray* propertyList,
 	const OW_CIMClass& requestedClass) const
 {
@@ -931,11 +932,11 @@ OW_CIMClass::getCloneProps(OW_Bool localOnly, OW_Bool deep,
 		return OW_StringArray();
 	}
 
-	OW_StringArray rv = this->getCloneProps(false, propertyList);
+	OW_StringArray rv = this->getCloneProps(E_NOT_LOCAL_ONLY, propertyList);
 
 	// do processing of deep & localOnly
-	// don't filter anything if (deep == true && localOnly == false)
-	if (deep != true || localOnly != false)
+	// don't filter anything if (deep == E_DEEP && localOnly == E_NOT_LOCAL_ONLY)
+	if (deep != E_DEEP || localOnly != E_NOT_LOCAL_ONLY)
 	{
 		OW_CIMPropertyArray props = this->getAllProperties();
 		OW_String requestedClassName = requestedClass.getName();
@@ -951,7 +952,7 @@ OW_CIMClass::getCloneProps(OW_Bool localOnly, OW_Bool deep,
 					continue;
 				}
 			}
-			if (deep == true)
+			if (deep == E_DEEP)
 			{
 				if (!clsp
 					|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
@@ -961,7 +962,7 @@ OW_CIMClass::getCloneProps(OW_Bool localOnly, OW_Bool deep,
 					continue;
 				}
 			}
-			if (localOnly == false)
+			if (localOnly == E_NOT_LOCAL_ONLY)
 			{
 				if (clsp)
 				{
@@ -978,7 +979,7 @@ OW_CIMClass::getCloneProps(OW_Bool localOnly, OW_Bool deep,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-OW_CIMClass::getCloneProps(OW_Bool localOnly,
+OW_CIMClass::getCloneProps(OW_WBEMFlags::ELocalOnlyFlag localOnly,
 	const OW_StringArray* propertyList) const
 {
 	OW_StringArray props;

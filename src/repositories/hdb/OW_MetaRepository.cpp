@@ -350,8 +350,8 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMException::ErrNoType
 OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList,
 	OW_CIMClass& cc)
 {
@@ -962,8 +962,8 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
 void
 OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin)
+	OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
@@ -1016,8 +1016,8 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
-	OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
+	OW_HDBHandle hdl, OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
 {
 	OW_CIMClass cimCls = _getClassFromNode(node, hdl);
 	// TODO: Check cimCls for NULL?
@@ -1040,7 +1040,7 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNod
 void
 OW_MetaRepository::enumClassNames(const OW_String& ns, const OW_String& className,
 	OW_StringResultHandlerIFC& result,
-	OW_Bool deep)
+	OW_WBEMFlags::EDeepFlag deep)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
@@ -1092,7 +1092,7 @@ OW_MetaRepository::enumClassNames(const OW_String& ns, const OW_String& classNam
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::_getClassNameNodes(OW_StringResultHandlerIFC& result, OW_HDBNode node,
-	OW_HDBHandle hdl, OW_Bool deep)
+	OW_HDBHandle hdl, OW_WBEMFlags::EDeepFlag deep)
 {
 	OW_String cimClsName = _getClassNameFromNode(node);
 	result.handle(cimClsName);

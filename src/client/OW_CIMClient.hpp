@@ -96,10 +96,10 @@ public:
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_StringArray enumNameSpaceE(OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
+	OW_StringArray enumNameSpaceE(OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
 
 	void enumNameSpace(OW_StringResultHandlerIFC& result, 
-		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
+		OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -110,7 +110,7 @@ public:
 	 *		the names of the first level children of the enumerated class.
 	 * @param localOnly If set to LOCAL_ONLY, only the non-inherited properties
 	 *		are returned on each instance, otherwise all properties are returned.
-	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS, then all class,
+	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all class,
 	 *		property and method qualifiers will be returned.
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be included with all appropriate elements of each class.
@@ -119,15 +119,16 @@ public:
 	 */
 	void enumClass(const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
-		OW_Bool deep=OW_CIMOMHandleIFC::SHALLOW, OW_Bool localOnly=OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
+		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_SHALLOW,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly=OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 
 	OW_CIMClassEnumeration enumClassE(const OW_String& className,
-		OW_Bool deep=OW_CIMOMHandleIFC::SHALLOW,
-		OW_Bool localOnly =OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers =OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin =OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
+		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_SHALLOW,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -141,11 +142,11 @@ public:
 	void enumClassNames(
 		const OW_String& className,
 		OW_StringResultHandlerIFC& result,
-		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
+		OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
 
 	OW_StringEnumeration enumClassNamesE(
 		const OW_String& className,
-		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
+		OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
 
 	/**
 	 * Returns all instances (the whole instance and not just the names)
@@ -160,7 +161,7 @@ public:
 	 *	are returned on each instance, otherwise all inherited properties are
 	 *	returned.
 	 *
-	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS, then all of the
+	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all of the
 	 *	qualifiers from the class will be returned with the each instance.
 	 *
 	 * @param includeClassOrigin If true, then the class origin attribute will
@@ -178,18 +179,18 @@ public:
 	void enumInstances(
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool deep = OW_CIMOMHandleIFC::DEEP,
-		OW_Bool localOnly =OW_CIMOMHandleIFC:: NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers =OW_CIMOMHandleIFC:: EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin =OW_CIMOMHandleIFC:: EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_DEEP,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	OW_CIMInstanceEnumeration enumInstancesE(
 		const OW_String& className,
-		OW_Bool deep =OW_CIMOMHandleIFC:: DEEP,
-		OW_Bool localOnly =OW_CIMOMHandleIFC:: NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers =OW_CIMOMHandleIFC:: EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin =OW_CIMOMHandleIFC:: EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EDeepFlag deep =OW_WBEMFlags::E_DEEP,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	/**
@@ -213,7 +214,7 @@ public:
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
 	 *		and methods	are returned, otherwise all properties and methods are
 	 *		returned.
-	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS, then all class,
+	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all class,
 	 *		property and method qualifiers will be included in the OW_CIMClass.
 	 *		Otherwise qualifiers will be excluded.
 	 * @param includeClassOrigin If true, then the classOrigin attribute will
@@ -227,9 +228,9 @@ public:
 	 */
 	OW_CIMClass getClass(
 		const OW_String& className,
-		OW_Bool localOnly =OW_CIMOMHandleIFC:: NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers =OW_CIMOMHandleIFC:: INCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin =OW_CIMOMHandleIFC:: INCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList = 0);
 
 	/**
@@ -239,7 +240,7 @@ public:
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
 	 *		are returned, otherwise all properties are returned.
 	 *
-	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS, then all of the
+	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all of the
 	 *		qualifiers from the class will be returned with the instance.
 	 *		Otherwise no qualifiers will be included with the instance.
 	 *
@@ -259,9 +260,9 @@ public:
 	 */
 	OW_CIMInstance getInstance(
 		const OW_CIMObjectPath& instanceName,
-		OW_Bool localOnly =OW_CIMOMHandleIFC:: NOT_LOCAL_ONLY,
-		OW_Bool includeQualifiers =OW_CIMOMHandleIFC:: EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin =OW_CIMOMHandleIFC:: EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) ;
 
 	/**
@@ -350,7 +351,7 @@ public:
 	 * @exception OW_CIMException
 	 */
 	void modifyInstance(const OW_CIMInstance& modifiedInstance,
-		OW_Bool includeQualifiers =OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
 		OW_StringArray* propertyList = 0);
 
 	/**
@@ -484,10 +485,10 @@ public:
 	 * that refers to the returned Object MUST match the value of this
 	 * parameter).
 	 *
-	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS then all
+	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS then all
 	 *		Qualifiers for each Object (including Qualifiers on the Object and
 	 *		on any returned Properties) MUST be included as elements in the
-	 *		response.If set to EXCLUDE_QUALIFIERS, then no qualifiers will be
+	 *		response.If set toOW_WBEMFlags::E_EXCLUDE_QUALIFIERS, then no qualifiers will be
 	 *		present in the returned object(s).
 	 *
 	 * @param includeClassOrigin If the IncludeClassOrigin input parameter is
@@ -531,8 +532,8 @@ public:
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
 		const OW_String& resultRole=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	OW_CIMInstanceEnumeration associatorsE(
@@ -541,8 +542,8 @@ public:
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
 		const OW_String& resultRole=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	/**
@@ -578,10 +579,10 @@ public:
 	 * that refers to the returned Object MUST match the value of this
 	 * parameter).
 	 *
-	 * @param includeQualifiers If set to INCLUDE_QUALIFIERS then all
+	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS then all
 	 *		Qualifiers for each Object (including Qualifiers on the Object and
 	 *		on any returned Properties) MUST be included as elements in the
-	 *		response.If set to EXCLUDE_QUALIFIERS, then no qualifiers will be
+	 *		response.If set toOW_WBEMFlags::E_EXCLUDE_QUALIFIERS, then no qualifiers will be
 	 *		present in the returned object(s).
 	 *
 	 * @param includeClassOrigin If the IncludeClassOrigin input parameter is
@@ -625,8 +626,8 @@ public:
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
 		const OW_String& resultRole=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	OW_CIMClassEnumeration associatorsClassesE(
@@ -635,8 +636,8 @@ public:
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
 		const OW_String& resultRole=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	/**
@@ -698,16 +699,16 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) ;
 
 	OW_CIMInstanceEnumeration referencesE(
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 
 	void referencesClasses(
@@ -715,16 +716,16 @@ public:
 		OW_CIMClassResultHandlerIFC& result,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0) ;
 
 	OW_CIMClassEnumeration referencesClassesE(
 		const OW_CIMObjectPath& path,
 		const OW_String& resultClass=OW_String(),
 		const OW_String& role=OW_String(),
-		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 

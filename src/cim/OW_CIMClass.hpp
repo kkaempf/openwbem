@@ -39,6 +39,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_WBEMFlags.hpp"
 
 /**
  * The OW_CIMClass encapsulates all information that pertains to a CIM class
@@ -345,8 +346,10 @@ public:
 	 * @return A new OW_CIMClass object that is based on this one, with the
 	 *		appropriate component filtered according to the parameters.
 	 */
-	OW_CIMClass clone(OW_Bool localOnly=false, OW_Bool includeQualifiers=true,
-		OW_Bool includeClassOrigin=true,
+	OW_CIMClass clone(
+		OW_WBEMFlags::ELocalOnlyFlag localOnly = OW_WBEMFlags::E_NOT_LOCAL_ONLY, 
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
 		const OW_StringArray& propertyList=OW_StringArray(),
 		OW_Bool noProps=false) const;
 
@@ -361,7 +364,7 @@ public:
 	 * @return A new OW_CIMClass constructed per the given parameters.
 	 */
 	OW_CIMClass filterProperties(const OW_StringArray& propertyList,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin) const;
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const;
 
 	/**
 	 * Return a list of all the properties that will be required to clone an
@@ -375,7 +378,9 @@ public:
 	 * @param requestedClass The class that was requested in enumInstances.
 	 * @return A list of properties that are requested based on the parameters.
 	 */
-	OW_StringArray getCloneProps(OW_Bool localOnly, OW_Bool deep,
+	OW_StringArray getCloneProps(
+		OW_WBEMFlags::ELocalOnlyFlag localOnly, 
+		OW_WBEMFlags::EDeepFlag deep,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& requestedClass) const;
 	
@@ -389,7 +394,7 @@ public:
 	 *		properties that can be returned.
 	 * @return A list of properties that are requested based on the parameters.
 	 */
-	OW_StringArray getCloneProps(OW_Bool localOnly,
+	OW_StringArray getCloneProps(OW_WBEMFlags::ELocalOnlyFlag localOnly,
 		const OW_StringArray* propertyList) const;
 
 	//////////////////////////////////////////////////////////////////////

@@ -47,6 +47,8 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_UserInfo.hpp"
 
+using namespace OW_WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationRepLayer::~OW_IndicationRepLayer() 
 {
@@ -62,7 +64,7 @@ OW_CIMInstance
 OW_IndicationRepLayerImpl::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	OW_CIMInstance theInst = m_pServer->getInstance(ns, instanceName, localOnly,
@@ -106,8 +108,8 @@ OW_IndicationRepLayerImpl::invokeMethod(
 				OW_CIMInstance expInst("CIM_InstMethodCall");
 
 				OW_UserInfo intAclInfo;
-				OW_CIMInstance theInst = m_pServer->getInstance(ns, path, false,
-					true, true, NULL, intAclInfo);
+				OW_CIMInstance theInst = m_pServer->getInstance(ns, path, E_NOT_LOCAL_ONLY,
+					E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, intAclInfo);
 	
 				if (!theInst)
 				{
@@ -232,7 +234,7 @@ OW_CIMInstance
 OW_IndicationRepLayerImpl::modifyInstance(
 	const OW_String& ns,
 	const OW_CIMInstance& modifiedInstance,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_UserInfo& aclInfo)
 {
@@ -324,8 +326,8 @@ OW_ServiceEnvironmentIFCRef OW_IndicationRepLayerImpl::getEnvironment() const
 void OW_IndicationRepLayerImpl::enumClasses(const OW_String& ns,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_UserInfo& aclInfo)
+	EDeepFlag deep, ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo)
 {
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, aclInfo);
@@ -336,7 +338,7 @@ void OW_IndicationRepLayerImpl::enumClassNames(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_StringResultHandlerIFC& result,
-	OW_Bool deep, const OW_UserInfo& aclInfo)
+	EDeepFlag deep, const OW_UserInfo& aclInfo)
 {
 	m_pServer->enumClassNames(ns, className, result, deep, aclInfo);
 }
@@ -345,8 +347,8 @@ void OW_IndicationRepLayerImpl::enumInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	EDeepFlag deep, ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
 	const OW_UserInfo& aclInfo)
 {
@@ -359,7 +361,7 @@ void OW_IndicationRepLayerImpl::enumInstanceNames(
 	const OW_String& ns,
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
-	OW_Bool deep, const OW_UserInfo& aclInfo)
+	EDeepFlag deep, const OW_UserInfo& aclInfo)
 {
 	return m_pServer->enumInstanceNames(ns, className, result, deep, aclInfo);
 }
@@ -376,8 +378,8 @@ OW_CIMQualifierType OW_IndicationRepLayerImpl::getQualifierType(
 OW_CIMClass OW_IndicationRepLayerImpl::getClass(
 	const OW_String& ns,
 	const OW_String& className,
-	OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+	ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_UserInfo& aclInfo)
 {
 	return m_pServer->getClass(ns, className, localOnly, includeQualifiers,
@@ -435,7 +437,7 @@ void OW_IndicationRepLayerImpl::associators(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String &assocClass, const OW_String &resultClass,
 	const OW_String &role, const OW_String &resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
@@ -449,7 +451,7 @@ void OW_IndicationRepLayerImpl::associatorsClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String &assocClass, const OW_String &resultClass,
 	const OW_String &role, const OW_String &resultRole,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
@@ -462,7 +464,7 @@ void OW_IndicationRepLayerImpl::references(
 	const OW_CIMObjectPath &path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String &resultClass, const OW_String &role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	m_pServer->references(ns, path, result, resultClass, role,
@@ -475,7 +477,7 @@ void OW_IndicationRepLayerImpl::referencesClasses(
 	const OW_CIMObjectPath &path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String &resultClass, const OW_String &role,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
 {
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,

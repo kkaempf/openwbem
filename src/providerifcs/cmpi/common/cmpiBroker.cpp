@@ -31,6 +31,7 @@
 #include "OW_LocalCIMOMHandle.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
 
+using namespace OW_WBEMFlags;
 //extern int traceAdapter;
 
 
@@ -109,7 +110,9 @@ OW_CIMClass* mbGetClass(CMPIBroker *mb, const OW_CIMObjectPath &cop)
 		OW_CIMClass cc=CM_CIMOM(mb)->getClass(
 			cop.getNameSpace(),
 			cop.getObjectName(),
-			false, true, false);
+			E_NOT_LOCAL_ONLY, 
+			E_INCLUDE_QUALIFIERS, 
+			E_EXCLUDE_CLASS_ORIGIN);
 
 		xBroker->clsCache->addToCache(cc, clsId);
 		return new OW_CIMClass(cc);
@@ -142,9 +145,9 @@ static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
 		OW_CIMInstance ci=CM_CIMOM(mb)->getInstance(
 			CM_ObjectPath(cop)->getNameSpace(),
 			qop,
-			CM_LocalOnly(flgs),
-			CM_IncludeQualifiers(flgs),
-			CM_ClassOrigin(flgs)
+			CM_LocalOnly(flgs) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
+			CM_IncludeQualifiers(flgs) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN
 				);
 		if (rc) CMSetStatus(rc,CMPI_RC_OK);
 		return (CMPIInstance*)new CMPI_Object(new OW_CIMInstance(ci));
@@ -209,7 +212,7 @@ static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx,
 		CM_CIMOM(mb)->modifyInstance(
 			CM_ObjectPath(cop)->getNameSpace(),
 			*CM_Instance(ci),
-			CM_IncludeQualifiers(flgs),
+			CM_IncludeQualifiers(flgs) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
 			&sProps);
 		CMReturn(CMPI_RC_OK);
 	}
@@ -314,10 +317,10 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
 			CM_ObjectPath(cop)->getNameSpace(),
 			CM_ObjectPath(cop)->getObjectName(),
 			result,
-			CM_DeepInheritance(flgs),
-			CM_LocalOnly(flgs),
-			CM_IncludeQualifiers(flgs),
-			CM_ClassOrigin(flgs)
+			CM_DeepInheritance(flgs) ? E_DEEP : E_SHALLOW,
+			CM_LocalOnly(flgs) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
+			CM_IncludeQualifiers(flgs) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN
 			);
 		if (rc) CMSetStatus(rc,CMPI_RC_OK);
 		return new CMPI_InstEnumeration( new OW_CIMInstanceArray(cia));
@@ -397,8 +400,8 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
 			OW_String(resultClass),
 			OW_String(role),
 			OW_String(resultRole),
-			CM_IncludeQualifiers(flgs),
-			CM_ClassOrigin(flgs),
+			CM_IncludeQualifiers(flgs) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			&sProps);
 
       		if (rc) CMSetStatus(rc,CMPI_RC_OK);
@@ -482,8 +485,8 @@ static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
 			result,
 			OW_String(resultClass),
 			OW_String(role),
-			CM_IncludeQualifiers(flgs),
-			CM_ClassOrigin(flgs),
+			CM_IncludeQualifiers(flgs) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			CM_ClassOrigin(flgs) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 			&sProps
 		);
 		if (rc) CMSetStatus(rc,CMPI_RC_OK);

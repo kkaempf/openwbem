@@ -112,7 +112,7 @@ void OW_CIMClient::deleteNameSpace(const OW_String& ns)
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_StringArray 
-OW_CIMClient::enumNameSpaceE(OW_Bool deep)
+OW_CIMClient::enumNameSpaceE(OW_WBEMFlags::EDeepFlag deep)
 {
 	// TODO: try using CIM_Namespace first
 	return OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, deep);
@@ -121,7 +121,7 @@ OW_CIMClient::enumNameSpaceE(OW_Bool deep)
 ///////////////////////////////////////////////////////////////////////////////
 void 
 OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result, 
-	OW_Bool deep)
+	OW_WBEMFlags::EDeepFlag deep)
 {
 	// TODO: try using CIM_Namespace first
 	OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
@@ -131,9 +131,10 @@ OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result,
 void 
 OW_CIMClient::enumClass(const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
-	OW_Bool deep, OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin)
+	OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
 {
 	m_ch->enumClass(m_namespace, className, result, deep, localOnly, 
 		includeQualifiers, includeClassOrigin);
@@ -142,10 +143,10 @@ OW_CIMClient::enumClass(const OW_String& className,
 ///////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration 
 OW_CIMClient::enumClassE(const OW_String& className,
-	OW_Bool deep,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin)
+	OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin)
 {
 	return m_ch->enumClassE(m_namespace, className, deep, localOnly, includeQualifiers, 
 		includeClassOrigin);
@@ -156,7 +157,7 @@ void
 	OW_CIMClient::enumClassNames(
 	const OW_String& className,
 	OW_StringResultHandlerIFC& result,
-	OW_Bool deep)
+	OW_WBEMFlags::EDeepFlag deep)
 {
 	m_ch->enumClassNames(m_namespace, className, result, deep);
 }
@@ -165,7 +166,7 @@ void
 OW_StringEnumeration 
 	OW_CIMClient::enumClassNamesE(
 	const OW_String& className,
-	OW_Bool deep)
+	OW_WBEMFlags::EDeepFlag deep)
 {
 	return m_ch->enumClassNamesE(m_namespace, className, deep);
 }
@@ -175,10 +176,10 @@ void
 OW_CIMClient::enumInstances(
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool deep,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_ch->enumInstances(m_namespace, className, result, deep, localOnly,
@@ -189,10 +190,10 @@ OW_CIMClient::enumInstances(
 OW_CIMInstanceEnumeration 
 OW_CIMClient::enumInstancesE(
 	const OW_String& className,
-	OW_Bool deep,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EDeepFlag deep,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_ch->enumInstancesE(m_namespace, className, deep, localOnly, 
@@ -220,9 +221,9 @@ OW_CIMClient::enumInstanceNamesE(
 OW_CIMClass 
 	OW_CIMClient::getClass(
 	const OW_String& className,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_ch->getClass(m_namespace, className, localOnly, 
@@ -233,9 +234,9 @@ OW_CIMClass
 OW_CIMInstance 
 	OW_CIMClient::getInstance(
 	const OW_CIMObjectPath& instanceName,
-	OW_Bool localOnly,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::ELocalOnlyFlag localOnly,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList) 
 {
 	return m_ch->getInstance(m_namespace, instanceName, localOnly, 
@@ -318,7 +319,7 @@ void
 ///////////////////////////////////////////////////////////////////////////////
 void 
 	OW_CIMClient::modifyInstance(const OW_CIMInstance& modifiedInstance,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	OW_StringArray* propertyList)
 {
 	m_ch->modifyInstance(m_namespace, modifiedInstance, includeQualifiers,
@@ -396,8 +397,8 @@ OW_CIMClient::associators(
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_ch->associators(m_namespace, path, result,
@@ -413,8 +414,8 @@ OW_CIMClient::associatorsE(
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_ch->associatorsE(m_namespace, path, assocClass, 
@@ -431,8 +432,8 @@ OW_CIMClient::associatorsClasses(
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	m_ch->associatorsClasses(m_namespace, path, result, assocClass, 
@@ -448,8 +449,8 @@ OW_CIMClient::associatorsClassesE(
 	const OW_String& resultClass,
 	const OW_String& role,
 	const OW_String& resultRole,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_ch->associatorsClassesE(m_namespace, path, assocClass, 
@@ -485,8 +486,8 @@ OW_CIMClient::references(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass,
 	const OW_String& role,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList) 
 {
 	m_ch->references(m_namespace, path, result, resultClass, 
@@ -499,8 +500,8 @@ OW_CIMClient::referencesE(
 	const OW_CIMObjectPath& path,
 	const OW_String& resultClass,
 	const OW_String& role,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_ch->referencesE(m_namespace, path, resultClass, role, 
@@ -514,8 +515,8 @@ OW_CIMClient::referencesClasses(
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass,
 	const OW_String& role,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList) 
 {
 	m_ch->referencesClasses(m_namespace, path, result, resultClass, 
@@ -528,8 +529,8 @@ OW_CIMClient::referencesClassesE(
 	const OW_CIMObjectPath& path,
 	const OW_String& resultClass,
 	const OW_String& role,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	return m_ch->referencesClassesE(m_namespace, path, resultClass, role, 

@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
 		}
 
 		classPrinter handler;
-		rch->enumClass(ns, classname, handler, OW_CIMOMHandleIFC::DEEP);
+		rch->enumClass(ns, classname, handler, OW_WBEMFlags::E_DEEP);
 
 		return 0;
 	}

@@ -53,7 +53,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns_,
-	OW_StringResultHandlerIFC &result, OW_Bool deep)
+	OW_StringResultHandlerIFC &result, OW_WBEMFlags::EDeepFlag deep)
 {
     OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(this, true), ns_, result, deep);
 }

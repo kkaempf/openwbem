@@ -44,7 +44,7 @@
 #include <iterator> // for back_inserter
 #include <algorithm> // for set_union
 
-//#include <iostream> // for debugging
+using namespace OW_WBEMFlags;
 
 const char * typeStrings[] =
 {
@@ -130,7 +130,8 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	)
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, false, true, true, 0);
+	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, E_NOT_LOCAL_ONLY, 
+		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 
 	OW_CIMInstance ci = cc.newInstance();
 	OW_CIMPropertyArray cpa = ci.getProperties();
@@ -208,7 +209,8 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 	)
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, false, true, true, 0);
+	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, E_NOT_LOCAL_ONLY, 
+		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 	if (pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_pcolumnList2->size() !=
 		pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList6->size())
 	{
@@ -443,7 +445,7 @@ void OW_WQLProcessor::visit_selectStmt(
 		{
 			// TODO: Use the filterInstance function from OW_IndicationServerImpl
 			// TODO: Handle __Path here
-			instances[i] = instances[i].filterProperties(m_propertyArray, true, true);
+			instances[i] = instances[i].filterProperties(m_propertyArray, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN);
 		}
 	}
 }
@@ -2405,6 +2407,6 @@ namespace
 void OW_WQLProcessor::populateInstances()
 {
 	InstanceArrayBuilder handler(instances);
-	m_hdl->enumInstances(m_ns, m_tableRef, handler, true);
+	m_hdl->enumInstances(m_ns, m_tableRef, handler, OW_WBEMFlags::E_DEEP);
 }
 

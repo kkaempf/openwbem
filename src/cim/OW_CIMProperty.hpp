@@ -39,6 +39,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_WBEMFlags.hpp"
 
 /**
  * The OW_CIMProperty class encapsulates all data and functionality petinent to
@@ -131,16 +132,16 @@ public:
 	/**
 	 * @return A copy of this OW_CIMProperty object.
 	 */
-	OW_CIMProperty clone() const {  return clone(true, true); }
+	OW_CIMProperty clone() const {  return clone(OW_WBEMFlags::E_INCLUDE_QUALIFIERS, OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN); }
 
 	/**
 	 * Create a copy of this OW_CIMProperty object base on filtering criteria.
-	 * @param includeQualifier		If true, include qualifiers of this object.
-	 * @param includeClassOrigin	If true, include the class origin of this obj.
+	 * @param includeQualifiers If true, include qualifiers of this object.
+	 * @param includeClassOrigin If true, include the class origin of this obj.
 	 * @return A copy of this OW_CIMProperty object
 	 */
-	OW_CIMProperty clone(OW_Bool includeQualifier,
-		OW_Bool includeClassOrigin) const;
+	OW_CIMProperty clone(OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const;
 
 	/**
 	 * Get the qualifiers for this property
@@ -285,7 +286,7 @@ public:
 	 *		included in the new OW_CIMProperty.
 	 * @return A OW_CIMProperty object based on the given filtering criteria.
 	 */
-	OW_CIMProperty filter(OW_Bool localOnly, OW_Bool includeQualifiers) const;
+	OW_CIMProperty filter(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
 
 	/**
 	 * Set the propagated flag on this property.
@@ -330,7 +331,7 @@ public:
 	 * @param includeQulifiers If true write all qualifiers for property
 	 */
 	virtual void writeObject(std::ostream &ostrm,
-		OW_Bool includeQualifiers) const;
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
 	
 	/**
 	 * Read this OW_CIIMProperty object from the given input stream.

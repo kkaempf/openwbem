@@ -43,6 +43,7 @@
 
 using std::ostream;
 using std::istream;
+using namespace OW_WBEMFlags;
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_CIMInstance::INSTData
@@ -299,7 +300,7 @@ OW_CIMInstance::_buildKeys()
 		OW_CIMProperty cp = m_pdata->m_properties[i];
 		if(cp.isKey())
 		{
-			m_pdata->m_keys.append(cp.clone(true, true));
+			m_pdata->m_keys.append(cp.clone(E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
 		}
 	}
 }
@@ -472,8 +473,8 @@ OW_CIMInstance::removeProperty(const OW_String& propName)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray* propertyList) const
+OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList) const
 {
 	OW_StringArray lproplist;
 	OW_Bool noprops = false;
@@ -495,8 +496,8 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray& propertyList,
+OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
 	OW_Bool noProps) const
 {
 	OW_CIMInstance ci;
@@ -565,18 +566,18 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool includeQualifiers,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
 	const OW_CIMClass& requestedClass, const OW_CIMClass& cimClass) const
 {
 	OW_CIMInstance ci(*this);
-	ci.syncWithClass(cimClass, true);
-	ci = ci.clone(false, includeQualifiers,
+	ci.syncWithClass(cimClass, E_INCLUDE_QUALIFIERS);
+	ci = ci.clone(E_NOT_LOCAL_ONLY, includeQualifiers,
 		includeClassOrigin, propertyList);
 
 	// do processing of deep & localOnly
-	// don't filter anything if (deep == true && localOnly == false)
-	if (deep != true || localOnly != false)
+	// don't filter anything if (deep == E_DEEP && localOnly == E_NOT_LOCAL_ONLY)
+	if (deep != E_DEEP || localOnly != E_NOT_LOCAL_ONLY)
 	{
 		OW_CIMPropertyArray props = ci.getProperties();
 		OW_CIMPropertyArray newprops;
@@ -594,7 +595,7 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers
 					continue;
 				}
 			}
-			if (deep == true)
+			if (deep == E_DEEP)
 			{
 				if (!clsp
 					|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
@@ -604,7 +605,7 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers
 					continue;
 				}
 			}
-			if (localOnly == false)
+			if (localOnly == E_NOT_LOCAL_ONLY)
 			{
 				if (clsp)
 				{
@@ -625,11 +626,11 @@ OW_CIMInstance::clone(OW_Bool localOnly, OW_Bool deep, OW_Bool includeQualifiers
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_CIMInstance::filterProperties(const OW_StringArray& propertyList,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 	OW_Bool ignorePropertyList) const
 {
 	OW_Bool noprops(propertyList.size() == 0 && ignorePropertyList == false);
-	return clone(false, includeQualifiers, includeClassOrigin, propertyList,
+	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList,
 		noprops);
 }
 
@@ -643,7 +644,7 @@ OW_CIMInstance::getName() const
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance&
 OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
-	OW_Bool includeQualifiers)
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers)
 {
 	if(!theClass)
 	{
@@ -755,7 +756,7 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 OW_CIMInstance
 OW_CIMInstance::createModifiedInstance(
 	const OW_CIMInstance& previousInstance,
-	OW_Bool includeQualifiers,
+	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	const OW_StringArray* propertyList,
 	const OW_CIMClass& theClass) const
 {

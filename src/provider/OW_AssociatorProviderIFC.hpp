@@ -144,8 +144,8 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 				const OW_String& resultClass,
 				const OW_String& role,
 				const OW_String& resultRole,
-				const OW_Bool& includeQualifiers,
-				const OW_Bool& includeClassOrigin,
+				OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+				OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 				const OW_StringArray* propertyList) = 0;
 
 		/**
@@ -225,8 +225,8 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 				const OW_CIMObjectPath& objectName,
 				const OW_String& resultClass,
 				const OW_String& role,
-				const OW_Bool& includeQualifiers,
-				const OW_Bool& includeClassOrigin,
+				OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+				OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 				const OW_StringArray* propertyList) = 0;
 
 		/**

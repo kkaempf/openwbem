@@ -66,6 +66,7 @@ using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
+using namespace OW_WBEMFlags;
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -186,7 +187,7 @@ enumClassNames(OW_CIMClient& hdl)
 
 	try
 	{
-		OW_StringEnumeration enu = hdl.enumClassNamesE( "", true);
+		OW_StringEnumeration enu = hdl.enumClassNamesE( "", E_DEEP);
 		while (enu.hasMoreElements())
 		{
 			cout << "CIMClass: " << enu.nextElement() << endl;
@@ -201,7 +202,7 @@ enumClassNames(OW_CIMClient& hdl)
 
 	try
 	{
-		OW_StringEnumeration enu = hdl.enumClassNamesE( "", false);
+		OW_StringEnumeration enu = hdl.enumClassNamesE( "", E_SHALLOW);
 		while (enu.hasMoreElements())
 		{
 			cout << "CIMClass: " << enu.nextElement() << endl;
@@ -224,7 +225,7 @@ enumClasses(OW_CIMClient& hdl)
 	cout << "deep = true, localOnly = false" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE( "", true, false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", E_DEEP, E_NOT_LOCAL_ONLY);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -246,7 +247,7 @@ enumClasses(OW_CIMClient& hdl)
 	cout << "deep = false, localOnly = false" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE( "", false, false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", E_SHALLOW, E_NOT_LOCAL_ONLY);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -268,7 +269,7 @@ enumClasses(OW_CIMClient& hdl)
 	cout << "deep = false, localOnly = true" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE( "", false, true);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", E_SHALLOW, E_LOCAL_ONLY);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -290,7 +291,7 @@ enumClasses(OW_CIMClient& hdl)
 	cout << "deep = true, localOnly = true" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE( "", true, true);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", E_DEEP, E_LOCAL_ONLY);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -321,7 +322,7 @@ modifyClass(OW_CIMClient& hdl)
 	try
 	{
 		OW_CIMClass cimClass = hdl.getClass(
-			"EXP_BionicComputerSystem", false);
+			"EXP_BionicComputerSystem");
 		cout << "CIMClass before: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -336,7 +337,7 @@ modifyClass(OW_CIMClient& hdl)
 		cimClass.addProperty(cimProp);
 		hdl.modifyClass( cimClass);
 
-		cimClass = hdl.getClass( "EXP_BionicComputerSystem", false);
+		cimClass = hdl.getClass( "EXP_BionicComputerSystem");
 		cout << "CIMClass after: " << cimClass.toMOF() << endl;
 		tfs.reset();
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -365,7 +366,7 @@ getClass(OW_CIMClient& hdl)
 	try
 	{
 		OW_CIMClass cimClass = hdl.getClass(
-			"EXP_BionicComputerSystem", false);
+			"EXP_BionicComputerSystem", E_NOT_LOCAL_ONLY);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -384,7 +385,7 @@ getClass(OW_CIMClient& hdl)
 	try
 	{
 		OW_CIMClass cimClass = hdl.getClass(
-			"EXP_BionicComputerSystem", true);
+			"EXP_BionicComputerSystem", E_LOCAL_ONLY);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::localOnly,
@@ -418,7 +419,7 @@ testDynInstances(OW_CIMClient& hdl)
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
 		OW_CIMObjectPath cop1("root/testsuite", ci);
-		ci = hdl.getInstance( cop1);
+		ci = hdl.getInstance(cop1);
 		OW_TempFileStream tfs;
 		tfs << "<CIM>";
 		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
@@ -439,7 +440,7 @@ testDynInstances(OW_CIMClient& hdl)
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
 		OW_CIMObjectPath cop2("root/testsuite", ci);
-		ci = hdl.getInstance( cop2);
+		ci = hdl.getInstance(cop2);
 		tfs.reset();
 		tfs << "<CIM>";
 		OW_CIMtoXML(ci, tfs, cop2, OW_CIMtoXMLFlags::isNotInstanceName,
@@ -458,7 +459,7 @@ testDynInstances(OW_CIMClient& hdl)
 		ci.setProperty("name", OW_CIMValue(OW_String("one")));
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.modifyInstance( ci);
-		ci = hdl.getInstance( cop1);
+		ci = hdl.getInstance(cop1);
 		tfs.reset();
 		tfs << "<CIM>";
 		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
@@ -506,7 +507,7 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
 		OW_CIMObjectPath cop1("root/testsuite", ci);
-		ci = hdl.getInstance( cop1);
+		ci = hdl.getInstance(cop1);
 
 		OW_CIMQualifier provQual = cc.getQualifier("provider");
 		TEST_ASSERT(!provQual); // shouldn't be there since the provider registers itself.
@@ -545,7 +546,7 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
 		cop1 = OW_CIMObjectPath("root/testsuite", ci);
-		ci = hdl.getInstance( cop1);
+		ci = hdl.getInstance(cop1);
 
 		provQual = cc.getQualifier("provider");
 		cc.removeQualifier(provQual);
@@ -590,7 +591,7 @@ createInstance(OW_CIMClient& hdl, const OW_String& fromClass, const OW_String& n
 
 	try
 	{
-		OW_CIMClass cimClass = hdl.getClass( fromClass, false);
+		OW_CIMClass cimClass = hdl.getClass( fromClass);
 
 		OW_CIMInstance newInst = cimClass.newInstance();
 
@@ -639,8 +640,8 @@ enumerateInstanceNames(OW_CIMClient& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, OW_Bool deep, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, EDeepFlag deep, ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;
@@ -679,10 +680,10 @@ enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, OW_Bool deep, OW_Bool l
 //////////////////////////////////////////////////////////////////////////////
 void
 getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
-		OW_Bool localOnly=false,
-		OW_Bool includeQualifiers=false,
-		OW_Bool includeClassOrigin=false,
-		const OW_StringArray* propertyList=0)
+		ELocalOnlyFlag localOnly = E_NOT_LOCAL_ONLY,
+		EIncludeQualifiersFlag includeQualifiers = E_EXCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const OW_StringArray* propertyList = 0)
 {
 	OW_String pstr;
 	pstr = format("localOnly = %1, includeQualifiers=%2, "
@@ -718,7 +719,7 @@ getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 //////////////////////////////////////////////////////////////////////////////
 void
 modifyInstance(OW_CIMClient& hdl, const OW_String& theInstance,
-	bool includeQualifiers, OW_StringArray* propList,
+	EIncludeQualifiersFlag includeQualifiers, OW_StringArray* propList,
 	bool addProperty, bool addQualifier)
 {
 	OW_String pstr = format("includeQualifiers=%1, "
@@ -733,7 +734,7 @@ modifyInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance( cop, false);
+		OW_CIMInstance in = hdl.getInstance(cop);
 
 		if (addProperty)
 		{
@@ -1028,8 +1029,8 @@ associatorNamesClass(OW_CIMClient& hdl, const OW_String& assocClass,
 void
 associators(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
-		const OW_String& resultRole, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
+		const OW_String& resultRole, EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
 {
 	OW_String pstr;
 	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
@@ -1081,8 +1082,8 @@ associators(OW_CIMClient& hdl, const OW_String& assocClass,
 void
 associatorsClasses(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
-		const OW_String& resultRole, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
+		const OW_String& resultRole, EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
 {
 	OW_String pstr;
 	pstr = format("assocClass = %1, resultClass = %2, role = %3, resultRole = "
@@ -1203,7 +1204,7 @@ referenceNamesClass(OW_CIMClient& hdl,
 void
 references(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;
@@ -1254,7 +1255,7 @@ references(OW_CIMClient& hdl,
 void
 referencesClasses(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
 	OW_String pstr;
@@ -1505,14 +1506,14 @@ enumNameSpace(OW_CIMClient& hdl)
 	try
 	{
 		cout << "deep = false" << endl;
-		OW_StringArray rval = hdl.enumNameSpaceE( OW_Bool(false));
+		OW_StringArray rval = hdl.enumNameSpaceE(E_SHALLOW);
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
 		}
 		
 		cout << "deep = true" << endl;
-		rval = hdl.enumNameSpaceE( OW_Bool(true));
+		rval = hdl.enumNameSpaceE(E_DEEP);
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
@@ -1817,84 +1818,84 @@ main(int argc, char* argv[])
 		createInstance(rch, "EXP_BionicComputerSystem2", "SevenMillion");
 		enumerateInstanceNames(rch);
 		// non-deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", false, false, false, false, 0);	
+		enumerateInstances(rch, "CIM_ComputerSystem", E_SHALLOW, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);	
 		// deep, non-localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, false, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, localOnly, no qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", true, true, false, false, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, qualifiers, no classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", true, false, true, false, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, no qualifiers, classOrigin, all props
-		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, true, 0);
+		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 		// deep, non-localOnly, no qualifiers, no classOrigin, no props
 		OW_StringArray sa;
-		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, false, &sa);
+		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 		// deep, non-localOnly, no qualifiers, no classOrigin, one prop
 		sa.push_back(OW_String("BrandNewProperty"));
-		enumerateInstances(rch, "CIM_ComputerSystem", true, false, false, false, &sa);
+		enumerateInstances(rch, "CIM_ComputerSystem", E_DEEP, E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-		enumerateInstances(rch, "Example_C1", true,true,false,true,0);
-		enumerateInstances(rch, "Example_C1", true,false,false,true,0);
-		enumerateInstances(rch, "Example_C1", false,true,false,true,0);
-		enumerateInstances(rch, "Example_C1", false,false,false,true,0);
-		enumerateInstances(rch, "Example_C2", true,true,false,true,0);
-		enumerateInstances(rch, "Example_C2", true,false,false,true,0);
-		enumerateInstances(rch, "Example_C2", false,true,false,true,0);
-		enumerateInstances(rch, "Example_C2", false,false,false,true,0);
-		enumerateInstances(rch, "Example_C3", true,true,false,true,0);
-		enumerateInstances(rch, "Example_C3", true,false,false,true,0);
-		enumerateInstances(rch, "Example_C3", false,true,false,true,0);
-		enumerateInstances(rch, "Example_C3", false,false,false,true,0);
+		enumerateInstances(rch, "Example_C1", E_DEEP,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C1", E_DEEP,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C1", E_SHALLOW,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C1", E_SHALLOW,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C2", E_DEEP,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C2", E_DEEP,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C2", E_SHALLOW,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C2", E_SHALLOW,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C3", E_DEEP,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C3", E_DEEP,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C3", E_SHALLOW,E_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+		enumerateInstances(rch, "Example_C3", E_SHALLOW,E_NOT_LOCAL_ONLY,E_EXCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
 
 		getInstance(rch, "SixMillion");
 		getInstance(rch, "SevenMillion");
 		// localOnly = true
-		getInstance(rch, "SevenMillion", true, false, false, 0);
+		getInstance(rch, "SevenMillion", E_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// includeQualifiers = true
-		getInstance(rch, "SevenMillion", false, true, false, 0);
+		getInstance(rch, "SevenMillion", E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 		// includeClassOrigin = true
-		getInstance(rch, "SevenMillion", false, false, true, 0);
+		getInstance(rch, "SevenMillion", E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 		// propertyList = non-null
 		sa.clear();
-		getInstance(rch, "SevenMillion", false, false, false, &sa);
+		getInstance(rch, "SevenMillion", E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 		// propertyList = non-null, with element
 		sa.push_back(OW_String("BrandNewProperty"));
-		getInstance(rch, "SevenMillion", false, false, false, &sa);
+		getInstance(rch, "SevenMillion", E_NOT_LOCAL_ONLY, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
 		// add a property and a qualifier
-		modifyInstance(rch, "SixMillion", true, 0, true, true);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, 0, true, true);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 		// add a property, remove a qualifier
-		modifyInstance(rch, "SixMillion", true, 0, true, false);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, 0, true, false);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 		// remove a property, remove a qualifier
-		modifyInstance(rch, "SixMillion", true, 0, false, false);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, 0, false, false);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 		// remove a property, add a qualifier
-		modifyInstance(rch, "SixMillion", true, 0, false, true);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, 0, false, true);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 
 		// includeQualifier = false.  don't add qualifier, add property, qual should still be there.
-		modifyInstance(rch, "SixMillion", false, 0, true, false);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_EXCLUDE_QUALIFIERS, 0, true, false);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 
 		// includeQualifier = true, don't add qualifier or property, qual and prop should be gone.
-		modifyInstance(rch, "SixMillion", true, 0, false, false);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, 0, false, false);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 		
 		// add the property, but it shouldn't appear, because the prop list is empty.
 		sa.clear();
-		modifyInstance(rch, "SixMillion", true, &sa, true, false);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_INCLUDE_QUALIFIERS, &sa, true, false);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 
 		// add the property, now it should appear.
 		sa.push_back(OW_String("BrandNewProperty"));
-		modifyInstance(rch, "SixMillion", false, &sa, true, false);
-		getInstance(rch, "SixMillion", true, true);
+		modifyInstance(rch, "SixMillion", E_EXCLUDE_QUALIFIERS, &sa, true, false);
+		getInstance(rch, "SixMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 
 		// try another instance
-		modifyInstance(rch, "SevenMillion", false, &sa, true, false);
-		getInstance(rch, "SevenMillion", true, true);
+		modifyInstance(rch, "SevenMillion", E_EXCLUDE_QUALIFIERS, &sa, true, false);
+		getInstance(rch, "SevenMillion", E_LOCAL_ONLY, E_INCLUDE_QUALIFIERS);
 
 		setProperty(rch, "SixMillion");
 		getProperty(rch, "SixMillion");
@@ -1926,37 +1927,37 @@ main(int argc, char* argv[])
 			associatorNamesClass(rch, "", "", "", "PartComponent");
 			associatorNamesClass(rch, "", "", "", "GroupComponent");
 
-			associators(rch, "", "", "", "", false, false, 0);
-			associators(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
-			associators(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
-			associators(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
-			associators(rch, "", "", "GroupComponent", "", false, false, 0);
-			associators(rch, "", "", "PartComponent", "", false, false, 0);
-			associators(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
-			associators(rch, "", "", "", "PartComponent", false, false, 0);
-			associators(rch, "", "", "", "GroupComponent", false, false, 0);
-			associators(rch, "", "", "", "", true, false, 0);
-			associators(rch, "", "", "", "", false, true, 0);
+			associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "CIM_SystemDevice", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "CIM_ComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "EXP_BionicComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "GroupComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "PartComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "PartComponent", "PartComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "", "PartComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "", "GroupComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "", "", E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 			sa.clear();
-			associators(rch, "", "", "", "", false, false, &sa);
+			associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 			sa.push_back(OW_String("BrandNewProperty"));
-			associators(rch, "", "", "", "", false, false, &sa);
+			associators(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-			associatorsClasses(rch, "", "", "", "", false, false, 0);
-			associatorsClasses(rch, "CIM_SystemDevice", "", "", "", false, false, 0);
-			associatorsClasses(rch, "", "CIM_ComputerSystem", "", "", false, false, 0);
-			associatorsClasses(rch, "", "EXP_BionicComputerSystem", "", "", false, false, 0);
-			associatorsClasses(rch, "", "", "GroupComponent", "", false, false, 0);
-			associatorsClasses(rch, "", "", "PartComponent", "", false, false, 0);
-			associatorsClasses(rch, "", "", "PartComponent", "PartComponent", false, false, 0);
-			associatorsClasses(rch, "", "", "", "PartComponent", false, false, 0);
-			associatorsClasses(rch, "", "", "", "GroupComponent", false, false, 0);
-			associatorsClasses(rch, "", "", "", "", true, false, 0);
-			associatorsClasses(rch, "", "", "", "", false, true, 0);
+			associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "CIM_SystemDevice", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "CIM_ComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "EXP_BionicComputerSystem", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "GroupComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "PartComponent", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "PartComponent", "PartComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "", "PartComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "", "GroupComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "", "", E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 			sa.clear();
-			associatorsClasses(rch, "", "", "", "", false, false, &sa);
+			associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 			sa.push_back(OW_String("BrandNewProperty"));
-			associatorsClasses(rch, "", "", "", "", false, false, &sa);
+			associatorsClasses(rch, "", "", "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
 			referenceNames(rch, "", "");
 			referenceNames(rch, "cim_systemdevice", "");
@@ -1970,29 +1971,29 @@ main(int argc, char* argv[])
 			referenceNamesClass(rch, "", "GroupComponent");
 			referenceNamesClass(rch, "", "PartComponent");
 
-			references(rch, "", "", false, false, 0);
-			references(rch, "cim_systemdevice", "", false, false, 0);
-			references(rch, "cim_component", "", false, false, 0);
-			references(rch, "", "GroupComponent", false, false, 0);
-			references(rch, "", "PartComponent", false, false, 0);
-			references(rch, "", "", true, false, 0);
-			references(rch, "", "", false, true, 0);
+			references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			references(rch, "cim_systemdevice", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			references(rch, "cim_component", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			references(rch, "", "GroupComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			references(rch, "", "PartComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			references(rch, "", "", E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 			sa.clear();
-			references(rch, "", "", false, false, &sa);
+			references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 			sa.push_back(OW_String("GroupComponent"));
-			references(rch, "", "", false, false, &sa);
+			references(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
-			referencesClasses(rch, "", "", false, false, 0);
-			referencesClasses(rch, "cim_systemdevice", "", false, false, 0);
-			referencesClasses(rch, "cim_component", "", false, false, 0);
-			referencesClasses(rch, "", "GroupComponent", false, false, 0);
-			referencesClasses(rch, "", "PartComponent", false, false, 0);
-			referencesClasses(rch, "", "", true, false, 0);
-			referencesClasses(rch, "", "", false, true, 0);
+			referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			referencesClasses(rch, "cim_systemdevice", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			referencesClasses(rch, "cim_component", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			referencesClasses(rch, "", "GroupComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			referencesClasses(rch, "", "PartComponent", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			referencesClasses(rch, "", "", E_INCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
+			referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 			sa.clear();
-			referencesClasses(rch, "", "", false, false, &sa);
+			referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 			sa.push_back(OW_String("GroupComponent"));
-			referencesClasses(rch, "", "", false, false, &sa);
+			referencesClasses(rch, "", "", E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, &sa);
 
 			execQuery(rch);
 			deleteAssociations(rch);

@@ -273,8 +273,8 @@ OW_CIMMethod::getOverridingMethod() const
 
 //////////////////////////////////////////////////////////////////////////////													
 OW_CIMMethod
-OW_CIMMethod::clone(OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin) const
+OW_CIMMethod::clone(OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const
 {
 	if(m_pdata.isNull())
 	{

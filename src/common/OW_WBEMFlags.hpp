@@ -27,42 +27,45 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_CPP_READ_ONLY_INSTANCE_PROVIDER_IFC_HPP_INCLUDE_GUARD_
-#define OW_CPP_READ_ONLY_INSTANCE_PROVIDER_IFC_HPP_INCLUDE_GUARD_
+
+#ifndef OW_WBEM_FLAGS_HPP_INCLUDE_GUARD_
+#define OW_WBEM_FLAGS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_CppInstanceProviderIFC.hpp"
 
-/**
- * This class implements deleteInstance, createInstance, and modifyInstance.
- * All throw an OW_CIMException::FAILED.
- * If an instance provider is read-only, it can derive from this class and
- * it won't have to implement the mutating functions.
- * This class can be part of a multiple-inerhitance diamond.  
- * Thus the "public virtual" inheritance.
- */
-class OW_CppReadOnlyInstanceProviderIFC : public virtual OW_CppInstanceProviderIFC
+namespace OW_WBEMFlags
 {
-	virtual void deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop);
 
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance );
-
-	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass);
-
+//////////////////////////////////////////////////////
+enum EDeepFlag
+{
+	E_SHALLOW,
+	E_DEEP
 };
 
-#endif
+//////////////////////////////////////////////////////
+enum ELocalOnlyFlag
+{
+	E_NOT_LOCAL_ONLY,
+	E_LOCAL_ONLY
+};
+
+//////////////////////////////////////////////////////
+enum EIncludeQualifiersFlag
+{
+	E_EXCLUDE_QUALIFIERS,
+	E_INCLUDE_QUALIFIERS
+};
+
+//////////////////////////////////////////////////////
+enum EIncludeClassOriginFlag
+{
+	E_EXCLUDE_CLASS_ORIGIN,
+	E_INCLUDE_CLASS_ORIGIN
+};
+
+}
+
+
+#endif				
 

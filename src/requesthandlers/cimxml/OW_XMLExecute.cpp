@@ -60,6 +60,7 @@ DEFINE_EXCEPTION(BadStream)
 #include <algorithm>
 
 using std::ostream;
+using namespace OW_WBEMFlags;
 
 
 template<typename T> inline static void checkStream(T& str)
@@ -784,8 +785,10 @@ void OW_XMLExecute::associators(ostream& ostr,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
 		hdl.associatorsClasses(ns, objectName, handler,
-			assocClass, resultClass, role, resultRole, includeQualifiers,
-			includeClassOrigin, pPropList);
+			assocClass, resultClass, role, resultRole, 
+			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			pPropList);
 	}
 	else
 	{
@@ -794,8 +797,10 @@ void OW_XMLExecute::associators(ostream& ostr,
 			includeClassOrigin, isPropertyList, propertyList, getHost());
 
 		hdl.associators(ns, objectName, handler,
-			assocClass, resultClass, role, resultRole, includeQualifiers,
-			includeClassOrigin, pPropList);
+			assocClass, resultClass, role, resultRole, 
+			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			pPropList);
 	}
 	ostr << "</IRETURNVALUE>";
 }
@@ -912,7 +917,9 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMInstance modifiedInstance(OW_CIMNULL);
 	params[0].val.get(modifiedInstance);
 
-	hdl.modifyInstance(ns, modifiedInstance, includeQualifiers, pPropList);
+	hdl.modifyInstance(ns, modifiedInstance, 
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+		pPropList);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1044,11 +1051,13 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_CIMXMLParser& parser,
 	getParameterValues(parser, params);
 
 	OW_String className = params[0].val.toString();
-	OW_Bool deepInheritance = params[1].val.toBool();
+	EDeepFlag deepInheritance(
+		params[1].val.toBool() ? E_DEEP : E_SHALLOW);
 
 	ostr << "<IRETURNVALUE>";
 	ClassNameXMLWriter handler(ostr);
-	hdl.enumClassNames(ns, className, handler, deepInheritance);
+	hdl.enumClassNames(ns, className, handler, 
+		deepInheritance);
 	ostr << "</IRETURNVALUE>";
 }
 
@@ -1104,7 +1113,8 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 	ostr << "<IRETURNVALUE>";
 	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
 		params[4].val.toBool());
-	hdl.enumClass(ns, className, handler, params[1].val.toBool(), false);
+	hdl.enumClass(ns, className, handler, 
+		params[1].val.toBool() ? E_DEEP : E_SHALLOW, E_NOT_LOCAL_ONLY);
 
 	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
 	//hdl.enumClass(path, deep, localOnly,
@@ -1228,8 +1238,12 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	// TODO: remove as many of these flags from handler as possible
 	CIMInstanceXMLOutputter handler(ostr, ns, localOnly, includeQualifiers,
 		includeClassOrigin, params[5].isSet, propertyList);
-	hdl.enumInstances(ns, className, handler, deep, localOnly,
-		includeQualifiers, includeClassOrigin, pPropList);
+	hdl.enumInstances(ns, className, handler, 
+		deep ? E_DEEP : E_SHALLOW, 
+		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+		pPropList);
 	ostr << "</IRETURNVALUE>";
 }
 
@@ -1264,8 +1278,10 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 
 
 	ostr << "<IRETURNVALUE>";
-	OW_CIMClass cimClass = hdl.getClass(ns, className, localOnly, includeQualifiers,
-		includeClassOrigin,
+	OW_CIMClass cimClass = hdl.getClass(ns, className, 
+		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY, 
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
 	
 	OW_CIMtoXML(cimClass, ostr,
@@ -1307,8 +1323,10 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeClassOrigin = params[3].val.toBool();
 
 	ostr << "<IRETURNVALUE>";
-	OW_CIMInstance cimInstance = hdl.getInstance(ns, instancePath, localOnly,
-		includeQualifiers, includeClassOrigin,
+	OW_CIMInstance cimInstance = hdl.getInstance(ns, instancePath, 
+		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
 
 	OW_CIMtoXML(cimInstance, ostr, OW_CIMObjectPath(OW_CIMNULL),
@@ -1429,7 +1447,10 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 			includeClassOrigin, isPropertyList, propertyList, ns);
 
 		hdl.referencesClasses(ns, path, handler, resultClass,
-			role, includeQualifiers, includeClassOrigin, pPropList);
+			role, 
+			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			pPropList);
 	}
 	else
 	{
@@ -1437,7 +1458,10 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 			includeClassOrigin, isPropertyList, propertyList, getHost());
 
 		hdl.references(ns, path, handler, resultClass,
-			role, includeQualifiers, includeClassOrigin, pPropList);
+			role, 
+			includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS, 
+			includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN, 
+			pPropList);
 	}
 	ostr << "</IRETURNVALUE>";
 }

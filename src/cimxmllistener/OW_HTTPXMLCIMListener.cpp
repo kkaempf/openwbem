@@ -53,6 +53,8 @@
 
 #include <algorithm> // for std::remove
 
+using namespace OW_WBEMFlags;
+
 namespace
 {
 // This anonymous namespace has the effect of giving this class internal
@@ -398,7 +400,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	}
 	
 	// get class of CIM_IndicationFilter and new instance of it
-	OW_CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", true);
+	OW_CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
 	ci = cimFilter.newInstance();
 
 	// set Query property to query that was passed into function
@@ -424,7 +426,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	// CIM_IndicationSubscription is an association class that connects
 	// the IndicationFilter to the IndicationHandler.
 	OW_CIMClass cimClientFilterDelivery = hdl.getClass(ns,
-		"CIM_IndicationSubscription", true);
+		"CIM_IndicationSubscription", E_LOCAL_ONLY);
 	ci = cimClientFilterDelivery.newInstance();
 
 	// set the properties for the filter and the handler

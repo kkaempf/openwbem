@@ -38,6 +38,7 @@
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_WBEMFlags.hpp"
 
 /**
  * The OW_CIMMethod class encapsulates all data and behaviour pertinent to an
@@ -247,8 +248,9 @@ public:
 	 * @return A new OW_CIMMethod that is a copy of this one with the
 	 * 		qualifiers and class origin optionally exclued.
 	 */
-	OW_CIMMethod clone(OW_Bool includeQualifiers=true,
-		OW_Bool includeClassOrigin=true) const;
+	OW_CIMMethod clone(
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN) const;
 
 	/**
 	 * @return The name of this method as an OW_String.

@@ -37,6 +37,8 @@
 #include "OW_CIMValue.hpp"
 #include "OW_MutexLock.hpp"
 
+using namespace OW_WBEMFlags;
+
 //////////////////////////////////////////////////////////////////////////////
 OW_LifecycleIndicationPoller::OW_LifecycleIndicationPoller(
 	const OW_String& ns, const OW_String& className,
@@ -165,7 +167,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
     if (!m_initializedInstances)
     {
         InstanceArrayBuilder iab(m_prevInsts);
-        env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, false, false, true, true, 0);
+        env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
         m_initializedInstances = true;
         return 1; // have poll called again in 1 second.
     }
@@ -184,7 +186,7 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 	OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	try
 	{
-		hdl->enumInstances(m_ns, m_classname, iab, false, false, true, true, 0);
+		hdl->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 	}
 	catch (const OW_CIMException& e)
 	{

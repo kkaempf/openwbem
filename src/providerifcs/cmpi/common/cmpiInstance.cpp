@@ -23,6 +23,7 @@
 #include "cmpisrv.h"
 #include "OW_CIMInstance.hpp"
 
+using namespace OW_WBEMFlags;
 
 static CMPIStatus instRelease(CMPIInstance* eInst) {
    //cout<<"--- instRelease()"<<endl;
@@ -41,7 +42,7 @@ static CMPIStatus instReleaseNop(CMPIInstance* eInst) {
 
 static CMPIInstance* instClone(CMPIInstance* eInst, CMPIStatus* rc) {
    OW_CIMInstance* inst=(OW_CIMInstance*)eInst->hdl;
-   OW_CIMInstance* cInst=new OW_CIMInstance(inst->clone(false, true, true));
+   OW_CIMInstance* cInst=new OW_CIMInstance(inst->clone(E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
    CMPIInstance* neInst=(CMPIInstance*)new CMPI_Object(cInst,CMPI_Instance_Ftab);
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return neInst;

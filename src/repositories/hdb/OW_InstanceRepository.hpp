@@ -35,6 +35,7 @@
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_WBEMFlags.hpp"
 
 class OW_InstanceRepository : public OW_GenericHDBRepository
 {
@@ -52,7 +53,7 @@ public:
 		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& theClass,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList=NULL);
 
 	void getInstanceNames(const OW_String& ns, const OW_CIMClass& theClass,
@@ -71,8 +72,8 @@ public:
 	 */
 	OW_CIMInstance getCIMInstance(const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& theClass, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_CIMClass& theClass, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -115,7 +116,7 @@ public:
 	void modifyInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass, const OW_CIMInstance& ci,
 		const OW_CIMInstance& oldInst,
-		OW_Bool includeQualifiers,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList);
 
 	/**

@@ -157,7 +157,7 @@ namespace OW_CIMNameSpaceUtils
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_StringArray enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
+	OW_StringArray enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
 
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -176,7 +176,7 @@ namespace OW_CIMNameSpaceUtils
 	 *		cannot be found in the specified namespace.
 	 */
 	void enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns,
-		OW_StringResultHandlerIFC& result, OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
+		OW_StringResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
 
 
 	/**

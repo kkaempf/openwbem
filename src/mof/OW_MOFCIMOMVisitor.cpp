@@ -1254,7 +1254,7 @@ OW_CIMClass CIMOMVisitor::CIMOMgetClass(const OW_String& className, const lineIn
 {
 	try
 	{
-		return m_hdl->getClass(m_namespace, className, false);
+		return m_hdl->getClass(m_namespace, className, OW_WBEMFlags::E_NOT_LOCAL_ONLY);
 	}
 	catch (const OW_CIMException& ce)
 	{

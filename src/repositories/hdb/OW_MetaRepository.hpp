@@ -36,6 +36,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_Cache.hpp"
+#include "OW_WBEMFlags.hpp"
 
 
 class OW_MetaRepository : public OW_GenericHDBRepository
@@ -107,8 +108,8 @@ public:
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
 	OW_CIMException::ErrNoType getCIMClass(const OW_String& ns, 
-		const OW_String& className, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_String& className, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList,
 		OW_CIMClass& cc);
 
@@ -164,8 +165,8 @@ public:
 	void enumClass(const OW_String& ns,
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
-		OW_Bool deep, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin);
+		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin);
 
 	/**
 	 * Enumerates the class names specified by className.
@@ -181,7 +182,7 @@ public:
 	void enumClassNames(const OW_String& ns,
 		const OW_String& className,
 		OW_StringResultHandlerIFC& result,
-		OW_Bool deep);
+		OW_WBEMFlags::EDeepFlag deep);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
@@ -254,11 +255,14 @@ private:
 #endif
 
 	void _getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
-		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,
-		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true);
+		OW_HDBHandle hdl, 
+		OW_WBEMFlags::EDeepFlag deep, 
+		OW_WBEMFlags::ELocalOnlyFlag localOnly = OW_WBEMFlags::E_NOT_LOCAL_ONLY,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_INCLUDE_QUALIFIERS, 
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 
 	void _getClassNameNodes(OW_StringResultHandlerIFC& result, OW_HDBNode node,
-		OW_HDBHandle hdl, OW_Bool deep);
+		OW_HDBHandle hdl, OW_WBEMFlags::EDeepFlag deep);
 
 //	void _getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
 //		OW_HDBHandle hdl);

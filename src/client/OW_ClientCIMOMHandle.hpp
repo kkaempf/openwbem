@@ -47,7 +47,7 @@ public:
 #endif
     /** This method is deprecated.  Use OW_CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void enumNameSpace(const OW_String& ns,
-		OW_StringResultHandlerIFC &result, OW_Bool deep);
+		OW_StringResultHandlerIFC &result, OW_WBEMFlags::EDeepFlag deep);
 
 };
 

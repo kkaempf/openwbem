@@ -15,6 +15,7 @@
 
 #include "OW_WQLSelectStatement.hpp"
 
+using namespace OW_WBEMFlags;
 
 // Garbage Collection helper functions
 void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type)
@@ -47,9 +48,9 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	{
 		cc = (*provenv)->getCIMOMHandle()->getClass(
 			nameSpace, className,
-			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
-			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN, NULL);
+			E_NOT_LOCAL_ONLY,
+			E_INCLUDE_QUALIFIERS,
+			OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN, NULL);
 	}
 	catch (...)
 	{
@@ -96,10 +97,11 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 	try
 	{
 		cinsts = (*provenv)->getCIMOMHandle()->enumInstancesE(
-			nameSpace, className, OW_CIMOMHandleIFC::DEEP,
-			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
-			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
-			OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN, NULL);
+			nameSpace, className, 
+			E_DEEP,
+			E_NOT_LOCAL_ONLY,
+			E_EXCLUDE_QUALIFIERS,
+			OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN, NULL);
 	}
 	catch (...)
 	{
@@ -124,7 +126,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
 	try
 	{
 		ci = (*provenv)->getCIMOMHandle()->getInstance(owcop.getNameSpace(),
-			owcop, localOnly);
+			owcop, localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
 	}
 	catch (...)
 	{

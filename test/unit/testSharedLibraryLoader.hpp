@@ -71,39 +71,51 @@ class testSharedLibrary: public OW_SharedLibrary
 class TestInstanceProvider : public OW_InstanceProviderIFC
 {
 public:
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMInstanceResultHandlerIFC &, 
-		OW_Bool , 
-		OW_Bool , 
-		OW_Bool , 
-		OW_Bool ,
-		const OW_StringArray*,
-		const OW_CIMClass& ,
-		const OW_CIMClass &)
+	virtual void enumInstances(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
+			const OW_String& className,
+			OW_CIMInstanceResultHandlerIFC& result,
+			OW_WBEMFlags::ELocalOnlyFlag localOnly, 
+			OW_WBEMFlags::EDeepFlag deep, 
+			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const OW_StringArray* propertyList,
+			const OW_CIMClass& requestedClass,
+			const OW_CIMClass& cimClass )
 	{
+		(void)env; (void)ns; (void)className; (void)result; (void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass; (void)cimClass;
 	}
 	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_CIMClass &)
 	{
 	}
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, 
-		OW_Bool ,
-		OW_Bool , 
-		OW_Bool ,
-		const OW_StringArray* , 
-		const OW_CIMClass &)
+	virtual OW_CIMInstance getInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
+		OW_WBEMFlags::ELocalOnlyFlag localOnly,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList, 
+		const OW_CIMClass& cimClass )
 	{
+		(void)env; (void)ns; (void)instanceName; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)cimClass;
 		return OW_CIMInstance(OW_CIMNULL);
 	}
 	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
 	{
 		return OW_CIMObjectPath(OW_CIMNULL);
 	}
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, 
-			const OW_CIMInstance& ,
-			const OW_CIMInstance& ,
-			OW_Bool ,
-			const OW_StringArray* ,
-			const OW_CIMClass& )
+	virtual void modifyInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		const OW_CIMInstance& previousInstance,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_CIMClass& theClass)
 	{
+		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	}
 	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
 	{
@@ -135,16 +147,17 @@ public:
 	{
 	}
 	virtual void references(
-		const OW_ProviderEnvironmentIFCRef &,
-		OW_CIMInstanceResultHandlerIFC &,
-		const OW_String &,
-		const OW_CIMObjectPath &,
-		const OW_String &,
-		const OW_String &,
-		const OW_Bool &,
-		const OW_Bool &,
-		const OW_StringArray *)
+		const OW_ProviderEnvironmentIFCRef& env,
+		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& resultClass,
+		const OW_String& role,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList)
 	{
+		(void)env; (void)result; (void)ns; (void)objectName; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	}
 	virtual void referenceNames(
 		const OW_ProviderEnvironmentIFCRef &,
@@ -156,18 +169,19 @@ public:
 	{
 	}
 	virtual void associators(
-		const OW_ProviderEnvironmentIFCRef &,
-		OW_CIMInstanceResultHandlerIFC &,
-		const OW_String &,
-		const OW_CIMObjectPath &,
-		const OW_String &,
-		const OW_String &,
-		const OW_String &,
-		const OW_String &,
-		const OW_Bool &,
-		const OW_Bool &,
-		const OW_StringArray *)
+		const OW_ProviderEnvironmentIFCRef& env,
+		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String& ns,
+		const OW_CIMObjectPath& objectName,
+		const OW_String& assocClass,
+		const OW_String& resultClass,
+		const OW_String& role,
+		const OW_String& resultRole,
+		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const OW_StringArray* propertyList)
 	{
+		(void)env; (void)result; (void)ns; (void)objectName; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	}
 };
 #endif

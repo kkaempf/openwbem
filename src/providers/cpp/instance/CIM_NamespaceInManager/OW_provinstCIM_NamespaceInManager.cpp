@@ -44,6 +44,8 @@
 namespace OpenWBEM
 {
 
+using namespace OW_WBEMFlags;
+
 class CIM_NamespaceInManagerInstProv :
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 public OW_CppAssociatorProviderIFC
@@ -103,10 +105,10 @@ public:
 		const OW_String& ns,
 		const OW_String& className,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool localOnly, 
-		OW_Bool deep, 
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin,
+		ELocalOnlyFlag localOnly, 
+		EDeepFlag deep, 
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass )
@@ -142,9 +144,9 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		OW_Bool localOnly,
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass )
 	{
@@ -213,7 +215,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMInstance& modifiedInstance,
 		const OW_CIMInstance& previousInstance,
-		OW_Bool includeQualifiers,
+		EIncludeQualifiersFlag includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass)
 	{
@@ -281,7 +283,7 @@ public:
 		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 
 		InstanceToObjectPathHandler handler(result, ns);
-		associators(env, handler, ns, objectName, assocClass, resultClass, role, resultRole, false, false, 0);
+		associators(env, handler, ns, objectName, assocClass, resultClass, role, resultRole, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
 
 	virtual void referenceNames(
@@ -299,7 +301,7 @@ public:
 		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
 
 		InstanceToObjectPathHandler handler(result, ns);
-		references(env, handler, ns, objectName, resultClass, role, false, false, 0);
+		references(env, handler, ns, objectName, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
 
 	class AssociatorFilter : public OW_CIMInstanceResultHandlerIFC
@@ -308,8 +310,8 @@ public:
 		AssociatorFilter(const OW_CIMObjectPath& objectName_, OW_CIMInstanceResultHandlerIFC& result_, 		
 			OW_CIMOMHandleIFCRef hdl_,
 			const OW_String& ns_,
-			bool includeQualifiers_,
-			bool includeClassOrigin_,
+			EIncludeQualifiersFlag includeQualifiers_,
+			EIncludeClassOriginFlag includeClassOrigin_,
 			const OW_StringArray* propertyList_)
 		: objectName(objectName_)
 		, result(result_)
@@ -326,8 +328,8 @@ public:
 			if (op == objectName)
 			{
 				OW_CIMObjectPath toGet = i.getPropertyT("Dependent").getValueT().toCIMObjectPath();
-				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, true, true, 0);
-				assocInst.clone(false, includeQualifiers, includeClassOrigin, propertyList);
+				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+				assocInst.clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
 				//OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
 				//assocInst.setKeys(toGet.getKeys());
 				result.handle(assocInst);
@@ -338,8 +340,8 @@ public:
 			if (op == objectName)
 			{
 				OW_CIMObjectPath toGet = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
-				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, true, true, 0);
-				assocInst.clone(false, includeQualifiers, includeClassOrigin, propertyList);
+				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+				assocInst.clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
 				//OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
 				//assocInst.setKeys(toGet.getKeys());
 				result.handle(assocInst);
@@ -350,8 +352,8 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result;
 		OW_CIMOMHandleIFCRef hdl;
 		OW_String ns;
-		bool includeQualifiers;
-		bool includeClassOrigin;
+		EIncludeQualifiersFlag includeQualifiers;
+		EIncludeClassOriginFlag includeClassOrigin;
 		const OW_StringArray* propertyList;
 	};
 
@@ -364,8 +366,8 @@ public:
 		const OW_String &resultClass, 
 		const OW_String &role, 
 		const OW_String &resultRole, 
-		const OW_Bool &includeQualifiers, 
-		const OW_Bool &includeClassOrigin, 
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin, 
 		const OW_StringArray *propertyList) 
 	{
 		(void)resultClass;
@@ -401,7 +403,7 @@ public:
 		}
 		OW_CIMClass theClass = env->getCIMOMHandle()->getClass(ns, "CIM_NamespaceInManager");
 		AssociatorFilter handler(objectName, result, env->getCIMOMHandle(), ns, includeQualifiers, includeClassOrigin, propertyList);
-		enumInstances(env, ns, "CIM_NamespaceInManager", handler, false, true, true, true, 0, theClass, theClass);
+		enumInstances(env, ns, "CIM_NamespaceInManager", handler, E_NOT_LOCAL_ONLY, E_DEEP, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass, theClass);
 	}
 
 	class ReferencesFilter : public OW_CIMInstanceResultHandlerIFC
@@ -439,8 +441,8 @@ public:
 		const OW_CIMObjectPath &objectName, 
 		const OW_String &resultClass,
 		const OW_String &role, 
-		const OW_Bool &includeQualifiers, 
-		const OW_Bool &includeClassOrigin, 
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin, 
 		const OW_StringArray *propertyList) 
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::references");
@@ -464,7 +466,7 @@ public:
 		}
 		OW_CIMClass theClass = env->getCIMOMHandle()->getClass(ns, "CIM_NamespaceInManager");
 		ReferencesFilter handler(objectName, result);
-		enumInstances(env, ns, "CIM_NamespaceInManager", handler, false, true, includeQualifiers, includeClassOrigin, propertyList, theClass, theClass);
+		enumInstances(env, ns, "CIM_NamespaceInManager", handler, E_NOT_LOCAL_ONLY, E_DEEP, includeQualifiers, includeClassOrigin, propertyList, theClass, theClass);
 	}
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
