@@ -34,6 +34,7 @@
 #include "OW_FileSystem.hpp"
 #include "OW_File.hpp"
 #include "OW_String.hpp"
+#include "OW_Array.hpp"
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -142,6 +143,30 @@ void OW_FileSystemTestCases::testopenOrCreateFile()
 	unitAssert(FileSystem::removeFile("testfile"));
 }
 
+void OW_FileSystemTestCases::testgetFileContents()
+{
+	FileSystem::removeFile("testfile");
+	File f = FileSystem::openOrCreateFile("testfile");
+	const char* contents = "line1\nline2";
+	f.write(contents, ::strlen(contents));
+	f.close();
+	unitAssert(FileSystem::getFileContents("testfile") == contents);
+	unitAssert(FileSystem::removeFile("testfile"));
+}
+
+void OW_FileSystemTestCases::testgetFileLines()
+{
+	FileSystem::removeFile("testfile");
+	File f = FileSystem::openOrCreateFile("testfile");
+	const char* contents = "line1\nline2";
+	f.write(contents, ::strlen(contents));
+	f.close();
+	unitAssert(FileSystem::getFileLines("testfile").size() == 2);
+	unitAssert(FileSystem::getFileLines("testfile")[0] == "line1");
+	unitAssert(FileSystem::getFileLines("testfile")[1] == "line2");
+	unitAssert(FileSystem::removeFile("testfile"));
+}
+
 Test* OW_FileSystemTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_FileSystem");
@@ -150,6 +175,8 @@ Test* OW_FileSystemTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testtryLock);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testunlock);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testopenOrCreateFile);
+	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetFileContents);
+	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetFileLines);
 
 	return testSuite;
 }

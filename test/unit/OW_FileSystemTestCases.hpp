@@ -49,6 +49,8 @@ private:
 	void testtryLock();
 	void testunlock();
 	void testopenOrCreateFile();
+	void testgetFileContents();
+	void testgetFileLines();
 };
 
 #endif
