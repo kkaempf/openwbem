@@ -40,6 +40,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
+#include "OW_Exception.hpp"
 
 namespace OW_NAMESPACE
 {
@@ -47,32 +48,33 @@ namespace OW_NAMESPACE
 namespace
 {
 const String COMPONENT_NAME("ow.owcimomd.ProviderIFCLoader");
+
+OW_DECLARE_EXCEPTION(ProviderIFCLoader);
+OW_DEFINE_EXCEPTION(ProviderIFCLoader);
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 ProviderIFCBaseIFCRef
-ProviderIFCLoaderBase::createProviderIFCFromLib(
-	const String& libname) const
+ProviderIFCLoaderBase::createProviderIFCFromLib(const String& libname) const
 {
 	LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
-	OW_LOG_DEBUG(lgr, Format(
-		"ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
-		" loading library %1", libname));
+	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib loading library %1", libname));
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
 		lgr);
 	ProviderIFCBaseIFC* ptr = 0;
 	if ( sl )
 	{
-		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl,
-				"createProviderIFC", lgr);
+		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl, "createProviderIFC", lgr);
 	}
 	else
 	{
-		OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::"
-			"createProviderIFCFromLib FAILED loading library %1", libname));
+		OW_THROW(ProviderIFCLoaderException, Format("ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib FAILED loading library %1", libname).c_str());
 	}
 	ProviderIFCBaseIFCRef retval(sl, ptr);
 	return retval;
 }
+
+///////////////////////////////////////////////////////////////////////////////
 void
 ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 {
@@ -80,14 +82,12 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	String libdir = env->getConfigItem(
 		ConfigOpts::PROVIDER_IFC_LIBS_opt);
 	LoggerRef lgr(env->getLogger(COMPONENT_NAME));
-	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
-		" interfaces from: %1", libdir));
+	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider interfaces from: %1", libdir));
 	StringArray libs;
 	FileSystem::getDirectoryContents(libdir, libs);
 	if (libs.size() == 0)
 	{
-		OW_LOG_DEBUG(lgr, "ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
-			" provider interfaces");
+		OW_THROW(ProviderIFCLoaderException, "ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any provider interfaces");
 		return;
 	}
 	int ifcCount = 0;
@@ -103,25 +103,17 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 				continue;
 		}
 #endif // OW_DARWIN
-		try
+		ProviderIFCBaseIFCRef rval;
+		ProviderIFCBaseIFCRef pmr;
+		rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
+		if (rval)
 		{
-			ProviderIFCBaseIFCRef rval;
-			ProviderIFCBaseIFCRef pmr;
-			rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
-			if (rval)
-			{
-				ifcCount++;
-				ifcs.push_back(rval);
-			}
-			else
-			{
-				OW_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1",
-					libs[i]));
-			}
+			ifcCount++;
+			ifcs.push_back(rval);
 		}
-		catch (const Exception& e)
+		else
 		{
-			OW_LOG_ERROR(lgr, Format("Caught exception: \"%1\" while loading library: %2", e, libs[i]));
+			OW_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1", libs[i]));
 		}
 	}
 	OW_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1",
