@@ -26,6 +26,8 @@
 #		wql
 #		multiReq
 #		cimexceptions
+#		namespaces
+#		interop
 
 
 OWSYSCONFDIR=@sysconfdir@
@@ -410,6 +412,28 @@ TestCIMExceptions()
 }
 
 #############################################################################
+TestNamespaces()
+{
+	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
+		namespaces >/dev/null 2>&1
+	then
+		return
+	fi
+
+	#RestartDaemon
+
+	URL=$1
+	OUT_FILE=testNamespaces.out
+
+	echo "Executing test suite, saving output in " $RESULTDIR/$OUT_FILE
+	$BUILDDIR/test/acceptance/progs/testNamespaces $URL $RESULTDIR/testNamespaces \
+		> $RESULTDIR/$OUT_FILE 2>&1 || \
+		ExitWithFail "TestNamespaces: testNamespaces failed with an error.  "
+
+	echo "Testsuite Passed"
+}
+
+#############################################################################
 TestWQL()
 {
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
@@ -759,7 +783,7 @@ TestMof()
 SetupInteropSchema()
 {
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
-		MOF >/dev/null 2>&1
+		interop >/dev/null 2>&1
 	then
 		return
 	fi
@@ -866,6 +890,9 @@ TestSuite "ipc://test1:pass1@localhost/owbinary" "testsuiteUDSBIN.out" "testsuit
 
 TestCIMExceptions "http://test1:pass1@localhost:30926"
 TestCIMExceptions "ipc://test1:pass1@localhost/owbinary"
+
+TestNamespaces "http://test1:pass1@localhost:30926"
+TestNamespaces "ipc://test1:pass1@localhost/owbinary"
 
 TestIndications
 

@@ -8,7 +8,8 @@ owcimclientcl \
 fakeclient \
 testinstprov \
 testCIMExceptions \
-infiniteClient
+infiniteClient \
+testNamespaces
 
 
 
@@ -164,6 +165,21 @@ $(CXXBINLINKFLAGS) \
 
 testCIMExceptions_SOURCES = \
 testCIMExceptions.cpp
+
+#testNamespaces
+testNamespaces_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+testNamespaces_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testNamespaces
+
+testNamespaces_SOURCES = \
+testNamespaces.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
