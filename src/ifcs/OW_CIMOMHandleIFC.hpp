@@ -105,6 +105,29 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 	/**
+	 * Enumerates the class specified by the CIMObjectPath.
+	 * @param ns The namespace.
+	 * @param className The class to be enumerated.
+	 * @param deep If set to E_DEEP, the enumeration returned will
+	 *		contain the names of all classes derived from the enumerated class.
+	 *		If set to E_SHALLOW the enumermation will return only
+	 *		the names of the first level children of the enumerated class.
+	 * @param localOnly If set to E_LOCAL_ONLY, only the non-inherited properties
+	 *		are returned on each instance, otherwise all properties are returned.
+	 * @param includeQualifiers If set to E_INCLUDE_QUALIFIERS, then all class,
+	 *		property and method qualifiers will be returned.
+	 * @param includeClassOrigin If E_INCLUDE_CLASS_ORIGIN, then the class origin attribute will
+	 *		be included with all appropriate elements of each class.
+	 * @return An array of CIMClass objects (CIMClassArray)
+	 * @exception CIMException If the specified class cannot be found
+	 */
+	virtual CIMClassArray enumClassA(const String& ns,
+		const String& className,
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW, 
+		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
+	/**
 	 * Enumerates the child classes of className.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated. Pass an empty string if
@@ -124,6 +147,10 @@ public:
 		StringResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP) = 0;
 	virtual StringEnumeration enumClassNamesE(
+		const String& ns,
+		const String& className,
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP);
+	virtual StringArray enumClassNamesA(
 		const String& ns,
 		const String& className,
 		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP);
@@ -175,6 +202,14 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList = 0);
+	virtual CIMInstanceArray enumInstancesA(
+		const String& ns,
+		const String& className,
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP,
+		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList = 0);
 	/**
 	 * Returns all instance names belonging to the class specified in the path.
 	 * This could include instances of all the classes in the specified class'
@@ -190,6 +225,9 @@ public:
 		const String& className,
 		CIMObjectPathResultHandlerIFC& result) = 0;
 	virtual CIMObjectPathEnumeration enumInstanceNamesE(
+		const String& ns,
+		const String& className);
+	virtual CIMObjectPathArray enumInstanceNamesA(
 		const String& ns,
 		const String& className);
 	/**
@@ -309,6 +347,8 @@ public:
 		const String& ns,
 		CIMQualifierTypeResultHandlerIFC& result) = 0;
 	virtual CIMQualifierTypeEnumeration enumQualifierTypesE(
+		const String& ns);
+	virtual CIMQualifierTypeArray enumQualifierTypesA(
 		const String& ns);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
@@ -453,6 +493,13 @@ public:
 		const String& resultClass = String(),
 		const String& role = String(),
 		const String& resultRole = String());
+	virtual CIMObjectPathArray associatorNamesA(
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass = String(),
+		const String& resultClass = String(),
+		const String& role = String(),
+		const String& resultRole = String());
 	/**
 	 * This operation is used to enumerate CIMInstances
 	 * that are associated to a particular source CIM Instance.
@@ -538,6 +585,16 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList = 0) = 0;
 	virtual CIMInstanceEnumeration associatorsE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& assocClass = String(),
+		const String& resultClass = String(),
+		const String& role = String(),
+		const String& resultRole = String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList = 0);
+	virtual CIMInstanceArray associatorsA(
 		const String& ns,
 		const CIMObjectPath& path,
 		const String& assocClass = String(),
@@ -641,6 +698,16 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList = 0);
+	virtual CIMClassArray associatorsClassesA(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& assocClass = String(),
+		const String& resultClass = String(),
+		const String& role = String(),
+		const String& resultRole = String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList = 0);
 	/**
 	 * This operation is used to enumerate the association objects that refer to
 	 * a particular target CIM Object.
@@ -661,6 +728,11 @@ public:
 		const String& resultClass = String(),
 		const String& role = String()) = 0;
 	virtual CIMObjectPathEnumeration referenceNamesE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass = String(),
+		const String& role = String());
+	virtual CIMObjectPathArray referenceNamesA(
 		const String& ns,
 		const CIMObjectPath& path,
 		const String& resultClass = String(),
@@ -712,6 +784,14 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList = 0);
+	virtual CIMInstanceArray referencesA(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass = String(),
+		const String& role = String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList = 0);
 	virtual void referencesClasses(
 		const String& ns,
 		const CIMObjectPath& path,
@@ -722,6 +802,14 @@ public:
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList = 0) = 0;
 	virtual CIMClassEnumeration referencesClassesE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass = String(),
+		const String& role = String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList = 0);
+	virtual CIMClassArray referencesClassesA(
 		const String& ns,
 		const CIMObjectPath& path,
 		const String& resultClass = String(),
@@ -756,6 +844,10 @@ public:
 		const String& query,
 		const String& queryLanguage) = 0;
 	virtual CIMInstanceEnumeration execQueryE(
+		const String& ns,
+		const String& query,
+		const String& queryLanguage);
+	virtual CIMInstanceArray execQueryA(
 		const String& ns,
 		const String& query,
 		const String& queryLanguage);

@@ -37,6 +37,7 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
@@ -77,6 +78,19 @@ namespace
 	private:
 		CIMClassEnumeration& m_e;
 	};
+
+	class CIMClassArrayBuilder : public CIMClassResultHandlerIFC
+	{
+	public:
+		CIMClassArrayBuilder(CIMClassArray& a) : m_a(a) {}
+	protected:
+		virtual void doHandle(const CIMClass &c)
+		{
+			m_a.push_back(c);
+		}
+	private:
+		CIMClassArray& m_a;
+	};
 	
 	class StringArrayBuilder : public StringResultHandlerIFC
 	{
@@ -116,6 +130,18 @@ namespace
 	private:
 		CIMObjectPathEnumeration& m_e;
 	};
+	class CIMObjectPathArrayBuilder : public CIMObjectPathResultHandlerIFC
+	{
+	public:
+		CIMObjectPathArrayBuilder(CIMObjectPathArray& a) : m_a(a) {}
+	protected:
+		virtual void doHandle(const CIMObjectPath &cop)
+		{
+			m_a.push_back(cop);
+		}
+	private:
+		CIMObjectPathArray& m_a;
+	};
 	class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 	{
 	public:
@@ -127,6 +153,18 @@ namespace
 		}
 	private:
 		CIMInstanceEnumeration& m_e;
+	};
+	class CIMInstanceArrayBuilder : public CIMInstanceResultHandlerIFC
+	{
+	public:
+		CIMInstanceArrayBuilder(CIMInstanceArray& a) : m_a(a) {}
+	protected:
+		virtual void doHandle(const CIMInstance &i)
+		{
+			m_a.push_back(i);
+		}
+	private:
+		CIMInstanceArray& m_a;
 	};
 	
 	class CIMQualifierTypeEnumBuilder : public CIMQualifierTypeResultHandlerIFC
@@ -140,6 +178,18 @@ namespace
 		}
 	private:
 		CIMQualifierTypeEnumeration& m_e;
+	};
+	class CIMQualifierTypeArrayBuilder : public CIMQualifierTypeResultHandlerIFC
+	{
+	public:
+		CIMQualifierTypeArrayBuilder(CIMQualifierTypeArray& a) : m_a(a) {}
+	protected:
+		virtual void doHandle(const CIMQualifierType &qt)
+		{
+			m_a.push_back(qt);
+		}
+	private:
+		CIMQualifierTypeArray& m_a;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -156,6 +206,19 @@ CIMOMHandleIFC::enumClassE(const String& ns,
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMClassArray
+CIMOMHandleIFC::enumClassA(const String& ns,
+	const String& className, 
+	EDeepFlag deep,
+	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
+{
+	CIMClassArray rval;
+	CIMClassArrayBuilder handler(rval);
+	enumClass(ns, className, handler, deep, localOnly, includeQualifiers,
+		includeClassOrigin);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
 StringEnumeration
 CIMOMHandleIFC::enumClassNamesE(
 	const String& ns,
@@ -164,6 +227,18 @@ CIMOMHandleIFC::enumClassNamesE(
 {
 	StringEnumeration rval;
 	StringEnumBuilder handler(rval);
+	enumClassNames(ns, className, handler, deep);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+StringArray
+CIMOMHandleIFC::enumClassNamesA(
+	const String& ns,
+	const String& className,
+	EDeepFlag deep)
+{
+	StringArray rval;
+	StringArrayBuilder handler(rval);
 	enumClassNames(ns, className, handler, deep);
 	return rval;
 }
@@ -185,6 +260,23 @@ CIMOMHandleIFC::enumInstancesE(
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMInstanceArray
+CIMOMHandleIFC::enumInstancesA(
+		const String& ns,
+		const String& className,
+		EDeepFlag deep,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
+{
+	CIMInstanceArray rval;
+	CIMInstanceArrayBuilder handler(rval);
+	enumInstances(ns, className, handler,deep,localOnly,includeQualifiers,
+		includeClassOrigin,propertyList);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMObjectPathEnumeration
 CIMOMHandleIFC::enumInstanceNamesE(
 	const String& ns,
@@ -192,6 +284,17 @@ CIMOMHandleIFC::enumInstanceNamesE(
 {
 	CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
+	enumInstanceNames(ns, className, handler);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPathArray
+CIMOMHandleIFC::enumInstanceNamesA(
+	const String& ns,
+	const String& className)
+{
+	CIMObjectPathArray rval;
+	CIMObjectPathArrayBuilder handler(rval);
 	enumInstanceNames(ns, className, handler);
 	return rval;
 }
@@ -203,6 +306,16 @@ CIMOMHandleIFC::enumQualifierTypesE(
 {
 	CIMQualifierTypeEnumeration rval;
 	CIMQualifierTypeEnumBuilder handler(rval);
+	enumQualifierTypes(ns, handler);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMQualifierTypeArray
+CIMOMHandleIFC::enumQualifierTypesA(
+	const String& ns)
+{
+	CIMQualifierTypeArray rval;
+	CIMQualifierTypeArrayBuilder handler(rval);
 	enumQualifierTypes(ns, handler);
 	return rval;
 }
@@ -224,6 +337,21 @@ CIMOMHandleIFC::associatorNamesE(
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMObjectPathArray
+CIMOMHandleIFC::associatorNamesA(
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole)
+{
+	CIMObjectPathArray rval;
+	CIMObjectPathArrayBuilder handler(rval);
+	associatorNames(ns,objectName,handler,assocClass,resultClass,role,resultRole);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMInstanceEnumeration
 CIMOMHandleIFC::associatorsE(
 		const String& ns,
@@ -238,6 +366,25 @@ CIMOMHandleIFC::associatorsE(
 {
 	CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
+	associators(ns, path, handler, assocClass, resultClass, role, resultRole,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMInstanceArray
+CIMOMHandleIFC::associatorsA(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
+{
+	CIMInstanceArray rval;
+	CIMInstanceArrayBuilder handler(rval);
 	associators(ns, path, handler, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
@@ -262,6 +409,25 @@ CIMOMHandleIFC::associatorsClassesE(
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMClassArray
+CIMOMHandleIFC::associatorsClassesA(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
+{
+	CIMClassArray rval;
+	CIMClassArrayBuilder handler(rval);
+	associatorsClasses(ns, path, handler, assocClass, resultClass, role, resultRole,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMObjectPathEnumeration
 CIMOMHandleIFC::referenceNamesE(
 	const String& ns,
@@ -271,6 +437,19 @@ CIMOMHandleIFC::referenceNamesE(
 {
 	CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
+	referenceNames(ns,path,handler,resultClass,role);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPathArray
+CIMOMHandleIFC::referenceNamesA(
+	const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass,
+		const String& role)
+{
+	CIMObjectPathArray rval;
+	CIMObjectPathArrayBuilder handler(rval);
 	referenceNames(ns,path,handler,resultClass,role);
 	return rval;
 }
@@ -292,6 +471,23 @@ CIMOMHandleIFC::referencesE(
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
+CIMInstanceArray
+CIMOMHandleIFC::referencesA(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass,
+		const String& role,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
+{
+	CIMInstanceArray rval;
+	CIMInstanceArrayBuilder handler(rval);
+	references(ns, path, handler, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
 CIMClassEnumeration
 CIMOMHandleIFC::referencesClassesE(
 		const String& ns,
@@ -308,6 +504,23 @@ CIMOMHandleIFC::referencesClassesE(
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
+//////////////////////////////////////////////////////////////////////////////
+CIMClassArray
+CIMOMHandleIFC::referencesClassesA(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass,
+		const String& role,
+		EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
+{
+	CIMClassArray rval;
+	CIMClassArrayBuilder handler(rval);
+	referencesClasses(ns, path, handler, resultClass, role,
+		includeQualifiers, includeClassOrigin, propertyList);	
+	return rval;
+}
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 CIMInstanceEnumeration
@@ -318,6 +531,18 @@ CIMOMHandleIFC::execQueryE(
 {
 	CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
+	execQuery(ns,handler,query,queryLanguage);
+	return rval;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMInstanceArray
+CIMOMHandleIFC::execQueryA(
+	const String& ns,
+	const String& query,
+	const String& queryLanguage)
+{
+	CIMInstanceArray rval;
+	CIMInstanceArrayBuilder handler(rval);
 	execQuery(ns,handler,query,queryLanguage);
 	return rval;
 }
