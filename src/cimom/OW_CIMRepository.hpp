@@ -624,7 +624,7 @@ private:
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result,
 		const OW_ACLInfo& aclInfo);
 	
-	void _staticReferences(const OW_CIMObjectPath& path,
+	void _staticReferenceNames(const OW_CIMObjectPath& path,
 		const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
 		OW_CIMObjectPathResultHandlerIFC& result);
 
@@ -645,7 +645,7 @@ private:
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result,
 		const OW_ACLInfo& aclInfo);
 
-	void _staticAssociators(const OW_CIMObjectPath& path,
+	void _staticAssociatorNames(const OW_CIMObjectPath& path,
 		const OW_SortedVectorSet<OW_String>* passocClasses,
 		const OW_SortedVectorSet<OW_String>* presultClasses,
 		const OW_String& role, const OW_String& resultRole,
@@ -668,6 +668,7 @@ private:
 	OW_AssocDb m_instAssocDb;
 	OW_CIMOMEnvironmentRef m_env;
 
+	friend class OW_CIMServer;
 };
 
 #endif

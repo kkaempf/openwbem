@@ -38,6 +38,7 @@
 #include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMRepository.hpp"
 
 class OW_AccessMgr
 {
@@ -343,6 +344,7 @@ OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
 	, m_nsClassCIM_Namespace()
 	, m_env(env)
 	, m_cimRepository(cimRepository)
+	, m_realRepository(m_cimRepository.cast_to<OW_CIMRepository>())
 {
 }
 
@@ -1312,12 +1314,9 @@ OW_CIMServer::invokeMethod(
 	// Check to see if user has rights to get the property
 	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, ns, aclInfo);
 
-	// Not creating any read/write locks here because the provider
-	// could call back into the CIM Server for something and then we
-	// could end up with a deadlock condition.
-
 	OW_ACLInfo intAclInfo;
 	OW_CIMMethod method;
+
 	OW_CIMClass cc = _getClass(ns, path.getObjectName(),false,true,true,0,intAclInfo);
 
 	OW_CIMPropertyArray keys = path.getKeys();
@@ -1344,11 +1343,10 @@ OW_CIMServer::invokeMethod(
 
 	try
 	{
-		// these are fully locking cimomhandles because we don't have any locks.
 		OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-			intAclInfo, false);
+			intAclInfo, true);
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-			aclInfo, false);
+			aclInfo, true);
 		
 		OW_CIMClass cctemp(cc);
 
@@ -1842,7 +1840,7 @@ namespace
 	{
 	public:
 		assocClassSeparator(
-			OW_CIMClassArray& staticAssocs_,
+			OW_StringArray* staticAssocs_,
 			OW_CIMClassArray& dynamicAssocs_,
 			OW_CIMServer& server_,
 			const OW_ACLInfo& aclInfo_,
@@ -1863,12 +1861,17 @@ namespace
 			}
 			// Now separate the association classes that have associator provider from
 			// the ones that don't
-			OW_CIMClassArray* pra = (server._isDynamicAssoc(ns, cc)) ? &dynamicAssocs
-				: &staticAssocs;
-			pra->append(cc);
+			if (server._isDynamicAssoc(ns, cc))
+			{
+				dynamicAssocs.push_back(cc);
+			}
+			else if (staticAssocs)
+			{
+				staticAssocs->push_back(cc.getName());
+			}
 		}
 	private:
-		OW_CIMClassArray& staticAssocs;
+		OW_StringArray* staticAssocs;
 		OW_CIMClassArray& dynamicAssocs;
 		OW_CIMServer& server;
 		const OW_ACLInfo& aclInfo;
@@ -1898,33 +1901,50 @@ OW_CIMServer::_commonReferences(
 	// If the result class was specified, only children of it will be
 	// returned.
 
-	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
+	OW_StringArray resultClassNames;
 
-	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo, ns);
+	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, aclInfo, ns);
 	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
-	//OW_StringArray resultClassNames;
-	//for(size_t i = 0; i < staticAssocs.size(); i++)
-	//{
-		//resultClassNames.append(staticAssocs[i].getName());
-	//}
-	//OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 
 	if (path.getKeys().size() == 0)
 	{
 		// it's a class path
 		// Process all of the association classes without providers
-		if (popresult != 0)
+		if (m_realRepository)
 		{
-			m_cimRepository->referenceNames(ns,path,*popresult,resultClass,role,aclInfo);
-		}
-		else if (pcresult != 0)
-		{
-			m_cimRepository->referencesClasses(ns,path,*pcresult,resultClass,role,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			if (!resultClass.empty())
+			{
+				// providers don't do classes, so we'll add the dynamic ones into the list
+				for(size_t i = 0; i < dynamicAssocs.size(); i++)
+				{
+					resultClassNames.append(dynamicAssocs[i].getName());
+				}
+
+				OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+				m_realRepository->_staticReferencesClass(path, &resultClassNamesSet,
+					role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, aclInfo);
+			}
+			else
+			{
+				m_realRepository->_staticReferencesClass(path, 0,
+					role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, aclInfo);
+			}
 		}
 		else
 		{
-			OW_ASSERT(0);
+			if (popresult != 0)
+			{
+				m_cimRepository->referenceNames(ns,path,*popresult,resultClass,role,aclInfo);
+			}
+			else if (pcresult != 0)
+			{
+				m_cimRepository->referencesClasses(ns,path,*pcresult,resultClass,role,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			}
+			else
+			{
+				OW_ASSERT(0);
+			}
 		}
 	}
 	else // it's an instance path
@@ -1933,12 +1953,48 @@ OW_CIMServer::_commonReferences(
 		if (piresult != 0)
 		{
 			// do instances
-			m_cimRepository->references(ns,path,*piresult,resultClass,role,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			if (m_realRepository)
+			{
+				if (!resultClass.empty())
+				{
+					OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+					m_realRepository->_staticReferences(path, &resultClassNamesSet, role,
+						includeQualifiers, includeClassOrigin, propertyList, *piresult, aclInfo);
+				}
+				else
+				{
+					m_realRepository->_staticReferences(path, 0, role,
+						includeQualifiers, includeClassOrigin, propertyList, *piresult, aclInfo);
+				}
+			}
+			else
+			{
+				m_cimRepository->references(ns,path,*piresult,resultClass,role,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			}
 		}
 		else if (popresult != 0)
 		{
 			// do names (object paths)
-			m_cimRepository->referenceNames(ns,path,*popresult,resultClass,role,aclInfo);
+			if (m_realRepository)
+			{
+				if (!resultClass.empty())
+				{
+					OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+					m_realRepository->_staticReferenceNames(path,
+						&resultClassNamesSet, role,
+						*popresult);
+				}
+				else
+				{
+					m_realRepository->_staticReferenceNames(path,
+						0, role,
+						*popresult);
+				}
+			}
+			else
+			{
+				m_cimRepository->referenceNames(ns,path,*popresult,resultClass,role,aclInfo);
+			}
 		}
 		else
 		{
@@ -2006,6 +2062,26 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 	}
 }
 
+namespace
+{
+	class classNamesBuilder : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		classNamesBuilder(OW_StringArray& resultClassNames) 
+			: m_resultClassNames(resultClassNames) 
+		{}
+
+		void doHandle(const OW_CIMObjectPath& op)
+		{
+			m_resultClassNames.push_back(op.getObjectName());
+		}
+
+	private:
+		OW_StringArray& m_resultClassNames;
+	};
+
+} // end anonymous namespace
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_commonAssociators(
@@ -2024,45 +2100,49 @@ OW_CIMServer::_commonAssociators(
 	path.setNameSpace(ns);
 
 	// Get association classes from the association repository
-	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
-	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo, ns);
+	OW_StringArray assocClassNames;
+	assocClassSeparator assocClassResult(!m_realRepository || assocClassName.empty() ? 0 : &assocClassNames, dynamicAssocs, *this, aclInfo, ns);
 	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role);
 
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
-	//OW_StringArray resultClassNames;
-	//if(!resultClass.empty())
-	//{
-	//	resultClassNames = m_mStore.getClassChildren(ns, resultClass);
-	//	resultClassNames.append(resultClass);
-	//}
-
-	//OW_StringArray assocClassNames;
-	//for(size_t i = 0; i < staticAssocs.size(); i++)
-	//{
-	//	assocClassNames.append(staticAssocs[i].getName());
-	//}
-	//OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
-	//		assocClassNames.end());
-	//OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
-	//		resultClassNames.end());
+	OW_StringArray resultClassNames;
+	if(m_realRepository && !resultClass.empty())
+	{
+		classNamesBuilder resultClassNamesResult(resultClassNames);
+		m_cimRepository->enumClassNames(ns, resultClass, resultClassNamesResult, true, aclInfo);
+		resultClassNames.append(resultClass);
+	}
 
 	if (path.getKeys().size() == 0)
 	{
 		// it's a class path
 		// Process all of the association classes without providers
-		if (popresult != 0)
+		if (m_realRepository)
 		{
-			m_cimRepository->associatorNames(ns,path,*popresult,assocClassName,resultClass,role,resultRole,aclInfo);
-		}
-		else if (pcresult != 0)
-		{
-			m_cimRepository->associatorsClasses(ns,path,*pcresult,assocClassName,resultClass,role,resultRole,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
+					assocClassNames.end());
+			OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
+					resultClassNames.end());
+			m_realRepository->_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+				resultClass.empty() ? 0 : &resultClassNamesSet,
+				role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, aclInfo);
 		}
 		else
 		{
-			OW_ASSERT(0);
+			if (popresult != 0)
+			{
+				m_cimRepository->associatorNames(ns,path,*popresult,assocClassName,resultClass,role,resultRole,aclInfo);
+			}
+			else if (pcresult != 0)
+			{
+				m_cimRepository->associatorsClasses(ns,path,*pcresult,assocClassName,resultClass,role,resultRole,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			}
+			else
+			{
+				OW_ASSERT(0);
+			}
 		}
 	}
 	else // it's an instance path
@@ -2071,12 +2151,38 @@ OW_CIMServer::_commonAssociators(
 		if (piresult != 0)
 		{
 			// do instances
-			m_cimRepository->associators(ns,path,*piresult,assocClassName,resultClass,role,resultRole,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			if (m_realRepository)
+			{
+				OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
+						assocClassNames.end());
+				OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
+						resultClassNames.end());
+				m_realRepository->_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+					resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
+					includeQualifiers, includeClassOrigin, propertyList, *piresult, aclInfo);
+			}
+			else
+			{
+				m_cimRepository->associators(ns,path,*piresult,assocClassName,resultClass,role,resultRole,includeQualifiers,includeClassOrigin,propertyList,aclInfo);
+			}
 		}
 		else if (popresult != 0)
 		{
 			// do names (object paths)
-			m_cimRepository->associatorNames(ns,path,*popresult,assocClassName,resultClass,role,resultRole,aclInfo);
+			if (m_realRepository)
+			{
+				OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
+						assocClassNames.end());
+				OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
+						resultClassNames.end());
+				m_realRepository->_staticAssociatorNames(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+					resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
+					*popresult);
+			}
+			else
+			{
+				m_cimRepository->associatorNames(ns,path,*popresult,assocClassName,resultClass,role,resultRole,aclInfo);
+			}
 		}
 		else
 		{

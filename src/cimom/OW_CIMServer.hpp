@@ -42,6 +42,7 @@
 
 
 class OW_AccessMgr;
+class OW_CIMRepository;
 
 // This class is responsible for:
 // 1. calling either providers/or the CIM Repository
@@ -700,6 +701,7 @@ private:
 	OW_CIMClass m_nsClassCIM_Namespace;
 	OW_CIMOMEnvironmentRef m_env;
 	OW_RepositoryIFCRef m_cimRepository;
+	OW_Reference<OW_CIMRepository> m_realRepository;
 
 };
 

@@ -1180,7 +1180,7 @@ OW_CIMRepository::_commonReferences(
 		else if (popresult != 0)
 		{
 			// do names (object paths)
-			_staticReferences(path,
+			_staticReferenceNames(path,
 				resultClass.empty() ? 0 : &resultClassNamesSet, role,
 				*popresult);
 		}
@@ -1344,7 +1344,7 @@ OW_CIMRepository::_staticReferences(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMRepository::_staticReferences(const OW_CIMObjectPath& path,
+OW_CIMRepository::_staticReferenceNames(const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
@@ -1420,7 +1420,7 @@ OW_CIMRepository::_commonAssociators(
 		else if (popresult != 0)
 		{
 			// do names (object paths)
-			_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
+			_staticAssociatorNames(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 				resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
 				*popresult);
 		}
@@ -1520,7 +1520,7 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMRepository::_staticAssociators(const OW_CIMObjectPath& path,
+OW_CIMRepository::_staticAssociatorNames(const OW_CIMObjectPath& path,
 	const OW_SortedVectorSet<OW_String>* passocClasses,
 	const OW_SortedVectorSet<OW_String>* presultClasses,
 	const OW_String& role, const OW_String& resultRole,
