@@ -72,7 +72,8 @@ namespace
 		ret.setProperty(CIMName("CimClass"),CIMValue(x.getName()));
 		return ret;
 	}
-	class ClassesEmbeddedInInstancesResultHandler : public CIMClassResultHandlerIFC
+	class ClassesEmbeddedInInstancesResultHandler
+		: public CIMClassResultHandlerIFC
 	{
 	public:
 		ClassesEmbeddedInInstancesResultHandler(CIMInstanceArray& instances)
@@ -84,8 +85,10 @@ namespace
 		
 	private:
 		//Don't support copying this class.
-		ClassesEmbeddedInInstancesResultHandler(ClassesEmbeddedInInstancesResultHandler const&);
-		ClassesEmbeddedInInstancesResultHandler& operator=(ClassesEmbeddedInInstancesResultHandler const&);
+		ClassesEmbeddedInInstancesResultHandler
+			(ClassesEmbeddedInInstancesResultHandler const&);
+		ClassesEmbeddedInInstancesResultHandler& operator=
+			(ClassesEmbeddedInInstancesResultHandler const&);
 		CIMInstanceArray& m_instances;
 	};
 
@@ -101,9 +104,11 @@ namespace
 	bool isTableRefMetaClass(tableRef* table_ref)
 	{
 		//FIXME. Most uses of dynamic_cast indicate a design error. :-(
-		if (tableRef_relationExpr* trre= dynamic_cast<tableRef_relationExpr*>(table_ref))
+		if (tableRef_relationExpr* trre
+			= dynamic_cast<tableRef_relationExpr*>(table_ref))
 		{
-			if (relationExpr_strRelationName* resr= dynamic_cast<relationExpr_strRelationName*>(trre->m_prelationExpr1))
+			if (relationExpr_strRelationName* resr
+				= dynamic_cast<relationExpr_strRelationName*>(trre->m_prelationExpr1))
 			{
 				return resr->m_pstrRelationName1->equalsIgnoreCase("meta_class");
 			}
@@ -123,6 +128,125 @@ namespace
 		return String(arrayString.toString());
 	}
 
+	bool classNameIsAbsolute(String const& possiblyQualifiedClassName)
+	{
+		return possiblyQualifiedClassName.length() > 0
+			&& possiblyQualifiedClassName[0] == '/';
+	}
+
+	String extractNameSpaceQualifier(String const& possiblyQualifiedClassName)
+	{
+		size_t slashIndex= possiblyQualifiedClassName.lastIndexOf('/');
+		if (slashIndex == String::npos)
+		{
+			OW_WQL_LOG_DEBUG(Format("%1 contains no namespace qualifier."
+					, possiblyQualifiedClassName));
+			return "";
+		}
+		else
+		{
+			return possiblyQualifiedClassName.substring(0, slashIndex);
+		}
+	}
+
+	String ensureTrailingSlash(String const& baseNameSpace)
+	{
+		if (baseNameSpace.endsWith('/'))
+		{
+			return baseNameSpace;
+		}
+		else
+		{
+			return baseNameSpace + "/";
+		}
+	}
+
+	String removeTrailingSlash(String const& baseNameSpace)
+	{
+		//Find the last char which is not a slash.
+		size_t lastCharNotSlash= baseNameSpace.length() - 1;
+		while(baseNameSpace[lastCharNotSlash] == '/')
+		{
+			--lastCharNotSlash;
+		}
+		return baseNameSpace.substring(0, lastCharNotSlash + 1);
+	}
+
+	/*
+	 CIMOMHandleIFCRef::getClass() has an appalling misbehavior such
+    	 that leading slashes get removed when getClass is called from a
+    	 local WQL query, but do not get removed when getClass is called
+    	 from a remote WQL query. So we use this function to remove
+    	 leading slashes from the namespace.
+	*/
+	String removeLeadingSlash(String const& baseNameSpace)
+	{
+		//Find the last char which is not a slash.
+		size_t firstCharNotSlash= 0;
+		while(baseNameSpace[firstCharNotSlash] == '/')
+		{
+			++firstCharNotSlash;
+		}
+		return baseNameSpace.substring(firstCharNotSlash);
+	}
+
+	String extractUnqualifiedClassName(String const& possiblyQualifiedClassName)
+	{
+		OW_WQL_LOG_DEBUG(Format("possiblyQualifiedClassName: %1"
+				, possiblyQualifiedClassName));
+		size_t slashIndex= possiblyQualifiedClassName.lastIndexOf('/');
+		OW_WQL_LOG_DEBUG(Format("slashIndex: %1", slashIndex));
+		if (slashIndex == String::npos)
+		{
+			OW_WQL_LOG_DEBUG(Format("%1 is not qualified.", possiblyQualifiedClassName));
+			return possiblyQualifiedClassName;
+		}
+		else
+		{
+			return possiblyQualifiedClassName.substring
+				(slashIndex + 1);
+		}
+	}
+
+	/**
+	
+	 @param baseNameSpace If possiblyQualifiedClassName is relative, it
+	     is relative to baseNameSpace. If possiblyQualifiedClassName is
+	     not relative, baseNameSpace is ignored.
+
+	 @param possiblyQualifiedClassName A class name which may be
+    	 relative or absolute, qualified or unqualified.
+
+	 @param absoluteNamespace Used to return the absolute namespace of
+    	 possiblyQualifiedClassName.
+
+	 @param unqualifiedClassName Used to return 
+	*/
+	void getAbsoluteNamespaceAndUnqualifiedClassName
+		( String const& baseNameSpace,
+			String const& possiblyQualifiedClassName,
+			String& absoluteNamespace,
+			String& unqualifiedClassName
+	  )
+	{
+		OW_WQL_LOG_DEBUG(Format("baseNameSpace: %1 , possiblyQualifiedClassName %2", baseNameSpace, possiblyQualifiedClassName));
+		if (classNameIsAbsolute(possiblyQualifiedClassName))
+		{
+			OW_WQL_LOG_DEBUG("possiblyQualifiedClassName is absolute.");
+			absoluteNamespace= extractNameSpaceQualifier
+				(possiblyQualifiedClassName);
+		}
+		else
+		{
+			OW_WQL_LOG_DEBUG("possiblyQualifiedClassName is not absolute.");
+			absoluteNamespace= ensureTrailingSlash(baseNameSpace)
+				+ extractNameSpaceQualifier(possiblyQualifiedClassName);
+		}
+		absoluteNamespace= removeLeadingSlash(removeTrailingSlash(absoluteNamespace));
+		unqualifiedClassName= extractUnqualifiedClassName
+			(possiblyQualifiedClassName);
+	}
+	
 	const char * typeStrings[] =
 	{
 		"CIMInstanceArray",
@@ -1477,14 +1601,17 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 			OW_WQL_LOG_DEBUG(Format("Found %1", lhs.str));
 			if (rhs.type == DataType::StringType)
 			{
+				String nameSpace;
+				getAbsoluteNamespaceAndUnqualifiedClassName(m_ns, rhs.str, nameSpace, className);
+				OW_WQL_LOG_DEBUG(Format("absolute namespace: %1 , unqualified class name: %2", nameSpace, className));
 				//Find the rhs and all its subclasses.
-				CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(m_ns, rhs.str));
+				CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(nameSpace, className));
 				OW_WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));
 				newInstances.push_back(rhsClass);
 				//result will push_back instances with embeded class into newInstances.
 				ClassesEmbeddedInInstancesResultHandler result(newInstances);
-				OW_WQL_LOG_DEBUG(Format("About to call enumClass(%1, %2, result, E_DEEP)", m_ns, rhs.str));
-				m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
+				OW_WQL_LOG_DEBUG(Format("About to call enumClass(%1, %2, result, E_DEEP)", nameSpace, className));
+				m_hdl->enumClass(nameSpace, className, result, E_DEEP);
 				OW_WQL_LOG_DEBUG(Format("Enumerated classes: %1", debugDump(newInstances)));
 			}
 			else

@@ -42,6 +42,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ConfigFile.hpp"
 #include "OW_Format.hpp"
@@ -220,6 +221,12 @@ namespace testSchemaQuery
 		rch->createClass(ns, CIMClass("ClassWithNoChildren"));
 		rch->createClass(ns, CIMClass("ClassWithManyChildren"));
 		rch->createClass(ns, CIMClass("ClassWithManyChildren2Level"));
+		LOG_DEBUG("Creating test namespaces absoluteNs and relativeNs.");
+		CIMNameSpaceUtils::createCIM_Namespace(*rch, "/absoluteNs");
+		CIMNameSpaceUtils::createCIM_Namespace(*rch, "/root/testsuite/relativeNs");
+		LOG_DEBUG("Adding test classes to namespace absoluteNs .");
+		rch->createClass("/absoluteNs", CIMClass("ClassWithNoChildren"));
+		rch->createClass(ns + "/relativeNs", CIMClass("ClassWithNoChildren"));
 		mkChildren(rch, ns.c_str(), "ClassWithManyChildren");
 		mkChildren2Level(rch, ns.c_str(), "ClassWithManyChildren2Level");
 	}
@@ -304,6 +311,18 @@ namespace testSchemaQuery
 		{
 			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"Child1OfClassWithManyChildren2Level\" ", 4);
+		}
+
+		void absoluteNs(CIMOMHandleIFCRef& rch)
+		{
+			LOG_DEBUG("");
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"/absoluteNs/ClassWithNoChildren\" ", 1);
+		}
+
+		void relativeNs(CIMOMHandleIFCRef& rch)
+		{
+			LOG_DEBUG("");
+			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"relativeNs/ClassWithNoChildren\" ", 1);
 		}
 		
 	}
@@ -396,6 +415,8 @@ namespace testSchemaQuery
 		thisTests::manyChildren(rch);
 		thisTests::manyLevelsOfChildren(rch);
 		thisTests::notRoot(rch);
+		thisTests::absoluteNs(rch);
+		thisTests::relativeNs(rch);
 	}
 
 	void testClass(CIMOMHandleIFCRef& rch)
