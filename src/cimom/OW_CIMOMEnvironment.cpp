@@ -75,7 +75,7 @@ namespace
 	public:
 		CIMOMProviderEnvironment(const CIMOMEnvironment* pCenv)
 			: m_pCenv(pCenv)
-			, m_context("")
+			, m_context()
 		{}
 		virtual String getConfigItem(const String &name, const String& defRetVal="") const
 		{
@@ -213,7 +213,7 @@ class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentI
 public:
 	ProviderEnvironmentServiceEnvironmentWrapper(CIMOMEnvironment* env_)
 		: env(env_)
-		, m_context("")
+		, m_context()
 	{}
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
@@ -572,7 +572,7 @@ CIMOMEnvironment::_loadConfigItemsFromFile(const String& filename)
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMOMEnvironment::authenticate(String &userName, const String &info,
-	String &details)
+	String &details, OperationContext& context)
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -583,7 +583,7 @@ CIMOMEnvironment::authenticate(String &userName, const String &info,
 	}
 	MutexLock ml(m_monitor);
 	OW_ASSERT(m_authManager);
-	return m_authManager->authenticate(userName, info, details);
+	return m_authManager->authenticate(userName, info, details, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 String

@@ -97,7 +97,7 @@ public:
 	};
 private:
 	bool authenticate(HTTPSvrConnection* pconn,
-		String& userName, const String& info);
+		String& userName, const String& info, OperationContext& context);
 	Mutex m_guard;
 	Options m_options;
 	Reference<UnnamedPipe> m_upipe;

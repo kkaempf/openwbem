@@ -48,10 +48,10 @@ public:
 	XMLExecute();
 	virtual ~XMLExecute();
 	int executeXML(CIMXMLParser& parser, std::ostream* ostrEntity,
-		std::ostream* ostrError, const String& userName);
+		std::ostream* ostrError, OperationContext& userName);
 	virtual RequestHandlerIFC* clone() const;
 protected:
-	virtual void doOptions(CIMFeatures& cf, const SortedVectorMap<String, String>& handlerVars);
+	virtual void doOptions(CIMFeatures& cf, OperationContext& context);
 	virtual void doLogDebug(const String& message);
 	virtual void doLogError(const String& message);
 	virtual void doLogCustInfo(const String& message);
@@ -74,7 +74,7 @@ private:
 	void doInvokeMethod(std::ostream& ostr, CIMXMLParser& parser,
 		const String& methodName, CIMOMHandleIFC& lch);
 	void processSimpleReq(CIMXMLParser& parser, std::ostream& ostrEntity,
-		std::ostream& ostrError, const String& userName);
+		std::ostream& ostrError, OperationContext& context);
 	static void getParameters(CIMXMLParser& parser,
 		CIMParamValueArray& params);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

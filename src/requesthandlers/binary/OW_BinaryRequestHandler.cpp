@@ -80,7 +80,7 @@ BinaryRequestHandler::setEnvironment(ServiceEnvironmentIFCRef env)
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryRequestHandler::doOptions(CIMFeatures& cf,
-	const SortedVectorMap<String, String>& /*handlerVars*/)
+	OperationContext&)
 {
 	cf.cimom = "openwbem";
 	cf.cimProduct = CIMFeatures::SERVER;
@@ -111,13 +111,15 @@ getUserId(const String& userName, UserId& userId)
 //////////////////////////////////////////////////////////////////////////////
 void
 BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
-	std::ostream* ostrError, const SortedVectorMap<String, String>& handlerVars)
+	std::ostream* ostrError, OperationContext& context)
 {
 	String userName;
-	SortedVectorMap<String, String>::const_iterator i = handlerVars.find(ConfigOpts::USER_NAME_opt);
-	if (i != handlerVars.end())
+	try
 	{
-		userName = (*i).second;
+		userName = context.getStringData(OperationContext::USER_NAME);
+	}
+	catch (ContextDataNotFoundException&)
+	{
 	}
 	if(!userName.empty())
 	{
@@ -130,7 +132,6 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	LoggerRef lgr = getEnvironment()->getLogger();
 	try
 	{
-		OperationContext context(userName);
 		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context);
 		UInt32 version = 0;
 		BinarySerialization::read(*istrm, version);

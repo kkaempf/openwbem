@@ -38,6 +38,7 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_XMLParseException.hpp"
 #include "OW_Logger.hpp"
+#include "OW_OperationContext.hpp"
 
 namespace OpenWBEM
 {
@@ -47,16 +48,19 @@ using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 void
 RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
-	ostream* ostrError, const SortedVectorMap<String, String>& handlerVars)
+	ostream* ostrError, OperationContext& context)
 {
 	OW_ASSERT(ostrEntity);
 	OW_ASSERT(ostrError);
-	SortedVectorMap<String, String>::const_iterator i
-		= handlerVars.find(ConfigOpts::HTTP_PATH_opt);
-	if (i != handlerVars.end())
+	try
 	{
-		setPath((*i).second);
+		setPath(context.getStringData(OperationContext::HTTP_PATH));
 	}
+	catch (ContextDataNotFoundException& e)
+	{
+		// not found: okay, setPath() won't be called.
+	}
+
 	try
 	{
 		CIMXMLParser parser(*istr);
@@ -73,15 +77,9 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		{
 			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-		String userName;
-		i = handlerVars.find(ConfigOpts::USER_NAME_opt);
-		if (i != handlerVars.end())
-		{
-			userName = (*i).second;
-		}
 		try
 		{
-			executeXML(parser, ostrEntity, ostrError, userName);
+			executeXML(parser, ostrEntity, ostrError, context);
 		}
 		catch (CIMException& ce)
 		{

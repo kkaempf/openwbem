@@ -96,7 +96,7 @@ public:
 	~CIMOMEnvironment();
 	void init();
 	virtual bool authenticate(String &userName, const String &info,
-		String &details);
+		String &details, OperationContext& context);
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
 	enum ELockingFlag
 	{

@@ -76,7 +76,7 @@ class LinuxPAMAuthentication : public AuthenticatorIFC
 	 */
 private:
 	virtual bool doAuthenticate(String &userName, const String &info,
-		String &details);
+		String &details, OperationContext& context);
 	
 	virtual void doInit(ServiceEnvironmentIFCRef env);
 	String m_allowedUsers;
@@ -84,7 +84,7 @@ private:
 // See misc_conv.c in libpam for an example.
 //////////////////////////////////////////////////////////////////////////////
 bool
-LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, String &details)
+LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, String &details, OperationContext& context)
 {
 	if (info.empty())
 	{

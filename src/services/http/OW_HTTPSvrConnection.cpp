@@ -50,6 +50,7 @@
 #include "OW_SortedVectorMap.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_ThreadCancelledException.hpp"
+#include "OW_OperationContext.hpp"
 
 namespace OpenWBEM
 {
@@ -202,7 +203,10 @@ HTTPSvrConnection::run()
 			//
 			// Process Headers
 			//
-			m_resCode = processHeaders();
+			OperationContext context;
+			context.setStringData(OperationContext::HTTP_PATH, m_requestLine[1]);
+
+			m_resCode = processHeaders(context);
 			istrToReadFrom = convertToFiniteStream(m_istr);
 			if (m_resCode >= 300)	// problem with request detected in headers.
 			{
@@ -225,10 +229,10 @@ HTTPSvrConnection::run()
 						OW_THROW(HTTPException,
 							"POST, but no content-length or chunking");
 					}
-					post(*istrToReadFrom);
+					post(*istrToReadFrom, context);
 					break;
 				case OPTIONS:
-					options();
+					options(context);
 					break;
 				default:
 					// should never happen.
@@ -555,7 +559,7 @@ HTTPSvrConnection::processRequestLine()
 // This function may seem large and complex, but it is composed of many
 // small, independent blocks.
 int
-HTTPSvrConnection::processHeaders()
+HTTPSvrConnection::processHeaders(OperationContext& context)
 {
 //
 // Check for Authentication
@@ -568,7 +572,7 @@ HTTPSvrConnection::processHeaders()
 			m_isAuthenticated = false;
 			try
 			{
-				if (performAuthentication(getHeaderValue("Authorization")) < 300 )
+				if (performAuthentication(getHeaderValue("Authorization"), context) < 300 )
 						m_isAuthenticated = true;
 			}
 			catch (AuthenticationException& e)
@@ -582,6 +586,7 @@ HTTPSvrConnection::processHeaders()
 				return SC_UNAUTHORIZED;
 			}
 		}
+		context.setStringData(OperationContext::USER_NAME, m_userName);
 	}
 //
 // check for required headers with HTTP/1.1
@@ -886,7 +891,7 @@ HTTPSvrConnection::trace()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPSvrConnection::post(istream& istr)
+HTTPSvrConnection::post(istream& istr, OperationContext& context)
 {
 	ostream* ostrEntity = NULL;
 	TempFileStream ostrError(400);
@@ -904,10 +909,8 @@ HTTPSvrConnection::post(istream& istr)
 	m_requestHandler->setEnvironment(m_options.env);
 	beginPostResponse();
 	// process the request
-	SortedVectorMap<String, String> handlerVars;
-	handlerVars[ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
-	handlerVars[ConfigOpts::USER_NAME_opt] = m_userName;
-	m_requestHandler->process(&istr, ostrEntity, &ostrError, handlerVars);
+
+	m_requestHandler->process(&istr, ostrEntity, &ostrError, context);
 	sendPostResponse(ostrEntity, ostrError);
 #ifdef OW_HAVE_ZLIB_H
 	HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>(ostrEntity);
@@ -921,7 +924,7 @@ HTTPSvrConnection::post(istream& istr)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPSvrConnection::options()
+HTTPSvrConnection::options(OperationContext& context)
 {
 	addHeader("Allow","POST, M-POST, OPTIONS, TRACE");
 #ifdef OW_HAVE_ZLIB_H
@@ -937,11 +940,8 @@ HTTPSvrConnection::options()
 		OW_HTTP_THROW(HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
 	}
 	m_requestHandler->setEnvironment(m_options.env);
-	SortedVectorMap<String, String> handlerVars;
-	handlerVars[ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
-	handlerVars[ConfigOpts::USER_NAME_opt] = m_userName;
 	
-	m_requestHandler->options(cf, handlerVars);
+	m_requestHandler->options(cf, context);
 	
 	addHeader("Opt", cf.extURL + " ; ns=" + hp);
 	hp += "-";
@@ -1047,9 +1047,9 @@ HTTPSvrConnection::sendError(int resCode)
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-HTTPSvrConnection::performAuthentication(const String& info)
+HTTPSvrConnection::performAuthentication(const String& info, OperationContext& context)
 {
-	if(m_pHTTPServer->authenticate(this, m_userName, info))
+	if(m_pHTTPServer->authenticate(this, m_userName, info, context))
 	{
 		return SC_OK;
 	}

@@ -35,6 +35,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
+#include "OW_OperationContext.hpp"
 
 namespace OpenWBEM
 {
@@ -71,10 +72,10 @@ public:
 	 *   True if user is authenticated
 	 */
 	bool authenticate(String& userName, const String& info,
-		String& details)
+		String& details, OperationContext& context)
 	{
 		MutexLock lock(m_mutex);
-		return doAuthenticate(userName, info, details);
+		return doAuthenticate(userName, info, details, context);
 	}
 	UInt32 signature;
 protected:
@@ -92,7 +93,7 @@ protected:
 	 *   True if user is authenticated
 	 */
 	virtual bool doAuthenticate(String& userName,
-		const String& info, String& details) = 0;
+		const String& info, String& details, OperationContext& context) = 0;
 	/**
 	 * Called when authenticator is loaded
 	 * Exception is thrown because other classes which derive

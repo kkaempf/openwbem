@@ -41,6 +41,8 @@ namespace OpenWBEM
 class CIMFeatures;
 class ServiceEnvironmentIFC;
 typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
+class OperationContext;
+
 /**
  * This is an abstract base class for a CIM product requiring a HTTP Server.
  * (a CIM Server or a CIM Listener).  The HTTPServer contains a reference
@@ -61,11 +63,10 @@ public:
 	 * @param istr The input for the request to be processed.
 	 * @param ostrEntity Non-error output gets written here.
 	 * @param ostrError Error output gets written here.
-	 * @path the path portion of the HTTP URL used to access the cimom
-	 * @userName the name of the user accessing the CIM Product.
+	 * @context the name of the user accessing the CIM Product.
 	 */
 	void process(std::istream* istr, std::ostream* ostrEntity,
-		std::ostream* ostrError, const SortedVectorMap<String, String>& handlerVars);
+		std::ostream* ostrError, OperationContext& context);
 	/**
 	 * Did an error occur during process()?  (should ostrEntity
 	 * be sent back, or osrtError?)
@@ -77,8 +78,8 @@ public:
 	 * What options are available for a particular path?
 	 * @param cf a CIMFeatures object to fill out.
 	 */
-	void options(CIMFeatures& cf, const SortedVectorMap<String, String>& handlerVars)
-		{  doOptions(cf, handlerVars); }
+	void options(CIMFeatures& cf, OperationContext& context)
+		{  doOptions(cf, context); }
 	virtual RequestHandlerIFC* clone() const = 0;
 	ServiceEnvironmentIFCRef getEnvironment() const;
 	virtual void setEnvironment(ServiceEnvironmentIFCRef env);
@@ -106,16 +107,16 @@ protected:
 	 * @param ostrEntity Non-error output gets written here.
 	 * @param ostrError Error output gets written here.
 	 * @path the path portion of the HTTP URL used to access the cimom
-	 * @userName the name of the user accessing the CIM Product.
+	 * @context the operation context.
 	 */
 	virtual void doProcess(std::istream* istr, std::ostream* ostrEntity,
-		std::ostream* ostrError, const SortedVectorMap<String, String>& handlerVars) = 0;
+		std::ostream* ostrError, OperationContext& context) = 0;
 	/**
 	 * Fill out the Features that the request handler at the path supports.
 	 * @param cf The features to fill out.
 	 * @param path The requested path
 	 */
-	virtual void doOptions(CIMFeatures& cf, const SortedVectorMap<String, String>& handlerVars) = 0;
+	virtual void doOptions(CIMFeatures& cf, OperationContext& context) = 0;
 	String m_cimError;
 	String getHost();
 	String m_cachedHost;

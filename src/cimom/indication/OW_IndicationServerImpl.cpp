@@ -99,7 +99,7 @@ public:
 		, m_ch()
 		, m_env(env)
 		, m_repch()
-		, m_opctx("") // no username
+		, m_opctx()
 	{
 		m_ch = m_env->getCIMOMHandle(m_opctx);
 		m_repch = m_env->getRepositoryCIMOMHandle(m_opctx);
@@ -261,8 +261,7 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	// Load map with available indication export providers
 	//-----------------
 	ProviderManagerRef pProvMgr = m_env->getProviderManager();
-	String username = "";
-	OperationContext context(username);
+	OperationContext context;
 	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 	IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
@@ -560,7 +559,7 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 		CIMClass cc;
 		try
 		{
-			OperationContext context("");
+			OperationContext context;
 			cc = m_env->getRepositoryCIMOMHandle(context)->getClass(instNS, curClassName);
 			curClassName = cc.getSuperClass();
 		}
@@ -576,7 +575,7 @@ IndicationServerImpl::_processIndicationRange(
 	const CIMInstance& instanceArg, const String instNS,
 	std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last)
 {
-	OperationContext context("");
+	OperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 	for( ;first != last; ++first)
 	{
@@ -860,7 +859,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	LoggerRef log = m_env->getLogger();
 	log->logDebug(format("IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
 	// get the filter
-	OperationContext context("");
+	OperationContext context;
 	CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle(context);
 	CIMObjectPath filterPath = subInst.getProperty("Filter").getValueT().toCIMObjectPath();
 	String filterNS = filterPath.getNameSpace();

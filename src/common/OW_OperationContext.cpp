@@ -31,29 +31,83 @@
 #include "OW_OperationContext.hpp"
 #include "OW_String.hpp"
 #include "OW_UserInfo.hpp"
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
 
-/////////////////////////////////////////////////////////////////////////////
-OperationContext::OperationContext(const String& username)
-	: m_username(username)
-{
-}
+OW_DEFINE_EXCEPTION(ContextDataNotFound);
 
 /////////////////////////////////////////////////////////////////////////////
 UserInfo
 OperationContext::getUserInfo() const
 {
-	if (m_username.empty())
+	try
+	{
+		return UserInfo(getStringData(USER_NAME));
+	}
+	catch (ContextDataNotFoundException& e)
 	{
 		return UserInfo();
 	}
-	else
-	{
-		return UserInfo(m_username);
-	}
 }
+
+
+/////////////////////////////////////////////////////////////////////////////
+OperationContext::Data::~Data()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void 
+OperationContext::setData(const String& key, const DataRef& data)
+{
+	m_data[key] = data;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+OperationContext::DataRef  
+OperationContext::getData(const String& key) const
+{
+	SortedVectorMap<String, DataRef>::const_iterator ci = m_data.find(key);
+	if (ci != m_data.end())
+	{
+		return ci->second;
+	}
+	return DataRef();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+namespace 
+{
+struct StringData : public OperationContext::Data
+{
+	StringData(const String& str) : m_str(str) {}
+	String m_str;
+};
+}
+/////////////////////////////////////////////////////////////////////////////
+void  
+OperationContext::setStringData(const String& key, const String& str)
+{
+	m_data[key] = DataRef(new StringData(str));
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String  
+OperationContext::getStringData(const String& key) const
+{
+	Reference<StringData> strData = getData(key).cast_to<StringData>();
+	if (!strData)
+	{
+		OW_THROW(ContextDataNotFoundException, key.c_str());
+	}
+	return strData->m_str;
+}
+
+const char* const OperationContext::USER_NAME = "USER_NAME";
+const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
+
 
 } // end namespace OpenWBEM
 

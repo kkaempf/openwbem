@@ -150,7 +150,7 @@ XMLExecute::~XMLExecute()
 // Private
 int
 XMLExecute::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
-	ostream* ostrError, const String& userName)
+	ostream* ostrError, OperationContext& context)
 {
 	clearError();
 	m_ostrEntity = ostrEntity;
@@ -170,7 +170,7 @@ XMLExecute::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		while (parser.tokenIsId(CIMXMLParser::E_SIMPLEREQ))
 		{
 			TempFileStream ostrEnt, ostrErr(500);
-			processSimpleReq(parser, ostrEnt, ostrErr, userName);
+			processSimpleReq(parser, ostrEnt, ostrErr, context);
 			if (hasError())
 			{
 				(*m_ostrEntity) << ostrErr.rdbuf();
@@ -188,7 +188,7 @@ XMLExecute::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 	else if (parser.getToken() == CIMXMLParser::E_SIMPLEREQ)
 	{
 		makeXMLHeader(messageId, *m_ostrError);
-		processSimpleReq(parser, *m_ostrEntity, *m_ostrError, userName);
+		processSimpleReq(parser, *m_ostrEntity, *m_ostrError, context);
 	}
 	else
 	{
@@ -1266,7 +1266,7 @@ XMLExecute::execQuery(ostream& ostr, CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
-	ostream& ostrError, const String& userName)
+	ostream& ostrError, OperationContext& context)
 {
 	try
 	{
@@ -1296,7 +1296,6 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		// <!ATTLIST METHODCALL %CIMName;>
 		m_functionName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		parser.mustGetChild();
-		OperationContext context(userName);
 		CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(context);
 		if (m_isIntrinsic)
 		{
@@ -1343,10 +1342,8 @@ XMLExecute::doLogError(const String& message)
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLExecute::doOptions(CIMFeatures& cf,
-	const SortedVectorMap<String, String>& /*handlerVars*/)
+	OperationContext& context)
 {
-	String username = "";
-	OperationContext context(username);
 	cf = this->getEnvironment()->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS)->getServerFeatures();
 }
 //////////////////////////////////////////////////////////////////////////////

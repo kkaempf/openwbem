@@ -57,7 +57,7 @@ XMLListener::~XMLListener()
 //////////////////////////////////////////////////////////////////////////////
 int
 XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
-	ostream* ostrError, const String& /*userName*/)
+	ostream* ostrError, OperationContext& context)
 {
 	clearError();
 	String messageId = parser.mustGetAttribute(CIMXMLParser::A_ID);
@@ -77,7 +77,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		while(parser)
 		{
 			TempFileStream ostrEnt, ostrErr;
-			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId);
+			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId, context);
 			if (hasError())
 			{
 				(*ostrEntity) << ostrErr.rdbuf();
@@ -92,7 +92,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 	}
 	else if (parser.tokenIsId(CIMXMLParser::E_SIMPLEEXPREQ))
 	{
-		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId);
+		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId, context);
 	}
 	else
 	{
@@ -104,7 +104,7 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-XMLListener::doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& /*handlerVars*/)
+XMLListener::doOptions(CIMFeatures &cf, OperationContext&)
 {
 	cf.extURL = "http://www.dmtf.org/cim/mapping/http/v1.0";
 	cf.cimProduct = CIMFeatures::LISTENER;
@@ -119,7 +119,7 @@ XMLListener::doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& /
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLListener::processSimpleExpReq(CIMXMLParser& parser,
-	ostream& ostrEntity, ostream& ostrError, const String& messageId)
+	ostream& ostrEntity, ostream& ostrError, const String& messageId, OperationContext&)
 {
 	try
 	{

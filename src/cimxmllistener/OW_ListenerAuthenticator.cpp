@@ -45,7 +45,7 @@ ListenerAuthenticator::~ListenerAuthenticator()
 //////////////////////////////////////////////////////////////////////////////
 bool
 ListenerAuthenticator::doAuthenticate(String& userName,
-		const String& info, String& details)
+		const String& info, String& details, OperationContext& context)
 {
 	bool rval = false;
 	if (info.empty()) // no "Authorization" header

@@ -67,7 +67,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OperationContext context("");
+	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
@@ -130,7 +130,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OperationContext context("");
+	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
@@ -239,7 +239,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OperationContext context("");
+	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
@@ -301,7 +301,7 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OperationContext context("");
+	OperationContext context;
 	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 

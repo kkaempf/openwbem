@@ -70,7 +70,7 @@ public:
 			config[item] = value;
 		}
 	}
-	virtual bool authenticate(String &, const String &, String &) {
+	virtual bool authenticate(String &, const String &, String &, OperationContext&) {
 		return true;
 	}
 	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {

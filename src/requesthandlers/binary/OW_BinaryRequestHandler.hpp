@@ -44,8 +44,8 @@ public:
 	BinaryRequestHandler();
 	virtual RequestHandlerIFC* clone() const;
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-			std::ostream *ostrError, const SortedVectorMap<String, String>& handlerVars);
-	virtual void doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& handlerVars);
+			std::ostream *ostrError, OperationContext& context);
+	virtual void doOptions(CIMFeatures &cf, OperationContext& context);
 	virtual void setEnvironment(ServiceEnvironmentIFCRef env);
 	virtual StringArray getSupportedContentTypes() const;
 	virtual String getContentType() const;

@@ -86,9 +86,9 @@ public:
 	}
 	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
 	virtual bool authenticate(String &userName,
-		const String &info, String &details)
+		const String &info, String &details, OperationContext& context)
 	{
-		return m_pLAuthenticator->authenticate(userName, info, details);
+		return m_pLAuthenticator->authenticate(userName, info, details, context);
 	}
 	virtual void addSelectable(SelectableIFCRef obj,
 		SelectableCallbackIFCRef cb)

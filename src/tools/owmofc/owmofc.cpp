@@ -212,7 +212,7 @@ public:
 	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag)
 	{
 	}
-	virtual bool authenticate(String &, const String &, String &)
+	virtual bool authenticate(String &, const String &, String &, OperationContext& context)
 	{
 		return true;
 	}
@@ -278,7 +278,7 @@ int main(int argc, char** argv)
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(mofCompEnvironment));
 			cimRepository->open(g_repositoryDir);
-			context = Reference<OperationContext>(new OperationContext(""));
+			context = Reference<OperationContext>(new OperationContext);
 			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
 		}
 		else

@@ -48,7 +48,7 @@ public:
 	~AuthManager();
 	void init(ServiceEnvironmentIFCRef env);
 	bool authenticate(String& userName,
-		const String& info, String& details);
+		const String& info, String& details, OperationContext& context);
 private:
 	AuthenticatorIFCRef m_authenticator;
 };

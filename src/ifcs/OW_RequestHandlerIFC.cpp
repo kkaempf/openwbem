@@ -51,9 +51,9 @@ RequestHandlerIFC::~RequestHandlerIFC()
 }
 ///////////////////////////////////////////////////////////////////////////////
 void RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
-	std::ostream* ostrError, const SortedVectorMap<String, String>& handlerVars)
+	std::ostream* ostrError, OperationContext& context)
 {
-	doProcess(istr, ostrEntity, ostrError, handlerVars);
+	doProcess(istr, ostrEntity, ostrError, context);
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool

@@ -100,11 +100,11 @@ AuthManager::init(ServiceEnvironmentIFCRef env)
 ///////////////////////////////////////////////////////////////////////////////
 bool
 AuthManager::authenticate(String& userName,
-	const String& info, String& details)
+	const String& info, String& details, OperationContext& context)
 {
 	if(m_authenticator)
 	{
-		return m_authenticator->authenticate(userName, info, details);
+		return m_authenticator->authenticate(userName, info, details, context);
 	}
 	details = "CIMOM has no available authentication mechanism";
 	return false;

@@ -75,7 +75,7 @@ namespace
 	{
 	public:
 		PollingManagerProviderEnvironment(CIMOMEnvironmentRef env)
-			: m_context("")
+			: m_context()
 			, m_env(env)
 		{}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const

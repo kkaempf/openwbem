@@ -68,7 +68,7 @@ HTTPServer::~HTTPServer()
 //////////////////////////////////////////////////////////////////////////////
 bool
 HTTPServer::authenticate(HTTPSvrConnection* pconn,
-	String& userName, const String& info)
+	String& userName, const String& info, OperationContext& context)
 {
 	MutexLock lock(m_authGuard);
 	
@@ -107,7 +107,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			return false;
 		}
 		String details;
-		if (!m_options.env->authenticate(userName, password, details))
+		if (!m_options.env->authenticate(userName, password, details, context))
 		{
 			pconn->setErrorDetails(details);
 			pconn->addHeader("WWW-Authenticate", "Basic");

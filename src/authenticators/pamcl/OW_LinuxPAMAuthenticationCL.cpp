@@ -53,7 +53,7 @@ class LinuxPAMAuthenticationCL : public AuthenticatorIFC
 	 *   True if user is authenticated
 	 */
 private:
-	virtual bool doAuthenticate(String &userName, const String &info, String &details);
+	virtual bool doAuthenticate(String &userName, const String &info, String &details, OperationContext& context);
 	
 	virtual void doInit(ServiceEnvironmentIFCRef env);
 	String m_allowedUsers;
@@ -62,7 +62,7 @@ private:
 //////////////////////////////////////////////////////////////////////////////
 bool
 LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
-	const String &info, String &details)
+	const String &info, String &details, OperationContext& context)
 {
 	if (info.empty())
 	{

@@ -31,21 +31,50 @@
 #define OW_OPERATION_CONTEXT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
+#include "OW_Reference.hpp"
+#include "OW_SortedVectorMap.hpp"
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
 
 class UserInfo;
 
+OW_DECLARE_EXCEPTION(ContextDataNotFound);
+
 /////////////////////////////////////////////////////////////////////////////
 class OperationContext
 {
 public:
-	explicit OperationContext(const String& username);
+	
+    class Data {
+	public:
+		virtual ~Data(); // subclasses can clean-up & free memory
+	};
+
+	typedef Reference<Data> DataRef;
+	
+	// caller creats a subclass of Data and passes it in.
+	void setData(const String& key, const DataRef& data);
+	
+	// caller uses Reference::cast_to<>() on the return value to attempt to
+	// recover the original type passed into storeData.
+	DataRef getData(const String& key) const;
+	
+	// These are be for convenience, and are implemented in terms of
+	// the first 2 functions.
+	void setStringData(const String& key, const String& str);
+	// @throws ContextDataNotFound if key is not found
+	String getStringData(const String& key) const;
+	
+	// Keys values we use.
+	static const char* const USER_NAME;
+	static const char* const HTTP_PATH;
+
 	UserInfo getUserInfo() const;
 
 private:
-	String m_username;
+	SortedVectorMap<String, DataRef> m_data;
 };
 
 } // end namespace OpenWBEM

@@ -59,7 +59,7 @@ public:
 	void removeCredentials(const String& creds);
 protected:
 	virtual bool doAuthenticate(String& userName,
-		const String& info, String& details);
+		const String& info, String& details, OperationContext& context);
 	/**
 	 * Called when authenticator is loaded
 	 * Exception is thrown because other classes which derive

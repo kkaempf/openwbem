@@ -162,16 +162,16 @@ private:
 	RequestHandlerIFCRef m_requestHandler;
 	HTTPServer::Options m_options;
 	int processRequestLine();
-	int processHeaders();
+	int processHeaders(OperationContext& context);
 	void trace();
-	void options();
-	void post(std::istream& istr);
+	void options(OperationContext& context);
+	void post(std::istream& istr, OperationContext& context);
 	void sendError(int resCode);
 	void beginPostResponse();
 	void initRespStream(std::ostream*& ostrEntity);
 	void sendPostResponse(std::ostream* ostrEntity,
 		TempFileStream& ostrError);
-	int performAuthentication(const String& info);
+	int performAuthentication(const String& info, OperationContext& context);
 	void sendHeaders(int sc, int len = -1);
 	void cleanUpIStreams(Reference<CIMProtocolIStreamIFC> istrm);
 	Reference<CIMProtocolIStreamIFC> convertToFiniteStream(

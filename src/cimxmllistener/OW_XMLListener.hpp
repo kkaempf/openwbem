@@ -63,23 +63,23 @@ protected:
 	 * @param node the root node.
 	 * @param ostrEntity the ostream to write to if no errors occurr
 	 * @param ostrError the ostream to write to if an error occurred.
-	 * @param userName the user performing the action
+	 * @param context the operation context
 	 * @return a HTTP status code, I think.
 	 */
 	virtual int executeXML(CIMXMLParser &parser, std::ostream *ostrEntity,
-		std::ostream *ostrError, const String& userName);
+		std::ostream *ostrError, OperationContext& context);
 	/**
 	 * Based on a path, what options are available?
 	 * @param cf a CIMFeatures object to fill out.
-	 * @param path the path of inquiry.
+	 * @param context the operation context.
 	 */
-	virtual void doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& handlerVars);
+	virtual void doOptions(CIMFeatures &cf, OperationContext& context);
 	virtual void outputError(CIMException::ErrNoType errorCode,
 		String msg, std::ostream& ostr);
 private:
 	CIMListenerCallback* m_callback;
 	void processSimpleExpReq(CIMXMLParser& parser, std::ostream& ostrEntity,
-		std::ostream& ostrError, const String& messageId);
+		std::ostream& ostrError, const String& messageId, OperationContext& context);
 };
 
 } // end namespace OpenWBEM

@@ -60,21 +60,21 @@ protected:
 	 * @param istr the istream containing the input.
 	 * @param ostrEntity write to this ostream if no errors occur.
 	 * @param ostrError write to this ostream if an error occurs.
-	 * @param userName the name of the user performing the action.
+	 * @param context the context for the operation.
 	 */
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-		std::ostream *ostrError, const SortedVectorMap<String, String>& handlerVars);
+		std::ostream *ostrError, OperationContext& context);
 	/**
 	 * After doProcess is called, and the XML is parsed, executeXML
 	 * is called on the root node.
 	 * @param node the root node.
 	 * @param ostrEntity the ostream to write to if no errors occurr
 	 * @param ostrError the ostream to write to if an error occurred.
-	 * @param userName the user performing the action
+	 * @param context the operation context
 	 * @return a HTTP status code, I think.
 	 */
 	virtual int executeXML(CIMXMLParser& parser, std::ostream* ostrEntity,
-		std::ostream* ostrError, const String& userName) = 0;
+		std::ostream* ostrError, OperationContext& context) = 0;
 	/**
 	 * Write a XML header based on the messageId, and write it to ostr
 	 * @param messageId the message ID

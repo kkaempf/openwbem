@@ -70,7 +70,7 @@ public:
 		const String& id) = 0;
 	virtual LoggerRef getLogger() const = 0;
 	virtual bool authenticate(String& userName,
-		const String& info, String& details) = 0;
+		const String& info, String& details, OperationContext& context) = 0;
 	enum ESendIndicationsFlag
 	{
 		E_DONT_SEND_INDICATIONS,

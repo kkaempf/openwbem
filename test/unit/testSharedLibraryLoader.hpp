@@ -528,11 +528,11 @@ namespace
 	public:
 
 		testProviderEnvironment(const LocalCIMOMHandle& ch, LoggerRef l)
-		: m_context(""), m_ch(new LocalCIMOMHandle(ch)), m_logger(l)
+		: m_context(), m_ch(new LocalCIMOMHandle(ch)), m_logger(l)
 		{}
 
 		testProviderEnvironment()
-		: m_context(""), m_ch(new LocalCIMOMHandle(CIMOMEnvironmentRef(),RepositoryIFCRef(),m_context)), m_logger(new DummyLogger)
+		: m_context(), m_ch(new LocalCIMOMHandle(CIMOMEnvironmentRef(),RepositoryIFCRef(),m_context)), m_logger(new DummyLogger)
 		{}
 
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const

@@ -55,7 +55,7 @@ public:
 protected:
 	virtual void doInit(ServiceEnvironmentIFCRef);
 	bool doAuthenticate(String& userName,
-		const String& info, String& details);
+		const String& info, String& details, OperationContext& context);
 private:
 	String m_passwordPath;
 	Map<String, String> m_passwords;
@@ -78,7 +78,7 @@ SimpleAuthenticator::doInit(ServiceEnvironmentIFCRef env)
 //////////////////////////////////////////////////////////////////////////////
 bool
 SimpleAuthenticator::doAuthenticate(String& userName,
-		const String& info, String& details)
+		const String& info, String& details, OperationContext& context)
 {
 	bool rval = false;
 	if (info.empty())
