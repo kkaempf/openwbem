@@ -21,6 +21,7 @@ OW_CppProxyProvider.hpp \
 OW_CppProviderIFC.hpp \
 OW_CppIndicationProviderIFC.cpp \
 OW_CppSimpleInstanceProviderIFC.cpp \
+OW_CppSimpleAssociatorProviderIFC.cpp \
 OW_CppReadOnlyInstanceProviderIFC.cpp
 
 if DISABLE_ASSOCIATION_TRAVERSAL
@@ -39,6 +40,7 @@ OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
 OW_CppIndicationProviderIFC.hpp \
 OW_CppSimpleInstanceProviderIFC.hpp \
+OW_CppSimpleAssociatorProviderIFC.hpp \
 OW_CppReadOnlyInstanceProviderIFC.hpp
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
