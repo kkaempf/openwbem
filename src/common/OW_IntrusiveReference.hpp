@@ -1,5 +1,3 @@
-#ifndef OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
-#define OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
 /*******************************************************************************
 * Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
 *
@@ -42,6 +40,10 @@
 //  This software is provided "as is" without express or implied
 //  warranty, and with no claim as to its suitability for any purpose.
 //
+
+#ifndef OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
+#define OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
 #include "OW_RefCount.hpp"
 #include <functional>           // for std::less
@@ -116,10 +118,10 @@ public:
 	{
 		return p_;
 	}
-	typedef T * (IntrusiveReference::*unspecified_bool_type) () const;
+	typedef T * this_type::*unspecified_bool_type;
 	operator unspecified_bool_type () const
 	{
-		return p_ == 0? 0: &IntrusiveReference::get;
+		return p_ == 0? 0: &this_type::p_;
 	}
 	bool operator! () const
 	{
