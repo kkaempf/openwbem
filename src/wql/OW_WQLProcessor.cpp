@@ -53,16 +53,16 @@ namespace OpenWBEM
 
 namespace
 {
-	CIMInstance embed_Class_In_Instance(CIMClass const& x)
+	CIMInstance embedClassInInstance(CIMClass const& x)
 	{
-		CIMInstance ret("Schema_Query_Result");
-		ret.setProperty(CIMName("cimclass"),CIMValue(x.getName()));
+		CIMInstance ret("__SchemaQueryResult");
+		ret.setProperty(CIMName("CimClass"),CIMValue(x.getName()));
 		return ret;
 	}
-	class Classes_Embedded_In_Instances_Result_Handler : public CIMClassResultHandlerIFC
+	class ClassesEmbeddedInInstancesResultHandler : public CIMClassResultHandlerIFC
 	{
 	public:
-		Classes_Embedded_In_Instances_Result_Handler(CIMInstanceArray& instances)
+		ClassesEmbeddedInInstancesResultHandler(CIMInstanceArray& instances)
 			:m_instances(instances)
 		{}
 
@@ -71,20 +71,20 @@ namespace
 		
 	private:
 		//Don't support copying this class.
-		Classes_Embedded_In_Instances_Result_Handler(Classes_Embedded_In_Instances_Result_Handler const&);
-		Classes_Embedded_In_Instances_Result_Handler& operator=(Classes_Embedded_In_Instances_Result_Handler const&);
+		ClassesEmbeddedInInstancesResultHandler(ClassesEmbeddedInInstancesResultHandler const&);
+		ClassesEmbeddedInInstancesResultHandler& operator=(ClassesEmbeddedInInstancesResultHandler const&);
 		CIMInstanceArray& m_instances;
 	};
 
 	//This class only exists so this function can be called.
-	void Classes_Embedded_In_Instances_Result_Handler::doHandle(CIMClass const& x)
+	void ClassesEmbeddedInInstancesResultHandler::doHandle(CIMClass const& x)
 	{
 		//Embed the class in an instance.
 		//Store the instance in the array.
-		m_instances.push_back(embed_Class_In_Instance(x));
+		m_instances.push_back(embedClassInInstance(x));
 	}
 
-	bool is_Table_Ref_Meta_Class(tableRef* table_ref)
+	bool isTableRefMetaClass(tableRef* table_ref)
 	{
 		//FIXME. Most uses of dynamic_cast indicate a design error. :-(
 		if (tableRef_relationExpr* trre= dynamic_cast<tableRef_relationExpr*>(table_ref))
@@ -608,7 +608,7 @@ void WQLProcessor::visit_optFromClause_FROM_fromList(
 	{
 		(*i)->accept(this);
 		//Find out if *i is 'meta_class' ; if it is, this is a schema query.
-		m_isSchemaQuery= is_Table_Ref_Meta_Class(*i);
+		m_isSchemaQuery= isTableRefMetaClass(*i);
 		//If this is a schema query, don't populate the instances. Instead, set a cookie
 		//  which will be checked in the where clause processing.
 		if (!m_isSchemaQuery)
@@ -1008,14 +1008,14 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 		{
 			CIMInstanceArray newInstances;
 			//If this is a schema query, the lhs must be '__Dynasty', __Class, etc.
-			if (lhs.str == String("__Class"))
+			if (lhs.str.equalsIgnoreCase("__Class"))
 			{
 				//Find the rhs, but no subclasses.
 				//result will push_back instances with embeded class into newInstances.
-				Classes_Embedded_In_Instances_Result_Handler result(newInstances);
+				ClassesEmbeddedInInstancesResultHandler result(newInstances);
 				m_hdl->enumClass(m_ns, rhs.str, result, E_SHALLOW);
 			}
-			else if (lhs.str == String("__Dynasty"))
+			else if (lhs.str.equalsIgnoreCase("__Dynasty"))
 			{
 				//If the rhs isn't a root class, it doesn't define a dynasty.
 				CIMClassArray cl= m_hdl->enumClassA(m_ns, rhs.str, E_SHALLOW);
@@ -1023,7 +1023,7 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 				{
 					//Find the rhs,and all subclasses.
 					//result will push_back instances with embeded class into newInstances.
-					Classes_Embedded_In_Instances_Result_Handler result(newInstances);
+					ClassesEmbeddedInInstancesResultHandler result(newInstances);
 					m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
 				}
 				else
@@ -1426,13 +1426,13 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 	if (m_isSchemaQuery)
 	{
 		//If this is a schema query, the lhs must be '__This' .
-		if (lhs.str == "__This")
+		if (lhs.str.equalsIgnoreCase("__This"))
 		{
 			if (rhs.type == DataType::StringType)
 			{
 				//Find the rhs and all its subclasses.
 				//result will push_back instances with embeded class into newInstances.
-				Classes_Embedded_In_Instances_Result_Handler result(newInstances);
+				ClassesEmbeddedInInstancesResultHandler result(newInstances);
 				m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
 			}
 			else
