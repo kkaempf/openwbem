@@ -66,13 +66,15 @@ public:
 	 * Read the specified signature from the input stream. Each class derived
 	 * from CIMBase must have a unique signature associated with it. If the
 	 * signature that is being read from the stream doesn't match the one
-	 * provided, an IOException will be thrown.
+	 * provided, an BadCIMSignatureException will be thrown.
 	 *
 	 * @param istrm The input stream to read the signature from.
 	 *
 	 * @param sig The signature to compare the signature read to. This must be
 	 *		a NULL terminated string. If the signature read does not match this
-	 *		string, an IOException will be thrown.
+	 *		string, an BadCIMSignatureException will be thrown.
+	 * 
+	 * @throws BadCIMSignatureException
 	 */
 	static void readSig(std::istream& istrm, const char* const sig);
 	/**
