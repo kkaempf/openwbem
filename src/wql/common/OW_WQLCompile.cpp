@@ -53,6 +53,10 @@ void OW_WQLCompile::term_el::negate(void)
 	}
 };
 
+bool operator==(const OW_WQLCompile::term_el& x, const OW_WQLCompile::term_el& y)
+{
+	return x.op == y.op && x.opn1 == y.opn1 && x.opn2 == y.opn2;
+}
 //
 // Evaluation heap element methods 
 //
@@ -750,6 +754,10 @@ void OW_WQLCompile::_sortTableau()
 				}
 			}
 		}
+		// remove duplicates
+		tr.erase(std::unique(tr.begin(), tr.end()), tr.end());
+
+		// save it
 		_tableau[i] = tr;
 	}
 }

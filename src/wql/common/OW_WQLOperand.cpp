@@ -86,4 +86,28 @@ OW_String OW_WQLOperand::toString() const
 }
 
 
+bool operator==(const OW_WQLOperand& x, const OW_WQLOperand& y)
+{
+	if (x.getType() != y.getType())
+	{
+		return false;
+	}
+	switch (x.getType())
+	{
+		case OW_WQLOperand::NULL_VALUE:
+			return true;
+		case OW_WQLOperand::INTEGER_VALUE:
+			return x.getIntegerValue() == y.getIntegerValue();
+		case OW_WQLOperand::DOUBLE_VALUE:
+			return x.getDoubleValue() == y.getDoubleValue();
+		case OW_WQLOperand::BOOLEAN_VALUE:
+			return x.getBooleanValue() == y.getBooleanValue();
+		case OW_WQLOperand::STRING_VALUE:
+			return x.getStringValue() == y.getStringValue();
+		case OW_WQLOperand::PROPERTY_NAME:
+			return x.getPropertyName() == y.getPropertyName();
+	}
+	return false;
+}
+
 

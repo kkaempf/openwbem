@@ -204,6 +204,8 @@ protected:
 
 };
 
+bool operator==(const OW_WQLCompile::term_el& x, const OW_WQLCompile::term_el& y);
+
 
 #endif
 

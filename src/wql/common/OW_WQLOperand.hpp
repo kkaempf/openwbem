@@ -1,7 +1,7 @@
-//%/////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //
 // Copyright (c) 2000, 2001, 2002 BMC Software, Hewlett-Packard Company, IBM,
-// The Open Group, Tivoli Systems
+// The Open Group, Tivoli Systems, Caldera International, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to
@@ -23,12 +23,13 @@
 //
 // Author: Mike Brasher (mbrasher@bmc.com)
 //
-// Modified By:
+// Modified By: Dan Nuffer
 //
-//%/////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-#ifndef Pegasus_OW_WQLOperand_h
-#define Pegasus_OW_WQLOperand_h
+#ifndef OW_WQL_OPERAND_HPP_INCLUDE_GUARD_
+#define OW_WQL_OPERAND_HPP_INCLUDE_GUARD_
+
 
 #include "OW_config.h"
 #include "OW_Types.h"
@@ -293,6 +294,7 @@ private:
 	Type _type;
 };
 
-//PEGASUS_NAMESPACE_END
+bool operator==(const OW_WQLOperand& x, const OW_WQLOperand& y);
 
-#endif /* Pegasus_OW_WQLOperand_h */
+#endif
+
