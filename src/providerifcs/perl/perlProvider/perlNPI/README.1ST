@@ -1,0 +1,18 @@
+Please issue 'perl Makefile.PL'.
+ If the makemaker module is installed on your system, this command should build the correct Makefile.
+Then build the perlNPI module with make and install it (as root!) with make install.
+
+
+In case of rebuilding, make sure that you delete the files
+perlNPI.pm
+auto/perlNPI/*
+
+found in the directory
+
+/usr/lib/perl5/site_perl/{perl version}/{perl architecture}/
+
+for example
+/usr/lib/perl5/site_perl/5.6.1/i586-linux/
+
+
+manually !!!
