@@ -56,36 +56,61 @@ public:
 	 * Construct a new AutoPtr.
 	 * @param p pointer to the object
 	 */
-	explicit AutoPtr(X* p = 0) : _ptr(p) {}
-	AutoPtr& operator= (X* p)
+	explicit AutoPtr(X* p = 0);
+	AutoPtr& operator= (X* p);
+	~AutoPtr();
+	X& operator*() const;
+	X* operator->() const;
+	X* get() const;
+	X* release();
+	void reset(X* p=0);
+};
+
+template <class X>
+inline AutoPtr<X>::AutoPtr(X* p) : _ptr(p) {}
+
+template <class X>
+inline AutoPtr<X>& AutoPtr<X>::operator= (X* p)
+{
+	if (p != _ptr)
 	{
-		if (p != _ptr)
-		{
-			reset();
-			_ptr = p;
-		}
-		return *this;
-	}
-	~AutoPtr()
-	{
-		typedef char type_must_be_complete[sizeof(X)];
-		delete _ptr;
-	}
-	X& operator*() const {  return *_ptr;}
-	X* operator->() const {  return _ptr;}
-	X* get() const {  return _ptr;}
-	X* release()
-	{
-		X* rval = _ptr;
-		_ptr = 0;
-		return rval;
-	}
-	void reset(X* p=0)
-	{
-		delete _ptr;
+		reset();
 		_ptr = p;
 	}
-};
+	return *this;
+}
+
+template <class X>
+inline AutoPtr<X>::~AutoPtr()
+{
+	typedef char type_must_be_complete[sizeof(X)];
+	delete _ptr;
+}
+
+template <class X>
+inline X& AutoPtr<X>::operator*() const {  return *_ptr;}
+
+template <class X>
+inline X* AutoPtr<X>::operator->() const {  return _ptr;}
+
+template <class X>
+inline X* AutoPtr<X>::get() const {  return _ptr;}
+
+template <class X>
+inline X* AutoPtr<X>::release()
+{
+	X* rval = _ptr;
+	_ptr = 0;
+	return rval;
+}
+
+template <class X>
+inline void AutoPtr<X>::reset(X* p)
+{
+	delete _ptr;
+	_ptr = p;
+}
+
 template <class X> class AutoPtrVec
 {
 private:
@@ -101,38 +126,69 @@ public:
 	 * Construct a new AutoPtrVec.
 	 * @param p pointer to the object
 	 */
-	explicit AutoPtrVec(X* p = 0) : _ptr(p) {}
-	AutoPtrVec& operator= (X* p)
+	explicit AutoPtrVec(X* p = 0);
+	AutoPtrVec& operator= (X* p);
+	~AutoPtrVec();
+	X& operator*() const;
+	X* operator->() const;
+	X& operator[](unsigned i);
+	const X& operator[](unsigned i) const;
+	X* get() const;
+	X* release();
+	void reset(X* p=0);
+};
+
+
+template <class X>
+inline AutoPtrVec<X>::AutoPtrVec(X* p) : _ptr(p) {}
+
+template <class X>
+AutoPtrVec<X>& AutoPtrVec<X>::operator= (X* p)
+{
+	if (p != _ptr)
 	{
-		if (p != _ptr)
-		{
-			reset();
-			_ptr = p;
-		}
-		return *this;
-	}
-	~AutoPtrVec()
-	{
-		typedef char type_must_be_complete[sizeof(X)];
-		delete [] _ptr;
-	}
-	X& operator*() const {  return *_ptr;}
-	X* operator->() const {  return _ptr;}
-	X& operator[](unsigned i) { return _ptr[i]; }
-	const X& operator[](unsigned i) const { return _ptr[i]; }
-	X* get() const {  return _ptr;}
-	X* release()
-	{
-		X* rval = _ptr;
-		_ptr = 0;
-		return rval;
-	}
-	void reset(X* p=0)
-	{
-		delete [] _ptr;
+		reset();
 		_ptr = p;
 	}
-};
+	return *this;
+}
+
+template <class X>
+AutoPtrVec<X>::~AutoPtrVec()
+{
+	typedef char type_must_be_complete[sizeof(X)];
+	delete [] _ptr;
+}
+
+template <class X>
+X& AutoPtrVec<X>::operator*() const {  return *_ptr;}
+
+template <class X>
+X* AutoPtrVec<X>::operator->() const {  return _ptr;}
+
+template <class X>
+X& AutoPtrVec<X>::operator[](unsigned i) { return _ptr[i]; }
+
+template <class X>
+const X& AutoPtrVec<X>::operator[](unsigned i) const { return _ptr[i]; }
+
+template <class X>
+X* AutoPtrVec<X>::get() const {  return _ptr;}
+
+template <class X>
+X* AutoPtrVec<X>::release()
+{
+	X* rval = _ptr;
+	_ptr = 0;
+	return rval;
+}
+
+template <class X>
+void AutoPtrVec<X>::reset(X* p)
+{
+	delete [] _ptr;
+	_ptr = p;
+}
 
 } // end namespace OpenWBEM
 
