@@ -97,7 +97,7 @@ public:
 		(void)ns;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
-		inst.setProperties(instanceName.getKeys());
+		inst.updatePropertyValues(instanceName.getKeys());
 		String className = cimClass.getName();
 		SocketAddress addr = SocketAddress::getAnyLocalHost();
 		if (!instanceName.getKeyT("SystemCreationClassName").getValueT().toString().equalsIgnoreCase("OpenWBEM_ObjectManager") ||

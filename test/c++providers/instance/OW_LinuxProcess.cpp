@@ -172,7 +172,7 @@ public:
 		(void)ns;
 		(void)cimClass;
 		CIMInstance inst = cimClass.newInstance();
-		inst.setProperties(instanceName.getKeys());
+		inst.updatePropertyValues(instanceName.getKeys());
 		String pid;
 		inst.getProperty("Handle").getValue().get(pid);
 		String cmd("/bin/ps p ");
