@@ -302,10 +302,11 @@ When you create a new class, make sure you define and document the following:
 - Exception safety (document the lowest level of all the member functions for
    the class, and document each member function as well)
    Fubared (If an exception was thrown, the function may have leaked memory
-    and/or left the instance in a non-usable inconsistent state)
+    and/or left the instance in a non-usable inconsistent state (the invariant
+    is probably broken))
    Basic (If an exception was thrown, the function didn't leak memory, the
-    instance is still in a usable consistent state, but the operation may be
-    partially completed)
+    instance is still in a usable consistent state (the invariant is still
+    valid), but the operation may be partially completed)
    Strong (If an exception was thrown, the instance is in the state it was in
     before the method was called. Basically commit/rollback semantics.)
    No-throw (The method will never throw an exception)
