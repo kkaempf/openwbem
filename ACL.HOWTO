@@ -39,6 +39,15 @@ property.
 If no ACLs are found on a namespace, that namespace inherits the ACLs
 of the parent namespace.  
 
+A note about the owcimomd.allow_anonymous config item.  If this is turned
+on, ACLs will still be checked. allow_anonymous influences how the http
+server works, and whether it will request authorization from a client.
+ACLs are checked in the CIM Server to see if a certain user has permissions
+to perform an operation.  Turning on allow_anonymous doesn't make sense
+when ACLs are used, since the client doesn't actually send a username
+when allow_anonymous is enabled. Similarly, if allow_anonymous is turned on,
+there is no point in using ACLs.
+
 Examples:
 Suppose the following namespaces exist: /root/foo, /root/bar, /root/foo/baz.
 The following instances exist in /root/security:
