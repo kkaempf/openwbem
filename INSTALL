@@ -18,28 +18,25 @@ CONTENTS
    on your system:
    
       gcc - (required)
-         Version 2.91 or higher
-			(see http://www.gnu.org).
-
-      stl - (required)
-         The C++ standard template library (comes with gcc).
-
-		Bison - (required)
-			General purpose parser generator.
+         Version 2.95.2 or higher
+            2.96 provided by RedHat is seriously broken and mis-compiles OW.
+            3.0.x has a bug in the standard library which prevents OW from 
+                working correctly.
          (see http://www.gnu.org).
 
-		Flex - (required)
-			Fast lexical analyser.
+      Bison - (optional)
+         General purpose parser generator. Stock version 1.875 has an 
+         incompatibility with gcc 3.3.  Most linux distributions have a patch
+         to fix this, but if you build it from source, you'll need 
+         (see http://www.gnu.org).
+
+      Flex - (optional)
+         Fast lexical analyser.
          (see http://www.gnu.org).
 
       OpenSSL library - (optional)
          If you want the CIMOM to provide HTTPS access
          (see http://www.openssl.org).
-
-      GNU Pth - (Optional on Linux. Required on SCO OpenServer)
-         The GNU portable threads library (libpth) if you are building
-         on SCO OpenServer or you wish to use cooperative
-         threads on Linux (see http://www.gnu.org).
 
       zlib - (optional)
          If you want to enable compression on the CIMOM's HTTP connections
@@ -84,22 +81,18 @@ CONTENTS
       configure --help at the shell prompt to see the plethora of options
       available to you.
 
-		Following is a list of some of the non-standard configure options
-		supported in the OpenWBEM build process:
+      Following is a list of some of the non-standard configure options
+      supported in the OpenWBEM build process:
 
-			--enable-gnu-pth
-				Use this option if you are building on Linux and wish to use
-				the GNU Pth cooperative thread library.
+         --with-search-dir=<path to additional include files>
+            Use this option if you have some header files that reside in
+            a location that cannot be found by the standard OpenWBEM build
+            process.
 
-			--with-search-dir=<path to additional include files>
-				Use this option if you have some header files that reside in
-				a location that cannot be found by the standard OpenWBEM build
-				process.
-
-			--with-ssl-dir=<path to OpenSSL header files>
-				Use this option if the header files for OpenSSL are located
-				in a location that cannot be found by the standard OpenWBEM
-				build process.
+         --with-ssl-dir=<path to OpenSSL header files>
+            Use this option if the header files for OpenSSL are located
+            in a location that cannot be found by the standard OpenWBEM
+            build process.
       
 -------------------------------------------------------------------------------
 3.0 Installing from CVS check-out
@@ -132,7 +125,4 @@ CONTENTS
    This will actually place all of the output from the make process in
    directories relative to the build directory as opposed to putting all of
    the object files and libraries in the same directories as the source files.
-   
-   As a developer, I seldom do a "make install". I usually just execute the
-   binaries in the directories off of the build directory.
    
