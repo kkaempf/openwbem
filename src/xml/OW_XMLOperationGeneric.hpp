@@ -39,7 +39,6 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Param.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_XMLParameters.hpp"
 
 namespace OpenWBEM
 {

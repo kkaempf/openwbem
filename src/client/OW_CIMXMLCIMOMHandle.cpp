@@ -37,7 +37,6 @@
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
 #include "OW_CIMXMLParser.hpp"
-#include "OW_XMLParameters.hpp"
 #include "OW_Format.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
