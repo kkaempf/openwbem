@@ -65,6 +65,8 @@
 /* Define if we want to check for valid array indexing and throw an exception */
 #undef CHECK_ARRAY_INDEXING
 
+/* Define if we want to build the perlIFC */
+#undef PERLIFC
 
 /* Define which one is the current platform */
 #undef GNU_LINUX
