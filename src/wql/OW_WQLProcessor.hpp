@@ -755,6 +755,7 @@ private:
 	String m_ns;
 	String m_tableRef;
 	bool m_doingSelect;
+	bool m_isSchemaQuery;
 	StringArray m_propertyArray;
 
 #ifdef OW_WIN32

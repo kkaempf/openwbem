@@ -51,6 +51,53 @@
 namespace OpenWBEM
 {
 
+namespace
+{
+	CIMInstance embed_Class_In_Instance(CIMClass const& x)
+	{
+		CIMInstance ret("Schema_Query_Result");
+		ret.setProperty(CIMName("cimclass"),CIMValue(x.getName()));
+		return ret;
+	}
+	class Classes_Embedded_In_Instances_Result_Handler : public CIMClassResultHandlerIFC
+	{
+	public:
+		Classes_Embedded_In_Instances_Result_Handler(CIMInstanceArray& instances)
+			:m_instances(instances)
+		{}
+
+	protected:
+		virtual void doHandle(CIMClass const& x);
+		
+	private:
+		//Don't support copying this class.
+		Classes_Embedded_In_Instances_Result_Handler(Classes_Embedded_In_Instances_Result_Handler const&);
+		Classes_Embedded_In_Instances_Result_Handler& operator=(Classes_Embedded_In_Instances_Result_Handler const&);
+		CIMInstanceArray& m_instances;
+	};
+
+	//This class only exists so this function can be called.
+	void Classes_Embedded_In_Instances_Result_Handler::doHandle(CIMClass const& x)
+	{
+		//Embed the class in an instance.
+		//Store the instance in the array.
+		m_instances.push_back(embed_Class_In_Instance(x));
+	}
+
+	bool is_Table_Ref_Meta_Class(tableRef* table_ref)
+	{
+		//FIXME. Most uses of dynamic_cast indicate a design error. :-(
+		if (tableRef_relationExpr* trre= dynamic_cast<tableRef_relationExpr*>(table_ref))
+		{
+			if (relationExpr_strRelationName* resr= dynamic_cast<relationExpr_strRelationName*>(trre->m_prelationExpr1))
+			{
+				return resr->m_pstrRelationName1->equalsIgnoreCase("meta_class");
+			}
+		}
+		return false;
+	}
+}
+
 using namespace WBEMFlags;
 const char * typeStrings[] =
 {
@@ -69,6 +116,7 @@ WQLProcessor::WQLProcessor(
 	: m_hdl(hdl)
 	, m_ns(ns)
 	, m_doingSelect(false)
+	, m_isSchemaQuery(false)
 {
 }
 void WQLProcessor::visit_stmt_selectStmt_optSemicolon(
@@ -559,7 +607,14 @@ void WQLProcessor::visit_optFromClause_FROM_fromList(
 		++i )
 	{
 		(*i)->accept(this);
-		populateInstances();
+		//Find out if *i is 'meta_class' ; if it is, this is a schema query.
+		m_isSchemaQuery= is_Table_Ref_Meta_Class(*i);
+		//If this is a schema query, don't populate the instances. Instead, set a cookie
+		//  which will be checked in the where clause processing.
+		if (!m_isSchemaQuery)
+		{
+			populateInstances();
+		}
 	}
 }
 void WQLProcessor::visit_tableRef_relationExpr(
@@ -946,7 +1001,51 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 	DataType lhs = m_exprValue;
 	paExpr_aExpr_EQUALS_aExpr->m_paExpr3->accept(this);
 	DataType rhs = m_exprValue;
-	doComparison(lhs, rhs, Compare(Compare::EqualsType));
+	if (m_isSchemaQuery)
+	{
+		//The right hand side of a schema query must be a string.
+		if (rhs.type == DataType::StringType)
+		{
+			CIMInstanceArray newInstances;
+			//If this is a schema query, the lhs must be '__Dynasty', __Class, etc.
+			if (lhs.str == String("__Class"))
+			{
+				//Find the rhs, but no subclasses.
+				//result will push_back instances with embeded class into newInstances.
+				Classes_Embedded_In_Instances_Result_Handler result(newInstances);
+				m_hdl->enumClass(m_ns, rhs.str, result, E_SHALLOW);
+			}
+			else if (lhs.str == String("__Dynasty"))
+			{
+				//If the rhs isn't a root class, it doesn't define a dynasty.
+				CIMClassArray cl= m_hdl->enumClassA(m_ns, rhs.str, E_SHALLOW);
+				if (cl.size() && cl[0].getSuperClass() == String(""))
+				{
+					//Find the rhs,and all subclasses.
+					//result will push_back instances with embeded class into newInstances.
+					Classes_Embedded_In_Instances_Result_Handler result(newInstances);
+					m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
+				}
+				else
+				{
+					OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("rhs %1 of = in schema query must be a root class.", rhs.str).c_str());
+				}
+			}
+			else
+			{
+				OW_THROWCIMMSG(CIMException::INVALID_QUERY, Format("%1 not understood in schema query.", rhs.str).c_str());
+			}
+			m_exprValue= DataType(newInstances);
+		}
+		else
+		{
+			OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Schema query must use string for rhs of ISA.");
+		}
+	}
+	else
+	{
+		doComparison(lhs, rhs, Compare(Compare::EqualsType));
+	}
 }
 void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const Compare& compare)
 {
@@ -1304,6 +1403,7 @@ bool WQLProcessor::classIsDerivedFrom(const String& cls,
 	}
 	return false;
 }
+
 void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 		const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
 		)
@@ -1323,34 +1423,59 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 	}
 	String className = rhs.str;
 	CIMInstanceArray newInstances;
-	for (size_t i = 0; i < m_instances.size(); ++i)
+	if (m_isSchemaQuery)
 	{
-		CIMInstance ci = m_instances[i];
-		if (ci)
+		//If this is a schema query, the lhs must be '__This' .
+		if (lhs.str == "__This")
 		{
-			CIMProperty cp = ci.getProperty(propName);
-			if (cp)
+			if (rhs.type == DataType::StringType)
 			{
-				CIMValue cv = cp.getValue();
-				if (cv)
+				//Find the rhs and all its subclasses.
+				//result will push_back instances with embeded class into newInstances.
+				Classes_Embedded_In_Instances_Result_Handler result(newInstances);
+				m_hdl->enumClass(m_ns, rhs.str, result, E_DEEP);
+			}
+			else
+			{
+				OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Schema query must use string for rhs of ISA.");
+			}
+		}
+		else
+		{
+			OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Schema query must use __This with ISA.");
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < m_instances.size(); ++i)
+		{
+			CIMInstance ci = m_instances[i];
+			if (ci)
+			{
+				CIMProperty cp = ci.getProperty(propName);
+				if (cp)
 				{
-					int valType = cv.getType();
-					if (valType == CIMDataType::EMBEDDEDINSTANCE)
+					CIMValue cv = cp.getValue();
+					if (cv)
 					{
-						CIMInstance embeddedinst(CIMNULL);
-						cv.get(embeddedinst);
-						if (instanceIsDerivedFrom(embeddedinst, className))
+						int valType = cv.getType();
+						if (valType == CIMDataType::EMBEDDEDINSTANCE)
 						{
-							newInstances.push_back(ci);
+							CIMInstance embeddedinst(CIMNULL);
+							cv.get(embeddedinst);
+							if (instanceIsDerivedFrom(embeddedinst, className))
+							{
+								newInstances.push_back(ci);
+							}
 						}
-					}
-					else if (valType == CIMDataType::EMBEDDEDCLASS)
-					{
-						CIMClass embeddedcls(CIMNULL);
-						cv.get(embeddedcls);
-						if (classIsDerivedFrom(embeddedcls.getName(), className))
+						else if (valType == CIMDataType::EMBEDDEDCLASS)
 						{
-							newInstances.push_back(ci);
+							CIMClass embeddedcls(CIMNULL);
+							cv.get(embeddedcls);
+							if (classIsDerivedFrom(embeddedcls.getName(), className))
+							{
+								newInstances.push_back(ci);
+							}
 						}
 					}
 				}

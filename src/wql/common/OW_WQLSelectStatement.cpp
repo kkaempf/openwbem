@@ -44,6 +44,8 @@ namespace OpenWBEM
 {
 
 // TODO: Merge this code with WQLCompile.cpp, it's all duplicated.
+//     Worse, it's an ODR violation, for which no diagnostic is
+//     required, and which has undefined behavoir.
 template<class T>
 inline static bool _Compare(const T& x, const T& y, WQLOperation op)
 {

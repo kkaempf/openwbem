@@ -172,6 +172,9 @@ public:
 	/**
 	 * Returns the XML value of the current node
 	 *
+	 * Amoung other things, if the current node is a CDATA, getText
+	 * returns the text of the CDATA.
+	 *
 	 * @return String holding the XML value of the current node
 	 */
 	String getText() const;
