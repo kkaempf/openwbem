@@ -38,8 +38,6 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Array.hpp"
 
-
-
 #if defined(OW_HAVE_SYS_WAIT_H) && defined(OW_WIFEXITED_NEEDS_WAIT_H)
 #include <sys/wait.h>
 #endif
@@ -105,8 +103,14 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 		StringArray cmd;
 		cmd.push_back("/bin/sh");
 		cmd.push_back("-c");
-		cmd.push_back("echo before; sleep 2; echo after");
-		Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 1);
+		
+		// We want a delay in this test before any output occurs.  This is
+		// important because on some platforms (like Linux), the output could be
+		// received even if the timeout was set as 0.  With a sleep at the
+		// beginning of the test, this should hopefully avoid any scheduling
+		// issues with a child process going too fast on an unloaded machine.
+		cmd.push_back("sleep 1; echo before; sleep 2; echo after");
+		Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 2);
 		unitAssert(0);
 	}
 	catch (const ExecTimeoutException& e)
