@@ -3,7 +3,7 @@
  *
  * CmpiContext.h
  *
- * Copyright (c) 2002, International Business Machines
+ * Copyright (c) 2003, International Business Machines
  * 
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -22,21 +22,44 @@
 #ifndef _CmpiContext_h_
 #define _CmpiContext_h_
 
-#include "cmpisrv.h"
+#include "cmpidt.h"
+#include "cmpift.h"
 
-#include "CmpiString.h"
-#include "CmpiData.h"
-#include "CmpiObjectPath.h"
-#include "CmpiInstance.h"
+#include "CmpiObject.h"
+#include "CmpiStatus.h"
 
-class CmpiContext {
-  protected:
-   CMPIContext *enc;
+/** This class acts as a container to holding provider functions context information.
+*/
+
+class CmpiContext : public CmpiObject {
+   friend class CmpiBroker;
+   friend class CmpiInstanceMIDriver;
+   friend class CmpiMethodMIDriver;
   private:
+  protected:
+
+   /** Constructor - Should not be called
+   */
    CmpiContext() {}
+
+   /** getEnc - Gets the encapsulated CMPIContext.
+   */
+   inline CMPIContext *getEnc() const
+      { return (CMPIContext*)enc; }
   public:
-   void makeGlobal() {}
-   CmpiContext(CMPIContext* r) { enc=r; }
+
+   /** Constructor used by MIDrivers to encapsulate CMPIContext.
+   */
+   inline CmpiContext(CMPIContext* c)
+      : CmpiObject((void*)c) {}
+
+   /** invocationFlags - InvocationFlags entry name.
+   */
+   static const char* invocationFlags;
+
+   /** getEntry - Gets a named context entry.
+   */
+  CmpiData getEntry(const char* name);
 };
 
 #endif
