@@ -33,17 +33,9 @@
  */
 
 #include "OW_config.h"
-#include "OW_CppReadOnlyInstanceProviderIFC.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_CIMInstance.hpp"
-#include "OW_CIMException.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_SocketAddress.hpp"
+#include "OW_CppProviderIncludes.hpp"
+#include "OW_ConfigOpts.hpp"
 #include "OW_UUID.hpp"
-#include "OW_Logger.hpp"
-#include "OW_ResultHandlerIFC.hpp"
 
 namespace OpenWBEM
 {
@@ -51,99 +43,123 @@ namespace OpenWBEM
 namespace
 {
 	const String COMPONENT_NAME("ow.provider.OpenWBEM_ObjectManager");
+	const String CLASS_OpenWBEM_ObjectManager("OpenWBEM_ObjectManager");
+	const String CLASS_OpenWBEM_InternalData("OpenWBEM_InternalData");
+	const String dataKey("OpenWBEM_ObjectManager.Name");
 }
 
 using namespace WBEMFlags;
-class OpenWBEM_ObjectManagerInstProv : public CppReadOnlyInstanceProviderIFC
+class OpenWBEM_ObjectManagerInstProv : public CppReadOnlyInstanceProviderIFC, public CppSimpleInstanceProviderIFC
 {
 private:
+	// Only have one Object Manager
 	CIMInstance m_inst;
-	String m_uuid;
+
 public:
 	////////////////////////////////////////////////////////////////////////////
 	OpenWBEM_ObjectManagerInstProv()
 		: m_inst(CIMNULL)
-		, m_uuid(UUID().toString()) // TODO: Fix this to be permanent!!!!
 	{
 	}
-	////////////////////////////////////////////////////////////////////////////
-	virtual ~OpenWBEM_ObjectManagerInstProv()
-	{
-	}
+	
 	////////////////////////////////////////////////////////////////////////////
 	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
-		info.addInstrumentedClass("OpenWBEM_ObjectManager");
+		info.addInstrumentedClass(CLASS_OpenWBEM_ObjectManager);
 	}
-	////////////////////////////////////////////////////////////////////////////
-	virtual void enumInstanceNames(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const String& className,
-		CIMObjectPathResultHandlerIFC& result,
-		const CIMClass& cimClass )
-	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
-		if (!m_inst)
-		{
-			m_inst = createTheInst(cimClass);
-		}
-		CIMObjectPath newCop(ns, m_inst);
-		result.handle(newCop);
-	}
-	CIMInstance createTheInst(const CIMClass& cimClass)
-	{
-		// Only have one Object Manager
-		CIMInstance newInst = cimClass.newInstance();
-		newInst.setProperty("Version", CIMValue(OW_VERSION));
-		//newInst.setProperty("GatherStatisticalData", CIMValue(/* TODO: Put the value here */));
-		
-		// TODO: Try to find a CIM_ComputerSystem and use it's keys.
-		// This property is a KEY, it must be filled out
-		newInst.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
-		// This property is a KEY, it must be filled out
-		SocketAddress addr = SocketAddress::getAnyLocalHost();
-		newInst.setProperty("SystemName", CIMValue(addr.getName()));
-		// This property is a KEY, it must be filled out
-		newInst.setProperty("CreationClassName", CIMValue("OpenWBEM_ObjectManager"));
-		// This property is a KEY, it must be filled out
-		String Name = OW_PACKAGE_PREFIX ":";
-		if (Name == ":")
-		{
-			// OW_PACKAGE_PREFIX is empty
-			Name = "OpenWBEM:";
-		}
-		
-		Name += m_uuid;
 
-		newInst.setProperty("Name", CIMValue(Name));
+	////////////////////////////////////////////////////////////////////////////
+	virtual void initialize(const ProviderEnvironmentIFCRef &env)
+	{
+		// retrieve the name from the repository
+		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+		CIMOMHandleIFCRef rephdl(env->getRepositoryCIMOMHandle());
+
+		String omName; // will be set to something if we find a previous instance in the repository.
+		try
+		{
+			// get the uuid
+			CIMObjectPath omNamePath(CLASS_OpenWBEM_InternalData, interopNS);
+			omNamePath.setKeyValue("Name", CIMValue(dataKey));
+			CIMInstance nameInst(rephdl->getInstance(interopNS, omNamePath));
+			omName = nameInst.getPropertyValue("Value").toString();
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() == CIMException::NOT_FOUND)
+			{
+				omName = OW_PACKAGE_PREFIX ":";
+				if (omName == ":")
+				{
+					// OW_PACKAGE_PREFIX is empty
+					omName = "OpenWBEM:";
+				}
+				omName += UUID().toString();
+				
+				// now save it
+				CIMClass OpenWBEM_InternalData(rephdl->getClass(interopNS, CLASS_OpenWBEM_InternalData));
+				CIMInstance newData(OpenWBEM_InternalData.newInstance());
+				newData.updatePropertyValue("Name", CIMValue(dataKey));
+				newData.updatePropertyValue("Value", CIMValue(omName));
+				rephdl->createInstance(interopNS, newData);
+			}
+			else
+			{
+				throw;
+			}
+		}
+
+		m_inst = createTheInstance(env, omName);
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	static CIMInstance createTheInstance(const ProviderEnvironmentIFCRef &env, const String& omName)
+	{
+		String interopNS = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+		CIMOMHandleIFCRef hdl(env->getCIMOMHandle());
+		
+		CIMClass OpenWBEM_ObjectManager(hdl->getClass(interopNS, CLASS_OpenWBEM_ObjectManager));
+
+		CIMInstance newInst(OpenWBEM_ObjectManager.newInstance());
+
+		// We are weakly associated to the ComputerSystem, we'll get it and use it's keys.
+		CIMObjectPathArray computerSystems(hdl->enumInstanceNamesA(interopNS, "CIM_ComputerSystem"));
+		if (computerSystems.size() != 1)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, Format("Expected 1 instance of CIM_ComputerSystem, got %1", computerSystems.size()).c_str());
+		}
+
+		CIMObjectPath& computerSystem(computerSystems[0]);
+
+		newInst.setProperty("Version", CIMValue(OW_VERSION));
+		
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("SystemCreationClassName", computerSystem.getKeyValue("CreationClassName"));
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("SystemName", computerSystem.getKeyValue("Name"));
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("CreationClassName", CIMValue(newInst.getClassName()));
+
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("Name", CIMValue(omName));
+
 		newInst.setProperty("Started", CIMValue(true));
 		newInst.setProperty("EnabledState", CIMValue(UInt16(2))); // 2 = Enabled
 		newInst.setProperty("Caption", CIMValue("owcimomd"));
 		newInst.setProperty("Description", CIMValue("owcimomd"));
+
 		return newInst;
 	}
+
 	////////////////////////////////////////////////////////////////////////////
-	virtual CIMInstance getInstance(
-		const ProviderEnvironmentIFCRef& env,
-		const String& ns,
-		const CIMObjectPath& instanceName,
-		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers,
-		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList,
-		const CIMClass& cimClass )
+	void doSimpleEnumInstances(
+		const ProviderEnvironmentIFCRef &env,
+		const String &ns,
+		const CIMClass &cimClass,
+		CIMInstanceResultHandlerIFC &result,
+		EPropertiesFlag propertiesFlag)
 	{
-		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In OpenWBEM_ObjectManagerInstProv::getInstance");
-		if (!m_inst)
-		{
-			m_inst = createTheInst(cimClass);
-		}
-		if (instanceName != CIMObjectPath(instanceName.getNameSpace(), m_inst))
-		{
-			OW_THROWCIMMSG(CIMException::NOT_FOUND, instanceName.toString().c_str());
-		}
-		return m_inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
+		result.handle(m_inst);
 	}
 };
 

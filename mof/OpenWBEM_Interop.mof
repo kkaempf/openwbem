@@ -163,4 +163,12 @@ class OpenWBEM_RemoteProviderRegistration
         boolean UseConnectionCredentials = false;
 };
 
+[Description("Class used by some of the OpenWBEM interop providers to store data")]
+class OpenWBEM_InternalData
+{
+	[Key]
+	string Name;
+	[Required]
+	string Value;
+};
 
