@@ -50,13 +50,25 @@ namespace OpenWBEM
 class OW_COMMON_API SSLSocketImpl : public SocketBaseImpl
 {
 public:
-	SSLSocketImpl();
+	SSLSocketImpl(SSLClientCtxRef sslCtx);
+
+	// DEPRECATED, but not because it's an impl
+	SSLSocketImpl() ;
 	/**
 	 * This constructor is to be used only for server sockets.
 	 * @param fd A socket handle, presumably created by a ServerSocket's
 	 * accept().
 	 */
-	SSLSocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType);
+	SSLSocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType, 
+				   SSLServerCtxRef sslCtx);
+	/**
+	 * This constructor is to be used only for server sockets.
+	 * @param fd A socket handle, presumably created by a ServerSocket's
+	 * @param addrType The addressType
+	 * accept().
+	 */
+	// Deprecated, but not really since this is an impl. 
+	SSLSocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType); 
 	/**
 	 * @throws SocketException
 	 */
@@ -68,6 +80,17 @@ public:
 	virtual void connect(const SocketAddress& addr);
 	virtual void disconnect();
 	Select_t getSelectObj() const;
+	/**
+	 * return the SSL structure associated with the socket
+	 * @return the SSL ptr. 
+	 */ 
+	SSL* getSSL() const; 
+
+	/**
+	 * Did the peer certificate pass verification? 
+	 * @return true if peer cert passed verification
+	 */ 
+	bool peerCertVerified() const; 
 private:
 	/**
 	 * @throws SocketException
@@ -80,6 +103,9 @@ private:
 	void connectSSL();
 	SSL* m_ssl;
 	BIO* m_sbio;
+	SSLClientCtxRef m_sslCtx; 
+	OWSSLContext m_owctx; 
+
 	SSLSocketImpl(const SSLSocketImpl& arg);
 	SSLSocketImpl& operator =(const SSLSocketImpl& arg);
 };

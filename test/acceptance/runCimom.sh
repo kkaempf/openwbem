@@ -41,6 +41,10 @@ elif [ "x$1" = "xinsight" ]; then
 b main
 r -d -c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
 EOS
+elif [ "x$1" = "xstrace" ]; then
+  strace -f -o /tmp/strace.out \
+    $STAGEDIR/usr/local/sbin/owcimomd -d \
+	  -c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
 else
   $STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t

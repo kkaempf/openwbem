@@ -45,6 +45,7 @@
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_IntrusiveReference.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 
 // TODO: This is duplicated in OW_ConfigOpts.hpp.  Figure out a way to merge the 2 without drastically increasing header dependencies.
@@ -65,7 +66,11 @@ public:
 	/** Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
 	 */
-	Socket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL);
+	Socket(SSLClientCtxRef = 0); 
+	/** Allocate a new  Socket
+	 * @param isSSL is it an ssl socket?
+	 */
+	Socket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL)  OW_DEPRECATED;
 	/**
 	 * Allocate a new  Socket based on an existing handle.
 	 * This is used by ServerSocket::accept()
@@ -73,14 +78,14 @@ public:
 	 * @param isSSL is it an SSL socket?
 	 */
 	Socket(SocketHandle_t fd, SocketAddress::AddressType addrType,
-		SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL);
+		SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL); // OW_DEPRECATED;
 	/**
 	 * Allocate a new Socket and connect it to a peer machine
 	 * @param addr the address of the peer machine
 	 * @isSSL is it an SSL socket?
 	 * @exception SocketException
 	 */
-	Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL);
+	Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL) OW_DEPRECATED;
 	/**
 	 * Copy ctor
 	 */
@@ -251,12 +256,37 @@ public:
 		return s_shutDownMechanism;
 	}
 
+#ifndef OW_NO_SSL
+	/**
+	 * get the SSL structure associated with the socket (if it
+	 * is an SSL socket)
+	 * @return a pointer to the SSL structure
+	 */ 
+	SSL* getSSL() const; 
+
+        /**
+         * did the peer certificate pass verification? 
+         * @return true if peer cert verified. 
+         */ 
+        bool peerCertVerified() const; 
+#endif
+
 private:
+	/**
+	 * Allocate a new  Socket based on an existing handle.
+	 * This is used by ServerSocket::accept()
+	 * @param fd a handle to the existing socket
+	 * @param isSSL is it an SSL socket?
+	 */
+	Socket(SocketHandle_t fd, SocketAddress::AddressType addrType,
+		SSLServerCtxRef sslCtx); 
 	SocketBaseImplRef m_impl;
 
 	static ShutDownMechanism_t s_shutDownMechanism;
 
-};
+	friend class ServerSocketImpl;
+
+}; 
 
 } // end namespace OpenWBEM
 

@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -11,7 +12,7 @@
 *    this list of conditions and the following disclaimer in the documentation
 *    and/or other materials provided with the distribution.
 *
-*  - Neither the name of Vintela, Inc. nor the names of its
+*  - Neither the name of Vintela, Inc., Novell, Inc. nor the names of its
 *    contributors may be used to endorse or promote products derived from this
 *    software without specific prior written permission.
 *
@@ -61,6 +62,8 @@
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_AuthenticationException.hpp"
 
+#include "OW_OperationContext.hpp"
+
 namespace OpenWBEM
 {
 
@@ -70,6 +73,9 @@ OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
 HTTPServer::HTTPServer()
 	: m_upipe(UnnamedPipe::createUnnamedPipe())
 	, m_allowAllUsers(false)
+	, m_sslCtx(0)
+	, m_shuttingDown(false)
+	, m_trustStore(0)
 {
 	m_upipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
 }
@@ -88,9 +94,11 @@ bool HTTPServer::isAllowedUser(const String& user) const
 //////////////////////////////////////////////////////////////////////////////
 bool
 HTTPServer::authenticate(HTTPSvrConnection* pconn,
-	String& userName, const String& info, OperationContext& context)
+	String& userName, const String& info, OperationContext& context, 
+	const Socket& socket)
 {
 	MutexLock lock(m_authGuard);
+
 	
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
@@ -107,11 +115,39 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		}
 		return rv;
 	}
-	else if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
+#ifndef OW_NO_SSL
+	if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
+	{
+            if (socket.peerCertVerified())
+            {
+
+				SSL* ssl = socket.getSSL(); 
+				OW_ASSERT(ssl); 
+				X509* cert = SSL_get_peer_certificate(ssl); 
+				OW_ASSERT(cert); 
+				String hash = SSLTrustStore::getCertMD5Fingerprint(cert); 
+				String uid; 
+				if (!m_trustStore->getUser(hash, userName, uid))
+				{
+					getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
+					return false; 
+				}
+                getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+				if (!uid.empty())
+				{
+					context.setStringData(OperationContext::CIMOM_UIDKEY, String("0"));
+					context.setStringData(OperationContext::CURUSER_UIDKEY, uid); 
+				}
+                return true; 
+            }
+	}
+#endif
+	bool rv = false; 
+	if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
 		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing Digest");
-		bool rv = m_digestAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
+		rv = m_digestAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
 		if (rv)
 		{
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
@@ -120,7 +156,6 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
-		return rv;
 #endif
 	}
 	else if (m_options.allowBasicAuthentication && info.startsWith("Basic"))
@@ -142,7 +177,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			return false;
 		}
 		String details;
-		bool rv = m_options.env->authenticate(userName, password, details, context) && isAllowedUser(userName);
+		rv = m_options.env->authenticate(userName, password, details, context) && isAllowedUser(userName);
 		if (!rv)
 		{
 			pconn->setErrorDetails(details);
@@ -153,37 +188,58 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			getEnvironment()->getLogger()->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
-		return rv;
 	}
-
-	// We don't handle whatever they sent, so send the default challenge
-	String hostname = pconn->getHostName();
-	pconn->setErrorDetails("You must authenticate to access this"
-		" resource");
-	String authChallenge;
-	switch (m_options.defaultAuthChallenge)
+	else
 	{
+		// We don't handle whatever they sent, so send the default challenge
+		String hostname = pconn->getHostName();
+		pconn->setErrorDetails("You must authenticate to access this"
+			" resource");
+		String authChallenge;
+		switch (m_options.defaultAuthChallenge)
+		{
 #ifndef OW_DISABLE_DIGEST
-		case E_DIGEST:
-			authChallenge = m_digestAuthentication->getChallenge(hostname); 
-			break;
+			case E_DIGEST:
+				authChallenge = m_digestAuthentication->getChallenge(hostname); 
+				break;
 #endif
-		case E_BASIC:
-			authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
-			break;
+			case E_BASIC:
+				authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
+				break;
 
-		case E_OWLOCAL:
-			authChallenge = "OWLocal";
-			break;
-
-		default:
-			OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
+			default:
+				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
+		}
+		getEnvironment()->getLogger()->logDebug(Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+		pconn->addHeader("WWW-Authenticate", authChallenge); 
+		return false;
 	}
-	getEnvironment()->getLogger()->logDebug(Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
-	pconn->addHeader("WWW-Authenticate", authChallenge); 
-	return false;
-	
+
+#ifndef OW_NO_SSL
+	if (rv && m_sslopts.verifyMode == SSLOpts::MODE_AUTOUPDATE)
+	{
+		SSL* ssl = socket.getSSL(); 
+                if (ssl)
+                {
+                    X509* cert = SSL_get_peer_certificate(ssl); 
+                    if (cert)
+                    {
+                            try
+                            {
+								String uid = context.getStringDataWithDefault(OperationContext::CURUSER_UIDKEY); 
+                                m_trustStore->addCertificate(cert, userName, uid); 
+                            }
+                            catch (SSLException& e)
+                            {
+                                getEnvironment()->getLogger()->logError(e.getMessage()); 
+                            }
+                    }
+                }
+	}
+#endif 
+	return rv; 
 }
+
 //////////////////////////////////////////////////////////////////////////////
 void
 HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
@@ -338,7 +394,7 @@ public:
 		catch (SSLException& se)
 		{
 			m_HTTPServer->m_options.env->getLogger()->logInfo(
-				"SSL Handshake failed");
+				Format("SSL Handshake failed: %1", se.getMessage()).c_str());
 		}
 		catch (SocketTimeoutException &e)
 		{
@@ -424,8 +480,7 @@ HTTPServer::startService()
 				UInt16 lport = static_cast<UInt16>(m_options.httpPort);
 				m_pHttpServerSocket = new ServerSocket;
 				m_pHttpServerSocket->doListen(lport,
-					SocketFlags::E_NOT_SSL, 1000,
-					curAddress,
+					1000, curAddress,
 					m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 				m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
 				lgr->logInfo(Format("HTTP server listening on: %1:%2",
@@ -463,8 +518,37 @@ HTTPServer::startService()
 #else
 			try
 			{
-				String keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
-				SSLCtxMgr::initServer(keyfile);
+				m_sslopts.keyfile = env->getConfigItem(ConfigOpts::SSL_CERT_opt);
+				m_sslopts.trustStore = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_TRUST_STORE, 
+													   OW_DEFAULT_HTTP_SERVER_SSL_TRUST_STORE); 
+				m_trustStore = SSLTrustStoreRef(new SSLTrustStore(m_sslopts.trustStore)); 
+				String verifyMode = env->getConfigItem(ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt, 
+													   OW_DEFAULT_HTTP_SERVER_SSL_CLIENT_VERIFICATION); 
+				verifyMode.toLowerCase();
+				if (verifyMode == "disabled")
+				{
+					m_sslopts.verifyMode = SSLOpts::MODE_DISABLED; 
+				}
+				else if (verifyMode == "optional")
+				{
+					m_sslopts.verifyMode = SSLOpts::MODE_OPTIONAL; 
+				}
+				else if (verifyMode == "required")
+				{
+					m_sslopts.verifyMode = SSLOpts::MODE_REQUIRED; 
+				}
+				else if (verifyMode == "autoupdate")
+				{
+					m_sslopts.verifyMode = SSLOpts::MODE_AUTOUPDATE; 
+				}
+				else
+				{
+					OW_THROW(HTTPServerException, Format("Bad value (%1) for configuration item %2", 
+														 verifyMode, 
+														 ConfigOpts::HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt).c_str()); 
+				}
+				//SSLCtxMgr::initServer(keyfile);
+				m_sslCtx = SSLServerCtxRef(new SSLServerCtx(m_sslopts)); 
 			}
 			catch (SSLException& e)
 			{
@@ -474,14 +558,14 @@ HTTPServer::startService()
 			}
 
 			UInt16 lport = static_cast<UInt16>(m_options.httpsPort);
-			if (SSLCtxMgr::isServer())
+			//if (SSLCtxMgr::isServer())
+			if (m_sslCtx)
 			{
 				try
 				{
-					m_pHttpsServerSocket = new ServerSocket;
+					m_pHttpsServerSocket = new ServerSocket(m_sslCtx.getPtr());
 					m_pHttpsServerSocket->doListen(lport,
-						SocketFlags::E_SSL, 1000,
-						curAddress,
+						1000, curAddress,
 						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 					m_options.httpsPort =
 					   m_pHttpsServerSocket->getLocalAddress().getPort();
@@ -559,9 +643,20 @@ HTTPServer::getLocalHTTPSAddress()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
+bool
+HTTPServer::isShuttingDown()
+{
+	MutexLock lock(m_shutdownGuard); 
+	return m_shuttingDown; 
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 HTTPServer::shutdown()
 {
+	{
+		MutexLock lock(m_shutdownGuard); 
+		m_shuttingDown = true; 
+	}
 	m_options.env->getLogger()->logDebug("HTTP Service is shutting down...");
 	// first stop all new connections
 	m_options.env->removeSelectable(m_pHttpServerSocket);

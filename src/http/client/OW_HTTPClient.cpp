@@ -54,13 +54,15 @@
 #include <cerrno>
 
 
+using namespace std; 
+
 namespace OpenWBEM
 {
 
 using std::flush;
 using std::istream;
 //////////////////////////////////////////////////////////////////////////////
-HTTPClient::HTTPClient( const String &sURL )
+HTTPClient::HTTPClient( const String &sURL, SSLClientCtxRef sslCtx)
 #ifndef OW_DISABLE_DIGEST
 	: m_iDigestNonceCount(1) ,
 #else
@@ -68,7 +70,8 @@ HTTPClient::HTTPClient( const String &sURL )
 #endif
 	 m_url(sURL)
 	, m_pIstrReturn(0)
-	, m_socket(m_url.scheme.endsWith('s') ? SocketFlags::E_SSL : SocketFlags::E_NOT_SSL) // covers https, cimxml.wbems, owbinary.wbems
+	, m_sslCtx(sslCtx)
+	, m_socket(m_url.scheme.endsWith('s')? (m_sslCtx? m_sslCtx: m_sslCtx = SSLClientCtxRef(new SSLClientCtx())): 0)
 	, m_requestMethod("M-POST"), m_authRequired(false)
 	, m_istr(m_socket.getInputStream()), m_ostr(m_socket.getOutputStream())
 	, m_doDeflateOut(false)
@@ -194,11 +197,9 @@ void HTTPClient::setUrl()
 	}
 	if (m_url.scheme.endsWith('s'))
 	{
-#ifndef OW_NO_SSL
-		SSLCtxMgr::initClient();
-#else
+#ifdef OW_NO_SSL
 		OW_THROW(SocketException, "SSL not available");
-#endif // #ifndef OW_NO_SSL
+#endif // #ifdef OW_NO_SSL
 	}
 	if (m_url.port.equalsIgnoreCase(URL::OWIPC) 
 		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated in 3.0.0 and will be removed!

@@ -39,13 +39,23 @@
 
 #include "OW_config.h"
 #include "OW_SSLSocketImpl.hpp"
+#include "OW_Format.hpp"
+#include "OW_Assertion.hpp"
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/err.h>
 #include <OW_Format.hpp>
 #include <OW_SocketUtils.hpp>
 
+
 namespace OpenWBEM
 {
+//////////////////////////////////////////////////////////////////////////////
+SSLSocketImpl::SSLSocketImpl(SSLClientCtxRef sslCtx) 
+	: SocketBaseImpl()
+	, m_ssl(0)
+	, m_sslCtx(sslCtx)
+{
+}
 
 namespace
 {
@@ -117,6 +127,47 @@ SSLSocketImpl::SSLSocketImpl()
 	, m_sbio(0)
 {
 }
+//////////////////////////////////////////////////////////////////////////////
+SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd, 
+	SocketAddress::AddressType addrType, SSLServerCtxRef sslCtx) 
+	: SocketBaseImpl(fd, addrType)
+{
+	OW_ASSERT(sslCtx); 
+	m_ssl = SSL_new(sslCtx->getSSLCtx());
+        SSL_set_ex_data(m_ssl, SSLServerCtx::SSL_DATA_INDEX, &m_owctx); 
+
+	if (!m_ssl)
+	{
+		OW_THROW(SSLException, "SSL_new failed");
+	}
+
+	BIO* bio = BIO_new_socket(fd, BIO_NOCLOSE);
+	if (!bio)
+	{
+		SSL_free(m_ssl);
+		OW_THROW(SSLException, "BIO_new_socket failed");
+	}
+		
+	SSL_set_bio(m_ssl, bio, bio);
+	int rval = SSL_accept(m_ssl); 
+	if (rval <= 0)
+	{
+		String msg = String("SSL accept error: ") + String(SSL_get_error(m_ssl, rval)); 
+		SSL_shutdown(m_ssl);
+		SSL_free(m_ssl);
+		ERR_remove_state(0); // cleanup memory SSL may have allocated
+		OW_THROW(SSLException, msg.c_str());
+	}
+	if (!SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
+	{
+		SSL_shutdown(m_ssl);
+		SSL_free(m_ssl);
+		ERR_remove_state(0); // cleanup memory SSL may have allocated
+		OW_THROW(SSLException, "SSL failed to authenticate client");
+	}
+}
+
+// TODO Get rid of this one later. 
 //////////////////////////////////////////////////////////////////////////////
 SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd, 
 	SocketAddress::AddressType addrType) 
@@ -199,7 +250,10 @@ void
 SSLSocketImpl::connectSSL()
 {
 	m_isConnected = false;
-	m_ssl = SSL_new(SSLCtxMgr::getSSLCtxClient());
+	//m_ssl = SSL_new(SSLCtxMgr::getSSLCtxClient());
+	OW_ASSERT(m_sslCtx); 
+	m_ssl = SSL_new(m_sslCtx->getSSLCtx()); 
+	
 	if (!m_ssl)
 	{
 		OW_THROW(SSLException, "SSL_new failed");
@@ -257,6 +311,20 @@ SSLSocketImpl::readAux(void* dataIn, int dataInLen)
 	return SSLCtxMgr::sslRead(m_ssl, static_cast<char*>(dataIn), 
 			dataInLen);
 }
+//////////////////////////////////////////////////////////////////////////////
+SSL*
+SSLSocketImpl::getSSL() const
+{
+	return m_ssl; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+SSLSocketImpl::peerCertVerified() const
+{
+    return (m_owctx.peerCertPassedVerify == OWSSLContext::VERIFY_PASS); 
+}
+
 
 } // end namespace OpenWBEM
 

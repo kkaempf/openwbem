@@ -1,5 +1,6 @@
 /*******************************************************************************
 * Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Novell, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -37,6 +38,9 @@
 #define OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_SSLException.hpp"
+#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_IntrusiveReference.hpp"
+#include "OW_Map.hpp"
 #ifdef OW_HAVE_OPENSSL
 #include "OW_String.hpp"
 #include <openssl/crypto.h>
@@ -151,6 +155,10 @@ public:
 		{ m_serverCertVerifyCB = cbfunc; }
 	// set type to NOT_INIT and free memory.
 	static void uninit(); 
+	/**
+	 * @throws SSLException
+	 */
+	static void generateEphRSAKey(SSL_CTX* ctx);
 private:
 	static SSL_CTX* m_ctxClient;
 	static SSL_CTX* m_ctxServer;
@@ -165,10 +173,6 @@ private:
 	 * @throws SSLException
 	 */
 	static void loadDHParams(SSL_CTX* ctx, const String& file);
-	/**
-	 * @throws SSLException
-	 */
-	static void generateEphRSAKey(SSL_CTX* ctx);
 	static void uninitServer();
 	static void uninitClient();
 
@@ -182,6 +186,95 @@ private:
 	 */
 	static bool checkCert(SSL* ssl, const String& hostName, certVerifyFuncPtr_t cbFunc);
 };
+
+//////////////////////////////////////////////////////////////////////////////
+struct SSLOpts
+{
+	SSLOpts(); 
+	String keyfile; 
+	String trustStore; 
+	enum VerifyMode_t
+	{
+		MODE_DISABLED, 
+		MODE_REQUIRED, 
+		MODE_OPTIONAL, 
+		MODE_AUTOUPDATE
+	}; 
+	VerifyMode_t verifyMode; 
+}; 
+
+
+//////////////////////////////////////////////////////////////////////////////
+class SSLCtxBase
+{
+public: 
+	SSL_CTX* getSSLCtx() const; 
+
+protected: 
+	SSLCtxBase(const SSLOpts& opts); 
+	virtual ~SSLCtxBase(); 
+	SSL_CTX* m_ctx; 
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class SSLServerCtx : public SSLCtxBase, public IntrusiveCountableBase
+{
+public: 
+	SSLServerCtx(const SSLOpts& opts); 
+        static const int SSL_DATA_INDEX = 0; 
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class SSLClientCtx : public SSLCtxBase, public IntrusiveCountableBase
+{
+public: 
+	SSLClientCtx(const SSLOpts& opts = SSLOpts()); 
+};
+
+typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef; 
+typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
+
+//////////////////////////////////////////////////////////////////////////////
+class SSLTrustStore: public IntrusiveCountableBase
+{
+public: 
+	SSLTrustStore(const String& storeLocation); 
+	void addCertificate(X509* cert, const String& user, const String& uid); 
+	bool getUser(const String& certhash, String& user, String& uid); 
+
+	static String getCertMD5Fingerprint(X509* cert); 
+private: 
+	String m_store; 
+	String m_mapfile; 
+	struct UserInfo
+	{
+		String user; 
+		String uid; 
+	};
+	Map<String, UserInfo> m_map; 
+
+	void readMap(); 
+	void writeMap(); 
+
+};
+
+typedef IntrusiveReference<SSLTrustStore> SSLTrustStoreRef; 
+//////////////////////////////////////////////////////////////////////////////
+
+struct OWSSLContext
+{
+	enum CertVerifyState_t
+	{
+		VERIFY_NONE, 
+		VERIFY_PASS, 
+		VERIFY_FAIL
+	}; 
+    OWSSLContext(); 
+    ~OWSSLContext(); 
+    CertVerifyState_t peerCertPassedVerify; 
+};
+
+//////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OpenWBEM
 

@@ -45,6 +45,7 @@
 
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/ssl.h>
+#include "OW_SSLCtxMgr.hpp"
 #endif
 
 using std::cerr;
@@ -78,11 +79,20 @@ int main(int argc, char* argv[])
 	{
 
 #ifdef OW_HAVE_OPENSSL
+		SSLClientCtxRef sslctx; 
 		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
+		char* sslcert = getenv("OW_SSL_CLIENT_CERT"); 
+		if (sslcert)
+		{
+			cerr << "Initializing SSL in client mode with " << sslcert << endl;
+			SSLOpts opts; 
+			opts.keyfile = String(sslcert); 
+			sslctx = SSLClientCtxRef(new SSLClientCtx(opts)); 
+		}
 #endif
 
 		
-		HTTPClient hc(url);
+		HTTPClient hc(url, sslctx);
 	
 		if (argc == 3)
 		{

@@ -1158,7 +1158,7 @@ HTTPSvrConnection::sendError(int resCode)
 int
 HTTPSvrConnection::performAuthentication(const String& info, OperationContext& context)
 {
-	if (m_pHTTPServer->authenticate(this, m_userName, info, context))
+	if (m_pHTTPServer->authenticate(this, m_userName, info, context, m_socket))
 	{
 		return SC_OK;
 	}

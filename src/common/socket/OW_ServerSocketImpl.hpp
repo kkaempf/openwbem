@@ -46,6 +46,7 @@
 #include "OW_File.hpp"
 #include "OW_SocketFlags.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 namespace OpenWBEM
 {
@@ -53,6 +54,7 @@ namespace OpenWBEM
 class OW_COMMON_API ServerSocketImpl : public SelectableIFC
 {
 public:
+	ServerSocketImpl(SSLServerCtxRef sslCtx); 
 	ServerSocketImpl(SocketFlags::ESSLFlag isSSL);
 	~ServerSocketImpl();
 	String addrString();
@@ -62,7 +64,14 @@ public:
 //	unsigned short getLocalPortRaw() { return m_localPort; }
 	SocketAddress getLocalAddress() { return m_localAddress; }
 	SocketHandle_t getfd() const { return m_sockfd; }
+
+
+	// this is deprecated, but we don't mark it so here because it's and impl. 
 	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10, 
+		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
+		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR); 
+
+	void doListen(UInt16 port, int queueSize=10, 
 		const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
 		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
 
@@ -83,6 +92,7 @@ private:
 	ServerSocketImpl(const ServerSocketImpl& arg);
 	ServerSocketImpl& operator=(const ServerSocketImpl& arg);
 	SocketFlags::ESSLFlag m_isSSL;
+	SSLServerCtxRef m_sslCtx; 
 #if defined(OW_WIN32)
 	HANDLE m_event;
 #else

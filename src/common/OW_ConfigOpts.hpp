@@ -172,6 +172,12 @@
 #ifndef OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE
 #define OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE "en"
 #endif
+#ifndef OW_DEFAULT_HTTP_SERVER_SSL_CLIENT_VERIFICATION 
+#define OW_DEFAULT_HTTP_SERVER_SSL_CLIENT_VERIFICATION "disabled"
+#endif
+#ifndef OW_DEFAULT_HTTP_SERVER_SSL_TRUST_STORE 
+#define OW_DEFAULT_HTTP_SERVER_SSL_TRUST_STORE OW_DEFAULT_SYSCONF_DIR"/openwbem/truststore"
+#endif
 
 namespace OpenWBEM
 {
@@ -235,6 +241,9 @@ namespace ConfigOpts
 	static const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt = "remoteprovifc.max_connections_per_url";
 	static const char* const ALLOWED_USERS_opt = "owcimomd.allowed_users";
 	static const char* const HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt = "http_server.default_content_language";
+	// 3.1 additions. 
+	static const char* const HTTP_SERVER_SSL_CLIENT_VERIFICATION_opt = "http_server.ssl_client_verification"; 
+	static const char* const HTTP_SERVER_SSL_TRUST_STORE = "http_server.ssl_trust_store"; 
 	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
 	// If the options begins with something else, the prefix must be part of the all caps name.
 

@@ -393,4 +393,27 @@ cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 # The default is "@libdir@/openwbem/perlproviders"
 perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 
+################################################################################
+# Determines if the server should attempt to authenticate clients
+# with SSL Client Certificate verification. 
+# disabled: no client certificate checking will take place.
+# optional: A trusted cert is authenticated (no HTTP auth necessary)
+#   An untrusted cert still passes the SSL handshake, but the client
+#   will have to pass HTTP authentication.
+# autoupdate: Same as optional, but previously unknown client certificates
+#   which pass HTTP authentication are added to the trust store, so that
+#   subsequent client connections with the same certificate won't 
+#   require HTTP authentication. 
+# required: A trusted cert is required for the the SSL handshake to
+#   succeed.
+#
+;http_server.ssl_client_verification = optional
+
+################################################################################
+# Specify the directory containing the OpenSSL trust store. 
+;http_server.ssl_trust_store = @sysconfdir@/openwbem/truststore
+
+################################################################################
+#
+
 

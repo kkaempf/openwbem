@@ -61,6 +61,7 @@ Install()
 	rm -rf stage
 	mkdir stage
 	mkdir $RESULTDIR
+	mkdir -p $STAGEDIR$OWSYSCONFDIR/openwbem/truststore
 
 	cd ../../
 	
@@ -90,6 +91,7 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 			-e "s!;http_server.timeout = .*!http_server.timeout = 3000!g" \
 			-e "s!;owcimomd.restart_on_error = .*!owcimomd.restart_on_error = false!g" \
 			-e "s!owcimomd.allowed_users = .*!owcimomd.allowed_users = test test1 test2 test3 $USER!g" \
+			-e "s!;http_server.ssl_trust_store = .*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
 		openwbem.conf > openwbem.conf-t
 	cd $STAGEDIR
 	# undo the change for the UDS, since the client won't know to use the

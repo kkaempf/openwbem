@@ -38,11 +38,13 @@
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_Socket.hpp"
 #include "OW_ServiceIFC.hpp"
 #include "OW_URL.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_Exception.hpp"
 #include "OW_SortedVectorSet.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 #include <ctime>
 
@@ -73,6 +75,12 @@ public:
 	 * untill all connections have been terminated, and cleaned up.
 	 */
 	virtual void shutdown();
+
+	/**
+	 * Is the server in the process of shutting down? 
+	 * @return true if shutting down
+	 */ 
+	bool isShuttingDown(); 
 	/**
 	 * Get the URLs associated with this http server.  This is used
 	 * by slp discovery.
@@ -117,7 +125,8 @@ public:
 	};
 private:
 	bool authenticate(HTTPSvrConnection* pconn,
-		String& userName, const String& info, OperationContext& context);
+		String& userName, const String& info, OperationContext& context, 
+					  const Socket& socket);
 	bool isAllowedUser(const String& user) const;
 
 	Mutex m_guard;
@@ -135,6 +144,11 @@ private:
 	IntrusiveReference<ThreadPool> m_threadPool;
 	SortedVectorSet<String> m_allowedUsers;
 	bool m_allowAllUsers;
+	SSLServerCtxRef m_sslCtx; 
+	Mutex m_shutdownGuard; 
+	bool m_shuttingDown;
+	SSLOpts m_sslopts; 
+	SSLTrustStoreRef m_trustStore; 
 
 	friend class HTTPSvrConnection;
 	friend class HTTPListener;

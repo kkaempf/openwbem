@@ -62,6 +62,23 @@ extern "C"
 
 namespace OpenWBEM
 {
+//////////////////////////////////////////////////////////////////////////////
+ServerSocketImpl::ServerSocketImpl(SSLServerCtxRef sslCtx)
+	: m_sockfd(-1)
+	, m_localAddress(SocketAddress::allocEmptyAddress(SocketAddress::INET))
+	, m_isActive(false)
+	, m_sslCtx(sslCtx)
+#if defined(OW_WIN32)
+	, m_event(NULL)
+{
+	m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+	OW_ASSERT(m_event != NULL);
+}
+#else
+	, m_udsFile()
+{
+}
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 ServerSocketImpl::ServerSocketImpl(SocketFlags::ESSLFlag isSSL)
@@ -116,15 +133,24 @@ ServerSocketImpl::getSelectObj() const
 #endif
 }
 
-#if defined(OW_WIN32)
 //////////////////////////////////////////////////////////////////////////////
 void
 ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	int queueSize, const String& listenAddr, 
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
-	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	m_isSSL = isSSL;
+	doListen(port, queueSize,listenAddr, reuseAddr); 
+}
+
+#if defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
+void
+ServerSocketImpl::doListen(UInt16 port, 
+	int queueSize, const String& listenAddr, 
+	SocketFlags::EReuseAddrFlag reuseAddr)
+{
+	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	close();
 	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
 	{
@@ -241,28 +267,31 @@ ServerSocketImpl::accept(int timeoutSecs)
 			Format("Resetting socket with WSAEventSelect failed: %1",
 			System::lastErrorMsg(true)).c_str());
 	}
-	return Socket(clntfd, m_localAddress.getType(), m_isSSL);
+	if (!m_sslCtx && m_isSSL == SocketFlags::E_SSL)
+	{
+		return Socket(clntfd, m_localAddress.getType(), m_isSSL);
+	}
+	return Socket(clntfd, m_localAddress.getType(), m_sslCtx);
 }
 #else
 //////////////////////////////////////////////////////////////////////////////
 void
-ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
+ServerSocketImpl::doListen(UInt16 port, 
 	int queueSize, const String& listenAddr, 
 	SocketFlags::EReuseAddrFlag reuseAddr)
 {
 	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
-	m_isSSL = isSSL;
 	close();
 	if ((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
+		OW_THROW(SocketException, Format("ServerSocket2Impl: %1",
 			strerror(errno)).c_str());
 	}
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl failed to set "
+		OW_THROW(SocketException, Format("ServerSocket2Impl failed to set "
 			"close-on-exec flag on listen socket: %1",
 			strerror(errno)).c_str());
 	}
@@ -299,18 +328,19 @@ ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
 	if (bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
+		OW_THROW(SocketException, Format("ServerSocket2Impl: %1",
 				strerror(errno)).c_str());
 	}
 	if (listen(m_sockfd, queueSize) == -1)
 	{
 		close();
-		OW_THROW(SocketException, Format("ServerSocketImpl: %1",
+		OW_THROW(SocketException, Format("ServerSocket2Impl: %1",
 			strerror(errno)).c_str());
 	}
 	fillAddrParms();
 	m_isActive = true;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 void
 ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr)
@@ -469,7 +499,13 @@ ServerSocketImpl::accept(int timeoutSecs)
 		{
 			::fcntl(clntfd, F_SETFL, fdflags ^ O_NONBLOCK);
 		}
-		return Socket(clntfd, m_localAddress.getType(), m_isSSL);
+		// TODO, how to make this bw compatible? 
+		//return Socket(clntfd, m_localAddress.getType(), m_isSSL);
+		if (!m_sslCtx && m_isSSL == SocketFlags::E_SSL)
+		{
+			return Socket(clntfd, m_localAddress.getType(), m_isSSL); // for bw compat. 
+		}
+		return Socket(clntfd, m_localAddress.getType(), m_sslCtx);
 	}
 	else
 	{

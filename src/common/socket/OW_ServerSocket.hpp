@@ -52,26 +52,21 @@ public:
 	/** Allocate a new Inet Server Socket.
 	 * @param isSSL is the Server Socket an SSL socket?
 	 */
-	ServerSocket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL)
-	  : SelectableIFC()
-	  , m_impl(new ServerSocketImpl(isSSL))
-   {
-   }
+	ServerSocket(SSLServerCtxRef sslCtx); 
+	/** Allocate a new Inet Server Socket.
+	 * @param isSSL is the Server Socket an SSL socket?
+	 */
+	ServerSocket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL); 
 	/**
 	 * Copy ctor
 	 */
-	ServerSocket(const ServerSocket& arg)
-		: SelectableIFC()
-		, m_impl(arg.m_impl) {}
+	ServerSocket(const ServerSocket& arg); 
 	/**
 	 * Accept a connection to the server socket
 	 * @param timeoutSecs the timeout
 	 * @return an Socket for the connection just accepted.
 	 */
-	Socket accept(int timeoutSecs=-1)
-	{
-		return m_impl->accept(timeoutSecs);
-	}
+	Socket accept(int timeoutSecs=-1); 
 	/**
 	 * Start listening on a port
 	 *
@@ -83,10 +78,18 @@ public:
 	 */
 	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10,
 			const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
-			SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR)
-	{
-		m_impl->doListen(port, isSSL, queueSize, listenAddr, reuseAddr);
-	}
+			SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR); 
+	/**
+	 * Start listening on a port
+	 *
+	 * @param port The port to listen on
+	 * @param queueSize the size of the listen queue
+	 * @param allInterfaces do we listen on all interfaces?
+	 * @throws SocketException
+	 */
+	void doListen(UInt16 port, int queueSize=10,
+			const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
+			SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR); 
 	/**
 	 * Start listening on a Unix Domain Socket
 	 *
@@ -95,27 +98,24 @@ public:
 	 * @throws SocketException
 	 */
 	void doListen(const String& filename, int queueSize=10, 
-		bool reuseAddr=true)
-	{
-		m_impl->doListen(filename, queueSize, reuseAddr);
-	}
+		bool reuseAddr=true); 
 	/**
 	 * Close the listen socket
 	 * @throws SocketException
 	 */
-	void close() { m_impl->close();}
+	void close(); 
 	
 	/**
 	 * Return the address of the local host
 	 * @return an SocketAddress representing the local node
 	 */
-	SocketAddress getLocalAddress() { return m_impl->getLocalAddress(); }
+	SocketAddress getLocalAddress(); 
 	/**
 	 * Get the file descriptor of the listen socket
 	 * @return a handle to the listen socket
 	 */
-	SocketHandle_t getfd() const { return m_impl->getfd(); }
-	Select_t getSelectObj() const { return m_impl->getSelectObj(); }
+	SocketHandle_t getfd() const; 
+	Select_t getSelectObj() const; 
 private:
 	IntrusiveReference<ServerSocketImpl> m_impl;
 };

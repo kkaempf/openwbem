@@ -288,3 +288,4 @@ typedef IntrusiveReference<Thread> ThreadRef;
 } // end namespace OpenWBEM
 
 #endif
+

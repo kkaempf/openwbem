@@ -45,6 +45,7 @@
 #include "OW_SocketImpl.hpp"
 #include "OW_SSLSocketImpl.hpp"
 
+
 namespace OpenWBEM
 {
 
@@ -53,6 +54,24 @@ OW_DEFINE_EXCEPTION_WITH_ID(SocketTimeout);
 
 Socket::ShutDownMechanism_t Socket::s_shutDownMechanism = 0;
 
+//////////////////////////////////////////////////////////////////////////////
+Socket::Socket(SSLClientCtxRef sslCtx)
+{
+	if (sslCtx)
+	{
+#ifndef OW_NO_SSL
+		m_impl = SocketBaseImplRef(new SSLSocketImpl(sslCtx));
+#else
+		OW_THROW(SSLException, "Not built with SSL");
+#endif // #ifndef OW_NO_SSL
+	}
+	else
+	{
+		m_impl = SocketBaseImplRef(new SocketImpl);
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 Socket::Socket(SocketFlags::ESSLFlag isSSL)
 {
 	if (isSSL == SocketFlags::E_SSL)
@@ -76,6 +95,24 @@ Socket::Socket(SocketHandle_t fd,
 	{
 #ifndef OW_NO_SSL
 		m_impl = SocketBaseImplRef(new SSLSocketImpl(fd, addrType));
+#else
+		OW_THROW(SSLException, "Not built with SSL");
+#endif // #ifndef OW_NO_SSL
+	}
+	else
+	{
+		m_impl = SocketBaseImplRef(new SocketImpl(fd, addrType));
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+// Used by ServerSocket2::accept()
+Socket::Socket(SocketHandle_t fd,
+	SocketAddress::AddressType addrType, SSLServerCtxRef sslCtx)
+{
+	if (sslCtx)
+	{
+#ifndef OW_NO_SSL
+		m_impl = SocketBaseImplRef(new SSLSocketImpl(fd, addrType, sslCtx));
 #else
 		OW_THROW(SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
@@ -161,6 +198,30 @@ Socket::gotShutDown()
 	MutexLock mlock(shutdownMutex);
 	return b_gotShutDown;
 }
+#ifndef OW_NO_SSL
+SSL*
+Socket::getSSL() const
+{
+	IntrusiveReference<SSLSocketImpl> sslsock = m_impl.cast_to<SSLSocketImpl>(); 
+	if (!sslsock)
+	{
+		return 0; 
+	}
+	return sslsock->getSSL(); 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+Socket::peerCertVerified() const
+{
+    IntrusiveReference<SSLSocketImpl> sslsock = m_impl.cast_to<SSLSocketImpl>(); 
+    if (!sslsock)
+    {
+            return false; 
+    }
+    return sslsock->peerCertVerified(); 
+}
+#endif
 
 } // end namespace OpenWBEM
 
