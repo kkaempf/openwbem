@@ -199,12 +199,14 @@ struct default_stack_size
 			return;
 		}
 
-		if (val < 1048576) {
+		if (val < 1048576) 
+		{
 			val = 1048576; // 1 MB
 			needsSetting = true;
 		}
 #ifdef PTHREAD_STACK_MIN
-		if (PTHREAD_STACK_MIN > val) {
+		if (PTHREAD_STACK_MIN > val) 
+		{
 			val = PTHREAD_STACK_MIN;
 			needsSetting = true;
 		}

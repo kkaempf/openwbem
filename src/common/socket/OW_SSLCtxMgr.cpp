@@ -199,11 +199,13 @@ SSLCtxMgr::initCtx(const String& keyfile)
 	{
 		if (SSL_CTX_use_certificate_chain_file(ctx, keyfile.c_str()) != 1)
 		{
+			SSL_CTX_free(ctx);
 			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read certificate file: %1: %2",
 				keyfile, getOpenSSLErrorDescription()).c_str());
 		}
 		if (SSL_CTX_use_PrivateKey_file(ctx, keyfile.c_str(), SSL_FILETYPE_PEM) != 1)
 		{
+			SSL_CTX_free(ctx);
 			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read key file: %1", getOpenSSLErrorDescription()).c_str());
 		}
 	}
@@ -570,6 +572,7 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	ERR_clear_error();
 	if (SSL_CTX_set_session_id_context(m_ctx, reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen) != 1)
 	{
+		SSL_CTX_free(m_ctx);
 		OW_THROW(SSLException, Format("SSLCtxMgr::initServer(): SSL_CTX_set_session_id_context failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 
@@ -577,11 +580,13 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	{
 		if (!FileSystem::exists(opts.trustStore))
 		{
+			SSL_CTX_free(m_ctx);
 			OW_THROW(SSLException, Format("Error loading truststore %1",
 										  opts.trustStore).c_str());
 		}
 		if (SSL_CTX_load_verify_locations(m_ctx,0,opts.trustStore.c_str()) != 1)
 		{
+			SSL_CTX_free(m_ctx);
 			OW_THROW(SSLException, Format("Error loading truststore %1: %2", opts.trustStore, SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 		}
 	}
