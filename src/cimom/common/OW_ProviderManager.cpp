@@ -353,16 +353,28 @@ namespace
 inline InstanceProviderIFCRef
 wrapProvider(InstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
-		return InstanceProviderIFCRef(new InstanceProviderProxy(pref, env));
+	if (!pref)
+	{
+		return pref;
+	}
+	return InstanceProviderIFCRef(new InstanceProviderProxy(pref, env));
 }
 inline SecondaryInstanceProviderIFCRef
 wrapProvider(SecondaryInstanceProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
-		return SecondaryInstanceProviderIFCRef(new SecondaryInstanceProviderProxy(pref, env));
+	if (!pref)
+	{
+		return pref;
+	}
+	return SecondaryInstanceProviderIFCRef(new SecondaryInstanceProviderProxy(pref, env));
 }
 inline MethodProviderIFCRef
 wrapProvider(MethodProviderIFCRef pref, const ProviderEnvironmentIFCRef& env)
 {
+	if (!pref)
+	{
+		return pref;
+	}
 	return MethodProviderIFCRef(new MethodProviderProxy(pref, env));
 }
 
@@ -371,6 +383,10 @@ inline AssociatorProviderIFCRef
 wrapProvider(AssociatorProviderIFCRef pref,
 	const ProviderEnvironmentIFCRef& env)
 {
+	if (!pref)
+	{
+		return pref;
+	}
 	return AssociatorProviderIFCRef(new AssociatorProviderProxy(pref, env));
 }
 #endif
