@@ -47,6 +47,8 @@ namespace OpenWBEM
 
 OW_DECLARE_APIEXCEPTION(UnknownHost, OW_COMMON_API);
 OW_DECLARE_APIEXCEPTION(SocketAddress, OW_COMMON_API);
+// TODO: This class needs to be rewritten to take into account the fact that a given hostname may have multiple 
+// ip addresses, and a given ip address may have multiple hostnames & aliases..
 class OW_COMMON_API SocketAddress
 {
 public:
