@@ -306,11 +306,12 @@ OW_LocalCIMOMHandle::invokeMethod(
 	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams)
 {
-	// Don't assume anything about locking for invokeMethod.
-	// OW_CIMServer gives the method provider a fully locking cimomhandle so whatever
-	// it does will be properly protected, although it may not be completely
-	// atomic (i.e. other operations may happen inbetween calls the provider
-	// makes)
+	// Don't know anything about locking for invokeMethod, so we have
+	// to assume the worst.  OW_CIMServer will do a getClass and possibly
+	// getInstance, we we need at least read locks.  But who knows what
+	// the provider will do, so just get dual write locks.
+	OW_CIMServerSchemaWriteLocker srl(this);
+	OW_CIMServerInstanceWriteLocker irl(this);
 	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_aclInfo);
 }
