@@ -18,6 +18,12 @@ Testing:
       infinite number of properties (to try and simulate a DNS attack)
     - Cleanup/integrate some of the tests under src/*/test subdirs
     - Create a test for mof compiling directly to the repository.
+    - Simulate problems:
+      - Out of memory.  Overload new/delete and fail at OW_MEM_LIMIT bytes.
+      - Out of disk space (for repository and/or temp files).
+      - Random syscall failure.  Send SIGUSR1 to owciomd at random intervals
+        while hammerClient is running.
+      - Do all this while running under valgrind to detect memory leaks, etc.
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
@@ -31,6 +37,8 @@ Fix problems:
       HTTP error.
     - Implement a "compatibility mode" in the client if the server doesn't 
       support the latest version(s) of the spec(s).
+    - The new redhat pthread_cancel() throws an exception that seems to clobber 
+      owcimomd.  Need to figure out how to prevent this from happening.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
@@ -190,6 +198,9 @@ Optimizations:
     - See if using OW_StringBuffer as the OW_String internal representation is 
       faster than ByteBuf. Probably remove COWReference completely and just
       store a ByteBuf/OW_StringBuffer?
+      - Fix comparisons against const char* const to not allocate a new buffer.
+      - See if using concepts of Mozilla's string classes would be better,
+        such as having a string with a large buffer for stack use.
     - Redo WQL to only process one instance at a time for better scalability.
     - Use OW_HashMap class where appropriate.
     - Change instance/associator provider interface to pass in a list of
