@@ -2,6 +2,7 @@
 #define OW_UNIT_TEST_ENVIRONMENT_
 
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Map.hpp"
 #include <iostream>
@@ -48,10 +49,10 @@ public:
 	virtual void removeSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) {
 	}
 	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &) const {
-		return OW_RequestHandlerIFCRef(0);
+		return OW_RequestHandlerIFCRef();
 	}
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, const OW_Bool) {
-		return OW_CIMOMHandleIFCRef(0);
+		return OW_CIMOMHandleIFCRef();
 	}
 
 	OW_Map<OW_String, OW_String> config;

@@ -166,7 +166,8 @@ void OW_Reference<T>::incRef()
 		++(m_pRefCount->m_count);
 	}
 }
-
+	
+extern int indent;
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 void OW_Reference<T>::decRef()
@@ -179,7 +180,24 @@ void OW_Reference<T>::decRef()
 			l.release();
 			delete m_pRefCount;
 			m_pRefCount = 0;
-cout << "About to delete: " << __PRETTY_FUNCTION__ << endl;
+if (m_pObj)
+{
+
+	for (int i = 0; i < indent; ++i)
+	{
+		cout << " ";
+	}
+	cout << "About to delete: " << __PRETTY_FUNCTION__ << endl;
+	++indent;
+	delete m_pObj;
+	--indent;
+	for (int i = 0; i < indent; ++i)
+	{
+		cout << " ";
+	}
+	cout << "Finished delete: " << __PRETTY_FUNCTION__ << endl;
+}
+else
 			delete m_pObj;
 		}
 		else

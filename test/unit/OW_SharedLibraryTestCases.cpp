@@ -34,6 +34,7 @@
 #include "OW_SharedLibrary.hpp"
 #include "testSharedLibraryLoader.hpp"
 
+
 void OW_SharedLibraryTestCases::setUp()
 {
 }
@@ -56,8 +57,8 @@ Test* OW_SharedLibraryTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_SharedLibrary");
 
-	testSuite->addTest (new TestCaller <OW_SharedLibraryTestCases> 
-			("testGetFunctionPointer", 
+	testSuite->addTest (new TestCaller <OW_SharedLibraryTestCases>
+			("testGetFunctionPointer",
 			&OW_SharedLibraryTestCases::testGetFunctionPointer));
 
 	return testSuite;

@@ -35,6 +35,8 @@
 #include "OW_Reference.hpp"
 #include "OW_SharedLibrary.hpp"
 
+extern int indent;
+
 template <class T>
 class OW_SharedLibraryReference
 {
@@ -53,8 +55,31 @@ public:
 
 	~OW_SharedLibraryReference()
 	{
+for (int i = 0; i < indent; ++i)
+{
+	cout << " ";
+}
+cout << __PRETTY_FUNCTION__ << " about to set obj to 0 this = " << this << endl;
+++indent;
+
 		m_obj = 0;
+
+--indent;
+for (int i = 0; i < indent; ++i)
+{
+	cout << " ";
+}
+cout << __PRETTY_FUNCTION__ << " about to set lib to 0 this = " << this << endl;
+++indent;
+
 		m_sharedLib = 0;
+
+--indent;
+for (int i = 0; i < indent; ++i)
+{
+	cout << " ";
+}
+cout << __PRETTY_FUNCTION__ << " about to set lib == 0 this = " << this << endl;
 	}
 
 	OW_SharedLibraryRef getLibRef() const

@@ -210,29 +210,25 @@ class testMuxLoader: public OW_ProviderIFCLoaderBase
 			{}
 		virtual ~testMuxLoader(){}
 		virtual void loadIFCs(
-				OW_Array<OW_ProviderIFCBaseIFCRef>& out,
-				OW_Array<OW_SharedLibraryRef>& shlibs) const
+				OW_Array<OW_ProviderIFCBaseIFCRef>& out) const
 		{
-			ifc_lib_pair rval;
+			OW_ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "lib1" );
-			if ( !rval.first.isNull() && !rval.second.isNull() )
+			if ( !rval.isNull()  )
 			{
-				out.push_back( rval.first );
-				shlibs.push_back( rval.second );
+				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "lib1" );
-			if ( !rval.first.isNull() && !rval.second.isNull() )
+			if ( !rval.isNull() )
 			{
-				out.push_back( rval.first );
-				shlibs.push_back( rval.second );
+				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "lib1" );
-			if ( !rval.first.isNull() && !rval.second.isNull() )
+			if ( !rval.isNull() )
 			{
-				out.push_back( rval.first );
-				shlibs.push_back( rval.second );
+				out.push_back( rval );
 			}
 
 		}
@@ -246,29 +242,25 @@ class testMuxLoaderBad: public OW_ProviderIFCLoaderBase
 			{}
 		virtual ~testMuxLoaderBad(){}
 		virtual void loadIFCs(
-				OW_Array<OW_ProviderIFCBaseIFCRef>& out,
-				OW_Array<OW_SharedLibraryRef>& shlibs) const
+				OW_Array<OW_ProviderIFCBaseIFCRef>& out) const
 		{
-			ifc_lib_pair rval;
+			OW_ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "libbad" );
-			if ( !rval.first.isNull() && !rval.second.isNull() )
+			if ( !rval.isNull() )
 			{
-				out.push_back( rval.first );
-				shlibs.push_back( rval.second );
+				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "libbad" );
-			if ( !rval.first.isNull() && !rval.second.isNull() )
+			if ( !rval.isNull() )
 			{
-				out.push_back( rval.first );
-				shlibs.push_back( rval.second );
+				out.push_back( rval );
 			}
 
 			rval = createProviderIFCFromLib( "libbad" );
-			if ( !rval.first.isNull() && !rval.second.isNull() )
+			if ( !rval.isNull() )
 			{
-				out.push_back( rval.first );
-				shlibs.push_back( rval.second );
+				out.push_back( rval );
 			}
 
 		}

@@ -164,7 +164,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 	m_options.useDigest = !item.equalsIgnoreCase("false");
 
 	// TODO: Fix this
-	m_options.requestHandler = env->getRequestHandler("CIM/XML");
+	//m_options.requestHandler = env->getRequestHandler("CIM/XML");
 	m_options.env = env;
 
 	m_threadCountSemaphore = new OW_Semaphore(m_options.maxConnections);
@@ -175,79 +175,6 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-
-class PathWrapperEnv : public OW_ServiceEnvironmentIFC
-{
-public:
-	PathWrapperEnv(const OW_ServiceEnvironmentIFCRef& toWrap)
-	{
-		m_wrapped = toWrap;
-	}
-	
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications)
-	{
-		return m_wrapped->getCIMOMHandle(username, doIndications);
-	}
-	
-	virtual OW_LoggerRef getLogger() const
-	{
-		return m_wrapped->getLogger();
-	}
-	
-	virtual OW_String getConfigItem(const OW_String &name) const
-	{
-		if (name == OW_ConfigOpts::HTTP_PATH_opt)
-		{
-			return m_path;
-		}
-		else
-		{
-			return m_wrapped->getConfigItem(name);
-		}
-	}
-	
-	virtual void setConfigItem( const OW_String& item,
-				const OW_String& value, OW_Bool overwritePrevious = true )
-	{
-		if (item == OW_ConfigOpts::HTTP_PATH_opt)
-		{
-			m_path = value;
-		}
-		else
-		{
-			m_wrapped->setConfigItem(item, value, overwritePrevious);
-		}
-	}
-
-	virtual void addSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb)
-	{
-		m_wrapped->addSelectable(obj, cb);
-	}
-	
-	virtual void removeSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb)
-	{
-		m_wrapped->removeSelectable(obj,cb);
-	}
-	
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &id) const
-	{
-		return m_wrapped->getRequestHandler(id);
-	}
-	
-	virtual OW_Bool authenticate(OW_String &userName, const OW_String &info, OW_String &details)
-	{
-		return m_wrapped->authenticate(userName,info,details);
-	}
-
-private:
-	OW_ServiceEnvironmentIFCRef m_wrapped;
-	OW_String m_path;
-};
-
-}
 //////////////////////////////////////////////////////////////////////////////
 class OW_HTTPServerSelectableCallback : public OW_SelectableCallbackIFC
 {
@@ -286,20 +213,7 @@ public:
 
 			m_HTTPServer->incThreadCount();
 
-			OW_RequestHandlerIFCRef newRequestHandler(
-				m_HTTPServer->m_options.requestHandler.getLibRef(), 
-				m_HTTPServer->m_options.requestHandler->clone());
-
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
-			// create a wrapper environment that will report the path to the
-			// request handler
-			OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
-				newOpts.env));
-
-			newOpts.env = wrapperEnv;
-
-			newOpts.requestHandler = newRequestHandler;
-			newOpts.requestHandler->setEnvironment(wrapperEnv);
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
 

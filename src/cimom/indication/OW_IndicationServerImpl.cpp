@@ -472,5 +472,12 @@ getOWVersion()
 {
 	return OW_VERSION;
 }
-
+/*
+#include <stdio.h>
+extern "C"
+void _fini(void)
+{
+	printf("_fini of indication server lib");
+}
+*/
 

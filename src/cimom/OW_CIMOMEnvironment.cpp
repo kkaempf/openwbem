@@ -187,6 +187,8 @@ OW_CIMOMEnvironment::startServices()
 void
 OW_CIMOMEnvironment::shutdown()
 {
+
+cout << "Starting OW_CIMOMEnvironment::shutdown()" << endl;
 	OW_MutexLock ml(m_monitor);
 
 	// Shutdown the polling manager
@@ -240,6 +242,8 @@ OW_CIMOMEnvironment::shutdown()
 
 	// Delete the loger
 	m_Logger = 0;
+cout << "Ending OW_CIMOMEnvironment::shutdown()" << endl;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -278,11 +282,6 @@ OW_CIMOMEnvironment::_createIndicationServer()
 	// Determine if user has disabled indication exportation
 	m_indicationsDisabled = getConfigItem(
 		OW_ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true");
-
-	// Note: The indication server is always started up, because it is
-	// responsible for the polled providers. If indications are disabled,
-	// then the exportIndication method will never actually export an
-	// indication.
 
 	if (!m_indicationsDisabled)
 	{
@@ -416,7 +415,7 @@ OW_CIMOMEnvironment::_loadServices()
 		OW_String libName = libPath;
 		libName += dirEntries[i];
 
-		OW_ServiceIFCRef srv = 
+		OW_ServiceIFCRef srv =
 			OW_SafeLibCreate<OW_ServiceIFC>::loadAndCreateObject(libName,
 				"createService", getLogger());
 
@@ -556,6 +555,7 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 
+
 	OW_CIMOMEnvironmentRef eref(this, true);
 
 	if(doIndications
@@ -566,6 +566,7 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 
 		if(irl)
 		{
+cout << "**********!OW_CIMOMEnvironment::getCIMOMHandle doing indications!" << endl;
 			OW_RepositoryIFCRef rref(new OW_SharedLibraryRepository(irl));
 			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
 				aclInfo));
@@ -633,13 +634,13 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 			if(!sll)
 			{
 				m_indicationRepLayerDisabled = true;
-				logError(format("CIMOM failed to load indication rep layer"
+				logError(format("CIMOM failed to create SharedLibraryLoader"
 					" library %1", libname));
 				return retref;
 			}
 
 			m_indicationRepLayerLib = sll->loadSharedLibrary(libname, m_Logger);
-			if(!m_indicationRepLayerLib);
+			if(!m_indicationRepLayerLib)
 			{
 				m_indicationRepLayerDisabled = true;
 				logError(format("CIMOM failed to load indication rep layer"
@@ -648,7 +649,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 			}
 		}
 
-		OW_IndicationRepLayer* pirep = 
+		OW_IndicationRepLayer* pirep =
 			OW_SafeLibCreate<OW_IndicationRepLayer>::createObj(
 				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger);
 

@@ -170,7 +170,7 @@ private:
 	OW_Reference<OW_UnnamedPipe> m_upipe;
 	OW_Bool m_chunkedOut;
 	OW_String m_userName;
-
+	OW_RequestHandlerIFCRef m_requestHandler;
 	OW_HTTPServer::Options m_options;
 
 

@@ -93,9 +93,9 @@ OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_InetSocket socket,
 	, m_upipe(upipe)
 	, m_chunkedOut(false)
 	, m_userName()
+	, m_requestHandler()
 	, m_options(opts)
 {
-	//m_socket.setReceiveTimeout(30);
 	m_socket.setTimeouts(SOCKET_TIMEOUT);
 }
 
@@ -387,7 +387,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 	if (!m_chunkedOut)
 	{
 		ostream* ostrToSend = ostrEntity;
-		if (m_options.requestHandler->hasError())
+		if (m_requestHandler && m_requestHandler->hasError())
 		{
 			ostrToSend = &ostrError;
 		}
@@ -472,7 +472,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		}
 
 		OW_ASSERT(ostrChunk);
-		if (m_options.requestHandler->hasError())
+		if (m_requestHandler && m_requestHandler->hasError())
 		{
 			OW_Array<OW_String> errorAr = ostrError.toString().tokenize("\n\r");
 			OW_String strippedError;
@@ -895,6 +895,79 @@ OW_HTTPSvrConnection::trace()
 	ostr.termOutput();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+
+class PathWrapperEnv : public OW_ServiceEnvironmentIFC
+{
+public:
+	PathWrapperEnv(const OW_ServiceEnvironmentIFCRef& toWrap)
+	{
+		m_wrapped = toWrap;
+	}
+	
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications)
+	{
+		return m_wrapped->getCIMOMHandle(username, doIndications);
+	}
+	
+	virtual OW_LoggerRef getLogger() const
+	{
+		return m_wrapped->getLogger();
+	}
+	
+	virtual OW_String getConfigItem(const OW_String &name) const
+	{
+		if (name == OW_ConfigOpts::HTTP_PATH_opt)
+		{
+			return m_path;
+		}
+		else
+		{
+			return m_wrapped->getConfigItem(name);
+		}
+	}
+	
+	virtual void setConfigItem( const OW_String& item,
+				const OW_String& value, OW_Bool overwritePrevious = true )
+	{
+		if (item == OW_ConfigOpts::HTTP_PATH_opt)
+		{
+			m_path = value;
+		}
+		else
+		{
+			m_wrapped->setConfigItem(item, value, overwritePrevious);
+		}
+	}
+
+	virtual void addSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb)
+	{
+		m_wrapped->addSelectable(obj, cb);
+	}
+	
+	virtual void removeSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb)
+	{
+		m_wrapped->removeSelectable(obj,cb);
+	}
+	
+	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &id) const
+	{
+		return m_wrapped->getRequestHandler(id);
+	}
+	
+	virtual OW_Bool authenticate(OW_String &userName, const OW_String &info, OW_String &details)
+	{
+		return m_wrapped->authenticate(userName,info,details);
+	}
+
+private:
+	OW_ServiceEnvironmentIFCRef m_wrapped;
+	OW_String m_path;
+};
+
+}
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -918,11 +991,22 @@ OW_HTTPSvrConnection::post(istream& istr)
 */
 
 	// set the path for the handler
-	m_options.requestHandler->getEnvironment()->setConfigItem(
+
+	// TODO: Fix this to get the id from the path somehow
+	m_requestHandler =
+		m_options.env->getRequestHandler(OW_CIMXML_ID);
+
+	// create a wrapper environment that will report the path to the
+	// request handler
+	OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
+		m_options.env));
+	wrapperEnv->setConfigItem(
 		OW_ConfigOpts::HTTP_PATH_opt, m_requestLine[1]);
 
+	m_requestHandler->setEnvironment(wrapperEnv);
+
 	// process the request
-	m_options.requestHandler->process(&istr, ostrEntity, &ostrError, m_userName);
+	m_requestHandler->process(&istr, ostrEntity, &ostrError, m_userName);
 
 	sendPostResponse(ostrEntity, ostrError);
 
@@ -950,10 +1034,19 @@ OW_HTTPSvrConnection::options(istream& istr)
 	OW_CIMFeatures cf;
 	
 	// set the path for the handler
-	m_options.requestHandler->getEnvironment()->setConfigItem(
+	m_requestHandler =
+		m_options.env->getRequestHandler(OW_CIMXML_ID);
+
+	// create a wrapper environment that will report the path to the
+	// request handler
+	OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
+		m_options.env));
+	wrapperEnv->setConfigItem(
 		OW_ConfigOpts::HTTP_PATH_opt, m_requestLine[1]);
-	
-	m_options.requestHandler->options(cf);
+
+	m_requestHandler->setEnvironment(wrapperEnv);
+
+	m_requestHandler->options(cf);
 	addHeader("Opt", cf.extURL + " ; ns=" + hp);
 	hp += "-";
 	addHeader(hp + "CIMProtocolVersion", cf.protocolVersion);
