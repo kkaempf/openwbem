@@ -52,11 +52,14 @@
 #include <unistd.h>
 #include <algorithm>
 
+using namespace OpenWBEM;
+using namespace WBEMFlags;
+
 namespace{
 
 // We use multiple inheritance here because our provider is to be both an
 // Instance and a method provider
-class RPMIP : public OW_CppInstanceProviderIFC, public OW_CppMethodProviderIFC
+class RPMIP : public CppInstanceProviderIFC, public CppMethodProviderIFC
 {
 public:
 
@@ -74,7 +77,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 	void
-		initialize(const OW_ProviderEnvironmentIFCRef&)
+		initialize(const ProviderEnvironmentIFCRef&)
 	{
 		struct stat fs;
 		if (stat("/usr/bin/dpkg", &fs) == 0)
@@ -100,92 +103,93 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	void
 		enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass )
 	{
 		(void)cimClass;
 		(void)env;
 
-		OW_String cmd = "/usr/bin/apt-cache search .*";
-		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+		String cmd = "/usr/bin/apt-cache search .*";
+		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
-		OW_StringArray lines = pos.out()->readAll().tokenize("\n");
+		StringArray lines = pos.out()->readAll().tokenize("\n");
 
 		sort(lines.begin(), lines.end());
 
 		if (pos.getExitStatus() != 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
+			OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
 		}
 
 
-		for (OW_StringArray::const_iterator iter = lines.begin();
+		for (StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
-			OW_CIMObjectPath newCop(className, ns);
-			newCop.addKey("Name", OW_CIMValue(iter->tokenize()[0]));
+			CIMObjectPath newCop(className, ns);
+			newCop.setKeyValue("Name", CIMValue(iter->tokenize()[0]));
 			result.handle(newCop);
 		}
 	}
 
 
 //////////////////////////////////////////////////////////////////////////////
-	struct InstanceCreator : public OW_CIMObjectPathResultHandlerIFC
+	struct InstanceCreator : public CIMObjectPathResultHandlerIFC
 	{
-		InstanceCreator(OW_CIMInstanceResultHandlerIFC& result, const OW_CIMClass& cimClass_) : m_result(result), cimClass(cimClass_) {}
-		void doHandle(const OW_CIMObjectPath& path)
+		InstanceCreator(CIMInstanceResultHandlerIFC& result, const CIMClass& cimClass_) : m_result(result), cimClass(cimClass_) {}
+		void doHandle(const CIMObjectPath& path)
 		{
-			OW_CIMInstance rval = cimClass.newInstance();
+			CIMInstance rval = cimClass.newInstance();
 			rval.setProperties(path.getKeys());
 
 			if (!RPMIP::processPkg(rval))
 			{
-				OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+				OW_THROWCIMMSG(CIMException::NOT_FOUND,
 					"The Instance does not (any longer) exist");
 			}
 			m_result.handle(rval);
 		}
-		OW_CIMInstanceResultHandlerIFC& m_result;
-		OW_CIMClass cimClass;
+		CIMInstanceResultHandlerIFC& m_result;
+		CIMClass cimClass;
 	};
 
 	void
 		enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool localOnly, 
-		OW_Bool deep, 
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		ELocalOnlyFlag localOnly, 
+		EDeepFlag deep, 
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass )
 	{
-		OW_String cmd = "/usr/bin/apt-cache search .*";
-		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+		env->getLogger()->logDebug("in RPM::enumInstances");
+		String cmd = "/usr/bin/apt-cache search .*";
+		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
-		OW_StringArray lines = pos.out()->readAll().tokenize("\n");
+		StringArray lines = pos.out()->readAll().tokenize("\n");
 
 		sort(lines.begin(), lines.end());
 
 		if (pos.getExitStatus() != 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
+			OW_THROWCIMMSG(CIMException::FAILED, "Bad exit status from popen");
 		}
 
 
-		OW_CIMInstanceArray insts;
-		for (OW_StringArray::const_iterator iter = lines.begin();
+		CIMInstanceArray insts;
+		for (StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
-			OW_CIMObjectPath newCop(className, ns);
-			newCop.addKey("Name", OW_CIMValue(iter->tokenize()[0]));
-			OW_CIMInstance rval = cimClass.newInstance();
+			CIMObjectPath newCop(className, ns);
+			newCop.setKeyValue("Name", CIMValue(iter->tokenize()[0]));
+			CIMInstance rval = cimClass.newInstance();
 			rval.setProperties(newCop.getKeys());
 			insts.push_back(rval);
 		}
@@ -197,28 +201,28 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstance
+	CIMInstance
 		getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		OW_Bool localOnly,
-		OW_Bool includeQualifiers, 
-		OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
+		ELocalOnlyFlag localOnly,
+		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
 		(void)cimClass;
 
-		OW_CIMInstance rval = cimClass.newInstance();
+		CIMInstance rval = cimClass.newInstance();
 		rval.setProperties(instanceName.getKeys());
 
 
 		if (!RPMIP::processPkg(rval))
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+			OW_THROWCIMMSG(CIMException::NOT_FOUND,
 				"The Instance does not (any longer) exist");
 		}
 
@@ -232,29 +236,29 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPath
+	CIMObjectPath
 		createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 		// not applicable with our apt implementation.
 		(void)env;
 		(void)ns;
 		(void)cimInstance;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
 
 //////////////////////////////////////////////////////////////////////////////
 	void
 		modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
-		OW_Bool includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
+		EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
@@ -263,15 +267,15 @@ public:
 		(void)includeQualifiers;
 		(void)propertyList;
 		(void)theClass;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 
 //////////////////////////////////////////////////////////////////////////////
 	void
 		deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		// not applicable with our apt implementation.
 		(void)env;
@@ -280,23 +284,23 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMValue
+	CIMValue
 		invokeMethod(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& methodName,
-		const OW_CIMParamValueArray& in,
-		OW_CIMParamValueArray& out )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in,
+		CIMParamValueArray& out )
 	{
 		(void)env;
 		(void)ns;
 		(void)out;
 		(void)in;
 
-		OW_String pkgName;
-		OW_CIMPropertyArray props = path.getKeys();
-		for (OW_CIMPropertyArray::const_iterator iter = props.begin();
+		String pkgName;
+		CIMPropertyArray props = path.getKeys();
+		for (CIMPropertyArray::const_iterator iter = props.begin();
 			iter != props.end(); ++iter)
 		{
 			if (iter->getName().equalsIgnoreCase("name"))
@@ -306,20 +310,20 @@ public:
 			}
 		}
 
-		OW_StringArray cmd;
-		cmd.push_back(OW_String("/usr/bin/apt-get"));
-		cmd.push_back(OW_String("-y"));
+		StringArray cmd;
+		cmd.push_back(String("/usr/bin/apt-get"));
+		cmd.push_back(String("-y"));
 		cmd.push_back(methodName);
 		cmd.push_back(pkgName);
 
-		int rc = OW_Exec::safeSystem(cmd);
+		int rc = Exec::safeSystem(cmd);
 
-		return OW_CIMValue(OW_Int32(rc));
+		return CIMValue(Int32(rc));
 	}
 
 
 private:
-	static OW_String _pkgHandler;
+	static String _pkgHandler;
 
 public:
 	/**
@@ -331,27 +335,27 @@ public:
 	 * @return True if successful, false if not (like the instance doesn't
 	 *         exist)
 	 */
-	static OW_Bool
-		processPkg(OW_CIMInstance& inst)
+	static bool
+		processPkg(CIMInstance& inst)
 	{
-		OW_String name;
+		String name;
 		inst.getProperty("Name").getValue().get(name);
 
 		// get package details
-		OW_String cmd = "/usr/bin/apt-cache --no-a show ";
+		String cmd = "/usr/bin/apt-cache --no-a show ";
 		cmd += name;
-		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
-		OW_StringArray lines = pos.out()->readAll().tokenize("\n");
+		StringArray lines = pos.out()->readAll().tokenize("\n");
 		if (pos.getExitStatus() != 0)
 		{
-			return OW_Bool(false);
+			return false;
 		}
 		// TODO parse output and add properties
 
 		bool hitPackage = false;
-		OW_String curName, value;
-		for (OW_StringArray::const_iterator iter = lines.begin();
+		String curName, value;
+		for (StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
 			if ((*iter)[0] == ' ')
@@ -393,7 +397,7 @@ public:
 				|| curName.equals("Conflicts")
 				|| curName.equals("Recommends"))
 			{
-				inst.setProperty(curName, OW_CIMValue(value.tokenize(",")));
+				inst.setProperty(curName, CIMValue(value.tokenize(",")));
 			}
 
 			else if (curName.equals("Size")
@@ -406,11 +410,11 @@ public:
 				}
 				try
 				{
-					inst.setProperty(curName, OW_CIMValue(value.toUInt32()));
+					inst.setProperty(curName, CIMValue(value.toUInt32()));
 				}
-				catch (const OW_StringConversionException& e)
+				catch (const StringConversionException& e)
 				{
-					OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output");
+					OW_THROWCIMMSG(CIMException::FAILED, "Provider failed parsing output");
 				}
 			}
 
@@ -427,7 +431,7 @@ public:
 				|| curName.equals("Caption")
 				)
 			{
-				inst.setProperty(curName, OW_CIMValue(value));
+				inst.setProperty(curName, CIMValue(value));
 			}
 			else
 			{
@@ -439,16 +443,16 @@ public:
 
 		// determine if package is installed.
 		cmd = _pkgHandler + name;
-		if (OW_Exec::safeSystem(cmd.tokenize()) == 0)
+		if (Exec::safeSystem(cmd.tokenize()) == 0)
 		{
-			inst.setProperty("Status", OW_CIMValue(OW_String("Installed")));
+			inst.setProperty("Status", CIMValue(String("Installed")));
 		}
 		else
 		{
-			inst.setProperty("Status", OW_CIMValue(OW_String("Available")));
+			inst.setProperty("Status", CIMValue(String("Available")));
 		}
 
-		return OW_Bool(true);
+		return true;
 	}
 
 		/**
@@ -460,31 +464,31 @@ public:
 	 * @return True if successful, false if not (like the instance doesn't
 	 *         exist)
 	 */
-	static OW_Bool
-		processPkgs(OW_CIMInstanceArray& insts)
+	static bool
+		processPkgs(CIMInstanceArray& insts)
 	{
-		OW_String cmd = "/usr/bin/apt-cache --no-a show ";
+		String cmd = "/usr/bin/apt-cache --no-a show ";
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
-			OW_String name;
+			String name;
 			insts[i].getPropertyT("Name").getValueT().get(name);
 
 			// get package details
 			cmd += name;
 			cmd += " ";
 		}
-		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
+		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 
-		OW_StringArray lines = pos.out()->readAll().tokenize("\n");
+		StringArray lines = pos.out()->readAll().tokenize("\n");
 		if (pos.getExitStatus() != 0)
 		{
-			return OW_Bool(false);
+			return false;
 		}
 		
 		size_t curInst = size_t(-1);
 
-		OW_String curName, value;
-		for (OW_StringArray::const_iterator iter = lines.begin();
+		String curName, value;
+		for (StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
 			if ((*iter)[0] == ' ')
@@ -519,18 +523,18 @@ public:
 
 				// determine if package is installed.
 				cmd = _pkgHandler + value;
-				if (OW_Exec::safeSystem(cmd.tokenize()) == 0)
+				if (Exec::safeSystem(cmd.tokenize()) == 0)
 				{
-					insts[curInst].setProperty("Status", OW_CIMValue(OW_String("Installed")));
+					insts[curInst].setProperty("Status", CIMValue(String("Installed")));
 				}
 				else
 				{
-					insts[curInst].setProperty("Status", OW_CIMValue(OW_String("Available")));
+					insts[curInst].setProperty("Status", CIMValue(String("Available")));
 				}
 
 			}
 
-			OW_CIMInstance& inst = insts[curInst];
+			CIMInstance& inst = insts[curInst];
 
 
 			if (curName.equals("Depends")
@@ -540,7 +544,7 @@ public:
 				|| curName.equals("Conflicts")
 				|| curName.equals("Recommends"))
 			{
-				inst.setProperty(curName, OW_CIMValue(value.tokenize(",")));
+				inst.setProperty(curName, CIMValue(value.tokenize(",")));
 			}
 
 			else if (curName.equals("Size")
@@ -553,11 +557,11 @@ public:
 				}
 				try
 				{
-					inst.setProperty(curName, OW_CIMValue(value.toUInt32()));
+					inst.setProperty(curName, CIMValue(value.toUInt32()));
 				}
-				catch (const OW_StringConversionException& e)
+				catch (const StringConversionException& e)
 				{
-					OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider failed parsing output");
+					OW_THROWCIMMSG(CIMException::FAILED, "Provider failed parsing output");
 				}
 			}
 
@@ -574,7 +578,7 @@ public:
 				|| curName.equals("Caption")
 				)
 			{
-				inst.setProperty(curName, OW_CIMValue(value));
+				inst.setProperty(curName, CIMValue(value));
 			}
 			else
 			{
@@ -584,12 +588,12 @@ public:
 
 		}
 
-		return OW_Bool(true);
+		return true;
 	}
 
 };
 
-OW_String RPMIP::_pkgHandler;
+String RPMIP::_pkgHandler;
 //////////////////////////////////////////////////////////////////////////////
 
 }
