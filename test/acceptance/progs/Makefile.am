@@ -123,6 +123,7 @@ infiniteClient_LDADD = \
 
 infiniteClient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
+$(SSL_LIBS) \
 -o infiniteClient
 
 infiniteClient_SOURCES = \
@@ -139,6 +140,7 @@ owcimclientcl_LDADD = \
 
 owcimclientcl_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
+$(SSL_LIBS) \
 -o owcimclientcl
 
 owcimclientcl_SOURCES = \
@@ -154,6 +156,7 @@ testinstprov_LDADD = \
 
 testinstprov_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
+$(SSL_LIBS) \
 -o testinstprov
 
 testinstprov_SOURCES = \
@@ -169,6 +172,7 @@ fakeclient_LDADD = \
 
 fakeclient_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
+$(SSL_LIBS) \
 -o fakeclient
 
 fakeclient_SOURCES = \
