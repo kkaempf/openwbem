@@ -49,7 +49,7 @@ class OW_RequestHandlerIFCXML : public OW_RequestHandlerIFC
 {
 public:
 
-	OW_RequestHandlerIFCXML(): m_hasError(false), m_path() {}
+	OW_RequestHandlerIFCXML(): m_path() {}
 
 	virtual ~OW_RequestHandlerIFCXML()
 	{
@@ -58,12 +58,6 @@ public:
 	virtual OW_StringArray getSupportedContentTypes() const;
 
 	virtual OW_String getContentType() const;
-
-	/**
-	 * has an error occurred?
-	 * @return true if an error occurred.
-	 */
-	virtual OW_Bool doHasError() { return m_hasError; }
 
 protected:
 	/**
@@ -100,7 +94,6 @@ protected:
 	virtual void outputError(OW_CIMException::ErrNoType errorCode,
 		OW_String, std::ostream& ostr) = 0;
 
-	OW_Bool m_hasError;
 	OW_String m_path;
 
 };

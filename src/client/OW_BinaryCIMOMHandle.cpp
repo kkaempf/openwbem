@@ -96,16 +96,8 @@ checkError(OW_CIMProtocolIStreamIFCRef istr)
 	catch (OW_IOException& e)
 	{
 		while(*istr) istr->get();
-		if (istr->getError().length() == 0)
-		{
-			throw e;
-		}
-		else
-		{
-			OW_TempFileStream error(500);
-			istr->getError(error);
-			checkError(error);
-		}
+		istr->checkForError();
+		throw e;
 	}
 }
 
@@ -165,19 +157,11 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 	catch (OW_IOException& e)
 	{
 		while(*istr) istr->get();
-		if (istr->getError().length() == 0)
-		{
-			throw e;
-		}
+		istr->checkForError();
+		throw e;
 	}
 	while(*istr) istr->get();
-	OW_String errorStr = istr->getError();
-	if (istr->getError().length() > 0)
-	{
-		OW_TempFileStream error(500);
-		istr->getError(error);
-		checkError(error);
-	}
+	istr->checkForError();
 	return rval;
 }
 
@@ -193,19 +177,11 @@ readAndDeliver(OW_CIMProtocolIStreamIFCRef& istr, T& result)
 	catch (OW_IOException& e)
 	{
 		while(*istr) istr->get();
-		if (istr->getError().length() == 0)
-		{
-			throw e;
-		}
+		istr->checkForError();
+		throw e;
 	}
 	while(*istr) istr->get();
-	OW_String errorStr = istr->getError();
-	if (istr->getError().length() > 0)
-	{
-		OW_TempFileStream error(500);
-		istr->getError(error);
-		checkError(error);
-	}
+	istr->checkForError();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -440,14 +416,8 @@ OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 	catch(OW_IOException& e)
 	{
 		while(*in) in->get();
-		if (in->getError().length() > 0)
-		{
-			checkError(in);
-		}
-		else
-		{
-			throw e;
-		}
+		in->checkForError();
+		throw e;
 	}
 	return cv;
 }
@@ -581,14 +551,8 @@ OW_BinaryCIMOMHandle::getProperty(const OW_CIMObjectPath& path,
 	catch (OW_IOException& e)
 	{
 		while(*in) in->get();
-		if (in->getError().length() > 0)
-		{
-			checkError(in);
-		}
-		else
-		{
-			throw e;
-		}
+		in->checkForError();
+		throw e;
 	}
 	return cv;
 }

@@ -45,8 +45,6 @@ public:
 
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
             std::ostream *ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
-	
-	virtual OW_Bool doHasError();
 
 	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 
@@ -137,7 +135,6 @@ private:
 
 	OW_Bool writeFileName(std::ostream& ostrm, const OW_String& fname);
 
-	OW_Bool m_isError;
 	OW_UserId m_userId;
 };
 

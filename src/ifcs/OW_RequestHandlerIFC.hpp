@@ -80,7 +80,7 @@ public:
 	 * @return true if an error occurred.
 	 */
 
-	OW_Bool hasError();
+	OW_Bool hasError(OW_Int32& errCode, OW_String& errDescr);
 
 	/**
 	 * What options are available for a particular path?
@@ -120,7 +120,7 @@ protected:
 	 * be sent back, or osrtError?)
 	 * @return true if an error occurred.
 	 */
-	virtual OW_Bool doHasError() = 0;
+	virtual OW_Bool doHasError(OW_Int32& errCode, OW_String& errDescr);
 
 	/**
 	 * Fill out the Features that the request handler at the path supports.
@@ -130,6 +130,9 @@ protected:
 	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars) = 0;
 
 	OW_String m_cimError;
+	OW_Bool m_hasError;
+	OW_Int32 m_errorCode;
+	OW_String m_errorDescription;
 
 private:
 	OW_ServiceEnvironmentIFCRef m_env;

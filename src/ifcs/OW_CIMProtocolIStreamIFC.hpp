@@ -52,10 +52,14 @@ class OW_CIMProtocolIStreamIFC : public std::istream
 {
 public:
 	OW_CIMProtocolIStreamIFC(std::streambuf* strbuf) : std::istream(strbuf) {}
-	virtual OW_String getTrailer(const OW_String& key) const
-			{ (void)key; return OW_String(); }
-	virtual OW_String getError() const { return OW_String(); }
-	virtual OW_UInt32 getError(std::ostream& ostr) const { (void)ostr; return 0; }
+
+	/**
+	 * This function should be called after the end of the stream has 
+	 * been reached.  It will check the trailers for an error, and through
+	 * an appropriate CIMException (constructed from the info from the 
+	 * trailers).
+	 */
+	virtual void checkForError() const { }
 	virtual ~OW_CIMProtocolIStreamIFC() {}
 };
 

@@ -369,10 +369,12 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 	OW_DataBlockStream& ostrError)
 {
 	int clen = -1;
+	OW_Int32 errCode = 0;
+	OW_String errDescr = "";
 	if (!m_chunkedOut)
 	{
 		ostream* ostrToSend = ostrEntity;
-		if (m_requestHandler && m_requestHandler->hasError())
+		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
 			ostrToSend = &ostrError;
 		}
@@ -466,42 +468,15 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		}
 
 		OW_ASSERT(ostrChunk);
-		if (m_requestHandler && m_requestHandler->hasError())
+		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
-			const char* data = ostrError.data();
-			size_t size = ostrError.size();
-			OW_StringBuffer escapedError;
-			for (size_t idx = 0; idx < size; ++idx)
+			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorCode", 
+				OW_String(errCode));
+			if (errDescr.length() > 0)
 			{
-				switch (data[idx])
-				{
-					case '\0':
-						escapedError += "\\0";
-						break;
-					case '\n':
-						escapedError += "\\n";
-						break;
-					case '\r':
-						escapedError += "\\r";
-						break;
-					case '\\':
-						escapedError += "\\\\";
-						break;
-					default:
-						escapedError += data[idx];
-						break;
-				}
+				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorDescription", 
+					errDescr);
 			}
-			/*
-			OW_Array<OW_String> errorAr = ostrError.toString().tokenize("\n\r");
-			OW_String strippedError;
-			for (size_t i = 0; i < errorAr.size(); ++i)
-			{
-				strippedError += errorAr[i] + " ";
-			}
-			*/
-			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorTrailer",
-				escapedError.releaseString());
 			if (m_requestHandler->getCIMError().length() > 0)
 			{
 				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError",

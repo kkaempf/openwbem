@@ -37,6 +37,8 @@
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_HTTPException.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMErrorException.hpp"
 
 using std::istream;
 
@@ -166,58 +168,30 @@ OW_HTTPChunkedIStream::getTrailer(const OW_String& key) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_HTTPChunkedIStream::getError() const
+void OW_HTTPChunkedIStream::checkForError() const
 {
-	return getTrailer("CIMErrorTrailer");
+	OW_String errorStr;
+	errorStr = getTrailer("CIMError");
+	if (errorStr.length() > 0)
+	{
+		OW_THROW(OW_CIMErrorException, errorStr.c_str());
+	}
+	errorStr = getTrailer("CIMErrorCode");
+	if (errorStr.length() > 0)
+	{
+		OW_String descr;
+		descr = getTrailer("CIMErrorDescription");
+		if (descr.length() > 0)
+		{
+			OW_THROWCIMMSG(OW_CIMException::ErrNoType(errorStr.toInt32()), 
+				descr.c_str());
+		}
+		else
+		{
+			OW_THROWCIM(OW_CIMException::ErrNoType(errorStr.toInt32()));
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_HTTPChunkedIStream::getError(std::ostream& ostr) const
-{
-	OW_String errorStr = getError();
-	OW_UInt32 rc = 0;
-	for (size_t i = 0; i < errorStr.length(); ++i)
-	{
-		switch (errorStr[i])
-		{
-			case '\\':
-				if (i + 1 == errorStr.length())
-				{
-					// last char was '\\'
-					OW_THROW(OW_HTTPException, "Invalid Trailer");
-				}
-				++i;
-				switch (errorStr[i])
-				{
-					case '0':
-						ostr << '\0';
-						++rc;
-						break;
-					case 'n':
-						ostr << '\n';
-						++rc;
-						break;
-					case 'r':
-						ostr << '\r';
-						++rc;
-						break;
-					case '\\':
-						ostr << '\\';
-						++rc;
-						break;
-					default:
-						OW_THROW(OW_HTTPException, "Invalid escape in trailer");
-				}
-				break;
-
-			default:
-				ostr << errorStr[i];
-				++rc;
-				break;
-		}
-	}
-	return rc;
-}
 

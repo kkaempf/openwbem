@@ -48,7 +48,6 @@
 //////////////////////////////////////////////////////////////////////////////
 OW_BinaryRequestHandler::OW_BinaryRequestHandler()
 	: OW_RequestHandlerIFC()
-	, m_isError(false)
 	, m_userId(OW_UserId(-1))
 {
 }
@@ -58,13 +57,6 @@ OW_RequestHandlerIFC*
 OW_BinaryRequestHandler::clone() const
 {
 	return new OW_BinaryRequestHandler();
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_BinaryRequestHandler::doHasError()
-{
-	return m_isError;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -289,7 +281,9 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 			OW_BinIfcIO::write(*ostrError, OW_BIN_EXCEPTION);
 			OW_BinIfcIO::write(*ostrError, OW_Int32(e.getErrNo()));
 			OW_BinIfcIO::write(*ostrError, e.getMessage());
-			m_isError = true;
+			m_errorCode = e.getErrNo();
+			m_errorDescription = e.getMessage();
+			m_hasError = true;
 		}
 	}
 	catch(OW_Exception& e)
@@ -300,7 +294,9 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		lgr->logError(format("Line: %1", e.getLine()));
 		lgr->logError(format("Msg: %1", e.getMessage()));
 		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e).c_str());
-		m_isError = true;
+		m_errorCode = OW_CIMException::FAILED;
+		m_errorDescription = e.getMessage();
+		m_hasError = true;
 		
 	}
 	catch(std::exception& e)
@@ -308,13 +304,17 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		lgr->logError(format("Caught %1 exception in OW_BinaryRequestHandler",
 			e.what()));
 		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e.what()).c_str());
-		m_isError = true;
+		m_errorCode = OW_CIMException::FAILED;
+		m_errorDescription = e.what();
+		m_hasError = true;
 	}
 	catch(...)
 	{
 		lgr->logError("Unknown exception caught in OW_BinaryRequestHandler");
 		writeError(*ostrError, "OW_BinaryRequestHandler caught unknown exception");
-		m_isError = true;
+		m_errorCode = OW_CIMException::FAILED;
+		m_errorDescription = "Caught unknown exception";
+		m_hasError = true;
 	}
 }
 

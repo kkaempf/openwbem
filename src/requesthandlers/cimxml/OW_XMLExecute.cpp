@@ -1486,6 +1486,8 @@ OW_XMLExecute::processSimpleReq(OW_CIMXMLParser& parser, ostream& ostrEntity,
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 
 		m_hasError = true;
+		m_errorCode = ce.getErrNo();
+		m_errorDescription = ce.getMessage();
 		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
 }

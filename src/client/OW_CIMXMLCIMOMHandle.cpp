@@ -186,22 +186,13 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 		parser.mustGetEndTag(); // pass </MESSAGE>
 		parser.mustGetEndTag(); // pass </CIM>
 		OW_HTTPUtils::eatEntity(*istr);
+		istr->checkForError();
 	}
 	catch (OW_XMLParseException& xmlE)
 	{
 		OW_HTTPUtils::eatEntity(*istr);
-		if (istr->getError().length() == 0)
-		{
-			throw xmlE;
-		}
-	}
-	if (istr->getError().length() > 0)
-	{
-		// The trailer is escaped, so first unescape it
-		OW_TempFileStream error(500);
-		istr->getError(error);
-		OW_CIMXMLParser errorParser(error);
-		checkNodeForCIMError(errorParser, methodName, isIntrinsic);
+		istr->checkForError();
+		throw xmlE;
 	}
 }
 
