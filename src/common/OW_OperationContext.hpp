@@ -51,7 +51,18 @@ class UserInfo;
 
 OW_DECLARE_EXCEPTION(ContextDataNotFound);
 
-/////////////////////////////////////////////////////////////////////////////
+/**
+ * This class is used to store general information (the context) of a
+ * WBEM operation. It works like an associative container, with a String key,
+ * and the data is an OperationContext::DataRef. The idea is for a client
+ * of this class to create a subclass of OperationContext::Data and then
+ * pass a smart pointer to it into setData().
+ * Convenience functions (and a subclass) are provided to use a String for
+ * the Data.
+ * 
+ * Thread safety: None
+ * Copy Semantics: Non-copyable
+ */
 class OperationContext
 {
 public:
@@ -67,7 +78,8 @@ public:
 	OperationContext();
 
 	/**
-	 * caller creats a subclass of Data and passes it in.
+	 * Caller creats a subclass of Data and passes it in.
+	 * @param key
 	 */
 	void setData(const String& key, const DataRef& data);
 
@@ -81,6 +93,8 @@ public:
 	/**
 	 * caller uses IntrusiveReference::cast_to<>() on the return value to attempt to
 	 * recover the original type passed into storeData.
+	 * @return The same DataRef associated with key that was passed to setData().
+	 *  A NULL DataRef if key is not valid.
 	 */
 	DataRef getData(const String& key) const;
 	
