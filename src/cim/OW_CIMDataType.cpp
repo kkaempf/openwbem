@@ -369,6 +369,7 @@ OW_CIMDataType::toString() const
 		case BOOLEAN: return "boolean"; break;
 		case DATETIME: return "datetime"; break;
 		case REFERENCE: return "REF"; break;
+		case EMBEDDEDCLASS: case EMBEDDEDINSTANCE: return "string"; break;
 		default:
 			return "** INVALID DATA TYPE IN OW_CIMDATATYPE - toString **";
 	}
@@ -380,37 +381,6 @@ OW_CIMDataType::toMOF() const
 {
 	return toString();
 }
-
-//////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMDataType::toXML(ostream& ostr) const
-{
-
-	switch(m_pdata->m_type)
-	{
-		case UINT8: ostr << "uint8"; break;
-		case SINT8: ostr << "sint8"; break;
-		case UINT16: ostr << "uint16"; break;
-		case SINT16: ostr << "sint16"; break;
-		case UINT32: ostr << "uint32"; break;
-		case SINT32: ostr << "sint32"; break;
-		case UINT64: ostr << "uint64"; break;
-		case SINT64: ostr << "sint64"; break;
-		case REAL64: ostr << "real64"; break;
-		case REAL32: ostr << "real32"; break;
-		case CHAR16: ostr << "char16"; break;
-		case STRING: ostr << "string"; break;
-		case BOOLEAN: ostr << "boolean"; break;
-		case DATETIME: ostr << "datetime"; break;
-		case REFERENCE: ostr << "REF"; break;
-		default:
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"Invalid data type for toXML operation");
-	}
-
-}
-*/
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

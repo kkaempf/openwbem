@@ -1404,6 +1404,16 @@ void OW_WQLProcessor::visit_aExpr_aExpr_IS_NOT_TRUEP(
 	doComparison(lhs, rhs, Compare(Compare::NotEqualsType));
 }
 
+void OW_WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
+		const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
+		)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
+	paExpr_aExpr_ISA_aExpr->m_paExpr1->accept(this);
+	paExpr_aExpr_ISA_aExpr->m_paExpr3->accept(this);
+}
+
+
 void OW_WQLProcessor::visit_aExpr_rowExpr(
 	const aExpr_rowExpr* paExpr_rowExpr
 	)

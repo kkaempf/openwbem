@@ -150,15 +150,6 @@ public:
 	explicit OW_CIMValue(OW_Real64 x);
 
 	/**
-	 * Create a new OW_CIMValue object from XML.
-	 * @param node The OW_XMLNode that is the parent node for the XML that
-	 * 	comprises this OW_CIMValue.
-	 * @param valueType The CIM value type that specifies what type of value
-	 *		is represented by the XML.
-	 */
-	//OW_CIMValue(const OW_XMLNode& node, const OW_String& valueType);
-
-	/**
 	 * Create a new OW_CIMValue that represents a char16 data type.
 	 * @param x The char16 value this object will contain.
 	 */
@@ -181,6 +172,18 @@ public:
 	 * @param x The Object path value this object will contain.
 	 */
 	explicit OW_CIMValue(const OW_CIMObjectPath& x);
+
+	/**
+	 * Create a new OW_CIMValue that represents an embedded class object data type.
+	 * @param x The class this object will contain.
+	 */
+	explicit OW_CIMValue(const OW_CIMClass& x);
+
+	/**
+	 * Create a new OW_CIMValue that represents an embedded instance object data type.
+	 * @param x The instance this object will contain.
+	 */
+	explicit OW_CIMValue(const OW_CIMInstance& x);
 
 	/**
 	 * Create a new OW_CIMValue that represents a boolean array data type.
@@ -273,6 +276,18 @@ public:
 	explicit OW_CIMValue(const OW_CIMObjectPathArray& x);
 
 	/**
+	 * Create a new OW_CIMValue that represents a embedded class array.
+	 * @param x The class array this object will contain.
+	 */
+	explicit OW_CIMValue(const OW_CIMClassArray& x);
+
+	/**
+	 * Create a new OW_CIMValue that represents a embedded instance array.
+	 * @param x The instance array this object will contain.
+	 */
+	explicit OW_CIMValue(const OW_CIMInstanceArray& x);
+
+	/**
 	 * Destroy this OW_CIMValue object.
 	 */
 	~OW_CIMValue();
@@ -359,6 +374,16 @@ public:
 	void get(OW_CIMObjectPath& x) const;
 
 	/**
+	 * Get a embedded class value from this OW_CIMValue.
+	 */
+	void get(OW_CIMClass& x) const;
+
+	/**
+	 * Get a embedded instance value from this OW_CIMValue.
+	 */
+	void get(OW_CIMInstance& x) const;
+
+	/**
 	 * Get a reference (Object path) array value from this OW_CIMValue.
 	 */
 	void get(OW_CIMObjectPathArray& x) const;
@@ -432,6 +457,16 @@ public:
 	 * Get a CIM datetime array from this OW_CIMValue.
 	 */
 	void get(OW_CIMDateTimeArray& x) const;
+
+	/**
+	 * Get a CIM class array from this OW_CIMValue.
+	 */
+	void get(OW_CIMClassArray& x) const;
+
+	/**
+	 * Get a CIM instance array from this OW_CIMValue.
+	 */
+	void get(OW_CIMInstanceArray& x) const;
 
 	/**
 	 * Set this to a null object.

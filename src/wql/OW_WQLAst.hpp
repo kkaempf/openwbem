@@ -2532,6 +2532,32 @@ class aExpr_aExpr_IS_NOT_TRUEP : public aExpr
 		OW_String* m_pTRUEP4;
 };
 
+class aExpr_aExpr_ISA_aExpr : public aExpr
+{
+	public:
+		aExpr_aExpr_ISA_aExpr(
+			aExpr* pNewaExpr1,
+			OW_String* pNewISA2,
+			aExpr* pNewaExpr3
+		)
+			: aExpr()
+			, m_paExpr1(pNewaExpr1)
+			, m_pISA2(pNewISA2)
+			, m_paExpr3(pNewaExpr3)
+		{}
+
+		virtual ~aExpr_aExpr_ISA_aExpr();
+
+		void accept( OW_WQLVisitor* v ) const
+		{
+			v->visit_aExpr_aExpr_ISA_aExpr( this );
+		}
+
+		aExpr* m_paExpr1;
+		OW_String* m_pISA2;
+		aExpr* m_paExpr3;
+};
+
 class aExpr_rowExpr : public aExpr
 {
 	public:
@@ -5225,6 +5251,13 @@ inline aExpr_aExpr_IS_NOT_TRUEP::~aExpr_aExpr_IS_NOT_TRUEP()
 	delete m_pIS2;
 	delete m_pNOT3;
 	delete m_pTRUEP4;
+}
+
+inline aExpr_aExpr_ISA_aExpr::~aExpr_aExpr_ISA_aExpr()
+{
+	delete m_paExpr1;
+	delete m_pISA2;
+	delete m_paExpr3;
 }
 
 inline aExpr_rowExpr::~aExpr_rowExpr()

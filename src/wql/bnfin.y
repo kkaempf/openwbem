@@ -221,6 +221,7 @@ aExpr:  cExpr
 		| aExpr IS NOT FALSEP
 		| aExpr IS FALSEP
 		| aExpr IS NOT TRUEP
+		| aExpr ISA aExpr
 		| rowExpr
 		;
 
@@ -402,6 +403,7 @@ strColLabel:  strColId
 		| INNERP						
 		| INTO							
 		| IS							
+		| ISA
 		| ISNULL						
 		| JOIN							
 		| LEADING						

@@ -143,6 +143,7 @@ class aExpr_aExpr_IS_TRUEP;
 class aExpr_aExpr_IS_NOT_FALSEP;
 class aExpr_aExpr_IS_FALSEP;
 class aExpr_aExpr_IS_NOT_TRUEP;
+class aExpr_aExpr_ISA_aExpr;
 class aExpr_rowExpr;
 class bExpr;
 class bExpr_cExpr;
@@ -612,6 +613,10 @@ class OW_WQLVisitor
 
 		virtual void visit_aExpr_aExpr_IS_NOT_TRUEP(
 			const aExpr_aExpr_IS_NOT_TRUEP* paExpr_aExpr_IS_NOT_TRUEP
+			) = 0;
+
+		virtual void visit_aExpr_aExpr_ISA_aExpr(
+			const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
 			) = 0;
 
 		virtual void visit_aExpr_rowExpr(

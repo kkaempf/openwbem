@@ -35,6 +35,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_CIMValueTestCases.hpp"
 #include "OW_CIMClassTestCases.hpp"
 #include "OW_ExceptionTestCases.hpp"
 #include "OW_StringStreamTestCases.hpp"
@@ -79,6 +80,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_CIMValue", OW_CIMValueTestCases::suite());
 	runner.addTest( "OW_CIMClass", OW_CIMClassTestCases::suite());
 	runner.addTest( "OW_Exception", OW_ExceptionTestCases::suite());
 	runner.addTest( "OW_StringStream", OW_StringStreamTestCases::suite());

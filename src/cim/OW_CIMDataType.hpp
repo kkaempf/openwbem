@@ -76,7 +76,9 @@ public:
 		DATETIME			= 13,		// date-time as a string					(SUPPORTED)
 		CHAR16			= 14,		// 16-bit UCS-2 character					(SUPPORTED)
 		REFERENCE		= 15,		// Reference type								(SUPPORTED)
-		MAXDATATYPE		= 16,		// Marker for valid checks
+		EMBEDDEDCLASS	= 16,		// Embedded Class				(SUPPORTED)
+		EMBEDDEDINSTANCE	= 17,		// Embedded Class				(SUPPORTED)
+		MAXDATATYPE		= 18,		// Marker for valid checks
 		INVALID			= 255		// Invalid type
 	};
 

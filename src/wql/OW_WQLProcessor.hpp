@@ -424,6 +424,10 @@ public:
 		const aExpr_aExpr_IS_NOT_TRUEP* paExpr_aExpr_IS_NOT_TRUEP
 		);
 
+	virtual void visit_aExpr_aExpr_ISA_aExpr(
+		const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
+		);
+	
 	virtual void visit_aExpr_rowExpr(
 		const aExpr_rowExpr* paExpr_rowExpr
 		);
