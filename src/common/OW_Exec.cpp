@@ -47,6 +47,7 @@ extern "C"
 #include <sys/wait.h>
 #include <errno.h>
 #include <stdio.h> // for perror
+#include <signal.h>
 
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>
