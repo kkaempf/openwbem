@@ -1363,219 +1363,201 @@ OW_CIMServer::invokeMethod(
 	OW_CIMValue cv(OW_CIMNULL);
 	OW_MethodProviderIFCRef methodp;
 
-	try
-	{
-		OW_CIMClass cctemp(cc);
+	OW_CIMClass cctemp(cc);
 
-		// we need to query for providers for this class and all base classes.
-		// One provider may instrument an entire hierarchy of classes.
-		// loop until we've got a provider or hit a root class
-		while (true)
+	// we need to query for providers for this class and all base classes.
+	// One provider may instrument an entire hierarchy of classes.
+	// loop until we've got a provider or hit a root class
+	while (true)
+	{
+		try
 		{
-			try
+			methodp = m_provManager->getMethodProvider(
+				createProvEnvRef(intAclInfo, m_env), ns, cctemp, method);
+		}
+		catch (const OW_NoSuchProviderException&)
+		{
+		}
+		OW_String parentClassName = cctemp.getSuperClass();
+		if (parentClassName.empty() || methodp)
+		{
+			// loop until we've got a provider or hit a root class
+			break;
+		}
+		cctemp = _getClass(ns, parentClassName,false,true,true,0,intAclInfo);
+	}
+
+	if(!methodp)
+	{
+		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
+	}
+
+	OW_CIMParameterArray methodInParams = method.getINParameters();
+	if (inParams.size() != methodInParams.size())
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"Incorrect number of parameters");
+	}
+
+	OW_CIMParameterArray methodOutParams = method.getOUTParameters();
+	outParams.resize(methodOutParams.size());
+	// set the names on outParams
+	for (size_t i = 0; i < methodOutParams.size(); ++i)
+	{
+		outParams[i].setName(methodOutParams[i].getName());
+	}
+
+	OW_CIMParamValueArray orderedParams;
+	OW_CIMParamValueArray inParams2(inParams);
+	for (size_t i = 0; i < methodInParams.size(); ++i)
+	{
+		OW_String parameterName = methodInParams[i].getName();
+		size_t paramIdx;
+		for (paramIdx = 0; paramIdx < inParams2.size(); ++paramIdx)
+		{
+			if (inParams2[paramIdx].getName().equalsIgnoreCase(parameterName))
 			{
-				methodp = m_provManager->getMethodProvider(
-					createProvEnvRef(intAclInfo, m_env), ns, cctemp, method);
-			}
-			catch (const OW_NoSuchProviderException&)
-			{
-			}
-			OW_String parentClassName = cctemp.getSuperClass();
-			if (parentClassName.empty() || methodp)
-			{
-				// loop until we've got a provider or hit a root class
 				break;
 			}
-			cctemp = _getClass(ns, parentClassName,false,true,true,0,intAclInfo);
 		}
 
-		if(!methodp)
+		if (paramIdx == inParams2.size())
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
-		}
-
-		OW_CIMParameterArray methodInParams = method.getINParameters();
-		if (inParams.size() != methodInParams.size())
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Incorrect number of parameters");
-		}
-
-		OW_CIMParameterArray methodOutParams = method.getOUTParameters();
-		outParams.resize(methodOutParams.size());
-		// set the names on outParams
-		for (size_t i = 0; i < methodOutParams.size(); ++i)
-		{
-			outParams[i].setName(methodOutParams[i].getName());
-		}
-
-		OW_CIMParamValueArray orderedParams;
-		OW_CIMParamValueArray inParams2(inParams);
-		for (size_t i = 0; i < methodInParams.size(); ++i)
-		{
-			OW_String parameterName = methodInParams[i].getName();
-			size_t paramIdx;
-			for (paramIdx = 0; paramIdx < inParams2.size(); ++paramIdx)
+			// The parameter wasn't specified.
+			// Parameters are optional unless they have a Required(true)
+			// qualifier
+			if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_REQUIRED))
 			{
-				if (inParams2[paramIdx].getName().equalsIgnoreCase(parameterName))
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+					"Parameter %1 was not specified.", parameterName).c_str());
+			}
+			else
+			{
+				// put a param with a null value
+				OW_CIMParamValue optionalParam(methodInParams[i].getName());
+				inParams2.push_back(optionalParam);
+			}
+		}
+
+		// move the param from inParams2 to orderedParams
+		orderedParams.push_back(inParams2[paramIdx]);
+		inParams2.erase(inParams2.begin() + paramIdx);
+
+		// make sure the type is right
+		OW_CIMValue v = orderedParams[i].getValue();
+		if (v)
+		{
+			if (methodInParams[i].getType().getType() != v.getType())
+			{
+				try
 				{
+					orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+						v, methodInParams[i].getType()));
+				}
+				catch (OW_CIMException& ce)
+				{
+					ce.setErrNo(OW_CIMException::INVALID_PARAMETER);
+					throw;
+				}
+			}
+		}
+
+		// if the in param is also an out param, assign the value to the out
+		// params array
+		if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+		{
+			size_t j;
+			for (j = 0; j < outParams.size(); ++j)
+			{
+				if (outParams[j].getName() == parameterName)
+				{
+					outParams[j].setValue(orderedParams[i].getValue());
 					break;
 				}
 			}
-
-			if (paramIdx == inParams2.size())
+			if (j == outParams.size())
 			{
-				// The parameter wasn't specified.
-				// Parameters are optional unless they have a Required(true)
-				// qualifier
-				if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_REQUIRED))
-				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-						"Parameter %1 was not specified.", parameterName).c_str());
-				}
-				else
-				{
-					// put a param with a null value
-					OW_CIMParamValue optionalParam(methodInParams[i].getName());
-					inParams2.push_back(optionalParam);
-				}
-			}
-
-			// move the param from inParams2 to orderedParams
-			orderedParams.push_back(inParams2[paramIdx]);
-			inParams2.erase(inParams2.begin() + paramIdx);
-
-			// make sure the type is right
-			OW_CIMValue v = orderedParams[i].getValue();
-			if (v)
-			{
-				if (methodInParams[i].getType().getType() != v.getType())
-				{
-					try
-					{
-						orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
-							v, methodInParams[i].getType()));
-					}
-					catch (OW_CIMException& ce)
-					{
-						ce.setErrNo(OW_CIMException::INVALID_PARAMETER);
-						throw;
-					}
-				}
-			}
-
-			// if the in param is also an out param, assign the value to the out
-			// params array
-			if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
-			{
-				size_t j;
-				for (j = 0; j < outParams.size(); ++j)
-				{
-					if (outParams[j].getName() == parameterName)
-					{
-						outParams[j].setValue(orderedParams[i].getValue());
-						break;
-					}
-				}
-				if (j == outParams.size())
-				{
-					OW_ASSERT(0);
-				}
+				OW_ASSERT(0);
 			}
 		}
+	}
 
 
 
-		// all the params should have been moved to orderedParams.  If there are
-		// some left, it means we have an unknown/invalid parameter.
-		if (inParams2.size() > 0)
+	// all the params should have been moved to orderedParams.  If there are
+	// some left, it means we have an unknown/invalid parameter.
+	if (inParams2.size() > 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+			"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
+	}
+
+	OW_StringBuffer methodStr;
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		methodStr += "OW_CIMServer invoking extrinsic method provider: ";
+		methodStr += ns;
+		methodStr += ':';
+		methodStr += path.toString();
+		methodStr += '.';
+		methodStr += methodName;
+		methodStr += '(';
+		for (size_t i = 0; i < orderedParams.size(); ++i)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-				"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
-		}
-
-		OW_StringBuffer methodStr;
-		if (m_env->getLogger()->getLogLevel() == DebugLevel)
-		{
-			methodStr += "OW_CIMServer invoking extrinsic method provider: ";
-			methodStr += ns;
-			methodStr += ':';
-			methodStr += path.toString();
-			methodStr += '.';
-			methodStr += methodName;
-			methodStr += '(';
-			for (size_t i = 0; i < orderedParams.size(); ++i)
+			methodStr += orderedParams[i].getName();
+			methodStr += '=';
+			methodStr += orderedParams[i].getValue().toString();
+			if (i != orderedParams.size() - 1)
 			{
-				methodStr += orderedParams[i].getName();
-				methodStr += '=';
-				methodStr += orderedParams[i].getValue().toString();
-				if (i != orderedParams.size() - 1)
-				{
-					methodStr += ", ";
-				}
+				methodStr += ", ";
 			}
-			methodStr += ')';
+		}
+		methodStr += ')';
+
+		m_env->logDebug(methodStr.toString());
+	}
+
+	cv = methodp->invokeMethod(
+		createProvEnvRef(aclInfo, m_env),
+			ns, path, methodName, orderedParams, outParams);
 	
-			m_env->logDebug(methodStr.toString());
-		}
-
-		cv = methodp->invokeMethod(
-			createProvEnvRef(aclInfo, m_env),
-				ns, path, methodName, orderedParams, outParams);
-		
-		// make sure the type is right on the outParams
-		for (size_t i = 0; i < methodOutParams.size(); ++i)
+	// make sure the type is right on the outParams
+	for (size_t i = 0; i < methodOutParams.size(); ++i)
+	{
+		OW_CIMValue v = outParams[i].getValue();
+		if (v)
 		{
-			OW_CIMValue v = outParams[i].getValue();
-			if (v)
+			if (methodOutParams[i].getType().getType() != v.getType())
 			{
-				if (methodOutParams[i].getType().getType() != v.getType())
-				{
-					outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
-						v, methodOutParams[i].getType()));
-				}
+				outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+					v, methodOutParams[i].getType()));
 			}
 		}
+	}
 
-		if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		methodStr.reset();
+		methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
+		OW_CIMObjectPath path2(path);
+		path2.setNameSpace(ns);
+		methodStr += path2.toString();
+		methodStr += '.';
+		methodStr += methodName;
+		methodStr += " OUT Params(";
+		for (size_t i = 0; i < outParams.size(); ++i)
 		{
-			methodStr.reset();
-			methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
-			OW_CIMObjectPath path2(path);
-			path2.setNameSpace(ns);
-			methodStr += path2.toString();
-			methodStr += '.';
-			methodStr += methodName;
-			methodStr += " OUT Params(";
-			for (size_t i = 0; i < outParams.size(); ++i)
+			methodStr += outParams[i].getName();
+			methodStr += '=';
+			methodStr += outParams[i].getValue().toString();
+			if (i != outParams.size() - 1)
 			{
-				methodStr += outParams[i].getName();
-				methodStr += '=';
-				methodStr += outParams[i].getValue().toString();
-				if (i != outParams.size() - 1)
-				{
-					methodStr += ", ";
-				}
+				methodStr += ", ";
 			}
-			methodStr += ") return value: ";
-			methodStr += cv.toString();
-			m_env->logDebug(methodStr.toString());
 		}
-	}
-	catch(OW_CIMException& e)
-	{
-		throw;
-	}
-	catch(OW_Exception& e)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Caught exception: %1 "
-			"while calling provider for method %2", e, methodName).c_str());
-	}
-	catch(...)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Caught unknown "
-			"exception while calling provider for method %1",
-			methodName).c_str());
+		methodStr += ") return value: ";
+		methodStr += cv.toString();
+		m_env->logDebug(methodStr.toString());
 	}
 
 	return cv;
