@@ -45,6 +45,7 @@
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
 #include "OW_Format.hpp"
+#include "OW_CmdLineParser.hpp"
 
 #include <csignal>
 #include <iostream> // for cout and cerr
@@ -71,6 +72,32 @@ void sig_handler(int)
 {
 	sigPipe->writeInt(0);
 }
+
+enum
+{
+	HELP_OPT,
+	VERSION_OPT,
+	URL_OPT,
+	CONFIG_OPT,
+	HTTP_PORT_OPT,
+	HTTPS_PORT_OPT,
+	UDS_FILENAME_OPT,
+	PROVIDER_OPT
+};
+
+CmdLineParser::Option g_options[] = 
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the cimom callback url."},
+	{CONFIG_OPT, 'c', "config", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the config file.  Command line options take precedence over config file options."},
+	{HTTP_PORT_OPT, '\0', "http-port", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the http port."},
+	{HTTPS_PORT_OPT, '\0', "https-port", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the https port."},
+	{UDS_FILENAME_OPT, '\0', "uds-filename", CmdLineParser::E_REQUIRED_ARG, 0, "Sets the filename of the unix domain socket."},
+	{PROVIDER_OPT, 'p', "provider", CmdLineParser::E_REQUIRED_ARG, 0, "Specify a filename of a provider library to use. May be used multiple times."},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 // TODO stole this stuff from OW_CppProviderIFC.cpp. 
@@ -143,45 +170,69 @@ getProvider(const String& libName, LoggerRef logger)
 	return rval;
 }
 
-
+void Usage()
+{
+	cerr << "Usage: owprovideragent [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
 
 int main(int argc, char* argv[])
 {
-	if (argc < 3)
-	{
-		cerr << "Usage: " << argv[0] << " <url_to_cimom> <provider_lib> ..." << endl;
-		return 1;
-	}
 	try
 	{
+		CmdLineParser parser(argc, argv, g_options);
+
 		sigPipe = UnnamedPipe::createUnnamedPipe();
+		sigPipe->setOutputBlocking(UnnamedPipe::E_NONBLOCKING);
+		sigPipe->setWriteTimeout(0);
 		signal(SIGINT, sig_handler);
 
-		String url(argv[1]);
-
-		LoggerRef logger(new RPALogger);
-		logger->setLogLevel(E_DEBUG_LEVEL);
-
-
 		ConfigFile::ConfigMap cmap; 
+
+		// set up some defaults
 		cmap[ConfigOpts::HTTP_PORT_opt] = String(-1);
 		cmap[ConfigOpts::HTTPS_PORT_opt] = String(-1);
 		cmap[ConfigOpts::MAX_CONNECTIONS_opt] = String(10);
 		cmap[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
 		cmap[ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
 		cmap[ConfigOpts::USE_UDS_opt] = "true";
-
 		cmap[ProviderAgent::DynamicClassRetieval_opt] = "true";
+
+		String url;
+
+		if (parser.isSet(HELP_OPT))
+		{
+			Usage();
+			return 0;
+		}
+		else if (parser.isSet(VERSION_OPT))
+		{
+			cout << "owprovideragent (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Bart Whiteley and Dan Nuffer.\n";
+			return 0;
+		}
+
+		LoggerRef logger(new RPALogger);
+		logger->setLogLevel(E_DEBUG_LEVEL);
+
+
 
 		Reference<AuthenticatorIFC> authenticator; 
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 
 		Array<RequestHandlerIFCRef> rha; 
 		rha.push_back(rh); 
 
-		Array<CppProviderBaseIFCRef> pra; 
-		for (int i = 2; i < argc; ++i)
+		Array<CppProviderBaseIFCRef> pra;
+		StringArray providers = parser.getOptionValueList(PROVIDER_OPT);
+		if (providers.empty())
 		{
-			String libName(argv[i]); 
+			cerr << "Error: no providers specified\n";
+			Usage();
+			return 1;
+		}
+		for (size_t i = 0; i < providers.size(); ++i)
+		{
+			String libName(providers[i]); 
 			CppProviderBaseIFCRef provider = getProvider(libName, logger); 
 			if (!provider->getInstanceProvider() 
 				&& !provider->getSecondaryInstanceProvider()
@@ -208,15 +259,31 @@ int main(int argc, char* argv[])
 		pa.shutdownHttpServer();
 		return 0;
 	}
-	catch(Exception& e)
+	catch (CmdLineParserException& e)
+	{
+		switch (e.getErrorCode())
+		{
+			case CmdLineParser::E_INVALID_OPTION:
+				cerr << "unknown option: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_MISSING_ARGUMENT:
+				cerr << "missing argument for option: " << e.getMessage() << '\n';
+			break;
+			default:
+				cerr << "failed parsing command line options\n";
+			break;
+		}
+		Usage();
+	}
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 	}
-	catch(std::exception& e)
+	catch (std::exception& e)
 	{
 		cerr << e.what() << endl;
 	}
-	catch(...)
+	catch (...)
 	{
 		cerr << "Caught unknown exception in main" << endl;
 	}
