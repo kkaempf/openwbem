@@ -205,7 +205,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-pthread -fPIC -D_REENTRANT"
 	CXXCOMMONLINKFLAGS="-pthread"
 	#CXXBINLINKFLAGS="-Wl,-Bexport"
-	CXXBINLINKFLAGS="-lsocket -lthread -Wl,-Bdynamic,-Bexport"
+	CXXBINLINKFLAGS="-lsocket -Wl,-Bdynamic,-Bexport"
 	#CXXSHAREDLIBLINKFLAGS='-fpic -shared -Wl,-h,$@,-z,text -lstdc++'
 	#CXXSHAREDLIBLINKFLAGS='-shared -Wl,-h,$@,-z,text -nodefaultlibs'
 	#CXXSHAREDLIBLINKFLAGS='-shared -G -h $@ -nodefaultlibs'
