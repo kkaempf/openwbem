@@ -41,10 +41,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef index
-#undef index
-#endif /* index */
 #include <unistd.h>
+#include <stdarg.h>
 
 #include <db.h>
 
@@ -54,22 +52,22 @@
 
 enum S { COMMAND, COMPARE, GET, PUT, REMOVE, SEQ, SEQFLAG, KEY, DATA };
 
-void	 compare __P((DBT *, DBT *));
-DBTYPE	 dbtype __P((char *));
-void	 dump __P((DB *, int));
-void	 err __P((const char *, ...));
-void	 get __P((DB *, DBT *));
-void	 getdata __P((DB *, DBT *, DBT *));
-void	 put __P((DB *, DBT *, DBT *));
-void	 rem __P((DB *, DBT *));
-char	*sflags __P((int));
-void	 synk __P((DB *));
-void	*rfile __P((char *, size_t *));
-void	 seq __P((DB *, DBT *));
-OW_UInt32	 setflags __P((char *));
-void	*setinfo __P((DBTYPE, char *));
-void	 usage __P((void));
-void	*xmalloc __P((char *, size_t));
+void	 compare (DBT *, DBT *);
+DBTYPE	 dbtype (char *);
+void	 dump (DB *, int);
+void	 err (const char *, ...);
+void	 get (DB *, DBT *);
+void	 getdata (DB *, DBT *, DBT *);
+void	 put (DB *, DBT *, DBT *);
+void	 rem (DB *, DBT *);
+const char	*sflags (int);
+void	 synk (DB *);
+void	*rfile (char *, size_t *);
+void	 seq (DB *, DBT *);
+OW_UInt32	 setflags (char *);
+void	*setinfo (DBTYPE, char *);
+void	 usage (void);
+void	*xmalloc (char *, size_t);
 
 DBTYPE type;				/* Database type. */
 void *infop;				/* Iflags. */
@@ -81,9 +79,7 @@ DB *XXdbp;				/* Global for gdb. */
 unsigned int XXlineno;				/* Fast breakpoint for gdb. */
 
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
+main(int argc, char *argv[])
 {
 	extern int optind;
 	extern char *optarg;
@@ -337,8 +333,7 @@ lkey:			switch (command) {
 #define	NOOVERWRITE	"put failed, would overwrite key\n"
 
 void
-compare(db1, db2)
-	DBT *db1, *db2;
+compare(DBT *db1, DBT *db2)
 {
 	register size_t len;
 	register OW_UInt8 *p1, *p2;
@@ -348,7 +343,7 @@ compare(db1, db2)
 		    (unsigned long)db1->size, (unsigned long)db2->size);
 
 	len = MIN(db1->size, db2->size);
-	for (p1 = db1->data, p2 = db2->data; len--;)
+	for (p1 = (OW_UInt8*)db1->data, p2 = (OW_UInt8*)db2->data; len--;)
 		if (*p1++ != *p2++) {
 			printf("compare failed at offset %d\n",
 			    (int)(p1 - (OW_UInt8 *)db1->data));
@@ -357,9 +352,7 @@ compare(db1, db2)
 }
 
 void
-get(dbp, kp)
-	DB *dbp;
-	DBT *kp;
+get(DB *dbp, DBT *kp)
 {
 	DBT data;
 
@@ -385,9 +378,7 @@ get(dbp, kp)
 }
 
 void
-getdata(dbp, kp, dp)
-	DB *dbp;
-	DBT *kp, *dp;
+getdata(DB *dbp, DBT *kp, DBT *dp)
 {
 	switch (dbp->get(dbp, kp, dp, flags)) {
 	case 0:
@@ -402,9 +393,7 @@ getdata(dbp, kp, dp)
 }
 
 void
-put(dbp, kp, dp)
-	DB *dbp;
-	DBT *kp, *dp;
+put(DB *dbp, DBT *kp, DBT *dp)
 {
 	switch (dbp->put(dbp, kp, dp, flags)) {
 	case 0:
@@ -419,9 +408,7 @@ put(dbp, kp, dp)
 }
 
 void
-rem(dbp, kp)
-	DB *dbp;
-	DBT *kp;
+rem(DB *dbp, DBT *kp)
 {
 	switch (dbp->del(dbp, kp, flags)) {
 	case 0:
@@ -445,8 +432,7 @@ rem(dbp, kp)
 }
 
 void
-synk(dbp)
-	DB *dbp;
+synk(DB *dbp)
 {
 	switch (dbp->sync(dbp, flags)) {
 	case 0:
@@ -458,9 +444,7 @@ synk(dbp)
 }
 
 void
-seq(dbp, kp)
-	DB *dbp;
-	DBT *kp;
+seq(DB *dbp, DBT *kp)
 {
 	DBT data;
 
@@ -489,9 +473,7 @@ seq(dbp, kp)
 }
 
 void
-dump(dbp, rev)
-	DB *dbp;
-	int rev;
+dump(DB *dbp, int rev)
 {
 	DBT key, data;
 	int flags, nflags;
@@ -522,15 +504,14 @@ done:	return;
 
 	
 OW_UInt32
-setflags(s)
-	char *s;
+setflags(char *s)
 {
-	char *p, *index();
+	char *p;
 
 	for (; isspace((int)*s); ++s);
 	if (*s == '\n' || *s == '\0')
 		return (0);
-	if ((p = index(s, '\n')) != NULL)
+	if ((p = strchr(s, '\n')) != NULL)
 		*p = '\0';
 	if (!strcmp(s, "R_CURSOR"))		return (R_CURSOR);
 	if (!strcmp(s, "R_FIRST"))		return (R_FIRST);
@@ -547,9 +528,8 @@ setflags(s)
 	return 0;
 }
 
-char *
-sflags(flags)
-	int flags;
+const char *
+sflags(int flags)
 {
 	switch (flags) {
 	case R_CURSOR:		return ("R_CURSOR");
@@ -567,8 +547,7 @@ sflags(flags)
 }
 	
 DBTYPE
-dbtype(s)
-	char *s;
+dbtype(char *s)
 {
 	if (!strcmp(s, "btree"))
 		return (DB_BTREE);
@@ -578,20 +557,18 @@ dbtype(s)
 		return (DB_RECNO);
 	err("%s: unknown type (use btree, hash or recno)", s);
 	/* NOTREACHED */
-	return 0;
+	return DB_BTREE;
 }
 
 void *
-setinfo(type, s)
-	DBTYPE type;
-	char *s;
+setinfo(DBTYPE type, char *s)
 {
 	static BTREEINFO ib;
 	static HASHINFO ih;
 	static RECNOINFO rh;
-	char *eq, *index();
+	char *eq;
 
-	if ((eq = index(s, '=')) == NULL)
+	if ((eq = strchr(s, '=')) == NULL)
 		err("%s: illegal structure set statement", s);
 	*eq++ = '\0';
 	if (!isdigit((int)*eq))
@@ -679,17 +656,15 @@ setinfo(type, s)
 }
 
 void *
-rfile(name, lenp)
-	char *name;
-	size_t *lenp;
+rfile(char *name, size_t *lenp)
 {
 	struct stat sb;
 	void *p;
 	int fd;
-	char *np, *index();
+	char *np;
 
 	for (; isspace((int)*name); ++name);
-	if ((np = index(name, '\n')) != NULL)
+	if ((np = strchr(name, '\n')) != NULL)
 		*np = '\0';
 	if ((fd = open(name, O_RDONLY, 0)) < 0 ||
 	    fstat(fd, &sb))
@@ -707,9 +682,7 @@ rfile(name, lenp)
 }
 
 void *
-xmalloc(text, len)
-	char *text;
-	size_t len;
+xmalloc(char *text, size_t len)
 {
 	void *p;
 
