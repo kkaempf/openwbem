@@ -35,18 +35,88 @@
 
 #include "OW_config.h"
 #include "OW_File.hpp"
-#include <fcntl.h>
-#ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
+
+#ifdef OW_WIN32
+	#include <io.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <windows.h>
+#else
+	#include <fcntl.h>
+	#ifdef OW_HAVE_UNISTD_H
+		#include <unistd.h>
+	#endif
 #endif
+
 
 namespace OpenWBEM
 {
+#ifdef OW_WIN32
+/////////////////////////////////////////////////////////////////////////////
+File::File(const File& x) : m_hdl(_dup(x.m_hdl))
+{
+}
+namespace {
+/////////////////////////////////////////////////////////////////////////////
+// implementation of lock functions
+int
+doLock(int hdl, bool doWait)
+{
+	HANDLE hFile = (HANDLE) _get_osfhandle(hdl);
+	if(hFile == INVALID_HANDLE_VALUE)
+	{
+		return -1;
+	}
+
+	DWORD flags = (doWait) ? LOCKFILE_EXCLUSIVE_LOCK
+		: LOCKFILE_FAIL_IMMEDIATELY;
+
+	if(!LockFileEx(hFile, flags, 0, 0xffffffff,
+		0xffffffff, NULL))
+	{
+		return -1;
+	}
+
+	return 0;
+}
+} // end unnamed namespace
+/////////////////////////////////////////////////////////////////////////////
+int 
+File::getLock()
+{
+	return doLock(m_hdl, true);
+}
+/////////////////////////////////////////////////////////////////////////////
+int
+File::tryLock()
+{
+	return doLock(m_hdl, false);
+}
+/////////////////////////////////////////////////////////////////////////////
+int
+File::unlock()
+{
+	HANDLE hFile = (HANDLE) _get_osfhandle(m_hdl);
+	if(hFile == INVALID_HANDLE_VALUE)
+	{
+		return -1;
+	}
+
+	if(!UnlockFileEx(hFile, 0, 0xffffffff, 0xffffffff, NULL))
+	{
+		return -1;
+	}
+
+	return 0;
+}
+
+#else	// NOT WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 File::File(const File& x) : m_hdl(dup(x.m_hdl))
 {
 }
+
 namespace {
 /////////////////////////////////////////////////////////////////////////////
 // implementation of lock functions
@@ -80,6 +150,7 @@ File::unlock()
 {
 	return doLock(m_hdl, F_SETLK, F_UNLCK);
 }
+#endif
 
 } // end namespace OpenWBEM
 

@@ -92,6 +92,7 @@ typedef off_t	off_t;
 // possibility this can be something other than an int on
 // a platform we don't yet support.
 typedef int Select_t;
+
 #ifdef OW_WIN32
 #define OW_SHAREDLIB_EXTENSION ".dll"
 #define OW_FILENAME_SEPARATOR "\\"
@@ -107,6 +108,7 @@ typedef int Select_t;
 #define OW_FILENAME_SEPARATOR "/"
 #define OW_PATHNAME_SEPARATOR ":"
 #endif
+
 typedef int		FileHandle;
 #ifdef OW_WIN32
 typedef int UserId;

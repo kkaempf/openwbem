@@ -45,15 +45,27 @@
 
 extern "C"
 {
+#ifdef OW_WIN32
+
+#include <direct.h>
+#include <io.h>
+#include <share.h>
+
+#else
+
 #ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef OW_HAVE_DIRENT_H
 #include <dirent.h>
 #endif
+
+#endif
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+
 }
 #include <cstdio> // for rename
 #include <fstream>
@@ -72,21 +84,36 @@ int
 changeFileOwner(const String& filename,
 	const UserId& userId)
 {
+#ifdef OW_WIN32
+	return 0;	// File ownership on Win32?
+#else
 	return ::chown(filename.c_str(), userId, gid_t(-1));
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 File
 openFile(const String& path)
 {
+#ifdef OW_WIN32
+	return File(::_sopen( path.c_str(), _O_RDWR, _SH_DENYNO, 
+        _S_IREAD | _S_IWRITE ));
+#else
 	return File(::open(path.c_str(), O_RDWR));
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 File
 createFile(const String& path)
 {
+#ifdef OW_WIN32
+	int fd = ::_sopen(path.c_str(), _O_CREAT | _O_EXCL | _O_TRUNC | _O_RDWR,
+		_SH_DENYNO, _S_IREAD | _S_IWRITE);
+#else
 	int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0660);
+#endif
+
 	if(fd != -1)
 	{
 		return File(fd);
@@ -98,54 +125,99 @@ createFile(const String& path)
 File
 openOrCreateFile(const String& path)
 {
+#ifdef OW_WIN32
+	return File(::_sopen(path.c_str(), O_RDWR | O_CREAT, _SH_DENYNO,
+		_S_IREAD | _S_IWRITE));
+#else
 	return File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
+#endif
 }
+
+#ifdef OW_WIN32
+#define _ACCESS ::_access
+#define R_OK 4
+#define F_OK 0
+#define W_OK 2
+#define _CHDIR _chdir
+#define _MKDIR(a,b)	_mkdir((a))
+#define _RMDIR _rmdir
+#define _UNLINK _unlink
+#define _LSEEK ::_lseek
+#define _READ ::_read
+#define _WRITE ::_write
+#define _CLOSEFILE ::_close
+#else
+#define _ACCESS ::access
+#define _CHDIR chdir
+#define _MKDIR(a,b) mkdir((a),(b))
+#define _RMDIR rmdir
+#define _UNLINK unlink
+#define _LSEEK ::lseek
+#define _READ ::read
+#define _WRITE ::write
+#define _CLOSEFILE ::close
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 exists(const String& path)
 {
-	return access(path.c_str(), F_OK) == 0;
+	return _ACCESS(path.c_str(), F_OK) == 0;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 canRead(const String& path)
 {
-	return access(path.c_str(), R_OK) == 0;
+	return _ACCESS(path.c_str(), R_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 canWrite(const String& path)
 {
-	return access(path.c_str(), W_OK) == 0;
+	return _ACCESS(path.c_str(), W_OK) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 isDirectory(const String& path)
 {
+#ifdef OW_WIN32
+	struct _stat st;
+	if(_stat(path.c_str(), &st) != 0)
+		return false;
+	return ((st.st_mode & _S_IFDIR) != 0);
+#else
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
 		return false;
 	return S_ISDIR(st.st_mode);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 changeDirectory(const String& path)
 {
-	return chdir(path.c_str()) == 0;
+	return _CHDIR(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 makeDirectory(const String& path, int mode)
 {
-	return mkdir(path.c_str(), mode) == 0;
+	return _MKDIR(path.c_str(), mode) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 getFileSize(const String& path, off_t& size)
 {
+#ifdef OW_WIN32
+	struct _stat st;
+	if(_stat(path.c_str(), &st) != 0)
+		return false;
+#else
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
 		return false;
+#endif
 	size = st.st_size;
 	return true;
 }
@@ -153,13 +225,13 @@ getFileSize(const String& path, off_t& size)
 bool
 removeDirectory(const String& path)
 {
-	return rmdir(path.c_str()) == 0;
+	return _RMDIR(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 removeFile(const String& path)
 {
-	return unlink(path.c_str()) == 0;
+	return _UNLINK(path.c_str()) == 0;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -168,6 +240,22 @@ getDirectoryContents(const String& path,
 {
 	static Mutex readdirGuard;
 	MutexLock lock(readdirGuard);
+
+#ifdef OW_WIN32
+    struct _finddata_t dentry;
+    long hFile;
+    // Find first directory entry
+    if((hFile = _findfirst( "*", &dentry)) == -1L)
+	{
+		return false;
+	}
+	dirEntries.clear();
+	while(_findnext(hFile, &dentry) == 0)
+	{
+		dirEntries.append(String(dentry.name));
+	}
+	_findclose(hFile);
+#else
 	DIR* dp;
 	struct dirent* dentry;
 	if((dp = opendir(path.c_str())) == NULL)
@@ -180,6 +268,7 @@ getDirectoryContents(const String& path,
 		dirEntries.append(String(dentry->d_name));
 	}
 	closedir(dp);
+#endif
 	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -196,9 +285,9 @@ read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 {
 	if(offset != -1L)
 	{
-		::lseek(hdl, offset, SEEK_SET);
+		_LSEEK(hdl, offset, SEEK_SET);
 	}
-	return ::read(hdl, bfr, numberOfBytes);
+	return _READ(hdl, bfr, numberOfBytes);
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
@@ -207,49 +296,59 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 {
 	if(offset != -1L)
 	{
-		::lseek(hdl, offset, SEEK_SET);
+		_LSEEK(hdl, offset, SEEK_SET);
 	}
-	return ::write(hdl, bfr, numberOfBytes);
+	return _WRITE(hdl, bfr, numberOfBytes);
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
 seek(FileHandle& hdl, off_t offset, int whence)
 {
-	return ::lseek(hdl, offset, whence);
+	return _LSEEK(hdl, offset, whence);
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
 tell(FileHandle& hdl)
 {
-	return ::lseek(hdl, 0, SEEK_CUR);
+	return _LSEEK(hdl, 0, SEEK_CUR);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 rewind(FileHandle& hdl)
 {
-	::lseek(hdl, 0, SEEK_SET);
+	_LSEEK(hdl, 0, SEEK_SET);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 close(FileHandle& hdl)
 {
-	return ::close(hdl);
+	return _CLOSEFILE(hdl);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 flush(FileHandle& hdl)
 {
-#ifdef OW_DARWIN
-	return ::fsync(hdl);
+#ifdef OW_WIN32
+	return _commit(hdl);
 #else
-	return 0;
+	#ifdef OW_DARWIN
+		return ::fsync(hdl);
+	#else
+		return 0;
+	#endif
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 initRandomFile(const String& filename)
 {
+#ifdef OW_WIN32
+	int hdl = ::_sopen(filename.c_str(), _O_CREAT | _O_TRUNC | _O_WRONLY,
+		_SH_DENYNO, _S_IREAD | _S_IWRITE );
+#else
 	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
+#endif
+
 	if (hdl == -1)
 	{
 		OW_THROW(FileSystemException, Format("Can't open random file %1 for writing", filename).c_str());
@@ -258,9 +357,9 @@ initRandomFile(const String& filename)
 	for (size_t i = 0; i < 1024; ++i)
 	{
 		char c = rnum.getNextNumber();
-		::write(hdl, &c, 1);
+		_WRITE(hdl, &c, 1);
 	}
-	::close(hdl);
+	_CLOSEFILE(hdl);
 }
 
 //////////////////////////////////////////////////////////////////////////////
