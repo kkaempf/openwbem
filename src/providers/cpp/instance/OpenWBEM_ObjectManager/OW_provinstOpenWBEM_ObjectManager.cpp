@@ -136,7 +136,7 @@ public:
 		(void)ns;
 		(void)instanceName;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
-		
+		// TODO: Check that instanceName is good.
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);
