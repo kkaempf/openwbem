@@ -113,7 +113,9 @@ public:
 			int sigtype;
 			SignalScope r1( OW_SIGFPE,  theSignalHandler );
 			SignalScope r3( OW_SIGSEGV, theSignalHandler );
+#ifdef SIGBUS // NetWare doesn't have this signal
 			SignalScope r4( OW_SIGBUS,  theSignalHandler );
+#endif
 			SignalScope r5( OW_SIGABRT, theSignalHandler );
 #ifndef OW_FREEBSD			
 			sigtype = setjmp(theLoaderBuf);
