@@ -34,6 +34,7 @@
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Socket.hpp"
+#include "OW_Format.hpp"
 
 extern "C"
 {
@@ -136,8 +137,7 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 			break;
 
 		case -1:
-			OW_THROW(OW_SocketException, "::waitForIO: select");
-			rc = errno;
+			OW_THROW(OW_SocketException, format("OW_SocketUtils::waitForIO: select failed: %1(%2)", errno, strerror(errno)).c_str());
 			break;
 
 		default:
@@ -169,16 +169,20 @@ extern OW_Mutex OW_gethostbynameMutex;  // defined in OW_SocketAddress.cpp
 
 OW_String getFullyQualifiedHostName()
 {
-    char hostName [2048];
+	char hostName [2048];
 
-    if (gethostname (hostName, sizeof(hostName)) == 0)
-    {
+	if (gethostname (hostName, sizeof(hostName)) == 0)
+	{
 #ifndef OW_HAVE_GETHOSTBYNAME_R
 		OW_MutexLock lock(OW_gethostbynameMutex);
 		struct hostent *he;
 		if ((he = gethostbyname (hostName)) != 0)
 		{
 		   return he->h_name;
+		}
+		else
+		{
+			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname failed: %1(%2)", h_errno, strerror(h_errno)).c_str());
 		}
 #else
 		hostent hostbuf;
@@ -193,10 +197,18 @@ OW_String getFullyQualifiedHostName()
 		{
 			return host->h_name;
 		}
+		else
+		{
+			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname_r failed: %1(%2)", h_err, strerror(h_err)).c_str());
+		}
 #endif
-    }
+	}
+	else
+	{
+		OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostname failed: %1(%2)", errno, strerror(errno)).c_str());
+	}
 
-    return "";
+	return "";
 }
 
 }
