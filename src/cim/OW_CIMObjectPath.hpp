@@ -102,16 +102,6 @@ public:
 		const OW_CIMPropertyArray& keys);
 
 	/**
-	 * Create an OW_CIMObjectPath from an XML definition
-	 * @param node	The OW_XMLNode containing the definition or an
-	 *		OW_CIMObjectPath
-	 *
-	 * Note: Does not accept XML_ELEMENT_OBJECTPATH - caller must jump
-	 * over such an element
-	 */
-	//explicit OW_CIMObjectPath(const OW_XMLNode& node);
-
-	/**
 	 * Create a new OW_CIMObject path from another.
 	 * @param arg The OW_CIMObjectPath this object will be a copy of.
 	 */
@@ -146,6 +136,14 @@ public:
 	 * @return An OW_CIMPropertyArray containing the keys for this object path.
 	 */
 	OW_CIMPropertyArray getKeys() const;
+
+	/**
+	 * Get a key from this ObjectPath
+	 * @param key The Name of the key to get
+	 * @return An OW_CIMProperty corresponding to key.  If there is no key
+	 *  found, a NULL OW_CIMProperty will be returned.
+	 */
+	OW_CIMProperty getKey(const OW_String& keyName) const;
 
 	/**
 	 * Set the keys of this object path
@@ -256,20 +254,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this OW_CIMObjectPath to an output stream
-	 * @param ostr The output stream to write the XML to.  The XML will be an
-	 * INSTANCEPATH instead of an INSTANCENAME
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
-	 * Write the XML representation of this OW_CIMObjectPath to an output stream
-	 * @param ostr The output stream to write the XML to.
-	 * @param isInstanceName Specifies whether to output the INSTANCEPATH tags.
-	 */
-	//virtual void toXML(std::ostream& ostr, OW_Bool isInstanceName) const;
-
-	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
@@ -282,17 +266,6 @@ public:
 	virtual void writeObject(std::ostream& ostrm) const;
 
 private:
-
-	/**
-	 * Build the XML for a key property and write it to the given output
-	 * stream.
-	 * @param ostr	The output stream to write to.
-	 * @param prop	The property to build the xml for (must be a key)
-	 */
-	//static void outputKEYVALUE(std::ostream& ostr, const OW_CIMProperty& prop);
-
-	//void getNameSpacePathAndSet(const OW_XMLNode& node);
-	//void getLocalNameSpacePathAndSet(const OW_XMLNode& node);
 
 	OW_Reference<OPData> m_pdata;
 };

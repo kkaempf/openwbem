@@ -77,8 +77,6 @@ public:
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
 			);
 	virtual void cleanup();
-
-private:
 };
 
 #endif

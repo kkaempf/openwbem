@@ -919,8 +919,20 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 	cimClass = hdl.getClass(path, localOnly);
 	if (!cimClass)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			OW_String("Path=" + path.toString()).c_str());
+		// check if the namespace exists so we can throw the correct exception
+		OW_CIMObjectPath nsPath(path);
+		nsPath.setObjectName(OW_CIMClass::NAMESPACECLASS);
+		nsPath.addKey(OW_CIMProperty::NAME_PROPERTY, OW_CIMValue(path.getNameSpace()));
+		if (hdl.getInstance(nsPath))
+		{
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+				OW_String("Path=" + path.toString()).c_str());
+		}
+		else
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
+				format("Path=%1", path.toString()).c_str());
+		}
 	}
 
 

@@ -141,14 +141,59 @@ OW_NameSpaceProvider::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_NameSpaceProvider::getInstance(
-		const OW_ProviderEnvironmentIFCRef& /*env*/,
+		const OW_ProviderEnvironmentIFCRef& env,
 		OW_CIMObjectPath cop,
 		OW_CIMClass cimClass,
 		OW_Bool /*localOnly*/)
 {
-	OW_CIMInstance ci = cimClass.newInstance();
-	ci.setProperty("Name", OW_CIMValue(cop.getNameSpace()));
-	return ci;
+	OW_CIMInstance ci;
+	OW_CIMProperty cp = cop.getKey(OW_CIMProperty::NAME_PROPERTY);
+	OW_CIMValue nsVal;
+	if (cp)
+	{
+		nsVal = cp.getValue();
+	}
+
+	if (nsVal && nsVal.getType() == OW_CIMDataType::STRING)
+	{
+		OW_CIMInstanceEnumeration cie;
+		try
+		{
+			cie = enumInstances(env,cop,false,cimClass,false);
+		}
+		catch (const OW_CIMException& e)
+		{
+			return ci;
+		}
+		
+		if (cie.hasMoreElements())
+		{
+			ci = cie.nextElement();
+			// since enumInstances always returns the root one first, we won't
+			// bother checking the rest of the instances in the enumeration.
+			if (ci)
+			{
+				OW_CIMProperty cp = ci.getProperty(OW_CIMProperty::NAME_PROPERTY);
+				if (cp)
+				{
+					OW_CIMValue v = cp.getValue();
+					if (v && v.getType() == OW_CIMDataType::STRING)
+					{
+						OW_String vval;
+						v.get(vval);
+						OW_String nsValStr;
+						nsVal.get(nsValStr);
+						if (vval.equalsIgnoreCase(nsValStr))
+						{
+							return ci;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return OW_CIMInstance();
 }
 
 //////////////////////////////////////////////////////////////////////////////

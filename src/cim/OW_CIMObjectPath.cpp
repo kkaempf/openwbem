@@ -164,6 +164,20 @@ OW_CIMObjectPath::getKeys() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMProperty
+OW_CIMObjectPath::getKey(const OW_String& keyName) const
+{
+	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
+	{
+		if (m_pdata->m_keys[i].getName().equalsIgnoreCase(keyName))
+		{
+			return m_pdata->m_keys[i];
+		}
+	}
+	return OW_CIMProperty();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMObjectPath::setKeys(const OW_CIMPropertyArray& newKeys)
 {

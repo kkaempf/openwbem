@@ -311,6 +311,8 @@ Diff()
 	DIFF_FILE1=$1
 	DIFF_FILE2=$2
 	if [ "$NODIFF" = "0" ]; then
+        echo "diff $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
+            $RESULTDIR/$DIFF_FILE2"
 		diff  $TOPSRCDIR/test/acceptance/testfiles/$DIFF_FILE1 \
 			 $RESULTDIR/$DIFF_FILE2 || \
 			 ExitWithFail "$3"

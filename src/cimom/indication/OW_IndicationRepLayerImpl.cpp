@@ -97,28 +97,31 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_CIMObjectPath& path,
 {
 	OW_CIMClass cc = m_pServer->deleteClass(path, aclInfo);
 
-	OW_ACLInfo intAclInfo;
-
-	OW_CIMClass expCC = m_pServer->getClass(
-		OW_CIMObjectPath("CIM_ClassDeletion"), false, true, true, NULL,
-		intAclInfo);
-
-	if(expCC)
+	if (cc)
 	{
-		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(cc, ss, OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin, OW_StringArray(), false);
+		OW_ACLInfo intAclInfo;
 
-		//cc.toXML(ss);
-		expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
-		exportIndication(expInst, path.getFullNameSpace());
-	}
-	else
-	{
-		getEnvironment()->logError("Unable to export indication for"
-			" createClass because CIM_ClassDeletion does not exist");
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_ClassDeletion"), false, true, true, NULL,
+			intAclInfo);
+
+		if(expCC)
+		{
+			OW_CIMInstance expInst = expCC.newInstance();
+			OW_StringStream ss;
+			OW_CIMtoXML(cc, ss, OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin, OW_StringArray(), false);
+
+			//cc.toXML(ss);
+			expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
+			exportIndication(expInst, path.getFullNameSpace());
+		}
+		else
+		{
+			getEnvironment()->logError("Unable to export indication for"
+				" createClass because CIM_ClassDeletion does not exist");
+		}
 	}
 	return cc;
 }
@@ -129,29 +132,32 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
 	OW_CIMInstance instOrig = m_pServer->deleteInstance(path, aclInfo);
-	OW_ACLInfo intAclInfo;
-
-	OW_CIMClass expCC = m_pServer->getClass(
-		OW_CIMObjectPath("CIM_InstDeletion"), false, true, true, NULL,
-		intAclInfo);
-
-	if (expCC)
+	if (instOrig)
 	{
-		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(instOrig, ss, OW_CIMObjectPath(),
-			OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
-		//instOrig.toXML(ss);
-		expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
-		exportIndication(expInst, path.getFullNameSpace());
-	}
-	else
-	{
-		getEnvironment()->logError("Unable to export indication for createClass"
-			" because CIM_InstDeletion does not exist");
+		OW_ACLInfo intAclInfo;
+
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_InstDeletion"), false, true, true, NULL,
+			intAclInfo);
+
+		if (instOrig && expCC)
+		{
+			OW_CIMInstance expInst = expCC.newInstance();
+			OW_StringStream ss;
+			OW_CIMtoXML(instOrig, ss, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			//instOrig.toXML(ss);
+			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			exportIndication(expInst, path.getFullNameSpace());
+		}
+		else
+		{
+			getEnvironment()->logError("Unable to export indication for createClass"
+				" because CIM_InstDeletion does not exist");
+		}
 	}
 	return instOrig;
 }
@@ -235,29 +241,32 @@ OW_IndicationRepLayerImpl::getCIMInstance(const OW_CIMObjectPath& name,
 {
 	OW_CIMInstance theInst = m_pServer->getCIMInstance(name, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-	OW_ACLInfo intAclInfo;
-
-	OW_CIMClass expCC = m_pServer->getClass(OW_CIMObjectPath("CIM_InstRead"),
-		false, true, true, NULL, intAclInfo);
-	if (expCC)
+	if (theInst)
 	{
-		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(theInst, ss, OW_CIMObjectPath(),
-			OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
-		//theInst.toXML(ss);
-		expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
-		exportIndication(expInst, name.getFullNameSpace());
-	}
-	else
-	{
-		getEnvironment()->logError("Unable to export indication for createClass"
-			" because CIM_InstRead does not exist");
-	}
+		OW_ACLInfo intAclInfo;
 
+		OW_CIMClass expCC = m_pServer->getClass(OW_CIMObjectPath("CIM_InstRead"),
+			false, true, true, NULL, intAclInfo);
+		if (expCC)
+		{
+			OW_CIMInstance expInst = expCC.newInstance();
+			OW_StringStream ss;
+			OW_CIMtoXML(theInst, ss, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			//theInst.toXML(ss);
+			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			exportIndication(expInst, name.getFullNameSpace());
+		}
+		else
+		{
+			getEnvironment()->logError("Unable to export indication for createClass"
+				" because CIM_InstRead does not exist");
+		}
+
+	}
 	return theInst;
 }
 
@@ -283,12 +292,31 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 			OW_CIMInstance theInst = m_pServer->getCIMInstance(name, false,
 				true, true, NULL, intAclInfo);
 
+			if (!theInst)
+			{
+				// can't export indication
+				return rval;
+			}
+
 			OW_CIMClass inParamsEmbed("__MethodParameters");
 
 			OW_CIMClass cc = m_pServer->getClass(name, false,
 				true, true, NULL, intAclInfo);
+			
+			if (!cc)
+			{
+				// can't export indication
+				return rval;
+			}
+
 
 			OW_CIMMethod cm = cc.getMethod(methodName);
+			if (!cm)
+			{
+				// can't export indication
+				return rval;
+			}
+
 			OW_CIMParameterArray paramList = cm.getParameters();
 
 			size_t paramIdx = 0;
@@ -325,13 +353,13 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 				OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,
 				OW_StringArray());
-			//theInst.toXML(ss);
+
 			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
 			ss.reset();
 			OW_CIMtoXML(inParamsEmbed, ss, OW_CIMtoXMLFlags::notLocalOnly,
 				OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
 				OW_StringArray(), false);
-			//inParamsEmbed.toXML(ss);
+
 			expInst.setProperty("MethodName", OW_CIMValue(methodName));
 			expInst.setProperty("MethodParameters", OW_CIMValue(ss.toString()));
 			expInst.setProperty("PreCall", OW_CIMValue(OW_Bool(false)));
@@ -379,33 +407,36 @@ OW_IndicationRepLayerImpl::updateClass(const OW_CIMObjectPath& name,
 {
 	OW_CIMClass lcc(cc);
 	OW_CIMClass CCOrig = m_pServer->updateClass(name, lcc, aclInfo);
-	OW_ACLInfo intAclInfo;
-
-	OW_CIMClass expCC = m_pServer->getClass(
-        OW_CIMObjectPath("CIM_ClassModification"), false, true, true, NULL,
-		intAclInfo);
-
-	if (expCC)
+	if (CCOrig)
 	{
-		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(CCOrig, ss, OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray(), false);
-		//CCOrig.toXML(ss);
-		expInst.setProperty("PreviousClassDefinition", OW_CIMValue(ss.toString()));
-		ss.reset();
-		OW_CIMtoXML(lcc, ss, OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray(), false);
-		//lcc.toXML(ss);
-		expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
-		exportIndication(expInst, name.getFullNameSpace());
-	}
-	else
-	{
-		getEnvironment()->logError("Unable to export indication for setClass"
-			" because CIM_ClassModification does not exist");
+		OW_ACLInfo intAclInfo;
+
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_ClassModification"), false, true, true, NULL,
+			intAclInfo);
+
+		if (expCC)
+		{
+			OW_CIMInstance expInst = expCC.newInstance();
+			OW_StringStream ss;
+			OW_CIMtoXML(CCOrig, ss, OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray(), false);
+			//CCOrig.toXML(ss);
+			expInst.setProperty("PreviousClassDefinition", OW_CIMValue(ss.toString()));
+			ss.reset();
+			OW_CIMtoXML(lcc, ss, OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray(), false);
+			//lcc.toXML(ss);
+			expInst.setProperty("ClassDefinition", OW_CIMValue(ss.toString()));
+			exportIndication(expInst, name.getFullNameSpace());
+		}
+		else
+		{
+			getEnvironment()->logError("Unable to export indication for setClass"
+				" because CIM_ClassModification does not exist");
+		}
 	}
 	return CCOrig;
 }
@@ -448,38 +479,41 @@ OW_IndicationRepLayerImpl::updateInstance(const OW_CIMObjectPath& name,
 {
 	OW_CIMInstance lci(ci);
 	OW_CIMInstance ciOrig = m_pServer->updateInstance(name, lci, aclInfo);
-	OW_ACLInfo intAclInfo;
-
-	OW_CIMClass expCC = m_pServer->getClass(
-        OW_CIMObjectPath("CIM_InstModification"), false, true, true, NULL,
-		intAclInfo);
-
-	if (expCC)
+	if (ciOrig)
 	{
-		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(ciOrig, ss, OW_CIMObjectPath(),
-			OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
-		//ciOrig.toXML(ss);
-		expInst.setProperty("PreviousInstance", OW_CIMValue(ss.toString()));
-		ss.reset();
-		OW_CIMtoXML(lci, ss, OW_CIMObjectPath(),
-			OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
-		//lci.toXML(ss);
-		// TODO refer to MOF.  What about filtering the properties in ss?
-		expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
-		exportIndication(expInst, name.getFullNameSpace());
-	}
-	else
-	{
-		getEnvironment()->logError("Unable to export indication for createClass"
-			" because CIM_InstModification does not exist");
+		OW_ACLInfo intAclInfo;
+
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_InstModification"), false, true, true, NULL,
+			intAclInfo);
+
+		if (expCC)
+		{
+			OW_CIMInstance expInst = expCC.newInstance();
+			OW_StringStream ss;
+			OW_CIMtoXML(ciOrig, ss, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			//ciOrig.toXML(ss);
+			expInst.setProperty("PreviousInstance", OW_CIMValue(ss.toString()));
+			ss.reset();
+			OW_CIMtoXML(lci, ss, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			//lci.toXML(ss);
+			// TODO refer to MOF.  What about filtering the properties in ss?
+			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			exportIndication(expInst, name.getFullNameSpace());
+		}
+		else
+		{
+			getEnvironment()->logError("Unable to export indication for createClass"
+				" because CIM_InstModification does not exist");
+		}
 	}
 	return ciOrig;
 }
@@ -492,33 +526,36 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 	OW_CIMInstance lci(ci);
 	OW_CIMObjectPath rval = m_pServer->createInstance(name, lci, aclInfo);
 
-	OW_CIMObjectPath op(name);
-	op.setKeys(ci.getKeyValuePairs());
-
-	OW_ACLInfo intAclInfo;
-
-	OW_CIMClass expCC = m_pServer->getClass(
-        OW_CIMObjectPath("CIM_InstCreation"), false, true, true, NULL,
-		intAclInfo);
-
-	if (expCC)
+	if (rval)
 	{
-		OW_CIMInstance expInst = expCC.newInstance();
-		OW_StringStream ss;
-		OW_CIMtoXML(lci, ss, OW_CIMObjectPath(),
-			OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
-		//lci.toXML(ss);
-		// TODO refer to MOF.  What about filtering the properties in ss?
-		expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
-		exportIndication(expInst, name.getFullNameSpace());
-	}
-	else
-	{
-		getEnvironment()->logError("Unable to export indication for createClass"
-			" because CIM_InstCreation does not exist");
+		OW_CIMObjectPath op(name);
+		op.setKeys(ci.getKeyValuePairs());
+
+		OW_ACLInfo intAclInfo;
+
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_InstCreation"), false, true, true, NULL,
+			intAclInfo);
+
+		if (expCC)
+		{
+			OW_CIMInstance expInst = expCC.newInstance();
+			OW_StringStream ss;
+			OW_CIMtoXML(lci, ss, OW_CIMObjectPath(),
+				OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+			//lci.toXML(ss);
+			// TODO refer to MOF.  What about filtering the properties in ss?
+			expInst.setProperty("SourceInstance", OW_CIMValue(ss.toString()));
+			exportIndication(expInst, name.getFullNameSpace());
+		}
+		else
+		{
+			getEnvironment()->logError("Unable to export indication for createClass"
+				" because CIM_InstCreation does not exist");
+		}
 	}
 	return rval;
 }
@@ -634,11 +671,4 @@ getOWVersion()
 {
 	return OW_VERSION;
 }
-/*
-#include <stdio.h>
-extern "C"
-void _fini(void)
-{
-	printf("_fini of indication rep layer lib");
-}
-*/
+
