@@ -253,6 +253,8 @@ OW_CIMQualifierType
 OW_MetaRepository::getQualifierType(const OW_String& ns,
 	const OW_String& qualName, OW_HDBHandle* phdl)
 {
+	// TODO: Use a cache here!
+
 	throwIfNotOpen();
 	OW_String qkey = _makeQualPath(ns, qualName);
 
