@@ -3,7 +3,7 @@
  *
  * cmpiArray.cpp
  *
- * Copyright (c) 2002, International Business Machines
+ * (C) Copyright IBM Corp. 2003
  *
  * THIS FILE IS PROVIDED UNDER THE TERMS OF THE COMMON PUBLIC LICENSE
  * ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF THIS FILE
@@ -23,16 +23,16 @@
 #include "cmpisrv.h"
 
 static CMPIStatus arrayRelease(CMPIArray* eArray) {
-   //cout<<"--- arrayRelease()"<<endl;
+//   cout<<"--- arrayRelease()"<<endl;
    CMPIData *dta=(CMPIData*)eArray->hdl;
    if (dta) {
       if (dta->type & CMPI_ENC) {
-        // for (uint i=1; i<=dta->value.uint32; i++) {
+         for (uint i=1; i<=dta->value.uint32; i++) {
 	//    if (dta[i].state==0)
 	//     ((CMPIString*)dta[i].value.string)->ft->release((CMPIString*)dta[i].value.string);
-	 //}
+	 }
       }
-      delete dta;
+      delete[] dta;
       ((CMPI_Object*)eArray)->unlinkAndDelete();
    }
    CMReturn(CMPI_RC_OK);
@@ -78,11 +78,13 @@ static CMPIStatus arraySetElementAt(CMPIArray* eArray, CMPICount pos,
    CMPIData *dta=(CMPIData*)eArray->hdl;
 
    if (pos<dta->value.uint32) {
-      if ((dta->type == type)||(dta->type == type | CMPI_ARRAY)) {
+      if ((dta->type&~CMPI_ARRAY)==type) {
          dta[pos+1].state=0;
          dta[pos+1].value=*val;
          CMReturn(CMPI_RC_OK);
       }
+      cout<<"--- arraySetElementAt(): CMPI_RC_ERR_TYPE_MISMATCH is "
+         <<(void*)(long)type<<" should be "<<(void*)(long)dta->type<<endl;
       CMReturn(CMPI_RC_ERR_TYPE_MISMATCH);
    }
    CMReturn(CMPI_RC_ERR_NOT_FOUND);
@@ -111,4 +113,8 @@ static CMPIArrayFT array_FT={
 };
 
 CMPIArrayFT *CMPI_Array_Ftab=&array_FT;
+
+
+
+
 
