@@ -53,8 +53,10 @@ namespace OpenWBEM
 
 //using namespace WBEMFlags;
 
-ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider)
+ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
+												   ProviderEnvironmentIFCRef env)
 	: m_prov(provider)
+	, m_PAEnv(env)
 {
 }
 /**

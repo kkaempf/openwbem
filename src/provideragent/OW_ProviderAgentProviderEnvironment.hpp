@@ -34,60 +34,39 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
-#define OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
+#ifndef OW_PROVIDERAGENTPROVIDERENVIRONMENT_HPP_INCLUDE_GUARD_
+#define OW_PROVIDERAGENTPROVIDERENVIRONMENT_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
-#include "OW_Reference.hpp"
-#include "OW_URL.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_RequestHandlerIFC.hpp"
-#include "OW_Logger.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_ConfigFile.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_CppProviderBaseIFC.hpp"
-#include "OW_AuthenticatorIFC.hpp"
 
 namespace OpenWBEM
 {
 
-class HTTPServer;
-class NonAuthenticatingAuthenticator;
-class Thread;
-class ProviderAgent
+class ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
 {
 public:
-	/**
-	 * @param logger If a logger specified then it will receive log messages, otherwise
-	 *  all log messages will be discarded.
-	 */
-	ProviderAgent(ConfigFile::ConfigMap configMap, 
-				  Reference<CppProviderBaseIFC> provider, 
-				  Array<RequestHandlerIFCRef> requestHandlers, 
-				  Reference<AuthenticatorIFC> authenticator,
-				  LoggerRef logger = LoggerRef(0)); 
-	~ProviderAgent();
-	/**
-	 * Shut down the http server that is listening for indications.
-	 *	This function blocks until all threads that are running callbacks
-	 *	have terminated.
-	 */
-	void shutdownHttpServer();
-private:
-	RequestHandlerIFCRef m_requestHandler;
-	Reference<NonAuthenticatingAuthenticator> m_pLAuthenticator;
-	Reference<HTTPServer> m_httpServer;
-	UInt16 m_httpListenPort;
-	UInt16 m_httpsListenPort;
-	Reference<Thread> m_httpThread;
-	UnnamedPipeRef m_stopHttpPipe;
+	ProviderAgentProviderEnvironment(LoggerRef logger, 
+									 ConfigFile::ConfigMap configMap); 
+		// This function returns a regular cimom handle that does access checking and may call providers.
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const; 
+	virtual String getConfigItem(const String &name, const String &defRetVal="") const; 
+	// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
+	// no providers will be called.  This function should only be called if getCIMOMHandle()
+	// is insufficent.
+	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const; 
+	// This function returns a reference to the repository.  This function should only
+	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
+	virtual RepositoryIFCRef getRepository() const; 
+	virtual LoggerRef getLogger() const; 
+	virtual String getUserName() const; 
+	virtual OperationContext& getOperationContext(); 
+private: 
 	LoggerRef m_logger; 
 	ConfigFile::ConfigMap m_configMap; 
 };
 
 } // end namespace OpenWBEM
 
-typedef OpenWBEM::ProviderAgent OW_ProviderAgent OW_DEPRECATED;
-
-#endif //#ifndef OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
+#endif // #ifndef OW_PROVIDERAGENTPROVIDERENVIRONMENT_HPP_INCLUDE_GUARD_

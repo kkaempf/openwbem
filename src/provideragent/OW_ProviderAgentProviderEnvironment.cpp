@@ -35,65 +35,33 @@
  */
 
 #include "OW_config.h"
-#include "OW_ProviderAgentEnvironment.hpp"
 #include "OW_ProviderAgentProviderEnvironment.hpp"
-#include "OW_ProviderAgentCIMOMHandle.hpp"
-#include "OW_RequestHandlerIFC.hpp"
 #include "OW_Assertion.hpp"
 
 namespace OpenWBEM
 {
 
-
-ProviderAgentEnvironment::ProviderAgentEnvironment(Map<String,String> configMap,
-		Reference<CppProviderBaseIFC> provider, 
-		Reference<AuthenticatorIFC> authenticator,
-		Array<RequestHandlerIFCRef> requestHandlers, 
-		LoggerRef logger,
-		Reference<Array<SelectablePair_t> > selectables)
-	: m_authenticator(authenticator)
-	, m_logger(logger ? logger : LoggerRef(new DummyLogger))
-	, m_requestHandlers(requestHandlers)
-	, m_selectables(selectables)
-	, m_prov(provider)
-	, m_configItems(configMap)
+//////////////////////////////////////////////////////////////////////////////
+ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(LoggerRef logger, 
+								 ConfigFile::ConfigMap configMap)
+	: m_logger(logger)
+	, m_configMap(configMap)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentEnvironment::~ProviderAgentEnvironment() {}
-
-
-//////////////////////////////////////////////////////////////////////////////
-bool 
-ProviderAgentEnvironment::authenticate(String &userName,
-		const String &info, String &details, OperationContext& context)
+	// This function returns a regular cimom handle that does access checking and may call providers.
+CIMOMHandleIFCRef 
+ProviderAgentProviderEnvironment::getCIMOMHandle() const
 {
-	return m_authenticator->authenticate(userName, info, details, context);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void 
-ProviderAgentEnvironment::addSelectable(const SelectableIFCRef& obj,
-		const SelectableCallbackIFCRef& cb)
-{
-	m_selectables->push_back(std::make_pair(obj, cb));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void 
-ProviderAgentEnvironment::removeSelectable(const SelectableIFCRef& obj)
-{
-	m_selectables->erase(std::remove_if(m_selectables->begin(), m_selectables->end(),
-		selectableFinder(obj)), m_selectables->end());
+	OW_ASSERT("not implemented" == 0); 
 }
 //////////////////////////////////////////////////////////////////////////////
 String 
-ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRetVal) const
+ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String &defRetVal) const
 {
 	Map<String, String>::const_iterator i =
-		m_configItems.find(name);
-	if (i != m_configItems.end())
+		m_configMap.find(name);
+	if (i != m_configMap.end())
 	{
 		return (*i).second;
 	}
@@ -102,55 +70,39 @@ ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRet
 		return defRetVal;
 	}
 }
-//////////////////////////////////////////////////////////////////////////////
-void 
-ProviderAgentEnvironment::setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
-{
-	if (overwritePrevious == E_OVERWRITE_PREVIOUS || getConfigItem(item) == "")
-		m_configItems[item] = value;
-}
-	
-//////////////////////////////////////////////////////////////////////////////
-RequestHandlerIFCRef 
-ProviderAgentEnvironment::getRequestHandler(const String& ct)
-{
-	for (Array<RequestHandlerIFCRef>::const_iterator iter = m_requestHandlers.begin(); 
-		  iter != m_requestHandlers.end(); ++iter)
-	{
-		StringArray sa = (*iter)->getSupportedContentTypes(); 
-		if (find(sa.begin(), sa.end(), ct) != sa.end())
-		{
-			return *iter; 
-		}
-	}
-	return RequestHandlerIFCRef(SharedLibraryRef(0), 0);  //TODO need to throw? 
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef 
-ProviderAgentEnvironment::getCIMOMHandle(OperationContext&,
-		ESendIndicationsFlag /*doIndications*/,
-		EBypassProvidersFlag /*bypassProviders*/)
-{
-	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(m_logger, m_configItems)); 
-	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(m_prov, pe)); 
-}
-//////////////////////////////////////////////////////////////////////////////
-LoggerRef 
-ProviderAgentEnvironment::getLogger() const
-{
-	return m_logger;
-}
 
 //////////////////////////////////////////////////////////////////////////////
-CIMInstanceArray 
-ProviderAgentEnvironment::getInteropInstances(const String& className)const 
+// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
+// no providers will be called.  This function should only be called if getCIMOMHandle()
+// is insufficent.
+CIMOMHandleIFCRef 
+ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 {
 	OW_ASSERT("not implemented" == 0); 
 }
-
 //////////////////////////////////////////////////////////////////////////////
-void 
-ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
+// This function returns a reference to the repository.  This function should only
+// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
+RepositoryIFCRef 
+ProviderAgentProviderEnvironment::getRepository() const
+{
+	OW_ASSERT("not implemented" == 0); 
+}
+//////////////////////////////////////////////////////////////////////////////
+LoggerRef 
+ProviderAgentProviderEnvironment::getLogger() const
+{
+	return m_logger; 
+}
+//////////////////////////////////////////////////////////////////////////////
+String 
+ProviderAgentProviderEnvironment::getUserName() const
+{
+	OW_ASSERT("not implemented" == 0); 
+}
+//////////////////////////////////////////////////////////////////////////////
+OperationContext& 
+ProviderAgentProviderEnvironment::getOperationContext()
 {
 	OW_ASSERT("not implemented" == 0); 
 }

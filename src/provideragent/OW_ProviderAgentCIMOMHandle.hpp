@@ -50,7 +50,8 @@ using namespace WBEMFlags;
 class ProviderAgentCIMOMHandle : public CIMOMHandleIFC
 {
 public:
-	ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider); 
+	ProviderAgentCIMOMHandle(Reference<CppProviderBaseIFC> provider, 
+							 ProviderEnvironmentIFCRef env); 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *

@@ -133,7 +133,6 @@ ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap,
 	: m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
-	, m_cimomHandle(new ProviderAgentCIMOMHandle(provider))
 {
 	Reference<Array<SelectablePair_t> >
 		selectables(new Array<SelectablePair_t>);

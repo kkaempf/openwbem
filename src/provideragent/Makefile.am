@@ -27,6 +27,8 @@ thelibdir = $(libdir)
 libowprovideragent_a_SOURCES = \
 OW_ProviderAgentCIMOMHandle.hpp OW_ProviderAgentCIMOMHandle.cpp \
 OW_ProviderAgentEnvironment.hpp OW_ProviderAgentEnvironment.cpp \
+OW_ProviderAgentProviderEnvironment.hpp \
+OW_ProviderAgentProviderEnvironment.cpp \
 OW_ProviderAgent.cpp
 
 pkginclude_HEADERS = \
