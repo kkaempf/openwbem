@@ -57,6 +57,8 @@ public:
 	 * The mutex lock must  be locked  by the calling thread on entrance 
 	 * to wait. Before returning to the calling thread, wait re-acquires  
 	 * the mutex lock.
+	 * This function should always be called within a while loop that
+	 * checks the condition.
 	 */
 	void wait(OW_NonRecursiveMutexLock& lock);
 
@@ -68,6 +70,8 @@ public:
 	 * @param sTimeout The number of seconds to wait for the mutex.
 	 * @param usTimeout The number of micro seconds (1/1000000th) to wait
 	 * The total wait time is sTimeout * 1000000 + usTimeout micro seconds.
+	 * This function should always be called within a while loop that
+	 * checks the condition.
 	 * @returns true if the lock was acquired, false if timeout occurred.
 	 */
 	bool timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
