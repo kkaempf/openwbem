@@ -1,2 +1,1 @@
-#SUBDIRS = cpp c
-SUBDIRS = cpp npi
+SUBDIRS = cpp npi simplecpp

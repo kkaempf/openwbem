@@ -28,86 +28,28 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_RESULTHANDLERIFC_HPP_
-#define OW_RESULTHANDLERIFC_HPP_
-
 #include "OW_config.h"
-#include "OW_CIMFwd.hpp"
+#include "OW_SimpleCppPropertyProviderIFC.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMValue.hpp"
 
-class OW_CIMClassResultHandlerIFC
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue OW_SimpleCppPropertyProviderIFC::getPropertyValue(
+	const OW_ProviderEnvironmentIFCRef&,
+	const OW_CIMObjectPath&,
+	const OW_String&)
 {
-public:
-	void handleClass(const OW_CIMClass& c)
-	{
-		doHandleClass(c);
-	}
+	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+}
 
-	virtual ~OW_CIMClassResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleClass(const OW_CIMClass& c) = 0;
-
-};
-
-class OW_CIMInstanceResultHandlerIFC
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_SimpleCppPropertyProviderIFC::setPropertyValue(
+	const OW_ProviderEnvironmentIFCRef&,
+	const OW_CIMObjectPath&,
+	const OW_String&,
+	const OW_CIMValue&)
 {
-public:
-	void handleInstance(const OW_CIMInstance& i)
-	{
-		doHandleInstance(i);
-	}
-
-	virtual ~OW_CIMInstanceResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleInstance(const OW_CIMInstance& i) = 0;
-
-};
-
-class OW_CIMObjectPathResultHandlerIFC
-{
-public:
-	void handleObjectPath(const OW_CIMObjectPath& cop)
-	{
-		doHandleObjectPath(cop);
-	}
-
-	virtual ~OW_CIMObjectPathResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleObjectPath(const OW_CIMObjectPath& cop) = 0;
-
-};
-
-class OW_StringResultHandlerIFC
-{
-public:
-	void handleString(const OW_String& s)
-	{
-		doHandleString(s);
-	}
-
-	virtual ~OW_StringResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleString(const OW_String& s) = 0;
-
-};
-
-class OW_CIMQualifierTypeResultHandlerIFC
-{
-public:
-	void handleQualifierType(const OW_CIMQualifierType& s)
-	{
-		doHandleQualifierType(s);
-	}
-
-	virtual ~OW_CIMQualifierTypeResultHandlerIFC() {}
-
-protected:
-	virtual void doHandleQualifierType(const OW_CIMQualifierType& qt) = 0;
-
-};
-
-#endif
+	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+}
 

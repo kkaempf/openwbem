@@ -64,6 +64,10 @@
 #define DEFAULT_CPP_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/c++providers"
 #endif
 
+#ifndef DEFAULT_SIMPLE_CPP_PROVIDER_LOCATION
+#define DEFAULT_SIMPLE_CPP_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/simplec++providers"
+#endif
+
 #ifndef DEFAULT_NPI_PROVIDER_LOCATION
 #define DEFAULT_NPI_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/npiproviders"
 #endif
@@ -173,6 +177,7 @@ namespace OW_ConfigOpts
 	static const char* const SSL_CERT_opt = "http_server.SSL_cert";
 	static const char* const CPPIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
 	static const char* const REQ_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
+	static const char* const SIMPLECPPIFC_PROV_LOC_opt = "simplecppprovifc.prov_location";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__
