@@ -28,7 +28,6 @@ clean-local:
 #OW_CMPIMethodProviderProxy.cpp  
 
 libcmpiprovifc_a_SOURCES = \
-CMPIProvider.hpp \
 OW_CMPIInstanceProviderProxy.cpp \
 OW_CMPIInstanceProviderProxy.hpp \
 OW_CMPIAssociatorProviderProxy.cpp \
@@ -43,6 +42,7 @@ OW_FTABLERef.hpp
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM
+
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
