@@ -84,7 +84,7 @@ public:
 	}
 
 protected:
-	virtual void run() 
+	virtual OW_Int32 run() 
 	{
 		m_locker->getReadLock(0);
 		m_sem->signal();
@@ -95,6 +95,7 @@ protected:
 		m_sem->signal();
 		OW_Thread::sleep(10);
 		m_locker->releaseWriteLock();
+		return 0;
 	}
 
 	OW_RWLocker* m_locker;

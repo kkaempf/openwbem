@@ -170,7 +170,7 @@ public:
 	 * The method that will be run when the start method is called on this
 	 * OW_Thread object.
 	 */
-	virtual void run()
+	virtual OW_Int32 run()
 	{
 		OW_SelectEngine engine;
 		OW_SelectableCallbackIFCRef cb(new OW_SelectEngineStopper(engine));
@@ -181,6 +181,7 @@ public:
 				(*m_selectables)[i].second);
 		}
 		engine.go();
+		return 0;
 	}
 
 private:

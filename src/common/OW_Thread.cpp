@@ -51,7 +51,7 @@ public:
 		setSelfDelete(true);
 	}
 
-	virtual void run()
+	virtual OW_Int32 run()
 	{
 		try
 		{
@@ -61,7 +61,7 @@ public:
 		{
 			// Ignore?
 		}
-
+		return 0; // Return code just gets dropped, but we have to return something...
 	}
 
 private:
@@ -153,7 +153,7 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 
 //////////////////////////////////////////////////////////////////////////////
 // Wait for this object's thread execution (if any) to complete.
-void
+OW_Int32
 OW_Thread::join() /*throw (OW_ThreadException)*/
 {
 	OW_ASSERT(isJoinable());
@@ -166,12 +166,14 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 	//	yield();
 	//}
 
-	if(OW_ThreadImpl::joinThread(m_id) != 0)
+	OW_Int32 rval;
+	if(OW_ThreadImpl::joinThread(m_id, rval) != 0)
 	{
 		OW_THROW(OW_ThreadException,
 			format("OW_Thread::join - OW_ThreadImpl::joinThread: %1(%2)", 
 				   errno, strerror(errno)).c_str());
 	}
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -200,10 +202,11 @@ OW_Thread::run(OW_RunnableRef theRunnable, OW_Bool separateThread, OW_Reference<
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 // Method used for starting threads
-void*
+OW_Int32
 OW_Thread::threadRunner(void* paramPtr)
 {
 	OW_Thread_t theThreadID;
+	OW_Int32 rval;
 	try
 	{
 		// scope is important so destructors will run before the thread is clobbered by exitThread
@@ -221,7 +224,7 @@ OW_Thread::threadRunner(void* paramPtr)
 			yield();
 		}
 
-		pTheThread->run();
+		rval = pTheThread->run();
 
 		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
@@ -266,8 +269,8 @@ OW_Thread::threadRunner(void* paramPtr)
 	}
 
 	// end the thread.  exitThread never returns.
-	OW_ThreadImpl::exitThread(theThreadID);
-	return NULL;
+	OW_ThreadImpl::exitThread(theThreadID, rval);
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////

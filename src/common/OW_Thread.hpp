@@ -158,8 +158,9 @@ public:
 	 * join() should not be called until after start() has returned.  It may
 	 * be called by a different thread.
 	 * @exception OW_ThreadException
+	 * @return The return value from the thread's run()
 	 */
-	void join() /*throw (OW_ThreadException)*/;
+	OW_Int32 join() /*throw (OW_ThreadException)*/;
 
 	/**
 	 * Get this OW_Thread object's id.
@@ -214,7 +215,7 @@ protected:
 	 * The method that will be run when the start method is called on this
 	 * OW_Thread object.
 	 */
-	virtual void run() = 0;
+	virtual OW_Int32 run() = 0;
 
 	OW_Thread_t m_id;
 	OW_Bool m_isJoinable;
@@ -231,7 +232,7 @@ private:
 		OW_Reference<OW_ThreadDoneCallback> cb;
 	};
 
-	static void* threadRunner(void* paramPtr);
+	static OW_Int32 threadRunner(void* paramPtr);
 };
 
 

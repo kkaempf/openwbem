@@ -329,7 +329,7 @@ OW_IndicationServerImpl::~OW_IndicationServerImpl()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_Int32
 OW_IndicationServerImpl::run()
 {
 	// let OW_CIMOMEnvironment know we're running and ready to go.
@@ -374,6 +374,8 @@ OW_IndicationServerImpl::run()
 	// probably cause a segfault, since the library will be unloaded soon after
 	// and if a thread is still running, then BOOM!
 	m_threadCounter->waitForAll(600, 0);
+
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

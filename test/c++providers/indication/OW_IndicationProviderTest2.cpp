@@ -135,7 +135,7 @@ public:
 	}
 
 protected:
-	virtual void run();
+	virtual OW_Int32 run();
 
 	OW_NonRecursiveMutex m_guard;
 	OW_Condition m_cond;
@@ -519,7 +519,7 @@ private:
 };
 
 
-void OW_TestProviderThread::run()
+OW_Int32 OW_TestProviderThread::run()
 {
 	OW_NonRecursiveMutexLock l(m_guard);
 	while (!m_shuttingDown)
@@ -529,6 +529,7 @@ void OW_TestProviderThread::run()
 		// to be able to stop the thread when the cimom shuts down or restarts.
 		m_cond.timedWait(l, 1);
 	}
+	return 0;
 }
 
 

@@ -40,7 +40,7 @@
  -----------------------------------*/
 #define OW_THREAD_FLG_JOINABLE 0x000000001
 
-typedef void* (*OW_ThreadFunction)(void*);
+typedef OW_Int32 (*OW_ThreadFunction)(void*);
 
 /**
  * The OW_ThreadImpl class represents the functionality needed by the
@@ -97,8 +97,9 @@ public:
 	 * When the POSIX threads are being used, pthread_exit is called.
 	 * This function does not return.
 	 * @param handle The thread handle of the calling thread.
+	 * @param rval The thread's return value. This can get picked up by joinThread.
 	 */
-	static void exitThread(OW_Thread_t& handle);
+	static void exitThread(OW_Thread_t& handle, OW_Int32 rval);
 
 	#ifdef OW_USE_GNU_PTH
 	static void initThreads();
@@ -135,9 +136,10 @@ public:
 	 * Assumed that if the thread has already terminated, this method
 	 * will still succeed and return immediately.
 	 * @param handle	A handle to the thread to join with.
+	 * @param rval An out parameter of the thread's return code.
 	 * @return 0 on success. Otherwise -1
 	 */
-	static int joinThread(OW_Thread_t& handle);
+	static int joinThread(OW_Thread_t& handle, OW_Int32& rval);
 
 	/**
 	 * Voluntarily yield to the processor giving the next thread in the chain

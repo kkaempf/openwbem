@@ -63,7 +63,7 @@ public:
 	void addPolledProvider(const OW_PolledProviderIFCRef& p);
 
 protected:
-	virtual void run();
+	virtual OW_Int32 run();
 
 private:
 

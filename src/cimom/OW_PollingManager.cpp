@@ -125,7 +125,7 @@ namespace
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_Int32
 OW_PollingManager::run()
 {
 	// let OW_CIMOMEnvironment know we're running and ready to go.
@@ -199,6 +199,8 @@ OW_PollingManager::run()
 	m_threadCount->waitForAll(60, 0);
 
 	m_triggerRunners.clear();
+
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////

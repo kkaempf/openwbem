@@ -169,7 +169,7 @@ default_stack_size g_theDefaultStackSize;
 // STATIC
 int
 OW_ThreadImpl::createThread(OW_Thread_t& handle, OW_ThreadFunction func,
-									 void* funcParm, OW_UInt32 threadFlags)
+	void* funcParm, OW_UInt32 threadFlags)
 {
 #ifdef OW_USE_GNU_PTH
     initThreads();
@@ -265,9 +265,10 @@ threadStarter(void* arg)
 	void* funcParm = parg->m_funcParm;
 	delete parg;
 
-	(*func)(funcParm);
-	pthread_exit(NULL);
-	return NULL;
+	OW_Int32 rval = (*func)(funcParm);
+	void* prval = reinterpret_cast<void*>(rval);
+	pthread_exit(prval);
+	return prval;
 }
 
 } // extern "C"
@@ -276,12 +277,14 @@ threadStarter(void* arg)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_ThreadImpl::exitThread(OW_Thread_t&)
+OW_ThreadImpl::exitThread(OW_Thread_t&, OW_Int32 rval)
 {
 #ifdef OW_USE_GNU_PTH
-    pth_exit(NULL);
+	void* prval = reinterpret_cast<void*>(rval);
+	pth_exit(prval);
 #elif defined(OW_USE_PTHREAD)
-	pthread_exit(NULL);
+	void* prval = reinterpret_cast<void*>(rval);
+	pthread_exit(prval);
 #elif defined(OW_USE_WIN32_THREADS)
 #else
 #error "port me!"
@@ -331,12 +334,21 @@ OW_ThreadImpl::setThreadDetached(OW_Thread_t& handle)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_ThreadImpl::joinThread(OW_Thread_t& handle)
+OW_ThreadImpl::joinThread(OW_Thread_t& handle, OW_Int32& rval)
 {
 #ifdef OW_USE_GNU_PTH
     return ((pth_join(handle, NULL)) != -1 ? 0 : -1);
 #elif defined(OW_USE_PTHREAD)
-	return(((errno = pthread_join(handle, NULL)) == 0) ? 0 : -1);
+	void* prval;
+	if ((errno = pthread_join(handle, &prval)) == 0)
+	{
+		rval = reinterpret_cast<OW_Int32>(prval);
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
 #elif defined(OW_USE_WIN32_THREADS)
 	return 0;
 #else

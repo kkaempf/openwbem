@@ -70,7 +70,7 @@ public:
 
 	virtual void setStartedSemaphore(OW_Semaphore* sem);
 
-	virtual void run();
+	virtual OW_Int32 run();
 	void shutdown();
 
 	void processIndication(const OW_CIMInstance& instance,
