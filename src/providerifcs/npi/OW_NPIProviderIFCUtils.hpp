@@ -70,5 +70,22 @@ private:
 	::Vector m_vector;
 };
 
+class OW_NPIHandleFreer
+{
+public:
+	OW_NPIHandleFreer(::NPIHandle& h) : m_handle(h)
+	{
+	}
+	~OW_NPIHandleFreer()
+	{
+		if (m_handle.providerError != NULL)
+		{
+			free((void*)m_handle.providerError);
+		}
+	}
+private:
+	::NPIHandle& m_handle;
+};
+
 
 #endif

@@ -53,9 +53,9 @@ OW_NPIAssociatorProviderProxy::associatorNames(
     if (m_ftable->fp_associatorNames != NULL)
     {
         ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
-
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
@@ -69,8 +69,8 @@ OW_NPIAssociatorProviderProxy::associatorNames(
 
         ::Vector v =
             m_ftable->fp_associatorNames(&_npiHandle, _assoc, _path,
-                resultClass.empty() ? 0 : resultClass.c_str(), 
-				role.empty() ? 0 : role.c_str(), 
+                resultClass.empty() ? 0 : resultClass.c_str(),
+				role.empty() ? 0 : role.c_str(),
 				resultRole.empty() ? 0 : resultRole.c_str());
 
         OW_NPIVectorFreer vf1(v);
@@ -117,6 +117,7 @@ OW_NPIAssociatorProviderProxy::associators(
     if (m_ftable->fp_associators != NULL)
     {
         ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
@@ -143,8 +144,8 @@ OW_NPIAssociatorProviderProxy::associators(
 
         ::Vector v =
             m_ftable->fp_associators(&_npiHandle, _assoc, _path,
-                resultClass.empty() ? 0 : resultClass.c_str(), 
-				role.empty() ? 0 : role.c_str(), 
+                resultClass.empty() ? 0 : resultClass.c_str(),
+				role.empty() ? 0 : role.c_str(),
 				resultRole.empty() ? 0 : resultRole.c_str(),
                 includeQualifiers, includeClassOrigin,
                 _plLen > 0 ? &_propertyList[0] : 0, _plLen);
@@ -202,6 +203,7 @@ OW_NPIAssociatorProviderProxy::references(
     if (m_ftable->fp_references != NULL)
     {
         ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
@@ -228,7 +230,7 @@ OW_NPIAssociatorProviderProxy::references(
 
         ::Vector v =
             m_ftable->fp_references(&_npiHandle, _assoc, _path,
-                role.empty() ? 0 : role.c_str(), 
+                role.empty() ? 0 : role.c_str(),
 				includeQualifiers, includeClassOrigin,
                 _plLen > 0 ? &_propertyList[0] : 0, _plLen);
 
@@ -283,6 +285,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
     if (m_ftable->fp_referenceNames != NULL)
     {
         ::NPIHandle _npiHandle = { 0, 0, 0, 0 };
+		OW_NPIHandleFreer nhf(_npiHandle);
 
         _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 

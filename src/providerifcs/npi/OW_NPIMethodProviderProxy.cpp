@@ -56,6 +56,7 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
         if (m_ftable->fp_invokeMethod != NULL)
         {
             ::NPIHandle _npiHandle = { 0,0,0,0};
+			OW_NPIHandleFreer nhf(_npiHandle);
 
             _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
@@ -81,6 +82,12 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 
             CIMValue cv = m_ftable->fp_invokeMethod(
                 &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
+
+			if (_npiHandle.errorOccurred)
+			{
+				OW_THROWCIMMSG(OW_CIMException::FAILED,
+					_npiHandle.providerError);
+			}
 
             rval = * static_cast<OW_CIMValue *> (cv.ptr);
 

@@ -1,3 +1,6 @@
+Fri Nov 15 08:05:33 MST 2002
+- Fixed bugs with NPI errors.
+
 Wed Nov 13 14:25:35 MST 2002
 - Fixed a bug in _validatePropagatedKeys when the name of the key that the
   Propagated qualifier refered to was different than the name of the
