@@ -1,6 +1,7 @@
 
 start: Make sure all important changes are committed.
 
+Validate the all LIBRARY_BINARY_VERSION numbers are correctly incremented.
 update changelog (http://www.red-bean.com/cvs2cl/) & TODO
   cvs2cl.pl -F BRANCH_2_0_MAINT --stdout --delta RELEASE_2_0_6:BRANCH_2_0_MAINT
 get a new cvs checkout.
