@@ -69,7 +69,7 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 String 
 ProviderAgentProviderEnvironment::getConfigItem(const String &name, const String &defRetVal) const
 {
-	Map<String, String>::const_iterator i =
+	ConfigFile::ConfigMap::const_iterator i =
 		m_configMap.find(name);
 	if (i != m_configMap.end())
 	{

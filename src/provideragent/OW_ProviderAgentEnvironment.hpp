@@ -91,7 +91,7 @@ public:
 		EBypassProvidersFlag /*bypassProviders*/); 
 	virtual LoggerRef getLogger() const; 
 private:
-	Map<String, String> m_configItems;
+	ConfigFile::ConfigMap m_configItems;
 	Reference<AuthenticatorIFC> m_authenticator;
 	LoggerRef m_logger;
 	String m_callbackURL; 

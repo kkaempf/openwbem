@@ -36,7 +36,7 @@
 #define OW_CONFIG_FILE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Map.hpp"
+#include "OW_SortedVectorMap.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -47,7 +47,7 @@ namespace OpenWBEM
 namespace ConfigFile
 {
 
-	typedef Map<String, String> ConfigMap;
+	typedef SortedVectorMap<String, String> ConfigMap;
 	void loadConfigFile(const String& filename, ConfigMap& rval);
 
 } // end namespace ConfigFile

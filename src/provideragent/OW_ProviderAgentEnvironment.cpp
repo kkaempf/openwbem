@@ -54,7 +54,7 @@ namespace OpenWBEM
 {
 
 
-ProviderAgentEnvironment::ProviderAgentEnvironment(Map<String,String> configMap,
+ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
 		Array<CppProviderBaseIFCRef> providers, 
 		Array<CIMClass> cimClasses, 
 		Reference<AuthenticatorIFC> authenticator,
@@ -262,7 +262,7 @@ ProviderAgentEnvironment::removeSelectable(const SelectableIFCRef& obj)
 String 
 ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRetVal) const
 {
-	Map<String, String>::const_iterator i =
+	ConfigFile::ConfigMap::const_iterator i =
 		m_configItems.find(name);
 	if (i != m_configItems.end())
 	{
