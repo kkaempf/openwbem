@@ -53,7 +53,10 @@ namespace OW_SocketUtils
 	OW_String inetAddrToString(OW_UInt64 addr);
 
 	/**
-	 * Get the fully qualified domain name.
+	 * Get the fully qualified host name.
+	 * This function can be expensive performance-wise.  It may query multiple DNS servers.
+	 * If the network is not working correctly, it will fail and throw an exception.
+	 * @throws OW_SocketException on failure.
 	 */
 	OW_String getFullyQualifiedHostName();
 }
