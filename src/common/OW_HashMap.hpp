@@ -45,7 +45,7 @@
 	#define HashMap __gnu_cxx::hash_map
 #else
 	#include "OW_SortedVectorMap.hpp"
-	#define OW_HASH_MAP_NS OpenWBEM
+	#define OW_HASH_MAP_NS OW_NAMESPACE
 	#define HashMap SortedVectorMap
 #endif
 #ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_
