@@ -40,6 +40,7 @@
 #include "OW_UUID.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Format.hpp"
+#include "OW_AutoPtr.hpp"
 
 #ifdef OW_HAVE_PWD_H
 #include <pwd.h>
@@ -170,10 +171,10 @@ LocalAuthentication::authorize(String& userName,
 		{
 			pwnbufsize = 10000; // just a guess
 		}
-		char buf[pwnbufsize];
+		AutoPtr<char> buf(new char[pwnbufsize]);
 		struct passwd pw;
 		struct passwd* ppw = 0;
-		int rv = ::getpwuid_r(uid, &pw, buf, pwnbufsize, &ppw);
+		int rv = ::getpwuid_r(uid, &pw, buf.get(), pwnbufsize, &ppw);
 		if (rv == 0 && ppw)
 		{
 			userName = pw.pw_name;
