@@ -39,7 +39,7 @@
  * @param escapedText The text to be unescaped
  * @return the unescaped text.
  */
-OW_String OW_XMLUnescape(const OW_String& escapedText);
+OW_String OW_XMLUnescape(const char* escapedText, unsigned len);
 
 
 #endif // OW_XMLUNESCAPE_HPP_

@@ -329,6 +329,10 @@ OW_CIMValue::OW_CIMValue(const OW_String& x)
 	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(x)) {}
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMValue::OW_CIMValue(const char* x)
+	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(OW_String(x))) {}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMValue::OW_CIMValue(const OW_CIMDateTime& x)
 	: OW_CIMBase(), m_impl(new OW_CIMValueImpl(x)) {}
 
@@ -2214,7 +2218,7 @@ OW_String raToString(const T& ra, OW_Bool forMOF=false)
 		}
 	}
 
-	return out.toString();
+	return out.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2240,7 +2244,7 @@ raToString(const OW_Array<OW_String>& ra, OW_Bool forMOF=false)
 		}
 	}
 
-	return out.toString();
+	return out.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2266,7 +2270,7 @@ raToString(const OW_Array<OW_CIMClass>& ra, OW_Bool forMOF=false)
 		}
 	}
 
-	return out.toString();
+	return out.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2292,7 +2296,7 @@ raToString(const OW_Array<OW_CIMInstance>& ra, OW_Bool forMOF=false)
 		}
 	}
 
-	return out.toString();
+	return out.releaseString();
 }
 
 static OW_String
@@ -2314,7 +2318,7 @@ raToString(const OW_Array<OW_Bool>& ra, OW_Bool isString=false)
 			out += '"';
 	}
 
-	return out.toString();
+	return out.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2534,7 +2538,7 @@ OW_CIMValue::OW_CIMValueImpl::toMOF() const
 	if(m_isArray)
 		rv += '}';
 
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -449,7 +449,7 @@ OW_CIMQualifierType::toMOF() const
 	}
 
 	rv += ";\n";
-	return rv.toString();
+	return rv.releaseString();
 }
 
 

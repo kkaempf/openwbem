@@ -733,6 +733,7 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 	try
 	{
 		OW_String ns = path.getNameSpace();
+		m_env->logDebug(format("Creating class: %1:%2", ns, cimClass.toMOF()));
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);
 		if (cimClass.isAssociation())
@@ -2083,7 +2084,7 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns,
 	}
 	else
 	{
-		OW_THROWCIM(OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED);
+		OW_THROWCIMMSG(OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, queryLanguage.c_str());
 	}
 }
 

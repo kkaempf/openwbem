@@ -159,7 +159,19 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 	try
 	{
 		checkNodeForCIMError(parser, methodName, isIntrinsic);
+		if (isIntrinsic)
+		{
+			parser.mustGetNext(); // pass over <IRETURNVALUE>
+		}
 		op(parser);
+		if (isIntrinsic)
+		{
+			parser.mustGetEndTag(); // pass </IRETURNVALUE>
+		}
+		parser.mustGetEndTag(); // pass </(I)METHODRESPONSE>
+		parser.mustGetEndTag(); // pass </SIMPLERSP>
+		parser.mustGetEndTag(); // pass </MESSAGE>
+		parser.mustGetEndTag(); // pass </CIM>
 		OW_HTTPUtils::eatEntity(*istr);
 	}
 	catch (OW_XMLParseException& xmlE)
@@ -329,22 +341,14 @@ static OW_String
 instanceNameToKey(const OW_CIMObjectPath& path,
 	const OW_String& parameterName)
 {
-	OW_String text;
-	
-	if(parameterName.length())
-	{
-		text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
-	}
+	OW_StringBuffer text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
 	
 	OW_StringStream ss;
-	OW_CIMtoXML(path, ss, OW_CIMtoXMLFlags::isNotInstanceName);
+	OW_CIMtoXML(path, ss, OW_CIMtoXMLFlags::isInstanceName);
 	text += ss.toString();
 
-	if(parameterName.length())
-	{
-	    text += "</IPARAMVALUE>";
-	}
-	return(text);
+    text += "</IPARAMVALUE>";
+	return text.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -385,8 +389,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_CLASSNAME);
-
 			while (parser.tokenIs(OW_CIMXMLParser::E_CLASSNAME))
 			{
 				result.handle(OW_XMLCIMFactory::createObjectPath(parser));
@@ -429,8 +431,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_CLASS);
-
 			while (parser.tokenIs(OW_CIMXMLParser::E_CLASS))
 			{
 				result.handle(OW_XMLCIMFactory::createClass(parser));
@@ -477,8 +477,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
-
 			while (parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME))
 			{
 				result.handle(OW_XMLCIMFactory::createObjectPath(parser));
@@ -525,18 +523,15 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE);
-
 			while (parser.tokenIs(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 			{
 				parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
 				OW_CIMObjectPath iop(OW_XMLCIMFactory::createObjectPath(parser));
-				parser.getNext();
 
 				OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(parser);
 				ci.setKeys(iop.getKeys());
 				result.handle(ci);
-				parser.mustGetEndTag();
+				parser.mustGetEndTag(); // pass </VALUE.NAMEDINSTANCE>
 			}
 		}
 
@@ -596,8 +591,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
-
 			while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
 			{
 				OW_CIMQualifierType cqt(OW_Bool(true));
@@ -633,7 +626,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_CLASS);
 			result = OW_XMLCIMFactory::createClass(parser);
 		}
 
@@ -698,7 +690,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCE);
 			result = OW_XMLCIMFactory::createInstance(parser);
 		}
 
@@ -759,7 +750,14 @@ namespace
 			// handle RETURNVALUE, which is optional
 			if (parser.tokenIs(OW_CIMXMLParser::E_RETURNVALUE))
 			{
-				parser.mustGetChild(OW_CIMXMLParser::E_VALUE);
+				parser.mustGetChild();
+				if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE) &&
+					!parser.tokenIs(OW_CIMXMLParser::E_VALUE_REFERENCE))
+				{
+					OW_THROWCIMMSG(OW_CIMException::FAILED,
+						"<RETURNVALUE> did not contain a <VALUE> or "
+						"<VALUE.REFERENCE> element");
+				}
 				result = OW_XMLCIMFactory::createValue(parser, returnType);
 				parser.mustGetEndTag(); // pass /RETURNVALUE
 			}
@@ -856,7 +854,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
 			OW_XMLQualifier::processQualifierDecl(parser, result);
 		}
 
@@ -947,7 +944,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
 	OW_StringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
-	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
+	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
 	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
@@ -970,7 +967,10 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
+			if (!parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME))
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Expected but did not get <INSTANCENAME>");
+			}
 
 			result = OW_XMLCIMFactory::createObjectPath(parser);
 		}
@@ -1028,10 +1028,12 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild();
-
-			// "string" because we don't know the type--defect in the spec.
-			result = OW_XMLCIMFactory::createValue(parser, "string");
+			if (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			{
+				// "string" because we don't know the type--defect in the spec.
+				result = OW_XMLCIMFactory::createValue(parser, "string");
+			}
+			// else it was a NULL value
 		}
 
 		OW_CIMValue& result;
@@ -1086,8 +1088,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild();
-
 			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
 			{
 				OW_CIMXMLParser::tokenId token = parser.getToken();
@@ -1135,7 +1135,7 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
+		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1218,8 +1218,6 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild();
-
 			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
 			{
 				OW_CIMInstanceArray cia;
@@ -1293,7 +1291,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(const OW_CIMObjectPath& path,
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
+		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1341,7 +1339,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
+		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1436,7 +1434,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(const OW_CIMObjectPath& path,
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
+		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
 		extra << "</IPARAMVALUE>";
 	}
 	else

@@ -37,12 +37,12 @@
 
 
 
-OW_String OW_XMLEscape(const OW_String& escapedText)
+OW_String OW_XMLEscape(const char* escapedText, unsigned len)
 {
-	OW_StringBuffer rval(escapedText.length());
+	OW_StringBuffer rval(len * 2);
 
-	const char* begin = escapedText.c_str();
-	const char* end = escapedText.c_str() + escapedText.length();
+	const char* begin = escapedText;
+	const char* end = escapedText + len;
 
 	#define YYCTYPE char
 	#define YYCURSOR        begin
@@ -98,10 +98,10 @@ yy18:	yych = *++YYCURSOR;
 	{ rval += *(YYCURSOR-1); goto start; }
 yy20:	
 #line 66
-	{ return rval.toString(); }
+	{ return rval.releaseString(); }
 }
 #line 67
 
 
-	return rval.toString();
+	return rval.releaseString();
 }

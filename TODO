@@ -43,3 +43,6 @@ x add a test for the matrix on the bottom of
 - change XML parser to be lazy. 
 - Fix? socket write/read also select on shutdown pipe.
 - inline the smaller functions in OW_String, OW_Reference, OW_Mutex, OW_MutexLock and other commonly used classes.
+- add a test for extrinsic methods with OUT and IN/OUT parameters
+- pretty-print the XML in the test suites.
+- fix execQuery XML

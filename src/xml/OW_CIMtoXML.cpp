@@ -458,7 +458,7 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 {
 	if(cop)
 	{
-		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
+		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isInstanceName);
 	}
 
 	//

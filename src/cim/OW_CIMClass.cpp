@@ -871,7 +871,7 @@ OW_CIMClass::toMOF() const
 	}
 
 	rv += "};\n";
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////

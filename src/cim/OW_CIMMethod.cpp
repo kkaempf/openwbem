@@ -214,6 +214,36 @@ OW_CIMMethod::getParameters() const
 }
 
 //////////////////////////////////////////////////////////////////////////////													
+OW_CIMParameterArray
+OW_CIMMethod::getINParameters() const
+{
+	OW_CIMParameterArray rval;
+	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
+	{
+		if (m_pdata->m_parameters[i].getQualifier(OW_CIMQualifier::CIM_QUAL_IN))
+		{
+			rval.push_back(m_pdata->m_parameters[i]);
+		}
+	}
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////													
+OW_CIMParameterArray
+OW_CIMMethod::getOUTParameters() const
+{
+	OW_CIMParameterArray rval;
+	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
+	{
+		if (m_pdata->m_parameters[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+		{
+			rval.push_back(m_pdata->m_parameters[i]);
+		}
+	}
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////													
 void
 OW_CIMMethod::setReturnType(const OW_CIMDataType& type)
 {
@@ -401,7 +431,7 @@ OW_CIMMethod::toMOF() const
 		}
 	}
 	rv += ");\n";
-	return rv.toString();
+	return rv.releaseString();
 }
 
 /////////////////////////////////////////////////////////////////////////////													

@@ -377,7 +377,7 @@ OW_CIMQualifier::toMOF() const
 		rv += m_pdata->m_qualifierValue.toMOF();
 		rv += ')';
 	}
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////

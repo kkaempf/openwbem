@@ -37,6 +37,7 @@
 #include "OW_StringStream.hpp"
 #include "OW_Format.hpp"
 #include "OW_BinIfcIO.hpp"
+#include "OW_Assertion.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -106,10 +107,11 @@ public:
 	~ByteBuf() { delete [] m_buf; }
 	ByteBuf& operator= (const ByteBuf& arg)
 	{
+		char* buf = new char[arg.m_len+1];
+		strcpy(buf, arg.m_buf);
 		delete [] m_buf;
+		m_buf = buf;
 		m_len = arg.m_len;
-		m_buf = new char[m_len+1];
-		strcpy(m_buf, arg.m_buf);
 		return *this;
 	}
 
@@ -211,17 +213,11 @@ OW_String::OW_String(const char* str) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_Bool /*takeOwnerShipTag*/, char* allocatedMemory) :
+OW_String::OW_String(OW_Bool /*takeOwnerShipTag*/, char* allocatedMemory, size_t len) :
 	m_buf(NULL)
 {
-	if(NULL == allocatedMemory)
-	{
-		m_buf = 0;
-	}
-	else
-	{
-		m_buf = new ByteBuf(allocatedMemory, ::strlen(allocatedMemory));
-	}
+	OW_ASSERT(allocatedMemory != 0);
+	m_buf = new ByteBuf(allocatedMemory, len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1509,7 +1505,7 @@ OW_String::getLine(istream& is)
 		}
 	}
 
-	OW_String rstr = rv.toString();
+	OW_String rstr = rv.releaseString();
 	int ndx = rstr.indexOf('\r');
 	if(ndx != -1)
 	{

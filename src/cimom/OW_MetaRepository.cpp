@@ -193,6 +193,7 @@ OW_MetaRepository::_makeClassPath(const OW_String& ns,
 		cp += "/";
 	}
 	cp += className;
+
 	return cp.toLowerCase();
 }
 

@@ -185,7 +185,13 @@ OW_Bool OW_XMLParser::next(OW_XMLToken& entry)
 	else
 	{
 		entry.type = OW_XMLToken::CONTENT;
-		_getContent(entry);
+		bool isSpaces;
+		_getContent(entry, isSpaces);
+		if (isSpaces)
+		{
+			// content is entirely white space, so just skip it.
+			return next(entry);
+		}
 
 		return true;
 	}
@@ -200,7 +206,7 @@ void OW_XMLParser::putBack(OW_XMLToken& entry)
 
 void OW_XMLParser::_skipWhitespace()
 {
-	while (*_current && isspace(*_current))
+	while (isspace(*_current))
 	{
 		if (*_current == '\n')
 			++_line;
@@ -215,9 +221,8 @@ OW_Bool OW_XMLParser::_getElementName(OW_XMLToken& entry)
 		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
 
 	entry.text.reset();
-	while (*_current &&
-			(isalnum(*_current) || *_current == '_' || *_current == '-' ||
-			 *_current == ':' || *_current == '.'))
+	while (isalnum(*_current) || *_current == '_' || *_current == '-' ||
+			 *_current == ':' || *_current == '.')
 	{
 		entry.text += *_current++;
 	}
@@ -246,9 +251,8 @@ OW_Bool OW_XMLParser::_getOpenElementName(OW_XMLToken& entry, OW_Bool& openClose
 		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
 
 	entry.text.reset();
-	while (*_current &&
-			(isalnum(*_current) || *_current == '_' || *_current == '-' ||
-			 *_current == ':' || *_current == '.'))
+	while (isalnum(*_current) || *_current == '_' || *_current == '-' ||
+			 *_current == ':' || *_current == '.')
 	{
 		entry.text += *_current++;
 	}
@@ -288,9 +292,8 @@ void OW_XMLParser::_getAttributeNameAndEqual(OW_XMLToken::Attribute& att)
 			_line, format("Expected alpha or _; got %1", *_current).c_str());
 
 	att.name.reset();
-	while (*_current &&
-			(isalnum(*_current) || *_current == '_' || *_current == '-' ||
-			 *_current == ':' || *_current == '.'))
+	while (isalnum(*_current) || *_current == '_' || *_current == '-' ||
+			 *_current == ':' || *_current == '.')
 	{
 		att.name += *_current++;
 	}
@@ -420,13 +423,19 @@ void OW_XMLParser::_getDocType()
 	_current++;
 }
 
-void OW_XMLParser::_getContent(OW_XMLToken& entry)
+void OW_XMLParser::_getContent(OW_XMLToken& entry, bool& isWhiteSpace)
 {
 	entry.text.reset();
+	isWhiteSpace = true;
 	while (*_current && *_current != '<')
 	{
 		if (*_current == '\n')
 			++_line;
+		//isWhiteSpace &= isspace(*_current);
+		if (isWhiteSpace)
+		{
+			isWhiteSpace = isspace(*_current);
+		}
 
 		entry.text += *_current++;
 	}

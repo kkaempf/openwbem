@@ -41,12 +41,12 @@
 #include <stdlib.h> // for strtol
 
 
-OW_String OW_XMLUnescape(const OW_String& escapedText)
+OW_String OW_XMLUnescape(const char* escapedText, unsigned len)
 {
-	OW_StringBuffer rval(escapedText.length());
+	OW_StringBuffer rval(len * 2);
 
-	const char* begin = escapedText.c_str();
-	const char* end = escapedText.c_str() + escapedText.length();
+	const char* begin = escapedText;
+	const char* end = escapedText + len;
 	const char* q;
 	const char* thisTokStart = 0;
 
@@ -87,7 +87,7 @@ yy4:	yych = *++YYCURSOR;
 	goto yy3;
 yy5:	
 #line 91
-	{ return rval.toString(); }
+	{ return rval.releaseString(); }
 yy7:	yych = *++YYCURSOR;
 	switch(yych){
 	case '0':
@@ -269,5 +269,5 @@ yy40:	yych = *++YYCURSOR;
 #line 92
 
 
-	return rval.toString();
+	return rval.releaseString();
 }

@@ -169,6 +169,12 @@ public:
 	explicit OW_CIMValue(const OW_String& x);
 
 	/**
+	 * Create a new OW_CIMValue that represents a string data type.
+	 * @param x The string value this object will contain.
+	 */
+	explicit OW_CIMValue(const char* x);
+
+	/**
 	 * Create a new OW_CIMValue that represents a CIM datetime data type.
 	 * @param x The CIM datetime value this object will contain.
 	 */

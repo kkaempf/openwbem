@@ -814,7 +814,7 @@ OW_CIMInstance::toMOF() const
 	}
 
 	rv += "};\n";
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -845,7 +845,7 @@ OW_CIMInstance::toString() const
 	}
 
 	temp += "}\n";
-	return temp.toString();
+	return temp.releaseString();
 }
 
 bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y)

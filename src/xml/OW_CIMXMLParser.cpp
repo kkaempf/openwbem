@@ -233,15 +233,15 @@ const char* const OW_CIMXMLParser::A_PARAMERRORDESCRIPTION = "DESCRIPTION";
 OW_String
 OW_CIMXMLParser::getAttribute(const char* const attrId, bool throwIfError)
 {
-
+	OW_ASSERT(m_curTok.type == OW_XMLToken::START_TAG);
 	for (unsigned i = 0; i < m_curTok.attributeCount; i++)
 	{
-		OW_XMLToken::Attribute attr = m_curTok.attributes[i];
+		OW_XMLToken::Attribute& attr = m_curTok.attributes[i];
 
 		// Should this be case insensentive? NO
 		if (attr.name.equals(attrId))
 		{
-			return OW_XMLUnescape(attr.value.toString());
+			return OW_XMLUnescape(attr.value.c_str(), attr.value.length());
 		}
 	}
 
@@ -349,7 +349,7 @@ OW_CIMXMLParser::tokenIs(const char* const arg) const
 bool
 OW_CIMXMLParser::tokenIs(OW_CIMXMLParser::tokenId tId) const
 {
-	cout << "tokenIs(" << g_elems[tId].name << ") = " << tokenIs(g_elems[tId].name) << "\n";
+//	cout << "tokenIs(" << g_elems[tId].name << ") = " << tokenIs(g_elems[tId].name) << "\n";
 	return tokenIs(g_elems[tId].name);
 }
 
@@ -431,7 +431,7 @@ OW_String
 OW_CIMXMLParser::getName() const
 {
 	OW_ASSERT(m_curTok.type == OW_XMLToken::START_TAG || m_curTok.type == OW_XMLToken::END_TAG);
-	return OW_XMLUnescape(m_curTok.text.toString());
+	return OW_XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -439,7 +439,7 @@ OW_String
 OW_CIMXMLParser::getData() const
 {
 	OW_ASSERT(m_curTok.type == OW_XMLToken::CONTENT || m_curTok.type == OW_XMLToken::CDATA);
-	return OW_XMLUnescape(m_curTok.text.toString());
+	return OW_XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
 }
 
 //////////////////////////////////////////////////////////////////////////////

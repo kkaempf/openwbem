@@ -48,6 +48,11 @@ void
 OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	OW_CIMQualifierType& cimQualifier)
 {
+	if (!parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Expected but did not find <QUALIFIER.DECLARATION>");
+	}
+
 	OW_String superClassName;
 	OW_String inClassName;
 
@@ -135,6 +140,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		OW_CIMValue val = OW_XMLCIMFactory::createValue(parser,qualType);
 		cimQualifier.setDefaultValue(val);
 	}
+	parser.mustGetEndTag(); // pass </QUALIFIER.DECLARATION>
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -218,9 +218,8 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 			unescaped += retval[i];
 		}
 	}
-	retval = unescaped.toString();
 	
-	return retval;
+	return unescaped.releaseString();
 }
 
 // static vars

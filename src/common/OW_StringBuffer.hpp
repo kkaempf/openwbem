@@ -52,6 +52,7 @@ public:
 	OW_StringBuffer& operator= (const OW_String& arg);
 	OW_StringBuffer& operator= (const char* str);
 
+	// TODO: inline some of these that are heavily used
 	OW_StringBuffer& append(char c);
 	OW_StringBuffer& append(const char* str);
 	OW_StringBuffer& append(const char* str, const size_t len);
@@ -84,50 +85,18 @@ public:
 	OW_StringBuffer& operator += (const OW_CIMDateTime& arg);
 	OW_StringBuffer& operator += (const OW_CIMObjectPath& arg);
 
-	OW_StringBuffer& operator<< (char c)
-		{ return append(c); }
-	OW_StringBuffer& operator<< (OW_Char16 c) 	
-		{ return append(char(c)); }
-	OW_StringBuffer& operator<< (const char* str)
-		{ return append(str); }
-	OW_StringBuffer& operator<< (const OW_String& arg)
-		{ return append(arg); }
-	OW_StringBuffer& operator<< (OW_Bool v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt8 v)
-		{  return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int8 v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt16 v)
-		{  return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int16 v)
-		{  return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt32 v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int32 v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt64 v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int64 v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Real32 v)
-		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Real64 v)
-		{ return operator+=(v); }
-
-	OW_StringBuffer& operator<< (const OW_CIMDateTime& arg)
-	{
-		return operator+=(arg);
-	}
-
-	OW_StringBuffer& operator<< (const OW_CIMObjectPath& arg)
-	{
-		return operator+=(arg);
-	}
 
 	char operator[] (int ndx) const;
 	OW_String toString() const
 			{ return OW_String(m_bfr); }
+
+	// After calling this function, the OW_StringBuffer is unusable
+	OW_String releaseString()
+	{
+		char * bfr = m_bfr;
+		m_bfr = 0;
+		return OW_String(true, bfr, m_len);
+	}
 
 	int length() const {  return m_len; }
 	int allocated() const {  return m_allocated; }

@@ -77,7 +77,7 @@ getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 		}
 
 		parser.mustGetNext();
-		parser.mustGetEndTag();
+		parser.mustGetEndTag(); // pass </NAMESPACE>
 	}
 
 	if(ns.length() == 0)
@@ -86,6 +86,7 @@ getLocalNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 	}
 
 	cop.setNameSpace(ns);
+	parser.mustGetEndTag(); // pass </LOCALNAMESPACEPATH>
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,10 +96,6 @@ getNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 	// <!ELEMENT NAMESPACEPATH (HOST,LOCALNAMESPACEPATH)>
 	// <!ELEMENT HOST (#PCDATA)>
 
-	parser.mustGetNext();
-	parser.mustGetChild(
-		OW_CIMXMLParser::E_NAMESPACEPATH);
-
 	parser.mustGetChild(OW_CIMXMLParser::E_HOST);
 	parser.mustGetNext();
 	if (!parser.isData())
@@ -106,6 +103,7 @@ getNameSpacePathAndSet(OW_CIMObjectPath& cop, OW_CIMXMLParser& parser)
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "invalid <HOST> in <NAMESPACEPATH>");
 	}
 	cop.setHost(parser.getData());
+	parser.mustGetNext();
 	parser.mustGetEndTag(); // pass </HOST>
 	getLocalNameSpacePathAndSet(cop, parser);
 	parser.mustGetEndTag(); // pass </NAMESPACEPATH>
@@ -193,7 +191,7 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 
 			cp = OW_CIMProperty(name, value);
 			propertyArray.push_back(cp);
-			parser.mustGetEndTag();
+			parser.mustGetEndTag(); // pass </KEYBINDING>
 		} while (parser.tokenIs(OW_CIMXMLParser::E_KEYBINDING));
 	}
 
@@ -222,7 +220,6 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 
 	cimPath.setKeys(propertyArray);
 
-	parser.mustGetNext();
 	parser.mustGetEndTag();
 }
 
@@ -242,7 +239,8 @@ OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 			parser.mustGetNext(OW_CIMXMLParser::E_CLASSNAME);
 			rval.setObjectName(parser.mustGetAttribute(OW_CIMXMLParser::A_NAME));
 			parser.mustGetNext();
-			parser.mustGetEndTag();
+			parser.mustGetEndTag(); // pass </CLASSNAME>
+			parser.mustGetEndTag(); // pass </LOCALCLASSPATH>
 			return rval;
 
 		case OW_CIMXMLParser::E_CLASSPATH:
@@ -251,13 +249,14 @@ OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 			parser.mustGetNext(OW_CIMXMLParser::E_CLASSNAME);
 			rval.setObjectName(parser.mustGetAttribute(OW_CIMXMLParser::A_NAME));
 			parser.mustGetNext();
-			parser.mustGetEndTag();
+			parser.mustGetEndTag(); // pass </CLASSNAME>
+			parser.mustGetEndTag(); // pass </LOCALCLASSPATH>
 			return rval;
 
 		case OW_CIMXMLParser::E_CLASSNAME:
 			rval.setObjectName(parser.mustGetAttribute(OW_CIMXMLParser::A_NAME));
 			parser.mustGetNext();
-			parser.mustGetEndTag();
+			parser.mustGetEndTag(); // pass </CLASSNAME>
 			return rval;
 
 		case OW_CIMXMLParser::E_INSTANCENAME:
@@ -267,27 +266,23 @@ OW_XMLCIMFactory::createObjectPath(OW_CIMXMLParser& parser)
 		case OW_CIMXMLParser::E_LOCALINSTANCEPATH:
 			parser.mustGetChild(OW_CIMXMLParser::E_LOCALNAMESPACEPATH);
 			getLocalNameSpacePathAndSet(rval, parser);
-			parser.mustGetNext();
-			parser.mustGetEndTag();
 			break;
 
 		case OW_CIMXMLParser::E_INSTANCEPATH:
 			parser.mustGetChild(OW_CIMXMLParser::E_NAMESPACEPATH);
 			getNameSpacePathAndSet(rval, parser);
-			parser.mustGetNext();
-			parser.mustGetEndTag();
 			break;
 
 		default:
 				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-					format("Invalid XMLNode for Object path construction.  Node "
+					format("Invalid XML for Object path construction.  Node "
 						"name = %1", parser.getName()).c_str());
 				break;
 	}
 
-	parser.mustGetNext(OW_CIMXMLParser::E_INSTANCENAME);
-
+	// read <INSTANCENAME>
 	getInstanceName(parser, rval);
+	parser.mustGetEndTag(); // pass </LOCALINSTANCEPATH> or </INSTANCEPATH>
 
 	return rval;
 }
@@ -450,7 +445,7 @@ template <class T>
 static inline void
 convertCimType(OW_Array<T>& ra, OW_CIMXMLParser& parser)
 {
-	// start out pointing at <VALUE>
+	// start out possibly pointing at <VALUE>
 	while(parser.tokenIs(OW_CIMXMLParser::E_VALUE))
 	{
 		parser.mustGetNext();
@@ -512,6 +507,8 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 						OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							"Invalid data type on node");
 					}
+
+					parser.mustGetNext();
 	
 					switch(type)
 					{
@@ -947,7 +944,7 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 	OW_String inClassName;
 
 	OW_String propName = parser.mustGetAttribute(OW_XMLParameters::paramName);
-	OW_String cimType = parser.mustGetAttribute(OW_XMLParameters::paramTypeAssign);
+	OW_String cimType = parser.getAttribute(OW_XMLParameters::paramTypeAssign);
 	OW_String classOrigin = parser.getAttribute(
 		OW_XMLParameters::paramClassOrigin);
 	OW_String propagate = parser.getAttribute(OW_XMLParameters::paramPropagated);
@@ -1015,13 +1012,11 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 		rval.addQualifier(createQualifier(parser));
 	}
 
-cout << "parser = " << parser << endl;
 	if (parser.tokenIs(OW_CIMXMLParser::E_VALUE)
 		|| parser.tokenIs(OW_CIMXMLParser::E_VALUE_ARRAY)
 		|| parser.tokenIs(OW_CIMXMLParser::E_VALUE_REFERENCE))
 	{
 		rval.setValue(createValue(parser,cimType));
-cout << "created value. parser = " << parser << endl;
 		
 // Shouldn't need to cast this.
 //         if(rval.getDataType().getType() != rval.getValue().getType()

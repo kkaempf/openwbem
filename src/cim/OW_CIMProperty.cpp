@@ -570,7 +570,7 @@ OW_CIMProperty::readObject(istream &istrm)
 OW_String
 OW_CIMProperty::toString() const
 {
-	OW_String rv = m_pdata->m_propertyDataType.toString() + ":"
+	OW_StringBuffer rv = m_pdata->m_propertyDataType.toString() + ":"
 		+ m_pdata->m_name + "=";
 
 	if(m_pdata->m_cimValue)
@@ -582,7 +582,7 @@ OW_CIMProperty::toString() const
 		rv += "null";
 	}
 
-	return rv;
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -616,7 +616,7 @@ OW_CIMProperty::toMOF() const
 		rv += m_pdata->m_cimValue.toMOF();
 	}
 	rv += ";\n";
-	return rv.toString();
+	return rv.releaseString();
 }
 
 const char* const OW_CIMProperty::NAME_PROPERTY = "Name";

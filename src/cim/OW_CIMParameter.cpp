@@ -245,7 +245,7 @@ OW_CIMParameter::toMOF() const
 	rv += m_pdata->m_dataType.toMOF();
 	rv += ' ';
 	rv += m_pdata->m_name;
-	return rv.toString();
+	return rv.releaseString();
 }
 
 

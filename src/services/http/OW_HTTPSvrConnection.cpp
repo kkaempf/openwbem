@@ -497,7 +497,8 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				strippedError += errorAr[i] + " ";
 			}
 			*/
-			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorTrailer", escapedError.toString());
+			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorTrailer",
+				escapedError.releaseString());
 			if (m_requestHandler->getCIMError().length() > 0)
 			{
 				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError",

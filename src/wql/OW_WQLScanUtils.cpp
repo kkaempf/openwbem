@@ -47,7 +47,7 @@ RemoveEscapes(const OW_String& s)
 
 	OW_StringBuffer newStr(s.length());
 
-	int len = s.length(); 
+	int len = s.length();
 
 	for (int i = 0; i < len; i++)
 	{
@@ -109,5 +109,5 @@ RemoveEscapes(const OW_String& s)
 		else
 			newStr += s[i];
 	}
-	return newStr.toString();
+	return newStr.releaseString();
 }

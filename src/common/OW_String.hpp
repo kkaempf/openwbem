@@ -154,12 +154,13 @@ public:
 	 * The buffer is assumed to contain a valid c string and be
 	 * previously allocated with the new operator. The memory given by the
 	 * allocatedMemory parameter will be deallocated by the OW_String class.
-	 * @param allocatedMemory	The dynamically allocated string that will be
-	 *									used by this OW_String.
 	 * @param takeOwnerShipTag This parm is not used. It is here to differentiate
 	 *									this constructor from the others.
+	 * @param allocatedMemory	The dynamically allocated string that will be
+	 *									used by this OW_String.  Must not be NULL.
+	 * @param len The length of the string allocatedMemory.
 	 */
-	explicit OW_String(OW_Bool takeOwnerShipTag, char* allocatedMemory);
+	explicit OW_String(OW_Bool takeOwnerShipTag, char* allocatedMemory, size_t len);
 
 	/**
 	 * Create s new OW_String object that will contain a copy of the given

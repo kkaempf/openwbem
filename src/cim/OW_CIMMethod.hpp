@@ -172,6 +172,20 @@ public:
 	OW_CIMParameterArray getParameters() const;
 
 	/**
+	 * Get the IN parameters for this method.
+	 * @return An OW_CIMParameterArray that contains IN the parameters for this
+	 * method.
+	 */
+	OW_CIMParameterArray getINParameters() const;
+
+	/**
+	 * Get the OUT parameters for this method.
+	 * @return An OW_CIMParameterArray that contains OUT the parameters for this
+	 * method.
+	 */
+	OW_CIMParameterArray getOUTParameters() const;
+
+	/**
 	 * Set the return data type for this parameter
 	 * @param type	An OW_CIMDataType object that represents the type.
 	 */

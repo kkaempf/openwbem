@@ -97,7 +97,7 @@ UtilKeyArray::toString(const OW_String& className)
 		rv += m_properties[i];
 	}
 
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////

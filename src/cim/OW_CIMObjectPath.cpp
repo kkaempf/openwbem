@@ -331,7 +331,7 @@ OW_CIMObjectPath::modelPath() const
 		}
 	}
 
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -374,7 +374,7 @@ OW_CIMObjectPath::toString() const
 	rv += ':';
 	rv += modelPath();
 
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -644,7 +644,7 @@ OW_CIMObjectPath::escape(const OW_String& inString)
 		return inString;
 	}
 
-	OW_StringBuffer rv;
+	OW_StringBuffer rv(valuesLen);
 	const char* values = inString.c_str();
 
 	for(int i = 0; i < valuesLen; i++)
@@ -671,7 +671,7 @@ OW_CIMObjectPath::escape(const OW_String& inString)
 		}
 	}
 
-	return rv.toString();
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -686,7 +686,7 @@ OW_CIMObjectPath::unEscape(const OW_String& inString)
 		return inString;
 	}
 
-	OW_StringBuffer rv;
+	OW_StringBuffer rv(valuesLen);
 	const char* values = inString.c_str();
 
 	for(int i = 0; i < valuesLen; i++)
@@ -707,9 +707,7 @@ OW_CIMObjectPath::unEscape(const OW_String& inString)
 		}
 	}
 
-
-	OW_String rstr = rv.toString();
-	return rstr;
+	return rv.releaseString();
 }
 
 //////////////////////////////////////////////////////////////////////////////
