@@ -69,6 +69,13 @@ namespace OW_NAMESPACE
 namespace Select
 {
 #if defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
+int
+selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms)
+{
+#error "write me!"
+}
+
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
@@ -218,6 +225,132 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	}
 	OW_THROW(AssertionException, "Logic error in Select. Didn't find file handle");
 	return Select::SELECT_ERROR;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+int
+selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms)
+{
+	int rc = 0;
+	fd_set ifds;
+	fd_set ofds;
+
+	// here we spin checking for thread cancellation every so often.
+	timeval now, end;
+	const Int32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
+	gettimeofday(&now, NULL);
+	end = now;
+	end.tv_sec  += ms / 1000;
+	end.tv_usec += (ms % 1000) * 1000;
+	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
+		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
+	{
+		int maxfd = 0;
+		FD_ZERO(&ifds);
+		FD_ZERO(&ofds);
+		for (size_t i = 0; i < input.size(); i++)
+		{
+			int fd = input[i].s;
+			OW_ASSERT(fd >= 0);
+			if (maxfd < fd)
+			{
+				maxfd = fd;
+			}
+			if (fd < 0 || fd >= FD_SETSIZE)
+			{
+				return Select::SELECT_ERROR;
+			}
+			FD_SET(fd, &ifds);
+		}
+
+		for (size_t i = 0; i < output.size(); i++)
+		{
+			int fd = output[i].s;
+			OW_ASSERT(fd >= 0);
+			if (maxfd < fd)
+			{
+				maxfd = fd;
+			}
+			if (fd < 0 || fd >= FD_SETSIZE)
+			{
+				return Select::SELECT_ERROR;
+			}
+			FD_SET(fd, &ofds);
+		}
+
+		timeval tv;
+		tv.tv_sec = end.tv_sec - now.tv_sec;
+		if (end.tv_usec >= now.tv_usec)
+		{
+			tv.tv_usec = end.tv_usec - now.tv_usec;
+		}
+		else
+		{
+			tv.tv_sec--;
+			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
+		}
+
+		if ((tv.tv_sec != 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
+		{
+			tv.tv_sec = 0;
+			tv.tv_usec = loopMicroSeconds;
+		}
+
+		Thread::testCancel();
+		rc = ::select(maxfd+1, &ifds, &ofds, NULL, &tv);
+		Thread::testCancel();
+
+		gettimeofday(&now, NULL);
+	}
+	
+	if (rc < 0)
+	{
+		if (errno == EINTR)
+		{
+#ifdef OW_NETWARE
+			// When the NetWare server is shutting down, select will
+			// set errno to EINTR on return. If this thread does not
+			// yield control (cooperative multitasking) then we end
+			// up in a very tight loop and get a CPUHog server abbend.
+			pthread_yield();
+#endif
+			return Select::SELECT_INTERRUPTED;
+		}
+		else
+		{
+			return Select::SELECT_ERROR;
+		}
+	}
+	if (rc == 0)
+	{
+		return Select::SELECT_TIMEOUT;
+	}
+	int availableCount = 0;
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		if (FD_ISSET(input[i].s, &ifds))
+		{
+			input[i].available = true;
+			++availableCount;
+		}
+		else
+		{
+			input[i].available = false;
+		}
+	}
+	for (size_t i = 0; i < output.size(); i++)
+	{
+		if (FD_ISSET(output[i].s, &ofds))
+		{
+			output[i].available = true;
+			++availableCount;
+		}
+		else
+		{
+			output[i].available = false;
+		}
+	}
+	return availableCount;
 }
 #endif	// #else OW_WIN32
 

@@ -65,6 +65,7 @@ namespace Select
 	 * Value that means infinite timeout
 	 */
 	const UInt32 INFINITE_TIMEOUT = ~0U;
+	
 	/**
 	 * Select returns as soon as input is available on any of Select_t
 	 * objects that are in given array.
@@ -72,13 +73,48 @@ namespace Select
 	 * @param selarray An array of Select_t objects that will be used while
 	 *	waiting for input to become available.
 	 *
-	 * @param ms The timeout value specified in millseconds
+	 * @param ms The timeout value specified in milliseconds
 	 *
 	 * @return On success, the index in the selarray of the first Select_t
 	 * object that input has become available on. SELECT_ERROR on error.
 	 * SELECT_TIMEOUT if the given timeout value has expired.
 	 */
 	OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms = INFINITE_TIMEOUT);
+
+	struct SelectObject
+	{
+		SelectObject(Select_t s_)
+		: s(s_)
+		, available(false)
+		{
+		}
+
+		Select_t s;
+		bool available;
+	};
+	typedef Array<SelectObject> SelectObjectArray;
+
+	/**
+	 * Select returns as soon as input is available on any of the Select_t
+	 * objects that are in given input array or if any of the Select_t
+	 * objects in the output array are available for writing, or the
+	 * timeout has passed.
+	 *
+	 * @param input An array of Select_t objects that will be used while
+	 *	waiting for input to become available.
+	 *
+	 * @param output An array of Select_t objects that will be used while
+	 *	waiting for input to become available.
+	 *
+	 * @param ms The timeout value specified in milliseconds
+	 *
+	 * @return On success, the number of descriptors available. SELECT_ERROR on error.
+	 * SELECT_TIMEOUT if the given timeout value has expired. The input and output
+	 * out parameters are modified to indicate which descriptors are available.
+	 */
+	OW_COMMON_API int selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms = INFINITE_TIMEOUT);
+
+
 } // end namespace Select
 
 } // end namespace OW_NAMESPACE
