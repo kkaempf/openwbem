@@ -1,0 +1,9 @@
+[ Description("Sample NPI Provider"), Provider("npi::sampleprovider") ]
+class SampleProvider : CIM_ManagedElement
+{
+  [ Description("The key property"), Key ]
+  String PropertyOne;
+  [ Description("An integer property")]
+  Uint32 PropertyTwo;
+};
+
