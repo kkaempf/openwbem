@@ -132,6 +132,7 @@ private:
 
 CIMInstance compileInstanceFromMOF(const String& instMOF);
 CIMInstanceArray compileInstancesFromMOF(const String& instMOF);
+CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns);
 
 
 } // end namespace MOF

@@ -294,15 +294,42 @@ String Compiler::fixParsedString(const String& s)
 class StoreLocalInstancesHandle : public CIMOMHandleIFC
 {
 public:
+	StoreLocalInstancesHandle(const CIMOMHandleIFCRef& hdl)
+		: m_realhdl(hdl)
+	{
+	}
 	virtual CIMObjectPath createInstance(const String &ns, const CIMInstance &instance)
 	{
 		m_instances.push_back(instance);
 		return CIMObjectPath(ns, instance);
 	}
-	virtual CIMClass getClass(const String &ns, const String &className, WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN, const StringArray *propertyList=0)
+	virtual CIMClass getClass(const String &ns, const String &className, 
+		WBEMFlags:: ELocalOnlyFlag localOnly=WBEMFlags:: E_NOT_LOCAL_ONLY, 
+		WBEMFlags:: EIncludeQualifiersFlag includeQualifiers=WBEMFlags:: E_INCLUDE_QUALIFIERS, 
+		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN, 
+		const StringArray *propertyList=0)
 	{
-		// just give back an empty class, with just the name set.
-		return CIMClass(className);
+		if (m_realhdl)
+		{
+			return m_realhdl->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList);
+		}
+		else
+		{
+			// just give back an empty class, with just the name set.
+			return CIMClass(className);
+		}
+	}
+
+	virtual CIMQualifierType getQualifierType(const String &ns, const String &qualifierName)
+	{
+		if (m_realhdl)
+		{
+			return m_realhdl->getQualifierType(ns, qualifierName);
+		}
+		else
+		{
+			OW_THROWCIM(CIMException::FAILED);
+		}
 	}
 
 	CIMInstanceArray getInstances() const { return m_instances; }
@@ -313,10 +340,6 @@ private:
 
 
 	// all these throw FAILED
-	virtual CIMQualifierType getQualifierType(const String &ns, const String &qualifierName)
-	{
-		OW_THROWCIM(CIMException::FAILED);
-	}
 	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType)
 	{
 		OW_THROWCIM(CIMException::FAILED);
@@ -448,6 +471,8 @@ CIMInstance compileInstanceFromMOF(const String& instMOF)
 
 CIMInstanceArray compileInstancesFromMOF(const String& instMOF)
 {
+	return compileInstancesFromMOF(instMOF, CIMOMHandleIFCRef(), "");
+	/*
 	Reference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle);
 	MOF::Compiler::Options opts;
 	Reference<NULLErrHandler> errHandler(new NULLErrHandler);
@@ -460,8 +485,25 @@ CIMInstanceArray compileInstancesFromMOF(const String& instMOF)
 	}
 	CIMInstanceArray cia = hdl->getInstances();
 	return cia;
+	*/
 }
 
+CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns)
+{
+	Reference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle(realhdl));
+	MOF::Compiler::Options opts;
+	opts.m_namespace = ns;
+	Reference<NULLErrHandler> errHandler(new NULLErrHandler);
+	MOF::Compiler comp(hdl, opts, errHandler);
+	long errors = comp.compileString(instMOF);
+	if (errors > 0)
+	{
+		// just report the first message, since anything else is too complicated :-{
+		OW_THROW(MOFCompilerException, errHandler->errors.size() > 0 ? errHandler->errors[0].c_str() : "");
+	}
+	CIMInstanceArray cia = hdl->getInstances();
+	return cia;
+}
 
 
 } // end namespace MOF
