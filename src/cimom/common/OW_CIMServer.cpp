@@ -554,6 +554,71 @@ namespace
 		bool localOnly;
 		bool deep;
 	};
+
+	class SecondaryInstanceProviderHandler : public CIMInstanceResultHandlerIFC
+	{
+	public:
+		SecondaryInstanceProviderHandler(
+			OperationContext& context_,
+			const CIMOMEnvironmentRef& env_,
+			const String& ns_,
+			const String& className_,
+			ELocalOnlyFlag localOnly_,
+			EDeepFlag deep_,
+			EIncludeQualifiersFlag includeQualifiers_,
+			EIncludeClassOriginFlag includeClassOrigin_,
+			const StringArray* propertyList_,
+			const CIMClass& theTopClass_,
+			const CIMClass& theClass_,
+			const SecondaryInstanceProviderIFCRefArray& secProvs_,
+			CIMInstanceResultHandlerIFC& result_)
+		: context(context_)
+		, env(env_)
+		, ns(ns_)
+		, className(className_)
+		, localOnly(localOnly_)
+		, deep(deep_)
+		, includeQualifiers(includeQualifiers_)
+		, includeClassOrigin(includeClassOrigin_)
+		, propertyList(propertyList_)
+		, theTopClass(theTopClass_)
+		, theClass(theClass_)
+		, secProvs(secProvs_)
+		, result(result_)
+		{
+		}
+		void doHandle(const CIMInstance& i)
+		{
+			CIMInstanceArray savedInstances;
+			savedInstances.push_back(i);
+			// now let all the secondary providers have at the instance
+			for (size_t i = 0; i < secProvs.size(); ++i)
+			{
+				secProvs[i]->filterInstances(createProvEnvRef(context, env), ns, 
+					className, savedInstances, localOnly, deep, includeQualifiers, 
+					includeClassOrigin, propertyList, theTopClass, theClass );
+			}
+			for (size_t i = 0; i < savedInstances.size(); ++i)
+			{
+				result.handle(savedInstances[i]);
+			}
+		}
+	private:
+		OperationContext& context;
+		const CIMOMEnvironmentRef& env;
+		const String& ns;
+		const String& className;
+		ELocalOnlyFlag localOnly;
+		EDeepFlag deep;
+		EIncludeQualifiersFlag includeQualifiers;
+		EIncludeClassOriginFlag includeClassOrigin;
+		const StringArray* propertyList;
+		const CIMClass& theTopClass;
+		const CIMClass& theClass;
+		const SecondaryInstanceProviderIFCRefArray& secProvs;
+		CIMInstanceResultHandlerIFC& result;
+	};
+
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -565,18 +630,20 @@ CIMServer::_getCIMInstances(
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	// If we have secondary instance providers, we need to buffer up the 
-	// instances so we can pass them to the seconday instance providers.
+	// If we have secondary instance providers, we need to use a new result 
+	// handler so we can pass instances to the seconday instance providers.
 	// Otherwise, we want to just pass them on to result.  presult will point
-	// to either result or a CIMInstanceArrayBuilder.
-	CIMInstanceResultHandlerIFC* presult = &result;
-	CIMInstanceArray savedInstances;
-	CIMInstanceArrayBuilder arrayBuilderResult(savedInstances);
-
+	// to either result or a SecondaryInstanceProviderHandler.
 	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, className, context);
+
+	SecondaryInstanceProviderHandler secondaryHandler(context, m_env, ns, 
+		className, localOnly, deep, includeQualifiers, includeClassOrigin, 
+		propertyList, theTopClass, theClass, secProvs, result);
+
+	CIMInstanceResultHandlerIFC* presult = &result;
 	if (!secProvs.empty())
 	{
-		presult = &arrayBuilderResult;
+		presult = &secondaryHandler;
 	}
 
 
@@ -606,18 +673,6 @@ CIMServer::_getCIMInstances(
 			includeQualifiers, includeClassOrigin, propertyList, E_DONT_ENUM_SUBCLASSES, context);
 	}
 
-	// now let all the secondary providers have at the instances
-	for (size_t i = 0; i < secProvs.size(); ++i)
-	{
-		secProvs[i]->filterInstances(createProvEnvRef(context, m_env), ns, 
-			className, savedInstances, localOnly, deep, includeQualifiers, 
-			includeClassOrigin, propertyList, theTopClass, theClass );
-	}
-	// this will be empty if there aren't any secondary instance providers.
-	for (size_t i = 0; i < savedInstances.size(); ++i)
-	{
-		result.handle(savedInstances[i]);
-	}
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance
