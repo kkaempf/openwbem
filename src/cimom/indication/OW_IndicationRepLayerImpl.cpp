@@ -37,6 +37,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMMethod.hpp"
+#include "OW_CIMParamValue.hpp"
 
 											
 //////////////////////////////////////////////////////////////////////////////
@@ -126,8 +127,8 @@ OW_IndicationRepLayerImpl::getInstance(const OW_CIMObjectPath& name,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
-	const OW_String& methodName, const OW_CIMValueArray& inParams,
-	OW_CIMValueArray& outParams, const OW_ACLInfo& aclInfo)
+	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
+	OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo)
 {
 	OW_CIMValue rval = m_pServer->invokeMethod(name, methodName, inParams,
 		outParams, aclInfo);
@@ -150,52 +151,24 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 				return rval;
 			}
 
-			OW_CIMClass inParamsEmbed("__MethodParameters");
+			OW_CIMClass ParamsEmbed("__MethodParameters");
 
-			OW_CIMClass cc = m_pServer->getClass(name, false,
-				true, true, NULL, intAclInfo);
-			
-
-			OW_CIMMethod cm = cc.getMethod(methodName);
-			if (!cm)
-			{
-				// can't export indication
-				return rval;
-			}
-
-			OW_CIMParameterArray paramList = cm.getParameters();
-
-			size_t paramIdx = 0;
 			for(size_t i = 0; i < inParams.size(); i++)
 			{
-				for(; paramIdx < paramList.size(); ++paramIdx)
-				{
-					if (paramList[paramIdx].getQualifier("IN"))
-					{
-						break;
-					}
-				}
-				if(paramIdx >= paramList.size() ||
-					 paramList[paramIdx].getQualifier("OUT"))
-				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-							 "Too many parameters (%1) for method %2", inParams.size(),
-							  methodName).c_str());
-				}
-				if(inParams[i].getType() != paramList[paramIdx].getType().getType())
-				{
-					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-								"Parameter type mismatch for parameter number %1 of "
-								"method %2", i + 1, methodName).c_str());
-				}
+				OW_CIMProperty prop(inParams[i].getName(), inParams[i].getValue());
+				ParamsEmbed.addProperty(prop);
+			}
 
-				OW_CIMProperty prop(paramList[paramIdx].getName(), inParams[i]);
-				inParamsEmbed.addProperty(prop);
+			for(size_t i = 0; i < outParams.size(); i++)
+			{
+				OW_CIMProperty prop(outParams[i].getName(), outParams[i].getValue());
+				ParamsEmbed.addProperty(prop);
 			}
 
 
+			expInst.setProperty("SourceInstance", OW_CIMValue(theInst)); // from CIM_InstIndication
 			expInst.setProperty("MethodName", OW_CIMValue(methodName));
-			expInst.setProperty("MethodParameters", OW_CIMValue(inParamsEmbed));
+			expInst.setProperty("MethodParameters", OW_CIMValue(ParamsEmbed));
 			expInst.setProperty("PreCall", OW_CIMValue(OW_Bool(false)));
 			expInst.setProperty("ReturnValue", OW_CIMValue(rval.toString()));
 			exportIndication(expInst, name.getFullNameSpace());

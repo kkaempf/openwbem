@@ -43,6 +43,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_IOException.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -406,9 +407,9 @@ OW_BinaryCIMOMHandle::getInstance(const OW_CIMObjectPath& path,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
-											  const OW_String& methodName,
-											  const OW_CIMValueArray& inParams,
-											  OW_CIMValueArray& outParams)
+	const OW_String& methodName,
+	const OW_CIMParamValueArray& inParams,
+	OW_CIMParamValueArray& outParams)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		methodName, name.getNameSpace());;
@@ -417,12 +418,8 @@ OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 	OW_BinIfcIO::writeObjectPath(strm, name);
 	OW_BinIfcIO::writeString(strm, methodName);
 
-	OW_BinIfcIO::write(strm, OW_Int32(OW_BINSIG_VALUEARRAY));
-	OW_BinIfcIO::write(strm, OW_Int32(inParams.size()));
-	for(size_t i = 0; i < inParams.size(); i++)
-	{
-		OW_BinIfcIO::writeValue(strm, inParams[i]);
-	}
+	OW_BinIfcIO::write(strm, OW_Int32(OW_BINSIG_PARAMVALUEARRAY));
+	inParams.writeObject(strm);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, methodName, name.getNameSpace());
 	checkError(in);
@@ -437,15 +434,8 @@ OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 		}
 
 		outParams.clear();
-		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_VALUEARRAY);
-		OW_Int32 size;
-		OW_BinIfcIO::read(*in, size);
-		while(size)
-		{
-			outParams.append(OW_BinIfcIO::readValue(*in));
-			size--;
-		}
-
+		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_PARAMVALUEARRAY);
+		outParams.readObject(strm);
 	}
 	catch(OW_IOException& e)
 	{

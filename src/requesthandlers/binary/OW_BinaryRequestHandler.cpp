@@ -41,6 +41,7 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMFeatures.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #include <exception>
 
@@ -731,19 +732,12 @@ OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 {
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_String methodName(OW_BinIfcIO::readString(istrm));
-	OW_CIMValueArray inparms;
-	OW_CIMValueArray outparms;
+	OW_CIMParamValueArray inparms;
+	OW_CIMParamValueArray outparms;
 
 	// Get input params
-	OW_BinIfcIO::verifySignature(istrm, (OW_Int32)OW_BINSIG_VALUEARRAY);
-	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size);
-
-	while(size)
-	{
-		inparms.append(OW_BinIfcIO::readValue(istrm));
-		size--;
-	}
+	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_PARAMVALUEARRAY);
+	inparms.readObject(istrm);
 
 	OW_CIMValue cv = chdl->invokeMethod(op, methodName, inparms, outparms);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
@@ -757,12 +751,8 @@ OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
 		OW_BinIfcIO::writeBool(ostrm, OW_Bool(false));
 	}
 
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_VALUEARRAY);
-	OW_BinIfcIO::write(ostrm, outparms.size());
-	for(size_t i = 0; i < outparms.size(); i++)
-	{
-		OW_BinIfcIO::writeValue(ostrm, outparms[i]);
-	}
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_PARAMVALUEARRAY);
+	outparms.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////

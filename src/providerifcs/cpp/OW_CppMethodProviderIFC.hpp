@@ -67,8 +67,8 @@ public:
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop,
 			const OW_String& methodName,
-			const OW_CIMValueArray& in,
-			OW_CIMValueArray& out ) = 0;
+			const OW_CIMParamValueArray& in,
+			OW_CIMParamValueArray& out ) = 0;
 
 	virtual OW_CppMethodProviderIFC* getMethodProvider() { return this; }
 };
@@ -76,4 +76,4 @@ public:
 typedef OW_SharedLibraryReference< OW_CppMethodProviderIFC > OW_CppMethodProviderIFCRef;
 
 #endif
-								 
+								

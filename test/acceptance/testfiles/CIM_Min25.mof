@@ -26,6 +26,8 @@ Qualifier Aggregation : boolean = false, Scope(association),
 	Flavor(DisableOverride);
 Qualifier Aggregate: boolean = false, Scope (reference),
 	Flavor(DisableOverride);
+Qualifier Out : boolean = false, Scope(parameter),
+	Flavor(DisableOverride);
 
 
 

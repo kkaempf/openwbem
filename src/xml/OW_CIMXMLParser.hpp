@@ -204,6 +204,7 @@ public:
 	static const char* const A_NEW_VALUE;
 	static const char* const A_OBJECT_NAME;
 	static const char* const A_OVERRIDABLE;
+	static const char* const A_PARAMTYPE;
 	static const char* const A_PROPAGATED;
 	static const char* const A_PROPERTY_LIST;
 	static const char* const A_PROPERTY_NAME;

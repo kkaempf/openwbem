@@ -36,6 +36,7 @@
 #include "OW_XMLEscape.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_StringStream.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -583,9 +584,37 @@ static void raToXmlChar16(ostream& out, const OW_Array<OW_Char16>& ra)
 	out << "</VALUE.ARRAY>";
 }
 
+void raToXmlNumeric(ostream& out, const OW_Array<OW_Int8>& ra)
+{
+	out << "<VALUE.ARRAY>";
+	for(size_t i = 0; i < ra.size(); i++)
+	{
+		out << "<VALUE>";
+		out << OW_Int32(ra[i]);
+		out << "</VALUE>";
+	}
+	out << "</VALUE.ARRAY>";
+}
+
+void raToXmlNumeric(ostream& out, const OW_Array<OW_UInt8>& ra)
+{
+	out << "<VALUE.ARRAY>";
+	for(size_t i = 0; i < ra.size(); i++)
+	{
+		out << "<VALUE>";
+		out << OW_UInt32(ra[i]);
+		out << "</VALUE>";
+	}
+	out << "</VALUE.ARRAY>";
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 {
+	if (!cv)
+	{
+		return;
+	}
 	if(cv.isArray())
 	{
 		switch(cv.getType())
@@ -602,7 +631,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 			{
 				OW_UInt8Array a;
 				cv.get(a);
-				raToXml(out, a);
+				raToXmlNumeric(out, a);
 				break;
 			}
 
@@ -610,7 +639,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 			{
 				OW_Int8Array a;
 				cv.get(a);
-				raToXml(out, a);
+				raToXmlNumeric(out, a);
 				break;
 			}
 
@@ -778,7 +807,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 			{
 				OW_UInt8 a;
 				cv.get(a);
-				out << a;
+				out << OW_UInt32(a);
 				break;
 			}
 
@@ -786,7 +815,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 			{
 				OW_Int8 a;
 				cv.get(a);
-				out << a;
+				out << OW_Int32(a);
 				break;
 			}
 
@@ -1403,6 +1432,29 @@ OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr)
 	ostr << "</CLASSNAME>";
 
 	ostr << "</CLASSPATH>\n";
+}
+
+/////////////////////////////////////////////////////////////
+void
+OW_CIMParamValueToXML(OW_CIMParamValue const& pv, std::ostream& ostr)
+{
+	ostr << "<PARAMVALUE NAME=\"" << pv.getName() << "\"";
+
+	if (pv.getValue())
+	{
+		OW_String type = pv.getValue().getCIMDataType().toString();
+		if (type == "REF")
+		{
+			type = "reference";
+		}
+		ostr << " PARAMTYPE=\"" << type << "\">";
+		OW_CIMtoXML(pv.getValue(), ostr);
+	}
+	else
+	{
+		ostr << '>';
+	}
+	ostr << "</PARAMVALUE>";
 }
 
 

@@ -245,6 +245,16 @@ OW_CIMParameter::toMOF() const
 	rv += m_pdata->m_dataType.toMOF();
 	rv += ' ';
 	rv += m_pdata->m_name;
+	if (m_pdata->m_dataType.isArrayType())
+	{
+		rv += '[';
+		int arraySize = m_pdata->m_dataType.getSize();
+		if (arraySize != -1)
+		{
+			rv += arraySize;
+		}
+		rv += ']';
+	}
 	return rv.releaseString();
 }
 

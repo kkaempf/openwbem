@@ -50,8 +50,12 @@ x pretty-print the XML in the test suites.
 - inline the smaller functions in OW_String, OW_StringBuffer, and other commonly used classes.
 - add a test for extrinsic methods with OUT and IN/OUT parameters
 - do some interop testing
-  - snia
+  - snia old and new (http://www.opengroup.org/snia-cimom/)
   - wbem services
   - pegasus
   - openwbem 1.3.2 1.2.x (make sure binary fails)
 - split out namespace parameters to cimom handle calls.
+- Add better error handling/messages to the MOF compiler.
+- Fix CIM Server so that an instance provider can provide associations.
+
+- Write developer documentation (similar to "SNIA CIM Object Manager Architecture and Developers Guide" found at http://www.opengroup.org/snia-cimom/)

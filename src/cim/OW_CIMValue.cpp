@@ -790,7 +790,6 @@ OW_String OW_CIMValue::toString() const
 		return m_impl->toString();
 	else
 	{
-		OW_ASSERT(0); // shouldn't ever happen
 		return "(null)";
 	}
 }
@@ -3087,15 +3086,6 @@ OW_CIMValue::~OW_CIMValue()
 {
 }
 
-/**
- *  * Inserter operator for OW_CIMValue
- *   */
-
-ostream& operator<<(std::ostream& ostr, const OW_CIMValue& cv)
-{
-	ostr << cv.toString();
-	return ostr;
-}
 
 
 

@@ -279,50 +279,6 @@ void deleteClass(OW_CIMOMHandleIFC& hdl)
 	hdl.deleteClass(pa);
 }
 
-void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
-{
-	OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root");
-
-	OW_String rval;
-	OW_CIMValueArray in, out;
-	OW_CIMValue cv;
-	OW_MutexLock lock(coutMutex);
-	switch (num)
-	{
-		case 1:
-			in.push_back(OW_CIMValue(OW_String("off")));
-			hdl.invokeMethod(cop, "setstate", in, out);
-			cout << "invokeMethod: setstate(\"off\")" << endl;
-			break;
-		case 2:
-			cv = hdl.invokeMethod(cop, "getstate", in, out);
-			cv.get(rval);
-			cout << "invokeMethod: getstate(): " << rval << endl;
-			break;
-		case 3:
-			hdl.invokeMethod(cop, "togglestate", in, out);
-			cout << "invokeMethod: togglestate()" << endl;
-			break;
-		case 4:
-			cv = hdl.invokeMethod(cop, "getstate", in, out);
-			cv.get(rval);
-			cout << "invokeMethod: getstate(): " << rval << endl;
-			break;
-		case 5:
-			in.push_back(OW_CIMValue(OW_String("off")));
-			hdl.invokeMethod(cop, "setstate", in, out);
-			cout << "invokeMethod: setstate(\"off\")" << endl;
-			break;
-		case 6:
-			cv = hdl.invokeMethod(cop, "getstate", in, out);
-			cv.get(rval);
-			cout << "invokeMethod: getstate(): " << rval << endl;
-			break;
-		default:
-			break;
-	}
-}
-
 class ListenerLogger : public OW_Logger
 {
 protected:

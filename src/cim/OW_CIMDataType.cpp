@@ -432,6 +432,9 @@ OW_CIMDataType::strToSimpleType(const OW_String& strType)
 	else if(strType.equalsIgnoreCase("REF"))
 		return REFERENCE;
 
+	else if(strType.equalsIgnoreCase("reference"))
+		return REFERENCE;
+
 	return INVALID;
 }
 

@@ -50,6 +50,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_XMLPrettyPrint.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #include <iostream>
 #include <algorithm> // for sort
@@ -1178,6 +1179,40 @@ deleteClass(OW_CIMOMHandleIFC& hdl, const OW_String& delClass)
 	testDone();
 }
 
+void
+prepareGetStateParams(OW_CIMParamValueArray& in, const OW_CIMObjectPath& cop)
+{
+	// MOF of this method:
+	//    string GetState(
+	//		[in] string s,
+	//		[in] uint8 uint8array[],
+	//		[out] boolean b,
+	//		[out] real64 r64,
+	//		[in, out] sint16 io16,
+	//		[out] string msg,
+	//		[in, out] CIM_ComputerSystem REF paths[],
+	//		[in, out] datetime nullParam);
+
+	// These are out of order on purpose, to test that the CIMOM will order them correctly.
+	in.push_back(OW_CIMParamValue("io16", OW_CIMValue(OW_Int16(16))));
+	in.push_back(OW_CIMParamValue("nullParam", OW_CIMValue()));
+	in.push_back(OW_CIMParamValue("s", OW_CIMValue(OW_String("input string"))));
+	OW_UInt8Array uint8array;
+	uint8array.push_back(1);
+	uint8array.push_back(255);
+	uint8array.push_back(0);
+	uint8array.push_back(128);
+	uint8array.push_back(0);
+	in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(uint8array)));
+	OW_CIMObjectPathArray paths;
+	paths.push_back(cop);
+	OW_CIMObjectPath cop2(cop);
+	cop2.addKey("name", OW_CIMValue("foo"));
+	paths.push_back(cop2);
+	in.push_back(OW_CIMParamValue("paths", OW_CIMValue(paths)));
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
@@ -1189,35 +1224,46 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root");
 
 		OW_String rval;
-		OW_CIMValueArray in, out;
+		OW_CIMParamValueArray in, out;
 		OW_CIMValue cv;
 		switch (num)
 		{
 			case 1:
-				in.push_back(OW_CIMValue(OW_String("off")));
+				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
 				hdl.invokeMethod(cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
 				break;
 			case 2:
+			{
+				prepareGetStateParams(in,cop);
 				cv = hdl.invokeMethod(cop, "getstate", in, out);
 				cv.get(rval);
+
 				cout << "invokeMethod: getstate(): " << rval << endl;
+				cout << out.size() << " out params:\n";
+				for (size_t i = 0; i < out.size(); ++i)
+				{
+					cout << "param " << i << ": " << out[i].toString() << '\n';
+				}
 				break;
+			}
 			case 3:
 				hdl.invokeMethod(cop, "togglestate", in, out);
 				cout << "invokeMethod: togglestate()" << endl;
 				break;
 			case 4:
+				prepareGetStateParams(in,cop);
 				cv = hdl.invokeMethod(cop, "getstate", in, out);
 				cv.get(rval);
 				cout << "invokeMethod: getstate(): " << rval << endl;
 				break;
 			case 5:
-				in.push_back(OW_CIMValue(OW_String("off")));
+				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
 				hdl.invokeMethod(cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
 				break;
 			case 6:
+				prepareGetStateParams(in,cop);
 				cv = hdl.invokeMethod(cop, "getstate", in, out);
 				cv.get(rval);
 				cout << "invokeMethod: getstate(): " << rval << endl;

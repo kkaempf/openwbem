@@ -19,7 +19,8 @@ OW_CIMProperty.cpp \
 OW_CIMQualifier.cpp \
 OW_CIMQualifierType.cpp \
 OW_CIMScope.cpp \
-OW_CIMUrl.cpp 
+OW_CIMUrl.cpp \
+OW_CIMParamValue.cpp
 
 pkginclude_HEADERS = \
 OW_CIM.hpp \
@@ -46,7 +47,8 @@ OW_CIMQualifierType.hpp \
 OW_CIMScope.hpp \
 OW_CIMUrl.hpp \
 OW_CIMValue.hpp \
-OW_CIMValueCast.hpp
+OW_CIMValueCast.hpp \
+OW_CIMParamValue.hpp
 
 
 INCLUDES = \

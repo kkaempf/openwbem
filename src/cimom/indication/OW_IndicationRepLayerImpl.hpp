@@ -136,8 +136,8 @@ public:
 
 
 	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
-		const OW_String &methodName, const OW_CIMValueArray &inParams,
-		OW_CIMValueArray &outParams, const OW_ACLInfo& aclInfo);
+		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
+		OW_CIMParamValueArray &outParams, const OW_ACLInfo& aclInfo);
 
 	virtual void createClass(const OW_CIMObjectPath &name,
 		OW_CIMClass &cc, const OW_ACLInfo& aclInfo);

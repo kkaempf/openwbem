@@ -41,6 +41,7 @@
 #include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_IOException.hpp"
+#include "OW_CIMParamValue.hpp"
 
 class OW_AccessMgr
 {
@@ -1828,8 +1829,8 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
-	const OW_String& methodName, const OW_CIMValueArray& inParams,
-	OW_CIMValueArray& outParams, const OW_ACLInfo& aclInfo)
+	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
+	OW_CIMParamValueArray& outParams, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
 	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, name, aclInfo);
@@ -1909,9 +1910,126 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, msg.c_str());
 		}
 
+		// TODO: Make sure all the in/out parameters match the class definition,
+		// and are in the correct order.  Assign the names to the out parameters.
+
+		OW_CIMParameterArray methodInParams = method.getINParameters();
+		if (inParams.size() != methodInParams.size())
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				"Incorrect number of parameters");
+		}
+
+		OW_CIMParameterArray methodOutParams = method.getOUTParameters();
+		outParams.resize(methodOutParams.size());
+		// set the names on outParams
+		for (size_t i = 0; i < methodOutParams.size(); ++i)
+		{
+			outParams[i].setName(methodOutParams[i].getName());
+		}
+
+		OW_CIMParamValueArray orderedParams;
+		OW_CIMParamValueArray inParams2(inParams);
+		for (size_t i = 0; i < methodInParams.size(); ++i)
+		{
+			OW_String parameterName = methodInParams[i].getName();
+			size_t paramIdx;
+			for (paramIdx = 0; paramIdx < inParams2.size(); ++paramIdx)
+			{
+				if (inParams2[paramIdx].getName().equalsIgnoreCase(parameterName))
+				{
+					break;
+				}
+			}
+
+			if (paramIdx == inParams2.size())
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+					"Parameter %1 was not specified.", parameterName).c_str());
+			}
+
+			// move the param from inParams2 to orderedParams
+			orderedParams.push_back(inParams2[paramIdx]);
+			inParams2.erase(inParams2.begin() + paramIdx);
+
+			// if the in param is also an out param, assign the value to the out
+			// params array
+			if (methodInParams[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+			{
+				size_t j;
+				for (j = 0; j < outParams.size(); ++j)
+				{
+					if (outParams[j].getName() == parameterName)
+					{
+						outParams[j].setValue(orderedParams[i].getValue());
+						break;
+					}
+				}
+				if (j == outParams.size())
+				{
+					OW_ASSERT(0);
+				}
+			}
+		}
+
+
+
+		// all the params should have been moved to orderedParams.  If there are
+		// some left, it means we have an unknown/invalid parameter.
+		if (inParams2.size() > 0)
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+				"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
+		}
+
+
+		OW_StringBuffer methodStr;
+		methodStr += "OW_CIMServer invoking extrinsic method provider: ";
+		methodStr += cq.getValue().toString();
+		methodStr += '\n';
+		methodStr += name.toString();
+		methodStr += '.';
+		methodStr += methodName;
+		methodStr += '(';
+		for (size_t i = 0; i < orderedParams.size(); ++i)
+		{
+			methodStr += orderedParams[i].getName();
+			methodStr += '=';
+			methodStr += orderedParams[i].getValue().toString();
+			if (i != orderedParams.size() - 1)
+			{
+				methodStr += ", ";
+			}
+		}
+		methodStr += ')';
+
+		m_env->logDebug(methodStr.toString());
+
 		cv = methodp->invokeMethod(
 			createProvEnvRef(real_ch),
-				name, methodName, inParams, outParams);
+				name, methodName, orderedParams, outParams);
+		
+		methodStr.reset();
+		methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
+		methodStr += cq.getValue().toString();
+		methodStr += '\n';
+		methodStr += name.toString();
+		methodStr += '.';
+		methodStr += methodName;
+		methodStr += " OUT Params(";
+		for (size_t i = 0; i < outParams.size(); ++i)
+		{
+			methodStr += outParams[i].getName();
+			methodStr += '=';
+			methodStr += outParams[i].getValue().toString();
+			if (i != outParams.size() - 1)
+			{
+				methodStr += ", ";
+			}
+		}
+		methodStr += ") return value: ";
+		methodStr += cv.toString();
+		m_env->logDebug(methodStr.toString());
 	}
 	catch(OW_CIMException& e)
 	{

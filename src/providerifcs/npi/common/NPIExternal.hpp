@@ -20,33 +20,6 @@
 
 #include "NPIProvider.hpp"
 
-        class OW_CIMParamValue
-        {
-        public:
-                OW_CIMParamValue() : m_name(), m_value() {}
-                OW_CIMParamValue(const OW_String& name, const OW_CIMValue& value)
-                        : m_name(name), m_value(value) {}
-                OW_CIMParamValue(const OW_CIMParamValue& arg)
-                        : m_name(arg.m_name), m_value(arg.m_value) {}
-
-                const OW_CIMParamValue& operator= (const OW_CIMParamValue& arg)
-                {
-                        m_name = arg.m_name;
-                        m_value = arg.m_value;
-                        return *this;
-                }
-
-                OW_String getName() const { return m_name; }
-                OW_CIMValue getValue() const { return m_value; }
-                void setName(const OW_String& name) { m_name = name; }
-                void setValue(const OW_CIMValue& value) { m_value = value; }
-
-        private:
-                OW_String m_name;
-                OW_CIMValue m_value;
-        };
-
-
 extern "C" NPIenv*
 createEnv(OW_CIMOMHandleIFCRef repository, const OW_String& nameSpace);
 

@@ -12,6 +12,7 @@
 #include "OW_SocketAddress.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_Format.hpp"
+#include "OW_CIMParamValue.hpp"
 #include <iostream> // for cerr
 
 namespace
@@ -197,15 +198,15 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_String& methodName,
-		const OW_CIMValueArray& in,
-		OW_CIMValueArray& out )
+		const OW_CIMParamValueArray& in,
+		OW_CIMParamValueArray& out )
 	{
 		(void)env;
 		(void)out;
 		if (methodName.equalsIgnoreCase("sendsignal"))
 		{
 			OW_Int32 sig;
-			in[0].get(sig);
+			in[0].getValue().get(sig);
 			OW_CIMPropertyArray keys = cop.getKeys();
 			pid_t pid = 0;
 			for (OW_CIMPropertyArray::const_iterator iter = keys.begin();

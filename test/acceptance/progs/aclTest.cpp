@@ -47,6 +47,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #include <iostream>
 
@@ -639,12 +640,12 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root/acltest");
 
 		OW_String rval;
-		OW_CIMValueArray in, out;
+		OW_CIMParamValueArray in, out;
 		OW_CIMValue cv;
 		switch (num)
 		{
 			case 1:
-				in.push_back(OW_CIMValue(OW_String("off")));
+				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
 				hdl.invokeMethod(cop, "setstate", in, out);
 				break;
 			default:

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIM_FWD_HPP__
-#define __OW_CIM_FWD_HPP__
+#ifndef OW_CIM_FWD_HPP_
+#define OW_CIM_FWD_HPP_
 
 #include "OW_config.h"
 #include "OW_ArrayFwd.hpp"
@@ -50,6 +50,7 @@ class OW_CIMQualifier;
 class OW_CIMMethod;
 class OW_CIMClass;
 class OW_CIMParameter;
+class OW_CIMParamValue;
 class OW_CIMInstance;
 class OW_CIMValue;
 class OW_String;
@@ -79,6 +80,7 @@ typedef OW_Array<OW_CIMQualifier> 		OW_CIMQualifierArray;
 typedef OW_Array<OW_CIMMethod> 			OW_CIMMethodArray;
 typedef OW_Array<OW_CIMClass> 			OW_CIMClassArray;
 typedef OW_Array<OW_CIMParameter> 		OW_CIMParameterArray;
+typedef OW_Array<OW_CIMParamValue> 		OW_CIMParamValueArray;
 typedef OW_Array<OW_CIMInstance> 		OW_CIMInstanceArray;
 typedef OW_Array<OW_CIMValue> 			OW_CIMValueArray;
 typedef OW_Array<OW_String>				OW_StringArray;
@@ -87,5 +89,5 @@ typedef OW_Array<OW_Bool>       			OW_BoolArray;
 
 
 
-#endif	// __OW_CIM_FWD_HPP__
+#endif
 

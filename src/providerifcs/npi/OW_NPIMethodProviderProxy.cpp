@@ -38,12 +38,13 @@
 #include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_CIMParamValue.hpp"
 
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
     const OW_CIMObjectPath &cop, const OW_String &methodName,
-    const OW_CIMValueArray &in, OW_CIMValueArray &out)
+    const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
 {
         OW_CIMValue rval;
 
@@ -67,7 +68,7 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 
             for (int i = 0, n = in.size(); i < n; i++)
             {
-                OW_CIMValue * owpv = new OW_CIMValue(in[i]); 
+                OW_CIMParamValue * owpv = new OW_CIMParamValue(in[i]);
                 _VectorAddTo(
                     &_npiHandle, parm_in, static_cast<void *> (owpv) );
             }
@@ -82,7 +83,7 @@ OW_NPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
 
             for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
             {
-                OW_CIMValue owpv = * static_cast<OW_CIMValue *>
+                OW_CIMParamValue owpv = * static_cast<OW_CIMParamValue *>
                     (_VectorGet(&_npiHandle, parm_out, i));
                 out.append(owpv);
             }

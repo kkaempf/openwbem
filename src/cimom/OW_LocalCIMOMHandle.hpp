@@ -293,8 +293,8 @@ public:
 	 * @return A non-null OW_CIMValue on success. Otherwise a null OW_CIMValue.
 	 */
 	virtual OW_CIMValue invokeMethod(const OW_CIMObjectPath &name,
-		const OW_String &methodName, const OW_CIMValueArray &inParams,
-		OW_CIMValueArray &outParams);
+		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
+		OW_CIMParamValueArray &outParams);
 
 	/**
 	 * Adds the CIM class to the specified namespace.

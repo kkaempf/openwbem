@@ -51,7 +51,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMXMLParser.hpp"
-#include "OW_CIMXMLParser.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -738,11 +738,9 @@ namespace
 	class invokeMethodOp : public OW_ClientOperation
 	{
 	public:
-		invokeMethodOp(OW_CIMValue& result_, OW_CIMValueArray& outParams_,
-			OW_String returnType_)
+		invokeMethodOp(OW_CIMValue& result_, OW_CIMParamValueArray& outParams_)
 			: result(result_)
 			, outParams(outParams_)
-			, returnType(returnType_)
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
@@ -752,6 +750,11 @@ namespace
 			// handle RETURNVALUE, which is optional
 			if (parser.tokenIs(OW_CIMXMLParser::E_RETURNVALUE))
 			{
+				OW_String returnType = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
+				if (returnType.length() == 0)
+				{
+					returnType = "string";
+				}
 				parser.mustGetChild();
 				if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE) &&
 					!parser.tokenIs(OW_CIMXMLParser::E_VALUE_REFERENCE))
@@ -770,24 +773,40 @@ namespace
 				  ++outParamCount)
 			{
 				OW_String name = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
-				OW_String type = parser.mustGetAttribute(OW_CIMXMLParser::A_TYPE);
-				parser.getChild();
+				OW_String type = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
+				if (type.length() == 0)
+				{
+					type = "string";
+				}
+				parser.getNext();
 				
 				if (outParams.size() <= outParamCount)
 				{
 					// make sure there's enough space in the vector
-					outParams.resize(outParamCount);
+					outParams.resize(outParamCount + 1);
 				}
-				outParams[outParamCount] = OW_XMLCIMFactory::createValue(parser,
-					type);
+				int token = parser.getToken();
+				if (token != OW_CIMXMLParser::E_VALUE
+					&& token != OW_CIMXMLParser::E_VALUE_REFERENCE
+					&& token != OW_CIMXMLParser::E_VALUE_ARRAY
+					&& token != OW_CIMXMLParser::E_VALUE_REFARRAY
+					)
+				{
+					outParams[outParamCount] = OW_CIMParamValue(name,
+						OW_CIMValue());
+				}
+				else
+				{
+					outParams[outParamCount] = OW_CIMParamValue(name,
+						OW_XMLCIMFactory::createValue(parser, type));
+				}
 				parser.mustGetEndTag(); // pass /PARAMVALUE
 			}
 
 		}
 
 		OW_CIMValue& result;
-		OW_CIMValueArray& outParams;
-		OW_String returnType;
+		OW_CIMParamValueArray& outParams;
 	};
 }
 
@@ -795,52 +814,41 @@ namespace
 OW_CIMValue
 OW_CIMXMLCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 											  const OW_String& methodName,
-											  const OW_CIMValueArray& inParams,
-											  OW_CIMValueArray& outParams)
+											  const OW_CIMParamValueArray& inParams,
+											  OW_CIMParamValueArray& outParams)
 {
 	OW_Reference<std::iostream> iostrRef =
 		m_protocol->beginRequest(methodName, name.getNameSpace());
 	std::iostream& tfs = *iostrRef;
 
-	OW_CIMClass cc = getClass(name);
-	OW_CIMMethod cm = cc.getMethod(methodName);
-	OW_CIMParameterArray paramList = cm.getParameters();
-
 	sendXMLHeader(methodName, name, tfs, false);
-
-	size_t paramIdx = 0;
 
 	for (size_t i = 0; i < inParams.size(); ++i)
 	{
-		for (; paramIdx < paramList.size(); ++paramIdx)
+		tfs << "<PARAMVALUE NAME=\"" << inParams[i].getName() << "\"";
+		OW_CIMValue v = inParams[i].getValue();
+		if (v)
 		{
-			if (paramList[paramIdx].getQualifier("IN"))
+			OW_String type = v.getCIMDataType().toString();
+			if (type == "REF")
 			{
-				break;
+				type = "reference";
 			}
+			tfs << " PARAMTYPE=\"" << type << "\">";
+			OW_CIMtoXML(inParams[i].getValue(), tfs);
 		}
-		if (paramIdx >= paramList.size() ||
-			 paramList[paramIdx].getQualifier("OUT"))
+		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-					 "Too many parameters (%1) for method %2", inParams.size(),
-					  methodName).c_str());
+			tfs << '>';
 		}
-		if (inParams[i].getType() != paramList[paramIdx].getType().getType())
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-						"Parameter type mismatch for parameter number %1 of "
-						"method %2", i + 1, methodName).c_str());
-		}
-		tfs << "<PARAMVALUE NAME=\"" << paramList[paramIdx].getName() << "\"><VALUE>"
-		<< inParams[i] << "</VALUE></PARAMVALUE>";
+		tfs << "</PARAMVALUE>";
 	}
 
 
 	sendXMLTrailer(tfs, false);
 
 	OW_CIMValue rval;
-	invokeMethodOp op(rval, outParams, cm.getReturnType().toString());
+	invokeMethodOp op(rval, outParams);
 	doSendRequest(iostrRef, methodName, name, false, op);
 	return rval;
 }

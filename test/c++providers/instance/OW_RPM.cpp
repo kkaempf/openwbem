@@ -253,8 +253,8 @@ public:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_String& methodName,
-		const OW_CIMValueArray& in,
-		OW_CIMValueArray& out )
+		const OW_CIMParamValueArray& in,
+		OW_CIMParamValueArray& out )
 	{
 		(void)env;
 		(void)out;

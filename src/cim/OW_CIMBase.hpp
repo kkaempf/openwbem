@@ -110,6 +110,8 @@ public:
 
 };
 
+std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb);
+
 ///////////////////////////////////////////////////////////////////////////////
 // signatures to be passed to readSig and writeSig
 #define OW_CIMCLASSSIG					"CLAS"	// OW_CIMClass
@@ -128,5 +130,6 @@ public:
 #define OW_CIMVALUESIG					"VALU"	// OW_CIMValue
 #define OW_CIMURLSIG					"CURL"	// OW_CIMUrl
 #define OW_INTERNNAMESPACESIG			"INNS"	// Internval namespace class
+#define OW_CIMPARAMVALUESIG				"PRVL"	// OW_CIMParamValue
 
 #endif	// OW_CIMBASE_HPP_

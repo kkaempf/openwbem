@@ -211,6 +211,7 @@ const char* const OW_CIMXMLParser::A_NAME							= "NAME";
 const char* const OW_CIMXMLParser::A_NEW_VALUE					= "NEWVALUE";
 const char* const OW_CIMXMLParser::A_OBJECT_NAME				= "OBJECTNAME";
 const char* const OW_CIMXMLParser::A_OVERRIDABLE				= "OVERRIDABLE";
+const char* const OW_CIMXMLParser::A_PARAMTYPE							= "PARAMTYPE";
 const char* const OW_CIMXMLParser::A_PROPAGATED					= "PROPAGATED";
 const char* const OW_CIMXMLParser::A_PROPERTY_LIST				= "PROPERTYLIST";
 const char* const OW_CIMXMLParser::A_PROPERTY_NAME				= "PROPERTYNAME";

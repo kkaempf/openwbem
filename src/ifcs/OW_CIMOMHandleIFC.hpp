@@ -375,8 +375,8 @@ public:
 	virtual OW_CIMValue invokeMethod(
 		const OW_CIMObjectPath& name,
 		const OW_String& methodName,
-		const OW_CIMValueArray& inParams,
-		OW_CIMValueArray& outParams) = 0;
+		const OW_CIMParamValueArray& inParams,
+		OW_CIMParamValueArray& outParams) = 0;
 
 	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.

@@ -85,7 +85,7 @@ private:
 		std::ostream& ostrError, const OW_String& userName);
 
 	static void getParameters(OW_CIMXMLParser& parser,
-		const OW_Array<OW_CIMParameter>& paramlist, OW_Array<OW_CIMValue>& params);
+		OW_CIMParamValueArray& params);
 
 	void associatorNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);

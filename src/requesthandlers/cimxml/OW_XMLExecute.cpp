@@ -49,6 +49,7 @@
 #include "OW_CIMFeatures.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_CIMtoXML.hpp"
+#include "OW_CIMParamValue.hpp"
 
 #include <algorithm>
 
@@ -249,11 +250,11 @@ OW_XMLExecute::executeExtrinsic(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMOMHandleIFC& lch)
 {
 	ostr << "<METHODRESPONSE NAME=\"" << m_functionName <<
-		"\"><RETURNVALUE>";
+		"\">";
 
 	doInvokeMethod(ostr, parser, m_functionName, lch);
 
-	ostr << "</RETURNVALUE></METHODRESPONSE>";
+	ostr << "</METHODRESPONSE>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -261,45 +262,25 @@ void
 OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_CIMXMLParser& parser,
 	const OW_String& methodName, OW_CIMOMHandleIFC& hdl)
 {
-	OW_CIMValueArray inParams;
-	OW_CIMValueArray outParams;
+	OW_CIMParamValueArray inParams;
+	OW_CIMParamValueArray outParams;
 
 	OW_CIMObjectPath instancePath = OW_XMLCIMFactory::createObjectPath(parser);
-	OW_CIMClass cc = hdl.getClass(instancePath, false);
-
-	if(!cc)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,"Class was null");
-	}
-
-	OW_CIMMethod method = cc.getMethod(methodName);
-
-	if(!method)
-	{
-		OW_THROWCIMMSG(OW_CIMException::METHOD_NOT_FOUND,
-			format("Looking for method %1", methodName).c_str() );
-	}
-
-	OW_CIMParameterArray inParameters = method.getINParameters();
-	OW_CIMParameterArray outParameters = method.getOUTParameters();
-
-	getParameters(parser, inParameters, inParams);
-
-	outParams.resize(outParameters.size());
+	
+	getParameters(parser, inParams);
 	OW_CIMValue cv = hdl.invokeMethod(instancePath, methodName, inParams,
 		outParams);
 
 	if(cv)
 	{
+		ostr << "<RETURNVALUE>";
 		OW_CIMtoXML(cv, ostr);
+		ostr << "</RETURNVALUE>";
 	}
 
-	for (size_t i=0; i < outParameters.size(); i++)
+	for (size_t i=0; i < outParams.size(); i++)
 	{
-		OW_CIMParameter cp = outParameters[i];
-		ostr << "<PARAMVALUE NAME=\"" << cp.getName() << "\">";
-		OW_CIMtoXML(outParams[i], ostr);
-		ostr << "</PARAMVALUE>";
+		OW_CIMParamValueToXML(outParams[i], ostr);
 	}
 }
 
@@ -317,17 +298,19 @@ OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_CIMXMLParser& parser,
 //
 void
 OW_XMLExecute::getParameters(OW_CIMXMLParser& parser,
-	const OW_Array<OW_CIMParameter>& paramlist, OW_Array<OW_CIMValue>& params)
+	OW_CIMParamValueArray& params)
 {
 	//
 	// Process parameters
 	//
-	OW_Array<bool> paramsFound(paramlist.size());
-	paramsFound.resize(paramlist.size(), false);
-	params.resize(paramlist.size()); // ensure we have the space to store the params we find.
 	while (parser.tokenIs(OW_CIMXMLParser::E_PARAMVALUE))
 	{
-		OW_String parameterName = parser.mustGetAttribute(paramName);
+		OW_String parameterName = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
+		OW_String parameterType = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
+		if (parameterType.length() == 0)
+		{
+			parameterType = "string";
+		}
 
 		parser.getNext();
 		int token = parser.getToken();
@@ -337,44 +320,18 @@ OW_XMLExecute::getParameters(OW_CIMXMLParser& parser,
 			&& token != OW_CIMXMLParser::E_VALUE_REFARRAY
 			)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-				"Parameter %1, has no value", paramName).c_str());
+			params.push_back(OW_CIMParamValue(parameterName,
+				OW_CIMValue()));
+		}
+		else
+		{
+			params.push_back(OW_CIMParamValue(parameterName,
+				OW_XMLCIMFactory::createValue(parser, parameterType)));
 		}
 
-		size_t paramIdx;
-		for (paramIdx = 0; paramIdx < paramlist.size(); paramIdx++)
-		{
-			if (paramlist[paramIdx].getName().equalsIgnoreCase(parameterName))
-			{
-				break;
-			}
-		}
-
-		if (paramIdx == paramlist.size())
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-				"Parameter %1 is not an valid parameter.", parameterName).c_str());
-		}
-
-		params[paramIdx] = OW_XMLCIMFactory::createValue(parser,
-			paramlist[paramIdx].getType().toString());
-		if (paramsFound[paramIdx] == true)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-				"Parameter %1 has already been specified.", parameterName).c_str());
-		}
-		paramsFound[paramIdx] = true;
-		parser.mustGetEndTag();
+		parser.mustGetEndTag(); // pass </PARAMVALUE>
 	}
 
-	for (size_t i = 0; i < paramsFound.size(); ++i)
-	{
-		if (paramsFound[i] == false)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
-				"Parameter %1 was not specified.", paramlist[i].getName()).c_str());
-		}
-	}
 }
 
 
@@ -441,7 +398,7 @@ namespace
 
 		bool operator()(const param& p)
 		{
-			return p.name == s;
+			return p.name.equalsIgnoreCase(s);
 		}
 
 		OW_String s;
@@ -809,7 +766,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath realPath = OW_CIMObjectPath(className, path.getNameSpace());
 
 	// Special treatment for __Namespace class
-	if(className.equals(OW_CIMClass::NAMESPACECLASS))
+	if(className.equalsIgnoreCase(OW_CIMClass::NAMESPACECLASS))
 	{
 		OW_CIMProperty prop = cimInstance.getProperty(
 			OW_CIMProperty::NAME_PROPERTY);
@@ -1293,7 +1250,7 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	// Check parameter name is "ModifiedInstance"
 	//
 	OW_String name=parser.getAttribute(paramName);
-	if (!name.equals("ModifiedInstance"))
+	if (!name.equalsIgnoreCase("ModifiedInstance"))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("Parameter name was %1", name).c_str() );

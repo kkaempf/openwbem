@@ -5732,6 +5732,13 @@ Qualifier borgishness : string = "", Scope(class,property), Flavor(DisableOverri
 invokeMethod: setstate("off")
 *** Doing invokeMethod() ***
 invokeMethod: getstate(): off
+6 out params:
+param 0: OW_CIMParamValue(b): true
+param 1: OW_CIMParamValue(r64): 9.87654e+32
+param 2: OW_CIMParamValue(io16): 555
+param 3: OW_CIMParamValue(msg): OW_MethodProviderTest::invokeMethod.  in[0] = OW_CIMParamValue(s): input string, in[1] = OW_CIMParamValue(uint8array): 1,255,0,128,0, in[2] = OW_CIMParamValue(io16): 16, in[3] = OW_CIMParamValue(paths): /root:exp_bartcomputersystem,/root:exp_bartcomputersystem.name="foo", in[4] = OW_CIMParamValue(nullParam): (null), out[0] = OW_CIMParamValue(b): true, out[1] = OW_CIMParamValue(r64): 9.87654e+32, out[2] = OW_CIMParamValue(io16): 555, out[4] = OW_CIMParamValue(paths): /root:exp_bartcomputersystem,/root:exp_bartcomputersystem.name="foo"
+param 4: OW_CIMParamValue(paths): /root:exp_bartcomputersystem,/root:exp_bartcomputersystem.name="foo"
+param 5: OW_CIMParamValue(nullParam): (null)
 *** Doing invokeMethod() ***
 invokeMethod: togglestate()
 *** Doing invokeMethod() ***

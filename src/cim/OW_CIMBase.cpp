@@ -83,3 +83,10 @@ void OW_CIMBase::writeSig( ostream& ostr, const char* const sig )
 }
 
 
+//////////////////////////////////////////////////////////////////////////////		
+std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb)
+{
+	ostr << cb.toString();
+	return ostr;
+}
+

@@ -226,8 +226,6 @@ public:
 	 */
 	virtual OW_String toMOF() const;
 
-	friend std::ostream& operator<< (std::ostream& ostrm, const OW_CIMUrl& arg);
-
 private:
 
 	void setLocalHost();

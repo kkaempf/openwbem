@@ -195,8 +195,8 @@ OW_CppMethodProviderProxy::invokeMethod(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_String& methodName,
-		const OW_CIMValueArray& in,
-		OW_CIMValueArray& out)
+		const OW_CIMParamValueArray& in,
+		OW_CIMParamValueArray& out)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->invokeMethod(env, cop, methodName, in, out);

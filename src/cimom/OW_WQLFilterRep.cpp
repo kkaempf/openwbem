@@ -314,8 +314,8 @@ OW_WQLFilterRep::getProperty(const OW_CIMObjectPath &/*name*/,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_WQLFilterRep::invokeMethod(const OW_CIMObjectPath &/*name*/,
-	const OW_String &/*methodName*/, const OW_CIMValueArray &/*inParams*/,
-	OW_CIMValueArray &/*outParams*/, const OW_ACLInfo& /*aclInfo*/)
+	const OW_String &/*methodName*/, const OW_CIMParamValueArray &/*inParams*/,
+	OW_CIMParamValueArray &/*outParams*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
