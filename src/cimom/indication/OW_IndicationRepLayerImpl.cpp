@@ -44,7 +44,6 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
-#include "OW_UserInfo.hpp"
 
 namespace OpenWBEM
 {
@@ -484,9 +483,9 @@ void IndicationRepLayerImpl::beginOperation(WBEMFlags::EOperationFlag op, Operat
 {
 	m_pServer->beginOperation(op, context);
 }
-void IndicationRepLayerImpl::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
+void IndicationRepLayerImpl::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
-	m_pServer->endOperation(op, context);
+	m_pServer->endOperation(op, context, result);
 }
 void IndicationRepLayerImpl::setCIMServer(const RepositoryIFCRef& src)
 {

@@ -298,9 +298,9 @@ void SharedLibraryRepository::beginOperation(WBEMFlags::EOperationFlag op, Opera
 {
 	m_ref->beginOperation(op, context);
 }
-void SharedLibraryRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
+void SharedLibraryRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
-	m_ref->endOperation(op, context);
+	m_ref->endOperation(op, context, result);
 }
 
 } // end namespace OpenWBEM

@@ -453,7 +453,7 @@ public:
 		OperationContext& context);
 	
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
-	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 private:
 	CIMInstance m_inst;
 	RepositoryIFCRef m_pCIMServer;

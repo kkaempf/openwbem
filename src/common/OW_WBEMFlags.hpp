@@ -69,9 +69,9 @@ enum EEnumSubclassesFlag
 //////////////////////////////////////////////////////
 enum EOperationFlag
 {
-	E_CREATE_NAME_SPACE,
-	E_DELETE_NAME_SPACE,
-	E_ENUM_NAME_SPACE,
+	E_CREATE_NAMESPACE,
+	E_DELETE_NAMESPACE,
+	E_ENUM_NAMESPACE,
 	E_GET_QUALIFIER_TYPE,
 	E_ENUM_QUALIFIER_TYPES,
 	E_DELETE_QUALIFIER_TYPE,
@@ -99,6 +99,12 @@ enum EOperationFlag
 	E_REFERENCES_CLASSES,
 	E_EXEC_QUERY,
 	E_EXPORT_INDICATION,
+};
+/////////////////////////////////////////////////////////////////////////////
+enum EOperationResultFlag
+{
+	E_FAILED,
+	E_SUCCESS,
 };
 
 }

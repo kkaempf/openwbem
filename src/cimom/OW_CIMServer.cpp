@@ -36,7 +36,7 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMParamValue.hpp"
-#include "OW_CIMRepository.hpp"
+#include "OW_CIMRepository2.hpp"
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
@@ -46,6 +46,8 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_MutexLock.hpp"
+#include "OW_UserInfo.hpp"
 
 namespace OpenWBEM
 {
@@ -340,7 +342,7 @@ CIMServer::CIMServer(CIMOMEnvironmentRef env,
 	, m_nsClass_Namespace(CIMNULL)
 	, m_env(env)
 	, m_cimRepository(cimRepository)
-	, m_realRepository(dynamic_pointer_cast<CIMRepository>(m_cimRepository))
+	, m_realRepository(dynamic_pointer_cast<CIMRepository2>(m_cimRepository))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -2076,9 +2078,9 @@ CIMServer::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& contex
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMServer::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
+CIMServer::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
-	m_cimRepository->endOperation(op, context);
+	m_cimRepository->endOperation(op, context, result);
 }
 
 

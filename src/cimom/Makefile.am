@@ -10,10 +10,9 @@ $(CXXBINLINKFLAGS) \
 owcimomd_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
--L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -ldl \
--L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+-L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr \
 -L$(top_builddir)/src/provider -lowprovider
 
 # OpenServer may need this one day, but Linux doesn't like it
@@ -48,8 +47,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/server \
 -I$(top_srcdir)/src/providerifcs/cpp \
--I$(top_srcdir)/db/include \
--I$(top_srcdir)/src/repositories/hdb
+-I$(top_srcdir)/src/repositories/tdbcr
 
 #use this rule to create the data dir
 install-exec-local:

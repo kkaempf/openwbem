@@ -35,7 +35,6 @@
 #include "OW_RepositoryIFC.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_CIMOMEnvironment.hpp"
-#include "OW_UserInfo.hpp"
 
 namespace OpenWBEM
 {
@@ -590,7 +589,7 @@ public:
 	safe_bool operator!() const
 		{  return (m_pServer) ? 0: &dummy::nonnull; }
 	void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
-	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
 private:
 	/**

@@ -36,7 +36,6 @@
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_UserInfo.hpp"
 
 namespace OpenWBEM
 {
@@ -398,7 +397,7 @@ WQLFilterRep::beginOperation(WBEMFlags::EOperationFlag, OperationContext&)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-WQLFilterRep::endOperation(WBEMFlags::EOperationFlag, OperationContext&)
+WQLFilterRep::endOperation(WBEMFlags::EOperationFlag, OperationContext&, WBEMFlags::EOperationResultFlag result)
 {
 }
 

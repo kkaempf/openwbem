@@ -44,7 +44,7 @@ namespace OpenWBEM
 #if !defined(OW_DISABLE_ACLS)
 class AccessMgr;
 #endif
-class CIMRepository;
+class CIMRepository2;
 // This class is responsible for:
 // 1. calling either providers/or the CIM Repository
 // 2. Access control
@@ -653,7 +653,7 @@ private:
 	ProviderManagerRef m_provManager;
 
 	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
-	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result);
 
 #if !defined(OW_DISABLE_ACLS)
 	friend class AccessMgr;
@@ -664,7 +664,7 @@ private:
 	CIMClass m_nsClass_Namespace;
 	CIMOMEnvironmentRef m_env;
 	RepositoryIFCRef m_cimRepository;
-	IntrusiveReference<CIMRepository> m_realRepository;
+	IntrusiveReference<CIMRepository2> m_realRepository;
 };
 
 } // end namespace OpenWBEM
