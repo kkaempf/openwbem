@@ -166,11 +166,9 @@ OW_NameSpaceProvider::getInstance(
 			return ci;
 		}
 		
-		if (cie.hasMoreElements())
+		while (cie.hasMoreElements())
 		{
 			ci = cie.nextElement();
-			// since enumInstances always returns the root one first, we won't
-			// bother checking the rest of the instances in the enumeration.
 			if (ci)
 			{
 				OW_CIMProperty cp = ci.getProperty(OW_CIMProperty::NAME_PROPERTY);
