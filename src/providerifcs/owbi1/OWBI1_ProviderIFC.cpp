@@ -868,3 +868,5 @@ void BI1ProviderIFC::doShuttingDown(const OpenWBEM::ProviderEnvironmentIFCRef& e
 
 } // end namespace OWBI1
 
+OW_PROVIDERIFCFACTORY(OWBI1::BI1ProviderIFC, owowbi1provifc)
+
