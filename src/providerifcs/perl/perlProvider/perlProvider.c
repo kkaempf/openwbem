@@ -70,7 +70,7 @@ static char* setPath(NPIHandle *nh, char *path)
 {
    char *e=getenv("NPIPERLPATH");
 
-   if (!nh->context) 
+   if ((!nh) && (!nh->context))
    {
       fprintf(stderr,"--- ERROR context path not set\n");
       exit(0);
