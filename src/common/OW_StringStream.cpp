@@ -89,7 +89,12 @@ OStringStream::~OStringStream()
 }
 ///////////////////////////////////////////////////////////////////////////////
 OStringStream::OStringStream(const OStringStream& ostr)
-	: std::basic_ios<char>(), OStringStreamBase(ostr.length()),  std::ostream(&m_buf)
+#if !defined(__GNUC__) || __GNUC__ > 2
+	: std::basic_ios<char>()
+#else
+	: std::ios() // gcc 2.95.x broken library.
+#endif
+	, OStringStreamBase(ostr.length()),  std::ostream(&m_buf)
 {
 	*this << ostr.toString();
 }
