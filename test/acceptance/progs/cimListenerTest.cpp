@@ -435,7 +435,7 @@ int main(int argc, char* argv[])
 		//invokeMethod(rch, 2); // TODO
 
 		//cout << "Now waiting for intrinsic method indications" << endl;
-		for (size_t i = 0; i < 18; ++i)
+		for (size_t i = 0; i < 14; ++i)
 		{
 			if (!sem.timedWait(25))
 			{
