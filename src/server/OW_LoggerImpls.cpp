@@ -80,7 +80,7 @@ class SyslogLogger : public Logger
 			static bool calledOpenLog = false;
 			if (!calledOpenLog)
 			{
-				openlog( "openwbem", LOG_CONS, LOG_DAEMON );
+				openlog( OW_PACKAGE_PREFIX"openwbem", LOG_CONS, LOG_DAEMON );
 				calledOpenLog = true;
 			}
 		}
