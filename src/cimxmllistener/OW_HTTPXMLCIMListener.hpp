@@ -52,6 +52,9 @@ namespace OpenWBEM
 class HTTPServer;
 class ListenerAuthenticator;
 class Thread;
+class ClientAuthCBIFC;
+typedef Reference<ClientAuthCBIFC> ClientAuthCBIFCRef;
+
 class HTTPXMLCIMListener : public CIMListenerCallback
 {
 public:
@@ -73,7 +76,9 @@ public:
 	 *  originate. If empty, the namespace of the Filter registration
 	 *  is assumed.
 	 * @param cb An object derived from CIMListenerCallback.  When an
-	 *		indication is received, the doIndicationOccured member function will be called
+	 *	indication is received, the doIndicationOccured member function will be called
+	 * @param authCb If authentication is necessary, and authCb != NULL, then
+	 *  authCb->getCredentials() will be called to obtain credentials.
 	 *
 	 * @return A unique handle identifying the indication subscription and callback.
 	 *		Use this handle to de-register the listener.
@@ -82,12 +87,17 @@ public:
 		const String& ns, const String& filter,
 		const String& querylanguage, 
 		const String& sourceNamespace,
-		CIMListenerCallbackRef cb);
+		CIMListenerCallbackRef cb, 
+		const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
+
 	/**
 	 * De-register for an indication
 	 * @param handle The string returned from registerForIndication
+	 * @param authCb If authentication is necessary, and authCb != NULL, then
+	 *  authCb->getCredentials() will be called to obtain credentials.
 	 */
 	void deregisterForIndication( const String& handle );
+
 	/**
 	 * Shut down the http server that is listening for indications.
 	 *	This function blocks until all threads that are running callbacks
@@ -112,6 +122,7 @@ private:
 		CIMObjectPath subscription;
 		CIMListenerCallbackRef callback;
 		String httpCredentials;
+		ClientAuthCBIFCRef authCb;
 	};
 	typedef Map< String, registrationInfo > callbackMap_t;
 	callbackMap_t m_callbacks;

@@ -276,7 +276,7 @@ HTTPXMLCIMListener::shutdownHttpServer()
 {
 	if (m_httpThread)
 	{
-		m_httpThread->definitiveCancel();
+		m_httpThread->cooperativeCancel();
 		// wait for the thread to quit
 		m_httpThread->join();
 		m_httpThread = 0;
@@ -296,13 +296,14 @@ HTTPXMLCIMListener::registerForIndication(
 	const String& filter,
 	const String& querylanguage,
 	const String& sourceNamespace,
-	CIMListenerCallbackRef cb)
+	CIMListenerCallbackRef cb,
+	const ClientAuthCBIFCRef& authCb)
 {
 	registrationInfo reg;
 	// create an http client with the url from the object path
 	URL curl(url);
 	reg.cimomUrl = curl;
-	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url);
+	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(url, authCb);
 	String ipAddress = hdl->getWBEMProtocolHandler()->getLocalAddress().getAddress();
 	
 	// If we are connecting to the CIMOM via HTTPS, then assume it will
@@ -415,6 +416,7 @@ HTTPXMLCIMListener::registerForIndication(
 	//save info for deletion later and callback delivery
 	reg.callback = cb;
 	reg.ns = ns;
+	reg.authCb = authCb;
 	m_callbacks[httpPath] = reg;
 	return httpPath;
 }
@@ -455,7 +457,7 @@ HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
 void
 HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
 {
-	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(reg.cimomUrl.toString());
+	ClientCIMOMHandleRef hdl = ClientCIMOMHandle::createFromURL(reg.cimomUrl.toString(), reg.authCb);
 	hdl->deleteInstance(reg.ns, reg.subscription);
 	hdl->deleteInstance(reg.ns, reg.filter);
 	hdl->deleteInstance(reg.ns, reg.handler);
