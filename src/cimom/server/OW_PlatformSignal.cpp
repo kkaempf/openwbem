@@ -76,51 +76,45 @@ namespace OW_NAMESPACE
 				dest.errorNumber = source.si_errno;
 				dest.signalCode = source.si_code;
 
-				if( source.si_code <= 0 )
+				switch(source.si_code)
 				{
-					switch(source.si_code)
-					{
-					case SI_USER:
-						dest.originatingPID = source.si_pid;
-						dest.originatingUID = source.si_uid;
-						break;
-					case SI_TIMER:
-						dest.timerValue = source.si_value;
-						break;
-					case SI_ASYNCIO:
+				case SI_USER:
+					dest.originatingPID = source.si_pid;
+					dest.originatingUID = source.si_uid;
+					break;
+				case SI_TIMER:
+					dest.timerValue = source.si_value;
+					break;
+				case SI_ASYNCIO:
 #if defined(OW_HAVE_SIGINFO_T_SI_FD)
-						dest.fileDescriptor = source.si_fd;
+					dest.fileDescriptor = source.si_fd;
 #endif
-						dest.band = source.si_band;
-						break;
-					default:
-						// UNKNOWN!
-						break;
-					}
+					dest.band = source.si_band;
+					break;
+				default:
+					// UNKNOWN!
+					break;
 				}
-				else
+				switch(source.si_signo)
 				{
-					switch(source.si_signo)
-					{
-					case SIGILL:
-					case SIGFPE:
-					case SIGTRAP:
-					case SIGBUS:
-					case SIGSEGV:
-						dest.faultAddress = source.si_addr;
-						break;
+				case SIGILL:
+				case SIGFPE:
+				case SIGTRAP:
+				case SIGBUS:
+				case SIGSEGV:
+					dest.faultAddress = source.si_addr;
+					break;
 #if defined(SIGPOLL)
-					case SIGPOLL:
+				case SIGPOLL:
 #if defined(OW_HAVE_SIGINFO_T_SI_FD)
-						dest.fileDescriptor = source.si_fd;
+					dest.fileDescriptor = source.si_fd;
 #endif
-						dest.band = source.si_band;
-						break;
+					dest.band = source.si_band;
+					break;
 #endif /* defined(SIGPOLL) */
-					default:
-						// UNKNOWN.
-						break;
-					}
+				default:
+					// UNKNOWN.
+					break;
 				}
 #endif
 			}
