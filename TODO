@@ -28,31 +28,7 @@ Testing:
     - Test suite doesn't error on timeout while waiting for log output
 
 Fix problems:
-    - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
-    - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
-    - To prevent DNS attacks, set a limit on incoming data.
-    - Audit classes in src/{cim,common}, especially comparison operators and 
-      operator<<
-    - Fix all exceptions to use error codes.
-    - Fix cim exception to not embed the symbolic name in the message.
-    - Only throw cim exceptions from providers/repository/cimomhandleifc
-    - Throw appropriate exceptions, use chained exceptions. Log chained 
-      exceptions correctly (maybe just fix operator<< ?)
-    - Create a impl namespace and move internal classes into it.
-    - Document public/internal classes.
-    - Indication server should not require that subscriptions have indication 
-      providers.
-    - Doxygen appears to ignore global functions associated with a class in 
-      the header file for that class -- for example, when you look up String, 
-      it doesn't show you the associated relational operators ==, !=, <, etc.
-    - Create a way to not have extrinsic methods not require the write lock.
-      If a qualifier is available for this, that will work, and the CIM Server
-      can look at it in begin/endOperation and pass the result down to the
-      CIM Repository.  If a qualifier won't work, then it can query the
-      provider.  This will necessitate a change to the provider interface
-      interface, so don't forget to tell Jason Long.
-    - Provider environments should throw exceptions after they are no longer 
-      valid. Indication provider environments can be saved.
+For 3.1.0:
     - Indication server needs to call deActivateFilter on all active providers
       when shutting down.
     - Change all cmd line utilities to use the CmdLineParser class and support --help and --version
@@ -62,10 +38,43 @@ Fix problems:
     - CMAddArg() broken.
     - Add a rw lock to the repositories so that a provider doesn't violate 
       integrity if it does a write operation when only the global read lock is held.
+    - Fix cim exception to not embed the symbolic name in the message.
+    - Create a way to not have extrinsic methods not require the write lock.
+      If a qualifier is available for this, that will work, and the CIM Server
+      can look at it in begin/endOperation and pass the result down to the
+      CIM Repository.  If a qualifier won't work, then it can query the
+      provider.  This will necessitate a change to the provider interface
+      interface, so don't forget to tell Jason Long.
+    - Provider environments should throw exceptions after they are no longer 
+      valid. Indication provider environments can be saved.
+Later:
+    - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
+    - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
+    - To prevent DNS attacks, set a limit on incoming data.
+    - Audit classes in src/{cim,common}, especially comparison operators and 
+      operator<<
+    - Fix all exceptions to use error codes.
+    - Only throw cim exceptions from providers/repository/cimomhandleifc
+    - Throw appropriate exceptions, use chained exceptions. Log chained 
+      exceptions correctly (maybe just fix operator<< ?)
+    - Create a impl namespace and move internal classes into it.
+    - Document public/internal classes.
+    - Doxygen appears to ignore global functions associated with a class in 
+      the header file for that class -- for example, when you look up String, 
+      it doesn't show you the associated relational operators ==, !=, <, etc.
 
 New features:
+For 3.1.0
+    - Implement the CIM_Interop build-in providers.
+      - OpenWBEM_UnitaryComputerSystem
+      - OpenWBEM_BinaryCommunicationMechanism
+      - CIM_HostedService
+      - CIM_CommMechanismForManager
+      - CIM_ObjectManagerAdapter
+      - CIM_CommMechanismForObjectManagerAdapter
+      - OpenWBEM_ObjectManager (including indication for SELECT * FROM CIM_InstModification WHERE SourceInstance ISA CIM_ObjectManager AND SourceInstance.Started <> PreviousInstance.Started This would be used to indicate that the object manager has been stopped This indication is RECOMENDED.)
+Later:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
-    - Start to use __attribute__ ((warn_unused_result)) where applicable.
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.
     - Send indications as a thread per handler, which can stay around for a
@@ -89,13 +98,6 @@ New features:
       To prevent a set of busy handlers from causing starvation of others 
       beyond the number of processing threads, set a maximum limit on
       the time one can stay around.
-    - Implement the CIM_Interop build-in providers.
-      - OpenWBEM_BinaryCommunicationMechanism
-      - CIM_CommMechanismForManager
-      - CIM_ObjectManagerAdapter
-      - CIM_CommMechanismForObjectManagerAdapter
-      - CIM_ObjectManager (including indication for SELECT * FROM CIM_InstModification WHERE SourceInstance ISA ObjectManager AND SourceInstance.Started <> PreviousInstance.Started This would be used to indicate that the object manager has been stopped This indication is RECOMENDED.)
-      - CIM_HostedService
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
     - Add support for running under inetd
@@ -182,15 +184,13 @@ New features:
     - Add capability for real (not string properties) embedded objects.
 
 Refactorings:
+    - Start to use __attribute__ ((warn_unused_result)) where applicable.
     - Remove *E,*A functions from the CIMOMHandle.  Create OW_CIMUtils:: functions
       that return OW_Enumeration<T> and OW_Array<T>.
-    - Put common request handlers into a header (e.g. InstanceArrayBuilder)
     - XML Things:
       - Move some of the XML code around.  Get rid of param* strings.  Move 
         XMLQualifier::* to XMLCIMFactory.
       - Fix most of the CIMtoXML object path stuff to closely mirror the dtd.
-
-    Post 3.0
     - Create a base class for all the common code in the provider interfaces.
     - Templatetize/inline the mutex lock classes.
     - Split the http client/server classes into 2 layers, one that just deals
