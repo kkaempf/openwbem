@@ -67,7 +67,7 @@ namespace OpenWBEM
  *
  * Each Derived ProviderIFC must implement the following code:
  *
- * PROVIDERIFCFACTORY(DerivedProviderIFC);
+ * OW_PROVIDERIFCFACTORY(DerivedProviderIFC);
  *
  * Each provider interface must be compiled into it's own shared library.
  *
