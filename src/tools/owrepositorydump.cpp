@@ -28,16 +28,9 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-int main(int argc, char** argv)
-{
-	return 0;
-}
-
 /**
  * @author Dan Nuffer
  */
-#if 0
-
 #include "OW_config.h"
 #include "OW_CIMRepository.hpp"
 #include "OW_OperationContext.hpp"
@@ -253,4 +246,3 @@ int main(int argc, char** argv)
 	return 1;
 }
 
-#endif
