@@ -295,9 +295,9 @@ CIMOMEnvironment::startServices()
 	ProviderEnvironmentIFCRef penvRef = ProviderEnvironmentIFCRef(
 		new ProviderEnvironmentServiceEnvironmentWrapper(this));
 
+	m_providerManager->init(penvRef);
 	m_authorizerManager->init(penvRef);
 
-	m_providerManager->init(penvRef);
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
 		m_services[i]->startService();
