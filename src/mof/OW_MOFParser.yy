@@ -689,6 +689,7 @@ stringValueList:
 	stringValue {$$ = $1; }
 	| stringValueList stringValue
 		{$$ = $1; $$->concat(*$2); delete $2;}
+	;
 
 constantValue:
 	integerValue {$$ = new ConstantValueIntegerValue($1); }
