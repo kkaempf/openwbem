@@ -39,6 +39,15 @@
 namespace OpenWBEM
 {
 
+/**
+ * This class encapsulates the details of encoding WBEM requests into CIM/XML.
+ * It requires a CIMProtocolIFCRef which it uses to send the CIM/XML to a server.
+ * Currently the only available implementation is HTTPClient.
+ * 
+ * Thread safety: non-reentrant
+ * Copy semantics: Non-copyable
+ * Exception safety: Basic
+ */
 class CIMXMLCIMOMHandle : public ClientCIMOMHandle
 {
 public:
@@ -659,6 +668,10 @@ private:
 	CIMProtocolIFCRef m_protocol;
 	UInt32 m_iMessageID;
 	bool m_performStrictChecks;
+
+	// non-copyable, unimplemented
+	CIMXMLCIMOMHandle(const CIMXMLCIMOMHandle&);
+	CIMXMLCIMOMHandle& operator=(const CIMXMLCIMOMHandle&);
 };
 
 } // end namespace OpenWBEM

@@ -45,6 +45,14 @@ namespace OpenWBEM
 {
 
 class TempFileStream;
+
+/**
+ * HTTPClient encapulates the functionality of a CIM HTTP Client.  It handles the details of the HTTP protocol.
+ * 
+ * Thread safety: non-reentrant.
+ * Copy semantics: Non-copyable.
+ * Exception safety: Basic.
+ */
 class HTTPClient : public CIMProtocolIFC
 {
 	public:
