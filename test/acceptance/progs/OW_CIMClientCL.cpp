@@ -1777,10 +1777,10 @@ main(int argc, char* argv[])
 		deleteNameSpace(rch);
 		createClass(rch, "EXP_BionicComputerSystem");
 		createClass(rch, "EXP_BionicComputerSystem2");
+		enumClassNames(rch);
 
 		if (getenv("OWLONGTEST"))
 		{
-			enumClassNames(rch);
 			enumClasses(rch);
 		}
 
