@@ -4,14 +4,19 @@ clean-local : clean-ow-shared-libs
 
 
 noinst_LIBRARIES = \
-libsecondaryinstancetest.a
+libsecondaryinstancetest1.a \
+libsecondaryinstancetest2.a
 
 
 OW_SHARED_LIBS = \
-libsecondaryinstancetest.$(LIB_EXT)
+libsecondaryinstancetest1.$(LIB_EXT) \
+libsecondaryinstancetest2.$(LIB_EXT)
 
-libsecondaryinstancetest_a_SOURCES = \
-SecondaryInstanceTest.cpp
+libsecondaryinstancetest1_a_SOURCES = \
+SecondaryInstanceTest1.cpp
+
+libsecondaryinstancetest2_a_SOURCES = \
+SecondaryInstanceTest2.cpp
 
 EXTRA_DIST = \
 SecondaryInstanceTest.mof

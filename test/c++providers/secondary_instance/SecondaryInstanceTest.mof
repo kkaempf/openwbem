@@ -1,0 +1,14 @@
+#pragma namespace("root/secondaryinstancetest")
+
+Qualifier Key : boolean = false, 
+    Scope(property, reference), 
+    Flavor(DisableOverride);
+
+class SecondaryInstanceTest
+{
+	[Key] String key;
+	String prop2;
+	String prop3;
+	String prop4;
+};
+
