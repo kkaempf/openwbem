@@ -19,7 +19,7 @@ OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
 OW_PAMAuth_LDADD = -lpam
 
 OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
-SHAREDLIBADD = -lpam
+SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem
 
 noinst_LIBRARIES = \
 	libpamclauthentication.a 

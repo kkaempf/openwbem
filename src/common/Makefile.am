@@ -8,8 +8,8 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
-OW_SHARED_LIBS = libopenwbem.$(LIB_EXT)
-SHAREDLIBADD = $(DL_LIB)
+OW_SHARED_LIBS = libopenwbem.$(LIB_EXT) 
+SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) $(EXTRA_SSL_LIBS)
 
 
 

@@ -29,6 +29,20 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
 
+# These rules are for Darwin/Mach-o and support both
+# the dynamic libs and the loadable modules (bundles)
+%.dylib : %.a
+	rm -rf $(TMPLIBDIR)
+	mkdir $(TMPLIBDIR)
+	cd $(TMPLIBDIR) && \
+	$(AR) x ../$< 
+	if [ "x$(AIX)" = "x1" ]; then $(CREATE_EXPORTS); fi
+	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
+	ln -s $(SOFILENAME) $@
+	chmod +x $(SOFILENAME)
+
+
 
 
 all-ow-shared-libs: $(OW_SHARED_LIBS)

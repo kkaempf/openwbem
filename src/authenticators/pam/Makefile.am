@@ -9,7 +9,7 @@ uninstall-local : uninstall-ow-shared-libs
 
 
 OW_SHARED_LIBS = libpamauthentication.$(LIB_EXT)
-SHAREDLIBADD = -lpam
+SHAREDLIBADD = -lpam -L$(top_builddir)/src/common -lopenwbem
 
 noinst_LIBRARIES = \
 	libpamauthentication.a 

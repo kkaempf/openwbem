@@ -148,16 +148,17 @@ case "$host" in
 	;;
 *-*-darwin*)
 	PLATFORMDIR="posix"
-	AC_DEFINE(DARWIN)
+	AC_DEFINE(DARWIN, $DARWIN, Target OS is DARWIN)
+	DARWIN=1
 	PLAT_CFLAGS="-fno-common -D_REENTRANT"
-	PLAT_CXXFLAGS="-fno-common -D_REENTRANT"
+	PLAT_CXXFLAGS="-no-cpp-precomp -fno-common -D_REENTRANT"
 	CXXCOMMONLINKFLAGS=""
-	CXXBINLINKFLAGS="-Wl,-Bdynamic"
+	CXXBINLINKFLAGS=""
 	CXXSHAREDLIBLINKFLAGS="-dynamiclib -install_name \$@ -compatibility_version $OPENWBEM_VERSION -current_version $OPENWBEM_VERSION"
-	PLAT_OPTFLAGS="-O3"
+	PLAT_OPTFLAGS="-O2"
 	PIDFILEDIR="/var/run"
-	CXX="c++"
-	LIB_EXT="dynlib"
+	CXX="g++"
+	LIB_EXT="dylib"
 	;;
 *-*-dgux*)
 	;;
@@ -264,8 +265,9 @@ AC_ARG_ENABLE(zlib,
 OW_HELP_STRING(--disable-zlib,disable zlib integration))
 
 if test "$enable_zlib" != no; then
-	AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
+	AC_CHECK_HEADERS(zlib.h, Z_LIBS="-lz")
 fi
+AC_SUBST(Z_LIBS)
 
 AC_CHECK_HEADERS(fcntl.h limits.h sys/file.h unistd.h byteswap.h pthread.h \
 sys/cdefs.h sys/queue.h sys/int_types.h \
@@ -586,7 +588,6 @@ AC_ARG_WITH(ssl-dir,
 ]
 )
 
-saved_LIBS="$LIBS"
 saved_LDFLAGS="$LDFLAGS"
 saved_CPPFLAGS="$CPPFLAGS"
 if test "x$prefix" != "xNONE" ; then
@@ -596,7 +597,7 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 	for ssldir in $tryssldir "" /usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/pkg /opt /opt/openssl ; do
 		CPPFLAGS="$saved_CPPFLAGS"
 		LDFLAGS="$saved_LDFLAGS"
-		LIBS="$saved_LIBS -lssl -lcrypto"
+	        SSL_LIBS="-lssl -lcrypto"
  
 		# Skip directories if they don't exist
 		if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
@@ -663,13 +664,12 @@ int main(void)
 		ssldir="(system)"
 	fi
  
-	LIBS="$saved_LIBS"
 	ac_cv_openssldir=$ssldir
 ])
  
 if (test ! -z "$ac_cv_openssldir") ; then
 	AC_DEFINE(HAVE_OPENSSL)
-	LIBS="$LIBS -lssl -lcrypto"
+    	SSL_LIBS="-lssl -lcrypto"
 else
 	AC_DEFINE(NO_SSL)
 fi
@@ -699,11 +699,14 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 			CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
 		fi
 	fi
-	LIBS="$saved_LIBS -lssl -lcrypto"
+    	SSL_LIBS="-lssl -lcrypto"
 fi
 else
 	AC_DEFINE(NO_SSL)
 fi
+
+AC_SUBST(SSL_LIBS)
+AC_SUBST(EXTRA_SSL_LIBS)
 
 dnl
 dnl   Fix this section, to make it more 'autoconfish', as this is just a chunk
@@ -724,7 +727,7 @@ then
 	then
 		EXTRA_SSL_LIBS=`pkg-config openssl --libs`
 		EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
-		LIBS="$LIBS $EXTRA_SSL_LIBS"
+#		LIBS="$LIBS $EXTRA_SSL_LIBS"
 		CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
 		AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
 	else

@@ -6,9 +6,10 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
-OW_SHARED_LIBS = libowprovider.so
+OW_SHARED_LIBS = libowprovider.$(LIB_EXT)
 
 noinst_LIBRARIES = libowprovider.a
+SHAREDLIBADD = -L$(top_builddir)/src/common/ -lopenwbem
 
 thelibdir = $(libdir)
 
