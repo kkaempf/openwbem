@@ -65,9 +65,10 @@ public:
 	// errors codes that may be specified when a CmdLineParserException is thrown
 	enum EErrorCodes
 	{
-		E_INVALID_OPTION,        // an unknown option was specified
-		E_MISSING_ARGUMENT,      // an option for which argtype == E_REQUIRED_ARG did not have an argument
-		E_INVALID_NON_OPTION_ARG // a non-option argument was specified, but they are not allowed
+		E_INVALID_OPTION,         // an unknown option was specified
+		E_MISSING_ARGUMENT,       // an option for which argtype == E_REQUIRED_ARG did not have an argument
+		E_INVALID_NON_OPTION_ARG, // a non-option argument was specified, but they are not allowed
+		E_MISSING_OPTION          // the option wasn't specified
 	};
 
 	struct Option
@@ -99,9 +100,21 @@ public:
 	/**
 	 * Read out a string option.
 	 * @param id The id of the option.
-	 * @return The value of the option, if given, otherwise an empty String.
+	 * @param defaultValue The return value if the option wasn't set.
+	 * @return The value of the option, if given, otherwise defaultValue. If the option was specified more than once, the value
+	 *  from the last occurence will be returned.
 	 */
-	String getOptionValue(int id) const;
+	String getOptionValue(int id, const char* defaultValue = "") const;
+ 	
+	/**
+	 * Read out a string option.
+	 * @param id The id of the option.
+	 * @return The value of the option. If the option was specified more than once, the value
+	 *  from the last occurence will be returned.
+	 * @param exceptionMessage If an exception is thrown this string will be used as the exception message.
+	 * @throws CmdLineParserException with code E_MISSING_OPTION if the option wasn't specified.
+	 */
+	String mustGetOptionValue(int id, const char* exceptionMessage = "") const;
  	
 	/**
 	 * Read out all occurences of a string option.
@@ -109,6 +122,15 @@ public:
 	 * @return The value of the option, if given, otherwise an empty StringArray.
 	 */
  	StringArray getOptionValueList(int id) const;
+ 	
+	/**
+	 * Read out all occurences of a string option.
+	 * @param id The id of the option.
+	 * @return The value of the option.
+	 * @param exceptionMessage If an exception is thrown this string will be used as the exception message.
+	 * @throws CmdLineParserException with code E_MISSING_OPTION if the option wasn't specified.
+	 */
+ 	StringArray mustGetOptionValueList(int id, const char* exceptionMessage = "") const;
  	
 	/**
 	 * Read out a boolean option or check for the presence of string option.

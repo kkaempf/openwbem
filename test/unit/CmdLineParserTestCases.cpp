@@ -77,9 +77,22 @@ void CmdLineParserTestCases::testSomething()
 		unitAssert(!parser.isSet(opt3));
 		unitAssert(!parser.isSet(invalidOpt));
 		unitAssert(parser.getOptionValue(opt2) == "abc");
+		unitAssert(parser.mustGetOptionValue(opt2) == "abc");
+		unitAssert(parser.getOptionValue(opt3) == "");
+		unitAssert(parser.getOptionValue(opt3, "opt3default") == "opt3default");
 		unitAssert(parser.getNonOptionCount() == 2);
 		unitAssert(parser.getNonOptionArg(0) == "-");
 		unitAssert(parser.getNonOptionArg(1) == "1");
+		try
+		{
+			parser.mustGetOptionValue(opt3, "opt3 desc");
+			unitAssert(0);
+		}
+		catch (CmdLineParserException& e)
+		{
+			unitAssert(e.getErrorCode() == CmdLineParser::E_MISSING_OPTION);
+			unitAssert(e.getMessage() == String("opt3 desc"));
+		}
 	}
 	{
 		int argc = 3;

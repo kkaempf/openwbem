@@ -299,16 +299,28 @@ CmdLineParser::getUsage(const Option* options, unsigned int maxColumns)
 
 /////////////////////////////////////////////////////////////////////////////
 String
-CmdLineParser::getOptionValue(int id) const
+CmdLineParser::getOptionValue(int id, const char* defaultValue) const
 {
-	String rval;
 	optionsMap_t::const_iterator ci = m_parsedOptions.find(id);
 	if (ci != m_parsedOptions.end() && ci->second.size() > 0)
 	{
 		// grab the last one
-		rval = ci->second[ci->second.size()-1];
+		return ci->second[ci->second.size()-1];
 	}
-	return rval;
+	return defaultValue;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String
+CmdLineParser::mustGetOptionValue(int id, const char* exceptionMessage) const
+{
+	optionsMap_t::const_iterator ci = m_parsedOptions.find(id);
+	if (ci != m_parsedOptions.end() && ci->second.size() > 0)
+	{
+		// grab the last one
+		return ci->second[ci->second.size()-1];
+	}
+	OW_THROW_ERR(CmdLineParserException, exceptionMessage, E_MISSING_OPTION);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -322,6 +334,18 @@ CmdLineParser::getOptionValueList(int id) const
 		rval = ci->second;
 	}
 	return rval;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+StringArray
+CmdLineParser::mustGetOptionValueList(int id, const char* exceptionMessage) const
+{
+	optionsMap_t::const_iterator ci = m_parsedOptions.find(id);
+	if (ci != m_parsedOptions.end() && ci->second.size() > 0)
+	{
+		return ci->second;
+	}
+	OW_THROW_ERR(CmdLineParserException, exceptionMessage, E_MISSING_OPTION);
 }
 
 /////////////////////////////////////////////////////////////////////////////
