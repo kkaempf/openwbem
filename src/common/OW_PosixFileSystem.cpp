@@ -187,7 +187,7 @@ isLink(const String& path)
   return ((st.st_mode & _S_IFLNK) != 0);
 #else
   struct stat st;
-  if(stat(path.c_str(), &st) != 0)
+  if(lstat(path.c_str(), &st) != 0)
     return false;
   return S_ISLNK(st.st_mode);
 #endif
