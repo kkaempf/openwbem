@@ -73,10 +73,7 @@ public:
 	 * @return true if the given integral value is a valid flavor. Otherwise
 	 * false.
 	 */
-	static bool validFlavor(Int32 iflavor)
-	{
-		return(iflavor > INVALID && iflavor < LASTVALUE);
-	}
+	static bool validFlavor(Int32 iflavor);
 	/**
 	 * Create a new CIMFlavor object.
 	 * @param iflavor		The flavor value for this CIMFlavor object. Cabe be
@@ -88,36 +85,26 @@ public:
 	 * 	CIMFlavor::TRANSLATE			= qualifier can be specified in multiple
 	 *												  locales
 	 */
-	CIMFlavor(Flavor iflavor) :
-		CIMBase(), m_flavor(iflavor)
-	{
-		if (!validFlavor(iflavor))
-		{
-			m_flavor = INVALID;
-		}
-	}
+	CIMFlavor(Flavor iflavor);
 	/**
 	 * Default constructor - Creates an invalid CIMFlavor.
 	 */
-	CIMFlavor() :
-		CIMBase(), m_flavor(INVALID) {}
+	CIMFlavor();
+
+	explicit CIMFlavor(const detail::CIMFlavorRepRef& rep);
+
 	/**
 	 * Copy constructor
 	 * @param arg	The CIMFlavor to create a copy of.
 	 */
-	CIMFlavor(const CIMFlavor& arg) :
-		CIMBase(), m_flavor(arg.m_flavor)
-	{
-	}
+	CIMFlavor(const CIMFlavor& arg);
 
-	typedef Int32 CIMFlavor::*safe_bool;
+	typedef detail::CIMFlavorRepRef CIMFlavor::*safe_bool;
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	operator safe_bool () const
-		{  return (validFlavor(m_flavor) == true) ? &CIMFlavor::m_flavor : 0; }
-	bool operator!() const
-		{  return !validFlavor(m_flavor); }
+	operator safe_bool () const;
+	bool operator!() const;
 	/**
 	 * Set this to a null object.
 	 */
@@ -128,18 +115,11 @@ public:
 	 * @return A reference to this CIMFlavor object after the assignment is
 	 * made.
 	 */
-	CIMFlavor& operator= (const CIMFlavor& arg)
-	{
-		m_flavor = arg.m_flavor;
-		return *this;
-	}
+	CIMFlavor& operator= (const CIMFlavor& arg);
 	/**
 	 * @return true if this CIMFlavor is valid. Otherwise false.
 	 */
-	bool isValid()
-	{
-		return (m_flavor != INVALID);
-	}
+	bool isValid();
 	
 	/**
 	 * Check if another CIMFlavor object is equal to this one.
@@ -147,30 +127,21 @@ public:
 	 * @return true if the given CIMFlavor object has the same flavor value
 	 * as this one.
 	 */
-	bool equals(const CIMFlavor& arg)
-	{
-		return (m_flavor == arg.m_flavor);
-	}
+	bool equals(const CIMFlavor& arg);
 	/**
 	 * Equality operator
 	 * @param arg The CIMFlavor to compare this object to.
 	 * @return true if the given CIMFlavor object has the same flavor value
 	 * as this one.
 	 */
-	bool operator== (const CIMFlavor& arg)
-	{
-		return equals(arg);
-	}
+	bool operator== (const CIMFlavor& arg);
 	/**
 	 * Inequality operator
 	 * @param arg The CIMFlavor to compare this object to.
 	 * @return true if the given CIMFlavor object has a different flavor
 	 * value than this one.
 	 */
-	bool operator!= (const CIMFlavor& arg)
-	{
-		return (equals(arg) == false);
-	}
+	bool operator!= (const CIMFlavor& arg);
 	/**
 	 * Read this CIMFlavor object from an input stream.
 	 * @param istrm The input stream to read this flavor from.
@@ -193,22 +164,16 @@ public:
 	/**
 	 * @return the integral value of this CIMFlavor object.
 	 */
-	Int32 getFlavor() const {  return m_flavor; }
+	Int32 getFlavor() const;
+
+	detail::CIMFlavorRepRef getRep() const;
 private:
-	static bool validScope(Int32 iflavor)
-	{
-		//
-		// NOTE: has implicit knowledge of flavor values!
-		//
-		return(iflavor >= ENABLEOVERRIDE && iflavor < LASTVALUE);
-	}
-	/** The integral representation of this flavor */
-	Int32 m_flavor;
-	friend bool operator<(const CIMFlavor& x, const CIMFlavor& y)
-	{
-		return x.m_flavor < y.m_flavor;
-	}
+
+	detail::CIMFlavorRepRef m_rep;
+
 };
+	
+bool operator<(const CIMFlavor& x, const CIMFlavor& y);
 
 } // end namespace OWBI1
 

@@ -35,15 +35,97 @@
 
 #include "OWBI1_config.h"
 #include "OWBI1_CIMScope.hpp"
+#include "OWBI1_CIMScopeRep.hpp"
 #include "OWBI1_String.hpp"
-#include "OW_BinarySerialization.hpp"
+#include "OW_String.hpp"
 
 namespace OWBI1
 {
 
-using namespace OpenWBEM;
+using namespace detail;
 using std::istream;
 using std::ostream;
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::CIMScope() 
+	: m_rep(new CIMScopeRep(OpenWBEM::CIMScope()))
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::CIMScope(Scope scopeVal) 
+	: m_rep(new CIMScopeRep(OpenWBEM::CIMScope(OpenWBEM::CIMScope::Scope(scopeVal))))
+{
+}
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::CIMScope(const CIMScope& arg) 
+	: CIMBase(arg)
+	, m_rep(arg.m_rep) 
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::CIMScope(const detail::CIMScopeRepRef& rep)
+	: m_rep(rep)
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::~CIMScope()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope& 
+CIMScope::operator= (const CIMScope& arg)
+{
+	m_rep = arg.m_rep;
+	return *this;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::Scope 
+CIMScope::getScope() const 
+{  
+	return Scope(m_rep->scope.getScope()); 
+}
+
+/////////////////////////////////////////////////////////////////////////////
+bool 
+CIMScope::equals(const CIMScope& arg) const
+{
+	return m_rep->scope.equals(arg.m_rep->scope);
+}
+/////////////////////////////////////////////////////////////////////////////
+bool 
+CIMScope::operator == (const CIMScope& arg) const
+{
+	return equals(arg);
+}
+/////////////////////////////////////////////////////////////////////////////
+bool 
+CIMScope::operator != (const CIMScope& arg) const
+{
+	return !equals(arg);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+CIMScope::operator safe_bool () const
+{  
+	return m_rep->scope ? &CIMScope::m_rep : 0; 
+}
+/////////////////////////////////////////////////////////////////////////////
+bool 
+CIMScope::operator!() const
+{  
+	return !m_rep->scope; 
+}
+/////////////////////////////////////////////////////////////////////////////
+bool operator<(const CIMScope& x, const CIMScope& y)
+{
+	return *x.getRep() < *y.getRep();
+}
+
 //////////////////////////////////////////////////////////////////////////////					
 String
 CIMScope::toString() const
@@ -54,76 +136,33 @@ CIMScope::toString() const
 String
 CIMScope::toMOF() const
 {
-	switch (m_val)
-	{
-		case SCHEMA: 
-		return "schema"; 
-		break;
-		
-		case CLASS: 
-		return "class"; 
-		break;
-		
-		case ASSOCIATION: 
-		return "association"; 
-		break;
-		
-		case INDICATION: 
-		return "indication"; 
-		break;
-		
-		case QUALIFIER: 
-		return "qualifier"; 
-		break;
-		
-		case PROPERTY: 
-		return "property"; 
-		break;
-		
-		case REFERENCE: 
-		return "reference"; 
-		break;
-		
-		case METHOD: 
-		return "method"; 
-		break;
-		
-		case PARAMETER: 
-		return "parameter"; 
-		break;
-		
-		case ANY: 
-		return "any"; 
-		break;
-		
-		default: 
-		return "BAD SCOPE"; 
-		break;
-	}
-
+	return m_rep->scope.toMOF().c_str();
 }
 //////////////////////////////////////////////////////////////////////////////					
 void
 CIMScope::readObject(istream &istrm)
 {
-	// Don't do this, it'll double the size CIMBase::readSig( istrm, CIMSCOPESIG );
-	UInt32 v;
-	BinarySerialization::readLen(istrm, v);
-	m_val = Scope(v);
+	m_rep->scope.readObject(istrm);
 }
 //////////////////////////////////////////////////////////////////////////////					
 void
 CIMScope::writeObject(ostream &ostrm) const
 {
-	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMSCOPESIG );
-	BinarySerialization::writeLen(ostrm, m_val);
+	m_rep->scope.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////					
 void
 CIMScope::setNull() 
 {
-	m_val = BAD;
+	m_rep->scope.setNull();
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+CIMScopeRepRef
+CIMScope::getRep() const
+{
+	return m_rep;
 }
 
 } // end namespace OWBI1

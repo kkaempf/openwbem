@@ -53,7 +53,6 @@ namespace OWBI1
 class OWBI1_OWBI1PROVIFC_API CIMQualifier : public CIMElement
 {
 public:
-	struct QUALData;
 	// Meta qualifiers
 	static const char* const CIM_QUAL_ASSOCIATION;
 	static const char* const CIM_QUAL_INDICATION;
@@ -147,6 +146,8 @@ public:
 	 * @param arg The CIMQualifier that this object will be a copy of.
 	 */
 	CIMQualifier(const CIMQualifier& arg);
+
+	explicit CIMQualifier(const detail::CIMQualifierRepRef& rep);
 	/**
 	 * Destroy this CIMQualifier class.
 	 */
@@ -228,7 +229,7 @@ public:
 	/**
 	 * @return The list of flavors this qualifier has.
 	 */
-	CIMFlavorArray getFlavor() const;
+	CIMFlavorArray getFlavors() const;
 	/**
 	 * Flag this qualifier as being propagated.
 	 * @param propagated	If true, then qualifier is flagged as propagated.
@@ -253,11 +254,10 @@ public:
 	 */
 	String getLanguage() const;
 
-	typedef COWIntrusiveReference<QUALData> CIMQualifier::*safe_bool;
-	operator safe_bool () const
-		{  return m_pdata ? &CIMQualifier::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	typedef detail::CIMQualifierRepRef CIMQualifier::*safe_bool;
+	operator safe_bool () const;
+	bool operator!() const;
+	
 	/**
 	 * @return The name of this qualifier as an String.
 	 */
@@ -297,6 +297,8 @@ public:
 	 */
 	enum { SERIALIZATION_VERSION = 1 };
 
+	detail::CIMQualifierRepRef getRep() const;
+
 private:
 
 #ifdef OWBI1_WIN32
@@ -304,7 +306,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<QUALData> m_pdata;
+	detail::CIMQualifierRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)

@@ -59,17 +59,17 @@
 namespace OWBI1
 {
 
-namespace ProxyProviderDetail
+namespace detail
 {
 
 OWBI1::CIMInstance convertCIMInstance(const OpenWBEM::CIMInstance& inst)
 {
-	return OWBI1::CIMInstance(OWBI1::CIMNULL);
+	return OWBI1::CIMInstance(OWBI1::CIMInstanceRep(inst));
 }
 
 OpenWBEM::CIMInstance convertCIMInstance(const OWBI1::CIMInstance& inst)
 {
-	return OpenWBEM::CIMInstance(OpenWBEM::CIMNULL);
+	return inst.getRep()->inst;
 }
 
 OWBI1::CIMInstanceArray convertCIMInstances(const OpenWBEM::CIMInstanceArray& inst)

@@ -37,6 +37,7 @@
 #define OWBI1_CIM_FWD_HPP_INCLUDE_GUARD
 #include "OWBI1_config.h"
 #include "OWBI1_ArrayFwd.hpp"
+#include "OWBI1_COWIntrusiveReference.hpp"
 
 namespace OWBI1
 {
@@ -88,6 +89,38 @@ typedef Array<CIMParamValue> 		CIMParamValueArray;
 typedef Array<CIMInstance> 		CIMInstanceArray;
 typedef Array<CIMValue> 			CIMValueArray;
 typedef Array<CIMName> 				CIMNameArray;
+
+// internal implementation details, but necessary for the headers to compile. DO NOT USE!
+namespace detail
+{
+
+class CIMInstanceRep;
+class CIMNameRep;
+class CIMPropertyRep;
+class CIMValueRep;
+class CIMDateTimeRep;
+class CIMDataTypeRep;
+class CIMObjectPathRep;
+class CIMClassRep;
+class CIMQualifierRep;
+class CIMQualifierTypeRep;
+class CIMFlavorRep;
+class CIMScopeRep;
+
+typedef COWIntrusiveReference<CIMInstanceRep> CIMInstanceRepRef;
+typedef COWIntrusiveReference<CIMNameRep> CIMNameRepRef;
+typedef COWIntrusiveReference<CIMPropertyRep> CIMPropertyRepRef;
+typedef COWIntrusiveReference<CIMValueRep> CIMValueRepRef;
+typedef COWIntrusiveReference<CIMDateTimeRep> CIMDateTimeRepRef;
+typedef COWIntrusiveReference<CIMDataTypeRep> CIMDataTypeRepRef;
+typedef COWIntrusiveReference<CIMObjectPathRep> CIMObjectPathRepRef;
+typedef COWIntrusiveReference<CIMClassRep> CIMClassRepRef;
+typedef COWIntrusiveReference<CIMQualifierRep> CIMQualifierRepRef;
+typedef COWIntrusiveReference<CIMQualifierTypeRep> CIMQualifierTypeRepRef;
+typedef COWIntrusiveReference<CIMFlavorRep> CIMFlavorRepRef;
+typedef COWIntrusiveReference<CIMScopeRep> CIMScopeRepRef;
+
+} // end namespace detail
 
 } // end namespace OWBI1
 

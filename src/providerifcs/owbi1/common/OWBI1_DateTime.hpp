@@ -197,6 +197,8 @@ public:
 	 */
 	DateTime(int year, int month, int day, int hour=0, int minute=0,
 		int second=0, UInt32 microsecond=0, ETimeOffset timeOffset = E_LOCAL_TIME);
+
+	explicit DateTime(const detail::DateTimeRepRef& rep);
 	/**
 	 * Destructor
 	 */
@@ -373,36 +375,23 @@ public:
 	 * @param seconds The number of seconds to add to this object.
 	 * @throws DateTimeException if the resulting DateTime don't represent a valid DateTime
 	 */
-	void addSeconds(long seconds)
-	{
-		m_time += seconds;
-	}
+	void addSeconds(long seconds);
 	/**
 	 * Add minutes to the date represented by this object.
 	 * @param minutes The number of minutes to add to this object.
 	 */
-	void addMinutes(long minutes)
-	{
-		m_time += minutes * 60;
-	}
+	void addMinutes(long minutes);
 	/**
 	 * Add hours to the date represented by this object.
 	 * @param hours The number of hours to add to this object.
 	 */
-	void addHours(long hours) {  m_time += hours * 60 * 60; }
+	void addHours(long hours);
 	/**
 	 * Less than operator
 	 * @param tm The DateTime object to compare this one to.
 	 * @return true if this object is less than the given DateTime object.
 	 */
-	bool operator< ( const DateTime& tm ) const
-	{
-		if (m_time == tm.m_time)
-		{
-			return m_microseconds < tm.m_microseconds;
-		}
-		return m_time < tm.m_time;
-	}
+	bool operator< ( const DateTime& tm ) const;
 	/**
 	 * Greater than operator
 	 * @param tm The DateTime object to compare this one to.
@@ -417,10 +406,7 @@ public:
 	 * @param tm The DateTime object to compare this one to.
 	 * @return true if this object is equal to the given DateTime object.
 	 */
-	bool operator== ( const DateTime& tm ) const
-	{
-		return m_time == tm.m_time && m_microseconds == tm.m_microseconds;
-	}
+	bool operator== ( const DateTime& tm ) const;
 	/**
 	 * Inequality operator
 	 * @param tm The DateTime object to compare this one to.
@@ -514,19 +500,18 @@ public:
 	 * tt as per the C localtime function, and returns the corresponding
 	 * GMT offset in minutes.
 	 */
-	Int16 toLocal(struct tm & tt) const
-	{
-		return  DateTime::localTimeAndOffset(m_time, tt);
-	}
+	Int16 toLocal(struct tm & tt) const;
 
 	/**
 	 * Gets a DateTime instance set to the current system time
 	 */
 	static DateTime getCurrent();
 
+	detail::DateTimeRepRef getRep() const;
+
 private:
-	time_t	m_time;
-	UInt32	m_microseconds;
+	detail::DateTimeRepRef m_rep;
+
 	tm getTm(ETimeOffset timeOffset) const;
 	void setTime(tm& tmarg, ETimeOffset timeOffset);
 	static Int16 localTimeAndOffset(time_t t, struct tm & tt);

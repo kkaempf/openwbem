@@ -35,8 +35,9 @@
 
 #include "OWBI1_config.h"
 #include "OWBI1_CIMFlavor.hpp"
-#include "OW_BinarySerialization.hpp"
+#include "OWBI1_CIMFlavorRep.hpp"
 #include "OWBI1_String.hpp"
+#include "OW_String.hpp"
 #if defined(OWBI1_HAVE_ISTREAM) && defined(OWBI1_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -47,65 +48,138 @@
 namespace OWBI1
 {
 
-using namespace OpenWBEM;
+using namespace detail;
 using std::ostream;
 using std::istream;
 //////////////////////////////////////////////////////////////////////////////		
 String
 CIMFlavor::toString() const
 {
-	String s("FLAVOR(");
-	s += toMOF() + ")";
-	return s;
+	return m_rep->flavor.toString().c_str();
 }
 //////////////////////////////////////////////////////////////////////////////		
 String
 CIMFlavor::toMOF() const
 {
-	switch (m_flavor)
-	{
-		case ENABLEOVERRIDE: 
-		return "EnableOverride"; 
-
-		case DISABLEOVERRIDE: 
-		return "DisableOverride";
-
-		case RESTRICTED: 
-		return "Restricted";
-
-		case TOSUBCLASS: 
-		return "ToSubclass";
-
-		case TRANSLATE: 
-		return "Translatable";
-
-		default: 
-		return "BAD FLAVOR";
-	}
+	return m_rep->flavor.toMOF().c_str();
 }
 //////////////////////////////////////////////////////////////////////////////		
 void
 CIMFlavor::readObject(istream &istrm)
 {
-	// Don't do this, it'll double the size CIMBase::readSig( istrm, CIMFLAVORSIG );
-	UInt32 f;
-	BinarySerialization::readLen(istrm, f);
-	m_flavor = f;
+	m_rep->flavor.readObject(istrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
 void
 CIMFlavor::writeObject(ostream &ostrm) const
 {
-	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMFLAVORSIG );
-	BinarySerialization::writeLen(ostrm, m_flavor);
+	m_rep->flavor.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////		
 void
 CIMFlavor::setNull()
 {
-	m_flavor = INVALID;
+	m_rep->flavor.setNull();
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CIMFlavor::operator safe_bool () const
+{  
+	return m_rep->flavor ? &CIMFlavor::m_rep : 0; 
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+bool 
+CIMFlavor::operator!() const
+{  
+	return !m_rep->flavor; 
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CIMFlavor::CIMFlavor(Flavor iflavor) 
+	: m_rep(new CIMFlavorRep(OpenWBEM::CIMFlavor(OpenWBEM::CIMFlavor::Flavor(iflavor))))
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CIMFlavor::CIMFlavor()
+	: m_rep(new CIMFlavorRep(OpenWBEM::CIMFlavor()))
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CIMFlavor::CIMFlavor(const CIMFlavor& arg)
+	: CIMBase(arg)
+	, m_rep(arg.m_rep)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CIMFlavor::CIMFlavor(const detail::CIMFlavorRepRef& rep)
+	: m_rep(rep)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+CIMFlavor& 
+CIMFlavor::operator= (const CIMFlavor& arg)
+{
+	m_rep = arg.m_rep;
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////		
+bool 
+CIMFlavor::isValid()
+{
+	return m_rep->flavor.isValid();
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+bool 
+CIMFlavor::equals(const CIMFlavor& arg)
+{
+	return m_rep->flavor.equals(arg.m_rep->flavor);
+}
+//////////////////////////////////////////////////////////////////////////////		
+bool 
+CIMFlavor::operator== (const CIMFlavor& arg)
+{
+	return equals(arg);
+}
+//////////////////////////////////////////////////////////////////////////////		
+bool 
+CIMFlavor::operator!= (const CIMFlavor& arg)
+{
+	return (equals(arg) == false);
+}
+//////////////////////////////////////////////////////////////////////////////		
+Int32 
+CIMFlavor::getFlavor() const 
+{  
+	return m_rep->flavor.getFlavor(); 
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+bool operator<(const CIMFlavor& x, const CIMFlavor& y)
+{
+	return *x.getRep() < *y.getRep();
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+// static 
+bool
+CIMFlavor::validFlavor(Int32 iflavor)
+{
+	return OpenWBEM::CIMFlavor::validFlavor(iflavor);
+}
+
+//////////////////////////////////////////////////////////////////////////////		
+detail::CIMFlavorRepRef 
+CIMFlavor::getRep() const
+{
+	return m_rep;
 }
 
 } // end namespace OWBI1

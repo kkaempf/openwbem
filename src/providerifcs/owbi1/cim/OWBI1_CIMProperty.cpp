@@ -35,111 +35,72 @@
 
 #include "OWBI1_config.h"
 #include "OWBI1_CIMProperty.hpp"
-#include "OWBI1_StringBuffer.hpp"
-#include "OWBI1_CIMValueCast.hpp"
-#include "OW_BinarySerialization.hpp"
-#include "OWBI1_NULLValueException.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OWBI1_NoSuchQualifierException.hpp"
-#include "OWBI1_CIMDataType.hpp"
-#include "OWBI1_CIMQualifier.hpp"
-#include "OWBI1_CIMException.hpp"
-#include "OWBI1_COWIntrusiveCountableBase.hpp"
-#include "OWBI1_Array.hpp"
+#include "OWBI1_CIMPropertyRep.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OWBI1_CIMName.hpp"
+#include "OWBI1_CIMNameRep.hpp"
 #include "OWBI1_CIMValue.hpp"
-#include "OWBI1_CIMInstance.hpp"
+#include "OWBI1_CIMValueRep.hpp"
+#include "OWBI1_CIMDataType.hpp"
+#include "OWBI1_CIMDataTypeRep.hpp"
+#include "OWBI1_CIMDetail.hpp"
+#include "OWBI1_NULLValueException.hpp"
+#include "OWBI1_CIMQualifier.hpp"
+#include "OWBI1_CIMQualifierRep.hpp"
+#include "OWBI1_NoSuchQualifierException.hpp"
+#include "OW_CIMException.hpp"
+#include "OWBI1_ProxyProviderDetail.hpp"
 
 namespace OWBI1
 {
 
-using namespace OpenWBEM;
 using std::istream;
 using std::ostream;
 using namespace WBEMFlags;
-struct CIMProperty::PROPData : public COWIntrusiveCountableBase
-{
-	PROPData();
-	CIMName m_name;
-	CIMQualifierArray m_qualifiers;
-	//
-	// Note that we can't rely on the cimValue's datatype
-	// because that is determined by what gets stored  as
-	// a value rather than what the MOF declared which is
-	// what is stored in propertyDataType.
-	//
-	CIMDataType m_propertyDataType;
-	//
-	// For an array type property this states how large it
-	// was declared as
-	//
-	Int32 m_sizeDataType;
-	CIMName m_override;
-	CIMName m_originClass;
-	CIMValue m_cimValue;
-	// propagated means inherited without change
-	Bool m_propagated;
-	PROPData* clone() const { return new PROPData(*this); }
-};
-CIMProperty::PROPData::PROPData() :
-	m_sizeDataType(-1), m_cimValue(CIMNULL), m_propagated(false)
-{
-}
-bool operator<(const CIMProperty::PROPData& x, const CIMProperty::PROPData& y)
-{
-	return StrictWeakOrdering(
-		x.m_name, y.m_name,
-		x.m_cimValue, y.m_cimValue,
-		x.m_qualifiers, y.m_qualifiers,
-		x.m_propertyDataType, y.m_propertyDataType,
-		x.m_sizeDataType, y.m_sizeDataType,
-		x.m_override, y.m_override,
-		x.m_originClass, y.m_originClass,
-		x.m_propagated, y.m_propagated);
-}
+using namespace detail;
+
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty() :
-	CIMElement(), m_pdata(new PROPData)
+CIMProperty::CIMProperty()
+	: m_rep(new CIMPropertyRep(OpenWBEM::CIMProperty()))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(CIMNULL_t) :
-	CIMElement(), m_pdata(0)
+CIMProperty::CIMProperty(CIMNULL_t)
+	: m_rep(new CIMPropertyRep(OpenWBEM::CIMProperty(OpenWBEM::CIMNULL)))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const CIMName& name) :
-	CIMElement(), m_pdata(new PROPData)
+CIMProperty::CIMProperty(const CIMName& name) 
+	: m_rep(new CIMPropertyRep(OpenWBEM::CIMProperty(name.getRep()->name)))
 {
-	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const char* name) :
-	CIMElement(), m_pdata(new PROPData)
+CIMProperty::CIMProperty(const char* name) 
+	: m_rep(new CIMPropertyRep(OpenWBEM::CIMProperty(name)))
 {
-	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const CIMName& name,
-	const CIMValue& value) :
-	CIMElement(), m_pdata(new PROPData)
+CIMProperty::CIMProperty(const CIMName& name, const CIMValue& value) 
+	: m_rep(new CIMPropertyRep(OpenWBEM::CIMProperty(name.getRep()->name, value.getRep()->value)))
 {
-	m_pdata->m_name = name;
-	m_pdata->m_cimValue = value;
-	m_pdata->m_propertyDataType = value.getCIMDataType();
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const CIMName& name,
-	const CIMDataType& dt) :
-	CIMElement(), m_pdata(new PROPData)
+CIMProperty::CIMProperty(const CIMName& name, const CIMDataType& dt) 
+	: m_rep(new CIMPropertyRep(OpenWBEM::CIMProperty(name.getRep()->name, dt.getRep()->datatype)))
 {
-	m_pdata->m_name = name;
-	m_pdata->m_propertyDataType = dt;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const CIMProperty& x) :
-	CIMElement(), m_pdata(x.m_pdata)
+CIMProperty::CIMProperty(const CIMProperty& x) 
+	: CIMElement(x)
+	, m_rep(x.m_rep)
 {
 }
+//////////////////////////////////////////////////////////////////////////////
+CIMProperty::CIMProperty(const CIMPropertyRepRef& rep)
+	: m_rep(rep)
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty::~CIMProperty()
 {
@@ -148,91 +109,70 @@ CIMProperty::~CIMProperty()
 void
 CIMProperty::setNull()
 {
-	m_pdata = NULL;
+	m_rep->prop.setNull();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::operator= (const CIMProperty& x)
 {
-	m_pdata = x.m_pdata;
+	m_rep = x.m_rep;
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierArray
 CIMProperty::getQualifiers() const
 {
-	return m_pdata->m_qualifiers;
+	return wrapArray<CIMQualifierArray>(m_rep->prop.getQualifiers());
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setQualifiers(const CIMQualifierArray& quals)
 {
-	m_pdata->m_qualifiers = quals;
+	m_rep->prop.setQualifiers(unwrapArray<OpenWBEM::CIMQualifierArray>(quals));
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMName
 CIMProperty::getOriginClass() const
 {
-	return m_pdata->m_originClass;
+	return CIMName(new CIMNameRep(m_rep->prop.getOriginClass()));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setOriginClass(const CIMName& originCls)
 {
-	m_pdata->m_originClass = originCls;
+	m_rep->prop.setOriginClass(originCls.getRep()->name);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setValue(const CIMValue& val)
 {
-	if (m_pdata->m_propertyDataType && val && val.getCIMDataType() != m_pdata->m_propertyDataType &&
-		val.getType() != CIMDataType::EMBEDDEDCLASS && val.getType() != CIMDataType::EMBEDDEDINSTANCE)
-	{
-		m_pdata->m_cimValue = CIMValueCast::castValueToDataType(val, m_pdata->m_propertyDataType);
-	}
-	else
-	{
-		m_pdata->m_cimValue = val;
-	}
+	m_rep->prop.setValue(val.getRep()->value);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMProperty::getValue() const
 {
-	return m_pdata->m_cimValue;
+	return CIMValue(CIMValueRepRef(new CIMValueRep(m_rep->prop.getValue())));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMProperty::getValueT() const
 {
-	if (!m_pdata->m_cimValue)
+	CIMValue rv(CIMValueRepRef(new CIMValueRep(m_rep->prop.getValue())));
+	if (!rv)
 	{
-		OWBI1_THROW(NULLValueException, m_pdata->m_name.toString().c_str());
+		OWBI1_THROW(NULLValueException, getName().c_str());
 	}
-	return m_pdata->m_cimValue;
+	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setDataType(const CIMDataType& type)
 {
-	m_pdata->m_propertyDataType = type;
-	if (m_pdata->m_cimValue)
-	{
-		if (m_pdata->m_propertyDataType.getType() != m_pdata->m_cimValue.getType()
-			|| m_pdata->m_propertyDataType.isArrayType() !=
-			m_pdata->m_cimValue.isArray())
-		{
-			if (m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDCLASS &&
-				m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDINSTANCE)
-			{
-				m_pdata->m_cimValue = CIMValueCast::castValueToDataType(
-					m_pdata->m_cimValue, m_pdata->m_propertyDataType);
-			}
-		}
-	}
+	m_rep->prop.setDataType(type.getRep()->datatype);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -245,54 +185,45 @@ CIMProperty::setDataType(const CIMDataType::Type& type)
 CIMDataType
 CIMProperty::getDataType() const
 {
-	return m_pdata->m_propertyDataType;
+	return CIMDataType(new CIMDataTypeRep(m_rep->prop.getDataType()));
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32
 CIMProperty::getSize() const
 {
-	return m_pdata->m_sizeDataType;
+	return m_rep->prop.getSize();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setDataSize(Int32 size)
 {
-	m_pdata->m_sizeDataType = size;
+	m_rep->prop.setDataSize(size);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setOverridingProperty(const CIMName& opname)
 {
-	m_pdata->m_override = opname;
+	m_rep->prop.setOverridingProperty(opname.getRep()->name);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMName
 CIMProperty::getOverridingProperty() const
 {
-	return m_pdata->m_override;
+	return CIMName(new CIMNameRep(m_rep->prop.getOverridingProperty()));
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMProperty::isReference() const
 {
-	return m_pdata->m_propertyDataType.isReferenceType();
+	return m_rep->prop.isReference();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier
 CIMProperty::getQualifier(const CIMName& name) const
 {
-	size_t tsize = m_pdata->m_qualifiers.size();
-	for (size_t i = 0; i < tsize; i++)
-	{
-		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName() == name)
-		{
-			return nq;
-		}
-	}
-	return CIMQualifier(CIMNULL);
+	return CIMQualifier(new CIMQualifierRep(m_rep->prop.getQualifier(name.getRep()->name)));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier
@@ -309,92 +240,59 @@ CIMProperty::getQualifierT(const CIMName& name) const
 CIMProperty&
 CIMProperty::setQualifier(const CIMQualifier& qual)
 {
-	if (qual)
-	{
-		CIMName qualName = qual.getName();
-		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-		{
-			if (m_pdata->m_qualifiers[i].getName() == qualName)
-			{
-				m_pdata->m_qualifiers[i] = qual;
-				return *this;
-			}
-		}
-		m_pdata->m_qualifiers.append(qual);
-	}
+	m_rep->prop.setQualifier(qual.getRep()->qual);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty&
+bool
 CIMProperty::addQualifier(const CIMQualifier& qual)
 {
-	size_t tsize = m_pdata->m_qualifiers.size();
-	for (size_t i = 0; i < tsize; i++)
+	try
 	{
-		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName() == qual.getName())
-		{
-			String msg("Qualifier ");
-			msg += qual.getName().toString();
-			msg += " already exists";
-			OWBI1_THROWCIMMSG(CIMException::ALREADY_EXISTS, msg.c_str());
-		}
+		m_rep->prop.addQualifier(qual.getRep()->qual);
 	}
-	m_pdata->m_qualifiers.append(qual);
-	return *this;
+	catch (OpenWBEM::CIMException& e)
+	{
+		return false;
+	}
+	return true;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMProperty::removeQualifier(const CIMName& name)
 {
-	size_t tsize = m_pdata->m_qualifiers.size();
-	for (size_t i = 0; i < tsize; i++)
-	{
-		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName() == name)
-		{
-			m_pdata->m_qualifiers.remove(i);
-			return true;
-		}
-	}
-	return false;
+	return m_rep->prop.removeQualifier(name.getRep()->name);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMProperty::isKey() const
 {
-	// TODO: Evaluate this.  It's not necessarily true that a REF is a key.  That's just the DMTF CIM Schema convention.
-	if (getDataType().isReferenceType()
-	   || hasTrueQualifier(CIMQualifier::CIM_QUAL_KEY))
-	{
-		return true;
-	}
-	return false;
+	return m_rep->prop.isKey();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
 CIMProperty::setPropagated(bool propagated)
 {
-	m_pdata->m_propagated = propagated;
+	m_rep->prop.setPropagated(propagated);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMProperty::getPropagated() const
 {
-	return m_pdata->m_propagated;
+	return m_rep->prop.getPropagated();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMName
 CIMProperty::getName() const
 {
-	return m_pdata->m_name;
+	return CIMName(new CIMNameRep(m_rep->prop.getName()));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMProperty::setName(const CIMName& name)
 {
-	m_pdata->m_name = name;
+	m_rep->prop.setName(name.getRep()->name);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -406,149 +304,52 @@ CIMProperty::writeObject(ostream &ostrm) const
 void
 CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifiers) const
 {
-	CIMBase::writeSig( ostrm, OWBI1_CIMPROPERTYSIG );
-	m_pdata->m_name.writeObject(ostrm);
-	m_pdata->m_override.writeObject(ostrm);
-	m_pdata->m_originClass.writeObject(ostrm);
-	m_pdata->m_propertyDataType.writeObject(ostrm);
-	BinarySerialization::writeLen(ostrm, m_pdata->m_sizeDataType);
-	m_pdata->m_propagated.writeObject(ostrm);
-	if (includeQualifiers)
-	{
-		BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
-	}
-	else
-	{
-		BinarySerialization::writeArray(ostrm, CIMQualifierArray());
-	}
-	if (m_pdata->m_cimValue)
-	{
-		Bool(true).writeObject(ostrm);
-		m_pdata->m_cimValue.writeObject(ostrm);
-	}
-	else
-	{
-		Bool(false).writeObject(ostrm);
-	}
+	m_rep->prop.writeObject(ostrm, convertWBEMFlag(includeQualifiers));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMProperty::readObject(istream &istrm)
 {
-	CIMName name;
-	CIMName override;
-	CIMName originClass;
-	CIMValue cimValue(CIMNULL);
-	CIMDataType propertyDataType(CIMNULL);
-	UInt32 sizeDataType;
-	Bool propagated;
-	CIMQualifierArray qualifiers;
-	CIMBase::readSig( istrm, OWBI1_CIMPROPERTYSIG );
-	name.readObject(istrm);
-	override.readObject(istrm);
-	originClass.readObject(istrm);
-	propertyDataType.readObject(istrm);
-	BinarySerialization::readLen(istrm, sizeDataType);
-	propagated.readObject(istrm);
-	BinarySerialization::readArray(istrm, qualifiers);
-	Bool isValue;
-	isValue.readObject(istrm);
-	if (isValue)
-	{
-		cimValue.readObject(istrm);
-	}
-	if (!m_pdata)
-	{
-		m_pdata = new PROPData;
-	}
-	m_pdata->m_name = name;
-	m_pdata->m_override = override;
-	m_pdata->m_originClass = originClass;
-	m_pdata->m_cimValue = cimValue;
-	m_pdata->m_propertyDataType = propertyDataType;
-	m_pdata->m_sizeDataType = sizeDataType;
-	m_pdata->m_propagated = propagated;
-	m_pdata->m_qualifiers = qualifiers;
+	m_rep->prop.readObject(istrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 CIMProperty::toString() const
 {
-	StringBuffer rv = m_pdata->m_propertyDataType.toString() + ":"
-		+ m_pdata->m_name.toString() + "=";
-	if (m_pdata->m_cimValue)
-	{
-		rv += m_pdata->m_cimValue.toString();
-	}
-	else
-	{
-		rv += "null";
-	}
-	return rv.releaseString();
+	return m_rep->prop.toString().c_str();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 CIMProperty::toMOF() const
 {
-	// this outputs a property suitable for a CIM class.
-	StringBuffer rv;
-	if (m_pdata->m_qualifiers.size() > 0)
-	{
-		rv += "  [";
-		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-		{
-			CIMQualifier nq = m_pdata->m_qualifiers[i];
-			if (i > 0)
-			{
-				rv += ',';
-// TODO:				rv += ",\n   ";
-			}
-			rv += nq.toMOF();
-		}
-		rv += "]\n";
-	}
-	rv += "  ";
-	rv += m_pdata->m_propertyDataType.toMOF();
-	rv += ' ';
-	rv += m_pdata->m_name.toString();
-	// If it is an array, show it.
-	rv += m_pdata->m_propertyDataType.getArrayMOF();
-	if (m_pdata->m_cimValue)
-	{
-		rv += '=';
-		rv += m_pdata->m_cimValue.toMOF();
-	}
-	rv += ";\n";
-	return rv.releaseString();
+	return m_rep->prop.toMOF().c_str();
 }
 //////////////////////////////////////////////////////////////////////////////
 const char* const CIMProperty::NAME_PROPERTY = "Name";
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMProperty& x, const CIMProperty& y)
 {
-	return *x.m_pdata < *y.m_pdata;
+	return *x.getRep() < *y.getRep();
 }
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMProperty::hasTrueQualifier(const CIMName& name) const
 {
-	CIMQualifier q = getQualifier(name);
-	if (!q)
-	{
-		return false;
-	}
-	CIMValue v = q.getValue();
-	if (!v)
-	{
-		return false;
-	}
-	if (v.getType() != CIMDataType::BOOLEAN)
-	{
-		return false;
-	}
-	Bool b;
-	v.get(b);
-	return b;
+	return m_rep->prop.hasTrueQualifier(name.getRep()->name);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMProperty::operator safe_bool () const
+{  
+	return m_rep->prop ? &CIMProperty::m_rep : 0; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+CIMProperty::operator!() const
+{  
+	return !(m_rep->prop); 
 }
 
 } // end namespace OWBI1

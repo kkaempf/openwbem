@@ -53,7 +53,6 @@ namespace OWBI1
 class OWBI1_OWBI1PROVIFC_API CIMQualifierType : public CIMElement
 {
 public:
-	struct QUALTData;
 	/**
 	 * Create a new CIMQualifierType object.
 	 */
@@ -78,6 +77,9 @@ public:
 	 * @param arg The CIMQualifierType to make this object a copy of.
 	 */
 	CIMQualifierType(const CIMQualifierType& arg);
+
+	explicit CIMQualifierType(const detail::CIMQualifierTypeRepRef& rep);
+
 	/**
 	 * Destroy this CIMQualifierType object.
 	 */
@@ -95,7 +97,7 @@ public:
 	/**
 	 * @return the Scopes for this CIMQualifierType object
 	 */
-	const CIMScopeArray& getScope() const;
+	CIMScopeArray getScopes() const;
 	/**
 	 * @return The data type for this CIMQualifierType object.
 	 */
@@ -202,13 +204,11 @@ public:
 	 */
 	virtual void setName(const CIMName& name);
 
-	typedef COWIntrusiveReference<QUALTData> CIMQualifierType::*safe_bool;
-	operator safe_bool () const
-		{  return m_pdata ? &CIMQualifierType::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	typedef detail::CIMQualifierTypeRepRef CIMQualifierType::*safe_bool;
+	operator safe_bool () const;
+	bool operator!() const;
 
-	friend OWBI1_OWBI1PROVIFC_API bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
+	detail::CIMQualifierTypeRepRef getRep() const;
 private:
 
 #ifdef OWBI1_WIN32
@@ -216,13 +216,15 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<QUALTData> m_pdata;
+	detail::CIMQualifierTypeRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)
 #endif
 
 };
+
+OWBI1_OWBI1PROVIFC_API bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 
 } // end namespace OWBI1
 

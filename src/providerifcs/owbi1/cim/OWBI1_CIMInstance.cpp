@@ -33,22 +33,15 @@
  * @author Dan Nuffer
  */
 
+#include "OWBI1_CIMDetail.hpp"
 #include "OWBI1_config.h"
 #include "OWBI1_CIMInstance.hpp"
-#include "OWBI1_StringBuffer.hpp"
-#include "OWBI1_CIMDataType.hpp"
-#include "OWBI1_String.hpp"
-#include "OWBI1_CIMValue.hpp"
-#include "OWBI1_CIMValueCast.hpp"
-#include "OW_BinarySerialization.hpp"
-#include "OWBI1_NoSuchPropertyException.hpp"
-#include "OW_StrictWeakOrdering.hpp"
-#include "OWBI1_CIMProperty.hpp"
-#include "OWBI1_CIMQualifier.hpp"
 #include "OWBI1_CIMName.hpp"
-#include "OWBI1_CIMClass.hpp"
-#include "OWBI1_COWIntrusiveCountableBase.hpp"
-#include <algorithm> // for std::sort
+#include "OWBI1_CIMInstanceRep.hpp"
+#include "OWBI1_CIMPropertyRep.hpp"
+#include "OWBI1_CIMNameRep.hpp"
+#include "OWBI1_Array.hpp"
+#include "OWBI1_CIMProperty.hpp"
 
 namespace OWBI1
 {
@@ -57,49 +50,31 @@ using namespace OpenWBEM;
 using std::ostream;
 using std::istream;
 using namespace WBEMFlags;
-//////////////////////////////////////////////////////////////////////////////
-struct CIMInstance::INSTData : public COWIntrusiveCountableBase
-{
-	CIMName m_owningClassName;
-	CIMPropertyArray m_keys;
-	CIMPropertyArray m_properties;
-	CIMQualifierArray m_qualifiers;
-	String m_language;
-	INSTData* clone() const { return new INSTData(*this); }
-};
-bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
-{
-	return StrictWeakOrdering(
-		x.m_owningClassName, y.m_owningClassName,
-		x.m_properties, y.m_properties,
-		x.m_keys, y.m_keys,
-		x.m_qualifiers, y.m_qualifiers);
-}
+using namespace detail;
+
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance::CIMInstance() :
-	CIMElement(), m_pdata(new INSTData)
+	CIMElement(), m_rep(new CIMInstanceRep)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance::CIMInstance(CIMNULL_t) :
-	CIMElement(), m_pdata(0)
+	CIMElement(), m_rep(new CIMInstanceRep(OpenWBEM::CIMInstance(OpenWBEM::CIMNULL)))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance::CIMInstance(const char* name) :
-	CIMElement(), m_pdata(new INSTData)
+	CIMElement(), m_rep(new CIMInstanceRep(OpenWBEM::CIMInstance(name)))
 {
-	m_pdata->m_owningClassName = name;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance::CIMInstance(const CIMName& name) :
-	CIMElement(), m_pdata(new INSTData)
+	CIMElement(), m_rep(new CIMInstanceRep(OpenWBEM::CIMInstance(name.c_str())))
 {
-	m_pdata->m_owningClassName = name;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance::CIMInstance(const CIMInstance& x) :
-		CIMElement(), m_pdata(x.m_pdata)
+		CIMElement(x), m_rep(x.m_rep)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -110,131 +85,64 @@ CIMInstance::~CIMInstance()
 void
 CIMInstance::setNull()
 {
-	m_pdata = NULL;
+	m_rep = NULL;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance& CIMInstance::operator= (const CIMInstance& x)
 {
-	m_pdata = x.m_pdata;
+	m_rep = x.m_rep;
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
 CIMInstance::setKeys(const CIMPropertyArray& keys)
 {
-	m_pdata->m_keys = keys;
+	OpenWBEM::CIMPropertyArray owkeys;
+	unwrapArray(owkeys, keys);
+	m_rep->inst.setKeys(owkeys);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMName
 CIMInstance::getClassName() const
 {
-	return m_pdata->m_owningClassName;
+	return CIMName(new CIMNameRep(m_rep->inst.getClassName()));
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 CIMInstance::getLanguage() const
 {
-	return m_pdata->m_language;
+	return m_rep->inst.getLanguage().c_str();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMInstance::setLanguage(const String& language)
 {
-	m_pdata->m_language = language;
+	m_rep->inst.setLanguage(language.c_str());
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
 CIMInstance::setClassName(const CIMName& name)
 {
-	m_pdata->m_owningClassName = name;
-	return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMQualifierArray
-CIMInstance::getQualifiers() const
-{
-	return m_pdata->m_qualifiers;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMQualifier
-CIMInstance::getQualifier(const CIMName& qualName) const
-{
-	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-	{
-		CIMQualifier qual = m_pdata->m_qualifiers[i];
-		if (qual.getName() == qualName)
-		{
-			return qual;
-		}
-	}
-	return CIMQualifier(CIMNULL);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMInstance&
-CIMInstance::removeQualifier(const CIMName& qualName)
-{
-	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-	{
-		if (m_pdata->m_qualifiers[i].getName() == qualName)
-		{
-			m_pdata->m_qualifiers.remove(i);
-			break;
-		}
-	}
-	return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMInstance&
-CIMInstance::setQualifier(const CIMQualifier& qual)
-{
-	if (qual)
-	{
-		CIMName qualName = qual.getName();
-		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
-		{
-			if (m_pdata->m_qualifiers[i].getName() == qualName)
-			{
-				m_pdata->m_qualifiers[i] = qual;
-				return *this;
-			}
-		}
-		m_pdata->m_qualifiers.append(qual);
-	}
-	return *this;
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMInstance&
-CIMInstance::setQualifiers(const CIMQualifierArray& quals)
-{
-	m_pdata->m_qualifiers = quals;
+	m_rep->inst.setClassName(name.getRep()->name);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMPropertyArray
 CIMInstance::getProperties(Int32 valueDataType) const
 {
-	if (valueDataType == CIMDataType::INVALID)
-	{
-		return m_pdata->m_properties;
-	}
-	CIMPropertyArray pra;
-	for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
-	{
-		CIMProperty prop = m_pdata->m_properties[i];
-		if (prop.getDataType().getType() == valueDataType)
-		{
-			pra.append(prop);
-		}
-	}
-	return pra;
+	OpenWBEM::CIMPropertyArray owpa = m_rep->inst.getProperties(valueDataType);
+	CIMPropertyArray rv;
+	unwrapArray(rv, owpa);
+	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
 CIMInstance::setProperties(const CIMPropertyArray& props)
 {
-	m_pdata->m_properties = props;
-	_buildKeys();
+	OpenWBEM::CIMPropertyArray owprops;
+	unwrapArray(owprops, props);
+	m_rep->inst.setProperties(owprops);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -242,26 +150,16 @@ CIMProperty
 CIMInstance::getProperty(const CIMName& name,
 	const CIMName& originClass) const
 {
-	int tsize = m_pdata->m_properties.size();
-	for (int i = 0; i < tsize; i++)
-	{
-		CIMProperty cp = m_pdata->m_properties[i];
-		if (originClass == cp.getOriginClass()
-			&& name == cp.getName())
-		{
-			return(cp);
-		}
-	}
-	return CIMProperty(CIMNULL);
+	return CIMProperty(new CIMPropertyRep(m_rep->inst.getProperty(name.getRep()->name, originClass.getRep()->name)));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty
 CIMInstance::getProperty(const CIMName& propertyName) const
 {
-	int tsize = m_pdata->m_properties.size();
+	int tsize = m_rep->m_properties.size();
 	for (int i = 0; i < tsize; i++)
 	{
-		CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_rep->m_properties[i];
 		if (propertyName == cp.getName())
 		{
 			return(cp);
@@ -315,14 +213,14 @@ CIMInstance::propertyHasValue(const CIMName& name) const
 void
 CIMInstance::_buildKeys()
 {
-	m_pdata->m_keys.clear();
-	int tsize = m_pdata->m_properties.size();
+	m_rep->m_keys.clear();
+	int tsize = m_rep->m_properties.size();
 	for (int i = 0; i < tsize; i++)
 	{
-		CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_rep->m_properties[i];
 		if (cp.isKey())
 		{
-			m_pdata->m_keys.append(cp);
+			m_rep->m_keys.append(cp);
 		}
 	}
 }
@@ -330,7 +228,7 @@ CIMInstance::_buildKeys()
 CIMPropertyArray
 CIMInstance::getKeyValuePairs() const
 {
-	return m_pdata->m_keys;
+	return m_rep->m_keys;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
@@ -351,14 +249,14 @@ CIMInstance::updatePropertyValue(const CIMProperty& prop)
 	if (prop)
 	{
 		CIMName name = prop.getName();
-		int tsize = m_pdata->m_properties.size();
+		int tsize = m_rep->m_properties.size();
 		for (int i = 0; i < tsize; i++)
 		{
-			CIMProperty cp = m_pdata->m_properties[i];
+			CIMProperty cp = m_rep->m_properties[i];
 			CIMName rname = cp.getName();
 			if (rname == name)
 			{
-				m_pdata->m_properties[i].setValue(prop.getValue());
+				m_rep->m_properties[i].setValue(prop.getValue());
 				if (cp.isKey() || prop.isKey())
 				{
 					//
@@ -389,14 +287,14 @@ CIMInstance::updatePropertyValue(const CIMName& name, const CIMValue& value)
 CIMInstance&
 CIMInstance::setProperty(const CIMName& name, const CIMValue& cv)
 {
-	int tsize = m_pdata->m_properties.size();
+	int tsize = m_rep->m_properties.size();
 	for (int i = 0; i < tsize; i++)
 	{
-		CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_rep->m_properties[i];
 		CIMName rname = cp.getName();
 		if (rname == name)
 		{
-			m_pdata->m_properties[i].setValue(cv);
+			m_rep->m_properties[i].setValue(cv);
 			if (cp.isKey())
 			{
 				_buildKeys();
@@ -417,7 +315,7 @@ CIMInstance::setProperty(const CIMName& name, const CIMValue& cv)
 	{
 		cp.setDataType(CIMDataType::CIMNULL);
 	}
-	m_pdata->m_properties.append(cp);
+	m_rep->m_properties.append(cp);
 	//
 	// We don't worry about building the keys here, because the
 	// property doesn't have the key qualifier (or any other for that matter)
@@ -431,14 +329,14 @@ CIMInstance::setProperty(const CIMProperty& prop)
 	if (prop)
 	{
 		CIMName propName = prop.getName();
-		int tsize = m_pdata->m_properties.size();
+		int tsize = m_rep->m_properties.size();
 		for (int i = 0; i < tsize; i++)
 		{
-			CIMProperty cp = m_pdata->m_properties[i];
+			CIMProperty cp = m_rep->m_properties[i];
 			CIMName rname = cp.getName();
 			if (rname == propName)
 			{
-				m_pdata->m_properties[i] = prop;
+				m_rep->m_properties[i] = prop;
 				// If property was a key or is a key, then rebuild the
 				// key values
 				if (cp.isKey() || prop.isKey())
@@ -451,7 +349,7 @@ CIMInstance::setProperty(const CIMProperty& prop)
 		//
 		// Not found so add it
 		//
-		m_pdata->m_properties.append(prop);
+		m_rep->m_properties.append(prop);
 		if (prop.isKey())
 		{
 			_buildKeys();
@@ -463,13 +361,13 @@ CIMInstance::setProperty(const CIMProperty& prop)
 CIMInstance&
 CIMInstance::removeProperty(const CIMName& propName)
 {
-	int tsize = m_pdata->m_properties.size();
+	int tsize = m_rep->m_properties.size();
 	for (int i = 0; i < tsize; i++)
 	{
-		CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_rep->m_properties[i];
 		if (cp.getName() == propName)
 		{
-			m_pdata->m_properties.remove(i);
+			m_rep->m_properties.remove(i);
 			// If this property was a key, then rebuild the key values
 			if (cp.isKey())
 			{
@@ -485,27 +383,27 @@ CIMInstance
 CIMInstance::clone(const CIMPropertyList& propertyList) const
 {
 	CIMInstance ci;
-	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
-	ci.m_pdata->m_keys = m_pdata->m_keys;
-	ci.m_pdata->m_language = m_pdata->m_language;
-	ci.m_pdata->m_qualifiers = m_pdata->m_qualifiers;
+	ci.m_rep->m_owningClassName = m_rep->m_owningClassName;
+	ci.m_rep->m_keys = m_rep->m_keys;
+	ci.m_rep->m_language = m_rep->m_language;
+	ci.m_rep->m_qualifiers = m_rep->m_qualifiers;
 	CIMPropertyArray props;
-	for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
+	for (size_t i = 0; i < m_rep->m_properties.size(); i++)
 	{
-		CIMProperty prop = m_pdata->m_properties[i];
+		CIMProperty prop = m_rep->m_properties[i];
 		if (propertyList.hasProperty(prop.getName()))
 		{
 			props.append(prop);
 		}
 	}
-	ci.m_pdata->m_properties = props;
+	ci.m_rep->m_properties = props;
 	return ci;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMName
 CIMInstance::getName() const
 {
-	return m_pdata->m_owningClassName;
+	return m_rep->m_owningClassName;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
@@ -619,7 +517,7 @@ CIMInstance::createModifiedInstance(
 void
 CIMInstance::setName(const CIMName& name)
 {
-	m_pdata->m_owningClassName = name;
+	m_rep->m_owningClassName = name;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -643,26 +541,26 @@ CIMInstance::readObject(istream &istrm)
 	{
 		language.readObject(istrm);
 	}
-	if (!m_pdata)
+	if (!m_rep)
 	{
-		m_pdata = new INSTData;
+		m_rep = new INSTData;
 	}
-	m_pdata->m_owningClassName = owningClassName;
-	m_pdata->m_keys = keys;
-	m_pdata->m_properties = properties;
-	m_pdata->m_qualifiers = qualifiers;
-	m_pdata->m_language = language;
+	m_rep->m_owningClassName = owningClassName;
+	m_rep->m_keys = keys;
+	m_rep->m_properties = properties;
+	m_rep->m_qualifiers = qualifiers;
+	m_rep->m_language = language;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMInstance::writeObject(std::ostream &ostrm) const
 {
 	CIMBase::writeSig(ostrm, OWBI1_CIMINSTANCESIG_V, CIMInstance::SERIALIZATION_VERSION);
-	m_pdata->m_owningClassName.writeObject(ostrm);
-	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
-	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
-	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
-	m_pdata->m_language.writeObject(ostrm);
+	m_rep->m_owningClassName.writeObject(ostrm);
+	BinarySerialization::writeArray(ostrm, m_rep->m_keys);
+	BinarySerialization::writeArray(ostrm, m_rep->m_properties);
+	BinarySerialization::writeArray(ostrm, m_rep->m_qualifiers);
+	m_rep->m_language.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -670,27 +568,27 @@ CIMInstance::toMOF() const
 {
 	size_t i;
 	StringBuffer rv;
-	if (m_pdata->m_qualifiers.size() > 0)
+	if (m_rep->m_qualifiers.size() > 0)
 	{
 		rv += "[\n";
-		for (i = 0; i < m_pdata->m_qualifiers.size(); i++)
+		for (i = 0; i < m_rep->m_qualifiers.size(); i++)
 		{
 			if (i > 0)
 			{
 				rv += ',';
 			}
-			rv += m_pdata->m_qualifiers[i].toMOF();
+			rv += m_rep->m_qualifiers[i].toMOF();
 		}
 		rv += "]\n";
 	}
 	rv += "INSTANCE OF ";
-	rv += m_pdata->m_owningClassName.toString();
+	rv += m_rep->m_owningClassName.toString();
 	rv += "\n{\n";
-	for (i = 0; i < m_pdata->m_properties.size(); i++)
+	for (i = 0; i < m_rep->m_properties.size(); i++)
 	{
 		// note that we can't use CIMProperty::toMOF() since it prints out
 		// the data type.
-		const CIMProperty& p = m_pdata->m_properties[i];
+		const CIMProperty& p = m_rep->m_properties[i];
 		if (p.hasTrueQualifier(CIMQualifier::CIM_QUAL_INVISIBLE))
 		{
 			continue;
@@ -738,10 +636,10 @@ CIMInstance::toString() const
 	StringBuffer temp;
 	String outVal;
 	temp += "instance of ";
-	temp += m_pdata->m_owningClassName.toString() + " {\n";
-	for (i = 0; i < m_pdata->m_properties.size(); i++)
+	temp += m_rep->m_owningClassName.toString() + " {\n";
+	for (i = 0; i < m_rep->m_properties.size(); i++)
 	{
-		CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_rep->m_properties[i];
 		if (cp.hasTrueQualifier(CIMQualifier::CIM_QUAL_INVISIBLE))
 		{
 			continue;
@@ -764,7 +662,7 @@ CIMInstance::toString() const
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMInstance& x, const CIMInstance& y)
 {
-	return *x.m_pdata < *y.m_pdata;
+	return *x.m_rep < *y.m_rep;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool CIMInstance::propertiesAreEqualTo(const CIMInstance& other) const
@@ -795,6 +693,24 @@ bool CIMInstance::propertiesAreEqualTo(const CIMInstance& other) const
 		++i2;
 	}
 	return true;
+}
+
+CIMInstance::safe_bool
+CIMInstance::operator CIMInstance::safe_bool() const
+{  
+	return m_rep->inst ? &CIMInstance::m_rep : 0; 
+}
+
+bool 
+CIMInstance::operator!() const
+{  
+	return !(m_rep->inst); 
+}
+
+CIMInstanceRepRef
+CIMInstance::getRep() const
+{
+	return m_rep;
 }
 
 } // end namespace OWBI1

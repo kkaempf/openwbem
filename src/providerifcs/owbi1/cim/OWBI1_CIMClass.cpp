@@ -113,6 +113,13 @@ CIMClass::CIMClass(const CIMName& name) :
 {
 	m_pdata->m_name = name;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+CIMClass::CIMClass(const CIMClassRepRef& rep)
+	: m_rep(rep)
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMClass::setName(const CIMName& name)
@@ -761,6 +768,20 @@ bool operator!=(const CIMClass& x, const CIMClass& y)
 	return !(x == y);
 }
 
+operator safe_bool () const
+{
+	return m_pdata ? &CIMClass::m_pdata : 0;
+}
+bool operator!() const
+{
+	return !this->m_pdata;
+}
+
+CIMClassRepRef
+CIMClass::getRep() const
+{
+	return m_rep;
+}
 
 } // end namespace OWBI1
 

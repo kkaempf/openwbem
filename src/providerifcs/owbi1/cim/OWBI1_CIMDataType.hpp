@@ -55,7 +55,6 @@ namespace OWBI1
 class OWBI1_OWBI1PROVIFC_API CIMDataType : public CIMBase
 {
 public:
-	struct DTData;
 	enum
 	{
 		SIZE_SINGLE,		// non-array types
@@ -119,6 +118,7 @@ public:
 	 */
 	CIMDataType(const CIMDataType& arg);
 	
+	explicit CIMDataType(const detail::CIMDataTypeRepRef& rep);
 	/**
 	 * Destroy this CIMDataType object.
 	 */
@@ -173,7 +173,7 @@ public:
 	 */
 	String getRefClassName() const;
 
-	typedef COWIntrusiveReference<DTData> CIMDataType::*safe_bool;
+	typedef detail::CIMDataTypeRepRef CIMDataType::*safe_bool;
 	/**
 	 * @return true if this CIMDataType is a valid CIM data type
 	 */
@@ -232,6 +232,9 @@ public:
 	 * @return true if 'type' is a numeric data type.
 	 */
 	static bool isNumericType(Type type);
+
+	detail::CIMDataTypeRepRef getRep() const;
+
 private:
 
 #ifdef OWBI1_WIN32
@@ -239,7 +242,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<DTData> m_pdata;
+	detail::CIMDataTypeRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)

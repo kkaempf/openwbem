@@ -52,10 +52,6 @@ namespace OWBI1
  */							
 class OWBI1_OWBI1PROVIFC_API CIMObjectPath : public CIMBase
 {
-private:
-	struct OPData;
-	friend bool operator<(const CIMObjectPath::OPData& x, 
-			const CIMObjectPath::OPData& y);
 public:
 	/**
 	 * Escapes quotes and '/'
@@ -116,6 +112,8 @@ public:
 	 * @param arg The CIMObjectPath this object will be a copy of.
 	 */
 	CIMObjectPath(const CIMObjectPath& arg);
+
+	explicit CIMObjectPath(const detail::CIMObjectPathRepRef& rep);
 	/**
 	 * Destroy this CIMObjectPath object.
 	 */
@@ -232,14 +230,12 @@ public:
 	 */
 	bool equals(const CIMObjectPath& op) const;
 
-	typedef COWIntrusiveReference<OPData> CIMObjectPath::*safe_bool;
+	typedef detail::CIMObjectPathRepRef CIMObjectPath::*safe_bool;
 	/**
 	 * @return true if this is not a null object.
 	 */
-	operator safe_bool () const
-		{  return m_pdata ? &CIMObjectPath::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	operator safe_bool () const;
+	bool operator!() const;
 	/**
 	 * Equality operator
 	 * @param op The object path to compare to this one.
@@ -306,6 +302,7 @@ public:
 	 */
 	CIMObjectPath& syncWithClass(const CIMClass& theClass);
 
+	detail::CIMObjectPathRepRef getRep() const;
 private:
 
 #ifdef OWBI1_WIN32
@@ -313,14 +310,15 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<OPData> m_pdata;
+	detail::CIMObjectPathRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)
 #endif
 
-	friend OWBI1_OWBI1PROVIFC_API bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);
 };
+
+OWBI1_OWBI1PROVIFC_API bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);
 
 } // end namespace OWBI1
 

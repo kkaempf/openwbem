@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -29,46 +29,49 @@
 *******************************************************************************/
 
 /**
- * @author Jon Carey
  * @author Dan Nuffer
  */
 
+#ifndef OWBI1_CIM_FLAVOR_REP_HPP_INCLUDE_GUARD_
+#define OWBI1_CIM_FLAVOR_REP_HPP_INCLUDE_GUARD_
+
 #include "OWBI1_config.h"
-#include "OWBI1_CIMValueCast.hpp"
-#include "OWBI1_CIMValue.hpp"
-#include "OWBI1_CIMValueRep.hpp"
-#include "OWBI1_CIMDataType.hpp"
-#include "OWBI1_CIMDataTypeRep.hpp"
-#include "OW_ExceptionIds.hpp"
-#include "OW_CIMValueCast.hpp"
+#include "OWBI1_COWIntrusiveCountableBase.hpp"
+#include "OW_CIMFlavor.hpp"
 
 namespace OWBI1
 {
 
-using namespace OpenWBEM;
-OWBI1_DEFINE_EXCEPTION_WITH_ID(ValueCast);
-
-//////////////////////////////////////////////////////////////////////////////
-namespace CIMValueCast
+namespace detail
 {
 
-CIMValue
-castValueToDataType(const CIMValue& value,
-		const CIMDataType& dataType)
+struct CIMFlavorRep : public COWIntrusiveCountableBase
 {
-	try
-	{
-		return CIMValue(detail::CIMValueRepRef(new detail::CIMValueRep(
-				OpenWBEM::CIMValueCast::castValueToDataType(value.getRep()->value, dataType.getRep()->datatype)
-				)));
-	}
-	catch (const OpenWBEM::Exception& e)
-	{
-		OWBI1_THROW(ValueCastException, e.getMessage());
-	}
+	CIMFlavorRep(const OpenWBEM::CIMFlavor& flavor_) : flavor(flavor_) {}
+	OpenWBEM::CIMFlavor flavor;
+	CIMFlavorRep* clone() const { return new CIMFlavorRep(*this); }
+
+};
+
+inline bool operator<(const CIMFlavorRep& x, const CIMFlavorRep& y)
+{
+	return x.flavor < y.flavor;
 }
-} // end namespace CIMValueCast
 
+inline OpenWBEM::CIMFlavor getOWObj(const CIMFlavorRep& in)
+{
+	return in.flavor;
+}
+
+
+} // end namespace detail
 
 } // end namespace OWBI1
+
+#endif
+
+
+
+
+
 

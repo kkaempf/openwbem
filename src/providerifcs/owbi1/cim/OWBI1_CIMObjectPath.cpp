@@ -35,103 +35,75 @@
 
 #include "OWBI1_config.h"
 #include "OWBI1_CIMObjectPath.hpp"
-#include "OWBI1_AutoPtr.hpp"
-#include "OW_Format.hpp"
-#include "OWBI1_CIMNameSpace.hpp"
-#include "OWBI1_CIMProperty.hpp"
-#include "OWBI1_CIMValue.hpp"
-#include "OWBI1_CIMDataType.hpp"
-#include "OWBI1_CIMInstance.hpp"
-#include "OWBI1_CIMUrl.hpp"
-#include "OWBI1_CIMClass.hpp"
+#include "OWBI1_CIMObjectPathRep.hpp"
+#include "OWBI1_CIMName.hpp"
+#include "OWBI1_CIMNameRep.hpp"
+#include "OWBI1_CIMDetail.hpp"
+#include "OW_Array.hpp"
+#include "OW_CIMProperty.hpp"
 #include "OWBI1_Array.hpp"
-#include "OWBI1_CIMException.hpp"
-#include "OW_BinarySerialization.hpp"
+#include "OWBI1_CIMProperty.hpp"
+#include "OWBI1_CIMPropertyRep.hpp"
+#include "OWBI1_CIMInstance.hpp"
+#include "OWBI1_CIMInstanceRep.hpp"
 #include "OWBI1_NoSuchPropertyException.hpp"
-#include "OW_StrictWeakOrdering.hpp"
+#include "OWBI1_CIMValue.hpp"
+#include "OWBI1_CIMValueRep.hpp"
 #include "OW_Assertion.hpp"
-#include "OWBI1_CIMValueCast.hpp"
-#include "OWBI1_COWIntrusiveCountableBase.hpp"
-#include "OWBI1_StringBuffer.hpp"
-
-#include <cstring>
-#include <cctype>
 
 namespace OWBI1
 {
 
-using namespace OpenWBEM;
+using namespace detail;
 using std::istream;
 using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-struct CIMObjectPath::OPData : public COWIntrusiveCountableBase
-{
-	CIMNameSpace m_nameSpace;
-	CIMName m_objectName;
-	CIMPropertyArray m_keys;
-	OPData* clone() const { return new OPData(*this); }
-};
-bool operator<(const CIMObjectPath::OPData& x, const CIMObjectPath::OPData& y)
-{
-	return StrictWeakOrdering(
-		x.m_nameSpace, y.m_nameSpace,
-		x.m_objectName, y.m_objectName,
-		x.m_keys, y.m_keys);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath() :
-	CIMBase(), m_pdata(new OPData)
+CIMObjectPath::CIMObjectPath() 
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath()))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(CIMNULL_t) :
-	CIMBase(), m_pdata(0)
+CIMObjectPath::CIMObjectPath(CIMNULL_t)
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath(OpenWBEM::CIMNULL)))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const char* oname) :
-	CIMBase(), m_pdata(new OPData)
+CIMObjectPath::CIMObjectPath(const char* oname)
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath(oname)))
 {
-	m_pdata->m_objectName = oname;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const CIMName& oname) :
-	CIMBase(), m_pdata(new OPData)
+CIMObjectPath::CIMObjectPath(const CIMName& oname)
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath(oname.getRep()->name)))
 {
-	m_pdata->m_objectName = oname;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const CIMName& oname,
-	const String& nspace) :
-	CIMBase(), m_pdata(new OPData)
+CIMObjectPath::CIMObjectPath(const CIMName& oname, const String& nspace)
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath(oname.getRep()->name, nspace.c_str())))
 {
-	m_pdata->m_objectName = oname;
-	m_pdata->m_nameSpace.setNameSpace(nspace);
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const CIMName& className,
-	const CIMPropertyArray& keys) :
-	CIMBase(), m_pdata(new OPData)
+CIMObjectPath::CIMObjectPath(const CIMName& className, const CIMPropertyArray& keys)
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath(className.getRep()->name, unwrapArray<OpenWBEM::CIMPropertyArray>(keys))))
 {
-	// If there is a namespace but it will be set via CIMClient on
-	// the next call
-	m_pdata->m_objectName = className;
-	setKeys(keys);
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const String& ns,
-	const CIMInstance& inst) :
-	CIMBase(), m_pdata(new OPData)
+CIMObjectPath::CIMObjectPath(const String& ns, const CIMInstance& inst)
+	: m_rep(new CIMObjectPathRep(OpenWBEM::CIMObjectPath(ns.c_str(), inst.getRep()->inst)))
 {
-	m_pdata->m_nameSpace.setNameSpace(ns);
-	m_pdata->m_objectName = inst.getClassName();
-	setKeys(inst.getKeyValuePairs());
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const CIMObjectPath& arg) :
-	CIMBase(), m_pdata(arg.m_pdata)
+CIMObjectPath::CIMObjectPath(const CIMObjectPath& arg) 
+	: CIMBase(arg)
+	, m_rep(arg.m_rep)
 {
 }
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPath::CIMObjectPath(const CIMObjectPathRepRef& rep)
+	: m_rep(rep)
+{
+}
+
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath::~CIMObjectPath()
 {
@@ -140,33 +112,26 @@ CIMObjectPath::~CIMObjectPath()
 void
 CIMObjectPath::setNull()
 {
-	m_pdata = NULL;
+	m_rep->objectpath.setNull();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
 CIMObjectPath::operator= (const CIMObjectPath& x)
 {
-	m_pdata = x.m_pdata;
+	m_rep = x.m_rep;
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMPropertyArray
 CIMObjectPath::getKeys() const
 {
-	return m_pdata->m_keys;
+	return wrapArray<CIMPropertyArray>(m_rep->objectpath.getKeys());
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty
 CIMObjectPath::getKey(const CIMName& keyName) const
 {
-	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
-	{
-		if (m_pdata->m_keys[i].getName() == keyName)
-		{
-			return m_pdata->m_keys[i];
-		}
-	}
-	return CIMProperty(CIMNULL);
+	return CIMProperty(new CIMPropertyRep(m_rep->objectpath.getKey(keyName.getRep()->name)));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty
@@ -183,37 +148,19 @@ CIMObjectPath::getKeyT(const CIMName& keyName) const
 CIMValue
 CIMObjectPath::getKeyValue(const CIMName& name) const
 {
-	CIMProperty p = this->getKey(name);
-	if (p)
-	{
-		return p.getValue();
-	}
-	return CIMValue(CIMNULL);
+	return CIMValue(CIMValueRepRef(new CIMValueRep(m_rep->objectpath.getKeyValue(name.getRep()->name))));
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMObjectPath::keyHasValue(const CIMName& name) const
 {
-	CIMProperty p = this->getKey(name);
-	if (p)
-	{
-		CIMValue v = p.getValue();
-		if (v)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	return false;
+	return m_rep->objectpath.keyHasValue(name.getRep()->name);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
 CIMObjectPath::setKeys(const CIMPropertyArray& newKeys)
 {
-	m_pdata->m_keys = newKeys;
+	m_rep->objectpath.setKeys(unwrapArray<OpenWBEM::CIMPropertyArray>(newKeys));
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -228,17 +175,7 @@ CIMObjectPath::setKeys(const CIMInstance& instance)
 CIMObjectPath& 
 CIMObjectPath::setKeyValue(const CIMName& name, const CIMValue& value)
 {
-	OW_ASSERT(value);
-	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
-	{
-		if (m_pdata->m_keys[i].getName() == name)
-		{
-			m_pdata->m_keys[i].setValue(value);
-			return *this;
-		}
-	}
-	// didn't find it
-    m_pdata->m_keys.append(CIMProperty(name, value));
+	m_rep->objectpath.setKeyValue(name.getRep()->name, value.getRep()->value);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -759,6 +696,26 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 	}
 	setKeys(copProps);
 	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPath::operator safe_bool () const
+{  
+	return m_rep->objectpath ? &CIMObjectPath::m_rep : 0; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+CIMObjectPath::operator!() const
+{  
+	return !m_rep->objectpath; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMObjectPathRepRef
+CIMObjectPath::getRep() const
+{
+	return m_rep;
 }
 
 } // end namespace OWBI1

@@ -69,7 +69,7 @@
 namespace OWBI1
 {
 
-namespace ProxyProviderDetail
+namespace detail
 {
 	OWBI1::CIMInstance convertCIMInstance(const OpenWBEM::CIMInstance& inst);
 	OpenWBEM::CIMInstance convertCIMInstance(const OWBI1::CIMInstance& inst);
@@ -90,6 +90,7 @@ namespace ProxyProviderDetail
 	OpenWBEM::StringArray convertStringArray(const OWBI1::StringArray& in);
 
 	OWBI1::WBEMFlags::EIncludeQualifiersFlag convertWBEMFlag(OpenWBEM::WBEMFlags::EIncludeQualifiersFlag includeQualifiers);
+	OpenWBEM::WBEMFlags::EIncludeQualifiersFlag convertWBEMFlag(OWBI1::WBEMFlags::EIncludeQualifiersFlag includeQualifiers);
 	OWBI1::WBEMFlags::EIncludeClassOriginFlag convertWBEMFlag(OpenWBEM::WBEMFlags::EIncludeClassOriginFlag includeClassOrigin);
 	OWBI1::WBEMFlags::ELocalOnlyFlag convertWBEMFlag(OpenWBEM::WBEMFlags::ELocalOnlyFlag includeClassOrigin);
 	OWBI1::WBEMFlags::EDeepFlag convertWBEMFlag(OpenWBEM::WBEMFlags::EDeepFlag includeClassOrigin);

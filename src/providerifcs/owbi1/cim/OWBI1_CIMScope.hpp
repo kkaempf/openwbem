@@ -32,8 +32,8 @@
  * @author Dan Nuffer
  */
 
-#ifndef OWBI1_CIMSCOPE_HPP_
-#define OWBI1_CIMSCOPE_HPP_
+#ifndef OWBI1_CIMSCOPE_HPP_INCLUDE_GUARD_
+#define OWBI1_CIMSCOPE_HPP_INCLUDE_GUARD_
 #include "OWBI1_config.h"
 #include "OWBI1_CIMBase.hpp"
 
@@ -70,22 +70,21 @@ public:
 	/**
 	 * Create an invalid scope.
 	 */
-	CIMScope() : CIMBase(), m_val(BAD) {}
+	CIMScope();
 	/**
 	 * Create a scope with a specified scoping value.
 	 * @param scopeVal The scoping value.
 	 */
-	CIMScope(Scope scopeVal) : CIMBase(), m_val(scopeVal)
-	{
-		if (!validScope(scopeVal))
-			m_val = BAD;
-	}
+	CIMScope(Scope scopeVal);
+
 	/**
 	 * Copy constructor
 	 * @param arg The CIMScopy to make this object a copy of.
 	 */
-	CIMScope(const CIMScope& arg) :
-		CIMBase(), m_val(arg.m_val) {}
+	CIMScope(const CIMScope& arg);
+
+	explicit CIMScope(const detail::CIMScopeRepRef& rep);
+	~CIMScope();
 	/**
 	 * Set this to a null object.
 	 */
@@ -95,51 +94,36 @@ public:
 	 * @param arg The CIMScopy to assign to this object.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	CIMScope& operator= (const CIMScope& arg)
-	{
-		m_val = arg.m_val;
-		return *this;
-	}
+	CIMScope& operator= (const CIMScope& arg);
 	/**
 	 * @return The scoping value of this scope.
 	 */
-	Scope getScope() const {  return m_val; }
+	Scope getScope() const;
 	/**
 	 * Determine if another scope is equal to this one.
 	 * @param arg The scope to check for equality against.
 	 * @return true if arg is equal to this scope. Otherwise false.
 	 */
-	bool equals(const CIMScope& arg) const
-	{
-		return (m_val == arg.m_val);
-	}
+	bool equals(const CIMScope& arg) const;
 	/**
 	 * Determine if another scope is equal to this one.
 	 * @param arg The scope to check for equality against.
 	 * @return true if arg is equal to this scope. Otherwise false.
 	 */
-	bool operator == (const CIMScope& arg) const
-	{
-		return equals(arg);
-	}
+	bool operator == (const CIMScope& arg) const;
 	/**
 	 * Determine if another scope is not equal to this one.
 	 * @param arg The scope to check for inequality against.
 	 * @return true if arg is not equal to this scope. Otherwise false.
 	 */
-	bool operator != (const CIMScope& arg) const
-	{
-		return !equals(arg);
-	}
+	bool operator != (const CIMScope& arg) const;
 
-	typedef Scope CIMScope::*safe_bool;
+	typedef detail::CIMScopeRepRef CIMScope::*safe_bool;
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	operator safe_bool () const
-		{  return (validScope(m_val) == true) ? &CIMScope::m_val : 0; }
-	bool operator!() const
-		{  return !validScope(m_val); }
+	operator safe_bool () const;
+	bool operator!() const;
 	/**
 	 * @return The string representation of this scopy
 	 */
@@ -158,17 +142,13 @@ public:
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
+
+	detail::CIMScopeRepRef getRep() const;
 private:
-	static bool validScope(Scope val)
-	{
-		return (val > BAD && val < MAXSCOPE);
-	}
-	Scope m_val;
-	friend bool operator<(const CIMScope& x, const CIMScope& y)
-	{
-		return x.m_val < y.m_val;
-	}
+	detail::CIMScopeRepRef m_rep;
 };
+
+bool operator<(const CIMScope& x, const CIMScope& y);
 
 } // end namespace OWBI1
 

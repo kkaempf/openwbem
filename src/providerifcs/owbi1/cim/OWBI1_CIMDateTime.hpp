@@ -113,7 +113,6 @@ OWBI1_DECLARE_APIEXCEPTION(CIMDateTime, OWBI1_COMMON_API);
 class OWBI1_OWBI1PROVIFC_API CIMDateTime
 {
 public:
-	struct DateTimeData;
 	
 	/**
 	 * Create a new interval type of CIMDateTime set to 0's
@@ -160,6 +159,9 @@ public:
 	 *		represents.
 	 */
 	explicit CIMDateTime(UInt64 microSeconds);
+
+	explicit CIMDateTime(const detail::CIMDateTimeRepRef& rep);
+
 	/**
 	 * Assignment operation
 	 * @param arg	The CIMDateTime object to assign to this one.
@@ -305,12 +307,14 @@ public:
 	 */
 	DateTime toDateTime() const;
 
-	typedef COWIntrusiveReference<DateTimeData> CIMDateTime::*safe_bool;
+	typedef detail::CIMDateTimeRepRef CIMDateTime::*safe_bool;
 	/**
 	 * @return true If this CIMDateTime is not comprised of zero values.
 	 */
 	operator safe_bool () const;
 	bool operator!() const;
+
+	detail::CIMDateTimeRepRef getRep() const;
 private:
 
 #ifdef OWBI1_WIN32
@@ -318,7 +322,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<DateTimeData> m_dptr;
+	detail::CIMDateTimeRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)

@@ -54,7 +54,6 @@ namespace OWBI1
 class OWBI1_OWBI1PROVIFC_API CIMProperty : public CIMElement
 {
 public:
-	struct PROPData;
 	static const char* const NAME_PROPERTY;
 	/**
 	 * Create a new CIMProperty object.
@@ -92,6 +91,8 @@ public:
 	 * @param arg The CIMProperty to make this object a copy of.
 	 */
 	CIMProperty(const CIMProperty& arg);
+
+	explicit CIMProperty(const detail::CIMPropertyRepRef& rep);
 	/**
 	 * Destroy this CIMProperty object.
 	 */
@@ -107,14 +108,12 @@ public:
 	 */
 	CIMProperty& operator= (const CIMProperty& arg);
 
-	typedef COWIntrusiveReference<PROPData> CIMProperty::*safe_bool;
+	typedef detail::CIMPropertyRepRef CIMProperty::*safe_bool;
 	/**
 	 * @return true If this CIMProperty has an implementation.
 	 */
-	operator safe_bool () const
-		{  return m_pdata ? &CIMProperty::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	operator safe_bool () const;
+	bool operator!() const;
 	/**
 	 * Get the qualifiers for this property
 	 * @return An CIMQualifierArray with the qualifiers for this property
@@ -216,9 +215,9 @@ public:
 	/**
 	 * Add a qualifier to this property.
 	 * @param qual	The CIMQualifier to add to this property.
-	 * @return a reference to *this
+	 * @return true if added, false if it already exists
 	 */
-	CIMProperty& addQualifier(const CIMQualifier& qual);
+	bool addQualifier(const CIMQualifier& qual);
 	/**
 	 * Remove a qualifier from this property.
 	 * @param qname	The name of the qualifier to remove.
@@ -286,6 +285,8 @@ public:
 	 * @return true if the qualifier exists and has a value of true.
 	 */
 	bool hasTrueQualifier(const CIMName& name) const;
+
+	detail::CIMPropertyRepRef getRep() const;
 private:
 
 #ifdef OWBI1_WIN32
@@ -293,14 +294,15 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<PROPData> m_pdata;
+	detail::CIMPropertyRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)
 #endif
 
-	friend OWBI1_OWBI1PROVIFC_API bool operator<(const CIMProperty& x, const CIMProperty& y);
 };
+
+OWBI1_OWBI1PROVIFC_API bool operator<(const CIMProperty& x, const CIMProperty& y);
 
 } // end namespace OWBI1
 

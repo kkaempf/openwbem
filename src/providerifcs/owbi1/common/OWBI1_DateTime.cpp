@@ -99,10 +99,9 @@ struct tm *gmtime_r(const time_t *timep, struct tm *result)
 namespace OWBI1
 {
 
-using namespace OpenWBEM;
+using namespace detail;
 using std::istream;
 using std::ostream;
-namespace ExceptionIds = ::OpenWBEM::ExceptionIds;
 //////////////////////////////////////////////////////////////////////////////
 OWBI1_DEFINE_EXCEPTION_WITH_ID(DateTime);
 
@@ -962,6 +961,11 @@ DateTime::DateTime(int year, int month, int day, int hour, int minute,
 	set(year, month, day, hour, minute, second, microseconds, timeOffset);
 }
 //////////////////////////////////////////////////////////////////////////////									
+DateTime::DateTime(const DateTimeRepRef& rep)
+	: m_rep(rep)
+{
+}
+//////////////////////////////////////////////////////////////////////////////									
 DateTime::~DateTime()
 {
 }
@@ -1293,6 +1297,71 @@ DateTime::getCurrent()
 	current.setToCurrent();
 	return current;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+DateTimeRepRef
+DateTime::getRep() const
+{
+	return m_rep;
+}
+
+	void addSeconds(long seconds)
+	{
+		m_time += seconds;
+	}
+	/**
+	 * Add minutes to the date represented by this object.
+	 * @param minutes The number of minutes to add to this object.
+	 */
+	void addMinutes(long minutes)
+	{
+		m_time += minutes * 60;
+	}
+	/**
+	 * Add hours to the date represented by this object.
+	 * @param hours The number of hours to add to this object.
+	 */
+	void addHours(long hours) {  m_time += hours * 60 * 60; }
+	/**
+	 * Less than operator
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is less than the given DateTime object.
+	 */
+	bool operator< ( const DateTime& tm ) const
+	{
+		if (m_time == tm.m_time)
+		{
+			return m_microseconds < tm.m_microseconds;
+		}
+		return m_time < tm.m_time;
+	}
+	/**
+	 * Greater than operator
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is greater than the given DateTime object.
+	 */
+	bool operator> ( const DateTime& tm ) const
+	{
+		return tm < *this;
+	}
+	/**
+	 * Equality operator
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is equal to the given DateTime object.
+	 */
+	bool operator== ( const DateTime& tm ) const
+	{
+		return m_time == tm.m_time && m_microseconds == tm.m_microseconds;
+	}
+
+	bool operator== ( const DateTime& tm ) const
+	{
+		return m_time == tm.m_time && m_microseconds == tm.m_microseconds;
+	}
+	Int16 toLocal(struct tm & tt) const
+	{
+		return  DateTime::localTimeAndOffset(m_time, tt);
+	}
 
 } // end namespace OWBI1
 

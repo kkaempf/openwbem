@@ -70,16 +70,21 @@ public:
 	 *		string.
 	 */
 	CIMName(const char* name);
+	CIMName(const CIMName& other);
+
+	explicit CIMName(const detail::CIMNameRepRef& rep);
 
 	~CIMName();
 	
 	CIMName& operator=(const String& name);
 	CIMName& operator=(const char* name);
+	CIMName& operator=(const CIMName& other);
 
 	/**
 	 * Get the String representation of the CIM Name
 	 */
 	String toString() const;
+	const char* c_str() const;
 	
 	/**
 	 * Read the object from an input stream.
@@ -100,15 +105,16 @@ public:
 	 */
 	bool isValid() const;
 
-	typedef String CIMName::*safe_bool;
+	typedef detail::CIMNameRepRef CIMName::*safe_bool;
 	operator safe_bool () const;
 	bool operator!() const;
 
 	friend OWBI1_OWBI1PROVIFC_API bool operator<(const CIMName& x, const CIMName& y);
 	friend OWBI1_OWBI1PROVIFC_API bool operator==(const CIMName& x, const CIMName& y);
+	detail::CIMNameRepRef getRep() const;
 
 private:
-	String m_name;
+	detail::CIMNameRepRef m_rep;
 
 };
 

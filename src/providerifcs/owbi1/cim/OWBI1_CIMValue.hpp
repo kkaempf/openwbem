@@ -52,7 +52,6 @@ namespace OWBI1
  */
 class OWBI1_OWBI1PROVIFC_API CIMValue : public CIMBase
 {
-	class CIMValueImpl;
 public:
 	/**
 	 * Create an CIMValue object of a specified type from a string.
@@ -253,6 +252,8 @@ public:
 	 * @param x The instance array this object will contain.
 	 */
 	explicit CIMValue(const CIMInstanceArray& x);
+
+	explicit CIMValue(const detail::CIMValueRepRef& rep);
 private:
 	// These are private/unimplemented to help prevent unintended errors of
 	// passing a pointer to the constructor.
@@ -445,17 +446,9 @@ public:
 	 */
 	virtual void setNull();
 
-	typedef COWIntrusiveReference<CIMValueImpl> CIMValue::*safe_bool;
-	operator safe_bool () const
-		{  return (m_impl) ? &CIMValue::m_impl : 0; }
-	bool operator!() const
-		{  return !m_impl; }
-	/**
-	 * Assign another CIMValue to this one.
-	 * @param x The CIMValue to assign to this one.
-	 * @return A reference to this CIMValue object.
-	 */
-	CIMValue& set(const CIMValue& x);
+	typedef detail::CIMValueRepRef CIMValue::*safe_bool;
+	operator safe_bool () const;
+	bool operator!() const;
 	/**
 	 * Assignment operator
 	 * @param x The CIMValue to assign to this one.
@@ -552,6 +545,8 @@ public:
 	 * @return true if this CIMValue object contains a numeric type.
 	 */
 	bool isNumericType() const;
+
+	detail::CIMValueRepRef getRep() const;
 private:
 
 #ifdef OWBI1_WIN32
@@ -559,7 +554,7 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<CIMValueImpl> m_impl;
+	detail::CIMValueRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)

@@ -57,8 +57,6 @@ namespace OWBI1
 class OWBI1_OWBI1PROVIFC_API CIMClass : public CIMElement
 {
 public:
-	struct CLSData;
-
 	/**
 	 * Binary serialization version.
 	 * Version 1 had a language.
@@ -86,6 +84,8 @@ public:
 	 */
 	explicit CIMClass(const char* name);
 	CIMClass(const CIMClass& x);
+
+	explicit CIMClass(const detail::CIMClassRepRef& rep);
 	
 	/**
 	 * Destroy this CIMClass object and decrement the refcount on the
@@ -340,18 +340,16 @@ public:
 	 */
 	virtual String toString() const;
 
-	typedef COWIntrusiveReference<CLSData> CIMClass::*safe_bool;
+	typedef detail::CIMClassRepRef CIMClass::*safe_bool;
+
 	/**
 	 * @return true if this CIMClass in not a NULL object.
 	 */
-	operator safe_bool () const
-	{
-		return m_pdata ? &CIMClass::m_pdata : 0;
-	}
-	bool operator!() const
-	{
-		return !this->m_pdata;
-	}
+	operator safe_bool () const;
+	bool operator!() const;
+
+	detail::CIMClassRepRef getRep() const;
+
 private:
 
 #ifdef OWBI1_WIN32
@@ -359,16 +357,16 @@ private:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<CLSData> m_pdata;
+	detail::CIMClassRepRef m_rep;
 
 #ifdef OWBI1_WIN32
 #pragma warning (pop)
 #endif
 
-	friend OWBI1_OWBI1PROVIFC_API bool operator<(const CIMClass& x, const CIMClass& y);
-	friend OWBI1_OWBI1PROVIFC_API bool operator==(const CIMClass& x, const CIMClass& y);
 };
 
+OWBI1_OWBI1PROVIFC_API bool operator<(const CIMClass& x, const CIMClass& y);
+OWBI1_OWBI1PROVIFC_API bool operator==(const CIMClass& x, const CIMClass& y);
 OWBI1_OWBI1PROVIFC_API bool operator<=(const CIMClass& x, const CIMClass& y);
 OWBI1_OWBI1PROVIFC_API bool operator>(const CIMClass& x, const CIMClass& y);
 OWBI1_OWBI1PROVIFC_API bool operator>=(const CIMClass& x, const CIMClass& y);

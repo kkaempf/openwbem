@@ -35,83 +35,63 @@
 
 #include "OWBI1_config.h"
 #include "OWBI1_CIMQualifierType.hpp"
-#include "OWBI1_CIMValueCast.hpp"
-#include "OWBI1_StringBuffer.hpp"
-#include "OW_BinarySerialization.hpp"
-#include "OW_StrictWeakOrdering.hpp"
+#include "OWBI1_CIMQualifierTypeRep.hpp"
+#include "OWBI1_CIMName.hpp"
+#include "OWBI1_CIMNameRep.hpp"
 #include "OWBI1_CIMScope.hpp"
+#include "OWBI1_CIMScopeRep.hpp"
+#include "OWBI1_Array.hpp"
+#include "OWBI1_CIMDetail.hpp"
 #include "OWBI1_CIMDataType.hpp"
-#include "OWBI1_CIMFlavor.hpp"
+#include "OWBI1_CIMDataTypeRep.hpp"
 #include "OWBI1_CIMValue.hpp"
-#include "OWBI1_COWIntrusiveCountableBase.hpp"
-#include "OWBI1_Bool.hpp"
+#include "OWBI1_CIMValueRep.hpp"
+#include "OWBI1_CIMFlavor.hpp"
+#include "OWBI1_CIMFlavorRep.hpp"
 
-#include <algorithm> // for std::sort
 
 namespace OWBI1
 {
-using namespace OpenWBEM;
+using namespace detail;
 using std::istream;
 using std::ostream;
 
-struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
-{
-	QUALTData()
-		: m_defaultValue(CIMNULL)
-	{}
-	CIMName m_name;
-	CIMDataType m_dataType;
-	CIMScopeArray m_scope;
-	CIMFlavorArray m_flavor;
-	CIMValue m_defaultValue;
-	QUALTData* clone() const { return new QUALTData(*this); }
-};
-//////////////////////////////////////////////////////////////////////////////
-bool operator<(const CIMQualifierType::QUALTData& x, const CIMQualifierType::QUALTData& y)
-{
-	return StrictWeakOrdering(
-		x.m_name, y.m_name,
-		x.m_dataType, y.m_dataType,
-		x.m_scope, y.m_scope,
-		x.m_flavor, y.m_flavor,
-		x.m_defaultValue, y.m_defaultValue);
-}
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMQualifierType& x, const CIMQualifierType& y)
 {
-	return *x.m_pdata < *y.m_pdata;
+	return *x.getRep() < *y.getRep();
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMQualifierType::CIMQualifierType() :
-	CIMElement(), m_pdata(new QUALTData)
-{
-	addFlavor(CIMFlavor::ENABLEOVERRIDE);
-	addFlavor(CIMFlavor::TOSUBCLASS);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMQualifierType::CIMQualifierType(CIMNULL_t) :
-	CIMElement(), m_pdata(0)
+CIMQualifierType::CIMQualifierType() 
+	: m_rep(new CIMQualifierTypeRep(OpenWBEM::CIMQualifierType()))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMQualifierType::CIMQualifierType(const CIMName& name) :
-	CIMElement(), m_pdata(new QUALTData)
+CIMQualifierType::CIMQualifierType(CIMNULL_t) 
+	: m_rep(new CIMQualifierTypeRep(OpenWBEM::CIMQualifierType(OpenWBEM::CIMNULL)))
 {
-	m_pdata->m_name = name;
-	addFlavor(CIMFlavor::ENABLEOVERRIDE);
-	addFlavor(CIMFlavor::TOSUBCLASS);
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMQualifierType::CIMQualifierType(const char* name) :
-	CIMElement(), m_pdata(new QUALTData)
+CIMQualifierType::CIMQualifierType(const CIMName& name)
+	: m_rep(new CIMQualifierTypeRep(OpenWBEM::CIMQualifierType(name.getRep()->name)))
 {
-	m_pdata->m_name = name;
-	addFlavor(CIMFlavor::ENABLEOVERRIDE);
-	addFlavor(CIMFlavor::TOSUBCLASS);
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMQualifierType::CIMQualifierType(const CIMQualifierType& x) :
-	CIMElement(), m_pdata(x.m_pdata)
+CIMQualifierType::CIMQualifierType(const char* name)
+	: m_rep(new CIMQualifierTypeRep(OpenWBEM::CIMQualifierType(name)))
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMQualifierType::CIMQualifierType(const CIMQualifierTypeRepRef& rep)
+	: m_rep(rep)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMQualifierType::CIMQualifierType(const CIMQualifierType& x) 
+	: CIMElement(x)
+	, m_rep(x.m_rep)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -122,49 +102,44 @@ CIMQualifierType::~CIMQualifierType()
 CIMQualifierType&
 CIMQualifierType::operator= (const CIMQualifierType& x)
 {
-	m_pdata = x.m_pdata;
+	m_rep = x.m_rep;
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMQualifierType::setNull()
 {
-	m_pdata = NULL;
+	m_rep->qualtype.setNull();
 }
 //////////////////////////////////////////////////////////////////////////////
-const CIMScopeArray&
-CIMQualifierType::getScope() const
+CIMScopeArray
+CIMQualifierType::getScopes() const
 {
-	return m_pdata->m_scope;
+	return wrapArray<CIMScopeArray>(m_rep->qualtype.getScope());
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDataType
 CIMQualifierType::getDataType() const
 {
-	return m_pdata->m_dataType;
+	return CIMDataType(new CIMDataTypeRep(m_rep->qualtype.getDataType()));
 }
 //////////////////////////////////////////////////////////////////////////////
 Int32
 CIMQualifierType::getDataSize() const
 {
-	return m_pdata->m_dataType.getSize();
+	return m_rep->qualtype.getDataSize();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
 CIMQualifierType::getDefaultValue() const
 {
-	return m_pdata->m_defaultValue;
+	return CIMValue(CIMValueRepRef(new CIMValueRep(m_rep->qualtype.getDefaultValue())));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType&
 CIMQualifierType::setDataType(const CIMDataType& dataType)
 {
-	m_pdata->m_dataType = dataType;
-	if (m_pdata->m_defaultValue)
-	{
-		m_pdata->m_defaultValue = CIMValueCast::castValueToDataType(
-			m_pdata->m_defaultValue, m_pdata->m_dataType);
-	}
+	m_rep->qualtype.setDataType(dataType.getRep()->datatype);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -177,195 +152,83 @@ CIMQualifierType::setDataType(const CIMDataType::Type& dataType)
 CIMQualifierType&
 CIMQualifierType::setDefaultValue(const CIMValue& defValue)
 {
-	m_pdata->m_defaultValue = defValue;
-	if (m_pdata->m_defaultValue)
-	{
-		m_pdata->m_defaultValue = CIMValueCast::castValueToDataType(
-			m_pdata->m_defaultValue, m_pdata->m_dataType);
-	}
+	m_rep->qualtype.setDefaultValue(defValue.getRep()->value);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType&
 CIMQualifierType::addScope(const CIMScope& newScope)
 {
-	if (newScope)
-	{
-		if (!hasScope(newScope))
-		{
-			if (newScope == CIMScope::ANY)
-			{
-				m_pdata->m_scope.clear();
-			}
-			m_pdata->m_scope.append(newScope);
-		}
-	}
+	m_rep->qualtype.addScope(newScope.getRep()->scope);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMQualifierType::hasScope(const CIMScope& scopeArg) const
 {
-	if (scopeArg)
-	{
-		size_t tsize = m_pdata->m_scope.size();
-		for (size_t i = 0; i < tsize; i++)
-		{
-			if (m_pdata->m_scope[i].getScope() == scopeArg.getScope())
-			{
-				return true;
-			}
-		}
-	}
-	return false;
+	return m_rep->qualtype.hasScope(scopeArg.getRep()->scope);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMQualifierType::hasFlavor(const CIMFlavor& flavorArg) const
 {
-	if (flavorArg)
-	{
-		size_t tsize = m_pdata->m_flavor.size();
-		for (size_t i = 0; i < tsize; i++)
-		{
-			if (m_pdata->m_flavor[i].getFlavor() == flavorArg.getFlavor())
-			{
-				return true;
-			}
-		}
-	}
-	return false;
+	return m_rep->qualtype.hasFlavor(flavorArg.getRep()->flavor);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType&
 CIMQualifierType::addFlavor(const CIMFlavor& newFlavor)
 {
-	Int32 flavor = newFlavor.getFlavor();
-	if (newFlavor)
-	{
-		if (!hasFlavor(newFlavor))
-		{
-			switch (flavor)
-			{
-				case CIMFlavor::ENABLEOVERRIDE:
-					removeFlavor(CIMFlavor::DISABLEOVERRIDE);
-					break;
-				case CIMFlavor::DISABLEOVERRIDE:
-					removeFlavor(CIMFlavor::ENABLEOVERRIDE);
-					break;
-				case CIMFlavor::RESTRICTED:
-					removeFlavor(CIMFlavor::TOSUBCLASS);
-					break;
-				case CIMFlavor::TOSUBCLASS:
-					removeFlavor(CIMFlavor::RESTRICTED);
-					break;
-			}
-			m_pdata->m_flavor.append(newFlavor);
-		}
-	}
+	m_rep->qualtype.addFlavor(newFlavor.getRep()->flavor);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType&
 CIMQualifierType::removeFlavor(const Int32 flavor)
 {
-	size_t i = 0;
-	while (i < m_pdata->m_flavor.size())
-	{
-		if (m_pdata->m_flavor[i].getFlavor() == flavor)
-		{
-			m_pdata->m_flavor.remove(i);
-		}
-		else
-		{
-			++i;
-		}
-	}
+	m_rep->qualtype.removeFlavor(flavor);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMFlavorArray
 CIMQualifierType::getFlavors() const
 {
-	return m_pdata->m_flavor;
+	return wrapArray<CIMFlavorArray>(m_rep->qualtype.getFlavors());
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMQualifierType::hasDefaultValue() const
 {
-	return m_pdata->m_defaultValue ? true : false;
+	return m_rep->qualtype.hasDefaultValue();
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMQualifierType::isDefaultValueArray() const
 {
-	bool isra = false;
-	if (m_pdata->m_defaultValue)
-	{
-		isra = m_pdata->m_defaultValue.isArray();
-	}
-	return isra;
+	return m_rep->qualtype.isDefaultValueArray();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMName
 CIMQualifierType::getName() const
 {
-	return m_pdata->m_name;
+	return CIMName(new CIMNameRep(m_rep->qualtype.getName()));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMQualifierType::setName(const CIMName& name)
 {
-	m_pdata->m_name = name;
+	m_rep->qualtype.setName(name.getRep()->name);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMQualifierType::writeObject(ostream &ostrm) const
 {
-	CIMBase::writeSig( ostrm, OWBI1_CIMQUALIFIERTYPESIG );
-	m_pdata->m_name.writeObject(ostrm);
-	m_pdata->m_dataType.writeObject(ostrm);
-	BinarySerialization::writeArray(ostrm, m_pdata->m_scope);
-	BinarySerialization::writeArray(ostrm, m_pdata->m_flavor);
-	if (m_pdata->m_defaultValue)
-	{
-		Bool(true).writeObject(ostrm);
-		m_pdata->m_defaultValue.writeObject(ostrm);
-	}
-	else
-	{
-		Bool(false).writeObject(ostrm);
-	}
+	m_rep->qualtype.writeObject(ostrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMQualifierType::readObject(istream &istrm)
 {
-	CIMName name;
-	CIMDataType dataType(CIMNULL);
-	CIMScopeArray scope;
-	CIMFlavorArray flavor;
-	CIMValue defaultValue(CIMNULL);
-	CIMBase::readSig( istrm, OWBI1_CIMQUALIFIERTYPESIG );
-	name.readObject(istrm);
-	dataType.readObject(istrm);
-	BinarySerialization::readArray(istrm, scope);
-	BinarySerialization::readArray(istrm, flavor);
-	Bool isValue;
-	isValue.readObject(istrm);
-	if (isValue)
-	{
-		defaultValue.readObject(istrm);
-	}
-	if (!m_pdata)
-	{
-		m_pdata = new QUALTData;
-	}
-	m_pdata->m_name = name;
-	m_pdata->m_dataType = dataType;
-	m_pdata->m_scope = scope;
-	m_pdata->m_flavor = flavor;
-	m_pdata->m_defaultValue = defaultValue;
+	m_rep->qualtype.readObject(istrm);
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -377,69 +240,27 @@ CIMQualifierType::toString() const
 String
 CIMQualifierType::toMOF() const
 {
-	size_t i;
-	StringBuffer rv;
-	rv = "Qualifier ";
-	rv += m_pdata->m_name.toString();
-	rv += " : ";
-	rv += m_pdata->m_dataType.toMOF();
-	if (m_pdata->m_dataType.isArrayType())
-	{
-		rv += '[';
-		if (m_pdata->m_dataType.getSize() != -1) // -1 means unlimited
-		{
-			rv += m_pdata->m_dataType.getSize();
-		}
-		rv += ']';
-	}
-	if (m_pdata->m_defaultValue)
-	{
-		rv += " = ";
-		rv += m_pdata->m_defaultValue.toMOF();
-	}
-	if (m_pdata->m_scope.size() > 0)
-	{
-		rv += ", Scope(";
-		CIMScopeArray scopes(m_pdata->m_scope);
-		std::sort(scopes.begin(), scopes.end());
-		for (i = 0; i < scopes.size(); i++)
-		{
-			if (i > 0)
-			{
-				rv += ',';
-			}
-			rv += scopes[i].toMOF();
-		}
-		rv += ')';
-	}
-	if (m_pdata->m_flavor.size() > 0)
-	{
-		CIMFlavorArray toPrint;
-		// first filter out the default flavors.
-		for (i = 0; i < m_pdata->m_flavor.size(); i++)
-		{
-			if (m_pdata->m_flavor[i].getFlavor() != CIMFlavor::ENABLEOVERRIDE
-				&& m_pdata->m_flavor[i].getFlavor() != CIMFlavor::TOSUBCLASS)
-			{
-				toPrint.push_back(m_pdata->m_flavor[i]);
-			}
-		}
-		if (toPrint.size() > 0)
-		{
-			rv += ", Flavor(";
-			for (i = 0; i < toPrint.size(); i++)
-			{
-				if (i > 0)
-				{
-					rv += ',';
-				}
-				rv += toPrint[i].toMOF();
-			}
-			rv += ')';
-		}
-	}
-	rv += ";\n";
-	return rv.releaseString();
+	return m_rep->qualtype.toMOF().c_str();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMQualifierType::operator safe_bool () const
+{  
+	return m_rep->qualtype ? &CIMQualifierType::m_rep : 0; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool
+CIMQualifierType::operator!() const
+{  
+	return !m_rep->qualtype; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
+detail::CIMQualifierTypeRepRef
+CIMQualifierType::getRep() const
+{
+	return m_rep;
 }
 
 } // end namespace OWBI1

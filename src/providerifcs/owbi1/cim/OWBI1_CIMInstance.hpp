@@ -81,8 +81,6 @@ namespace OWBI1
 class OWBI1_OWBI1PROVIFC_API CIMInstance : public CIMElement
 {
 public:
-	struct INSTData;
-	
 	enum { SERIALIZATION_VERSION = 1 };				// Version # for serialization
 	
 	enum EErrorCodes
@@ -114,6 +112,9 @@ public:
 	 * @param name	The class name of this CIMInstance as a NULL terminated string.
 	 */
 	explicit CIMInstance(const char* name);
+
+	explicit CIMInstance(const detail::CIMInstanceRepRef& rep);
+
 	/**
 	 * Destroy this CIMInstance object.
 	 */
@@ -153,36 +154,6 @@ public:
 	 * @param language The new language for this CIMClass
 	 */
 	void setLanguage(const String& language);
-	/**
-	 * @return The qualifiers for this instance as an array of CIMQualifiers.
-	 */
-	CIMQualifierArray getQualifiers() const;
-	/**
-	 * Get the qualifier associated with the given name.
-	 * @param qualName The name of the qualifier to retrieve.
-	 * @return A valid CIMQalifier on success. Otherwise a null
-	 * CIMQualifier
-	 */
-	CIMQualifier getQualifier(const CIMName& qualName) const;
-	/**
-	 * Remove the named qualifier from this CIMInstance.
-	 * @param qualName The name of the qualifier to remove.
-	 * @return a reference to *this
-	 */
-	CIMInstance& removeQualifier(const CIMName& qualName);
-	/**
-	 * Set the qualifiers for this instance. Any old qualifiers will removed.
-	 * @param quals An CIMQualifierArray with the new qualifers for this
-	 *		instance.
-	 * @return a reference to *this
-	 */
-	CIMInstance& setQualifiers(const CIMQualifierArray& quals);
-	/**
-	 * Set/Add a qualifier to this instance's qualifier list
-	 * @param qual	The qualifier to add to this instance.
-	 * @return a reference to *this
-	 */
-	CIMInstance& setQualifier(const CIMQualifier& qual);
 	/**
 	 * Get all the properties of a specific datatype from this instance.
 	 * @param valueDataType	All properties returned must have this datatype.
@@ -369,12 +340,11 @@ public:
 	 */
 	bool propertiesAreEqualTo(const CIMInstance& other) const;
 
-	typedef COWIntrusiveReference<INSTData> CIMInstance::*safe_bool;
-	operator safe_bool () const
-		{  return m_pdata ? &CIMInstance::m_pdata : 0; }
-	bool operator!() const
-		{  return !m_pdata; }
+	typedef detail::CIMInstanceRepRef CIMInstance::*safe_bool;
+	operator safe_bool () const;
+	bool operator!() const;
 	
+	detail::CIMInstanceRepRef getRep() const;
 protected:
 	void _buildKeys();
 
@@ -383,7 +353,7 @@ protected:
 #pragma warning (disable: 4251)
 #endif
 
-	COWIntrusiveReference<INSTData> m_pdata;
+	detail::CIMInstanceRepRef m_rep;
 	
 #ifdef OWBI1_WIN32
 #pragma warning (pop)
