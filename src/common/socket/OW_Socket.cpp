@@ -153,6 +153,11 @@ Socket::shutdownAllSockets()
 	MutexLock mlock(shutdownMutex);
 
 	OW_ASSERT(s_shutDownMechanism != 0);
+	if (!s_shutDownMechanism)
+	{
+		return;
+	}
+
 	b_gotShutDown = true;
 #if defined(OW_WIN32)
 	::SetEvent(s_shutDownMechanism);
