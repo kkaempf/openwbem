@@ -99,10 +99,12 @@ dlSharedLibrary::dlSharedLibrary(void * libhandle, const String& libName)
   
 dlSharedLibrary::~dlSharedLibrary()
 {
+#if !defined(OW_VALGRIND_SUPPORT) // dlclose()ing shared libs make it impossible to see where memory leaks occurred with valgrind.
 	if (m_call_dlclose)
 	{
 		dlclose( m_libhandle );
 	}
+#endif
 }
 bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 		void** fp) const

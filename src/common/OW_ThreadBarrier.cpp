@@ -38,7 +38,7 @@
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
 
-#if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
+#if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER) && !defined(OW_VALGRIND_SUPPORT)
  #include <pthread.h>
 #else
  // This is for the generic less-efficient version
@@ -53,7 +53,7 @@ namespace OpenWBEM
 
 OW_DEFINE_EXCEPTION_WITH_ID(ThreadBarrier);
 
-#if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
+#if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER) && !defined(OW_VALGRIND_SUPPORT) // valgrind doesn't support pthread_barrier_*()
 class ThreadBarrierImpl
 {
 public:

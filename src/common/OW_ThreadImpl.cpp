@@ -236,9 +236,11 @@ createThread(Thread_t& handle, ThreadFunction func,
 		pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	}
 
+#if !defined(OW_VALGRIND_SUPPORT) // valgrind doesn't like us to set the stack size
 	// Won't be set to true unless _POSIX_THREAD_ATTR_STACKSIZE is defined
 	if (default_stack_size::needsSetting)
 		pthread_attr_setstacksize(&attr, default_stack_size::val);
+#endif
 
 	LocalThreadParm* parg = new LocalThreadParm;
 	parg->m_func = func;
