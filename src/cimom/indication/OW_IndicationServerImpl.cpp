@@ -740,11 +740,25 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	// If activateFilter calls fail or throw, just ignore it and keep going.
 	// If none succeed, we need to remove it from m_subscriptions and throw 
 	// to indicate that subscription creation failed.
+	int successfulActivations = 0;
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
 		bool firstActivation = true; // TODO: Figure out firstActivation
-		providers[i]->activateFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
-			selectStmt, indicationClassName, ns, isaClassNames, firstActivation);
+		try
+		{
+			providers[i]->activateFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
+				selectStmt, indicationClassName, ns, isaClassNames, firstActivation);
+			
+			++successfulActivations;
+		}
+		catch (OW_CIMException& ce)
+		{
+			m_env->getLogger()->logError(format("Caught exception while calling activateFilter for provider: %1", ce));
+		}
+		catch (...)
+		{
+			m_env->getLogger()->logError("Caught unknown exception while calling activateFilter for provider");
+		}
 	}
 
 }

@@ -93,6 +93,9 @@ public:
 	OW_DateTime getLastAccessTime() const  { return m_dt; }
 
 	void updateAccessTime();
+	
+	virtual bool canUnload() { return true; }
+
 protected:
 
 private:

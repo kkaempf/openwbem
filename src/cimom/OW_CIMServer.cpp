@@ -1395,8 +1395,7 @@ OW_CIMServer::invokeMethod(
 				// The parameter wasn't specified.
 				// Parameters are optional unless they have a Required(true)
 				// qualifier
-				OW_CIMQualifier reqd(methodInParams[i].getQualifier(OW_CIMQualifier::CIM_QUAL_REQUIRED));
-				if (reqd && reqd.getValue() == OW_CIMValue(true))
+				if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_REQUIRED))
 				{
 					OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
 						"Parameter %1 was not specified.", parameterName).c_str());
@@ -1434,7 +1433,7 @@ OW_CIMServer::invokeMethod(
 
 			// if the in param is also an out param, assign the value to the out
 			// params array
-			if (methodInParams[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+			if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
 			{
 				size_t j;
 				for (j = 0; j < outParams.size(); ++j)

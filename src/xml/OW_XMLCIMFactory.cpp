@@ -679,6 +679,7 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 	}
 	catch (const OW_StringConversionException& e)
 	{
+		// Workaround for SNIA client which sends <VALUE>NULL</VALUE> for NULL values
 		if (parser.getData().equalsIgnoreCase("NULL"))
 		{
 			rval = OW_CIMValue();
@@ -909,7 +910,26 @@ struct valueIsEmbeddedClass
 	}
 };
 
+bool isKnownEmbeddedObjectName(OW_String name)
+{
+	// This is a bad hack, hopefully EmbeddedObject will become a real
+	// data type someday.
+	// This is all property names in the CIM Schema (as of 2.7.1) that have
+	// an EmbeddedObject(true) qualifier.
+
+	// If this list gets much bigger, use a HashMap
+	name.toLowerCase();
+	return 
+		name.equals("sourceinstance") ||
+		name.equals("previousinstance") ||
+		name.equals("methodparameters") ||
+		name.equals("classdefinition") ||
+		name.equals("previousclassdefinition") ||
+		name.equals("indobject");
 }
+
+}
+
 
 ///////////////////////////////////
 OW_CIMProperty
@@ -1015,9 +1035,19 @@ OW_XMLCIMFactory::createProperty(OW_CIMXMLParser& parser)
 	}
 
 	// handle embedded class or instance
-	if (rval.getQualifier(OW_CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
+	// This checks for prescense of EmbeddedObject(true) qualifier
+	// or if the name of the property is a known embedded object from the
+	// CIM Schema (ClassDefinition, PreviousClassDefinition, SourceInstance,
+	// PreviousInstance, MethodParameters, IndObject)
+	// Unfortunately qualifiers usually aren't on instances, and we don't
+	// want to always try to convert any string property to an embedded
+	// instance, so we just settle for known cases.  SourceInstance is
+	// the name of the embedded 
+	if ((rval.hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
 		rval.getDataType().getType() == OW_CIMDataType::STRING &&
-		rval.getValue())
+		rval.getValue()) ||
+		isKnownEmbeddedObjectName(rval.getName())
+		)
 	{
 		if (rval.getDataType().isArrayType())
 		{

@@ -550,7 +550,7 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 
 	// Propagate Properties from parent class.
 	//
-	// ATTN: Regardless of whether there is an override
+	// TODO: Regardless of whether there is an override
 	// this will perform override like behavior - probably
 	// need to add validation code...
 	//

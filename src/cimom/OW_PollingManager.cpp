@@ -273,7 +273,7 @@ OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 		createProvEnvRef(OW_ACLInfo(), m_env));
 
 	m_env->logDebug(format("OW_PollingManager poll interval for provider"
-		" %2", tr.m_pollInterval));
+		" %1", tr.m_pollInterval));
 
 	if(!tr.m_pollInterval)
 	{

@@ -77,6 +77,11 @@ public:
 	{
 	}
 
+	~OW_IndicationProviderTest3()
+	{
+		cleanup();
+	}
+
 	// Indication provider methods
 	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &env, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&)
 	{
@@ -366,7 +371,7 @@ private:
 					OW_CIMInstance expInst(true);
 					expInst.setClassName("CIM_InstDeletion");
 					expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[i]));
-					hdl->exportIndication(expInst, "");
+					hdl->exportIndication(expInst, "root/testsuite");
 				}
 			}
 			m_insts.clear();
@@ -387,7 +392,7 @@ private:
 				OW_CIMInstance expInst(true);
 				expInst.setClassName("CIM_InstCreation");
 				expInst.setProperty("SourceInstance", OW_CIMValue(iToAdd));
-				hdl->exportIndication(expInst, "");
+				hdl->exportIndication(expInst, "root/testsuite");
 			}
 			m_insts.push_back(iToAdd);
 
@@ -403,7 +408,7 @@ private:
 				expInst.setClassName("CIM_InstModification");
 				expInst.setProperty("PreviousInstance", OW_CIMValue(prevInst));
 				expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[0]));
-				hdl->exportIndication(expInst, "");
+				hdl->exportIndication(expInst, "root/testsuite");
 			}
 		}
 	}

@@ -589,10 +589,11 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 	{
 		OW_DateTime provDt = iter->second->getLastAccessTime();
 		provDt.addMinutes(iTimeWindow);
-		if (provDt < dt)
+		if (provDt < dt && iter->second->canUnload())
 		{
 			env->getLogger()->logCustInfo(format("Unloading Provider %1", iter->first));
-			iter->second->cleanup();
+			// TODO: we can't call cleanup here since the provider may be in use.  Figure this out.
+			//iter->second->cleanup();
 			iter->second.setNull();
 			m_provs.erase(iter++);
 		}
