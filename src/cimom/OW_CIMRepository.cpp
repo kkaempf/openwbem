@@ -455,11 +455,16 @@ OW_CIMRepository::createClass(const OW_String& ns, const OW_CIMClass& cimClass_,
 {
 	try
 	{
-		// m_mStore.createClass modified cimClass to be consistent with base 
+		// m_mStore.createClass modifies cimClass to be consistent with base 
 		// classes, etc.
 		OW_CIMClass cimClass(cimClass_);
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);
+
+		// we need to re-get the class, so that it will be consistent.  currently
+		// cimClass only contains "unique" items that are added in the child class.
+		cimClass = _getClass(ns, cimClass.getName());
+
 		if (cimClass.isAssociation())
 		{
 			OW_AssocDbHandle hdl = m_classAssocDb.getHandle();
@@ -840,7 +845,7 @@ OW_CIMRepository::createInstance(
 
 		OW_CIMClass theClass = _instGetClass(ns, ci.getClassName());
 
-		//_checkRequiredProperties(theClass, ci);
+		//TODO: _checkRequiredProperties(theClass, ci);
 		m_iStore.createInstance(ns, theClass, ci);
 
 		if(theClass.isAssociation())
@@ -878,7 +883,7 @@ OW_CIMRepository::modifyInstance(
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, acl);
 
-		//_checkRequiredProperties(theClass, modifiedInstance);
+		//TODO: _checkRequiredProperties(theClass, modifiedInstance);
 
 		m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance, oldInst, includeQualifiers, propertyList);
 
