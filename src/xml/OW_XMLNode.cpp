@@ -393,11 +393,11 @@ XMLNodeImpl::printNode( std::ostream& ostr ) const
 	String name = getName();
 	XMLAttributeArray aa = getAttrs();
 
-	ostr << "<" << name;
+	ostr << '<' << name;
 	for ( XMLAttributeArray::const_iterator aiter = aa.begin();
 			aiter != aa.end(); ++aiter )
 	{
-		ostr << " " << aiter->getName() << "=\"" << XMLEscape(aiter->getValue()) << '"';
+		ostr << ' ' << aiter->getName() << "=\"" << XMLEscape(aiter->getValue()) << '"';
 	}
 
 	if (getText().empty() && !getChild())
@@ -406,7 +406,7 @@ XMLNodeImpl::printNode( std::ostream& ostr ) const
 	}
 	else
 	{
-		ostr << ">";
+		ostr << '>';
 		ostr << XMLEscape(getText());
 		XMLNode curChild = getChild();
 		while (curChild)
@@ -414,7 +414,7 @@ XMLNodeImpl::printNode( std::ostream& ostr ) const
 			curChild.printNode(ostr);
 			curChild = curChild.getNext();
 		}
-		ostr << "</" << name << ">";
+		ostr << "</" << name << '>';
 	}
 }
 
