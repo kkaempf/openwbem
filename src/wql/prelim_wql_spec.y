@@ -235,8 +235,15 @@ class_property_identifier:
 */
 
 class_property_identifier:
-      IDENT PERIOD property_identifier /* this could be an embedded_object */
+      class_property_identifier_sub PERIOD property_identifier /* this could be an embedded_object or classname.propertyname */
+      class_property_identifier_sub PERIOD terminal_property_identifier /* this could be an embedded_object or classname.propertyname */
     | property_identifier
+    | terminal_property_identifier
+;
+
+class_property_identifier_sub:
+      class_property_identifier_sub PERIOD property_identifier
+    | class_name_or_property_identifier
 ;
 
 /* embedded_object is ambiguous with class_property_identifier
@@ -251,9 +258,17 @@ property_identifier:
 */
 
 property_identifier:
-      ASTERISK
-    | property_name
+      property_name
     | array_property
+;
+
+class_name_or_property_identifier:
+      IDENT /* either a class name or a property name */
+    | array_property
+;
+
+terminal_property_identifier:
+      ASTERISK
     | KEY
     | CLASS
 ;
@@ -284,9 +299,9 @@ embedded_object:
 ;
 */
 
-/* this is ambiguous with class_property_identifier
+/*
 embedded_object:
-      IDENT PERIOD property_identifier
+      property_name PERIOD property_identifier
 ;
 */
 
