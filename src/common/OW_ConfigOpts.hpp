@@ -180,7 +180,7 @@ namespace ConfigOpts
 	// 3.0 additions
 	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
 	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
- 	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
+	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
 	static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
 	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
 	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";

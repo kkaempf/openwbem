@@ -104,9 +104,9 @@ writePid(const char *pidfile)
 	}
 	// TODO: replace this with the locking code in OW_File
 #ifdef OW_GNU_LINUX
-    if(flock(fd, LOCK_EX|LOCK_NB) == -1)
+	if(flock(fd, LOCK_EX|LOCK_NB) == -1)
 #elif defined(OW_OPENSERVER)
-    if(lockf(fd, F_TLOCK, 0) == -1)
+	if(lockf(fd, F_TLOCK, 0) == -1)
 #else
 	if(ftrylockfile(f) != 0)
 #endif
@@ -127,21 +127,21 @@ writePid(const char *pidfile)
 	}
 	fflush(f);
 #ifdef OW_GNU_LINUX
-    if(flock(fd, LOCK_UN) == -1)
-    {
-        lerrno = errno;
-        fclose(f);
-        errno = lerrno;
-        return -1;
-    }
+	if(flock(fd, LOCK_UN) == -1)
+	{
+		lerrno = errno;
+		fclose(f);
+		errno = lerrno;
+		return -1;
+	}
 #elif defined (OW_OPENSERVER)
-    if(lockf(fd, F_ULOCK, 0) == -1)
-    {
-        lerrno = errno;
-        fclose(f);
-        errno = lerrno;
-        return -1;
-    }
+	if(lockf(fd, F_ULOCK, 0) == -1)
+	{
+		lerrno = errno;
+		fclose(f);
+		errno = lerrno;
+		return -1;
+	}
 #else
 	funlockfile(f);
 #endif

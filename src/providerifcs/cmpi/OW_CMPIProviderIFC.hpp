@@ -56,7 +56,7 @@ public:
 	static const char * const CREATIONFUNC;
 	CMPIProviderIFC();
 	~CMPIProviderIFC();
-        //static ::CMPIBroker * getBroker() { return &(_broker); }
+		//static ::CMPIBroker * getBroker() { return &(_broker); }
 protected:
 	//static ::CMPIBroker _broker;
 	virtual const char* getName() const { return "cmpi"; }

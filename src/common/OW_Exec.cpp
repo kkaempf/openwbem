@@ -344,7 +344,7 @@ safeSystem(const Array<String>& command)
 	if (command.size() == 0)
 		return 1;
 #ifdef OW_USE_GNU_PTH
-    pid = pth_fork();
+	pid = pth_fork();
 #else
 	pid = fork();
 #endif

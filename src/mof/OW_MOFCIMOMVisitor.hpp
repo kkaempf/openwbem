@@ -153,16 +153,16 @@ private:
 	String m_source;
 	String m_sourceType;
 	
-    Cache<CIMQualifierType> m_dataTypeCache;
+	Cache<CIMQualifierType> m_dataTypeCache;
 	CIMDataType getQualifierDataType(const String& qualName, const lineInfo& li);
 	CIMQualifierType getQualifierType(const String& qualName, const lineInfo& li);
-    Cache<CIMClass> m_classCache;
+	Cache<CIMClass> m_classCache;
 	CIMClass getClass(const String& className, const lineInfo& li);
 	
 	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );
 	
 	// Functions that call into the remote cimom handle
-    CIMClass CIMOMgetClass(const String& className, const lineInfo& li);
+	CIMClass CIMOMgetClass(const String& className, const lineInfo& li);
 	void CIMOMcreateClass(const lineInfo& li);
 	void CIMOMsetQualifierType(const lineInfo& li);
 	void CIMOMcreateInstance(const lineInfo& li);

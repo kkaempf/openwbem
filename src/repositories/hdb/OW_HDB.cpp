@@ -794,7 +794,7 @@ HDBHandle::turnFlagsOn(HDBNode& node, UInt32 flags)
 		{
 			if(node.reload(*this))
 			{
-            node.turnFlagsOn(*this, flags);
+			node.turnFlagsOn(*this, flags);
 			}
 		}
 		else

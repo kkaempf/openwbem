@@ -41,15 +41,15 @@ typedef Array<Select_t> SelectTypeArray;
 namespace Select
 {
    /**
-    * The value returned from select when the timeout value has expired
+	* The value returned from select when the timeout value has expired
 	*/
    const int SELECT_TIMEOUT = -2;
    /**
-    * The value returned from select when any error occurs other than timeout.
+	* The value returned from select when any error occurs other than timeout.
 	*/
    const int SELECT_ERROR = -1;
    /**
-    * The value returned from select when select is interrupted by a signal.
+	* The value returned from select when select is interrupted by a signal.
 	*/
    const int SELECT_INTERRUPTED = -3;
    /**

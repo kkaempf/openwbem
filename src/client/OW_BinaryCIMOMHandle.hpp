@@ -77,7 +77,7 @@ public:
 		const CIMQualifierType &qt);
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
-     * @param path	The CIMObjectPath identifying the namespace whose qualifier
+	 * @param path	The CIMObjectPath identifying the namespace whose qualifier
 	 *					definitions are to be enumerated.
 	 * @exception CIMException	If the specified CIMObjectPath cannot be
 	 *										found

@@ -50,26 +50,26 @@ CMPIPolledProviderProxy::~CMPIPolledProviderProxy()
 /////////////////////////////////////////////////////////////////////////////
 Int32
 CMPIPolledProviderProxy::getInitialPollingInterval(
-      const ProviderEnvironmentIFCRef& env)
+	  const ProviderEnvironmentIFCRef& env)
 {
-        env->getLogger()->logDebug("CMPIPolledProviderIFC::getInitialPollingInterval()");
+		env->getLogger()->logDebug("CMPIPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
 CMPIPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
-        CIMValue rval;
-        env->getLogger()->
-            logDebug("CMPIPolledProviderIFC::poll()");
-        if (m_ftable->fp_mustPoll != NULL)
+		CIMValue rval;
+		env->getLogger()->
+			logDebug("CMPIPolledProviderIFC::poll()");
+		if (m_ftable->fp_mustPoll != NULL)
 	{
-            ::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+			::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			CMPIHandleFreer nhf(_npiHandle);
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
-	    char * expo = "SourceInstance.PercentageSpaceUse 80";
-	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
-            m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
+			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		char * expo = "SourceInstance.PercentageSpaceUse 80";
+		SelectExp exp = {expo};
+		CIMObjectPath cop = {NULL};
+			m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -85,17 +85,17 @@ void CMPIPolledProviderProxy::activateFilter(
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
-            env->getLogger()->logDebug("activateFilter2");
-            ::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+			env->getLogger()->logDebug("activateFilter2");
+			::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			CMPIHandleFreer nhf(_npiHandle);
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
-	    char * expo = query.allocateCString();
-	    char * _type = Type.allocateCString();
-	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
-            m_ftable->fp_activateFilter( &_npiHandle, exp, _type, cop, 0);
-	    free(expo);
-	    free(_type);
+			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		char * expo = query.allocateCString();
+		char * _type = Type.allocateCString();
+		SelectExp exp = {expo};
+		CIMObjectPath cop = {NULL};
+			m_ftable->fp_activateFilter( &_npiHandle, exp, _type, cop, 0);
+		free(expo);
+		free(_type);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -110,18 +110,18 @@ void CMPIPolledProviderProxy::deactivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-            ::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+			::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
 			CMPIHandleFreer nhf(_npiHandle);
-            env->getLogger()->logDebug("deactivateFilter2");
-            _npiHandle.thisObject = (void *) static_cast<const void *>(&env);
-	    char * expo = query.allocateCString();
-	    char * _type = Type.allocateCString();
-	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
-	    char * type = NULL;
-            m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
-	    free(type);
-	    free(expo);
+			env->getLogger()->logDebug("deactivateFilter2");
+			_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		char * expo = query.allocateCString();
+		char * _type = Type.allocateCString();
+		SelectExp exp = {expo};
+		CIMObjectPath cop = {NULL};
+		char * type = NULL;
+			m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
+		free(type);
+		free(expo);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -130,37 +130,37 @@ void CMPIPolledProviderProxy::deactivateFilter(
 	}
 }
 #if 0
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
-            CIMObjectPath owcop = path;
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
+			CIMObjectPath owcop = path;
 			owcop.setNameSpace(ns);
-            CIMObjectPath _cop= {static_cast<void *> (&owcop)};
-            Vector parm_in = VectorNew(&_npiHandle);
-            Vector parm_out = VectorNew(&_npiHandle);
-            for (int i = 0, n = in.size(); i < n; i++)
-            {
-                CIMParamValue * owpv = new CIMParamValue(in[i]);
-                _VectorAddTo(
-                    &_npiHandle, parm_in, static_cast<void *> (owpv) );
-            }
-            CMPIVectorFreer vf1(parm_in);
-            CMPIVectorFreer vf2(parm_out);
-            CIMValue cv = m_ftable->fp_invokeMethod(
-                &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
+			CIMObjectPath _cop= {static_cast<void *> (&owcop)};
+			Vector parm_in = VectorNew(&_npiHandle);
+			Vector parm_out = VectorNew(&_npiHandle);
+			for (int i = 0, n = in.size(); i < n; i++)
+			{
+				CIMParamValue * owpv = new CIMParamValue(in[i]);
+				_VectorAddTo(
+					&_npiHandle, parm_in, static_cast<void *> (owpv) );
+			}
+			CMPIVectorFreer vf1(parm_in);
+			CMPIVectorFreer vf2(parm_out);
+			CIMValue cv = m_ftable->fp_invokeMethod(
+				&_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
 			if (_npiHandle.errorOccurred)
 			{
 				OW_THROWCIMMSG(CIMException::FAILED,
 					_npiHandle.providerError);
 			}
-            rval = * static_cast<CIMValue *> (cv.ptr);
-            for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
-            {
-                CIMParamValue owpv = * static_cast<CIMParamValue *>
-                    (_VectorGet(&_npiHandle, parm_out, i));
-                out.append(owpv);
-            }
-        }
-        return rval;
+			rval = * static_cast<CIMValue *> (cv.ptr);
+			for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
+			{
+				CIMParamValue owpv = * static_cast<CIMParamValue *>
+					(_VectorGet(&_npiHandle, parm_out, i));
+				out.append(owpv);
+			}
+		}
+		return rval;
 }
 #endif
 

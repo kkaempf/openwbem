@@ -53,10 +53,10 @@ static char * stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc) {
 }
 
 static CMPIStringFT string_FT={
-     CMPICurrentVersion,
-     stringRelease,
-     stringClone,
-     stringGetCharPtr,
+	 CMPICurrentVersion,
+	 stringRelease,
+	 stringClone,
+	 stringGetCharPtr,
 };
 
 CMPIStringFT *CMPI_String_Ftab=&string_FT;

@@ -41,7 +41,7 @@ class NPIIndicationProviderProxy : public IndicationProviderIFC
 public:
 	NPIIndicationProviderProxy(const FTABLERef& f)
 	: m_ftable(f)
-    , m_activationCount(0)
+	, m_activationCount(0)
 	{
 	}
 	virtual ~NPIIndicationProviderProxy()
@@ -75,7 +75,7 @@ public:
 		);
 private:
 	FTABLERef m_ftable;
-    unsigned int m_activationCount;
+	unsigned int m_activationCount;
 };
 
 } // end namespace OpenWBEM

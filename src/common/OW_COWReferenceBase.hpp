@@ -39,9 +39,9 @@ namespace OpenWBEM
 template<class T>
 inline void COWRefSwap(T& x, T&y)
 {
-    T t = x;
-    x = y;
-    y = t;
+	T t = x;
+	x = y;
+	y = t;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,52 +50,52 @@ inline void COWRefSwap(T& x, T&y)
 class COWReferenceBase
 {
 protected:
-    COWReferenceBase()
-        : m_pRefCount(new RefCount) {}
-    COWReferenceBase(const COWReferenceBase& arg)
-        : m_pRefCount(arg.m_pRefCount)
-    {
-        m_pRefCount->inc();
-    }
-    void incRef()
-    {
-        m_pRefCount->inc();
-    }
+	COWReferenceBase()
+		: m_pRefCount(new RefCount) {}
+	COWReferenceBase(const COWReferenceBase& arg)
+		: m_pRefCount(arg.m_pRefCount)
+	{
+		m_pRefCount->inc();
+	}
+	void incRef()
+	{
+		m_pRefCount->inc();
+	}
 	
-    bool decRef()
-    {
-        if (m_pRefCount->decAndTest())
-        {
-            delete m_pRefCount;
-            m_pRefCount = 0;
-            return true;
-        }
-        return false;
-    }
+	bool decRef()
+	{
+		if (m_pRefCount->decAndTest())
+		{
+			delete m_pRefCount;
+			m_pRefCount = 0;
+			return true;
+		}
+		return false;
+	}
 
 	bool refCountGreaterThanOne() const
 	{
 		return m_pRefCount->get() > 1;
 	}
-    
-    void getWriteLock()
-    {
-        if (m_pRefCount->decAndTest())
-        {
-            // only copy--don't need to clone, also not a race condition
-            incRef();
-        }
-        else
-        {
-            // need to become unique
-    		m_pRefCount = new RefCount;
-        }
-    }
-    
-    void swap(COWReferenceBase& arg)
-    {
-        COWRefSwap(m_pRefCount, arg.m_pRefCount);
-    }
+	
+	void getWriteLock()
+	{
+		if (m_pRefCount->decAndTest())
+		{
+			// only copy--don't need to clone, also not a race condition
+			incRef();
+		}
+		else
+		{
+			// need to become unique
+			m_pRefCount = new RefCount;
+		}
+	}
+	
+	void swap(COWReferenceBase& arg)
+	{
+		COWRefSwap(m_pRefCount, arg.m_pRefCount);
+	}
 
 #ifdef OW_CHECK_NULL_REFERENCES
 	void throwNULLException() const;
@@ -109,7 +109,7 @@ protected:
 #endif
 
 protected:
-    RefCount* volatile m_pRefCount;
+	RefCount* volatile m_pRefCount;
 };
 
 } // end namespace OpenWBEM

@@ -45,11 +45,11 @@ class TestResult;
 class Test
 {
 public:
-    virtual                ~Test (){}
+	virtual                ~Test (){}
 
-    virtual void           run (TestResult *result)    = 0;
-    virtual int            countTestCases ()           = 0;
-    virtual const char*    toString ()                 = 0;
+	virtual void           run (TestResult *result)    = 0;
+	virtual int            countTestCases ()           = 0;
+	virtual const char*    toString ()                 = 0;
 
 
 };

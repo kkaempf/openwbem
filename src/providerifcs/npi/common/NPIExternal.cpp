@@ -25,8 +25,8 @@ void _NPIGarbageRetrieve(NPIHandle * nh, void * object)
 {
    for(int i = ((NPIContext *)(nh->context))->garbage.size()-1;i >=0;i--)
    {
-      if ( ((NPIContext *)(nh->context))->garbage[i] == object)
-         ((NPIContext *)(nh->context))->garbageType[i] = NOTHING;
+	  if ( ((NPIContext *)(nh->context))->garbage[i] == object)
+		 ((NPIContext *)(nh->context))->garbageType[i] = NOTHING;
    }
 }
 // administrative functions
@@ -627,25 +627,25 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 }
 /* ====================================================================== */
 static void _CIMObjectPathAddKey(OpenWBEM::CIMObjectPath * ref,
-           const String& Key, const OpenWBEM::CIMValue & Value)
+		   const String& Key, const OpenWBEM::CIMValue & Value)
 {
    if (ref->getKey(Key))
    {
-      bool b = false;
-      CIMPropertyArray cprops = ref->getKeys();
-      for(Int32 i=cprops.size()-1; i >= 0; i--)
-      {
-       if (cprops[i].getName().equalsIgnoreCase(Key))
-        {
-            cprops[i].setValue(Value);
-            b = true;
-         }
-      }
-      if (b)
-      {
-         ref->setKeys(cprops);
-         return;
-      }
+	  bool b = false;
+	  CIMPropertyArray cprops = ref->getKeys();
+	  for(Int32 i=cprops.size()-1; i >= 0; i--)
+	  {
+	   if (cprops[i].getName().equalsIgnoreCase(Key))
+		{
+			cprops[i].setValue(Value);
+			b = true;
+		 }
+	  }
+	  if (b)
+	  {
+		 ref->setKeys(cprops);
+		 return;
+	  }
    }
    ref->addKey(Key,Value);
 }
@@ -856,7 +856,7 @@ CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char * ns,
 	ProviderEnvironmentIFCRef * provenv =
 		static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 	OpenWBEM::CIMInstance * ow_indication =
-           static_cast<OpenWBEM::CIMInstance *>(indication.ptr);
+		   static_cast<OpenWBEM::CIMInstance *>(indication.ptr);
 	try
 	{
 		(*provenv)->getCIMOMHandle()->exportIndication(
@@ -873,20 +873,20 @@ CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char * ns,
 extern "C" void
 CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 			::CIMInstance indication, 
-                          ::CIMInstance source, ::CIMInstance previous)
+						  ::CIMInstance source, ::CIMInstance previous)
 {
 	(void)ns;
 	ProviderEnvironmentIFCRef * provenv =
 		static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 	OpenWBEM::CIMInstance * ow_indication =
-           static_cast<OpenWBEM::CIMInstance *>(indication.ptr);
+		   static_cast<OpenWBEM::CIMInstance *>(indication.ptr);
 	OpenWBEM::CIMInstance * ow_source = static_cast<OpenWBEM::CIMInstance *>(source.ptr);
 	OpenWBEM::CIMInstance * ow_previous =
-           static_cast<OpenWBEM::CIMInstance *>(previous.ptr);
-        OpenWBEM::CIMValue src_val(* ow_source);
-        OpenWBEM::CIMValue prev_val(* ow_previous);
+		   static_cast<OpenWBEM::CIMInstance *>(previous.ptr);
+		OpenWBEM::CIMValue src_val(* ow_source);
+		OpenWBEM::CIMValue prev_val(* ow_previous);
 	ow_indication->setProperty(String("SourceInstance"), src_val);
-           
+		   
 	ow_indication->setProperty(String("PreviousInstance"), prev_val);
 	try
 	{
@@ -905,30 +905,30 @@ CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char * ns,
 extern "C" NPIHandle *
 CIMOMPrepareAttach(NPIHandle* npiHandle)
 {
-    ::NPIHandle * nh = new ::NPIHandle(*npiHandle);
-        // clone the providerenvironment
-    ProviderEnvironmentIFCRef * provenv =
-        static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
-    nh->thisObject = new ProviderEnvironmentIFCRef(*provenv);
-    // copy NPIContext
-    nh->context = new ::NPIContext;
-    ((NPIContext *)(nh->context))->scriptName =
-           ((NPIContext *)(npiHandle->context))->scriptName;
-    // CHECK: do I have to allocate a new perl context here ?
-    ((NPIContext *)(nh->context))->my_perl =
-           ((NPIContext *)(npiHandle->context))->my_perl;
-    // need to worry about errorOccurred and providerError???   
-    return nh;
+	::NPIHandle * nh = new ::NPIHandle(*npiHandle);
+		// clone the providerenvironment
+	ProviderEnvironmentIFCRef * provenv =
+		static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	nh->thisObject = new ProviderEnvironmentIFCRef(*provenv);
+	// copy NPIContext
+	nh->context = new ::NPIContext;
+	((NPIContext *)(nh->context))->scriptName =
+		   ((NPIContext *)(npiHandle->context))->scriptName;
+	// CHECK: do I have to allocate a new perl context here ?
+	((NPIContext *)(nh->context))->my_perl =
+		   ((NPIContext *)(npiHandle->context))->my_perl;
+	// need to worry about errorOccurred and providerError???   
+	return nh;
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
 CIMOMCancelAttach(NPIHandle* npiHandle)
 {
-    delete static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
-    if (npiHandle->providerError != NULL)
-        free((void *)(npiHandle->providerError));
-    // TODO delete NPIContext
-    free(npiHandle);
+	delete static_cast<ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
+	if (npiHandle->providerError != NULL)
+		free((void *)(npiHandle->providerError));
+	// TODO delete NPIContext
+	free(npiHandle);
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -936,8 +936,8 @@ CIMOMAttachThread(NPIHandle* npiHandle)
 {
 	if (npiHandle == NULL) return;
 	npiHandle->errorOccurred = 0;
-    ((NPIContext *)(npiHandle->context))->garbage = Array<void *>();
-    ((NPIContext *)(npiHandle->context))->garbageType = Array<NPIGarbageType>();
+	((NPIContext *)(npiHandle->context))->garbage = Array<void *>();
+	((NPIContext *)(npiHandle->context))->garbageType = Array<NPIGarbageType>();
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void

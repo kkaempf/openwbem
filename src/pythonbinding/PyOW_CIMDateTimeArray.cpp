@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_CIMDateTime(const char* name)
 {
-    registerArrayImpl<CIMDateTime>(name);
+	registerArrayImpl<CIMDateTime>(name);
 }
 
 } // end namespace OpenWBEM

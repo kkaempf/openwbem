@@ -168,7 +168,7 @@ AssocDbHandle::AssocDbHandleData::~AssocDbHandleData()
 	}
 	catch (...)
 	{
-        // if decHandleCount throws, just ignore it.
+		// if decHandleCount throws, just ignore it.
 	}
 }
 //////////////////////////////////////////////////////////////////////////////

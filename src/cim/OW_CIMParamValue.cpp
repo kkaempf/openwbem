@@ -46,7 +46,7 @@ struct CIMParamValue::Data
 	{}
 	String m_name;
 	CIMValue m_val;
-    Data* clone() const { return new Data(*this); }
+	Data* clone() const { return new Data(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMParamValue::Data& x, const CIMParamValue::Data& y)

@@ -162,7 +162,7 @@ TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 		::lseek(m_hdl, offset, SEEK_SET);
 	}
 #ifdef OW_USE_GNU_PTH
-    int rv = pth_write(m_hdl, bfr, numberOfBytes);
+	int rv = pth_write(m_hdl, bfr, numberOfBytes);
 #else
 	int rv = ::write(m_hdl, bfr, numberOfBytes);
 #endif

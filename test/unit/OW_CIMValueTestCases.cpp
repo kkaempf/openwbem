@@ -48,31 +48,31 @@ void OW_CIMValueTestCases::tearDown()
 
 void OW_CIMValueTestCases::testGetArraySize()
 {
-    CIMClassArray ca;
-    ca.push_back(CIMClass(CIMNULL));
-    ca.push_back(CIMClass(CIMNULL));
-    ca.push_back(CIMClass(CIMNULL));
-    CIMValue v1(ca);
+	CIMClassArray ca;
+	ca.push_back(CIMClass(CIMNULL));
+	ca.push_back(CIMClass(CIMNULL));
+	ca.push_back(CIMClass(CIMNULL));
+	CIMValue v1(ca);
 	unitAssert( v1.getArraySize() == 3 );
 
-    CIMInstanceArray ia;
-    ia.push_back(CIMInstance(CIMNULL));
-    ia.push_back(CIMInstance(CIMNULL));
-    ia.push_back(CIMInstance(CIMNULL));
-    ia.push_back(CIMInstance(CIMNULL));
-    ia.push_back(CIMInstance(CIMNULL));
-    CIMValue v2(ia);
-    unitAssert(v2.getArraySize() == 5);
+	CIMInstanceArray ia;
+	ia.push_back(CIMInstance(CIMNULL));
+	ia.push_back(CIMInstance(CIMNULL));
+	ia.push_back(CIMInstance(CIMNULL));
+	ia.push_back(CIMInstance(CIMNULL));
+	ia.push_back(CIMInstance(CIMNULL));
+	CIMValue v2(ia);
+	unitAssert(v2.getArraySize() == 5);
 
-    CIMValue v3(v1);
-    unitAssert(v3.getArraySize() == 3);
+	CIMValue v3(v1);
+	unitAssert(v3.getArraySize() == 3);
 
-    CIMValue v4(v2);
-    unitAssert(v4.getArraySize() == 5);
-    unitAssert(v1 == v3);
-    unitAssert(v2 == v4);
-    unitAssert(v1 != v2);
-    unitAssert(v3 != v4);
+	CIMValue v4(v2);
+	unitAssert(v4.getArraySize() == 5);
+	unitAssert(v1 == v3);
+	unitAssert(v2 == v4);
+	unitAssert(v1 != v2);
+	unitAssert(v3 != v4);
 }
 
 void OW_CIMValueTestCases::testInserterOp()

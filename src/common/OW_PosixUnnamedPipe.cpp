@@ -172,9 +172,9 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[1] != -1)
 	{
-        // Always use the regular write in this method, instead of the
-        // pth_write. This is because the signal handler calls this method
-        // indirectly when it pushes a signal that has been received.
+		// Always use the regular write in this method, instead of the
+		// pth_write. This is because the signal handler calls this method
+		// indirectly when it pushes a signal that has been received.
 		rc = ::write(m_fds[1], data, dataLen);
 	}
 	if (errorAsException && rc == -1)
@@ -191,7 +191,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	if(m_fds[0] != -1)
 	{
 #ifdef OW_USE_GNU_PTH
-        rc = pth_read(m_fds[0], buffer, bufferLen);
+		rc = pth_read(m_fds[0], buffer, bufferLen);
 #else
 		rc = ::read(m_fds[0], buffer, bufferLen);
 #endif

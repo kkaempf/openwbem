@@ -50,7 +50,7 @@ LifecycleIndicationPoller::LifecycleIndicationPoller(
 	, m_pollCreation(0)
 	, m_pollModification(0)
 	, m_pollDeletion(0)
-    , m_initializedInstances(false)
+	, m_initializedInstances(false)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ LifecycleIndicationPoller::removePollOp(PollOp op)
 			--m_pollDeletion;
 			break;
 	}
-    return !willPoll();
+	return !willPoll();
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -137,7 +137,7 @@ Int32
 LifecycleIndicationPoller::getInitialPollingInterval(
 	const ProviderEnvironmentIFCRef &)
 {
-    return 1; // have poll called again in 1 second.
+	return 1; // have poll called again in 1 second.
 }
 namespace
 {
@@ -154,18 +154,18 @@ Int32
 LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 {
 	// do enumInstances to populate m_prevInsts
-    if (!m_initializedInstances)
-    {
-        InstanceArrayBuilder iab(m_prevInsts);
-        env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
-        m_initializedInstances = true;
-        return 1; // have poll called again in 1 second.
-    }
-    env->getLogger()->logDebug(format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+	if (!m_initializedInstances)
+	{
+		InstanceArrayBuilder iab(m_prevInsts);
+		env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+		m_initializedInstances = true;
+		return 1; // have poll called again in 1 second.
+	}
+	env->getLogger()->logDebug(format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
-        env->getLogger()->logDebug("LifecycleIndicationPoller::poll nothing to do, returning 0");
+		env->getLogger()->logDebug("LifecycleIndicationPoller::poll nothing to do, returning 0");
 		return 0;
 	}
 	// do enumInstances of the class

@@ -51,80 +51,80 @@ void OW_FileSystemTestCases::tearDown()
 
 void OW_FileSystemTestCases::testgetLock()
 {
-    File f = FileSystem::openFile("Makefile");
-    unitAssert(f);
+	File f = FileSystem::openFile("Makefile");
+	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
 }
 
 void OW_FileSystemTestCases::testtryLock()
 {
-    File f = FileSystem::openFile("Makefile");
-    unitAssert(f);
+	File f = FileSystem::openFile("Makefile");
+	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
-    // the lock is recursive, meaning to get a block, we've got to try to
-    // acquire it from another process.  So fork()
-    int rval = 0;
-    pid_t p = fork();
-    switch (p)
-    {
-        case -1:
-            unitAssert(0);
-            break;
-        case 0: // child
-            if( f.tryLock() == -1 && (errno == EAGAIN || errno == EACCES) )
-                _exit(0);
-            else
-                _exit(1);
-            break;
-        default: // parent
-            {
-                int status;
-                pid_t p2 = waitpid(p, &status, 0);
-                unitAssert(p2 == p);
-                unitAssert(WIFEXITED(status));
-                rval = WEXITSTATUS(status);
-            }
-                
-            break;
-    }
-    // child should have returned 0 if the test worked.
-    unitAssert( rval == 0 );
+	// the lock is recursive, meaning to get a block, we've got to try to
+	// acquire it from another process.  So fork()
+	int rval = 0;
+	pid_t p = fork();
+	switch (p)
+	{
+		case -1:
+			unitAssert(0);
+			break;
+		case 0: // child
+			if( f.tryLock() == -1 && (errno == EAGAIN || errno == EACCES) )
+				_exit(0);
+			else
+				_exit(1);
+			break;
+		default: // parent
+			{
+				int status;
+				pid_t p2 = waitpid(p, &status, 0);
+				unitAssert(p2 == p);
+				unitAssert(WIFEXITED(status));
+				rval = WEXITSTATUS(status);
+			}
+				
+			break;
+	}
+	// child should have returned 0 if the test worked.
+	unitAssert( rval == 0 );
 }
 
 void OW_FileSystemTestCases::testunlock()
 {
-    File f = FileSystem::openFile("Makefile");
-    unitAssert(f);
+	File f = FileSystem::openFile("Makefile");
+	unitAssert(f);
 	unitAssert( f.getLock() == 0 );
 	unitAssert( f.unlock() == 0 );
-    // the lock is recursive, meaning to get a block, we've got to try to
-    // acquire it from another process.  So fork()
-    int rval = 0;
-    pid_t p = fork();
-    switch (p)
-    {
-        case -1:
-            unitAssert(0);
-            break;
-        case 0: // child
-            if( f.tryLock() == 0 )
-                _exit(0);
-            else
-                _exit(1);
-            break;
-        default: // parent
-            {
-                int status;
-                pid_t p2 = waitpid(p, &status, 0);
-                unitAssert(p2 == p);
-                unitAssert(WIFEXITED(status));
-                rval = WEXITSTATUS(status);
-            }
-                
-            break;
-    }
-    // child should have returned 0 if the test worked.
-    unitAssert( rval == 0 );
+	// the lock is recursive, meaning to get a block, we've got to try to
+	// acquire it from another process.  So fork()
+	int rval = 0;
+	pid_t p = fork();
+	switch (p)
+	{
+		case -1:
+			unitAssert(0);
+			break;
+		case 0: // child
+			if( f.tryLock() == 0 )
+				_exit(0);
+			else
+				_exit(1);
+			break;
+		default: // parent
+			{
+				int status;
+				pid_t p2 = waitpid(p, &status, 0);
+				unitAssert(p2 == p);
+				unitAssert(WIFEXITED(status));
+				rval = WEXITSTATUS(status);
+			}
+				
+			break;
+	}
+	// child should have returned 0 if the test worked.
+	unitAssert( rval == 0 );
 }
 
 void OW_FileSystemTestCases::testopenOrCreateFile()

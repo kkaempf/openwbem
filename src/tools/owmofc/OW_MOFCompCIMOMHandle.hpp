@@ -109,7 +109,7 @@ public:
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
-    * @param path	The CIMObjectPath identifying the namespace whose qualifier
+	* @param path	The CIMObjectPath identifying the namespace whose qualifier
 	 *					definitions are to be enumerated.
 	 */
 	virtual void enumQualifierTypes(

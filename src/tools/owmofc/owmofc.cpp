@@ -103,8 +103,8 @@ StringArray filelist;
 //////////////////////////////////////////////////////////////////////////////
 static struct option   long_options[] =
 {
-    { "direct", required_argument, NULL, 'd' },
-    { "url", required_argument, NULL, 'u' },
+	{ "direct", required_argument, NULL, 'd' },
+	{ "url", required_argument, NULL, 'u' },
 	{ "namespace", required_argument, NULL, 'n' },
 	{ "create-namespaces", 0, NULL, 'c' },
 	{ "encoding", required_argument, NULL, 'e' },
@@ -117,8 +117,8 @@ static struct option   long_options[] =
 	{ "quiet", 0, NULL, 'q' },
 	{ "include", required_argument, NULL, 'I' },
 	{ "ignore-double-includes", 0, NULL, 'i' },
-    { "help", 0, NULL, 'h' },
-    { 0, 0, 0, 0 }
+	{ "help", 0, NULL, 'h' },
+	{ 0, 0, 0, 0 }
 };
 #endif
 static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ih";
@@ -136,9 +136,9 @@ processCommandLineOptions(int argc, char** argv)
 		return 0;
 	}
 #ifdef OW_HAVE_GETOPT_LONG
-    int optndx = 0;
+	int optndx = 0;
 	optind = 1;
-    int c = getopt_long(argc, argv, short_options, long_options, &optndx);
+	int c = getopt_long(argc, argv, short_options, long_options, &optndx);
 #else
 	optind = 1;
 	int c = getopt(argc, argv, short_options);
@@ -164,7 +164,7 @@ processCommandLineOptions(int argc, char** argv)
 				return -1;
 		}
 #ifdef OW_HAVE_GETOPT_LONG
-        c = getopt_long(argc, argv, short_options, long_options, &optndx);
+		c = getopt_long(argc, argv, short_options, long_options, &optndx);
 #else
 		c = getopt(argc, argv, short_options);
 #endif

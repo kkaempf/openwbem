@@ -279,7 +279,7 @@ inline void swap(List<T>& x, List<T>& y)
 template <class T>
 std::list<T>* COWReferenceClone(std::list<T>* obj)
 {
-    return new std::list<T>(*obj);
+	return new std::list<T>(*obj);
 }
 
 } // end namespace OpenWBEM

@@ -67,26 +67,26 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 {
 	String output;
 	int processstatus(0);
-    Exec::executeProcessAndGatherOutput(String("/bin/true").tokenize(), output, processstatus);
+	Exec::executeProcessAndGatherOutput(String("/bin/true").tokenize(), output, processstatus);
 	unitAssert(output.empty());
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
 
 	processstatus = 0;
 	output.erase();
-    Exec::executeProcessAndGatherOutput(String("/bin/false").tokenize(), output, processstatus);
+	Exec::executeProcessAndGatherOutput(String("/bin/false").tokenize(), output, processstatus);
 	unitAssert(output.empty());
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 1);
 
 	processstatus = 0;
 	output.erase();
-    Exec::executeProcessAndGatherOutput(String("/bin/echo -n false").tokenize(), output, processstatus);
+	Exec::executeProcessAndGatherOutput(String("/bin/echo -n false").tokenize(), output, processstatus);
 	unitAssert(output == "false");
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
 
-    // do a timeout
+	// do a timeout
 	processstatus = 0;
 	output.erase();
 	try
@@ -103,7 +103,7 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	}
 	unitAssert(output == "before\n");
 
-    // test output limit
+	// test output limit
 	processstatus = 0;
 	output.erase();
 	try
@@ -116,9 +116,9 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	}
 	unitAssert(output == "1234");
 
-    // test both
-    //runtest("for x in `seq 10`; do echo $x; sleep $x; done", 5, 100);
-    //runtest("for x in `seq 10`; do echo $x; sleep $x; done", 100, 5);
+	// test both
+	//runtest("for x in `seq 10`; do echo $x; sleep $x; done", 5, 100);
+	//runtest("for x in `seq 10`; do echo $x; sleep $x; done", 100, 5);
 
 }
 

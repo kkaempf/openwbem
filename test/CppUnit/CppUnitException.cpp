@@ -42,29 +42,29 @@ CppUnitException::CppUnitException (const char* message, long lineNumber,
 // Destruct the exception
 CppUnitException::~CppUnitException () throw()
 {
-    free(m_message);
-    free(m_fileName);
+	free(m_message);
+	free(m_fileName);
 }
 
 CppUnitException::CppUnitException(CppUnitException const& x)
-    : exception(x)
-    , m_message(x.m_message ? strdup(x.m_message) : 0)
-    , m_lineNumber(x.m_lineNumber)
-    , m_fileName(x.m_fileName ? strdup(x.m_fileName) : 0)
+	: exception(x)
+	, m_message(x.m_message ? strdup(x.m_message) : 0)
+	, m_lineNumber(x.m_lineNumber)
+	, m_fileName(x.m_fileName ? strdup(x.m_fileName) : 0)
 {
 }
 
 CppUnitException& CppUnitException::operator=(CppUnitException x)
 {
-    x.swap(*this);
-    return *this;
+	x.swap(*this);
+	return *this;
 }
 
 void CppUnitException::swap(CppUnitException& x)
 {
-    std::swap(m_message, x.m_message);
-    std::swap(m_lineNumber, x.m_lineNumber);
-    std::swap(m_fileName, x.m_fileName);
+	std::swap(m_message, x.m_message);
+	std::swap(m_lineNumber, x.m_lineNumber);
+	std::swap(m_fileName, x.m_fileName);
 }
 
 // Return descriptive message

@@ -49,50 +49,50 @@ PerlInstanceProviderProxy::~PerlInstanceProviderProxy()
 /////////////////////////////////////////////////////////////////////////////
 void
 PerlInstanceProviderProxy::enumInstanceNames(
-        const ProviderEnvironmentIFCRef& env,
+		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const String& className,
 		CIMObjectPathResultHandlerIFC& result,
-        const CIMClass& cimClass )
+		const CIMClass& cimClass )
 {
-        env->getLogger()->
-            logDebug("PerlInstanceProviderProxy::enumInstanceNames()");
-        if (m_ftable->fp_enumInstanceNames!= NULL)
-        {
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-	    NPIHandleFreer nhf(_npiHandle);
-	    ProviderEnvironmentIFCRef env2(env);
-            _npiHandle.thisObject = static_cast<void *>(&env2);
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+		env->getLogger()->
+			logDebug("PerlInstanceProviderProxy::enumInstanceNames()");
+		if (m_ftable->fp_enumInstanceNames!= NULL)
+		{
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		NPIHandleFreer nhf(_npiHandle);
+		ProviderEnvironmentIFCRef env2(env);
+			_npiHandle.thisObject = static_cast<void *>(&env2);
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
 			CIMClass cimClass2(cimClass);
-            ::CIMClass _cc = { static_cast<void *> (&cimClass2)};
-	    CIMObjectPath cop(className, ns);
-            ::CIMObjectPath _cop = { static_cast<void *> (&cop)};
-            ::Vector v =
-                m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
-	    // the vector and its contents are
-            //  deleted by the global garbage collector (npiHandle)
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
-            ::CIMObjectPath my_cop;
-            for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
-            {
-                my_cop.ptr = _VectorGet(&_npiHandle,v,i);
-                CIMObjectPath ow_cop(*
-                    static_cast<CIMObjectPath *>(my_cop.ptr) );
-                ow_cop.setObjectName(cimClass.getName());
+			::CIMClass _cc = { static_cast<void *> (&cimClass2)};
+		CIMObjectPath cop(className, ns);
+			::CIMObjectPath _cop = { static_cast<void *> (&cop)};
+			::Vector v =
+				m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
+		// the vector and its contents are
+			//  deleted by the global garbage collector (npiHandle)
+			if (_npiHandle.errorOccurred)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED,
+					_npiHandle.providerError);
+			}
+			::CIMObjectPath my_cop;
+			for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
+			{
+				my_cop.ptr = _VectorGet(&_npiHandle,v,i);
+				CIMObjectPath ow_cop(*
+					static_cast<CIMObjectPath *>(my_cop.ptr) );
+				ow_cop.setObjectName(cimClass.getName());
 		result.handle(ow_cop);
-            }
-            //printf("Leaving enumInstanceNames\n");
-        }
-        else
-        {
+			}
+			//printf("Leaving enumInstanceNames\n");
+		}
+		else
+		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstanceNames");
-        }
+		}
 }
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -159,79 +159,79 @@ PerlInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const StringArray* propertyList, 
 	const CIMClass& cimClass)
 {
-        CIMInstance rval;
-        env->getLogger()->
-            logDebug("PerlInstanceProviderProxy::getInstance()");
-        if (m_ftable->fp_getInstance != NULL)
-        {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		CIMInstance rval;
+		env->getLogger()->
+			logDebug("PerlInstanceProviderProxy::getInstance()");
+		if (m_ftable->fp_getInstance != NULL)
+		{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			NPIHandleFreer nhf(_npiHandle);
 			ProviderEnvironmentIFCRef env2(env);
-            _npiHandle.thisObject = static_cast<void *>(&env2);
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+			_npiHandle.thisObject = static_cast<void *>(&env2);
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
 			CIMClass cimClass2(cimClass);
-            ::CIMClass _cc = { static_cast<void *> (&cimClass2)};
+			::CIMClass _cc = { static_cast<void *> (&cimClass2)};
 			CIMObjectPath cop(instanceName);
 			cop.setNameSpace(ns);
-            ::CIMObjectPath _cop = { static_cast<void *> (&cop)};
-            int lo = localOnly;
-            ::CIMInstance my_inst =
-                m_ftable->fp_getInstance(&_npiHandle, _cop, _cc, lo);
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
-            CIMInstance ow_inst(*
-                static_cast<CIMInstance *>(my_inst.ptr));
+			::CIMObjectPath _cop = { static_cast<void *> (&cop)};
+			int lo = localOnly;
+			::CIMInstance my_inst =
+				m_ftable->fp_getInstance(&_npiHandle, _cop, _cc, lo);
+			if (_npiHandle.errorOccurred)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED,
+					_npiHandle.providerError);
+			}
+			CIMInstance ow_inst(*
+				static_cast<CIMInstance *>(my_inst.ptr));
 // FIXME:
-            ow_inst.setClassName(cimClass.getName());
-            rval = ow_inst;
+			ow_inst.setClassName(cimClass.getName());
+			rval = ow_inst;
 			rval = rval.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
-        }
-        else
-        {
+		}
+		else
+		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support getInstance");
-        }
-        return rval;
+		}
+		return rval;
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 PerlInstanceProviderProxy::createInstance(
-    const ProviderEnvironmentIFCRef &env, const String& ns,
-    const CIMInstance& cimInstance)
+	const ProviderEnvironmentIFCRef &env, const String& ns,
+	const CIMInstance& cimInstance)
 {
-        CIMObjectPath rval;
-        env->getLogger()->
-            logDebug("PerlInstanceProviderProxy::createInstance()");
-        if (m_ftable->fp_createInstance != NULL)
-        {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		CIMObjectPath rval;
+		env->getLogger()->
+			logDebug("PerlInstanceProviderProxy::createInstance()");
+		if (m_ftable->fp_createInstance != NULL)
+		{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			NPIHandleFreer nhf(_npiHandle);
 			ProviderEnvironmentIFCRef env2(env);
-            _npiHandle.thisObject = static_cast<void *>(&env2);
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+			_npiHandle.thisObject = static_cast<void *>(&env2);
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
 			CIMInstance cimInstance2(cimInstance);
-            ::CIMInstance _ci = { static_cast<void *> (&cimInstance2)};
+			::CIMInstance _ci = { static_cast<void *> (&cimInstance2)};
 			CIMObjectPath cop(ns, cimInstance);
-            ::CIMObjectPath _cop = { static_cast<void *> (const_cast<CIMObjectPath*>(&cop))};
-            ::CIMObjectPath _rcop =
-                m_ftable->fp_createInstance(&_npiHandle, _cop, _ci);
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
-            rval = *(static_cast<CIMObjectPath *>(_rcop.ptr) );
-        }
-        else
-        {
+			::CIMObjectPath _cop = { static_cast<void *> (const_cast<CIMObjectPath*>(&cop))};
+			::CIMObjectPath _rcop =
+				m_ftable->fp_createInstance(&_npiHandle, _cop, _ci);
+			if (_npiHandle.errorOccurred)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED,
+					_npiHandle.providerError);
+			}
+			rval = *(static_cast<CIMObjectPath *>(_rcop.ptr) );
+		}
+		else
+		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
-        }
-        return rval;
+		}
+		return rval;
 }
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -247,7 +247,7 @@ PerlInstanceProviderProxy::modifyInstance(const ProviderEnvironmentIFCRef &env,
 	logDebug("PerlInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->fp_setInstance != NULL)
 	{
-	        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);

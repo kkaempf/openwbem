@@ -43,69 +43,69 @@ void registerCIMOMLocator();
 void registerClientAuthCBIFC();
 BOOST_PYTHON_MODULE(owclient)
 {
-    registerString();
-    registerCIMClient();
-    registerCIMOMInfo();
-    registerArray();
-    registerCIMOMLocator();
-    registerClientAuthCBIFC();
-    //
-    //    ClientAuthCBIFC ?
-    //    ClientAuthCBIFCRef
-    //
-    //    CIMClass
-    //
-    //    CIMDataType
-    //
-    //    CIMDateTime
-    //
-    //    CIMException
-    //
-    //    CIMFlavor
-    //
-    //    CIMInstance
-    //
-    //    CIMMethod
-    //
-    //    CIMNameSpace ???
-    //
-    //    CIMObjectPath
-    //
-    //    CIMParamValue
-    //
-    //    CIMParameter
-    //
-    //    CIMProperty
-    //
-    //    CIMQualifier
-    //
-    //    CIMQualifierType
-    //
-    //    CIMScope
-    //
-    //    CIMValue
-    //
-    //    CIMValueCast
-    //
-    //    StringResultHandlerIFC
-    //
-    //    CIMClassResultHandlerIFC
-    //
-    //    CIMClassEnumeration
-    //
-    //    CIMObjectPathResultHandlerIFC
-    //
-    //    CIMObjectPathEnumeration
-    //
-    //    CIMInstanceResultHandlerIFC
-    //
-    //    CIMInstanceEnumeration
-    //
-    //    CIMQualifierTypeResultHandlerIFC
-    //
-    //    CIMQualifierTypeEnumeration
-    //
-    //    MofCompiler
+	registerString();
+	registerCIMClient();
+	registerCIMOMInfo();
+	registerArray();
+	registerCIMOMLocator();
+	registerClientAuthCBIFC();
+	//
+	//    ClientAuthCBIFC ?
+	//    ClientAuthCBIFCRef
+	//
+	//    CIMClass
+	//
+	//    CIMDataType
+	//
+	//    CIMDateTime
+	//
+	//    CIMException
+	//
+	//    CIMFlavor
+	//
+	//    CIMInstance
+	//
+	//    CIMMethod
+	//
+	//    CIMNameSpace ???
+	//
+	//    CIMObjectPath
+	//
+	//    CIMParamValue
+	//
+	//    CIMParameter
+	//
+	//    CIMProperty
+	//
+	//    CIMQualifier
+	//
+	//    CIMQualifierType
+	//
+	//    CIMScope
+	//
+	//    CIMValue
+	//
+	//    CIMValueCast
+	//
+	//    StringResultHandlerIFC
+	//
+	//    CIMClassResultHandlerIFC
+	//
+	//    CIMClassEnumeration
+	//
+	//    CIMObjectPathResultHandlerIFC
+	//
+	//    CIMObjectPathEnumeration
+	//
+	//    CIMInstanceResultHandlerIFC
+	//
+	//    CIMInstanceEnumeration
+	//
+	//    CIMQualifierTypeResultHandlerIFC
+	//
+	//    CIMQualifierTypeEnumeration
+	//
+	//    MofCompiler
 }
 
 } // end namespace OpenWBEM

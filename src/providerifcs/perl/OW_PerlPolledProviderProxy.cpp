@@ -49,9 +49,9 @@ PerlPolledProviderProxy::~PerlPolledProviderProxy()
 /////////////////////////////////////////////////////////////////////////////
 Int32
 PerlPolledProviderProxy::getInitialPollingInterval(
-      const ProviderEnvironmentIFCRef& env)
+	  const ProviderEnvironmentIFCRef& env)
 {
-        env->getLogger()->logDebug("PerlPolledProviderIFC::getInitialPollingInterval()");
+		env->getLogger()->logDebug("PerlPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
@@ -66,10 +66,10 @@ PerlPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-	    char * expo = "SourceInstance.PercentageSpaceUse 80";
-	    SelectExp exp = {expo};
-	    ::CIMObjectPath cop = {NULL};
-            m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
+		char * expo = "SourceInstance.PercentageSpaceUse 80";
+		SelectExp exp = {expo};
+		::CIMObjectPath cop = {NULL};
+			m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,

@@ -53,7 +53,7 @@ class COWReference : private COWReferenceBase
 		~COWReference();
 		COWReference<T>& operator= (COWReference<T> arg);
 		COWReference<T>& operator= (T* newObj);
-        void swap(COWReference<T>& arg);
+		void swap(COWReference<T>& arg);
 		T* operator->();
 		T& operator*();
 //		T* getPtr();
@@ -128,44 +128,44 @@ template<class T>
 inline void COWReference<T>::decRef()
 {
 	typedef char type_must_be_complete[sizeof(T)];
-    if (COWReferenceBase::decRef())
-    {
-        delete m_pObj;
-        m_pObj = 0;
-    }
+	if (COWReferenceBase::decRef())
+	{
+		delete m_pObj;
+		m_pObj = 0;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline void COWReference<T>::getWriteLock()
 {
-    if (COWReferenceBase::refCountGreaterThanOne())
-    {
+	if (COWReferenceBase::refCountGreaterThanOne())
+	{
 		m_pObj = COWReferenceClone(m_pObj);
 		// this will decrement the count and then make a new one if we're making a copy.
 		COWReferenceBase::getWriteLock();
-    }
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline COWReference<T>& COWReference<T>::operator= (COWReference<T> arg)
 {
-    arg.swap(*this);
+	arg.swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline COWReference<T>& COWReference<T>::operator= (T* newObj)
 {
-    COWReference<T>(newObj).swap(*this);
+	COWReference<T>(newObj).swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 template <class T>
 inline void COWReference<T>::swap(COWReference<T>& arg)
 {
-    COWReferenceBase::swap(arg);
-    COWRefSwap(m_pObj, arg.m_pObj);
+	COWReferenceBase::swap(arg);
+	COWRefSwap(m_pObj, arg.m_pObj);
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
@@ -174,7 +174,7 @@ inline T* COWReference<T>::operator->()
 #ifdef OW_CHECK_NULL_REFERENCES
 	checkNull(m_pObj);
 #endif
-    getWriteLock();
+	getWriteLock();
 	
 	return m_pObj;
 }
@@ -185,7 +185,7 @@ inline T& COWReference<T>::operator*()
 #ifdef OW_CHECK_NULL_REFERENCES
 	checkNull(m_pObj);
 #endif
-    getWriteLock();
+	getWriteLock();
 	
 	return *(m_pObj);
 }
@@ -267,9 +267,9 @@ inline bool operator<(const COWReference<T>& a, const COWReference<U>& b)
 template <class T>
 inline T* COWReferenceClone(T* obj)
 {
-    // default implementation.  If a certain class doesn't have clone()
-    // (like std::vector), then they can overload this function
-    return obj->clone();
+	// default implementation.  If a certain class doesn't have clone()
+	// (like std::vector), then they can overload this function
+	return obj->clone();
 }
 
 } // end namespace OpenWBEM

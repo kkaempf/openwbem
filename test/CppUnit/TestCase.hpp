@@ -104,54 +104,54 @@ class TestResult;
 
 class TestCase : public Test
 {
-    REFERENCEOBJECT (TestCase)
+	REFERENCEOBJECT (TestCase)
 
 public:
-                        TestCase         (const char* Name);
-                        ~TestCase        ();
+						TestCase         (const char* Name);
+						~TestCase        ();
 
-    virtual void        run              (TestResult *result);
-    virtual TestResult  *run             ();
+	virtual void        run              (TestResult *result);
+	virtual TestResult  *run             ();
 
 	template <class T>
 	bool runFuncAndCatchErrors( T func, const char* msg, TestResult* result );
 
-    virtual int         countTestCases   ();
-    const char*         name             ();
-    virtual const char* toString         ();
+	virtual int         countTestCases   ();
+	const char*         name             ();
+	virtual const char* toString         ();
 
-    virtual void        setUp            ();
-    virtual void        tearDown         ();
+	virtual void        setUp            ();
+	virtual void        tearDown         ();
 
 protected:
-    virtual void        runTest          ();
+	virtual void        runTest          ();
 
-    TestResult          *defaultResult   ();
-    void                assertImplementation
-                                         (bool         condition,
-                                          const char*  conditionExpression,
-                                          long         lineNumber,
-                                          const char*  fileName);
+	TestResult          *defaultResult   ();
+	void                assertImplementation
+										 (bool         condition,
+										  const char*  conditionExpression,
+										  long         lineNumber,
+										  const char*  fileName);
 
-    void                assertEquals     (long         expected,
-                                          long         actual,
-                                          long         lineNumber,
-                                          const char*  fileName);
+	void                assertEquals     (long         expected,
+										  long         actual,
+										  long         lineNumber,
+										  const char*  fileName);
 
-    void                assertEquals     (double       expected,
-                                          double       actual,
-                                          double       delta,
-                                          long         lineNumber,
-                                          const char*  fileName);
+	void                assertEquals     (double       expected,
+										  double       actual,
+										  double       delta,
+										  long         lineNumber,
+										  const char*  fileName);
 
-    const char*         notEqualsMessage (long         expected,
-                                          long         actual);
+	const char*         notEqualsMessage (long         expected,
+										  long         actual);
 
-    const char*         notEqualsMessage (double       expected,
-                                          double       actual);
+	const char*         notEqualsMessage (double       expected,
+										  double       actual);
 
 private:
-    const char*   m_name;
+	const char*   m_name;
 
 
 
@@ -169,28 +169,28 @@ private:
 
 #ifdef CPPUNIT_SOURCEANNOTATION
 
-    #undef unitAssert
-    #define unitAssert(condition)\
-    try{this->assertImplementation ((condition),(#condition),\
-        __LINE__, __FILE__);\
-	     } catch (const CppUnitException& e){throw e;} \
+	#undef unitAssert
+	#define unitAssert(condition)\
+	try{this->assertImplementation ((condition),(#condition),\
+		__LINE__, __FILE__);\
+		 } catch (const CppUnitException& e){throw e;} \
 			catch( const std::exception& e ){ throw CppUnitException( e.what(), __LINE__, __FILE__);} \
 		  catch (...) {throw CppUnitException((#condition), __LINE__, __FILE__);}
 
-    #undef unitAssertFail
-    #define unitAssertFail(condition)\
-    try{this->assertImplementation ((!(condition)),("!("#condition")"),\
-        __LINE__, __FILE__);\
-	     } catch (const CppUnitException& e){throw e;} \
+	#undef unitAssertFail
+	#define unitAssertFail(condition)\
+	try{this->assertImplementation ((!(condition)),("!("#condition")"),\
+		__LINE__, __FILE__);\
+		 } catch (const CppUnitException& e){throw e;} \
 			catch( const std::exception& e ){ throw CppUnitException( e.what(), __LINE__, __FILE__);} \
 		  catch (...) {throw CppUnitException((#condition), __LINE__, __FILE__);}
 
-    #undef unitAssertThrows
-    #define unitAssertThrows(condition)\
-    try{condition;\
+	#undef unitAssertThrows
+	#define unitAssertThrows(condition)\
+	try{condition;\
 		 this->assertImplementation (false, #condition,\
 				 __LINE__, __FILE__);\
-	     } catch (const CppUnitException& e){throw e;} \
+		 } catch (const CppUnitException& e){throw e;} \
 		  catch (...) {}
 		
 	#undef unitAssertNoThrow
@@ -203,10 +203,10 @@ private:
 
 #else
 
-    #undef unitAssert
-    #define unitAssert(condition)\
-    (this->assertImplementation ((condition),"",\
-        __LINE__, __FILE__))
+	#undef unitAssert
+	#define unitAssert(condition)\
+	(this->assertImplementation ((condition),"",\
+		__LINE__, __FILE__))
 
 #endif
 
@@ -214,11 +214,11 @@ private:
 // Macros for primitive value comparisons
 #define unitAssertDoublesEqual(expected,actual,delta)\
 (this->assertEquals ((expected),\
-        (actual),(delta),__LINE__,__FILE__))
+		(actual),(delta),__LINE__,__FILE__))
 
 #define unitAssertLongsEqual(expected,actual)\
 (this->assertEquals ((expected),\
-        (actual),__LINE__,__FILE__))
+		(actual),__LINE__,__FILE__))
 
 
 #endif

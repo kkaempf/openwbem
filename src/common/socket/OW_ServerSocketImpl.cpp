@@ -203,15 +203,15 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 	}
 	// We got the lock, so clobber the UDS if it's there so bind will succeed.
 	// If it's not gone, bind will fail.
-    if (FileSystem::exists(filename))
-    {
-        if (!FileSystem::removeFile(filename.c_str()))
-        {
-            OW_THROW(SocketException,
-                format("Unable to unlink Unix Domain Socket: %1, errno: %2(%3)",
-                    filename, errno, strerror(errno)).c_str());
-        }
-    }
+	if (FileSystem::exists(filename))
+	{
+		if (!FileSystem::removeFile(filename.c_str()))
+		{
+			OW_THROW(SocketException,
+				format("Unable to unlink Unix Domain Socket: %1, errno: %2(%3)",
+					filename, errno, strerror(errno)).c_str());
+		}
+	}
 		
 	if(bind(m_sockfd, m_localAddress.getNativeForm(),
 		m_localAddress.getNativeFormSize()) == -1)

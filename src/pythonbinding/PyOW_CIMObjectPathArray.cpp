@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_CIMObjectPath(const char* name)
 {
-    registerArrayImpl<CIMObjectPath>(name);
+	registerArrayImpl<CIMObjectPath>(name);
 }
 
 } // end namespace OpenWBEM

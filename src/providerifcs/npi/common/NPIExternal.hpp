@@ -24,161 +24,161 @@ namespace OpenWBEM
 extern "C" 
 void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type);
 extern "C"  CIMClass NPI_getmyClass(
-    NPIHandle* npiHandle,
-    const String& nameSpace, const String& className);
+	NPIHandle* npiHandle,
+	const String& nameSpace, const String& className);
 extern "C" CIMObjectPathEnumeration
-    NPI_enumeratemyInstanceNames(
-    NPIHandle* npiHandle,
-    const String& nameSpace, const String& className);
+	NPI_enumeratemyInstanceNames(
+	NPIHandle* npiHandle,
+	const String& nameSpace, const String& className);
 extern "C" CIMInstanceEnumeration
-    NPI_enumeratemyInstances(
-    NPIHandle* npiHandle,
-    const String& nameSpace, const String& className);
+	NPI_enumeratemyInstances(
+	NPIHandle* npiHandle,
+	const String& nameSpace, const String& className);
 extern "C" CIMInstance
-    NPI_getmyInstance(
-    NPIHandle* npiHandle,
-    const CIMObjectPath & owcop, const int localOnly);
+	NPI_getmyInstance(
+	NPIHandle* npiHandle,
+	const CIMObjectPath & owcop, const int localOnly);
 }
 
 //Vector functions
 extern "C"  Vector VectorNew ( NPIHandle* npiHandle);
 extern "C"
-    void _VectorAddTo ( NPIHandle* npiHandle,Vector v, void* obj);
+	void _VectorAddTo ( NPIHandle* npiHandle,Vector v, void* obj);
 extern "C"
-    int VectorSize( NPIHandle* npiHandle, Vector v);
+	int VectorSize( NPIHandle* npiHandle, Vector v);
 extern "C"
-    void* _VectorGet( NPIHandle* npiHandle, Vector v, int pos);
+	void* _VectorGet( NPIHandle* npiHandle, Vector v, int pos);
 //CIMValue functions
 extern "C"
-    ::CIMType CIMValueGetType (NPIHandle* npiHandle, ::CIMValue cv);
+	::CIMType CIMValueGetType (NPIHandle* npiHandle, ::CIMValue cv);
 extern "C"
-    ::CIMValue CIMValueNewString (NPIHandle* npiHandle, const char* val);
+	::CIMValue CIMValueNewString (NPIHandle* npiHandle, const char* val);
 extern "C"
-    ::CIMValue CIMValueNewInteger (NPIHandle* npiHandle, int val);
+	::CIMValue CIMValueNewInteger (NPIHandle* npiHandle, int val);
 extern "C"
-    ::CIMValue CIMValueNewRef (NPIHandle* npiHandle, ::CIMObjectPath cop);
+	::CIMValue CIMValueNewRef (NPIHandle* npiHandle, ::CIMObjectPath cop);
 extern "C"
-    char* CIMValueGetString (NPIHandle* npiHandle, ::CIMValue cv);
+	char* CIMValueGetString (NPIHandle* npiHandle, ::CIMValue cv);
 extern "C"
-    int CIMValueGetInteger(NPIHandle* npiHandle, ::CIMValue cv);
+	int CIMValueGetInteger(NPIHandle* npiHandle, ::CIMValue cv);
 extern "C"
-    ::CIMObjectPath CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv);
+	::CIMObjectPath CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv);
 //CIMParameter functions
 extern "C"
-    ::CIMType CIMParameterGetType( NPIHandle* npiHandle, ::CIMParameter cp);
+	::CIMType CIMParameterGetType( NPIHandle* npiHandle, ::CIMParameter cp);
 extern "C"
-    char* CIMParameterGetName( NPIHandle* npiHandle, ::CIMParameter cp);
+	char* CIMParameterGetName( NPIHandle* npiHandle, ::CIMParameter cp);
 extern "C"
-    ::CIMParameter CIMParameterNewString (NPIHandle* npiHandle,
-            const char* name, const char* value);
+	::CIMParameter CIMParameterNewString (NPIHandle* npiHandle,
+			const char* name, const char* value);
 extern "C"
-    ::CIMParameter CIMParameterNewInteger ( NPIHandle* npiHandle,
-            const char* name, int value);
+	::CIMParameter CIMParameterNewInteger ( NPIHandle* npiHandle,
+			const char* name, int value);
 extern "C"
-    ::CIMParameter CIMParameterNewRef ( NPIHandle* npiHandle,
-            const char* name, CIMObjectPath value);
+	::CIMParameter CIMParameterNewRef ( NPIHandle* npiHandle,
+			const char* name, CIMObjectPath value);
 extern "C"
-    char* CIMParameterGetString ( NPIHandle* npiHandle,
-              ::CIMParameter cp);
+	char* CIMParameterGetString ( NPIHandle* npiHandle,
+			  ::CIMParameter cp);
 extern "C"
-    int CIMParameterGetIntegerValue ( NPIHandle* npiHandle,
-              ::CIMParameter cp);
+	int CIMParameterGetIntegerValue ( NPIHandle* npiHandle,
+			  ::CIMParameter cp);
 extern "C"
-    CIMObjectPath CIMParameterGetRefValue ( NPIHandle* npiHandle,
-              ::CIMParameter cp);
+	CIMObjectPath CIMParameterGetRefValue ( NPIHandle* npiHandle,
+			  ::CIMParameter cp);
 //CIMInstance functions
 extern "C"
-    ::CIMInstance CIMClassNewInstance ( NPIHandle* npiHandle, ::CIMClass cc );
+	::CIMInstance CIMClassNewInstance ( NPIHandle* npiHandle, ::CIMClass cc );
 extern "C"
-    void CIMInstanceSetStringProperty( NPIHandle* npiHandle, ::CIMInstance ci,
-                                       const char* name, const char* value );
+	void CIMInstanceSetStringProperty( NPIHandle* npiHandle, ::CIMInstance ci,
+									   const char* name, const char* value );
 extern "C"
-    void CIMInstanceSetIntegerProperty( NPIHandle* npiHandle,::CIMInstance ci,
-                                       const char* name, const int value);
+	void CIMInstanceSetIntegerProperty( NPIHandle* npiHandle,::CIMInstance ci,
+									   const char* name, const int value);
 extern "C"
   void CIMInstanceSetLongProperty ( NPIHandle*, ::CIMInstance , const char*,
-                                   const long long );
+								   const long long );
 extern "C"
   void CIMInstanceSetBooleanProperty ( NPIHandle*, ::CIMInstance,
-                                      const char*, const unsigned char );
+									  const char*, const unsigned char );
 extern "C"
-    void CIMInstanceSetRefProperty( NPIHandle* npiHandle, ::CIMInstance ci,
-                                     const char* name, ::CIMObjectPath value);
+	void CIMInstanceSetRefProperty( NPIHandle* npiHandle, ::CIMInstance ci,
+									 const char* name, ::CIMObjectPath value);
 extern "C"
 char* CIMInstanceGetStringValue(NPIHandle* npiHandle,
-                                 ::CIMInstance ci, const char* name);
+								 ::CIMInstance ci, const char* name);
 extern "C"
 int CIMInstanceGetIntegerValue(NPIHandle* npiHandle,
-                                 ::CIMInstance ci, const char* name);
+								 ::CIMInstance ci, const char* name);
 extern "C"
 ::CIMObjectPath CIMInstanceGetRefValue(NPIHandle* npiHandle,
-                                       CIMInstance ci, const char* name);
+									   CIMInstance ci, const char* name);
 // Object path functions
 extern "C"
-    ::CIMObjectPath CIMObjectPathNew ( NPIHandle* npiHandle,
-                                       const char* classname );
+	::CIMObjectPath CIMObjectPathNew ( NPIHandle* npiHandle,
+									   const char* classname );
 extern "C"
-    void CIMObjectPathDel ( NPIHandle* npiHandle,
-                                       ::CIMObjectPath cop);
+	void CIMObjectPathDel ( NPIHandle* npiHandle,
+									   ::CIMObjectPath cop);
 //extern "C"
 //    ::CIMObjectPath CIMObjectPathNew ( NPIHandle* npiHandle,
 //                                       ::CIMInstance ci);
 extern "C"
-    ::CIMObjectPath CIMObjectPathFromCIMInstance
-                             ( NPIHandle* npiHandle, ::CIMInstance ci);
+	::CIMObjectPath CIMObjectPathFromCIMInstance
+							 ( NPIHandle* npiHandle, ::CIMInstance ci);
 extern "C"
-    char* CIMObjectPathGetClassName( NPIHandle* npiHandle,
-                                       ::CIMObjectPath cop);
+	char* CIMObjectPathGetClassName( NPIHandle* npiHandle,
+									   ::CIMObjectPath cop);
 extern "C"
-    char* CIMObjectPathGetNameSpace( NPIHandle* npiHandle,
-                                       ::CIMObjectPath cop);
+	char* CIMObjectPathGetNameSpace( NPIHandle* npiHandle,
+									   ::CIMObjectPath cop);
 extern "C"
-    void CIMObjectPathSetNameSpace( NPIHandle* npiHandle,
-                                    ::CIMObjectPath cop, const char* str);
+	void CIMObjectPathSetNameSpace( NPIHandle* npiHandle,
+									::CIMObjectPath cop, const char* str);
 extern "C"
-    void CIMObjectPathSetNameSpaceFromCIMObjectPath ( NPIHandle* npiHandle,
-                                    ::CIMObjectPath cop, ::CIMObjectPath src);
+	void CIMObjectPathSetNameSpaceFromCIMObjectPath ( NPIHandle* npiHandle,
+									::CIMObjectPath cop, ::CIMObjectPath src);
 extern "C"
-    char* CIMObjectPathGetStringKeyValue (NPIHandle* npiHandle,
-                                        ::CIMObjectPath cop, const char* key);
+	char* CIMObjectPathGetStringKeyValue (NPIHandle* npiHandle,
+										::CIMObjectPath cop, const char* key);
 extern "C"
-    void CIMObjectPathAddStringKeyValue (NPIHandle* npiHandle,
-                                         ::CIMObjectPath cop,
-                                         const char* key, const char* value);
+	void CIMObjectPathAddStringKeyValue (NPIHandle* npiHandle,
+										 ::CIMObjectPath cop,
+										 const char* key, const char* value);
 extern "C"
-    int CIMObjectPathGetIntegerKeyValue( NPIHandle* npiHandle,
-                                        ::CIMObjectPath cop, const char* key);
+	int CIMObjectPathGetIntegerKeyValue( NPIHandle* npiHandle,
+										::CIMObjectPath cop, const char* key);
 extern "C"
-    void CIMObjectPathAddIntegerKeyValue (NPIHandle* npiHandle,
-                                         ::CIMObjectPath cop,
-                                         const char* key, const int value);
+	void CIMObjectPathAddIntegerKeyValue (NPIHandle* npiHandle,
+										 ::CIMObjectPath cop,
+										 const char* key, const int value);
 extern "C"
-    ::CIMObjectPath CIMObjectPathGetRefKeyValue( NPIHandle* npiHandle,
-                                        ::CIMObjectPath cop, const char* key);
+	::CIMObjectPath CIMObjectPathGetRefKeyValue( NPIHandle* npiHandle,
+										::CIMObjectPath cop, const char* key);
 extern "C"
-    void CIMObjectPathAddRefKeyValue (NPIHandle* npiHandle,
-                                      ::CIMObjectPath cop,
-                                      const char* key, ::CIMObjectPath cop2);
+	void CIMObjectPathAddRefKeyValue (NPIHandle* npiHandle,
+									  ::CIMObjectPath cop,
+									  const char* key, ::CIMObjectPath cop2);
 // CIMOM functions
 extern "C"
-    ::CIMClass CIMOMGetClass( NPIHandle* npiHandle,
-                             ::CIMObjectPath cop, int localOnly );
+	::CIMClass CIMOMGetClass( NPIHandle* npiHandle,
+							 ::CIMObjectPath cop, int localOnly );
 extern "C"
-    ::Vector CIMOMEnumInstanceNames(NPIHandle* npiHandle,
-                                    ::CIMObjectPath cop, int i);
+	::Vector CIMOMEnumInstanceNames(NPIHandle* npiHandle,
+									::CIMObjectPath cop, int i);
 extern "C"
-    ::Vector CIMOMEnumInstances(NPIHandle* npiHandle,
-                                    ::CIMObjectPath cop, int i, int j);
+	::Vector CIMOMEnumInstances(NPIHandle* npiHandle,
+									::CIMObjectPath cop, int i, int j);
 extern "C"
-    ::CIMInstance CIMOMGetInstance(NPIHandle* npiHandle,
-                              ::CIMObjectPath cop, int i);
+	::CIMInstance CIMOMGetInstance(NPIHandle* npiHandle,
+							  ::CIMObjectPath cop, int i);
 extern "C" void
 CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char* ns,
-                ::CIMInstance indication);
+				::CIMInstance indication);
 extern "C" void
 CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char* ns,
-                ::CIMInstance indication,
-                ::CIMInstance source, ::CIMInstance previous);
+				::CIMInstance indication,
+				::CIMInstance source, ::CIMInstance previous);
 // Error handling classes
 extern "C" int errorCheck(NPIHandle* npiHandle );
 extern "C" void raiseError(NPIHandle* npiHandle, const char* msg );

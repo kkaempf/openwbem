@@ -43,23 +43,23 @@ using namespace boost::python;
 namespace {
 void CIMOMInfo_setitem_(CIMOMInfo& ci, const String& key, const String& value)
 {
-    ci[key] = value;
+	ci[key] = value;
 }
 String CIMOMInfo_getitem_(const CIMOMInfo& ci, const String& key)
 {
-    return ci[key];
+	return ci[key];
 }
 }
 void registerCIMOMInfo()
 {
-    class_<CIMOMInfo>("CIMOMInfo")
-        .def("getURL", &CIMOMInfo::getURL)
-        .def("__getitem__", &CIMOMInfo_getitem_)
-        .def("__setitem__", &CIMOMInfo_setitem_)
-        .def(self < self)
-        .def(self == self)
-        .def(self != self)
-    ;
+	class_<CIMOMInfo>("CIMOMInfo")
+		.def("getURL", &CIMOMInfo::getURL)
+		.def("__getitem__", &CIMOMInfo_getitem_)
+		.def("__setitem__", &CIMOMInfo_setitem_)
+		.def(self < self)
+		.def(self == self)
+		.def(self != self)
+	;
 }
 
 } // end namespace OpenWBEM

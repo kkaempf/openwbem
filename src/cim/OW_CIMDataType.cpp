@@ -49,7 +49,7 @@ struct CIMDataType::DTData
 	Int32 m_numberOfElements;
 	Int32 m_sizeRange;
 	String m_reference;
-    DTData* clone() const { return new DTData(*this); }
+	DTData* clone() const { return new DTData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMDataType::DTData& x, const CIMDataType::DTData& y)

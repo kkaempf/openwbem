@@ -264,45 +264,45 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    MutexLock ml(m_guard);
    if(m_loadDone)
    {
-      return;
+	  return;
    }
    m_loadDone = true;
    String libPath = env->getConfigItem(ConfigOpts::CMPIIFC_PROV_LOC_opt, OW_DEFAULT_CMPI_PROVIDER_LOCATION);
    env->getLogger()->logError("LoadNoIDproviders 2");
    SharedLibraryLoaderRef ldr =
-      SharedLibraryLoader::createSharedLibraryLoader();
+	  SharedLibraryLoader::createSharedLibraryLoader();
    if(ldr.isNull())
    {
-      env->getLogger()->logError("CMPI provider ifc failed to get shared lib loader");
-      return;
+	  env->getLogger()->logError("CMPI provider ifc failed to get shared lib loader");
+	  return;
    }
    StringArray dirEntries;
    if(!FileSystem::getDirectoryContents(libPath, dirEntries))
    {
-      env->getLogger()->logError(format("CMPI provider ifc failed getting contents of "
-         "directory: %1", libPath));
-      return;
+	  env->getLogger()->logError(format("CMPI provider ifc failed getting contents of "
+		 "directory: %1", libPath));
+	  return;
    }
    env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
-      if(!dirEntries[i].endsWith(".so"))
-      {
-         continue;
-      }
-      String libName = libPath;
-      libName += OW_FILENAME_SEPARATOR;
-      libName += dirEntries[i];
-      SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
-            env->getLogger());
-      String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
-      if(theLib.isNull())
-      {
-         env->getLogger()->logError(format("CMPI provider %1 ifc failed to load"
-                   " library: %2", guessProvId, libName));
-         continue;
-      }
-    }
+	  if(!dirEntries[i].endsWith(".so"))
+	  {
+		 continue;
+	  }
+	  String libName = libPath;
+	  libName += OW_FILENAME_SEPARATOR;
+	  libName += dirEntries[i];
+	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+			env->getLogger());
+	  String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
+	  if(theLib.isNull())
+	  {
+		 env->getLogger()->logError(format("CMPI provider %1 ifc failed to load"
+				   " library: %2", guessProvId, libName));
+		 continue;
+	  }
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 CMPIFTABLERef
@@ -341,14 +341,14 @@ CMPIProviderIFC::getProvider(
 		return CMPIFTABLERef();
 	}
 	memset(&miVector, 0, sizeof(MIs));
-        miVector.genericMode = 0;
+		miVector.genericMode = 0;
 	int specificMode = 0;
 	// find InstanceProvider entry points
 	if (theLib->getFunctionPointer(
 		"_Generic_Create_InstanceMI", miVector.createGenInstMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Instance;
-        	miVector.genericMode = 1;
+			miVector.genericMode = 1;
 	}
 	String creationFuncName = provId.substring(4) + "_Create_InstanceMI";
 	env->getLogger()->logError(format("CMPI provider ifc: Library %1 should contain %2", provId, creationFuncName));
@@ -356,65 +356,65 @@ CMPIProviderIFC::getProvider(
 		creationFuncName, miVector.createInstMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Instance;
- 		specificMode = 1;
+		specificMode = 1;
 	}
 	// find AssociationProvider entry points
 	if (theLib->getFunctionPointer(
 		"_Generic_Create_AssociationMI", miVector.createGenAssocMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Association;
-        	miVector.genericMode = 1;
+			miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_AssociationMI";
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createAssocMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Association;
- 		specificMode = 1;
+		specificMode = 1;
 	}
 	// find MethodProvider entry points
 	if (theLib->getFunctionPointer(
 		"_Generic_Create_MethodMI", miVector.createGenMethMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Method;
-        	miVector.genericMode = 1;
+			miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_MethodMI";
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createMethMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Method;
- 		specificMode = 1;
+		specificMode = 1;
 	}
 	// find PropertyProvider entry points
 	if (theLib->getFunctionPointer(
 		"_Generic_Create_PropertyMI", miVector.createGenPropMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Property;
-        	miVector.genericMode = 1;
+			miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_PropertyMI";
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createPropMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Property;
- 		specificMode = 1;
+		specificMode = 1;
 	}
 	// find IndicationProvider entry points
 	if (theLib->getFunctionPointer(
 		"_Generic_Create_IndicationMI", miVector.createGenIndMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Indication;
-        	miVector.genericMode = 1;
+			miVector.genericMode = 1;
 	}
 	creationFuncName = provId.substring(4) + "_Create_IndicationMI";
 	if (theLib->getFunctionPointer(
 		creationFuncName, miVector.createIndMI))
 	{
 		miVector.miTypes |= CMPI_MIType_Indication;
- 		specificMode = 1;
+		specificMode = 1;
 	}
-                
+				
 	if (miVector.miTypes == 0)
 	{
 		env->getLogger()->logError(format("CMPI provider ifc: Library %1 does not contain"
@@ -428,7 +428,7 @@ CMPIProviderIFC::getProvider(
 		return CMPIFTABLERef();
 	}
 	// Now it's time to initialize the providers
-        ProviderEnvironmentIFCRef * provenv =
+		ProviderEnvironmentIFCRef * provenv =
 		(ProviderEnvironmentIFCRef *)(&env);
 	_broker.hdl=new ProviderEnvironmentIFCRef(* provenv);
 	_broker.bft=CMPI_Broker_Ftab;
@@ -501,9 +501,9 @@ CMPIProviderIFC::getProvider(
 	env->getLogger()->logDebug(format("CMPI provider ifc: provider %1 loaded and initialized",
 		provId));
 	CompleteMI * completeMI = new  CompleteMI();
-        completeMI->miVector = miVector;
+		completeMI->miVector = miVector;
 	delete ((ProviderEnvironmentIFC *)completeMI->broker.hdl);
-        completeMI->broker = _broker;
+		completeMI->broker = _broker;
 	//MIs * _miVector = new MIs(miVector);
 	if (completeMI->miVector.instMI != miVector.instMI)
 	{

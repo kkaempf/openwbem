@@ -77,11 +77,11 @@ public:
 	}
 	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance_)
 	{
-        // make a copy so we can add the __Subscription_UserName property to it.
-        CIMInstance cimInstance(cimInstance_);
-        // we add this property so that if the cimom restarts, we can recover the username of whoever created the subscription.
-        String username = env->getUserName();
-        cimInstance.setProperty("__Subscription_UserName", CIMValue(username));
+		// make a copy so we can add the __Subscription_UserName property to it.
+		CIMInstance cimInstance(cimInstance_);
+		// we add this property so that if the cimom restarts, we can recover the username of whoever created the subscription.
+		String username = env->getUserName();
+		cimInstance.setProperty("__Subscription_UserName", CIMValue(username));
 		if (!indicationsEnabled)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");

@@ -242,7 +242,7 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	}
 	catch (const StringConversionException&)
 	{
-       		maxIndicationExportThreads = String(OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS).toInt32();
+			maxIndicationExportThreads = String(OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS).toInt32();
 	}
 	m_notifierThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, 
 				maxIndicationExportThreads, maxIndicationExportThreads * 100, env->getLogger(), "Indication Server"));

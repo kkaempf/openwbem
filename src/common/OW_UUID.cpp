@@ -185,31 +185,31 @@ UUID::UUID()
 	l.release();
 	// stuff fields into the UUID
 	// do time_low 
-        UInt32 tmp = static_cast<UInt32>(timestamp & 0xFFFFFFFF);
-        m_uuid[3] = static_cast<UInt8>(tmp);
-        tmp >>= 8;
-        m_uuid[2] = static_cast<UInt8>(tmp);
-        tmp >>= 8;
-        m_uuid[1] = static_cast<UInt8>(tmp);
-        tmp >>= 8;
-        m_uuid[0] = static_cast<UInt8>(tmp);
+		UInt32 tmp = static_cast<UInt32>(timestamp & 0xFFFFFFFF);
+		m_uuid[3] = static_cast<UInt8>(tmp);
+		tmp >>= 8;
+		m_uuid[2] = static_cast<UInt8>(tmp);
+		tmp >>= 8;
+		m_uuid[1] = static_cast<UInt8>(tmp);
+		tmp >>= 8;
+		m_uuid[0] = static_cast<UInt8>(tmp);
 	// do time_mid
-        tmp = static_cast<UInt16>((timestamp >> 32) & 0xFFFF);
-        m_uuid[5] = static_cast<UInt8>(tmp);
-        tmp >>= 8;
-        m_uuid[4] = static_cast<UInt8>(tmp);
+		tmp = static_cast<UInt16>((timestamp >> 32) & 0xFFFF);
+		m_uuid[5] = static_cast<UInt8>(tmp);
+		tmp >>= 8;
+		m_uuid[4] = static_cast<UInt8>(tmp);
 	// do time_hi_and_version
-        tmp = static_cast<UInt16>(((timestamp >> 48) & 0x0FFF) | (1 << 12));
-        m_uuid[7] = static_cast<UInt8>(tmp);
-        tmp >>= 8;
-        m_uuid[6] = static_cast<UInt8>(tmp);
+		tmp = static_cast<UInt16>(((timestamp >> 48) & 0x0FFF) | (1 << 12));
+		m_uuid[7] = static_cast<UInt8>(tmp);
+		tmp >>= 8;
+		m_uuid[6] = static_cast<UInt8>(tmp);
 	// do clk_seq_low
-        tmp = clockseq & 0xFF;
-        m_uuid[9] = static_cast<UInt8>(tmp);
+		tmp = clockseq & 0xFF;
+		m_uuid[9] = static_cast<UInt8>(tmp);
 	// do clk_seq_hi_res
-        tmp = (clockseq & 0x3F00) >> 8 | 0x80;
-        m_uuid[8] = static_cast<UInt8>(tmp);
-        memcpy(m_uuid+10, &node, 6);
+		tmp = (clockseq & 0x3F00) >> 8 | 0x80;
+		m_uuid[8] = static_cast<UInt8>(tmp);
+		memcpy(m_uuid+10, &node, 6);
 }
 /////////////////////////////////////////////////////////////////////////////
 UUID::UUID(const String& uuidStr)

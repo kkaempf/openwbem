@@ -63,10 +63,10 @@ CMPIAssociatorProviderProxy::associatorNames(
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-                                                                                
+																				
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-                                                                                
+																				
 		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
@@ -89,11 +89,11 @@ CMPIAssociatorProviderProxy::associatorNames(
 		if (_role) delete _role;
 		if (_resultClass) delete _resultClass;
 		if (_resultRole) delete _resultRole;
-        	if (rc.rc != CMPI_RC_OK)
-        	{
-            		OW_THROWCIMMSG(CIMException::FAILED,
+			if (rc.rc != CMPI_RC_OK)
+			{
+					OW_THROWCIMMSG(CIMException::FAILED,
 					 String(rc.rc).c_str());
-        	}
+			}
 	}
 	else
 	{
@@ -126,7 +126,7 @@ CMPIAssociatorProviderProxy::associators(
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-                                                                                
+																				
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 		// initialize path
@@ -146,7 +146,7 @@ CMPIAssociatorProviderProxy::associators(
 					props[i]= (*propertyList)[i].
 							allocateCString();
 				props[pCount]=NULL;
- 			}
+			}
 		}
 		CMPIFlags flgs = 0;
 		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
@@ -168,12 +168,12 @@ CMPIAssociatorProviderProxy::associators(
 		if (_resultRole) delete _resultRole;
 		if (props && pCount)
 			for (int i=0;i<pCount;i++) free((char *)props[i]);
-        	if (rc.rc == CMPI_RC_OK) return;
+			if (rc.rc == CMPI_RC_OK) return;
 		else
-        	{
+			{
 			OW_THROWCIMMSG(CIMException::FAILED,
 					 String(rc.rc).c_str());
-        	}
+			}
 	}
 	else
 	{
@@ -204,7 +204,7 @@ CMPIAssociatorProviderProxy::references(
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-                                                                                
+																				
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 		// initialize path
@@ -224,7 +224,7 @@ CMPIAssociatorProviderProxy::references(
 					props[i]= (*propertyList)[i].
 						allocateCString();
 				props[pCount]=NULL;
- 			}
+			}
 		}
 		CMPIFlags flgs = 0;
 		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
@@ -239,12 +239,12 @@ CMPIAssociatorProviderProxy::references(
 		if (_role) delete _role;
 		if (props && pCount)
 			for (int i=0;i<pCount;i++) free((char *)props[i]);
-        	if (rc.rc == CMPI_RC_OK) return;
+			if (rc.rc == CMPI_RC_OK) return;
 		else
-        	{
+			{
 			OW_THROWCIMMSG(CIMException::FAILED,
 					 String(rc.rc).c_str());
-        	}
+			}
 	}
 	else
 	{
@@ -270,7 +270,7 @@ CMPIAssociatorProviderProxy::referenceNames(
 		::OperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-                                                                                
+																				
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 		// initialize path
@@ -288,12 +288,12 @@ CMPIAssociatorProviderProxy::referenceNames(
 			mi,&eCtx,&eRes,&eRef, aClass, _role);
 		if (aClass) delete aClass;
 		if (_role) delete _role;
-        	if (rc.rc != CMPI_RC_OK) return;
+			if (rc.rc != CMPI_RC_OK) return;
 		else
-        	{
+			{
 			OW_THROWCIMMSG(CIMException::FAILED,
 					 String(rc.rc).c_str());
-        	}
+			}
 	}
 	else
 	{

@@ -83,12 +83,12 @@ void OW_StringArrayPropertyTestCases::testSomething()
 	}
 	catch(CIMException& ce)
 	{
-        std::cerr << ce.getMessage() << std::endl;
+		std::cerr << ce.getMessage() << std::endl;
 		unitAssert(false);
 	}
 	catch(Exception& e)
 	{
-        std::cerr << e.getMessage() << std::endl;
+		std::cerr << e.getMessage() << std::endl;
 		//std::cerr << e.getStackTrace() << std::endl;
 		unitAssert(false);
 	}

@@ -46,7 +46,7 @@ struct CIMParameter::PARMData
 	String m_name;
 	CIMDataType m_dataType;
 	CIMQualifierArray m_qualifiers;
-    PARMData* clone() const { return new PARMData(*this); }
+	PARMData* clone() const { return new PARMData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMParameter::PARMData& x, const CIMParameter::PARMData& y)

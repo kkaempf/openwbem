@@ -51,7 +51,7 @@ using std::istream;
 HTTPClient::HTTPClient( const String &sURL )
 #ifndef OW_DISABLE_DIGEST
 	: m_sRealm()
-  	, m_sDigestNonce()
+	, m_sDigestNonce()
 	, m_sDigestCNonce()
 	, m_iDigestNonceCount(1)
 	, m_sDigestSessionKey()
@@ -346,7 +346,7 @@ HTTPClient::beginRequest(const String& methodName,
 	const String& nameSpace)
 {
 	(void)methodName; (void)nameSpace;
-    return Reference<std::iostream>(new TempFileStream());
+	return Reference<std::iostream>(new TempFileStream());
 }
 //////////////////////////////////////////////////////////////////////////////
 Reference<CIMProtocolIStreamIFC>
@@ -595,7 +595,7 @@ HTTPClient::processHeaders(String& statusLine)
 					}
 					break;
 			default:
-	  				m_needsConnect = true;
+					m_needsConnect = true;
 					rt = FATAL;
 					break;
 			} // switch (isc)

@@ -45,9 +45,9 @@ Param::Param(String argname, String value) : m_argName(argname), m_argValue(valu
 Param::Param(String argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
 {
 	if(value)
-	    m_argValue = "TRUE";
+		m_argValue = "TRUE";
 	else		    
-	    m_argValue = "FALSE";
+		m_argValue = "FALSE";
 }
 	
 String

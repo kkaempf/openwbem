@@ -216,7 +216,7 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 		}
 		else
 		{
- 			p = new char[ifc.ifc_len];
+			p = new char[ifc.ifc_len];
 			memmove(p, ifc.ifc_buf, oldlen);
 			delete [] ifc.ifc_buf;
 			ifc.ifc_buf = p;

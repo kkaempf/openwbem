@@ -136,8 +136,8 @@ namespace Exec
 	 *  command[1] .. command[n] are the command line parameters to the command.
 	 *
 	 * @return 127 if the execve() call for command[0]
-     * fails,  -1 if there was another error and the return code
-     * of the command otherwise.
+	 * fails,  -1 if there was another error and the return code
+	 * of the command otherwise.
 	 */
 	int safeSystem(const Array<String>& command);
 	/**

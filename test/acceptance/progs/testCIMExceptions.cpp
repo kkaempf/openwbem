@@ -141,7 +141,7 @@ main(int argc, char* argv[])
 			chRef = new CIMXMLCIMOMHandle(client);
 		}
 
-        runTests(chRef);
+		runTests(chRef);
 
 		return 0;
 
@@ -159,7 +159,7 @@ main(int argc, char* argv[])
 
 void runTests(const CIMOMHandleIFCRef& hdl)
 {
-    // GetClass
+	// GetClass
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
@@ -1067,132 +1067,132 @@ void runTests(const CIMOMHandleIFCRef& hdl)
 	// EnumNameSpaces
 
 
-    // invokeMethod
+	// invokeMethod
 
-    // CIM_ERR_INVALID_NAMESPACE
-    try
-    {
-        CIMParamValueArray in, out;
-        hdl->invokeMethod("badNamespace", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		CIMParamValueArray in, out;
+		hdl->invokeMethod("badNamespace", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::INVALID_NAMESPACE);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::INVALID_NAMESPACE);
+	}
 
-    // CIM_ERR_INVALID_PARAMETER - wrong number of params
-    try
-    {
-        CIMParamValueArray in, out;
-        hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+	// CIM_ERR_INVALID_PARAMETER - wrong number of params
+	try
+	{
+		CIMParamValueArray in, out;
+		hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
+	}
 
-    // CIM_ERR_INVALID_PARAMETER - wrong name of some parameter
-    try
-    {
-        CIMParamValueArray in, out;
-        in.push_back(CIMParamValue("io16", CIMValue(Int16(16))));
-        in.push_back(CIMParamValue("nullParam", CIMValue(CIMNULL)));
-        in.push_back(CIMParamValue("s", CIMValue(String("input string"))));
-        UInt8Array uint8array;
-        in.push_back(CIMParamValue("uint8array", CIMValue(uint8array)));
-        CIMObjectPathArray paths;
-        in.push_back(CIMParamValue("pathsBAD", CIMValue(paths)));
+	// CIM_ERR_INVALID_PARAMETER - wrong name of some parameter
+	try
+	{
+		CIMParamValueArray in, out;
+		in.push_back(CIMParamValue("io16", CIMValue(Int16(16))));
+		in.push_back(CIMParamValue("nullParam", CIMValue(CIMNULL)));
+		in.push_back(CIMParamValue("s", CIMValue(String("input string"))));
+		UInt8Array uint8array;
+		in.push_back(CIMParamValue("uint8array", CIMValue(uint8array)));
+		CIMObjectPathArray paths;
+		in.push_back(CIMParamValue("pathsBAD", CIMValue(paths)));
 
-        hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
+	}
 
-    // CIM_ERR_INVALID_PARAMETER - wrong type of some parameter
-    try
-    {
-        CIMParamValueArray in, out;
-        in.push_back(CIMParamValue("io16", CIMValue(Int16(16))));
-        in.push_back(CIMParamValue("nullParam", CIMValue(CIMNULL)));
-        in.push_back(CIMParamValue("s", CIMValue(String("input string"))));
-        StringArray sarray;
-        sarray.push_back("x");
-        in.push_back(CIMParamValue("uint8array", CIMValue(sarray)));
-        CIMObjectPathArray paths;
-        in.push_back(CIMParamValue("paths", CIMValue(paths)));
+	// CIM_ERR_INVALID_PARAMETER - wrong type of some parameter
+	try
+	{
+		CIMParamValueArray in, out;
+		in.push_back(CIMParamValue("io16", CIMValue(Int16(16))));
+		in.push_back(CIMParamValue("nullParam", CIMValue(CIMNULL)));
+		in.push_back(CIMParamValue("s", CIMValue(String("input string"))));
+		StringArray sarray;
+		sarray.push_back("x");
+		in.push_back(CIMParamValue("uint8array", CIMValue(sarray)));
+		CIMObjectPathArray paths;
+		in.push_back(CIMParamValue("paths", CIMValue(paths)));
 
-        hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
+	}
 
-    // CIM_ERR_INVALID_PARAMETER - duplicate parameter
-    try
-    {
-        CIMParamValueArray in, out;
-        in.push_back(CIMParamValue("io16", CIMValue(Int16(16))));
-        in.push_back(CIMParamValue("nullParam", CIMValue(CIMNULL)));
-        in.push_back(CIMParamValue("s", CIMValue(String("input string"))));
-        UInt8Array uint8array;
-        in.push_back(CIMParamValue("uint8array", CIMValue(uint8array)));
-        CIMObjectPathArray paths;
-        in.push_back(CIMParamValue("uint8array", CIMValue(paths)));
+	// CIM_ERR_INVALID_PARAMETER - duplicate parameter
+	try
+	{
+		CIMParamValueArray in, out;
+		in.push_back(CIMParamValue("io16", CIMValue(Int16(16))));
+		in.push_back(CIMParamValue("nullParam", CIMValue(CIMNULL)));
+		in.push_back(CIMParamValue("s", CIMValue(String("input string"))));
+		UInt8Array uint8array;
+		in.push_back(CIMParamValue("uint8array", CIMValue(uint8array)));
+		CIMObjectPathArray paths;
+		in.push_back(CIMParamValue("uint8array", CIMValue(paths)));
 
-        hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+		hdl->invokeMethod("root/testsuite", CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::INVALID_PARAMETER);
+	}
 
-    // CIM_ERR_NOT_FOUND - no class
-    try
-    {
-        CIMParamValueArray in, out;
-        hdl->invokeMethod("root/testsuite", CIMObjectPath("BADEXP_BartComputerSystem"), "getstate", in, out);
+	// CIM_ERR_NOT_FOUND - no class
+	try
+	{
+		CIMParamValueArray in, out;
+		hdl->invokeMethod("root/testsuite", CIMObjectPath("BADEXP_BartComputerSystem"), "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::NOT_FOUND);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::NOT_FOUND);
+	}
 
-    // CIM_ERR_NOT_FOUND - no instance
-    try
-    {
-        CIMParamValueArray in, out;
-        CIMObjectPath cop("EXP_BartComputerSystem");
-        cop.addKey("Name", CIMValue("badKey"));
-        cop.addKey("CreationClassName", CIMValue("badKey"));
-        hdl->invokeMethod("root/testsuite", cop, "getstate", in, out);
+	// CIM_ERR_NOT_FOUND - no instance
+	try
+	{
+		CIMParamValueArray in, out;
+		CIMObjectPath cop("EXP_BartComputerSystem");
+		cop.addKey("Name", CIMValue("badKey"));
+		cop.addKey("CreationClassName", CIMValue("badKey"));
+		hdl->invokeMethod("root/testsuite", cop, "getstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::NOT_FOUND);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::NOT_FOUND);
+	}
 
-    // CIM_ERR_METHOD_NOT_FOUND
-    try
-    {
-        CIMParamValueArray in, out;
-        CIMObjectPath cop("EXP_BartComputerSystem");
-        hdl->invokeMethod("root/testsuite", cop, "BADgetstate", in, out);
+	// CIM_ERR_METHOD_NOT_FOUND
+	try
+	{
+		CIMParamValueArray in, out;
+		CIMObjectPath cop("EXP_BartComputerSystem");
+		hdl->invokeMethod("root/testsuite", cop, "BADgetstate", in, out);
 		TEST_ASSERT(0);
-    }
-    catch (const CIMException& e)
-    {
-        TEST_ASSERT(e.getErrNo() == CIMException::METHOD_NOT_FOUND);
-    }
+	}
+	catch (const CIMException& e)
+	{
+		TEST_ASSERT(e.getErrNo() == CIMException::METHOD_NOT_FOUND);
+	}
 
 
 	// cleanup

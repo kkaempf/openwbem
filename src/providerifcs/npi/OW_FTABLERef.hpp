@@ -64,8 +64,8 @@ typedef enum {
 } NPIGarbageType;
 class NPIContext {
 public:
-        char * scriptName;
-        void * my_perl;
+		char * scriptName;
+		void * my_perl;
 	Array<void *> garbage;
 	Array<NPIGarbageType> garbageType;
 };

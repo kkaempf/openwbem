@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_Int8(const char* name)
 {
-    registerArrayImpl<Int8>(name);
+	registerArrayImpl<Int8>(name);
 }
 
 } // end namespace OpenWBEM

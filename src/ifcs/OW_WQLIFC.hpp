@@ -48,7 +48,7 @@ public:
 	virtual void evaluate(const String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage,
-                Reference<CIMOMHandleIFC> hdl) = 0;
+				Reference<CIMOMHandleIFC> hdl) = 0;
 	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };

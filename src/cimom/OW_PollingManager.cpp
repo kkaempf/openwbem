@@ -98,10 +98,10 @@ namespace
 		{
 			return m_env->getLogger();
 		}
-        virtual String getUserName() const
-        {
-            return Platform::getCurrentUserName();
-        }
+		virtual String getUserName() const
+		{
+			return Platform::getCurrentUserName();
+		}
 	private:
 		UserInfo m_acl;
 		CIMOMEnvironmentRef m_env;
@@ -274,7 +274,7 @@ PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 	tr->m_nextPoll = tm + tr->m_pollInterval;
 	tr->m_itp = p;
 	m_triggerRunners.append(tr);
-    m_triggerCondition.notifyAll();
+	m_triggerCondition.notifyAll();
 }
 //////////////////////////////////////////////////////////////////////////////
 PollingManager::TriggerRunner::TriggerRunner(PollingManager* svr,

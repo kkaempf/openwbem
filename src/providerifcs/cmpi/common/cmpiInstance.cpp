@@ -29,8 +29,8 @@ static CMPIStatus instRelease(CMPIInstance* eInst) {
    //cout<<"--- instRelease()"<<endl;
    OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
    if (inst) {
-      delete inst;
-      ((CMPI_Object*)eInst)->unlinkAndDelete();
+	  delete inst;
+	  ((CMPI_Object*)eInst)->unlinkAndDelete();
    }
    CMReturn(CMPI_RC_OK);
 }
@@ -49,15 +49,15 @@ static CMPIInstance* instClone(CMPIInstance* eInst, CMPIStatus* rc) {
 }
 
 static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString** name,
-                            CMPIStatus* rc) {
+							CMPIStatus* rc) {
    OpenWBEM::CIMInstance* inst=(OpenWBEM::CIMInstance*)eInst->hdl;
    CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
 
    const OpenWBEM::CIMPropertyArray& p=inst->getProperties();
 
    if (pos >= p.size()) {
-     if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
-      return data;
+	 if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+	  return data;
    }
 
    const OpenWBEM::CIMValue& v=p[pos].getValue();
@@ -68,8 +68,8 @@ static CMPIData instGetPropertyAt(CMPIInstance* eInst, CMPICount pos, CMPIString
    CMPIrc rrc=value2CMPIData(v,t,&data);
 
    if (name) {
-      OpenWBEM::String str=p[pos].getName();
-      *name=string2CMPIString(str);
+	  OpenWBEM::String str=p[pos].getName();
+	  *name=string2CMPIString(str);
    }
 
    if (rrc) CMSetStatus(rc,CMPI_RC_OK);
@@ -83,13 +83,13 @@ static CMPIData instGetProperty(CMPIInstance* eInst, char* name, CMPIStatus* rc)
    const OpenWBEM::CIMProperty& p = inst->getProperty(OpenWBEM::String(name));
 
    if (p) {
-      const OpenWBEM::CIMValue& v=p.getValue();
-      OpenWBEM::CIMDataType pType=v.getType();
-      CMPIType t=type2CMPIType(pType,v.isArray());
+	  const OpenWBEM::CIMValue& v=p.getValue();
+	  OpenWBEM::CIMDataType pType=v.getType();
+	  CMPIType t=type2CMPIType(pType,v.isArray());
 
-      CMPIrc rrc=value2CMPIData(v,t,&data);
-      if (rrc) CMSetStatus(rc,CMPI_RC_OK);
-      return data;
+	  CMPIrc rrc=value2CMPIData(v,t,&data);
+	  if (rrc) CMSetStatus(rc,CMPI_RC_OK);
+	  return data;
    }
    if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
    return data;
@@ -104,17 +104,17 @@ static CMPICount instGetPropertyCount(CMPIInstance* eInst, CMPIStatus* rc) {
 }
 
 static CMPIStatus instSetProperty(CMPIInstance* eInst, char* name,
-                          CMPIValue* data, CMPIType type) {
+						  CMPIValue* data, CMPIType type) {
    OpenWBEM::CIMInstance *inst=(OpenWBEM::CIMInstance*)eInst->hdl;
    char **list=(char**)((CMPI_Object*)eInst)->priv;
    CMPIrc rc;
 
    if (list) {
-      while (*list) {
-         if (strcasecmp(name,*list)==0) goto ok;
-         list++;
-      }
-      CMReturn(CMPI_RC_OK);
+	  while (*list) {
+		 if (strcasecmp(name,*list)==0) goto ok;
+		 list++;
+	  }
+	  CMReturn(CMPI_RC_OK);
    }
 
 ok:
@@ -134,17 +134,17 @@ static CMPIObjectPath* instGetObjectPath(CMPIInstance* eInst, CMPIStatus* rc) {
 }
 
 static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
-            char** propertyList, char **keys){
+			char** propertyList, char **keys){
    CMPI_Object *inst=(CMPI_Object*)eInst;
    char **list=(char**)inst->priv;    // Thank you Warren !
    int i,s;
 
    if (inst->priv) {
-      while (*list) {
-         free (*list);
-         list++;
-      }
-      free(inst->priv);
+	  while (*list) {
+		 free (*list);
+		 list++;
+	  }
+	  free(inst->priv);
    }
    inst->priv=NULL;
 
@@ -163,7 +163,7 @@ static CMPIStatus instSetPropertyFilter(CMPIInstance* eInst,
 }
 
 static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
-            char** propertyList, char **keys){
+			char** propertyList, char **keys){
 	(void)eInst;
 	(void)propertyList;
 	(void)keys;
@@ -173,26 +173,26 @@ static CMPIStatus instSetPropertyFilterIgnore(CMPIInstance* eInst,
 
 
 static CMPIInstanceFT instance_FT={
-     CMPICurrentVersion,
-     instRelease,
-     instClone,
-     instGetProperty,
-     instGetPropertyAt,
-     instGetPropertyCount,
-     instSetProperty,
-     instGetObjectPath,
+	 CMPICurrentVersion,
+	 instRelease,
+	 instClone,
+	 instGetProperty,
+	 instGetPropertyAt,
+	 instGetPropertyCount,
+	 instSetProperty,
+	 instGetObjectPath,
 	 instSetPropertyFilter,
 };
 
 static CMPIInstanceFT instanceOnStack_FT={
-     CMPICurrentVersion,
-     instReleaseNop,
-     instClone,
-     instGetProperty,
-     instGetPropertyAt,
-     instGetPropertyCount,
-     instSetProperty,
-     instGetObjectPath,
+	 CMPICurrentVersion,
+	 instReleaseNop,
+	 instClone,
+	 instGetProperty,
+	 instGetPropertyAt,
+	 instGetPropertyCount,
+	 instSetProperty,
+	 instGetObjectPath,
 	 instSetPropertyFilterIgnore,
 };
 
@@ -201,6 +201,6 @@ CMPIInstanceFT *CMPI_InstanceOnStack_Ftab=&instanceOnStack_FT;
 
 
 CMPI_InstanceOnStack::CMPI_InstanceOnStack(const OpenWBEM::CIMInstance& ci) {
-      hdl=(void*)&ci;
-      ft=CMPI_InstanceOnStack_Ftab;
+	  hdl=(void*)&ci;
+	  ft=CMPI_InstanceOnStack_Ftab;
    }

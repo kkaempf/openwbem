@@ -59,99 +59,99 @@ using std::cin;
 
 void TestRunner::printBanner ()
 {
-    cout << "Usage: driver [ -wait ] testName, where name is the name of a test case class" << endl;
+	cout << "Usage: driver [ -wait ] testName, where name is the name of a test case class" << endl;
 }
 
 
 void TestRunner::run (int ac, char **av)
 {
-    string  testCase;
-    int     numberOfTests = 0;
+	string  testCase;
+	int     numberOfTests = 0;
 
-    for (int i = 1; i < ac; i++) {
+	for (int i = 1; i < ac; i++) {
 
-        if (string (av [i]) == "-wait") {
-            m_wait = true;
-            continue;
-        }
+		if (string (av [i]) == "-wait") {
+			m_wait = true;
+			continue;
+		}
 
-        testCase = av [i];
+		testCase = av [i];
 
-        cout << testCase;
-        run( testCase );
-        numberOfTests++;
+		cout << testCase;
+		run( testCase );
+		numberOfTests++;
 
 
-    }
+	}
 
-    if (numberOfTests == 0) {
-        printBanner ();
-        return;        
-    }
+	if (numberOfTests == 0) {
+		printBanner ();
+		return;        
+	}
 
-    if (m_wait) {
-        cout << "<RETURN> to continue" << endl;
-        cin.get ();
+	if (m_wait) {
+		cout << "<RETURN> to continue" << endl;
+		cin.get ();
 
-    }
+	}
 
 
 }
 
 void TestRunner::run (string testCase)
 {
-        if (testCase == "")
+		if (testCase == "")
 		  {
-            printBanner ();
-            return;
-        }
+			printBanner ();
+			return;
+		}
 
-        Test *testToRun = NULL;
+		Test *testToRun = NULL;
 
-        for (mappings::iterator it = m_mappings.begin ();
-                it != m_mappings.end ();
-                ++it)
+		for (mappings::iterator it = m_mappings.begin ();
+				it != m_mappings.end ();
+				++it)
 		  {
-            if ((*it).first == testCase)
+			if ((*it).first == testCase)
 				{
-                testToRun = (*it).second;
-                run (testToRun);
+				testToRun = (*it).second;
+				run (testToRun);
 
-            }
-        }
-        if (!testToRun)
+			}
+		}
+		if (!testToRun)
 		  {
-            cout << "Test " << testCase << " not found." << endl;
-            return;
+			cout << "Test " << testCase << " not found." << endl;
+			return;
 
-        } 
+		} 
 
 }
 
 void TestRunner::runAll ()
 {
-    string  testCase;
-    int     numberOfTests = 0;
+	string  testCase;
+	int     numberOfTests = 0;
 
 
-    Test *testToRun = NULL;
+	Test *testToRun = NULL;
 
-    for (mappings::iterator it = m_mappings.begin ();
-            it != m_mappings.end ();
-            ++it) 
-    {
-        cout << (*it).first;
-        testToRun = (*it).second;
-        run (testToRun);
-    }
+	for (mappings::iterator it = m_mappings.begin ();
+			it != m_mappings.end ();
+			++it) 
+	{
+		cout << (*it).first;
+		testToRun = (*it).second;
+		run (testToRun);
+	}
 
-    numberOfTests++;
+	numberOfTests++;
 
 
-    if (numberOfTests == 0) {
-        printBanner ();
-        return;        
-    }
+	if (numberOfTests == 0) {
+		printBanner ();
+		return;        
+	}
 
 }
 
@@ -159,20 +159,20 @@ void TestRunner::runAll ()
 
 TestRunner::~TestRunner ()
 {
-    for (mappings::iterator it = m_mappings.begin ();
-             it != m_mappings.end ();
-             ++it)
-        delete it->second;
+	for (mappings::iterator it = m_mappings.begin ();
+			 it != m_mappings.end ();
+			 ++it)
+		delete it->second;
 
 }
 
 
 void TestRunner::run (Test *test)
 {
-    TextTestResult  result;
+	TextTestResult  result;
 
-    test->run (&result);
+	test->run (&result);
 
-    cout << result << endl;
+	cout << result << endl;
 }
 

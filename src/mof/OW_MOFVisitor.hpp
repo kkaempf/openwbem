@@ -198,7 +198,7 @@ public:
 	
 	virtual void VisitReferenceInitializerAliasIdentifier( const ReferenceInitializerAliasIdentifier * ) = 0;
 	virtual void VisitReferenceInitializerObjectHandle( const ReferenceInitializerObjectHandle * ) = 0;
-    virtual void VisitObjectHandle( const ObjectHandle * ) = 0;
+	virtual void VisitObjectHandle( const ObjectHandle * ) = 0;
 	
 	virtual void VisitQualifierDeclaration( const QualifierDeclaration * ) = 0;
 	virtual void VisitQualifierName( const QualifierName * ) = 0;

@@ -53,7 +53,7 @@ ProviderIFCLoaderBase::createProviderIFCFromLib(
 	if ( !sl.isNull() )
 	{
 		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl,
-                "createProviderIFC", m_env->getLogger());
+				"createProviderIFC", m_env->getLogger());
 	}
 	else
 	{

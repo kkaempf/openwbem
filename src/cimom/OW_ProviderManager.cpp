@@ -138,24 +138,24 @@ void processProviderClassExtraInfo(
 	const String& providerName,
 	ProviderManager::IndProvRegMap_t& regMap)
 {
-    {
-        registerProviderInfo(env, name, ifc, providerName, regMap);
-    }
-    if (!extra.empty())
-    {
-        for (size_t i = 0; i < extra.size(); ++i)
-        {
-            String extraName = extra[i];
-            if (extraName.empty())
-            {
-                env->getLogger()->logError(format("Provider sub-name is "
-                    "empty for %1 by provider %2::%3",
-                    name, ifc->getName(), providerName));
-                continue;
-            }
-            registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
-        }
-    }
+	{
+		registerProviderInfo(env, name, ifc, providerName, regMap);
+	}
+	if (!extra.empty())
+	{
+		for (size_t i = 0; i < extra.size(); ++i)
+		{
+			String extraName = extra[i];
+			if (extraName.empty())
+			{
+				env->getLogger()->logError(format("Provider sub-name is "
+					"empty for %1 by provider %2::%3",
+					name, ifc->getName(), providerName));
+				continue;
+			}
+			registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
+		}
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 template <typename ClassInfoT>

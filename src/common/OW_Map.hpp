@@ -216,7 +216,7 @@ public:
 template <class Key, class T, class Compare>
 std::map<Key, T, Compare>* COWReferenceClone(std::map<Key, T, Compare>* obj)
 {
-    return new std::map<Key, T, Compare>(*obj);
+	return new std::map<Key, T, Compare>(*obj);
 }
 template<class Key, class T, class Compare>
 inline bool operator==(const Map<Key, T, Compare>& x,

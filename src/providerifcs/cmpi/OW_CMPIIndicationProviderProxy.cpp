@@ -74,7 +74,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 		rc = m_ftable->miVector.indMI->ft->deActivateFilter(
 			mi, &eCtx, &eRes,
 			&exp, 
-		 	_eventType, &eRef, lastActivation);
+			_eventType, &eRef, lastActivation);
 		if (_eventType) delete _eventType;
 		if (rc.rc == CMPI_RC_OK) return;
 		else
@@ -122,7 +122,7 @@ CMPIIndicationProviderProxy::activateFilter(
 		rc = m_ftable->miVector.indMI->ft->activateFilter(
 			mi, &eCtx, &eRes,
 			&exp, 
-		 	_eventType, &eRef, firstActivation);
+			_eventType, &eRef, firstActivation);
 		if (_eventType) delete _eventType;
 		if (rc.rc == CMPI_RC_OK) return;
 		else

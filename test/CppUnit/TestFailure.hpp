@@ -55,19 +55,19 @@ class Test;
 
 class TestFailure 
 {
-    REFERENCEOBJECT (TestFailure)
+	REFERENCEOBJECT (TestFailure)
 
 public:
-                        TestFailure (Test *failedTest, CppUnitException *thrownException);
-                        ~TestFailure ();
+						TestFailure (Test *failedTest, CppUnitException *thrownException);
+						~TestFailure ();
 
-    Test                *failedTest ();
-    CppUnitException    *thrownException ();
-    const char*         toString ();
+	Test                *failedTest ();
+	CppUnitException    *thrownException ();
+	const char*         toString ();
 
 protected:
-    Test                *m_failedTest;
-    CppUnitException    *m_thrownException;
+	Test                *m_failedTest;
+	CppUnitException    *m_thrownException;
 
 };
 

@@ -52,46 +52,46 @@ PerlMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const String& ns,
 	const CIMObjectPath& path,
 	const String &methodName,
-    const CIMParamValueArray &in, CIMParamValueArray &out)
+	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
-        CIMValue rval(CIMNULL);
-        env->getLogger()->
-            logDebug("PerlInstanceProviderProxy::invokeMethod()");
-        if (m_ftable->fp_invokeMethod != NULL)
-        {
-	    ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		CIMValue rval(CIMNULL);
+		env->getLogger()->
+			logDebug("PerlInstanceProviderProxy::invokeMethod()");
+		if (m_ftable->fp_invokeMethod != NULL)
+		{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
-            _npiHandle.thisObject = static_cast<void *>(&env2);
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
-            CIMObjectPath owcop = path;
+			_npiHandle.thisObject = static_cast<void *>(&env2);
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
+			CIMObjectPath owcop = path;
 		owcop.setNameSpace(ns);
-            ::CIMObjectPath _cop= {static_cast<void *> (&owcop)};
-            ::Vector parm_in = VectorNew(&_npiHandle);
-            ::Vector parm_out = VectorNew(&_npiHandle);
-            for (int i = 0, n = in.size(); i < n; i++)
-            {
-                CIMParamValue * owpv = new CIMParamValue(in[i]);
-                _VectorAddTo(
-                    &_npiHandle, parm_in, static_cast<void *> (owpv) );
-            }
-            ::CIMValue cv = m_ftable->fp_invokeMethod(
-                &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
+			::CIMObjectPath _cop= {static_cast<void *> (&owcop)};
+			::Vector parm_in = VectorNew(&_npiHandle);
+			::Vector parm_out = VectorNew(&_npiHandle);
+			for (int i = 0, n = in.size(); i < n; i++)
+			{
+				CIMParamValue * owpv = new CIMParamValue(in[i]);
+				_VectorAddTo(
+					&_npiHandle, parm_in, static_cast<void *> (owpv) );
+			}
+			::CIMValue cv = m_ftable->fp_invokeMethod(
+				&_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
 				_npiHandle.providerError);
 		}
-            rval = * static_cast<CIMValue *> (cv.ptr);
-            for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
-            {
-                CIMParamValue owpv = * static_cast<CIMParamValue *>
-                    (_VectorGet(&_npiHandle, parm_out, i));
-                out.append(owpv);
-            }
-        }
-        return rval;
+			rval = * static_cast<CIMValue *> (cv.ptr);
+			for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
+			{
+				CIMParamValue owpv = * static_cast<CIMParamValue *>
+					(_VectorGet(&_npiHandle, parm_out, i));
+				out.append(owpv);
+			}
+		}
+		return rval;
 }
 
 } // end namespace OpenWBEM

@@ -37,19 +37,19 @@ static OpenWBEM::CIMDateTime * makeCIMDateTime(time_t inTime, unsigned long usec
 
    localtime_r(&inTime,&tmTime);
    if (strftime(strTime,256,"%Y%m%d%H%M%S.",&tmTime)) {
-      snprintf(usTime,32,"%6.6ld",usec);
-      strcat(strTime,usTime);
-      if (interval) strcpy(utcOffset,":000");
-      else {
+	  snprintf(usTime,32,"%6.6ld",usec);
+	  strcat(strTime,usTime);
+	  if (interval) strcpy(utcOffset,":000");
+	  else {
 #if defined (OW_GNU_LINUX)
-        snprintf(utcOffset,20,"%+4.3ld",tmTime.tm_gmtoff/60);
+		snprintf(utcOffset,20,"%+4.3ld",tmTime.tm_gmtoff/60);
 #else
-      snprintf(utcOffset,20,"%+4.3ld",0L);
+	  snprintf(utcOffset,20,"%+4.3ld",0L);
 #endif
-      }
-      strncat(strTime,utcOffset,256);
-      dt = new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
-      //cout<<"dt = " <<dt->toString()<<endl;
+	  }
+	  strncat(strTime,utcOffset,256);
+	  dt = new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
+	  //cout<<"dt = " <<dt->toString()<<endl;
    }
    return dt;
 }
@@ -74,8 +74,8 @@ static CMPIStatus dtRelease(CMPIDateTime* eDt) {
    //cout<<"--- dtRelease()"<<endl;
    OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
    if (dt) {
-      delete dt;
-      ((CMPI_Object*)eDt)->unlinkAndDelete();
+	  delete dt;
+	  ((CMPI_Object*)eDt)->unlinkAndDelete();
    }
    CMReturn(CMPI_RC_OK);
 }
@@ -114,60 +114,60 @@ static CMPIUint64 dtGetBinaryFormat(CMPIDateTime* eDt, CMPIStatus* rc) {
    char *cStr=strdup(dt->toString().c_str());
 
    if (dt->isInterval()) {
-      cStr[21]=0;
-      usecs=atoi(cStr+15);
-      cStr[15]=0;
-      secs=atoi(cStr+12);
-      cStr[12]=0;
-      mins=atoi(cStr+10);
-      cStr[10]=0;
-      hours=atoi(cStr+8);
-      cStr[8]=0;
-      days=atoi(cStr);
-      lTime=(days*(OpenWBEM::UInt64)(86400000000LL))+
-            (hours*(OpenWBEM::UInt64)(3600000000LL))+
-            (mins*60000000)+(secs*1000000)+usecs;
-      //lTime=(days*PEGASUS_UINT64_LITERAL(86400000000))+
-      //      (hours*PEGASUS_UINT64_LITERAL(3600000000))+
-      //      (mins*60000000)+(secs*1000000)+usecs;
+	  cStr[21]=0;
+	  usecs=atoi(cStr+15);
+	  cStr[15]=0;
+	  secs=atoi(cStr+12);
+	  cStr[12]=0;
+	  mins=atoi(cStr+10);
+	  cStr[10]=0;
+	  hours=atoi(cStr+8);
+	  cStr[8]=0;
+	  days=atoi(cStr);
+	  lTime=(days*(OpenWBEM::UInt64)(86400000000LL))+
+			(hours*(OpenWBEM::UInt64)(3600000000LL))+
+			(mins*60000000)+(secs*1000000)+usecs;
+	  //lTime=(days*PEGASUS_UINT64_LITERAL(86400000000))+
+	  //      (hours*PEGASUS_UINT64_LITERAL(3600000000))+
+	  //      (mins*60000000)+(secs*1000000)+usecs;
    }
 
    else {
-      time_t tt=time(NULL);
-      localtime_r(&tt,&tmt);
-      memset(&tm,0,sizeof(tm));
-      tm.tm_isdst=tmt.tm_isdst;
-      utc=atoi(cStr+21);
-      cStr[21]=0;
-      usecs=atoi(cStr+15);
-      cStr[15]=0;
-      tm.tm_sec=atoi(cStr+12);
-      cStr[12]=0;
-      tm.tm_min=atoi(cStr+10);
-      cStr[10]=0;
-      tm.tm_hour=atoi(cStr+8);
-      cStr[8]=0;
-      tm.tm_mday=atoi(cStr+6);
-      cStr[6]=0;
-      tm.tm_mon=(atoi(cStr+4)-1);
-      cStr[4]=0;
-      tm.tm_year=(atoi(cStr)-1900);
+	  time_t tt=time(NULL);
+	  localtime_r(&tt,&tmt);
+	  memset(&tm,0,sizeof(tm));
+	  tm.tm_isdst=tmt.tm_isdst;
+	  utc=atoi(cStr+21);
+	  cStr[21]=0;
+	  usecs=atoi(cStr+15);
+	  cStr[15]=0;
+	  tm.tm_sec=atoi(cStr+12);
+	  cStr[12]=0;
+	  tm.tm_min=atoi(cStr+10);
+	  cStr[10]=0;
+	  tm.tm_hour=atoi(cStr+8);
+	  cStr[8]=0;
+	  tm.tm_mday=atoi(cStr+6);
+	  cStr[6]=0;
+	  tm.tm_mon=(atoi(cStr+4)-1);
+	  cStr[4]=0;
+	  tm.tm_year=(atoi(cStr)-1900);
 
-      lTime=mktime(&tm);
-      lTime*=1000000;
-      lTime+=usecs;
+	  lTime=mktime(&tm);
+	  lTime*=1000000;
+	  lTime+=usecs;
    }
 
    return lTime;
 }
 
 static CMPIDateTimeFT dateTime_FT={
-     CMPICurrentVersion,
-     dtRelease,
-     dtClone,
-     dtGetBinaryFormat,
-     dtGetStringFormat,
-     dtIsInterval,
+	 CMPICurrentVersion,
+	 dtRelease,
+	 dtClone,
+	 dtGetBinaryFormat,
+	 dtGetStringFormat,
+	 dtIsInterval,
 };
 
 CMPIDateTimeFT *CMPI_DateTime_Ftab=&dateTime_FT;

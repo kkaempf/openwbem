@@ -55,30 +55,30 @@ createMutex(Mutex_t& handle)
 	}
 	return cc;
 #elif defined (OW_USE_PTHREAD)
-    pthread_mutexattr_t attr;
-    int res = pthread_mutexattr_init(&attr);
-    assert(res == 0);
-    if (res != 0)
-        return -1;
+	pthread_mutexattr_t attr;
+	int res = pthread_mutexattr_init(&attr);
+	assert(res == 0);
+	if (res != 0)
+		return -1;
  
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    assert(res == 0);
-    if (res != 0)
-        return -1;
+	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+	assert(res == 0);
+	if (res != 0)
+		return -1;
 #endif
  
-    res = pthread_mutex_init(&handle.mutex, &attr);
-    if (res != 0)
-        return -1;
+	res = pthread_mutex_init(&handle.mutex, &attr);
+	if (res != 0)
+		return -1;
  
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_cond_init(&handle.unlocked, 0);
-    if (res != 0)
-    {
-        pthread_mutex_destroy(&handle.mutex);
-        return -1;
-    }
+	res = pthread_cond_init(&handle.unlocked, 0);
+	if (res != 0)
+	{
+		pthread_mutex_destroy(&handle.mutex);
+		return -1;
+	}
 	
 	handle.valid_id = false;
 	handle.count = 0;
@@ -118,8 +118,8 @@ destroyMutex(Mutex_t& handle)
 	}
 	int res = 0;
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    res = pthread_cond_destroy(&handle.unlocked);
-    assert(res == 0);
+	res = pthread_cond_destroy(&handle.unlocked);
+	assert(res == 0);
 #endif
 	return res;
 #elif defined OW_USE_WIN32_THREADS
@@ -143,28 +143,28 @@ acquireMutex(Mutex_t& handle)
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
 #elif defined (OW_USE_PTHREAD)
-    int res = pthread_mutex_lock(&handle.mutex);
-    assert(res == 0);
+	int res = pthread_mutex_lock(&handle.mutex);
+	assert(res == 0);
  
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-    pthread_t tid = pthread_self();
-    if (handle.valid_id && pthread_equal(handle.thread_id, tid))
-        ++handle.count;
-    else
-    {
-        while (handle.valid_id)
-        {
-            res = pthread_cond_wait(&handle.unlocked, &handle.mutex);
-            assert(res == 0);
-        }
+	pthread_t tid = pthread_self();
+	if (handle.valid_id && pthread_equal(handle.thread_id, tid))
+		++handle.count;
+	else
+	{
+		while (handle.valid_id)
+		{
+			res = pthread_cond_wait(&handle.unlocked, &handle.mutex);
+			assert(res == 0);
+		}
  
-        handle.thread_id = tid;
-        handle.valid_id = true;
-        handle.count = 1;
-    }
+		handle.thread_id = tid;
+		handle.valid_id = true;
+		handle.count = 1;
+	}
  
-    res = pthread_mutex_unlock(&handle.mutex);
-    assert(res == 0);
+	res = pthread_mutex_unlock(&handle.mutex);
+	assert(res == 0);
 #endif
 	return res;
 #elif defined OW_USE_WIN32_THREADS
@@ -192,29 +192,29 @@ releaseMutex(Mutex_t& handle)
 	assert(res == 0);
 	return res;
 #else
-    int res = 0;
-    res = pthread_mutex_lock(&handle.mutex);
-    assert(res == 0);
+	int res = 0;
+	res = pthread_mutex_lock(&handle.mutex);
+	assert(res == 0);
  
-    pthread_t tid = pthread_self();
-    if (handle.valid_id && !pthread_equal(handle.thread_id, tid))
-    {
-        res = pthread_mutex_unlock(&handle.mutex);
-        assert(res == 0);
-        return -1;
-    }
+	pthread_t tid = pthread_self();
+	if (handle.valid_id && !pthread_equal(handle.thread_id, tid))
+	{
+		res = pthread_mutex_unlock(&handle.mutex);
+		assert(res == 0);
+		return -1;
+	}
  
-    if (--handle.count == 0)
-    {
-        assert(handle.valid_id);
-        handle.valid_id = false;
+	if (--handle.count == 0)
+	{
+		assert(handle.valid_id);
+		handle.valid_id = false;
  
-        res = pthread_cond_signal(&handle.unlocked);
-        assert(res == 0);
-    }
+		res = pthread_cond_signal(&handle.unlocked);
+		assert(res == 0);
+	}
  
-    res = pthread_mutex_unlock(&handle.mutex);
-    assert(res == 0);
+	res = pthread_mutex_unlock(&handle.mutex);
+	assert(res == 0);
 	return res;
 #endif
 #elif defined (OW_USE_WIN32_THREADS)

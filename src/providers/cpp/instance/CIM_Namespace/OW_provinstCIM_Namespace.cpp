@@ -167,7 +167,7 @@ public:
 		(void)theClass;
 		// This is just a no-op since we don't really care about any properties
 		// other than the keys (which can't change.)
-        //OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
+		//OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 	////////////////////////////////////////////////////////////////////////////
 	virtual void deleteInstance(

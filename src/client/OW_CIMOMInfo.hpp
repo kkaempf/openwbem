@@ -62,15 +62,15 @@ private:
 };
 inline bool operator<(const CIMOMInfo& x, const CIMOMInfo& y)
 {
-    return x.getURL() < y.getURL();
+	return x.getURL() < y.getURL();
 }
 inline bool operator==(const CIMOMInfo& x, const CIMOMInfo& y)
 {
-    return x.getURL() == y.getURL();
+	return x.getURL() == y.getURL();
 }
 inline bool operator!=(const CIMOMInfo& x, const CIMOMInfo& y)
 {
-    return !(x == y);
+	return !(x == y);
 }
 typedef Array<CIMOMInfo> CIMOMInfoArray;
 

@@ -36,7 +36,7 @@
 // Prevent copy construction and assignment for a class
 #define REFERENCEOBJECT(className) \
 private: \
-               className (const className& other); \
-    className& operator= (const className& other); 
+			   className (const className& other); \
+	className& operator= (const className& other); 
 
 #endif

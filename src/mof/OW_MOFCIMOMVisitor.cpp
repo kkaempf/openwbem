@@ -845,7 +845,7 @@ void CIMOMVisitor::VisitDefaultFlavor( const DefaultFlavor *pDefaultFlavor )
 void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanceDeclaration )
 {
 	CIMClass cc = getClass(*pInstanceDeclaration->pClassName->pClassName, pInstanceDeclaration->theLineInfo);
-        //m_hdl->getClass(m_namespace,
+		//m_hdl->getClass(m_namespace,
 		//*pInstanceDeclaration->pClassName->pClassName, false);
 	m_curInstance = cc.newInstance();
 	if ( pInstanceDeclaration->pQualifier.get() != 0 )
@@ -990,25 +990,25 @@ CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const li
 {
 	String lcqualName = qualName;
 	lcqualName.toLowerCase();
-    CIMQualifierType qt = m_dataTypeCache.getFromCache(lcqualName);
-    if (!qt)
-    {
-        qt = CIMOMgetQualifierType(qualName, li);
-        m_dataTypeCache.addToCache(qt, lcqualName);
-    }
-    return qt;
+	CIMQualifierType qt = m_dataTypeCache.getFromCache(lcqualName);
+	if (!qt)
+	{
+		qt = CIMOMgetQualifierType(qualName, li);
+		m_dataTypeCache.addToCache(qt, lcqualName);
+	}
+	return qt;
 }
 CIMClass CIMOMVisitor::getClass(const String& className, const lineInfo& li)
 {
 	String lcclassName = className;
 	lcclassName.toLowerCase();
-    CIMClass c = m_classCache.getFromCache(lcclassName);
-    if (!c)
-    {
-        c = CIMOMgetClass(className, li);
-        m_classCache.addToCache(c, lcclassName);
-    }
-    return c;
+	CIMClass c = m_classCache.getFromCache(lcclassName);
+	if (!c)
+	{
+		c = CIMOMgetClass(className, li);
+		m_classCache.addToCache(c, lcclassName);
+	}
+	return c;
 }
 void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 {
@@ -1017,8 +1017,8 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
 		m_hdl->createClass(m_namespace, m_curClass);
 		theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
-        // Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
-        // in the case that there are lots of instances, each class will only have to be fetched once.
+		// Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
+		// in the case that there are lots of instances, each class will only have to be fetched once.
 	}
 	catch (const CIMException& ce)
 	{
@@ -1049,7 +1049,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 		// save it in the cache
 		String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();
-        m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
+		m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
 		//m_dataTypeCache[lcqualName] = m_curQualifierType;
 	}
 	catch (const CIMException& ce)

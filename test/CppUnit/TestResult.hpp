@@ -64,58 +64,58 @@ class TestFailure;
 
 class TestResult
 {
-    REFERENCEOBJECT (TestResult)
+	REFERENCEOBJECT (TestResult)
 
 public:
-                                        TestResult  ();
-    virtual                             ~TestResult ();
+										TestResult  ();
+	virtual                             ~TestResult ();
 
-    virtual void                        addError       (Test *test, CppUnitException *e);
-    virtual void                        addFailure     (Test *test, CppUnitException *e);
-    virtual void                        startTest      (Test *test);
-    virtual void                        endTest        (Test *test);
-    virtual int                         runTests       ();
-    virtual int                         testErrors     ();
-    virtual int                         testFailures   ();
-    virtual bool                        wasSuccessful  ();
-    virtual bool                        shouldStop     ();
-    virtual void                        stop           ();
+	virtual void                        addError       (Test *test, CppUnitException *e);
+	virtual void                        addFailure     (Test *test, CppUnitException *e);
+	virtual void                        startTest      (Test *test);
+	virtual void                        endTest        (Test *test);
+	virtual int                         runTests       ();
+	virtual int                         testErrors     ();
+	virtual int                         testFailures   ();
+	virtual bool                        wasSuccessful  ();
+	virtual bool                        shouldStop     ();
+	virtual void                        stop           ();
 
-    virtual std::vector<TestFailure *>& errors         ();
-    virtual std::vector<TestFailure *>& failures       ();
+	virtual std::vector<TestFailure *>& errors         ();
+	virtual std::vector<TestFailure *>& failures       ();
 
 
-    class SynchronizationObject
-    {
-    public:
-                                SynchronizationObject  () {}
-        virtual                 ~SynchronizationObject () {}
+	class SynchronizationObject
+	{
+	public:
+								SynchronizationObject  () {}
+		virtual                 ~SynchronizationObject () {}
 
-        virtual void            lock                   () {}
-        virtual void            unlock                 () {}
-    };
+		virtual void            lock                   () {}
+		virtual void            unlock                 () {}
+	};
 
-    class ExclusiveZone
-    {
-        SynchronizationObject   *m_syncObject;
+	class ExclusiveZone
+	{
+		SynchronizationObject   *m_syncObject;
 
-    public:
-                                ExclusiveZone (SynchronizationObject *syncObject) 
-                                : m_syncObject (syncObject) 
-                                { m_syncObject->lock (); }
+	public:
+								ExclusiveZone (SynchronizationObject *syncObject) 
+								: m_syncObject (syncObject) 
+								{ m_syncObject->lock (); }
 
-                                ~ExclusiveZone () 
-                                { m_syncObject->unlock (); }
-    };
+								~ExclusiveZone () 
+								{ m_syncObject->unlock (); }
+	};
 
 protected:
-    virtual void                setSynchronizationObject (SynchronizationObject *syncObject);
+	virtual void                setSynchronizationObject (SynchronizationObject *syncObject);
 
-    std::vector<TestFailure *>  m_errors;
-    std::vector<TestFailure *>  m_failures;
-    int                         m_runTests;
-    bool                        m_stop;
-    SynchronizationObject       *m_syncObject;
+	std::vector<TestFailure *>  m_errors;
+	std::vector<TestFailure *>  m_failures;
+	int                         m_runTests;
+	bool                        m_stop;
+	SynchronizationObject       *m_syncObject;
 
 };
 

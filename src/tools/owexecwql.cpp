@@ -132,10 +132,10 @@ int main(int argc, char* argv[])
 	{
 		cerr << e << endl;
 	}
-    catch(const std::exception& e)
-    {
-        cerr << e.what() << endl;
-    }
+	catch(const std::exception& e)
+	{
+		cerr << e.what() << endl;
+	}
 	catch(...)
 	{
 		cerr << "Caught unknown exception in main" << endl;

@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_CIMQualifierType(const char* name)
 {
-    registerArrayImpl<CIMQualifierType>(name);
+	registerArrayImpl<CIMQualifierType>(name);
 }
 
 } // end namespace OpenWBEM

@@ -401,7 +401,7 @@ String::concat(const String& arg)
 String&
 String::concat(char arg)
 {
-    return concat(String(arg));
+	return concat(String(arg));
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -785,7 +785,7 @@ String::writeObject(ostream& ostrm) const
 	BinarySerialization::writeLen(ostrm, len);
 	if (len)
 	{
-        BinarySerialization::write(ostrm, m_buf->data(), len);
+		BinarySerialization::write(ostrm, m_buf->data(), len);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -830,7 +830,7 @@ char&
 String::operator[] (size_t ndx)
 {
 #ifdef OW_DEBUG
-    OW_ASSERT(ndx <= length());
+	OW_ASSERT(ndx <= length());
 #endif
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// m_buf->data() won't be executed.
@@ -1333,7 +1333,7 @@ String::getLine(istream& is)
 	if(is)
 	{
 		size_t count = 0;
-        std::streambuf *sb = is.rdbuf();
+		std::streambuf *sb = is.rdbuf();
 		
 		while(1)
 		{

@@ -55,7 +55,7 @@ struct CIMQualifier::QUALData
 	CIMQualifierType m_qualifierType;
 	Bool m_propagated;
 	CIMFlavorArray m_flavors;
-    QUALData* clone() const { return new QUALData(*this); }
+	QUALData* clone() const { return new QUALData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMQualifier::QUALData& x, const CIMQualifier::QUALData& y)
@@ -314,7 +314,7 @@ CIMQualifier::writeObject(ostream &ostrm) const
 {
 	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG);
 	m_pdata->m_name.writeObject(ostrm);
-    CIMValue qv = m_pdata->m_qualifierValue;
+	CIMValue qv = m_pdata->m_qualifierValue;
 	if(!qv && m_pdata->m_qualifierType)
 	{
 		qv = m_pdata->m_qualifierType.getDefaultValue();

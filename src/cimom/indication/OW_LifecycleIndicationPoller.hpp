@@ -57,7 +57,7 @@ public:
 	void addPollOp(PollOp op);
 	// takes a POLL_FOR_INSTANCE* flag and indicates a provider has requested
 	// we poll for it, and the subscription was removed.
-    // returns !willPoll().
+	// returns !willPoll().
 	bool removePollOp(PollOp op);
 	// returns true if the there are any poll operations to do
 	bool willPoll() const;
@@ -75,7 +75,7 @@ private:
 	UInt32 m_pollDeletion;
 	mutable Mutex m_guard;
 	CIMInstanceArray m_prevInsts;
-    bool m_initializedInstances;
+	bool m_initializedInstances;
 };
 
 } // end namespace OpenWBEM

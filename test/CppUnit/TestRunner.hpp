@@ -52,22 +52,22 @@ typedef std::vector<std::pair<std::string, Test *> >   mappings;
 class TestRunner
 {
 protected:
-    bool                                m_wait;
+	bool                                m_wait;
 	 std::vector<std::pair<std::string,Test *> >        m_mappings;
 
 public:
-	            TestRunner    () : m_wait (false) {}
-                ~TestRunner   ();
+				TestRunner    () : m_wait (false) {}
+				~TestRunner   ();
 
-    void        run           (int ac, char **av);
-    void        run           (std::string name);
-    void        runAll        ();
-    void        addTest       (std::string name, Test *test)
-    { m_mappings.push_back (mapping (name, test)); }
+	void        run           (int ac, char **av);
+	void        run           (std::string name);
+	void        runAll        ();
+	void        addTest       (std::string name, Test *test)
+	{ m_mappings.push_back (mapping (name, test)); }
 
 protected:
-    void        run (Test *test);
-    void        printBanner ();
+	void        run (Test *test);
+	void        printBanner ();
 
 };
 

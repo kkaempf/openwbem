@@ -43,7 +43,7 @@ struct CIMNameSpace::NSData
 {
 	String m_nameSpace;
 	CIMUrl m_url;
-    NSData* clone() const { return new NSData(*this); }
+	NSData* clone() const { return new NSData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMNameSpace::NSData& x, const CIMNameSpace::NSData& y)

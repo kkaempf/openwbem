@@ -35,7 +35,7 @@ namespace OpenWBEM
 {
 
 typedef struct {
-        char* operationContext;
+		char* operationContext;
 	CIMOMHandleIFCRef _cimomhandle;
 	String _nameSpace;
 } NPIenv;

@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_Real64(const char* name)
 {
-    registerArrayImpl<Real64>(name);
+	registerArrayImpl<Real64>(name);
 }
 
 } // end namespace OpenWBEM

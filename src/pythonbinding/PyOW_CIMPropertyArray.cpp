@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_CIMProperty(const char* name)
 {
-    registerArrayImpl<CIMProperty>(name);
+	registerArrayImpl<CIMProperty>(name);
 }
 
 } // end namespace OpenWBEM

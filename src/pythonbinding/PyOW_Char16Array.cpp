@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_Char16(const char* name)
 {
-    registerArrayImpl<Char16>(name);
+	registerArrayImpl<Char16>(name);
 }
 
 } // end namespace OpenWBEM

@@ -91,16 +91,16 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 		if (token == CIMXMLParser::E_CLASSPATH)
 		{
 			parser.mustTokenIs(CIMXMLParser::E_CLASS);
-		    c = readClass(parser,tmpcop);
+			c = readClass(parser,tmpcop);
 		}
 		else if (token==CIMXMLParser::E_INSTANCEPATH)
 		{
 			parser.mustTokenIs(CIMXMLParser::E_INSTANCE);
-		    i = readInstance(parser,tmpcop);
+			i = readInstance(parser,tmpcop);
 		}
 		else
 		{
-		    OW_THROWCIMMSG(CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 		}
 		
@@ -109,19 +109,19 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 	}
 	else if (token==CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH)
 	{
-	    token = parser.getToken();
-	    CIMObjectPath tmpcop = XMLCIMFactory::createObjectPath(parser);
+		token = parser.getToken();
+		CIMObjectPath tmpcop = XMLCIMFactory::createObjectPath(parser);
 			
-	    if (token == CIMXMLParser::E_LOCALCLASSPATH)
+		if (token == CIMXMLParser::E_LOCALCLASSPATH)
 		{
 			parser.mustTokenIs(CIMXMLParser::E_CLASS);
-		    c = readClass(parser, tmpcop);
-	    }
+			c = readClass(parser, tmpcop);
+		}
 		else if (token == CIMXMLParser::E_LOCALINSTANCEPATH)
 		{
 			parser.mustTokenIs(CIMXMLParser::E_INSTANCE);
-		    i = readInstance(parser, tmpcop);
-	    }
+			i = readInstance(parser, tmpcop);
+		}
 		else
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -129,7 +129,7 @@ getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
 		}
 		
 		parser.mustGetEndTag(); // pass </VALUE.OBJECTWITHLOCALPATH>
-	    return tmpcop;
+		return tmpcop;
 	}
 	OW_THROWCIMMSG(CIMException::FAILED,
 		format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());

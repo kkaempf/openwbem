@@ -48,26 +48,26 @@
 class CppUnitException : public std::exception
 {
 public:
-                        CppUnitException (const char*  message, 
-                                          long         lineNumber, 
-                                          const char*  fileName
+						CppUnitException (const char*  message, 
+										  long         lineNumber, 
+										  const char*  fileName
 														);
 
-                        CppUnitException (const CppUnitException& x);
-                        CppUnitException& operator= (CppUnitException x);
+						CppUnitException (const CppUnitException& x);
+						CppUnitException& operator= (CppUnitException x);
 
-    virtual             ~CppUnitException () throw();
+	virtual             ~CppUnitException () throw();
 
-    const char          *what() const throw ();
+	const char          *what() const throw ();
 
-    long                lineNumber ();
-    const char*         fileName ();
-    void                swap(CppUnitException& x);
+	long                lineNumber ();
+	const char*         fileName ();
+	void                swap(CppUnitException& x);
 
 private:
-    char*               m_message;
-    long                m_lineNumber;
-    char*               m_fileName;
+	char*               m_message;
+	long                m_lineNumber;
+	char*               m_fileName;
 
 };
 

@@ -239,7 +239,7 @@ StringBuffer::append(const char* str, const size_t len)
 	checkAvail(len+1);
 	::strncpy(m_bfr+m_len, str, len);
 	m_len += len;
-    m_bfr[m_len] = '\0';
+	m_bfr[m_len] = '\0';
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////

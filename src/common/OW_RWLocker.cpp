@@ -44,7 +44,7 @@ RWLocker::RWLocker()
 	, m_num_waiting_writers(0)
 	, m_num_waiting_readers(0)
 	, m_readers_next(0)
-    , m_guard()
+	, m_guard()
 	, m_state(0)
 {
 }
@@ -65,12 +65,12 @@ RWLocker::~RWLocker()
 void
 RWLocker::getReadLock(UInt32 sTimeout, UInt32 usTimeout)
 {
-    NonRecursiveMutexLock l(m_guard);
-    
-    // Wait until no exclusive lock is held.
-    //
-    // Note:  Scheduling priorities are enforced in the unlock()
-    //   call.  unlock will wake the proper thread.
+	NonRecursiveMutexLock l(m_guard);
+	
+	// Wait until no exclusive lock is held.
+	//
+	// Note:  Scheduling priorities are enforced in the unlock()
+	//   call.  unlock will wake the proper thread.
 	// if we will lock, then make sure we won't deadlock
 	Thread_t tid = ThreadImpl::currentThread();
 	if (m_state < 0)
@@ -81,31 +81,31 @@ RWLocker::getReadLock(UInt32 sTimeout, UInt32 usTimeout)
 			OW_THROW(DeadlockException, "A thread that has a write lock is trying to acquire a read lock.");
 		}
 	}
-    while(m_state < 0)
-    {
-        ++m_num_waiting_readers;
-        //m_waiting_readers.wait(l);
+	while(m_state < 0)
+	{
+		++m_num_waiting_readers;
+		//m_waiting_readers.wait(l);
 		if (!m_waiting_readers.timedWait(l, sTimeout, usTimeout))
 		{
 			--m_num_waiting_readers;
 			OW_THROW(TimeoutException, "Timeout while waiting for read lock.");
 		}
-        --m_num_waiting_readers;
-    }
-    
-    // Increase the reader count
-    m_state++;
+		--m_num_waiting_readers;
+	}
+	
+	// Increase the reader count
+	m_state++;
 	m_readers.push_back(tid);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 RWLocker::getWriteLock(UInt32 sTimeout, UInt32 usTimeout)
 {
-    NonRecursiveMutexLock l(m_guard);
-    // Wait until no exclusive lock is held.
-    //
-    // Note:  Scheduling priorities are enforced in the unlock()
-    //   call.  unlock will wake the proper thread.
+	NonRecursiveMutexLock l(m_guard);
+	// Wait until no exclusive lock is held.
+	//
+	// Note:  Scheduling priorities are enforced in the unlock()
+	//   call.  unlock will wake the proper thread.
 	// if we will lock, then make sure we won't deadlock
 	Thread_t tid = ThreadImpl::currentThread();
 	if (m_state != 0)
@@ -119,32 +119,32 @@ RWLocker::getWriteLock(UInt32 sTimeout, UInt32 usTimeout)
 			}
 		}
 	}
-    while(m_state != 0)
-    {
-        ++m_num_waiting_writers;
-        if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
+	while(m_state != 0)
+	{
+		++m_num_waiting_writers;
+		if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
 		{
 			--m_num_waiting_writers;
 			OW_THROW(TimeoutException, "Timeout while waiting for write lock.");
 		}
-        --m_num_waiting_writers;
-    }
-    m_state = -1;
+		--m_num_waiting_writers;
+	}
+	m_state = -1;
 	m_writer = tid;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 RWLocker::releaseReadLock()
 {
-    NonRecursiveMutexLock l(m_guard);
-    if(m_state > 0)        // Release a reader.
-        --m_state;
-    else
+	NonRecursiveMutexLock l(m_guard);
+	if(m_state > 0)        // Release a reader.
+		--m_state;
+	else
 		OW_THROW(RWLockerException, "A writer is releasing a read lock");
-    if(m_state == 0)
-    {
-        doWakeups();
-    }
+	if(m_state == 0)
+	{
+		doWakeups();
+	}
 	Thread_t tid = ThreadImpl::currentThread();
 	for (size_t i = 0; i < m_readers.size(); ++i)
 	{
@@ -159,22 +159,22 @@ RWLocker::releaseReadLock()
 void
 RWLocker::releaseWriteLock()
 {
-    NonRecursiveMutexLock l(m_guard);
-    if(m_state == -1)
-        m_state = 0;
-    else
-        OW_THROW(RWLockerException, "A reader is releasing a write lock");
-    // After a writer is unlocked, we are always back in the unlocked state.
-    //
-    doWakeups();
+	NonRecursiveMutexLock l(m_guard);
+	if(m_state == -1)
+		m_state = 0;
+	else
+		OW_THROW(RWLockerException, "A reader is releasing a write lock");
+	// After a writer is unlocked, we are always back in the unlocked state.
+	//
+	doWakeups();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 RWLocker::doWakeups()
 {
-    if( m_num_waiting_writers > 0 && 
-        m_num_waiting_readers > 0)
-    {
+	if( m_num_waiting_writers > 0 && 
+		m_num_waiting_readers > 0)
+	{
 		if(m_readers_next == 1)
 		{
 			m_readers_next = 0;
@@ -185,17 +185,17 @@ RWLocker::doWakeups()
 			m_waiting_writers.notifyOne();
 			m_readers_next = 1;
 		}
-    }
-    else if(m_num_waiting_writers > 0)
-    {
-        // Only writers - scheduling doesn't matter
-        m_waiting_writers.notifyOne();
-    }
-    else if(m_num_waiting_readers > 0)
-    {
-        // Only readers - scheduling doesn't matter
-        m_waiting_readers.notifyAll();
-    }
+	}
+	else if(m_num_waiting_writers > 0)
+	{
+		// Only writers - scheduling doesn't matter
+		m_waiting_writers.notifyOne();
+	}
+	else if(m_num_waiting_readers > 0)
+	{
+		// Only readers - scheduling doesn't matter
+		m_waiting_readers.notifyAll();
+	}
 }
 
 } // end namespace OpenWBEM

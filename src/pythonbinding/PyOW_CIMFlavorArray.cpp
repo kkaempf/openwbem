@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_CIMFlavor(const char* name)
 {
-    registerArrayImpl<CIMFlavor>(name);
+	registerArrayImpl<CIMFlavor>(name);
 }
 
 } // end namespace OpenWBEM

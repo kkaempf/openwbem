@@ -42,10 +42,10 @@ namespace OpenWBEM
 using namespace boost::python;
 void registerCIMOMLocator()
 {
-    class_<CIMOMLocator, boost::noncopyable>("CIMOMLocator", no_init)
-        .def("findCIMOMs", &CIMOMLocator::findCIMOMs)
-    ;
-    def("createCIMOMLocator", &CIMOMLocator::createCIMOMLocator);
+	class_<CIMOMLocator, boost::noncopyable>("CIMOMLocator", no_init)
+		.def("findCIMOMs", &CIMOMLocator::findCIMOMs)
+	;
+	def("createCIMOMLocator", &CIMOMLocator::createCIMOMLocator);
 }
 
 } // end namespace OpenWBEM

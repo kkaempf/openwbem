@@ -72,7 +72,7 @@ namespace Platform
 	int popSig();
 	void shutdownSig();
 	SelectableIFCRef getSigSelectable();
-    String getCurrentUserName();
+	String getCurrentUserName();
 };
 
 } // end namespace OpenWBEM

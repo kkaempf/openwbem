@@ -107,7 +107,7 @@ String getState()
 	{
 		return String("off");
 	}
- 	return String();
+	return String();
 }
 
 void setState(const String& newState)

@@ -64,7 +64,7 @@ CIMOMHandleIFC::exportIndication(const CIMInstance& instance,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-    // TODO: Put these into a common header.  Make them available for re-use.
+	// TODO: Put these into a common header.  Make them available for re-use.
 	class CIMClassEnumBuilder : public CIMClassResultHandlerIFC
 	{
 	public:

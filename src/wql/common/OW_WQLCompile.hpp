@@ -121,12 +121,12 @@ public:
 	
 	typedef Array<TableauRow> Tableau;
 	
-    WQLCompile();
+	WQLCompile();
 	// calls compile()
-    WQLCompile(const WQLSelectStatement& wqs);
-    ~WQLCompile();
-    void compile (const WQLSelectStatement * wqs);
-    Tableau& getTableau() {return _tableau;}
+	WQLCompile(const WQLSelectStatement& wqs);
+	~WQLCompile();
+	void compile (const WQLSelectStatement * wqs);
+	Tableau& getTableau() {return _tableau;}
 	/** Evalautes the where clause using the symbol table to resolve symbols.
 	 * @return true or false if the source passes the query
 	 * @throws NoSuchPropertyException if the where clause references a 
@@ -135,40 +135,40 @@ public:
 	 *		the where clause or if the property type of the source property
 	 *		doesn't match the query.
 	 */
-    bool evaluate(const WQLPropertySource& source) const;
-    void print(std::ostream& ostr);
-    void printTableau(std::ostream& ostr);
+	bool evaluate(const WQLPropertySource& source) const;
+	void print(std::ostream& ostr);
+	void printTableau(std::ostream& ostr);
 protected:
-    void _buildEvalHeap(const WQLSelectStatement * wqs);
-    void _pushNOTDown(void);
-    void _factoring(void);
-    void _gatherDisj(Array<stack_el>& stk);
-    void _gatherConj(Array<stack_el>& stk, stack_el sel);
-    void _gather(Array<stack_el>& stk, stack_el sel, bool or_flag);
-    void _sortTableau();
-    static inline void _ResolveProperty(
-        WQLOperand& op,
-        const WQLPropertySource& source)
-    {
-        //
-        // Resolve the operand: if it's a property name, look up its value:
-        //
-        if (op.getType() == WQLOperand::PROPERTY_NAME)
-        {
-            const String& propertyName = op.getPropertyName();
-            if (!source.getValue(propertyName, op))
+	void _buildEvalHeap(const WQLSelectStatement * wqs);
+	void _pushNOTDown(void);
+	void _factoring(void);
+	void _gatherDisj(Array<stack_el>& stk);
+	void _gatherConj(Array<stack_el>& stk, stack_el sel);
+	void _gather(Array<stack_el>& stk, stack_el sel, bool or_flag);
+	void _sortTableau();
+	static inline void _ResolveProperty(
+		WQLOperand& op,
+		const WQLPropertySource& source)
+	{
+		//
+		// Resolve the operand: if it's a property name, look up its value:
+		//
+		if (op.getType() == WQLOperand::PROPERTY_NAME)
+		{
+			const String& propertyName = op.getPropertyName();
+			if (!source.getValue(propertyName, op))
 				OW_THROW(NoSuchPropertyException, "No such property");
-        }
-    }
-    // Structure to contain the compiled DNF form
-    Tableau _tableau;
-    //
-    // The eval_heap structure contains an ordered tree of non-terminal
-    // expressions, the term_heap structure the corresponding terminal
-    // expressions
-    //
-    Array<term_el> terminal_heap;
-    Array<eval_el> eval_heap;
+		}
+	}
+	// Structure to contain the compiled DNF form
+	Tableau _tableau;
+	//
+	// The eval_heap structure contains an ordered tree of non-terminal
+	// expressions, the term_heap structure the corresponding terminal
+	// expressions
+	//
+	Array<term_el> terminal_heap;
+	Array<eval_el> eval_heap;
 };
 bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 

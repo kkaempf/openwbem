@@ -43,23 +43,23 @@ using namespace boost::python;
 namespace {
 struct ClientAuthCBIFCWrap : ClientAuthCBIFC
 {
-    ClientAuthCBIFCWrap(PyObject* self_)
-        : self(self_) {}
-    bool getCredentials(const String& realm, String& name,
-                        String& passwd, const String& details)
-    { 
-        return call_method<int>(self, "getCredentials", 
-                realm, name, passwd, details); 
-    }
-    PyObject* self;
+	ClientAuthCBIFCWrap(PyObject* self_)
+		: self(self_) {}
+	bool getCredentials(const String& realm, String& name,
+						String& passwd, const String& details)
+	{ 
+		return call_method<int>(self, "getCredentials", 
+				realm, name, passwd, details); 
+	}
+	PyObject* self;
 };
 }
 void registerClientAuthCBIFC()
 {
-    class_<ClientAuthCBIFC, ClientAuthCBIFCWrap, boost::noncopyable>
-        ("ClientAuthCBIFC", no_init)
-       // .def("getCredentials", &ClientAuthCBIFC::getCredentials)
-    ;
+	class_<ClientAuthCBIFC, ClientAuthCBIFCWrap, boost::noncopyable>
+		("ClientAuthCBIFC", no_init)
+	   // .def("getCredentials", &ClientAuthCBIFC::getCredentials)
+	;
 }
 
 } // end namespace OpenWBEM

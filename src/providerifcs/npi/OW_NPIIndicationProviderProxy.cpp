@@ -47,11 +47,11 @@ NPIIndicationProviderProxy::deActivateFilter(
 	const String& nameSpace,
 	const StringArray& classes)
 {
-    bool lastActivation = (--m_activationCount == 0);
+	bool lastActivation = (--m_activationCount == 0);
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("deactivateFilter");
 		ProviderEnvironmentIFCRef env2(env);
@@ -80,12 +80,12 @@ NPIIndicationProviderProxy::activateFilter(
 	const String& nameSpace,
 	const StringArray& classes)
 {
-    bool firstActivation = (m_activationCount++ == 0);
+	bool firstActivation = (m_activationCount++ == 0);
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
@@ -118,7 +118,7 @@ NPIIndicationProviderProxy::authorizeFilter(
 	env->getLogger()->logDebug("authorizeFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("authorizeFilter2");
 		ProviderEnvironmentIFCRef env2(env);
@@ -151,7 +151,7 @@ NPIIndicationProviderProxy::mustPoll(
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+			::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("mustPoll2");
 		ProviderEnvironmentIFCRef env2(env);

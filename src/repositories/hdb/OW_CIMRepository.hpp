@@ -173,7 +173,7 @@ public:
 	 *		CIM_ERR_CLASS_HAS_INSTANCES
 	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_FOUND
-  	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER
 	 *		CIM_ERR_FAILED
@@ -237,7 +237,7 @@ public:
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception CIMException  	
- 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER
@@ -261,7 +261,7 @@ public:
 	 * @param localOnly Only include properties
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception CIMException  	
- 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER
@@ -291,7 +291,7 @@ public:
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception CIMException
- 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER
@@ -320,7 +320,7 @@ public:
 	 *							to the specified class are returned.
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception CIMException
- 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER

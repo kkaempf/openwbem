@@ -217,7 +217,7 @@ BinaryCIMOMHandle::enumClass(const String& ns_,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClasses", ns);
 	std::iostream& strm = *strmRef;
@@ -240,7 +240,7 @@ BinaryCIMOMHandle::enumInstanceNames(
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstanceNames", ns);
 	std::iostream& strm = *strmRef;
@@ -261,7 +261,7 @@ BinaryCIMOMHandle::enumInstances(
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstances", ns);
 	std::iostream& strm = *strmRef;
@@ -284,10 +284,10 @@ BinaryCIMOMHandle::getClass(
 	const String& ns_,
 	const String& className,
 	ELocalOnlyFlag localOnly,
-    EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetClass", ns);
 	std::iostream& strm = *strmRef;
@@ -311,7 +311,7 @@ BinaryCIMOMHandle::getInstance(
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetInstance", ns);
 	std::iostream& strm = *strmRef;
@@ -336,7 +336,7 @@ BinaryCIMOMHandle::invokeMethod(
 	const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		methodName, ns);
 	std::iostream& strm = *strmRef;
@@ -374,7 +374,7 @@ CIMQualifierType
 BinaryCIMOMHandle::getQualifierType(const String& ns_,
 		const String& qualifierName)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetQualifier", ns);
 	std::iostream& strm = *strmRef;
@@ -393,7 +393,7 @@ void
 BinaryCIMOMHandle::setQualifierType(const String& ns_,
 		const CIMQualifierType& qt)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetQualifier", ns);
 	std::iostream& strm = *strmRef;
@@ -411,7 +411,7 @@ BinaryCIMOMHandle::enumQualifierTypes(
 	const String& ns_,
 	CIMQualifierTypeResultHandlerIFC& result)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateQualifiers", ns);
 	std::iostream& strm = *strmRef;
@@ -426,7 +426,7 @@ BinaryCIMOMHandle::enumQualifierTypes(
 void
 BinaryCIMOMHandle::deleteQualifierType(const String& ns_, const String& qualName)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteQualifier", ns);
 	std::iostream& strm = *strmRef;
@@ -443,7 +443,7 @@ void
 BinaryCIMOMHandle::modifyClass(const String &ns_,
 		const CIMClass& cc)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyClass", ns);
 	std::iostream& strm = *strmRef;
@@ -460,7 +460,7 @@ void
 BinaryCIMOMHandle::createClass(const String& ns_,
 		const CIMClass& cc)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateClass", ns);
 	std::iostream& strm = *strmRef;
@@ -476,7 +476,7 @@ BinaryCIMOMHandle::createClass(const String& ns_,
 void
 BinaryCIMOMHandle::deleteClass(const String& ns_, const String& className)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteClass", ns);
 	std::iostream& strm = *strmRef;
@@ -497,7 +497,7 @@ BinaryCIMOMHandle::modifyInstance(
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", ns);
 	std::iostream& strm = *strmRef;
@@ -517,7 +517,7 @@ CIMObjectPath
 BinaryCIMOMHandle::createInstance(const String& ns_,
 	const CIMInstance& ci)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateInstance", ns);
 	std::iostream& strm = *strmRef;
@@ -536,7 +536,7 @@ BinaryCIMOMHandle::createInstance(const String& ns_,
 void
 BinaryCIMOMHandle::deleteInstance(const String& ns_, const CIMObjectPath& inst)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteInstance", ns);;
 	std::iostream& strm = *strmRef;
@@ -554,7 +554,7 @@ BinaryCIMOMHandle::setProperty(
 	const String& propName,
 	const CIMValue& cv)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetProperty", ns);
 	std::iostream& strm = *strmRef;
@@ -581,7 +581,7 @@ BinaryCIMOMHandle::getProperty(
 	const CIMObjectPath& path,
 	const String& propName)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetProperty", ns);
 	std::iostream& strm = *strmRef;
@@ -620,7 +620,7 @@ BinaryCIMOMHandle::associatorNames(
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"AssociatorNames", ns);
 	std::iostream& strm = *strmRef;
@@ -647,7 +647,7 @@ BinaryCIMOMHandle::associators(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isInstancePath())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -682,7 +682,7 @@ BinaryCIMOMHandle::associatorsClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isClassPath())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -715,7 +715,7 @@ BinaryCIMOMHandle::referenceNames(
 	const String& resultClass,
 	const String& role)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
@@ -740,7 +740,7 @@ BinaryCIMOMHandle::references(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isInstancePath())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -773,7 +773,7 @@ BinaryCIMOMHandle::referencesClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	if (!path.isClassPath())
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -813,7 +813,7 @@ BinaryCIMOMHandle::execQuery(
 	CIMInstanceResultHandlerIFC& result,
 	const String& query, const String& queryLanguage)
 {
-    String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
+	String ns(CIMNameSpaceUtils::prepareNamespace(ns_));
 	Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ExecQuery", ns);
 	std::iostream& strm = *strmRef;

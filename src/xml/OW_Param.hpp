@@ -46,19 +46,19 @@ namespace OpenWBEM
 class Param
 {
 public:    
-    static const int VALUENOTSET = 0;
-    static const int VALUESET = 1;
-	    
-    Param(String argname, int mode, String value);
-    Param(String argname, String value);
-    Param(String argname, bool value);
-	    
-    String getArgName() const;
-    String getArgValue() const;
+	static const int VALUENOTSET = 0;
+	static const int VALUESET = 1;
+		
+	Param(String argname, int mode, String value);
+	Param(String argname, String value);
+	Param(String argname, bool value);
+		
+	String getArgName() const;
+	String getArgValue() const;
 private:
 	String m_argName;
-    String m_argValue;
-    int m_argMode;
+	String m_argValue;
+	int m_argMode;
 };
 typedef Array<Param> ParamArray;
 

@@ -30,7 +30,7 @@ static CMPIStatus arrayRelease(CMPIArray* eArray)
 	{
 		if (dta->type & CMPI_ENC)
 		{
-         		for (uint i=1; i<=dta->value.uint32; i++)
+				for (uint i=1; i<=dta->value.uint32; i++)
 			{
 				//if (dta[i].state == 0)
 					//((CMPIString *)dta[i].value.

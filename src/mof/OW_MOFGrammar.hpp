@@ -84,7 +84,7 @@ public:
 		while (pConstantValue.get() && !pConstantValue->empty())
 		{
 			delete pConstantValue->front();
-         pConstantValue->pop_front();
+		 pConstantValue->pop_front();
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitArrayInitializer( this ); }
@@ -152,7 +152,7 @@ public:
 		while (pFlavor.get() && !pFlavor->empty())
 		{
 			delete pFlavor->front();
-         pFlavor->pop_front();
+		 pFlavor->pop_front();
 		}
 	}
 	void Accept( Visitor *pV ) const { pV->VisitQualifier( this ); }
@@ -267,10 +267,10 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitInstanceDeclaration( this ); }
 	
-    AutoPtr< List< Qualifier * > > pQualifier;
-    AutoPtr< const ClassName > pClassName;
-    AutoPtr< const Alias > pAlias;
-    AutoPtr< List< ValueInitializer * > > pValueInitializer;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const ClassName > pClassName;
+	AutoPtr< const Alias > pAlias;
+	AutoPtr< List< ValueInitializer * > > pValueInitializer;
 	 lineInfo theLineInfo;
 };
 class DefaultFlavor
@@ -289,7 +289,7 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitDefaultFlavor( this ); }
 	
-    AutoPtr< List< Flavor * > > pFlavor;
+	AutoPtr< List< Flavor * > > pFlavor;
 };
 class MetaElement
 {

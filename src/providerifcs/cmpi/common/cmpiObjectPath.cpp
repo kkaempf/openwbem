@@ -29,8 +29,8 @@ static CMPIStatus refRelease(CMPIObjectPath* eRef) {
 
    OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
    if (ref) {
-      delete ref;
-      ((CMPI_Object*)eRef)->unlinkAndDelete();
+	  delete ref;
+	  ((CMPI_Object*)eRef)->unlinkAndDelete();
    }
    CMReturn(CMPI_RC_OK);
 }
@@ -83,8 +83,8 @@ static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc) {
 
 static long locateKey(const OpenWBEM::CIMPropertyArray &kb, const OpenWBEM::String& eName) {
    for (unsigned long i=0,s=kb.size(); i<s; i++) {
-      const OpenWBEM::String &n=kb[i].getName();
-      if (n.equalsIgnoreCase(eName)) 
+	  const OpenWBEM::String &n=kb[i].getName();
+	  if (n.equalsIgnoreCase(eName)) 
 	  {
 		  return i;
 	  }
@@ -93,7 +93,7 @@ static long locateKey(const OpenWBEM::CIMPropertyArray &kb, const OpenWBEM::Stri
 }
 
 static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
-          CMPIValue* data, CMPIType type) {
+		  CMPIValue* data, CMPIType type) {
    OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
    OpenWBEM::CIMPropertyArray keyBindings=ref->getKeys();
    OpenWBEM::String key(name);
@@ -103,7 +103,7 @@ static CMPIStatus refAddKey(CMPIObjectPath* eRef, char* name,
    if (i>=0) 
    {
 	keyBindings.remove(i);
-   	ref->setKeys(keyBindings);
+	ref->setKeys(keyBindings);
    }
    OpenWBEM::CIMValue val=value2CIMValue(data,type,&rc);
    ref->addKey(key, val);
@@ -120,9 +120,9 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc) {
 
    if (cpr)
    {
-      OpenWBEM::CIMValue cv = cpr.getValue();
-      value2CMPIData(cv, type2CMPIType(cv.getType(),cv.isArray()) ,&data);
-      return data;
+	  OpenWBEM::CIMValue cv = cpr.getValue();
+	  value2CMPIData(cv, type2CMPIType(cv.getType(),cv.isArray()) ,&data);
+	  return data;
    }
 
    CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
@@ -130,23 +130,23 @@ static CMPIData refGetKey(CMPIObjectPath* eRef, char* name, CMPIStatus* rc) {
 }
 
 static CMPIData refGetKeyAt(CMPIObjectPath* eRef, unsigned pos, CMPIString** name,
-          CMPIStatus* rc) {
+		  CMPIStatus* rc) {
    OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
    const OpenWBEM::CIMPropertyArray &akb=ref->getKeys();
    CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
    CMSetStatus(rc,CMPI_RC_OK);
 
    if (pos >= akb.size()) {
-      CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
-      return data;
+	  CMSetStatus(rc,CMPI_RC_ERR_NOT_FOUND);
+	  return data;
    }
 
    OpenWBEM::CIMValue cv = akb[pos].getValue();
    value2CMPIData(cv, type2CMPIType(cv.getType(),cv.isArray()) ,&data);
 
    if (name) {
-      const OpenWBEM::String &n=akb[pos].getName();
-      *name=string2CMPIString(n);
+	  const OpenWBEM::String &n=akb[pos].getName();
+	  *name=string2CMPIString(n);
    }
    return data;
 }
@@ -159,7 +159,7 @@ static CMPICount refGetKeyCount(CMPIObjectPath* eRef, CMPIStatus* rc) {
 }
 
 static CMPIStatus refSetNameSpaceFromObjectPath(CMPIObjectPath* eRef,
-          CMPIObjectPath* eSrc) {
+		  CMPIObjectPath* eSrc) {
    OpenWBEM::CIMObjectPath* ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
    OpenWBEM::CIMObjectPath* src=(OpenWBEM::CIMObjectPath*)eSrc->hdl;
    ref->setNameSpace(src->getNameSpace());
@@ -178,59 +178,59 @@ static CMPIBoolean refClassPathIsA(CMPIObjectPath *eRef,
 #endif
 
 CMPIObjectPathFT objectPath_FT={
-     CMPICurrentVersion,
-     refRelease,
-     refClone,
-     refSetNameSpace,
-     refGetNameSpace,
-     NULL,		// setHostName
-     NULL,		// getHostName
-     refSetClassName,
-     refGetClassName,
-     refAddKey,
-     refGetKey,
-     refGetKeyAt,
-     refGetKeyCount,
-     refSetNameSpaceFromObjectPath,
-     NULL,		//refSetHostAndNameSpaceFromObjectPath,
-     //refClassPathIsA,
-     // no qualifier support yet
-     NULL,
-     NULL,
-     NULL,
-     NULL
+	 CMPICurrentVersion,
+	 refRelease,
+	 refClone,
+	 refSetNameSpace,
+	 refGetNameSpace,
+	 NULL,		// setHostName
+	 NULL,		// getHostName
+	 refSetClassName,
+	 refGetClassName,
+	 refAddKey,
+	 refGetKey,
+	 refGetKeyAt,
+	 refGetKeyCount,
+	 refSetNameSpaceFromObjectPath,
+	 NULL,		//refSetHostAndNameSpaceFromObjectPath,
+	 //refClassPathIsA,
+	 // no qualifier support yet
+	 NULL,
+	 NULL,
+	 NULL,
+	 NULL
 };
 
 CMPIObjectPathFT *CMPI_ObjectPath_Ftab=&objectPath_FT;
 
 CMPIObjectPathFT objectPathOnStack_FT={
-     CMPICurrentVersion,
-     refReleaseNop,
-     refClone,
-     refSetNameSpace,
-     refGetNameSpace,
-     NULL,		// setHostName
-     NULL,		// getHostName
-     refSetClassName,
-     refGetClassName,
-     refAddKey,
-     refGetKey,
-     refGetKeyAt,
-     refGetKeyCount,
-     refSetNameSpaceFromObjectPath,
-     NULL,		//refSetHostAndNameSpaceFromObjectPath,
-     //refClassPathIsA,
-     // no qualifier support yet
-     NULL,
-     NULL,
-     NULL,
-     NULL
+	 CMPICurrentVersion,
+	 refReleaseNop,
+	 refClone,
+	 refSetNameSpace,
+	 refGetNameSpace,
+	 NULL,		// setHostName
+	 NULL,		// getHostName
+	 refSetClassName,
+	 refGetClassName,
+	 refAddKey,
+	 refGetKey,
+	 refGetKeyAt,
+	 refGetKeyCount,
+	 refSetNameSpaceFromObjectPath,
+	 NULL,		//refSetHostAndNameSpaceFromObjectPath,
+	 //refClassPathIsA,
+	 // no qualifier support yet
+	 NULL,
+	 NULL,
+	 NULL,
+	 NULL
 };
 
 CMPIObjectPathFT *CMPI_ObjectPathOnStack_Ftab=&objectPathOnStack_FT;
 
 
 CMPI_ObjectPathOnStack::CMPI_ObjectPathOnStack(const OpenWBEM::CIMObjectPath& cop) {
-      hdl=(void*)&cop;
-      ft=CMPI_ObjectPathOnStack_Ftab;
+	  hdl=(void*)&cop;
+	  ft=CMPI_ObjectPathOnStack_Ftab;
    }

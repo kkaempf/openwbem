@@ -115,7 +115,7 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, Str
 	{
 		pam_end(pamh, rval);
 		free(pUserName);
-        details = "Error in Linux-PAM conversation function";
+		details = "Error in Linux-PAM conversation function";
 		return false;
 	}
 	if (pam_end(pamh,rval) != PAM_SUCCESS)

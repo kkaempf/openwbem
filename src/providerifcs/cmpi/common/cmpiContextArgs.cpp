@@ -128,25 +128,25 @@ static CMPICount argsGetArgCount(CMPIArgs* eArg, CMPIStatus* rc)
 
 
 static CMPIArgsFT args_FT={
-     CMPICurrentVersion,
-     argsRelease,
-     argsClone,
-     argsAddArg,
-     argsGetArg,
-     argsGetArgAt,
-     argsGetArgCount,
+	 CMPICurrentVersion,
+	 argsRelease,
+	 argsClone,
+	 argsAddArg,
+	 argsGetArg,
+	 argsGetArgAt,
+	 argsGetArgCount,
 };
 
 CMPIArgsFT *CMPI_Args_Ftab=&args_FT;
 
 static CMPIArgsFT argsOnStack_FT={
-     CMPICurrentVersion,
-     argsReleaseNop,
-     argsClone,
-     argsAddArg,
-     argsGetArg,
-     argsGetArgAt,
-     argsGetArgCount,
+	 CMPICurrentVersion,
+	 argsReleaseNop,
+	 argsClone,
+	 argsAddArg,
+	 argsGetArg,
+	 argsGetArgAt,
+	 argsGetArgCount,
 };
 
 CMPIArgsFT *CMPI_ArgsOnStack_Ftab=&argsOnStack_FT;
@@ -185,25 +185,25 @@ static CMPIStatus contextAddEntry(CMPIContext* eCtx, char* name,
 
 
 static CMPIContextFT context_FT={
-     CMPICurrentVersion,
-     contextReleaseNop,
-     NULL,		// clone
-     contextGetEntry,
-     contextGetEntryAt,
-     contextGetEntryCount,
-     contextAddEntry,
+	 CMPICurrentVersion,
+	 contextReleaseNop,
+	 NULL,		// clone
+	 contextGetEntry,
+	 contextGetEntryAt,
+	 contextGetEntryCount,
+	 contextAddEntry,
 };
 
 CMPIContextFT *CMPI_Context_Ftab=&context_FT;
 
 static CMPIContextFT contextOnStack_FT={
-     CMPICurrentVersion,
-     contextReleaseNop,
-     NULL,		// clone
-     contextGetEntry,
-     contextGetEntryAt,
-     contextGetEntryCount,
-     contextAddEntry,
+	 CMPICurrentVersion,
+	 contextReleaseNop,
+	 NULL,		// clone
+	 contextGetEntry,
+	 contextGetEntryAt,
+	 contextGetEntryCount,
+	 contextAddEntry,
 };
 
 CMPIContextFT *CMPI_ContextOnStack_Ftab=&contextOnStack_FT;

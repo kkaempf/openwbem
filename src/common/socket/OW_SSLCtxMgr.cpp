@@ -52,7 +52,7 @@ static struct CRYPTO_dynlock_value * dyn_create_function(const char *,int)
 	return new CRYPTO_dynlock_value;
 }
 static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
-			      const char *, int)
+				  const char *, int)
 {
 	if (mode & CRYPTO_LOCK)
 		l->mutex.acquire();

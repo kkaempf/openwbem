@@ -242,36 +242,36 @@ bool WQLCompile::evaluate(const WQLPropertySource& source) const
 		TableauRow tr = _tableau[i];
 		for (UInt32 j=0,m = tr.size(); j < m; j++)
 		{
-            if (tr[j].op == WQL_ISA)
-            {
-                String propertyName = tr[j].opn1.getPropertyName();
-                String className;
-                if (tr[j].opn2.getType() == WQLOperand::PROPERTY_NAME)
-                {
-                    className = tr[j].opn2.getPropertyName();
-                }
-                else
-                {
-                    className = tr[j].opn2.getStringValue(); // this will throw if it's not a string
-                }
-                b = source.evaluateISA(propertyName, className);
-            }
-            else
-            {
-                lhs = tr[j].opn1;
-                WQLCompile::_ResolveProperty(lhs,source);
-                rhs = tr[j].opn2;
-                WQLCompile::_ResolveProperty(rhs,source);
-                if (rhs.getType() != lhs.getType())
-                    OW_THROW(TypeMismatchException, format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
-                if (!_Evaluate(lhs, rhs, tr[j].op))
-                {
-                    b = false;
-                    break;
-                }
-                else
-                    b = true;
-            }
+			if (tr[j].op == WQL_ISA)
+			{
+				String propertyName = tr[j].opn1.getPropertyName();
+				String className;
+				if (tr[j].opn2.getType() == WQLOperand::PROPERTY_NAME)
+				{
+					className = tr[j].opn2.getPropertyName();
+				}
+				else
+				{
+					className = tr[j].opn2.getStringValue(); // this will throw if it's not a string
+				}
+				b = source.evaluateISA(propertyName, className);
+			}
+			else
+			{
+				lhs = tr[j].opn1;
+				WQLCompile::_ResolveProperty(lhs,source);
+				rhs = tr[j].opn2;
+				WQLCompile::_ResolveProperty(rhs,source);
+				if (rhs.getType() != lhs.getType())
+					OW_THROW(TypeMismatchException, format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
+				if (!_Evaluate(lhs, rhs, tr[j].op))
+				{
+					b = false;
+					break;
+				}
+				else
+					b = true;
+			}
 		}
 		if (b) return true;
 	}

@@ -62,16 +62,16 @@ struct CIMClass::CLSData
 	CIMMethodArray m_methods;
 	Bool m_associationFlag;
 	Bool m_isKeyed;
-    CLSData* clone() const { return new CLSData(*this); }
+	CLSData* clone() const { return new CLSData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMClass::CLSData& x, const CIMClass::CLSData& y)
 {
 	return StrictWeakOrdering(x.m_name, y.m_name, 
 		x.m_parentClassName, y.m_parentClassName,
-        x.m_qualifiers, y.m_qualifiers,
-        x.m_properties, y.m_properties,
-        x.m_methods, y.m_methods);
+		x.m_qualifiers, y.m_qualifiers,
+		x.m_properties, y.m_properties,
+		x.m_methods, y.m_methods);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass::CIMClass() :
@@ -400,7 +400,7 @@ CIMClass::addQualifier(const CIMQualifier& qual)
 	}
 	if(qual.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_ASSOCIATION))
 	{
-        CIMValue v = qual.getValue();
+		CIMValue v = qual.getValue();
 		if (v && v.getType() == CIMDataType::BOOLEAN)
 		{
 			Bool b;

@@ -63,13 +63,13 @@ CIMRepository::CIMRepository(ServiceEnvironmentIFCRef env)
 	, m_instAssocDb(env)
 #endif
 	, m_env(env)
-    , m_checkReferentialIntegrity(false)
+	, m_checkReferentialIntegrity(false)
 {
-    if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt, 
+	if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt, 
 		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
-    {
-        m_checkReferentialIntegrity = true;
-    }
+	{
+		m_checkReferentialIntegrity = true;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMRepository::~CIMRepository()
@@ -394,7 +394,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 			E_DEEP, E_LOCAL_ONLY,
 			E_EXCLUDE_QUALIFIERS,
 			E_EXCLUDE_CLASS_ORIGIN,
-            acl);
+			acl);
 		ccd.handle(cc);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
@@ -1693,19 +1693,19 @@ CIMRepository::checkGetClassRvalAndThrowInst(CIMException::ErrNoType rval,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-    class ClassNameArrayBuilder : public CIMObjectPathResultHandlerIFC
-    {
-    public:
-        ClassNameArrayBuilder(StringArray& names_)
-        : names(names_)
-        {}
-        void doHandle(const CIMObjectPath& op)
-        {
-            names.push_back(op.getObjectName());
-        }
-    private:
-        StringArray& names;
-    };
+	class ClassNameArrayBuilder : public CIMObjectPathResultHandlerIFC
+	{
+	public:
+		ClassNameArrayBuilder(StringArray& names_)
+		: names(names_)
+		{}
+		void doHandle(const CIMObjectPath& op)
+		{
+			names.push_back(op.getObjectName());
+		}
+	private:
+		StringArray& names;
+	};
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1781,35 +1781,35 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 	{
 		String clsname = it->first;
 		
-        // since we don't know what class the keys refer to, we get all subclasses
-        // and try calling getInstance for each to see if we can find one with
-        // the matching keys.
+		// since we don't know what class the keys refer to, we get all subclasses
+		// and try calling getInstance for each to see if we can find one with
+		// the matching keys.
 		StringArray classes = getClassChildren(m_mStore, ns,
 			theClass.getName());
-        classes.push_back(clsname);
-        op.setKeys(it->second);
-        bool found = false;
-        for (size_t i = 0; i < classes.size(); ++i)
-        {
-            op.setObjectName(classes[i]);
-            try
-            {
-                CIMClass c = _instGetClass(ns,classes[i]);
-                m_iStore.getCIMInstance(ns, op, c, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
-                // if the previous line didn't throw, then we found it.
-                found = true;
-                break;
-            }
-            catch (const CIMException&)
-            {
-            }
-        }
-        if (!found)
-        {
-            OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-                format("Propagated keys refer to non-existent object: %1",
-                    op.toString()).c_str());
-        }
+		classes.push_back(clsname);
+		op.setKeys(it->second);
+		bool found = false;
+		for (size_t i = 0; i < classes.size(); ++i)
+		{
+			op.setObjectName(classes[i]);
+			try
+			{
+				CIMClass c = _instGetClass(ns,classes[i]);
+				m_iStore.getCIMInstance(ns, op, c, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+				// if the previous line didn't throw, then we found it.
+				found = true;
+				break;
+			}
+			catch (const CIMException&)
+			{
+			}
+		}
+		if (!found)
+		{
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+				format("Propagated keys refer to non-existent object: %1",
+					op.toString()).c_str());
+		}
 		++it;
 	}
 }

@@ -70,25 +70,25 @@ template <class Fixture> class TestCaller : public TestCase
    REFERENCEOBJECT (TestCaller)
 
    typedef void             (Fixture::*TestMethod)();
-    
+	
 public:
-                            TestCaller (const char* name, TestMethod test)
-                            : TestCase (name), m_fixture (new Fixture (name)), m_test (test)
-                            {}
+							TestCaller (const char* name, TestMethod test)
+							: TestCase (name), m_fixture (new Fixture (name)), m_test (test)
+							{}
 									 ~TestCaller()
 									 {
 										 delete m_fixture;
 									 }
 
 protected:
-    void                    runTest () 
-                            { (m_fixture->*m_test)(); }  
+	void                    runTest () 
+							{ (m_fixture->*m_test)(); }  
 
-    void                    setUp ()
-                            { m_fixture->setUp (); }
+	void                    setUp ()
+							{ m_fixture->setUp (); }
 
-    void                    tearDown ()
-                            { m_fixture->tearDown (); }
+	void                    tearDown ()
+							{ m_fixture->tearDown (); }
 
 private:
    Fixture*   m_fixture;

@@ -40,13 +40,13 @@ using namespace WBEMFlags;
 void
 ClientCIMOMHandle::createNameSpace(const String& ns)
 {
-    CIMNameSpaceUtils::create__Namespace(*this, ns);
+	CIMNameSpaceUtils::create__Namespace(*this, ns);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 ClientCIMOMHandle::deleteNameSpace(const String& ns_)
 {
-    CIMNameSpaceUtils::delete__Namespace(*this, ns_);
+	CIMNameSpaceUtils::delete__Namespace(*this, ns_);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ void
 ClientCIMOMHandle::enumNameSpace(const String& ns_,
 	StringResultHandlerIFC &result, EDeepFlag deep)
 {
-    CIMNameSpaceUtils::enum__Namespace(*this, ns_, result, deep);
+	CIMNameSpaceUtils::enum__Namespace(*this, ns_, result, deep);
 }
 
 } // end namespace OpenWBEM

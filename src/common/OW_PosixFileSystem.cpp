@@ -190,7 +190,7 @@ FileSystem::read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 		::lseek(hdl, offset, SEEK_SET);
 	}
 #ifdef OW_USE_GNU_PTH
-    return pth_read(hdl, bfr, numberOfBytes);
+	return pth_read(hdl, bfr, numberOfBytes);
 #else
 	return ::read(hdl, bfr, numberOfBytes);
 #endif
@@ -205,7 +205,7 @@ FileSystem::write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 		::lseek(hdl, offset, SEEK_SET);
 	}
 #ifdef OW_USE_GNU_PTH
-    return pth_write(hdl, bfr, numberOfBytes);
+	return pth_write(hdl, bfr, numberOfBytes);
 #else
 	return ::write(hdl, bfr, numberOfBytes);
 #endif

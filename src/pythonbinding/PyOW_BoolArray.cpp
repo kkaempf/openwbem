@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_Bool(const char* name)
 {
-    registerArrayImpl<Bool>(name);
+	registerArrayImpl<Bool>(name);
 }
 
 } // end namespace OpenWBEM

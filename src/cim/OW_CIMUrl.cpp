@@ -56,7 +56,7 @@ struct CIMUrl::URLData
 	String m_file;
 	String m_ref;
 	Bool m_localHost;
-    URLData* clone() { return new URLData(*this); }
+	URLData* clone() { return new URLData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMUrl::URLData& x, const CIMUrl::URLData& y)

@@ -57,7 +57,7 @@ struct CIMMethod::METHData
 	String m_originClass;
 	String m_override;
 	Bool m_propagated;
-    METHData* clone() const { return new METHData(*this); }
+	METHData* clone() const { return new METHData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////													
 bool operator<(const CIMMethod::METHData& x, const CIMMethod::METHData& y)

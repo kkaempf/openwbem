@@ -44,7 +44,7 @@ public:
 	BinaryRequestHandler();
 	virtual RequestHandlerIFC* clone() const;
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-            std::ostream *ostrError, const SortedVectorMap<String, String>& handlerVars);
+			std::ostream *ostrError, const SortedVectorMap<String, String>& handlerVars);
 	virtual void doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& handlerVars);
 	virtual void setEnvironment(ServiceEnvironmentIFCRef env);
 	virtual StringArray getSupportedContentTypes() const;
@@ -92,7 +92,7 @@ private:
 	void enumInstances(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	void enumInstanceNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-            std::istream& istrm);
+			std::istream& istrm);
 	void invokeMethod(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	void execQuery(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
@@ -101,7 +101,7 @@ private:
 	void associators(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	void associatorNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-        std::istream& istrm);
+		std::istream& istrm);
 	void references(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	void referenceNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,

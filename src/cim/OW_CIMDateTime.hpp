@@ -126,7 +126,7 @@ public:
 		UInt32 m_microSeconds;
 		Int16 m_utc;
 		UInt8 m_isInterval;
-        DateTimeData* clone() const { return new DateTimeData(*this); }
+		DateTimeData* clone() const { return new DateTimeData(*this); }
 	};
 	
 	/**

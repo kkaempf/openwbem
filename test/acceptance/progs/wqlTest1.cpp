@@ -77,7 +77,7 @@ CIMInstanceArray testQueryRemote(CIMOMHandleIFCRef& rch, const char* query, int 
 	{
 		CIMInstance i = cie.nextElement();
 		cia.push_back(i);
-        cout << i.toMOF() << endl;
+		cout << i.toMOF() << endl;
 	}
 	if (expectedSize >= 0)
 	{
@@ -100,7 +100,7 @@ CIMInstanceArray testQueryLocal(CIMOMHandleIFCRef& rch, const char* query, int e
 	{
 		CIMInstance i = cie.nextElement();
 		cia.push_back(i);
-        cout << i.toMOF() << endl;
+		cout << i.toMOF() << endl;
 	}
 	if (expectedSize >= 0)
 	{

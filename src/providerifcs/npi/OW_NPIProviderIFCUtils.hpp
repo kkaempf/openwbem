@@ -70,40 +70,40 @@ public:
 //printf("Garbage array size is %x\n", sz);
 	   for (int i= sz-1; i>=0; i--)
 	   {
-              NPIGarbageType pgt =
-	         ((NPIContext *)(m_handle.context))->garbageType[i];
+			  NPIGarbageType pgt =
+			 ((NPIContext *)(m_handle.context))->garbageType[i];
 //printf("Delete Entry %x, Type %x\n", i, pgt);
-	      void * obj_ptr = ((NPIContext *)(m_handle.context))->garbage[i];
-	      switch(pgt)
-	      {
-	         case VECTOR:
-	            delete(static_cast<charVect *>(obj_ptr));
-	            break;
-	         case CIM_VALUE:
-	            delete(static_cast<CIMValue *>(obj_ptr));
-	            break;
-	         case CIM_QUALIFIER:
-	          //delete(static_cast<CIMQualifier *>(
-	          //       ((NPIContext *)(m_handle.context))->garbage[i]) );
-	            break;
-	         case CIM_PARAMVALUE:
-	            delete(static_cast<CIMParamValue *>(obj_ptr));
-	            break;
-	         case CIM_PROPERTY:
-	            delete(static_cast<CIMProperty *>(obj_ptr));
-	            break;
-	         case CIM_INSTANCE:
-	            delete(static_cast<CIMInstance *>(obj_ptr));
-	            break;
-	         case CIM_OBJECTPATH:
-	            delete(static_cast<CIMObjectPath *>(obj_ptr));
-	            break;
-	         case CIM_CLASS:
-	            delete(static_cast<CIMClass *>(obj_ptr));
-	            break;
-	         default:
-	            break;
-	      }
+		  void * obj_ptr = ((NPIContext *)(m_handle.context))->garbage[i];
+		  switch(pgt)
+		  {
+			 case VECTOR:
+				delete(static_cast<charVect *>(obj_ptr));
+				break;
+			 case CIM_VALUE:
+				delete(static_cast<CIMValue *>(obj_ptr));
+				break;
+			 case CIM_QUALIFIER:
+			  //delete(static_cast<CIMQualifier *>(
+			  //       ((NPIContext *)(m_handle.context))->garbage[i]) );
+				break;
+			 case CIM_PARAMVALUE:
+				delete(static_cast<CIMParamValue *>(obj_ptr));
+				break;
+			 case CIM_PROPERTY:
+				delete(static_cast<CIMProperty *>(obj_ptr));
+				break;
+			 case CIM_INSTANCE:
+				delete(static_cast<CIMInstance *>(obj_ptr));
+				break;
+			 case CIM_OBJECTPATH:
+				delete(static_cast<CIMObjectPath *>(obj_ptr));
+				break;
+			 case CIM_CLASS:
+				delete(static_cast<CIMClass *>(obj_ptr));
+				break;
+			 default:
+				break;
+		  }
 	   }
 	   ((NPIContext *)(m_handle.context))->garbage.clear();
 	   ((NPIContext *)(m_handle.context))->garbageType.clear();

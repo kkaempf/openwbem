@@ -50,45 +50,45 @@ PerlAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-    env->getLogger()->
-        logDebug("PerlAssociatorProviderProxy::associatorNames()");
-    if (m_ftable->fp_associatorNames != NULL)
-    {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	env->getLogger()->
+		logDebug("PerlAssociatorProviderProxy::associatorNames()");
+	if (m_ftable->fp_associatorNames != NULL)
+	{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	NPIHandleFreer nhf(_npiHandle);
 	ProviderEnvironmentIFCRef env2(env);
-        _npiHandle.thisObject = static_cast<void *>(&env2);
-        //  may the arguments must be copied verbatim
-        //  to avoid locking problems
-        // initialize association class
+		_npiHandle.thisObject = static_cast<void *>(&env2);
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
+		// initialize association class
 		CIMObjectPath assocName2(assocClass);
-        ::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
-        // initialize path
+		::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
+		// initialize path
 		CIMObjectPath objectNameWithNS(objectName);
 		objectNameWithNS.setNameSpace(ns);
-        ::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
-        ::Vector v =
-            m_ftable->fp_associatorNames(&_npiHandle, _assoc, _path,
-                resultClass.empty() ? 0 : resultClass.c_str(),
+		::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
+		::Vector v =
+			m_ftable->fp_associatorNames(&_npiHandle, _assoc, _path,
+				resultClass.empty() ? 0 : resultClass.c_str(),
 				role.empty() ? 0 : role.c_str(),
 				resultRole.empty() ? 0 : resultRole.c_str());
-        if (_npiHandle.errorOccurred)
-        {
-            OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
-        }
-        ::CIMObjectPath cop;
-        for (int i=::VectorSize(&_npiHandle, v) - 1; i >= 0; i--)
-        {
-            cop.ptr = ::_VectorGet(&_npiHandle,v,i);
-            CIMObjectPath ow_cop(*
-                static_cast<CIMObjectPath *>(cop.ptr) );
-	    result.handle(ow_cop);
-        }
-    }
-    else
-    {
-        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support associatorNames");
-    }
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
+		}
+		::CIMObjectPath cop;
+		for (int i=::VectorSize(&_npiHandle, v) - 1; i >= 0; i--)
+		{
+			cop.ptr = ::_VectorGet(&_npiHandle,v,i);
+			CIMObjectPath ow_cop(*
+				static_cast<CIMObjectPath *>(cop.ptr) );
+		result.handle(ow_cop);
+		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support associatorNames");
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -105,64 +105,64 @@ PerlAssociatorProviderProxy::associators(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-    env->getLogger()->
-        logDebug("PerlAssociatorProviderProxy::associators()");
-    if (m_ftable->fp_associators != NULL)
-    {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	env->getLogger()->
+		logDebug("PerlAssociatorProviderProxy::associators()");
+	if (m_ftable->fp_associators != NULL)
+	{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	NPIHandleFreer nhf(_npiHandle);
 	ProviderEnvironmentIFCRef env2(env);
-        _npiHandle.thisObject = static_cast<void *>(&env2);
-        //  may the arguments must be copied verbatim
-        //  to avoid locking problems
-        // initialize association class
+		_npiHandle.thisObject = static_cast<void *>(&env2);
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
+		// initialize association class
 	CIMObjectPath assocName2(assocClass);
-        ::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
-        // initialize path
+		::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
+		// initialize path
 	CIMObjectPath objectNameWithNS(objectName);
 	objectNameWithNS.setNameSpace(ns);
-        ::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
-        int _plLen = 0;
-        std::vector<const char *> _propertyList;
-        if (propertyList)
-        {
-            _plLen = propertyList->size();
-            for (int i = 0; i < _plLen; i++)
-                _propertyList.push_back((*propertyList)[i].allocateCString());
-        }
-        ::Vector v =
-            m_ftable->fp_associators(&_npiHandle, _assoc, _path,
-                resultClass.empty() ? 0 : resultClass.c_str(),
+		::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
+		int _plLen = 0;
+		std::vector<const char *> _propertyList;
+		if (propertyList)
+		{
+			_plLen = propertyList->size();
+			for (int i = 0; i < _plLen; i++)
+				_propertyList.push_back((*propertyList)[i].allocateCString());
+		}
+		::Vector v =
+			m_ftable->fp_associators(&_npiHandle, _assoc, _path,
+				resultClass.empty() ? 0 : resultClass.c_str(),
 				role.empty() ? 0 : role.c_str(),
 				resultRole.empty() ? 0 : resultRole.c_str(),
-                includeQualifiers, includeClassOrigin,
-                _plLen > 0 ? &_propertyList[0] : 0, _plLen);
-        // free the strings in _propertyList
-        for (std::vector<const char*>::iterator i = _propertyList.begin();
-             i != _propertyList.end(); ++i)
-        {
-            free(const_cast<void*>(static_cast<const void*>(*i)));
-        }
-        if (_npiHandle.errorOccurred)
-        {
-            OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
-        }
-        int n = ::VectorSize(&_npiHandle,v);
-        env->getLogger()->logDebug(format("PerlAssociatorProviderProxy::"
+				includeQualifiers, includeClassOrigin,
+				_plLen > 0 ? &_propertyList[0] : 0, _plLen);
+		// free the strings in _propertyList
+		for (std::vector<const char*>::iterator i = _propertyList.begin();
+			 i != _propertyList.end(); ++i)
+		{
+			free(const_cast<void*>(static_cast<const void*>(*i)));
+		}
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
+		}
+		int n = ::VectorSize(&_npiHandle,v);
+		env->getLogger()->logDebug(format("PerlAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
-        ::CIMInstance my_inst;
-        for (int i=0; i < n; i++)
-        {
-            my_inst.ptr = _VectorGet(&_npiHandle,v,i);
-            CIMInstance ow_inst(*
-                static_cast<CIMInstance *>(my_inst.ptr) );
-	    result.handle(ow_inst);
-        }
-    }
-    else
-    {
-        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support associators");
-    }
+		::CIMInstance my_inst;
+		for (int i=0; i < n; i++)
+		{
+			my_inst.ptr = _VectorGet(&_npiHandle,v,i);
+			CIMInstance ow_inst(*
+				static_cast<CIMInstance *>(my_inst.ptr) );
+		result.handle(ow_inst);
+		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support associators");
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -177,61 +177,61 @@ PerlAssociatorProviderProxy::references(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-    env->getLogger()->logDebug("PerlAssociatorProviderProxy::references()");
-    if (m_ftable->fp_references != NULL)
-    {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	env->getLogger()->logDebug("PerlAssociatorProviderProxy::references()");
+	if (m_ftable->fp_references != NULL)
+	{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	NPIHandleFreer nhf(_npiHandle);
 	ProviderEnvironmentIFCRef env2(env);
-        _npiHandle.thisObject = static_cast<void *>(&env2);
-        //  may the arguments must be copied verbatim
-        //  to avoid locking problems
-        // initialize association class
+		_npiHandle.thisObject = static_cast<void *>(&env2);
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
+		// initialize association class
 	CIMObjectPath assocName2(resultClass);
-        ::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
-        // initialize path
+		::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
+		// initialize path
 	CIMObjectPath objectNameWithNS(objectName);
 	objectNameWithNS.setNameSpace(ns);
-        ::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
-        int _plLen = 0;
-        std::vector<const char *> _propertyList;
-        if (propertyList)
-        {
-            _plLen = propertyList->size();
-            for (int i = 0; i < _plLen; i++)
-                _propertyList.push_back((*propertyList)[i].allocateCString());
-        }
-        ::Vector v =
-            m_ftable->fp_references(&_npiHandle, _assoc, _path,
-                role.empty() ? 0 : role.c_str(),
+		::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
+		int _plLen = 0;
+		std::vector<const char *> _propertyList;
+		if (propertyList)
+		{
+			_plLen = propertyList->size();
+			for (int i = 0; i < _plLen; i++)
+				_propertyList.push_back((*propertyList)[i].allocateCString());
+		}
+		::Vector v =
+			m_ftable->fp_references(&_npiHandle, _assoc, _path,
+				role.empty() ? 0 : role.c_str(),
 				includeQualifiers, includeClassOrigin,
-                _plLen > 0 ? &_propertyList[0] : 0, _plLen);
-        // free the strings in _propertyList
-        for (std::vector<const char*>::iterator i = _propertyList.begin();
-             i != _propertyList.end(); ++i)
-        {
-            free(const_cast<void*>(static_cast<const void*>(*i)));
-        }
-        if (_npiHandle.errorOccurred)
-        {
-            OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
-        }
-        int n = ::VectorSize(&_npiHandle,v);
-        env->getLogger()->logDebug(format("PerlAssociatorProviderProxy::"
+				_plLen > 0 ? &_propertyList[0] : 0, _plLen);
+		// free the strings in _propertyList
+		for (std::vector<const char*>::iterator i = _propertyList.begin();
+			 i != _propertyList.end(); ++i)
+		{
+			free(const_cast<void*>(static_cast<const void*>(*i)));
+		}
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
+		}
+		int n = ::VectorSize(&_npiHandle,v);
+		env->getLogger()->logDebug(format("PerlAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
-        ::CIMInstance my_inst;
-        for (int i=0; i < n; i++)
-        {
-            my_inst.ptr = _VectorGet(&_npiHandle,v,i);
-            CIMInstance ow_inst(*
-                static_cast<CIMInstance *>(my_inst.ptr) );
-	    result.handle(ow_inst);
-        }
-    }
-    else
-    {
-        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support references");
-    }
+		::CIMInstance my_inst;
+		for (int i=0; i < n; i++)
+		{
+			my_inst.ptr = _VectorGet(&_npiHandle,v,i);
+			CIMInstance ow_inst(*
+				static_cast<CIMInstance *>(my_inst.ptr) );
+		result.handle(ow_inst);
+		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support references");
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -243,43 +243,43 @@ PerlAssociatorProviderProxy::referenceNames(
 		const String& resultClass,
 		const String& role)
 {
-    env->getLogger()->
-        logDebug("PerlAssociatorProviderProxy::referenceNames()");
-    if (m_ftable->fp_referenceNames != NULL)
-    {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	env->getLogger()->
+		logDebug("PerlAssociatorProviderProxy::referenceNames()");
+	if (m_ftable->fp_referenceNames != NULL)
+	{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	NPIHandleFreer nhf(_npiHandle);
 	ProviderEnvironmentIFCRef env2(env);
-        _npiHandle.thisObject = static_cast<void *>(&env2);
-        //  may the arguments must be copied verbatim
-        //  to avoid locking problems
-        // initialize association class
+		_npiHandle.thisObject = static_cast<void *>(&env2);
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
+		// initialize association class
 	CIMObjectPath assocName2(resultClass);
-        ::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
-        // initialize path
+		::CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
+		// initialize path
 	CIMObjectPath objectNameWithNS(objectName);
 	objectNameWithNS.setNameSpace(ns);
-        ::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
-        ::Vector v =
-            m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,
-                    role.empty() ? 0 : role.c_str());
-        if (_npiHandle.errorOccurred)
-        {
-            OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
-        }
-        ::CIMObjectPath my_cop;
-        for (int i=::VectorSize(&_npiHandle, v) - 1; i >= 0; i--)
-        {
-            my_cop.ptr = _VectorGet(&_npiHandle,v,i);
-            CIMObjectPath ow_cop(*
-                static_cast<CIMObjectPath*>(my_cop.ptr) );
-	    result.handle(ow_cop);
-        }
-    }
-    else
-    {
-        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support referenceNames");
-    }
+		::CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
+		::Vector v =
+			m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,
+					role.empty() ? 0 : role.c_str());
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
+		}
+		::CIMObjectPath my_cop;
+		for (int i=::VectorSize(&_npiHandle, v) - 1; i >= 0; i--)
+		{
+			my_cop.ptr = _VectorGet(&_npiHandle,v,i);
+			CIMObjectPath ow_cop(*
+				static_cast<CIMObjectPath*>(my_cop.ptr) );
+		result.handle(ow_cop);
+		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support referenceNames");
+	}
 }
 
 } // end namespace OpenWBEM

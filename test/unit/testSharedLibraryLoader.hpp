@@ -498,7 +498,7 @@ class testSharedLibraryLoader: public SharedLibraryLoader
 		virtual ~testSharedLibraryLoader(){}
 
 		virtual SharedLibraryRef loadSharedLibrary( const String& name,
-            LoggerRef ) const
+			LoggerRef ) const
 		{
 			if ( name == "lib1" )
 				return SharedLibraryRef( new testMuxSharedLibrary );

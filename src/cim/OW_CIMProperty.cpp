@@ -67,7 +67,7 @@ struct CIMProperty::PROPData
 	CIMValue m_cimValue;
 	// propagated means inherited without change
 	Bool m_propagated;
-    PROPData* clone() const { return new PROPData(*this); }
+	PROPData* clone() const { return new PROPData(*this); }
 };
 CIMProperty::PROPData::PROPData() :
 	m_sizeDataType(-1), m_cimValue(CIMNULL), m_propagated(false)

@@ -157,62 +157,62 @@ int main(int argc, char* argv[])
 #ifdef OW_HAVE_OPENSSL
 void display_name(const char* prefix, X509_NAME* name)
 {
-    char buf[256];
+	char buf[256];
 
-    X509_NAME_get_text_by_NID(name,
-                              NID_organizationName,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name,
-                              NID_organizationalUnitName,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name,
-                              NID_commonName,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
-    X509_NAME_get_text_by_NID(name,
-                              NID_pkcs9_emailAddress,
-                              buf,
-                              256);
-    printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_organizationName,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_organizationalUnitName,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_commonName,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
+	X509_NAME_get_text_by_NID(name,
+							  NID_pkcs9_emailAddress,
+							  buf,
+							  256);
+	printf("%s%s\n",prefix,buf);
 }
 
 /////////////////////////////////////////////////////////////////////////////
 void display_cert(X509* cert)
 {
-    X509_NAME*      name;
-    int             unsigned i = 16;
-    unsigned char   digest[16];
+	X509_NAME*      name;
+	int             unsigned i = 16;
+	unsigned char   digest[16];
 
-    cout << endl;
+	cout << endl;
 
-    /* print the issuer */
-    printf("   issuer:\n");
-    name = X509_get_issuer_name(cert);
-    display_name("      ",name);
+	/* print the issuer */
+	printf("   issuer:\n");
+	name = X509_get_issuer_name(cert);
+	display_name("      ",name);
 
-    /* print the subject */
-    name = X509_get_subject_name(cert);
-    printf("   subject:\n");
-    display_name("      ",name);
+	/* print the subject */
+	name = X509_get_subject_name(cert);
+	printf("   subject:\n");
+	display_name("      ",name);
 
-    /* print the fingerprint */
-    X509_digest(cert,EVP_md5(),digest,&i);
-    printf("   fingerprint:\n");
-    printf("      ");
-    for(i=0;i<16;i++)
-    {
-        printf("%02X",digest[i]);
-        if(i != 15)
-        {
-            printf(":");
-        }
-    }
-    printf("\n");
+	/* print the fingerprint */
+	X509_digest(cert,EVP_md5(),digest,&i);
+	printf("   fingerprint:\n");
+	printf("      ");
+	for(i=0;i<16;i++)
+	{
+		printf("%02X",digest[i]);
+		if(i != 15)
+		{
+			printf(":");
+		}
+	}
+	printf("\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////

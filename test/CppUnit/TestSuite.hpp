@@ -65,22 +65,22 @@ class TestResult;
 
 class TestSuite : public Test
 {
-    REFERENCEOBJECT (TestSuite)
+	REFERENCEOBJECT (TestSuite)
 
 public:
-                        TestSuite       (const char* name = "");
-                        ~TestSuite      ();
+						TestSuite       (const char* name = "");
+						~TestSuite      ();
 
-    void                run             (TestResult *result);
-    int                 countTestCases  ();
-    void                addTest         (Test *test);
-    const char*         toString        ();
+	void                run             (TestResult *result);
+	int                 countTestCases  ();
+	void                addTest         (Test *test);
+	const char*         toString        ();
 
-    virtual void        deleteContents  ();
+	virtual void        deleteContents  ();
 
 private:
-    std::vector<Test *> m_tests;
-    const char*   m_name;
+	std::vector<Test *> m_tests;
+	const char*   m_name;
 
 
 };

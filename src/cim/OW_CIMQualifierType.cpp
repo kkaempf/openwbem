@@ -54,7 +54,7 @@ struct CIMQualifierType::QUALTData
 	CIMScopeArray m_scope;
 	CIMFlavorArray m_flavor;
 	CIMValue m_defaultValue;
-    QUALTData* clone() const { return new QUALTData(*this); }
+	QUALTData* clone() const { return new QUALTData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMQualifierType::QUALTData& x, const CIMQualifierType::QUALTData& y)
@@ -381,7 +381,7 @@ CIMQualifierType::toMOF() const
 	if(m_pdata->m_scope.size() > 0)
 	{
 		rv += ", Scope(";
-        CIMScopeArray scopes(m_pdata->m_scope);
+		CIMScopeArray scopes(m_pdata->m_scope);
 		std::sort(scopes.begin(), scopes.end());
 		for(i = 0; i < scopes.size(); i++)
 		{

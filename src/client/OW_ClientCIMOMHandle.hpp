@@ -41,12 +41,12 @@ class ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-    /** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
+	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void createNameSpace(const String& ns);
-    /** This method is deprecated.  Use CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
+	/** This method is deprecated.  Use CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
 	virtual void deleteNameSpace(const String& ns);
 #endif
-    /** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
+	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void enumNameSpace(const String& ns,
 		StringResultHandlerIFC &result, WBEMFlags::EDeepFlag deep);
 };

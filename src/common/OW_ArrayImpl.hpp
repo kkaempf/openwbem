@@ -358,7 +358,7 @@ Array<T>::checkValidIndex(size_type index) const
 template <class T>
 inline std::vector<T>* COWReferenceClone(std::vector<T>* obj)
 {
-    return new std::vector<T>(*obj);
+	return new std::vector<T>(*obj);
 }
 template<class T>
 inline bool operator==(const Array<T>& x, const Array<T>& y)

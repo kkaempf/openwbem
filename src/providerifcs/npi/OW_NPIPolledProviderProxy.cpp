@@ -48,9 +48,9 @@ NPIPolledProviderProxy::~NPIPolledProviderProxy()
 /////////////////////////////////////////////////////////////////////////////
 Int32
 NPIPolledProviderProxy::getInitialPollingInterval(
-      const ProviderEnvironmentIFCRef& env)
+	  const ProviderEnvironmentIFCRef& env)
 {
-        env->getLogger()->logDebug("NPIPolledProviderIFC::getInitialPollingInterval()");
+		env->getLogger()->logDebug("NPIPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
@@ -89,13 +89,13 @@ void NPIPolledProviderProxy::activateFilter(
 		NPIHandleFreer nhf(_npiHandle);
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-	    char * expo = query.allocateCString();
-	    char * _type = Type.allocateCString();
-	    SelectExp exp = {expo};
-	    ::CIMObjectPath cop = {NULL};
-            m_ftable->fp_activateFilter( &_npiHandle, exp, _type, cop, 0);
-	    free(expo);
-	    free(_type);
+		char * expo = query.allocateCString();
+		char * _type = Type.allocateCString();
+		SelectExp exp = {expo};
+		::CIMObjectPath cop = {NULL};
+			m_ftable->fp_activateFilter( &_npiHandle, exp, _type, cop, 0);
+		free(expo);
+		free(_type);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -115,14 +115,14 @@ void NPIPolledProviderProxy::deactivateFilter(
 		env->getLogger()->logDebug("deactivateFilter2");
 		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-	    char * expo = query.allocateCString();
-	    char * _type = Type.allocateCString();
-	    SelectExp exp = {expo};
-	    ::CIMObjectPath cop = {NULL};
-	    char * type = NULL;
-            m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
-	    free(type);
-	    free(expo);
+		char * expo = query.allocateCString();
+		char * _type = Type.allocateCString();
+		SelectExp exp = {expo};
+		::CIMObjectPath cop = {NULL};
+		char * type = NULL;
+			m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
+		free(type);
+		free(expo);
 		if (_npiHandle.errorOccurred)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,

@@ -200,7 +200,7 @@ class CppIndicationProviderProxy : public IndicationProviderIFC
 public:
 	CppIndicationProviderProxy(CppIndicationProviderIFCRef pProv)
 		: m_pProv(pProv)
-        , m_activationCount(0) {}
+		, m_activationCount(0) {}
 	virtual void deActivateFilter(
 		const ProviderEnvironmentIFCRef &env, 
 		const WQLSelectStatement &filter, 
@@ -208,7 +208,7 @@ public:
 		const String& nameSpace,
 		const StringArray& classes) 
 	{
-        bool lastActivation = (--m_activationCount == 0);
+		bool lastActivation = (--m_activationCount == 0);
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace, classes,lastActivation);
 	}
 	virtual void activateFilter(
@@ -218,7 +218,7 @@ public:
 		const String& nameSpace,
 		const StringArray& classes) 
 	{
-        bool firstActivation = (m_activationCount++ == 0);
+		bool firstActivation = (m_activationCount++ == 0);
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
 	}
 	virtual void authorizeFilter(
@@ -243,7 +243,7 @@ public:
 	}
 private:
 	CppIndicationProviderIFCRef m_pProv;
-    unsigned int m_activationCount;
+	unsigned int m_activationCount;
 };
 
 } // end namespace OpenWBEM

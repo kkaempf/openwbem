@@ -252,8 +252,8 @@ private:
 		const String& ns=String());
 	String _getClassNameFromNode(HDBNode& node);
 	//void _throwIfBadClass(const CIMClass& cc, const CIMClass& parentClass);
-    Cache<CIMClass> m_classCache;
-    Cache<CIMQualifierType> m_qualCache;
+	Cache<CIMClass> m_classCache;
+	Cache<CIMQualifierType> m_qualCache;
 };
 
 } // end namespace OpenWBEM

@@ -34,15 +34,15 @@
 // Destroys a test result
 TestResult::~TestResult ()
 {
-    std::vector<TestFailure *>::iterator it;
+	std::vector<TestFailure *>::iterator it;
 
-    for (it = m_errors.begin (); it != m_errors.end (); ++it)
-        delete *it;
+	for (it = m_errors.begin (); it != m_errors.end (); ++it)
+		delete *it;
 
-    for (it = m_failures.begin (); it != m_failures.end (); ++it)
-        delete *it;
+	for (it = m_failures.begin (); it != m_failures.end (); ++it)
+		delete *it;
 
-    delete m_syncObject;
+	delete m_syncObject;
 }
 
 // Construct a TestResult

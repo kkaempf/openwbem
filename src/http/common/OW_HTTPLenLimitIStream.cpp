@@ -75,7 +75,7 @@ HTTPLengthLimitStreamBuffer::resetLen(Int64 len)
 {
 	initGetBuffer();
 	m_length = len;
-  	m_pos = 0;
+	m_pos = 0;
 	m_isEnd = false;
 }
 //////////////////////////////////////////////////////////////////////////////

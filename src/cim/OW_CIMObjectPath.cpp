@@ -57,7 +57,7 @@ struct CIMObjectPath::OPData
 	CIMNameSpace m_nameSpace;
 	String m_objectName;
 	CIMPropertyArray m_keys;
-    OPData* clone() const { return new OPData(*this); }
+	OPData* clone() const { return new OPData(*this); }
 };
 bool operator<(const CIMObjectPath::OPData& x, const CIMObjectPath::OPData& y)
 {

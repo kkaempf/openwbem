@@ -299,7 +299,7 @@ public:
 	virtual void deleteQualifierType(const String& ns, const String& qualName) = 0;
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
-     * @param ns	The namespace whose qualifier definitions are to be enumerated.
+	 * @param ns	The namespace whose qualifier definitions are to be enumerated.
 	 * @return 	An Enumeration of CIMQualifierTypes
 	 *				(CIMQualifierEnumeration)
 	 * @exception CIMException	If the specified CIMObjectPath cannot be

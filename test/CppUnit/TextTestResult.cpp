@@ -40,118 +40,118 @@ using namespace std;
 
 void TextTestResult::addError (Test *test, CppUnitException *e)
 {
-    TestResult::addError (test, e);
-    cerr << "E\n";
+	TestResult::addError (test, e);
+	cerr << "E\n";
 
 }
 
 void TextTestResult::addFailure (Test *test, CppUnitException *e)
 {
-    TestResult::addFailure (test, e);
-    cerr << "F\n";
+	TestResult::addFailure (test, e);
+	cerr << "F\n";
 
 }
 
 void TextTestResult::startTest (Test *test)
 {
-    TestResult::startTest (test);
-    cerr << ".";
+	TestResult::startTest (test);
+	cerr << ".";
 
 }
 
 
 void TextTestResult::printErrors (ostream& stream)
 {
-    if (testErrors () != 0) {
+	if (testErrors () != 0) {
 
-        if (testErrors () == 1)
-            stream << "There was " << testErrors () << " error: " << endl;
-        else
-            stream << "There were " << testErrors () << " errors: " << endl;
+		if (testErrors () == 1)
+			stream << "There was " << testErrors () << " error: " << endl;
+		else
+			stream << "There were " << testErrors () << " errors: " << endl;
 
-        int i = 1;
+		int i = 1;
 
-        for (vector<TestFailure *>::iterator it = errors ().begin (); it != errors ().end (); ++it) {
-            TestFailure             *failure    = *it;
-            CppUnitException        *e          = failure->thrownException ();
+		for (vector<TestFailure *>::iterator it = errors ().begin (); it != errors ().end (); ++it) {
+			TestFailure             *failure    = *it;
+			CppUnitException        *e          = failure->thrownException ();
 				Test							*t				= failure->failedTest();
 
-            stream << i
-                   << ") "
+			stream << i
+				   << ") "
 						 << t->toString()
 						 << " line: ";
 				if (e)
 					stream << e->lineNumber();
 				stream << " "
-                   << (e ? e->fileName () : "") << " "
-                   << "\"" << failure->thrownException ()->what () << "\""
-                   << endl;
-            i++;
-        }
-        exit(1); // stop once we've reported the failed test.
-    }
+				   << (e ? e->fileName () : "") << " "
+				   << "\"" << failure->thrownException ()->what () << "\""
+				   << endl;
+			i++;
+		}
+		exit(1); // stop once we've reported the failed test.
+	}
 
 }
 
 void TextTestResult::printFailures (ostream& stream)
 {
-    if (testFailures () != 0) {
-        if (testFailures () == 1)
-            stream << "There was " << testFailures () << " failure: " << endl;
-        else
-            stream << "There were " << testFailures () << " failures: " << endl;
+	if (testFailures () != 0) {
+		if (testFailures () == 1)
+			stream << "There was " << testFailures () << " failure: " << endl;
+		else
+			stream << "There were " << testFailures () << " failures: " << endl;
 
-        int i = 1;
+		int i = 1;
 
-        for (vector<TestFailure *>::iterator it = failures ().begin (); it != failures ().end (); ++it) {
-            TestFailure             *failure    = *it;
-            CppUnitException        *e          = failure->thrownException ();
+		for (vector<TestFailure *>::iterator it = failures ().begin (); it != failures ().end (); ++it) {
+			TestFailure             *failure    = *it;
+			CppUnitException        *e          = failure->thrownException ();
 				Test							*t				= failure->failedTest();
 
-            stream << i
-                   << ") "
+			stream << i
+				   << ") "
 						 << t->toString()
-                   << " line: ";
+				   << " line: ";
 				if (e)
 					stream << e->lineNumber ();
 				stream << " "
-                   << (e ? e->fileName () : "") << " "
-                   << "\"" << failure->thrownException ()->what () << "\""
-                   << endl;
-            i++;
-        }
+				   << (e ? e->fileName () : "") << " "
+				   << "\"" << failure->thrownException ()->what () << "\""
+				   << endl;
+			i++;
+		}
 
-        exit(1); // stop once we've reported the failed test.
-    }
+		exit(1); // stop once we've reported the failed test.
+	}
 
 }
 
 
 void TextTestResult::print (ostream& stream)
 {
-    printHeader (stream);
-    printErrors (stream);
-    printFailures (stream);
+	printHeader (stream);
+	printErrors (stream);
+	printFailures (stream);
 
 }
 
 
 void TextTestResult::printHeader (ostream& stream)
 {
-    if (wasSuccessful ())
-        stream << endl << "OK (" << runTests () << " tests)" << endl;
-    else
-    {
-        stream << endl
-             << "!!!FAILURES!!!" << endl
-             << "Test Results:" << endl
-             << "Run:  "
-             << runTests ()
-             << "   Failures: "
-             << testFailures ()
-             << "   Errors: "
-             << testErrors ()
-             << endl;
-    }
+	if (wasSuccessful ())
+		stream << endl << "OK (" << runTests () << " tests)" << endl;
+	else
+	{
+		stream << endl
+			 << "!!!FAILURES!!!" << endl
+			 << "Test Results:" << endl
+			 << "Run:  "
+			 << runTests ()
+			 << "   Failures: "
+			 << testFailures ()
+			 << "   Errors: "
+			 << testErrors ()
+			 << endl;
+	}
 
 }

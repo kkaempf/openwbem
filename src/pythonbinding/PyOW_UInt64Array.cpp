@@ -35,7 +35,7 @@ namespace OpenWBEM
 
 void registerArrayImpl_UInt64(const char* name)
 {
-    registerArrayImpl<UInt64>(name);
+	registerArrayImpl<UInt64>(name);
 }
 
 } // end namespace OpenWBEM

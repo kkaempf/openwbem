@@ -68,9 +68,9 @@ SLPBoolean MySLPSrvURLCallback( SLPHandle /*hslp*/,
 } 
 //////////////////////////////////////////////////////////////////////////////
 SLPBoolean MySLPAttrCallback(SLPHandle /*hslp*/, 
-                            const char* attrlist, 
-                            SLPError errcode, 
-                            void* cookie ) 
+							const char* attrlist, 
+							SLPError errcode, 
+							void* cookie ) 
 { 
 	if(errcode == SLP_OK) 
 	{ 

@@ -320,7 +320,7 @@ instanceNameToKey(const CIMObjectPath& path,
 	StringStream ss;
 	CIMInstanceNametoXML(path, ss);
 	text += ss.toString();
-    text += "</IPARAMVALUE>";
+	text += "</IPARAMVALUE>";
 	return text.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -538,7 +538,7 @@ CIMXMLCIMOMHandle::getClass(
 	const String& ns,
 	const String& className,
 	ELocalOnlyFlag localOnly,
-    EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
+	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
 	static const char* const commandName = "GetClass";

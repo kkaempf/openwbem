@@ -49,47 +49,47 @@ NPIInstanceProviderProxy::~NPIInstanceProviderProxy()
 /////////////////////////////////////////////////////////////////////////////
 void
 NPIInstanceProviderProxy::enumInstanceNames(
-        const ProviderEnvironmentIFCRef& env,
+		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const String& className,
 		CIMObjectPathResultHandlerIFC& result,
-        const CIMClass& cimClass )
+		const CIMClass& cimClass )
 {
-        env->getLogger()->
-            logDebug("NPIInstanceProviderProxy::enumInstanceNames()");
-        if (m_ftable->fp_enumInstanceNames!= NULL)
-        {
+		env->getLogger()->
+			logDebug("NPIInstanceProviderProxy::enumInstanceNames()");
+		if (m_ftable->fp_enumInstanceNames!= NULL)
+		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			NPIHandleFreer nhf(_npiHandle);
 			ProviderEnvironmentIFCRef env2(env);
-            _npiHandle.thisObject = static_cast<void *>(&env2);
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+			_npiHandle.thisObject = static_cast<void *>(&env2);
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
 			CIMClass cimClass2(cimClass);
-            ::CIMClass _cc = { static_cast<void *> (&cimClass2)};
+			::CIMClass _cc = { static_cast<void *> (&cimClass2)};
 			CIMObjectPath cop(className, ns);
-            ::CIMObjectPath _cop = { static_cast<void *> (&cop)};
-            ::Vector v =
-                m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
-            ::CIMObjectPath my_cop;
-            for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
-            {
-                my_cop.ptr = _VectorGet(&_npiHandle,v,i);
-                CIMObjectPath ow_cop(*
-                    static_cast<CIMObjectPath *>(my_cop.ptr) );
-                ow_cop.setObjectName(cimClass.getName());
+			::CIMObjectPath _cop = { static_cast<void *> (&cop)};
+			::Vector v =
+				m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
+			if (_npiHandle.errorOccurred)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED,
+					_npiHandle.providerError);
+			}
+			::CIMObjectPath my_cop;
+			for (int i=0,n=VectorSize(&_npiHandle,v); i < n; i++)
+			{
+				my_cop.ptr = _VectorGet(&_npiHandle,v,i);
+				CIMObjectPath ow_cop(*
+					static_cast<CIMObjectPath *>(my_cop.ptr) );
+				ow_cop.setObjectName(cimClass.getName());
 		result.handle(ow_cop);
-            }
-        }
-        else
-        {
+			}
+		}
+		else
+		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstanceNames");
-        }
+		}
 }
 /////////////////////////////////////////////////////////////////////////////
 void
@@ -195,39 +195,39 @@ NPIInstanceProviderProxy::getInstance(
 /////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 NPIInstanceProviderProxy::createInstance(
-    const ProviderEnvironmentIFCRef &env, 
+	const ProviderEnvironmentIFCRef &env, 
 	const String& ns,
-    const CIMInstance& cimInstance)
+	const CIMInstance& cimInstance)
 {
-        CIMObjectPath rval(CIMNULL);
-        env->getLogger()->
-            logDebug("NPIInstanceProviderProxy::createInstance()");
-        if (m_ftable->fp_createInstance != NULL)
-        {
+		CIMObjectPath rval(CIMNULL);
+		env->getLogger()->
+			logDebug("NPIInstanceProviderProxy::createInstance()");
+		if (m_ftable->fp_createInstance != NULL)
+		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			NPIHandleFreer nhf(_npiHandle);
 			ProviderEnvironmentIFCRef env2(env);
-            _npiHandle.thisObject = static_cast<void *>(&env2);
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
+			_npiHandle.thisObject = static_cast<void *>(&env2);
+			//  may the arguments must be copied verbatim
+			//  to avoid locking problems
 			CIMInstance cimInstance2(cimInstance);
-            ::CIMInstance _ci = { static_cast<void *> (&cimInstance2)};
+			::CIMInstance _ci = { static_cast<void *> (&cimInstance2)};
 			CIMObjectPath cop(ns, cimInstance);
-            ::CIMObjectPath _cop = { static_cast<void *> (const_cast<CIMObjectPath*>(&cop))};
-            ::CIMObjectPath _rcop =
-                m_ftable->fp_createInstance(&_npiHandle, _cop, _ci);
-            if (_npiHandle.errorOccurred)
-            {
-                OW_THROWCIMMSG(CIMException::FAILED,
-                    _npiHandle.providerError);
-            }
-            rval = *(static_cast<CIMObjectPath *>(_rcop.ptr) );
-        }
-        else
-        {
+			::CIMObjectPath _cop = { static_cast<void *> (const_cast<CIMObjectPath*>(&cop))};
+			::CIMObjectPath _rcop =
+				m_ftable->fp_createInstance(&_npiHandle, _cop, _ci);
+			if (_npiHandle.errorOccurred)
+			{
+				OW_THROWCIMMSG(CIMException::FAILED,
+					_npiHandle.providerError);
+			}
+			rval = *(static_cast<CIMObjectPath *>(_rcop.ptr) );
+		}
+		else
+		{
 			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
-        }
-        return rval;
+		}
+		return rval;
 }
 /////////////////////////////////////////////////////////////////////////////
 void

@@ -49,9 +49,9 @@ public:
 	SimpleAuthenticator();
 	virtual ~SimpleAuthenticator() { };
    /**
-    * Called when authenticator is loaded
-    *
-    */
+	* Called when authenticator is loaded
+	*
+	*/
 protected:
 	virtual void doInit(ServiceEnvironmentIFCRef);
 	bool doAuthenticate(String& userName,
@@ -60,9 +60,9 @@ private:
 	String m_passwordPath;
 	Map<String, String> m_passwords;
 	/**
-    * Loads the password file into a hash map so it only has to
-    * take the hit of loading from a file once.
-    */
+	* Loads the password file into a hash map so it only has to
+	* take the hit of loading from a file once.
+	*/
 	void loadPasswordFile(ServiceEnvironmentIFCRef env);
 	bool doAuthenticate(const String& userName, const String& passwd);
 };
