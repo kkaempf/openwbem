@@ -57,8 +57,12 @@ namespace OpenWBEM
  * 			called OS::loadAuthenticator, which in turn called
  * 			pam_authenticate, which calls PamConv
  */
-static int PAM_conv(int num_msg, const struct pam_message **msgm,
-							  struct pam_response **response, void *appdata_ptr);
+#ifdef OW_HPUX 
+static int PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr);
+#else
+static int PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **response, void *appdata_ptr);
+#endif
+
 class LinuxPAMAuthentication : public AuthenticatorIFC
 {
 	/**
@@ -137,12 +141,29 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, Str
 	bool retval = ( rval == PAM_SUCCESS ? true : false ); /* indicate success */
 	return retval;
 }
+
+#if !defined(_pam_overwrite)
+#define _pam_overwrite(x)        \
+do {                             \
+     register char *__xx__;      \
+     if ((__xx__=(x)))           \
+          while (*__xx__)        \
+               *__xx__++ = '\0'; \
+} while (0)
+
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////////
 // Static
 // TODO clean up, remove all stuff we don't support.
+#ifdef OW_HPUX 
 int
-PAM_conv(int num_msg, const struct pam_message **msgm,
-				struct pam_response **response, void *appdata_ptr)
+PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
+#else
+int
+PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
+#endif
 {
 	int count=0;
 	struct pam_response *reply;

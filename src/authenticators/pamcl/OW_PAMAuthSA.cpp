@@ -36,15 +36,40 @@
 #include <stdio.h>
 extern "C"
 {
+#if defined OW_HAVE_PAM_PAM_APPL_H 
+#include <pam/pam_appl.h>
+#elif defined OW_HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
+#endif
+#if defined OW_HAVE_PAM_PAM_MISC_H
+#include <pam/pam_misc.h>
+#elif defined OW_HAVE_SECURITY_PAM_MISC_H
 #include <security/pam_misc.h>
+#endif
 }
 using std::cin;
 using std::endl;
+
+#if !defined(_pam_overwrite)
+#define _pam_overwrite(x)        \
+do {                             \
+     register char *__xx__;      \
+     if ((__xx__=(x)))           \
+          while (*__xx__)        \
+               *__xx__++ = '\0'; \
+} while (0)
+
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////////
+#ifdef OW_HPUX 
 int
-MY_PAM_conv(int num_msg, const struct pam_message **msgm,
-				struct pam_response **response, void *appdata_ptr)
+MY_PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
+#else
+int
+MY_PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
+#endif
 {
 	int count=0;
 	struct pam_response *reply;
