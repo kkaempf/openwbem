@@ -788,6 +788,12 @@ OW_HELP_STRING(--enable-valgrind-support,enable workarounds so the code can work
 	AC_DEFINE(VALGRIND_SUPPORT)
 ])
 
+AC_ARG_ENABLE(non-thread-safe-exception-handling-workaround,
+OW_HELP_STRING(--enable-non-thread-safe-exception-handling-workaround,enable workarounds for non thread safe exception handling),
+[
+	AC_DEFINE(NON_THREAD_SAFE_EXCEPTION_HANDLING)
+])
+
 AC_ARG_WITH(package-prefix,
 	OW_HELP_STRING(--with-package-prefix=PREFIX,specify an optional prefix for 
 		use when building a commercial version of OpenWBEM.  This allows separate 

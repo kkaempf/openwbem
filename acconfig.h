@@ -120,6 +120,9 @@
 /* Define to enable workarounds so we can work with valgrind */
 #undef VALGRIND_SUPPORT
 
+/* Define to enable workarounds for non-thread safe exception handling support */
+#undef NON_THREAD_SAFE_EXCEPTION_HANDLING
+
 @BOTTOM@
 
 /* end of autoconf set vars */
