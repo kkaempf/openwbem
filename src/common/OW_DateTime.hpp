@@ -70,6 +70,10 @@ OW_DECLARE_APIEXCEPTION(DateTime, OW_COMMON_API)
  * If the non-standard function timegm() is available, it will be used, 
  * otherwise this class' implementation relies on the global variable timezone 
  * (from time.h) which reflects the system's timezone.
+ * 
+ * For constructor or setter member functions, if parameter values are outside
+ * their legal interval, they will be normalized (so that, e.g., 40 October 
+ * is changed into 9 November).
  */
 class OW_COMMON_API DateTime
 {
@@ -177,18 +181,20 @@ public:
 	 * @param microseconds The microsecond component of the time.
 	 *  This is the number of seconds since the Epoch, and should not be
 	 *  adjusted for time zone.
+	 * @throws DateTimeException if t == time_t(-1)
 	 */
 	explicit DateTime(time_t t, UInt32 microseconds=0);
 	/**
 	 * Create a new DateTime object that represent the given date and time
 	 *
-	 * @param year   The year component of the date
-	 * @param month  The month component of the date
-	 * @param day    The day component of the date
-	 * @param hour   The hour component of the time
-	 * @param minute The minute component of the time.
-	 * @param second The second component of the time.
-	 * @param microsecond The microsecond component of the time.
+	 * @param year   The year component of the date. Valid values are >= 1970
+	 * @param month  The month component of the date. Valid values are >= 1
+	 * @param day    The day component of the date. Valid values are >= 1
+	 * @param hour   The hour component of the time. Valid values are >= 1
+	 * @param minute The minute component of the time. Any value is valid.
+	 * @param second The second component of the time. Any value is valid.
+	 * @param microsecond The microsecond component of the time. Valid values are 0..999999
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	DateTime(int year, int month, int day, int hour=0, int minute=0,
 		int second=0, UInt32 microsecond=0, ETimeOffset timeOffset = E_LOCAL_TIME);
@@ -220,7 +226,7 @@ public:
 	int getSecond(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
 	 * Get the microsecond of the second for this DateTime object.
-	 * In the range 0-999999.  There are 1 million (1000000) microseconds 
+	 * In the range 0..999999.  There are 1 million (1000000) microseconds 
 	 * per second.
 	 *
 	 * @return
@@ -257,24 +263,28 @@ public:
 	 * Set the hour component of this DateTime object.
 	 * @param hour The new hour for this DateTime object.
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void setHour(int hour, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the minute component of this DateTime object.
 	 * @param minute The new minute for this DateTime object.
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void setMinute(int minute, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the second component of this DateTime object.
 	 * @param second The new second for this DateTime object.
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void setSecond(int second, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the microsecond component of this DateTime object.
 	 * @param microsecond The new microsecond for this DateTime object.
-	 *  Acceptable range is 0-999999
+	 *  Acceptable range is 0..999999
+	 * @throws DateTimeException if microsecond is out of range.
 	 */
 	void setMicrosecond(UInt32 microsecond);
 	/**
@@ -283,46 +293,49 @@ public:
 	 * @param minute The minute component of the time.
 	 * @param second The second component of the time.
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void setTime(int hour, int minute, int second, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the day component of this DateTime object.
 	 * @param day The new day for this DateTime object.
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void setDay(int day, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the month component of this DateTime object.
-	 * @param month The new month for this DateTime object.
+	 * @param month The new month for this DateTime object. Valid values are >= 1
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime or month == 0
 	 */
 	void setMonth(int month, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the year component of this DateTime object.
-	 * @param year The new year for this DateTime object.
+	 * @param year The new year for this DateTime object. Valid values are >= 1970
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void setYear(int year, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set this DateTime object with a time_t value.
 	 * @param t A time_t value that represents the number of seconds from
 	 *		Jan 1, 1970.
-	 * @param microseconds The microsecond component of the time.
+	 * @param microseconds The microsecond component of the time. Valid values are 0..999999
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
-	void set(time_t t, UInt32 microseconds=0)
-	{
-		m_time = t;
-		m_microseconds = microseconds;
-	}
+	void set(time_t t, UInt32 microseconds=0);
 	/**
 	 * Set the date and time for this DateTime.
-	 * @param year The new year component for this object.
+	 * @param year The new year component for this object. Valid values are >= 1970
 	 * @param month The new month component for this object.
 	 * @param day The new day component for this object.
 	 * @param hour The new hour component for this object.
 	 * @param minute The new minute component for this object.
 	 * @param second The new second component for this object.
+	 * @param microseconds The new microseconds component for this object. Valid values are 0..999999
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @throws DateTimeException if the parameters don't represent a valid DateTime
 	 */
 	void set(int year, int month, int day, int hour, int minute, int second, UInt32 microseconds, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
@@ -332,11 +345,13 @@ public:
 	/**
 	 * Add days to the date represented by this object.
 	 * @param days The number of days to add to this object.
+	 * @throws DateTimeException if the resulting DateTime don't represent a valid DateTime
 	 */
 	void addDays(int days);
 	/**
 	 * Add week to the date represented by this object.
 	 * @param weeks The number of weeks to add to this object.
+	 * @throws DateTimeException if the resulting DateTime don't represent a valid DateTime
 	 */
 	void addWeeks(int weeks)
 	{
@@ -345,16 +360,19 @@ public:
 	/**
 	 * Add months to the date represented by this object.
 	 * @param months The number of months to add to this object.
+	 * @throws DateTimeException if the resulting DateTime don't represent a valid DateTime
 	 */
 	void addMonths(int months);
 	/**
 	 * Add years to the date represent by this object.
 	 * @param years The number of years to add to this object.
+	 * @throws DateTimeException if the resulting DateTime don't represent a valid DateTime
 	 */
 	void addYears(int years);
 	/**
 	 * Add seconds to the date represented by this object.
 	 * @param seconds The number of seconds to add to this object.
+	 * @throws DateTimeException if the resulting DateTime don't represent a valid DateTime
 	 */
 	void addSeconds(long seconds)
 	{

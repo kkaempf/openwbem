@@ -975,6 +975,17 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 #endif
 #endif
 	}
+	if (m_time == static_cast<time_t>(-1))
+	{
+#ifdef OW_HAVE_ASCTIME_R
+		char buff[30];
+		asctime_r(&tmarg, buff);
+#else
+		// if the c library isn't thread-safe, we'll need a mutex here.
+		char* buff asctime(&tmarg);
+#endif
+		OW_THROW(DateTimeException, Format("Unable to represent time \"%1\" as a time_t", buff).c_str());
+	}
 }
 //////////////////////////////////////////////////////////////////////////////									
 int
@@ -1058,6 +1069,10 @@ DateTime::setSecond(int second, ETimeOffset timeOffset)
 void
 DateTime::setMicrosecond(UInt32 microseconds)
 {
+	if (microseconds > 999999)
+	{
+		OW_THROW(DateTimeException, Format("invalid microseconds: %1", microseconds).c_str());
+	}
 	m_microseconds = microseconds;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1082,6 +1097,11 @@ DateTime::setDay(int day, ETimeOffset timeOffset)
 void
 DateTime::setMonth(int month, ETimeOffset timeOffset)
 {
+	if (month == 0)
+	{
+		OW_THROW(DateTimeException, "invalid month: 0");
+	}
+
 	tm theTime = getTm(timeOffset);
 	theTime.tm_mon = month-1;
 	setTime(theTime, timeOffset);
@@ -1207,6 +1227,19 @@ DateTime::getGMTOffset()
 		}
 	}
 	return gmtOffset;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+DateTime::set(time_t t, UInt32 microseconds)
+{
+	if (t == static_cast<time_t>(-1) || microseconds > 999999)
+	{
+		OW_THROW(DateTimeException, "Either t == -1 or microseconds > 999999");
+	}
+
+	m_time = t;
+	m_microseconds = microseconds;
 }
 
 } // end namespace OpenWBEM
