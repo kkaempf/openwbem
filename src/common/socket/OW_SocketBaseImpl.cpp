@@ -146,7 +146,7 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	, m_inout(&m_streamBuf)
 	, m_recvTimeout(-1)
 	, m_sendTimeout(-1)
-	, m_connectTimeout(0)
+	, m_connectTimeout(-1)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
