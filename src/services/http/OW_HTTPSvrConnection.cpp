@@ -418,17 +418,22 @@ HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 {
 	OW_ASSERT(ostrEntity == 0);
 
-	// these get deleted in post().  If this logic is changed, make sure you
-	// update post() as well.
+	// Clear out any previous instance. The order is important, since Deflate may hold a pointer to Chunked,
+	// and it's destructor may call functions on Chunked. Yeah, this is a BAD design!
+	m_HTTPDeflateOStreamRef = 0;
+	m_HTTPChunkedOStreamRef = 0;
+	m_TempFileStreamRef = 0;
 
 	if (m_chunkedOut)
 	{
-		ostrEntity = new HTTPChunkedOStream(m_ostr);
+		m_HTTPChunkedOStreamRef = new HTTPChunkedOStream(m_ostr);
+		ostrEntity = m_HTTPChunkedOStreamRef.getPtr();
 		ostrEntity->exceptions(std::ios::badbit);
 		if (m_deflateCompressionOut)
 		{
 #ifdef OW_HAVE_ZLIB_H
-			ostrEntity = new HTTPDeflateOStream(*ostrEntity);
+			m_HTTPDeflateOStreamRef = new HTTPDeflateOStream(*ostrEntity);
+			ostrEntity = m_HTTPDeflateOStreamRef.getPtr();
 			ostrEntity->exceptions(std::ios::badbit);
 #else
 			OW_THROW(HTTPException, "Trying to deflate output, but no zlib!");
@@ -437,7 +442,8 @@ HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 	}
 	else
 	{
-		ostrEntity = new TempFileStream;
+		m_TempFileStreamRef = new TempFileStream;
+		ostrEntity = m_TempFileStreamRef.getPtr();
 		ostrEntity->exceptions(std::ios::badbit);
 	}
 }
@@ -1026,49 +1032,16 @@ HTTPSvrConnection::post(istream& istr, OperationContext& context)
 {
 	ostream* ostrEntity = NULL;
 	initRespStream(ostrEntity);
-	try
-	{
-		OW_ASSERT(ostrEntity);
-		TempFileStream ostrError(400);
+	OW_ASSERT(ostrEntity);
+	TempFileStream ostrError(400);
 
-	/*
-		TempFileStream ltfs;
-		ltfs << istr.rdbuf();
-		ofstream ofstr("/tmp/HTTPSvrConnectionXMLDump", ios::app);
-		ofstr << "************* New entity **** Size: " << ltfs.getSize() << " Should be: " << getHeaderValue("Content-Length") << endl;
-		ofstr << ltfs.rdbuf();
-		ltfs.rewind();
-	*/
-		m_requestHandler->setEnvironment(m_options.env);
-		beginPostResponse();
-		// process the request
+	m_requestHandler->setEnvironment(m_options.env);
+	beginPostResponse();
+	// process the request
 
-		m_requestHandler->process(&istr, ostrEntity, &ostrError, context);
-		sendPostResponse(ostrEntity, ostrError, context);
-	}
-	catch (...)
-	{
-#ifdef OW_HAVE_ZLIB_H
-		HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>(ostrEntity);
-		if (deflateostr)
-		{
-			ostrEntity = &deflateostr->getOutputStreamOrig();
-			delete deflateostr;
-		}
-#endif // #ifdef OW_HAVE_ZLIB_H
-		delete ostrEntity;
-		throw;
-	}
+	m_requestHandler->process(&istr, ostrEntity, &ostrError, context);
+	sendPostResponse(ostrEntity, ostrError, context);
 
-#ifdef OW_HAVE_ZLIB_H
-	HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>(ostrEntity);
-	if (deflateostr)
-	{
-		ostrEntity = &deflateostr->getOutputStreamOrig();
-		delete deflateostr;
-	}
-#endif // #ifdef OW_HAVE_ZLIB_H
-	delete ostrEntity;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1251,12 +1224,13 @@ HTTPSvrConnection::convertToFiniteStream(istream& istr)
 	}
 	if (m_deflateCompressionIn)
 	{
-#ifdef OW_HAVE_ZLIB_H
-		rval = new HTTPDeflateIStream(rval);
-#else
+//#ifdef OW_HAVE_ZLIB_H
+		// TODO: Fix this! we have to keep the HTTPDeflateIStream ctor argument alive for the duration.
+		//rval = new HTTPDeflateIStream(rval);
+//#else
 		OW_THROW(HTTPException, "Attempting to deflate request, but "
 				"we're not linked with zlib!  (shouldn't happen)");
-#endif // #ifdef OW_HAVE_ZLIB_H
+//#endif // #ifdef OW_HAVE_ZLIB_H
 	}
 	return rval;
 }

@@ -47,6 +47,8 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_CommonFwd.hpp"
+#include "OW_HttpCommonFwd.hpp"
+#include "OW_Reference.hpp"
 #include <iosfwd>
 #include <fstream>
 
@@ -192,6 +194,13 @@ private:
 	RequestHandlerIFCRef m_requestHandler;
 	HTTPServer::Options m_options;
 	bool m_shutdown;
+	
+	// Don't switch the order of the next 2 member vars. The order is important, since Deflate may hold a pointer to Chunked,
+	// and it's destructor may call functions on Chunked. Yeah, this is a BAD design!
+	Reference<HTTPChunkedOStream> m_HTTPChunkedOStreamRef;
+	Reference<HTTPDeflateOStream> m_HTTPDeflateOStreamRef;
+
+	Reference<TempFileStream> m_TempFileStreamRef;
 
 #ifdef OW_WIN32
 #pragma warning (pop)
