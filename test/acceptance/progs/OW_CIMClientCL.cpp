@@ -1035,14 +1035,14 @@ enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_CIMNameSpace path("/root");
 		cout << "deep = false" << endl;
-		OW_StringArray rval = hdl.enumNameSpace(path, OW_Bool(false));
+		OW_StringArray rval = hdl.enumNameSpaceE(path, OW_Bool(false));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
 		}
 		
 		cout << "deep = true" << endl;
-		rval = hdl.enumNameSpace(path, OW_Bool(true));
+		rval = hdl.enumNameSpaceE(path, OW_Bool(true));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;

@@ -75,7 +75,20 @@ namespace
 	private:
 		OW_CIMClassEnumeration& m_e;
 	};
+	class StringArrayBuilder : public OW_StringResultHandlerIFC
+	{
+	public:
+		StringArrayBuilder(OW_StringArray& a) : m_a(a) {}
+	protected:
+		virtual void doHandleString(const OW_String &s)
+		{
+			m_a.push_back(s);
+		}
+	private:
+		OW_StringArray& m_a;
+	};
 }
+
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClassEnumeration
 OW_CIMOMHandleIFC::enumClassE(const OW_CIMObjectPath& path, OW_Bool deep,
@@ -85,6 +98,17 @@ OW_CIMOMHandleIFC::enumClassE(const OW_CIMObjectPath& path, OW_Bool deep,
 	CIMClassEnumBuilder handler(rval);
 	enumClass(path, handler, deep, localOnly, includeQualifiers,
 		includeClassOrigin);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_StringArray
+OW_CIMOMHandleIFC::enumNameSpaceE(const OW_CIMNameSpace& ns,
+		OW_Bool deep)
+{
+	OW_StringArray rval;
+	StringArrayBuilder handler(rval);
+	enumNameSpace(ns, handler, deep);
 	return rval;
 }
 

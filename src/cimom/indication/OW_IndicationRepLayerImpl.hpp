@@ -177,7 +177,9 @@ public:
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	OW_StringArray enumNameSpace(const OW_CIMNameSpace& path, OW_Bool deep,
+	void enumNameSpace(const OW_CIMNameSpace& path,
+		OW_StringResultHandlerIFC& result,
+		OW_Bool deep,
 		const OW_ACLInfo& aclInfo);
 
 	virtual OW_ReadLock getReadLock();

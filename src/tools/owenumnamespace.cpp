@@ -120,7 +120,8 @@ int main(int argc, char* argv[])
 
 		cout << "Enumerating namespace (" << ns << ")" << endl;
         bool deep = true; // TODO: get this from a command line argument
-		OW_StringArray rval = rch->enumNameSpace(path, deep);
+		
+		OW_StringArray rval = rch->enumNameSpaceE(path, deep);
         copy(rval.begin(), rval.end(), std::ostream_iterator<OW_String>(cout, "\n"));
 
 		return 0;

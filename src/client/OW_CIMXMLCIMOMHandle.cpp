@@ -364,7 +364,7 @@ OW_CIMXMLCIMOMHandle::deleteNameSpace(const OW_CIMNameSpace& ns)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::enumNameSpaceAux(const OW_CIMObjectPath& path,
-	OW_StringArray& rval, OW_Bool deep)
+	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	OW_CIMInstanceEnumeration e = enumInstances(path, deep);
 
@@ -393,26 +393,24 @@ OW_CIMXMLCIMOMHandle::enumNameSpaceAux(const OW_CIMObjectPath& path,
 		}
 		OW_String tmp;
 		nameProp.getValue().get(tmp);
-		rval.push_back(path.getNameSpace() + "/" + tmp);
+		result.handleString(path.getNameSpace() + "/" + tmp);
 		if (deep)
 		{
 			OW_CIMObjectPath newObjPath("__Namespace",
 												 path.getNameSpace()+ "/" + tmp);
-			enumNameSpaceAux(newObjPath, rval, deep);
+			enumNameSpaceAux(newObjPath, result, deep);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
+void
 OW_CIMXMLCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& path,
-												OW_Bool deep)
+		OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	OW_CIMObjectPath cop("__Namespace", path.getNameSpace());
-	OW_StringArray rval;
-	rval.push_back(path.getNameSpace());
-	enumNameSpaceAux(cop, rval, deep);
-	return rval;
+	result.handleString(path.getNameSpace());
+	enumNameSpaceAux(cop, result, deep);
 }
 
 //////////////////////////////////////////////////////////////////////////////

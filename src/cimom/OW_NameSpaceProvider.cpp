@@ -109,6 +109,36 @@ OW_NameSpaceProvider::enumInstanceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class NameSpaceEnumBuilder : public OW_StringResultHandlerIFC
+	{
+	public:
+		NameSpaceEnumBuilder(OW_CIMInstanceEnumeration& cienum_,
+			const OW_CIMClass& cimClass_)
+		: cienum(cienum_)
+		, cimClass(cimClass_)
+		{}
+	protected:
+		virtual void doHandleString(const OW_String &s)
+		{
+			OW_String nameSpaceName = s;
+			int ndx = nameSpaceName.lastIndexOf('/');
+			if(ndx != -1)
+			{
+				nameSpaceName = nameSpaceName.substring(ndx+1);
+			}
+
+			OW_CIMInstance ci = cimClass.newInstance();
+			ci.setProperty("Name", OW_CIMValue(nameSpaceName));
+			cienum.addElement(ci);
+		}
+	private:
+		OW_CIMInstanceEnumeration& cienum;
+		const OW_CIMClass& cimClass;
+	};
+}
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration
 OW_NameSpaceProvider::enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -118,22 +148,9 @@ OW_NameSpaceProvider::enumInstances(
 		const OW_Bool& /*localOnly*/)
 {
 	OW_CIMInstanceEnumeration cienum;
-	OW_StringArray nsra = env->getCIMOMHandle()->enumNameSpace(
-		cop.getFullNameSpace(), false);
-
-	for(size_t i = 0; i < nsra.size(); i++)
-	{
-		OW_String nameSpaceName = nsra[i];
-		int ndx = nameSpaceName.lastIndexOf('/');
-		if(ndx != -1)
-		{
-			nameSpaceName = nameSpaceName.substring(ndx+1);
-		}
-
-		OW_CIMInstance ci = cimClass.newInstance();
-		ci.setProperty("Name", OW_CIMValue(nameSpaceName));
-		cienum.addElement(ci);
-	}
+	NameSpaceEnumBuilder handler(cienum, cimClass);
+	env->getCIMOMHandle()->enumNameSpace(
+		cop.getFullNameSpace(), handler, false);
 
 	return cienum;
 }

@@ -123,7 +123,8 @@ public:
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	OW_StringArray enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep,
+	void enumNameSpace(const OW_CIMNameSpace& ns,
+		OW_StringResultHandlerIFC& result, OW_Bool deep,
 		const OW_ACLInfo& aclInfo);
 
 	/**
@@ -613,7 +614,8 @@ private:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo);
 
-	void _getChildKeys(OW_HDBHandle hdl, OW_StringArray& ra, OW_HDBNode node);
+	void _getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
+		OW_HDBNode node);
 
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_CIMObjectPath cop,
 		const OW_ACLInfo& aclInfo);

@@ -150,11 +150,12 @@ OW_IndicationRepLayerImpl::deleteQualifierType(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_IndicationRepLayerImpl::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep,
+void
+OW_IndicationRepLayerImpl::enumNameSpace(const OW_CIMNameSpace& ns,
+	OW_StringResultHandlerIFC& result, OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumNameSpace(ns, deep, aclInfo);
+	m_pServer->enumNameSpace(ns, result, deep, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

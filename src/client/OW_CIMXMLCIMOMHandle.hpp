@@ -110,7 +110,8 @@ public:
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	virtual OW_StringArray enumNameSpace(const OW_CIMNameSpace& path,
+	virtual void enumNameSpace(const OW_CIMNameSpace& path,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep);
 
 	/**
@@ -627,8 +628,8 @@ private:
 		const OW_CIMObjectPath& path, const OW_String& operation,
 		const OW_Array<OW_Param>& params = OW_Array<OW_Param>(),
 		const OW_String& extra = OW_String());
-	void enumNameSpaceAux(const OW_CIMObjectPath& path, OW_StringArray& rval,
-		OW_Bool deep);
+	void enumNameSpaceAux(const OW_CIMObjectPath& path,
+		OW_StringResultHandlerIFC& result, OW_Bool deep);
 
 	
 	OW_CIMProtocolIFCRef m_protocol;

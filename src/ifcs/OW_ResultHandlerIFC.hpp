@@ -73,5 +73,18 @@ protected:
 
 };
 
+class OW_StringResultHandlerIFC
+{
+public:
+	void handleString(const OW_String& s)
+	{
+		doHandleString(s);
+	}
+
+protected:
+	virtual void doHandleString(const OW_String& s) = 0;
+
+};
+
 #endif
 

@@ -686,7 +686,7 @@ void enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMNameSpace path("/root/acltest");
-		OW_StringArray rval = hdl.enumNameSpace(path, OW_Bool(true));
+		OW_StringArray rval = hdl.enumNameSpaceE(path, OW_Bool(true));
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

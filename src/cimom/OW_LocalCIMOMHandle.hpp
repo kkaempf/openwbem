@@ -550,14 +550,14 @@ public:
 	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
 	 *					to delete.
 	 */
-	void deleteNameSpace(const OW_CIMNameSpace &ns);
+	virtual void deleteNameSpace(const OW_CIMNameSpace &ns);
 
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The OW_CIMNameSpace object that specified a string for the
 	 *					host and a string for the namespace.
 	 */
-	void createNameSpace(const OW_CIMNameSpace &ns);
+	virtual void createNameSpace(const OW_CIMNameSpace &ns);
 
 	/**
 	 * Gets a list of the namespaces within a specified namespace
@@ -569,7 +569,9 @@ public:
 	 *		enumerated namespace.
 	 * @return An Array of namespace names as strings.
 	 */
-	OW_StringArray enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep);
+	virtual void enumNameSpace(const OW_CIMNameSpace& ns,
+		OW_StringResultHandlerIFC& result,
+		OW_Bool deep);
 	
 	/**
 	 * @return The features of the CIMOM this OW_CIMOMHandleIFC is connected to as

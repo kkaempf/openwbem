@@ -37,5 +37,8 @@ x overhaul Provider interface with consistent const& params.
 - XMLExecute has handling of flags like localonly, etc.  remove this
   and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
 x fix deleteClass
-- search for all reads and writes.  check return values and throw. 
+x search for all reads and writes.  check return values and throw. 
+- Create a common base class for client CIMOM handles (OW_CIMXMLCIMOMHandle 
+  and OW_BinaryCIMOMHandle) and put common code there (namespace funcs in 
+  particular).
 

@@ -269,7 +269,7 @@ OW_BinaryCIMOMHandle::deleteNameSpace(const OW_CIMNameSpace& ns)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::enumNameSpaceAux(const OW_CIMObjectPath& path,
-	OW_StringArray& rval, OW_Bool deep)
+	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	OW_CIMInstanceEnumeration e = enumInstances(path, deep);
 	while(e.hasMoreElements())
@@ -298,25 +298,24 @@ OW_BinaryCIMOMHandle::enumNameSpaceAux(const OW_CIMObjectPath& path,
 
 		OW_String tmp;
 		nameProp.getValue().get(tmp);
-		rval.push_back(path.getNameSpace() + "/" + tmp);
+		result.handleString(path.getNameSpace() + "/" + tmp);
 		if(deep)
 		{
 			OW_CIMObjectPath newObjPath(OW_CIMClass::NAMESPACECLASS,
 				path.getNameSpace()+ "/" + tmp);
-			enumNameSpaceAux(newObjPath, rval, deep);
+			enumNameSpaceAux(newObjPath, result, deep);
 		}
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_BinaryCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep)
+void
+OW_BinaryCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& ns,
+	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	OW_CIMObjectPath cop(OW_CIMClass::NAMESPACECLASS, ns.getNameSpace());
-	OW_StringArray rval;
-	rval.push_back(ns.getNameSpace());
-	enumNameSpaceAux(cop, rval, deep);
-	return rval;
+	result.handleString(ns.getNameSpace());
+	enumNameSpaceAux(cop, result, deep);
 }
 
 //////////////////////////////////////////////////////////////////////////////

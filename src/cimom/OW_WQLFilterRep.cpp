@@ -64,8 +64,9 @@ OW_WQLFilterRep::getQualifierType(const OW_CIMObjectPath &/*objPath*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_StringArray
+void
 OW_WQLFilterRep::enumNameSpace(const OW_CIMNameSpace& /*path*/,
+	OW_StringResultHandlerIFC&,
 	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

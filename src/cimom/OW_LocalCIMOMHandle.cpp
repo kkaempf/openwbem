@@ -132,11 +132,12 @@ OW_LocalCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_LocalCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep)
+void
+OW_LocalCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& ns,
+	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	OW_ReadLock rl = getReadLock();
-	return m_pServer->enumNameSpace(ns, deep, m_aclInfo);
+	m_pServer->enumNameSpace(ns, result, deep, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

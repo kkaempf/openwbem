@@ -69,10 +69,11 @@ public:
 		m_ref->deleteNameSpace(ns, aclInfo);
 	}
 
-	virtual OW_StringArray enumNameSpace(const OW_CIMNameSpace &ns,
+	virtual void enumNameSpace(const OW_CIMNameSpace &ns,
+		OW_StringResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumNameSpace(ns, deep, aclInfo);
+		return m_ref->enumNameSpace(ns, result, deep, aclInfo);
 	}
 
 	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypes(

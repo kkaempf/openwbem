@@ -490,8 +490,9 @@ OW_CIMServer::enumQualifierTypes(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_CIMServer::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep,
+void
+OW_CIMServer::enumNameSpace(const OW_CIMNameSpace& ns,
+	OW_StringResultHandlerIFC& result, OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
 	OW_String nsName(ns.getNameSpace());
@@ -510,35 +511,32 @@ OW_CIMServer::enumNameSpace(const OW_CIMNameSpace& ns, OW_Bool deep,
 	}
 
 	nsNode = hdl->getFirstChild(nsNode);
-	OW_StringArray ra;
 
 	while(nsNode)
 	{
 		if(!deep)
 		{
-			ra.append(nsNode.getKey());
+			result.handleString(nsNode.getKey());
 		}
 		else
 		{
-			_getChildKeys(hdl.getHandle(), ra, nsNode);
+			_getChildKeys(hdl.getHandle(), result, nsNode);
 		}
 		nsNode = hdl->getNextSibling(nsNode);
 	}
-
-	return ra;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_CIMServer::_getChildKeys(OW_HDBHandle hdl, OW_StringArray& ra,
+OW_CIMServer::_getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 	OW_HDBNode node)
 {
-	ra.append(node.getKey());
+	result.handleString(node.getKey());
 	node = hdl.getFirstChild(node);
 	while(node)
 	{
-		_getChildKeys(hdl, ra, node);
+		_getChildKeys(hdl, result, node);
 		node = hdl.getNextSibling(node);
 	}
 }
