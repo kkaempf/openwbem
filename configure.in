@@ -492,6 +492,7 @@ sys/types.h \
 sys/stat.h \
 pwd.h \
 sys/wait.h \
+grp.h \
 )
 
 # check for C++ headers
