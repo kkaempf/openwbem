@@ -1184,9 +1184,6 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_XMLNode& node,
 	node=node.getNext();
 
 	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(node);
-	//
-	// TODO: Much more validation needs to be performed!
-	//
 	hdl.modifyInstance(path,cimInstance);
 }
 
