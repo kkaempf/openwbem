@@ -62,7 +62,7 @@ doACompileOnlyTest()
 }
 
 ##############################################################################
-doTest()
+doTests()
 {
 	doATest "" || return 1
 	doATest "--enable-debug-mode --enable-stack-trace --enable-maintainer-mode" || return 1
@@ -75,6 +75,7 @@ doTest()
 	doATest "--disable-check-null-references --disable-check-array-indexing" || return 1
 	doATest "--disable-digest" || return 1
 	doATest "--disable-ssl" || return 1
+	doATest "--enable-perl-providerifc" || return 1
 	doACompileOnlyTest "--disable-association-traversal" || return 1
 	doACompileOnlyTest "--disable-qualifier-declaration" || return 1
 	doACompileOnlyTest "--disable-schema-manipulation" || return 1
@@ -83,7 +84,7 @@ doTest()
 }
 
 ## MAIN ######################################################################
-if doTest; then
+if doTests; then
 	echo "Success"
 	exit 0
 else
