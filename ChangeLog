@@ -1,3 +1,6 @@
+Fri Jul 25 11:13:21 MDT 2003
+- Fixed 127.0.0.1 in xml of association traversal operations.
+
 Wed Jul 23 12:35:20 MDT 2003
 - Added an option to the mof compiler to go directly to the repository.
 - Add configure options to disable usage of zlib, pam, ssl, slp, and most
