@@ -19,7 +19,7 @@ noinst_LIBRARIES = libopenwbem.a
 thelibdir = $(libdir)
 
 
-# Shouldn't depend on anything not in common.
+# Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!
 INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs \
