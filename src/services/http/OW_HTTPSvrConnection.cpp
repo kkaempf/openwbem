@@ -122,6 +122,7 @@ HTTPSvrConnection::run()
 	try
 	{
 		m_isAuthenticated = false;
+		OperationContext context;
 		while (m_istr.good())
 		{
 			//m_isAuthenticated = false;
@@ -203,7 +204,6 @@ HTTPSvrConnection::run()
 			//
 			// Process Headers
 			//
-			OperationContext context;
 			context.setStringData(OperationContext::HTTP_PATH, m_requestLine[1]);
 
 			m_resCode = processHeaders(context);
