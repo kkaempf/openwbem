@@ -148,19 +148,25 @@ void processProviderClassExtraInfo(
 	const OW_String& providerName,
 	OW_ProviderManager::IndProvRegMap_t& regMap)
 {
-	registerProviderInfo(env, name, ifc, providerName, regMap);
-	for (size_t i = 0; i < extra.size(); ++i)
-	{
-		OW_String extraName = extra[i];
-		if (extraName.empty())
-		{
-			env->getLogger()->logError(format("Provider sub-name is "
-				"empty for %1 by provider %2::%3",
-				name, ifc->getName(), providerName));
-			continue;
-		}
-		registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
-	}
+    if (extra.empty())
+    {
+        registerProviderInfo(env, name, ifc, providerName, regMap);
+    }
+    else
+    {
+        for (size_t i = 0; i < extra.size(); ++i)
+        {
+            OW_String extraName = extra[i];
+            if (extraName.empty())
+            {
+                env->getLogger()->logError(format("Provider sub-name is "
+                    "empty for %1 by provider %2::%3",
+                    name, ifc->getName(), providerName));
+                continue;
+            }
+            registerProviderInfo(env, name + "/" + extraName, ifc, providerName, regMap);
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////

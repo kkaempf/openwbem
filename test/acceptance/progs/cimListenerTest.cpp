@@ -306,13 +306,13 @@ int main(int argc, char* argv[])
 		if (getenv("OWLONGTEST"))
 		{
 			handle = hxcl.registerForIndication(url, ns,
-				"select * from OW_TestIndication1 where TheClass ISA "
-				"\"TestClass1\"", "wql1", "root/testsuite", test1cb);
+				"select * from CIM_Indication where SourceInstance ISA "
+				"OW_IndicationProviderTest1", "wql1", "root/testsuite", test1cb);
 			registrationHandles.append(handle);
 
 			handle = hxcl.registerForIndication(url, ns,
-				"select * from OW_TestIndication2 where TheInstance ISA "
-				"\"TestClass2\" and TheInstance.dummykey = \"foo\"", "wql1",
+				"select * from CIM_InstModification where SourceInstance ISA "
+				"\"OW_IndicationProviderTest2\" and SourceInstance.dummykey = \"foo\"", "wql1",
 				"root/testsuite", test2cb);
 			registrationHandles.append(handle);
 
@@ -336,7 +336,7 @@ int main(int argc, char* argv[])
 
 			// now deregister
 			OW_MutexLock guard1(coutMutex);
-			cout << "Now deregistering for OW_TestIndication1 and OW_TestIndication2" << endl;
+			cout << "Now deregistering" << endl;
 			guard1.release();
 
 			for (size_t i = 0; i < registrationHandles.size(); ++i)

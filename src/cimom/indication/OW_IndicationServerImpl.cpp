@@ -361,6 +361,9 @@ OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 	m_mainLoopCondition.notifyOne();
 }
 
+#include <iostream>
+using namespace std;
+
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
@@ -395,13 +398,17 @@ public:
 
 	virtual bool getValue(const OW_String &propertyName, OW_WQLOperand &value) const 
 	{
+cout << "InstancePropertySource::getValue propertyName = " << propertyName << endl;
 		OW_StringArray propNames = propertyName.tokenize(".");
+cout << "propNames.size() = " << propNames.size() << endl;
 		if (propNames.empty())
 		{
+cout << "returning false because propNames.empty()" << endl;
 			return false;
 		}
 
-		if (propNames[0] == ci.getClassName())
+cout << "propNames[0] = " << propNames[0] << " ci.getClassName = " << ci.getClassName() << endl;
+		if (propNames[0].equalsIgnoreCase(ci.getClassName()))
 		{
 			propNames.remove(0);
 		}
@@ -463,14 +470,17 @@ private:
 	// This is for recursion on embedded instances
 	static bool getValueAux(const OW_CIMInstance& ci, OW_StringArray propNames, OW_WQLOperand& value)
 	{
+cout << "propNames.size() = " << propNames.size() << endl;
 		if (propNames.empty())
 		{
+cout << "getValueAux returning false because propNames.empty()" << endl;
 			return false;
 		}
 
 		OW_CIMProperty p = ci.getProperty(propNames[0]);
 		if (!p)
 		{
+cout << "getValueAux returning false because failed to get property " << propNames[0] << endl;
 			return false;
 		}
 
@@ -527,6 +537,7 @@ private:
 				v.get(embed);
 				if (!embed)
 				{
+cout << "getValueAux returning false because the embedded instance is NULL" << endl;
 					return false;
 				}
 				return getValueAux(embed, propNames, value);
@@ -647,31 +658,57 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 		return;
 	}
 
-	OW_String key = instanceArg.getClassName();
-	key.toLowerCase();
 
-	OW_MutexLock lock(m_subGuard);
-	std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
-		m_subscriptions.equal_range(key);
-	_processIndicationRange(instanceArg, instNS, range.first, range.second);
+    OW_String curClassName = instanceArg.getClassName();
+    while (!curClassName.empty())
+    {
+        OW_String key = curClassName;
 
-    OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
-	if (!prop)
-		return;
-	OW_CIMValue v = prop.getValue();
-	if (!v)
-		return;
-	if (v.getType() != OW_CIMDataType::EMBEDDEDINSTANCE)
-		return;
+        key.toLowerCase();
+        {
+            OW_MutexLock lock(m_subGuard);
+            m_env->logDebug(format("searching for key %1", key));
+            std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+                m_subscriptions.equal_range(key);
+            m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
+            _processIndicationRange(instanceArg, instNS, range.first, range.second);
+        }
 
-	OW_CIMInstance embed;
-	v.get(embed);
-	key += ":";
-	key += embed.getClassName();
-	key.toLowerCase();
+        OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
+        if (!prop)
+            return;
+        OW_CIMValue v = prop.getValue();
+        if (!v)
+            return;
+        if (v.getType() != OW_CIMDataType::EMBEDDEDINSTANCE)
+            return;
 
-	range = m_subscriptions.equal_range(key);
-	_processIndicationRange(instanceArg, instNS, range.first, range.second);
+        OW_CIMInstance embed;
+        v.get(embed);
+        key += ":";
+        key += embed.getClassName();
+        key.toLowerCase();
+
+        {
+            OW_MutexLock lock(m_subGuard);
+            m_env->logDebug(format("searching for key %1", key));
+            std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+                m_subscriptions.equal_range(key);
+            m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
+            _processIndicationRange(instanceArg, instNS, range.first, range.second);
+        }
+
+        OW_CIMClass cc;
+        try
+        {
+            cc = m_env->getRepositoryCIMOMHandle()->getClass(instNS, curClassName);
+            curClassName = cc.getSuperClass();
+        }
+        catch (const OW_CIMException& e)
+        {
+            curClassName.erase();
+        }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -807,14 +844,20 @@ OW_IndicationServerImpl::getProvider(const OW_String& className)
 void 
 OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath)
 {
+    OW_LoggerRef log = m_env->getLogger();
+    log->logDebug(format("OW_IndicationServerImpl::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
+
 	OW_CIMObjectPath cop(subPath);
 	cop.setNameSpace(ns);
+    log->logDebug(format("cop = %1", cop));
 	
 	OW_MutexLock l(m_subGuard);
 	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end();)
 	{
+        log->logDebug(format("subPath = %1", iter->second.m_subPath));
 		if (cop.equals(iter->second.m_subPath))
 		{
+            log->logDebug("found a match");
 			Subscription& sub = iter->second;
 			for (size_t i = 0; i < sub.m_providers.size(); ++i)
 			{
@@ -828,24 +871,36 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 						// the provider
 						for (size_t j = 0; j < sub.m_classes.size(); ++j)
 						{
-							OW_String key = sub.m_classes[i];
+							OW_String key = sub.m_classes[j];
 							key.toLowerCase();
 							poller_map_t::iterator iter = m_pollers.find(key);
 							if (iter != m_pollers.end())
 							{
 								OW_LifecycleIndicationPollerRef p = iter->second;
-								if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstCreation"))
+                                OW_String subClsName = sub.m_selectStmt.getClassName();
+                                bool removePoller = false;
+								if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
 								{
-									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+									removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
 								}
-								else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstModification"))
+								else if (subClsName.equalsIgnoreCase("CIM_InstModification"))
 								{
-									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+									removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
 								}
-								else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstDeletion"))
+								else if (subClsName.equalsIgnoreCase("CIM_InstDeletion"))
 								{
-									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+									removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
 								}
+                                else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
+                                {
+                                    p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+                                    p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+                                    removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+                                }
+                                if (removePoller)
+                                {
+                                    m_pollers.erase(iter);
+                                }
 							}
 						}
 					}
@@ -899,6 +954,9 @@ OW_String getSourceNameSpace(const OW_CIMInstance& inst)
 void
 OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst)
 {
+    OW_LoggerRef log = m_env->getLogger();
+    log->logDebug(format("OW_IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
+
 	// get the filter
 	OW_CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle();
 	OW_CIMObjectPath filterPath = subInst.getProperty("Filter").getValueT().toCIMObjectPath();
@@ -979,6 +1037,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		}
 	}
 
+    log->logDebug(format("Found %1 providers for the subscription", providers.size()));
 	if (providers.empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "No indication provider found for this subscription");
@@ -996,16 +1055,94 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	// call authorizeFilter on all the indication providers
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
+        log->logDebug(format("Calling authorizeFilter for provider %1", i));
 		providers[i]->authorizeFilter(createProvEnvRef(m_env),
 			selectStmt, indicationClassName, ns, isaClassNames, ""); // TODO: figure out the user name
 	}
 
+	// Call mustPoll on all the providers
+    OW_Array<bool> isPolled(providers.size(), false);
+	for (size_t i = 0; i < providers.size(); ++i)
+	{
+		try
+		{
+            log->logDebug(format("Calling mustPoll for provider %1", i));
+			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
+				selectStmt, indicationClassName, ns, isaClassNames);
+            log->logDebug(format("got pollInterval %1", pollInterval));
+			if (pollInterval > 0)
+			{
+				isPolled[i] = true;
+				for (size_t j = 0; j < isaClassNames.size(); ++j)
+				{
+					OW_String key = isaClassNames[j];
+					key.toLowerCase();
+                    log->logDebug(format("searching on class key %1", isaClassNames[j]));
+					poller_map_t::iterator iter = m_pollers.find(key);
+                    OW_LifecycleIndicationPollerRef p;
+					if (iter != m_pollers.end())
+					{
+                        log->logDebug(format("found on class key %1: %2", isaClassNames[j], iter->first));
+						p = iter->second;
+					}
+					else
+					{
+                        log->logDebug(format("not found on class key %1", isaClassNames[j]));
+						p = OW_LifecycleIndicationPollerRef(OW_SharedLibraryRef(0), 
+							OW_Reference<OW_LifecycleIndicationPoller>(new OW_LifecycleIndicationPoller(ns, key, pollInterval)));
+
+					}
+
+                    OW_String subClsName = selectStmt.getClassName();
+                    if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
+                    {
+                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+                    }
+                    else if (subClsName.equalsIgnoreCase("CIM_InstModification"))
+                    {
+                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+                    }
+                    else if (subClsName.equalsIgnoreCase("CIM_InstDeletion"))
+                    {
+                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+                    }
+                    else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
+                    {
+                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+                    }
+                    p->addPollInterval(pollInterval);
+
+                    if (iter == m_pollers.end())
+                    {
+                        log->logDebug(format("Inserting %1 into m_pollers", key));
+						m_pollers.insert(std::make_pair(key, p));
+						m_env->getPollingManager()->addPolledProvider(
+							OW_PolledProviderIFCRef(
+								new OW_CppPolledProviderProxy(
+									OW_CppPolledProviderIFCRef(p))));
+                    }
+				}
+			}
+			
+		}
+		catch (OW_CIMException& ce)
+		{
+			m_env->getLogger()->logError(format("Caught exception while calling mustPoll for provider: %1", ce));
+		}
+		catch (...)
+		{
+			m_env->getLogger()->logError("Caught unknown exception while calling mustPoll for provider");
+		}
+	}
+
 	// create a subscription (save the compiled filter and other info)
 	Subscription sub;
-	sub.m_subPath = OW_CIMObjectPath(subInst);
+	sub.m_subPath = OW_CIMObjectPath(ns, subInst);
 	sub.m_sub = subInst;
 	sub.m_providers = providers;
-	sub.m_isPolled.resize(providers.size(), false);
+	sub.m_isPolled = isPolled;
 	sub.m_filter = filterInst;
 	sub.m_selectStmt = selectStmt;
 	sub.m_compiledStmt = compiledStmt;
@@ -1041,78 +1178,6 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 				subKey.toLowerCase();
 				m_subscriptions.insert(std::make_pair(subKey, sub));
 			}
-		}
-	}
-
-	// Call mustPoll on all the providers
-	for (size_t i = 0; i < providers.size(); ++i)
-	{
-		try
-		{
-			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
-				selectStmt, indicationClassName, ns, isaClassNames);
-			if (pollInterval > 0)
-			{
-				sub.m_isPolled[i] = true; // TODO: This isn't modifying the real thing!
-				for (size_t j = 0; j < sub.m_classes.size(); ++j)
-				{
-					OW_String key = sub.m_classes[i];
-					key.toLowerCase();
-					poller_map_t::iterator iter = m_pollers.find(key);
-					if (iter != m_pollers.end())
-					{
-						OW_LifecycleIndicationPollerRef p = iter->second;
-						if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstCreation"))
-						{
-							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-						}
-						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstModification"))
-						{
-							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-						}
-						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstDeletion"))
-						{
-							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-						}
-						p->addPollInterval(pollInterval);
-					}
-					else
-					{
-						OW_LifecycleIndicationPollerRef p(OW_SharedLibraryRef(0), 
-							OW_Reference<OW_LifecycleIndicationPoller>(new OW_LifecycleIndicationPoller(ns, key, pollInterval)));
-
-						if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstCreation"))
-						{
-							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-						}
-						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstModification"))
-						{
-							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-						}
-						else if (sub.m_selectStmt.getClassName().equalsIgnoreCase("CIM_InstDeletion"))
-						{
-							p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-						}
-						p->addPollInterval(pollInterval);
-
-						m_pollers.insert(std::make_pair(key, p));
-						m_env->getPollingManager()->addPolledProvider(
-							OW_PolledProviderIFCRef(
-								new OW_CppPolledProviderProxy(
-									OW_CppPolledProviderIFCRef(p))));
-					}
-
-				}
-			}
-			
-		}
-		catch (OW_CIMException& ce)
-		{
-			m_env->getLogger()->logError(format("Caught exception while calling mustPoll for provider: %1", ce));
-		}
-		catch (...)
-		{
-			m_env->getLogger()->logError("Caught unknown exception while calling mustPoll for provider");
 		}
 	}
 

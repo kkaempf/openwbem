@@ -46,6 +46,7 @@ OW_LifecycleIndicationPoller::OW_LifecycleIndicationPoller(
 	, m_pollCreation(0)
 	, m_pollModification(0)
 	, m_pollDeletion(0)
+    , m_initializedInstances(false)
 {
 }
 
@@ -70,7 +71,7 @@ OW_LifecycleIndicationPoller::addPollOp(PollOp op)
 
 //////////////////////////////////////////////////////////////////////////////
 // takes a POLL_FOR_INSTANCE* flag
-void
+bool
 OW_LifecycleIndicationPoller::removePollOp(PollOp op)
 {
 	OW_MutexLock l(m_guard);
@@ -86,12 +87,14 @@ OW_LifecycleIndicationPoller::removePollOp(PollOp op)
 			--m_pollDeletion;
 			break;
 	}
+    return !willPoll();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 bool
 OW_LifecycleIndicationPoller::willPoll() const
 {
+	OW_MutexLock l(m_guard);
 	return m_pollCreation > 0 || m_pollModification > 0 || m_pollDeletion > 0;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -103,11 +106,15 @@ OW_LifecycleIndicationPoller::addPollInterval(OW_UInt32 newPollInterval)
 	return m_pollInterval;
 }
 
+#include <iostream>
+using namespace std;
+
 //////////////////////////////////////////////////////////////////////////////
 OW_UInt32
 OW_LifecycleIndicationPoller::getPollInterval()	const
 {
 	OW_MutexLock l(m_guard);
+cout << "OW_LifecycleIndicationPoller::getPollInterval returning " << m_pollInterval << endl;
 	return m_pollInterval;
 }
 
@@ -133,13 +140,9 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 OW_Int32
 OW_LifecycleIndicationPoller::getInitialPollingInterval(
-	const OW_ProviderEnvironmentIFCRef &env)
+	const OW_ProviderEnvironmentIFCRef &)
 {
-	// do enumInstances to populate m_prevInsts
-	InstanceArrayBuilder iab(m_prevInsts);
-	env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, false, false, true, true, 0);
-
-	return getPollInterval();
+    return 1; // have poll called again in 1 second.
 }
 
 namespace
@@ -157,9 +160,20 @@ namespace
 OW_Int32
 OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 {
+	// do enumInstances to populate m_prevInsts
+    if (!m_initializedInstances)
+    {
+        InstanceArrayBuilder iab(m_prevInsts);
+        env->getCIMOMHandle()->enumInstances(m_ns, m_classname, iab, false, false, true, true, 0);
+        m_initializedInstances = true;
+        return 1; // have poll called again in 1 second.
+    }
+
+    env->getLogger()->logDebug(format("OW_LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
+        env->getLogger()->logDebug("OW_LifecycleIndicationPoller::poll nothing to do, returning 0");
 		return 0;
 	}
 

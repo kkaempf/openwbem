@@ -113,7 +113,7 @@ public:
 	 * @param ns The namespace
 	 * @param inst An instance.
 	 */
-	OW_CIMObjectPath(const OW_String& className,
+	OW_CIMObjectPath(const OW_String& ns,
 		const OW_CIMInstance& inst);
 
 	/**

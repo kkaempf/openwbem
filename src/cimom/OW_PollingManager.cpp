@@ -288,6 +288,7 @@ OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
 	tr.m_itp = p;
 	m_triggerRunners.append(tr);
 
+    m_triggerCondition.notifyAll();
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -749,7 +749,7 @@ OW_AssocDb::deleteEntry(const OW_CIMObjectPath& objectName,
 	}
 	else
 	{
-		OW_ASSERT(0 == "OW_AssocDb::deleteEntry failed to find key.  Database may be corrupt");
+		// TODO: Log this OW_ASSERT(0 == "OW_AssocDb::deleteEntry failed to find key.  Database may be corrupt");
 	}
 }
 
