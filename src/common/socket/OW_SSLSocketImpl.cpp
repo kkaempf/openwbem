@@ -46,7 +46,6 @@
 #include <OW_Format.hpp>
 #include <OW_SocketUtils.hpp>
 
-#include <iostream>
 
 namespace OpenWBEM
 {
@@ -76,12 +75,15 @@ void sslWaitForIO(SocketBaseImpl& s, int type)
 int shutdownSSL(SSL* ssl)
 {
 	int cc = SSL_shutdown(ssl);
+	/* // we're not going to reuse the SSL context, so we do a 
+	// unidirectional shutdown. 
 	int retries = 0;
 	while(cc == 0 && retries < OW_SSL_RETRY_LIMIT)
 	{	// 0=shutdown not complete, call again
 		retries++;
 		cc = SSL_shutdown(ssl);
 	}
+	*/
 	return (cc == 1) ? 0 : -1;
 }
 
@@ -295,18 +297,12 @@ SSLSocketImpl::disconnect()
 	if (m_sockfd != -1 && m_isConnected)
 #endif
 	{
-		// probably not the best to call disconnect on the base class before
-		// SSL_shutdown, but if we don't SSL_shutdown hangs if the peer isn't
-		// ready to shutdown yet (server waiting on read() from a persistance 
-		// connection, for example. 
-		SocketBaseImpl::disconnect();
 		if (m_ssl)
 		{
-			std::cerr << "************** doing shutdownSSL(m_ssl)" << std::endl;
 			shutdownSSL(m_ssl);
-			std::cerr << "************** done shutdownSSL(m_ssl)" << std::endl;
 		}
 	}
+	SocketBaseImpl::disconnect();
 }
 //////////////////////////////////////////////////////////////////////////////
 int 
