@@ -36,65 +36,9 @@
 #include <iostream>
 #endif
 
-//////////////////////////////////////////////////////////////////////////////
-class OW_RunnableThread : public OW_Thread
-{
-public:
-	OW_RunnableThread(OW_RunnableRef theRunnable) :
-		OW_Thread(false), m_runnable(theRunnable)
-	{
-		setSelfDelete(true);
-	}
-
-	virtual OW_Int32 run()
-	{
-		m_runnable->run();
-		return 0; // Return code just gets dropped, but we have to return something...
-	}
-
-private:
-	OW_RunnableRef m_runnable;
-};
-
-
 /////////////////////////////////////////////////////////////////////////////
 OW_Runnable::~OW_Runnable()
 {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-void
-OW_Runnable::run(OW_RunnableRef theRunnable, bool separateThread, OW_Reference<OW_ThreadDoneCallback> cb)
-{
-	if(separateThread)
-	{
-		OW_RunnableThread* prt = new OW_RunnableThread(theRunnable);
-		prt->start(cb);
-	}
-	else
-	{
-		try
-		{
-			theRunnable->run();
-		}
-		catch (OW_ThreadCancelledException&)
-		{
-			throw;
-		}
-		catch (OW_Exception& ex)
-		{
-#ifdef OW_DEBUG		
-			std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Runnable::run(): " << ex << std::endl;
-#endif
-		}
-		catch (...)
-		{
-#ifdef OW_DEBUG		
-			std::cerr << "!!! Unknown Exception caught in OW_Runnable::run()" << std::endl;
-#endif
-		}
-	}
 }
 
 

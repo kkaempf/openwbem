@@ -162,7 +162,7 @@ class SelectEngineThread : public OW_Thread
 public:
 	SelectEngineThread(OW_Reference<OW_Array<SelectablePair_t> > selectables,
 		OW_SelectableIFCRef stopObject)
-	: OW_Thread(true) // joinable
+	: OW_Thread()
 	, m_selectables(selectables)
 	, m_stopObject(stopObject)
 	{}

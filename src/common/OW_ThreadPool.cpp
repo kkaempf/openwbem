@@ -70,7 +70,7 @@ class FixedSizePoolWorkerThread : public OW_Thread
 {
 public:
 	FixedSizePoolWorkerThread(FixedSizePoolImpl* thePool)
-		: OW_Thread(true) // joinable
+		: OW_Thread()
 		, m_thePool(thePool)
 	{
 	}
@@ -359,7 +359,7 @@ class DynamicSizePoolWorkerThread : public OW_Thread
 {
 public:
 	DynamicSizePoolWorkerThread(DynamicSizePoolImpl* thePool)
-		: OW_Thread(true) // joinable
+		: OW_Thread()
 		, m_thePool(thePool)
 	{
 	}

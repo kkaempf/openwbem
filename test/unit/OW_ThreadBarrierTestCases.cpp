@@ -48,7 +48,7 @@ class testThread : public OW_Thread
 {
 public:
 	testThread(const OW_ThreadBarrier& b, bool& f)
-		: OW_Thread(true)
+		: OW_Thread()
 		, barrier(b)
 		, flag(f)
 	{

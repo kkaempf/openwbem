@@ -74,10 +74,8 @@ sameId(const OW_Thread_t& t1, const OW_Thread_t& t2)
 
 //////////////////////////////////////////////////////////////////////////////
 // Constructor
-OW_Thread::OW_Thread(bool isjoinable) 
+OW_Thread::OW_Thread() 
 	: m_id(NULLTHREAD)
-	, m_isJoinable(isjoinable)
-	, m_deleteSelf(false)
 	, m_isRunning(false)
 	, m_isStarting(false)
 	, m_cancelRequested(false)
@@ -91,6 +89,15 @@ OW_Thread::~OW_Thread()
 {
 	try
 	{
+		try
+		{
+			join();
+		}
+		catch (OW_ThreadException& e)
+		{
+			// this will happen if join has already been called
+		}
+
 		OW_ASSERT(m_isRunning == false);
 		if(!sameId(m_id, NULLTHREAD))
 		{
@@ -122,7 +129,7 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 
 	m_isStarting = true;
 
-	OW_UInt32 flgs = (m_isJoinable == true) ? OW_THREAD_FLG_JOINABLE : 0;
+	OW_UInt32 flgs = OW_THREAD_FLG_JOINABLE;
 
 	OW_ThreadBarrier barrier(2);
 	// p will be delted by threadRunner
@@ -145,8 +152,6 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 OW_Int32
 OW_Thread::join() /*throw (OW_ThreadException)*/
 {
-	OW_ASSERT(isJoinable());
-
 	OW_ASSERT(!sameId(m_id, NULLTHREAD));
 
 	OW_Int32 rval;
@@ -204,18 +209,6 @@ OW_Thread::threadRunner(void* paramPtr)
 		}
 
 		delete pParam;
-
-		if(pTheThread->getSelfDelete() == true)
-		{
-			// There is an race condition wrt the deletion of the thread.
-			// If the OW_Thread::start() function hasn't returned yet, it will
-			// cause memory corruption.  The sleep here give OW_Thread::start()
-			// enough of a chance to actually return.  If you know of a better
-			// way to accomplish this, please let me know.
-			OW_ThreadImpl::sleep(100); 
-			delete pTheThread;
-			pTheThread = 0;
-		}
 
 		// Note that this *has* to come after the 'delete pTheThread' statement.
 		// This is because during shutdown the notifyThreadDone will decrement

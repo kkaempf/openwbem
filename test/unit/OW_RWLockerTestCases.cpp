@@ -77,7 +77,7 @@ class testThread : public OW_Thread
 {
 public:
 	testThread(OW_RWLocker* locker, OW_Semaphore* sem)
-		: OW_Thread(true) // joinable
+		: OW_Thread()
 		, m_locker(locker)
 		, m_sem(sem)
 	{

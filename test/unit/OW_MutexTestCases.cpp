@@ -32,7 +32,6 @@
 #include "TestCaller.hpp"
 #include "OW_MutexTestCases.hpp"
 #include "OW_Mutex.hpp"
-#include "OW_Runnable.hpp"
 #include "OW_Thread.hpp"
 #include <iostream>
 
@@ -48,19 +47,21 @@ void OW_MutexTestCases::tearDown()
 {
 }
 
+static OW_Mutex g_mutex;
+static int g_int;
+
+namespace {
+
 class testClass
 {
 public:
 	static OW_Mutex m;
 };
 
-static OW_Mutex g_mutex;
-static int g_int;
-
-class myRunnable: public OW_Runnable
+class testThread1: public OW_Thread
 {
 protected:
-	void run()
+	OW_Int32 run()
 	{
 		try
 		{
@@ -76,13 +77,16 @@ protected:
 		}
 		catch(...)
 		{
-			cout << "Unknown exception in myRunnable::run" << endl;
+			cout << "Unknown exception in testThread1::run" << endl;
 			throw;
 		}
+		return 0;
 	}
 };
 
 OW_Mutex testClass::m;
+
+} // end anonymous namespace
 
 void OW_MutexTestCases::testAcquireRelease()
 {
@@ -106,9 +110,8 @@ void OW_MutexTestCases::testAcquireRelease()
 	{
 		g_int = 1;
 		g_mutex.acquire();
-		OW_RunnableRef rref(new myRunnable);
-		OW_Runnable::run(rref);
-		//OW_Thread::sleep(1000 * 60 * 10);
+		testThread1 t1;
+		t1.start();
 		OW_Thread::sleep(100);
 		unitAssert(g_int == 1);
 		g_mutex.release();

@@ -81,7 +81,7 @@ public:
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
 	OW_TestProviderThread(const OW_CIMOMHandleIFCRef& hdl, OW_IndicationProviderTest2* pProv)
-		: OW_Thread(true) // true means joinable.
+		: OW_Thread()
 		, m_shuttingDown(false)
 		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)

@@ -895,13 +895,6 @@ TestHammer()
 		> $RESULTDIR/$OUT_FILE 2>&1 || \
 		ExitWithFail "TestHammer: hammerClient failed with an error.  "
 
-# we probably shouldn't do this one, because it can overwhelm the system, use up all the file descriptors, etc.
-# but it's fun to run and watch it go :-)
-#	echo "Executing hammerClient $URL thread, saving output in " $RESULTDIR/$OUT_FILE
-#	$BUILDDIR/test/acceptance/progs/hammerClient $URL thread once collect \
-#		> $RESULTDIR/$OUT_FILE 2>&1 || \
-#		ExitWithFail "TestHammer: hammerClient failed with an error.  "
-
 	echo "Testsuite Passed"
 }
 

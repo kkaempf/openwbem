@@ -55,16 +55,12 @@ public:
 
 	/**
 	 * Create a new OW_Thread object.
-	 * @param isjoinable	If true this thread will be a joinable thread.
-	 * This allows other threads to call join on this thread, causing them
-	 * to block until this OW_Thread exits.
-	 * If a thread is created as joinable, then join must be called on this
-	 * thread to release the resources associated with this thread.
 	 */
-	OW_Thread(bool isjoinable=false);
+	OW_Thread();
 
 	/**
-	 * Destroy this OW_Thread object.
+	 * Destroy this OW_Thread object.  The destructor will call join().
+	 * This function won't return until the thread has exited.
 	 */
 	virtual ~OW_Thread();
 
@@ -76,16 +72,13 @@ public:
 
 	/**
 	 * Attempt to cooperatively cancel this OW_Threads execution.  
-	 * You must still call join() in order to clean up resources allocated
+	 * You should still call join() in order to clean up resources allocated
 	 * for this thread.  
 	 * This function will set a flag that the thread has been 
 	 * cancelled, which can be checked by testCancel().  If the thread does
 	 * not call testCancel(), it may keep running.
 	 * The thread may (probably) still be running after this function returns,
 	 * and it will exit as soon as it calls testCancel().
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
@@ -99,7 +92,7 @@ public:
 
 	/**
 	 * Attempt to cooperatively and then definitively cancel this OW_Threads 
-	 * execution.  You must still call join() in order to clean up resources 
+	 * execution.  You should still call join() in order to clean up resources 
 	 * allocated for this thread.  
 	 * This function will set a flag that the thread has been 
 	 * cancelled, which can be checked by testCancel().  
@@ -118,9 +111,6 @@ public:
 	 * By default all OW_Thread objects are asynchronously cancellable, and
 	 * so may be immediately cancelled.
 	 * The thread may (unlikely) still be running after this function returns.
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
 	 *
 	 * It is also possible for an individual thread to override the cancellation
 	 * request, if it knows that cancellation at this time may crash the system
@@ -144,7 +134,7 @@ public:
 	 * given a chance to clean up or override the cancellation.
 	 * DO NOT call this function without first trying definitiveCancel().
 	 *
-	 * You must still call join() in order to clean up resources 
+	 * You should still call join() in order to clean up resources 
 	 * allocated for this thread.  
 	 *
 	 * pthread_cancel will be called.
@@ -160,9 +150,6 @@ public:
 	 * By default all OW_Thread objects are asynchronously cancellable, and
 	 * so may be immediately cancelled.
 	 * The thread may (unlikely) still be running after this function returns.
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
 	 */
 	void cancel();
 
@@ -192,9 +179,6 @@ public:
 	 * Note that this method is staic, and it will check the the current running
 	 * thread has been cacelled.  Thus, you can't call it on an object that doesn't
 	 * represent the current running thread and expect it to work.
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
 	 *
 	 */
 	static void testCancel();
@@ -230,45 +214,6 @@ private:
 
 public:
 	/**
-	 * Set the self delete flag on this OW_Thread object. If the self delete
-	 * flag is set on this OW_Thread, it is assumed that this OW_Thread was
-	 * dynamically allocated and the thread will be deleted when it completes
-	 * its execution.  The thread cannot be joinable, it must be detached.
-	 * A long-running thread should not use the self delete feature, as this
-	 * makes thread management impossible.  It should only be used for quick
-	 * running tasks.  Also, no member functions may be called on an instance
-	 * of a self deleting thread after it has been started, since the thread 
-	 * may have already run and deleted itself before the starting thread has 
-	 * even returned from start().
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
-	 *
-	 * @param selfDelete	If true this thread will execute "delete this" on exit.
-	 */
-	void setSelfDelete(bool selfDelete=true)
-	{
-		OW_ASSERT(!m_isJoinable); // a joinable thread can't be set to self-delete.
-		m_deleteSelf = selfDelete;
-	}
-
-	/**
-	 * Get the value of the self delete flag.
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
-	 *
-	 * @return true if this thread will self destruct. Otherwise false.
-	 */
-	bool getSelfDelete()
-	{
-		return m_deleteSelf;
-	}
-
-	/**
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
-	 *
 	 * @return true if this thread is currently running. Otherwise false.
 	 */
 	bool isRunning()
@@ -278,15 +223,12 @@ public:
 
 
 	/**
-	 * Join with this OW_Thread's execution. The thread must be a joinable
-	 * thread for this method to be called. This method must be called at on
-	 * all joinable threads. If this OW_Thread object is executing, this method
+	 * Join with this OW_Thread's execution. This method should be called 
+	 * on all joinable threads. The destructor will call it as well.
+	 * If this OW_Thread object is executing, this method
 	 * will block until this OW_Thread's run method returns.
 	 * join() should not be called until after start() has returned.  It may
 	 * be called by a different thread.
-	 *
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
 	 *
 	 * @exception OW_ThreadException
 	 * @return The return value from the thread's run()
@@ -306,19 +248,6 @@ public:
 	{
 		return m_id;
 	}
-
-	/**
-	 * This function cannot be called on a non-joinable self-deleting thread
-	 * after it has started.
-	 *
-	 * @return true if this OW_Thread object is a joinable thread. Otherwise
-	 * return false.
-	 */
-	bool isJoinable()
-	{
-		return m_isJoinable;
-	}
-
 
 	/**
 	 * Suspend execution of the current thread until the given number
@@ -348,8 +277,6 @@ protected:
 
 	// thread state
 	OW_Thread_t m_id;
-	bool m_isJoinable;
-	bool m_deleteSelf;
 	bool m_isRunning;
 	bool m_isStarting;
 

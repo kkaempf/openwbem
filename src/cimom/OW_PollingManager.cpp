@@ -45,7 +45,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
-	: OW_Thread(true) // true means this thread will be joinable
+	: OW_Thread()
 	, m_shuttingDown(false)
 	, m_env(env)
 {

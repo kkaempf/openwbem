@@ -47,7 +47,7 @@ class testReturnThread : public OW_Thread
 {
 public:
 	testReturnThread()
-		: OW_Thread(true)
+		: OW_Thread()
 	{}
 
 	OW_Int32 run()
@@ -78,7 +78,7 @@ class testCancellationThread1 : public OW_Thread
 {
 public:
 	testCancellationThread1()
-		: OW_Thread(true)
+		: OW_Thread()
 		, m_cooperativeCancelCalled(false)
 		, m_definitiveCancelCalled(false)
 	{
@@ -116,7 +116,7 @@ class testCancellationThread2 : public OW_Thread
 {
 public:
 	testCancellationThread2()
-		: OW_Thread(true)
+		: OW_Thread()
 		, m_cooperativeCancelCalled(false)
 		, m_definitiveCancelCalled(false)
 	{
@@ -154,7 +154,7 @@ class testCancellationThread3 : public OW_Thread
 {
 public:
 	testCancellationThread3()
-		: OW_Thread(true)
+		: OW_Thread()
 		, m_cooperativeCancelCalled(false)
 		, m_firstTime(true)
 	{

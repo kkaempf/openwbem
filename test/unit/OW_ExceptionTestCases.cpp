@@ -33,7 +33,7 @@
 #include "OW_ExceptionTestCases.hpp"
 #include "OW_Semaphore.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Runnable.hpp"
+#include "OW_Thread.hpp"
 
 DECLARE_EXCEPTION(Test);
 DEFINE_EXCEPTION(Test);
@@ -49,10 +49,11 @@ void OW_ExceptionTestCases::tearDown()
 static OW_Semaphore g_sem;
 static bool g_caught = false;
 
-class ExTestRunnable: public OW_Runnable
+namespace {
+class ExTestRunnable: public OW_Thread
 {
 protected:
-	void run()
+	OW_Int32 run()
 	{
 		try
 		{
@@ -63,8 +64,10 @@ protected:
 			g_caught = true;
 			g_sem.signal();
 		}
+		return 0;
 	}
 };
+} // end anonymous namespace
 
 void OW_ExceptionTestCases::testSomething()
 {
@@ -80,8 +83,8 @@ void OW_ExceptionTestCases::testSomething()
 	unitAssert(g_caught);
 
 	g_caught = false;
-	OW_RunnableRef rref(new ExTestRunnable);
-	OW_Runnable::run(rref);
+	ExTestRunnable t1;
+	t1.start();
 	unitAssert(g_sem.timedWait(30));
 
 	unitAssert(g_caught);

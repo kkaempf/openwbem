@@ -172,15 +172,12 @@ OW_ThreadPool* pool = 0;
 enum ThreadMode
 {
 	SINGLE,
-	POOL,
-	THREAD
+	POOL
 };
 
 ThreadMode threadMode = SINGLE;
 
 OW_String url;
-
-OW_ThreadCounterRef threadCount(new OW_ThreadCounter(400)); // more than ~400 threads will break on Linux.
 
 void doWork(const OW_RunnableRef& work)
 {
@@ -207,12 +204,6 @@ void doWork(const OW_RunnableRef& work)
 			pool->addWork(work);
 		}
 		break;
-		case THREAD:
-		{
-			threadCount->incThreadCount(600, 0); // 10 min timeout.
-			OW_Runnable::run(work, true, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(threadCount)));
-		}
-		break;
 	}
 }
 
@@ -220,10 +211,9 @@ void doWork(const OW_RunnableRef& work)
 void
 usage(const char* name)
 {
-	cerr << "Usage: " << name << " <url> <single|pool=<size>|thread> <once|forever> <abort|collect|ignore>\n";
+	cerr << "Usage: " << name << " <url> <single|pool=<size> > <once|forever> <abort|collect|ignore>\n";
 	cerr << " single - runs all operations single-threaded serially.  This may fail if the http connection timeout on the server is to low.\n";
 	cerr << " pool - creates a thread pool of size number of threads.  Each request is run on it's own thread.\n";
-	cerr << " thread - creates a thread for each request.  The maximum number of threads is 400, but this can still overload a system.\n";
 	cerr << " once - the test will run once\n";
 	cerr << " forever - the test will continue to loop forever\n";
 	cerr << " abort - the test ends once an error has occurred\n";
@@ -912,10 +902,6 @@ main(int argc, char* argv[])
 			pool = new OW_ThreadPool(OW_ThreadPool::FIXED_SIZE, poolSize, 0); // unlimited queue since we don't want to be too restrictive and cause a deadlock
 			threadMode = POOL;
 		}
-		else if (threadModeArg == "thread")
-		{
-			threadMode = THREAD;
-		}
 		else
 		{
 			usage(argv[0]);
@@ -980,10 +966,6 @@ main(int argc, char* argv[])
 					case POOL:
 						pool->waitForEmptyQueue();
 					break;
-					case THREAD:
-						// wait 10 sec. before launching another round.
-						OW_ThreadImpl::sleep(10000);
-					break;
 				}
 				rch.enumNameSpace(namespaceResultHandler);
 			}
@@ -996,9 +978,6 @@ main(int argc, char* argv[])
 			break; // we're already done
 			case POOL:
 				pool->shutdown();
-			break;
-			case THREAD:
-				threadCount->waitForAll(60000, 0); // 1000 min timeout
 			break;
 		}
 

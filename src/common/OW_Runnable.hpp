@@ -43,44 +43,13 @@ typedef OW_Reference<OW_Runnable> OW_RunnableRef;
  * One is to derive from OW_Thread and implement the run method and call start
  * on instances of the class to get the thread running.
  * The other method is to derive from OW_Runnable and pass references of the
- * derived class to the static run method on OW_Thread that takes an
- * OW_RunnableRef class. This technique allows the caller to run the
- * OW_Runnable object as a separate thread or in the same thread based on
- * the separateThread argument passed to the OW_Thread::run method.
- *
- * Example:
- *
- *		class MyRunnable : public OW_Runnable
- *		{
- *			virtual void run()
- *			{
- *				Some meaningful stuff for MyRunnable
- *			}
- *		};
- *
- *		void foo()
- *		{
- *			OW_RunnableRef rref(new MyRunnable);
- *			bool sepThreadFlag = (if wanted in separate thread) ? true : false;
- *			OW_Thread::run(rref, sepThreadFlag);
- *
- *			// If sepThreadFlag was true, then when we return from foo,
- *			// the MyRunnable object is still running.
- *		}
+ * derived class to OW_ThreadPool::addWork()
  */
 class OW_Runnable
 {
 public:
 	virtual ~OW_Runnable();
 	virtual void run() = 0;
-
-	/**
-	 * Start a thread and run the run method of a given OW_Runnable object.
-	 * @param theRunnable	A reference to an OW_Runnable object as an
-	 *								OW_RunnableRef to run.
-	 */
-	static void run(OW_RunnableRef theRunnable, bool separateThread = true,
-		OW_ThreadDoneCallbackRef cb = OW_ThreadDoneCallbackRef(0));
 
 };
 

@@ -43,7 +43,7 @@ class OW_IndicationServer : public OW_Thread
 public:
 
 	OW_IndicationServer()
-		: OW_Thread(true)
+		: OW_Thread()
 	{}
 
 	virtual ~OW_IndicationServer();
