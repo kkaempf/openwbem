@@ -610,7 +610,6 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 OW_CppProviderBaseIFC::~OW_CppProviderBaseIFC() {}
 void OW_CppProviderBaseIFC::updateAccessTime() { m_dt.setToCurrent(); }
 
-OW_CppIndicationProviderIFC::~OW_CppIndicationProviderIFC() {}
 OW_CppInstanceProviderIFC::~OW_CppInstanceProviderIFC() {}
 OW_CppAssociatorProviderIFC::~OW_CppAssociatorProviderIFC(){}
 OW_CppIndicationExportProviderIFC::~OW_CppIndicationExportProviderIFC(){}
