@@ -66,6 +66,7 @@ OW_StringStream.cpp \
 OW_TempFileStream.cpp \
 OW_TimeoutException.cpp \
 OW_Thread.cpp \
+OW_ThreadBarrier.cpp \
 OW_ThreadCounter.cpp \
 OW_ThreadImpl.cpp \
 OW_TmpFile.cpp \
@@ -141,6 +142,7 @@ OW_StringStream.hpp \
 OW_TempFileStream.hpp \
 OW_TimeoutException.hpp \
 OW_Thread.hpp \
+OW_ThreadBarrier.hpp \
 OW_ThreadCounter.hpp \
 OW_ThreadImpl.hpp \
 OW_ThreadTypes.hpp \
