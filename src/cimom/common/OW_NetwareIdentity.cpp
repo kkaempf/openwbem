@@ -39,6 +39,7 @@ using std::endl;
 extern "C"
 {
 #include <client.h>
+#include <fsio.h>
 }
 
 namespace OpenWBEM
