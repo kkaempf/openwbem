@@ -48,7 +48,10 @@ static char sccsid[] = "@(#)db.c	8.4 (Berkeley) 2/21/94";
 #define __DBINTERFACE_PRIVATE
 #include "db.h"
 
-OW_DB_API DB *
+#ifdef OW_WIN32
+OW_DB_API 
+#endif
+DB *
 dbopen(fname, flags, mode, type, openinfo)
 	const char *fname;
 	int flags, mode;
