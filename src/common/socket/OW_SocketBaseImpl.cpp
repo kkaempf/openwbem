@@ -222,11 +222,13 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 		}
 	}
 
-	if(n != 0)
+	if(n == -1) 
 	{
+		// because of the above check for EINPROGRESS
+		// not connected yet, need to select and wait for connection to complete.
 		OW_PosixUnnamedPipeRef lUPipe;
 
-		int pipefd = 0;
+		int pipefd = -1;
 
 		if (OW_Socket::m_pUpipe)
 		{
@@ -241,7 +243,10 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 
 		FD_ZERO(&rset);
 		FD_SET(m_sockfd, &rset);
-		FD_SET(pipefd, &rset);
+		if (pipefd != -1)
+		{
+			FD_SET(pipefd, &rset);
+		}
 
 		FD_ZERO(&wset);
 		FD_SET(m_sockfd, &wset);
@@ -259,16 +264,23 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 		{
 			::close(m_sockfd);
 
+			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect() select timedout");
+		}
+		if (n == -1)
+		{
+			::close(m_sockfd);
+
 			if (errno == EINTR)
 			{
 				OW_Thread::testCancel();
 			}
 
-			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
+			OW_THROW(OW_SocketException, format("OW_SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
 		}
 
-		if(FD_ISSET(pipefd, &rset))
+		if(pipefd != -1 && FD_ISSET(pipefd, &rset))
 		{
+			::close(m_sockfd);
 			OW_THROW(OW_SocketException, "Sockets have been shutdown");
 		}
 		else if(FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
@@ -281,13 +293,19 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 			{
 				::close(m_sockfd);
 				OW_THROW(OW_SocketException,
-						"OW_SocketBaseImpl::connect");
+						format("OW_SocketBaseImpl::connect() getsockopt() failed: %1(%2)", errno, strerror(errno)).c_str());
+			}
+			if (error != 0)
+			{
+				::close(m_sockfd);
+				OW_THROW(OW_SocketException,
+						format("OW_SocketBaseImpl::connect() failed: %1(%2)", error, strerror(error)).c_str());
 			}
 		}
 		else
 		{
 			::close(m_sockfd);
-			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect");
+			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect(). Logic error, m_sockfd not in FD set.");
 		}
 	}
 
