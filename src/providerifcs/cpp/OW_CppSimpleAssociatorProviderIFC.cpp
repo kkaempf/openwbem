@@ -47,6 +47,8 @@
 
 namespace OpenWBEM
 {
+namespace
+{
     class AssocHelperResultHandlerIFC : public CIMInstanceResultHandlerIFC
     {
     public:
@@ -208,6 +210,9 @@ namespace OpenWBEM
         CIMObjectPathResultHandlerIFC& _realHandler;
         String _ns;
     };
+
+} // end anonymous namespace
+
 /**
  * This method is invoked in order to do the Associators operation as
  * defined by the CIM operations over HTTP spec at
