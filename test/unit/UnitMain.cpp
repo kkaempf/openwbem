@@ -35,6 +35,7 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_FileSystemTestCases.hpp"
 #include "OW_CIMPropertyTestCases.hpp"
 #include "OW_CIMInstanceTestCases.hpp"
 #include "OW_StringArrayPropertyTestCases.hpp"
@@ -83,6 +84,7 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_FileSystem", OW_FileSystemTestCases::suite());
 	runner.addTest( "OW_CIMProperty", OW_CIMPropertyTestCases::suite());
 	runner.addTest( "OW_CIMInstance", OW_CIMInstanceTestCases::suite());
 	runner.addTest( "OW_StringArrayProperty", OW_StringArrayPropertyTestCases::suite());

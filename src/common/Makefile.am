@@ -47,6 +47,7 @@ OW_Format.cpp \
 OW_IOIFCStreamBuffer.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
+OW_PosixFile.cpp \
 OW_PosixFileSystem.cpp \
 OW_PosixOS.cpp \
 OW_PosixUnnamedPipe.cpp \
@@ -87,6 +88,7 @@ OW_DateTime.hpp \
 OW_Enumeration.hpp \
 OW_Exception.hpp \
 OW_Exec.hpp \
+OW_File.hpp \
 OW_FileSystem.hpp \
 OW_Format.hpp \
 OW_FuncNamePrinter.hpp \

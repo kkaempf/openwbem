@@ -1,3 +1,7 @@
+Fri Nov 22 20:07:54 MST 2002
+- Added system file locking support to OW_File.
+- Moved OW_File into it's own hpp/cpp files.
+
 Fri Nov 15 08:05:33 MST 2002
 - Fixed bugs with NPI errors.
 

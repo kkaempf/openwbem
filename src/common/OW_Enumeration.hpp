@@ -35,6 +35,7 @@
 #include "OW_Exception.hpp"
 #include "OW_Reference.hpp"
 #include "OW_TempFileStream.hpp"
+#include "OW_File.hpp"
 #include "OW_FileSystem.hpp"
 
 #include <fstream>

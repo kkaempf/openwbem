@@ -36,7 +36,7 @@
 #include "OW_String.hpp"
 #include "OW_Index.hpp"
 #include "OW_Reference.hpp"
-#include "OW_FileSystem.hpp"
+#include "OW_File.hpp"
 #include "OW_HDBNode.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_MutexLock.hpp"

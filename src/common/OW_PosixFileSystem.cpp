@@ -34,6 +34,7 @@
 #include "OW_Exception.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_File.hpp"
 
 extern "C"
 {
@@ -279,4 +280,5 @@ OW_FileSystem::initRandomFile(const OW_String& filename)
 	}
 	::close(hdl);
 }
+
 

@@ -36,7 +36,7 @@
 #include "OW_Index.hpp"
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
-#include "OW_FileSystem.hpp"
+#include "OW_File.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMOMEnvironment.hpp"
