@@ -619,22 +619,10 @@ namespace
 		{
 		}
 
-		virtual void createNameSpace(const String &ns,
-			OperationContext &context)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			m_prep->createNameSpace(ns, context);
-		}
 		virtual void open(const String &path)
 		{
 			RUIDManager um(m_cimomuid, m_useruid);
 			m_prep->open(path);
-		}
-		virtual void deleteNameSpace(const String &ns,
-			OperationContext &context)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			m_prep->deleteNameSpace(ns, context);
 		}
 		virtual void close()
 		{
@@ -646,6 +634,21 @@ namespace
 			// Inst/Assoc/Meth provs don't need one of these
 			return ServiceEnvironmentIFCRef(0);
 		}
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+		virtual void createNameSpace(const String &ns,
+			OperationContext &context)
+		{
+			RUIDManager um(m_cimomuid, m_useruid);
+			m_prep->createNameSpace(ns, context);
+		}
+		virtual void deleteNameSpace(const String &ns,
+			OperationContext &context)
+		{
+			RUIDManager um(m_cimomuid, m_useruid);
+			m_prep->deleteNameSpace(ns, context);
+		}
+#endif
+
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		virtual void enumQualifierTypes(const String &ns, 
 			CIMQualifierTypeResultHandlerIFC &result, OperationContext &context)
@@ -743,6 +746,7 @@ namespace
 			m_prep->enumClasses(ns, className, result, deep, localOnly,
 				includeQualifiers, includeClassOrigin, context);
 		}
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 		virtual CIMInstance deleteInstance(const String &ns,
 			const CIMObjectPath &cop, OperationContext &context)
 		{
@@ -755,6 +759,23 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			return m_prep->createInstance(ns, ci, context);
 		}
+		virtual CIMInstance modifyInstance(const String &ns,
+			const CIMInstance &modifiedInstance, 
+			EIncludeQualifiersFlag includeQualifiers,
+			const StringArray *propertyList, OperationContext &context)
+		{
+			RUIDManager um(m_cimomuid, m_useruid);
+			return m_prep->modifyInstance(ns, modifiedInstance, 
+				includeQualifiers, propertyList, context);
+		}
+		virtual void setProperty(const String &ns, const CIMObjectPath &name,
+			const String &propertyName, const CIMValue &cv,
+			OperationContext &context)
+		{
+			RUIDManager um(m_cimomuid, m_useruid);
+			m_prep->setProperty(ns, name, propertyName, cv, context);
+		}
+#endif
 		virtual void enumInstanceNames(const String &ns,
 			const String &className, CIMObjectPathResultHandlerIFC &result,
 			EDeepFlag deep, OperationContext &context)
@@ -788,22 +809,6 @@ namespace
 			RUIDManager um(m_cimomuid, m_useruid);
 			return m_prep->invokeMethod(ns, path, methodName, inParams,
 				outParams, context);
-		}
-		virtual CIMInstance modifyInstance(const String &ns,
-			const CIMInstance &modifiedInstance, 
-			EIncludeQualifiersFlag includeQualifiers,
-			const StringArray *propertyList, OperationContext &context)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			return m_prep->modifyInstance(ns, modifiedInstance, 
-				includeQualifiers, propertyList, context);
-		}
-		virtual void setProperty(const String &ns, const CIMObjectPath &name,
-			const String &propertyName, const CIMValue &cv,
-			OperationContext &context)
-		{
-			RUIDManager um(m_cimomuid, m_useruid);
-			m_prep->setProperty(ns, name, propertyName, cv, context);
 		}
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
