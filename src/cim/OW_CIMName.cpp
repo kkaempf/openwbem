@@ -34,6 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMName.hpp"
+#include <ostream>
 
 namespace OpenWBEM
 {
