@@ -10,6 +10,7 @@ ProviderInterface.HOWTO \
 openwbem-faq.html \
 pg.tex \
 PerlIFC.sxw \
-remote_providers.txt
+remote_providers.txt \
+local_authentication.txt
 
 
