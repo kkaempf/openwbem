@@ -63,7 +63,7 @@ namespace OpenWBEM
  * 			called OS::loadAuthenticator, which in turn called
  * 			pam_authenticate, which calls PamConv
  */
-#if defined(OW_HPUX) || defined(OW_SOLARIS)
+#if defined(OW_HPUX) || defined(OW_SOLARIS) || defined(OW_AIX)
 static int PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr);
 #else
 static int PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **response, void *appdata_ptr);
@@ -190,7 +190,7 @@ do {                             \
 //////////////////////////////////////////////////////////////////////////////
 // Static
 // TODO clean up, remove all stuff we don't support.
-#if defined(OW_HPUX) || defined(OW_SOLARIS)
+#if defined(OW_HPUX) || defined(OW_SOLARIS) || defined(OW_AIX)
 int
 PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
 #else

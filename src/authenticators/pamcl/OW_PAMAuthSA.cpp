@@ -63,7 +63,7 @@ do {                             \
 
 
 //////////////////////////////////////////////////////////////////////////////
-#if defined(OW_HPUX) || defined(OW_SOLARIS)
+#if defined(OW_HPUX) || defined(OW_SOLARIS) || defined(OW_AIX)
 int
 MY_PAM_conv(int num_msg, struct pam_message **msgm, struct pam_response **response, void *appdata_ptr)
 #else
