@@ -68,23 +68,37 @@ public:
 
 	explicit CppProviderInitializationHelper(const CppProviderBaseIFCRef& provider)
 		: m_initialized(false)
+		, m_initializeFailed(false)
 		, m_provider(provider)
 	{
 
 	}
 
-	void waitUntilInitialized() const
+	// returns false if initialization failed
+	bool waitUntilInitialized() const
 	{
 		NonRecursiveMutexLock l(m_initializedGuard);
-		while (!m_initialized)
+		while (!m_initialized && !m_initializeFailed)
 		{
 			m_initializedCond.wait(l);
 		}
+		return !m_initializeFailed;
 	}
 	
 	void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		m_provider->initialize(env);
+		try
+		{
+			m_provider->initialize(env);
+		}
+		catch (...)
+		{
+			NonRecursiveMutexLock l(m_initializedGuard);
+			m_initializeFailed = true;
+			m_initializedCond.notifyAll();
+			throw;
+		}
+
 		NonRecursiveMutexLock l(m_initializedGuard);
 		m_initialized = true;
 		m_initializedCond.notifyAll();
@@ -96,6 +110,7 @@ public:
 	}
 private:
 	bool m_initialized;
+	bool m_initializeFailed;
 	mutable NonRecursiveMutex m_initializedGuard;
 	mutable Condition m_initializedCond;
 	CppProviderBaseIFCRef m_provider;
@@ -624,9 +639,17 @@ CppProviderIFC::getProvider(
 		CppProviderInitializationHelperRef prov(it->second);
 		// do this to prevent a deadlock
 		ml.release();
+
 		// another thread may be initializing the provider, wait until it's done.
-		prov->waitUntilInitialized();
-		return prov->getProvider();
+		if (prov->waitUntilInitialized())
+		{
+			return prov->getProvider();
+		}
+		else
+		{
+			// initialization failed, it's now out of the map.
+			return CppProviderBaseIFCRef();
+		}
 	}
 
 	String libName;
@@ -682,7 +705,17 @@ CppProviderIFC::getProvider(
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc calling initialize"
 			" for provider %1", provId));
 
-		provInitHelper->initialize(env); // Let provider initialize itself
+		try
+		{
+			provInitHelper->initialize(env); // Let provider initialize itself
+		}
+		catch (...)
+		{
+			// provider initialization failed, we need to take it out of the map
+			MutexLock lock(m_guard);
+			m_provs.erase(provId);
+			throw;
+		}
 
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("C++ provider ifc: provider %1"
 			" loaded and initialized", provId));
