@@ -217,96 +217,113 @@ long Compiler::compileString( const String& mof )
 // STATIC
 String Compiler::fixParsedString(const String& s)
 {
-	StringArray sa = s.tokenize("\n\r");
-	String retval;
-	for (size_t i = 0; i < sa.size(); ++i)
-	{
+	//StringArray sa = s.tokenize("\n\r");
+	//StringBuffer retval;
+
+	//for (size_t i = 0; i < sa.size(); ++i)
+	//{
 		// trim off whitespace
-		String trimmed = sa[i];
-		trimmed.trim();
+	//	String trimmed = sa[i];
+	//	trimmed.trim();
 		// cut off the quotes and concatenate
-		if (trimmed.length() > 2)
-		{
-			assert(trimmed[0] == '"' && trimmed[trimmed.length()-1] == '"');
-			retval += trimmed.substring(1, trimmed.length() - 2);
-		}
-	}
+	//	if (trimmed.length() > 2)
+	//	{
+	//		assert(trimmed[0] == '"' && trimmed[trimmed.length()-1] == '"');
+	//		retval += trimmed.substring(1, trimmed.length() - 2);
+	//	}
+	//}
+	bool inString = false;
 	StringBuffer unescaped;
-	for (size_t i = 0; i < retval.length(); ++i)
+	for (size_t i = 0; i < s.length(); ++i)
 	{
-		if (retval[i] == '\\')
+		if (inString)
 		{
-			/* this can never happen, unless someone messes up the lexer
-			if (i+1 >= retval.length())
+			if (s[i] == '\\')
 			{
-				OW_THROW(Exception, "String cannot end with '\\'");
-			}*/
-			++i;
-			switch (retval[i])
+				/* this can never happen, unless someone messes up the lexer
+				if (i+1 >= retval.length())
+				{
+					OW_THROW(Exception, "String cannot end with '\\'");
+				}*/
+				++i;
+				switch (s[i])
+				{
+					case 'b':
+						unescaped += '\b';
+						break;
+					case 't':
+						unescaped += '\t';
+						break;
+					case 'n':
+						unescaped += '\n';
+						break;
+					case 'f':
+						unescaped += '\f';
+						break;
+					case 'r':
+						unescaped += '\r';
+						break;
+					case '"':
+						unescaped += '"';
+						break;
+					case '\'':
+						unescaped += '\'';
+						break;
+					case '\\':
+						unescaped += '\\';
+						break;
+					case 'x':
+					case 'X':
+						{
+							// The lexer guarantees that there will be from 1-4 hex chars.
+							UInt16 hex = 0;
+							for (size_t j = 0; j < 4; ++j)
+							{
+								hex <<= 4;
+								char c = s[i+j];
+								if (isdigit(c))
+								{
+									hex |= c - '0';
+								}
+								else if (isxdigit(c))
+								{
+									c = toupper(c);
+									hex |= c - 'A' + 0xA;
+								}
+								else
+								{
+									break;
+								}
+							}
+							if (hex > CHAR_MAX)
+							{
+								OW_THROW(MOFCompilerException, "Escape sequence larger than supported maximum");
+							}
+							unescaped += static_cast<char>(hex);
+						}
+						break;
+					default:
+						// this could never happen unless someone messes up the lexer
+						OW_ASSERT("Invalid escape sequence" == 0);
+						break;
+				}
+			}
+			else if (s[i] == '"')
 			{
-				case 'b':
-					unescaped += '\b';
-					break;
-				case 't':
-					unescaped += '\t';
-					break;
-				case 'n':
-					unescaped += '\n';
-					break;
-				case 'f':
-					unescaped += '\f';
-					break;
-				case 'r':
-					unescaped += '\r';
-					break;
-				case '"':
-					unescaped += '"';
-					break;
-				case '\'':
-					unescaped += '\'';
-					break;
-				case '\\':
-					unescaped += '\\';
-					break;
-				case 'x':
-				case 'X':
-					{
-						// The lexer guarantees that there will be from 1-4 hex chars.
-						UInt16 hex = 0;
-						for (size_t j = 0; j < 4; ++j)
-						{
-							hex <<= 4;
-							char c = retval[i+j];
-							if (isdigit(c))
-							{
-								hex |= c - '0';
-							}
-							else if (isxdigit(c))
-							{
-								c = toupper(c);
-								hex |= c - 'A' + 0xA;
-							}
-							else
-							{
-								break;
-							}
-						}
-						if (hex > CHAR_MAX)
-						{
-							OW_THROW(MOFCompilerException, "Escape sequence larger than supported maximum");
-						}
-						unescaped += static_cast<char>(hex);
-					}
-					break;
-				default:
-					// this could never happen unless someone messes up the lexer
-					OW_ASSERT("Invalid escape sequence" == 0);
-					break;
+				inString = false;
+			}
+			else
+			{
+				unescaped += s[i];
 			}
 		}
 		else
 		{
-			unescaped += retval[i];
+			// not in the string
+			if (s[i] == '"')
+			{
+				inString = true;
+			}
 		}
 	}
 

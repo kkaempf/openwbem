@@ -115,7 +115,6 @@ cChar [^'\\\n\r]|{escapeSequence}
 sChar [^"\\\n\r]|{escapeSequence}
 
 charValue \'{cChar}\'
-	/*stringValue \"{sChar}*\"(({ws}|[\n\r])*\"{sChar}*\")* */
 stringValue \"{sChar}*\"
 
 ws		[ \t]+
@@ -219,21 +218,7 @@ true					{RETURN_STR(TRUE_TOK);}
 
 {charValue}			{RETURN_STR(charValue);}
 
-{stringValue}(({ws}|[\r\n])*{stringValue})*		{
-	/* figure out how many lines we passed over */
-	int i;
-	for (i = 0; i < owmofleng; ++i)
-	{
-		if ( owmoftext[i] == '\r' || owmoftext[i] == '\n' )
-		{
-			++MOF_COMPILER->theLineInfo.lineNum;
-			if ( ( i + 1 ) < owmofleng )
-				if ( owmoftext[i] == '\r' && owmoftext[i + 1] == '\n' )
-					++i;
-		}
-	}
-	RETURN_STR(stringValue);
-}
+{stringValue}		{ RETURN_STR(stringValue);}
 
 {identifier}		{RETURN_STR(IDENTIFIER_TOK);}
 

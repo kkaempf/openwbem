@@ -111,9 +111,9 @@ void yyerror( const char* );
 	ReferenceInitializer*		pReferenceInitializer;
 	QualifierType*					pQualifierType;
 	DefaultFlavor*					pDefaultFlavor;
-	String*						pString;
-        IntegerValue*                   pIntegerValue;
-        ConstantValue*                  pConstantValue;
+	String*							pString;
+	IntegerValue*              pIntegerValue;
+	ConstantValue*             pConstantValue;
 	ArrayInitializer*				pArrayInitializer;
 	ValueInitializer*				pValueInitializer;
 	List<ValueInitializer*>*	pValueInitializerList;
@@ -172,7 +172,7 @@ int yylex(YYSTYPE *yylval, void* YYLEX_PARAM);
 %type <pQualifierType>				qualifierType
 %type <pDefaultFlavor>				defaultFlavor
 
-%type <pString>						IDENTIFIER stringValue binaryValue octalValue decimalValue hexValue floatValue charValue booleanValue nullValue IDENTIFIER_TOK ANY_TOK AS_TOK CLASS_TOK FLAVOR_TOK INSTANCE_TOK METHOD_TOK OF_TOK PARAMETER_TOK PRAGMA_TOK PROPERTY_TOK QUALIFIER_TOK REFERENCE_TOK RESTRICTED_TOK SCHEMA_TOK SCOPE_TOK ENABLEOVERRIDE_TOK DISABLEOVERRIDE_TOK TOSUBCLASS_TOK TRANSLATABLE_TOK DT_UINT8_TOK DT_SINT8_TOK DT_UINT16_TOK DT_SINT16_TOK DT_UINT32_TOK DT_SINT32_TOK DT_UINT64_TOK DT_SINT64_TOK DT_REAL32_TOK DT_REAL64_TOK DT_CHAR16_TOK DT_STR_TOK DT_BOOL_TOK DT_DATETIME_TOK ASSOCIATION_TOK INDICATION_TOK LPAREN_TOK RPAREN_TOK LBRACE_TOK RBRACE_TOK SEMICOLON_TOK LBRACK_TOK RBRACK_TOK COMMA_TOK DOLLAR_TOK COLON_TOK EQUALS_TOK FALSE_TOK TRUE_TOK NULL_TOK REF_TOK
+%type <pString>						IDENTIFIER stringValue stringValueList binaryValue octalValue decimalValue hexValue floatValue charValue booleanValue nullValue IDENTIFIER_TOK ANY_TOK AS_TOK CLASS_TOK FLAVOR_TOK INSTANCE_TOK METHOD_TOK OF_TOK PARAMETER_TOK PRAGMA_TOK PROPERTY_TOK QUALIFIER_TOK REFERENCE_TOK RESTRICTED_TOK SCHEMA_TOK SCOPE_TOK ENABLEOVERRIDE_TOK DISABLEOVERRIDE_TOK TOSUBCLASS_TOK TRANSLATABLE_TOK DT_UINT8_TOK DT_SINT8_TOK DT_UINT16_TOK DT_SINT16_TOK DT_UINT32_TOK DT_SINT32_TOK DT_UINT64_TOK DT_SINT64_TOK DT_REAL32_TOK DT_REAL64_TOK DT_CHAR16_TOK DT_STR_TOK DT_BOOL_TOK DT_DATETIME_TOK ASSOCIATION_TOK INDICATION_TOK LPAREN_TOK RPAREN_TOK LBRACE_TOK RBRACE_TOK SEMICOLON_TOK LBRACK_TOK RBRACK_TOK COMMA_TOK DOLLAR_TOK COLON_TOK EQUALS_TOK FALSE_TOK TRUE_TOK NULL_TOK REF_TOK
 
 
 %type <pIntegerValue>                   integerValue
@@ -684,11 +684,17 @@ constantValueList:
 		{$1->push_back($3); $$ = $1; delete $2;}
 	;
 
+/* do this to handle "string" "concatenation" */
+stringValueList:
+	stringValue {$$ = $1; }
+	| stringValueList stringValue
+		{$$ = $1; $$->concat(*$2); delete $2;}
+
 constantValue:
 	integerValue {$$ = new ConstantValueIntegerValue($1); }
 	| floatValue {$$ = new ConstantValueFloatValue($1); }
 	| charValue {$$ = new ConstantValueCharValue($1); }
-	| stringValue {$$ = new ConstantValueStringValue($1); }
+	| stringValueList {$$ = new ConstantValueStringValue($1); }
 	| booleanValue {$$ = new ConstantValueBooleanValue($1); }
 	| nullValue {$$ = new ConstantValueNullValue($1); }
 	;
