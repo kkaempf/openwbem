@@ -721,6 +721,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	}
 	String qvstr;
 	cv.get(qvstr);
+	size_t ndxoffset = 2;
 	size_t ndx = qvstr.indexOf("::");
 	if(ndx == String::npos)
 	{
@@ -731,9 +732,10 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 				"Provider Manager - Invalid format for provider string: %1", qvstr));
 			return rref;
 		}
+		ndxoffset = 1;
 	}
 	String ifcStr = qvstr.substring(0, ndx);
-	provStr = qvstr.substring(ndx+2);
+	provStr = qvstr.substring(ndx+ndxoffset);
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
 	{
 		if(ifcStr.equalsIgnoreCase(m_IFCArray[i]->getName()))
