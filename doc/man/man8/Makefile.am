@@ -1,7 +1,7 @@
-man8_DATA = owcimomd.8 owdigestgenpass.8
+man8_MANS = owcimomd.8 owdigestgenpass.8
 man8dir = $(mandir)/man8
 
-EXTRA_DIST = owcimomd.8.fb owdigestgenpass.8
+EXTRA_DIST = $(man8_MANS)
 
 CLEANFILES = owcimomd.8 
 
