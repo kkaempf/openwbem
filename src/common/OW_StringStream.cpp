@@ -89,6 +89,7 @@ OW_StringStream::OW_StringStream(size_t size)
 OW_StringStream::~OW_StringStream()
 {
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 OW_String OW_StringStream::toString() const 
 { 
