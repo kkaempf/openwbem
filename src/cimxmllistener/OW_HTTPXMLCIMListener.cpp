@@ -79,6 +79,7 @@ public:
 		m_configItems[OW_ConfigOpts::SINGLE_THREAD_opt] = "false";
 		m_configItems[OW_ConfigOpts::ENABLE_DEFLATE_opt] = "true";
 		m_configItems[OW_ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
+		m_configItems[OW_ConfigOpts::USE_UDS_opt] = "false";
 	}
 
 	virtual ~OW_HTTPXMLCIMListenerServiceEnvironment() {}

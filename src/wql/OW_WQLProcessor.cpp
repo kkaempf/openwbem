@@ -2208,22 +2208,12 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 				{
 					OW_CIMObjectPath valCop = OW_CIMObjectPath::parse(
 						OW_CIMObjectPath::unEscape(val.toString()));
+					valCop.setNameSpace(m_ns);
 
 					OW_CIMObjectPath instCop(ci.getClassName(),
 						ci.getKeyValuePairs());
 
-					// we need to compare the full thing
-					if (valCop.getFullNameSpace().getNameSpace().length() > 0 &&
-						valCop.getFullNameSpace().getHostUrl().toString().length() > 0)
-					{
-						instCop.setNameSpace(m_ns);
-					}
-					// check if we've only got a namespace, with no url
-					else if (valCop.getFullNameSpace().getNameSpace().length() > 0 &&
-							 valCop.getFullNameSpace().getHostUrl().toString().length() == 0)
-					{
-						instCop.setNameSpace(m_ns);
-					}
+					instCop.setNameSpace(m_ns);
 
 					if (compare(OW_CIMValue(instCop.toString()),
 						OW_CIMValue(valCop.toString())))

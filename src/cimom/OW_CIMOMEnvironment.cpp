@@ -135,7 +135,7 @@ OW_CIMOMEnvironment::OW_CIMOMEnvironment()
 	, m_indicationLock()
 	, m_indicationRepLayerDisabled(false)
 	, m_selectableLock()
-	, m_shuttingDown(false)
+	, m_running(false)
 {
 }
 
@@ -231,102 +231,130 @@ OW_CIMOMEnvironment::startServices()
 	_createAuthManager();
 	_loadRequestHandlers();
 	_loadServices();
+
+	_createPollingManager();
+	_createIndicationServer();
+
+	m_running = true;
+
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
 		m_services[i]->startService();
 	}
 
-	_createPollingManager();
-	_createIndicationServer();
+	// TODO: Don't start these threads if we are running in single thread mode
+	// Start up the polling manager
+	m_Logger->logDebug("CIMOM starting Polling Manager");
+	m_pollingManager->start();
+	OW_Thread::yield();
+
+	// Start up the indication server
+	m_Logger->logDebug("CIMOM starting IndicationServer");
+	m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
+	m_indicationServer->start();
+	OW_Thread::yield();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMEnvironment::shutdown()
 {
-	// There are lots of yield() calls in here, because we have race conditions
-	// when shutting down.  Problem is that sometimes a threads' destructor will
-	// be running, and we unload the library out from underneath it, causing
-	// a segfault.
-
 	logDebug("CIMOM Environment shutting down...");
 
-	m_shuttingDown = true;
+	m_running = false;
 
 	OW_MutexLock ml(m_monitor);
 
 	// Shutdown the polling manager
 	if(m_pollingManager)
 	{
-		m_pollingManager->shutdown();
+		try
+		{
+			m_pollingManager->shutdown();
+		}
+		catch (...)
+		{
+		}
 		m_pollingManager->join();
-		OW_Thread::yield();
 		m_pollingManager = 0;
 	}
 	
 	// Clear selectable objects
-	_clearSelectables();
+	try
+	{
+		_clearSelectables();
+	}
+	catch(...)
+	{
+	}
 
 	// Shutdown any loaded services
 	// For now. We need to unload these in the opposite order that
 	// they were loaded.
 	for(int i = int(m_services.size())-1; i >= 0; i--)
 	{
-		m_services[i]->shutdown();
-		OW_Thread::yield();
+		try
+		{
+			m_services[i]->shutdown();
+		}
+		catch (...)
+		{
+		}
 		m_services[i].setNull();
 	}
-	OW_Thread::yield();
 	m_services.clear();
 
 	// Unload all request handlers
-	OW_Thread::yield();
 	m_reqHandlers.clear();
 
 	// Unload the wql library if loaded
-	OW_Thread::yield();
-    m_wqlLib = 0;
+	m_wqlLib = 0;
 
 	// Shutdown indication processing
-	OW_Thread::yield();
 	m_indicationRepLayerLib = 0;
 	if(m_indicationServer)
 	{
-		m_indicationServer->shutdown();
+		try
+		{
+			m_indicationServer->shutdown();
+		}
+		catch (...)
+		{
+		}
 		m_indicationServer->join();
-		OW_Thread::yield();
 		m_indicationServer.setNull();
 	}
 
 	// Delete the authentication manager
-	OW_Thread::yield();
 	m_authManager = 0;
 
 	// Shutdown the cim server and delete it
 	if(m_cimServer)
 	{
-		m_cimServer->close();
-		OW_Thread::yield();
+		try
+		{
+			m_cimServer->close();
+		}
+		catch (...)
+		{
+		}
 		m_cimServer = 0;
 	}
 
 	// Delete the provider manager
-	OW_Thread::yield();
 	m_providerManager = 0;
 
 	// We keep the logger around so all of the shutdown sequence can be
 	// logged
 
 	logDebug("CIMOM Environment has shut down");
-
-	m_shuttingDown = false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_ProviderManagerRef
 OW_CIMOMEnvironment::getProviderManager()
 {
-	if (m_shuttingDown)
+	if (!m_running)
 	{
 		return OW_ProviderManagerRef();
 	}
@@ -351,8 +379,6 @@ OW_CIMOMEnvironment::_createPollingManager()
 	m_pollingManager = OW_PollingManagerRef(new OW_PollingManager(
 		OW_CIMOMEnvironmentRef(this, true)));
 
-	m_pollingManager->start();
-	OW_Thread::yield();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -387,11 +413,6 @@ OW_CIMOMEnvironment::_createIndicationServer()
 			return;
 		}
 
-		// Start up the indication server
-		m_Logger->logDebug("CIMOM starting IndicationServer");
-		m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true));
-		m_indicationServer->start();
-		OW_Thread::yield();
 	}
 }
 
@@ -608,7 +629,7 @@ OW_Bool
 OW_CIMOMEnvironment::authenticate(OW_String &userName, const OW_String &info,
 	OW_String &details)
 {
-	if (m_shuttingDown)
+	if (!m_running)
 	{
 		return false;
 	}
@@ -638,7 +659,7 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
         const OW_ACLInfo& aclInfo)
 {
-	if (m_shuttingDown)
+	if (!m_running)
 	{
 		return OW_CIMOMHandleIFCRef();
 	}
@@ -655,7 +676,7 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_Bool doIndications)
 {
-	if (m_shuttingDown)
+	if (!m_running)
 	{
 		return OW_CIMOMHandleIFCRef();
 	}
@@ -696,7 +717,7 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 OW_WQLIFCRef
 OW_CIMOMEnvironment::getWQLRef()
 {
-	if (m_shuttingDown)
+	if (!m_running)
 	{
 		return OW_WQLIFCRef();
 	}
@@ -786,7 +807,7 @@ OW_RequestHandlerIFCRef
 OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 {
 	OW_RequestHandlerIFCRef ref;
-	if (m_shuttingDown)
+	if (!m_running)
 	{
 		return ref;
 	}

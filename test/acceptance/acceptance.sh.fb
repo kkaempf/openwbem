@@ -339,10 +339,10 @@ TestSuite()
 	if [ "$TESTMOFDONE" = "0" ]; then
 		TESTMOFDONE=1
 		echo "Importing mof files for test"
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root \
+		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
 			$TOPSRCDIR/test/c++providers/method/OW_MethodProviderTest.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
-		$STAGEDIR/$OWBINDIR/owmofc $URL /root \
+		$STAGEDIR/$OWBINDIR/owmofc $URL /root/testsuite \
 			$TOPSRCDIR/test/acceptance/testfiles/testsuite.mof || \
 			ExitWithFail "TestSuite: MOF compiler exited with error."
 	fi
@@ -670,13 +670,14 @@ TestMof()
 	fi
 
 	RestartDaemon
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root \
+	CreateNameSpace testsuite
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 			$TOPSRCDIR/src/mof/testfiles/CIM_Schema25.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \
 		ExitWithFail "MOF compiler test: owmofc exited with error."
-	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root \
+	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/wqlTest.mof || \
 		ExitWithFail "MOF compiler test: MOF compiler exited with error"
 }

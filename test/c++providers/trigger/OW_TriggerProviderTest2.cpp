@@ -130,12 +130,12 @@ OW_TriggerProviderTest2::poll(const OW_ProviderEnvironmentIFCRef& env)
 	static int count = 1;
 
 	OW_CIMOMHandleIFCRef lch = env->getCIMOMHandle();
-	OW_CIMClass cc = lch->getClass(OW_CIMObjectPath("OW_TestIndication2","root"));
+	OW_CIMClass cc = lch->getClass(OW_CIMObjectPath("OW_TestIndication2","root/testsuite"));
 	if (cc)
 	{
 		OW_CIMInstance ci = cc.newInstance();
 		ci.setProperty("indicationNumber", OW_CIMValue(count));
-		OW_CIMClass embeddedClass = lch->getClass(OW_CIMObjectPath("TestClass2", "root"));
+		OW_CIMClass embeddedClass = lch->getClass(OW_CIMObjectPath("TestClass2", "root/testsuite"));
 		OW_CIMInstance embeddedInst = embeddedClass.newInstance();
 		embeddedInst.setProperty("dummykey", OW_CIMValue(OW_String("foo")));
 		ci.setProperty("TheInstance", OW_CIMValue(embeddedInst));

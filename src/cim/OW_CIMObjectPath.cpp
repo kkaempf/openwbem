@@ -52,21 +52,8 @@ using std::ostream;
 struct OW_CIMObjectPath::OPData
 {
 	OPData() :
-		m_nameSpace(OW_Bool(true)), m_objectName(), m_keys()
+		m_nameSpace(OW_Bool(true))
 	{
-	}
-
-	OPData(const OPData& x) :
-		m_nameSpace(x.m_nameSpace), m_objectName(x.m_objectName), m_keys(x.m_keys)
-	{
-	}
-
-	OPData& operator= (const OPData& x)
-	{
-		m_nameSpace = x.m_nameSpace;
-		m_objectName = x.m_objectName;
-		m_keys = x.m_keys;
-		return *this;
 	}
 
 	OW_CIMNameSpace m_nameSpace;

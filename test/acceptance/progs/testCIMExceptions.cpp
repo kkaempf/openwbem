@@ -174,7 +174,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		hdl->getClass(OW_CIMObjectPath("fooXXX", "root"));
+		hdl->getClass(OW_CIMObjectPath("fooXXX", "root/testsuite"));
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -203,7 +203,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("fooXXX", "root");
+		OW_CIMObjectPath cop("fooXXX", "root/testsuite");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->getInstance(cop);
 		assert(0);
@@ -216,7 +216,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		OW_CIMObjectPath cop("CIM_PhysicalElement", "root");
+		OW_CIMObjectPath cop("CIM_PhysicalElement", "root/testsuite");
 		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
 		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->getInstance(cop);
@@ -247,7 +247,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		hdl->deleteClass("root", "fooXXX");
+		hdl->deleteClass("root/testsuite", "fooXXX");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -283,7 +283,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMObjectPath cop("fooXXX");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
-		hdl->deleteInstance("root", cop);
+		hdl->deleteInstance("root/testsuite", cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -297,7 +297,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("CIM_PhysicalElement");
 		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
 		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
-		hdl->deleteInstance("root", cop);
+		hdl->deleteInstance("root/testsuite", cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -309,7 +309,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CreateClass
 
 	OW_CIMClass cc("footest");
-	OW_CIMQualifierType keyQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_KEY, "root"));
+	OW_CIMQualifierType keyQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_KEY, "root/testsuite"));
 	OW_CIMQualifier keyQual(keyQualType);
 	keyQual.setValue(OW_CIMValue(true));
 	OW_CIMProperty theKeyProp("theKeyProp", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
@@ -338,7 +338,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	
 	// create a base class that has the associator qualifier, which can't be overridden
 	OW_CIMClass baseClass("invalidTestBase");
-	OW_CIMQualifierType assocQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, "root"));
+	OW_CIMQualifierType assocQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, "root/testsuite"));
 	OW_CIMQualifier assocQual(assocQualType);
 	assocQual.setValue(OW_CIMValue(true));
 	baseClass.addProperty(theKeyProp);
@@ -348,12 +348,12 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		try
 		{
-			hdl->deleteClass("root", baseClass.getName());
+			hdl->deleteClass("root/testsuite", baseClass.getName());
 		}
 		catch (const OW_CIMException&)
 		{
 		}
-		hdl->createClass(OW_CIMObjectPath(baseClass.getName(), "root"), baseClass);
+		hdl->createClass(OW_CIMObjectPath(baseClass.getName(), "root/testsuite"), baseClass);
 	}
 	catch (const OW_CIMException& e)
 	{
@@ -367,7 +367,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "root");
+		OW_CIMObjectPath cop("foo", "root/testsuite");
 		cop.setKeys(ci);
 		hdl->createInstance(cop, ci);
 	}
@@ -387,7 +387,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMQualifier assocQual2(assocQual);
 		assocQual2.setValue(OW_CIMValue(false));
 		cc2.addQualifier(assocQual2);
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->createClass(cop, cc2);
 		assert(0);
 	}
@@ -404,7 +404,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->createClass(cop, cc2);
 		assert(0);
 	}
@@ -417,7 +417,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		// test adding a class with no keys
 		OW_CIMClass cc2("invalidTestSub");
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->createClass(cop, cc2);
 		assert(0);
 	}
@@ -430,7 +430,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		// test adding a class with no keys
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		hdl->createClass(cop, baseClass);
 		assert(0);
 	}
@@ -444,7 +444,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMClass cc2(baseClass);
 		cc2.setSuperClass("invalid");
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->createClass(cop, cc2);
 		assert(0);
 	}
@@ -479,7 +479,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setClassName("nonexistentClass");
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "root");
+		OW_CIMObjectPath cop("foo", "root/testsuite");
 		cop.setKeys(ci);
 		hdl->createInstance(cop, ci);
 		assert(0);
@@ -494,7 +494,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "root");
+		OW_CIMObjectPath cop("foo", "root/testsuite");
 		cop.setKeys(ci);
 		hdl->createInstance(cop, ci);
 		assert(0);
@@ -525,7 +525,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMClass cc2("invalidTestSub");
 		cc2.setSuperClass("invalidTestBase");
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->createClass(cop, cc2);
 	}
 	catch (const OW_CIMException& e)
@@ -541,7 +541,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMQualifier assocQual2(assocQual);
 		assocQual2.setValue(OW_CIMValue(false));
 		cc2.addQualifier(assocQual2);
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->modifyClass(cop, cc2);
 		assert(0);
 	}
@@ -558,7 +558,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->modifyClass(cop, cc2);
 		assert(0);
 	}
@@ -571,7 +571,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		// test adding a class with no keys
 		OW_CIMClass cc2("invalidTestSub");
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->modifyClass(cop, cc2);
 		assert(0);
 	}
@@ -584,7 +584,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		OW_CIMClass cc2("invalidTestSub2");
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->modifyClass(cop, cc2);
 		assert(0);
 	}
@@ -598,7 +598,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMClass cc2(baseClass);
 		cc2.setSuperClass("invalid");
-		OW_CIMObjectPath cop(cc2.getName(), "root");
+		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
 		hdl->modifyClass(cop, cc2);
 		assert(0);
 	}
@@ -616,11 +616,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	ci.setProperty(theKeyProp);
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName());
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		cop.setKeys(ci);
 		try
 		{
-			hdl->deleteInstance("root", cop);
+			hdl->deleteInstance("root/testsuite", cop);
 		}
 		catch (const OW_CIMException& e)
 		{
@@ -652,7 +652,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci2(ci);
 		ci2.setClassName("fooBad");
-		OW_CIMObjectPath cop("fooBad", "root");
+		OW_CIMObjectPath cop("fooBad", "root/testsuite");
 		cop.setKeys(ci2);
 		hdl->modifyInstance(cop, ci2);
 		assert(0);
@@ -667,7 +667,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci2(ci);
 		ci2.setProperty("theKeyProp", OW_CIMValue(false));
-		OW_CIMObjectPath cop(ci2.getClassName(), "root");
+		OW_CIMObjectPath cop(ci2.getClassName(), "root/testsuite");
 		cop.setKeys(ci2);
 		hdl->modifyInstance(cop, ci2);
 		assert(0);
@@ -697,7 +697,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root");
+		OW_CIMObjectPath cop("badClass", "root/testsuite");
 		hdl->enumClassE(cop);
 		assert(0);
 	}
@@ -726,7 +726,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root");
+		OW_CIMObjectPath cop("badClass", "root/testsuite");
 		hdl->enumClassNamesE(cop);
 		assert(0);
 	}
@@ -755,7 +755,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root");
+		OW_CIMObjectPath cop("badClass", "root/testsuite");
 		hdl->enumInstancesE(cop);
 		assert(0);
 	}
@@ -783,7 +783,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root");
+		OW_CIMObjectPath cop("badClass", "root/testsuite");
 		hdl->enumInstanceNamesE(cop);
 		assert(0);
 	}
@@ -811,7 +811,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("root"), "select * from junk", "badql");
+		hdl->execQueryE(OW_CIMNameSpace("root/testsuite"), "select * from junk", "badql");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -822,7 +822,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_QUERY
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("root"), "xxx", "wql1");
+		hdl->execQueryE(OW_CIMNameSpace("root/testsuite"), "xxx", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -832,7 +832,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	try
 	{
-		hdl->execQueryE(OW_CIMNameSpace("root"), "select * from junk", "wql1");
+		hdl->execQueryE(OW_CIMNameSpace("root/testsuite"), "select * from junk", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -929,7 +929,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root");
+		OW_CIMObjectPath cop("badClass", "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->getProperty(cop, "theKeyProp");
 		assert(0);
@@ -942,7 +942,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(false));
 		hdl->getProperty(cop, "theKeyProp");
 		assert(0);
@@ -955,7 +955,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NO_SUCH_PROPERTY
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->getProperty(cop, "badProp");
 		assert(0);
@@ -986,7 +986,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("badClass", "root");
+		OW_CIMObjectPath cop("badClass", "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(true));
 		assert(0);
@@ -999,7 +999,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(false));
 		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(false));
 		assert(0);
@@ -1012,7 +1012,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NO_SUCH_PROPERTY
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty(cop, "badProp", OW_CIMValue(true));
 		assert(0);
@@ -1025,7 +1025,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_TYPE_MISMATCH
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty(cop, "theKeyProp", OW_CIMValue(OW_String("x")));
 		assert(0);
@@ -1053,7 +1053,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		hdl->getQualifierType(OW_CIMObjectPath("badQualifierType", "root"));
+		hdl->getQualifierType(OW_CIMObjectPath("badQualifierType", "root/testsuite"));
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -1096,7 +1096,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		hdl->deleteQualifierType(OW_CIMObjectPath("badQualifierType", "root"));
+		hdl->deleteQualifierType(OW_CIMObjectPath("badQualifierType", "root/testsuite"));
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -1143,7 +1143,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1163,7 +1163,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMObjectPathArray paths;
         in.push_back(OW_CIMParamValue("pathsBAD", OW_CIMValue(paths)));
 
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1184,7 +1184,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMObjectPathArray paths;
         in.push_back(OW_CIMParamValue("paths", OW_CIMValue(paths)));
 
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1204,7 +1204,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMObjectPathArray paths;
         in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(paths)));
 
-        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
+        hdl->invokeMethod(OW_CIMObjectPath("EXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1216,7 +1216,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        hdl->invokeMethod(OW_CIMObjectPath("BADEXP_BartComputerSystem"), "getstate", in, out);
+        hdl->invokeMethod(OW_CIMObjectPath("BADEXP_BartComputerSystem", "root/testsuite"), "getstate", in, out);
 		assert(0);
     }
     catch (const OW_CIMException& e)
@@ -1228,7 +1228,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        OW_CIMObjectPath cop("EXP_BartComputerSystem");
+        OW_CIMObjectPath cop("EXP_BartComputerSystem", "root/testsuite");
         cop.addKey("Name", OW_CIMValue("badKey"));
         cop.addKey("CreationClassName", OW_CIMValue("badKey"));
         hdl->invokeMethod(cop, "getstate", in, out);
@@ -1243,7 +1243,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     try
     {
         OW_CIMParamValueArray in, out;
-        OW_CIMObjectPath cop("EXP_BartComputerSystem");
+        OW_CIMObjectPath cop("EXP_BartComputerSystem", "root/testsuite");
         hdl->invokeMethod(cop, "BADgetstate", in, out);
 		assert(0);
     }
@@ -1255,7 +1255,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	// cleanup
 
-	hdl->deleteClass("root", baseClass.getName());
+	hdl->deleteClass("root/testsuite", baseClass.getName());
 
 
 }

@@ -335,37 +335,51 @@ OW_HTTPServer::startService()
 
 	if (m_options.useUDS)
 	{
-		m_pUDSServerSocket = new OW_ServerSocket;
-		m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000);
+		try
+		{
+			m_pUDSServerSocket = new OW_ServerSocket;
+			m_pUDSServerSocket->doListen(OW_DOMAIN_SOCKET_NAME, 1000);
 
-		lgr->logCustInfo("HTTP server listening on Unix Domain Socket");
+			lgr->logCustInfo("HTTP server listening on Unix Domain Socket");
 
-		OW_String URL = "ipc://localhost/cimom";
-		addURL(OW_URL(URL));
-		
-		OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
-			false, this, true));
+			OW_String URL = "ipc://localhost/cimom";
+			addURL(OW_URL(URL));
+			
+			OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
+				false, this, true));
 
-		env->addSelectable(m_pUDSServerSocket, cb);
+			env->addSelectable(m_pUDSServerSocket, cb);
+		}
+		catch (OW_SocketException& e)
+		{
+			lgr->logError(format("HTTP Server failed to listen on UDS: %1", e));
+		}
 	}
 	if (m_options.httpPort >= 0)
 	{
-		OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpPort);
-		m_pHttpServerSocket = new OW_ServerSocket;
-		m_pHttpServerSocket->doListen(lport, false, 1000, true);
-		m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
+		try
+		{
+			OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpPort);
+			m_pHttpServerSocket = new OW_ServerSocket;
+			m_pHttpServerSocket->doListen(lport, false, 1000, true);
+			m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
 
-		lgr->logCustInfo(format("HTTP server listening on port: %1",
-		   m_options.httpPort));
+			lgr->logCustInfo(format("HTTP server listening on port: %1",
+			   m_options.httpPort));
 
-		OW_String URL = "http://" + OW_SocketAddress::getAnyLocalHost().getName()
-			+ ":" + OW_String(m_options.httpPort) + "/cimom";
-		addURL(OW_URL(URL));
-		
-		OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
-			false, this, false));
+			OW_String URL = "http://" + OW_SocketAddress::getAnyLocalHost().getName()
+				+ ":" + OW_String(m_options.httpPort) + "/cimom";
+			addURL(OW_URL(URL));
+			
+			OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
+				false, this, false));
 
-		env->addSelectable(m_pHttpServerSocket, cb);
+			env->addSelectable(m_pHttpServerSocket, cb);
+		}
+		catch (OW_SocketException& e)
+		{
+			lgr->logError(format("HTTP Server failed to listen on TCP port: %1.  Msg: %2", m_options.httpPort, e));
+		}
 	}
 
 	if (m_options.httpsPort >= 0)
@@ -385,25 +399,32 @@ OW_HTTPServer::startService()
 		OW_UInt16 lport = static_cast<OW_UInt16>(m_options.httpsPort);
 		if (OW_SSLCtxMgr::isServer())
 		{
-			m_pHttpsServerSocket = new OW_ServerSocket;
-			m_pHttpsServerSocket->doListen(lport, true, 1000, true);
+			try
+			{
+				m_pHttpsServerSocket = new OW_ServerSocket;
+				m_pHttpsServerSocket->doListen(lport, true, 1000, true);
 
-			m_options.httpsPort =
-			   m_pHttpsServerSocket->getLocalAddress().getPort();
+				m_options.httpsPort =
+				   m_pHttpsServerSocket->getLocalAddress().getPort();
 
-			lgr->logCustInfo(format("HTTPS server listening on port: %1",
-			   m_options.httpsPort));
+				lgr->logCustInfo(format("HTTPS server listening on port: %1",
+				   m_options.httpsPort));
 
-			OW_String URL = "https://" +
-				OW_SocketAddress::getAnyLocalHost().getName() + ":" +
-				OW_String(m_options.httpsPort) + "/cimom";
+				OW_String URL = "https://" +
+					OW_SocketAddress::getAnyLocalHost().getName() + ":" +
+					OW_String(m_options.httpsPort) + "/cimom";
 
-			addURL(OW_URL(URL));
+				addURL(OW_URL(URL));
 
-			OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
-				true, this, false));
+				OW_SelectableCallbackIFCRef cb(new OW_HTTPServerSelectableCallback(
+					true, this, false));
 
-			env->addSelectable(m_pHttpsServerSocket, cb);
+				env->addSelectable(m_pHttpsServerSocket, cb);
+			}
+			catch (OW_SocketException& e)
+			{
+				lgr->logError(format("HTTP Server failed to listen on TCP port: %1.  Msg: %2", m_options.httpPort, e));
+			}
 		}
 		else
 #endif // #ifndef OW_NO_SSL

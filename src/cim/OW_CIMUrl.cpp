@@ -48,25 +48,8 @@ using std::ostream;
 struct OW_CIMUrl::URLData
 {
 	URLData() :
-		m_spec(), m_protocol(), m_host(), m_port(0), m_file(), m_ref(),
+		m_port(0),
 		m_localHost(true) {}
-
-	URLData(const URLData& x) :
-		m_spec(x.m_spec), m_protocol(x.m_protocol), m_host(x.m_host),
-		m_port(x.m_port), m_file(x.m_file), m_ref(x.m_ref),
-		m_localHost(x.m_localHost) {}
-
-	URLData& operator= (const URLData& x)
-	{
-		m_spec = x.m_spec;
-		m_protocol = x.m_protocol;
-		m_host = x.m_host;
-		m_port = x.m_port;
-		m_file = x.m_file;
-		m_ref = x.m_ref;
-		m_localHost = x.m_localHost;
-		return *this;
-	}
 
 	OW_String m_spec;
 	OW_String m_protocol;

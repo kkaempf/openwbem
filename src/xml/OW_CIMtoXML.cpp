@@ -300,8 +300,30 @@ void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 {
 	if (cop.getKeys().size() == 0)
 	{
-		// Class path
-		ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/>";
+		// Class object path
+
+		if (cop.getNameSpace() != CIM_DEFAULT_NS)
+		{
+			if (cop.getFullNameSpace().isLocal())
+			{
+				// do <LOCALCLASSPATH>
+				ostr << "<LOCALCLASSPATH>";
+				OW_CIMtoXML(cop.getFullNameSpace(),ostr,OW_CIMtoXMLFlags::doLocal);
+				ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/></LOCALCLASSPATH>";
+			}
+			else
+			{
+				// do <CLASSPATH>
+				ostr << "<CLASSPATH>";
+				OW_CIMtoXML(cop.getFullNameSpace(),ostr,OW_CIMtoXMLFlags::dontDoLocal);
+				ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/></CLASSPATH>";
+			}
+		}
+		else
+		{
+			// do <CLASSNAME>
+			ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/>";
+		}
 	}
 	else
 	{

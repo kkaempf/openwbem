@@ -106,8 +106,8 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 
 	try
 	{
-		OW_CIMObjectPath parentPath(name);
-		OW_CIMObjectPath cqtPath("Key", "root");
+		OW_CIMObjectPath parentPath(name, "root/testsuite");
+		OW_CIMObjectPath cqtPath("Key", "root/testsuite");
 		OW_CIMQualifierType cqt = hdl.getQualifierType(cqtPath);
 		OW_CIMQualifier cimQualifierKey(cqt);
 
@@ -181,7 +181,7 @@ enumClassNames(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE(cop, true);
 		while (enu.hasMoreElements())
 		{
@@ -197,7 +197,7 @@ enumClassNames(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE(cop, false);
 		while (enu.hasMoreElements())
 		{
@@ -221,7 +221,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = true, localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true, false);
 		while (enu.hasMoreElements())
 		{
@@ -244,7 +244,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = false, localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, false,
 																 false);
 		while (enu.hasMoreElements())
@@ -268,7 +268,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = false, localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, false,
 																 true);
 		while (enu.hasMoreElements())
@@ -292,7 +292,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = true, localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMClassEnumeration enu = hdl.enumClassE(cop, true,
 																 true);
 		while (enu.hasMoreElements())
@@ -324,7 +324,7 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		OW_CIMClass cimClass = hdl.getClass(cop, false);
 		cout << "CIMClass before: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -368,7 +368,7 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		OW_CIMClass cimClass = hdl.getClass(cop, false);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -387,7 +387,7 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		OW_CIMClass cimClass = hdl.getClass(cop, true);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -414,7 +414,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 
 	try
 	{
-		OW_CIMObjectPath cop(fromClass, "root");
+		OW_CIMObjectPath cop(fromClass, "root/testsuite");
 		OW_CIMClass cimClass = hdl.getClass(cop, false);
 
 		OW_CIMInstance newInst = cimClass.newInstance();
@@ -426,6 +426,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 								  OW_CIMValue(fromClass));
 
 		cop = OW_CIMObjectPath(fromClass, newInst.getKeyValuePairs());
+		cop.setNameSpace("root/testsuite");
 
 		hdl.createInstance(cop, newInst);
 	}
@@ -446,7 +447,7 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE(cop);
 		while (enu.hasMoreElements())
 		{
@@ -481,7 +482,7 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_B
 
 	try
 	{
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(cop, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 
@@ -523,7 +524,7 @@ getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
@@ -554,7 +555,7 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
@@ -581,10 +582,10 @@ deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& ofClass, const OW_String
 
 	try
 	{
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
-		hdl.deleteInstance("root", cop);
+		hdl.deleteInstance("root/testsuite", cop);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -602,7 +603,7 @@ deleteAssociations(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("root");
+		OW_CIMNameSpace path("root/testsuite");
 		hdl.execQueryE(path,
 			"delete from CIM_SystemComponent", "wql1");
 	}
@@ -624,7 +625,7 @@ setQualifier(OW_CIMOMHandleIFC& hdl)
 	{
 		OW_String qualName = "borgishness";
 
-		OW_CIMObjectPath cop(qualName);
+		OW_CIMObjectPath cop(qualName, "root/testsuite");
 		OW_CIMQualifierType qt(qualName);
 
 		qt.setDataType(OW_CIMDataType::STRING);
@@ -654,7 +655,7 @@ enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("", "root");
+		OW_CIMObjectPath cop("", "root/testsuite");
 		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE(cop);
 		while (enu.hasMoreElements())
 		{
@@ -684,7 +685,7 @@ getQualifier(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String qualType = "borgishness";
-		OW_CIMObjectPath cop(qualType);
+		OW_CIMObjectPath cop(qualType, "root/testsuite");
 		OW_CIMQualifierType qt = hdl.getQualifierType(cop);
 		cout << "Got Qualifier: " << qt.getName() << endl;
 		cout << qt.toMOF() << endl;
@@ -706,7 +707,7 @@ void createAssociation(OW_CIMOMHandleIFC& hdl, const OW_String& assocName,
 		const OW_String& propName2, const OW_CIMObjectPath& cop2)
 {
 
-		OW_CIMClass cc = hdl.getClass(OW_CIMObjectPath(assocName));
+		OW_CIMClass cc = hdl.getClass(OW_CIMObjectPath(assocName, "root/testsuite"));
 		OW_CIMInstance inst = cc.newInstance();
 			
 		inst.setProperty(propName1, OW_CIMValue(cop1));
@@ -714,6 +715,7 @@ void createAssociation(OW_CIMOMHandleIFC& hdl, const OW_String& assocName,
 		inst.setProperty(propName2, OW_CIMValue(cop2));
 
 		OW_CIMObjectPath cop(inst.getClassName(), inst.getKeyValuePairs());
+		cop.setNameSpace("root/testsuite");
 
 		hdl.createInstance(cop, inst);
 
@@ -726,19 +728,19 @@ setupAssociations(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop1("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop1("EXP_BionicComputerSystem", "root/testsuite");
 		cop1.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop1.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPath cop2("EXP_BionicComputerSystem2");
+		OW_CIMObjectPath cop2("EXP_BionicComputerSystem2", "root/testsuite");
 		cop2.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem2")));
 		cop2.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		OW_CIMObjectPath cop3("EXP_BionicComputerSystem2");
+		OW_CIMObjectPath cop3("EXP_BionicComputerSystem2", "root/testsuite");
 		cop3.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem2")));
 		cop3.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPath cop4("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop4("EXP_BionicComputerSystem", "root/testsuite");
 		cop4.addKey("CreationClassName", OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop4.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
@@ -772,7 +774,7 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
@@ -811,7 +813,7 @@ associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		
 		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(cop,
 					assocClass, resultClass, role, resultRole);
@@ -851,7 +853,7 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 
@@ -904,7 +906,7 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		OW_CIMClassEnumeration enu = hdl.associatorsClassesE(cop,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
@@ -946,7 +948,7 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
@@ -984,7 +986,7 @@ referenceNamesClass(OW_CIMOMHandleIFC& hdl,
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass);
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 
 		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE(cop,
 				resultClass, role);
@@ -1023,7 +1025,7 @@ references(OW_CIMOMHandleIFC& hdl,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		cop.addKey("CreationClassName",
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
@@ -1074,7 +1076,7 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
+		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 
 		OW_CIMClassEnumeration enu = hdl.referencesClassesE(cop,
 				resultClass, role, includeQualifiers, includeClassOrigin,
@@ -1114,7 +1116,7 @@ execQuery(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("root");
+		OW_CIMNameSpace path("root/testsuite");
 		OW_CIMInstanceEnumeration cie = hdl.execQueryE(path,
 			"select * from EXP_BionicComputerSystem", "wql1");
 		while (cie.hasMoreElements())
@@ -1148,7 +1150,7 @@ deleteQualifier(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String qualType = "borgishness";
-		OW_CIMObjectPath cop(qualType);
+		OW_CIMObjectPath cop(qualType, "root/testsuite");
 		hdl.deleteQualifierType(cop);
 	}
 	catch (OW_CIMException& e)
@@ -1167,7 +1169,7 @@ deleteClass(OW_CIMOMHandleIFC& hdl, const OW_String& delClass)
 
 	try
 	{
-		hdl.deleteClass("root", delClass);
+		hdl.deleteClass("root/testsuite", delClass);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1219,7 +1221,7 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BartComputerSystem", "root");
+		OW_CIMObjectPath cop("EXP_BartComputerSystem", "root/testsuite");
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
@@ -1289,8 +1291,8 @@ createNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		hdl.createNameSpace("root/Caldera");
-		hdl.createNameSpace("root/Caldera/test");
+		hdl.createNameSpace("root/testsuite/Caldera");
+		hdl.createNameSpace("root/testsuite/Caldera/test");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1309,14 +1311,14 @@ enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		cout << "deep = false" << endl;
-		OW_StringArray rval = hdl.enumNameSpaceE("root", OW_Bool(false));
+		OW_StringArray rval = hdl.enumNameSpaceE("root/testsuite", OW_Bool(false));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
 		}
 		
 		cout << "deep = true" << endl;
-		rval = hdl.enumNameSpaceE("root", OW_Bool(true));
+		rval = hdl.enumNameSpaceE("root/testsuite", OW_Bool(true));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
@@ -1338,7 +1340,7 @@ deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		hdl.deleteNameSpace("root/Caldera");
+		hdl.deleteNameSpace("root/testsuite/Caldera");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1357,7 +1359,7 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root");
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String(instName)));
 
@@ -1387,7 +1389,7 @@ setProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root");
+		OW_CIMObjectPath cop(ofClass, "root/testsuite");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(instName));
 

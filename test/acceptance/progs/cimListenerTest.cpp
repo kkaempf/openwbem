@@ -116,8 +116,8 @@ protected:
 
 void createClass(OW_CIMOMHandleIFC& hdl)
 {
-	OW_CIMObjectPath parentPath("EXP_IndicationTestComputerSystem");
-	OW_CIMObjectPath cqtPath("Key", "root");
+	OW_CIMObjectPath parentPath("EXP_IndicationTestComputerSystem", "root/testsuite");
+	OW_CIMObjectPath cqtPath("Key", "root/testsuite");
 	OW_CIMQualifierType cqt = hdl.getQualifierType(cqtPath);
 	OW_CIMQualifier cimQualifierKey(cqt);
 	cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
@@ -179,7 +179,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 
 void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
-	OW_CIMObjectPath cop("EXP_IndicationTestComputerSystem");
+	OW_CIMObjectPath cop("EXP_IndicationTestComputerSystem", "root/testsuite");
 	OW_CIMClass cimClass = hdl.getClass(cop, false);
 	OW_CIMProperty cimProp(OW_Bool(true));
 	cimProp.setDataType(OW_CIMDataType::STRING);
@@ -217,7 +217,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 	keyvect.append(cp);
 	cimInstance.setProperties(keyvect);*/
 
-	OW_CIMObjectPath cop(fromClass, "root");
+	OW_CIMObjectPath cop(fromClass, "root/testsuite");
 	OW_CIMClass cimClass = hdl.getClass(cop, false);
 
 	OW_CIMInstance newInst = cimClass.newInstance();
@@ -229,6 +229,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 							  OW_CIMValue(fromClass));
 
 	cop = OW_CIMObjectPath(fromClass, newInst.getKeyValuePairs());
+	cop.setNameSpace("root/testsuite");
 
 	hdl.createInstance(cop, newInst);
 }
@@ -237,7 +238,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass);
+	OW_CIMObjectPath cop(ofClass, "root/testsuite");
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
 
@@ -248,7 +249,7 @@ void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass);
+	OW_CIMObjectPath cop(ofClass, "root/testsuite");
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
 
@@ -263,10 +264,10 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 {
 	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass);
+	OW_CIMObjectPath cop(ofClass, "root/testsuite");
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
-	hdl.deleteInstance("root", cop);
+	hdl.deleteInstance("root/testsuite", cop);
 }
 
 
@@ -274,7 +275,7 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_String delClass = "EXP_IndicationTestComputerSystem";
-	hdl.deleteClass("root", delClass);
+	hdl.deleteClass("root/testsuite", delClass);
 }
 
 class ListenerLogger : public OW_Logger
@@ -320,8 +321,8 @@ int main(int argc, char* argv[])
 
 		OW_HTTPXMLCIMListener hxcl(logger);
 
-		OW_CIMNameSpace path("/root");
-		OW_String ns("/root");
+		OW_CIMNameSpace path("/root/testsuite");
+		OW_String ns("/root/testsuite");
 
 		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(httpClient);

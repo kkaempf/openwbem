@@ -176,7 +176,7 @@ private:
 	mutable OW_Mutex m_indicationLock;
 	OW_Bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;
-	OW_Bool m_shuttingDown;
+	OW_Bool m_running;
 };
 
 typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
