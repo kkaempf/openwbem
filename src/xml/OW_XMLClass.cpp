@@ -52,9 +52,11 @@ OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 		OW_String pname = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
 		if(pname.empty())
 		{
-			OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
+			//OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
+			// can't do this, because some clients send invalid xml, and
+			// interoperability is more important than spec purity.
 		}
-		if (firstTime)
+		else if (firstTime)
 		{
 			firstTime=false;
 			nameSpace += pname;
