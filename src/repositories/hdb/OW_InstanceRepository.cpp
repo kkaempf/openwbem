@@ -110,6 +110,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "no object path");
 	}
 
+	// Start return value with the namespace
 	OW_StringBuffer rv(makeClassKey(ns, cop.getObjectName()));
 	rv += '/';
 
@@ -131,8 +132,6 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 				theClass.getName()).c_str());
 	}
 
-	// Start return value with the namespace
-	//OW_String rv = makeClassKey(ns, cop.getObjectName()) + "/";
 	rv += oclass;
 
 	// Get keys from object path
