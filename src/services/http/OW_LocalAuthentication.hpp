@@ -62,9 +62,10 @@ private:
 		String cookie;
 		String nonce;
 		DateTime creationTime;
+		String userName;
 	};
 
-	String createNewChallenge(const String& uid);
+	String createNewChallenge(const String& uid, const String& userName);
 	static String generateNewNonce();
 	static void cleanupEntry(const AuthEntry& entry);
 	static void generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie);

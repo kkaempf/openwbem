@@ -186,7 +186,7 @@ LocalAuthentication::authenticate(String& userName,
 		}
 
 		// give them back the challenge
-		htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr));
+		htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr, userName));
 		return false;
 	}
 
@@ -219,6 +219,8 @@ LocalAuthentication::authenticate(String& userName,
 		return false;
 	}
 
+	userName = m_authEntries[i].userName;
+
 	iter = infoMap.find("cookie");
 	if (iter == infoMap.end() || iter->second.empty())
 	{
@@ -239,7 +241,7 @@ LocalAuthentication::authenticate(String& userName,
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-LocalAuthentication::createNewChallenge(const String& uid)
+LocalAuthentication::createNewChallenge(const String& uid, const String& userName)
 {
 	String nonce = generateNewNonce();
 	String cookieFileName;
@@ -251,6 +253,7 @@ LocalAuthentication::createNewChallenge(const String& uid)
 	newEntry.cookie = cookie;
 	newEntry.nonce = nonce;
 	newEntry.creationTime.setToCurrent();
+	newEntry.userName = userName;
 	m_authEntries.push_back(newEntry);
 
 	return String("OWLocal nonce=\"" + nonce + "\", cookiefile=\"" + cookieFileName + "\"");
