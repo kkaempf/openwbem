@@ -1326,11 +1326,11 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
+OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to delete the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETEINSTANCE, cop, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::DELETEINSTANCE, ns, aclInfo);
 
 	m_env->logDebug(format("OW_CIMServer::deleteInstance.  cop = %1",
 		cop.toString()));
@@ -1346,14 +1346,16 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 	try
 	{
 		OW_CIMClass theClass;
-		OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
+		OW_CIMObjectPath copWithNS(cop); // TODO: Remove this var once getInstance is fixed
+		copWithNS.setNameSpace(ns);
+		OW_CIMInstance oldInst = getInstance(copWithNS, false, true, true, NULL,
 			&theClass, intAclInfo);
 
 		OW_AssocDbHandle hdl = m_assocDb.getHandle();
 
 		// Ensure no associations exist for this instance
-		OW_String instStr = cop.toString();
-		if(hdl.isEntries(instStr))
+		OW_String instStr = copWithNS.toString();
+		if(hdl.hasAssocEntries(instStr))
 		{
 			// TODO: Revisit this.  Instead of throwing, it is allowed in the
 			// spec to to delete the associations that reference the instance.
@@ -1386,21 +1388,21 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 			// delete the entries from the database for this association.
 			if(!assocP)
 			{
-				hdl.deleteEntries(cop.getNameSpace(), oldInst);
+				hdl.deleteEntries(ns, oldInst);
 			}
 		}
 
-		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cop, aclInfo);
+		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, cop.getObjectName(), aclInfo);
 
 		if(instancep)	// If there is an instance provider, let it do the delete.
 		{
 			instancep->deleteInstance(
-				createProvEnvRef(real_ch), cop);
+				createProvEnvRef(real_ch), ns, cop);
 		}
 		else
 		{
 			// Delete the instance from the instance repository
-			m_iStore.deleteInstance(cop, theClass);
+			m_iStore.deleteInstance(ns, cop, theClass);
 		}
 
 		OW_ASSERT(oldInst);
@@ -2089,6 +2091,7 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 // Get the instance provider information - we locate the provider by traversing
 // up the class hierarchy to find the provider closest to the class that is
 // identified by the instance
+// TODO: Remove this function
 OW_InstanceProviderIFCRef
 OW_CIMServer::_getInstanceProvider(const OW_CIMObjectPath cop,
 	const OW_ACLInfo& aclInfo)
@@ -2207,7 +2210,7 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns,
 
 		try
 		{
-			wql->evaluate(ns, result, query, queryLanguage, lch);
+			wql->evaluate(ns.getNameSpace(), result, query, queryLanguage, lch);
 		}
 		catch (const OW_CIMException& ce)
 		{

@@ -98,8 +98,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
 	v.push_back(cp);
 
 	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, v);
-	path.setNameSpace(parentPath);
-	deleteInstance(path);
+	deleteInstance(parentPath, path);
 }
 
 //////////////////////////////////////////////////////////////////////////////

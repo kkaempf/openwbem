@@ -156,7 +156,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-    const OW_CIMObjectPath& cop)
+	const OW_String& ns, const OW_CIMObjectPath& cop)
 {
         env->getLogger()->
             logDebug("OW_NPIInstanceProviderProxy::deleteInstance()");
@@ -170,7 +170,9 @@ OW_NPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
 
-            CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
+			OW_CIMObjectPath copWithNS(cop);
+			copWithNS.setNameSpace(ns);
+            CIMObjectPath _cop = { (void*)static_cast<const void *> (&copWithNS)};
 
             m_ftable->fp_deleteInstance(&_npiHandle, _cop);
 

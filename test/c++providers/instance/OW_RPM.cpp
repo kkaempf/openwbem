@@ -240,10 +240,12 @@ public:
 	void
 		deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop)
 	{
 		// not applicable with our apt implementation.
 		(void)env;
+		(void)ns;
 		(void)cop;
 	}
 

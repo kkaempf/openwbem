@@ -190,7 +190,8 @@ public:
 	/**
 	 * Delete an existing class from the store
 	 *
-	 * @param path The path for the class to delete
+	 * @param ns The namespace containing the class to delete.
+	 * @param className The class to delete
 	 * @param aclInfo ACL object describing user making request.
 	 * @return an OW_CIMClass representing the class which was deleted.
 	 * @exception CIMException
@@ -407,7 +408,7 @@ public:
 	 *		CIM_ERR_INVALID_CLASS
 	 *		CIM_ERR_FAILED
 	 */
-	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_ACLInfo& aclInfo);
 
 	/**

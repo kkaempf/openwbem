@@ -61,7 +61,7 @@ const char * typeStrings[] =
 
 OW_WQLProcessor::OW_WQLProcessor(
 	const OW_Reference<OW_CIMOMHandleIFC>& hdl,
-	const OW_CIMNameSpace& ns)
+	const OW_String& ns)
 	: m_hdl(hdl)
 	, m_ns(ns)
 	, m_doingSelect(false)
@@ -122,7 +122,7 @@ void OW_WQLProcessor::visit_insertStmt(
 	const insertStmt* pinsertStmt
 	)
 {
-	m_tableRef = OW_CIMObjectPath(*pinsertStmt->m_pstrRelationName3, m_ns.getNameSpace());
+	m_tableRef = OW_CIMObjectPath(*pinsertStmt->m_pstrRelationName3, m_ns);
 	pinsertStmt->m_pinsertRest4->accept(this);
 }
 
@@ -189,7 +189,7 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	}
 	
 	// create the instance
-	OW_CIMObjectPath cop(ci.getClassName(), m_ns.getNameSpace());
+	OW_CIMObjectPath cop(ci.getClassName(), m_ns);
 	cop.setKeys(ci.getKeyValuePairs());
 	//OW_LOGDEBUG(format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(cop, ci);
@@ -275,7 +275,7 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 		ci.setProperty(cp);
 	}
 	// create the instance
-	OW_CIMObjectPath cop(ci.getClassName(), m_ns.getNameSpace());
+	OW_CIMObjectPath cop(ci.getClassName(), m_ns);
 	cop.setKeys(ci.getKeyValuePairs());
 	//OW_LOGDEBUG(format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 	m_hdl->createInstance(cop, ci);
@@ -297,10 +297,10 @@ void OW_WQLProcessor::visit_deleteStmt(
 		 i != instances.end();
 		 ++i)
 	{
-		OW_CIMObjectPath cop(i->getClassName(), m_ns.getNameSpace());
+		OW_CIMObjectPath cop(i->getClassName(), m_ns);
 		cop.setKeys(i->getKeyValuePairs());
 		//OW_LOGDEBUG(format("Deleting instance:\n%1", cop.toString()));
-		m_hdl->deleteInstance(cop);
+		m_hdl->deleteInstance(m_ns, cop);
 	}
 }
 
@@ -379,7 +379,7 @@ void OW_WQLProcessor::visit_updateStmt(
 			ci.setProperty(cp);
 		}
 		// update the instance
-		OW_CIMObjectPath cop(ci.getClassName(), m_ns.getNameSpace());
+		OW_CIMObjectPath cop(ci.getClassName(), m_ns);
 		cop.setKeys(ci.getKeyValuePairs());
 		//OW_LOGDEBUG(format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 		m_hdl->modifyInstance(cop, ci);
@@ -781,7 +781,7 @@ void OW_WQLProcessor::visit_relationExpr_strRelationName(
 	const relationExpr_strRelationName* prelationExpr_strRelationName
 	)
 {
-	m_tableRef = OW_CIMObjectPath(*prelationExpr_strRelationName->m_pstrRelationName1, m_ns.getNameSpace());
+	m_tableRef = OW_CIMObjectPath(*prelationExpr_strRelationName->m_pstrRelationName1, m_ns);
 	//OW_LOGDEBUG(format("Setting m_tableRef to: %1", m_tableRef.toString()));
 }
 
@@ -1420,7 +1420,7 @@ bool OW_WQLProcessor::classIsDerivedFrom(const OW_String& cls,
 			return true;
 		}
 		// didn't match, so try the superclass of curClassName
-		OW_CIMObjectPath cop(curClassName, m_ns.getNameSpace());
+		OW_CIMObjectPath cop(curClassName, m_ns);
 		OW_CIMClass cls2 = m_hdl->getClass(cop);
 		curClassName = cls2.getSuperClass();
 
@@ -2216,13 +2216,13 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 					if (valCop.getFullNameSpace().getNameSpace().length() > 0 &&
 						valCop.getFullNameSpace().getHostUrl().toString().length() > 0)
 					{
-						instCop.setNameSpace(m_ns.toString());
+						instCop.setNameSpace(m_ns);
 					}
 					// check if we've only got a namespace, with no url
 					else if (valCop.getFullNameSpace().getNameSpace().length() > 0 &&
 							 valCop.getFullNameSpace().getHostUrl().toString().length() == 0)
 					{
-						instCop.setNameSpace(m_ns.getNameSpace());
+						instCop.setNameSpace(m_ns);
 					}
 
 					if (compare(OW_CIMValue(instCop.toString()),
@@ -2389,7 +2389,7 @@ bool OW_WQLProcessor::LessThan::operator()(const OW_CIMValue& lhs, const OW_CIMV
 
 void OW_WQLProcessor::populateInstances(const OW_String& className)
 {
-	m_tableRef = OW_CIMObjectPath(className, m_ns.getNameSpace());
+	m_tableRef = OW_CIMObjectPath(className, m_ns);
 	populateInstances();
 }
 

@@ -166,7 +166,7 @@ OW_WQLFilterRep::getInstance(const OW_CIMObjectPath&, OW_Bool, OW_Bool,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_WQLFilterRep::deleteInstance(const OW_CIMObjectPath &/*cop*/,
+OW_WQLFilterRep::deleteInstance(const OW_String& /*ns*/, const OW_CIMObjectPath &/*cop*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

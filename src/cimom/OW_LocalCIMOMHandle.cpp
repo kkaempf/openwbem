@@ -112,10 +112,10 @@ OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteInstance(const OW_CIMObjectPath& path)
+OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path)
 {
 	OW_WriteLock wl = getWriteLock();
-	m_pServer->deleteInstance(path, m_aclInfo);
+	m_pServer->deleteInstance(ns, path, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

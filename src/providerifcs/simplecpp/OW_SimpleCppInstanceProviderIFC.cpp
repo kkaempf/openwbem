@@ -117,6 +117,7 @@ OW_SimpleCppInstanceProviderIFC::modifyInstance(
 void
 OW_SimpleCppInstanceProviderIFC::deleteInstance(
 	const OW_ProviderEnvironmentIFCRef&,
+	const OW_String&,
 	const OW_CIMObjectPath&)
 {
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);

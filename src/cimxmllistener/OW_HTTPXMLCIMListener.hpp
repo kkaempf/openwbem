@@ -58,7 +58,7 @@ public:
 
 	/**
 	 * Register for an indication.
-	 * @param op The object path to the CIMOM and namespace where the
+	 * @param op The namespace where the
 	 *            indication subscription and related objects will be created.
 	 * @param filter The filter for the indication subscription
 	 * @param querylanguage The language of the filter (typically wql1)
@@ -69,7 +69,7 @@ public:
 	 *		Use this handle to de-register the listener.
 	 */
 	OW_String registerForIndication(const OW_String& url,
-		const OW_CIMObjectPath& op, const OW_String& filter,
+		const OW_String& ns, const OW_String& filter,
 		const OW_String& querylanguage, OW_CIMListenerCallback& cb);
 
 	/**
@@ -95,6 +95,7 @@ private:
 	struct registrationInfo
 	{
 		OW_URL cimomUrl;
+		OW_String ns;
 		OW_CIMObjectPath handler;
 		OW_CIMObjectPath filter;
 		OW_CIMObjectPath subscription;

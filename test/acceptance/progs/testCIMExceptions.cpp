@@ -266,9 +266,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
+		OW_CIMObjectPath cop("foo");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
-		hdl->deleteInstance(cop);
+		hdl->deleteInstance("badNamespace", cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -281,9 +281,9 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_CLASS
 	try
 	{
-		OW_CIMObjectPath cop("fooXXX", "root");
+		OW_CIMObjectPath cop("fooXXX");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
-		hdl->deleteInstance(cop);
+		hdl->deleteInstance("root", cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -294,10 +294,10 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_NOT_FOUND
 	try
 	{
-		OW_CIMObjectPath cop("CIM_PhysicalElement", "root");
+		OW_CIMObjectPath cop("CIM_PhysicalElement");
 		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
 		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
-		hdl->deleteInstance(cop);
+		hdl->deleteInstance("root", cop);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -616,11 +616,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	ci.setProperty(theKeyProp);
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root");
+		OW_CIMObjectPath cop(baseClass.getName());
 		cop.setKeys(ci);
 		try
 		{
-			hdl->deleteInstance(cop);
+			hdl->deleteInstance("root", cop);
 		}
 		catch (const OW_CIMException& e)
 		{

@@ -168,7 +168,8 @@ public:
 	/**
 	 * Delete an existing class from the store
 	 *
-	 * @param path The path for the class to delete
+	 * @param ns The namespace containing the class to delete.
+	 * @param className The class to delete
 	 * @param aclInfo ACL object describing user making request.
 	 * @return A OW_CIMClass representing the class which was deleted.
 	 *		This is likely usefull only for creating CIM_ClassCreation incidations.
@@ -338,7 +339,7 @@ public:
 	 * @return an OW_CIMInstance representing the Instance just deleted.
 	 *		This is likely usefull only for creating CIM_InstDeletion indications;
 	 */
-	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath& cop,
+	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_ACLInfo& aclInfo) = 0;
 
 	/**

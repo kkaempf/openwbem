@@ -102,7 +102,7 @@ UtilKeyArray::toString(const OW_String& className)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
+OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
 	if(!cop)
@@ -126,7 +126,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_CIMObjectPath& cop,
 	}
 
 	// Start return value with the namespace
-	OW_String rv = makeClassKey(cop.getNameSpace(), cop.getObjectName()) + "/";
+	OW_String rv = makeClassKey(ns, cop.getObjectName()) + "/";
 	rv += oclass;
 
 	// Get keys from object path
@@ -304,7 +304,7 @@ OW_InstanceRepository::getCIMInstance(const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
 	throwIfNotOpen();
-	OW_String instanceKey = makeInstanceKey(cop, theClass);
+	OW_String instanceKey = makeInstanceKey(cop.getNameSpace(), cop, theClass);
 
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(instanceKey);
@@ -320,11 +320,11 @@ OW_InstanceRepository::getCIMInstance(const OW_CIMObjectPath& cop,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::deleteInstance(const OW_CIMObjectPath& cop,
+OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 	const OW_CIMClass& theClass)
 {
 	throwIfNotOpen();
-	OW_String instanceKey = makeInstanceKey(cop, theClass);
+	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
@@ -361,7 +361,7 @@ OW_InstanceRepository::createInstance(const OW_CIMObjectPath& cop,
 	// Create object path with keys from new instance
 	OW_CIMObjectPath icop(cop);
 	icop.setKeys(ci.getKeyValuePairs());
-	OW_String instanceKey = makeInstanceKey(icop, theClass);
+	OW_String instanceKey = makeInstanceKey(icop.getNameSpace(), icop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)
 	{
@@ -405,7 +405,7 @@ OW_InstanceRepository::modifyInstance(const OW_CIMObjectPath& cop,
 	OW_HDBHandleLock hdl(this, getHandle());
 
 	// Get old instance
-	OW_String instanceKey = makeInstanceKey(cop, theClass);
+	OW_String instanceKey = makeInstanceKey(cop.getNameSpace(), cop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
 	{
@@ -490,7 +490,7 @@ OW_InstanceRepository::instanceExists(const OW_CIMObjectPath& cop,
 {
 	throwIfNotOpen();
 	OW_Bool cc = false;
-	OW_String instanceKey = makeInstanceKey(cop, theClass);
+	OW_String instanceKey = makeInstanceKey(cop.getNameSpace(), cop, theClass);
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)

@@ -232,15 +232,16 @@ OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& classNam
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteInstance(const OW_CIMObjectPath& path)
+OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& inst)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"DeleteInstance", path.getNameSpace());;
+		"DeleteInstance", ns);;
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_DELETEINST);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeObjectPath(strm, inst);
 
-	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", path.getNameSpace()));
+	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", ns));
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -492,8 +492,9 @@ void
 OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
-	chdl->deleteInstance(op);
+	chdl->deleteInstance(ns, op);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 

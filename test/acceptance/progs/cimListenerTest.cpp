@@ -266,7 +266,7 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	OW_CIMObjectPath cop(ofClass);
 	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 	cop.addKey("Name", OW_CIMValue(theInstance));
-	hdl.deleteInstance(cop);
+	hdl.deleteInstance("root", cop);
 }
 
 
@@ -321,7 +321,7 @@ int main(int argc, char* argv[])
 		OW_HTTPXMLCIMListener hxcl(logger);
 
 		OW_CIMNameSpace path("/root");
-		OW_CIMObjectPath cop("", "/root");
+		OW_String ns("/root");
 
 		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(httpClient);
@@ -334,12 +334,12 @@ int main(int argc, char* argv[])
 
 		if (getenv("OWLONGTEST"))
 		{
-			handle = hxcl.registerForIndication(url, cop,
+			handle = hxcl.registerForIndication(url, ns,
 				"select * from OW_TestIndication1 where TheClass ISA "
 				"\"TestClass1\"", "wql1", test1cb);
 			registrationHandles.append(handle);
 
-			handle = hxcl.registerForIndication(url, cop,
+			handle = hxcl.registerForIndication(url, ns,
 				"select * from OW_TestIndication2 where TheInstance ISA "
 				"\"TestClass2\" and TheInstance.dummykey = \"foo\"", "wql1",
 				test2cb);
@@ -398,35 +398,35 @@ int main(int argc, char* argv[])
 			cout << e.getMessage() << endl;
 		}
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_ClassIndication", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_ClassCreation", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassCreation", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_ClassDeletion", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassDeletion", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_ClassModification", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassModification", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_InstModification", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstModification", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_InstDeletion", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstDeletion", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_InstRead", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstRead", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_InstCreation", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstCreation", "wql1", mcb);
 		registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop, "select * from CIM_InstIndication", "wql1", mcb);
+		handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstIndication", "wql1", mcb);
 		registrationHandles.append(handle);
 
 
-		//handle = hxcl.registerForIndication(url, cop, "select * from CIM_InstMethodCall", "wql1", mcb);
+		//handle = hxcl.registerForIndication(url, ns, "select * from CIM_InstMethodCall", "wql1", mcb);
 		//registrationHandles.append(handle);
 
 

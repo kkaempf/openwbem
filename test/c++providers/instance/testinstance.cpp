@@ -202,9 +202,11 @@ public:
 	void
 		deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop)
 	{
 		(void)env;
+		(void)ns;
 		OW_String name;
 		cop.getKeys()[0].getValue().get(name);
 		for (OW_Array<TestInstance>::iterator iter = g_saa.begin();

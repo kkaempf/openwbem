@@ -121,7 +121,7 @@ public:
 private:
 
 	void _processIndication(const OW_CIMInstance& instance,
-		const OW_CIMNameSpace& instNS);
+		const OW_String& instNS);
 
 
 	void addTrans(const OW_CIMInstance& indication, OW_CIMInstance& handler,
@@ -134,23 +134,12 @@ private:
 	struct ProcIndicationTrans
 	{
 		ProcIndicationTrans(const OW_CIMInstance& inst,
-			const OW_CIMNameSpace& ns)
+			const OW_String& ns)
 			: instance(inst)
 			, nameSpace(ns) {}
 
-		ProcIndicationTrans(const ProcIndicationTrans& arg)
-			: instance(arg.instance)
-			, nameSpace(arg.nameSpace) {}
-
-		ProcIndicationTrans& operator= (const ProcIndicationTrans& arg)
-		{
-			instance = arg.instance;
-			nameSpace = arg.nameSpace;
-			return *this;
-		}
-
 		OW_CIMInstance instance;
-		OW_CIMNameSpace nameSpace;
+		OW_String nameSpace;
 	};
 
 	int m_runCount;

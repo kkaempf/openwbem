@@ -361,10 +361,10 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
-		hdl.deleteInstance(cop);
+		hdl.deleteInstance("/root/acltest", cop);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

@@ -584,7 +584,7 @@ deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& ofClass, const OW_String
 		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
-		hdl.deleteInstance(cop);
+		hdl.deleteInstance("root", cop);
 	}
 	catch (OW_CIMException& e)
 	{

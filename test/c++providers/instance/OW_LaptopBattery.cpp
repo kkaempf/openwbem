@@ -153,9 +153,11 @@ namespace
 		/////////////////////////////////////////////////////////////////////////
 		virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& cop)
 		{
 			(void)env;
+			(void)ns;
 			(void)cop;
 			OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 		}

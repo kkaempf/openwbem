@@ -807,9 +807,8 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 
 	parser.mustGetChild();
 
-	OW_CIMObjectPath completePath = OW_XMLCIMFactory::createObjectPath(parser);
-	completePath.setNameSpace(path.getNameSpace());
-	hdl.deleteInstance( completePath );
+	OW_CIMObjectPath instPath = OW_XMLCIMFactory::createObjectPath(parser);
+	hdl.deleteInstance( path.getNameSpace(), instPath );
 }
 
 //////////////////////////////////////////////////////////////////////////////

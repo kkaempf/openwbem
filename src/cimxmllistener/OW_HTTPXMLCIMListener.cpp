@@ -284,7 +284,7 @@ OW_HTTPXMLCIMListener::shutdownHttpServer()
 OW_String
 OW_HTTPXMLCIMListener::registerForIndication(
 	const OW_String& url,
-	const OW_CIMObjectPath& op,
+	const OW_String& ns,
 	const OW_String& filter,
 	const OW_String& querylanguage,
 	OW_CIMListenerCallback& cb)
@@ -314,8 +314,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	{
 		try
 		{
-			OW_CIMObjectPath cop(op);
-			cop.setObjectName("CIM_IndicationHandlerXMLHTTPS");
+			OW_CIMObjectPath cop("CIM_IndicationHandlerXMLHTTPS", ns);
 			delivery = hdl.getClass(cop);
 		}
 		catch (OW_CIMException& e)
@@ -331,8 +330,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 
 	if (!useHttps)
 	{
-		OW_CIMObjectPath cop(op);
-		cop.setObjectName("CIM_IndicationHandlerXMLHTTP");
+		OW_CIMObjectPath cop("CIM_IndicationHandlerXMLHTTP", ns);
 		delivery = hdl.getClass(cop);
 		urlPrefix = "http://";
 		listenerPort = m_httpListenPort;
@@ -363,7 +361,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	try
 	{
 		cop = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
-		cop.setNameSpace(op.getNameSpace());
+		cop.setNameSpace(ns);
 		reg.handler = hdl.createInstance(cop, ci);
 	}
 	catch (OW_CIMException& e)
@@ -380,8 +378,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	}
 	
 	// get class of CIM_IndicationFilter and new instance of it
-	cop = OW_CIMObjectPath(op);
-	cop.setObjectName("CIM_IndicationFilter");
+	cop = OW_CIMObjectPath("CIM_IndicationFilter", ns);
 	OW_CIMClass cimFilter = hdl.getClass(cop, true);
 	ci = cimFilter.newInstance();
 
@@ -397,7 +394,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("Name", OW_CIMValue(httpPath));
 	// create instance of filter
 	cop = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
-	cop.setNameSpace(op.getNameSpace());
+	cop.setNameSpace(ns);
 	reg.filter = hdl.createInstance(cop, ci);
 
 	// get class of CIM_IndicationSubscription and new instance of it.
@@ -414,11 +411,12 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	// creating the instance the CIM_IndicationSubscription creates
 	// the event subscription
 	cop = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
-	cop.setNameSpace(op.getNameSpace());
+	cop.setNameSpace(ns);
 	reg.subscription = hdl.createInstance(cop, ci);
 
 	//save info for deletion later and callback delivery
 	reg.callback = &cb;
+	reg.ns = ns;
 
 	m_callbacks[httpPath] = reg;
 
@@ -471,8 +469,8 @@ OW_HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
 	OW_CIMProtocolIFCRef client(new OW_HTTPClient(reg.cimomUrl.toString()));
 	OW_CIMXMLCIMOMHandle hdl(client);
 
-	hdl.deleteInstance(reg.subscription);
-	hdl.deleteInstance(reg.filter);
-	hdl.deleteInstance(reg.handler);
+	hdl.deleteInstance(reg.ns, reg.subscription);
+	hdl.deleteInstance(reg.ns, reg.filter);
+	hdl.deleteInstance(reg.ns, reg.handler);
 }
 

@@ -80,7 +80,7 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	void deleteInstance(const OW_CIMObjectPath& cop,
+	void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass);
 
 	/**
@@ -165,7 +165,7 @@ private:
 
 	OW_String makeClassKey(const OW_String& ns, const OW_String& className);
 
-	OW_String makeInstanceKey(const OW_CIMObjectPath& cop,
+	OW_String makeInstanceKey(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass);
 
 	friend class OW_CIMServer;

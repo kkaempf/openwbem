@@ -38,7 +38,7 @@ OW_Mutex OW_WQLImpl::classLock;
 const char* OW_WQLImpl::parserInput;
 stmt* OW_WQLImpl::statement;
 
-void OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace,
+void OW_WQLImpl::evaluate(const OW_String& nameSpace,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage,
 	OW_Reference<OW_CIMOMHandleIFC> hdl)

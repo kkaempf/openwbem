@@ -162,10 +162,11 @@ OW_SimpleCppInstanceProviderProxy::OW_SimpleCppInstanceProviderProxy(
 void
 OW_SimpleCppInstanceProviderProxy::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->deleteInstance(env, cop);
+	m_pProv->deleteInstance(env, ns, cop);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

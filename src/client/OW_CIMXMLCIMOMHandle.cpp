@@ -367,14 +367,14 @@ instanceNameToKey(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::deleteInstance(const OW_CIMObjectPath& path)
+OW_CIMXMLCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& inst)
 {
 	static const char* const commandName = "DeleteInstance";
 	OW_Array<OW_Param> params;
 
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, params,
-						 instanceNameToKey(path, "InstanceName"));
+	intrinsicMethod(ns, commandName, op, params,
+						 instanceNameToKey(inst, "InstanceName"));
 }
 
 //////////////////////////////////////////////////////////////////////////////

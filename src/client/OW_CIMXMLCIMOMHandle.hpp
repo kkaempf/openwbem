@@ -69,12 +69,8 @@ public:
 	virtual void close() {}
 
 	/**
-	 * Deletes the CIM class for the object specified by the CIM object path.
-	 * The CIM object path consists of two parts: namespace + model path. The
-	 * namespace portion of the CIM object path identifies the host running the
-	 * CIM Object Manager and the  namespace. A namespace is a directory-like
-	 * structure that contains CIM classes, instances, and qualifier types.
-	 * @param path	The OW_CIMObjectPath identifying the class to delete.
+	 * @param ns The namespace containing the class to delete.
+	 * @param className The class to delete
 	 * @exception OW_CIMException If the object does not exist
 	 */
 	virtual void deleteClass(const OW_String& ns, const OW_String& className);
@@ -138,7 +134,7 @@ public:
 	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
 	 * @exception OW_CIMException If the instance does not exist.
 	 */
-	virtual void deleteInstance(const OW_CIMObjectPath &path);
+	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path);
 
 	/**
 	 * Enumerates the qualifiers defined in a namespace.

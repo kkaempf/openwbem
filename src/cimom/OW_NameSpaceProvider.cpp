@@ -48,6 +48,7 @@ OW_NameSpaceProvider::~OW_NameSpaceProvider()
 void
 OW_NameSpaceProvider::deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop)
 {
 	OW_CIMPropertyArray pra = cop.getKeys();
@@ -79,7 +80,7 @@ OW_NameSpaceProvider::deleteInstance(
 			"Name property contains an empty value");
 	}
 
-	OW_String newns = cop.getNameSpace() + "/" + nsName;
+	OW_String newns = ns + "/" + nsName;
 
 	env->getCIMOMHandle()->deleteNameSpace(newns);
 }

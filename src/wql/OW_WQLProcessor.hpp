@@ -43,7 +43,7 @@
 class OW_WQLProcessor : public OW_WQLVisitor
 {
 public:
-	OW_WQLProcessor(const OW_Reference<OW_CIMOMHandleIFC>& hdl, const OW_CIMNameSpace& ns);
+	OW_WQLProcessor(const OW_Reference<OW_CIMOMHandleIFC>& hdl, const OW_String& ns);
 	virtual ~OW_WQLProcessor()
 	{
 	}
@@ -923,7 +923,7 @@ private:
 	DataType m_exprValue;
 	OW_Array<DataType> m_valueArray;
 	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
-	OW_CIMNameSpace m_ns;
+	OW_String m_ns;
 	OW_CIMObjectPath m_tableRef;
 	bool m_doingSelect;
 	OW_StringArray m_propertyArray;

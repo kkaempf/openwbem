@@ -198,7 +198,7 @@ OW_AssocDbHandle::addEntry(const OW_AssocDbEntry& newEntry)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_AssocDbHandle::isEntries(const OW_String& targetObject)
+OW_AssocDbHandle::hasAssocEntries(const OW_String& targetObject)
 {
 	return (m_pdata->m_pdb->findEntry(targetObject, *this)) ? true : false;
 }

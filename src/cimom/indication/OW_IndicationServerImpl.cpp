@@ -269,7 +269,7 @@ OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 	const OW_CIMNameSpace& instNS)
 {
 	OW_MutexLock ml(m_procTransGuard);
-	ProcIndicationTrans trans(instanceArg, instNS);
+	ProcIndicationTrans trans(instanceArg, instNS.getNameSpace());
 	m_procTrans.push_back(trans);
 	m_wakeEvent.signal();
 }
@@ -295,7 +295,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
-	const OW_CIMNameSpace& instNS)
+	const OW_String& instNS)
 {
 	OW_ACLInfo aclInfo;
 

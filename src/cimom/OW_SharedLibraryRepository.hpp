@@ -181,10 +181,10 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath &cop,
+	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
 		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->deleteInstance(cop, aclInfo);
+		return m_ref->deleteInstance(ns, cop, aclInfo);
 	}
 
 	virtual void references(const OW_CIMObjectPath &path,

@@ -71,10 +71,10 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& cla
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_IndicationRepLayerImpl::deleteInstance(const OW_CIMObjectPath& path,
+OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMInstance instOrig = m_pServer->deleteInstance(path, aclInfo);
+	OW_CIMInstance instOrig = m_pServer->deleteInstance(ns, path, aclInfo);
 	OW_ACLInfo intAclInfo;
 
 	try
