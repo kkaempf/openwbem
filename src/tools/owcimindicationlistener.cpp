@@ -106,6 +106,8 @@ int main(int argc, char* argv[])
 		// wait until we get a SIGINT
 		shutdownSem.wait();
 
+		cout << "De-registering and shutting down." << endl;
+
 		hxcl.shutdownHttpServer();
 		hxcl.deregisterForIndication(handle);
 
