@@ -1,4 +1,3 @@
-MAKEDYLIB=1
 MAKEBUNDLE=1
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
