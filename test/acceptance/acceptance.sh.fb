@@ -238,7 +238,7 @@ StartDaemon()
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	WaitForLogResults 'CIMOM is now running' 60
+	WaitForLogResults 'owcimomd is now running' 60
 	if [ $WAIT_RESULTS -eq 0 ]
         then
           echo "The daemon should now be running."
@@ -277,7 +277,7 @@ RestartDaemon()
 		fi
 	fi
 	echo "Waiting for daemon to re-initialize"
-	WaitForLogResults 'CIMOM is now running' 60
+	WaitForLogResults 'owcimomd is now running' 60
 	if [ $WAIT_RESULTS -eq 0 ]
         then
           echo "The daemon should now be running."
@@ -308,7 +308,7 @@ StopDaemon()
 	  Exit 1
 	fi
 	kill -15 $PID # TERM
-	WaitForLogResults 'CIMOM has shutdown' 60 5
+	WaitForLogResults 'owcimomd has shutdown' 60 5
 	if [ -d /proc ] && [ -d /proc/$PID ]; then
 	  kill -9 $PID # KILL
 	  echo "** Daemon failed to terminate!!!  Check"

@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
 		// logger's not set up according to the config file until after init()
 		logger = env->getLogger(COMPONENT_NAME);
-		OW_LOG_INFO(logger, "CIMOM beginning startup");
+		OW_LOG_INFO(logger, "owcimomd (" OW_VERSION ") beginning startup");
 
 		// Call platform specific code to become a daemon/service
 		try
@@ -90,12 +90,12 @@ int main(int argc, char* argv[])
 		catch (const DaemonException& e)
 		{
 			OW_LOG_FATAL_ERROR(logger, e.getMessage());
-			OW_LOG_FATAL_ERROR(logger, "CIMOM failed to initialize. Aborting...");
+			OW_LOG_FATAL_ERROR(logger, "owcimomd failed to initialize. Aborting...");
 			return 1;
 		}
 		// Start all of the cimom services
 		env->startServices();
-		OW_LOG_INFO(logger, "CIMOM is now running!");
+		OW_LOG_INFO(logger, "owcimomd is now running!");
 
 		// Do this after initialization to prevent an infinite loop.
 		std::unexpected_handler oldUnexpectedHandler = 0;
@@ -155,12 +155,12 @@ int main(int argc, char* argv[])
 					}
 #endif
 
-					OW_LOG_INFO(logger, "CIMOM received shutdown notification."
+					OW_LOG_INFO(logger, "owcimomd received shutdown notification."
 						" Initiating shutdown");
 					env->shutdown();
 					break;
 				case Platform::REINIT:
-					OW_LOG_INFO(logger, "CIMOM received restart notification."
+					OW_LOG_INFO(logger, "owcimomd received restart notification."
 						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
@@ -182,21 +182,21 @@ int main(int argc, char* argv[])
 	}
 	catch (Exception& e)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN owcimomd MAIN!");
 		OW_LOG_FATAL_ERROR(logger, Format("* %1", e));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch (std::exception& se)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "* std::exception CAUGHT IN owcimomd MAIN!");
 		OW_LOG_FATAL_ERROR(logger, Format("* Message: %1", se.what()));
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
 	catch(...)
 	{
-		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT owcimomd MAIN!");
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
@@ -205,7 +205,7 @@ int main(int argc, char* argv[])
 	// Call platform specific shutdown routine
 	Platform::daemonShutdown(OW_DAEMON_NAME);
 
-	OW_LOG_INFO(logger, "CIMOM has shutdown");
+	OW_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;
 }
 
@@ -224,7 +224,7 @@ processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 	{
 		if (opts.error)
 		{
-			std::cerr << "Unknown command line argument for CIMOM" << std::endl;
+			std::cerr << "Unknown command line argument for owcimomd" << std::endl;
 		}
 		printUsage(std::cout);
 		exit(0);
