@@ -46,16 +46,15 @@ class shlSharedLibrary : public SharedLibrary
 {
 public:
 	shlSharedLibrary(void * libhandle, const String& libName)
-		: SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
+		: SharedLibrary(), m_libhandle( reinterpret_cast<shl_t>(libhandle) ), m_libName(libName)
 	{
 	}
 	virtual ~shlSharedLibrary();
 
 protected:
-	virtual bool doGetFunctionPointer( const String& functionName,
-											  void** fp ) const;
+	virtual bool doGetFunctionPointer( const String& functionName, void** fp ) const;
 private:
-	shl_t m_libhandle;
+	mutable shl_t m_libhandle;
 	String m_libName;
 };
 

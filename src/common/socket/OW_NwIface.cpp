@@ -31,45 +31,56 @@
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
+  #include <unistd.h>
 #endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+
 #ifdef OW_HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+  #include <sys/socket.h>
 #endif
+
 #include <arpa/inet.h>
 #include <errno.h>
+
 #ifdef OW_GNU_LINUX
-#include <sys/ioctl.h>
-#include <linux/if.h>
-#include <string.h>
+  #include <sys/ioctl.h>
+  #include <linux/if.h>
+  #include <string.h>
+
 #elif defined (OW_OPENSERVER)
-#include <string.h>
-#include <stropts.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <strings.h>
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <paths.h>
-#include <sys/mdi.h>
+  #include <string.h>
+  #include <stropts.h>
+  #include <net/if.h>
+  #include <netinet/in.h>
+  #include <strings.h>
+  #include <arpa/inet.h>
+  #include <fcntl.h>
+  #include <paths.h>
+  #include <sys/mdi.h>
+
 #elif defined (OW_DARWIN)
-#include <net/if.h>
-#include <sys/ioctl.h>
+  #include <net/if.h>
+  #include <sys/ioctl.h>
 #else
-#ifdef OW_HAVE_STROPTS_H
-#include <stropts.h>
+
+  #ifdef OW_HAVE_STROPTS_H
+    #include <stropts.h>
+  #endif
+
+  #include <net/if.h>
+  #include <netinet/in.h>
+
+  #if defined (OW_HAVE_SYS_SOCKIO_H)
+    #include <sys/sockio.h>
+  #endif
+
+  #include <strings.h>
+  #include <fcntl.h>
 #endif
-#include <net/if.h>
-#include <netinet/in.h>
-#if defined (OW_HAVE_SYS_SOCKIO_H)
-#include <sys/sockio.h>
-#endif
-#include <strings.h>
-#include <fcntl.h>
-#endif
+
 #include <string.h>
 } // extern "C"
 // These need to be after the system includes because of some weird openserver

@@ -43,7 +43,7 @@ bool shlSharedLibrary::doGetFunctionPointer(const String& functionName,
 		void** fp) const
 {
 	void *symaddr = NULL;
-    int status = shl_findsym( m_libhandle, functionName.c_str(), TYPE_PROCEDURE, &symaddr );
+	int status = shl_findsym( &m_libhandle, functionName.c_str(), TYPE_PROCEDURE, &symaddr );
 	if (status == -1 || symaddr == NULL)
 	{
 		return false;

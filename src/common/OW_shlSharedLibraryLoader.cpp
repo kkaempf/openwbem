@@ -34,6 +34,7 @@
 #include "OW_Format.hpp"
 
 #include <dl.h>
+#include <errno.h>
 
 namespace OpenWBEM
 {
@@ -52,7 +53,7 @@ shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	else
 	{
 		logger->logError(format("shlSharedLibraryLoader::loadSharedLibrary "
-			"dlopen returned NULL.  Error is: %1", dlerror()));
+			"shl_load returned NULL.  Error is: %1(%2)", errno, strerror(errno)));
 		return SharedLibraryRef( 0 );
 	}
 }
