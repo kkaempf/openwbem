@@ -79,6 +79,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_IOIFCStreamBuffer.obj \
 	$(OBJDIR)\OW_Logger.obj \
 	$(OBJDIR)\OW_LoggerImpls.obj \
+	$(OBJDIR)\OW_MD5.obj \
 	$(OBJDIR)\OW_MemTracer.obj \
 	$(OBJDIR)\OW_Mutex.obj \
 	$(OBJDIR)\OW_MutexImpl.obj \
@@ -305,6 +306,9 @@ $(OBJDIR)\OW_Logger.obj: $(COMMONSRCDIR)\OW_Logger.cpp
 
 $(OBJDIR)\OW_LoggerImpls.obj: $(COMMONSRCDIR)\OW_LoggerImpls.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_LoggerImpls.cpp
+
+$(OBJDIR)\OW_MD5.obj: $(COMMONSRCDIR)\OW_MD5.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_MD5.cpp
 
 $(OBJDIR)\OW_MemTracer.obj: $(COMMONSRCDIR)\OW_MemTracer.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_MemTracer.cpp

@@ -71,8 +71,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_HTTPDeflateOStream.obj \
 	$(OBJDIR)\OW_HTTPException.obj \
 	$(OBJDIR)\OW_HTTPLenLimitIStream.obj \
-	$(OBJDIR)\OW_HTTPUtils.obj \
-	$(OBJDIR)\OW_MD5.obj
+	$(OBJDIR)\OW_HTTPUtils.obj
 
 CLIENTOBJS = \
 	$(OBJDIR)\OW_HTTPClient.obj
@@ -135,10 +134,6 @@ $(OBJDIR)\OW_HTTPLenLimitIStream.obj: $(COMMONSRCDIR)\OW_HTTPLenLimitIStream.cpp
 $(OBJDIR)\OW_HTTPUtils.obj: $(COMMONSRCDIR)\OW_HTTPUtils.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_HTTPUtils.cpp
 
-$(OBJDIR)\OW_MD5.obj: $(COMMONSRCDIR)\OW_MD5.cpp
-	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\OW_MD5.cpp
-
-	
 $(OBJDIR)\OW_HTTPClient.obj: $(CLIENTSRCDIR)\OW_HTTPClient.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(CLIENTSRCDIR)\OW_HTTPClient.cpp
 

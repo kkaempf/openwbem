@@ -97,8 +97,8 @@ public:
 	String toString() const;
 private:
 	unsigned char m_uuid[16];
-	friend bool operator==(const UUID& x, const UUID& y);
-	friend bool operator<(const UUID& x, const UUID& y);
+	friend OW_COMMON_API bool operator==(const UUID& x, const UUID& y);
+	friend OW_COMMON_API bool operator<(const UUID& x, const UUID& y);
 };
 OW_COMMON_API bool operator!=(const UUID& x, const UUID& y);
 

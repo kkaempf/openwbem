@@ -127,11 +127,11 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_RWLocker", OW_RWLockerTestCases::suite());
 	runner.addTest( "OW_FileSystem", OW_FileSystemTestCases::suite());
 	runner.addTest( "OW_CIMProperty", OW_CIMPropertyTestCases::suite());
-	//-runner.addTest( "OW_CIMInstance", OW_CIMInstanceTestCases::suite());
-	//-runner.addTest( "OW_StringArrayProperty", OW_StringArrayPropertyTestCases::suite());
-	//-runner.addTest( "OW_CIMValue", OW_CIMValueTestCases::suite());
-	//-runner.addTest( "OW_CIMClass", OW_CIMClassTestCases::suite());
-	//-runner.addTest( "OW_Exception", OW_ExceptionTestCases::suite());
+	runner.addTest( "OW_CIMInstance", OW_CIMInstanceTestCases::suite());
+	runner.addTest( "OW_StringArrayProperty", OW_StringArrayPropertyTestCases::suite());
+	runner.addTest( "OW_CIMValue", OW_CIMValueTestCases::suite());
+	runner.addTest( "OW_CIMClass", OW_CIMClassTestCases::suite());
+	runner.addTest( "OW_Exception", OW_ExceptionTestCases::suite());
 	//-runner.addTest( "OW_StringStream", OW_StringStreamTestCases::suite());
 	//-runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
 	//-runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
