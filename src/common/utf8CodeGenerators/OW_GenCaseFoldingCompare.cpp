@@ -1,3 +1,32 @@
+/*******************************************************************************
+* Copyright (C) 2003 Vintela, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Center 7 nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL Center 7, Inc OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_StringStream.hpp"
@@ -7,6 +36,7 @@
 #include <algorithm>
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 using namespace OpenWBEM;
@@ -74,24 +104,49 @@ int followOrAddTransition(int curTransition, UInt8 input, int aux)
 	int nextTransition = stateMachine.getTransition(curTransition, input);
 	if (nextTransition == StateMachine::invalid)
 	{
+		// no transition, add one
 		int newState = stateMachine.addState();
 		stateMachine.addTransition(curTransition, input, newState, aux);
 		nextTransition = newState;
 	}
 	else
 	{
+		// found a transition
 		assert(stateMachine.getStateStr(curTransition) == aux);
+		// check that it's for the right string
+/*
+		int stateStr = stateMachine.getStateStr(nextTransition);
+		if (stateStr != aux)
+		{
+			// not the right string, add a new one.
+			int newState = stateMachine.addState();
+			stateMachine.addTransition(curTransition, input, newState, aux);
+			nextTransition = newState;
+		}
+*/
 	}
 	return nextTransition;
 }
 
 void buildTransitions(const String& str1, const String& str2)
 {
+	cout << "buildTransitions: str1 = \"";
+	for (int i = 0; i < str1.length(); ++i)
+	{
+		cout << hex << "\\x" << (int)(unsigned char)str1[i];
+	}
+	cout << "\" str2 = \"";
+	for (int i = 0; i < str2.length(); ++i)
+	{
+		cout << hex << "\\x" << (int)(unsigned char)str2[i];
+	}
+	cout << "\"\n";
+
 	// do it first for str1/str2
 	int trans = StateMachine::start;
 	int pos1 = 0;
 	int pos2 = 0;
-	while (pos1 < str1.length() && pos1 < str2.length())
+	while (pos1 < str1.length() || pos2 < str2.length())
 	{
 		if (str1[pos1])
 			trans = followOrAddTransition(trans, str1[pos1++], 1);
@@ -103,7 +158,7 @@ void buildTransitions(const String& str1, const String& str2)
 	trans = StateMachine::start;
 	pos1 = 0;
 	pos2 = 0;
-	while (pos1 < str1.length() && pos1 < str2.length())
+	while (pos1 < str1.length() || pos2 < str2.length())
 	{
 		if (str2[pos2])
 			trans = followOrAddTransition(trans, str2[pos2++], 1);
@@ -138,32 +193,6 @@ struct processLine
 		}
 
 		buildTransitions(str1, str2);
-		// do it first for str1/str2
-		int trans = StateMachine::start;
-		int pos1 = 0;
-		int pos2 = 0;
-		while (pos1 < str1.length() && pos1 < str2.length())
-		{
-			if (str1[pos1])
-				trans = followOrAddTransition(trans, str1[pos1++], 1);
-
-			if (str2[pos2])
-				trans = followOrAddTransition(trans, str2[pos2++], 2);
-		}
-		// do it next for str2/str1
-		trans = StateMachine::start;
-		pos1 = 0;
-		pos2 = 0;
-		while (pos1 < str1.length() && pos1 < str2.length())
-		{
-			if (str2[pos2])
-				trans = followOrAddTransition(trans, str2[pos2++], 1);
-
-			if (str1[pos1])
-				trans = followOrAddTransition(trans, str1[pos1++], 2);
-		}
-//		cout << "finished building SM for " << s << "\n";
-
 	}
 };
 
@@ -175,7 +204,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	fstream in(argv[1]);
+	ifstream in(argv[1]);
 	if (!in)
 	{
 		cerr << "could not open " << argv[1] << endl;
@@ -189,21 +218,62 @@ int main(int argc, char** argv)
 	for_each(sa.begin(), sa.end(), processLine());
 
 	// now add transitions for equal matches
-	for (int i = 0; i < 256; ++i)
+/*	for (int i = 1; i < 256; ++i)
 	{
 		String s = String(char(i));
 		buildTransitions(s, s);
 	}
+*/
+
+	// TODO: disable duplicate states
 
 	// now generate the code:
-	cout << "int utf8strcasecmp(const char* str1, const char* str2)\n";
+	cout << "/*******************************************************************************\n";
+	cout << "* Copyright (C) 2003 Vintela, Inc All rights reserved.\n";
+	cout << "*\n";
+	cout << "* Redistribution and use in source and binary forms, with or without\n";
+	cout << "* modification, are permitted provided that the following conditions are met:\n";
+	cout << "*\n";
+	cout << "*  - Redistributions of source code must retain the above copyright notice,\n";
+	cout << "*    this list of conditions and the following disclaimer.\n";
+	cout << "*\n";
+	cout << "*  - Redistributions in binary form must reproduce the above copyright notice,\n";
+	cout << "*    this list of conditions and the following disclaimer in the documentation\n";
+	cout << "*    and/or other materials provided with the distribution.\n";
+	cout << "*\n";
+	cout << "*  - Neither the name of Center 7 nor the names of its\n";
+	cout << "*    contributors may be used to endorse or promote products derived from this\n";
+	cout << "*    software without specific prior written permission.\n";
+	cout << "*\n";
+	cout << "* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''\n";
+	cout << "* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n";
+	cout << "* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE\n";
+	cout << "* ARE DISCLAIMED. IN NO EVENT SHALL Center 7, Inc OR THE CONTRIBUTORS\n";
+	cout << "* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR\n";
+	cout << "* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF\n";
+	cout << "* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS\n";
+	cout << "* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN\n";
+	cout << "* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)\n";
+	cout << "* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE\n";
+	cout << "* POSSIBILITY OF SUCH DAMAGE.\n";
+	cout << "*******************************************************************************/\n";
+	cout << "\n// Do NOT modify this file.  It was generated by OW_GenCaseFoldingCompare.cpp\n";
+	cout << "// If this file needs to be modified, change the generator and regenerate it.\n";
+	cout << "#include \"OW_config.h\"\n";
+	cout << "#include \"OW_UTF8Utils.hpp\"\n";
+	cout << "\nnamespace OpenWBEM\n{\n";
+	cout << "namespace UTF8Utils\n{\n";
+	cout << "\n/////////////////////////////////////////////////////////////////////////////\n";
+
+	cout << "int compareToIgnoreCase(const char* cstr1, const char* cstr2)\n";
 	cout << "{\n";
-	cout << "begin:\n";
+	cout << "\tconst unsigned char* str1 = reinterpret_cast<const unsigned char*>(cstr1);\n";
+	cout << "\tconst unsigned char* str2 = reinterpret_cast<const unsigned char*>(cstr2);\n";
 
 	for (int i = 0; i < stateMachine.m_states.size(); ++i)
 	{
 		if (stateMachine.m_states[i].second == -1)
-			continue; // it's an acceptance state, we don't need to print it
+			continue; // it's an acceptance or duplicate state, we don't need to print it
 
 		cout << "state" << i << ":\n";
 		if (stateMachine.m_states[i].second == 1)
@@ -223,20 +293,19 @@ int main(int argc, char** argv)
 			if (stateMachine.m_states[i].first[j] != -1)
 			{
 				if (stateMachine.m_states[stateMachine.m_states[i].first[j]].second == -1)
-					cout << "\t\tcase 0x" << hex << j << ": goto begin;\n";
+					cout << "\t\tcase 0x" << hex << j << ": goto state0;\n";
 				else
 					cout << "\t\tcase 0x" << hex << j << ": goto state" << stateMachine.m_states[i].first[j] << ";\n";
 			}
 		}
 		cout << "\t\tdefault: goto no_match;\n\t}\n";
 	}
-	cout << "match:\n";
-	cout << "\treturn 0;\n";
 	cout << "no_match:\n";
 	cout << "\treturn *(str1-1) - *(str2-1);\n";
 	cout << "zero:\n";
 	cout << "\treturn 0 - *str2;\n";
-	cout << "}\n";
-
+	cout << "}\n\n";
+	cout << "} // end namespace UTF8Utils\n";
+	cout << "} // end namespace OpenWBEM\n\n";
 }
 
