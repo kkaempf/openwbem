@@ -1931,6 +1931,7 @@ void WQLProcessor::visit_aExprConst_BITCONST(
 {
 	char* endptr;
 	const char* p = paExprConst_BITCONST->m_pBITCONST1->c_str();
+	errno = 0;
 	Int64 val = String::strtoll(p, &endptr, 2);
 	if (*endptr != '\0' || errno == ERANGE)
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad bitstring integer input '%1'",
@@ -1944,6 +1945,7 @@ void WQLProcessor::visit_aExprConst_HEXCONST(
 {
 	char* endptr;
 	const char* p = paExprConst_HEXCONST->m_pHEXCONST1->c_str();
+	errno = 0;
 	Int64 val = String::strtoll(p, &endptr, 16);
 	if (*endptr != '\0' || errno == ERANGE)
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad bitstring integer input '%1'",

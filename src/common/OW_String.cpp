@@ -914,6 +914,7 @@ T convertToRealType(const COWReference<String::ByteBuf>& m_buf, const char* type
 	if (m_buf)
 	{
 		char* endptr;
+		errno = 0;		// errno is thread local
 		double v = ::strtod(m_buf->data(), &endptr);
 		T rv = static_cast<T>(v);
 		if (*endptr != '\0' || errno == ERANGE || rv == HUGE_VAL || rv == -HUGE_VAL)
@@ -965,6 +966,7 @@ T doConvertToIntType(const COWReference<String::ByteBuf>& m_buf, const char* typ
 	if (m_buf)
 	{
 		char* endptr;
+		errno = 0;		// errno is thread local
 		FPRT v = fp(m_buf->data(), &endptr, base);
 		T rv = static_cast<T>(v);
 		if (*endptr != '\0' || errno == ERANGE || FPRT(rv) != v)

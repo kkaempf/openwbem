@@ -328,6 +328,7 @@ other			.
 
 					BEGIN(INITIAL);
 					const char* literalbuf = strbuffer.c_str();
+					errno = 0;
 					val = strtol(literalbuf, &endptr, 16);
 					if (*endptr != '\0' || errno == ERANGE)
 						OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad hexadecimal integer input '%1'",
