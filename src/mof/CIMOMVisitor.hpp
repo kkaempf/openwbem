@@ -46,6 +46,7 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_MofParserErrorHandlerIFC.hpp"
+#include "OW_Cache.hpp"
 
 struct lineInfo;
 
@@ -156,13 +157,17 @@ private:
 	OW_String m_source;
 	OW_String m_sourceType;
 	
-	OW_Map<OW_String, OW_CIMQualifierType> m_dataTypeCache;
+    OW_Cache<OW_CIMQualifierType> m_dataTypeCache;
 	OW_CIMDataType getQualifierDataType(const OW_String& qualName, const lineInfo& li);
 	OW_CIMQualifierType getQualifierType(const OW_String& qualName, const lineInfo& li);
+
+    OW_Cache<OW_CIMClass> m_classCache;
+	OW_CIMClass getClass(const OW_String& className, const lineInfo& li);
 	
 	OW_CIMValue convertValuesIntoValueArray( const OW_CIMValueArray& values );
 	
 	// Functions that call into the remote cimom handle
+    OW_CIMClass CIMOMgetClass(const OW_String& className, const lineInfo& li);
 	void CIMOMcreateClass(const lineInfo& li);
 	void CIMOMsetQualifierType(const lineInfo& li);
 	void CIMOMcreateInstance(const lineInfo& li);
