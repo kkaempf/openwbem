@@ -293,6 +293,8 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 
 	// For extrinsic methods, we leave the parser sitting on either
 	// RETURNVALUE, PARAMVALUE or /METHODRESPONSE
+	// For intrinsic methods, it's sitting on either IPARAMVALUE or
+	// /IMETHODRESPONSE
 }
 
 
