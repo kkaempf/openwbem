@@ -319,6 +319,6 @@ void LinuxPAMAuthentication::doInit(ServiceEnvironmentIFCRef env)
 
 } // end namespace OpenWBEM
 
-OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthentication);
+OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthentication,pam);
 
 

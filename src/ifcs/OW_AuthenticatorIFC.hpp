@@ -109,7 +109,8 @@ protected:
 };
 typedef SharedLibraryReference<Reference<AuthenticatorIFC> > AuthenticatorIFCRef;
 
-#define OW_AUTHENTICATOR_FACTORY(derived) \
+#if !defined(OW_STATIC_SERVICES)  
+#define OW_AUTHENTICATOR_FACTORY(derived, authenticatorName) \
 extern "C" OpenWBEM::AuthenticatorIFC* \
 createAuthenticator() \
 { \
@@ -120,6 +121,14 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 }
+#else
+#define OW_AUTHENTICATOR_FACTORY(derived, authenticatorName) \
+extern "C" OpenWBEM::AuthenticatorIFC* \
+createAuthenticator_##authenticatorName() \
+{ \
+	return new derived; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 } // end namespace OpenWBEM
 

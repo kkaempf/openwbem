@@ -104,7 +104,12 @@ typedef SharedLibraryReference< Reference<CppProviderBaseIFC> > CppProviderBaseI
 
 } // end namespace OpenWBEM
 
+
+// This is here to prevent existing code from breaking.  New code should use OW_PROVIDERFACTORY_NOID.
 #define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
+
+#if !defined(OW_STATIC_SERVICES)
+#define OW_PROVIDERFACTORY_NOID(prov, name) OW_PROVIDERFACTORY(prov, NO_ID)
 #define OW_PROVIDERFACTORY(prov, name) \
 extern "C" const char* \
 getOWVersion() \
@@ -116,5 +121,14 @@ createProvider##name() \
 { \
 	return new prov; \
 }
+#else
+#define OW_PROVIDERFACTORY_NOID(prov, name) OW_PROVIDERFACTORY(prov, NO_ID##name)
+#define OW_PROVIDERFACTORY(prov, name) \
+extern "C" OpenWBEM::CppProviderBaseIFC* \
+createProvider##name() \
+{ \
+	return new prov; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 #endif

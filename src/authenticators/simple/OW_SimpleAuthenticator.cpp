@@ -161,5 +161,5 @@ SimpleAuthenticator::loadPasswordFile(ServiceEnvironmentIFCRef env)
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_AUTHENTICATOR_FACTORY(OpenWBEM::SimpleAuthenticator)
+OW_AUTHENTICATOR_FACTORY(OpenWBEM::SimpleAuthenticator, simple)
 

@@ -492,5 +492,5 @@ HTTPServer::shutdown()
 
 //////////////////////////////////////////////////////////////////////////////
 // This allows the http server to be dynamically loaded
-OW_SERVICE_FACTORY(OpenWBEM::HTTPServer)
+OW_SERVICE_FACTORY(OpenWBEM::HTTPServer,HTTPServer)
 

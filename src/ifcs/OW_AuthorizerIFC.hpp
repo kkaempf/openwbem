@@ -48,6 +48,25 @@ public:
 
 }
 
+#if !defined(OW_STATIC_SERVICES)
+#define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
+extern "C" OpenWBEM::AuthorizerIFC* \
+createAuthorizer() \
+{ \
+	return new derived; \
+} \
+extern "C" const char* \
+getOWVersion() \
+{ \
+	return OW_VERSION; \
+}
+#else
+#define OW_AUTHORIZER_FACTORY(derived, authorizerName) \
+extern "C" OpenWBEM::AuthorizerIFC* \
+createAuthorizer_##authorizerName() \
+{ \
+	return new derived; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
+
 #endif
-
-

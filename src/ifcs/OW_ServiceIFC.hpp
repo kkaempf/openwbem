@@ -49,7 +49,8 @@ typedef SharedLibraryReference< Reference<ServiceIFC> > ServiceIFCRef;
 
 } // end namespace OpenWBEM
 
-#define OW_SERVICE_FACTORY(derived) \
+#if !defined(OW_STATIC_SERVICES)
+#define OW_SERVICE_FACTORY(derived, serviceName) \
 extern "C" OpenWBEM::ServiceIFC* \
 createService() \
 { \
@@ -60,5 +61,13 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 }
+#else
+#define OW_SERVICE_FACTORY(derived, serviceName) \
+extern "C" OpenWBEM::ServiceIFC* \
+createService_##serviceName() \
+{ \
+	return new derived; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
-#endif
+#endif /* OW_SERVICEIFC_HPP_INCLUDE_GUARD_ */

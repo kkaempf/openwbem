@@ -968,5 +968,5 @@ BinaryRequestHandler::getContentType() const
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_REQUEST_HANDLER_FACTORY(OpenWBEM::BinaryRequestHandler);
+OW_REQUEST_HANDLER_FACTORY(OpenWBEM::BinaryRequestHandler,BinaryRequest);
 

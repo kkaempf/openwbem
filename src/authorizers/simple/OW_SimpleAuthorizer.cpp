@@ -758,17 +758,5 @@ SimpleAuthorizer::endOperation(WBEMFlags::EOperationFlag op, OperationContext& c
 
 } // end namespace OpenWBEM
 
-//////////////////////////////////////////////////////////////////////////////
-extern "C" OpenWBEM::AuthorizerIFC*
-createAuthorizer()
-{
-	return new OpenWBEM::SimpleAuthorizer;
-}
-//////////////////////////////////////////////////////////////////////////////
-extern "C" const char*
-getOWVersion()
-{
-	return OW_VERSION;
-}
 
-
+OW_AUTHORIZER_FACTORY(OpenWBEM::SimpleAuthorizer, simple);

@@ -53,8 +53,9 @@ public:
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };
 typedef SharedLibraryReference< Reference<WQLIFC> > WQLIFCRef;
-		
-#define OW_WQLFACTORY(derived) \
+
+#if !defined(OW_STATIC_SERVICES)
+#define OW_WQLFACTORY(derived,wqlname) \
 extern "C" const char* \
 getOWVersion() \
 { \
@@ -65,6 +66,14 @@ createWQL() \
 { \
 	return new derived; \
 }
+#else
+#define OW_WQLFACTORY(derived,wqlname) \
+extern "C" OpenWBEM::WQLIFC* \
+createWQL_##wqlname() \
+{ \
+	return new derived; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 } // end namespace OpenWBEM
 

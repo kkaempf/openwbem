@@ -624,5 +624,5 @@ CMPIProviderIFC::getProvider(
 
 } // end namespace OpenWBEM
 
-OW_PROVIDERIFCFACTORY(OpenWBEM::CMPIProviderIFC)
+OW_PROVIDERIFCFACTORY(OpenWBEM::CMPIProviderIFC, cmpi)
 

@@ -406,5 +406,5 @@ NPIProviderIFC::getProvider(
 }
 } // end namespace OpenWBEM
 
-OW_PROVIDERIFCFACTORY(OpenWBEM::NPIProviderIFC)
+OW_PROVIDERIFCFACTORY(OpenWBEM::NPIProviderIFC, npi)
 

@@ -134,5 +134,5 @@ bool WQLImpl::supportsQueryLanguage(const String& lang)
 
 } // end namespace OpenWBEM
 
-OW_WQLFACTORY(OpenWBEM::WQLImpl);
+OW_WQLFACTORY(OpenWBEM::WQLImpl,wqlimpl);
 

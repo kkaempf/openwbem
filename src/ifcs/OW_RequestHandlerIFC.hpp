@@ -30,6 +30,7 @@
 #ifndef OW_REQUESTHANDLERIFC_HPP_
 #define OW_REQUESTHANDLERIFC_HPP_
 #include "OW_config.h"
+#include "OW_Types.h"
 #include "OW_String.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SortedVectorMap.hpp"
@@ -130,7 +131,10 @@ private:
 
 } // end namespace OpenWBEM
 
-#define OW_REQUEST_HANDLER_FACTORY(derived) \
+
+#if !defined(OW_STATIC_SERVICES)
+#WARNING OW_STATIC_SERVICES IS NOT DEFINED!
+#define OW_REQUEST_HANDLER_FACTORY(derived, handlerName) \
 extern "C" OpenWBEM::RequestHandlerIFC* \
 createRequestHandler() \
 { \
@@ -141,5 +145,13 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 }
+#else
+#define OW_REQUEST_HANDLER_FACTORY(derived, handlerName) \
+extern "C" OpenWBEM::RequestHandlerIFC* \
+createRequestHandler_##handlerName() \
+{ \
+	return new derived; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 #endif

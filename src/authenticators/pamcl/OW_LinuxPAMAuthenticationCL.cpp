@@ -109,5 +109,5 @@ LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthenticationCL);
+OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthenticationCL,pamcl);
 

@@ -1382,5 +1382,5 @@ XMLExecute::outputError(CIMException::ErrNoType errorCode,
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_REQUEST_HANDLER_FACTORY(OpenWBEM::XMLExecute);
+OW_REQUEST_HANDLER_FACTORY(OpenWBEM::XMLExecute,XMLExecute);
 

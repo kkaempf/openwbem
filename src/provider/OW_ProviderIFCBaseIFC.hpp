@@ -216,7 +216,8 @@ typedef SharedLibraryReference< Reference<ProviderIFCBaseIFC> > ProviderIFCBaseI
 
 } // end namespace OpenWBEM
 
-#define OW_PROVIDERIFCFACTORY(prov) \
+#if !defined(OW_STATIC_SERVICES)
+#define OW_PROVIDERIFCFACTORY(prov, name) \
 extern "C" OpenWBEM::ProviderIFCBaseIFC* \
 createProviderIFC() \
 { \
@@ -227,5 +228,13 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 }
+#else
+#define OW_PROVIDERIFCFACTORY(prov, name) \
+extern "C" OpenWBEM::ProviderIFCBaseIFC* \
+createProviderIFC_##name() \
+{ \
+	return new prov; \
+}
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 #endif

@@ -108,5 +108,5 @@ CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_NOIDPROVIDERFACTORY(OpenWBEM::CppIndicationExportXMLHTTPProvider);
+OW_PROVIDERFACTORY_NOID(OpenWBEM::CppIndicationExportXMLHTTPProvider, XMLHTTP);
 
