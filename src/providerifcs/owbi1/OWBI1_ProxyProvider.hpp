@@ -34,8 +34,9 @@
 
 #ifndef OWBI1_PROXYPROVIDER_HPP_INCLUDE_GUARD_
 #define OWBI1_PROXYPROVIDER_HPP_INCLUDE_GUARD_
+#include "OW_config.h"
 #include "OWBI1_config.h"
-#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
 #include "OW_InstanceProviderIFC.hpp"
@@ -82,7 +83,7 @@ typedef OpenWBEM::SharedLibraryReference< IntrusiveReference<BI1IndicationProvid
 
 using namespace ProxyProviderDetail;
 
-#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 class OWBI1_OWBI1PROVIFC_API BI1AssociatorProviderProxy : public OpenWBEM::AssociatorProviderIFC
 {
@@ -130,7 +131,7 @@ public:
 private:
 	BI1AssociatorProviderIFCRef m_pProv;
 };
-#endif // #ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 class OWBI1_OWBI1PROVIFC_API BI1InstanceProviderProxy : public OpenWBEM::InstanceProviderIFC
 {
@@ -163,7 +164,7 @@ public:
 			OpenWBEM::WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const OpenWBEM::StringArray* propertyList, 
 			const OpenWBEM::CIMClass& cimClass);
-#ifndef OWBI1_DISABLE_INSTANCE_MANIPULATION
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual OpenWBEM::CIMObjectPath createInstance(
 			const OpenWBEM::ProviderEnvironmentIFCRef& env,
 			const OpenWBEM::String& ns,
@@ -180,7 +181,7 @@ public:
 			const OpenWBEM::ProviderEnvironmentIFCRef& env,
 			const OpenWBEM::String& ns,
 			const OpenWBEM::CIMObjectPath& cop);
-#endif // #ifndef OWBI1_DISABLE_INSTANCE_MANIPULATION
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 private:
 	BI1InstanceProviderIFCRef m_pProv;
 };
@@ -190,11 +191,11 @@ class OWBI1_OWBI1PROVIFC_API BI1SecondaryInstanceProviderProxy : public OpenWBEM
 public:
 	BI1SecondaryInstanceProviderProxy(const BI1SecondaryInstanceProviderIFCRef& pProv);
 	virtual void filterInstances(const OpenWBEM::ProviderEnvironmentIFCRef &env, const OpenWBEM::String &ns, const OpenWBEM::String &className, OpenWBEM::CIMInstanceArray &instances, OpenWBEM::WBEMFlags::ELocalOnlyFlag localOnly, OpenWBEM::WBEMFlags::EDeepFlag deep, OpenWBEM::WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OpenWBEM::WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OpenWBEM::StringArray *propertyList, const OpenWBEM::CIMClass &requestedClass, const OpenWBEM::CIMClass &cimClass);
-#ifndef OWBI1_DISABLE_INSTANCE_MANIPULATION
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void createInstance(const OpenWBEM::ProviderEnvironmentIFCRef &env, const OpenWBEM::String &ns, const OpenWBEM::CIMInstance &cimInstance);
 	virtual void modifyInstance(const OpenWBEM::ProviderEnvironmentIFCRef &env, const OpenWBEM::String &ns, const OpenWBEM::CIMInstance &modifiedInstance, const OpenWBEM::CIMInstance &previousInstance, OpenWBEM::WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const OpenWBEM::StringArray *propertyList, const OpenWBEM::CIMClass &theClass);
 	virtual void deleteInstance(const OpenWBEM::ProviderEnvironmentIFCRef &env, const OpenWBEM::String &ns, const OpenWBEM::CIMObjectPath &cop);
-#endif // #ifndef OWBI1_DISABLE_INSTANCE_MANIPULATION
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 private:
 	BI1SecondaryInstanceProviderIFCRef m_pProv;
 };

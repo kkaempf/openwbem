@@ -79,7 +79,7 @@ protected:
 	virtual void doInit(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		OpenWBEM::InstanceProviderInfoArray& i,
 		OpenWBEM::SecondaryInstanceProviderInfoArray& si,
-#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OpenWBEM::AssociatorProviderInfoArray& a,
 #endif
 		OpenWBEM::MethodProviderInfoArray& m,
@@ -93,11 +93,9 @@ protected:
 	virtual OpenWBEM::MethodProviderIFCRef doGetMethodProvider(
 		const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OpenWBEM::AssociatorProviderIFCRef doGetAssociatorProvider(
 		const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-#endif
 	virtual OpenWBEM::IndicationProviderIFCRef doGetIndicationProvider(
 		const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		const char* provIdString);

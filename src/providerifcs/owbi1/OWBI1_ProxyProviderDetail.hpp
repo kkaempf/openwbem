@@ -34,8 +34,9 @@
 
 #ifndef OWBI1_PROXY_PROVIDER_DETAIL_HPP_INCLUDE_GUARD_
 #define OWBI1_PROXY_PROVIDER_DETAIL_HPP_INCLUDE_GUARD_
+#include "OW_config.h"
 #include "OWBI1_config.h"
-#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
 #endif
 #include "OW_InstanceProviderIFC.hpp"

@@ -36,7 +36,6 @@
 #define OWBI1_ASSOCIATORPROVIDERIFC_HPP_
 #include "OWBI1_config.h"
 
-#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OWBI1_InstanceProviderIFC.hpp"
 #include "OWBI1_CommonFwd.hpp"
 #include "OWBI1_ProviderFwd.hpp"
@@ -254,7 +253,5 @@ class OWBI1_OWBI1PROVIFC_API BI1AssociatorProviderIFC: public virtual BI1Instanc
 };
 
 } // end namespace OWBI1
-
-#endif //#ifndef OWBI1_DISABLE_ASSOCIATION_TRAVERSAL
 
 #endif

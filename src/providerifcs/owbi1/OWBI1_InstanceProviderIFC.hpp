@@ -137,7 +137,6 @@ public:
 			const CIMObjectPath& instanceName,
 			const CIMPropertyList& propertyList,
 			const CIMClass& cimClass ) = 0;
-#ifndef OWBI1_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * This method creates the instance specified in the object path.  If the
 	 * instance does exist an CIMException with ID CIM_ERR_ALREADY_EXISTS
@@ -186,7 +185,6 @@ public:
 			const ProviderEnvironmentIFCRef& env,
 			const String& ns,
 			const CIMObjectPath& cop) = 0;
-#endif // #ifndef OWBI1_DISABLE_INSTANCE_MANIPULATION
 	virtual BI1InstanceProviderIFC* getInstanceProvider();
 };
 //typedef SharedLibraryReference< IntrusiveReference<BI1InstanceProviderIFC> > CppInstanceProviderIFCRef;
