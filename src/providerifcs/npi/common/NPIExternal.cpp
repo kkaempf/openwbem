@@ -48,7 +48,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const String& nameSpace,
 	{
 		// cerr << "Class or Namespace do not exist\n";
 		// TODO: log this, and catch the correct exception.
-		npiHandle->errorOccurred = 1;
+		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return cc;
 }
@@ -70,6 +70,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 		// cerr << "Class or Namespace do not exist\n";
 		// TODO: log this, and catch the correct exception.
 		npiHandle->errorOccurred = 1;
+		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return crefs;
 }
@@ -94,7 +95,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const String& nameSpace,
 	{
 		// cerr << "Class or Namespace do not exist\n";
 		// TODO: log this, and catch the correct exception.
-		npiHandle->errorOccurred = 1;
+		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return cinsts;
 }
@@ -115,7 +116,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const CIMObjectPath& owcop,
 	{
 		// cerr << "Instance does not exist\n";
 		// TODO: log this, and catch the correct exception.
-		npiHandle->errorOccurred = 1;
+		raiseError(npiHandle,"Class or Namespace does not exist");
 	}
 	return ci;
 }
@@ -223,18 +224,27 @@ extern "C" char*
 CIMValueGetString(NPIHandle* npiHandle, ::CIMValue cv)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*)cv.ptr;
-	String mystring = pcv->toString();
-	return mystring.allocateCString();
+	try {
+		OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*)cv.ptr;
+		String mystring = pcv->toString();
+		return mystring.allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Error getting string value");
+		return NULL;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
 CIMValueGetInteger(NPIHandle* npiHandle, ::CIMValue cv)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*)cv.ptr;
 	int retval;
-	pcv->get(retval);
+	try {
+		OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*)cv.ptr;
+		pcv->get(retval);
+	} catch (...) {
+		raiseError(npiHandle, "Error getting int value");
+	}
 	return retval;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -242,12 +252,17 @@ extern "C" ::CIMObjectPath
 CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*) cv.ptr;
-	OpenWBEM::CIMObjectPath cref(CIMNULL);
-	pcv->get(cref);
-	OpenWBEM::CIMObjectPath* ncop = new OpenWBEM::CIMObjectPath(cref);
-	::CIMObjectPath cop = {(void*) ncop};
-	_NPIGarbageCan(npiHandle, (void *) ncop, CIM_OBJECTPATH);
+	::CIMObjectPath cop = { NULL};
+	try {
+		OpenWBEM::CIMValue* pcv = (OpenWBEM::CIMValue*) cv.ptr;
+		OpenWBEM::CIMObjectPath cref(CIMNULL);
+		pcv->get(cref);
+		OpenWBEM::CIMObjectPath* ncop = new OpenWBEM::CIMObjectPath(cref);
+		::CIMObjectPath cop = {(void*) ncop};
+		_NPIGarbageCan(npiHandle, (void *) ncop, CIM_OBJECTPATH);
+	} catch (...) {
+		raiseError(npiHandle, "Error getting ref value");
+	}
 	return cop;
 }
 // CIMParameter functions
@@ -256,8 +271,14 @@ extern "C" ::CIMType
 CIMParameterGetType(NPIHandle* npiHandle, ::CIMParameter cp)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMParamValue* pcp = (OpenWBEM::CIMParamValue*)cp.ptr;
-	int dt = pcp->getValue().getType();
+	int dt;
+	try {
+		OpenWBEM::CIMParamValue* pcp = (OpenWBEM::CIMParamValue*)cp.ptr;
+		dt = pcp->getValue().getType();
+	} catch (...) {
+		raiseError(npiHandle, "Error getting parameter type");
+	}
+
 	//switch(dt.getType())
 	switch (dt)
 	{
@@ -287,8 +308,14 @@ extern "C" char*
 CIMParameterGetName(NPIHandle* npiHandle, ::CIMParameter cp)
 {
 	(void)npiHandle;
-	CIMParamValue* pcp = (CIMParamValue*)cp.ptr;
-	return pcp->getName().allocateCString();
+	try {
+		CIMParamValue* pcp = (CIMParamValue*)cp.ptr;
+		return pcp->getName().allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Error getting parameter name");
+
+		return NULL;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" ::CIMParameter
@@ -345,18 +372,29 @@ extern "C" char*
 CIMParameterGetString(NPIHandle* npiHandle, ::CIMParameter cp)
 {
 	(void)npiHandle;
-	CIMParamValue* pcpv = static_cast<CIMParamValue *> (cp.ptr);
-	String value = pcpv->getValue().toString();
-	return value.allocateCString();
+	try {
+		CIMParamValue* pcpv = static_cast<CIMParamValue *> (cp.ptr);
+		String value = pcpv->getValue().toString();
+		return value.allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Retrieving string parameter failed. Possible attemt to retrieve non-string parameter");
+
+		return NULL;
+	}	
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
 CIMParameterGetIntegerValue(NPIHandle* npiHandle, ::CIMParameter cp)
 {
 	(void)npiHandle;
-	CIMParamValue* pcpv = (CIMParamValue*)cp.ptr;
 	int value;
-	pcpv->getValue().get(value);
+	try {
+		CIMParamValue* pcpv = (CIMParamValue*)cp.ptr;
+		pcpv->getValue().get(value);
+	} catch (...) {
+		raiseError(npiHandle, "Retrieving integer parameter failed. Possible attemt to retrieve non-integer parameter");
+
+	}	
 	return value;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -364,13 +402,19 @@ extern "C" ::CIMObjectPath
 CIMParameterGetRefValue(NPIHandle* npiHandle, ::CIMParameter cp)
 {
 	(void)npiHandle;
-	CIMParamValue* pcpv = (CIMParamValue*)cp.ptr;
-	OpenWBEM::CIMObjectPath op(CIMNULL);
-	OpenWBEM::CIMValue val = pcpv->getValue();
-	val.get(op);
-	OpenWBEM::CIMObjectPath * pop = new OpenWBEM::CIMObjectPath(op);
-	::CIMObjectPath cop = { (void*) pop};
-	_NPIGarbageCan(npiHandle, (void *) pop, CIM_OBJECTPATH);
+	::CIMObjectPath cop = { NULL};
+	try {
+		CIMParamValue* pcpv = (CIMParamValue*)cp.ptr;
+		OpenWBEM::CIMObjectPath op(CIMNULL);
+		OpenWBEM::CIMValue val = pcpv->getValue();
+		val.get(op);
+		OpenWBEM::CIMObjectPath * pop = new OpenWBEM::CIMObjectPath(op);
+		::CIMObjectPath cop = { (void*) pop};
+		_NPIGarbageCan(npiHandle, (void *) pop, CIM_OBJECTPATH);
+	} catch (...) {
+		raiseError(npiHandle, "Retrieving ref parameter failed. Possible attemt to retrieve non-ref parameter");
+
+	}	
 	return cop;
 }
 // Instance functions
@@ -379,10 +423,16 @@ extern "C" ::CIMInstance
 CIMClassNewInstance(NPIHandle* npiHandle, ::CIMClass cc)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMClass * owcc = static_cast<OpenWBEM::CIMClass *>(cc.ptr);
-	OpenWBEM::CIMInstance * owci = new OpenWBEM::CIMInstance(owcc->newInstance());
-	::CIMInstance ci = {static_cast<void *>(owci)};
-	_NPIGarbageCan(npiHandle, (void *) owci, CIM_INSTANCE);
+	::CIMInstance ci ={ NULL};
+	try {
+		OpenWBEM::CIMClass * owcc = static_cast<OpenWBEM::CIMClass *>(cc.ptr);
+		OpenWBEM::CIMInstance * owci = new OpenWBEM::CIMInstance(owcc->newInstance());
+		ci.ptr = static_cast<void *>(owci);
+		_NPIGarbageCan(npiHandle, (void *) owci, CIM_INSTANCE);
+	} catch (...) {
+		raiseError(npiHandle,"Error creating instance");
+
+	}
 	return ci;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -393,27 +443,34 @@ CIMInstanceSetStringProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
-	if (strlen(name) == 0) return;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	String Val;
-	if (value)
-	{
-		if (strlen(value)>0)
+
+	try {
+		if (strlen(name) == 0) return;		// try this too, might be non-string
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		String Val;
+		if (value)
 		{
-			Val = String(value);
+			if (strlen(value)>0)
+			{
+				Val = String(value);
+			}
+			else
+			{
+				Val = String("-empty-");
+			}
 		}
 		else
 		{
 			Val = String("-empty-");
 		}
+		OpenWBEM::CIMValue Value(Val);
+		owci->setProperty(Key,Value);
+	} catch (...) {
+		raiseError(npiHandle,"Error setting string property");
+
+		return;
 	}
-	else
-	{
-		Val = String("-empty-");
-	}
-	OpenWBEM::CIMValue Value(Val);
-	owci->setProperty(Key,Value);
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -423,9 +480,16 @@ CIMInstanceSetIntegerProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
-	if (strlen(name) == 0) return;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	owci->setProperty(String(name),OpenWBEM::CIMValue(value));
+	
+	try {
+		if (strlen(name) == 0) return;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		owci->setProperty(String(name),OpenWBEM::CIMValue(value));
+	} catch (...) {
+		raiseError(npiHandle,"Error setting integer property");
+
+		return;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -435,11 +499,16 @@ CIMInstanceSetLongProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
-	if (strlen(name) == 0) return;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	OpenWBEM::CIMValue Value(static_cast<UInt64>(value));
-	owci->setProperty(Key,Value);
+	try {
+		if (strlen(name) == 0) return;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		OpenWBEM::CIMValue Value(static_cast<UInt64>(value));
+		owci->setProperty(Key,Value);
+	} catch (...) {
+		raiseError(npiHandle,"Error creating instance");
+		return;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -449,11 +518,16 @@ CIMInstanceSetBooleanProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
-	if (strlen(name) == 0) return;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	OpenWBEM::CIMValue Value(Bool((int)value));
-	owci->setProperty(Key,Value);
+	try {
+		if (strlen(name) == 0) return;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		OpenWBEM::CIMValue Value(Bool((int)value));
+		owci->setProperty(Key,Value);
+} catch (...) {
+		raiseError(npiHandle,"Error setting boolean property");
+		return;
+	}		
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -463,12 +537,18 @@ CIMInstanceSetRefProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
-	if (strlen(name) == 0) return;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	OpenWBEM::CIMObjectPath * owcop = static_cast<OpenWBEM::CIMObjectPath *> (value.ptr);
-	String Key(name);
-	OpenWBEM::CIMValue Value(*owcop);
-	owci->setProperty(Key,Value);
+	try {
+		if (strlen(name) == 0) return;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		OpenWBEM::CIMObjectPath * owcop = static_cast<OpenWBEM::CIMObjectPath *> (value.ptr);
+		String Key(name);
+		OpenWBEM::CIMValue Value(*owcop);
+		owci->setProperty(Key,Value);
+	} catch (...) {
+		raiseError(npiHandle,"Error setting ref property");
+
+		return;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -496,23 +576,28 @@ CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return;
-	if (strlen(name) == 0) return;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	String Value(value);
-	// get current value
-	OpenWBEM::CIMProperty cp = owci->getProperty(Key);
-	OpenWBEM::CIMValue cv = cp.getValue();
-	OpenWBEM::StringArray sa;
-	if (!cv) {
-		// printf ("Got empty CIMValue\n");
-	} else {
-		// printf("Got StringArray\n");
-		sa = cv.toStringArray();
+	try {
+		if (strlen(name) == 0) return;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		String Value(value);
+		// get current value
+		OpenWBEM::CIMProperty cp = owci->getProperty(Key);
+		OpenWBEM::CIMValue cv = cp.getValue();
+		OpenWBEM::StringArray sa;
+		if (!cv) {
+			// printf ("Got empty CIMValue\n");
+		} else {
+			// printf("Got StringArray\n");
+			sa = cv.toStringArray();
+		}
+		sa.append(Value);
+		OpenWBEM::CIMValue newcv(sa);
+		owci->setProperty(Key,newcv);
+	} catch (...) {
+		raiseError(npiHandle,"Error adding string array property");
+		return;
 	}
-	sa.append(Value);
-	OpenWBEM::CIMValue newcv(sa);
-	owci->setProperty(Key,newcv);
 } 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -526,15 +611,20 @@ CIMInstanceGetStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	char * result = NULL;
 	// Sanity check
 	if (name == NULL) return result;
-	if (strlen(name) == 0) return result;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	// get current value
-	OpenWBEM::CIMProperty cp = owci->getProperty(Key);
-	OpenWBEM::CIMValue cv = cp.getValue();
-	OpenWBEM::StringArray sa;
-	sa = cv.toStringArray();
-	return sa[pos].toString().allocateCString();
+	try {
+		if (strlen(name) == 0) return result;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		// get current value
+		OpenWBEM::CIMProperty cp = owci->getProperty(Key);
+		OpenWBEM::CIMValue cv = cp.getValue();
+		OpenWBEM::StringArray sa;
+		sa = cv.toStringArray();
+		return sa[pos].toString().allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Error retrieving array property element. Possible attempt to retrive element of non-array property");
+		return NULL;
+	}
 } 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -547,17 +637,22 @@ CIMInstanceGetStringArrayPropertySize(NPIHandle* npiHandle, ::CIMInstance ci,
 	// Sanity check
 	if (name == NULL) return -1;
 	if (strlen(name) == 0) return -1;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	// get current value
-	OpenWBEM::CIMProperty cp = owci->getProperty(Key);
-	OpenWBEM::CIMValue cv = cp.getValue();
-	OpenWBEM::StringArray sa;
-	if (!cv) {
+	try {
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		// get current value
+		OpenWBEM::CIMProperty cp = owci->getProperty(Key);
+		OpenWBEM::CIMValue cv = cp.getValue();
+		OpenWBEM::StringArray sa;
+		if (!cv) {
+			return -1;
+		}
+		sa = cv.toStringArray();
+		return sa.size();
+	} catch (...) {
+		raiseError(npiHandle, "Error retrieving array property size. Possible attempt to retrive size of non-array property");
 		return -1;
 	}
-	sa = cv.toStringArray();
-	return sa.size();
 } 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -568,16 +663,21 @@ CIMInstanceGetStringValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	(void)npiHandle;
 	// Sanity check
 	if (name == NULL) return NULL;
-	if (strlen(name) == 0) return NULL;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	CIMProperty prop = owci->getProperty(Key);
-	if (!prop) return NULL;
-	OpenWBEM::CIMValue cv = prop.getValue();
-	if (!cv) return NULL;
-	if (cv.getType() != CIMDataType::STRING)	return NULL;
-	cv.get(Key);
-	return Key.allocateCString();
+	try {	
+		if (strlen(name) == 0) return NULL;
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		CIMProperty prop = owci->getProperty(Key);
+		if (!prop) return NULL;
+		OpenWBEM::CIMValue cv = prop.getValue();
+		if (!cv) return NULL;
+		if (cv.getType() != CIMDataType::STRING)	return NULL;
+		cv.get(Key);
+		return Key.allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Error getting string property");
+		return NULL;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
@@ -588,24 +688,28 @@ CIMInstanceGetIntegerValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	// Sanity check
 	if (name == NULL) return 0;
 	if (strlen(name) == 0) return 0;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	CIMProperty prop = owci->getProperty(Key);
-	if (!prop) return 0;
-	OpenWBEM::CIMValue cv = prop.getValue();
-	if (!cv) return 0;
-	switch (cv.getType())
-	{
-		case CIMDataType::UINT8: {UInt8 i; cv.get(i); return i; break;}
-		case CIMDataType::SINT8: {Int8 i; cv.get(i); return i; break;}
-		case CIMDataType::UINT16: {UInt16 i; cv.get(i); return i; break;}
-		case CIMDataType::SINT16: {Int16 i; cv.get(i); return i; break;}
-		case CIMDataType::UINT32: {UInt32 i; cv.get(i); return i; break;}
-		case CIMDataType::SINT32: {Int32 i; cv.get(i); return i; break;}
-		case CIMDataType::UINT64: {UInt64 i; cv.get(i); return i; break;}
-		case CIMDataType::SINT64: {Int64 i; cv.get(i); return i; break;}
-		case CIMDataType::BOOLEAN: {Bool i; cv.get(i); return (i?-1:0); break;}
-		default: return 0;
+	try {
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		CIMProperty prop = owci->getProperty(Key);
+		if (!prop) return 0;
+		OpenWBEM::CIMValue cv = prop.getValue();
+		if (!cv) return 0;
+		switch (cv.getType())
+		{
+			case CIMDataType::UINT8: {UInt8 i; cv.get(i); return i; break;}
+			case CIMDataType::SINT8: {Int8 i; cv.get(i); return i; break;}
+			case CIMDataType::UINT16: {UInt16 i; cv.get(i); return i; break;}
+			case CIMDataType::SINT16: {Int16 i; cv.get(i); return i; break;}
+			case CIMDataType::UINT32: {UInt32 i; cv.get(i); return i; break;}
+			case CIMDataType::SINT32: {Int32 i; cv.get(i); return i; break;}
+			case CIMDataType::UINT64: {UInt64 i; cv.get(i); return i; break;}
+			case CIMDataType::SINT64: {Int64 i; cv.get(i); return i; break;}
+			case CIMDataType::BOOLEAN: {Bool i; cv.get(i); return (i?-1:0); break;}
+			default: return 0;
+		}
+	} catch (...) {
+		raiseError(npiHandle, "Error getting integer property");	
 	}
 	return 0;
 }
@@ -618,14 +722,18 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, ::CIMInstance ci, const char* name)
 	// Sanity check
 	if (name == NULL) return cop;
 	if (strlen(name) == 0) return cop;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String Key(name);
-	CIMProperty prop = owci->getProperty(Key);
-	OpenWBEM::CIMValue cv = prop.getValue();
-	if (cv.getType() != CIMDataType::REFERENCE) return cop;
-	OpenWBEM::CIMObjectPath owcop(CIMNULL);
-	cv.get(owcop);
-	cop.ptr = static_cast<void *>(&owcop);
+	try {	
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String Key(name);
+		CIMProperty prop = owci->getProperty(Key);
+		OpenWBEM::CIMValue cv = prop.getValue();
+		if (cv.getType() != CIMDataType::REFERENCE) return cop;
+		OpenWBEM::CIMObjectPath owcop(CIMNULL);
+		cv.get(owcop);
+		cop.ptr = static_cast<void *>(&owcop);
+	} catch (...) {
+		raiseError(npiHandle, "Error getting ref property");
+	}
 	return cop;
 }
 // Object Path functions
@@ -635,10 +743,15 @@ extern "C" ::CIMObjectPath
 CIMObjectPathNew(NPIHandle* npiHandle, const char* classname)
 {
 	(void)npiHandle;
-	String className(classname);
-	OpenWBEM::CIMObjectPath * ref = new OpenWBEM::CIMObjectPath(className);
-	::CIMObjectPath cop = { static_cast<void *> (ref)};
-	_NPIGarbageCan(npiHandle, (void *) ref, CIM_OBJECTPATH);
+	::CIMObjectPath cop = {NULL};	
+	try {
+		String className(classname);
+		OpenWBEM::CIMObjectPath * ref = new OpenWBEM::CIMObjectPath(className);
+		cop.ptr = static_cast<void *>(ref);
+		_NPIGarbageCan(npiHandle, (void *) ref, CIM_OBJECTPATH);
+	} catch (...) {
+		raiseError(npiHandle, "Error creating object path");
+	}
 	return cop;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -649,11 +762,16 @@ extern "C" ::CIMObjectPath
 CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, ::CIMInstance ci)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
-	String host;
-	OpenWBEM::CIMObjectPath * ref = new OpenWBEM::CIMObjectPath("", *owci);
-	::CIMObjectPath cop = { static_cast<void *>(ref)};
-	_NPIGarbageCan(npiHandle, (void *) ref, CIM_OBJECTPATH);
+	::CIMObjectPath cop = {NULL};
+	try {
+		OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+		String host;
+		OpenWBEM::CIMObjectPath * ref = new OpenWBEM::CIMObjectPath("", *owci);
+		cop.ptr = static_cast<void *>(ref);
+		_NPIGarbageCan(npiHandle, (void *) ref, CIM_OBJECTPATH);
+	} catch (...) {
+		raiseError(npiHandle, "Error creating object path from instance");
+	}
 	return cop;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -661,16 +779,26 @@ extern "C" char*
 CIMObjectPathGetClassName(NPIHandle* npiHandle, ::CIMObjectPath cop)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *> (cop.ptr);
-	return ref->getClassName().allocateCString();
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *> (cop.ptr);
+		return ref->getClassName().allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Error getting class name");
+		return NULL;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" char*
 CIMObjectPathGetNameSpace(NPIHandle* npiHandle, ::CIMObjectPath cop)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	return ref->getNameSpace().allocateCString();
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		return ref->getNameSpace().allocateCString();
+	} catch (...) {
+		raiseError(npiHandle, "Error getting namespace");
+		return NULL;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -678,17 +806,29 @@ CIMObjectPathSetNameSpace(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	const char* str)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	ref->setNameSpace(String(str));
+	try {	
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		ref->setNameSpace(String(str));
+	} catch (...) {
+		raiseError(npiHandle, "Error getting string property");
+		return;
+	}
+	
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void CIMObjectPathSetNameSpaceFromCIMObjectPath(
 	NPIHandle* npiHandle, ::CIMObjectPath cop, ::CIMObjectPath src)
 {
 	(void)npiHandle;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	OpenWBEM::CIMObjectPath * rsrc = static_cast<OpenWBEM::CIMObjectPath *>(src.ptr);
-	ref->setNameSpace(rsrc->getNameSpace());
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		OpenWBEM::CIMObjectPath * rsrc = static_cast<OpenWBEM::CIMObjectPath *>(src.ptr);
+		ref->setNameSpace(rsrc->getNameSpace());
+	} catch (...) {
+		raiseError(npiHandle, "Error seting namespace from COP");
+		return;
+	}
+
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" char*
@@ -699,23 +839,29 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	// Sanity check
 	if (key == NULL) return NULL;
 	if (strlen(key) == 0) return NULL;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	CIMPropertyArray props = ref->getKeys();
-	String Key(key);
-	for (int i = props.size()-1; i >= 0; i--)
-	{
-		CIMProperty cp = props[i];
-		if (cp.getName().equalsIgnoreCase(Key))
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		CIMPropertyArray props = ref->getKeys();
+		String Key(key);
+		for (int i = props.size()-1; i >= 0; i--)
 		{
-			OpenWBEM::CIMValue cv = cp.getValue();
-			if (!cv) return NULL;
-			if (cv.getType() != CIMDataType::STRING)
-				return NULL;
-			cv.get(Key);
-			return Key.allocateCString();
+			CIMProperty cp = props[i];
+			if (cp.getName().equalsIgnoreCase(Key))
+			{
+				OpenWBEM::CIMValue cv = cp.getValue();
+				if (!cv) return NULL;
+				if (cv.getType() != CIMDataType::STRING)
+					return NULL;
+				cv.get(Key);
+				return Key.allocateCString();
+			}
 		}
+		return NULL;
+	} catch (...) {
+		raiseError(npiHandle, "Error getting string property");
+		return NULL;
 	}
-	return NULL;
+
 }
 /* ====================================================================== */
 static void _CIMObjectPathAddKey(OpenWBEM::CIMObjectPath * ref,
@@ -750,11 +896,17 @@ CIMObjectPathAddStringKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	String Key(key);
-	String Val(value);
-	OpenWBEM::CIMValue Value(Val);
-	_CIMObjectPathAddKey(ref, Key, Value);
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		String Key(key);
+		String Val(value);
+		OpenWBEM::CIMValue Value(Val);
+		_CIMObjectPathAddKey(ref, Key, Value);
+	} catch (...) {
+		raiseError(npiHandle, "Error adding string key");
+		return;
+	}
+
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" int
@@ -765,38 +917,42 @@ CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	// Sanity check
 	if (key == NULL) return -1;
 	if (strlen(key) == 0) return -1;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	CIMPropertyArray props = ref->getKeys();
-	String Key(key);
-	//for (int i = 0, n = props.size(); i < n; i++)
-	for (int i = props.size()-1; i >= 0; i--)
-	{
-		CIMProperty cp = props[i];
-		if (cp.getName().equalsIgnoreCase(Key))
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		CIMPropertyArray props = ref->getKeys();
+		String Key(key);
+		//for (int i = 0, n = props.size(); i < n; i++)
+		for (int i = props.size()-1; i >= 0; i--)
 		{
-			OpenWBEM::CIMValue cv = cp.getValue();
-			if (!cv) return 0;
-			switch (cv.getType())
+			CIMProperty cp = props[i];
+			if (cp.getName().equalsIgnoreCase(Key))
 			{
-				case CIMDataType::UINT8:
-					{UInt8 i; cv.get(i); return i; break;}
-				case CIMDataType::SINT8:
-					{Int8 i; cv.get(i); return i; break;}
-				case CIMDataType::UINT16:
-					{UInt16 i; cv.get(i); return i; break;}
-				case CIMDataType::SINT16:
-					{Int16 i; cv.get(i); return i; break;}
-				case CIMDataType::UINT32:
-					{UInt32 i; cv.get(i); return i; break;}
-				case CIMDataType::SINT32:
-					{Int32 i; cv.get(i); return i; break;}
-				case CIMDataType::UINT64:
-					{UInt64 i; cv.get(i); return i; break;}
-				case CIMDataType::SINT64:
-					{Int64 i; cv.get(i); return i; break;}
-				default: return 0;
+				OpenWBEM::CIMValue cv = cp.getValue();
+				if (!cv) return 0;
+				switch (cv.getType())
+				{
+					case CIMDataType::UINT8:
+						{UInt8 i; cv.get(i); return i; break;}
+					case CIMDataType::SINT8:
+						{Int8 i; cv.get(i); return i; break;}
+					case CIMDataType::UINT16:
+						{UInt16 i; cv.get(i); return i; break;}
+					case CIMDataType::SINT16:
+						{Int16 i; cv.get(i); return i; break;}
+					case CIMDataType::UINT32:
+						{UInt32 i; cv.get(i); return i; break;}
+					case CIMDataType::SINT32:
+						{Int32 i; cv.get(i); return i; break;}
+					case CIMDataType::UINT64:
+						{UInt64 i; cv.get(i); return i; break;}
+					case CIMDataType::SINT64:
+						{Int64 i; cv.get(i); return i; break;}
+					default: return 0;
+				}
 			}
 		}
+	} catch (...) {
+		raiseError(npiHandle, "Error getting integer key");
 	}
 	return 0;
 }
@@ -809,10 +965,16 @@ CIMObjectPathAddIntegerKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	String Key(key);
-	OpenWBEM::CIMValue Value(value);
-	_CIMObjectPathAddKey(ref, Key, Value);
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		String Key(key);
+		OpenWBEM::CIMValue Value(value);
+		_CIMObjectPathAddKey(ref, Key, Value);
+	} catch (...) {
+		raiseError(npiHandle, "Error adding int key");
+		return;
+	}
+
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" ::CIMObjectPath
@@ -824,26 +986,30 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	::CIMObjectPath cop2 = {NULL};
 	if (key == NULL) return cop2;
 	if (strlen(key) == 0) return cop2;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	CIMPropertyArray props = ref->getKeys();
-	String Key(key);
-	//for (int i = 0, n = props.size(); i < n; i++)
-	for (int i = props.size()-1; i >= 0; i--)
-	{
-		CIMProperty cp = props[i];
-		if (cp.getName().equalsIgnoreCase(Key))
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		CIMPropertyArray props = ref->getKeys();
+		String Key(key);
+		//for (int i = 0, n = props.size(); i < n; i++)
+		for (int i = props.size()-1; i >= 0; i--)
 		{
-			OpenWBEM::CIMValue cv = cp.getValue();
-			if (!cv) return cop2;
-			if (cv.getType() != CIMDataType::REFERENCE) return cop2;
-			OpenWBEM::CIMObjectPath * ref2 = new OpenWBEM::CIMObjectPath(CIMNULL);
-			cv.get(*ref2);
-			cop2.ptr = (void *) ref;
-			_NPIGarbageCan(npiHandle,(void *)ref2,CIM_OBJECTPATH);
-			return cop2;
+			CIMProperty cp = props[i];
+			if (cp.getName().equalsIgnoreCase(Key))
+			{
+				OpenWBEM::CIMValue cv = cp.getValue();
+				if (!cv) return cop2;
+				if (cv.getType() != CIMDataType::REFERENCE) return cop2;
+				OpenWBEM::CIMObjectPath * ref2 = new OpenWBEM::CIMObjectPath(CIMNULL);
+				cv.get(*ref2);
+				cop2.ptr = (void *) ref;
+				_NPIGarbageCan(npiHandle,(void *)ref2,CIM_OBJECTPATH);
+				return cop2;
+			}
 		}
+	} catch (...) {
+		raiseError(npiHandle, "Error getting ref key");
 	}
-	return cop;
+	return cop2;
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
@@ -854,11 +1020,16 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, ::CIMObjectPath cop,
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	OpenWBEM::CIMObjectPath * ref2 = static_cast<OpenWBEM::CIMObjectPath *>(cop2.ptr);
-	String Key(key);
-	OpenWBEM::CIMValue Value(*ref2);
-	_CIMObjectPathAddKey(ref, Key, Value);
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		OpenWBEM::CIMObjectPath * ref2 = static_cast<OpenWBEM::CIMObjectPath *>(cop2.ptr);
+		String Key(key);
+		OpenWBEM::CIMValue Value(*ref2);
+		_CIMObjectPathAddKey(ref, Key, Value);
+	} catch (...) {
+		raiseError(npiHandle, "Error adding ref key");
+		return;
+	}
 }
 // SelectExp functions
 //////////////////////////////////////////////////////////////////////////////
@@ -866,10 +1037,15 @@ extern "C" char *
 SelectExpGetSelectString(NPIHandle* npiHandle, ::SelectExp sxp)
 {
 	(void)npiHandle;
-	WQLSelectStatement * wf =
-		 static_cast<WQLSelectStatement *>(sxp.ptr);
-	char * query = wf->toString().allocateCString();
-	return query;
+	try {
+		WQLSelectStatement * wf =
+			 static_cast<WQLSelectStatement *>(sxp.ptr);
+		char * query = wf->toString().allocateCString();
+		return query;
+	} catch (...) {
+		raiseError(npiHandle, "Error getting select string from select exp");
+		return NULL;
+	}
 }
 // CIMOM functions
 //////////////////////////////////////////////////////////////////////////////
@@ -891,19 +1067,23 @@ extern "C" ::Vector
 CIMOMEnumInstanceNames(NPIHandle* npiHandle, ::CIMObjectPath cop, int i)
 {
 	(void)i;
-	OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
-	String nameSpace = ref->getNameSpace();
-	String className = ref->getClassName();
-	CIMObjectPathEnumeration instNames =
-		NPI_enumeratemyInstanceNames(npiHandle,nameSpace,className);
-	// Full Copy
 	Vector v = VectorNew(npiHandle);
-	while (instNames.hasMoreElements())
-	{
-		OpenWBEM::CIMObjectPath * cowp = new
-			OpenWBEM::CIMObjectPath(instNames.nextElement());
-		_NPIGarbageCan(npiHandle, (void *) cowp, CIM_OBJECTPATH);
-		_VectorAddTo(npiHandle, v, (void *) cowp);
+	try {
+		OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
+		String nameSpace = ref->getNameSpace();
+		String className = ref->getClassName();
+		CIMObjectPathEnumeration instNames =
+			NPI_enumeratemyInstanceNames(npiHandle,nameSpace,className);
+		// Full Copy
+		while (instNames.hasMoreElements())
+		{
+			OpenWBEM::CIMObjectPath * cowp = new
+				OpenWBEM::CIMObjectPath(instNames.nextElement());
+			_NPIGarbageCan(npiHandle, (void *) cowp, CIM_OBJECTPATH);
+			_VectorAddTo(npiHandle, v, (void *) cowp);
+		}
+	} catch (...) {
+		raiseError(npiHandle, "Error enumerating instance names");
 	}
 	return v;
 }
@@ -913,18 +1093,22 @@ CIMOMEnumInstances(NPIHandle* npiHandle, ::CIMObjectPath cop, int i, int j)
 {
 	(void)i;
 	(void)j;
-	OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
-	String nameSpace = ref->getNameSpace();
-	String className = ref->getClassName();
-	CIMInstanceEnumeration insts =
-		NPI_enumeratemyInstances(npiHandle,nameSpace,className);
-	// Full Copy
 	Vector v = VectorNew(npiHandle);
-	while (insts.hasMoreElements())
-	{
-		OpenWBEM::CIMInstance * ci = new OpenWBEM::CIMInstance(insts.nextElement());
-		_NPIGarbageCan(npiHandle, (void *) ci, CIM_INSTANCE);
-		_VectorAddTo(npiHandle, v, (void *) ci);
+	try {
+		OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
+		String nameSpace = ref->getNameSpace();
+		String className = ref->getClassName();
+		CIMInstanceEnumeration insts =
+			NPI_enumeratemyInstances(npiHandle,nameSpace,className);
+		// Full Copy
+		while (insts.hasMoreElements())
+		{
+			OpenWBEM::CIMInstance * ci = new OpenWBEM::CIMInstance(insts.nextElement());
+			_NPIGarbageCan(npiHandle, (void *) ci, CIM_INSTANCE);
+			_VectorAddTo(npiHandle, v, (void *) ci);
+		}
+	} catch (...) {
+		raiseError(npiHandle, "Error enumerating instances");
 	}
 	return v;
 }
@@ -932,11 +1116,16 @@ CIMOMEnumInstances(NPIHandle* npiHandle, ::CIMObjectPath cop, int i, int j)
 extern "C" ::CIMInstance
 CIMOMGetInstance(NPIHandle* npiHandle, ::CIMObjectPath cop, int i)
 {
-	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
-	OpenWBEM::CIMInstance ci = NPI_getmyInstance(npiHandle, *ref, i);
-	OpenWBEM::CIMInstance * my_ci = new OpenWBEM::CIMInstance(ci);
-	_NPIGarbageCan(npiHandle, (void *) my_ci, CIM_INSTANCE);
-	::CIMInstance localci = { static_cast<void *> (my_ci)};
+	::CIMInstance localci = { NULL};
+	try {
+		OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
+		OpenWBEM::CIMInstance ci = NPI_getmyInstance(npiHandle, *ref, i);
+		OpenWBEM::CIMInstance * my_ci = new OpenWBEM::CIMInstance(ci);
+		_NPIGarbageCan(npiHandle, (void *) my_ci, CIM_INSTANCE);
+		localci.ptr = static_cast<void *> (my_ci);
+	} catch (...) {
+		raiseError(npiHandle, "Error getting instance");
+	}
 	return localci;
 }
 //////////////////////////////////////////////////////////////////////////////
