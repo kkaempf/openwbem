@@ -140,7 +140,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
 		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing OWLocal");
-		bool rv = m_localAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
+		bool rv = m_localAuthentication->authenticate(userName, info, pconn, context) && isAllowedUser(userName);
 		if (rv)
 		{
 			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));

@@ -53,7 +53,8 @@ public:
 	~LocalAuthentication();
 
 	bool authenticate(String& userName,
-		const String& info, HTTPSvrConnection* htcon);
+		const String& info, HTTPSvrConnection* htcon,
+		OperationContext& context);
 
 private:
 	struct AuthEntry
@@ -63,6 +64,7 @@ private:
 		String nonce;
 		DateTime creationTime;
 		String userName;
+		String uidStr;
 	};
 
 	String createNewChallenge(const String& uid, const String& userName);

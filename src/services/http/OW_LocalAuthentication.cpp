@@ -43,6 +43,7 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_UserUtils.hpp"
 #include "OW_AuthenticationException.hpp"
+#include "OW_OperationContext.hpp"
 
 #ifdef OW_HAVE_PWD_H
 #include <pwd.h>
@@ -131,10 +132,12 @@ parseInfo(const String& pinfo, SortedVectorMap<String, String>& infoMap)
 }
 
 } // end unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 LocalAuthentication::authenticate(String& userName,
-		const String& info, HTTPSvrConnection* htcon)
+		const String& info, HTTPSvrConnection* htcon,
+		OperationContext& context)
 {
 	cleanupStaleEntries();
 
@@ -235,7 +238,14 @@ LocalAuthentication::authenticate(String& userName,
 	String cookie = iter->second;
 	if ( cookie == m_authEntries[i].cookie )
 	{
-		// match!  authenticated.  Clean up.
+		// Match! Authenticated
+
+		// Put uid in the operation context so the proxy provider
+		// can use it to do uid switching.
+		context.setStringData(OperationContext::CURUSER_UIDKEY,
+			m_authEntries[i].uidStr);
+
+		// Clean up.
 		cleanupEntry(m_authEntries[i]);
 		m_authEntries.erase(m_authEntries.begin() + i);
 		return true;
@@ -259,6 +269,7 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 	newEntry.nonce = nonce;
 	newEntry.creationTime.setToCurrent();
 	newEntry.userName = userName;
+	newEntry.uidStr = uid;
 	m_authEntries.push_back(newEntry);
 
 	return String("OWLocal nonce=\"" + nonce + "\", cookiefile=\"" + cookieFileName + "\"");
