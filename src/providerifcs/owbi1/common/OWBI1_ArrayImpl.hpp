@@ -361,7 +361,7 @@ Array<T>::checkValidIndex(size_type index) const
 {
 	if (index >= size())
 	{
-		throwArrayOutOfBoundsException(size(), index);
+		OWBI1::throwArrayOutOfBoundsException(size(), index);
 	}
 }
 #endif

@@ -141,7 +141,7 @@ inline void COWReference<T>::getWriteLock()
 	{
 		// this needs to happen first to avoid a race condition between 
 		// another thread deleting the object and this one making a copy.
-		T* tmp = COWReferenceClone(m_pObj);
+		T* tmp = OWBI1::COWReferenceClone(m_pObj);
 		// this will decrement the count and then make a new one if we're making a copy.
 		if (COWReferenceBase::getWriteLock())
 		{
@@ -172,7 +172,7 @@ template <class T>
 inline void COWReference<T>::swap(COWReference<T>& arg)
 {
 	COWReferenceBase::swap(arg);
-	COWRefSwap(m_pObj, arg.m_pObj);
+	OWBI1::COWRefSwap(m_pObj, arg.m_pObj);
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>

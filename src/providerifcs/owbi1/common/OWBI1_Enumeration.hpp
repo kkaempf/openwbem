@@ -37,6 +37,7 @@
 #include "OWBI1_config.h"
 #include "OWBI1_TempFileEnumerationImplBase.hpp"
 #include "OWBI1_IntrusiveReference.hpp"
+#include "OWBI1_String.hpp"
 
 #include <iterator> // for the iterator tags
 
@@ -60,14 +61,14 @@ public:
 	void nextElement(T& out)
 	{
 		throwIfEmpty();
-		out.readObject(m_Data);
+		out.readObject(m_data);
 		--m_size;
 	}
 	T nextElement()
 	{
 		throwIfEmpty();
 		T retval;
-		retval.readObject(m_Data);
+		retval.readObject(m_data);
 		--m_size;
 		return retval;
 	}
