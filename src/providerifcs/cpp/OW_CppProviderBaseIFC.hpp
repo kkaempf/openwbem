@@ -73,6 +73,12 @@ class OW_CppProviderBaseIFC
 		 */
 		virtual void cleanup() {}
 
+		/**
+		 * We do the following because gcc seems to have a problem with
+		 * dynamic_cast.  If often fails, especially when compiling with
+		 * optimizations.  It will return a (supposedly) valid pointer, 
+		 * when it should return NULL.
+		 */
 
 		virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
 		virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
