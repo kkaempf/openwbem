@@ -1,4 +1,3 @@
-
 /*
  *
  * cmpiBroker.cpp
@@ -107,10 +106,15 @@ OpenWBEM::CIMClass* mbGetClass(CMPIBroker *mb, const OpenWBEM::CIMObjectPath &co
 	OpenWBEM::String clsId = cop.getNameSpace()+":"+cop.getObjectName();
 	OpenWBEM::CIMClass ccp;
 	if (xBroker->clsCache) {
-		if (!(ccp = xBroker->clsCache->getFromCache(clsId)))
-		return new OpenWBEM::CIMClass(ccp);
+		if ((ccp = xBroker->clsCache->getFromCache(clsId)))
+		{
+		    return new OpenWBEM::CIMClass(ccp);
+		}
 	}
-	else xBroker->clsCache=new ClassCache();
+	else
+	{
+	     xBroker->clsCache=new ClassCache();
+	}
 
 	try {
 		OpenWBEM::CIMClass cc=CM_CIMOM(mb)->getClass(
@@ -363,7 +367,11 @@ static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
 			CM_ObjectPath(cop)->getNameSpace(),
 			CM_ObjectPath(cop)->getClassName(),
 			result);
-		if (rc) CMSetStatus(rc,CMPI_RC_OK);
+		if (rc)
+		{
+		    CMSetStatus(rc,CMPI_RC_OK);
+		}
+
 		return new CMPI_OpEnumeration( new OpenWBEM::CIMObjectPathArray(cia));
 	}
 	catch (OpenWBEM::CIMException &e)
@@ -371,14 +379,24 @@ static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug(format("CMPIBroker Exception in "
 			"mbEnumInstanceNames code: %1, msg %2",
 			e.type(), e.getMessage()));
-		if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
+                if (rc)
+		{
+		    CMSetStatus(rc,(CMPIrc)e.getErrNo());
+		}
 	}
 	catch (...)
 	{
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbEnumInstanceNames");
-		if (rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		if (rc)
+		{
+		    CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
+		}
 	}
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+   if (rc)
+   {
+       CMSetStatus(rc,CMPI_RC_ERR_FAILED);
+   }
+
    return NULL;
 }
 

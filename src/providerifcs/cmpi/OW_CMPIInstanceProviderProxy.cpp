@@ -81,7 +81,10 @@ void
 		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
 			mi, &eCtx, &eRes, &eRef);
 		//delete ((ProviderEnvironmentIFCRef *)(m_ftable->broker.hdl));
-		if (rc.rc == CMPI_RC_OK) return;
+		if (rc.rc == CMPI_RC_OK)
+		{
+			return;
+		}
 		else
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");

@@ -99,6 +99,7 @@ static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
    
 	const OpenWBEM::CIMObjectPath& cop =
 		* (static_cast<OpenWBEM::CIMObjectPath *>(eRef->hdl));
+
 	try {
 		//std::cout << "cop to handle " << cop.toMOF() << std::endl;
 		res->handle(cop);
@@ -111,6 +112,7 @@ static CMPIStatus resultReturnObjectPath(CMPIResult* eRes,
 	{
 		CMReturn(CMPI_RC_ERROR);
 	}
+
 	CMReturn(CMPI_RC_OK);
 }
 

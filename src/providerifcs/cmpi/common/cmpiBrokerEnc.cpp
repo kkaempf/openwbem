@@ -1,4 +1,3 @@
-
 /*
  *
  * cmpiBrokerEnc.cpp
@@ -45,7 +44,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 
 	OpenWBEM::CIMInstance ci;
 
-	if (cls)
+	if (cls && *cls)
 	{
 		//CMPIContext *ctx=CMPI_ThreadContext::getContext();
 		//CMPIFlags flgs = ctx->ft->getEntry(
