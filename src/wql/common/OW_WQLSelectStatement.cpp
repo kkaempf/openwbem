@@ -328,7 +328,7 @@ String WQLSelectStatement::toString() const
 	{
 		if (i == 0)
 			buf += "\n";
-		buf += " _operStack[" + String(i) + "]: ";
+		buf += " _operStack[" + String(UInt32(i)) + "]: ";
 		buf += "\"" + _operStack[i].toString() + "\"\n";
 	}
 	buf += ")";
