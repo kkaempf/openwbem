@@ -32,19 +32,11 @@
 #define OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Condition.hpp"
 #include "OW_Mutex.hpp"
-#include "OW_SSLCtxMgr.hpp"
-#include "OW_String.hpp"
-#include "OW_Map.hpp"
-#include "OW_UnnamedPipe.hpp"
-#include "OW_RequestHandlerIFC.hpp"
 #include "OW_SocketAddress.hpp"
-#include "OW_HTTPUtils.hpp"
 #include "OW_ServiceIFC.hpp"
-#include "OW_AutoPtr.hpp"
 #include "OW_URL.hpp"
-#include "OW_ThreadCounter.hpp"
+#include "OW_ThreadPool.hpp"
 #include <ctime>
 
 class OW_ServerSocket;
@@ -54,6 +46,7 @@ class OW_HTTPSvrConnection;
 class OW_DigestAuthentication;
 #endif
 class OW_HTTPServer;
+class OW_UnnamedPipe;
 
 
 
@@ -116,8 +109,6 @@ private:
 
 	Options m_options;
 
-	OW_ThreadCounterRef m_threadCount;
-
 	OW_Reference<OW_UnnamedPipe> m_upipe;
 	OW_Array<OW_URL> m_urls;
 
@@ -128,6 +119,8 @@ private:
 	OW_Reference<OW_DigestAuthentication> m_digestAuth;
 #endif
 	OW_Mutex m_authGuard;
+
+	OW_ThreadPoolRef m_threadPool;
 
 	friend class OW_HTTPSvrConnection;
 	friend class OW_HTTPListener;

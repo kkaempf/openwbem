@@ -45,8 +45,8 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_Condition.hpp"
 #include "OW_Semaphore.hpp"
-#include "OW_ThreadCounter.hpp"
 #include "OW_UserInfo.hpp"
+#include "OW_ThreadPool.hpp"
 
 class OW_PollingManager : public OW_Thread
 {
@@ -73,12 +73,11 @@ private:
 	public:
 		TriggerRunner(OW_PollingManager* svr, OW_UserInfo acl,
 			OW_CIMOMEnvironmentRef env);
-		void start(const OW_RunnableRef& tr);
 		virtual void run();
 
 		OW_PolledProviderIFCRef m_itp;
 		time_t m_nextPoll;
-		OW_Bool m_isRunning;
+		bool m_isRunning;
 		OW_Int32 m_pollInterval;
 		OW_PollingManager* m_pollMan;
 		OW_UserInfo m_acl;
@@ -90,16 +89,13 @@ private:
 	OW_Bool m_shuttingDown;
 	OW_NonRecursiveMutex m_triggerGuard;
 	OW_Condition m_triggerCondition;
-	
-	OW_ThreadCounterRef m_threadCount;
-
 	OW_CIMOMEnvironmentRef m_env;
-
 	OW_Semaphore* m_startedSem;
+	OW_ThreadPoolRef m_triggerRunnerThreadPool;
 
-    // m_triggerGuard must be locked before calling this function.
+	// m_triggerGuard must be locked before calling this function.
 	OW_UInt32 calcSleepTime(OW_Bool& rightNow, OW_Bool doInit);
-    // m_triggerGuard must be locked before calling this function.
+	// m_triggerGuard must be locked before calling this function.
 	void processTriggers();
 
 	friend class TriggerRunner;

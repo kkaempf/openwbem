@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -48,22 +48,16 @@
 #endif
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
-#include "OW_ThreadDoneCallback.hpp"
 #include "OW_Runnable.hpp"
 #include "OW_TimeoutException.hpp"
+#include "OW_ThreadCancelledException.hpp"
+#include "OW_ThreadPool.hpp"
+
+#include <iostream> // for debugging.
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
-	: m_options()
-	, m_threadCount(new OW_ThreadCounter(0))
-	, m_upipe(OW_UnnamedPipe::createUnnamedPipe())
-	, m_urls()
-	, m_pHttpServerSocket(0)
-	, m_pHttpsServerSocket(0)
-#ifndef OW_DISABLE_DIGEST
-	, m_digestAuth(0)
-#endif
-	, m_authGuard()
+	: m_upipe(OW_UnnamedPipe::createUnnamedPipe())
 {
 }
 
@@ -150,7 +144,8 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 
 		item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt, OW_DEFAULT_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32() + 1;
-		m_threadCount->setMax(m_options.maxConnections);
+		// TODO: Make the type of pool and the size of the queue be separate config options.
+		m_threadPool = OW_Reference<OW_ThreadPool>(new OW_ThreadPool(OW_ThreadPool::DYNAMIC_SIZE, m_options.maxConnections, m_options.maxConnections * 100));
 
 		item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt, OW_DEFAULT_SINGLE_THREAD);
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
@@ -240,8 +235,6 @@ public:
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
 
-			m_HTTPServer->m_threadCount->incThreadCount(60, 0);
-
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
 			if (m_isIPC)
 			{
@@ -250,8 +243,11 @@ public:
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
 
-			OW_Runnable::run(rref, m_HTTPServer->m_options. isSepThread,
-				OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_HTTPServer->m_threadCount)));
+			if (!m_HTTPServer->m_threadPool->tryAddWork(rref))
+			{
+				// TODO: Send back a server too busy error.  We'll need a different thread pool for that, since our
+				// main thread can't block.
+			}
 		}
 		catch (OW_SSLException& se)
 		{
@@ -282,6 +278,10 @@ public:
 		{
 			m_HTTPServer->m_options.env->getLogger()->logError(format(
 				"OW_Exception in HTTPServer: %1", e));
+			throw;
+		}
+		catch (OW_ThreadCancelledException&)
+		{
 			throw;
 		}
 		catch (...)
@@ -489,7 +489,9 @@ OW_HTTPServer::shutdown()
 	{
 		OW_THROW(OW_IOException, "Failed writing to OW_HTTPServer shutdown pipe");
 	}
-	m_threadCount->waitForAll(60, 0);
+
+	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
+	m_threadPool->shutdown(false, 60);
 
 	OW_Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;

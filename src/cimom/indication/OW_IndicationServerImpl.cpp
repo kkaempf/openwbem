@@ -83,8 +83,6 @@ public:
 	OW_Notifier(OW_IndicationServerImpl* pmgr, OW_NotifyTrans& ntrans, OW_UserInfo const& aclInfo) :
 		m_pmgr(pmgr), m_trans(ntrans), m_aclInfo(aclInfo) {}
 
-	void start();
-
 	virtual void run();
 
 private:
@@ -151,47 +149,30 @@ OW_ProviderEnvironmentIFCRef createProvEnvRef(OW_CIMOMEnvironmentRef env)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Notifier::start()
-{
-	OW_CIMOMEnvironmentRef eref = m_pmgr->getEnvironment();
-
-	OW_Bool singleThread = eref->getConfigItem(
-		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-
-	OW_Runnable::run(OW_RunnableRef(this), !singleThread,
-		OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pmgr->m_threadCounter)));
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_Notifier::run()
 {
 	OW_CIMOMEnvironmentRef env = m_pmgr->getEnvironment();
 
-	while (true)
+	try
 	{
-		try
-		{
-			m_trans.m_provider->exportIndication(createProvEnvRef(
-				m_pmgr->getEnvironment()), m_trans.m_ns, m_trans.m_handler,
-				m_trans.m_indication);
-		}
-		catch(OW_Exception& e)
-		{
-			env->logError(format("%1 caught in OW_Notifier::run", e.type()));
-			env->logError(format("File: %1", e.getFile()));
-			env->logError(format("Line: %1", e.getLine()));
-			env->logError(format("Msg: %1", e.getMessage()));
-		}
-		catch(...)
-		{
-			env->logError("Unknown exception caught in OW_Notifier::run");
-		}
-		if(!m_pmgr->getNewTrans(m_trans))
-		{
-			break;
-		}
+		m_trans.m_provider->exportIndication(createProvEnvRef(
+			m_pmgr->getEnvironment()), m_trans.m_ns, m_trans.m_handler,
+			m_trans.m_indication);
+	}
+	catch(OW_Exception& e)
+	{
+		env->logError(format("%1 caught in OW_Notifier::run", e.type()));
+		env->logError(format("File: %1", e.getFile()));
+		env->logError(format("Line: %1", e.getLine()));
+		env->logError(format("Msg: %1", e.getMessage()));
+	}
+	catch(OW_ThreadCancelledException&)
+	{
+		throw;
+	}
+	catch(...)
+	{
+		env->logError("Unknown exception caught in OW_Notifier::run");
 	}
 }
 
@@ -200,7 +181,6 @@ OW_Notifier::run()
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationServerImpl::OW_IndicationServerImpl()
 	: OW_IndicationServer()
-	, m_threadCounter(new OW_ThreadCounter(MAX_NOTIFIERS))
 	, m_shuttingDown(false)
 {
 }
@@ -277,6 +257,19 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	m_env = env;
 	OW_UserInfo aclInfo;
 
+	// set up the thread pool
+	OW_Int32 maxIndicationExportThreads;
+	try
+	{
+		maxIndicationExportThreads = env->getConfigItem(OW_ConfigOpts::MAX_INDICATION_EXPORT_THREADS_opt, OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS).toInt32();
+	}
+	catch (const OW_StringConversionException&)
+	{
+       		maxIndicationExportThreads = OW_String(OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS).toInt32();
+	}
+	m_notifierThreadPool = OW_ThreadPoolRef(new OW_ThreadPool(OW_ThreadPool::DYNAMIC_SIZE, 
+				maxIndicationExportThreads, maxIndicationExportThreads * 100));
+
 	//-----------------
 	// Load map with available indication export providers
 	//-----------------
@@ -323,7 +316,6 @@ OW_IndicationServerImpl::~OW_IndicationServerImpl()
 {
 	try
 	{
-		m_trans.clear();
 		m_providers.clear();
 	}
 	catch (...)
@@ -362,6 +354,10 @@ OW_IndicationServerImpl::run()
 				m_env->logError(format("OW_IndicationServerImpl::run caught "
 					" exception %1", e));
 			}
+			catch(OW_ThreadCancelledException&)
+			{
+				throw;
+			}
 			catch(...)
 			{
 				m_env->logError("OW_IndicationServerImpl::run caught unknown"
@@ -373,11 +369,7 @@ OW_IndicationServerImpl::run()
 
 	m_env->logDebug("OW_IndicationServerImpl::run shutting down");
 
-	// Wait for OW_Notifier threads to complete any pending notifications.
-	// We use a large timeout (10 mins.) because if this does timeout, we'll
-	// probably cause a segfault, since the library will be unloaded soon after
-	// and if a thread is still running, then BOOM!
-	m_threadCounter->waitForAll(600, 0);
+	m_notifierThreadPool->shutdown(false, 60);
 
 	return 0;
 }
@@ -699,37 +691,11 @@ OW_IndicationServerImpl::addTrans(
 	const OW_CIMInstance& subscription, 
 	OW_IndicationExportProviderIFCRef provider)
 {
-	OW_MutexLock ml(m_transGuard);
-
 	OW_NotifyTrans trans(ns, indication, handler, subscription, provider);
-	if(m_threadCounter->getThreadCount() < MAX_NOTIFIERS)
+	if (!m_notifierThreadPool->tryAddWork(OW_RunnableRef(new OW_Notifier(this, trans, OW_UserInfo()))))
 	{
-		// this may look like a memory leak, but the start method will end
-		// up deleting the thread once it's done running.
-		OW_Notifier* pnotifier = new OW_Notifier(this, trans, OW_UserInfo());
-		m_threadCounter->incThreadCount(0, 0); // This should never timeout, since we already checked in the above if statement
-		pnotifier->start();
+		m_env->logError(format("Indication export notifier pool overloaded.  Dropping indication: %1", indication.toMOF()));
 	}
-	else
-	{
-		m_trans.push_back(trans);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-OW_IndicationServerImpl::getNewTrans(OW_NotifyTrans& outTrans)
-{
-	OW_MutexLock ml(m_transGuard);
-
-	if(!m_trans.empty())
-	{
-		outTrans = m_trans.front();
-		m_trans.pop_front();
-		return true;
-	}
-
-	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -824,6 +790,10 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 				}
 				catch (const OW_Exception& e)
 				{
+				}
+				catch(OW_ThreadCancelledException&)
+				{
+					throw;
 				}
 				catch (...)
 				{
@@ -1045,6 +1015,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		{
 			m_env->getLogger()->logError(format("Caught exception while calling mustPoll for provider: %1", ce));
 		}
+		catch(OW_ThreadCancelledException&)
+		{
+			throw;
+		}
 		catch (...)
 		{
 			m_env->getLogger()->logError("Caught unknown exception while calling mustPoll for provider");
@@ -1112,6 +1086,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		catch (OW_CIMException& ce)
 		{
 			m_env->getLogger()->logError(format("Caught exception while calling activateFilter for provider: %1", ce));
+		}
+		catch(OW_ThreadCancelledException&)
+		{
+			throw;
 		}
 		catch (...)
 		{

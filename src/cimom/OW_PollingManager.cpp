@@ -59,7 +59,7 @@ OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
 		maxThreads = OW_String(OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
 	}
 	
-	m_threadCount = new OW_ThreadCounter(maxThreads);
+	m_triggerRunnerThreadPool = OW_ThreadPoolRef(new OW_ThreadPool(OW_ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -196,7 +196,7 @@ OW_PollingManager::run()
 	}
 
 	// wait until all the threads exit
-	m_threadCount->waitForAll(60, 0);
+	m_triggerRunnerThreadPool->shutdown(false, 60);
 
 	m_triggerRunners.clear();
 
@@ -267,12 +267,8 @@ OW_PollingManager::processTriggers()
 
 		if (tm >= m_triggerRunners[i]->m_nextPoll)
 		{
-			try
-			{
-				m_threadCount->incThreadCount(1, 0); // if we can't run in 1 sec., just skip this poll, and continue
-				m_triggerRunners[i]->start(m_triggerRunners[i]);
-			}
-			catch (const OW_TimeoutException& e)
+			m_triggerRunners[i]->m_isRunning = true;
+			if (!m_triggerRunnerThreadPool->tryAddWork(m_triggerRunners[i]))
 			{
 				m_env->logCustInfo("Failed to run polled provider, because there are too many already running!");
 			}
@@ -341,16 +337,6 @@ OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PollingManager::TriggerRunner::start(const OW_RunnableRef& tr)
-{
-	m_isRunning = true;
-	OW_Bool isSepThread = !m_env->getConfigItem(
-		OW_ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true");
-	OW_Runnable::run(tr, isSepThread, OW_ThreadDoneCallbackRef(new OW_ThreadCountDecrementer(m_pollMan->m_threadCount)));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_PollingManager::TriggerRunner::run()
 {
 	OW_Int32 nextInterval = 0;
@@ -362,6 +348,10 @@ OW_PollingManager::TriggerRunner::run()
 	{
 		m_env->logError(OW_Format("Caught Exception while running poll: %1",
 			e.what()));
+	}
+	catch(OW_ThreadCancelledException& e)
+	{
+		throw;
 	}
 	catch(...)
 	{

@@ -43,12 +43,11 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_IndicationServer.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_ThreadCounter.hpp"
 #include "OW_HashMultiMap.hpp"
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_WQLCompile.hpp"
 #include "OW_LifecycleIndicationPoller.hpp"
+#include "OW_ThreadPool.hpp"
 
 
 class OW_NotifyTrans;
@@ -57,11 +56,6 @@ class OW_NotifyTrans;
 class OW_IndicationServerImpl : public OW_IndicationServer
 {
 public:
-	enum
-	{
-		MAX_NOTIFIERS = 10
-	};
-
 	OW_IndicationServerImpl();
 	~OW_IndicationServerImpl();
 
@@ -78,8 +72,6 @@ public:
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
 	bool getNewTrans(OW_NotifyTrans& outTrans);
-
-	OW_ThreadCounterRef m_threadCounter;
 
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
 	virtual void deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath);
@@ -146,11 +138,6 @@ private:
 	OW_NonRecursiveMutex m_mainLoopGuard;
 	OW_Condition m_mainLoopCondition;
 
-	// This is where the indications get placed if the number of notify 
-	// threads maxes out, and they need to be pooled somewhere.
-	OW_List<OW_NotifyTrans> m_trans;
-	OW_Mutex m_transGuard;
-
 	OW_CIMOMEnvironmentRef m_env;
 	OW_Semaphore* m_startedSem;
 
@@ -161,6 +148,8 @@ private:
 
 	typedef OW_HashMap<OW_String, OW_LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
+
+	OW_ThreadPoolRef m_notifierThreadPool;
 };
 
 #endif
