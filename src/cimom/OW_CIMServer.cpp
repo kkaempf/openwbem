@@ -940,7 +940,7 @@ OW_CIMServer::_getCIMInstanceNames(const OW_CIMObjectPath cop,
 		{
 			OW_String msg("Unknown provider: ");
 			msg += cq.getValue().toString();
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, msg.c_str());
+			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
 		OW_CIMObjectPathEnumeration theEnum = instancep->enumInstances(
@@ -1074,7 +1074,7 @@ OW_CIMServer::_getCIMInstances(const OW_CIMObjectPath& cop,
 		{
 			OW_String msg("Unknown provider: ");
 			msg += cq.getValue().toString();
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, msg.c_str());
+			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
 		OW_CIMInstanceEnumeration theEnum = instancep->enumInstances(
@@ -1218,7 +1218,13 @@ OW_CIMServer::deleteInstance(const OW_CIMObjectPath& cop,
 		OW_String instStr = cop.toString();
 		if(hdl.isEntries(instStr))
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
+			// TODO: Revisit this.  Instead of throwing, it is allowed in the
+			// spec to to delete the associations that reference the instance.
+			// See http://dmtf.org/standards/documents/WBEM/DSP200.html
+			//   2.3.2.4. DeleteInstance
+			// It would also to good to check for Min(1) relationships to the
+			// instance.
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				format("Instance has associations: %1", instStr).c_str());
 		}
 
@@ -1594,7 +1600,7 @@ OW_CIMServer::getProperty(const OW_CIMObjectPath& name,
 	{
 		OW_String msg("Unknown provider: ");
 		msg += cq.getValue().toString();
-		OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, msg.c_str());
+		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 	}
 
 	return propp->getPropertyValue(
@@ -1650,7 +1656,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 		{
 			OW_String msg("Cannot modify key property: ");
 			msg += cp.getName();
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, msg.c_str());
+			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
 		cp.setValue(cv);
@@ -1673,7 +1679,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 			{
 				msg += cq.getValue().toString();
 			}
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, msg.c_str());
+			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 		}
 
 		propp->setPropertyValue(
@@ -1746,7 +1752,7 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 		cq = cc.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 		if(!cq)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				"No method provider");
 		}
 	}

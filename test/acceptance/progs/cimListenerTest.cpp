@@ -371,7 +371,7 @@ int main(int argc, char* argv[])
 		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(httpClient);
 
-		rch.execQuery(path, "delete from CIM_IndicationSubscription", "wql1");
+		rch.execQuery(path, "delete from CIM_IndicationSubscription", "wql2");
 
 
 		OW_Array<OW_String> registrationHandles;
@@ -379,47 +379,47 @@ int main(int argc, char* argv[])
 
 		if (getenv("OWLONGTEST"))
 		{
-		}
-		
-		handle = hxcl.registerForIndication(url, cop,
-			"select * from OW_TestIndication1 where TheClass ISA "
-			"\"TestClass1\"", "wql1", test1cb);
-		registrationHandles.append(handle);
+			handle = hxcl.registerForIndication(url, cop,
+				"select * from OW_TestIndication1 where TheClass ISA "
+				"\"TestClass1\"", "wql1", test1cb);
+			registrationHandles.append(handle);
 
-		handle = hxcl.registerForIndication(url, cop,
-			"select * from OW_TestIndication2 where TheInstance ISA "
-			"\"TestClass2\" and TheInstance.dummykey = \"foo\"", "wql1",
-			test2cb);
-		registrationHandles.append(handle);
+			handle = hxcl.registerForIndication(url, cop,
+				"select * from OW_TestIndication2 where TheInstance ISA "
+				"\"TestClass2\" and TheInstance.dummykey = \"foo\"", "wql1",
+				test2cb);
+			registrationHandles.append(handle);
 
-		// Now wait for our test trigger providers to send out their indications.
-		// we should get 8 OW_TestIndication1 indications.
-		for (size_t i = 0; i < 8; ++i)
-		{
-			if (!test1sem.wait(25 * 1000))
+			// Now wait for our test trigger providers to send out their indications.
+			// we should get 8 OW_TestIndication1 indications.
+			for (size_t i = 0; i < 8; ++i)
 			{
-				OW_THROW(OW_Exception, "semaphore timed out");
+				if (!test1sem.wait(25 * 1000))
+				{
+					OW_THROW(OW_Exception, "semaphore timed out");
+				}
 			}
-		}
-		// we should get 6 OW_TestIndication2 indications.
-		for (size_t i = 0; i < 6; ++i)
-		{
-			if (!test2sem.wait(25 * 1000))
+			// we should get 6 OW_TestIndication2 indications.
+			for (size_t i = 0; i < 6; ++i)
 			{
-				OW_THROW(OW_Exception, "semaphore timed out");
+				if (!test2sem.wait(25 * 1000))
+				{
+					OW_THROW(OW_Exception, "semaphore timed out");
+				}
 			}
-		}
 
-		// now deregister
-		OW_MutexLock guard1(coutMutex);
-		cout << "Now deregistering for OW_TestIndication1 and OW_TestIndication2" << endl;
-		guard1.release();
+			// now deregister
+			OW_MutexLock guard1(coutMutex);
+			cout << "Now deregistering for OW_TestIndication1 and OW_TestIndication2" << endl;
+			guard1.release();
 
-		for (size_t i = 0; i < registrationHandles.size(); ++i)
-		{
-			hxcl.deregisterForIndication(registrationHandles[i]);
+			for (size_t i = 0; i < registrationHandles.size(); ++i)
+			{
+				hxcl.deregisterForIndication(registrationHandles[i]);
+			}
+			registrationHandles.clear();
+
 		}
-		registrationHandles.clear();
 		
 		// now let's register for all the intrinsic method indications.
 

@@ -478,7 +478,7 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 		path.setNameSpace(ns);
 		if (path.getKeys().size() == 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 					"Class paths not supported");
 		}
 		break;

@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_CIMSCOPE_HPP__
-#define __OW_CIMSCOPE_HPP__
+#ifndef OW_CIMSCOPE_HPP_
+#define OW_CIMSCOPE_HPP_
 
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
@@ -151,12 +151,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this scope to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
@@ -178,4 +172,4 @@ private:
 	int m_val;
 };
 
-#endif	//f __OW_CIMSCOPE_HPP__
+#endif

@@ -15,7 +15,7 @@
 
 namespace
 {
-class LinuxProcess : public OW_CppInstanceProviderIFC, 
+class LinuxProcess : public OW_CppInstanceProviderIFC,
 	public OW_CppMethodProviderIFC
 {
 public:
@@ -29,7 +29,7 @@ public:
 	virtual OW_CIMObjectPathEnumeration enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_Bool& deep, 
+		const OW_Bool& deep,
 		const OW_CIMClass& cimClass )
 	{
 		(void)deep;
@@ -43,24 +43,24 @@ public:
 
 		if (pos.getExitStatus() != 0)
 		{
-			//OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, "Bad exit status from popen");
+			//OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
 		}
 
 		OW_StringArray lines = output.tokenize("\n");
-		for (OW_StringArray::const_iterator iter = lines.begin(); 
+		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); iter++)
 		{
 			OW_StringArray proc = iter->tokenize();
 			OW_CIMObjectPath newCop = cop;
 			newCop.addKey(OW_String("Handle"), OW_CIMValue(proc[0]));
-			newCop.addKey(OW_String("CreationClassName"), 
+			newCop.addKey(OW_String("CreationClassName"),
 				OW_CIMValue(cop.getObjectName()));
 			newCop.addKey(OW_String("OSName"), OW_CIMValue(OW_String("Linux")));
-			newCop.addKey(OW_String("OSCreationClassName"), 
+			newCop.addKey(OW_String("OSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_OperatingSystem")));
-			newCop.addKey(OW_String("CSName"), 
+			newCop.addKey(OW_String("CSName"),
 				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
-			newCop.addKey(OW_String("CSCreationClassName"), 
+			newCop.addKey(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
 			rval.addElement(newCop);
 		}
@@ -72,8 +72,8 @@ public:
 	virtual OW_CIMInstanceEnumeration enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_Bool& deep, 
-		const OW_CIMClass& cimClass, 
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)env;
@@ -86,25 +86,25 @@ public:
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 		if (pos.getExitStatus() != 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, "Bad exit status from popen");
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
 		}
 
 		OW_String output = pos.out()->readAll();
 		OW_StringArray lines = output.tokenize("\n");
-		for (OW_StringArray::const_iterator iter = lines.begin(); 
+		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); iter++)
 		{
 			OW_StringArray proc = iter->tokenize();
 			OW_CIMInstance newInst = cimClass.newInstance();
-			newInst.setProperty(OW_String("CreationClassName"), 
+			newInst.setProperty(OW_String("CreationClassName"),
 				OW_CIMValue(cop.getObjectName()));
 			newInst.setProperty(OW_String("Handle"), OW_CIMValue(proc[0]));
 			newInst.setProperty(OW_String("OSName"), OW_CIMValue(OW_String("Linux")));
-			newInst.setProperty(OW_String("OSCreationClassName"), 
+			newInst.setProperty(OW_String("OSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_OperatingSystem")));
-			newInst.setProperty(OW_String("CSName"), 
+			newInst.setProperty(OW_String("CSName"),
 				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
-			newInst.setProperty(OW_String("CSCreationClassName"), 
+			newInst.setProperty(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
 			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
 			newInst.setProperty(OW_String("VirtualMemorySize"), OW_CIMValue(proc[2].toUInt32()));
@@ -118,7 +118,7 @@ public:
 	virtual OW_CIMInstance getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_CIMClass& cimClass, 
+		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)env;
@@ -127,7 +127,7 @@ public:
 		(void)localOnly;
 		OW_CIMInstance inst = cimClass.newInstance();
 		inst.setProperties(cop.getKeys());
-		OW_String pid;  
+		OW_String pid;
 		inst.getProperty("Handle").getValue().get(pid);
 		OW_String cmd("/bin/ps p ");
 		cmd += pid;
@@ -135,7 +135,7 @@ public:
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 		if (pos.getExitStatus() != 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, 
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 				"The Instance does not (any longer) exist");
 		}
 		OW_StringArray proc = pos.out()->readAll().tokenize();
@@ -184,7 +184,7 @@ public:
 	virtual OW_CIMValue invokeMethod(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_String& methodName, 
+		const OW_String& methodName,
 		const OW_CIMValueArray& in,
 		OW_CIMValueArray& out )
 	{
@@ -196,7 +196,7 @@ public:
 			in[0].get(sig);
 			OW_CIMPropertyArray keys = cop.getKeys();
 			pid_t pid = 0;
-			for (OW_CIMPropertyArray::const_iterator iter = keys.begin(); 
+			for (OW_CIMPropertyArray::const_iterator iter = keys.begin();
 				iter != keys.end(); iter++)
 			{
 				if (iter->getName().equalsIgnoreCase("handle"))

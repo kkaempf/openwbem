@@ -229,7 +229,7 @@ OW_HTTPSvrConnection::run()
 				case POST:
 					if (istrToReadFrom.isNull())
 					{
-						OW_THROW(OW_HTTPException, 
+						OW_THROW(OW_HTTPException,
 							"POST, but no content-length or chunking");
 					}
 					post(*istrToReadFrom);
@@ -264,7 +264,18 @@ OW_HTTPSvrConnection::run()
 			m_errDetails = OW_String("CIMError: ") + cee.getMessage();
 		}
 		cleanUpIStreams(istrToReadFrom);
-		sendError(SC_BAD_REQUEST);
+		OW_String errMsg(cee.getMessage());
+		if (errMsg == OW_CIMErrorException::unsupported_protocol_version ||
+			errMsg == OW_CIMErrorException::multiple_requests_unsupported ||
+			errMsg == OW_CIMErrorException::unsupported_cim_version ||
+			errMsg == OW_CIMErrorException::unsupported_dtd_version)
+		{
+			sendError(SC_NOT_IMPLEMENTED);
+		}
+		else
+		{
+			sendError(SC_BAD_REQUEST);
+		}
 	}
 	catch (OW_Assertion& a)
 	{
@@ -750,8 +761,8 @@ OW_HTTPSvrConnection::processHeaders()
 
 	if (getHeaderValue("TE").indexOf("trailers") >= 0)
 	{
-		// Trailers not standardized yet, so only do it we're talking to 
-		// ourselves. 
+		// Trailers not standardized yet, so only do it we're talking to
+		// ourselves.
 		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) >= 0)
 		{
 			m_chunkedOut = true;

@@ -32,10 +32,12 @@
 // OW_XMLOperationGeneric.cpp
 //
 
-#include	"OW_config.h"
-#include	"OW_Param.hpp"
-#include	"OW_XMLNode.hpp"
-#include	"OW_XMLOperationGeneric.hpp"
+#include "OW_config.h"
+#include "OW_Param.hpp"
+#include "OW_XMLNode.hpp"
+#include "OW_XMLOperationGeneric.hpp"
+#include "OW_Assertion.hpp"
+#include "OW_CIMErrorException.hpp"
 
 using std::istream;
 using std::ostream;
@@ -48,7 +50,7 @@ OW_XMLOperationGeneric::extrinsicMethod(ostream& ostr, OW_XMLNode& node,
 	(void)node;
 	(void)method;
 	(void)hdl;
-	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
+	OW_ASSERT(0);
 }
 
 OW_XMLNode
@@ -63,15 +65,15 @@ OW_XMLOperationGeneric::XMLGetCIMElement(OW_XMLNode& node)
 
 	if(!str.equals(CIMVERSION_VALUE))
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
-				"Unsupported version of CIMVERSION");
+		OW_THROW(OW_CIMErrorException,
+			OW_CIMErrorException::unsupported_cim_version);
 	}
 	
 	str = node.mustGetAttribute(DTDVERSION);
 	if(!str.equals(DTDVERSION_VALUE))
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED,
-				"Unsupported version of DTDVERSION");
+		OW_THROW(OW_CIMErrorException,
+			OW_CIMErrorException::unsupported_dtd_version);
 	}
 	
 	node = node.getChild();

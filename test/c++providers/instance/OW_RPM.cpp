@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 /*******************************************************************************
-* This is an example of how to create an Instance and Method provider.  
+* This is an example of how to create an Instance and Method provider.
 *******************************************************************************/
 
 #include "OW_CppInstanceProviderIFC.hpp"
@@ -68,12 +68,12 @@ public:
 	{
 	}
 
-	// Here are the virtual functions we'll implement.  Check the base 
-	// classes for the documentation. 
+	// Here are the virtual functions we'll implement.  Check the base
+	// classes for the documentation.
 
 
 //////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 		initialize(const OW_ProviderEnvironmentIFCRef&)
 	{
 		struct stat fs;
@@ -98,7 +98,7 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPathEnumeration 
+	OW_CIMObjectPathEnumeration
 		enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
@@ -119,11 +119,11 @@ public:
 
 		if (pos.getExitStatus() != 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, "Bad exit status from popen");
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
 		}
 
 
-		for (OW_StringArray::const_iterator iter = lines.begin(); 
+		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
 			OW_CIMObjectPath newCop = cop;
@@ -136,12 +136,12 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstanceEnumeration 
+	OW_CIMInstanceEnumeration
 		enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_Bool& deep, 
-		const OW_CIMClass& cimClass, 
+		const OW_Bool& deep,
+		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)env;
@@ -154,25 +154,25 @@ public:
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 		if (pos.getExitStatus() != 0)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, "Bad exit status from popen");
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
 		}
 
 		OW_String output = pos.out()->readAll();
 		OW_StringArray lines = output.tokenize("\n");
-		for (OW_StringArray::const_iterator iter = lines.begin(); 
+		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); iter++)
 		{
 			OW_StringArray proc = iter->tokenize();
 			OW_CIMInstance newInst = cimClass.newInstance();
-			newInst.setProperty(OW_String("CreationClassName"), 
+			newInst.setProperty(OW_String("CreationClassName"),
 				OW_CIMValue(cop.getObjectName()));
 			newInst.setProperty(OW_String("Handle"), OW_CIMValue(proc[0]));
 			newInst.setProperty(OW_String("OSName"), OW_CIMValue(OW_String("Linux")));
-			newInst.setProperty(OW_String("OSCreationClassName"), 
+			newInst.setProperty(OW_String("OSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_OperatingSystem")));
-			newInst.setProperty(OW_String("CSName"), 
+			newInst.setProperty(OW_String("CSName"),
 				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
-			newInst.setProperty(OW_String("CSCreationClassName"), 
+			newInst.setProperty(OW_String("CSCreationClassName"),
 				OW_CIMValue(OW_String("CIM_ComputerSystem")));
 			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
 			rval.addElement(newInst);
@@ -181,11 +181,11 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstance 
+	OW_CIMInstance
 		getInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_CIMClass& cimClass, 
+		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
 		(void)env;
@@ -199,7 +199,7 @@ public:
 
 		if (!processPkg(rval))
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, 
+			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 				"The Instance does not (any longer) exist");
 		}
 
@@ -212,13 +212,13 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPath 
+	OW_CIMObjectPath
 		createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& cimInstance )
 	{
-		// not applicable with our apt implementation. 
+		// not applicable with our apt implementation.
 		(void)env;
 		(void)cop;
 		(void)cimInstance;
@@ -226,13 +226,13 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 		setInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& cimInstance)
 	{
-		// not applicable with our apt implementation. 
+		// not applicable with our apt implementation.
 		(void)env;
 		(void)cop;
 		(void)cimInstance;
@@ -240,22 +240,22 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 		deleteInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop)
 	{
-		// not applicable with our apt implementation. 
+		// not applicable with our apt implementation.
 		(void)env;
 		(void)cop;
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMValue 
+	OW_CIMValue
 		invokeMethod(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_CIMObjectPath& cop,
-		const OW_String& methodName, 
+		const OW_String& methodName,
 		const OW_CIMValueArray& in,
 		OW_CIMValueArray& out )
 	{
@@ -265,7 +265,7 @@ public:
 
 		OW_String pkgName;
 		OW_CIMPropertyArray props = cop.getKeys();
-		for (OW_CIMPropertyArray::const_iterator iter = props.begin(); 
+		for (OW_CIMPropertyArray::const_iterator iter = props.begin();
 			iter != props.end(); ++iter)
 		{
 			if (iter->getName().equalsIgnoreCase("name"))
@@ -290,12 +290,12 @@ public:
 private:
 	OW_String _pkgHandler;
 
-	/** 
+	/**
 	 * Fill in the information on a package
 	 *
 	 * @param inst The instance to fill out.  Note that the keys
 	 *             must already be present before passing it in.
-	 * 
+	 *
 	 * @return True if successful, false if not (like the instance doesn't
 	 *         exist)
 	 */
@@ -319,7 +319,7 @@ private:
 
 		bool hitPackage = false;
 		OW_String curName, value;
-		for (OW_StringArray::const_iterator iter = lines.begin(); 
+		for (OW_StringArray::const_iterator iter = lines.begin();
 			iter != lines.end(); ++iter)
 		{
 			if ((*iter)[0] == ' ')
