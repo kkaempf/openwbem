@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 class OW_WQLSelectStatement;
@@ -100,7 +100,7 @@ public:
 
 };
 
-typedef OW_Reference< OW_IndicationProviderIFC > OW_IndicationProviderIFCRef;
+typedef OW_IntrusiveReference< OW_IndicationProviderIFC > OW_IndicationProviderIFCRef;
 typedef OW_Array<OW_IndicationProviderIFCRef>
 		OW_IndicationProviderIFCRefArray;
 

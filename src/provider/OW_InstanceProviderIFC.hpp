@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
@@ -177,7 +177,7 @@ public:
 
 };
 
-typedef OW_Reference<OW_InstanceProviderIFC> OW_InstanceProviderIFCRef;
+typedef OW_IntrusiveReference<OW_InstanceProviderIFC> OW_InstanceProviderIFCRef;
 
 #endif
 

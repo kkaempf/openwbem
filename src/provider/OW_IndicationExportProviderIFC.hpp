@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Array.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 class OW_IndicationExportProviderIFC : public OW_ProviderBaseIFC
@@ -56,7 +56,7 @@ public:
 		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst) = 0;
 };
 
-typedef OW_Reference<OW_IndicationExportProviderIFC>
+typedef OW_IntrusiveReference<OW_IndicationExportProviderIFC>
 		OW_IndicationExportProviderIFCRef;
 
 typedef OW_Array<OW_IndicationExportProviderIFCRef>

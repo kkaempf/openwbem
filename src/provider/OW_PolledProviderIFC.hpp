@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_Array.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
@@ -60,7 +60,7 @@ public:
 	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env) = 0;
 };
 
-typedef OW_Reference<OW_PolledProviderIFC>
+typedef OW_IntrusiveReference<OW_PolledProviderIFC>
 		OW_PolledProviderIFCRef;
 
 typedef OW_Array<OW_PolledProviderIFCRef>

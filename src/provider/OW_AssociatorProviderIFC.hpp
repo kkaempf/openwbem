@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
@@ -257,7 +257,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 				const OW_String& role ) = 0;
 };
 
-typedef OW_Reference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
+typedef OW_IntrusiveReference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
 
 #endif
 

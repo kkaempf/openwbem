@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
@@ -91,7 +91,7 @@ public:
 			const OW_CIMValue& val ) = 0;
 };
 
-typedef OW_Reference< OW_PropertyProviderIFC > OW_PropertyProviderIFCRef;
+typedef OW_IntrusiveReference< OW_PropertyProviderIFC > OW_PropertyProviderIFCRef;
 
 #endif
 

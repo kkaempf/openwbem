@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
-#include "OW_Reference.hpp"
+#include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 /**
@@ -71,7 +71,7 @@ public:
 			OW_CIMParamValueArray& out ) = 0;
 };
 
-typedef OW_Reference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
+typedef OW_IntrusiveReference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
 
 #endif
 
