@@ -27,19 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Runnable.hpp"
 #include "OW_Thread.hpp"
-
 #ifdef OW_DEBUG		
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
+
 /////////////////////////////////////////////////////////////////////////////
-OW_Runnable::~OW_Runnable()
+Runnable::~Runnable()
 {
 }
 
-
+} // end namespace OpenWBEM
 

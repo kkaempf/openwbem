@@ -33,6 +33,8 @@
 #include "OW_ThreadTestCases.hpp"
 #include "OW_Thread.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ThreadTestCases::setUp()
 {
 }
@@ -43,14 +45,14 @@ void OW_ThreadTestCases::tearDown()
 
 namespace {
 
-class testReturnThread : public OW_Thread
+class testReturnThread : public Thread
 {
 public:
 	testReturnThread()
-		: OW_Thread()
+		: Thread()
 	{}
 
-	OW_Int32 run()
+	Int32 run()
 	{
 		return 4321;
 	}
@@ -71,28 +73,28 @@ bool cancelCleanedUp = false;
 struct shouldRunOnException
 {
 	~shouldRunOnException() { cancelCleanedUp = true; }
-	OW_Int32 getRV() { return 0; } // this is just so we can use the variable down below and avoid an unused variable warning.
+	Int32 getRV() { return 0; } // this is just so we can use the variable down below and avoid an unused variable warning.
 };
 
-class testCancellationThread1 : public OW_Thread
+class testCancellationThread1 : public Thread
 {
 public:
 	testCancellationThread1()
-		: OW_Thread()
+		: Thread()
 		, m_cooperativeCancelCalled(false)
 		, m_definitiveCancelCalled(false)
 	{
 		cancelCleanedUp = false;
 	}
 
-	OW_Int32 run()
+	Int32 run()
 	{
 		shouldRunOnException x;
 		// just wait a long time for us to get cancelled.
 		while (true)
 		{
 			testCancel();
-			OW_Thread::yield();
+			Thread::yield();
 		}
 		return x.getRV();
 	}
@@ -112,24 +114,24 @@ public:
 	bool m_definitiveCancelCalled;
 };
 
-class testCancellationThread2 : public OW_Thread
+class testCancellationThread2 : public Thread
 {
 public:
 	testCancellationThread2()
-		: OW_Thread()
+		: Thread()
 		, m_cooperativeCancelCalled(false)
 		, m_definitiveCancelCalled(false)
 	{
 		cancelCleanedUp = false;
 	}
 
-	OW_Int32 run()
+	Int32 run()
 	{
 		shouldRunOnException x;
 		// just wait a long time for us to get cancelled.
 		while (true)
 		{
-			OW_Thread::yield();
+			Thread::yield();
 		}
 		return x.getRV();
 	}
@@ -150,24 +152,24 @@ public:
 };
 
 // here's a thread that won't allow definitive cancellation.
-class testCancellationThread3 : public OW_Thread
+class testCancellationThread3 : public Thread
 {
 public:
 	testCancellationThread3()
-		: OW_Thread()
+		: Thread()
 		, m_cooperativeCancelCalled(false)
 		, m_firstTime(true)
 	{
 		cancelCleanedUp = false;
 	}
 
-	OW_Int32 run()
+	Int32 run()
 	{
 		shouldRunOnException x;
 		// just wait a long time for us to get cancelled.
 		while (true)
 		{
-			OW_Thread::yield();
+			Thread::yield();
 		}
 		return x.getRV();
 	}
@@ -184,7 +186,7 @@ public:
 		if (m_firstTime)
 		{
 			m_firstTime = false;
-			OW_THROW(OW_CancellationDeniedException, "test");
+			OW_THROW(CancellationDeniedException, "test");
 		}
 		else
 			return;
@@ -243,7 +245,7 @@ void OW_ThreadTestCases::testDefinitiveCancellation()
 	testCancellationThread3 theThread3;
 	unitAssert(!cancelCleanedUp);
 	theThread3.start();
-	// first time, we'll get an OW_CancellationDeniedException
+	// first time, we'll get an CancellationDeniedException
 	unitAssertThrows(theThread3.definitiveCancel(0));
 
 	// second time it'll allow itself to be cancelled.

@@ -35,6 +35,8 @@
 #include "testSharedLibraryLoader.hpp"
 
 
+using namespace OpenWBEM;
+
 void OW_SharedLibraryTestCases::setUp()
 {
 }
@@ -46,9 +48,9 @@ void OW_SharedLibraryTestCases::tearDown()
 
 void OW_SharedLibraryTestCases::testGetFunctionPointer()
 {
-	OW_Reference<OW_SharedLibrary> sl(new testSharedLibrary);
+	Reference<SharedLibrary> sl(new testSharedLibrary);
 	fptype fp;
-	OW_SharedLibrary::getFunctionPointer( sl, "testFunction", fp );
+	SharedLibrary::getFunctionPointer( sl, "testFunction", fp );
 	unitAssert( fp );
 	unitAssert( fp(3) == 4 );
 }

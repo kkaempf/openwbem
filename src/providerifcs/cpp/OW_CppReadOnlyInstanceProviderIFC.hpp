@@ -29,40 +29,40 @@
 *******************************************************************************/
 #ifndef OW_CPP_READ_ONLY_INSTANCE_PROVIDER_IFC_HPP_INCLUDE_GUARD_
 #define OW_CPP_READ_ONLY_INSTANCE_PROVIDER_IFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 
+namespace OpenWBEM
+{
+
 /**
  * This class implements deleteInstance, createInstance, and modifyInstance.
- * All throw an OW_CIMException::FAILED.
+ * All throw an CIMException::FAILED.
  * If an instance provider is read-only, it can derive from this class and
  * it won't have to implement the mutating functions.
  * This class can be part of a multiple-inerhitance diamond.  
  * Thus the "public virtual" inheritance.
  */
-class OW_CppReadOnlyInstanceProviderIFC : public virtual OW_CppInstanceProviderIFC
+class CppReadOnlyInstanceProviderIFC : public virtual CppInstanceProviderIFC
 {
 	virtual void deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop);
-
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance );
-
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop);
+	virtual CIMObjectPath createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance );
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass);
-
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList,
+		const CIMClass& theClass);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

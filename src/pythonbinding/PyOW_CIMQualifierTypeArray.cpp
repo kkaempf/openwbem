@@ -30,7 +30,13 @@
 #include "OW_CIMQualifierType.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMQualifierType(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMQualifierType>(name);
+
+void registerArrayImpl_CIMQualifierType(const char* name)
+{
+    registerArrayImpl<CIMQualifierType>(name);
 }
+
+} // end namespace OpenWBEM
+

@@ -35,6 +35,8 @@
 #include "OW_Exception.hpp"
 #include "OW_Thread.hpp"
 
+using namespace OpenWBEM;
+
 DECLARE_EXCEPTION(Test);
 DEFINE_EXCEPTION(Test);
 
@@ -46,20 +48,20 @@ void OW_ExceptionTestCases::tearDown()
 {
 }
 
-static OW_Semaphore g_sem;
+static Semaphore g_sem;
 static bool g_caught = false;
 
 namespace {
-class ExTestRunnable: public OW_Thread
+class ExTestRunnable: public Thread
 {
 protected:
-	OW_Int32 run()
+	Int32 run()
 	{
 		try
 		{
-			OW_THROW(OW_TestException, "test");
+			OW_THROW(TestException, "test");
 		}
-		catch(OW_Exception& e)
+		catch(Exception& e)
 		{
 			g_caught = true;
 			g_sem.signal();
@@ -74,9 +76,9 @@ void OW_ExceptionTestCases::testSomething()
 	g_caught = false;
 	try
 	{
-		OW_THROW(OW_TestException, "test");
+		OW_THROW(TestException, "test");
 	}
-	catch(OW_TestException& e)
+	catch(TestException& e)
 	{
 		g_caught = true;
 	}

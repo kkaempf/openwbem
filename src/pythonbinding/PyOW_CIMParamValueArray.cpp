@@ -30,7 +30,13 @@
 #include "OW_CIMParamValue.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMParamValue(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMParamValue>(name);
+
+void registerArrayImpl_CIMParamValue(const char* name)
+{
+    registerArrayImpl<CIMParamValue>(name);
 }
+
+} // end namespace OpenWBEM
+

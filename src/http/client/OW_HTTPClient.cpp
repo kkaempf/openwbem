@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_HTTPUtils.hpp"
@@ -44,12 +42,13 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_HTTPException.hpp"
 
+namespace OpenWBEM
+{
 
 using std::flush;
 using std::istream;
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
+HTTPClient::HTTPClient( const String &sURL )
 #ifndef OW_DISABLE_DIGEST
 	: m_sRealm()
   	, m_sDigestNonce()
@@ -64,7 +63,7 @@ OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
 	, m_url(sURL)
 	, m_responseHeaders(), m_requestHeadersCommon()
 	, m_requestHeadersNew(), m_pIstrReturn(0)
-	, m_socket(m_url.protocol.equalsIgnoreCase("https") ? OW_SocketFlags::E_SSL : OW_SocketFlags::E_NOT_SSL)
+	, m_socket(m_url.protocol.equalsIgnoreCase("https") ? SocketFlags::E_SSL : SocketFlags::E_NOT_SSL)
 	, m_requestMethod("M-POST"), m_authRequired(false)
 	, m_needsConnect(true)
 	, m_istr(m_socket.getInputStream()), m_ostr(m_socket.getOutputStream())
@@ -76,9 +75,8 @@ OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
 	//m_socket.setReceiveTimeout(300);
 	//m_socket.setSendTimeout(300);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPClient::~OW_HTTPClient()
+HTTPClient::~HTTPClient()
 {
 	try
 	{
@@ -89,28 +87,24 @@ OW_HTTPClient::~OW_HTTPClient()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::cleanUpIStreams()
+HTTPClient::cleanUpIStreams()
 {
 	// if there remains bytes from last response, eat them.
 	if (m_pIstrReturn)
 	{
-		OW_HTTPUtils::eatEntity(*m_pIstrReturn);
+		HTTPUtils::eatEntity(*m_pIstrReturn);
 		m_pIstrReturn = 0;
 	}
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
-void OW_HTTPClient::setUrl()
+void HTTPClient::setUrl()
 {
 	if (m_url.protocol.empty())
 	{
 		m_url.protocol = "http";
 	}
-
 	if (m_url.port == 0)
 	{
 		if( m_url.protocol.equalsIgnoreCase("https") )
@@ -122,47 +116,42 @@ void OW_HTTPClient::setUrl()
 			m_url.port = 5988;
 		}
 	}
-
 	if (m_url.protocol.equalsIgnoreCase("https"))
 	{
 #ifndef OW_NO_SSL
-		OW_SSLCtxMgr::initClient();
+		SSLCtxMgr::initClient();
 #else
-		OW_THROW(OW_SocketException, "SSL not available");
+		OW_THROW(SocketException, "SSL not available");
 #endif // #ifndef OW_NO_SSL
 	}
-
 	if (m_url.protocol.equalsIgnoreCase("ipc"))
 	{
-		m_serverAddress = OW_SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
+		m_serverAddress = SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
 	}
 	else
 	{
-		m_serverAddress = OW_SocketAddress::getByName(m_url.host,
+		m_serverAddress = SocketAddress::getByName(m_url.host,
 			m_url.port);
 	}
-
 	if( m_url.path.empty())
 	{
 		m_url.path = "/cimom";
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::receiveAuthentication()
+HTTPClient::receiveAuthentication()
 {
 #ifndef OW_DISABLE_DIGEST
-	OW_RandomNumber rn(0, 0x7FFFFFFF);
+	RandomNumber rn(0, 0x7FFFFFFF);
 	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
 	
-	OW_String authInfo = getHeaderValue("www-authenticate");
+	String authInfo = getHeaderValue("www-authenticate");
 	size_t iBeginIndex = authInfo.indexOf( "realm" ) + 7;
 	if( iBeginIndex >= 7 )
 	{
 		size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-		if( iEndIndex != OW_String::npos )
+		if( iEndIndex != String::npos )
 		{
 			m_sRealm = authInfo.substring( iBeginIndex, iEndIndex -
 				iBeginIndex );
@@ -177,16 +166,15 @@ OW_HTTPClient::receiveAuthentication()
 		m_sRealm = "";
 	}
 #endif // #ifndef OW_DISABLE_DIGEST
-
 	if (m_url.username.empty())
 	{
 		if (!m_loginCB)
 		{
-			OW_THROW(OW_HTTPException, "No login/password to send");
+			OW_THROW(HTTPException, "No login/password to send");
 		}
 		else
 		{
-			OW_String realm;
+			String realm;
 #ifndef OW_DISABLE_DIGEST
 			if (m_sRealm.empty())
 			{
@@ -199,7 +187,7 @@ OW_HTTPClient::receiveAuthentication()
 #else
 			realm = m_url.toString();
 #endif
-			OW_String name, passwd;
+			String name, passwd;
 			if (m_loginCB->getCredentials(realm, name, passwd, ""))
 			{
 				m_url.username = name;
@@ -207,79 +195,75 @@ OW_HTTPClient::receiveAuthentication()
 			}
 			else
 			{
-				OW_THROW(OW_HTTPException, "No login/password to send");
+				OW_THROW(HTTPException, "No login/password to send");
 			}
 		}
 	}
-
-
 #ifndef OW_DISABLE_DIGEST
 	if(headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
-		OW_String authInfo = getHeaderValue("authentication-info");
+		String authInfo = getHeaderValue("authentication-info");
 		size_t iBeginIndex = authInfo.indexOf( "nextnonce" ) + 11;
 		if( iBeginIndex >= 11 )
 		{
 			size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-			if( iEndIndex != OW_String::npos )
+			if( iEndIndex != String::npos )
 			{
 				m_sDigestNonce = authInfo.substring( iBeginIndex,
 					iEndIndex - iBeginIndex );
 			}
 		}
-		OW_HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
+		HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
 			m_url.password, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 		m_iDigestNonceCount = 1;
-
 	}
-	else if( getHeaderValue("www-authenticate").indexOf( "Digest" ) != OW_String::npos )
+	else if( getHeaderValue("www-authenticate").indexOf( "Digest" ) != String::npos )
 	{
 		m_sAuthorization = "Digest";
-		OW_String authInfo = getHeaderValue("www-authenticate");
+		String authInfo = getHeaderValue("www-authenticate");
 		size_t iBeginIndex = authInfo.indexOf( "nonce" ) + 7;
 		if( iBeginIndex >= 7 )
 		{
 			size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-			if( iEndIndex != OW_String::npos )
+			if( iEndIndex != String::npos )
 			{
 				m_sDigestNonce = authInfo.substring( iBeginIndex, iEndIndex -
 					iBeginIndex );
 			}
 		}
-
-		OW_HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
+		HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
 			m_url.password, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 	}
 	else 
 #endif
-	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) != OW_String::npos )
+	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) != String::npos )
 	{
 		m_sAuthorization = "Basic";
 	}
 	else
 	{
-		OW_THROW(OW_HTTPException, "No known authentication schemes");
+		OW_THROW(HTTPException, "No known authentication schemes");
 	}
 }
 				
 //////////////////////////////////////////////////////////////////////////////
-void OW_HTTPClient::sendAuthorization()
+void HTTPClient::sendAuthorization()
 {
 	if( !m_sAuthorization.empty())
 	{
-		OW_StringStream ostr;
+		StringStream ostr;
 		ostr << m_sAuthorization << " ";
 		if( m_sAuthorization == "Basic" )
 		{
-			ostr << OW_HTTPUtils::base64Encode( m_url.username + ":" +
+			ostr << HTTPUtils::base64Encode( m_url.username + ":" +
 				m_url.password );
 		}
 #ifndef OW_DISABLE_DIGEST
 		else if( m_sAuthorization == "Digest" )
 		{
-			OW_String sNonceCount;
+			String sNonceCount;
 			sNonceCount.format( "%08x", m_iDigestNonceCount );
-			OW_HTTPUtils::DigestCalcResponse( m_sDigestSessionKey, m_sDigestNonce, sNonceCount,
+			HTTPUtils::DigestCalcResponse( m_sDigestSessionKey, m_sDigestNonce, sNonceCount,
 				m_sDigestCNonce, "auth", m_requestMethod, m_url.path, "", m_sDigestResponse );
 			ostr << "username=\"" << m_url.username << "\", ";
 			ostr << "realm=\"" << m_sRealm << "\", ";
@@ -295,21 +279,16 @@ void OW_HTTPClient::sendAuthorization()
 		addHeaderNew("Authorization", ostr.toString());
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-void OW_HTTPClient::sendDataToServer( OW_Reference<OW_TempFileStream> tfs,
-	const OW_String& methodName, const OW_String& nameSpace )
+void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
+	const String& methodName, const String& nameSpace )
 {
 	// Make sure our connection is good
-
 	checkConnection();
-
-
-	OW_String hp;
+	String hp;
 	if (m_requestMethod.equals("M-POST"))
 	{
-		hp = OW_HTTPUtils::getCounterStr();
+		hp = HTTPUtils::getCounterStr();
 		addHeaderNew("Man", "http://www.dmtf.org/cim/mapping/http/v1.0; ns="
 			+ hp);
 		hp += "-";
@@ -328,32 +307,29 @@ void OW_HTTPClient::sendDataToServer( OW_Reference<OW_TempFileStream> tfs,
 		addHeaderNew(hp + "CIMMethod", methodName);
 		addHeaderNew(hp + "CIMObject", nameSpace);
 	}
-
 	if (m_doDeflateOut)
 	{
 		// deflate test items
 		addHeaderNew("Transfer-Encoding", "chunked");
 		addHeaderNew("Content-Encoding", "deflate");
 	}
-
 	// send headers
 	sendHeaders(m_requestMethod, "HTTP/1.1");
 	
 	// send entity
 	tfs->rewind();				
-
 	if (m_doDeflateOut)
 	{
 #ifdef OW_HAVE_ZLIB_H
 		// test deflate stuff
-		OW_HTTPChunkedOStream chunkostr(m_ostr);
-		OW_HTTPDeflateOStream deflateostr(chunkostr);
+		HTTPChunkedOStream chunkostr(m_ostr);
+		HTTPDeflateOStream deflateostr(chunkostr);
 		deflateostr << tfs->rdbuf();
 		deflateostr.termOutput();
 		chunkostr.termOutput();
 		// end deflate test stuff
 #else
-		OW_THROW(OW_HTTPException, "Attempted to deflate output but not "
+		OW_THROW(HTTPException, "Attempted to deflate output but not "
 			"compiled with zlib!");
 #endif
 	}
@@ -361,158 +337,131 @@ void OW_HTTPClient::sendDataToServer( OW_Reference<OW_TempFileStream> tfs,
 	{
 		m_ostr << tfs->rdbuf() << flush;
 	}
-
 	m_requestHeadersNew.clear();
 	m_responseHeaders.clear();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Reference<std::iostream>
-OW_HTTPClient::beginRequest(const OW_String& methodName,
-	const OW_String& nameSpace)
+Reference<std::iostream>
+HTTPClient::beginRequest(const String& methodName,
+	const String& nameSpace)
 {
 	(void)methodName; (void)nameSpace;
-    return OW_Reference<std::iostream>(new OW_TempFileStream());
+    return Reference<std::iostream>(new TempFileStream());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Reference<OW_CIMProtocolIStreamIFC>
-OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& methodName,
-			const OW_String& nameSpace)
+Reference<CIMProtocolIStreamIFC>
+HTTPClient::endRequest(Reference<std::iostream> request, const String& methodName,
+			const String& nameSpace)
 {
-	OW_Reference<OW_TempFileStream> tfs = request.cast_to<OW_TempFileStream>();
+	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
 	OW_ASSERT(tfs);
 	int len = tfs->getSize();
-
 	// add common headers
 	prepareHeaders();
 	OW_ASSERT(!m_contentType.empty());
 	addHeaderCommon("Content-Type", m_contentType + "; charset=\"utf-8\"");
-
 	if (!m_doDeflateOut)
 	{
-		addHeaderCommon("Content-Length", OW_String(len));
+		addHeaderCommon("Content-Length", String(len));
 	}
 	// else we're chunked and don't need the Content-Length header
-
 	addHeaderCommon("TE", "trailers");
-
 #ifdef OW_HAVE_ZLIB_H
 	addHeaderCommon("Accept-Encoding", "deflate");
 #endif
-
 	// if there remains bytes from last response, eat them.
 	cleanUpIStreams();
-
-	OW_String statusLine;
+	String statusLine;
 	Resp_t rt = RETRY;
 	do
 	{
 		sendDataToServer(tfs, methodName, nameSpace);
-
 		statusLine = checkResponse(rt);
-
 	} while(rt == RETRY);
-
 	if (rt == FATAL)
 	{
-
 		/*
-		OW_String sNonceCount;
+		String sNonceCount;
 		sNonceCount.format( "%08x", m_iDigestNonceCount );
-		OW_String errDetails = "Bailing out of sendRequest: ";
+		String errDetails = "Bailing out of sendRequest: ";
 		errDetails += "sHA1: >" + m_sDigestSessionKey + "< sNonce: >" +
 			m_sDigestNonce + "< Nonce Count >" + sNonceCount + "< sCNonce: >" +
 			m_sDigestCNonce + "< Method >" + m_requestMethod +
 			"< url >" + m_url.path + "<";
 		*/
-		OW_THROW(OW_HTTPException, format("Unable to process request: %1",
+		OW_THROW(HTTPException, format("Unable to process request: %1",
 			statusLine).c_str());
 	}
-
 	m_pIstrReturn = convertToFiniteStream();
 	OW_ASSERT(m_pIstrReturn);
 	return m_pIstrReturn;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMFeatures
-OW_HTTPClient::getFeatures()
+CIMFeatures
+HTTPClient::getFeatures()
 {
-	OW_String methodOrig = m_requestMethod;
+	String methodOrig = m_requestMethod;
 	m_requestMethod = "OPTIONS";
 	prepareHeaders();
-	OW_String statusLine;
+	String statusLine;
 	Resp_t rt = RETRY;
 	do
 	{
 		checkConnection();
 		sendHeaders(m_requestMethod,  "HTTP/1.1");
 		m_ostr.flush();
-
 		m_requestHeadersNew.clear();
 		m_responseHeaders.clear();
-
 		statusLine = checkResponse(rt);
 	} while(rt == RETRY);
-
 	m_requestMethod = methodOrig;
 	if (rt == FATAL)
 	{
-		OW_THROW(OW_HTTPException, format("Unable to process request: %1",
+		OW_THROW(HTTPException, format("Unable to process request: %1",
 			statusLine).c_str());
 	}
-
-	if (getHeaderValue("allow").indexOf("M-POST") == OW_String::npos)
+	if (getHeaderValue("allow").indexOf("M-POST") == String::npos)
 	{
 		m_requestMethod = "POST";
 	}
-	if (getHeaderValue("Accept-Encoding").indexOf("deflate") != OW_String::npos)
+	if (getHeaderValue("Accept-Encoding").indexOf("deflate") != String::npos)
 	{
 		m_doDeflateOut = true;
 	}
-
-	OW_String extURL = getHeaderValue("Opt");
+	String extURL = getHeaderValue("Opt");
 	size_t idx = extURL.indexOf(';');
-	if (idx < 1 || idx == OW_String::npos)
+	if (idx < 1 || idx == String::npos)
 	{
-		OW_THROW(OW_HTTPException, "No \"Opt\" header in OPTIONS response");
+		OW_THROW(HTTPException, "No \"Opt\" header in OPTIONS response");
 	}
-	OW_CIMFeatures rval;
+	CIMFeatures rval;
 	rval.extURL = extURL.substring(0, idx);
 	rval.extURL.trim();
-
-	OW_String hp = extURL.substring(idx + 1);
+	String hp = extURL.substring(idx + 1);
 	idx = hp.indexOf("=");
 	hp = hp.substring(idx + 1);
 	hp.trim();
-
 	if (hp.length() != 2)
 	{
-		OW_THROW(OW_HTTPException, "HTTP Ext header prefix is not a two digit "
+		OW_THROW(HTTPException, "HTTP Ext header prefix is not a two digit "
 			"number");
 	}
-
 	hp += "-";
 	rval.protocolVersion = getHeaderValue(hp + "CIMProtocolVersion");
-	OW_String supportedGroups;
-
+	String supportedGroups;
 	rval.supportsBatch = false;
 	if (headerHasKey(hp + "CIMSupportedFunctionalGroups"))
 	{
-		rval.cimProduct = OW_CIMFeatures::SERVER;
+		rval.cimProduct = CIMFeatures::SERVER;
 		supportedGroups = getHeaderValue(hp + "CIMSupportedFunctionalGroups");
 		if (headerHasKey(hp + "CIMSupportsMultipleOperations"))
 		{
 			rval.supportsBatch = true;
 		}
-
-
 	}
 	else if (headerHasKey(hp + "CIMSupportedExportGroups"))
 	{
-		rval.cimProduct = OW_CIMFeatures::LISTENER;
+		rval.cimProduct = CIMFeatures::LISTENER;
 		supportedGroups = getHeaderValue(hp + "CIMSupportedExportGroups");
 		if (headerHasKey(hp + "CIMSupportsMultipleExports"))
 		{
@@ -521,45 +470,38 @@ OW_HTTPClient::getFeatures()
 	}
 	else
 	{
-		OW_THROW(OW_HTTPException, "No CIMSupportedFunctionalGroups or "
+		OW_THROW(HTTPException, "No CIMSupportedFunctionalGroups or "
 			"CIMSupportedExportGroups header");
 	}
-
 	rval.supportedGroups = supportedGroups.tokenize(",");
 	for (size_t i = 0; i < rval.supportedGroups.size(); i++)
 	{
 		rval.supportedGroups[i].trim();
 	}
-
 	rval.supportedQueryLanguages =
 		getHeaderValue(hp + "CIMSupportedQueryLanguages").tokenize(",");
-
 	for (size_t i = 0; i < rval.supportedQueryLanguages.size(); i++)
 	{
 		rval.supportedQueryLanguages[i].trim();
 	}
-
 	rval.cimom = getHeaderValue(hp + "CIMOM");
 	rval.validation = getHeaderValue(hp + "CIMValidation");
-
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::prepareForRetry()
+HTTPClient::prepareForRetry()
 {
-	OW_Reference<OW_CIMProtocolIStreamIFC> tmpIstr = convertToFiniteStream();
+	Reference<CIMProtocolIStreamIFC> tmpIstr = convertToFiniteStream();
 	if (tmpIstr)
 	{
-		OW_HTTPUtils::eatEntity(*tmpIstr);
+		HTTPUtils::eatEntity(*tmpIstr);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::sendHeaders(const OW_String& method,
-	const OW_String& prot)
+HTTPClient::sendHeaders(const String& method,
+	const String& prot)
 {
 	m_ostr << method << " " << m_url.path << " " << prot << "\r\n";
 	for (size_t i = 0; i < m_requestHeadersCommon.size(); i++)
@@ -572,25 +514,22 @@ OW_HTTPClient::sendHeaders(const OW_String& method,
 	}
 	m_ostr << "\r\n";
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
-OW_HTTPClient::Resp_t
-OW_HTTPClient::processHeaders(OW_String& statusLine)
+HTTPClient::Resp_t
+HTTPClient::processHeaders(String& statusLine)
 {
-
 	Resp_t rt = FATAL;
 	size_t idx = statusLine.indexOf(' ');
-	OW_String respProt;
-	OW_String sc; // http status code
+	String respProt;
+	String sc; // http status code
 	int isc = 500; // status code (int)
-	if (idx > 0 && idx != OW_String::npos)
+	if (idx > 0 && idx != String::npos)
 	{
 		respProt = statusLine.substring(0, idx);
 		statusLine = statusLine.substring(idx + 1);
 	}
 	idx = statusLine.indexOf(' ');
-	if (idx > 0 && idx != OW_String::npos)
+	if (idx > 0 && idx != String::npos)
 	{
 		sc = statusLine.substring(0,idx);
 		statusLine = statusLine.substring(idx + 1);
@@ -598,7 +537,7 @@ OW_HTTPClient::processHeaders(OW_String& statusLine)
 		{
 			isc = sc.toInt32();
 		}
-		catch (const OW_StringConversionException&)
+		catch (const StringConversionException&)
 		{
 			return FATAL;
 		}
@@ -607,7 +546,6 @@ OW_HTTPClient::processHeaders(OW_String& statusLine)
 	{
 		return FATAL;
 	}
-
 	switch (sc[0])
 	{
 		case '1':
@@ -689,48 +627,45 @@ OW_HTTPClient::processHeaders(OW_String& statusLine)
 	} // switch (sc[0])
 	return rt;
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_Reference<OW_CIMProtocolIStreamIFC>
-OW_HTTPClient::convertToFiniteStream()
+Reference<CIMProtocolIStreamIFC>
+HTTPClient::convertToFiniteStream()
 {
-	OW_Reference<OW_CIMProtocolIStreamIFC> rval(0);
+	Reference<CIMProtocolIStreamIFC> rval(0);
 	if (getHeaderValue("Transfer-Encoding").equalsIgnoreCase("chunked"))
 	{
-		rval = new OW_HTTPChunkedIStream(m_istr);
+		rval = new HTTPChunkedIStream(m_istr);
 	}
 	else if (headerHasKey("Content-Length"))
 	{
-		rval = new OW_HTTPLenLimitIStream(m_istr,
+		rval = new HTTPLenLimitIStream(m_istr,
 			getHeaderValue("Content-Length").toInt32());
 	}
 	if (getHeaderValue("Content-Encoding").equalsIgnoreCase("deflate"))
 	{
 #ifdef OW_HAVE_ZLIB_H
-		rval = new OW_HTTPDeflateIStream(rval);
+		rval = new HTTPDeflateIStream(rval);
 #else
-		OW_THROW(OW_HTTPException, "Response is deflated but we're not "
+		OW_THROW(HTTPException, "Response is deflated but we're not "
 			"compiled with zlib!");
 #endif // #ifdef OW_HAVE_ZLIB_H
 	}
 	if (!rval)
 	{
-		OW_THROW(OW_HTTPException, "OW_HTTPClient::convertToFiniteStream: unable to understand server response!");
+		OW_THROW(HTTPException, "HTTPClient::convertToFiniteStream: unable to understand server response!");
 	}
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::handleAuth()
+HTTPClient::handleAuth()
 {
 	receiveAuthentication();
 	sendAuthorization();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::checkConnection()
+HTTPClient::checkConnection()
 {
 	if (!m_istr || !m_ostr)
 	{
@@ -742,26 +677,23 @@ OW_HTTPClient::checkConnection()
 		m_socket.connect(m_serverAddress);
 		m_needsConnect = false;
 	}
-
 	// add new headers.
-
 	if (m_authRequired)
 	{
 		handleAuth();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_HTTPClient::checkResponse(Resp_t& rt)
+String
+HTTPClient::checkResponse(Resp_t& rt)
 {
-	OW_String statusLine;
+	String statusLine;
 	do
 	{
 		// RFC 2616 says to skip leading blank lines...
 		do
 		{
-			statusLine = OW_String::getLine(m_istr);
+			statusLine = String::getLine(m_istr);
 		}
 		while(statusLine.trim().empty() && m_istr);
 		if (!m_istr)
@@ -783,10 +715,9 @@ OW_HTTPClient::checkResponse(Resp_t& rt)
 			}
 			break;
 		}
-
-		if (!OW_HTTPUtils::parseHeader(m_responseHeaders, m_istr))
+		if (!HTTPUtils::parseHeader(m_responseHeaders, m_istr))
 		{
-			OW_THROW(OW_HTTPException, "Received junk from server");
+			OW_THROW(HTTPException, "Received junk from server");
 		}
 		if (getHeaderValue("Connection").equalsIgnoreCase("close"))
 		{
@@ -798,29 +729,24 @@ OW_HTTPClient::checkResponse(Resp_t& rt)
 			prepareForRetry();
 		}
 	} while (rt == CONTINUE);
-
 	if (rt == RETRY)
 	{
 		prepareForRetry();
 	}
-
 	return statusLine;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPClient::prepareHeaders()
+HTTPClient::prepareHeaders()
 {
 	m_requestHeadersCommon.clear();
 	addHeaderCommon("Host", m_url.host);
 	addHeaderCommon("User-Agent", OW_PACKAGE"/"OW_VERSION);
 	m_responseHeaders.clear();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketAddress
-OW_HTTPClient::getLocalAddress() const
+SocketAddress
+HTTPClient::getLocalAddress() const
 {
 	if (m_needsConnect)
 	{
@@ -829,11 +755,9 @@ OW_HTTPClient::getLocalAddress() const
 	}
 	return m_socket.getLocalAddress();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketAddress
-OW_HTTPClient::getPeerAddress() const
+SocketAddress
+HTTPClient::getPeerAddress() const
 {
 	if (m_needsConnect)
 	{
@@ -842,3 +766,6 @@ OW_HTTPClient::getPeerAddress() const
 	}
 	return m_socket.getPeerAddress();
 }
+
+} // end namespace OpenWBEM
+

@@ -27,76 +27,70 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NAMESPACEPROVIDER_HPP_
 #define OW_NAMESPACEPROVIDER_HPP_
-
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 
-class OW_NameSpaceProvider : public OW_CppInstanceProviderIFC
+namespace OpenWBEM
+{
+
+class NameSpaceProvider : public CppInstanceProviderIFC
 {
 public:
-	OW_NameSpaceProvider() :
-		OW_CppInstanceProviderIFC() {}
-	~OW_NameSpaceProvider();
-
+	NameSpaceProvider() :
+		CppInstanceProviderIFC() {}
+	~NameSpaceProvider();
 	virtual void enumInstanceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_CIMClass& cimClass);
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMObjectPathResultHandlerIFC& result,
+			const CIMClass& cimClass);
 	virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMInstanceResultHandlerIFC& result,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-			OW_WBEMFlags::EDeepFlag deep, 
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& requestedClass,
-			const OW_CIMClass& cimClass);
-
-	virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& instanceName,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList, 
-			const OW_CIMClass& cimClass);
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMInstanceResultHandlerIFC& result,
+			WBEMFlags::ELocalOnlyFlag localOnly, 
+			WBEMFlags::EDeepFlag deep, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList,
+			const CIMClass& requestedClass,
+			const CIMClass& cimClass);
+	virtual CIMInstance getInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& instanceName,
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList, 
+			const CIMClass& cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& cimInstance);
-
+	virtual CIMObjectPath createInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& cimInstance);
 	virtual void modifyInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& modifiedInstance,
-			const OW_CIMInstance& previousInstance,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& theClass);
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& modifiedInstance,
+			const CIMInstance& previousInstance,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			const StringArray* propertyList,
+			const CIMClass& theClass);
 	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop);
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& cop);
 #endif
-
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env
+	virtual void initialize(const ProviderEnvironmentIFCRef& env
 			);
-
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info);
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

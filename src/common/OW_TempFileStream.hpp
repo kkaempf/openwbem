@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * OW_TempFileBuffer is the "IntelliBuffer".
  * This buffer is for an iostream similar to a stringstream.
@@ -37,16 +36,12 @@
  * memory in the case of large buffers.
  *
  */
-
 #ifndef OW_TEMPFILESTREAM_HPP_INCLUDE_GUARD_
 #define OW_TEMPFILESTREAM_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_String.hpp"
 #include "OW_AutoPtr.hpp"
-
 #if defined(OW_HAVE_STREAMBUF)
 #include <streambuf>
 #elif defined(OW_HAVE_STREAMBUF_H)
@@ -59,76 +54,63 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
-class OW_TmpFile;
-
-class OW_TempFileBuffer : public std::streambuf
+class TmpFile;
+class TempFileBuffer : public std::streambuf
 {
 public:
-	OW_TempFileBuffer(size_t bufSize);
-	OW_TempFileBuffer(OW_String const& filename, size_t bufSize);
-	~OW_TempFileBuffer();
-
+	TempFileBuffer(size_t bufSize);
+	TempFileBuffer(String const& filename, size_t bufSize);
+	~TempFileBuffer();
 	std::streamsize getSize();
 	void rewind();
 	void reset();
-	OW_String releaseFile();
+	String releaseFile();
 	bool usingTempFile() const;
-
 protected:
 	// for input
 	int underflow();
-
 	// for output
 	std::streamsize xsputn(const char* s, std::streamsize n);
 	int overflow(int c = EOF);
 	//virtual int sync();
-
 	void initBuffers();
 	void initGetBuffer();
 	void initPutBuffer();
-
 	int buffer_to_device(const char* c, int n);
 	int buffer_from_device(char* c, int n);
-
 private:
-
 	size_t m_bufSize;
 	char* m_buffer;
-	OW_TmpFile* m_tempFile;
-
+	TmpFile* m_tempFile;
 	std::streamsize m_readPos;
 	std::streamsize m_writePos;
 	bool m_isEOF;
-
 	int buffer_in();
 	int buffer_out();
-
 	// prohibit copying and assigning
-	OW_TempFileBuffer(const OW_TempFileBuffer& arg);
-	OW_TempFileBuffer& operator=(const OW_TempFileBuffer& arg);
-
+	TempFileBuffer(const TempFileBuffer& arg);
+	TempFileBuffer& operator=(const TempFileBuffer& arg);
 };
-
-class OW_TempFileStream : public std::iostream
+class TempFileStream : public std::iostream
 {
 public:
-	OW_TempFileStream(size_t bufSize = 4096);
-	OW_TempFileStream(OW_String const& filename, size_t bufSize = 4096);
+	TempFileStream(size_t bufSize = 4096);
+	TempFileStream(String const& filename, size_t bufSize = 4096);
 	std::streamsize getSize() { return m_buffer->getSize(); }
 	void rewind();
 	void reset();
-	OW_String releaseFile();
+	String releaseFile();
 	bool usingTempFile() const;
-
 private:
-	OW_AutoPtr<OW_TempFileBuffer> m_buffer;
-
+	AutoPtr<TempFileBuffer> m_buffer;
 	// disallow copying and assigning
-	OW_TempFileStream(const OW_TempFileStream&);
-	OW_TempFileStream& operator=(const OW_TempFileStream&);
-
+	TempFileStream(const TempFileStream&);
+	TempFileStream& operator=(const TempFileStream&);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

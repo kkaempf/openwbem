@@ -34,28 +34,26 @@
  *
  *-------------------------------------------------------------------------
  */
-
 #include "OW_WQLScanUtils.hpp"
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 
-OW_String
-RemoveEscapes(const OW_String& s)
+namespace OpenWBEM
+{
+
+String
+RemoveEscapes(const String& s)
 {
 	if (s.empty())
 	{
 		return s;
 	}
-
-	OW_StringBuffer newStr(s.length());
-
+	StringBuffer newStr(s.length());
 	int len = s.length();
-
 	for (int i = 0; i < len; i++)
 	{
 		if (s[i] == '\'')
 		{
-
 			/*
 			 * Note: if scanner is working right, unescaped quotes can
 			 * only appear in pairs, so there should be another character.
@@ -94,7 +92,6 @@ RemoveEscapes(const OW_String& s)
 					{
 						int			k;
 						long		octVal = 0;
-
 						for (k = 0;
 							 s[i + k] >= '0' && s[i + k] <= '7' && k < 3;
 							 k++)
@@ -113,3 +110,6 @@ RemoveEscapes(const OW_String& s)
 	}
 	return newStr.releaseString();
 }
+
+} // end namespace OpenWBEM
+

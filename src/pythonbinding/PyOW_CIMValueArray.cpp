@@ -30,7 +30,13 @@
 #include "OW_CIMValue.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMValue(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMValue>(name);
+
+void registerArrayImpl_CIMValue(const char* name)
+{
+    registerArrayImpl<CIMValue>(name);
 }
+
+} // end namespace OpenWBEM
+

@@ -27,65 +27,52 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifdef HAVE_CONFIG_H
 #include "OW_config.h"
 #include <config.h>
 #endif
-
 #include "OW_Socket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_String.hpp"
 #include <string>
 #include <iostream>
-
 extern "C"
 {
 #include <stdlib.h>
 }
-
 using std::string;
 using std::ios;
-
 int
 main(int argc, char* argv[])
 {
 	try
 	{
-		OW_SSLCtxMgr Ctx;
+		SSLCtxMgr Ctx;
 		Ctx.initClient();
 		
 		string ipOrHost;
-
 //		cout << "Enter an IP or hostname: ";
 //		cin >> ipOrHost;
-
-		OW_SocketAddress addr;
-		addr = OW_SocketAddress::getByName(argv[1], 443);
-
+		SocketAddress addr;
+		addr = SocketAddress::getByName(argv[1], 443);
 		cout << "\n\nTrying to connect on port 443...\n";
-		OW_Socket sock(addr, true);
-
+		Socket sock(addr, true);
 		cout << "Getting /\n";
-
 		ostream& ostrm = sock.getOutputStream();
 		sock.waitForOutput();
 		ostrm << "GET / \r\n\r\n";
 		ostrm.flush();
-
 		istream& istrm = sock.getInputStream();
-
 		string recievedChunk;
 		cout << "Receiving...\n";
 		while(istrm >> recievedChunk)
 		{
 			cout << recievedChunk;
 		}
-
 		cout << endl;
 	}
-	catch(OW_SocketException &e)
+	catch(SocketException &e)
 	{
 		cerr << "An exception occurred: " << e.type() << " " << e.getMessage()
 			<< endl;
@@ -93,6 +80,6 @@ main(int argc, char* argv[])
 //		cerr << "Error num: " << e.errornum() << endl;
 		return EXIT_SUCCESS;
 	}
-
 	return EXIT_SUCCESS;
 }
+

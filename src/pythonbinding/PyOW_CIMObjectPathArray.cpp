@@ -30,7 +30,13 @@
 #include "OW_CIMObjectPath.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMObjectPath(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMObjectPath>(name);
+
+void registerArrayImpl_CIMObjectPath(const char* name)
+{
+    registerArrayImpl<CIMObjectPath>(name);
 }
+
+} // end namespace OpenWBEM
+

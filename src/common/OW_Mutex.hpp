@@ -27,51 +27,45 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_MUTEX_INCLUDE_GUARD_HPP_
 #define OW_MUTEX_INCLUDE_GUARD_HPP_
-
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_Mutex
+class Mutex
 {
 public:
-
 	/**
-	 * Create a new recursive OW_Mutex object.
+	 * Create a new recursive Mutex object.
 	 */
-	OW_Mutex();
-
+	Mutex();
 	/**
-	 * Destroy this OW_Mutex object.
+	 * Destroy this Mutex object.
 	 */
-	~OW_Mutex();
-
+	~Mutex();
 	/**
-	 * Acquire ownership of this OW_Mutex object.
+	 * Acquire ownership of this Mutex object.
 	 * This call will block if another thread has ownership of 
-	 * this OW_Mutex. When it returns, the current thread will be
-	 * the owner of this OW_Mutex object.
+	 * this Mutex. When it returns, the current thread will be
+	 * the owner of this Mutex object.
 	 */
 	void acquire();
-
 	/**
-	 * Release ownership of this OW_Mutex object. If another thread is waiting
+	 * Release ownership of this Mutex object. If another thread is waiting
 	 * to acquire the ownership of this mutex it will stop blocking and acquire
 	 * ownership when this call returns.
 	 */
 	bool release();
-
 private:
-	OW_Mutex_t m_mutex;
-
+	Mutex_t m_mutex;
 	// noncopyable
-	OW_Mutex(const OW_Mutex&);
-	OW_Mutex operator = (const OW_Mutex&);
-
+	Mutex(const Mutex&);
+	Mutex operator = (const Mutex&);
 };
 
+} // end namespace OpenWBEM
 
 #endif

@@ -35,7 +35,6 @@
 #include <OW_CIMValue.hpp>
 #include <OW_CIMInstance.hpp>
 #include <OW_CIMObjectPath.hpp>
-
 // note this comes *after* the OpenWBEM headers, because it has a
 // #define ANY void
 // which really screws up OpenWBEM
@@ -44,101 +43,99 @@
 #undef ANY
 #endif
 
-using namespace boost::python;
+namespace OpenWBEM
+{
 
+using namespace boost::python;
  
 namespace {
-
-// OW_CIMClient
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumNameSpaceE_overloads, OW_CIMClient::enumNameSpaceE, 0, 1)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumNameSpace_overloads, OW_CIMClient::enumNameSpace, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumClass_overloads, OW_CIMClient::enumClass, 2, 6)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumClassE_overloads, OW_CIMClient::enumClassE, 1, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumClassNames_overloads, OW_CIMClient::enumClassNames, 2, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumClassNamesE_overloads, OW_CIMClient::enumClassNamesE, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumInstances_overloads, OW_CIMClient::enumInstances, 2, 7)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumInstancesE_overloads, OW_CIMClient::enumInstancesE, 1, 6)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_getClass_overloads, OW_CIMClient::getClass, 1, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_getInstance_overloads, OW_CIMClient::getInstance, 1, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_modifyInstance_overloads, OW_CIMClient::modifyInstance, 1, 3)
+// CIMClient
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumNameSpaceE_overloads, CIMClient::enumNameSpaceE, 0, 1)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumNameSpace_overloads, CIMClient::enumNameSpace, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumClass_overloads, CIMClient::enumClass, 2, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumClassE_overloads, CIMClient::enumClassE, 1, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumClassNames_overloads, CIMClient::enumClassNames, 2, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumClassNamesE_overloads, CIMClient::enumClassNamesE, 1, 2)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumInstances_overloads, CIMClient::enumInstances, 2, 7)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_enumInstancesE_overloads, CIMClient::enumInstancesE, 1, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_getClass_overloads, CIMClient::getClass, 1, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_getInstance_overloads, CIMClient::getInstance, 1, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_modifyInstance_overloads, CIMClient::modifyInstance, 1, 3)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorNames_overloads, OW_CIMClient::associatorNames, 2, 6)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorNamesE_overloads, OW_CIMClient::associatorNamesE, 1, 5)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associators_overloads, OW_CIMClient::associators, 2, 9)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorsE_overloads, OW_CIMClient::associatorsE, 1, 8)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorsClasses_overloads, OW_CIMClient::associatorsClasses, 2, 9)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorsClassesE_overloads, OW_CIMClient::associatorsClassesE, 1, 8)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referenceNames_overloads, OW_CIMClient::referenceNames, 2, 4)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referenceNamesE_overloads, OW_CIMClient::referenceNamesE, 1, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_references_overloads, OW_CIMClient::references, 2, 7)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesE_overloads, OW_CIMClient::referencesE, 1, 6)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesClasses_overloads, OW_CIMClient::referencesClasses, 2, 7)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesClassesE_overloads, OW_CIMClient::referencesClassesE, 1, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_associatorNames_overloads, CIMClient::associatorNames, 2, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_associatorNamesE_overloads, CIMClient::associatorNamesE, 1, 5)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_associators_overloads, CIMClient::associators, 2, 9)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_associatorsE_overloads, CIMClient::associatorsE, 1, 8)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_associatorsClasses_overloads, CIMClient::associatorsClasses, 2, 9)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_associatorsClassesE_overloads, CIMClient::associatorsClassesE, 1, 8)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_referenceNames_overloads, CIMClient::referenceNames, 2, 4)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_referenceNamesE_overloads, CIMClient::referenceNamesE, 1, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_references_overloads, CIMClient::references, 2, 7)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_referencesE_overloads, CIMClient::referencesE, 1, 6)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_referencesClasses_overloads, CIMClient::referencesClasses, 2, 7)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CIMClient_referencesClassesE_overloads, CIMClient::referencesClassesE, 1, 6)
 #endif
-
 }
-
-
-void registerOW_CIMClient()
+void registerCIMClient()
 {
-    //    OW_CIMClient
-    class_<OW_CIMClient>("OW_CIMClient", init<const OW_String&, const OW_String&, optional<const OW_ClientAuthCBIFCRef&> >())
-        .def("setNameSpace", &OW_CIMClient::setNameSpace)
-        .def("getNameSpace", &OW_CIMClient::getNameSpace)
+    //    CIMClient
+    class_<CIMClient>("CIMClient", init<const String&, const String&, optional<const ClientAuthCBIFCRef&> >())
+        .def("setNameSpace", &CIMClient::setNameSpace)
+        .def("getNameSpace", &CIMClient::getNameSpace)
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-        .def("createNameSpace", &OW_CIMClient::createNameSpace)
-        .def("deleteNameSpace", &OW_CIMClient::deleteNameSpace)
+        .def("createNameSpace", &CIMClient::createNameSpace)
+        .def("deleteNameSpace", &CIMClient::deleteNameSpace)
 #endif
-        .def("enumNameSpaceE", &OW_CIMClient::enumNameSpaceE, OW_CIMClient_enumNameSpaceE_overloads(args("deep")))
-        .def("enumNameSpace", &OW_CIMClient::enumNameSpace, OW_CIMClient_enumNameSpace_overloads(args("deep")))
-        .def("enumClass", &OW_CIMClient::enumClass, OW_CIMClient_enumClass_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin")))
-        .def("enumClassE", &OW_CIMClient::enumClassE, OW_CIMClient_enumClassE_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin")))
-        .def("enumClassNames", &OW_CIMClient::enumClassNames, OW_CIMClient_enumClassNames_overloads(args("deep")))
-        .def("enumClassNamesE", &OW_CIMClient::enumClassNamesE, OW_CIMClient_enumClassNamesE_overloads(args("deep")))
-        .def("enumInstances", &OW_CIMClient::enumInstances, OW_CIMClient_enumInstances_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("enumInstancesE", &OW_CIMClient::enumInstancesE, OW_CIMClient_enumInstancesE_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("enumInstanceNames", &OW_CIMClient::enumInstanceNames)
-        .def("enumInstanceNamesE", &OW_CIMClient::enumInstanceNamesE)
-        .def("getClass", &OW_CIMClient::getClass, OW_CIMClient_getClass_overloads(args("localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("getInstance", &OW_CIMClient::getInstance, OW_CIMClient_getInstance_overloads(args("localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("invokeMethod", &OW_CIMClient::invokeMethod)
-        .def("getQualifierType", &OW_CIMClient::getQualifierType)
+        .def("enumNameSpaceE", &CIMClient::enumNameSpaceE, CIMClient_enumNameSpaceE_overloads(args("deep")))
+        .def("enumNameSpace", &CIMClient::enumNameSpace, CIMClient_enumNameSpace_overloads(args("deep")))
+        .def("enumClass", &CIMClient::enumClass, CIMClient_enumClass_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin")))
+        .def("enumClassE", &CIMClient::enumClassE, CIMClient_enumClassE_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin")))
+        .def("enumClassNames", &CIMClient::enumClassNames, CIMClient_enumClassNames_overloads(args("deep")))
+        .def("enumClassNamesE", &CIMClient::enumClassNamesE, CIMClient_enumClassNamesE_overloads(args("deep")))
+        .def("enumInstances", &CIMClient::enumInstances, CIMClient_enumInstances_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("enumInstancesE", &CIMClient::enumInstancesE, CIMClient_enumInstancesE_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("enumInstanceNames", &CIMClient::enumInstanceNames)
+        .def("enumInstanceNamesE", &CIMClient::enumInstanceNamesE)
+        .def("getClass", &CIMClient::getClass, CIMClient_getClass_overloads(args("localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("getInstance", &CIMClient::getInstance, CIMClient_getInstance_overloads(args("localOnly", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("invokeMethod", &CIMClient::invokeMethod)
+        .def("getQualifierType", &CIMClient::getQualifierType)
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-        .def("setQualifierType", &OW_CIMClient::setQualifierType)
-        .def("deleteQualifierType", &OW_CIMClient::deleteQualifierType)
-        .def("enumQualifierTypes", &OW_CIMClient::enumQualifierTypes)
-        .def("enumQualifierTypesE", &OW_CIMClient::enumQualifierTypesE)
+        .def("setQualifierType", &CIMClient::setQualifierType)
+        .def("deleteQualifierType", &CIMClient::deleteQualifierType)
+        .def("enumQualifierTypes", &CIMClient::enumQualifierTypes)
+        .def("enumQualifierTypesE", &CIMClient::enumQualifierTypesE)
 #endif
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-        .def("modifyClass", &OW_CIMClient::modifyClass)
-        .def("createClass", &OW_CIMClient::createClass)
-        .def("deleteClass", &OW_CIMClient::deleteClass)
+        .def("modifyClass", &CIMClient::modifyClass)
+        .def("createClass", &CIMClient::createClass)
+        .def("deleteClass", &CIMClient::deleteClass)
 #endif
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-        .def("modifyInstance", &OW_CIMClient::modifyInstance, OW_CIMClient_modifyInstance_overloads(args("includeQualifiers", "propertyList")))
-        .def("createInstance", &OW_CIMClient::createInstance)
-        .def("deleteInstance", &OW_CIMClient::deleteInstance)
+        .def("modifyInstance", &CIMClient::modifyInstance, CIMClient_modifyInstance_overloads(args("includeQualifiers", "propertyList")))
+        .def("createInstance", &CIMClient::createInstance)
+        .def("deleteInstance", &CIMClient::deleteInstance)
 #endif
-        .def("getProperty", &OW_CIMClient::getProperty)
-        .def("setProperty", &OW_CIMClient::setProperty)
+        .def("getProperty", &CIMClient::getProperty)
+        .def("setProperty", &CIMClient::setProperty)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-        .def("associatorNames", &OW_CIMClient::associatorNames, OW_CIMClient_associatorNames_overloads(args("assocClass", "resultClass", "role", "resultRole")))
-        .def("associatorNamesE", &OW_CIMClient::associatorNamesE, OW_CIMClient_associatorNamesE_overloads(args("assocClass", "resultClass", "role", "resultRole")))
-        .def("associators", &OW_CIMClient::associators, OW_CIMClient_associators_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("associatorsE", &OW_CIMClient::associatorsE, OW_CIMClient_associatorsE_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("associatorsClasses", &OW_CIMClient::associatorsClasses, OW_CIMClient_associatorsClasses_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("associatorsClassesE", &OW_CIMClient::associatorsClassesE, OW_CIMClient_associatorsClassesE_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("referenceNames", &OW_CIMClient::referenceNames, OW_CIMClient_referenceNames_overloads(args("resultClass", "role")))
-        .def("referenceNamesE", &OW_CIMClient::referenceNamesE, OW_CIMClient_referenceNamesE_overloads(args("resultClass", "role")))
-        .def("references", &OW_CIMClient::references, OW_CIMClient_references_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("referencesE", &OW_CIMClient::referencesE, OW_CIMClient_referencesE_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("referencesClasses", &OW_CIMClient::referencesClasses, OW_CIMClient_referencesClasses_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
-        .def("referencesClassesE", &OW_CIMClient::referencesClassesE, OW_CIMClient_referencesClassesE_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("associatorNames", &CIMClient::associatorNames, CIMClient_associatorNames_overloads(args("assocClass", "resultClass", "role", "resultRole")))
+        .def("associatorNamesE", &CIMClient::associatorNamesE, CIMClient_associatorNamesE_overloads(args("assocClass", "resultClass", "role", "resultRole")))
+        .def("associators", &CIMClient::associators, CIMClient_associators_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("associatorsE", &CIMClient::associatorsE, CIMClient_associatorsE_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("associatorsClasses", &CIMClient::associatorsClasses, CIMClient_associatorsClasses_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("associatorsClassesE", &CIMClient::associatorsClassesE, CIMClient_associatorsClassesE_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("referenceNames", &CIMClient::referenceNames, CIMClient_referenceNames_overloads(args("resultClass", "role")))
+        .def("referenceNamesE", &CIMClient::referenceNamesE, CIMClient_referenceNamesE_overloads(args("resultClass", "role")))
+        .def("references", &CIMClient::references, CIMClient_references_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("referencesE", &CIMClient::referencesE, CIMClient_referencesE_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("referencesClasses", &CIMClient::referencesClasses, CIMClient_referencesClasses_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
+        .def("referencesClassesE", &CIMClient::referencesClassesE, CIMClient_referencesClassesE_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
 #endif
-        .def("execQuery", &OW_CIMClient::execQuery)
-        .def("execQueryE", &OW_CIMClient::execQueryE)
-
+        .def("execQuery", &CIMClient::execQuery)
+        .def("execQueryE", &CIMClient::execQueryE)
         ;
-
 }
+
+} // end namespace OpenWBEM
 

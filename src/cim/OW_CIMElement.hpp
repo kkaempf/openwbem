@@ -27,58 +27,55 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMELEMENT_HPP_INCLUDE_GUARD_
 #define OW_CIMELEMENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_String.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMElement class is used to enforce behavior from class that make
- * up CIM classes and CIM Instances. This would be OW_CIMClass, OW_CIMInstance,
- * OW_CIMMethod, OW_CIMParameter, OW_CIMProperty, OW_CIMQualifier and
- * OW_CIMQualifierType.
+ * The CIMElement class is used to enforce behavior from class that make
+ * up CIM classes and CIM Instances. This would be CIMClass, CIMInstance,
+ * CIMMethod, CIMParameter, CIMProperty, CIMQualifier and
+ * CIMQualifierType.
  */
-class OW_CIMElement : public OW_CIMBase
+class CIMElement : public CIMBase
 {
 public:
-
 	/**
-	 * @return The name of this OW_CIMElement object as an OW_String.
+	 * @return The name of this CIMElement object as an String.
 	 */
-	virtual OW_String getName() const = 0;
-
+	virtual String getName() const = 0;
 	/**
-	 * Set the name of this OW_CIMElement object.
-	 * @param name The new name of this OW_CIMElement object.
+	 * Set the name of this CIMElement object.
+	 * @param name The new name of this CIMElement object.
 	 */
-	virtual void setName(const OW_String& name) = 0;
-
+	virtual void setName(const String& name) = 0;
 	/**
-	 * @return An OW_String representing this OW_CIMElement.
+	 * @return An String representing this CIMElement.
 	 */
-	virtual OW_String toString() const;
-
-	int compare(const OW_CIMElement& arg)
+	virtual String toString() const;
+	int compare(const CIMElement& arg)
 	{
 		return getName().compareToIgnoreCase(arg.getName());
 	}
-	bool equals(const OW_CIMElement& arg)
+	bool equals(const CIMElement& arg)
 	{
 		return (compare(arg) == 0);
 	}
-
-	bool operator== (const OW_CIMElement& arg)
+	bool operator== (const CIMElement& arg)
 	{
 		return equals(arg);
 	}
-
-	bool operator!= (const OW_CIMElement& arg)
+	bool operator!= (const CIMElement& arg)
 	{
 		return compare(arg) != 0;
 	}
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -33,51 +33,48 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 namespace {
-
 DECLARE_EXCEPTION(FoundTheInst);
 DEFINE_EXCEPTION(FoundTheInst);
 //////////////////////////////////////////////////////////////////////////////
-class GetInstanceHandler : public OW_CIMInstanceResultHandlerIFC
+class GetInstanceHandler : public CIMInstanceResultHandlerIFC
 {
 public:
-	GetInstanceHandler(const OW_CIMObjectPath& instanceName, OW_CIMInstance& theInst)
+	GetInstanceHandler(const CIMObjectPath& instanceName, CIMInstance& theInst)
 		: m_instanceName(instanceName)
 		, m_theInst(theInst)
 	{
 	}
-
-	void doHandle(const OW_CIMInstance& inst)
+	void doHandle(const CIMInstance& inst)
 	{
-		if (OW_CIMObjectPath(m_instanceName.getNameSpace(), inst) == m_instanceName)
+		if (CIMObjectPath(m_instanceName.getNameSpace(), inst) == m_instanceName)
 		{
 			m_theInst = inst;
-			OW_THROW(OW_FoundTheInstException, "");
+			OW_THROW(FoundTheInstException, "");
 		}
 	}
-
 private:
-	OW_CIMObjectPath m_instanceName;
-	OW_CIMInstance& m_theInst;
+	CIMObjectPath m_instanceName;
+	CIMInstance& m_theInst;
 };
-
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance 
-OW_CppSimpleInstanceProviderIFC::getInstance(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_String &ns, 
-	const OW_CIMObjectPath &instanceName, 
+CIMInstance 
+CppSimpleInstanceProviderIFC::getInstance(
+	const ProviderEnvironmentIFCRef &env, 
+	const String &ns, 
+	const CIMObjectPath &instanceName, 
 	ELocalOnlyFlag localOnly, 
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin, 
-	const OW_StringArray *propertyList, 
-	const OW_CIMClass &cimClass)
+	const StringArray *propertyList, 
+	const CIMClass &cimClass)
 {
-	OW_CIMInstance theInst(OW_CIMNULL);
+	CIMInstance theInst(CIMNULL);
 	GetInstanceHandler handler(instanceName, theInst);
 	// this usage of exceptions is slightly abnormal, we use it to terminate
 	// enumInstances once we've found the instance we want. The exception
@@ -86,67 +83,58 @@ OW_CppSimpleInstanceProviderIFC::getInstance(
 	{
 		this->doSimpleEnumInstances(env,ns,cimClass,handler, E_ALL_PROPERTIES);
 	}
-	catch (const OW_FoundTheInstException&)
+	catch (const FoundTheInstException&)
 	{
 		return theInst.clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
-	OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, instanceName.toString().c_str());
+	OW_THROWCIMMSG(CIMException::NOT_FOUND, instanceName.toString().c_str());
 }
-
 namespace {
-
 //////////////////////////////////////////////////////////////////////////////
-class EnumInstanceNamesHandler : public OW_CIMInstanceResultHandlerIFC
+class EnumInstanceNamesHandler : public CIMInstanceResultHandlerIFC
 {
 public:
-	EnumInstanceNamesHandler(OW_CIMObjectPathResultHandlerIFC &result,
-		const OW_String& ns)
+	EnumInstanceNamesHandler(CIMObjectPathResultHandlerIFC &result,
+		const String& ns)
 		: m_result(result)
 		, m_ns(ns)
 	{
 	}
-
-	void doHandle(const OW_CIMInstance& inst)
+	void doHandle(const CIMInstance& inst)
 	{
-		m_result.handle(OW_CIMObjectPath(m_ns, inst));
+		m_result.handle(CIMObjectPath(m_ns, inst));
 	}
-
 private:
-	OW_CIMObjectPathResultHandlerIFC& m_result;
-	OW_String m_ns;
+	CIMObjectPathResultHandlerIFC& m_result;
+	String m_ns;
 };
-
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppSimpleInstanceProviderIFC::enumInstanceNames(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_String &ns, 
-	const OW_String &className, 
-	OW_CIMObjectPathResultHandlerIFC &result, 
-	const OW_CIMClass &cimClass)
+CppSimpleInstanceProviderIFC::enumInstanceNames(
+	const ProviderEnvironmentIFCRef &env, 
+	const String &ns, 
+	const String &className, 
+	CIMObjectPathResultHandlerIFC &result, 
+	const CIMClass &cimClass)
 {
 	(void)className;
 	EnumInstanceNamesHandler handler(result, ns);
 	this->doSimpleEnumInstances(env,ns,cimClass,handler, E_KEY_PROPERTIES_ONLY);
 }
-
-
 namespace {
-
 //////////////////////////////////////////////////////////////////////////////
-class EnumInstancesHandler : public OW_CIMInstanceResultHandlerIFC
+class EnumInstancesHandler : public CIMInstanceResultHandlerIFC
 {
 public:
-	EnumInstancesHandler(OW_CIMInstanceResultHandlerIFC &result,
+	EnumInstancesHandler(CIMInstanceResultHandlerIFC &result,
 		ELocalOnlyFlag localOnly_,
 		EDeepFlag deep_, 
 		EIncludeQualifiersFlag includeQualifiers_, 
 		EIncludeClassOriginFlag includeClassOrigin_, 
-		const OW_StringArray *propertyList_, 
-		const OW_CIMClass &requestedClass_, 
-		const OW_CIMClass &cimClass_)
+		const StringArray *propertyList_, 
+		const CIMClass &requestedClass_, 
+		const CIMClass &cimClass_)
 		: m_result(result)
 		, localOnly(localOnly_)
 		, deep(deep_)
@@ -157,41 +145,37 @@ public:
 		, cimClass(cimClass_)
 	{
 	}
-
-	void doHandle(const OW_CIMInstance& inst)
+	void doHandle(const CIMInstance& inst)
 	{
 		m_result.handle(inst.clone(localOnly, deep, includeQualifiers,
 			includeClassOrigin, propertyList, requestedClass,
 			cimClass));
 	}
-
 private:
-	OW_CIMInstanceResultHandlerIFC& m_result;
+	CIMInstanceResultHandlerIFC& m_result;
 	ELocalOnlyFlag localOnly;
 	EDeepFlag deep;
 	EIncludeQualifiersFlag includeQualifiers;
 	EIncludeClassOriginFlag includeClassOrigin;
-	const OW_StringArray *propertyList;
-	const OW_CIMClass &requestedClass;
-	const OW_CIMClass &cimClass;
+	const StringArray *propertyList;
+	const CIMClass &requestedClass;
+	const CIMClass &cimClass;
 };
-
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppSimpleInstanceProviderIFC::enumInstances(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_String &ns, 
-	const OW_String &className, 
-	OW_CIMInstanceResultHandlerIFC &result, 
+CppSimpleInstanceProviderIFC::enumInstances(
+	const ProviderEnvironmentIFCRef &env, 
+	const String &ns, 
+	const String &className, 
+	CIMInstanceResultHandlerIFC &result, 
 	ELocalOnlyFlag localOnly,
 	EDeepFlag deep, 
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin, 
-	const OW_StringArray *propertyList, 
-	const OW_CIMClass &requestedClass, 
-	const OW_CIMClass &cimClass)
+	const StringArray *propertyList, 
+	const CIMClass &requestedClass, 
+	const CIMClass &cimClass)
 {
 	(void)className;
 	EnumInstancesHandler handler(result, localOnly, deep, includeQualifiers,
@@ -199,4 +183,5 @@ OW_CppSimpleInstanceProviderIFC::enumInstances(
 	this->doSimpleEnumInstances(env,ns,cimClass,handler, E_ALL_PROPERTIES);
 }
 
+} // end namespace OpenWBEM
 

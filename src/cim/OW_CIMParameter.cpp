@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMParameter.hpp"
 #include "OW_StringBuffer.hpp"
@@ -36,212 +35,182 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////
-struct OW_CIMParameter::PARMData
+struct CIMParameter::PARMData
 {
-	OW_String m_name;
-	OW_CIMDataType m_dataType;
-	OW_CIMQualifierArray m_qualifiers;
-
+	String m_name;
+	CIMDataType m_dataType;
+	CIMQualifierArray m_qualifiers;
     PARMData* clone() const { return new PARMData(*this); }
 };
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMParameter::PARMData& x, const OW_CIMParameter::PARMData& y)
+bool operator<(const CIMParameter::PARMData& x, const CIMParameter::PARMData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_name, y.m_name,
 		x.m_dataType, y.m_dataType,
 		x.m_qualifiers, y.m_qualifiers);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::OW_CIMParameter() :
-	OW_CIMElement(), m_pdata(new PARMData)
+CIMParameter::CIMParameter() :
+	CIMElement(), m_pdata(new PARMData)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::OW_CIMParameter(OW_CIMNULL_t) :
-	OW_CIMElement(), m_pdata(0)
+CIMParameter::CIMParameter(CIMNULL_t) :
+	CIMElement(), m_pdata(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::OW_CIMParameter(const char* name) :
-	OW_CIMElement(), m_pdata(new PARMData)
+CIMParameter::CIMParameter(const char* name) :
+	CIMElement(), m_pdata(new PARMData)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::OW_CIMParameter(const OW_String& name) :
-	OW_CIMElement(), m_pdata(new PARMData)
+CIMParameter::CIMParameter(const String& name) :
+	CIMElement(), m_pdata(new PARMData)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::OW_CIMParameter(const OW_CIMParameter& x) :
-	OW_CIMElement(), m_pdata(x.m_pdata)
+CIMParameter::CIMParameter(const CIMParameter& x) :
+	CIMElement(), m_pdata(x.m_pdata)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter::~OW_CIMParameter()
+CIMParameter::~CIMParameter()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParameter::setNull()
+CIMParameter::setNull()
 {
 	m_pdata = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter&
-OW_CIMParameter::operator= (const OW_CIMParameter& x)
+CIMParameter&
+CIMParameter::operator= (const CIMParameter& x)
 {
 	m_pdata = x.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter&
-OW_CIMParameter::setQualifiers(const OW_CIMQualifierArray& quals)
+CIMParameter&
+CIMParameter::setQualifiers(const CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierArray
-OW_CIMParameter::getQualifiers() const
+CIMQualifierArray
+CIMParameter::getQualifiers() const
 {
 	return m_pdata->m_qualifiers;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParameter&
-OW_CIMParameter::setDataType(const OW_CIMDataType& type)
+CIMParameter&
+CIMParameter::setDataType(const CIMDataType& type)
 {
 	m_pdata->m_dataType = type;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType
-OW_CIMParameter::getType() const
+CIMDataType
+CIMParameter::getType() const
 {
 	return m_pdata->m_dataType;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_CIMParameter::getDataSize() const
+Int32
+CIMParameter::getDataSize() const
 {
 	return m_pdata->m_dataType.getSize();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier
-OW_CIMParameter::getQualifier(const OW_String& name) const
+CIMQualifier
+CIMParameter::getQualifier(const String& name) const
 {
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
-		OW_CIMQualifier nq = m_pdata->m_qualifiers[i];
+		CIMQualifier nq = m_pdata->m_qualifiers[i];
 		if(nq.getName().equalsIgnoreCase(name))
 		{
 			return nq;
 		}
 	}
-
-	return OW_CIMQualifier(OW_CIMNULL);
+	return CIMQualifier(CIMNULL);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMParameter::getName() const
+String
+CIMParameter::getName() const
 {
 	return m_pdata->m_name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParameter::setName(const OW_String& name)
+CIMParameter::setName(const String& name)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParameter::writeObject(ostream &ostrm) const
+CIMParameter::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMPARAMETERSIG );
+	CIMBase::writeSig( ostrm, OW_CIMPARAMETERSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_dataType.writeObject(ostrm);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParameter::readObject(istream &istrm)
+CIMParameter::readObject(istream &istrm)
 {
-	OW_String name;
-	OW_CIMDataType dataType(OW_CIMNULL);
-	OW_CIMQualifierArray qualifiers;
-
-	OW_CIMBase::readSig( istrm, OW_CIMPARAMETERSIG );
+	String name;
+	CIMDataType dataType(CIMNULL);
+	CIMQualifierArray qualifiers;
+	CIMBase::readSig( istrm, OW_CIMPARAMETERSIG );
 	name.readObject(istrm);
 	dataType.readObject(istrm);
-	OW_BinarySerialization::readArray(istrm, qualifiers);
-
+	BinarySerialization::readArray(istrm, qualifiers);
 	if(m_pdata.isNull())
 	{
 		m_pdata = new PARMData;
 	}
-
 	m_pdata->m_name = name;
 	m_pdata->m_dataType = dataType;
 	m_pdata->m_qualifiers = qualifiers;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMParameter::toString() const
+String
+CIMParameter::toString() const
 {
-	return "OW_CIMParameter(" + m_pdata->m_name + ")";
+	return "CIMParameter(" + m_pdata->m_name + ")";
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMParameter::toMOF() const
+String
+CIMParameter::toMOF() const
 {
-	OW_StringBuffer rv;
-
+	StringBuffer rv;
 	if(m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += '[';
-
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			OW_CIMQualifier nq = m_pdata->m_qualifiers[i];
-
+			CIMQualifier nq = m_pdata->m_qualifiers[i];
 			if(i > 0)
 			{
 				rv += ',';
 			}
-
 			rv += nq.toMOF();
 		}
-
 		rv += ']';
 	}
-
 	rv += m_pdata->m_dataType.toMOF();
 	rv += ' ';
 	rv += m_pdata->m_name;
@@ -257,33 +226,33 @@ OW_CIMParameter::toMOF() const
 	}
 	return rv.releaseString();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y)
+bool operator<(const CIMParameter& x, const CIMParameter& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool 
-OW_CIMParameter::hasTrueQualifier(const OW_String& name) const
+CIMParameter::hasTrueQualifier(const String& name) const
 {
-	OW_CIMQualifier q = getQualifier(name);
+	CIMQualifier q = getQualifier(name);
 	if (!q)
 	{
 		return false;
 	}
-	OW_CIMValue v = q.getValue();
+	CIMValue v = q.getValue();
 	if (!v)
 	{
 		return false;
 	}
-	if (v.getType() != OW_CIMDataType::BOOLEAN)
+	if (v.getType() != CIMDataType::BOOLEAN)
 	{
 		return false;
 	}
-	OW_Bool b;
+	Bool b;
 	v.get(b);
 	return b;
 }
+
+} // end namespace OpenWBEM
+

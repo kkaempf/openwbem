@@ -27,23 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 // gptr() && !pptr() == input mode
 // !gptr() && pptr() == output mode
 // pptr() && gptr() should never happen
 // !gptr() && !pptr() should never happen
 // pptr() should never be 0 unless we're gone to file.
-
 #include "OW_config.h"
 #include "OW_TempFileStream.hpp"
 #include "OW_TmpFile.hpp"
 #include "OW_Assertion.hpp"
 #include <cstring>
 
-using std::iostream;
+namespace OpenWBEM
+{
 
+using std::iostream;
 //////////////////////////////////////////////////////////////////////////////
-OW_TempFileBuffer::OW_TempFileBuffer(size_t bufSize)
+TempFileBuffer::TempFileBuffer(size_t bufSize)
 	: m_bufSize(bufSize)
 	, m_buffer(new char[m_bufSize])
 	, m_tempFile(NULL)
@@ -54,12 +54,11 @@ OW_TempFileBuffer::OW_TempFileBuffer(size_t bufSize)
 	setg(0,0,0); // start out in output mode.
 	initPutBuffer();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_TempFileBuffer::OW_TempFileBuffer(OW_String const& filename, size_t bufSize)
+TempFileBuffer::TempFileBuffer(String const& filename, size_t bufSize)
 	: m_bufSize(bufSize)
 	, m_buffer(new char[m_bufSize])
-	, m_tempFile(new OW_TmpFile(filename))
+	, m_tempFile(new TmpFile(filename))
 	, m_readPos(0)
 	, m_writePos(0)
 	, m_isEOF(false)
@@ -67,54 +66,46 @@ OW_TempFileBuffer::OW_TempFileBuffer(OW_String const& filename, size_t bufSize)
 	m_tempFile->seek(0, SEEK_END);
 	m_writePos = m_tempFile->tell();
 	m_tempFile->rewind();
-
 	setp(0,0); // start out in input mode.
 	initGetBuffer();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileBuffer::initBuffers()
+TempFileBuffer::initBuffers()
 {
 	initPutBuffer();
 	initGetBuffer();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileBuffer::initPutBuffer()
+TempFileBuffer::initPutBuffer()
 {
 	setp(m_buffer, m_buffer + m_bufSize);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileBuffer::initGetBuffer()
+TempFileBuffer::initGetBuffer()
 {
 	setg(m_buffer, m_buffer, m_buffer);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_TempFileBuffer::~OW_TempFileBuffer()
+TempFileBuffer::~TempFileBuffer()
 {
 	delete [] m_buffer;
 	delete m_tempFile;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TempFileBuffer::buffer_out()
+TempFileBuffer::buffer_out()
 {
 	int cnt = pptr() - pbase();
 	int retval = buffer_to_device(m_buffer, cnt);
-
 	initPutBuffer();
 	return retval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TempFileBuffer::overflow(int c)
+TempFileBuffer::overflow(int c)
 {
 	if (pptr()) // buffer is full
 	{
@@ -148,10 +139,9 @@ OW_TempFileBuffer::overflow(int c)
 		return c;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 std::streamsize
-OW_TempFileBuffer::xsputn(const char* s, std::streamsize n)
+TempFileBuffer::xsputn(const char* s, std::streamsize n)
 {
 	if (n < epptr() - pptr())
 	{
@@ -169,11 +159,9 @@ OW_TempFileBuffer::xsputn(const char* s, std::streamsize n)
 		return n;
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TempFileBuffer::underflow()
+TempFileBuffer::underflow()
 {
 	if (m_isEOF)
 	{
@@ -207,13 +195,11 @@ OW_TempFileBuffer::underflow()
 	}
 	return static_cast<unsigned char>(*gptr());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TempFileBuffer::buffer_in()
+TempFileBuffer::buffer_in()
 {
 	int retval = buffer_from_device(m_buffer, m_bufSize);
-
 	if (retval <= 0)
 	{
 		setg(0,0,0);
@@ -226,22 +212,19 @@ OW_TempFileBuffer::buffer_in()
 		return retval;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TempFileBuffer::buffer_to_device(const char* c, int n)
+TempFileBuffer::buffer_to_device(const char* c, int n)
 {
 	if (!m_tempFile)
 	{
-		m_tempFile = new OW_TmpFile;
+		m_tempFile = new TmpFile;
 	}
 	return static_cast<int>(m_tempFile->write(c, n));
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TempFileBuffer::buffer_from_device(char* c, int n)
+TempFileBuffer::buffer_from_device(char* c, int n)
 {
 	if (!m_tempFile)
 	{
@@ -252,11 +235,9 @@ OW_TempFileBuffer::buffer_from_device(char* c, int n)
 		return static_cast<int>(m_tempFile->read(c, n));
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 std::streamsize
-OW_TempFileBuffer::getSize()
+TempFileBuffer::getSize()
 {
 	if (gptr() && !m_tempFile)
 	{
@@ -273,10 +254,9 @@ OW_TempFileBuffer::getSize()
 	}
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileBuffer::rewind()
+TempFileBuffer::rewind()
 {
 	m_readPos = 0;
 	if (m_tempFile)
@@ -304,10 +284,9 @@ OW_TempFileBuffer::rewind()
 	setp(0,0);
 	m_isEOF = false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileBuffer::reset()
+TempFileBuffer::reset()
 {
 	delete m_tempFile;
 	m_tempFile = NULL;
@@ -316,68 +295,62 @@ OW_TempFileBuffer::reset()
 	initPutBuffer();
 	m_isEOF = false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_TempFileBuffer::releaseFile()
+String
+TempFileBuffer::releaseFile()
 {
 	buffer_out(); 	// Flush the buffer and cause the temp file to be written
 					// if it's not already being used.
-	OW_String rval = m_tempFile->releaseFile();
+	String rval = m_tempFile->releaseFile();
 	reset();
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_TempFileBuffer::usingTempFile() const
+TempFileBuffer::usingTempFile() const
 {
 	return m_tempFile != 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_TempFileStream::OW_TempFileStream(size_t bufSize)
-: iostream(new OW_TempFileBuffer(bufSize))
-, m_buffer(dynamic_cast<OW_TempFileBuffer*>(rdbuf()))
+TempFileStream::TempFileStream(size_t bufSize)
+: iostream(new TempFileBuffer(bufSize))
+, m_buffer(dynamic_cast<TempFileBuffer*>(rdbuf()))
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_TempFileStream::OW_TempFileStream(OW_String const& filename, size_t bufSize)
-: iostream(new OW_TempFileBuffer(filename, bufSize))
-, m_buffer(dynamic_cast<OW_TempFileBuffer*>(rdbuf()))
+TempFileStream::TempFileStream(String const& filename, size_t bufSize)
+: iostream(new TempFileBuffer(filename, bufSize))
+, m_buffer(dynamic_cast<TempFileBuffer*>(rdbuf()))
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileStream::rewind()
+TempFileStream::rewind()
 {
 	m_buffer->rewind();
 	clear();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TempFileStream::reset()
+TempFileStream::reset()
 {
 	m_buffer->reset();
 	clear();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_TempFileStream::releaseFile()
+String
+TempFileStream::releaseFile()
 {
-	OW_String rval = m_buffer->releaseFile();
+	String rval = m_buffer->releaseFile();
 	clear();
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_TempFileStream::usingTempFile() const
+TempFileStream::usingTempFile() const
 {
 	return m_buffer->usingTempFile();
 }
+
+} // end namespace OpenWBEM
 

@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 /**
  *
  *
@@ -36,15 +34,17 @@
  
 #ifndef OW_CIMQUALIFIERENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_CIMQUALIFIERENUMERATION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Enumeration.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
 
-typedef OW_Enumeration<OW_CIMQualifier> OW_CIMQualifierEnumeration;
-typedef OW_Enumeration<OW_CIMQualifierType> OW_CIMQualifierTypeEnumeration;
+namespace OpenWBEM
+{
 
+typedef Enumeration<CIMQualifier> CIMQualifierEnumeration;
+typedef Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
+
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,24 +27,29 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_CIMErrorException.hpp"
 
-const char* const OW_CIMErrorException::unsupported_protocol_version = 
+namespace OpenWBEM
+{
+
+const char* const CIMErrorException::unsupported_protocol_version = 
 	"unsupported-protocol-version";
-const char* const OW_CIMErrorException::multiple_requests_unsupported = 
+const char* const CIMErrorException::multiple_requests_unsupported = 
 	"multiple-requests-unsupported";
-const char* const OW_CIMErrorException::unsupported_cim_version = 
+const char* const CIMErrorException::unsupported_cim_version = 
 	"unsupported-cim-version";
-const char* const OW_CIMErrorException::unsupported_dtd_version = 
+const char* const CIMErrorException::unsupported_dtd_version = 
 	"unsupported-dtd-version";
-const char* const OW_CIMErrorException::request_not_valid = 
+const char* const CIMErrorException::request_not_valid = 
 	"request-not-valid";
-const char* const OW_CIMErrorException::request_not_well_formed = 
+const char* const CIMErrorException::request_not_well_formed = 
 	"request-not-well-formed";
-const char* const OW_CIMErrorException::request_not_loosely_valid = 
+const char* const CIMErrorException::request_not_loosely_valid = 
 	"request-not-loosely-valid";
-const char* const OW_CIMErrorException::header_mismatch = 
+const char* const CIMErrorException::header_mismatch = 
 	"header-mismatch";
-const char* const OW_CIMErrorException::unsupported_operation = 
+const char* const CIMErrorException::unsupported_operation = 
 	"unsupported-operation";
+
+} // end namespace OpenWBEM
+

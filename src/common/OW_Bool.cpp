@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_BinarySerialization.hpp"
-
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -40,40 +38,40 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
 using std::ostream;
 using std::istream;
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Bool::writeObject(ostream& ostrm) const
+Bool::writeObject(ostream& ostrm) const
 {
-	OW_UInt8 v = m_val;
-	OW_BinarySerialization::write(ostrm, v);
+	UInt8 v = m_val;
+	BinarySerialization::write(ostrm, v);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Bool::readObject(istream& istrm)
+Bool::readObject(istream& istrm)
 {
-	OW_UInt8 v;
-	OW_BinarySerialization::read(istrm, v);
+	UInt8 v;
+	BinarySerialization::read(istrm, v);
 	m_val = bool(v);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_Bool::toString() const
+String
+Bool::toString() const
 {
-	return OW_String(((m_val) ? "true" : "false"));
+	return String(((m_val) ? "true" : "false"));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-operator << (ostream& ostrm, const OW_Bool& arg)
+operator << (ostream& ostrm, const Bool& arg)
 {
 	const char *p = (arg) ? "true" : "false";
 	ostrm << p;
 	return ostrm;
 }
+
+} // end namespace OpenWBEM
 

@@ -43,6 +43,8 @@
 using std::cout;
 using std::endl;
 
+using namespace OpenWBEM;
+
 void OW_ProviderMuxLoaderTestCases::setUp()
 {
 }
@@ -53,16 +55,16 @@ void OW_ProviderMuxLoaderTestCases::tearDown()
 
 void OW_ProviderMuxLoaderTestCases::testLoadIFCs()
 {
-	OW_Array<OW_ProviderIFCBaseIFCRef> muxarray;
-	OW_ProviderIFCLoaderRef pml = testCreateMuxLoader();
+	Array<ProviderIFCBaseIFCRef> muxarray;
+	ProviderIFCLoaderRef pml = testCreateMuxLoader();
 	unitAssertNoThrow( pml->loadIFCs( muxarray ) );
 	unitAssert( muxarray.size() == 3 );
-	unitAssert( muxarray[0]->getName() == OW_String("lib1") );
+	unitAssert( muxarray[0]->getName() == String("lib1") );
 }
 
 void OW_ProviderMuxLoaderTestCases::testFailLoadIFCs()
 {
-	OW_Array<OW_ProviderIFCBaseIFCRef> muxarray;
+	Array<ProviderIFCBaseIFCRef> muxarray;
 	testMuxLoaderBad pml( testCreateSharedLibraryLoader() );
 	unitAssertNoThrow(pml.loadIFCs( muxarray ));
 	unitAssert( muxarray.size() == 0 );
@@ -70,15 +72,15 @@ void OW_ProviderMuxLoaderTestCases::testFailLoadIFCs()
 
 void OW_ProviderMuxLoaderTestCases::testLoadCppIFC()
 {
-	OW_Array<OW_ProviderIFCBaseIFCRef> muxarray;
+	Array<ProviderIFCBaseIFCRef> muxarray;
 	g_testEnvironment->setConfigItem(
-			OW_ConfigOpts::PROVIDER_IFC_LIBS_opt,
+			ConfigOpts::PROVIDER_IFC_LIBS_opt,
 			"../../src/providerifcs/cpp" );
-	OW_ProviderIFCLoaderRef pml = OW_ProviderIFCLoader::createProviderIFCLoader(g_testEnvironment);
+	ProviderIFCLoaderRef pml = ProviderIFCLoader::createProviderIFCLoader(g_testEnvironment);
 	unitAssertNoThrow( pml->loadIFCs( muxarray ) );
 	cout << "muxarray.size() = " << muxarray.size() << endl;
 	unitAssert( muxarray.size() == 1 );
-	unitAssert( muxarray[0]->getName() == OW_String("c++") );
+	unitAssert( muxarray[0]->getName() == String("c++") );
 }
 
 Test* OW_ProviderMuxLoaderTestCases::suite()

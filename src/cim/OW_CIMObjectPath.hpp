@@ -27,241 +27,207 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMOBJECTPATH_HPP_INCLUDE_GUARD_
 #define OW_CIMOBJECTPATH_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMOMObjectPath class represents the location of CIM classes and
- * instances. OW_CIMObjectPath is a ref counted, copy on write object. It is
- * possible to have a NULL OW_CIMObjectPath.
+ * The CIMOMObjectPath class represents the location of CIM classes and
+ * instances. CIMObjectPath is a ref counted, copy on write object. It is
+ * possible to have a NULL CIMObjectPath.
  */							
-class OW_CIMObjectPath : public OW_CIMBase
+class CIMObjectPath : public CIMBase
 {
 private:
 	struct OPData;
-	friend bool operator<(const OW_CIMObjectPath::OPData& x, 
-			const OW_CIMObjectPath::OPData& y);
-
+	friend bool operator<(const CIMObjectPath::OPData& x, 
+			const CIMObjectPath::OPData& y);
 public:
-
 	/**
 	 * Escapes quotes and '/'
 	 * @param inString The string to escape
 	 * @return The escaped string
 	 */
-	static OW_String escape(const OW_String& inString);
-
+	static String escape(const String& inString);
 	/**
 	 * Unescapes quotes and '/'
 	 * @param inString The string in an escaped form
 	 * @return The string with escape sequences removed
 	 */
-	static OW_String unEscape(const OW_String& inString);
-
+	static String unEscape(const String& inString);
 	/**
-	 * Create a new OW_CIMObjectPath object.
+	 * Create a new CIMObjectPath object.
 	 */
-	OW_CIMObjectPath();
-
+	CIMObjectPath();
 	/**
-	 * Create a NULL OW_CIMObjectPath object.
+	 * Create a NULL CIMObjectPath object.
 	 */
-	explicit OW_CIMObjectPath(OW_CIMNULL_t);
-
+	explicit CIMObjectPath(CIMNULL_t);
 	/**
-	 * Create an OW_CIMObjectPath to access the specified object
+	 * Create an CIMObjectPath to access the specified object
 	 * @param className The name of the CIM class this object path is for.
 	 */
-	explicit OW_CIMObjectPath(const OW_String& className);
-
+	explicit CIMObjectPath(const String& className);
 	/**
-	 * Create an OW_CIMObjectPath to access the specified object
+	 * Create an CIMObjectPath to access the specified object
 	 * @param className The name of the CIM class this object path is for as a
 	 * 	NULL terminated string.
 	 */
-	explicit OW_CIMObjectPath(const char* className);
-
+	explicit CIMObjectPath(const char* className);
 	/**
-	 * Create an OW_CIMObjectPath to access the specified object (a qualifier
+	 * Create an CIMObjectPath to access the specified object (a qualifier
 	 * or a class) in a particular namespace.
 	 * @param className The name of the CIM class this object refers to.
 	 * @param nspace The string representation of the name space
 	 *		(e.g. "root/cimv2")
 	 */
-	OW_CIMObjectPath(const OW_String& className, const OW_String& nspace);
-
+	CIMObjectPath(const String& className, const String& nspace);
 	/**
-	 * Create an OW_CIMObjectPath for an instance.
+	 * Create an CIMObjectPath for an instance.
 	 * @param className	The name of the class for the instance
-	 * @param keys			An OW_CIMPropertyArray that contains the keys for
+	 * @param keys			An CIMPropertyArray that contains the keys for
 	 *							the instance.
 	 */
-	OW_CIMObjectPath(const OW_String& className,
-		const OW_CIMPropertyArray& keys);
-
+	CIMObjectPath(const String& className,
+		const CIMPropertyArray& keys);
 	/**
-	 * Create an OW_CIMObjectPath for an instance and namespace.
+	 * Create an CIMObjectPath for an instance and namespace.
 	 * @param ns The namespace
 	 * @param inst An instance.
 	 */
-	OW_CIMObjectPath(const OW_String& ns,
-		const OW_CIMInstance& inst);
-
+	CIMObjectPath(const String& ns,
+		const CIMInstance& inst);
 	/**
-	 * Create a new OW_CIMObject path from another.
-	 * @param arg The OW_CIMObjectPath this object will be a copy of.
+	 * Create a new CIMObject path from another.
+	 * @param arg The CIMObjectPath this object will be a copy of.
 	 */
-	OW_CIMObjectPath(const OW_CIMObjectPath& arg);
-
+	CIMObjectPath(const CIMObjectPath& arg);
 	/**
-	 * Destroy this OW_CIMObjectPath object.
+	 * Destroy this CIMObjectPath object.
 	 */
-	~OW_CIMObjectPath();
-
+	~CIMObjectPath();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMObjectPath to assign to this one.
+	 * @param arg The CIMObjectPath to assign to this one.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	OW_CIMObjectPath& operator= (const OW_CIMObjectPath& arg);
-
+	CIMObjectPath& operator= (const CIMObjectPath& arg);
 	/**
 	 * Add another key to this object path (for instance paths).
 	 * @param keyname The name of the key property
 	 * @param value The value for the key property.  Cannot be null.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& addKey(const OW_String& keyname, const OW_CIMValue& value);
-
+	CIMObjectPath& addKey(const String& keyname, const CIMValue& value);
 	/**
 	 * Add another key to this object path (for instance paths).
 	 * @param key The key property.  Cannot be null.  Cannot have a null value.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& addKey(const OW_CIMProperty& key);
-
+	CIMObjectPath& addKey(const CIMProperty& key);
 	/**
 	 * Get the keys for this object path
-	 * @return An OW_CIMPropertyArray containing the keys for this object path.
+	 * @return An CIMPropertyArray containing the keys for this object path.
 	 */
-	OW_CIMPropertyArray getKeys() const;
-
+	CIMPropertyArray getKeys() const;
 	/**
 	 * Get a key from this ObjectPath
 	 * @param key The Name of the key to get
-	 * @return An OW_CIMProperty corresponding to key.  If there is no key
-	 *  found, a NULL OW_CIMProperty will be returned.
+	 * @return An CIMProperty corresponding to key.  If there is no key
+	 *  found, a NULL CIMProperty will be returned.
 	 */
-	OW_CIMProperty getKey(const OW_String& keyName) const;
-
+	CIMProperty getKey(const String& keyName) const;
 	/**
 	 * Get a key from this ObjectPath
 	 * @param key The Name of the key to get
-	 * @return An OW_CIMProperty corresponding to key.  If there is no key
-	 *  found, an OW_NoSuchPropertyException exception is thrown.
-	 * @throws OW_NoSuchPropertyException if keyName is not a property
+	 * @return An CIMProperty corresponding to key.  If there is no key
+	 *  found, an NoSuchPropertyException exception is thrown.
+	 * @throws NoSuchPropertyException if keyName is not a property
 	 */
-	OW_CIMProperty getKeyT(const OW_String& keyName) const;
-
+	CIMProperty getKeyT(const String& keyName) const;
 	/**
 	 * Set the keys of this object path
-	 * @param newKeys	An OW_CIMPropertyArray that contains the keys for this
+	 * @param newKeys	An CIMPropertyArray that contains the keys for this
 	 * 	object path.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setKeys(const OW_CIMPropertyArray& newKeys);
-
-
+	CIMObjectPath& setKeys(const CIMPropertyArray& newKeys);
 	/**
 	 * Set the keys of this object path from the key properties of an instance.
 	 * @param instance The CIM instance to get the key properties from.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setKeys(const OW_CIMInstance& instance);
-
+	CIMObjectPath& setKeys(const CIMInstance& instance);
 	/**
-	 * @return The namespace component of the OW_CIMNameSpace for this object path
+	 * @return The namespace component of the CIMNameSpace for this object path
 	 */
-	OW_String getNameSpace() const;
-
+	String getNameSpace() const;
 	/**
-	 * @return The URL component of the OW_CIMNameSpace for this object path
+	 * @return The URL component of the CIMNameSpace for this object path
 	 */
-	OW_CIMUrl getNameSpaceUrl() const;
-
+	CIMUrl getNameSpaceUrl() const;
 	/**
 	 * @return The host name from the name space for this object path.
 	 */
-	OW_String getHost() const;
-
+	String getHost() const;
 	/**
 	 * This function is deprecated in favor of getClassName()
 	 * @return The class name for this object path
 	 */
-	OW_String getObjectName() const;
-
+	String getObjectName() const;
 	/**
 	 * @return The class name for this object path
 	 */
-	OW_String getClassName() const;
-
+	String getClassName() const;
 	/**
-	 * Convert a string representation of an object path to an OW_CIMObjectPath.
+	 * Convert a string representation of an object path to an CIMObjectPath.
 	 * @param instanceName	The object path to convert. Assumed to be an instance
 	 *		path.
-	 * @return An OW_CIMObjectPath object on success.
+	 * @return An CIMObjectPath object on success.
 	 */
-	static OW_CIMObjectPath parse(const OW_String& instanceName);
-
+	static CIMObjectPath parse(const String& instanceName);
 	/**
 	 * Set the host name on the name space for this object path.
 	 * @param host	The new name of the host to set on the underlying name space.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setHost(const OW_String& host);
-
+	CIMObjectPath& setHost(const String& host);
 	/**
 	 * Set the namespace for this object path.
 	 * @param ns	The string representation of the namespace.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setNameSpace(const OW_String& ns);
-
+	CIMObjectPath& setNameSpace(const String& ns);
 	/**
 	 * Assign a class name to this object path.
 	 * This function is deprecated in favor of setClassName()
 	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setObjectName(const OW_String& className);
-
+	CIMObjectPath& setObjectName(const String& className);
 	/**
 	 * Assign a class name to this object path.
 	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setClassName(const OW_String& className);
-
+	CIMObjectPath& setClassName(const String& className);
 	/**
 	 * Compare this object path with another.
 	 * @param op The object path to compare to this one.
 	 * @return true if the object paths are equal. Otherwise false.
 	 */
-	bool equals(const OW_CIMObjectPath& op) const;
-
+	bool equals(const CIMObjectPath& op) const;
 	/**
 	 * @return true if this is not a null object.
 	 */
@@ -270,75 +236,62 @@ private:
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 	/**
 	 * Equality operator
 	 * @param op The object path to compare to this one.
 	 * @return true if the object paths are equal. Otherwise false.
 	 */
-	bool operator== (const OW_CIMObjectPath& op) const
+	bool operator== (const CIMObjectPath& op) const
 	{
 		return equals(op);
 	}
-
 	/**
 	 * @return The full namespace for this object path
 	 */
-	OW_CIMNameSpace getFullNameSpace() const;
-
+	CIMNameSpace getFullNameSpace() const;
 	/**
 	 * @return true if this object is a class path
 	 */
 	bool isClassPath() const;
-
 	/**
 	 * @return true if this object is an instance path
 	 */
 	bool isInstancePath() const;
-
 	/**
-	 * @return The string representation of this OW_CIMObjectPath.
+	 * @return The string representation of this CIMObjectPath.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return The model path component of this OW_CIMObjectPath as an
-	 * OW_String
+	 * @return The model path component of this CIMObjectPath as an
+	 * String
 	 */
-	virtual OW_String modelPath() const;
-
+	virtual String modelPath() const;
 	/**
-	 * @return The MOF representation of this OW_CIMObjectPath as an
-	 * OW_String
+	 * @return The MOF representation of this CIMObjectPath as an
+	 * String
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream& istrm);
-
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream& ostrm) const;
-
 private:
-
-	OW_COWReference<OPData> m_pdata;
-
-	friend bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs);
+	COWReference<OPData> m_pdata;
+	friend bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs);
 };
 
+} // end namespace OpenWBEM
 
 #endif

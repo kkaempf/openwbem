@@ -27,29 +27,31 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CLIENTCIMOMHANDLE_HPP_
 #define OW_CLIENTCIMOMHANDLE_HPP_
-
 #include "OW_config.h"										
 #include "OW_CIMOMHandleIFC.hpp"
 
+namespace OpenWBEM
+{
+
 // This class is mean to hold common functionality in the client-side CIMOM
 // handles	
-class OW_ClientCIMOMHandle : public OW_CIMOMHandleIFC
+class ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-    /** This method is deprecated.  Use OW_CIMNameSpaceUtils::createCIM_Namespace() instead. */
-	virtual void createNameSpace(const OW_String& ns);
-    /** This method is deprecated.  Use OW_CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
-	virtual void deleteNameSpace(const OW_String& ns);
+    /** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
+	virtual void createNameSpace(const String& ns);
+    /** This method is deprecated.  Use CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
+	virtual void deleteNameSpace(const String& ns);
 #endif
-    /** This method is deprecated.  Use OW_CIMNameSpaceUtils::createCIM_Namespace() instead. */
-	virtual void enumNameSpace(const OW_String& ns,
-		OW_StringResultHandlerIFC &result, OW_WBEMFlags::EDeepFlag deep);
-
+    /** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
+	virtual void enumNameSpace(const String& ns,
+		StringResultHandlerIFC &result, WBEMFlags::EDeepFlag deep);
 };
+
+} // end namespace OpenWBEM
 
 #endif
 	

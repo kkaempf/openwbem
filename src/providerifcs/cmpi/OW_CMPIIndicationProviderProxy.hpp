@@ -30,64 +30,60 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_CMPI_INDICATION_PROVIDER_PROXY_HPP_
 #define OW_CMPI_INDICATION_PROVIDER_PROXY_HPP_
-
 #include "OW_config.h"
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-class OW_CMPIIndicationProviderProxy : public OW_IndicationProviderIFC
+namespace OpenWBEM
+{
+
+class CMPIIndicationProviderProxy : public IndicationProviderIFC
 {
 public:
-	OW_CMPIIndicationProviderProxy(const OW_CMPIFTABLERef& f)
+	CMPIIndicationProviderProxy(const CMPIFTABLERef& f)
 	: m_ftable(f)
 	, m_activationCount(0)
 	{
 	}
-
-	virtual ~OW_CMPIIndicationProviderProxy()
+	virtual ~CMPIIndicationProviderProxy()
 	{
 	}
-
 	virtual void deActivateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes
 		);
-
 	virtual void activateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes 
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes 
 		);
-
 	virtual void authorizeFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		const OW_String& owner
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes, 
+		const String& owner
 		);
-
 	virtual int mustPoll(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes
 		);
-
 private:
-	OW_CMPIFTABLERef m_ftable;
+	CMPIFTABLERef m_ftable;
 	unsigned int m_activationCount;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

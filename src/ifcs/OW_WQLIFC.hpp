@@ -27,37 +27,32 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_WQLIFC_HPP_
 #define OW_WQLIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
-// this class is part of the wqlcommon library, which is not in libopenwbem
-class OW_WQLSelectStatement;
+namespace OpenWBEM
+{
 
-class OW_WQLIFC
+// this class is part of the wqlcommon library, which is not in libopenwbem
+class WQLSelectStatement;
+class WQLIFC
 {
 public:
-	virtual ~OW_WQLIFC()
+	virtual ~WQLIFC()
 	{
 	}
-
-	virtual void evaluate(const OW_String& nameSpace,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& query, const OW_String& queryLanguage,
-                OW_Reference<OW_CIMOMHandleIFC> hdl) = 0;
-
-	virtual OW_WQLSelectStatement createSelectStatement(const OW_String& query) = 0;
-
-	virtual bool supportsQueryLanguage(const OW_String& lang) = 0;
-
+	virtual void evaluate(const String& nameSpace,
+		CIMInstanceResultHandlerIFC& result,
+		const String& query, const String& queryLanguage,
+                Reference<CIMOMHandleIFC> hdl) = 0;
+	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
+	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };
-
-typedef OW_SharedLibraryReference<OW_WQLIFC> OW_WQLIFCRef;
+typedef SharedLibraryReference<WQLIFC> WQLIFCRef;
 		
 #define OW_WQLFACTORY(derived) \
 extern "C" const char* \
@@ -65,11 +60,12 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
-extern "C" OW_WQLIFC* \
+extern "C" OpenWBEM::WQLIFC* \
 createWQL() \
 { \
 	return new derived; \
 }
 
+} // end namespace OpenWBEM
 
 #endif

@@ -27,31 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifdef HAVE_CONFIG_H
 #include "OW_config.h"
 #include <config.h>
 #endif
-
 #include "OW_Socket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunker.hpp"
 #include "OW_String.hpp"
 #include <iostream>
 #include <string>
-
 extern "C"
 {
 #include <stdlib.h>
 }
-
 using std::string;
 using std::ios;
-
 int
 main(int argc, char* argv[])
 {
-	OW_HTTPChunker* chunker;
+	HTTPChunker* chunker;
 	if (argc < 3)
 	{
 		cout << "Usage: " << argv[0] << " <hostname> <path> [chunked]" << endl;
@@ -61,25 +56,19 @@ main(int argc, char* argv[])
 	try
 	{
 		string ipOrHost;
-
 //		cout << "Enter an IP or hostname: ";
 //		cin >> ipOrHost;
-
-		OW_SocketAddress addr;
-		addr = OW_SocketAddress::getByName(argv[1], 80);
-
+		SocketAddress addr;
+		addr = SocketAddress::getByName(argv[1], 80);
 		cout << "\n\nTrying to connect on port 80...\n";
-		OW_Socket sock(addr);
-
+		Socket sock(addr);
 		cout << "Getting /\n";
-
 		ostream& ostrm = sock.getOutputStream();
 		sock.waitForOutput();
 		ostrm << "GET " << argv[2] << " HTTP/1.1\r\n\r\n";
 		ostrm.flush();
 		char buf[1024];
 		istrm = &sock.getInputStream();
-
 		cout << "Receiving...\n";
 		while (istrm->getline(buf, 1023))
 		{
@@ -92,17 +81,15 @@ main(int argc, char* argv[])
 		cout << istrm->good() << istrm->bad() << istrm->fail() << istrm->eof()
 			<< istrm->rdstate() << endl;
 		
-
 		if (argc >= 4 && strcmp(argv[3], "chunked") == 0)
 		{
-			chunker = new OW_HTTPChunker(istrm);
+			chunker = new HTTPChunker(istrm);
 			istrm = &chunker->getInputStream();
 			cout << "Switched istream pointer to chunker" << endl;
 			cout << "stream states: good bad fail eof rdstate" << endl;
 			cout << istrm->good() << istrm->bad() << istrm->fail() << istrm->eof()
 				<< istrm->rdstate() << endl;
 		}
-
 		string recievedChunk;
 		cout << "~~BODY~~" << endl;
 		try
@@ -112,16 +99,14 @@ main(int argc, char* argv[])
 				cout << recievedChunk;
 			}
 		}
-		catch (OW_HTTPChunkException& e)
+		catch (HTTPChunkException& e)
 		{
 			cout << "Chunk Error!" << endl;
 			exit(1);
 		}
-
-
 		cout << endl;
 	}
-	catch(OW_SocketException &e)
+	catch(SocketException &e)
 	{
 		cerr << "An exception occurred: " << e.type() << " " << e.getMessage()
 			<< endl;
@@ -133,11 +118,10 @@ main(int argc, char* argv[])
 	{
 		cout << "caught unknown exception" << endl;
 	}
-
 	cout << "^^END OF BODY^^" << endl;
 	cout << "stream states: good bad fail eof rdstate" << endl;
 	cout << istrm->good() << istrm->bad() << istrm->fail() << istrm->eof()
 		<< istrm->rdstate() << endl;
-
 	return EXIT_SUCCESS;
 }
+

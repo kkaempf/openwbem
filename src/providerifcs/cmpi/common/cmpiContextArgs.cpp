@@ -39,13 +39,13 @@ static CMPIStatus argsReleaseNop(CMPIArgs* eArg)
 
 static CMPIArgs* argsClone(CMPIArgs* eArg, CMPIStatus* rc)
 {
-	OW_CIMParamValueArray * arg = (OW_CIMParamValueArray *)eArg->hdl;
-	OW_CIMParamValueArray * cArg = new OW_CIMParamValueArray();
+	OpenWBEM::CIMParamValueArray * arg = (OpenWBEM::CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::CIMParamValueArray * cArg = new OpenWBEM::CIMParamValueArray();
 	for (long i=0,s=arg->size(); i<s; i++)
 	{
-		OW_String name = (*arg)[i].getName();
-		OW_CIMValue value = (*arg)[i].getValue();
-		OW_CIMParamValue pv(name,value);
+		OpenWBEM::String name = (*arg)[i].getName();
+		OpenWBEM::CIMValue value = (*arg)[i].getValue();
+		OpenWBEM::CIMParamValue pv(name,value);
 		cArg->append(pv);
 	}
 	CMPIArgs* neArg=(CMPIArgs*)new CMPI_Object(cArg,CMPI_ObjectPath_Ftab);
@@ -53,11 +53,11 @@ static CMPIArgs* argsClone(CMPIArgs* eArg, CMPIStatus* rc)
 	return neArg;
 }
 
-static long locateArg(const OW_CIMParamValueArray &a, const OW_String &eName)
+static long locateArg(const OpenWBEM::CIMParamValueArray &a, const OpenWBEM::String &eName)
 {
 	for (long i=0,s=a.size(); i<s; i++)
 	{
-		const OW_String &n=a[i].getName();
+		const OpenWBEM::String &n=a[i].getName();
 		if (n.compareToIgnoreCase(eName)) return i;
 	}
 	return -1;
@@ -66,22 +66,22 @@ static long locateArg(const OW_CIMParamValueArray &a, const OW_String &eName)
 static CMPIStatus argsAddArg(CMPIArgs* eArg, char* name,
 				 CMPIValue* data, CMPIType type)
 {
-	OW_CIMParamValueArray * arg=(OW_CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	CMPIrc rc;
-	OW_CIMValue v = value2CIMValue(data,type,&rc);
-	OW_String sName(name);
+	OpenWBEM::CIMValue v = value2CIMValue(data,type,&rc);
+	OpenWBEM::String sName(name);
 
 	long i=locateArg(*arg,sName);
 	if (i>=0) arg->remove(i);
 
-	arg->append(OW_CIMParamValue(sName,v));
+	arg->append(OpenWBEM::CIMParamValue(sName,v));
 	CMReturn(CMPI_RC_OK);
 }
 
 static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 			CMPIStatus* rc)
 {
-	OW_CIMParamValueArray * arg=(OW_CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
 
 	if (pos > arg->size())
@@ -90,15 +90,15 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 		return data;
 	}
 
-	OW_CIMValue v=(*arg)[pos].getValue();
-	OW_CIMDataType pType=v.getType();
+	OpenWBEM::CIMValue v=(*arg)[pos].getValue();
+	OpenWBEM::CIMDataType pType=v.getType();
 	CMPIType t=type2CMPIType(pType,v.isArray());
 
 	value2CMPIData(v,t,&data);
 
 	if (name)
 	{
-		OW_String n=(*arg)[pos].getName();
+		OpenWBEM::String n=(*arg)[pos].getName();
 		*name=string2CMPIString(n);
 	}
 
@@ -108,8 +108,8 @@ static CMPIData argsGetArgAt(CMPIArgs* eArg, CMPICount pos, CMPIString** name,
 
 static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
 {
-	OW_CIMParamValueArray * arg=(OW_CIMParamValueArray *)eArg->hdl;
-	OW_String eName(name);
+	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::String eName(name);
 
 	long i=locateArg(*arg,eName);
 	if (i>=0) return argsGetArgAt(eArg,i,NULL,rc);
@@ -121,7 +121,7 @@ static CMPIData argsGetArg(CMPIArgs* eArg, char* name, CMPIStatus* rc)
 
 static CMPICount argsGetArgCount(CMPIArgs* eArg, CMPIStatus* rc)
 {
-	OW_CIMParamValueArray * arg=(OW_CIMParamValueArray *)eArg->hdl;
+	OpenWBEM::CIMParamValueArray * arg=(OpenWBEM::CIMParamValueArray *)eArg->hdl;
 	if (rc) CMSetStatus(rc,CMPI_RC_OK);
 	return arg->size();
 }
@@ -212,23 +212,23 @@ CMPIContextFT *CMPI_ContextOnStack_Ftab=&contextOnStack_FT;
 CMPI_Context::CMPI_Context(const OperationContext& ct)
 {
 	ctx=(OperationContext*)&ct;
-	hdl=(void*)new OW_CIMParamValueArray();
+	hdl=(void*)new OpenWBEM::CIMParamValueArray();
 	ft=CMPI_Context_Ftab;
 }
 
 CMPI_ContextOnStack::CMPI_ContextOnStack(const OperationContext& ct)
 {
 	ctx=(OperationContext*)&ct;
-	hdl=(void*)new OW_CIMParamValueArray();
+	hdl=(void*)new OpenWBEM::CIMParamValueArray();
 	ft=CMPI_ContextOnStack_Ftab;
 }
 
 CMPI_ContextOnStack::~CMPI_ContextOnStack()
 {
-	delete (OW_CIMParamValueArray *)hdl;
+	delete (OpenWBEM::CIMParamValueArray *)hdl;
 }
 
-CMPI_ArgsOnStack::CMPI_ArgsOnStack(const OW_CIMParamValueArray& args)
+CMPI_ArgsOnStack::CMPI_ArgsOnStack(const OpenWBEM::CIMParamValueArray& args)
 {
 	hdl=(void*)&args;
 	ft=CMPI_ArgsOnStack_Ftab;

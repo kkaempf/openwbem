@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"										
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
@@ -52,7 +51,6 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMQualifierType.hpp"
-
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -60,32 +58,29 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
 using std::ostream;
 using std::iostream;
 using std::istream;
-using namespace OW_WBEMFlags;
-
-
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-OW_ClientOperation::~OW_ClientOperation() 
+ClientOperation::~ClientOperation() 
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
-	: OW_ClientCIMOMHandle()
+CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(CIMProtocolIFCRef prot)
+	: ClientCIMOMHandle()
 	, m_protocol(prot)
 	, m_performStrictChecks(false) // TODO: Make a way to set this to true.
 {
 	m_iMessageID = 0;
 	m_protocol->setContentType("application/xml");
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
+CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 {
 	if (++m_iMessageID > 65535)
 	{
@@ -96,48 +91,45 @@ OW_CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
 	ostr << "<SIMPLEREQ>";
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const OW_String &sMethod,
-	const OW_String& ns,
+CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const String &sMethod,
+	const String& ns,
 	ostream& ostr)
 {
 	sendCommonXMLHeader(ostr);
-	OW_CIMNameSpace nameSpace(ns);
+	CIMNameSpace nameSpace(ns);
 	ostr << "<IMETHODCALL NAME=\"" << sMethod << "\">";
-	OW_LocalCIMNameSpacetoXML(nameSpace, ostr);
+	LocalCIMNameSpacetoXML(nameSpace, ostr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const OW_String &sMethod,
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
+CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const String &sMethod,
+	const String& ns,
+	const CIMObjectPath& path,
 	ostream& ostr)
 {
 	sendCommonXMLHeader(ostr);
-	OW_CIMNameSpace nameSpace(ns);
+	CIMNameSpace nameSpace(ns);
 	ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
 	if (path.isInstancePath())
 	{
 		ostr << "<LOCALINSTANCEPATH>";
-		OW_LocalCIMNameSpacetoXML(nameSpace, ostr);
-		OW_CIMInstanceNametoXML(path, ostr);
+		LocalCIMNameSpacetoXML(nameSpace, ostr);
+		CIMInstanceNametoXML(path, ostr);
 		ostr << "</LOCALINSTANCEPATH>";
 	}
 	else // it's a class
 	{
 		ostr << "<LOCALCLASSPATH>";
-		OW_LocalCIMNameSpacetoXML(nameSpace, ostr);
+		LocalCIMNameSpacetoXML(nameSpace, ostr);
 		ostr << "<CLASSNAME NAME=\"" << path.getObjectName() << "\"/>";
 		ostr << "</LOCALCLASSPATH>";
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::sendXMLTrailer( ostream& ostr, bool intrinsic)
+CIMXMLCIMOMHandle::sendXMLTrailer( ostream& ostr, bool intrinsic)
 {
 	if (intrinsic)
 	{
@@ -152,37 +144,35 @@ OW_CIMXMLCIMOMHandle::sendXMLTrailer( ostream& ostr, bool intrinsic)
 	ostr << "</CIM>";
 	ostr << "\r\n";
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::doSendRequest(
-	OW_Reference<std::iostream> ostrRef,
-	const OW_String& methodName,
-	const OW_String& ns,
+CIMXMLCIMOMHandle::doSendRequest(
+	Reference<std::iostream> ostrRef,
+	const String& methodName,
+	const String& ns,
 	bool isIntrinsic,
-	OW_ClientOperation& op)
+	ClientOperation& op)
 {
-	OW_Reference<OW_CIMProtocolIStreamIFC> istr = m_protocol->endRequest(
+	Reference<CIMProtocolIStreamIFC> istr = m_protocol->endRequest(
 		ostrRef, methodName, ns);
 	// Debug stuff
 	/*
-	OW_TempFileStream buf;
+	TempFileStream buf;
 	buf << istr.rdbuf();
 	ofstream ofstr("/tmp/rchXMLDump", ios::app);
 	ofstr << "******* New dump ********" << endl;
 	ofstr << buf.rdbuf() << endl;
 	buf.rewind();
-	OW_XMLParser parser(&buf);
+	XMLParser parser(&buf);
 	*/
 	// end debug stuff
-	OW_CIMXMLParser parser(*istr);
-
+	CIMXMLParser parser(*istr);
 	try
 	{
 		checkNodeForCIMError(parser, methodName, isIntrinsic);
 		if (isIntrinsic)
 		{
-			if (parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			if (parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
 			{
 				parser.mustGetNextTag(); // pass over <IRETURNVALUE>
 				op(parser);
@@ -197,310 +187,275 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 		parser.mustGetEndTag(); // pass </SIMPLERSP>
 		parser.mustGetEndTag(); // pass </MESSAGE>
 		parser.mustGetEndTag(); // pass </CIM>
-		OW_HTTPUtils::eatEntity(*istr);
+		HTTPUtils::eatEntity(*istr);
 		istr->checkForError();
 	}
-	catch (OW_XMLParseException& xmlE)
+	catch (XMLParseException& xmlE)
 	{
-		OW_HTTPUtils::eatEntity(*istr);
+		HTTPUtils::eatEntity(*istr);
 		istr->checkForError();
 		throw xmlE;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
-	const OW_String& operation, bool isIntrinsic)
+CIMXMLCIMOMHandle::checkNodeForCIMError(CIMXMLParser& parser,
+	const String& operation, bool isIntrinsic)
 {
 	//
 	// Check for <CIM> element
 	//
-	if (!parser || !parser.tokenIs(OW_CIMXMLParser::E_CIM))
+	if (!parser || !parser.tokenIs(CIMXMLParser::E_CIM))
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid XML");
+		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML");
 	}
-
 	if (m_performStrictChecks)
 	{
-		OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
-		if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION20_VALUE) &&
-			!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION21_VALUE) &&
-			!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION22_VALUE))
+		String cimattr = parser.mustGetAttribute(CIMXMLParser::A_CIMVERSION);
+		if (!cimattr.equals(CIMXMLParser::AV_CIMVERSION20_VALUE) &&
+			!cimattr.equals(CIMXMLParser::AV_CIMVERSION21_VALUE) &&
+			!cimattr.equals(CIMXMLParser::AV_CIMVERSION22_VALUE))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-								OW_String("Return is for CIMVERSION " + cimattr).c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								String("Return is for CIMVERSION " + cimattr).c_str());
 		}
-
-		cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
-		if (!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION20_VALUE) &&
-			!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION21_VALUE))
+		cimattr = parser.mustGetAttribute(CIMXMLParser::A_DTDVERSION);
+		if (!cimattr.equals(CIMXMLParser::AV_DTDVERSION20_VALUE) &&
+			!cimattr.equals(CIMXMLParser::AV_DTDVERSION21_VALUE))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-								OW_String("Return is for DTDVERSION " + cimattr).c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								String("Return is for DTDVERSION " + cimattr).c_str());
 		}
 	}
-
 	//
 	// Find <MESSAGE>
 	//
-	parser.mustGetChild(OW_CIMXMLParser::E_MESSAGE);
-	OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
-	if (!cimattr.equals(OW_String(m_iMessageID)))
+	parser.mustGetChild(CIMXMLParser::E_MESSAGE);
+	String cimattr = parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
+	if (!cimattr.equals(String(m_iMessageID)))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return messageid="+cimattr+", expected="
-										 +OW_String(m_iMessageID)).c_str());
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Return messageid="+cimattr+", expected="
+										 +String(m_iMessageID)).c_str());
 	}
-
 	if (m_performStrictChecks)
 	{
-		cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
-		if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION10_VALUE) &&
-			!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION11_VALUE))
+		cimattr = parser.mustGetAttribute(CIMXMLParser::A_PROTOCOLVERSION);
+		if (!cimattr.equals(CIMXMLParser::AV_PROTOCOLVERSION10_VALUE) &&
+			!cimattr.equals(CIMXMLParser::AV_PROTOCOLVERSION11_VALUE))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-								OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+								String("Return is for PROTOCOLVERSION "+cimattr).c_str());
 		}
 	}
-
 	//
 	// Find <SIMPLERSP>
 	//
-	parser.mustGetChild(OW_CIMXMLParser::E_SIMPLERSP);
-
+	parser.mustGetChild(CIMXMLParser::E_SIMPLERSP);
 	//
 	// TODO-NICE: need to look for complex RSPs!!
 	//
-
 	//
 	// <METHODRESPONSE> or <IMETHODRESPONSE>
 	//
 	parser.mustGetNext(isIntrinsic ?
-		OW_CIMXMLParser::E_IMETHODRESPONSE :
-		OW_CIMXMLParser::E_METHODRESPONSE);
-
-	OW_String nameOfMethod = parser.mustGetAttribute("NAME");
-
+		CIMXMLParser::E_IMETHODRESPONSE :
+		CIMXMLParser::E_METHODRESPONSE);
+	String nameOfMethod = parser.mustGetAttribute("NAME");
 	if (!nameOfMethod.equalsIgnoreCase(operation))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Called "+operation+" but response was for "+
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Called "+operation+" but response was for "+
 										 nameOfMethod).c_str());
 	}
-
 	parser.mustGetNextTag();
-
 	//
 	// See if there was an error, and if there was throw an equivalent
 	// exception on the client
 	//
-	if (parser.tokenIs(OW_CIMXMLParser::E_ERROR))
+	if (parser.tokenIs(CIMXMLParser::E_ERROR))
 	{
-		OW_String errCode = parser.mustGetAttribute(
-			OW_XMLParameters::paramErrorCode);
-		OW_String description = parser.mustGetAttribute(
-			OW_XMLParameters::paramErrorDescription);
-		OW_Int32 iErrCode;
+		String errCode = parser.mustGetAttribute(
+			XMLParameters::paramErrorCode);
+		String description = parser.mustGetAttribute(
+			XMLParameters::paramErrorDescription);
+		Int32 iErrCode;
 		try
 		{
 			iErrCode = errCode.toInt32();
 		}
-		catch (const OW_StringConversionException& e)
+		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, format("Invalid xml.  %1",
+			OW_THROWCIMMSG(CIMException::FAILED, format("Invalid xml.  %1",
 				e.getMessage()).c_str());
 		}
-		OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()), description.c_str());
+		OW_THROWCIMMSG(CIMException::ErrNoType(errCode.toInt32()), description.c_str());
 	}
-
 	// For extrinsic methods, we leave the parser sitting on either
 	// RETURNVALUE, PARAMVALUE or /METHODRESPONSE
 	// For intrinsic methods, it's sitting on either IPARAMVALUE or
 	// /IMETHODRESPONSE
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class voidRetValOp : public OW_ClientOperation
+	class voidRetValOp : public ClientOperation
 	{
 	public:
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
 			(void)parser;
 			return;
 		}
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-static OW_String
-instanceNameToKey(const OW_CIMObjectPath& path,
-	const OW_String& parameterName)
+static String
+instanceNameToKey(const CIMObjectPath& path,
+	const String& parameterName)
 {
-	OW_StringBuffer text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
+	StringBuffer text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
 	
-	OW_StringStream ss;
-	OW_CIMInstanceNametoXML(path, ss);
+	StringStream ss;
+	CIMInstanceNametoXML(path, ss);
 	text += ss.toString();
-
     text += "</IPARAMVALUE>";
 	return text.releaseString();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumClassNamesOp : public OW_ClientOperation
+	class enumClassNamesOp : public ClientOperation
 	{
 	public:
-		enumClassNamesOp(OW_StringResultHandlerIFC& result_)
+		enumClassNamesOp(StringResultHandlerIFC& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(OW_CIMXMLParser::E_CLASSNAME))
+			while (parser.tokenIs(CIMXMLParser::E_CLASSNAME))
 			{
-				result.handle(OW_XMLCIMFactory::createObjectPath(parser).getClassName());
+				result.handle(XMLCIMFactory::createObjectPath(parser).getClassName());
 			}
 		}
-
-		OW_StringResultHandlerIFC& result;
+		StringResultHandlerIFC& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumClassNames(
-		const OW_String& ns,
-		const OW_String& className,
-		OW_StringResultHandlerIFC& result,
+CIMXMLCIMOMHandle::enumClassNames(
+		const String& ns,
+		const String& className,
+		StringResultHandlerIFC& result,
 		EDeepFlag deep)
 {
 	static const char* const commandName = "EnumerateClassNames";
-
-	OW_Array<OW_Param> params;
+	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
+		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
-	params.push_back(OW_Param(XMLP_DEEP,deep));
-
+	params.push_back(Param(XMLP_DEEP,deep));
 	enumClassNamesOp op(result);
 	intrinsicMethod(ns, commandName, op, params);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumClassOp : public OW_ClientOperation
+	class enumClassOp : public ClientOperation
 	{
 	public:
-		enumClassOp(OW_CIMClassResultHandlerIFC& result_)
+		enumClassOp(CIMClassResultHandlerIFC& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(OW_CIMXMLParser::E_CLASS))
+			while (parser.tokenIs(CIMXMLParser::E_CLASS))
 			{
-				result.handle(OW_XMLCIMFactory::createClass(parser));
+				result.handle(XMLCIMFactory::createClass(parser));
 			}
 		}
-
-		OW_CIMClassResultHandlerIFC& result;
+		CIMClassResultHandlerIFC& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumClass(const OW_String& ns,
-	const OW_String& className,
-	OW_CIMClassResultHandlerIFC& result, 
+CIMXMLCIMOMHandle::enumClass(const String& ns,
+	const String& className,
+	CIMClassResultHandlerIFC& result, 
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, 
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin)
 {
 	static const char* const commandName = "EnumerateClasses";
-
-	OW_Array<OW_Param> params;
-
+	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
+		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
-	params.push_back(OW_Param(XMLP_LOCAL,localOnly));
-	params.push_back(OW_Param(XMLP_DEEP,deep));
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
-
+	params.push_back(Param(XMLP_LOCAL,localOnly));
+	params.push_back(Param(XMLP_DEEP,deep));
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 	enumClassOp op(result);
 	intrinsicMethod(ns, commandName, op, params);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumInstanceNamesOp : public OW_ClientOperation
+	class enumInstanceNamesOp : public ClientOperation
 	{
 	public:
-		enumInstanceNamesOp(OW_CIMObjectPathResultHandlerIFC& result_,
-			const OW_String& ns_)
+		enumInstanceNamesOp(CIMObjectPathResultHandlerIFC& result_,
+			const String& ns_)
 			: result(result_)
 			, ns(ns_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME))
+			while (parser.tokenIs(CIMXMLParser::E_INSTANCENAME))
 			{
-				OW_CIMObjectPath p = OW_XMLCIMFactory::createObjectPath(parser);
+				CIMObjectPath p = XMLCIMFactory::createObjectPath(parser);
 				p.setNameSpace(ns);
 				result.handle(p);
 			}
 		}
-
-		OW_CIMObjectPathResultHandlerIFC& result;
-		const OW_String& ns;
+		CIMObjectPathResultHandlerIFC& result;
+		const String& ns;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumInstanceNames(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result)
+CIMXMLCIMOMHandle::enumInstanceNames(
+	const String& ns,
+	const String& className,
+	CIMObjectPathResultHandlerIFC& result)
 {
 	static const char* const commandName = "EnumerateInstanceNames";
-
-	OW_Array<OW_Param> params;
-
+	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(OW_Param(XMLP_CLASSNAME, OW_Param::VALUESET,
+		params.push_back(Param(XMLP_CLASSNAME, Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Class was empty in "
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, "Class was empty in "
 							"EnumerateInstanceNames");
 	}
-
 	enumInstanceNamesOp op(result, ns);
 	intrinsicMethod(ns, commandName, op, params);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static inline void generatePropertyListXML(std::ostream& ostr,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	if (propertyList)
 	{
-		ostr << "<IPARAMVALUE NAME=\"" << OW_XMLParameters::XMLP_PROPERTYLIST <<
+		ostr << "<IPARAMVALUE NAME=\"" << XMLParameters::XMLP_PROPERTYLIST <<
 		"\"><VALUE.ARRAY>";
 		for (size_t i = 0;i < propertyList->size(); i++)
 		{
@@ -509,209 +464,183 @@ static inline void generatePropertyListXML(std::ostream& ostr,
 		ostr << "</VALUE.ARRAY></IPARAMVALUE>";
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumInstancesOp : public OW_ClientOperation
+	class enumInstancesOp : public ClientOperation
 	{
 	public:
-		enumInstancesOp(OW_CIMInstanceResultHandlerIFC& result_)
+		enumInstancesOp(CIMInstanceResultHandlerIFC& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE))
+			while (parser.tokenIs(CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 			{
-				parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
-				OW_CIMObjectPath iop(OW_XMLCIMFactory::createObjectPath(parser));
-
-				OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(parser);
+				parser.mustGetChild(CIMXMLParser::E_INSTANCENAME);
+				CIMObjectPath iop(XMLCIMFactory::createObjectPath(parser));
+				CIMInstance ci = XMLCIMFactory::createInstance(parser);
 				ci.setKeys(iop.getKeys());
 				result.handle(ci);
 				parser.mustGetEndTag(); // pass </VALUE.NAMEDINSTANCE>
 			}
 		}
-
-		OW_CIMInstanceResultHandlerIFC& result;
+		CIMInstanceResultHandlerIFC& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumInstances(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
+CIMXMLCIMOMHandle::enumInstances(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	static const char* const commandName = "EnumerateInstances";
-	OW_StringStream extra(1000);
-	OW_Array<OW_Param> params;
-
+	StringStream extra(1000);
+	Array<Param> params;
 	if(className.empty())
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Class Name was empty in "
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, "Class Name was empty in "
 			"EnumerateInstances");
 	}
-
-	params.push_back(OW_Param(XMLP_CLASSNAME, OW_Param::VALUESET,
+	params.push_back(Param(XMLP_CLASSNAME, Param::VALUESET,
 		"<CLASSNAME NAME=\""+className+"\"/>"));
-
-	params.push_back(OW_Param(XMLP_DEEP, deep));
-	params.push_back(OW_Param(XMLP_LOCAL, localOnly));
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
-
+	params.push_back(Param(XMLP_DEEP, deep));
+	params.push_back(Param(XMLP_LOCAL, localOnly));
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 	generatePropertyListXML(extra,propertyList);
-
 	enumInstancesOp op(result);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getClassOp : public OW_ClientOperation
+	class getClassOp : public ClientOperation
 	{
 	public:
-		getClassOp(OW_CIMClass& result_)
+		getClassOp(CIMClass& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			result = OW_XMLCIMFactory::createClass(parser);
+			result = XMLCIMFactory::createClass(parser);
 		}
-
-		OW_CIMClass& result;
+		CIMClass& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMXMLCIMOMHandle::getClass(
-	const OW_String& ns,
-	const OW_String& className,
+CIMClass
+CIMXMLCIMOMHandle::getClass(
+	const String& ns,
+	const String& className,
 	ELocalOnlyFlag localOnly,
     EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	static const char* const commandName = "GetClass";
-	OW_Array<OW_Param> params;
-
+	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
+		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
 			"<CLASSNAME NAME=\""+className+"\"/>"));
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, "no class given for "
+		OW_THROWCIMMSG(CIMException::INVALID_CLASS, "no class given for "
 			"GetClass()");
 	}
-
-	params.push_back(OW_Param(XMLP_LOCAL, localOnly));
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
-
-	OW_StringStream extra;
+	params.push_back(Param(XMLP_LOCAL, localOnly));
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	StringStream extra;
 	generatePropertyListXML(extra,propertyList);
-
-	OW_CIMClass rval(OW_CIMNULL);
+	CIMClass rval(CIMNULL);
 	getClassOp op(rval);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getInstanceOp : public OW_ClientOperation
+	class getInstanceOp : public ClientOperation
 	{
 	public:
-		getInstanceOp(OW_CIMInstance& result_)
+		getInstanceOp(CIMInstance& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			result = OW_XMLCIMFactory::createInstance(parser);
+			result = XMLCIMFactory::createInstance(parser);
 		}
-
-		OW_CIMInstance& result;
+		CIMInstance& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMXMLCIMOMHandle::getInstance(
-	const OW_String& ns,
-	const OW_CIMObjectPath& instanceName,
+CIMInstance
+CIMXMLCIMOMHandle::getInstance(
+	const String& ns,
+	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	static const char* const commandName = "GetInstance";
-	OW_StringStream extra(1000);
-	OW_Array<OW_Param> params;
-
-	params.push_back(OW_Param(XMLP_LOCAL, localOnly));
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
-
-	OW_CIMObjectPath path(instanceName);
+	StringStream extra(1000);
+	Array<Param> params;
+	params.push_back(Param(XMLP_LOCAL, localOnly));
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
+	CIMObjectPath path(instanceName);
 	path.setNameSpace(ns);
 	extra << instanceNameToKey(path, "InstanceName");
-
 	generatePropertyListXML(extra,propertyList);
-
-	OW_CIMInstance rval(OW_CIMNULL);
+	CIMInstance rval(CIMNULL);
 	getInstanceOp op(rval);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class invokeMethodOp : public OW_ClientOperation
+	class invokeMethodOp : public ClientOperation
 	{
 	public:
-		invokeMethodOp(OW_CIMValue& result_, OW_CIMParamValueArray& outParams_)
+		invokeMethodOp(CIMValue& result_, CIMParamValueArray& outParams_)
 			: result(result_)
 			, outParams(outParams_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
 			// For extrinsic methods, the parser is sitting on either
 			// RETURNVALUE, PARAMVALUE or /METHODRESPONSE
-
 			// handle RETURNVALUE, which is optional
-			if (parser.tokenIs(OW_CIMXMLParser::E_RETURNVALUE))
+			if (parser.tokenIs(CIMXMLParser::E_RETURNVALUE))
 			{
-				OW_String returnType = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
+				String returnType = parser.getAttribute(CIMXMLParser::A_PARAMTYPE);
 				if (returnType.empty())
 				{
 					returnType = "string";
 				}
 				parser.mustGetChild();
-				if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE) &&
-					!parser.tokenIs(OW_CIMXMLParser::E_VALUE_REFERENCE))
+				if (!parser.tokenIs(CIMXMLParser::E_VALUE) &&
+					!parser.tokenIs(CIMXMLParser::E_VALUE_REFERENCE))
 				{
-					OW_THROWCIMMSG(OW_CIMException::FAILED,
+					OW_THROWCIMMSG(CIMException::FAILED,
 						"<RETURNVALUE> did not contain a <VALUE> or "
 						"<VALUE.REFERENCE> element");
 				}
-				result = OW_XMLCIMFactory::createValue(parser, returnType);
+				result = XMLCIMFactory::createValue(parser, returnType);
 				parser.mustGetEndTag(); // pass /RETURNVALUE
 			}
-
 			// handle PARAMVALUE*
 			for (size_t outParamCount = 0;
-				  parser && parser.tokenIs(OW_CIMXMLParser::E_PARAMVALUE);
+				  parser && parser.tokenIs(CIMXMLParser::E_PARAMVALUE);
 				  ++outParamCount)
 			{
-				OW_String name = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
-				OW_String type = parser.getAttribute(OW_CIMXMLParser::A_PARAMTYPE);
+				String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
+				String type = parser.getAttribute(CIMXMLParser::A_PARAMTYPE);
 				if (type.empty())
 				{
 					type = "string";
@@ -724,58 +653,53 @@ namespace
 					outParams.resize(outParamCount + 1);
 				}
 				int token = parser.getToken();
-				if (token != OW_CIMXMLParser::E_VALUE
-					&& token != OW_CIMXMLParser::E_VALUE_REFERENCE
-					&& token != OW_CIMXMLParser::E_VALUE_ARRAY
-					&& token != OW_CIMXMLParser::E_VALUE_REFARRAY
+				if (token != CIMXMLParser::E_VALUE
+					&& token != CIMXMLParser::E_VALUE_REFERENCE
+					&& token != CIMXMLParser::E_VALUE_ARRAY
+					&& token != CIMXMLParser::E_VALUE_REFARRAY
 					)
 				{
-					outParams[outParamCount] = OW_CIMParamValue(name,
-						OW_CIMValue(OW_CIMNULL));
+					outParams[outParamCount] = CIMParamValue(name,
+						CIMValue(CIMNULL));
 				}
 				else
 				{
-					outParams[outParamCount] = OW_CIMParamValue(name,
-						OW_XMLCIMFactory::createValue(parser, type));
+					outParams[outParamCount] = CIMParamValue(name,
+						XMLCIMFactory::createValue(parser, type));
 				}
 				parser.mustGetEndTag(); // pass /PARAMVALUE
 			}
-
 		}
-
-		OW_CIMValue& result;
-		OW_CIMParamValueArray& outParams;
+		CIMValue& result;
+		CIMParamValueArray& outParams;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMXMLCIMOMHandle::invokeMethod(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String& methodName,
-	const OW_CIMParamValueArray& inParams,
-	OW_CIMParamValueArray& outParams)
+CIMValue
+CIMXMLCIMOMHandle::invokeMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& inParams,
+	CIMParamValueArray& outParams)
 {
-	OW_Reference<std::iostream> iostrRef =
+	Reference<std::iostream> iostrRef =
 		m_protocol->beginRequest(methodName, ns);
 	std::iostream& tfs = *iostrRef;
-
 	sendExtrinsicXMLHeader(methodName, ns, path, tfs);
-
 	for (size_t i = 0; i < inParams.size(); ++i)
 	{
 		tfs << "<PARAMVALUE NAME=\"" << inParams[i].getName() << "\"";
-		OW_CIMValue v = inParams[i].getValue();
+		CIMValue v = inParams[i].getValue();
 		if (v)
 		{
-			OW_String type = v.getCIMDataType().toString();
+			String type = v.getCIMDataType().toString();
 			if (type == "REF")
 			{
 				type = "reference";
 			}
 			tfs << " PARAMTYPE=\"" << type << "\">";
-			OW_CIMtoXML(inParams[i].getValue(), tfs);
+			CIMtoXML(inParams[i].getValue(), tfs);
 		}
 		else
 		{
@@ -783,202 +707,171 @@ OW_CIMXMLCIMOMHandle::invokeMethod(
 		}
 		tfs << "</PARAMVALUE>";
 	}
-
-
 	sendXMLTrailer(tfs, false);
-
-	OW_CIMValue rval(OW_CIMNULL);
+	CIMValue rval(CIMNULL);
 	invokeMethodOp op(rval, outParams);
 	doSendRequest(iostrRef, methodName, ns, false, op);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getQualifierTypeOp : public OW_ClientOperation
+	class getQualifierTypeOp : public ClientOperation
 	{
 	public:
-		getQualifierTypeOp(OW_CIMQualifierType& result_)
+		getQualifierTypeOp(CIMQualifierType& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			OW_XMLQualifier::processQualifierDecl(parser, result);
+			XMLQualifier::processQualifierDecl(parser, result);
 		}
-
-		OW_CIMQualifierType& result;
+		CIMQualifierType& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_CIMXMLCIMOMHandle::getQualifierType(const OW_String& ns,
-		const OW_String& qualifierName)
+CIMQualifierType
+CIMXMLCIMOMHandle::getQualifierType(const String& ns,
+		const String& qualifierName)
 {
 	static const char* const commandName = "GetQualifier";
-
-	OW_Array<OW_Param> params;
-
-	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualifierName));
-
-	OW_CIMQualifierType rval;
+	Array<Param> params;
+	params.push_back(Param(XMLP_QUALIFIERNAME, qualifierName));
+	CIMQualifierType rval;
 	getQualifierTypeOp op(rval);
 	intrinsicMethod(ns, commandName, op, params);
 	return rval;
 }
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType& qt)
+CIMXMLCIMOMHandle::setQualifierType(const String& ns,
+		const CIMQualifierType& qt)
 {
 	static const char* const commandName = "SetQualifier";
-	OW_StringStream extra;
+	StringStream extra;
 	extra << "<IPARAMVALUE NAME=\"QualifierDeclaration\">";
-	OW_CIMtoXML(qt, extra);
+	CIMtoXML(qt, extra);
 	extra << "</IPARAMVALUE>";
-
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, Array<Param>(),
 						 extra.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
+CIMXMLCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 {
 	static const char* const commandName = "DeleteQualifier";
-	OW_Array<OW_Param> params;
-
-	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualName));
-
+	Array<Param> params;
+	params.push_back(Param(XMLP_QUALIFIERNAME, qualName));
 	voidRetValOp op;
 	intrinsicMethod(ns, commandName, op, params);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class enumQualifierTypesOp : public OW_ClientOperation
+	class enumQualifierTypesOp : public ClientOperation
 	{
 	public:
-		enumQualifierTypesOp(OW_CIMQualifierTypeResultHandlerIFC& result_)
+		enumQualifierTypesOp(CIMQualifierTypeResultHandlerIFC& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
+			while (parser.tokenIs(CIMXMLParser::E_QUALIFIER_DECLARATION))
 			{
-				OW_CIMQualifierType cqt;
-				OW_XMLQualifier::processQualifierDecl(parser, cqt);
+				CIMQualifierType cqt;
+				XMLQualifier::processQualifierDecl(parser, cqt);
 				result.handle(cqt);
 			}
 		}
-
-		OW_CIMQualifierTypeResultHandlerIFC& result;
+		CIMQualifierTypeResultHandlerIFC& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumQualifierTypes(
-	const OW_String& ns,
-	OW_CIMQualifierTypeResultHandlerIFC& result)
+CIMXMLCIMOMHandle::enumQualifierTypes(
+	const String& ns,
+	CIMQualifierTypeResultHandlerIFC& result)
 {
 	static const char* const commandName = "EnumerateQualifiers";
-
 	enumQualifierTypesOp op(result);
 	intrinsicMethod(ns, commandName, op);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::modifyClass(const OW_String &ns,
-		const OW_CIMClass& cc)
+CIMXMLCIMOMHandle::modifyClass(const String &ns,
+		const CIMClass& cc)
 {
 	static const char* const commandName = "ModifyClass";
-
-	OW_StringStream extra(1024);
+	StringStream extra(1024);
 	extra << "<IPARAMVALUE NAME=\"" << XMLP_MODIFIED_CLASS << "\">";
-	OW_CIMtoXML(cc, extra);
+	CIMtoXML(cc, extra);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, Array<Param>(),
 		extra.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::createClass(const OW_String& ns,
-		const OW_CIMClass& cc)
+CIMXMLCIMOMHandle::createClass(const String& ns,
+		const CIMClass& cc)
 {
 	static const char* const commandName = "CreateClass";
-
-	OW_StringStream ostr;
+	StringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewClass\">";
-	OW_CIMtoXML(cc, ostr);
+	CIMtoXML(cc, ostr);
 	ostr << "</IPARAMVALUE>";
-
 	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, Array<Param>(),
 		ostr.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::deleteClass(const OW_String& nameSpace, const OW_String& className)
+CIMXMLCIMOMHandle::deleteClass(const String& nameSpace, const String& className)
 {
-
 	static const char* const commandName = "DeleteClass";
-
-	OW_Array<OW_Param> params;
-
+	Array<Param> params;
 	if (!className.empty())
 	{
-		params.push_back(OW_Param(XMLP_CLASSNAME,OW_Param::VALUESET,
+		params.push_back(Param(XMLP_CLASSNAME,Param::VALUESET,
 										  "<CLASSNAME NAME=\""+className+"\"/>"));
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, "No ClassName passed"
+		OW_THROWCIMMSG(CIMException::INVALID_CLASS, "No ClassName passed"
 							" to deleteClass()");
 	}
-
 	voidRetValOp op;
 	intrinsicMethod(nameSpace, commandName, op, params);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::modifyInstance(
-	const OW_String& ns,
-	const OW_CIMInstance& modifiedInstance,
+CIMXMLCIMOMHandle::modifyInstance(
+	const String& ns,
+	const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	static const char* const commandName = "ModifyInstance";
-
 	// This check is wrong, because instances w/out keys are singletons.
 	//if (modifiedInstance.getKeyValuePairs().empty())
 	//{
-	//	OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Instance must have keys");
+	//	OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Instance must have keys");
 	//}
-
-	OW_StringStream ostr(1000);
+	StringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
-	OW_CIMInstanceNameAndInstancetoXML(modifiedInstance, ostr, 
-		OW_CIMObjectPath(ns, modifiedInstance));
+	CIMInstanceNameAndInstancetoXML(modifiedInstance, ostr, 
+		CIMObjectPath(ns, modifiedInstance));
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	
-	OW_Array<OW_Param> params;
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	Array<Param> params;
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
 	
 	generatePropertyListXML(ostr, propertyList);
 	
@@ -986,155 +879,138 @@ OW_CIMXMLCIMOMHandle::modifyInstance(
 	intrinsicMethod(ns, commandName, op, params,
 		ostr.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class createInstanceOp : public OW_ClientOperation
+	class createInstanceOp : public ClientOperation
 	{
 	public:
-		createInstanceOp(OW_CIMObjectPath& result_)
+		createInstanceOp(CIMObjectPath& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			if (!parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME))
+			if (!parser.tokenIs(CIMXMLParser::E_INSTANCENAME))
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Expected but did not get <INSTANCENAME>");
+				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Expected but did not get <INSTANCENAME>");
 			}
-
-			result = OW_XMLCIMFactory::createObjectPath(parser);
+			result = XMLCIMFactory::createObjectPath(parser);
 		}
-
-		OW_CIMObjectPath& result;
+		CIMObjectPath& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath
-OW_CIMXMLCIMOMHandle::createInstance(const OW_String& ns,
-	const OW_CIMInstance& ci)
+CIMObjectPath
+CIMXMLCIMOMHandle::createInstance(const String& ns,
+	const CIMInstance& ci)
 {
 	static const char* const commandName = "CreateInstance";
-
 	// This check isn't necessary, because of singleton classes/instances 
 	// that don't have any keys
 	//if (ci.getKeyValuePairs().empty())
 	//{
-	//	OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+	//	OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 	//		"The instance does not have any keys");
 	//}
-
-	OW_StringStream ostr;
+	StringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewInstance\">";
-	OW_CIMInstancetoXML(ci, ostr);
+	CIMInstancetoXML(ci, ostr);
 	ostr << "</IPARAMVALUE>";
-
-	OW_CIMObjectPath rval(OW_CIMNULL);
+	CIMObjectPath rval(CIMNULL);
 	createInstanceOp op(rval);
-	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(), ostr.toString());
+	intrinsicMethod(ns, commandName, op, Array<Param>(), ostr.toString());
 	rval.setNameSpace(ns);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& inst)
+CIMXMLCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& inst)
 {
 	static const char* const commandName = "DeleteInstance";
-	OW_Array<OW_Param> params;
-
+	Array<Param> params;
 	voidRetValOp op;
 	intrinsicMethod(ns, commandName, op, params,
 						 instanceNameToKey(inst, "InstanceName"));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::setProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String& propName,
-	const OW_CIMValue& cv)
+CIMXMLCIMOMHandle::setProperty(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& propName,
+	const CIMValue& cv)
 {
 	static const char* const commandName = "SetProperty";
-	OW_Array<OW_Param> params;
-	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
-	OW_StringStream ostr;
-	OW_CIMtoXML(cv, ostr);
-	params.push_back(OW_Param(XMLP_NEWVALUE, OW_Param::VALUESET, ostr.toString()));
-
+	Array<Param> params;
+	params.push_back(Param(XMLP_PROPERTYNAME, propName));
+	StringStream ostr;
+	CIMtoXML(cv, ostr);
+	params.push_back(Param(XMLP_NEWVALUE, Param::VALUESET, ostr.toString()));
 	voidRetValOp op;
 	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class getPropertyOp : public OW_ClientOperation
+	class getPropertyOp : public ClientOperation
 	{
 	public:
-		getPropertyOp(OW_CIMValue& result_)
+		getPropertyOp(CIMValue& result_)
 			: result(result_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			if (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			if (!parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
 			{
 				// "string" because we don't know the type--defect in the spec.
-				result = OW_XMLCIMFactory::createValue(parser, "string");
+				result = XMLCIMFactory::createValue(parser, "string");
 			}
 			// else it was a NULL value
 		}
-
-		OW_CIMValue& result;
+		CIMValue& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMXMLCIMOMHandle::getProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String& propName)
+CIMValue
+CIMXMLCIMOMHandle::getProperty(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& propName)
 {
 	static const char* const commandName = "GetProperty";
-	OW_Array<OW_Param> params;
-
-	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
-
-	OW_CIMValue rval(OW_CIMNULL);
+	Array<Param> params;
+	params.push_back(Param(XMLP_PROPERTYNAME, propName));
+	CIMValue rval(CIMNULL);
 	getPropertyOp op(rval);
 	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class objectPathOp : public OW_ClientOperation
+	class objectPathOp : public ClientOperation
 	{
 	public:
-		objectPathOp(OW_CIMObjectPathResultHandlerIFC& result_,
-			OW_String ns_)
+		objectPathOp(CIMObjectPathResultHandlerIFC& result_,
+			String ns_)
 			: result(result_)
 			, ns(ns_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			while (!parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
 			{
-				OW_CIMXMLParser::tokenId token = parser.getToken();
-				OW_CIMObjectPath cop = OW_XMLCIMFactory::createObjectPath(parser);
+				CIMXMLParser::tokenId token = parser.getToken();
+				CIMObjectPath cop = XMLCIMFactory::createObjectPath(parser);
 				switch (token)
 				{
-					case OW_CIMXMLParser::E_CLASSNAME:
+					case CIMXMLParser::E_CLASSNAME:
 						cop.setNameSpace(ns);
 						break;
-					case OW_CIMXMLParser::E_INSTANCENAME:
+					case CIMXMLParser::E_INSTANCENAME:
 						cop.setNameSpace(ns);
 						break;
 					default:
@@ -1143,37 +1019,35 @@ namespace
 				result.handle(cop);
 			}
 		}
-
-		OW_CIMObjectPathResultHandlerIFC& result;
-		OW_String ns;
+		CIMObjectPathResultHandlerIFC& result;
+		String ns;
 	};
-
 //////////////////////////////////////////////////////////////////////////////
-	class objectWithPathOp : public OW_ClientOperation
+	class objectWithPathOp : public ClientOperation
 	{
 	public:
 		objectWithPathOp(
-			OW_CIMInstanceResultHandlerIFC* iresult_,
-			OW_CIMClassResultHandlerIFC* cresult_,
-			OW_String ns_)
+			CIMInstanceResultHandlerIFC* iresult_,
+			CIMClassResultHandlerIFC* cresult_,
+			String ns_)
 			: iresult(iresult_)
 			, cresult(cresult_)
 			, ns(ns_)
 		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
+		virtual void operator ()(CIMXMLParser &parser)
 		{
-			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			while (!parser.tokenIs(CIMXMLParser::E_IRETURNVALUE))
 			{
-				OW_CIMInstance ci(OW_CIMNULL);
-				OW_CIMClass cc(OW_CIMNULL);
-				OW_CIMObjectPath cop = OW_XMLClass::getObjectWithPath(parser, cc, ci);
+				CIMInstance ci(CIMNULL);
+				CIMClass cc(CIMNULL);
+				CIMObjectPath cop = XMLClass::getObjectWithPath(parser, cc, ci);
 				if (cop)
 				{
 					if (iresult)
 					{
 						if (!ci)
 						{
-							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
+							OW_THROWCIMMSG(CIMException::FAILED, "Server did not send an instance.");
 						}
 						ci.setKeys(cop.getKeys());
 						iresult->handle(ci);
@@ -1182,47 +1056,43 @@ namespace
 					{
 						if (!cc)
 						{
-							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
+							OW_THROWCIMMSG(CIMException::FAILED, "Server did not send an class.");
 						}
 						cresult->handle(cc);
 					}
 				}
 			}
 		}
-
-		OW_CIMInstanceResultHandlerIFC* iresult;
-		OW_CIMClassResultHandlerIFC* cresult;
-		OW_String ns;
+		CIMInstanceResultHandlerIFC* iresult;
+		CIMClassResultHandlerIFC* cresult;
+		String ns;
 	};
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associatorNames(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole)
+CIMXMLCIMOMHandle::associatorNames(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole)
 {
 	static const char* const commandName = "AssociatorNames";
-
-	OW_Array<OW_Param> params;
-	OW_StringStream extra(1000);
+	Array<Param> params;
+	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(OW_Param(XMLP_ROLE, role));
+		params.push_back(Param(XMLP_ROLE, role));
 	}
 	if (!resultRole.empty())
 	{
-		params.push_back(OW_Param(XMLP_RESULTROLE, resultRole));
+		params.push_back(Param(XMLP_RESULTROLE, resultRole));
 	}
-
 	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMInstanceNametoXML(path, extra);
+		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1231,102 +1101,90 @@ OW_CIMXMLCIMOMHandle::associatorNames(
 		"<CLASSNAME NAME=\"" << path.getObjectName() <<
 		"\"/></IPARAMVALUE>";
 	}
-
 	if (!assocClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_ASSOCCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << assocClass <<
 		"\"/></IPARAMVALUE>";
 	}
-
 	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
 		"\"/></IPARAMVALUE>";
 	}
-
 	objectPathOp op(result, ns);
 	intrinsicMethod(ns, commandName, op, params,
 		extra.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associators(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMXMLCIMOMHandle::associators(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	if (!path.isInstancePath())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"associators requires an instance path not a class path");
 	}
-
 	associatorsCommon(ns, path, &result, 0, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associatorsClasses(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMXMLCIMOMHandle::associatorsClasses(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	if (!path.isClassPath())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"associatorsClasses requires a class path not an instance path");
 	}
-
 	associatorsCommon(ns, path, 0, &result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::associatorsCommon(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC* iresult,
-	OW_CIMClassResultHandlerIFC* cresult,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMXMLCIMOMHandle::associatorsCommon(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC* iresult,
+	CIMClassResultHandlerIFC* cresult,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	static const char* const commandName = "Associators";
-
-	OW_Array<OW_Param> params;
-	OW_StringStream extra(1000);
-
+	Array<Param> params;
+	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(OW_Param(XMLP_ROLE, role));
+		params.push_back(Param(XMLP_ROLE, role));
 	}
 	if (!resultRole.empty())
 	{
-		params.push_back(OW_Param(XMLP_RESULTROLE, resultRole));
+		params.push_back(Param(XMLP_RESULTROLE, resultRole));
 	}
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
-
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 	generatePropertyListXML(extra,propertyList);
-
 	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMInstanceNametoXML(path, extra);
+		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1335,47 +1193,41 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(
 		"<CLASSNAME NAME=\"" << path.getObjectName() <<
 		"\"/></IPARAMVALUE>";
 	}
-
 	if (!assocClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_ASSOCCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << assocClass <<
 		"\"/></IPARAMVALUE>";
 	}
-
 	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
 		"\"/></IPARAMVALUE>";
 	}
-
 	objectWithPathOp op(iresult, cresult, ns);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::referenceNames(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& resultClass,
-	const OW_String& role)
+CIMXMLCIMOMHandle::referenceNames(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& resultClass,
+	const String& role)
 {
 	static const char* const commandName = "ReferenceNames";
-	OW_Array<OW_Param> params;
-	OW_StringStream extra(1000);
+	Array<Param> params;
+	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(OW_Param(XMLP_ROLE, role));
+		params.push_back(Param(XMLP_ROLE, role));
 	}
-
 	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMInstanceNametoXML(path, extra);
+		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1384,88 +1236,77 @@ OW_CIMXMLCIMOMHandle::referenceNames(
 		"<CLASSNAME NAME=\"" << path.getObjectName() <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
-
 	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">" <<
 		"<CLASSNAME NAME=\"" << resultClass <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
-
 	objectPathOp op(result, ns);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::references(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
+CIMXMLCIMOMHandle::references(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	if (!path.isInstancePath())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"references requires an instance path not a class path");
 	}
-
 	referencesCommon(ns, path, &result, 0, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::referencesClasses(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
+CIMXMLCIMOMHandle::referencesClasses(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	if (!path.isClassPath())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"referencesClasses requires a class path not an instance path");
 	}
-
 	referencesCommon(ns, path, 0, &result, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::referencesCommon(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC* iresult,
-	OW_CIMClassResultHandlerIFC* cresult,
-	const OW_String& resultClass,
-	const OW_String& role,
+CIMXMLCIMOMHandle::referencesCommon(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC* iresult,
+	CIMClassResultHandlerIFC* cresult,
+	const String& resultClass,
+	const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	static const char* const commandName = "References";
-
-	OW_Array<OW_Param> params;
-	OW_StringStream extra(1000);
-
+	Array<Param> params;
+	StringStream extra(1000);
 	if (!role.empty())
 	{
-		params.push_back(OW_Param(XMLP_ROLE, role));
+		params.push_back(Param(XMLP_ROLE, role));
 	}
-	params.push_back(OW_Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
-	params.push_back(OW_Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
-
+	params.push_back(Param(XMLP_INCLUDEQUALIFIERS, includeQualifiers));
+	params.push_back(Param(XMLP_INCLUDECLASSORIGIN, includeClassOrigin));
 	generatePropertyListXML(extra,propertyList);
-
 	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMInstanceNametoXML(path, extra);
+		CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1474,64 +1315,54 @@ OW_CIMXMLCIMOMHandle::referencesCommon(
 		<< "<CLASSNAME NAME=\"" << path.getObjectName()
 		<< "\"></CLASSNAME></IPARAMVALUE>";
 	}
-
 	if (!resultClass.empty())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_RESULTCLASS << "\">"
 		<< "<CLASSNAME NAME=\"" << resultClass <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
-
 	objectWithPathOp op(iresult,cresult,ns);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_CIMXMLCIMOMHandle::execQuery(
-	const OW_String& ns,
-	const OW_String& query, int wqlLevel)
+CIMInstanceEnumeration
+CIMXMLCIMOMHandle::execQuery(
+	const String& ns,
+	const String& query, int wqlLevel)
 {
-	return OW_CIMOMHandleIFC::execQueryE(ns, query, 
-		OW_String("WQL") + OW_String(wqlLevel));
+	return CIMOMHandleIFC::execQueryE(ns, query, 
+		String("WQL") + String(wqlLevel));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::execQuery(
-	const OW_String& ns,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& query, const OW_String& queryLanguage)
+CIMXMLCIMOMHandle::execQuery(
+	const String& ns,
+	CIMInstanceResultHandlerIFC& result,
+	const String& query, const String& queryLanguage)
 {
 	static const char* const commandName = "ExecQuery";
-
-	OW_Array<OW_Param> params;
-
-	params.push_back(OW_Param(XMLP_QUERYLANGUAGE, OW_XMLEscape(queryLanguage)));
-	params.push_back(OW_Param(XMLP_QUERY, OW_XMLEscape(query)));
-
+	Array<Param> params;
+	params.push_back(Param(XMLP_QUERYLANGUAGE, XMLEscape(queryLanguage)));
+	params.push_back(Param(XMLP_QUERY, XMLEscape(query)));
 	objectWithPathOp op(&result, 0, ns);
 	intrinsicMethod(ns, commandName, op, params);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMFeatures
-OW_CIMXMLCIMOMHandle::getServerFeatures()
+CIMFeatures
+CIMXMLCIMOMHandle::getServerFeatures()
 {
 	return m_protocol->getFeatures();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::intrinsicMethod(
-	const OW_String& ns, const OW_String& operation,
-	OW_ClientOperation& op,
-	const OW_Array<OW_Param>& params, const OW_String& extra)
+CIMXMLCIMOMHandle::intrinsicMethod(
+	const String& ns, const String& operation,
+	ClientOperation& op,
+	const Array<Param>& params, const String& extra)
 {
-	OW_Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, ns);
+	Reference<std::iostream> iostrRef = m_protocol->beginRequest(operation, ns);
 	std::iostream& iostr = *iostrRef;
-
 	sendIntrinsicXMLHeader(operation, ns, iostr);
 	for (size_t i = 0; i < params.size(); i++)
 	{
@@ -1546,4 +1377,5 @@ OW_CIMXMLCIMOMHandle::intrinsicMethod(
 	doSendRequest(iostrRef, operation, ns, true, op);
 }
 
+} // end namespace OpenWBEM
 

@@ -30,9 +30,13 @@
 #include "OW_config.h"
 #include "OW_MethodProviderIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_MethodProviderIFC::~OW_MethodProviderIFC() 
+MethodProviderIFC::~MethodProviderIFC() 
 {
 }
 
+} // end namespace OpenWBEM
 

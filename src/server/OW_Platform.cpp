@@ -27,14 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Platform.hpp"
 //#include "OW_Environment.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 #include "OW_PidFile.hpp"
-
 extern "C"
 {
 #include <sys/types.h>
@@ -53,173 +51,139 @@ extern "C"
 #endif
 #include <pwd.h>
 }
-
 #include <iostream>
 #include <cstring>
 #include <cstdio>
 
+namespace OpenWBEM
+{
+
 using std::ostream;
 using std::endl;
-
 DEFINE_EXCEPTION(Daemon);
-
-OW_Reference<OW_UnnamedPipe> OW_Platform::plat_upipe;
-
-static OW_Platform::Options processCommandLineOptions(int argc, char** argv);
+Reference<UnnamedPipe> Platform::plat_upipe;
+static Platform::Options processCommandLineOptions(int argc, char** argv);
 static void handleSignal(int sig);
 static void setupSigHandler(bool dbgFlg);
-
 extern "C" {
 static void theSigHandler(int sig);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Platform::Options
-OW_Platform::daemonInit( int argc, char* argv[] )
+Platform::Options
+Platform::daemonInit( int argc, char* argv[] )
 {
-#ifdef OW_USE_GNU_PTH
-    // This function is the very first thing called from main, so do pth_init here.
-    pth_init();
-#endif
 	return processCommandLineOptions(argc, argv);
 }
-
 /**
  * daemonize() - detach process from user and disappear into the background
- * Throws OW_DaemonException on error.
+ * Throws DaemonException on error.
  */
 void
-OW_Platform::daemonize(bool dbgFlg, const OW_String& daemonName)
+Platform::daemonize(bool dbgFlg, const String& daemonName)
 {
 	if(!dbgFlg)
 	{
 		if(getuid() != 0)
 		{
-			OW_THROW(OW_DaemonException, format("%1 must run as root. aborting...", daemonName).c_str());
+			OW_THROW(DaemonException, format("%1 must run as root. aborting...", daemonName).c_str());
 		}
 	}
-
-	OW_String pidFile(OW_PIDFILE_DIR);
+	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
 	pidFile += daemonName;
 	pidFile += ".pid";
-
-	int pid = OW_PidFile::checkPid(pidFile.c_str());
-
+	int pid = PidFile::checkPid(pidFile.c_str());
 	// Is there already another instance of the cimom running?
 	if(pid != -1)
 	{
-		OW_THROW(OW_DaemonException,
+		OW_THROW(DaemonException,
 			format("Another instance of %1 is already running [%2]",
 				daemonName, pid).c_str());
 	}
-
 	if(!dbgFlg)
 	{
-#ifdef OW_USE_GNU_PTH
-        pid = pth_fork();
-#else
 		pid = fork();
-#endif
 		switch(pid)
 		{
 			case 0:
 				break;
 			case -1:
-				OW_THROW(OW_DaemonException,
+				OW_THROW(DaemonException,
 					format("FAILED TO DETACH FROM THE TERMINAL - First fork : %1",
 						strerror(errno)).c_str());
-
 			default:
 				_exit(0);			 // exit the original process
 		}
-
 		if (setsid() < 0)					  // shoudn't fail on linux
 		{
-			OW_THROW(OW_DaemonException,
+			OW_THROW(DaemonException,
 				"FAILED TO DETACH FROM THE TERMINAL - setsid failed");
 		}
-
-#ifdef OW_USE_GNU_PTH
-        pid = pth_fork();
-#else
 		pid = fork();
-#endif
 		switch(pid)
 		{
 			case 0:
 				break;
-
 			case -1:
-				OW_THROW(OW_DaemonException,
+				OW_THROW(DaemonException,
 					format("FAILED TO DETACH FROM THE TERMINAL - Second fork : %1",
 						strerror(errno)).c_str());
 				exit(0);
-
 			default:
 				_exit(0);
 		}
-
 		chdir("/");
 		umask(0);
-
-        close(0);
-        close(1);
-        close(2);
-
-        open("/dev/null", O_RDONLY);
-        open("/dev/null", O_WRONLY);
-        dup(1);
+		close(0);
+		close(1);
+		close(2);
+		open("/dev/null", O_RDONLY);
+		open("/dev/null", O_WRONLY);
+		dup(1);
 	}
 	else
 	{
 		pid = getpid();
 	}
-
-	OW_PidFile::writePid(pidFile.c_str());
-	//OW_String msg;
-	//msg.format(OW_DAEMON_NAME " is now running [PID=%d]", getpid());
-	//OW_Environment::logCustInfo(msg);
+	PidFile::writePid(pidFile.c_str());
+	//String msg;
+	//msg.format(DAEMON_NAME " is now running [PID=%d]", getpid());
+	//Environment::logCustInfo(msg);
 	initSig();
 	setupSigHandler(dbgFlg);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_Platform::daemonShutdown(const OW_String& daemonName)
+Platform::daemonShutdown(const String& daemonName)
 {
-	OW_String pidFile(OW_PIDFILE_DIR);
+	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
 	pidFile += daemonName;
 	pidFile += ".pid";
-	OW_PidFile::removePid(pidFile.c_str());
+	PidFile::removePid(pidFile.c_str());
 	shutdownSig();
 	return 0;
 }
-
 #ifdef OW_HAVE_GETOPT_LONG
 //////////////////////////////////////////////////////////////////////////////
 static struct option   long_options[] =
 {
-    { "debug", 0, NULL, 'd' },
-    { "config", required_argument, NULL, 'c' },
-    { "help", 0, NULL, 'h' },
-    { 0, 0, 0, 0 }
+	{ "debug", 0, NULL, 'd' },
+	{ "config", required_argument, NULL, 'c' },
+	{ "help", 0, NULL, 'h' },
+	{ 0, 0, 0, 0 }
 };
 #endif
-
 static const char* const short_options = "dc:h";
-
 //////////////////////////////////////////////////////////////////////////////
-static OW_Platform::Options
+static Platform::Options
 processCommandLineOptions(int argc, char** argv)
 {
-	OW_Platform::Options rval;
-
+	Platform::Options rval;
 #ifdef OW_HAVE_GETOPT_LONG
-    int optndx = 0;
+	int optndx = 0;
 	optind = 1;
-    int c = getopt_long(argc, argv, short_options, long_options, &optndx);
+	int c = getopt_long(argc, argv, short_options, long_options, &optndx);
 #else
 	optind = 1;
 	int c = getopt(argc, argv, short_options);
@@ -231,30 +195,26 @@ processCommandLineOptions(int argc, char** argv)
 			case 'd':
 				rval.debug = true;
 				break;
-
 			case 'c':
 				rval.configFile = true;
 				rval.configFilePath = optarg;
 				break;
-
 			case 'h':
 				rval.help = true;
 				return rval;
-
 			default:
 				rval.help = true;
 				rval.error = true;
 				return rval;
 		}
 #ifdef OW_HAVE_GETOPT_LONG
-        c = getopt_long(argc, argv, short_options, long_options, &optndx);
+		c = getopt_long(argc, argv, short_options, long_options, &optndx);
 #else
 		c = getopt(argc, argv, short_options);
 #endif
 	}
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static void
 handleSignalAux(int sig, sighandler_t handler)
@@ -266,7 +226,6 @@ handleSignalAux(int sig, sighandler_t handler)
 	{
 		temp.sa_handler = handler;
 		sigemptyset(&temp.sa_mask);
-
 		/* Here's a note from the glibc documentation: 
 		 * When you don't specify with `sigaction' or `siginterrupt' what a
 		 * particular handler should do, it uses a default choice.  The default
@@ -284,19 +243,16 @@ handleSignalAux(int sig, sighandler_t handler)
 		sigaction(sig, &temp, NULL);
 	}
 }
-
 static void
 handleSignal(int sig)
 {
 	handleSignalAux(sig, theSigHandler);
 }
-
 static void
 ignoreSignal(int sig)
 {
 	handleSignalAux(sig, SIG_IGN);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 extern "C" {
 static void
@@ -308,10 +264,10 @@ theSigHandler(int sig)
 		{
 			case SIGTERM:
 			case SIGINT:
-				OW_Platform::pushSig(OW_Platform::SHUTDOWN);
+				Platform::pushSig(Platform::SHUTDOWN);
 				break;
 			case SIGHUP:
-				OW_Platform::pushSig(OW_Platform::REINIT);
+				Platform::pushSig(Platform::REINIT);
 				break;
 		}
 	}
@@ -319,9 +275,7 @@ theSigHandler(int sig)
 	{
 	}
 }
-
 } // extern "C"
-
 //////////////////////////////////////////////////////////////////////////////
 static void
 setupSigHandler(bool dbgFlg)
@@ -338,10 +292,8 @@ setupSigHandler(bool dbgFlg)
 	 functions should be avoided because of compatibility problems.  It is
 	 better to use `sigaction' if it is available since the results are much
 	 more reliable.
-
 	 We avoid using signal and use sigaction instead.
 	 */
-
 	if(dbgFlg)
 	{
 		handleSignal(SIGINT);
@@ -350,14 +302,10 @@ setupSigHandler(bool dbgFlg)
 	{
 		ignoreSignal(SIGINT);
 	}
-
-
 	handleSignal(SIGTERM);
 	handleSignal(SIGHUP);
-
 //	handleSignal(SIGUSR2);
 //	handleSignal(SIGUSR1);
-
 	ignoreSignal(SIGTTIN);
 	ignoreSignal(SIGTTOU);
 	ignoreSignal(SIGTSTP);
@@ -367,7 +315,6 @@ setupSigHandler(bool dbgFlg)
 	ignoreSignal(SIGIO);
 #endif
 	ignoreSignal(SIGPIPE);
-
 	// ?
 	ignoreSignal(SIGIOT);
 	ignoreSignal(SIGBUS);
@@ -378,7 +325,6 @@ setupSigHandler(bool dbgFlg)
 	ignoreSignal(SIGVTALRM);
 	ignoreSignal(SIGPROF);
 	ignoreSignal(SIGPWR);
-
 	// ?
 	//handleSignal(SIGALRM);
 	//handleSignal(SIGABRT);
@@ -387,17 +333,18 @@ setupSigHandler(bool dbgFlg)
 	//handleSignal(SIGFPE);
 	//handleSignal(SIGSTKFLT);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // static
-OW_String OW_Platform::getCurrentUserName()
+String Platform::getCurrentUserName()
 {
-    uid_t uid = getuid();
-    struct passwd* p = getpwuid(uid);
-    if (p)
-    {
-        return p->pw_name;
-    }
-
-    return "";
+	uid_t uid = getuid();
+	struct passwd* p = getpwuid(uid);
+	if (p)
+	{
+		return p->pw_name;
+	}
+	return "";
 }
+
+} // end namespace OpenWBEM
+

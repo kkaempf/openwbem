@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_WQLPropertySource.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_WQLPropertySource::~OW_WQLPropertySource() 
+WQLPropertySource::~WQLPropertySource() 
 {
 }
+
+} // end namespace OpenWBEM
 

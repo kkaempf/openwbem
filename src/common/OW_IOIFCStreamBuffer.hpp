@@ -29,38 +29,29 @@
 *******************************************************************************/
 #ifndef OW_IOIFCSTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_IOIFCSTREAMBUFFER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_IOIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 
-class OW_IOIFCStreamBuffer : public OW_BaseStreamBuffer
+namespace OpenWBEM
+{
+
+class IOIFCStreamBuffer : public BaseStreamBuffer
 {
 public:
-	OW_IOIFCStreamBuffer(OW_IOIFC* dev, int bufSize = BASE_BUF_SIZE,
+	IOIFCStreamBuffer(IOIFC* dev, int bufSize = BASE_BUF_SIZE,
 		const char* direction = "io");
-
-	virtual ~OW_IOIFCStreamBuffer();
-
+	virtual ~IOIFCStreamBuffer();
 	virtual void reset() { initBuffers(); }
-
 private:
 	// unimplemented
-	OW_IOIFCStreamBuffer(const OW_IOIFCStreamBuffer& arg);
-	OW_IOIFCStreamBuffer& operator= (const OW_IOIFCStreamBuffer& arg);
-
+	IOIFCStreamBuffer(const IOIFCStreamBuffer& arg);
+	IOIFCStreamBuffer& operator= (const IOIFCStreamBuffer& arg);
 	virtual int buffer_to_device(const char* c, int n);
 	virtual int buffer_from_device(char* c, int n);
-
-	OW_IOIFC* m_dev;
+	IOIFC* m_dev;
 };
 
-
-
-
+} // end namespace OpenWBEM
 
 #endif
-
-
-
-

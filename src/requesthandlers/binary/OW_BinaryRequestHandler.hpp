@@ -29,124 +29,91 @@
 *******************************************************************************/
 #ifndef OW_BINARYREQUESTHANDLER_HPP_INCLUDE_GUARD_
 #define OW_BINARYREQUESTHANDLER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMFwd.hpp"
 
-class OW_BinaryRequestHandler : public OW_RequestHandlerIFC
+namespace OpenWBEM
+{
+
+class BinaryRequestHandler : public RequestHandlerIFC
 {
 public:
-	OW_BinaryRequestHandler();
-
-	virtual OW_RequestHandlerIFC* clone() const;
-
+	BinaryRequestHandler();
+	virtual RequestHandlerIFC* clone() const;
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
-            std::ostream *ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
-
-	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
-
-	virtual void setEnvironment(OW_ServiceEnvironmentIFCRef env);
-
-	virtual OW_StringArray getSupportedContentTypes() const;
-
-	virtual OW_String getContentType() const;
-
+            std::ostream *ostrError, const SortedVectorMap<String, String>& handlerVars);
+	virtual void doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& handlerVars);
+	virtual void setEnvironment(ServiceEnvironmentIFCRef env);
+	virtual StringArray getSupportedContentTypes() const;
+	virtual String getContentType() const;
 private:
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	void createClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void createClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void modifyClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void deleteClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	void createInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void createInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void deleteInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void modifyInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void setProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void setProperty(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-	void enumClasses(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumClasses(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void getClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void getInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	
-	void getQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-	void setQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void setQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void enumQualifiers(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumQualifiers(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void deleteQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
-	void getProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getProperty(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void enumClassNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumClassNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void enumInstances(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumInstances(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void enumInstanceNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumInstanceNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
             std::istream& istrm);
-
-	void invokeMethod(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void invokeMethod(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void execQuery(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void execQuery(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	void associators(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void associators(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void associatorNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void associatorNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
         std::istream& istrm);
-
-	void references(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void references(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
-	void referenceNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void referenceNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif
-
-	void getServerFeatures(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getServerFeatures(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
-
 	void writeError(std::ostream& ostrm, const char* msg);
-
-	bool writeFileName(std::ostream& ostrm, const OW_String& fname);
-
-	OW_UserId m_userId;
+	bool writeFileName(std::ostream& ostrm, const String& fname);
+	UserId m_userId;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-

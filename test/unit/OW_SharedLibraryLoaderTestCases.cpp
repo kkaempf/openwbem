@@ -35,6 +35,8 @@
 #include "OW_SharedLibrary.hpp"
 #include "testSharedLibraryLoader.hpp"
 
+using namespace OpenWBEM;
+
 void OW_SharedLibraryLoaderTestCases::setUp()
 {
 }
@@ -47,7 +49,7 @@ void OW_SharedLibraryLoaderTestCases::tearDown()
 void OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary()
 {
 	testSharedLibraryLoader sll;
-	OW_SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger() );
+	SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger() );
 	unitAssert( !slp.isNull() );
 }
 

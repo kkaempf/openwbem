@@ -27,25 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_UNLOADERPROVIDER_HPP_
 #define OW_UNLOADERPROVIDER_HPP_
-
 #include "OW_config.h"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_Reference.hpp"
 
-class OW_CIMOMEnvironment;
-typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
+namespace OpenWBEM
+{
 
-class OW_UnloaderProvider : public OW_CppPolledProviderIFC
+class CIMOMEnvironment;
+typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
+class UnloaderProvider : public CppPolledProviderIFC
 {
 public:
-	OW_UnloaderProvider();
-	virtual ~OW_UnloaderProvider();
-
+	UnloaderProvider();
+	virtual ~UnloaderProvider();
 	/**
-	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
+	 * Called by the CIMOM to give this CppPolledProviderIFC to
 	 * opportunity to export indications if needed.
 	 * @param lch	A local CIMOM handle the provider can use to export
 	 *					indications if needed.
@@ -53,18 +52,15 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env);
-
+	virtual Int32 poll(const ProviderEnvironmentIFCRef &env);
 	/**
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const
-		OW_ProviderEnvironmentIFCRef &env);
-
+	virtual Int32 getInitialPollingInterval(const
+		ProviderEnvironmentIFCRef &env);
 };
 
-
+} // end namespace OpenWBEM
 
 #endif
-

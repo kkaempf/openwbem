@@ -30,44 +30,47 @@
 #include "OW_config.h"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 
+namespace OpenWBEM
+{
+
+namespace MOF
+{
+
 /////////////////////////////////////////////////////////////////////////////// 
-OW_MofParserErrorHandlerIFC::OW_MofParserErrorHandlerIFC() 
+ParserErrorHandlerIFC::ParserErrorHandlerIFC() 
 	: m_errorCount(0) 
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////// 
-OW_MofParserErrorHandlerIFC::~OW_MofParserErrorHandlerIFC()
+ParserErrorHandlerIFC::~ParserErrorHandlerIFC()
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////// 
 long
-OW_MofParserErrorHandlerIFC::errorCount() 
+ParserErrorHandlerIFC::errorCount() 
 { 
 	return m_errorCount; 
 }
-
 /////////////////////////////////////////////////////////////////////////////// 
-void OW_MofParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
+void ParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
 {
 	++m_errorCount;
 	doFatalError(error,li);
-	OW_THROW(OW_MofParseFatalErrorException, "");
+	OW_THROW(ParseFatalErrorException, "");
 }
-
 /////////////////////////////////////////////////////////////////////////////// 
-void OW_MofParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
+void ParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
 {
 	++m_errorCount;
 	if ( doRecoverableError(error,li) == Abort )
-		OW_THROW(OW_MofParseFatalErrorException, "");
+		OW_THROW(ParseFatalErrorException, "");
 }
-
 /////////////////////////////////////////////////////////////////////////////// 
-void OW_MofParserErrorHandlerIFC::progressMessage( const char* message, const lineInfo& li )
+void ParserErrorHandlerIFC::progressMessage( const char* message, const lineInfo& li )
 {
 	doProgressMessage( message, li );
 }
 
+} // end namespace MOF
+} // end namespace OpenWBEM
 

@@ -27,69 +27,53 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef OW_FORMAT_HPP
 #define OW_FORMAT_HPP
-
 #include "OW_config.h"
 #include <iosfwd>
 #include "OW_StringStream.hpp"
 #include "OW_String.hpp"
 
-//  Format class declaration  -----------------------------------------------//
+namespace OpenWBEM
+{
 
-class OW_Format
+//  Format class declaration  -----------------------------------------------//
+class Format
 {
 public:
 	
-	operator OW_String() const;
-	OW_String toString() const;
+	operator String() const;
+	String toString() const;
 	const char* c_str() const;
-
 	// generic templated constructors
 	template<typename A>
-	OW_Format(const char* ca, const A& a);
-
+	Format(const char* ca, const A& a);
 	template<typename A, typename B>
-	OW_Format(const char* ca, const A& a, const B& b);
-
+	Format(const char* ca, const A& a, const B& b);
 	template<typename A, typename B, typename C>
-	OW_Format(const char* ca, const A& a, const B& b, const C& c);
-
+	Format(const char* ca, const A& a, const B& b, const C& c);
 	template<typename A, typename B, typename C, typename D>
-	OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d);
-
+	Format(const char* ca, const A& a, const B& b, const C& c, const D& d);
 	template<typename A, typename B, typename C, typename D, typename E>
-		OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e);
-
+		Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e);
 	template<typename A, typename B, typename C, typename D, typename E, typename F>
-	OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f);
-
+	Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f);
 	template<typename A, typename B, typename C, typename D, typename E, typename F, typename G>
-	OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g);
-
+	Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g);
 	template<typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H>
-	OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h);
-
+	Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h);
 	template<typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I>
-	OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i);
-
+	Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i);
 	// These specific versions are to help prevent template bloat
-	OW_Format(const char* ca, const OW_String& a);
-	OW_Format(const char* ca, const OW_String& a, const OW_String& b);
-	OW_Format(const char* ca, const OW_String& a, const OW_String& b, const OW_String& c);
-
+	Format(const char* ca, const String& a);
+	Format(const char* ca, const String& a, const String& b);
+	Format(const char* ca, const String& a, const String& b, const String& c);
 private:
-	OW_StringStream oss;
-
-
-	char process(OW_String& f, char c0);
-
+	StringStream oss;
+	char process(String& f, char c0);
 	template<typename T> void put(const T& t);
-
 	// These are to help prevent template bloat
-	void put (const OW_String& t);
+	void put (const String& t);
 	void put (char t);
 	void put (unsigned char t);
 	void put (short t);
@@ -100,26 +84,19 @@ private:
 	void put (unsigned long t);
 	void put (long long t);
 	void put (unsigned long long t);
-
-	friend std::ostream& operator<<(std::ostream& os, const OW_Format& f);
-
-}; // class OW_Format
-
-
+	friend std::ostream& operator<<(std::ostream& os, const Format& f);
+}; // class Format
 template<typename T> 
-void OW_Format::put(const T& t)
+void Format::put(const T& t)
 { // t is inserted into oss
-
 	if (!oss.good())
 		return;
-
 	oss << t;
 }
-
 template<typename A>
-OW_Format::OW_Format(const char* ca, const A& a) : oss()
+Format::Format(const char* ca, const A& a) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '1'))
@@ -128,12 +105,10 @@ OW_Format::OW_Format(const char* ca, const A& a) : oss()
 		}
 	}
 }
-
-
 template<typename A, typename B>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b) : oss()
+Format::Format(const char* ca, const A& a, const B& b) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '2'))
@@ -143,12 +118,10 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b) : oss()
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c) : oss()
+Format::Format(const char* ca, const A& a, const B& b, const C& c) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '3'))
@@ -159,12 +132,10 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c) : oss()
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C, typename D>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d) : oss()
+Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '4'))
@@ -176,12 +147,10 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C, typename D, typename E>
-OW_Format::	OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e) : oss()
+Format::	Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '5'))
@@ -194,12 +163,10 @@ OW_Format::	OW_Format(const char* ca, const A& a, const B& b, const C& c, const 
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C, typename D, typename E, typename F>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f) : oss()
+Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '6'))
@@ -213,12 +180,10 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C, typename D, typename E, typename F, typename G>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g) : oss()
+Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '7'))
@@ -233,12 +198,10 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h) : oss()
+Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '8'))
@@ -254,12 +217,10 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D
 		}
 	}
 }
-
-
 template<typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I>
-OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i) : oss()
+Format::Format(const char* ca, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '9'))
@@ -276,10 +237,9 @@ OW_Format::OW_Format(const char* ca, const A& a, const B& b, const C& c, const D
 		}
 	}
 }
+typedef Format format;
 
-
-typedef OW_Format format;
-
+} // end namespace OpenWBEM
 
 #endif
 // end of OW_Format.hpp ---------------------------------------------------------//

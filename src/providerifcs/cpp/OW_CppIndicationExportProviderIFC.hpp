@@ -29,33 +29,34 @@
 *******************************************************************************/
 #ifndef OW_CPPINDICATIONEXPORTPROVIDERIFC_HPP_
 #define OW_CPPINDICATIONEXPORTPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-class OW_CppIndicationExportProviderIFC : public virtual OW_CppProviderBaseIFC
+namespace OpenWBEM
+{
+
+class CppIndicationExportProviderIFC : public virtual CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppIndicationExportProviderIFC();
+	virtual ~CppIndicationExportProviderIFC();
 	/**
 	 * @return The class names of all the CIM_CppIndicationHandler sub-classes
-	 * this OW_IndicationExportProvider handles.
+	 * this IndicationExportProvider handles.
 	 */
-	virtual OW_StringArray getHandlerClassNames() = 0;
+	virtual StringArray getHandlerClassNames() = 0;
 	
 	/**
 	 * Export the given indication
 	 */
-	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst) = 0;
-
-	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return this; }
+	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst) = 0;
+	virtual CppIndicationExportProviderIFC* getIndicationExportProvider() { return this; }
 };
+typedef SharedLibraryReference<CppIndicationExportProviderIFC>
+	CppIndicationExportProviderIFCRef;
 
-typedef OW_SharedLibraryReference<OW_CppIndicationExportProviderIFC>
-	OW_CppIndicationExportProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

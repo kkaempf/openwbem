@@ -49,13 +49,14 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::find;
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
-// create our own TEST_ASSERT, because assert and OW_ASSERT will be turned off
+// create our own TEST_ASSERT, because assert and ASSERT will be turned off
 // in non-debug mode.
-#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
-static const OW_String ns("root/testsuite");
+static const String ns("root/testsuite");
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -64,49 +65,49 @@ usage(const char* name)
 	cerr << "Usage: " << name << " <url> [dump file extension]" << endl;
 }
 
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+#ifndef DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 // The point of this test is to verify that we can set a qualifier value on
 // an instance that is specific to the instance, or different than what is
 // specified on the class.
-void testInstanceLevelQualifier(OW_CIMOMHandleIFCRef& chRef)
+void testInstanceLevelQualifier(CIMOMHandleIFCRef& chRef)
 {
-	const OW_String cName = "testC1";
-	OW_CIMQualifier max = 
-		OW_CIMQualifier(
+	const String cName = "testC1";
+	CIMQualifier max = 
+		CIMQualifier(
 			chRef->getQualifierType(ns, "MaxValue")
 		).setValue(
-			OW_CIMValue(OW_UInt64(100))
+			CIMValue(UInt64(100))
 		);
 
-	OW_CIMClass c = 
-		OW_CIMClass(cName).addProperty(
-			OW_CIMProperty("p", OW_CIMValue(OW_Int32(10))).addQualifier(
+	CIMClass c = 
+		CIMClass(cName).addProperty(
+			CIMProperty("p", CIMValue(Int32(10))).addQualifier(
 				max
 			)
 		);
 	chRef->createClass(ns, c);
 	c = chRef->getClass(ns, cName);
-	OW_CIMInstance i = c.newInstance();
-	OW_CIMProperty p = i.getProperty("p");
-	max.setValue(OW_CIMValue(OW_UInt64(50)));
+	CIMInstance i = c.newInstance();
+	CIMProperty p = i.getProperty("p");
+	max.setValue(CIMValue(UInt64(50)));
 	p.setQualifier(max);
 	i.setProperty(p);
 	chRef->createInstance(ns,i);
-	i = chRef->getInstance(ns, OW_CIMObjectPath(ns, i), 
+	i = chRef->getInstance(ns, CIMObjectPath(ns, i), 
 		E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS);
 
 	p = i.getPropertyT("p");
-	OW_CIMQualifier q = p.getQualifier("MaxValue");
+	CIMQualifier q = p.getQualifier("MaxValue");
 	TEST_ASSERT(q);
 	TEST_ASSERT(q.getValue());
-	TEST_ASSERT(q.getValue().getType() == OW_CIMDataType::UINT64);
+	TEST_ASSERT(q.getValue().getType() == CIMDataType::UINT64);
 	TEST_ASSERT(q.getValue().toUInt64() == 50);
 
 
 }
-#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+#endif // #ifndef DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 int
@@ -122,31 +123,31 @@ main(int argc, char* argv[])
 
 		if (argc == 3)
 		{
-			OW_String sockDumpOut = argv[2];
-			OW_String sockDumpIn = argv[2];
+			String sockDumpOut = argv[2];
+			String sockDumpIn = argv[2];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
-			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 		else
 		{
-			OW_SocketBaseImpl::setDumpFiles("","");
+			SocketBaseImpl::setDumpFiles("","");
 		}
 
-		OW_String url(argv[1]);
-		OW_URL owurl(url);
+		String url(argv[1]);
+		URL owurl(url);
 
-		OW_CIMProtocolIFCRef client(new OW_HTTPClient(url));
+		CIMProtocolIFCRef client(new HTTPClient(url));
 
-		OW_CIMOMHandleIFCRef chRef;
+		CIMOMHandleIFCRef chRef;
 		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		{
-			chRef = new OW_BinaryCIMOMHandle(client);
+			chRef = new BinaryCIMOMHandle(client);
 		}
 		else
 		{
-			chRef = new OW_CIMXMLCIMOMHandle(client);
+			chRef = new CIMXMLCIMOMHandle(client);
 		}
 
 		// This doesn't work yet. testInstanceLevelQualifier(chRef);
@@ -154,7 +155,7 @@ main(int argc, char* argv[])
 		return 0;
 
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 	}

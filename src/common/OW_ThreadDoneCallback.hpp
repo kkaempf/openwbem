@@ -27,28 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
 #define OW_THREAD_DONE_CALLBACK_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 
-class OW_Thread;
+namespace OpenWBEM
+{
 
-class OW_ThreadDoneCallback
+class Thread;
+class ThreadDoneCallback
 {
 public:
-	virtual ~OW_ThreadDoneCallback();
-
-	void notifyThreadDone(OW_Thread* t);
-
+	virtual ~ThreadDoneCallback();
+	void notifyThreadDone(Thread* t);
 protected:
-	virtual void doNotifyThreadDone(OW_Thread* t) = 0;
+	virtual void doNotifyThreadDone(Thread* t) = 0;
 };
+typedef Reference<ThreadDoneCallback> ThreadDoneCallbackRef;
 
-typedef OW_Reference<OW_ThreadDoneCallback> OW_ThreadDoneCallbackRef;
-
+} // end namespace OpenWBEM
 
 #endif
-

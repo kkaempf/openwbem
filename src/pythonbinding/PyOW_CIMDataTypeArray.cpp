@@ -30,7 +30,13 @@
 #include "OW_CIMDataType.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMDataType(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMDataType>(name);
+
+void registerArrayImpl_CIMDataType(const char* name)
+{
+    registerArrayImpl<CIMDataType>(name);
 }
+
+} // end namespace OpenWBEM
+

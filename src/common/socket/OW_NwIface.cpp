@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 extern "C"
 {
@@ -42,7 +41,6 @@ extern "C"
 #endif
 #include <arpa/inet.h>
 #include <errno.h>
-
 #ifdef OW_GNU_LINUX
 #include <sys/ioctl.h>
 #include <linux/if.h>
@@ -67,9 +65,7 @@ extern "C"
 #include <strings.h>
 #include <fcntl.h>
 #endif
-
 } // extern "C"
-
 // These need to be after the system includes because of some weird openserver
 // include order problem
 #include "OW_NwIface.hpp"
@@ -77,34 +73,32 @@ extern "C"
 #include "OW_Exception.hpp"
 #include "OW_SocketUtils.hpp"
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_NwIface::OW_NwIface()
+NwIface::NwIface()
 {
 	int s, lerrno;
 	struct ifreq ifr;
 	struct sockaddr_in *sin;
-
 	if((s = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
 	{
-		OW_THROW(OW_SocketException, "socket");
+		OW_THROW(SocketException, "socket");
 	}
-
 	getInterfaceName(s);
-
 	bzero(&ifr, sizeof(ifr));
 	strncpy(ifr.ifr_name, m_name.c_str(), sizeof(ifr.ifr_name));
-
 	////////////////////
 	// Get IP address
 	if(ioctl(s, SIOCGIFADDR, &ifr) < 0)
 	{
 		lerrno = errno;
 		close(s);
-		OW_THROW(OW_SocketException, "ioctl:SIOCGIFADDR");
+		OW_THROW(SocketException, "ioctl:SIOCGIFADDR");
 	}
 	sin = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_addr);
 	m_addr = sin->sin_addr.s_addr;
-
 	////////////////////
 	// Get the broadcast address
 	// Testing
@@ -112,21 +106,18 @@ OW_NwIface::OW_NwIface()
 	{
 		lerrno = errno;
 		close(s);
-		OW_THROW(OW_SocketException, "ioctl:SIOCGIFBRDADDR");
+		OW_THROW(SocketException, "ioctl:SIOCGIFBRDADDR");
 	}
-
 	sin = reinterpret_cast<struct sockaddr_in*>(&ifr.ifr_broadaddr);
 	m_bcastAddr = sin->sin_addr.s_addr;
-
 	////////////////////
 	// Get net mask
 	if(ioctl(s, SIOCGIFNETMASK, &ifr) < 0)
 	{
 		lerrno = errno;
 		close(s);
-		OW_THROW(OW_SocketException, "ioctl:SIOCGIFNETMASK");
+		OW_THROW(SocketException, "ioctl:SIOCGIFNETMASK");
 	}
-
 #ifdef OW_GNU_LINUX
 	sin = reinterpret_cast<struct sockaddr_in *>(&ifr.ifr_netmask);
 #else
@@ -135,85 +126,77 @@ OW_NwIface::OW_NwIface()
 	m_netmask = sin->sin_addr.s_addr;
 	close(s);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_NwIface::getName()
+String
+NwIface::getName()
 {
 	return m_name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 unsigned long
-OW_NwIface::getIPAddress()
+NwIface::getIPAddress()
 {
 	return m_addr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_NwIface::getIPAddressString()
+String
+NwIface::getIPAddressString()
 {
-	return OW_SocketUtils::inetAddrToString(m_addr);
+	return SocketUtils::inetAddrToString(m_addr);
 }
 //////////////////////////////////////////////////////////////////////////////
 unsigned long
-OW_NwIface::getBroadcastAddress()
+NwIface::getBroadcastAddress()
 {
 	return m_bcastAddr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_NwIface::getBroadcastAddressString()
+String
+NwIface::getBroadcastAddressString()
 {
-	return OW_SocketUtils::inetAddrToString(m_bcastAddr);
+	return SocketUtils::inetAddrToString(m_bcastAddr);
 }
 //////////////////////////////////////////////////////////////////////////////
 /*
-OW_String
-OW_NwIface::getMACAddressString()
+String
+NwIface::getMACAddressString()
 {
 	return m_macAddress;
 }
 */
 //////////////////////////////////////////////////////////////////////////////
 unsigned long
-OW_NwIface::getNetmask()
+NwIface::getNetmask()
 {
 	return m_netmask;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_NwIface::getNetmaskString()
+String
+NwIface::getNetmaskString()
 {
-	return OW_SocketUtils::inetAddrToString(m_netmask);
+	return SocketUtils::inetAddrToString(m_netmask);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_NwIface::sameNetwork(unsigned long addr)
+NwIface::sameNetwork(unsigned long addr)
 {
 	return ((addr & m_netmask) == (m_addr & m_netmask));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_NwIface::sameNetwork(const OW_String& straddr)
+NwIface::sameNetwork(const String& straddr)
 {
 	return sameNetwork(stringToAddress(straddr));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 unsigned long
-OW_NwIface::stringToAddress(const OW_String& straddr)
+NwIface::stringToAddress(const String& straddr)
 {
 	return inet_addr(straddr.c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd)
+NwIface::getInterfaceName(SocketHandle_t sockfd)
 {
 	char *p;
 	int numreqs = 30;
@@ -223,7 +206,6 @@ OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd)
 	int oldlen = -1;
 	int lerrno = 0;
 	const char* appliesTo;
-
 	ifc.ifc_buf = NULL;
 	for(;;)
 	{
@@ -235,14 +217,11 @@ OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd)
 		else
 		{
  			p = new char[ifc.ifc_len];
-
 			memmove(p, ifc.ifc_buf, oldlen);
 			delete [] ifc.ifc_buf;
 			ifc.ifc_buf = p;
 		}
-
 		oldlen = ifc.ifc_len;
-
 		if(ioctl(sockfd, SIOCGIFCONF, &ifc) < 0)
 		{
 			lerrno = errno;
@@ -255,27 +234,22 @@ OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd)
 			numreqs += 10;
 			continue;
 		}
-
 		break;
 	}
-
 	if(lerrno == 0)
 	{
 		lerrno = ENODEV;
 		appliesTo = "No interfaces found";
 		ifr = ifc.ifc_req;
-
 		for(n = 0; n < ifc.ifc_len; n += sizeof(struct ifreq))
 		{
 			ifrcopy = *ifr;
-
 			if(ioctl(sockfd, SIOCGIFFLAGS, &ifrcopy) < 0)
 			{
 				lerrno = errno;
 				appliesTo = "ioctl:SIOCGIFFLAGS";
 				break;
 			}
-
 #ifdef OW_GNU_LINUX
 			if((ifrcopy.ifr_flags & IFF_UP) && !(ifrcopy.ifr_flags & (IFF_LOOPBACK | IFF_DYNAMIC)))
 #else
@@ -286,19 +260,18 @@ OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd)
 				lerrno = 0;
 				break;
 			}
-
 			ifr++;
 		}
 	}
-
 	if(ifc.ifc_buf != NULL)
 	{
 		delete [] ifc.ifc_buf;
 	}
-
 	if(lerrno != 0)
 	{
-		OW_THROW(OW_SocketException, "OW_NwIface::getInterfaceName");
+		OW_THROW(SocketException, "NwIface::getInterfaceName");
 	}
 }
+
+} // end namespace OpenWBEM
 

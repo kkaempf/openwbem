@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_ClientAuthCBIFC.hpp"
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_ClientAuthCBIFC::~OW_ClientAuthCBIFC()
+ClientAuthCBIFC::~ClientAuthCBIFC()
 {
 }
+
+} // end namespace OpenWBEM
 

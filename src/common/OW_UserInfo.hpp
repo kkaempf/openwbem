@@ -29,90 +29,82 @@
 *******************************************************************************/
 #ifndef OW_USERINFO_HPP_INCLUDE_GUARD_
 #define OW_USERINFO_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_UserInfo class is used to encapsulate information about the user
+ * The UserInfo class is used to encapsulate information about the user
  * making a request of the CIMOM. This is information is retreived at
- * the time the user authenticates to the CIMOM. If an OW_UserInfo object
+ * the time the user authenticates to the CIMOM. If an UserInfo object
  * contains a user name, then read/write request will be verified against
- * the access rights of that user. If an OW_UserInfo object does NOT contain
+ * the access rights of that user. If an UserInfo object does NOT contain
  * user a user name and the m_internal flag is set, then access rights are
  * not checked on read/write operations. Only select components of the
- * CIMOM are allowed to construct this type of an OW_UserInfo object.
+ * CIMOM are allowed to construct this type of an UserInfo object.
  */
-class OW_UserInfo
+class UserInfo
 {
 public:
 	/**
-	 *	Create a new OW_UserInfo object.
+	 *	Create a new UserInfo object.
 	 * @param userName	The user name to use when checking access rights for
 	 * 						read/write operations.
 	 */
-	OW_UserInfo(const OW_String& userName);
-
+	UserInfo(const String& userName);
 	/**
-	 * Create a new OW_UserInfo object that is a copy of another.
-	 * @param arg	The OW_UserInfo object that this object will be a copy of.
+	 * Create a new UserInfo object that is a copy of another.
+	 * @param arg	The UserInfo object that this object will be a copy of.
 	 */
-	OW_UserInfo(const OW_UserInfo& arg);
-
+	UserInfo(const UserInfo& arg);
 	/**
-	 * Assign another OW_UserInfo object to this one.
-	 * @param arg	The OW_UserInfo object to assign to this one.
-	 * @return A references to this OW_UserInfo object after the assignment is
+	 * Assign another UserInfo object to this one.
+	 * @param arg	The UserInfo object to assign to this one.
+	 * @return A references to this UserInfo object after the assignment is
 	 * made.
 	 */
-	OW_UserInfo& operator= (const OW_UserInfo& arg);
-
+	UserInfo& operator= (const UserInfo& arg);
 	/**
-	 * @return The user name that is associated with this OW_UserInfo object.
+	 * @return The user name that is associated with this UserInfo object.
 	 */
-	OW_String getUserName() const;
-
-
+	String getUserName() const;
 private:
-
 	/**
-	 * Create a new OW_UserInfo object that access rights will not be checked on.
+	 * Create a new UserInfo object that access rights will not be checked on.
 	 * This method is private so only friend class are allowed to create this
-	 * type of OW_UserInfo object.
+	 * type of UserInfo object.
 	 */
-	OW_UserInfo();
-
+	UserInfo();
 	/**
-	 * @return true if access rights are not to be checked on this OW_UserInfo
+	 * @return true if access rights are not to be checked on this UserInfo
 	 * object. Otherwise false.
 	 */
 	bool getInternal() const;
-
 	/**
-	 * Set this OW_UserInfo object to internal
+	 * Set this UserInfo object to internal
 	 */
 	void setInternal();
-
-	/** The user name associated with this OW_UserInfo object. */
-	OW_String m_userName;
-
+	/** The user name associated with this UserInfo object. */
+	String m_userName;
 	/** Internal flags. If true access rights are not checked. */
 	bool m_internal;
-
 	//--------------------------------------------------------------------------
-	// Friend classes that are allowed to construct OW_UserInfo objects that
+	// Friend classes that are allowed to construct UserInfo objects that
 	// access rights are not checked on.
 	//--------------------------------------------------------------------------
-	friend class OW_CIMServer;
+	friend class CIMServer;
 #if !defined(OW_DISABLE_ACLS)
-	friend class OW_AccessMgr;
+	friend class AccessMgr;
 #endif
-	friend class OW_IndicationRepLayerImpl;
-	friend class OW_PollingManager;
-	friend class OW_IndicationServerImpl;
-	friend class OW_CIMOMEnvironment;
-	friend class OW_CIMRepository;
+	friend class IndicationRepLayerImpl;
+	friend class PollingManager;
+	friend class IndicationServerImpl;
+	friend class CIMOMEnvironment;
+	friend class CIMRepository;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

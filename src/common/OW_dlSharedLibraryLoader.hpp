@@ -27,30 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_LINUX_SHARED_LIBRARY_LOADER_HPP_
 #define OW_LINUX_SHARED_LIBRARY_LOADER_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibraryLoader.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * OW_dlSharedLibraryLoader is the class for loading
+ * dlSharedLibraryLoader is the class for loading
  * shared libraries on dl.
  */
-class OW_dlSharedLibraryLoader : public OW_SharedLibraryLoader
+class dlSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
-		virtual ~OW_dlSharedLibraryLoader();
-
+		virtual ~dlSharedLibraryLoader();
 		/**
 		 * Load a shared library specified by filename.  If the operation fails,
 		 * the return value will be null ref counted pointer.
 		 */
-		virtual OW_SharedLibraryRef loadSharedLibrary(const OW_String& filename,
-			OW_LoggerRef logger) const;
+		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
+			LoggerRef logger) const;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

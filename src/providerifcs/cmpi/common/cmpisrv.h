@@ -45,7 +45,7 @@
 // BMMU
 typedef struct {
   void * oc;
-  OW_ProviderEnvironmentIFCRef cimom;
+  OpenWBEM::ProviderEnvironmentIFCRef cimom;
 } OperationContext;
 //OperationContext::OperationContext(void * Oc, void * Cimom) :
 //	 oc = OC, cimom = Cimom {}
@@ -155,13 +155,13 @@ struct CMPI_Object {
    void *ftab;
    CMPI_Object *next,*prev;
    void *priv;    // CMPI type specific usage
-   CMPI_Object(OW_CIMInstance*);
-   CMPI_Object(OW_CIMObjectPath*);
-   CMPI_Object(OW_CIMDateTime*);
-   CMPI_Object(const OW_String&);
+   CMPI_Object(OpenWBEM::CIMInstance*);
+   CMPI_Object(OpenWBEM::CIMObjectPath*);
+   CMPI_Object(OpenWBEM::CIMDateTime*);
+   CMPI_Object(const OpenWBEM::String&);
    CMPI_Object(char*);
    CMPI_Object(void*,void*);
-   CMPI_Object(OW_Array<OW_CIMParamValue>*);
+   CMPI_Object(OpenWBEM::Array<OpenWBEM::CIMParamValue>*);
    CMPI_Object(CMPIData*);
    CMPI_Object(CMPI_Object*);
    ~CMPI_Object();
@@ -183,11 +183,11 @@ struct CMPI_ContextOnStack : CMPIContext {
 
 // BMMU
 template<typename T>
-class CMPISingleValueResultHandler : public OW_ResultHandlerIFC<T>
+class CMPISingleValueResultHandler : public OpenWBEM::ResultHandlerIFC<T>
 {
 public:
 	CMPISingleValueResultHandler()
-		: _t(OW_CIMNULL)
+		: _t(OpenWBEM::CIMNULL)
 	{
 	}
 
@@ -204,10 +204,10 @@ private:
         T _t;
 };
 
-typedef CMPISingleValueResultHandler<OW_CIMClass> CMPIClassValueResultHandler;
-typedef CMPISingleValueResultHandler<OW_CIMObjectPath> CMPIObjectPathValueResultHandler;
-typedef CMPISingleValueResultHandler<OW_CIMInstance> CMPIInstanceValueResultHandler;
-typedef CMPISingleValueResultHandler<OW_CIMValue> CMPIValueValueResultHandler;
+typedef CMPISingleValueResultHandler<OpenWBEM::CIMClass> CMPIClassValueResultHandler;
+typedef CMPISingleValueResultHandler<OpenWBEM::CIMObjectPath> CMPIObjectPathValueResultHandler;
+typedef CMPISingleValueResultHandler<OpenWBEM::CIMInstance> CMPIInstanceValueResultHandler;
+typedef CMPISingleValueResultHandler<OpenWBEM::CIMValue> CMPIValueValueResultHandler;
 
 
 struct CMPI_Result : CMPIResult {
@@ -220,8 +220,8 @@ struct CMPI_ResultOnStack : CMPIResult {
    CMPI_Object *next,*prev;
    long flags;
    CMPI_Broker *xBroker;
-   CMPI_ResultOnStack(const OW_CIMObjectPathResultHandlerIFC & handler);
-   CMPI_ResultOnStack(const OW_CIMInstanceResultHandlerIFC& handler);
+   CMPI_ResultOnStack(const OpenWBEM::CIMObjectPathResultHandlerIFC & handler);
+   CMPI_ResultOnStack(const OpenWBEM::CIMInstanceResultHandlerIFC& handler);
    CMPI_ResultOnStack(const CMPIObjectPathValueResultHandler & handler);
    CMPI_ResultOnStack(const CMPIValueValueResultHandler & handler);
 #if 0
@@ -235,18 +235,18 @@ struct CMPI_ResultOnStack : CMPIResult {
 struct CMPI_InstanceOnStack : CMPIInstance {
    CMPI_Object *next,*prev;
    void *priv;    // CMPI type specific usage
-   CMPI_InstanceOnStack(const OW_CIMInstance& ci);
+   CMPI_InstanceOnStack(const OpenWBEM::CIMInstance& ci);
 };
 
 
 struct CMPI_ObjectPathOnStack : CMPIObjectPath {
    CMPI_Object *next,*prev;
-   CMPI_ObjectPathOnStack(const OW_CIMObjectPath& cop);
+   CMPI_ObjectPathOnStack(const OpenWBEM::CIMObjectPath& cop);
 };
 
 struct CMPI_ArgsOnStack : CMPIArgs {
    CMPI_Object *next,*prev;
-   CMPI_ArgsOnStack(const OW_Array<OW_CIMParamValue>& args);
+   CMPI_ArgsOnStack(const OpenWBEM::Array<OpenWBEM::CIMParamValue>& args);
 };
 
 
@@ -261,26 +261,26 @@ struct CMPI_DateTime : CMPIDateTime {
 struct CMPI_ObjEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
-   //CMPI_ObjEnumeration(OW_Array<OW_CIMBase>* ia);
-   CMPI_ObjEnumeration(OW_Array<OW_CIMInstance>* ia);
+   //CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMBase>* ia);
+   CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* ia);
 };
 
 struct CMPI_InstEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
-   CMPI_InstEnumeration(OW_Array<OW_CIMInstance>* ia);
+   CMPI_InstEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* ia);
 };
 
 struct CMPI_OpEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
-   CMPI_OpEnumeration(OW_Array<OW_CIMObjectPath>* opa);
+   CMPI_OpEnumeration(OpenWBEM::Array<OpenWBEM::CIMObjectPath>* opa);
 };
 
 //typedef HashTable<String, CIMClass *,
 //      EqualFunc<String>,  HashFunc<String> > ClassCache;
 
-typedef OW_Cache<OW_CIMClass> ClassCache;
+typedef OpenWBEM::Cache<OpenWBEM::CIMClass> ClassCache;
 
 struct CMPI_Broker : CMPIBroker {
    ClassCache * clsCache;
@@ -290,14 +290,14 @@ struct CMPI_Broker : CMPIBroker {
 
 #include "cmpiThreadContext.h"
 
-CMPI_String* string2CMPIString(const OW_String &s);
-CMPIType type2CMPIType(OW_CIMDataType pt, int array);
-OW_CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc);
-CMPIrc key2CMPIData(const OW_String& v, OW_CIMDataType t, CMPIData *data);
-//CMPIrc key2CMPIData(const OW_String& v, KeyBinding::Type t, CMPIData *data);
-CMPIrc value2CMPIData(const OW_CIMValue&,CMPIType,CMPIData *data);
+CMPI_String* string2CMPIString(const OpenWBEM::String &s);
+CMPIType type2CMPIType(OpenWBEM::CIMDataType pt, int array);
+OpenWBEM::CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc);
+CMPIrc key2CMPIData(const OpenWBEM::String& v, OpenWBEM::CIMDataType t, CMPIData *data);
+//CMPIrc key2CMPIData(const OpenWBEM::String& v, KeyBinding::Type t, CMPIData *data);
+CMPIrc value2CMPIData(const OpenWBEM::CIMValue&,CMPIType,CMPIData *data);
 
-OW_CIMClass *mbGetClass(CMPIBroker *mb, const OW_CIMObjectPath &cop);
+OpenWBEM::CIMClass *mbGetClass(CMPIBroker *mb, const OpenWBEM::CIMObjectPath &cop);
 
 #endif
 

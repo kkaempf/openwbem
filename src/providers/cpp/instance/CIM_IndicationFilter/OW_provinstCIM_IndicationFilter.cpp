@@ -27,9 +27,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *******************************************************************************/
-
 #include "OW_config.h"
-
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -40,102 +38,90 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 namespace
 {
-
 // This is a pass through provider.  The instances are really stored in the repository.  All CIM_IndicationFilter modifications are intercepted and passed to the indication
 // server so it can keep track of subscriptions.
-class OW_provinstCIM_IndicationFilter : public OW_CppInstanceProviderIFC
+class provinstCIM_IndicationFilter : public CppInstanceProviderIFC
 {
 public:
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env)
+	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		indicationsEnabled = !(env->getConfigItem(OW_ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
+		indicationsEnabled = !(env->getConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
 		// get the indication server and save it.
 		if (indicationsEnabled)
 		{
-			indicationServer = OW_CIMOMEnvironment::g_cimomEnvironment->getIndicationServer();
+			indicationServer = CIMOMEnvironment::g_cimomEnvironment->getIndicationServer();
 			if (!indicationServer)
 			{
 				indicationsEnabled = false;
 			}
 		}
 	}
-
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_IndicationFilter");
 	}
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &cop)
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 	{
 		// delete it from the repository
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->deleteInstance(ns, cop);
 	}
-
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance)
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 	{
 		if (!indicationsEnabled)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
+			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
 		}
-
 		return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
 	}
-
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance,
-			EIncludeQualifiersFlag includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
+	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
+			EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 	{
 		(void)previousInstance;
 		(void)theClass;
 		if (!indicationsEnabled)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
+			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
 		}
-
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
 		// Tell the indication server about the modified subscription.
 		indicationServer->modifyFilter(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
-
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-			EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass)
+	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+			EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &cimClass)
 	{
 		(void)cimClass;
 		return env->getRepositoryCIMOMHandle()->getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
-
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMInstanceResultHandlerIFC &result, ELocalOnlyFlag localOnly,
-			EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &requestedClass, const OW_CIMClass &cimClass)
+	virtual void enumInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceResultHandlerIFC &result, ELocalOnlyFlag localOnly,
+			EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 	{
 		(void)requestedClass; (void)cimClass;
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstances(ns,className,result,deep,localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
-
-	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMObjectPathResultHandlerIFC &result,
-			const OW_CIMClass &cimClass)
+	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMObjectPathResultHandlerIFC &result,
+			const CIMClass &cimClass)
 	{
 		(void)cimClass;
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstanceNames(ns,className,result);
 	}
-
 private:
 	bool indicationsEnabled;
-	OW_IndicationServerRef indicationServer;
+	IndicationServerRef indicationServer;
 };
-
 } // end anonymous namespace
+} // end namespace OpenWBEM
 
-
-OW_PROVIDERFACTORY(OW_provinstCIM_IndicationFilter, owprovinstCIM_IndicationFilter);
-
+OW_PROVIDERFACTORY(OpenWBEM::provinstCIM_IndicationFilter, owprovinstCIM_IndicationFilter);
 

@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_DAEMON_ENV_HPP_
 #define OW_DAEMON_ENV_HPP_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_LogLevel.hpp"
@@ -41,59 +39,56 @@
 #include "OW_AuthManager.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 
-static const char* const OW_DAEMON_NAME = "newdaemon";
+namespace OpenWBEM
+{
 
-class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
+static const char* const DAEMON_NAME = "newdaemon";
+class DaemonEnv : public ServiceEnvironmentIFC
 {
 	public:
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, ESendIndicationsFlag doIndications, EBypassProvidersFlag bypassProviders);
-		virtual OW_LoggerRef getLogger() const;
-		virtual bool authenticate(OW_String &userName, const OW_String &info, OW_String &details);
-		virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String& id) ;
-		virtual void addSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb);
-		virtual void removeSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb);
-
+		virtual CIMOMHandleIFCRef getCIMOMHandle(const String &username, ESendIndicationsFlag doIndications, EBypassProvidersFlag bypassProviders);
+		virtual LoggerRef getLogger() const;
+		virtual bool authenticate(String &userName, const String &info, String &details);
+		virtual RequestHandlerIFCRef getRequestHandler(const String& id) ;
+		virtual void addSelectable(SelectableIFCRef obj, SelectableCallbackIFCRef cb);
+		virtual void removeSelectable(SelectableIFCRef obj, SelectableCallbackIFCRef cb);
 		void init();
 		void startServices();
 		void shutdown();
-
-		virtual void setConfigItem( const OW_String& item,
-				const OW_String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS );
-		virtual OW_String getConfigItem( const OW_String& item ) const;
-
-		void logDebug(const OW_String& message);
-		void logCustInfo(const OW_String& message);
-		void logError(const OW_String& message);
-
+		virtual void setConfigItem( const String& item,
+				const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS );
+		virtual String getConfigItem( const String& item ) const;
+		void logDebug(const String& message);
+		void logCustInfo(const String& message);
+		void logError(const String& message);
 		void runSelectEngine();
-
 	private:
-		void loadConfigItemsFromFile( const OW_String& filename );
+		void loadConfigItemsFromFile( const String& filename );
 		void clearConfigItems();
 		void deleteConfigMap();
 		void createService();
 		void startService();
 		void deleteService();
 		void createLogger();
-		void setLogLevel(const OW_LogLevel level);
-		void setLogLevel(const OW_String& level);
+		void setLogLevel(const LogLevel level);
+		void setLogLevel(const String& level);
 		void deleteLogger();
 		void createAuthManager();
 		void deleteAuthManager();
 		void createRequestHandler();
 		void deleteRequestHandler();
-
-		OW_LoggerRef m_Logger;
+		LoggerRef m_Logger;
 		
-		typedef OW_SortedVectorMap<OW_String, OW_String> config_t;
+		typedef SortedVectorMap<String, String> config_t;
 		config_t m_configItems;
 		
-		typedef std::pair<OW_SelectableIFCRef, OW_SelectableCallbackIFCRef> SelectablePair_t;
-		OW_Array<SelectablePair_t> m_selectables;
-
-		OW_ServiceIFCRef m_service;
-		OW_AuthManagerRef m_authManager;
-		OW_RequestHandlerIFCRef m_requestHandler;
+		typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
+		Array<SelectablePair_t> m_selectables;
+		ServiceIFCRef m_service;
+		AuthManagerRef m_authManager;
+		RequestHandlerIFCRef m_requestHandler;
 };
+
+} // end namespace OpenWBEM
 
 #endif // OW_ENVIRONMENT_HPP_

@@ -27,28 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_LINUXSHAREDLIBRARY_HPP_
 #define OW_LINUXSHAREDLIBRARY_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * OW_dlSharedLibrary loads and queries shared libraries. Using dlsym &
+ * dlSharedLibrary loads and queries shared libraries. Using dlsym &
  * friends.
  */
-class OW_dlSharedLibrary : public OW_SharedLibrary
+class dlSharedLibrary : public SharedLibrary
 {
 public:
-	OW_dlSharedLibrary(void * libhandle, const OW_String& libName)
-		: OW_SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
+	dlSharedLibrary(void * libhandle, const String& libName)
+		: SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
 	{
 	}
-
-	virtual ~OW_dlSharedLibrary();
-
-
+	virtual ~dlSharedLibrary();
 protected:
 	/**
 	 * Derived classes have to override this function to implement
@@ -59,13 +57,13 @@ protected:
 	 * @param fp				Where to store the function pointer.
 	 * @return true if function succeeded, false otherwise.
 	 */
-	virtual bool doGetFunctionPointer( const OW_String& functionName,
+	virtual bool doGetFunctionPointer( const String& functionName,
 											  void** fp ) const;
-
 private:
 	void* m_libhandle;
-	OW_String m_libName;
+	String m_libName;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_HTTPUtils.hpp"
@@ -40,18 +39,16 @@ int main(int argc, char* argv[])
 			<< endl;
 		return 1;
 	}
-
 	try
 	{
-		OW_String namePass = argv[3];
-		namePass += OW_String(":") + argv[4];
-		OW_String encoded = OW_HTTPUtils::base64Encode(namePass);
-		OW_String info = "Basic " + encoded;
-
-		OW_SocketAddress addr = OW_SocketAddress::getByName(argv[1], atoi(argv[2]));
-		OW_HTTPServer htIn(9877);
-		OW_Socket sock(addr);
-		OW_HTTPSvrConnection svr(sock, &htIn);
+		String namePass = argv[3];
+		namePass += String(":") + argv[4];
+		String encoded = HTTPUtils::base64Encode(namePass);
+		String info = "Basic " + encoded;
+		SocketAddress addr = SocketAddress::getByName(argv[1], atoi(argv[2]));
+		HTTPServer htIn(9877);
+		Socket sock(addr);
+		HTTPSvrConnection svr(sock, &htIn);
 		int sc;
 		for(int i = 0; i < 10; i++)
 		{
@@ -66,10 +63,11 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 	}
 	
 	return 0;
 }
+

@@ -27,47 +27,47 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 //
 // OW_CIMFeatures.hpp
 //
 //
 //
-
 #ifndef OW_CIMFEATURES_HPP_INCLUDE_GUARD_
 #define OW_CIMFEATURES_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_Bool.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMFeatures structure encapsulates all of the data that comprises
+ * The CIMFeatures structure encapsulates all of the data that comprises
  * the features of a CIM Product.
  */		  
-struct OW_CIMFeatures
+struct CIMFeatures
 {
 	/**
-	 * The OW_CIMProduct_t enumeration contains values for all known products
+	 * The CIMProduct_t enumeration contains values for all known products
 	 * in OpenWBEM.
 	 */
-	typedef enum OW_CIMProduct_t
+	typedef enum CIMProduct_t
 	{
 		SERVER,			// The CIMOM
 		CLIENT,			// The client library
 		LISTENER		// The listener interface (part of the client lib)
 	};
-
-	OW_CIMProduct_t cimProduct;
-	OW_String extURL;
-	OW_Array<OW_String> supportedGroups;
-	OW_Bool supportsBatch;
-	OW_Array<OW_String> supportedQueryLanguages;
-	OW_String validation;
-	OW_String cimom;
-	OW_String protocolVersion;
+	CIMProduct_t cimProduct;
+	String extURL;
+	Array<String> supportedGroups;
+	Bool supportsBatch;
+	Array<String> supportedQueryLanguages;
+	String validation;
+	String cimom;
+	String protocolVersion;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

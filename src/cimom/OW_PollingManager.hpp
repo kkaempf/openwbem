@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_POLLING_MANAGER_HPP_
 #define OW_POLLING_MANAGER_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Thread.hpp"
@@ -48,61 +46,53 @@
 #include "OW_UserInfo.hpp"
 #include "OW_ThreadPool.hpp"
 
-class OW_PollingManager : public OW_Thread
+namespace OpenWBEM
+{
+
+class PollingManager : public Thread
 {
 public:
-	OW_PollingManager(OW_CIMOMEnvironmentRef env);
-	virtual ~OW_PollingManager();
-
+	PollingManager(CIMOMEnvironmentRef env);
+	virtual ~PollingManager();
 	void shutdown();
-
-	void setStartedSemaphore(OW_Semaphore* sem)
+	void setStartedSemaphore(Semaphore* sem)
 	{
 		m_startedSem = sem;
 	}
-
-	void addPolledProvider(const OW_PolledProviderIFCRef& p);
-
+	void addPolledProvider(const PolledProviderIFCRef& p);
 protected:
-	virtual OW_Int32 run();
-
+	virtual Int32 run();
 private:
-
-	class TriggerRunner : public OW_Runnable
+	class TriggerRunner : public Runnable
 	{
 	public:
-		TriggerRunner(OW_PollingManager* svr, OW_UserInfo acl,
-			OW_CIMOMEnvironmentRef env);
+		TriggerRunner(PollingManager* svr, UserInfo acl,
+			CIMOMEnvironmentRef env);
 		virtual void run();
-
-		OW_PolledProviderIFCRef m_itp;
+		PolledProviderIFCRef m_itp;
 		time_t m_nextPoll;
 		bool m_isRunning;
-		OW_Int32 m_pollInterval;
-		OW_PollingManager* m_pollMan;
-		OW_UserInfo m_acl;
-		OW_CIMOMEnvironmentRef m_env;
+		Int32 m_pollInterval;
+		PollingManager* m_pollMan;
+		UserInfo m_acl;
+		CIMOMEnvironmentRef m_env;
 	};
-	typedef OW_Reference<TriggerRunner> TriggerRunnerRef;
-
-	OW_Array<TriggerRunnerRef> m_triggerRunners;
+	typedef Reference<TriggerRunner> TriggerRunnerRef;
+	Array<TriggerRunnerRef> m_triggerRunners;
 	bool m_shuttingDown;
-	OW_NonRecursiveMutex m_triggerGuard;
-	OW_Condition m_triggerCondition;
-	OW_CIMOMEnvironmentRef m_env;
-	OW_Semaphore* m_startedSem;
-	OW_ThreadPoolRef m_triggerRunnerThreadPool;
-
+	NonRecursiveMutex m_triggerGuard;
+	Condition m_triggerCondition;
+	CIMOMEnvironmentRef m_env;
+	Semaphore* m_startedSem;
+	ThreadPoolRef m_triggerRunnerThreadPool;
 	// m_triggerGuard must be locked before calling this function.
-	OW_UInt32 calcSleepTime(bool& rightNow, bool doInit);
+	UInt32 calcSleepTime(bool& rightNow, bool doInit);
 	// m_triggerGuard must be locked before calling this function.
 	void processTriggers();
-
 	friend class TriggerRunner;
 };
+typedef Reference<PollingManager> PollingManagerRef;
 
-typedef OW_Reference<OW_PollingManager> OW_PollingManagerRef;
+} // end namespace OpenWBEM
 
 #endif
-
-

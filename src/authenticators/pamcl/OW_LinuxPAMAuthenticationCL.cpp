@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Exec.hpp"
 #include "OW_ConfigOpts.hpp"
@@ -35,7 +34,10 @@
 #include "OW_AuthenticatorIFC.hpp"
 #include <string.h>
 
-class OW_LinuxPAMAuthenticationCL : public OW_AuthenticatorIFC
+namespace OpenWBEM
+{
+
+class LinuxPAMAuthenticationCL : public AuthenticatorIFC
 {
 	/**
 	 * Authenticates a user
@@ -51,27 +53,23 @@ class OW_LinuxPAMAuthenticationCL : public OW_AuthenticatorIFC
 	 *   True if user is authenticated
 	 */
 private:
-	virtual bool doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details);
+	virtual bool doAuthenticate(String &userName, const String &info, String &details);
 	
-	virtual void doInit(OW_ServiceEnvironmentIFCRef env);
-
-	OW_String m_allowedUsers;
-	OW_String m_libexecdir;
+	virtual void doInit(ServiceEnvironmentIFCRef env);
+	String m_allowedUsers;
+	String m_libexecdir;
 };
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
-	const OW_String &info, OW_String &details)
+LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
+	const String &info, String &details)
 {
 	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
 		return false;
 	}
-
-	OW_Array<OW_String> allowedUsers = m_allowedUsers.tokenize();
-
+	Array<String> allowedUsers = m_allowedUsers.tokenize();
 	bool nameFound = false;
 	for (size_t i = 0; i < allowedUsers.size(); i++)
 	{
@@ -85,15 +83,12 @@ OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
 	{
 		return false;
 	}
-
-	OW_String pathToPamAuth = m_libexecdir + "/OW_PAMAuth";
-	OW_Array<OW_String> commandLine;
+	String pathToPamAuth = m_libexecdir + "/PAMAuth";
+	Array<String> commandLine;
 	commandLine.push_back(pathToPamAuth);
-
 	bool rval;
-	OW_PopenStreams ps = OW_Exec::safePopen(commandLine,
+	PopenStreams ps = Exec::safePopen(commandLine,
 		userName + " " + info + "\n");
-
 	if (ps.getExitStatus() == 0)
 	{
 		rval = true;
@@ -102,18 +97,17 @@ OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
 	{
 		rval = false;
 	}
-
 	return rval;
 }
-
 void
-OW_LinuxPAMAuthenticationCL::doInit(OW_ServiceEnvironmentIFCRef env)
+LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)
 {
-	m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
-	m_libexecdir = env->getConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt);
+	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
+	m_libexecdir = env->getConfigItem(ConfigOpts::LIBEXEC_DIR_opt);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-OW_AUTHENTICATOR_FACTORY(OW_LinuxPAMAuthenticationCL);
+} // end namespace OpenWBEM
 
+//////////////////////////////////////////////////////////////////////////////
+OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthenticationCL);
 

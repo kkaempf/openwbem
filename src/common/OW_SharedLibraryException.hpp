@@ -27,14 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SHAREDLIBRARYEXCEPTION_HPP_
 #define OW_SHAREDLIBRARYEXCEPTION_HPP_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(SharedLibrary);
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

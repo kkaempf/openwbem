@@ -29,40 +29,37 @@
 *******************************************************************************/
 #ifndef OW_CPPINDICATIONEXPORTXMLHTTPPROVIDER_HPP_INCLUDE_GUARD_
 #define OW_CPPINDICATIONEXPORTXMLHTTPPROVIDER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 
-class OW_CppIndicationExportXMLHTTPProvider : public OW_CppIndicationExportProviderIFC
+namespace OpenWBEM
+{
+
+class CppIndicationExportXMLHTTPProvider : public CppIndicationExportProviderIFC
 {
 public:
-
-	~OW_CppIndicationExportXMLHTTPProvider();
-
+	~CppIndicationExportXMLHTTPProvider();
 	/**
 	 * Export the given indication
 	 */
-	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance &indHandlerInst, const OW_CIMInstance &indicationInst);
-
+	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance &indHandlerInst, const CIMInstance &indicationInst);
 	/**
 	 * @return The class names of all the CIM_CppIndicationHandler sub-classes
-	 * this OW_IndicationExportProvider handles.
+	 * this IndicationExportProvider handles.
 	 */
-	virtual OW_StringArray getHandlerClassNames();
-
+	virtual StringArray getHandlerClassNames();
 	/**
 	 * Called by the CIMOM when the provider is initialized
 	 *
 	 * @param hdl The handle to the cimom
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
-
+	virtual void initialize(const ProviderEnvironmentIFCRef&) {}
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -44,46 +44,43 @@
 #include "OW_MutexLock.hpp"
 #include "OW_SocketException.hpp"
 #include "OW_ThreadCancelledException.hpp"
-
 extern "C"
 {
 #include <unistd.h>
 #include <pwd.h>
 #include <sys/types.h>
 }
-
 #include <exception>
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-OW_BinaryRequestHandler::OW_BinaryRequestHandler()
-	: OW_RequestHandlerIFC()
-	, m_userId(OW_UserId(-1))
+BinaryRequestHandler::BinaryRequestHandler()
+	: RequestHandlerIFC()
+	, m_userId(UserId(-1))
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_RequestHandlerIFC*
-OW_BinaryRequestHandler::clone() const
+RequestHandlerIFC*
+BinaryRequestHandler::clone() const
 {
-	return new OW_BinaryRequestHandler(*this);
+	return new BinaryRequestHandler(*this);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setEnvironment(OW_ServiceEnvironmentIFCRef env)
+BinaryRequestHandler::setEnvironment(ServiceEnvironmentIFCRef env)
 {
-	OW_RequestHandlerIFC::setEnvironment(env);
+	RequestHandlerIFC::setEnvironment(env);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
-	const OW_SortedVectorMap<OW_String, OW_String>& /*handlerVars*/)
+BinaryRequestHandler::doOptions(CIMFeatures& cf,
+	const SortedVectorMap<String, String>& /*handlerVars*/)
 {
 	cf.cimom = "openwbem";
-	cf.cimProduct = OW_CIMFeatures::SERVER;
+	cf.cimProduct = CIMFeatures::SERVER;
 	cf.extURL = "local_binary";
 	cf.protocolVersion = OW_VERSION;
 	cf.supportedGroups.clear();
@@ -92,14 +89,12 @@ OW_BinaryRequestHandler::doOptions(OW_CIMFeatures& cf,
 	cf.supportsBatch = false;
 	cf.validation.erase();
 }
-
-static OW_Mutex g_pwdLock;
-
+static Mutex g_pwdLock;
 //////////////////////////////////////////////////////////////////////////////
 static bool
-getUserId(const OW_String& userName, OW_UserId& userId)
+getUserId(const String& userName, UserId& userId)
 {
-	OW_MutexLock ml(g_pwdLock);
+	MutexLock ml(g_pwdLock);
 	bool rv = false;
 	struct passwd* pwd;
 	pwd = ::getpwnam(userName.c_str());
@@ -110,14 +105,13 @@ getUserId(const OW_String& userName, OW_UserId& userId)
 	}
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
-	std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
+BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
+	std::ostream* ostrError, const SortedVectorMap<String, String>& handlerVars)
 {
-	OW_String userName;
-	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+	String userName;
+	SortedVectorMap<String, String>::const_iterator i = handlerVars.find(ConfigOpts::USER_NAME_opt);
 	if (i != handlerVars.end())
 	{
 		userName = (*i).second;
@@ -126,957 +120,848 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	{
 		if(!getUserId(userName, m_userId))
 		{
-			m_userId = OW_UserId(-1);
+			m_userId = UserId(-1);
 		}
 	}
-
-	OW_UInt8 funcNo = 0;
-
-	OW_LoggerRef lgr = getEnvironment()->getLogger();
-
+	UInt8 funcNo = 0;
+	LoggerRef lgr = getEnvironment()->getLogger();
 	try
 	{
-		OW_CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName);
-		OW_UInt32 version = 0;
-		OW_BinarySerialization::read(*istrm, version);
-		if (version != OW_BinaryProtocolVersion)
+		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName);
+		UInt32 version = 0;
+		BinarySerialization::read(*istrm, version);
+		if (version != BinaryProtocolVersion)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Incompatible version");
+			OW_THROWCIMMSG(CIMException::FAILED, "Incompatible version");
 		}
-
-		OW_BinarySerialization::read(*istrm, funcNo);
-
+		BinarySerialization::read(*istrm, funcNo);
 		try
 		{
 			switch(funcNo)
 			{
-				case OW_BIN_GETQUAL:
-					lgr->logDebug("OW_BinaryRequestHandler get qualifier"
+				case BIN_GETQUAL:
+					lgr->logDebug("BinaryRequestHandler get qualifier"
 						" request");
 					getQual(chdl, *ostrm, *istrm);
 					break;
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-				case OW_BIN_SETQUAL:
-					lgr->logDebug("OW_BinaryRequestHandler set qualifier"
+				case BIN_SETQUAL:
+					lgr->logDebug("BinaryRequestHandler set qualifier"
 						" request");
 					setQual(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_DELETEQUAL:
-					lgr->logDebug("OW_BinaryRequestHandler delete qualifier"
+				case BIN_DELETEQUAL:
+					lgr->logDebug("BinaryRequestHandler delete qualifier"
 						" request");
 					deleteQual(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_ENUMQUALS:
-					lgr->logDebug("OW_BinaryRequestHandler enum qualifiers"
+				case BIN_ENUMQUALS:
+					lgr->logDebug("BinaryRequestHandler enum qualifiers"
 						" request");
 					enumQualifiers(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
-				case OW_BIN_GETCLS:
-					lgr->logDebug("OW_BinaryRequestHandler get class"
+				case BIN_GETCLS:
+					lgr->logDebug("BinaryRequestHandler get class"
 						" request");
 					getClass(chdl, *ostrm, *istrm);
 					break;
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-				case OW_BIN_CREATECLS:
-					lgr->logDebug("OW_BinaryRequestHandler create class"
+				case BIN_CREATECLS:
+					lgr->logDebug("BinaryRequestHandler create class"
 						" request");
 					createClass(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_MODIFYCLS:
-					lgr->logDebug("OW_BinaryRequestHandler modify class"
+				case BIN_MODIFYCLS:
+					lgr->logDebug("BinaryRequestHandler modify class"
 						" request");
 					modifyClass(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_DELETECLS:
-					lgr->logDebug("OW_BinaryRequestHandler delete class"
+				case BIN_DELETECLS:
+					lgr->logDebug("BinaryRequestHandler delete class"
 						" request");
 					deleteClass(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
-				case OW_BIN_ENUMCLSS:
-					lgr->logDebug("OW_BinaryRequestHandler enum classes"
+				case BIN_ENUMCLSS:
+					lgr->logDebug("BinaryRequestHandler enum classes"
 						" request");
 					enumClasses(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_GETINST:
-					lgr->logDebug("OW_BinaryRequestHandler get instance"
+				case BIN_GETINST:
+					lgr->logDebug("BinaryRequestHandler get instance"
 						" request");
 					getInstance(chdl, *ostrm, *istrm);
 					break;
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-				case OW_BIN_CREATEINST:
-					lgr->logDebug("OW_BinaryRequestHandler create instance"
+				case BIN_CREATEINST:
+					lgr->logDebug("BinaryRequestHandler create instance"
 						" request");
 					createInstance(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_MODIFYINST:
-					lgr->logDebug("OW_BinaryRequestHandler get instance"
+				case BIN_MODIFYINST:
+					lgr->logDebug("BinaryRequestHandler get instance"
 						" request");
 					modifyInstance(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_DELETEINST:
-					lgr->logDebug("OW_BinaryRequestHandler delete instance"
+				case BIN_DELETEINST:
+					lgr->logDebug("BinaryRequestHandler delete instance"
 						" request");
 					deleteInstance(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_SETPROP:
-					lgr->logDebug("OW_BinaryRequestHandler set property"
+				case BIN_SETPROP:
+					lgr->logDebug("BinaryRequestHandler set property"
 						" request");
 					setProperty(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-				case OW_BIN_GETPROP:
-					lgr->logDebug("OW_BinaryRequestHandler get property"
+				case BIN_GETPROP:
+					lgr->logDebug("BinaryRequestHandler get property"
 						" request");
 					getProperty(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_ENUMCLSNAMES:
-					lgr->logDebug("OW_BinaryRequestHandler enum class names"
+				case BIN_ENUMCLSNAMES:
+					lgr->logDebug("BinaryRequestHandler enum class names"
 						" request");
 					enumClassNames(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_ENUMINSTS:
-					lgr->logDebug("OW_BinaryRequestHandler enum instances"
+				case BIN_ENUMINSTS:
+					lgr->logDebug("BinaryRequestHandler enum instances"
 						" request");
 					enumInstances(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_ENUMINSTNAMES:
-					lgr->logDebug("OW_BinaryRequestHandler enum instance"
+				case BIN_ENUMINSTNAMES:
+					lgr->logDebug("BinaryRequestHandler enum instance"
 						" names request");
 					enumInstanceNames(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_INVMETH:
-					lgr->logDebug("OW_BinaryRequestHandler invoke method"
+				case BIN_INVMETH:
+					lgr->logDebug("BinaryRequestHandler invoke method"
 						" request");
 					invokeMethod(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_EXECQUERY:
-					lgr->logDebug("OW_BinaryRequestHandler exec query"
+				case BIN_EXECQUERY:
+					lgr->logDebug("BinaryRequestHandler exec query"
 						" request");
 					execQuery(chdl, *ostrm, *istrm);
 					break;
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-				case OW_BIN_ASSOCIATORS:
-					lgr->logDebug("OW_BinaryRequestHandler associators"
+				case BIN_ASSOCIATORS:
+					lgr->logDebug("BinaryRequestHandler associators"
 						" request");
 					associators(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_ASSOCNAMES:
-					lgr->logDebug("OW_BinaryRequestHandler associator names"
+				case BIN_ASSOCNAMES:
+					lgr->logDebug("BinaryRequestHandler associator names"
 						" request");
 					associatorNames(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_REFERENCES:
-					lgr->logDebug("OW_BinaryRequestHandler references"
+				case BIN_REFERENCES:
+					lgr->logDebug("BinaryRequestHandler references"
 						" request");
 					references(chdl, *ostrm, *istrm);
 					break;
-
-				case OW_BIN_REFNAMES:
-					lgr->logDebug("OW_BinaryRequestHandler reference names"
+				case BIN_REFNAMES:
+					lgr->logDebug("BinaryRequestHandler reference names"
 						" request");
 					referenceNames(chdl, *ostrm, *istrm);
 					break;
 #endif
-
-				case OW_BIN_GETSVRFEATURES:
-					lgr->logDebug("OW_BinaryRequestHandler get server"
+				case BIN_GETSVRFEATURES:
+					lgr->logDebug("BinaryRequestHandler get server"
 						" features request");
 					getServerFeatures(chdl, *ostrm, *istrm);
 					break;
-
 				default:
-					lgr->logDebug(format("OW_BinaryRequestHandler: Received"
+					lgr->logDebug(format("BinaryRequestHandler: Received"
 						" invalid function number: %1", funcNo));
 					writeError(*ostrError, "Invalid function number");
 					break;
 			}
 		}
-		catch(OW_CIMException& e)
+		catch(CIMException& e)
 		{
 			lgr->logDebug(format("CIM Exception caught in"
-				" OW_BinaryRequestHandler: %1", e));
-			OW_BinarySerialization::write(*ostrError, OW_BIN_EXCEPTION);
-			OW_BinarySerialization::write(*ostrError, OW_UInt16(e.getErrNo()));
-			OW_BinarySerialization::write(*ostrError, e.getMessage());
+				" BinaryRequestHandler: %1", e));
+			BinarySerialization::write(*ostrError, BIN_EXCEPTION);
+			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));
+			BinarySerialization::write(*ostrError, e.getMessage());
 			setError(e.getErrNo(), e.getMessage());
 		}
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
-		lgr->logError("OW_Exception caught in OW_BinaryRequestHandler");
+		lgr->logError("Exception caught in BinaryRequestHandler");
 		lgr->logError(format("Type: %1", e.type()));
 		lgr->logError(format("File: %1", e.getFile()));
 		lgr->logError(format("Line: %1", e.getLine()));
 		lgr->logError(format("Msg: %1", e.getMessage()));
-		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e).c_str());
-		setError(OW_CIMException::FAILED, e.getMessage());
+		writeError(*ostrError, format("BinaryRequestHandler caught exception: %1", e).c_str());
+		setError(CIMException::FAILED, e.getMessage());
 		
 	}
 	catch(std::exception& e)
 	{
-		lgr->logError(format("Caught %1 exception in OW_BinaryRequestHandler",
+		lgr->logError(format("Caught %1 exception in BinaryRequestHandler",
 			e.what()));
-		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e.what()).c_str());
-		setError(OW_CIMException::FAILED, e.what());
+		writeError(*ostrError, format("BinaryRequestHandler caught exception: %1", e.what()).c_str());
+		setError(CIMException::FAILED, e.what());
 	}
-	catch (OW_ThreadCancelledException&)
+	catch (ThreadCancelledException&)
 	{
-		lgr->logError("Thread cancelled in OW_BinaryRequestHandler");
+		lgr->logError("Thread cancelled in BinaryRequestHandler");
 		writeError(*ostrError, "Thread cancelled");
-		setError(OW_CIMException::FAILED, "Thread cancelled");
+		setError(CIMException::FAILED, "Thread cancelled");
 		throw;
 	}
 	catch(...)
 	{
-		lgr->logError("Unknown exception caught in OW_BinaryRequestHandler");
-		writeError(*ostrError, "OW_BinaryRequestHandler caught unknown exception");
-		setError(OW_CIMException::FAILED, "Caught unknown exception");
+		lgr->logError("Unknown exception caught in BinaryRequestHandler");
+		writeError(*ostrError, "BinaryRequestHandler caught unknown exception");
+		setError(CIMException::FAILED, "Caught unknown exception");
 	}
 }
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::createClass(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::createClass(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMClass cc(OW_BinarySerialization::readClass(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	CIMClass cc(BinarySerialization::readClass(istrm));
 	chdl->createClass(ns, cc);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::modifyClass(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::modifyClass(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMClass cc(OW_BinarySerialization::readClass(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	CIMClass cc(BinarySerialization::readClass(istrm));
 	chdl->modifyClass(ns, cc);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::deleteClass(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String className(OW_BinarySerialization::readString(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	String className(BinarySerialization::readString(istrm));
 	chdl->deleteClass(ns, className);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class BinaryCIMClassWriter : public OW_CIMClassResultHandlerIFC
+	class BinaryCIMClassWriter : public CIMClassResultHandlerIFC
 	{
 	public:
 		BinaryCIMClassWriter(std::ostream& ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMClass &c)
+		virtual void doHandle(const CIMClass &c)
 		{
-			OW_BinarySerialization::writeClass(ostrm, c);
+			BinarySerialization::writeClass(ostrm, c);
 		}
 	private:
 		std::ostream& ostrm;
 	};
-
-	class BinaryCIMObjectPathWriter : public OW_CIMObjectPathResultHandlerIFC
+	class BinaryCIMObjectPathWriter : public CIMObjectPathResultHandlerIFC
 	{
 	public:
-		BinaryCIMObjectPathWriter(std::ostream& ostrm_, const OW_String& host_)
+		BinaryCIMObjectPathWriter(std::ostream& ostrm_, const String& host_)
 		: ostrm(ostrm_)
 		, m_host(host_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMObjectPath &cop_)
+		virtual void doHandle(const CIMObjectPath &cop_)
 		{
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
-			OW_CIMObjectPath cop(cop_);
+			CIMObjectPath cop(cop_);
 			if (cop.getFullNameSpace().isLocal())
 			{
 				try
 				{
 					cop.setHost(m_host);
 				}
-				catch (const OW_SocketException& e)
+				catch (const SocketException& e)
 				{
 				}
 			}
-
-			OW_BinarySerialization::writeObjectPath(ostrm, cop);
+			BinarySerialization::writeObjectPath(ostrm, cop);
 		}
 	private:
 		std::ostream& ostrm;
-		OW_String m_host;
+		String m_host;
 	};
-
-	class BinaryCIMInstanceWriter : public OW_CIMInstanceResultHandlerIFC
+	class BinaryCIMInstanceWriter : public CIMInstanceResultHandlerIFC
 	{
 	public:
 		BinaryCIMInstanceWriter(std::ostream& ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &cop)
+		virtual void doHandle(const CIMInstance &cop)
 		{
-			OW_BinarySerialization::writeInstance(ostrm, cop);
+			BinarySerialization::writeInstance(ostrm, cop);
 		}
 	private:
 		std::ostream& ostrm;
 	};
-
-	class BinaryCIMQualifierTypeWriter : public OW_CIMQualifierTypeResultHandlerIFC
+	class BinaryCIMQualifierTypeWriter : public CIMQualifierTypeResultHandlerIFC
 	{
 	public:
 		BinaryCIMQualifierTypeWriter(std::ostream& ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMQualifierType &cqt)
+		virtual void doHandle(const CIMQualifierType &cqt)
 		{
-			OW_BinarySerialization::writeQual(ostrm, cqt);
+			BinarySerialization::writeQual(ostrm, cqt);
 		}
 	private:
 		std::ostream& ostrm;
 	};
-
-	class BinaryStringWriter : public OW_StringResultHandlerIFC
+	class BinaryStringWriter : public StringResultHandlerIFC
 	{
 	public:
 		BinaryStringWriter(std::ostream& ostrm_)
 		: ostrm(ostrm_)
 		{}
 	protected:
-		virtual void doHandle(const OW_String &name)
+		virtual void doHandle(const String &name)
 		{
-			OW_BinarySerialization::writeString(ostrm, name);
+			BinarySerialization::writeString(ostrm, name);
 		}
 	private:
 		std::ostream& ostrm;
 	};
-
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumClasses(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String className(OW_BinarySerialization::readString(istrm));
-	EDeepFlag deep(OW_BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
-	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_CLSENUM);
-
+	String ns(BinarySerialization::readString(istrm));
+	String className(BinarySerialization::readString(istrm));
+	EDeepFlag deep(BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
+	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_CLSENUM);
 	BinaryCIMClassWriter handler(ostrm);
 	chdl->enumClass(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin);
 	
-	OW_BinarySerialization::write(ostrm, OW_END_CLSENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_CLSENUM);
-
+	BinarySerialization::write(ostrm, END_CLSENUM);
+	BinarySerialization::write(ostrm, END_CLSENUM);
 }
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::deleteQual(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String qualName(OW_BinarySerialization::readString(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	String qualName(BinarySerialization::readString(istrm));
 	chdl->deleteQualifierType(ns, qualName);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setQual(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::setQual(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMQualifierType qt(OW_BinarySerialization::readQual(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	CIMQualifierType qt(BinarySerialization::readQual(istrm));
 	chdl->setQualifierType(ns, qt);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumQualifiers(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_QUALENUM);
+	String ns(BinarySerialization::readString(istrm));
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_QUALENUM);
 	BinaryCIMQualifierTypeWriter handler(ostrm);
 	chdl->enumQualifierTypes(ns, handler);
-
-	OW_BinarySerialization::write(ostrm, OW_END_QUALENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_QUALENUM);
+	BinarySerialization::write(ostrm, END_QUALENUM);
+	BinarySerialization::write(ostrm, END_QUALENUM);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getClass(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getClass(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String className(OW_BinarySerialization::readString(istrm));
-	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
+	StringArray propList;
+	StringArray* propListPtr = 0;
+	String ns(BinarySerialization::readString(istrm));
+	String className(BinarySerialization::readString(istrm));
+	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
-		propList = OW_BinarySerialization::readStringArray(istrm);
+		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
 	}
-
-	OW_CIMClass cc = chdl->getClass(ns, className, localOnly, includeQualifiers,
+	CIMClass cc = chdl->getClass(ns, className, localOnly, includeQualifiers,
 		includeClassOrigin, propListPtr);
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::writeClass(ostrm, cc);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::writeClass(ostrm, cc);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getInstance(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getInstance(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	StringArray propList;
+	StringArray* propListPtr = 0;
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
-		propList = OW_BinarySerialization::readStringArray(istrm);
+		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
 	}
-
-	OW_CIMInstance cimInstance = chdl->getInstance(ns, op, localOnly,
+	CIMInstance cimInstance = chdl->getInstance(ns, op, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::writeInstance(ostrm, cimInstance);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::writeInstance(ostrm, cimInstance);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getQual(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getQual(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String qualifierName(OW_BinarySerialization::readString(istrm));
-	OW_CIMQualifierType qt = chdl->getQualifierType(ns, qualifierName);
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::writeQual(ostrm, qt);
+	String ns(BinarySerialization::readString(istrm));
+	String qualifierName(BinarySerialization::readString(istrm));
+	CIMQualifierType qt = chdl->getQualifierType(ns, qualifierName);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::writeQual(ostrm, qt);
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::createInstance(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMInstance cimInstance(OW_BinarySerialization::readInstance(istrm));
-
-	OW_String className = cimInstance.getClassName();
-	//OW_CIMObjectPath realPath(className, path.getNameSpace());
-
+	String ns(BinarySerialization::readString(istrm));
+	CIMInstance cimInstance(BinarySerialization::readInstance(istrm));
+	String className = cimInstance.getClassName();
+	//CIMObjectPath realPath(className, path.getNameSpace());
 	// Special treatment for __Namespace class
-	if(className.equals(OW_CIMClass::NAMESPACECLASS))
+	if(className.equals(CIMClass::NAMESPACECLASS))
 	{
-		OW_CIMProperty prop = cimInstance.getProperty(
-			OW_CIMProperty::NAME_PROPERTY);
-
+		CIMProperty prop = cimInstance.getProperty(
+			CIMProperty::NAME_PROPERTY);
 		// Need the name property since it contains the name of the new
 		// name space
 		if (!prop)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Name property not specified for new namespace");
 		}
-
 		// If the name property didn't come acrossed as a key, then
 		// set the name property as the key
 		if(!prop.isKey())
 		{
-			prop.addQualifier(OW_CIMQualifier::createKeyQualifier());
+			prop.addQualifier(CIMQualifier::createKeyQualifier());
 		}
-
 		cimInstance.setProperty(prop);
 	}
-
 	/* This should be done in the CIM Server
-	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
+	CIMPropertyArray keys = cimInstance.getKeyValuePairs();
 	if (keys.size() == 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,"Instance doesn't have keys");
+		OW_THROWCIMMSG(CIMException::FAILED,"Instance doesn't have keys");
 	}
-
 	for (size_t i = 0; i < keys.size(); ++i)
 	{
-		OW_CIMProperty key = keys[i];
+		CIMProperty key = keys[i];
 		if (!key.getValue())
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				format("Key must be provided!  Property \"%1\" does not have a "
 					"valid value.", key.getName()).c_str());
 		}
 	}
-
 	realPath.setKeys(keys);
 	*/
-
-	OW_CIMObjectPath newPath = chdl->createInstance(ns, cimInstance);
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::writeObjectPath(ostrm, newPath);
+	CIMObjectPath newPath = chdl->createInstance(ns, cimInstance);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::writeObjectPath(ostrm, newPath);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::deleteInstance(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
 	chdl->deleteInstance(ns, op);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::modifyInstance(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::modifyInstance(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMInstance ci(OW_BinarySerialization::readInstance(istrm));
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
+	String ns(BinarySerialization::readString(istrm));
+	CIMInstance ci(BinarySerialization::readInstance(istrm));
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	StringArray propList;
+	StringArray* propListPtr = 0;
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
-		propList = OW_BinarySerialization::readStringArray(istrm);
+		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
 	}
-
 	chdl->modifyInstance(ns, ci, includeQualifiers, propListPtr);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::setProperty(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String propName(OW_BinarySerialization::readString(istrm));
-	OW_Bool isValue(OW_BinarySerialization::readBool(istrm));
-	OW_CIMValue cv(OW_CIMNULL);
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	String propName(BinarySerialization::readString(istrm));
+	Bool isValue(BinarySerialization::readBool(istrm));
+	CIMValue cv(CIMNULL);
 	if(isValue)
 	{
-		cv = OW_BinarySerialization::readValue(istrm);
+		cv = BinarySerialization::readValue(istrm);
 	}
-
 	chdl->setProperty(ns, op, propName, cv);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getProperty(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getProperty(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns (OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String propName(OW_BinarySerialization::readString(istrm));
-
-	OW_CIMValue cv = chdl->getProperty(ns, op, propName);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_Bool isValue = (cv) ? true : false;
-	OW_BinarySerialization::writeBool(ostrm, isValue);
+	String ns (BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	String propName(BinarySerialization::readString(istrm));
+	CIMValue cv = chdl->getProperty(ns, op, propName);
+	BinarySerialization::write(ostrm, BIN_OK);
+	Bool isValue = (cv) ? true : false;
+	BinarySerialization::writeBool(ostrm, isValue);
 	if(isValue)
 	{
-		OW_BinarySerialization::writeValue(ostrm, cv);
+		BinarySerialization::writeValue(ostrm, cv);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumClassNames(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String className(OW_BinarySerialization::readString(istrm));
-	EDeepFlag deep(OW_BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_STRINGENUM);
+	String ns(BinarySerialization::readString(istrm));
+	String className(BinarySerialization::readString(istrm));
+	EDeepFlag deep(BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_STRINGENUM);
 	BinaryStringWriter handler(ostrm);
 	chdl->enumClassNames(ns, className, handler, deep);
-
-	OW_BinarySerialization::write(ostrm, OW_END_STRINGENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_STRINGENUM);
+	BinarySerialization::write(ostrm, END_STRINGENUM);
+	BinarySerialization::write(ostrm, END_STRINGENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumInstances(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumInstances(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String className(OW_BinarySerialization::readString(istrm));
-	EDeepFlag deep(OW_BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
-	ELocalOnlyFlag localOnly(OW_BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
+	StringArray propList;
+	StringArray* propListPtr = 0;
+	String ns(BinarySerialization::readString(istrm));
+	String className(BinarySerialization::readString(istrm));
+	EDeepFlag deep(BinarySerialization::readBool(istrm) ? E_DEEP : E_SHALLOW);
+	ELocalOnlyFlag localOnly(BinarySerialization::readBool(istrm) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY);
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
-		propList = OW_BinarySerialization::readStringArray(istrm);
+		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
 	}
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_INSTENUM);
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_INSTENUM);
 	
 	BinaryCIMInstanceWriter handler(ostrm);
 	chdl->enumInstances(ns, className, handler, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propListPtr);
-
-	OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
+	BinarySerialization::write(ostrm, END_INSTENUM);
+	BinarySerialization::write(ostrm, END_INSTENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumInstanceNames(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String className(OW_BinarySerialization::readString(istrm));
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
+	String ns(BinarySerialization::readString(istrm));
+	String className(BinarySerialization::readString(istrm));
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->enumInstanceNames(ns, className, handler);
-
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
-
+	BinarySerialization::write(ostrm, END_OPENUM);
+	BinarySerialization::write(ostrm, END_OPENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::invokeMethod(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::invokeMethod(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns (OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath path(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String methodName(OW_BinarySerialization::readString(istrm));
-	OW_CIMParamValueArray inparms;
-	OW_CIMParamValueArray outparms;
-
+	String ns (BinarySerialization::readString(istrm));
+	CIMObjectPath path(BinarySerialization::readObjectPath(istrm));
+	String methodName(BinarySerialization::readString(istrm));
+	CIMParamValueArray inparms;
+	CIMParamValueArray outparms;
 	// Get input params
-	OW_BinarySerialization::verifySignature(istrm, OW_BINSIG_PARAMVALUEARRAY);
-	OW_BinarySerialization::readArray(istrm, inparms);
-
-	OW_CIMValue cv = chdl->invokeMethod(ns, path, methodName, inparms, outparms);
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::verifySignature(istrm, BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::readArray(istrm, inparms);
+	CIMValue cv = chdl->invokeMethod(ns, path, methodName, inparms, outparms);
+	BinarySerialization::write(ostrm, BIN_OK);
 	if(cv)
 	{
-		OW_BinarySerialization::writeBool(ostrm, OW_Bool(true));
-		OW_BinarySerialization::writeValue(ostrm, cv);
+		BinarySerialization::writeBool(ostrm, Bool(true));
+		BinarySerialization::writeValue(ostrm, cv);
 	}
 	else
 	{
-		OW_BinarySerialization::writeBool(ostrm, OW_Bool(false));
+		BinarySerialization::writeBool(ostrm, Bool(false));
 	}
-
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_PARAMVALUEARRAY);
-	OW_BinarySerialization::writeArray(ostrm, outparms);
+	BinarySerialization::write(ostrm, BINSIG_PARAMVALUEARRAY);
+	BinarySerialization::writeArray(ostrm, outparms);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::execQuery(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_String query(OW_BinarySerialization::readString(istrm));
-	OW_String queryLang(OW_BinarySerialization::readString(istrm));
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_INSTENUM);
+	String ns(BinarySerialization::readString(istrm));
+	String query(BinarySerialization::readString(istrm));
+	String queryLang(BinarySerialization::readString(istrm));
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_INSTENUM);
 	BinaryCIMInstanceWriter handler(ostrm);
 	chdl->execQuery(ns, handler, query, queryLang);
-
-	OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
+	BinarySerialization::write(ostrm, END_INSTENUM);
+	BinarySerialization::write(ostrm, END_INSTENUM);
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::associators(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String assocClass(OW_BinarySerialization::readString(istrm));
-	OW_String resultClass(OW_BinarySerialization::readString(istrm));
-	OW_String role(OW_BinarySerialization::readString(istrm));
-	OW_String resultRole(OW_BinarySerialization::readString(istrm));
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
+	StringArray propList;
+	StringArray* propListPtr = 0;
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	String assocClass(BinarySerialization::readString(istrm));
+	String resultClass(BinarySerialization::readString(istrm));
+	String role(BinarySerialization::readString(istrm));
+	String resultRole(BinarySerialization::readString(istrm));
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
-		propList = OW_BinarySerialization::readStringArray(istrm);
+		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
 	}
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 	if (op.isClassPath())
 	{
 		// class path
-		OW_BinarySerialization::write(ostrm, OW_BINSIG_CLSENUM);
+		BinarySerialization::write(ostrm, BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
 		op.setNameSpace(ns);
 		chdl->associatorsClasses(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
-		OW_BinarySerialization::write(ostrm, OW_END_CLSENUM);
-		OW_BinarySerialization::write(ostrm, OW_END_CLSENUM);
+		BinarySerialization::write(ostrm, END_CLSENUM);
+		BinarySerialization::write(ostrm, END_CLSENUM);
 	}
 	else
 	{
 		// instance path
-		OW_BinarySerialization::write(ostrm, OW_BINSIG_INSTENUM);
+		BinarySerialization::write(ostrm, BINSIG_INSTENUM);
 		BinaryCIMInstanceWriter handler(ostrm);
 		chdl->associators(ns, op, handler, assocClass, resultClass,
 			role, resultRole, includeQualifiers, includeClassOrigin, propListPtr);
-		OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
-		OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
+		BinarySerialization::write(ostrm, END_INSTENUM);
+		BinarySerialization::write(ostrm, END_INSTENUM);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::associatorNames(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String assocClass(OW_BinarySerialization::readString(istrm));
-	OW_String resultClass(OW_BinarySerialization::readString(istrm));
-	OW_String role(OW_BinarySerialization::readString(istrm));
-	OW_String resultRole(OW_BinarySerialization::readString(istrm));
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	String assocClass(BinarySerialization::readString(istrm));
+	String resultClass(BinarySerialization::readString(istrm));
+	String role(BinarySerialization::readString(istrm));
+	String resultRole(BinarySerialization::readString(istrm));
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->associatorNames(ns, op, handler, assocClass,
 		resultClass, role, resultRole);
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
+	BinarySerialization::write(ostrm, END_OPENUM);
+	BinarySerialization::write(ostrm, END_OPENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::references(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_StringArray propList;
-	OW_StringArray* propListPtr = 0;
-
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String resultClass(OW_BinarySerialization::readString(istrm));
-	OW_String role(OW_BinarySerialization::readString(istrm));
-	EIncludeQualifiersFlag includeQualifiers(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
-	EIncludeClassOriginFlag includeClassOrigin(OW_BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
-	OW_Bool nullPropertyList(OW_BinarySerialization::readBool(istrm));
+	StringArray propList;
+	StringArray* propListPtr = 0;
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	String resultClass(BinarySerialization::readString(istrm));
+	String role(BinarySerialization::readString(istrm));
+	EIncludeQualifiersFlag includeQualifiers(BinarySerialization::readBool(istrm) ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS);
+	EIncludeClassOriginFlag includeClassOrigin(BinarySerialization::readBool(istrm) ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
+	Bool nullPropertyList(BinarySerialization::readBool(istrm));
 	if(!nullPropertyList)
 	{
-		propList = OW_BinarySerialization::readStringArray(istrm);
+		propList = BinarySerialization::readStringArray(istrm);
 		propListPtr = &propList;
 	}
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	BinarySerialization::write(ostrm, BIN_OK);
 	if (op.isClassPath())
 	{
 		// class path
-		OW_BinarySerialization::write(ostrm, OW_BINSIG_CLSENUM);
+		BinarySerialization::write(ostrm, BINSIG_CLSENUM);
 		BinaryCIMClassWriter handler(ostrm);
 		chdl->referencesClasses(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
-		OW_BinarySerialization::write(ostrm, OW_END_CLSENUM);
-		OW_BinarySerialization::write(ostrm, OW_END_CLSENUM);
+		BinarySerialization::write(ostrm, END_CLSENUM);
+		BinarySerialization::write(ostrm, END_CLSENUM);
 	}
 	else
 	{
 		// instance path
-		OW_BinarySerialization::write(ostrm, OW_BINSIG_INSTENUM);
+		BinarySerialization::write(ostrm, BINSIG_INSTENUM);
 		BinaryCIMInstanceWriter handler(ostrm);
 		chdl->references(ns, op, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, propListPtr);
-		OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
-		OW_BinarySerialization::write(ostrm, OW_END_INSTENUM);
+		BinarySerialization::write(ostrm, END_INSTENUM);
+		BinarySerialization::write(ostrm, END_INSTENUM);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::referenceNames(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_String ns(OW_BinarySerialization::readString(istrm));
-	OW_CIMObjectPath op(OW_BinarySerialization::readObjectPath(istrm));
-	OW_String resultClass(OW_BinarySerialization::readString(istrm));
-	OW_String role(OW_BinarySerialization::readString(istrm));
-
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
+	String ns(BinarySerialization::readString(istrm));
+	CIMObjectPath op(BinarySerialization::readObjectPath(istrm));
+	String resultClass(BinarySerialization::readString(istrm));
+	String role(BinarySerialization::readString(istrm));
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, BINSIG_OPENUM);
 	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->referenceNames(ns, op, handler, resultClass, role);
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
-	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
+	BinarySerialization::write(ostrm, END_OPENUM);
+	BinarySerialization::write(ostrm, END_OPENUM);
 }
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::getServerFeatures(OW_CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getServerFeatures(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& /*istrm*/)
 {
-	OW_CIMFeatures f = chdl->getServerFeatures();
-	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	OW_BinarySerialization::write(ostrm, OW_Int32(f.cimProduct));
-	OW_BinarySerialization::writeString(ostrm, f.extURL);
-	OW_BinarySerialization::writeStringArray(ostrm, f.supportedGroups);
-	OW_BinarySerialization::writeBool(ostrm, f.supportsBatch);
-	OW_BinarySerialization::writeStringArray(ostrm, f.supportedQueryLanguages);
-	OW_BinarySerialization::writeString(ostrm, f.validation);
-	OW_BinarySerialization::writeString(ostrm, f.cimom);
-	OW_BinarySerialization::writeString(ostrm, f.protocolVersion);
+	CIMFeatures f = chdl->getServerFeatures();
+	BinarySerialization::write(ostrm, BIN_OK);
+	BinarySerialization::write(ostrm, Int32(f.cimProduct));
+	BinarySerialization::writeString(ostrm, f.extURL);
+	BinarySerialization::writeStringArray(ostrm, f.supportedGroups);
+	BinarySerialization::writeBool(ostrm, f.supportsBatch);
+	BinarySerialization::writeStringArray(ostrm, f.supportedQueryLanguages);
+	BinarySerialization::writeString(ostrm, f.validation);
+	BinarySerialization::writeString(ostrm, f.cimom);
+	BinarySerialization::writeString(ostrm, f.protocolVersion);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryRequestHandler::writeError(std::ostream& ostrm, const char* msg)
+BinaryRequestHandler::writeError(std::ostream& ostrm, const char* msg)
 {
-	OW_BinarySerialization::write(ostrm, OW_BIN_ERROR);
-	OW_BinarySerialization::write(ostrm, msg);
+	BinarySerialization::write(ostrm, BIN_ERROR);
+	BinarySerialization::write(ostrm, msg);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_BinaryRequestHandler::writeFileName(std::ostream& ostrm,
-	const OW_String& fname)
+BinaryRequestHandler::writeFileName(std::ostream& ostrm,
+	const String& fname)
 {
-	OW_LoggerRef lgr = getEnvironment()->getLogger();
-	if(m_userId == OW_UserId(-1))
+	LoggerRef lgr = getEnvironment()->getLogger();
+	if(m_userId == UserId(-1))
 	{
 		lgr->logError("Binary request handler cannot change file ownership:"
 			" Owner unknown");
 		return false;
 	}
-
 	try
 	{
-		if(OW_FileSystem::changeFileOwner(fname, m_userId) != 0)
+		if(FileSystem::changeFileOwner(fname, m_userId) != 0)
 		{
 			lgr->logError(format("Binary request handler failed changing"
 				" ownership on file %1", fname));
 			return false;
 		}
-
 		// Write -1 to indicate file name follows
-		OW_BinarySerialization::write(ostrm, OW_Int32(-1));
-
+		BinarySerialization::write(ostrm, Int32(-1));
 		// Write file name
-		OW_BinarySerialization::writeString(ostrm, fname);
+		BinarySerialization::writeString(ostrm, fname);
 	}
 	catch(...)
 	{
-		OW_FileSystem::removeFile(fname);
+		FileSystem::removeFile(fname);
 		throw;
 	}
-
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_BinaryRequestHandler::getSupportedContentTypes() const
+StringArray
+BinaryRequestHandler::getSupportedContentTypes() const
 {
-	OW_StringArray rval;
+	StringArray rval;
 	rval.push_back("application/x-owbinary");
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_BinaryRequestHandler::getContentType() const
+String
+BinaryRequestHandler::getContentType() const
 {
-	return OW_String("application/x-owbinary");
+	return String("application/x-owbinary");
 }
 
+} // end namespace OpenWBEM
+
 //////////////////////////////////////////////////////////////////////////////
-OW_REQUEST_HANDLER_FACTORY(OW_BinaryRequestHandler);
+OW_REQUEST_HANDLER_FACTORY(OpenWBEM::BinaryRequestHandler);
+

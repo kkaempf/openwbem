@@ -27,24 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NPI_METHOD_PROVIDER_PROXY_HPP_
 #define OW_NPI_METHOD_PROVIDER_PROXY_HPP_
-
 #include "OW_config.h"
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-class OW_NPIMethodProviderProxy : public OW_MethodProviderIFC
+namespace OpenWBEM
+{
+
+class NPIMethodProviderProxy : public MethodProviderIFC
 {
 public:
-	OW_NPIMethodProviderProxy(const OW_FTABLERef& f)
+	NPIMethodProviderProxy(const FTABLERef& f)
 		: m_ftable(f)
 	{
 	}
-
-	virtual ~OW_NPIMethodProviderProxy();
-
+	virtual ~NPIMethodProviderProxy();
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters
 	 * is to be invoked.
@@ -52,25 +51,26 @@ public:
 	 * @param cop Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
-	 * @param inParams An array of OW_CIMValues which are the input parameters
+	 * @param inParams An array of CIMValues which are the input parameters
 	 * 	for this method.
-	 * @param outParams An array of OW_CIMValues which are the output
+	 * @param outParams An array of CIMValues which are the output
 	 * 	parameters for this method.
 	 *
-	 * @returns OW_CIMValue - The return value of the method.  Must be a
-	 *    valid OW_CIMValue.
+	 * @returns CIMValue - The return value of the method.  Must be a
+	 *    valid CIMValue.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual OW_CIMValue invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String &methodName,
-		const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out);
-
+	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String &methodName,
+		const CIMParamValueArray &in, CIMParamValueArray &out);
 private:
-	OW_FTABLERef m_ftable;
+	FTABLERef m_ftable;
 };
 										
-#endif
 
+} // end namespace OpenWBEM
+
+#endif

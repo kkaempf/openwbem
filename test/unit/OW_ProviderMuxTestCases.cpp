@@ -35,6 +35,8 @@
 #include "testSharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ProviderMuxTestCases::setUp()
 {
 }
@@ -45,15 +47,15 @@ void OW_ProviderMuxTestCases::tearDown()
 
 void OW_ProviderMuxTestCases::testCreation()
 {								
-	unitAssertNoThrow( OW_ProviderIFCBaseIFCRef pm = OW_ProviderIFCBaseIFCRef( OW_SharedLibraryRef(), new testProviderMux( "name" ) ) );
-	OW_ProviderIFCBaseIFCRef pm= OW_ProviderIFCBaseIFCRef( OW_SharedLibraryRef(), new testProviderMux( "name" ) );
+	unitAssertNoThrow( ProviderIFCBaseIFCRef pm = ProviderIFCBaseIFCRef( SharedLibraryRef(), new testProviderMux( "name" ) ) );
+	ProviderIFCBaseIFCRef pm= ProviderIFCBaseIFCRef( SharedLibraryRef(), new testProviderMux( "name" ) );
 	unitAssert(pm->signature == 0xABCDEFA0);
 }
 
 void OW_ProviderMuxTestCases::testGetName()
 {
-	OW_ProviderIFCBaseIFCRef pm= OW_ProviderIFCBaseIFCRef( OW_SharedLibraryRef(), new testProviderMux( "name" ) );
-	unitAssert( pm->getName() == OW_String("name") );
+	ProviderIFCBaseIFCRef pm= ProviderIFCBaseIFCRef( SharedLibraryRef(), new testProviderMux( "name" ) );
+	unitAssert( pm->getName() == String("name") );
 }
 
 Test* OW_ProviderMuxTestCases::suite()

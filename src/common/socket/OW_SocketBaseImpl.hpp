@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_SocketBaseImpl.hpp
  * @author	Jon M. Carey
@@ -37,7 +36,6 @@
  */
 #ifndef OW_SOCKETBASEIMPL_HPP_INCLUDE_GUARD_
 #define OW_SOCKETBASEIMPL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Reference.hpp"
@@ -54,21 +52,19 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
-class OW_SocketBaseImpl;
-
-typedef OW_Reference<OW_SocketBaseImpl> OW_SocketBaseImplRef;
-
-class OW_SocketBaseImpl : public OW_SelectableIFC, public OW_IOIFC
+class SocketBaseImpl;
+typedef Reference<SocketBaseImpl> SocketBaseImplRef;
+class SocketBaseImpl : public SelectableIFC, public IOIFC
 {
 public:
-
-	OW_SocketBaseImpl();
-	OW_SocketBaseImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
-	OW_SocketBaseImpl(const OW_SocketAddress& addr);
-	virtual ~OW_SocketBaseImpl();
-
-	virtual void connect(const OW_SocketAddress& addr);
+	SocketBaseImpl();
+	SocketBaseImpl(SocketHandle_t fd, SocketAddress::AddressType addrType);
+	SocketBaseImpl(const SocketAddress& addr);
+	virtual ~SocketBaseImpl();
+	virtual void connect(const SocketAddress& addr);
 	virtual void disconnect();
 	void setReceiveTimeout(int seconds) { m_recvTimeout = seconds; }
 	int getReceiveTimeout() { return m_recvTimeout; }
@@ -78,39 +74,32 @@ public:
 	int getConnectTimeout() { return m_connectTimeout; }
 	void setTimeouts(int seconds) { m_recvTimeout = m_sendTimeout = m_connectTimeout = seconds; }
 	bool receiveTimeOutExpired() { return m_recvTimeoutExprd; }
-
 	int write(const void* dataOut, int dataOutLen,
 			bool errorAsException=false);
 	int read(void* dataIn, int dataInLen,
 			bool errorAsException=false);
-
 	bool waitForInput(int timeOutSecs=-1);
 	bool waitForOutput(int timeOutSecs=-1);
 	std::istream& getInputStream();
 	std::ostream& getOutputStream();
 	std::iostream& getIOStream();
-	OW_SocketAddress getLocalAddress() const { return m_localAddress; }
-	OW_SocketAddress getPeerAddress() const { return m_peerAddress; }
-	OW_SocketHandle_t getfd() { return m_sockfd; }
-
-	OW_Select_t getSelectObj() const;
-
-	static void setDumpFiles(const OW_String& in, const OW_String& out);
+	SocketAddress getLocalAddress() const { return m_localAddress; }
+	SocketAddress getPeerAddress() const { return m_peerAddress; }
+	SocketHandle_t getfd() { return m_sockfd; }
+	Select_t getSelectObj() const;
+	static void setDumpFiles(const String& in, const String& out);
 protected:
 	virtual int readAux(void* dataIn, int dataInLen) = 0;
 	virtual int writeAux(const void* dataOut, int dataOutLen) = 0;
-
 	bool m_isConnected;
-	OW_SocketHandle_t m_sockfd;
-	OW_SocketAddress m_localAddress;
-	OW_SocketAddress m_peerAddress;
-
+	SocketHandle_t m_sockfd;
+	SocketAddress m_localAddress;
+	SocketAddress m_peerAddress;
 private:
 	void fillInetAddrParms();
 	void fillUnixAddrParms();
-
 	bool m_recvTimeoutExprd;
-	OW_SocketStreamBuffer m_streamBuf;
+	SocketStreamBuffer m_streamBuf;
 	std::istream m_in;
 	std::ostream m_out;
 	std::iostream m_inout;
@@ -118,13 +107,12 @@ private:
 	int m_sendTimeout;
 	int m_connectTimeout;
 	
-	static OW_String m_traceFileOut;
-	static OW_String m_traceFileIn;
-
-	OW_SocketBaseImpl(const OW_SocketBaseImpl& arg);
-	OW_SocketBaseImpl& operator= (const OW_SocketBaseImpl& arg);
+	static String m_traceFileOut;
+	static String m_traceFileIn;
+	SocketBaseImpl(const SocketBaseImpl& arg);
+	SocketBaseImpl& operator= (const SocketBaseImpl& arg);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

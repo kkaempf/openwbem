@@ -97,7 +97,8 @@ using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,12 +122,12 @@ ReportMode reportMode;
 
 //////////////////////////////////////////////////////////////////
 // Error reporting globals
-OW_NonRecursiveMutex errorGuard;
-OW_StringArray errors;
+NonRecursiveMutex errorGuard;
+StringArray errors;
 
-void handleErrorMessage(const OW_String& errorMsg)
+void handleErrorMessage(const String& errorMsg)
 {
-	OW_NonRecursiveMutexLock l(errorGuard);
+	NonRecursiveMutexLock l(errorGuard);
 	switch (reportMode)
 	{
 		case ABORT:
@@ -143,33 +144,33 @@ void handleErrorMessage(const OW_String& errorMsg)
 
 }
 
-void reportError(const OW_String& operation, const OW_String& param="")
+void reportError(const String& operation, const String& param="")
 {
-	OW_String errorMsg = format("%1(%2)", operation, param);
+	String errorMsg = format("%1(%2)", operation, param);
 	handleErrorMessage(errorMsg);
 }
 
-void reportError(const OW_Exception& e, const OW_String& operation, const OW_String& param="")
+void reportError(const Exception& e, const String& operation, const String& param="")
 {
-	OW_String errorMsg = format("%1(%2): %3", operation, param, e);
+	String errorMsg = format("%1(%2): %3", operation, param, e);
 	handleErrorMessage(errorMsg);
 }
 
-void reportError(const OW_Exception& e)
+void reportError(const Exception& e)
 {
-	OW_String errorMsg = format("%1", e);
+	String errorMsg = format("%1", e);
 	handleErrorMessage(errorMsg);
 }
 
 int checkAndReportErrors()
 {
-	std::copy(errors.begin(), errors.end(), std::ostream_iterator<OW_String>(std::cout, "\n"));
+	std::copy(errors.begin(), errors.end(), std::ostream_iterator<String>(std::cout, "\n"));
 	return errors.size();
 }
 
 ////////////////////////////////////////////////////////////////
 // Threading globals
-OW_ThreadPool* pool = 0;
+ThreadPool* pool = 0;
 
 enum ThreadMode
 {
@@ -179,9 +180,9 @@ enum ThreadMode
 
 ThreadMode threadMode = SINGLE;
 
-OW_String url;
+String url;
 
-void doWork(const OW_RunnableRef& work)
+void doWork(const RunnableRef& work)
 {
 	switch (threadMode)
 	{
@@ -191,7 +192,7 @@ void doWork(const OW_RunnableRef& work)
 			{
 				work->run();
 			}
-			catch (const OW_Exception& e)
+			catch (const Exception& e)
 			{
 				reportError(e, "doWork");
 			}
@@ -226,10 +227,10 @@ usage(const char* name)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_ErrorReportRunnable : public OW_Runnable
+class ErrorReportRunnable : public Runnable
 {
 public:
-	OW_ErrorReportRunnable(const OW_String& operation , const OW_String& param)
+	ErrorReportRunnable(const String& operation , const String& param)
 		: m_operation(operation)
 		, m_param(param)
 	{}
@@ -240,7 +241,7 @@ public:
 		{
 			doRun();
 		}
-		catch (const OW_Exception& e)
+		catch (const Exception& e)
 		{
 			reportError(e, m_operation, m_param);
 		}
@@ -254,12 +255,12 @@ public:
 protected:
 	virtual void doRun() = 0;
 
-	void setOperation(const OW_String& operation) { m_operation = operation; }
-	void setParam(const OW_String& param) { m_param = param; }
+	void setOperation(const String& operation) { m_operation = operation; }
+	void setParam(const String& param) { m_param = param; }
 
 private:
-	OW_String m_operation;
-	OW_String m_param;
+	String m_operation;
+	String m_param;
 
 };
 
@@ -267,11 +268,11 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////////
-class AssociatorsChecker : public OW_ErrorReportRunnable
+class AssociatorsChecker : public ErrorReportRunnable
 {
 public:
-	AssociatorsChecker(const OW_String& ns, const OW_CIMObjectPath& inst, const OW_CIMObjectPath& other, const OW_String& assocName)
-		: OW_ErrorReportRunnable("references", inst.toString())
+	AssociatorsChecker(const String& ns, const CIMObjectPath& inst, const CIMObjectPath& other, const String& assocName)
+		: ErrorReportRunnable("references", inst.toString())
 		, m_ns(ns)
 		, m_inst(inst)
 		, m_other(other)
@@ -280,31 +281,31 @@ public:
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMInstanceEnumeration insts = rch.associatorsE(m_inst, m_assocName, m_other.getClassName());
+		CIMClient rch(url, m_ns);
+		CIMInstanceEnumeration insts = rch.associatorsE(m_inst, m_assocName, m_other.getClassName());
 		// now make sure that assoc is in insts
 		while (insts.hasMoreElements())
 		{
-			OW_CIMInstance i(insts.nextElement());
-			if (OW_CIMObjectPath(m_ns, i) == m_other)
+			CIMInstance i(insts.nextElement());
+			if (CIMObjectPath(m_ns, i) == m_other)
 				return;
 		}
 		// didn't find it
 		reportError("AssociatorsChecker", m_inst.toString() + " didn't return " + m_other.toString());
 	}
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_inst;
-	OW_CIMObjectPath m_other;
-	OW_String m_assocName;
+	String m_ns;
+	CIMObjectPath m_inst;
+	CIMObjectPath m_other;
+	String m_assocName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class AssociatorNamesChecker : public OW_ErrorReportRunnable
+class AssociatorNamesChecker : public ErrorReportRunnable
 {
 public:
-	AssociatorNamesChecker(const OW_String& ns, const OW_CIMObjectPath& inst, const OW_CIMObjectPath& other, const OW_String& assocName)
-		: OW_ErrorReportRunnable("references", inst.toString())
+	AssociatorNamesChecker(const String& ns, const CIMObjectPath& inst, const CIMObjectPath& other, const String& assocName)
+		: ErrorReportRunnable("references", inst.toString())
 		, m_ns(ns)
 		, m_inst(inst)
 		, m_other(other)
@@ -313,12 +314,12 @@ public:
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMObjectPathEnumeration cops = rch.associatorNamesE(m_inst, m_assocName, m_other.getClassName());
+		CIMClient rch(url, m_ns);
+		CIMObjectPathEnumeration cops = rch.associatorNamesE(m_inst, m_assocName, m_other.getClassName());
 		// now make sure that assoc is in cops
 		while (cops.hasMoreElements())
 		{
-			OW_CIMObjectPath cop(cops.nextElement());
+			CIMObjectPath cop(cops.nextElement());
 			if (cop == m_other)
 				return;
 		}
@@ -326,18 +327,18 @@ public:
 		reportError("AssociatorNamesChecker", m_inst.toString() + " didn't return " + m_other.toString());
 	}
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_inst;
-	OW_CIMObjectPath m_other;
-	OW_String m_assocName;
+	String m_ns;
+	CIMObjectPath m_inst;
+	CIMObjectPath m_other;
+	String m_assocName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ReferencesChecker : public OW_ErrorReportRunnable
+class ReferencesChecker : public ErrorReportRunnable
 {
 public:
-	ReferencesChecker(const OW_String& ns, const OW_CIMObjectPath& inst, const OW_CIMObjectPath& assoc)
-		: OW_ErrorReportRunnable("references", inst.toString())
+	ReferencesChecker(const String& ns, const CIMObjectPath& inst, const CIMObjectPath& assoc)
+		: ErrorReportRunnable("references", inst.toString())
 		, m_ns(ns)
 		, m_inst(inst)
 		, m_assoc(assoc)
@@ -345,30 +346,30 @@ public:
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMInstanceEnumeration refs = rch.referencesE(m_inst, m_assoc.getClassName());
+		CIMClient rch(url, m_ns);
+		CIMInstanceEnumeration refs = rch.referencesE(m_inst, m_assoc.getClassName());
 		// now make sure that assoc is in refs
 		while (refs.hasMoreElements())
 		{
-			OW_CIMInstance i(refs.nextElement());
-			if (OW_CIMObjectPath(m_ns, i) == m_assoc)
+			CIMInstance i(refs.nextElement());
+			if (CIMObjectPath(m_ns, i) == m_assoc)
 				return;
 		}
 		// didn't find it
 		reportError("ReferencesChecker", m_inst.toString() + " didn't return " + m_assoc.toString());
 	}
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_inst;
-	OW_CIMObjectPath m_assoc;
+	String m_ns;
+	CIMObjectPath m_inst;
+	CIMObjectPath m_assoc;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ReferenceNamesChecker : public OW_ErrorReportRunnable
+class ReferenceNamesChecker : public ErrorReportRunnable
 {
 public:
-	ReferenceNamesChecker(const OW_String& ns, const OW_CIMObjectPath& inst, const OW_CIMObjectPath& assoc)
-		: OW_ErrorReportRunnable("references", inst.toString())
+	ReferenceNamesChecker(const String& ns, const CIMObjectPath& inst, const CIMObjectPath& assoc)
+		: ErrorReportRunnable("references", inst.toString())
 		, m_ns(ns)
 		, m_inst(inst)
 		, m_assoc(assoc)
@@ -376,12 +377,12 @@ public:
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMObjectPathEnumeration refs = rch.referenceNamesE(m_inst, m_assoc.getClassName());
+		CIMClient rch(url, m_ns);
+		CIMObjectPathEnumeration refs = rch.referenceNamesE(m_inst, m_assoc.getClassName());
 		// now make sure that assoc is in refs
 		while (refs.hasMoreElements())
 		{
-			OW_CIMObjectPath op(refs.nextElement());
+			CIMObjectPath op(refs.nextElement());
 			
 			if (op == m_assoc)
 				return;
@@ -390,162 +391,162 @@ public:
 		reportError("ReferenceNamesChecker", m_inst.toString() + " didn't return " + m_assoc.toString());
 	}
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_inst;
-	OW_CIMObjectPath m_assoc;
+	String m_ns;
+	CIMObjectPath m_inst;
+	CIMObjectPath m_assoc;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class NoopObjectPathResultHandler : public OW_CIMObjectPathResultHandlerIFC
+class NoopObjectPathResultHandler : public CIMObjectPathResultHandlerIFC
 {
 public:
-	NoopObjectPathResultHandler(const OW_String& ns)
+	NoopObjectPathResultHandler(const String& ns)
 		: m_ns(ns)
 	{}
 
-	void doHandle(const OW_CIMObjectPath& cop)
+	void doHandle(const CIMObjectPath& cop)
 	{
 		(void)cop;
 	}
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class NoopInstanceResultHandler : public OW_CIMInstanceResultHandlerIFC
+class NoopInstanceResultHandler : public CIMInstanceResultHandlerIFC
 {
 public:
-	NoopInstanceResultHandler(const OW_String& ns)
+	NoopInstanceResultHandler(const String& ns)
 		: m_ns(ns)
 	{}
 
-	void doHandle(const OW_CIMInstance& inst)
+	void doHandle(const CIMInstance& inst)
 	{
 		(void)inst;
 	}
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceAssociatorNames : public OW_ErrorReportRunnable
+class InstanceAssociatorNames : public ErrorReportRunnable
 {
 public:
-	InstanceAssociatorNames(const OW_String& ns, const OW_CIMObjectPath& name)
-		: OW_ErrorReportRunnable("associatorNames", ns + ":" + name.toString())
+	InstanceAssociatorNames(const String& ns, const CIMObjectPath& name)
+		: ErrorReportRunnable("associatorNames", ns + ":" + name.toString())
 		, m_ns(ns)
 		, m_name(name)
 		{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		NoopObjectPathResultHandler objectPathResultHandler(m_ns);
 		rch.associatorNames(m_name, objectPathResultHandler);
 	}
 
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_name;
+	String m_ns;
+	CIMObjectPath m_name;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceReferenceNames : public OW_ErrorReportRunnable
+class InstanceReferenceNames : public ErrorReportRunnable
 {
 public:
-	InstanceReferenceNames(const OW_String& ns, const OW_CIMObjectPath& name)
-		: OW_ErrorReportRunnable("referenceNames", ns + ":" + name.toString())
+	InstanceReferenceNames(const String& ns, const CIMObjectPath& name)
+		: ErrorReportRunnable("referenceNames", ns + ":" + name.toString())
 		, m_ns(ns)
 		, m_name(name)
 		{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		NoopObjectPathResultHandler objectPathResultHandler(m_ns);
 		rch.referenceNames(m_name, objectPathResultHandler);
 	}
 
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_name;
+	String m_ns;
+	CIMObjectPath m_name;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceAssociators : public OW_ErrorReportRunnable
+class InstanceAssociators : public ErrorReportRunnable
 {
 public:
-	InstanceAssociators(const OW_String& ns, const OW_CIMObjectPath& name)
-		: OW_ErrorReportRunnable("associators", ns + ":" + name.toString())
+	InstanceAssociators(const String& ns, const CIMObjectPath& name)
+		: ErrorReportRunnable("associators", ns + ":" + name.toString())
 		, m_ns(ns)
 		, m_name(name)
 		{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		NoopInstanceResultHandler instanceResultHandler(m_ns);
 		rch.associators(m_name, instanceResultHandler);
 	}
 
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_name;
+	String m_ns;
+	CIMObjectPath m_name;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceReferences : public OW_ErrorReportRunnable
+class InstanceReferences : public ErrorReportRunnable
 {
 public:
-	InstanceReferences(const OW_String& ns, const OW_CIMObjectPath& name)
-		: OW_ErrorReportRunnable("references", ns + ":" + name.toString())
+	InstanceReferences(const String& ns, const CIMObjectPath& name)
+		: ErrorReportRunnable("references", ns + ":" + name.toString())
 		, m_ns(ns)
 		, m_name(name)
 		{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		NoopInstanceResultHandler instanceResultHandler(m_ns);
 		rch.references(m_name, instanceResultHandler);
 	}
 
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_name;
+	String m_ns;
+	CIMObjectPath m_name;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceGetter : public OW_ErrorReportRunnable
+class InstanceGetter : public ErrorReportRunnable
 {
 public:
-	InstanceGetter(const OW_String& ns, const OW_CIMObjectPath& instPath)
-		: OW_ErrorReportRunnable("getInstance", instPath.toString())
+	InstanceGetter(const String& ns, const CIMObjectPath& instPath)
+		: ErrorReportRunnable("getInstance", instPath.toString())
 		, m_ns(ns)
 		, m_instPath(instPath)
 	{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMInstance inst2 = rch.getInstance(m_instPath);
+		CIMClient rch(url, m_ns);
+		CIMInstance inst2 = rch.getInstance(m_instPath);
 		// look for REF properties and start a thread to get them.
-		OW_CIMPropertyArray props = inst2.getProperties();
+		CIMPropertyArray props = inst2.getProperties();
 		for (size_t i = 0; i < props.size(); ++i)
 		{
-			OW_CIMProperty& p = props[i];
-			if (p.getDataType().getType() == OW_CIMDataType::REFERENCE)
+			CIMProperty& p = props[i];
+			if (p.getDataType().getType() == CIMDataType::REFERENCE)
 			{
-				OW_CIMObjectPath curPath = p.getValueT().toCIMObjectPath();
+				CIMObjectPath curPath = p.getValueT().toCIMObjectPath();
 
 				// make sure the ref points to a valid instance
-				OW_RunnableRef worker1(new InstanceGetter(m_ns, curPath));
+				RunnableRef worker1(new InstanceGetter(m_ns, curPath));
 				doWork(worker1);
 
 				// Check 2-way referential integrity of Reference[Name]s.  call reference* on the path and make sure it returns m_instPath
-				OW_RunnableRef worker2(new ReferencesChecker(m_ns, curPath, m_instPath));
+				RunnableRef worker2(new ReferencesChecker(m_ns, curPath, m_instPath));
 				doWork(worker2);
-				OW_RunnableRef worker3(new ReferenceNamesChecker(m_ns, curPath, m_instPath));
+				RunnableRef worker3(new ReferenceNamesChecker(m_ns, curPath, m_instPath));
 				doWork(worker3);
 
 				// Check 2-way referencial integrity of Associator[Name]s.  call associator[Name]s on the path and make sure it returns all the other REF properties in this instance.
@@ -554,100 +555,100 @@ public:
 				{
 					if (j == i)
 						continue;
-					if (props[i].getDataType().getType() == OW_CIMDataType::REFERENCE)
+					if (props[i].getDataType().getType() == CIMDataType::REFERENCE)
 						break;
 				}
 				if (j != props.size())
 				{
-					OW_CIMObjectPath otherPath = props[j].getValueT().toCIMObjectPath();
-					OW_RunnableRef worker4(new AssociatorsChecker(m_ns, curPath, otherPath, m_instPath.getClassName()));
+					CIMObjectPath otherPath = props[j].getValueT().toCIMObjectPath();
+					RunnableRef worker4(new AssociatorsChecker(m_ns, curPath, otherPath, m_instPath.getClassName()));
 					doWork(worker4);
-					OW_RunnableRef worker5(new AssociatorNamesChecker(m_ns, curPath, otherPath, m_instPath.getClassName()));
+					RunnableRef worker5(new AssociatorNamesChecker(m_ns, curPath, otherPath, m_instPath.getClassName()));
 					doWork(worker5);
 				}
 			}
 		}
 
-		OW_RunnableRef worker6(new InstanceAssociators(m_ns, m_instPath));
+		RunnableRef worker6(new InstanceAssociators(m_ns, m_instPath));
 		doWork(worker6);
 
-		OW_RunnableRef worker7(new InstanceReferences(m_ns, m_instPath));
+		RunnableRef worker7(new InstanceReferences(m_ns, m_instPath));
 		doWork(worker7);
 
-		OW_RunnableRef worker8(new InstanceAssociatorNames(m_ns, m_instPath));
+		RunnableRef worker8(new InstanceAssociatorNames(m_ns, m_instPath));
 		doWork(worker8);
 
-		OW_RunnableRef worker9(new InstanceReferenceNames(m_ns, m_instPath));
+		RunnableRef worker9(new InstanceReferenceNames(m_ns, m_instPath));
 		doWork(worker9);
 	}
 
 private:
-	OW_String m_ns;
-	OW_CIMObjectPath m_instPath;
+	String m_ns;
+	CIMObjectPath m_instPath;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceResultHandler : public OW_CIMInstanceResultHandlerIFC
+class InstanceResultHandler : public CIMInstanceResultHandlerIFC
 {
 public:
-	InstanceResultHandler(const OW_String& ns)
+	InstanceResultHandler(const String& ns)
 		: m_ns(ns)
 	{}
 
-	void doHandle(const OW_CIMInstance& inst)
+	void doHandle(const CIMInstance& inst)
 	{
-		OW_RunnableRef worker(new InstanceGetter(m_ns, OW_CIMObjectPath(m_ns, inst)));
+		RunnableRef worker(new InstanceGetter(m_ns, CIMObjectPath(m_ns, inst)));
 		doWork(worker);
 	}
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class InstanceEnumerator : public OW_ErrorReportRunnable
+class InstanceEnumerator : public ErrorReportRunnable
 {
 public:
-	InstanceEnumerator(const OW_String& ns, const OW_String& name)
-		: OW_ErrorReportRunnable("enumInstances", ns + ":" + name)
+	InstanceEnumerator(const String& ns, const String& name)
+		: ErrorReportRunnable("enumInstances", ns + ":" + name)
 		, m_ns(ns)
 		, m_name(name)
 		{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		InstanceResultHandler instanceResultHandler(m_ns);
 		rch.enumInstances(m_name, instanceResultHandler);
 	}
 
 private:
-	OW_String m_ns;
-	OW_String m_name;
+	String m_ns;
+	String m_name;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class AssociatorsClassesChecker : public OW_ErrorReportRunnable
+class AssociatorsClassesChecker : public ErrorReportRunnable
 {
 public:
-	AssociatorsClassesChecker(const OW_String& ns, const OW_String& clsName)
-		: OW_ErrorReportRunnable("associatorsClasses", clsName)
+	AssociatorsClassesChecker(const String& ns, const String& clsName)
+		: ErrorReportRunnable("associatorsClasses", clsName)
 		, m_ns(ns)
 		, m_clsName(clsName)
 	{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMClassEnumeration e = rch.associatorsClassesE(OW_CIMObjectPath(m_clsName));
+		CIMClient rch(url, m_ns);
+		CIMClassEnumeration e = rch.associatorsClassesE(CIMObjectPath(m_clsName));
 		while (e.hasMoreElements())
 		{
-			OW_CIMClass c = e.nextElement();
+			CIMClass c = e.nextElement();
 /* don't do this for now, it's too slow
-			OW_CIMClassEnumeration e2 = rch.associatorsClassesE(OW_CIMObjectPath(c.getName()));
+			CIMClassEnumeration e2 = rch.associatorsClassesE(CIMObjectPath(c.getName()));
 			bool foundOrigClass = false;
 			while (e2.hasMoreElements())
 			{
-				OW_CIMClass c2 = e2.nextElement();
+				CIMClass c2 = e2.nextElement();
 				if (c2.getName() == m_clsName)
 				{
 					foundOrigClass = true;
@@ -663,34 +664,34 @@ public:
 	}
 
 private:
-	OW_String m_ns;
-	OW_String m_clsName;
+	String m_ns;
+	String m_clsName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ReferencesClassesChecker : public OW_ErrorReportRunnable
+class ReferencesClassesChecker : public ErrorReportRunnable
 {
 public:
-	ReferencesClassesChecker(const OW_String& ns, const OW_String& clsName)
-		: OW_ErrorReportRunnable("referencesClasses", clsName)
+	ReferencesClassesChecker(const String& ns, const String& clsName)
+		: ErrorReportRunnable("referencesClasses", clsName)
 		, m_ns(ns)
 		, m_clsName(clsName)
 	{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMClassEnumeration e = rch.referencesClassesE(OW_CIMObjectPath(m_clsName));
+		CIMClient rch(url, m_ns);
+		CIMClassEnumeration e = rch.referencesClassesE(CIMObjectPath(m_clsName));
 /* disabled until it can be fixed, and it takes a LONG time.
 		while (e.hasMoreElements())
 		{
-			OW_CIMClass c = e.nextElement();
+			CIMClass c = e.nextElement();
 			bool foundReferenceToOrigClass = false;
-			OW_CIMPropertyArray props = c.getAllProperties();
+			CIMPropertyArray props = c.getAllProperties();
 			for (size_t i = 0; i < props.size(); ++i)
 			{
-				OW_CIMProperty& p = props[i];
-				if (p.getDataType().getType() == OW_CIMDataType::REFERENCE)
+				CIMProperty& p = props[i];
+				if (p.getDataType().getType() == CIMDataType::REFERENCE)
 				{
 					// Fix this: it needs to also check for base class names.
 					if (p.getDataType().getRefClassName() == m_clsName)
@@ -709,172 +710,172 @@ public:
 	}
 
 private:
-	OW_String m_ns;
-	OW_String m_clsName;
+	String m_ns;
+	String m_clsName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ClassGetter : public OW_ErrorReportRunnable
+class ClassGetter : public ErrorReportRunnable
 {
 public:
-	ClassGetter(const OW_String& ns, const OW_String& clsName)
-		: OW_ErrorReportRunnable("getClass", clsName)
+	ClassGetter(const String& ns, const String& clsName)
+		: ErrorReportRunnable("getClass", clsName)
 		, m_ns(ns)
 		, m_clsName(clsName)
 	{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMClass c = rch.getClass(m_clsName);
+		CIMClient rch(url, m_ns);
+		CIMClass c = rch.getClass(m_clsName);
 	}
 
 private:
-	OW_String m_ns;
-	OW_String m_clsName;
+	String m_ns;
+	String m_clsName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ClassResultHandler : public OW_CIMClassResultHandlerIFC, public OW_StringResultHandlerIFC
+class ClassResultHandler : public CIMClassResultHandlerIFC, public StringResultHandlerIFC
 {
 public:
-	ClassResultHandler(const OW_String& ns)
+	ClassResultHandler(const String& ns)
 		: m_ns(ns)
 	{}
 
-	void doHandle(const OW_CIMClass& cls)
+	void doHandle(const CIMClass& cls)
 	{
 		(void)cls;
 	}
 
-	void doHandle(const OW_String& clsName)
+	void doHandle(const String& clsName)
 	{
-		OW_RunnableRef worker1(new InstanceEnumerator(m_ns, clsName));
+		RunnableRef worker1(new InstanceEnumerator(m_ns, clsName));
 		doWork(worker1);
 
-		OW_RunnableRef worker2(new ClassGetter(m_ns, clsName));
+		RunnableRef worker2(new ClassGetter(m_ns, clsName));
 		doWork(worker2);
 
-		OW_RunnableRef worker3(new AssociatorsClassesChecker(m_ns, clsName));
+		RunnableRef worker3(new AssociatorsClassesChecker(m_ns, clsName));
 		doWork(worker3);
 
-		OW_RunnableRef worker4(new ReferencesClassesChecker(m_ns, clsName));
+		RunnableRef worker4(new ReferencesClassesChecker(m_ns, clsName));
 		doWork(worker4);
 	}
 
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ClassEnumerator : public OW_ErrorReportRunnable
+class ClassEnumerator : public ErrorReportRunnable
 {
 public:
-	ClassEnumerator(const OW_String& ns)
-		: OW_ErrorReportRunnable("enumClass", ns)
+	ClassEnumerator(const String& ns)
+		: ErrorReportRunnable("enumClass", ns)
 		, m_ns(ns) {}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		ClassResultHandler classResultHandler(m_ns);
 		rch.enumClass("", classResultHandler, E_DEEP);
 	}
 
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class ClassNameEnumerator : public OW_ErrorReportRunnable
+class ClassNameEnumerator : public ErrorReportRunnable
 {
 public:
-	ClassNameEnumerator(const OW_String& ns)
-		: OW_ErrorReportRunnable("enumClassNames", ns)
+	ClassNameEnumerator(const String& ns)
+		: ErrorReportRunnable("enumClassNames", ns)
 		, m_ns(ns) {}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		ClassResultHandler classNameResultHandler(m_ns);
 		rch.enumClassNames("", classNameResultHandler);
 	}
 
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class QualifierTypeGetter : public OW_ErrorReportRunnable
+class QualifierTypeGetter : public ErrorReportRunnable
 {
 public:
-	QualifierTypeGetter(const OW_String& ns, const OW_String& qtName)
-		: OW_ErrorReportRunnable("getQualifierType", qtName)
+	QualifierTypeGetter(const String& ns, const String& qtName)
+		: ErrorReportRunnable("getQualifierType", qtName)
 		, m_ns(ns)
 		, m_qtName(qtName)
 	{}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
-		OW_CIMQualifierType c = rch.getQualifierType(m_qtName);
+		CIMClient rch(url, m_ns);
+		CIMQualifierType c = rch.getQualifierType(m_qtName);
 	}
 
 private:
-	OW_String m_ns;
-	OW_String m_qtName;
+	String m_ns;
+	String m_qtName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class QualifierTypeResultHandler : public OW_CIMQualifierTypeResultHandlerIFC
+class QualifierTypeResultHandler : public CIMQualifierTypeResultHandlerIFC
 {
 public:
-	QualifierTypeResultHandler(const OW_String& ns)
+	QualifierTypeResultHandler(const String& ns)
 		: m_ns(ns)
 	{}
 
-	void doHandle(const OW_CIMQualifierType& qt)
+	void doHandle(const CIMQualifierType& qt)
 	{
-		OW_RunnableRef worker(new QualifierTypeGetter(m_ns, qt.getName()));
+		RunnableRef worker(new QualifierTypeGetter(m_ns, qt.getName()));
 		doWork(worker);
 	}
 
 
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class QualifierEnumerator : public OW_ErrorReportRunnable
+class QualifierEnumerator : public ErrorReportRunnable
 {
 public:
-	QualifierEnumerator(const OW_String& ns)
-		: OW_ErrorReportRunnable("enumQualifierTypes", ns)
+	QualifierEnumerator(const String& ns)
+		: ErrorReportRunnable("enumQualifierTypes", ns)
 		, m_ns(ns) {}
 
 	void doRun()
 	{
-		OW_CIMClient rch(url, m_ns);
+		CIMClient rch(url, m_ns);
 		QualifierTypeResultHandler qualifierTypeResultHandler(m_ns);
 		rch.enumQualifierTypes(qualifierTypeResultHandler);
 	}
 
 private:
-	OW_String m_ns;
+	String m_ns;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class NamespaceResultHandler : public OW_StringResultHandlerIFC
+class NamespaceResultHandler : public StringResultHandlerIFC
 {
-	void doHandle(const OW_String& ns)
+	void doHandle(const String& ns)
 	{
-		OW_RunnableRef worker1(new ClassEnumerator(ns));
+		RunnableRef worker1(new ClassEnumerator(ns));
 		doWork(worker1);
 
-		OW_RunnableRef worker2(new ClassNameEnumerator(ns));
+		RunnableRef worker2(new ClassNameEnumerator(ns));
 		doWork(worker2);
 
-		OW_RunnableRef worker3(new QualifierEnumerator(ns));
+		RunnableRef worker3(new QualifierEnumerator(ns));
 		doWork(worker3);
 	}
 };
@@ -893,15 +894,15 @@ main(int argc, char* argv[])
 			return 1;
 		}
 
-		OW_String threadModeArg(argv[2]);
+		String threadModeArg(argv[2]);
 		if (threadModeArg == "single")
 		{
 			threadMode = SINGLE;
 		}
 		else if (threadModeArg.startsWith("pool"))
 		{
-			OW_UInt32 poolSize = threadModeArg.substring(threadModeArg.indexOf('=') + 1).toUInt32();
-			pool = new OW_ThreadPool(OW_ThreadPool::FIXED_SIZE, poolSize, 0); // unlimited queue since we don't want to be too restrictive and cause a deadlock
+			UInt32 poolSize = threadModeArg.substring(threadModeArg.indexOf('=') + 1).toUInt32();
+			pool = new ThreadPool(ThreadPool::FIXED_SIZE, poolSize, 0); // unlimited queue since we don't want to be too restrictive and cause a deadlock
 			threadMode = POOL;
 		}
 		else
@@ -910,7 +911,7 @@ main(int argc, char* argv[])
 			return 1;
 		}
 
-		OW_String repeatModeArg(argv[3]);
+		String repeatModeArg(argv[3]);
 		if (repeatModeArg == "once")
 		{
 			repeatMode = ONCE;
@@ -925,7 +926,7 @@ main(int argc, char* argv[])
 			return 1;
 		}
 
-		OW_String reportModeArg(argv[4]);
+		String reportModeArg(argv[4]);
 		if (reportModeArg == "abort")
 		{
 			reportMode = ABORT;
@@ -947,7 +948,7 @@ main(int argc, char* argv[])
 
 		url = argv[1];
 
-		OW_CIMClient rch(url, "root");
+		CIMClient rch(url, "root");
 		
 		// start this all off by enumerating namespaces
 		NamespaceResultHandler namespaceResultHandler;
@@ -979,13 +980,17 @@ main(int argc, char* argv[])
 			case SINGLE:
 			break; // we're already done
 			case POOL:
+				// Give the threads a little time to start filling up the queue.
+				ThreadImpl::sleep(10);
+				// don't immediately shutdown, to give things a chance to run for a while.
+				pool->waitForEmptyQueue();
 				pool->shutdown();
 			break;
 		}
 
 
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		reportError(e, "enumNameSpace", url);
 	}

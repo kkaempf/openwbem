@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_dlSharedLibrary.hpp"
 #include "OW_Format.hpp"
@@ -35,17 +34,18 @@
 #include "OW_MutexLock.hpp"
 #include <dlfcn.h>
 
-OW_Mutex OW_dlSharedLibrary_guard;
+namespace OpenWBEM
+{
 
-OW_dlSharedLibrary::~OW_dlSharedLibrary()
+Mutex dlSharedLibrary_guard;
+dlSharedLibrary::~dlSharedLibrary()
 {
 	dlclose( m_libhandle );
 }
-
-bool OW_dlSharedLibrary::doGetFunctionPointer(const OW_String& functionName,
+bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 		void** fp) const
 {
-	OW_MutexLock l(OW_dlSharedLibrary_guard);
+	MutexLock l(dlSharedLibrary_guard);
 	*fp = dlsym( m_libhandle, functionName.c_str() );
 	if (!*fp)
 	{
@@ -53,3 +53,6 @@ bool OW_dlSharedLibrary::doGetFunctionPointer(const OW_String& functionName,
 	}
 	return true;
 }
+
+} // end namespace OpenWBEM
+

@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_PROVIDER_IFC_LOADER_HPP_
 #define OW_PROVIDER_IFC_LOADER_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
@@ -39,6 +37,8 @@
 #include "OW_String.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 
+namespace OpenWBEM
+{
 
 /**
  * This class is a base class for different provider interface loading
@@ -47,20 +47,16 @@
  * overridden, and then the createProviderIFCFromLib function can be used to
  * actually load the shared library.
  */
-class OW_ProviderIFCLoaderBase
+class ProviderIFCLoaderBase
 {
 public:
-
-
-	OW_ProviderIFCLoaderBase(OW_SharedLibraryLoaderRef sll,
-		OW_ServiceEnvironmentIFCRef env)
+	ProviderIFCLoaderBase(SharedLibraryLoaderRef sll,
+		ServiceEnvironmentIFCRef env)
 		: m_sll( sll )
 		, m_env(env)
 	{
 	}
-
-	virtual ~OW_ProviderIFCLoaderBase();
-
+	virtual ~ProviderIFCLoaderBase();
 	/**
 	 * This function needs to be overridden by derived classes and implement a
 	 * strategy to obtain the shared library names of the provider interfaces.
@@ -76,8 +72,8 @@ public:
 	 *
 	 * The derived classes code will probably be similar to this:
 	 * 	virtual void loadIFCs(
-	 * 		OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
-	 * 		OW_Array<OW_SharedLibraryRef>& shlibs) const
+	 * 		Array<ProviderIFCBaseIFCRef>& ifcs,
+	 * 		Array<SharedLibraryRef>& shlibs) const
 	 * 	{
 	 * 		ifc_lib_pair rval;
 	 * 		rval = createProviderIFCFromLib( "libname" );
@@ -97,52 +93,43 @@ public:
 	 *
 	 */
 	virtual void loadIFCs(
-		OW_Array<OW_ProviderIFCBaseIFCRef>& interfaces) const = 0;
-
-	OW_ServiceEnvironmentIFCRef getEnvironment() const
+		Array<ProviderIFCBaseIFCRef>& interfaces) const = 0;
+	ServiceEnvironmentIFCRef getEnvironment() const
 	{
 		return m_env;
 	}
-
 protected:
 	/**
-	 * Function uses the OW_SharedLibraryLoader to load the library designated
-	 * by libname (probably a filename) and creates an OW_ProviderIFCBaseIFCRef.
+	 * Function uses the SharedLibraryLoader to load the library designated
+	 * by libname (probably a filename) and creates an ProviderIFCBaseIFCRef.
 	 *
 	 * @param libname The name of the library to load.
 	 *
-	 * @returns A pair containing a ref counted pointer to the OW_ProviderIFCBaseIFC
+	 * @returns A pair containing a ref counted pointer to the ProviderIFCBaseIFC
 	 * 	corresponding to libname and a ref counted point to the corresponding
-	 * 	OW_SharedLibrary.  If loading the library fails, null is returned.
+	 * 	SharedLibrary.  If loading the library fails, null is returned.
 	 * 	e.g. retval.first.isNull() == true and retval.second.isNull() == true.
 	 */
-	OW_ProviderIFCBaseIFCRef createProviderIFCFromLib(const OW_String& libname) const;
-
+	ProviderIFCBaseIFCRef createProviderIFCFromLib(const String& libname) const;
 private:
-
-	//OW_ProviderIFCBaseIFC* safeCreateIFC(OW_SharedLibraryRef sl) const;
+	//ProviderIFCBaseIFC* safeCreateIFC(SharedLibraryRef sl) const;
 	
-	const OW_SharedLibraryLoaderRef m_sll;
-	OW_ServiceEnvironmentIFCRef m_env;
+	const SharedLibraryLoaderRef m_sll;
+	ServiceEnvironmentIFCRef m_env;
 };
-
-typedef OW_Reference<OW_ProviderIFCLoaderBase> OW_ProviderIFCLoaderRef;
-
-class OW_ProviderIFCLoader : public OW_ProviderIFCLoaderBase
+typedef Reference<ProviderIFCLoaderBase> ProviderIFCLoaderRef;
+class ProviderIFCLoader : public ProviderIFCLoaderBase
 {
 public:
-	OW_ProviderIFCLoader(OW_SharedLibraryLoaderRef sll,
-		OW_ServiceEnvironmentIFCRef env)
-		: OW_ProviderIFCLoaderBase(sll, env) {}
-
-	virtual ~OW_ProviderIFCLoader();
-
-	virtual void loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const;
-
-	static OW_ProviderIFCLoaderRef createProviderIFCLoader(
-		OW_ServiceEnvironmentIFCRef env);
+	ProviderIFCLoader(SharedLibraryLoaderRef sll,
+		ServiceEnvironmentIFCRef env)
+		: ProviderIFCLoaderBase(sll, env) {}
+	virtual ~ProviderIFCLoader();
+	virtual void loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const;
+	static ProviderIFCLoaderRef createProviderIFCLoader(
+		ServiceEnvironmentIFCRef env);
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

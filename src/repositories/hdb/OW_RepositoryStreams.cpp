@@ -27,32 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_RepositoryStreams.hpp"
-
 #include <cstring>
 
-using std::streambuf;
+namespace OpenWBEM
+{
 
+using std::streambuf;
 //////////////////////////////////////////////////////////////////////////////
-OW_RepositoryOStreamBuf::OW_RepositoryOStreamBuf(int incSize) : 
+RepositoryOStreamBuf::RepositoryOStreamBuf(int incSize) : 
 	streambuf(), 
 	m_incSize(incSize < MIN_INCSIZE ? MIN_INCSIZE : incSize),
 	m_bfr(new unsigned char[m_incSize]), m_size(m_incSize), m_count(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_RepositoryOStreamBuf::~OW_RepositoryOStreamBuf()
+RepositoryOStreamBuf::~RepositoryOStreamBuf()
 {
 	delete [] m_bfr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_RepositoryOStreamBuf::overflow(int c)
+RepositoryOStreamBuf::overflow(int c)
 {
 	if(m_count == m_size)
 	{
@@ -62,14 +60,12 @@ OW_RepositoryOStreamBuf::overflow(int c)
 		delete [] m_bfr;
 		m_bfr = bfr;
 	}
-
 	m_bfr[m_count++] = c;
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_RepositoryOStreamBuf::clear()
+RepositoryOStreamBuf::clear()
 {
 	if(m_size != m_incSize)
 	{
@@ -79,4 +75,6 @@ OW_RepositoryOStreamBuf::clear()
 	}
 	m_count = 0;
 }
+
+} // end namespace OpenWBEM
 

@@ -31,9 +31,13 @@
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_SocketBaseImpl.hpp"
 
-OW_SocketStreamBuffer::OW_SocketStreamBuffer(OW_SocketBaseImpl* sock)
-	: OW_IOIFCStreamBuffer(sock, SOCK_STREAM_BUF_SIZE)
+namespace OpenWBEM
+{
+
+SocketStreamBuffer::SocketStreamBuffer(SocketBaseImpl* sock)
+	: IOIFCStreamBuffer(sock, SOCK_STREAM_BUF_SIZE)
 {
 }
 
+} // end namespace OpenWBEM
 

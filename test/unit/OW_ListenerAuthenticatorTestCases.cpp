@@ -32,6 +32,8 @@
 #include "TestCaller.hpp"
 #include "OW_ListenerAuthenticatorTestCases.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ListenerAuthenticatorTestCases::setUp()
 {
 }
@@ -42,8 +44,8 @@ void OW_ListenerAuthenticatorTestCases::tearDown()
 
 void OW_ListenerAuthenticatorTestCases::testSomething()
 {
-	OW_ListenerAuthenticator la;
-	OW_String creds = la.getNewCredentials();
+	ListenerAuthenticator la;
+	String creds = la.getNewCredentials();
 	unitAssert(creds.length() == 17);
 }
 

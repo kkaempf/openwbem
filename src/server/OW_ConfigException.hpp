@@ -27,14 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CONFIGEXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_CONFIGEXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(Config);
+
+} // end namespace OpenWBEM
 
 #endif

@@ -27,16 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMINSTANCEENUMERATION_HPP_
 #define OW_CIMINSTANCEENUMERATION_HPP_
-
-
 #include "OW_config.h"
-
 #include "OW_CIMInstance.hpp"
 #include "OW_Enumeration.hpp"
 
-typedef OW_Enumeration<OW_CIMInstance> OW_CIMInstanceEnumeration;
-#endif
+namespace OpenWBEM
+{
 
+typedef Enumeration<CIMInstance> CIMInstanceEnumeration;
+
+} // end namespace OpenWBEM
+
+#endif

@@ -27,45 +27,40 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_STRINGBUFFER_HPP_INCLUDE_GUARD_
 #define OW_STRINGBUFFER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
 #include "OW_Bool.hpp"
-
 #include <cstring>
 
-class OW_CIMDateTime;
-class OW_CIMObjectPath;
+namespace OpenWBEM
+{
 
-class OW_StringBuffer
+class CIMDateTime;
+class CIMObjectPath;
+class StringBuffer
 {
 public:
-	static const size_t DEFAULT_ALLOCATION_UNIT = 128;
-
-	OW_StringBuffer(size_t allocSize = DEFAULT_ALLOCATION_UNIT);
-	OW_StringBuffer(const char* arg);
-	OW_StringBuffer(const OW_String& arg);
-	OW_StringBuffer(const OW_StringBuffer& arg);
-	~OW_StringBuffer() { delete [] m_bfr; }
-
-	OW_StringBuffer& operator= (OW_StringBuffer arg);
-	OW_StringBuffer& operator= (const OW_String& arg);
-	OW_StringBuffer& operator= (const char* str);
-	void swap(OW_StringBuffer& x);
-
-	OW_StringBuffer& append(char c)
+	static const size_t OW_DEFAULT_ALLOCATION_UNIT = 128;
+	StringBuffer(size_t allocSize = OW_DEFAULT_ALLOCATION_UNIT);
+	StringBuffer(const char* arg);
+	StringBuffer(const String& arg);
+	StringBuffer(const StringBuffer& arg);
+	~StringBuffer() { delete [] m_bfr; }
+	StringBuffer& operator= (StringBuffer arg);
+	StringBuffer& operator= (const String& arg);
+	StringBuffer& operator= (const char* str);
+	void swap(StringBuffer& x);
+	StringBuffer& append(char c)
 	{
 		checkAvail();
 		m_bfr[m_len++] = c;
 		m_bfr[m_len] = '\0';
 		return *this;
 	}
-
-	OW_StringBuffer& append(const char* str)
+	StringBuffer& append(const char* str)
 	{
 		size_t len = ::strlen(str);
 		checkAvail(len+1);
@@ -73,62 +68,54 @@ public:
 		m_len += len;
 		return *this;
 	}
-
-	OW_StringBuffer& append(const char* str, const size_t len);
-	OW_StringBuffer& append(const OW_String& arg) 	
+	StringBuffer& append(const char* str, const size_t len);
+	StringBuffer& append(const String& arg) 	
 		{ return append(arg.c_str()); }
-	OW_StringBuffer& append(const OW_StringBuffer& arg)
+	StringBuffer& append(const StringBuffer& arg)
 	{
 		return append(arg.c_str());
 	}
-
-	OW_StringBuffer& operator += (char c)
+	StringBuffer& operator += (char c)
 		{ return append(c); }
-	OW_StringBuffer& operator += (OW_Char16 c)
+	StringBuffer& operator += (Char16 c)
 		{ return append(c.toUTF8()); }
-	OW_StringBuffer& operator += (const char* str)
+	StringBuffer& operator += (const char* str)
 		{ return append(str); }
-	OW_StringBuffer& operator += (const OW_String& arg)
+	StringBuffer& operator += (const String& arg)
 		{ return append(arg); }
-	OW_StringBuffer& operator += (OW_Bool v);
-	OW_StringBuffer& operator += (OW_UInt8 v);
-	OW_StringBuffer& operator += (OW_Int8 v);
-	OW_StringBuffer& operator += (OW_UInt16 v);
-	OW_StringBuffer& operator += (OW_Int16 v);
-	OW_StringBuffer& operator += (OW_UInt32 v);
-	OW_StringBuffer& operator += (OW_Int32 v);
-	OW_StringBuffer& operator += (OW_UInt64 v);
-	OW_StringBuffer& operator += (OW_Int64 v);
-	OW_StringBuffer& operator += (OW_Real32 v);
-	OW_StringBuffer& operator += (OW_Real64 v);
-	OW_StringBuffer& operator += (const OW_CIMDateTime& arg);
-	OW_StringBuffer& operator += (const OW_CIMObjectPath& arg);
-	OW_StringBuffer& operator += (const OW_StringBuffer& arg)
+	StringBuffer& operator += (Bool v);
+	StringBuffer& operator += (UInt8 v);
+	StringBuffer& operator += (Int8 v);
+	StringBuffer& operator += (UInt16 v);
+	StringBuffer& operator += (Int16 v);
+	StringBuffer& operator += (UInt32 v);
+	StringBuffer& operator += (Int32 v);
+	StringBuffer& operator += (UInt64 v);
+	StringBuffer& operator += (Int64 v);
+	StringBuffer& operator += (Real32 v);
+	StringBuffer& operator += (Real64 v);
+	StringBuffer& operator += (const CIMDateTime& arg);
+	StringBuffer& operator += (const CIMObjectPath& arg);
+	StringBuffer& operator += (const StringBuffer& arg)
 	{
 		return append(arg);
 	}
-
-
 	char operator[] (size_t ndx) const;
-	OW_String toString() const
-			{ return OW_String(m_bfr); }
-
-	// After calling this function, the OW_StringBuffer is unusable
-	OW_String releaseString()
+	String toString() const
+			{ return String(m_bfr); }
+	// After calling this function, the StringBuffer is unusable
+	String releaseString()
 	{
 		char * bfr = m_bfr;
 		m_bfr = 0;
-		return OW_String(OW_String::E_TAKE_OWNERSHIP, bfr, m_len);
+		return String(String::E_TAKE_OWNERSHIP, bfr, m_len);
 	}
-
 	size_t length() const {  return m_len; }
 	size_t allocated() const {  return m_allocated; }
 	void reset();
 	const char* c_str() const {  return m_bfr; }
 	bool equals(const char* arg) const;
-
-	friend std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b);
-
+	friend std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b);
 private:
 	void checkAvail(size_t len=1)
 	{
@@ -144,13 +131,11 @@ private:
 			m_bfr = bfr;
 		}
 	}
-
-
 	size_t m_len;
 	size_t m_allocated;
 	char* m_bfr;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

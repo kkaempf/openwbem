@@ -40,10 +40,12 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_ConfigOpts.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ProviderManagerTestCases::setUp()
 {
 	g_testEnvironment->setConfigItem(
-		OW_ConfigOpts::CPPIFC_PROV_LOC_opt,
+		ConfigOpts::CPPIFC_PROV_LOC_opt,
 		"this is set to a dummy value so that the default won't be used, "
 		"which may break things, if providers are actually installed there." );
 }
@@ -54,7 +56,7 @@ void OW_ProviderManagerTestCases::tearDown()
 
 void OW_ProviderManagerTestCases::testInit()
 {
-	OW_ProviderManager pm;
+	ProviderManager pm;
 	pm.load(testCreateMuxLoader());
 }
 
@@ -62,29 +64,29 @@ void OW_ProviderManagerTestCases::testInit()
 
 void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
-	OW_ProviderManager mgr;
+	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OW_LocalCIMOMHandle hdl;
+	LocalCIMOMHandle hdl;
 	mgr.init(createProvEnvRef(hdl));
 
 	// test qualifier on class
-	OW_CIMClass c1("TestClass");
-	OW_CIMQualifier provQual(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	provQual.setValue(OW_CIMValue("lib1::TestInstanceProvider"));
+	CIMClass c1("TestClass");
+	CIMQualifier provQual(CIMQualifier::CIM_QUAL_PROVIDER);
+	provQual.setValue(CIMValue("lib1::TestInstanceProvider"));
 	c1.addQualifier(provQual);
-	OW_InstanceProviderIFCRef provRef = mgr.getInstanceProvider(
+	InstanceProviderIFCRef provRef = mgr.getInstanceProvider(
 		createProvEnvRef(hdl), "root", c1);
 	unitAssert(provRef);
 
 	// bad qualifier
-	OW_CIMClass c2("TestClass");
-	provQual.setValue(OW_CIMValue("lib1::bad"));
+	CIMClass c2("TestClass");
+	provQual.setValue(CIMValue("lib1::bad"));
 	c2.addQualifier(provQual);
 	unitAssertThrows(provRef = mgr.getInstanceProvider(
 		createProvEnvRef(hdl), "root", c2));
 
 	// self-registering provider all namespaces
-	OW_CIMClass c3("SelfReg");
+	CIMClass c3("SelfReg");
 	provRef = mgr.getInstanceProvider(
 		createProvEnvRef(hdl), "root", c3);
 	unitAssert(provRef);
@@ -93,7 +95,7 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	unitAssert(provRef);
 	
 	// self-registering provider two namespaces
-	OW_CIMClass c4("SelfRegTwoNamespaces");
+	CIMClass c4("SelfRegTwoNamespaces");
 	provRef = mgr.getInstanceProvider(
 		createProvEnvRef(hdl), "root", c4);
 	unitAssert(provRef);
@@ -105,13 +107,13 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 	unitAssert(provRef);
 	
 	// nothing
-	OW_CIMClass c5("Nothing");
+	CIMClass c5("Nothing");
 	provRef = mgr.getInstanceProvider(
 		createProvEnvRef(hdl), "root", c5);
 	unitAssert(!provRef);
 
 	// self-registering provider all namespaces - case insensitivity
-	OW_CIMClass c6("selFreG");
+	CIMClass c6("selFreG");
 	provRef = mgr.getInstanceProvider(
 		createProvEnvRef(hdl), "Root", c6);
 	unitAssert(provRef);
@@ -124,39 +126,39 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 
 void OW_ProviderManagerTestCases::testGetMethodProvider()
 {
-	OW_ProviderManager mgr;
+	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OW_LocalCIMOMHandle hdl;
+	LocalCIMOMHandle hdl;
 	mgr.init(createProvEnvRef(hdl));
 
 	// test qualifier on method
-	OW_CIMClass c1("TestClass");
-	OW_CIMMethod mwq("TestMethod");
-	OW_CIMQualifier provQual(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	provQual.setValue(OW_CIMValue("lib1::TestMethodProvider"));
+	CIMClass c1("TestClass");
+	CIMMethod mwq("TestMethod");
+	CIMQualifier provQual(CIMQualifier::CIM_QUAL_PROVIDER);
+	provQual.setValue(CIMValue("lib1::TestMethodProvider"));
 	mwq.addQualifier(provQual);
 	c1.addMethod(mwq);
-	OW_MethodProviderIFCRef provRef = mgr.getMethodProvider(
+	MethodProviderIFCRef provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c1, mwq);
 	unitAssert(provRef);
 
 	// test qualifier on class, not on method
-	OW_CIMMethod m("TestMethod");
-	OW_CIMClass c2("TestClass");
+	CIMMethod m("TestMethod");
+	CIMClass c2("TestClass");
 	c2.addQualifier(provQual);
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c2, m);
 	unitAssert(provRef);
 
 	// bad qualifier
-	OW_CIMClass c2_2("TestClass");
-	provQual.setValue(OW_CIMValue("lib1::bad"));
+	CIMClass c2_2("TestClass");
+	provQual.setValue(CIMValue("lib1::bad"));
 	c2_2.addQualifier(provQual);
 	unitAssertThrows(provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c2_2, m));
 
 	// self-registering provider all namespaces
-	OW_CIMClass c3("SelfReg");
+	CIMClass c3("SelfReg");
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c3, m);
 	unitAssert(provRef);
@@ -165,7 +167,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	
 	// self-registering provider two namespaces
-	OW_CIMClass c4("SelfRegTwoNamespaces");
+	CIMClass c4("SelfRegTwoNamespaces");
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c4, m);
 	unitAssert(provRef);
@@ -183,13 +185,13 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	
 	// nothing
-	OW_CIMClass c5("Nothing");
+	CIMClass c5("Nothing");
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c5, m);
 	unitAssert(!provRef);
 
 	// self-registering provider all namespaces - case insensitivity
-	OW_CIMClass c6("selFreG");
+	CIMClass c6("selFreG");
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "Root", c6, m);
 	unitAssert(provRef);
@@ -198,7 +200,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	unitAssert(provRef);
 	
 	// self-registering provider all namespaces - one method
-	OW_CIMClass c7("SelfRegOneMethod");
+	CIMClass c7("SelfRegOneMethod");
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c7, m);
 	unitAssert(provRef);
@@ -206,25 +208,25 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 		createProvEnvRef(hdl), "root/foo", c7, m);
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c7, OW_CIMMethod("BadMethod"));
+		createProvEnvRef(hdl), "root/foo", c7, CIMMethod("BadMethod"));
 	unitAssert(!provRef);
 	
 	// self-registering provider one namespaces - one method
-	OW_CIMClass c8("SelfRegOneNamespaceOneMethod");
+	CIMClass c8("SelfRegOneNamespaceOneMethod");
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root", c8, m);
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "Root", c8, OW_CIMMethod("testMETHOD"));
+		createProvEnvRef(hdl), "Root", c8, CIMMethod("testMETHOD"));
 	unitAssert(provRef);
 	provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), "root/foo", c8, m);
 	unitAssert(!provRef);
 	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root", c8, OW_CIMMethod("BadMethod"));
+		createProvEnvRef(hdl), "root", c8, CIMMethod("BadMethod"));
 	unitAssert(!provRef);
 	provRef = mgr.getMethodProvider(
-		createProvEnvRef(hdl), "root/foo", c8, OW_CIMMethod("BadMethod"));
+		createProvEnvRef(hdl), "root/foo", c8, CIMMethod("BadMethod"));
 	unitAssert(!provRef);
 	
 }
@@ -232,29 +234,29 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
-	OW_ProviderManager mgr;
+	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OW_LocalCIMOMHandle hdl;
+	LocalCIMOMHandle hdl;
 	mgr.init(createProvEnvRef(hdl));
 
 	// test qualifier on class
-	OW_CIMClass c1("TestClass");
-	OW_CIMQualifier provQual(OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	provQual.setValue(OW_CIMValue("lib1::TestAssociatorProvider"));
+	CIMClass c1("TestClass");
+	CIMQualifier provQual(CIMQualifier::CIM_QUAL_PROVIDER);
+	provQual.setValue(CIMValue("lib1::TestAssociatorProvider"));
 	c1.addQualifier(provQual);
-	OW_AssociatorProviderIFCRef provRef = mgr.getAssociatorProvider(
+	AssociatorProviderIFCRef provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "root", c1);
 	unitAssert(provRef);
 
 	// bad qualifier
-	OW_CIMClass c2("TestClass");
-	provQual.setValue(OW_CIMValue("lib1::bad"));
+	CIMClass c2("TestClass");
+	provQual.setValue(CIMValue("lib1::bad"));
 	c2.addQualifier(provQual);
 	unitAssertThrows(provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "root", c2));
 
 	// self-registering provider all namespaces
-	OW_CIMClass c3("SelfReg");
+	CIMClass c3("SelfReg");
 	provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "root", c3);
 	unitAssert(provRef);
@@ -263,7 +265,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	unitAssert(provRef);
 	
 	// self-registering provider two namespaces
-	OW_CIMClass c4("SelfRegTwoNamespaces");
+	CIMClass c4("SelfRegTwoNamespaces");
 	provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "root", c4);
 	unitAssert(provRef);
@@ -275,13 +277,13 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 	unitAssert(provRef);
 	
 	// nothing
-	OW_CIMClass c5("Nothing");
+	CIMClass c5("Nothing");
 	provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "root", c5);
 	unitAssert(!provRef);
 
 	// self-registering provider all namespaces - case insensitivity
-	OW_CIMClass c6("selFreG");
+	CIMClass c6("selFreG");
 	provRef = mgr.getAssociatorProvider(
 		createProvEnvRef(hdl), "Root", c6);
 	unitAssert(provRef);
@@ -293,13 +295,13 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 
 void OW_ProviderManagerTestCases::testGetIndicationProvider()
 {
-	OW_ProviderManager mgr;
+	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	OW_LocalCIMOMHandle hdl;
+	LocalCIMOMHandle hdl;
 	mgr.init(createProvEnvRef(hdl));
 
 	// self-registering provider all namespaces
-	OW_IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
+	IndicationProviderIFCRefArray provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "root", "SelfReg", "");
 	unitAssert(provRefs.size() == 1);
 	provRefs = mgr.getIndicationProviders(
@@ -314,7 +316,7 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	unitAssert(provRefs.size() == 2);
 	
 	// self-registering provider two namespaces
-	OW_String c4("SelfRegTwoNamespaces");
+	String c4("SelfRegTwoNamespaces");
 	provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "root", c4, "");
 	unitAssert(provRefs.size() == 1);
@@ -326,13 +328,13 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 	unitAssert(provRefs.size() == 1);
 	
 	// nothing
-	OW_String c5("Nothing");
+	String c5("Nothing");
 	provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "root", c5, "");
 	unitAssert(provRefs.size() == 0);
 
 	// self-registering provider all namespaces - case insensitivity
-	OW_String c6("selFreG");
+	String c6("selFreG");
 	provRefs = mgr.getIndicationProviders(
 		createProvEnvRef(hdl), "Root", c6, "");
 	unitAssert(provRefs.size() == 1);

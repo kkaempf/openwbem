@@ -27,38 +27,35 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #ifndef OW_HTTTPCOUNTER_HPP_INCLUDE_GUARD_
 #define OW_HTTTPCOUNTER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_MutexLock.hpp"
 
-class OW_HTTPCounter
+namespace OpenWBEM
+{
+
+class HTTPCounter
 {
 public:
-
 	/** 
 	 * Get the next count number.  This is usefull getting a two digit
 	 * number to use as a prefix for M-POST style headers.
 	 * @return the next two digit number.
 	 */
 	static int getCounter();
-
 private:
 	static int m_counter;
 	static const int m_maxValue = 99;
-	static OW_Mutex m_mutex;
-
+	static Mutex m_mutex;
 	// don't allow instantiation.
-	OW_HTTPCounter();
+	HTTPCounter();
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_SocketAddress.hpp"
 #include "OW_ByteSwap.hpp"
@@ -36,10 +34,9 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
-#include <netdb.h>
-
 extern "C"
 {
+#include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/param.h>
@@ -48,23 +45,22 @@ extern "C"
 #include <errno.h>
 }
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(UnknownHost);
 DEFINE_EXCEPTION(SocketAddress);
-
-
 //static
-OW_SocketAddress
-OW_SocketAddress::getUDS(const OW_String& filename)
+SocketAddress
+SocketAddress::getUDS(const String& filename)
 {
-	OW_SocketAddress rval;
+	SocketAddress rval;
 	rval.m_type = UDS;
 	rval.m_name = filename;
 	memset(&rval.m_UDSNativeAddress, 0, sizeof(rval.m_UDSNativeAddress));
 	rval.m_UDSNativeAddress.sun_family = AF_UNIX;
 	strncpy(rval.m_UDSNativeAddress.sun_path, filename.c_str(),
 		sizeof(rval.m_UDSNativeAddress.sun_path) - 1);
-
-
 #ifdef OW_SOLARIS
 	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
 		offsetof(struct sockaddr_un, sun_path);
@@ -78,80 +74,66 @@ OW_SocketAddress::getUDS(const OW_String& filename)
 #endif
 	return rval;
 }
-
-OW_SocketAddress::OW_SocketAddress()
+SocketAddress::SocketAddress()
 	: m_nativeSize(0) , m_type(UNSET)
 {
 }
-
-
 #ifndef OW_HAVE_GETHOSTBYNAME_R
-OW_Mutex OW_gethostbynameMutex;
+Mutex gethostbynameMutex;
 #endif
-
 //static
-OW_SocketAddress
-OW_SocketAddress::getByName(
-		const OW_String& hostName, OW_UInt16 port)
+SocketAddress
+SocketAddress::getByName(
+		const String& hostName, UInt16 port)
 {
 #ifdef OW_HAVE_GETHOSTBYNAME_R
 	hostent hostbuf;
 	hostent* host = &hostbuf;
 	char buf[2048];
 	int h_err = 0;
-
 	if (gethostbyname_r(hostName.c_str(), &hostbuf, buf, sizeof(buf),
 				&host, &h_err) == -1)
 		host = NULL;
 #else
 	hostent* host = NULL;
-
-	OW_MutexLock mlock(OW_gethostbynameMutex);
+	MutexLock mlock(gethostbynameMutex);
 	host = gethostbyname(hostName.c_str());
-
 #endif
 	if (!host) {
-		OW_THROW(OW_UnknownHostException, hostName.c_str());
+		OW_THROW(UnknownHostException, hostName.c_str());
 	}
-
 	in_addr addr;
 	memcpy(&addr, host->h_addr_list[0], sizeof(addr));
 	return getFromNativeForm(addr, port, host->h_name);
 }
-
 //static
-OW_SocketAddress
-OW_SocketAddress::getFromNativeForm( const OW_InetSocketAddress_t& nativeForm)
+SocketAddress
+SocketAddress::getFromNativeForm( const InetSocketAddress_t& nativeForm)
 {
-	return OW_SocketAddress(nativeForm);
+	return SocketAddress(nativeForm);
 }
-
 //static
-OW_SocketAddress
-OW_SocketAddress::getFromNativeForm( const OW_UnixSocketAddress_t& nativeForm)
+SocketAddress
+SocketAddress::getFromNativeForm( const UnixSocketAddress_t& nativeForm)
 {
-	return OW_SocketAddress(nativeForm);
+	return SocketAddress(nativeForm);
 }
-
 //static
-OW_SocketAddress
-OW_SocketAddress::getFromNativeForm( const OW_InetAddress_t& nativeForm,
-		OW_UInt16 nativePort, const OW_String& hostName)
+SocketAddress
+SocketAddress::getFromNativeForm( const InetAddress_t& nativeForm,
+		UInt16 nativePort, const String& hostName)
 {
-	OW_InetSocketAddress_t addr;
+	InetSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
-	addr.sin_port = OW_hton16(nativePort);
+	addr.sin_port = hton16(nativePort);
 	addr.sin_addr = nativeForm;
-
-	OW_SocketAddress p = OW_SocketAddress(addr);
+	SocketAddress p = SocketAddress(addr);
 	p.m_type = INET;
 	p.m_name = hostName;
-
 	return p;
 }
-
-const OW_SocketAddress_t* OW_SocketAddress::getNativeForm() const
+const SocketAddress_t* SocketAddress::getNativeForm() const
 {
 	if (m_type == INET)
 	{
@@ -163,125 +145,112 @@ const OW_SocketAddress_t* OW_SocketAddress::getNativeForm() const
 	}
 	else return 0;
 }
-
-OW_SocketAddress
-OW_SocketAddress::getAnyLocalHost(OW_UInt16 port)
+SocketAddress
+SocketAddress::getAnyLocalHost(UInt16 port)
 {
 	struct in_addr addr;
-	addr.s_addr = OW_hton32(INADDR_ANY);
-	OW_SocketAddress rval = getFromNativeForm(addr, port, "localhost");
+	addr.s_addr = hton32(INADDR_ANY);
+	SocketAddress rval = getFromNativeForm(addr, port, "localhost");
 	char buf[256];
 	gethostname(buf, sizeof(buf));
-	OW_String hname(buf);
-	if (hname.indexOf('.') == OW_String::npos)
+	String hname(buf);
+	if (hname.indexOf('.') == String::npos)
 	{
 #ifdef OW_HAVE_GETHOSTBYNAME_R
 		hostent hostbuf;
 		hostent* hent = &hostbuf;
 		char buf[2048];
 		int h_err = 0;
-
 		if (gethostbyname_r(hname.c_str(), &hostbuf, buf, sizeof(buf),
 					&hent, &h_err) == -1)
 			hent = NULL;
 #else
 		hostent* hent = 0;
 		{
-			OW_MutexLock mlock(OW_gethostbynameMutex);
+			MutexLock mlock(gethostbynameMutex);
 			hent = gethostbyname(buf);
 		}
 #endif
 		if (hent)
 		{
-			hname = OW_String(hent->h_name);
+			hname = String(hent->h_name);
 		}
 	}
 	rval.m_name = hname;
 	return rval;
 }
-
-void OW_SocketAddress::assignFromNativeForm(
-	const OW_InetSocketAddress_t* address, size_t /*size*/)
+void SocketAddress::assignFromNativeForm(
+	const InetSocketAddress_t* address, size_t /*size*/)
 {
 	m_type = INET;
 	memcpy(&m_inetNativeAddress, address, sizeof(m_inetNativeAddress));
 	m_address = inet_ntoa(m_inetNativeAddress.sin_addr);
 	m_nativeSize = sizeof(m_inetNativeAddress);
 }
-
-void OW_SocketAddress::assignFromNativeForm(
-	const OW_UnixSocketAddress_t* address, size_t /*size*/)
+void SocketAddress::assignFromNativeForm(
+	const UnixSocketAddress_t* address, size_t /*size*/)
 {
 	m_type = UDS;
 	memcpy(&m_UDSNativeAddress, address, sizeof(m_UDSNativeAddress));
 	m_address = m_name = m_UDSNativeAddress.sun_path;
 	m_nativeSize = sizeof(m_UDSNativeAddress);
 }
-
-OW_UInt16 OW_SocketAddress::getPort() const
+UInt16 SocketAddress::getPort() const
 {
 	OW_ASSERT(m_type == INET);
-	return OW_ntoh16(m_inetNativeAddress.sin_port);
+	return ntoh16(m_inetNativeAddress.sin_port);
 }
-
-OW_SocketAddress::OW_SocketAddress(const OW_UnixSocketAddress_t& nativeForm)
+SocketAddress::SocketAddress(const UnixSocketAddress_t& nativeForm)
 	: m_nativeSize(0), m_type(UDS)
 {
 	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
 }
-
-OW_SocketAddress::OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm)
+SocketAddress::SocketAddress(const InetSocketAddress_t& nativeForm)
 	: m_nativeSize(0), m_type(INET)
 {
 	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
 }
-
-const OW_String OW_SocketAddress::getName() const
+const String SocketAddress::getName() const
 {
 	return m_name;
 }
-
-const OW_String OW_SocketAddress::getAddress() const
+const String SocketAddress::getAddress() const
 {
 	return m_address;
 }
-
-size_t OW_SocketAddress::getNativeFormSize() const
+size_t SocketAddress::getNativeFormSize() const
 {
 	return m_nativeSize;
 }
-
-
-OW_SocketAddress OW_SocketAddress::allocEmptyAddress(AddressType type)
+SocketAddress SocketAddress::allocEmptyAddress(AddressType type)
 {
 	if (type == INET)
 	{
 		sockaddr_in addr;
 		memset(&addr, 0, sizeof(addr));
 		addr.sin_family = AF_INET;
-		return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
+		return SocketAddress(SocketAddress::getFromNativeForm(addr));
 	}
 	else if (type == UDS)
 	{
 		sockaddr_un addr;
 		memset(&addr, 0, sizeof(addr));
 		addr.sun_family = AF_UNIX;
-		return OW_SocketAddress(OW_SocketAddress::getFromNativeForm(addr));
+		return SocketAddress(SocketAddress::getFromNativeForm(addr));
 	}
 	else
 	{
-		OW_THROW(OW_SocketAddressException, "Bad Address Type");
+		OW_THROW(SocketAddressException, "Bad Address Type");
 	}
 }
-
-const OW_String
-OW_SocketAddress::toString() const
+const String
+SocketAddress::toString() const
 {
 	OW_ASSERT(m_type != UNSET);
-	OW_String rval;
+	String rval;
 	if (m_type == INET)
 	{
-		rval = getAddress() + ":" + OW_String(OW_UInt32(getPort()));
+		rval = getAddress() + ":" + String(UInt32(getPort()));
 	}
 	else
 	{
@@ -289,4 +258,6 @@ OW_SocketAddress::toString() const
 	}
 	return rval;
 }
+
+} // end namespace OpenWBEM
 

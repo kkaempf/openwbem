@@ -27,47 +27,46 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_INDICATION_REP_LAYER_MEDIATOR_HPP_
 #define OW_INDICATION_REP_LAYER_MEDIATOR_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_AtomicOps.hpp"
 
+namespace OpenWBEM
+{
+
 /**
  * The purpose of this class is to serve as an always present bridge between
- * OW_IndicationRepLayerImpl and OW_provIndicationRepLayer
+ * IndicationRepLayerImpl and provIndicationRepLayer
  */
-class OW_IndicationRepLayerMediator
+class IndicationRepLayerMediator
 {
 public:
-	OW_UInt32 getClassCreationSubscriptionCount();
-	OW_UInt32 getClassModificationSubscriptionCount();
-	OW_UInt32 getClassDeletionSubscriptionCount();
-	OW_UInt32 getInstCreationSubscriptionCount();
-	OW_UInt32 getInstModificationSubscriptionCount();
-	OW_UInt32 getInstDeletionSubscriptionCount();
-	OW_UInt32 getInstReadSubscriptionCount();
-	OW_UInt32 getInstMethodCallSubscriptionCount();
-	void addSubscription(const OW_String& subName);
-	void deleteSubscription(const OW_String& subName);
-
+	UInt32 getClassCreationSubscriptionCount();
+	UInt32 getClassModificationSubscriptionCount();
+	UInt32 getClassDeletionSubscriptionCount();
+	UInt32 getInstCreationSubscriptionCount();
+	UInt32 getInstModificationSubscriptionCount();
+	UInt32 getInstDeletionSubscriptionCount();
+	UInt32 getInstReadSubscriptionCount();
+	UInt32 getInstMethodCallSubscriptionCount();
+	void addSubscription(const String& subName);
+	void deleteSubscription(const String& subName);
 private:
-	OW_Atomic_t m_classCount;
-	OW_Atomic_t m_classCreationCount;
-	OW_Atomic_t m_classModificationCount;
-	OW_Atomic_t m_classDeletionCount;
-	OW_Atomic_t m_instCount;
-	OW_Atomic_t m_instCreationCount;
-	OW_Atomic_t m_instModificationCount;
-	OW_Atomic_t m_instDeletionCount;
-	OW_Atomic_t m_instReadCount;
-	OW_Atomic_t m_instMethodCallCount;
-	OW_Atomic_t m_indicationCount;
+	Atomic_t m_classCount;
+	Atomic_t m_classCreationCount;
+	Atomic_t m_classModificationCount;
+	Atomic_t m_classDeletionCount;
+	Atomic_t m_instCount;
+	Atomic_t m_instCreationCount;
+	Atomic_t m_instModificationCount;
+	Atomic_t m_instDeletionCount;
+	Atomic_t m_instReadCount;
+	Atomic_t m_instMethodCallCount;
+	Atomic_t m_indicationCount;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -27,14 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef CIMOMVISITOR_HPP_
 #define CIMOMVISITOR_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Map.hpp"
-#include "OW_MOFVisitor.h"
+#include "OW_MOFVisitor.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMNameSpace.hpp"
@@ -48,15 +46,19 @@
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 #include "OW_Cache.hpp"
 
-struct lineInfo;
+namespace OpenWBEM
+{
 
+namespace MOF
+{
+
+struct lineInfo;
 class CIMOMVisitor : public Visitor
 {
 public:
-	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_String& ns,
-		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler);
+	CIMOMVisitor( CIMOMHandleIFCRef hdl, String& ns,
+		Reference<ParserErrorHandlerIFC> _theErrorHandler);
 	~CIMOMVisitor();
-
 	void VisitMOFSpecification( const MOFSpecification * );
 	
 	void VisitMOFProductionCompilerDirective( const MOFProductionCompilerDirective * );
@@ -90,19 +92,16 @@ public:
 	
 	void VisitQualifierParameterConstantValue( const QualifierParameterConstantValue * );
 	void VisitQualifierParameterArrayInitializer( const QualifierParameterArrayInitializer * );
-
 	void VisitFlavor( const Flavor * );
 	void VisitPropertyName( const PropertyName * );
 	void VisitReferenceName( const ReferenceName * );
 	void VisitMethodName( const MethodName * );
 	void VisitDataType( const DataType * );
 	void VisitObjectRef( const ObjectRef * );
-
 	void VisitIntegerValueBinaryValue( const IntegerValueBinaryValue * );
 	void VisitIntegerValueOctalValue( const IntegerValueOctalValue * );
 	void VisitIntegerValueDecimalValue( const IntegerValueDecimalValue * );
 	void VisitIntegerValueHexValue( const IntegerValueHexValue * );
-
 	void VisitConstantValueIntegerValue( const ConstantValueIntegerValue * );
 	void VisitConstantValueFloatValue( const ConstantValueFloatValue * );
 	void VisitConstantValueStringValue( const ConstantValueStringValue * );
@@ -120,13 +119,11 @@ public:
 	void VisitInitializerReferenceInitializer( const InitializerReferenceInitializer * );
 	void VisitInitializerArrayInitializer( const InitializerArrayInitializer * );
 	void VisitInitializerConstantValue( const InitializerConstantValue * );
-
 	void VisitArrayInitializer( const ArrayInitializer * );
 	
 	void VisitReferenceInitializerAliasIdentifier( const ReferenceInitializerAliasIdentifier * );
 	void VisitReferenceInitializerObjectHandle( const ReferenceInitializerObjectHandle * );
 	void VisitObjectHandle( const ObjectHandle * );
-
 	void VisitQualifierDeclaration( const QualifierDeclaration * );
 	void VisitQualifierName( const QualifierName * );
 	void VisitQualifierType( const QualifierType * );
@@ -135,45 +132,45 @@ public:
 	void VisitDefaultFlavor( const DefaultFlavor * );
 	void VisitInstanceDeclaration( const InstanceDeclaration * );
 	void VisitValueInitializer( const ValueInitializer * );
-
 private:
-	OW_CIMClass m_curClass;
-	OW_CIMInstance m_curInstance;
-	OW_CIMQualifier m_curQualifier;
-	OW_CIMQualifierType m_curQualifierType;
-	OW_CIMValue m_curValue;
-	OW_CIMProperty m_curProperty;
-	OW_CIMMethod m_curMethod;
-	OW_CIMParameter m_curParameter;
-	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
-	OW_Map<OW_String, OW_String> m_aliasMap;
-	OW_String m_namespace;
+	CIMClass m_curClass;
+	CIMInstance m_curInstance;
+	CIMQualifier m_curQualifier;
+	CIMQualifierType m_curQualifierType;
+	CIMValue m_curValue;
+	CIMProperty m_curProperty;
+	CIMMethod m_curMethod;
+	CIMParameter m_curParameter;
+	Reference<CIMOMHandleIFC> m_hdl;
+	Map<String, String> m_aliasMap;
+	String m_namespace;
 	
-	OW_String m_instanceLocale;
-	OW_String m_locale;
+	String m_instanceLocale;
+	String m_locale;
 	
-	OW_String m_nonLocal;
-	OW_String m_nonLocalType;
-	OW_String m_source;
-	OW_String m_sourceType;
+	String m_nonLocal;
+	String m_nonLocalType;
+	String m_source;
+	String m_sourceType;
 	
-    OW_Cache<OW_CIMQualifierType> m_dataTypeCache;
-	OW_CIMDataType getQualifierDataType(const OW_String& qualName, const lineInfo& li);
-	OW_CIMQualifierType getQualifierType(const OW_String& qualName, const lineInfo& li);
-
-    OW_Cache<OW_CIMClass> m_classCache;
-	OW_CIMClass getClass(const OW_String& className, const lineInfo& li);
+    Cache<CIMQualifierType> m_dataTypeCache;
+	CIMDataType getQualifierDataType(const String& qualName, const lineInfo& li);
+	CIMQualifierType getQualifierType(const String& qualName, const lineInfo& li);
+    Cache<CIMClass> m_classCache;
+	CIMClass getClass(const String& className, const lineInfo& li);
 	
-	OW_CIMValue convertValuesIntoValueArray( const OW_CIMValueArray& values );
+	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );
 	
 	// Functions that call into the remote cimom handle
-    OW_CIMClass CIMOMgetClass(const OW_String& className, const lineInfo& li);
+    CIMClass CIMOMgetClass(const String& className, const lineInfo& li);
 	void CIMOMcreateClass(const lineInfo& li);
 	void CIMOMsetQualifierType(const lineInfo& li);
 	void CIMOMcreateInstance(const lineInfo& li);
-	OW_CIMQualifierType CIMOMgetQualifierType(const OW_String& qualName, const lineInfo& li);
-
-	OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
+	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const lineInfo& li);
+	Reference<ParserErrorHandlerIFC> theErrorHandler;
 };
+
+} // end namespace MOF
+} // end namespace OpenWBEM
 
 #endif

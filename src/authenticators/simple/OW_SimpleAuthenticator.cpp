@@ -27,137 +27,114 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
-
 #include <fstream>
 #include <iosfwd>
+
+namespace OpenWBEM
+{
 
 namespace
 {
 	// anonymous namespace is to prevent possible linkage problems or identifier
 	// conflict whens the library is dynamically loaded
-
-
-class OW_SimpleAuthenticator: public OW_AuthenticatorIFC
+class SimpleAuthenticator: public AuthenticatorIFC
 {
 public:
-
-	OW_SimpleAuthenticator();
-	virtual ~OW_SimpleAuthenticator() { };
-
+	SimpleAuthenticator();
+	virtual ~SimpleAuthenticator() { };
    /**
     * Called when authenticator is loaded
     *
     */
 protected:
-
-	virtual void doInit(OW_ServiceEnvironmentIFCRef);
-	bool doAuthenticate(OW_String& userName,
-		const OW_String& info, OW_String& details);
-
-
+	virtual void doInit(ServiceEnvironmentIFCRef);
+	bool doAuthenticate(String& userName,
+		const String& info, String& details);
 private:
-	OW_String m_passwordPath;
-	OW_Map<OW_String, OW_String> m_passwords;
-
+	String m_passwordPath;
+	Map<String, String> m_passwords;
 	/**
     * Loads the password file into a hash map so it only has to
     * take the hit of loading from a file once.
     */
-	void loadPasswordFile(OW_ServiceEnvironmentIFCRef env);
-
-	bool doAuthenticate(const OW_String& userName, const OW_String& passwd);
-
+	void loadPasswordFile(ServiceEnvironmentIFCRef env);
+	bool doAuthenticate(const String& userName, const String& passwd);
 };
-
-OW_SimpleAuthenticator::OW_SimpleAuthenticator()
+SimpleAuthenticator::SimpleAuthenticator()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SimpleAuthenticator::doInit(OW_ServiceEnvironmentIFCRef env)
+SimpleAuthenticator::doInit(ServiceEnvironmentIFCRef env)
 {
 	loadPasswordFile(env);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_SimpleAuthenticator::doAuthenticate(OW_String& userName,
-		const OW_String& info, OW_String& details)
+SimpleAuthenticator::doAuthenticate(String& userName,
+		const String& info, String& details)
 {
 	bool rval = false;
-
 	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
 		return rval;
 	}
-
 	if(!(rval = doAuthenticate(userName, info)))
 	{
 		details = "Invalid username or password";
 	}
-
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_SimpleAuthenticator::doAuthenticate(const OW_String& userName,
-	const OW_String& passwd)
+SimpleAuthenticator::doAuthenticate(const String& userName,
+	const String& passwd)
 {
 	bool rval;
-
 	if (m_passwords.count(userName) < 1) // user not found in password file
 	{
 		rval = false;
 	}
 	else
 	{
-		OW_String truePass = m_passwords[userName];
+		String truePass = m_passwords[userName];
 		rval = passwd.equals(truePass);
 	}
-
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Private
 void
-OW_SimpleAuthenticator::loadPasswordFile(OW_ServiceEnvironmentIFCRef env)
+SimpleAuthenticator::loadPasswordFile(ServiceEnvironmentIFCRef env)
 {
 	// get path to password file from config file
-	OW_String passwdFile = env->getConfigItem(
-		OW_ConfigOpts::SIMPLE_AUTH_FILE_opt);
-
+	String passwdFile = env->getConfigItem(
+		ConfigOpts::SIMPLE_AUTH_FILE_opt);
 	if (passwdFile.empty())
 	{
-		OW_THROW(OW_AuthenticationException, "No password file given for "
+		OW_THROW(AuthenticationException, "No password file given for "
 			"simple authorization module");
 	}
-
 	std::ifstream infile(passwdFile.c_str(), std::ios::in);
 	if (!infile)
 	{
-		OW_THROW(OW_AuthenticationException, "Cannot open password file");
+		OW_THROW(AuthenticationException, "Cannot open password file");
 	}
-
 	// read name/password pairs from file into password map.
 	while (infile)
 	{
-		OW_String line;
-		OW_String name;
-		OW_String passwd;
-
+		String line;
+		String name;
+		String passwd;
 		int lineCount = 0;
-		line = OW_String::getLine(infile);
+		line = String::getLine(infile);
 		lineCount++;
 		line.trim();
 		if (line.empty()) // skip blank lines
@@ -165,14 +142,14 @@ OW_SimpleAuthenticator::loadPasswordFile(OW_ServiceEnvironmentIFCRef env)
 			continue;
 		}
 		size_t index = line.indexOf(':');
-		if (index != OW_String::npos)
+		if (index != String::npos)
 		{
 			name = line.substring(0, index);
 			passwd = line.substring(index + 1);
 		}
 		else
 		{
-			OW_THROW(OW_AuthenticationException, format("Invalid syntax in "
+			OW_THROW(AuthenticationException, format("Invalid syntax in "
 				"%1 at line %2", passwdFile, lineCount).c_str());
 		}
 		m_passwords[name] = passwd;
@@ -181,7 +158,8 @@ OW_SimpleAuthenticator::loadPasswordFile(OW_ServiceEnvironmentIFCRef env)
 		
 } // end anonymous namespace
 
-//////////////////////////////////////////////////////////////////////////////
+} // end namespace OpenWBEM
 
-OW_AUTHENTICATOR_FACTORY(OW_SimpleAuthenticator)
+//////////////////////////////////////////////////////////////////////////////
+OW_AUTHENTICATOR_FACTORY(OpenWBEM::SimpleAuthenticator)
 

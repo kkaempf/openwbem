@@ -27,44 +27,41 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SOCKET_FLAGS_HPP_INCLUDE_GUARD_
 #define OW_SOCKET_FLAGS_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 
-namespace OW_SocketFlags
+namespace OpenWBEM
 {
 
+namespace SocketFlags
+{
 /////////////////////////////////////////////////////////////////////////////
 enum ESSLFlag
 {
 	E_NOT_SSL,
 	E_SSL
 };
-
 /////////////////////////////////////////////////////////////////////////////
 enum EAllInterfacesFlag
 {
 	E_NOT_ALL_INTERFACES,
 	E_ALL_INTERFACES
 };
-
 /////////////////////////////////////////////////////////////////////////////
 enum EReuseAddrFlag
 {
 	E_DONT_REUSE_ADDR,
 	E_REUSE_ADDR
 };
-
 /////////////////////////////////////////////////////////////////////////////
 enum EWaitDirectionFlag
 {
 	E_WAIT_FOR_OUTPUT,
 	E_WAIT_FOR_INPUT
 };
+} // end namespace SocketFlags
 
-} // end namespace OW_SocketFlags
+} // end namespace OpenWBEM
 
 #endif
-
-

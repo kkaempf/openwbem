@@ -27,36 +27,35 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"										
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
-
+using namespace WBEMFlags;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
+ClientCIMOMHandle::createNameSpace(const String& ns)
 {
-    OW_CIMNameSpaceUtils::create__Namespace(OW_CIMOMHandleIFCRef(this, true), ns);
+    CIMNameSpaceUtils::create__Namespace(CIMOMHandleIFCRef(this, true), ns);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
+ClientCIMOMHandle::deleteNameSpace(const String& ns_)
 {
-    OW_CIMNameSpaceUtils::delete__Namespace(OW_CIMOMHandleIFCRef(this, true), ns_);
+    CIMNameSpaceUtils::delete__Namespace(CIMOMHandleIFCRef(this, true), ns_);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns_,
-	OW_StringResultHandlerIFC &result, EDeepFlag deep)
+ClientCIMOMHandle::enumNameSpace(const String& ns_,
+	StringResultHandlerIFC &result, EDeepFlag deep)
 {
-    OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(this, true), ns_, result, deep);
+    CIMNameSpaceUtils::enum__Namespace(CIMOMHandleIFCRef(this, true), ns_, result, deep);
 }
 
+} // end namespace OpenWBEM
 

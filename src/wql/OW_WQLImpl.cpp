@@ -35,94 +35,84 @@
 #include "OW_CIMException.hpp"
 #include "OW_WQLSelectStatementGen.hpp"
 
-OW_Mutex OW_WQLImpl::classLock;
-const char* OW_WQLImpl::parserInput;
-stmt* OW_WQLImpl::statement;
+namespace OpenWBEM
+{
 
-void OW_WQLImpl::evaluate(const OW_String& nameSpace,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& query, const OW_String& queryLanguage,
-	OW_Reference<OW_CIMOMHandleIFC> hdl)
+Mutex WQLImpl::classLock;
+const char* WQLImpl::parserInput;
+stmt* WQLImpl::statement;
+void WQLImpl::evaluate(const String& nameSpace,
+	CIMInstanceResultHandlerIFC& result,
+	const String& query, const String& queryLanguage,
+	Reference<CIMOMHandleIFC> hdl)
 {
 	(void)queryLanguage;
-	OW_MutexLock lock(classLock);
-
+	MutexLock lock(classLock);
 	// set up the parser's input
 	parserInput = query.c_str();
-	OW_WQLscanner_init();
-
+	WQLscanner_init();
 #ifdef YYOW_DEBUG
 	yydebug = 1;
 #endif
-
 	int yyresult = yyparse();
 	if (yyresult)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Parse failed");
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
 	}
 	else
 	{
-		//OW_LOGDEBUG("Parse succeeded");
+		//LOGDEBUG("Parse succeeded");
 	}
-
-	OW_WQLProcessor p(hdl, nameSpace);
-	OW_AutoPtr<stmt> pAST(OW_WQLImpl::statement);
+	WQLProcessor p(hdl, nameSpace);
+	AutoPtr<stmt> pAST(WQLImpl::statement);
 	lock.release();
-
 	if (pAST.get())
 	{
 		pAST->accept(&p);
 	}
 	else
 	{
-		//OW_LOGDEBUG("pAST was NULL!");
+		//LOGDEBUG("pAST was NULL!");
 	}
 	for (size_t i = 0; i < p.instances.size(); ++i)
 	{
 		result.handle(p.instances[i]);
 	}
 }
-
  
-OW_WQLSelectStatement
-OW_WQLImpl::createSelectStatement(const OW_String& query)
+WQLSelectStatement
+WQLImpl::createSelectStatement(const String& query)
 {
-	OW_MutexLock lock(classLock);
-
+	MutexLock lock(classLock);
 	// set up the parser's input
 	parserInput = query.c_str();
-	OW_WQLscanner_init();
-
+	WQLscanner_init();
 #ifdef YYOW_DEBUG
 	yydebug = 1;
 #endif
-
 	int yyresult = yyparse();
 	if (yyresult)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Parse failed");
+		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
 	}
 	else
 	{
-		//OW_LOGDEBUG("Parse succeeded");
+		//LOGDEBUG("Parse succeeded");
 	}
-
-	OW_WQLSelectStatementGen p;
-	OW_AutoPtr<stmt> pAST(OW_WQLImpl::statement);
+	WQLSelectStatementGen p;
+	AutoPtr<stmt> pAST(WQLImpl::statement);
 	lock.release();
-
 	if (pAST.get())
 	{
 		pAST->accept(&p);
 	}
 	else
 	{
-		//OW_LOGDEBUG("pAST was NULL!");
+		//LOGDEBUG("pAST was NULL!");
 	}
 	return p.getSelectStatement();
 }
-
-bool OW_WQLImpl::supportsQueryLanguage(const OW_String& lang)
+bool WQLImpl::supportsQueryLanguage(const String& lang)
 {
 	if (lang.equalsIgnoreCase("wql1"))
 	{
@@ -142,6 +132,7 @@ bool OW_WQLImpl::supportsQueryLanguage(const OW_String& lang)
 	}
 }
 
-OW_WQLFACTORY(OW_WQLImpl);
+} // end namespace OpenWBEM
 
+OW_WQLFACTORY(OpenWBEM::WQLImpl);
 

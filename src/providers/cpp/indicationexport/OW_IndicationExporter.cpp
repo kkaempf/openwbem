@@ -38,35 +38,35 @@
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMException.hpp"
 
+namespace OpenWBEM
+{
+
 using std::ostream;
 using std::istream;
 using std::iostream;
-
-OW_IndicationExporter::OW_IndicationExporter( OW_CIMProtocolIFCRef prot )
+IndicationExporter::IndicationExporter( CIMProtocolIFCRef prot )
 	: m_protocol(prot), m_iMessageID(0)
 {
 	m_protocol->setContentType("application/xml");
 }
-
 void
-OW_IndicationExporter::exportIndication( const OW_String& ns, const OW_CIMInstance& ci )
+IndicationExporter::exportIndication( const String& ns, const CIMInstance& ci )
 {
 	static const char* const commandName = "ExportIndication";
-	OW_Array<OW_Param> params;
+	Array<Param> params;
 	
-	OW_Reference<OW_TempFileStream> iostr(new OW_TempFileStream);
+	Reference<TempFileStream> iostr(new TempFileStream);
 	sendXMLHeader(*iostr);
 	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
-	OW_CIMInstancetoXML(ci, *iostr);
+	CIMInstancetoXML(ci, *iostr);
 	*iostr << "</EXPPARAMVALUE>";
 	sendXMLTrailer(*iostr);
 	doSendRequest(iostr, commandName, ns);
 }
-
 void
-OW_IndicationExporter::sendXMLHeader(ostream& ostr)
+IndicationExporter::sendXMLHeader(ostream& ostr)
 {
-	// TODO: merge this with the code in OW_CIMXMLCIMOMHandle.cpp
+	// TODO: merge this with the code in CIMXMLCIMOMHandle.cpp
 	// TODO: WRT the versions, have a way of doing a fallback to older
 	// versions for the sake of compatibility.
 	if (++m_iMessageID > 65535)
@@ -79,9 +79,8 @@ OW_IndicationExporter::sendXMLHeader(ostream& ostr)
 	ostr << "<SIMPLEEXPREQ>";
 	ostr << "<EXPMETHODCALL NAME=\"ExportIndication\">";
 }
-
 void
-OW_IndicationExporter::sendXMLTrailer(ostream& ostr)
+IndicationExporter::sendXMLTrailer(ostream& ostr)
 {
 	ostr << "</EXPMETHODCALL>";
 	ostr << "</SIMPLEEXPREQ>";
@@ -91,126 +90,116 @@ OW_IndicationExporter::sendXMLTrailer(ostream& ostr)
 }
 	
 void
-OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_String& methodName,
-		const OW_String& ns)
+IndicationExporter::doSendRequest(Reference<iostream> ostr, const String& methodName,
+		const String& ns)
 {
-	OW_CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
+	CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
 		ns);
-
 	// Debug stuff
 	/*
-	OW_TempFileStream buf;
+	TempFileStream buf;
 	buf << istr.rdbuf();
 	ofstream ofstr("/tmp/rchXMLDump", ios::app);
 	ofstr << "******* New dump ********" << endl;
 	ofstr << buf.rdbuf() << endl;
 	buf.rewind();
-	OW_XMLParser parser(&buf);
+	XMLParser parser(&buf);
 	*/
 	// end debug stuff
-
-	OW_CIMXMLParser parser(*istr);
-
+	CIMXMLParser parser(*istr);
 	return checkNodeForCIMError(parser, methodName);
 }
-
 void
-OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
-		const OW_String& operation)
+IndicationExporter::checkNodeForCIMError(CIMXMLParser& parser,
+		const String& operation)
 {
-// TODO: This code is the same as in OW_CIMXMLCIMOMHandle.cpp.  Put it in a
+// TODO: This code is the same as in CIMXMLCIMOMHandle.cpp.  Put it in a
 // common spot.
-
 	//
 	// Check for <CIM> element
 	//
-	if (!parser || !parser.tokenIs(OW_CIMXMLParser::E_CIM))
+	if (!parser || !parser.tokenIs(CIMXMLParser::E_CIM))
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid XML");
+		OW_THROWCIMMSG(CIMException::FAILED, "Invalid XML");
 	}
-	OW_String cimattr;
+	String cimattr;
 // TODO: Decide if we really should check this or not.
 #if 0
-	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
-	if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(CIMXMLParser::A_CIMVERSION);
+	if (!cimattr.equals(CIMXMLParser::AV_CIMVERSION_VALUE))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return is for CIMVERSION " + cimattr).c_str());
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Return is for CIMVERSION " + cimattr).c_str());
 	}
-
-	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
-	if (!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(CIMXMLParser::A_DTDVERSION);
+	if (!cimattr.equals(CIMXMLParser::AV_DTDVERSION_VALUE))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return is for DTDVERSION " + cimattr).c_str());
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Return is for DTDVERSION " + cimattr).c_str());
 	}
 #endif
 	//
 	// Find <MESSAGE>
 	//
-	parser.mustGetChild(OW_CIMXMLParser::E_MESSAGE);
-	cimattr=parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
-	if (!cimattr.equals(OW_String(m_iMessageID)))
+	parser.mustGetChild(CIMXMLParser::E_MESSAGE);
+	cimattr=parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
+	if (!cimattr.equals(String(m_iMessageID)))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return messageid="+cimattr+", expected="
-										 +OW_String(m_iMessageID)).c_str());
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Return messageid="+cimattr+", expected="
+										 +String(m_iMessageID)).c_str());
 	}
-
 // TODO: Decide if we really should check this or not.
 #if 0
-	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
-	if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(CIMXMLParser::A_PROTOCOLVERSION);
+	if (!cimattr.equals(CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Return is for PROTOCOLVERSION "+cimattr).c_str());
 	}
 #endif
-
 	// Find <SIMPLEEXPRSP>
 	//
 	// TODO-NICE: need to look for complex EXPRSPs!!
 	//
-	parser.mustGetChild(OW_CIMXMLParser::E_SIMPLEEXPRSP);
-
+	parser.mustGetChild(CIMXMLParser::E_SIMPLEEXPRSP);
 	//
 	// <EXPMETHODRESPONSE>
 	//
-	parser.mustGetChild(OW_CIMXMLParser::E_EXPMETHODRESPONSE);
-
-	OW_String nameOfMethod = parser.getAttribute(OW_CIMXMLParser::A_NAME);
+	parser.mustGetChild(CIMXMLParser::E_EXPMETHODRESPONSE);
+	String nameOfMethod = parser.getAttribute(CIMXMLParser::A_NAME);
 	if (nameOfMethod.empty())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 							"Response had no method name");
 	}
-
 	if (!nameOfMethod.equalsIgnoreCase(operation))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Called "+operation+" but response was for "+
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							String("Called "+operation+" but response was for "+
 										 nameOfMethod).c_str());
 	}
-
 	parser.mustGetNextTag();
-	if (parser.tokenIs(OW_CIMXMLParser::E_ERROR))
+	if (parser.tokenIs(CIMXMLParser::E_ERROR))
 	{
-		OW_String errCode = parser.mustGetAttribute(
-			OW_XMLParameters::paramErrorCode);
-		OW_String description = parser.mustGetAttribute(
-			OW_XMLParameters::paramErrorDescription);
-		OW_Int32 iErrCode;
+		String errCode = parser.mustGetAttribute(
+			XMLParameters::paramErrorCode);
+		String description = parser.mustGetAttribute(
+			XMLParameters::paramErrorDescription);
+		Int32 iErrCode;
 		try
 		{
 			iErrCode = errCode.toInt32();
 		}
-		catch (const OW_StringConversionException& e)
+		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, format("Invalid xml.  %1",
+			OW_THROWCIMMSG(CIMException::FAILED, format("Invalid xml.  %1",
 				e.getMessage()).c_str());
 		}
-		OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()), description.c_str());
+		OW_THROWCIMMSG(CIMException::ErrNoType(errCode.toInt32()), description.c_str());
 	}
 }
 	
+
+} // end namespace OpenWBEM
 

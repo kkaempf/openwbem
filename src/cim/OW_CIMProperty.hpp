@@ -27,13 +27,9 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMPROPERTY_HPP_INCLUDE_GUARD_
 #define OW_CIMPROPERTY_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
 #include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
@@ -41,314 +37,271 @@
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMProperty class encapsulates all data and functionality petinent to
+ * The CIMProperty class encapsulates all data and functionality petinent to
  * a CIM property found in a CIM class or a CIM Instance.
  */
-class OW_CIMProperty : public OW_CIMElement
+class CIMProperty : public CIMElement
 {
 public:
 	struct PROPData;
-
 	static const char* const NAME_PROPERTY;
-
 	/**
-	 * Create a new OW_CIMProperty object.
+	 * Create a new CIMProperty object.
 	 */
-	OW_CIMProperty();
-
+	CIMProperty();
 	/**
-	 * Create a NULL OW_CIMProperty object.
+	 * Create a NULL CIMProperty object.
 	 */
-	explicit OW_CIMProperty(OW_CIMNULL_t);
-
+	explicit CIMProperty(CIMNULL_t);
 	/**
-	 * Create an OW_CIMProperty object with a given name.
-	 * @param name	The name for this OW_CIMProperty object
+	 * Create an CIMProperty object with a given name.
+	 * @param name	The name for this CIMProperty object
 	 */
-	explicit OW_CIMProperty(const OW_String& name);
-
+	explicit CIMProperty(const String& name);
 	/**
-	 * Create an OW_CIMProperty object with a given name.
-	 * @param name	The name for this OW_CIMProperty object as a NULL terminated
+	 * Create an CIMProperty object with a given name.
+	 * @param name	The name for this CIMProperty object as a NULL terminated
 	 *		string.
 	 */
-	explicit OW_CIMProperty(const char* name);
-
+	explicit CIMProperty(const char* name);
 	/**
-	 * Create an OW_CIMProperty object with a name and a value.
-	 * @param name The name for this OW_CIMProperty object.
-	 * @param value The value of this OW_CIMProperty
+	 * Create an CIMProperty object with a name and a value.
+	 * @param name The name for this CIMProperty object.
+	 * @param value The value of this CIMProperty
 	 */
-	OW_CIMProperty(const OW_String& name, const OW_CIMValue& value);
-
+	CIMProperty(const String& name, const CIMValue& value);
 	/**
-	 * Create an OW_CIMProperty object with a name and a type.
-	 * @param name The name for this OW_CIMProperty object.
-	 * @param dt The type of this OW_CIMProperty
+	 * Create an CIMProperty object with a name and a type.
+	 * @param name The name for this CIMProperty object.
+	 * @param dt The type of this CIMProperty
 	 */
-	OW_CIMProperty(const OW_String& name, const OW_CIMDataType& dt);
-
+	CIMProperty(const String& name, const CIMDataType& dt);
 	/**
 	 * Copy constructor
-	 * @param arg The OW_CIMProperty to make this object a copy of.
+	 * @param arg The CIMProperty to make this object a copy of.
 	 */
-	OW_CIMProperty(const OW_CIMProperty& arg);
-
+	CIMProperty(const CIMProperty& arg);
 	/**
-	 * Destroy this OW_CIMProperty object.
+	 * Destroy this CIMProperty object.
 	 */
-	~OW_CIMProperty();
-
+	~CIMProperty();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMProperty object to assign to this one.
+	 * @param arg The CIMProperty object to assign to this one.
 	 * @return A reference to this object after the assignment is made.
 	 */
-	OW_CIMProperty& operator= (const OW_CIMProperty& arg);
-
+	CIMProperty& operator= (const CIMProperty& arg);
 	/**
-	 * @return true If this OW_CIMProperty has an implementation.
+	 * @return true If this CIMProperty has an implementation.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 	/**
-	 * @return A copy of this OW_CIMProperty object.
+	 * @return A copy of this CIMProperty object.
 	 */
-	OW_CIMProperty clone() const {  return clone(OW_WBEMFlags::E_INCLUDE_QUALIFIERS, OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN); }
-
+	CIMProperty clone() const {  return clone(WBEMFlags::E_INCLUDE_QUALIFIERS, WBEMFlags::E_INCLUDE_CLASS_ORIGIN); }
 	/**
-	 * Create a copy of this OW_CIMProperty object base on filtering criteria.
+	 * Create a copy of this CIMProperty object base on filtering criteria.
 	 * @param includeQualifiers If true, include qualifiers of this object.
 	 * @param includeClassOrigin If true, include the class origin of this obj.
-	 * @return A copy of this OW_CIMProperty object
+	 * @return A copy of this CIMProperty object
 	 */
-	OW_CIMProperty clone(OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const;
-
+	CIMProperty clone(WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin) const;
 	/**
 	 * Get the qualifiers for this property
-	 * @return An OW_CIMQualifierArray with the qualifiers for this property
+	 * @return An CIMQualifierArray with the qualifiers for this property
 	 */
-	OW_CIMQualifierArray getQualifiers() const;
-
+	CIMQualifierArray getQualifiers() const;
 	/**
 	 * Set the qualifiers for this property object.
-	 * @param quals	An OW_CIMQualifierArray with the new qualifiers for this
+	 * @param quals	An CIMQualifierArray with the new qualifiers for this
 	 *						property object.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setQualifiers(const OW_CIMQualifierArray& quals);
-
+	CIMProperty& setQualifiers(const CIMQualifierArray& quals);
 	/**
 	 * Get the origin class for this property.
 	 * @return The name of the origin class of this property.
 	 */
-	OW_String getOriginClass() const;
-
+	String getOriginClass() const;
 	/**
 	 * Set the origin class for this property.
 	 * @param originCls	The name of the origin class of this property.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setOriginClass(const OW_String& originCls);
-
+	CIMProperty& setOriginClass(const String& originCls);
 	/**
 	 * Set the value of this property.
-	 * @param val	The OW_CIMValue for this property.
+	 * @param val	The CIMValue for this property.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setValue(const OW_CIMValue& val);
-
+	CIMProperty& setValue(const CIMValue& val);
 	/**
-	 * @return The OW_CIMValue object for this property.  The value may be NULL.
+	 * @return The CIMValue object for this property.  The value may be NULL.
 	 */
-	OW_CIMValue getValue() const;
-
+	CIMValue getValue() const;
 	/**
-	 * @return The OW_CIMValue object for this property.
-	 * @throws OW_NULLValueException if the value is NULL.
+	 * @return The CIMValue object for this property.
+	 * @throws NULLValueException if the value is NULL.
 	 */
-	OW_CIMValue getValueT() const;
-
+	CIMValue getValueT() const;
 	/**
 	 * Set the data type for this property.
-	 * @param type	The OW_CIMDataType for this property
+	 * @param type	The CIMDataType for this property
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setDataType(const OW_CIMDataType& type);
-
+	CIMProperty& setDataType(const CIMDataType& type);
 	/**
 	 * Set the data type for this property.
-	 * @param type	The OW_CIMDataType::Type for this property
+	 * @param type	The CIMDataType::Type for this property
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setDataType(const OW_CIMDataType::Type& type);
-
+	CIMProperty& setDataType(const CIMDataType::Type& type);
 	/**
-	 * @return The OW_CIMDataType for this property.
+	 * @return The CIMDataType for this property.
 	 */
-	OW_CIMDataType getDataType() const;
-
+	CIMDataType getDataType() const;
 	/**
 	 * @return The size of the data associated with this property
 	 */
-	OW_Int32 getSize() const;
-
+	Int32 getSize() const;
 	/**
 	 * Set the size of the data for this property.
 	 * @param size	The size of the data associated with property.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setDataSize(OW_Int32 size);
-
+	CIMProperty& setDataSize(Int32 size);
 	/**
 	 * Set the overriding property name.
 	 * @param opname	The name of the overriding property.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setOverridingProperty(const OW_String& opname);
-
+	CIMProperty& setOverridingProperty(const String& opname);
 	/**
 	 * @return The name of the overriding property.
 	 */
-	OW_String getOverridingProperty() const;
-
+	String getOverridingProperty() const;
 	/**
 	 * @return true if this property is a reference. Otherwise return false.
 	 */
 	bool isReference() const;
-
 	/**
 	 * Get the qualifier associated with the given name from this property.
 	 * @param name	The name of the qualifier to retrieve.
-	 * @return The OW_CIMQualifier associated with the given name if there is
-	 * one. Otherwise return a NULL OW_CIMQualifier.
+	 * @return The CIMQualifier associated with the given name if there is
+	 * one. Otherwise return a NULL CIMQualifier.
 	 */
-	OW_CIMQualifier getQualifier(const OW_String& name) const;
-
+	CIMQualifier getQualifier(const String& name) const;
 	/**
 	 * Get the qualifier associated with the given name from this property.
 	 * @param name	The name of the qualifier to retrieve.
-	 * @return The OW_CIMQualifier associated with the given name if there is
-	 * one. Otherwise a OW_NoSuchQualifierException is thrown.
+	 * @return The CIMQualifier associated with the given name if there is
+	 * one. Otherwise a NoSuchQualifierException is thrown.
 	 */
-	OW_CIMQualifier getQualifierT(const OW_String& name) const;
-
+	CIMQualifier getQualifierT(const String& name) const;
 	/**
 	 * Set the value of a qaulifier on this property.
-	 * @param qual	An OW_CIMQualifier to use to update the property qualifier.
+	 * @param qual	An CIMQualifier to use to update the property qualifier.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setQualifier(const OW_CIMQualifier& qual);
-
+	CIMProperty& setQualifier(const CIMQualifier& qual);
 	/**
 	 * Add a qualifier to this property.
-	 * @param qual	The OW_CIMQualifier to add to this property.
+	 * @param qual	The CIMQualifier to add to this property.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& addQualifier(const OW_CIMQualifier& qual);
-
+	CIMProperty& addQualifier(const CIMQualifier& qual);
 	/**
 	 * Remove a qualifier from this property.
 	 * @param qname	The name of the qualifier to remove.
 	 * @return true if the qualifier was found and removed. Otherwise false.
 	 */
-	bool removeQualifier(const OW_String& name);
-
+	bool removeQualifier(const String& name);
 	/**
 	 * @return true if this property has the key qualifier on it.
 	 */
 	bool isKey() const;
-
 	/**
 	 * Create a filtered version of this property.
 	 * @param localOnly If true and this property was inherited from another
-	 *		class, then an empty OW_CIMProprty will be return.
+	 *		class, then an empty CIMProprty will be return.
 	 * @param includeQualifiers If true, all qualifier on this property will be
-	 *		included in the new OW_CIMProperty.
-	 * @return A OW_CIMProperty object based on the given filtering criteria.
+	 *		included in the new CIMProperty.
+	 * @return A CIMProperty object based on the given filtering criteria.
 	 */
-	OW_CIMProperty filter(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
-
+	CIMProperty filter(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
 	/**
 	 * Set the propagated flag on this property.
 	 * @param propagated	If true this property is propagated. Otherwise false.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& setPropagated(bool propagated=true);
-
+	CIMProperty& setPropagated(bool propagated=true);
 	/**
 	 * Get the propagated flag for this property.
 	 * @return true if this property is propagated. Otherwise false.
 	 */
 	bool getPropagated() const;
-
 	/**
 	 * Clear all qualifier from property.
 	 * @return a reference to *this
 	 */
-	OW_CIMProperty& clearQualifiers();
-
+	CIMProperty& clearQualifiers();
 	/**
-	 * @return The name of this OW_CIMProperty
+	 * @return The name of this CIMProperty
 	 */
-	virtual OW_String getName() const;
-
+	virtual String getName() const;
 	/**
-	 * Set the name of this OW_CIMProperty object.
-	 * @param name	The new name for this OW_CIMProperty object.
+	 * Set the name of this CIMProperty object.
+	 * @param name	The new name for this CIMProperty object.
 	 */
-	virtual void setName(const OW_String& name);
-
+	virtual void setName(const String& name);
 	/**
-	 * Write this OW_CIMProperty to the given output stream.
+	 * Write this CIMProperty to the given output stream.
 	 * @param ostrm	The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * Write this OW_CIMProperty, optionally omitting all qualifiers except
+	 * Write this CIMProperty, optionally omitting all qualifiers except
 	 * the key qualifier.
 	 * @param ostrm	The output stream to write this object to.
 	 * @param includeQulifiers If true write all qualifiers for property
 	 */
 	virtual void writeObject(std::ostream &ostrm,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers) const;
 	
 	/**
-	 * Read this OW_CIIMProperty object from the given input stream.
-	 * @param istrm	The input stream to read this OW_CIMElement from.
+	 * Read this CIIMProperty object from the given input stream.
+	 * @param istrm	The input stream to read this CIMElement from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
-	 * @return The string representation of this OW_CIMProperty.
+	 * @return The string representation of this CIMProperty.
 	 */
-	virtual OW_String toString() const;
+	virtual String toString() const;
 	
 	/**
-	 * @return An OW_String that contains the MOF representation of this
-	 * OW_CIMProperty object.
+	 * @return An String that contains the MOF representation of this
+	 * CIMProperty object.
 	 */
-	virtual OW_String toMOF() const;
+	virtual String toMOF() const;
 	
 	/**
 	 * Test if this property has a qualifier that is a boolean type with a
@@ -356,15 +309,12 @@ public:
 	 * @param name	The name of the qualifier to test.
 	 * @return true if the qualifier exists and has a value of true.
 	 */
-	bool hasTrueQualifier(const OW_String& name) const;
-
+	bool hasTrueQualifier(const String& name) const;
 private:
-
-	OW_COWReference<PROPData> m_pdata;
-
-	friend bool operator<(const OW_CIMProperty& x, const OW_CIMProperty& y);
+	COWReference<PROPData> m_pdata;
+	friend bool operator<(const CIMProperty& x, const CIMProperty& y);
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

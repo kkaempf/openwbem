@@ -37,6 +37,7 @@
 using std::cout;
 using std::endl;
 using std::cerr;
+using namespace OpenWBEM;
 
 
 int main(int argc, char* argv[])
@@ -46,8 +47,8 @@ int main(int argc, char* argv[])
 	try
 	{
 
-		OW_CIMOMLocatorRef cl = OW_CIMOMLocator::createCIMOMLocator("slp");
-		OW_CIMOMInfoArray cia = cl->findCIMOMs();
+		CIMOMLocatorRef cl = CIMOMLocator::createCIMOMLocator("slp");
+		CIMOMInfoArray cia = cl->findCIMOMs();
 		for (size_t i = 0; i < cia.size(); ++i)
 		{
 			cout << "URL: " << cia[i].getURL() << endl;
@@ -56,11 +57,11 @@ int main(int argc, char* argv[])
 			cout << "host-os: " << cia[i]["host-os"] << endl;
 		}
 	}
-	catch(OW_CIMOMLocatorException& cle)
+	catch(CIMOMLocatorException& cle)
 	{
 		cerr << "CIMOMLocatorException caught: " << cle << endl;
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << "CIMOMException caught: " << e << endl;
 	}

@@ -30,5 +30,5 @@
 #include "UnitTestEnvironment.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 
-OW_ServiceEnvironmentIFCRef g_testEnvironment = OW_ServiceEnvironmentIFCRef(new OW_TestEnvironment);
+OpenWBEM::ServiceEnvironmentIFCRef g_testEnvironment = OpenWBEM::ServiceEnvironmentIFCRef(new TestEnvironment);
 

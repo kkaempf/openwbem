@@ -27,20 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
-
 #ifdef OW_HAVE_ZLIB_H
-
 #include "OW_HTTPDeflateOStream.hpp"
 #include "OW_HTTPException.hpp"
 #include "OW_String.hpp"
 
-using std::ostream;
+namespace OpenWBEM
+{
 
-OW_HTTPDeflateOStreamBuffer::OW_HTTPDeflateOStreamBuffer(ostream& ostr)
-	: OW_BaseStreamBuffer(HTTP_BUF_SIZE, "out")
+using std::ostream;
+HTTPDeflateOStreamBuffer::HTTPDeflateOStreamBuffer(ostream& ostr)
+	: BaseStreamBuffer(HTTP_BUF_SIZE, "out")
 	, m_ostr(ostr)
 {
 	m_zstr.opaque = Z_NULL;
@@ -51,17 +49,16 @@ OW_HTTPDeflateOStreamBuffer::OW_HTTPDeflateOStreamBuffer(ostream& ostr)
 	int rval = deflateInit(&m_zstr, Z_DEFAULT_COMPRESSION);
 	if (rval != Z_OK)
 	{
-		OW_String msg = "Error: deflateInit returned " + OW_String(rval);
+		String msg = "Error: deflateInit returned " + String(rval);
 		if (m_zstr.msg)
 		{
-			msg += OW_String(": ") + OW_String(m_zstr.msg);
+			msg += String(": ") + String(m_zstr.msg);
 		}
-		OW_THROW(OW_HTTPException, msg.c_str());
+		OW_THROW(HTTPException, msg.c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPDeflateOStreamBuffer::~OW_HTTPDeflateOStreamBuffer()
+HTTPDeflateOStreamBuffer::~HTTPDeflateOStreamBuffer()
 {
 	try
 	{
@@ -73,21 +70,19 @@ OW_HTTPDeflateOStreamBuffer::~OW_HTTPDeflateOStreamBuffer()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPDeflateOStreamBuffer::sync()
+HTTPDeflateOStreamBuffer::sync()
 {
-	int rval = OW_BaseStreamBuffer::sync();
+	int rval = BaseStreamBuffer::sync();
 	m_zstr.avail_in = 0;
 	flushOutBuf(Z_SYNC_FLUSH);
 	m_ostr.flush();
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPDeflateOStreamBuffer::buffer_to_device(const char* c, int n)
+HTTPDeflateOStreamBuffer::buffer_to_device(const char* c, int n)
 {
 	m_zstr.next_in = const_cast<Bytef*>(reinterpret_cast<const Bytef*>(c));
 	m_zstr.avail_in = n;
@@ -107,13 +102,11 @@ OW_HTTPDeflateOStreamBuffer::buffer_to_device(const char* c, int n)
 	}
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPDeflateOStreamBuffer::flushOutBuf(int flush)
+HTTPDeflateOStreamBuffer::flushOutBuf(int flush)
 {
 	int rval = 0;
-
 	switch (flush)
 	{
 		case Z_SYNC_FLUSH:
@@ -156,10 +149,9 @@ OW_HTTPDeflateOStreamBuffer::flushOutBuf(int flush)
 	return rval;
 }
 	
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPDeflateOStreamBuffer::writeToStream()
+HTTPDeflateOStreamBuffer::writeToStream()
 {
 	int bytesToWrite = m_outBufSize - m_zstr.avail_out;
 	if (!m_ostr.write(reinterpret_cast<char*>(m_outBuf), bytesToWrite))
@@ -170,24 +162,23 @@ OW_HTTPDeflateOStreamBuffer::writeToStream()
 	m_zstr.avail_out = m_outBufSize;
 	return bytesToWrite;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPDeflateOStreamBuffer::termOutput()
+HTTPDeflateOStreamBuffer::termOutput()
 {
 	sync();
 	flushOutBuf(Z_FINISH);
 	m_ostr.flush();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPDeflateOStream::OW_HTTPDeflateOStream(ostream& ostr)
-	: OW_HTTPDeflateOStreamBase(ostr)
+HTTPDeflateOStream::HTTPDeflateOStream(ostream& ostr)
+	: HTTPDeflateOStreamBase(ostr)
 	, ostream(&m_strbuf)
 	, m_ostr(ostr)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
 #endif // #ifdef OW_HAVE_ZLIB_H
+
+} // end namespace OpenWBEM
+

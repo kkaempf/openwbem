@@ -27,60 +27,61 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-#ifndef OW_NETWORK_TYPES_H_
-#define OW_NETWORK_TYPES_H_
-
+#ifndef OW_NETWORK_TYPES_HPP_INCLUDE_GUARD_
+#define OW_NETWORK_TYPES_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
 
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
+ #include <unistd.h>
 #endif
+
 #include <signal.h>
+
 #ifdef OW_HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+ #include <sys/socket.h>
 #endif
+
 #ifdef OW_HAVE_NETINET_IN_H
-#include <netinet/in.h>
+ #include <netinet/in.h>
 #endif
+
 #ifdef OW_HAVE_SYS_UN_H
-#include <sys/un.h>
+ #include <sys/un.h>
 #endif
 }
 
 #undef shutdown // On OpenUnix, sys/socket.h defines shutdown to be
-				// _shutdown.  (which breaks OW_HTTPServer, etc.)
+				// _shutdown.  (which breaks HTTPServer, etc.)
+
+namespace OpenWBEM
+{
 
 // Platform specific socket address type
-typedef sockaddr		OW_SocketAddress_t;
-
+typedef sockaddr		SocketAddress_t;
 // Platform specific inet socket address type
-typedef sockaddr_in		OW_InetSocketAddress_t;
+typedef sockaddr_in		InetSocketAddress_t;
 
 #if !defined(OW_WIN32)
-// Platform specific unix socket address type
-typedef sockaddr_un		OW_UnixSocketAddress_t;
+	// Platform specific unix socket address type
+	typedef sockaddr_un		UnixSocketAddress_t;
 #endif
 
 // Platform specific socket address type
-typedef in_addr		OW_InetAddress_t;
-
+typedef in_addr		InetAddress_t;
 // Platform specific socket fd type
-typedef int 			OW_SocketHandle_t;
+typedef int 			SocketHandle_t;
 
-// Platform specific socket address family type
-//typedef sa_family_t		OW_SAFamily_t;
+} // end namespace OpenWBEM
 
 #ifndef OW_HAVE_SOCKLEN_T
-#ifdef OW_USE_GNU_PTH // pth.h typedefs socklen_t
-#include <pth.h>
-#else
-typedef unsigned socklen_t;
+ #ifdef OW_USE_GNU_PTH // pth.h typedefs socklen_t
+  #include <pth.h>
+ #else
+  typedef unsigned socklen_t;
+ #endif
 #endif
-#endif
-
 
 #endif

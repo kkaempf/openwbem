@@ -44,6 +44,8 @@
 #include "OW_CIMQualifierType.hpp"
 
 
+using namespace OpenWBEM;
+
 void OW_CIMPropertyTestCases::setUp()
 {
 }
@@ -54,25 +56,25 @@ void OW_CIMPropertyTestCases::tearDown()
 
 void OW_CIMPropertyTestCases::testEmbeddedClass()
 {
-	OW_CIMClass c1;
+	CIMClass c1;
 	c1.setName("test");
-	OW_CIMQualifierType cqt("Description");
-	cqt.setDataType(OW_CIMDataType::STRING);
-	c1.addQualifier(OW_CIMQualifier(cqt));
+	CIMQualifierType cqt("Description");
+	cqt.setDataType(CIMDataType::STRING);
+	c1.addQualifier(CIMQualifier(cqt));
 
-	OW_CIMProperty p1("testprop", OW_CIMValue(c1));
-	OW_CIMClass c2(OW_CIMNULL);
+	CIMProperty p1("testprop", CIMValue(c1));
+	CIMClass c2(CIMNULL);
 	p1.getValue().get(c2);
 	unitAssert( c1 == c2 );
 
-	OW_TempFileStream ostr;
-	OW_CIMtoXML(p1, ostr);
+	TempFileStream ostr;
+	CIMtoXML(p1, ostr);
 	ostr.rewind();
-	OW_CIMXMLParser parser(ostr);
+	CIMXMLParser parser(ostr);
 
 	unitAssert(parser);
 
-	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(parser);
+	CIMProperty p2 = XMLCIMFactory::createProperty(parser);
 
 	unitAssert(p1 == p2);
 
@@ -80,27 +82,27 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 
 void OW_CIMPropertyTestCases::testEmbeddedInstance()
 {
-	OW_CIMClass c1;
+	CIMClass c1;
 	c1.setName("test");
-	OW_CIMQualifierType cqt("Description");
-	cqt.setDataType(OW_CIMDataType::STRING);
-	c1.addQualifier(OW_CIMQualifier(cqt));
+	CIMQualifierType cqt("Description");
+	cqt.setDataType(CIMDataType::STRING);
+	c1.addQualifier(CIMQualifier(cqt));
 
-	OW_CIMInstance i1 = c1.newInstance();
+	CIMInstance i1 = c1.newInstance();
 
-	OW_CIMProperty p1("testprop", OW_CIMValue(i1));
-	OW_CIMInstance i2(OW_CIMNULL);
+	CIMProperty p1("testprop", CIMValue(i1));
+	CIMInstance i2(CIMNULL);
 	p1.getValue().get(i2);
 	unitAssert( i1 == i2 );
 
-	OW_TempFileStream ostr;
-	OW_CIMtoXML(p1, ostr);
+	TempFileStream ostr;
+	CIMtoXML(p1, ostr);
 	ostr.rewind();
-	OW_CIMXMLParser parser(ostr);
+	CIMXMLParser parser(ostr);
 
 	unitAssert(parser);
 
-	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(parser);
+	CIMProperty p2 = XMLCIMFactory::createProperty(parser);
 
 	unitAssert(p1 == p2);
 

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
 #include "OW_ThreadImpl.hpp"
@@ -35,49 +34,45 @@
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"
 #include "OW_MutexImpl.hpp"
-
 #include <cstring>
 
-
-
-OW_Mutex::OW_Mutex()
+namespace OpenWBEM
 {
-	if(OW_MutexImpl::createMutex(m_mutex) != 0)
+
+Mutex::Mutex()
+{
+	if(MutexImpl::createMutex(m_mutex) != 0)
 	{
-		OW_THROW(OW_Assertion, "OW_MutexImpl::createMutex failed");
+		OW_THROW(Assertion, "MutexImpl::createMutex failed");
 	}
 }
-
-OW_Mutex::~OW_Mutex()
+Mutex::~Mutex()
 {
-	if(OW_MutexImpl::destroyMutex(m_mutex) == -1)
+	if(MutexImpl::destroyMutex(m_mutex) == -1)
 	{
-		OW_MutexImpl::releaseMutex(m_mutex);
-		OW_MutexImpl::destroyMutex(m_mutex);
+		MutexImpl::releaseMutex(m_mutex);
+		MutexImpl::destroyMutex(m_mutex);
 	}
 }
-
-
 void 
-OW_Mutex::acquire()
+Mutex::acquire()
 {
-	int rv = OW_MutexImpl::acquireMutex(m_mutex);
+	int rv = MutexImpl::acquireMutex(m_mutex);
 	if (rv != 0)
 	{
-		OW_THROW(OW_Assertion,
-			"OW_MutexImpl::acquireMutex returned with error");
+		OW_THROW(Assertion,
+			"MutexImpl::acquireMutex returned with error");
 	}
 }
-
-
 bool
-OW_Mutex::release()
+Mutex::release()
 {
-	if (OW_MutexImpl::releaseMutex(m_mutex) != 0)
+	if (MutexImpl::releaseMutex(m_mutex) != 0)
 	{
-		OW_THROW(OW_Assertion, "OW_MutexImpl::releaseMutex returned with error");
+		OW_THROW(Assertion, "MutexImpl::releaseMutex returned with error");
 	}
 	return true;
 }
 
+} // end namespace OpenWBEM
 

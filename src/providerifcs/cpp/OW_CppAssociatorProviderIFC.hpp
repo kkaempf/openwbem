@@ -27,14 +27,15 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPP_ASSOCIATORPROVIDERIFC_HPP_
 #define OW_CPP_ASSOCIATORPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * This interface is implemented by providers of dynamic association
@@ -43,10 +44,10 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
+class CppAssociatorProviderIFC: public virtual CppInstanceProviderIFC
 {
 	public:
-		virtual ~OW_CppAssociatorProviderIFC();
+		virtual ~CppAssociatorProviderIFC();
 		
 		/**
 		 * A provider should override this method to report which classes in
@@ -62,10 +63,9 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 		 * provider location method is removed, this member function will be pure
 		 * virtual.
 		 */
-		virtual void getAssociatorProviderInfo(OW_AssociatorProviderInfo&)
+		virtual void getAssociatorProviderInfo(AssociatorProviderInfo&)
 		{
 		}
-
 		/**
 		 * This method is invoked in order to do the Associators operation as
 		 * defined by the CIM operations over HTTP spec at
@@ -142,7 +142,7 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 		 * @returns If successful, the method returns zero or more CIM Instances
 		 * 	meeting the requested criteria.
 		 *
-		 * @throws OW_CIMException. - The following IDs can be expected.
+		 * @throws CIMException. - The following IDs can be expected.
 		 * 	CIM_ERR_ACCESS_DENIED
 		 * 	CIM_ERR_NOT_SUPPORTED
 		 * 	CIM_ERR_INVALID_NAMESPACE
@@ -151,18 +151,17 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 		 * 	CIM_ERR_FAILED (some other unspecifed error occurred)
 		 */
 		virtual void associators(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMInstanceResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& assocClass,
-				const OW_String& resultClass,
-				const OW_String& role,
-				const OW_String& resultRole,
-				OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-				OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-				const OW_StringArray* propertyList) = 0;
-
+				const ProviderEnvironmentIFCRef& env,
+				CIMInstanceResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& assocClass,
+				const String& resultClass,
+				const String& role,
+				const String& resultRole,
+				WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+				WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+				const StringArray* propertyList) = 0;
 		/**
 		 * For the definition of this operation, refer to
 		 * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecAssociatorNames
@@ -177,18 +176,17 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 		 * @param resultRole see associator parameter resultRole
 		 * @returns If successful, the method returns zero or more full CIM
 		 * 	Instance of Objects meeting the requested criteria.
-		 * @throws OW_CIMException - as defined in the associator method
+		 * @throws CIMException - as defined in the associator method
 		 */
 		virtual void associatorNames(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPathResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& assocClass,
-				const OW_String& resultClass,
-				const OW_String& role,
-				const OW_String& resultRole ) = 0;
-
+				const ProviderEnvironmentIFCRef& env,
+				CIMObjectPathResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& assocClass,
+				const String& resultClass,
+				const String& role,
+				const String& resultRole ) = 0;
 		/**
 		 * For definition of this operation, refer to
 		 * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecReferencesMethod
@@ -217,19 +215,18 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 		 * @returns If successful, the method returns zero or more CIM Instances
 		 * 	meeting the requested criteria.
 		 *
-		 * @throws OW_CIMException - as defined for the associators method.
+		 * @throws CIMException - as defined for the associators method.
 		 */
 		virtual void references(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMInstanceResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& resultClass,
-				const OW_String& role,
-				OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-				OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-				const OW_StringArray* propertyList) = 0;
-
+				const ProviderEnvironmentIFCRef& env,
+				CIMInstanceResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& resultClass,
+				const String& role,
+				WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+				WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+				const StringArray* propertyList) = 0;
 		/**
 		 * For definition of this operation, refer to
 		 *  ttp://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecReferenceNames
@@ -242,20 +239,19 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppInstanceProviderIFC
 		 *
 		 * @returns If successful, the method returns the names of zero or more
 		 * full CIM Instance paths of Objects meeting the requested criteria.
-		 * @throws OW_CIMException - as defined for associators method.
+		 * @throws CIMException - as defined for associators method.
 		 */
 		virtual void referenceNames(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPathResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& resultClass,
-				const OW_String& role ) = 0;
-
-		virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return this; }
+				const ProviderEnvironmentIFCRef& env,
+				CIMObjectPathResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& resultClass,
+				const String& role ) = 0;
+		virtual CppAssociatorProviderIFC* getAssociatorProvider() { return this; }
 };
+typedef SharedLibraryReference< CppAssociatorProviderIFC > CppAssociatorProviderIFCRef;
 
-typedef OW_SharedLibraryReference< OW_CppAssociatorProviderIFC > OW_CppAssociatorProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,41 +27,43 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_dlSharedLibraryLoader.hpp"
 #include "OW_dlSharedLibrary.hpp"
 #include "OW_Format.hpp"
 #include <dlfcn.h>
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_SharedLibraryRef 
-OW_dlSharedLibraryLoader::loadSharedLibrary(const OW_String& filename,
-	OW_LoggerRef logger) const
+SharedLibraryRef 
+dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
+	LoggerRef logger) const
 {
 	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
 	if (libhandle)
 	{
-		return OW_SharedLibraryRef( new OW_dlSharedLibrary(libhandle,
+		return SharedLibraryRef( new dlSharedLibrary(libhandle,
 			filename));
 	}
 	else
 	{
-		logger->logError(format("OW_dlSharedLibraryLoader::loadSharedLibrary "
+		logger->logError(format("dlSharedLibraryLoader::loadSharedLibrary "
 			"dlopen returned NULL.  Error is: %1", dlerror()));
-		return OW_SharedLibraryRef( 0 );
+		return SharedLibraryRef( 0 );
 	}
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_SharedLibraryLoaderRef 
-OW_SharedLibraryLoader::createSharedLibraryLoader()
+SharedLibraryLoaderRef 
+SharedLibraryLoader::createSharedLibraryLoader()
 {
-	return OW_SharedLibraryLoaderRef(new OW_dlSharedLibraryLoader);
+	return SharedLibraryLoaderRef(new dlSharedLibraryLoader);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_dlSharedLibraryLoader::~OW_dlSharedLibraryLoader()
+dlSharedLibraryLoader::~dlSharedLibraryLoader()
 {
 }
+
+} // end namespace OpenWBEM
 

@@ -27,24 +27,28 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef LINE_INFO_HPP_
 #define LINE_INFO_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
+
+namespace OpenWBEM
+{
+
+namespace MOF
+{
 
 struct lineInfo
 {
 	lineInfo()
 		: filename(), lineNum(1) {}
-	lineInfo( const OW_String& _filename, const long _linenum )
+	lineInfo( const String& _filename, const long _linenum )
 		: filename(_filename), lineNum(_linenum) {}
-
-	OW_String filename;
+	String filename;
 	long lineNum;
 };
 
+} // end namespace MOF
+} // end namespace OpenWBEM
 
 #endif
-

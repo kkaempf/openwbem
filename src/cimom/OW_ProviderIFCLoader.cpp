@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_SharedLibraryException.hpp"
 #include "OW_ProviderIFCLoader.hpp"
@@ -37,67 +36,60 @@
 #include "OW_FileSystem.hpp"
 #include "OW_SafeLibCreate.hpp"
 
+namespace OpenWBEM
+{
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCBaseIFCRef
-OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
-	const OW_String& libname) const
+ProviderIFCBaseIFCRef
+ProviderIFCLoaderBase::createProviderIFCFromLib(
+	const String& libname) const
 {
 	m_env->getLogger()->logDebug(format(
-		"OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
+		"ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
-
-	OW_SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
+	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
 		m_env->getLogger());
-
-	OW_ProviderIFCBaseIFC* ptr = 0;
+	ProviderIFCBaseIFC* ptr = 0;
 	if ( !sl.isNull() )
 	{
-		ptr = OW_SafeLibCreate<OW_ProviderIFCBaseIFC>::create(sl,
+		ptr = SafeLibCreate<ProviderIFCBaseIFC>::create(sl,
                 "createProviderIFC", m_env->getLogger());
 	}
 	else
 	{
-		m_env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::"
+		m_env->getLogger()->logDebug(format("ProviderIFCBaseIFCLoaderBase::"
 			"createProviderIFCFromLib FAILED loading library %1", libname));
 	}
-
-	OW_ProviderIFCBaseIFCRef retval(sl, ptr);
+	ProviderIFCBaseIFCRef retval(sl, ptr);
 	return retval;
 }
-
 void
-OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const
+ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 {
-	OW_ServiceEnvironmentIFCRef env = getEnvironment();
-	OW_String libdir = env->getConfigItem(
-		OW_ConfigOpts::PROVIDER_IFC_LIBS_opt);
-
-	env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
+	ServiceEnvironmentIFCRef env = getEnvironment();
+	String libdir = env->getConfigItem(
+		ConfigOpts::PROVIDER_IFC_LIBS_opt);
+	env->getLogger()->logDebug(format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
 		" interfaces from: %1", libdir));
-
-	OW_StringArray libs;
-	OW_FileSystem::getDirectoryContents(libdir, libs);
-
+	StringArray libs;
+	FileSystem::getDirectoryContents(libdir, libs);
 	if(libs.size() == 0)
 	{
-		env->getLogger()->logDebug("OW_ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
+		env->getLogger()->logDebug("ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
 			" provider interfacess");
 		return;
 	}
-
 	int ifcCount = 0;
-	for (OW_StringArray::size_type i = 0; i < libs.size(); ++i)
+	for (StringArray::size_type i = 0; i < libs.size(); ++i)
 	{
 		if(!libs[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
-
 		try
 		{
-			OW_ProviderIFCBaseIFCRef rval;
-			OW_ProviderIFCBaseIFCRef pmr;
+			ProviderIFCBaseIFCRef rval;
+			ProviderIFCBaseIFCRef pmr;
 			rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
 			if(rval)
 			{
@@ -110,33 +102,30 @@ OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const
 					libs[i]));
 			}
 		}
-		catch (const OW_Exception& e)
+		catch (const Exception& e)
 		{
 			env->getLogger()->logError(format("Caught exception: \"%1\" while loading library: %2", e, libs[i])); 
 		}
 	}
-
 	env->getLogger()->logDebug(format("Number of provider interfaces loaded: %1",
 		ifcCount));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_ProviderIFCLoaderRef
-OW_ProviderIFCLoader::createProviderIFCLoader(OW_ServiceEnvironmentIFCRef env)
+ProviderIFCLoaderRef
+ProviderIFCLoader::createProviderIFCLoader(ServiceEnvironmentIFCRef env)
 {
-	return OW_ProviderIFCLoaderRef(new OW_ProviderIFCLoader(
-		OW_SharedLibraryLoader::createSharedLibraryLoader(), env));
+	return ProviderIFCLoaderRef(new ProviderIFCLoader(
+		SharedLibraryLoader::createSharedLibraryLoader(), env));
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCLoaderBase::~OW_ProviderIFCLoaderBase() 
+ProviderIFCLoaderBase::~ProviderIFCLoaderBase() 
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+ProviderIFCLoader::~ProviderIFCLoader()
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCLoader::~OW_ProviderIFCLoader()
-{
-}
+} // end namespace OpenWBEM
 

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_UUID.hpp"
 #include "OW_NonRecursiveMutex.hpp"
@@ -35,43 +34,36 @@
 #include "OW_Types.hpp"
 #include "OW_Format.hpp"
 #include "OW_RandomNumber.hpp"
-
 #include <sys/time.h> // for gettimeofday
 #include <string.h> // for memcmp
 #include <stdlib.h> // for rand
 #include <ctype.h> // for isxdigit
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(UUID);
-
 namespace {
-
 // typedefs
-typedef OW_UInt64 uuid_time_t;
+typedef UInt64 uuid_time_t;
 struct uuid_node_t 
 {
 	unsigned char nodeId[6];
 };
-
 struct uuid_state
 {
 	uuid_time_t timestamp;
 	uuid_node_t nodeId;
-	OW_UInt16 clockSequence;
+	UInt16 clockSequence;
 };
-
-
-
 // static generator state
 uuid_state g_state;
-OW_NonRecursiveMutex g_guard;
-
+NonRecursiveMutex g_guard;
 /////////////////////////////////////////////////////////////////////////////
 void getSystemTime(uuid_time_t *uuid_time)
 {
 	struct timeval tp;
-
 	gettimeofday(&tp, 0);
-
 	// Offset between UUID formatted times and Unix formatted times.
 	// UUID UTC base time is October 15, 1582.
 	// Unix base time is January 1, 1970.
@@ -81,26 +73,21 @@ void getSystemTime(uuid_time_t *uuid_time)
 		(((unsigned long long) 0x01B21DD2) << 32) + 
 		0x13814000;
 }
-
 /////////////////////////////////////////////////////////////////////////////
-// these globals are protected by the mutex locked in OW_UUID::OW_UUID()
+// these globals are protected by the mutex locked in UUID::UUID()
 uuid_time_t timeLast;
-OW_UInt16 uuidsThisTick;
+UInt16 uuidsThisTick;
 bool currentTimeInited = false;
-
 void getCurrentTime(uuid_time_t * timestamp) 
 {
 	uuid_time_t timeNow;
-
 	if (!currentTimeInited) 
 	{
 		getSystemTime(&timeLast);
 		uuidsThisTick = 0;
 		currentTimeInited = true;
 	}
-
 	getSystemTime(&timeNow);
-
 	if (timeLast != timeNow) 
 	{
 		uuidsThisTick = 0;
@@ -110,15 +97,13 @@ void getCurrentTime(uuid_time_t * timestamp)
 	{
 		uuidsThisTick++;
 	}
-
 	// add the count of uuids to low order bits of the clock reading
 	*timestamp = timeNow + uuidsThisTick;
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void getRandomBytes(void* buf, size_t len)
 {
-	OW_RandomNumber rn;
+	RandomNumber rn;
 	unsigned char* cp = reinterpret_cast<unsigned char*>(buf);
 	for (size_t i = 0; i < len; ++cp, ++i)
 	{
@@ -126,12 +111,10 @@ void getRandomBytes(void* buf, size_t len)
 		*cp = rn.getNextNumber() >> 13;
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-// these globals are protected by the mutex locked in OW_UUID::OW_UUID()
+// these globals are protected by the mutex locked in UUID::UUID()
 unsigned char nodeId[6];
 bool nodeIdInitDone = false;
-
 void getNodeIdentifier(uuid_node_t *node) 
 {
 	// If we ever get a portable (or ported) method of acquiring the MAC
@@ -144,10 +127,8 @@ void getNodeIdentifier(uuid_node_t *node)
 		nodeId[0] |= 0x80;
 		nodeIdInitDone = true;
 	}
-
 	memcpy(node->nodeId, nodeId, sizeof(node->nodeId));
 }
-
 /////////////////////////////////////////////////////////////////////////////
 inline unsigned char decodeHex(char c)
 {
@@ -161,117 +142,93 @@ inline unsigned char decodeHex(char c)
 		return c - 'A' + 0xA;
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-inline unsigned char fromHexStr(char c1, char c2, const OW_String& uuidStr)
+inline unsigned char fromHexStr(char c1, char c2, const String& uuidStr)
 {
 	if (!isxdigit(c1) || !isxdigit(c2))
 	{
-		OW_THROW(OW_UUIDException, format("Invalid UUID: %1", uuidStr).c_str());
+		OW_THROW(UUIDException, format("Invalid UUID: %1", uuidStr).c_str());
 	}
-
 	return (decodeHex(c1) << 4) | decodeHex(c2);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 inline char toHexHi(unsigned char c)
 {
 	unsigned char t = c >> 4;
 	return t >= 10 ? t - 10 + 'a' : t + '0';
 }
-
 /////////////////////////////////////////////////////////////////////////////
 inline char toHexLow(unsigned char c)
 {
 	unsigned char t = c & 0xF;
 	return t >= 10 ? t - 10 + 'a' : t + '0';
 }
-
 } // end anonymous namespace 
-
 /////////////////////////////////////////////////////////////////////////////
-OW_UUID::OW_UUID()
+UUID::UUID()
 {
-	OW_NonRecursiveMutexLock l(g_guard);
-
+	NonRecursiveMutexLock l(g_guard);
 	uuid_time_t timestamp;
 	getCurrentTime(&timestamp);
-
 	uuid_node_t node;
 	getNodeIdentifier(&node);
-
 	uuid_time_t last_time = g_state.timestamp;
-	OW_UInt16 clockseq = g_state.clockSequence;
+	UInt16 clockseq = g_state.clockSequence;
 	uuid_node_t last_node = g_state.nodeId;
-
 	// If clock went backwards (can happen if system clock resolution is low), change clockseq
 	if (timestamp < last_time)
 		++clockseq;
-
 	// save the state for next time
 	g_state.timestamp = last_time;
 	g_state.clockSequence = clockseq;
 	g_state.nodeId = last_node;
-
 	l.release();
-
 	// stuff fields into the UUID
 	// do time_low 
-        OW_UInt32 tmp = static_cast<OW_UInt32>(timestamp & 0xFFFFFFFF);
-        m_uuid[3] = static_cast<OW_UInt8>(tmp);
+        UInt32 tmp = static_cast<UInt32>(timestamp & 0xFFFFFFFF);
+        m_uuid[3] = static_cast<UInt8>(tmp);
         tmp >>= 8;
-        m_uuid[2] = static_cast<OW_UInt8>(tmp);
+        m_uuid[2] = static_cast<UInt8>(tmp);
         tmp >>= 8;
-        m_uuid[1] = static_cast<OW_UInt8>(tmp);
+        m_uuid[1] = static_cast<UInt8>(tmp);
         tmp >>= 8;
-        m_uuid[0] = static_cast<OW_UInt8>(tmp);
-
+        m_uuid[0] = static_cast<UInt8>(tmp);
 	// do time_mid
-        tmp = static_cast<OW_UInt16>((timestamp >> 32) & 0xFFFF);
-        m_uuid[5] = static_cast<OW_UInt8>(tmp);
+        tmp = static_cast<UInt16>((timestamp >> 32) & 0xFFFF);
+        m_uuid[5] = static_cast<UInt8>(tmp);
         tmp >>= 8;
-        m_uuid[4] = static_cast<OW_UInt8>(tmp);
-
+        m_uuid[4] = static_cast<UInt8>(tmp);
 	// do time_hi_and_version
-        tmp = static_cast<OW_UInt16>(((timestamp >> 48) & 0x0FFF) | (1 << 12));
-        m_uuid[7] = static_cast<OW_UInt8>(tmp);
+        tmp = static_cast<UInt16>(((timestamp >> 48) & 0x0FFF) | (1 << 12));
+        m_uuid[7] = static_cast<UInt8>(tmp);
         tmp >>= 8;
-        m_uuid[6] = static_cast<OW_UInt8>(tmp);
-
+        m_uuid[6] = static_cast<UInt8>(tmp);
 	// do clk_seq_low
         tmp = clockseq & 0xFF;
-        m_uuid[9] = static_cast<OW_UInt8>(tmp);
-
+        m_uuid[9] = static_cast<UInt8>(tmp);
 	// do clk_seq_hi_res
         tmp = (clockseq & 0x3F00) >> 8 | 0x80;
-        m_uuid[8] = static_cast<OW_UInt8>(tmp);
-
+        m_uuid[8] = static_cast<UInt8>(tmp);
         memcpy(m_uuid+10, &node, 6);
-
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_UUID::OW_UUID(const OW_String& uuidStr)
+UUID::UUID(const String& uuidStr)
 {
 	const char* s = uuidStr.c_str();
 	if (uuidStr.length() != 36 || s[8] != '-' || s[13] != '-' || s[18] != '-' || s[23] != '-')
 	{
-		OW_THROW(OW_UUIDException, format("Invalid UUID: %1", uuidStr).c_str());
+		OW_THROW(UUIDException, format("Invalid UUID: %1", uuidStr).c_str());
 	}
 	m_uuid[0] = fromHexStr(s[0], s[1], uuidStr);
 	m_uuid[1] = fromHexStr(s[2], s[3], uuidStr);
 	m_uuid[2] = fromHexStr(s[4], s[5], uuidStr);
 	m_uuid[3] = fromHexStr(s[6], s[7], uuidStr);
-
 	m_uuid[4] = fromHexStr(s[9], s[10], uuidStr);
 	m_uuid[5] = fromHexStr(s[11], s[12], uuidStr);
-
 	m_uuid[6] = fromHexStr(s[14], s[15], uuidStr);
 	m_uuid[7] = fromHexStr(s[16], s[17], uuidStr);
-
 	m_uuid[8] = fromHexStr(s[19], s[20], uuidStr);
 	m_uuid[9] = fromHexStr(s[21], s[22], uuidStr);
-
 	m_uuid[10] = fromHexStr(s[24], s[25], uuidStr);
 	m_uuid[11] = fromHexStr(s[26], s[27], uuidStr);
 	m_uuid[12] = fromHexStr(s[28], s[29], uuidStr);
@@ -279,67 +236,51 @@ OW_UUID::OW_UUID(const OW_String& uuidStr)
 	m_uuid[14] = fromHexStr(s[32], s[33], uuidStr);
 	m_uuid[15] = fromHexStr(s[34], s[35], uuidStr);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_String 
-OW_UUID::toString() const
+String 
+UUID::toString() const
 {
 	// This will return a string like this: 
 	// 6ba7b810-9dad-11d1-80b4-00c04fd430c8
 	char buf[37];
-
 	buf[0] = toHexHi(m_uuid[0]); buf[1] = toHexLow(m_uuid[0]);
 	buf[2] = toHexHi(m_uuid[1]); buf[3] = toHexLow(m_uuid[1]);
 	buf[4] = toHexHi(m_uuid[2]); buf[5] = toHexLow(m_uuid[2]);
 	buf[6] = toHexHi(m_uuid[3]); buf[7] = toHexLow(m_uuid[3]);
-
 	buf[8] = '-';
-
 	buf[9] = toHexHi(m_uuid[4]); buf[10] = toHexLow(m_uuid[4]);
 	buf[11] = toHexHi(m_uuid[5]); buf[12] = toHexLow(m_uuid[5]);
-
 	buf[13] = '-';
-
 	buf[14] = toHexHi(m_uuid[6]); buf[15] = toHexLow(m_uuid[6]);
 	buf[16] = toHexHi(m_uuid[7]); buf[17] = toHexLow(m_uuid[7]);
-
 	buf[18] = '-';
-
 	buf[19] = toHexHi(m_uuid[8]); buf[20] = toHexLow(m_uuid[8]);
 	buf[21] = toHexHi(m_uuid[9]); buf[22] = toHexLow(m_uuid[9]);
-
 	buf[23] = '-';
-
 	buf[24] = toHexHi(m_uuid[10]); buf[25] = toHexLow(m_uuid[10]);
 	buf[26] = toHexHi(m_uuid[11]); buf[27] = toHexLow(m_uuid[11]);
 	buf[28] = toHexHi(m_uuid[12]); buf[29] = toHexLow(m_uuid[12]);
 	buf[30] = toHexHi(m_uuid[13]); buf[31] = toHexLow(m_uuid[13]);
 	buf[32] = toHexHi(m_uuid[14]); buf[33] = toHexLow(m_uuid[14]);
 	buf[34] = toHexHi(m_uuid[15]); buf[35] = toHexLow(m_uuid[15]);
-
 	buf[36] = '\0';
-
-	return OW_String(buf);
+	return String(buf);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-bool operator==(const OW_UUID& x, const OW_UUID& y)
+bool operator==(const UUID& x, const UUID& y)
 {
 	return memcmp(x.m_uuid, y.m_uuid, sizeof(x.m_uuid)) == 0;
 }
-
 /////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_UUID& x, const OW_UUID& y)
+bool operator<(const UUID& x, const UUID& y)
 {
 	return memcmp(x.m_uuid, y.m_uuid, sizeof(x.m_uuid)) < 0;
 }
-
 /////////////////////////////////////////////////////////////////////////////
-bool operator!=(const OW_UUID& x, const OW_UUID& y)
+bool operator!=(const UUID& x, const UUID& y)
 {
 	return !(x == y);
 }
 
-
-
+} // end namespace OpenWBEM
 

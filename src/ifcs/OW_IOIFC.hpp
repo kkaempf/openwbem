@@ -29,18 +29,18 @@
 *******************************************************************************/
 #ifndef OW_IOIFC_HPP_INCLUDE_GUARD_
 #define OW_IOIFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 
-class OW_IOIFC
+namespace OpenWBEM
+{
+
+class IOIFC
 {
 public:
-
-	virtual ~OW_IOIFC();
-
+	virtual ~IOIFC();
 	/**
 	 * Read a specified number of bytes from the device that is exposing the
-	 * OW_IOIFC interface.
+	 * IOIFC interface.
 	 *
 	 * @param dataIn A pointer to a location in memory to put the bytes that
 	 *		have been read.
@@ -55,7 +55,7 @@ public:
 			
 	/**
 	 * Write a specified number of bytes to the device that is exposing the
-	 * OW_IOIFC interface.
+	 * IOIFC interface.
 	 *
 	 * @param dataOut A pointer to a location in memory that contains the bytes
 	 *		that will be written to the device.
@@ -69,6 +69,6 @@ public:
 			bool errorAsException=false) = 0;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_INDICATION_SERVER_IMPL_HPP_
 #define OW_INDICATION_SERVER_IMPL_HPP_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_CIMFwd.hpp"
@@ -49,109 +48,87 @@
 #include "OW_LifecycleIndicationPoller.hpp"
 #include "OW_ThreadPool.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_NotifyTrans;
-
+class NotifyTrans;
 //////////////////////////////////////////////////////////////////////////////
-class OW_IndicationServerImpl : public OW_IndicationServer
+class IndicationServerImpl : public IndicationServer
 {
 public:
-	OW_IndicationServerImpl();
-	~OW_IndicationServerImpl();
-
-	virtual void init(OW_CIMOMEnvironmentRef env);
-
-	virtual void setStartedSemaphore(OW_Semaphore* sem);
-
-	virtual OW_Int32 run();
+	IndicationServerImpl();
+	~IndicationServerImpl();
+	virtual void init(CIMOMEnvironmentRef env);
+	virtual void setStartedSemaphore(Semaphore* sem);
+	virtual Int32 run();
 	void shutdown();
-
-	void processIndication(const OW_CIMInstance& instance,
-		const OW_String& instNS);
-
-	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
-
-	bool getNewTrans(OW_NotifyTrans& outTrans);
-
+	void processIndication(const CIMInstance& instance,
+		const String& instNS);
+	CIMOMEnvironmentRef getEnvironment() const { return m_env; }
+	bool getNewTrans(NotifyTrans& outTrans);
 	// these are called by the CIM_IndicationSubscription pass-thru provider.
-	virtual void deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath);
-	virtual void createSubscription(const OW_String& ns, const OW_CIMInstance& subInst, const OW_String& username);
-	virtual void modifySubscription(const OW_String& ns, const OW_CIMInstance& subInst);
-	virtual void modifyFilter(const OW_String& ns, const OW_CIMInstance& filterInst);
+	virtual void deleteSubscription(const String& ns, const CIMObjectPath& subPath);
+	virtual void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
+	virtual void modifySubscription(const String& ns, const CIMInstance& subInst);
+	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst);
 private:
-
 	struct Subscription
 	{
 		Subscription()
-			: m_subPath(OW_CIMNULL)
-			, m_sub(OW_CIMNULL)
-			, m_filter(OW_CIMNULL)
+			: m_subPath(CIMNULL)
+			, m_sub(CIMNULL)
+			, m_filter(CIMNULL)
 		{}
-
-		OW_CIMObjectPath m_subPath;
-		OW_CIMInstance m_sub;
-		OW_IndicationProviderIFCRefArray m_providers;
-		OW_CIMInstance m_filter;
-		OW_WQLSelectStatement m_selectStmt;
-		OW_WQLCompile m_compiledStmt;
-		OW_StringArray m_classes;
-		OW_String m_filterSourceNameSpace;
-		OW_Array<bool> m_isPolled; // each bool corresponds to a provider
+		CIMObjectPath m_subPath;
+		CIMInstance m_sub;
+		IndicationProviderIFCRefArray m_providers;
+		CIMInstance m_filter;
+		WQLSelectStatement m_selectStmt;
+		WQLCompile m_compiledStmt;
+		StringArray m_classes;
+		String m_filterSourceNameSpace;
+		Array<bool> m_isPolled; // each bool corresponds to a provider
 	};
-
 	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
-	typedef OW_HashMultiMap<OW_String, Subscription> subscriptions_t;
-
-
-	void _processIndication(const OW_CIMInstance& instance,
-		const OW_String& instNS);
-
+	typedef HashMultiMap<String, Subscription> subscriptions_t;
+	void _processIndication(const CIMInstance& instance,
+		const String& instNS);
 	void _processIndicationRange(
-		const OW_CIMInstance& instanceArg, const OW_String instNS,
+		const CIMInstance& instanceArg, const String instNS,
 		std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last);
-
-	void addTrans(const OW_String& ns, const OW_CIMInstance& indication,
-		const OW_CIMInstance& handler,
-		const OW_CIMInstance& subscription,
-		OW_IndicationExportProviderIFCRef provider);
-
-	OW_IndicationExportProviderIFCRef getProvider(const OW_String& className);
-
+	void addTrans(const String& ns, const CIMInstance& indication,
+		const CIMInstance& handler,
+		const CIMInstance& subscription,
+		IndicationExportProviderIFCRef provider);
+	IndicationExportProviderIFCRef getProvider(const String& className);
 	struct ProcIndicationTrans
 	{
-		ProcIndicationTrans(const OW_CIMInstance& inst,
-			const OW_String& ns)
+		ProcIndicationTrans(const CIMInstance& inst,
+			const String& ns)
 			: instance(inst)
 			, nameSpace(ns) {}
-
-		OW_CIMInstance instance;
-		OW_String nameSpace;
+		CIMInstance instance;
+		String nameSpace;
 	};
-
-	typedef OW_HashMap<OW_String, OW_IndicationExportProviderIFCRef> provider_map_t;
+	typedef HashMap<String, IndicationExportProviderIFCRef> provider_map_t;
 	provider_map_t m_providers;
 	
 	// m_procTrans is where new indications to be delivered are put.
 	// Both m_procTrans and m_shuttingDown are protected by the same condition
-	OW_List<ProcIndicationTrans> m_procTrans;
+	List<ProcIndicationTrans> m_procTrans;
 	bool m_shuttingDown;
-	OW_NonRecursiveMutex m_mainLoopGuard;
-	OW_Condition m_mainLoopCondition;
-
-	OW_CIMOMEnvironmentRef m_env;
-	OW_Semaphore* m_startedSem;
-
+	NonRecursiveMutex m_mainLoopGuard;
+	Condition m_mainLoopCondition;
+	CIMOMEnvironmentRef m_env;
+	Semaphore* m_startedSem;
 	subscriptions_t m_subscriptions;
-	OW_Mutex m_subGuard;
-
-	typedef OW_SharedLibraryReference<OW_LifecycleIndicationPoller> OW_LifecycleIndicationPollerRef;
-
-	typedef OW_HashMap<OW_String, OW_LifecycleIndicationPollerRef > poller_map_t;
+	Mutex m_subGuard;
+	typedef SharedLibraryReference<LifecycleIndicationPoller> LifecycleIndicationPollerRef;
+	typedef HashMap<String, LifecycleIndicationPollerRef > poller_map_t;
 	poller_map_t m_pollers;
-
-	OW_ThreadPoolRef m_notifierThreadPool;
+	ThreadPoolRef m_notifierThreadPool;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

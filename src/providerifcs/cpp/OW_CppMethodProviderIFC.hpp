@@ -27,14 +27,15 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPP_METHODPROVIDERIFC_HPP_
 #define OW_CPP_METHODPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_MethodProviderInfo.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * This is the interface implemented by method providers.  These providers are
@@ -42,11 +43,10 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_CppMethodProviderIFC: public virtual OW_CppProviderBaseIFC
+class CppMethodProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppMethodProviderIFC();
-
+	virtual ~CppMethodProviderIFC();
 	/**
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.
@@ -61,7 +61,7 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getMethodProviderInfo(OW_MethodProviderInfo&)
+	virtual void getMethodProviderInfo(MethodProviderInfo&)
 	{
 	}
 	
@@ -72,28 +72,28 @@ public:
 	 * @param cop Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
-	 * @param inParams An array of OW_CIMValues which are the input parameters
+	 * @param inParams An array of CIMValues which are the input parameters
 	 * 	for this method.
-	 * @param outParams An array of OW_CIMValues which are the output
+	 * @param outParams An array of CIMValues which are the output
 	 * 	parameters for this method.
 	 *
-	 * @returns OW_CIMValue - The return value of the method.  Must be a
-	 *    valid OW_CIMValue.
+	 * @returns CIMValue - The return value of the method.  Must be a
+	 *    valid CIMValue.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& path,
-			const OW_String& methodName,
-			const OW_CIMParamValueArray& in,
-			OW_CIMParamValueArray& out ) = 0;
-
-	virtual OW_CppMethodProviderIFC* getMethodProvider() { return this; }
+	virtual CIMValue invokeMethod(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& path,
+			const String& methodName,
+			const CIMParamValueArray& in,
+			CIMParamValueArray& out ) = 0;
+	virtual CppMethodProviderIFC* getMethodProvider() { return this; }
 };
+typedef SharedLibraryReference< CppMethodProviderIFC > CppMethodProviderIFCRef;
 
-typedef OW_SharedLibraryReference< OW_CppMethodProviderIFC > OW_CppMethodProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
 								

@@ -34,37 +34,31 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_SocketAddress.hpp"
-
-
 #ifdef OW_GNU_LINUX
 #define OW_STRPLATFORM "Linux"
 #endif
-
 #ifdef OW_OPENUNIX
 #define OW_STRPLATFORM "OpenUnix"
 #endif
-
 #ifdef OW_SOLARIS
 #define OW_STRPLATFORM "Solaris"
 #endif
-
 #ifdef OW_OPENSERVER
 #define OW_STRPLATFORM "OpenServer"
 #endif
-
 #ifndef OW_STRPLATFORM
 #error "OW_STRPLATFORM is undefined"
 #endif
-
-
 extern "C"
 {
 #include <slp.h>
 }
 
-static const OW_Int32 POLLING_INTERVAL = 60 * 5;
-static const OW_Int32 INITIAL_POLLING_INTERVAL = 5;
+namespace OpenWBEM
+{
 
+static const Int32 POLLING_INTERVAL = 60 * 5;
+static const Int32 INITIAL_POLLING_INTERVAL = 5;
 extern "C"
 {
 static
@@ -74,64 +68,59 @@ slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 	(void)hdl;
 	if(errArg < SLP_OK)
 	{
-		OW_LoggerRef* pLogger = (OW_LoggerRef*)cookie;
+		LoggerRef* pLogger = (LoggerRef*)cookie;
 		(*pLogger)->logError(format("cimom received error durring SLP registration: %1",
 			(int)errArg));
 	}
 }
 }
-
-class OW_SLPProvider : public OW_CppPolledProviderIFC
+class SLPProvider : public CppPolledProviderIFC
 {
 public:
-
 	/**
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef &env)
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef &env)
 	{
-		if (env->getConfigItem(OW_ConfigOpts::HTTP_SLP_DISABLED_opt).equalsIgnoreCase("true"))
+		if (env->getConfigItem(ConfigOpts::HTTP_SLP_DISABLED_opt).equalsIgnoreCase("true"))
 		{
 			return 0;
 		}
-		OW_Int32 rval = INITIAL_POLLING_INTERVAL;
+		Int32 rval = INITIAL_POLLING_INTERVAL;
 		env->getLogger()->logDebug(format(
-			"OW_SLPProvider::getInitialPollingInterval returning %1",
+			"SLPProvider::getInitialPollingInterval returning %1",
 			INITIAL_POLLING_INTERVAL).c_str());
-
-		m_httpsPort = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
-		m_httpPort = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT);
-
-		OW_Int32 httpsPort = 0, httpPort = 0;
+		m_httpsPort = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
+		m_httpPort = env->getConfigItem(ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT);
+		Int32 httpsPort = 0, httpPort = 0;
 		try
 		{
 			httpsPort = m_httpsPort.toInt32();
 		}
-		catch (const OW_StringConversionException&)
+		catch (const StringConversionException&)
 		{
 		}
 		try
 		{
 			httpPort = m_httpPort.toInt32();
 		}
-		catch (const OW_StringConversionException&)
+		catch (const StringConversionException&)
 		{
 		}
 		if (httpsPort < 1 && httpPort < 1)
 		{
 			return 0;
 		}
-
-		m_useDigest = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt)
+		m_useDigest = env->getConfigItem(ConfigOpts::HTTP_USE_DIGEST_opt)
 				.equalsIgnoreCase("true");
-		m_allowAnonymous = env->getConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS)
+		m_allowAnonymous = env->getConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS)
 				.equalsIgnoreCase("true");
 	
 		return rval;
 	}
 	/**
-	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
+	 * Called by the CIMOM to give this CppPolledProviderIFC to
 	 * opportunity to export indications if needed.
 	 * @param lch	A local CIMOM handle the provider can use to export
 	 *					indications if needed.
@@ -139,29 +128,23 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env)
+	virtual Int32 poll(const ProviderEnvironmentIFCRef &env)
 	{
 		doSlpRegister(env);
 		return POLLING_INTERVAL;
 	}
-
 private:
-
-	OW_String m_httpsPort;
-	OW_String m_httpPort;
+	String m_httpsPort;
+	String m_httpPort;
 	bool m_useDigest;
 	bool m_allowAnonymous;
-
-	void doSlpRegister(const OW_ProviderEnvironmentIFCRef& env)
+	void doSlpRegister(const ProviderEnvironmentIFCRef& env)
 	{
-
 		SLPError err;
 		SLPHandle slpHandle;
-
-		OW_String attributes(
+		String attributes(
 			"(namespace=root),(implementation=OpenWbem),(version="OW_VERSION"),"
 			"(query-language=WBEMSQL2),(host-os="OW_STRPLATFORM")");
-
 		if (!m_allowAnonymous)
 		{
 			attributes += ",(authentication=";
@@ -174,51 +157,45 @@ private:
 				attributes += "Basic)";
 			}
 		}
-
 		if((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
 		{
-
-			env->getLogger()->logError(format("OW_SLPProvider::doSlpRegister - SLPOpenFailed: %1",
+			env->getLogger()->logError(format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
 				err).c_str());
 			return;
 		}
-
-		OW_String hostname = OW_SocketAddress::getAnyLocalHost().getName();
-
-		OW_StringArray urls;
+		String hostname = SocketAddress::getAnyLocalHost().getName();
+		StringArray urls;
 		try
 		{
 			if (m_httpPort.toInt32() > 0)
 			{
-				OW_String newUrl = "http://";
+				String newUrl = "http://";
 				newUrl += hostname + ":" + m_httpPort + "/cimom";
 				urls.push_back(newUrl);
 			}
 		}
-		catch (const OW_StringConversionException&)
+		catch (const StringConversionException&)
 		{
 		}
 		try
 		{
 			if (m_httpsPort.toInt32() > 0)
 			{
-				OW_String newUrl = "https://";
+				String newUrl = "https://";
 				newUrl += hostname + ":" + m_httpsPort + "/cimom";
 				urls.push_back(newUrl);
 			}
 		}
-		catch (const OW_StringConversionException&)
+		catch (const StringConversionException&)
 		{
 		}
 		for(size_t i = 0; i < urls.size(); i++)
 		{
-			OW_String urlString;
+			String urlString;
 			urlString = OW_CIMOM_SLP_URL_PREFIX;
 			urlString += urls[i];
-
 			// Register URL with SLP
-
-			OW_LoggerRef lgr = env->getLogger();
+			LoggerRef lgr = env->getLogger();
 			err = SLPReg(slpHandle,		// SLP Handle from open
 				urlString.c_str(),		// Service URL
 				POLLING_INTERVAL+60,		// Length of time registration last
@@ -238,13 +215,11 @@ private:
 					urlString).c_str());
 			}
 		}
-
 		SLPClose(slpHandle);
 	}
-
 };
 
+} // end namespace OpenWBEM
 
-
-OW_NOIDPROVIDERFACTORY(OW_SLPProvider)
+OW_NOIDPROVIDERFACTORY(OpenWBEM::SLPProvider)
 

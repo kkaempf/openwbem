@@ -44,6 +44,8 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMClass.hpp"
 
+using namespace OpenWBEM;
+
 static int testFunction( int i )
 {
 	return i + 1;
@@ -56,303 +58,303 @@ static const char* versionFunction()
 
 typedef int (*fptype)(int);
 
-class testSharedLibrary: public OW_SharedLibrary
+class testSharedLibrary: public SharedLibrary
 {
 	public:
 		virtual ~testSharedLibrary(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const OW_String&, void** fp ) const
+		virtual bool doGetFunctionPointer( const String&, void** fp ) const
 		{
 			*fp = (void*)(&testFunction);
 			return true;
 		}
 };
 
-class TestInstanceProvider : public OW_InstanceProviderIFC
+class TestInstanceProvider : public InstanceProviderIFC
 {
 public:
 	virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMInstanceResultHandlerIFC& result,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-			OW_WBEMFlags::EDeepFlag deep, 
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& requestedClass,
-			const OW_CIMClass& cimClass )
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMInstanceResultHandlerIFC& result,
+			WBEMFlags::ELocalOnlyFlag localOnly, 
+			WBEMFlags::EDeepFlag deep, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList,
+			const CIMClass& requestedClass,
+			const CIMClass& cimClass )
 	{
 		(void)env; (void)ns; (void)className; (void)result; (void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass; (void)cimClass;
 	}
-	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_CIMClass &)
+	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &, const String &, const String &, CIMObjectPathResultHandlerIFC &, const CIMClass &)
 	{
 	}
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+	virtual CIMInstance getInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
+		WBEMFlags::ELocalOnlyFlag localOnly,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)env; (void)ns; (void)instanceName; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)cimClass;
-		return OW_CIMInstance(OW_CIMNULL);
+		return CIMInstance(CIMNULL);
 	}
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
 	{
-		return OW_CIMObjectPath(OW_CIMNULL);
+		return CIMObjectPath(CIMNULL);
 	}
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 	}
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 	{
 	}
 };
 
-class TestMethodProvider : public OW_MethodProviderIFC
+class TestMethodProvider : public MethodProviderIFC
 {
 public:
-	virtual OW_CIMValue invokeMethod(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_CIMParamValueArray &, OW_CIMParamValueArray &)
+	virtual CIMValue invokeMethod(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &, const String &, const CIMParamValueArray &, CIMParamValueArray &)
 	{
-		return OW_CIMValue(OW_CIMNULL);
+		return CIMValue(CIMNULL);
 	}
 };
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-class TestAssociatorProvider : public OW_AssociatorProviderIFC
+class TestAssociatorProvider : public AssociatorProviderIFC
 {
 public:
 	virtual void associatorNames(
-		const OW_ProviderEnvironmentIFCRef &,
-		OW_CIMObjectPathResultHandlerIFC &,
-		const OW_String &,
-		const OW_CIMObjectPath &,
-		const OW_String &,
-		const OW_String &,
-		const OW_String &,
-		const OW_String &)
+		const ProviderEnvironmentIFCRef &,
+		CIMObjectPathResultHandlerIFC &,
+		const String &,
+		const CIMObjectPath &,
+		const String &,
+		const String &,
+		const String &,
+		const String &)
 	{
 	}
 	virtual void references(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultClass,
-		const OW_String& role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
 	{
 		(void)env; (void)result; (void)ns; (void)objectName; (void)resultClass; (void)role; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	}
 	virtual void referenceNames(
-		const OW_ProviderEnvironmentIFCRef &,
-		OW_CIMObjectPathResultHandlerIFC &,
-		const OW_String &,
-		const OW_CIMObjectPath &,
-		const OW_String &,
-		const OW_String &)
+		const ProviderEnvironmentIFCRef &,
+		CIMObjectPathResultHandlerIFC &,
+		const String &,
+		const CIMObjectPath &,
+		const String &,
+		const String &)
 	{
 	}
 	virtual void associators(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList)
 	{
 		(void)env; (void)result; (void)ns; (void)objectName; (void)assocClass; (void)resultClass; (void)role; (void)resultRole; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
 	}
 };
 #endif
 
-class TestIndicationProvider : public OW_IndicationProviderIFC
+class TestIndicationProvider : public IndicationProviderIFC
 {
 public:
-	virtual void deActivateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray& ) 
+	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& ) 
 	{
 	}
-	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray& ) 
+	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& ) 
 	{
 	}
-	virtual void authorizeFilter(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&, const OW_String &) 
+	virtual void authorizeFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, const String &) 
 	{
 	}
-	virtual int mustPoll(const OW_ProviderEnvironmentIFCRef &, const OW_WQLSelectStatement &, const OW_String &, const OW_String&, const OW_StringArray&)
+	virtual int mustPoll(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&)
 	{
 		return 0;
 	}
 };
 
-class testProviderMux: public OW_ProviderIFCBaseIFC
+class testProviderMux: public ProviderIFCBaseIFC
 {
 	public:
 		testProviderMux( const char* const name )
-			: OW_ProviderIFCBaseIFC(), m_name(name) {}
+			: ProviderIFCBaseIFC(), m_name(name) {}
 		virtual ~testProviderMux() {}
-		virtual void doInit(const OW_ProviderEnvironmentIFCRef&,
-			OW_InstanceProviderInfoArray& ia,
+		virtual void doInit(const ProviderEnvironmentIFCRef&,
+			InstanceProviderInfoArray& ia,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-			OW_AssociatorProviderInfoArray& aa,
+			AssociatorProviderInfoArray& aa,
 #endif
-			OW_MethodProviderInfoArray& ma,
-			OW_IndicationProviderInfoArray& inda)
+			MethodProviderInfoArray& ma,
+			IndicationProviderInfoArray& inda)
 		{
 			if (m_name == "lib1")
 			{
 				// instance provider registration
 				{
-					OW_InstanceProviderInfo ipi;
+					InstanceProviderInfo ipi;
 					ipi.setProviderName("TestInstanceProvider");
 					ipi.addInstrumentedClass("SelfReg");
 					ia.push_back(ipi);
 				}
 				{
-					OW_InstanceProviderInfo ipi;
+					InstanceProviderInfo ipi;
 					ipi.setProviderName("TestInstanceProvider");
-					OW_StringArray namespaces;
+					StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
-					OW_InstanceProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
+					InstanceProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
 					ipi.addInstrumentedClass(ci);
 					ia.push_back(ipi);
 				}
 				// method provider registration
 				{
-					OW_MethodProviderInfo mpi;
+					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
 					mpi.addInstrumentedClass("SelfReg");
 					ma.push_back(mpi);
 				}
 				{
-					OW_MethodProviderInfo mpi;
+					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
-					OW_StringArray namespaces;
+					StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
-					OW_StringArray methods;
-					OW_MethodProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces, methods);
+					StringArray methods;
+					MethodProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces, methods);
 					mpi.addInstrumentedClass(ci);
 					ma.push_back(mpi);
 				}
 				{
-					OW_MethodProviderInfo mpi;
+					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
-					OW_StringArray namespaces;
-					OW_StringArray methods;
+					StringArray namespaces;
+					StringArray methods;
 					methods.push_back("TestMethod");
-					OW_MethodProviderInfo::ClassInfo ci("SelfRegOneMethod", namespaces, methods);
+					MethodProviderInfo::ClassInfo ci("SelfRegOneMethod", namespaces, methods);
 					mpi.addInstrumentedClass(ci);
 					ma.push_back(mpi);
 				}
 				{
-					OW_MethodProviderInfo mpi;
+					MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
-					OW_StringArray namespaces;
+					StringArray namespaces;
 					namespaces.push_back("root");
-					OW_StringArray methods;
+					StringArray methods;
 					methods.push_back("TestMethod");
-					OW_MethodProviderInfo::ClassInfo ci("SelfRegOneNamespaceOneMethod", namespaces, methods);
+					MethodProviderInfo::ClassInfo ci("SelfRegOneNamespaceOneMethod", namespaces, methods);
 					mpi.addInstrumentedClass(ci);
 					ma.push_back(mpi);
 				}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 				// associator provider registration
 				{
-					OW_AssociatorProviderInfo api;
+					AssociatorProviderInfo api;
 					api.setProviderName("TestAssociatorProvider");
 					api.addInstrumentedClass("SelfReg");
 					aa.push_back(api);
 				}
 				{
-					OW_AssociatorProviderInfo api;
+					AssociatorProviderInfo api;
 					api.setProviderName("TestAssociatorProvider");
-					OW_StringArray namespaces;
+					StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
-					OW_AssociatorProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
+					AssociatorProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
 					api.addInstrumentedClass(ci);
 					aa.push_back(api);
 				}
 #endif
 				// indication provider registration
 				{
-					OW_IndicationProviderInfo indi;
+					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider");
 					indi.addInstrumentedClass("SelfReg");
 					inda.push_back(indi);
 				}
 				{
-					OW_IndicationProviderInfo indi;
+					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider");
-					OW_StringArray namespaces;
+					StringArray namespaces;
 					namespaces.push_back("root");
 					namespaces.push_back("root/good");
-					OW_IndicationProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
+					IndicationProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces);
 					indi.addInstrumentedClass(ci);
 					inda.push_back(indi);
 				}
 				{
-					OW_IndicationProviderInfo indi;
+					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider1");
 					indi.addInstrumentedClass("SelfReg2");
 					inda.push_back(indi);
 				}
 				{
-					OW_IndicationProviderInfo indi;
+					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider2");
 					indi.addInstrumentedClass("SelfReg2");
 					inda.push_back(indi);
 				}
 				{
 					// life-cycle type indication
-					OW_IndicationProviderInfo indi;
+					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider");
-					OW_StringArray namespaces;
-					OW_StringArray classes;
+					StringArray namespaces;
+					StringArray classes;
 					classes.push_back("TestClass1");
-					OW_IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
+					IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
 					indi.addInstrumentedClass(ci1);
-					OW_IndicationProviderInfo::ClassInfo ci2("CIM_InstModification", namespaces, classes);
+					IndicationProviderInfo::ClassInfo ci2("CIM_InstModification", namespaces, classes);
 					indi.addInstrumentedClass(ci2);
-					OW_IndicationProviderInfo::ClassInfo ci3("CIM_InstDeletion", namespaces, classes);
+					IndicationProviderInfo::ClassInfo ci3("CIM_InstDeletion", namespaces, classes);
 					indi.addInstrumentedClass(ci3);
 					inda.push_back(indi);
 				}
 				{
 					// life-cycle type indication
-					OW_IndicationProviderInfo indi;
+					IndicationProviderInfo indi;
 					indi.setProviderName("TestIndicationProvider2");
-					OW_StringArray namespaces;
-					OW_StringArray classes;
+					StringArray namespaces;
+					StringArray classes;
 					classes.push_back("TestClass2");
 					classes.push_back("TestClass3");
-					OW_IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
+					IndicationProviderInfo::ClassInfo ci1("CIM_InstCreation", namespaces, classes);
 					indi.addInstrumentedClass(ci1);
-					OW_IndicationProviderInfo::ClassInfo ci2("CIM_InstModification", namespaces, classes);
+					IndicationProviderInfo::ClassInfo ci2("CIM_InstModification", namespaces, classes);
 					indi.addInstrumentedClass(ci2);
-					OW_IndicationProviderInfo::ClassInfo ci3("CIM_InstDeletion", namespaces, classes);
+					IndicationProviderInfo::ClassInfo ci3("CIM_InstDeletion", namespaces, classes);
 					indi.addInstrumentedClass(ci3);
 					inda.push_back(indi);
 				}
@@ -360,95 +362,95 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			}
 		}
 
-		virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
+		virtual InstanceProviderIFCRef doGetInstanceProvider(
+			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (OW_String(provIdString) == "TestInstanceProvider")
+			if (String(provIdString) == "TestInstanceProvider")
 			{
-				return OW_InstanceProviderIFCRef(new TestInstanceProvider);
+				return InstanceProviderIFCRef(new TestInstanceProvider);
 			}
-			OW_THROW(OW_NoSuchProviderException, provIdString);
+			OW_THROW(NoSuchProviderException, provIdString);
 		}
 
-		virtual OW_MethodProviderIFCRef doGetMethodProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
+		virtual MethodProviderIFCRef doGetMethodProvider(
+			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (OW_String(provIdString) == "TestMethodProvider")
+			if (String(provIdString) == "TestMethodProvider")
 			{
-				return OW_MethodProviderIFCRef(new TestMethodProvider);
+				return MethodProviderIFCRef(new TestMethodProvider);
 			}
-			OW_THROW(OW_NoSuchProviderException, provIdString);
+			OW_THROW(NoSuchProviderException, provIdString);
 		}
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
+		virtual AssociatorProviderIFCRef doGetAssociatorProvider(
+			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (OW_String(provIdString) == "TestAssociatorProvider")
+			if (String(provIdString) == "TestAssociatorProvider")
 			{
-				return OW_AssociatorProviderIFCRef(new TestAssociatorProvider);
+				return AssociatorProviderIFCRef(new TestAssociatorProvider);
 			}
-			OW_THROW(OW_NoSuchProviderException, provIdString);
+			OW_THROW(NoSuchProviderException, provIdString);
 		}
 #endif
 
-		virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
+		virtual IndicationProviderIFCRef doGetIndicationProvider(
+			const ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			if (OW_String(provIdString) == "TestIndicationProvider"
-				|| OW_String(provIdString) == "TestIndicationProvider1"
-				|| OW_String(provIdString) == "TestIndicationProvider2")
+			if (String(provIdString) == "TestIndicationProvider"
+				|| String(provIdString) == "TestIndicationProvider1"
+				|| String(provIdString) == "TestIndicationProvider2")
 			{
-				return OW_IndicationProviderIFCRef(new TestIndicationProvider);
+				return IndicationProviderIFCRef(new TestIndicationProvider);
 			}
-			OW_THROW(OW_NoSuchProviderException, provIdString);
+			OW_THROW(NoSuchProviderException, provIdString);
 		}
 
 		virtual const char* getName() const { return m_name.c_str(); }
 
-		virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-			const OW_ProviderEnvironmentIFCRef&)
+		virtual PolledProviderIFCRefArray doGetPolledProviders(
+			const ProviderEnvironmentIFCRef&)
 		{
-			return OW_PolledProviderIFCRefArray();
+			return PolledProviderIFCRefArray();
 		}
 
-		virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-			const OW_ProviderEnvironmentIFCRef&)
+		virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
+			const ProviderEnvironmentIFCRef&)
 		{
-			return OW_IndicationExportProviderIFCRefArray();
+			return IndicationExportProviderIFCRefArray();
 		}
 
-		virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef&)
+		virtual void doUnloadProviders(const ProviderEnvironmentIFCRef&)
 		{
 		}
 
 private:
-	OW_String m_name;
+	String m_name;
 
 };
 
-static OW_ProviderIFCBaseIFC* testCreateProviderMux()
+static ProviderIFCBaseIFC* testCreateProviderMux()
 {
 	return new testProviderMux( "lib1" );
 }
 
-static OW_ProviderIFCBaseIFC* testCreateProviderMux2()
+static ProviderIFCBaseIFC* testCreateProviderMux2()
 {
 	return new testProviderMux( "lib2" );
 }
 
-static OW_ProviderIFCBaseIFC* testCreateProviderMux3()
+static ProviderIFCBaseIFC* testCreateProviderMux3()
 {
 	return new testProviderMux( "lib3" );
 }
 
-class testMuxSharedLibrary: public OW_SharedLibrary
+class testMuxSharedLibrary: public SharedLibrary
 {
 	public:
 		virtual ~testMuxSharedLibrary(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const OW_String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -458,13 +460,13 @@ class testMuxSharedLibrary: public OW_SharedLibrary
 		}
 };
 			
-class testMuxSharedLibrary2: public OW_SharedLibrary
+class testMuxSharedLibrary2: public SharedLibrary
 {
 	public:
 		virtual ~testMuxSharedLibrary2(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const OW_String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -474,13 +476,13 @@ class testMuxSharedLibrary2: public OW_SharedLibrary
 		}
 };
 			
-class testMuxSharedLibrary3: public OW_SharedLibrary
+class testMuxSharedLibrary3: public SharedLibrary
 {
 	public:
 		virtual ~testMuxSharedLibrary3(){}
 
 	protected:
-		virtual bool doGetFunctionPointer( const OW_String& name, void**fp ) const
+		virtual bool doGetFunctionPointer( const String& name, void**fp ) const
 		{
 			if (name == "getOWVersion")
 				*fp = (void*)(&versionFunction);
@@ -490,106 +492,106 @@ class testMuxSharedLibrary3: public OW_SharedLibrary
 		}
 };
 			
-class testSharedLibraryLoader: public OW_SharedLibraryLoader
+class testSharedLibraryLoader: public SharedLibraryLoader
 {
 	public:
 		virtual ~testSharedLibraryLoader(){}
 
-		virtual OW_SharedLibraryRef loadSharedLibrary( const OW_String& name,
-            OW_LoggerRef ) const
+		virtual SharedLibraryRef loadSharedLibrary( const String& name,
+            LoggerRef ) const
 		{
 			if ( name == "lib1" )
-				return OW_SharedLibraryRef( new testMuxSharedLibrary );
+				return SharedLibraryRef( new testMuxSharedLibrary );
 			else if ( name == "lib2" )
-				return OW_SharedLibraryRef( new testMuxSharedLibrary2 );
+				return SharedLibraryRef( new testMuxSharedLibrary2 );
 			else if ( name == "lib3" )
-				return OW_SharedLibraryRef( new testMuxSharedLibrary3 );
+				return SharedLibraryRef( new testMuxSharedLibrary3 );
 			else
-				return OW_SharedLibraryRef( new testSharedLibrary );
+				return SharedLibraryRef( new testSharedLibrary );
 		}
 };
 
 namespace
 {
-	class DummyLogger : public OW_Logger
+	class DummyLogger : public Logger
 	{
 	protected:
-		virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const
+		virtual void doLogMessage(const String &message, const LogLevel) const
 		{
 			std::cout << message << std::endl;
 		}
 	};
 
-	class testProviderEnvironment : public OW_ProviderEnvironmentIFC
+	class testProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
 
-		testProviderEnvironment(const OW_LocalCIMOMHandle& ch, OW_LoggerRef l)
-		: m_ch(new OW_LocalCIMOMHandle(ch)), m_logger(l)
+		testProviderEnvironment(const LocalCIMOMHandle& ch, LoggerRef l)
+		: m_ch(new LocalCIMOMHandle(ch)), m_logger(l)
 		{}
 
 		testProviderEnvironment()
-		: m_ch(new OW_LocalCIMOMHandle()), m_logger(new DummyLogger)
+		: m_ch(new LocalCIMOMHandle()), m_logger(new DummyLogger)
 		{}
 
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
+		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_ch;
 		}
 		
-		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
 			return m_ch;
 		}
 		
-		virtual OW_RepositoryIFCRef getRepository() const
+		virtual RepositoryIFCRef getRepository() const
 		{
-			return OW_RepositoryIFCRef();
+			return RepositoryIFCRef();
 		}
 
-		virtual OW_LoggerRef getLogger() const
+		virtual LoggerRef getLogger() const
 		{
 			return m_logger;
 		}
 
-		virtual OW_String getConfigItem(const OW_String &, const OW_String&) const
+		virtual String getConfigItem(const String &, const String&) const
 		{
 			return "";
 		}
 
-		virtual OW_String getUserName() const
+		virtual String getUserName() const
 		{
 			return "";
 		}
 
 
 	private:
-		OW_CIMOMHandleIFCRef m_ch;
-		OW_LoggerRef m_logger;
+		CIMOMHandleIFCRef m_ch;
+		LoggerRef m_logger;
 	};
 
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
+	ProviderEnvironmentIFCRef createProvEnvRef(const LocalCIMOMHandle& ch)
 	{
-		OW_LoggerRef log(new DummyLogger);
+		LoggerRef log(new DummyLogger);
 		log->setLogLevel(DebugLevel);
-		return OW_ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
+		return ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
 			log));
 	}
 }
 
 
 
-class testMuxLoader: public OW_ProviderIFCLoaderBase
+class testMuxLoader: public ProviderIFCLoaderBase
 {
 	public:
-		testMuxLoader( OW_SharedLibraryLoaderRef sll ) :
-			OW_ProviderIFCLoaderBase(sll, g_testEnvironment)
+		testMuxLoader( SharedLibraryLoaderRef sll ) :
+			ProviderIFCLoaderBase(sll, g_testEnvironment)
 			{}
 		virtual ~testMuxLoader(){}
 		virtual void loadIFCs(
-				OW_Array<OW_ProviderIFCBaseIFCRef>& out) const
+				Array<ProviderIFCBaseIFCRef>& out) const
 		{
-			OW_ProviderIFCBaseIFCRef rval;
+			ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "lib1" );
 			if ( !rval.isNull()  )
 			{
@@ -611,17 +613,17 @@ class testMuxLoader: public OW_ProviderIFCLoaderBase
 		}
 };
 
-class testMuxLoaderBad: public OW_ProviderIFCLoaderBase
+class testMuxLoaderBad: public ProviderIFCLoaderBase
 {
 	public:
-		testMuxLoaderBad( OW_SharedLibraryLoaderRef sll ) :
-			OW_ProviderIFCLoaderBase(sll, g_testEnvironment)
+		testMuxLoaderBad( SharedLibraryLoaderRef sll ) :
+			ProviderIFCLoaderBase(sll, g_testEnvironment)
 			{}
 		virtual ~testMuxLoaderBad(){}
 		virtual void loadIFCs(
-				OW_Array<OW_ProviderIFCBaseIFCRef>& out) const
+				Array<ProviderIFCBaseIFCRef>& out) const
 		{
-			OW_ProviderIFCBaseIFCRef rval;
+			ProviderIFCBaseIFCRef rval;
 			rval = createProviderIFCFromLib( "libbad" );
 			if ( !rval.isNull() )
 			{
@@ -643,18 +645,18 @@ class testMuxLoaderBad: public OW_ProviderIFCLoaderBase
 		}
 };
 
-static OW_SharedLibraryLoaderRef testCreateSharedLibraryLoader();
+static SharedLibraryLoaderRef testCreateSharedLibraryLoader();
 
-static OW_ProviderIFCLoaderRef testCreateMuxLoader()
+static ProviderIFCLoaderRef testCreateMuxLoader()
 {
-	return OW_ProviderIFCLoaderRef( new testMuxLoader(
+	return ProviderIFCLoaderRef( new testMuxLoader(
 				testCreateSharedLibraryLoader() ) );
 }
 
-static OW_SharedLibraryLoaderRef testCreateSharedLibraryLoader()
+static SharedLibraryLoaderRef testCreateSharedLibraryLoader()
 {
 	(void)testCreateMuxLoader; // to prevent silly compiler warnings
-	return OW_SharedLibraryLoaderRef( new testSharedLibraryLoader );
+	return SharedLibraryLoaderRef( new testSharedLibraryLoader );
 }
 
 #endif

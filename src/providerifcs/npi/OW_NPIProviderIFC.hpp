@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NPIPROVIDERIFC_HPP_
 #define OW_NPIPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
@@ -38,79 +36,67 @@
 #include "OW_MutexLock.hpp"
 #include "OW_FTABLERef.hpp"
 
+namespace OpenWBEM
+{
 
 /**
- * This class implements a bridge from the CIMOM's OW_ProviderManager to the
+ * This class implements a bridge from the CIMOM's ProviderManager to the
  * C++ providers.  It's main function is location and creation of providers.
  */
-class OW_NPIProviderIFC : public OW_ProviderIFCBaseIFC
+class NPIProviderIFC : public ProviderIFCBaseIFC
 {
 public:
 	static const char * const CREATIONFUNC;
-
-	OW_NPIProviderIFC();
-	~OW_NPIProviderIFC();
-
+	NPIProviderIFC();
+	~NPIProviderIFC();
 protected:
-
 	virtual const char* getName() const { return "npi"; }
-
-	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
-		OW_InstanceProviderInfoArray& i,
+	virtual void doInit(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		OW_AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& a,
 #endif
-		OW_MethodProviderInfoArray& m,
-		OW_IndicationProviderInfoArray& ind);
-
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind);
+	virtual InstanceProviderIFCRef doGetInstanceProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual MethodProviderIFCRef doGetMethodProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual AssociatorProviderIFCRef doGetAssociatorProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 #endif
-
-	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual IndicationProviderIFCRef doGetIndicationProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
+		const ProviderEnvironmentIFCRef& env
 		);
-
-	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual PolledProviderIFCRefArray doGetPolledProviders(
+		const ProviderEnvironmentIFCRef& env
 		);
-
-	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	{
 		(void)env;
 		// TODO
 	}
-
 private:
-
-	typedef OW_Map<OW_String, OW_FTABLERef> ProviderMap;
-	//typedef OW_Array<OW_SharedLibraryObject<OW_FTABLERef> > LoadedProviderArray;
-	typedef OW_Array<OW_FTABLERef > LoadedProviderArray;
-
-	OW_FTABLERef getProvider(const OW_ProviderEnvironmentIFCRef& env,
+	typedef Map<String, FTABLERef> ProviderMap;
+	//typedef Array<SharedLibraryObject<FTABLERef> > LoadedProviderArray;
+	typedef Array<FTABLERef > LoadedProviderArray;
+	FTABLERef getProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-	void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
-
+	void loadNoIdProviders(const ProviderEnvironmentIFCRef& env);
 	ProviderMap m_provs;
-	OW_Mutex m_guard;
+	Mutex m_guard;
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
 };
+typedef SharedLibraryReference<NPIProviderIFC> NPIProviderIFCRef;
 
-typedef OW_SharedLibraryReference<OW_NPIProviderIFC> OW_NPIProviderIFCRef;
+} // end namespace OpenWBEM
+
 #endif
-

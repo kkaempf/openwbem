@@ -28,9 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-
 #include "OW_ConfigException.hpp"
+
+namespace OpenWBEM
+{
 
 DEFINE_EXCEPTION(Config);
 
+} // end namespace OpenWBEM
 

@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_AuthenticatorIFC::~OW_AuthenticatorIFC() 
+AuthenticatorIFC::~AuthenticatorIFC() 
 {
 }
+
+} // end namespace OpenWBEM
 

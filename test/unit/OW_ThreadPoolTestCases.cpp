@@ -34,6 +34,8 @@
 #include "OW_ThreadPool.hpp"
 #include "OW_Thread.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ThreadPoolTestCases::setUp()
 {
 }
@@ -46,7 +48,7 @@ namespace {
 
 const int RUNNER_COUNT_MAX = 100000;
 
-class testRunner : public OW_Runnable
+class testRunner : public Runnable
 {
 public:
 	testRunner(int& i) : m_i(i) {}
@@ -58,7 +60,7 @@ public:
 			// yield every now and then to stir up the pot a bit
 			if (!(x % 10000))
 			{
-				OW_Thread::yield();
+				Thread::yield();
 			}
 			m_i = x;
 		}
@@ -72,22 +74,22 @@ public:
 void OW_ThreadPoolTestCases::testThreadPool()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(OW_ThreadPool::FIXED_SIZE, 10, 20);
+	ThreadPool thePool(ThreadPool::FIXED_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
-		unitAssert(thePool.addWork(OW_RunnableRef(new testRunner(ints[i]))));
+		unitAssert(thePool.addWork(RunnableRef(new testRunner(ints[i]))));
 	}
 
-	// adding a null OW_RunnableRef should fail
-	unitAssert(!thePool.addWork(OW_RunnableRef()));
+	// adding a null RunnableRef should fail
+	unitAssert(!thePool.addWork(RunnableRef()));
 
-	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
+	thePool.shutdown(ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, addWork should fail
-	unitAssert(!thePool.addWork(OW_RunnableRef(new testRunner(ints[0]))));
+	unitAssert(!thePool.addWork(RunnableRef(new testRunner(ints[0]))));
 
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
@@ -99,7 +101,7 @@ void OW_ThreadPoolTestCases::testThreadPool()
 void OW_ThreadPoolTestCases::testThreadPool2()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(OW_ThreadPool::FIXED_SIZE, 10, 20);
+	ThreadPool thePool(ThreadPool::FIXED_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -107,21 +109,21 @@ void OW_ThreadPoolTestCases::testThreadPool2()
 	int ran = 0, didntRun = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
-		thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
+		thePool.tryAddWork(RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
 		if (!(i % 5))
-			OW_Thread::yield();
+			Thread::yield();
 	}
 
-	// adding a null OW_RunnableRef should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef()));
+	// adding a null RunnableRef should fail
+	unitAssert(!thePool.tryAddWork(RunnableRef()));
 
 	// let something happen...
-	OW_Thread::yield();
+	Thread::yield();
 
-	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
+	thePool.shutdown(ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, tryAddWork should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
+	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner(ints[0]))));
 
 	int ran2 = 0, didntRun2 = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
@@ -143,7 +145,7 @@ void OW_ThreadPoolTestCases::testThreadPool2()
 void OW_ThreadPoolTestCases::testThreadPool3()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(OW_ThreadPool::FIXED_SIZE, 10, 20);
+	ThreadPool thePool(ThreadPool::FIXED_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -151,22 +153,22 @@ void OW_ThreadPoolTestCases::testThreadPool3()
 	int ran = 0, didntRun = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
-		thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
+		thePool.tryAddWork(RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
 		if (!(i % 5))
-			OW_Thread::yield();
+			Thread::yield();
 	}
 
-	// adding a null OW_RunnableRef should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef()));
+	// adding a null RunnableRef should fail
+	unitAssert(!thePool.tryAddWork(RunnableRef()));
 
 	// let something happen...
-	OW_Thread::yield();
+	Thread::yield();
 
 	// false doesn't means to ditch the work still in the queue and shutdown asap.
-	thePool.shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 0);
+	thePool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 0);
 
 	// after the pool is shutdown, tryAddWork should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
+	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner(ints[0]))));
 
 	int ran2 = 0, didntRun2 = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
@@ -188,22 +190,22 @@ void OW_ThreadPoolTestCases::testThreadPool3()
 void OW_ThreadPoolTestCases::testThreadPoolDynamic1()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(OW_ThreadPool::DYNAMIC_SIZE, 10, 20);
+	ThreadPool thePool(ThreadPool::DYNAMIC_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
-		unitAssert(thePool.addWork(OW_RunnableRef(new testRunner(ints[i]))));
+		unitAssert(thePool.addWork(RunnableRef(new testRunner(ints[i]))));
 	}
 
-	// adding a null OW_RunnableRef should fail
-	unitAssert(!thePool.addWork(OW_RunnableRef()));
+	// adding a null RunnableRef should fail
+	unitAssert(!thePool.addWork(RunnableRef()));
 
-	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
+	thePool.shutdown(ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, addWork should fail
-	unitAssert(!thePool.addWork(OW_RunnableRef(new testRunner(ints[0]))));
+	unitAssert(!thePool.addWork(RunnableRef(new testRunner(ints[0]))));
 
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
@@ -215,7 +217,7 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic1()
 void OW_ThreadPoolTestCases::testThreadPoolDynamic2()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(OW_ThreadPool::DYNAMIC_SIZE, 10, 20);
+	ThreadPool thePool(ThreadPool::DYNAMIC_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -223,21 +225,21 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic2()
 	int ran = 0, didntRun = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
-		thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
+		thePool.tryAddWork(RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
 		if (!(i % 5))
-			OW_Thread::yield();
+			Thread::yield();
 	}
 
-	// adding a null OW_RunnableRef should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef()));
+	// adding a null RunnableRef should fail
+	unitAssert(!thePool.tryAddWork(RunnableRef()));
 
 	// let something happen...
-	OW_Thread::yield();
+	Thread::yield();
 
-	thePool.shutdown(OW_ThreadPool::E_FINISH_WORK_IN_QUEUE);
+	thePool.shutdown(ThreadPool::E_FINISH_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, tryAddWork should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
+	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner(ints[0]))));
 
 	int ran2 = 0, didntRun2 = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
@@ -259,7 +261,7 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic2()
 void OW_ThreadPoolTestCases::testThreadPoolDynamic3()
 {
 	// The pool has 10 threads, max queue of 20
-	OW_ThreadPool thePool(OW_ThreadPool::DYNAMIC_SIZE, 10, 20);
+	ThreadPool thePool(ThreadPool::DYNAMIC_SIZE, 10, 20);
 	const int NUM_RUNNERS = 100;
 	int ints[NUM_RUNNERS];
 	memset(ints, 0, NUM_RUNNERS * sizeof(int));
@@ -267,22 +269,22 @@ void OW_ThreadPoolTestCases::testThreadPoolDynamic3()
 	int ran = 0, didntRun = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)
 	{
-		thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
+		thePool.tryAddWork(RunnableRef(new testRunner(ints[i]))) ? ++ran : ++didntRun;
 		if (!(i % 5))
-			OW_Thread::yield();
+			Thread::yield();
 	}
 
-	// adding a null OW_RunnableRef should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef()));
+	// adding a null RunnableRef should fail
+	unitAssert(!thePool.tryAddWork(RunnableRef()));
 
 	// let something happen...
-	OW_Thread::yield();
+	Thread::yield();
 
 	// ditch the work still in the queue and shutdown asap.
-	thePool.shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE);
+	thePool.shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE);
 
 	// after the pool is shutdown, tryAddWork should fail
-	unitAssert(!thePool.tryAddWork(OW_RunnableRef(new testRunner(ints[0]))));
+	unitAssert(!thePool.tryAddWork(RunnableRef(new testRunner(ints[0]))));
 
 	int ran2 = 0, didntRun2 = 0;
 	for (int i = 0; i < NUM_RUNNERS; ++i)

@@ -33,8 +33,11 @@
 #include "OW_SocketUtils.hpp"
 #include "OW_SocketException.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_RequestHandlerIFC::OW_RequestHandlerIFC()
+RequestHandlerIFC::RequestHandlerIFC()
 	: m_cimError()
 	, m_hasError(false)
 	, m_errorCode(0)
@@ -42,22 +45,19 @@ OW_RequestHandlerIFC::OW_RequestHandlerIFC()
 	, m_env(0)
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_RequestHandlerIFC::~OW_RequestHandlerIFC()
+RequestHandlerIFC::~RequestHandlerIFC()
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-void OW_RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
-	std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
+void RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
+	std::ostream* ostrError, const SortedVectorMap<String, String>& handlerVars)
 {
 	doProcess(istr, ostrEntity, ostrError, handlerVars);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 bool
-OW_RequestHandlerIFC::hasError(OW_Int32& errCode, OW_String& errDescr)
+RequestHandlerIFC::hasError(Int32& errCode, String& errDescr)
 {
 	if (m_hasError)
 	{
@@ -66,37 +66,32 @@ OW_RequestHandlerIFC::hasError(OW_Int32& errCode, OW_String& errDescr)
 	}
 	return m_hasError;
 }
-
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_ServiceEnvironmentIFCRef
-OW_RequestHandlerIFC::getEnvironment() const
+ServiceEnvironmentIFCRef
+RequestHandlerIFC::getEnvironment() const
 {
 	return m_env;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_RequestHandlerIFC::setEnvironment(OW_ServiceEnvironmentIFCRef env)
+RequestHandlerIFC::setEnvironment(ServiceEnvironmentIFCRef env)
 {
 	m_env = env;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_RequestHandlerIFC::getHost()
+String
+RequestHandlerIFC::getHost()
 {
 	if (!m_cachedHost.empty())
 	{
 		return m_cachedHost;
 	}
-
 	try
 	{
 		// first try doing a DNS lookup for our full hostname
-		m_cachedHost = OW_SocketUtils::getFullyQualifiedHostName();
+		m_cachedHost = SocketUtils::getFullyQualifiedHostName();
 	}
-	catch (const OW_SocketException&)
+	catch (const SocketException&)
 	{
 	}
 	
@@ -106,11 +101,12 @@ OW_RequestHandlerIFC::getHost()
 		// now try setting it to the ip on the incoming socket, if we got a tcp connection.
 		// if the connection came in on the domain socket, just set it to the first ip we can get.
 	}
-
 	if (m_cachedHost.empty())
 	{
 		m_cachedHost = "localhost";
 	}
 	return m_cachedHost;
 }
+
+} // end namespace OpenWBEM
 

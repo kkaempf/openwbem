@@ -27,19 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_MUTEXLOCK_HPP_INCLUDE_GUARD_
 #define OW_MUTEXLOCK_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
 #include <cassert>
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-class OW_MutexLock
+class MutexLock
 {
 public:
-	explicit OW_MutexLock(OW_Mutex& mutex, bool initially_locked=true)
+	explicit MutexLock(Mutex& mutex, bool initially_locked=true)
 		: m_mutex(&mutex), m_locked(false)
 	{
 		if(initially_locked)
@@ -47,8 +48,7 @@ public:
 			lock();
 		}
 	}
-
-	~OW_MutexLock()
+	~MutexLock()
 	{
 		try
 		{
@@ -62,41 +62,33 @@ public:
 			// don't let exceptions escape
 		}
 	}
-
 	void lock()
 	{
 		assert(m_locked == false);
 		m_mutex->acquire();
 		m_locked = true;
 	}
-
 	void release()
 	{
 		assert(m_locked == true);
 		m_mutex->release();
 		m_locked = false;
 	}
-
-	OW_MutexLock(const OW_MutexLock& arg)
+	MutexLock(const MutexLock& arg)
 		: m_mutex(arg.m_mutex), m_locked(arg.m_locked)
 	{
 		arg.m_locked = false;
 	}
-
 	bool isLocked() const
 	{
 		return m_locked;
 	}
-
 private:
-
-
-	OW_Mutex* m_mutex;
+	Mutex* m_mutex;
 	mutable bool m_locked;
-
-	friend class OW_Condition;
+	friend class Condition;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

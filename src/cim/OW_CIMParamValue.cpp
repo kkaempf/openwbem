@@ -27,174 +27,155 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMParamValue.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////
-struct OW_CIMParamValue::Data
+struct CIMParamValue::Data
 {
 	Data()
-		: m_val(OW_CIMNULL)
+		: m_val(CIMNULL)
 	{}
-
-	OW_String m_name;
-	OW_CIMValue m_val;
-
+	String m_name;
+	CIMValue m_val;
     Data* clone() const { return new Data(*this); }
 };
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMParamValue::Data& x, const OW_CIMParamValue::Data& y)
+bool operator<(const CIMParamValue::Data& x, const CIMParamValue::Data& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_name, y.m_name,
 		x.m_val, y.m_val);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue::OW_CIMParamValue() :
+CIMParamValue::CIMParamValue() :
 	m_pdata(new Data)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue::OW_CIMParamValue(OW_CIMNULL_t) :
+CIMParamValue::CIMParamValue(CIMNULL_t) :
 	m_pdata(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue::OW_CIMParamValue(const OW_String& name) :
+CIMParamValue::CIMParamValue(const String& name) :
 	m_pdata(new Data)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue::OW_CIMParamValue(const OW_String& name, const OW_CIMValue& val) :
+CIMParamValue::CIMParamValue(const String& name, const CIMValue& val) :
 	m_pdata(new Data)
 {
 	m_pdata->m_name = name;
 	m_pdata->m_val = val;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue::OW_CIMParamValue(const OW_CIMParamValue& x) :
-	OW_CIMBase(x), m_pdata(x.m_pdata)
+CIMParamValue::CIMParamValue(const CIMParamValue& x) :
+	CIMBase(x), m_pdata(x.m_pdata)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue::~OW_CIMParamValue()
+CIMParamValue::~CIMParamValue()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue&
-OW_CIMParamValue::operator= (const OW_CIMParamValue& x)
+CIMParamValue&
+CIMParamValue::operator= (const CIMParamValue& x)
 {
 	m_pdata = x.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMParamValue::getName() const
+String
+CIMParamValue::getName() const
 {
 	return m_pdata->m_name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue&
-OW_CIMParamValue::setName(const OW_String& name)
+CIMParamValue&
+CIMParamValue::setName(const String& name)
 {
 	m_pdata->m_name = name;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMParamValue::getValue() const
+CIMValue
+CIMParamValue::getValue() const
 {
 	return m_pdata->m_val;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMParamValue&
-OW_CIMParamValue::setValue(const OW_CIMValue& val)
+CIMParamValue&
+CIMParamValue::setValue(const CIMValue& val)
 {
 	m_pdata->m_val = val;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParamValue::setNull()
+CIMParamValue::setNull()
 {
 	m_pdata = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParamValue::writeObject(ostream &ostrm) const
+CIMParamValue::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMPARAMVALUESIG );
+	CIMBase::writeSig( ostrm, OW_CIMPARAMVALUESIG );
 	m_pdata->m_name.writeObject(ostrm);
 	if (m_pdata->m_val)
 	{
-		OW_Bool(true).writeObject(ostrm);
+		Bool(true).writeObject(ostrm);
 		m_pdata->m_val.writeObject(ostrm);
 	}
 	else
 	{
-		OW_Bool(false).writeObject(ostrm);
+		Bool(false).writeObject(ostrm);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMParamValue::readObject(istream &istrm)
+CIMParamValue::readObject(istream &istrm)
 {
-	OW_String name;
-	OW_CIMValue val(OW_CIMNULL);
-
-	OW_CIMBase::readSig( istrm, OW_CIMPARAMVALUESIG );
+	String name;
+	CIMValue val(CIMNULL);
+	CIMBase::readSig( istrm, OW_CIMPARAMVALUESIG );
 	name.readObject(istrm);
-	OW_Bool b;
+	Bool b;
 	b.readObject(istrm);
 	if (b)
 	{
 		val.readObject(istrm);
 	}
-
 	m_pdata->m_name = name;
 	m_pdata->m_val = val;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMParamValue::toString() const
+String
+CIMParamValue::toString() const
 {
-	return "OW_CIMParamValue(" + m_pdata->m_name + "): " + m_pdata->m_val.toString();
+	return "CIMParamValue(" + m_pdata->m_name + "): " + m_pdata->m_val.toString();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMParamValue::toMOF() const
+String
+CIMParamValue::toMOF() const
 {
-	return "ERROR: OW_CIMParamValue cannot be converted to MOF";
+	return "ERROR: CIMParamValue cannot be converted to MOF";
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMParamValue& x, const OW_CIMParamValue& y)
+bool operator<(const CIMParamValue& x, const CIMParamValue& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
+} // end namespace OpenWBEM
+

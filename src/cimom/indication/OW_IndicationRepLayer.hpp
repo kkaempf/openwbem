@@ -27,21 +27,21 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef _OW_INDICATION_REP_LAYER_HPP_
 #define _OW_INDICATION_REP_LAYER_HPP_
-
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 
-class OW_IndicationRepLayer : public OW_RepositoryIFC
+namespace OpenWBEM
+{
+
+class IndicationRepLayer : public RepositoryIFC
 {
 public:
-	virtual ~OW_IndicationRepLayer();
-
-	virtual void setCIMServer(const OW_RepositoryIFCRef& src) = 0;
+	virtual ~IndicationRepLayer();
+	virtual void setCIMServer(const RepositoryIFCRef& src) = 0;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -30,65 +30,61 @@
 #include "OW_config.h"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
-
 #include <cassert>
 #include <cerrno>
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(ConditionLock);
 DEFINE_EXCEPTION(ConditionResource);
-
 #if defined(OW_USE_PTHREAD)
 /////////////////////////////////////////////////////////////////////////////
-OW_Condition::OW_Condition()
+Condition::Condition()
 {
 	int res = pthread_cond_init(&m_condition, 0);
 	if (res != 0)
 	{
-		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
+		OW_THROW(ConditionResourceException, "Failed initializing condition variable");
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_Condition::~OW_Condition()
+Condition::~Condition()
 {
 	int res = pthread_cond_destroy(&m_condition);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::notifyOne()
+Condition::notifyOne()
 {
 	int res = pthread_cond_signal(&m_condition);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::notifyAll()
+Condition::notifyAll()
 {
 	int res = pthread_cond_broadcast(&m_condition);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
+Condition::doWait(NonRecursiveMutex& mutex)
 {
 	int res;
-	OW_NonRecursiveMutexLockState state;
+	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	res = pthread_cond_wait(&m_condition, state.pmutex);
 	mutex.conditionPostWait(state);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 bool 
-OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
 	int res;
-	OW_NonRecursiveMutexLockState state;
+	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	bool ret = false;
 	timespec ts;
@@ -100,59 +96,53 @@ OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UI
 	ret = res != ETIMEDOUT;
 	return ret;
 }
-
 #elif defined (OW_USE_PTH)
 /////////////////////////////////////////////////////////////////////////////
-OW_Condition::OW_Condition()
+Condition::Condition()
 {
 	int res = pth_cond_init(&m_condition, 0);
 	if (res != 0)
 	{
-		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
+		OW_THROW(ConditionResourceException, "Failed initializing condition variable");
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_Condition::~OW_Condition()
+Condition::~Condition()
 {
 	int res = pth_cond_destroy(&m_condition);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::notifyOne()
+Condition::notifyOne()
 {
 	int res = pth_cond_signal(&m_condition);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::notifyAll()
+Condition::notifyAll()
 {
 	int res = pth_cond_broadcast(&m_condition);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
+Condition::doWait(NonRecursiveMutex& mutex)
 {
 	int res;
-	OW_NonRecursiveMutexLockState state;
+	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	res = pth_cond_wait(&m_condition, state.pmutex);
 	mutex.conditionPostWait(state);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 bool 
-OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
 	int res;
-	OW_NonRecursiveMutexLockState state;
+	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	bool ret = false;
 	timespec ts;
@@ -164,85 +154,75 @@ OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UI
 	ret = res != ETIMEDOUT;
 	return ret;
 }
-
 #elif defined (OW_USE_WIN32_THREADS)
 /////////////////////////////////////////////////////////////////////////////
-OW_Condition::OW_Condition()
+Condition::Condition()
 {
 	//if (res != 0)
 	{
-		OW_THROW(OW_ConditionResourceException, "Failed initializing condition variable");
+		OW_THROW(ConditionResourceException, "Failed initializing condition variable");
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_Condition::~OW_Condition()
+Condition::~Condition()
 {
 	//assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::notifyOne()
+Condition::notifyOne()
 {
 //	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::notifyAll()
+Condition::notifyAll()
 {
 //	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::doWait(OW_NonRecursiveMutex& mutex)
+Condition::doWait(NonRecursiveMutex& mutex)
 {
 	int res;
-	OW_NonRecursiveMutexLockState state;
+	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	mutex.conditionPostWait(state);
 	assert(res == 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 bool 
-OW_Condition::doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
 {
-	OW_NonRecursiveMutexLockState state;
+	NonRecursiveMutexLockState state;
 	mutex.conditionPreWait(state);
 	bool ret = false;
 	mutex.conditionPostWait(state);
 	return ret;
 }
-
 #else
 #error "port me!"
-
 #endif
-
-
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Condition::wait(OW_NonRecursiveMutexLock& lock)
+Condition::wait(NonRecursiveMutexLock& lock)
 {
 	if (!lock.isLocked())
 	{
-		OW_THROW(OW_ConditionLockException, "Lock must be locked");
+		OW_THROW(ConditionLockException, "Lock must be locked");
 	}
 	doWait(*(lock.m_mutex));
 }
-
 /////////////////////////////////////////////////////////////////////////////
 bool 
-OW_Condition::timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+Condition::timedWait(NonRecursiveMutexLock& lock, UInt32 sTimeout, UInt32 usTimeout)
 {
 	if (!lock.isLocked())
 	{
-		OW_THROW(OW_ConditionLockException, "Lock must be locked");
+		OW_THROW(ConditionLockException, "Lock must be locked");
 	}
 	return doTimedWait(*(lock.m_mutex), sTimeout, usTimeout);
 }
+
+} // end namespace OpenWBEM
 

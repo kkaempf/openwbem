@@ -27,60 +27,52 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NON_RECURSIVE_MUTEX_INCLUDE_GUARD_HPP_
 #define OW_NON_RECURSIVE_MUTEX_INCLUDE_GUARD_HPP_
-
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(Deadlock)
-
-
-class OW_NonRecursiveMutex
+class NonRecursiveMutex
 {
 public:
-
 	/**
-	 * Create a new OW_NonRecursiveMutex object.
+	 * Create a new NonRecursiveMutex object.
 	 */
-	OW_NonRecursiveMutex();
-
+	NonRecursiveMutex();
 	/**
-	 * Destroy this OW_NonRecursiveMutex object.
+	 * Destroy this NonRecursiveMutex object.
 	 */
-	~OW_NonRecursiveMutex();
-
+	~NonRecursiveMutex();
 	/**
-	 * Acquire ownership of this OW_NonRecursiveMutex object.
+	 * Acquire ownership of this NonRecursiveMutex object.
 	 * This call will block if another thread has
-	 * ownership of this OW_NonRecursiveMutex. When it returns, the current thread will be
-	 * the owner of this OW_NonRecursiveMutex object.
-	 * If this thread is the owner of the mutex, then an OW_Deadlock 
+	 * ownership of this NonRecursiveMutex. When it returns, the current thread will be
+	 * the owner of this NonRecursiveMutex object.
+	 * If this thread is the owner of the mutex, then an Deadlock 
 	 * exception will be thrown.
 	 */
 	void acquire();
-
 	/**
-	 * Release ownership of this OW_NonRecursiveMutex object. If another thread is waiting
+	 * Release ownership of this NonRecursiveMutex object. If another thread is waiting
 	 * to acquire the ownership of this mutex it will stop blocking and acquire
 	 * ownership when this call returns.
 	 */
 	bool release();
-
 private:
-	OW_NonRecursiveMutex_t m_mutex;
-
+	NonRecursiveMutex_t m_mutex;
 	// noncopyable
-	OW_NonRecursiveMutex(const OW_NonRecursiveMutex&);
-	OW_NonRecursiveMutex operator = (const OW_NonRecursiveMutex&);
-
-	friend class OW_Condition;
-
-	void conditionPreWait(OW_NonRecursiveMutexLockState& state);
-	void conditionPostWait(OW_NonRecursiveMutexLockState& state);
+	NonRecursiveMutex(const NonRecursiveMutex&);
+	NonRecursiveMutex operator = (const NonRecursiveMutex&);
+	friend class Condition;
+	void conditionPreWait(NonRecursiveMutexLockState& state);
+	void conditionPostWait(NonRecursiveMutexLockState& state);
 };
 
+} // end namespace OpenWBEM
 
 #endif

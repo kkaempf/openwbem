@@ -24,7 +24,7 @@
 #include "cmpisrv.h"
 #include "OW_String.hpp"
 
-CMPI_String* string2CMPIString(const OW_String &s) {
+CMPI_String* string2CMPIString(const OpenWBEM::String &s) {
   char *cp=strdup(s.c_str());
   CMPI_Object *obj= new CMPI_Object((void*)cp,CMPI_String_Ftab);
 //  CMPIRefs::localRefs().addRef(obj,CMPIRefs::TypeString);

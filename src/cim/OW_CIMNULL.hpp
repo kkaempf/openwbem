@@ -27,16 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMNULL_HPP_INCLUDE_GUARD_
 #define OW_CIMNULL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 
-// This is used to create NULL CIM objects.
-enum OW_CIMNULL_t
+namespace OpenWBEM
 {
-	OW_CIMNULL
+
+// This is used to create NULL CIM objects.
+enum CIMNULL_t
+{
+	CIMNULL
 };
 					
+
+} // end namespace OpenWBEM
+
 #endif

@@ -27,17 +27,17 @@
 // Modified By: Dan Nuffer
 //
 //%/////////////////////////////////////////////////////////////////////////////
-
 #include "OW_config.h"
 #include "OW_WQLOperand.hpp"
 #include "OW_StringBuffer.hpp"
 
-DEFINE_EXCEPTION(TypeMismatch);
-
-OW_String OW_WQLOperand::toString() const
+namespace OpenWBEM
 {
-	OW_StringBuffer result;
 
+DEFINE_EXCEPTION(TypeMismatch);
+String WQLOperand::toString() const
+{
+	StringBuffer result;
 	switch (_type)
 	{
 	case PROPERTY_NAME:
@@ -46,50 +46,40 @@ OW_String OW_WQLOperand::toString() const
 			result += _string;
 			break;
 		}
-
 	case STRING_VALUE:
 		{
 			result = "STRING_VALUE: ";
 			result += _string;
 			break;
 		}
-
 	case INTEGER_VALUE:
 		{
 			result = "INTEGER_VALUE: ";
 			result += _integerValue;
 			break;
 		}
-
 	case DOUBLE_VALUE:
 		{
 			result = "DOUBLE_VALUE: ";
 			result += _doubleValue;
 			break;
 		} 
-
 	case BOOLEAN_VALUE:
 		{
 			result = "BOOLEAN_VALUE: ";
-
 			if (_booleanValue)
 				result += "TRUE";
 			else
 				result += "FALSE";
-
 			break;
 		}
-
 	default:
 		result = "NULL_VALUE";
 		break;
 	}
-
 	return result.releaseString();
 }
-
-
-bool operator==(const OW_WQLOperand& x, const OW_WQLOperand& y)
+bool operator==(const WQLOperand& x, const WQLOperand& y)
 {
 	if (x.getType() != y.getType())
 	{
@@ -97,20 +87,21 @@ bool operator==(const OW_WQLOperand& x, const OW_WQLOperand& y)
 	}
 	switch (x.getType())
 	{
-		case OW_WQLOperand::NULL_VALUE:
+		case WQLOperand::NULL_VALUE:
 			return true;
-		case OW_WQLOperand::INTEGER_VALUE:
+		case WQLOperand::INTEGER_VALUE:
 			return x.getIntegerValue() == y.getIntegerValue();
-		case OW_WQLOperand::DOUBLE_VALUE:
+		case WQLOperand::DOUBLE_VALUE:
 			return x.getDoubleValue() == y.getDoubleValue();
-		case OW_WQLOperand::BOOLEAN_VALUE:
+		case WQLOperand::BOOLEAN_VALUE:
 			return x.getBooleanValue() == y.getBooleanValue();
-		case OW_WQLOperand::STRING_VALUE:
+		case WQLOperand::STRING_VALUE:
 			return x.getStringValue() == y.getStringValue();
-		case OW_WQLOperand::PROPERTY_NAME:
+		case WQLOperand::PROPERTY_NAME:
 			return x.getPropertyName() == y.getPropertyName();
 	}
 	return false;
 }
 
+} // end namespace OpenWBEM
 

@@ -27,47 +27,44 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SHARED_LIBRARY_LOADER_HPP_
 #define OW_SHARED_LIBRARY_LOADER_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 #include "OW_String.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Logger.hpp"
 
-class OW_SharedLibraryLoader;
-typedef OW_Reference<OW_SharedLibraryLoader> OW_SharedLibraryLoaderRef;
+namespace OpenWBEM
+{
 
+class SharedLibraryLoader;
+typedef Reference<SharedLibraryLoader> SharedLibraryLoaderRef;
 /**
- * OW_SharedLibraryLoader is the base class for a platform class for loading
+ * SharedLibraryLoader is the base class for a platform class for loading
  * shared libraries.
  */
-class OW_SharedLibraryLoader
+class SharedLibraryLoader
 {
 public:
-	virtual ~OW_SharedLibraryLoader()
+	virtual ~SharedLibraryLoader()
 	{
 	}
-
 	/**
 	 * Load a shared library specified by filename.  If the operation fails,
 	 * the return value will be null ref counted pointer.
 	 */
-	virtual OW_SharedLibraryRef loadSharedLibrary(const OW_String& filename,
-		OW_LoggerRef logger) const = 0;
-
+	virtual SharedLibraryRef loadSharedLibrary(const String& filename,
+		LoggerRef logger) const = 0;
 	/**
-	 * @return A reference to an OW_SharedLibraryLoader object.
+	 * @return A reference to an SharedLibraryLoader object.
 	 *
 	 * Note: The implementation of createSharedLibraryLoader is contained
 	 * in the platform specific branch of the source tree.
 	 */
-	static OW_SharedLibraryLoaderRef createSharedLibraryLoader();
-
+	static SharedLibraryLoaderRef createSharedLibraryLoader();
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

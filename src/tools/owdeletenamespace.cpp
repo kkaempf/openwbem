@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
@@ -36,33 +35,30 @@
 #include "OW_GetPass.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMUrl.hpp"
-
 #include <iostream>
+
+using namespace OpenWBEM;
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
-
-class GetLoginInfo : public OW_ClientAuthCBIFC
+class GetLoginInfo : public ClientAuthCBIFC
 {
 	public:
-		bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd, const OW_String& details)
+		bool getCredentials(const String& realm, String& name,
+				String& passwd, const String& details)
 		{
 			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
-			name = OW_String::getLine(cin);
-			passwd = OW_GetPass::getPass("Enter the password for " +
+			name = String::getLine(cin);
+			passwd = GetPass::getPass("Enter the password for " +
 				name + ": ");
 			return true;
 		}
 };
-
-
 //////////////////////////////////////////////////////////////////////////////
-
 int main(int argc, char* argv[])
 {
 	if (argc != 3)
@@ -70,56 +66,45 @@ int main(int argc, char* argv[])
 		cout << "Usage: <URL> <namespace>" << endl;
 		return 1;
 	}
-
 	try
 	{
-		OW_String url = argv[1];
-		OW_String ns = argv[2];
-
-		OW_URL owurl(url);
-
-		OW_CIMProtocolIFCRef client;
-		client = new OW_HTTPClient(url);
-
-
+		String url = argv[1];
+		String ns = argv[2];
+		URL owurl(url);
+		CIMProtocolIFCRef client;
+		client = new HTTPClient(url);
 		/**********************************************************************
 		 * Create an instance of our authentication callback class.
 		 **********************************************************************/
 		
-		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-
+		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		/**********************************************************************
 		 * Assign our callback to the HTTP Client.
 		 **********************************************************************/
-
 		client->setLoginCallBack(getLoginInfo);
-
 		/**********************************************************************
-		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
-		 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
-		 * a OW_Reference<OW_CIMProtocol> it it's constructor, so
-		 * we have to make a OW_Reference out of our HTTP Client first.
+		 * Here we create a CIMXMLCIMOMHandle and have it use the
+		 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
+		 * a Reference<CIMProtocol> it it's constructor, so
+		 * we have to make a Reference out of our HTTP Client first.
 		 * By doing this, we don't have to worry about deleting our
-		 * OW_HTTPClient.  OW_Reference will delete it for us when the
+		 * HTTPClient.  Reference will delete it for us when the
 		 * last copy goes out of scope (reference count goes to zero).
 		 **********************************************************************/
-
-		OW_CIMOMHandleIFCRef rch;
+		CIMOMHandleIFCRef rch;
 		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		{
-			rch = new OW_BinaryCIMOMHandle(client);
+			rch = new BinaryCIMOMHandle(client);
 		}
 		else
 		{
-			rch = new OW_CIMXMLCIMOMHandle(client);
+			rch = new CIMXMLCIMOMHandle(client);
 		}
-
 		cout << "Deleting namespace (" << ns << ")" << endl;
-		OW_CIMNameSpaceUtils::delete__Namespace(rch, ns);
-
+		CIMNameSpaceUtils::delete__Namespace(rch, ns);
 		return 0;
 	}
-	catch(const OW_Exception& e)
+	catch(const Exception& e)
 	{
 		cerr << e << endl;
 	}
@@ -133,3 +118,5 @@ int main(int argc, char* argv[])
 	}
 	return 1;
 }
+
+

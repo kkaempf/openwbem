@@ -27,37 +27,38 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_CIMOMLocator.hpp"
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_Exception.hpp"
 
-DEFINE_EXCEPTION(CIMOMLocator);
+namespace OpenWBEM
+{
 
+DEFINE_EXCEPTION(CIMOMLocator);
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMLocator::~OW_CIMOMLocator() 
+CIMOMLocator::~CIMOMLocator() 
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMLocatorRef
-OW_CIMOMLocator::createCIMOMLocator(const OW_String& locatorType)
+CIMOMLocatorRef
+CIMOMLocator::createCIMOMLocator(const String& locatorType)
 {
 	if (locatorType.equalsIgnoreCase("slp"))
 	{
 #ifdef OW_HAVE_SLP_H
-		return OW_CIMOMLocatorRef(new OW_CIMOMLocatorSLP());
+		return CIMOMLocatorRef(new CIMOMLocatorSLP());
 #else
-		OW_THROW(OW_CIMOMLocatorException, "Requested SLP CIMOM Locator, but "
+		OW_THROW(CIMOMLocatorException, "Requested SLP CIMOM Locator, but "
 			"not linked with libslp!");
 #endif
 	}
 	else
 	{
-		OW_THROW(OW_Exception, "Unknown CIMOMLocator type");
+		OW_THROW(Exception, "Unknown CIMOMLocator type");
 	}
-	return OW_CIMOMLocatorRef();
+	return CIMOMLocatorRef();
 }
+
+} // end namespace OpenWBEM
 

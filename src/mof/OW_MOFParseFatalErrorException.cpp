@@ -30,6 +30,14 @@
 #include "OW_config.h"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
 
-DEFINE_EXCEPTION(MofParseFatalError)
+namespace OpenWBEM
+{
 
+namespace MOF
+{
+
+DEFINE_EXCEPTION(ParseFatalError)
+
+} // end namespace MOF
+} // end namespace OpenWBEM
 

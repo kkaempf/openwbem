@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HTTPXMLCIMLISTENER_HPP_
 #define OW_HTTPXMLCIMLISTENER_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Map.hpp"
@@ -43,22 +41,21 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Mutex.hpp"
 
-class OW_HTTPServer;
-class OW_ListenerAuthenticator;
-class OW_Thread;
+namespace OpenWBEM
+{
 
-class OW_HTTPXMLCIMListener : public OW_CIMListenerCallback
+class HTTPServer;
+class ListenerAuthenticator;
+class Thread;
+class HTTPXMLCIMListener : public CIMListenerCallback
 {
 public:
 	/**
 	 * @param logger If a logger specified then it will receive log messages, otherwise
 	 *  all log messages will be discarded.
 	 */
-	OW_HTTPXMLCIMListener(OW_LoggerRef logger = OW_LoggerRef(0));
-
-	~OW_HTTPXMLCIMListener();
-
-
+	HTTPXMLCIMListener(LoggerRef logger = LoggerRef(0));
+	~HTTPXMLCIMListener();
 	/**
 	 * Register for an indication.  The destructor will attempt to deregister
 	 * any subscriptions which are still outstanding at the time.
@@ -70,70 +67,60 @@ public:
 	 * @param sourceNamespace The path to a local namespace where the Indications
 	 *  originate. If empty, the namespace of the Filter registration
 	 *  is assumed.
-	 * @param cb An object derived from OW_CIMListenerCallback.  When an
+	 * @param cb An object derived from CIMListenerCallback.  When an
 	 *		indication is received, the doIndicationOccured member function will be called
 	 *
 	 * @return A unique handle identifying the indication subscription and callback.
 	 *		Use this handle to de-register the listener.
 	 */
-	OW_String registerForIndication(const OW_String& url,
-		const OW_String& ns, const OW_String& filter,
-		const OW_String& querylanguage, 
-		const OW_String& sourceNamespace,
-		OW_CIMListenerCallbackRef cb);
-
+	String registerForIndication(const String& url,
+		const String& ns, const String& filter,
+		const String& querylanguage, 
+		const String& sourceNamespace,
+		CIMListenerCallbackRef cb);
 	/**
 	 * De-register for an indication
 	 * @param handle The string returned from registerForIndication
 	 */
-	void deregisterForIndication( const OW_String& handle );
-
+	void deregisterForIndication( const String& handle );
 	/**
 	 * Shut down the http server that is listening for indications.
 	 *	This function blocks until all threads that are running callbacks
 	 *	have terminated.
 	 */
 	void shutdownHttpServer();
-
 protected:
-
-	virtual void doIndicationOccurred( OW_CIMInstance& ci,
-		const OW_String& listenerPath );
-
+	virtual void doIndicationOccurred( CIMInstance& ci,
+		const String& listenerPath );
 private:
-
 	struct registrationInfo
 	{
 		registrationInfo()
-			: handler(OW_CIMNULL)
-			, filter(OW_CIMNULL)
-			, subscription(OW_CIMNULL)
+			: handler(CIMNULL)
+			, filter(CIMNULL)
+			, subscription(CIMNULL)
 		{}
-
-		OW_URL cimomUrl;
-		OW_String ns;
-		OW_CIMObjectPath handler;
-		OW_CIMObjectPath filter;
-		OW_CIMObjectPath subscription;
-		OW_CIMListenerCallbackRef callback;
-		OW_String httpCredentials;
+		URL cimomUrl;
+		String ns;
+		CIMObjectPath handler;
+		CIMObjectPath filter;
+		CIMObjectPath subscription;
+		CIMListenerCallbackRef callback;
+		String httpCredentials;
 	};
-
-	typedef OW_Map< OW_String, registrationInfo > callbackMap_t;
-
+	typedef Map< String, registrationInfo > callbackMap_t;
 	callbackMap_t m_callbacks;
-	OW_RequestHandlerIFCRef m_XMLListener;
-	OW_Reference<OW_ListenerAuthenticator> m_pLAuthenticator;
-	OW_Reference<OW_HTTPServer> m_httpServer;
-	OW_UInt16 m_httpListenPort;
-	OW_UInt16 m_httpsListenPort;
-
+	RequestHandlerIFCRef m_XMLListener;
+	Reference<ListenerAuthenticator> m_pLAuthenticator;
+	Reference<HTTPServer> m_httpServer;
+	UInt16 m_httpListenPort;
+	UInt16 m_httpsListenPort;
 	void deleteRegistrationObjects( const registrationInfo& reg );
-
-	OW_Mutex m_mutex;
-	OW_Reference<OW_Thread> m_httpThread;
-	OW_UnnamedPipeRef m_stopHttpPipe;
+	Mutex m_mutex;
+	Reference<Thread> m_httpThread;
+	UnnamedPipeRef m_stopHttpPipe;
 };
 
+} // end namespace OpenWBEM
 
 #endif

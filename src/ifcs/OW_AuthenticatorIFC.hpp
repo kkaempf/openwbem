@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_AUTHENTICATORIFC_HPP_
 #define OW_AUTHENTICATORIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
@@ -37,27 +36,25 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-DECLARE_EXCEPTION(Authentication);
+namespace OpenWBEM
+{
 
-class OW_AuthenticatorIFC
+DECLARE_EXCEPTION(Authentication);
+class AuthenticatorIFC
 {
 public:
-
-	OW_AuthenticatorIFC()
+	AuthenticatorIFC()
 		: signature(0xCA1DE8A1)
 		, m_mutex() {}
-
-	virtual ~OW_AuthenticatorIFC();
-
+	virtual ~AuthenticatorIFC();
 	/**
 	 * Called when authenticator is loaded
-	 * @param env A reference to an OW_ServiceEnvironment for the authenticator
+	 * @param env A reference to an ServiceEnvironment for the authenticator
 	 *		to use.
 	 * Exception is thrown because other classes which derive
 	 * from this may need to throw exceptions in init()
 	 */
-	void init(OW_ServiceEnvironmentIFCRef env) { doInit(env); }
-
+	void init(ServiceEnvironmentIFCRef env) { doInit(env); }
 	/**
 	 * Authenticates a user
 	 *
@@ -73,17 +70,14 @@ public:
 	 * @return
 	 *   True if user is authenticated
 	 */
-	bool authenticate(OW_String& userName, const OW_String& info,
-		OW_String& details)
+	bool authenticate(String& userName, const String& info,
+		String& details)
 	{
-		OW_MutexLock lock(m_mutex);
+		MutexLock lock(m_mutex);
 		return doAuthenticate(userName, info, details);
 	}
-
-	OW_UInt32 signature;
-
+	UInt32 signature;
 protected:
-
 	/**
 	 * Authenticates a user
 	 *
@@ -97,23 +91,20 @@ protected:
 	 * @return
 	 *   True if user is authenticated
 	 */
-	virtual bool doAuthenticate(OW_String& userName,
-		const OW_String& info, OW_String& details) = 0;
-
+	virtual bool doAuthenticate(String& userName,
+		const String& info, String& details) = 0;
 	/**
 	 * Called when authenticator is loaded
 	 * Exception is thrown because other classes which derive
 	 * from this may need to throw exceptions in init()
 	 */
-	virtual void doInit(OW_ServiceEnvironmentIFCRef) {}
-
-	OW_Mutex m_mutex;
+	virtual void doInit(ServiceEnvironmentIFCRef) {}
+	Mutex m_mutex;
 };
-
-typedef OW_SharedLibraryReference<OW_AuthenticatorIFC> OW_AuthenticatorIFCRef;
+typedef SharedLibraryReference<AuthenticatorIFC> AuthenticatorIFCRef;
 
 #define OW_AUTHENTICATOR_FACTORY(derived) \
-extern "C" OW_AuthenticatorIFC* \
+extern "C" OpenWBEM::AuthenticatorIFC* \
 createAuthenticator() \
 { \
 	return new derived; \
@@ -124,5 +115,6 @@ getOWVersion() \
 	return OW_VERSION; \
 }
 
+} // end namespace OpenWBEM
 
 #endif

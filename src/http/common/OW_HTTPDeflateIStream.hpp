@@ -27,80 +27,68 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifdef OW_HAVE_ZLIB_H
-
 #ifndef OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPDEFLATEISTREAM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
-
-
-extern "C"
-{
 #include <zlib.h>
-}
 
-class OW_HTTPDeflateIStreamBuffer : public OW_BaseStreamBuffer
+namespace OpenWBEM
+{
+
+class HTTPDeflateIStreamBuffer : public BaseStreamBuffer
 {
 public:
-	OW_HTTPDeflateIStreamBuffer(std::istream& istr);
-	~OW_HTTPDeflateIStreamBuffer();
-
+	HTTPDeflateIStreamBuffer(std::istream& istr);
+	~HTTPDeflateIStreamBuffer();
 protected:
 	virtual int buffer_from_device(char *, int);
-
 private:
 	std::istream& m_istr;
 	z_stream m_zstr;
-	static const OW_UInt32 m_inBufSize = HTTP_BUF_SIZE;
+	static const UInt32 m_inBufSize = HTTP_BUF_SIZE;
 	Bytef m_inBuf[m_inBufSize];
-
 	// don't allow copying and assigning
-	OW_HTTPDeflateIStreamBuffer(const OW_HTTPDeflateIStreamBuffer&);
-	OW_HTTPDeflateIStreamBuffer& operator=(OW_HTTPDeflateIStreamBuffer&);
+	HTTPDeflateIStreamBuffer(const HTTPDeflateIStreamBuffer&);
+	HTTPDeflateIStreamBuffer& operator=(HTTPDeflateIStreamBuffer&);
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPDeflateIStreamBase
+class HTTPDeflateIStreamBase
 {
 public:
-	OW_HTTPDeflateIStreamBase(std::istream& istr)
+	HTTPDeflateIStreamBase(std::istream& istr)
 		: m_strbuf(istr) {}
-	OW_HTTPDeflateIStreamBuffer m_strbuf;
+	HTTPDeflateIStreamBuffer m_strbuf;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPDeflateIStream : private OW_HTTPDeflateIStreamBase, 
-	public OW_CIMProtocolIStreamIFC
+class HTTPDeflateIStream : private HTTPDeflateIStreamBase, 
+	public CIMProtocolIStreamIFC
 {
 public:
 	/**
-	 * Convert an istream to a OW_HTTPDeflateIStream.  This wraps the 
+	 * Convert an istream to a HTTPDeflateIStream.  This wraps the 
 	 * istream.  Anything read from the new istream, is first read from
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
 	 */
-	OW_HTTPDeflateIStream(OW_Reference<OW_CIMProtocolIStreamIFC> istr);
-
+	HTTPDeflateIStream(Reference<CIMProtocolIStreamIFC> istr);
 	/**
 	 * Get the original istream
 	 * @return the original istream.
 	 */
-	OW_Reference<OW_CIMProtocolIStreamIFC> getInputStreamOrig() { return m_istr; };
-
+	Reference<CIMProtocolIStreamIFC> getInputStreamOrig() { return m_istr; };
 	virtual void checkForError() const { m_istr->checkForError(); }
 private:
-	OW_Reference<OW_CIMProtocolIStreamIFC> m_istr;
-
+	Reference<CIMProtocolIStreamIFC> m_istr;
 	// don't allow copying and assigning
-	OW_HTTPDeflateIStream(const OW_HTTPDeflateIStream&);
-	OW_HTTPDeflateIStream& operator=(OW_HTTPDeflateIStream&);
+	HTTPDeflateIStream(const HTTPDeflateIStream&);
+	HTTPDeflateIStream& operator=(HTTPDeflateIStream&);
 };
-
 #endif
+
+} // end namespace OpenWBEM
 
 #endif // #ifdef OW_HAVE_ZLIB_H

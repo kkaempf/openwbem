@@ -128,7 +128,7 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_String", OW_StringTestCases::suite());
 	runner.addTest( "OW_Format", OW_FormatTestCases::suite());
 
-	if ( argc < 2 || ( argc == 2 && OW_String("all") == argv[1] ) )
+	if ( argc < 2 || ( argc == 2 && OpenWBEM::String("all") == argv[1] ) )
 	{
 		runner.runAll();
 	}

@@ -27,28 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_PLATFORM_HPP_INCLUDE_GUARD_
 #define OW_PLATFORM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 
-DECLARE_EXCEPTION(Daemon);
+namespace OpenWBEM
+{
 
-class OW_Platform
+DECLARE_EXCEPTION(Daemon);
+class Platform
 {
 public:
-
 	enum
 	{
 		SHUTDOWN,
 		REINIT
 	};
-
 	struct Options
 	{
 		Options()
@@ -58,22 +56,19 @@ public:
 		, help(false)
 		, error(false)
 		{}
-
 		bool debug;
 		bool configFile;
-		OW_String configFilePath;
+		String configFilePath;
 		bool help;
 		bool error;
 	};
-
 	static Options daemonInit( int argc, char* argv[] );
-
 	/**
-	 * @throws OW_DaemonException on error
+	 * @throws DaemonException on error
 	 */
-	static void daemonize(bool dbgFlg, const OW_String& daemonName);
-	static int daemonShutdown(const OW_String& daemonName);
-	static void initSig() { plat_upipe = OW_UnnamedPipe::createUnnamedPipe(); }
+	static void daemonize(bool dbgFlg, const String& daemonName);
+	static int daemonShutdown(const String& daemonName);
+	static void initSig() { plat_upipe = UnnamedPipe::createUnnamedPipe(); }
 	static void pushSig(int sig)
 	{
 		plat_upipe->writeInt(sig);
@@ -87,17 +82,16 @@ public:
 		return tmp;
 	}
 	static void shutdownSig() { plat_upipe = 0; }
-
-	static OW_SelectableIFCRef getSigSelectable()
+	static SelectableIFCRef getSigSelectable()
 	{
 		return plat_upipe;
 	}
-
-    static OW_String getCurrentUserName();
+    static String getCurrentUserName();
 private:
-	OW_Platform(); // prevent instantiation.
-	static OW_Reference<OW_UnnamedPipe> plat_upipe;
+	Platform(); // prevent instantiation.
+	static Reference<UnnamedPipe> plat_upipe;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

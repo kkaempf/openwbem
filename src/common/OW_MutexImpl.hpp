@@ -27,31 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_MUTEX_IMPL_INCLUDE_GUARD_HPP_
 #define OW_MUTEX_IMPL_INCLUDE_GUARD_HPP_
-
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_MutexImpl class represents the functionality needed by the
- * OpenWbem Mutex class (OW_Mutex). The implementation for this class
+ * The MutexImpl class represents the functionality needed by the
+ * OpenWbem Mutex class (Mutex). The implementation for this class
  * must be provided on all platforms that OpenWbem runs on. It is essentially
  * an abstraction layer over another mutex implementation.
  */
-class OW_MutexImpl
+class MutexImpl
 {
 public:
-
 	/**
 	 * Create a platform specific mutext handle.
 	 * @param handle	The mutex handle that should be initialized by this method
 	 * @param isRecursive Specified whether to create a recursive mutex
 	 * @return 0 on success. Otherwise -1.
 	 */
-	static int createMutex(OW_Mutex_t& handle);
-
+	static int createMutex(Mutex_t& handle);
 	/**
 	 * Destroy a mutex previously created with createMutex.
 	 * @param handle The handle to the mutex that will be destroyed.
@@ -61,8 +60,7 @@ public:
 	 *				locked.
 	 *		-2:	All other error conditions
 	 */
-	static int destroyMutex(OW_Mutex_t& handle);
-
+	static int destroyMutex(Mutex_t& handle);
 	/**
 	 * Acquire the mutex specified by a given mutex handle. This method should
 	 * block until the desired mutex can be acquired. The error return value is
@@ -71,18 +69,17 @@ public:
 	 * @param handle The mutex to acquire.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int acquireMutex(OW_Mutex_t& handle);
-
+	static int acquireMutex(Mutex_t& handle);
 	/**
 	 * Release a mutex that was previously acquired with the acquireMutex
 	 * method.
 	 * @param handle The handle to the mutex that is being released.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int releaseMutex(OW_Mutex_t& handle);
+	static int releaseMutex(Mutex_t& handle);
 	
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

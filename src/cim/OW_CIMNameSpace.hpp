@@ -27,203 +27,169 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMNAMESPACE_HPP_INCLUDE_GUARD_
 #define OW_CIMNAMESPACE_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
 #include "OW_CIMBase.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMNULL.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMNameSpace class represents a CIM namespace. The CIM namespace
+ * The CIMNameSpace class represents a CIM namespace. The CIM namespace
  * is a component of a CIM object name (namespace + model path) that provides
- * a scope within which all objects are unique. OW_CIMNameSpace objects are
- * ref counted and copy on write. It is possible to have a NULL OW_CIMNameSpace
+ * a scope within which all objects are unique. CIMNameSpace objects are
+ * ref counted and copy on write. It is possible to have a NULL CIMNameSpace
  * object.
  */
-class OW_CIMNameSpace : public OW_CIMBase
+class CIMNameSpace : public CIMBase
 {
 private:
-
 	struct NSData;
-	friend bool operator<(const OW_CIMNameSpace::NSData& x, 
-			const OW_CIMNameSpace::NSData& y); 
-
+	friend bool operator<(const CIMNameSpace::NSData& x, 
+			const CIMNameSpace::NSData& y); 
 public:
-
 	/**
-	 * Create a new OW_CIMNameSpace object.
+	 * Create a new CIMNameSpace object.
 	 */
-	OW_CIMNameSpace();
-
+	CIMNameSpace();
 	/**
-	 * Create a NULL OW_CIMNameSpace object.
+	 * Create a NULL CIMNameSpace object.
 	 */
-	explicit OW_CIMNameSpace(OW_CIMNULL_t);
-
+	explicit CIMNameSpace(CIMNULL_t);
 	/**
-	 * Create a new OW_CIMNameSpace object.
-	 * @param hostUrl The url component of this OW_CIMNameSpace object.
+	 * Create a new CIMNameSpace object.
+	 * @param hostUrl The url component of this CIMNameSpace object.
 	 * @param nameSpace The namespace (e.g. "root/cimv2") component of this
-	 *		OW_CIMNameSpace object.
+	 *		CIMNameSpace object.
 	 */
-	OW_CIMNameSpace(const OW_CIMUrl& hostUrl,
-		const OW_String& nameSpace);
-
+	CIMNameSpace(const CIMUrl& hostUrl,
+		const String& nameSpace);
 	/**
-	 * Create a new OW_CIMNameSpace object.
-	 * @param hostUrl The url component of this OW_CIMNameSpace object.
+	 * Create a new CIMNameSpace object.
+	 * @param hostUrl The url component of this CIMNameSpace object.
 	 * @param nameSpace The namespace (e.g. "root/cimv2") component of this
-	 *		OW_CIMNameSpace object.
+	 *		CIMNameSpace object.
 	 */
-	explicit OW_CIMNameSpace(const OW_String& nameSpace);
-
+	explicit CIMNameSpace(const String& nameSpace);
 	/**
-	 * Create a new OW_CIMNameSpace object.
-	 * @param hostUrl The url component of this OW_CIMNameSpace object.
+	 * Create a new CIMNameSpace object.
+	 * @param hostUrl The url component of this CIMNameSpace object.
 	 * @param nameSpace The namespace (e.g. "root/cimv2") component of this
-	 *		OW_CIMNameSpace object.
+	 *		CIMNameSpace object.
 	 */
-	explicit OW_CIMNameSpace(const char* nameSpace);
-
+	explicit CIMNameSpace(const char* nameSpace);
 	/**
-	 * Create a new OW_CIMNameSpace object that is a copy of another.
-	 * @param arg The OW_CIMNameSpace to make this object a copy of.
+	 * Create a new CIMNameSpace object that is a copy of another.
+	 * @param arg The CIMNameSpace to make this object a copy of.
 	 */
-	OW_CIMNameSpace(const OW_CIMNameSpace& arg);
-
+	CIMNameSpace(const CIMNameSpace& arg);
 	/**
-	 * Destroy this OW_CIMNameSpace object.
+	 * Destroy this CIMNameSpace object.
 	 */
-	~OW_CIMNameSpace();
-
+	~CIMNameSpace();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMNameSpace object to assign to this one.
+	 * @param arg The CIMNameSpace object to assign to this one.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	OW_CIMNameSpace& operator= (const OW_CIMNameSpace& arg);
-
+	CIMNameSpace& operator= (const CIMNameSpace& arg);
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 	/**
-	 * @return The namespace component of this OW_CIMNameSpace object.
+	 * @return The namespace component of this CIMNameSpace object.
 	 */
-	OW_String getNameSpace() const;
-
+	String getNameSpace() const;
 	/**
-	 * @return The host component of this OW_CIMNameSpace object.
+	 * @return The host component of this CIMNameSpace object.
 	 */
-	OW_String getHost() const;
-
+	String getHost() const;
 	/**
-	 * @return The host URL component of this OW_CIMNameSpace object.
+	 * @return The host URL component of this CIMNameSpace object.
 	 */
-	OW_CIMUrl getHostUrl() const;
-
+	CIMUrl getHostUrl() const;
 	/**
-	 * @return The port number from the URL component of this OW_CIMNameSpace.
+	 * @return The port number from the URL component of this CIMNameSpace.
 	 */
-	OW_Int32 getPortNumber() const;
-
+	Int32 getPortNumber() const;
 	/**
-	 * @return The protocol from the URL component of this OW_CIMNameSpace.
+	 * @return The protocol from the URL component of this CIMNameSpace.
 	 */
-	OW_String getProtocol() const;
-
+	String getProtocol() const;
 	/**
-	 * @return The file name from the URL component of this OW_CIMNameSpace.
+	 * @return The file name from the URL component of this CIMNameSpace.
 	 */
-	OW_String getFileName() const;
-
-
+	String getFileName() const;
 	/**
 	 * @return true if this namespace refers to a namespace hosted by the local
 	 * CIMOM.
 	 */
 	bool isLocal() const;
-
 	/**
-	 * Set the namespace component of this OW_CIMNameSpace object.
-	 * @param nameSpace The namespace for this object as an OW_String
+	 * Set the namespace component of this CIMNameSpace object.
+	 * @param nameSpace The namespace for this object as an String
 	 * @return a reference to *this
 	 */
-	OW_CIMNameSpace& setNameSpace(const OW_String& nameSpace);
-
+	CIMNameSpace& setNameSpace(const String& nameSpace);
 	/**
-	 * Set the host url component of this OW_CIMNameSpace object.
-	 * @param hostUrl The new host url for this OW_CIMNameSpace.
+	 * Set the host url component of this CIMNameSpace object.
+	 * @param hostUrl The new host url for this CIMNameSpace.
 	 * @return a reference to *this
 	 */
-	OW_CIMNameSpace& setHostUrl(const OW_CIMUrl& hostUrl);
-
+	CIMNameSpace& setHostUrl(const CIMUrl& hostUrl);
 	/**
-	 * Set the host of the url component for this OW_CIMNameSpace object.
+	 * Set the host of the url component for this CIMNameSpace object.
 	 * @param host The new host for the url component of this object.
 	 * @return a reference to *this
 	 */
-	OW_CIMNameSpace& setHost(const OW_String& host);
-
+	CIMNameSpace& setHost(const String& host);
 	/**
 	 * Set the protocol
 	 * @param protocol The protocol component of the url for the name space
 	 * @return a reference to *this
 	 */
-	OW_CIMNameSpace& setProtocol(const OW_String& protocol);
-
+	CIMNameSpace& setProtocol(const String& protocol);
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return The string representation of this OW_CIMNameSpace object.
+	 * @return The string representation of this CIMNameSpace object.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return The MOF representation of this OW_CIMNameSpace object.
+	 * @return The MOF representation of this CIMNameSpace object.
 	 * Currently unimplemented.
 	 */
-	virtual OW_String toMOF() const {  return "UMIMPLEMENTED"; }
-
+	virtual String toMOF() const {  return "UMIMPLEMENTED"; }
 private:
-
-	OW_COWReference<NSData> m_pdata;
-
-	friend bool operator<(const OW_CIMNameSpace& lhs, const OW_CIMNameSpace& rhs);
+	COWReference<NSData> m_pdata;
+	friend bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

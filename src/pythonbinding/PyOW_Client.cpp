@@ -32,77 +32,81 @@
 #undef ANY
 #endif
 
-void registerOW_String();
-void registerOW_CIMClient();
-void registerOW_CIMOMInfo();
-void registerOW_Array();
-void registerOW_CIMOMLocator();
-void registerOW_ClientAuthCBIFC();
+namespace OpenWBEM
+{
 
+void registerString();
+void registerCIMClient();
+void registerCIMOMInfo();
+void registerArray();
+void registerCIMOMLocator();
+void registerClientAuthCBIFC();
 BOOST_PYTHON_MODULE(owclient)
 {
-    registerOW_String();
-    registerOW_CIMClient();
-    registerOW_CIMOMInfo();
-    registerOW_Array();
-    registerOW_CIMOMLocator();
-    registerOW_ClientAuthCBIFC();
+    registerString();
+    registerCIMClient();
+    registerCIMOMInfo();
+    registerArray();
+    registerCIMOMLocator();
+    registerClientAuthCBIFC();
     //
-    //    OW_ClientAuthCBIFC ?
-    //    OW_ClientAuthCBIFCRef
+    //    ClientAuthCBIFC ?
+    //    ClientAuthCBIFCRef
     //
-    //    OW_CIMClass
+    //    CIMClass
     //
-    //    OW_CIMDataType
+    //    CIMDataType
     //
-    //    OW_CIMDateTime
+    //    CIMDateTime
     //
-    //    OW_CIMException
+    //    CIMException
     //
-    //    OW_CIMFlavor
+    //    CIMFlavor
     //
-    //    OW_CIMInstance
+    //    CIMInstance
     //
-    //    OW_CIMMethod
+    //    CIMMethod
     //
-    //    OW_CIMNameSpace ???
+    //    CIMNameSpace ???
     //
-    //    OW_CIMObjectPath
+    //    CIMObjectPath
     //
-    //    OW_CIMParamValue
+    //    CIMParamValue
     //
-    //    OW_CIMParameter
+    //    CIMParameter
     //
-    //    OW_CIMProperty
+    //    CIMProperty
     //
-    //    OW_CIMQualifier
+    //    CIMQualifier
     //
-    //    OW_CIMQualifierType
+    //    CIMQualifierType
     //
-    //    OW_CIMScope
+    //    CIMScope
     //
-    //    OW_CIMValue
+    //    CIMValue
     //
-    //    OW_CIMValueCast
+    //    CIMValueCast
     //
-    //    OW_StringResultHandlerIFC
+    //    StringResultHandlerIFC
     //
-    //    OW_CIMClassResultHandlerIFC
+    //    CIMClassResultHandlerIFC
     //
-    //    OW_CIMClassEnumeration
+    //    CIMClassEnumeration
     //
-    //    OW_CIMObjectPathResultHandlerIFC
+    //    CIMObjectPathResultHandlerIFC
     //
-    //    OW_CIMObjectPathEnumeration
+    //    CIMObjectPathEnumeration
     //
-    //    OW_CIMInstanceResultHandlerIFC
+    //    CIMInstanceResultHandlerIFC
     //
-    //    OW_CIMInstanceEnumeration
+    //    CIMInstanceEnumeration
     //
-    //    OW_CIMQualifierTypeResultHandlerIFC
+    //    CIMQualifierTypeResultHandlerIFC
     //
-    //    OW_CIMQualifierTypeEnumeration
+    //    CIMQualifierTypeEnumeration
     //
     //    MofCompiler
 }
+
+} // end namespace OpenWBEM
 

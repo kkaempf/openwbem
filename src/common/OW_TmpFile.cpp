@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_TmpFile.hpp"
@@ -35,12 +34,10 @@
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
 #include "OW_Format.hpp"
-
 #include <cstring>
 #include <cstdlib>
 #include <cerrno>
 #include <cstdio>
-
 extern "C"
 {
 #ifdef OW_USE_GNU_PTH
@@ -51,16 +48,18 @@ extern "C"
 #include <fcntl.h>
 }
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_TmpFileImpl::OW_TmpFileImpl()
+TmpFileImpl::TmpFileImpl()
 	: m_filename(NULL)
 	, m_hdl(-1)
 {
 	open();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_TmpFileImpl::OW_TmpFileImpl(OW_String const& filename)
+TmpFileImpl::TmpFileImpl(String const& filename)
 	: m_filename(NULL)
 	, m_hdl(-1)
 {
@@ -68,26 +67,23 @@ OW_TmpFileImpl::OW_TmpFileImpl(OW_String const& filename)
 	m_filename = new char[len + 1];
 	strncpy(m_filename, filename.c_str(), len);
 	m_filename[len] = '\0';
-
 	m_hdl = ::open(m_filename, O_RDWR);
 	if(m_hdl == -1)
 	{
 		delete[] m_filename;
 		m_filename = NULL;
-		OW_THROW(OW_IOException, format("Error opening file %1: %2", filename,
+		OW_THROW(IOException, format("Error opening file %1: %2", filename,
 			strerror(errno)).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_TmpFileImpl::~OW_TmpFileImpl()
+TmpFileImpl::~TmpFileImpl()
 {
 	close();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 long
-OW_TmpFileImpl::getSize()
+TmpFileImpl::getSize()
 {
 	long cv = tell();
 	seek(0L, SEEK_END);
@@ -95,23 +91,22 @@ OW_TmpFileImpl::getSize()
 	seek(cv, SEEK_SET);
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_TmpFileImpl::open()
+TmpFileImpl::open()
 {
 	close();
 #ifdef OW_OPENUNIX
-	OW_String sfname("/var/tmp/owtmpfileXXXXXX");
+	String sfname("/var/tmp/owtmpfileXXXXXX");
 #else
-	OW_String sfname("/tmp/owtmpfileXXXXXX");
+	String sfname("/tmp/owtmpfileXXXXXX");
 #endif
 	size_t len = sfname.length();
 	m_filename = new char[len + 1];
 	strncpy(m_filename, sfname.c_str(), len);
 	m_filename[len] = '\0';
-	static OW_Mutex tmpfileMutex;
-	OW_MutexLock tmpfileML(tmpfileMutex);
+	static Mutex tmpfileMutex;
+	MutexLock tmpfileML(tmpfileMutex);
 #ifdef OW_WIN32
 	m_hdl = -1;
 #else
@@ -121,14 +116,13 @@ OW_TmpFileImpl::open()
 	{
 		delete[] m_filename;
 		m_filename = NULL;
-		OW_THROW(OW_IOException, format("Error opening file from mkstemp: %1", 
+		OW_THROW(IOException, format("Error opening file from mkstemp: %1", 
 			strerror(errno)).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_TmpFileImpl::close()
+TmpFileImpl::close()
 {
 	int rv = -1;
 	if(m_hdl != -1)
@@ -141,10 +135,9 @@ OW_TmpFileImpl::close()
 	}
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
+TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
 {
 	if(offset == -1L)
 	{
@@ -154,13 +147,11 @@ OW_TmpFileImpl::read(void* bfr, size_t numberOfBytes, long offset)
 	{
 		::lseek(m_hdl, offset, SEEK_SET);
 	}
-
 	return ::read(m_hdl, bfr, numberOfBytes);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
+TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 {
 	if(offset == -1L)
 	{
@@ -170,7 +161,6 @@ OW_TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 	{
 		::lseek(m_hdl, offset, SEEK_SET);
 	}
-
 #ifdef OW_USE_GNU_PTH
     int rv = pth_write(m_hdl, bfr, numberOfBytes);
 #else
@@ -178,21 +168,19 @@ OW_TmpFileImpl::write(const void* bfr, size_t numberOfBytes, long offset)
 #endif
 	if (rv == -1)
 	{
-		perror("OW_TmpFile::write()");
+		perror("TmpFile::write()");
 	}
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_TmpFileImpl::releaseFile()
+String
+TmpFileImpl::releaseFile()
 {
-	OW_String rval(m_filename);
+	String rval(m_filename);
 	if(m_hdl != -1)
 	{
 		if( ::close(m_hdl) == -1)
-			OW_THROW(OW_IOException, "Unable to close file");
-
+			OW_THROW(IOException, "Unable to close file");
 		// work like close, but don't delete the file, it will be give to the
 		// caller
 		delete [] m_filename;
@@ -201,3 +189,6 @@ OW_TmpFileImpl::releaseFile()
 	}
 	return rval;
 }
+
+} // end namespace OpenWBEM
+

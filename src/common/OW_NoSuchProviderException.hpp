@@ -32,8 +32,11 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(NoSuchProvider)
 
+} // end namespace OpenWBEM
+
 #endif
-
-

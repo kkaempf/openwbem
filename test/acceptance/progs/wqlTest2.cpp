@@ -38,11 +38,12 @@
 #include "OW_Bool.hpp"
 
 #include <iostream>
-#include <assert.h>
 
 using std::cout;
 using std::endl;
 using std::cerr;
+using namespace OpenWBEM;
+
 
 namespace
 {
@@ -53,97 +54,97 @@ void testQuery(const char* query)
 {
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
-	OW_Reference<OW_WQLIFC> wql(new OW_WQLImpl);
+	Reference<WQLIFC> wql(new WQLImpl);
 
-	OW_WQLSelectStatement stmt = wql->createSelectStatement(query);
+	WQLSelectStatement stmt = wql->createSelectStatement(query);
 	stmt.print(cout);
 
-	OW_WQLCompile comp(stmt);
+	WQLCompile comp(stmt);
 	comp.print(cout);
 	comp.printTableau(cout);
 }
 
-class InstancePropertySource : public OW_WQLPropertySource
+class InstancePropertySource : public WQLPropertySource
 {
 public:
-	InstancePropertySource(const OW_CIMInstance& ci_)
+	InstancePropertySource(const CIMInstance& ci_)
 		: ci(ci_)
 	{
 	}
-	virtual bool evaluateISA(const OW_String &propertyName, const OW_String &className) const 
+	virtual bool evaluateISA(const String &propertyName, const String &className) const 
 	{
 		// TODO
 		(void)propertyName;
 		(void)className;
 		return false;
 	}
-	virtual bool getValue(const OW_String &propertyName, OW_WQLOperand &value) const 
+	virtual bool getValue(const String &propertyName, WQLOperand &value) const 
 	{
-		OW_StringArray propNames = propertyName.tokenize(".");
+		StringArray propNames = propertyName.tokenize(".");
 		if (propNames[0] == ci.getClassName())
 		{
 			propNames.remove(0);
 		}
 		// don't handle embedded instances/properties yet.
-		OW_CIMProperty p = ci.getProperty(propNames[0]);
+		CIMProperty p = ci.getProperty(propNames[0]);
 		if (!p)
 		{
 			return false;
 		}
 
-		OW_CIMValue v = p.getValue();
+		CIMValue v = p.getValue();
 		switch (v.getType())
 		{
-			case OW_CIMDataType::DATETIME:
-			case OW_CIMDataType::CIMNULL:
-				value = OW_WQLOperand();
+			case CIMDataType::DATETIME:
+			case CIMDataType::CIMNULL:
+				value = WQLOperand();
 				break;
-			case OW_CIMDataType::UINT8:
-			case OW_CIMDataType::SINT8:
-			case OW_CIMDataType::UINT16:
-			case OW_CIMDataType::SINT16:
-			case OW_CIMDataType::UINT32:
-			case OW_CIMDataType::SINT32:
-			case OW_CIMDataType::UINT64:
-			case OW_CIMDataType::SINT64:
-			case OW_CIMDataType::CHAR16:
+			case CIMDataType::UINT8:
+			case CIMDataType::SINT8:
+			case CIMDataType::UINT16:
+			case CIMDataType::SINT16:
+			case CIMDataType::UINT32:
+			case CIMDataType::SINT32:
+			case CIMDataType::UINT64:
+			case CIMDataType::SINT64:
+			case CIMDataType::CHAR16:
 			{
-				OW_Int64 x;
-				OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::SINT64).get(x);
-				value = OW_WQLOperand(x, WQL_INTEGER_VALUE_TAG);
+				Int64 x;
+				CIMValueCast::castValueToDataType(v, CIMDataType::SINT64).get(x);
+				value = WQLOperand(x, WQL_INTEGER_VALUE_TAG);
 				break;
 			}
-			case OW_CIMDataType::STRING:
-				value = OW_WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
+			case CIMDataType::STRING:
+				value = WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
 				break;
-			case OW_CIMDataType::BOOLEAN:
+			case CIMDataType::BOOLEAN:
 			{
-				OW_Bool b;
+				Bool b;
 				v.get(b);
-				value = OW_WQLOperand(b, WQL_BOOLEAN_VALUE_TAG);
+				value = WQLOperand(b, WQL_BOOLEAN_VALUE_TAG);
 				break;
 			}
-			case OW_CIMDataType::REAL32:
-			case OW_CIMDataType::REAL64:
+			case CIMDataType::REAL32:
+			case CIMDataType::REAL64:
 			{
-				OW_Real64 x;
-				OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::REAL64).get(x);
-				value = OW_WQLOperand(x, WQL_DOUBLE_VALUE_TAG);
+				Real64 x;
+				CIMValueCast::castValueToDataType(v, CIMDataType::REAL64).get(x);
+				value = WQLOperand(x, WQL_DOUBLE_VALUE_TAG);
 				break;
 			}
-			case OW_CIMDataType::REFERENCE:
-				value = OW_WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
+			case CIMDataType::REFERENCE:
+				value = WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
 				break;
-			case OW_CIMDataType::EMBEDDEDCLASS:
+			case CIMDataType::EMBEDDEDCLASS:
 				// TODO
-				value = OW_WQLOperand();
+				value = WQLOperand();
 				break;
-			case OW_CIMDataType::EMBEDDEDINSTANCE:
+			case CIMDataType::EMBEDDEDINSTANCE:
 				// TODO
-				value = OW_WQLOperand();
+				value = WQLOperand();
 				break;
 			default:
-				value = OW_WQLOperand();
+				value = WQLOperand();
 				break;
 		}
 
@@ -151,19 +152,19 @@ public:
 	}
 
 private:
-	OW_CIMInstance ci;
+	CIMInstance ci;
 };
 
-void testQuery(const char* query, const OW_CIMInstance& passingInstance)
+void testQuery(const char* query, const CIMInstance& passingInstance)
 {
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
-	OW_Reference<OW_WQLIFC> wql(new OW_WQLImpl);
+	Reference<WQLIFC> wql(new WQLImpl);
 
-	OW_WQLSelectStatement stmt = wql->createSelectStatement(query);
+	WQLSelectStatement stmt = wql->createSelectStatement(query);
 	stmt.print(cout);
 
-	OW_WQLCompile comp(stmt);
+	WQLCompile comp(stmt);
 	comp.print(cout);
 	comp.printTableau(cout);
 	InstancePropertySource source(passingInstance);
@@ -204,15 +205,15 @@ int main(int , char**)
 		testQuery("select wqlTestClass.* from wqlTestClass");
 
 		// test some equals on the where clause
-		OW_CIMInstance inst;
+		CIMInstance inst;
 		inst.setClassName("wqlTestClass");
-		inst.setProperty("name", OW_CIMValue("test1"));
+		inst.setProperty("name", CIMValue("test1"));
 		testQuery("select * from wqlTestClass where name = \"test1\"", inst);
 		testQuery("select * from wqlTestClass where \"test1\" = name", inst);
-		inst.setProperty("sint32Data", OW_CIMValue(OW_Int32(0)));
+		inst.setProperty("sint32Data", CIMValue(Int32(0)));
 		testQuery("select * from wqlTestClass where sint32Data = 0", inst);
 		testQuery("select * from wqlTestClass where 0 = sint32Data", inst);
-		inst.setProperty("sint32Data", OW_CIMValue(OW_Int32(10)));
+		inst.setProperty("sint32Data", CIMValue(Int32(10)));
 		testQuery("select * from wqlTestClass where sint32Data = b'1010'", inst);
 		testQuery("select * from wqlTestClass where sint32Data = x'A'", inst);
 		testQuery("select * from wqlTestClass where booleanData = TRUE");
@@ -359,7 +360,7 @@ int main(int , char**)
 
 		return 0;
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 	}

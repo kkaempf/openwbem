@@ -37,22 +37,24 @@
 #include "OW_Map.hpp"
 #include <iostream>
 
-class OW_TestLogger : public OW_Logger
+using namespace OpenWBEM;
+
+class TestLogger : public Logger
 {
 protected:
-	virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const {
+	virtual void doLogMessage(const String &message, const LogLevel) const {
 		std::cout << message << std::endl;
 	}
 };
 
 
-class OW_TestEnvironment : public OW_ServiceEnvironmentIFC
+class TestEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual OW_LoggerRef getLogger() const {
-		return OW_LoggerRef(new OW_TestLogger);
+	virtual LoggerRef getLogger() const {
+		return LoggerRef(new TestLogger);
 	}
-	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal) const {
+	virtual String getConfigItem(const String &name, const String& defRetVal) const {
 		if (config.find(name) != config.end())
 		{
 			return config.find(name)->second;
@@ -60,32 +62,32 @@ public:
 		else
 			return defRetVal;
 	}
-	virtual void setConfigItem(const OW_String &item, const OW_String &value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) {
-		OW_Map<OW_String, OW_String>::iterator it = config.find(item);
+	virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) {
+		Map<String, String>::iterator it = config.find(item);
 		if(it == config.end() || overwritePrevious)
 		{
 			config[item] = value;
 		}
 	}
-	virtual bool authenticate(OW_String &, const OW_String &, OW_String &) {
+	virtual bool authenticate(String &, const String &, String &) {
 		return true;
 	}
-	virtual void addSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) {
+	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {
 	}
-	virtual void removeSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) {
+	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {
 	}
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &) {
-		return OW_RequestHandlerIFCRef();
+	virtual RequestHandlerIFCRef getRequestHandler(const String &) {
+		return RequestHandlerIFCRef();
 	}
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, ESendIndicationsFlag, EBypassProvidersFlag) {
-		OW_THROW(OW_Exception, "Cannot call OW_TestEnvironment::getCIMOMHandle()");
-		//return OW_CIMOMHandleIFCRef();
+	virtual CIMOMHandleIFCRef getCIMOMHandle(const String &, ESendIndicationsFlag, EBypassProvidersFlag) {
+		OW_THROW(Exception, "Cannot call TestEnvironment::getCIMOMHandle()");
+		//return CIMOMHandleIFCRef();
 	}
 
-	OW_Map<OW_String, OW_String> config;
+	Map<String, String> config;
 };
 
-extern OW_ServiceEnvironmentIFCRef g_testEnvironment;
+extern ServiceEnvironmentIFCRef g_testEnvironment;
 
 #endif
 

@@ -27,19 +27,21 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Index.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_Index::~OW_Index() 
+Index::~Index() 
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_Index::flush() 
+Index::flush() 
 {
 }
 
+} // end namespace OpenWBEM
 

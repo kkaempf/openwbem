@@ -27,16 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #ifndef OW_HTTPSTATUSCODES_H_INCLUDE_GUARD_
 #define OW_HTTPSTATUSCODES_H_INCLUDE_GUARD_
-
 #include "OW_config.h"
+
+namespace OpenWBEM
+{
 
 // Status codes.
 #define SC_CONTINUE 100
@@ -78,6 +78,6 @@
 #define SC_HTTP_VERSION_NOT_SUPPORTED 505
 #define SC_NOT_EXTENDED 510
 
-
+} // end namespace OpenWBEM
 
 #endif

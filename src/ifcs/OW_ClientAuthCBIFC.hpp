@@ -27,14 +27,14 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CLIENTAUTHCBIFC_HPP_
 #define OW_CLIENTAUTHCBIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Reference.hpp"
 
+namespace OpenWBEM
+{
 
 /**
  * An abstract base class used to provide a callback for retrieving a
@@ -42,7 +42,7 @@
  * URL, and the cimom returns a Unauthorized, this will be called
  * so the client can repeat the request with authentication credentials.
  */
-class OW_ClientAuthCBIFC
+class ClientAuthCBIFC
 {
 public:
 	/**
@@ -50,7 +50,7 @@ public:
 	 *
 	 * @param realm A string describing the server or area within the
 	 * 		server for which the client needs access (typically a URL)
-	 * @param name A non-const OW_String&.  The function should assign
+	 * @param name A non-const String&.  The function should assign
 	 * 		a valid user name here.
 	 * @param passwd Similar to "name". The callback assigns the password
 	 * 		here.
@@ -60,12 +60,12 @@ public:
 	 * 		callback, and to http client has no reason to retry the
 	 * 		request.
 	 */
-	virtual bool getCredentials(const OW_String& realm, OW_String& name,
-			OW_String& passwd, const OW_String& details) = 0;
-	virtual ~OW_ClientAuthCBIFC();
+	virtual bool getCredentials(const String& realm, String& name,
+			String& passwd, const String& details) = 0;
+	virtual ~ClientAuthCBIFC();
 };
+typedef Reference<ClientAuthCBIFC> ClientAuthCBIFCRef;
 
-typedef OW_Reference<OW_ClientAuthCBIFC> OW_ClientAuthCBIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

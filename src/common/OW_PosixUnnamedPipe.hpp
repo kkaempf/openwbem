@@ -27,19 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_POSIX_UNNAMED_PIPE_HPP_
 #define OW_POSIX_UNNAMED_PIPE_HPP_
-
 #include "OW_config.h"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Reference.hpp"
 
-class OW_PosixUnnamedPipe : public OW_UnnamedPipe
+namespace OpenWBEM
+{
+
+class PosixUnnamedPipe : public UnnamedPipe
 {
 public:
-	OW_PosixUnnamedPipe(EOpen doOpen=E_OPEN);
-	virtual ~OW_PosixUnnamedPipe();
+	PosixUnnamedPipe(EOpen doOpen=E_OPEN);
+	virtual ~PosixUnnamedPipe();
 	virtual int write(const void* data, int dataLen, bool errorAsException=false);
 	virtual int read(void* buffer, int bufferLen, bool errorAsException=false);
 	int getInputHandle() { return m_fds[0]; }
@@ -49,12 +50,12 @@ public:
 	int closeInputHandle();
 	int closeOutputHandle();
 	void setOutputBlocking(bool outputIsBlocking=true);
-	OW_Select_t getSelectObj() const;
-
+	Select_t getSelectObj() const;
 private:
 	int m_fds[2];
 };
+typedef Reference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 
-typedef OW_Reference<OW_PosixUnnamedPipe> OW_PosixUnnamedPipeRef;
+} // end namespace OpenWBEM
 
 #endif

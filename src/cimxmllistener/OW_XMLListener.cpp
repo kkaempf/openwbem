@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_XMLListener.hpp"
 #include "OW_CIMXMLParser.hpp"
@@ -43,47 +41,42 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Assertion.hpp"
 
+namespace OpenWBEM
+{
+
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////
-OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
-: OW_RequestHandlerIFCXML(),  m_callback(callback)
+XMLListener::XMLListener(CIMListenerCallback* callback)
+: RequestHandlerIFCXML(),  m_callback(callback)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_XMLListener::~OW_XMLListener() 
+XMLListener::~XMLListener() 
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
-	ostream* ostrError, const OW_String& /*userName*/)
+XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
+	ostream* ostrError, const String& /*userName*/)
 {
 	clearError();
-
-	OW_String messageId = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
-
+	String messageId = parser.mustGetAttribute(CIMXMLParser::A_MSG_ID);
 	parser.getChild();
-
 	if (!parser)
 	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}
-
 	makeXMLHeader(messageId, *ostrEntity);
-
-	if (parser.tokenIs(OW_CIMXMLParser::E_MULTIEXPREQ))
+	if (parser.tokenIs(CIMXMLParser::E_MULTIEXPREQ))
 	{
 		parser.getChild();
 		if (!parser)
 		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
 		while(parser)
 		{
-			OW_TempFileStream ostrEnt, ostrErr;
+			TempFileStream ostrEnt, ostrErr;
 			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId);
 			if (hasError())
 			{
@@ -94,32 +87,27 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 			{
 				(*ostrEntity) << ostrEnt.rdbuf();
 			}
-
-			parser.getNext(OW_CIMXMLParser::E_SIMPLEEXPREQ);
+			parser.getNext(CIMXMLParser::E_SIMPLEEXPREQ);
 		}
 	}
-	else if (parser.tokenIs(OW_CIMXMLParser::E_SIMPLEEXPREQ))
+	else if (parser.tokenIs(CIMXMLParser::E_SIMPLEEXPREQ))
 	{
 		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId);
 	}
 	else
 	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}
-
-
 	(void)ostrError;
-
 	(*ostrEntity) << "</MESSAGE></CIM>\r\n";
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& /*handlerVars*/)
+XMLListener::doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& /*handlerVars*/)
 {
 	cf.extURL = "http://www.dmtf.org/cim/mapping/http/v1.0";
-	cf.cimProduct = OW_CIMFeatures::LISTENER;
+	cf.cimProduct = CIMFeatures::LISTENER;
 	cf.cimom = "/cimom";
 	cf.protocolVersion = "1.1";
 	cf.supportedGroups.clear();
@@ -128,81 +116,70 @@ OW_XMLListener::doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String
 	cf.supportsBatch = true;
 	cf.validation = "";
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
-	ostream& ostrEntity, ostream& ostrError, const OW_String& messageId)
+XMLListener::processSimpleExpReq(CIMXMLParser& parser,
+	ostream& ostrEntity, ostream& ostrError, const String& messageId)
 {
 	try
 	{
-		if (!parser.tokenIs(OW_CIMXMLParser::E_SIMPLEEXPREQ))
+		if (!parser.tokenIs(CIMXMLParser::E_SIMPLEEXPREQ))
 		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-		parser.mustGetChild(OW_CIMXMLParser::E_EXPMETHODCALL);
+		parser.mustGetChild(CIMXMLParser::E_EXPMETHODCALL);
 		parser.mustGetNextTag();
-		while (parser.tokenIs(OW_CIMXMLParser::E_EXPPARAMVALUE))
+		while (parser.tokenIs(CIMXMLParser::E_EXPPARAMVALUE))
 		{
-			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCE);
-			OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(parser);
+			parser.mustGetChild(CIMXMLParser::E_INSTANCE);
+			CIMInstance inst = XMLCIMFactory::createInstance(parser);
 			m_callback->indicationOccurred(inst, m_path);
 			parser.mustGetEndTag(); // pass </EXPPARAMVALUE>
 		}
 		parser.mustGetEndTag(); // pass </EXPMETHODCALL>
 		parser.mustGetEndTag(); // pass </SIMPLEEXPREQ>
-
 		ostrEntity << "<SIMPLEEXPRSP>";
 		ostrEntity << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
-
 		ostrEntity << "</EXPMETHODRESPONSE>";
-
 		ostrEntity << "</SIMPLEEXPRSP>";
 	}
-	catch(OW_CIMException& ce)
+	catch(CIMException& ce)
 	{
 		makeXMLHeader(messageId, ostrError);
 		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::outputError(OW_CIMException::ErrNoType errorCode,
-	OW_String msg, ostream& ostr)
+XMLListener::outputError(CIMException::ErrNoType errorCode,
+	String msg, ostream& ostr)
 {
 	setError(errorCode, msg);
-
 	ostr << "<SIMPLEEXPRSP>";
 	ostr << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
-
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
-		OW_XMLEscape(msg) <<
+		XMLEscape(msg) <<
 		"\"></ERROR>";
-
 	ostr << "</EXPMETHODRESPONSE>";
-
 	ostr << "</SIMPLEEXPRSP>";
 	ostr << "</MESSAGE></CIM>\r\n";
 }
-
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_XMLListener::getSupportedContentTypes() const
+StringArray
+XMLListener::getSupportedContentTypes() const
 {
-	OW_StringArray rval;
+	StringArray rval;
 	rval.push_back("text/xml");
 	rval.push_back("application/xml");
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_XMLListener::getContentType() const
+String
+XMLListener::getContentType() const
 {
-	return OW_String("application/xml");
+	return String("application/xml");
 }
-
 //////////////////////////////////////////////////////////////////////////////
+
+} // end namespace OpenWBEM
+

@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_FTABLE_REF_HPP_
 #define OW_FTABLE_REF_HPP_
-
 //#include <string.h>
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
@@ -45,12 +43,13 @@
 #include "OW_Array.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
-
 #include "OW_SharedLibraryReference.hpp"
 #include "npi.h"
 
-typedef OW_Array<char *> charVect;
+namespace OpenWBEM
+{
 
+typedef Array<char *> charVect;
 typedef enum {
   NOTHING,
   STRING,
@@ -63,19 +62,15 @@ typedef enum {
   CIM_OBJECTPATH,
   CIM_CLASS
 } NPIGarbageType;
-
-
 class NPIContext {
 public:
         char * scriptName;
         void * my_perl;
-	OW_Array<void *> garbage;
-	OW_Array<NPIGarbageType> garbageType;
+	Array<void *> garbage;
+	Array<NPIGarbageType> garbageType;
 };
 // my_perl serves as pointer to the perl environment for the perlIFC
-
 class NPIFTABLE {
-
 public:
   //CIMProvider;
   FP_INITIALIZE         fp_initialize;
@@ -100,9 +95,7 @@ public:
   FP_MUSTPOLL           fp_mustPoll;
   FP_ACTIVATEFILTER     fp_activateFilter;
   FP_DEACTIVATEFILTER   fp_deActivateFilter;
-
   NPIContext 		* npicontext;
-
   //NPIFTABLE& operator = (const ::FTABLE& original) {return *this;}
   NPIFTABLE& operator = (const ::FTABLE& original) 
   {
@@ -110,28 +103,10 @@ public:
 	return *this;
   }
 };
-
-
 typedef ::FTABLE (*FP_INIT_FT) (void);
-
 typedef NPIFTABLE (*NPIFP_INIT_FT) (void);
+typedef SharedLibraryReference< NPIFTABLE> FTABLERef;
 
-typedef OW_SharedLibraryReference< ::NPIFTABLE> OW_FTABLERef;
-
-#define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
-
-#define OW_PROVIDERFACTORY(prov, name) \
-extern "C" const char* \
-getOWVersion() \
-{ \
-        return OW_VERSION; \
-} \
-extern "C" OW_FTABLERef* \
-createProvider##name() \
-{ \
-        return new prov; \
-}
-
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,29 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SERVICEIFC_HPP_INCLUDE_GUARD_
 #define OW_SERVICEIFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
+namespace OpenWBEM
+{
+
 // This class is a base interface for any services for Openwbem.
-class OW_ServiceIFC
+class ServiceIFC
 {
 public:
-	virtual ~OW_ServiceIFC();
-
-	virtual void setServiceEnvironment(OW_ServiceEnvironmentIFCRef env) = 0;
+	virtual ~ServiceIFC();
+	virtual void setServiceEnvironment(ServiceEnvironmentIFCRef env) = 0;
 	virtual void startService() = 0;
 	virtual void shutdown() = 0;
 };
+typedef SharedLibraryReference<ServiceIFC> ServiceIFCRef;
 
-typedef OW_SharedLibraryReference<OW_ServiceIFC> OW_ServiceIFCRef;
+} // end namespace OpenWBEM
 
 #define OW_SERVICE_FACTORY(derived) \
-extern "C" OW_ServiceIFC* \
+extern "C" OpenWBEM::ServiceIFC* \
 createService() \
 { \
 	return new derived; \
@@ -61,5 +62,3 @@ getOWVersion() \
 }
 
 #endif
-
-

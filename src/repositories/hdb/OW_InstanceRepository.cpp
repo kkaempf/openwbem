@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_InstanceRepository.hpp"
 #include "OW_RepositoryStreams.hpp"
@@ -44,26 +43,27 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_IOException.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
+
+//////////////////////////////////////////////////////////////////////////////
 class UtilKeyArray
 {
 public:
 	UtilKeyArray() : m_names(), m_properties() {}
-	void addElement(const OW_CIMProperty& prop);
-	OW_String toString(const OW_String& className);
-
+	void addElement(const CIMProperty& prop);
+	String toString(const String& className);
 private:
-	OW_StringArray m_names;
-	OW_StringArray m_properties;
+	StringArray m_names;
+	StringArray m_properties;
 };
-
 //////////////////////////////////////////////////////////////////////////////
 void
-UtilKeyArray::addElement(const OW_CIMProperty& prop)
+UtilKeyArray::addElement(const CIMProperty& prop)
 {
-	OW_String propName = prop.getName().toLowerCase();
-
+	String propName = prop.getName().toLowerCase();
 	for(size_t i = 0; i < m_names.size(); i++)
 	{
 		int cc = m_names[i].compareTo(propName);
@@ -79,17 +79,14 @@ UtilKeyArray::addElement(const OW_CIMProperty& prop)
 			return;
 		}
 	}
-
 	m_names.append(propName);
 	m_properties.append(prop.getValue().toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-UtilKeyArray::toString(const OW_String& className)
+String
+UtilKeyArray::toString(const String& className)
 {
-	OW_StringBuffer rv(className.toString().toLowerCase());
-
+	StringBuffer rv(className.toString().toLowerCase());
 	for(size_t i = 0; i < m_names.size(); i++)
 	{
 		char c = (i == 0) ? '.' : ',';
@@ -98,150 +95,130 @@ UtilKeyArray::toString(const OW_String& className)
 		rv += '=';
 		rv += m_properties[i];
 	}
-
 	return rv.releaseString();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass)
+String
+InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
+	const CIMClass& theClass)
 {
 	if(!cop)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "no object path");
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "no object path");
 	}
-
 	// Start return value with the namespace
-	OW_StringBuffer rv(makeClassKey(ns, cop.getObjectName()));
+	StringBuffer rv(makeClassKey(ns, cop.getObjectName()));
 	rv += '/';
-
-	OW_CIMPropertyArray kprops = theClass.getKeys();
+	CIMPropertyArray kprops = theClass.getKeys();
 	if(kprops.size() == 0)
 	{
 		rv += cop.getObjectName();
 		return rv.releaseString();
 		// don't do this to allow for singleton classes without keys.
-		//OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS,
+		//OW_THROWCIMMSG(CIMException::INVALID_CLASS,
 		//	format("No key properties for class: %1", theClass.getName()).c_str());
 	}
-
-	OW_String oclass = kprops[0].getOriginClass().toLowerCase();
+	String oclass = kprops[0].getOriginClass().toLowerCase();
 	if(oclass.empty())
 	{
-		OW_THROW(OW_Exception,
+		OW_THROW(Exception,
 			format("No orgin class for key property on class: %1",
 				theClass.getName()).c_str());
 	}
-
 	rv += oclass;
-
 	// Get keys from object path
-	OW_CIMPropertyArray pra = cop.getKeys();
+	CIMPropertyArray pra = cop.getKeys();
 	if(pra.size() == 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"object path has no keys");
 	}
-
 	for(size_t i = 0; i < pra.size(); i++)
 	{
 		if(!pra[i].getValue())
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"object path has key with missing value");
 		}
 	}
-
 	// If not all the key properties were specified, throw an exception
 	if(pra.size() < kprops.size())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			format("Model path is missing keys: %1", cop.toString()).c_str());
 	}
-
 	// TODO: Is this necessary?
 	if(pra.size() == 1)
 	{
 		// If only one key property in object path, ensure it is
 		// a key property in the class
-		OW_String pname = pra[0].getName().toLowerCase();
+		String pname = pra[0].getName().toLowerCase();
 		if(!pname.empty() && !pname.equalsIgnoreCase(kprops[0].getName()))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				format("Property in model path is not a key: %1", pname).c_str());
 		}
-
 		rv += '.';
 		rv += pname;
 		rv += '=';
-
-		OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(pra[0].getValue(),
+		CIMValue cv = CIMValueCast::castValueToDataType(pra[0].getValue(),
 			kprops[0].getDataType());
-
-		if (cv.getType() == OW_CIMDataType::REFERENCE)
+		if (cv.getType() == CIMDataType::REFERENCE)
 		{
-			OW_CIMObjectPath cop(cv.toCIMObjectPath());
+			CIMObjectPath cop(cv.toCIMObjectPath());
 			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
-				cv = OW_CIMValue(cop);
+				cv = CIMValue(cop);
 			}
 		}
 		rv += cv.toString();
 		return rv.releaseString();
 	}
-
 	// TODO: Is this necessary?
 	// Ensure no non-key properties were specified in the path
 	for(size_t i = 0; i < pra.size(); i++)
 	{
-		OW_String pname = pra[i].getName();
+		String pname = pra[i].getName();
 		size_t j = 0;
 		for(; j < kprops.size(); j++)
 		{
 			if(pname.equalsIgnoreCase(kprops[j].getName()))
 			{
-				OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(
+				CIMValue cv = CIMValueCast::castValueToDataType(
 					pra[i].getValue(), kprops[j].getDataType());
-
-				if (cv.getType() == OW_CIMDataType::REFERENCE)
+				if (cv.getType() == CIMDataType::REFERENCE)
 				{
-					OW_CIMObjectPath cop(cv.toCIMObjectPath());
+					CIMObjectPath cop(cv.toCIMObjectPath());
 					if (cop.getNameSpace().empty())
 					{
 						cop.setNameSpace(ns);
-						cv = OW_CIMValue(cop);
+						cv = CIMValue(cop);
 					}
 				}
-
 				pra[i].setValue(cv);
 				break;
 			}
 		}
-
 		if(j == kprops.size())
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				format("Property in model path is not a key: %1", pname).c_str());
 		}
 	}
-
 	UtilKeyArray kra;
 	for(size_t i = 0; i < pra.size(); i++)
 	{
 		kra.addElement(pra[i]);
 	}
-
 	return kra.toString(rv.releaseString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_InstanceRepository::makeClassKey(const OW_String& ns,
-	const OW_String& className)
+String
+InstanceRepository::makeClassKey(const String& ns,
+	const String& className)
 {
-	OW_String rv(ns);
+	String rv(ns);
 	while (!rv.empty() && rv[0] == '/')
 	{
 		rv = rv.substring(1);
@@ -250,104 +227,90 @@ OW_InstanceRepository::makeClassKey(const OW_String& ns,
 	rv += className;
 	return rv.toLowerCase();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::getInstanceNames(const OW_String& ns,
-	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result)
+InstanceRepository::getInstanceNames(const String& ns,
+	const CIMClass& theClass, CIMObjectPathResultHandlerIFC& result)
 {
 	throwIfNotOpen();
-	OW_String className = theClass.getName();
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_String ckey = makeClassKey(ns, className);
-	OW_HDBNode clsNode = hdl->getNode(ckey);
+	String className = theClass.getName();
+	HDBHandleLock hdl(this, getHandle());
+	String ckey = makeClassKey(ns, className);
+	HDBNode clsNode = hdl->getNode(ckey);
 	if(!clsNode)
 	{
-		OW_THROWCIM(OW_CIMException::INVALID_CLASS);
+		OW_THROWCIM(CIMException::INVALID_CLASS);
 	}
-
-	if(!clsNode.areAllFlagsOn(OW_HDBCLSNODE_FLAG))
+	if(!clsNode.areAllFlagsOn(HDBCLSNODE_FLAG))
 	{
-		OW_THROW(OW_IOException, "Expected class name node for instances");
+		OW_THROW(IOException, "Expected class name node for instances");
 	}
-
-	OW_HDBNode node = hdl->getFirstChild(clsNode);
+	HDBNode node = hdl->getFirstChild(clsNode);
 	while(node)
 	{
-		OW_CIMInstance ci(OW_CIMNULL);
+		CIMInstance ci(CIMNULL);
 		nodeToCIMObject(ci, node);
 		ci.syncWithClass(theClass); // need to do this to set up the keys
-		OW_CIMObjectPath op(ci.getClassName(), ns);
+		CIMObjectPath op(ci.getClassName(), ns);
 		op.setKeys(ci.getKeyValuePairs());
 		result.handle(op);
 		node = hdl->getNextSibling(node);
 	}
 }
 
-#include <iostream>
-using namespace std;
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::getCIMInstances(
-	const OW_String& ns,
-	const OW_String& className,
-	const OW_CIMClass& requestedClass,
-	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
+InstanceRepository::getCIMInstances(
+	const String& ns,
+	const String& className,
+	const CIMClass& requestedClass,
+	const CIMClass& theClass, CIMInstanceResultHandlerIFC& result,
 	EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList)
+	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList)
 {
 	throwIfNotOpen();
-
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_String ckey = makeClassKey(ns, className);
-	OW_HDBNode clsNode = hdl->getNode(ckey);
+	HDBHandleLock hdl(this, getHandle());
+	String ckey = makeClassKey(ns, className);
+	HDBNode clsNode = hdl->getNode(ckey);
 	if(!clsNode)
 	{
-		OW_THROWCIM(OW_CIMException::INVALID_CLASS);
+		OW_THROWCIM(CIMException::INVALID_CLASS);
 	}
-
-	if(!clsNode.areAllFlagsOn(OW_HDBCLSNODE_FLAG))
+	if(!clsNode.areAllFlagsOn(HDBCLSNODE_FLAG))
 	{
-		OW_THROW(OW_IOException, "Expected class name node for instances");
+		OW_THROW(IOException, "Expected class name node for instances");
 	}
-
-	OW_HDBNode node = hdl->getFirstChild(clsNode);
+	HDBNode node = hdl->getFirstChild(clsNode);
 	while(node)
 	{
-		OW_CIMInstance ci(OW_CIMNULL);
+		CIMInstance ci(CIMNULL);
 		nodeToCIMObject(ci, node);
 		ci = ci.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,theClass);
-
 		result.handle(ci);
 		node = hdl->getNextSibling(node);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_InstanceRepository::getCIMInstance(
-	const OW_String& ns,
-	const OW_CIMObjectPath& instanceName,
-	const OW_CIMClass& theClass, ELocalOnlyFlag localOnly,
+CIMInstance
+InstanceRepository::getCIMInstance(
+	const String& ns,
+	const CIMObjectPath& instanceName,
+	const CIMClass& theClass, ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	throwIfNotOpen();
-	OW_String instanceKey = makeInstanceKey(ns, instanceName, theClass);
-
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(instanceKey);
+	String instanceKey = makeInstanceKey(ns, instanceName, theClass);
+	HDBHandleLock hdl(this, getHandle());
+	HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
 	{
-		OW_CIMObjectPath cop(instanceName);
+		CIMObjectPath cop(instanceName);
 		cop.setNameSpace(ns);
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, cop.toString().c_str());
 	}
-
-	OW_CIMInstance ci(OW_CIMNULL);
+	CIMInstance ci(CIMNULL);
 	nodeToCIMObject(ci, node);
-
 	ci.syncWithClass(theClass, E_INCLUDE_QUALIFIERS);
 	
 	// only filter if we need to
@@ -359,244 +322,213 @@ OW_InstanceRepository::getCIMInstance(
 	
 	return ci;
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass)
+InstanceRepository::deleteInstance(const String& ns, const CIMObjectPath& cop,
+	const CIMClass& theClass)
 {
 	throwIfNotOpen();
-	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(instanceKey);
+	String instanceKey = makeInstanceKey(ns, cop, theClass);
+	HDBHandleLock hdl(this, getHandle());
+	HDBNode node = hdl->getNode(instanceKey);
 	if(!node)
 	{
-		OW_CIMObjectPath cop2(cop);
+		CIMObjectPath cop2(cop);
 		cop2.setNameSpace(ns);
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop2.toString().c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, cop2.toString().c_str());
 	}
-
-	// Ensure the node belongs to an OW_CIMInstance before we delete it.
+	// Ensure the node belongs to an CIMInstance before we delete it.
 	// If it's not, an exception will be thrown
-	OW_CIMInstance ci(OW_CIMNULL);
+	CIMInstance ci(CIMNULL);
 	nodeToCIMObject(ci, node);
-
 	hdl->removeNode(node);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::createInstance(const OW_String& ns,
-	const OW_CIMClass& theClass, const OW_CIMInstance& ci_)
+InstanceRepository::createInstance(const String& ns,
+	const CIMClass& theClass, const CIMInstance& ci_)
 {
 	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-
-	OW_CIMInstance ci(ci_);
-	OW_String ckey = makeClassKey(ns, ci.getClassName());
-	OW_HDBNode clsNode = getNameSpaceNode(hdl, ckey);
+	HDBHandleLock hdl(this, getHandle());
+	CIMInstance ci(ci_);
+	String ckey = makeClassKey(ns, ci.getClassName());
+	HDBNode clsNode = getNameSpaceNode(hdl, ckey);
 	if(!clsNode)
 	{
 		// Theoretically this should never happen, but just in case...
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, ci.getClassName().c_str());
+		OW_THROWCIMMSG(CIMException::INVALID_CLASS, ci.getClassName().c_str());
 	}
-
 	// Create object path with keys from new instance
-	OW_CIMObjectPath icop(ns, ci);
-	OW_String instanceKey = makeInstanceKey(ns, icop, theClass);
-	OW_HDBNode node = hdl->getNode(instanceKey);
+	CIMObjectPath icop(ns, ci);
+	String instanceKey = makeInstanceKey(ns, icop, theClass);
+	HDBNode node = hdl->getNode(instanceKey);
 	if(node)
 	{
-		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS, instanceKey.c_str());
+		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, instanceKey.c_str());
 	}
-
 	_removeDuplicatedQualifiers(ci, theClass);
-
-	OW_RepositoryOStream ostrm;
+	RepositoryOStream ostrm;
 	ci.writeObject(ostrm);
-	node = OW_HDBNode(instanceKey, ostrm.length(), ostrm.getData());
+	node = HDBNode(instanceKey, ostrm.length(), ostrm.getData());
 	hdl.getHandle().addChild(clsNode, node);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // TODO: Is this function actually used?
 bool
-OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
+InstanceRepository::classHasInstances(const CIMObjectPath& classPath)
 {
 	bool cc = false;
 	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_String ckey = makeClassKey(classPath.getNameSpace(),
+	HDBHandleLock hdl(this, getHandle());
+	String ckey = makeClassKey(classPath.getNameSpace(),
 		classPath.getObjectName());
-	OW_HDBNode node = hdl->getNode(ckey);
+	HDBNode node = hdl->getNode(ckey);
 	if(node)
 	{
-		if(!node.areAllFlagsOn(OW_HDBCLSNODE_FLAG))
+		if(!node.areAllFlagsOn(HDBCLSNODE_FLAG))
 		{
-			OW_THROW(OW_IOException, "Expected class name node for instances");
+			OW_THROW(IOException, "Expected class name node for instances");
 		}
-
 		cc = node.hasChildren();
 	}
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::modifyInstance(const OW_String& ns,
-	const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass, const OW_CIMInstance& ci_,
-	const OW_CIMInstance& oldInst,
+InstanceRepository::modifyInstance(const String& ns,
+	const CIMObjectPath& cop,
+	const CIMClass& theClass, const CIMInstance& ci_,
+	const CIMInstance& oldInst,
 	EIncludeQualifiersFlag includeQualifiers,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-
-	OW_CIMInstance ci(ci_.createModifiedInstance(oldInst,includeQualifiers,propertyList,theClass));
-
+	HDBHandleLock hdl(this, getHandle());
+	CIMInstance ci(ci_.createModifiedInstance(oldInst,includeQualifiers,propertyList,theClass));
 	// Now sync the new instance with the class. This will remove any properties
 	// that shouldn't be on the instance and add properties that should be
 	// there.
 	ci.syncWithClass(theClass, E_EXCLUDE_QUALIFIERS);
-
 	// Ensure key values haven't changed
-	OW_CIMPropertyArray oldKeys = oldInst.getKeyValuePairs();
+	CIMPropertyArray oldKeys = oldInst.getKeyValuePairs();
 	for(size_t i = 0; i < oldKeys.size(); i++)
 	{
-		OW_CIMProperty kprop = ci.getProperty(oldKeys[i].getName());
+		CIMProperty kprop = ci.getProperty(oldKeys[i].getName());
 		if(!kprop)
 		{
-			OW_String msg("Missing key value: ");
+			String msg("Missing key value: ");
 			msg += oldKeys[i].getName();
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, msg.c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
-
-		OW_CIMValue cv1 = kprop.getValue();
+		CIMValue cv1 = kprop.getValue();
 		if(!cv1)
 		{
-			OW_String msg("Missing key value: ");
+			String msg("Missing key value: ");
 			msg += kprop.getName();
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, msg.c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
-
-		OW_CIMValue cv2 = oldKeys[i].getValue();
+		CIMValue cv2 = oldKeys[i].getValue();
 		if(!cv2)
 		{
-			OW_String msg("Missing key value in object path: ");
+			String msg("Missing key value in object path: ");
 			msg += oldKeys[i].getName();
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, msg.c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
-
 		if(!cv1.sameType(cv2))
 		{
-			OW_String msg("Data type for key property changed! property: ");
+			String msg("Data type for key property changed! property: ");
 			msg += kprop.getName();
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, msg.c_str());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, msg.c_str());
 		}
-
 		if(!cv1.equal(cv2))
 		{
-			OW_String msg("key value for instance changed: ");
+			String msg("key value for instance changed: ");
 			msg += kprop.getName();
-			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
+			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 	}
-
-
 	_removeDuplicatedQualifiers(ci, theClass);
-
-	OW_RepositoryOStream ostrm;
+	RepositoryOStream ostrm;
 	ci.writeObject(ostrm);
-	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
-	OW_HDBNode node = hdl->getNode(instanceKey);
+	String instanceKey = makeInstanceKey(ns, cop, theClass);
+	HDBNode node = hdl->getNode(instanceKey);
 	if (!node)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, cop.toString().c_str());
 	}
 	hdl.getHandle().updateNode(node, ostrm.length(), ostrm.getData());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::deleteNameSpace(const OW_String& nsName)
+InstanceRepository::deleteNameSpace(const String& nsName)
 {
 	throwIfNotOpen();
-
 	// ATTN: Do we need to do more later? Associations?
-	OW_GenericHDBRepository::deleteNameSpace(nsName);
+	GenericHDBRepository::deleteNameSpace(nsName);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_InstanceRepository::createNameSpace(OW_String ns)
+InstanceRepository::createNameSpace(String ns)
 {
-	return OW_GenericHDBRepository::createNameSpace(ns);
+	return GenericHDBRepository::createNameSpace(ns);
 }
 #endif
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::createClass(const OW_String& ns,
-	const OW_CIMClass& cimClass)
+InstanceRepository::createClass(const String& ns,
+	const CIMClass& cimClass)
 {
 	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode pnode = getNameSpaceNode(hdl, ns);
+	HDBHandleLock hdl(this, getHandle());
+	HDBNode pnode = getNameSpaceNode(hdl, ns);
 	if(!pnode)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
+		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 			ns.c_str());
 	}
-
-	OW_String ckey = makeClassKey(ns, cimClass.getName());
-	OW_HDBNode node = hdl->getNode(ckey);
+	String ckey = makeClassKey(ns, cimClass.getName());
+	HDBNode node = hdl->getNode(ckey);
 	if(node)
 	{
-		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS, ckey.c_str());
+		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS, ckey.c_str());
 	}
-
-	node = OW_HDBNode(ckey, ckey.length()+1,
+	node = HDBNode(ckey, ckey.length()+1,
 		reinterpret_cast<const unsigned char*>(ckey.c_str()));
-	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG | OW_HDBCLSNODE_FLAG);
+	hdl->turnFlagsOn(node, HDBNSNODE_FLAG | HDBCLSNODE_FLAG);
 	hdl->addChild(pnode, node);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::deleteClass(const OW_String& ns,
-	const OW_String& className)
+InstanceRepository::deleteClass(const String& ns,
+	const String& className)
 {
 	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_String ckey = makeClassKey(ns, className);
-	OW_HDBNode node = hdl->getNode(ckey);
+	HDBHandleLock hdl(this, getHandle());
+	String ckey = makeClassKey(ns, className);
+	HDBNode node = hdl->getNode(ckey);
 	if(node)
 	{
-		if(!node.areAllFlagsOn(OW_HDBCLSNODE_FLAG))
+		if(!node.areAllFlagsOn(HDBCLSNODE_FLAG))
 		{
-			OW_THROW(OW_IOException, "Expected class name node for instances");
+			OW_THROW(IOException, "Expected class name node for instances");
 		}
 	}
-
 	hdl->removeNode(ckey);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
-	const OW_CIMClass& theClass)
+void InstanceRepository::_removeDuplicatedQualifiers(CIMInstance& inst,
+	const CIMClass& theClass)
 {
-	OW_CIMQualifierArray quals(inst.getQualifiers());
-	OW_CIMQualifierArray newQuals;
+	CIMQualifierArray quals(inst.getQualifiers());
+	CIMQualifierArray newQuals;
 	for (size_t i = 0; i < quals.size(); ++i)
 	{
-		OW_CIMQualifier& iq = quals[i];
-		OW_CIMQualifier cq = theClass.getQualifier(iq.getName());
+		CIMQualifier& iq = quals[i];
+		CIMQualifier cq = theClass.getQualifier(iq.getName());
 		if (!cq)
 		{
 			newQuals.push_back(iq);
@@ -609,18 +541,17 @@ void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
 		}
 	}
 	inst.setQualifiers(newQuals);
-
-	OW_CIMPropertyArray props = inst.getProperties();
+	CIMPropertyArray props = inst.getProperties();
 	for (size_t i = 0; i < props.size(); ++i)
 	{
-		OW_CIMProperty& p = props[i];
-		OW_CIMProperty clsp = theClass.getProperty(p.getName());
-		OW_CIMQualifierArray quals(p.getQualifiers());
-		OW_CIMQualifierArray newQuals;
+		CIMProperty& p = props[i];
+		CIMProperty clsp = theClass.getProperty(p.getName());
+		CIMQualifierArray quals(p.getQualifiers());
+		CIMQualifierArray newQuals;
 		for (size_t j = 0; j < quals.size(); ++j)
 		{
-			OW_CIMQualifier& ipq = quals[j];
-			OW_CIMQualifier cpq = clsp.getQualifier(ipq.getName());
+			CIMQualifier& ipq = quals[j];
+			CIMQualifier cpq = clsp.getQualifier(ipq.getName());
 			if (!cpq)
 			{
 				newQuals.push_back(ipq);
@@ -638,6 +569,5 @@ void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
-
-
+} // end namespace OpenWBEM
 

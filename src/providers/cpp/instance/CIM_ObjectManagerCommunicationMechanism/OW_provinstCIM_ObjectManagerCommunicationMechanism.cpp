@@ -9,151 +9,138 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_SocketAddress.hpp"
 
-using namespace OW_WBEMFlags;
-
 namespace OpenWBEM
 {
 
-class CIM_ObjectManagerCommunicationMechanismInstProv : public OW_CppInstanceProviderIFC
+using namespace WBEMFlags;
+
+class CIM_ObjectManagerCommunicationMechanismInstProv : public CppInstanceProviderIFC
 {
 public:
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual ~CIM_ObjectManagerCommunicationMechanismInstProv()
 	{
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_ObjectManagerCommunicationMechanism");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass )
 	{
 		(void)cimClass;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
-
-		OW_CIMObjectPath newCop(className, ns);
-
-		OW_CIMInstanceArray insts = OW_CIMOMEnvironment::g_cimomEnvironment->getCommunicationMechanisms();
+		CIMObjectPath newCop(className, ns);
+		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getCommunicationMechanisms();
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))
 			{
-				newCop.addKey("SystemCreationClassName", OW_CIMValue("OpenWBEM_ObjectManager"));
-				OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
-				newCop.addKey("SystemName", OW_CIMValue(addr.getName()));
-				newCop.addKey("CreationClassName", OW_CIMValue(className));
-				newCop.addKey("Name", OW_CIMValue(insts[i].getPropertyT("Name").getValue()));
+				newCop.addKey("SystemCreationClassName", CIMValue("OpenWBEM_ObjectManager"));
+				SocketAddress addr = SocketAddress::getAnyLocalHost();
+				newCop.addKey("SystemName", CIMValue(addr.getName()));
+				newCop.addKey("CreationClassName", CIMValue(className));
+				newCop.addKey("Name", CIMValue(insts[i].getPropertyT("Name").getValue()));
 				result.handle(newCop);
 			}
 		}
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
-
-		OW_CIMInstanceArray insts = OW_CIMOMEnvironment::g_cimomEnvironment->getCommunicationMechanisms();
+		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getCommunicationMechanisms();
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))
 			{
-				OW_CIMInstance& newInst(insts[i]);
-				newInst.setProperty("SystemCreationClassName", OW_CIMValue("OpenWBEM_ObjectManager"));
-				OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
-				newInst.setProperty("SystemName", OW_CIMValue(addr.getName()));
-				newInst.setProperty("CreationClassName", OW_CIMValue(className));
+				CIMInstance& newInst(insts[i]);
+				newInst.setProperty("SystemCreationClassName", CIMValue("OpenWBEM_ObjectManager"));
+				SocketAddress addr = SocketAddress::getAnyLocalHost();
+				newInst.setProperty("SystemName", CIMValue(addr.getName()));
+				newInst.setProperty("CreationClassName", CIMValue(className));
 	
 				result.handle(newInst.clone(localOnly,deep,includeQualifiers,
 					includeClassOrigin,propertyList,requestedClass,cimClass));
 			}
 		}
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+	virtual CIMInstance getInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		env->getLogger()->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
-		OW_CIMInstance inst = cimClass.newInstance();
+		CIMInstance inst = cimClass.newInstance();
 		inst.setProperties(instanceName.getKeys());
-
-		OW_String className = cimClass.getName();
-		OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
+		String className = cimClass.getName();
+		SocketAddress addr = SocketAddress::getAnyLocalHost();
 		if (!instanceName.getKeyT("SystemCreationClassName").getValueT().toString().equalsIgnoreCase("OpenWBEM_ObjectManager") ||
 			!instanceName.getKeyT("SystemName").getValueT().toString().equalsIgnoreCase(addr.getName()) ||
 			!instanceName.getKeyT("CreationClassName").getValueT().toString().equalsIgnoreCase(className))
 		{
-			OW_THROWCIM(OW_CIMException::NOT_FOUND);
+			OW_THROWCIM(CIMException::NOT_FOUND);
 		}
-
-		OW_CIMInstanceArray insts = OW_CIMOMEnvironment::g_cimomEnvironment->getCommunicationMechanisms();
+		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getCommunicationMechanisms();
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))
 			{
-				OW_CIMInstance& newInst(insts[i]);
-				newInst.setProperty("SystemCreationClassName", OW_CIMValue("OpenWBEM_ObjectManager"));
-				newInst.setProperty("SystemName", OW_CIMValue(addr.getName()));
-				newInst.setProperty("CreationClassName", OW_CIMValue(className));
+				CIMInstance& newInst(insts[i]);
+				newInst.setProperty("SystemCreationClassName", CIMValue("OpenWBEM_ObjectManager"));
+				newInst.setProperty("SystemName", CIMValue(addr.getName()));
+				newInst.setProperty("CreationClassName", CIMValue(className));
 	
 				return newInst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 			}
 		}
-
-		OW_THROWCIM(OW_CIMException::NOT_FOUND);
+		OW_THROWCIM(CIMException::NOT_FOUND);
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+	virtual CIMObjectPath createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 		(void)env;
 		(void)ns;
 		(void)cimInstance;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
+        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
@@ -162,29 +149,21 @@ public:
 		(void)includeQualifiers;
 		(void)propertyList;
 		(void)theClass;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		(void)env;
 		(void)ns;
 		(void)cop;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 	}
-
-
 };
-
-
-}
-
+} // end namespace OpenWBEM
 
 OW_PROVIDERFACTORY(OpenWBEM::CIM_ObjectManagerCommunicationMechanismInstProv, owprovinstCIM_ObjectManagerCommunicationMechanism)
-
-
 

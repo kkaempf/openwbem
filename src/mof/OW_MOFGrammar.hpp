@@ -27,18 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef GRAMMAR_H
 #define GRAMMAR_H
-
 #include "OW_config.h"
-
 #include "OW_String.hpp"
 #include "OW_List.hpp"
 #include "OW_AutoPtr.hpp"
-
-#include "OW_MOFVisitor.h"
+#include "OW_MOFVisitor.hpp"
 #include "OW_MOFLineInfo.hpp"
+
+namespace OpenWBEM
+{
+
+namespace MOF
+{
 
 class Initializer
 {
@@ -46,44 +48,35 @@ public:
 	virtual ~Initializer() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class Flavor
 {
 public:
-	Flavor( const OW_String *pNewFlavor, const lineInfo& li )
+	Flavor( const String *pNewFlavor, const lineInfo& li )
 	: pFlavor(pNewFlavor)
 	, theLineInfo(li)
 	{}
 	virtual ~Flavor(){}
 	
 	void Accept( Visitor *pV ) const { pV->VisitFlavor( this ); }
-
-	OW_AutoPtr< const OW_String > pFlavor;
+	AutoPtr< const String > pFlavor;
 	lineInfo theLineInfo;
 };
-
-
 class QualifierParameter
 {
 public:
 	virtual ~QualifierParameter() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class ConstantValue
 {
 public:
 	virtual ~ConstantValue() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class ArrayInitializer
 {
 public:
-	ArrayInitializer( OW_List< ConstantValue * >* pNewConstantValue )
+	ArrayInitializer( List< ConstantValue * >* pNewConstantValue )
 		: pConstantValue(pNewConstantValue)
 	{}
 	virtual ~ArrayInitializer()
@@ -94,13 +87,9 @@ public:
          pConstantValue->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitArrayInitializer( this ); }
-
-	OW_AutoPtr< OW_List< ConstantValue * > > pConstantValue;
+	AutoPtr< List< ConstantValue * > > pConstantValue;
 };
-
-
 class QualifierParameterArrayInitializer : public QualifierParameter
 {
 public:
@@ -111,17 +100,14 @@ public:
 		, theLineInfo(li)
 	{}
 	virtual ~QualifierParameterArrayInitializer(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitQualifierParameterArrayInitializer( this );
 	}
 	
-	OW_AutoPtr< const ArrayInitializer > pArrayInitializer;
+	AutoPtr< const ArrayInitializer > pArrayInitializer;
 	lineInfo theLineInfo;
 };
-
-
 class QualifierParameterConstantValue : public QualifierParameter
 {
 public:
@@ -131,44 +117,36 @@ public:
 		, theLineInfo(li)
 	{}
 	virtual ~QualifierParameterConstantValue(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitQualifierParameterConstantValue( this );
 	}
 	
-	OW_AutoPtr< const ConstantValue > pConstantValue;
+	AutoPtr< const ConstantValue > pConstantValue;
 	lineInfo theLineInfo;
 };
-
 class QualifierName
 {
 public:
-	QualifierName( const OW_String* pNewQualifierName )
+	QualifierName( const String* pNewQualifierName )
 		: pQualifierName(pNewQualifierName)
 	{}
 	virtual ~QualifierName() {}
-
 	void Accept( Visitor *pV ) const { pV->VisitQualifierName( this ); }
-
-	OW_AutoPtr< const OW_String > pQualifierName;
+	AutoPtr< const String > pQualifierName;
 };
-
-
-
 class Qualifier
 {
 public:
 	Qualifier( const QualifierName* pNewQualifierName,
 		const QualifierParameter* pNewQualifierParameter,
-		OW_List< Flavor * >* pNewFlavor,
+		List< Flavor * >* pNewFlavor,
 		const lineInfo& li )
 		: pQualifierName(pNewQualifierName)
 		, pQualifierParameter(pNewQualifierParameter)
 		, pFlavor(pNewFlavor)
 		, theLineInfo(li)
 	{}
-
 	virtual ~Qualifier()
 	{
 		while (pFlavor.get() && !pFlavor->empty())
@@ -177,15 +155,13 @@ public:
          pFlavor->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitQualifier( this ); }
 	
-	OW_AutoPtr< const QualifierName > pQualifierName;
-	OW_AutoPtr< const QualifierParameter > pQualifierParameter;
-	OW_AutoPtr< OW_List< Flavor * > > pFlavor;
+	AutoPtr< const QualifierName > pQualifierName;
+	AutoPtr< const QualifierParameter > pQualifierParameter;
+	AutoPtr< List< Flavor * > > pFlavor;
 	lineInfo theLineInfo;
 };
-
 class DefaultValue
 {
 public:
@@ -193,19 +169,14 @@ public:
 		: pInitializer(pNewInitializer)
 	{}
 	virtual ~DefaultValue(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitDefaultValue( this ); }
-
-	OW_AutoPtr< const Initializer > pInitializer;
+	AutoPtr< const Initializer > pInitializer;
 };
-
-
-
 class ValueInitializer
 {
 public:
-	ValueInitializer( OW_List< Qualifier * >* pNewQualifier,
-		const OW_String* pNewValueInitializer,
+	ValueInitializer( List< Qualifier * >* pNewQualifier,
+		const String* pNewValueInitializer,
 		const DefaultValue* pNewDefaultValue )
 		: pQualifier(pNewQualifier)
 		, pValueInitializer(pNewValueInitializer)
@@ -219,59 +190,43 @@ public:
 			pQualifier->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitValueInitializer( this ); }
-
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const OW_String > pValueInitializer;
-	OW_AutoPtr< const DefaultValue > pDefaultValue;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const String > pValueInitializer;
+	AutoPtr< const DefaultValue > pDefaultValue;
 };
-
-
 class PropertyName
 {
 public:
-	PropertyName( const OW_String* pNewPropertyName )
+	PropertyName( const String* pNewPropertyName )
 		: pPropertyName(pNewPropertyName)
 	{}
 	virtual ~PropertyName() {}
-
 	void Accept( Visitor *pV ) const { pV->VisitPropertyName( this ); }
-
-	OW_AutoPtr< const OW_String > pPropertyName;
+	AutoPtr< const String > pPropertyName;
 };
-
 class ClassName
 {
 public:
-	ClassName( const OW_String* pNewClassName )
+	ClassName( const String* pNewClassName )
 		: pClassName(pNewClassName)
 	{}
 	virtual ~ClassName(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitClassName( this ); }
-
-	OW_AutoPtr< const OW_String > pClassName;
+	AutoPtr< const String > pClassName;
 };
-
 class AliasIdentifier
 {
 public:
-	AliasIdentifier( const OW_String* pNewAliasIdentifier, lineInfo li )
+	AliasIdentifier( const String* pNewAliasIdentifier, lineInfo li )
 		: pAliasIdentifier(pNewAliasIdentifier)
 		, theLineInfo(li)
 	{}
-
 	virtual ~AliasIdentifier(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitAliasIdentifier( this ); }
-
-	OW_AutoPtr< const OW_String > pAliasIdentifier;
+	AutoPtr< const String > pAliasIdentifier;
 	lineInfo theLineInfo;
 };
-
-
-
 class Alias
 {
 public:
@@ -279,22 +234,17 @@ public:
 		: pAliasIdentifier(pNewAliasIdentifier)
 	{}
 	virtual ~Alias(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitAlias( this ); }
-
-	OW_AutoPtr< const AliasIdentifier > pAliasIdentifier;
+	AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
-
-
-
 class InstanceDeclaration
 {
 public:
 	InstanceDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const ClassName* pNewClassName,
 		const Alias* pNewAlias,
-		OW_List< ValueInitializer * >* pNewValueInitializer,
+		List< ValueInitializer * >* pNewValueInitializer,
 		const lineInfo& li)
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
@@ -302,7 +252,6 @@ public:
 		, pValueInitializer(pNewValueInitializer)
 		, theLineInfo(li)
 	{}
-
 	virtual ~InstanceDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -318,21 +267,18 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitInstanceDeclaration( this ); }
 	
-    OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-    OW_AutoPtr< const ClassName > pClassName;
-    OW_AutoPtr< const Alias > pAlias;
-    OW_AutoPtr< OW_List< ValueInitializer * > > pValueInitializer;
+    AutoPtr< List< Qualifier * > > pQualifier;
+    AutoPtr< const ClassName > pClassName;
+    AutoPtr< const Alias > pAlias;
+    AutoPtr< List< ValueInitializer * > > pValueInitializer;
 	 lineInfo theLineInfo;
 };
-
-
 class DefaultFlavor
 {
 public:
-	DefaultFlavor( OW_List< Flavor * >* pNewFlavor )
+	DefaultFlavor( List< Flavor * >* pNewFlavor )
 		: pFlavor(pNewFlavor)
 	{}
-
 	virtual ~DefaultFlavor()
 	{
 		while (pFlavor.get() && !pFlavor->empty())
@@ -341,37 +287,28 @@ public:
 			pFlavor->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitDefaultFlavor( this ); }
 	
-    OW_AutoPtr< OW_List< Flavor * > > pFlavor;
+    AutoPtr< List< Flavor * > > pFlavor;
 };
-
-
 class MetaElement
 {
 public:
-	MetaElement( const OW_String* pNewMetaElement, const lineInfo& li )
+	MetaElement( const String* pNewMetaElement, const lineInfo& li )
 		: pMetaElement(pNewMetaElement)
 		, theLineInfo(li)
 	{}
-
 	virtual ~MetaElement(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitMetaElement( this ); }
-
-	OW_AutoPtr< const OW_String > pMetaElement;
+	AutoPtr< const String > pMetaElement;
 	lineInfo theLineInfo;
 };
-
-
 class Scope
 {
 public:
-	Scope( OW_List< MetaElement * >* pNewMetaElement )
+	Scope( List< MetaElement * >* pNewMetaElement )
 		: pMetaElement(pNewMetaElement)
 	{}
-
 	virtual ~Scope()
 	{
 		while (pMetaElement.get() && !pMetaElement->empty())
@@ -380,53 +317,36 @@ public:
 			pMetaElement->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitScope( this ); }
 	
-	OW_AutoPtr< OW_List< MetaElement * > > pMetaElement;
+	AutoPtr< List< MetaElement * > > pMetaElement;
 };
-
-
-
 class DataType
 {
 public:
-	DataType( const OW_String* pNewDataType )
+	DataType( const String* pNewDataType )
 		: pDataType(pNewDataType)
 	{}
-
 	virtual ~DataType(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitDataType( this ); }
-
-	OW_AutoPtr< const OW_String > pDataType;
+	AutoPtr< const String > pDataType;
 };
-
 class IntegerValue
 {
 public:
 	virtual ~IntegerValue() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class Array
 {
 public:
 	Array( const IntegerValue* pNewArray )
 		: pArray(pNewArray)
 	{}
-
 	virtual ~Array(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitArray( this ); }
-
-	OW_AutoPtr< const IntegerValue > pArray;
+	AutoPtr< const IntegerValue > pArray;
 };
-
-
-
-
 class QualifierType
 {
 public:
@@ -437,17 +357,14 @@ public:
 		, pArray(pNewArray)
 		, pDefaultValue(pNewDefaultValue)
 	{}
-
 	virtual ~QualifierType(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitQualifierType( this ); }
 	
-	OW_AutoPtr< const DataType > pDataType;
-	OW_AutoPtr< const Array > pArray;
-	OW_AutoPtr< const DefaultValue > pDefaultValue;
+	AutoPtr< const DataType > pDataType;
+	AutoPtr< const Array > pArray;
+	AutoPtr< const DefaultValue > pDefaultValue;
 };
 	
-
 class QualifierDeclaration
 {
 public:
@@ -463,228 +380,170 @@ public:
 		, pDefaultFlavor(pNewDefaultFlavor)
 		, theLineInfo(li)
 	{}
-
 	virtual ~QualifierDeclaration(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitQualifierDeclaration( this ); }
-
-	OW_AutoPtr< const QualifierName > pQualifierName;
-	OW_AutoPtr< const QualifierType > pQualifierType;
-	OW_AutoPtr< const Scope > pScope;
-	OW_AutoPtr< const DefaultFlavor > pDefaultFlavor;
+	AutoPtr< const QualifierName > pQualifierName;
+	AutoPtr< const QualifierType > pQualifierType;
+	AutoPtr< const Scope > pScope;
+	AutoPtr< const DefaultFlavor > pDefaultFlavor;
 	lineInfo theLineInfo;
 };
-
-
 class ReferenceName
 {
 public:
-	ReferenceName( const OW_String* pNewReferenceName )
+	ReferenceName( const String* pNewReferenceName )
 		: pReferenceName(pNewReferenceName)
 	{}
-
 	virtual ~ReferenceName(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitReferenceName( this ); }
-
-	OW_AutoPtr< const OW_String > pReferenceName;
+	AutoPtr< const String > pReferenceName;
 };
-
 class IntegerValueBinaryValue : public IntegerValue
 {
 public:
-	IntegerValueBinaryValue( const OW_String* pNewBinaryValue )
+	IntegerValueBinaryValue( const String* pNewBinaryValue )
 		: pBinaryValue(pNewBinaryValue)
 	{}
-
 	virtual ~IntegerValueBinaryValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitIntegerValueBinaryValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pBinaryValue;
+	AutoPtr< const String > pBinaryValue;
 };
-
 class IntegerValueOctalValue : public IntegerValue
 {
 public:
-	IntegerValueOctalValue( const OW_String* pNewOctalValue )
+	IntegerValueOctalValue( const String* pNewOctalValue )
 		: pOctalValue(pNewOctalValue)
 	{}
-
 	virtual ~IntegerValueOctalValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitIntegerValueOctalValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pOctalValue;
+	AutoPtr< const String > pOctalValue;
 };
-
 class IntegerValueDecimalValue : public IntegerValue
 {
 public:
-	IntegerValueDecimalValue( const OW_String* pNewDecimalValue )
+	IntegerValueDecimalValue( const String* pNewDecimalValue )
 		: pDecimalValue(pNewDecimalValue)
 	{}
-
 	virtual ~IntegerValueDecimalValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitIntegerValueDecimalValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pDecimalValue;
+	AutoPtr< const String > pDecimalValue;
 };
-
 class IntegerValueHexValue : public IntegerValue
 {
 public:
-	IntegerValueHexValue( const OW_String* pNewHexValue )
+	IntegerValueHexValue( const String* pNewHexValue )
 		: pHexValue(pNewHexValue)
 	{}
-
 	virtual ~IntegerValueHexValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitIntegerValueHexValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pHexValue;
+	AutoPtr< const String > pHexValue;
 };
-
-
 class ConstantValueIntegerValue : public ConstantValue
 {
 public:
 	ConstantValueIntegerValue( const IntegerValue* pNewIntegerValue )
 		: pIntegerValue(pNewIntegerValue)
 	{}
-
 	virtual ~ConstantValueIntegerValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitConstantValueIntegerValue( this );
 	}
-
-	OW_AutoPtr< const IntegerValue > pIntegerValue;
+	AutoPtr< const IntegerValue > pIntegerValue;
 };
-
 class ConstantValueFloatValue : public ConstantValue
 {
 public:
-	ConstantValueFloatValue( const OW_String* pNewFloatValue )
+	ConstantValueFloatValue( const String* pNewFloatValue )
 		: pFloatValue(pNewFloatValue)
 	{}
-
 	virtual ~ConstantValueFloatValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitConstantValueFloatValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pFloatValue;
+	AutoPtr< const String > pFloatValue;
 };
-
 class ConstantValueCharValue : public ConstantValue
 {
 public:
-	ConstantValueCharValue( const OW_String* pNewCharValue )
+	ConstantValueCharValue( const String* pNewCharValue )
 		: pCharValue(pNewCharValue)
 	{}
-
 	virtual ~ConstantValueCharValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitConstantValueCharValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pCharValue;
+	AutoPtr< const String > pCharValue;
 };
-
 class ConstantValueStringValue : public ConstantValue
 {
 public:
-	ConstantValueStringValue( const OW_String* pNewStringValue )
+	ConstantValueStringValue( const String* pNewStringValue )
 		: pStringValue(pNewStringValue)
 	{}
-
 	virtual ~ConstantValueStringValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitConstantValueStringValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pStringValue;
+	AutoPtr< const String > pStringValue;
 };
-
 class ConstantValueBooleanValue : public ConstantValue
 {
 public:
-	ConstantValueBooleanValue( const OW_String* pNewBooleanValue )
+	ConstantValueBooleanValue( const String* pNewBooleanValue )
 		: pBooleanValue(pNewBooleanValue)
 	{}
-
 	virtual ~ConstantValueBooleanValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitConstantValueBooleanValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pBooleanValue;
+	AutoPtr< const String > pBooleanValue;
 };
-
 class ConstantValueNullValue : public ConstantValue
 {
 public:
-	ConstantValueNullValue( const OW_String* pNewNullValue )
+	ConstantValueNullValue( const String* pNewNullValue )
 		: pNullValue(pNewNullValue)
 	{}
-
 	virtual ~ConstantValueNullValue(){}
-
 	virtual void Accept(Visitor *pV) const
 	{
 		pV->VisitConstantValueNullValue( this );
 	}
-
-	OW_AutoPtr< const OW_String > pNullValue;
+	AutoPtr< const String > pNullValue;
 };
-
-
 class ObjectHandle
 {
 public:
-	ObjectHandle( const OW_String* pNewObjectHandle )
+	ObjectHandle( const String* pNewObjectHandle )
 		: pObjectHandle(pNewObjectHandle)
 	{}
-
 	virtual ~ObjectHandle(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitObjectHandle( this ); }
-
-	OW_AutoPtr< const OW_String > pObjectHandle;
+	AutoPtr< const String > pObjectHandle;
 };
-
-
 class ReferenceInitializer
 {
 public:
 	virtual ~ReferenceInitializer() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class ReferenceInitializerAliasIdentifier : public ReferenceInitializer
 {
 public:
@@ -692,37 +551,27 @@ public:
 		const AliasIdentifier * pNewAliasIdentifier)
 		: pAliasIdentifier(pNewAliasIdentifier)
 	{}
-
 	virtual ~ReferenceInitializerAliasIdentifier(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitReferenceInitializerAliasIdentifier( this );
 	}
 	
-	OW_AutoPtr< const AliasIdentifier > pAliasIdentifier;
+	AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
-
-
 class ReferenceInitializerObjectHandle : public ReferenceInitializer
 {
 public:
 	ReferenceInitializerObjectHandle( const ObjectHandle* pNewObjectHandle )
 		: pObjectHandle(pNewObjectHandle)
 	{}
-
 	virtual ~ReferenceInitializerObjectHandle(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitReferenceInitializerObjectHandle( this );
 	}
-
-	OW_AutoPtr< const ObjectHandle > pObjectHandle;
+	AutoPtr< const ObjectHandle > pObjectHandle;
 };
-
-
-
 class InitializerReferenceInitializer : public Initializer
 {
 public:
@@ -730,97 +579,70 @@ public:
 		const ReferenceInitializer* pNewReferenceInitializer)
 		: pReferenceInitializer(pNewReferenceInitializer)
 	{}
-
 	virtual ~InitializerReferenceInitializer(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitInitializerReferenceInitializer( this );
 	}
-
-	OW_AutoPtr< const ReferenceInitializer > pReferenceInitializer;
+	AutoPtr< const ReferenceInitializer > pReferenceInitializer;
 };		
-
-
 class InitializerArrayInitializer : public Initializer
 {
 public:
 	InitializerArrayInitializer( const ArrayInitializer* pNewArrayInitializer)
 		: pArrayInitializer(pNewArrayInitializer)
 	{}
-
 	virtual ~InitializerArrayInitializer(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitInitializerArrayInitializer( this );
 	}
-
-	OW_AutoPtr< const ArrayInitializer > pArrayInitializer;
+	AutoPtr< const ArrayInitializer > pArrayInitializer;
 };		
-
-
 class InitializerConstantValue : public Initializer
 {
 public:
 	InitializerConstantValue( const ConstantValue *pNewConstantValue )
 		: pConstantValue(pNewConstantValue)
 	{}
-
 	virtual ~InitializerConstantValue(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitInitializerConstantValue( this );
 	}
-
-	OW_AutoPtr< const ConstantValue > pConstantValue;
+	AutoPtr< const ConstantValue > pConstantValue;
 };		
-
-
 class ParameterName
 {
 public:
-	ParameterName( const OW_String* pNewParameterName )
+	ParameterName( const String* pNewParameterName )
 		: pParameterName(pNewParameterName)
 	{}
-
 	virtual ~ParameterName(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitParameterName( this ); }
-
-	OW_AutoPtr< const OW_String > pParameterName;
+	AutoPtr< const String > pParameterName;
 };
-
-
 class Parameter
 {
 public:
 	virtual ~Parameter() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class ObjectRef
 {
 public:
 	ObjectRef( const ClassName* pNewClassName )
 		: pClassName(pNewClassName)
 	{}
-
 	virtual ~ObjectRef(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitObjectRef( this ); }
-
-	OW_AutoPtr< const ClassName > pClassName;
+	AutoPtr< const ClassName > pClassName;
 };
-
-
 class ParameterObjectRef : public Parameter
 {
 public:
 	ParameterObjectRef(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const ObjectRef* pNewObjectRef,
 		const ParameterName* pNewParameterName,
 		const Array* pNewArray )
@@ -829,7 +651,6 @@ public:
 		, pParameterName(pNewParameterName)
 		, pArray(pNewArray)
 	{}
-
 	virtual ~ParameterObjectRef()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -838,21 +659,17 @@ public:
 			pQualifier->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitParameterObjectRef( this ); }
-
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const ObjectRef > pObjectRef;
-	OW_AutoPtr< const ParameterName > pParameterName;
-	OW_AutoPtr< const Array > pArray;	
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const ObjectRef > pObjectRef;
+	AutoPtr< const ParameterName > pParameterName;
+	AutoPtr< const Array > pArray;	
 };
-
-
 class ParameterDataType : public Parameter
 {
 public:
 	ParameterDataType(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const DataType* pNewDataType,
 		const ParameterName* pNewParameterName,
 		const Array* pNewArray )
@@ -861,7 +678,6 @@ public:
 		, pParameterName(pNewParameterName)
 		, pArray(pNewArray)
 	{}
-
 	virtual ~ParameterDataType()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -870,45 +686,35 @@ public:
 			pQualifier->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitParameterDataType( this ); }
-
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const DataType > pDataType;
-	OW_AutoPtr< const ParameterName > pParameterName;
-	OW_AutoPtr< const Array > pArray;	
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const DataType > pDataType;
+	AutoPtr< const ParameterName > pParameterName;
+	AutoPtr< const Array > pArray;	
 };
-
-
 class MethodName
 {
 public:
-	MethodName( const OW_String* pNewMethodName )
+	MethodName( const String* pNewMethodName )
 		: pMethodName(pNewMethodName)
 	{}
-
 	virtual ~MethodName(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitMethodName( this ); }
-
-	OW_AutoPtr< const OW_String > pMethodName;
+	AutoPtr< const String > pMethodName;
 };
-
-
 class MethodDeclaration
 {
 public:
 	MethodDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const DataType* pNewDataType,
 		const MethodName* pNewMethodName,
-		OW_List< Parameter * >* pNewParameter )
+		List< Parameter * >* pNewParameter )
 		: pQualifier(pNewQualifier)
 		, pDataType(pNewDataType)
 		, pMethodName(pNewMethodName)
 		, pParameter(pNewParameter)
 	{}
-
 	virtual ~MethodDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -922,21 +728,18 @@ public:
 			pParameter->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitMethodDeclaration( this ); }
 	
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const DataType > pDataType;
-	OW_AutoPtr< const MethodName > pMethodName;
-	OW_AutoPtr< OW_List< Parameter * > > pParameter;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const DataType > pDataType;
+	AutoPtr< const MethodName > pMethodName;
+	AutoPtr< List< Parameter * > > pParameter;
 };
-
-
 class ReferenceDeclaration
 {
 public:
 	ReferenceDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const ObjectRef* pNewObjectRef,
 		const ReferenceName* pNewReferenceName,
 		const DefaultValue* pNewDefaultValue )
@@ -945,7 +748,6 @@ public:
 		, pReferenceName(pNewReferenceName)
 		, pDefaultValue(pNewDefaultValue)
 	{}
-
 	virtual ~ReferenceDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -954,21 +756,18 @@ public:
 			pQualifier->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitReferenceDeclaration( this ); }
 	
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const ObjectRef > pObjectRef;
-	OW_AutoPtr< const ReferenceName > pReferenceName;
-	OW_AutoPtr< const DefaultValue > pDefaultValue;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const ObjectRef > pObjectRef;
+	AutoPtr< const ReferenceName > pReferenceName;
+	AutoPtr< const DefaultValue > pDefaultValue;
 };
-
-
 class PropertyDeclaration
 {
 public:
 	PropertyDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const DataType* pNewDataType,
 		const PropertyName* pNewPropertyName,
 		const Array* pNewArray,
@@ -981,7 +780,6 @@ public:
 		, pDefaultValue(pNewDefaultValue)
 		, theLineInfo(li)
 	{}
-
 	virtual ~PropertyDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -990,52 +788,40 @@ public:
 			pQualifier->pop_front();
 		}
 	}
-
 	void Accept( Visitor *pV ) const { pV->VisitPropertyDeclaration( this ); }
-
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const DataType > pDataType;
-	OW_AutoPtr< const PropertyName > pPropertyName;
-	OW_AutoPtr< const Array > pArray;
-	OW_AutoPtr< const DefaultValue > pDefaultValue;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const DataType > pDataType;
+	AutoPtr< const PropertyName > pPropertyName;
+	AutoPtr< const Array > pArray;
+	AutoPtr< const DefaultValue > pDefaultValue;
 	lineInfo theLineInfo;
 };
-
-
 class AssociationFeature
 {
 public:
 	virtual ~AssociationFeature() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class ClassFeature
 {
 public:
 	virtual ~ClassFeature() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class AssociationFeatureClassFeature : public AssociationFeature
 {
 public:
 	AssociationFeatureClassFeature( const ClassFeature* pNewClassFeature )
 		: pClassFeature(pNewClassFeature)
 	{}
-
 	virtual ~AssociationFeatureClassFeature(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitAssociationFeatureClassFeature( this );
 	}
 	
-	OW_AutoPtr< const ClassFeature > pClassFeature;
+	AutoPtr< const ClassFeature > pClassFeature;
 };
-
-
 class ClassFeatureMethodDeclaration : public ClassFeature
 {
 public:
@@ -1043,18 +829,14 @@ public:
 		const MethodDeclaration* pNewMethodDeclaration )
 		: pMethodDeclaration(pNewMethodDeclaration)
 	{}
-
 	virtual ~ClassFeatureMethodDeclaration(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitClassFeatureMethodDeclaration( this );
 	}
 	
-	OW_AutoPtr< const MethodDeclaration > pMethodDeclaration;
+	AutoPtr< const MethodDeclaration > pMethodDeclaration;
 };
-
-
 class ClassFeaturePropertyDeclaration : public ClassFeature
 {
 public:
@@ -1062,18 +844,14 @@ public:
 		const PropertyDeclaration* pNewPropertyDeclaration )
 		: pPropertyDeclaration(pNewPropertyDeclaration)
 	{}
-
 	virtual ~ClassFeaturePropertyDeclaration(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitClassFeaturePropertyDeclaration( this );
 	}
 	
-	OW_AutoPtr< const PropertyDeclaration > pPropertyDeclaration;
+	AutoPtr< const PropertyDeclaration > pPropertyDeclaration;
 };
-
-
 /* Note: This should be in AssociationFeature, but I found some MOF files
 	that use this in ClassFeature */
 class ClassFeatureReferenceDeclaration : public ClassFeature
@@ -1083,42 +861,34 @@ public:
 		const ReferenceDeclaration* pNewReferenceDeclaration )
 		: pReferenceDeclaration(pNewReferenceDeclaration)
 	{}
-
 	virtual ~ClassFeatureReferenceDeclaration(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitClassFeatureReferenceDeclaration( this );
 	}
 	
-	OW_AutoPtr< const ReferenceDeclaration > pReferenceDeclaration;
+	AutoPtr< const ReferenceDeclaration > pReferenceDeclaration;
 };
-
-
 class SuperClass
 {
 public:
 	SuperClass( const ClassName* pNewClassName )
 		: pClassName(pNewClassName)
 	{}
-
 	virtual ~SuperClass(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitSuperClass( this ); }
 	
-	OW_AutoPtr< const ClassName > pClassName;
+	AutoPtr< const ClassName > pClassName;
 };
-
-
 class IndicDeclaration
 {
 public:
 	IndicDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const ClassName* pNewClassName,
 		const Alias* pNewAlias,
 		const SuperClass* pNewSuperClass,
-		OW_List< ClassFeature * >* pNewClassFeature,
+		List< ClassFeature * >* pNewClassFeature,
 		const lineInfo& li)
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
@@ -1127,7 +897,6 @@ public:
 		, pClassFeature(pNewClassFeature)
 		, theLineInfo(li)
 	{}
-
 	virtual ~IndicDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -1143,24 +912,22 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitIndicDeclaration( this ); }
 	
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const ClassName > pClassName;
-	OW_AutoPtr< const Alias > pAlias;
-	OW_AutoPtr< const SuperClass > pSuperClass;
-	OW_AutoPtr< OW_List< ClassFeature * > > pClassFeature;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const ClassName > pClassName;
+	AutoPtr< const Alias > pAlias;
+	AutoPtr< const SuperClass > pSuperClass;
+	AutoPtr< List< ClassFeature * > > pClassFeature;
 	lineInfo theLineInfo;
 };
-
-
 class AssocDeclaration
 {
 public:
 	AssocDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const ClassName* pNewClassName,
 		const Alias* pNewAlias,
 		const SuperClass* pNewSuperClass,
-		OW_List< AssociationFeature * >* pNewAssociationFeature,
+		List< AssociationFeature * >* pNewAssociationFeature,
 		const lineInfo& li )
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
@@ -1169,7 +936,6 @@ public:
 		, pAssociationFeature(pNewAssociationFeature)
 		, theLineInfo(li)
 	{}
-
 	virtual ~AssocDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -1185,24 +951,22 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitAssocDeclaration( this ); }
 	
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const ClassName > pClassName;
-	OW_AutoPtr< const Alias > pAlias;
-	OW_AutoPtr< const SuperClass > pSuperClass;
-	OW_AutoPtr< OW_List< AssociationFeature * > > pAssociationFeature;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const ClassName > pClassName;
+	AutoPtr< const Alias > pAlias;
+	AutoPtr< const SuperClass > pSuperClass;
+	AutoPtr< List< AssociationFeature * > > pAssociationFeature;
 	lineInfo theLineInfo;
 };
-
-
 class ClassDeclaration
 {
 public:
 	ClassDeclaration(
-		OW_List< Qualifier * >* pNewQualifier,
+		List< Qualifier * >* pNewQualifier,
 		const ClassName* pNewClassName,
 		const Alias* pNewAlias,
 		const SuperClass* pNewSuperClass,
-		OW_List< ClassFeature * >* pNewClassFeature,
+		List< ClassFeature * >* pNewClassFeature,
 		const lineInfo& li )
 		: pQualifier(pNewQualifier)
 		, pClassName(pNewClassName)
@@ -1211,7 +975,6 @@ public:
 		, pClassFeature(pNewClassFeature)
 		, theLineInfo(li)
 	{}
-
 	virtual ~ClassDeclaration()
 	{
 		while (pQualifier.get() && !pQualifier->empty())
@@ -1227,45 +990,33 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitClassDeclaration( this ); }
 	
-	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtr< const ClassName > pClassName;
-	OW_AutoPtr< const Alias > pAlias;
-	OW_AutoPtr< const SuperClass > pSuperClass;
-	OW_AutoPtr< OW_List< ClassFeature * > > pClassFeature;
+	AutoPtr< List< Qualifier * > > pQualifier;
+	AutoPtr< const ClassName > pClassName;
+	AutoPtr< const Alias > pAlias;
+	AutoPtr< const SuperClass > pSuperClass;
+	AutoPtr< List< ClassFeature * > > pClassFeature;
 	lineInfo theLineInfo;
 };
-
-
 class PragmaParameter
 {
 public:
-	PragmaParameter( const OW_String* pNewPragmaParameter )
+	PragmaParameter( const String* pNewPragmaParameter )
 		: pPragmaParameter(pNewPragmaParameter)
 	{}
-
 	virtual ~PragmaParameter(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitPragmaParameter( this ); }
-
-	OW_AutoPtr< const OW_String > pPragmaParameter;
+	AutoPtr< const String > pPragmaParameter;
 };
-
-
 class PragmaName
 {
 public:
-	PragmaName( const OW_String* pNewPragmaName )
+	PragmaName( const String* pNewPragmaName )
 		: pPragmaName(pNewPragmaName)
 	{}
-
 	virtual ~PragmaName(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitPragmaName( this ); }
-
-	OW_AutoPtr< const OW_String > pPragmaName;
+	AutoPtr< const String > pPragmaName;
 };
-
-
 class CompilerDirective
 {
 public:
@@ -1277,24 +1028,18 @@ public:
 		, pPragmaParameter(pNewPragmaParameter)
 		, theLineInfo(li)
 	{}
-
 	virtual ~CompilerDirective(){}
-
 	void Accept( Visitor *pV ) const { pV->VisitCompilerDirective( this ); }
 	
-	OW_AutoPtr< const PragmaName > pPragmaName;
-	OW_AutoPtr< const PragmaParameter > pPragmaParameter;
+	AutoPtr< const PragmaName > pPragmaName;
+	AutoPtr< const PragmaParameter > pPragmaParameter;
 	lineInfo theLineInfo;
 };
-
-
 class MOFProduction {
 public:
 	virtual ~MOFProduction() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-
-
 class MOFProductionInstanceDeclaration : public MOFProduction
 {
 public:
@@ -1302,18 +1047,14 @@ public:
 		const InstanceDeclaration* pNewInstanceDeclaration )
 		: pInstanceDeclaration(pNewInstanceDeclaration)
 	{}
-
 	virtual ~MOFProductionInstanceDeclaration(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitMOFProductionInstanceDeclaration( this );
 	}
 	
-	OW_AutoPtr< const InstanceDeclaration > pInstanceDeclaration;
+	AutoPtr< const InstanceDeclaration > pInstanceDeclaration;
 };
-
-
 class MOFProductionQualifierDeclaration : public MOFProduction
 {
 public:
@@ -1321,18 +1062,14 @@ public:
 		const QualifierDeclaration* pNewQualifierDeclaration )
 		: pQualifierDeclaration(pNewQualifierDeclaration)
 	{}
-
 	virtual ~MOFProductionQualifierDeclaration(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitMOFProductionQualifierDeclaration( this );
 	}
 	
-	OW_AutoPtr< const QualifierDeclaration > pQualifierDeclaration;
+	AutoPtr< const QualifierDeclaration > pQualifierDeclaration;
 };
-
-
 class MOFProductionIndicDeclaration : public MOFProduction
 {
 public:
@@ -1340,18 +1077,14 @@ public:
 		const IndicDeclaration* pNewIndicDeclaration )
 		: pIndicDeclaration(pNewIndicDeclaration)
 	{}
-
 	virtual ~MOFProductionIndicDeclaration() {}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitMOFProductionIndicDeclaration( this );
 	}
 	
-	OW_AutoPtr< const IndicDeclaration > pIndicDeclaration;
+	AutoPtr< const IndicDeclaration > pIndicDeclaration;
 };
-
-
 class MOFProductionAssocDeclaration : public MOFProduction
 {
 public:
@@ -1359,18 +1092,14 @@ public:
 		const AssocDeclaration* pNewAssocDeclaration )
 		: pAssocDeclaration(pNewAssocDeclaration)
 	{}
-
 	virtual ~MOFProductionAssocDeclaration(){}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitMOFProductionAssocDeclaration( this );
 	}
 	
-	OW_AutoPtr< const AssocDeclaration > pAssocDeclaration;
+	AutoPtr< const AssocDeclaration > pAssocDeclaration;
 };
-
-
 class MOFProductionClassDeclaration : public MOFProduction
 {
 public:
@@ -1378,18 +1107,14 @@ public:
 		const ClassDeclaration* pNewClassDeclaration )
 		: pClassDeclaration(pNewClassDeclaration)
 	{}
-
 	virtual ~MOFProductionClassDeclaration() {}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitMOFProductionClassDeclaration( this );
 	}
 	
-	OW_AutoPtr< const ClassDeclaration > pClassDeclaration;
+	AutoPtr< const ClassDeclaration > pClassDeclaration;
 };
-
-
 class MOFProductionCompilerDirective : public MOFProduction
 {
 public:
@@ -1397,24 +1122,18 @@ public:
 		const CompilerDirective* pNewCompilerDirective )
 		: pCompilerDirective(pNewCompilerDirective)
 	{}
-
 	virtual ~MOFProductionCompilerDirective() {}
-
 	void Accept( Visitor *pV ) const
 	{
 		pV->VisitMOFProductionCompilerDirective( this );
 	}
-
-	OW_AutoPtr< const CompilerDirective > pCompilerDirective;
+	AutoPtr< const CompilerDirective > pCompilerDirective;
 };
-
-
 class MOFSpecification {
 public:
-	MOFSpecification( OW_List< MOFProduction * >* pNewMOFProduction )
+	MOFSpecification( List< MOFProduction * >* pNewMOFProduction )
 		: pMOFProduction(pNewMOFProduction)
 	{}
-
 	virtual ~MOFSpecification()
 	{
 		while (pMOFProduction.get() && !pMOFProduction->empty())
@@ -1425,10 +1144,10 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitMOFSpecification( this ); }
 	
-	OW_AutoPtr< OW_List< MOFProduction * > > pMOFProduction;
+	AutoPtr< List< MOFProduction * > > pMOFProduction;
 };
 
-
-
+} // end namespace MOF
+} // end namespace OpenWBEM
 
 #endif

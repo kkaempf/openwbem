@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 #define OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
@@ -37,112 +36,94 @@
 #include "OW_CIMNULL.hpp"
 #include <iosfwd>
 
-class OW_CIMParamValue : public OW_CIMBase
+namespace OpenWBEM
+{
+
+class CIMParamValue : public CIMBase
 {
 public:
-
 	struct Data;
-
 	/**
-	 * Create an OW_CIMParamValue
+	 * Create an CIMParamValue
 	 */
-	OW_CIMParamValue();
-
+	CIMParamValue();
 	/**
-	 * Create a null OW_CIMParamValue
+	 * Create a null CIMParamValue
 	 */
-	explicit OW_CIMParamValue(OW_CIMNULL_t);
-
+	explicit CIMParamValue(CIMNULL_t);
 	/**
-	 * Create a new OW_CIMParamValue object.
+	 * Create a new CIMParamValue object.
 	 * @param name		The name of the parameter.
 	 * @param val		The value of the parameter.
 	 */
-	OW_CIMParamValue(const OW_String& name, const OW_CIMValue& val);
-
+	CIMParamValue(const String& name, const CIMValue& val);
 	/**
-	 * Create a new OW_CIMParamValue object.
+	 * Create a new CIMParamValue object.
 	 * @param name		The name of the parameter.
 	 */
-	explicit OW_CIMParamValue(const OW_String& name);
-
+	explicit CIMParamValue(const String& name);
 	/**
 	 * Copy constructor
-	 * @param arg	The OW_CIMParamValue to make a copy of
+	 * @param arg	The CIMParamValue to make a copy of
 	 */
-	OW_CIMParamValue(const OW_CIMParamValue& arg);
+	CIMParamValue(const CIMParamValue& arg);
 	
 	/**
-	 * Destroy this OW_CIMParamValue object.
+	 * Destroy this CIMParamValue object.
 	 */
-	~OW_CIMParamValue();
-
+	~CIMParamValue();
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMParamValue to assign to this one.
-	 * @return A reference to this OW_CIMParamValue object.
+	 * @param arg The CIMParamValue to assign to this one.
+	 * @return A reference to this CIMParamValue object.
 	 */
-	OW_CIMParamValue& operator = (const OW_CIMParamValue& arg);
-
-	OW_String getName() const;
-	OW_CIMParamValue& setName(const OW_String& name);
-
-	OW_CIMValue getValue() const;
-	OW_CIMParamValue& setValue(const OW_CIMValue& val);
-
+	CIMParamValue& operator = (const CIMParamValue& arg);
+	String getName() const;
+	CIMParamValue& setName(const String& name);
+	CIMValue getValue() const;
+	CIMParamValue& setValue(const CIMValue& val);
 	/**
-	 * @return true if this OW_CIMParamValue is a valid CIM data type
+	 * @return true if this CIMParamValue is a valid CIM data type
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 	{
 		return (this->m_pdata.isNull()) ? 0 : &dummy::nonnull;
 	}
-
 	safe_bool operator!() const
 	{
 		return (this->m_pdata.isNull()) ? &dummy::nonnull : 0;
 	}
-
 	/**
-	 * Read this OW_CIMParamValue from an inputstream.
+	 * Read this CIMParamValue from an inputstream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
-	 * Write this OW_CIMParamValue to an output stream.
+	 * Write this CIMParamValue to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	virtual void setNull();
-
 	/**
-	 * @return The string representation of this OW_CIMParamValue object.
+	 * @return The string representation of this CIMParamValue object.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return The MOF representation of this OW_CIMParamValue as an OW_String.
+	 * @return The MOF representation of this CIMParamValue as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 private:
-
-	OW_COWReference<Data> m_pdata;
-
-	friend bool operator<(const OW_CIMParamValue& x, const OW_CIMParamValue& y);
+	COWReference<Data> m_pdata;
+	friend bool operator<(const CIMParamValue& x, const CIMParamValue& y);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_IndicationProviderIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_IndicationProviderIFC::~OW_IndicationProviderIFC() 
+IndicationProviderIFC::~IndicationProviderIFC() 
 {
 }
+
+} // end namespace OpenWBEM
 

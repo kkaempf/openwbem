@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_NwIface.hpp
  * @author	Jon M. Carey
@@ -39,47 +38,44 @@
  */
 #ifndef OW_NWIFACE_HPP_INCLUDE_GUARD_
 #define OW_NWIFACE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_SocketException.hpp"
 #include "OW_String.hpp"
 #include "OW_NetworkTypes.hpp"
 
-class OW_NwIface
+namespace OpenWBEM
+{
+
+class NwIface
 {
 public:
 	/**
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
-	OW_NwIface();
-	OW_String getName();
+	NwIface();
+	String getName();
 	unsigned long getIPAddress();
-	OW_String getIPAddressString();
+	String getIPAddressString();
 	unsigned long getBroadcastAddress();
-	OW_String getBroadcastAddressString();
-//	OW_String getMACAddressString();
+	String getBroadcastAddressString();
+//	String getMACAddressString();
 	unsigned long getNetmask();
-	OW_String getNetmaskString();
+	String getNetmaskString();
 	bool sameNetwork(unsigned long addr);
-	bool sameNetwork(const OW_String& straddr);
-	static unsigned long stringToAddress(const OW_String& straddr);
-
+	bool sameNetwork(const String& straddr);
+	static unsigned long stringToAddress(const String& straddr);
 private:
 	/**
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
-	void getInterfaceName(OW_SocketHandle_t sockfd);
-
+	void getInterfaceName(SocketHandle_t sockfd);
 	unsigned long m_addr;
 	unsigned long m_bcastAddr;
 	unsigned long m_netmask;
-//	OW_String m_macAddress;
-	OW_String m_name;
+//	String m_macAddress;
+	String m_name;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-
-

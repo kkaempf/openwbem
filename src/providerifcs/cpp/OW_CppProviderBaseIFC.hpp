@@ -27,26 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPP_PROVIDERBASEIFC_HPP_
 #define OW_CPP_PROVIDERBASEIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_DateTime.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_CppInstanceProviderIFC;
-class OW_CppMethodProviderIFC;
+class CppInstanceProviderIFC;
+class CppMethodProviderIFC;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-class OW_CppAssociatorProviderIFC;
+class CppAssociatorProviderIFC;
 #endif
-class OW_CppIndicationExportProviderIFC;
-class OW_CppPolledProviderIFC;
-class OW_CppIndicationProviderIFC;
-
+class CppIndicationExportProviderIFC;
+class CppPolledProviderIFC;
+class CppIndicationProviderIFC;
 /**
  * This is the base class implemented by all providers that are loaded
  * by the C++ provider interface.
@@ -55,62 +54,54 @@ class OW_CppIndicationProviderIFC;
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class OW_CppProviderBaseIFC
+class CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppProviderBaseIFC();
-
+	virtual ~CppProviderBaseIFC();
 	/**
 	 * Called by the CIMOM when the provider is initialized
 	 * @param hdl The handle to the cimom
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef&) {}
-
+	virtual void initialize(const ProviderEnvironmentIFCRef&) {}
 	/**
 	 * We do the following because gcc seems to have a problem with
 	 * dynamic_cast.  If often fails, especially when compiling with
 	 * optimizations.  It will return a (supposedly) valid pointer, 
 	 * when it should return NULL.
 	 */
-
-	virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
-	virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
+	virtual CppInstanceProviderIFC* getInstanceProvider() { return 0; }
+	virtual CppMethodProviderIFC* getMethodProvider() { return 0; }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
+	virtual CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
 #endif
-	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
-	virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }
-	virtual OW_CppIndicationProviderIFC* getIndicationProvider() { return 0; }
-
-	OW_DateTime getLastAccessTime() const  { return m_dt; }
-
+	virtual CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
+	virtual CppPolledProviderIFC* getPolledProvider() { return 0; }
+	virtual CppIndicationProviderIFC* getIndicationProvider() { return 0; }
+	DateTime getLastAccessTime() const  { return m_dt; }
 	void updateAccessTime();
 	
 	virtual bool canUnload() { return true; }
-
 protected:
-
 private:
-	OW_DateTime m_dt;
-
+	DateTime m_dt;
 };
 
-typedef OW_SharedLibraryReference<OW_CppProviderBaseIFC> OW_CppProviderBaseIFCRef;
+typedef SharedLibraryReference<CppProviderBaseIFC> CppProviderBaseIFCRef;
+
+} // end namespace OpenWBEM
 
 #define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
-
 #define OW_PROVIDERFACTORY(prov, name) \
 extern "C" const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
-extern "C" OW_CppProviderBaseIFC* \
+extern "C" OpenWBEM::CppProviderBaseIFC* \
 createProvider##name() \
 { \
 	return new prov; \
 }
 
 #endif
-

@@ -24,10 +24,8 @@
 // Modified By: Dan Nuffer
 //
 //%/////////////////////////////////////////////////////////////////////////////
-
 #ifndef OW_WQLCOMPILE_HPP_INCLUDE_GUARD_H_
 #define OW_WQLCOMPILE_HPP_INCLUDE_GUARD_H_
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Stack.hpp"
@@ -36,17 +34,18 @@
 #include "OW_WQLSelectStatement.hpp"
 #include "OW_NoSuchPropertyException.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_WQLCompile
+class WQLCompile
 {
 public:
-
 	class term_el
 	{
 	public:
 		term_el()
 		{}
-		term_el(bool mark_, OW_WQLOperation op_, OW_WQLOperand opn1_, OW_WQLOperand opn2_)
+		term_el(bool mark_, WQLOperation op_, WQLOperand opn1_, WQLOperand opn2_)
 			: mark(mark_)
 			, op(op_)
 			, opn1(opn1_)
@@ -54,9 +53,9 @@ public:
 		{}
 		
 		bool mark;
-		OW_WQLOperation op;
-		OW_WQLOperand opn1;
-		OW_WQLOperand opn2;
+		WQLOperation op;
+		WQLOperand opn1;
+		WQLOperand opn2;
 	
 		void negate(void);
 	};
@@ -67,7 +66,6 @@ public:
 		TERMINAL_HEAP,
 		OPERAND
 	};
-
 	struct stack_el
 	{
 		stack_el()
@@ -76,7 +74,6 @@ public:
 			: opn(opn_)
 			, type(type_)
 		{}
-
 		int  opn;     // either to terminals or eval_heap
 		el_type type;
 	};
@@ -87,7 +84,7 @@ public:
 	public:
 		eval_el()
 		{}
-		eval_el(bool mark_, OW_WQLOperation op_, int opn1_, el_type is_terminal1_, int opn2_, el_type is_terminal2_)
+		eval_el(bool mark_, WQLOperation op_, int opn1_, el_type is_terminal1_, int opn2_, el_type is_terminal2_)
 			: mark(mark_)
 			, op(op_)
 			, opn1(opn1_)
@@ -96,9 +93,8 @@ public:
 			, is_terminal2(is_terminal2_)
 		{}
 	
-
 		bool mark;
-		OW_WQLOperation op;
+		WQLOperation op;
 		int opn1;
 		el_type is_terminal1; // if yes, look in terminal Array
 		int opn2;
@@ -121,89 +117,61 @@ public:
 		void order(void);
 	};
 	
-	typedef OW_Array<term_el> TableauRow;
+	typedef Array<term_el> TableauRow;
 	
-	typedef OW_Array<TableauRow> Tableau;
+	typedef Array<TableauRow> Tableau;
 	
-
-
-    OW_WQLCompile();
-
+    WQLCompile();
 	// calls compile()
-    OW_WQLCompile(const OW_WQLSelectStatement& wqs);
-
-    ~OW_WQLCompile();
-
-    void compile (const OW_WQLSelectStatement * wqs);
-
+    WQLCompile(const WQLSelectStatement& wqs);
+    ~WQLCompile();
+    void compile (const WQLSelectStatement * wqs);
     Tableau& getTableau() {return _tableau;}
-
 	/** Evalautes the where clause using the symbol table to resolve symbols.
 	 * @return true or false if the source passes the query
-	 * @throws OW_NoSuchPropertyException if the where clause references a 
+	 * @throws NoSuchPropertyException if the where clause references a 
 	 *		property that is unknown to source.
-	 * @throws OW_TypeMismatchException if the there is a type error in
+	 * @throws TypeMismatchException if the there is a type error in
 	 *		the where clause or if the property type of the source property
 	 *		doesn't match the query.
 	 */
-    bool evaluate(const OW_WQLPropertySource& source) const;
-
+    bool evaluate(const WQLPropertySource& source) const;
     void print(std::ostream& ostr);
-
     void printTableau(std::ostream& ostr);
-
-
 protected:
-    void _buildEvalHeap(const OW_WQLSelectStatement * wqs);
-
+    void _buildEvalHeap(const WQLSelectStatement * wqs);
     void _pushNOTDown(void);
-
     void _factoring(void);
-
-    void _gatherDisj(OW_Array<stack_el>& stk);
-
-    void _gatherConj(OW_Array<stack_el>& stk, stack_el sel);
-
-    void _gather(OW_Array<stack_el>& stk, stack_el sel, bool or_flag);
-
+    void _gatherDisj(Array<stack_el>& stk);
+    void _gatherConj(Array<stack_el>& stk, stack_el sel);
+    void _gather(Array<stack_el>& stk, stack_el sel, bool or_flag);
     void _sortTableau();
-
     static inline void _ResolveProperty(
-        OW_WQLOperand& op,
-        const OW_WQLPropertySource& source)
+        WQLOperand& op,
+        const WQLPropertySource& source)
     {
         //
         // Resolve the operand: if it's a property name, look up its value:
         //
-
-        if (op.getType() == OW_WQLOperand::PROPERTY_NAME)
+        if (op.getType() == WQLOperand::PROPERTY_NAME)
         {
-            const OW_String& propertyName = op.getPropertyName();
-
+            const String& propertyName = op.getPropertyName();
             if (!source.getValue(propertyName, op))
-				OW_THROW(OW_NoSuchPropertyException, "No such property");
+				OW_THROW(NoSuchPropertyException, "No such property");
         }
     }
-
-
     // Structure to contain the compiled DNF form
-
     Tableau _tableau;
-
     //
     // The eval_heap structure contains an ordered tree of non-terminal
     // expressions, the term_heap structure the corresponding terminal
     // expressions
     //
-
-    OW_Array<term_el> terminal_heap;
-
-    OW_Array<eval_el> eval_heap;
-
+    Array<term_el> terminal_heap;
+    Array<eval_el> eval_heap;
 };
+bool operator==(const WQLCompile::term_el& x, const WQLCompile::term_el& y);
 
-bool operator==(const OW_WQLCompile::term_el& x, const OW_WQLCompile::term_el& y);
-
+} // end namespace OpenWBEM
 
 #endif
-

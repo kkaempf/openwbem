@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_StackTrace.hpp"
 #include "OW_Exec.hpp"
@@ -36,11 +35,9 @@
 #include "OW_Array.hpp"
 #include <fstream>
 #include <iostream>
-
 #if defined(OW_HAVE_BACKTRACE)
 #include <execinfo.h>
 #endif
-
 #ifdef OW_HAVE_UNISTD_H
 extern "C"
 {
@@ -48,19 +45,22 @@ extern "C"
 }
 #endif
 
+namespace OpenWBEM
+{
+
 using std::ifstream;
 using std::ofstream;
 using std::flush;
 
-#ifndef DEFAULT_GDB_PATH
-#define DEFAULT_GDB_PATH "/usr/bin/gdb"
+#ifndef OW_DEFAULT_GDB_PATH
+#define OW_DEFAULT_GDB_PATH "/usr/bin/gdb"
 #endif
 
 // static
-void OW_StackTrace::getStackTrace()
+void StackTrace::getStackTrace()
 {
-	OW_StackTrace* retval = 0;
-	if (getenv("OW_STACKTRACE"))
+	StackTrace* retval = 0;
+	if (getenv("STACKTRACE"))
 	{
 		// if we have the GNU backtrace functions we use them.  They don't give
 		// as good information as gdb does, but they are orders of magnitude
@@ -74,7 +74,7 @@ void OW_StackTrace::getStackTrace()
 		size = backtrace (array, 200);
 		strings = backtrace_symbols (array, size);
 		
-		OW_String bt;
+		String bt;
 		
 		for (i = 0; i < size; i++)
 		{
@@ -84,20 +84,20 @@ void OW_StackTrace::getStackTrace()
 		
 		free (strings);
 		
-		retval = new OW_StackTrace(bt);
+		retval = new StackTrace(bt);
 #elif defined(OW_WIN32)
 #else
-		ifstream file(DEFAULT_GDB_PATH);
+		ifstream file(OW_DEFAULT_GDB_PATH);
 		if (file)
 		{
 			file.close();
-			OW_String scriptName("/tmp/owgdb-");
-			OW_String outputName("/tmp/owgdbout-");
+			String scriptName("/tmp/owgdb-");
+			String outputName("/tmp/owgdbout-");
 			// TODO: don't use getppid, get it from somewhere else!
-			outputName += OW_String(OW_UInt32(::getpid()));
-			scriptName += OW_String(OW_UInt32(::getpid())) + ".sh";
-			OW_String exeName("/proc/");
-			exeName += OW_String(OW_UInt32(::getpid())) + "/exe";
+			outputName += String(UInt32(::getpid()));
+			scriptName += String(UInt32(::getpid())) + ".sh";
+			String exeName("/proc/");
+			exeName += String(UInt32(::getpid())) + "/exe";
 			
 			ofstream scriptFile(scriptName.c_str(), std::ios::out);
 			scriptFile << "#!/bin/sh\n"
@@ -108,26 +108,20 @@ void OW_StackTrace::getStackTrace()
 				<< "q\n"
 				<< "EOS\n" << flush;
 			scriptFile.close();
-
-			OW_Array<OW_String> command;
+			Array<String> command;
 			command.push_back( "/bin/sh" );
 			command.push_back( scriptName );
-			OW_Exec::safeSystem(command);
-
-
+			Exec::safeSystem(command);
 			ifstream outputFile(outputName.c_str(), std::ios::in);
-
-			OW_String output;
+			String output;
 			while (outputFile)
 			{
-				output += OW_String::getLine(outputFile) + "\n";
+				output += String::getLine(outputFile) + "\n";
 			}
-
 			outputFile.close();
 			unlink(outputName.c_str());
 			unlink(scriptName.c_str());
-
-			retval = new OW_StackTrace(output);
+			retval = new StackTrace(output);
 		}
 #endif
 	}
@@ -136,14 +130,15 @@ void OW_StackTrace::getStackTrace()
 		std::cerr << *retval << std::endl;
 	}
 }
-
-OW_StackTrace::OW_StackTrace(const OW_String& trace)
+StackTrace::StackTrace(const String& trace)
 	: m_trace(trace)
 {
 }
-
-std::ostream& operator<<(std::ostream& ostr, const OW_StackTrace& out)
+std::ostream& operator<<(std::ostream& ostr, const StackTrace& out)
 {
 	ostr << out.m_trace;
 	return ostr;
 }
+
+} // end namespace OpenWBEM
+

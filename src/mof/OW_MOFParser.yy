@@ -37,15 +37,18 @@
 #include "OW_Array.hpp"
 #include "OW_MOFCompiler.hpp"
 
+using namespace OpenWBEM;
+using namespace OpenWBEM::MOF;
+
 //#define YYDEBUG 1
 
 // Lexer functions
-void lexIncludeFile( void* context, const OW_String& filename );
+void lexIncludeFile( void* context, const String& filename );
 void yyerror( char* );
 
 /* This is so we can avoid static variables and pass a pointer into yyparse */
 #define YYPARSE_PARAM context
-#define MOF_COMPILER (reinterpret_cast<MofCompiler*>(context))
+#define MOF_COMPILER (reinterpret_cast<Compiler*>(context))
 %}
 
 /* avoid non-reentrant global variables */
@@ -72,46 +75,46 @@ void yyerror( char* );
 /* here is the stuff to make our C++ AST work */
 %union {
 	MOFSpecification*				pMOFSpecification;
-	OW_List<MOFProduction*>*		pMOFProductionList;
+	List<MOFProduction*>*		pMOFProductionList;
 	MOFProduction*					pMOFProduction;
 	IndicDeclaration*				pIndicDeclaration;
 	ClassDeclaration*				pClassDeclaration;
 	PropertyDeclaration*			pPropertyDeclaration;
 	ObjectRef*						pObjectRef;
 	Parameter*						pParameter;
-	Array*							pArray;
+	::OpenWBEM::MOF::Array*							pArray;
 	CompilerDirective*			pCompilerDirective;
 	MetaElement*					pMetaElement;
-	OW_List<MetaElement*>*			pMetaElementList;
+	List<MetaElement*>*			pMetaElementList;
 	Initializer*					pInitializer;
 	SuperClass*						pSuperClass;
 	AssociationFeature*			pAssociationFeature;
-	OW_List<AssociationFeature*>*	pAssociationFeatureList;
+	List<AssociationFeature*>*	pAssociationFeatureList;
 	QualifierParameter*			pQualifierParameter;
 	QualifierDeclaration*		pQualifierDeclaration;
 	PragmaParameter*				pPragmaParameter;
 	AssocDeclaration*				pAssocDeclaration;
 	DefaultValue*					pDefaultValue;
 	ClassFeature*					pClassFeature;
-	OW_List<ClassFeature*>*			pClassFeatureList;
+	List<ClassFeature*>*			pClassFeatureList;
 	ReferenceInitializer*		pReferenceInitializer;
 	QualifierType*					pQualifierType;
 	DefaultFlavor*					pDefaultFlavor;
-	OW_String*						pString;
+	String*						pString;
         IntegerValue*                   pIntegerValue;
         ConstantValue*                  pConstantValue;
 	ArrayInitializer*				pArrayInitializer;
 	ValueInitializer*				pValueInitializer;
-	OW_List<ValueInitializer*>*	pValueInitializerList;
+	List<ValueInitializer*>*	pValueInitializerList;
 	Flavor*							pFlavor;
-	OW_List<Flavor*>*					pFlavorList;
-	OW_List<ConstantValue*>*				pConstantValueList;
+	List<Flavor*>*					pFlavorList;
+	List<ConstantValue*>*				pConstantValueList;
 	Alias*							pAlias;
-	OW_List<Qualifier*>*				pQualifierList;
+	List<Qualifier*>*				pQualifierList;
 	ReferenceDeclaration*		pReferenceDeclaration;
 	MethodDeclaration*			pMethodDeclaration;
 	Qualifier*						pQualifier;
-	OW_List<Parameter*>*				pParameterList;
+	List<Parameter*>*				pParameterList;
 	Scope*							pScope;
 	InstanceDeclaration*			pInstanceDeclaration;
 	PragmaName*						pPragmaName;
@@ -196,12 +199,12 @@ int yylex(YYSTYPE *yylval, void* YYLEX_PARAM);
 /* rules */
 mofSpecification:
 	mofProductionList {
-		OW_AutoPtr<MOFSpecification> p(new MOFSpecification($1));
+		AutoPtr<MOFSpecification> p(new MOFSpecification($1));
 		MOF_COMPILER->mofSpecification = p;
 		}
 	;
 
-mofProductionList: /* empty */ {$$ = new OW_List<MOFProduction*>; }
+mofProductionList: /* empty */ {$$ = new List<MOFProduction*>; }
 	| mofProductionList mofProduction {$1->push_back($2); $$ = $1;}
 	;
 
@@ -303,7 +306,7 @@ classDeclaration:
         }
 	;
 
-classFeatureList: /* empty */ {$$ = new OW_List<ClassFeature*>; }
+classFeatureList: /* empty */ {$$ = new List<ClassFeature*>; }
 	| classFeatureList classFeature {$1->push_back($2); $$ = $1;}
 	;
 
@@ -354,12 +357,12 @@ assocDeclaration:
         }
 	;
 	
-qualifierListEmpty: /* empty */ {$$ = new OW_List<Qualifier*>; }
+qualifierListEmpty: /* empty */ {$$ = new List<Qualifier*>; }
 	| qualifierListEmpty COMMA_TOK qualifier
         {$1->push_back($3); $$ = $1; delete $2; }
 	;
 
-associationFeatureList: /* empty */ {$$ = new OW_List<AssociationFeature*>; }
+associationFeatureList: /* empty */ {$$ = new List<AssociationFeature*>; }
 	| associationFeatureList associationFeature {$1->push_back($2); $$ = $1;}
 	;
 
@@ -462,7 +465,7 @@ qualifier:
 	;
 
 flavorList:
-	flavor {$$ = new OW_List<Flavor*>(1, $1); }
+	flavor {$$ = new List<Flavor*>(1, $1); }
 	| flavorList flavor {$1->push_back($2); $$ = $1;}
 	;
 
@@ -615,7 +618,7 @@ objectRef:
 	;
 
 parameterList:
-	parameter {$$ = new OW_List<Parameter*>(1, $1); }
+	parameter {$$ = new List<Parameter*>(1, $1); }
 	| parameterList COMMA_TOK parameter {$1->push_back($3); $$=$1; delete $2;}
 	;
 
@@ -643,9 +646,9 @@ parameterName:
 	;
 
 array:
-	LBRACK_TOK RBRACK_TOK {$$ = new Array(0); delete $1; delete $2;}
+	LBRACK_TOK RBRACK_TOK {$$ = new ::OpenWBEM::MOF::Array(0); delete $1; delete $2;}
 	| LBRACK_TOK integerValue RBRACK_TOK /* must be positive value */
-		{$$ = new Array($2); delete $1; delete $3;}
+		{$$ = new ::OpenWBEM::MOF::Array($2); delete $1; delete $3;}
 	;
 
 defaultValue:
@@ -666,7 +669,7 @@ arrayInitializer:
 	;
 
 constantValueList:
-	constantValue {$$ = new OW_List<ConstantValue*>(1, $1); }
+	constantValue {$$ = new List<ConstantValue*>(1, $1); }
 	| constantValueList COMMA_TOK constantValue
 		{$1->push_back($3); $$ = $1; delete $2;}
 	;
@@ -779,7 +782,7 @@ scope:
 	;
 
 metaElementList:
-	metaElement {$$ = new OW_List<MetaElement*>(1, $1); }
+	metaElement {$$ = new List<MetaElement*>(1, $1); }
 	| metaElementList COMMA_TOK metaElement
 		{$1->push_back($3); $$ = $1; delete $2; }
 	;
@@ -809,7 +812,7 @@ defaultFlavor:
 	;
 
 flavorListWithComma:
-	flavor {$$ = new OW_List<Flavor*>(1, $1); }
+	flavor {$$ = new List<Flavor*>(1, $1); }
 	| flavorListWithComma COMMA_TOK flavor
 	{
 		$1->push_back($3); $$ = $1;
@@ -857,7 +860,7 @@ instanceDeclaration:
 	;
 
 valueInitializerList:
-	valueInitializer {$$ = new OW_List<ValueInitializer*>(1, $1); }
+	valueInitializer {$$ = new List<ValueInitializer*>(1, $1); }
 	| valueInitializerList valueInitializer
 		{$1->push_back($2); $$ = $1;}
 	;
@@ -885,7 +888,7 @@ IDENTIFIER:
 	/*| ASSOCIATION_TOK*/
 	| CLASS_TOK {$$ = $1;}
 	| DISABLEOVERRIDE_TOK {$$ = $1;}
-	| dataType {$$ = const_cast<OW_String*>($1->pDataType.release()); delete $1;}
+	| dataType {$$ = const_cast<String*>($1->pDataType.release()); delete $1;}
 	| ENABLEOVERRIDE_TOK {$$ = $1;}
 	| FLAVOR_TOK {$$ = $1;}
 	/*| INDICATION_TOK*/
@@ -910,7 +913,7 @@ IDENTIFIER:
 %%
 void yyerror(char* string)
 {
-	OW_THROW(OW_Exception, string);
+	OW_THROW(Exception, string);
 }
 
 

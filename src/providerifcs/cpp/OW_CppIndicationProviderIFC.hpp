@@ -27,25 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPP_INDICATIONPROVIDERIFC_HPP_
 #define OW_CPP_INDICATIONPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 
-class OW_WQLSelectStatement;
+namespace OpenWBEM
+{
 
+class WQLSelectStatement;
 /**
  * This is the interface implemented by indication providers.
  */
-class OW_CppIndicationProviderIFC: public virtual OW_CppProviderBaseIFC
+class CppIndicationProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppIndicationProviderIFC();
-
+	virtual ~CppIndicationProviderIFC();
 	/**
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.
@@ -64,35 +63,32 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getIndicationProviderInfo(OW_IndicationProviderInfo& info);
+	virtual void getIndicationProviderInfo(IndicationProviderInfo& info);
 	
 	virtual void activateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes, 
 		bool firstActivation
 		);
-
 	virtual void authorizeFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		const OW_String& owner
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes, 
+		const String& owner
 		);
-
 	virtual void deActivateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes, 
 		bool lastActivation
 		);
-
 	/**
 	 * If a provider wishes to be polled, it must return a positive number.
 	 * The int returned will be the number of seconds between polls.
@@ -115,17 +111,17 @@ public:
 	 * @param env 
 	 */
 	virtual int mustPoll(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes
 		);
-
-	virtual OW_CppIndicationProviderIFC* getIndicationProvider();
+	virtual CppIndicationProviderIFC* getIndicationProvider();
 };
+typedef SharedLibraryReference< CppIndicationProviderIFC > CppIndicationProviderIFCRef;
 
-typedef OW_SharedLibraryReference< OW_CppIndicationProviderIFC > OW_CppIndicationProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
 								

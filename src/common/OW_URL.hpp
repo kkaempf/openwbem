@@ -27,36 +27,37 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_URL_HPP_
 #define OW_URL_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * This is used easily parse and manage http URLs
  */
-struct OW_URL
+struct URL
 {
-	OW_URL();
-
+	URL();
 	/**
-	 * Allocate a new OW_URL, based on a string.  This ctor parses the string
+	 * Allocate a new URL, based on a string.  This ctor parses the string
 	 * and fills out the member variables.
 	 */
-	OW_URL(const OW_String& sUrl);
-	OW_String protocol;
-	OW_String username;
-	OW_String password;
-	OW_String host;
-	OW_UInt16 port;
-	OW_String path;
-
+	URL(const String& sUrl);
+	String protocol;
+	String username;
+	String password;
+	String host;
+	UInt16 port;
+	String path;
 	/**
 	 * Return a string based on the data in the member variables.
 	 */
-	OW_String toString() const;
+	String toString() const;
 };
+
+} // end namespace OpenWBEM
 
 #endif

@@ -30,7 +30,7 @@
 
 static const unsigned long NOKEY = PTHREAD_KEYS_MAX+1;
 volatile unsigned long CMPI_ThreadContext::theKey=NOKEY;
-static OW_NonRecursiveMutex keyGuard;
+static OpenWBEM::NonRecursiveMutex keyGuard;
 
 CMPI_ThreadContext* CMPI_ThreadContext::getThreadContext()
 {
@@ -42,11 +42,11 @@ void CMPI_ThreadContext::setContext()
 	pthread_key_t k;
 	int rc = pthread_key_create(&k,NULL);
 	if (rc != 0)
-		OW_THROW(OW_Exception, format("pthread_key_create failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_key_create failed. error = %1", rc).c_str());
 
 	rc = pthread_setspecific(k,this);
 	if (rc != 0)
-		OW_THROW(OW_Exception, format("pthread_setspecific failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
 
 	theKey = k;
 	std::cout<<"--- setThreadContext(1) theKey: " << theKey << std::endl;
@@ -59,11 +59,11 @@ void CMPI_ThreadContext::setThreadContext()
 	// if this is the first time setThreadContext() has run.
 	// hiKey is initially PTHREAD_KEYS_MAX+1, but then gets set as 
 	// CMPI_ThreadContext objects are created.
-	OW_ThreadImpl::memoryBarrier();
+	OpenWBEM::ThreadImpl::memoryBarrier();
 	if (theKey == NOKEY)
 	{
 		// double-checked locking pattern.  See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
-		OW_NonRecursiveMutexLock l(keyGuard);
+		OpenWBEM::NonRecursiveMutexLock l(keyGuard);
 		if (theKey == NOKEY)
 		{
 			m_prev=NULL;
@@ -83,7 +83,7 @@ void CMPI_ThreadContext::setThreadContext()
 	// set this as the context
 	int rc = pthread_setspecific(theKey,this);
 	if (rc != 0)
-		OW_THROW(OW_Exception, format("pthread_setspecific failed. error = %1", rc).c_str());
+		OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
 
 	return;
 }
@@ -151,7 +151,7 @@ CMPI_ThreadContext::~CMPI_ThreadContext()
 	{
 		int rc = pthread_setspecific(theKey, m_prev);
 		if (rc != 0)
-			OW_THROW(OW_Exception, format("pthread_setspecific failed. error = %1", rc).c_str());
+			OW_THROW(OpenWBEM::Exception, OpenWBEM::Format("pthread_setspecific failed. error = %1", rc).c_str());
 		return;
 	}
 }

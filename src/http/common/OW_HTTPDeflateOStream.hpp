@@ -27,82 +27,71 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifdef OW_HAVE_ZLIB_H
-
 #ifndef OW_HTTPDEFLATEOSTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPDEFLATEOSTREAM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Types.hpp"
 
 #ifdef OW_HAVE_OSTREAM
-#include <ostream>
+ #include <ostream>
 #elif defined(OW_HAVE_OSTREAM_H)
-#include <ostream.h>
+ #include <ostream.h>
 #else
-#include <iostream>
+ #include <iostream>
 #endif
 
-extern "C"
-{
 #include <zlib.h>
-}
 
-class OW_HTTPDeflateOStreamBuffer : public OW_BaseStreamBuffer
+namespace OpenWBEM
+{
+
+class HTTPDeflateOStreamBuffer : public BaseStreamBuffer
 {
 public:
-	OW_HTTPDeflateOStreamBuffer(std::ostream& ostr);
-	virtual ~OW_HTTPDeflateOStreamBuffer();
+	HTTPDeflateOStreamBuffer(std::ostream& ostr);
+	virtual ~HTTPDeflateOStreamBuffer();
 	void termOutput(); 
-
 protected:
 	virtual int sync();
 	virtual int buffer_to_device(const char *, int) ;
-
 private:
 	std::ostream& m_ostr;
 	z_stream m_zstr;
-	static const OW_UInt32 m_outBufSize = HTTP_BUF_SIZE;
+	static const UInt32 m_outBufSize = HTTP_BUF_SIZE;
 	Bytef m_outBuf[m_outBufSize];
-
 	int flushOutBuf(int flush = 0);
 	int writeToStream();
-
 	// disallow copying and assigning
-	OW_HTTPDeflateOStreamBuffer(const OW_HTTPDeflateOStreamBuffer&);
-	OW_HTTPDeflateOStreamBuffer& operator=(const OW_HTTPDeflateOStreamBuffer&);
+	HTTPDeflateOStreamBuffer(const HTTPDeflateOStreamBuffer&);
+	HTTPDeflateOStreamBuffer& operator=(const HTTPDeflateOStreamBuffer&);
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPDeflateOStreamBase
+class HTTPDeflateOStreamBase
 {
 public:
-	OW_HTTPDeflateOStreamBase(std::ostream& ostr)
+	HTTPDeflateOStreamBase(std::ostream& ostr)
 		: m_strbuf(ostr) {}
-	OW_HTTPDeflateOStreamBuffer m_strbuf;
+	HTTPDeflateOStreamBuffer m_strbuf;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPDeflateOStream : private OW_HTTPDeflateOStreamBase, public std::ostream
+class HTTPDeflateOStream : private HTTPDeflateOStreamBase, public std::ostream
 {
 public:
 	/**
-	 * Converts an ostream to a OW_HTTPDeflateOStream.  The original 
+	 * Converts an ostream to a HTTPDeflateOStream.  The original 
 	 * ostream is wrapped.  Anything written to the new ostream, is 
 	 * first deflated, and then passed to the original ostream.
 	 * @param ostr the original ostream
 	 */
-	OW_HTTPDeflateOStream(std::ostream& ostr);
-
+	HTTPDeflateOStream(std::ostream& ostr);
 	/**
 	 * Get the original ostream
 	 * @return the original ostream.
 	 */
 	std::ostream& getOutputStreamOrig() { return m_ostr; };
-
 	/**
 	 * Call this when the entire entity has been written to the
 	 * ostream.  This preforms some things necessary to terminate
@@ -111,13 +100,12 @@ public:
 	void termOutput() { m_strbuf.termOutput(); }
 private:
 	std::ostream& m_ostr;
-
 	// disallow copying and assigning
-	OW_HTTPDeflateOStream(const OW_HTTPDeflateOStream&);
-	OW_HTTPDeflateOStream& operator=(const OW_HTTPDeflateOStream&);
+	HTTPDeflateOStream(const HTTPDeflateOStream&);
+	HTTPDeflateOStream& operator=(const HTTPDeflateOStream&);
 };
-
-
 #endif
+
+} // end namespace OpenWBEM
 
 #endif // #ifdef OW_HAVE_ZLIB_H

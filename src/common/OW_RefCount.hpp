@@ -27,42 +27,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
 #ifndef OW_REF_COUNT_HPP_
 #define OW_REF_COUNT_HPP_
-
 #include "OW_config.h"
 #include "OW_AtomicOps.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-
-struct OW_RefCount
+namespace OpenWBEM
 {
-	OW_RefCount()
+
+//////////////////////////////////////////////////////////////////////////////
+struct RefCount
+{
+	RefCount()
 		: m_count(1)
 	{
 	}
-
-	OW_RefCount(OW_Atomic_t c)
+	RefCount(Atomic_t c)
 		: m_count(c)
 	{
 	}
-
 	void inc()
 	{
-		OW_AtomicInc(m_count);
+		AtomicInc(m_count);
 	}
-
 	bool decAndTest()
 	{
-		return OW_AtomicDecAndTest(m_count);
+		return AtomicDecAndTest(m_count);
 	}
-
-
 	private:
-	OW_Atomic_t m_count;
+	Atomic_t m_count;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

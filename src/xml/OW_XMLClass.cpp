@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_XMLClass.hpp"
@@ -41,18 +40,21 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Format.hpp"
 
-//////////////////////////////////////////////////////////////////////////////		
-OW_String
-OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
+namespace OpenWBEM
 {
-	OW_String nameSpace;
+
+//////////////////////////////////////////////////////////////////////////////		
+String
+XMLClass::getNameSpace(CIMXMLParser& parser)
+{
+	String nameSpace;
 	bool firstTime = true;
-	while (parser.tokenIs(OW_CIMXMLParser::E_NAMESPACE))
+	while (parser.tokenIs(CIMXMLParser::E_NAMESPACE))
 	{
-		OW_String pname = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
+		String pname = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		if(pname.empty())
 		{
-			//OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
+			//OW_THROWCIM(CIMException::INVALID_PARAMETER);
 			// can't do this, because some clients send invalid xml, and
 			// interoperability is more important than spec purity.
 		}
@@ -70,89 +72,82 @@ OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 	}
 	return nameSpace;
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMObjectPath
-OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClass& c,
-	OW_CIMInstance& i)
+CIMObjectPath
+XMLClass::getObjectWithPath(CIMXMLParser& parser, CIMClass& c,
+	CIMInstance& i)
 {
-	OW_CIMXMLParser::tokenId token = parser.getToken();
-
+	CIMXMLParser::tokenId token = parser.getToken();
 	parser.mustGetChild(); // pass <VALUE.OBJECTWITHPATH> or <VALUE.OBJECTWITHLOCALPATH>
 	
-	if (token == OW_CIMXMLParser::E_VALUE_OBJECTWITHPATH)
+	if (token == CIMXMLParser::E_VALUE_OBJECTWITHPATH)
 	{
 		token = parser.getToken();
 		
-		OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
+		CIMObjectPath tmpcop = XMLCIMFactory::createObjectPath(parser);
 			
-		if (token == OW_CIMXMLParser::E_CLASSPATH)
+		if (token == CIMXMLParser::E_CLASSPATH)
 		{
-			parser.mustTokenIs(OW_CIMXMLParser::E_CLASS);
+			parser.mustTokenIs(CIMXMLParser::E_CLASS);
 		    c = readClass(parser,tmpcop);
 		}
-		else if (token==OW_CIMXMLParser::E_INSTANCEPATH)
+		else if (token==CIMXMLParser::E_INSTANCEPATH)
 		{
-			parser.mustTokenIs(OW_CIMXMLParser::E_INSTANCE);
+			parser.mustTokenIs(CIMXMLParser::E_INSTANCE);
 		    i = readInstance(parser,tmpcop);
 		}
 		else
 		{
-		    OW_THROWCIMMSG(OW_CIMException::FAILED,
+		    OW_THROWCIMMSG(CIMException::FAILED,
 				format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 		}
 		
 		parser.mustGetEndTag(); // pass </VALUE.OBJECTWITHPATH>
 		return tmpcop;
 	}
-	else if (token==OW_CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH)
+	else if (token==CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH)
 	{
 	    token = parser.getToken();
-
-	    OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
+	    CIMObjectPath tmpcop = XMLCIMFactory::createObjectPath(parser);
 			
-	    if (token == OW_CIMXMLParser::E_LOCALCLASSPATH)
+	    if (token == CIMXMLParser::E_LOCALCLASSPATH)
 		{
-			parser.mustTokenIs(OW_CIMXMLParser::E_CLASS);
+			parser.mustTokenIs(CIMXMLParser::E_CLASS);
 		    c = readClass(parser, tmpcop);
 	    }
-		else if (token == OW_CIMXMLParser::E_LOCALINSTANCEPATH)
+		else if (token == CIMXMLParser::E_LOCALINSTANCEPATH)
 		{
-			parser.mustTokenIs(OW_CIMXMLParser::E_INSTANCE);
+			parser.mustTokenIs(CIMXMLParser::E_INSTANCE);
 		    i = readInstance(parser, tmpcop);
 	    }
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				"Require instance or class in object with path declaration");
 		}
 		
 		parser.mustGetEndTag(); // pass </VALUE.OBJECTWITHLOCALPATH>
 	    return tmpcop;
 	}
-	OW_THROWCIMMSG(OW_CIMException::FAILED,
+	OW_THROWCIMMSG(CIMException::FAILED,
 		format("Require instance or class in object with path declaration. token = %1, parser = %2", token, parser).c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMClass
-OW_XMLClass::readClass(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
+CIMClass
+XMLClass::readClass(CIMXMLParser& childNode, CIMObjectPath& path)
 {
-	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(childNode);
-
+	CIMClass cimClass = XMLCIMFactory::createClass(childNode);
 	path.setObjectName(cimClass.getName());
-
 	return cimClass;
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMInstance
-OW_XMLClass::readInstance(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
+CIMInstance
+XMLClass::readInstance(CIMXMLParser& childNode, CIMObjectPath& path)
 {
 	(void)path;
-	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(childNode);
+	CIMInstance cimInstance = XMLCIMFactory::createInstance(childNode);
 	return cimInstance;
 }
 
-
+} // end namespace OpenWBEM
 

@@ -27,31 +27,28 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_AUTOPTR_HPP_INCLUDE_GUARD_
 #define OW_AUTOPTR_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 
-template <class X> class OW_AutoPtr
+namespace OpenWBEM
+{
+
+template <class X> class AutoPtr
 {
 private:
 	X* _ptr;
-
 public:
 	typedef X element_type;
-
 	/**
-	 * Construct a new OW_AutoPtr.
+	 * Construct a new AutoPtr.
 	 * @param isArray true if memory is allocated with new[], false if
 	 *        memory is allocated with new.
 	 * @param p pointer to the object
 	 */
-	explicit OW_AutoPtr(X* p = 0) : _ptr(p) {}
-
-	OW_AutoPtr(OW_AutoPtr& a) : _ptr(a.release()) {}
-
-	OW_AutoPtr& operator= (X* p)
+	explicit AutoPtr(X* p = 0) : _ptr(p) {}
+	AutoPtr(AutoPtr& a) : _ptr(a.release()) {}
+	AutoPtr& operator= (X* p)
 	{
 		if(p != _ptr)
 		{
@@ -60,8 +57,7 @@ public:
 		}
 		return *this;
 	}
-
-	OW_AutoPtr& operator= (OW_AutoPtr& a)
+	AutoPtr& operator= (AutoPtr& a)
 	{
 		if(&a != this)
 		{
@@ -70,13 +66,11 @@ public:
 		}
 		return *this;
 	}
-
-	~OW_AutoPtr()
+	~AutoPtr()
 	{
 		typedef char type_must_be_complete[sizeof(X)];
 		delete _ptr;
 	}
-
 	X& operator*() const {  return *_ptr;}
 	X* operator->() const {  return _ptr;}
 	X* get() const {  return _ptr;}
@@ -92,27 +86,21 @@ public:
 		_ptr = p;
 	}
 };
-
-
-template <class X> class OW_AutoPtrVec
+template <class X> class AutoPtrVec
 {
 private:
 	X* _ptr;
-
 public:
 	typedef X element_type;
-
 	/**
-	 * Construct a new OW_AutoPtrVec.
+	 * Construct a new AutoPtrVec.
 	 * @param isArray true if memory is allocated with new[], false if
 	 *        memory is allocated with new.
 	 * @param p pointer to the object
 	 */
-	explicit OW_AutoPtrVec(X* p = 0) : _ptr(p) {}
-
-	OW_AutoPtrVec(OW_AutoPtrVec& a) : _ptr(a.release()) {}
-
-	OW_AutoPtrVec& operator= (X* p)
+	explicit AutoPtrVec(X* p = 0) : _ptr(p) {}
+	AutoPtrVec(AutoPtrVec& a) : _ptr(a.release()) {}
+	AutoPtrVec& operator= (X* p)
 	{
 		if(p != _ptr)
 		{
@@ -121,8 +109,7 @@ public:
 		}
 		return *this;
 	}
-
-	OW_AutoPtrVec& operator= (OW_AutoPtrVec& a)
+	AutoPtrVec& operator= (AutoPtrVec& a)
 	{
 		if(&a != this)
 		{
@@ -131,19 +118,15 @@ public:
 		}
 		return *this;
 	}
-
-	~OW_AutoPtrVec()
+	~AutoPtrVec()
 	{
 		typedef char type_must_be_complete[sizeof(X)];
 		delete [] _ptr;
 	}
-
 	X& operator*() const {  return *_ptr;}
 	X* operator->() const {  return _ptr;}
-
 	X& operator[](unsigned i) { return _ptr[i]; }
 	const X& operator[](unsigned i) const { return _ptr[i]; }
-
 	X* get() const {  return _ptr;}
 	X* release()
 	{
@@ -158,11 +141,6 @@ public:
 	}
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-
-
-
-
-

@@ -33,6 +33,8 @@
 #include "OW_StringStreamTestCases.hpp"
 #include "OW_StringStream.hpp"
 
+using namespace OpenWBEM;
+
 void OW_StringStreamTestCases::setUp()
 {
 }
@@ -43,7 +45,7 @@ void OW_StringStreamTestCases::tearDown()
 
 void OW_StringStreamTestCases::testSomething()
 {
-	OW_StringStream ss;
+	StringStream ss;
 	ss << "O";
 	unitAssert(ss.length() == 1);
 	unitAssert(ss.toString().equals("O"));
@@ -52,7 +54,7 @@ void OW_StringStreamTestCases::testSomething()
 	unitAssert(ss.length() == 0);
 	unitAssert(ss.toString().equals(""));
 
-	ss << OW_String("Hello World");
+	ss << String("Hello World");
 	unitAssert(ss.length() == 11);
 	unitAssert(ss.toString().equals("Hello World"));
 }

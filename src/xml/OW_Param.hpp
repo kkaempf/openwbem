@@ -27,43 +27,41 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 //
 // OW_Param.hpp
 //
-
 #ifndef OW_PARAM_HPP_INCLUDE_GUARD_
 #define OW_PARAM_HPP_INCLUDE_GUARD_
-
 #include	"OW_config.h"
 #include	"OW_String.hpp"
 #include	"OW_Array.hpp"
+
+namespace OpenWBEM
+{
 
 //
 // Param allows parameters to be built for transmission
 // in an XML request
 //
-class OW_Param
+class Param
 {
 public:    
     static const int VALUENOTSET = 0;
     static const int VALUESET = 1;
 	    
-    OW_Param(OW_String argname, int mode, OW_String value);
-    OW_Param(OW_String argname, OW_String value);
-    OW_Param(OW_String argname, bool value);
+    Param(String argname, int mode, String value);
+    Param(String argname, String value);
+    Param(String argname, bool value);
 	    
-    OW_String getArgName() const;
-    OW_String getArgValue() const;
-
+    String getArgName() const;
+    String getArgValue() const;
 private:
-	OW_String m_argName;
-    OW_String m_argValue;
+	String m_argName;
+    String m_argValue;
     int m_argMode;
 };
+typedef Array<Param> ParamArray;
 
-typedef OW_Array<OW_Param> OW_ParamArray;
+} // end namespace OpenWBEM
 
 #endif
-
-

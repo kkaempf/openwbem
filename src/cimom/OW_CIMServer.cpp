@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValueCast.hpp"
@@ -46,10 +45,12 @@
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 #if !defined(OW_DISABLE_ACLS)
-class OW_AccessMgr
+class AccessMgr
 {
 public:
 	enum
@@ -81,36 +82,30 @@ public:
 		ENUMERATENAMESPACE,
 		INVOKEMETHOD
 	};
-
-	OW_AccessMgr(OW_CIMServer* pServer, OW_CIMOMEnvironmentRef env);
-
+	AccessMgr(CIMServer* pServer, CIMOMEnvironmentRef env);
 	/**
 	 * checkAccess will check that access is granted through the ACL. If
-	 * Access is not granted, an OW_CIMException will be thrown.
+	 * Access is not granted, an CIMException will be thrown.
 	 * @param op	The operation that access is being checked for.
 	 * @param ns	The name space that access is being check on.
 	 * @param aclInfo The ACL info for the user request.
 	 */
-	void checkAccess(int op, const OW_String& ns, const OW_UserInfo& aclInfo);
-
+	void checkAccess(int op, const String& ns, const UserInfo& aclInfo);
 private:
-
-	OW_String getMethodType(int op);
-	OW_CIMServer* m_pServer;
-	OW_CIMOMEnvironmentRef m_env;
+	String getMethodType(int op);
+	CIMServer* m_pServer;
+	CIMOMEnvironmentRef m_env;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AccessMgr::OW_AccessMgr(OW_CIMServer* pServer,
-	OW_CIMOMEnvironmentRef env)
+AccessMgr::AccessMgr(CIMServer* pServer,
+	CIMOMEnvironmentRef env)
 	: m_pServer(pServer)
 	, m_env(env)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_AccessMgr::getMethodType(int op)
+String
+AccessMgr::getMethodType(int op)
 {
 	switch(op)
 	{
@@ -128,7 +123,7 @@ OW_AccessMgr::getMethodType(int op)
 		case ASSOCIATORNAMES:
 		case REFERENCES:
 		case REFERENCENAMES:
-			return OW_String("r");
+			return String("r");
 		case DELETECLASS:
 		case DELETEINSTANCE:
 		case CREATECLASS:
@@ -140,101 +135,95 @@ OW_AccessMgr::getMethodType(int op)
 		case DELETEQUALIFIER:
 		case CREATENAMESPACE:
 		case DELETENAMESPACE:
-			return OW_String("w");
+			return String("w");
 		case INVOKEMETHOD:
-			return OW_String("rw");
+			return String("rw");
 		default:
-			OW_THROW(OW_Exception, "Unknown operation type passed to "
+			OW_THROW(Exception, "Unknown operation type passed to "
 				"AccessMgr.  This shouldn't happen");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AccessMgr::checkAccess(int op, const OW_String& ns,
-	const OW_UserInfo& aclInfo)
+AccessMgr::checkAccess(int op, const String& ns,
+	const UserInfo& aclInfo)
 {
 	if (aclInfo.m_internal)
 	{
 		return;
 	}
-	OW_UserInfo intACLInfo;
-
+	UserInfo intACLInfo;
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
 		m_env->logDebug(format("Checking access to namespace: \"%1\"", ns));
 		m_env->logDebug(format("UserName is: \"%1\" Operation is : %2",
 			aclInfo.getUserName(), op));
 	}
-
-	OW_String lns(ns);
+	String lns(ns);
 	while (!lns.empty() && lns[0] == '/')
 	{
 		lns = lns.substring(1);
 	}
 	lns.toLowerCase();
-
 	for(;;)
 	{
 		if (!aclInfo.getUserName().empty())
 		{
-			OW_String superUser =
-				m_env->getConfigItem(OW_ConfigOpts::ACL_SUPERUSER_opt);
-
+			String superUser =
+				m_env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 			if (superUser.equalsIgnoreCase(aclInfo.getUserName()))
 			{
 				m_env->logDebug("User is SuperUser: checkAccess returning.");
 				return;
 			}
-
 			try
 			{
-				OW_CIMClass cc = m_pServer->getClass("root/security",
+				CIMClass cc = m_pServer->getClass("root/security",
 					"OpenWBEM_UserACL", E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 					intACLInfo);
 			}
-			catch(OW_CIMException&)
+			catch(CIMException&)
 			{
 				m_env->logDebug("OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return;
 			}
 			
-			OW_CIMObjectPath cop("OpenWBEM_UserACL");
-			cop.addKey("username", OW_CIMValue(aclInfo.getUserName()));
-			cop.addKey("nspace", OW_CIMValue(lns));
-			OW_CIMInstance ci(OW_CIMNULL);
+			CIMObjectPath cop("OpenWBEM_UserACL");
+			cop.addKey("username", CIMValue(aclInfo.getUserName()));
+			cop.addKey("nspace", CIMValue(lns));
+			CIMInstance ci(CIMNULL);
 			try
 			{
 				ci = m_pServer->getInstance("root/security", cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 					NULL, intACLInfo);
 			}
-			catch(const OW_CIMException&)
+			catch(const CIMException&)
 			{
 				ci.setNull();
 			}
 			if (ci)
 			{
-				OW_String capability;
-				OW_CIMProperty capabilityProp = ci.getProperty("capability");
+				String capability;
+				CIMProperty capabilityProp = ci.getProperty("capability");
 				if (capabilityProp)
 				{
-					OW_CIMValue cv = capabilityProp.getValue();
+					CIMValue cv = capabilityProp.getValue();
 					if (cv)
 					{
 						capability = cv.toString();
 					}
 				}
-				OW_String opType = getMethodType(op);
+				String opType = getMethodType(op);
 				capability.toLowerCase();
 				if (opType.length() == 1)
 				{
-					if (capability.indexOf(opType) == OW_String::npos)
+					if (capability.indexOf(opType) == String::npos)
 					{
 						m_env->logError(format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							aclInfo.m_userName, lns));
-						OW_THROWCIM(OW_CIMException::ACCESS_DENIED);
+						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
 				else
@@ -244,7 +233,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 						m_env->logError(format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							aclInfo.m_userName, lns));
-						OW_THROWCIM(OW_CIMException::ACCESS_DENIED);
+						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
 				m_env->logCustInfo(format(
@@ -256,58 +245,56 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 		// use default policy for namespace
 		try
 		{
-			OW_CIMClass cc = m_pServer->getClass("root/security",
+			CIMClass cc = m_pServer->getClass("root/security",
 				"OpenWBEM_NamespaceACL", E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 				intACLInfo);
 		}
-		catch(OW_CIMException&)
+		catch(CIMException&)
 		{
 			m_env->logDebug("OpenWBEM_NamespaceACL class non-existent in"
 				" /root/security. namespace ACLs disabled");
 			return;
 		}
-		OW_CIMObjectPath cop("OpenWBEM_NamespaceACL");
-		cop.addKey("nspace", OW_CIMValue(lns));
-		OW_CIMInstance ci(OW_CIMNULL);
+		CIMObjectPath cop("OpenWBEM_NamespaceACL");
+		cop.addKey("nspace", CIMValue(lns));
+		CIMInstance ci(CIMNULL);
 		try
 		{
 			ci = m_pServer->getInstance("root/security", cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 				NULL, intACLInfo);
 		}
-		catch(const OW_CIMException& ce)
+		catch(const CIMException& ce)
 		{
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
 				m_env->logDebug(format("Caught exception: %1 in"
-					" OW_AccessMgr::checkAccess", ce));
+					" AccessMgr::checkAccess", ce));
 			}
 			ci.setNull();
 		}
 	
 		if (ci)
 		{
-			OW_String capability;
-			OW_CIMProperty capabilityProp = ci.getProperty("capability");
+			String capability;
+			CIMProperty capabilityProp = ci.getProperty("capability");
 			if (capabilityProp)
 			{
-				OW_CIMValue v = capabilityProp.getValue();
+				CIMValue v = capabilityProp.getValue();
 				if (v)
 				{
 					capability = v.toString();
 				}
 			}
 			capability.toLowerCase();
-
-			OW_String opType = getMethodType(op);
-
+			String opType = getMethodType(op);
 			if (opType.length() == 1)
 			{
-				if (capability.indexOf(opType) == OW_String::npos)
+				if (capability.indexOf(opType) == String::npos)
 				{
 					m_env->logError(format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						aclInfo.m_userName, lns));
-					OW_THROWCIM(OW_CIMException::ACCESS_DENIED);
+					OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
 			else
@@ -317,18 +304,16 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 					m_env->logError(format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						aclInfo.m_userName, lns));
-					OW_THROWCIM(OW_CIMException::ACCESS_DENIED);
+					OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
-
 			m_env->logCustInfo(format(
 				"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 				aclInfo.m_userName, lns));
 			return;
-
 		}
 		size_t idx = lns.lastIndexOf('/');
-		if (idx == 0 || idx == OW_String::npos)
+		if (idx == 0 || idx == String::npos)
 		{
 			break;
 		}
@@ -337,30 +322,28 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 	m_env->logError(format(
 		"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 		aclInfo.m_userName, lns));
-	OW_THROWCIM(OW_CIMException::ACCESS_DENIED);
+	OW_THROWCIM(CIMException::ACCESS_DENIED);
 }
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMServer::OW_CIMServer(OW_CIMOMEnvironmentRef env,
-	const OW_ProviderManagerRef& provManager,
-	const OW_RepositoryIFCRef& cimRepository)
-	: OW_RepositoryIFC()
+CIMServer::CIMServer(CIMOMEnvironmentRef env,
+	const ProviderManagerRef& provManager,
+	const RepositoryIFCRef& cimRepository)
+	: RepositoryIFC()
 	, m_provManager(provManager)
 	, m_rwSchemaLocker()
 	, m_rwInstanceLocker()
 #if !defined(OW_DISABLE_ACLS)
-	, m_accessMgr(new OW_AccessMgr(this, env))
+	, m_accessMgr(new AccessMgr(this, env))
 #endif
-	, m_nsClass_Namespace(OW_CIMNULL)
+	, m_nsClass_Namespace(CIMNULL)
 	, m_env(env)
 	, m_cimRepository(cimRepository)
-	, m_realRepository(m_cimRepository.cast_to<OW_CIMRepository>())
+	, m_realRepository(m_cimRepository.cast_to<CIMRepository>())
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMServer::~OW_CIMServer()
+CIMServer::~CIMServer()
 {
 	try
 	{
@@ -371,149 +354,130 @@ OW_CIMServer::~OW_CIMServer()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::open(const OW_String& path)
+CIMServer::open(const String& path)
 {
 	(void)path;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::close()
+CIMServer::close()
 {
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::createNameSpace(const OW_String& ns,
-	const OW_UserInfo& aclInfo)
+CIMServer::createNameSpace(const String& ns,
+	const UserInfo& aclInfo)
 {
 	// Don't need to check ACLs, since this is a result of calling createInstance.
 	m_cimRepository->createNameSpace(ns,aclInfo);
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::deleteNameSpace(const OW_String& ns,
-	const OW_UserInfo& aclInfo)
+CIMServer::deleteNameSpace(const String& ns,
+	const UserInfo& aclInfo)
 {
 	// Don't need to check ACLs, since this is a result of calling deleteInstance.
 	m_cimRepository->deleteNameSpace(ns,aclInfo);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumNameSpace(OW_StringResultHandlerIFC& result,
-	const OW_UserInfo& aclInfo)
+CIMServer::enumNameSpace(StringResultHandlerIFC& result,
+	const UserInfo& aclInfo)
 {
 	// Don't need to check ACLs, since this is a result of calling enumInstances.
 	m_cimRepository->enumNameSpace(result,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_CIMServer::getQualifierType(const OW_String& ns,
-	const OW_String& qualifierName,
-	const OW_UserInfo& aclInfo)
+CIMQualifierType
+CIMServer::getQualifierType(const String& ns,
+	const String& qualifierName,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::GETQUALIFIER, ns, aclInfo);
 #endif
-
 	return m_cimRepository->getQualifierType(ns,qualifierName,aclInfo);
 }
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumQualifierTypes(
-	const OW_String& ns,
-	OW_CIMQualifierTypeResultHandlerIFC& result,
-	const OW_UserInfo& aclInfo)
+CIMServer::enumQualifierTypes(
+	const String& ns,
+	CIMQualifierTypeResultHandlerIFC& result,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ENUMERATEQUALIFIERS, ns, aclInfo);
 #endif
 	m_cimRepository->enumQualifierTypes(ns,result,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-	const OW_UserInfo& aclInfo)
+CIMServer::deleteQualifierType(const String& ns, const String& qualName,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETEQUALIFIER, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::DELETEQUALIFIER, ns, aclInfo);
 #endif
-
 	m_cimRepository->deleteQualifierType(ns,qualName,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::setQualifierType(
-	const OW_String& ns,
-	const OW_CIMQualifierType& qt, const OW_UserInfo& aclInfo)
+CIMServer::setQualifierType(
+	const String& ns,
+	const CIMQualifierType& qt, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::SETQUALIFIER, ns, aclInfo);
 #endif
-
 	m_cimRepository->setQualifierType(ns,qt,aclInfo);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMServer::getClass(
-	const OW_String& ns, const OW_String& className, ELocalOnlyFlag localOnly,
+CIMClass
+CIMServer::getClass(
+	const String& ns, const String& className, ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// we don't check for __Namespace, so that clients can get it before they
 	// create one.
 	if (!className.equalsIgnoreCase("__Namespace"))
 	{
-		m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, ns, aclInfo);
+		m_accessMgr->checkAccess(AccessMgr::GETCLASS, ns, aclInfo);
 	}
 #endif
-
 	return _getClass(ns,className, localOnly, 
 		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMServer::_getClass(const OW_String& ns, const OW_String& className, 
+CIMClass
+CIMServer::_getClass(const String& ns, const String& className, 
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
-	OW_CIMClass theClass = _getNameSpaceClass(className);
+	CIMClass theClass = _getNameSpaceClass(className);
 	if(!theClass)
 	{
 		theClass = m_cimRepository->getClass(ns,className,localOnly,
 			includeQualifiers,includeClassOrigin,propertyList,aclInfo);
 	}
-
 	return theClass;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMServer::_instGetClass(const OW_String& ns, const OW_String& className,
+CIMClass
+CIMServer::_instGetClass(const String& ns, const String& className,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
-	OW_CIMClass theClass = _getNameSpaceClass(className);
+	CIMClass theClass = _getNameSpaceClass(className);
 	if(!theClass)
 	{
 		try
@@ -521,109 +485,96 @@ OW_CIMServer::_instGetClass(const OW_String& ns, const OW_String& className,
 			theClass = m_cimRepository->getClass(ns,className,localOnly,
 				includeQualifiers,includeClassOrigin,propertyList,aclInfo);
 		}
-		catch (OW_CIMException& e)
+		catch (CIMException& e)
 		{
-			if (e.getErrNo() == OW_CIMException::NOT_FOUND)
+			if (e.getErrNo() == CIMException::NOT_FOUND)
 			{
-				e.setErrNo(OW_CIMException::INVALID_CLASS);
+				e.setErrNo(CIMException::INVALID_CLASS);
 			}
 			throw e;
 		}
 	}
-
 	return theClass;
 }
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
-	const OW_UserInfo& aclInfo)
+CIMClass
+CIMServer::deleteClass(const String& ns, const String& className,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETECLASS, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::DELETECLASS, ns, aclInfo);
 #endif
-
 	return m_cimRepository->deleteClass(ns,className,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::createClass(const OW_String& ns, const OW_CIMClass& cimClass,
-	const OW_UserInfo& aclInfo)
+CIMServer::createClass(const String& ns, const CIMClass& cimClass,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATECLASS, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::CREATECLASS, ns, aclInfo);
 #endif
-
-
-	if(cimClass.getName().equals(OW_CIMClass::NAMESPACECLASS))
+	if(cimClass.getName().equals(CIMClass::NAMESPACECLASS))
 	{
-		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS,
+		OW_THROWCIMMSG(CIMException::ALREADY_EXISTS,
 			format("Creation of class %1 is not allowed",
 				cimClass.getName()).c_str());
 	}
 	m_cimRepository->createClass(ns,cimClass,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMServer::modifyClass(
-	const OW_String& ns,
-	const OW_CIMClass& cc,
-	const OW_UserInfo& aclInfo)
+CIMClass
+CIMServer::modifyClass(
+	const String& ns,
+	const CIMClass& cc,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYCLASS, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::MODIFYCLASS, ns, aclInfo);
 #endif
-
 	return m_cimRepository->modifyClass(ns,cc,aclInfo);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumClasses(const OW_String& ns,
-		const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result,
+CIMServer::enumClasses(const String& ns,
+		const String& className,
+		CIMClassResultHandlerIFC& result,
 		EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-		EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo)
+		EIncludeClassOriginFlag includeClassOrigin, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ENUMERATECLASSES, ns, aclInfo);
 #endif
-
 	m_cimRepository->enumClasses(ns,className,result,deep,localOnly,
 		includeQualifiers,includeClassOrigin,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumClassNames(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_StringResultHandlerIFC& result,
-	EDeepFlag deep, const OW_UserInfo& aclInfo)
+CIMServer::enumClassNames(
+	const String& ns,
+	const String& className,
+	StringResultHandlerIFC& result,
+	EDeepFlag deep, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSNAMES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ENUMERATECLASSNAMES, ns, aclInfo);
 #endif
-
 	m_cimRepository->enumClassNames(ns,className,result,deep,aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class InstNameEnumerator : public OW_CIMClassResultHandlerIFC
+	class InstNameEnumerator : public CIMClassResultHandlerIFC
 	{
 	public:
 		InstNameEnumerator(
-			const OW_String& ns_,
-			OW_CIMObjectPathResultHandlerIFC& result_,
-			const OW_UserInfo& aclInfo_,
-			const OW_CIMOMEnvironmentRef& env_,
-			OW_CIMServer* server_)
+			const String& ns_,
+			CIMObjectPathResultHandlerIFC& result_,
+			const UserInfo& aclInfo_,
+			const CIMOMEnvironmentRef& env_,
+			CIMServer* server_)
 			: ns(ns_)
 			, result(result_)
 			, aclInfo(aclInfo_)
@@ -631,48 +582,42 @@ namespace
 			, server(server_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMClass &cc)
+		virtual void doHandle(const CIMClass &cc)
 		{
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
-				m_env->logDebug(format("OW_CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+				m_env->logDebug(format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
 					cc.getName()));
 			}
 			server->_getCIMInstanceNames(ns, cc.getName(), cc, result, aclInfo);
 		}
 	private:
-		OW_String ns;
-		OW_CIMObjectPathResultHandlerIFC& result;
-		const OW_UserInfo& aclInfo;
-		const OW_CIMOMEnvironmentRef& m_env;
-		OW_CIMServer* server;
+		String ns;
+		CIMObjectPathResultHandlerIFC& result;
+		const UserInfo& aclInfo;
+		const CIMOMEnvironmentRef& m_env;
+		CIMServer* server;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumInstanceNames(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
+CIMServer::enumInstanceNames(
+	const String& ns,
+	const String& className,
+	CIMObjectPathResultHandlerIFC& result,
 	EDeepFlag deep,
-	const OW_UserInfo& aclInfo)
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCENAMES, ns,
+	m_accessMgr->checkAccess(AccessMgr::ENUMERATEINSTANCENAMES, ns,
 		aclInfo);
 #endif
-
-
 	InstNameEnumerator ie(ns, result, aclInfo, m_env, this);
-
-	OW_UserInfo intAclInfo;
-
-	OW_CIMClass theClass = _instGetClass(ns, className,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+	UserInfo intAclInfo;
+	CIMClass theClass = _instGetClass(ns, className,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
 	ie.handle(theClass);
-
 	// If this is the namespace class then just return now
-	if(className.equalsIgnoreCase(OW_CIMClass::NAMESPACECLASS)
+	if(className.equalsIgnoreCase(CIMClass::NAMESPACECLASS)
 		|| !deep)
 	{
 		return;
@@ -683,77 +628,67 @@ OW_CIMServer::enumInstanceNames(
 		// enumClassNames + getClass() here.
 		m_cimRepository->enumClasses(ns,className,ie,deep,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,intAclInfo);
 	}
-
 }
-
 /////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class CIMServerProviderEnvironment : public OW_ProviderEnvironmentIFC
+	class CIMServerProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
-
-		CIMServerProviderEnvironment(const OW_UserInfo& acl,
-			const OW_CIMOMEnvironmentRef& env)
+		CIMServerProviderEnvironment(const UserInfo& acl,
+			const CIMOMEnvironmentRef& env)
 			: m_acl(acl)
 			, m_env(env)
 		{}
-
-		virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const
+		virtual String getConfigItem(const String &name, const String& defRetVal="") const
 		{
 			return m_env->getConfigItem(name, defRetVal);
 		}
-
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
+		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_acl, 
-				OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
-				OW_ServiceEnvironmentIFC::E_USE_PROVIDERS, 
-				OW_CIMOMEnvironment::E_NO_LOCKING);
+				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
+				ServiceEnvironmentIFC::E_USE_PROVIDERS, 
+				CIMOMEnvironment::E_NO_LOCKING);
 		}
 		
-		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_acl, 
-				OW_ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
-				OW_ServiceEnvironmentIFC::E_BYPASS_PROVIDERS, 
-				OW_CIMOMEnvironment::E_NO_LOCKING);
+				ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
+				ServiceEnvironmentIFC::E_BYPASS_PROVIDERS, 
+				CIMOMEnvironment::E_NO_LOCKING);
 		}
 		
-		virtual OW_RepositoryIFCRef getRepository() const
+		virtual RepositoryIFCRef getRepository() const
 		{
 			return m_env->getRepository();
 		}
-
-		virtual OW_LoggerRef getLogger() const
+		virtual LoggerRef getLogger() const
 		{
 			return m_env->getLogger();
 		}
-
-		virtual OW_String getUserName() const
+		virtual String getUserName() const
 		{
 			return m_acl.getUserName();
 		}
-
 	private:
-		OW_UserInfo m_acl;
-		OW_CIMOMEnvironmentRef m_env;
+		UserInfo m_acl;
+		CIMOMEnvironmentRef m_env;
 	};
-
-	inline OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_UserInfo& acl, const OW_CIMOMEnvironmentRef& env)
+	inline ProviderEnvironmentIFCRef createProvEnvRef(const UserInfo& acl, const CIMOMEnvironmentRef& env)
 	{
-		return OW_ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(acl, env));
+		return ProviderEnvironmentIFCRef(new CIMServerProviderEnvironment(acl, env));
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& className,
-	const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_UserInfo& aclInfo)
+CIMServer::_getCIMInstanceNames(const String& ns, const String& className,
+	const CIMClass& theClass, CIMObjectPathResultHandlerIFC& result,
+	const UserInfo& aclInfo)
 {
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
+	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
 		instancep->enumInstanceNames(createProvEnvRef(aclInfo, m_env),
@@ -764,25 +699,24 @@ OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& classNa
 		m_cimRepository->enumInstanceNames(ns,className,result,E_SHALLOW,aclInfo);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class InstEnumerator : public OW_CIMClassResultHandlerIFC
+	class InstEnumerator : public CIMClassResultHandlerIFC
 	{
 	public:
 		InstEnumerator(
-			const OW_String& ns_,
-			OW_CIMInstanceResultHandlerIFC& result_,
-			const OW_UserInfo& aclInfo_,
-			const OW_CIMOMEnvironmentRef& env_,
-			OW_CIMServer* server_, 
+			const String& ns_,
+			CIMInstanceResultHandlerIFC& result_,
+			const UserInfo& aclInfo_,
+			const CIMOMEnvironmentRef& env_,
+			CIMServer* server_, 
 			EDeepFlag deep_,
 			ELocalOnlyFlag localOnly_, 
 			EIncludeQualifiersFlag includeQualifiers_, 
 			EIncludeClassOriginFlag includeClassOrigin_,
-			const OW_StringArray* propertyList_,
-			const OW_CIMClass& theTopClass_)
+			const StringArray* propertyList_,
+			const CIMClass& theTopClass_)
 			: ns(ns_)
 			, result(result_)
 			, aclInfo(aclInfo_)
@@ -796,11 +730,11 @@ namespace
 			, theTopClass(theTopClass_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMClass &cc)
+		virtual void doHandle(const CIMClass &cc)
 		{
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
-				m_env->logDebug(format("OW_CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns,
+				m_env->logDebug(format("CIMServer InstEnumerator Enumerating derived instance names: %1:%2", ns,
 					cc.getName()));
 			}
 			server->_getCIMInstances(ns, cc.getName(), theTopClass, cc, 
@@ -808,44 +742,39 @@ namespace
 				includeClassOrigin, propertyList, aclInfo);
 		}
 	private:
-		OW_String ns;
-		OW_CIMInstanceResultHandlerIFC& result;
-		const OW_UserInfo& aclInfo;
-		const OW_CIMOMEnvironmentRef& m_env;
-		OW_CIMServer* server;
+		String ns;
+		CIMInstanceResultHandlerIFC& result;
+		const UserInfo& aclInfo;
+		const CIMOMEnvironmentRef& m_env;
+		CIMServer* server;
 		EDeepFlag deep;
 		ELocalOnlyFlag localOnly;
 		EIncludeQualifiersFlag includeQualifiers;
 		EIncludeClassOriginFlag includeClassOrigin;
-		const OW_StringArray* propertyList;
-		const OW_CIMClass& theTopClass;
+		const StringArray* propertyList;
+		const CIMClass& theTopClass;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumInstances(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
+CIMServer::enumInstances(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result, EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, EEnumSubclassesFlag enumSubclasses, 
-	const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, EEnumSubclassesFlag enumSubclasses, 
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ENUMERATEINSTANCES, ns, aclInfo);
 #endif
-
-	OW_UserInfo intAclInfo;
-	OW_CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, intAclInfo);
-
+	UserInfo intAclInfo;
+	CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, intAclInfo);
 	InstEnumerator ie(ns, result, aclInfo, m_env, this, deep, localOnly, 
 		includeQualifiers, includeClassOrigin, propertyList, theTopClass);
-
 	ie.handle(theTopClass);
-
 	// If this is the namespace class then only do one class
-	if(theTopClass.getName().equals(OW_CIMClass::NAMESPACECLASS) || enumSubclasses == E_DONT_ENUM_SUBCLASSES)
+	if(theTopClass.getName().equals(CIMClass::NAMESPACECLASS) || enumSubclasses == E_DONT_ENUM_SUBCLASSES)
 	{
 		return;
 	}
@@ -857,41 +786,39 @@ OW_CIMServer::enumInstances(
 		m_cimRepository->enumClasses(ns,className,ie,E_DEEP,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,intAclInfo);
 	}
 }
-
 namespace
 {
 	/* not going to use this -- the providers are now responsible for their own behavior
-	class HandleProviderInstance : public OW_CIMInstanceResultHandlerIFC
+	class HandleProviderInstance : public CIMInstanceResultHandlerIFC
 	{
 	public:
 		HandleProviderInstance(
 			bool includeQualifiers_, bool includeClassOrigin_,
-			const OW_StringArray* propList_,
-			OW_CIMInstanceResultHandlerIFC& result_)
+			const StringArray* propList_,
+			CIMInstanceResultHandlerIFC& result_)
 		: includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, propList(propList_)
 		, result(result_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &ci)
+		virtual void doHandle(const CIMInstance &ci)
 		{
 			result.handle(ci.clone(false, includeQualifiers,
 				includeClassOrigin, propList));
 		}
 	private:
 		bool includeQualifiers, includeClassOrigin;
-		const OW_StringArray* propList;
-		OW_CIMInstanceResultHandlerIFC& result;
+		const StringArray* propList;
+		CIMInstanceResultHandlerIFC& result;
 	};
 	*/
-
-	class HandleLocalOnlyAndDeep : public OW_CIMInstanceResultHandlerIFC
+	class HandleLocalOnlyAndDeep : public CIMInstanceResultHandlerIFC
 	{
 	public:
 		HandleLocalOnlyAndDeep(
-			OW_CIMInstanceResultHandlerIFC& result_,
-			const OW_CIMClass& requestedClass_,
+			CIMInstanceResultHandlerIFC& result_,
+			const CIMClass& requestedClass_,
 			bool localOnly_,
 			bool deep_)
 		: result(result_)
@@ -900,22 +827,21 @@ namespace
 		, deep(deep_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &inst)
+		virtual void doHandle(const CIMInstance &inst)
 		{
 			if (deep == true && localOnly == false) // don't filter anything
 			{
 				result.handle(inst);
 				return;
 			}
-
-			OW_CIMPropertyArray props = inst.getProperties();
-			OW_CIMPropertyArray newprops;
-			OW_CIMInstance newInst(inst);
-			OW_String requestedClassName = requestedClass.getName();
+			CIMPropertyArray props = inst.getProperties();
+			CIMPropertyArray newprops;
+			CIMInstance newInst(inst);
+			String requestedClassName = requestedClass.getName();
 			for (size_t i = 0; i < props.size(); ++i)
 			{
-				OW_CIMProperty p = props[i];
-				OW_CIMProperty clsp = requestedClass.getProperty(p.getName());
+				CIMProperty p = props[i];
+				CIMProperty clsp = requestedClass.getProperty(p.getName());
 				if (clsp)
 				{
 					if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
@@ -943,41 +869,37 @@ namespace
 						continue;
 					}
 				}
-
 			}
 			newInst.setProperties(newprops);
 			newInst.setKeys(inst.getKeyValuePairs());
 			result.handle(newInst);
 		}
 	private:
-		OW_CIMInstanceResultHandlerIFC& result;
-		const OW_CIMClass& requestedClass;
+		CIMInstanceResultHandlerIFC& result;
+		const CIMClass& requestedClass;
 		bool localOnly;
 		bool deep;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_CIMServer::_getCIMInstances(
-	const OW_String& ns,
-	const OW_String& className,
-	const OW_CIMClass& theTopClass,
-	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result, 
+CIMServer::_getCIMInstances(
+	const String& ns,
+	const String& className,
+	const CIMClass& theTopClass,
+	const CIMClass& theClass, CIMInstanceResultHandlerIFC& result, 
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
-
-	OW_InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
+	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
 	if (instancep)
 	{
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("OW_CIMServer calling provider to enumerate instances: %1:%2", ns,
+			m_env->logDebug(format("CIMServer calling provider to enumerate instances: %1:%2", ns,
 				className));
 		}
-
 		// not going to use these, the provider ifc/providers are now responsible for it.
 		//HandleLocalOnlyAndDeep handler1(result,theTopClass,localOnly,deep);
 		//HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
@@ -997,48 +919,42 @@ OW_CIMServer::_getCIMInstances(
 			includeQualifiers, includeClassOrigin, propertyList, E_DONT_ENUM_SUBCLASSES, aclInfo);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMServer::getInstance(
-	const OW_String& ns,
-	const OW_CIMObjectPath& instanceName,
+CIMInstance
+CIMServer::getInstance(
+	const String& ns,
+	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
 	return getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin,
 		propertyList, NULL, aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMServer::getInstance(
-	const OW_String& ns,
-	const OW_CIMObjectPath& instanceName,
+CIMInstance
+CIMServer::getInstance(
+	const String& ns,
+	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMClass* pOutClass,
-	const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, CIMClass* pOutClass,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::GETINSTANCE, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::GETINSTANCE, ns, aclInfo);
 #endif
-
-	OW_CIMClass cc = _instGetClass(ns, instanceName.getObjectName(),
+	CIMClass cc = _instGetClass(ns, instanceName.getObjectName(),
 		E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS,
 		E_INCLUDE_CLASS_ORIGIN,
 		0, aclInfo);
-
 	if(pOutClass)
 	{
 		*pOutClass = cc;
 	}
-
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, cc);
-
-	OW_CIMInstance ci(OW_CIMNULL);
+	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, cc);
+	CIMInstance ci(CIMNULL);
 	if(instancep)
 	{
 		ci = instancep->getInstance(
@@ -1046,55 +962,46 @@ OW_CIMServer::getInstance(
 				ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList, cc);
 		if (!ci)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				"Provider erroneously returned a NULL CIMInstance");
 		}
-
 		/* don't do this, it's up to the provider ifc/provider to do this correctly.
 		ci.syncWithClass(cc, true);
-
 		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
 			propertyList);
 			*/
-
 	}
 	else
 	{
 		ci = m_cimRepository->getInstance(ns, instanceName, localOnly, 
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 	}
-
 	OW_ASSERT(ci);
 	
 	return ci;
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
-	const OW_UserInfo& aclInfo)
+CIMInstance
+CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETEINSTANCE, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::DELETEINSTANCE, ns, aclInfo);
 #endif
 	
-	OW_CIMObjectPath cop(cop_);
+	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
-
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMServer::deleteInstance.  cop = %1",
+		m_env->logDebug(format("CIMServer::deleteInstance.  cop = %1",
 			cop.toString()));
 	}
-
-	OW_UserInfo intAclInfo;
-	OW_CIMClass theClass(OW_CIMNULL);
-	OW_CIMInstance oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
+	UserInfo intAclInfo;
+	CIMClass theClass(CIMNULL);
+	CIMInstance oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 		&theClass, intAclInfo);
-
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
-
+	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if(instancep)	// If there is an instance provider, let it do the delete.
 	{
 		instancep->deleteInstance(
@@ -1105,54 +1012,45 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 		// Delete the instance from the instance repository
 		m_cimRepository->deleteInstance(ns, cop, aclInfo);
 	}
-
 	OW_ASSERT(oldInst);
 	return oldInst;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath
-OW_CIMServer::createInstance(
-	const OW_String& ns,
-	const OW_CIMInstance& ci,
-	const OW_UserInfo& aclInfo)
+CIMObjectPath
+CIMServer::createInstance(
+	const String& ns,
+	const CIMInstance& ci,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to create the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::CREATEINSTANCE, ns, aclInfo);
 #endif
-
-	OW_String className = ci.getClassName();
-
-	OW_UserInfo intAclInfo;
-
-	OW_CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, 
+	String className = ci.getClassName();
+	UserInfo intAclInfo;
+	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, 
 		intAclInfo);
-
-	OW_CIMQualifier acq = theClass.getQualifier(
-			OW_CIMQualifier::CIM_QUAL_ABSTRACT);
+	CIMQualifier acq = theClass.getQualifier(
+			CIMQualifier::CIM_QUAL_ABSTRACT);
 	if(acq)
 	{
-		if (acq.getValue() == OW_CIMValue(true))
+		if (acq.getValue() == CIMValue(true))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					format("Unable to create instance because class (%1)"
 						" is abstract", theClass.getName()).c_str());
 		}
 	}
-
 	// Make sure instance jives with class definition
-	OW_CIMInstance lci(ci);
+	CIMInstance lci(ci);
 	lci.syncWithClass(theClass);
-
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
+		m_env->logDebug(format("CIMServer::createInstance.  ns = %1, "
 			"instance = %2", ns, lci.toMOF()));
 	}
-
-	OW_CIMObjectPath rval(OW_CIMNULL);
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
+	CIMObjectPath rval(CIMNULL);
+	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
 		rval = instancep->createInstance(createProvEnvRef(aclInfo, m_env), ns, lci);
@@ -1161,36 +1059,30 @@ OW_CIMServer::createInstance(
 	{
 		rval = m_cimRepository->createInstance(ns, lci, aclInfo);
 	}
-
 	// Prevent lazy providers from causing a problem.
 	if (!rval)
 	{
-		rval = OW_CIMObjectPath(ns, lci);
+		rval = CIMObjectPath(ns, lci);
 	}
-
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMServer::modifyInstance(
-	const OW_String& ns,
-	const OW_CIMInstance& modifiedInstance,
+CIMInstance
+CIMServer::modifyInstance(
+	const String& ns,
+	const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
-	const OW_StringArray* propertyList,
-	const OW_UserInfo& aclInfo)
+	const StringArray* propertyList,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::MODIFYINSTANCE, ns, aclInfo);
 #endif
-
-	OW_CIMInstance oldInst(OW_CIMNULL);
-
-	OW_UserInfo intAclInfo;
-	OW_CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(), 
+	CIMInstance oldInst(CIMNULL);
+	UserInfo intAclInfo;
+	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(), 
 		E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, intAclInfo);
-
-	OW_InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
+	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
 	if(!instancep)
 	{
 		// No instance provider qualifier found
@@ -1200,183 +1092,154 @@ OW_CIMServer::modifyInstance(
 	else
 	{
 		// Look for dynamic instances
-		OW_CIMObjectPath cop(ns, modifiedInstance);
+		CIMObjectPath cop(ns, modifiedInstance);
 		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 			intAclInfo);
-
 		instancep->modifyInstance(createProvEnvRef(aclInfo, m_env), ns,
 			modifiedInstance, oldInst, includeQualifiers, propertyList, theClass);
 	}
-
 	OW_ASSERT(oldInst);
 	return oldInst;
-
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMServer::_instanceExists(const OW_String& ns, const OW_CIMObjectPath& icop,
-	const OW_UserInfo& aclInfo)
+CIMServer::_instanceExists(const String& ns, const CIMObjectPath& icop,
+	const UserInfo& aclInfo)
 {
 	try
 	{
 		getInstance(ns,icop,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,0,aclInfo);
 		return true;
 	}
-	catch(OW_CIMException&)
+	catch(CIMException&)
 	{
 		return false;
 	}
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMServer::getProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& name,
-	const OW_String& propertyName, const OW_UserInfo& aclInfo)
+CIMValue
+CIMServer::getProperty(
+	const String& ns,
+	const CIMObjectPath& name,
+	const String& propertyName, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::GETPROPERTY, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::GETPROPERTY, ns, aclInfo);
 #endif
-
-	OW_UserInfo intAclInfo;
-	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-		intAclInfo, OW_LocalCIMOMHandle::E_NO_LOCKING);
-	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-		aclInfo, OW_LocalCIMOMHandle::E_NO_LOCKING);
-
-	OW_CIMClass theClass = _instGetClass(ns,name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
-
-	OW_CIMProperty cp = theClass.getProperty(propertyName);
+	UserInfo intAclInfo;
+	LocalCIMOMHandle internal_ch(m_env, RepositoryIFCRef(this, true),
+		intAclInfo, LocalCIMOMHandle::E_NO_LOCKING);
+	LocalCIMOMHandle real_ch(m_env, RepositoryIFCRef(this, true),
+		aclInfo, LocalCIMOMHandle::E_NO_LOCKING);
+	CIMClass theClass = _instGetClass(ns,name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
+		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
 	}
-
-	OW_CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
+	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 		NULL, aclInfo);
-	OW_CIMProperty prop = ci.getProperty(propertyName);
+	CIMProperty prop = ci.getProperty(propertyName);
 	if(!prop)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
+		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
 	}
-
 	return prop.getValue();
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::setProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& name,
-	const OW_String& propertyName, const OW_CIMValue& valueArg,
-	const OW_UserInfo& aclInfo)
+CIMServer::setProperty(
+	const String& ns,
+	const CIMObjectPath& name,
+	const String& propertyName, const CIMValue& valueArg,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
-	m_accessMgr->checkAccess(OW_AccessMgr::SETPROPERTY, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::SETPROPERTY, ns, aclInfo);
 #endif
-
-	OW_UserInfo intAclInfo;
-	OW_CIMClass theClass = _instGetClass(ns, name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
-
-	OW_CIMProperty cp = theClass.getProperty(propertyName);
+	UserInfo intAclInfo;
+	CIMClass theClass = _instGetClass(ns, name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
+		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
 	}
-
 	// Ensure value passed in is right data type
-	OW_CIMValue cv(valueArg);
+	CIMValue cv(valueArg);
 	if(cv && (cp.getDataType().getType() != cv.getType()))
 	{
 		try
 		{
 			// this throws a FAILED CIMException if it can't convert
-			cv = OW_CIMValueCast::castValueToDataType(cv, cp.getDataType());
+			cv = CIMValueCast::castValueToDataType(cv, cp.getDataType());
 		}
-		catch (OW_CIMException& ce)
+		catch (CIMException& ce)
 		{
 			// translate FAILED to TYPE_MISMATCH
-			if (ce.getErrNo() == OW_CIMException::FAILED)
+			if (ce.getErrNo() == CIMException::FAILED)
 			{
-				ce.setErrNo(OW_CIMException::TYPE_MISMATCH);
+				ce.setErrNo(CIMException::TYPE_MISMATCH);
 			}
 			throw ce;
 		}
 	}
-
-	OW_CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
+	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
 		NULL, intAclInfo);
-
 	if(!ci)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, name.toString().c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, name.toString().c_str());
 	}
-
-	OW_CIMProperty tcp = ci.getProperty(propertyName);
-
+	CIMProperty tcp = ci.getProperty(propertyName);
 	if(cp.isKey() && tcp.getValue() && !tcp.getValue().equal(cv))
 	{
-		OW_String msg("Cannot modify key property: ");
+		String msg("Cannot modify key property: ");
 		msg += cp.getName();
-		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
+		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
-
 	cp.setValue(cv);
 	ci.setProperty(cp);
 	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, 0, intAclInfo);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMServer::invokeMethod(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
-	OW_CIMParamValueArray& outParams, const OW_UserInfo& aclInfo)
+CIMValue
+CIMServer::invokeMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName, const CIMParamValueArray& inParams,
+	CIMParamValueArray& outParams, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::INVOKEMETHOD, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::INVOKEMETHOD, ns, aclInfo);
 #endif
-
-	OW_UserInfo intAclInfo;
-
-	OW_CIMClass cc = _getClass(ns, path.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
-
-	OW_CIMPropertyArray keys = path.getKeys();
-
+	UserInfo intAclInfo;
+	CIMClass cc = _getClass(ns, path.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+	CIMPropertyArray keys = path.getKeys();
 	// If this is an instance, ensure it exists.
 	if(keys.size() > 0)
 	{
 		if(!_instanceExists(ns, path, aclInfo))
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+			OW_THROWCIMMSG(CIMException::NOT_FOUND,
 				format("Instance not found: %1", path.toString()).c_str());
 		}
 	}
-
 	// Get the method from the class definition
-	OW_CIMMethod method = cc.getMethod(methodName);
+	CIMMethod method = cc.getMethod(methodName);
 	if(!method)
 	{
-		OW_THROWCIMMSG(OW_CIMException::METHOD_NOT_FOUND, methodName.c_str());
+		OW_THROWCIMMSG(CIMException::METHOD_NOT_FOUND, methodName.c_str());
 	}
-
-	OW_CIMValue cv(OW_CIMNULL);
-	OW_MethodProviderIFCRef methodp;
-
-	OW_CIMClass cctemp(cc);
-
+	CIMValue cv(CIMNULL);
+	MethodProviderIFCRef methodp;
+	CIMClass cctemp(cc);
 	// we need to query for providers for this class and all base classes.
 	// One provider may instrument an entire hierarchy of classes.
 	// loop until we've got a provider or hit a root class
@@ -1387,10 +1250,10 @@ OW_CIMServer::invokeMethod(
 			methodp = m_provManager->getMethodProvider(
 				createProvEnvRef(intAclInfo, m_env), ns, cctemp, method);
 		}
-		catch (const OW_NoSuchProviderException&)
+		catch (const NoSuchProviderException&)
 		{
 		}
-		OW_String parentClassName = cctemp.getSuperClass();
+		String parentClassName = cctemp.getSuperClass();
 		if (parentClassName.empty() || methodp)
 		{
 			// loop until we've got a provider or hit a root class
@@ -1398,32 +1261,28 @@ OW_CIMServer::invokeMethod(
 		}
 		cctemp = _getClass(ns, parentClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
 	}
-
 	if(!methodp)
 	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
 	}
-
-	OW_CIMParameterArray methodInParams = method.getINParameters();
+	CIMParameterArray methodInParams = method.getINParameters();
 	if (inParams.size() != methodInParams.size())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"Incorrect number of parameters");
 	}
-
-	OW_CIMParameterArray methodOutParams = method.getOUTParameters();
+	CIMParameterArray methodOutParams = method.getOUTParameters();
 	outParams.resize(methodOutParams.size());
 	// set the names on outParams
 	for (size_t i = 0; i < methodOutParams.size(); ++i)
 	{
 		outParams[i].setName(methodOutParams[i].getName());
 	}
-
-	OW_CIMParamValueArray orderedParams;
-	OW_CIMParamValueArray inParams2(inParams);
+	CIMParamValueArray orderedParams;
+	CIMParamValueArray inParams2(inParams);
 	for (size_t i = 0; i < methodInParams.size(); ++i)
 	{
-		OW_String parameterName = methodInParams[i].getName();
+		String parameterName = methodInParams[i].getName();
 		size_t paramIdx;
 		for (paramIdx = 0; paramIdx < inParams2.size(); ++paramIdx)
 		{
@@ -1432,51 +1291,47 @@ OW_CIMServer::invokeMethod(
 				break;
 			}
 		}
-
 		if (paramIdx == inParams2.size())
 		{
 			// The parameter wasn't specified.
 			// Parameters are optional unless they have a Required(true)
 			// qualifier
-			if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_REQUIRED))
+			if (methodInParams[i].hasTrueQualifier(CIMQualifier::CIM_QUAL_REQUIRED))
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, format(
 					"Parameter %1 was not specified.", parameterName).c_str());
 			}
 			else
 			{
 				// put a param with a null value
-				OW_CIMParamValue optionalParam(methodInParams[i].getName());
+				CIMParamValue optionalParam(methodInParams[i].getName());
 				inParams2.push_back(optionalParam);
 			}
 		}
-
 		// move the param from inParams2 to orderedParams
 		orderedParams.push_back(inParams2[paramIdx]);
 		inParams2.erase(inParams2.begin() + paramIdx);
-
 		// make sure the type is right
-		OW_CIMValue v = orderedParams[i].getValue();
+		CIMValue v = orderedParams[i].getValue();
 		if (v)
 		{
 			if (methodInParams[i].getType().getType() != v.getType())
 			{
 				try
 				{
-					orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+					orderedParams[i].setValue(CIMValueCast::castValueToDataType(
 						v, methodInParams[i].getType()));
 				}
-				catch (OW_CIMException& ce)
+				catch (CIMException& ce)
 				{
-					ce.setErrNo(OW_CIMException::INVALID_PARAMETER);
+					ce.setErrNo(CIMException::INVALID_PARAMETER);
 					throw;
 				}
 			}
 		}
-
 		// if the in param is also an out param, assign the value to the out
 		// params array
-		if (methodInParams[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+		if (methodInParams[i].hasTrueQualifier(CIMQualifier::CIM_QUAL_OUT))
 		{
 			size_t j;
 			for (j = 0; j < outParams.size(); ++j)
@@ -1493,21 +1348,17 @@ OW_CIMServer::invokeMethod(
 			}
 		}
 	}
-
-
-
 	// all the params should have been moved to orderedParams.  If there are
 	// some left, it means we have an unknown/invalid parameter.
 	if (inParams2.size() > 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format(
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, format(
 			"Unknown or duplicate parameter: %1", inParams2[0].getName()).c_str());
 	}
-
-	OW_StringBuffer methodStr;
+	StringBuffer methodStr;
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		methodStr += "OW_CIMServer invoking extrinsic method provider: ";
+		methodStr += "CIMServer invoking extrinsic method provider: ";
 		methodStr += ns;
 		methodStr += ':';
 		methodStr += path.toString();
@@ -1525,10 +1376,8 @@ OW_CIMServer::invokeMethod(
 			}
 		}
 		methodStr += ')';
-
 		m_env->logDebug(methodStr.toString());
 	}
-
 	cv = methodp->invokeMethod(
 		createProvEnvRef(aclInfo, m_env),
 			ns, path, methodName, orderedParams, outParams);
@@ -1536,22 +1385,21 @@ OW_CIMServer::invokeMethod(
 	// make sure the type is right on the outParams
 	for (size_t i = 0; i < methodOutParams.size(); ++i)
 	{
-		OW_CIMValue v = outParams[i].getValue();
+		CIMValue v = outParams[i].getValue();
 		if (v)
 		{
 			if (methodOutParams[i].getType().getType() != v.getType())
 			{
-				outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+				outParams[i].setValue(CIMValueCast::castValueToDataType(
 					v, methodOutParams[i].getType()));
 			}
 		}
 	}
-
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
 		methodStr.reset();
-		methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
-		OW_CIMObjectPath path2(path);
+		methodStr += "CIMServer finished invoking extrinsic method provider: ";
+		CIMObjectPath path2(path);
 		path2.setNameSpace(ns);
 		methodStr += path2.toString();
 		methodStr += '.';
@@ -1571,48 +1419,42 @@ OW_CIMServer::invokeMethod(
 		methodStr += cv.toString();
 		m_env->logDebug(methodStr.toString());
 	}
-
 	return cv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_InstanceProviderIFCRef
-OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
+InstanceProviderIFCRef
+CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_)
 {
-	OW_UserInfo intAclInfo;
-	OW_InstanceProviderIFCRef instancep;
-	OW_CIMClass cc(cc_);
-
+	UserInfo intAclInfo;
+	InstanceProviderIFCRef instancep;
+	CIMClass cc(cc_);
 	try
 	{
 		instancep =
 			m_provManager->getInstanceProvider(createProvEnvRef(intAclInfo, m_env), ns, cc);
 	}
-	catch (const OW_NoSuchProviderException& e)
+	catch (const NoSuchProviderException& e)
 	{
 		// This will only happen if the provider qualifier is incorrect
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::FAILED,
 			format("Invalid provider: %1", e.getMessage()).c_str());
 	}
-
 	return instancep;
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
-OW_AssociatorProviderIFCRef
-OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_)
+AssociatorProviderIFCRef
+CIMServer::_getAssociatorProvider(const String& ns, const CIMClass& cc_)
 {
-	OW_UserInfo intAclInfo;
-	OW_AssociatorProviderIFCRef ap;
-	OW_CIMClass cc(cc_);
-
+	UserInfo intAclInfo;
+	AssociatorProviderIFCRef ap;
+	CIMClass cc(cc_);
 	try
 	{
 		ap =  m_provManager->getAssociatorProvider(
 			createProvEnvRef(intAclInfo, m_env), ns, cc);
 	}
-	catch (const OW_NoSuchProviderException&)
+	catch (const NoSuchProviderException&)
 	{
 		// if it's not an instance or associator provider, then ERROR!
 		try
@@ -1620,34 +1462,30 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_
 			m_provManager->getInstanceProvider(
 				createProvEnvRef(intAclInfo, m_env), ns, cc);
 		}
-		catch (const OW_NoSuchProviderException& e)
+		catch (const NoSuchProviderException& e)
 		{
 			// This will only happen if the provider qualifier is incorrect
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				format("Invalid provider: %1", e.getMessage()).c_str());
 		}
 	}
 	return ap;
 }
 #endif
-
 //////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_CIMServer::_getNameSpaceClass(const OW_String& className)
+CIMClass
+CIMServer::_getNameSpaceClass(const String& className)
 {
-
 	if (className.equalsIgnoreCase("__Namespace"))
 	{
 		if(!m_nsClass_Namespace)
 		{
-			m_nsClass_Namespace = OW_CIMClass("__Namespace");
-
-			OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
-			cimProp.setDataType(OW_CIMDataType::STRING);
-			cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
+			m_nsClass_Namespace = CIMClass("__Namespace");
+			CIMProperty cimProp(CIMProperty::NAME_PROPERTY);
+			cimProp.setDataType(CIMDataType::STRING);
+			cimProp.addQualifier(CIMQualifier::createKeyQualifier());
 			m_nsClass_Namespace.addProperty(cimProp);
 		}
-
 		return m_nsClass_Namespace;
 	}
 	/*
@@ -1655,51 +1493,48 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 	{
 		if (!m_nsClassCIM_Namespace)
 		{
-			m_nsClassCIM_Namespace = OW_CIMClass("CIM_Namespace");
-
+			m_nsClassCIM_Namespace = CIMClass("CIM_Namespace");
 		}
 		return m_nsClassCIM_Namespace;
 	}
 	*/
 	else
 	{
-		return OW_CIMClass(OW_CIMNULL);
+		return CIMClass(CIMNULL);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::execQuery(
-	const OW_String& ns,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String &query,
-	const OW_String& queryLanguage, const OW_UserInfo& aclInfo)
+CIMServer::execQuery(
+	const String& ns,
+	CIMInstanceResultHandlerIFC& result,
+	const String &query,
+	const String& queryLanguage, const UserInfo& aclInfo)
 {
-	OW_WQLIFCRef wql = m_env->getWQLRef();
+	WQLIFCRef wql = m_env->getWQLRef();
 	if (wql && wql->supportsQueryLanguage(queryLanguage))
 	{
-		OW_CIMOMHandleIFCRef lch(new OW_LocalCIMOMHandle(m_env,
-			OW_RepositoryIFCRef(this, true), aclInfo, OW_LocalCIMOMHandle::E_NO_LOCKING));
-
+		CIMOMHandleIFCRef lch(new LocalCIMOMHandle(m_env,
+			RepositoryIFCRef(this, true), aclInfo, LocalCIMOMHandle::E_NO_LOCKING));
 		try
 		{
 			wql->evaluate(ns, result, query, queryLanguage, lch);
 		}
-		catch (const OW_CIMException& ce)
+		catch (const CIMException& ce)
 		{
 			// translate any error except INVALID_NAMESPACE, INVALID_QUERY,
 			// ACCESS_DENIED or FAILED into an INVALID_QUERY
-			if (ce.getErrNo() != OW_CIMException::FAILED
-				&& ce.getErrNo() != OW_CIMException::INVALID_NAMESPACE
-				&& ce.getErrNo() != OW_CIMException::INVALID_QUERY
-				&& ce.getErrNo() != OW_CIMException::ACCESS_DENIED)
+			if (ce.getErrNo() != CIMException::FAILED
+				&& ce.getErrNo() != CIMException::INVALID_NAMESPACE
+				&& ce.getErrNo() != CIMException::INVALID_QUERY
+				&& ce.getErrNo() != CIMException::ACCESS_DENIED)
 			{
 				// the " " added to the beginning of the message is a little
-				// trick to fool the OW_CIMException constructor from stripping
+				// trick to fool the CIMException constructor from stripping
 				// away the old "canned" CIMException message.
-				throw OW_CIMException(ce.getFile(), ce.getLine(),
-					OW_CIMException::INVALID_QUERY,
-					OW_String(OW_String(" ") + ce.getMessage()).c_str());
+				throw CIMException(ce.getFile(), ce.getLine(),
+					CIMException::INVALID_QUERY,
+					String(String(" ") + ce.getMessage()).c_str());
 			}
 			else
 			{
@@ -1709,141 +1544,128 @@ OW_CIMServer::execQuery(
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, queryLanguage.c_str());
+		OW_THROWCIMMSG(CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, queryLanguage.c_str());
 	}
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::associators(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMServer::associators(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ASSOCIATORS, ns, aclInfo);
 #endif
-
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,
 		aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::associatorsClasses(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMServer::associatorsClasses(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORS, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ASSOCIATORS, ns, aclInfo);
 #endif
-
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
 		aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::associatorNames(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
-	const OW_UserInfo& aclInfo)
+CIMServer::associatorNames(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::ASSOCIATORNAMES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::ASSOCIATORNAMES, ns, aclInfo);
 #endif
-
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0, aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::references(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
+CIMServer::references(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::REFERENCES, ns, aclInfo);
 #endif
-
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList, &result, 0, 0, aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::referencesClasses(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
+CIMServer::referencesClasses(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::REFERENCES, ns, aclInfo);
 #endif
-
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList, 0, 0, &result, aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::referenceNames(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
-	const OW_UserInfo& aclInfo)
+CIMServer::referenceNames(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& resultClass, const String& role,
+	const UserInfo& aclInfo)
 {
 #if !defined(OW_DISABLE_ACLS)
 	// Check to see if user has rights to get associators
-	m_accessMgr->checkAccess(OW_AccessMgr::REFERENCENAMES, ns, aclInfo);
+	m_accessMgr->checkAccess(AccessMgr::REFERENCENAMES, ns, aclInfo);
 #endif
-
 	_commonReferences(ns, path, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0,
 		aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class assocClassSeparator : public OW_CIMClassResultHandlerIFC
+	class assocClassSeparator : public CIMClassResultHandlerIFC
 	{
 	public:
 		assocClassSeparator(
-			OW_StringArray* staticAssocs_,
-			OW_CIMClassArray& dynamicAssocs_,
-			OW_CIMServer& server_,
-			const OW_UserInfo& aclInfo_,
-			const OW_String& ns_,
-			const OW_LoggerRef& lgr)
+			StringArray* staticAssocs_,
+			CIMClassArray& dynamicAssocs_,
+			CIMServer& server_,
+			const UserInfo& aclInfo_,
+			const String& ns_,
+			const LoggerRef& lgr)
 		: staticAssocs(staticAssocs_)
 		, dynamicAssocs(dynamicAssocs_)
 		, server(server_)
@@ -1852,11 +1674,11 @@ namespace
 		, logger(lgr)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMClass &cc)
+		virtual void doHandle(const CIMClass &cc)
 		{
 			if (!cc.isAssociation())
 			{
-				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					format("class %1 is not an association", cc.getName()).c_str());
 			}
 			// Now separate the association classes that have associator provider from
@@ -1873,42 +1695,35 @@ namespace
 			}
 		}
 	private:
-		OW_StringArray* staticAssocs;
-		OW_CIMClassArray& dynamicAssocs;
-		OW_CIMServer& server;
-		const OW_UserInfo& aclInfo;
-		OW_String ns;
-		OW_LoggerRef logger;
+		StringArray* staticAssocs;
+		CIMClassArray& dynamicAssocs;
+		CIMServer& server;
+		const UserInfo& aclInfo;
+		String ns;
+		LoggerRef logger;
 	};
 }
-
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_commonReferences(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path_,
-	const OW_String& resultClass, const OW_String& role,
+CIMServer::_commonReferences(
+	const String& ns,
+	const CIMObjectPath& path_,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult,
-	OW_CIMClassResultHandlerIFC* pcresult,
-	const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
+	CIMObjectPathResultHandlerIFC* popresult,
+	CIMClassResultHandlerIFC* pcresult,
+	const UserInfo& aclInfo)
 {
-	OW_CIMObjectPath path(path_);
+	CIMObjectPath path(path_);
 	path.setNameSpace(ns);
-
 	// Get all association classes from the repository
 	// If the result class was specified, only children of it will be
 	// returned.
-
-	OW_CIMClassArray dynamicAssocs;
-	OW_StringArray resultClassNames;
-
+	CIMClassArray dynamicAssocs;
+	StringArray resultClassNames;
 	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, aclInfo, ns, m_env->getLogger());
 	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
-
 	if (path.isClassPath())
 	{
 		// Process all of the association classes without providers
@@ -1921,8 +1736,7 @@ OW_CIMServer::_commonReferences(
 				{
 					resultClassNames.append(dynamicAssocs[i].getName());
 				}
-
-				OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+				SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 				m_realRepository->_staticReferencesClass(path, &resultClassNamesSet,
 					role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, aclInfo);
 			}
@@ -1958,7 +1772,7 @@ OW_CIMServer::_commonReferences(
 			{
 				if (!resultClass.empty())
 				{
-					OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+					SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 					m_realRepository->_staticReferences(path, &resultClassNamesSet, role,
 						includeQualifiers, includeClassOrigin, propertyList, *piresult, aclInfo);
 				}
@@ -1980,7 +1794,7 @@ OW_CIMServer::_commonReferences(
 			{
 				if (!resultClass.empty())
 				{
-					OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+					SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 					m_realRepository->_staticReferenceNames(path,
 						&resultClassNamesSet, role,
 						*popresult);
@@ -2001,40 +1815,33 @@ OW_CIMServer::_commonReferences(
 		{
 			OW_ASSERT(0);
 		}
-
 		// Process all of the association classes with providers
 		_dynamicReferences(path, dynamicAssocs, role, includeQualifiers,
 			includeClassOrigin, propertyList, piresult, popresult, aclInfo);
 	}
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
-	const OW_CIMClassArray& assocClasses, const OW_String& role,
+CIMServer::_dynamicReferences(const CIMObjectPath& path,
+	const CIMClassArray& assocClasses, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
+	CIMObjectPathResultHandlerIFC* popresult, const UserInfo& aclInfo)
 {
 	// assocClasses should always have something in it
 	if(assocClasses.size() == 0)
 	{
 		return;
 	}
-
 	for(size_t i = 0; i < assocClasses.size(); i++)
 	{
-		OW_CIMClass cc = assocClasses[i];
-
-		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
+		CIMClass cc = assocClasses[i];
+		AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
 		if(!assocP)
 		{
 			continue;
 		}
-
-		OW_String resultClass(assocClasses[i].getName());
-
+		String resultClass(assocClasses[i].getName());
 		// If the object path enumeration pointer is null, then assume we
 		// are doing references and not referenceNames
 		if(piresult != 0)
@@ -2056,68 +1863,60 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 		}
 	}
 }
-
 namespace
 {
-	class classNamesBuilder : public OW_StringResultHandlerIFC
+	class classNamesBuilder : public StringResultHandlerIFC
 	{
 	public:
-		classNamesBuilder(OW_StringArray& resultClassNames) 
+		classNamesBuilder(StringArray& resultClassNames) 
 			: m_resultClassNames(resultClassNames) 
 		{}
-
-		void doHandle(const OW_String& op)
+		void doHandle(const String& op)
 		{
 			m_resultClassNames.push_back(op);
 		}
-
 	private:
-		OW_StringArray& m_resultClassNames;
+		StringArray& m_resultClassNames;
 	};
-
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_commonAssociators(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path_,
-	const OW_String& assocClassName, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMServer::_commonAssociators(
+	const String& ns,
+	const CIMObjectPath& path_,
+	const String& assocClassName, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList,
-	OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult,
-	OW_CIMClassResultHandlerIFC* pcresult,
-	const OW_UserInfo& aclInfo)
+	const StringArray* propertyList,
+	CIMInstanceResultHandlerIFC* piresult,
+	CIMObjectPathResultHandlerIFC* popresult,
+	CIMClassResultHandlerIFC* pcresult,
+	const UserInfo& aclInfo)
 {
-	OW_CIMObjectPath path(path_);
+	CIMObjectPath path(path_);
 	path.setNameSpace(ns);
-
 	// Get association classes from the association repository
-	OW_CIMClassArray dynamicAssocs;
-	OW_StringArray assocClassNames;
+	CIMClassArray dynamicAssocs;
+	StringArray assocClassNames;
 	assocClassSeparator assocClassResult(!m_realRepository || assocClassName.empty() ? 0 : &assocClassNames, dynamicAssocs, *this, aclInfo, ns, m_env->getLogger());
 	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role);
-
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
-	OW_StringArray resultClassNames;
+	StringArray resultClassNames;
 	if(m_realRepository && !resultClass.empty())
 	{
 		classNamesBuilder resultClassNamesResult(resultClassNames);
 		m_cimRepository->enumClassNames(ns, resultClass, resultClassNamesResult, E_DEEP, aclInfo);
 		resultClassNames.append(resultClass);
 	}
-
 	if (path.isClassPath())
 	{
 		// Process all of the association classes without providers
 		if (m_realRepository)
 		{
-			OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
+			SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
 					assocClassNames.end());
-			OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
+			SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
 					resultClassNames.end());
 			m_realRepository->_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 				resultClass.empty() ? 0 : &resultClassNamesSet,
@@ -2147,9 +1946,9 @@ OW_CIMServer::_commonAssociators(
 			// do instances
 			if (m_realRepository)
 			{
-				OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
+				SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
 						assocClassNames.end());
-				OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
+				SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
 						resultClassNames.end());
 				m_realRepository->_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 					resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
@@ -2165,9 +1964,9 @@ OW_CIMServer::_commonAssociators(
 			// do names (object paths)
 			if (m_realRepository)
 			{
-				OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(),
+				SortedVectorSet<String> assocClassNamesSet(assocClassNames.begin(),
 						assocClassNames.end());
-				OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
+				SortedVectorSet<String> resultClassNamesSet(resultClassNames.begin(),
 						resultClassNames.end());
 				m_realRepository->_staticAssociatorNames(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 					resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
@@ -2182,42 +1981,36 @@ OW_CIMServer::_commonAssociators(
 		{
 			OW_ASSERT(0);
 		}
-
 		// Process all of the association classes with providers
 		_dynamicAssociators(path, dynamicAssocs, resultClass, role, resultRole,
 			includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
 			aclInfo);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
-	const OW_CIMClassArray& assocClasses, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+CIMServer::_dynamicAssociators(const CIMObjectPath& path,
+	const CIMClassArray& assocClasses, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
-	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_UserInfo& aclInfo)
+	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
+	CIMObjectPathResultHandlerIFC* popresult, const UserInfo& aclInfo)
 {
 	// AssocClasses should always have something in it
 	if(assocClasses.size() == 0)
 	{
 		return;
 	}
-
 	for(size_t i = 0; i < assocClasses.size(); i++)
 	{
-		OW_CIMClass cc = assocClasses[i];
-
-		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
+		CIMClass cc = assocClasses[i];
+		AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
 		if(!assocP)
 		{
 			m_env->getLogger()->logError("Failed to get associator provider for class: " + cc.getName());
 			continue;
 		}
-
-		OW_String assocClass(assocClasses[i].getName());
-
+		String assocClass(assocClasses[i].getName());
 		if(piresult != 0)
 		{
 			m_env->getLogger()->logDebug("Calling associators on associator provider for class: " + cc.getName());
@@ -2237,20 +2030,18 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 		}
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_getAssociationClasses(const OW_String& ns,
-		const OW_String& assocClassName, const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result, const OW_String& role)
+CIMServer::_getAssociationClasses(const String& ns,
+		const String& assocClassName, const String& className,
+		CIMClassResultHandlerIFC& result, const String& role)
 {
-	OW_UserInfo intAclInfo;
+	UserInfo intAclInfo;
 	if(!assocClassName.empty())
 	{
 		// they gave us a class name so we can use the class association index
 		// to only look at the ones that could provide associations
-		OW_CIMClass cc = getClass(ns,assocClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
+		CIMClass cc = getClass(ns,assocClassName,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,intAclInfo);
 		result.handle(cc);
 		// TODO: measure whether it would be faster to use
 		// enumClassNames + getClass() here.
@@ -2259,7 +2050,7 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 	else
 	{
 		// need to get all the assoc classes with dynamic providers
-		OW_CIMObjectPath cop(className, ns);
+		CIMObjectPath cop(className, ns);
 		if (m_realRepository)
 		{
 			m_realRepository->_staticReferencesClass(cop,0,role,E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,0,&result,intAclInfo);
@@ -2268,29 +2059,25 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		{
 			m_cimRepository->referencesClasses(ns,cop,result,assocClassName,role,E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,intAclInfo);
 		}
-
 		// TODO: test if this is faster
 		//assocHelper helper(result, m_mStore, ns);
 		//m_mStore.getTopLevelAssociations(ns, helper);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMServer::_isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc)
+CIMServer::_isDynamicAssoc(const String& ns, const CIMClass& cc)
 {
 	return _getAssociatorProvider(ns, cc) ? true : false;
 }
-
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
-
-const char* const OW_CIMServer::INST_REPOS_NAME = "instances";
-const char* const OW_CIMServer::META_REPOS_NAME = "schema";
-const char* const OW_CIMServer::NS_REPOS_NAME = "namespaces";
+const char* const CIMServer::INST_REPOS_NAME = "instances";
+const char* const CIMServer::META_REPOS_NAME = "schema";
+const char* const CIMServer::NS_REPOS_NAME = "namespaces";
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-const char* const OW_CIMServer::CLASS_ASSOC_REPOS_NAME = "classassociation";
-const char* const OW_CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
+const char* const CIMServer::CLASS_ASSOC_REPOS_NAME = "classassociation";
+const char* const CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
 #endif
 
+} // end namespace OpenWBEM
 

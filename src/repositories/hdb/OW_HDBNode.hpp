@@ -27,23 +27,22 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HDBNODE_HPP_INCLUDE_GUARD_
 #define OW_HDBNODE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_HDBCommon.hpp"
 #include "OW_String.hpp"
 #include "OW_Reference.hpp"
 
-class OW_HDBHandle;
-class OW_HDB;
+namespace OpenWBEM
+{
 
+class HDBHandle;
+class HDB;
 //////////////////////////////////////////////////////////////////////////////				
-class OW_HDBNode
+class HDBNode
 {
 private:
-
 	struct HDBNodeData
 	{
 		HDBNodeData();
@@ -51,75 +50,66 @@ private:
 		~HDBNodeData();
 		HDBNodeData& operator= (const HDBNodeData& x);
 	
-		OW_HDBBlock m_blk;
-		OW_String m_key;
-		OW_Int32 m_bfrLen;
+		HDBBlock m_blk;
+		String m_key;
+		Int32 m_bfrLen;
 		unsigned char* m_bfr;
-		OW_Int32 m_offset;
-		OW_Int32 m_version;
+		Int32 m_offset;
+		Int32 m_version;
 	};
-
 public:
-
 	/**
-	 * Create a null OW_HDBNode object.
+	 * Create a null HDBNode object.
 	 */
-	OW_HDBNode() : m_pdata(0) {}
-
+	HDBNode() : m_pdata(0) {}
 	/**
-	 * Create an OW_HDBNode associated with a given key and data.
-	 * The node will not be persistant until it is added to the OW_HDB.
-	 * @param key		The key associated with the given OW_HDBNode
+	 * Create an HDBNode associated with a given key and data.
+	 * The node will not be persistant until it is added to the HDB.
+	 * @param key		The key associated with the given HDBNode
 	 * @param dataLen	The length of the data associated with the node.
 	 * @param data		The data associated with the node.
 	 */
-	OW_HDBNode(const OW_String& key, int dataLen, const unsigned char* data);
-
+	HDBNode(const String& key, int dataLen, const unsigned char* data);
 	/**
 	 * Copy constructor
-	 * @param x		The OW_HDBNode to copy this node from.
+	 * @param x		The HDBNode to copy this node from.
 	 */
-	OW_HDBNode(const OW_HDBNode& x) : m_pdata(x.m_pdata) { }
-
+	HDBNode(const HDBNode& x) : m_pdata(x.m_pdata) { }
 	/**
 	 * Assignment operator
-	 * @param x		The OW_HDBNode to assign to this one.
-	 * @return A reference to this OW_HDBNode.
+	 * @param x		The HDBNode to assign to this one.
+	 * @return A reference to this HDBNode.
 	 */
-	OW_HDBNode& operator= (const OW_HDBNode& x)
+	HDBNode& operator= (const HDBNode& x)
 	{
 		m_pdata = x.m_pdata;
 		return *this;
 	}
-
 	/**
-	 * @return The value of the flags field on this OW_HDBNode object.
+	 * @return The value of the flags field on this HDBNode object.
 	 */
-	OW_UInt32 getFlags()
+	UInt32 getFlags()
 	{
 		return m_pdata->m_blk.flags;
 	}
-
 	/**
 	 * Determine if all of the user defined flags are on.
 	 * @param flags	The user defined flags to check.
 	 * @return true if all flags are on in this node. Othewise false.
 	 */
-	bool areAllFlagsOn(OW_UInt32 flags) const
+	bool areAllFlagsOn(UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) == flags);
 	}
-
 	/**
 	 * Determine if some of the user defined flags are on.
 	 * @param flags	The user defined flags to check.
 	 * @return true if some flags are on in this node. Othewise false.
 	 */
-	bool areSomeFlagsOn(OW_UInt32 flags) const
+	bool areSomeFlagsOn(UInt32 flags) const
 	{
 		return ((m_pdata->m_blk.flags & flags) != 0);
 	}
-
 	/**
 	 * Turn the user defined flags on in this node.
 	 * @param hdl
@@ -127,8 +117,7 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	bool turnFlagsOn(OW_HDBHandle& hdl, OW_UInt32 flags);
-
+	bool turnFlagsOn(HDBHandle& hdl, UInt32 flags);
 	/**
 	 * Turn the user defined flags off in this node.
 	 * @param hdl
@@ -136,111 +125,91 @@ public:
 	 * @return true if the flags were changed from this operation. Otherwise
 	 * false.
 	 */
-	bool turnFlagsOff(OW_HDBHandle& hdl, OW_UInt32 flags);
-
+	bool turnFlagsOff(HDBHandle& hdl, UInt32 flags);
 	/**
-	 * @return The key associated with this OW_HDBNode.
+	 * @return The key associated with this HDBNode.
 	 */
-	OW_String getKey() const { return m_pdata->m_key; }
-
+	String getKey() const { return m_pdata->m_key; }
 	/**
-	 * @return The length of the data associated with this OW_HDBNode.
+	 * @return The length of the data associated with this HDBNode.
 	 */
-	OW_Int32 getDataLen() const { return m_pdata->m_bfrLen; }
-
+	Int32 getDataLen() const { return m_pdata->m_bfrLen; }
 	/**
-	 * @return A pointer to the data associated with this OW_HDBNode.
+	 * @return A pointer to the data associated with this HDBNode.
 	 */
 	const unsigned char* getData() const { return m_pdata->m_bfr; }
-
 	/**
-	 * @return true if this OW_HDBNode has a parent.
+	 * @return true if this HDBNode has a parent.
 	 */
 	bool hasParent() const { return (m_pdata->m_blk.parent != -1); }
-
 	/**
-	 * @return true if this OW_HDBNode has a next sibling.
+	 * @return true if this HDBNode has a next sibling.
 	 */
 	bool hasNextSibling() const { return (m_pdata->m_blk.nextSib != -1); }
-
 	/**
-	 * @return true if this OW_HDBNode has a previous sibling.
+	 * @return true if this HDBNode has a previous sibling.
 	 */
 	bool hasPreviousSibling() const { return (m_pdata->m_blk.prevSib != -1); }
-
 	/**
-	 * @return true if this OW_HDBNode has any children.
+	 * @return true if this HDBNode has any children.
 	 */
 	bool hasChildren() const { return (m_pdata->m_blk.firstChild != -1); }
-
 	/**
-	 * @return true if this OW_HDBNode is a root node (has no parent).
+	 * @return true if this HDBNode is a root node (has no parent).
 	 */
 	bool isRoot() const { return (hasParent() == false); }
-
 	/**
-	 * @return true if this OW_HDBNode is a child.
+	 * @return true if this HDBNode is a child.
 	 */
 	bool isChild() const { return (hasParent() == true); }
-
 	/**
-	 * @return true if this OW_HDBNode has any siblings.
+	 * @return true if this HDBNode has any siblings.
 	 */
 	bool isSibling() const
 	{
 		return (hasNextSibling() > 0 || hasPreviousSibling() > 0);
 	}
-
 	/**
-	 * @return true if this OW_HDBNode is valid.
+	 * @return true if this HDBNode is valid.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 private:
-
-	OW_HDBNode(const char* key, OW_HDBHandle& hdl);
-	OW_HDBNode(OW_Int32 offset, OW_HDBHandle& hdl);
-	void read(OW_Int32 offset, OW_HDBHandle& hdl);
-	bool reload(OW_HDBHandle& hdl);
-
+	HDBNode(const char* key, HDBHandle& hdl);
+	HDBNode(Int32 offset, HDBHandle& hdl);
+	void read(Int32 offset, HDBHandle& hdl);
+	bool reload(HDBHandle& hdl);
 	enum EWriteHeaderFlag
 	{
 		E_WRITE_ALL,
 		E_WRITE_ONLY_HEADER
 	};
-
-	OW_Int32 write(OW_HDBHandle& hdl, EWriteHeaderFlag onlyHeader = E_WRITE_ALL);
-	void updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset);
-	OW_Int32 getParentOffset() const { return m_pdata->m_blk.parent; }
-	OW_Int32 getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
-	OW_Int32 getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
-	OW_Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
-	OW_Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
-	OW_Int32 getOffset() const { return m_pdata->m_offset; }
-	bool remove(OW_HDBHandle& hdl);
-	void removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset);
-	void addChild(OW_HDBHandle& hdl, OW_HDBNode& arg);
-	bool updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data);
-
+	Int32 write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader = E_WRITE_ALL);
+	void updateOffsets(HDBHandle& hdl, Int32 offset);
+	Int32 getParentOffset() const { return m_pdata->m_blk.parent; }
+	Int32 getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
+	Int32 getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
+	Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
+	Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
+	Int32 getOffset() const { return m_pdata->m_offset; }
+	bool remove(HDBHandle& hdl);
+	void removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset);
+	void addChild(HDBHandle& hdl, HDBNode& arg);
+	bool updateData(HDBHandle& hdl, int dataLen, unsigned char* data);
 	void setNull() { m_pdata = 0; }
-
-	OW_Reference<HDBNodeData> m_pdata;
-
-	friend class OW_HDBHandle;
+	Reference<HDBNodeData> m_pdata;
+	friend class HDBHandle;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -27,15 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NO_SUCH_QUALIFIER_EXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_NO_SUCH_QUALIFIER_EXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(NoSuchQualifier);
 
+} // end namespace OpenWBEM
 
 #endif
-

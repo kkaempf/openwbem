@@ -39,6 +39,8 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
+using namespace OpenWBEM;
+
 void OW_MutexTestCases::setUp()
 {
 }
@@ -47,7 +49,7 @@ void OW_MutexTestCases::tearDown()
 {
 }
 
-static OW_Mutex g_mutex;
+static Mutex g_mutex;
 static int g_int;
 
 namespace {
@@ -55,13 +57,13 @@ namespace {
 class testClass
 {
 public:
-	static OW_Mutex m;
+	static Mutex m;
 };
 
-class testThread1: public OW_Thread
+class testThread1: public Thread
 {
 protected:
-	OW_Int32 run()
+	Int32 run()
 	{
 		try
 		{
@@ -70,7 +72,7 @@ protected:
 			g_int = 2;
 			g_mutex.release();
 		}
-		catch(OW_Exception& e)
+		catch(Exception& e)
 		{
 			cout << e << endl;
 			throw;
@@ -84,13 +86,13 @@ protected:
 	}
 };
 
-OW_Mutex testClass::m;
+Mutex testClass::m;
 
 } // end anonymous namespace
 
 void OW_MutexTestCases::testAcquireRelease()
 {
-	OW_Mutex m;
+	Mutex m;
 
 	m.acquire();
 	m.release();
@@ -112,13 +114,13 @@ void OW_MutexTestCases::testAcquireRelease()
 		g_mutex.acquire();
 		testThread1 t1;
 		t1.start();
-		OW_Thread::sleep(100);
+		Thread::sleep(100);
 		unitAssert(g_int == 1);
 		g_mutex.release();
-		OW_Thread::sleep(100);
+		Thread::sleep(100);
 		unitAssert(g_int == 2);
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cout << e << endl;
 		unitAssert(0);

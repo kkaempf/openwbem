@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_HTTPUtils.hpp"
 #include <iostream>
@@ -37,14 +35,14 @@
 int main(int argc, char* argv[])
 {
 	ifstream infile(argv[1]);
-	OW_Map<OW_String, OW_String> map;
-	OW_Array<OW_String> array;
-	if (!OW_HTTPUtils::parseHeader(map, array, infile))
+	Map<String, String> map;
+	Array<String> array;
+	if (!HTTPUtils::parseHeader(map, array, infile))
 		cerr << "Error" << endl;
 	int i;
 	for (i = 0; i < array.size(); i++)
 		cout << ">" << array[i] << "<";
 	cout << endl;
 	cout << map["01-CIMSupportedFunctionalGroups"] << endl;
-
 }
+

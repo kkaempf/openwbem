@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /*
 #include "OW_config.h"
 #include "easyaddress.h"
@@ -35,18 +34,16 @@
 #include "easysocket.h"
 #include "easyserver.h"
 */
-
 #include "OW_ServerSocket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
-
 #include <iostream>
 #include <fstream.h>
 #include <string>
 #include <stdlib.h>
 #include <unistd.h>
-
 using namespace std;
+using namespace OpenWBEM;
 
 int main(int argc, char* argv[])
 {
@@ -59,21 +56,19 @@ int main(int argc, char* argv[])
 	{
 		unsigned short port;
 		port = atoi(argv[1]);
-
-		OW_ServerSocket svr(port);
-		OW_SocketAddress localAddr = svr.getLocalAddress();
+		ServerSocket svr(port);
+		SocketAddress localAddr = svr.getLocalAddress();
 		cout << "Listening on address " << localAddr.getName() << 
 			"(" << localAddr.getAddress() << ")" << ":" 
 			<< localAddr.getPort() << endl;
 		cout.flush();
-
-		OW_Socket sock = svr.accept();
-		OW_SocketAddress peerAddr = sock.getPeerAddress();
+		Socket sock = svr.accept();
+		SocketAddress peerAddr = sock.getPeerAddress();
 		cout << "Connection is made. Client is " << peerAddr.getName() << 
 			"(" << peerAddr.getAddress() << ")" << ":" 
 			<< peerAddr.getPort() << endl;
 		ostream& ostr = sock.getOutputStream();
-		OW_HTTPChunkedOStream ostrm(ostr);
+		HTTPChunkedOStream ostrm(ostr);
 		ifstream filestr(argv[2], ios::in);
 		char bfr[1024];
 		int count = 0;
@@ -86,7 +81,6 @@ int main(int argc, char* argv[])
 		cout << "Wrote " << count << " bytes" << endl;
 		ostrm.flush();
 		ostrm.termOutput();
-
 		if (argc == 4)
 		{
 			ifstream filestr2(argv[3], ios::in);
@@ -101,15 +95,14 @@ int main(int argc, char* argv[])
 			ostrm.flush();
 			ostrm.termOutput();
 		}
-
 		svr.close();
 		sock.disconnect();
 	}
-	catch(OW_SocketException &e)
+	catch(SocketException &e)
 	{
 		cerr << "An exception occurred in " << e << endl;
 		return 1;
 	}
-
 	return 0;
 }
+

@@ -27,43 +27,42 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SIGNALSCOPE_HPP_INCLUDE_GUARD_
 #define OW_SIGNALSCOPE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include <signal.h>
+
+namespace OpenWBEM
+{
 
 const int OW_SIGSEGV = SIGSEGV;
 const int OW_SIGABRT = SIGABRT;
 const int OW_SIGBUS = SIGBUS;
 const int OW_SIGFPE = SIGFPE;
 
-
 extern "C" {
 typedef void (*sighandler_t)(int);
 }
 
-class OW_SignalScope
+class SignalScope
 {
 public:
-	OW_SignalScope( int sig, sighandler_t handler )
+	SignalScope( int sig, sighandler_t handler )
 			: m_sig( sig ), m_oldHandler( 0 ) 
 	{
 		m_oldHandler = signal( m_sig, handler );
 	}
-
-	~OW_SignalScope()
+	~SignalScope()
 	{
 		signal( m_sig, m_oldHandler );
 	}
-
 private:
-	OW_SignalScope(const OW_SignalScope&);
-	const OW_SignalScope& operator=(const OW_SignalScope&);
+	SignalScope(const SignalScope&);
+	const SignalScope& operator=(const SignalScope&);
 	int m_sig;
 	sighandler_t m_oldHandler;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

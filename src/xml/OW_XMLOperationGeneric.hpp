@@ -29,27 +29,26 @@
 *******************************************************************************/
 #ifndef OW_XMLOPERATIONGENERIC_HPP_INCLUDE_GUARD_
 #define OW_XMLOPERATIONGENERIC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Param.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_XMLParameters.hpp"
 
-class OW_CIMXMLParser;
+namespace OpenWBEM
+{
 
-class OW_XMLOperationGeneric : public OW_XMLParameters
+class CIMXMLParser;
+class XMLOperationGeneric : public XMLParameters
 {
 	public:
-
 		/**
-		 * @throws OW_CIMException
+		 * @throws CIMException
 		 */
-		static void XMLGetCIMElement(OW_CIMXMLParser& node);
-
-
+		static void XMLGetCIMElement(CIMXMLParser& node);
 	private:
-
 };
+
+} // end namespace OpenWBEM
 
 #endif

@@ -42,133 +42,121 @@
 #include "OW_Assertion.hpp"
 #include <cstdio> // for SEEK_END
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
 using std::endl;
-
 //////////////////////////////////////////////////////////////////////////////
 // Local functions
-static OW_UInt32 calcCheckSum(unsigned char* src, OW_Int32 len);
-static void writeRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file);
-static void readRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file);
-
+static UInt32 calcCheckSum(unsigned char* src, Int32 len);
+static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file);
+static void readRecHeader(AssocDbRecHeader& rh, Int32 offset, File file);
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbEntry::OW_AssocDbEntry(istream& istrm) 
-	: m_objectName(OW_CIMNULL)
+AssocDbEntry::AssocDbEntry(istream& istrm) 
+	: m_objectName(CIMNULL)
 	, m_offset(-1L)
 {
 	readObject(istrm);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbEntry::OW_AssocDbEntry(const OW_CIMObjectPath& objectName,
-		const OW_String& role,
-		const OW_String& resultRole) :
+AssocDbEntry::AssocDbEntry(const CIMObjectPath& objectName,
+		const String& role,
+		const String& resultRole) :
 	m_objectName(objectName), m_role(role), m_resultRole(resultRole),
 	m_offset(-1L)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbEntry::writeObject(ostream& ostrm) const
+AssocDbEntry::writeObject(ostream& ostrm) const
 {
 	m_objectName.writeObject(ostrm);
 	m_role.writeObject(ostrm);
 	m_resultRole.writeObject(ostrm);
-	OW_BinarySerialization::writeArray(ostrm, m_entries);
+	BinarySerialization::writeArray(ostrm, m_entries);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbEntry::entry::writeObject(ostream& ostrm) const
+AssocDbEntry::entry::writeObject(ostream& ostrm) const
 {
 	m_assocClass.writeObject(ostrm);
 	m_resultClass.writeObject(ostrm);
 	m_associatedObject.writeObject(ostrm);
 	m_associationPath.writeObject(ostrm);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbEntry::readObject(istream& istrm)
+AssocDbEntry::readObject(istream& istrm)
 {
 	m_objectName.readObject(istrm);
 	m_role.readObject(istrm);
 	m_resultRole.readObject(istrm);
-	OW_BinarySerialization::readArray(istrm, m_entries);
+	BinarySerialization::readArray(istrm, m_entries);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbEntry::entry::readObject(istream& istrm)
+AssocDbEntry::entry::readObject(istream& istrm)
 {
 	m_assocClass.readObject(istrm);
 	m_resultClass.readObject(istrm);
 	m_associatedObject.readObject(istrm);
 	m_associationPath.readObject(istrm);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_AssocDbEntry::makeKey(const OW_CIMObjectPath& objectName, const OW_String& role,
-	const OW_String& resultRole)
+String
+AssocDbEntry::makeKey(const CIMObjectPath& objectName, const String& role,
+	const String& resultRole)
 {
 	// use # as the separator, because that's not a valid character in an
 	// object path or any CIM identifier
-	OW_String lowerName = objectName.toString();
+	String lowerName = objectName.toString();
 	lowerName.toLowerCase();
-	OW_String lowerRole = role;
+	String lowerRole = role;
 	lowerRole.toLowerCase();
-	OW_String lowerResultRole = resultRole;
+	String lowerResultRole = resultRole;
 	lowerResultRole.toLowerCase();
 	return lowerName + "#" + lowerRole + "#" + lowerResultRole;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_AssocDbEntry::makeKey() const
+String
+AssocDbEntry::makeKey() const
 {
 	// use # as the separator, because that's not a valid character in an
 	// object path or any CIM identifier
 	return makeKey(m_objectName, m_role, m_resultRole);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-operator << (ostream& ostrm, const OW_AssocDbEntry& arg)
+operator << (ostream& ostrm, const AssocDbEntry& arg)
 {
 	ostrm
 		<< "\tobjectName: " << arg.m_objectName.toString() << endl
 		<< "\trole: " << arg.m_role << endl
 		<< "\tresultRole: " << arg.m_resultRole << endl
 		<< "\tkey: " << arg.makeKey() << endl;
-
 	return ostrm;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbHandle::AssocDbHandleData::AssocDbHandleData() :
+AssocDbHandle::AssocDbHandleData::AssocDbHandleData() :
 	m_pdb(NULL), m_file()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbHandle::AssocDbHandleData::AssocDbHandleData(
+AssocDbHandle::AssocDbHandleData::AssocDbHandleData(
 	const AssocDbHandleData& arg) :
 	m_pdb(arg.m_pdb), m_file(arg.m_file)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbHandle::AssocDbHandleData::AssocDbHandleData(OW_AssocDb* pdb,
-	OW_File file) :
+AssocDbHandle::AssocDbHandleData::AssocDbHandleData(AssocDb* pdb,
+	File file) :
 	m_pdb(pdb), m_file(file)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbHandle::AssocDbHandleData::~AssocDbHandleData()
+AssocDbHandle::AssocDbHandleData::~AssocDbHandleData()
 {
 	try
 	{
@@ -183,23 +171,21 @@ OW_AssocDbHandle::AssocDbHandleData::~AssocDbHandleData()
         // if decHandleCount throws, just ignore it.
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbHandle::AssocDbHandleData&
-OW_AssocDbHandle::AssocDbHandleData::operator= (const AssocDbHandleData& arg)
+AssocDbHandle::AssocDbHandleData&
+AssocDbHandle::AssocDbHandleData::operator= (const AssocDbHandleData& arg)
 {
 	m_pdb = arg.m_pdb;
 	m_file = arg.m_file;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::addEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath)
+AssocDbHandle::addEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath)
 {
 	m_pdata->m_pdb->addEntry(objectName, 
 		assocClassName, resultClass,
@@ -207,45 +193,40 @@ OW_AssocDbHandle::addEntry(const OW_CIMObjectPath& objectName,
 		associatedObject, 
 		assocClassPath, *this);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_AssocDbHandle::hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName)
+AssocDbHandle::hasAssocEntries(const String& ns, const CIMObjectPath& instanceName)
 {
-	OW_CIMObjectPath pathWithNS(instanceName);
+	CIMObjectPath pathWithNS(instanceName);
 	pathWithNS.setNameSpace(ns);
-	OW_String targetObject = pathWithNS.toString();
+	String targetObject = pathWithNS.toString();
 	return (m_pdata->m_pdb->findEntry(targetObject, *this)) ? true : false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::addEntries(const OW_String& ns, const OW_CIMInstance& assocInstance)
+AssocDbHandle::addEntries(const String& ns, const CIMInstance& assocInstance)
 {
 	addOrDeleteEntries(ns, assocInstance, true);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::deleteEntries(const OW_String& ns, const OW_CIMInstance& assocInstance)
+AssocDbHandle::deleteEntries(const String& ns, const CIMInstance& assocInstance)
 {
 	addOrDeleteEntries(ns, assocInstance, false);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMInstance& assocInstance, bool add)
+AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add)
 {
-	OW_String assocClass = assocInstance.getClassName();
-	OW_CIMObjectPath assocPath(assocClass, ns);
+	String assocClass = assocInstance.getClassName();
+	CIMObjectPath assocPath(assocClass, ns);
 	assocPath.setKeys(assocInstance);
-
 	// search for references
-	OW_CIMPropertyArray propRa = assocInstance.getProperties();
+	CIMPropertyArray propRa = assocInstance.getProperties();
 	for(size_t i = 0; i < propRa.size(); i++)
 	{
-		OW_CIMValue propValue1 = propRa[i].getValue();
-		if(propValue1 && propValue1.getType() == OW_CIMDataType::REFERENCE)
+		CIMValue propValue1 = propRa[i].getValue();
+		if(propValue1 && propValue1.getType() == CIMDataType::REFERENCE)
 		{
 			// found first reference, search for second
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -254,82 +235,77 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMInstance& 
 				{
 					continue; // don't bother with same ones.
 				}
-				OW_CIMValue propValue2 = propRa[j].getValue();
-				if(propValue2 && propValue2.getType() == OW_CIMDataType::REFERENCE)
+				CIMValue propValue2 = propRa[j].getValue();
+				if(propValue2 && propValue2.getType() == CIMDataType::REFERENCE)
 				{
 					// found a second reference, now set up the vars we need
 					// and create index entries.
-					OW_CIMObjectPath objectName(OW_CIMNULL);
+					CIMObjectPath objectName(CIMNULL);
 					propValue1.get(objectName);
 					if (objectName.getNameSpace().empty())
 					{
 						objectName.setNameSpace(ns);
 					}
-					OW_CIMObjectPath associatedObject(OW_CIMNULL);
+					CIMObjectPath associatedObject(CIMNULL);
 					propValue2.get(associatedObject);
 					if (associatedObject.getNameSpace().empty())
 					{
 						objectName.setNameSpace(ns);
 					}
-					OW_String resultClass = associatedObject.getObjectName();
-					OW_String role = propRa[i].getName();
-					OW_String resultRole = propRa[j].getName();
-
+					String resultClass = associatedObject.getObjectName();
+					String role = propRa[i].getName();
+					String resultRole = propRa[j].getName();
 					if (add)
 					{
 						addEntry(objectName, assocClass, resultClass,
 							role, resultRole, associatedObject, assocPath);
 						addEntry(objectName, assocClass, resultClass,
-							OW_String(), resultRole, associatedObject, assocPath);
+							String(), resultRole, associatedObject, assocPath);
 						addEntry(objectName, assocClass, resultClass,
-							role, OW_String(), associatedObject, assocPath);
+							role, String(), associatedObject, assocPath);
 						addEntry(objectName, assocClass, resultClass,
-							OW_String(), OW_String(), associatedObject, assocPath);
+							String(), String(), associatedObject, assocPath);
 					}
 					else
 					{
 						deleteEntry(objectName, assocClass, resultClass,
 							role, resultRole, associatedObject, assocPath);
 						deleteEntry(objectName, assocClass, resultClass,
-							OW_String(), resultRole, associatedObject, assocPath);
+							String(), resultRole, associatedObject, assocPath);
 						deleteEntry(objectName, assocClass, resultClass,
-							role, OW_String(), associatedObject, assocPath);
+							role, String(), associatedObject, assocPath);
 						deleteEntry(objectName, assocClass, resultClass,
-							OW_String(), OW_String(), associatedObject, assocPath);
+							String(), String(), associatedObject, assocPath);
 					}
 				}
 			}
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::addEntries(const OW_String& ns, const OW_CIMClass& assocClass)
+AssocDbHandle::addEntries(const String& ns, const CIMClass& assocClass)
 {
 	addOrDeleteEntries(ns, assocClass, true);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::deleteEntries(const OW_String& ns, const OW_CIMClass& assocClass)
+AssocDbHandle::deleteEntries(const String& ns, const CIMClass& assocClass)
 {
 	addOrDeleteEntries(ns, assocClass, false);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& assocClass, bool add)
+AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add)
 {
-	OW_String assocClassName = assocClass.getName();
-	OW_CIMObjectPath assocClassPath(assocClassName, ns);
-
+	String assocClassName = assocClass.getName();
+	CIMObjectPath assocClassPath(assocClassName, ns);
 	// search for references
-	OW_CIMPropertyArray propRa = assocClass.getAllProperties();
+	CIMPropertyArray propRa = assocClass.getAllProperties();
 	for(size_t i = 0; i < propRa.size(); i++)
 	{
-		OW_CIMProperty p1 = propRa[i];
-		if(p1.getDataType().getType() == OW_CIMDataType::REFERENCE)
+		CIMProperty p1 = propRa[i];
+		if(p1.getDataType().getType() == CIMDataType::REFERENCE)
 		{
 			// found first reference, search for others
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -338,52 +314,50 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& ass
 				{
 					continue; // don't bother with same ones.
 				}
-				OW_CIMProperty p2 = propRa[j];
-				if(p2.getDataType().getType() == OW_CIMDataType::REFERENCE)
+				CIMProperty p2 = propRa[j];
+				if(p2.getDataType().getType() == CIMDataType::REFERENCE)
 				{
 					// found another reference, now set up the vars we need
 					// and create index entries.
-					OW_CIMObjectPath objectName(p1.getDataType().getRefClassName(), ns);
-					OW_String resultClass = p2.getDataType().getRefClassName();
-					OW_String role = p1.getName();
-					OW_String resultRole = p2.getName();
-					OW_CIMObjectPath associatedObject(resultClass, ns);
-
+					CIMObjectPath objectName(p1.getDataType().getRefClassName(), ns);
+					String resultClass = p2.getDataType().getRefClassName();
+					String role = p1.getName();
+					String resultRole = p2.getName();
+					CIMObjectPath associatedObject(resultClass, ns);
 					if (add)
 					{
 						addEntry(objectName, assocClassName, resultClass,
 							role, resultRole, associatedObject, assocClassPath);
 						addEntry(objectName, assocClassName, resultClass,
-							OW_String(), resultRole, associatedObject, assocClassPath);
+							String(), resultRole, associatedObject, assocClassPath);
 						addEntry(objectName, assocClassName, resultClass,
-							role, OW_String(), associatedObject, assocClassPath);
+							role, String(), associatedObject, assocClassPath);
 						addEntry(objectName, assocClassName, resultClass,
-							OW_String(), OW_String(), associatedObject, assocClassPath);
+							String(), String(), associatedObject, assocClassPath);
 					}
 					else
 					{
 						deleteEntry(objectName, assocClassName, resultClass,
 							role, resultRole, associatedObject, assocClassPath);
 						deleteEntry(objectName, assocClassName, resultClass,
-							OW_String(), resultRole, associatedObject, assocClassPath);
+							String(), resultRole, associatedObject, assocClassPath);
 						deleteEntry(objectName, assocClassName, resultClass,
-							role, OW_String(), associatedObject, assocClassPath);
+							role, String(), associatedObject, assocClassPath);
 						deleteEntry(objectName, assocClassName, resultClass,
-							OW_String(), OW_String(), associatedObject, assocClassPath);
+							String(), String(), associatedObject, assocClassPath);
 					}
 				}
 			}
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::deleteEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath)
+AssocDbHandle::deleteEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath)
 {
 	m_pdata->m_pdb->deleteEntry(objectName, 
 		assocClassName, resultClass,
@@ -391,32 +365,28 @@ OW_AssocDbHandle::deleteEntry(const OW_CIMObjectPath& objectName,
 		associatedObject, 
 		assocClassPath, *this);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDbHandle::getAllEntries(const OW_CIMObjectPath& objectName,
-		const OW_SortedVectorSet<OW_String>* passocClasses,
-		const OW_SortedVectorSet<OW_String>* presultClasses,
-		const OW_String& role,
-		const OW_String& resultRole,
-		OW_AssocDbEntryResultHandlerIFC& result)
+AssocDbHandle::getAllEntries(const CIMObjectPath& objectName,
+		const SortedVectorSet<String>* passocClasses,
+		const SortedVectorSet<String>* presultClasses,
+		const String& role,
+		const String& resultRole,
+		AssocDbEntryResultHandlerIFC& result)
 {
 	if ((passocClasses && passocClasses->size() == 0)
 		|| presultClasses && presultClasses->size() == 0)
 	{
 		return; // one of the filters will reject everything, so don't even bother
 	}
-
-	OW_String key = OW_AssocDbEntry::makeKey(objectName, role, resultRole);
-
-	OW_MutexLock l = m_pdata->m_pdb->getDbLock();
-
-	OW_AssocDbEntry dbentry = m_pdata->m_pdb->findEntry(key, *this);
+	String key = AssocDbEntry::makeKey(objectName, role, resultRole);
+	MutexLock l = m_pdata->m_pdb->getDbLock();
+	AssocDbEntry dbentry = m_pdata->m_pdb->findEntry(key, *this);
 	if (dbentry)
 	{
 		for (size_t i = 0; i < dbentry.m_entries.size(); ++i)
 		{
-			OW_AssocDbEntry::entry& e = dbentry.m_entries[i];
+			AssocDbEntry::entry& e = dbentry.m_entries[i];
 			if(((passocClasses == 0) || (passocClasses->count(e.m_assocClass) > 0))
 			   && ((presultClasses == 0) || (presultClasses->count(e.m_resultClass) > 0)))
 			{
@@ -425,9 +395,8 @@ OW_AssocDbHandle::getAllEntries(const OW_CIMObjectPath& objectName,
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDb::OW_AssocDb(OW_ServiceEnvironmentIFCRef env)
+AssocDb::AssocDb(ServiceEnvironmentIFCRef env)
 	: m_hdrBlock()
 	, m_pIndex(NULL)
 	, m_fileName()
@@ -437,15 +406,14 @@ OW_AssocDb::OW_AssocDb(OW_ServiceEnvironmentIFCRef env)
 	, m_env(env)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDb::~OW_AssocDb()
+AssocDb::~AssocDb()
 {
 	try
 	{
 		if(m_hdlCount > 0)
 		{
-			m_env->getLogger()->logDebug("*** OW_AssocDb::~OW_AssocDb - STILL OUTSTANDING"
+			m_env->getLogger()->logDebug("*** AssocDb::~AssocDb - STILL OUTSTANDING"
 				" HANDLES ***");
 		}
 		close();
@@ -455,94 +423,79 @@ OW_AssocDb::~OW_AssocDb()
 		// logDebug or close could throw.
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDb::open(const OW_String& fileName)
+AssocDb::open(const String& fileName)
 {
-	OW_MutexLock l = getDbLock();
+	MutexLock l = getDbLock();
 	if(m_opened)
 	{
 		return;
 	}
-
 	m_hdlCount = 0;
 	m_fileName = fileName;
-
-	OW_String fname = m_fileName + ".dat";
-
+	String fname = m_fileName + ".dat";
 	createFile();
 	if(!checkFile())
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(IOException,
 			format("Failed to open file: %1", fname).c_str());
 	}
-
 	m_opened = true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_AssocDb::createFile()
+AssocDb::createFile()
 {
-	OW_AssocDbHeader b = { OW_ASSOCSIGNATURE, -1L };
+	AssocDbHeader b = { OW_ASSOCSIGNATURE, -1L };
 	m_hdrBlock = b;
-
-	OW_File f = OW_FileSystem::createFile(m_fileName + ".dat");
+	File f = FileSystem::createFile(m_fileName + ".dat");
 	if(!f)
 	{
 		return false;
 	}
-
 	if(f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0) != sizeof(m_hdrBlock))
 	{
 		f.close();
-		OW_THROW(OW_IOException, "Failed to write header of HDB");
+		OW_THROW(IOException, "Failed to write header of HDB");
 	}
-
 	f.close();
-	m_pIndex = OW_Index::createIndexObject();
-	m_pIndex->open(m_fileName.c_str(), OW_Index::E_ALLOW_DUPLICATES);
+	m_pIndex = Index::createIndexObject();
+	m_pIndex->open(m_fileName.c_str(), Index::E_ALLDUPLICATES);
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_AssocDb::checkFile()
+AssocDb::checkFile()
 {
-	OW_File f = OW_FileSystem::openFile(m_fileName + ".dat");
+	File f = FileSystem::openFile(m_fileName + ".dat");
 	if(!f)
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(IOException,
 			format("Failed to open file: %1", m_fileName).c_str());
 	}
-
 	size_t sizeRead = f.read(&m_hdrBlock, sizeof(m_hdrBlock), 0);
 	f.close();
-
 	if(sizeRead != sizeof(m_hdrBlock))
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(IOException,
 			format("Failed to read Assoc DB header from file: %1",
 				m_fileName).c_str());
 	}
-
 	if(::strncmp(m_hdrBlock.signature, OW_ASSOCSIGNATURE, OW_ASSOCSIGLEN))
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(IOException,
 			format("Invalid format for Assoc db file: %1", m_fileName).c_str());
 	}
-
-	m_pIndex = OW_Index::createIndexObject();
-	m_pIndex->open(m_fileName.c_str(), OW_Index::E_ALLOW_DUPLICATES);
+	m_pIndex = Index::createIndexObject();
+	m_pIndex->open(m_fileName.c_str(), Index::E_ALLDUPLICATES);
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDb::close()
+AssocDb::close()
 {
-	OW_MutexLock l = getDbLock();
+	MutexLock l = getDbLock();
 	if(m_opened)
 	{
 		m_pIndex->close();
@@ -550,118 +503,98 @@ OW_AssocDb::close()
 		m_opened = false;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_AssocDbHandle
-OW_AssocDb::getHandle()
+AssocDbHandle
+AssocDb::getHandle()
 {
-	OW_MutexLock l = getDbLock();
-	OW_File file = OW_FileSystem::openFile(m_fileName + ".dat");
+	MutexLock l = getDbLock();
+	File file = FileSystem::openFile(m_fileName + ".dat");
 	if(!file)
 	{
-		OW_THROW(OW_IOException,
+		OW_THROW(IOException,
 			format("Failed to open file while creating handle: %1",
 				m_fileName).c_str());
 	}
-
 	m_hdlCount++;
-	return OW_AssocDbHandle(this, file);
+	return AssocDbHandle(this, file);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_AssocDb::decHandleCount()
+AssocDb::decHandleCount()
 {
-	OW_MutexLock l = getDbLock();
+	MutexLock l = getDbLock();
 	m_hdlCount--;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE - OW_AssocDbHandle uses
-OW_AssocDbEntry
-OW_AssocDb::findEntry(const OW_String& objectKey, OW_AssocDbHandle& hdl)
+// PRIVATE - AssocDbHandle uses
+AssocDbEntry
+AssocDb::findEntry(const String& objectKey, AssocDbHandle& hdl)
 {
-	OW_MutexLock l = getDbLock();
-
-	OW_AssocDbEntry dbentry;
-
-	OW_IndexEntry ie = m_pIndex->findFirst(objectKey.c_str());
+	MutexLock l = getDbLock();
+	AssocDbEntry dbentry;
+	IndexEntry ie = m_pIndex->findFirst(objectKey.c_str());
 	if(ie && ie.key.equals(objectKey))
 	{
 		dbentry = readEntry(ie.offset, hdl);
 	}
-
 	return dbentry;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE - OW_AssocDbHandle uses
-OW_AssocDbEntry
-OW_AssocDb::nextEntry(OW_AssocDbHandle& hdl)
+// PRIVATE - AssocDbHandle uses
+AssocDbEntry
+AssocDb::nextEntry(AssocDbHandle& hdl)
 {
-	OW_MutexLock l = getDbLock();
-
-	OW_AssocDbEntry dbentry;
-	OW_IndexEntry ie = m_pIndex->findNext();
+	MutexLock l = getDbLock();
+	AssocDbEntry dbentry;
+	IndexEntry ie = m_pIndex->findNext();
 	if(!ie)
 	{
 		return dbentry;
 	}
-
 	return readEntry(ie.offset, hdl);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
-OW_AssocDbEntry
-OW_AssocDb::readEntry(OW_Int32 offset, OW_AssocDbHandle& hdl)
+AssocDbEntry
+AssocDb::readEntry(Int32 offset, AssocDbHandle& hdl)
 {
-	OW_AssocDbEntry dbentry;
+	AssocDbEntry dbentry;
 	AssocDbRecHeader rh;
-
 	readRecHeader(rh, offset, hdl.getFile());
-
-	OW_AutoPtrVec<unsigned char> bfr(new unsigned char[rh.dataSize]);
-
+	AutoPtrVec<unsigned char> bfr(new unsigned char[rh.dataSize]);
 	if(hdl.getFile().read(bfr.get(), rh.dataSize) != rh.dataSize)
 	{
-		OW_THROW(OW_IOException, "Failed to read data for rec on assoc db");
+		OW_THROW(IOException, "Failed to read data for rec on assoc db");
 	}
-
-	OW_RepositoryIStream istrm(rh.dataSize, bfr.get());
+	RepositoryIStream istrm(rh.dataSize, bfr.get());
 	dbentry.readObject(istrm);
 	dbentry.setOffset(offset);
-
 	return dbentry;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE - OW_AssocDbHandle uses
+// PRIVATE - AssocDbHandle uses
 void
-OW_AssocDb::deleteEntry(const OW_CIMObjectPath& objectName, 
-	const OW_String& assocClassName, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole, 
-	const OW_CIMObjectPath& associatedObject, 
-	const OW_CIMObjectPath& assocClassPath, OW_AssocDbHandle& hdl)
+AssocDb::deleteEntry(const CIMObjectPath& objectName, 
+	const String& assocClassName, const String& resultClass,
+	const String& role, const String& resultRole, 
+	const CIMObjectPath& associatedObject, 
+	const CIMObjectPath& assocClassPath, AssocDbHandle& hdl)
 {
-	OW_String key = OW_AssocDbEntry::makeKey(objectName, role, resultRole);
-	OW_AssocDbEntry dbentry;
-
-	OW_MutexLock l = getDbLock();
-	OW_IndexEntry ie = m_pIndex->findFirst(key.c_str());
+	String key = AssocDbEntry::makeKey(objectName, role, resultRole);
+	AssocDbEntry dbentry;
+	MutexLock l = getDbLock();
+	IndexEntry ie = m_pIndex->findFirst(key.c_str());
 	if(ie)
 	{
 		dbentry = readEntry(ie.offset, hdl);
 		
 		OW_ASSERT(dbentry.makeKey().equals(key));
-
-		OW_AssocDbEntry::entry e;
+		AssocDbEntry::entry e;
 		e.m_assocClass = assocClassName;
 		e.m_resultClass = resultClass;
 		e.m_associatedObject = associatedObject;
 		e.m_associationPath = assocClassPath;
-
-		OW_Array<OW_AssocDbEntry::entry>::iterator iter = find(dbentry.m_entries.begin(), dbentry.m_entries.end(), e);
+		Array<AssocDbEntry::entry>::iterator iter = find(dbentry.m_entries.begin(), dbentry.m_entries.end(), e);
 		OW_ASSERT(iter != dbentry.m_entries.end());
 		if (iter != dbentry.m_entries.end())
 		{
@@ -681,19 +614,18 @@ OW_AssocDb::deleteEntry(const OW_CIMObjectPath& objectName,
 	}
 	else
 	{
-		// TODO: Log this OW_ASSERT(0 == "OW_AssocDb::deleteEntry failed to find key.  Database may be corrupt");
+		// TODO: Log this OW_ASSERT(0 == "AssocDb::deleteEntry failed to find key.  Database may be corrupt");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE - OW_AssocDbHandle uses
+// PRIVATE - AssocDbHandle uses
 void
-OW_AssocDb::deleteEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl)
+AssocDb::deleteEntry(const AssocDbEntry& entry, AssocDbHandle& hdl)
 {
-	OW_MutexLock l = getDbLock();
-	OW_String key = entry.makeKey();
-	OW_AssocDbEntry dbentry;
-	OW_IndexEntry ie = m_pIndex->findFirst(key.c_str());
+	MutexLock l = getDbLock();
+	String key = entry.makeKey();
+	AssocDbEntry dbentry;
+	IndexEntry ie = m_pIndex->findFirst(key.c_str());
 	while(ie)
 	{
 		dbentry = readEntry(ie.offset, hdl);
@@ -701,28 +633,25 @@ OW_AssocDb::deleteEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl)
 		{
 			break;
 		}
-
 		if(dbentry == entry)
 		{
 			m_pIndex->remove(key.c_str(), dbentry.getOffset());
 			addToFreeList(dbentry.getOffset(), hdl);
 			break;
 		}
-
 		ie = m_pIndex->findNext();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE - OW_AssocDbHandle uses
+// PRIVATE - AssocDbHandle uses
 void
-OW_AssocDb::addEntry(const OW_AssocDbEntry& nentry, OW_AssocDbHandle& hdl)
+AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 {
-	OW_MutexLock l = getDbLock();
-	OW_RepositoryOStream ostrm;
+	MutexLock l = getDbLock();
+	RepositoryOStream ostrm;
 	nentry.writeObject(ostrm);
-	OW_UInt32 blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
-	OW_Int32 offset;
+	UInt32 blkSize = ostrm.length() + sizeof(AssocDbRecHeader);
+	Int32 offset;
 	AssocDbRecHeader rh = getNewBlock(offset, blkSize, hdl);
 	rh.dataSize = ostrm.length();
 	writeRecHeader(rh, offset, hdl.getFile());
@@ -730,83 +659,72 @@ OW_AssocDb::addEntry(const OW_AssocDbEntry& nentry, OW_AssocDbHandle& hdl)
 	if(hdl.getFile().write(ostrm.getData(), ostrm.length()) !=
 		size_t(ostrm.length()))
 	{
-		OW_THROW(OW_IOException, "Failed to write data assoc db");
+		OW_THROW(IOException, "Failed to write data assoc db");
 	}
 	
 	if(!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
-		m_env->getLogger()->logError(format("OW_AssocDb::addEntry failed to add entry to"
+		m_env->getLogger()->logError(format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE - OW_AssocDbHandle uses
+// PRIVATE - AssocDbHandle uses
 void
-OW_AssocDb::addEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath, OW_AssocDbHandle& hdl)
+AssocDb::addEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl)
 {
-	OW_String key = OW_AssocDbEntry::makeKey(objectName, role, resultRole);
-	OW_MutexLock l = getDbLock();
-
-	OW_AssocDbEntry dbentry = findEntry(key, hdl);
+	String key = AssocDbEntry::makeKey(objectName, role, resultRole);
+	MutexLock l = getDbLock();
+	AssocDbEntry dbentry = findEntry(key, hdl);
 	if (dbentry)
 	{
 		deleteEntry(dbentry, hdl);
 	}
 	else
 	{
-		dbentry = OW_AssocDbEntry(objectName, role, resultRole);
+		dbentry = AssocDbEntry(objectName, role, resultRole);
 	}
-
-	OW_AssocDbEntry::entry e;
+	AssocDbEntry::entry e;
 	e.m_assocClass = assocClassName;
 	e.m_resultClass = resultClass;
 	e.m_associatedObject = associatedObject;
 	e.m_associationPath = assocClassPath;
-
 	dbentry.m_entries.push_back(e);
 	addEntry(dbentry, hdl);
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 void
-OW_AssocDb::addToFreeList(OW_Int32 offset, OW_AssocDbHandle& hdl)
+AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 {
 	AssocDbRecHeader rh;
-
 	readRecHeader(rh, offset, hdl.getFile());
 	rh.nextFree = m_hdrBlock.firstFree;
 	writeRecHeader(rh, offset, hdl.getFile());
-
 	m_hdrBlock.firstFree = offset;
 	if(hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 		sizeof(m_hdrBlock))
 	{
-		OW_THROW(OW_IOException, "Failed write file header on deletion");
+		OW_THROW(IOException, "Failed write file header on deletion");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE
 AssocDbRecHeader
-OW_AssocDb::getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
-	OW_AssocDbHandle& hdl)
+AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
+	AssocDbHandle& hdl)
 {
 	AssocDbRecHeader rh;
 	AssocDbRecHeader lh;
-	OW_Int32 lastOffset = -1L;
-
-	OW_Int32 coffset = m_hdrBlock.firstFree;
+	Int32 lastOffset = -1L;
+	Int32 coffset = m_hdrBlock.firstFree;
 	while(coffset != -1)
 	{
 		readRecHeader(rh, coffset, hdl.getFile());
-
 		if(rh.blkSize >= blkSize)
 		{
 			if(lastOffset != -1L)
@@ -814,87 +732,77 @@ OW_AssocDb::getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
 				lh.nextFree = rh.nextFree;
 				writeRecHeader(lh, lastOffset, hdl.getFile());
 			}
-
 			if(m_hdrBlock.firstFree == coffset)
 			{
 				m_hdrBlock.firstFree = rh.nextFree;
 				if(hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 					sizeof(m_hdrBlock))
 				{
-					OW_THROW(OW_IOException,
+					OW_THROW(IOException,
 						"failed to write file header while updating free list");
 				}
 			}
-
 			rh.nextFree = 0L;
 			writeRecHeader(rh, coffset, hdl.getFile());
 			offset = coffset;
 			return rh;
 		}
-
 		lastOffset = coffset;
 		lh = rh;
 		coffset = rh.nextFree;
 	}
-
 	hdl.getFile().seek(0L, SEEK_END);
 	offset = hdl.getFile().tell();
 	memset(&rh, 0, sizeof(rh));
 	rh.blkSize = blkSize;
 	return rh;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static void
-writeRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file)
+writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
 {
 	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
-
 	if(file.write(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
-		OW_THROW(OW_IOException, "Failed to write record to assoc db");
+		OW_THROW(IOException, "Failed to write record to assoc db");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static void
-readRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file)
+readRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
 {
 	if(file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
-		OW_THROW(OW_IOException, "Failed to read record from assoc db");
+		OW_THROW(IOException, "Failed to read record from assoc db");
 	}
-
-	OW_UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
+	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		 sizeof(rh) - sizeof(rh.chkSum));
-
 	if(chkSum != rh.chkSum)
 	{
-		OW_THROW(OW_IOException, "Check sum failed reading rec from assoc db");
+		OW_THROW(IOException, "Check sum failed reading rec from assoc db");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-static OW_UInt32
-calcCheckSum(unsigned char* src, OW_Int32 len)
+static UInt32
+calcCheckSum(unsigned char* src, Int32 len)
 {
-	register OW_UInt32 cksum = 0;
-	register OW_Int32 i;
-
+	register UInt32 cksum = 0;
+	register Int32 i;
 	for(i = 0; i < len; i++)
 	{
-		cksum += static_cast<OW_UInt32>(src[i]);
+		cksum += static_cast<UInt32>(src[i]);
 	}
-
 	return cksum;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator==(const OW_AssocDbEntry::entry& lhs, const OW_AssocDbEntry::entry& rhs)
+bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs)
 {
 	return lhs.m_assocClass.equalsIgnoreCase(rhs.m_assocClass) &&
 		lhs.m_resultClass.equalsIgnoreCase(rhs.m_resultClass) &&
 		lhs.m_associatedObject.equals(rhs.m_associatedObject) &&
 		lhs.m_associationPath.equals(rhs.m_associationPath);
 }
+
+} // end namespace OpenWBEM
+

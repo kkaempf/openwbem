@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HDB_HPP_INCLUDE_GUARD_
 #define OW_HDB_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_HDBCommon.hpp"
 #include "OW_String.hpp"
@@ -40,138 +38,122 @@
 #include "OW_HDBNode.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_MutexLock.hpp"
-
 #include <cstdio>
 
-class OW_HDB;
+namespace OpenWBEM
+{
 
+class HDB;
 //////////////////////////////////////////////////////////////////////////////
-class OW_HDBHandle
+class HDBHandle
 {
 private:
-
-	class OW_HDBHandleData
+	class HDBHandleData
 	{
 	public:
-		OW_HDBHandleData(OW_HDB* pdb, OW_File file) :
+		HDBHandleData(HDB* pdb, File file) :
 			m_pdb(pdb), m_file(file), m_writeDone(false),
 			m_userVal(0L) {}
-
-		OW_HDBHandleData() :
+		HDBHandleData() :
 			m_pdb(NULL), m_file(), m_writeDone(false),
 			m_userVal(0L) {}
-
-		~OW_HDBHandleData();
+		~HDBHandleData();
 	
-		OW_HDB* m_pdb;
-		OW_File m_file;
+		HDB* m_pdb;
+		File m_file;
 		bool m_writeDone;
-		OW_Int32 m_userVal;	// Handle user can store any long data here
+		Int32 m_userVal;	// Handle user can store any long data here
 	};
-
 public:
 	/**
-	 * Create a new OW_HDBHandle object from another (copy ctor).
-	 * @param x		The OW_HDBHandle to make a copy of.
+	 * Create a new HDBHandle object from another (copy ctor).
+	 * @param x		The HDBHandle to make a copy of.
 	 */
-	OW_HDBHandle(const OW_HDBHandle& x) : m_pdata(x.m_pdata) {}
-
-	OW_HDBHandle();
-
+	HDBHandle(const HDBHandle& x) : m_pdata(x.m_pdata) {}
+	HDBHandle();
 	/**
 	 * Assignment operator
-	 * @param x		The OW_HDBHandle to assign to this one.
-	 * @return A reference to this OW_HDBHandle
+	 * @param x		The HDBHandle to assign to this one.
+	 * @return A reference to this HDBHandle
 	 */
-	OW_HDBHandle& operator= (const OW_HDBHandle& x)
+	HDBHandle& operator= (const HDBHandle& x)
 	{
 		m_pdata = x.m_pdata;
 		return *this;
 	}
-
 	/**
 	 * Flush the underlying database and index files.
 	 */
 	void flush();
-
 	/**
-	 * Get the OW_HDBNode associated with a key.
-	 * @param key	The key of the OW_HDBNode to retrieve.
-	 * @return The OW_HDBNode associated with the key on success. Otherwise
-	 * a NULL OW_HDBNode if the node doesn't exist.
-	 * @exception OW_HDBException
+	 * Get the HDBNode associated with a key.
+	 * @param key	The key of the HDBNode to retrieve.
+	 * @return The HDBNode associated with the key on success. Otherwise
+	 * a NULL HDBNode if the node doesn't exist.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getNode(const OW_String& key);
-
+	HDBNode getNode(const String& key);
 	/**
-	 * Get the OW_HDBNode that is the parent of another OW_HDBNode.
-	 * @param node	The node to get the parent OW_HDBNode for.
-	 * @return The OW_HDBNode that is the parent of the given node on success.
-	 * Otherwise a NULL OW_HDBNode if there is no parent.
-	 * @exception OW_HDBException
+	 * Get the HDBNode that is the parent of another HDBNode.
+	 * @param node	The node to get the parent HDBNode for.
+	 * @return The HDBNode that is the parent of the given node on success.
+	 * Otherwise a NULL HDBNode if there is no parent.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getParent(OW_HDBNode& node);
-
+	HDBNode getParent(HDBNode& node);
 	/**
-	 * Get the OW_HDBNode that is the first child of a given node.
+	 * Get the HDBNode that is the first child of a given node.
 	 * @param node	The node to get the first child from.
-	 * @return An OW_HDBNode for the first child of node on success. Otherwise
-	 * a NULL OW_HDBNode if there are no children.
-	 * @exception OW_HDBException
+	 * @return An HDBNode for the first child of node on success. Otherwise
+	 * a NULL HDBNode if there are no children.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getFirstChild(OW_HDBNode& node);
-
+	HDBNode getFirstChild(HDBNode& node);
 	/**
-	 * Get the OW_HDBNode that is the last child of a given node.
+	 * Get the HDBNode that is the last child of a given node.
 	 * @param node	The node to get the last child from.
-	 * @return An OW_HDBNode for the last child of node on success. Otherwise
-	 * a NULL OW_HDBNode if there are no children.
-	 * @exception OW_HDBException
+	 * @return An HDBNode for the last child of node on success. Otherwise
+	 * a NULL HDBNode if there are no children.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getLastChild(OW_HDBNode& node);
-
+	HDBNode getLastChild(HDBNode& node);
 	/**
-	 * Get the OW_HDBNode that is the next sibling of a given node.
+	 * Get the HDBNode that is the next sibling of a given node.
 	 * @param node	The node to get the next sibling from.
-	 * @return An OW_HDBNode for the next sibling of node on success. Otherwise
-	 * a NULL OW_HDBNode if there are no siblings.
-	 * @exception OW_HDBException
+	 * @return An HDBNode for the next sibling of node on success. Otherwise
+	 * a NULL HDBNode if there are no siblings.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getNextSibling(OW_HDBNode& node);
-
+	HDBNode getNextSibling(HDBNode& node);
 	/**
-	 * Get the OW_HDBNode that is the previous sibling of a given node.
+	 * Get the HDBNode that is the previous sibling of a given node.
 	 * @param node	The node to get the previous sibling from.
-	 * @return An OW_HDBNode for the previous sibling of node on success.
-	 * Otherwise a NULL OW_HDBNode if there are no siblings.
-	 * @exception OW_HDBException
+	 * @return An HDBNode for the previous sibling of node on success.
+	 * Otherwise a NULL HDBNode if there are no siblings.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getPrevSibling(OW_HDBNode& node);
-
+	HDBNode getPrevSibling(HDBNode& node);
 	/**
 	 * @return The first root node of the database if there is one. Othewise
-	 * a NULL OW_HDBNode.
-	 * @exception OW_HDBException
+	 * a NULL HDBNode.
+	 * @exception HDBException
 	 */
-	OW_HDBNode getFirstRoot();
-
+	HDBNode getFirstRoot();
 	/**
 	 * Add a node to the database that has no parent (root node).
 	 * @param node	The node to add as a root node to the database.
 	 * @return true if the node was added to the database. Otherwise false.
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	bool addRootNode(OW_HDBNode& node);
-
+	bool addRootNode(HDBNode& node);
 	/**
 	 * Add a node as a child to another node.
 	 * @param parentNode		The node to add the child node to.
 	 * @param childNode		The child node to add to parentNode.
 	 * @return true if the child node was added to the parent. Otherwise false.
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	bool addChild(OW_HDBNode& parentNode, OW_HDBNode& childNode);
-
+	bool addChild(HDBNode& parentNode, HDBNode& childNode);
 	/**
 	 * Add a node as a child to another node referenced by a given key.
 	 * @param parentKey	The key to the parent node.
@@ -179,230 +161,194 @@ public:
 	 * @return true if the child node was added to the parent. false if the
 	 * parent does not exist.
 	 */
-	bool addChild(const OW_String& parentKey, OW_HDBNode& childNode);
-
+	bool addChild(const String& parentKey, HDBNode& childNode);
 	/**
 	 * Remove a node and all of its' children.
 	 * @param node	The node to remove.
 	 * @return true if the node was removed. Otherwise false.
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	bool removeNode(OW_HDBNode& node);
-
+	bool removeNode(HDBNode& node);
 	/**
 	 * Remove the node associated with a given key and all of its' children.
 	 * @param key	The key of the node to remove.
 	 * @return true if the node was removed. Otherwise false.
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	bool removeNode(const OW_String& key);
-
+	bool removeNode(const String& key);
 	/**
 	 * Update the data associated with a node.
 	 * @param node		The node to update the data on.
 	 * @param dataLen	The length of the data that will be associated with node.
 	 * @param data		The data that will be associated with node.
 	 * @return true if the update was successful. Otherwise false.
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	bool updateNode(OW_HDBNode& node, OW_Int32 dataLen, unsigned char* data);
-
+	bool updateNode(HDBNode& node, Int32 dataLen, unsigned char* data);
 	/**
 	 * Turn the user defined flags on in this node.
 	 * @param node		The node to turn the flags on in
 	 * @param flags	The flags to turn on in this node.
 	 */
-	void turnFlagsOn(OW_HDBNode& node, OW_UInt32 flags);
-
+	void turnFlagsOn(HDBNode& node, UInt32 flags);
 	/**
 	 * Turn the user defined flags off in this node.
 	 * @param node		The node to turn the flags off in
 	 * @param flags	The flags to turn off in this node.
 	 */
-	void turnFlagsOff(OW_HDBNode& node, OW_UInt32 flags);
-
+	void turnFlagsOff(HDBNode& node, UInt32 flags);
 	/**
 	 * Set the user value for this handle. The user value is not used by the
-	 * OW_HDBHandle object. It allows the user to store any value for later
+	 * HDBHandle object. It allows the user to store any value for later
 	 * retrieval. It is being used to help facilitate the caching of
-	 * OW_HDBHandle object.
+	 * HDBHandle object.
 	 * @param value	The new value for the user data field.
 	 */
-	void setUserValue(OW_Int32 value) { m_pdata->m_userVal = value; }
-
+	void setUserValue(Int32 value) { m_pdata->m_userVal = value; }
 	/**
-	 * @return The user value for this OW_HDBHandle object.
+	 * @return The user value for this HDBHandle object.
 	 * @see setUserValue
 	 */
-	OW_Int32 getUserValue() const { return m_pdata->m_userVal; }
-
+	Int32 getUserValue() const { return m_pdata->m_userVal; }
 	/**
-	 * @return true if the is a valid OW_HDBHandle. Otherwise false.
+	 * @return true if the is a valid HDBHandle. Otherwise false.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 private:
-
-	OW_HDBHandle(OW_HDB* pdb, OW_File file);
-
-	OW_File getFile() { return m_pdata->m_file; }
-	OW_HDB* getHDB() { return m_pdata->m_pdb; }
-	OW_Int32 registerWrite();
-
-	OW_IndexEntry findFirstIndexEntry(const char* key=NULL);
-	OW_IndexEntry findNextIndexEntry();
-	OW_IndexEntry findPrevIndexEntry();
-	OW_IndexEntry findIndexEntry(const char* key);
-	bool addIndexEntry(const char* key, OW_Int32 offset);
+	HDBHandle(HDB* pdb, File file);
+	File getFile() { return m_pdata->m_file; }
+	HDB* getHDB() { return m_pdata->m_pdb; }
+	Int32 registerWrite();
+	IndexEntry findFirstIndexEntry(const char* key=NULL);
+	IndexEntry findNextIndexEntry();
+	IndexEntry findPrevIndexEntry();
+	IndexEntry findIndexEntry(const char* key);
+	bool addIndexEntry(const char* key, Int32 offset);
 	bool removeIndexEntry(const char* key);
-	bool updateIndexEntry(const char* key, OW_Int32 newOffset);
-
-	friend class OW_HDB;
-	friend class OW_HDBNode;
-
-	OW_Reference<OW_HDBHandleData> m_pdata;
+	bool updateIndexEntry(const char* key, Int32 newOffset);
+	friend class HDB;
+	friend class HDBNode;
+	Reference<HDBHandleData> m_pdata;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HDB
+class HDB
 {
 public:
 	
 	/**
-	 * Create a new OW_HDB object.
+	 * Create a new HDB object.
 	 */
-	OW_HDB();
-
+	HDB();
 	/**
-	 * Destroy this OW_HDB object.
+	 * Destroy this HDB object.
 	 */
-	~OW_HDB();
-
+	~HDB();
 	/**
-	 * Open this OW_HDB object up for business.
+	 * Open this HDB object up for business.
 	 * @param fileName	The file name associated with the database
-	 * @exception OW_HDBException if an error occurs opening/creating files.
+	 * @exception HDBException if an error occurs opening/creating files.
 	 */
 	void open(const char* fileName);
-
 	/**
-	 * Close this OW_HDB object
+	 * Close this HDB object
 	 */
 	void close();
-
 	/**
-	 * Create a new OW_HDBHandle that is associated with this OW_HDB object.
-	 * @return An OW_HDBHandle object that can be used to operate on this
-	 * OW_HDB object.
-	 * @exception OW_HDBException if this OW_HDB is not opened.
+	 * Create a new HDBHandle that is associated with this HDB object.
+	 * @return An HDBHandle object that can be used to operate on this
+	 * HDB object.
+	 * @exception HDBException if this HDB is not opened.
 	 */
-	OW_HDBHandle getHandle();
-
+	HDBHandle getHandle();
 	/**
-	 * @return true if this OW_HDB is currently opened.
+	 * @return true if this HDB is currently opened.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (m_opened) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (m_opened) ? 0: &dummy::nonnull; }
-
 	/**
-	 * @return The number of outstanding handles on this OW_HDB
+	 * @return The number of outstanding handles on this HDB
 	 */
 	int getHandleCount() const { return m_hdlCount; }
-
 	/**
-	 * @return The file name for this OW_HDB object
+	 * @return The file name for this HDB object
 	 */
-	OW_String getFileName() const { return m_fileName; }
-
-
+	String getFileName() const { return m_fileName; }
 	/**
-	 * Write the given OW_HDBBlock.
-	 * @param fblk	The OW_HDBBlock to write.
+	 * Write the given HDBBlock.
+	 * @param fblk	The HDBBlock to write.
 	 * @param file The file object to write fblk to.
 	 * @param offset	The offset to write the block to.
 	 * @return The number of bytes written on success. Otherwise -1
 	 */
-	static void writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
-
+	static void writeBlock(HDBBlock& fblk, File file, Int32 offset);
 	/**
-	 * Read the given OW_HDBBlock.
-	 * @param fblk	The OW_HDBBlock to read.
+	 * Read the given HDBBlock.
+	 * @param fblk	The HDBBlock to read.
 	 * @param file The file object to read fblk from.
 	 * @param offset	The offset to read the block from.
 	 * @return The number of bytes read on success. Otherwise -1
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	static void readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
-
+	static void readBlock(HDBBlock& fblk, File file, Int32 offset);
 private:
-
 	bool createFile();
 	bool checkFile();
-	void setOffsets(OW_File file, OW_Int32 firstRootOffset, OW_Int32 lastRootOffset,
-		OW_Int32 firstFreeOffset);
-	void setFirstRootOffSet(OW_File file, OW_Int32 offset);
-	void setLastRootOffset(OW_File file, OW_Int32 offset);
-	void setFirstFreeOffSet(OW_File file, OW_Int32 offset);
-	OW_Int32 getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
-	OW_Int32 getLastRootOffset() { return m_hdrBlock.lastRoot; }
-	OW_Int32 getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
-	OW_Int32 findBlock(OW_File file, int size);
-	void removeBlockFromFreeList(OW_File file, OW_HDBBlock& fblk);
-	void addRootNode(OW_File file, OW_HDBBlock& fblk, OW_Int32 offset);
-	void addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
-		OW_Int32 offset);
-
-	OW_Int32 getVersion() { return m_version; }
-	OW_Int32 incVersion();
+	void setOffsets(File file, Int32 firstRootOffset, Int32 lastRootOffset,
+		Int32 firstFreeOffset);
+	void setFirstRootOffSet(File file, Int32 offset);
+	void setLastRootOffset(File file, Int32 offset);
+	void setFirstFreeOffSet(File file, Int32 offset);
+	Int32 getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
+	Int32 getLastRootOffset() { return m_hdrBlock.lastRoot; }
+	Int32 getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
+	Int32 findBlock(File file, int size);
+	void removeBlockFromFreeList(File file, HDBBlock& fblk);
+	void addRootNode(File file, HDBBlock& fblk, Int32 offset);
+	void addBlockToFreeList(File file, const HDBBlock& parmblk,
+		Int32 offset);
+	Int32 getVersion() { return m_version; }
+	Int32 incVersion();
 	void decHandleCount();
-
-	OW_IndexEntry findFirstIndexEntry(const char* key=NULL);
-	OW_IndexEntry findNextIndexEntry();
-	OW_IndexEntry findPrevIndexEntry();
-	OW_IndexEntry findIndexEntry(const char* key);
-	bool addIndexEntry(const char* key, OW_Int32 offset);
+	IndexEntry findFirstIndexEntry(const char* key=NULL);
+	IndexEntry findNextIndexEntry();
+	IndexEntry findPrevIndexEntry();
+	IndexEntry findIndexEntry(const char* key);
+	bool addIndexEntry(const char* key, Int32 offset);
 	bool removeIndexEntry(const char* key);
-	bool updateIndexEntry(const char* key, OW_Int32 newOffset);
+	bool updateIndexEntry(const char* key, Int32 newOffset);
 	void flushIndex();
-
-	OW_HDBHeaderBlock m_hdrBlock;
-	OW_String m_fileName;
-	OW_Int32 m_version;
+	HDBHeaderBlock m_hdrBlock;
+	String m_fileName;
+	Int32 m_version;
 	int m_hdlCount;
 	bool m_opened;
-	OW_IndexRef m_pindex;
-	OW_Mutex m_indexGuard;
-	OW_Mutex m_guard;
-
-	friend class OW_HDBNode;
-	friend class OW_HDBHandle;
-	friend class OW_HDBHandle::OW_HDBHandleData;
+	IndexRef m_pindex;
+	Mutex m_indexGuard;
+	Mutex m_guard;
+	friend class HDBNode;
+	friend class HDBHandle;
+	friend class HDBHandle::HDBHandleData;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SocketUtils.hpp"
@@ -39,7 +38,6 @@
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_Socket.hpp"
 #include "OW_Thread.hpp"
-
 extern "C"
 {
 #include <sys/types.h>
@@ -57,8 +55,10 @@ extern "C"
 #include <pth.h>
 #endif
 }
-
 #include <fstream>
+
+namespace OpenWBEM
+{
 
 using std::istream;
 using std::ostream;
@@ -67,14 +67,12 @@ using std::ifstream;
 using std::ofstream;
 using std::fstream;
 using std::ios;
-
-OW_String OW_SocketBaseImpl::m_traceFileOut;
-OW_String OW_SocketBaseImpl::m_traceFileIn;
-
+String SocketBaseImpl::m_traceFileOut;
+String SocketBaseImpl::m_traceFileIn;
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketBaseImpl::OW_SocketBaseImpl()
-	: OW_SelectableIFC()
-	, OW_IOIFC()
+SocketBaseImpl::SocketBaseImpl()
+	: SelectableIFC()
+	, IOIFC()
 	, m_isConnected(false)
 	, m_sockfd(-1)
 	, m_localAddress()
@@ -92,16 +90,15 @@ OW_SocketBaseImpl::OW_SocketBaseImpl()
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd,
-		OW_SocketAddress::AddressType addrType)
-	: OW_SelectableIFC()
-	, OW_IOIFC()
+SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
+		SocketAddress::AddressType addrType)
+	: SelectableIFC()
+	, IOIFC()
 	, m_isConnected(true)
 	, m_sockfd(fd)
-	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
-	, m_peerAddress(OW_SocketAddress::allocEmptyAddress(addrType))
+	, m_localAddress(SocketAddress::getAnyLocalHost())
+	, m_peerAddress(SocketAddress::allocEmptyAddress(addrType))
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -114,11 +111,11 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd,
 	m_in.tie(&m_out);
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
-	if (addrType == OW_SocketAddress::INET)
+	if (addrType == SocketAddress::INET)
 	{
 		fillInetAddrParms();
 	}
-	else if (addrType == OW_SocketAddress::UDS)
+	else if (addrType == SocketAddress::UDS)
 	{
 		fillUnixAddrParms();
 	}
@@ -127,14 +124,13 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(OW_SocketHandle_t fd,
 		OW_ASSERT(0);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketBaseImpl::OW_SocketBaseImpl(const OW_SocketAddress& addr)
-	: OW_SelectableIFC()
-	, OW_IOIFC()
+SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
+	: SelectableIFC()
+	, IOIFC()
 	, m_isConnected(false)
 	, m_sockfd(-1)
-	, m_localAddress(OW_SocketAddress::getAnyLocalHost())
+	, m_localAddress(SocketAddress::getAnyLocalHost())
 	, m_peerAddress(addr)
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
@@ -151,7 +147,7 @@ OW_SocketBaseImpl::OW_SocketBaseImpl(const OW_SocketAddress& addr)
 	connect(m_peerAddress);
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketBaseImpl::~OW_SocketBaseImpl()
+SocketBaseImpl::~SocketBaseImpl()
 {
 	try
 	{
@@ -162,17 +158,15 @@ OW_SocketBaseImpl::~OW_SocketBaseImpl()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Select_t
-OW_SocketBaseImpl::getSelectObj() const
+Select_t
+SocketBaseImpl::getSelectObj() const
 {
 	return m_sockfd;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
+SocketBaseImpl::connect(const SocketAddress& addr)
 {
 	if(m_isConnected)
 	{
@@ -182,30 +176,25 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 	m_in.clear();
 	m_out.clear();
 	m_inout.clear();
-
-	OW_ASSERT(addr.getType() == OW_SocketAddress::INET
-			|| addr.getType() == OW_SocketAddress::UDS);
-
-	if((m_sockfd = ::socket(addr.getType() == OW_SocketAddress::INET ?
+	OW_ASSERT(addr.getType() == SocketAddress::INET
+			|| addr.getType() == SocketAddress::UDS);
+	if((m_sockfd = ::socket(addr.getType() == SocketAddress::INET ?
 		AF_INET : PF_UNIX, SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(OW_SocketException,
+		OW_THROW(SocketException,
 			format("Failed to create a socket: %1", strerror(errno)).c_str());
 	}
-
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		::close(m_sockfd);
-		OW_THROW(OW_SocketException, format("OW_SocketBaseImpl::connect() failed to set "
+		OW_THROW(SocketException, format("SocketBaseImpl::connect() failed to set "
 			"close-on-exec flag on socket: %1",
 			strerror(errno)).c_str());
 	}
-
 	int n;
 	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
-
 #ifdef OW_USE_GNU_PTH
 	if((n = ::pth_connect(m_sockfd, addr.getNativeForm(),
 					addr.getNativeFormSize())) < 0)
@@ -217,40 +206,32 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 		if(errno != EINPROGRESS)
 		{
 			::close(m_sockfd);
-			OW_THROW(OW_SocketException,
+			OW_THROW(SocketException,
 				format("Failed to connect to: %1: %2(%3)", addr.getAddress(), errno, strerror(errno)).c_str());
 		}
 	}
-
 	if(n == -1) 
 	{
 		// because of the above check for EINPROGRESS
 		// not connected yet, need to select and wait for connection to complete.
-		OW_PosixUnnamedPipeRef lUPipe;
-
+		PosixUnnamedPipeRef lUPipe;
 		int pipefd = -1;
-
-		if (OW_Socket::m_pUpipe)
+		if (Socket::m_pUpipe)
 		{
-			lUPipe = OW_Socket::m_pUpipe.cast_to<OW_PosixUnnamedPipe>();
+			lUPipe = Socket::m_pUpipe.cast_to<PosixUnnamedPipe>();
 			OW_ASSERT(lUPipe);
 			pipefd = lUPipe->getInputHandle();
-
 		}
-
 		fd_set rset, wset;
 		struct timeval tval;
-
 		FD_ZERO(&rset);
 		FD_SET(m_sockfd, &rset);
 		if (pipefd != -1)
 		{
 			FD_SET(pipefd, &rset);
 		}
-
 		FD_ZERO(&wset);
 		FD_SET(m_sockfd, &wset);
-
 		struct timeval* ptval = 0;
 		if (m_connectTimeout > 0)
 		{
@@ -258,65 +239,57 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 			tval.tv_usec = 0;
 			ptval = &tval;
 		}
-
 		int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
 		if((n = ::select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
 		{
 			::close(m_sockfd);
-
-			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect() select timedout");
+			OW_THROW(SocketException, "SocketBaseImpl::connect() select timedout");
 		}
 		if (n == -1)
 		{
 			::close(m_sockfd);
-
 			if (errno == EINTR)
 			{
-				OW_Thread::testCancel();
+				Thread::testCancel();
 			}
-
-			OW_THROW(OW_SocketException, format("OW_SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
+			OW_THROW(SocketException, format("SocketBaseImpl::connect() select failed: %1(%2)", errno, strerror(errno)).c_str());
 		}
-
 		if(pipefd != -1 && FD_ISSET(pipefd, &rset))
 		{
 			::close(m_sockfd);
-			OW_THROW(OW_SocketException, "Sockets have been shutdown");
+			OW_THROW(SocketException, "Sockets have been shutdown");
 		}
 		else if(FD_ISSET(m_sockfd, &rset) || FD_ISSET(m_sockfd, &wset))
 		{
 			int error;
 			socklen_t len = sizeof(error);
-
 			if(::getsockopt(m_sockfd, SOL_SOCKET, SO_ERROR, &error,
 						&len) < 0)
 			{
 				::close(m_sockfd);
-				OW_THROW(OW_SocketException,
-						format("OW_SocketBaseImpl::connect() getsockopt() failed: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW(SocketException,
+						format("SocketBaseImpl::connect() getsockopt() failed: %1(%2)", errno, strerror(errno)).c_str());
 			}
 			if (error != 0)
 			{
 				::close(m_sockfd);
-				OW_THROW(OW_SocketException,
-						format("OW_SocketBaseImpl::connect() failed: %1(%2)", error, strerror(error)).c_str());
+				OW_THROW(SocketException,
+						format("SocketBaseImpl::connect() failed: %1(%2)", error, strerror(error)).c_str());
 			}
 		}
 		else
 		{
 			::close(m_sockfd);
-			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::connect(). Logic error, m_sockfd not in FD set.");
+			OW_THROW(SocketException, "SocketBaseImpl::connect(). Logic error, m_sockfd not in FD set.");
 		}
 	}
-
 	::fcntl(m_sockfd, F_SETFL, flags);
-
 	m_isConnected = true;
-	if (addr.getType() == OW_SocketAddress::INET)
+	if (addr.getType() == SocketAddress::INET)
 	{
 		fillInetAddrParms();
 	}
-	else if (addr.getType() == OW_SocketAddress::UDS)
+	else if (addr.getType() == SocketAddress::UDS)
 	{
 		fillUnixAddrParms();
 	}
@@ -325,11 +298,9 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 		OW_ASSERT(0);
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SocketBaseImpl::disconnect()
+SocketBaseImpl::disconnect()
 {
 	if (m_in)
 	{
@@ -350,72 +321,63 @@ OW_SocketBaseImpl::disconnect()
 		m_sockfd = -1;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // JBW this needs reworked.
 void
-OW_SocketBaseImpl::fillInetAddrParms()
+SocketBaseImpl::fillInetAddrParms()
 {
 	socklen_t len;
-	OW_InetSocketAddress_t addr;
+	InetSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
-
 	len = sizeof(addr);
 	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 // Don't error out here, we can still operate without working DNS.
-//		OW_THROW(OW_SocketException,
-//				format("OW_SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
+//		OW_THROW(SocketException,
+//				format("SocketBaseImpl::fillInetAddrParms: getsockname: %1(%2)", errno, strerror(errno)).c_str());
 	}
 	else
 	{
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
-
 	len = sizeof(addr);
 	if(getpeername(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
 // Don't error out here, we can still operate without working DNS.
-//		OW_THROW(OW_SocketException,
-//				format("OW_SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
+//		OW_THROW(SocketException,
+//				format("SocketBaseImpl::fillInetAddrParms: getpeername: %1(%2)", errno, strerror(errno)).c_str());
 	}
 	else
 	{
 		m_peerAddress.assignFromNativeForm(&addr, len);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SocketBaseImpl::fillUnixAddrParms()
+SocketBaseImpl::fillUnixAddrParms()
 {
 	socklen_t len;
-	OW_UnixSocketAddress_t addr;
+	UnixSocketAddress_t addr;
 	memset(&addr, 0, sizeof(addr));
-
 	len = sizeof(addr);
 	if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 	{
-		OW_THROW(OW_SocketException,
-				"OW_SocketBaseImpl::fillUnixAddrParms: getsockname");
+		OW_THROW(SocketException,
+				"SocketBaseImpl::fillUnixAddrParms: getsockname");
 	}
 	m_localAddress.assignFromNativeForm(&addr, len);
 	m_peerAddress.assignFromNativeForm(&addr, len);
 }
-
-static OW_Mutex guard;
-
+static Mutex guard;
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException)
+SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException)
 {
 	int rc = 0;
 	bool isError = false;
-
 	if(m_isConnected)
 	{
 		isError = waitForOutput(m_sendTimeout);
-
 		if(isError)
 		{
 			rc = -1;
@@ -425,15 +387,15 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsExcept
 			rc = writeAux(dataOut, dataOutLen);
 			if(!m_traceFileOut.empty() && rc > 0)
 			{
-				OW_MutexLock ml(guard);
+				MutexLock ml(guard);
 				ofstream traceFile(m_traceFileOut.c_str(), std::ios::app);
 				if (!traceFile)
 				{
-					OW_THROW(OW_IOException, "Failed opening socket dump file");
+					OW_THROW(IOException, "Failed opening socket dump file");
 				}
 				if (!traceFile.write(static_cast<const char*>(dataOut), rc))
 				{
-					OW_THROW(OW_IOException, "Failed writing to socket dump");
+					OW_THROW(IOException, "Failed writing to socket dump");
 				}
 			}
 		}
@@ -442,7 +404,6 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsExcept
 	{
 		rc = -1;
 	}
-
 	if(rc < 0)
 	{
 		if (m_isConnected)
@@ -450,23 +411,19 @@ OW_SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsExcept
 			disconnect();
 		}
 		if(errorAsException)
-			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::write");
+			OW_THROW(SocketException, "SocketBaseImpl::write");
 	}
-
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException) 	
+SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException) 	
 {
 	int rc = 0;
 	bool isError = false;
-
 	if(m_isConnected)
 	{
 		isError = waitForInput(m_recvTimeout);
-
 		if(isError)
 		{
 			rc = -1;
@@ -476,15 +433,15 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 			rc = readAux(dataIn, dataInLen);
 			if(!m_traceFileIn.empty() && rc > 0)
 			{
-				OW_MutexLock ml(guard);
+				MutexLock ml(guard);
 				ofstream traceFile(m_traceFileIn.c_str(), std::ios::app);
 				if (!traceFile)
 				{
-					OW_THROW(OW_IOException, "Failed opening tracefile");
+					OW_THROW(IOException, "Failed opening tracefile");
 				}
 				if (!traceFile.write(reinterpret_cast<const char*>(dataIn), rc))
 				{
-					OW_THROW(OW_IOException, "Failed writing to socket dump");
+					OW_THROW(IOException, "Failed writing to socket dump");
 				}
 			}
 		}
@@ -493,62 +450,56 @@ OW_SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	{
 		rc = -1;
 	}
-
 	if(rc < 0)
 	{
 		if(errorAsException)
-			OW_THROW(OW_SocketException, "OW_SocketBaseImpl::read");
+			OW_THROW(SocketException, "SocketBaseImpl::read");
 	}
-
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_SocketBaseImpl::waitForInput(int timeOutSecs)
+SocketBaseImpl::waitForInput(int timeOutSecs)
 {
-	int rval = OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, OW_SocketFlags::E_WAIT_FOR_INPUT);
+	int rval = SocketUtils::waitForIO(m_sockfd, timeOutSecs, SocketFlags::E_WAIT_FOR_INPUT);
 	if (rval == ETIMEDOUT)
 	{
 		m_recvTimeoutExprd = true;
 	}
 	return (rval != 0);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_SocketBaseImpl::waitForOutput(int timeOutSecs)
+SocketBaseImpl::waitForOutput(int timeOutSecs)
 {
-	return OW_SocketUtils::waitForIO(m_sockfd, timeOutSecs, OW_SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
+	return SocketUtils::waitForIO(m_sockfd, timeOutSecs, SocketFlags::E_WAIT_FOR_OUTPUT) != 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 istream&
-OW_SocketBaseImpl::getInputStream()
+SocketBaseImpl::getInputStream()
 {
 	return m_in;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-OW_SocketBaseImpl::getOutputStream()
+SocketBaseImpl::getOutputStream()
 {
 	return m_out;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 iostream&
-OW_SocketBaseImpl::getIOStream()
+SocketBaseImpl::getIOStream()
 {
 	return m_inout;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_SocketBaseImpl::setDumpFiles(const OW_String& in, const OW_String& out)
+SocketBaseImpl::setDumpFiles(const String& in, const String& out)
 {
 	m_traceFileOut = out;
 	m_traceFileIn = in;
 }
+
+} // end namespace OpenWBEM
+

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_SocketImpl.cpp
  * @author	J. Bart Whiteley
@@ -39,44 +38,39 @@
 #include "OW_SocketImpl.hpp"
 
 #ifdef OW_USE_GNU_PTH
-extern "C"
-{
-#include <pth.h>
-}
+ #include <pth.h>
 #endif
 
-
-//////////////////////////////////////////////////////////////////////////////
-OW_SocketImpl::OW_SocketImpl() 
-	: OW_SocketBaseImpl()
+namespace OpenWBEM
 {
-}
 
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketImpl::OW_SocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType)
-	: OW_SocketBaseImpl(fd, addrType)
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_SocketImpl::OW_SocketImpl(const OW_SocketAddress addr) 
-	: OW_SocketBaseImpl(addr)
+SocketImpl::SocketImpl() 
+	: SocketBaseImpl()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_SocketImpl::~OW_SocketImpl()
+SocketImpl::SocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType)
+	: SocketBaseImpl(fd, addrType)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Select_t
-OW_SocketImpl::getSelectObj() const
+SocketImpl::SocketImpl(const SocketAddress addr) 
+	: SocketBaseImpl(addr)
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+SocketImpl::~SocketImpl()
+{
+}
+//////////////////////////////////////////////////////////////////////////////
+Select_t
+SocketImpl::getSelectObj() const
 {
 	return m_sockfd;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-int OW_SocketImpl::readAux(void* dataIn, int dataInLen) 
+int SocketImpl::readAux(void* dataIn, int dataInLen) 
 {
 #ifdef OW_USE_GNU_PTH
 	return ::read(m_sockfd, dataIn, dataInLen);
@@ -84,9 +78,8 @@ int OW_SocketImpl::readAux(void* dataIn, int dataInLen)
 	return ::read(m_sockfd, dataIn, dataInLen);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
-int OW_SocketImpl::writeAux(const void* dataOut, int dataOutLen)
+int SocketImpl::writeAux(const void* dataOut, int dataOutLen)
 {
 #ifdef OW_USE_GNU_PTH
 	return ::write(m_sockfd, dataOut, dataOutLen);
@@ -94,6 +87,7 @@ int OW_SocketImpl::writeAux(const void* dataOut, int dataOutLen)
 	return ::write(m_sockfd, dataOut, dataOutLen);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
+
+} // end namespace OpenWBEM
 

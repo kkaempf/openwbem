@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_MOFGrammar.hpp"
 #include "OW_MOFCIMOMVisitor.hpp"
@@ -38,70 +37,57 @@
 #include "OW_CIMScope.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
-
 #include <assert.h>
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
-CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns,
-		OW_Reference<OW_MofParserErrorHandlerIFC> _theErrorHandler)
-: m_curValue(OW_CIMNULL)
+namespace MOF
+{
+
+using namespace WBEMFlags;
+CIMOMVisitor::CIMOMVisitor(Reference<CIMOMHandleIFC> handle, String& ns,
+		Reference<ParserErrorHandlerIFC> _theErrorHandler)
+: m_curValue(CIMNULL)
 , m_hdl(handle)
 , m_namespace(ns)
 , theErrorHandler(_theErrorHandler)
 {
 }
-
 CIMOMVisitor::~CIMOMVisitor()
 {
 }
-
-
 void CIMOMVisitor::VisitMOFSpecification( const MOFSpecification *pMOFSpecification )
 {
-	for ( OW_List<MOFProduction *>::const_iterator i = pMOFSpecification->pMOFProduction->begin();
+	for ( List<MOFProduction *>::const_iterator i = pMOFSpecification->pMOFProduction->begin();
 		 i != pMOFSpecification->pMOFProduction->end();
 		 ++i )
 		(*i)->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitMOFProductionCompilerDirective( const MOFProductionCompilerDirective *pMOFProductionCompilerDirective )
 {
 	pMOFProductionCompilerDirective->pCompilerDirective->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitMOFProductionClassDeclaration( const MOFProductionClassDeclaration *pMOFProductionClassDeclaration )
 {
 	pMOFProductionClassDeclaration->pClassDeclaration->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitMOFProductionAssocDeclaration( const MOFProductionAssocDeclaration *pMOFProductionAssocDeclaration )
 {
 	pMOFProductionAssocDeclaration->pAssocDeclaration->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitMOFProductionIndicDeclaration( const MOFProductionIndicDeclaration *pMOFProductionIndicDeclaration )
 {
 	pMOFProductionIndicDeclaration->pIndicDeclaration->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitMOFProductionQualifierDeclaration( const MOFProductionQualifierDeclaration *pMOFProductionQualifierDeclaration )
 {
 	pMOFProductionQualifierDeclaration->pQualifierDeclaration->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitMOFProductionInstanceDeclaration( const MOFProductionInstanceDeclaration *pMOFProductionInstanceDeclaration )
 {
 	pMOFProductionInstanceDeclaration->pInstanceDeclaration->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDirective )
 {
 	//pCompilerDirective->pPragmaName->Accept( this );
@@ -112,15 +98,15 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("instancelocale"))
 	{
-		m_instanceLocale = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_instanceLocale = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("locale"))
 	{
-		m_locale = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_locale = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("namespace"))
 	{
-		m_namespace = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_namespace = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocal"))
 	{
@@ -130,7 +116,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 			theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocal ignored",
 				pCompilerDirective->theLineInfo);
 		}
-		m_nonLocal = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_nonLocal = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocaltype"))
 	{
@@ -140,7 +126,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 			theErrorHandler->recoverableError("nonlocal and nonlocaltype pragmas can't both be set, pragma nonlocaltype ignored",
 				pCompilerDirective->theLineInfo);
 		}
-		m_nonLocalType = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_nonLocalType = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("source"))
 	{
@@ -150,7 +136,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 			theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma source ignored",
 				pCompilerDirective->theLineInfo);
 		}
-		m_source = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_source = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("sourcetype"))
 	{
@@ -160,7 +146,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 			theErrorHandler->recoverableError("source and sourcetype pragmas can't both be set, pragma sourcetype ignored",
 				pCompilerDirective->theLineInfo);
 		}
-		m_sourceType = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
+		m_sourceType = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else
 	{
@@ -170,49 +156,39 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 			pCompilerDirective->theLineInfo);
 	}
 }
-
-
 void CIMOMVisitor::VisitPragmaName( const PragmaName * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitPragmaParameter( const PragmaParameter * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitClassDeclaration( const ClassDeclaration *pClassDeclaration )
 {
-	m_curClass = OW_CIMClass(*pClassDeclaration->pClassName->pClassName);
-
+	m_curClass = CIMClass(*pClassDeclaration->pClassName->pClassName);
 	if ( pClassDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pClassDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pClassDeclaration->pQualifier->begin();
 			 i != pClassDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
 			m_curClass.addQualifier(m_curQualifier);
 		}
 	}
-
 	if ( pClassDeclaration->pAlias.get() != 0 )
 	{
 		theErrorHandler->recoverableError("Class aliases are deprecated per DMTF CR817", pClassDeclaration->theLineInfo);
 		m_aliasMap[*(pClassDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			*(pClassDeclaration->pClassName->pClassName);
 	}
-
 	if ( pClassDeclaration->pSuperClass.get() != 0 )
 	{
 		m_curClass.setSuperClass(*(pClassDeclaration->pSuperClass->pClassName->pClassName));
 	}
-
 	if ( pClassDeclaration->pClassFeature.get() != 0 )
 	{
-		for ( OW_List<ClassFeature *>::const_iterator i = pClassDeclaration->pClassFeature->begin();
+		for ( List<ClassFeature *>::const_iterator i = pClassDeclaration->pClassFeature->begin();
 			 i != pClassDeclaration->pClassFeature->end();
 			 ++i )
 		{
@@ -221,19 +197,16 @@ void CIMOMVisitor::VisitClassDeclaration( const ClassDeclaration *pClassDeclarat
 	}
 	CIMOMcreateClass(pClassDeclaration->theLineInfo);
 }
-
 void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclaration )
 {
-	m_curClass = OW_CIMClass(*pAssocDeclaration->pClassName->pClassName);
-
-	OW_CIMQualifierType qt = getQualifierType(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, pAssocDeclaration->theLineInfo);
-	OW_CIMQualifier q(qt);
-	q.setValue(OW_CIMValue(OW_Bool(true)));
-
+	m_curClass = CIMClass(*pAssocDeclaration->pClassName->pClassName);
+	CIMQualifierType qt = getQualifierType(CIMQualifier::CIM_QUAL_ASSOCIATION, pAssocDeclaration->theLineInfo);
+	CIMQualifier q(qt);
+	q.setValue(CIMValue(Bool(true)));
 	m_curClass.addQualifier(q);
 	if ( pAssocDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pAssocDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pAssocDeclaration->pQualifier->begin();
 			 i != pAssocDeclaration->pQualifier->end();
 			 ++i )
 		{
@@ -241,7 +214,6 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 			m_curClass.addQualifier(m_curQualifier);
 		}
 	}
-
 	if ( pAssocDeclaration->pAlias.get() != 0 )
 	{
 		theErrorHandler->recoverableError("Class aliases are deprecated per DMTF CR817", pAssocDeclaration->theLineInfo);
@@ -252,10 +224,9 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 	{
 		m_curClass.setSuperClass(*(pAssocDeclaration->pSuperClass->pClassName->pClassName));
 	}
-
 	if ( pAssocDeclaration->pAssociationFeature.get() != 0 )
 	{
-		for ( OW_List<AssociationFeature *>::const_iterator i = pAssocDeclaration->pAssociationFeature->begin();
+		for ( List<AssociationFeature *>::const_iterator i = pAssocDeclaration->pAssociationFeature->begin();
 			 i != pAssocDeclaration->pAssociationFeature->end();
 			 ++i )
 		{
@@ -264,19 +235,17 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 	}
 	CIMOMcreateClass(pAssocDeclaration->theLineInfo);
 }
-
-
 void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclaration )
 {
-	m_curClass = OW_CIMClass(*pIndicDeclaration->pClassName->pClassName);
+	m_curClass = CIMClass(*pIndicDeclaration->pClassName->pClassName);
 	
-	OW_CIMQualifierType qt = getQualifierType(OW_CIMQualifier::CIM_QUAL_INDICATION, pIndicDeclaration->theLineInfo);
-	OW_CIMQualifier q(qt);
-	q.setValue(OW_CIMValue(OW_Bool(true)));
+	CIMQualifierType qt = getQualifierType(CIMQualifier::CIM_QUAL_INDICATION, pIndicDeclaration->theLineInfo);
+	CIMQualifier q(qt);
+	q.setValue(CIMValue(Bool(true)));
 	m_curClass.addQualifier(q);
 	if ( pIndicDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pIndicDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pIndicDeclaration->pQualifier->begin();
 			 i != pIndicDeclaration->pQualifier->end();
 			 ++i )
 		{
@@ -284,7 +253,6 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 			m_curClass.addQualifier(m_curQualifier);
 		}
 	}
-
 	if ( pIndicDeclaration->pAlias.get() != 0 )
 	{
 		theErrorHandler->recoverableError("Class aliases are deprecated per DMTF CR817", pIndicDeclaration->theLineInfo);
@@ -295,10 +263,9 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 	{
 		m_curClass.setSuperClass(*(pIndicDeclaration->pSuperClass->pClassName->pClassName));
 	}
-
 	if ( pIndicDeclaration->pClassFeature.get() != 0 )
 	{
-		for ( OW_List<ClassFeature *>::const_iterator i = pIndicDeclaration->pClassFeature->begin();
+		for ( List<ClassFeature *>::const_iterator i = pIndicDeclaration->pClassFeature->begin();
 			 i != pIndicDeclaration->pClassFeature->end();
 			 ++i )
 		{
@@ -307,8 +274,6 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 	}
 	CIMOMcreateClass(pIndicDeclaration->theLineInfo);
 }
-
-
 void CIMOMVisitor::VisitClassName( const ClassName * )
 {
 	assert(0);
@@ -319,53 +284,42 @@ void CIMOMVisitor::VisitAlias( const Alias * )
 }
 void CIMOMVisitor::VisitAliasIdentifier( const AliasIdentifier *pAliasIdentifier )
 {
-	OW_String alias = m_aliasMap[*pAliasIdentifier->pAliasIdentifier];
+	String alias = m_aliasMap[*pAliasIdentifier->pAliasIdentifier];
 	if (alias.empty())
 	{
 		theErrorHandler->recoverableError(format("Invalid alias: %1", *pAliasIdentifier->pAliasIdentifier).c_str(),
 			pAliasIdentifier->theLineInfo);
 	}
-	m_curValue = OW_CIMValue(alias);
+	m_curValue = CIMValue(alias);
 }
 void CIMOMVisitor::VisitSuperClass( const SuperClass * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitClassFeaturePropertyDeclaration( const ClassFeaturePropertyDeclaration *pClassFeaturePropertyDeclaration )
 {
 	pClassFeaturePropertyDeclaration->pPropertyDeclaration->Accept( this );
 	m_curClass.addProperty(m_curProperty);
 }
-
-
 void CIMOMVisitor::VisitClassFeatureMethodDeclaration( const ClassFeatureMethodDeclaration *pClassFeatureMethodDeclaration )
 {
 	pClassFeatureMethodDeclaration->pMethodDeclaration->Accept( this );
 	m_curClass.addMethod(m_curMethod);
 }
-
-
 void CIMOMVisitor::VisitClassFeatureReferenceDeclaration( const ClassFeatureReferenceDeclaration *pClassFeatureReferenceDeclaration )
 {
 	pClassFeatureReferenceDeclaration->pReferenceDeclaration->Accept( this );
 	m_curClass.addProperty(m_curProperty);
 }
-
-
 void CIMOMVisitor::VisitAssociationFeatureClassFeature( const AssociationFeatureClassFeature *pAssociationFeatureClassFeature )
 {
 	pAssociationFeatureClassFeature->pClassFeature->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 {
-	m_curQualifier = OW_CIMQualifier(*pQualifier->pQualifierName->pQualifierName);
-	OW_CIMQualifierType qt = getQualifierType(m_curQualifier.getName(), pQualifier->theLineInfo);
+	m_curQualifier = CIMQualifier(*pQualifier->pQualifierName->pQualifierName);
+	CIMQualifierType qt = getQualifierType(m_curQualifier.getName(), pQualifier->theLineInfo);
 	m_curQualifier.setDefaults(qt);
-
 	if ( pQualifier->pQualifierParameter.get() != 0 )
 	{
 		pQualifier->pQualifierParameter->Accept( this );
@@ -381,42 +335,41 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 		{
 			// create an empty array of the right type.  An empty String array
 			// will cast to anything.
-			m_curQualifier.setValue(OW_CIMValueCast::castValueToDataType(OW_CIMValue(OW_StringArray()),qt.getDataType()));
+			m_curQualifier.setValue(CIMValueCast::castValueToDataType(CIMValue(StringArray()),qt.getDataType()));
 		}
-		else if (qt.getDataType().getType() == OW_CIMDataType::BOOLEAN)
+		else if (qt.getDataType().getType() == CIMDataType::BOOLEAN)
 		{
-			m_curQualifier.setValue(OW_CIMValue(OW_Bool(true)));
+			m_curQualifier.setValue(CIMValue(Bool(true)));
 		}
 		else
 		{
-			m_curQualifier.setValue(OW_CIMValue(OW_CIMNULL));
+			m_curQualifier.setValue(CIMValue(CIMNULL));
 		}
 	}
-
 	if ( pQualifier->pFlavor.get() != 0 )
 	{
-		for ( OW_List<Flavor *>::const_iterator i = pQualifier->pFlavor->begin();
+		for ( List<Flavor *>::const_iterator i = pQualifier->pFlavor->begin();
 			 i != pQualifier->pFlavor->end(); ++i )
 		{
 			if ( (*i)->pFlavor->equalsIgnoreCase( "ENABLEOVERRIDE" ) )
 			{
-				m_curQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::ENABLEOVERRIDE));
+				m_curQualifier.addFlavor(CIMFlavor(CIMFlavor::ENABLEOVERRIDE));
 			}
 			else if ( (*i)->pFlavor->equalsIgnoreCase( "DISABLEOVERRIDE" ) )
 			{
-				m_curQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::DISABLEOVERRIDE));
+				m_curQualifier.addFlavor(CIMFlavor(CIMFlavor::DISABLEOVERRIDE));
 			}
 			else if ( (*i)->pFlavor->equalsIgnoreCase( "RESTRICTED" ) )
 			{
-				m_curQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::RESTRICTED));
+				m_curQualifier.addFlavor(CIMFlavor(CIMFlavor::RESTRICTED));
 			}
 			else if ( (*i)->pFlavor->equalsIgnoreCase( "TOSUBCLASS" ) )
 			{
-				m_curQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOSUBCLASS));
+				m_curQualifier.addFlavor(CIMFlavor(CIMFlavor::TOSUBCLASS));
 			}
 			else if ( (*i)->pFlavor->equalsIgnoreCase( "TRANSLATABLE" ) )
 			{
-				m_curQualifier.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TRANSLATE));
+				m_curQualifier.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 			}
 			else
 			{
@@ -427,53 +380,42 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 		}
 	}
 }
-
-
 void CIMOMVisitor::VisitQualifierParameterConstantValue( const QualifierParameterConstantValue *pQualifierParameterConstantValue )
 {
 	pQualifierParameterConstantValue->pConstantValue->Accept( this );
 	// Need to get the type from the CIMOM
-	OW_CIMDataType dt = getQualifierDataType(m_curQualifier.getName(), pQualifierParameterConstantValue->theLineInfo);
+	CIMDataType dt = getQualifierDataType(m_curQualifier.getName(), pQualifierParameterConstantValue->theLineInfo);
 	// now cast the value into the correct type
-	m_curValue = OW_CIMValueCast::castValueToDataType(m_curValue, dt);
+	m_curValue = CIMValueCast::castValueToDataType(m_curValue, dt);
 }
-
-
 void CIMOMVisitor::VisitQualifierParameterArrayInitializer( const QualifierParameterArrayInitializer *pQualifierParameterArrayInitializer )
 {
 	pQualifierParameterArrayInitializer->pArrayInitializer->Accept( this );
-
 	// Need to get the type from the CIMOM
-	OW_CIMDataType dt = getQualifierDataType(m_curQualifier.getName(), pQualifierParameterArrayInitializer->theLineInfo);
+	CIMDataType dt = getQualifierDataType(m_curQualifier.getName(), pQualifierParameterArrayInitializer->theLineInfo);
 	// now cast the value into the correct type
-	m_curValue = OW_CIMValueCast::castValueToDataType(m_curValue, dt);
+	m_curValue = CIMValueCast::castValueToDataType(m_curValue, dt);
 }
-
-
 void CIMOMVisitor::VisitFlavor( const Flavor * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitPropertyDeclaration( const PropertyDeclaration *pPropertyDeclaration )
 {
-	m_curProperty = OW_CIMProperty(*pPropertyDeclaration->pPropertyName->pPropertyName);
+	m_curProperty = CIMProperty(*pPropertyDeclaration->pPropertyName->pPropertyName);
 	if ( pPropertyDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pPropertyDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pPropertyDeclaration->pQualifier->begin();
 			 i != pPropertyDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
 			m_curProperty.addQualifier(m_curQualifier);
 		}
-
 	}
-
-	OW_Int64 arraySize = -1;
+	Int64 arraySize = -1;
 	if ( pPropertyDeclaration->pArray.get() != 0 )
 	{
-		OW_CIMDataType dt = OW_CIMDataType::getDataType(*pPropertyDeclaration->pDataType->pDataType);
+		CIMDataType dt = CIMDataType::getDataType(*pPropertyDeclaration->pDataType->pDataType);
 		if (pPropertyDeclaration->pArray->pArray.get() != 0)
 		{
 			pPropertyDeclaration->pArray->pArray->Accept( this );
@@ -484,7 +426,7 @@ void CIMOMVisitor::VisitPropertyDeclaration( const PropertyDeclaration *pPropert
 	}
 	else
 	{
-		m_curProperty.setDataType(OW_CIMDataType::getDataType(*pPropertyDeclaration->pDataType->pDataType));
+		m_curProperty.setDataType(CIMDataType::getDataType(*pPropertyDeclaration->pDataType->pDataType));
 	}
 	if ( pPropertyDeclaration->pDefaultValue.get() != 0 )
 	{
@@ -509,54 +451,45 @@ void CIMOMVisitor::VisitPropertyDeclaration( const PropertyDeclaration *pPropert
 		}
 		m_curProperty.setValue(m_curValue);
 	}
-
 }
-
-
 void CIMOMVisitor::VisitReferenceDeclaration( const ReferenceDeclaration *pReferenceDeclaration )
 {
-	m_curProperty = OW_CIMProperty(*pReferenceDeclaration->pReferenceName->pReferenceName);
+	m_curProperty = CIMProperty(*pReferenceDeclaration->pReferenceName->pReferenceName);
 	if ( pReferenceDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pReferenceDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pReferenceDeclaration->pQualifier->begin();
 			 i != pReferenceDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
 			m_curProperty.addQualifier(m_curQualifier);
 		}
 	}
-
-	OW_CIMDataType dt(*(pReferenceDeclaration->pObjectRef->pClassName->pClassName));
+	CIMDataType dt(*(pReferenceDeclaration->pObjectRef->pClassName->pClassName));
 	m_curProperty.setDataType(dt);
 	if ( pReferenceDeclaration->pDefaultValue.get() != 0 )
 	{
 		pReferenceDeclaration->pDefaultValue->Accept( this );
 		m_curProperty.setValue(m_curValue);
 	}
-
 }
-
-
 void CIMOMVisitor::VisitMethodDeclaration( const MethodDeclaration *pMethodDeclaration )
 {
-	m_curMethod = OW_CIMMethod(*pMethodDeclaration->pMethodName->pMethodName);
+	m_curMethod = CIMMethod(*pMethodDeclaration->pMethodName->pMethodName);
 	if ( pMethodDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pMethodDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pMethodDeclaration->pQualifier->begin();
 			 i != pMethodDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
 			m_curMethod.addQualifier(m_curQualifier);
 		}
-
 	}
-	OW_CIMDataType dt = OW_CIMDataType::getDataType(*pMethodDeclaration->pDataType->pDataType);
+	CIMDataType dt = CIMDataType::getDataType(*pMethodDeclaration->pDataType->pDataType);
 	m_curMethod.setReturnType(dt);
-
 	if ( pMethodDeclaration->pParameter.get() != 0 )
 	{
-		OW_CIMParameterArray params;
-		for ( OW_List<Parameter *>::const_iterator j = pMethodDeclaration->pParameter->begin();
+		CIMParameterArray params;
+		for ( List<Parameter *>::const_iterator j = pMethodDeclaration->pParameter->begin();
 			 j != pMethodDeclaration->pParameter->end(); ++j )
 		{
 			(*j)->Accept( this );
@@ -565,45 +498,33 @@ void CIMOMVisitor::VisitMethodDeclaration( const MethodDeclaration *pMethodDecla
 		m_curMethod.setParameters(params);
 	}
 }
-
-
 void CIMOMVisitor::VisitPropertyName( const PropertyName * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitReferenceName( const ReferenceName * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitMethodName( const MethodName * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitDataType( const DataType * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitObjectRef( const ObjectRef * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitParameterDataType( const ParameterDataType *pParameterDataType )
 {
-	m_curParameter = OW_CIMParameter(*pParameterDataType->pParameterName->pParameterName);
+	m_curParameter = CIMParameter(*pParameterDataType->pParameterName->pParameterName);
 	if ( pParameterDataType->pQualifier.get() != 0 )
 	{
-		OW_CIMQualifierArray quals;
-		for ( OW_List<Qualifier *>::const_iterator i = pParameterDataType->pQualifier->begin();
+		CIMQualifierArray quals;
+		for ( List<Qualifier *>::const_iterator i = pParameterDataType->pQualifier->begin();
 			 i != pParameterDataType->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
@@ -611,11 +532,10 @@ void CIMOMVisitor::VisitParameterDataType( const ParameterDataType *pParameterDa
 		}
 		m_curParameter.setQualifiers(quals);
 	}
-
-	OW_CIMDataType dt = OW_CIMDataType::getDataType(*pParameterDataType->pDataType->pDataType);
+	CIMDataType dt = CIMDataType::getDataType(*pParameterDataType->pDataType->pDataType);
 	if ( pParameterDataType->pArray.get() != 0 )
 	{
-		OW_Int64 arraySize = 0;
+		Int64 arraySize = 0;
 		if (pParameterDataType->pArray->pArray.get() != 0)
 		{
 			pParameterDataType->pArray->pArray->Accept( this );
@@ -625,16 +545,14 @@ void CIMOMVisitor::VisitParameterDataType( const ParameterDataType *pParameterDa
 	}
 	m_curParameter.setDataType(dt);
 }
-
-
 void CIMOMVisitor::VisitParameterObjectRef( const ParameterObjectRef *pParameterObjectRef )
 {
-	m_curParameter = OW_CIMParameter(*pParameterObjectRef->pParameterName->pParameterName);
+	m_curParameter = CIMParameter(*pParameterObjectRef->pParameterName->pParameterName);
 	if ( pParameterObjectRef->pQualifier.get() != 0 )
 	{
-		OW_CIMQualifierArray quals;
+		CIMQualifierArray quals;
 		
-		for ( OW_List<Qualifier *>::const_iterator i = pParameterObjectRef->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pParameterObjectRef->pQualifier->begin();
 			  i != pParameterObjectRef->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
@@ -642,12 +560,10 @@ void CIMOMVisitor::VisitParameterObjectRef( const ParameterObjectRef *pParameter
 		}
 		m_curParameter.setQualifiers(quals);
 	}
-
-	OW_CIMDataType dt(*pParameterObjectRef->pObjectRef->pClassName->pClassName);
-
+	CIMDataType dt(*pParameterObjectRef->pObjectRef->pClassName->pClassName);
 	if ( pParameterObjectRef->pArray.get() != 0 )
 	{
-		OW_Int64 arraySize = 0;
+		Int64 arraySize = 0;
 		if (pParameterObjectRef->pArray->pArray.get() != 0)
 		{
 			pParameterObjectRef->pArray->pArray->Accept( this );
@@ -657,50 +573,36 @@ void CIMOMVisitor::VisitParameterObjectRef( const ParameterObjectRef *pParameter
 	}
 	m_curParameter.setDataType(dt);
 }
-
-
 void CIMOMVisitor::VisitParameterName( const ParameterName * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitArray( const Array * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitDefaultValue( const DefaultValue *pDefaultValue )
 {
 	pDefaultValue->pInitializer->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitInitializerReferenceInitializer( const InitializerReferenceInitializer *pInitializerReferenceInitializer )
 {
 	pInitializerReferenceInitializer->pReferenceInitializer->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitInitializerArrayInitializer( const InitializerArrayInitializer *pInitializerArrayInitializer )
 {
 	pInitializerArrayInitializer->pArrayInitializer->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitInitializerConstantValue( const InitializerConstantValue *pInitializerConstantValue )
 {
 	pInitializerConstantValue->pConstantValue->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitArrayInitializer( const ArrayInitializer *pArrayInitializer )
 {
-	OW_CIMValueArray values;
+	CIMValueArray values;
 	if (pArrayInitializer->pConstantValue.get() != 0)
 	{
-		for( OW_List<ConstantValue *>::const_iterator i = pArrayInitializer->pConstantValue->begin();
+		for( List<ConstantValue *>::const_iterator i = pArrayInitializer->pConstantValue->begin();
 			 i != pArrayInitializer->pConstantValue->end(); ++i )
 		{
 			(*i)->Accept( this );
@@ -709,9 +611,8 @@ void CIMOMVisitor::VisitArrayInitializer( const ArrayInitializer *pArrayInitiali
 	}
 	m_curValue = convertValuesIntoValueArray(values);
 }
-
 template <class T>
-OW_CIMValue doArrayConversion( T& tempArray, const OW_CIMValueArray& values )
+CIMValue doArrayConversion( T& tempArray, const CIMValueArray& values )
 {
 	for (size_t i = 0; i < values.size(); ++i)
 	{
@@ -719,109 +620,97 @@ OW_CIMValue doArrayConversion( T& tempArray, const OW_CIMValueArray& values )
 		values[i].get(element);
 		tempArray.push_back(element);
 	}
-	return OW_CIMValue(tempArray);
+	return CIMValue(tempArray);
 }
-
-OW_CIMValue CIMOMVisitor::convertValuesIntoValueArray( const OW_CIMValueArray& values )
+CIMValue CIMOMVisitor::convertValuesIntoValueArray( const CIMValueArray& values )
 {
 	if (values.size())
 	{
-		if (values[0].getType() == OW_CIMDataType::BOOLEAN)
+		if (values[0].getType() == CIMDataType::BOOLEAN)
 		{
-			OW_BoolArray temp;
+			BoolArray temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::CHAR16)
+		else if (values[0].getType() == CIMDataType::CHAR16)
 		{
-			OW_Char16Array temp;
+			Char16Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::UINT8)
+		else if (values[0].getType() == CIMDataType::UINT8)
 		{
-			OW_UInt8Array temp;
+			UInt8Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::SINT8)
+		else if (values[0].getType() == CIMDataType::SINT8)
 		{
-			OW_Int8Array temp;
+			Int8Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::UINT16)
+		else if (values[0].getType() == CIMDataType::UINT16)
 		{
-			OW_UInt16Array temp;
+			UInt16Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::SINT16)
+		else if (values[0].getType() == CIMDataType::SINT16)
 		{
-			OW_Int16Array temp;
+			Int16Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::UINT32)
+		else if (values[0].getType() == CIMDataType::UINT32)
 		{
-			OW_UInt32Array temp;
+			UInt32Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::SINT32)
+		else if (values[0].getType() == CIMDataType::SINT32)
 		{
-			OW_Int32Array temp;
+			Int32Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::UINT64)
+		else if (values[0].getType() == CIMDataType::UINT64)
 		{
-			OW_UInt64Array temp;
+			UInt64Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::SINT64)
+		else if (values[0].getType() == CIMDataType::SINT64)
 		{
-			OW_Int64Array temp;
+			Int64Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::REAL64)
+		else if (values[0].getType() == CIMDataType::REAL64)
 		{
-			OW_Real64Array temp;
+			Real64Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::REAL32)
+		else if (values[0].getType() == CIMDataType::REAL32)
 		{
-			OW_Real32Array temp;
+			Real32Array temp;
 			return doArrayConversion(temp, values);
 		}
-		else if (values[0].getType() == OW_CIMDataType::STRING)
+		else if (values[0].getType() == CIMDataType::STRING)
 		{
-			OW_StringArray temp;
+			StringArray temp;
 			return doArrayConversion(temp, values);
 		}
 	}
-	return OW_CIMValue(OW_StringArray());
+	return CIMValue(StringArray());
 }
-
-
-
-
 void CIMOMVisitor::VisitReferenceInitializerObjectHandle( const ReferenceInitializerObjectHandle *pReferenceInitializerObjectHandle )
 {
 	pReferenceInitializerObjectHandle->pObjectHandle->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitReferenceInitializerAliasIdentifier( const ReferenceInitializerAliasIdentifier *pReferenceInitializerAliasIdentifier )
 {
 	pReferenceInitializerAliasIdentifier->pAliasIdentifier->Accept( this );
 }
-
-
 void CIMOMVisitor::VisitObjectHandle( const ObjectHandle *pObjectHandle )
 {
-	m_curValue = OW_CIMValue(*pObjectHandle->pObjectHandle);
+	m_curValue = CIMValue(*pObjectHandle->pObjectHandle);
 }
-
-
 void CIMOMVisitor::VisitQualifierDeclaration( const QualifierDeclaration *pQualifierDeclaration )
 {
-	m_curQualifierType = OW_CIMQualifierType(*pQualifierDeclaration->pQualifierName->pQualifierName);
+	m_curQualifierType = CIMQualifierType(*pQualifierDeclaration->pQualifierName->pQualifierName);
 	
 	pQualifierDeclaration->pQualifierType->Accept( this );
-
 	pQualifierDeclaration->pScope->Accept( this );
 	if ( pQualifierDeclaration->pDefaultFlavor.get() != 0 )
 	{
@@ -829,20 +718,16 @@ void CIMOMVisitor::VisitQualifierDeclaration( const QualifierDeclaration *pQuali
 	}
 	CIMOMsetQualifierType(pQualifierDeclaration->theLineInfo);
 }
-
-
 void CIMOMVisitor::VisitQualifierName( const QualifierName * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitQualifierType( const QualifierType *pQualifierType )
 {
-	OW_CIMDataType dt = OW_CIMDataType::getDataType(*pQualifierType->pDataType->pDataType);
+	CIMDataType dt = CIMDataType::getDataType(*pQualifierType->pDataType->pDataType);
 	if ( pQualifierType->pArray.get() != 0 )
 	{
-		OW_Int64 arraySize = 0;
+		Int64 arraySize = 0;
 		if (pQualifierType->pArray->pArray.get() != 0)
 		{
 			pQualifierType->pArray->pArray->Accept( this );
@@ -851,66 +736,63 @@ void CIMOMVisitor::VisitQualifierType( const QualifierType *pQualifierType )
 		dt.setToArrayType(arraySize);
 	}
 	m_curQualifierType.setDataType(dt);
-
 	if ( pQualifierType->pDefaultValue.get() != 0 )
 	{
 		pQualifierType->pDefaultValue->Accept( this );
 		m_curQualifierType.setDefaultValue(m_curValue);
 	}
 }
-
-
 void CIMOMVisitor::VisitScope( const Scope *pScope )
 {
-	for ( OW_List<MetaElement *>::const_iterator i = pScope->pMetaElement->begin();
+	for ( List<MetaElement *>::const_iterator i = pScope->pMetaElement->begin();
 		 i != pScope->pMetaElement->end();
 		 ++i )
 	{
-		OW_CIMScope scope;
+		CIMScope scope;
 		/* Removed by CIM Specification 2.2 Addenda Sheet: 01
 		http://www.dmtf.org/spec/release/CIM_Errata/CIM_Spec_Addenda221.htm
 		Our grammar still parses this, because it's used in CIM_Schema23.mof,
 		So the user will just get a warning.
 		if ((*i)->pMetaElement->equalsIgnoreCase("SCHEMA"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::SCHEMA);
+			scope = CIMScope(CIMScope::SCHEMA);
 		}
 		else*/
 		if ((*i)->pMetaElement->equalsIgnoreCase("CLASS"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::CLASS);
+			scope = CIMScope(CIMScope::CLASS);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("ASSOCIATION"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::ASSOCIATION);
+			scope = CIMScope(CIMScope::ASSOCIATION);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("INDICATION"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::INDICATION);
+			scope = CIMScope(CIMScope::INDICATION);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("QUALIFIER"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::QUALIFIER);
+			scope = CIMScope(CIMScope::QUALIFIER);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("PROPERTY"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::PROPERTY);
+			scope = CIMScope(CIMScope::PROPERTY);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("REFERENCE"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::REFERENCE);
+			scope = CIMScope(CIMScope::REFERENCE);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("METHOD"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::METHOD);
+			scope = CIMScope(CIMScope::METHOD);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("PARAMETER"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::PARAMETER);
+			scope = CIMScope(CIMScope::PARAMETER);
 		}
 		else if ((*i)->pMetaElement->equalsIgnoreCase("ANY"))
 		{
-			scope = OW_CIMScope(OW_CIMScope::ANY);
+			scope = CIMScope(CIMScope::ANY);
 		}
 		else
 		{
@@ -921,41 +803,36 @@ void CIMOMVisitor::VisitScope( const Scope *pScope )
 		
 		m_curQualifierType.addScope(scope);
 	}
-
 }
-
-
 void CIMOMVisitor::VisitMetaElement( const MetaElement * )
 {
 	assert(0);
 }
-
-
 void CIMOMVisitor::VisitDefaultFlavor( const DefaultFlavor *pDefaultFlavor )
 {
-	for ( OW_List<Flavor *>::const_iterator i = pDefaultFlavor->pFlavor->begin();
+	for ( List<Flavor *>::const_iterator i = pDefaultFlavor->pFlavor->begin();
 		 i != pDefaultFlavor->pFlavor->end();
 		 ++i )
 	{
 		if ((*i)->pFlavor->equalsIgnoreCase("ENABLEOVERRIDE"))
 		{
-			m_curQualifierType.addFlavor(OW_CIMFlavor(OW_CIMFlavor::ENABLEOVERRIDE));
+			m_curQualifierType.addFlavor(CIMFlavor(CIMFlavor::ENABLEOVERRIDE));
 		}
 		else if ((*i)->pFlavor->equalsIgnoreCase("DISABLEOVERRIDE"))
 		{
-			m_curQualifierType.addFlavor(OW_CIMFlavor(OW_CIMFlavor::DISABLEOVERRIDE));
+			m_curQualifierType.addFlavor(CIMFlavor(CIMFlavor::DISABLEOVERRIDE));
 		}
 		else if ((*i)->pFlavor->equalsIgnoreCase("RESTRICTED"))
 		{
-			m_curQualifierType.addFlavor(OW_CIMFlavor(OW_CIMFlavor::RESTRICTED));
+			m_curQualifierType.addFlavor(CIMFlavor(CIMFlavor::RESTRICTED));
 		}
 		else if ((*i)->pFlavor->equalsIgnoreCase("TOSUBCLASS"))
 		{
-			m_curQualifierType.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TOSUBCLASS));
+			m_curQualifierType.addFlavor(CIMFlavor(CIMFlavor::TOSUBCLASS));
 		}
 		else if ((*i)->pFlavor->equalsIgnoreCase("TRANSLATABLE"))
 		{
-			m_curQualifierType.addFlavor(OW_CIMFlavor(OW_CIMFlavor::TRANSLATE));
+			m_curQualifierType.addFlavor(CIMFlavor(CIMFlavor::TRANSLATE));
 		}
 		else
 		{
@@ -965,64 +842,57 @@ void CIMOMVisitor::VisitDefaultFlavor( const DefaultFlavor *pDefaultFlavor )
 		}
 	}
 }
-
-
 void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanceDeclaration )
 {
-	OW_CIMClass cc = getClass(*pInstanceDeclaration->pClassName->pClassName, pInstanceDeclaration->theLineInfo);
+	CIMClass cc = getClass(*pInstanceDeclaration->pClassName->pClassName, pInstanceDeclaration->theLineInfo);
         //m_hdl->getClass(m_namespace,
 		//*pInstanceDeclaration->pClassName->pClassName, false);
 	m_curInstance = cc.newInstance();
 	if ( pInstanceDeclaration->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pInstanceDeclaration->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pInstanceDeclaration->pQualifier->begin();
 			  i != pInstanceDeclaration->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
 			m_curInstance.setQualifier(m_curQualifier);
 		}
 	}
-
 	if ( pInstanceDeclaration->pValueInitializer.get() != 0 )
 	{
-		for ( OW_List<ValueInitializer *>::const_iterator i = pInstanceDeclaration->pValueInitializer->begin();
+		for ( List<ValueInitializer *>::const_iterator i = pInstanceDeclaration->pValueInitializer->begin();
 			  i != pInstanceDeclaration->pValueInitializer->end(); ++i )
 		{
 			(*i)->Accept( this );
-			OW_CIMProperty tempProp = m_curInstance.getProperty(m_curProperty.getName());
+			CIMProperty tempProp = m_curInstance.getProperty(m_curProperty.getName());
 			if (tempProp)
 			{
-				OW_CIMQualifierArray newQuals = m_curProperty.getQualifiers();
+				CIMQualifierArray newQuals = m_curProperty.getQualifiers();
 				for (size_t i = 0; i < newQuals.size(); ++i)
 				{
 					tempProp.setQualifier(newQuals[i]);
 				}
-
-				OW_CIMValue castValue = OW_CIMValueCast::castValueToDataType(
+				CIMValue castValue = CIMValueCast::castValueToDataType(
 						m_curProperty.getValue(),
-						OW_CIMDataType(tempProp.getDataType()));
-
-				if (castValue.getType() == OW_CIMDataType::REFERENCE)
+						CIMDataType(tempProp.getDataType()));
+				if (castValue.getType() == CIMDataType::REFERENCE)
 				{
-					OW_CIMObjectPath cop(OW_CIMNULL);
+					CIMObjectPath cop(CIMNULL);
 					castValue.get(cop);
 					if (cop)
 					{
 						// If the object path doesn't have a : character, then we need to set the namespace on it.
-						if (m_curProperty.getValue().toString().indexOf(':') == OW_String::npos)
+						if (m_curProperty.getValue().toString().indexOf(':') == String::npos)
 						{
 							cop.setNameSpace(m_namespace);
-							castValue = OW_CIMValue(cop);
+							castValue = CIMValue(cop);
 						}
 					}
 				}
-
 				if (!castValue)
 				{
 					theErrorHandler->recoverableError(
 							format("Value is not the correct type: %1.  The type should be: %2", m_curProperty.getValue().toString(), tempProp.getDataType().toString()).c_str(), pInstanceDeclaration->theLineInfo);
 				}
-
 				tempProp.setValue(castValue);
 				m_curInstance.setProperty(tempProp);
 			}
@@ -1035,22 +905,19 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 	
 	if ( pInstanceDeclaration->pAlias.get() != 0 )
 	{
-		OW_CIMObjectPath cop(m_namespace, m_curInstance);
+		CIMObjectPath cop(m_namespace, m_curInstance);
 		
 		m_aliasMap[*(pInstanceDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			cop.modelPath();
 	}
-
 	CIMOMcreateInstance(pInstanceDeclaration->theLineInfo);
 }
-
-
 void CIMOMVisitor::VisitValueInitializer( const ValueInitializer *pValueInitializer )
 {
-	m_curProperty = OW_CIMProperty(*pValueInitializer->pValueInitializer);
+	m_curProperty = CIMProperty(*pValueInitializer->pValueInitializer);
 	if ( pValueInitializer->pQualifier.get() != 0 )
 	{
-		for ( OW_List<Qualifier *>::const_iterator i = pValueInitializer->pQualifier->begin();
+		for ( List<Qualifier *>::const_iterator i = pValueInitializer->pQualifier->begin();
 			  i != pValueInitializer->pQualifier->end(); ++i )
 		{
 			(*i)->Accept( this );
@@ -1060,56 +927,47 @@ void CIMOMVisitor::VisitValueInitializer( const ValueInitializer *pValueInitiali
 	pValueInitializer->pDefaultValue->Accept( this );
 	m_curProperty.setValue(m_curValue);
 }
-
 void CIMOMVisitor::VisitIntegerValueBinaryValue( const IntegerValueBinaryValue *pIntegerValueBinaryValue )
 {
-	OW_Int64 val = pIntegerValueBinaryValue->pBinaryValue->toInt64(2);
-	m_curValue = OW_CIMValue(val);
+	Int64 val = pIntegerValueBinaryValue->pBinaryValue->toInt64(2);
+	m_curValue = CIMValue(val);
 }
-
 void CIMOMVisitor::VisitIntegerValueOctalValue( const IntegerValueOctalValue *pIntegerValueOctalValue )
 {
-	OW_Int64 val = pIntegerValueOctalValue->pOctalValue->toInt64(8);
-	m_curValue = OW_CIMValue(val);
+	Int64 val = pIntegerValueOctalValue->pOctalValue->toInt64(8);
+	m_curValue = CIMValue(val);
 }
-
 void CIMOMVisitor::VisitIntegerValueDecimalValue( const IntegerValueDecimalValue *pIntegerValueDecimalValue )
 {
-	OW_Int64 val = pIntegerValueDecimalValue->pDecimalValue->toInt64(10);
-	m_curValue = OW_CIMValue(val);
+	Int64 val = pIntegerValueDecimalValue->pDecimalValue->toInt64(10);
+	m_curValue = CIMValue(val);
 }
-
 void CIMOMVisitor::VisitIntegerValueHexValue( const IntegerValueHexValue *pIntegerValueHexValue )
 {
-	OW_Int64 val = pIntegerValueHexValue->pHexValue->toInt64(16);
-	m_curValue = OW_CIMValue(val);
+	Int64 val = pIntegerValueHexValue->pHexValue->toInt64(16);
+	m_curValue = CIMValue(val);
 }
-
 void CIMOMVisitor::VisitConstantValueIntegerValue( const ConstantValueIntegerValue *pConstantValueIntegerValue )
 {
 	pConstantValueIntegerValue->pIntegerValue->Accept( this );
 }
-
 void CIMOMVisitor::VisitConstantValueFloatValue( const ConstantValueFloatValue *pConstantValueFloatValue )
 {
-	OW_Real64 val = pConstantValueFloatValue->pFloatValue->toReal64();
-	m_curValue = OW_CIMValue(val);
+	Real64 val = pConstantValueFloatValue->pFloatValue->toReal64();
+	m_curValue = CIMValue(val);
 }
-
 void CIMOMVisitor::VisitConstantValueStringValue( const ConstantValueStringValue *pConstantValueStringValue )
 {
-	m_curValue = OW_CIMValue(MofCompiler::fixParsedString(*pConstantValueStringValue->pStringValue));
+	m_curValue = CIMValue(Compiler::fixParsedString(*pConstantValueStringValue->pStringValue));
 }
-
 void CIMOMVisitor::VisitConstantValueCharValue( const ConstantValueCharValue *pConstantValueCharValue )
 {
 	char c = pConstantValueCharValue->pCharValue->charAt(1);
-	m_curValue = OW_CIMValue(c);
+	m_curValue = CIMValue(c);
 }
-
 void CIMOMVisitor::VisitConstantValueBooleanValue( const ConstantValueBooleanValue *pConstantValueBooleanValue )
 {
-	OW_Bool b;
+	Bool b;
 	if (pConstantValueBooleanValue->pBooleanValue->equalsIgnoreCase("TRUE"))
 	{
 		b = true;
@@ -1118,24 +976,21 @@ void CIMOMVisitor::VisitConstantValueBooleanValue( const ConstantValueBooleanVal
 	{
 		b = false;
 	}
-	m_curValue = OW_CIMValue(b);
+	m_curValue = CIMValue(b);
 }
-
 void CIMOMVisitor::VisitConstantValueNullValue( const ConstantValueNullValue * )
 {
 	m_curValue.setNull();
 }
-
-OW_CIMDataType CIMOMVisitor::getQualifierDataType(const OW_String& qualName, const lineInfo& li)
+CIMDataType CIMOMVisitor::getQualifierDataType(const String& qualName, const lineInfo& li)
 {
 	return getQualifierType(qualName, li).getDataType();
 }
-
-OW_CIMQualifierType CIMOMVisitor::getQualifierType(const OW_String& qualName, const lineInfo& li)
+CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const lineInfo& li)
 {
-	OW_String lcqualName = qualName;
+	String lcqualName = qualName;
 	lcqualName.toLowerCase();
-    OW_CIMQualifierType qt = m_dataTypeCache.getFromCache(lcqualName);
+    CIMQualifierType qt = m_dataTypeCache.getFromCache(lcqualName);
     if (!qt)
     {
         qt = CIMOMgetQualifierType(qualName, li);
@@ -1143,13 +998,11 @@ OW_CIMQualifierType CIMOMVisitor::getQualifierType(const OW_String& qualName, co
     }
     return qt;
 }
-
-
-OW_CIMClass CIMOMVisitor::getClass(const OW_String& className, const lineInfo& li)
+CIMClass CIMOMVisitor::getClass(const String& className, const lineInfo& li)
 {
-	OW_String lcclassName = className;
+	String lcclassName = className;
 	lcclassName.toLowerCase();
-    OW_CIMClass c = m_classCache.getFromCache(lcclassName);
+    CIMClass c = m_classCache.getFromCache(lcclassName);
     if (!c)
     {
         c = CIMOMgetClass(className, li);
@@ -1157,8 +1010,6 @@ OW_CIMClass CIMOMVisitor::getClass(const OW_String& className, const lineInfo& l
     }
     return c;
 }
-
-
 void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 {
 	try
@@ -1166,20 +1017,19 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
 		m_hdl->createClass(m_namespace, m_curClass);
 		theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
-
         // Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
         // in the case that there are lots of instances, each class will only have to be fetched once.
 	}
-	catch (const OW_CIMException& ce)
+	catch (const CIMException& ce)
 	{
-		if (ce.getErrNo() == OW_CIMException::ALREADY_EXISTS)
+		if (ce.getErrNo() == CIMException::ALREADY_EXISTS)
 		{
 			try
 			{
 				m_hdl->modifyClass(m_namespace, m_curClass);
 				theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
 			}
-			catch (const OW_CIMException& ce)
+			catch (const CIMException& ce)
 			{
 				theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 			}
@@ -1190,7 +1040,6 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		}
 	}
 }
-
 void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 {
 	try
@@ -1198,36 +1047,35 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 		theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
 		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
 		// save it in the cache
-		OW_String lcqualName = m_curQualifierType.getName();
+		String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();
         m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
 		//m_dataTypeCache[lcqualName] = m_curQualifierType;
 	}
-	catch (const OW_CIMException& ce)
+	catch (const CIMException& ce)
 	{
 		theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 }
-
 void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 {
-	OW_CIMObjectPath cop(m_namespace, m_curInstance);
+	CIMObjectPath cop(m_namespace, m_curInstance);
 	theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
 	try
 	{
 		m_hdl->createInstance(m_namespace, m_curInstance);
 		theErrorHandler->progressMessage(format("Created Instance: %1", cop.toString()).c_str(), li);
 	}
-	catch (const OW_CIMException& ce)
+	catch (const CIMException& ce)
 	{
-		if (ce.getErrNo() == OW_CIMException::ALREADY_EXISTS)
+		if (ce.getErrNo() == CIMException::ALREADY_EXISTS)
 		{
 			try
 			{
 				m_hdl->modifyInstance(m_namespace, m_curInstance);
 				theErrorHandler->progressMessage(format("Updated Instance: %1", cop.toString()).c_str(), li);
 			}
-			catch (const OW_CIMException& ce)
+			catch (const CIMException& ce)
 			{
 				theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 			}
@@ -1238,31 +1086,31 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 		}
 	}
 }
-
-OW_CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const OW_String& qualName, const lineInfo& li)
+CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const String& qualName, const lineInfo& li)
 {
 	try
 	{
 		return m_hdl->getQualifierType(m_namespace, qualName);
 	}
-	catch (const OW_CIMException& ce)
+	catch (const CIMException& ce)
 	{
 		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
-	return OW_CIMQualifierType();
+	return CIMQualifierType();
 }
-
-OW_CIMClass CIMOMVisitor::CIMOMgetClass(const OW_String& className, const lineInfo& li)
+CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const lineInfo& li)
 {
 	try
 	{
 		return m_hdl->getClass(m_namespace, className, E_NOT_LOCAL_ONLY);
 	}
-	catch (const OW_CIMException& ce)
+	catch (const CIMException& ce)
 	{
 		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
-	return OW_CIMClass();
+	return CIMClass();
 }
 
+} // end namespace MOF
+} // end namespace OpenWBEM
 

@@ -27,27 +27,27 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_XMLClass_HPP_
 #define OW_XMLClass_HPP_
-
 #include "OW_config.h"
 #include "OW_XMLOperationGeneric.hpp"
 #include "OW_CIMFwd.hpp"
 
-class OW_CIMXMLParser;
+namespace OpenWBEM
+{
 
-class OW_XMLClass : public OW_XMLOperationGeneric
+class CIMXMLParser;
+class XMLClass : public XMLOperationGeneric
 {
 public:
-	static OW_String getNameSpace(OW_CIMXMLParser& parser);
-	static OW_CIMObjectPath getObjectWithPath(OW_CIMXMLParser& parser,
-			OW_CIMClass& c, OW_CIMInstance& i);
-	static OW_CIMClass readClass(OW_CIMXMLParser& parser, OW_CIMObjectPath& path);
-	static OW_CIMInstance readInstance(OW_CIMXMLParser& parser,
-			OW_CIMObjectPath& path);
+	static String getNameSpace(CIMXMLParser& parser);
+	static CIMObjectPath getObjectWithPath(CIMXMLParser& parser,
+			CIMClass& c, CIMInstance& i);
+	static CIMClass readClass(CIMXMLParser& parser, CIMObjectPath& path);
+	static CIMInstance readInstance(CIMXMLParser& parser,
+			CIMObjectPath& path);
 };
 
+} // end namespace OpenWBEM
 
 #endif  // OW_XMLClass_HPP_
-

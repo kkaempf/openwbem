@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPLenLimitIStream.hpp"
 #include <fstream>
@@ -36,19 +35,17 @@
 int main(int argc, char* argv[])
 {
 	istream* istr = new ifstream("/tmp/bigFile.txt");
-
-	istream *llistr = new OW_HTTPLenLimitIStream(*istr, 1);
-
-	OW_HTTPLenLimitIStream* newIstr;
+	istream *llistr = new HTTPLenLimitIStream(*istr, 1);
+	HTTPLenLimitIStream* newIstr;
 	//istream* newIstr;
-
-	newIstr = dynamic_cast<OW_HTTPLenLimitIStream*>(llistr);
+	newIstr = dynamic_cast<HTTPLenLimitIStream*>(llistr);
 	if (newIstr)
 	{
 		newIstr->resetLen(10);
 		cout << "dynamic cast was non-NULL" << endl;
 	}
-	newIstr = dynamic_cast<OW_HTTPLenLimitIStream*>(istr);
+	newIstr = dynamic_cast<HTTPLenLimitIStream*>(istr);
 	if (!newIstr)
 		cout << "dynamic cast was NULL" << endl;
 }
+

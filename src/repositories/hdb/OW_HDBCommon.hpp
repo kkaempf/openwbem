@@ -27,83 +27,75 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HDBCOMMOM_HPP_INCLUDE_GUARD_
 #define OW_HDBCOMMOM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
-
 #include <cstring>
 
-class OW_HDBException : public OW_Exception
+namespace OpenWBEM
+{
+
+class HDBException : public Exception
 {
 public:
-
-	OW_HDBException() : OW_Exception() {}
-	OW_HDBException(const char* file, int line, const char* msg) :
-		OW_Exception(file, line, msg) {}
-	OW_HDBException(const char* msg) : OW_Exception(msg) {}
-	OW_HDBException(const OW_HDBException& e) : OW_Exception(e) {}
+	HDBException() : Exception() {}
+	HDBException(const char* file, int line, const char* msg) :
+		Exception(file, line, msg) {}
+	HDBException(const char* msg) : Exception(msg) {}
+	HDBException(const HDBException& e) : Exception(e) {}
 		
-	virtual const char* type() const { return "OW_HDBException"; }
+	virtual const char* type() const { return "HDBException"; }
 };
-
 #define OW_HDBSIGNATURE "OWHIERARCHICADB"
-const int OW_HDBSIGLEN = 16;
-
-
+const int HDBSIGLEN = 16;
 // The general idea is to have it be a concatenation of release numbers with
 // a revision on the end (to prevent problems during development)
 // So 3000003 originated from version 3.0.0 rev 4
 //
 // 8/21/2003 - Changed from 3000003 to 3000004 because of a change in the 
-//   structure of OW_CIMInstance.  The name and alias were removed.  Also
+//   structure of CIMInstance.  The name and alias were removed.  Also
 //   changed the length of the signature to 16 so the header block could be
 //   aligned easier (and slightly smaller).
 // 10/25/2003 - 3000005. Changed enumClassNames to send over an enum of strings
 //   instead of object paths.
-const OW_UInt32 OW_HDBVERSION = 3000005;
-
+const UInt32 HDBVERSION = 3000005;
 /**
- * The OW_HDBHeaderBlock structure represent the header information for
+ * The HDBHeaderBlock structure represent the header information for
  * the database.
  */
-struct OW_HDBHeaderBlock
+struct HDBHeaderBlock
 {
-	char signature[OW_HDBSIGLEN];
-	OW_UInt32 version;
-	OW_Int32 firstRoot;
-	OW_Int32 lastRoot;
-	OW_Int32 firstFree;
+	char signature[HDBSIGLEN];
+	UInt32 version;
+	Int32 firstRoot;
+	Int32 lastRoot;
+	Int32 firstFree;
 };
-
 /**
- * The OW_HDBBlock structure represents nodes within the database.
+ * The HDBBlock structure represents nodes within the database.
  */
-struct OW_HDBBlock
+struct HDBBlock
 {
-	OW_HDBBlock() { memset(this, 0, sizeof(OW_HDBBlock)); }
-
-	OW_UInt32 chkSum;		// The check sum of all following fields
+	HDBBlock() { memset(this, 0, sizeof(HDBBlock)); }
+	UInt32 chkSum;		// The check sum of all following fields
 	unsigned char isFree;	// Node is free block
-	OW_UInt32 size;				// The size of this block (used in free list)
-	OW_UInt32 flags;		// User defined flags
-	OW_Int32 nextSib;				// offset of next sibling node in the file
-	OW_Int32 prevSib;				// offset of prev sibling node in the file
-	OW_Int32 parent;				// offset of the parent node in the file
-	OW_Int32 firstChild;			// offset of the first child node for this node
-	OW_Int32 lastChild;			// offset of the last child node for this node
-	OW_UInt32 keyLength;			// length of the key component of the data
-	OW_UInt32 dataLength;		// length of data not including key
+	UInt32 size;				// The size of this block (used in free list)
+	UInt32 flags;		// User defined flags
+	Int32 nextSib;				// offset of next sibling node in the file
+	Int32 prevSib;				// offset of prev sibling node in the file
+	Int32 parent;				// offset of the parent node in the file
+	Int32 firstChild;			// offset of the first child node for this node
+	Int32 lastChild;			// offset of the last child node for this node
+	UInt32 keyLength;			// length of the key component of the data
+	UInt32 dataLength;		// length of data not including key
 	// Data follows
 	// The data starts with the key, which is a null terminated string.
 	// The length of the non-key data will be dataLength - keyLength;
 };
-
 #define OW_HDBLKSZ sizeof(HDBBlock);
 
+} // end namespace OpenWBEM
+
 #endif
-
-

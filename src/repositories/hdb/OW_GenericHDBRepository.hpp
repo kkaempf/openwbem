@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_GENERICHDBREPOSITORY_HPP_INCLUDE_GUARD_
 #define OW_GENERICHDBREPOSITORY_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_HDB.hpp"
@@ -39,39 +37,36 @@
 #include "OW_CIMBase.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 
-class OW_HDBHandleLock;
+namespace OpenWBEM
+{
 
-class OW_GenericHDBRepository
+class HDBHandleLock;
+class GenericHDBRepository
 {
 public:
-
 	/**
-	 * Create a new OW_GenericHDBRepository object.
+	 * Create a new GenericHDBRepository object.
 	 * @param path	The path to where the repository files are or will be
 	 *					located.
-	 * @exception OW_HDBException
+	 * @exception HDBException
 	 */
-	OW_GenericHDBRepository(OW_ServiceEnvironmentIFCRef env);
-
+	GenericHDBRepository(ServiceEnvironmentIFCRef env);
 	/**
-	 * Destroy this OW_GenericHDBRepository object
+	 * Destroy this GenericHDBRepository object
 	 */
-	virtual ~OW_GenericHDBRepository();
-
+	virtual ~GenericHDBRepository();
 	/**
-	 * Open this OW_GenericHDBRepository.
+	 * Open this GenericHDBRepository.
 	 * @param path	The path to where the repository files are or will be
 	 *					located.
-	 * @exception OW_Exception
-	 * @exception OW_HDBException
+	 * @exception Exception
+	 * @exception HDBException
 	 */
-	virtual void open(const OW_String& path);
-
+	virtual void open(const String& path);
 	/**
-	 * Close this OW_GenericHDBRepository.
+	 * Close this GenericHDBRepository.
 	 */
 	virtual void close();
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
@@ -80,112 +75,93 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(OW_String ns);
-
+	virtual int createNameSpace(String ns);
 	/**
 	 * Delete a container and all of its' children
 	 * @param key	The key to the container to remove
-	 * @exception OW_IOException If the database is not opened.
-	 * @exception OW_HDBException
+	 * @exception IOException If the database is not opened.
+	 * @exception HDBException
 	 */
-	void deleteNameSpace(OW_String key);
+	void deleteNameSpace(String key);
 #endif
-
 	/**
 	 * Check whether a namespace exists
 	 * @param key	The key to the namespace
-	 * @exception OW_IOException If the database is not opened.
-	 * @exception OW_HDBException
+	 * @exception IOException If the database is not opened.
+	 * @exception HDBException
 	 * @return Whether the namespace key exists.
 	 */
-	bool nameSpaceExists(OW_String key);
-
+	bool nameSpaceExists(String key);
 	/**
 	 * @return true if this repository is open. Otherwise false.
 	 */
 	bool isOpen() { return m_opened; }
-
-	void nodeToCIMObject(OW_CIMBase& cimObj, const OW_HDBNode& node);
-
-	void getCIMObject(OW_CIMBase& cimObj, const OW_String& key,
-		OW_HDBHandle hdl);
-
-	void updateCIMObject(const OW_CIMBase& cimObj, OW_HDBNode& node,
-		OW_HDBHandle hdl);
-
-	void addCIMObject(const OW_CIMBase& cimObj, const OW_String& key,
-		OW_HDBNode& parentNode, OW_HDBHandle hdl, OW_UInt32 nodeFlags=0);
-
-	void addCIMObject(const OW_CIMBase& cimObj, const OW_String& key,
-		OW_HDBHandle hdl, OW_UInt32 nodeFlags=0);
-
+	void nodeToCIMObject(CIMBase& cimObj, const HDBNode& node);
+	void getCIMObject(CIMBase& cimObj, const String& key,
+		HDBHandle hdl);
+	void updateCIMObject(const CIMBase& cimObj, HDBNode& node,
+		HDBHandle hdl);
+	void addCIMObject(const CIMBase& cimObj, const String& key,
+		HDBNode& parentNode, HDBHandle hdl, UInt32 nodeFlags=0);
+	void addCIMObject(const CIMBase& cimObj, const String& key,
+		HDBHandle hdl, UInt32 nodeFlags=0);
 	/**
-	 * @return An OW_HDBHandle object from the underlying OW_HDB object.
+	 * @return An HDBHandle object from the underlying HDB object.
 	 * freeHandle must be called later on the handle that is returned from
-	 * this method.The OW_HDBHandleLock is a nice way to handle the return
+	 * this method.The HDBHandleLock is a nice way to handle the return
 	 * value from this method. It will automatically call free handle when it
 	 * goes out of scope.
 	 */
-	OW_HDBHandle getHandle();
-
+	HDBHandle getHandle();
 	/**
 	 * Free a and that was previously acquired by a call to getHandle. This
-	 * method MUST be called on all OW_HDBHandles acquired through getHandle.
+	 * method MUST be called on all HDBHandles acquired through getHandle.
 	 * @param hdl	A reference to the handle previously acquired through a call
 	 *					to getHandle.
 	 */
-	void freeHandle(OW_HDBHandle& hdl);
-
+	void freeHandle(HDBHandle& hdl);
 	/**
 	 * Get the name space node for a given key
 	 * @param key	The key for the name space node.
-	 * @return On success the OW_HDBNode associated with the given key.
-	 * Otherwise a null OW_HDBNode
+	 * @return On success the HDBNode associated with the given key.
+	 * Otherwise a null HDBNode
 	 */
-	OW_HDBNode getNameSpaceNode(OW_HDBHandleLock& hdl, OW_String key);
-
-	void logError(const OW_String& s) { m_env->getLogger()->logError(s); }
-	void logCustInfo(const OW_String& s) { m_env->getLogger()->logCustInfo(s); }
-	void logDebug(const OW_String& s) { m_env->getLogger()->logDebug(s); }
-
+	HDBNode getNameSpaceNode(HDBHandleLock& hdl, String key);
+	void logError(const String& s) { m_env->getLogger()->logError(s); }
+	void logCustInfo(const String& s) { m_env->getLogger()->logCustInfo(s); }
+	void logDebug(const String& s) { m_env->getLogger()->logDebug(s); }
 protected:
-
 	/**
-	 * Throw an OW_IOException is this repository is not open.
-	 * @exception OW_IOException If this repository is not open.
+	 * Throw an IOException is this repository is not open.
+	 * @exception IOException If this repository is not open.
 	 */
 	void throwIfNotOpen()
 	{
 		if(!isOpen())
-			OW_THROW(OW_HDBException, "Database is not open");
+			OW_THROW(HDBException, "Database is not open");
 	}
-
-	OW_HDB m_hdb;
+	HDB m_hdb;
 	bool m_opened;
-	OW_Mutex m_guard;
-	OW_Array<OW_HDBHandle> m_handles;
-	OW_ServiceEnvironmentIFCRef m_env;
-
+	Mutex m_guard;
+	Array<HDBHandle> m_handles;
+	ServiceEnvironmentIFCRef m_env;
 	enum { MAXHANDLES = 10 };
-
-	friend class OW_HDBHandleLock;
+	friend class HDBHandleLock;
 };
-
 /**
- * The OW_HDBHandleLock class helps facilitate the releasing of OW_HDBHandle
- * objects that are acquired through calls to OW_GenericHDBRepository::
- * getHandle. Instances of OW_HDBHandleLock will automatically call
- * OW_GenericHDBRepository::freeHandle when they go out of scope. Instances
- * of this class are essentially smart pointers for OW_HDBHandle instances
- * returned from OW_GenericHDBRepository::getHandle.
+ * The HDBHandleLock class helps facilitate the releasing of HDBHandle
+ * objects that are acquired through calls to GenericHDBRepository::
+ * getHandle. Instances of HDBHandleLock will automatically call
+ * GenericHDBRepository::freeHandle when they go out of scope. Instances
+ * of this class are essentially smart pointers for HDBHandle instances
+ * returned from GenericHDBRepository::getHandle.
  */
-class OW_HDBHandleLock
+class HDBHandleLock
 {
 public:
-	OW_HDBHandleLock(OW_GenericHDBRepository* pr, const OW_HDBHandle& hdl) :
+	HDBHandleLock(GenericHDBRepository* pr, const HDBHandle& hdl) :
 		m_pr(pr), m_hdl(hdl) {}
-
-	~OW_HDBHandleLock()
+	~HDBHandleLock()
 	{
 		try
 		{
@@ -196,18 +172,17 @@ public:
 			// don't let exceptions escape
 		}
 	}
-	OW_HDBHandle* operator->() { return &m_hdl; }
-	OW_HDBHandle& operator*() { return m_hdl; }
-	OW_HDBHandle getHandle() { return m_hdl; }
+	HDBHandle* operator->() { return &m_hdl; }
+	HDBHandle& operator*() { return m_hdl; }
+	HDBHandle getHandle() { return m_hdl; }
 private:
-	OW_GenericHDBRepository* m_pr;
-	OW_HDBHandle m_hdl;
+	GenericHDBRepository* m_pr;
+	HDBHandle m_hdl;
 };
+static const UInt32 HDBNSNODE_FLAG = 0x40000000;
+static const UInt32 HDBCLSNODE_FLAG = 0x20000000;
+static const UInt32 HDBCLSASSOCNODE_FLAG = 0x08000000;
 
-static const OW_UInt32 OW_HDBNSNODE_FLAG = 0x40000000;
-static const OW_UInt32 OW_HDBCLSNODE_FLAG = 0x20000000;
-static const OW_UInt32 OW_HDBCLSASSOCNODE_FLAG = 0x08000000;
+} // end namespace OpenWBEM
 
 #endif
-
-

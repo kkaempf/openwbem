@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMFeatures.hpp"
@@ -39,305 +38,289 @@
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMValue.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMHandleIFC::~OW_CIMOMHandleIFC() 
+CIMOMHandleIFC::~CIMOMHandleIFC() 
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMFeatures
-OW_CIMOMHandleIFC::getServerFeatures()
+CIMFeatures
+CIMOMHandleIFC::getServerFeatures()
 {
-	return OW_CIMFeatures();
+	return CIMFeatures();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMOMHandleIFC::exportIndication(const OW_CIMInstance& instance,
-		const OW_String& instNS)
+CIMOMHandleIFC::exportIndication(const CIMInstance& instance,
+		const String& instNS)
 {
-	OW_THROWCIM(OW_CIMException::FAILED);
+	OW_THROWCIM(CIMException::FAILED);
 	(void)instance;
 	(void)instNS;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
     // TODO: Put these into a common header.  Make them available for re-use.
-	class CIMClassEnumBuilder : public OW_CIMClassResultHandlerIFC
+	class CIMClassEnumBuilder : public CIMClassResultHandlerIFC
 	{
 	public:
-		CIMClassEnumBuilder(OW_CIMClassEnumeration& e) : m_e(e) {}
+		CIMClassEnumBuilder(CIMClassEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandle(const OW_CIMClass &c)
+		virtual void doHandle(const CIMClass &c)
 		{
 			m_e.addElement(c);
 		}
 	private:
-		OW_CIMClassEnumeration& m_e;
+		CIMClassEnumeration& m_e;
 	};
 	
-	class StringArrayBuilder : public OW_StringResultHandlerIFC
+	class StringArrayBuilder : public StringResultHandlerIFC
 	{
 	public:
-		StringArrayBuilder(OW_StringArray& a) : m_a(a) {}
+		StringArrayBuilder(StringArray& a) : m_a(a) {}
 	protected:
-		virtual void doHandle(const OW_String &s)
+		virtual void doHandle(const String &s)
 		{
 			m_a.push_back(s);
 		}
 	private:
-		OW_StringArray& m_a;
+		StringArray& m_a;
 	};
 	
-	class StringEnumBuilder : public OW_StringResultHandlerIFC
+	class StringEnumBuilder : public StringResultHandlerIFC
 	{
 	public:
-		StringEnumBuilder(OW_StringEnumeration& e) : m_e(e) {}
+		StringEnumBuilder(StringEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandle(const OW_String &s)
+		virtual void doHandle(const String &s)
 		{
 			m_e.addElement(s);
 		}
 	private:
-		OW_StringEnumeration& m_e;
+		StringEnumeration& m_e;
 	};
 	
-	class CIMObjectPathEnumBuilder : public OW_CIMObjectPathResultHandlerIFC
+	class CIMObjectPathEnumBuilder : public CIMObjectPathResultHandlerIFC
 	{
 	public:
-		CIMObjectPathEnumBuilder(OW_CIMObjectPathEnumeration& e) : m_e(e) {}
+		CIMObjectPathEnumBuilder(CIMObjectPathEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandle(const OW_CIMObjectPath &cop)
+		virtual void doHandle(const CIMObjectPath &cop)
 		{
 			m_e.addElement(cop);
 		}
 	private:
-		OW_CIMObjectPathEnumeration& m_e;
+		CIMObjectPathEnumeration& m_e;
 	};
-
-	class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+	class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+		CIMInstanceEnumBuilder(CIMInstanceEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &i)
+		virtual void doHandle(const CIMInstance &i)
 		{
 			m_e.addElement(i);
 		}
 	private:
-		OW_CIMInstanceEnumeration& m_e;
+		CIMInstanceEnumeration& m_e;
 	};
 	
-	class CIMQualifierTypeEnumBuilder : public OW_CIMQualifierTypeResultHandlerIFC
+	class CIMQualifierTypeEnumBuilder : public CIMQualifierTypeResultHandlerIFC
 	{
 	public:
-		CIMQualifierTypeEnumBuilder(OW_CIMQualifierTypeEnumeration& e) : m_e(e) {}
+		CIMQualifierTypeEnumBuilder(CIMQualifierTypeEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandle(const OW_CIMQualifierType &qt)
+		virtual void doHandle(const CIMQualifierType &qt)
 		{
 			m_e.addElement(qt);
 		}
 	private:
-		OW_CIMQualifierTypeEnumeration& m_e;
+		CIMQualifierTypeEnumeration& m_e;
 	};
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_CIMOMHandleIFC::enumClassE(const OW_String& ns,
-	const OW_String& className, 
+CIMClassEnumeration
+CIMOMHandleIFC::enumClassE(const String& ns,
+	const String& className, 
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin)
 {
-	OW_CIMClassEnumeration rval;
+	CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
 	enumClass(ns, className, handler, deep, localOnly, includeQualifiers,
 		includeClassOrigin);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringEnumeration
-OW_CIMOMHandleIFC::enumClassNamesE(
-	const OW_String& ns,
-	const OW_String& className,
+StringEnumeration
+CIMOMHandleIFC::enumClassNamesE(
+	const String& ns,
+	const String& className,
 	EDeepFlag deep)
 {
-	OW_StringEnumeration rval;
+	StringEnumeration rval;
 	StringEnumBuilder handler(rval);
 	enumClassNames(ns, className, handler, deep);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_CIMOMHandleIFC::enumInstancesE(
-		const OW_String& ns,
-		const OW_String& className,
+CIMInstanceEnumeration
+CIMOMHandleIFC::enumInstancesE(
+		const String& ns,
+		const String& className,
 		EDeepFlag deep,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
-	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
 	enumInstances(ns, className, handler,deep,localOnly,includeQualifiers,
 		includeClassOrigin,propertyList);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
-OW_CIMOMHandleIFC::enumInstanceNamesE(
-	const OW_String& ns,
-	const OW_String& className)
+CIMObjectPathEnumeration
+CIMOMHandleIFC::enumInstanceNamesE(
+	const String& ns,
+	const String& className)
 {
-	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
 	enumInstanceNames(ns, className, handler);
 	return rval;
 }
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration
-OW_CIMOMHandleIFC::enumQualifierTypesE(
-	const OW_String& ns)
+CIMQualifierTypeEnumeration
+CIMOMHandleIFC::enumQualifierTypesE(
+	const String& ns)
 {
-	OW_CIMQualifierTypeEnumeration rval;
+	CIMQualifierTypeEnumeration rval;
 	CIMQualifierTypeEnumBuilder handler(rval);
 	enumQualifierTypes(ns, handler);
 	return rval;
 }
 #endif
-
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
-OW_CIMOMHandleIFC::associatorNamesE(
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole)
+CIMObjectPathEnumeration
+CIMOMHandleIFC::associatorNamesE(
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole)
 {
-	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
 	associatorNames(ns,objectName,handler,assocClass,resultClass,role,resultRole);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_CIMOMHandleIFC::associatorsE(
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
+CIMInstanceEnumeration
+CIMOMHandleIFC::associatorsE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
-	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
 	associators(ns, path, handler, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_CIMOMHandleIFC::associatorsClassesE(
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
+CIMClassEnumeration
+CIMOMHandleIFC::associatorsClassesE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
-	OW_CIMClassEnumeration rval;
+	CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
 	associatorsClasses(ns, path, handler, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
-OW_CIMOMHandleIFC::referenceNamesE(
-	const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& resultClass,
-		const OW_String& role)
+CIMObjectPathEnumeration
+CIMOMHandleIFC::referenceNamesE(
+	const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass,
+		const String& role)
 {
-	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumeration rval;
 	CIMObjectPathEnumBuilder handler(rval);
 	referenceNames(ns,path,handler,resultClass,role);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_CIMOMHandleIFC::referencesE(
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& resultClass,
-		const OW_String& role,
+CIMInstanceEnumeration
+CIMOMHandleIFC::referencesE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass,
+		const String& role,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
-	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
 	references(ns, path, handler, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration
-OW_CIMOMHandleIFC::referencesClassesE(
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& resultClass,
-		const OW_String& role,
+CIMClassEnumeration
+CIMOMHandleIFC::referencesClassesE(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& resultClass,
+		const String& role,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
-	OW_CIMClassEnumeration rval;
+	CIMClassEnumeration rval;
 	CIMClassEnumBuilder handler(rval);
 	referencesClasses(ns, path, handler, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration
-OW_CIMOMHandleIFC::execQueryE(
-	const OW_String& ns,
-	const OW_String& query,
-	const OW_String& queryLanguage)
+CIMInstanceEnumeration
+CIMOMHandleIFC::execQueryE(
+	const String& ns,
+	const String& query,
+	const String& queryLanguage)
 {
-	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumeration rval;
 	CIMInstanceEnumBuilder handler(rval);
 	execQuery(ns,handler,query,queryLanguage);
 	return rval;
 }
 
+} // end namespace OpenWBEM
 

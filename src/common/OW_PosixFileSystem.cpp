@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_FileSystem.hpp"
 #include "OW_RandomNumber.hpp"
@@ -38,7 +37,6 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"
-
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
@@ -54,230 +52,204 @@ extern "C"
 #include <pth.h>
 #endif
 }
-
 #include <cstdio> // for rename
+
+namespace OpenWBEM
+{
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_FileSystem::changeFileOwner(const OW_String& filename,
-	const OW_UserId& userId)
+FileSystem::changeFileOwner(const String& filename,
+	const UserId& userId)
 {
 	return ::chown(filename.c_str(), userId, gid_t(-1));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_File
-OW_FileSystem::openFile(const OW_String& path)
+File
+FileSystem::openFile(const String& path)
 {
-	return OW_File(::open(path.c_str(), O_RDWR));
+	return File(::open(path.c_str(), O_RDWR));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_File
-OW_FileSystem::createFile(const OW_String& path)
+File
+FileSystem::createFile(const String& path)
 {
 	int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0660);
 	if(fd != -1)
 	{
-		return OW_File(fd);
+		return File(fd);
 	}
-
-	return OW_File();
+	return File();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_File
-OW_FileSystem::openOrCreateFile(const OW_String& path)
+File
+FileSystem::openOrCreateFile(const String& path)
 {
-	return OW_File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
+	return File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::exists(const OW_String& path)
+FileSystem::exists(const String& path)
 {
 	return access(path.c_str(), F_OK) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::canRead(const OW_String& path)
+FileSystem::canRead(const String& path)
 {
 	return access(path.c_str(), R_OK) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::canWrite(const OW_String& path)
+FileSystem::canWrite(const String& path)
 {
 	return access(path.c_str(), W_OK) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::isDirectory(const OW_String& path)
+FileSystem::isDirectory(const String& path)
 {
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
 		return false;
-
 	return S_ISDIR(st.st_mode);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::changeDirectory(const OW_String& path)
+FileSystem::changeDirectory(const String& path)
 {
 	return chdir(path.c_str()) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::makeDirectory(const OW_String& path)
+FileSystem::makeDirectory(const String& path)
 {
 	return mkdir(path.c_str(), 0777) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::getFileSize(const OW_String& path, OW_UInt32& size)
+FileSystem::getFileSize(const String& path, UInt32& size)
 {
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
 		return false;
-
 	size = st.st_size;
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::removeDirectory(const OW_String& path)
+FileSystem::removeDirectory(const String& path)
 {
 	return rmdir(path.c_str()) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::removeFile(const OW_String& path)
+FileSystem::removeFile(const String& path)
 {
 	return unlink(path.c_str()) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::getDirectoryContents(const OW_String& path,
-	OW_StringArray& dirEntries)
+FileSystem::getDirectoryContents(const String& path,
+	StringArray& dirEntries)
 {
-	static OW_Mutex readdirGuard;
-	OW_MutexLock lock(readdirGuard);
+	static Mutex readdirGuard;
+	MutexLock lock(readdirGuard);
 	DIR* dp;
 	struct dirent* dentry;
 	if((dp = opendir(path.c_str())) == NULL)
 	{
 		return false;
 	}
-
 	dirEntries.clear();
 	while((dentry = readdir(dp)) != NULL)
 	{
-		dirEntries.append(OW_String(dentry->d_name));
+		dirEntries.append(String(dentry->d_name));
 	}
 	closedir(dp);
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_FileSystem::renameFile(const OW_String& oldFileName,
-	const OW_String& newFileName)
+FileSystem::renameFile(const String& oldFileName,
+	const String& newFileName)
 {
 	return ::rename(oldFileName.c_str(), newFileName.c_str()) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t 
-OW_FileSystem::read(OW_FileHandle& hdl, void* bfr, size_t numberOfBytes,
+FileSystem::read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	long offset)
 {
 	if(offset != -1L)
 	{
 		::lseek(hdl, offset, SEEK_SET);
 	}
-
 #ifdef OW_USE_GNU_PTH
     return pth_read(hdl, bfr, numberOfBytes);
 #else
 	return ::read(hdl, bfr, numberOfBytes);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t 
-OW_FileSystem::write(OW_FileHandle& hdl, const void* bfr, size_t numberOfBytes,
+FileSystem::write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	long offset)
 {
 	if(offset != -1L)
 	{
 		::lseek(hdl, offset, SEEK_SET);
 	}
-
 #ifdef OW_USE_GNU_PTH
     return pth_write(hdl, bfr, numberOfBytes);
 #else
 	return ::write(hdl, bfr, numberOfBytes);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_FileSystem::seek(OW_FileHandle& hdl, OW_off_t offset, int whence)
+FileSystem::seek(FileHandle& hdl, off_t offset, int whence)
 {
 	return ::lseek(hdl, offset, whence);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_off_t 
-OW_FileSystem::tell(OW_FileHandle& hdl)
+off_t 
+FileSystem::tell(FileHandle& hdl)
 {
 	return ::lseek(hdl, 0, SEEK_CUR);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_FileSystem::rewind(OW_FileHandle& hdl)
+FileSystem::rewind(FileHandle& hdl)
 {
 	::lseek(hdl, 0, SEEK_SET);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_FileSystem::close(OW_FileHandle& hdl)
+FileSystem::close(FileHandle& hdl)
 {
 	return ::close(hdl);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_FileSystem::flush(OW_FileHandle&)
+FileSystem::flush(FileHandle&)
 {
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_FileSystem::initRandomFile(const OW_String& filename)
+FileSystem::initRandomFile(const String& filename)
 {
 	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
 	if (hdl == -1)
 	{
-		OW_THROW(OW_Exception, format("Can't open random file %1 for writing", filename).c_str());
+		OW_THROW(Exception, format("Can't open random file %1 for writing", filename).c_str());
 	}
-	OW_RandomNumber rnum(0, 0xFF);
+	RandomNumber rnum(0, 0xFF);
 	for (size_t i = 0; i < 1024; ++i)
 	{
 		char c = rnum.getNextNumber();
@@ -286,4 +258,5 @@ OW_FileSystem::initRandomFile(const OW_String& filename)
 	::close(hdl);
 }
 
+} // end namespace OpenWBEM
 

@@ -29,35 +29,36 @@
  *******************************************************************************/
 #ifndef OW_SHAREDLIBRARY_HPP_
 #define OW_SHAREDLIBRARY_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Reference.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * OW_SharedLibrary is a base class for platform classes that implement the
+ * SharedLibrary is a base class for platform classes that implement the
  * functionality of loading and querying shared libraries.
  */
-class OW_SharedLibrary
+class SharedLibrary
 {
 public:
-	virtual ~OW_SharedLibrary();
-
+	virtual ~SharedLibrary();
 	/**
 	 * given a symbol name, getFunctionPointer will store a pointer to the
 	 * function in retval.  If the symbol is found the function returns
 	 * true, otherwise false.
 	 * This function should be called like this:
-	 * typedef OW_ReturnType (*func_t)(param_t p1, ...);
+	 * typedef ReturnType (*func_t)(param_t p1, ...);
 	 * func_t theFunction;
-	 * OW_SharedLibrary::getFunctionPointer(sharedLibrary, "FunctionName", theFunction);
+	 * SharedLibrary::getFunctionPointer(sharedLibrary, "FunctionName", theFunction);
 	 *
 	 * @param functionName	The name of the function to resolve.
 	 * @param retval			Will be set to the function pointer.
 	 * @return true if function succeeded, false otherwise.
 	 */
 	template< class fptype >
-	static bool getFunctionPointer( const OW_Reference<OW_SharedLibrary>& sl, const OW_String& functionName, fptype& retval )
+	static bool getFunctionPointer( const Reference<SharedLibrary>& sl, const String& functionName, fptype& retval )
 	{
 		return sl->doGetFunctionPointer( functionName, reinterpret_cast<void**>(&retval));
 	}
@@ -71,10 +72,11 @@ protected:
 	 * @param fp				Where to store the function pointer.
 	 * @return true if function succeeded, false otherwise.
 	 */
-	virtual bool doGetFunctionPointer( const OW_String& functionName,
+	virtual bool doGetFunctionPointer( const String& functionName,
 			void** fp ) const = 0;
 };
+typedef Reference<SharedLibrary> SharedLibraryRef;
 
-typedef OW_Reference<OW_SharedLibrary> OW_SharedLibraryRef;
+} // end namespace OpenWBEM
+
 #endif
-

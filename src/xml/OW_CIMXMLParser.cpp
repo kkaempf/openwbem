@@ -27,46 +27,45 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_CIMXMLParser.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_XMLUnescape.hpp"
-
 #include <algorithm> // for std::lower_bound
+
+namespace OpenWBEM
+{
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::prime()
+CIMXMLParser::prime()
 {
 	if (!(m_good = m_parser.next(m_curTok)))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Empty XML");
 	}
-	if (m_curTok.type == OW_XMLToken::XML_DECLARATION)
+	if (m_curTok.type == XMLToken::XML_DECLARATION)
 	{
 		if (!(m_good = m_parser.next(m_curTok)))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Empty XML");
 		}
 		skipData();
 	}
-	if (m_curTok.type == OW_XMLToken::DOCTYPE)
+	if (m_curTok.type == XMLToken::DOCTYPE)
 	{
 		if (!(m_good = m_parser.next(m_curTok)))
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "Empty XML");
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "Empty XML");
 		}
 		skipData();
 	}
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLParser::OW_CIMXMLParser(const OW_String& str)
-	: m_ptfs(new OW_TempFileStream())
+CIMXMLParser::CIMXMLParser(const String& str)
+	: m_ptfs(new TempFileStream())
 	, m_parser()
 	, m_curTok()
 	, m_good(true)
@@ -75,9 +74,8 @@ OW_CIMXMLParser::OW_CIMXMLParser(const OW_String& str)
 	m_parser.setInput(*m_ptfs);
 	prime();
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLParser::OW_CIMXMLParser(std::istream& istr)
+CIMXMLParser::CIMXMLParser(std::istream& istr)
 	: m_ptfs()
 	, m_parser(istr)
 	, m_curTok()
@@ -85,235 +83,213 @@ OW_CIMXMLParser::OW_CIMXMLParser(std::istream& istr)
 {
 	prime();
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLParser::OW_CIMXMLParser()
+CIMXMLParser::CIMXMLParser()
 	: m_good(false)
 {
 }
-
-
 // This needs to be sorted alphabetically.
-OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[] =
+CIMXMLParser::ElemEntry CIMXMLParser::g_elems[] =
 {
-	{ "CIM", OW_CIMXMLParser::E_CIM },
-	{ "CLASS", OW_CIMXMLParser::E_CLASS },
-	{ "CLASSNAME", OW_CIMXMLParser::E_CLASSNAME },
-	{ "CLASSPATH", OW_CIMXMLParser::E_CLASSPATH },
-	{ "DECLARATION", OW_CIMXMLParser::E_DECLARATION },
-	{ "DECLGROUP", OW_CIMXMLParser::E_DECLGROUP },
-	{ "DECLGROUP.WITHNAME", OW_CIMXMLParser::E_DECLGROUP_WITHNAME },
-	{ "DECLGROUP.WITHPATH", OW_CIMXMLParser::E_DECLGROUP_WITHPATH },
-	{ "ERROR", OW_CIMXMLParser::E_ERROR },
-	{ "EXPMETHODCALL", OW_CIMXMLParser::E_EXPMETHODCALL },
-	{ "EXPMETHODRESPONSE", OW_CIMXMLParser::E_EXPMETHODRESPONSE },
-	{ "EXPPARAMVALUE", OW_CIMXMLParser::E_EXPPARAMVALUE },
-	{ "HOST", OW_CIMXMLParser::E_HOST },
-	{ "IMETHODCALL", OW_CIMXMLParser::E_IMETHODCALL },
-	{ "IMETHODRESPONSE", OW_CIMXMLParser::E_IMETHODRESPONSE },
-	{ "IMPLICITKEY", OW_CIMXMLParser::E_IMPLICITKEY },
-	{ "INSTANCE", OW_CIMXMLParser::E_INSTANCE },
-	{ "INSTANCENAME", OW_CIMXMLParser::E_INSTANCENAME },
-	{ "INSTANCEPATH", OW_CIMXMLParser::E_INSTANCEPATH },
-	{ "IPARAMVALUE", OW_CIMXMLParser::E_IPARAMVALUE },
-	{ "IRETURNVALUE", OW_CIMXMLParser::E_IRETURNVALUE },
-	{ "KEYBINDING", OW_CIMXMLParser::E_KEYBINDING },
-	{ "KEYVALUE", OW_CIMXMLParser::E_KEYVALUE },
-	{ "LOCALCLASSPATH", OW_CIMXMLParser::E_LOCALCLASSPATH },
-	{ "LOCALINSTANCEPATH", OW_CIMXMLParser::E_LOCALINSTANCEPATH },
-	{ "LOCALNAMESPACEPATH", OW_CIMXMLParser::E_LOCALNAMESPACEPATH },
-	{ "MESSAGE", OW_CIMXMLParser::E_MESSAGE },
-	{ "METHOD", OW_CIMXMLParser::E_METHOD },
-	{ "METHODCALL", OW_CIMXMLParser::E_METHODCALL },
-	{ "METHODRESPONSE", OW_CIMXMLParser::E_METHODRESPONSE },
-	{ "MULTIEXPREQ", OW_CIMXMLParser::E_MULTIEXPREQ },
-	{ "MULTIEXPRSP", OW_CIMXMLParser::E_MULTIEXPRSP },
-	{ "MULTIREQ", OW_CIMXMLParser::E_MULTIREQ },
-	{ "MULTIRSP", OW_CIMXMLParser::E_MULTIRSP },
-	{ "NAMESPACE", OW_CIMXMLParser::E_NAMESPACE },
-	{ "NAMESPACEPATH", OW_CIMXMLParser::E_NAMESPACEPATH },
-	{ "OBJECTPATH", OW_CIMXMLParser::E_OBJECTPATH },
-	{ "PARAMETER", OW_CIMXMLParser::E_PARAMETER },
-	{ "PARAMETER.ARRAY", OW_CIMXMLParser::E_PARAMETER_ARRAY },
-	{ "PARAMETER.REFARRAY", OW_CIMXMLParser::E_PARAMETER_REFARRAY },
-	{ "PARAMETER.REFERENCE", OW_CIMXMLParser::E_PARAMETER_REFERENCE },
-	{ "PARAMVALUE", OW_CIMXMLParser::E_PARAMVALUE },
-	{ "PROPERTY", OW_CIMXMLParser::E_PROPERTY },
-	{ "PROPERTY.ARRAY", OW_CIMXMLParser::E_PROPERTY_ARRAY },
-	{ "PROPERTY.REFERENCE", OW_CIMXMLParser::E_PROPERTY_REFERENCE },
-	{ "QUALIFIER", OW_CIMXMLParser::E_QUALIFIER },
-	{ "QUALIFIER.DECLARATION", OW_CIMXMLParser::E_QUALIFIER_DECLARATION },
-	{ "RETURNVALUE", OW_CIMXMLParser::E_RETURNVALUE },
-	{ "SCOPE", OW_CIMXMLParser::E_SCOPE },
-	{ "SIMPLEEXPREQ", OW_CIMXMLParser::E_SIMPLEEXPREQ },
-	{ "SIMPLEEXPRSP", OW_CIMXMLParser::E_SIMPLEEXPRSP },
-	{ "SIMPLEREQ", OW_CIMXMLParser::E_SIMPLEREQ },
-	{ "SIMPLERSP", OW_CIMXMLParser::E_SIMPLERSP },
-	{ "VALUE", OW_CIMXMLParser::E_VALUE },
-	{ "VALUE.ARRAY", OW_CIMXMLParser::E_VALUE_ARRAY },
-	{ "VALUE.NAMEDINSTANCE", OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE },
-	{ "VALUE.NAMEDOBJECT", OW_CIMXMLParser::E_VALUE_NAMEDOBJECT },
-	{ "VALUE.OBJECT", OW_CIMXMLParser::E_VALUE_OBJECT },
-	{ "VALUE.OBJECTWITHLOCALPATH", OW_CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH },
-	{ "VALUE.OBJECTWITHPATH", OW_CIMXMLParser::E_VALUE_OBJECTWITHPATH },
-	{ "VALUE.REFARRAY", OW_CIMXMLParser::E_VALUE_REFARRAY },
-	{ "VALUE.REFERENCE", OW_CIMXMLParser::E_VALUE_REFERENCE },
-	{ "garbage", OW_CIMXMLParser::E_UNKNOWN }
+	{ "CIM", CIMXMLParser::E_CIM },
+	{ "CLASS", CIMXMLParser::E_CLASS },
+	{ "CLASSNAME", CIMXMLParser::E_CLASSNAME },
+	{ "CLASSPATH", CIMXMLParser::E_CLASSPATH },
+	{ "DECLARATION", CIMXMLParser::E_DECLARATION },
+	{ "DECLGROUP", CIMXMLParser::E_DECLGROUP },
+	{ "DECLGROUP.WITHNAME", CIMXMLParser::E_DECLGROUP_WITHNAME },
+	{ "DECLGROUP.WITHPATH", CIMXMLParser::E_DECLGROUP_WITHPATH },
+	{ "ERROR", CIMXMLParser::E_ERROR },
+	{ "EXPMETHODCALL", CIMXMLParser::E_EXPMETHODCALL },
+	{ "EXPMETHODRESPONSE", CIMXMLParser::E_EXPMETHODRESPONSE },
+	{ "EXPPARAMVALUE", CIMXMLParser::E_EXPPARAMVALUE },
+	{ "HOST", CIMXMLParser::E_HOST },
+	{ "IMETHODCALL", CIMXMLParser::E_IMETHODCALL },
+	{ "IMETHODRESPONSE", CIMXMLParser::E_IMETHODRESPONSE },
+	{ "IMPLICITKEY", CIMXMLParser::E_IMPLICITKEY },
+	{ "INSTANCE", CIMXMLParser::E_INSTANCE },
+	{ "INSTANCENAME", CIMXMLParser::E_INSTANCENAME },
+	{ "INSTANCEPATH", CIMXMLParser::E_INSTANCEPATH },
+	{ "IPARAMVALUE", CIMXMLParser::E_IPARAMVALUE },
+	{ "IRETURNVALUE", CIMXMLParser::E_IRETURNVALUE },
+	{ "KEYBINDING", CIMXMLParser::E_KEYBINDING },
+	{ "KEYVALUE", CIMXMLParser::E_KEYVALUE },
+	{ "LOCALCLASSPATH", CIMXMLParser::E_LOCALCLASSPATH },
+	{ "LOCALINSTANCEPATH", CIMXMLParser::E_LOCALINSTANCEPATH },
+	{ "LOCALNAMESPACEPATH", CIMXMLParser::E_LOCALNAMESPACEPATH },
+	{ "MESSAGE", CIMXMLParser::E_MESSAGE },
+	{ "METHOD", CIMXMLParser::E_METHOD },
+	{ "METHODCALL", CIMXMLParser::E_METHODCALL },
+	{ "METHODRESPONSE", CIMXMLParser::E_METHODRESPONSE },
+	{ "MULTIEXPREQ", CIMXMLParser::E_MULTIEXPREQ },
+	{ "MULTIEXPRSP", CIMXMLParser::E_MULTIEXPRSP },
+	{ "MULTIREQ", CIMXMLParser::E_MULTIREQ },
+	{ "MULTIRSP", CIMXMLParser::E_MULTIRSP },
+	{ "NAMESPACE", CIMXMLParser::E_NAMESPACE },
+	{ "NAMESPACEPATH", CIMXMLParser::E_NAMESPACEPATH },
+	{ "OBJECTPATH", CIMXMLParser::E_OBJECTPATH },
+	{ "PARAMETER", CIMXMLParser::E_PARAMETER },
+	{ "PARAMETER.ARRAY", CIMXMLParser::E_PARAMETER_ARRAY },
+	{ "PARAMETER.REFARRAY", CIMXMLParser::E_PARAMETER_REFARRAY },
+	{ "PARAMETER.REFERENCE", CIMXMLParser::E_PARAMETER_REFERENCE },
+	{ "PARAMVALUE", CIMXMLParser::E_PARAMVALUE },
+	{ "PROPERTY", CIMXMLParser::E_PROPERTY },
+	{ "PROPERTY.ARRAY", CIMXMLParser::E_PROPERTY_ARRAY },
+	{ "PROPERTY.REFERENCE", CIMXMLParser::E_PROPERTY_REFERENCE },
+	{ "QUALIFIER", CIMXMLParser::E_QUALIFIER },
+	{ "QUALIFIER.DECLARATION", CIMXMLParser::E_QUALIFIER_DECLARATION },
+	{ "RETURNVALUE", CIMXMLParser::E_RETURNVALUE },
+	{ "SCOPE", CIMXMLParser::E_SCOPE },
+	{ "SIMPLEEXPREQ", CIMXMLParser::E_SIMPLEEXPREQ },
+	{ "SIMPLEEXPRSP", CIMXMLParser::E_SIMPLEEXPRSP },
+	{ "SIMPLEREQ", CIMXMLParser::E_SIMPLEREQ },
+	{ "SIMPLERSP", CIMXMLParser::E_SIMPLERSP },
+	{ "VALUE", CIMXMLParser::E_VALUE },
+	{ "VALUE.ARRAY", CIMXMLParser::E_VALUE_ARRAY },
+	{ "VALUE.NAMEDINSTANCE", CIMXMLParser::E_VALUE_NAMEDINSTANCE },
+	{ "VALUE.NAMEDOBJECT", CIMXMLParser::E_VALUE_NAMEDOBJECT },
+	{ "VALUE.OBJECT", CIMXMLParser::E_VALUE_OBJECT },
+	{ "VALUE.OBJECTWITHLOCALPATH", CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH },
+	{ "VALUE.OBJECTWITHPATH", CIMXMLParser::E_VALUE_OBJECTWITHPATH },
+	{ "VALUE.REFARRAY", CIMXMLParser::E_VALUE_REFARRAY },
+	{ "VALUE.REFERENCE", CIMXMLParser::E_VALUE_REFERENCE },
+	{ "garbage", CIMXMLParser::E_UNKNOWN }
 };
-
 		
-OW_CIMXMLParser::ElemEntry* OW_CIMXMLParser::g_elemsEnd = &OW_CIMXMLParser::g_elems[0] +
-	(sizeof(OW_CIMXMLParser::g_elems)/sizeof(*OW_CIMXMLParser::g_elems)) - 1;
-
+CIMXMLParser::ElemEntry* CIMXMLParser::g_elemsEnd = &CIMXMLParser::g_elems[0] +
+	(sizeof(CIMXMLParser::g_elems)/sizeof(*CIMXMLParser::g_elems)) - 1;
 //////////////////////////////////////////////////////////////////////////////
 inline bool
-OW_CIMXMLParser::elemEntryCompare(const OW_CIMXMLParser::ElemEntry& f1,
-	const OW_CIMXMLParser::ElemEntry& f2)
+CIMXMLParser::elemEntryCompare(const CIMXMLParser::ElemEntry& f1,
+	const CIMXMLParser::ElemEntry& f2)
 {
 	return (strcmp(f1.name, f2.name) < 0);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLParser::tokenId
-OW_CIMXMLParser::getTokenFromName(const char* name)
+CIMXMLParser::tokenId
+CIMXMLParser::getTokenFromName(const char* name)
 {
-	ElemEntry e = { 0, OW_CIMXMLParser::E_UNKNOWN };
+	ElemEntry e = { 0, CIMXMLParser::E_UNKNOWN };
 	e.name = name;
 	ElemEntry* i = std::lower_bound(g_elems, g_elemsEnd, e, elemEntryCompare);
 	if (i == g_elemsEnd || strcmp((*i).name, name) != 0)
 	{
-		return OW_CIMXMLParser::E_UNKNOWN;
+		return CIMXMLParser::E_UNKNOWN;
 	}
 	else
 	{
 		return i->id;
 	}
 }
-
-
-const char* const OW_CIMXMLParser::A_ARRAY_SIZE					= "ARRAYSIZE";
-const char* const OW_CIMXMLParser::A_ASSOC_CLASS				= "ASSOCCLASS";
-const char* const OW_CIMXMLParser::A_CLASS_NAME					= "CLASSNAME";
-const char* const OW_CIMXMLParser::A_CLASS_ORIGIN				= "CLASSORIGIN";
-const char* const OW_CIMXMLParser::A_DEEP_INHERITANCE			= "DEEPINHERITANCE";
-const char* const OW_CIMXMLParser::A_INCLUDE_CLASS_ORIGIN	= "INCLUDECLASSORIGIN";
-const char* const OW_CIMXMLParser::A_INCLUDE_QUALIFIERS		= "INCLUDEQUALIFIERS";
-const char* const OW_CIMXMLParser::A_INSTANCE_NAME				= "INSTANCENAME";
-const char* const OW_CIMXMLParser::A_LOCAL_ONLY					= "LOCALONLY";
-const char* const OW_CIMXMLParser::A_MODIFIED_CLASS			= "MODIFIEDCLASS";
-const char* const OW_CIMXMLParser::A_NAME							= "NAME";
-const char* const OW_CIMXMLParser::A_NEW_VALUE					= "NEWVALUE";
-const char* const OW_CIMXMLParser::A_OBJECT_NAME				= "OBJECTNAME";
-const char* const OW_CIMXMLParser::A_OVERRIDABLE				= "OVERRIDABLE";
-const char* const OW_CIMXMLParser::A_PARAMTYPE							= "PARAMTYPE";
-const char* const OW_CIMXMLParser::A_PROPAGATED					= "PROPAGATED";
-const char* const OW_CIMXMLParser::A_PROPERTY_LIST				= "PROPERTYLIST";
-const char* const OW_CIMXMLParser::A_PROPERTY_NAME				= "PROPERTYNAME";
-const char* const OW_CIMXMLParser::A_REFERENCE_CLASS			= "REFERENCECLASS";
-const char* const OW_CIMXMLParser::A_RESULT_CLASS				= "RESULTCLASS";
-const char* const OW_CIMXMLParser::A_RESULT_ROLE				= "RESULTROLE";
-const char* const OW_CIMXMLParser::A_ROLE							= "ROLE";
-const char* const OW_CIMXMLParser::A_SUPER_CLASS				= "SUPERCLASS";
-const char* const OW_CIMXMLParser::A_TOINSTANCE					= "TOINSTANCE"; // This is a bug in the spec
-const char* const OW_CIMXMLParser::A_TOSUBCLASS					= "TOSUBCLASS";
-const char* const OW_CIMXMLParser::A_TRANSLATABLE				= "TRANSLATABLE";
-const char* const OW_CIMXMLParser::A_TYPE							= "TYPE";
-const char* const OW_CIMXMLParser::A_VALUE_TYPE					= "VALUETYPE";
-const char* const OW_CIMXMLParser::A_CIMVERSION = "CIMVERSION";
-const char* const OW_CIMXMLParser::A_DTDVERSION = "DTDVERSION";
-const char* const OW_CIMXMLParser::A_MSG_ID = "ID";
-const char* const OW_CIMXMLParser::A_PROTOCOLVERSION = "PROTOCOLVERSION";
-const char* const OW_CIMXMLParser::AV_CIMVERSION20_VALUE = "2.0";
-const char* const OW_CIMXMLParser::AV_CIMVERSION21_VALUE = "2.1";
-const char* const OW_CIMXMLParser::AV_CIMVERSION22_VALUE = "2.2";
-const char* const OW_CIMXMLParser::AV_DTDVERSION20_VALUE = "2.0";
-const char* const OW_CIMXMLParser::AV_DTDVERSION21_VALUE = "2.1";
-const char* const OW_CIMXMLParser::AV_PROTOCOLVERSION10_VALUE = "1.0";
-const char* const OW_CIMXMLParser::AV_PROTOCOLVERSION11_VALUE = "1.1";
-const char* const OW_CIMXMLParser::A_PARAMERRORCODE = "CODE";
-const char* const OW_CIMXMLParser::A_PARAMERRORDESCRIPTION = "DESCRIPTION";
-
-
-OW_String
-OW_CIMXMLParser::getAttribute(const char* const attrId, bool throwIfError)
+const char* const CIMXMLParser::A_ARRAY_SIZE					= "ARRAYSIZE";
+const char* const CIMXMLParser::A_ASSOC_CLASS				= "ASSOCCLASS";
+const char* const CIMXMLParser::A_CLASS_NAME					= "CLASSNAME";
+const char* const CIMXMLParser::A_CLASS_ORIGIN				= "CLASSORIGIN";
+const char* const CIMXMLParser::A_DEEP_INHERITANCE			= "DEEPINHERITANCE";
+const char* const CIMXMLParser::A_INCLUDE_CLASS_ORIGIN	= "INCLUDECLASSORIGIN";
+const char* const CIMXMLParser::A_INCLUDE_QUALIFIERS		= "INCLUDEQUALIFIERS";
+const char* const CIMXMLParser::A_INSTANCE_NAME				= "INSTANCENAME";
+const char* const CIMXMLParser::A_LOCAL_ONLY					= "LOCALONLY";
+const char* const CIMXMLParser::A_MODIFIED_CLASS			= "MODIFIEDCLASS";
+const char* const CIMXMLParser::A_NAME							= "NAME";
+const char* const CIMXMLParser::A_NEW_VALUE					= "NEWVALUE";
+const char* const CIMXMLParser::A_OBJECT_NAME				= "OBJECTNAME";
+const char* const CIMXMLParser::A_OVERRIDABLE				= "OVERRIDABLE";
+const char* const CIMXMLParser::A_PARAMTYPE							= "PARAMTYPE";
+const char* const CIMXMLParser::A_PROPAGATED					= "PROPAGATED";
+const char* const CIMXMLParser::A_PROPERTY_LIST				= "PROPERTYLIST";
+const char* const CIMXMLParser::A_PROPERTY_NAME				= "PROPERTYNAME";
+const char* const CIMXMLParser::A_REFERENCE_CLASS			= "REFERENCECLASS";
+const char* const CIMXMLParser::A_RESULT_CLASS				= "RESULTCLASS";
+const char* const CIMXMLParser::A_RESULT_ROLE				= "RESULTROLE";
+const char* const CIMXMLParser::A_ROLE							= "ROLE";
+const char* const CIMXMLParser::A_SUPER_CLASS				= "SUPERCLASS";
+const char* const CIMXMLParser::A_TOINSTANCE					= "TOINSTANCE"; // This is a bug in the spec
+const char* const CIMXMLParser::A_TOSUBCLASS					= "TOSUBCLASS";
+const char* const CIMXMLParser::A_TRANSLATABLE				= "TRANSLATABLE";
+const char* const CIMXMLParser::A_TYPE							= "TYPE";
+const char* const CIMXMLParser::A_VALUE_TYPE					= "VALUETYPE";
+const char* const CIMXMLParser::A_CIMVERSION = "CIMVERSION";
+const char* const CIMXMLParser::A_DTDVERSION = "DTDVERSION";
+const char* const CIMXMLParser::A_MSG_ID = "ID";
+const char* const CIMXMLParser::A_PROTOCOLVERSION = "PROTOCOLVERSION";
+const char* const CIMXMLParser::AV_CIMVERSION20_VALUE = "2.0";
+const char* const CIMXMLParser::AV_CIMVERSION21_VALUE = "2.1";
+const char* const CIMXMLParser::AV_CIMVERSION22_VALUE = "2.2";
+const char* const CIMXMLParser::AV_DTDVERSION20_VALUE = "2.0";
+const char* const CIMXMLParser::AV_DTDVERSION21_VALUE = "2.1";
+const char* const CIMXMLParser::AV_PROTOCOLVERSION10_VALUE = "1.0";
+const char* const CIMXMLParser::AV_PROTOCOLVERSION11_VALUE = "1.1";
+const char* const CIMXMLParser::A_PARAMERRORCODE = "CODE";
+const char* const CIMXMLParser::A_PARAMERRORDESCRIPTION = "DESCRIPTION";
+String
+CIMXMLParser::getAttribute(const char* const attrId, bool throwIfError)
 {
-	OW_ASSERT(m_curTok.type == OW_XMLToken::START_TAG);
+	OW_ASSERT(m_curTok.type == XMLToken::START_TAG);
 	for (unsigned i = 0; i < m_curTok.attributeCount; i++)
 	{
-		OW_XMLToken::Attribute& attr = m_curTok.attributes[i];
-
+		XMLToken::Attribute& attr = m_curTok.attributes[i];
 		// Should this be case insensentive? NO
 		if (attr.name.equals(attrId))
 		{
-			return OW_XMLUnescape(attr.value.c_str(), attr.value.length());
+			return XMLUnescape(attr.value.c_str(), attr.value.length());
 		}
 	}
-
 	if (throwIfError)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					format("Failed to find "
 						"attribute: %1 in node: %2", attrId, m_curTok.text).c_str() );
 	}
-
-	return OW_String();
+	return String();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::mustGetChild(OW_CIMXMLParser::tokenId tId)
+CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId)
 {
 	if (!m_good)
 	{
 		m_good = false;
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			"CIMXMLParser has reached EOF");
 	}
-
 	getChild();
 	if (!m_good || !tokenIs(tId))
 	{
 		m_good = false;
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::mustGetChild(OW_CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::mustGetChild(CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
 				g_elems[tId].name, *this).c_str());
 	}
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::mustGetChild()
+CIMXMLParser::mustGetChild()
 {
 	if (!m_good)
 	{
 		m_good = false;
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::mustGetChild() failed.  parser = %1",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::mustGetChild() failed.  parser = %1",
 				*this).c_str());
-
 	}
-
 	getChild();
 	if (!m_good)
 	{
 		m_good = false;
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::mustGetChild() failed.  parser = %1",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::mustGetChild() failed.  parser = %1",
 				*this).c_str());
 	}
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::getChild()
+CIMXMLParser::getChild()
 {
 	if (!m_good)
 	{
 		return;
 	}
-
 	for(;;)
 	{
 		nextToken();
@@ -323,66 +299,59 @@ OW_CIMXMLParser::getChild()
 		}
 		switch (m_curTok.type)
 		{
-			case OW_XMLToken::END_TAG: // hit the end, no children
+			case XMLToken::END_TAG: // hit the end, no children
 				m_good = false;
-			case OW_XMLToken::START_TAG: // valid token for a child
+			case XMLToken::START_TAG: // valid token for a child
 				return;
 			default:
 				break;
 		}
 	}
 }
-
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId) const
+CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId) const
 {
 //	cout << "tokenIs(" << g_elems[tId].name << ") = " << tokenIs(g_elems[tId].name) << "\n";
 	if (!tokenIs(g_elems[tId].name))
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::mustTokenIs(CIMXMLParser::tokenId tId=%1) failed.  parser = %2",
 				g_elems[tId].name, *this).c_str());
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::getNextTag(bool throwIfError)
+CIMXMLParser::getNextTag(bool throwIfError)
 {
 	nextToken();
 	skipData();
 	if (!m_good && throwIfError)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::getNext() failed.  parser = %1",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::getNext() failed.  parser = %1",
 				*this).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::getNext(bool throwIfError)
+CIMXMLParser::getNext(bool throwIfError)
 {
 	nextToken();
 	if (!m_good && throwIfError)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::getNext() failed.  parser = %1",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::getNext() failed.  parser = %1",
 				*this).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::getNext(OW_CIMXMLParser::tokenId beginTok, bool throwIfError)
+CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok, bool throwIfError)
 {
 	while (m_good)
 	{
-		if (m_curTok.type == OW_XMLToken::START_TAG)
+		if (m_curTok.type == XMLToken::START_TAG)
 		{
 			if (m_curTok.text.equals(g_elems[beginTok].name))
 			{
@@ -393,85 +362,76 @@ OW_CIMXMLParser::getNext(OW_CIMXMLParser::tokenId beginTok, bool throwIfError)
 	}
 	if (!m_good && throwIfError)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::getNext(OW_CIMXMLParser::tokenId beginTok=%1) failed.  parser = %2",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::getNext(CIMXMLParser::tokenId beginTok=%1) failed.  parser = %2",
 				g_elems[beginTok].name, *this).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::mustGetEndTag()
+CIMXMLParser::mustGetEndTag()
 {
 	skipData();
-	if (m_curTok.type != OW_XMLToken::END_TAG)
+	if (m_curTok.type != XMLToken::END_TAG)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("OW_CIMXMLParser::mustGetEndTag() failed.  parser = %1",
+		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+			format("CIMXMLParser::mustGetEndTag() failed.  parser = %1",
 				*this).c_str());
 	}
 	getNext();
 	skipData();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMXMLParser::getName() const
+String
+CIMXMLParser::getName() const
 {
-	OW_ASSERT(m_curTok.type == OW_XMLToken::START_TAG || m_curTok.type == OW_XMLToken::END_TAG);
-	return OW_XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
+	OW_ASSERT(m_curTok.type == XMLToken::START_TAG || m_curTok.type == XMLToken::END_TAG);
+	return XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMXMLParser::getData() const
+String
+CIMXMLParser::getData() const
 {
-	OW_ASSERT(m_curTok.type == OW_XMLToken::CONTENT || m_curTok.type == OW_XMLToken::CDATA);
-	return OW_XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
+	OW_ASSERT(m_curTok.type == XMLToken::CONTENT || m_curTok.type == XMLToken::CDATA);
+	return XMLUnescape(m_curTok.text.c_str(), m_curTok.text.length());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMXMLParser::isData() const
+CIMXMLParser::isData() const
 {
-	return m_curTok.type == OW_XMLToken::CONTENT || m_curTok.type == OW_XMLToken::CDATA;
+	return m_curTok.type == XMLToken::CONTENT || m_curTok.type == XMLToken::CDATA;
 }
-
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::nextToken()
+CIMXMLParser::nextToken()
 {
 	do
 	{
 		m_good = m_parser.next(m_curTok);
-	} while (m_curTok.type == OW_XMLToken::COMMENT && m_good);
+	} while (m_curTok.type == XMLToken::COMMENT && m_good);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLParser::skipData()
+CIMXMLParser::skipData()
 {
 	while (isData() && m_good)
 	{
 		nextToken();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-std::ostream& operator<<(std::ostream& ostr, const OW_CIMXMLParser& p)
+std::ostream& operator<<(std::ostream& ostr, const CIMXMLParser& p)
 {
 	ostr << "m_good = " << p.m_good << '\n';
 	switch (p.m_curTok.type)
 	{
-		case OW_XMLToken::INVALID:
+		case XMLToken::INVALID:
 			ostr << "*INVALID*\n";
 			break;
-		case OW_XMLToken::XML_DECLARATION:
+		case XMLToken::XML_DECLARATION:
 			ostr << "<xml>\n";
 			break;
-		case OW_XMLToken::START_TAG:
+		case XMLToken::START_TAG:
 			ostr << '<' << p.m_curTok.text << ' ';
 			for (unsigned int x = 0; x < p.m_curTok.attributeCount; ++x)
 			{
@@ -480,19 +440,19 @@ std::ostream& operator<<(std::ostream& ostr, const OW_CIMXMLParser& p)
 			}
 			ostr << ">\n";
 			break;
-		case OW_XMLToken::END_TAG:
+		case XMLToken::END_TAG:
 			ostr << "</" << p.m_curTok.text << ">\n";
 			break;
-		case OW_XMLToken::COMMENT:
+		case XMLToken::COMMENT:
 			ostr << "<--" << p.m_curTok.text << "-->\n";
 			break;
-		case OW_XMLToken::CDATA:
+		case XMLToken::CDATA:
 			ostr << "<CDATA[[" << p.m_curTok.text << "]]>\n";
 			break;
-		case OW_XMLToken::DOCTYPE:
+		case XMLToken::DOCTYPE:
 			ostr << "<DOCTYPE>\n";
 			break;
-		case OW_XMLToken::CONTENT:
+		case XMLToken::CONTENT:
 			ostr << "CONTENT: " << p.m_curTok.text << '\n';
 			break;
 		default:
@@ -500,3 +460,6 @@ std::ostream& operator<<(std::ostream& ostr, const OW_CIMXMLParser& p)
 	}
 	return ostr;
 }
+
+} // end namespace OpenWBEM
+

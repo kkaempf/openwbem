@@ -27,70 +27,59 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_RWLOCKER_HPP_INCLUDE_GUARD_
 #define OW_RWLOCKER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Array.hpp"
 
-DECLARE_EXCEPTION(RWLocker);
+namespace OpenWBEM
+{
 
+DECLARE_EXCEPTION(RWLocker);
 //////////////////////////////////////////////////////////////////////////////
-class OW_RWLocker
+class RWLocker
 {
 public:
-	OW_RWLocker();
-	~OW_RWLocker();
-
-	void getReadLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
-	void getWriteLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
-
+	RWLocker();
+	~RWLocker();
+	void getReadLock(UInt32 sTimeout, UInt32 usTimeout=0);
+	void getWriteLock(UInt32 sTimeout, UInt32 usTimeout=0);
 	void releaseReadLock();
 	void releaseWriteLock();
-
 private:
-
 	void doWakeups();
-
-	OW_Condition   m_waiting_writers;
-	OW_Condition   m_waiting_readers;
+	Condition   m_waiting_writers;
+	Condition   m_waiting_readers;
 	
 	int         m_num_waiting_writers;
 	int         m_num_waiting_readers;
 	int			m_readers_next;
 	
-	OW_NonRecursiveMutex	m_guard;
-
+	NonRecursiveMutex	m_guard;
 	// -1 means writer has lock.  0 means no one has the lock. 
 	// > 0 means readers have the lock.
 	int m_state;
-
-	OW_Array<OW_Thread_t> m_readers;
-	OW_Thread_t m_writer;
+	Array<Thread_t> m_readers;
+	Thread_t m_writer;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_ReadLock
+class ReadLock
 {
 public:
-	OW_ReadLock(OW_RWLocker& locker, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+	ReadLock(RWLocker& locker, UInt32 sTimeout, UInt32 usTimeout=0)
 		: m_locker(&locker)
 		, m_released(false)
 	{
 		m_locker->getReadLock(sTimeout, usTimeout);
 	}
-
-	~OW_ReadLock()
+	~ReadLock()
 	{
 		release();
 	}
-
-	void lock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+	void lock(UInt32 sTimeout, UInt32 usTimeout=0)
 	{
 		if(m_released)
 		{
@@ -98,7 +87,6 @@ public:
 			m_released = false;
 		}
 	}
-
 	void release()
 	{
 		if(!m_released)
@@ -107,33 +95,28 @@ public:
 			m_released = true;
 		}
 	}
-
 private:
-	OW_RWLocker* m_locker;
+	RWLocker* m_locker;
 	bool m_released;
-
 	// noncopyable
-	OW_ReadLock(const OW_ReadLock&);
-	OW_ReadLock& operator=(const OW_ReadLock&);
+	ReadLock(const ReadLock&);
+	ReadLock& operator=(const ReadLock&);
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_WriteLock
+class WriteLock
 {
 public:
-	OW_WriteLock(OW_RWLocker& locker, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+	WriteLock(RWLocker& locker, UInt32 sTimeout, UInt32 usTimeout=0)
 		: m_locker(&locker)
 		, m_released(false)
 	{
 		m_locker->getWriteLock(sTimeout, usTimeout);
 	}
-
-	~OW_WriteLock()
+	~WriteLock()
 	{
 		release();
 	}
-
-	void lock(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+	void lock(UInt32 sTimeout, UInt32 usTimeout=0)
 	{
 		if(m_released)
 		{
@@ -141,7 +124,6 @@ public:
 			m_released = false;
 		}
 	}
-
 	void release()
 	{
 		if(!m_released)
@@ -150,14 +132,15 @@ public:
 			m_released = true;
 		}
 	}
-
 private:
-	OW_RWLocker* m_locker;
+	RWLocker* m_locker;
 	bool m_released;
 	
 	// noncopyable
-	OW_WriteLock(const OW_WriteLock&);
-	OW_WriteLock& operator=(const OW_WriteLock&);
+	WriteLock(const WriteLock&);
+	WriteLock& operator=(const WriteLock&);
 };
+
+} // end namespace OpenWBEM
 
 #endif

@@ -29,33 +29,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /* a simple lexical scanner to escape xml */
 #include "OW_config.h"
 #include "OW_XMLUnescape.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_XMLParser.hpp" // for OW_XMLParseException
 #include "OW_Format.hpp"
-
 #include <limits.h> // for CHAR_MAX
 #include <stdlib.h> // for strtol
 
-
-OW_String OW_XMLUnescape(const char* escapedText, unsigned len)
+namespace OpenWBEM
 {
-	OW_StringBuffer rval(len * 2);
 
+String XMLUnescape(const char* escapedText, unsigned len)
+{
+	StringBuffer rval(len * 2);
 	const char* begin = escapedText;
 	const char* end = escapedText + len;
 	const char* q;
 	const char* thisTokStart = 0;
-
 	#define YYCTYPE char
 	#define YYCURSOR        begin
 	#define YYLIMIT         end
 	#define YYMARKER        q
 	#define YYFILL(n)
-
 start:
 	{
 	YYCTYPE yych;
@@ -230,7 +227,7 @@ yy36:	yych = *++YYCURSOR;
 		long lval = strtol( thisTokStart + 2, NULL, 10 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(OW_XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROW(XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
@@ -259,7 +256,7 @@ yy40:	yych = *++YYCURSOR;
 		long lval = strtol( thisTokStart + 3, NULL, 16 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(OW_XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROW(XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
@@ -267,7 +264,8 @@ yy40:	yych = *++YYCURSOR;
 	}
 }
 #line 92
-
-
 	return rval.releaseString();
 }
+
+} // end namespace OpenWBEM
+

@@ -29,18 +29,19 @@
 *******************************************************************************/
 #ifndef OW_CPPPOLLEDPROVIDERIFC_HPP_
 #define OW_CPPPOLLEDPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-class OW_CppPolledProviderIFC : public virtual OW_CppProviderBaseIFC
+namespace OpenWBEM
+{
+
+class CppPolledProviderIFC : public virtual CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppPolledProviderIFC();
-
+	virtual ~CppPolledProviderIFC();
 	/**
-	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
+	 * Called by the CIMOM to give this CppPolledProviderIFC to
 	 * opportunity to export indications if needed.
 	 * @param lch	A local CIMOM handle the provider can use to export
 	 *					indications if needed.
@@ -48,19 +49,16 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env) = 0;
-
+	virtual Int32 poll(const ProviderEnvironmentIFCRef& env) = 0;
 	/**
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env) = 0;
-
-	virtual OW_CppPolledProviderIFC* getPolledProvider() { return this; }
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
+	virtual CppPolledProviderIFC* getPolledProvider() { return this; }
 };
+typedef SharedLibraryReference<CppPolledProviderIFC> CppPolledProviderIFCRef;
 
-typedef OW_SharedLibraryReference<OW_CppPolledProviderIFC> OW_CppPolledProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-
-

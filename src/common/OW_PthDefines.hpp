@@ -27,20 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-
 #ifdef OW_USE_GNU_PTH
 extern "C"
 {
 #include <pth.h>
-}
-#endif
 
+namespace OpenWBEM
+{
+
+}
+
+} // end namespace OpenWBEM
+
+#endif
 #define OW_os_fork pth_fork
 #define OW_os_waitpid pth_waitpid
 #define OW_os_open pth_open
 #define OW_os_read pth_read
 #define OW_os_write pth_write
 #define OW_os_select pth_select
-

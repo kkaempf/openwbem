@@ -30,6 +30,10 @@
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(CIMProtocol)
 
+} // end namespace OpenWBEM
 

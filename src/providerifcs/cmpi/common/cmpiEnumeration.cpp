@@ -25,7 +25,7 @@
 static CMPIStatus enumRelease(CMPIEnumeration* eEnum)
 {
 	//cout<<"--- enumRelease()"<<endl;
-	OW_CIMInstance* enm=(OW_CIMInstance*)eEnum->hdl;
+	OpenWBEM::CIMInstance* enm=(OpenWBEM::CIMInstance*)eEnum->hdl;
 	if (enm)
 	{
 		delete enm;
@@ -56,11 +56,11 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 	{
 		CMPI_ObjEnumeration* ie=(CMPI_ObjEnumeration*)eEnum;
 		data.type=CMPI_instance;
-		OW_Array<OW_CIMInstance>* ia=(OW_Array<OW_CIMInstance>*)ie->hdl;
+		OpenWBEM::Array<OpenWBEM::CIMInstance>* ia=(OpenWBEM::Array<OpenWBEM::CIMInstance>*)ie->hdl;
 		if (ie->cursor<ie->max)
 		{
 			data.value.inst=(CMPIInstance*)
-			new CMPI_Object(new OW_CIMInstance((*ia)[ie->cursor++]));
+			new CMPI_Object(new OpenWBEM::CIMInstance((*ia)[ie->cursor++]));
 			if (rc)	CMSetStatus(rc,CMPI_RC_OK);
 		}
 		else if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
@@ -70,11 +70,11 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 	{
 		CMPI_InstEnumeration* ie=(CMPI_InstEnumeration*)eEnum;
 		data.type=CMPI_instance;
-		OW_Array<OW_CIMInstance>* ia=(OW_Array<OW_CIMInstance>*)ie->hdl;
+		OpenWBEM::Array<OpenWBEM::CIMInstance>* ia=(OpenWBEM::Array<OpenWBEM::CIMInstance>*)ie->hdl;
 		if (ie->cursor<ie->max)
 		{
 			data.value.inst=(CMPIInstance*)
-			new CMPI_Object(new OW_CIMInstance((*ia)[ie->cursor++]));
+			new CMPI_Object(new OpenWBEM::CIMInstance((*ia)[ie->cursor++]));
 			if (rc)	CMSetStatus(rc,CMPI_RC_OK);
 		}
 		else if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
@@ -84,11 +84,11 @@ CMPIData enumGetNext(CMPIEnumeration* eEnum, CMPIStatus* rc)
 	{
 		CMPI_OpEnumeration* oe=(CMPI_OpEnumeration*)eEnum;
 		data.type=CMPI_ref;
-		OW_Array<OW_CIMObjectPath>* opa=(OW_Array<OW_CIMObjectPath>*)oe->hdl;
+		OpenWBEM::Array<OpenWBEM::CIMObjectPath>* opa=(OpenWBEM::Array<OpenWBEM::CIMObjectPath>*)oe->hdl;
 		if (oe->cursor<oe->max)
 		{
 			data.value.ref=(CMPIObjectPath*)
-			new CMPI_Object(new OW_CIMObjectPath((*opa)[oe->cursor++]));
+			new CMPI_Object(new OpenWBEM::CIMObjectPath((*opa)[oe->cursor++]));
 			if (rc)	CMSetStatus(rc,CMPI_RC_OK);
 		}
 		else if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
@@ -155,14 +155,14 @@ CMPIEnumerationFT *CMPI_ObjEnumeration_Ftab=&objEnumeration_FT;
 CMPIEnumerationFT *CMPI_InstEnumeration_Ftab=&instEnumeration_FT;
 CMPIEnumerationFT *CMPI_OpEnumeration_Ftab=&opEnumeration_FT;
 
-CMPI_ObjEnumeration::CMPI_ObjEnumeration(OW_Array<OW_CIMInstance>* oa)
+CMPI_ObjEnumeration::CMPI_ObjEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* oa)
 {
 	cursor=0;
 	max=oa->size();
 	hdl=(void*)oa;
 	ft=CMPI_ObjEnumeration_Ftab;
 }
-CMPI_InstEnumeration::CMPI_InstEnumeration(OW_Array<OW_CIMInstance>* ia)
+CMPI_InstEnumeration::CMPI_InstEnumeration(OpenWBEM::Array<OpenWBEM::CIMInstance>* ia)
 {
 	cursor=0;
 	max=ia->size();
@@ -170,7 +170,7 @@ CMPI_InstEnumeration::CMPI_InstEnumeration(OW_Array<OW_CIMInstance>* ia)
 	ft=CMPI_InstEnumeration_Ftab;
 }
 
-CMPI_OpEnumeration::CMPI_OpEnumeration(OW_Array<OW_CIMObjectPath>* opa)
+CMPI_OpEnumeration::CMPI_OpEnumeration(OpenWBEM::Array<OpenWBEM::CIMObjectPath>* opa)
 {
 	cursor=0;
 	max=opa->size();

@@ -27,31 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_MEMTRACER_HPP_INCLUDE_GUARD_
 #define OW_MEMTRACER_HPP_INCLUDE_GUARD_
-
 #ifdef __cplusplus
-
 #ifdef OW_DEBUG_MEMORY
-
-
 void* operator new(unsigned int size);
 void* operator new[](unsigned int size);
 void* operator new(unsigned int size, char const* file, int line);
 void* operator new[](unsigned int size, char const* file, int line);
 void operator delete(void* p);
 void operator delete[](void* p);
-
 #ifndef OW_MEMTRACER_CPP_INCLUDE_GUARD_
 #define OW_NEW new(__FILE__, __LINE__)
 #define new OW_NEW
 #endif
-
 #endif	// OW_DEBUG_MEMORY
-
 #endif // __cplusplus
-
 #endif
-
-

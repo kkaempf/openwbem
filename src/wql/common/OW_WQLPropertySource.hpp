@@ -27,33 +27,31 @@
 // Modified By: Dan Nuffer
 //
 //%/////////////////////////////////////////////////////////////////////////////
-
 #ifndef OW_WQL_PROPERTY_SOURCE_HPP_INCLUDE_GUARD_
 #define OW_WQL_PROPERTY_SOURCE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_WQLOperand.hpp"
+
+namespace OpenWBEM
+{
 
 /** This class must be implemented to provide a source of properties for the
 	WQLSelectStatement::evaluateWhereClause() method which calls methods of
 	this class to obtain real values for property names used in the where
 	clause.
 */
-class OW_WQLPropertySource
+class WQLPropertySource
 {
 public:
-
 	/** Virtual destructor.
 	*/
-	virtual ~OW_WQLPropertySource();
-
+	virtual ~WQLPropertySource();
 	/** Returns the value whose property has the given name. The output
 		parameter value is populated with the value of that parameter.
 		Note that only integer, double, and string types are supported
 		(see the WQLOperand class). The implementer of this method must
 		perform appropriate conversions to the appropriate type.
-
 		@param propertyName name of property to be gotten.  This can be of the form:
 		  name(.subname)*
 		  examples:
@@ -66,13 +64,11 @@ public:
 		@return true if such a property was found and false otherwise.
 	*/
 	virtual bool getValue(
-		const OW_String& propertyName, 
-		OW_WQLOperand& value) const = 0;
-
+		const String& propertyName, 
+		WQLOperand& value) const = 0;
 	/** Returns true if the property identified by propertyName is an
 		EmbeddedObject instance or class that is either className or
 		is derived from className.
-
 		@param propertyName name of property to be gotten.  This can be of the form:
 		  name(.subname)*
 		  examples:
@@ -86,10 +82,10 @@ public:
 		@return true or false
 	*/
 	virtual bool evaluateISA(
-		const OW_String& propertyName,
-		const OW_String& className) const = 0;
-
+		const String& propertyName,
+		const String& className) const = 0;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

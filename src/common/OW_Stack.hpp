@@ -29,43 +29,37 @@
 *******************************************************************************/
 #ifndef OW_STACK_HPP_INCLUDE_GUARD_
 #define OW_STACK_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Array.hpp"
 
+namespace OpenWBEM
+{
+
 template<class T>
-class OW_Stack : private OW_Array<T>
+class Stack : private Array<T>
 {
 public:
-
-	typedef typename OW_Array<T>::size_type size_type;
-	typedef typename OW_Array<T>::reference reference;
-	typedef typename OW_Array<T>::const_reference const_reference;
-
-	OW_Stack() : OW_Array<T>() {  }
-
+	typedef typename Array<T>::size_type size_type;
+	typedef typename Array<T>::reference reference;
+	typedef typename Array<T>::const_reference const_reference;
+	Stack() : Array<T>() {  }
 	bool empty() const {   return (size() == 0); }
-
 	reference top() {   return back(); }
 	const_reference top() const {   return back(); }
-
 	void pop() { pop_back(); }
-
 	void push(const T& x) {   push_back(x); }
-
 	int search(const T& x) const
 	{
 		int i = find(x);
 		return (i >= 0) ? int(size()) - i : -1;
 	}
-
 	size_type size() const
 	{
-		return OW_Array<T>::size();
+		return Array<T>::size();
 	}
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_SSLSocketImpl.cpp
  * @author	J. Bart Whiteley
@@ -43,38 +42,37 @@ extern "C"
 #include <pth.h>
 }
 #endif
-
 #ifdef OW_HAVE_OPENSSL
-
 #include <openssl/err.h>
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_SSLSocketImpl::OW_SSLSocketImpl() 
-	: OW_SocketBaseImpl()
+SSLSocketImpl::SSLSocketImpl() 
+	: SocketBaseImpl()
 	, m_ssl(0)
 	, m_sbio(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_SSLSocketImpl::OW_SSLSocketImpl(OW_SocketHandle_t fd, 
-	OW_SocketAddress::AddressType addrType) 
-	: OW_SocketBaseImpl(fd, addrType)
+SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd, 
+	SocketAddress::AddressType addrType) 
+	: SocketBaseImpl(fd, addrType)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);
 #endif
-
-	m_ssl = SSL_new(OW_SSLCtxMgr::getSSLCtxServer());
+	m_ssl = SSL_new(SSLCtxMgr::getSSLCtxServer());
 	if (!m_ssl)
 	{
-		OW_THROW(OW_SSLException, "SSL_new failed");
+		OW_THROW(SSLException, "SSL_new failed");
 	}
 	m_sbio = BIO_new_socket(fd, BIO_NOCLOSE);
 	if (!m_sbio)
 	{
 		SSL_free(m_ssl);
-		OW_THROW(OW_SSLException, "BIO_new_socket failed");
+		OW_THROW(SSLException, "BIO_new_socket failed");
 	}
 		
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
@@ -83,25 +81,24 @@ OW_SSLSocketImpl::OW_SSLSocketImpl(OW_SocketHandle_t fd,
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
-		OW_THROW(OW_SSLException, "SSL accept error");
+		OW_THROW(SSLException, "SSL accept error");
 	}
-	if (!OW_SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
+	if (!SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
 	{
 		SSL_shutdown(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
-		OW_THROW(OW_SSLException, "SSL failed to authenticate client");
+		OW_THROW(SSLException, "SSL failed to authenticate client");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_SSLSocketImpl::OW_SSLSocketImpl(const OW_SocketAddress& addr) 
-	: OW_SocketBaseImpl(addr)
+SSLSocketImpl::SSLSocketImpl(const SocketAddress& addr) 
+	: SocketBaseImpl(addr)
 {
 	connectSSL();
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_SSLSocketImpl::~OW_SSLSocketImpl()
+SSLSocketImpl::~SSLSocketImpl()
 {
 	if(m_sockfd != -1 && m_isConnected)
 	{
@@ -113,63 +110,56 @@ OW_SSLSocketImpl::~OW_SSLSocketImpl()
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Select_t
-OW_SSLSocketImpl::getSelectObj() const
+Select_t
+SSLSocketImpl::getSelectObj() const
 {
 	return m_sockfd;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_SSLSocketImpl::connect(const OW_SocketAddress& addr)
+SSLSocketImpl::connect(const SocketAddress& addr)
 {
-	OW_SocketBaseImpl::connect(addr);
+	SocketBaseImpl::connect(addr);
 	connectSSL();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_SSLSocketImpl::connectSSL()
+SSLSocketImpl::connectSSL()
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);
 #endif
-
 	m_isConnected = false;
-	m_ssl = SSL_new(OW_SSLCtxMgr::getSSLCtxClient());
+	m_ssl = SSL_new(SSLCtxMgr::getSSLCtxClient());
 	if (!m_ssl)
 	{
-		OW_THROW(OW_SSLException, "SSL_new failed");
+		OW_THROW(SSLException, "SSL_new failed");
 	}
 	m_sbio = BIO_new_socket(m_sockfd, BIO_NOCLOSE);
 	if (!m_sbio)
 	{
 		SSL_free(m_ssl);
-		OW_THROW(OW_SSLException, "BIO_new_socket failed");
+		OW_THROW(SSLException, "BIO_new_socket failed");
 	}
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
 	if (SSL_connect(m_ssl) <= 0)
 	{
-		OW_THROW(OW_SSLException, "SSL connect error");
+		OW_THROW(SSLException, "SSL connect error");
 	}
-	if (!OW_SSLCtxMgr::checkServerCert(m_ssl, m_peerAddress.getName()))
+	if (!SSLCtxMgr::checkServerCert(m_ssl, m_peerAddress.getName()))
 	{
-		OW_THROW(OW_SSLException, "Failed to validate peer certificate");
+		OW_THROW(SSLException, "Failed to validate peer certificate");
 	}
 	m_isConnected = true;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SSLSocketImpl::disconnect()
+SSLSocketImpl::disconnect()
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);
 #endif
-
 	if(m_sockfd != -1 && m_isConnected)
 	{
 		if (m_ssl)
@@ -179,34 +169,30 @@ OW_SSLSocketImpl::disconnect()
 		}
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
-	OW_SocketBaseImpl::disconnect();
+	SocketBaseImpl::disconnect();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
+SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);
 #endif
-
-	return OW_SSLCtxMgr::sslWrite(m_ssl, static_cast<const char*>(dataOut), 
+	return SSLCtxMgr::sslWrite(m_ssl, static_cast<const char*>(dataOut), 
 			dataOutLen);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_SSLSocketImpl::readAux(void* dataIn, int dataInLen)
+SSLSocketImpl::readAux(void* dataIn, int dataInLen)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_yield(NULL);
 #endif
-
-	return OW_SSLCtxMgr::sslRead(m_ssl, static_cast<char*>(dataIn), 
+	return SSLCtxMgr::sslRead(m_ssl, static_cast<char*>(dataIn), 
 			dataInLen);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
 #endif // #ifdef OW_HAVE_OPENSSL
+
+} // end namespace OpenWBEM
 

@@ -27,12 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
-
 #ifndef OW_SocketADDRESS_HPP_INCLUDE_GUARD_
 #define OW_SocketADDRESS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Types.hpp"
@@ -40,21 +36,20 @@
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(UnknownHost);
 DECLARE_EXCEPTION(SocketAddress);
-
-class OW_SocketAddress
+class SocketAddress
 {
 public:
-
 	enum AddressType
 	{
 		UNSET,
 		INET,
 		UDS
 	};
-
-
 	AddressType getType() const { return m_type; }
 	/**
 	 * Do a DNS lookup on a hostname and return an SocketAddress for that host
@@ -63,10 +58,9 @@ public:
 	 * @param port The port
 	 *
 	 * @return An SocketAddress for the host and port
-	 * @throws OW_UnknownHostException
+	 * @throws UnknownHostException
 	 */
-	static OW_SocketAddress getByName(const OW_String& host, unsigned short port = 0);
-
+	static SocketAddress getByName(const String& host, unsigned short port = 0);
 	/**
 	 * Do a DNS lookup on a hostname and return a list of all addresses
 	 * that map to that hostname.
@@ -74,99 +68,77 @@ public:
 	 * @param host The hostname
 	 * @param port The port
 	 *
-	 * @return An OW_Array of SocketAddresses for the host and port
+	 * @return An Array of SocketAddresses for the host and port
 	 */
-	//static OW_Array<OW_SocketAddress> getAllByName(const OW_String& hostName,
+	//static Array<SocketAddress> getAllByName(const String& hostName,
 	//		unsigned short port = 0);
-
-
-	static OW_SocketAddress getUDS(const OW_String& filename);
-
+	static SocketAddress getUDS(const String& filename);
 	/**
-	 * Get an OW_SocketAddress appropriate for referring to the local host
+	 * Get an SocketAddress appropriate for referring to the local host
 	 * @param port The port
-	 * @return An OW_SocketAddress representing the local machine
+	 * @return An SocketAddress representing the local machine
 	 */
-	static OW_SocketAddress getAnyLocalHost(OW_UInt16 port = 0);
-
+	static SocketAddress getAnyLocalHost(UInt16 port = 0);
 	/**
 	 * Allocate an empty SocketAddress.
 	 * @return an empty address
 	 */
-	static OW_SocketAddress allocEmptyAddress(AddressType type);
-
+	static SocketAddress allocEmptyAddress(AddressType type);
 	/**
 	 * Get the port associated with the address
 	 * @return The port
 	 */
-	OW_UInt16 getPort() const;
-
-	~OW_SocketAddress() {}
-
-
+	UInt16 getPort() const;
+	~SocketAddress() {}
 	/**
 	 * Returns the hostname (FQDN) of the address.
 	 *
 	 * @return The hostname of the address.
 	 */
-	const OW_String getName() const;
-
+	const String getName() const;
 	/**
 	 * Returns the IP address of the host
 	 *
 	 * @return The IP address of the host
 	 */
-
-	const OW_String getAddress() const;
-
-	const OW_SocketAddress_t* getNativeForm() const;
-
-
+	const String getAddress() const;
+	const SocketAddress_t* getNativeForm() const;
 	size_t getNativeFormSize() const;
-
-
 	/**
 	 * Returns the IP address and the port with a colon in between.
 	 *
 	 * @return The IP and port seperated by a colon.
 	 */
-	const OW_String toString() const;
-
-	void assignFromNativeForm(const OW_InetSocketAddress_t* address, size_t len);
+	const String toString() const;
+	void assignFromNativeForm(const InetSocketAddress_t* address, size_t len);
 #if !defined(OW_WIN32)
-	void assignFromNativeForm(const OW_UnixSocketAddress_t* address, size_t len);
+	void assignFromNativeForm(const UnixSocketAddress_t* address, size_t len);
 #endif
-
-	OW_SocketAddress();
-
+	SocketAddress();
 private:
-	OW_SocketAddress(const OW_InetSocketAddress_t& nativeForm);
+	SocketAddress(const InetSocketAddress_t& nativeForm);
 #if !defined(OW_WIN32)
-	OW_SocketAddress(const OW_UnixSocketAddress_t& nativeForm);
+	SocketAddress(const UnixSocketAddress_t& nativeForm);
 #endif
-
-	OW_String m_name;
-	OW_String m_address;
+	String m_name;
+	String m_address;
 	size_t m_nativeSize;
 	
-
-	OW_InetSocketAddress_t m_inetNativeAddress;
+	InetSocketAddress_t m_inetNativeAddress;
 #if !defined(OW_WIN32)
-	OW_UnixSocketAddress_t m_UDSNativeAddress;
+	UnixSocketAddress_t m_UDSNativeAddress;
 #endif
 	AddressType m_type;
-
-
-	static OW_SocketAddress getFromNativeForm(const OW_InetAddress_t& nativeForm,
-			OW_UInt16 nativePort, const OW_String& hostname );
-	static OW_SocketAddress getFromNativeForm(
-		const OW_InetSocketAddress_t& nativeForm);
+	static SocketAddress getFromNativeForm(const InetAddress_t& nativeForm,
+			UInt16 nativePort, const String& hostname );
+	static SocketAddress getFromNativeForm(
+		const InetSocketAddress_t& nativeForm);
 #if !defined(OW_WIN32)
-	static OW_SocketAddress getFromNativeForm(
-		const OW_UnixSocketAddress_t& nativeForm);
+	static SocketAddress getFromNativeForm(
+		const UnixSocketAddress_t& nativeForm);
 #endif
-
 };
 
+} // end namespace OpenWBEM
 
 #endif

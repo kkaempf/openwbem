@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPPPROXYPROVIDER_HPP_
 #define OW_CPPPROXYPROVIDER_HPP_
-
 #include "OW_config.h"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
@@ -48,233 +46,206 @@
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-class OW_CppAssociatorProviderProxy : public OW_AssociatorProviderIFC
+
+namespace OpenWBEM
+{
+
+class CppAssociatorProviderProxy : public AssociatorProviderIFC
 {
 public:
-
-	OW_CppAssociatorProviderProxy(OW_CppAssociatorProviderIFCRef pProv);
+	CppAssociatorProviderProxy(CppAssociatorProviderIFCRef pProv);
 	
 	virtual void associators(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& assocClass,
-			const OW_String& resultClass,
-			const OW_String& role,
-			const OW_String& resultRole,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList);
-
+			const ProviderEnvironmentIFCRef& env,
+			CIMInstanceResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& assocClass,
+			const String& resultClass,
+			const String& role,
+			const String& resultRole,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList);
 	virtual void associatorNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& assocClass,
-			const OW_String& resultClass,
-			const OW_String& role,
-			const OW_String& resultRole);
-
+			const ProviderEnvironmentIFCRef& env,
+			CIMObjectPathResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& assocClass,
+			const String& resultClass,
+			const String& role,
+			const String& resultRole);
 	virtual void references(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& resultClass,
-			const OW_String& role,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList);
-
+			const ProviderEnvironmentIFCRef& env,
+			CIMInstanceResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& resultClass,
+			const String& role,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList);
 	virtual void referenceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& resultClass,
-			const OW_String& role);
-
+			const ProviderEnvironmentIFCRef& env,
+			CIMObjectPathResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& resultClass,
+			const String& role);
 private:
-	OW_CppAssociatorProviderIFCRef m_pProv;
+	CppAssociatorProviderIFCRef m_pProv;
 };
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
-class OW_CppInstanceProviderProxy : public OW_InstanceProviderIFC
+class CppInstanceProviderProxy : public InstanceProviderIFC
 {
 public:
-	OW_CppInstanceProviderProxy(OW_CppInstanceProviderIFCRef pProv);
-
+	CppInstanceProviderProxy(CppInstanceProviderIFCRef pProv);
 	virtual void enumInstanceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_CIMClass& cimClass);
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMObjectPathResultHandlerIFC& result,
+			const CIMClass& cimClass);
 	virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMInstanceResultHandlerIFC& result,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-			OW_WBEMFlags::EDeepFlag deep, 
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& requestedClass,
-			const OW_CIMClass& cimClass);
-
-	virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& instanceName,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList, 
-			const OW_CIMClass& cimClass);
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMInstanceResultHandlerIFC& result,
+			WBEMFlags::ELocalOnlyFlag localOnly, 
+			WBEMFlags::EDeepFlag deep, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList,
+			const CIMClass& requestedClass,
+			const CIMClass& cimClass);
+	virtual CIMInstance getInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& instanceName,
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList, 
+			const CIMClass& cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& cimInstance);
-
+	virtual CIMObjectPath createInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& cimInstance);
 	virtual void modifyInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& modifiedInstance,
-			const OW_CIMInstance& previousInstance,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& theClass);
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& modifiedInstance,
+			const CIMInstance& previousInstance,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			const StringArray* propertyList,
+			const CIMClass& theClass);
 	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop);
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& cop);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 private:
-	OW_CppInstanceProviderIFCRef m_pProv;
+	CppInstanceProviderIFCRef m_pProv;
 };
-
-class OW_CppMethodProviderProxy : public OW_MethodProviderIFC
+class CppMethodProviderProxy : public MethodProviderIFC
 {
 public:
-
-	OW_CppMethodProviderProxy(OW_CppMethodProviderIFCRef pProv);
-
-	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& path,
-			const OW_String& methodName,
-			const OW_CIMParamValueArray& in,
-			OW_CIMParamValueArray& out);
-
+	CppMethodProviderProxy(CppMethodProviderIFCRef pProv);
+	virtual CIMValue invokeMethod(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& path,
+			const String& methodName,
+			const CIMParamValueArray& in,
+			CIMParamValueArray& out);
 private:
-
-	OW_CppMethodProviderIFCRef m_pProv;
+	CppMethodProviderIFCRef m_pProv;
 };
-
-class OW_CppIndicationExportProviderProxy : public OW_IndicationExportProviderIFC
+class CppIndicationExportProviderProxy : public IndicationExportProviderIFC
 {
 public:
-	OW_CppIndicationExportProviderProxy(OW_CppIndicationExportProviderIFCRef pProv) :
+	CppIndicationExportProviderProxy(CppIndicationExportProviderIFCRef pProv) :
 		m_pProv(pProv) {}
-
-	virtual OW_StringArray getHandlerClassNames()
+	virtual StringArray getHandlerClassNames()
 	{
 		return m_pProv->getHandlerClassNames();
 	}
 	
-	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst)
+	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst)
 	{
 		m_pProv->exportIndication(env, ns, indHandlerInst, indicationInst);
 	}
-
 private:
-	OW_CppIndicationExportProviderIFCRef m_pProv;
+	CppIndicationExportProviderIFCRef m_pProv;
 };
-
-class OW_CppPolledProviderProxy : public OW_PolledProviderIFC
+class CppPolledProviderProxy : public PolledProviderIFC
 {
 public:
-	OW_CppPolledProviderProxy(OW_CppPolledProviderIFCRef pProv) :
+	CppPolledProviderProxy(CppPolledProviderIFCRef pProv) :
 		m_pProv(pProv) {}
-
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env )
+	virtual Int32 poll(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->poll(env); }
-
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env )
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->getInitialPollingInterval(env); }
-
 private:
-	OW_CppPolledProviderIFCRef m_pProv;
+	CppPolledProviderIFCRef m_pProv;
 };
-
-class OW_CppIndicationProviderProxy : public OW_IndicationProviderIFC
+class CppIndicationProviderProxy : public IndicationProviderIFC
 {
 public:
-	OW_CppIndicationProviderProxy(OW_CppIndicationProviderIFCRef pProv)
+	CppIndicationProviderProxy(CppIndicationProviderIFCRef pProv)
 		: m_pProv(pProv)
         , m_activationCount(0) {}
-
 	virtual void deActivateFilter(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_WQLSelectStatement &filter, 
-		const OW_String &eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes) 
+		const ProviderEnvironmentIFCRef &env, 
+		const WQLSelectStatement &filter, 
+		const String &eventType, 
+		const String& nameSpace,
+		const StringArray& classes) 
 	{
         bool lastActivation = (--m_activationCount == 0);
 		m_pProv->deActivateFilter(env,filter,eventType,nameSpace, classes,lastActivation);
 	}
-
 	virtual void activateFilter(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_WQLSelectStatement &filter, 
-		const OW_String &eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes) 
+		const ProviderEnvironmentIFCRef &env, 
+		const WQLSelectStatement &filter, 
+		const String &eventType, 
+		const String& nameSpace,
+		const StringArray& classes) 
 	{
         bool firstActivation = (m_activationCount++ == 0);
 		m_pProv->activateFilter(env,filter,eventType,nameSpace,classes,firstActivation);
 	}
-
 	virtual void authorizeFilter(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_WQLSelectStatement &filter, 
-		const OW_String &eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
-		const OW_String &owner) 
+		const ProviderEnvironmentIFCRef &env, 
+		const WQLSelectStatement &filter, 
+		const String &eventType, 
+		const String& nameSpace,
+		const StringArray& classes, 
+		const String &owner) 
 	{
 		m_pProv->authorizeFilter(env,filter,eventType,nameSpace,classes,owner);
 	}
-
 	virtual int mustPoll(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes
 		)
 	{
 		return m_pProv->mustPoll(env,filter,eventType,nameSpace,classes);
 	}
-
 private:
-	OW_CppIndicationProviderIFCRef m_pProv;
+	CppIndicationProviderIFCRef m_pProv;
     unsigned int m_activationCount;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

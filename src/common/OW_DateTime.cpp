@@ -27,14 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-
 #include "OW_DateTime.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_BinarySerialization.hpp"
-
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -42,132 +39,117 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////									
-OW_DateTime::OW_DateTime() :
+DateTime::DateTime() :
 	m_time(0), m_isInterval(true)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_DateTime::OW_DateTime(const OW_String& str) :
+DateTime::DateTime(const String& str) :
 	m_time(0), m_isInterval(false)
 {
 	size_t ndx = str.indexOf(':');	// Check for interval
-	if(ndx != OW_String::npos)
+	if(ndx != String::npos)
 	{
 		m_isInterval = true;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////									
-OW_DateTime::OW_DateTime(time_t t) :
+DateTime::DateTime(time_t t) :
 	m_time(t), m_isInterval(false)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_DateTime::OW_DateTime(int year, int month, int day, int hour, int minute,
+DateTime::DateTime(int year, int month, int day, int hour, int minute,
 	int second) :
 	m_time(0), m_isInterval(false)
 {
 	set(year, month, day, hour, minute, second);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
-OW_DateTime::~OW_DateTime()
+DateTime::~DateTime()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 int
-OW_DateTime::getHour() const
+DateTime::getHour() const
 {
 	return getTm().tm_hour;
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 int
-OW_DateTime::getMinute() const
+DateTime::getMinute() const
 {
 	return getTm().tm_min;
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 int
-OW_DateTime::getSecond() const
+DateTime::getSecond() const
 {
 	return getTm().tm_sec;
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 int
-OW_DateTime::getDay() const
+DateTime::getDay() const
 {
 	return getTm().tm_mday;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_DateTime::getDow() const
+DateTime::getDow() const
 {
 	return getTm().tm_wday;
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 int
-OW_DateTime::getMonth() const
+DateTime::getMonth() const
 {
 	return getTm().tm_mon+1;
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 int
-OW_DateTime::getYear() const
+DateTime::getYear() const
 {
 	return (getTm().tm_year + 1900);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 time_t
-OW_DateTime::get() const
+DateTime::get() const
 {
 	return m_time;
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 void
-OW_DateTime::setHour(int hour)
+DateTime::setHour(int hour)
 {
 	tm theTime = getTm();
 	theTime.tm_hour = hour;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 void
-OW_DateTime::setMinute(int minute)
+DateTime::setMinute(int minute)
 {
 	tm theTime = getTm();
 	theTime.tm_min = minute;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 void
-OW_DateTime::setSecond(int second)
+DateTime::setSecond(int second)
 {
 	tm theTime = getTm();
 	theTime.tm_sec = second;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_DateTime::setTime(int hour, int minute, int second)
+DateTime::setTime(int hour, int minute, int second)
 {
 	tm theTime = getTm();
 	theTime.tm_hour = hour;
@@ -175,37 +157,33 @@ OW_DateTime::setTime(int hour, int minute, int second)
 	theTime.tm_sec = second;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 void
-OW_DateTime::setDay(int day)
+DateTime::setDay(int day)
 {
 	tm theTime = getTm();
 	theTime.tm_mday = day;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 void
-OW_DateTime::setMonth(int month)
+DateTime::setMonth(int month)
 {
 	tm theTime = getTm();
 	theTime.tm_mon = month-1;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
 void
-OW_DateTime::setYear(int year)
+DateTime::setYear(int year)
 {
 	tm theTime = getTm();
 	theTime.tm_year = year - 1900;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_DateTime::set(int year, int month, int day, int hour, int minute, int second)
+DateTime::set(int year, int month, int day, int hour, int minute, int second)
 {
 	tm tmarg;
 	tmarg.tm_year = (year >= 1900) ? year - 1900 : year;
@@ -216,62 +194,55 @@ OW_DateTime::set(int year, int month, int day, int hour, int minute, int second)
 	tmarg.tm_sec = second;
 	m_time = mktime(&tmarg);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_DateTime::setToCurrent()
+DateTime::setToCurrent()
 {
 	m_time = time(NULL);
 	m_isInterval = false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_DateTime::addDays(int days)
+DateTime::addDays(int days)
 {
 	tm theTime = getTm();
 	theTime.tm_mday += days;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_DateTime::addYears(int years)
+DateTime::addYears(int years)
 {
 	tm theTime = getTm();
 	theTime.tm_year += years;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_DateTime::addMonths(int months)
+DateTime::addMonths(int months)
 {
 	tm theTime = getTm();
 	theTime.tm_mon += months;
 	m_time = mktime(&theTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////									
-OW_String
-OW_DateTime::toString() const
+String
+DateTime::toString() const
 {
 	tm theTime = getTm();
 #ifdef OW_HAVE_ASCTIME_R
 	char buff[30];
 	asctime_r(&theTime, buff);
-	OW_String s(buff);
+	String s(buff);
 	return s;
 #else
 	// if the c library isn't thread-safe, we'll need a mutex here.
 	return asctime(&theTime);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
-OW_String
-OW_DateTime::toStringGMT() const
+String
+DateTime::toStringGMT() const
 {
 #ifdef OW_HAVE_GMTIME_R
 	tm ltime;
@@ -283,17 +254,16 @@ OW_DateTime::toStringGMT() const
 #ifdef OW_HAVE_ASCTIME_R
 	char buff[30];
 	asctime_r(theTime, buff);
-	OW_String s(buff);
+	String s(buff);
 	return s;
 #else
 	// if the c library isn't thread-safe, we'll need a mutex here.
 	return asctime(theTime);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
 tm
-OW_DateTime::getTm() const
+DateTime::getTm() const
 {
 #ifdef OW_HAVE_LOCALTIME_R
 	tm theTime;
@@ -304,3 +274,6 @@ OW_DateTime::getTm() const
 	return *theTime;
 #endif
 }
+
+} // end namespace OpenWBEM
+

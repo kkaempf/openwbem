@@ -27,100 +27,88 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_PROVIDER_INFO_BASE_HPP_INCLUDE_GUARD_
 #define OW_PROVIDER_INFO_BASE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-///////////////////////////////////////////////////////////////////////////////
-struct OW_InstClassInfo
+namespace OpenWBEM
 {
-	explicit OW_InstClassInfo(OW_String const& className_);
-	OW_InstClassInfo(OW_String const& className_, OW_StringArray const& namespaces_);
-	~OW_InstClassInfo();
-	OW_String className;
-	OW_StringArray namespaces;
-};
 
+///////////////////////////////////////////////////////////////////////////////
+struct InstClassInfo
+{
+	explicit InstClassInfo(String const& className_);
+	InstClassInfo(String const& className_, StringArray const& namespaces_);
+	~InstClassInfo();
+	String className;
+	StringArray namespaces;
+};
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
-class OW_ProviderInfoBase
+class ProviderInfoBase
 {
 public:
-
 	typedef ClassInfoT ClassInfo;
-	typedef OW_Array<ClassInfoT> ClassInfoArray;
-
-	virtual ~OW_ProviderInfoBase();
-
+	typedef Array<ClassInfoT> ClassInfoArray;
+	virtual ~ProviderInfoBase();
 	/**
 	 * Add a class name to the list of instrumented classes for the provider.
 	 * This will not have a specific namespace associated with it, it will be
 	 * associated to all namespaces.
 	 * @param className The class name.
 	 */
-	void addInstrumentedClass(OW_String const& className);
+	void addInstrumentedClass(String const& className);
 	void addInstrumentedClass(ClassInfoT const& classInfo);
 	const ClassInfoArray& getClassInfo() const;
-	void setProviderName(OW_String const& name);
-	OW_String getProviderName() const;
-
+	void setProviderName(String const& name);
+	String getProviderName() const;
 private:
 	ClassInfoArray m_instrumentedClasses;
-	OW_String m_name;
-
+	String m_name;
 };
-
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
-OW_ProviderInfoBase<ClassInfoT>::~OW_ProviderInfoBase() 
+ProviderInfoBase<ClassInfoT>::~ProviderInfoBase() 
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
 void 
-OW_ProviderInfoBase<ClassInfoT>::addInstrumentedClass(OW_String const& className)
+ProviderInfoBase<ClassInfoT>::addInstrumentedClass(String const& className)
 {
 	m_instrumentedClasses.push_back(ClassInfoT(className));
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
 void 
-OW_ProviderInfoBase<ClassInfoT>::addInstrumentedClass(ClassInfoT const& classInfo)
+ProviderInfoBase<ClassInfoT>::addInstrumentedClass(ClassInfoT const& classInfo)
 {
 	m_instrumentedClasses.push_back(classInfo);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
-const typename OW_ProviderInfoBase<ClassInfoT>::ClassInfoArray& 
-OW_ProviderInfoBase<ClassInfoT>::getClassInfo() const
+const typename ProviderInfoBase<ClassInfoT>::ClassInfoArray& 
+ProviderInfoBase<ClassInfoT>::getClassInfo() const
 {
 	return m_instrumentedClasses;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
 void 
-OW_ProviderInfoBase<ClassInfoT>::setProviderName(OW_String const& name)
+ProviderInfoBase<ClassInfoT>::setProviderName(String const& name)
 {
 	m_name = name;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 template <class ClassInfoT>
-OW_String 
-OW_ProviderInfoBase<ClassInfoT>::getProviderName() const
+String 
+ProviderInfoBase<ClassInfoT>::getProviderName() const
 {
 	return m_name;
 }
 
+} // end namespace OpenWBEM
 
 #endif
-
-

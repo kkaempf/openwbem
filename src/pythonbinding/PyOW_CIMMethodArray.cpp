@@ -30,7 +30,13 @@
 #include "OW_CIMMethod.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMMethod(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMMethod>(name);
+
+void registerArrayImpl_CIMMethod(const char* name)
+{
+    registerArrayImpl<CIMMethod>(name);
 }
+
+} // end namespace OpenWBEM
+

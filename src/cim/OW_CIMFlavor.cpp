@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMFlavor.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_String.hpp"
-
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -40,22 +38,22 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
 using std::ostream;
 using std::istream;
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_String
-OW_CIMFlavor::toString() const
+String
+CIMFlavor::toString() const
 {
-	OW_String s("FLAVOR(");
+	String s("FLAVOR(");
 	s += toMOF() + ")";
 	return s;
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_String
-OW_CIMFlavor::toMOF() const
+String
+CIMFlavor::toMOF() const
 {
 	const char* strf;
 	switch(m_flavor)
@@ -68,27 +66,24 @@ OW_CIMFlavor::toMOF() const
 		default: strf = "BAD FLAVOR"; break;
 	}
 	
-	return OW_String(strf);
+	return String(strf);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CIMFlavor::readObject(istream &istrm)
+CIMFlavor::readObject(istream &istrm)
 {
-	// Don't do this, it'll double the size OW_CIMBase::readSig( istrm, OW_CIMFLAVORSIG );
-
-	OW_UInt32 f;
-	OW_BinarySerialization::readLen(istrm, f);
+	// Don't do this, it'll double the size CIMBase::readSig( istrm, CIMFLAVORSIG );
+	UInt32 f;
+	BinarySerialization::readLen(istrm, f);
 	m_flavor = f;
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CIMFlavor::writeObject(ostream &ostrm) const
+CIMFlavor::writeObject(ostream &ostrm) const
 {
-	// Don't do this, it'll double the size OW_CIMBase::writeSig( ostrm, OW_CIMFLAVORSIG );
-
-	OW_BinarySerialization::writeLen(ostrm, m_flavor);
+	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMFLAVORSIG );
+	BinarySerialization::writeLen(ostrm, m_flavor);
 }
 
+} // end namespace OpenWBEM
 

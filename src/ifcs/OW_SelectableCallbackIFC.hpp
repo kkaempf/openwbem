@@ -29,27 +29,26 @@
 *******************************************************************************/
 #ifndef OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
 #define OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 #include "OW_SelectableIFC.hpp"
 
-class OW_SelectableCallbackIFC
+namespace OpenWBEM
+{
+
+class SelectableCallbackIFC
 {
 public:
-	virtual ~OW_SelectableCallbackIFC();
-
-	void selected(OW_SelectableIFCRef& selectedObject)
+	virtual ~SelectableCallbackIFC();
+	void selected(SelectableIFCRef& selectedObject)
 	{
 		doSelected(selectedObject);
 	}
-
 protected:
-	virtual void doSelected(OW_SelectableIFCRef& selectedObject) = 0;
+	virtual void doSelected(SelectableIFCRef& selectedObject) = 0;
 };
+typedef Reference<SelectableCallbackIFC> SelectableCallbackIFCRef;
 
-typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-
-

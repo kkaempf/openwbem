@@ -34,53 +34,48 @@
 #include "OW_SafeLibCreate.hpp"
 #include "OW_ThreadCancelledException.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_AuthManager::OW_AuthManager()
+AuthManager::AuthManager()
 	: m_authenticator()
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_AuthManager::~OW_AuthManager()
+AuthManager::~AuthManager()
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
+AuthManager::init(ServiceEnvironmentIFCRef env)
 {
 	m_authenticator.setNull();
-
-	OW_String authLib = env->getConfigItem(
-		OW_ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
-
+	String authLib = env->getConfigItem(
+		ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
 	env->getLogger()->logCustInfo(format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
-
 	m_authenticator =
-		OW_SafeLibCreate<OW_AuthenticatorIFC>::loadAndCreateObject(authLib,
+		SafeLibCreate<AuthenticatorIFC>::loadAndCreateObject(authLib,
 			"createAuthenticator", env->getLogger());
-
 	if(m_authenticator)
 	{
 		try
 		{
 			m_authenticator->init(env);
-
 			env->getLogger()->logCustInfo(format("Authentication module %1"
 				" is now being used for authentication to the CIMOM",
 				authLib));
 		}
-		catch(OW_Exception& e)
+		catch(Exception& e)
 		{
 			env->getLogger()->logError(format("Authentication Module %1 failed"
 				" to initialize: %2 - %3"
 				" [No Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
-
-			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
+			OW_THROW(Exception, "No Authentication Mechanism Available");
 		}
-		catch (OW_ThreadCancelledException&)
+		catch (ThreadCancelledException&)
 		{
 			throw;
 		}
@@ -89,8 +84,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 			env->getLogger()->logError(format("Authentication Module %1 failed"
 				" to initialize: Unknown Exception Caught"
 				" [No Authentication Mechanism Available!]", authLib));
-
-			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
+			OW_THROW(Exception, "No Authentication Mechanism Available");
 		}
 	}
 	else
@@ -98,21 +92,21 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 		env->getLogger()->logError(format("Authentication Module %1 failed"
 			" to produce authentication module"
 			" [No Authentication Mechanism Available!]", authLib));
-		OW_THROW(OW_Exception, "No Authentication Mechanism Available");
+		OW_THROW(Exception, "No Authentication Mechanism Available");
 	}
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 bool
-OW_AuthManager::authenticate(OW_String& userName,
-	const OW_String& info, OW_String& details)
+AuthManager::authenticate(String& userName,
+	const String& info, String& details)
 {
 	if(m_authenticator)
 	{
 		return m_authenticator->authenticate(userName, info, details);
 	}
-
 	details = "CIMOM has no available authentication mechanism";
 	return false;
 }
+
+} // end namespace OpenWBEM
 

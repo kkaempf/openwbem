@@ -29,12 +29,14 @@
 *******************************************************************************/
 #ifndef OW_WQL_SCAN_UTILS_HPP_
 #define OW_WQL_SCAN_UTILS_HPP_
-
 #include "OW_config.h"
 
-class OW_String;
+namespace OpenWBEM
+{
 
-OW_String RemoveEscapes(const OW_String& str);
+class String;
+String RemoveEscapes(const String& str);
 
+} // end namespace OpenWBEM
 
 #endif	 /* SCANSUP_H */

@@ -42,11 +42,12 @@
 using std::ifstream;
 using std::ofstream;
 using std::endl;
+using namespace OpenWBEM;
 
 namespace
 {
 
-class OW_MethodProviderTest: public OW_CppMethodProviderIFC
+class MethodProviderTest: public CppMethodProviderIFC
 {
 public:
 	/**
@@ -56,60 +57,60 @@ public:
 	 * @param cop Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
-	 * @param inParams An array of OW_CIMValues which are the input parameters
+	 * @param inParams An array of CIMValues which are the input parameters
 	 * 	for this method.
-	 * @param outParams An array of OW_CIMValues which are the output
+	 * @param outParams An array of CIMValues which are the output
 	 * 	parameters for this method.
 	 *
-	 * @returns OW_CIMValue - The return value of the method.  If the method
-	 * 	has no return value, it must return a default OW_CIMValue().
+	 * @returns CIMValue - The return value of the method.  If the method
+	 * 	has no return value, it must return a default CIMValue().
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	void initialize(const OW_ProviderEnvironmentIFCRef& env);
-	virtual ~OW_MethodProviderTest()
+	void initialize(const ProviderEnvironmentIFCRef& env);
+	virtual ~MethodProviderTest()
 	{
 	}
-	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& path,
-			const OW_String &methodName,
-			const OW_CIMParamValueArray &in,
-			OW_CIMParamValueArray &out);
+	virtual CIMValue invokeMethod(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& path,
+			const String &methodName,
+			const CIMParamValueArray &in,
+			CIMParamValueArray &out);
 private:
 };
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MethodProviderTest::initialize(const OW_ProviderEnvironmentIFCRef& env)
+MethodProviderTest::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	env->getLogger()->logDebug("OW_MethodProviderTest initialize called");
+	env->getLogger()->logDebug("MethodProviderTest initialize called");
 }
 
 
-OW_String fileName("ow_methodProviderTestFile.txt");
-OW_String getState()
+String fileName("ow_methodProviderTestFile.txt");
+String getState()
 {
 	ifstream ifstr(fileName.c_str(), std::ios::in);
 	if (!ifstr)
 	{
-		return OW_String("off");
+		return String("off");
 	}
 	char buf[80];
 	ifstr >> buf;
-	OW_String val(buf, strlen(buf));
+	String val(buf, strlen(buf));
 	if (val.equalsIgnoreCase("on"))
 	{
-		return OW_String("on");
+		return String("on");
 	}
 	else
 	{
-		return OW_String("off");
+		return String("off");
 	}
- 	return OW_String();
+ 	return String();
 }
 
-void setState(const OW_String& newState)
+void setState(const String& newState)
 {
 	(void)newState;
 	ofstream ofstr(fileName.c_str(), std::ios::out | std::ios::trunc);
@@ -120,23 +121,23 @@ void toggleState()
 {
 	if (getState().equals("off"))
 	{
-		setState(OW_String("on"));
+		setState(String("on"));
 	}
 	else
 	{
-		setState(OW_String("off"));
+		setState(String("off"));
 	}
 }
 
 
-OW_CIMValue
-OW_MethodProviderTest::invokeMethod(
-		const OW_ProviderEnvironmentIFCRef&,
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String &methodName,
-		const OW_CIMParamValueArray &in,
-		OW_CIMParamValueArray &out)
+CIMValue
+MethodProviderTest::invokeMethod(
+		const ProviderEnvironmentIFCRef&,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String &methodName,
+		const CIMParamValueArray &in,
+		CIMParamValueArray &out)
 {
 	(void)ns;
 	(void)path;
@@ -169,34 +170,34 @@ OW_MethodProviderTest::invokeMethod(
 		OW_ASSERT(out[4].getValue() == in[3].getValue());
 		OW_ASSERT(out[5].getName() == "nullParam");
 		OW_ASSERT(out[5].getValue() == in[4].getValue());
-		out[0].setValue(OW_CIMValue(true));
-		out[1].setValue(OW_CIMValue(OW_Real64(9.87654e32l)));
-		out[2].setValue(OW_CIMValue(OW_Int16(555)));
-		out[3].setValue(OW_CIMValue(OW_String(
-			format("OW_MethodProviderTest::invokeMethod.  in[0] = %1, "
+		out[0].setValue(CIMValue(true));
+		out[1].setValue(CIMValue(Real64(9.87654e32l)));
+		out[2].setValue(CIMValue(Int16(555)));
+		out[3].setValue(CIMValue(String(
+			format("MethodProviderTest::invokeMethod.  in[0] = %1, "
 				"in[1] = %2, in[2] = %3, in[3] = %4, in[4] = %5, out[0] = %6, out[1] = %7, "
 				"out[2] = %8, out[4] = %9",
 				in[0].toString(), in[1].toString(), in[2].toString(), in[3].toString(), in[4].toString(),
 				out[0].toString(), out[1].toString(), out[2].toString(), out[4].toString()))));
 
-		return OW_CIMValue(getState());
+		return CIMValue(getState());
 	}
 	else if (methodName.equalsIgnoreCase("setstate"))
 	{
 		OW_ASSERT(in.size() == 1);
-		OW_String newState;
+		String newState;
 		in[0].getValue().get(newState);
 		setState(newState);
-		return OW_CIMValue(getState());
+		return CIMValue(getState());
 	}
 	else if (methodName.equalsIgnoreCase("togglestate"))
 	{
 		toggleState();
-		return OW_CIMValue(getState());
+		return CIMValue(getState());
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::METHOD_NOT_FOUND, format("Cannot find "
+		OW_THROWCIMMSG(CIMException::METHOD_NOT_FOUND, format("Cannot find "
 			"method: %1", methodName).c_str());
 	}
 	(void)out;
@@ -204,4 +205,4 @@ OW_MethodProviderTest::invokeMethod(
 
 } // end anonymous namespace
 
-OW_PROVIDERFACTORY(OW_MethodProviderTest, methodtest)
+OW_PROVIDERFACTORY(MethodProviderTest, methodtest)

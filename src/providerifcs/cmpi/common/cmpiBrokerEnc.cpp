@@ -30,7 +30,7 @@
 #include "OW_LocalCIMOMHandle.hpp"
 
 #define CM_LOGGER(mb) \
-(* static_cast<OW_ProviderEnvironmentIFCRef *>(mb->hdl))->getLogger()
+(* static_cast<OpenWBEM::ProviderEnvironmentIFCRef *>(mb->hdl))->getLogger()
 
 // Factory section
 
@@ -39,11 +39,11 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 {
 	CM_LOGGER(mb)->logDebug("CMPIBrokerEnc: mbEncNewInstance()");
 
- 	OW_CIMObjectPath * cop = static_cast<OW_CIMObjectPath *>(eCop->hdl);
+ 	OpenWBEM::CIMObjectPath * cop = static_cast<OpenWBEM::CIMObjectPath *>(eCop->hdl);
 
-	OW_CIMClass *cls=mbGetClass(mb,*cop);
+	OpenWBEM::CIMClass *cls=mbGetClass(mb,*cop);
 
-	OW_CIMInstance ci;
+	OpenWBEM::CIMInstance ci;
 
 	if (cls)
 	{
@@ -62,7 +62,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 		ci.setClassName(cop->getObjectName());
 
 	CMPIInstance * neInst = (CMPIInstance *)new CMPI_Object(
-					new OW_CIMInstance(ci));
+					new OpenWBEM::CIMInstance(ci));
 	if (rc) CMSetStatus(rc,CMPI_RC_OK);
 	return neInst;
 }
@@ -73,9 +73,9 @@ static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *ns, char *cls,
 	(void) mb;
 
 	CM_LOGGER(mb)->logDebug("CMPIBrokerEnc: mbEncNewObjectPath()");
-	OW_String className(cls);
-	OW_String nameSpace(ns);
-	OW_CIMObjectPath * cop = new OW_CIMObjectPath(className,nameSpace);
+	OpenWBEM::String className(cls);
+	OpenWBEM::String nameSpace(ns);
+	OpenWBEM::CIMObjectPath * cop = new OpenWBEM::CIMObjectPath(className,nameSpace);
 
 	CMPIObjectPath * nePath = (CMPIObjectPath*)new CMPI_Object(cop);
 	if (rc) CMSetStatus(rc,CMPI_RC_OK);
@@ -87,7 +87,7 @@ static CMPIArgs* mbEncNewArgs(CMPIBroker* mb, CMPIStatus *rc)
 	(void) mb;
 
 	if (rc) CMSetStatus(rc,CMPI_RC_OK);
-	return (CMPIArgs*)new CMPI_Object(new OW_Array<OW_CIMParamValue>());
+	return (CMPIArgs*)new CMPI_Object(new OpenWBEM::Array<OpenWBEM::CIMParamValue>());
 }
 
 static CMPIString* mbEncNewString(CMPIBroker* mb, char *cStr, CMPIStatus *rc)
@@ -157,7 +157,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 	(void) mb;
 
 	CMPI_Object *obj=(CMPI_Object*)o;
-	OW_String str;
+	OpenWBEM::String str;
 	char msg[128];
 	if (obj==NULL)
 	{
@@ -176,7 +176,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 	if (obj->ftab==(void*)CMPI_Instance_Ftab ||
 		obj->ftab==(void*)CMPI_InstanceOnStack_Ftab)
 	{
-		str = ((OW_CIMInstance*)obj->hdl)->toString();
+		str = ((OpenWBEM::CIMInstance*)obj->hdl)->toString();
 		sprintf(msg,"** Object not supported (0x%x) **",(int)o);
 		if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 		return (CMPIString*) new CMPI_Object(msg);
@@ -184,7 +184,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 	else if (obj->ftab==(void*)CMPI_ObjectPath_Ftab ||
 		obj->ftab==(void*)CMPI_ObjectPathOnStack_Ftab)
 	{
-		str=((OW_CIMObjectPath*)obj->hdl)->toString();
+		str=((OpenWBEM::CIMObjectPath*)obj->hdl)->toString();
 	}
 	/* else if (obj->ftab==(void*)CMPI_SelectExp_Ftab ||
 		obj->ftab==(void*)CMPI_SelectCondDoc_Ftab ||
@@ -204,7 +204,7 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc)
 	}
 
 	sprintf(msg,"0x%p: ",o);
-	return (CMPIString*) new CMPI_Object(OW_String(msg)+str);
+	return (CMPIString*) new CMPI_Object(OpenWBEM::String(msg)+str);
 }
 
 static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
@@ -212,14 +212,14 @@ static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
 {
 	(void) rc;
 
-	OW_CIMObjectPath* cop=static_cast<OW_CIMObjectPath *>(eCp->hdl);
+	OpenWBEM::CIMObjectPath* cop=static_cast<OpenWBEM::CIMObjectPath *>(eCp->hdl);
 
-	OW_String tcn(type);
+	OpenWBEM::String tcn(type);
  
 	if (tcn == cop->getClassName()) return 1;
  
-	OW_CIMClass *cc=mbGetClass(mb,*cop);
-	OW_CIMObjectPath  scp(*cop);
+	OpenWBEM::CIMClass *cc=mbGetClass(mb,*cop);
+	OpenWBEM::CIMObjectPath  scp(*cop);
 	scp.setClassName(cc->getSuperClass());
                                                                                 
 	for (; !scp.getClassName().empty(); )

@@ -27,17 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_RWLocker.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_TimeoutException.hpp"
 
-DEFINE_EXCEPTION(RWLocker);
+namespace OpenWBEM
+{
 
+DEFINE_EXCEPTION(RWLocker);
 //////////////////////////////////////////////////////////////////////////////
-OW_RWLocker::OW_RWLocker()
+RWLocker::RWLocker()
 	: m_waiting_writers()
 	, m_waiting_readers()
 	, m_num_waiting_writers(0)
@@ -47,9 +48,8 @@ OW_RWLocker::OW_RWLocker()
 	, m_state(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_RWLocker::~OW_RWLocker()
+RWLocker::~RWLocker()
 {
 	// ???
 	//try
@@ -61,29 +61,26 @@ OW_RWLocker::~OW_RWLocker()
 		// don't let exceptions escape
 	//}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::getReadLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+RWLocker::getReadLock(UInt32 sTimeout, UInt32 usTimeout)
 {
-    OW_NonRecursiveMutexLock l(m_guard);
+    NonRecursiveMutexLock l(m_guard);
     
     // Wait until no exclusive lock is held.
     //
     // Note:  Scheduling priorities are enforced in the unlock()
     //   call.  unlock will wake the proper thread.
-
 	// if we will lock, then make sure we won't deadlock
-	OW_Thread_t tid = OW_ThreadImpl::currentThread();
+	Thread_t tid = ThreadImpl::currentThread();
 	if (m_state < 0)
 	{
 		// see if we already have the write lock
-		if (OW_ThreadImpl::sameThreads(m_writer, tid))
+		if (ThreadImpl::sameThreads(m_writer, tid))
 		{
-			OW_THROW(OW_DeadlockException, "A thread that has a write lock is trying to acquire a read lock.");
+			OW_THROW(DeadlockException, "A thread that has a write lock is trying to acquire a read lock.");
 		}
 	}
-
     while(m_state < 0)
     {
         ++m_num_waiting_readers;
@@ -91,102 +88,89 @@ OW_RWLocker::getReadLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
 		if (!m_waiting_readers.timedWait(l, sTimeout, usTimeout))
 		{
 			--m_num_waiting_readers;
-			OW_THROW(OW_TimeoutException, "Timeout while waiting for read lock.");
+			OW_THROW(TimeoutException, "Timeout while waiting for read lock.");
 		}
         --m_num_waiting_readers;
     }
     
     // Increase the reader count
     m_state++;
-
 	m_readers.push_back(tid);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::getWriteLock(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+RWLocker::getWriteLock(UInt32 sTimeout, UInt32 usTimeout)
 {
-    OW_NonRecursiveMutexLock l(m_guard);
-
+    NonRecursiveMutexLock l(m_guard);
     // Wait until no exclusive lock is held.
     //
     // Note:  Scheduling priorities are enforced in the unlock()
     //   call.  unlock will wake the proper thread.
-
 	// if we will lock, then make sure we won't deadlock
-	OW_Thread_t tid = OW_ThreadImpl::currentThread();
+	Thread_t tid = ThreadImpl::currentThread();
 	if (m_state != 0)
 	{
 		// see if we already have a read lock
 		for (size_t i = 0; i < m_readers.size(); ++i)
 		{
-			if (OW_ThreadImpl::sameThreads(m_readers[i], tid))
+			if (ThreadImpl::sameThreads(m_readers[i], tid))
 			{
-				OW_THROW(OW_DeadlockException, "A thread that has a read lock is trying to acquire a write lock.");
+				OW_THROW(DeadlockException, "A thread that has a read lock is trying to acquire a write lock.");
 			}
 		}
 	}
-
     while(m_state != 0)
     {
         ++m_num_waiting_writers;
         if (!m_waiting_writers.timedWait(l, sTimeout, usTimeout))
 		{
 			--m_num_waiting_writers;
-			OW_THROW(OW_TimeoutException, "Timeout while waiting for write lock.");
+			OW_THROW(TimeoutException, "Timeout while waiting for write lock.");
 		}
         --m_num_waiting_writers;
     }
     m_state = -1;
-
 	m_writer = tid;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::releaseReadLock()
+RWLocker::releaseReadLock()
 {
-    OW_NonRecursiveMutexLock l(m_guard);
+    NonRecursiveMutexLock l(m_guard);
     if(m_state > 0)        // Release a reader.
         --m_state;
     else
-		OW_THROW(OW_RWLockerException, "A writer is releasing a read lock");
-
+		OW_THROW(RWLockerException, "A writer is releasing a read lock");
     if(m_state == 0)
     {
         doWakeups();
     }
-
-	OW_Thread_t tid = OW_ThreadImpl::currentThread();
+	Thread_t tid = ThreadImpl::currentThread();
 	for (size_t i = 0; i < m_readers.size(); ++i)
 	{
-		if (OW_ThreadImpl::sameThreads(m_readers[i], tid))
+		if (ThreadImpl::sameThreads(m_readers[i], tid))
 		{
 			m_readers.remove(i);
 			i--;
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::releaseWriteLock()
+RWLocker::releaseWriteLock()
 {
-    OW_NonRecursiveMutexLock l(m_guard);
+    NonRecursiveMutexLock l(m_guard);
     if(m_state == -1)
         m_state = 0;
     else
-        OW_THROW(OW_RWLockerException, "A reader is releasing a write lock");
-
+        OW_THROW(RWLockerException, "A reader is releasing a write lock");
     // After a writer is unlocked, we are always back in the unlocked state.
     //
     doWakeups();
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RWLocker::doWakeups()
+RWLocker::doWakeups()
 {
     if( m_num_waiting_writers > 0 && 
         m_num_waiting_readers > 0)
@@ -212,9 +196,7 @@ OW_RWLocker::doWakeups()
         // Only readers - scheduling doesn't matter
         m_waiting_readers.notifyAll();
     }
-
 }
 
-
-
+} // end namespace OpenWBEM
 

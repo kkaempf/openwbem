@@ -37,6 +37,8 @@
 #include "OW_String.hpp"
 
 
+using namespace OpenWBEM;
+
 void OW_MD5TestCases::setUp()
 {
 }
@@ -47,7 +49,7 @@ void OW_MD5TestCases::tearDown()
 
 void OW_MD5TestCases::testSomething()
 {
-	OW_MD5 md5("");
+	MD5 md5("");
 	unitAssert(md5.toString().equals("d41d8cd98f00b204e9800998ecf8427e"));
 
 	md5.init("a");
@@ -112,7 +114,7 @@ void OW_MD5TestCases::testSomething()
 
 	// test formatting
 	md5.init("12345");
-	OW_String s1 = md5.toString();
+	String s1 = md5.toString();
 	md5.init("");
 	md5 << 12345;
 	unitAssert(md5.toString().equals(s1));

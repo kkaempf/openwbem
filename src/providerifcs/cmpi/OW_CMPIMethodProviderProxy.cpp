@@ -30,7 +30,6 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CMPIMethodProviderProxy.hpp"
 #include "OW_CIMClass.hpp"
@@ -41,42 +40,38 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
 
+namespace OpenWBEM
+{
+
 /////////////////////////////////////////////////////////////////////////////
-OW_CMPIMethodProviderProxy::OW_CMPIMethodProviderProxy(const OW_CMPIFTABLERef& f)
+CMPIMethodProviderProxy::CMPIMethodProviderProxy(const CMPIFTABLERef& f)
 	: m_ftable(f)
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_CMPIMethodProviderProxy::~OW_CMPIMethodProviderProxy() 
+CMPIMethodProviderProxy::~CMPIMethodProviderProxy() 
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CMPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String &methodName,
-	const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
+CIMValue
+CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
+	const String& ns,
+	const CIMObjectPath& path,
+	const String &methodName,
+	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
-
 	env->getLogger()->
-		logDebug("OW_CMPIInstanceProviderProxy::invokeMethod()");
-
+		logDebug("CMPIInstanceProviderProxy::invokeMethod()");
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-
 		::OperationContext context;
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
                                                                                 
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath objectReference = path;
+		CIMObjectPath objectReference = path;
 		objectReference.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectReference);
 		CMPI_ArgsOnStack eArgsIn(in);
@@ -84,22 +79,19 @@ OW_CMPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
 		CMPIValueValueResultHandler handler;
 		CMPI_ResultOnStack eRes(handler);
 		char* mName=methodName.allocateCString();
-
 		CMPIFlags flgs=0;
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		rc=m_ftable->miVector.methMI->ft->invokeMethod(
 			m_ftable->miVector.methMI,&eCtx,&eRes,&eRef,
 			mName,&eArgsIn,&eArgsOut);
-
 		if (rc.rc == CMPI_RC_OK)
 			return handler.getValue();
 		else
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
 	}
-
-	return OW_CIMValue(OW_CIMNULL);
+	return CIMValue(CIMNULL);
 }
 
+} // end namespace OpenWBEM
 

@@ -10,7 +10,7 @@
 #		counter-parts in the build directory.  
 #   OWNODIFF
 #		If this has a value of 1, no diffs will be performed.  This
-#		can be usefull if using the OW_MemTracer
+#		can be usefull if using the MemTracer
 #   OWTESTLIST
 #		If this is non-empty, only the specified tests will be performed.
 #		Valid values are (case insensitive):
@@ -291,7 +291,7 @@ TestInstalledHeaders()
 #include <iostream>
 int main()
 {
-	OW_String toPrint = "Executing Installed Headers Test main()";
+	OpenWBEM::String toPrint = "Executing Installed Headers Test main()";
 	std::cout << toPrint << std::endl;
 	return 0;
 }
@@ -317,6 +317,7 @@ TestInstalledHeadersOneByOne()
 
 	cd $STAGEDIR
 		echo "Testing header inclusion one-by-one..."
+		rm -rf compilation
 		mkdir compilation
 		cd compilation
 		  INCLUSION_FAIL_LIST=""
@@ -328,8 +329,8 @@ TestInstalledHeadersOneByOne()
 #include <iostream>
 int main(int argc, char* argv[])
 {
-		char* execName = argv[0] + 2;
-		std::cout << execName << " Passed!" << std::endl;
+	char* execName = argv[0] + 2;
+	std::cout << execName << " Passed!" << std::endl;
 	return 0;
 }
 EOS

@@ -27,13 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NonRecursiveMutexImpl.hpp"
-
 #include <cerrno>
 #include <cassert>
 
+namespace OpenWBEM
+{
 
 /**
  * Create a platform specific mutext handle.
@@ -42,10 +42,10 @@
  */
 // static 
 int
-OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
+NonRecursiveMutexImpl::createMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
-	OW_ThreadImpl::initThreads();
+	ThreadImpl::initThreads();
 	int cc = 0;
 	if(!pth_mutex_init(&handle))
 	{
@@ -53,7 +53,6 @@ OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
 	}
 	return cc;
 #elif defined OW_USE_PTHREAD
-
 	pthread_mutexattr_t attr;
 	int res = pthread_mutexattr_init(&attr);
 	assert(res == 0);
@@ -71,8 +70,6 @@ OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
 #error "port me!"
 #endif
 }
-
-
 /**
  * Destroy a mutex previously created with createMutex.
  * @param handle The handle to the mutex that will be destroyed.
@@ -84,7 +81,7 @@ OW_NonRecursiveMutexImpl::createMutex(OW_NonRecursiveMutex_t& handle)
  */
 // static
 int
-OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
+NonRecursiveMutexImpl::destroyMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
@@ -94,18 +91,15 @@ OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
 	{
 		case 0:
 			break;
-
 		case EBUSY:
-			//cerr << "OW_NonRecursiveMutexImpl::destroyMutex - got EBUSY on destroy" << endl;
+			//cerr << "NonRecursiveMutexImpl::destroyMutex - got EBUSY on destroy" << endl;
 			return -1;
 			break;
-
 		default:
-			//cerr << "OW_NonRecursiveMutexImpl::destroyMutex - Error on destroy: "
+			//cerr << "NonRecursiveMutexImpl::destroyMutex - Error on destroy: "
 			//	<< cc << endl;
 			return -2;
 	}
-
 	return 0;
 #elif defined (OW_USE_WIN32_THREADS)
 	return 0;
@@ -113,8 +107,6 @@ OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
 #error "port me!"
 #endif
 }
-
-
 /**
  * Acquire the mutex specified by a given mutex handle. This method should
  * block until the desired mutex can be acquired. The error return value is
@@ -125,16 +117,14 @@ OW_NonRecursiveMutexImpl::destroyMutex(OW_NonRecursiveMutex_t& handle)
  */
 // static
 int
-OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
+NonRecursiveMutexImpl::acquireMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
 #elif defined (OW_USE_PTHREAD)
-
 	int res = pthread_mutex_lock(&handle.mutex);
 	assert(res == 0);
-
 	return res;
 #elif defined (OW_USE_WIN32_THREADS)
 	return 0;
@@ -142,8 +132,6 @@ OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
 #error "port me!"
 #endif
 }
-
-
 /**
  * Release a mutex that was previously acquired with the acquireMutex
  * method.
@@ -152,7 +140,7 @@ OW_NonRecursiveMutexImpl::acquireMutex(OW_NonRecursiveMutex_t& handle)
  */
 // static
 int
-OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
+NonRecursiveMutexImpl::releaseMutex(NonRecursiveMutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	// TODO: ?!?!
@@ -161,7 +149,6 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 #elif defined (OW_USE_PTHREAD)
 	int res = pthread_mutex_unlock(&handle.mutex);
 	assert(res == 0);
-
 	return res;
  
 #elif defined (OW_USE_WIN32_THREADS)
@@ -170,21 +157,20 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
 #error "port me!"
 #endif
 }
-
-
 // static
 int
-OW_NonRecursiveMutexImpl::conditionPreWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state)
+NonRecursiveMutexImpl::conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
 	state.pmutex = &handle.mutex;
 	return 0;
 }
-
 // static
 int
-OW_NonRecursiveMutexImpl::conditionPostWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state)
+NonRecursiveMutexImpl::conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
 	(void)handle; (void)state;
 	return 0;
 }
+
+} // end namespace OpenWBEM
 

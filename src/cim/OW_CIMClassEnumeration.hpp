@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 /**
  *
  *
@@ -36,12 +34,15 @@
  
 #ifndef OW_CIMCLASSENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_CIMCLASSENUMERATION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Enumeration.hpp"
 #include "OW_CIMClass.hpp"
 
-typedef OW_Enumeration<OW_CIMClass> OW_CIMClassEnumeration;
+namespace OpenWBEM
+{
 
+typedef Enumeration<CIMClass> CIMClassEnumeration;
+
+} // end namespace OpenWBEM
 
 #endif

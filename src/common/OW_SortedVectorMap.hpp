@@ -27,29 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SORTED_VECTOR_MAP_HPP_
 #define OW_SORTED_VECTOR_MAP_HPP_
-
 #include "OW_config.h"
-
 #include "OW_COWReference.hpp"
-
 #ifdef OW_NEW
 #undef new
 #endif
-
 #include <vector>
 #include <utility> // for std::pair
 #include <functional> // for std::less
 #include <algorithm>
-
 #ifdef OW_NEW
 #define new OW_NEW
 #endif
 
+namespace OpenWBEM
+{
+
 template <class Key, class T, class Compare>
-class OW_SortedVectorMapDataCompare
+class SortedVectorMapDataCompare
 {
 	typedef std::pair<Key, T> Data;
 public:
@@ -67,12 +64,10 @@ public:
 	{
 		return keyLess(k, rhs.first);
 	}
-
 	bool operator()(const typename Data::first_type& k, const typename Data::first_type& rhs) const
 	{
 		return keyLess(k, rhs);
 	}
-
 private:
 	bool keyLess(const typename Data::first_type& k1,
 		const typename Data::first_type& k2) const
@@ -80,16 +75,12 @@ private:
 		return Compare()(k1, k2);
 	}
 };
-
-template<class Key, class T, class Compare = OW_SortedVectorMapDataCompare<Key, T, std::less<Key> > >
-class OW_SortedVectorMap
+template<class Key, class T, class Compare = SortedVectorMapDataCompare<Key, T, std::less<Key> > >
+class SortedVectorMap
 {
-
 	typedef std::pair<Key, T> Data;
-
 	typedef std::vector<Data> container_t;
-	OW_COWReference<container_t> m_impl;
-
+	COWReference<container_t> m_impl;
 public:
 	typedef          Key key_type;
 	typedef          T data_type;
@@ -105,65 +96,52 @@ public:
 	typedef typename container_t::const_reverse_iterator const_reverse_iterator;
 	typedef typename container_t::size_type size_type;
 	typedef typename container_t::difference_type difference_type;
-
-	OW_SortedVectorMap() : m_impl(new container_t) {  }
-
-	explicit OW_SortedVectorMap(container_t* toWrap) : m_impl(toWrap)
+	SortedVectorMap() : m_impl(new container_t) {  }
+	explicit SortedVectorMap(container_t* toWrap) : m_impl(toWrap)
 		{ }
-
 	template <class InputIterator>
-	OW_SortedVectorMap(InputIterator first, InputIterator last) :
+	SortedVectorMap(InputIterator first, InputIterator last) :
 		m_impl(new container_t(first, last))
 	{
 		std::sort(m_impl->begin(), m_impl->end(), Compare());
 	}
-
 	const_iterator begin() const
 	{
 		return m_impl->begin();
 	}
-
 	const_iterator end() const
 	{
 		return m_impl->end();
 	}
-
 	// These are slightly dangerous, if you use them, DON'T CHANGE THE KEY!
 	iterator begin()
 	{
 		return m_impl->begin();
 	}
-
 	iterator end()
 	{
 		return m_impl->end();
 	}
-
 	const_reverse_iterator rbegin() const
 	{
 		return m_impl->rbegin();
 	}
-
 	const_reverse_iterator rend() const
 	{
 		return m_impl->rend();
 	}
-
 	bool empty() const
 	{
 		return m_impl->empty();
 	}
-
 	size_type size() const
 	{
 		return m_impl->size();
 	}
-
 	size_type max_size() const
 	{
 		return m_impl->max_size();
 	}
-
 	data_type& operator[](const key_type& k)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), k, Compare());
@@ -173,12 +151,10 @@ public:
 		}
 		return (*(m_impl->insert(i, value_type(k, data_type())))).second;
 	}
-
-	void swap(OW_SortedVectorMap<Key, T, Compare>& x)
+	void swap(SortedVectorMap<Key, T, Compare>& x)
 	{
 		m_impl.swap(x.m_impl);
 	}
-
 	std::pair<iterator, bool> insert(const value_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
@@ -191,14 +167,12 @@ public:
 			return std::pair<iterator, bool>(m_impl->insert(i, x), true);
 		}
 	}
-
 	iterator insert(iterator, const value_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		
 		return m_impl->insert(i, x);
 	}
-
 	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last)
 	{
@@ -208,12 +182,10 @@ public:
 		}
 		std::sort(m_impl->begin(), m_impl->end(), Compare());
 	}
-
 	void erase(iterator position)
 	{
 		m_impl->erase(position);
 	}
-
 	size_type erase(const key_type& x)
 	{
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
@@ -227,17 +199,14 @@ public:
 			return 0;
 		}
 	}
-
 	void erase(iterator first, iterator last)
 	{
 		m_impl->erase(first, last);
 	}
-
 	void clear()
 	{
 		m_impl->clear();
 	}
-
 	const_iterator find(const key_type& x) const
 	{
 		const_iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
@@ -250,7 +219,6 @@ public:
 			return m_impl->end();
 		}
 	}
-
 	iterator find(const key_type& x)
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
@@ -263,7 +231,6 @@ public:
 			return m_impl->end();
 		}
 	}
-
 	size_type count(const key_type& x) const
 	{
 		if (std::binary_search(m_impl->begin(), m_impl->end(), x, Compare()))
@@ -275,50 +242,43 @@ public:
 			return 0;
 		}
 	}
-
 	const_iterator lower_bound(const key_type& x) const
 	{
 		return std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}
-
 	const_iterator upper_bound(const key_type& x) const
 	{
 		return std::upper_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}
-
 	std::pair<const_iterator, const_iterator>
 		equal_range(const key_type& x) const
 	{
 		return std::equal_range(m_impl->begin(), m_impl->end(), x, Compare());
 	}
-
-	friend bool operator== <>(const OW_SortedVectorMap<Key, T, Compare>& x,
-		const OW_SortedVectorMap<Key, T, Compare>& y);
-
-	friend bool operator< <>(const OW_SortedVectorMap<Key, T, Compare>& x,
-		const OW_SortedVectorMap<Key, T, Compare>& y);
+	friend bool operator== <>(const SortedVectorMap<Key, T, Compare>& x,
+		const SortedVectorMap<Key, T, Compare>& y);
+	friend bool operator< <>(const SortedVectorMap<Key, T, Compare>& x,
+		const SortedVectorMap<Key, T, Compare>& y);
 };
-
 template<class Key, class T, class Compare>
-inline bool operator==(const OW_SortedVectorMap<Key, T, Compare>& x,
-	const OW_SortedVectorMap<Key, T, Compare>& y)
+inline bool operator==(const SortedVectorMap<Key, T, Compare>& x,
+	const SortedVectorMap<Key, T, Compare>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
-
 template<class Key, class T, class Compare>
-inline bool operator<(const OW_SortedVectorMap<Key, T, Compare>& x,
-	const OW_SortedVectorMap<Key, T, Compare>& y)
+inline bool operator<(const SortedVectorMap<Key, T, Compare>& x,
+	const SortedVectorMap<Key, T, Compare>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
-
 template <class Key, class T, class Compare>
-inline void swap(OW_SortedVectorMap<Key, T, Compare>& x,
-	OW_SortedVectorMap<Key, T, Compare>& y)
+inline void swap(SortedVectorMap<Key, T, Compare>& x,
+	SortedVectorMap<Key, T, Compare>& y)
 {
 	x.swap(y);
 }
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

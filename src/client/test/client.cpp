@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_Exception.hpp"
@@ -44,35 +43,27 @@ int main( int iArgC, char *asArgV[] )
 			cout << "Example: " << asArgV[ 0 ] << " https://Login:Password@cimom.example.com:5989/cimom" << endl;
 			return 1;
 		}
-
-		OW_String sURL( asArgV[ 1 ] );
-
+		String sURL( asArgV[ 1 ] );
 		if( sURL.startsWith( "https://" ) )
-			OW_SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
+			SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
 	
-		OW_AutoPtrNoVec<OW_CIMXMLCIMOMHandle> pClient;
-
-		pClient = new OW_CIMXMLCIMOMHandle( sURL );
-
-		OW_CIMObjectPath RootPath;
-		OW_CIMObjectPath ClassPath( "MyClass" );
-		OW_CIMObjectPath InstancePath( "MyClass" );
+		AutoPtrNoVec<CIMXMLCIMOMHandle> pClient;
+		pClient = new CIMXMLCIMOMHandle( sURL );
+		CIMObjectPath RootPath;
+		CIMObjectPath ClassPath( "MyClass" );
+		CIMObjectPath InstancePath( "MyClass" );
 		
-		OW_String NameSpace( "root/cimv2" );
+		String NameSpace( "root/cimv2" );
 		pClient->createNameSpace( NameSpace );
-
 		pClient->enumNameSpace( RootPath, true );
-
-		OW_CIMClass Class( "MyClass" );
+		CIMClass Class( "MyClass" );
 		pClient->createClass( ClassPath, Class );	
 	
 		pClient->enumClass( RootPath, true, true );	
-
-		OW_CIMInstance Instance( Class.newInstance() );
-		Instance.setProperty( "Name", OW_String("MyInstance") );
-		InstancePath.addKey( "Name", OW_String("MyInstance") );
+		CIMInstance Instance( Class.newInstance() );
+		Instance.setProperty( "Name", String("MyInstance") );
+		InstancePath.addKey( "Name", String("MyInstance") );
 		pClient->createInstance( InstancePath, Instance );	
-
 		pClient->enumInstances( RootPath, true, true );
 		
 		pClient->deleteInstance( InstancePath );
@@ -83,10 +74,11 @@ int main( int iArgC, char *asArgV[] )
 		
 		return 0;
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 		return 1;
 	}
 	return 0;
 }
+

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_XMLPrettyPrint.hpp"
 #include "OW_XMLParser.hpp"
@@ -35,15 +34,17 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
 
-static void addIndent(OW_StringBuffer& sb, int indent)
+namespace OpenWBEM
+{
+
+static void addIndent(StringBuffer& sb, int indent)
 {
 	while (indent--)
 	{
 		sb += "  ";
 	}
 }
-
-static void outputAttrs(OW_StringBuffer& sb, const OW_XMLToken& tok)
+static void outputAttrs(StringBuffer& sb, const XMLToken& tok)
 {
 	for (size_t i = 0; i < tok.attributeCount; ++i)
 	{
@@ -54,26 +55,24 @@ static void outputAttrs(OW_StringBuffer& sb, const OW_XMLToken& tok)
 		sb += "\"";
 	}
 }
-
-OW_String OW_XMLPrettyPrint(std::istream& istr)
+String XMLPrettyPrint(std::istream& istr)
 {
-	OW_XMLParser p(istr);
-	OW_StringBuffer rval;
+	XMLParser p(istr);
+	StringBuffer rval;
 	int indent = 0;
-	OW_XMLToken tok;
+	XMLToken tok;
 	bool good = p.next(tok);
 	while (good)
 	{
 		switch (tok.type)
 		{
-			case OW_XMLToken::XML_DECLARATION:
+			case XMLToken::XML_DECLARATION:
 				addIndent(rval, indent);
 				rval += "<?xml";
 				outputAttrs(rval, tok);
 				rval += " ?>\n";
 				break;
-
-			case OW_XMLToken::START_TAG:
+			case XMLToken::START_TAG:
 				addIndent(rval, indent);
 				rval += "<";
 				rval += tok.text;
@@ -81,8 +80,7 @@ OW_String OW_XMLPrettyPrint(std::istream& istr)
 				rval += ">\n";
 				++indent;
 				break;
-
-			case OW_XMLToken::END_TAG:
+			case XMLToken::END_TAG:
 				--indent;
 				OW_ASSERT(indent >= 0);
 				addIndent(rval, indent);
@@ -90,51 +88,44 @@ OW_String OW_XMLPrettyPrint(std::istream& istr)
 				rval += tok.text;
 				rval += ">\n";
 				break;
-
-			case OW_XMLToken::COMMENT:
+			case XMLToken::COMMENT:
 				addIndent(rval, indent);
 				rval += "<!--";
 				rval += tok.text;
 				rval += "-->\n";
 				break;
-
-			case OW_XMLToken::CDATA:
+			case XMLToken::CDATA:
 				addIndent(rval, indent);
 				rval += "<![CDATA[";
 				rval += tok.text;
 				rval += "]]>\n";
 				break;
-
-			case OW_XMLToken::DOCTYPE:
+			case XMLToken::DOCTYPE:
 				addIndent(rval, indent);
 				rval += "<!DOCTYPE";
 				rval += tok.text;
 				rval += ">\n";
 				break;
-
-			case OW_XMLToken::CONTENT:
+			case XMLToken::CONTENT:
 				addIndent(rval, indent);
 				rval += tok.text;
 				rval += "\n";
 				break;
-
 			default:
 				OW_ASSERT(0);
 		}
 		
 		good = p.next(tok);
 	}
-
 	return rval.releaseString();
 }
-
-OW_String OW_XMLPrettyPrint(const OW_String& s)
+String XMLPrettyPrint(const String& s)
 {
-	OW_TempFileStream tfs;
+	TempFileStream tfs;
 	tfs << s;
 	tfs.rewind();
-	return OW_XMLPrettyPrint(tfs);
+	return XMLPrettyPrint(tfs);
 }
 
-
+} // end namespace OpenWBEM
 

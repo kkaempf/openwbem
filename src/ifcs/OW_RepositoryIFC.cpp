@@ -30,14 +30,18 @@
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_RepositoryIFC::~OW_RepositoryIFC()
+RepositoryIFC::~RepositoryIFC()
+{
+}
+///////////////////////////////////////////////////////////////////////////////
+void
+RepositoryIFC::exportIndication(const CIMInstance&, const String&) 
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
-void
-OW_RepositoryIFC::exportIndication(const OW_CIMInstance&, const OW_String&) 
-{
-}
+} // end namespace OpenWBEM
 

@@ -27,164 +27,139 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMPARAMETER_HPP_INCLUDE_GUARD_
 #define OW_CIMPARAMETER_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
 #include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMParameter class encapsulates all data and functionality pertinent
+ * The CIMParameter class encapsulates all data and functionality pertinent
  * to a parameter to a method within a CIM class.
  */
-class OW_CIMParameter : public OW_CIMElement
+class CIMParameter : public CIMElement
 {
 public:
-
 	struct PARMData;
-
 	/**
-	 * Create a new OW_CIMParameter object.
+	 * Create a new CIMParameter object.
 	 */
-	OW_CIMParameter();
-
+	CIMParameter();
 	/**
-	 * Create a NULL OW_CIMParameter object.
+	 * Create a NULL CIMParameter object.
 	 */
-	explicit OW_CIMParameter(OW_CIMNULL_t);
-
+	explicit CIMParameter(CIMNULL_t);
 	/**
-	 * Create an OW_CIMParameter object with a given name.
+	 * Create an CIMParameter object with a given name.
 	 * @param name	The name for this parameter.
 	 */
-	explicit OW_CIMParameter(const OW_String& name);
-
+	explicit CIMParameter(const String& name);
 	/**
-	 * Create an OW_CIMParameter object with a given name.
+	 * Create an CIMParameter object with a given name.
 	 * @param name	The name for this parameter as a NULL terminated string.
 	 */
-	explicit OW_CIMParameter(const char* name);
-
+	explicit CIMParameter(const char* name);
 	/**
 	 * Copy constructor
-	 * @param arg The OW_CIMParameter object to make this one a copy of.
+	 * @param arg The CIMParameter object to make this one a copy of.
 	 */
-	OW_CIMParameter(const OW_CIMParameter& arg);
-
+	CIMParameter(const CIMParameter& arg);
 	/**
-	 * Destroy this OW_CIMParameter object.
+	 * Destroy this CIMParameter object.
 	 */
-	~OW_CIMParameter();
-
+	~CIMParameter();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMParameter object to assign to this one.
+	 * @param arg The CIMParameter object to assign to this one.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	OW_CIMParameter& operator= (const OW_CIMParameter& arg);
-
+	CIMParameter& operator= (const CIMParameter& arg);
 	/**
-	 * @return true if this a valid OW_CIMParameter object.
+	 * @return true if this a valid CIMParameter object.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 	/**
 	 * Set the qualifiers for this parameter
-	 * @param quals An OW_CIMQualifierArray that contains the qualifiers for
+	 * @param quals An CIMQualifierArray that contains the qualifiers for
 	 * 	this parameter.
 	 * @return a reference to *this
 	 */
-	OW_CIMParameter& setQualifiers(const OW_CIMQualifierArray& quals);
-
+	CIMParameter& setQualifiers(const CIMQualifierArray& quals);
 	/**
 	 * Get the qualifiers for this parameter.
-	 * @return An OW_CIMQualifierArray that contains the qualifiers for this
+	 * @return An CIMQualifierArray that contains the qualifiers for this
 	 * parameter.
 	 */
-	OW_CIMQualifierArray getQualifiers() const;
-
+	CIMQualifierArray getQualifiers() const;
 	/**
 	 * Set the data type for this parameter.
-	 * @param type	The OW_CIMDataType for this parameter.
+	 * @param type	The CIMDataType for this parameter.
 	 * @return a reference to *this
 	 */
-	OW_CIMParameter& setDataType(const OW_CIMDataType& type);
-
+	CIMParameter& setDataType(const CIMDataType& type);
 	/**
 	 * Get the data type for this parameter.
-	 * @return An OW_CIMDataType for this parameter.
+	 * @return An CIMDataType for this parameter.
 	 */
-	OW_CIMDataType getType() const;
-
+	CIMDataType getType() const;
 	/**
 	 * @return The size of the data for this parameter.
 	 */
-	OW_Int32 getDataSize() const;
-
+	Int32 getDataSize() const;
 	/**
 	 * Get a qualifier by name for this parameter.
 	 * @param name	The name of the qualifier to retrieve.
-	 * @return The OW_CIMQualifier associated with the given name if there is
-	 * one. Otherwise a NULL OW_CIMQualifier.
+	 * @return The CIMQualifier associated with the given name if there is
+	 * one. Otherwise a NULL CIMQualifier.
 	 */
-	OW_CIMQualifier getQualifier(const OW_String& name) const;
-
+	CIMQualifier getQualifier(const String& name) const;
 	/**
-	 * @return The name of this OW_CIMParameter.
+	 * @return The name of this CIMParameter.
 	 */
-	virtual OW_String getName() const;
-
+	virtual String getName() const;
 	/**
-	 * Set the name of this OW_CIMParameter.
-	 * @param name	The new name for this OW_CIMParameter.
+	 * Set the name of this CIMParameter.
+	 * @param name	The new name for this CIMParameter.
 	 */
-	virtual void setName(const OW_String& name);
-
+	virtual void setName(const String& name);
 	/**
 	 * Write this object to the given output stream.
-	 * @param ostrm The output stream to write this OW_CIMElement to.
+	 * @param ostrm The output stream to write this CIMElement to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
 	 * Read this object from the given input stream.
-	 * @param istrm The input stream to read this OW_CIMElement from.
+	 * @param istrm The input stream to read this CIMElement from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
-	 * @return a string representation of this OW_CIMParameter.
+	 * @return a string representation of this CIMParameter.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return An OW_String that contains the MOF representation of this
-	 * OW_CIMParameter object.
+	 * @return An String that contains the MOF representation of this
+	 * CIMParameter object.
 	 */
-	virtual OW_String toMOF() const;
+	virtual String toMOF() const;
 	
 	/**
 	 * Test if this property has a qualifier that is a boolean type with a
@@ -192,15 +167,12 @@ public:
 	 * @param name	The name of the qualifier to test.
 	 * @return true if the qualifier exists and has a value of true.
 	 */
-	bool hasTrueQualifier(const OW_String& name) const;
-
+	bool hasTrueQualifier(const String& name) const;
 private:
-
-	OW_COWReference<PARMData> m_pdata;
-
-	friend bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y);
+	COWReference<PARMData> m_pdata;
+	friend bool operator<(const CIMParameter& x, const CIMParameter& y);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 * Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
@@ -28,10 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NULLValueException.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(NULLValue)
 
+} // end namespace OpenWBEM
 

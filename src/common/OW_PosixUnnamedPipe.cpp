@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_PosixUnnamedPipe.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_IOException.hpp"
-
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
@@ -47,19 +45,20 @@ extern "C"
 #include <io.h>
 #endif
 }
-
 #include <cstring>
+
+namespace OpenWBEM
+{
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_UnnamedPipeRef
-OW_UnnamedPipe::createUnnamedPipe(EOpen doOpen)
+UnnamedPipeRef
+UnnamedPipe::createUnnamedPipe(EOpen doOpen)
 {
-	return OW_UnnamedPipeRef(new OW_PosixUnnamedPipe(doOpen));
+	return UnnamedPipeRef(new PosixUnnamedPipe(doOpen));
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PosixUnnamedPipe::OW_PosixUnnamedPipe(EOpen doOpen)
+PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
 {
 	m_fds[0] = m_fds[1] = -1;
 	if(doOpen)
@@ -69,30 +68,26 @@ OW_PosixUnnamedPipe::OW_PosixUnnamedPipe(EOpen doOpen)
 }
 	
 //////////////////////////////////////////////////////////////////////////////
-OW_PosixUnnamedPipe::~OW_PosixUnnamedPipe()
+PosixUnnamedPipe::~PosixUnnamedPipe()
 {
 	close();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
+PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 {
 	// If not opened, ignore?
 	if(m_fds[1] == -1)
 	{
 		return;
 	}
-
 #ifdef OW_WIN32
 	// TODO: use outputIsBlocking?
 	unsigned long argp = 0;
 	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
-		OW_THROW(OW_IOException, "Failed to set pipe to non-blocking");
-
+		OW_THROW(IOException, "Failed to set pipe to non-blocking");
 #else
 	int fdflags = fcntl(m_fds[1], F_GETFL, 0);
-
 	if(outputIsBlocking)
 	{
 		fdflags ^= O_NONBLOCK;
@@ -100,22 +95,18 @@ OW_PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 	else
 	{
 		fdflags |= O_NONBLOCK;
-
 	}
-
 	fcntl(m_fds[1], F_SETFL, fdflags);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PosixUnnamedPipe::open()
+PosixUnnamedPipe::open()
 {
 	if(m_fds[0] != -1)
 	{
 		close();
 	}
-
 #ifdef OW_WIN32
 	if(::_pipe(m_fds, 2560, _O_BINARY) == -1)
 #else
@@ -123,22 +114,19 @@ OW_PosixUnnamedPipe::open()
 #endif
 	{
 		m_fds[0] = m_fds[1] = -1;
-		OW_THROW(OW_UnnamedPipeException, ::strerror(errno));
+		OW_THROW(UnnamedPipeException, ::strerror(errno));
 	}
-
 #ifdef OW_WIN32
 	unsigned long argp = 1;
 	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
-		OW_THROW(OW_IOException, "Failed to set pipe to blocking");
-
+		OW_THROW(IOException, "Failed to set pipe to blocking");
 #else
 	fcntl(m_fds[1], F_SETFL, O_NONBLOCK);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::close()
+PosixUnnamedPipe::close()
 {
 	int rc = -1;
 	if(m_fds[0] != -1)
@@ -151,13 +139,11 @@ OW_PosixUnnamedPipe::close()
 		rc = ::close(m_fds[1]);
 		m_fds[1] = -1;
 	}
-
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::closeInputHandle()
+PosixUnnamedPipe::closeInputHandle()
 {
 	int rc = -1;
 	if(m_fds[0] != -1)
@@ -167,10 +153,9 @@ OW_PosixUnnamedPipe::closeInputHandle()
 	}
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::closeOutputHandle()
+PosixUnnamedPipe::closeOutputHandle()
 {
 	int rc = -1;
 	if(m_fds[1] != -1)
@@ -178,16 +163,13 @@ OW_PosixUnnamedPipe::closeOutputHandle()
 		rc = ::close(m_fds[1]);
 		m_fds[1] = -1;
 	}
-
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
+PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 {
 	int rc = -1;
-
 	if(m_fds[1] != -1)
 	{
         // Always use the regular write in this method, instead of the
@@ -197,18 +179,15 @@ OW_PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(OW_Exception, "pipe write failed");
+		OW_THROW(Exception, "pipe write failed");
 	}
-
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
+PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 {
 	int rc = -1;
-
 	if(m_fds[0] != -1)
 	{
 #ifdef OW_USE_GNU_PTH
@@ -219,15 +198,16 @@ OW_PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	}
 	if (errorAsException && rc == -1)
 	{
-		OW_THROW(OW_Exception, "pipe read failed");
+		OW_THROW(Exception, "pipe read failed");
 	}
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Select_t
-OW_PosixUnnamedPipe::getSelectObj() const
+Select_t
+PosixUnnamedPipe::getSelectObj() const
 {
 	return m_fds[0];
 }
+
+} // end namespace OpenWBEM
 

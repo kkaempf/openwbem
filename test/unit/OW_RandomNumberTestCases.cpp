@@ -33,6 +33,8 @@
 #include "OW_RandomNumberTestCases.hpp"
 #include "OW_RandomNumber.hpp"
 
+using namespace OpenWBEM;
+
 void OW_RandomNumberTestCases::setUp()
 {
 }
@@ -48,13 +50,13 @@ const int MAX_TEST_COUNT = 10000000;
 
 void OW_RandomNumberTestCases::doTestRange(int low, int high)
 {
-	OW_RandomNumber gen(low, high);
+	RandomNumber gen(low, high);
 	bool saw_low = false;
 	bool saw_high = false;
 	int i = 0;
 	while ((i < MIN_TEST_COUNT) || ((i < MAX_TEST_COUNT) && (!saw_low && !saw_high)))
 	{
-		OW_Int32 rn = gen.getNextNumber();
+		Int32 rn = gen.getNextNumber();
 		unitAssert(rn >= low && rn <= high);
 		if (rn == low)
 			saw_low = true;
@@ -69,10 +71,10 @@ void OW_RandomNumberTestCases::doTestRange(int low, int high)
 void OW_RandomNumberTestCases::testRandomNumbers()
 {
 	// test default.  range: 0-RAND_MAX
-	OW_RandomNumber g1;
+	RandomNumber g1;
 	for (int i = 0; i < MIN_TEST_COUNT; ++i)
 	{
-		OW_Int32 rn = g1.getNextNumber();
+		Int32 rn = g1.getNextNumber();
 		unitAssert(rn >= 0 && rn <= RAND_MAX);
 	}
 

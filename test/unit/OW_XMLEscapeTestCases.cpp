@@ -33,6 +33,8 @@
 #include "OW_XMLEscapeTestCases.hpp"
 #include "OW_XMLEscape.hpp"
 
+using namespace OpenWBEM;
+
 void OW_XMLEscapeTestCases::setUp()
 {
 }
@@ -43,8 +45,8 @@ void OW_XMLEscapeTestCases::tearDown()
 
 void OW_XMLEscapeTestCases::test()
 {
-	unitAssert( OW_XMLEscape("&\"<>\x9'\n\r") == "&amp;&quot;&lt;&gt;&#9;&apos;&#10;&#13;" );
-	unitAssert( OW_XMLEscape("Minix (<=1.4a) | Linux | Microsoft") == "Minix (&lt;=1.4a) | Linux | Microsoft");
+	unitAssert( XMLEscape("&\"<>\x9'\n\r") == "&amp;&quot;&lt;&gt;&#9;&apos;&#10;&#13;" );
+	unitAssert( XMLEscape("Minix (<=1.4a) | Linux | Microsoft") == "Minix (&lt;=1.4a) | Linux | Microsoft");
 }
 
 Test* OW_XMLEscapeTestCases::suite()

@@ -27,107 +27,98 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMException.hpp"
 #include "OW_String.hpp"
-
 #include <cstring>
 #include <cstdlib>
 #include <algorithm> // for std::swap
 
-static OW_String getMsg(OW_CIMException::ErrNoType errval, const char* msg = 0);
+namespace OpenWBEM
+{
 
+static String getMsg(CIMException::ErrNoType errval, const char* msg = 0);
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(OW_CIMException::ErrNoType errval) :
-	OW_Exception(), m_errno(errval), m_longmsg(0)
+CIMException::CIMException(CIMException::ErrNoType errval) :
+	Exception(), m_errno(errval), m_longmsg(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const char* file, int line, OW_CIMException::ErrNoType errval,
+CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
 	const char* msg) :
-	OW_Exception(file, line, msg), m_errno(errval), m_longmsg(0)
+	Exception(file, line, msg), m_errno(errval), m_longmsg(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::~OW_CIMException() throw()
+CIMException::~CIMException() throw()
 {
 	if (m_longmsg)
 	{
 		free(m_longmsg);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException::OW_CIMException(const OW_CIMException& x)
-	: OW_Exception(x)
+CIMException::CIMException(const CIMException& x)
+	: Exception(x)
 	, m_errno(x.m_errno)
 	, m_longmsg(x.m_longmsg ? strdup(x.m_longmsg) : 0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMException&
-OW_CIMException::operator=(OW_CIMException x)
+CIMException&
+CIMException::operator=(CIMException x)
 {
 	x.swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMException::swap(OW_CIMException& x)
+CIMException::swap(CIMException& x)
 {
-	OW_Exception::swap(x);
+	Exception::swap(x);
 	std::swap(m_longmsg, x.m_longmsg);
 	std::swap(m_errno, x.m_errno);
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 const char*
-OW_CIMException::getMessage() const
+CIMException::getMessage() const
 {
 	if (!m_longmsg)
 	{
-		m_longmsg = strdup(getMsg(m_errno, OW_Exception::getMessage()).c_str());
+		m_longmsg = strdup(getMsg(m_errno, Exception::getMessage()).c_str());
 	}
 	return m_longmsg;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 struct MsgRec
 {
-	OW_CIMException::ErrNoType errval;
+	CIMException::ErrNoType errval;
 	const char* msg;
 };
-
 static MsgRec _pmsgs[] =
 {
-	{ OW_CIMException::SUCCESS, "no error" },
-	{ OW_CIMException::FAILED, "general error" },
-	{ OW_CIMException::ACCESS_DENIED, "Access to CIM resource unavailable to client" },
-	{ OW_CIMException::INVALID_NAMESPACE, "namespace does not exist" },
-	{ OW_CIMException::INVALID_PARAMETER, "invalid parameter passed to method" },
-	{ OW_CIMException::INVALID_CLASS, "class does not exist" },
-	{ OW_CIMException::NOT_FOUND, "requested object could not be found" },
-	{ OW_CIMException::NOT_SUPPORTED, "requested operation is not supported" },
-	{ OW_CIMException::CLASS_HAS_CHILDREN, "operation cannot be done on class with subclasses" },
-	{ OW_CIMException::CLASS_HAS_INSTANCES, "operator cannot be done on class with instances" },
-	{ OW_CIMException::INVALID_SUPERCLASS, "specified superclass does not exist" },
-	{ OW_CIMException::ALREADY_EXISTS, "object already exists" },
-	{ OW_CIMException::NO_SUCH_PROPERTY, "specified property does not exist" },
-	{ OW_CIMException::TYPE_MISMATCH, "value supplied is incompatible with type" },
-	{ OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, "query language is not recognized or supported" },
-	{ OW_CIMException::INVALID_QUERY, "query is not valid for the specified query language" },
-	{ OW_CIMException::METHOD_NOT_AVAILABLE, "extrinsic method could not be executed" },
-	{ OW_CIMException::METHOD_NOT_FOUND, "extrinsic method does not exist" },
-	{ OW_CIMException::SUCCESS, 0 }
+	{ CIMException::SUCCESS, "no error" },
+	{ CIMException::FAILED, "general error" },
+	{ CIMException::ACCESS_DENIED, "Access to CIM resource unavailable to client" },
+	{ CIMException::INVALID_NAMESPACE, "namespace does not exist" },
+	{ CIMException::INVALID_PARAMETER, "invalid parameter passed to method" },
+	{ CIMException::INVALID_CLASS, "class does not exist" },
+	{ CIMException::NOT_FOUND, "requested object could not be found" },
+	{ CIMException::NOT_SUPPORTED, "requested operation is not supported" },
+	{ CIMException::CLASS_HAS_CHILDREN, "operation cannot be done on class with subclasses" },
+	{ CIMException::CLASS_HAS_INSTANCES, "operator cannot be done on class with instances" },
+	{ CIMException::INVALID_SUPERCLASS, "specified superclass does not exist" },
+	{ CIMException::ALREADY_EXISTS, "object already exists" },
+	{ CIMException::NO_SUCH_PROPERTY, "specified property does not exist" },
+	{ CIMException::TYPE_MISMATCH, "value supplied is incompatible with type" },
+	{ CIMException::QUERY_LANGUAGE_NOT_SUPPORTED, "query language is not recognized or supported" },
+	{ CIMException::INVALID_QUERY, "query is not valid for the specified query language" },
+	{ CIMException::METHOD_NOT_AVAILABLE, "extrinsic method could not be executed" },
+	{ CIMException::METHOD_NOT_FOUND, "extrinsic method does not exist" },
+	{ CIMException::SUCCESS, 0 }
 };
-
-static OW_String
-getMsg(OW_CIMException::ErrNoType err, const char* msg)
+static String
+getMsg(CIMException::ErrNoType err, const char* msg)
 {
 	const char* p = "unknown error";
 	for(int i = 0; _pmsgs[i].msg != NULL; i++)
@@ -138,10 +129,9 @@ getMsg(OW_CIMException::ErrNoType err, const char* msg)
 			break;
 		}
 	}
-
-	OW_String rstr(p);
+	String rstr(p);
 	// avoid multiple appendings of the exception message
-	if (rstr == OW_String(msg).substring(0, rstr.length()))
+	if (rstr == String(msg).substring(0, rstr.length()))
 	{
 		rstr = msg;
 	}
@@ -151,7 +141,8 @@ getMsg(OW_CIMException::ErrNoType err, const char* msg)
 		rstr += msg;
 		rstr += ")";
 	}
-
 	return rstr;
 }
+
+} // end namespace OpenWBEM
 

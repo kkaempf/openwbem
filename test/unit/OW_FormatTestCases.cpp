@@ -33,6 +33,8 @@
 #include "OW_FormatTestCases.hpp"
 #include "OW_Format.hpp"
 
+using namespace OpenWBEM;
+
 void OW_FormatTestCases::setUp()
 {
 }
@@ -47,7 +49,7 @@ void OW_FormatTestCases::testFormat()
 	unitAssert( format("%1 != %2", 1, 2).toString() == "1 != 2" );
 	unitAssert( format("%1,%2,%3,%4,%5,%6,%7,%8,%9", 
 				1,2,3,4,5,6,7,8,9).toString() == "1,2,3,4,5,6,7,8,9" );
-	unitAssert( OW_String(format("%1 != %2", 1, 2).c_str()) == "1 != 2" );
+	unitAssert( String(format("%1 != %2", 1, 2).c_str()) == "1 != 2" );
 }
 
 void OW_FormatTestCases::testPercent()

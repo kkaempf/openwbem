@@ -29,26 +29,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /* a simple lexical scanner to escape xml */
 #include "OW_config.h"
 #include "OW_XMLEscape.hpp"
 #include "OW_StringBuffer.hpp"
 
-
-
-OW_String OW_XMLEscape(const char* escapedText, unsigned len)
+namespace OpenWBEM
 {
-	OW_StringBuffer rval(len * 2);
 
+String XMLEscape(const char* escapedText, unsigned len)
+{
+	StringBuffer rval(len * 2);
 	const char* begin = escapedText;
 	const char* end = escapedText + len;
-
 	#define YYCTYPE char
 	#define YYCURSOR        begin
 	#define YYLIMIT         end
 	#define YYFILL(n)
-
 start:
 	{
 	YYCTYPE yych;
@@ -101,7 +98,8 @@ yy20:
 	{ return rval.releaseString(); }
 }
 #line 67
-
-
 	return rval.releaseString();
 }
+
+} // end namespace OpenWBEM
+

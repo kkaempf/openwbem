@@ -27,9 +27,7 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -40,64 +38,56 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMValue.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 namespace
 {
-
 // This is a pass through provider.  The instances are really stored in the repository.  All CIM_IndicationSubscription actions are intercepted and passed to the indication
 // server so it can keep track of subscriptions and also deny the creation of any subscriptions for which no providers exist.
-class OW_provCIM_IndicationSubscription : public OW_CppInstanceProviderIFC
+class provCIM_IndicationSubscription : public CppInstanceProviderIFC
 {
 public:
-	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env)
+	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		indicationsEnabled = !(env->getConfigItem(OW_ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
+		indicationsEnabled = !(env->getConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt).equalsIgnoreCase("true"));
 		// get the indication server and save it.
 		if (indicationsEnabled)
 		{
-			indicationServer = OW_CIMOMEnvironment::g_cimomEnvironment->getIndicationServer();
+			indicationServer = CIMOMEnvironment::g_cimomEnvironment->getIndicationServer();
 			if (!indicationServer)
 			{
 				indicationsEnabled = false;
 			}
 		}
 	}
-
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_IndicationSubscription");
 	}
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &cop)
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 	{
 		// delete it from the repository
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->deleteInstance(ns, cop);
-
 		// tell the indication server it's being deleted.
 		indicationServer->deleteSubscription(ns, cop);
-
 	}
-
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &cimInstance_)
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance_)
 	{
-        // make a copy so we can add the __OW_Subscription_UserName property to it.
-        OW_CIMInstance cimInstance(cimInstance_);
-
+        // make a copy so we can add the __Subscription_UserName property to it.
+        CIMInstance cimInstance(cimInstance_);
         // we add this property so that if the cimom restarts, we can recover the username of whoever created the subscription.
-        OW_String username = env->getUserName();
-        cimInstance.setProperty("__OW_Subscription_UserName", OW_CIMValue(username));
-
+        String username = env->getUserName();
+        cimInstance.setProperty("__Subscription_UserName", CIMValue(username));
 		if (!indicationsEnabled)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
+			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
 		}
-
 		// Tell the indication server about the new subscription.  This may throw if the subscription is not allowed.
 		indicationServer->createSubscription(ns, cimInstance, username);
-
 		// now create it in the repository.
 		try
 		{
@@ -105,25 +95,23 @@ public:
 		}
 		catch (...)
 		{
-			indicationServer->deleteSubscription(ns, OW_CIMObjectPath(ns, cimInstance));
+			indicationServer->deleteSubscription(ns, CIMObjectPath(ns, cimInstance));
 			throw;
 		}
 	}
-
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance,
-		EIncludeQualifiersFlag includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
+	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
+		EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 	{
 		(void)previousInstance;
 		(void)theClass;
 		if (!indicationsEnabled)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
+			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Subscription creation is not allowed.");
 		}
 		
 		// Tell the indication server about the modified subscription.  This may throw if the subscription is not allowed.
 		indicationServer->modifySubscription(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
-
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		try
 		{
 			rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
@@ -134,38 +122,34 @@ public:
 		}
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-		EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass)
+	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+		EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &cimClass)
 	{
 		(void)cimClass;
 		return env->getRepositoryCIMOMHandle()->getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
 	
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMInstanceResultHandlerIFC &result, ELocalOnlyFlag localOnly,
-		EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &requestedClass, const OW_CIMClass &cimClass)
+	virtual void enumInstances(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMInstanceResultHandlerIFC &result, ELocalOnlyFlag localOnly,
+		EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList, const CIMClass &requestedClass, const CIMClass &cimClass)
 	{
 		(void)requestedClass; (void)cimClass;
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstances(ns,className,result,deep,localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 	
-	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_String &className, OW_CIMObjectPathResultHandlerIFC &result,
-		const OW_CIMClass &cimClass)
+	virtual void enumInstanceNames(const ProviderEnvironmentIFCRef &env, const String &ns, const String &className, CIMObjectPathResultHandlerIFC &result,
+		const CIMClass &cimClass)
 	{
 		(void)cimClass;
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstanceNames(ns,className,result);
 	}
-
 private:
 	bool indicationsEnabled;
-	OW_IndicationServerRef indicationServer;
+	IndicationServerRef indicationServer;
 };
-
 } // end anonymous namespace
+} // end namespace OpenWBEM
 
-
-OW_PROVIDERFACTORY(OW_provCIM_IndicationSubscription, owprovCIM_IndicationSubscription);
-
+OW_PROVIDERFACTORY(OpenWBEM::provCIM_IndicationSubscription, owprovCIM_IndicationSubscription);
 

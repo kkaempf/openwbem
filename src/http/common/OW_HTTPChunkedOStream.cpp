@@ -27,21 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPChunkedOStream.hpp"
 
-using std::ostream;
+namespace OpenWBEM
+{
 
+using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedOStreamBuffer::OW_HTTPChunkedOStreamBuffer(ostream& ostr)
-	: OW_BaseStreamBuffer(HTTP_BUF_SIZE, "out"), m_ostr(ostr)
+HTTPChunkedOStreamBuffer::HTTPChunkedOStreamBuffer(ostream& ostr)
+	: BaseStreamBuffer(HTTP_BUF_SIZE, "out"), m_ostr(ostr)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
-OW_HTTPChunkedOStreamBuffer::~OW_HTTPChunkedOStreamBuffer()
+HTTPChunkedOStreamBuffer::~HTTPChunkedOStreamBuffer()
 {
 	try
 	{
@@ -52,20 +51,17 @@ OW_HTTPChunkedOStreamBuffer::~OW_HTTPChunkedOStreamBuffer()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPChunkedOStreamBuffer::sync()
+HTTPChunkedOStreamBuffer::sync()
 {
-	int rval = OW_BaseStreamBuffer::sync();
+	int rval = BaseStreamBuffer::sync();
 	m_ostr.flush();
 	return rval;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPChunkedOStreamBuffer::buffer_to_device(const char* c, int n)
+HTTPChunkedOStreamBuffer::buffer_to_device(const char* c, int n)
 {
 	if (n <= 0) // we don't ever want to write a 0 length here.
 		return 0;
@@ -77,28 +73,21 @@ OW_HTTPChunkedOStreamBuffer::buffer_to_device(const char* c, int n)
 	else
 		return -1;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedOStream::OW_HTTPChunkedOStream(ostream& ostr) :
-	OW_HTTPChunkedOStreamBase(ostr),
+HTTPChunkedOStream::HTTPChunkedOStream(ostream& ostr) :
+	HTTPChunkedOStreamBase(ostr),
 	ostream(&m_strbuf),
 	m_ostr(ostr)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedOStream::~OW_HTTPChunkedOStream()
+HTTPChunkedOStream::~HTTPChunkedOStream()
 {
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPChunkedOStream::termOutput()
+HTTPChunkedOStream::termOutput()
 {
 	flush();
 	m_ostr << "0\r\n";
@@ -110,12 +99,11 @@ OW_HTTPChunkedOStream::termOutput()
 	m_ostr << "\r\n";
 	m_ostr.flush();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPChunkedOStream::addTrailer(const OW_String& key, const OW_String& value)
+HTTPChunkedOStream::addTrailer(const String& key, const String& value)
 {
-	OW_String tmpKey = key;
+	String tmpKey = key;
 	tmpKey.trim();
 	if (!tmpKey.empty())
 	{
@@ -126,4 +114,6 @@ OW_HTTPChunkedOStream::addTrailer(const OW_String& key, const OW_String& value)
 		m_trailers.push_back(" " + value);
 	}
 }
+
+} // end namespace OpenWBEM
 

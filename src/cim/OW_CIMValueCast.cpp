@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMValueCast.hpp"
 #include "OW_Format.hpp"
@@ -37,553 +36,489 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(ValueCast);
-
-static bool isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to);
-
-static void makeValueArray(OW_CIMValue& theValue);
-
-static OW_CIMValue convertString(const OW_String& strValue,
-	const OW_CIMDataType& dataType);
-
-static OW_CIMValue convertArray(const OW_CIMValue& value,
-	const OW_CIMDataType& dataType);
-
-static OW_StringArray convertToStringArray(const OW_CIMValue& value,
+static bool isCompatible(CIMDataType::Type from, CIMDataType::Type to);
+static void makeValueArray(CIMValue& theValue);
+static CIMValue convertString(const String& strValue,
+	const CIMDataType& dataType);
+static CIMValue convertArray(const CIMValue& value,
+	const CIMDataType& dataType);
+static StringArray convertToStringArray(const CIMValue& value,
 	bool onlyOne);
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC PUBLIC
-OW_CIMValue
-OW_CIMValueCast::castValueToDataType(const OW_CIMValue& value,
-		const OW_CIMDataType& dataType)
+CIMValue
+CIMValueCast::castValueToDataType(const CIMValue& value,
+		const CIMDataType& dataType)
 {
 	try
 	{
 		// If NULL data type, then return NULL value.
 		if(!dataType || !value)
 		{
-			return OW_CIMValue(OW_CIMNULL);
+			return CIMValue(CIMNULL);
 		}
-
-		// If the OW_CIMValue is already what it needs to be, then just return it.
+		// If the CIMValue is already what it needs to be, then just return it.
 		if(value.getType() == dataType.getType()
 			&& value.isArray() == dataType.isArrayType())
 		{
 			return value;
 		}
-
 		// If we can't convert to the data type specified in the dataType argument,
 		// then throw an exception
 		if(!isCompatible(value.getType(), dataType.getType()))
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				format("Failed to convert \"%1\" to %2", value.toString(),
 					dataType.toString()).c_str());
 		}
-
 		// If value is an array, then do special array processing
 		if(value.isArray())
 		{
 			return convertArray(value, dataType);
 		}
-
 		// Convert value to string
-		OW_String strValue = value.toString();
-		OW_CIMValue cv(OW_CIMNULL);
+		String strValue = value.toString();
+		CIMValue cv(CIMNULL);
 		cv = convertString(strValue, dataType);
-
 		if(dataType.isArrayType())
 		{
 			makeValueArray(cv);
 		}
-
 		return cv;
 	}
-	catch (const OW_StringConversionException& e)
+	catch (const StringConversionException& e)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, e.getMessage());
+		OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-makeValueArray(OW_CIMValue& theValue)
+makeValueArray(CIMValue& theValue)
 {
 	if(theValue.isArray())
 	{
 		return;
 	}
-
 	switch(theValue.getType())
 	{
-		case OW_CIMDataType::UINT8:
+		case CIMDataType::UINT8:
 		{
-			OW_UInt8 v;
+			UInt8 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_UInt8Array(1, v));
+			theValue = CIMValue(UInt8Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::SINT8:
+		case CIMDataType::SINT8:
 		{
-			OW_Int8 v;
+			Int8 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Int8Array(1, v));
+			theValue = CIMValue(Int8Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::UINT16:
+		case CIMDataType::UINT16:
 		{
-			OW_UInt16 v;
+			UInt16 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_UInt16Array(1, v));
+			theValue = CIMValue(UInt16Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::SINT16:
+		case CIMDataType::SINT16:
 		{
-			OW_Int16 v;
+			Int16 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Int16Array(1, v));
+			theValue = CIMValue(Int16Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::UINT32:
+		case CIMDataType::UINT32:
 		{
-			OW_UInt32 v;
+			UInt32 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_UInt32Array(1, v));
+			theValue = CIMValue(UInt32Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::SINT32:
+		case CIMDataType::SINT32:
 		{
-			OW_Int32 v;
+			Int32 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Int32Array(1, v));
+			theValue = CIMValue(Int32Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::UINT64:
+		case CIMDataType::UINT64:
 		{
-			OW_UInt64 v;
+			UInt64 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_UInt64Array(1, v));
+			theValue = CIMValue(UInt64Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::SINT64:
+		case CIMDataType::SINT64:
 		{
-			OW_Int64 v;
+			Int64 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Int64Array(1, v));
+			theValue = CIMValue(Int64Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::STRING:
+		case CIMDataType::STRING:
 		{
-			OW_String v;
+			String v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_StringArray(1, v));
+			theValue = CIMValue(StringArray(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::BOOLEAN:
+		case CIMDataType::BOOLEAN:
 		{
-			OW_Bool v;
+			Bool v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_BoolArray(1, v));
+			theValue = CIMValue(BoolArray(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::REAL32:
+		case CIMDataType::REAL32:
 		{
-			OW_Real32 v;
+			Real32 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Real32Array(1, v));
+			theValue = CIMValue(Real32Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::REAL64:
+		case CIMDataType::REAL64:
 		{
-			OW_Real64 v;
+			Real64 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Real64Array(1, v));
+			theValue = CIMValue(Real64Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::DATETIME:
+		case CIMDataType::DATETIME:
 		{
-			OW_CIMDateTime v(OW_CIMNULL);
+			CIMDateTime v(CIMNULL);
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_CIMDateTimeArray(1, v));
+			theValue = CIMValue(CIMDateTimeArray(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::CHAR16:
+		case CIMDataType::CHAR16:
 		{
-			OW_Char16 v;
+			Char16 v;
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_Char16Array(1, v));
+			theValue = CIMValue(Char16Array(1, v));
 			break;
 		}
-
-		case OW_CIMDataType::REFERENCE:
+		case CIMDataType::REFERENCE:
 		{
-			OW_CIMObjectPath v(OW_CIMNULL);
+			CIMObjectPath v(CIMNULL);
 			theValue.get(v);
-			theValue = OW_CIMValue(OW_CIMObjectPathArray(1, v));
+			theValue = CIMValue(CIMObjectPathArray(1, v));
 			break;
 		}
-
 		default:
-			OW_THROW(OW_Exception, format("Invalid data type: %1",
+			OW_THROW(Exception, format("Invalid data type: %1",
 				theValue.getType()).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to)
+isCompatible(CIMDataType::Type from, CIMDataType::Type to)
 {
 	if(from == to									// Same data types
-		|| from == OW_CIMDataType::STRING	// String can convert to anything
-		|| to == OW_CIMDataType::STRING)		// Anything can convert to string
+		|| from == CIMDataType::STRING	// String can convert to anything
+		|| to == CIMDataType::STRING)		// Anything can convert to string
 	{
 		return true;
 	}
-
-	if(to == OW_CIMDataType::DATETIME
-		|| to == OW_CIMDataType::REFERENCE
-		|| from == OW_CIMDataType::DATETIME
-		|| from == OW_CIMDataType::REFERENCE)
+	if(to == CIMDataType::DATETIME
+		|| to == CIMDataType::REFERENCE
+		|| from == CIMDataType::DATETIME
+		|| from == CIMDataType::REFERENCE)
 	{
 		// Only string can convert to/from these types, and neither the from or
 		// to data types are a string type
 		return false;
 	}
-
 	//---------
 	// At this point we know we are not converting to/from any DATETIME,
 	// REFERENCE or STRING data types
 	//---------
-
-	bool fromNumeric = OW_CIMDataType::isNumericType(from);
-	bool toNumeric = OW_CIMDataType::isNumericType(to);
-
+	bool fromNumeric = CIMDataType::isNumericType(from);
+	bool toNumeric = CIMDataType::isNumericType(to);
 	// If we're converting to any numeric data type
 	if(toNumeric
-		|| to == OW_CIMDataType::CHAR16
-		|| to == OW_CIMDataType::BOOLEAN)
+		|| to == CIMDataType::CHAR16
+		|| to == CIMDataType::BOOLEAN)
 	{
 		if(fromNumeric
-			|| from == OW_CIMDataType::BOOLEAN
-			|| from == OW_CIMDataType::CHAR16)
+			|| from == CIMDataType::BOOLEAN
+			|| from == CIMDataType::CHAR16)
 		{
 			return true;
 		}
-
 		return false;
 	}
-
-	OW_THROW(OW_Exception, format("Invalid to datatype: %1", to).c_str());
+	OW_THROW(Exception, format("Invalid to datatype: %1", to).c_str());
 	return false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-convertString(const OW_String& strValue, const OW_CIMDataType& dataType)
+CIMValue
+convertString(const String& strValue, const CIMDataType& dataType)
 {
-	return OW_CIMValue::createSimpleValue(dataType.toString(), strValue);
+	return CIMValue::createSimpleValue(dataType.toString(), strValue);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-convertArray(const OW_CIMValue& value, const OW_CIMDataType& dataType)
+CIMValue
+convertArray(const CIMValue& value, const CIMDataType& dataType)
 {
-	OW_CIMValue rcv(OW_CIMNULL);
+	CIMValue rcv(CIMNULL);
 	bool onlyOne = !dataType.isArrayType();
-	OW_StringArray strArray = convertToStringArray(value, onlyOne);
+	StringArray strArray = convertToStringArray(value, onlyOne);
 	size_t sz = strArray.size();
-
 	if(onlyOne)
 	{
 		if(sz)
 		{
 			rcv = convertString(strArray[0], dataType);
 		}
-
 		return rcv;
 	}
-
 	switch(dataType.getType())
 	{
-		case OW_CIMDataType::UINT8:
+		case CIMDataType::UINT8:
 		{
-			OW_UInt8Array ra(sz);
+			UInt8Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt8();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::SINT8:
+		case CIMDataType::SINT8:
 		{
-			OW_Int8Array ra(sz);
+			Int8Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt8();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::UINT16:
+		case CIMDataType::UINT16:
 		{
-			OW_UInt16Array ra(sz);
+			UInt16Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt16();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::SINT16:
+		case CIMDataType::SINT16:
 		{
-			OW_Int16Array ra(sz);
+			Int16Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt16();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::UINT32:
+		case CIMDataType::UINT32:
 		{
-			OW_UInt32Array ra(sz);
+			UInt32Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt32();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::SINT32:
+		case CIMDataType::SINT32:
 		{
-			OW_Int32Array ra(sz);
+			Int32Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt32();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::UINT64:
+		case CIMDataType::UINT64:
 		{
-			OW_UInt64Array ra(sz);
+			UInt64Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toUInt64();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::SINT64:
+		case CIMDataType::SINT64:
 		{
-			OW_Int64Array ra(sz);
+			Int64Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toInt64();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::STRING:
-			rcv = OW_CIMValue(strArray);
+		case CIMDataType::STRING:
+			rcv = CIMValue(strArray);
 			break;
-
-		case OW_CIMDataType::BOOLEAN:
+		case CIMDataType::BOOLEAN:
 		{
-			OW_BoolArray ra(sz);
+			BoolArray ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toBool();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::REAL32:
+		case CIMDataType::REAL32:
 		{
-			OW_Real32Array ra(sz);
+			Real32Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toReal32();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::REAL64:
+		case CIMDataType::REAL64:
 		{
-			OW_Real64Array ra(sz);
+			Real64Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toReal64();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::DATETIME:
+		case CIMDataType::DATETIME:
 		{
-			OW_CIMDateTimeArray ra(sz);
+			CIMDateTimeArray ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toDateTime();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::CHAR16:
+		case CIMDataType::CHAR16:
 		{
-			OW_Char16Array ra(sz);
+			Char16Array ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
 				ra[i] = strArray[i].toChar16();
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
-		case OW_CIMDataType::REFERENCE:
+		case CIMDataType::REFERENCE:
 		{
-			OW_CIMObjectPathArray ra(sz);
+			CIMObjectPathArray ra(sz);
 			for(size_t i = 0; i < sz; i++)
 			{
-				ra[i] = OW_CIMObjectPath::parse(strArray[i]);
+				ra[i] = CIMObjectPath::parse(strArray[i]);
 			}
-			rcv = OW_CIMValue(ra);
+			rcv = CIMValue(ra);
 			break;
 		}
-
 		default:
-			OW_THROW(OW_Exception, "LOGIC ERROR");
+			OW_THROW(Exception, "LOGIC ERROR");
 	}
-
 	return rcv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-convertToStringArray(const OW_CIMValue& value, bool onlyOne)
+StringArray
+convertToStringArray(const CIMValue& value, bool onlyOne)
 {
 	size_t rasize = (onlyOne) ? 1 : value.getArraySize();
-	OW_StringArray rvra(rasize);
-
+	StringArray rvra(rasize);
 	switch(value.getType())
 	{
-		case OW_CIMDataType::UINT8:
+		case CIMDataType::UINT8:
 		{
-			OW_UInt8Array ra;
+			UInt8Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(OW_UInt32(ra[i]));
+				rvra[i] = String(UInt32(ra[i]));
 			}
 			break;
 		}
-
-		case OW_CIMDataType::SINT8:
+		case CIMDataType::SINT8:
 		{
-			OW_Int8Array ra;
+			Int8Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(OW_Int32(ra[i]));
+				rvra[i] = String(Int32(ra[i]));
 			}
 			break;
 		}
-
-		case OW_CIMDataType::UINT16:
+		case CIMDataType::UINT16:
 		{
-			OW_UInt16Array ra;
+			UInt16Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(OW_UInt32(ra[i]));
+				rvra[i] = String(UInt32(ra[i]));
 			}
 			break;
 		}
-
-		case OW_CIMDataType::SINT16:
+		case CIMDataType::SINT16:
 		{
-			OW_Int16Array ra;
+			Int16Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(OW_Int32(ra[i]));
+				rvra[i] = String(Int32(ra[i]));
 			}
 			break;
 		}
-
-		case OW_CIMDataType::UINT32:
+		case CIMDataType::UINT32:
 		{
-			OW_UInt32Array ra;
+			UInt32Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(ra[i]);
+				rvra[i] = String(ra[i]);
 			}
 			break;
 		}
-
-		case OW_CIMDataType::SINT32:
+		case CIMDataType::SINT32:
 		{
-			OW_Int32Array ra;
+			Int32Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(ra[i]);
+				rvra[i] = String(ra[i]);
 			}
 			break;
 		}
-
-		case OW_CIMDataType::UINT64:
+		case CIMDataType::UINT64:
 		{
-			OW_UInt64Array ra;
+			UInt64Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(ra[i]);
+				rvra[i] = String(ra[i]);
 			}
 			break;
 		}
-
-		case OW_CIMDataType::SINT64:
+		case CIMDataType::SINT64:
 		{
-			OW_Int64Array ra;
+			Int64Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(ra[i]);
+				rvra[i] = String(ra[i]);
 			}
 			break;
 		}
-
-		case OW_CIMDataType::STRING:
+		case CIMDataType::STRING:
 		{
-			OW_StringArray ra;
+			StringArray ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
@@ -591,10 +526,9 @@ convertToStringArray(const OW_CIMValue& value, bool onlyOne)
 			}
 			break;
 		}
-
-		case OW_CIMDataType::BOOLEAN:
+		case CIMDataType::BOOLEAN:
 		{
-			OW_BoolArray ra;
+			BoolArray ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
@@ -602,54 +536,29 @@ convertToStringArray(const OW_CIMValue& value, bool onlyOne)
 			}
 			break;
 		}
-
-		case OW_CIMDataType::REAL32:
+		case CIMDataType::REAL32:
 		{
-			OW_Real32Array ra;
+			Real32Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(OW_Real64(ra[i]));
+				rvra[i] = String(Real64(ra[i]));
 			}
 			break;
 		}
-
-		case OW_CIMDataType::REAL64:
+		case CIMDataType::REAL64:
 		{
-			OW_Real64Array ra;
+			Real64Array ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
-				rvra[i] = OW_String(ra[i]);
+				rvra[i] = String(ra[i]);
 			}
 			break;
 		}
-
-		case OW_CIMDataType::DATETIME:
+		case CIMDataType::DATETIME:
 		{
-			OW_CIMDateTimeArray ra;
-			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
-			{
-				rvra[i] = ra[i].toString();
-			}
-			break;
-		}
-
-		case OW_CIMDataType::CHAR16:
-		{
-			OW_Char16Array ra;
-			value.get(ra);
-			for(size_t i = 0; i < rasize; i++)
-			{
-				rvra[i] = OW_String(ra[i]);
-			}
-			break;
-		}
-
-		case OW_CIMDataType::REFERENCE:
-		{
-			OW_CIMObjectPathArray ra;
+			CIMDateTimeArray ra;
 			value.get(ra);
 			for(size_t i = 0; i < rasize; i++)
 			{
@@ -657,13 +566,31 @@ convertToStringArray(const OW_CIMValue& value, bool onlyOne)
 			}
 			break;
 		}
-
+		case CIMDataType::CHAR16:
+		{
+			Char16Array ra;
+			value.get(ra);
+			for(size_t i = 0; i < rasize; i++)
+			{
+				rvra[i] = String(ra[i]);
+			}
+			break;
+		}
+		case CIMDataType::REFERENCE:
+		{
+			CIMObjectPathArray ra;
+			value.get(ra);
+			for(size_t i = 0; i < rasize; i++)
+			{
+				rvra[i] = ra[i].toString();
+			}
+			break;
+		}
 		default:
-			OW_THROW(OW_Exception, "LOGIC ERROR");
+			OW_THROW(Exception, "LOGIC ERROR");
 	}
-
 	return rvra;
 }
 
-
+} // end namespace OpenWBEM
 

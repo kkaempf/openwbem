@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifdef HAVE_CONFIG_H
 #include "OW_config.h"
 #include <config.h>
 #endif
-
 #include "OW_Socket.hpp"
 #include "OW_SocketAddress.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
@@ -40,15 +38,12 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-
 extern "C"
 {
 #include <stdlib.h>
 }
-
 using std::string;
 using std::ios;
-
 int
 main(int argc, char* argv[])
 {
@@ -60,19 +55,14 @@ main(int argc, char* argv[])
 	}
 	try
 	{
-		OW_SocketAddress addr;
-		addr = OW_SocketAddress::getByName(argv[1], atoi(argv[2]));
-
+		SocketAddress addr;
+		addr = SocketAddress::getByName(argv[1], atoi(argv[2]));
 		cout << "\n\nTrying to connect..." << endl;
-		OW_Socket sock(addr);
-
-
+		Socket sock(addr);
 		sock.waitForOutput();
 		char buf[1024];
 		istream& tmpIstrm = sock.getInputStream();
-
-		OW_HTTPChunkedIStream istrm(tmpIstrm);
-
+		HTTPChunkedIStream istrm(tmpIstrm);
 		string recievedChunk;
 		ofstream outfile(argv[3], ios::out);
 		try
@@ -92,19 +82,15 @@ main(int argc, char* argv[])
 					outfile2.write(buf, istrm.gcount());
 				}
 			}
-
-
 		}
 		catch (...)
 		{
 			cout << "Chunk Error!" << endl;
 			exit(1);
 		}
-
-
 		cout << endl;
 	}
-	catch(OW_SocketException &e)
+	catch(SocketException &e)
 	{
 		cerr << "An exception occurred: " << e << endl;
 		return 1;
@@ -113,7 +99,6 @@ main(int argc, char* argv[])
 	{
 		cout << "caught unknown exception" << endl;
 	}
-
 	return 0;
 }
 

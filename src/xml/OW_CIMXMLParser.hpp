@@ -27,28 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
 #define OW_CIMXMLPARSER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_AutoPtr.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_String.hpp"
 #include "OW_XMLParser.hpp"
-
 #ifdef OW_HAVE_ISTREAM
 #include <istream>
 #else
 #include <iostream>
 #endif
 
-class OW_CIMXMLParser
+namespace OpenWBEM
 {
 
+class CIMXMLParser
+{
 public:
-
 	// These must be sorted alphabetically, except E_UNKNOWN, which must be last!!!!!!!!!!!!!!!!!!!!!!!!!
 	enum tokenId
 	{
@@ -114,24 +111,16 @@ public:
 		E_VALUE_OBJECTWITHPATH			,
 		E_VALUE_REFARRAY					,
 		E_VALUE_REFERENCE				,
-
 		E_UNKNOWN
 	};
-
-
-	OW_CIMXMLParser(const OW_String& str);
-	OW_CIMXMLParser(std::istream& sb);
-	OW_CIMXMLParser();
-
-
-
-	OW_String mustGetAttribute(const char* const attrId)
+	CIMXMLParser(const String& str);
+	CIMXMLParser(std::istream& sb);
+	CIMXMLParser();
+	String mustGetAttribute(const char* const attrId)
 	{
 		return getAttribute(attrId, true);
 	}
-
-	OW_String getAttribute(const char* const attrId, bool throwIfError = false);
-
+	String getAttribute(const char* const attrId, bool throwIfError = false);
 	void getChild();
 	void mustGetChild(tokenId tId);
 	void mustGetChild();
@@ -142,48 +131,36 @@ public:
 	{
 		getNext(true);
 	}
-
 	void mustGetNextTag()
 	{
 		getNextTag(true);
 	}
-
 	void mustGetNext(tokenId beginTok)
 	{
 		getNext(beginTok, true);
 	}
-
 	void mustGetEndTag();
-
 	bool tokenIs(const char* const arg) const
 	{
 		return m_curTok.text.equals(arg);
 	}
-
 	bool tokenIs(tokenId tId) const
 	{
 		return tokenIs(g_elems[tId].name);
 	}
-
 	void mustTokenIs(tokenId tId) const;
-
 	tokenId getToken() const
 	{
 		return getTokenFromName(m_curTok.text.c_str());
 	}
-
-
-	OW_String getName() const;
-	OW_String getData() const;
-
+	String getName() const;
+	String getData() const;
 	bool isData() const;
-
 private:
-	OW_AutoPtr<OW_TempFileStream> m_ptfs;
-	OW_XMLParser m_parser;
-	OW_XMLToken m_curTok;
+	AutoPtr<TempFileStream> m_ptfs;
+	XMLParser m_parser;
+	XMLToken m_curTok;
 	bool m_good;
-
 	void prime();
 	static tokenId getTokenFromName(const char* name);
 	struct ElemEntry
@@ -195,29 +172,22 @@ private:
 	static ElemEntry g_elems[];
 	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
 	static ElemEntry* g_elemsEnd;
-
 	void nextToken();
 	void skipData();
-
 	// unimplemented
-	OW_CIMXMLParser(const OW_CIMXMLParser& x);
-	OW_CIMXMLParser& operator=(const OW_CIMXMLParser& x);
-
+	CIMXMLParser(const CIMXMLParser& x);
+	CIMXMLParser& operator=(const CIMXMLParser& x);
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return m_good ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return m_good ? 0: &dummy::nonnull; }
-
-
 	static const char* const A_ARRAY_SIZE;
 	static const char* const A_ASSOC_CLASS;
 	static const char* const A_CLASS_NAME;
@@ -246,7 +216,6 @@ public:
 	static const char* const A_TRANSLATABLE;
 	static const char* const A_TYPE;
 	static const char* const A_VALUE_TYPE;
-
 	static const char* const A_CIMVERSION;
 	static const char* const A_DTDVERSION;
 	static const char* const A_MSG_ID;
@@ -260,13 +229,9 @@ public:
 	static const char* const AV_PROTOCOLVERSION11_VALUE;
 	static const char* const A_PARAMERRORCODE;
 	static const char* const A_PARAMERRORDESCRIPTION;
-
-	friend std::ostream& operator<<(std::ostream& ostr, const OW_CIMXMLParser& p);
+	friend std::ostream& operator<<(std::ostream& ostr, const CIMXMLParser& p);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-
-
-

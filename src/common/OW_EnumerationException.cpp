@@ -30,6 +30,10 @@
 #include "OW_config.h"
 #include "OW_Enumeration.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(Enumeration)
 
+} // end namespace OpenWBEM
 

@@ -1,6 +1,5 @@
 #ifndef OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
 #define OW_INTRUSIVE_REFERENCE_HPP_INCLUDE_GUARD_
-
 /*******************************************************************************
 * Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
@@ -30,7 +29,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 //
 //  Copyright (c) 2001, 2002 Peter Dimov
 //
@@ -39,222 +37,176 @@
 //  This software is provided "as is" without express or implied
 //  warranty, and with no claim as to its suitability for any purpose.
 //
-
 #include "OW_config.h"
 #include "OW_RefCount.hpp"
-
 #include <functional>           // for std::less
 
+namespace OpenWBEM
+{
+
 //
-//  OW_IntrusiveReference
+//  IntrusiveReference
 //
 //  A smart pointer that uses intrusive reference counting.
 //
 //  Relies on unqualified calls to
 //  
-//      void OW_IntrusiveReference_add_ref(T * p);
-//      void OW_IntrusiveReference_release(T * p);
+//      void IntrusiveReference_add_ref(T * p);
+//      void IntrusiveReference_release(T * p);
 //
 //          (p != 0)
 //
 //  The object is responsible for destroying itself.
 //
-
-template<class T> class OW_IntrusiveReference
+template<class T> class IntrusiveReference
 {
 private:
-
-    typedef OW_IntrusiveReference this_type;
-
+    typedef IntrusiveReference this_type;
 public:
-
     typedef T element_type;
-
-    OW_IntrusiveReference(): p_(0)
+    IntrusiveReference(): p_(0)
     {
     }
-
-    OW_IntrusiveReference(T * p, bool add_ref = true): p_(p)
+    IntrusiveReference(T * p, bool add_ref = true): p_(p)
     {
-        if(p_ != 0 && add_ref) OW_IntrusiveReference_add_ref(p_);
+        if(p_ != 0 && add_ref) IntrusiveReference_add_ref(p_);
     }
-
-    template<class U> OW_IntrusiveReference(OW_IntrusiveReference<U> const & rhs): p_(rhs.get())
+    template<class U> IntrusiveReference(IntrusiveReference<U> const & rhs): p_(rhs.get())
     {
-        if(p_ != 0) OW_IntrusiveReference_add_ref(p_);
+        if(p_ != 0) IntrusiveReference_add_ref(p_);
     }
-
-    OW_IntrusiveReference(OW_IntrusiveReference const & rhs): p_(rhs.p_)
+    IntrusiveReference(IntrusiveReference const & rhs): p_(rhs.p_)
     {
-        if(p_ != 0) OW_IntrusiveReference_add_ref(p_);
+        if(p_ != 0) IntrusiveReference_add_ref(p_);
     }
-
-    ~OW_IntrusiveReference()
+    ~IntrusiveReference()
     {
-        if(p_ != 0) OW_IntrusiveReference_release(p_);
+        if(p_ != 0) IntrusiveReference_release(p_);
     }
-
-    template<class U> OW_IntrusiveReference & operator=(OW_IntrusiveReference<U> const & rhs)
+    template<class U> IntrusiveReference & operator=(IntrusiveReference<U> const & rhs)
     {
         this_type(rhs).swap(*this);
         return *this;
     }
-
-    OW_IntrusiveReference & operator=(OW_IntrusiveReference const & rhs)
+    IntrusiveReference & operator=(IntrusiveReference const & rhs)
     {
         this_type(rhs).swap(*this);
         return *this;
     }
-
-    OW_IntrusiveReference & operator=(T * rhs)
+    IntrusiveReference & operator=(T * rhs)
     {
         this_type(rhs).swap(*this);
         return *this;
     }
-
     T * get() const
     {
         return p_;
     }
-
     T & operator*() const
     {
         return *p_;
     }
-
     T * operator->() const
     {
         return p_;
     }
-
-    typedef T * (OW_IntrusiveReference::*unspecified_bool_type) () const;
-
+    typedef T * (IntrusiveReference::*unspecified_bool_type) () const;
     operator unspecified_bool_type () const
     {
-        return p_ == 0? 0: &OW_IntrusiveReference::get;
+        return p_ == 0? 0: &IntrusiveReference::get;
     }
-
     bool operator! () const
     {
         return p_ == 0;
     }
-
-    void swap(OW_IntrusiveReference & rhs)
+    void swap(IntrusiveReference & rhs)
     {
         T * tmp = p_;
         p_ = rhs.p_;
         rhs.p_ = tmp;
     }
-
 private:
-
     T * p_;
 };
-
-template<class T, class U> inline bool operator==(OW_IntrusiveReference<T> const & a, OW_IntrusiveReference<U> const & b)
+template<class T, class U> inline bool operator==(IntrusiveReference<T> const & a, IntrusiveReference<U> const & b)
 {
     return a.get() == b.get();
 }
-
-template<class T, class U> inline bool operator!=(OW_IntrusiveReference<T> const & a, OW_IntrusiveReference<U> const & b)
+template<class T, class U> inline bool operator!=(IntrusiveReference<T> const & a, IntrusiveReference<U> const & b)
 {
     return a.get() != b.get();
 }
-
-template<class T> inline bool operator==(OW_IntrusiveReference<T> const & a, T * b)
+template<class T> inline bool operator==(IntrusiveReference<T> const & a, T * b)
 {
     return a.get() == b;
 }
-
-template<class T> inline bool operator!=(OW_IntrusiveReference<T> const & a, T * b)
+template<class T> inline bool operator!=(IntrusiveReference<T> const & a, T * b)
 {
     return a.get() != b;
 }
-
-template<class T> inline bool operator==(T * a, OW_IntrusiveReference<T> const & b)
+template<class T> inline bool operator==(T * a, IntrusiveReference<T> const & b)
 {
     return a == b.get();
 }
-
-template<class T> inline bool operator!=(T * a, OW_IntrusiveReference<T> const & b)
+template<class T> inline bool operator!=(T * a, IntrusiveReference<T> const & b)
 {
     return a != b.get();
 }
-
 #if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
-
 // Resolve the ambiguity between our op!= and the one in rel_ops
-
-template<class T> inline bool operator!=(OW_IntrusiveReference<T> const & a, OW_IntrusiveReference<T> const & b)
+template<class T> inline bool operator!=(IntrusiveReference<T> const & a, IntrusiveReference<T> const & b)
 {
     return a.get() != b.get();
 }
-
 #endif
-
-template<class T> inline bool operator<(OW_IntrusiveReference<T> const & a, OW_IntrusiveReference<T> const & b)
+template<class T> inline bool operator<(IntrusiveReference<T> const & a, IntrusiveReference<T> const & b)
 {
     return std::less<T *>()(a.get(), b.get());
 }
-
-template<class T> void swap(OW_IntrusiveReference<T> & lhs, OW_IntrusiveReference<T> & rhs)
+template<class T> void swap(IntrusiveReference<T> & lhs, IntrusiveReference<T> & rhs)
 {
     lhs.swap(rhs);
 }
-
-template<class T, class U> OW_IntrusiveReference<T> static_pointer_cast(OW_IntrusiveReference<U> const & p)
+template<class T, class U> IntrusiveReference<T> static_pointer_cast(IntrusiveReference<U> const & p)
 {
     return static_cast<T *>(p.get());
 }
-
-template<class T, class U> OW_IntrusiveReference<T> const_pointer_cast(OW_IntrusiveReference<U> const & p)
+template<class T, class U> IntrusiveReference<T> const_pointer_cast(IntrusiveReference<U> const & p)
 {
     return const_cast<T *>(p.get());
 }
-
-template<class T, class U> OW_IntrusiveReference<T> dynamic_pointer_cast(OW_IntrusiveReference<U> const & p)
+template<class T, class U> IntrusiveReference<T> dynamic_pointer_cast(IntrusiveReference<U> const & p)
 {
     return dynamic_cast<T *>(p.get());
 }
-
-// If you want your class to be managed by OW_IntrusiveReference, then derive
+// If you want your class to be managed by IntrusiveReference, then derive
 // from this class.  Note that if multiple inheritance is used, you must derive
 // "virtual"ly.
-class OW_IntrusiveCountableBase
+class IntrusiveCountableBase
 {
 private:
-
-    OW_RefCount use_count_;
-
-    OW_IntrusiveCountableBase(OW_IntrusiveCountableBase const &);
-    OW_IntrusiveCountableBase & operator=(OW_IntrusiveCountableBase const &);
-
+    RefCount use_count_;
+    IntrusiveCountableBase(IntrusiveCountableBase const &);
+    IntrusiveCountableBase & operator=(IntrusiveCountableBase const &);
 protected:
-
-    OW_IntrusiveCountableBase(): use_count_(0)
+    IntrusiveCountableBase(): use_count_(0)
     {
     }
-
-    virtual ~OW_IntrusiveCountableBase()
+    virtual ~IntrusiveCountableBase()
     {
     }
-
 public:
-
-    inline friend void OW_IntrusiveReference_add_ref(OW_IntrusiveCountableBase * p)
+    inline friend void IntrusiveReference_add_ref(IntrusiveCountableBase * p)
     {
 		p->use_count_.inc();
     }
-
-    inline friend void OW_IntrusiveReference_release(OW_IntrusiveCountableBase * p)
+    inline friend void IntrusiveReference_release(IntrusiveCountableBase * p)
     {
         if(p->use_count_.decAndTest())
 			delete p;
     }
 };
 
-
-
+} // end namespace OpenWBEM
 
 #endif
-

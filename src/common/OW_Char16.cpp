@@ -27,14 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Char16.hpp"
 #include "OW_String.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_UTF8Utils.hpp"
-
 #include <cstdio>
 #include <cstring>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -44,46 +42,42 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Char16::OW_Char16(const OW_String& x) :
+Char16::Char16(const String& x) :
 	m_value(0)
 {
-	m_value = OW_UTF8Utils::UTF8toUCS2(x.c_str());
+	m_value = UTF8Utils::UTF8toUCS2(x.c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_Char16::toUTF8() const
+String
+Char16::toUTF8() const
 {
-	return OW_UTF8Utils::UCS2toUTF8(m_value);
+	return UTF8Utils::UCS2toUTF8(m_value);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Char16::writeObject(ostream& ostrm) const
+Char16::writeObject(ostream& ostrm) const
 {
-	OW_UInt16 v = OW_hton16(m_value);
-	OW_BinarySerialization::write(ostrm, &v, sizeof(v));
+	UInt16 v = hton16(m_value);
+	BinarySerialization::write(ostrm, &v, sizeof(v));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Char16::readObject(istream& istrm)
+Char16::readObject(istream& istrm)
 {
-	OW_BinarySerialization::read(istrm, &m_value, sizeof(m_value));
-	m_value = OW_ntoh16(m_value);
+	BinarySerialization::read(istrm, &m_value, sizeof(m_value));
+	m_value = ntoh16(m_value);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 std::ostream&
-operator<< (std::ostream& ostrm, const OW_Char16& arg)
+operator<< (std::ostream& ostrm, const Char16& arg)
 {
-	OW_UInt16 val = arg.getValue();
-
+	UInt16 val = arg.getValue();
 	if(val > 0 && val <= 127)
 	{
 		ostrm << char(val);
@@ -95,7 +89,8 @@ operator<< (std::ostream& ostrm, const OW_Char16& arg)
 		sprintf(bfr, "\\x%04X", val);
 		ostrm << bfr;
 	}
-
 	return ostrm;
 }
+
+} // end namespace OpenWBEM
 

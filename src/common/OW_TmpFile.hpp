@@ -27,14 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_TMPFILE_HPP_INCLUDE_GUARD_
 #define OW_TMPFILE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
-
 #ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -42,95 +39,76 @@
 #include <io.h>
 #endif
 
-class OW_TmpFileImpl
+namespace OpenWBEM
+{
+
+class TmpFileImpl
 {
 public:
-	OW_TmpFileImpl();
-	OW_TmpFileImpl(OW_String const& filename);
-	~OW_TmpFileImpl();
-
+	TmpFileImpl();
+	TmpFileImpl(String const& filename);
+	~TmpFileImpl();
 	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L);
 	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L);
 #ifdef OW_WIN32
 	int seek(long offset, int whence=SEEK_SET)
 		{ return ::_lseek(m_hdl, offset, whence); }
-
 	long tell() { return ::_lseek(m_hdl, 0, SEEK_CUR); }
 	void rewind() { ::_lseek(m_hdl, 0, SEEK_SET); }
 #else
 	int seek(long offset, int whence=SEEK_SET)
 		{ return ::lseek(m_hdl, offset, whence); }
-
 	long tell() { return ::lseek(m_hdl, 0, SEEK_CUR); }
 	void rewind() { ::lseek(m_hdl, 0, SEEK_SET); }
 #endif
 	int flush() { return 0; }
 	void newFile() { open(); }
 	long getSize();
-
-	OW_String releaseFile();
-
+	String releaseFile();
 private:
 	void open();
 	int close();
-
-	OW_TmpFileImpl(const OW_TmpFileImpl& arg);	// Not implemented
-	OW_TmpFileImpl& operator= (const OW_TmpFileImpl& arg);	// Not implemented
-
+	TmpFileImpl(const TmpFileImpl& arg);	// Not implemented
+	TmpFileImpl& operator= (const TmpFileImpl& arg);	// Not implemented
 	char* m_filename;
 	int m_hdl;
 };
-
-
-class OW_TmpFile
+class TmpFile
 {
 public:
-	OW_TmpFile() :
-		m_impl(new OW_TmpFileImpl) {  }
-
-	OW_TmpFile(OW_String const& filename)
-		: m_impl(new OW_TmpFileImpl(filename))
+	TmpFile() :
+		m_impl(new TmpFileImpl) {  }
+	TmpFile(String const& filename)
+		: m_impl(new TmpFileImpl(filename))
 	{}
-
-	OW_TmpFile(const OW_TmpFile& arg) :
+	TmpFile(const TmpFile& arg) :
 		m_impl(arg.m_impl) {}
-
-	OW_TmpFile& operator= (const OW_TmpFile& arg)
+	TmpFile& operator= (const TmpFile& arg)
 	{
 		m_impl = arg.m_impl;
 		return *this;
 	}
-
-	~OW_TmpFile()  {  }
-
+	~TmpFile()  {  }
 	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L)
 	{
 		return m_impl->read(bfr, numberOfBytes, offset);
 	}
-
 	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L)
 	{
 		return m_impl->write(bfr, numberOfBytes, offset);
 	}
-
 	int seek(long offset, int whence=SEEK_SET)
 		{ return m_impl->seek(offset, whence); }
-
 	long tell() { return m_impl->tell(); }
-
 	void rewind() { m_impl->rewind(); }
-
 	int flush() { return m_impl->flush(); }
-
 	void newFile() { m_impl->newFile(); }
-
 	long getSize() { return m_impl->getSize(); }
-
-	OW_String releaseFile() { return m_impl->releaseFile(); }
+	String releaseFile() { return m_impl->releaseFile(); }
 private:
-
-	OW_Reference<OW_TmpFileImpl> m_impl;
+	Reference<TmpFileImpl> m_impl;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -55,12 +55,11 @@ using std::cerr;
 using std::cin;
 using std::cout;
 using std::endl;
+using namespace OpenWBEM;
 
+#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 //////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////
 void
 usage(const char* name)
 {
@@ -73,17 +72,17 @@ usage(const char* name)
  * This is the class that will be used to obtain authentication credentials
  * if none are provided in the URL used by the HTTP Client.
  ****************************************************************************/
-class GetLoginInfo : public OW_ClientAuthCBIFC
+class GetLoginInfo : public ClientAuthCBIFC
 {
 	public:
-		bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd, const OW_String& details)
+		bool getCredentials(const String& realm, String& name,
+				String& passwd, const String& details)
 		{
 			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
-			name = OW_String::getLine(cin);
-			passwd = OW_GetPass::getPass("Enter the password for " +
+			name = String::getLine(cin);
+			passwd = GetPass::getPass("Enter the password for " +
 				name + ": ");
 			return true;
 		}
@@ -116,38 +115,38 @@ main(int argc, char* argv[])
 
 		if (argc == 3)
 		{
-			OW_String sockDumpOut = argv[2];
-			OW_String sockDumpIn = argv[2];
+			String sockDumpOut = argv[2];
+			String sockDumpIn = argv[2];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
-			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 		else
 		{
-			OW_SocketBaseImpl::setDumpFiles("","");
+			SocketBaseImpl::setDumpFiles("","");
 		}
 
-		OW_String url(argv[1]);
-		OW_URL owurl(url);
+		String url(argv[1]);
+		URL owurl(url);
 
 		/**********************************************************************
-		 * We assign our SSL certificate callback into the OW_SSLCtxMgr.
+		 * We assign our SSL certificate callback into the SSLCtxMgr.
 		 * If we don't do this, we'll accept any server certificate without
 		 * any verification.  We leave this commented out here, so our
 		 * acceptance test will run without user interaction.
 		 **********************************************************************/
 
 #ifdef OW_HAVE_OPENSSL
-		//OW_SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
+		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
 #endif
 		
 		
 		/**********************************************************************
-		 * Here we create the concrete OW_CIMProtocol that we want
-		 * our OW_CIMXMLCIMOMHandle to use.  We'll use the OW_HTTPClient
+		 * Here we create the concrete CIMProtocol that we want
+		 * our CIMXMLCIMOMHandle to use.  We'll use the HTTPClient
 		 * (capable of handling HTTP/1.1 and HTTPS -- HTTP over SSL).
-		 * The OW_HTTPClient takes a URL in it's constructor, representing
+		 * The HTTPClient takes a URL in it's constructor, representing
 		 * the CIM Server that it will connect to.  A URL has the form
 		 *   http[s]://[USER:PASSWORD@]HOSTNAME[:PORT][/PATH].
 		 *
@@ -159,15 +158,15 @@ main(int argc, char* argv[])
 		 * be provided to retrieve authentication credentials.
 		 **********************************************************************/
 
-		OW_CIMProtocolIFCRef client;
-		client = new OW_HTTPClient(url);
+		CIMProtocolIFCRef client;
+		client = new HTTPClient(url);
 
 
 		/**********************************************************************
 		 * Create an instance of our authentication callback class.
 		 **********************************************************************/
 		
-		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 
 		/**********************************************************************
 		 * Assign our callback to the HTTP Client.
@@ -176,79 +175,79 @@ main(int argc, char* argv[])
 		client->setLoginCallBack(getLoginInfo);
 
 		/**********************************************************************
-		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
-		 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
-		 * a OW_Reference<OW_CIMProtocol> it it's constructor, so
-		 * we have to make a OW_Reference out of our HTTP Client first.
+		 * Here we create a CIMXMLCIMOMHandle and have it use the
+		 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
+		 * a Reference<CIMProtocol> it it's constructor, so
+		 * we have to make a Reference out of our HTTP Client first.
 		 * By doing this, we don't have to worry about deleting our
-		 * OW_HTTPClient.  OW_Reference will delete it for us when the
+		 * HTTPClient.  Reference will delete it for us when the
 		 * last copy goes out of scope (reference count goes to zero).
 		 **********************************************************************/
 
-		OW_CIMOMHandleIFCRef chRef;
+		CIMOMHandleIFCRef chRef;
 		if (owurl.path.equalsIgnoreCase("owbinary"))
 		{
-			chRef = new OW_BinaryCIMOMHandle(client);
+			chRef = new BinaryCIMOMHandle(client);
 		}
 		else
 		{
-			chRef = new OW_CIMXMLCIMOMHandle(client);
+			chRef = new CIMXMLCIMOMHandle(client);
 		}
 
-		OW_CIMOMHandleIFC& rch = *chRef;
+		CIMOMHandleIFC& rch = *chRef;
 
 		/**********************************************************************
 		 * Now we have essentially established a "connection" to the CIM
 		 * Server.  We can access the methods on the remote CIMOM handle,
-		 * and these methods will call into the CIM Server.  The OW_HTTPClient
+		 * and these methods will call into the CIM Server.  The HTTPClient
 		 * will take care of the particulars of the HTTP protocol, including
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
 
 
 		cout << "** Enumerating instances (0 instances)" << endl;
-		OW_CIMObjectPathEnumeration copEnu = rch.enumInstanceNamesE("root", "TestInstance");
-		OW_ASSERT(copEnu.numberOfElements() == 0);
+		CIMObjectPathEnumeration copEnu = rch.enumInstanceNamesE("root", "TestInstance");
+		TEST_ASSERT(copEnu.numberOfElements() == 0);
 
 		cout << "** Getting class" << endl;
-		OW_CIMClass cc = rch.getClass("root", "TestInstance");
+		CIMClass cc = rch.getClass("root", "TestInstance");
 
 		cout << "** Creating instance one" << endl;
-		OW_CIMInstance inst = cc.newInstance();
-		inst.setProperty("Name", OW_CIMValue(OW_String("One")));
-		OW_StringArray sa;
-		sa.push_back(OW_String("One"));
-		sa.push_back(OW_String("Two"));
+		CIMInstance inst = cc.newInstance();
+		inst.setProperty("Name", CIMValue(String("One")));
+		StringArray sa;
+		sa.push_back(String("One"));
+		sa.push_back(String("Two"));
 #if 1
-		inst.setProperty("Params", OW_CIMValue(sa));
+		inst.setProperty("Params", CIMValue(sa));
 #else
-		inst.setProperty(OW_CIMProperty(OW_String("Params"), OW_CIMValue(sa)));
+		inst.setProperty(CIMProperty(String("Params"), CIMValue(sa)));
 #endif
-		OW_CIMObjectPath ccop("TestInstance", "root");
-		OW_CIMObjectPath icop = ccop;
-		icop.addKey("Name", OW_CIMValue(OW_String("One")));
+		CIMObjectPath ccop("TestInstance", "root");
+		CIMObjectPath icop = ccop;
+		icop.addKey("Name", CIMValue(String("One")));
 		rch.createInstance("root", inst);
 
 		cout << "** Enumerating instances (1 instance)" << endl;
 		copEnu = rch.enumInstanceNamesE("root", "TestInstance");
-		OW_ASSERT(copEnu.numberOfElements() == 1);
+		TEST_ASSERT(copEnu.numberOfElements() == 1);
 
 		cout << "** Getting Instance" << endl;
 		inst = rch.getInstance(icop.getNameSpace(), icop);
 		sa.clear();
 		cout << "** Checking array property on instance" << endl;
 		inst.getProperty("Params").getValue().get(sa);
-		OW_ASSERT(sa.size() == 2);
-		OW_ASSERT(sa[0] == "One");
-		OW_ASSERT(sa[1] == "Two");
+		TEST_ASSERT(sa.size() == 2);
+		TEST_ASSERT(sa[0] == "One");
+		TEST_ASSERT(sa[1] == "Two");
 
 		cout << "** Modifying array property on instance" << endl;
-		sa.push_back(OW_String("Three"));
+		sa.push_back(String("Three"));
 
 #if 1
-		inst.setProperty("Params", OW_CIMValue(sa));
+		inst.setProperty("Params", CIMValue(sa));
 #else
-		inst.setProperty(OW_CIMProperty(OW_String("Params"), OW_CIMValue(sa)));
+		inst.setProperty(CIMProperty(String("Params"), CIMValue(sa)));
 #endif
 
 		rch.modifyInstance("root", inst);
@@ -259,18 +258,18 @@ main(int argc, char* argv[])
 		cout << "** Checking array property on new instance" << endl;
 		sa.clear();
 		inst.getProperty("Params").getValue().get(sa);
-		OW_ASSERT(sa.size() == 3);
-		OW_ASSERT(sa[0] == "One");
-		OW_ASSERT(sa[1] == "Two");
-		OW_ASSERT(sa[2] == "Three");
+		TEST_ASSERT(sa.size() == 3);
+		TEST_ASSERT(sa[0] == "One");
+		TEST_ASSERT(sa[1] == "Two");
+		TEST_ASSERT(sa[2] == "Three");
 
 		return 0;
 	}
-	catch (OW_Assertion& a)
+	catch (Assertion& a)
 	{
 		cerr << "Caught Assertion: " << a << endl;
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 	}
@@ -355,7 +354,7 @@ int ssl_verifycert_callback(X509* cert)
 		display_cert(pX509Cert);
 
 		cout << "\nDo you want to accept this+Certificate (Y/N)? ";
-		OW_String response = OW_String::getLine(cin);
+		String response = String::getLine(cin);
 		if(response.compareToIgnoreCase("Y") != 0)
 			return 0;
 	}

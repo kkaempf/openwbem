@@ -27,16 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_THREAD_CANCELLED_EXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_THREAD_CANCELLED_EXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
+
+namespace OpenWBEM
+{
 
 /**
  * In the event a thread has been cancelled, a 
- * OW_ThreadCancelledException will be thrown.  DO NOT catch this exception.
- * OW_ThreadCancelledException is not derived from anything.
+ * ThreadCancelledException will be thrown.  DO NOT catch this exception.
+ * ThreadCancelledException is not derived from anything.
  * Do not write code like this:
  * try {
  *  //...
@@ -47,17 +48,18 @@
  * Instead do this:
  * try {
  *  //...
- * } catch (OW_ThreadCancelledException&) {
+ * } catch (ThreadCancelledException&) {
  *  throw;
  * } catch (std::exception& e) {
  *  // handle the exception
  * }
- * The only place OW_ThreadCancelledException should be caught is in 
- * OW_Thread::threadRunner(). main() shouldn't need to catch it, as the main
+ * The only place ThreadCancelledException should be caught is in 
+ * Thread::threadRunner(). main() shouldn't need to catch it, as the main
  * thread of an application should never be cancelled.  The main thread
  * shouldn't need to ever call testCancel.
  */
-struct OW_ThreadCancelledException {};
+struct ThreadCancelledException {};
+
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,26 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMMETHOD_HPP_INCLUDE_GUARD_
 #define OW_CIMMETHOD_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
 #include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMMethod class encapsulates all data and behaviour pertinent to an
- * CIM method. OW_CIMMethods are ref counted, copy on write objects.
- * It is possible to have an OW_CIMMethod object that is NULL. The method
+ * The CIMMethod class encapsulates all data and behaviour pertinent to an
+ * CIM method. CIMMethods are ref counted, copy on write objects.
+ * It is possible to have an CIMMethod object that is NULL. The method
  * to check for this condition is as follows:
  *
- *		OW_CIMMethod ch = cc.getMethod(...);
+ *		CIMMethod ch = cc.getMethod(...);
  *		if(!ch)
  *		{
  *			// Null method
@@ -56,257 +55,216 @@
  *			// Valid method
  *		}
  */
-class OW_CIMMethod : public OW_CIMElement
+class CIMMethod : public CIMElement
 {
 public:
-
 	struct METHData;
-
 	/**
-	 * Create a new OW_CIMMethod object.
+	 * Create a new CIMMethod object.
 	 */
-	OW_CIMMethod();
-
+	CIMMethod();
 	/**
-	 * Create a NULL OW_CIMMethod object.
+	 * Create a NULL CIMMethod object.
 	 */
-	explicit OW_CIMMethod(OW_CIMNULL_t);
-
+	explicit CIMMethod(CIMNULL_t);
 	/**
-	 * Create an OW_CIMMethod with a name
-	 * @param name	The name of this OW_CIMMethod.
+	 * Create an CIMMethod with a name
+	 * @param name	The name of this CIMMethod.
 	 */
-	explicit OW_CIMMethod(const OW_String& name);
-
+	explicit CIMMethod(const String& name);
 	/**
-	 * Create an OW_CIMMethod with a name
-	 * @param name	The name of this OW_CIMMethod as a NULL terminated string.
+	 * Create an CIMMethod with a name
+	 * @param name	The name of this CIMMethod as a NULL terminated string.
 	 */
-	explicit OW_CIMMethod(const char* name);
-
+	explicit CIMMethod(const char* name);
 	/**
-	 * Create an OW_CIMMethod from an XML definition.
-	 * @param node	The OW_XMLNode that contains the definition of this method.
+	 * Create an CIMMethod from an XML definition.
+	 * @param node	The XMLNode that contains the definition of this method.
 	 */
-	//OW_CIMMethod(const OW_XMLNode& node);
-
+	//CIMMethod(const XMLNode& node);
 	/**
 	 * Copy constructor
-	 * @param arg The OW_CIMMethod this object will be a copy of.
+	 * @param arg The CIMMethod this object will be a copy of.
 	 */
-	OW_CIMMethod(const OW_CIMMethod& arg);
-
+	CIMMethod(const CIMMethod& arg);
 	/**
-	 * Destroy this OW_CIMMethod object.
+	 * Destroy this CIMMethod object.
 	 */
-	~OW_CIMMethod();
-
+	~CIMMethod();
 	/**
 	 * Set this to a null object. All subsequent operation will fail after this
 	 * method is called.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMMethod to assign to this object.
-	 * @return A reference to this OW_CIMMethod after the assignment has taken
+	 * @param arg The CIMMethod to assign to this object.
+	 * @return A reference to this CIMMethod after the assignment has taken
 	 * place.
 	 */
-	OW_CIMMethod& operator= (const OW_CIMMethod& arg);
-
+	CIMMethod& operator= (const CIMMethod& arg);
 	/**
 	 * Set the qualifiers for this method.
-	 * @param quals An OW_CIMQualifierArray that contains the qualifiers for
-	 *		this OW_CIMInstance.
+	 * @param quals An CIMQualifierArray that contains the qualifiers for
+	 *		this CIMInstance.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setQualifiers(const OW_CIMQualifierArray& quals);
-
+	CIMMethod& setQualifiers(const CIMQualifierArray& quals);
 	/**
-	 * Add a qualifier to this OW_CIMMethod.
-	 * @param qual The OW_CIMQualifier to add to this method.
+	 * Add a qualifier to this CIMMethod.
+	 * @param qual The CIMQualifier to add to this method.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& addQualifier(const OW_CIMQualifier& qual);
-
+	CIMMethod& addQualifier(const CIMQualifier& qual);
 	/**
 	 * Get the qualifiers for this method.
-	 * @return An OW_CIMQualifierArray that contains the qualifiers for this
+	 * @return An CIMQualifierArray that contains the qualifiers for this
 	 * method.
 	 */
-	OW_CIMQualifierArray getQualifiers() const;
-
+	CIMQualifierArray getQualifiers() const;
 	/**
 	 * Get the qualifier associated with a specified name.
 	 * @param name	The name of the qualifier to retrieve.
-	 * @return The OW_CIMQualifier associated with the given name if found.
-	 * Otherwise a NULL OW_CIMQualifier.
+	 * @return The CIMQualifier associated with the given name if found.
+	 * Otherwise a NULL CIMQualifier.
 	 */
-	OW_CIMQualifier getQualifier(const OW_String& name) const;
-
+	CIMQualifier getQualifier(const String& name) const;
 	/**
 	 * Get the origin class for this method.
 	 * @return The name of the origin class.
 	 */
-	OW_String getOriginClass() const;
-
+	String getOriginClass() const;
 	/**
 	 * Set thr origin class for this method.
 	 * @param originCls	The name of the origin class for this method.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setOriginClass(const OW_String& originCls);
+	CIMMethod& setOriginClass(const String& originCls);
 	
 	/**
-	 * Add a parameter to this OW_CIMMethod.
-	 * @param param The OW_CIMParameter to add to this method.
+	 * Add a parameter to this CIMMethod.
+	 * @param param The CIMParameter to add to this method.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& addParameter(const OW_CIMParameter& param);
-
+	CIMMethod& addParameter(const CIMParameter& param);
 	/**
 	 * Set the parameters for this method
-	 * @param inParms	An OW_CIMParameterArray that contains the parameters for
+	 * @param inParms	An CIMParameterArray that contains the parameters for
 	 * 	this method.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setParameters(const OW_CIMParameterArray& inParms);
-
+	CIMMethod& setParameters(const CIMParameterArray& inParms);
 	/**
 	 * Get the parameters for this method.
-	 * @return An OW_CIMParameterArray that contains the parameters for this
+	 * @return An CIMParameterArray that contains the parameters for this
 	 * method.
 	 */
-	OW_CIMParameterArray getParameters() const;
-
+	CIMParameterArray getParameters() const;
 	/**
 	 * Get the IN parameters for this method.
-	 * @return An OW_CIMParameterArray that contains IN the parameters for this
+	 * @return An CIMParameterArray that contains IN the parameters for this
 	 * method.
 	 */
-	OW_CIMParameterArray getINParameters() const;
-
+	CIMParameterArray getINParameters() const;
 	/**
 	 * Get the OUT parameters for this method.
-	 * @return An OW_CIMParameterArray that contains OUT the parameters for this
+	 * @return An CIMParameterArray that contains OUT the parameters for this
 	 * method.
 	 */
-	OW_CIMParameterArray getOUTParameters() const;
-
+	CIMParameterArray getOUTParameters() const;
 	/**
 	 * Set the return data type for this parameter
-	 * @param type	An OW_CIMDataType object that represents the type.
+	 * @param type	An CIMDataType object that represents the type.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setReturnType(const OW_CIMDataType& type);
-
+	CIMMethod& setReturnType(const CIMDataType& type);
 	/**
 	 * @return The return data type for this method.
 	 */
-	OW_CIMDataType getReturnType() const;
-
+	CIMDataType getReturnType() const;
 	/**
 	 * @return The size of the return data type.
 	 */
-	OW_Int32 getReturnDataSize() const;
-
+	Int32 getReturnDataSize() const;
 	/**
 	 * Set name of overriding method.
 	 * @param omname The name of the overriding method.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setOverridingMethod(const OW_String& omname);
-
+	CIMMethod& setOverridingMethod(const String& omname);
 	/**
 	 * @return The name of the overriding method.
 	 */
-	OW_String getOverridingMethod() const;
-
+	String getOverridingMethod() const;
 	/**
 	 * Set the propagated flag for this method.
 	 * @param propagated If true method is propagated. Otherwise false.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setPropagated(bool propagated=true);
-
+	CIMMethod& setPropagated(bool propagated=true);
 	/**
 	 * Get the propagated flag.
 	 * @return true if this method is propagated. Otherwise false.
 	 */
 	bool getPropagated() const;
-
 	/**
-	 * Create an OW_CIMMethod object based on this one, using the criteria
+	 * Create an CIMMethod object based on this one, using the criteria
 	 * specified in the parameters.
 	 *
 	 * @param includeQualifiers If false, no qualifiers will be included in the
-	 *		OW_CIMMethod returned. Otherwise all qualifiers are included.
+	 *		CIMMethod returned. Otherwise all qualifiers are included.
 	 * @param includeClassOrigin I false, the class origin will not be included
-	 *		in the OW_CIMMethod returned. Otherwise the class origin is included
+	 *		in the CIMMethod returned. Otherwise the class origin is included
 	 *
-	 * @return A new OW_CIMMethod that is a copy of this one with the
+	 * @return A new CIMMethod that is a copy of this one with the
 	 * 		qualifiers and class origin optionally exclued.
 	 */
-	OW_CIMMethod clone(
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN) const;
-
+	CIMMethod clone(
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN) const;
 	/**
-	 * @return The name of this method as an OW_String.
+	 * @return The name of this method as an String.
 	 */
-	virtual OW_String getName() const;
-
+	virtual String getName() const;
 	/**
 	 * Set the name of this method.
 	 * @param name The new name for this method.
 	 */
-	virtual void setName(const OW_String& name);
-
+	virtual void setName(const String& name);
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return The MOF representation of this object as an OW_String.
+	 * @return The MOF representation of this object as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
-	 * @return The string representation of this method as an OW_String.
+	 * @return The string representation of this method as an String.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 protected:
-
-	OW_COWReference<METHData> m_pdata;
-
-	friend bool operator<(const OW_CIMMethod& x, const OW_CIMMethod& y);
+	COWReference<METHData> m_pdata;
+	friend bool operator<(const CIMMethod& x, const CIMMethod& y);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-

@@ -27,116 +27,103 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_WQLFILTERREP_HPP_INCLUDE_GUARD_
 #define OW_WQLFILTERREP_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMInstance.hpp"
 
-class OW_CIMServer;
+namespace OpenWBEM
+{
 
-class OW_WQLFilterRep : public OW_RepositoryIFC
+class CIMServer;
+class WQLFilterRep : public RepositoryIFC
 {
 public:
-
-	OW_WQLFilterRep(const OW_CIMInstance& inst, const OW_RepositoryIFCRef& cimServer);
-
+	WQLFilterRep(const CIMInstance& inst, const RepositoryIFCRef& cimServer);
 	/**
-	 * Open this OW_RepositoryIFC.
-	 * @exception OW_IOException
+	 * Open this RepositoryIFC.
+	 * @exception IOException
 	 */
-	virtual void open(const OW_String &/*path*/) {}
-
+	virtual void open(const String &/*path*/) {}
 	/**
-	 * Close this OW_GenericHDBRepository.
+	 * Close this GenericHDBRepository.
 	 */
 	virtual void close() {}
-
 	/**
-	 * @return A reference to the OW_CIMOMEnvironment this object is using.
+	 * @return A reference to the CIMOMEnvironment this object is using.
 	 */
-	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const;
-
+	virtual ServiceEnvironmentIFCRef getEnvironment() const;
 	/**
 	 * Gets a list of the namespaces.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An Array of namespace names as strings.
-	 * @exception 	OW_CIMException If the namespace does not exist or the object
+	 * @exception 	CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
-		const OW_UserInfo& aclInfo);
-
+	virtual void enumNameSpace(StringResultHandlerIFC& result,
+		const UserInfo& aclInfo);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace to be created.
-	 * @exception OW_CIMException If the namespace already exists.
+	 * @exception CIMException If the namespace already exists.
 	 */
-	virtual void createNameSpace(const OW_String& ns,
-		const OW_UserInfo& aclInfo);
-
+	virtual void createNameSpace(const String& ns,
+		const UserInfo& aclInfo);
 	/**
 	 * Delete a specified namespace.
 	 * @param ns	The namespace to delete.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException If the namespace does not exist.
+	 * @exception CIMException If the namespace does not exist.
 	 */
-	virtual void deleteNameSpace(const OW_String& ns,
-		const OW_UserInfo& aclInfo);
+	virtual void deleteNameSpace(const String& ns,
+		const UserInfo& aclInfo);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 	/**
 	 * Get an existing qualifier type from the repository.
 	 * @param objPath	The object path for the qaulifer type.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return A valid OW_CIMQaulifer type on success. Otherwise a NULL
-	 * OW_CIMQualifier type.
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @return A valid CIMQaulifer type on success. Otherwise a NULL
+	 * CIMQualifier type.
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	virtual OW_CIMQualifierType getQualifierType(
-		const OW_String& ns,
-		const OW_String& qualifierName, const OW_UserInfo& aclInfo);
-
+	virtual CIMQualifierType getQualifierType(
+		const String& ns,
+		const String& qualifierName, const UserInfo& aclInfo);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
-	 * @param name	Am OW_CIMObjectPath that identifies the CIM qualifier type.
+	 * @param name	Am CIMObjectPath that identifies the CIM qualifier type.
 	 * @param qt	The CIM qualifier type to be updated.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException If the qualifier type cannot be found or the
+	 * @exception CIMException If the qualifier type cannot be found or the
 	 *										user does not have write permission to the
 	 *										namespace.
 	 */
-	virtual void setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType &qt, const OW_UserInfo& aclInfo);
-
+	virtual void setQualifierType(const String& ns,
+		const CIMQualifierType &qt, const UserInfo& aclInfo);
 	/**
 	 * Enumerate the qualifier types in a name space.
 	 * @param path	The object path to enumeration the qualifiers in.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An enumeration of OW_CIMQualifierTypes
-	 * @exception	OW_CIMException
+	 * @return An enumeration of CIMQualifierTypes
+	 * @exception	CIMException
 	 */
 	virtual void enumQualifierTypes(
-		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		CIMQualifierTypeResultHandlerIFC& result, const UserInfo& aclInfo);
 	/**
 	 * Delete an existing qualifier type from the repository
 	 * @param objPath	The object path fro the qualifer type.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException
+	 * @exception CIMException
 	 */
-	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-		const OW_UserInfo& aclInfo);
+	virtual void deleteQualifierType(const String& ns, const String& qualName,
+		const UserInfo& aclInfo);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * creates a class in the store
@@ -146,40 +133,37 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception 	CIMException if the class already exists, or parent class
 	 *					is not yet on file.
-	 * @exception OW_HDBException An error occurred in the database.
-	 * @exception OW_IOException Couldn't write class object to file.
+	 * @exception HDBException An error occurred in the database.
+	 * @exception IOException Couldn't write class object to file.
 	 */
-	virtual void createClass(const OW_String& ns, const OW_CIMClass &cimClass,
-		const OW_UserInfo& aclInfo);
-
+	virtual void createClass(const String& ns, const CIMClass &cimClass,
+		const UserInfo& aclInfo);
 	/**
 	 * set a class in the store - note children are not affected
 	 *
 	 * @param path The path for the class to create
 	 * @param cimClass The class to create
 	 * @param aclInfo ACL object describing user making request.
-	 * @return an OW_CIMClass representing the state of the class prior to
+	 * @return an CIMClass representing the state of the class prior to
 	 * 	the update.  This is likely usefull only for creating
 	 *		CIM_ClassModification indications.
 	 * @exception CIMException if the class already exists
 	 */
-	virtual OW_CIMClass modifyClass(const OW_String &ns,
-		const OW_CIMClass &cc, const OW_UserInfo& aclInfo);
-
+	virtual CIMClass modifyClass(const String &ns,
+		const CIMClass &cc, const UserInfo& aclInfo);
 	/**
 	 * Delete an existing class from the store
 	 *
 	 * @param ns The namespace containing the class to delete.
 	 * @param className The class to delete
 	 * @param aclInfo ACL object describing user making request.
-	 * @return A OW_CIMClass representing the class which was deleted.
+	 * @return A CIMClass representing the class which was deleted.
 	 *		This is likely usefull only for creating CIM_ClassCreation incidations.
 	 * @exception CIMException if class does not exist
 	 */
-	virtual OW_CIMClass deleteClass(const OW_String& ns, const OW_String& className,
-		const OW_UserInfo& aclInfo);
+	virtual CIMClass deleteClass(const String& ns, const String& className,
+		const UserInfo& aclInfo);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 	/**
 	 * Gets an existing class from a store
 	 * @param path The path for the class to retrieve
@@ -194,23 +178,22 @@ public:
 	 *		empty, then no properties should be returned. If NULL then all
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return A valid OW_CIMClass object on success. Otherwise a NULL
-	 * OW_CIMClass object.
-	 * @exception OW_CIMException
-	 * @exception OW_HDBException An error occurred in the database.
-	 * @exception OW_IOException Couldn't read class object from file.
+	 * @return A valid CIMClass object on success. Otherwise a NULL
+	 * CIMClass object.
+	 * @exception CIMException
+	 * @exception HDBException An error occurred in the database.
+	 * @exception IOException Couldn't read class object from file.
 	 */
-	virtual OW_CIMClass getClass(
-		const OW_String& ns,
-		const OW_String& className,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_UserInfo& aclInfo);
-
+	virtual CIMClass getClass(
+		const String& ns,
+		const String& className,
+		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		const UserInfo& aclInfo);
 	/**
 	 * Retrieve a specific instance
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param localOnly If true, only return non-derived properties.
 	 * @param includeQualifiers If true, then all qualifiers for the instance
 	 *		(including properties, methods, and method parameters) are returned.
@@ -221,24 +204,23 @@ public:
 	 *		empty, then no properties should be returned. If NULL then all
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An OW_CIMInstance object
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @return An CIMInstance object
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	virtual OW_CIMInstance getInstance(
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_UserInfo& aclInfo);
-
+	virtual CIMInstance getInstance(
+		const String& ns,
+		const CIMObjectPath& instanceName,
+		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		const UserInfo& aclInfo);
 	/**
-	 * Enumerates the class specified by the OW_CIMObjectPath.
-	 * @param path The OW_CIMObjectPath identifying the class to be enumerated.
-	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
+	 * Enumerates the class specified by the CIMObjectPath.
+	 * @param path The CIMObjectPath identifying the class to be enumerated.
+	 * @param deep If set to CIMClient::DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
-	 *		If set to OW_CIMClient::SHALLOW the	enumermation will return only
+	 *		If set to CIMClient::SHALLOW the	enumermation will return only
 	 *		the names of the first level children of the enumerated class.
 	 * @param localOnly If true, then only CIM elements (properties, methods,
 	 *		qualifiers) overriden within the definition are returned.
@@ -247,43 +229,41 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
+	 * @exception CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual void enumClasses(const OW_String& ns,
-		const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_UserInfo& aclInfo);
-
+	virtual void enumClasses(const String& ns,
+		const String& className,
+		CIMClassResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const UserInfo& aclInfo);
 	/**
-	 * Enumerates the class specified by the OW_CIMObjectPath.
-	 * @param path		The OW_CIMObjectPath identifying the class to be
+	 * Enumerates the class specified by the CIMObjectPath.
+	 * @param path		The CIMObjectPath identifying the class to be
 	 *						enumerated.
-	 * @param deep		If set to OW_CIMClient::DEEP, the enumeration returned will
+	 * @param deep		If set to CIMClient::DEEP, the enumeration returned will
 	 *						contain the names of all classes derived from the
-	 *						enumerated class. If set to OW_CIMClient::SHALLOW the
+	 *						enumerated class. If set to CIMClient::SHALLOW the
 	 *						enumermation will return only the names of the first level
 	 *						children of the enumerated class.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
+	 * @exception CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
 	virtual void enumClassNames(
-		const OW_String& ns,
-		const OW_String& className,
-		OW_StringResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const String& className,
+		StringResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep, const UserInfo& aclInfo);
 	/**
-	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular
+	 * Retrieve an enumeration of instances (CIMInstance) for a particular
 	 * class
 	 *
-	 * @param path The OW_CIMObjectPath identifying the class whose	instances
+	 * @param path The CIMObjectPath identifying the class whose	instances
 	 *		are to be enumerated.
-	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
+	 * @param deep If set to CIMClient::DEEP, the enumeration returned will
 	 *		contain the names of all instances of the specified class and all
-	 *		classes derived from it. If set to OW_CIMClient::SHALLOW only names
+	 *		classes derived from it. If set to CIMClient::SHALLOW only names
 	 *		of instances belonging to the specified class are returned.
 	 * @param localOnly	If true only non-inherited properties/qualifiers are
 	 *							included in the instances.
@@ -296,196 +276,181 @@ public:
 	 *		empty, then no properties should be returned. If NULL then all
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
 	virtual void enumInstances(
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		OW_WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
-		const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList, 
+		WBEMFlags::EEnumSubclassesFlag enumSubclasses, 
+		const UserInfo& aclInfo);
 	/**
-	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular
+	 * Retrieve an enumeration of instances (CIMInstance) for a particular
 	 * class
 	 *
-	 * @param path			The OW_CIMObjectPath identifying the class whose
+	 * @param path			The CIMObjectPath identifying the class whose
 	 *							instances are to be enumerated.
-	 * @param deep			If set to OW_CIMClient::DEEP, the enumeration returned
+	 * @param deep			If set to CIMClient::DEEP, the enumeration returned
 	 *							will contain the names of all instances of the specified
 	 *                	class and all classes derived from it. If set to
-	 *							OW_CIMClient::SHALLOW only names of instances belonging
+	 *							CIMClient::SHALLOW only names of instances belonging
 	 *							to the specified class are returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
 	virtual void enumInstanceNames(
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep, const UserInfo& aclInfo);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Creates a instance in the store
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param ci The instance that is to be stored with that object path
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
-		const OW_CIMInstance &ci,
-		const OW_UserInfo& aclInfo);
-
+	virtual CIMObjectPath createInstance(const String& ns,
+		const CIMInstance &ci,
+		const UserInfo& aclInfo);
 	/**
 	 * Update an instance
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param ci	The instance with the new values
 	 * @param aclInfo ACL object describing user making request.
-	 * @return a OW_CIMInstance representing the state of the instance prior
+	 * @return a CIMInstance representing the state of the instance prior
 	 * 	to the update.  This is likely usefull only for creating
 	 *		CIM_InstModification indications.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	virtual OW_CIMInstance modifyInstance(
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_UserInfo& aclInfo);
-
+	virtual CIMInstance modifyInstance(
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList,
+		const UserInfo& aclInfo);
 	/**
 	 * Delete an existing instance from the store
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
-	 * @return an OW_CIMInstance representing the Instance just deleted.
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
+	 * @return an CIMInstance representing the Instance just deleted.
 	 *		This is likely usefull only for creating CIM_InstDeletion indications;
 	 */
-	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
-		const OW_UserInfo& aclInfo);
-
+	virtual CIMInstance deleteInstance(const String& ns, const CIMObjectPath &cop,
+		const UserInfo& aclInfo);
 	/**
-	 * Set a property value on an OW_CIMInstance.
+	 * Set a property value on an CIMInstance.
 	 * @param name				The object path of the instance
 	 * @param propertyName	The name of the property to update
 	 * @param cv				The value to set the property to.
 	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_CIMException
+	 * @exception CIMException
 	 */
 	virtual void setProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_UserInfo& aclInfo);
+		const String& ns,
+		const CIMObjectPath &name,
+		const String &propertyName, const CIMValue &cv,
+		const UserInfo& aclInfo);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 	/**
 	 * Get the specified CIM instance property.
-	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
+	 * @param name				An CIMObjectPath that identifies the CIM instance
 	 *								to be accessed
 	 * @param propertyName	The name of the property to retrieve.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return The OW_CIMvalue for property identified by propertyName.
-	 * @exception OW_CIMException
+	 * @return The CIMvalue for property identified by propertyName.
+	 * @exception CIMException
 	 */
-	virtual OW_CIMValue getProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_UserInfo& aclInfo);
-
+	virtual CIMValue getProperty(
+		const String& ns,
+		const CIMObjectPath &name,
+		const String &propertyName, const UserInfo& aclInfo);
 	/**
 	 * Invokes a method
 	 *
 	 * @param name	The object path of the object on which the method is being
 	 *					invoked this can be a class or instance
 	 * @param methodName	The name of the method to invoke.
-	 * @param inParams An array of OW_CIMProperty objects for inbound values
-	 * @param outParams An array of OW_CIMProperty objects for inbound values
+	 * @param inParams An array of CIMProperty objects for inbound values
+	 * @param outParams An array of CIMProperty objects for inbound values
 	 * @param outParams A vector of CIMProperty for outbound values
 	 * @param aclInfo ACL object describing user making request.
-	 * @return The return from the extrinsic method as a OW_CIMValue.
-	 * @exception OW_CIMException
+	 * @return The return from the extrinsic method as a CIMValue.
+	 * @exception CIMException
 	 */
-	virtual OW_CIMValue invokeMethod(
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
-		OW_CIMParamValueArray &outParams, const OW_UserInfo& aclInfo);
-
+	virtual CIMValue invokeMethod(
+		const String& ns,
+		const CIMObjectPath& path,
+		const String &methodName, const CIMParamValueArray &inParams,
+		CIMParamValueArray &outParams, const UserInfo& aclInfo);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associators(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String &assocClass, const OW_String &resultClass,
-		const OW_String &role, const OW_String &resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const CIMObjectPath &path,
+		CIMInstanceResultHandlerIFC& result,
+		const String &assocClass, const String &resultClass,
+		const String &role, const String &resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList, const UserInfo& aclInfo);
 	virtual void associatorsClasses(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String &assocClass, const OW_String &resultClass,
-		const OW_String &role, const OW_String &resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const CIMObjectPath &path,
+		CIMClassResultHandlerIFC& result,
+		const String &assocClass, const String &resultClass,
+		const String &role, const String &resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList, const UserInfo& aclInfo);
 	virtual void referenceNames(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String &resultClass,
-		const OW_String &role, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const CIMObjectPath &path,
+		CIMObjectPathResultHandlerIFC& result,
+		const String &resultClass,
+		const String &role, const UserInfo& aclInfo);
 	virtual void associatorNames(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String &assocClass,
-		const OW_String &resultClass, const OW_String &role,
-		const OW_String &resultRole, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const CIMObjectPath &path,
+		CIMObjectPathResultHandlerIFC& result,
+		const String &assocClass,
+		const String &resultClass, const String &role,
+		const String &resultRole, const UserInfo& aclInfo);
 	virtual void references(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String &resultClass, const OW_String &role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		const CIMObjectPath &path,
+		CIMInstanceResultHandlerIFC& result,
+		const String &resultClass, const String &role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList, const UserInfo& aclInfo);
 	virtual void referencesClasses(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String &resultClass, const OW_String &role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
+		const String& ns,
+		const CIMObjectPath &path,
+		CIMClassResultHandlerIFC& result,
+		const String &resultClass, const String &role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList, const UserInfo& aclInfo);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 	virtual void execQuery(
-		const OW_String& ns,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String &query, const OW_String &queryLanguage,
-		const OW_UserInfo& aclInfo);
-
+		const String& ns,
+		CIMInstanceResultHandlerIFC& result,
+		const String &query, const String &queryLanguage,
+		const UserInfo& aclInfo);
 	virtual void getSchemaReadLock();
 	virtual void getSchemaWriteLock();
 	virtual void releaseSchemaReadLock();
@@ -494,12 +459,11 @@ public:
 	virtual void getInstanceWriteLock();
 	virtual void releaseInstanceReadLock();
 	virtual void releaseInstanceWriteLock();
-
 private:
-	OW_CIMInstance m_inst;
-	OW_RepositoryIFCRef m_pCIMServer;
+	CIMInstance m_inst;
+	RepositoryIFCRef m_pCIMServer;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,10 +27,8 @@
 // Modified By: Dan Nuffer
 //
 //%/////////////////////////////////////////////////////////////////////////////
-
 #ifndef OW_WQL_SELECT_STATEMENT_HPP_INCLUDE_GUARD_H_
 #define OW_WQL_SELECT_STATEMENT_HPP_INCLUDE_GUARD_H_
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
@@ -38,8 +36,10 @@
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLPropertySource.hpp"
 
-/** This class represents a compiled WQL select statement. 
+namespace OpenWBEM
+{
 
+/** This class represents a compiled WQL select statement. 
 	See the wql spec for details on the select statement.
 	
 	There are methods for obtaining the various elements of the select
@@ -50,129 +50,105 @@
 	YACC parser). Evaluation is performed using a Boolean stack. See the
 	implementation of evaluateWhereClause() for details.
 */
-
-class OW_WQLCompile;
-
-class OW_WQLSelectStatement
+class WQLCompile;
+class WQLSelectStatement
 {
 public:
-
-	OW_WQLSelectStatement();
-
-	~OW_WQLSelectStatement();
-
+	WQLSelectStatement();
+	~WQLSelectStatement();
 	/** Clears all data members of this object.
 	*/
 	void clear();
-
-	const OW_String& getClassName() const
+	const String& getClassName() const
 	{
 		return _className;
 	}
-
 	/** Modifier. This method should not be called by the user (only by the
 	  parser).
 	 */
-	void setClassName(const OW_String& className)
+	void setClassName(const String& className)
 	{
 		_className = className;
 	}
-
 	/** Returns the number of property names which were indicated in the
 	  selection list.
 	 */
-	OW_UInt32 getSelectPropertyNameCount() const
+	UInt32 getSelectPropertyNameCount() const
 	{
 		return _selectPropertyNames.size();
 	}
-
 	/** Gets the i-th selected property name in the list.
 	 */
-	const OW_String& getSelectPropertyName(OW_UInt32 i) const
+	const String& getSelectPropertyName(UInt32 i) const
 	{
 		return _selectPropertyNames[i];
 	}
-
 	/** Gets the selected property names in the list.
 	 */
-	const OW_StringArray& getSelectPropertyNames() const
+	const StringArray& getSelectPropertyNames() const
 	{
 		return _selectPropertyNames;
 	}
-
 	/** Appends a property name to the property name list. This user should
 	  not call this method; it should only be called by the parser.
 	 */
-	void appendSelectPropertyName(const OW_String& x)
+	void appendSelectPropertyName(const String& x)
 	{
 		_selectPropertyNames.append(x);
 	}
-
 	/** Returns the number of unique property names from the where clause.
 	 */
-	OW_UInt32 getWherePropertyNameCount() const
+	UInt32 getWherePropertyNameCount() const
 	{
 		return _wherePropertyNames.size();
 	}
-
 	/** Gets the i-th unique property appearing in the where clause.
 	 */
-	const OW_String& getWherePropertyName(OW_UInt32 i) const
+	const String& getWherePropertyName(UInt32 i) const
 	{
 		return _wherePropertyNames[i];
 	}
-
 	/** Appends a property name to the where property name list. This user 
 	  should not call this method; it should only be called by the parser.
-
 	  @param x name of the property.
 	  @return false if a property with that name already exists.
 	 */
-	bool appendWherePropertyName(const OW_String& x);
-
+	bool appendWherePropertyName(const String& x);
 	/** Appends an operation to the operation array. This method should only
 	  be called by the parser itself.
 	 */
-	void appendOperation(OW_WQLOperation x)
+	void appendOperation(WQLOperation x)
 	{
 		_operStack.push_back(x);
 	}
-
 	/** Appends an operand to the operation array. This method should only
 	  be called by the parser itself.
 	 */
-	void appendOperand(const OW_WQLOperand& x)
+	void appendOperand(const WQLOperand& x)
 	{
 		_operStack.push_back(x);
 	}
-
 	/** Returns true if this class has a where clause.
 	 */
 	bool hasWhereClause() const
 	{
 		return !_operStack.empty();
 	}
-
 	/** Evalautes the where clause using the symbol table to resolve symbols.
 	 * @return true or false if the source passes the query
-	 * @throws OW_NoSuchPropertyException if the where clause references a 
+	 * @throws NoSuchPropertyException if the where clause references a 
 	 *		property that is unknown to source.
-	 * @throws OW_TypeMismatchException if the there is a type error in
+	 * @throws TypeMismatchException if the there is a type error in
 	 *		the where clause or if the property type of the source property
 	 *		doesn't match the query.
 	 */
-	bool evaluateWhereClause(const OW_WQLPropertySource* source) const;
-
+	bool evaluateWhereClause(const WQLPropertySource* source) const;
 	/** Prints out the members of this class.
 	*/
 	void print(std::ostream& ostr) const;
-
-	OW_String toString() const;
-
-	void compileWhereClause(const OW_WQLPropertySource* source, OW_WQLCompile& wcl);
-
+	String toString() const;
+	void compileWhereClause(const WQLPropertySource* source, WQLCompile& wcl);
 private:
-
 	//
 	// The name of the target class. For example:
 	//
@@ -180,9 +156,7 @@ private:
 	//	 FROM TargetClass
 	//	 WHERE ...
 	//
-
-	OW_String _className;
-
+	String _className;
 	//
 	// The list of property names being selected. For example, see "firstName",
 	// and "lastName" below.
@@ -191,17 +165,13 @@ private:
 	//	 FROM TargetClass
 	//	 WHERE ...
 	//
-
-	OW_Array<OW_String> _selectPropertyNames;
-
+	Array<String> _selectPropertyNames;
 	//
 	// The unique list of property names appearing in the WHERE clause.
 	// Although a property may occur many times in the WHERE clause, it will
 	// only appear once in this list.
 	//
-
-	OW_Array<OW_String> _wherePropertyNames;
-
+	Array<String> _wherePropertyNames;
 	//
 	// The list of operations encountered while parsing the WHERE clause.
 	// Consider this query:
@@ -210,7 +180,7 @@ private:
 	//	 FROM TargetClass
 	//	 WHERE count > 10 OR peak < 20 AND state = "OKAY"
 	//
-	// This would generate the following stream of OW_WQLOperations:
+	// This would generate the following stream of WQLOperations:
 	//
 	//	 WQL_GT
 	//	 WQL_LT
@@ -218,17 +188,14 @@ private:
 	//	 WQL_AND
 	//	 WQL_OR
 	//
-
-	//OW_Array<OW_WQLOperation> _operations;
-
+	//Array<WQLOperation> _operations;
 	// 
 	// The list of operands encountered while parsing the WHERE clause. They
 	// query just above would generate the following stream of operands:
 	//
 	//	 count, 10, peak, 20, state, "OKAY"
 	//
-
-	//OW_Array<OW_WQLOperand> _operands;
+	//Array<WQLOperand> _operands;
 	struct OperandOrOperation
 	{
 		enum Type
@@ -236,26 +203,22 @@ private:
 			OPERATION,
 			OPERAND
 		};
-
-		OperandOrOperation(OW_WQLOperation o)
+		OperandOrOperation(WQLOperation o)
 			: m_type(OPERATION)
 			, m_operation(o)
 		{}
-
-		OperandOrOperation(const OW_WQLOperand& o)
+		OperandOrOperation(const WQLOperand& o)
 			: m_type(OPERAND)
 			, m_operand(o)
 		{}
-
 		Type m_type;
-		OW_WQLOperation m_operation;
-		OW_WQLOperand m_operand;
-
-		OW_String toString() const
+		WQLOperation m_operation;
+		WQLOperand m_operand;
+		String toString() const
 		{
 			if (m_type == OPERATION)
 			{
-				return OW_WQLOperationToString(m_operation);
+				return WQLOperationToString(m_operation);
 			}
 			else
 			{
@@ -263,11 +226,10 @@ private:
 			}
 		}
 	};
-
-	OW_Array<OperandOrOperation> _operStack;
-
-	friend class OW_WQLCompile;
+	Array<OperandOrOperation> _operStack;
+	friend class WQLCompile;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

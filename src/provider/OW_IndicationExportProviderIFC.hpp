@@ -29,39 +29,38 @@
 *******************************************************************************/
 #ifndef OW_INDICATIONEXPORTPROVIDERIFC_HPP_
 #define OW_INDICATIONEXPORTPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
-class OW_IndicationExportProviderIFC : public OW_ProviderBaseIFC
+namespace OpenWBEM
+{
+
+class IndicationExportProviderIFC : public ProviderBaseIFC
 {
 public:
-
-	virtual ~OW_IndicationExportProviderIFC();
-
+	virtual ~IndicationExportProviderIFC();
 	/**
 	 * @return The class names of all the CIM_IndicationHandler sub-classes
-	 * this OW_IndicationExportProviderIFC handles.
+	 * this IndicationExportProviderIFC handles.
 	 */
-	virtual OW_StringArray getHandlerClassNames() = 0;
+	virtual StringArray getHandlerClassNames() = 0;
 	
 	/**
 	 * Export the given indication
 	 */
-	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst) = 0;
+	virtual void exportIndication(const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& indHandlerInst, const CIMInstance& indicationInst) = 0;
 };
+//typedef IntrusiveReference<IndicationExportProviderIFC>
+typedef Reference<IndicationExportProviderIFC>
+		IndicationExportProviderIFCRef;
+typedef Array<IndicationExportProviderIFCRef>
+		IndicationExportProviderIFCRefArray;
 
-//typedef OW_IntrusiveReference<OW_IndicationExportProviderIFC>
-typedef OW_Reference<OW_IndicationExportProviderIFC>
-		OW_IndicationExportProviderIFCRef;
-
-typedef OW_Array<OW_IndicationExportProviderIFCRef>
-		OW_IndicationExportProviderIFCRefArray;
+} // end namespace OpenWBEM
 
 #endif
-

@@ -28,9 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-
 #include "OW_TimeoutException.hpp"
+
+namespace OpenWBEM
+{
 
 DEFINE_EXCEPTION(Timeout);
 
+} // end namespace OpenWBEM
 

@@ -27,107 +27,106 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_THREAD_TYPES_HPP_
 #define OW_THREAD_TYPES_HPP_
-
 #include "OW_config.h"
 
 #ifdef OW_USE_GNU_PTH
 
-extern "C"
-{
-#include <pth.h>
-}
+	#include <pth.h>
 
-// Platform specific thread type
-typedef pth_t			OW_Thread_t;
+	namespace OpenWBEM
+	{
 
-// Platform specific mutex type
-typedef pth_mutex_t	OW_Mutex_t;
-typedef pth_mutex_t OW_NativeMutex_t;
-typedef pth_mutex_t	OW_NonRecursiveMutex_t;
+		// Platform specific thread type
+		typedef pth_t			Thread_t;
+		// Platform specific mutex type
+		typedef pth_mutex_t	Mutex_t;
+		typedef pth_mutex_t NativeMutex_t;
+		typedef pth_mutex_t	NonRecursiveMutex_t;
+		// Platform specific conditional variable type
+		typedef pth_cond_t	ConditionVar_t;
 
-// Platform specific conditional variable type
-typedef pth_cond_t	OW_ConditionVar_t;
+	} // end namespace OpenWBEM
 
 #elif OW_HAVE_PTHREAD_H
 
-extern "C"
-{
-#include <pthread.h>
-}
+	#include <pthread.h>
 
-// Platform specific thread type
-typedef pthread_t					OW_Thread_t;
+	namespace OpenWBEM
+	{
 
-typedef pthread_mutex_t OW_NativeMutex_t;
-struct OW_NonRecursiveMutex_t
-{
-    pthread_mutex_t mutex;
-};
+		// Platform specific thread type
+		typedef pthread_t			Thread_t;
+		typedef pthread_mutex_t NativeMutex_t;
+		struct NonRecursiveMutex_t
+		{
+		    pthread_mutex_t mutex;
+		};
 
-#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
-// Platform specific mutex type
+		#if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
+		// Platform specific mutex type
+		// we have native recursive mutexes.
+		struct Mutex_t
+		{
+			pthread_mutex_t mutex;
+		};
 
-// we have native recursive mutexes.
-struct OW_Mutex_t
-{
-	pthread_mutex_t mutex;
-};
-#else
-// we have to emulate recursive mutexes.
-struct OW_Mutex_t
-{
-	pthread_mutex_t mutex;
-	pthread_cond_t unlocked;
-	bool valid_id;
-	unsigned count;
-	pthread_t thread_id;
-};
-#endif
+		#else
 
-// Platform specific conditional variable type
-typedef pthread_cond_t 			OW_ConditionVar_t;
+		// we have to emulate recursive mutexes.
+		struct Mutex_t
+		{
+			pthread_mutex_t mutex;
+			pthread_cond_t unlocked;
+			bool valid_id;
+			unsigned count;
+			pthread_t thread_id;
+		};
+		#endif
 
-struct OW_NonRecursiveMutexLockState
-{
-	pthread_t thread_id;
-	OW_NativeMutex_t* pmutex;
-};
+		// Platform specific conditional variable type
+		typedef pthread_cond_t 			ConditionVar_t;
+		struct NonRecursiveMutexLockState
+		{
+			pthread_t thread_id;
+			NativeMutex_t* pmutex;
+		};
+
+	} // end namespace OpenWBEM
 
 #elif OW_WIN32
 
-#include <Windows.h>
+	#include <Windows.h>
 
-// Platform specific thread type
-typedef DWORD OW_Thread_t;
+	namespace OpenWBEM
+	{
 
-typedef HANDLE OW_NativeMutex_t;
-struct OW_NonRecursiveMutex_t
-{
-    HANDLE mutex;
-    HANDLE thread_id;
-    bool valid_id;
-};
+		// Platform specific thread type
+		typedef DWORD Thread_t;
+		typedef HANDLE NativeMutex_t;
+		struct NonRecursiveMutex_t
+		{
+		    HANDLE mutex;
+		    HANDLE thread_id;
+		    bool valid_id;
+		};
+		struct Mutex_t
+		{
+			void* mutex;
+			unsigned long count;
+		};
+		// Platform specific conditional variable type
+		typedef void* 			ConditionVar_t;
+		struct NonRecursiveMutexLockState
+		{
+		    void* thread_id;
+			NativeMutex_t* pmutex;
+		};
 
+	} // end namespace OpenWBEM
 
-struct OW_Mutex_t
-{
-	void* mutex;
-	unsigned long count;
-};
-
-// Platform specific conditional variable type
-typedef void* 			OW_ConditionVar_t;
-
-struct OW_NonRecursiveMutexLockState
-{
-    void* thread_id;
-	OW_NativeMutex_t* pmutex;
-};
-
-#endif // #ifdef OW_HAVE_PTHREAD_H
+#endif
 
 #endif	// #ifndef OW_THREAD_TYPES_HPP_
 				

@@ -27,22 +27,19 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
 #define OW_SSLCtxMgr_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_SSLException.hpp"
-
 #ifdef OW_HAVE_OPENSSL
-
 #include <openssl/crypto.h>
 #include <openssl/ssl.h>
 #include <openssl/bio.h>
-
-
 #define OW_SSLCTX_MAX_CN_LEN 256
+
+namespace OpenWBEM
+{
 
 /**
  * Verify a X509 certificate.
@@ -50,19 +47,15 @@
  * @return 1 if the certificate is good, 0 if the certificate is bad.
  * 	If 0 is returned, the SSL handshake will abort.
  */
-typedef int (*certVerifyFuncPtr_t)(X509* cert, const OW_String& hostName);
-
+typedef int (*certVerifyFuncPtr_t)(X509* cert, const String& hostName);
 // TODO: Make this class be a singleton.
-class OW_SSLCtxMgr
+class SSLCtxMgr
 {
 public:
-
 	/**
 	 * The callback for getting a passphrase on a certificate.
 	 */
 	static int pem_passwd_cb(char* buf, int size, int rwflag, void *userData);
-
-
 	/**
 	 * Check a certificate based on the callback function for client cert
 	 * verification. 
@@ -70,8 +63,7 @@ public:
 	 * @param hostname the hostname of the client machine
 	 * @return True if the certificate is good, false otherwise
 	 */
-	static bool checkClientCert(SSL* ssl, const OW_String& hostName);
-
+	static bool checkClientCert(SSL* ssl, const String& hostName);
 	/**
 	 * Check a certificate based on the callback function for server cert
 	 * verification. 
@@ -79,22 +71,19 @@ public:
 	 * @param hostname the hostname of the server machine
 	 * @return True if the certificate is good, false otherwise
 	 */
-	static bool checkServerCert(SSL* ssl, const OW_String& hostName);
-
+	static bool checkServerCert(SSL* ssl, const String& hostName);
 	/**
 	 * Initialize for a client
 	 * @param keyFile the path to the file containing the key
-	 * @exception OW_SSLException
+	 * @exception SSLException
 	 */
-	static void initClient(const OW_String& keyFile = OW_String());
-
+	static void initClient(const String& keyFile = String());
 	/**
 	 * Initialize for a server
 	 * @param keyFile the path to the file containing the key
-	 * @exception OW_SSLException
+	 * @exception SSLException
 	 */
-	static void initServer(const OW_String& keyFile);	
-
+	static void initServer(const String& keyFile);	
 	/** 
 	 * get the Server SSL Context
 	 * @return the server SSL_CTX
@@ -103,7 +92,6 @@ public:
 	{
 		return m_ctxServer;
 	}
-
 	/**
 	 * get the Client SSL Context
 	 * @return the client SSL_CTX
@@ -112,39 +100,34 @@ public:
 	{
 		return m_ctxClient;
 	}
-
 	/**
 	 * Read from a SSL connection
 	 * @param ssl a pointer to the SSL Context for the connection
 	 * @param buf a pointer to a buffer where data should be copied.
 	 * @param len the number of bytes to read.
 	 * @return the number of bytes read.
-	 * @exception OW_SSLException
+	 * @exception SSLException
 	 */
 	static int sslRead(SSL* ssl, char* buf, int len); 
-
 	/**
 	 * Write to a SSL connection
 	 * @param ssl a pointer to a SSL Context for the connection
 	 * @param buf the buffer containing the data to write.
 	 * @param len the number of bytes to write.
 	 * @return the number of bytes written.
-	 * @exception OW_SSLException
+	 * @exception SSLException
 	 */
 	static int sslWrite(SSL* ssl, const char* buf, int len);
-
 	/**
 	 * Have we been initialized as a client?
 	 * @return true if initialized as a client
 	 */
 	static bool isClient() { return m_ctxClient != NULL; }
-
 	/**
 	 * Have we been initialized as a server?
 	 * @return true if initialized as a server
 	 */
 	static bool isServer() { return m_ctxServer != NULL; }
-
 	/**
 	 * Assign a callback function to be used to verify SSL certificates.
 	 * @param cbfunc the callback function.  Signature:
@@ -152,7 +135,6 @@ public:
 	 */
 	static void setClientCertVerifyCallback(certVerifyFuncPtr_t cbfunc)
 		{ m_clientCertVerifyCB = cbfunc; }
-
 	/**
 	 * Assign a callback function to be used to verify SSL certificates.
 	 * @param cbfunc the callback function.  Signature:
@@ -160,40 +142,37 @@ public:
 	 */
 	static void setServerCertVerifyCallback(certVerifyFuncPtr_t cbfunc)
 		{ m_serverCertVerifyCB = cbfunc; }
-
 	// set type to NOT_INIT and free memory.
 	static void uninit(); 
-
 private:
 	static SSL_CTX* m_ctxClient;
 	static SSL_CTX* m_ctxServer;
 	static BIO* m_bio_err;
 	static certVerifyFuncPtr_t m_clientCertVerifyCB;
 	static certVerifyFuncPtr_t m_serverCertVerifyCB;
-
 	/**
-	 * @throws OW_SSLException
+	 * @throws SSLException
 	 */
-	static SSL_CTX* initCtx(const OW_String& keyfile);
+	static SSL_CTX* initCtx(const String& keyfile);
 	/**
-	 * @throws OW_SSLException
+	 * @throws SSLException
 	 */
-	static void loadDHParams(SSL_CTX* ctx, const OW_String& file);
+	static void loadDHParams(SSL_CTX* ctx, const String& file);
 	/**
-	 * @throws OW_SSLException
+	 * @throws SSLException
 	 */
 	static void generateEphRSAKey(SSL_CTX* ctx);
 	static void uninitServer();
 	static void uninitClient();
-
 	// don't allow instantiation
-	OW_SSLCtxMgr();
+	SSLCtxMgr();
 	/** 
 	 * This probably needs to say something useful.
 	 */
-	static bool checkCert(SSL* ssl, const OW_String& hostName, certVerifyFuncPtr_t cbFunc);
+	static bool checkCert(SSL* ssl, const String& hostName, certVerifyFuncPtr_t cbFunc);
 };
-
 #endif // ifdef OW_HAVE_OPENSSL
+
+} // end namespace OpenWBEM
 
 #endif

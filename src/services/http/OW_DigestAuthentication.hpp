@@ -27,34 +27,32 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_DIGEST_AUTHENTICATION_HPP_
 #define OW_DIGEST_AUTHENTICATION_HPP_
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Map.hpp"
 #include "OW_HTTPSvrConnection.hpp"
 
-class OW_DigestAuthentication
+namespace OpenWBEM
+{
+
+class DigestAuthentication
 {
 public:
-	OW_DigestAuthentication(const OW_String& passwdFile);
-	~OW_DigestAuthentication() {}
-
-	bool authorize(OW_String& userName,
-		const OW_String& info, OW_HTTPSvrConnection* htcon);
-
-	OW_String getChallenge(const OW_String& hostname);
-
+	DigestAuthentication(const String& passwdFile);
+	~DigestAuthentication() {}
+	bool authorize(String& userName,
+		const String& info, HTTPSvrConnection* htcon);
+	String getChallenge(const String& hostname);
 private:
-	OW_String getHash( const OW_String &sUserName, const OW_String &sRealm );
-	OW_String generateNewNonce( void );
-
-	OW_Array< OW_String > m_asNonces;
-	OW_Array< time_t > m_aDateTimes;
-	OW_Map<OW_String, OW_String> m_passwdMap;
+	String getHash( const String &sUserName, const String &sRealm );
+	String generateNewNonce( void );
+	Array< String > m_asNonces;
+	Array< time_t > m_aDateTimes;
+	Map<String, String> m_passwdMap;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

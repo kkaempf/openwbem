@@ -27,26 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ASSOCIATOR_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 #define OW_ASSOCIATOR_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
 
-class OW_AssociatorProviderInfo : public OW_ProviderInfoBase<OW_InstClassInfo>
+namespace OpenWBEM
+{
+
+class AssociatorProviderInfo : public ProviderInfoBase<InstClassInfo>
 {
 public:
 	// pull the names into this class
-	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfo;
-	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfoArray;
-
+	using ProviderInfoBase<InstClassInfo>::ClassInfo;
+	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
+typedef Array<AssociatorProviderInfo> AssociatorProviderInfoArray;
+extern template class ProviderInfoBase<InstClassInfo>;
 
-typedef OW_Array<OW_AssociatorProviderInfo> OW_AssociatorProviderInfoArray;
-
-extern template class OW_ProviderInfoBase<OW_InstClassInfo>;
+} // end namespace OpenWBEM
 
 #endif
-
-

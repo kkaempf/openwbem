@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPLenLimitIStream.hpp"
 #include <fstream.h>
 #include <stdlib.h>
-
 
 int main(int argc, char* argv[])
 {
@@ -42,7 +40,7 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 	ifstream inFile(argv[1]);
-	OW_HTTPLenLimitIStream istr(inFile, atoi(argv[2]));
+	HTTPLenLimitIStream istr(inFile, atoi(argv[2]));
 	cout << "** First " << argv[2] << endl;
 	while (istr)
 	{
@@ -61,3 +59,4 @@ int main(int argc, char* argv[])
 	}
 	cout << endl;
 }
+

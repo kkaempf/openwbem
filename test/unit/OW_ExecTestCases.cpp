@@ -35,6 +35,8 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Array.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ExecTestCases::setUp()
 {
 }
@@ -45,16 +47,16 @@ void OW_ExecTestCases::tearDown()
 
 void OW_ExecTestCases::testSafePopen()
 {
-	OW_Array<OW_String> command;
+	Array<String> command;
 	command.push_back("/bin/cat");
-	OW_PopenStreams rval = OW_Exec::safePopen( command );
+	PopenStreams rval = Exec::safePopen( command );
 	rval.in()->write("hello world\n", 12);
 	rval.in()->close();
-	OW_String out = rval.out()->readAll();
+	String out = rval.out()->readAll();
 	rval.getExitStatus();
 	unitAssert(out == "hello world\n");
 
-	OW_PopenStreams rval2 = OW_Exec::safePopen( command, "hello to world\n" );
+	PopenStreams rval2 = Exec::safePopen( command, "hello to world\n" );
 	rval2.in()->close();
 	out = rval2.out()->readAll();
 	rval2.getExitStatus();
@@ -63,23 +65,23 @@ void OW_ExecTestCases::testSafePopen()
 
 void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 {
-	OW_String output;
+	String output;
 	int processstatus(0);
-    OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/true").tokenize(), output, processstatus);
+    Exec::executeProcessAndGatherOutput(String("/bin/true").tokenize(), output, processstatus);
 	unitAssert(output.empty());
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
 
 	processstatus = 0;
 	output.erase();
-    OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/false").tokenize(), output, processstatus);
+    Exec::executeProcessAndGatherOutput(String("/bin/false").tokenize(), output, processstatus);
 	unitAssert(output.empty());
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 1);
 
 	processstatus = 0;
 	output.erase();
-    OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/echo -n false").tokenize(), output, processstatus);
+    Exec::executeProcessAndGatherOutput(String("/bin/echo -n false").tokenize(), output, processstatus);
 	unitAssert(output == "false");
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
@@ -89,14 +91,14 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	output.erase();
 	try
 	{
-		OW_StringArray cmd;
+		StringArray cmd;
 		cmd.push_back("/bin/sh");
 		cmd.push_back("-c");
 		cmd.push_back("echo before; sleep 2; echo after");
-		OW_Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 1);
+		Exec::executeProcessAndGatherOutput(cmd, output, processstatus, 1);
 		unitAssert(0);
 	}
-	catch (const OW_ExecTimeoutException& e)
+	catch (const ExecTimeoutException& e)
 	{
 	}
 	unitAssert(output == "before\n");
@@ -106,10 +108,10 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 	output.erase();
 	try
 	{
-		OW_Exec::executeProcessAndGatherOutput(OW_String("/bin/echo 12345").tokenize(), output, processstatus, -1, 4);
+		Exec::executeProcessAndGatherOutput(String("/bin/echo 12345").tokenize(), output, processstatus, -1, 4);
 		unitAssert(0);
 	}
-	catch (const OW_ExecBufferFullException& e)
+	catch (const ExecBufferFullException& e)
 	{
 	}
 	unitAssert(output == "1234");

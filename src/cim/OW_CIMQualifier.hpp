@@ -27,33 +27,29 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMQUALIFIER_HPP_INCLUDE_GUARD_
 #define OW_CIMQUALIFIER_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
 #include "OW_CIMElement.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMQualifier class encapsulates the data and functionality pertinent
+ * The CIMQualifier class encapsulates the data and functionality pertinent
  * to a CIM qualifier that is found on classes, properties and methods.
- * OW_CIMQualifier objects are ref counted and copy on write.
+ * CIMQualifier objects are ref counted and copy on write.
  */
-class OW_CIMQualifier : public OW_CIMElement
+class CIMQualifier : public CIMElement
 {
 public:
-
 	struct QUALData;
-
 	// Meta qualifiers
 	static const char* const CIM_QUAL_ASSOCIATION;
 	static const char* const CIM_QUAL_INDICATION;
-
 	// Standard qualifiers
 	static const char* const CIM_QUAL_ABSTRACT;
 	static const char* const CIM_QUAL_AGGREGATE;
@@ -96,210 +92,175 @@ public:
 	static const char* const CIM_QUAL_WEAK;
 	static const char* const CIM_QUAL_WRITE;
 	static const char* const CIM_QUAL_PROVIDER;
-
 	/**
-	 * Create a new OW_CIMQualifier object.
+	 * Create a new CIMQualifier object.
 	 */
-	OW_CIMQualifier();
-
+	CIMQualifier();
 	/**
-	 * Create a NULL OW_CIMQualifier object.
+	 * Create a NULL CIMQualifier object.
 	 */
-	explicit OW_CIMQualifier(OW_CIMNULL_t);
-
+	explicit CIMQualifier(CIMNULL_t);
 	/**
-	 * Create an OW_CIMQualifier with a given name.
-	 * @param name	The name for this OW_CIMQualifier
+	 * Create an CIMQualifier with a given name.
+	 * @param name	The name for this CIMQualifier
 	 */
-	OW_CIMQualifier(const OW_String& name);
-
+	CIMQualifier(const String& name);
 	/**
-	 * Create an OW_CIMQualifier with a given name.
-	 * @param name	The name for this OW_CIMQualifier as a NULL terminated
+	 * Create an CIMQualifier with a given name.
+	 * @param name	The name for this CIMQualifier as a NULL terminated
 	 *		string.
 	 */
-	OW_CIMQualifier(const char* name);
-
+	CIMQualifier(const char* name);
 	/**
-	 * Create an OW_CIMQualifier with a name and type
+	 * Create an CIMQualifier with a name and type
 	 * @param qtype The qualifier type that this qualifier is based upon.
 	 */
-	OW_CIMQualifier(const OW_CIMQualifierType& qtype);
-
+	CIMQualifier(const CIMQualifierType& qtype);
 	/**
 	 * Copy constructor
-	 * @param arg The OW_CIMQualifier that this object will be a copy of.
+	 * @param arg The CIMQualifier that this object will be a copy of.
 	 */
-	OW_CIMQualifier(const OW_CIMQualifier& arg);
-
+	CIMQualifier(const CIMQualifier& arg);
 	/**
-	 * Destroy this OW_CIMQualifier class.
+	 * Destroy this CIMQualifier class.
 	 */
-	~OW_CIMQualifier();
-
+	~CIMQualifier();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMQualifier to assign to this object.
+	 * @param arg The CIMQualifier to assign to this object.
 	 * @return A reference to this object after the assignment is made.
 	 */
-	OW_CIMQualifier& operator= (const OW_CIMQualifier& arg);
-
+	CIMQualifier& operator= (const CIMQualifier& arg);
 	/**
 	 * @return true if this is the key qualifier. Otherwise false.
 	 */
 	bool isKeyQualifier() const;
-
 	/**
 	 * @return true if this is the association qualifier. Otherwise false.
 	 */
 	bool isAssociationQualifier() const;
-
 	/**
-	 * @return The OW_CIMValue for this qualifier
+	 * @return The CIMValue for this qualifier
 	 */
-	OW_CIMValue getValue() const;
-
+	CIMValue getValue() const;
 	/**
-	 * @return The OW_CIMValue for this qualifier.
-	 * @throws OW_NULLValueException if the value is NULL.
+	 * @return The CIMValue for this qualifier.
+	 * @throws NULLValueException if the value is NULL.
 	 */
-	OW_CIMValue getValueT() const;
-
+	CIMValue getValueT() const;
 	/**
 	 * Set the value for this qualifier
-	 * @param value The OW_CIMValue for this qualifier.
+	 * @param value The CIMValue for this qualifier.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifier& setValue(const OW_CIMValue& value);
-
+	CIMQualifier& setValue(const CIMValue& value);
 	/**
 	 * Set default type for this qualifier
 	 * @param qtype The qualifier type that this qualifier is based upon.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifier& setDefaults(const OW_CIMQualifierType& qtype);
-
+	CIMQualifier& setDefaults(const CIMQualifierType& qtype);
 	/**
 	 * Get default type for this qualifier
 	 * @return The default type for this qualifier
 	 */
-	OW_CIMQualifierType getDefaults() const;
-
+	CIMQualifierType getDefaults() const;
 	/**
 	 * Determine if this qualifier has the given flavor.
 	 * @param flavor Check if the qualifier has this flavor.
 	 * @return true if this qualifier has the specified flavor. Otherwise false.
 	 */
-	bool hasFlavor(const OW_CIMFlavor& flavor) const;
-
+	bool hasFlavor(const CIMFlavor& flavor) const;
 	/**
-	 * Add an OW_CIMFlavor to this qualifier
+	 * Add an CIMFlavor to this qualifier
 	 * @param newFlavor The flavor to add to this qualifier
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifier& addFlavor(const OW_CIMFlavor& flavor);
-
+	CIMQualifier& addFlavor(const CIMFlavor& flavor);
 	/**
-	 * Remove a flavor from this OW_CIMQualifier.
+	 * Remove a flavor from this CIMQualifier.
 	 * @param flavor The integral value of the flavor to remove from this
 	 * 	qualifier.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifier& removeFlavor(OW_Int32 flavor);
-
+	CIMQualifier& removeFlavor(Int32 flavor);
 	/**
 	 * @return true if this qualifier has a value. Otherwise false.
 	 */
 	bool hasValue() const;
-
 	/**
 	 * Check for equality against another qualifier.
-	 * @param arg The OW_CIMQualifier to check for equality against.
+	 * @param arg The CIMQualifier to check for equality against.
 	 * @return true if this qualifier has the same name as the given qualifier.
 	 * Otherwise false.
 	 */
-	bool equals(const OW_CIMQualifier& arg) const;
-
+	bool equals(const CIMQualifier& arg) const;
 	/**
 	 * @return The list of flavors this qualifier has.
 	 */
-	OW_CIMFlavorArray getFlavor() const;
-
+	CIMFlavorArray getFlavor() const;
 	/**
 	 * Flag this qualifier as being propagated.
 	 * @param propagated	If true, then qualifier is flagged as propagated.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifier& setPropagated(bool propagated=true);
-
+	CIMQualifier& setPropagated(bool propagated=true);
 	/**
 	 * @return true if qualifier is propagated. Otherwise false.
 	 */
 	bool getPropagated() const;
-
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 	/**
-	 * @return The name of this qualifier as an OW_String.
+	 * @return The name of this qualifier as an String.
 	 */
-	virtual OW_String getName() const;
-
+	virtual String getName() const;
 	/**
 	 * Set the name of this qualifier.
-	 * @param name The new name of this qualifier as an OW_String.
+	 * @param name The new name of this qualifier as an String.
 	 */
-	virtual void setName(const OW_String& name);
+	virtual void setName(const String& name);
 	
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return The MOF representation of this qualifier as an OW_String.
+	 * @return The MOF representation of this qualifier as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
 	 * @return The string representation of this qualifier.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
 	 * Create a key qualifier
 	 */
-	static OW_CIMQualifier createKeyQualifier();
-
+	static CIMQualifier createKeyQualifier();
 private:
-
-	OW_COWReference<QUALData> m_pdata;
-
-	friend bool operator<(const OW_CIMQualifier& x, const OW_CIMQualifier& y);
+	COWReference<QUALData> m_pdata;
+	friend bool operator<(const CIMQualifier& x, const CIMQualifier& y);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

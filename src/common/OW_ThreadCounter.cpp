@@ -33,71 +33,67 @@
 #include "OW_Assertion.hpp"
 #include "OW_TimeoutException.hpp"
 
-OW_ThreadCounter::OW_ThreadCounter(OW_Int32 maxThreads)
+namespace OpenWBEM
+{
+
+ThreadCounter::ThreadCounter(Int32 maxThreads)
 	: m_maxThreads(maxThreads)
 	, m_runCount(0)
 {}
-
-OW_ThreadCounter::~OW_ThreadCounter()
+ThreadCounter::~ThreadCounter()
 {}
-
 void
-OW_ThreadCounter::incThreadCount(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+ThreadCounter::incThreadCount(UInt32 sTimeout, UInt32 usTimeout)
 {
-	OW_NonRecursiveMutexLock l(m_runCountGuard);
+	NonRecursiveMutexLock l(m_runCountGuard);
 	while (m_runCount >= m_maxThreads)
 	{
 		if (!m_runCountCondition.timedWait(l, sTimeout, usTimeout))
-			OW_THROW(OW_TimeoutException, "OW_ThreadCounter::incThreadCount timedout");
+			OW_THROW(TimeoutException, "ThreadCounter::incThreadCount timedout");
 	}
 	++m_runCount;
 }
-
 void
-OW_ThreadCounter::decThreadCount()
+ThreadCounter::decThreadCount()
 {
-	OW_NonRecursiveMutexLock l(m_runCountGuard);
+	NonRecursiveMutexLock l(m_runCountGuard);
 	OW_ASSERT(m_runCount > 0);
 	--m_runCount;
 	m_runCountCondition.notifyAll();
 }
-
-OW_Int32
-OW_ThreadCounter::getThreadCount()
+Int32
+ThreadCounter::getThreadCount()
 {
-	OW_NonRecursiveMutexLock l(m_runCountGuard);
+	NonRecursiveMutexLock l(m_runCountGuard);
 	return m_runCount;
 }
-
 void
-OW_ThreadCounter::waitForAll(OW_UInt32 sTimeout, OW_UInt32 usTimeout)
+ThreadCounter::waitForAll(UInt32 sTimeout, UInt32 usTimeout)
 {
-	OW_NonRecursiveMutexLock runCountLock(m_runCountGuard);
+	NonRecursiveMutexLock runCountLock(m_runCountGuard);
 	while(m_runCount > 0)
 	{
 		if (!m_runCountCondition.timedWait(runCountLock, sTimeout, usTimeout))
-			OW_THROW(OW_TimeoutException, "OW_ThreadCounter::waitForAll timedout");
+			OW_THROW(TimeoutException, "ThreadCounter::waitForAll timedout");
 	}
 }
-
 void
-OW_ThreadCounter::setMax(OW_Int32 maxThreads)
+ThreadCounter::setMax(Int32 maxThreads)
 {
-	OW_NonRecursiveMutexLock runCountLock(m_runCountGuard);
+	NonRecursiveMutexLock runCountLock(m_runCountGuard);
 	m_maxThreads = maxThreads;
 	m_runCountCondition.notifyAll();
 }
-
-OW_ThreadCountDecrementer::OW_ThreadCountDecrementer(OW_ThreadCounterRef const& x)
+ThreadCountDecrementer::ThreadCountDecrementer(ThreadCounterRef const& x)
 	: m_counter(x)
 {}
-
-OW_ThreadCountDecrementer::~OW_ThreadCountDecrementer()
+ThreadCountDecrementer::~ThreadCountDecrementer()
 {}
-
 void
-OW_ThreadCountDecrementer::doNotifyThreadDone(OW_Thread *)
+ThreadCountDecrementer::doNotifyThreadDone(Thread *)
 {
 	m_counter->decThreadCount();
 }
+
+} // end namespace OpenWBEM
 

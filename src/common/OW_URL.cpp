@@ -27,16 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_URL.hpp"
 #include "OW_Exception.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_URL::toString() const
+namespace OpenWBEM
 {
-	OW_String retval;
+
+//////////////////////////////////////////////////////////////////////////////
+String
+URL::toString() const
+{
+	String retval;
 	if (!this->protocol.empty())
 	{
 		retval = this->protocol + "://";
@@ -48,7 +50,7 @@ OW_URL::toString() const
 	retval += this->host;
 	if ( this->port > 0 )
 	{
-		retval += ":" + OW_String(static_cast<OW_UInt32>(this->port));
+		retval += ":" + String(static_cast<UInt32>(this->port));
 	}
 	if ( !this->path.empty())
 	{
@@ -56,35 +58,30 @@ OW_URL::toString() const
 	}
 	return retval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_URL::OW_URL()
+URL::URL()
 : protocol(), username(), password(), host(), port(0), path()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_URL::OW_URL(const OW_String& sUrl): port(0)
+URL::URL(const String& sUrl): port(0)
 {
-	OW_String sURL = sUrl;
+	String sURL = sUrl;
 	sURL.trim();
-
 	size_t iBeginIndex = 0;
 	size_t iEndIndex = sURL.indexOf( "://" );
-
-	if ( iEndIndex != OW_String::npos )
+	if ( iEndIndex != String::npos )
 	{
 		if ( iEndIndex > 0 )
 			protocol = sURL.substring( 0, iEndIndex ).toLowerCase();
 		iBeginIndex = iEndIndex + 3;
 	}
-
 	iEndIndex = sURL.indexOf( "@", iBeginIndex );
-	if ( iEndIndex != OW_String::npos )
+	if ( iEndIndex != String::npos )
 	{
-		OW_String sNamePass = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );
+		String sNamePass = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );
 		iBeginIndex = sNamePass.indexOf( ":" );
-		if ( iBeginIndex != OW_String::npos )
+		if ( iBeginIndex != String::npos )
 		{
 			if ( iBeginIndex > 0 )
 				username = sNamePass.substring( 0, iBeginIndex );
@@ -95,18 +92,16 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 			username = sNamePass;
 		iBeginIndex = iEndIndex + 1;
 	}
-
 	iEndIndex = sURL.indexOf( "/", iBeginIndex );
-	if ( iEndIndex != OW_String::npos )
+	if ( iEndIndex != String::npos )
 	{
 		path = sURL.substring( iEndIndex );
 		sURL = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );
 	}
 	else
 		sURL = sURL.substring( iBeginIndex );
-
 	iBeginIndex = sURL.indexOf( ":" );
-	if ( iBeginIndex != OW_String::npos )
+	if ( iBeginIndex != String::npos )
 	{
 		host = sURL.substring( 0, iBeginIndex );
 		if ( sURL.length() > iBeginIndex+1 )
@@ -115,9 +110,9 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 			{
 				port = sURL.substring( iBeginIndex + 1 ).toUInt16();
 			}
-			catch (const OW_StringConversionException&)
+			catch (const StringConversionException&)
 			{
-				OW_THROW(OW_Exception, OW_String("Invalid URL: " + sUrl).c_str());
+				OW_THROW(Exception, String("Invalid URL: " + sUrl).c_str());
 			}
 		}
 	}
@@ -125,8 +120,9 @@ OW_URL::OW_URL(const OW_String& sUrl): port(0)
 		host = sURL;
 	else
 	{
-		OW_THROW(OW_Exception, OW_String("Invalid URL: " + sUrl).c_str());
+		OW_THROW(Exception, String("Invalid URL: " + sUrl).c_str());
 	}
 }
 
+} // end namespace OpenWBEM
 

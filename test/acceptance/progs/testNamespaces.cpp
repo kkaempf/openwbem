@@ -43,12 +43,13 @@ using std::cin;
 using std::cout;
 using std::endl;
 using std::find;
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 
-// create our own TEST_ASSERT, because assert and OW_ASSERT will be turned off
+// create our own TEST_ASSERT, because assert and ASSERT will be turned off
 // in non-debug mode.
-#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -72,116 +73,116 @@ main(int argc, char* argv[])
 
 		if (argc == 3)
 		{
-			OW_String sockDumpOut = argv[2];
-			OW_String sockDumpIn = argv[2];
+			String sockDumpOut = argv[2];
+			String sockDumpIn = argv[2];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
-			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 		else
 		{
-			OW_SocketBaseImpl::setDumpFiles("","");
+			SocketBaseImpl::setDumpFiles("","");
 		}
 
-		OW_String url(argv[1]);
-		OW_URL owurl(url);
+		String url(argv[1]);
+		URL owurl(url);
 
-		OW_CIMProtocolIFCRef client(new OW_HTTPClient(url));
+		CIMProtocolIFCRef client(new HTTPClient(url));
 
-		OW_CIMOMHandleIFCRef chRef;
+		CIMOMHandleIFCRef chRef;
 		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		{
-			chRef = new OW_BinaryCIMOMHandle(client);
+			chRef = new BinaryCIMOMHandle(client);
 		}
 		else
 		{
-			chRef = new OW_CIMXMLCIMOMHandle(client);
+			chRef = new CIMXMLCIMOMHandle(client);
 		}
 
-		OW_StringArray namespaces;
+		StringArray namespaces;
 
 		// first check for the existence of root
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root")) != namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root")) != namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root")) != namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root")) != namespaces.end());
 
-		OW_CIMNameSpaceUtils::create__Namespace(chRef,"root/testnamespace");
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) != namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) != namespaces.end());
+		CIMNameSpaceUtils::create__Namespace(chRef,"root/testnamespace");
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) != namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) != namespaces.end());
 		
-		OW_CIMNameSpaceUtils::create__Namespace(chRef,"root/testnamespace/deep");
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep")) != namespaces.end());
+		CIMNameSpaceUtils::create__Namespace(chRef,"root/testnamespace/deep");
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) != namespaces.end());
 		
-		OW_CIMNameSpaceUtils::create__Namespace(chRef,"root/testnamespace/deep/deep2");
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) != namespaces.end());
+		CIMNameSpaceUtils::create__Namespace(chRef,"root/testnamespace/deep/deep2");
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) != namespaces.end());
 
 		// __Namespace automatically deletes sub-namespaces, make sure deep and deep2 are gone
-		OW_CIMNameSpaceUtils::delete__Namespace(chRef,"root/testnamespace/deep");
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) == namespaces.end());
+		CIMNameSpaceUtils::delete__Namespace(chRef,"root/testnamespace/deep");
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
 		
-		OW_CIMNameSpaceUtils::delete__Namespace(chRef,"root/testnamespace");
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) == namespaces.end());
+		CIMNameSpaceUtils::delete__Namespace(chRef,"root/testnamespace");
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_SHALLOW);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enum__Namespace(chRef, "root", E_DEEP);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) == namespaces.end());
 
 		// Now test CIM_Namespace
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root")) != namespaces.end());
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root")) != namespaces.end());
 
-		OW_CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace");
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) != namespaces.end());
+		CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace");
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) != namespaces.end());
 		
-		OW_CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace/deep");
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep")) != namespaces.end());
+		CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace/deep");
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) != namespaces.end());
 		
-		OW_CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace/deep/deep2");
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) != namespaces.end());
+		CIMNameSpaceUtils::createCIM_Namespace(chRef,"root/testnamespace/deep/deep2");
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) != namespaces.end());
 
 		// CIM_Namespace doesn't delete sub-namespaces, make sure deep is gone and deep2 is still there.
-		OW_CIMNameSpaceUtils::deleteCIM_Namespace(chRef,"root/testnamespace/deep");
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) != namespaces.end());
+		CIMNameSpaceUtils::deleteCIM_Namespace(chRef,"root/testnamespace/deep");
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) != namespaces.end());
 		
-		OW_CIMNameSpaceUtils::deleteCIM_Namespace(chRef,"root/testnamespace");
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) != namespaces.end());
+		CIMNameSpaceUtils::deleteCIM_Namespace(chRef,"root/testnamespace");
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) != namespaces.end());
 
-		OW_CIMNameSpaceUtils::deleteCIM_Namespace(chRef,"root/testnamespace/deep/deep2");
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace")) == namespaces.end());
-		namespaces = OW_CIMNameSpaceUtils::enumCIM_Namespace(chRef);
-		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), OW_String("root/testnamespace/deep/deep2")) == namespaces.end());
+		CIMNameSpaceUtils::deleteCIM_Namespace(chRef,"root/testnamespace/deep/deep2");
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace")) == namespaces.end());
+		namespaces = CIMNameSpaceUtils::enumCIM_Namespace(chRef);
+		TEST_ASSERT(find(namespaces.begin(), namespaces.end(), String("root/testnamespace/deep/deep2")) == namespaces.end());
 
 
 		return 0;
 
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 	}

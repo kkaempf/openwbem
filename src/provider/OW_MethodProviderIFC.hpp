@@ -27,24 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_METHODPROVIDERIFC_HPP_
 #define OW_METHODPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
+namespace OpenWBEM
+{
+
 /**
  * This is the interface implemented by method providers.  These providers are
  * used to provide implementation for all methods of CIM classes.
  */
-class OW_MethodProviderIFC: public OW_ProviderBaseIFC
+class MethodProviderIFC: public ProviderBaseIFC
 {
 public:
-	virtual ~OW_MethodProviderIFC();
-
+	virtual ~MethodProviderIFC();
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters
 	 * is to be invoked.
@@ -52,27 +52,27 @@ public:
 	 * @param cop Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
-	 * @param inParams An array of OW_CIMValues which are the input parameters
+	 * @param inParams An array of CIMValues which are the input parameters
 	 * 	for this method.
-	 * @param outParams An array of OW_CIMValues which are the output
+	 * @param outParams An array of CIMValues which are the output
 	 * 	parameters for this method.
 	 *
-	 * @returns OW_CIMValue - The return value of the method.  Must be a
-	 *    valid OW_CIMValue.
+	 * @returns CIMValue - The return value of the method.  Must be a
+	 *    valid CIMValue.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual OW_CIMValue invokeMethod(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& path,
-			const OW_String& methodName,
-			const OW_CIMParamValueArray& in,
-			OW_CIMParamValueArray& out ) = 0;
+	virtual CIMValue invokeMethod(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& path,
+			const String& methodName,
+			const CIMParamValueArray& in,
+			CIMParamValueArray& out ) = 0;
 };
+//typedef IntrusiveReference< MethodProviderIFC > MethodProviderIFCRef;
+typedef Reference< MethodProviderIFC > MethodProviderIFCRef;
 
-//typedef OW_IntrusiveReference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
-typedef OW_Reference< OW_MethodProviderIFC > OW_MethodProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,142 +27,124 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_BOOL_HPP_INCLUDE_GUARD_
 #define OW_BOOL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include <iosfwd>
 
-class OW_String;
+namespace OpenWBEM
+{
 
+class String;
 /**
- * The OW_Bool class is an abstraction for the boolean data type.  It's not
+ * The Bool class is an abstraction for the boolean data type.  It's not
  * meant to be a replacement for bool.  Use it if you need a type that
  * supports toString(), readObject(), or writeObject().  It's also useful for
  * preventing implicit conversion of char*->bool.  Using it can make overloading
  * functions safer (ie it'll be less likely the compiler will pick the wrong
  * overload.)
  */
-class OW_Bool
+class Bool
 {
 public:
 		
 	/**
-	 * Create an OW_Bool object initialized to false.
+	 * Create an Bool object initialized to false.
 	 */
-	OW_Bool() : m_val(false) {}
-
+	Bool() : m_val(false) {}
 	/**
-	 * Create an OW_Bool object initialized to a given boolean value.
-	 * @param val The boolean value to initialize this OW_Bool to
+	 * Create an Bool object initialized to a given boolean value.
+	 * @param val The boolean value to initialize this Bool to
 	 */
-	OW_Bool(bool val) : m_val(val) {}
-
+	Bool(bool val) : m_val(val) {}
 	/**
 	 * Copy constructor
-	 * @param arg The OW_Bool to make this object a copy of.
+	 * @param arg The Bool to make this object a copy of.
 	 */
-	OW_Bool(const OW_Bool& arg) : m_val(arg.m_val) {}
-
+	Bool(const Bool& arg) : m_val(arg.m_val) {}
 	/**
 	 * Assignment operator
-	 * @param arg The OW_Bool to assign to this one.
+	 * @param arg The Bool to assign to this one.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	OW_Bool& operator= (const OW_Bool& arg) { m_val = arg.m_val; return *this; }
-
+	Bool& operator= (const Bool& arg) { m_val = arg.m_val; return *this; }
 	/**
 	 * Equality operator
-	 * @param arg bool value to compare this OW_Bool object against.
+	 * @param arg bool value to compare this Bool object against.
 	 * @return true If the given bool value is equal to this one. Otherwise
 	 * false
 	 */
 	bool operator== (const bool arg) const { return m_val == arg; }
-
 	/**
 	 * Equality operator
-	 * @param arg The OW_Bool object to compare this one with.
-	 * @return true If the given OW_Bool object is equal to this one. Otherwise
+	 * @param arg The Bool object to compare this one with.
+	 * @return true If the given Bool object is equal to this one. Otherwise
 	 * false
 	 */
-	bool operator== (const OW_Bool& arg) const { return m_val == arg.m_val; }
-
+	bool operator== (const Bool& arg) const { return m_val == arg.m_val; }
 	/**
 	 * Inequality operator
-	 * @param arg bool value to compare this OW_Bool object against.
+	 * @param arg bool value to compare this Bool object against.
 	 * @return true If the given bool value is not equal to this one. Otherwise
 	 * false
 	 */
 	bool operator!= (const bool arg) const { return m_val != arg; }
-
 	/**
 	 * Inequality operator
-	 * @param arg The OW_Bool object to compare this one with.
-	 * @return true If the given OW_Bool object is not equal to this one.
+	 * @param arg The Bool object to compare this one with.
+	 * @return true If the given Bool object is not equal to this one.
 	 * Otherwise false
 	 */
-	bool operator!= (const OW_Bool& arg) const { return m_val != arg.m_val; }
-
+	bool operator!= (const Bool& arg) const { return m_val != arg.m_val; }
 	/**
-	 * @return The bool value of this OW_Bool object.
+	 * @return The bool value of this Bool object.
 	 */
 	operator bool() const { return m_val; }
-
 	/**
 	 * Negation operator
-	 * @return true if this OW_Bool operator has a value of false.
+	 * @return true if this Bool operator has a value of false.
 	 */
 	bool operator !() const { return !m_val; }
-
 	/**
 	 * @return The string representation of this object. If this object contains
 	 * a true value, the "true" is returned. Otherwise "false" is returned.
 	 */
-	OW_String toString() const;
-
+	String toString() const;
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	void writeObject(std::ostream& ostrm) const;
-
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	void readObject(std::istream& istrm);
-
 	/**
 	 * Less than operator (friend function)
-	 * @param b1 The first OW_Bool object to use in the comparison.
-	 * @param b2 The second OW_Bool object to use in the comparison.
+	 * @param b1 The first Bool object to use in the comparison.
+	 * @param b2 The second Bool object to use in the comparison.
 	 * @return true if b1 is less than b2. Otherwise false.
 	 */
-	friend bool operator< (const OW_Bool& b1, const OW_Bool& b2)
+	friend bool operator< (const Bool& b1, const Bool& b2)
 	{
 		return b1.m_val < b2.m_val;
 	}
-
-	friend bool operator!=(bool b1, OW_Bool b2)
+	friend bool operator!=(bool b1, Bool b2)
 	{
 		return b1 < b2.m_val;
 	}
-
 private:
-
 	// These are private/unimplemented to help prevent unintended errors of
 	// passing a pointer to the constructor.
-	OW_Bool(const void*);
-	OW_Bool(void*);
-	OW_Bool(volatile const void*);
-	OW_Bool(volatile void*);
-
+	Bool(const void*);
+	Bool(void*);
+	Bool(volatile const void*);
+	Bool(volatile void*);
 	bool m_val;
 };
+std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
-std::ostream& operator << (std::ostream& ostrm, const OW_Bool& arg);
-
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,34 +27,29 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_STACK_TRACE_HPP_
 #define OW_STACK_TRACE_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
-
 #include <iosfwd>
 
-class OW_StackTrace
+namespace OpenWBEM
+{
+
+class StackTrace
 {
 	public:
-
 		static void getStackTrace();
-
-		friend std::ostream& operator<<(std::ostream& ostr, const OW_StackTrace& out);
-
+		friend std::ostream& operator<<(std::ostream& ostr, const StackTrace& out);
 		const char* c_str() const
 		{
 			return m_trace.c_str();
 		}
-
 	private:
-		OW_StackTrace(const OW_String& trace);
-
-		OW_String m_trace;
+		StackTrace(const String& trace);
+		String m_trace;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

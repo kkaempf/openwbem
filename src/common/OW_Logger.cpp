@@ -30,25 +30,26 @@
 #include "OW_config.h"
 #include "OW_Logger.hpp"
 #include "OW_MutexLock.hpp"
-OW_Mutex loggerMutex;
 
+namespace OpenWBEM
+{
+
+Mutex loggerMutex;
 //////////////////////////////////////////////////////////////////////////////
-OW_Logger::~OW_Logger()
+Logger::~Logger()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Logger::logMessage( const OW_LogLevel l, const OW_String& s ) const
+Logger::logMessage( const LogLevel l, const String& s ) const
 {
-	OW_MutexLock mtxlck( loggerMutex );
+	MutexLock mtxlck( loggerMutex );
 	if ( l <= m_level )
 		doLogMessage( s, l );
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Logger::setLogLevel( const OW_String& l )
+Logger::setLogLevel( const String& l )
 {
 	if (l.equalsIgnoreCase("custinfo"))
 	{
@@ -63,4 +64,6 @@ OW_Logger::setLogLevel( const OW_String& l )
 		setLogLevel(ErrorLevel);
 	}
 }
+
+} // end namespace OpenWBEM
 

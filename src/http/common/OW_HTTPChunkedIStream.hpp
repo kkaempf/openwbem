@@ -27,15 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #ifndef OW_HTTPChunkedIStream_HPP_INCLUDE_GUARD_
 #define OW_HTTPChunkedIStream_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_HTTPChunkException.hpp"
 #include "OW_BaseStreamBuffer.hpp"
@@ -44,96 +41,80 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_HTTPChunkedIStream;
-
-class OW_HTTPChunkedIStreamBuffer : public OW_BaseStreamBuffer
+class HTTPChunkedIStream;
+class HTTPChunkedIStreamBuffer : public BaseStreamBuffer
 {
 	public:
-		OW_HTTPChunkedIStreamBuffer(std::istream& istr,
-				OW_HTTPChunkedIStream* chunkedIstr);
-
+		HTTPChunkedIStreamBuffer(std::istream& istr,
+				HTTPChunkedIStream* chunkedIstr);
 		void resetInput();
-		~OW_HTTPChunkedIStreamBuffer();
-
+		~HTTPChunkedIStreamBuffer();
 	private:
 		std::istream& m_istr;
 		int m_inLen;
 		int m_inPos;
-
 		bool m_isEOF;
 		virtual int buffer_from_device(char* c, int n);
-
-		OW_HTTPChunkedIStream* m_pChunker;
-
+		HTTPChunkedIStream* m_pChunker;
 		// don't allow copying.
-		OW_HTTPChunkedIStreamBuffer(const OW_HTTPChunkedIStreamBuffer&);
-		OW_HTTPChunkedIStreamBuffer operator=(const OW_HTTPChunkedIStreamBuffer&);
+		HTTPChunkedIStreamBuffer(const HTTPChunkedIStreamBuffer&);
+		HTTPChunkedIStreamBuffer operator=(const HTTPChunkedIStreamBuffer&);
 };
-
-class OW_HTTPChunkedIStreamBase 
+class HTTPChunkedIStreamBase 
 {
 public:
-	OW_HTTPChunkedIStreamBase(std::istream& istr, 
-		OW_HTTPChunkedIStream* chunkedIStr) : m_strbuf(istr, chunkedIStr) {}
-	OW_HTTPChunkedIStreamBuffer m_strbuf;
+	HTTPChunkedIStreamBase(std::istream& istr, 
+		HTTPChunkedIStream* chunkedIStr) : m_strbuf(istr, chunkedIStr) {}
+	HTTPChunkedIStreamBuffer m_strbuf;
 };
-
-class OW_HTTPChunkedIStream : private OW_HTTPChunkedIStreamBase, 
-	public OW_CIMProtocolIStreamIFC
+class HTTPChunkedIStream : private HTTPChunkedIStreamBase, 
+	public CIMProtocolIStreamIFC
 {
 	public:
 		/**
-		 * Convert a istream& into a OW_HTTPChunkedIStream.  The istream&
+		 * Convert a istream& into a HTTPChunkedIStream.  The istream&
 		 * passed in is wrapped to that the new input available from this
 		 * is de-chunked.
 		 * @param istr The istream& to be wrapped (de-chunked).
 		 */
-		OW_HTTPChunkedIStream(std::istream& istr);
-		~OW_HTTPChunkedIStream();
-
+		HTTPChunkedIStream(std::istream& istr);
+		~HTTPChunkedIStream();
 		/**
 		 * Get the original istream&.
 		 * @return a istream& pointing to the original istream.
 		 */
 		std::istream& getInputStreamOrig() { return m_istr; }
-
 		/**
 		 * Get the HTTP trailers from the http response.
 		 * This must be called after EOF is hit on the input stream.
 		 * @return the trailers.
 		 */
-		OW_Map<OW_String, OW_String> getTrailers() const { return m_trailerMap; }
-
+		Map<String, String> getTrailers() const { return m_trailerMap; }
 		/**
 		 * Clear the EOF/BAD bits, so that input can continue.
 		 */
 		void resetInput();
-
 		virtual void checkForError() const;
-		virtual OW_String getTrailer(const OW_String& key) const;
-
+		virtual String getTrailer(const String& key) const;
 	private:
-
 		std::istream& m_istr;
 		// incoming trailer info
-		OW_Map<OW_String, OW_String> m_trailerMap;
-
+		Map<String, String> m_trailerMap;
 		/**
-		 * A callback function, invoked by the OW_HTTPChunkingStreamBuffer.
+		 * A callback function, invoked by the HTTPChunkingStreamBuffer.
 		 * After a zero length chunk is encountered, this is called to build
 		 * the trailer map, if there is one
 		 */
 		void buildTrailerMap();
-
 		// don't allow copying
-		OW_HTTPChunkedIStream(const OW_HTTPChunkedIStream&);
-		OW_HTTPChunkedIStream& operator=(const OW_HTTPChunkedIStream&);
-
-		friend class OW_HTTPChunkedIStreamBuffer;
+		HTTPChunkedIStream(const HTTPChunkedIStream&);
+		HTTPChunkedIStream& operator=(const HTTPChunkedIStream&);
+		friend class HTTPChunkedIStreamBuffer;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -35,66 +35,60 @@
 #include "OW_CIMValueCast.hpp"
 #include "OW_Bool.hpp"
 
-///////////////////////////////////////////////////////////////////////////////	
-OW_WQLInstancePropertySource::~OW_WQLInstancePropertySource()
+namespace OpenWBEM
 {
-}
 
 ///////////////////////////////////////////////////////////////////////////////	
-bool OW_WQLInstancePropertySource::evaluateISA(const OW_String &propertyName, const OW_String &className) const 
+WQLInstancePropertySource::~WQLInstancePropertySource()
 {
-	OW_StringArray propNames = propertyName.tokenize(".");
+}
+///////////////////////////////////////////////////////////////////////////////	
+bool WQLInstancePropertySource::evaluateISA(const String &propertyName, const String &className) const 
+{
+	StringArray propNames = propertyName.tokenize(".");
 	if (propNames.empty())
 	{
 		return false;
 	}
-
 	if (propNames[0] == ci.getClassName())
 	{
 		propNames.remove(0);
 	}
-
 	return evaluateISAAux(ci, propNames, className);
 }
-
 ///////////////////////////////////////////////////////////////////////////////	
-bool OW_WQLInstancePropertySource::getValue(const OW_String &propertyName, OW_WQLOperand &value) const 
+bool WQLInstancePropertySource::getValue(const String &propertyName, WQLOperand &value) const 
 {
-	OW_StringArray propNames = propertyName.tokenize(".");
+	StringArray propNames = propertyName.tokenize(".");
 	if (propNames.empty())
 	{
 		return false;
 	}
-
 	if (propNames[0].equalsIgnoreCase(ci.getClassName()))
 	{
 		propNames.remove(0);
 	}
-
 	return getValueAux(ci, propNames, value);
 }
-
 ///////////////////////////////////////////////////////////////////////////////	
-bool OW_WQLInstancePropertySource::evaluateISAAux(const OW_CIMInstance& ci, OW_StringArray propNames, const OW_String &className) const 
+bool WQLInstancePropertySource::evaluateISAAux(const CIMInstance& ci, StringArray propNames, const String &className) const 
 {
 	if (propNames.empty())
 	{
 		return classIsDerivedFrom(ci.getClassName(), className);
 	}
-
-	OW_CIMProperty p = ci.getProperty(propNames[0]);
+	CIMProperty p = ci.getProperty(propNames[0]);
 	if (!p)
 	{
 		return false;
 	}
-
-	OW_CIMValue v = p.getValue();
+	CIMValue v = p.getValue();
 	switch (v.getType())
 	{
-		case OW_CIMDataType::EMBEDDEDINSTANCE:
+		case CIMDataType::EMBEDDEDINSTANCE:
 		{
 			propNames.remove(0);
-			OW_CIMInstance embed;
+			CIMInstance embed;
 			v.get(embed);
 			if (!embed)
 			{
@@ -106,11 +100,10 @@ bool OW_WQLInstancePropertySource::evaluateISAAux(const OW_CIMInstance& ci, OW_S
 			return false;
 	}
 }
-
 ///////////////////////////////////////////////////////////////////////////////	
-bool OW_WQLInstancePropertySource::classIsDerivedFrom(const OW_String& cls, const OW_String& className) const
+bool WQLInstancePropertySource::classIsDerivedFrom(const String& cls, const String& className) const
 {
-	OW_String curClassName = cls;
+	String curClassName = cls;
 	while (!curClassName.empty())
 	{
 		if (curClassName.equalsIgnoreCase(className))
@@ -118,77 +111,73 @@ bool OW_WQLInstancePropertySource::classIsDerivedFrom(const OW_String& cls, cons
 			return true;
 		}
 		// didn't match, so try the superclass of curClassName
-		OW_CIMClass cls2 = m_hdl->getClass(m_ns, curClassName);
+		CIMClass cls2 = m_hdl->getClass(m_ns, curClassName);
 		curClassName = cls2.getSuperClass();
-
 	}
 	return false;
 }
-
 ///////////////////////////////////////////////////////////////////////////////	
-bool OW_WQLInstancePropertySource::getValueAux(const OW_CIMInstance& ci, OW_StringArray propNames, OW_WQLOperand& value)
+bool WQLInstancePropertySource::getValueAux(const CIMInstance& ci, StringArray propNames, WQLOperand& value)
 {
 	if (propNames.empty())
 	{
 		return false;
 	}
-
-	OW_CIMProperty p = ci.getProperty(propNames[0]);
+	CIMProperty p = ci.getProperty(propNames[0]);
 	if (!p)
 	{
 		return false;
 	}
-
-	OW_CIMValue v = p.getValue();
+	CIMValue v = p.getValue();
 	switch (v.getType())
 	{
-		case OW_CIMDataType::DATETIME:
-		case OW_CIMDataType::CIMNULL:
-			value = OW_WQLOperand();
+		case CIMDataType::DATETIME:
+		case CIMDataType::CIMNULL:
+			value = WQLOperand();
 			break;
-		case OW_CIMDataType::UINT8:
-		case OW_CIMDataType::SINT8:
-		case OW_CIMDataType::UINT16:
-		case OW_CIMDataType::SINT16:
-		case OW_CIMDataType::UINT32:
-		case OW_CIMDataType::SINT32:
-		case OW_CIMDataType::UINT64:
-		case OW_CIMDataType::SINT64:
-		case OW_CIMDataType::CHAR16:
+		case CIMDataType::UINT8:
+		case CIMDataType::SINT8:
+		case CIMDataType::UINT16:
+		case CIMDataType::SINT16:
+		case CIMDataType::UINT32:
+		case CIMDataType::SINT32:
+		case CIMDataType::UINT64:
+		case CIMDataType::SINT64:
+		case CIMDataType::CHAR16:
 		{
-			OW_Int64 x;
-			OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::SINT64).get(x);
-			value = OW_WQLOperand(x, WQL_INTEGER_VALUE_TAG);
+			Int64 x;
+			CIMValueCast::castValueToDataType(v, CIMDataType::SINT64).get(x);
+			value = WQLOperand(x, WQL_INTEGER_VALUE_TAG);
 			break;
 		}
-		case OW_CIMDataType::STRING:
-			value = OW_WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
+		case CIMDataType::STRING:
+			value = WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
 			break;
-		case OW_CIMDataType::BOOLEAN:
+		case CIMDataType::BOOLEAN:
 		{
-			OW_Bool b;
+			Bool b;
 			v.get(b);
-			value = OW_WQLOperand(b, WQL_BOOLEAN_VALUE_TAG);
+			value = WQLOperand(b, WQL_BOOLEAN_VALUE_TAG);
 			break;
 		}
-		case OW_CIMDataType::REAL32:
-		case OW_CIMDataType::REAL64:
+		case CIMDataType::REAL32:
+		case CIMDataType::REAL64:
 		{
-			OW_Real64 x;
-			OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::REAL64).get(x);
-			value = OW_WQLOperand(x, WQL_DOUBLE_VALUE_TAG);
+			Real64 x;
+			CIMValueCast::castValueToDataType(v, CIMDataType::REAL64).get(x);
+			value = WQLOperand(x, WQL_DOUBLE_VALUE_TAG);
 			break;
 		}
-		case OW_CIMDataType::REFERENCE:
-			value = OW_WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
+		case CIMDataType::REFERENCE:
+			value = WQLOperand(v.toString(), WQL_STRING_VALUE_TAG);
 			break;
-		case OW_CIMDataType::EMBEDDEDCLASS:
-			value = OW_WQLOperand();
+		case CIMDataType::EMBEDDEDCLASS:
+			value = WQLOperand();
 			break;
-		case OW_CIMDataType::EMBEDDEDINSTANCE:
+		case CIMDataType::EMBEDDEDINSTANCE:
 		{
 			propNames.remove(0);
-			OW_CIMInstance embed;
+			CIMInstance embed;
 			v.get(embed);
 			if (!embed)
 			{
@@ -198,10 +187,11 @@ bool OW_WQLInstancePropertySource::getValueAux(const OW_CIMInstance& ci, OW_Stri
 		}
 		break;
 		default:
-			value = OW_WQLOperand();
+			value = WQLOperand();
 			break;
 	}
-
 	return true;
 }
+
+} // end namespace OpenWBEM
 

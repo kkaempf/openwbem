@@ -27,92 +27,76 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-
 #include "OW_ThreadPool.hpp"
 #include "OW_Array.hpp"
 #include "OW_Thread.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
-
 #include <deque>
-
 #ifdef OW_DEBUG		
 #include <iostream>
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
+namespace OpenWBEM
+{
 
-class OW_ThreadPoolImpl
+/////////////////////////////////////////////////////////////////////////////
+class ThreadPoolImpl
 {
 public:
 	// returns true if work is placed in the queue to be run and false if not.
-	virtual bool addWork(const OW_RunnableRef& work, bool blockWhenFull) = 0;
-
-	virtual void shutdown(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs) = 0;
-
+	virtual bool addWork(const RunnableRef& work, bool blockWhenFull) = 0;
+	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs) = 0;
 	virtual void waitForEmptyQueue() = 0;
-
-	virtual ~OW_ThreadPoolImpl()
+	virtual ~ThreadPoolImpl()
 	{
 	}
-
 };
-
 namespace {
-
 class FixedSizePoolImpl;
-
 /////////////////////////////////////////////////////////////////////////////
-class FixedSizePoolWorkerThread : public OW_Thread
+class FixedSizePoolWorkerThread : public Thread
 {
 public:
 	FixedSizePoolWorkerThread(FixedSizePoolImpl* thePool)
-		: OW_Thread()
+		: Thread()
 		, m_thePool(thePool)
 	{
 	}
-
-	virtual OW_Int32 run();
-
+	virtual Int32 run();
 private:
 	FixedSizePoolImpl* m_thePool;
 };
-
 /////////////////////////////////////////////////////////////////////////////
-class CommonPoolImpl : public OW_ThreadPoolImpl
+class CommonPoolImpl : public ThreadPoolImpl
 {
 protected:
-	CommonPoolImpl(OW_UInt32 maxQueueSize)
+	CommonPoolImpl(UInt32 maxQueueSize)
 		: m_maxQueueSize(maxQueueSize)
 		, m_queueClosed(false)
 		, m_shutdown(false)
 	{
 	}
-
 	// assumes that m_queueLock is locked
 	bool queueIsFull() const
 	{
 		return ((m_maxQueueSize > 0) && (m_queue.size() == m_maxQueueSize));
 	}
-
 	// assumes that m_queueLock is locked
 	bool queueClosed() const
 	{
 		return m_shutdown || m_queueClosed;
 	}
-
-	bool finishOffWorkInQueue(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	bool finishOffWorkInQueue(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
-		OW_NonRecursiveMutexLock l(m_queueLock);
+		NonRecursiveMutexLock l(m_queueLock);
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
 			return false;
 		}
-
 		m_queueClosed = true;
 		
 		if (finishWorkInQueue)
@@ -130,47 +114,41 @@ protected:
 				}
 			}
 		}
-
 		m_shutdown = true;
 		return true;
 	}
-
 	virtual void waitForEmptyQueue()
 	{
-		OW_NonRecursiveMutexLock l(m_queueLock);
+		NonRecursiveMutexLock l(m_queueLock);
 		while (m_queue.size() != 0)
 		{
 			m_queueEmpty.wait(l);
 		}
 	}
-
 	void shutdownThreads(int shutdownSecs)
 	{
 		if (shutdownSecs >= 0)
 		{
 			// Set cooperative thread cancellation flag
-			for (OW_UInt32 i = 0; i < m_threads.size(); ++i)
+			for (UInt32 i = 0; i < m_threads.size(); ++i)
 			{
 				m_threads[i]->cooperativeCancel();
 			}
-
 			// If any still haven't shut down, kill them.
-			for (OW_UInt32 i = 0; i < m_threads.size(); ++i)
+			for (UInt32 i = 0; i < m_threads.size(); ++i)
 			{
 				m_threads[i]->definitiveCancel(shutdownSecs);
 			}
 		}
-
 		// Clean up after the threads and/or wait for them to exit.
-		for (OW_UInt32 i = 0; i < m_threads.size(); ++i)
+		for (UInt32 i = 0; i < m_threads.size(); ++i)
 		{
 			m_threads[i]->join();
 		}
 	}
-
-	OW_RunnableRef getWorkFromQueue(bool waitForWork)
+	RunnableRef getWorkFromQueue(bool waitForWork)
 	{
-		OW_NonRecursiveMutexLock l(m_queueLock);
+		NonRecursiveMutexLock l(m_queueLock);
 		while ((m_queue.size() == 0) && (!m_shutdown))
 		{
 			if (waitForWork)
@@ -179,96 +157,80 @@ protected:
 			}
 			else
 			{
-				return OW_RunnableRef();
+				return RunnableRef();
 			}
 		}
-
 		// check to see if a shutdown started while the thread was sleeping
 		if (m_shutdown)
 		{
-			return OW_RunnableRef();
+			return RunnableRef();
 		}
-
-		OW_RunnableRef work = m_queue.front();
+		RunnableRef work = m_queue.front();
 		m_queue.pop_front();
-
 		// handle threads waiting in addWork()
 		if (m_queue.size() == (m_maxQueueSize - 1))
 		{
 			m_queueNotFull.notifyAll();
 		}
-
 		// handle waiting shutdown thread or callers of waitForEmptyQueue()
 		if (m_queue.size() == 0)
 		{
 			m_queueEmpty.notifyAll();
 		}
-
 		return work;
 	}
-
 	// pool characteristics
-	OW_UInt32 m_maxQueueSize;
-
+	UInt32 m_maxQueueSize;
 	// pool state
-	OW_Array<OW_ThreadRef> m_threads;
-	std::deque<OW_RunnableRef> m_queue;
+	Array<ThreadRef> m_threads;
+	std::deque<RunnableRef> m_queue;
 	bool m_queueClosed;
-
 	bool m_shutdown;
-
 	// pool synchronization
-	OW_NonRecursiveMutex m_queueLock;
-	OW_Condition m_queueNotFull;
-	OW_Condition m_queueEmpty;
-	OW_Condition m_queueNotEmpty;
-
+	NonRecursiveMutex m_queueLock;
+	Condition m_queueNotFull;
+	Condition m_queueEmpty;
+	Condition m_queueNotEmpty;
 };
-
 class FixedSizePoolImpl : public CommonPoolImpl
 {
 public:
-	FixedSizePoolImpl(OW_UInt32 numThreads, OW_UInt32 maxQueueSize)
+	FixedSizePoolImpl(UInt32 numThreads, UInt32 maxQueueSize)
 		: CommonPoolImpl(maxQueueSize)
 	{
 		// create the threads and start them up.
 		m_threads.reserve(numThreads);
-		for (OW_UInt32 i = 0; i < numThreads; ++i)
+		for (UInt32 i = 0; i < numThreads; ++i)
 		{
-			m_threads.push_back(OW_ThreadRef(new FixedSizePoolWorkerThread(this)));
+			m_threads.push_back(ThreadRef(new FixedSizePoolWorkerThread(this)));
 		}
-		for (OW_UInt32 i = 0; i < numThreads; ++i)
+		for (UInt32 i = 0; i < numThreads; ++i)
 		{
 			m_threads[i]->start();
 		}
 	}
-
 	// returns true if work is placed in the queue to be run and false if not.
-	virtual bool addWork(const OW_RunnableRef& work, bool blockWhenFull)
+	virtual bool addWork(const RunnableRef& work, bool blockWhenFull)
 	{
 		// check precondition: work != NULL
 		if (!work)
 		{
 			return false;
 		}
-
-		OW_NonRecursiveMutexLock l(m_queueLock);
+		NonRecursiveMutexLock l(m_queueLock);
 		if (!blockWhenFull && queueIsFull())
 		{
 			return false;
 		}
-
 		while( queueIsFull() && !queueClosed() )
 		{
 			m_queueNotFull.wait(l);
 		}
-
 		// the pool is in the process of being destroyed
 		if (queueClosed()) 
 		{
 			return false;
 		}
-
 		m_queue.push_back(work);
 		
 		// if the queue was empty, there may be workers just sitting around, so we need to wake them up!
@@ -278,134 +240,115 @@ public:
 		}
 		return true;
 	}
-
-	virtual void shutdown(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
 		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
 		{
 			return;
 		}
-
 		// Wake up any workers so they recheck shutdown flag
 		m_queueNotEmpty.notifyAll();
 		m_queueNotFull.notifyAll();
-
 		shutdownThreads(shutdownSecs);
 	}
-
 	virtual ~FixedSizePoolImpl()
 	{
 		// can't let exception escape the destructor
 		try
 		{
 			// Make sure the pool is shutdown.
-			shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+			shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 		}
 		catch (...)
 		{
 		}
 	}
-
 private:
-
 	friend class FixedSizePoolWorkerThread;
 };
-
-void runRunnable(const OW_RunnableRef& work)
+void runRunnable(const RunnableRef& work)
 {
-	// don't let exceptions escape, we need to keep going, except for OW_ThreadCancelledException, in which case we need to stop.
+	// don't let exceptions escape, we need to keep going, except for ThreadCancelledException, in which case we need to stop.
 	try
 	{
 		work->run();
 	}
-	catch (OW_ThreadCancelledException&)
+	catch (ThreadCancelledException&)
 	{
 		throw;
 	}
-	catch (OW_Exception& ex)
+	catch (Exception& ex)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_ThreadPool worker: " << ex << std::endl;
+		std::cerr << "!!! Exception: " << ex.type() << " caught in ThreadPool worker: " << ex << std::endl;
 #endif
 	}
 	catch (...)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Unknown Exception caught in OW_ThreadPool worker" << std::endl;
+		std::cerr << "!!! Unknown Exception caught in ThreadPool worker" << std::endl;
 #endif
 	}
 }
-
-OW_Int32 FixedSizePoolWorkerThread::run()
+Int32 FixedSizePoolWorkerThread::run()
 {
 	while (true)
 	{
 		// check queue for work
-		OW_RunnableRef work = m_thePool->getWorkFromQueue(true);
+		RunnableRef work = m_thePool->getWorkFromQueue(true);
 		if (!work)
 		{
 			return 0;
 		}
-
 		runRunnable(work);
 	}
 	return 0;
 }
-
 class DynamicSizePoolImpl;
-
 /////////////////////////////////////////////////////////////////////////////
-class DynamicSizePoolWorkerThread : public OW_Thread
+class DynamicSizePoolWorkerThread : public Thread
 {
 public:
 	DynamicSizePoolWorkerThread(DynamicSizePoolImpl* thePool)
-		: OW_Thread()
+		: Thread()
 		, m_thePool(thePool)
 	{
 	}
-
-	virtual OW_Int32 run();
-
+	virtual Int32 run();
 private:
 	DynamicSizePoolImpl* m_thePool;
 };
-
 /////////////////////////////////////////////////////////////////////////////
 class DynamicSizePoolImpl : public CommonPoolImpl
 {
 public:
-	DynamicSizePoolImpl(OW_UInt32 maxThreads, OW_UInt32 maxQueueSize)
+	DynamicSizePoolImpl(UInt32 maxThreads, UInt32 maxQueueSize)
 		: CommonPoolImpl(maxQueueSize)
 		, m_maxThreads(maxThreads)
 	{
 	}
-
 	// returns true if work is placed in the queue to be run and false if not.
-	virtual bool addWork(const OW_RunnableRef& work, bool blockWhenFull)
+	virtual bool addWork(const RunnableRef& work, bool blockWhenFull)
 	{
 		// check precondition: work != NULL
 		if (!work)
 		{
 			return false;
 		}
-
-		OW_NonRecursiveMutexLock l(m_queueLock);
+		NonRecursiveMutexLock l(m_queueLock);
 		if (!blockWhenFull && queueIsFull())
 		{
 			return false;
 		}
-
 		while( queueIsFull() && !queueClosed() )
 		{
 			m_queueNotFull.wait(l);
 		}
-
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
 			return false;
 		}
-
 		m_queue.push_back(work);
 		
 		// clean up dead threads (before we add the new one, so we don't need to check it)
@@ -417,72 +360,59 @@ public:
 				m_threads.remove(i--);
 			}
 		}
-
 		// Start up a new thread to handle the work in the queue.
 		if (m_threads.size() < m_maxThreads)
 		{
-			OW_ThreadRef theThread(new DynamicSizePoolWorkerThread(this));
+			ThreadRef theThread(new DynamicSizePoolWorkerThread(this));
 			m_threads.push_back(theThread);
 			theThread->start();
 		}
-
 		return true;
 	}
-
-	virtual void shutdown(OW_ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+	virtual void shutdown(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 	{
 		if (!finishOffWorkInQueue(finishWorkInQueue, shutdownSecs))
 		{
 			return;
 		}
-
 		// Wake up any workers so they recheck shutdown flag
 		m_queueNotFull.notifyAll();
-
 		shutdownThreads(shutdownSecs);
 	}
-
 	virtual ~DynamicSizePoolImpl()
 	{
 		// can't let exception escape the destructor
 		try
 		{
 			// Make sure the pool is shutdown.
-			shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+			shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 		}
 		catch (...)
 		{
 		}
 	}
-
 private:
 	// pool characteristics
-	OW_UInt32 m_maxThreads;
-
+	UInt32 m_maxThreads;
 	friend class DynamicSizePoolWorkerThread;
 };
-
-OW_Int32 DynamicSizePoolWorkerThread::run()
+Int32 DynamicSizePoolWorkerThread::run()
 {
 	while (true)
 	{
 		// check queue for work
-		OW_RunnableRef work = m_thePool->getWorkFromQueue(false);
+		RunnableRef work = m_thePool->getWorkFromQueue(false);
 		if (!work)
 		{
 			return 0;
 		}
-
 		runRunnable(work);
 	}
 	return 0;
 }
-
-
 } // end anonymous namespace
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadPool::OW_ThreadPool(PoolType poolType, OW_UInt32 numThreads, OW_UInt32 maxQueueSize)
+ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize)
 {
 	switch (poolType)
 	{
@@ -494,47 +424,41 @@ OW_ThreadPool::OW_ThreadPool(PoolType poolType, OW_UInt32 numThreads, OW_UInt32 
 			break;
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-bool OW_ThreadPool::addWork(const OW_RunnableRef& work)
+bool ThreadPool::addWork(const RunnableRef& work)
 {
 	return m_impl->addWork(work, true);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-bool OW_ThreadPool::tryAddWork(const OW_RunnableRef& work)
+bool ThreadPool::tryAddWork(const RunnableRef& work)
 {
 	return m_impl->addWork(work, false);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_ThreadPool::shutdown(EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
+void ThreadPool::shutdown(EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
 {
 	m_impl->shutdown(finishWorkInQueue, shutdownSecs);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_ThreadPool::waitForEmptyQueue()
+void ThreadPool::waitForEmptyQueue()
 {
 	m_impl->waitForEmptyQueue();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadPool::~OW_ThreadPool()
+ThreadPool::~ThreadPool()
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadPool::OW_ThreadPool(const OW_ThreadPool& x)
+ThreadPool::ThreadPool(const ThreadPool& x)
 	: m_impl(x.m_impl)
 {
 }
-
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadPool& OW_ThreadPool::operator=(const OW_ThreadPool& x)
+ThreadPool& ThreadPool::operator=(const ThreadPool& x)
 {
 	m_impl = x.m_impl;
 	return *this;
 }
+
+} // end namespace OpenWBEM
 

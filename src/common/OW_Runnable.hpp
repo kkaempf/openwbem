@@ -27,33 +27,31 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_RUNNABLE_HPP_INCLUDE_GUARD_
 #define OW_RUNNABLE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 
-class OW_Runnable;
-typedef OW_Reference<OW_Runnable> OW_RunnableRef;
+namespace OpenWBEM
+{
 
+class Runnable;
+typedef Reference<Runnable> RunnableRef;
 /**
  * There are two methods for creating a thread of execution in the OW systems.
- * One is to derive from OW_Thread and implement the run method and call start
+ * One is to derive from Thread and implement the run method and call start
  * on instances of the class to get the thread running.
- * The other method is to derive from OW_Runnable and pass references of the
- * derived class to OW_ThreadPool::addWork()
+ * The other method is to derive from Runnable and pass references of the
+ * derived class to ThreadPool::addWork()
  */
-class OW_Runnable
+class Runnable
 {
 public:
-	virtual ~OW_Runnable();
+	virtual ~Runnable();
 	virtual void run() = 0;
-
 };
 
-
+} // end namespace OpenWBEM
 
 #endif
-

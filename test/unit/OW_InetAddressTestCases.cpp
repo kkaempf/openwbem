@@ -33,6 +33,8 @@
 #include "OW_InetAddressTestCases.hpp"
 #include "OW_SocketAddress.hpp"
 
+using namespace OpenWBEM;
+
 void OW_InetAddressTestCases::setUp()
 {
 }
@@ -43,10 +45,10 @@ void OW_InetAddressTestCases::tearDown()
 
 void OW_InetAddressTestCases::testSomething()
 {
-	OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
-	OW_String addrName = addr.getName();
+	SocketAddress addr = SocketAddress::getAnyLocalHost();
+	String addrName = addr.getName();
 	unitAssert(addrName.length());
-	//unitAssert(addrName.indexOf('.') != OW_String::npos);
+	//unitAssert(addrName.indexOf('.') != String::npos);
 }
 
 Test* OW_InetAddressTestCases::suite()

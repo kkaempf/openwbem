@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_ProviderEnvironmentIFC::~OW_ProviderEnvironmentIFC()
+ProviderEnvironmentIFC::~ProviderEnvironmentIFC()
 {
 }
+
+} // end namespace OpenWBEM
 

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_MOFGrammar.hpp"
 #include "OW_HTTPClient.hpp"
@@ -44,7 +43,6 @@
 #include "OW_CIMRepository.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include <iostream>
-
 #ifdef OW_HAVE_GETOPT_H
 #include <getopt.h>
 #else
@@ -52,60 +50,55 @@
 #include <unistd.h> // for getopt on Linux
 #endif
 
+using namespace OpenWBEM;
+using namespace OpenWBEM::MOF;
+
 using std::cout;
 using std::cin;
 using std::cerr;
 using std::endl;
-
-class GetLoginInfo : public OW_ClientAuthCBIFC
+class GetLoginInfo : public ClientAuthCBIFC
 {
 	public:
-		bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd, const OW_String& details)
+		bool getCredentials(const String& realm, String& name,
+				String& passwd, const String& details)
 		{
 			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
-			name = OW_String::getLine(cin);
-			passwd = OW_GetPass::getPass("Enter the password for " +
+			name = String::getLine(cin);
+			passwd = GetPass::getPass("Enter the password for " +
 				name + ": ");
 			return true;
 		}
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class TheErrorHandler: public OW_MofParserErrorHandlerIFC
+class TheErrorHandler: public ParserErrorHandlerIFC
 {
 public:
-	TheErrorHandler() : OW_MofParserErrorHandlerIFC() {}
+	TheErrorHandler() : ParserErrorHandlerIFC() {}
 	virtual ~TheErrorHandler(){}
-
 protected:
 	virtual void doFatalError(const char *error, const lineInfo& li )
 	{
 		cerr << "Fatal error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
 	}
-
 	virtual ParserAction doRecoverableError(const char *error, const lineInfo& li )
 	{
 		cerr << "Recoverable error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
 		return Ignore;
 	}
-
 	virtual void doProgressMessage( const char* message, const lineInfo& li )
 	{
 		cout << "File: " << li.filename << " Line: " << li.lineNum << ": " << message << endl;
 	}
-
 };
-
 static bool use_cim_repository = false;
-static OW_String repository_dir;
-static OW_String url_arg = "http://localhost";
-static OW_String namespace_arg = "root/cimv2";
-static OW_String encoding_arg = "cimxml";
-OW_StringArray filelist;
-
+static String repository_dir;
+static String url_arg = "http://localhost";
+static String namespace_arg = "root/cimv2";
+static String encoding_arg = "cimxml";
+StringArray filelist;
 #ifdef OW_HAVE_GETOPT_LONG
 //////////////////////////////////////////////////////////////////////////////
 static struct option   long_options[] =
@@ -128,9 +121,7 @@ static struct option   long_options[] =
     { 0, 0, 0, 0 }
 };
 #endif
-
 static const char* const short_options = "d:u:n:ce:sx:rpgwqI:ih";
-
 //////////////////////////////////////////////////////////////////////////////
 static int
 processCommandLineOptions(int argc, char** argv)
@@ -144,7 +135,6 @@ processCommandLineOptions(int argc, char** argv)
 		filelist.push_back(argv[3]);
 		return 0;
 	}
-
 #ifdef OW_HAVE_GETOPT_LONG
     int optndx = 0;
 	optind = 1;
@@ -161,19 +151,15 @@ processCommandLineOptions(int argc, char** argv)
 				use_cim_repository = true;
 				repository_dir = optarg;
 				break;
-
 			case 'u':
 				url_arg = optarg;
 				break;
-
 			case 'n':
 				namespace_arg = optarg;
 				break;
-
 			case 'e':
 				encoding_arg = optarg;
 				break;
-
 			default:
 				return -1;
 		}
@@ -188,54 +174,50 @@ processCommandLineOptions(int argc, char** argv)
 		while (optind < argc)
 			filelist.push_back(argv[optind++]);
 	}
-
 	return 0;
 }
-
-class coutLogger : public OW_Logger
+class coutLogger : public Logger
 {
-	virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const 
+	virtual void doLogMessage(const String &message, const LogLevel) const 
 	{
 		cout << message << endl;
 	}
 };
-
-class OW_MOFCompEnvironment : public OW_ServiceEnvironmentIFC
+class MOFCompEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual OW_LoggerRef getLogger() const 
+	virtual LoggerRef getLogger() const 
 	{
-		return OW_LoggerRef(new coutLogger);
+		return LoggerRef(new coutLogger);
 	}
-	virtual void setConfigItem(const OW_String &, const OW_String &, EOverwritePreviousFlag) 
+	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag) 
 	{
 	}
-	virtual bool authenticate(OW_String &, const OW_String &, OW_String &) 
+	virtual bool authenticate(String &, const String &, String &) 
 	{
 		return true;
 	}
-	virtual void addSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) 
+	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) 
 	{
-		OW_THROW(OW_Exception, "Unsupported");
+		OW_THROW(Exception, "Unsupported");
 	}
-	virtual void removeSelectable(OW_SelectableIFCRef, OW_SelectableCallbackIFCRef) 
+	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef) 
 	{
-		OW_THROW(OW_Exception, "Unsupported");
+		OW_THROW(Exception, "Unsupported");
 	}
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String &) 
+	virtual RequestHandlerIFCRef getRequestHandler(const String &) 
 	{
-		OW_THROW(OW_Exception, "Unsupported");
+		OW_THROW(Exception, "Unsupported");
 	}
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &, ESendIndicationsFlag, EBypassProvidersFlag) 
+	virtual CIMOMHandleIFCRef getCIMOMHandle(const String &, ESendIndicationsFlag, EBypassProvidersFlag) 
 	{
-		OW_THROW(OW_Exception, "Unsupported");
+		OW_THROW(Exception, "Unsupported");
 	}
-	virtual OW_String getConfigItem(const OW_String &, const OW_String &defRetVal) const 
+	virtual String getConfigItem(const String &, const String &defRetVal) const 
 	{
 		return defRetVal;
 	}
 };
-
 int main(int argc, char** argv)
 {
 	long errors = 0;
@@ -261,53 +243,49 @@ int main(int argc, char** argv)
 			cout << "  -h,--help: Print this help message\n";
 			return 1;
 		}
-
-		OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
-		OW_Reference<OW_CIMOMHandleIFC> handle;
+		Reference<ParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
+		Reference<CIMOMHandleIFC> handle;
 		if (use_cim_repository)
 		{
-			OW_ServiceEnvironmentIFCRef mofCompEnvironment(new OW_MOFCompEnvironment());
-			OW_RepositoryIFCRef cimRepository = OW_RepositoryIFCRef(new OW_CIMRepository(mofCompEnvironment));
+			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
+			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(mofCompEnvironment));
 			cimRepository->open(repository_dir);
 			try
 			{
-				cimRepository->createNameSpace(OW_CIMNameSpaceUtils::prepareNamespace(namespace_arg), OW_UserInfo(""));
+				cimRepository->createNameSpace(CIMNameSpaceUtils::prepareNamespace(namespace_arg), UserInfo(""));
 			}
-			catch (const OW_CIMException& e)
+			catch (const CIMException& e)
 			{
 				// ignore the already exists error.
-				if (e.getErrNo() != OW_CIMException::ALREADY_EXISTS)
+				if (e.getErrNo() != CIMException::ALREADY_EXISTS)
 				{
 					throw e;
 				}
 			}
-			handle = OW_CIMOMHandleIFCRef(new OW_MOFCompCIMOMHandle(cimRepository, OW_UserInfo("")));
+			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, UserInfo("")));
 		}
 		else
 		{
-			OW_URL url(url_arg);
-			OW_CIMProtocolIFCRef client;
-			client = new OW_HTTPClient(url_arg);
-
+			URL url(url_arg);
+			CIMProtocolIFCRef client;
+			client = new HTTPClient(url_arg);
 			// TODO: The /owbinary path part is deprecated, remove it post 3.0
 			if(encoding_arg == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
 			{
-				handle = OW_CIMOMHandleIFCRef(new OW_BinaryCIMOMHandle(client));
+				handle = CIMOMHandleIFCRef(new BinaryCIMOMHandle(client));
 			}
 			else if (encoding_arg == "cimxml")
 			{
-				handle = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(client));
+				handle = CIMOMHandleIFCRef(new CIMXMLCIMOMHandle(client));
 			}
 			else
 			{
 				cerr << "Invalid encoding.  Valid encodings: cimxml, owbinary" << endl;
 				return 1;
 			}
-			client->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
+			client->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
 		}
-
-
-		MofCompiler theCompiler(handle, namespace_arg, theErrorHandler);
+		Compiler theCompiler(handle, namespace_arg, theErrorHandler);
 		if (filelist.empty())
 		{
 			filelist.push_back("-"); // if they didn't specify a file, read from stdin.
@@ -316,15 +294,14 @@ int main(int argc, char** argv)
 		{
 			errors += theCompiler.compile(filelist[i]);
 		}
-
 		cout
 			<< "Compilation finished.  "
 			<< errors
 			<< " errors occurred." << endl;
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
-		cerr << "Caught OW_Exception: " << e.type() << endl;
+		cerr << "Caught Exception: " << e.type() << endl;
 		cerr << "File: " << e.getFile() << endl;
 		cerr << "Line: " << e.getLine() << endl;
 		cerr << "Msg: " << e.getMessage() << endl;
@@ -335,7 +312,7 @@ int main(int argc, char** argv)
 		cerr << "Caught unknown exception" << endl;
 		++errors;
 	}
-
 	return errors;
 }
+
 

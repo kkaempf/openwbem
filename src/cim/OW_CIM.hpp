@@ -27,19 +27,15 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIM_HPP_INCLUDE_GUARD_
 #define OW_CIM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Char16.hpp"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 #include "OW_CIMException.hpp"
-
 #include "OW_CIMFwd.hpp"
-
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMDataType.hpp"
@@ -58,6 +54,10 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"
 
+namespace OpenWBEM
+{
+
+
+} // end namespace OpenWBEM
 
 #endif
-

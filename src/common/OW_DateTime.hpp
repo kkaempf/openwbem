@@ -29,45 +29,44 @@
 *******************************************************************************/
 #ifndef OW_DATETIME_HPP_INCLUDE_GUARD_
 #define OW_DATETIME_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
-class OW_String;
 
 extern "C"
 {
 #include <time.h>
 }
 
+namespace OpenWBEM
+{
+
+class String;
+
 /**
- * The OW_DateTime class is an abstraction for date time data.
+ * The DateTime class is an abstraction for date time data.
  * It allows easy date/time adjustment, date/time arithmetic and
  * comparison.
  */
-class OW_DateTime
+class DateTime
 {
 public:
 	/**
-	 * Create a new OW_DateTime object that represents a 0 length interval.
+	 * Create a new DateTime object that represents a 0 length interval.
 	 */
-	OW_DateTime();
-
+	DateTime();
 	/**
-	 * Create a new OW_DateTime object from a string that contains a
+	 * Create a new DateTime object from a string that contains a
 	 * CIM DateTime formated string
-	 * @param str	An OW_String object that contains the CIM DateTime string
+	 * @param str	An String object that contains the CIM DateTime string
 	 */
-	OW_DateTime(const OW_String& str);
-
+	DateTime(const String& str);
 	/**
-	 * Create a OW_DateTime object that represents the given time.
+	 * Create a DateTime object that represents the given time.
 	 *
-	 * @param t      The epoch time that this OW_DateTime object will respresent
+	 * @param t      The epoch time that this DateTime object will respresent
 	 */
-	OW_DateTime(time_t t);
-
+	DateTime(time_t t);
 	/**
-	 * Create a new OW_DateTime object that represent the given date and time
+	 * Create a new DateTime object that represent the given date and time
 	 *
 	 * @param year   The year component of the date
 	 * @param month  The month component of the date
@@ -76,114 +75,96 @@ public:
 	 * @param minute The minute component of the time.
 	 * @param second The second component of the time.
 	 */
-	OW_DateTime(int year, int month, int day, int hour=0, int minute=0,
+	DateTime(int year, int month, int day, int hour=0, int minute=0,
 		int second=0);
-
 	/**
 	 * Destructor
 	 */
-	~OW_DateTime();
-
+	~DateTime();
 	/**
-	 * @return true if this OW_DateTime represents an interval.
+	 * @return true if this DateTime represents an interval.
 	 */
 	bool isInterval() const {  return m_isInterval; }
-
 	/**
-	 * Get the hour of the day for this OW_DateTime object 0-23
+	 * Get the hour of the day for this DateTime object 0-23
 	 *
 	 * @return
 	 */
 	int getHour() const;
-
 	/**
-	 * Get the minute of the hour for this OW_DateTime object 0-59
+	 * Get the minute of the hour for this DateTime object 0-59
 	 *
 	 * @return
 	 */
 	int getMinute() const;
-
 	/**
-	 * Get the second of the minute for this OW_DateTime object 0-59
+	 * Get the second of the minute for this DateTime object 0-59
 	 *
 	 * @return
 	 */
 	int getSecond() const;
-
 	/**
 	 * Get the day of the month (1-31)
 	 *
 	 * @return
 	 */
 	int getDay() const;
-
 	/**
 	 * @return The day of the week for the date represented by this object. This
 	 * will be a value in the range 0-6.
 	 */
 	int getDow() const;
-
 	/**
 	 * @return The month of the year. This will be a value in the range 1-12.
 	 */
 	int getMonth() const;
-
 	/**
 	 * @return The year. This value will include the century (e.g. 2001).
 	 */
 	int getYear() const;
-
 	/**
 	 * @return The number of seconds since Jan 1, 1970.
 	 */
 	time_t get() const;
-
 	/**
-	 * Set the hour component of this OW_DateTime object.
-	 * @param hour The new hour for this OW_DateTime object.
+	 * Set the hour component of this DateTime object.
+	 * @param hour The new hour for this DateTime object.
 	 */
 	void setHour(int hour);
-
 	/**
-	 * Set the minute component of this OW_DateTime object.
-	 * @param minute The new minute for this OW_DateTime object.
+	 * Set the minute component of this DateTime object.
+	 * @param minute The new minute for this DateTime object.
 	 */
 	void setMinute(int minute);
-
 	/**
-	 * Set the second component of this OW_DateTime object.
-	 * @param second The new second for this OW_DateTime object.
+	 * Set the second component of this DateTime object.
+	 * @param second The new second for this DateTime object.
 	 */
 	void setSecond(int second);
-
 	/**
-	 * Set the time component of this OW_DateTime object.
+	 * Set the time component of this DateTime object.
 	 * @param hour The hour component of the time.
 	 * @param minute The minute component of the time.
 	 * @param second The second component of the time.
 	 */
 	void setTime(int hour, int minute, int second);
-
 	/**
-	 * Set the day component of this OW_DateTime object.
-	 * @param day The new day for this OW_DateTime object.
+	 * Set the day component of this DateTime object.
+	 * @param day The new day for this DateTime object.
 	 */
 	void setDay(int day);
-
 	/**
-	 * Set the month component of this OW_DateTime object.
-	 * @param month The new month for this OW_DateTime object.
+	 * Set the month component of this DateTime object.
+	 * @param month The new month for this DateTime object.
 	 */
 	void setMonth(int month);
-
 	/**
-	 * Set the year component of this OW_DateTime object.
-	 * @param year The new year for this OW_DateTime object.
+	 * Set the year component of this DateTime object.
+	 * @param year The new year for this DateTime object.
 	 */
 	void setYear(int year);
-
 	/**
-	 * Set this OW_DateTime object with a time_t value.
+	 * Set this DateTime object with a time_t value.
 	 * @param t A time_t value that represents the number of seconds from
 	 *		Jan 1, 1970.
 	 */
@@ -192,9 +173,8 @@ public:
 		m_time = t;
 		m_isInterval = false;
 	}
-
 	/**
-	 * Set the date and time for this OW_DateTime.
+	 * Set the date and time for this DateTime.
 	 * @param year The new year component for this object.
 	 * @param month The new month component for this object.
 	 * @param day The new day component for this object.
@@ -203,18 +183,15 @@ public:
 	 * @param second The new second component for this object.
 	 */
 	void set(int year, int month, int day, int hour, int minute, int second);
-
 	/**
-	 * Set this OW_DateTime to the current system time.
+	 * Set this DateTime to the current system time.
 	 */
 	void setToCurrent();
-
 	/**
 	 * Add days to the date represented by this object.
 	 * @param days The number of days to add to this object.
 	 */
 	void addDays(int days);
-
 	/**
 	 * Add week to the date represented by this object.
 	 * @param weeks The number of weeks to add to this object.
@@ -223,19 +200,16 @@ public:
 	{
 		addDays(weeks * 7);
 	}
-
 	/**
 	 * Add months to the date represented by this object.
 	 * @param months The number of months to add to this object.
 	 */
 	void addMonths(int months);
-
 	/**
 	 * Add years to the date represent by this object.
 	 * @param years The number of years to add to this object.
 	 */
 	void addYears(int years);
-
 	/**
 	 * Add seconds to the date represented by this object.
 	 * @param seconds The number of seconds to add to this object.
@@ -244,7 +218,6 @@ public:
 	{
 		m_time += seconds;
 	}
-
 	/**
 	 * Add minutes to the date represented by this object.
 	 * @param minutes The number of minutes to add to this object.
@@ -253,128 +226,112 @@ public:
 	{
 		m_time += minutes * 60;
 	}
-
 	/**
 	 * Add hours to the date represented by this object.
 	 * @param hours The number of hours to add to this object.
 	 */
 	void addHours(long hours) {  m_time += hours * 60 * 60; }
-
 	/**
 	 * Less than operator
-	 * @param tm The OW_DateTime object to compare this one to.
-	 * @return true if this object is less than the given OW_DateTime object.
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is less than the given DateTime object.
 	 */
-	bool operator< ( const OW_DateTime& tm ) const
+	bool operator< ( const DateTime& tm ) const
 	{
 		return m_time < tm.m_time;
 	}
-
 	/**
 	 * Greater than operator
-	 * @param tm The OW_DateTime object to compare this one to.
-	 * @return true if this object is greater than the given OW_DateTime object.
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is greater than the given DateTime object.
 	 */
-	bool operator> ( const OW_DateTime& tm ) const
+	bool operator> ( const DateTime& tm ) const
 	{
 		return m_time > tm.m_time;
 	}
-
 	/**
 	 * Equality operator
-	 * @param tm The OW_DateTime object to compare this one to.
-	 * @return true if this object is equal to the given OW_DateTime object.
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is equal to the given DateTime object.
 	 */
-	bool operator== ( const OW_DateTime& tm ) const
+	bool operator== ( const DateTime& tm ) const
 	{
 		return m_time == tm.m_time;
 	}
-
 	/**
 	 * Inequality operator
-	 * @param tm The OW_DateTime object to compare this one to.
-	 * @return true if this object is not equal to the given OW_DateTime object.
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is not equal to the given DateTime object.
 	 */
-	bool operator!= ( const OW_DateTime& tm ) const
+	bool operator!= ( const DateTime& tm ) const
 	{
 		return m_time != tm.m_time;
 	}
-
 	/**
 	 * Less than or equal operator
-	 * @param tm The OW_DateTime object to compare this one to.
-	 * @return true if this object is less than or equal to the given OW_DateTime
+	 * @param tm The DateTime object to compare this one to.
+	 * @return true if this object is less than or equal to the given DateTime
 	 * object.
 	 */
-	bool operator<= ( const OW_DateTime& tm ) const
+	bool operator<= ( const DateTime& tm ) const
 	{
 		return m_time <= tm.m_time;
 	}
-
 	/**
 	 * Greate than or equal operator
-	 * @param tm The OW_DateTime object to compare this one to.
+	 * @param tm The DateTime object to compare this one to.
 	 * @return true if this object is greater than or equal to the given
-	 * OW_DateTime object.
+	 * DateTime object.
 	 */
-	bool operator>= ( const OW_DateTime& tm ) const
+	bool operator>= ( const DateTime& tm ) const
 	{
 		return m_time >= tm.m_time;
 	}
-
 	/**
-	 * Add a given number of seconds to this OW_DateTime object.
+	 * Add a given number of seconds to this DateTime object.
 	 * @param seconds The number of seconds to add to this object.
 	 * @return A reference to this object.
 	 */
-	OW_DateTime& operator+= (long seconds)
+	DateTime& operator+= (long seconds)
 	{
 		addSeconds(seconds);
 		return *this;
 	}
-
 	/**
-	 * Subtract a given number of seconds from this OW_DateTime object.
+	 * Subtract a given number of seconds from this DateTime object.
 	 * @param seconds The number of seconds to subtract from this object.
 	 * @return A reference to this object.
 	 */
-	OW_DateTime& operator-= (long seconds)
+	DateTime& operator-= (long seconds)
 	{
 		addSeconds(-seconds);
 		return *this;
 	}
-
 	/**
 	 * Assignment operator
-	 * @param tm The OW_DateTime object to assign to this one.
+	 * @param tm The DateTime object to assign to this one.
 	 * @return A reference to this object.
 	 */
-	OW_DateTime& operator= (const OW_DateTime& tm)
+	DateTime& operator= (const DateTime& tm)
 	{
 		m_time = tm.m_time;
 		return *this;
 	}
-
 	/**
-	 * @return The string representation of this OW_DateTime object.
+	 * @return The string representation of this DateTime object.
 	 */
-	OW_String toString() const;
-
+	String toString() const;
 	/**
-	 * @return The string representation of this OW_DateTime object adjust to
+	 * @return The string representation of this DateTime object adjust to
 	 * GMT.
 	 */
-	OW_String toStringGMT() const;
-
+	String toStringGMT() const;
 private:
-
 	time_t	m_time;
 	bool	m_isInterval;
-
 	tm getTm() const;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-

@@ -29,14 +29,15 @@
 *******************************************************************************/
 #ifndef OW_XMLQWALIFIER_HPP_INCLUDE_GUARD_
 #define OW_XMLQWALIFIER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_XMLClass.hpp"
 #include "OW_CIMScope.hpp"
 
-class OW_CIMXMLParser;
+namespace OpenWBEM
+{
 
-class OW_XMLQualifier : public OW_XMLClass
+class CIMXMLParser;
+class XMLQualifier : public XMLClass
 {
 public:
 	static const char* const XMLP_QUALIFIERNAME;
@@ -44,29 +45,22 @@ public:
 	static const char* const paramISARRAY;
 	static const char* const paramQualifierFlavor;
 	static const char* const paramArraySize;
-
-	static void processQualifierDecl(OW_CIMXMLParser& result,
-		OW_CIMQualifierType& cimQualifier);
-
+	static void processQualifierDecl(CIMXMLParser& result,
+		CIMQualifierType& cimQualifier);
 protected:
-
 	/**
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	static OW_String getQualifierName(OW_CIMXMLParser& node);
-
-
-
+	static String getQualifierName(CIMXMLParser& node);
 private:
-
 	/**
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	static void processScope(OW_CIMXMLParser& parser,
-		OW_CIMQualifierType& cqt, const char* attrName,
-		OW_CIMScope::Scope scopeValue);
-
+	static void processScope(CIMXMLParser& parser,
+		CIMQualifierType& cqt, const char* attrName,
+		CIMScope::Scope scopeValue);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -43,6 +43,7 @@ using std::cout;
 using std::cin;
 using std::ifstream;
 using std::istream;
+using namespace OpenWBEM;
 
 // certificate verify callback.
 #ifdef OW_HAVE_OPENSSL
@@ -59,7 +60,7 @@ int main(int argc, char* argv[])
 		exit(2);
 	}
 
-	OW_String url(argv[1]);
+	String url(argv[1]);
 
 
 
@@ -67,27 +68,27 @@ int main(int argc, char* argv[])
 	{
 
 #ifdef OW_HAVE_OPENSSL
-		//OW_SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
+		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
 #endif
 
 		
-		OW_HTTPClient hc(url);
+		HTTPClient hc(url);
 	
 		if (argc == 3)
 		{
 			ifstream infile(argv[2]);
 			hc.setContentType("application/xml");
-			OW_Reference<std::iostream> tfsOut = hc.beginRequest("CIMBatch", "");
+			Reference<std::iostream> tfsOut = hc.beginRequest("CIMBatch", "");
 			*tfsOut << infile.rdbuf();
-			OW_CIMProtocolIStreamIFCRef istr = hc.endRequest(tfsOut, "CIMBatch", "");
+			CIMProtocolIStreamIFCRef istr = hc.endRequest(tfsOut, "CIMBatch", "");
 			cout << istr->rdbuf() << endl;
 			istr->checkForError();
 		}
 		else
 		{
-			OW_CIMFeatures cf = hc.getFeatures();
+			CIMFeatures cf = hc.getFeatures();
 			cout << "CIMProtocolVersion = " << cf.protocolVersion << endl;
-			cout << "CIMProduct = " << ((cf.cimProduct == OW_CIMFeatures::SERVER)?
+			cout << "CIMProduct = " << ((cf.cimProduct == CIMFeatures::SERVER)?
 				"CIMServer": "CIMListener") << endl;
 			cout << "CIMSupportedGroups = ";
 			for (size_t i = 0; i < cf.supportedGroups.size(); i++)
@@ -119,12 +120,12 @@ int main(int argc, char* argv[])
 
 	
 	}
-	catch(OW_HTTPException& he)
+	catch(HTTPException& he)
 	{
 		cerr << he << endl;
-		OW_String message = he.getMessage();
+		String message = he.getMessage();
 		size_t idx = message.indexOf("Unauthorized");
-		if (idx != OW_String::npos)
+		if (idx != String::npos)
 		{
 			exit(1);
 		}
@@ -133,12 +134,12 @@ int main(int argc, char* argv[])
 			exit(2);
 		}
 	}
-	catch(OW_Assertion& a)
+	catch(Assertion& a)
 	{
 		cerr << "Caught assertion in main(): " << a.getMessage() << endl;
 		exit(2);
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 		exit(2);
@@ -230,7 +231,7 @@ int ssl_verifycert_callback(X509* cert)
 		display_cert(pX509Cert);
 
 		cout << "\nDo you want to accept this+Certificate (Y/N)? ";
-		OW_String response = OW_String::getLine(cin);
+		String response = String::getLine(cin);
 		if(response.compareToIgnoreCase("Y") != 0)
 			return 0;
 	}

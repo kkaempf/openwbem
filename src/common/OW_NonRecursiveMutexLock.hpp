@@ -27,19 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NON_RECURSIVE_MUTEXLOCK_HPP_INCLUDE_GUARD_
 #define OW_NON_RECURSIVE_MUTEXLOCK_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_NonRecursiveMutex.hpp"
 #include <cassert>
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-class OW_NonRecursiveMutexLock
+class NonRecursiveMutexLock
 {
 public:
-	explicit OW_NonRecursiveMutexLock(OW_NonRecursiveMutex& mutex, bool initially_locked=true)
+	explicit NonRecursiveMutexLock(NonRecursiveMutex& mutex, bool initially_locked=true)
 		: m_mutex(&mutex), m_locked(false)
 	{
 		if(initially_locked)
@@ -47,8 +48,7 @@ public:
 			lock();
 		}
 	}
-
-	~OW_NonRecursiveMutexLock()
+	~NonRecursiveMutexLock()
 	{
 		try
 		{
@@ -62,34 +62,29 @@ public:
 			// don't let exceptions escape
 		}
 	}
-
 	void lock()
 	{
 		assert(m_locked == false);
 		m_mutex->acquire();
 		m_locked = true;
 	}
-
 	void release()
 	{
 		assert(m_locked == true);
 		m_mutex->release();
 		m_locked = false;
 	}
-
-	OW_NonRecursiveMutexLock(const OW_NonRecursiveMutexLock& arg)
+	NonRecursiveMutexLock(const NonRecursiveMutexLock& arg)
 		: m_mutex(arg.m_mutex), m_locked(arg.m_locked)
 	{
 		arg.m_locked = false;
 	}
-
 	bool isLocked() const
 	{
 		return m_locked;
 	}
-
 	/*
-	OW_NonRecursiveMutexLock& operator= (const OW_NonRecursiveMutexLock& arg)
+	NonRecursiveMutexLock& operator= (const NonRecursiveMutexLock& arg)
 	{
 		release();
 		m_locked = arg.m_locked;
@@ -98,16 +93,12 @@ public:
 		return *this;
 	}
 	*/
-
 private:
-
-
-	OW_NonRecursiveMutex* m_mutex;
+	NonRecursiveMutex* m_mutex;
 	mutable bool m_locked;
-
-	friend class OW_Condition;
+	friend class Condition;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

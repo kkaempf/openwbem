@@ -27,27 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPChunker.hpp"
 #include <iostream>
 
-
-
 int main(int argc, char* argv[])
 {
 	cout << "starting chunker test" << endl;
-	OW_HTTPChunker chunk(&cout, &cin);
+	HTTPChunker chunk(&cout, &cin);
 	ostream& ostr = chunk.getOutputStream();
 	istream& istr = chunk.getInputStream();
 	ostr << "Here's some stuff" << endl;
 	ostr << "Here's some more stuff" << endl;
 	//chunk.termOutput();
-
 	ostr << "Write some stuff for the chunking istream." << endl;
 	char buf[4096];
 	istr.read(buf, 4096);
 	ostr << "Here's what you wrote:\n" << buf << endl;
-
 	return 0;
 }
+

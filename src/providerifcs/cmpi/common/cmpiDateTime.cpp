@@ -27,9 +27,9 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMFwd.hpp"
 
-static OW_CIMDateTime * makeCIMDateTime(time_t inTime, unsigned long usec, CMPIBoolean interval)
+static OpenWBEM::CIMDateTime * makeCIMDateTime(time_t inTime, unsigned long usec, CMPIBoolean interval)
 {
-   OW_CIMDateTime * dt;
+   OpenWBEM::CIMDateTime * dt;
    char strTime[256];
    char utcOffset[20];
    char usTime[32];
@@ -48,7 +48,7 @@ static OW_CIMDateTime * makeCIMDateTime(time_t inTime, unsigned long usec, CMPIB
 #endif
       }
       strncat(strTime,utcOffset,256);
-      dt = new OW_CIMDateTime(OW_String(strTime));
+      dt = new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
       //cout<<"dt = " <<dt->toString()<<endl;
    }
    return dt;
@@ -66,13 +66,13 @@ CMPIDateTime *newDateTime(CMPIUint64 tim, CMPIBoolean interval) {
 }
 
 CMPIDateTime *newDateTime(char *strTime) {
-   OW_CIMDateTime *dt=new OW_CIMDateTime(OW_String(strTime));
+   OpenWBEM::CIMDateTime *dt=new OpenWBEM::CIMDateTime(OpenWBEM::String(strTime));
    return (CMPIDateTime*)new CMPI_Object(dt);
 }
 
 static CMPIStatus dtRelease(CMPIDateTime* eDt) {
    //cout<<"--- dtRelease()"<<endl;
-   OW_CIMDateTime* dt=(OW_CIMDateTime*)eDt->hdl;
+   OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
    if (dt) {
       delete dt;
       ((CMPI_Object*)eDt)->unlinkAndDelete();
@@ -81,9 +81,9 @@ static CMPIStatus dtRelease(CMPIDateTime* eDt) {
 }
 
 static CMPIDateTime* dtClone(CMPIDateTime* eDt, CMPIStatus* rc) {
-   OW_CIMDateTime * dt=(OW_CIMDateTime*)eDt->hdl;
-   //OW_CIMDateTime * cDt=new OW_CIMDateTime(dt->toString());
-   OW_CIMDateTime * cDt = new OW_CIMDateTime(*dt);
+   OpenWBEM::CIMDateTime * dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
+   //OpenWBEM::CIMDateTime * cDt=new OpenWBEM::CIMDateTime(dt->toString());
+   OpenWBEM::CIMDateTime * cDt = new OpenWBEM::CIMDateTime(*dt);
 
    CMPIDateTime* neDt=(CMPIDateTime*)new CMPI_Object(cDt,CMPI_DateTime_Ftab);
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
@@ -91,13 +91,13 @@ static CMPIDateTime* dtClone(CMPIDateTime* eDt, CMPIStatus* rc) {
 }
 
 static CMPIBoolean dtIsInterval(CMPIDateTime* eDt, CMPIStatus* rc) {
-   OW_CIMDateTime* dt=(OW_CIMDateTime*)eDt->hdl;
+   OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return dt->isInterval();
 }
 
 static CMPIString *dtGetStringFormat(CMPIDateTime* eDt, CMPIStatus* rc) {
-   OW_CIMDateTime* dt=(OW_CIMDateTime*)eDt->hdl;
+   OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
    CMPIString *str=(CMPIString*)new CMPI_Object(dt->toString());
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return str;
@@ -105,7 +105,7 @@ static CMPIString *dtGetStringFormat(CMPIDateTime* eDt, CMPIStatus* rc) {
 
 static CMPIUint64 dtGetBinaryFormat(CMPIDateTime* eDt, CMPIStatus* rc) {
    (void) rc;
-   OW_CIMDateTime* dt=(OW_CIMDateTime*)eDt->hdl;
+   OpenWBEM::CIMDateTime* dt=(OpenWBEM::CIMDateTime*)eDt->hdl;
    CMPIUint64 days,hours,mins,secs,usecs,utc,lTime;
    struct tm tm,tmt;
    //CString tStr=dt->toString().getCString();
@@ -124,8 +124,8 @@ static CMPIUint64 dtGetBinaryFormat(CMPIDateTime* eDt, CMPIStatus* rc) {
       hours=atoi(cStr+8);
       cStr[8]=0;
       days=atoi(cStr);
-      lTime=(days*(OW_UInt64)(86400000000LL))+
-            (hours*(OW_UInt64)(3600000000LL))+
+      lTime=(days*(OpenWBEM::UInt64)(86400000000LL))+
+            (hours*(OpenWBEM::UInt64)(3600000000LL))+
             (mins*60000000)+(secs*1000000)+usecs;
       //lTime=(days*PEGASUS_UINT64_LITERAL(86400000000))+
       //      (hours*PEGASUS_UINT64_LITERAL(3600000000))+

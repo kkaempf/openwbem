@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_Exception.hpp"
@@ -44,24 +43,21 @@ int main( int iArgC, char *asArgV[] )
 			cout << "Example: " << asArgV[ 0 ] << " https://Login:Password@cimom.example.com:5989/cimom" << endl;
 			return 1;
 		}
-
-		OW_String sURL( asArgV[ 1 ] );
-
+		String sURL( asArgV[ 1 ] );
 		if( sURL.startsWith( "https://" ) )
-			OW_SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
+			SSLCtxMgr::initClient("/etc/ssl/private/hostkey+cert.pem");
 	
-		OW_AutoPtrNoVec<OW_HTTPClient> pClient;
-
-		pClient = new OW_HTTPClient( sURL );
-
+		AutoPtrNoVec<HTTPClient> pClient;
+		pClient = new HTTPClient( sURL );
 		pClient->SendRequest();
 	
 		return 0;
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 		return 1;
 	}
 	return 0;
 }
+

@@ -34,23 +34,29 @@
 
 %{
 #include "OW_MOFGrammar.hpp"
-#include "OW_MOFParser.h"
 #include "OW_MOFCompiler.hpp"
 #include "OW_Format.hpp"
+
+// since this file is generated we can't control it.  We need to do some thing
+// bad, but we don't have a choice.  These using statements have to be before
+// the include or things will break!
+using namespace OpenWBEM;
+using namespace OpenWBEM::MOF;
+#include "OW_MOFParser.h"
 
 #define WHITE_RETURN(x) /* skip it */
 #define NEWLINE_RETURN() WHITE_RETURN('\n')
 
 #define RETURN_VAL(x) yylval->pString = 0; return(x);
-#define RETURN_STR(x) yylval->pString = new OW_String(yytext); return(x);
+#define RETURN_STR(x) yylval->pString = new String(yytext); return(x);
 
 /* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 #define YY_FATAL_ERROR(msg) \
-	OW_THROW(OW_Exception, msg);
+	OW_THROW(Exception, msg);
 
 #define YYLEX_PARAM context
 #define YY_DECL int yylex(YYSTYPE *yylval, void* YYLEX_PARAM)
-#define MOF_COMPILER (reinterpret_cast<MofCompiler*>(context))
+#define MOF_COMPILER (reinterpret_cast<Compiler*>(context))
 %}
 
 /* here are the definitions */
@@ -235,19 +241,19 @@ true					{RETURN_STR(TRUE_TOK);}
 %%
 /* here is the user code */
 
-void lexIncludeFile( void* context, const OW_String& filename )
+void lexIncludeFile( void* context, const String& filename )
 {
-	if ( MOF_COMPILER->include_stack_ptr >= MAX_INCLUDE_DEPTH )
+	if ( MOF_COMPILER->include_stack_ptr >= Compiler::E_MAX_INCLUDE_DEPTH )
 	{
 		// REPORT AN ERROR
 		MOF_COMPILER->theErrorHandler->fatalError(
-			format("Includes nested too deep (Max of %1 levels)", MAX_INCLUDE_DEPTH).c_str(),
+			format("Includes nested too deep (Max of %1 levels)", Compiler::E_MAX_INCLUDE_DEPTH).c_str(),
 			MOF_COMPILER->theLineInfo);
 		return;
 	}
 
 	// first try to find the file in the same dir as our original file.
-	OW_String filenameWithPath = MOF_COMPILER->basepath + "/" + filename;
+	String filenameWithPath = MOF_COMPILER->basepath + "/" + filename;
 	FILE* newfile = fopen( filenameWithPath.c_str(), "r" );
 
 	if ( !newfile )

@@ -27,92 +27,81 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMFLAVOR_HPP_INCLUDE_GUARD_
 #define OW_CIMFLAVOR_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include <iosfwd>
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMFlavor class represents the flavor that is associated with a
- * OW_CIMQualifier.
+ * The CIMFlavor class represents the flavor that is associated with a
+ * CIMQualifier.
  */
-class OW_CIMFlavor : public OW_CIMBase
+class CIMFlavor : public CIMBase
 {
 public:
-
 	enum Flavor
 	{
 		/** Invalid flavor */
 		INVALID				= 0,
-
 		/** Overridable */
 		ENABLEOVERRIDE		= 1,
-
 		/** Cannot be overriden */
 		DISABLEOVERRIDE	= 2,
-
 		/** Applies only to the declaring class */
 		RESTRICTED			= 3,
-
 		/** Qualifier is inherited */
 		TOSUBCLASS			= 4,
-
 		/** Qualifier can be specified in multiple locales */
 		TRANSLATE			= 5,
-
 		// Mark limit for scopes
 		LASTVALUE			= 6
 	};
-
 	/**
 	 * Determine if an integral value represents a valid flavor.
 	 * @param iflavor The integral value verify.
 	 * @return true if the given integral value is a valid flavor. Otherwise
 	 * false.
 	 */
-	static bool validFlavor(OW_Int32 iflavor)
+	static bool validFlavor(Int32 iflavor)
 	{
 		return(iflavor > INVALID && iflavor < LASTVALUE);
 	}
-
 	/**
-	 * Create a new OW_CIMFlavor object.
-	 * @param iflavor		The flavor value for this OW_CIMFlavor object. Cabe be
+	 * Create a new CIMFlavor object.
+	 * @param iflavor		The flavor value for this CIMFlavor object. Cabe be
 	 * one of the following values:
-	 * 	OW_CIMFlavor::ENABLEOVERRIDE	= overridable
-	 * 	OW_CIMFlavor::DISABLEOVERRIDE	= cannot be overriden
-	 * 	OW_CIMFlavor::RESTRICTED		= applies only to the declaring class
-	 * 	OW_CIMFlavor::TOSUBCLASS		= qualifier is inherited
-	 * 	OW_CIMFlavor::TRANSLATE			= qualifier can be specified in multiple
+	 * 	CIMFlavor::ENABLEOVERRIDE	= overridable
+	 * 	CIMFlavor::DISABLEOVERRIDE	= cannot be overriden
+	 * 	CIMFlavor::RESTRICTED		= applies only to the declaring class
+	 * 	CIMFlavor::TOSUBCLASS		= qualifier is inherited
+	 * 	CIMFlavor::TRANSLATE			= qualifier can be specified in multiple
 	 *												  locales
 	 */
-	OW_CIMFlavor(Flavor iflavor) :
-		OW_CIMBase(), m_flavor(iflavor)
+	CIMFlavor(Flavor iflavor) :
+		CIMBase(), m_flavor(iflavor)
 	{
 		if(!validFlavor(iflavor))
 		{
 			m_flavor = INVALID;
 		}
 	}
-
 	/**
-	 * Default constructor - Creates an invalid OW_CIMFlavor.
+	 * Default constructor - Creates an invalid CIMFlavor.
 	 */
-	OW_CIMFlavor() :
-		OW_CIMBase(), m_flavor(INVALID) {}
-
+	CIMFlavor() :
+		CIMBase(), m_flavor(INVALID) {}
 	/**
 	 * Copy constructor
-	 * @param arg	The OW_CIMFlavor to create a copy of.
+	 * @param arg	The CIMFlavor to create a copy of.
 	 */
-	OW_CIMFlavor(const OW_CIMFlavor& arg) :
-		OW_CIMBase(), m_flavor(arg.m_flavor)
+	CIMFlavor(const CIMFlavor& arg) :
+		CIMBase(), m_flavor(arg.m_flavor)
 	{
 	}
-
 	/**
 	 * @return true if this is a valid flavor
 	 */
@@ -121,34 +110,29 @@ private:
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (validFlavor(m_flavor) == true) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (validFlavor(m_flavor) == true) ? 0: &dummy::nonnull; }
-
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull() {  m_flavor = INVALID; }
-
 	/**
-	 * Assign the values from a given OW_CIMFlavor object to this one.
-	 * @param arg	The OW_CIMFlavor object to assign values from.
-	 * @return A reference to this OW_CIMFlavor object after the assignment is
+	 * Assign the values from a given CIMFlavor object to this one.
+	 * @param arg	The CIMFlavor object to assign values from.
+	 * @return A reference to this CIMFlavor object after the assignment is
 	 * made.
 	 */
-	OW_CIMFlavor& operator= (const OW_CIMFlavor& arg)
+	CIMFlavor& operator= (const CIMFlavor& arg)
 	{
 		m_flavor = arg.m_flavor;
 		return *this;
 	}
-
 	/**
-	 * @return true if this OW_CIMFlavor is valid. Otherwise false.
+	 * @return true if this CIMFlavor is valid. Otherwise false.
 	 */
 	bool isValid()
 	{
@@ -156,85 +140,74 @@ public:
 	}
 	
 	/**
-	 * Check if another OW_CIMFlavor object is equal to this one.
-	 * @param arg The OW_CIMFlavor to compare this object to.
-	 * @return true if the given OW_CIMFlavor object has the same flavor value
+	 * Check if another CIMFlavor object is equal to this one.
+	 * @param arg The CIMFlavor to compare this object to.
+	 * @return true if the given CIMFlavor object has the same flavor value
 	 * as this one.
 	 */
-	bool equals(const OW_CIMFlavor& arg)
+	bool equals(const CIMFlavor& arg)
 	{
 		return (m_flavor == arg.m_flavor);
 	}
-
 	/**
 	 * Equality operator
-	 * @param arg The OW_CIMFlavor to compare this object to.
-	 * @return true if the given OW_CIMFlavor object has the same flavor value
+	 * @param arg The CIMFlavor to compare this object to.
+	 * @return true if the given CIMFlavor object has the same flavor value
 	 * as this one.
 	 */
-	bool operator== (const OW_CIMFlavor& arg)
+	bool operator== (const CIMFlavor& arg)
 	{
 		return equals(arg);
 	}
-
 	/**
 	 * Inequality operator
-	 * @param arg The OW_CIMFlavor to compare this object to.
-	 * @return true if the given OW_CIMFlavor object has a different flavor
+	 * @param arg The CIMFlavor to compare this object to.
+	 * @return true if the given CIMFlavor object has a different flavor
 	 * value than this one.
 	 */
-	bool operator!= (const OW_CIMFlavor& arg)
+	bool operator!= (const CIMFlavor& arg)
 	{
 		return (equals(arg) == false);
 	}
-
 	/**
-	 * Read this OW_CIMFlavor object from an input stream.
+	 * Read this CIMFlavor object from an input stream.
 	 * @param istrm The input stream to read this flavor from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
-	 * Write this OW_CIMFlavor object to an output stream.
+	 * Write this CIMFlavor object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return An OW_String object that represents this OW_CIMFlavor.
+	 * @return An String object that represents this CIMFlavor.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return An OW_String object that contains the MOF representation of this
-	 * OW_CIMFlavor object.
+	 * @return An String object that contains the MOF representation of this
+	 * CIMFlavor object.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
-	 * @return the integral value of this OW_CIMFlavor object.
+	 * @return the integral value of this CIMFlavor object.
 	 */
-	OW_Int32 getFlavor() const {  return m_flavor; }
-
+	Int32 getFlavor() const {  return m_flavor; }
 private:
-
-	static bool validScope(OW_Int32 iflavor)
+	static bool validScope(Int32 iflavor)
 	{
 		//
 		// NOTE: has implicit knowledge of flavor values!
 		//
 		return(iflavor >= ENABLEOVERRIDE && iflavor < LASTVALUE);
 	}
-
 	/** The integral representation of this flavor */
-	OW_Int32 m_flavor;
-
-	friend bool operator<(const OW_CIMFlavor& x, const OW_CIMFlavor& y)
+	Int32 m_flavor;
+	friend bool operator<(const CIMFlavor& x, const CIMFlavor& y)
 	{
 		return x.m_flavor < y.m_flavor;
 	}
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
@@ -38,62 +37,52 @@
 #include "OW_Logger.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
-class OW_CIMOMHandleIFC;
-typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
+namespace OpenWBEM
+{
 
-class OW_ServiceEnvironmentIFC;
-typedef OW_Reference<OW_ServiceEnvironmentIFC> OW_ServiceEnvironmentIFCRef;
-
-class OW_RequestHandlerIFC;
-typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
-
-class OW_ServiceEnvironmentIFC
+class CIMOMHandleIFC;
+typedef Reference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+class ServiceEnvironmentIFC;
+typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
+class RequestHandlerIFC;
+typedef SharedLibraryReference<RequestHandlerIFC> RequestHandlerIFCRef;
+class ServiceEnvironmentIFC
 {
 public:
-	virtual ~OW_ServiceEnvironmentIFC();
-
-	virtual OW_String getConfigItem(const OW_String& name, const OW_String& defRetVal="") const = 0;
-
+	virtual ~ServiceEnvironmentIFC();
+	virtual String getConfigItem(const String& name, const String& defRetVal="") const = 0;
 	enum EOverwritePreviousFlag
 	{
 		E_PRESERVE_PREVIOUS,
 		E_OVERWRITE_PREVIOUS
 	};
 	
-	virtual void setConfigItem(const OW_String& item,
-		const OW_String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) = 0;
-
-	virtual void addSelectable(OW_SelectableIFCRef obj,
-		OW_SelectableCallbackIFCRef cb) = 0;
-
-	virtual void removeSelectable(OW_SelectableIFCRef obj,
-		OW_SelectableCallbackIFCRef cb) = 0;
-
-	virtual OW_RequestHandlerIFCRef getRequestHandler(
-		const OW_String& id) = 0;
-
-	virtual OW_LoggerRef getLogger() const = 0;
-
-	virtual bool authenticate(OW_String& userName,
-		const OW_String& info, OW_String& details) = 0;
-
+	virtual void setConfigItem(const String& item,
+		const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) = 0;
+	virtual void addSelectable(SelectableIFCRef obj,
+		SelectableCallbackIFCRef cb) = 0;
+	virtual void removeSelectable(SelectableIFCRef obj,
+		SelectableCallbackIFCRef cb) = 0;
+	virtual RequestHandlerIFCRef getRequestHandler(
+		const String& id) = 0;
+	virtual LoggerRef getLogger() const = 0;
+	virtual bool authenticate(String& userName,
+		const String& info, String& details) = 0;
 	enum ESendIndicationsFlag
 	{
 		E_DONT_SEND_INDICATIONS,
 		E_SEND_INDICATIONS
 	};
-
 	enum EBypassProvidersFlag
 	{
 		E_USE_PROVIDERS,
 		E_BYPASS_PROVIDERS
 	};
-
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& username,
+	virtual CIMOMHandleIFCRef getCIMOMHandle(const String& username,
 		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) = 0;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -30,9 +30,13 @@
 #include "OW_config.h"
 #include "OW_InstanceProviderIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_InstanceProviderIFC::~OW_InstanceProviderIFC() 
+InstanceProviderIFC::~InstanceProviderIFC() 
 {
 }
 
+} // end namespace OpenWBEM
 

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Exec.hpp"
 #include "OW_Format.hpp"
@@ -37,7 +36,6 @@
 #include "OW_IOException.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Select.hpp"
-
 extern "C"
 {
 #ifdef OW_HAVE_SYS_RESOURCE_H
@@ -48,40 +46,35 @@ extern "C"
 #include <errno.h>
 #include <stdio.h> // for perror
 #include <signal.h>
-
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>
 #endif
 }
-
 #include <iostream>
+
+namespace OpenWBEM
+{
 
 using std::cerr;
 using std::endl;
-
 DEFINE_EXCEPTION(ExecTimeout);
 DEFINE_EXCEPTION(ExecBufferFull);
 DEFINE_EXCEPTION(ExecError);
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_Exec::safeSystem(const OW_Array<OW_String>& command)
+Exec::safeSystem(const Array<String>& command)
 {
 	int status;
 	pid_t pid;
-
 	if (command.size() == 0)
 		return 1;
-
 #ifdef OW_USE_GNU_PTH
     pid = pth_fork();
 #else
 	pid = fork();
 #endif
-
 	if (pid == -1)
 		return -1;
-
 	if (pid == 0)
 	{
 		// Close all file handle from parent process
@@ -89,13 +82,11 @@ OW_Exec::safeSystem(const OW_Array<OW_String>& command)
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
 			i = rl.rlim_max;
-
 		while (i > 2)
 		{
 			close(i);
 			i--;
 		}
-
 		char** argv = new char*[command.size() + 1];
 		for (size_t i = 0; i < command.size(); i++)
 		{
@@ -103,14 +94,13 @@ OW_Exec::safeSystem(const OW_Array<OW_String>& command)
 		}
 		argv[command.size()] = 0;
 		int rval = execv(argv[0], argv);
-		cerr << format( "OW_Platform::safeSystem: execv failed for program "
+		cerr << format( "Platform::safeSystem: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(1);
 	}
-
 	do
 	{
-		OW_Thread::testCancel();
+		Thread::testCancel();
 #ifdef OW_USE_GNUPTH
 		if (pth_waitpid(pid, &status, 0) == -1)
 #else
@@ -126,91 +116,77 @@ OW_Exec::safeSystem(const OW_Array<OW_String>& command)
 		}
 	} while (1);
 }
-
-
-class OW_PopenStreamsImpl
+class PopenStreamsImpl
 {
 public:
-	OW_PopenStreamsImpl();
-	~OW_PopenStreamsImpl();
-
-	OW_UnnamedPipeRef in();
-	void in(OW_UnnamedPipeRef pipe);
-
-	OW_UnnamedPipeRef out();
-	void out(OW_UnnamedPipeRef pipe);
-
-	OW_UnnamedPipeRef err();
-	void err(OW_UnnamedPipeRef pipe);
-
+	PopenStreamsImpl();
+	~PopenStreamsImpl();
+	UnnamedPipeRef in();
+	void in(UnnamedPipeRef pipe);
+	UnnamedPipeRef out();
+	void out(UnnamedPipeRef pipe);
+	UnnamedPipeRef err();
+	void err(UnnamedPipeRef pipe);
 	pid_t pid();
 	void pid(pid_t newPid);
-
 	int getExitStatus();
-
 	void setProcessStatus(int ps)
 	{
 		m_processstatus = ps;
 	}
-
 private:
-	OW_UnnamedPipeRef m_in;
-	OW_UnnamedPipeRef m_out;
-	OW_UnnamedPipeRef m_err;
+	UnnamedPipeRef m_in;
+	UnnamedPipeRef m_out;
+	UnnamedPipeRef m_err;
 	pid_t m_pid;
 	int m_processstatus;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PopenStreamsImpl::OW_PopenStreamsImpl()
+PopenStreamsImpl::PopenStreamsImpl()
 	: m_pid(0)
 	, m_processstatus(-1)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UnnamedPipeRef OW_PopenStreamsImpl::in()
+UnnamedPipeRef PopenStreamsImpl::in()
 {
 	return m_in;
 }
 //////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreamsImpl::in(OW_UnnamedPipeRef pipe)
+void PopenStreamsImpl::in(UnnamedPipeRef pipe)
 {
 	m_in = pipe;
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_UnnamedPipeRef OW_PopenStreamsImpl::out()
+UnnamedPipeRef PopenStreamsImpl::out()
 {
 	return m_out;
 }
 //////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreamsImpl::out(OW_UnnamedPipeRef pipe)
+void PopenStreamsImpl::out(UnnamedPipeRef pipe)
 {
 	m_out = pipe;
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_UnnamedPipeRef OW_PopenStreamsImpl::err()
+UnnamedPipeRef PopenStreamsImpl::err()
 {
 	return m_err;
 }
 //////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreamsImpl::err(OW_UnnamedPipeRef pipe)
+void PopenStreamsImpl::err(UnnamedPipeRef pipe)
 {
 	m_err = pipe;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-pid_t OW_PopenStreamsImpl::pid()
+pid_t PopenStreamsImpl::pid()
 {
 	return m_pid;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreamsImpl::pid(pid_t newPid)
+void PopenStreamsImpl::pid(pid_t newPid)
 {
 	m_pid = newPid;
 }
-
 //////////////////////////////////////////////////////////////////////
 static inline pid_t lwaitpid(pid_t pid, int* status, int options)
 {
@@ -220,7 +196,6 @@ static inline pid_t lwaitpid(pid_t pid, int* status, int options)
 	return ::waitpid(pid, status, options);
 #endif
 }
-
 //////////////////////////////////////////////////////////////////////
 static pid_t
 waitpidNoINTR(pid_t pid, int* status, int options)
@@ -228,28 +203,25 @@ waitpidNoINTR(pid_t pid, int* status, int options)
 	pid_t waitpidrv;
 	do
 	{
-		OW_Thread::testCancel();
+		Thread::testCancel();
 		waitpidrv = lwaitpid(pid, status, options);
 	} while (waitpidrv == -1 && errno == EINTR);
 	return waitpidrv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static inline void
-milliSleep(OW_UInt32 milliSeconds)
+milliSleep(UInt32 milliSeconds)
 {
-	OW_Thread::sleep(milliSeconds);
+	Thread::sleep(milliSeconds);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static inline void
-secSleep(OW_UInt32 seconds)
+secSleep(UInt32 seconds)
 {
-	OW_Thread::sleep(seconds * 1000);
+	Thread::sleep(seconds * 1000);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-int OW_PopenStreamsImpl::getExitStatus()
+int PopenStreamsImpl::getExitStatus()
 {
 	// Close the streams. If the child process is blocked waiting to output,
 	// then this will cause it to get a SIGPIPE, and it may be able to clean
@@ -257,7 +229,6 @@ int OW_PopenStreamsImpl::getExitStatus()
 	in()->close();
 	out()->close();
 	err()->close();
-
 	// Now make sure the process has exited. We do everything possible to make 
 	// sure the sub-process dies.
 	if (m_pid != -1) // it's set to -1 if we already sucessfully waited for it.
@@ -271,7 +242,6 @@ int OW_PopenStreamsImpl::getExitStatus()
 			milliSleep(100); // 1/10 of a second
 			waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 		}
-
 		if (waitpidrv == 0)
 		{
 			if (kill(m_pid, SIGTERM) != -1)
@@ -292,9 +262,8 @@ int OW_PopenStreamsImpl::getExitStatus()
 					{
 						// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 						waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-						OW_THROW(OW_ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, format("Failed sending SIGKILL to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 					}
-
 					// give the kernel 1 sec to clean it up, otherwise we bail.
 					waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					for (int i = 0; i < 100 && waitpidrv == 0; ++i)
@@ -302,10 +271,9 @@ int OW_PopenStreamsImpl::getExitStatus()
 						milliSleep(10); // 1/100 of a second
 						waitpidrv = waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
 					}
-
 					if (waitpidrv == 0)
 					{
-						OW_THROW(OW_ExecErrorException, format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, format("Child process has not exited after sending it a SIGKILL. errno = %1(%2)\n", errno, strerror(errno)).c_str());
 					}
 				}
 				else if (waitpidrv > 0)
@@ -314,14 +282,14 @@ int OW_PopenStreamsImpl::getExitStatus()
 				}
 				else
 				{
-					OW_THROW(OW_ExecErrorException, format("OW_PopenStreamsImpl::getExitStatus: 1- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+					OW_THROW(ExecErrorException, format("PopenStreamsImpl::getExitStatus: 1- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
 				}
 			}
 			else
 			{
 				// call waitpid in case the thing has turned into a zombie, which would cause kill() to fail.
 				waitpidNoINTR(m_pid, &m_processstatus, WNOHANG);
-				OW_THROW(OW_ExecErrorException, format("Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, format("Failed sending SIGTERM to process %1. errno = %2(%3)\n", m_pid, errno, strerror(errno)).c_str());
 			}
 		}
 		else if (waitpidrv > 0)
@@ -330,14 +298,13 @@ int OW_PopenStreamsImpl::getExitStatus()
 		}
 		else
 		{
-			OW_THROW(OW_ExecErrorException, format("OW_PopenStreamsImpl::getExitStatus: 2- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
+			OW_THROW(ExecErrorException, format("PopenStreamsImpl::getExitStatus: 2- waitpid failed.  errno = %1(%2)\n", errno, strerror(errno)).c_str());
 		}
 	}
 	return m_processstatus;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PopenStreamsImpl::~OW_PopenStreamsImpl()
+PopenStreamsImpl::~PopenStreamsImpl()
 {
 	try // can't let exceptions past.
 	{
@@ -348,207 +315,172 @@ OW_PopenStreamsImpl::~OW_PopenStreamsImpl()
 	{
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PopenStreams
-OW_Exec::safePopen(const OW_Array<OW_String>& command,
-		const OW_String& initialInput)
+PopenStreams
+Exec::safePopen(const Array<String>& command,
+		const String& initialInput)
 {
-	OW_PopenStreams retval;
-	retval.in( OW_UnnamedPipe::createUnnamedPipe() );
-	OW_UnnamedPipeRef upipeOut = OW_UnnamedPipe::createUnnamedPipe();
+	PopenStreams retval;
+	retval.in( UnnamedPipe::createUnnamedPipe() );
+	UnnamedPipeRef upipeOut = UnnamedPipe::createUnnamedPipe();
 	upipeOut->setOutputBlocking(true);
 	retval.out( upipeOut );
-	OW_UnnamedPipeRef upipeErr = OW_UnnamedPipe::createUnnamedPipe();
+	UnnamedPipeRef upipeErr = UnnamedPipe::createUnnamedPipe();
 	upipeErr->setOutputBlocking(true);
 	retval.err( upipeErr );
-
 	if (initialInput != "")
 	{
 		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
 		{
-			OW_THROW(OW_IOException, "Failed writing input to process");
+			OW_THROW(IOException, "Failed writing input to process");
 		}
 	}
-
 	if (command.size() == 0)
 	{
-		OW_THROW(OW_ExecErrorException, "command is empty");
+		OW_THROW(ExecErrorException, "command is empty");
 	}
-
 #ifdef OW_USE_GNU_PTH
 	retval.pid ( pth_fork() );
 #else
 	retval.pid ( fork() );
 #endif
-
 	if (retval.pid() == -1)
-		OW_THROW(OW_ExecErrorException, "fork() failed");
-
+		OW_THROW(ExecErrorException, "fork() failed");
 	if (retval.pid() == 0)
 	{
 		// Close stdin, stdout, and stderr.
 		close(0);
 		close(1);
 		close(2);
-
 		// this should only fail because of programmer error.
-		OW_PosixUnnamedPipeRef in = retval.in().cast_to<OW_PosixUnnamedPipe>();
-		OW_PosixUnnamedPipeRef out = retval.out().cast_to<OW_PosixUnnamedPipe>();
-		OW_PosixUnnamedPipeRef err = retval.err().cast_to<OW_PosixUnnamedPipe>();
+		PosixUnnamedPipeRef in = retval.in().cast_to<PosixUnnamedPipe>();
+		PosixUnnamedPipeRef out = retval.out().cast_to<PosixUnnamedPipe>();
+		PosixUnnamedPipeRef err = retval.err().cast_to<PosixUnnamedPipe>();
 		OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
-
 		// connect stdin, stdout, and stderr to the return pipes.
 		dup(in->getInputHandle());
 		dup(out->getOutputHandle());
 		dup(err->getOutputHandle());
-
 		// Close all other file handle from parent process
 		rlimit rl;
 		int i = sysconf(_SC_OPEN_MAX);
 		if (getrlimit(RLIMIT_NOFILE, &rl) != -1)
 			i = rl.rlim_max;
-
 		while (i > 2)
 		{
 			close(i);
 			i--;
 		}
-
 		char** argv = new char*[command.size() + 1];
 		for (size_t i = 0; i < command.size(); i++)
 		{
 			argv[i] = strdup(command[i].c_str());
 		}
 		argv[command.size()] = 0;
-
 		int rval = execv(argv[0], argv);
-		cerr << format( "OW_Platform::safePopen: execv failed for program "
+		cerr << format( "Platform::safePopen: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(1);
 	}
-
 	// this should only fail because of programmer error.
-	OW_PosixUnnamedPipeRef in = retval.in().cast_to<OW_PosixUnnamedPipe>();
-	OW_PosixUnnamedPipeRef out = retval.out().cast_to<OW_PosixUnnamedPipe>();
-	OW_PosixUnnamedPipeRef err = retval.err().cast_to<OW_PosixUnnamedPipe>();
+	PosixUnnamedPipeRef in = retval.in().cast_to<PosixUnnamedPipe>();
+	PosixUnnamedPipeRef out = retval.out().cast_to<PosixUnnamedPipe>();
+	PosixUnnamedPipeRef err = retval.err().cast_to<PosixUnnamedPipe>();
 	OW_ASSERT(in); OW_ASSERT(out); OW_ASSERT(err);
-
 	// prevent the parent from using the child's end of the pipes.
 	in->closeInputHandle();
 	out->closeOutputHandle();
 	err->closeOutputHandle();
-
 	return retval;
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_PopenStreams::OW_PopenStreams()
-	: m_impl(new OW_PopenStreamsImpl)
+PopenStreams::PopenStreams()
+	: m_impl(new PopenStreamsImpl)
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_PopenStreams::~OW_PopenStreams()
+PopenStreams::~PopenStreams()
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_Reference<OW_UnnamedPipe> OW_PopenStreams::in() const
+Reference<UnnamedPipe> PopenStreams::in() const
 {
 	return m_impl->in();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreams::in(OW_UnnamedPipeRef pipe)
+void PopenStreams::in(UnnamedPipeRef pipe)
 {
 	m_impl->in(pipe);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_UnnamedPipeRef OW_PopenStreams::out() const
+UnnamedPipeRef PopenStreams::out() const
 {
 	return m_impl->out();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreams::out(OW_UnnamedPipeRef pipe)
+void PopenStreams::out(UnnamedPipeRef pipe)
 {
 	m_impl->out(pipe);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_UnnamedPipeRef OW_PopenStreams::err() const
+UnnamedPipeRef PopenStreams::err() const
 {
 	return m_impl->err();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreams::err(OW_UnnamedPipeRef pipe)
+void PopenStreams::err(UnnamedPipeRef pipe)
 {
 	m_impl->err(pipe);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-pid_t OW_PopenStreams::pid() const
+pid_t PopenStreams::pid() const
 {
 	return m_impl->pid();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreams::pid(pid_t newPid)
+void PopenStreams::pid(pid_t newPid)
 {
 	m_impl->pid(newPid);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-int OW_PopenStreams::getExitStatus()
+int PopenStreams::getExitStatus()
 {
 	return m_impl->getExitStatus();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_PopenStreams::setProcessStatus(int ps)
+void PopenStreams::setProcessStatus(int ps)
 {
 	m_impl->setProcessStatus(ps);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_PopenStreams::OW_PopenStreams(const OW_PopenStreams& src)
+PopenStreams::PopenStreams(const PopenStreams& src)
 	: m_impl(src.m_impl)
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_PopenStreams& OW_PopenStreams::operator=(const OW_PopenStreams& src)
+PopenStreams& PopenStreams::operator=(const PopenStreams& src)
 {
 	m_impl = src.m_impl;
 	return *this;
 }
-
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Exec::executeProcessAndGatherOutput(const OW_Array<OW_String>& command,
-	OW_String& output, int& processstatus,
+Exec::executeProcessAndGatherOutput(const Array<String>& command,
+	String& output, int& processstatus,
 	int timeoutsecs, int outputlimit)
 {
 	processstatus = -1;
-	OW_PopenStreams streams(safePopen(command));
-
+	PopenStreams streams(safePopen(command));
 	gatherOutput(output, streams, processstatus,
 		timeoutsecs, outputlimit);
-
 	if (processstatus == -1)
 	{
 		processstatus = streams.getExitStatus();
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void 
-OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
+Exec::gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
 {
 	bool outIsOpen = true;
 	bool errIsOpen = true;
@@ -556,8 +488,7 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 	int cumulative_timeout = 0;
 	while(outIsOpen || errIsOpen)
 	{
-		OW_SelectTypeArray fdset;
-
+		SelectTypeArray fdset;
 		if (outIsOpen)
 		{
 			fdset.push_back(streams.out()->getSelectObj());
@@ -574,7 +505,7 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 			waitpidrv = waitpidNoINTR(streams.pid(), &processstatus, WNOHANG);
 			if (waitpidrv == -1)
 			{
-				OW_THROW(OW_ExecErrorException, format("OW_Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, format("Exec::gatherOutput: waitpid failed errno = %1(%2)\n", errno, strerror(errno)).c_str());
 			}
 			else if (waitpidrv != 0)
 			{
@@ -583,22 +514,19 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 				streams.setProcessStatus(processstatus);
 			}
 		}
-
 		const int mstimeout = 100; // use 1/10 of a second
-		int selectrval = OW_Select::select(fdset, mstimeout);
+		int selectrval = Select::select(fdset, mstimeout);
 		switch (selectrval)
 		{
-			case OW_Select::OW_SELECT_INTERRUPTED:
+			case Select::SELECT_INTERRUPTED:
 				// if we got interrupted, just try again
 				break;
-
-			case OW_Select::OW_SELECT_ERROR:
+			case Select::SELECT_ERROR:
 			{
-				OW_THROW(OW_ExecErrorException, format("error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
+				OW_THROW(ExecErrorException, format("error selecting on stdout and stderr: %1(%2)", errno, strerror(errno)).c_str());
 			}
 			break;
-
-			case OW_Select::OW_SELECT_TIMEOUT:
+			case Select::SELECT_TIMEOUT:
 			{
 				if (got_child_return_code)
 				{
@@ -612,16 +540,15 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 					++cumulative_timeout;
 					if (timeoutsecs >= 0 && cumulative_timeout >= (timeoutsecs * 10))
 					{
-						OW_THROW(OW_ExecTimeoutException, "timedout");
+						OW_THROW(ExecTimeoutException, "timedout");
 					}
 				}
 			}
 			break;
-
 			default:
 			{
 				cumulative_timeout = 0;
-				OW_UnnamedPipeRef readstream;
+				UnnamedPipeRef readstream;
 				// if both have output, we'll get error first.
 				if (streams.err()->getSelectObj() == fdset[selectrval])
 				{
@@ -644,7 +571,7 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 					}
 					else if (readrc == -1)
 					{
-						OW_THROW(OW_ExecErrorException, format("Error reading stdout from lwcclient: %1(%2)", errno, strerror(errno)).c_str());
+						OW_THROW(ExecErrorException, format("Error reading stdout from lwcclient: %1(%2)", errno, strerror(errno)).c_str());
 					}
 					else
 					{
@@ -658,7 +585,7 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 								buff[lentocopy] = '\0';
 								output += buff;
 							}
-							OW_THROW(OW_ExecBufferFullException, "");
+							OW_THROW(ExecBufferFullException, "");
 						}
 						output += buff;
 					}
@@ -669,4 +596,5 @@ OW_Exec::gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processs
 	}
 }
 
+} // end namespace OpenWBEM
 

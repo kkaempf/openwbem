@@ -46,23 +46,24 @@
 using std::ifstream;
 using std::ofstream;
 using std::endl;
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 
-struct TestInstance
+struct TestInstanceData
 {
-	OW_String name;
-	OW_StringArray params;
+	String name;
+	StringArray params;
 };
 
-static OW_Array<TestInstance> g_saa;
+static Array<TestInstanceData> g_saa;
 
-class OW_TestInstance: public OW_CppInstanceProviderIFC
+class TestInstance: public CppInstanceProviderIFC
 {
 public:
-	virtual ~OW_TestInstance(){}
+	virtual ~TestInstance(){}
 
-	void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("TestInstance");
 	}
@@ -70,19 +71,19 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	void
 		enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass )
 	{
 		(void)env;
 		(void)cimClass;
-		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
-			OW_CIMObjectPath instCop(className, ns);
-			instCop.addKey("Name", OW_CIMValue(iter->name));
+			CIMObjectPath instCop(className, ns);
+			instCop.addKey("Name", CIMValue(iter->name));
 			result.handle(instCop);
 		}
 	}
@@ -90,56 +91,56 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	void
 		enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)className;
 		(void)env;
-		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
-			OW_CIMInstance inst = cimClass.newInstance();
-			inst.setProperty("Name", OW_CIMValue(iter->name));
-			inst.setProperty("Params", OW_CIMValue(iter->params));
+			CIMInstance inst = cimClass.newInstance();
+			inst.setProperty("Name", CIMValue(iter->name));
+			inst.setProperty("Params", CIMValue(iter->params));
 			result.handle(inst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 	}
 
 //////////////////////////////////////////////////////////////////////////////
 
-	OW_CIMInstance
+	CIMInstance
 		getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)env;
-		OW_CIMInstance rval = cimClass.newInstance();
-		OW_String name;
+		CIMInstance rval = cimClass.newInstance();
+		String name;
 		instanceName.getKeys()[0].getValue().get(name);
-		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
 			if (iter->name == name)
 			{
-				rval.setProperty("Name", OW_CIMValue(name));
-				rval.setProperty("Params", OW_CIMValue(iter->params));
+				rval.setProperty("Name", CIMValue(name));
+				rval.setProperty("Params", CIMValue(iter->params));
 				break;
 			}
 		}
@@ -148,47 +149,47 @@ public:
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPath
+	CIMObjectPath
 		createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 
 		(void)env;
 		(void)ns;
-		OW_String name;
-		OW_StringArray params;
+		String name;
+		StringArray params;
 		cimInstance.getProperty("Name").getValue().get(name);
 
-		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
+		for (Array<TestInstanceData>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
 			if (iter->name == name)
 			{
-				OW_THROWCIM(OW_CIMException::ALREADY_EXISTS);
+				OW_THROWCIM(CIMException::ALREADY_EXISTS);
 				break;
 			}
 		}
 
 		cimInstance.getProperty("Params").getValue().get(params);
-		TestInstance newInst;
+		TestInstanceData newInst;
 		newInst.name = name;
 		newInst.params = params;
 		g_saa.push_back(newInst);
-		return OW_CIMObjectPath(ns, cimInstance);
+		return CIMObjectPath(ns, cimInstance);
 	}
 
 //////////////////////////////////////////////////////////////////////////////
 	void
 		modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		env->getLogger()->logDebug("TestInstance::modifyInstance");
 		(void)ns;
@@ -196,12 +197,12 @@ public:
 		(void)includeQualifiers;
 		(void)propertyList;
 		(void)theClass;
-		OW_String name;
-		OW_StringArray params;
+		String name;
+		StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);
 		modifiedInstance.getProperty("Params").getValue().get(params);
 
-		for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
+		for (Array<TestInstanceData>::iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
 			if (iter->name == name)
@@ -211,7 +212,7 @@ public:
 			}
 		}
 		// new instance
-		TestInstance newInst;
+		TestInstanceData newInst;
 		newInst.name = name;
 		newInst.params = params;
 		g_saa.push_back(newInst);
@@ -220,15 +221,15 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	void
 		deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		(void)env;
 		(void)ns;
-		OW_String name;
+		String name;
 		cop.getKeys()[0].getValue().get(name);
-		for (OW_Array<TestInstance>::iterator iter = g_saa.begin();
+		for (Array<TestInstanceData>::iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{
 			if (iter->name == name)
@@ -247,7 +248,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-OW_PROVIDERFACTORY(OW_TestInstance, testinstance)
+OW_PROVIDERFACTORY(TestInstance, testinstance)
 
 
 	

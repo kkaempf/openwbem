@@ -50,64 +50,58 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Thread.hpp"
-
 #include <algorithm> // for std::remove
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 namespace
 {
 // This anonymous namespace has the effect of giving this class internal
 // linkage.  That means it won't cause a link error if another translation
 // unit has a class with the same name.
-
-typedef std::pair<OW_SelectableIFCRef, OW_SelectableCallbackIFCRef> SelectablePair_t;
-
-class OW_HTTPXMLCIMListenerServiceEnvironment : public OW_ServiceEnvironmentIFC
+typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
+class HTTPXMLCIMListenerServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	OW_HTTPXMLCIMListenerServiceEnvironment(
-		OW_Reference<OW_ListenerAuthenticator> authenticator,
-		OW_RequestHandlerIFCRef listener,
-		OW_LoggerRef logger,
-		OW_Reference<OW_Array<SelectablePair_t> > selectables)
+	HTTPXMLCIMListenerServiceEnvironment(
+		Reference<ListenerAuthenticator> authenticator,
+		RequestHandlerIFCRef listener,
+		LoggerRef logger,
+		Reference<Array<SelectablePair_t> > selectables)
 	: m_pLAuthenticator(authenticator)
 	, m_XMLListener(listener)
-	, m_logger(logger ? logger : OW_LoggerRef(new DummyLogger))
+	, m_logger(logger ? logger : LoggerRef(new DummyLogger))
 	, m_selectables(selectables)
 	{
-		m_configItems[OW_ConfigOpts::HTTP_PORT_opt] = OW_String(0);
-		m_configItems[OW_ConfigOpts::HTTPS_PORT_opt] = OW_String(-1);
-		m_configItems[OW_ConfigOpts::MAX_CONNECTIONS_opt] = OW_String(10);
-		m_configItems[OW_ConfigOpts::SINGLE_THREAD_opt] = "false";
-		m_configItems[OW_ConfigOpts::ENABLE_DEFLATE_opt] = "true";
-		m_configItems[OW_ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
-		m_configItems[OW_ConfigOpts::USE_UDS_opt] = "false";
+		m_configItems[ConfigOpts::HTTP_PORT_opt] = String(0);
+		m_configItems[ConfigOpts::HTTPS_PORT_opt] = String(-1);
+		m_configItems[ConfigOpts::MAX_CONNECTIONS_opt] = String(10);
+		m_configItems[ConfigOpts::SINGLE_THREAD_opt] = "false";
+		m_configItems[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
+		m_configItems[ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
+		m_configItems[ConfigOpts::USE_UDS_opt] = "false";
 	}
-
-	virtual ~OW_HTTPXMLCIMListenerServiceEnvironment() {}
-
-	virtual bool authenticate(OW_String &userName,
-		const OW_String &info, OW_String &details)
+	virtual ~HTTPXMLCIMListenerServiceEnvironment() {}
+	virtual bool authenticate(String &userName,
+		const String &info, String &details)
 	{
 		return m_pLAuthenticator->authenticate(userName, info, details);
 	}
-
-	virtual void addSelectable(OW_SelectableIFCRef obj,
-		OW_SelectableCallbackIFCRef cb)
+	virtual void addSelectable(SelectableIFCRef obj,
+		SelectableCallbackIFCRef cb)
 	{
 		m_selectables->push_back(std::make_pair(obj, cb));
 	}
-
-	virtual void removeSelectable(OW_SelectableIFCRef obj, OW_SelectableCallbackIFCRef cb)
+	virtual void removeSelectable(SelectableIFCRef obj, SelectableCallbackIFCRef cb)
 	{
 		m_selectables->erase(std::remove(m_selectables->begin(), m_selectables->end(),
 			std::make_pair(obj, cb)), m_selectables->end());
 	}
-
-	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const
 	{
-		OW_Map<OW_String, OW_String>::const_iterator i =
+		Map<String, String>::const_iterator i =
 			m_configItems.find(name);
 		if (i != m_configItems.end())
 		{
@@ -118,66 +112,58 @@ public:
 			return defRetVal;
 		}
 	}
-
-	virtual void setConfigItem(const OW_String& item, const OW_String& value, EOverwritePreviousFlag overwritePrevious)
+	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 	{
 		if (overwritePrevious || getConfigItem(item) == "")
 			m_configItems[item] = value;
-
 	}
 	
-	virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String&)
+	virtual RequestHandlerIFCRef getRequestHandler(const String&)
 	{
 		return m_XMLListener;
 	}
-
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& /*username*/,
+	virtual CIMOMHandleIFCRef getCIMOMHandle(const String& /*username*/,
 		ESendIndicationsFlag /*doIndications*/, 
 		EBypassProvidersFlag /*bypassProviders*/)
 	{
-		OW_THROW(OW_Exception, "Not implemented");
+		OW_THROW(Exception, "Not implemented");
 	}
-
-	virtual OW_LoggerRef getLogger() const
+	virtual LoggerRef getLogger() const
 	{
 		return m_logger;
 	}
-
 private:
-	OW_Map<OW_String, OW_String> m_configItems;
-	OW_Reference<OW_ListenerAuthenticator> m_pLAuthenticator;
-	OW_RequestHandlerIFCRef m_XMLListener;
-	OW_LoggerRef m_logger;
-	OW_Reference<OW_Array<SelectablePair_t> > m_selectables;
-
-	class DummyLogger : public OW_Logger
+	Map<String, String> m_configItems;
+	Reference<ListenerAuthenticator> m_pLAuthenticator;
+	RequestHandlerIFCRef m_XMLListener;
+	LoggerRef m_logger;
+	Reference<Array<SelectablePair_t> > m_selectables;
+	class DummyLogger : public Logger
 	{
 	protected:
-		virtual void doLogMessage(const OW_String &, const OW_LogLevel) const
+		virtual void doLogMessage(const String &, const LogLevel) const
 		{
 			return;
 		}
 	};
 };
-
-class SelectEngineThread : public OW_Thread
+class SelectEngineThread : public Thread
 {
 public:
-	SelectEngineThread(OW_Reference<OW_Array<SelectablePair_t> > selectables,
-		OW_SelectableIFCRef stopObject)
-	: OW_Thread()
+	SelectEngineThread(Reference<Array<SelectablePair_t> > selectables,
+		SelectableIFCRef stopObject)
+	: Thread()
 	, m_selectables(selectables)
 	, m_stopObject(stopObject)
 	{}
-
 	/**
 	 * The method that will be run when the start method is called on this
-	 * OW_Thread object.
+	 * Thread object.
 	 */
-	virtual OW_Int32 run()
+	virtual Int32 run()
 	{
-		OW_SelectEngine engine;
-		OW_SelectableCallbackIFCRef cb(new OW_SelectEngineStopper(engine));
+		SelectEngine engine;
+		SelectableCallbackIFCRef cb(new SelectEngineStopper(engine));
 		m_selectables->push_back(std::make_pair(m_stopObject, cb));
 		for (size_t i = 0; i < m_selectables->size(); ++i)
 		{
@@ -187,30 +173,25 @@ public:
 		engine.go();
 		return 0;
 	}
-
 private:
-	OW_Reference<OW_Array<SelectablePair_t> > m_selectables;
-	OW_SelectableIFCRef m_stopObject;
+	Reference<Array<SelectablePair_t> > m_selectables;
+	SelectableIFCRef m_stopObject;
 };
-
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPXMLCIMListener::OW_HTTPXMLCIMListener(OW_LoggerRef logger)
+HTTPXMLCIMListener::HTTPXMLCIMListener(LoggerRef logger)
 	: m_callbacks()
-	, m_XMLListener(OW_SharedLibraryRef(0), new OW_XMLListener(this))
-	, m_pLAuthenticator(new OW_ListenerAuthenticator)
-	, m_httpServer(new OW_HTTPServer)
+	, m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
+	, m_pLAuthenticator(new ListenerAuthenticator)
+	, m_httpServer(new HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
 	, m_mutex()
 {
-	OW_Reference<OW_Array<SelectablePair_t> >
-		selectables(new OW_Array<SelectablePair_t>);
-
-	OW_ServiceEnvironmentIFCRef env(new OW_HTTPXMLCIMListenerServiceEnvironment(
+	Reference<Array<SelectablePair_t> >
+		selectables(new Array<SelectablePair_t>);
+	ServiceEnvironmentIFCRef env(new HTTPXMLCIMListenerServiceEnvironment(
 		m_pLAuthenticator, m_XMLListener, logger, selectables));
-
 	m_httpServer->setServiceEnvironment(env);
 	m_httpServer->startService();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
@@ -218,21 +199,19 @@ OW_HTTPXMLCIMListener::OW_HTTPXMLCIMListener(OW_LoggerRef logger)
 	// below which will use them to run the select engine.
 	m_httpListenPort = m_httpServer->getLocalHTTPAddress().getPort();
 	m_httpsListenPort = m_httpServer->getLocalHTTPSAddress().getPort();
-
 	// start a thread to run the http server
-	m_stopHttpPipe = OW_UnnamedPipe::createUnnamedPipe();
+	m_stopHttpPipe = UnnamedPipe::createUnnamedPipe();
 	m_httpThread = new SelectEngineThread(selectables, m_stopHttpPipe);
 	m_httpThread->start();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPXMLCIMListener::~OW_HTTPXMLCIMListener()
+HTTPXMLCIMListener::~HTTPXMLCIMListener()
 {
 	try
 	{
 		shutdownHttpServer();
 		// unregister all the callbacks from the CIMOMs
-		OW_MutexLock lock(m_mutex);
+		MutexLock lock(m_mutex);
 		for (callbackMap_t::iterator i = m_callbacks.begin();
 			i != m_callbacks.end(); ++i)
 		{
@@ -242,12 +221,12 @@ OW_HTTPXMLCIMListener::~OW_HTTPXMLCIMListener()
 			{
 				deleteRegistrationObjects(reg);
 			}
-			catch (OW_CIMException& ce)
+			catch (CIMException& ce)
 			{
 				// if an error occured, then just ignore it.  We don't have any way
 				// of logging it!
 			}
-			catch (OW_HTTPException& e)
+			catch (HTTPException& e)
 			{
 				// a network error occured, we can't do anything about it.
 			}
@@ -263,9 +242,8 @@ OW_HTTPXMLCIMListener::~OW_HTTPXMLCIMListener()
 		// don't let exceptions escape
 	}
 }
-
 void
-OW_HTTPXMLCIMListener::shutdownHttpServer()
+HTTPXMLCIMListener::shutdownHttpServer()
 {
 	if (m_stopHttpPipe)
 	{
@@ -273,18 +251,16 @@ OW_HTTPXMLCIMListener::shutdownHttpServer()
 		// thread will exit
 		if (m_stopHttpPipe->writeInt(0) == -1)
 		{
-			OW_THROW(OW_IOException, "Writing to the termination pipe failed");
+			OW_THROW(IOException, "Writing to the termination pipe failed");
 		}
 		m_stopHttpPipe = 0;
 	}
-
 	if (m_httpThread)
 	{
 		// wait for the thread to quit
 		m_httpThread->join();
 		m_httpThread = 0;
 	}
-
 	if (m_httpServer)
 	{
 		// stop the http server
@@ -292,37 +268,32 @@ OW_HTTPXMLCIMListener::shutdownHttpServer()
 		m_httpServer = 0;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_HTTPXMLCIMListener::registerForIndication(
-	const OW_String& url,
-	const OW_String& ns,
-	const OW_String& filter,
-	const OW_String& querylanguage,
-	const OW_String& sourceNamespace,
-	OW_CIMListenerCallbackRef cb)
+String
+HTTPXMLCIMListener::registerForIndication(
+	const String& url,
+	const String& ns,
+	const String& filter,
+	const String& querylanguage,
+	const String& sourceNamespace,
+	CIMListenerCallbackRef cb)
 {
 	registrationInfo reg;
-
 	// create an http client with the url from the object path
-	OW_URL curl(url);
+	URL curl(url);
 	reg.cimomUrl = curl;
-
-	OW_CIMProtocolIFCRef client(new OW_HTTPClient(curl.toString()));
-	OW_String ipAddress = client->getLocalAddress().getAddress();
-
-	OW_CIMXMLCIMOMHandle hdl(client);
-
+	CIMProtocolIFCRef client(new HTTPClient(curl.toString()));
+	String ipAddress = client->getLocalAddress().getAddress();
+	CIMXMLCIMOMHandle hdl(client);
 	// If we are connecting to the CIMOM via HTTPS, then assume it will
 	// support HTTPS. We'll
 	// first try to get a class of CIM_IndicationHandlerXMLHTTPS
 	// If we can't get HTTPS then try for HTTP
 	// This will be used as the indication handler for all
 	// events subscribed to.
-	OW_CIMClass delivery(OW_CIMNULL);
-	OW_String urlPrefix = "https://";
-	OW_UInt16 listenerPort = m_httpsListenPort;
+	CIMClass delivery(CIMNULL);
+	String urlPrefix = "https://";
+	UInt16 listenerPort = m_httpsListenPort;
 	bool useHttps = reg.cimomUrl.protocol.equalsIgnoreCase("https");
 	if (useHttps)
 	{
@@ -330,9 +301,9 @@ OW_HTTPXMLCIMListener::registerForIndication(
 		{
 			delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
 		}
-		catch (OW_CIMException& e)
+		catch (CIMException& e)
 		{
-			if (e.getErrNo() == OW_CIMException::INVALID_CLASS)
+			if (e.getErrNo() == CIMException::INVALID_CLASS)
 			{
 				useHttps = false;
 			}
@@ -340,16 +311,15 @@ OW_HTTPXMLCIMListener::registerForIndication(
 				throw;
 		}
 	}
-
 	if (!useHttps)
 	{
 		try
 		{
 			delivery = hdl.getClass(ns, "CIM_IndicationHandlerCIMXML");
 		}
-		catch (OW_CIMException& e)
+		catch (CIMException& e)
 		{
-			if (e.getErrNo() == OW_CIMException::NOT_FOUND)
+			if (e.getErrNo() == CIMException::NOT_FOUND)
 			{
 				// the > 2.6 doesn't exist, try to get the 2.5 class
 				delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTP");
@@ -360,141 +330,117 @@ OW_HTTPXMLCIMListener::registerForIndication(
 		urlPrefix = "http://";
 		listenerPort = m_httpListenPort;
 	}
-
-	OW_CIMInstance ci = delivery.newInstance();
-
-	OW_MutexLock lock(m_mutex);
-	OW_String httpPath;
-	OW_RandomNumber rn(0, 0x7FFFFFFF);
+	CIMInstance ci = delivery.newInstance();
+	MutexLock lock(m_mutex);
+	String httpPath;
+	RandomNumber rn(0, 0x7FFFFFFF);
 	do
 	{
-		OW_String randomHashValue(rn.getNextNumber());
+		String randomHashValue(rn.getNextNumber());
 		httpPath = "/cimListener" + randomHashValue;
 	} while (m_callbacks.find(httpPath) != m_callbacks.end());
-
-
 	reg.httpCredentials = m_pLAuthenticator->getNewCredentials();
-	ci.setProperty("Destination", OW_CIMValue(urlPrefix + reg.httpCredentials + "@" +
-				ipAddress + ":" + OW_String(OW_UInt32(listenerPort)) + httpPath));
-
-	ci.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
-	ci.setProperty("SystemName", OW_CIMValue(ipAddress));
-	ci.setProperty("CreationClassName", OW_CIMValue(delivery.getName()));
-	ci.setProperty("Name", OW_CIMValue(httpPath));
-	ci.setProperty("Owner", OW_CIMValue("OW_HTTPXMLCIMListener on " + ipAddress));
-
+	ci.setProperty("Destination", CIMValue(urlPrefix + reg.httpCredentials + "@" +
+				ipAddress + ":" + String(UInt32(listenerPort)) + httpPath));
+	ci.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
+	ci.setProperty("SystemName", CIMValue(ipAddress));
+	ci.setProperty("CreationClassName", CIMValue(delivery.getName()));
+	ci.setProperty("Name", CIMValue(httpPath));
+	ci.setProperty("Owner", CIMValue("HTTPXMLCIMListener on " + ipAddress));
 	try
 	{
 		reg.handler = hdl.createInstance(ns, ci);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		// We don't care if it already exists, but err out on anything else
-		if (e.getErrNo() != OW_CIMException::ALREADY_EXISTS)
+		if (e.getErrNo() != CIMException::ALREADY_EXISTS)
 		{
 			throw;
 		}
 		else
 		{
-			reg.handler = OW_CIMObjectPath(ns, ci);
+			reg.handler = CIMObjectPath(ns, ci);
 		}
 	}
-
 	// get class of CIM_IndicationFilter and new instance of it
-	OW_CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
+	CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", E_LOCAL_ONLY);
 	ci = cimFilter.newInstance();
-
 	// set Query property to query that was passed into function
-	ci.setProperty("Query", OW_CIMValue(filter));
-
+	ci.setProperty("Query", CIMValue(filter));
 	// set QueryLanguage property
-	ci.setProperty("QueryLanguage", OW_CIMValue(querylanguage));
-
-	ci.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
-	ci.setProperty("SystemName", OW_CIMValue(ipAddress));
-	ci.setProperty("CreationClassName", OW_CIMValue(cimFilter.getName()));
-	ci.setProperty("Name", OW_CIMValue(httpPath));
-
+	ci.setProperty("QueryLanguage", CIMValue(querylanguage));
+	ci.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
+	ci.setProperty("SystemName", CIMValue(ipAddress));
+	ci.setProperty("CreationClassName", CIMValue(cimFilter.getName()));
+	ci.setProperty("Name", CIMValue(httpPath));
 	if (!sourceNamespace.empty())
 	{
-		ci.setProperty("SourceNamespace", OW_CIMValue(sourceNamespace));
+		ci.setProperty("SourceNamespace", CIMValue(sourceNamespace));
 	}
-
 	// create instance of filter
 	reg.filter = hdl.createInstance(ns, ci);
-
 	// get class of CIM_IndicationSubscription and new instance of it.
 	// CIM_IndicationSubscription is an association class that connects
 	// the IndicationFilter to the IndicationHandler.
-	OW_CIMClass cimClientFilterDelivery = hdl.getClass(ns,
+	CIMClass cimClientFilterDelivery = hdl.getClass(ns,
 			"CIM_IndicationSubscription", E_LOCAL_ONLY);
 	ci = cimClientFilterDelivery.newInstance();
-
 	// set the properties for the filter and the handler
-	ci.setProperty("filter", OW_CIMValue(reg.filter));
-	ci.setProperty("handler", OW_CIMValue(reg.handler));
-
+	ci.setProperty("filter", CIMValue(reg.filter));
+	ci.setProperty("handler", CIMValue(reg.handler));
 	// creating the instance the CIM_IndicationSubscription creates
 	// the event subscription
 	reg.subscription = hdl.createInstance(ns, ci);
-
 	//save info for deletion later and callback delivery
 	reg.callback = cb;
 	reg.ns = ns;
-
 	m_callbacks[httpPath] = reg;
-
 	return httpPath;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPXMLCIMListener::deregisterForIndication( const OW_String& handle )
+HTTPXMLCIMListener::deregisterForIndication( const String& handle )
 {
-	OW_MutexLock lock(m_mutex);
+	MutexLock lock(m_mutex);
 	callbackMap_t::iterator i = m_callbacks.find(handle);
 	if (i != m_callbacks.end())
 	{
 		registrationInfo reg = i->second;
 		m_callbacks.erase(i);
 		lock.release();
-
 		m_pLAuthenticator->removeCredentials(reg.httpCredentials);
-
 		deleteRegistrationObjects(reg);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPXMLCIMListener::doIndicationOccurred( OW_CIMInstance& ci,
-		const OW_String& listenerPath )
+HTTPXMLCIMListener::doIndicationOccurred( CIMInstance& ci,
+		const String& listenerPath )
 {
-	OW_CIMListenerCallbackRef cb;
-	{ // scope for the OW_MutexLock
-		OW_MutexLock lock(m_mutex);
+	CIMListenerCallbackRef cb;
+	{ // scope for the MutexLock
+		MutexLock lock(m_mutex);
 		callbackMap_t::iterator i = m_callbacks.find(listenerPath);
 		if (i == m_callbacks.end())
 		{
-			OW_THROWCIMMSG(OW_CIMException::ACCESS_DENIED,
+			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 				format("No listener for path: %1", listenerPath).c_str());
 		}
-
 		cb = i->second.callback;
 	}
-
 	cb->indicationOccurred( ci, listenerPath );
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
+HTTPXMLCIMListener::deleteRegistrationObjects( const registrationInfo& reg )
 {
-	OW_CIMProtocolIFCRef client(new OW_HTTPClient(reg.cimomUrl.toString()));
-	OW_CIMXMLCIMOMHandle hdl(client);
-
+	CIMProtocolIFCRef client(new HTTPClient(reg.cimomUrl.toString()));
+	CIMXMLCIMOMHandle hdl(client);
 	hdl.deleteInstance(reg.ns, reg.subscription);
 	hdl.deleteInstance(reg.ns, reg.filter);
 	hdl.deleteInstance(reg.ns, reg.handler);
 }
+
+} // end namespace OpenWBEM
 

@@ -27,171 +27,163 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_IndicationRepLayerMediator.hpp"
 #include "OW_MutexLock.hpp"
 
-///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getClassCreationSubscriptionCount()
+namespace OpenWBEM
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_classCount) + OW_AtomicGet(m_classCreationCount);
-}
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getClassModificationSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getClassCreationSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_classCount) + OW_AtomicGet(m_classModificationCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_classCount) + AtomicGet(m_classCreationCount);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getClassDeletionSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getClassModificationSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_classCount) + OW_AtomicGet(m_classDeletionCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_classCount) + AtomicGet(m_classModificationCount);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getInstCreationSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getClassDeletionSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_instCount) + OW_AtomicGet(m_instCreationCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_classCount) + AtomicGet(m_classDeletionCount);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getInstModificationSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getInstCreationSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_instCount) + OW_AtomicGet(m_instModificationCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_instCount) + AtomicGet(m_instCreationCount);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getInstDeletionSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getInstModificationSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_instCount) + OW_AtomicGet(m_instDeletionCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_instCount) + AtomicGet(m_instModificationCount);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getInstReadSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getInstDeletionSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_instCount) + OW_AtomicGet(m_instReadCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_instCount) + AtomicGet(m_instDeletionCount);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_IndicationRepLayerMediator::getInstMethodCallSubscriptionCount()
+UInt32
+IndicationRepLayerMediator::getInstReadSubscriptionCount()
 {
-	return OW_AtomicGet(m_indicationCount) + OW_AtomicGet(m_instCount) + OW_AtomicGet(m_instMethodCallCount);
+	return AtomicGet(m_indicationCount) + AtomicGet(m_instCount) + AtomicGet(m_instReadCount);
 }
-
+///////////////////////////////////////////////////////////////////////////////
+UInt32
+IndicationRepLayerMediator::getInstMethodCallSubscriptionCount()
+{
+	return AtomicGet(m_indicationCount) + AtomicGet(m_instCount) + AtomicGet(m_instMethodCallCount);
+}
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationRepLayerMediator::addSubscription(const OW_String& subName)
+IndicationRepLayerMediator::addSubscription(const String& subName)
 {
-	OW_String name(subName);
+	String name(subName);
 	name.toLowerCase();
-
 	if (name == "cim_instcreation")
 	{
-		OW_AtomicInc(m_instCreationCount);
+		AtomicInc(m_instCreationCount);
 	}
 	else if (name == "cim_instmodification")
 	{
-		OW_AtomicInc(m_instModificationCount);
+		AtomicInc(m_instModificationCount);
 	}
 	else if (name == "cim_instdeletion")
 	{
-		OW_AtomicInc(m_instDeletionCount);
+		AtomicInc(m_instDeletionCount);
 	}
 	else if (name == "cim_instmethodcall")
 	{
-		OW_AtomicInc(m_instMethodCallCount);
+		AtomicInc(m_instMethodCallCount);
 	}
 	else if (name == "cim_instread")
 	{
-		OW_AtomicInc(m_instReadCount);
+		AtomicInc(m_instReadCount);
 	}
 	else if (name == "cim_instindication")
 	{
-		OW_AtomicInc(m_instCount);
+		AtomicInc(m_instCount);
 	}
 	else if (name == "cim_classcreation")
 	{
-		OW_AtomicInc(m_classCreationCount);
+		AtomicInc(m_classCreationCount);
 	}
 	else if (name == "cim_classmodification")
 	{
-		OW_AtomicInc(m_classModificationCount);
+		AtomicInc(m_classModificationCount);
 	}
 	else if (name == "cim_classdeletion")
 	{
-		OW_AtomicInc(m_classDeletionCount);
+		AtomicInc(m_classDeletionCount);
 	}
 	else if (name == "cim_classindication")
 	{
-		OW_AtomicInc(m_classCount);
+		AtomicInc(m_classCount);
 	}
 	else if (name == "cim_indication")
 	{
-		OW_AtomicInc(m_indicationCount);
+		AtomicInc(m_indicationCount);
 	}
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationRepLayerMediator::deleteSubscription(const OW_String& subName)
+IndicationRepLayerMediator::deleteSubscription(const String& subName)
 {
-	OW_String name(subName);
+	String name(subName);
 	name.toLowerCase();
-
 	if (name == "cim_instcreation")
 	{
-		OW_AtomicDec(m_instCreationCount);
+		AtomicDec(m_instCreationCount);
 	}
 	else if (name == "cim_instmodification")
 	{
-		OW_AtomicDec(m_instModificationCount);
+		AtomicDec(m_instModificationCount);
 	}
 	else if (name == "cim_instdeletion")
 	{
-		OW_AtomicDec(m_instDeletionCount);
+		AtomicDec(m_instDeletionCount);
 	}
 	else if (name == "cim_instmethodcall")
 	{
-		OW_AtomicDec(m_instMethodCallCount);
+		AtomicDec(m_instMethodCallCount);
 	}
 	else if (name == "cim_instread")
 	{
-		OW_AtomicDec(m_instReadCount);
+		AtomicDec(m_instReadCount);
 	}
 	else if (name == "cim_instindication")
 	{
-		OW_AtomicDec(m_instCount);
+		AtomicDec(m_instCount);
 	}
 	else if (name == "cim_classcreation")
 	{
-		OW_AtomicDec(m_classCreationCount);
+		AtomicDec(m_classCreationCount);
 	}
 	else if (name == "cim_classmodification")
 	{
-		OW_AtomicDec(m_classModificationCount);
+		AtomicDec(m_classModificationCount);
 	}
 	else if (name == "cim_classdeletion")
 	{
-		OW_AtomicDec(m_classDeletionCount);
+		AtomicDec(m_classDeletionCount);
 	}
 	else if (name == "cim_classindication")
 	{
-		OW_AtomicDec(m_classCount);
+		AtomicDec(m_classCount);
 	}
 	else if (name == "cim_indication")
 	{
-		OW_AtomicDec(m_indicationCount);
+		AtomicDec(m_indicationCount);
 	}
 }
 
+} // end namespace OpenWBEM
 

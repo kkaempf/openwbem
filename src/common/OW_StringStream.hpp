@@ -27,73 +27,63 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_STRINGSTREAM_HPP_INCLUDE_GUARD_
 #define OW_STRINGSTREAM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
 #include "OW_BaseStreamBuffer.hpp"
-
 #if defined(OW_HAVE_OSTREAM)
 #include <ostream>
 #else
 #include <iostream>
 #endif
-
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
 #else
 #include <streambuf.h>
 #endif
 
-class OW_StringStreamBuf : public OW_BaseStreamBuffer
+namespace OpenWBEM
+{
+
+class StringStreamBuf : public BaseStreamBuffer
 {
 public:
-	OW_StringStreamBuf(size_t size);
-	virtual ~OW_StringStreamBuf();
-	OW_String toString() const;
+	StringStreamBuf(size_t size);
+	virtual ~StringStreamBuf();
+	String toString() const;
 	size_t length() const;
 	const char* c_str() const;
 	void reset();
-
 protected:
 	virtual int buffer_to_device(const char *c, int n);
-
 private:
-	OW_StringBuffer m_buf;
-
-	friend class OW_StringStream;
+	StringBuffer m_buf;
+	friend class StringStream;
 };
-
 ///////////////////////////////////////////////////////////////////////////////
-class OW_StringStreamBase
+class StringStreamBase
 {
 public:
-	OW_StringStreamBase(size_t sz);
-
-	mutable OW_StringStreamBuf m_buf;
+	StringStreamBase(size_t sz);
+	mutable StringStreamBuf m_buf;
 };
-
 ///////////////////////////////////////////////////////////////////////////////
-class OW_StringStream : private OW_StringStreamBase, public std::ostream
+class StringStream : private StringStreamBase, public std::ostream
 {
 public:
-	OW_StringStream(size_t size = 256);
-	~OW_StringStream();
-	OW_String toString() const;
+	StringStream(size_t size = 256);
+	~StringStream();
+	String toString() const;
 	size_t length() const;
 	const char* c_str() const;
 	void reset();
-
 private:
-
 	// not implemented
-	OW_StringStream(const OW_StringStream&);
-	OW_StringStream& operator=(const OW_StringStream&);
+	StringStream(const StringStream&);
+	StringStream& operator=(const StringStream&);
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

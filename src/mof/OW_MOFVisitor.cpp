@@ -27,16 +27,22 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-#include "OW_MOFVisitor.h"
+#include "OW_MOFVisitor.hpp"
 
+namespace OpenWBEM
+{
+
+namespace MOF
+{
 
 Visitor::Visitor()
 {
 }
-
-
 Visitor::~Visitor()
 {
 }
+
+} // end namespace MOF
+} // end namespace OpenWBEM
+

@@ -27,31 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_MAP_HPP_INCLUDE_GUARD_
 #define OW_MAP_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_COWReference.hpp"
-
 #ifdef OW_NEW
 #undef new
 #endif
-
 #include <map>
 #include <functional>
-
 #ifdef OW_NEW
 #define new OW_NEW
 #endif
 
-template<class Key, class T, class Compare = std::less<Key> > class OW_Map
+namespace OpenWBEM
 {
 
+template<class Key, class T, class Compare = std::less<Key> > class Map
+{
 	typedef std::map<Key, T, Compare > M;
-	OW_COWReference<M> m_impl;
-
+	COWReference<M> m_impl;
 public:
 	typedef typename M::key_type key_type;
 	typedef typename M::mapped_type mapped_type;
@@ -68,223 +63,180 @@ public:
 	typedef typename M::const_reverse_iterator const_reverse_iterator;
 	typedef typename M::size_type size_type;
 	typedef typename M::difference_type difference_type;
-
-	OW_Map() : m_impl(new M) {  }
-
-	explicit OW_Map(M* toWrap) : m_impl(toWrap)
+	Map() : m_impl(new M) {  }
+	explicit Map(M* toWrap) : m_impl(toWrap)
 		{ }
-
-	explicit OW_Map(const Compare& comp)
+	explicit Map(const Compare& comp)
 		: m_impl(new M(comp)) {  }
-
 	template <class InputIterator>
-	OW_Map(InputIterator first, InputIterator last) :
+	Map(InputIterator first, InputIterator last) :
 		m_impl(new M(first, last))
 	{
 	}
-
 	template <class InputIterator>
-	OW_Map(InputIterator first, InputIterator last, const Compare& comp) :
+	Map(InputIterator first, InputIterator last, const Compare& comp) :
 		m_impl(new M(first, last, comp))
 	{
 	}
-
 	M* getImpl()
 	{
 		return &*m_impl;
 	}
-
 	key_compare key_comp() const
 	{
 		return m_impl->key_comp();
 	}
-
 	value_compare value_comp() const
 	{
 		return m_impl->value_comp();
 	}
-
 	iterator begin()
 	{
 		return m_impl->begin();
 	}
-
 	const_iterator begin() const
 	{
 		return m_impl->begin();
 	}
-
 	iterator end()
 	{
 		return m_impl->end();
 	}
-
 	const_iterator end() const
 	{
 		return m_impl->end();
 	}
-
 	reverse_iterator rbegin()
 	{
 		return m_impl->rbegin();
 	}
-
 	const_reverse_iterator rbegin() const
 	{
 		return m_impl->rbegin();
 	}
-
 	reverse_iterator rend()
 	{
 		return m_impl->rend();
 	}
-
 	const_reverse_iterator rend() const
 	{
 		return m_impl->rend();
 	}
-
 	bool empty() const
 	{
 		return m_impl->empty();
 	}
-
 	size_type size() const
 	{
 		return m_impl->size();
 	}
-
 	size_type max_size() const
 	{
 		return m_impl->max_size();
 	}
-
 	T& operator[](const key_type& k)
 	{
 		return m_impl->operator[](k);
 	}
-
-	void swap(OW_Map<Key, T, Compare>& x)
+	void swap(Map<Key, T, Compare>& x)
 	{
 		m_impl.swap(x.m_impl);
 	}
-
 	std::pair<iterator, bool> insert(const value_type& x)
 	{
 		return m_impl->insert(x);
 	}
-
 	iterator insert(iterator position, const value_type& x)
 	{
 		return m_impl->insert(position, x);
 	}
-
 	template <class InputIterator>
 	void insert(InputIterator first, InputIterator last)
 	{
 		return m_impl->insert(first, last);
 	}
-
 	void erase(iterator position)
 	{
 		return m_impl->erase(position);
 	}
-
 	size_type erase(const key_type& x)
 	{
 		return m_impl->erase(x);
 	}
-
 	void erase(iterator first, iterator last)
 	{
 		return m_impl->erase(first, last);
 	}
-
 	void clear()
 	{
 		return m_impl->clear();
 	}
-
 	iterator find(const key_type& x)
 	{
 		return m_impl->find(x);
 	}
-
 	const_iterator find(const key_type& x) const
 	{
 		return m_impl->find(x);
 	}
-
 	size_type count(const key_type& x) const
 	{
 		return m_impl->count(x);
 	}
-
 	iterator lower_bound(const key_type& x)
 	{
 		return m_impl->lower_bound(x);
 	}
-
 	const_iterator lower_bound(const key_type& x) const
 	{
 		return m_impl->lower_bound(x);
 	}
-
 	iterator upper_bound(const key_type& x)
 	{
 		return m_impl->upper_bound(x);
 	}
-
 	const_iterator upper_bound(const key_type& x) const
 	{
 		return m_impl->upper_bound(x);
 	}
-
 	std::pair<iterator, iterator> equal_range(const key_type& x)
 	{
 		return m_impl->equal_range(x);
 	}
-
 	std::pair<const_iterator, const_iterator>
 		equal_range(const key_type& x) const
 	{
 		return m_impl->equal_range(x);
 	}
-
-	friend bool operator== <>(const OW_Map<Key, T, Compare>& x,
-		const OW_Map<Key, T, Compare>& y);
-
-	friend bool operator< <>(const OW_Map<Key, T, Compare>& x,
-		const OW_Map<Key, T, Compare>& y);
+	friend bool operator== <>(const Map<Key, T, Compare>& x,
+		const Map<Key, T, Compare>& y);
+	friend bool operator< <>(const Map<Key, T, Compare>& x,
+		const Map<Key, T, Compare>& y);
 };
-
 template <class Key, class T, class Compare>
-std::map<Key, T, Compare>* OW_COWReferenceClone(std::map<Key, T, Compare>* obj)
+std::map<Key, T, Compare>* COWReferenceClone(std::map<Key, T, Compare>* obj)
 {
     return new std::map<Key, T, Compare>(*obj);
 }
-
 template<class Key, class T, class Compare>
-inline bool operator==(const OW_Map<Key, T, Compare>& x,
-	const OW_Map<Key, T, Compare>& y)
+inline bool operator==(const Map<Key, T, Compare>& x,
+	const Map<Key, T, Compare>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
-
 template<class Key, class T, class Compare>
-inline bool operator<(const OW_Map<Key, T, Compare>& x,
-	const OW_Map<Key, T, Compare>& y)
+inline bool operator<(const Map<Key, T, Compare>& x,
+	const Map<Key, T, Compare>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
-
 template <class Key, class T, class Compare>
-inline void swap(OW_Map<Key, T, Compare>& x,
-	OW_Map<Key, T, Compare>& y)
+inline void swap(Map<Key, T, Compare>& x,
+	Map<Key, T, Compare>& y)
 {
 	x.swap(y);
 }
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -30,10 +30,8 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_FTABLE_REF_HPP_
 #define OW_FTABLE_REF_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMDataType.hpp"
@@ -51,28 +49,16 @@
 #include "cmpift.h"
 #include "cmpisrv.h"
 
+namespace OpenWBEM
+{
 
 typedef struct {
 	::MIs miVector;
 	::CMPI_Broker broker;
-} OW_CompleteMI; 
+} CompleteMI; 
 
-typedef OW_SharedLibraryReference<OW_CompleteMI> OW_CMPIFTABLERef;
+typedef SharedLibraryReference<CompleteMI> CMPIFTABLERef;
 
-#define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
-
-#define OW_PROVIDERFACTORY(prov, name) \
-extern "C" const char* \
-getOWVersion() \
-{ \
-        return OW_VERSION; \
-} \
-extern "C" OW_FTABLERef* \
-createProvider##name() \
-{ \
-        return new prov; \
-}
-
+} // end namespace OpenWBEM
 
 #endif
-

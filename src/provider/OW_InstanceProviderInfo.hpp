@@ -27,29 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 #define OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_ProviderInfoBase.hpp"
 
-class OW_InstanceProviderInfo : public OW_ProviderInfoBase<OW_InstClassInfo>
+namespace OpenWBEM
+{
+
+class InstanceProviderInfo : public ProviderInfoBase<InstClassInfo>
 {
 public:
 	// pull the names into this class
-	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfo;
-	using OW_ProviderInfoBase<OW_InstClassInfo>::ClassInfoArray;
-
+	using ProviderInfoBase<InstClassInfo>::ClassInfo;
+	using ProviderInfoBase<InstClassInfo>::ClassInfoArray;
 };
+typedef Array<InstanceProviderInfo> InstanceProviderInfoArray;
+extern template class ProviderInfoBase<InstClassInfo>;
 
-typedef OW_Array<OW_InstanceProviderInfo> OW_InstanceProviderInfoArray;
-
-extern template class OW_ProviderInfoBase<OW_InstClassInfo>;
-
+} // end namespace OpenWBEM
 
 #endif
-
-

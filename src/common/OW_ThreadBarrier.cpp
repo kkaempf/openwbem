@@ -27,34 +27,40 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-
 #include "OW_ThreadBarrier.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 
-DEFINE_EXCEPTION(ThreadBarrier);
+#if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
+ #include <pthread.h>
+#else
+ // This is for the generic less-efficient version
+ #include "OW_Condition.hpp"
+ #include "OW_NonRecursiveMutex.hpp"
+ #include "OW_NonRecursiveMutexLock.hpp"
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
+namespace OpenWBEM
+{
+
+DEFINE_EXCEPTION(ThreadBarrier);
+
 #if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
-
-#include <pthread.h>
-
-class OW_ThreadBarrierImpl
+class ThreadBarrierImpl
 {
 public:
-	OW_ThreadBarrierImpl(OW_UInt32 threshold)
+	ThreadBarrierImpl(UInt32 threshold)
 	{
 		OW_ASSERT(threshold != 0);
 		int res = pthread_barrier_init(&barrier, NULL, threshold);
 		if (res != 0)
 		{
-			OW_THROW(OW_ThreadBarrierException, format("pthread_barrier_init failed: %1(%2)", res, strerror(res)).c_str());
+			OW_THROW(ThreadBarrierException, format("pthread_barrier_init failed: %1(%2)", res, strerror(res)).c_str());
 		}
 	}
-
-	~OW_ThreadBarrierImpl()
+	~ThreadBarrierImpl()
 	{
 		int res = pthread_barrier_destroy(&barrier);
 		if (res != 0)
@@ -68,7 +74,7 @@ public:
 		int res = pthread_barrier_wait(&barrier);
 		if (res != 0 && res != PTHREAD_BARRIER_SERIAL_THREAD)
 		{
-			OW_THROW(OW_ThreadBarrierException, format("pthread_barrier_wait failed: %1(%2)", res, strerror(res)).c_str());
+			OW_THROW(ThreadBarrierException, format("pthread_barrier_wait failed: %1(%2)", res, strerror(res)).c_str());
 		}
 	}
 private:	
@@ -78,11 +84,8 @@ private:
 #else
 
 // This is the generic less-efficient version
-#include "OW_Condition.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_NonRecursiveMutexLock.hpp"
 
-class OW_ThreadBarrierImpl
+class ThreadBarrierImpl
 {
 public:
 	/**
@@ -95,26 +98,21 @@ public:
 	 * threads calls wait() again (i.e., starts up the next generation
 	 * barrier).
 	 */
-
 	struct SubBarrier
 	{
 		SubBarrier() : m_waitingCount(0) {}
-
 		/// The number of waiting threads
-		OW_UInt32 m_waitingCount;
+		UInt32 m_waitingCount;
 		/// Condition for threads to wait on.
-		OW_Condition m_cond;
+		Condition m_cond;
 	};
-
-	OW_ThreadBarrierImpl(OW_UInt32 threshold)
+	ThreadBarrierImpl(UInt32 threshold)
 		: m_threshold(threshold)
 	{
 	}
-
 	void wait()
 	{
-		OW_NonRecursiveMutexLock l(m_mutex);
-
+		NonRecursiveMutexLock l(m_mutex);
 		// Select the current SubBarrier
 		SubBarrier& curBarrier = m_curSubBarrier?m_subBarrier0:m_subBarrier1;
 		++curBarrier.m_waitingCount;
@@ -122,10 +120,8 @@ public:
 		{
 			// reset the sub barrier so it can be reused
 			curBarrier.m_waitingCount = 0;
-
 			// swap current barriers
 			m_curSubBarrier = 1 - m_curSubBarrier;
-
 			// now wake up all the threads that were stopped
 			curBarrier.m_cond.notifyAll();
 		}
@@ -140,50 +136,45 @@ public:
 			}
 		}
 	}
-
 private:
 	/// The number of threads to synchronize
-	OW_UInt32 m_threshold;
-	OW_NonRecursiveMutex m_mutex;
+	UInt32 m_threshold;
+	NonRecursiveMutex m_mutex;
 	SubBarrier m_subBarrier0;
 	SubBarrier m_subBarrier1;
-
 	/// Either 0 or 1, depending on whether we are the first generation
 	/// of waiters or the next generation of waiters.
 	int m_curSubBarrier;
 };
+
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadBarrier::OW_ThreadBarrier(OW_UInt32 threshold)
-	: m_impl(new OW_ThreadBarrierImpl(threshold))
+ThreadBarrier::ThreadBarrier(UInt32 threshold)
+	: m_impl(new ThreadBarrierImpl(threshold))
 {
 	OW_ASSERT(threshold != 0);
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_ThreadBarrier::wait()
+void ThreadBarrier::wait()
 {
 	m_impl->wait();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadBarrier::~OW_ThreadBarrier()
+ThreadBarrier::~ThreadBarrier()
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadBarrier::OW_ThreadBarrier(const OW_ThreadBarrier& x)
+ThreadBarrier::ThreadBarrier(const ThreadBarrier& x)
 	: m_impl(x.m_impl)
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_ThreadBarrier& OW_ThreadBarrier::operator=(const OW_ThreadBarrier& x)
+ThreadBarrier& ThreadBarrier::operator=(const ThreadBarrier& x)
 {
 	m_impl = x.m_impl;
 	return *this;
 }
 
-
+} // end namespace OpenWBEM
 

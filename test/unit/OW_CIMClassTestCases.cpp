@@ -38,6 +38,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_String.hpp"
 
+using namespace OpenWBEM;
+
 void OW_CIMClassTestCases::setUp()
 {
 }
@@ -48,14 +50,14 @@ void OW_CIMClassTestCases::tearDown()
 
 void OW_CIMClassTestCases::testNewInstance()
 {
-	OW_CIMClass c("c");
-	OW_CIMValue v(OW_UInt16(10));
-	OW_CIMProperty p("p");
-	p.setDataType(OW_CIMDataType::UINT16);
+	CIMClass c("c");
+	CIMValue v(UInt16(10));
+	CIMProperty p("p");
+	p.setDataType(CIMDataType::UINT16);
 	p.setValue(v);
 	c.addProperty(p);
-	OW_CIMInstance i = c.newInstance();
-	unitAssert(i.getProperty(OW_String("p")).getValue() == v);
+	CIMInstance i = c.newInstance();
+	unitAssert(i.getProperty(String("p")).getValue() == v);
 }
 
 Test* OW_CIMClassTestCases::suite()

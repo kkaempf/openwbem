@@ -27,21 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #ifndef OW_HTTPCHUNKEDOSTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPCHUNKEDOSTREAM_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_Array.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_String.hpp"
-
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #elif defined(OW_HAVE_OSTREAM_H)
@@ -50,77 +46,69 @@
 #include <iostream>
 #endif
 
-class OW_HTTPChunkedOStreamBuffer : public OW_BaseStreamBuffer
+namespace OpenWBEM
+{
+
+class HTTPChunkedOStreamBuffer : public BaseStreamBuffer
 {
 public: 
-	OW_HTTPChunkedOStreamBuffer(std::ostream& ostr);
-
-	virtual ~OW_HTTPChunkedOStreamBuffer();
-
+	HTTPChunkedOStreamBuffer(std::ostream& ostr);
+	virtual ~HTTPChunkedOStreamBuffer();
 protected:
 	virtual int sync();
-
 private:
 	std::ostream& m_ostr;
-
 	virtual int buffer_to_device(const char* c, int n);
-
 	// disallow copying and assigning
-	OW_HTTPChunkedOStreamBuffer(const OW_HTTPChunkedOStreamBuffer&);
-	OW_HTTPChunkedOStreamBuffer& operator=(const OW_HTTPChunkedOStreamBuffer&);
+	HTTPChunkedOStreamBuffer(const HTTPChunkedOStreamBuffer&);
+	HTTPChunkedOStreamBuffer& operator=(const HTTPChunkedOStreamBuffer&);
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPChunkedOStreamBase 
+class HTTPChunkedOStreamBase 
 {
 public:
-	OW_HTTPChunkedOStreamBase(std::ostream& ostr)
+	HTTPChunkedOStreamBase(std::ostream& ostr)
 		: m_strbuf(ostr) {}
-	OW_HTTPChunkedOStreamBuffer m_strbuf;
+	HTTPChunkedOStreamBuffer m_strbuf;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPChunkedOStream : private OW_HTTPChunkedOStreamBase, 
+class HTTPChunkedOStream : private HTTPChunkedOStreamBase, 
 	public std::ostream
 {
 public:
 	/**
-	 * Convert a ostream to a OW_HTTPChunkedOStream.  The ostream 
+	 * Convert a ostream to a HTTPChunkedOStream.  The ostream 
 	 * that is passed in is wrapped.  All output sent to the new 
 	 * stream is chunked, and then passed to the original stream.
 	 * @param ostr the ostream& to wrap.
 	 */
-	OW_HTTPChunkedOStream(std::ostream& ostr);
+	HTTPChunkedOStream(std::ostream& ostr);
 	
-	~OW_HTTPChunkedOStream();
-
+	~HTTPChunkedOStream();
 	/**
 	 * Call this when the entity has been completely sent.
 	 * This flushes the remaining output, and sends a zero length
 	 * chunk, signalling the end of the entity.
 	 */
 	void termOutput();
-
 	/** Get the original ostream&
 	 * @return the original ostream
 	 */
 	std::ostream& getOutputStreamOrig() { return m_ostr; };
-
 	/**
 	 * Add a HTTP trailer (header at the end of a chunked entity)
 	 * @param key the name of the trailer (left of the ':')
 	 * @param value the value of the trailer (right of the ':')
 	 */
-	void addTrailer(const OW_String& key, const OW_String& value);
+	void addTrailer(const String& key, const String& value);
 private:
 	std::ostream& m_ostr;
-
-	OW_Array<OW_String> m_trailers;
-
+	Array<String> m_trailers;
 	// disallow copying and assigning
-	OW_HTTPChunkedOStream(const OW_HTTPChunkedOStream&);
-	OW_HTTPChunkedOStream& operator=(const OW_HTTPChunkedOStream&);
+	HTTPChunkedOStream(const HTTPChunkedOStream&);
+	HTTPChunkedOStream& operator=(const HTTPChunkedOStream&);
 };
 
+} // end namespace OpenWBEM
 
 #endif

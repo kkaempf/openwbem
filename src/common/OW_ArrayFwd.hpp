@@ -27,14 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ARRAYFWD_HPP_
 #define OW_ARRAYFWD_HPP_
-
 #include "OW_config.h"
 
+namespace OpenWBEM
+{
+
 template <class T>
-class OW_Array;
+class Array;
+
+template<class T>
+inline bool operator==(const Array<T>& x, const Array<T>& y);
+
+template<class T>
+inline bool operator<(const Array<T>& x, const Array<T>& y);
+
+template<class T>
+inline void swap(Array<T>& x, Array<T>& y);
+
+} // end namespace OpenWBEM
 
 #endif
-

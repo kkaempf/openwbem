@@ -27,36 +27,33 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Format.hpp"
 
+namespace OpenWBEM
+{
+
 /////////////////////////////////////////////////////////////////////////////
-OW_Format::operator OW_String() const
+Format::operator String() const
 {
 	return oss.toString();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_String OW_Format::toString() const
+String Format::toString() const
 {
 	return oss.toString();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-const char* OW_Format::c_str() const
+const char* Format::c_str() const
 {
 	return oss.c_str();
 }
-
 /////////////////////////////////////////////////////////////////////////////
-char OW_Format::process(OW_String& str, char numArgs)
+char Format::process(String& str, char numArgs)
 {
 	int i, len(str.length());
 	char c(' ');
 	bool err = false;
-
-
 	for (i=0; i<len && c == ' ' && !err; ++i)
 	{
 		switch(str[i])
@@ -84,7 +81,6 @@ char OW_Format::process(OW_String& str, char numArgs)
 				break;
 		} // outer switch
 	} // for
-
 	if ( i <= len && c > numArgs )
 	{
 		oss << "\n*** Parameter specifier too large.";
@@ -99,29 +95,23 @@ char OW_Format::process(OW_String& str, char numArgs)
 	str.erase(0, i);
 	return c;
 } // process
-
-
 /////////////////////////////////////////////////////////////////////////////
 std::ostream&
-operator<<(std::ostream& os, const OW_Format& f)
+operator<<(std::ostream& os, const Format& f)
 {
 	os << f.oss.toString();
 	return os;
 }
-
 /////////////////////////////////////////////////////////////////////////////
-void OW_Format::put(const OW_String& t)
+void Format::put(const String& t)
 { // t is inserted into oss
-
 	if (!oss.good())
 		return;
-
 	oss << t;
 }
-
 /////////////////////////////////////////////////////////////////////////////
 #define OW_DEFINE_PUT(type) \
-void OW_Format::put(type t) \
+void Format::put(type t) \
 { \
 \
 	if (!oss.good()) \
@@ -129,7 +119,6 @@ void OW_Format::put(type t) \
 \
 	oss << t; \
 }
-
 OW_DEFINE_PUT(char);
 OW_DEFINE_PUT(unsigned char);
 OW_DEFINE_PUT(short);
@@ -140,11 +129,11 @@ OW_DEFINE_PUT(long);
 OW_DEFINE_PUT(unsigned long);
 OW_DEFINE_PUT(long long);
 OW_DEFINE_PUT(unsigned long long);
+#undef OW_DEFINE_PUT
 
-
-OW_Format::OW_Format(const char* ca, const OW_String& a) : oss()
+Format::Format(const char* ca, const String& a) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '1'))
@@ -153,11 +142,9 @@ OW_Format::OW_Format(const char* ca, const OW_String& a) : oss()
 		}
 	}
 }
-
-
-OW_Format::OW_Format(const char* ca, const OW_String& a, const OW_String& b) : oss()
+Format::Format(const char* ca, const String& a, const String& b) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '2'))
@@ -167,11 +154,9 @@ OW_Format::OW_Format(const char* ca, const OW_String& a, const OW_String& b) : o
 		}
 	}
 }
-
-
-OW_Format::OW_Format(const char* ca, const OW_String& a, const OW_String& b, const OW_String& c) : oss()
+Format::Format(const char* ca, const String& a, const String& b, const String& c) : oss()
 {
-	OW_String fmt(ca);
+	String fmt(ca);
 	while (!fmt.empty())
 	{
 		switch (process(fmt, '3'))
@@ -183,4 +168,5 @@ OW_Format::OW_Format(const char* ca, const OW_String& a, const OW_String& b, con
 	}
 }
 
+} // end namespace OpenWBEM
 

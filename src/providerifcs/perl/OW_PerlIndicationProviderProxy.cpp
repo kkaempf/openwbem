@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_PerlIndicationProviderProxy.hpp"
 #include "NPIExternal.hpp"
@@ -36,145 +35,124 @@
 #include "OW_NPIProviderIFCUtils.hpp"
 #include "OW_WQLSelectStatement.hpp"
 
+namespace OpenWBEM
+{
+
 /////////////////////////////////////////////////////////////////////////////
 void
-OW_PerlIndicationProviderProxy::deActivateFilter(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_WQLSelectStatement& filter, 
-	const OW_String& eventType, 
-	const OW_String& nameSpace,
-	const OW_StringArray& classes)
+PerlIndicationProviderProxy::deActivateFilter(
+	const ProviderEnvironmentIFCRef& env,
+	const WQLSelectStatement& filter, 
+	const String& eventType, 
+	const String& nameSpace,
+	const StringArray& classes)
 {
 	bool lastActivation = (--m_activationCount == 0);
-
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
         	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
+		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("deactivateFilter");
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
-		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
+		WQLSelectStatement mutableFilter(filter);
+		CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
-
+		::CIMObjectPath cop = {&mutablePath};
 		m_ftable->fp_deActivateFilter( &_npiHandle, exp, eventType.c_str(), cop, lastActivation);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 			_npiHandle.providerError);
 		}
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-OW_PerlIndicationProviderProxy::activateFilter(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_WQLSelectStatement& filter, 
-	const OW_String& eventType, 
-	const OW_String& nameSpace,
-	const OW_StringArray& classes)
+PerlIndicationProviderProxy::activateFilter(
+	const ProviderEnvironmentIFCRef& env,
+	const WQLSelectStatement& filter, 
+	const String& eventType, 
+	const String& nameSpace,
+	const StringArray& classes)
 {
 	bool firstActivation = (m_activationCount++ == 0);
-
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
         	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		NPIHandleFreer nhf(_npiHandle);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
-		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
+		WQLSelectStatement mutableFilter(filter);
+		CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
-
+		::CIMObjectPath cop = {&mutablePath};
 		m_ftable->fp_activateFilter( &_npiHandle, exp, eventType.c_str(), cop, firstActivation);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 			_npiHandle.providerError);
 		}
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-OW_PerlIndicationProviderProxy::authorizeFilter(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_WQLSelectStatement& filter, 
-	const OW_String& eventType, 
-	const OW_String& nameSpace,
-	const OW_StringArray& classes, 
-	const OW_String& owner)
+PerlIndicationProviderProxy::authorizeFilter(
+	const ProviderEnvironmentIFCRef& env,
+	const WQLSelectStatement& filter, 
+	const String& eventType, 
+	const String& nameSpace,
+	const StringArray& classes, 
+	const String& owner)
 {
 	env->getLogger()->logDebug("authorizeFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
         	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
+		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("authorizeFilter2");
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
-		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
+		WQLSelectStatement mutableFilter(filter);
+		CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
-
+		::CIMObjectPath cop = {&mutablePath};
 		m_ftable->fp_authorizeFilter( &_npiHandle, exp, eventType.c_str(), cop, owner.c_str());
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 			_npiHandle.providerError);
 		}
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
 int
-OW_PerlIndicationProviderProxy::mustPoll(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_WQLSelectStatement& filter, 
-	const OW_String& eventType, 
-	const OW_String& nameSpace,
-	const OW_StringArray& classes)
+PerlIndicationProviderProxy::mustPoll(
+	const ProviderEnvironmentIFCRef& env,
+	const WQLSelectStatement& filter, 
+	const String& eventType, 
+	const String& nameSpace,
+	const StringArray& classes)
 {
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
         	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
+		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("mustPoll2");
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
-		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
+		WQLSelectStatement mutableFilter(filter);
+		CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
-
+		::CIMObjectPath cop = {&mutablePath};
 		int rval = m_ftable->fp_mustPoll( &_npiHandle, exp, eventType.c_str(), cop);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 			_npiHandle.providerError);
 		}
 		// Perl providers only return 0 or 1 for mustPoll.
@@ -187,4 +165,6 @@ OW_PerlIndicationProviderProxy::mustPoll(
 	}
 	return 0;
 }
+
+} // end namespace OpenWBEM
 

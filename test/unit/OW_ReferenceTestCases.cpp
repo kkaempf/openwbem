@@ -33,6 +33,8 @@
 #include "OW_ReferenceTestCases.hpp"
 #include "OW_Reference.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ReferenceTestCases::setUp()
 {
 }
@@ -62,7 +64,7 @@ class refTest
 void OW_ReferenceTestCases::testVoid()
 {
 	int count = 0;
-	OW_Reference<refTest> r(new refTest(count));
+	Reference<refTest> r(new refTest(count));
 
 	unitAssert( count == 1 );
 

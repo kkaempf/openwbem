@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMDateTime.hpp"
 #include "OW_DateTime.hpp"
@@ -37,12 +36,10 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
-
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
 #include <ctime>
-
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -50,24 +47,23 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
+
 using std::ostream;
 using std::istream;
-
-static void fillDateTimeData(OW_CIMDateTime::OW_DateTimeData& data, const char* str);
-static OW_Int16 getGMTOffset();
-
-
+static void fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str);
+static Int16 getGMTOffset();
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_CIMDateTime::OW_DateTimeData::compare(const OW_CIMDateTime::OW_DateTimeData& arg)
+CIMDateTime::DateTimeData::compare(const CIMDateTime::DateTimeData& arg)
 {
 	return ::memcmp(this, &arg, sizeof(*this));
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMDateTime::OW_DateTimeData& x, const OW_CIMDateTime::OW_DateTimeData& y)
+bool operator<(const CIMDateTime::DateTimeData& x, const CIMDateTime::DateTimeData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_year, y.m_year,
 		x.m_month, y.m_month,
 		x.m_days, y.m_days,
@@ -77,35 +73,30 @@ bool operator<(const OW_CIMDateTime::OW_DateTimeData& x, const OW_CIMDateTime::O
 		x.m_utc, y.m_utc,
 		x.m_isInterval, y.m_isInterval);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime()
-	: m_dptr(new OW_DateTimeData)
+CIMDateTime::CIMDateTime()
+	: m_dptr(new DateTimeData)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime(OW_CIMNULL_t)
+CIMDateTime::CIMDateTime(CIMNULL_t)
 	: m_dptr(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime(const OW_CIMDateTime& arg)
+CIMDateTime::CIMDateTime(const CIMDateTime& arg)
 	: m_dptr(arg.m_dptr)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime(const OW_String& arg) :
-	m_dptr(new OW_DateTimeData)
+CIMDateTime::CIMDateTime(const String& arg) :
+	m_dptr(new DateTimeData)
 {
 	fillDateTimeData(*m_dptr, arg.c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime(const OW_DateTime& arg) :
-	m_dptr(new OW_DateTimeData)
+CIMDateTime::CIMDateTime(const DateTime& arg) :
+	m_dptr(new DateTimeData)
 {
 	m_dptr->m_days = arg.getDay();
 	m_dptr->m_year = arg.getYear();
@@ -117,37 +108,33 @@ OW_CIMDateTime::OW_CIMDateTime(const OW_DateTime& arg) :
 	m_dptr->m_microSeconds = 0;
 	m_dptr->m_utc = getGMTOffset();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::OW_CIMDateTime(OW_UInt64 microSeconds) :
-	m_dptr(new OW_DateTimeData)
+CIMDateTime::CIMDateTime(UInt64 microSeconds) :
+	m_dptr(new DateTimeData)
 {
-	OW_UInt32 secs = microSeconds / 1000000ULL;
+	UInt32 secs = microSeconds / 1000000ULL;
 	microSeconds -= secs * 1000000;
-	OW_UInt32 minutes = secs / 60;
+	UInt32 minutes = secs / 60;
 	secs -= minutes * 60;
-	OW_UInt32 hours = minutes / 60;
+	UInt32 hours = minutes / 60;
 	minutes -= hours * 60;
-	OW_UInt32 days = hours / 24;
+	UInt32 days = hours / 24;
 	hours -= days * 24;
-
 	m_dptr->m_days = days;
 	m_dptr->m_hours = hours;
 	m_dptr->m_minutes = minutes;
 	m_dptr->m_seconds = secs;
 	m_dptr->m_microSeconds = microSeconds;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::operator= (const OW_CIMDateTime& arg)
+CIMDateTime&
+CIMDateTime::operator= (const CIMDateTime& arg)
 {
 	m_dptr = arg.m_dptr;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::operator OW_CIMDateTime::safe_bool() const
+CIMDateTime::operator CIMDateTime::safe_bool() const
 {
 	if(!m_dptr.isNull())
 	{
@@ -160,13 +147,11 @@ OW_CIMDateTime::operator OW_CIMDateTime::safe_bool() const
 			|| m_dptr->m_microSeconds != 0) ?
 			&dummy::nonnull : 0;
 	}
-
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::safe_bool
-OW_CIMDateTime::operator !() const
+CIMDateTime::safe_bool
+CIMDateTime::operator !() const
 {
 	if(!m_dptr.isNull())
 	{
@@ -179,131 +164,111 @@ OW_CIMDateTime::operator !() const
 			|| m_dptr->m_microSeconds != 0) ?
 			0 : &dummy::nonnull;
 	}
-
 	return &dummy::nonnull;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setYear(OW_UInt16 arg)
+CIMDateTime&
+CIMDateTime::setYear(UInt16 arg)
 {
 	m_dptr->m_year = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setMonth(OW_UInt8 arg)
+CIMDateTime&
+CIMDateTime::setMonth(UInt8 arg)
 {
 	m_dptr->m_month = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setDays(OW_UInt32 arg)
+CIMDateTime&
+CIMDateTime::setDays(UInt32 arg)
 {
 	m_dptr->m_days = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setDay(OW_UInt32 arg)
+CIMDateTime&
+CIMDateTime::setDay(UInt32 arg)
 {
 	m_dptr->m_days = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setHours(OW_UInt8 arg)
+CIMDateTime&
+CIMDateTime::setHours(UInt8 arg)
 {
 	m_dptr->m_hours = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setMinutes(OW_UInt8 arg)
+CIMDateTime&
+CIMDateTime::setMinutes(UInt8 arg)
 {
 	m_dptr->m_minutes = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setSeconds(OW_UInt8 arg)
+CIMDateTime&
+CIMDateTime::setSeconds(UInt8 arg)
 {
 	m_dptr->m_seconds = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setMicroSeconds(OW_UInt32 arg)
+CIMDateTime&
+CIMDateTime::setMicroSeconds(UInt32 arg)
 {
 	m_dptr->m_microSeconds = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime&
-OW_CIMDateTime::setUtc(OW_Int16 arg)
+CIMDateTime&
+CIMDateTime::setUtc(Int16 arg)
 {
 	m_dptr->m_utc = arg;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDateTime::equal(const OW_CIMDateTime& arg) const
+CIMDateTime::equal(const CIMDateTime& arg) const
 {
 	return (::memcmp(arg.m_dptr.getPtr(), m_dptr.getPtr(),
-		sizeof(OW_DateTimeData)) == 0);
+		sizeof(DateTimeData)) == 0);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMDateTime::readObject(istream &istrm)
+CIMDateTime::readObject(istream &istrm)
 {
-	OW_DateTimeData dtdata;
-	OW_BinarySerialization::read(istrm, &dtdata, sizeof(dtdata));
-
-	dtdata.m_year = OW_ntoh16(dtdata.m_year);
-	dtdata.m_days = OW_ntoh32(dtdata.m_days);
-	dtdata.m_microSeconds = OW_ntoh32(dtdata.m_microSeconds);
-	dtdata.m_utc = OW_ntoh16(dtdata.m_utc);
-
+	DateTimeData dtdata;
+	BinarySerialization::read(istrm, &dtdata, sizeof(dtdata));
+	dtdata.m_year = ntoh16(dtdata.m_year);
+	dtdata.m_days = ntoh32(dtdata.m_days);
+	dtdata.m_microSeconds = ntoh32(dtdata.m_microSeconds);
+	dtdata.m_utc = ntoh16(dtdata.m_utc);
 	if(m_dptr.isNull())
 	{
-		m_dptr = new OW_DateTimeData;
+		m_dptr = new DateTimeData;
 	}
-
 	*m_dptr = dtdata;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMDateTime::writeObject(ostream &ostrm) const
+CIMDateTime::writeObject(ostream &ostrm) const
 {
-	OW_DateTimeData dtdata;
-
+	DateTimeData dtdata;
 	memmove(&dtdata, m_dptr.getPtr(), sizeof(dtdata));
-	dtdata.m_year = OW_hton16(dtdata.m_year);
-	dtdata.m_days = OW_hton32(dtdata.m_days);
-	dtdata.m_microSeconds = OW_hton32(dtdata.m_microSeconds);
-	dtdata.m_utc = OW_hton16(dtdata.m_utc);
-
-	OW_BinarySerialization::write(ostrm, &dtdata, sizeof(dtdata));
+	dtdata.m_year = hton16(dtdata.m_year);
+	dtdata.m_days = hton32(dtdata.m_days);
+	dtdata.m_microSeconds = hton32(dtdata.m_microSeconds);
+	dtdata.m_utc = hton16(dtdata.m_utc);
+	BinarySerialization::write(ostrm, &dtdata, sizeof(dtdata));
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMDateTime::toString() const
+String
+CIMDateTime::toString() const
 {
 	char bfr[30];
-
 	if(isInterval())
 	{
 		// Interval format
@@ -318,22 +283,18 @@ OW_CIMDateTime::toString() const
 			m_dptr->m_month, m_dptr->m_days, m_dptr->m_hours, m_dptr->m_minutes,
 			m_dptr->m_seconds, m_dptr->m_microSeconds, m_dptr->m_utc);
 	}
-
-	return OW_String(bfr);
+	return String(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static void
-fillDateTimeData(OW_CIMDateTime::OW_DateTimeData& data, const char* str)
+fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 {
-	::memset(&data, 0, sizeof(OW_CIMDateTime::OW_DateTimeData));
+	::memset(&data, 0, sizeof(CIMDateTime::DateTimeData));
 	if(str == NULL || *str == '\0')
 		return;
-
 	char bfr[35];
 	::strncpy(bfr, str, sizeof(bfr));
 	bfr[34] = '\0';
-
 	if(bfr[21] == ':')	// Is this an interval
 	{
 		// ddddddddhhmmss.mmmmmm:000
@@ -371,42 +332,39 @@ fillDateTimeData(OW_CIMDateTime::OW_DateTimeData& data, const char* str)
 	}
 	else
 	{
-		OW_THROW(OW_CIMDateTimeException, "Invalid format for date time");
+		OW_THROW(CIMDateTimeException, "Invalid format for date time");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-operator<< (ostream& ostr, const OW_CIMDateTime& arg)
+operator<< (ostream& ostr, const CIMDateTime& arg)
 {
 	ostr << arg.toString();
 	return ostr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-static OW_Int16
+static Int16
 getGMTOffset()
 {
-	static OW_Int16 gmtOffset = 0;
+	static Int16 gmtOffset = 0;
 	static bool offsetComputed = false;
-	static OW_Mutex tzmutex;
-
-	OW_MutexLock ml(tzmutex);
+	static Mutex tzmutex;
+	MutexLock ml(tzmutex);
 	if(!offsetComputed)
 	{
 		time_t tm = time(NULL);
 		time_t gmt = mktime(gmtime(&tm));
 		time_t lctm = mktime(localtime(&tm));
-
 		gmtOffset = ((lctm - gmt) / 60) / 60;
 		offsetComputed = true;
 	}
-
 	return gmtOffset;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMDateTime& x, const OW_CIMDateTime& y)
+bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 {
 	return *x.m_dptr < *y.m_dptr;
 }
+
+} // end namespace OpenWBEM
+

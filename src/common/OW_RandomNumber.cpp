@@ -27,25 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_RandomNumber.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_ThreadImpl.hpp"
-
 #include <fstream>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <stdlib.h>
 
-static OW_Mutex guard;
+namespace OpenWBEM
+{
 
+static Mutex guard;
 static unsigned int seed = 0;
-
-OW_RandomNumber::OW_RandomNumber(OW_Int32 lowVal, OW_Int32 highVal)
+RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 : m_lowVal(lowVal), m_highVal(highVal)
 {
 	if(lowVal > highVal)
@@ -53,23 +51,20 @@ OW_RandomNumber::OW_RandomNumber(OW_Int32 lowVal, OW_Int32 highVal)
 		m_lowVal = highVal;
 		m_highVal = lowVal;
 	}
-
 	// double-checked locking pattern. See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
-	OW_ThreadImpl::memoryBarrier();
+	ThreadImpl::memoryBarrier();
 	if (seed == 0)
 	{
-		OW_MutexLock lock(guard);
+		MutexLock lock(guard);
 		if (seed == 0)
 		{
 			// use the time as part of the seed
 			struct timeval tv;
 			gettimeofday(&tv, 0);
-
 			// try to get something from the kernel
 			std::ifstream infile("/dev/urandom", std::ios::in);
 			if (!infile)
 				infile.open("/dev/random", std::ios::in);
-
 			// don't initialize this, we may get random stack
 			// junk in case infile isn't usable.
 			unsigned int dev_rand_input;
@@ -78,10 +73,8 @@ OW_RandomNumber::OW_RandomNumber(OW_Int32 lowVal, OW_Int32 highVal)
 				infile.read(reinterpret_cast<char*>(&dev_rand_input), sizeof(dev_rand_input));
 				infile.close();
 			}
-
 			// Build the seed. Take into account our pid and uid.
 			seed = dev_rand_input ^ (getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec;
-
 #ifdef OW_HAVE_SRANDOM
 			srandom(seed);
 #else
@@ -91,14 +84,16 @@ OW_RandomNumber::OW_RandomNumber(OW_Int32 lowVal, OW_Int32 highVal)
 	}
 }
 	
-OW_Int32
-OW_RandomNumber::getNextNumber()
+Int32
+RandomNumber::getNextNumber()
 {
-	OW_MutexLock lock(guard);
+	MutexLock lock(guard);
 #ifdef OW_HAVE_RANDOM
 	return m_lowVal + (random() % (m_highVal - m_lowVal + 1));
 #else
 	return m_lowVal + (rand() % (m_highVal - m_lowVal + 1));
 #endif
 }
+
+} // end namespace OpenWBEM
 

@@ -27,67 +27,64 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIM_FWD_HPP_
 #define OW_CIM_FWD_HPP_
-
 #include "OW_config.h"
 #include "OW_ArrayFwd.hpp"
 
-class OW_Bool;
-class OW_CIMDateTime;
-class OW_CIMBase;
-class OW_CIMDataType;
-class OW_CIMScope;
-class OW_CIMUrl;
-class OW_CIMNameSpace;
-class OW_CIMElement;
-class OW_CIMFlavor;
-class OW_CIMProperty;
-class OW_CIMObjectPath;
-class OW_CIMQualifierType;
-class OW_CIMQualifier;
-class OW_CIMMethod;
-class OW_CIMClass;
-class OW_CIMParameter;
-class OW_CIMParamValue;
-class OW_CIMInstance;
-class OW_CIMValue;
-class OW_String;
-class OW_Char16;
-struct OW_CIMFeatures;
+namespace OpenWBEM
+{
 
+class Bool;
+class CIMDateTime;
+class CIMBase;
+class CIMDataType;
+class CIMScope;
+class CIMUrl;
+class CIMNameSpace;
+class CIMElement;
+class CIMFlavor;
+class CIMProperty;
+class CIMObjectPath;
+class CIMQualifierType;
+class CIMQualifier;
+class CIMMethod;
+class CIMClass;
+class CIMParameter;
+class CIMParamValue;
+class CIMInstance;
+class CIMValue;
+class String;
+class Char16;
+struct CIMFeatures;
 template <class T>
-class OW_Enumeration;
+class Enumeration;
+typedef Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
+typedef Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
+typedef Enumeration<CIMClass> CIMClassEnumeration;
+typedef Enumeration<CIMInstance> CIMInstanceEnumeration;
+typedef Array<CIMDateTime> 		CIMDateTimeArray;
+typedef Array<CIMBase> 				CIMBaseArray;
+typedef Array<CIMDataType> 		CIMDataTypeArray;
+typedef Array<CIMScope> 			CIMScopeArray;
+typedef Array<CIMUrl> 				CIMUrlArray;
+typedef Array<CIMNameSpace>		CIMNameSpaceArray;
+typedef Array<CIMElement> 			CIMElementArray;
+typedef Array<CIMFlavor> 			CIMFlavorArray;
+typedef Array<CIMProperty> 		CIMPropertyArray;
+typedef Array<CIMObjectPath> 		CIMObjectPathArray;
+typedef Array<CIMQualifierType> 	CIMQualifierTypeArray;
+typedef Array<CIMQualifier> 		CIMQualifierArray;
+typedef Array<CIMMethod> 			CIMMethodArray;
+typedef Array<CIMClass> 			CIMClassArray;
+typedef Array<CIMParameter> 		CIMParameterArray;
+typedef Array<CIMParamValue> 		CIMParamValueArray;
+typedef Array<CIMInstance> 		CIMInstanceArray;
+typedef Array<CIMValue> 			CIMValueArray;
+typedef Array<String>				StringArray;
+typedef Array<Char16>				Char16Array;
+typedef Array<Bool>       			BoolArray;
 
-typedef OW_Enumeration<OW_CIMObjectPath> OW_CIMObjectPathEnumeration;
-typedef OW_Enumeration<OW_CIMQualifierType> OW_CIMQualifierTypeEnumeration;
-typedef OW_Enumeration<OW_CIMClass> OW_CIMClassEnumeration;
-typedef OW_Enumeration<OW_CIMInstance> OW_CIMInstanceEnumeration;
-
-typedef OW_Array<OW_CIMDateTime> 		OW_CIMDateTimeArray;
-typedef OW_Array<OW_CIMBase> 				OW_CIMBaseArray;
-typedef OW_Array<OW_CIMDataType> 		OW_CIMDataTypeArray;
-typedef OW_Array<OW_CIMScope> 			OW_CIMScopeArray;
-typedef OW_Array<OW_CIMUrl> 				OW_CIMUrlArray;
-typedef OW_Array<OW_CIMNameSpace>		OW_CIMNameSpaceArray;
-typedef OW_Array<OW_CIMElement> 			OW_CIMElementArray;
-typedef OW_Array<OW_CIMFlavor> 			OW_CIMFlavorArray;
-typedef OW_Array<OW_CIMProperty> 		OW_CIMPropertyArray;
-typedef OW_Array<OW_CIMObjectPath> 		OW_CIMObjectPathArray;
-typedef OW_Array<OW_CIMQualifierType> 	OW_CIMQualifierTypeArray;
-typedef OW_Array<OW_CIMQualifier> 		OW_CIMQualifierArray;
-typedef OW_Array<OW_CIMMethod> 			OW_CIMMethodArray;
-typedef OW_Array<OW_CIMClass> 			OW_CIMClassArray;
-typedef OW_Array<OW_CIMParameter> 		OW_CIMParameterArray;
-typedef OW_Array<OW_CIMParamValue> 		OW_CIMParamValueArray;
-typedef OW_Array<OW_CIMInstance> 		OW_CIMInstanceArray;
-typedef OW_Array<OW_CIMValue> 			OW_CIMValueArray;
-typedef OW_Array<OW_String>				OW_StringArray;
-typedef OW_Array<OW_Char16>				OW_Char16Array;
-typedef OW_Array<OW_Bool>       			OW_BoolArray;
-
-
+} // end namespace OpenWBEM
 
 #endif
-

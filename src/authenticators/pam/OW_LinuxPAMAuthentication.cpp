@@ -27,32 +27,31 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 #include <string.h>
-
 extern "C"
 {
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 }
 
+namespace OpenWBEM
+{
 
 /**
  * This is the Linux-PAM "conversation" function.
  * Refer to
  * http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/pam_appl.html
- * @param appdata_ptr A pointer to the OW_HTTPReader instance which
- * 			called OW_OS::loadAuthenticator, which in turn called
+ * @param appdata_ptr A pointer to the HTTPReader instance which
+ * 			called OS::loadAuthenticator, which in turn called
  * 			pam_authenticate, which calls PamConv
  */
-static int OW_PAM_conv(int num_msg, const struct pam_message **msgm,
+static int PAM_conv(int num_msg, const struct pam_message **msgm,
 							  struct pam_response **response, void *appdata_ptr);
-
-class OW_LinuxPAMAuthentication : public OW_AuthenticatorIFC
+class LinuxPAMAuthentication : public AuthenticatorIFC
 {
 	/**
 	 * Authenticates a user
@@ -68,28 +67,23 @@ class OW_LinuxPAMAuthentication : public OW_AuthenticatorIFC
 	 *   True if user is authenticated
 	 */
 private:
-	virtual bool doAuthenticate(OW_String &userName, const OW_String &info,
-		OW_String &details);
+	virtual bool doAuthenticate(String &userName, const String &info,
+		String &details);
 	
-	virtual void doInit(OW_ServiceEnvironmentIFCRef env);
-
-	OW_String m_allowedUsers;
+	virtual void doInit(ServiceEnvironmentIFCRef env);
+	String m_allowedUsers;
 };
-
 // See misc_conv.c in libpam for an example.
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details)
+LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, String &details)
 {
 	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
 		return false;
 	}
-
-	OW_Array<OW_String> allowedUsers = m_allowedUsers.tokenize();
-
+	Array<String> allowedUsers = m_allowedUsers.tokenize();
 	bool nameFound = false;
 	for (size_t i = 0; i < allowedUsers.size(); i++)
 	{
@@ -104,26 +98,19 @@ OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &
 		details = "You must authenticate to access this resource";
 		return false;
 	}
-
 	char* pPasswd = strdup(info.c_str());
 	char* pUserName = strdup(userName.c_str());
-
 	struct pam_conv conv = {
-		OW_PAM_conv,
+		PAM_conv,
 		pPasswd
 	};
-
 	pam_handle_t *pamh=NULL;
 	int rval;
-
 	rval = pam_start("openwbem", pUserName, &conv, &pamh);
-
 	if (rval == PAM_SUCCESS)
 		rval = pam_authenticate(pamh, 0);	 /* is user really user? */
-
 	if (rval == PAM_SUCCESS)
 		rval = pam_acct_mgmt(pamh, 0);		 /* permitted access? */
-
 	if (rval == PAM_CONV_ERR)
 	{
 		pam_end(pamh, rval);
@@ -131,37 +118,28 @@ OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &
         details = "Error in Linux-PAM conversation function";
 		return false;
 	}
-
-
 	if (pam_end(pamh,rval) != PAM_SUCCESS)
 	{		// close Linux-PAM
 		pamh = NULL;
 		details = "Unable to close PAM transaction";
 		return false;
 	}
-
 	free(pUserName);
-
 	bool retval = ( rval == PAM_SUCCESS ? true : false ); /* indicate success */
-
 	return retval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Static
 // TODO clean up, remove all stuff we don't support.
 int
-OW_PAM_conv(int num_msg, const struct pam_message **msgm,
+PAM_conv(int num_msg, const struct pam_message **msgm,
 				struct pam_response **response, void *appdata_ptr)
 {
 	int count=0;
 	struct pam_response *reply;
-
 	if (num_msg <= 0)
 		return PAM_CONV_ERR;
-
 	//D(("allocating empty response structure array."));
-
 	reply = static_cast<struct pam_response *>(calloc(num_msg, sizeof(struct pam_response)));
 	if (reply == NULL)
 	{
@@ -169,13 +147,10 @@ OW_PAM_conv(int num_msg, const struct pam_message **msgm,
 		return PAM_CONV_ERR;
 	}
 	bool failed = false;
-
 	//D(("entering conversation function."));
-
 	for (count=0; count < num_msg; ++count)
 	{
 		char *string=NULL;
-
 		if (failed == true)
 		{
 			break;
@@ -225,17 +200,14 @@ OW_PAM_conv(int num_msg, const struct pam_message **msgm,
 				//		  ,msgm[count]->msg_style);
 				failed = true;
 		}
-
 		if (string)
 		{								  /* must add to reply array */
 			/* add string to list of responses */
-
 			reply[count].resp_retcode = 0;
 			reply[count].resp = string;
 			string = NULL;
 		}
 	}
-
 	/* New (0.59+) behavior is to always have a reply - this is
 		compatable with the X/Open (March 1997) spec. */
 	if (!failed)
@@ -277,13 +249,13 @@ OW_PAM_conv(int num_msg, const struct pam_message **msgm,
 	} // else
 	return PAM_SUCCESS;
 }
-
-
-void OW_LinuxPAMAuthentication::doInit(OW_ServiceEnvironmentIFCRef env)
+void LinuxPAMAuthentication::doInit(ServiceEnvironmentIFCRef env)
 {
-	m_allowedUsers = env->getConfigItem(OW_ConfigOpts::PAM_ALLOWED_USERS_opt);
+	m_allowedUsers = env->getConfigItem(ConfigOpts::PAM_ALLOWED_USERS_opt);
 }
 
-OW_AUTHENTICATOR_FACTORY(OW_LinuxPAMAuthentication);
+} // end namespace OpenWBEM
+
+OW_AUTHENTICATOR_FACTORY(OpenWBEM::LinuxPAMAuthentication);
 
 

@@ -27,26 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_UnloaderProvider.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_Format.hpp"
-
 #define POLLING_INTERVAL 60
 
-OW_UnloaderProvider::OW_UnloaderProvider()
+namespace OpenWBEM
+{
+
+UnloaderProvider::UnloaderProvider()
 {
 }
-
-OW_UnloaderProvider::~OW_UnloaderProvider() 
+UnloaderProvider::~UnloaderProvider() 
 {
 }
-
-
 /**
- * Called by the CIMOM to give this OW_CppPolledProviderIFC to
+ * Called by the CIMOM to give this CppPolledProviderIFC to
  * opportunity to export indications if needed.
  * @param lch	A local CIMOM handle the provider can use to export
  *					indications if needed.
@@ -54,29 +51,28 @@ OW_UnloaderProvider::~OW_UnloaderProvider()
  * method returns -1 then the last polling interval will be used. If it
  * returns 0 then the poll method will never be called again.
  */
-OW_Int32
-OW_UnloaderProvider::poll(const OW_ProviderEnvironmentIFCRef &/*env*/)
+Int32
+UnloaderProvider::poll(const ProviderEnvironmentIFCRef &/*env*/)
 {
-	//env->getLogger()->logDebug( "Polling OW_UnloaderProvider");
-	OW_CIMOMEnvironment::g_cimomEnvironment->unloadProviders();
-	OW_CIMOMEnvironment::g_cimomEnvironment->unloadReqHandlers();
+	//env->getLogger()->logDebug( "Polling UnloaderProvider");
+	CIMOMEnvironment::g_cimomEnvironment->unloadProviders();
+	CIMOMEnvironment::g_cimomEnvironment->unloadReqHandlers();
 	return -1;
 }
-
 /**
  * @return The amount of seconds before the first call to the poll method.
  * If this method returns zero, then the poll method is never called.
  */
-OW_Int32
-OW_UnloaderProvider::getInitialPollingInterval(const
-		OW_ProviderEnvironmentIFCRef &env)
+Int32
+UnloaderProvider::getInitialPollingInterval(const
+		ProviderEnvironmentIFCRef &env)
 {
 	env->getLogger()->logDebug(format(
-		"Calling getInitialPollingInterval in OW_ProviderUnloader; returning %1",
+		"Calling getInitialPollingInterval in ProviderUnloader; returning %1",
 		POLLING_INTERVAL));
 	return POLLING_INTERVAL;
 }
+} // end namespace OpenWBEM
 
-
-OW_NOIDPROVIDERFACTORY(OW_UnloaderProvider)
+OW_NOIDPROVIDERFACTORY(OpenWBEM::UnloaderProvider)
 

@@ -27,20 +27,21 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_Exception.hpp"
 #include "OW_String.hpp"
-
 #include <iostream> // for cerr
 #include <cstring> // for memcpy
 
-OW_BaseStreamBuffer::OW_BaseStreamBuffer(size_t bufSize,
+namespace OpenWBEM
+{
+
+BaseStreamBuffer::BaseStreamBuffer(size_t bufSize,
 		const char* direction_)
 	: m_bufSize(bufSize), m_inputBuffer(NULL), m_outputBuffer(NULL)
 {
-	OW_String direction(direction_);
+	String direction(direction_);
 	if (direction.equals("in") || direction.equals("io"))
 	{
 		m_inputBuffer = new char[m_bufSize];
@@ -52,46 +53,40 @@ OW_BaseStreamBuffer::OW_BaseStreamBuffer(size_t bufSize,
 		initPutBuffer();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BaseStreamBuffer::initBuffers()
+BaseStreamBuffer::initBuffers()
 {
 	initPutBuffer();
 	initGetBuffer();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BaseStreamBuffer::initPutBuffer()
+BaseStreamBuffer::initPutBuffer()
 {
 	setp(m_outputBuffer, m_outputBuffer + m_bufSize);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BaseStreamBuffer::initGetBuffer()
+BaseStreamBuffer::initGetBuffer()
 {
 	setg(m_inputBuffer, m_inputBuffer, m_inputBuffer);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_BaseStreamBuffer::~OW_BaseStreamBuffer()
+BaseStreamBuffer::~BaseStreamBuffer()
 {
 	delete [] m_inputBuffer;
 	delete [] m_outputBuffer;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_BaseStreamBuffer::sync()
+BaseStreamBuffer::sync()
 {
 	return buffer_out();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_BaseStreamBuffer::buffer_out()
+BaseStreamBuffer::buffer_out()
 {
 	// NOTE: If an exception escapes this function, __terminate will be called
 	// for gcc 2.95.2
@@ -102,26 +97,25 @@ OW_BaseStreamBuffer::buffer_out()
 		pbump(-cnt);
 		return retval;
 	}
-	catch (const OW_Exception& e)
+	catch (const Exception& e)
 	{
-		std::cerr << "Caught OW_Exception in OW_BaseStreamBuffer::buffer_out(): " << e << std::endl;
+		std::cerr << "Caught Exception in BaseStreamBuffer::buffer_out(): " << e << std::endl;
 		return EOF;
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Caught exception in OW_BaseStreamBuffer::buffer_out(): " << e.what() << std::endl;
+		std::cerr << "Caught exception in BaseStreamBuffer::buffer_out(): " << e.what() << std::endl;
 		return EOF;
 	}
 	catch (...)
 	{
-		std::cerr << "Caught unknown exception in OW_BaseStreamBuffer::buffer_out()" << std::endl;
+		std::cerr << "Caught unknown exception in BaseStreamBuffer::buffer_out()" << std::endl;
 		return EOF;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_BaseStreamBuffer::overflow(int c)
+BaseStreamBuffer::overflow(int c)
 {
 	if (buffer_out() < 0)
 	{
@@ -135,10 +129,9 @@ OW_BaseStreamBuffer::overflow(int c)
 			return c;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 std::streamsize
-OW_BaseStreamBuffer::xsputn(const char* s, std::streamsize n)
+BaseStreamBuffer::xsputn(const char* s, std::streamsize n)
 {
 	if (n < epptr() - pptr())
 	{
@@ -155,15 +148,12 @@ OW_BaseStreamBuffer::xsputn(const char* s, std::streamsize n)
 				return i;
 			}
 		}
-
 		return n;
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_BaseStreamBuffer::underflow()
+BaseStreamBuffer::underflow()
 {
 	// NOTE: If an exception escapes this function, __terminate will be called
 	// for gcc 2.95.2
@@ -171,36 +161,33 @@ OW_BaseStreamBuffer::underflow()
 	{
 		if (gptr() < egptr())
 			return static_cast<unsigned char>(*gptr());
-
 		if (buffer_in() < 0)
 			return EOF;
 		else
 			return static_cast<unsigned char>(*gptr());
 	}
-	catch (const OW_Exception& e)
+	catch (const Exception& e)
 	{
-		std::cerr << "Caught OW_Exception in OW_BaseStreamBuffer::underflow(): " << e << std::endl;
+		std::cerr << "Caught Exception in BaseStreamBuffer::underflow(): " << e << std::endl;
 		return EOF;
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "Caught exception in OW_BaseStreamBuffer::underflow(): " << e.what() << std::endl;
+		std::cerr << "Caught exception in BaseStreamBuffer::underflow(): " << e.what() << std::endl;
 		return EOF;
 	}
 	catch (...)
 	{
-		std::cerr << "Caught unknown exception in OW_BaseStreamBuffer::underflow()" << std::endl;
+		std::cerr << "Caught unknown exception in BaseStreamBuffer::underflow()" << std::endl;
 		return EOF;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_BaseStreamBuffer::buffer_in()
+BaseStreamBuffer::buffer_in()
 {
 	int retval = buffer_from_device(m_inputBuffer,
 			m_bufSize);
-
 	if (retval <= 0)
 	{
 		setg(0,0,0);
@@ -212,22 +199,22 @@ OW_BaseStreamBuffer::buffer_in()
 		return retval;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_BaseStreamBuffer::buffer_to_device(const char* c, int n)
+BaseStreamBuffer::buffer_to_device(const char* c, int n)
 {
-	OW_THROW(OW_Exception, "Not implemented, should overwrite");
+	OW_THROW(Exception, "Not implemented, should overwrite");
+	(void)c; (void)n;
+	return -1; // make the compiler happy
+}
+//////////////////////////////////////////////////////////////////////////////
+int
+BaseStreamBuffer::buffer_from_device(char* c, int n)
+{
+	OW_THROW(Exception, "Not implemented, should overwrite");
 	(void)c; (void)n;
 	return -1; // make the compiler happy
 }
 
-//////////////////////////////////////////////////////////////////////////////
-int
-OW_BaseStreamBuffer::buffer_from_device(char* c, int n)
-{
-	OW_THROW(OW_Exception, "Not implemented, should overwrite");
-	(void)c; (void)n;
-	return -1; // make the compiler happy
-}
+} // end namespace OpenWBEM
 

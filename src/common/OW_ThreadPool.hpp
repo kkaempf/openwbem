@@ -27,22 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_THREAD_POOL_HPP_INCLUDE_GUARD_
 #define OW_THREAD_POOL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
-
 #include "OW_Reference.hpp"
 #include "OW_Runnable.hpp"
 
-class OW_ThreadPoolImpl;
+namespace OpenWBEM
+{
 
+class ThreadPoolImpl;
 DECLARE_EXCEPTION(ThreadPool);
-
 /**
- * The OW_ThreadPool class is used to coordinate a group of threads.  There is
+ * The ThreadPool class is used to coordinate a group of threads.  There is
  * a queue maintained of work to do.  As each thread in the group is available
  * it will get it's next task from the head of the queue.  The queue can have
  * a maximum size limit or can be of unlimited size.
@@ -50,7 +48,7 @@ DECLARE_EXCEPTION(ThreadPool);
  * This class is freely copyable.  All copies reference the same underlying implementation.
  * This class is thread safe.
  */
-class OW_ThreadPool
+class ThreadPool
 {
 public:
 	enum PoolType
@@ -58,7 +56,6 @@ public:
 		FIXED_SIZE,
 		DYNAMIC_SIZE
 	};
-
 	/**
 	 * Constructor
 	 *
@@ -74,30 +71,26 @@ public:
 	 * @param maxQueueSize The upper bound on the size of the queue.  0 means
 	 *  no limit.
 	 *
-	 * @throw OW_ThreadPoolException if the underlying implementation fails.
+	 * @throw ThreadPoolException if the underlying implementation fails.
 	 */
-	OW_ThreadPool(PoolType poolType, OW_UInt32 numThreads, OW_UInt32 maxQueueSize);
-
+	ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize);
 	/**
-	 * Add an OW_RunnableRef for the pool to execute.
+	 * Add an RunnableRef for the pool to execute.
 	 * If the queue is full, this call will block until there is space in the queue.
 	 * @return true if added to the queue, false if not, which will only happen if the pool is shutting down.
 	 */
-	bool addWork(const OW_RunnableRef& work);
-
+	bool addWork(const RunnableRef& work);
 	/**
-	 * Add an OW_RunnableRef for the pool to execute.
+	 * Add an RunnableRef for the pool to execute.
 	 * If the queue is full, this call will *not* block.
 	 * @return true if added to the queue, false if not.
 	 */
-	bool tryAddWork(const OW_RunnableRef& work);
-
+	bool tryAddWork(const RunnableRef& work);
 	enum EShutdownQueueFlag
 	{
 		E_DISCARD_WORK_IN_QUEUE,
 		E_FINISH_WORK_IN_QUEUE
 	};
-
 	/**
 	 * Instruct all threads to exit and stop working.  After shutdown() is
 	 * called, addWork() and tryAddWork() will return false.
@@ -113,23 +106,22 @@ public:
 	 *  all the threads have exited.
 	 */
 	void shutdown(EShutdownQueueFlag finishWorkInQueue = E_FINISH_WORK_IN_QUEUE, int timeoutSecs=-1);
-
 	/**
 	 * Wait for the queue to empty out.
 	 */
 	void waitForEmptyQueue();
-
 	/**
 	 * Destructor.  This will call shutdown(false) when the last copy is
 	 * destroyed
 	 */
-	~OW_ThreadPool();
-	OW_ThreadPool(const OW_ThreadPool& x);
-	OW_ThreadPool& operator=(const OW_ThreadPool& x);
+	~ThreadPool();
+	ThreadPool(const ThreadPool& x);
+	ThreadPool& operator=(const ThreadPool& x);
 private:
-	OW_Reference<OW_ThreadPoolImpl> m_impl;
+	Reference<ThreadPoolImpl> m_impl;
 };
+typedef Reference<ThreadPool> ThreadPoolRef;
 
-typedef OW_Reference<OW_ThreadPool> OW_ThreadPoolRef;
+} // end namespace OpenWBEM
 
 #endif

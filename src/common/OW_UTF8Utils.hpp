@@ -29,15 +29,15 @@
 *******************************************************************************/
 #ifndef OW_UTF8_UTILS_HPP_INCLUDE_GUARD_
 #define OW_UTF8_UTILS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 
-class OW_String;
-
-namespace OW_UTF8Utils
+namespace OpenWBEM
 {
 
+class String;
+namespace UTF8Utils
+{
 /**
  * Count the number of UTF-8 chars in the string.  This may be different than
  * the number of bytes (as would be returned by strlen()).
@@ -46,7 +46,6 @@ namespace OW_UTF8Utils
  * @return Number of chars in the string.
  */
 size_t charCount(const char* utf8str);
-
 /**
  * Convert one UTF-8 char (possibly multiple bytes) into a UCS2 16-bit char
  * @param utc8char pointer to the UTF-8 char to convert
@@ -54,19 +53,15 @@ size_t charCount(const char* utf8str);
  *  invalid UTF-8 sequence.  Not all UTF-8 chars are handled. UTF-8 chars 
  *  outside the range of a UCS2 char will produce undefined results.
  */
-OW_UInt16 UTF8toUCS2(const char* utf8char);
-
+UInt16 UTF8toUCS2(const char* utf8char);
 /**
  * Convert one UCS2 16-bit char into a UTF-8 char (possibly multiple bytes)
  * @param ucs2char UCS2 char to convert.
  * @return The corresponding UTF-8 char.
  */
-OW_String UCS2toUTF8(OW_UInt16 ucs2char);
+String UCS2toUTF8(UInt16 ucs2char);
+} // end namespace UTF8Utils
 
-} // end namespace OW_UTF8Utils
-
-
+} // end namespace OpenWBEM
 
 #endif
-
-

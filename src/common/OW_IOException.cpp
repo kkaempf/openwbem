@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 * Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
@@ -31,19 +30,19 @@
 #include "OW_config.h"
 #include "OW_IOException.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(IO)
-
 // Don't use DEFINE_EXCEPTION because we're not derived directly from 
-// OW_Exception which is what the macro assumes.
-OW_BadCIMSignatureException::OW_BadCIMSignatureException() : OW_IOException() {}
-
-OW_BadCIMSignatureException::OW_BadCIMSignatureException(const char* file, int line, const char* msg)
-		: OW_IOException(file, line, msg) {}
-
-OW_BadCIMSignatureException::OW_BadCIMSignatureException(const char* msg) : OW_IOException(msg) {}
-
-OW_BadCIMSignatureException::~OW_BadCIMSignatureException() throw() { }
-
+// Exception which is what the macro assumes.
+BadCIMSignatureException::BadCIMSignatureException() : IOException() {}
+BadCIMSignatureException::BadCIMSignatureException(const char* file, int line, const char* msg)
+		: IOException(file, line, msg) {}
+BadCIMSignatureException::BadCIMSignatureException(const char* msg) : IOException(msg) {}
+BadCIMSignatureException::~BadCIMSignatureException() throw() { }
 const char* 
-OW_BadCIMSignatureException::type() const { return "OW_BadCIMSignatureException"; }
+BadCIMSignatureException::type() const { return "BadCIMSignatureException"; }
+
+} // end namespace OpenWBEM
 

@@ -35,6 +35,8 @@
 #include "OW_String.hpp"
 #include "OW_Types.hpp"
 
+using namespace OpenWBEM;
+
 void OW_StringTestCases::setUp()
 {
 }
@@ -45,7 +47,7 @@ void OW_StringTestCases::tearDown()
 
 void OW_StringTestCases::testErase()
 {
-	OW_String s = "abc";
+	String s = "abc";
 	s.erase();
 	unitAssert( s == "" );
 	unitAssert( s.length() == 0 );
@@ -53,25 +55,25 @@ void OW_StringTestCases::testErase()
 
 void OW_StringTestCases::testSubstring()
 {
-	OW_String s = "abc";
+	String s = "abc";
 	unitAssert( s.substring(0, 0) == "" );
 	unitAssert( s.substring(0, 0).length() == 0 );
-	unitAssert( s.substring(static_cast<OW_UInt32>(-1)) == "" );
-	unitAssert( s.substring(static_cast<OW_UInt32>(-1)).length() == 0 );
+	unitAssert( s.substring(static_cast<UInt32>(-1)) == "" );
+	unitAssert( s.substring(static_cast<UInt32>(-1)).length() == 0 );
 }
 
 void OW_StringTestCases::testNumbers()
 {
-	OW_String s = "-1";
+	String s = "-1";
 	unitAssert(s.toInt32() == -1);
-	OW_String uls("5000000000000");
-	OW_UInt64 ul = uls.toUInt64();
+	String uls("5000000000000");
+	UInt64 ul = uls.toUInt64();
 	unitAssert(ul == 5000000000000LL);
-	OW_String uls2(ul);
+	String uls2(ul);
 	unitAssert(uls.equals(uls2));
-	OW_String rs("4.56e+80");
-	OW_Real64 r = rs.toReal64();
-	OW_String rs2(r);
+	String rs("4.56e+80");
+	Real64 r = rs.toReal64();
+	String rs2(r);
 	unitAssert(rs.equals(rs2));	
 }
 

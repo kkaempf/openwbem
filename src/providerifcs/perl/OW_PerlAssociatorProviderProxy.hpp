@@ -27,71 +27,67 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_Perl_ASSOCIATOR_PROVIDER_PROXY_HPP_
 #define OW_Perl_ASSOCIATOR_PROVIDER_PROXY_HPP_
-
 #include "OW_config.h"
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-class OW_PerlAssociatorProviderProxy : public OW_AssociatorProviderIFC
+namespace OpenWBEM
+{
+
+class PerlAssociatorProviderProxy : public AssociatorProviderIFC
 {
 public:
-	OW_PerlAssociatorProviderProxy(const OW_FTABLERef& f)
+	PerlAssociatorProviderProxy(const FTABLERef& f)
 	: m_ftable(f)
 	{
 	}
-
-	virtual ~OW_PerlAssociatorProviderProxy()
+	virtual ~PerlAssociatorProviderProxy()
 	{
 	}
-
 	virtual void associatorNames(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole);
 	virtual void associators(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList);
 	virtual void references(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultRole,
-		const OW_String& role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultRole,
+		const String& role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList);
 	virtual void referenceNames(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultRole,
-		const OW_String& role);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultRole,
+		const String& role);
 private:
-	OW_FTABLERef m_ftable;
+	FTABLERef m_ftable;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

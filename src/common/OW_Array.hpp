@@ -27,38 +27,34 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ARRAY_HPP_INCLUDE_GUARD_
 #define OW_ARRAY_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
+#include "OW_ArrayFwd.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
-DECLARE_EXCEPTION(OutOfBounds);
-
 #ifdef OW_NEW
 #undef new
 #endif
-
 #include <vector>
-
 #ifdef OW_NEW
 #define new OW_NEW
 #endif
 
+namespace OpenWBEM
+{
+
+DECLARE_EXCEPTION(OutOfBounds);
 
 /**
  * The OW_Array class essentially takes the vector class of the stl and
  * adds ref counting and copy on write capability.
  */
-template<class T> class OW_Array
+template<class T> class Array
 {
 	typedef std::vector<T, std::allocator<T> > V;
-	OW_COWReference<V> m_impl;
-
+	COWReference<V> m_impl;
 public:
 	typedef typename V::value_type value_type;
 	typedef typename V::pointer pointer;
@@ -71,18 +67,15 @@ public:
 	typedef typename V::difference_type difference_type;
 	typedef typename V::reverse_iterator reverse_iterator;
 	typedef typename V::const_reverse_iterator const_reverse_iterator;
-
-	OW_Array();
-	~OW_Array();
-	explicit OW_Array(V* toWrap);
-	OW_Array(size_type n, const T& value);
-	OW_Array(int n, const T& value);
-	OW_Array(long n, const T& value);
-	explicit OW_Array(size_type n);
-
+	Array();
+	~Array();
+	explicit Array(V* toWrap);
+	Array(size_type n, const T& value);
+	Array(int n, const T& value);
+	Array(long n, const T& value);
+	explicit Array(size_type n);
 	template<class InputIterator>
-	OW_Array(InputIterator first, InputIterator last);
-
+	Array(InputIterator first, InputIterator last);
 	iterator begin();
 	const_iterator begin() const;
 	iterator end();
@@ -97,7 +90,7 @@ public:
 	bool empty() const;
 	reference operator[](size_type n);
 	const_reference operator[](size_type n) const;
-	OW_Array<T>& operator+= (const T& x);
+	Array<T>& operator+= (const T& x);
 	void reserve(size_type n);
 	reference front();
 	const_reference front() const;
@@ -105,43 +98,45 @@ public:
 	const_reference back() const;
 	void push_back(const T& x);
 	void append(const T& x);
-	void swap(OW_Array<T>& x);
+	void swap(Array<T>& x);
 	iterator insert(iterator position, const T& x);
 	void insert(size_type position, const T& x);
 	void remove(size_type index);
 	void remove(size_type begin, size_type end);
 	template<class InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last);
-	void appendArray(const OW_Array<T>& x);
+	void appendArray(const Array<T>& x);
 	void pop_back();
 	iterator erase(iterator position);
 	iterator erase(iterator first, iterator last);
 	void resize(size_type new_size, const T& x);
 	void resize(size_type new_size);
 	void clear();
-	friend bool operator== <>(const OW_Array<T>& x, const OW_Array<T>& y);
-	friend bool operator< <>(const OW_Array<T>& x, const OW_Array<T>& y);
-
+	friend bool operator== <>(const Array<T>& x, const Array<T>& y);
+	friend bool operator< <>(const Array<T>& x, const Array<T>& y);
 private:
 #ifdef OW_CHECK_ARRAY_INDEXING
 	void checkValidIndex(size_type index) const;
 #endif
 };
 
+template <class T>
+inline std::vector<T>* COWReferenceClone(std::vector<T>* obj);
 
-typedef OW_Array<OW_UInt8>      OW_UInt8Array;
-typedef OW_Array<OW_Int8>       OW_Int8Array;
-typedef OW_Array<OW_UInt16>     OW_UInt16Array;
-typedef OW_Array<OW_Int16>      OW_Int16Array;
-typedef OW_Array<OW_UInt32>     OW_UInt32Array;
-typedef OW_Array<OW_Int32>      OW_Int32Array;
-typedef OW_Array<OW_UInt64>     OW_UInt64Array;
-typedef OW_Array<OW_Int64>      OW_Int64Array;
-typedef OW_Array<OW_Real64>     OW_Real64Array;
-typedef OW_Array<OW_Real32>     OW_Real32Array;
+typedef Array<UInt8>      UInt8Array;
+typedef Array<Int8>       Int8Array;
+typedef Array<UInt16>     UInt16Array;
+typedef Array<Int16>      Int16Array;
+typedef Array<UInt32>     UInt32Array;
+typedef Array<Int32>      Int32Array;
+typedef Array<UInt64>     UInt64Array;
+typedef Array<Int64>      Int64Array;
+typedef Array<Real64>     Real64Array;
+typedef Array<Real32>     Real32Array;
+
+} // end namespace OpenWBEM
 
 #include "OW_ArrayImpl.hpp"
 
 #endif
 	
-

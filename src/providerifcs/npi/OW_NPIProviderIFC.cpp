@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NPIProviderIFC.hpp"
 #include "OW_SharedLibraryException.hpp"
@@ -45,31 +44,30 @@
 #include "OW_NPIPolledProviderProxy.hpp"
 #include "OW_NPIIndicationProviderProxy.hpp"
 
-//typedef OW_NPIProviderBaseIFC* (*ProviderCreationFunc)();
-// the closest approximation of NPIProviderBaseIFCRef is ::NPIFTABLE
+namespace OpenWBEM
+{
 
-typedef OW_FTABLERef* (*ProviderCreationFunc)();
+//typedef NPIProviderBaseIFC* (*ProviderCreationFunc)();
+// the closest approximation of NPIProviderBaseIFCRef is NPIFTABLE
+typedef FTABLERef* (*ProviderCreationFunc)();
 typedef const char* (*versionFunc_t)();
-
-const char* const OW_NPIProviderIFC::CREATIONFUNC = "createProvider";
-
+const char* const NPIProviderIFC::CREATIONFUNC = "createProvider";
 //////////////////////////////////////////////////////////////////////////////
-OW_NPIProviderIFC::OW_NPIProviderIFC()
-	: OW_ProviderIFCBaseIFC()
+NPIProviderIFC::NPIProviderIFC()
+	: ProviderIFCBaseIFC()
 	, m_provs()
 	, m_guard()
 	, m_noidProviders()
 	, m_loadDone(false)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_NPIProviderIFC::~OW_NPIProviderIFC()
+NPIProviderIFC::~NPIProviderIFC()
 {
 	try
 	{
 		ProviderMap::iterator it = m_provs.begin();
-		//OW_Reference<NPIenv> npiHandle(); // TODO: createEnv(...);
+		//Reference<NPIenv> npiHandle(); // TODO: createEnv(...);
 		while(it != m_provs.end())
 		{
 			it->second->fp_cleanup(0); // TODO: FIX this. m_npiHandle);
@@ -92,208 +90,177 @@ OW_NPIProviderIFC::~OW_NPIProviderIFC()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
-	OW_InstanceProviderInfoArray&,
+NPIProviderIFC::doInit(const ProviderEnvironmentIFCRef&,
+	InstanceProviderInfoArray&,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	OW_AssociatorProviderInfoArray&,
+	AssociatorProviderInfoArray&,
 #endif
-	OW_MethodProviderInfoArray&,
-	OW_IndicationProviderInfoArray&)
+	MethodProviderInfoArray&,
+	IndicationProviderInfoArray&)
 {
 	return;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_InstanceProviderIFCRef
-OW_NPIProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
+InstanceProviderIFCRef
+NPIProviderIFC::doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	OW_FTABLERef pProv = getProvider(env, provIdString);
+	FTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
 		// if the createInstance pointer is set, then assume it's an instance
 		// provider
 		if(pProv->fp_createInstance)
 		{
-			env->getLogger()->logDebug(format("OW_NPIProviderIFC found instance"
+			env->getLogger()->logDebug(format("NPIProviderIFC found instance"
 				" provider %1", provIdString));
-
-			return OW_InstanceProviderIFCRef(new OW_NPIInstanceProviderProxy(
+			return InstanceProviderIFCRef(new NPIInstanceProviderProxy(
 				pProv));
 		}
-
 		env->getLogger()->logError(format("Provider %1 is not an instance provider",
 			provIdString));
 	}
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
+	OW_THROW(NoSuchProviderException, provIdString);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_IndicationExportProviderIFCRefArray
-OW_NPIProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env)
+IndicationExportProviderIFCRefArray
+NPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& env)
 {
 	(void)env;
 	//loadNoIdProviders(env);
-	OW_IndicationExportProviderIFCRefArray rvra;
+	IndicationExportProviderIFCRefArray rvra;
 	//for(size_t i = 0; i < m_noidProviders.size(); i++)
 	//{
-	//	OW_CppProviderBaseIFCRef pProv = m_noidProviders[i];
+	//	CppProviderBaseIFCRef pProv = m_noidProviders[i];
 	//	if(pProv->isIndicationExportProvider())
 	//	{
 	//		rvra.append(
-	//			OW_IndicationExportProviderIFCRef(new
-	//				OW_CppIndicationExportProviderProxy(
-	//					pProv.cast_to<OW_CppIndicationExportProviderIFC>())));
+	//			IndicationExportProviderIFCRef(new
+	//				CppIndicationExportProviderProxy(
+	//					pProv.cast_to<CppIndicationExportProviderIFC>())));
 	//	}
 	//}
-
 	return rvra;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PolledProviderIFCRefArray
-OW_NPIProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
+PolledProviderIFCRefArray
+NPIProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
 	(void)env;
 	loadNoIdProviders(env);
-	OW_PolledProviderIFCRefArray rvra;
-
+	PolledProviderIFCRefArray rvra;
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
-		//OW_NPIProviderBaseIFCRef pProv = m_noidProviders[i];
-		OW_FTABLERef pProv = m_noidProviders[i];
-
+		//NPIProviderBaseIFCRef pProv = m_noidProviders[i];
+		FTABLERef pProv = m_noidProviders[i];
 		//  if (pProv->isPolledProvider())
 		if(pProv->fp_activateFilter)
 		{
 			rvra.append(
-				OW_PolledProviderIFCRef(new
-					OW_NPIPolledProviderProxy(pProv)));
+				PolledProviderIFCRef(new
+					NPIPolledProviderProxy(pProv)));
 		}
 	}
-
 	return rvra;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_MethodProviderIFCRef
-OW_NPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
+MethodProviderIFCRef
+NPIProviderIFC::doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	OW_FTABLERef pProv = getProvider(env, provIdString);
+	FTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
 		// it's a method provider if the invokeMethod function pointer is not
 		// NULL
 		if(pProv->fp_invokeMethod)
 		{
-			env->getLogger()->logDebug(format("OW_NPIProviderIFC found method provider %1",
+			env->getLogger()->logDebug(format("NPIProviderIFC found method provider %1",
 				provIdString));
-
-			return OW_MethodProviderIFCRef(
-				new OW_NPIMethodProviderProxy(pProv));
+			return MethodProviderIFCRef(
+				new NPIMethodProviderProxy(pProv));
 		}
-
 		env->getLogger()->logError(format("Provider %1 is not a method provider",
 			provIdString));
 	}
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
+	OW_THROW(NoSuchProviderException, provIdString);
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
-OW_AssociatorProviderIFCRef
-OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
+AssociatorProviderIFCRef
+NPIProviderIFC::doGetAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	OW_FTABLERef pProv = getProvider(env, provIdString);
+	FTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
 		// if the associatorNames function pointer is not 0, we know it's an
 		// associator provider
 		if(pProv->fp_associatorNames)
 		{
-			env->getLogger()->logDebug(format("OW_NPIProviderIFC found associator provider %1",
+			env->getLogger()->logDebug(format("NPIProviderIFC found associator provider %1",
 				provIdString));
-
-			return OW_AssociatorProviderIFCRef(new
-				OW_NPIAssociatorProviderProxy(pProv));
+			return AssociatorProviderIFCRef(new
+				NPIAssociatorProviderProxy(pProv));
 		}
-
 		env->getLogger()->logError(format("Provider %1 is not an associator provider",
 			provIdString));
 	}
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
+	OW_THROW(NoSuchProviderException, provIdString);
 }
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
-OW_IndicationProviderIFCRef
-OW_NPIProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+IndicationProviderIFCRef
+NPIProviderIFC::doGetIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
-	OW_FTABLERef pProv = getProvider(env, provIdString);
+	FTABLERef pProv = getProvider(env, provIdString);
 	if(pProv)
 	{
 		// if the indicationNames function pointer is not 0, we know it's an
 		// indication provider
 		if(pProv->fp_activateFilter)
 		{
-			env->getLogger()->logDebug(format("OW_NPIProviderIFC found indication provider %1",
+			env->getLogger()->logDebug(format("NPIProviderIFC found indication provider %1",
 				provIdString));
-
-			return OW_IndicationProviderIFCRef(new
-				OW_NPIIndicationProviderProxy(pProv));
+			return IndicationProviderIFCRef(new
+				NPIIndicationProviderProxy(pProv));
 		}
-
 		env->getLogger()->logError(format("Provider %1 is not an indication provider",
 			provIdString));
 	}
-
-	OW_THROW(OW_NoSuchProviderException, provIdString);
+	OW_THROW(NoSuchProviderException, provIdString);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
+NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 {
    
    env->getLogger()->logError("LoadNoIDproviders");
-   OW_MutexLock ml(m_guard);
-
+   MutexLock ml(m_guard);
    if(m_loadDone)
    {
       return;
    }
-
    m_loadDone = true;
-
-   OW_String libPath = env->getConfigItem(OW_ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
-
+   String libPath = env->getConfigItem(ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
    env->getLogger()->logError("LoadNoIDproviders 2");
-   OW_SharedLibraryLoaderRef ldr =
-      OW_SharedLibraryLoader::createSharedLibraryLoader();
-
+   SharedLibraryLoaderRef ldr =
+      SharedLibraryLoader::createSharedLibraryLoader();
    if(ldr.isNull())
    {
       env->getLogger()->logError("NPI provider ifc failed to get shared lib loader");
       return;
    }
-
-   OW_StringArray dirEntries;
-   if(!OW_FileSystem::getDirectoryContents(libPath, dirEntries))
+   StringArray dirEntries;
+   if(!FileSystem::getDirectoryContents(libPath, dirEntries))
    {
       env->getLogger()->logError(format("NPI provider ifc failed getting contents of "
          "directory: %1", libPath));
       return;
    }
-
    env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
@@ -301,25 +268,21 @@ OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
       {
          continue;
       }
-
-      OW_String libName = libPath;
+      String libName = libPath;
       libName += OW_FILENAME_SEPARATOR;
       libName += dirEntries[i];
-      OW_SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+      SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
             env->getLogger());
-
-      OW_String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
-
+      String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
       if(theLib.isNull())
       {
          env->getLogger()->logError(format("NPI provider %1 ifc failed to load"
                    " library: %2", guessProvId, libName));
          continue;
       }
-
 #if 0
       versionFunc_t versFunc;
-      if(!OW_SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
+      if(!SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
              versFunc))
       {
          env->getLogger()->logError(format("NPI provider ifc failed getting"
@@ -327,163 +290,127 @@ OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
                  libName));
          continue;
       }
-
       const char* strVer = (*versFunc)();
-      if(strcmp(strVer, OW_VERSION))
+      if(strcmp(strVer, VERSION))
       {
          env->getLogger()->logError(format("NPI provider ifc got invalid version from "
                  "provider: %1", strVer));
          continue;
       }
 #endif
-
 	::FP_INIT_FT createProvider;
-	OW_String creationFuncName = guessProvId + "_initFunctionTable";
+	String creationFuncName = guessProvId + "_initFunctionTable";
    env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
-
-	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
 		continue;
 	}
-
    env->getLogger()->logError("LoadNoIDproviders 5");
 	::FTABLE fTable_ = (*createProvider)();
-
 	if(!fTable_.fp_initialize)
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));
 		continue;
 	}
-
         // only initialize polled and indicationexport providers
 	// since NPI doesn't support indicationexport providers ....
-
    env->getLogger()->logError("LoadNoIDproviders 6");
 	if (!fTable_.fp_activateFilter) continue;
-
 	// 
-
         // else it must be a polled provider - initialize it 
-
 	env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Calling initialize"
 		" for provider %2", libName, guessProvId));
-
 	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 	// nothing the provider can do with it, so we'll just pass in 0
-
-	//OW_Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
-
+	//Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
         // Garbage Collection support
-	::NPIFTABLE fTable;
+	NPIFTABLE fTable;
         memcpy(&fTable, &fTable_, sizeof(::FTABLE));
-
-        fTable.npicontext = new ::NPIContext;
+        fTable.npicontext = new NPIContext;
         fTable.npicontext->scriptName = NULL;
-
 	::NPIHandle _npiHandle = {0, 0, 0, 0, fTable.npicontext};
-
 	fTable.fp_initialize(&_npiHandle, ch );	// Let provider initialize itself
-
 	// take care of the errorOccurred field - buggy provider or perl script
 	if (_npiHandle.errorOccurred)
 	{
 		env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Initialize failed"
 		" for provider %2", libName, guessProvId));
-		delete ((::NPIContext *)fTable.npicontext);
+		delete ((NPIContext *)fTable.npicontext);
 		continue;
 	}
-
 	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
 		guessProvId));
-
 	//::NPIFTABLE * nf = new ::NPIFTABLE();
 	//* nf = fTable;
-        m_noidProviders.append(OW_FTABLERef(theLib, new ::NPIFTABLE(fTable)));
-        //m_noidProviders.append(OW_FTABLERef(theLib, nf));
+        m_noidProviders.append(FTABLERef(theLib, new NPIFTABLE(fTable)));
+        //m_noidProviders.append(FTABLERef(theLib, nf));
     }
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_FTABLERef
-OW_NPIProviderIFC::getProvider(
-	const OW_ProviderEnvironmentIFCRef& env, const char* provIdString)
+FTABLERef
+NPIProviderIFC::getProvider(
+	const ProviderEnvironmentIFCRef& env, const char* provIdString)
 {
-	OW_MutexLock ml(m_guard);
-
-	OW_String provId(provIdString);
+	MutexLock ml(m_guard);
+	String provId(provIdString);
 	ProviderMap::iterator it = m_provs.find(provId);
 	if(it != m_provs.end())
 	{
 		return it->second;
 	}
-
-	OW_String libPath = env->getConfigItem(
-		OW_ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
-
-	OW_SharedLibraryLoaderRef ldr =
-		OW_SharedLibraryLoader::createSharedLibraryLoader();
-
+	String libPath = env->getConfigItem(
+		ConfigOpts::NPIIFC_PROV_LOC_opt, OW_DEFAULT_NPI_PROVIDER_LOCATION);
+	SharedLibraryLoaderRef ldr =
+		SharedLibraryLoader::createSharedLibraryLoader();
 	if(ldr.isNull())
 	{
 		env->getLogger()->logError("NPI: provider ifc failed to get shared lib loader");
-		return OW_FTABLERef();
+		return FTABLERef();
 	}
-
-	OW_String libName(libPath);
+	String libName(libPath);
 	libName += OW_FILENAME_SEPARATOR;
 	libName += "lib";
 	libName += provId;
 	libName += ".so";
-
-	env->getLogger()->logDebug(format("OW_NPIProviderIFC::getProvider loading library: %1",
+	env->getLogger()->logDebug(format("NPIProviderIFC::getProvider loading library: %1",
 		libName));
-
-	OW_SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
+	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 		env->getLogger());
-
 	if(theLib.isNull())
 	{
 		env->getLogger()->logError(format("NPI provider ifc failed to load library: %1 "
 			"for provider id %2", libName, provId));
-		return OW_FTABLERef();
+		return FTABLERef();
 	}
-
 	::FP_INIT_FT createProvider;
-	OW_String creationFuncName = provId + "_initFunctionTable";
-
-	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	String creationFuncName = provId + "_initFunctionTable";
+	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
-		return OW_FTABLERef();
+		return FTABLERef();
 	}
-
 	::FTABLE fTable_ = (*createProvider)();
 	//NPIFTABLE fTable = fTable_;
-	::NPIFTABLE fTable;
+	NPIFTABLE fTable;
 	memcpy(&fTable, &fTable_, sizeof(::FTABLE));
-
-	fTable.npicontext = new ::NPIContext;
+	fTable.npicontext = new NPIContext;
 	fTable.npicontext->scriptName = NULL;
-
 	if(!fTable.fp_initialize)
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));
-		delete ((::NPIContext *)fTable.npicontext);
-		return OW_FTABLERef();
+		delete ((NPIContext *)fTable.npicontext);
+		return FTABLERef();
 	}
-
 	env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Calling initialize"
 		" for provider %2", libName, provId));
-
 	::CIMOMHandle ch = {0}; // CIMOMHandle parameter is meaningless, there is
 	// nothing the provider can do with it, so we'll just pass in 0
-
-	//OW_Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
+	//Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
 	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
 	fTable.fp_initialize(&_npiHandle, ch ); // Let provider initialize itself
 	// take care of the errorOccurred field
@@ -492,17 +419,15 @@ OW_NPIProviderIFC::getProvider(
 	{
 		env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Initialize failed"
 			" for provider %2", libName, provId));
-		delete ((::NPIContext *)fTable.npicontext);
-		return OW_FTABLERef();
+		delete ((NPIContext *)fTable.npicontext);
+		return FTABLERef();
 	}
-
 	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
 		provId));
-
-	m_provs[provId] = OW_FTABLERef(theLib, new ::NPIFTABLE(fTable));
-
+	m_provs[provId] = FTABLERef(theLib, new NPIFTABLE(fTable));
 	return m_provs[provId];
 }
+} // end namespace OpenWBEM
 
-OW_PROVIDERIFCFACTORY(OW_NPIProviderIFC)
+OW_PROVIDERIFCFACTORY(OpenWBEM::NPIProviderIFC)
 

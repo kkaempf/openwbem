@@ -27,55 +27,50 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SELECT_HPP_
 #define OW_SELECT_HPP_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Array.hpp"
 #include "OW_SelectableIFC.hpp"
 
-typedef OW_Array<OW_Select_t> OW_SelectTypeArray;
+namespace OpenWBEM
+{
 
-class OW_Select
+typedef Array<Select_t> SelectTypeArray;
+class Select
 {
 public:
-
    /**
     * The value returned from select when the timeout value has expired
 	*/
-   static const int OW_SELECT_TIMEOUT = -2;
-
+   static const int SELECT_TIMEOUT = -2;
    /**
     * The value returned from select when any error occurs other than timeout.
 	*/
-   static const int OW_SELECT_ERROR = -1;
-
+   static const int SELECT_ERROR = -1;
    /**
     * The value returned from select when select is interrupted by a signal.
 	*/
-   static const int OW_SELECT_INTERRUPTED = -3;
-
+   static const int SELECT_INTERRUPTED = -3;
    /**
-	* OW_Select returns as soon as input is available on any of OW_Select_t
+	* Select returns as soon as input is available on any of Select_t
 	* objects that are in given array.
 	*
-	* @param selarray An array of OW_Select_t objects that will be used while
+	* @param selarray An array of Select_t objects that will be used while
 	*	waiting for input to become available.
 	*
 	* @param ms The timeout value specified in millseconds
 	*
-	* @return On success, the index in the selarray of the first OW_Select_t
-	* object that input has become available on. OW_SELECT_ERROR on error.
-	* OW_SELECT_TIMEOUT if the given timeout value has expired.
+	* @return On success, the index in the selarray of the first Select_t
+	* object that input has become available on. SELECT_ERROR on error.
+	* SELECT_TIMEOUT if the given timeout value has expired.
 	*/
-   static int select(const OW_SelectTypeArray& selarray, OW_UInt32 ms = ~0U);
-
+   static int select(const SelectTypeArray& selarray, UInt32 ms = ~0U);
 private:
-	OW_Select(); // don't allow instantiation.
+	Select(); // don't allow instantiation.
 };
 
+} // end namespace OpenWBEM
+
 #endif // OW_SELECT_HPP_
-
-

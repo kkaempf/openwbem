@@ -30,7 +30,13 @@
 #include "OW_CIMInstance.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMInstance(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMInstance>(name);
+
+void registerArrayImpl_CIMInstance(const char* name)
+{
+    registerArrayImpl<CIMInstance>(name);
 }
+
+} // end namespace OpenWBEM
+

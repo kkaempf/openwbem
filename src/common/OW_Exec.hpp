@@ -27,77 +27,68 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_EXEC_HPP_
 #define OW_EXEC_HPP_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Reference.hpp"
 #include "OW_String.hpp"
 #include "OW_ArrayFwd.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(ExecTimeout);
 DECLARE_EXCEPTION(ExecBufferFull);
 DECLARE_EXCEPTION(ExecError);
-
-class OW_UnnamedPipe;
-typedef OW_Reference<OW_UnnamedPipe> OW_UnnamedPipeRef;
-
-class OW_PopenStreamsImpl;
+class UnnamedPipe;
+typedef Reference<UnnamedPipe> UnnamedPipeRef;
+class PopenStreamsImpl;
 /**
  * This class represents a connection to a process.
  */
-class OW_PopenStreams
+class PopenStreams
 {
 public:
-	OW_PopenStreams();
-	~OW_PopenStreams();
-	OW_PopenStreams(const OW_PopenStreams& src);
-	OW_PopenStreams& operator=(const OW_PopenStreams& src);
-
+	PopenStreams();
+	~PopenStreams();
+	PopenStreams(const PopenStreams& src);
+	PopenStreams& operator=(const PopenStreams& src);
 	/**
 	 * Get a write-only pipe to the process's stdin.
 	 */
-	OW_UnnamedPipeRef in() const;
+	UnnamedPipeRef in() const;
 	
 	/**
 	 * Set a pipe to the process's stdin
 	 */
-	void in(OW_UnnamedPipeRef pipe);
-
+	void in(UnnamedPipeRef pipe);
 	/**
 	 * Get a read-only pipe to the process's stdout
 	 */
-	OW_UnnamedPipeRef out() const;
-
+	UnnamedPipeRef out() const;
 	/**
 	 * Set a pipe to the process's stdout
 	 */
-	void out(OW_UnnamedPipeRef pipe);
-
+	void out(UnnamedPipeRef pipe);
 	/**
 	 * Get a read-only pipe to the process's stderr
 	 */
-	OW_UnnamedPipeRef err() const;
-
+	UnnamedPipeRef err() const;
 	/**
 	 * Set a pipe to the process's stderr
 	 */
-	void err(OW_UnnamedPipeRef pipe);
-
+	void err(UnnamedPipeRef pipe);
 	/**
 	 * Get the process's pid.  If the process's exit status has already been
 	 * read by calling getExitStatus(), then this will return -1
 	 */
-	OW_ProcId pid() const;
-
+	ProcId pid() const;
 	/**
 	 * Set the process's pid.  This is only usefule when constructing an 
 	 * instance of this class.
 	 */
-	void pid(OW_ProcId newPid);
-
+	void pid(ProcId newPid);
 	/**
 	 * Get the process's exit status.  
 	 * If the child process is still running, this function will do everything
@@ -116,21 +107,17 @@ public:
 	 * the family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
 	 */
 	int getExitStatus();
-
 	/**
 	 * Sets the process's exit status.
-	 * This function is used by OW_Exec::gatherOutput()
+	 * This function is used by Exec::gatherOutput()
 	 */
 	void setProcessStatus(int ps);
-
 private:
-	OW_Reference<OW_PopenStreamsImpl> m_impl;
+	Reference<PopenStreamsImpl> m_impl;
 };
-
-class OW_Exec
+class Exec
 {
 public:
-
 	/**
 	 * Execute a command.
 	 * The command will inherit stdin, stdout, and stderr from the parent
@@ -151,8 +138,7 @@ public:
      * fails,  -1 if there was another error and the return code
      * of the command otherwise.
 	 */
-	static int safeSystem(const OW_Array<OW_String>& command);
-
+	static int safeSystem(const Array<String>& command);
 	/**
 	 * Execute a command.
 	 * The command's stdin, stdout, and stderr will be connected via pipes to
@@ -171,18 +157,17 @@ public:
 	 * @param initialInput
 	 *  The string is sent to stdin of the child process.
 	 *
-	 * @return A OW_PopenStreams object which can be used to access the child
+	 * @return A PopenStreams object which can be used to access the child
 	 *  process and/or get it's return value.
 	 */
-	static OW_PopenStreams safePopen(const OW_Array<OW_String>& command,
-			const OW_String& initialInput = OW_String());
-
+	static PopenStreams safePopen(const Array<String>& command,
+			const String& initialInput = String());
 	/**
 	 * Wait for output from a child process.  The function returns when the
 	 * process exits. In the case that the child process doesn't exit, if a 
-	 * timout is specified, then an OW_ExecTimeoutException is thrown.
+	 * timout is specified, then an ExecTimeoutException is thrown.
 	 * If the process outputs more bytes than outputlimit, an 
-	 * OW_ExecBufferFullException is thrown.
+	 * ExecBufferFullException is thrown.
 	 *
 	 * @param output An out parameter, the process output will be appended to 
 	 *  this string.
@@ -193,27 +178,27 @@ public:
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
 	 * @param timeoutsecs Specifies the number of seconds to wait for the 
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an OW_ExecTimeoutException will be thrown. If timeoutsecs < 0, the 
+	 *  an ExecTimeoutException will be thrown. If timeoutsecs < 0, the 
 	 *  timeout will be infinite, and no exception will ever be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
-	 *  more data than will fit into output, then an OW_ExecBufferFullException
+	 *  more data than will fit into output, then an ExecBufferFullException
 	 *  is thrown. If outputlimit < 0, the limit will be infinite, and an
-	 *  OW_ExecBufferFullException will never be thrown.
+	 *  ExecBufferFullException will never be thrown.
 	 *
-	 * @throws OW_ProcessError on error. 
-	 * @throws OW_ProcessTimeout if the process hasn't finished within timeoutsecs. 
-	 * @throws OW_ProcessBufferFull if the process output exceeds outputlimit bytes.
+	 * @throws ProcessError on error. 
+	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
+	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	static void gatherOutput(OW_String& output, OW_PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
+	static void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
 	
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The 
 	 * function returns when the
 	 * process exits. In the case that the child process doesn't exit, if a 
-	 * timout is specified, then an OW_ExecTimeoutException is thrown.
+	 * timout is specified, then an ExecTimeoutException is thrown.
 	 * If the process outputs more bytes than outputlimit, an 
-	 * OW_ExecBufferFullException is thrown.
+	 * ExecBufferFullException is thrown.
 	 * This function will not search the path for command[0], so
 	 * the absolute path to the binary should be specified.  If the path needs
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
@@ -243,26 +228,28 @@ public:
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
 	 * @param timeoutsecs Specifies the number of seconds to wait for the 
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an OW_ExecTimeoutException will be thrown, and the process will be 
+	 *  an ExecTimeoutException will be thrown, and the process will be 
 	 *  killed. 
 	 *  If timeoutsecs < 0, the timeout will be infinite, and a 
-	 *  OW_ExecTimeoutException will not be thrown.
+	 *  ExecTimeoutException will not be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
-	 *  more data than will fit into output, then an OW_ExecBufferFullException
+	 *  more data than will fit into output, then an ExecBufferFullException
 	 *  is thrown, and the process will be killed. 
 	 *  If outputlimit < 0, the limit will be infinite, and an
-	 *  OW_ExecBufferFullException will not be thrown.
+	 *  ExecBufferFullException will not be thrown.
 	 *
-	 * @throws OW_ProcessError on error. 
-	 * @throws OW_ProcessTimeout if the process hasn't finished within timeoutsecs. 
-	 * @throws OW_ProcessBufferFull if the process output exceeds outputlimit bytes.
+	 * @throws ProcessError on error. 
+	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
+	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	static void executeProcessAndGatherOutput(const OW_Array<OW_String>& command,
-		OW_String& output, int& processstatus,
+	static void executeProcessAndGatherOutput(const Array<String>& command,
+		String& output, int& processstatus,
 		int timeoutsecs = -1, int outputlimit = -1);
 	
 	
 };
+
+} // end namespace OpenWBEM
 
 #endif

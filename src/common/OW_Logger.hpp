@@ -27,53 +27,50 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_LOGGER_HPP_INCLUDE_GUARD_
 #define OW_LOGGER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_Reference.hpp"
 
+namespace OpenWBEM
+{
+
 /**
  * Logging interface.
  */
-class OW_Logger
+class Logger
 {
 	public:
 		/**
 		 * Log an error.
 		 * @param s The string to log.
 		 */
-		void logError( const OW_String& s ) const
+		void logError( const String& s ) const
 			{  logMessage( ErrorLevel, s ); }
 		/**
 		 * Log customer info.
 		 * @param s The string to log.
 		 */
-		void logCustInfo( const OW_String& s ) const
+		void logCustInfo( const String& s ) const
 			{  logMessage( CustInfoLevel, s ); }
 		/**
 		 * Log debug info.
 		 * @param s The string to log.
 		 */
-		void logDebug( const OW_String& s ) const
+		void logDebug( const String& s ) const
 			{  logMessage( DebugLevel, s ); }
-
 		/**
 		 * Set the logging level.  All messages with priority > l will be logged.
 		 * @param l The level of messages to log
 		 */
-		void setLogLevel( const OW_LogLevel l ) {  m_level = l; }
-
-		void setLogLevel( const OW_String& l );
-
+		void setLogLevel( const LogLevel l ) {  m_level = l; }
+		void setLogLevel( const String& l );
 		/**
 		 * @return The current logging level
 		 */
-		OW_LogLevel getLogLevel() {  return m_level; }
-
+		LogLevel getLogLevel() {  return m_level; }
 		/**
 		 * Create a concrete logger depending on the type string passed in.
 		 * On Linux, if type == "syslog" a logger the writes to the syslog
@@ -83,32 +80,27 @@ class OW_Logger
 		 * @param type The type of logger to create
 		 * @param debug Indicates whether to create a debug logger (duplicates
 		 *   			all messages to stdout)
-		 * @return a class that implements the OW_Logger interface.
+		 * @return a class that implements the Logger interface.
 		 */
-		static OW_Reference<OW_Logger> createLogger( const OW_String& type,
+		static Reference<Logger> createLogger( const String& type,
 			bool debug );
-
-		virtual ~OW_Logger();
-
+		virtual ~Logger();
 	protected:
-		OW_Logger() : m_level(ErrorLevel) { }
-		OW_Logger( const OW_LogLevel l ) : m_level(l) {  }
-
+		Logger() : m_level(ErrorLevel) { }
+		Logger( const LogLevel l ) : m_level(l) {  }
 		/**
 		 * To be overridden by derived classes with a function that does the
 		 * actual logging.
 		 */
-		virtual void doLogMessage( const OW_String& message,
-			const OW_LogLevel level) const = 0;
-
+		virtual void doLogMessage( const String& message,
+			const LogLevel level) const = 0;
 	private:
-		void logMessage( const OW_LogLevel l, const OW_String& s ) const;
-
+		void logMessage( const LogLevel l, const String& s ) const;
 	private: // data
-		OW_LogLevel m_level;
+		LogLevel m_level;
 };
+typedef Reference<Logger> LoggerRef;
 
-typedef OW_Reference<OW_Logger> OW_LoggerRef;
+} // end namespace OpenWBEM
 
 #endif
-

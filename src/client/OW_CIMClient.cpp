@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_CIMClient.hpp"
 #include "OW_HTTPClient.hpp"
@@ -42,97 +40,86 @@
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
 
-using namespace OW_WBEMFlags;
-
-///////////////////////////////////////////////////////////////////////////////
-OW_CIMClient::OW_CIMClient(const OW_String& url, const OW_String& ns,
-	const OW_ClientAuthCBIFCRef& authCB)
+namespace OpenWBEM
 {
 
-	OW_URL owurl(url);
-	OW_CIMProtocolIFCRef client(new OW_HTTPClient(url));
-
-
+using namespace WBEMFlags;
+///////////////////////////////////////////////////////////////////////////////
+CIMClient::CIMClient(const String& url, const String& ns,
+	const ClientAuthCBIFCRef& authCB)
+{
+	URL owurl(url);
+	CIMProtocolIFCRef client(new HTTPClient(url));
 	/**********************************************************************
 	 * Assign our callback to the HTTP Client.
 	 **********************************************************************/
-
 	client->setLoginCallBack(authCB);
-
 	/**********************************************************************
-	 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
-	 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
-	 * a OW_Reference<OW_CIMProtocol> it it's constructor, so
-	 * we have to make a OW_Reference out of our HTTP Client first.
+	 * Here we create a CIMXMLCIMOMHandle and have it use the
+	 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
+	 * a Reference<CIMProtocol> it it's constructor, so
+	 * we have to make a Reference out of our HTTP Client first.
 	 * By doing this, we don't have to worry about deleting our
-	 * OW_HTTPClient.  OW_Reference will delete it for us when the
+	 * HTTPClient.  Reference will delete it for us when the
 	 * last copy goes out of scope (reference count goes to zero).
 	 **********************************************************************/
-
 	if (owurl.path.equalsIgnoreCase("/owbinary"))
 	{
-		m_ch = new OW_BinaryCIMOMHandle(client);
+		m_ch = new BinaryCIMOMHandle(client);
 	}
 	else
 	{
-		m_ch = new OW_CIMXMLCIMOMHandle(client);
+		m_ch = new CIMXMLCIMOMHandle(client);
 	}
-
 	m_namespace = ns;
-
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
-void OW_CIMClient::createNameSpace(const OW_String& ns)
+void CIMClient::createNameSpace(const String& ns)
 {
     try
     {
-        OW_CIMNameSpaceUtils::createCIM_Namespace(m_ch,ns);
+        CIMNameSpaceUtils::createCIM_Namespace(m_ch,ns);
     }
-    catch (const OW_CIMException& e)
+    catch (const CIMException& e)
     {
         // server doesn't support CIM_Namespace, try __Namespace
-        OW_CIMNameSpaceUtils::create__Namespace(m_ch,ns);
+        CIMNameSpaceUtils::create__Namespace(m_ch,ns);
     }
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-void OW_CIMClient::deleteNameSpace(const OW_String& ns)
+void CIMClient::deleteNameSpace(const String& ns)
 {
 	try
     {
-        OW_CIMNameSpaceUtils::deleteCIM_Namespace(m_ch,ns);
+        CIMNameSpaceUtils::deleteCIM_Namespace(m_ch,ns);
     }
-    catch (const OW_CIMException& e)
+    catch (const CIMException& e)
     {
         // server doesn't support CIM_Namespace, try __Namespace
-        OW_CIMNameSpaceUtils::delete__Namespace(m_ch,ns);
+        CIMNameSpaceUtils::delete__Namespace(m_ch,ns);
     }
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_StringArray 
-OW_CIMClient::enumNameSpaceE(EDeepFlag deep)
+StringArray 
+CIMClient::enumNameSpaceE(EDeepFlag deep)
 {
 	// TODO: try using CIM_Namespace first
-	return OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, deep);
+	return CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, deep);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result, 
+CIMClient::enumNameSpace(StringResultHandlerIFC& result, 
 	EDeepFlag deep)
 {
 	// TODO: try using CIM_Namespace first
-	OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
+	CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::enumClass(const OW_String& className,
-	OW_CIMClassResultHandlerIFC& result,
+CIMClient::enumClass(const String& className,
+	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
@@ -141,10 +128,9 @@ OW_CIMClient::enumClass(const OW_String& className,
 	m_ch->enumClass(m_namespace, className, result, deep, localOnly, 
 		includeQualifiers, includeClassOrigin);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration 
-OW_CIMClient::enumClassE(const OW_String& className,
+CIMClassEnumeration 
+CIMClient::enumClassE(const String& className,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
@@ -153,412 +139,375 @@ OW_CIMClient::enumClassE(const OW_String& className,
 	return m_ch->enumClassE(m_namespace, className, deep, localOnly, includeQualifiers, 
 		includeClassOrigin);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::enumClassNames(
-	const OW_String& className,
-	OW_StringResultHandlerIFC& result,
+	CIMClient::enumClassNames(
+	const String& className,
+	StringResultHandlerIFC& result,
 	EDeepFlag deep)
 {
 	m_ch->enumClassNames(m_namespace, className, result, deep);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_StringEnumeration 
-	OW_CIMClient::enumClassNamesE(
-	const OW_String& className,
+StringEnumeration 
+	CIMClient::enumClassNamesE(
+	const String& className,
 	EDeepFlag deep)
 {
 	return m_ch->enumClassNamesE(m_namespace, className, deep);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::enumInstances(
-	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result,
+CIMClient::enumInstances(
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_ch->enumInstances(m_namespace, className, result, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-OW_CIMClient::enumInstancesE(
-	const OW_String& className,
+CIMInstanceEnumeration 
+CIMClient::enumInstancesE(
+	const String& className,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_ch->enumInstancesE(m_namespace, className, deep, localOnly, 
 		includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::enumInstanceNames(
-	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result)
+CIMClient::enumInstanceNames(
+	const String& className,
+	CIMObjectPathResultHandlerIFC& result)
 {
 	m_ch->enumInstanceNames(m_namespace, className, result);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
-OW_CIMClient::enumInstanceNamesE(
-	const OW_String& className)
+CIMObjectPathEnumeration 
+CIMClient::enumInstanceNamesE(
+	const String& className)
 {
 	return m_ch->enumInstanceNamesE(m_namespace, className);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMClass 
-	OW_CIMClient::getClass(
-	const OW_String& className,
+CIMClass 
+	CIMClient::getClass(
+	const String& className,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_ch->getClass(m_namespace, className, localOnly, 
 		includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance 
-	OW_CIMClient::getInstance(
-	const OW_CIMObjectPath& instanceName,
+CIMInstance 
+	CIMClient::getInstance(
+	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList) 
+	const StringArray* propertyList) 
 {
 	return m_ch->getInstance(m_namespace, instanceName, localOnly, 
 		includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMValue 
-	OW_CIMClient::invokeMethod(
-	const OW_CIMObjectPath& path,
-	const OW_String& methodName,
-	const OW_CIMParamValueArray& inParams,
-	OW_CIMParamValueArray& outParams)
+CIMValue 
+	CIMClient::invokeMethod(
+	const CIMObjectPath& path,
+	const String& methodName,
+	const CIMParamValueArray& inParams,
+	CIMParamValueArray& outParams)
 {
 	return m_ch->invokeMethod(m_namespace, path, methodName, inParams, outParams);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType 
-	OW_CIMClient::getQualifierType(const OW_String& qualifierName)
+CIMQualifierType 
+	CIMClient::getQualifierType(const String& qualifierName)
 {
 	return m_ch->getQualifierType(m_namespace, qualifierName);
 }
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::setQualifierType(const OW_CIMQualifierType& qualifierType)
+	CIMClient::setQualifierType(const CIMQualifierType& qualifierType)
 {
 	m_ch->setQualifierType(m_namespace, qualifierType);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::deleteQualifierType(const OW_String& qualName)
+CIMClient::deleteQualifierType(const String& qualName)
 {
 	m_ch->deleteQualifierType(m_namespace, qualName);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::enumQualifierTypes(
-	OW_CIMQualifierTypeResultHandlerIFC& result)
+CIMClient::enumQualifierTypes(
+	CIMQualifierTypeResultHandlerIFC& result)
 {
 	m_ch->enumQualifierTypes(m_namespace, result);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration 
-OW_CIMClient::enumQualifierTypesE()
+CIMQualifierTypeEnumeration 
+CIMClient::enumQualifierTypesE()
 {
 	return m_ch->enumQualifierTypesE(m_namespace);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::modifyClass(const OW_CIMClass& cimClass) 
+	CIMClient::modifyClass(const CIMClass& cimClass) 
 {
 	m_ch->modifyClass(m_namespace, cimClass);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::createClass(const OW_CIMClass& cimClass) 
+	CIMClient::createClass(const CIMClass& cimClass) 
 {
 	m_ch->createClass(m_namespace, cimClass);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::deleteClass(const OW_String& className)
+	CIMClient::deleteClass(const String& className)
 {
 	m_ch->deleteClass(m_namespace, className);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::modifyInstance(const OW_CIMInstance& modifiedInstance,
+	CIMClient::modifyInstance(const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
-	OW_StringArray* propertyList)
+	StringArray* propertyList)
 {
 	m_ch->modifyInstance(m_namespace, modifiedInstance, includeQualifiers,
 		propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath 
-	OW_CIMClient::createInstance(const OW_CIMInstance& instance) 
+CIMObjectPath 
+	CIMClient::createInstance(const CIMInstance& instance) 
 {
 	return m_ch->createInstance(m_namespace, instance);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::deleteInstance(const OW_CIMObjectPath& path)
+	CIMClient::deleteInstance(const CIMObjectPath& path)
 {
 	m_ch->deleteInstance(m_namespace, path);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::setProperty(
-	const OW_CIMObjectPath& instanceName,
-	const OW_String& propertyName,
-	const OW_CIMValue& newValue) 
+	CIMClient::setProperty(
+	const CIMObjectPath& instanceName,
+	const String& propertyName,
+	const CIMValue& newValue) 
 {
 	m_ch->setProperty(m_namespace, instanceName, propertyName, newValue);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMValue 
-	OW_CIMClient::getProperty(
-	const OW_CIMObjectPath& instanceName,
-	const OW_String& propertyName)
+CIMValue 
+	CIMClient::getProperty(
+	const CIMObjectPath& instanceName,
+	const String& propertyName)
 {
 	return m_ch->getProperty(m_namespace, instanceName, propertyName);
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::associatorNames(
-	const OW_CIMObjectPath& objectName,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role,
-	const OW_String& resultRole)
+	CIMClient::associatorNames(
+	const CIMObjectPath& objectName,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole)
 {
 	m_ch->associatorNames(m_namespace, objectName, result,
 		assocClass, resultClass, role, resultRole);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
-	OW_CIMClient::associatorNamesE(
-	const OW_CIMObjectPath& objectName,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role,
-	const OW_String& resultRole)
+CIMObjectPathEnumeration 
+	CIMClient::associatorNamesE(
+	const CIMObjectPath& objectName,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole)
 {
 	return m_ch->associatorNamesE(m_namespace, objectName, 
 		assocClass, resultClass, role, resultRole);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::associators(
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role,
-	const OW_String& resultRole,
+CIMClient::associators(
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_ch->associators(m_namespace, path, result,
 		assocClass, resultClass,
 		role, resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-OW_CIMClient::associatorsE(
-	const OW_CIMObjectPath& path,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role,
-	const OW_String& resultRole,
+CIMInstanceEnumeration 
+CIMClient::associatorsE(
+	const CIMObjectPath& path,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_ch->associatorsE(m_namespace, path, assocClass, 
 		resultClass, role, resultRole, includeQualifiers, 
 		includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::associatorsClasses(
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role,
-	const OW_String& resultRole,
+CIMClient::associatorsClasses(
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_ch->associatorsClasses(m_namespace, path, result, assocClass, 
 		resultClass, role, resultRole, includeQualifiers, includeClassOrigin, 
 		propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration 
-OW_CIMClient::associatorsClassesE(
-	const OW_CIMObjectPath& path,
-	const OW_String& assocClass,
-	const OW_String& resultClass,
-	const OW_String& role,
-	const OW_String& resultRole,
+CIMClassEnumeration 
+CIMClient::associatorsClassesE(
+	const CIMObjectPath& path,
+	const String& assocClass,
+	const String& resultClass,
+	const String& role,
+	const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_ch->associatorsClassesE(m_namespace, path, assocClass, 
 		resultClass, role, resultRole, includeQualifiers, includeClassOrigin, 
 		propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-	OW_CIMClient::referenceNames(
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& resultClass,
-	const OW_String& role)
+	CIMClient::referenceNames(
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& resultClass,
+	const String& role)
 {
 	m_ch->referenceNames(m_namespace, path, result, resultClass, role);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration 
-	OW_CIMClient::referenceNamesE(
-	const OW_CIMObjectPath& path,
-	const OW_String& resultClass,
-	const OW_String& role)
+CIMObjectPathEnumeration 
+	CIMClient::referenceNamesE(
+	const CIMObjectPath& path,
+	const String& resultClass,
+	const String& role)
 {
 	return m_ch->referenceNamesE(m_namespace, path, resultClass, role);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::references(
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& resultClass,
-	const OW_String& role,
+CIMClient::references(
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& resultClass,
+	const String& role,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList) 
+	const StringArray* propertyList) 
 {
 	m_ch->references(m_namespace, path, result, resultClass, 
 		role, includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-OW_CIMClient::referencesE(
-	const OW_CIMObjectPath& path,
-	const OW_String& resultClass,
-	const OW_String& role,
+CIMInstanceEnumeration 
+CIMClient::referencesE(
+	const CIMObjectPath& path,
+	const String& resultClass,
+	const String& role,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_ch->referencesE(m_namespace, path, resultClass, role, 
 		includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::referencesClasses(
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& resultClass,
-	const OW_String& role,
+CIMClient::referencesClasses(
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& resultClass,
+	const String& role,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList) 
+	const StringArray* propertyList) 
 {
 	m_ch->referencesClasses(m_namespace, path, result, resultClass, 
 		role, includeQualifiers, includeClassOrigin, propertyList);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMClassEnumeration 
-OW_CIMClient::referencesClassesE(
-	const OW_CIMObjectPath& path,
-	const OW_String& resultClass,
-	const OW_String& role,
+CIMClassEnumeration 
+CIMClient::referencesClassesE(
+	const CIMObjectPath& path,
+	const String& resultClass,
+	const String& role,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_ch->referencesClassesE(m_namespace, path, resultClass, role, 
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::execQuery(
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& query,
-	const OW_String& queryLanguage) 
+CIMClient::execQuery(
+	CIMInstanceResultHandlerIFC& result,
+	const String& query,
+	const String& queryLanguage) 
 {
 	m_ch->execQuery(m_namespace, result, query, queryLanguage);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceEnumeration 
-OW_CIMClient::execQueryE(
-	const OW_String& query,
-	const OW_String& queryLanguage)
+CIMInstanceEnumeration 
+CIMClient::execQueryE(
+	const String& query,
+	const String& queryLanguage)
 {
 	return m_ch->execQueryE(m_namespace, query, queryLanguage);
 }
 
-
-
+} // end namespace OpenWBEM
 

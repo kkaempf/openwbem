@@ -52,7 +52,8 @@
 #include "OW_PollingManager.hpp"
 #include "OW_CppProxyProvider.hpp"
 
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 // anonymous namespace to prevent library symbol conflicts
 namespace
@@ -71,34 +72,34 @@ namespace
 // split up into a couple of source and header files...
 
 
-class OW_IndicationProviderTest3 : public OW_CppIndicationProviderIFC, public OW_CppInstanceProviderIFC, public OW_CppPolledProviderIFC
+class IndicationProviderTest3 : public CppIndicationProviderIFC, public CppInstanceProviderIFC, public CppPolledProviderIFC
 {
 public:
 	
-	OW_IndicationProviderTest3()
-		: m_theClass(OW_CIMNULL)
+	IndicationProviderTest3()
+		: m_theClass(CIMNULL)
 		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
 	{
 	}
 
-	~OW_IndicationProviderTest3()
+	~IndicationProviderTest3()
 	{
 	}
 
 	virtual void activateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& nameSpace,
-		const OW_StringArray& classes, 
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& nameSpace,
+		const StringArray& classes, 
 		bool firstActivation)
 	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest3::activateFilter");
+		env->getLogger()->logDebug("IndicationProviderTest3::activateFilter");
 		
 		// eventType contains the name of the indication the listener subscribed to.
-		// this will be one of the class names we indicated in getIndicationProviderInfo(OW_IndicationProviderInfo& info)
+		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
 		// so for this provider (and most other life cycle indication providers), it's got to be one of:
 		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
 		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
@@ -122,14 +123,14 @@ public:
 		else
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
+			OW_THROWCIMMSG(CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
 		}
-		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
-		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest3")
+		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a IndicationProviderTest2 classname
+		// (this is the case if the filter contains "SourceInstance ISA IndicationProviderTest3")
 		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") == classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
+			OW_THROWCIMMSG(CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
 		}
 
 		if (!m_theClass)
@@ -137,30 +138,30 @@ public:
 			m_theClass = env->getCIMOMHandle()->getClass(nameSpace, "OW_IndicationProviderTest3");
 		}
 
-		OW_WQLCompile comp(filter);
+		WQLCompile comp(filter);
 		// do something with comp
 		(void)comp;
 
 		if (firstActivation)
 		{
 			// TODO: Make a better way to do this that doesn't bypass the provider manager or use a no-delete reference or use g_cimomEnvironment.
-			OW_PollingManagerRef pm = OW_CIMOMEnvironment::g_cimomEnvironment->getPollingManager();
-//			pm->addPolledProvider(OW_PolledProviderIFCRef(new OW_CppPolledProviderProxy(OW_CppPolledProviderIFCRef(OW_SharedLibraryRef(), OW_Reference<OW_CppPolledProviderIFC>(this, true)))));
+			PollingManagerRef pm = CIMOMEnvironment::g_cimomEnvironment->getPollingManager();
+//			pm->addPolledProvider(PolledProviderIFCRef(new CppPolledProviderProxy(CppPolledProviderIFCRef(SharedLibraryRef(), Reference<CppPolledProviderIFC>(this, true)))));
 		}
 	}
 	
 	virtual void deActivateFilter(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_WQLSelectStatement& filter, 
-		const OW_String& eventType, 
-		const OW_String& /*nameSpace*/,
-		const OW_StringArray& classes, 
+		const ProviderEnvironmentIFCRef& env,
+		const WQLSelectStatement& filter, 
+		const String& eventType, 
+		const String& /*nameSpace*/,
+		const StringArray& classes, 
 		bool lastActivation)
 	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest3::deActivateFilter");
+		env->getLogger()->logDebug("IndicationProviderTest3::deActivateFilter");
 		
 		// eventType contains the name of the indication the listener subscribed to.
-		// this will be one of the class names we indicated in getIndicationProviderInfo(OW_IndicationProviderInfo& info)
+		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
 		// so for this provider (and most other life cycle indication providers), it's got to be one of:
 		// CIM_InstCreation, CIM_InstModification, or CIM_InstDeletion
 		if (eventType.equalsIgnoreCase("CIM_InstCreation"))
@@ -184,23 +185,23 @@ public:
 		else
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
+			OW_THROWCIMMSG(CIMException::FAILED, "BIG PROBLEM! eventType is incorrect!");
 		}
-		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a OW_IndicationProviderTest2 classname
-		// (this is the case if the filter contains "SourceInstance ISA OW_IndicationProviderTest3")
+		// classes should either be empty (meaning the filter didn't contain an ISA clause), or contain a IndicationProviderTest2 classname
+		// (this is the case if the filter contains "SourceInstance ISA IndicationProviderTest3")
 		if (!classes.empty() && std::find(classes.begin(), classes.end(), "OW_IndicationProviderTest3") == classes.end())
 		{
 			// this isn't really necessary in a normal provider, but since this is a test, we do it to make sure the indication server is working all right
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
+			OW_THROWCIMMSG(CIMException::FAILED, "BIG PROBLEM! classPath is incorrect!");
 		}
 
-		OW_WQLCompile comp(filter);
+		WQLCompile comp(filter);
 		// do something with comp
 		(void)comp;
 		
 		if (lastActivation)
 		{
-			OW_MutexLock l(m_guard);
+			MutexLock l(m_guard);
             OW_ASSERT(m_creationFilterCount == 0);
 			OW_ASSERT(m_modificationFilterCount == 0);
 			OW_ASSERT(m_deletionFilterCount == 0);
@@ -221,12 +222,12 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getIndicationProviderInfo(OW_IndicationProviderInfo& info) 
+	virtual void getIndicationProviderInfo(IndicationProviderInfo& info) 
 	{
 		// all the life-cycle indications that may be generated by this provider
-        OW_IndicationProviderInfoEntry e("CIM_InstCreation");
+        IndicationProviderInfoEntry e("CIM_InstCreation");
 
-		// If OW_IndicationProviderTest3 was derived from other classes, we 
+		// If IndicationProviderTest3 was derived from other classes, we 
 		// would need to add all the base classes in as well.
         e.classes.push_back("OW_IndicationProviderTest3");
 		info.addInstrumentedClass(e);
@@ -246,70 +247,70 @@ public:
 	}
 
 	// These are the indication provider methods.
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		// The class we are instrumenting
 		info.addInstrumentedClass("OW_IndicationProviderTest3");
 	}
 
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Delete not supported");
+		OW_THROWCIMMSG(CIMException::FAILED, "Delete not supported");
 	}
 
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &) 
+	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &) 
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Create not supported");
+		OW_THROWCIMMSG(CIMException::FAILED, "Create not supported");
 	}
 	
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &instanceName, 
+	virtual CIMInstance getInstance(
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const CIMObjectPath &instanceName, 
 		ELocalOnlyFlag localOnly, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin, 
-		const OW_StringArray *propertyList, 
-		const OW_CIMClass &cimClass) 
+		const StringArray *propertyList, 
+		const CIMClass &cimClass) 
 	{
 		(void)ns; (void)cimClass;
-		env->getLogger()->logDebug("OW_IndicationProviderTest3::getInstance");
-		OW_Int32 id = 0;
+		env->getLogger()->logDebug("IndicationProviderTest3::getInstance");
+		Int32 id = 0;
 		try
 		{
 			id = instanceName.getKeyT("DeviceID").getValueT().toString().toInt32();
 		}
-		catch (OW_Exception& e)
+		catch (Exception& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, "Invalid DeviceID property");
+			OW_THROWCIMMSG(CIMException::NOT_FOUND, "Invalid DeviceID property");
 		}
 
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
-		if (id < 0 || OW_UInt32(id) >= m_insts.size())
+		MutexLock l(m_guard);
+		if (id < 0 || UInt32(id) >= m_insts.size())
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("Invalid DeviceID property: %1", id).c_str());
+			OW_THROWCIMMSG(CIMException::NOT_FOUND, format("Invalid DeviceID property: %1", id).c_str());
 		}
 		return m_insts[id].clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
 	}
 
 	virtual void enumInstances(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_String &className, 
-		OW_CIMInstanceResultHandlerIFC &result, 
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const String &className, 
+		CIMInstanceResultHandlerIFC &result, 
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin, 
-		const OW_StringArray *propertyList, 
-		const OW_CIMClass &requestedClass, 
-		const OW_CIMClass &cimClass) 
+		const StringArray *propertyList, 
+		const CIMClass &requestedClass, 
+		const CIMClass &cimClass) 
 	{
 		(void)ns; (void)className;
-		env->getLogger()->logDebug("OW_IndicationProviderTest3::enumInstances");
+		env->getLogger()->logDebug("IndicationProviderTest3::enumInstances");
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
 		{
 			result.handle(m_insts[i].clone(localOnly, deep, includeQualifiers, includeClassOrigin, propertyList, requestedClass, cimClass));
@@ -317,39 +318,39 @@ public:
 	}
 	
 	virtual void enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_String &className, 
-		OW_CIMObjectPathResultHandlerIFC &result, 
-		const OW_CIMClass &cimClass) 
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const String &className, 
+		CIMObjectPathResultHandlerIFC &result, 
+		const CIMClass &cimClass) 
 	{
 		(void)className; (void)cimClass;
-		env->getLogger()->logDebug("OW_IndicationProviderTest3::enumInstanceNames");
+		env->getLogger()->logDebug("IndicationProviderTest3::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
 		{
-			result.handle(OW_CIMObjectPath(ns, m_insts[i]));
+			result.handle(CIMObjectPath(ns, m_insts[i]));
 		}
 	}
 	
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Modify not supported");
+		OW_THROWCIMMSG(CIMException::FAILED, "Modify not supported");
 	}
 
 	// Polled provider methods
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env)
+	virtual Int32 poll(const ProviderEnvironmentIFCRef& env)
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		// return a 1 second interval if we need to be polled, otherwise return 0 which means we won't be polled.
 		if (m_creationFilterCount + m_modificationFilterCount + m_deletionFilterCount > 0)
 		{
@@ -362,10 +363,10 @@ public:
 		}
 	}
 
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env)
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger()->logDebug("OW_IndicationProviderTest3::getInitialPollingInterval");
-		OW_MutexLock l(m_guard);
+		env->getLogger()->logDebug("IndicationProviderTest3::getInitialPollingInterval");
+		MutexLock l(m_guard);
 		// return a 1 second interval if we need to be polled, otherwise return 0 which means we won't be polled.
 		if (m_creationFilterCount + m_modificationFilterCount + m_deletionFilterCount > 0)
 		{
@@ -378,12 +379,12 @@ public:
 	}
 
 private:
-	void updateInstancesAndSendIndications(const OW_ProviderEnvironmentIFCRef& env)
+	void updateInstancesAndSendIndications(const ProviderEnvironmentIFCRef& env)
 	{
-		OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
 		// m_insts could be accessed from multiple threads
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		if (m_insts.size() == 5)
 		{
 			if (m_deletionFilterCount > 0)
@@ -391,9 +392,9 @@ private:
 				// send out CIM_InstDeletion indications
 				for (size_t i = 0; i < m_insts.size(); ++i)
 				{
-					OW_CIMInstance expInst;
+					CIMInstance expInst;
 					expInst.setClassName("CIM_InstDeletion");
-					expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[i]));
+					expInst.setProperty("SourceInstance", CIMValue(m_insts[i]));
 					hdl->exportIndication(expInst, "root/testsuite");
 				}
 			}
@@ -402,44 +403,44 @@ private:
 		else
 		{
 			// add an instance
-			OW_CIMInstance iToAdd(m_theClass.newInstance());
-			iToAdd.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
-			iToAdd.setProperty("SystemName", OW_CIMValue("localhost"));
-			iToAdd.setProperty("CreationClassName", OW_CIMValue("OW_IndicationProviderTest3"));
-			iToAdd.setProperty("DeviceID", OW_CIMValue(OW_String(m_insts.size())));
+			CIMInstance iToAdd(m_theClass.newInstance());
+			iToAdd.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
+			iToAdd.setProperty("SystemName", CIMValue("localhost"));
+			iToAdd.setProperty("CreationClassName", CIMValue("OW_IndicationProviderTest3"));
+			iToAdd.setProperty("DeviceID", CIMValue(String(m_insts.size())));
 			// PowerOnHours is our property that will be modified
-			iToAdd.setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(m_insts.size())));
+			iToAdd.setProperty("PowerOnHours", CIMValue(UInt64(m_insts.size())));
 			if (m_creationFilterCount > 0)
 			{
 				// send out CIM_InstCreation indications
-				OW_CIMInstance expInst;
+				CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
-				expInst.setProperty("SourceInstance", OW_CIMValue(iToAdd));
+				expInst.setProperty("SourceInstance", CIMValue(iToAdd));
 				hdl->exportIndication(expInst, "root/testsuite");
 			}
 			m_insts.push_back(iToAdd);
 
 			// now modify the first instance's PowerOnHours property
-			OW_CIMInstance prevInst = m_insts[0];
-			OW_UInt64 oldPowerOnHours = prevInst.getPropertyT("PowerOnHours").getValueT().toUInt64();
-			m_insts[0].setProperty("PowerOnHours", OW_CIMValue(OW_UInt64(oldPowerOnHours + 1)));
+			CIMInstance prevInst = m_insts[0];
+			UInt64 oldPowerOnHours = prevInst.getPropertyT("PowerOnHours").getValueT().toUInt64();
+			m_insts[0].setProperty("PowerOnHours", CIMValue(UInt64(oldPowerOnHours + 1)));
 
 			if (m_modificationFilterCount > 0)
 			{
 				// send out CIM_InstModification indications
-				OW_CIMInstance expInst;
+				CIMInstance expInst;
 				expInst.setClassName("CIM_InstModification");
-				expInst.setProperty("PreviousInstance", OW_CIMValue(prevInst));
-				expInst.setProperty("SourceInstance", OW_CIMValue(m_insts[0]));
+				expInst.setProperty("PreviousInstance", CIMValue(prevInst));
+				expInst.setProperty("SourceInstance", CIMValue(m_insts[0]));
 				hdl->exportIndication(expInst, "root/testsuite");
 			}
 		}
 	}
 
-	OW_CIMInstanceArray m_insts;
+	CIMInstanceArray m_insts;
 
-	OW_Mutex m_guard;
-	OW_CIMClass m_theClass;
+	Mutex m_guard;
+	CIMClass m_theClass;
 
 	int m_creationFilterCount;
 	int m_modificationFilterCount;
@@ -447,37 +448,37 @@ private:
 
 	void addCreationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		++m_creationFilterCount;
 	}
 
 	void addModificationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		++m_modificationFilterCount;
 	}
 
 	void addDeletionFilter()
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		++m_deletionFilterCount;
 	}
 
 	void removeCreationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		--m_creationFilterCount;
 	}
 
 	void removeModificationFilter()
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		--m_modificationFilterCount;
 	}
 
 	void removeDeletionFilter()
 	{
-		OW_MutexLock l(m_guard);
+		MutexLock l(m_guard);
 		--m_deletionFilterCount;
 	}
 };
@@ -486,6 +487,6 @@ private:
 } // end anonymous namespace
 
 
-OW_PROVIDERFACTORY(OW_IndicationProviderTest3, indicationtest3)
+OW_PROVIDERFACTORY(IndicationProviderTest3, indicationtest3)
 
 

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include <cstddef>
 #include <cctype>
@@ -38,15 +37,17 @@
 #include "OW_XMLParser.hpp"
 #include "OW_Format.hpp"
 
+namespace OpenWBEM
+{
+
 ////////////////////////////////////////////////////////////////////////////////
 //
-// OW_XMLParseException
+// XMLParseException
 //
 // Note that we don't use the OW_THROW macro in this file to throw 
-// an OW_XMLParseException.  This is because it needs extra information not
+// an XMLParseException.  This is because it needs extra information not
 // available with OW_THROW.
 ////////////////////////////////////////////////////////////////////////////////
-
 static const char* _xmlMessages[] =
 {
 	"Bad opening element",
@@ -67,128 +68,106 @@ static const char* _xmlMessages[] =
 	"Validation error",
 	"Semantic error"
 };
-
-
-OW_XMLParseException::OW_XMLParseException(
-		OW_XMLParseException::Code code,
+XMLParseException::XMLParseException(
+		XMLParseException::Code code,
 		unsigned int lineNumber)
-: OW_Exception(format("%1: on line %2", _xmlMessages[code - 1], lineNumber).c_str())
+: Exception(format("%1: on line %2", _xmlMessages[code - 1], lineNumber).c_str())
 {
 }
-
-OW_XMLParseException::OW_XMLParseException(
-		OW_XMLParseException::Code code,
+XMLParseException::XMLParseException(
+		XMLParseException::Code code,
 		unsigned int lineNumber,
 		const char* message)
-: OW_Exception(format("%1: on line %2: %3", _xmlMessages[code - 1], lineNumber,
+: Exception(format("%1: on line %2: %3", _xmlMessages[code - 1], lineNumber,
 	message).c_str())
 {
 }
-
-OW_XMLParseException::OW_XMLParseException(
+XMLParseException::XMLParseException(
 		const char* file,
 		unsigned int line,
 		const char* msg)
-: OW_Exception(file, line, msg)
+: Exception(file, line, msg)
 {
 }
-
 ////////////////////////////////////////////////////////////////////////////////
 //
-// OW_XMLParseValidationError
+// XMLParseValidationError
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-OW_XMLParseValidationError::OW_XMLParseValidationError(
+XMLParseValidationError::XMLParseValidationError(
 		unsigned int lineNumber,
 		const char* message)
-: OW_XMLParseException(OW_XMLParseException::VALIDATION_ERROR, lineNumber, message)
+: XMLParseException(XMLParseException::VALIDATION_ERROR, lineNumber, message)
 {
-
 }
-
 ////////////////////////////////////////////////////////////////////////////////
 //
-// OW_XMLParseSemanticError
+// XMLParseSemanticError
 //
 ////////////////////////////////////////////////////////////////////////////////
-
-OW_XMLParseSemanticError::OW_XMLParseSemanticError(
+XMLParseSemanticError::XMLParseSemanticError(
 		unsigned int lineNumber,
 		const char* message)
-: OW_XMLParseException(OW_XMLParseException::SEMANTIC_ERROR, lineNumber, message)
+: XMLParseException(XMLParseException::SEMANTIC_ERROR, lineNumber, message)
 {
-
 }
-
 ////////////////////////////////////////////////////////////////////////////////
 //
-// OW_XMLParser
+// XMLParser
 //
 ////////////////////////////////////////////////////////////////////////////////
-bool OW_XMLParser::next(OW_XMLToken& entry)
+bool XMLParser::next(XMLToken& entry)
 {
-	OW_IstreamBufIterator iterEOF;
+	IstreamBufIterator iterEOF;
 	if (_current == iterEOF || *_current == 0)
 	{
 		if (!_stack.empty())
 		{
-			throw OW_XMLParseException(OW_XMLParseException::UNCLOSED_TAGS, _line);
+			throw XMLParseException(XMLParseException::UNCLOSED_TAGS, _line);
 		}
-
 		return false;
 	}
-
 	// if the last tag was a <.../> then set the next token to END_TAG so that
 	// the caller doesn't need to worry about <.../>, it will look like
 	// <...></...>
 	if (_tagIsEmpty)
 	{
 		_tagIsEmpty = false;
-		entry.type = OW_XMLToken::END_TAG;
+		entry.type = XMLToken::END_TAG;
 		entry.attributeCount = 0;
 		entry.text.reset();
 		return true;
 	}
-
 	// Either a "<...>" or content begins next:
-
 	if (*_current == '<')
 	{
 		// Skip over any whitespace:
-
 		_skipWhitespace();
-
 		_current++;
 		_getElement(entry);
-
-		if (entry.type == OW_XMLToken::START_TAG)
+		if (entry.type == XMLToken::START_TAG)
 		{
 			if (_stack.empty() && _foundRoot)
-				throw OW_XMLParseException(OW_XMLParseException::MULTIPLE_ROOTS, _line);
-
+				throw XMLParseException(XMLParseException::MULTIPLE_ROOTS, _line);
 			_foundRoot = true;
 			if (!_tagIsEmpty)
 			{
 				_stack.push(entry.text.toString());
 			}
 		}
-		else if (entry.type == OW_XMLToken::END_TAG)
+		else if (entry.type == XMLToken::END_TAG)
 		{
 			if (_stack.empty())
-				throw OW_XMLParseException(OW_XMLParseException::START_END_MISMATCH, _line);
-
+				throw XMLParseException(XMLParseException::START_END_MISMATCH, _line);
 			if (_stack.top() != entry.text.toString())
-				throw OW_XMLParseException(OW_XMLParseException::START_END_MISMATCH, _line);
-
+				throw XMLParseException(XMLParseException::START_END_MISMATCH, _line);
 			_stack.pop();
 		}
-
 		return true;
 	}
 	else
 	{
-		entry.type = OW_XMLToken::CONTENT;
+		entry.type = XMLToken::CONTENT;
 		//bool isSpaces;
 		//_getContent(entry, isSpaces);
 		_getContent(entry);
@@ -197,84 +176,67 @@ bool OW_XMLParser::next(OW_XMLToken& entry)
 			// content is entirely white space, so just skip it.
 		//	return next(entry);
 		//}
-
 		return true;
 	}
 }
-
 /*
-void OW_XMLParser::putBack(OW_XMLToken& entry)
+void XMLParser::putBack(XMLToken& entry)
 {
 	_putBackStack.push(entry);
 }
 */
-
-void OW_XMLParser::_skipWhitespace()
+void XMLParser::_skipWhitespace()
 {
 	while (isspace(*_current))
 	{
 		if (*_current == '\n')
 			++_line;
-
 		++_current;
 	}
 }
-
-bool OW_XMLParser::_getElementName(OW_XMLToken& entry)
+bool XMLParser::_getElementName(XMLToken& entry)
 {
 	if (!isalpha(*_current) && *_current != '_')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
-
+		throw XMLParseException(XMLParseException::BAD_START_TAG, _line);
 	entry.text.reset();
 	while (isalnum(*_current) || *_current == '_' || *_current == '-' ||
 			 *_current == ':' || *_current == '.')
 	{
 		entry.text += *_current++;
 	}
-
 	// The next character might be a space:
-
 	if (isspace(*_current))
 	{
 		_skipWhitespace();
 	}
-
 	if (*_current == '>')
 	{
 		++_current;
 		return true;
 	}
-
 	return false;
 }
-
-bool OW_XMLParser::_getOpenElementName(OW_XMLToken& entry, bool& openCloseElement)
+bool XMLParser::_getOpenElementName(XMLToken& entry, bool& openCloseElement)
 {
 	openCloseElement = false;
-
 	if (!isalpha(*_current) && *_current != '_')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
-
+		throw XMLParseException(XMLParseException::BAD_START_TAG, _line);
 	entry.text.reset();
 	while (isalnum(*_current) || *_current == '_' || *_current == '-' ||
 			 *_current == ':' || *_current == '.')
 	{
 		entry.text += *_current++;
 	}
-
 	// The next character must be a space:
-
 	if (isspace(*_current))
 	{
 		_skipWhitespace();
 	}
-
 	if (*_current == '>')
 	{
 		++_current;
 		return true;
 	}
-
 	if (*_current == '/')
 	{
 		++_current;
@@ -284,65 +246,48 @@ bool OW_XMLParser::_getOpenElementName(OW_XMLToken& entry, bool& openCloseElemen
 			++_current;
 			return true;
 		}
-
 	}
-
 	return false;
 }
-
-void OW_XMLParser::_getAttributeNameAndEqual(OW_XMLToken::Attribute& att)
+void XMLParser::_getAttributeNameAndEqual(XMLToken::Attribute& att)
 {
 	if (!isalpha(*_current) && *_current != '_')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_NAME,
+		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_NAME,
 			_line, format("Expected alpha or _; got %1", *_current).c_str());
-
 	att.name.reset();
 	while (isalnum(*_current) || *_current == '_' || *_current == '-' ||
 			 *_current == ':' || *_current == '.')
 	{
 		att.name += *_current++;
 	}
-
 	_skipWhitespace();
-
 	if (*_current != '=')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_NAME,
+		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_NAME,
 			_line, format("Expected =; got %1", *_current).c_str());
-
 	_current++;
-
 	_skipWhitespace();
-
 }
-
-void OW_XMLParser::_getAttributeValue(OW_XMLToken::Attribute& att)
+void XMLParser::_getAttributeValue(XMLToken::Attribute& att)
 {
 	// ATTN-B: handle values contained in semiquotes:
-
 	if (*_current != '"' && *_current != '\'')
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
+		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_VALUE,
 			_line, format("Expecting \" or '; got %1", *_current).c_str());
-
 	char startChar = *_current++;
-
 	att.value.reset();
 	while (*_current && *_current != startChar)
 	{
 		att.value += *_current++;
 	}
 		
-
 	if (*_current != startChar)
-		throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
+		throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_VALUE,
 			_line, format("Expecting %1; Got %2", startChar, static_cast<int>(*_current)).c_str());
-
 	++_current;
 }
-
-void OW_XMLParser::_getComment()
+void XMLParser::_getComment()
 {
 	// Now p points to first non-whitespace character beyond "<--" sequence:
-
 	for (; *_current; _current++)
 	{
 		if (*_current == '-')
@@ -358,22 +303,18 @@ void OW_XMLParser::_getComment()
 				}
 				else
 				{
-					throw OW_XMLParseException(
-							OW_XMLParseException::MINUS_MINUS_IN_COMMENT, _line);
+					throw XMLParseException(
+							XMLParseException::MINUS_MINUS_IN_COMMENT, _line);
 				}
 			}
 		}
 	}
-
 	// If it got this far, then the comment is unterminated:
-
-	throw OW_XMLParseException(OW_XMLParseException::UNTERMINATED_COMMENT, _line);
+	throw XMLParseException(XMLParseException::UNTERMINATED_COMMENT, _line);
 }
-
-void OW_XMLParser::_getCData(OW_XMLToken& entry)
+void XMLParser::_getCData(XMLToken& entry)
 {
 	// At this point _current points one past "<![CDATA[" sequence:
-
 	entry.text.reset();
 	for (; *_current; _current++)
 	{
@@ -399,37 +340,27 @@ void OW_XMLParser::_getCData(OW_XMLToken& entry)
 				entry.text += ']';
 			}
 		}
-
 		if (*_current == '\n')
 			++_line;
-
 		entry.text += *_current++;
-
 	}
-
 	// If it got this far, then the cdata is unterminated:
-
-	throw OW_XMLParseException(OW_XMLParseException::UNTERMINATED_CDATA, _line);
+	throw XMLParseException(XMLParseException::UNTERMINATED_CDATA, _line);
 }
-
-void OW_XMLParser::_getDocType()
+void XMLParser::_getDocType()
 {
 	// Just ignore the DOCTYPE command for now:
-
 	for (; *_current && *_current != '>'; ++_current)
 	{
 		if (*_current == '\n')
 			++_line;
 	}
-
 	if (*_current != '>')
-		throw OW_XMLParseException(OW_XMLParseException::UNTERMINATED_DOCTYPE, _line);
-
+		throw XMLParseException(XMLParseException::UNTERMINATED_DOCTYPE, _line);
 	_current++;
 }
-
-//void OW_XMLParser::_getContent(OW_XMLToken& entry, bool& isWhiteSpace)
-void OW_XMLParser::_getContent(OW_XMLToken& entry)
+//void XMLParser::_getContent(XMLToken& entry, bool& isWhiteSpace)
+void XMLParser::_getContent(XMLToken& entry)
 {
 	entry.text.reset();
 	//isWhiteSpace = true;
@@ -442,41 +373,34 @@ void OW_XMLParser::_getContent(OW_XMLToken& entry)
 		//{
 		//	isWhiteSpace = isspace(*_current);
 		//}
-
 		entry.text += *_current++;
 	}
 }
-
-void OW_XMLParser::_getElement(OW_XMLToken& entry)
+void XMLParser::_getElement(XMLToken& entry)
 {
 	entry.attributeCount = 0;
 	entry.text.reset();
-
 	//--------------------------------------------------------------------------
 	// Get the element name (expect one of these: '?', '!', [A-Za-z_])
 	//--------------------------------------------------------------------------
-
 	if (*_current == '?')
 	{
-		entry.type = OW_XMLToken::XML_DECLARATION;
+		entry.type = XMLToken::XML_DECLARATION;
 		++_current;
-
 		if (_getElementName(entry))
 			return;
 	}
 	else if (*_current == '!')
 	{
 		_current++;
-
 		// Expect a comment or CDATA:
-
 		if (*_current == '-')
 		{
 			++_current;
 			if (*_current == '-')
 			{
 				++_current;
-				entry.type = OW_XMLToken::COMMENT;
+				entry.type = XMLToken::COMMENT;
 				_getComment();
 				return;
 			}
@@ -488,9 +412,9 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 			while (*curChar)
 			{
 				if (*curChar++ != *_current++)
-					throw(OW_XMLParseException(OW_XMLParseException::EXPECTED_COMMENT_OR_CDATA, _line));
+					throw(XMLParseException(XMLParseException::EXPECTED_COMMENT_OR_CDATA, _line));
 			}
-			entry.type = OW_XMLToken::CDATA;
+			entry.type = XMLToken::CDATA;
 			_getCData(entry);
 			return;
 		}
@@ -501,51 +425,45 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 			while (*curChar)
 			{
 				if (*curChar++ != *_current++)
-					throw(OW_XMLParseException(OW_XMLParseException::EXPECTED_COMMENT_OR_CDATA, _line));
+					throw(XMLParseException(XMLParseException::EXPECTED_COMMENT_OR_CDATA, _line));
 			}
-			entry.type = OW_XMLToken::DOCTYPE;
+			entry.type = XMLToken::DOCTYPE;
 			_getDocType();
 			return;
 		}
-		throw(OW_XMLParseException(OW_XMLParseException::EXPECTED_COMMENT_OR_CDATA, _line));
+		throw(XMLParseException(XMLParseException::EXPECTED_COMMENT_OR_CDATA, _line));
 	}
 	else if (*_current == '/')
 	{
-		entry.type = OW_XMLToken::END_TAG;
+		entry.type = XMLToken::END_TAG;
 		++_current;
-
 		if (!_getElementName(entry))
-			throw(OW_XMLParseException(OW_XMLParseException::BAD_END_TAG, _line));
-
+			throw(XMLParseException(XMLParseException::BAD_END_TAG, _line));
 		return;
 	}
 	else if (isalpha(*_current) || *_current == '_')
 	{
-		entry.type = OW_XMLToken::START_TAG;
-
+		entry.type = XMLToken::START_TAG;
 		bool openCloseElement;
-
 		if (_getOpenElementName(entry, openCloseElement))
 		{
 			if (openCloseElement)
 			{
-				entry.type = OW_XMLToken::START_TAG;
+				entry.type = XMLToken::START_TAG;
 				_tagIsEmpty = true;
 			}
 			return;
 		}
 	}
 	else
-		throw OW_XMLParseException(OW_XMLParseException::BAD_START_TAG, _line);
-
+		throw XMLParseException(XMLParseException::BAD_START_TAG, _line);
 	//--------------------------------------------------------------------------
 	// Grab all the attributes:
 	//--------------------------------------------------------------------------
-
 	for (;;)
 	{
 		_skipWhitespace();
-		if (entry.type == OW_XMLToken::XML_DECLARATION)
+		if (entry.type == XMLToken::XML_DECLARATION)
 		{
 			if (*_current == '?')
 			{
@@ -557,25 +475,25 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 				}
 				else
 				{
-					throw OW_XMLParseException(
-						OW_XMLParseException::BAD_ATTRIBUTE_VALUE, _line,
+					throw XMLParseException(
+						XMLParseException::BAD_ATTRIBUTE_VALUE, _line,
 						format("Expecting >; Got %1", *_current).c_str());
 				}
 			}
 		}
-		else if (entry.type == OW_XMLToken::START_TAG && *_current == '/')
+		else if (entry.type == XMLToken::START_TAG && *_current == '/')
 		{
 			++_current;
 			if (*_current =='>')
 			{
-				entry.type = OW_XMLToken::START_TAG;
+				entry.type = XMLToken::START_TAG;
 				_tagIsEmpty = true;
 				++_current;
 				return;
 			}
 			else
 			{
-				throw OW_XMLParseException(OW_XMLParseException::BAD_ATTRIBUTE_VALUE,
+				throw XMLParseException(XMLParseException::BAD_ATTRIBUTE_VALUE,
 					_line, format("Expecting >; Got %1", *_current).c_str());
 			}
 		}
@@ -584,17 +502,14 @@ void OW_XMLParser::_getElement(OW_XMLToken& entry)
 			++_current;
 			return;
 		}
-
 		++entry.attributeCount;
-		OW_XMLToken::Attribute& attr = entry.attributes[entry.attributeCount - 1];
+		XMLToken::Attribute& attr = entry.attributes[entry.attributeCount - 1];
 		_getAttributeNameAndEqual(attr);
-
 		_getAttributeValue(attr);
-
-		if (entry.attributeCount == OW_XMLToken::MAX_ATTRIBUTES)
-			throw OW_XMLParseException(OW_XMLParseException::TOO_MANY_ATTRIBUTES, _line);
-
+		if (entry.attributeCount == XMLToken::MAX_ATTRIBUTES)
+			throw XMLParseException(XMLParseException::TOO_MANY_ATTRIBUTES, _line);
 	}
 }
 
+} // end namespace OpenWBEM
 

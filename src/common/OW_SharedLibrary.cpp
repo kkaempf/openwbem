@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_SharedLibrary::~OW_SharedLibrary()
+SharedLibrary::~SharedLibrary()
 {
 }
+
+} // end namespace OpenWBEM
 

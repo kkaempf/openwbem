@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMDataType.hpp"
@@ -38,133 +37,117 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifier.hpp"
-
 #include <algorithm> // for std::sort
+
+namespace OpenWBEM
+{
 
 using std::ostream;
 using std::istream;
-using namespace OW_WBEMFlags;
-
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-struct OW_CIMInstance::INSTData
+struct CIMInstance::INSTData
 {
-	OW_String m_owningClassName;
-	OW_CIMPropertyArray m_keys;
-	OW_CIMPropertyArray m_properties;
-	OW_CIMQualifierArray m_qualifiers;
-
+	String m_owningClassName;
+	CIMPropertyArray m_keys;
+	CIMPropertyArray m_properties;
+	CIMQualifierArray m_qualifiers;
 	INSTData* clone() const { return new INSTData(*this); }
 };
-
-bool operator<(const OW_CIMInstance::INSTData& x, const OW_CIMInstance::INSTData& y)
+bool operator<(const CIMInstance::INSTData& x, const CIMInstance::INSTData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_owningClassName, y.m_owningClassName,
 		x.m_properties, y.m_properties,
 		x.m_keys, y.m_keys,
 		x.m_qualifiers, y.m_qualifiers);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::OW_CIMInstance() :
-	OW_CIMElement(), m_pdata(new INSTData)
+CIMInstance::CIMInstance() :
+	CIMElement(), m_pdata(new INSTData)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::OW_CIMInstance(OW_CIMNULL_t) :
-	OW_CIMElement(), m_pdata(0)
+CIMInstance::CIMInstance(CIMNULL_t) :
+	CIMElement(), m_pdata(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::OW_CIMInstance(const char* name) :
-	OW_CIMElement(), m_pdata(new INSTData)
+CIMInstance::CIMInstance(const char* name) :
+	CIMElement(), m_pdata(new INSTData)
 {
 	m_pdata->m_owningClassName = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::OW_CIMInstance(const OW_String& name) :
-	OW_CIMElement(), m_pdata(new INSTData)
+CIMInstance::CIMInstance(const String& name) :
+	CIMElement(), m_pdata(new INSTData)
 {
 	m_pdata->m_owningClassName = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::OW_CIMInstance(const OW_CIMInstance& x) :
-		OW_CIMElement(), m_pdata(x.m_pdata)
+CIMInstance::CIMInstance(const CIMInstance& x) :
+		CIMElement(), m_pdata(x.m_pdata)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance::~OW_CIMInstance()
+CIMInstance::~CIMInstance()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMInstance::setNull()
+CIMInstance::setNull()
 {
 	m_pdata = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance& OW_CIMInstance::operator= (const OW_CIMInstance& x)
+CIMInstance& CIMInstance::operator= (const CIMInstance& x)
 {
 	m_pdata = x.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setKeys(const OW_CIMPropertyArray& keys)
+CIMInstance&
+CIMInstance::setKeys(const CIMPropertyArray& keys)
 {
 	m_pdata->m_keys = keys;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMInstance::getClassName() const
+String
+CIMInstance::getClassName() const
 {
 	return m_pdata->m_owningClassName;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setClassName(const OW_String& name)
+CIMInstance&
+CIMInstance::setClassName(const String& name)
 {
 	m_pdata->m_owningClassName = name;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierArray
-OW_CIMInstance::getQualifiers() const
+CIMQualifierArray
+CIMInstance::getQualifiers() const
 {
 	return m_pdata->m_qualifiers;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier
-OW_CIMInstance::getQualifier(const OW_String& qualName) const
+CIMQualifier
+CIMInstance::getQualifier(const String& qualName) const
 {
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
-		OW_CIMQualifier qual = m_pdata->m_qualifiers[i];
+		CIMQualifier qual = m_pdata->m_qualifiers[i];
 		if(qual.getName().equalsIgnoreCase(qualName))
 		{
 			return qual;
 		}
 	}
-
-	return OW_CIMQualifier(OW_CIMNULL);
+	return CIMQualifier(CIMNULL);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::removeQualifier(const OW_String& qualName)
+CIMInstance&
+CIMInstance::removeQualifier(const String& qualName)
 {
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
@@ -176,14 +159,13 @@ OW_CIMInstance::removeQualifier(const OW_String& qualName)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setQualifier(const OW_CIMQualifier& qual)
+CIMInstance&
+CIMInstance::setQualifier(const CIMQualifier& qual)
 {
 	if(qual)
 	{
-		OW_String qualName = qual.getName();
+		String qualName = qual.getName();
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
@@ -196,125 +178,109 @@ OW_CIMInstance::setQualifier(const OW_CIMQualifier& qual)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setQualifiers(const OW_CIMQualifierArray& quals)
+CIMInstance&
+CIMInstance::setQualifiers(const CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMPropertyArray
-OW_CIMInstance::getProperties(OW_Int32 valueDataType) const
+CIMPropertyArray
+CIMInstance::getProperties(Int32 valueDataType) const
 {
-	if(valueDataType == OW_CIMDataType::INVALID)
+	if(valueDataType == CIMDataType::INVALID)
 	{
 		return m_pdata->m_properties;
 	}
-
-	OW_CIMPropertyArray pra;
+	CIMPropertyArray pra;
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
-		OW_CIMProperty prop = m_pdata->m_properties[i];
+		CIMProperty prop = m_pdata->m_properties[i];
 		if(prop.getDataType().getType() == valueDataType)
 		{
 			pra.append(prop);
 		}
 	}
-
 	return pra;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setProperties(const OW_CIMPropertyArray& props)
+CIMInstance&
+CIMInstance::setProperties(const CIMPropertyArray& props)
 {
 	m_pdata->m_properties = props;
 	_buildKeys();
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMProperty
-OW_CIMInstance::getProperty(const OW_String& name,
-	const OW_String& originClass) const
+CIMProperty
+CIMInstance::getProperty(const String& name,
+	const String& originClass) const
 {
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
 	{
-		OW_CIMProperty cp = m_pdata->m_properties[i];
-
+		CIMProperty cp = m_pdata->m_properties[i];
 		if(originClass.equalsIgnoreCase(cp.getOriginClass())
 			&& name.equalsIgnoreCase(cp.getName()))
 		{
 			return(cp);
 		}
 	}
-
-	return OW_CIMProperty(OW_CIMNULL);
+	return CIMProperty(CIMNULL);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMProperty
-OW_CIMInstance::getProperty(const OW_String& propertyName) const
+CIMProperty
+CIMInstance::getProperty(const String& propertyName) const
 {
 	if(propertyName.empty())
-		return OW_CIMProperty(OW_CIMNULL);
-
+		return CIMProperty(CIMNULL);
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
 	{
-		OW_CIMProperty cp = m_pdata->m_properties[i];
-
-		OW_String pname = cp.getName();
+		CIMProperty cp = m_pdata->m_properties[i];
+		String pname = cp.getName();
 		if(propertyName.equalsIgnoreCase(cp.getName()))
 			return(cp);
 	}
-
-	return OW_CIMProperty(OW_CIMNULL);
+	return CIMProperty(CIMNULL);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMProperty
-OW_CIMInstance::getPropertyT(const OW_String& propertyName) const
+CIMProperty
+CIMInstance::getPropertyT(const String& propertyName) const
 {
-	OW_CIMProperty p = getProperty(propertyName);
+	CIMProperty p = getProperty(propertyName);
 	if (!p)
 	{
-		OW_THROW(OW_NoSuchPropertyException, propertyName.c_str());
+		OW_THROW(NoSuchPropertyException, propertyName.c_str());
 	}
 	return p;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // PRIVATE.
 void
-OW_CIMInstance::_buildKeys()
+CIMInstance::_buildKeys()
 {
 	m_pdata->m_keys.clear();
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
 	{
-		OW_CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_pdata->m_properties[i];
 		if(cp.isKey())
 		{
 			m_pdata->m_keys.append(cp.clone(E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMPropertyArray
-OW_CIMInstance::getKeyValuePairs() const
+CIMPropertyArray
+CIMInstance::getKeyValuePairs() const
 {
 	return m_pdata->m_keys;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::updatePropertyValues(const OW_CIMPropertyArray& props)
+CIMInstance&
+CIMInstance::updatePropertyValues(const CIMPropertyArray& props)
 {
 	int tsize = props.size();
 	for(int i = 0; i < tsize; i++)
@@ -323,23 +289,19 @@ OW_CIMInstance::updatePropertyValues(const OW_CIMPropertyArray& props)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
+CIMInstance&
+CIMInstance::updatePropertyValue(const CIMProperty& prop)
 {
 	bool buildTheKeys = false;
-
 	if(prop)
 	{
-		OW_String name = prop.getName();
-
+		String name = prop.getName();
 		int tsize = m_pdata->m_properties.size();
 		for(int i = 0; i < tsize; i++)
 		{
-			OW_CIMProperty cp = m_pdata->m_properties[i];
-			OW_String rname = cp.getName();
-
+			CIMProperty cp = m_pdata->m_properties[i];
+			String rname = cp.getName();
 			if(rname.equalsIgnoreCase(name))
 			{
 				m_pdata->m_properties[i].setValue(prop.getValue());
@@ -351,11 +313,9 @@ OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 					//
 					buildTheKeys = true;
 				}
-
 				break;
 			}
 		}
-
 		if(buildTheKeys)
 		{
 			_buildKeys();
@@ -363,18 +323,15 @@ OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
+CIMInstance&
+CIMInstance::setProperty(const String& name, const CIMValue& cv)
 {
 	int tsize = m_pdata->m_properties.size();
-
 	for(int i = 0; i < tsize; i++)
 	{
-		OW_CIMProperty cp = m_pdata->m_properties[i];
-		OW_String rname = cp.getName();
-
+		CIMProperty cp = m_pdata->m_properties[i];
+		String rname = cp.getName();
 		if(rname.equalsIgnoreCase(name))
 		{
 			m_pdata->m_properties[i].setValue(cv);
@@ -385,11 +342,10 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 			return *this;
 		}
 	}
-
 	//
 	// Not found so add it
 	//
-	OW_CIMProperty cp(name);
+	CIMProperty cp(name);
 	cp.setValue(cv);
 	if(cv)
 	{
@@ -397,9 +353,8 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 	}
 	else
 	{
-		cp.setDataType(OW_CIMDataType::CIMNULL);
+		cp.setDataType(CIMDataType::CIMNULL);
 	}
-
 	m_pdata->m_properties.append(cp);
 	//
 	// We don't worry about building the keys here, because the
@@ -407,25 +362,21 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 	//
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
+CIMInstance&
+CIMInstance::setProperty(const CIMProperty& prop)
 {
 	if(prop)
 	{
-		OW_String propName = prop.getName();
-
+		String propName = prop.getName();
 		int tsize = m_pdata->m_properties.size();
 		for(int i = 0; i < tsize; i++)
 		{
-			OW_CIMProperty cp = m_pdata->m_properties[i];
-			OW_String rname = cp.getName();
-
+			CIMProperty cp = m_pdata->m_properties[i];
+			String rname = cp.getName();
 			if(rname.equalsIgnoreCase(propName))
 			{
 				m_pdata->m_properties[i] = prop;
-
 				// If property was a key or is a key, then rebuild the
 				// key values
 				if(cp.isKey() || prop.isKey())
@@ -435,7 +386,6 @@ OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 				return *this;
 			}
 		}
-
 		//
 		// Not found so add it
 		//
@@ -447,19 +397,17 @@ OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::removeProperty(const OW_String& propName)
+CIMInstance&
+CIMInstance::removeProperty(const String& propName)
 {
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
 	{
-		OW_CIMProperty cp = m_pdata->m_properties[i];
+		CIMProperty cp = m_pdata->m_properties[i];
 		if(cp.getName().equalsIgnoreCase(propName))
 		{
 			m_pdata->m_properties.remove(i);
-
 			// If this property was a key, then rebuild the key values
 			if(cp.isKey())
 			{
@@ -470,13 +418,12 @@ OW_CIMInstance::removeProperty(const OW_String& propName)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList) const
+CIMInstance
+CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList) const
 {
-	OW_StringArray lproplist;
+	StringArray lproplist;
 	bool noprops = false;
 	if(propertyList)
 	{
@@ -489,58 +436,51 @@ OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQu
 			lproplist = *propertyList;
 		}
 	}
-
 	return clone(localOnly, includeQualifiers, includeClassOrigin, lproplist,
 		noprops);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
+CIMInstance
+CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const StringArray& propertyList,
 	bool noProps) const
 {
-	OW_CIMInstance ci;
+	CIMInstance ci;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
 	ci.m_pdata->m_keys = m_pdata->m_keys;
-
 	//
 	// Process qualifiers
 	//
 	if(includeQualifiers)
 	{
-		OW_CIMQualifierArray qra;
+		CIMQualifierArray qra;
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			OW_CIMQualifier cq = m_pdata->m_qualifiers[i];
+			CIMQualifier cq = m_pdata->m_qualifiers[i];
 			if(localOnly && cq.getPropagated())
 			{
 				continue;
 			}
-
 			qra.append(cq);
 		}
-
 		ci.m_pdata->m_qualifiers = qra;
 	}
-
 	if(!noProps)
 	{
-		OW_CIMPropertyArray props;
+		CIMPropertyArray props;
 		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
-			OW_CIMProperty prop = m_pdata->m_properties[i];
+			CIMProperty prop = m_pdata->m_properties[i];
 			if(localOnly && prop.getPropagated())
 			{
 				continue;
 			}
-
 			//
 			// If propertyList is not NULL then check this is a request property
 			//
 			if(propertyList.size() != 0)
 			{
-				OW_String pName = prop.getName();
+				String pName = prop.getName();
 				for(size_t j = 0; j < propertyList.size(); j++)
 				{
 					if(pName.equalsIgnoreCase(propertyList[j]))
@@ -557,36 +497,32 @@ OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQu
 					includeClassOrigin));
 			}
 		}
-
 		ci.m_pdata->m_properties = props;
 	}
-
 	return ci;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers,
-	EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
-	const OW_CIMClass& requestedClass, const OW_CIMClass& cimClass) const
+CIMInstance
+CIMInstance::clone(ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers,
+	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+	const CIMClass& requestedClass, const CIMClass& cimClass) const
 {
-	OW_CIMInstance ci(*this);
+	CIMInstance ci(*this);
 	ci.syncWithClass(cimClass, E_INCLUDE_QUALIFIERS);
 	ci = ci.clone(E_NOT_LOCAL_ONLY, includeQualifiers,
 		includeClassOrigin, propertyList);
-
 	// do processing of deep & localOnly
 	// don't filter anything if (deep == E_DEEP && localOnly == E_NOT_LOCAL_ONLY)
 	if (deep != E_DEEP || localOnly != E_NOT_LOCAL_ONLY)
 	{
-		OW_CIMPropertyArray props = ci.getProperties();
-		OW_CIMPropertyArray newprops;
-		OW_CIMInstance newInst(ci);
-		OW_String requestedClassName = requestedClass.getName();
+		CIMPropertyArray props = ci.getProperties();
+		CIMPropertyArray newprops;
+		CIMInstance newInst(ci);
+		String requestedClassName = requestedClass.getName();
 		for (size_t i = 0; i < props.size(); ++i)
 		{
-			OW_CIMProperty p = props[i];
-			OW_CIMProperty clsp = requestedClass.getProperty(p.getName());
+			CIMProperty p = props[i];
+			CIMProperty clsp = requestedClass.getProperty(p.getName());
 			if (clsp)
 			{
 				if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
@@ -614,7 +550,6 @@ OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifie
 					continue;
 				}
 			}
-
 		}
 		newInst.setProperties(newprops);
 		newInst.setKeys(ci.getKeyValuePairs());
@@ -622,10 +557,9 @@ OW_CIMInstance::clone(ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifie
 	}
 	return ci;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMInstance::filterProperties(const OW_StringArray& propertyList,
+CIMInstance
+CIMInstance::filterProperties(const StringArray& propertyList,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	bool ignorePropertyList) const
 {
@@ -633,17 +567,15 @@ OW_CIMInstance::filterProperties(const OW_StringArray& propertyList,
 	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList,
 		noprops);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMInstance::getName() const
+String
+CIMInstance::getName() const
 {
 	return m_pdata->m_owningClassName;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance&
-OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
+CIMInstance&
+CIMInstance::syncWithClass(const CIMClass& theClass,
 	EIncludeQualifiersFlag includeQualifiers)
 {
 	if(!theClass)
@@ -654,14 +586,14 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 	if(includeQualifiers)
 	{
 		// Ensure all class qualifiers are on the instance
-		OW_CIMQualifierArray classQuals = theClass.getQualifiers();
+		CIMQualifierArray classQuals = theClass.getQualifiers();
 		for(size_t i = 0; i < classQuals.size(); i++)
 		{
-			OW_CIMQualifier qual = classQuals[i];
-			OW_String clsQualName = qual.getName();
+			CIMQualifier qual = classQuals[i];
+			String clsQualName = qual.getName();
 			if(!getQualifier(clsQualName))
 			{
-				if(qual.hasFlavor(OW_CIMFlavor::TOINSTANCE))
+				if(qual.hasFlavor(CIMFlavor::TOINSTANCE))
 				{
 					// Qualifier is to be propagated to instances
 					setQualifier(qual);
@@ -669,14 +601,14 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 			}
 			else
 			{
-				if(!qual.hasFlavor(OW_CIMFlavor::TOINSTANCE))
+				if(!qual.hasFlavor(CIMFlavor::TOINSTANCE))
 				{
 					// Qualifier is not to be propagated to instances
 					removeQualifier(clsQualName);
 				}
 				else
 				{
-					if(!qual.hasFlavor(OW_CIMFlavor::ENABLEOVERRIDE))
+					if(!qual.hasFlavor(CIMFlavor::ENABLEOVERRIDE))
 					{
 						// Override not allowed. Sync with class qualifier
 						setQualifier(qual);
@@ -686,11 +618,9 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 		}
 	}
 */
-
-	OW_String propName;
-	OW_CIMPropertyArray classProps = theClass.getAllProperties();
-	OW_CIMPropertyArray instProps = getProperties();
-
+	String propName;
+	CIMPropertyArray classProps = theClass.getAllProperties();
+	CIMPropertyArray instProps = getProperties();
 	// Remove properties that are not defined in the class
 	for(int i = 0; i < int(instProps.size()); i++)
 	{
@@ -701,46 +631,40 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 			i--;
 		}
 	}
-
 	// Add missing properties and ensure existing have right class origin,
 	// and qualifiers
 	for(size_t i = 0; i < classProps.size(); i++)
 	{
 		bool found = false;
-		OW_CIMProperty cprop = classProps[i];
+		CIMProperty cprop = classProps[i];
 		propName = cprop.getName();
 		for(size_t j = 0; j < instProps.size(); j++)
 		{
-			OW_CIMProperty iprop = instProps[j];
+			CIMProperty iprop = instProps[j];
 			if(iprop.getName().equalsIgnoreCase(propName))
 			{
-				OW_CIMValue cv = iprop.getValue();
+				CIMValue cv = iprop.getValue();
 				iprop = cprop;
 				if(cv)
 				{
 					if(cv.getType() != iprop.getDataType().getType())
 					{
-						cv = OW_CIMValueCast::castValueToDataType(cv,
+						cv = CIMValueCast::castValueToDataType(cv,
 							iprop.getDataType());
 					}
-
 					iprop.setValue(cv);
 				}
-
 				instProps[j] = iprop;
 				found = true;
 				break;
 			}
 		}
-
 		if(!found)
 		{
 			instProps.append(classProps[i]);
 		}
 	}
-
 	setProperties(instProps);
-
 	if(!includeQualifiers)
 	{
 		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
@@ -748,37 +672,33 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 			m_pdata->m_properties[i].clearQualifiers();
 		}
 	}
-
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_CIMInstance::createModifiedInstance(
-	const OW_CIMInstance& previousInstance,
+CIMInstance
+CIMInstance::createModifiedInstance(
+	const CIMInstance& previousInstance,
 	EIncludeQualifiersFlag includeQualifiers,
-	const OW_StringArray* propertyList,
-	const OW_CIMClass& theClass) const
+	const StringArray* propertyList,
+	const CIMClass& theClass) const
 {
-	OW_CIMInstance newInst(*this);
-
+	CIMInstance newInst(*this);
 	if (!includeQualifiers)
 	{
 		newInst.setQualifiers(previousInstance.getQualifiers());
 	}
-
 	if (propertyList)
 	{
 		newInst.setProperties(previousInstance.getProperties());
-		for (OW_StringArray::const_iterator i = propertyList->begin();
+		for (StringArray::const_iterator i = propertyList->begin();
 			 i != propertyList->end(); ++i)
 		{
-			OW_CIMProperty p = this->getProperty(*i);
+			CIMProperty p = this->getProperty(*i);
 			if (p)
 			{
 				if (!includeQualifiers)
 				{
-					OW_CIMProperty cp = theClass.getProperty(*i);
+					CIMProperty cp = theClass.getProperty(*i);
 					if (cp)
 					{
 						p.setQualifiers(cp.getQualifiers());
@@ -788,7 +708,7 @@ OW_CIMInstance::createModifiedInstance(
 			}
 			else
 			{
-				OW_CIMProperty cp = theClass.getProperty(*i);
+				CIMProperty cp = theClass.getProperty(*i);
 				if (cp)
 				{
 					newInst.setProperty(cp);
@@ -802,98 +722,82 @@ OW_CIMInstance::createModifiedInstance(
 	}
 	return newInst;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMInstance::setName(const OW_String& name)
+CIMInstance::setName(const String& name)
 {
 	m_pdata->m_owningClassName = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMInstance::readObject(istream &istrm)
+CIMInstance::readObject(istream &istrm)
 {
-	OW_String owningClassName;
-	OW_CIMPropertyArray properties;
-	OW_CIMPropertyArray keys;
-	OW_CIMQualifierArray qualifiers;
-
-	OW_CIMBase::readSig(istrm, OW_CIMINSTANCESIG);
+	String owningClassName;
+	CIMPropertyArray properties;
+	CIMPropertyArray keys;
+	CIMQualifierArray qualifiers;
+	CIMBase::readSig(istrm, OW_CIMINSTANCESIG);
 	owningClassName.readObject(istrm);
-	OW_BinarySerialization::readArray(istrm, keys);
-	OW_BinarySerialization::readArray(istrm, properties);
-	OW_BinarySerialization::readArray(istrm, qualifiers);
-
+	BinarySerialization::readArray(istrm, keys);
+	BinarySerialization::readArray(istrm, properties);
+	BinarySerialization::readArray(istrm, qualifiers);
 	if(m_pdata.isNull())
 	{
 		m_pdata = new INSTData;
 	}
-
 	m_pdata->m_owningClassName = owningClassName;
 	m_pdata->m_keys = keys;
 	m_pdata->m_properties = properties;
 	m_pdata->m_qualifiers = qualifiers;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMInstance::writeObject(std::ostream &ostrm) const
+CIMInstance::writeObject(std::ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
+	CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
 	m_pdata->m_owningClassName.writeObject(ostrm);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_keys);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_properties);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMInstance::toMOF() const
+String
+CIMInstance::toMOF() const
 {
 	size_t i;
-	OW_StringBuffer rv;
-
+	StringBuffer rv;
 	if(m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += "[\n";
-
 		for(i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			if(i > 0)
 			{
 				rv += ',';
 			}
-
 			rv += m_pdata->m_qualifiers[i].toMOF();
 		}
 		rv += "]\n";
 	}
-
 	rv += "INSTANCE OF ";
 	rv += m_pdata->m_owningClassName;
-
 	rv += "\n{\n";
-
 	for(i = 0; i < m_pdata->m_properties.size(); i++)
 	{
-		// note that we can't use OW_CIMProperty::toMOF() since it prints out
+		// note that we can't use CIMProperty::toMOF() since it prints out
 		// the data type.
-		const OW_CIMProperty& p = m_pdata->m_properties[i];
-
-
-		OW_CIMValue v = p.getValue();
+		const CIMProperty& p = m_pdata->m_properties[i];
+		CIMValue v = p.getValue();
 		if(v)
 		{
 			// do qualifiers
-			OW_CIMQualifierArray qualifiers = p.getQualifiers();
+			CIMQualifierArray qualifiers = p.getQualifiers();
 			if(qualifiers.size() > 0)
 			{
 				rv += "  [";
-
 				for(size_t i = 0; i < qualifiers.size(); i++)
 				{
-					const OW_CIMQualifier& nq = qualifiers[i];
+					const CIMQualifier& nq = qualifiers[i];
 					if(i > 0)
 					{
 						rv += ',';
@@ -902,35 +806,29 @@ OW_CIMInstance::toMOF() const
 				}
 				rv += "]\n";
 			}
-
 			rv += "  ";
 			rv += p.getName();
 			rv += '=';
 			rv += v.toMOF();
 			rv += ";\n";
 		}
-
 	}
-
 	rv += "};\n";
 	return rv.releaseString();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMInstance::toString() const
+String
+CIMInstance::toString() const
 {
 	size_t i;
-	OW_StringBuffer temp;
-	OW_String outVal;
-
+	StringBuffer temp;
+	String outVal;
 	temp += "instance of ";
 	temp += m_pdata->m_owningClassName + " {\n";
-
 	for(i = 0; i < m_pdata->m_properties.size(); i++)
 	{
-		OW_CIMProperty cp = m_pdata->m_properties[i];
-		OW_CIMValue val = cp.getValue();
+		CIMProperty cp = m_pdata->m_properties[i];
+		CIMValue val = cp.getValue();
 		if(!val)
 		{
 			outVal = "null";
@@ -939,37 +837,33 @@ OW_CIMInstance::toString() const
 		{
 			outVal = val.toString();
 		}
-
 		temp += cp.getName() + " = " + outVal + ";\n";
 	}
-
 	temp += "}\n";
 	return temp.releaseString();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y)
+bool operator<(const CIMInstance& x, const CIMInstance& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool OW_CIMInstance::propertiesAreEqualTo(const OW_CIMInstance& other) const
+bool CIMInstance::propertiesAreEqualTo(const CIMInstance& other) const
 {
-	OW_CIMPropertyArray props1(getProperties());
-	OW_CIMPropertyArray props2(other.getProperties());
+	CIMPropertyArray props1(getProperties());
+	CIMPropertyArray props2(other.getProperties());
 	if (props1.size() != props2.size())
 	{
 		return false;
 	}
 	std::sort(props1.begin(), props1.end());
 	std::sort(props2.begin(), props2.end());
-	OW_CIMPropertyArray::iterator i1 = props1.begin();
-	OW_CIMPropertyArray::iterator i2 = props2.begin();
+	CIMPropertyArray::iterator i1 = props1.begin();
+	CIMPropertyArray::iterator i2 = props2.begin();
 	while (i1 != props1.end())
 	{
-		OW_CIMProperty p1 = *i1;
-		OW_CIMProperty p2 = *i2;
+		CIMProperty p1 = *i1;
+		CIMProperty p2 = *i2;
 		if (p1 != p2) // checks the name
 		{
 			return false;
@@ -983,4 +877,6 @@ bool OW_CIMInstance::propertiesAreEqualTo(const OW_CIMInstance& other) const
 	}
 	return true;
 }
+
+} // end namespace OpenWBEM
 

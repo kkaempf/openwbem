@@ -27,31 +27,32 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMVALUECAST_HPP_INCLUDE_GUARD_
 #define OW_CIMVALUECAST_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Exception.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-DECLARE_EXCEPTION(ValueCast);
+namespace OpenWBEM
+{
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_CIMValueCast
+DECLARE_EXCEPTION(ValueCast);
+//////////////////////////////////////////////////////////////////////////////
+class CIMValueCast
 {
 public:
 	/**
-	 * Converts a given OW_CIMValue object to an OW_CIMValue object that
-	 * represents the given OW_CIMDataType.
-	 * @param value		The OW_CIMValue object to be converted.
+	 * Converts a given CIMValue object to an CIMValue object that
+	 * represents the given CIMDataType.
+	 * @param value		The CIMValue object to be converted.
 	 * @param dataType	The data type to convert the value to.
-	 * @throws OW_ValueCastException if the convertion is not possible.
+	 * @throws ValueCastException if the convertion is not possible.
 	 */
-	static OW_CIMValue castValueToDataType(const OW_CIMValue& value,
-		const OW_CIMDataType& dataType);
+	static CIMValue castValueToDataType(const CIMValue& value,
+		const CIMDataType& dataType);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

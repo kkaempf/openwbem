@@ -27,23 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_PIDFILE_HPP_
 #define OW_PIDFILE_HPP_
 #include "OW_config.h"
 
-class OW_PidFile
+namespace OpenWBEM
+{
+
+class PidFile
 {
 public:
 	static int readPid(const char *pidfile);
 	static int checkPid(const char *pidfile);
 	static int writePid(const char *pidfile);
 	static int removePid(const char *pidfile);
-
 private:
-	OW_PidFile() {}	// Don't allow instances of PidFile
+	PidFile() {}	// Don't allow instances of PidFile
 };
 
+} // end namespace OpenWBEM
+
 #endif	// OW_PIDFILE_HPP_
-
-

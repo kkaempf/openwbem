@@ -27,23 +27,22 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMERROREXCEPTION_H_INCLUDE_GUARD_
 #define OW_CIMERROREXCEPTION_H_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-class OW_CIMErrorException: public OW_Exception
+namespace OpenWBEM
+{
+
+class CIMErrorException: public Exception
 {
 public:
-	OW_CIMErrorException() : OW_Exception() {}
-	OW_CIMErrorException(const char* file, int line, const char* msg)
-		: OW_Exception(file, line, msg) {}
-	OW_CIMErrorException(const char* msg) : OW_Exception(msg) {}
-
-	virtual const char* type() const { return "OW_CIMErrorException"; }
-
+	CIMErrorException() : Exception() {}
+	CIMErrorException(const char* file, int line, const char* msg)
+		: Exception(file, line, msg) {}
+	CIMErrorException(const char* msg) : Exception(msg) {}
+	virtual const char* type() const { return "CIMErrorException"; }
 	static const char* const unsupported_protocol_version; 
 	static const char* const multiple_requests_unsupported; 
 	static const char* const unsupported_cim_version; 
@@ -56,5 +55,6 @@ public:
 	
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -39,6 +39,8 @@
 #include "OW_CIMClass.hpp"
 #include <iostream>
 
+using namespace OpenWBEM;
+
 void OW_StringArrayPropertyTestCases::setUp()
 {
 }
@@ -51,18 +53,18 @@ void OW_StringArrayPropertyTestCases::testSomething()
 {
 	try
 	{
-		OW_CIMClass cc;
+		CIMClass cc;
 		cc.setName("Class");
-		OW_CIMProperty prop = OW_CIMProperty("SA");
-		OW_CIMDataType dt = OW_CIMDataType::STRING;
+		CIMProperty prop = CIMProperty("SA");
+		CIMDataType dt = CIMDataType::STRING;
 		dt.setToArrayType(-1);
 		prop.setDataType(dt);
-		OW_CIMInstance inst = cc.newInstance();
-		OW_StringArray sa;
-		sa.push_back(OW_String("one"));
-		sa.push_back(OW_String("two"));
-		inst.setProperty(OW_String("SA"), OW_CIMValue(sa));
-		OW_StringArray newSA;
+		CIMInstance inst = cc.newInstance();
+		StringArray sa;
+		sa.push_back(String("one"));
+		sa.push_back(String("two"));
+		inst.setProperty(String("SA"), CIMValue(sa));
+		StringArray newSA;
 		inst.getProperty("SA").getValue().get(newSA);
 		unitAssert(newSA.size() == 2);
 		unitAssert(newSA[0].equals("one"));
@@ -71,7 +73,7 @@ void OW_StringArrayPropertyTestCases::testSomething()
 		newSA.push_back("ONE");
 		newSA.push_back("TWO");
 		newSA.push_back("THREE");
-		inst.setProperty(OW_CIMProperty(OW_String("SA2"),OW_CIMValue(newSA)));
+		inst.setProperty(CIMProperty(String("SA2"),CIMValue(newSA)));
 		newSA.clear();
 		inst.getProperty("SA2").getValue().get(newSA);
 		unitAssert(newSA.size() == 3);
@@ -79,12 +81,12 @@ void OW_StringArrayPropertyTestCases::testSomething()
 		unitAssert(newSA[1].equals("TWO"));
 		unitAssert(newSA[2].equals("THREE"));
 	}
-	catch(OW_CIMException& ce)
+	catch(CIMException& ce)
 	{
         std::cerr << ce.getMessage() << std::endl;
 		unitAssert(false);
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
         std::cerr << e.getMessage() << std::endl;
 		//std::cerr << e.getStackTrace() << std::endl;

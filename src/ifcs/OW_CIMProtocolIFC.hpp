@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMPROTOCOL_HPP_INCLUDE_GUARD_
 #define OW_CIMPROTOCOL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_CIMFeatures.hpp"
@@ -40,17 +38,16 @@
 #include "OW_CIMProtocolIStreamIFC.hpp"
 #include <iosfwd>
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(CIMProtocol);
-
-
-class OW_CIMProtocolIFC
+class CIMProtocolIFC
 {
 public:
-
-	virtual ~OW_CIMProtocolIFC();
-
-	virtual OW_Reference<std::iostream> beginRequest(
-			const OW_String& methodName, const OW_String& nameSpace) = 0;
+	virtual ~CIMProtocolIFC();
+	virtual Reference<std::iostream> beginRequest(
+			const String& methodName, const String& nameSpace) = 0;
 	/**
 	 * Establishes a connection (if not already connected) to the
 	 * CIMOM and sends a request.  An istream& is returned containing
@@ -60,51 +57,44 @@ public:
 	 * @param methodName The CIM method that corresponds to the request.
 	 * @nameSpace the namespace the request applies to.
 	 * @return an istream& containing the response from the server
-	 * @exception OW_HTTPException
-	 * @exception OW_SocketException
+	 * @exception HTTPException
+	 * @exception SocketException
 	 *
 	 */
-	virtual OW_Reference<OW_CIMProtocolIStreamIFC> endRequest(
-		OW_Reference<std::iostream> request,
-			const OW_String& methodName, const OW_String& nameSpace) = 0;
-
-
+	virtual Reference<CIMProtocolIStreamIFC> endRequest(
+		Reference<std::iostream> request,
+			const String& methodName, const String& nameSpace) = 0;
 	/**
 	 * Get the supported features of a CIMOM
-	 * @return a OW_CIMFeatures object listing the features of the CIMOM.
+	 * @return a CIMFeatures object listing the features of the CIMOM.
 	 */
-	virtual OW_CIMFeatures getFeatures() = 0;
+	virtual CIMFeatures getFeatures() = 0;
 	
 	/**
 	 * Assigns a login callback object.
-	 * @param loginCB A OW_Reference to a OW_ClientAuthCB object
+	 * @param loginCB A Reference to a ClientAuthCB object
 	 * 	containing the callback method.
 	 */
-	void setLoginCallBack(OW_ClientAuthCBIFCRef loginCB)
+	void setLoginCallBack(ClientAuthCBIFCRef loginCB)
 		{ m_loginCB = loginCB; }
-
-	void setContentType(const OW_String& ct)
+	void setContentType(const String& ct)
 		{ m_contentType = ct; }
-
 	/**
 	 * Gets the address of the local machine
-	 * @return An OW_SocketAddress corresponding to the local machine.
+	 * @return An SocketAddress corresponding to the local machine.
 	 */
-	virtual OW_SocketAddress getLocalAddress() const = 0;
-
+	virtual SocketAddress getLocalAddress() const = 0;
 	/**
 	 * Gets the address of the peer connection
-	 * @return An OW_SocketAddress corresponding to the peer connection
+	 * @return An SocketAddress corresponding to the peer connection
 	 */
-	virtual OW_SocketAddress getPeerAddress()  const = 0;
-
+	virtual SocketAddress getPeerAddress()  const = 0;
 protected:
-	OW_ClientAuthCBIFCRef m_loginCB;
-	OW_String m_contentType;
-
+	ClientAuthCBIFCRef m_loginCB;
+	String m_contentType;
 };
+typedef Reference<CIMProtocolIFC> CIMProtocolIFCRef;
 
-typedef OW_Reference<OW_CIMProtocolIFC> OW_CIMProtocolIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,29 +27,27 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_METHOD_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 #define OW_METHOD_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-class OW_MethodProviderInfo
+namespace OpenWBEM
+{
+
+class MethodProviderInfo
 {
 public:
 	struct ClassInfo
 	{
-		explicit ClassInfo(OW_String const& className_);
-		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_, OW_StringArray const& methods_);
-
-		OW_String className;
-		OW_StringArray namespaces;
-		OW_StringArray methods;
+		explicit ClassInfo(String const& className_);
+		ClassInfo(String const& className_, StringArray const& namespaces_, StringArray const& methods_);
+		String className;
+		StringArray namespaces;
+		StringArray methods;
 	};
-
-	typedef OW_Array<ClassInfo> ClassInfoArray;
-
+	typedef Array<ClassInfo> ClassInfoArray;
 	/**
 	 * Add a class name to the list of instrumented classes for the provider.
 	 * This will not have a specific namespace associated with it, it will be
@@ -58,24 +56,18 @@ public:
 	 * the provider handles all the methods in the class
 	 * @param className The class name.
 	 */
-	void addInstrumentedClass(OW_String const& className);
-
+	void addInstrumentedClass(String const& className);
 	void addInstrumentedClass(ClassInfo const& classInfo);
 	
 	const ClassInfoArray& getClassInfo() const;
-
-	void setProviderName(OW_String const& name);
-
-	OW_String getProviderName() const;
-
+	void setProviderName(String const& name);
+	String getProviderName() const;
 private:
 	ClassInfoArray m_instrumentedClasses;
-	OW_String m_name;
-
+	String m_name;
 };
+typedef Array<MethodProviderInfo> MethodProviderInfoArray;
 
-typedef OW_Array<OW_MethodProviderInfo> OW_MethodProviderInfoArray;
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -30,7 +30,13 @@
 #include "OW_CIMDateTime.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMDateTime(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMDateTime>(name);
+
+void registerArrayImpl_CIMDateTime(const char* name)
+{
+    registerArrayImpl<CIMDateTime>(name);
 }
+
+} // end namespace OpenWBEM
+

@@ -27,16 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef src_client_OW_CIMClient_hpp_INCLUDE_GUARD_
 #define src_client_OW_CIMClient_hpp_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * This class is a convenience wrapper to make it easier to use all the client
@@ -45,10 +45,9 @@
  * will be used for all calls.  If the path in the url is "/owbinary" then the
  * openwbem binary protocol will be used, otherwise CIM/XML is the default.
  */
-class OW_CIMClient
+class CIMClient
 {
 public:
-
 	/**
 	 * Constructor
 	 * @param url The url identifying the cimom to talk to.  If the path portion
@@ -62,29 +61,25 @@ public:
 	 *   to be thrown if authentication fails.  Note that the credentials can
 	 *   be specified in the url.
 	 */
-	OW_CIMClient(const OW_String& url, const OW_String& ns,
-			const OW_ClientAuthCBIFCRef& authCB = OW_ClientAuthCBIFCRef());
-
-	void setNameSpace(const OW_String& arg) { m_namespace = arg; }
-
-	OW_String getNameSpace() const { return m_namespace; }
+	CIMClient(const String& url, const String& ns,
+			const ClientAuthCBIFCRef& authCB = ClientAuthCBIFCRef());
+	void setNameSpace(const String& arg) { m_namespace = arg; }
+	String getNameSpace() const { return m_namespace; }
 	
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace name to be created.
-	 * @exception OW_CIMException If the namespace already exists.
+	 * @exception CIMException If the namespace already exists.
 	 */
-	void createNameSpace(const OW_String& ns);
-
+	void createNameSpace(const String& ns);
 	/**
 	 * Delete a specified namespace.
 	 * @param ns	The namespace to delete.
-	 * @exception OW_CIMException If the namespace does not exist.
+	 * @exception CIMException If the namespace does not exist.
 	 */
-	void deleteNameSpace(const OW_String& ns);
+	void deleteNameSpace(const String& ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM
 	 * object path.
@@ -93,16 +88,14 @@ public:
 	 *		namespace. If set to SHALLOW  the enuermation will return only the
 	 *		first level children of the enumerated namespace.
 	 * @return An Array of namespace names as strings.
-	 * @exception OW_CIMException If the namespace does not exist or the object
+	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_StringArray enumNameSpaceE(OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
-
-	void enumNameSpace(OW_StringResultHandlerIFC& result, 
-		OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
-
+	StringArray enumNameSpaceE(WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
+	void enumNameSpace(StringResultHandlerIFC& result, 
+		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
-	 * Enumerates the class specified by the OW_CIMObjectPath.
+	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
@@ -110,44 +103,40 @@ public:
 	 *		the names of the first level children of the enumerated class.
 	 * @param localOnly If set to LOCAL_ONLY, only the non-inherited properties
 	 *		are returned on each instance, otherwise all properties are returned.
-	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all class,
+	 * @param includeQualifiers If set toWBEMFlags::E_INCLUDE_QUALIFIERS, then all class,
 	 *		property and method qualifiers will be returned.
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be included with all appropriate elements of each class.
-	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
+	 * @exception CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
-	void enumClass(const OW_String& className,
-		OW_CIMClassResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_SHALLOW,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly=OW_WBEMFlags::E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
-
-	OW_CIMClassEnumeration enumClassE(const OW_String& className,
-		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_SHALLOW,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
-
+	void enumClass(const String& className,
+		CIMClassResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
+		WBEMFlags::ELocalOnlyFlag localOnly=WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_INCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
+	CIMClassEnumeration enumClassE(const String& className,
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
+		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_INCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
 	/**
-	 * Enumerates the class specified by the OW_CIMObjectPath.
+	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
 	 *		the names of the first level children of the enumerated class.
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object cannot be found.
+	 * @exception CIMException  	If the specified CIMObjectPath object cannot be found.
 	 */
 	void enumClassNames(
-		const OW_String& className,
-		OW_StringResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
-
-	OW_StringEnumeration enumClassNamesE(
-		const OW_String& className,
-		OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
-
+		const String& className,
+		StringResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
+	StringEnumeration enumClassNamesE(
+		const String& className,
+		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * Returns all instances (the whole instance and not just the names)
 	 * belonging to the class specified in the path. This could include
@@ -161,7 +150,7 @@ public:
 	 *	are returned on each instance, otherwise all inherited properties are
 	 *	returned.
 	 *
-	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all of the
+	 * @param includeQualifiers If set toWBEMFlags::E_INCLUDE_QUALIFIERS, then all of the
 	 *	qualifiers from the class will be returned with the each instance.
 	 *
 	 * @param includeClassOrigin If true, then the class origin attribute will
@@ -174,73 +163,68 @@ public:
 	 * are returned with the instances subject to constraints specified in the
 	 * other parameters.
 	 *
-	 * @exception OW_CIMException 	If the object cannot be found
+	 * @exception CIMException 	If the object cannot be found
 	 */
 	void enumInstances(
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep = OW_WBEMFlags::E_DEEP,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
-	OW_CIMInstanceEnumeration enumInstancesE(
-		const OW_String& className,
-		OW_WBEMFlags::EDeepFlag deep =OW_WBEMFlags::E_DEEP,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_DEEP,
+		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
+	CIMInstanceEnumeration enumInstancesE(
+		const String& className,
+		WBEMFlags::EDeepFlag deep =WBEMFlags::E_DEEP,
+		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
 	/**
 	 * Returns all instance names belonging to the class specified in the path.
 	 * This could include instances of all the classes in the specified class'
 	 * hierarchy.
 	 *
 	 * @param className The class whose instances are to be enumerated.
-	 * @exception OW_CIMException 	If the object cannot be found
+	 * @exception CIMException 	If the object cannot be found
 	 */
 	void enumInstanceNames(
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result);
-
-	OW_CIMObjectPathEnumeration enumInstanceNamesE(
-		const OW_String& className);
-
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result);
+	CIMObjectPathEnumeration enumInstanceNamesE(
+		const String& className);
 	/**
 	 * Gets the CIM class for the specified CIM object path.
 	 * @param classNname The CIM class
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
 	 *		and methods	are returned, otherwise all properties and methods are
 	 *		returned.
-	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all class,
-	 *		property and method qualifiers will be included in the OW_CIMClass.
+	 * @param includeQualifiers If set toWBEMFlags::E_INCLUDE_QUALIFIERS, then all class,
+	 *		property and method qualifiers will be included in the CIMClass.
 	 *		Otherwise qualifiers will be excluded.
 	 * @param includeClassOrigin If true, then the classOrigin attribute will
-	 *		be present on all appropriate elements of the OW_CIMClass
+	 *		be present on all appropriate elements of the CIMClass
 	 * @param propertyList If not NULL, only properties contained in this array
-	 *		will be included in the OW_CIMClass. If NULL, all properties will
+	 *		will be included in the CIMClass. If NULL, all properties will
 	 *		be returned.
-	 * @return OW_CIMClass the CIM class indentified by the CIMObjectPath
-	 * @exception OW_CIMException If the namespace or the model path identifying
+	 * @return CIMClass the CIM class indentified by the CIMObjectPath
+	 * @exception CIMException If the namespace or the model path identifying
 	 *										the object cannot be found
 	 */
-	OW_CIMClass getClass(
-		const OW_String& className,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList = 0);
-
+	CIMClass getClass(
+		const String& className,
+		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_INCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList = 0);
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
-	 * @param instanceName The OW_CIMObjectPath that identifies this CIM instance
+	 * @param instanceName The CIMObjectPath that identifies this CIM instance
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
 	 *		are returned, otherwise all properties are returned.
 	 *
-	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS, then all of the
+	 * @param includeQualifiers If set toWBEMFlags::E_INCLUDE_QUALIFIERS, then all of the
 	 *		qualifiers from the class will be returned with the instance.
 	 *		Otherwise no qualifiers will be included with the instance.
 	 *
@@ -254,151 +238,136 @@ public:
 	 * are returned with the instance subject to constraints specified in the
 	 * other parameters.
 	 *
-	 * @return The OW_CIMInstance identified by the OW_CIMObjectPath
-	 * @exception OW_CIMException If the specified OW_CIMObjectPath cannot be
+	 * @return The CIMInstance identified by the CIMObjectPath
+	 * @exception CIMException If the specified CIMObjectPath cannot be
 	 *										found
 	 */
-	OW_CIMInstance getInstance(
-		const OW_CIMObjectPath& instanceName,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly =OW_WBEMFlags::E_NOT_LOCAL_ONLY,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0) ;
-
+	CIMInstance getInstance(
+		const CIMObjectPath& instanceName,
+		WBEMFlags::ELocalOnlyFlag localOnly =WBEMFlags::E_NOT_LOCAL_ONLY,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin =WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0) ;
 	/**
 	 * Executes the specified method on the specified object. A method is a
 	 * declaration containing the method name, return type, and parameters in
 	 * the method.
-	 * @param path An OW_CIMObjectPath that identifies the class or instance
+	 * @param path An CIMObjectPath that identifies the class or instance
 	 *  on which to invoke the method.
 	 * @param methodName The string name of the method to be invoked
-	 * @param inParams The input parameters specified as an OW_CIMValueArray.
+	 * @param inParams The input parameters specified as an CIMValueArray.
 	 * @param outParams	The output parameters.
-	 * @return A non-null OW_CIMValue on success. Otherwise a null OW_CIMValue.
-	 * @exception OW_CIMException	If the specified method cannot be found
+	 * @return A non-null CIMValue on success. Otherwise a null CIMValue.
+	 * @exception CIMException	If the specified method cannot be found
 	 */
-	OW_CIMValue invokeMethod(
-		const OW_CIMObjectPath& path,
-		const OW_String& methodName,
-		const OW_CIMParamValueArray& inParams,
-		OW_CIMParamValueArray& outParams);
-
+	CIMValue invokeMethod(
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& inParams,
+		CIMParamValueArray& outParams);
 	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.
 	 * @param qualifierName The name of the CIM qualifier type.
-	 * @return An OW_CIMQualifierType identified by name.
-	 * @exception OW_CIMException If the CIM qualifier type cannot be found
+	 * @return An CIMQualifierType identified by name.
+	 * @exception CIMException If the CIM qualifier type cannot be found
 	 */
-	OW_CIMQualifierType getQualifierType(const OW_String& qualifierName);
-
+	CIMQualifierType getQualifierType(const String& qualifierName);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace if
 	 * it exist. If it doesn't exist, it will be added.
 	 * @param qualifierType The CIM qualifier type to be updated or added.
 	 */
-	void setQualifierType(const OW_CIMQualifierType& qualifierType);
-
+	void setQualifierType(const CIMQualifierType& qualifierType);
 	/**
 	 * Deletes a CIM qualfier type.
 	 * @param qualName The qualifier type to delete.
-	 * @exception OW_CIMException If the qualifier type does not exist.
+	 * @exception CIMException If the qualifier type does not exist.
 	 */
-	void deleteQualifierType(const OW_String& qualName);
-
+	void deleteQualifierType(const String& qualName);
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
-	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
+	 * @exception CIMException	If the specified CIMObjectPath cannot be
 	 *										found
 	 */
 	void enumQualifierTypes(
-		OW_CIMQualifierTypeResultHandlerIFC& result);
-
-	OW_CIMQualifierTypeEnumeration enumQualifierTypesE();
+		CIMQualifierTypeResultHandlerIFC& result);
+	CIMQualifierTypeEnumeration enumQualifierTypesE();
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Updates the CIM class associated with the specified namespace.
-	 * @param cimClass The OW_CIMClass to be updated
-	 * @exception OW_CIMException If the class does not exists
+	 * @param cimClass The CIMClass to be updated
+	 * @exception CIMException If the class does not exists
 	 */
-	void modifyClass(const OW_CIMClass& cimClass) ;
-
+	void modifyClass(const CIMClass& cimClass) ;
 	/**
 	 * Adds the CIM class to the specified namespace.
-	 * @param cimClass The OW_CIMClass to be added
-	 * @exception OW_CIMException If the CIM class already exists in the
+	 * @param cimClass The CIMClass to be added
+	 * @exception CIMException If the CIM class already exists in the
 	 *		namespace.
 	 */
-	void createClass(const OW_CIMClass& cimClass) ;
-
+	void createClass(const CIMClass& cimClass) ;
 	/**
 	 * Deletes the CIM class specified by className in namespace ns.
 	 * @param className The class to delete
-	 * @exception OW_CIMException If the object does not exist
+	 * @exception CIMException If the object does not exist
 	 */
-	void deleteClass(const OW_String& className);
+	void deleteClass(const String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Update the specified CIM instance associated with the specified
 	 * namespace.
-	 * @param modifiedInstance The OW_CIMInstance to be updated.
+	 * @param modifiedInstance The CIMInstance to be updated.
 	 * @param includeQualifiers Modify the qualifiers
 	 * @param propertyList The properties to modify.  0 means all properties.
-	 * @exception OW_CIMException
+	 * @exception CIMException
 	 */
-	void modifyInstance(const OW_CIMInstance& modifiedInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers =OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
-		OW_StringArray* propertyList = 0);
-
+	void modifyInstance(const CIMInstance& modifiedInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers =WBEMFlags::E_INCLUDE_QUALIFIERS,
+		StringArray* propertyList = 0);
 	/**
 	 * Add the specified CIM instance to the specified namespace.
-	 * @param instance the OW_CIMInstance to be added
-	 * @return An OW_CIMObjectPath of the created instance.
-	 * @exception OW_CIMException If the CIM instance already exists in the
+	 * @param instance the CIMInstance to be added
+	 * @return An CIMObjectPath of the created instance.
+	 * @exception CIMException If the CIM instance already exists in the
 	 *		namespace
 	 */
-	OW_CIMObjectPath createInstance(const OW_CIMInstance& instance) ;
-
+	CIMObjectPath createInstance(const CIMInstance& instance) ;
 	/**
 	 * Deletes the CIM instance specified by the CIM object path.
 	 * A CIM object path consists of two  parts: namespace + model path. The
 	 * model path is created by concatenating the properties of a class that are
 	 * qualified with the KEY qualifier.
-	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
-	 * @exception OW_CIMException If the instance does not exist.
+	 * @param path	The CIMObjectPath identifying the instance to delete.
+	 * @exception CIMException If the instance does not exist.
 	 */
-	void deleteInstance(const OW_CIMObjectPath& path);
-
+	void deleteInstance(const CIMObjectPath& path);
 	/**
 	 * Set the specified CIM instance property.
-	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance
+	 * @param instanceName An CIMObjectPath that identifies the CIM instance
 	 *		to be accessed
 	 * @param propertyName The name of the property to set the value on.
 	 * @param newValue The new value for property propertyName.
-	 * @exception OW_CIMException
+	 * @exception CIMException
 	 */
 	void setProperty(
-		const OW_CIMObjectPath& instanceName,
-		const OW_String& propertyName,
-		const OW_CIMValue& newValue) ;
+		const CIMObjectPath& instanceName,
+		const String& propertyName,
+		const CIMValue& newValue) ;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 	/**
 	 * Get the specified CIM instance property.
-	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance to be
+	 * @param instanceName An CIMObjectPath that identifies the CIM instance to be
 	 *		accessed
 	 * @param propertyName	The name of the property to retrieve.
-	 * @return The OW_CIMvalue for property identified by propertyName.
-	 * @exception OW_CIMException
+	 * @return The CIMvalue for property identified by propertyName.
+	 * @exception CIMException
 	 */
-	OW_CIMValue getProperty(
-		const OW_CIMObjectPath& instanceName,
-		const OW_String& propertyName);
-
+	CIMValue getProperty(
+		const CIMObjectPath& instanceName,
+		const String& propertyName);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes or
@@ -435,23 +404,21 @@ public:
 	 * @return If successful, the method returns zero or more full CIM Class
 	 *		paths or Instance paths of Objects meeting the requested criteria.
 	 *
-	 * @exception OW_CIMException - as defined in the associator method
+	 * @exception CIMException - as defined in the associator method
 	 */
 	void associatorNames(
-		const OW_CIMObjectPath& objectName,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		const OW_String& resultRole=OW_String()) ;
-
-	OW_CIMObjectPathEnumeration associatorNamesE(
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		const OW_String& resultRole=OW_String());
-
+		const CIMObjectPath& objectName,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& assocClass=String(),
+		const String& resultClass=String(),
+		const String& role=String(),
+		const String& resultRole=String()) ;
+	CIMObjectPathEnumeration associatorNamesE(
+		const CIMObjectPath& objectName,
+		const String& assocClass=String(),
+		const String& resultClass=String(),
+		const String& role=String(),
+		const String& resultRole=String());
 	/**
 	 * This operation is used to enumerate CIMInstances
 	 * that are associated to a particular source CIM Instance.
@@ -485,10 +452,10 @@ public:
 	 * that refers to the returned Object MUST match the value of this
 	 * parameter).
 	 *
-	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS then all
+	 * @param includeQualifiers If set toWBEMFlags::E_INCLUDE_QUALIFIERS then all
 	 *		Qualifiers for each Object (including Qualifiers on the Object and
 	 *		on any returned Properties) MUST be included as elements in the
-	 *		response.If set toOW_WBEMFlags::E_EXCLUDE_QUALIFIERS, then no qualifiers will be
+	 *		response.If set toWBEMFlags::E_EXCLUDE_QUALIFIERS, then no qualifiers will be
 	 *		present in the returned object(s).
 	 *
 	 * @param includeClassOrigin If the IncludeClassOrigin input parameter is
@@ -526,26 +493,24 @@ public:
 	 * error occurred)
 	 */
 	void associators(
-		const OW_CIMObjectPath& path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		const OW_String& resultRole=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
-	OW_CIMInstanceEnumeration associatorsE(
-		const OW_CIMObjectPath& path,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		const OW_String& resultRole=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
+		const CIMObjectPath& path,
+		CIMInstanceResultHandlerIFC& result,
+		const String& assocClass=String(),
+		const String& resultClass=String(),
+		const String& role=String(),
+		const String& resultRole=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
+	CIMInstanceEnumeration associatorsE(
+		const CIMObjectPath& path,
+		const String& assocClass=String(),
+		const String& resultClass=String(),
+		const String& role=String(),
+		const String& resultRole=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
 	/**
 	 * This operation is used to enumerate CIMClasses
 	 * that are associated to a particular source CIM Object.
@@ -579,10 +544,10 @@ public:
 	 * that refers to the returned Object MUST match the value of this
 	 * parameter).
 	 *
-	 * @param includeQualifiers If set toOW_WBEMFlags::E_INCLUDE_QUALIFIERS then all
+	 * @param includeQualifiers If set toWBEMFlags::E_INCLUDE_QUALIFIERS then all
 	 *		Qualifiers for each Object (including Qualifiers on the Object and
 	 *		on any returned Properties) MUST be included as elements in the
-	 *		response.If set toOW_WBEMFlags::E_EXCLUDE_QUALIFIERS, then no qualifiers will be
+	 *		response.If set toWBEMFlags::E_EXCLUDE_QUALIFIERS, then no qualifiers will be
 	 *		present in the returned object(s).
 	 *
 	 * @param includeClassOrigin If the IncludeClassOrigin input parameter is
@@ -620,26 +585,24 @@ public:
 	 * error occurred)
 	 */
 	void associatorsClasses(
-		const OW_CIMObjectPath& path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		const OW_String& resultRole=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
-	OW_CIMClassEnumeration associatorsClassesE(
-		const OW_CIMObjectPath& path,
-		const OW_String& assocClass=OW_String(),
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		const OW_String& resultRole=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
+		const CIMObjectPath& path,
+		CIMClassResultHandlerIFC& result,
+		const String& assocClass=String(),
+		const String& resultClass=String(),
+		const String& role=String(),
+		const String& resultRole=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
+	CIMClassEnumeration associatorsClassesE(
+		const CIMObjectPath& path,
+		const String& assocClass=String(),
+		const String& resultClass=String(),
+		const String& role=String(),
+		const String& resultRole=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
 	/**
 	 * This operation is used to enumerate the association objects that refer to
 	 * a particular target CIM Object.
@@ -651,19 +614,17 @@ public:
 	 * CIM Class paths or Instance paths of Objects meeting the requested
 	 * criteria.
 	 *
-	 * @exception OW_CIMException As defined for associators method.
+	 * @exception CIMException As defined for associators method.
 	 */
 	void referenceNames(
-		const OW_CIMObjectPath& path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String()) ;
-
-	OW_CIMObjectPathEnumeration referenceNamesE(
-		const OW_CIMObjectPath& path,
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String());
-
+		const CIMObjectPath& path,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& resultClass=String(),
+		const String& role=String()) ;
+	CIMObjectPathEnumeration referenceNamesE(
+		const CIMObjectPath& path,
+		const String& resultClass=String(),
+		const String& role=String());
 	/**
 	 * This operation is used to enumerate the association objects that refer to
 	 * a particular target CIM Object (Class or Instance).
@@ -692,43 +653,39 @@ public:
 	 * @return If successful, the method returns zero or more CIM Classes or
 	 * Instances meeting the requested criteria.
 	 *
-	 * @exception OW_CIMException - as defined for associators method.
+	 * @exception CIMException - as defined for associators method.
 	 */
 	void references(
-		const OW_CIMObjectPath& path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0) ;
-
-	OW_CIMInstanceEnumeration referencesE(
-		const OW_CIMObjectPath& path,
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
-
+		const CIMObjectPath& path,
+		CIMInstanceResultHandlerIFC& result,
+		const String& resultClass=String(),
+		const String& role=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0) ;
+	CIMInstanceEnumeration referencesE(
+		const CIMObjectPath& path,
+		const String& resultClass=String(),
+		const String& role=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
 	void referencesClasses(
-		const OW_CIMObjectPath& path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0) ;
-
-	OW_CIMClassEnumeration referencesClassesE(
-		const OW_CIMObjectPath& path,
-		const OW_String& resultClass=OW_String(),
-		const OW_String& role=OW_String(),
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers=OW_WBEMFlags::E_EXCLUDE_QUALIFIERS,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=OW_WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
-		const OW_StringArray* propertyList=0);
+		const CIMObjectPath& path,
+		CIMClassResultHandlerIFC& result,
+		const String& resultClass=String(),
+		const String& role=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0) ;
+	CIMClassEnumeration referencesClassesE(
+		const CIMObjectPath& path,
+		const String& resultClass=String(),
+		const String& role=String(),
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers=WBEMFlags::E_EXCLUDE_QUALIFIERS,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin=WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
+		const StringArray* propertyList=0);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 	/**
 	 * Executes a query to retrieve or modify objects.
 	 *
@@ -738,30 +695,29 @@ public:
 	 * @param queryLanguage A string containing the query language the query is
 	 * 		written in.
 	 *
-	 * @return OW_CIMInstanceArray A deep enumeration of all instances of the
+	 * @return CIMInstanceArray A deep enumeration of all instances of the
 	 *		specified class and all classes derived from the specified class,
 	 *		that match the query string.
 	 *
-	 * @exception OW_CIMException If any of the following errors occur:
+	 * @exception CIMException If any of the following errors occur:
 	 *		The user does not have permission to view the result.
 	 *		The requested query language is not supported.
 	 *		The query specifies a class that does not exist.
 	 */
 	void execQuery(
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& query,
-		const OW_String& queryLanguage);
-
-	OW_CIMInstanceEnumeration execQueryE(
-		const OW_String& query,
-		const OW_String& queryLanguage);
+		CIMInstanceResultHandlerIFC& result,
+		const String& query,
+		const String& queryLanguage);
+	CIMInstanceEnumeration execQueryE(
+		const String& query,
+		const String& queryLanguage);
 	
 private:
-	OW_String m_namespace;
-	OW_CIMOMHandleIFCRef m_ch;
+	String m_namespace;
+	CIMOMHandleIFCRef m_ch;
 	
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

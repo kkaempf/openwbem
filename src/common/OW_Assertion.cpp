@@ -27,11 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
-
 #include "OW_Assertion.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(Assertion)
+
+} // end namespace OpenWBEM
 

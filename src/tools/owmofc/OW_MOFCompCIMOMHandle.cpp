@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_MOFCompCIMOMHandle.hpp"
 #include "OW_CIMFeatures.hpp"
@@ -38,27 +37,27 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-OW_MOFCompCIMOMHandle::OW_MOFCompCIMOMHandle(OW_RepositoryIFCRef pRepos, const OW_UserInfo& aclInfo)
-	: OW_CIMOMHandleIFC()
+MOFCompCIMOMHandle::MOFCompCIMOMHandle(RepositoryIFCRef pRepos, const UserInfo& aclInfo)
+	: CIMOMHandleIFC()
 	, m_pServer(pRepos)
 	, m_aclInfo(aclInfo)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::close()
+MOFCompCIMOMHandle::close()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::enumClass(const OW_String& ns,
-	const OW_String& className,
-	OW_CIMClassResultHandlerIFC& result, 
+MOFCompCIMOMHandle::enumClass(const String& ns,
+	const String& className,
+	CIMClassResultHandlerIFC& result, 
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, 
 	EIncludeQualifiersFlag includeQualifiers, 
@@ -67,302 +66,276 @@ OW_MOFCompCIMOMHandle::enumClass(const OW_String& ns,
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::enumClassNames(const OW_String& ns,
-	const OW_String& className,
-	OW_StringResultHandlerIFC& result,
+MOFCompCIMOMHandle::enumClassNames(const String& ns,
+	const String& className,
+	StringResultHandlerIFC& result,
 	EDeepFlag deep)
 {
 	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::enumInstances(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result, 
+MOFCompCIMOMHandle::enumInstances(
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result, 
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly, 
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, E_ENUM_SUBCLASSES, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::enumInstanceNames(
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result)
+MOFCompCIMOMHandle::enumInstanceNames(
+	const String& ns,
+	const String& className,
+	CIMObjectPathResultHandlerIFC& result)
 {
 	return m_pServer->enumInstanceNames(ns, className, result, E_DEEP, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_MOFCompCIMOMHandle::getQualifierType(const OW_String& ns,
-		const OW_String& qualifierName)
+CIMQualifierType
+MOFCompCIMOMHandle::getQualifierType(const String& ns,
+		const String& qualifierName)
 {
 	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
 }
-
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
+MOFCompCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 {
 	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::enumQualifierTypes(
-	const OW_String& ns,
-	OW_CIMQualifierTypeResultHandlerIFC& result)
+MOFCompCIMOMHandle::enumQualifierTypes(
+	const String& ns,
+	CIMQualifierTypeResultHandlerIFC& result)
 {
 	m_pServer->enumQualifierTypes(ns, result, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::setQualifierType(const OW_String& ns,
-	const OW_CIMQualifierType& qt)
+MOFCompCIMOMHandle::setQualifierType(const String& ns,
+	const CIMQualifierType& qt)
 {
 	m_pServer->setQualifierType(ns, qt, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass
-OW_MOFCompCIMOMHandle::getClass(
-	const OW_String& ns,
-	const OW_String& className,
+CIMClass
+MOFCompCIMOMHandle::getClass(
+	const String& ns,
+	const String& className,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
-	OW_CIMClass cls = m_pServer->getClass(ns, className, localOnly,
+	CIMClass cls = m_pServer->getClass(ns, className, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 	return cls;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_MOFCompCIMOMHandle::getInstance(
-	const OW_String& ns,
-	const OW_CIMObjectPath& instanceName,
+CIMInstance
+MOFCompCIMOMHandle::getInstance(
+	const String& ns,
+	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	return m_pServer->getInstance(ns, instanceName, localOnly, includeQualifiers,
 		includeClassOrigin, propertyList, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_MOFCompCIMOMHandle::invokeMethod(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String& methodName, const OW_CIMParamValueArray& inParams,
-	OW_CIMParamValueArray& outParams)
+CIMValue
+MOFCompCIMOMHandle::invokeMethod(
+	const String& ns,
+	const CIMObjectPath& path,
+	const String& methodName, const CIMParamValueArray& inParams,
+	CIMParamValueArray& outParams)
 {
 	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_aclInfo);
 }
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::modifyClass(
-	const OW_String& ns,
-	const OW_CIMClass& cc)
+MOFCompCIMOMHandle::modifyClass(
+	const String& ns,
+	const CIMClass& cc)
 {
 	m_pServer->modifyClass(ns, cc, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::createClass(const OW_String& ns,
-	const OW_CIMClass& cc)
+MOFCompCIMOMHandle::createClass(const String& ns,
+	const CIMClass& cc)
 {
 	m_pServer->createClass(ns, cc, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
+MOFCompCIMOMHandle::deleteClass(const String& ns, const String& className)
 {
 	m_pServer->deleteClass(ns, className, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::modifyInstance(
-	const OW_String& ns,
-	const OW_CIMInstance& modifiedInstance,
+MOFCompCIMOMHandle::modifyInstance(
+	const String& ns,
+	const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_pServer->modifyInstance(ns, modifiedInstance, includeQualifiers,
 		propertyList, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath
-OW_MOFCompCIMOMHandle::createInstance(const OW_String& ns,
-	const OW_CIMInstance& ci)
+CIMObjectPath
+MOFCompCIMOMHandle::createInstance(const String& ns,
+	const CIMInstance& ci)
 {
 	return m_pServer->createInstance(ns, ci, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path)
+MOFCompCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& path)
 {
 	m_pServer->deleteInstance(ns, path, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::setProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& name,
-	const OW_String& propertyName, const OW_CIMValue& cv)
+MOFCompCIMOMHandle::setProperty(
+	const String& ns,
+	const CIMObjectPath& name,
+	const String& propertyName, const CIMValue& cv)
 {
 	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_MOFCompCIMOMHandle::getProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& name,
-	const OW_String& propertyName)
+CIMValue
+MOFCompCIMOMHandle::getProperty(
+	const String& ns,
+	const CIMObjectPath& name,
+	const String& propertyName)
 {
 	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::associatorNames(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole)
+MOFCompCIMOMHandle::associatorNames(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole)
 {
 	m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
 		resultRole, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::associators(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+MOFCompCIMOMHandle::associators(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::associatorsClasses(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& assocClass, const OW_String& resultClass,
-	const OW_String& role, const OW_String& resultRole,
+MOFCompCIMOMHandle::associatorsClasses(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& assocClass, const String& resultClass,
+	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
 		m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::referenceNames(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role)
+MOFCompCIMOMHandle::referenceNames(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMObjectPathResultHandlerIFC& result,
+	const String& resultClass, const String& role)
 {
 	m_pServer->referenceNames(ns, path, result, resultClass, role, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::references(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
+MOFCompCIMOMHandle::references(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMInstanceResultHandlerIFC& result,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_pServer->references(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::referencesClasses(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	OW_CIMClassResultHandlerIFC& result,
-	const OW_String& resultClass, const OW_String& role,
+MOFCompCIMOMHandle::referencesClasses(
+	const String& ns,
+	const CIMObjectPath& path,
+	CIMClassResultHandlerIFC& result,
+	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::execQuery(
-	const OW_String& ns,
-	OW_CIMInstanceResultHandlerIFC& result,
-	const OW_String& query,
-	const OW_String& queryLanguage)
+MOFCompCIMOMHandle::execQuery(
+	const String& ns,
+	CIMInstanceResultHandlerIFC& result,
+	const String& query,
+	const String& queryLanguage)
 {
 	m_pServer->execQuery(ns, result, query, queryLanguage, m_aclInfo);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMFeatures
-OW_MOFCompCIMOMHandle::getServerFeatures()
+CIMFeatures
+MOFCompCIMOMHandle::getServerFeatures()
 {
-	OW_CIMFeatures cf;
+	CIMFeatures cf;
 	cf.protocolVersion = "1.0";
 	cf.cimom = "/cimom";
-	cf.cimProduct = OW_CIMFeatures::SERVER;
+	cf.cimProduct = CIMFeatures::SERVER;
 	cf.extURL = "http://www.dmtf.org/cim/mapping/http/v1.0";
 	cf.supportedGroups.push_back("basic-read");
 	cf.supportedGroups.push_back("basic-write");
@@ -378,15 +351,15 @@ OW_MOFCompCIMOMHandle::getServerFeatures()
 #endif
 	cf.supportedQueryLanguages.clear();
 	cf.supportsBatch = true;
-	cf.validation = OW_String();
+	cf.validation = String();
 	return cf;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MOFCompCIMOMHandle::exportIndication(const OW_CIMInstance&,
-	const OW_String&)
+MOFCompCIMOMHandle::exportIndication(const CIMInstance&,
+	const String&)
 {
 }
 
+} // end namespace OpenWBEM
 

@@ -27,36 +27,33 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HASH_MAP_HPP_INCLUDE_GUARD_
 #define OW_HASH_MAP_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #ifdef OW_HAVE_HASH_MAP
 	#include <hash_map> // hash_map is better for the cache than OW_SortedVectorMap
 	#define OW_HASH_MAP_NS std
-	#define OW_HashMap std::hash_map
+	#define HashMap std::hash_map
 #elif OW_HAVE_EXT_HASH_MAP
 	#include <ext/hash_map> // hash_map is better for the cache than OW_SortedVectorMap
 	#define OW_HASH_MAP_NS __gnu_cxx
-	#define OW_HashMap __gnu_cxx::hash_map
+	#define HashMap __gnu_cxx::hash_map
 #else
 	#include "OW_SortedVectorMap.hpp"
-	#define OW_HASH_MAP_NS
-	#define OW_HashMap OW_SortedVectorMap
+	#define OW_HASH_MAP_NS OpenWBEM
+	#define HashMap OW_SortedVectorMap
 #endif
-
 #ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_
 #define OW_HASH_SPECIALIZED_INCLUDE_GUARD_
 #if defined(OW_HAVE_HASH_MAP) || defined(OW_HAVE_EXT_HASH_MAP)
 #include "OW_String.hpp"
+
 // need to specialize hash
 namespace OW_HASH_MAP_NS
 {
-template<> struct hash<OW_String>
+template<> struct hash<OpenWBEM::String>
 {
-	size_t operator()(const OW_String& s) const
+	size_t operator()(const OpenWBEM::String& s) const
 	{
 		return hash<const char*>()(s.c_str());
 	}
@@ -64,9 +61,5 @@ template<> struct hash<OW_String>
 }
 #endif
 #endif
-
 #undef OW_HASH_MAP_NS
-
 #endif
-
-

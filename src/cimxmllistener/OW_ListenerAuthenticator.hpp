@@ -27,57 +27,49 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_LISTENERAUTHENTICATOR_HPP_INCLUDE_GUARD_
 #define OW_LISTENERAUTHENTICATOR_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_Map.hpp"
 
-class OW_ListenerAuthenticator : public OW_AuthenticatorIFC
+namespace OpenWBEM
+{
+
+class ListenerAuthenticator : public AuthenticatorIFC
 {
 public:
-
 	/**
-	 * Allocate a new OW_ListenerAuthenticator (auth module
+	 * Allocate a new ListenerAuthenticator (auth module
 	 * used by a CIM Listener product)
 	 */
-	OW_ListenerAuthenticator();
-	virtual ~OW_ListenerAuthenticator();
-
+	ListenerAuthenticator();
+	virtual ~ListenerAuthenticator();
 	/**
 	 * generate a new random name/password in the form
 	 * "<name>:<password>"
 	 * @return a new set of credentials.
 	 */
-	OW_String getNewCredentials();
-
+	String getNewCredentials();
 	/**
 	 * Remove a set of credentials from the name/password map.
 	 * @param creds the credentials to be removed.  They have the
 	 * 	form "<name>:<password>"
 	 */
-	void removeCredentials(const OW_String& creds);
-
+	void removeCredentials(const String& creds);
 protected:
-
-	virtual bool doAuthenticate(OW_String& userName,
-		const OW_String& info, OW_String& details);
-
+	virtual bool doAuthenticate(String& userName,
+		const String& info, String& details);
 	/**
 	 * Called when authenticator is loaded
 	 * Exception is thrown because other classes which derive
 	 * from this may need to throw exceptions in init()
 	 */
-
-	virtual void doInit(OW_ServiceEnvironmentIFCRef);
-
+	virtual void doInit(ServiceEnvironmentIFCRef);
 private:
-	OW_Map<OW_String, OW_String> m_passwdMap;
+	Map<String, String> m_passwdMap;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

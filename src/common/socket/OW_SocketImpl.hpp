@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_SocketImpl.hpp
  * @author	J. Bart Whiteley
@@ -37,31 +36,27 @@
  */
 #ifndef OW_INETSOCKETIMPL_HPP_INCLUDE_GUARD_
 #define OW_INETSOCKETIMPL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_Assertion.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_SocketImpl : public OW_SocketBaseImpl
+class SocketImpl : public SocketBaseImpl
 {
 public:
-
-	OW_SocketImpl();
-	OW_SocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
-	OW_SocketImpl(const OW_SocketAddress addr);
-
-	virtual ~OW_SocketImpl();
-
-	OW_Select_t getSelectObj() const;
-
+	SocketImpl();
+	SocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType);
+	SocketImpl(const SocketAddress addr);
+	virtual ~SocketImpl();
+	Select_t getSelectObj() const;
 protected:
-
 	virtual int readAux(void* dataIn, int dataInLen);
 	virtual int writeAux(const void* dataOut, int dataOutLen);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

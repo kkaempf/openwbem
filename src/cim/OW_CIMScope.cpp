@@ -27,25 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMScope.hpp"
 #include "OW_String.hpp"
 #include "OW_BinarySerialization.hpp"
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_String
-OW_CIMScope::toString() const
+String
+CIMScope::toString() const
 {
 	return toMOF();
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_String
-OW_CIMScope::toMOF() const
+String
+CIMScope::toMOF() const
 {
 	switch(m_val)
 	{
@@ -62,22 +62,22 @@ OW_CIMScope::toMOF() const
 		default: return "BAD SCOPE"; break;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 void
-OW_CIMScope::readObject(istream &istrm)
+CIMScope::readObject(istream &istrm)
 {
-	// Don't do this, it'll double the size OW_CIMBase::readSig( istrm, OW_CIMSCOPESIG );
-	OW_UInt32 v;
-	OW_BinarySerialization::readLen(istrm, v);
+	// Don't do this, it'll double the size CIMBase::readSig( istrm, CIMSCOPESIG );
+	UInt32 v;
+	BinarySerialization::readLen(istrm, v);
 	m_val = Scope(v);
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 void
-OW_CIMScope::writeObject(ostream &ostrm) const
+CIMScope::writeObject(ostream &ostrm) const
 {
-	// Don't do this, it'll double the size OW_CIMBase::writeSig( ostrm, OW_CIMSCOPESIG );
-	OW_BinarySerialization::writeLen(ostrm, m_val);
+	// Don't do this, it'll double the size CIMBase::writeSig( ostrm, CIMSCOPESIG );
+	BinarySerialization::writeLen(ostrm, m_val);
 }
+
+} // end namespace OpenWBEM
 

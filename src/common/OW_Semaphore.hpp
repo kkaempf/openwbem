@@ -27,81 +27,69 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SEMAPHORE_HPP_INCLUDE_GUARD_
 #define OW_SEMAPHORE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 
-class OW_Semaphore
+namespace OpenWBEM
+{
+
+class Semaphore
 {
 public:
-	OW_Semaphore()
+	Semaphore()
 		: m_curCount(0)
 	{}
-	OW_Semaphore(OW_Int32 initCount)
+	Semaphore(Int32 initCount)
 		: m_curCount(initCount)
 	{}
-
 	void wait()
 	{
-		OW_NonRecursiveMutexLock l(m_mutex);
-
+		NonRecursiveMutexLock l(m_mutex);
 		while (m_curCount <= 0)
 		{
 			m_cond.wait(l);
 		}
-
 		--m_curCount;
 	}
-
-	bool timedWait(OW_UInt32 sTimeout, OW_UInt32 usTimeout=0)
+	bool timedWait(UInt32 sTimeout, UInt32 usTimeout=0)
 	{
 		bool ret = true;
-
-		OW_NonRecursiveMutexLock l(m_mutex);
-
+		NonRecursiveMutexLock l(m_mutex);
 		while (m_curCount <= 0 && ret == true)
 		{
 			ret = m_cond.timedWait(l, sTimeout, usTimeout);
 		}
-
 		if (ret == true)
 		{
 			--m_curCount;
 		}
-
 		return ret;
 	}
-
 	void signal()
 	{
-		OW_NonRecursiveMutexLock l(m_mutex);
+		NonRecursiveMutexLock l(m_mutex);
 		++m_curCount;
 		m_cond.notifyAll();
 	}
-
-	OW_Int32 getCount()
+	Int32 getCount()
 	{
-		OW_NonRecursiveMutexLock l(m_mutex);
+		NonRecursiveMutexLock l(m_mutex);
 		return m_curCount;
 	}
-
 private:
-	OW_Int32 m_curCount;
-
-	OW_Condition m_cond;
-	OW_NonRecursiveMutex m_mutex;
-
+	Int32 m_curCount;
+	Condition m_cond;
+	NonRecursiveMutex m_mutex;
 	// noncopyable
-	OW_Semaphore(const OW_Semaphore&);
-	OW_Semaphore& operator=(const OW_Semaphore&);
-
+	Semaphore(const Semaphore&);
+	Semaphore& operator=(const Semaphore&);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

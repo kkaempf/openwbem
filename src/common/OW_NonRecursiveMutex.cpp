@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_ThreadImpl.hpp"
@@ -35,68 +34,63 @@
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"
 #include "OW_NonRecursiveMutexImpl.hpp"
-
 #include <cstring>
 
+namespace OpenWBEM
+{
 
 DEFINE_EXCEPTION(Deadlock)
-
-OW_NonRecursiveMutex::OW_NonRecursiveMutex()
+NonRecursiveMutex::NonRecursiveMutex()
 {
-	if(OW_NonRecursiveMutexImpl::createMutex(m_mutex) != 0)
+	if(NonRecursiveMutexImpl::createMutex(m_mutex) != 0)
 	{
-		OW_THROW(OW_Assertion, "OW_NonRecursiveMutexImpl::createMutex failed");
+		OW_THROW(Assertion, "NonRecursiveMutexImpl::createMutex failed");
 	}
 }
-
-OW_NonRecursiveMutex::~OW_NonRecursiveMutex()
+NonRecursiveMutex::~NonRecursiveMutex()
 {
-	if(OW_NonRecursiveMutexImpl::destroyMutex(m_mutex) == -1)
+	if(NonRecursiveMutexImpl::destroyMutex(m_mutex) == -1)
 	{
-		OW_NonRecursiveMutexImpl::releaseMutex(m_mutex);
-		OW_NonRecursiveMutexImpl::destroyMutex(m_mutex);
+		NonRecursiveMutexImpl::releaseMutex(m_mutex);
+		NonRecursiveMutexImpl::destroyMutex(m_mutex);
 	}
 }
-
-
 void 
-OW_NonRecursiveMutex::acquire()
+NonRecursiveMutex::acquire()
 {
-	int rv = OW_NonRecursiveMutexImpl::acquireMutex(m_mutex);
+	int rv = NonRecursiveMutexImpl::acquireMutex(m_mutex);
 	if (rv != 0)
 	{
-		OW_THROW(OW_Assertion,
-			"OW_NonRecursiveMutexImpl::acquireMutex returned with error");
+		OW_THROW(Assertion,
+			"NonRecursiveMutexImpl::acquireMutex returned with error");
 	}
 }
-
-
 bool
-OW_NonRecursiveMutex::release()
+NonRecursiveMutex::release()
 {
-	int rc = OW_NonRecursiveMutexImpl::releaseMutex(m_mutex);
+	int rc = NonRecursiveMutexImpl::releaseMutex(m_mutex);
 	if (rc != 0)
 	{
-		OW_THROW(OW_Assertion, format("OW_NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
+		OW_THROW(Assertion, format("NonRecursiveMutexImpl::releaseMutex returned with error %1", rc).c_str());
 	}
 	return true;
 }
-
 void 
-OW_NonRecursiveMutex::conditionPreWait(OW_NonRecursiveMutexLockState& state)
+NonRecursiveMutex::conditionPreWait(NonRecursiveMutexLockState& state)
 {
-	if (OW_NonRecursiveMutexImpl::conditionPreWait(m_mutex, state) != 0)
+	if (NonRecursiveMutexImpl::conditionPreWait(m_mutex, state) != 0)
 	{
-		OW_THROW(OW_Assertion, "OW_NonRecursiveMutexImpl::releaseMutex returned with error");
+		OW_THROW(Assertion, "NonRecursiveMutexImpl::releaseMutex returned with error");
+	}
+}
+void
+NonRecursiveMutex::conditionPostWait(NonRecursiveMutexLockState& state)
+{
+	if (NonRecursiveMutexImpl::conditionPostWait(m_mutex, state) != 0)
+	{
+		OW_THROW(Assertion, "NonRecursiveMutexImpl::releaseMutex returned with error");
 	}
 }
 
-void
-OW_NonRecursiveMutex::conditionPostWait(OW_NonRecursiveMutexLockState& state)
-{
-	if (OW_NonRecursiveMutexImpl::conditionPostWait(m_mutex, state) != 0)
-	{
-		OW_THROW(OW_Assertion, "OW_NonRecursiveMutexImpl::releaseMutex returned with error");
-	}
-}
+} // end namespace OpenWBEM
 

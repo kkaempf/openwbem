@@ -34,6 +34,8 @@
 #include "OW_ThreadBarrier.hpp"
 #include "OW_Thread.hpp"
 
+using namespace OpenWBEM;
+
 void OW_ThreadBarrierTestCases::setUp()
 {
 }
@@ -44,17 +46,17 @@ void OW_ThreadBarrierTestCases::tearDown()
 
 namespace {
 
-class testThread : public OW_Thread
+class testThread : public Thread
 {
 public:
-	testThread(const OW_ThreadBarrier& b, bool& f)
-		: OW_Thread()
+	testThread(const ThreadBarrier& b, bool& f)
+		: Thread()
 		, barrier(b)
 		, flag(f)
 	{
 	}
 
-	virtual OW_Int32 run()
+	virtual Int32 run()
 	{
 		barrier.wait();
 		flag = true;
@@ -63,7 +65,7 @@ public:
 	}
 
 private:
-	OW_ThreadBarrier barrier;
+	ThreadBarrier barrier;
 	bool& flag;
 };
 
@@ -72,12 +74,12 @@ private:
 
 void OW_ThreadBarrierTestCases::testBarrier()
 {
-	OW_ThreadBarrier barrier(2);
+	ThreadBarrier barrier(2);
 	bool flag = false;
 	testThread anotherThread(barrier, flag);
 	anotherThread.start();
 	unitAssert(flag == false);
-	OW_ThreadImpl::yield(); // give the other thread a chance to run
+	ThreadImpl::yield(); // give the other thread a chance to run
 	unitAssert(flag == false);
 
 	barrier.wait();

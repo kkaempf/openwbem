@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
@@ -36,33 +35,30 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
-
 #include <iostream>
+
+using namespace OpenWBEM;
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::cerr;
-
-class GetLoginInfo : public OW_ClientAuthCBIFC
+class GetLoginInfo : public ClientAuthCBIFC
 {
 	public:
-		bool getCredentials(const OW_String& realm, OW_String& name,
-				OW_String& passwd, const OW_String& details)
+		bool getCredentials(const String& realm, String& name,
+				String& passwd, const String& details)
 		{
 			(void)details;
 			cout << "Authentication required for " << realm << endl;
 			cout << "Enter the user name: ";
-			name = OW_String::getLine(cin);
-			passwd = OW_GetPass::getPass("Enter the password for " +
+			name = String::getLine(cin);
+			passwd = GetPass::getPass("Enter the password for " +
 				name + ": ");
 			return true;
 		}
 };
-
-
 //////////////////////////////////////////////////////////////////////////////
-
 int main(int argc, char* argv[])
 {
 	if (argc != 4)
@@ -70,84 +66,69 @@ int main(int argc, char* argv[])
 		cout << "Usage: <URL> <namespace> <WQL statement>" << endl;
 		return 1;
 	}
-
 	try
 	{
-		OW_String url = argv[1];
-		OW_String ns = argv[2];
-		OW_String query = argv[3];
-
+		String url = argv[1];
+		String ns = argv[2];
+		String query = argv[3];
 		/*
-		OW_CIMOMHandleIFCRef rch;
-
-		if(OW_URL(url).protocol.equalsIgnoreCase("IPC"))
+		CIMOMHandleIFCRef rch;
+		if(URL(url).protocol.equalsIgnoreCase("IPC"))
 		{
-			OW_IPCCIMOMHandle *ipchdl = new OW_IPCCIMOMHandle(url);
-			ipchdl->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			rch = OW_Reference<OW_CIMOMHandleIFC>(ipchdl);
+			IPCCIMOMHandle *ipchdl = new IPCCIMOMHandle(url);
+			ipchdl->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
+			rch = Reference<CIMOMHandleIFC>(ipchdl);
 		}
 		else
 		{
-			OW_HTTPClient* pHttpClient = new OW_HTTPClient(url);
-			pHttpClient->setLoginCallBack(OW_ClientAuthCBIFCRef(new GetLoginInfo));
-			OW_CIMProtocolIFCRef httpClient(pHttpClient);
-			rch = OW_CIMOMHandleIFCRef(new OW_CIMXMLCIMOMHandle(httpClient));
+			HTTPClient* pHttpClient = new HTTPClient(url);
+			pHttpClient->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
+			CIMProtocolIFCRef httpClient(pHttpClient);
+			rch = CIMOMHandleIFCRef(new CIMXMLCIMOMHandle(httpClient));
 		}
 		*/
-
-		OW_URL owurl(url);
-
-		OW_CIMProtocolIFCRef client;
-		client = new OW_HTTPClient(url);
-
-
+		URL owurl(url);
+		CIMProtocolIFCRef client;
+		client = new HTTPClient(url);
 		/**********************************************************************
 		 * Create an instance of our authentication callback class.
 		 **********************************************************************/
 		
-		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-
+		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		/**********************************************************************
 		 * Assign our callback to the HTTP Client.
 		 **********************************************************************/
-
 		client->setLoginCallBack(getLoginInfo);
-
 		/**********************************************************************
-		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
-		 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
-		 * a OW_Reference<OW_CIMProtocol> it it's constructor, so
-		 * we have to make a OW_Reference out of our HTTP Client first.
+		 * Here we create a CIMXMLCIMOMHandle and have it use the
+		 * HTTPClient we've created.  CIMXMLCIMOMHandle takes
+		 * a Reference<CIMProtocol> it it's constructor, so
+		 * we have to make a Reference out of our HTTP Client first.
 		 * By doing this, we don't have to worry about deleting our
-		 * OW_HTTPClient.  OW_Reference will delete it for us when the
+		 * HTTPClient.  Reference will delete it for us when the
 		 * last copy goes out of scope (reference count goes to zero).
 		 **********************************************************************/
-
-		OW_CIMOMHandleIFCRef rch;
+		CIMOMHandleIFCRef rch;
 		if (owurl.path.equalsIgnoreCase("owbinary"))
 		{
-			rch = new OW_BinaryCIMOMHandle(client);
+			rch = new BinaryCIMOMHandle(client);
 		}
 		else
 		{
-			rch = new OW_CIMXMLCIMOMHandle(client);
+			rch = new CIMXMLCIMOMHandle(client);
 		}
-
 		// end of stuff cut'n'pasted from client driver.
-
 		cout << "Executing query (" << query << ") on server" << endl;
-		OW_CIMInstanceEnumeration cie = rch->execQueryE(ns, query, "wql2");
-
+		CIMInstanceEnumeration cie = rch->execQueryE(ns, query, "wql2");
 		cout << "Got response: " << cie.numberOfElements() << " CIMInstances\n";
 		for (size_t i = 0; cie.hasMoreElements(); ++i)
 		{
 			cout << "CIMInstance " << (i + 1) << ":\n";
 			cout << cie.nextElement().toString() << '\n';
 		}
-
 		return 0;
 	}
-	catch(const OW_Exception& e)
+	catch(const Exception& e)
 	{
 		cerr << e << endl;
 	}
@@ -161,3 +142,5 @@ int main(int argc, char* argv[])
 	}
 	return 1;
 }
+
+

@@ -27,19 +27,19 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #ifndef OW_GETPASS_HPP_INCLUDE_GUARD_
 #define OW_GETPASS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 
-class OW_GetPass
+namespace OpenWBEM
+{
+
+class GetPass
 {
 public:
 	/**
@@ -58,12 +58,12 @@ public:
 	 * @param prompt The prompt to be displayed
 	 * @return the password
 	 */
-	static OW_String getPass(const OW_String& prompt);
-
+	static String getPass(const String& prompt);
 private:
-	OW_GetPass(); // don't allow instantiation.
+	GetPass(); // don't allow instantiation.
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif
 	

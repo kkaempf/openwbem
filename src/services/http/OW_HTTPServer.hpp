@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HTTPSERVER_HPP_INCLUDE_GUARD_
 #define OW_HTTPSERVER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
 #include "OW_SocketAddress.hpp"
@@ -39,93 +37,81 @@
 #include "OW_ThreadPool.hpp"
 #include <ctime>
 
-class OW_ServerSocket;
-class OW_IPCHandler;
-class OW_HTTPSvrConnection;
+namespace OpenWBEM
+{
+
+class ServerSocket;
+class IPCHandler;
+class HTTPSvrConnection;
 #ifndef OW_DISABLE_DIGEST
-class OW_DigestAuthentication;
+class DigestAuthentication;
 #endif
-class OW_HTTPServer;
-class OW_UnnamedPipe;
-
-
-
-class OW_HTTPServer : public OW_ServiceIFC
+class HTTPServer;
+class UnnamedPipe;
+class HTTPServer : public ServiceIFC
 {
 public:
-	OW_HTTPServer();
-	virtual ~OW_HTTPServer();
-
-	virtual void setServiceEnvironment(OW_ServiceEnvironmentIFCRef env);
+	HTTPServer();
+	virtual ~HTTPServer();
+	virtual void setServiceEnvironment(ServiceEnvironmentIFCRef env);
 	virtual void startService();
-
 	/**
 	 * Shutdown the http server.  This function does not return
 	 * untill all connections have been terminated, and cleaned up.
 	 */
 	virtual void shutdown();
-
 	/**
 	 * Get the URLs associated with this http server.  This is used
 	 * by slp discovery.
-	 * @return an array of OW_URLs representing all urls that can be
+	 * @return an array of URLs representing all urls that can be
 	 * 	used to access the HTTP server.
 	 */
-	OW_Array<OW_URL> getURLs() const;
-
-	OW_ServiceEnvironmentIFCRef getEnvironment() const { return m_options.env; }
-
+	Array<URL> getURLs() const;
+	ServiceEnvironmentIFCRef getEnvironment() const { return m_options.env; }
 	/**
 	 * Add a new url (to be returned by getURLs())
 	 * @param url the URL to be added
 	 */
-	void addURL(const OW_URL& url);
-
-	OW_SocketAddress getLocalHTTPAddress();
-	OW_SocketAddress getLocalHTTPSAddress();
+	void addURL(const URL& url);
+	SocketAddress getLocalHTTPAddress();
+	SocketAddress getLocalHTTPSAddress();
 	
 	
 	struct Options
 	{
-		OW_Int32 httpPort;
-		OW_Int32 httpsPort;
-		OW_Int32 maxConnections;
+		Int32 httpPort;
+		Int32 httpsPort;
+		Int32 maxConnections;
 		bool isSepThread;
 		bool enableDeflate;
 		bool useDigest;
 		bool allowAnonymous;
 		bool useUDS;
 		bool reuseAddr;
-		OW_ServiceEnvironmentIFCRef env;
-		OW_Int32 timeout;
+		ServiceEnvironmentIFCRef env;
+		Int32 timeout;
 	};
-
-
 private:
-
-	bool authenticate(OW_HTTPSvrConnection* pconn,
-		OW_String& userName, const OW_String& info);
-	OW_Mutex m_guard;
-
+	bool authenticate(HTTPSvrConnection* pconn,
+		String& userName, const String& info);
+	Mutex m_guard;
 	Options m_options;
-
-	OW_Reference<OW_UnnamedPipe> m_upipe;
-	OW_Array<OW_URL> m_urls;
-
-	OW_Reference<OW_ServerSocket> m_pHttpServerSocket;
-	OW_Reference<OW_ServerSocket> m_pHttpsServerSocket;
-	OW_Reference<OW_ServerSocket> m_pUDSServerSocket;
+	Reference<UnnamedPipe> m_upipe;
+	Array<URL> m_urls;
+	Reference<ServerSocket> m_pHttpServerSocket;
+	Reference<ServerSocket> m_pHttpsServerSocket;
+	Reference<ServerSocket> m_pUDSServerSocket;
 #ifndef OW_DISABLE_DIGEST
-	OW_Reference<OW_DigestAuthentication> m_digestAuth;
+	Reference<DigestAuthentication> m_digestAuth;
 #endif
-	OW_Mutex m_authGuard;
-
-	OW_ThreadPoolRef m_threadPool;
-
-	friend class OW_HTTPSvrConnection;
-	friend class OW_HTTPListener;
-	friend class OW_IPCConnectionHandler;
-	friend class OW_HTTPServerSelectableCallback;
+	Mutex m_authGuard;
+	ThreadPoolRef m_threadPool;
+	friend class HTTPSvrConnection;
+	friend class HTTPListener;
+	friend class IPCConnectionHandler;
+	friend class HTTPServerSelectableCallback;
 };
+
+} // end namespace OpenWBEM
 
 #endif

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_DaemonEnv.hpp"
 #include "OW_ConfigOpts.hpp"
@@ -40,37 +39,31 @@
 using std::ostream;
 using std::endl;
 using std::cout;
+using namespace OpenWBEM;
 
 static bool processCommandLine(int argc, char* argv[]);
 static void printUsage(ostream& ostrm);
-
-static OW_DaemonEnv env;
-
+static DaemonEnv env;
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-
 	try
 	{
 		bool debugMode = processCommandLine(argc, argv);
-
 		// Set up environment and start up all server components.
 		env.init();
-
 		// Call platform specific code to become a daemon/service
 		try
 		{
-			OW_Platform::daemonize(debugMode, OW_DAEMON_NAME);
+			Platform::daemonize(debugMode, DAEMON_NAME);
 		}
-		catch (const OW_DaemonException& e)
+		catch (const DaemonException& e)
 		{
 			env.logError(e.getMessage());
 			env.logError("Failed to initialize - aborting...");
 			return 1;
 		}
-
 		env.startServices();
-
 		int sig;
 		bool shuttingDown(false);
 		while(!shuttingDown)
@@ -78,15 +71,15 @@ int main(int argc, char* argv[])
 			// runSelectEngine will only return once something has been put into
 			// the signal pipe.
 			env.runSelectEngine();
-			sig = OW_Platform::popSig();
+			sig = Platform::popSig();
 			switch (sig)
 			{
-				case OW_Platform::SHUTDOWN:
+				case Platform::SHUTDOWN:
 					shuttingDown = true;
 					env.logCustInfo("Open WBEM cimom received shutdown notification");
 					env.shutdown();
 					break;
-				case OW_Platform::REINIT:
+				case Platform::REINIT:
 					env.logCustInfo("Open WBEM cimom received restart notification");
 					env.shutdown();
 					processCommandLine(argc, argv);
@@ -97,20 +90,19 @@ int main(int argc, char* argv[])
 					break;
 			}
 		}
-
 		// Call platform specific shutdown routine
-		OW_Platform::daemonShutdown(OW_DAEMON_NAME);
+		Platform::daemonShutdown(DAEMON_NAME);
 	}
-	catch (OW_Assertion& e)
+	catch (Assertion& e)
 	{
 		env.logError("**************************************************");
-		env.logError("* ASSERTION CAUGHT IN MAIN!");
+		env.logError("* OW_ASSERTION CAUGHT IN MAIN!");
 		env.logError(format("* Condition: %1", e.getMessage()));
 		env.logError(format("* File: %1", e.getFile()));
 		env.logError(format("* Line: %1", e.getLine()));
 		env.logError("**************************************************");
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		env.logError("**************************************************");
 		env.logError("* EXCEPTION CAUGHT IN MAIN!");
@@ -133,17 +125,14 @@ int main(int argc, char* argv[])
 		env.logError("* UNKNOWN EXCEPTION CAUGHT MAIN!");
 		env.logError("**************************************************");
 	}
-
 	return 0;
 }
-
 bool
 processCommandLine(int argc, char* argv[])
 {
 	bool debug = false;
 	// Process command line options
-	OW_Platform::Options opts = OW_Platform::daemonInit(argc, argv);
-
+	Platform::Options opts = Platform::daemonInit(argc, argv);
 	// If the user only specified the help option on the command
 	// line then get out
 	if(opts.help)
@@ -155,34 +144,29 @@ processCommandLine(int argc, char* argv[])
 		printUsage(cout);
 		exit(0);
 	}
-
 	if (opts.debug)
 	{
-		env.setConfigItem(OW_ConfigOpts::OW_DEBUG_opt, "true",
+		env.setConfigItem(ConfigOpts::DEBUG_opt, "true",
 			true);
-		env.setConfigItem(OW_ConfigOpts::LOG_LEVEL_opt,
+		env.setConfigItem(ConfigOpts::LOG_LEVEL_opt,
 			"debug");
 		debug = true;
 	}
-
 	if (opts.configFile)
 	{
-		env.setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt,
+		env.setConfigItem(ConfigOpts::CONFIG_FILE_opt,
 			opts.configFilePath, true);
 	}
 	return debug;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 static void
 printUsage(ostream& ostrm)
 {
-	ostrm << OW_DAEMON_NAME << " [OPTIONS]..." << endl;
+	ostrm << DAEMON_NAME << " [OPTIONS]..." << endl;
 	ostrm << "Available options:" << endl;
 	ostrm << "\t-d, --debug  Set debug on (does not detach from terminal"<< endl;
 	ostrm << "\t-c, --config Specifiy an alternate config file" << endl;
 	ostrm << "\t-h, --help   Print this help information" << endl;
 }
-
 

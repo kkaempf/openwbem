@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Logger.hpp"
 #include "OW_Exception.hpp"
@@ -37,54 +36,46 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+
 #include <fstream>
 #include <iostream> // for cerr
-
-extern "C"
-{
 #include <syslog.h>
 #include <unistd.h> // for getpid
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>
 #endif
-}
+
+namespace OpenWBEM
+{
 
 using std::ofstream;
 using std::endl;
-
-
-class OW_FileLogger : public OW_Logger
+class FileLogger : public Logger
 {
 	public:
-		OW_FileLogger( const char* filename ) :
+		FileLogger( const char* filename ) :
 			log( filename, std::ios::out|std::ios::app )
 		{
 			if (!log)
-				OW_THROW(OW_Exception, format("OW_FileLogger: Unable to open file: %1", filename).toString().c_str() );
+				OW_THROW(Exception, format("FileLogger: Unable to open file: %1", filename).toString().c_str() );
 		}
-		virtual ~OW_FileLogger() {}
-
+		virtual ~FileLogger() {}
 	protected:
-		virtual void doLogMessage( const OW_String& s,
-			const OW_LogLevel /*level*/ ) const
+		virtual void doLogMessage( const String& s,
+			const LogLevel /*level*/ ) const
 		{
-#ifdef OW_USE_GNU_PTH
-            pth_yield(NULL);
-#endif
-			OW_DateTime DateTime;
+			DateTime DateTime;
 			DateTime.setToCurrent();
 			// FIXME: Need to remove newline after DateTime.
 			log << DateTime.toString() << s << endl;
 		}
-
 	private:
 		mutable ofstream log;
 };
-
-class OW_SyslogLogger : public OW_Logger
+class SyslogLogger : public Logger
 {
 	public:
-		OW_SyslogLogger()
+		SyslogLogger()
 		{
 			static bool calledOpenLog = false;
 			if (!calledOpenLog)
@@ -93,14 +84,10 @@ class OW_SyslogLogger : public OW_Logger
 				calledOpenLog = true;
 			}
 		}
-		virtual ~OW_SyslogLogger() {}
-
+		virtual ~SyslogLogger() {}
 	protected:
-		virtual void doLogMessage( const OW_String& s, const OW_LogLevel level ) const
+		virtual void doLogMessage( const String& s, const LogLevel level ) const
 		{
-#ifdef OW_USE_GNU_PTH
-            pth_yield(NULL);
-#endif
 			int syslogPriority;
 			switch( level )
 			{
@@ -115,28 +102,26 @@ class OW_SyslogLogger : public OW_Logger
 					syslogPriority = LOG_DEBUG;
 					break;
 			}
-			OW_StringArray a = s.tokenize("\n");
+			StringArray a = s.tokenize("\n");
 			for (size_t i = 0; i < a.size(); ++i)
 				syslog( syslogPriority, "%s", a[i].c_str() );
 		}
 };
-
-class OW_TeeLogger : public OW_Logger
+class TeeLogger : public Logger
 {
 	public:
-		OW_TeeLogger( OW_LoggerRef const& first, OW_LoggerRef const& second ):
+		TeeLogger( LoggerRef const& first, LoggerRef const& second ):
 			m_first(first), m_second(second)
 		{
 			m_first->setLogLevel(DebugLevel);
 			m_second->setLogLevel(DebugLevel);
 		}
-		virtual ~OW_TeeLogger()
+		virtual ~TeeLogger()
 		{
 		}
-
 	protected:
-		virtual void doLogMessage( const OW_String& s,
-			const OW_LogLevel level) const
+		virtual void doLogMessage( const String& s,
+			const LogLevel level) const
 		{
 			switch (level)
 			{
@@ -156,56 +141,46 @@ class OW_TeeLogger : public OW_Logger
 					break;
 			}
 		}
-
 	private:
-		OW_LoggerRef m_first;
-		OW_LoggerRef m_second;
+		LoggerRef m_first;
+		LoggerRef m_second;
 };
-
-class OW_CerrLogger : public OW_Logger
+class CerrLogger : public Logger
 {
 	public:
-		virtual ~OW_CerrLogger(){}
-
+		virtual ~CerrLogger(){}
 	protected:
-		virtual void doLogMessage( const OW_String& s,
-			const OW_LogLevel /*level*/ ) const
+		virtual void doLogMessage( const String& s,
+			const LogLevel /*level*/ ) const
 		{
-#ifdef OW_USE_GNU_PTH
-            pth_yield(NULL);
-#endif
 			std::cerr << '[' << getpid() << "] " << s << std::endl;
 		}
 };
-
-class OW_NullLogger : public OW_Logger
+class NullLogger : public Logger
 {
 public:
-	virtual ~OW_NullLogger() {}
-
+	virtual ~NullLogger() {}
 protected:
-	virtual void doLogMessage(const OW_String &, 
-		const OW_LogLevel) const 
+	virtual void doLogMessage(const String &, 
+		const LogLevel) const 
 	{
 	}
 };
-
-OW_LoggerRef OW_Logger::createLogger( const OW_String& type, bool debug )
+LoggerRef Logger::createLogger( const String& type, bool debug )
 {
-	OW_LoggerRef retval;
+	LoggerRef retval;
 	if (type.empty() || type.equalsIgnoreCase("null"))
-		retval = new OW_NullLogger;
+		retval = new NullLogger;
 	else if ( type == "syslog" )
-		retval = new OW_SyslogLogger;
+		retval = new SyslogLogger;
 	else
-		retval = new OW_FileLogger( type.c_str() );
-
+		retval = new FileLogger( type.c_str() );
 	if ( debug )
 	{
-		retval = new OW_TeeLogger( retval, OW_LoggerRef(new OW_CerrLogger) );
+		retval = new TeeLogger( retval, LoggerRef(new CerrLogger) );
 	}
-
 	return retval;
 }
 
+} // end namespace OpenWBEM
 

@@ -27,19 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
-
 #ifdef OW_HAVE_ZLIB_H
-
 #include "OW_HTTPDeflateIStream.hpp"
 #include "OW_HTTPException.hpp"
 
-using std::istream;
+namespace OpenWBEM
+{
 
-OW_HTTPDeflateIStreamBuffer::OW_HTTPDeflateIStreamBuffer(istream& istr)
-	: OW_BaseStreamBuffer(HTTP_BUF_SIZE, "in")
+using std::istream;
+HTTPDeflateIStreamBuffer::HTTPDeflateIStreamBuffer(istream& istr)
+	: BaseStreamBuffer(HTTP_BUF_SIZE, "in")
 	, m_istr(istr)
 {
 	m_zstr.opaque = Z_NULL;
@@ -49,24 +47,22 @@ OW_HTTPDeflateIStreamBuffer::OW_HTTPDeflateIStreamBuffer(istream& istr)
 	int rval = inflateInit(&m_zstr);
 	if (rval != Z_OK)
 	{
-		OW_String msg = "Error: inflateInit returned " + OW_String(rval);
+		String msg = "Error: inflateInit returned " + String(rval);
 		if (m_zstr.msg)
 		{
-			msg += OW_String(": ") + OW_String(m_zstr.msg);
+			msg += String(": ") + String(m_zstr.msg);
 		}
-		OW_THROW(OW_HTTPException, msg.c_str());
+		OW_THROW(HTTPException, msg.c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPDeflateIStreamBuffer::~OW_HTTPDeflateIStreamBuffer()
+HTTPDeflateIStreamBuffer::~HTTPDeflateIStreamBuffer()
 {
 	inflateEnd(&m_zstr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
+HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 {
 	if (n < 1)
 	{
@@ -101,8 +97,6 @@ OW_HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 	{
 		return -1;
 	}
-
-
 	/*
 	if (!m_istr)
 	{
@@ -120,20 +114,19 @@ OW_HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 	{
 		return -1;
 	}
-
 	return (n - m_zstr.avail_out);
 	*/
 }
-
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPDeflateIStream::OW_HTTPDeflateIStream(
-			OW_Reference<OW_CIMProtocolIStreamIFC> istr)
-	: OW_HTTPDeflateIStreamBase(*istr)
-	, OW_CIMProtocolIStreamIFC(&m_strbuf)
+HTTPDeflateIStream::HTTPDeflateIStream(
+			Reference<CIMProtocolIStreamIFC> istr)
+	: HTTPDeflateIStreamBase(*istr)
+	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 {
 }
-
-
 #endif // #ifdef OW_HAVE_ZLIB_H
+
+} // end namespace OpenWBEM
+

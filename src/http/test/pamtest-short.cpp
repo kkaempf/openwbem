@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_LinuxPAMAuthorizer.hpp"
 
@@ -39,10 +38,7 @@ int main(int argc, char* argv[])
 			"<number>" << endl;
 		return 1;
 	}
-
-
-	OW_Authorizer* auth = new OW_LinuxPAMAuthorizer;
-
+	Authorizer* auth = new LinuxPAMAuthorizer;
 	for (int i = 0; i < atoi(argv[3]); i++)
 	{
 		if (auth->authenticate(argv[1], argv[2]))
@@ -53,3 +49,4 @@ int main(int argc, char* argv[])
 	
 	return 0;
 }
+

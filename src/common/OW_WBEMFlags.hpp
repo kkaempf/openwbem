@@ -27,52 +27,47 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_WBEM_FLAGS_HPP_INCLUDE_GUARD_
 #define OW_WBEM_FLAGS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 
-namespace OW_WBEMFlags
+namespace OpenWBEM
 {
 
+namespace WBEMFlags
+{
 //////////////////////////////////////////////////////
 enum EDeepFlag
 {
 	E_SHALLOW,
 	E_DEEP
 };
-
 //////////////////////////////////////////////////////
 enum ELocalOnlyFlag
 {
 	E_NOT_LOCAL_ONLY,
 	E_LOCAL_ONLY
 };
-
 //////////////////////////////////////////////////////
 enum EIncludeQualifiersFlag
 {
 	E_EXCLUDE_QUALIFIERS,
 	E_INCLUDE_QUALIFIERS
 };
-
 //////////////////////////////////////////////////////
 enum EIncludeClassOriginFlag
 {
 	E_EXCLUDE_CLASS_ORIGIN,
 	E_INCLUDE_CLASS_ORIGIN
 };
-
 //////////////////////////////////////////////////////
 enum EEnumSubclassesFlag
 {
 	E_DONT_ENUM_SUBCLASSES,
 	E_ENUM_SUBCLASSES
 };
-
 }
 
+} // end namespace OpenWBEM
 
 #endif				
-

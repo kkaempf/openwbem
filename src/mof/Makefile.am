@@ -31,7 +31,7 @@ OW_MOFParseFatalErrorException.cpp
 
 pkginclude_HEADERS = \
 OW_MOFGrammar.hpp \
-OW_MOFVisitor.h \
+OW_MOFVisitor.hpp \
 OW_MOFParserErrorHandlerIFC.hpp \
 OW_MOFCIMOMVisitor.hpp \
 OW_MOFCompiler.hpp \

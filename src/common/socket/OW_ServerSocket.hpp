@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_INETSERVERSOCKET_HPP_INCLUDE_GUARD_
 #define OW_INETSERVERSOCKET_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_ServerSocketImpl.hpp"
@@ -38,37 +36,35 @@
 #include "OW_Types.hpp"
 #include "OW_SocketFlags.hpp"
 
-class OW_ServerSocket : public OW_SelectableIFC
+namespace OpenWBEM
+{
+
+class ServerSocket : public SelectableIFC
 {
 public:
-
 	/** Allocate a new Inet Server Socket.
 	 * @param isSSL is the Server Socket an SSL socket?
 	 */
-	OW_ServerSocket(OW_SocketFlags::ESSLFlag isSSL = OW_SocketFlags::E_NOT_SSL)
-	  : OW_SelectableIFC()
-	  , m_impl(new OW_ServerSocketImpl(isSSL))
+	ServerSocket(SocketFlags::ESSLFlag isSSL = SocketFlags::E_NOT_SSL)
+	  : SelectableIFC()
+	  , m_impl(new ServerSocketImpl(isSSL))
    {
    }
-
 	/**
 	 * Copy ctor
 	 */
-	OW_ServerSocket(const OW_ServerSocket& arg)
-		: OW_SelectableIFC()
+	ServerSocket(const ServerSocket& arg)
+		: SelectableIFC()
 		, m_impl(arg.m_impl) {}
-
-
 	/**
 	 * Accept a connection to the server socket
 	 * @param timeoutSecs the timeout
-	 * @return an OW_Socket for the connection just accepted.
+	 * @return an Socket for the connection just accepted.
 	 */
-	OW_Socket accept(int timeoutSecs=-1)
+	Socket accept(int timeoutSecs=-1)
 	{
 		return m_impl->accept(timeoutSecs);
 	}
-
 	/**
 	 * Start listening on a port
 	 *
@@ -76,51 +72,47 @@ public:
 	 * @param isSSL is the Server Socket an SSL socket?
 	 * @param queueSize the size of the listen queue
 	 * @param allInterfaces do we listen on all interfaces?
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
-	void doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL, int queueSize=10,
-			OW_SocketFlags::EAllInterfacesFlag allInterfaces = OW_SocketFlags::E_NOT_ALL_INTERFACES, 
-			OW_SocketFlags::EReuseAddrFlag reuseAddr = OW_SocketFlags::E_REUSE_ADDR)
+	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10,
+			SocketFlags::EAllInterfacesFlag allInterfaces = SocketFlags::E_NOT_ALL_INTERFACES, 
+			SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR)
 	{
 		m_impl->doListen(port, isSSL, queueSize, allInterfaces, reuseAddr);
 	}
-
 	/**
 	 * Start listening on a Unix Domain Socket
 	 *
 	 * @param filename The filename for the unix domain socket
 	 * @param queueSize the size of the listen queue
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
-	void doListen(const OW_String& filename, int queueSize=10, 
+	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr=true)
 	{
 		m_impl->doListen(filename, queueSize, reuseAddr);
 	}
-
 	/**
 	 * Close the listen socket
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
 	void close() { m_impl->close();}
 	
 	/**
 	 * Return the address of the local host
-	 * @return an OW_SocketAddress representing the local node
+	 * @return an SocketAddress representing the local node
 	 */
-	OW_SocketAddress getLocalAddress() { return m_impl->getLocalAddress(); }
-
+	SocketAddress getLocalAddress() { return m_impl->getLocalAddress(); }
 	/**
 	 * Get the file descriptor of the listen socket
 	 * @return a handle to the listen socket
 	 */
-	OW_SocketHandle_t getfd() const { return m_impl->getfd(); }
-
-	OW_Select_t getSelectObj() const { return m_impl->getSelectObj(); }
-
+	SocketHandle_t getfd() const { return m_impl->getfd(); }
+	Select_t getSelectObj() const { return m_impl->getSelectObj(); }
 private:
-	OW_Reference<OW_ServerSocketImpl> m_impl;
+	Reference<ServerSocketImpl> m_impl;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMQUALIFIERTYPE_HPP_INCLUDE_GUARD_
 #define OW_CIMQUALIFIERTYPE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
 #include "OW_COWReference.hpp"
@@ -38,209 +36,180 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMQualifierType class encapsulates the data and functionality
+ * The CIMQualifierType class encapsulates the data and functionality
  * associated with a CIM qualifier type.
  */
-class OW_CIMQualifierType : public OW_CIMElement
+class CIMQualifierType : public CIMElement
 {
 public:
 	struct QUALTData;
-
 	/**
-	 * Create a new OW_CIMQualifierType object.
+	 * Create a new CIMQualifierType object.
 	 */
-	OW_CIMQualifierType();
-
+	CIMQualifierType();
 	/**
-	 * Create a NULL OW_CIMQualifierType object.
+	 * Create a NULL CIMQualifierType object.
 	 */
-	explicit OW_CIMQualifierType(OW_CIMNULL_t);
-
+	explicit CIMQualifierType(CIMNULL_t);
 	/**
-	 * Create an OW_CIMQualifierType with a given name.
-	 * @param name	The name for this OW_CIMQualifierType object.
+	 * Create an CIMQualifierType with a given name.
+	 * @param name	The name for this CIMQualifierType object.
 	 */
-	OW_CIMQualifierType(const OW_String& name);
-
+	CIMQualifierType(const String& name);
 	/**
-	 * Create an OW_CIMQualifierType with a given name.
-	 * @param name	The name for this OW_CIMQualifierType object as a NULL
+	 * Create an CIMQualifierType with a given name.
+	 * @param name	The name for this CIMQualifierType object as a NULL
 	 *		terminated string.
 	 */
-	OW_CIMQualifierType(const char* name);
-
+	CIMQualifierType(const char* name);
 	/**
 	 * Copy ctor
-	 * @param arg The OW_CIMQualifierType to make this object a copy of.
+	 * @param arg The CIMQualifierType to make this object a copy of.
 	 */
-	OW_CIMQualifierType(const OW_CIMQualifierType& arg);
-
+	CIMQualifierType(const CIMQualifierType& arg);
 	/**
-	 * Destroy this OW_CIMQualifierType object.
+	 * Destroy this CIMQualifierType object.
 	 */
-	~OW_CIMQualifierType();
-
+	~CIMQualifierType();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMQualifierType to assign to this object.
+	 * @param arg The CIMQualifierType to assign to this object.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	OW_CIMQualifierType& operator= (const OW_CIMQualifierType& arg);
-
+	CIMQualifierType& operator= (const CIMQualifierType& arg);
 	/**
-	 * @return the Scopes for this OW_CIMQualifierType object
+	 * @return the Scopes for this CIMQualifierType object
 	 */
-	const OW_CIMScopeArray& getScope() const;
-
+	const CIMScopeArray& getScope() const;
 	/**
-	 * @return The data type for this OW_CIMQualifierType object.
+	 * @return The data type for this CIMQualifierType object.
 	 */
-	OW_CIMDataType getDataType() const;
-
+	CIMDataType getDataType() const;
 	/**
-	 * @return The size of the data for OW_CIMQualifierType object.
+	 * @return The size of the data for CIMQualifierType object.
 	 */
-	OW_Int32 getDataSize() const;
-
+	Int32 getDataSize() const;
 	/**
-	 * @return The default value for this OW_CIMQualifierType object.
+	 * @return The default value for this CIMQualifierType object.
 	 */
-	OW_CIMValue getDefaultValue() const;
-
+	CIMValue getDefaultValue() const;
 	/**
-	 * Set the data type for this OW_CIMQualifierType object.
-	 * @param dataType	The OW_CIMDataType for this OW_CIMQualifierType object.
+	 * Set the data type for this CIMQualifierType object.
+	 * @param dataType	The CIMDataType for this CIMQualifierType object.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifierType& setDataType(const OW_CIMDataType& dataType);
-
+	CIMQualifierType& setDataType(const CIMDataType& dataType);
 	/**
-	 * Set the data type for this OW_CIMQualifierType object.
-	 * @param dataType	The OW_CIMDataType::Type for this OW_CIMQualifierType object.
+	 * Set the data type for this CIMQualifierType object.
+	 * @param dataType	The CIMDataType::Type for this CIMQualifierType object.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifierType& setDataType(const OW_CIMDataType::Type& dataType);
-
+	CIMQualifierType& setDataType(const CIMDataType::Type& dataType);
 	/**
-	 * Set the default value for this OW_CIMQualifierType object.
-	 * @param defValue	The default value for this OW_CIMQualifierType.
+	 * Set the default value for this CIMQualifierType object.
+	 * @param defValue	The default value for this CIMQualifierType.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifierType& setDefaultValue(const OW_CIMValue& defValue);
-
+	CIMQualifierType& setDefaultValue(const CIMValue& defValue);
 	/**
-	 * Add a scope to this OW_CIMQualifierType object.
-	 * @param newScope	The scope to add to this OW_CIMQualifierType.
+	 * Add a scope to this CIMQualifierType object.
+	 * @param newScope	The scope to add to this CIMQualifierType.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifierType& addScope(const OW_CIMScope& newScope);
-
+	CIMQualifierType& addScope(const CIMScope& newScope);
 	/**
-	 * Determine if this OW_CIMQualifierType has a specified scope.
+	 * Determine if this CIMQualifierType has a specified scope.
 	 * @param scopeArg	The scope to check for.
-	 * @return true if this OW_CIMQualifierType has the given scope. Otherwise
+	 * @return true if this CIMQualifierType has the given scope. Otherwise
 	 * false.
 	 */
-	bool hasScope(const OW_CIMScope& scopeArg) const;
-
+	bool hasScope(const CIMScope& scopeArg) const;
 	/**
-	 * Determine if this OW_CIMQualifierType has a specified flavor.
+	 * Determine if this CIMQualifierType has a specified flavor.
 	 * @param flavorArg	The flavor to check for.
-	 * @return true if this OW_CIMQualifierType has the given flavor. Otherwise
+	 * @return true if this CIMQualifierType has the given flavor. Otherwise
 	 * false.
 	 */
-	bool hasFlavor(const OW_CIMFlavor& flavorArg) const;
-
+	bool hasFlavor(const CIMFlavor& flavorArg) const;
 	/**
-	 * Add a flavor to this OW_CIMQualifierType object.
-	 * @param newFlavor	The flavor to add to this OW_CIMQualifierType object.
+	 * Add a flavor to this CIMQualifierType object.
+	 * @param newFlavor	The flavor to add to this CIMQualifierType object.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifierType& addFlavor(const OW_CIMFlavor& newFlavor);
-
+	CIMQualifierType& addFlavor(const CIMFlavor& newFlavor);
 	/**
-	 * Remove a flavor from this OW_CIMQualifierType.
+	 * Remove a flavor from this CIMQualifierType.
 	 * @param flavor The integral value of the flavor to remove.
 	 * @return a reference to *this
 	 */
-	OW_CIMQualifierType& removeFlavor(const OW_Int32 flavor);
-
+	CIMQualifierType& removeFlavor(const Int32 flavor);
 	/**
-	 * @return The flavors for this OW_CIMQualifierType object.
+	 * @return The flavors for this CIMQualifierType object.
 	 */
-	OW_CIMFlavorArray getFlavors() const;
-
+	CIMFlavorArray getFlavors() const;
 	/**
-	 * @return true this OW_CIMQualifierType has a default value. Otherwise
+	 * @return true this CIMQualifierType has a default value. Otherwise
 	 * false.
 	 */
 	bool hasDefaultValue() const;
-
 	/**
 	 * @return true if the default value is an array type. Otherwise false.
 	 */
 	bool isDefaultValueArray() const;
-
 	/**
-	 * Write this OW_CIMQualifierType object to the given output stream.
-	 * @param ostrm	The output stream to write this OW_CIMQualifierType to.
+	 * Write this CIMQualifierType object to the given output stream.
+	 * @param ostrm	The output stream to write this CIMQualifierType to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * Read this OW_CIMQualifierType object from the given input stream.
-	 * @param istrm	The input stream to read this OW_CIMQualifierType from.
+	 * Read this CIMQualifierType object from the given input stream.
+	 * @param istrm	The input stream to read this CIMQualifierType from.
 	 */
 	virtual void readObject(std::istream &istrm);
 	
 	/**
-	 * @return An OW_String representing this OW_CIMQualifierType.
+	 * @return An String representing this CIMQualifierType.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return An OW_String that contains the MOF representation of this
-	 * OW_CIMQualifierType object.
+	 * @return An String that contains the MOF representation of this
+	 * CIMQualifierType object.
 	 */
-	virtual OW_String toMOF() const;
+	virtual String toMOF() const;
 	
 	/**
 	 * @return The name of this qualifier type.
 	 */
-	virtual OW_String getName() const;
-
+	virtual String getName() const;
 	/**
 	 * Set the name of this qualifier type.
 	 * @param name The new name for this qualifier type.
 	 */
-	virtual void setName(const OW_String& name);
-
+	virtual void setName(const String& name);
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
-	friend bool operator<(const OW_CIMQualifierType& x, const OW_CIMQualifierType& y);
-
+	friend bool operator<(const CIMQualifierType& x, const CIMQualifierType& y);
 private:
-
-	OW_COWReference<QUALTData> m_pdata;
+	COWReference<QUALTData> m_pdata;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

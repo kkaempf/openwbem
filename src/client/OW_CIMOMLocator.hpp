@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
 #define OW_CIMOMLOCATOR_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMOMInfo.hpp"
 #include "OW_Reference.hpp"
@@ -38,35 +36,32 @@
 #include "OW_Array.hpp"
 #include <utility>
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(CIMOMLocator);
-
-typedef std::pair<OW_String, OW_String> OW_CIMOMAttribute;
-typedef OW_Array<OW_CIMOMAttribute> OW_CIMOMAttributeArray;
-
-class OW_CIMOMLocator;
-typedef OW_Reference<OW_CIMOMLocator> OW_CIMOMLocatorRef;
-
-class OW_CIMOMLocator
+typedef std::pair<String, String> CIMOMAttribute;
+typedef Array<CIMOMAttribute> CIMOMAttributeArray;
+class CIMOMLocator;
+typedef Reference<CIMOMLocator> CIMOMLocatorRef;
+class CIMOMLocator
 {
 public:
-
-	virtual ~OW_CIMOMLocator();
-
+	virtual ~CIMOMLocator();
 	/**
 	 * Find available CIMOMs.  
-	 * @return An Array or OW_CIMOMInfo objects.
+	 * @return An Array or CIMOMInfo objects.
 	 */
-	virtual OW_CIMOMInfoArray findCIMOMs() = 0;
-
+	virtual CIMOMInfoArray findCIMOMs() = 0;
 	/**
 	 * Factory Function to create a CIMOMLocator.
 	 * @param locatorType The type of CIMOMLocator to create.  Valid values are:
 	 * 							"slp".
-	 * @returns An OW_Reference<OW_CIMOMLocator>.
+	 * @returns An Reference<CIMOMLocator>.
 	 */
-	static OW_CIMOMLocatorRef createCIMOMLocator(const OW_String& locatorType);
+	static CIMOMLocatorRef createCIMOMLocator(const String& locatorType);
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,58 +27,52 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_FILE_HPP_INCLUDE_GUARD_
 #define OW_FILE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_FileSystem.hpp"
-
 #include <algorithm> // for std::swap
 
+namespace OpenWBEM
+{
+
 /**
- * The purpose of the OW_File class is to provide an abstraction layer
+ * The purpose of the File class is to provide an abstraction layer
  * over the platform dependant functionality related to a file.
  */
-class OW_File
+class File
 {
 public:
-
 	/**
-	 * Create a NULL OW_File object.
+	 * Create a NULL File object.
 	 */
-	OW_File() : m_hdl(-1)
+	File() : m_hdl(-1)
 	{
 	}
-
 	/**
 	 * Copy constructor
-	 * @param x	The OW_File object to copy.
+	 * @param x	The File object to copy.
 	 */
-	OW_File(const OW_File& x);
-
-	~OW_File()
+	File(const File& x);
+	~File()
 	{
 		close();
 	}
-
 	/**
 	 * Assignment operator
-	 * @param x	The OW_File object to copy.
-	 * @return A reference to this OW_File object.
+	 * @param x	The File object to copy.
+	 * @return A reference to this File object.
 	 */
-	OW_File& operator= (OW_File x)
+	File& operator= (File x)
 	{
 		x.swap(*this);
 		return *this;
 	}
-
-	void swap(OW_File& x)
+	void swap(File& x)
 	{
 		std::swap(m_hdl, x.m_hdl);
 	}
-
 	/**
 	 * Read from the underlying file.
 	 * @param bfr				The location where the read operation will place
@@ -91,9 +85,8 @@ public:
 	 */
 	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L)
 	{
-		return OW_FileSystem::read(m_hdl, bfr, numberOfBytes, offset);
+		return FileSystem::read(m_hdl, bfr, numberOfBytes, offset);
 	}
-
 	/**
 	 * Write to the underlying file
 	 * @param bfr				The locaction to get the contents to write.
@@ -105,9 +98,8 @@ public:
 	 */
 	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L)
 	{
-		return OW_FileSystem::write(m_hdl, bfr, numberOfBytes, offset);
+		return FileSystem::write(m_hdl, bfr, numberOfBytes, offset);
 	}
-
 	/**
 	 * Seek to a given offset within the file.
 	 * @param offset		The offset to seek to relative to the whence parm.
@@ -118,28 +110,25 @@ public:
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	int seek(OW_off_t offset, int whence)
+	int seek(off_t offset, int whence)
 	{
-		return OW_FileSystem::seek(m_hdl, offset, whence);
+		return FileSystem::seek(m_hdl, offset, whence);
 	}
-
 	/**
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	OW_off_t tell()
+	off_t tell()
 	{
-		return OW_FileSystem::tell(m_hdl);
+		return FileSystem::tell(m_hdl);
 	}
-
 	/**
 	 * Position the file pointer to the beginning of the file.
 	 */
 	void rewind()
 	{
-		OW_FileSystem::rewind(m_hdl);
+		FileSystem::rewind(m_hdl);
 	}
-
 	/**
 	 * Close the underlying file object.
 	 * @return 0 on success. Otherwise -1.
@@ -148,22 +137,20 @@ public:
 	{
 		if (m_hdl != -1)
 		{
-			int rv = OW_FileSystem::close(m_hdl);
+			int rv = FileSystem::close(m_hdl);
 			m_hdl = -1;
 			return rv;
 		}
 		return 0;
 	}
-
 	/**
 	 * Flush any buffered data to the file.
 	 * @return 0 on success. Otherwise -1.
 	 */
 	int flush()
 	{
-		return OW_FileSystem::flush(m_hdl);
+		return FileSystem::flush(m_hdl);
 	}
-
 	/**
 	 * Acquire a kernel lock on the file.  This call may block. The lock may
 	 * be released by calling unlock(). The lock will also be released when
@@ -175,7 +162,6 @@ public:
 	 * errno may be one of: EBADF, EDEADLK, EINVAL, ENOLCK
 	 */
 	int getLock();
-
 	/**
 	 * Acquire a kernel lock on the file.  This call won't block. The lock may
 	 * be released by calling unlock() The lock will also be released when
@@ -187,7 +173,6 @@ public:
 	 * EACCES or EAGAIN signifies the file is already locked.
 	 */
 	int tryLock();
-
 	/**
 	 * Release a lock on the file.  This call will not block.
 	 * @return 0 on sucess.  On error, -1 is returned, and errno is set 
@@ -195,48 +180,37 @@ public:
 	 * errno may be one of: EAGAIN, EBADF, EDEADLK, EINVAL, ENOLCK
 	 */
 	int unlock();
-
-
 	/**
-	 * @return true if this is a valid OW_File object.
+	 * @return true if this is a valid File object.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (m_hdl != -1) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (m_hdl != -1) ? 0: &dummy::nonnull; }
-
 	/**
 	 * Equality operator.
-	 * @param rhs The OW_File object to compare this object to.
-	 * @return true if this OW_File represents the same file as rhs.
+	 * @param rhs The File object to compare this object to.
+	 * @return true if this File represents the same file as rhs.
 	 */
-	bool operator==(const OW_File& rhs)
+	bool operator==(const File& rhs)
 	{
 		return m_hdl == rhs.m_hdl;
 	}
-
 private:
-
-	OW_File(OW_FileHandle hdl) : m_hdl(hdl)
+	File(FileHandle hdl) : m_hdl(hdl)
 	{
 	}
-
-	OW_FileHandle	m_hdl;
-
-	friend class OW_FileSystem;
-
+	FileHandle	m_hdl;
+	friend class FileSystem;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_PollingManager.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
@@ -40,140 +39,119 @@
 #include "OW_UserInfo.hpp"
 #include "OW_Platform.hpp"
 #include "OW_TimeoutException.hpp"
-
 #include <climits>
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
-	: OW_Thread()
+PollingManager::PollingManager(CIMOMEnvironmentRef env)
+	: Thread()
 	, m_shuttingDown(false)
 	, m_env(env)
 {
-	OW_Int32 maxThreads;
+	Int32 maxThreads;
 	try
 	{
-		maxThreads = env->getConfigItem(OW_ConfigOpts::POLLING_MANAGER_MAX_THREADS_opt, OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
+		maxThreads = env->getConfigItem(ConfigOpts::POLLING_MANAGER_MAX_THREADS_opt, OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
 	}
-	catch (const OW_StringConversionException&)
+	catch (const StringConversionException&)
 	{
-		maxThreads = OW_String(OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
+		maxThreads = String(OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
 	}
 	
-	m_triggerRunnerThreadPool = OW_ThreadPoolRef(new OW_ThreadPool(OW_ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10));
+	m_triggerRunnerThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE, maxThreads, maxThreads * 10));
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PollingManager::~OW_PollingManager()
+PollingManager::~PollingManager()
 {
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class PollingManagerProviderEnvironment : public OW_ProviderEnvironmentIFC
+	class PollingManagerProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
-
-		PollingManagerProviderEnvironment(const OW_UserInfo& acl,
-			OW_CIMOMEnvironmentRef env)
+		PollingManagerProviderEnvironment(const UserInfo& acl,
+			CIMOMEnvironmentRef env)
 			: m_acl(acl)
 			, m_env(env)
 		{}
-
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
+		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
 			return m_env->getCIMOMHandle(m_acl);
 		}
-
-		virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
+		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
 			return m_env->getRepositoryCIMOMHandle();
 		}
-
-		virtual OW_RepositoryIFCRef getRepository() const
+		virtual RepositoryIFCRef getRepository() const
 		{
 			return m_env->getRepository();
 		}
-
-		virtual OW_String getConfigItem(const OW_String& name, const OW_String& defRetVal="") const
+		virtual String getConfigItem(const String& name, const String& defRetVal="") const
 		{
 			return m_env->getConfigItem(name, defRetVal);
 		}
 		
-		virtual OW_LoggerRef getLogger() const
+		virtual LoggerRef getLogger() const
 		{
 			return m_env->getLogger();
 		}
-
-        virtual OW_String getUserName() const
+        virtual String getUserName() const
         {
-            return OW_Platform::getCurrentUserName();
+            return Platform::getCurrentUserName();
         }
-
 	private:
-		OW_UserInfo m_acl;
-		OW_CIMOMEnvironmentRef m_env;
+		UserInfo m_acl;
+		CIMOMEnvironmentRef m_env;
 	};
-
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_UserInfo& acl,
-		OW_CIMOMEnvironmentRef env)
+	ProviderEnvironmentIFCRef createProvEnvRef(const UserInfo& acl,
+		CIMOMEnvironmentRef env)
 	{
-		return OW_ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(
+		return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(
 			acl, env));
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_PollingManager::run()
+Int32
+PollingManager::run()
 {
-	// let OW_CIMOMEnvironment know we're running and ready to go.
+	// let CIMOMEnvironment know we're running and ready to go.
 	m_startedSem->signal();
-
 	bool doInit = true;
-
 	// Get all of the indication trigger providers
-	OW_ProviderManagerRef pm = m_env->getProviderManager();
+	ProviderManagerRef pm = m_env->getProviderManager();
 	
-	OW_PolledProviderIFCRefArray itpra =
-			pm->getPolledProviders(createProvEnvRef(OW_UserInfo(), m_env));
-
-	m_env->logDebug(format("OW_PollingManager found %1 polled providers",
+	PolledProviderIFCRefArray itpra =
+			pm->getPolledProviders(createProvEnvRef(UserInfo(), m_env));
+	m_env->logDebug(format("PollingManager found %1 polled providers",
 		itpra.size()));
-
 	{
 		// Get initial polling interval from all polled providers
-		OW_NonRecursiveMutexLock ml(m_triggerGuard);
-
+		NonRecursiveMutexLock ml(m_triggerGuard);
 		for (size_t i = 0; i < itpra.size(); ++i)
 		{
-			TriggerRunnerRef tr(new TriggerRunner(this, OW_UserInfo(), m_env));
-
+			TriggerRunnerRef tr(new TriggerRunner(this, UserInfo(), m_env));
 			tr->m_pollInterval = itpra[i]->getInitialPollingInterval(
-				createProvEnvRef(OW_UserInfo(), m_env));
-
-			m_env->logDebug(format("OW_PollingManager poll interval for provider"
+				createProvEnvRef(UserInfo(), m_env));
+			m_env->logDebug(format("PollingManager poll interval for provider"
 				" %1: %2", i, tr->m_pollInterval));
-
 			if(!tr->m_pollInterval)
 			{
 				continue;
 			}
-
 			tr->m_itp = itpra[i];
 			m_triggerRunners.append(tr);
 		}
 	}
-
 	{
-		OW_NonRecursiveMutexLock l(m_triggerGuard);
+		NonRecursiveMutexLock l(m_triggerGuard);
 		while (!m_shuttingDown)
 		{
 			bool rightNow;
-			OW_UInt32 sleepTime = calcSleepTime(rightNow, doInit);
+			UInt32 sleepTime = calcSleepTime(rightNow, doInit);
 			doInit = false;
-
 			if(!rightNow)
 			{
 				if (sleepTime == 0)
@@ -185,35 +163,28 @@ OW_PollingManager::run()
 					m_triggerCondition.timedWait(l, sleepTime);
 				}
 			}
-
 			if (m_shuttingDown)
 			{
 				break;
 			}
-
 			processTriggers();
 		}
 	}
-
 	// wait until all the threads exit
-	m_triggerRunnerThreadPool->shutdown(OW_ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
-
+	m_triggerRunnerThreadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 	m_triggerRunners.clear();
-
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_PollingManager::calcSleepTime(bool& rightNow, bool doInit)
+UInt32
+PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 {
 	rightNow = false;
-	OW_DateTime dtm;
+	DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
 	time_t leastTime = LONG_MAX;
 	int checkedCount = 0;
-
 	for(size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
 		if(m_triggerRunners[i]->m_isRunning
@@ -221,7 +192,6 @@ OW_PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 		{
 			continue;
 		}
-
 		if(doInit)
 		{
 			m_triggerRunners[i]->m_nextPoll =
@@ -232,7 +202,6 @@ OW_PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 			rightNow = true;
 			return 0;
 		}
-
 		checkedCount++;
 		time_t diff = m_triggerRunners[i]->m_nextPoll - tm;
 		if(diff < leastTime)
@@ -240,18 +209,15 @@ OW_PollingManager::calcSleepTime(bool& rightNow, bool doInit)
 			leastTime = diff;
 		}
 	}
-
-	return (checkedCount == 0) ? 0 : OW_UInt32(leastTime);
+	return (checkedCount == 0) ? 0 : UInt32(leastTime);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PollingManager::processTriggers()
+PollingManager::processTriggers()
 {
-	OW_DateTime dtm;
+	DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
-
 	for (size_t i = 0; i < m_triggerRunners.size(); i++)
 	{
 		if (m_triggerRunners[i]->m_isRunning)
@@ -264,7 +230,6 @@ OW_PollingManager::processTriggers()
 			m_triggerRunners.remove(i--);
 			continue;
 		}
-
 		if (tm >= m_triggerRunners[i]->m_nextPoll)
 		{
 			m_triggerRunners[i]->m_isRunning = true;
@@ -275,56 +240,46 @@ OW_PollingManager::processTriggers()
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PollingManager::shutdown()
+PollingManager::shutdown()
 {
 	{
-		OW_NonRecursiveMutexLock l(m_triggerGuard);
+		NonRecursiveMutexLock l(m_triggerGuard);
 		m_shuttingDown = true;
 		m_triggerCondition.notifyAll();
 	}
 	// wait until the main thread exits.
 	this->join();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PollingManager::addPolledProvider(const OW_PolledProviderIFCRef& p)
+PollingManager::addPolledProvider(const PolledProviderIFCRef& p)
 {
-	OW_NonRecursiveMutexLock l(m_triggerGuard);
+	NonRecursiveMutexLock l(m_triggerGuard);
 	if (m_shuttingDown)
 		return;
-
-	TriggerRunnerRef tr(new TriggerRunner(this, OW_UserInfo(), m_env));
-
+	TriggerRunnerRef tr(new TriggerRunner(this, UserInfo(), m_env));
 	tr->m_pollInterval = p->getInitialPollingInterval(
-		createProvEnvRef(OW_UserInfo(), m_env));
-
-	m_env->logDebug(format("OW_PollingManager poll interval for provider"
+		createProvEnvRef(UserInfo(), m_env));
+	m_env->logDebug(format("PollingManager poll interval for provider"
 		" %1", tr->m_pollInterval));
-
 	if(!tr->m_pollInterval)
 	{
 		return;
 	}
-
-	OW_DateTime dtm;
+	DateTime dtm;
 	dtm.setToCurrent();
 	time_t tm = dtm.get();
 	tr->m_nextPoll = tm + tr->m_pollInterval;
-
 	tr->m_itp = p;
 	m_triggerRunners.append(tr);
-
     m_triggerCondition.notifyAll();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
-	OW_UserInfo acl, OW_CIMOMEnvironmentRef env)
-	: OW_Runnable()
+PollingManager::TriggerRunner::TriggerRunner(PollingManager* svr,
+	UserInfo acl, CIMOMEnvironmentRef env)
+	: Runnable()
 	, m_itp(0)
 	, m_nextPoll(0)
 	, m_isRunning(false)
@@ -334,22 +289,21 @@ OW_PollingManager::TriggerRunner::TriggerRunner(OW_PollingManager* svr,
 	, m_env(env)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PollingManager::TriggerRunner::run()
+PollingManager::TriggerRunner::run()
 {
-	OW_Int32 nextInterval = 0;
+	Int32 nextInterval = 0;
 	try
 	{
 		nextInterval = m_itp->poll(createProvEnvRef(m_acl, m_env));
 	}
 	catch(std::exception& e)
 	{
-		m_env->logError(OW_Format("Caught Exception while running poll: %1",
+		m_env->logError(Format("Caught Exception while running poll: %1",
 			e.what()));
 	}
-	catch(OW_ThreadCancelledException& e)
+	catch(ThreadCancelledException& e)
 	{
 		throw;
 	}
@@ -357,9 +311,7 @@ OW_PollingManager::TriggerRunner::run()
 	{
 		m_env->logError("Caught Unknown Exception while running poll");
 	}
-
-	OW_NonRecursiveMutexLock l(m_pollMan->m_triggerGuard);
-
+	NonRecursiveMutexLock l(m_pollMan->m_triggerGuard);
 	if(nextInterval == 0 || m_pollInterval == 0) // m_pollInterval == 0 means this poller has been instructed to stop
 	{
 		m_pollInterval = 0;
@@ -371,14 +323,13 @@ OW_PollingManager::TriggerRunner::run()
 		{
 			m_pollInterval = nextInterval;
 		}
-
-		OW_DateTime dtm;
+		DateTime dtm;
 		dtm.setToCurrent();
 		m_nextPoll = dtm.get() + m_pollInterval;
 	}
-
 	m_isRunning = false;
 	m_pollMan->m_triggerCondition.notifyOne();
 }
 
+} // end namespace OpenWBEM
 

@@ -30,21 +30,22 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_CMPI_PROFIDER_IFC_UTILS_HPP_
 #define OW_CMPI_PROFIDER_IFC_UTILS_HPP_
-
 #include "OW_config.h"
-//#include "CMPIExternal.hpp"
 
+namespace OpenWBEM
+{
+
+//#include "CMPIExternal.hpp"
 #if 0
-class OW_CMPIVectorFreer
+class CMPIVectorFreer
 {
 public:
-	OW_CMPIVectorFreer(::Vector v) : m_vector(v)
+	CMPIVectorFreer(::Vector v) : m_vector(v)
 	{
 	}
-	~OW_CMPIVectorFreer()
+	~CMPIVectorFreer()
 	{
 		int n = ::VectorSize(0,m_vector);
 		for (int i=0; i < n; i++)
@@ -56,14 +57,13 @@ public:
 private:
 	::Vector m_vector;
 };
-
-class OW_CMPIHandleFreer
+class CMPIHandleFreer
 {
 public:
-	OW_CMPIHandleFreer(::NPIHandle& h) : m_handle(h)
+	CMPIHandleFreer(::NPIHandle& h) : m_handle(h)
 	{
 	}
-	~OW_CMPIHandleFreer()
+	~CMPIHandleFreer()
 	{
 		if (m_handle.providerError != NULL)
 		{
@@ -75,5 +75,6 @@ private:
 };
 #endif
 
+} // end namespace OpenWBEM
 
 #endif

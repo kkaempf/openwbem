@@ -33,13 +33,15 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
 
-namespace OW_BinarySerialization
+namespace OpenWBEM
 {
 
+namespace BinarySerialization
+{
 //////////////////////////////////////////////////////////////////////////////
 template <typename Handler, typename ReaderFunc>
 static inline void readEnum(std::istream& istrm, Handler& result,
-	const ReaderFunc& read, const OW_Int32 beginsig, const OW_Int32 endsig)
+	const ReaderFunc& read, const Int32 beginsig, const Int32 endsig)
 {
 	verifySignature(istrm, beginsig);
 	bool done = false;
@@ -49,7 +51,7 @@ static inline void readEnum(std::istream& istrm, Handler& result,
 		{
 			result.handle(read(istrm));
 		}
-		catch (const OW_BadCIMSignatureException& e)
+		catch (const BadCIMSignatureException& e)
 		{
 			// read threw because we've read all the objects
 			verifySignature(istrm, endsig);
@@ -57,73 +59,63 @@ static inline void readEnum(std::istream& istrm, Handler& result,
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
+readObjectPathEnum(std::istream& istrm, CIMObjectPathResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &readObjectPath, OW_BINSIG_OPENUM, OW_END_OPENUM);
+	readEnum(istrm, result, &readObjectPath, BINSIG_OPENUM, END_OPENUM);
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
+readClassEnum(std::istream& istrm, CIMClassResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &readClass, OW_BINSIG_CLSENUM, OW_END_CLSENUM);
+	readEnum(istrm, result, &readClass, BINSIG_CLSENUM, END_CLSENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result)
+readInstanceEnum(std::istream& istrm, CIMInstanceResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &readInstance, OW_BINSIG_INSTENUM, OW_END_INSTENUM);
+	readEnum(istrm, result, &readInstance, BINSIG_INSTENUM, END_INSTENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result)
+readQualifierTypeEnum(std::istream& istrm, CIMQualifierTypeResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &readQual, OW_BINSIG_QUALENUM, OW_END_QUALENUM);
+	readEnum(istrm, result, &readQual, BINSIG_QUALENUM, END_QUALENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readStringEnum(std::istream& istrm, OW_StringResultHandlerIFC& result)
+readStringEnum(std::istream& istrm, StringResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &readString, OW_BINSIG_STRINGENUM, OW_END_STRINGENUM);
+	readEnum(istrm, result, &readString, BINSIG_STRINGENUM, END_STRINGENUM);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-writeLen(std::ostream& ostrm, OW_UInt32 len)
+writeLen(std::ostream& ostrm, UInt32 len)
 {
 	// This is ASN.1 length encoding
 	/*
 	 * short len if it's less than 128 - one byte giving the len,
 	 * with bit 8 0.
 	 */
-
 	if ( len <= 127 )
 	{
-		OW_UInt8 length_byte = static_cast<OW_UInt8>(len);
+		UInt8 length_byte = static_cast<UInt8>(len);
 		write(ostrm, &length_byte, 1);
 		return;
 	}
-
 	/*
 	 * long len otherwise - one byte with bit 8 set, giving the
 	 * length of the length, followed by the length itself.
 	 */
-
 	/* find the first non-all-zero byte */
-	OW_UInt8 lenlen;
+	UInt8 lenlen;
 	if (len <= 255)
 	{
 		lenlen = 1;
@@ -140,56 +132,43 @@ writeLen(std::ostream& ostrm, OW_UInt32 len)
 	{
 		lenlen = 4;
 	}
-
-	OW_UInt8 netlenlen = lenlen | 0x80UL;
-
+	UInt8 netlenlen = lenlen | 0x80UL;
 	/* write the length of the length */
 	write(ostrm, &netlenlen, 1);
-
-	OW_UInt8 netlen[sizeof(len)];
+	UInt8 netlen[sizeof(len)];
 	for (int j = 0; j < lenlen; j++)
 	{
-		netlen[(sizeof(len)-1) - j] = static_cast<OW_UInt8>(len & 0xffU);
+		netlen[(sizeof(len)-1) - j] = static_cast<UInt8>(len & 0xffU);
 		len >>= 8;
 	}
-
 	/* write the length itself */
 	write(ostrm, static_cast<void *>(&netlen[sizeof(len)-lenlen]), lenlen);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-readLen(std::istream& istrm, OW_UInt32& len)
+readLen(std::istream& istrm, UInt32& len)
 {
 	// This is ASN.1 length encoding
-	OW_UInt8 lc;
+	UInt8 lc;
 	read(istrm, lc);
-
 	if (lc & 0x80U) 
 	{
-		OW_UInt8 noctets = lc & 0x7fU;
-
+		UInt8 noctets = lc & 0x7fU;
 		if ( noctets > sizeof(len) ) {
-			OW_THROW(OW_IOException, "Failed reading data: length length is too large");
+			OW_THROW(IOException, "Failed reading data: length length is too large");
 		}
-
-		OW_UInt8 netlen[sizeof(len)];
+		UInt8 netlen[sizeof(len)];
 		read(istrm, static_cast<void *>(netlen), noctets);
-
 		len = 0;
 		for(int i = 0; i < noctets; i++ ) {
 			len <<= 8;
 			len |= netlen[i];
 		}
-
 	} else {
 		len = lc;
 	}
 }
-
-
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
@@ -198,32 +177,28 @@ write(std::ostream& ostrm, const void* dataOut,
 {
 	if(!ostrm.write(reinterpret_cast<const char*>(dataOut), dataOutLen))
 	{
-		OW_THROW(OW_IOException, "Failed writing data");
+		OW_THROW(IOException, "Failed writing data");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-verifySignature(std::istream& istrm, OW_UInt8 validSig)
+verifySignature(std::istream& istrm, UInt8 validSig)
 {
-	OW_UInt8 val;
+	UInt8 val;
 	read(istrm, val);
-
 	if(val != validSig)
 	{
-		OW_THROW(OW_BadCIMSignatureException,
-			format("Received invalid signature. Got: %1 Expected: %2", OW_Int32(val),
-				OW_Int32(validSig)).c_str());
+		OW_THROW(BadCIMSignatureException,
+			format("Received invalid signature. Got: %1 Expected: %2", Int32(val),
+				Int32(validSig)).c_str());
 	}
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
 writeStringArray(std::ostream& ostrm,
-	const OW_StringArray* propertyList)
+	const StringArray* propertyList)
 {
 	bool nullPropertyList = (propertyList == 0);
 	writeBool(ostrm, nullPropertyList);
@@ -232,8 +207,6 @@ writeStringArray(std::ostream& ostrm,
 		writeStringArray(ostrm, *propertyList);
 	}
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
@@ -241,9 +214,10 @@ read(std::istream& istrm, void* dataIn, int dataInLen)
 {
 	if(!istrm.read(reinterpret_cast<char*>(dataIn), dataInLen))
 	{
-		OW_THROW(OW_IOException, "Failed reading data");
+		OW_THROW(IOException, "Failed reading data");
 	}
 }
-
 }
+
+} // end namespace OpenWBEM
 

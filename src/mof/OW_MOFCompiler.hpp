@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef MOF_COMPILER_HPP_
 #define MOF_COMPILER_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
@@ -38,22 +36,29 @@
 #include "OW_Reference.hpp"
 #include "OW_MOFGrammar.hpp"
 
+// these 2 need to be at global scope because flex also declares them.
 struct yy_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
-class MofCompiler
+namespace OpenWBEM
+{
+
+namespace MOF
+{
+
+class Compiler
 {
 public:
-	MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh );
-	~MofCompiler();
+	Compiler( Reference<CIMOMHandleIFC> ch, const String& nameSpace, Reference<ParserErrorHandlerIFC> mpeh );
+	~Compiler();
 
-	long compile( const OW_String& filename );
-	long compileString( const OW_String& mof );
+	long compile( const String& filename );
+	long compileString( const String& mof );
+	static String fixParsedString(const String& s);
 
-	static OW_String fixParsedString(const OW_String& s);
-	OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
-	OW_AutoPtr<MOFSpecification> mofSpecification;
-	OW_String basepath;
+	Reference<ParserErrorHandlerIFC> theErrorHandler;
+	AutoPtr<MOFSpecification> mofSpecification;
+	String basepath;
 
 	// This variable is only for convenience for the lexer and parser.
 	// After parsing is complete, it should not be used.  The filename and
@@ -61,20 +66,26 @@ public:
 	lineInfo theLineInfo;
 
 	// Needed by the code to implement includes
-#define MAX_INCLUDE_DEPTH 10
+	enum
+	{
+		E_MAX_INCLUDE_DEPTH = 100
+	};
+
 	struct include_t
 	{
 		YY_BUFFER_STATE yyBufferState;
 		lineInfo theLineInfo;
 	};
 
-	include_t include_stack[MAX_INCLUDE_DEPTH];
+	include_t include_stack[E_MAX_INCLUDE_DEPTH];
 	int include_stack_ptr;
 
 private:
-	OW_Reference<OW_CIMOMHandleIFC> m_ch;
-	OW_String m_nameSpace;
-
+	Reference<CIMOMHandleIFC> m_ch;
+	String m_nameSpace;
 };
+
+} // end namespace MOF
+} // end namespace OpenWBEM
 
 #endif // MOF_COMPILER_HPP_

@@ -29,145 +29,114 @@
 *******************************************************************************/
 #ifndef OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
 #define OW_CONFIGOPTS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #ifndef OW_DEFAULT_HTTP_PORT
 #define OW_DEFAULT_HTTP_PORT "5988"
 #endif
-
 #ifndef OW_DEFAULT_HTTPS_PORT
 #define OW_DEFAULT_HTTPS_PORT "5989"
 #endif
-
 #ifndef OW_DEFAULT_LOG_FILE
 #define OW_DEFAULT_LOG_FILE "syslog"
 #endif
-
 #ifndef OW_DEFAULT_OWLIB_DIR
 #define OW_DEFAULT_OWLIB_DIR OW_DEFAULT_LIB_DIR"/openwbem"
 #endif
-
 #ifndef OW_DEFAULT_IFC_LIBS
 #define OW_DEFAULT_IFC_LIBS OW_DEFAULT_OWLIB_DIR"/provifcs"
 #endif
-
 #ifndef OW_DEFAULT_CIMOM_SERVICES_LOCATION
 #define OW_DEFAULT_CIMOM_SERVICES_LOCATION OW_DEFAULT_OWLIB_DIR"/services"
 #endif
-
 #ifndef OW_DEFAULT_CIMOM_REQHANDLER_LOCATION
 #define OW_DEFAULT_CIMOM_REQHANDLER_LOCATION OW_DEFAULT_OWLIB_DIR"/requesthandlers"
 #endif
-
 #ifndef OW_DEFAULT_CPP_PROVIDER_LOCATION
 #define OW_DEFAULT_CPP_PROVIDER_LOCATION OW_DEFAULT_OWLIB_DIR"/c++providers"
 #endif
-
 #ifndef OW_DEFAULT_NPI_PROVIDER_LOCATION
 #define OW_DEFAULT_NPI_PROVIDER_LOCATION OW_DEFAULT_OWLIB_DIR"/npiproviders"
 #endif
-
 #ifndef OW_DEFAULT_CMPI_PROVIDER_LOCATION
 #define OW_DEFAULT_CMPI_PROVIDER_LOCATION OW_DEFAULT_OWLIB_DIR"/cmpiproviders"
 #endif
-
 #ifndef OW_DEFAULT_PERL_PROVIDER_LOCATION
 #define OW_DEFAULT_PERL_PROVIDER_LOCATION OW_DEFAULT_OWLIB_DIR"/perlproviders"
 #endif
-
 #ifndef OW_DEFAULT_AUTH_MOD
 #define OW_DEFAULT_AUTH_MOD OW_DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
 #endif
+
+namespace OpenWBEM
+{
+
 									
 #ifndef OW_DEFAULT_CONFIG_FILE
 #define OW_DEFAULT_CONFIG_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/openwbem.conf"
 #endif
-
 #ifndef OW_DEFAULT_DIGEST_PASSWD_FILE
 #define OW_DEFAULT_DIGEST_PASSWD_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/digest_auth.passwd"
 #endif
-
 #ifndef OW_DEFAULT_SIMPLE_PASSWD_FILE
 #define OW_DEFAULT_SIMPLE_PASSWD_FILE OW_DEFAULT_SYSCONF_DIR"/openwbem/simple_auth.passwd"
 #endif
-
 #ifndef OW_DEFAULT_DATA_DIR
 #define OW_DEFAULT_DATA_DIR OW_DEFAULT_STATE_DIR"/lib/openwbem"
 #endif
-
 #ifndef OW_DEFAULT_OWLIBEXEC_DIR
 #define OW_DEFAULT_OWLIBEXEC_DIR OW_DEFAULT_LIBEXEC_DIR"/openwbem"
 #endif
-
 #ifndef OW_DEFAULT_ALLOW_ANONYMOUS
 #define OW_DEFAULT_ALLOW_ANONYMOUS "false"
 #endif
-
 #ifndef OW_DEFAULT_MAX_CONNECTIONS
 #define OW_DEFAULT_MAX_CONNECTIONS "30"
 #endif
-
 #ifndef OW_DEFAULT_DISABLE_INDICATIONS
 #define OW_DEFAULT_DISABLE_INDICATIONS "false"
 #endif
-
 #ifndef OW_DEFAULT_WQL_LIB
 #define OW_DEFAULT_WQL_LIB OW_DEFAULT_LIB_DIR"/libowwql.so"
 #endif
-
 #ifndef OW_DEFAULT_ENABLE_DEFLATE
 #define OW_DEFAULT_ENABLE_DEFLATE "true"
 #endif
-
 #ifndef OW_DEFAULT_USE_UDS
 #define OW_DEFAULT_USE_UDS "true"
 #endif
-
 #ifndef OW_DEFAULT_CPPIFC_PROV_TTL
 #define OW_DEFAULT_CPPIFC_PROV_TTL "5"
 #endif
-
 #ifndef OW_DEFAULT_REQ_HANDLER_TTL
 #define OW_DEFAULT_REQ_HANDLER_TTL "5"
 #endif
-
 #ifndef OW_DEFAULT_MAX_CLASS_CACHE_SIZE
 #define OW_DEFAULT_MAX_CLASS_CACHE_SIZE 128
 #endif
-
 #ifndef OW_DEFAULT_MAX_CLASS_CACHE_SIZE_S
 #define OW_DEFAULT_MAX_CLASS_CACHE_SIZE_S "128"
 #endif
-
 #ifndef OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY
 #define OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY "false"
 #endif
-
 #ifndef OW_DEFAULT_SINGLE_THREAD
 #define OW_DEFAULT_SINGLE_THREAD "false"
 #endif
-
 #ifndef OW_DEFAULT_USE_DIGEST
 #define OW_DEFAULT_USE_DIGEST "true"
 #endif
-
 #ifndef OW_DEFAULT_POLLING_MANAGER_MAX_THREADS
 #define OW_DEFAULT_POLLING_MANAGER_MAX_THREADS "256"
 #endif
-
 #ifndef OW_DEFAULT_HTTP_TIMEOUT
 #define OW_DEFAULT_HTTP_TIMEOUT "300"
 #endif
-
 #ifndef OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS
 #define OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS "30"
 #endif
-
-
-namespace OW_ConfigOpts
+namespace ConfigOpts
 {
-	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
+	static const char* const DEBUG_opt = "owcimomd.debugflag";
 	static const char* const CONFIG_FILE_opt = "owcimomd.config_file";
 	static const char* const LOG_LOCATION_opt = "owcimomd.log_location";
 	static const char* const LOG_LEVEL_opt = "owcimomd.log_level";
@@ -185,7 +154,6 @@ namespace OW_ConfigOpts
 	static const char* const DISABLE_INDICATIONS_opt = "owcimomd.disable_indications";
 	static const char* const WQL_LIB_opt = "owcimomd.wql_lib";
 	static const char* const ACL_SUPERUSER_opt = "owcimomd.ACL_superuser";
-
 	// 2.0 additions
 	static const char* const CIMOM_SERVICES_LOCATION_opt = "owcimomd.services_path";
 	static const char* const CIMOM_REQUEST_HANDLER_LOCATION_opt = "owcimomd.request_handler_path";
@@ -209,7 +177,6 @@ namespace OW_ConfigOpts
 	static const char* const CPPIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
 	static const char* const REQ_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
 	static const char* const MAX_CLASS_CACHE_SIZE_opt = "owcimomd.max_class_cache_size";
-
 	// 3.0 additions
 	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
 	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
@@ -220,5 +187,6 @@ namespace OW_ConfigOpts
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

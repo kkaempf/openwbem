@@ -29,24 +29,24 @@
 *******************************************************************************/
 #ifndef OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 #define OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMNULL.hpp"
 #include <iosfwd>
 
-class OW_String;
-class OW_CIMValue;
+namespace OpenWBEM
+{
 
+class String;
+class CIMValue;
 /**
- * The OW_CIMDataType is used to represent the CIM data type of underlying data
- * in other CIM objects, such as OW_CIMValue objects.
+ * The CIMDataType is used to represent the CIM data type of underlying data
+ * in other CIM objects, such as CIMValue objects.
  */
-class OW_CIMDataType : public OW_CIMBase
+class CIMDataType : public CIMBase
 {
 public:
-
 	struct DTData;
 	enum
 	{
@@ -54,7 +54,6 @@ public:
 		SIZE_UNLIMITED,	// indicates array type unlimited
 		SIZE_LIMITED		// array but limited size (NOTSUN)
 	};
-
 	enum Type
 	{
 		CIMNULL			= 0,		// Null type
@@ -78,186 +77,155 @@ public:
 		MAXDATATYPE		= 18,		// Marker for valid checks
 		INVALID			= 99		// Invalid type
 	};
-
 	/**
-	 * Create an OW_CIMDataType
+	 * Create an CIMDataType
 	 */
-	OW_CIMDataType();
-
+	CIMDataType();
 	/**
-	 * Create a NULL OW_CIMDataType
-	 * No operations should be attempted on a NULL OW_CIMDataType.
+	 * Create a NULL CIMDataType
+	 * No operations should be attempted on a NULL CIMDataType.
 	 */
-	explicit OW_CIMDataType(OW_CIMNULL_t);
-
+	explicit CIMDataType(CIMNULL_t);
 	/**
-	 * Create a new OW_CIMDataType object represent the given type.
+	 * Create a new CIMDataType object represent the given type.
 	 * This constructor is for non-array and non-reference types.
 	 * @param type	An integer specifying the data type of this object.
 	 */
-	OW_CIMDataType(Type type);
-
+	CIMDataType(Type type);
 	/**
-	 * Create a new OW_CIMDataType object representing the given type.
+	 * Create a new CIMDataType object representing the given type.
 	 * @param type		An integer specifying the data type of this object.
 	 * @param size		The size of the type if it is an array type.
 	 *	Pass 0 if the size is unlimited.
-	 * @exception OW_CIMException if the type is invalid for this method.
+	 * @exception CIMException if the type is invalid for this method.
 	 */
-	OW_CIMDataType(Type type, OW_Int32 size);
-
+	CIMDataType(Type type, Int32 size);
 	/**
-	 * Create a new OW_CIMDataType object that represents a REFERENCE data type.
+	 * Create a new CIMDataType object that represents a REFERENCE data type.
 	 * @param refClassName	The name of the reference class.
 	 */
-	explicit OW_CIMDataType(const OW_String& refClassName);
-
+	explicit CIMDataType(const String& refClassName);
 	/**
 	 * Copy constructor
-	 * @param arg	The OW_CIMDataType to make a copy of
+	 * @param arg	The CIMDataType to make a copy of
 	 */
-	OW_CIMDataType(const OW_CIMDataType& arg);
+	CIMDataType(const CIMDataType& arg);
 	
 	/**
-	 * Destroy this OW_CIMDataType object.
+	 * Destroy this CIMDataType object.
 	 */
-	~OW_CIMDataType();
-
+	~CIMDataType();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMDataType to assign to this one.
-	 * @return A reference to this OW_CIMDataType object.
+	 * @param arg The CIMDataType to assign to this one.
+	 * @return A reference to this CIMDataType object.
 	 */
-	OW_CIMDataType& operator = (const OW_CIMDataType& arg);
-
+	CIMDataType& operator = (const CIMDataType& arg);
 	/**
-	 * Set this OW_CIMDataType to represent a given OW_CIMValue.
-	 * @param value The OW_CIMValue object to sync this OW_CIMDataType with.
-	 * @return true if this OW_CIMDataType changed during this method call.
-	 * Otherwise false indicates this OW_CIMDataType already represented the
+	 * Set this CIMDataType to represent a given CIMValue.
+	 * @param value The CIMValue object to sync this CIMDataType with.
+	 * @return true if this CIMDataType changed during this method call.
+	 * Otherwise false indicates this CIMDataType already represented the
 	 * given value.
 	 */
-	bool syncWithValue(const OW_CIMValue& value);
-
+	bool syncWithValue(const CIMValue& value);
 	/**
 	 * Set this datatype to an array type
 	 * @param size If 0 or -1 then the array is marked as unlimited in size.
 	 *		Otherwise the size is set at the given size.
 	 * @return true on success. Otherwise false.
 	 */
-	bool setToArrayType(OW_Int32 size);
-
+	bool setToArrayType(Int32 size);
 	/**
 	 * @return true if this data type represents an array type.
 	 */
 	bool isArrayType() const;
-
-
 	/**
 	 * @return true if this data type represents a numeric data type
 	 */
 	bool isNumericType() const;
-
 	/**
 	 * @return true if this data type represents a reference data type.
 	 */
 	bool isReferenceType() const;
-
 	/**
-	 * @return the type of this OW_CIMDataType
+	 * @return the type of this CIMDataType
 	 */
 	Type getType() const;
-
 	/**
-	 * @return the number of elements for this OW_CIMDataType
+	 * @return the number of elements for this CIMDataType
 	 */
-	OW_Int32 getSize() const;
-
+	Int32 getSize() const;
 	/**
 	 * @return the class name for reference if this is a REFERENCE type.
 	 */
-	OW_String getRefClassName() const;
-
+	String getRefClassName() const;
 	/**
-	 * @return true if this OW_CIMDataType is a valid CIM data type
+	 * @return true if this CIMDataType is a valid CIM data type
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const;
 	safe_bool operator!() const;
-
 	/**
-	 * Create an OW_CIMDataType object represented by a given string.
-	 * @param arg	An OW_String that contains a valid name of a CIM data type.
+	 * Create an CIMDataType object represented by a given string.
+	 * @param arg	An String that contains a valid name of a CIM data type.
 	 *		(i.e. "uint8", "sint8", "real32", etc...)
-	 * @return The OW_CIMDataType represented by the given string.
+	 * @return The CIMDataType represented by the given string.
 	 */
-	static OW_CIMDataType getDataType(const OW_String& strType);
-
+	static CIMDataType getDataType(const String& strType);
 	/**
 	 * Determine the int data type associated with a name of a data type.
-	 * @param strType	An OW_String that contains a valid name of a CIM data type.
+	 * @param strType	An String that contains a valid name of a CIM data type.
 	 *		(i.e. "uint8", "sint8", "real32", etc...)
 	 * @return An integer representation of the data type (i.e. UINT8, SINT8,
 	 * REAL32, etc...)
 	 */
-	static Type strToSimpleType(const OW_String& strType);
-
+	static Type strToSimpleType(const String& strType);
 	/**
-	 * Check a given OW_CIMDataType with this one for equality.
-	 * @param arg The OW_CIMDataType to compare with this one.
-	 * @return true if the given OW_CIMDataType is equal to this one.
+	 * Check a given CIMDataType with this one for equality.
+	 * @param arg The CIMDataType to compare with this one.
+	 * @return true if the given CIMDataType is equal to this one.
 	 */
-	bool equals(const OW_CIMDataType& arg) const;
-
+	bool equals(const CIMDataType& arg) const;
 	/**
-	 * Read this OW_CIMDataType from an inputstream.
+	 * Read this CIMDataType from an inputstream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
-	 * Write this OW_CIMDataType to an output stream.
+	 * Write this CIMDataType to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return The string representation of this OW_CIMDataType object.
+	 * @return The string representation of this CIMDataType object.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return The MOF representation of this OW_CIMDataType as an OW_String.
+	 * @return The MOF representation of this CIMDataType as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
 	 * Determine if a given data type is numeric.
 	 * @param type The data type to check
 	 * @return true if 'type' is a numeric data type.
 	 */
 	static bool isNumericType(Type type);
-
 private:
-
-	OW_COWReference<DTData> m_pdata;
-
-	friend bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y);
+	COWReference<DTData> m_pdata;
+	friend bool operator<(const CIMDataType& x, const CIMDataType& y);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

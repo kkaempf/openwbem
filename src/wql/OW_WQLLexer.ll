@@ -40,7 +40,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_WQLAst.hpp"
-#include "OW_WQLParser.h"
 #include "OW_WQLImpl.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Format.hpp"
@@ -49,6 +48,10 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
+
+// this has to be before OW_WQLParser.h is included.
+using namespace OpenWBEM;
+#include "OW_WQLParser.h"
 
 static const char *parseCh;
 
@@ -71,7 +74,7 @@ static int myinput(char* buf, int max);
 
 /* Avoid exit() on fatal scanner errors (a bit ugly -- see yy_fatal_error) */
 #define YY_FATAL_ERROR(msg) \
-		OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, \
+		OW_THROWCIMMSG( CIMException::INVALID_QUERY, \
 			format("Fatal Parser Error: %1", msg).c_str())
 
 #else /* !FLEX_SCANNER */
@@ -88,11 +91,11 @@ extern YYSTYPE yylval;
 
 static int		xcdepth = 0;	/* depth of nesting in slash-star comments */
 
-static OW_StringBuffer strbuffer;
+static StringBuffer strbuffer;
 
 #define RETURN_VAL(x) yylval.pstring = 0; return(x);
-#define RETURN_STR(x) yylval.pstring = new OW_String(yytext); return(x);
-#define RETURN_BUFF_VAL(x) yylval.pstring = new OW_String(strbuffer.c_str()); return(x);
+#define RETURN_STR(x) yylval.pstring = new String(yytext); return(x);
+#define RETURN_BUFF_VAL(x) yylval.pstring = new String(strbuffer.c_str()); return(x);
 
 %}
 /*
@@ -264,7 +267,7 @@ other			.
 
 <xc>{xcinside}			{ /* ignore */ }
 
-<xc><<EOF>>			{ OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Unterminated /* comment"); }
+<xc><<EOF>>			{ OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Unterminated /* comment"); }
 
 {xbitstart}			{
 					BEGIN(xbit);
@@ -276,7 +279,7 @@ other			.
 					BEGIN(INITIAL);
 					const char* buf = strbuffer.c_str();
 					if (buf[strspn(buf, "01") + 1] != '\0')
-						OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, format( "invalid bit string input: '%1'",
+						OW_THROWCIMMSG(CIMException::INVALID_QUERY, format( "invalid bit string input: '%1'",
 							 buf).c_str());
 					RETURN_BUFF_VAL(BITCONST);
 				}
@@ -289,7 +292,7 @@ other			.
 <xh>{xhcat} |
 <xbit>{xbitcat}			{ /* ignore */ }
 
-<xbit><<EOF>>			{ OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, "unterminated bit string literal" ); }
+<xbit><<EOF>>			{ OW_THROWCIMMSG( CIMException::INVALID_QUERY, "unterminated bit string literal" ); }
 
 {xhstart}			{
 					BEGIN(xh);
@@ -304,12 +307,12 @@ other			.
 					const char* literalbuf = strbuffer.c_str();
 					val = strtol(literalbuf, &endptr, 16);
 					if (*endptr != '\0' || errno == ERANGE)
-						OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, format( "Bad hexadecimal integer input '%1'",
+						OW_THROWCIMMSG( CIMException::INVALID_QUERY, format( "Bad hexadecimal integer input '%1'",
 							 literalbuf).c_str() );
 					RETURN_BUFF_VAL( HEXCONST );
 				}
 				
-<xh><<EOF>>			{ OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, "Unterminated hexadecimal integer"); }
+<xh><<EOF>>			{ OW_THROWCIMMSG( CIMException::INVALID_QUERY, "Unterminated hexadecimal integer"); }
 
 {xqstart}			{
 					BEGIN(xq);
@@ -329,7 +332,7 @@ other			.
 				
 <xq>{xqcat}			{ /* ignore */ }
 
-<xq><<EOF>>			{ OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, "Unterminated quoted string"); }
+<xq><<EOF>>			{ OW_THROWCIMMSG( CIMException::INVALID_QUERY, "Unterminated quoted string"); }
 
 
 {xdstart}			{
@@ -340,7 +343,7 @@ other			.
 <xd>{xdstop}			{
 					BEGIN(INITIAL);
 //					if (strbuffer.length() == 0)
-//						OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, "zero-length delimited identifier");
+//						OW_THROWCIMMSG( CIMException::INVALID_QUERY, "zero-length delimited identifier");
 					RETURN_BUFF_VAL(SCONST);
 				}
 				
@@ -352,7 +355,7 @@ other			.
 					strbuffer.append(yytext, yyleng);
 				}
 				
-<xd><<EOF>>			{ OW_THROWCIMMSG( OW_CIMException::INVALID_QUERY, "Unterminated quoted identifier"); }
+<xd><<EOF>>			{ OW_THROWCIMMSG( CIMException::INVALID_QUERY, "Unterminated quoted identifier"); }
 
 
 "," { RETURN_VAL(COMMA); }
@@ -511,7 +514,7 @@ yywrap(void)
 	called by postgres before any actual parsing is done
 */
 void
-OW_WQLscanner_init(void)
+WQLscanner_init(void)
 {
 	/* it's important to set this to NULL
 	   because input()/myinput() checks the non-nullness of parseCh
@@ -533,7 +536,7 @@ int
 input()
 {
 	if (parseCh == NULL)
-		parseCh = OW_WQLParser::parserInput;
+		parseCh = WQLParser::parserInput;
 	if (*parseCh == '\0')
 		return(0);
 	else
@@ -561,7 +564,7 @@ myinput(char* buf, int max)
 	int len;
 
 	if (parseCh == NULL)
-		parseCh = OW_WQLImpl::parserInput;
+		parseCh = WQLImpl::parserInput;
 	len = strlen(parseCh);		/* remaining data available */
 	/* Note: this code used to think that flex wants a null-terminated
 	 * string.  It does NOT, and returning 1 less character than it asks

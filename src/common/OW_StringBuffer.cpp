@@ -27,184 +27,166 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMDateTime.hpp"
 #include "OW_Char16.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMDateTime.hpp"
-
 #include <cstring>
 #include <cstdio>
 #include <iostream>
 #include <algorithm> // for std::swap
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer::OW_StringBuffer(size_t allocSize) :
+StringBuffer::StringBuffer(size_t allocSize) :
 	m_len(0),
-	m_allocated(allocSize > 0 ? allocSize : DEFAULT_ALLOCATION_UNIT),
+	m_allocated(allocSize > 0 ? allocSize : OW_DEFAULT_ALLOCATION_UNIT),
 	m_bfr(new char[m_allocated])
 {
 	m_bfr[0] = 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer::OW_StringBuffer(const char* arg) :
+StringBuffer::StringBuffer(const char* arg) :
 	m_len(strlen(arg)),
-	m_allocated(m_len + DEFAULT_ALLOCATION_UNIT),
+	m_allocated(m_len + OW_DEFAULT_ALLOCATION_UNIT),
 	m_bfr(new char[m_allocated])
 {
 	::strcpy(m_bfr, arg);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer::OW_StringBuffer(const OW_String& arg) :
+StringBuffer::StringBuffer(const String& arg) :
 	m_len(arg.length()),
-	m_allocated(m_len + DEFAULT_ALLOCATION_UNIT),
+	m_allocated(m_len + OW_DEFAULT_ALLOCATION_UNIT),
 	m_bfr(new char[m_allocated])
 {
 	::strcpy(m_bfr, arg.c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer::OW_StringBuffer(const OW_StringBuffer& arg) :
+StringBuffer::StringBuffer(const StringBuffer& arg) :
 	m_len(arg.m_len), m_allocated(arg.m_allocated),
 	m_bfr(new char[arg.m_allocated])
 {
 	::memmove(m_bfr, arg.m_bfr, arg.m_len + 1);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator= (const OW_String& arg)
+StringBuffer&
+StringBuffer::operator= (const String& arg)
 {
-	OW_StringBuffer(arg).swap(*this);
+	StringBuffer(arg).swap(*this);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator= (const char* str)
+StringBuffer&
+StringBuffer::operator= (const char* str)
 {
-	OW_StringBuffer(str).swap(*this);
+	StringBuffer(str).swap(*this);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator =(OW_StringBuffer arg)
+StringBuffer&
+StringBuffer::operator =(StringBuffer arg)
 {
 	arg.swap(*this);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_StringBuffer::swap(OW_StringBuffer& x)
+StringBuffer::swap(StringBuffer& x)
 {
 	std::swap(m_len, x.m_len);
 	std::swap(m_allocated, x.m_allocated);
 	std::swap(m_bfr, x.m_bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_StringBuffer::reset()
+StringBuffer::reset()
 {
 	m_len = 0;
 	m_bfr[0] = '\0';
 }
-
 //////////////////////////////////////////////////////////////////////////////
 char
-OW_StringBuffer::operator[] (size_t ndx) const
+StringBuffer::operator[] (size_t ndx) const
 {
 	return (ndx > m_len) ? 0 : m_bfr[ndx];
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // This operator must write "TRUE"/"FALSE" to support the CIMValue toXML
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Bool v)
+StringBuffer&
+StringBuffer::operator += (Bool v)
 {
 	return append(v.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (const OW_CIMDateTime& arg)
+StringBuffer&
+StringBuffer::operator += (const CIMDateTime& arg)
 {
 	return append(arg.toString());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (const OW_CIMObjectPath& arg)
+StringBuffer&
+StringBuffer::operator += (const CIMObjectPath& arg)
 {
 	return append(arg.toString());
 }
-
 #if defined(OW_WIN32)
 #define snprintf _snprintf // stupid windoze...
 #endif
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_UInt8 v)
+StringBuffer&
+StringBuffer::operator += (UInt8 v)
 {
 	char bfr[6];
-	::snprintf(bfr, sizeof(bfr), "%u", OW_UInt32(v));
+	::snprintf(bfr, sizeof(bfr), "%u", UInt32(v));
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Int8 v)
+StringBuffer&
+StringBuffer::operator += (Int8 v)
 {
 	char bfr[6];
-	::snprintf(bfr, sizeof(bfr), "%d", OW_Int32(v));
+	::snprintf(bfr, sizeof(bfr), "%d", Int32(v));
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_UInt16 v)
+StringBuffer&
+StringBuffer::operator += (UInt16 v)
 {
 	char bfr[16];
-	::snprintf(bfr, sizeof(bfr), "%u", OW_UInt32(v));
+	::snprintf(bfr, sizeof(bfr), "%u", UInt32(v));
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Int16 v)
+StringBuffer&
+StringBuffer::operator += (Int16 v)
 {
 	char bfr[16];
-	::snprintf(bfr, sizeof(bfr), "%d", OW_Int32(v));
+	::snprintf(bfr, sizeof(bfr), "%d", Int32(v));
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_UInt32 v)
+StringBuffer&
+StringBuffer::operator += (UInt32 v)
 {
 	char bfr[16];
 	::snprintf(bfr, sizeof(bfr), "%u", v);
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Int32 v)
+StringBuffer&
+StringBuffer::operator += (Int32 v)
 {
 	char bfr[16];
 	::snprintf(bfr, sizeof(bfr), "%d", v);
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_UInt64 v)
+StringBuffer&
+StringBuffer::operator += (UInt64 v)
 {
 	char bfr[28];
 #if OW_SIZEOF_LONG_INT == 8
@@ -214,10 +196,9 @@ OW_StringBuffer::operator += (OW_UInt64 v)
 #endif
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Int64 v)
+StringBuffer&
+StringBuffer::operator += (Int64 v)
 {
 	char bfr[28];
 #if OW_SIZEOF_LONG_INT == 8
@@ -227,32 +208,28 @@ OW_StringBuffer::operator += (OW_Int64 v)
 #endif
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Real32 v)
+StringBuffer&
+StringBuffer::operator += (Real32 v)
 {
 	char bfr[32];
 	::snprintf(bfr, sizeof(bfr), "%f", v);
 	return append(bfr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::operator += (OW_Real64 v)
+StringBuffer&
+StringBuffer::operator += (Real64 v)
 {
 	char bfr[32];
 	::snprintf(bfr, sizeof(bfr), "%f", v);
 	return append(bfr);
 }
-
 #if defined(OW_WIN32)
 #undef snprintf
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::append(const char* str, const size_t len)
+StringBuffer&
+StringBuffer::append(const char* str, const size_t len)
 {
 	checkAvail(len+1);
 	::strncpy(m_bfr+m_len, str, len);
@@ -260,18 +237,18 @@ OW_StringBuffer::append(const char* str, const size_t len)
     m_bfr[m_len] = '\0';
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_StringBuffer::equals(const char* arg) const
+StringBuffer::equals(const char* arg) const
 {
 	return strcmp(arg, m_bfr) == 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b)
+std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b)
 {
 	ostr << b.c_str();
 	return ostr;
 }
+
+} // end namespace OpenWBEM
 

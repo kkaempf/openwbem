@@ -29,22 +29,21 @@
 *******************************************************************************/
 #ifndef OW_CIM_LISTENER_CALLBACK_HPP_
 #define OW_CIM_LISTENER_CALLBACK_HPP_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 
-class OW_CIMInstance;
-class OW_String;
+namespace OpenWBEM
+{
 
+class CIMInstance;
+class String;
 /**
  * An abstract base class for CIM Listener callbacks.
  */
-
-class OW_CIMListenerCallback
+class CIMListenerCallback
 {
 public:
-	virtual ~OW_CIMListenerCallback();
-
+	virtual ~CIMListenerCallback();
 	/**
 	 * This gets called when the CIM Listener receives an indication.
 	 * @param ci The CIM Instance representing the indication
@@ -53,11 +52,10 @@ public:
 	 * 	listerners on a single http server.  This lets you know which
 	 * 	one was triggered.
 	 */
-	void indicationOccurred( OW_CIMInstance& ci, const OW_String& listenerPath )
+	void indicationOccurred( CIMInstance& ci, const String& listenerPath )
 	{
 		doIndicationOccurred( ci, listenerPath );
 	}
-
 protected:
 	/**
 	 * This gets called when the CIM Listener receives an indication.
@@ -67,10 +65,11 @@ protected:
 	 * 	listerners on a single http server.  This lets you know which
 	 * 	one was triggered.
 	 */
-	virtual void doIndicationOccurred( OW_CIMInstance& ci,
-		const OW_String& listenerPath ) = 0;
+	virtual void doIndicationOccurred( CIMInstance& ci,
+		const String& listenerPath ) = 0;
 };
+typedef Reference<CIMListenerCallback> CIMListenerCallbackRef;
 
-typedef OW_Reference<OW_CIMListenerCallback> OW_CIMListenerCallbackRef;
+} // end namespace OpenWBEM
 
 #endif

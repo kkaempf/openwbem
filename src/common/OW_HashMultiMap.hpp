@@ -27,47 +27,42 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HASH_MULTI_MAP_HPP_INCLUDE_GUARD_
 #define OW_HASH_MULTI_MAP_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #ifdef OW_HAVE_HASH_MAP
 	#include <hash_map>
 	#define OW_HASH_MAP_NS std
-	#define OW_HashMultiMap std::hash_multimap
+	#define HashMultiMap std::hash_multimap
 #elif OW_HAVE_EXT_HASH_MAP
 	#include <ext/hash_map>
 	#define OW_HASH_MAP_NS __gnu_cxx
-	#define OW_HashMultiMap __gnu_cxx::hash_multimap
+	#define HashMultiMap __gnu_cxx::hash_multimap
 #else
 	// TODO: Write a real hash multi map
 	#include <multimap>
 	#define OW_HASH_MAP_NS std
-	#define OW_HashMultiMap multimap
+	#define HashMultiMap multimap
 #endif
 
 #ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_
 #define OW_HASH_SPECIALIZED_INCLUDE_GUARD_
 #if defined(OW_HAVE_HASH_MAP) || defined(OW_HAVE_EXT_HASH_MAP)
 #include "OW_String.hpp"
+
 // need to specialize hash
 namespace OW_HASH_MAP_NS
 {
-template<> struct hash<OW_String>
+template<> struct hash<OpenWBEM::String>
 {
-	size_t operator()(const OW_String& s) const
+	size_t operator()(const OpenWBEM::String& s) const
 	{
 		return hash<const char*>()(s.c_str());
 	}
 };
 }
-#endif
-#endif
 
+#endif
+#endif
 #undef OW_HASH_MAP_NS
-
 #endif
-
-

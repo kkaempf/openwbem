@@ -33,6 +33,8 @@
 #include "OW_Base64TestCases.hpp"
 #include "OW_HTTPUtils.hpp"
 
+using namespace OpenWBEM;
+
 void OW_Base64TestCases::setUp()
 {
 }
@@ -43,14 +45,14 @@ void OW_Base64TestCases::tearDown()
 
 void OW_Base64TestCases::testSomething()
 {
-	OW_String info("Aladdin:open sesame");
-	OW_String encoded = OW_HTTPUtils::base64Encode(info);
+	String info("Aladdin:open sesame");
+	String encoded = HTTPUtils::base64Encode(info);
 	unitAssert(encoded.equals("QWxhZGRpbjpvcGVuIHNlc2FtZQ=="));
-	unitAssert(OW_HTTPUtils::base64Decode(encoded).equals(info));
+	unitAssert(HTTPUtils::base64Decode(encoded).equals(info));
 	encoded = "Og==";
-	info = OW_HTTPUtils::base64Decode(encoded);
+	info = HTTPUtils::base64Decode(encoded);
 	unitAssert(info.equals(":"));
-	unitAssert(OW_HTTPUtils::base64Encode(info).equals(encoded));
+	unitAssert(HTTPUtils::base64Encode(info).equals(encoded));
 }
 
 Test* OW_Base64TestCases::suite()

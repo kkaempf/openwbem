@@ -27,72 +27,60 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #ifndef OW_HTTPLENLIMITSTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPLENLIMITSTREAM_HPP_INCLUDE_GUARD_
-
 #define HTTPLL_STREAM_BUF_SIZE 256
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 
+namespace OpenWBEM
+{
 
-
-class OW_HTTPLengthLimitStreamBuffer : public OW_BaseStreamBuffer
+class HTTPLengthLimitStreamBuffer : public BaseStreamBuffer
 {
 public:
-	OW_HTTPLengthLimitStreamBuffer(std::istream& istr, OW_Int64 length);
-	virtual ~OW_HTTPLengthLimitStreamBuffer();
-
+	HTTPLengthLimitStreamBuffer(std::istream& istr, Int64 length);
+	virtual ~HTTPLengthLimitStreamBuffer();
 	/**
 	 * sets the Len to a new value,
 	 * sets m_pos to zero, and m_isEnd to false
 	 */
-	void resetLen(OW_Int64 len);
-
+	void resetLen(Int64 len);
 protected:
 	virtual int buffer_from_device(char* c, int n);
-
 private:
 	std::istream& m_istr;
 	
 	// holds the content length.
-	OW_Int64 m_length;
+	Int64 m_length;
 	// keeps track of how much we've read.
-	OW_Int64 m_pos;
-
+	Int64 m_pos;
 	// keeps track if we are at end of length.
 	bool m_isEnd;
-
 	// prohibit copying and assigning
 	// NO IMPLEMENTATION
-	OW_HTTPLengthLimitStreamBuffer(const OW_HTTPLengthLimitStreamBuffer& arg);
-	OW_HTTPLengthLimitStreamBuffer& operator=(
-			const OW_HTTPLengthLimitStreamBuffer& arg);
-
+	HTTPLengthLimitStreamBuffer(const HTTPLengthLimitStreamBuffer& arg);
+	HTTPLengthLimitStreamBuffer& operator=(
+			const HTTPLengthLimitStreamBuffer& arg);
 };
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPLenLimitIStreamBase
+class HTTPLenLimitIStreamBase
 {
 public:
-	OW_HTTPLenLimitIStreamBase(std::istream& istr, OW_Int64 length)
+	HTTPLenLimitIStreamBase(std::istream& istr, Int64 length)
 		: m_strbuf(istr, length) {}
-	OW_HTTPLengthLimitStreamBuffer m_strbuf;
+	HTTPLengthLimitStreamBuffer m_strbuf;
 };
-
-
 //////////////////////////////////////////////////////////////////////////////
-class OW_HTTPLenLimitIStream : private OW_HTTPLenLimitIStreamBase,
-	public OW_CIMProtocolIStreamIFC
+class HTTPLenLimitIStream : private HTTPLenLimitIStreamBase,
+	public CIMProtocolIStreamIFC
 {
 public:
 	/**
@@ -102,29 +90,26 @@ public:
 	 * @param istr the original istream
 	 * @param len the number of bytes to read before setting EOF.
 	 */
-	OW_HTTPLenLimitIStream(std::istream& istr, OW_Int64 len);
-
+	HTTPLenLimitIStream(std::istream& istr, Int64 len);
 	/**
 	 * Get the original istream.
 	 * @return the original istream
 	 */
 	std::istream& getInputStreamOrig() const { return m_istr; }
-
 	/**
 	 * Clear the EOF bit, and set the new length to len
 	 * @param len the new length to read before (re)setting EOF
 	 */
-	void resetLen(OW_Int64 len);
-
+	void resetLen(Int64 len);
 private:
-
-
 	std::istream& m_istr;
 	
 	// don't allow copying and assigning.
 	// NO IMPLEMENTATION
-	OW_HTTPLenLimitIStream(const OW_HTTPLenLimitIStream& arg);
-	OW_HTTPLenLimitIStream& operator=(const OW_HTTPLenLimitIStream& arg);
+	HTTPLenLimitIStream(const HTTPLenLimitIStream& arg);
+	HTTPLenLimitIStream& operator=(const HTTPLenLimitIStream& arg);
 };
+
+} // end namespace OpenWBEM
 
 #endif

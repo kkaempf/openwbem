@@ -36,6 +36,8 @@
 #include "OW_Semaphore.hpp"
 #include "OW_TimeoutException.hpp"
 
+using namespace OpenWBEM;
+
 void OW_RWLockerTestCases::setUp()
 {
 }
@@ -46,7 +48,7 @@ void OW_RWLockerTestCases::tearDown()
 
 void OW_RWLockerTestCases::testDeadlock()
 {
-	OW_RWLocker locker;
+	RWLocker locker;
 	locker.getReadLock(100);
 	try
 	{
@@ -54,7 +56,7 @@ void OW_RWLockerTestCases::testDeadlock()
 		locker.getWriteLock(100);
 		unitAssert(0);
 	}
-	catch (const OW_DeadlockException& e)
+	catch (const DeadlockException& e)
 	{
 	}
 	locker.releaseReadLock();
@@ -66,46 +68,46 @@ void OW_RWLockerTestCases::testDeadlock()
 		locker.getReadLock(100);
 		unitAssert(0);
 	}
-	catch (const OW_DeadlockException& e)
+	catch (const DeadlockException& e)
 	{
 	}
 
 	locker.releaseWriteLock();
 }
 
-class testThread : public OW_Thread
+class testThread : public Thread
 {
 public:
-	testThread(OW_RWLocker* locker, OW_Semaphore* sem)
-		: OW_Thread()
+	testThread(RWLocker* locker, Semaphore* sem)
+		: Thread()
 		, m_locker(locker)
 		, m_sem(sem)
 	{
 	}
 
 protected:
-	virtual OW_Int32 run() 
+	virtual Int32 run() 
 	{
 		m_locker->getReadLock(0);
 		m_sem->signal();
-		OW_Thread::sleep(10);
+		Thread::sleep(10);
 		m_locker->releaseReadLock();
 
 		m_locker->getWriteLock(0);
 		m_sem->signal();
-		OW_Thread::sleep(10);
+		Thread::sleep(10);
 		m_locker->releaseWriteLock();
 		return 0;
 	}
 
-	OW_RWLocker* m_locker;
-	OW_Semaphore* m_sem;
+	RWLocker* m_locker;
+	Semaphore* m_sem;
 };
 
 void OW_RWLockerTestCases::testTimeout()
 {
-	OW_RWLocker locker;
-	OW_Semaphore sem;
+	RWLocker locker;
+	Semaphore sem;
 	testThread t1(&locker, &sem);
 	t1.start();
 	sem.wait(); // wait for the thread to start. It's already got the read lock, and will keep it for 10 ms.
@@ -116,7 +118,7 @@ void OW_RWLockerTestCases::testTimeout()
 		locker.getWriteLock(0,1);
 		unitAssert(0);
 	}
-	catch (const OW_TimeoutException& e)
+	catch (const TimeoutException& e)
 	{
 	}
 
@@ -128,7 +130,7 @@ void OW_RWLockerTestCases::testTimeout()
 		locker.getReadLock(0,1);
 		unitAssert(0);
 	}
-	catch (const OW_TimeoutException& e)
+	catch (const TimeoutException& e)
 	{
 	}
 

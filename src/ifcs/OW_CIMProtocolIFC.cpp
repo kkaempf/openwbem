@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMProtocolIFC::~OW_CIMProtocolIFC() 
+CIMProtocolIFC::~CIMProtocolIFC() 
 {
 }
+
+} // end namespace OpenWBEM
 

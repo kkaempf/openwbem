@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_ServerSocketImpl.hpp
  * @author	Jon M. Carey
@@ -37,7 +36,6 @@
  */
 #ifndef OW_INETSERVERSOCKETIMPL_HPP_INCLUDE_GUARD_
 #define OW_INETSERVERSOCKETIMPL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Socket.hpp"
@@ -46,44 +44,41 @@
 #include "OW_File.hpp"
 #include "OW_SocketFlags.hpp"
 
-class OW_ServerSocketImpl : public OW_SelectableIFC
+namespace OpenWBEM
+{
+
+class ServerSocketImpl : public SelectableIFC
 {
 public:
-	OW_ServerSocketImpl(OW_SocketFlags::ESSLFlag isSSL);
-	~OW_ServerSocketImpl();
-	OW_String addrString();
-	OW_Socket accept(int timeoutSecs=-1);
-
+	ServerSocketImpl(SocketFlags::ESSLFlag isSSL);
+	~ServerSocketImpl();
+	String addrString();
+	Socket accept(int timeoutSecs=-1);
 	void close();
 //	unsigned long getLocalAddressRaw() { return m_localAddress; }
 //	unsigned short getLocalPortRaw() { return m_localPort; }
-
-	OW_SocketAddress getLocalAddress() { return m_localAddress; }
-	OW_SocketHandle_t getfd() const { return m_sockfd; }
-	void doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL, int queueSize=10, 
-		OW_SocketFlags::EAllInterfacesFlag allInterfaces = OW_SocketFlags::E_NOT_ALL_INTERFACES, 
-		OW_SocketFlags::EReuseAddrFlag reuseAddr = OW_SocketFlags::E_REUSE_ADDR);
-	void doListen(const OW_String& filename, int queueSize=10, 
+	SocketAddress getLocalAddress() { return m_localAddress; }
+	SocketHandle_t getfd() const { return m_sockfd; }
+	void doListen(UInt16 port, SocketFlags::ESSLFlag isSSL, int queueSize=10, 
+		SocketFlags::EAllInterfacesFlag allInterfaces = SocketFlags::E_NOT_ALL_INTERFACES, 
+		SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR);
+	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr = true);
-	bool waitForIO(int fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionFlag forInput);
-	OW_Select_t getSelectObj() const;
-
+	bool waitForIO(int fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput);
+	Select_t getSelectObj() const;
 private:
-
 	void fillAddrParms();
-
-	OW_SocketHandle_t m_sockfd;
+	SocketHandle_t m_sockfd;
 //	unsigned long m_localAddress;
 //	unsigned short m_localPort;
-	OW_SocketAddress m_localAddress;
+	SocketAddress m_localAddress;
 	bool m_isActive;
-
-	OW_ServerSocketImpl(const OW_ServerSocketImpl& arg);
-	OW_ServerSocketImpl operator=(const OW_ServerSocketImpl& arg);
-
-	OW_SocketFlags::ESSLFlag m_isSSL;
-	OW_File m_udsFile;
+	ServerSocketImpl(const ServerSocketImpl& arg);
+	ServerSocketImpl operator=(const ServerSocketImpl& arg);
+	SocketFlags::ESSLFlag m_isSSL;
+	File m_udsFile;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

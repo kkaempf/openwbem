@@ -29,26 +29,26 @@
 *******************************************************************************/
 #ifndef OW_SOCKETSTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_SOCKETSTREAMBUFFER_HPP_INCLUDE_GUARD_
-
 #define SOCK_STREAM_BUF_SIZE 4096
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_IOIFCStreamBuffer.hpp"
 
-class OW_SocketBaseImpl;
+namespace OpenWBEM
+{
 
-class OW_SocketStreamBuffer : public OW_IOIFCStreamBuffer
+class SocketBaseImpl;
+class SocketStreamBuffer : public IOIFCStreamBuffer
 {
 public:
-	OW_SocketStreamBuffer(OW_SocketBaseImpl* sock);
-
+	SocketStreamBuffer(SocketBaseImpl* sock);
 private:
-
 	// prohibit copying and assigning
 	// NO IMPLEMENTATION
-	OW_SocketStreamBuffer(const OW_SocketStreamBuffer& arg);
-	OW_SocketStreamBuffer& operator=(const OW_SocketStreamBuffer& arg);
+	SocketStreamBuffer(const SocketStreamBuffer& arg);
+	SocketStreamBuffer& operator=(const SocketStreamBuffer& arg);
 };
+
+} // end namespace OpenWBEM
 
 #endif 

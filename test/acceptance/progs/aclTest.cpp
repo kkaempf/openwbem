@@ -53,40 +53,41 @@
 
 #include <iostream>
 
-#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
+#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::endl;
 using std::cout;
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 void usage(const char* name)
 {
 	cerr << "Usage: " << name << " <url> <mode = 0,r,w,rw> [dump file extension]" << endl;
 }
 
-OW_String mode;
-OW_CIMClass bionicClass(OW_CIMNULL);
-OW_CIMInstance bionicInstance(OW_CIMNULL);
+String mode;
+CIMClass bionicClass(CIMNULL);
+CIMInstance bionicInstance(CIMNULL);
 
-void createClass(OW_CIMOMHandleIFC& hdl)
+void createClass(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing createClass() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath cqtPath("Key", "/root/acltest");
-		OW_CIMQualifierType cqt("Key");
-		cqt.setDataType(OW_CIMDataType::BOOLEAN);
-		cqt.setDefaultValue(OW_CIMValue(OW_Bool(false)));
-		OW_CIMQualifier cimQualifierKey(cqt);
+		CIMObjectPath cqtPath("Key", "/root/acltest");
+		CIMQualifierType cqt("Key");
+		cqt.setDataType(CIMDataType::BOOLEAN);
+		cqt.setDefaultValue(CIMValue(Bool(false)));
+		CIMQualifier cimQualifierKey(cqt);
 
-		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
+		cimQualifierKey.setValue(CIMValue(Bool(true)));
 
-		OW_CIMClass cimClass;
+		CIMClass cimClass;
 		cimClass.setName("EXP_BionicComputerSystem2");
 		cimClass.setSuperClass("CIM_ComputerSystem");
 
-		OW_Array<OW_String> zargs;
+		Array<String> zargs;
 		zargs.push_back("CreationClassName");
 		zargs.push_back("string");
 		zargs.push_back("true");
@@ -97,33 +98,33 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 		zargs.push_back("boolean");
 		zargs.push_back("false");
 
-		OW_String name;
-		OW_String type;
-		OW_String isKey;
+		String name;
+		String type;
+		String isKey;
 
 		for (size_t i = 0; i < zargs.size(); i += 3)
 		{
 			name = zargs[i];
 			type = zargs[i + 1];
 			isKey = zargs[i + 2];
-			OW_CIMProperty cimProp;
+			CIMProperty cimProp;
 			if (type.equals("string"))
 			{
-				cimProp.setDataType(OW_CIMDataType::STRING);
+				cimProp.setDataType(CIMDataType::STRING);
 			}
 			else if (type.equals("uint16"))
 			{
-				cimProp.setDataType(OW_CIMDataType::UINT16);
+				cimProp.setDataType(CIMDataType::UINT16);
 			}
 			else if (type.equals("boolean"))
 			{
-				cimProp.setDataType(OW_CIMDataType::BOOLEAN);
+				cimProp.setDataType(CIMDataType::BOOLEAN);
 			}
 			else if (type.equals("datatime"))
 			{
-				cimProp.setDataType(OW_CIMDataType::DATETIME);
+				cimProp.setDataType(CIMDataType::DATETIME);
 			}
-			else cimProp.setDataType(OW_CIMDataType::STRING);
+			else cimProp.setDataType(CIMDataType::STRING);
 
 			cimProp.setName(name);
 			if (isKey.equals("true"))
@@ -138,59 +139,59 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void enumClassNames(OW_CIMOMHandleIFC& hdl)
+void enumClassNames(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumClassNames() *******\n" << endl;
 	try
 	{
-		OW_StringEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", E_DEEP);
+		StringEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void enumClasses(OW_CIMOMHandleIFC& hdl)
+void enumClasses(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumClasses() *******\n" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE("root/acltest", "", E_DEEP);
+		CIMClassEnumeration enu = hdl.enumClassE("root/acltest", "", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void modifyClass(OW_CIMOMHandleIFC& hdl)
+void modifyClass(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing modifyClass() *******\n" << endl;
 	try
 	{
-		OW_CIMClass cimClass = bionicClass;
-		OW_CIMProperty cimProp;
-		cimProp.setDataType(OW_CIMDataType::STRING);
+		CIMClass cimClass = bionicClass;
+		CIMProperty cimProp;
+		cimProp.setDataType(CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
 		bionicClass = cimClass;
@@ -198,341 +199,341 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
 
-void getClass(OW_CIMOMHandleIFC& hdl)
+void getClass(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing getClass() *******\n" << endl;
 	try
 	{
-		OW_CIMClass cimClass = hdl.getClass("/root/acltest",
+		CIMClass cimClass = hdl.getClass("/root/acltest",
 			"EXP_BionicComputerSystem");
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
+void createInstance(CIMOMHandleIFC& hdl, const String& newInstance)
 {
 	cout << "\n\n******* Doing createInstance() *******\n" << endl;
 	try
 	{
-		OW_String fromClass = "EXP_BionicComputerSystem2";
+		String fromClass = "EXP_BionicComputerSystem2";
 
-		OW_CIMObjectPath cop(fromClass, "/root/acltest");
-		OW_CIMClass cimClass = bionicClass;
+		CIMObjectPath cop(fromClass, "/root/acltest");
+		CIMClass cimClass = bionicClass;
 
-		OW_CIMInstance newInst = cimClass.newInstance();
+		CIMInstance newInst = cimClass.newInstance();
 
-		newInst.setProperty(OW_CIMProperty::NAME_PROPERTY,
-								  OW_CIMValue(newInstance));
+		newInst.setProperty(CIMProperty::NAME_PROPERTY,
+								  CIMValue(newInstance));
 		newInst.setProperty("CreationClassName",
-								  OW_CIMValue(fromClass));
+								  CIMValue(fromClass));
 
 		bionicInstance = newInst;
 		hdl.createInstance("/root/acltest", newInst);
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
+void enumerateInstanceNames(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumInstanceNames() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE("/root/acltest", ofClass);
+		String ofClass = "EXP_BionicComputerSystem";
+		CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE("/root/acltest", ofClass);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void enumerateInstances(OW_CIMOMHandleIFC& hdl)
+void enumerateInstances(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumInstances() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("/root/acltest", ofClass, E_DEEP);
+		String ofClass = "EXP_BionicComputerSystem";
+		CIMInstanceEnumeration enu = hdl.enumInstancesE("/root/acltest", ofClass, E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+void getInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
 	cout << "\n\n******* Doing getInstance() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-		cop.addKey("Name", OW_CIMValue(theInstance));
+		String ofClass = "EXP_BionicComputerSystem";
+		CIMObjectPath cop(ofClass, "/root/acltest");
+		cop.addKey("CreationClassName", CIMValue(ofClass));
+		cop.addKey("Name", CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance("/root/acltest", cop);
+		CIMInstance in = hdl.getInstance("/root/acltest", cop);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void modifyInstance(OW_CIMOMHandleIFC& hdl)
+void modifyInstance(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing modifyInstance() *******\n" << endl;
 	try
 	{
-		OW_CIMInstance in = bionicInstance;
-		in.setProperty(OW_CIMProperty("BrandNewProperty",
-			OW_CIMValue(OW_Bool(true))));
+		CIMInstance in = bionicInstance;
+		in.setProperty(CIMProperty("BrandNewProperty",
+			CIMValue(Bool(true))));
 
 		hdl.modifyInstance("/root/acltest", in);
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
 	cout << "\n\n******* Doing deleteInstance() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-		cop.addKey("Name", OW_CIMValue(theInstance));
+		String ofClass = "EXP_BionicComputerSystem2";
+		CIMObjectPath cop(ofClass, "/root/acltest");
+		cop.addKey("CreationClassName", CIMValue(ofClass));
+		cop.addKey("Name", CIMValue(theInstance));
 		hdl.deleteInstance("/root/acltest", cop);
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void setQualifier(OW_CIMOMHandleIFC& hdl)
+void setQualifier(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing setQualifier() *******\n" << endl;
 	try
 	{
-		OW_String qualName = "borgishness";
+		String qualName = "borgishness";
 
-		OW_CIMQualifierType qt(qualName);
+		CIMQualifierType qt(qualName);
 
-		qt.setDataType(OW_CIMDataType::STRING);
-		qt.setDefaultValue(OW_CIMValue(OW_String()));
+		qt.setDataType(CIMDataType::STRING);
+		qt.setDefaultValue(CIMValue(String()));
 
-		qt.addScope(OW_CIMScope::CLASS);
-		qt.addScope(OW_CIMScope::PROPERTY);
+		qt.addScope(CIMScope::CLASS);
+		qt.addScope(CIMScope::PROPERTY);
 
-		qt.addFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
+		qt.addFlavor(CIMFlavor::DISABLEOVERRIDE);
 
 
 		hdl.setQualifierType("/root/acltest", qt);
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
+void enumerateQualifiers(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumerateQualifier() *******\n" << endl;
 	try
 	{
-		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE("/root/acltest");
+		CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE("/root/acltest");
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void getQualifier(OW_CIMOMHandleIFC& hdl)
+void getQualifier(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing getQualifier() *******\n" << endl;
 	try
 	{
-		OW_CIMQualifierType qt = hdl.getQualifierType("/root/acltest", "description");
+		CIMQualifierType qt = hdl.getQualifierType("/root/acltest", "description");
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void associatorNames(OW_CIMOMHandleIFC& hdl)
+void associatorNames(CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing associatorNames() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
+		CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
 		cop.addKey("CreationClassName",
-					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+					  CIMValue(String("EXP_BionicComputerSystem")));
+		cop.addKey("Name", CIMValue(String("SevenMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(
+		CIMObjectPathEnumeration enu = hdl.associatorNamesE(
 			"/root/acltest", cop, "CIM_Component", "", "", "");
 
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void associators(OW_CIMOMHandleIFC& hdl)
+void associators(CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing associators() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
+		CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
 		cop.addKey("CreationClassName",
-					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
+					  CIMValue(String("EXP_BionicComputerSystem")));
 
-		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
+		cop.addKey("Name", CIMValue(String("SixMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.associatorsE("/root/acltest", cop,
+		CIMInstanceEnumeration enu = hdl.associatorsE("/root/acltest", cop,
 									"CIM_Component", "", "", "", E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL);
 
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void referenceNames(OW_CIMOMHandleIFC& hdl)
+void referenceNames(CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing referenceNames() ****** " << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
+		String ofClass = "EXP_BionicComputerSystem";
+		CIMObjectPath cop(ofClass, "/root/acltest");
 		cop.addKey("CreationClassName",
-					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
+					  CIMValue(String("EXP_BionicComputerSystem")));
+		cop.addKey("Name", CIMValue(String("SixMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE("/root/acltest", cop,
+		CIMObjectPathEnumeration enu = hdl.referenceNamesE("/root/acltest", cop,
 			"CIM_Component", "");
 
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void references(OW_CIMOMHandleIFC& hdl)
+void references(CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing references() ****** " << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
+		CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
 		cop.addKey("CreationClassName",
-					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
-		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
+					  CIMValue(String("EXP_BionicComputerSystem")));
+		cop.addKey("Name", CIMValue(String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.referencesE("/root/acltest", cop,
+		CIMInstanceEnumeration enu = hdl.referencesE("/root/acltest", cop,
 									"CIM_Component", "", E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL);
 
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void execReadQuery(OW_CIMOMHandleIFC& hdl)
+void execReadQuery(CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing execQuery() (read) ****** " << endl;
 	try
@@ -542,16 +543,16 @@ void execReadQuery(OW_CIMOMHandleIFC& hdl)
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void execWriteQuery(OW_CIMOMHandleIFC& hdl)
+void execWriteQuery(CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing execQuery() (write) ****** " << endl;
 	try
@@ -561,16 +562,16 @@ void execWriteQuery(OW_CIMOMHandleIFC& hdl)
 		if (mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		//TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		//TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "rw")
 			throw;
 	}
 }
 
-void deleteQualifier(OW_CIMOMHandleIFC& hdl)
+void deleteQualifier(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteQualifier() *******\n" << endl;
 	try
@@ -579,49 +580,49 @@ void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
 
-void deleteClass(OW_CIMOMHandleIFC& hdl)
+void deleteClass(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteClass() *******\n" << endl;
 	try
 	{
-		OW_String delClass = "EXP_BionicComputerSystem2";
+		String delClass = "EXP_BionicComputerSystem2";
 		hdl.deleteClass("/root/acltest", delClass);
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
+void invokeMethod(CIMOMHandleIFC& hdl, int num)
 {
 	cout << "\n\n******* Doing invokeMethod() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root/acltest");
+		CIMObjectPath cop("EXP_BartComputerSystem", "/root/acltest");
 
-		OW_String rval;
-		OW_CIMParamValueArray in, out;
-		OW_CIMValue cv(OW_CIMNULL);
+		String rval;
+		CIMParamValueArray in, out;
+		CIMValue cv(CIMNULL);
 		switch (num)
 		{
 			case 1:
-				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
+				in.push_back(CIMParamValue("newState", CIMValue(String("off"))));
 				hdl.invokeMethod("/root/acltest", cop, "setstate", in, out);
 				break;
 			default:
@@ -630,110 +631,110 @@ void invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 		if (mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "rw")
 			throw;
 	}
 }
 
-void createNameSpace(OW_CIMOMHandleIFC& hdl)
+void createNameSpace(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing createNameSpace() *******\n" << endl;
 	try
 	{
-		OW_CIMNameSpaceUtils::create__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
+		CIMNameSpaceUtils::create__Namespace(CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void enumNameSpace(OW_CIMOMHandleIFC& hdl)
+void enumNameSpace(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing enumNameSpace() *******\n" << endl;
 	try
 	{
-		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest", E_DEEP);
+		StringArray rval = CIMNameSpaceUtils::enum__Namespace(CIMOMHandleIFCRef(&hdl, true), "/root/acltest", E_DEEP);
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void deleteNameSpace(OW_CIMOMHandleIFC& hdl)
+void deleteNameSpace(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteNameSpace() *******\n" << endl;
 	try
 	{
-		OW_CIMNameSpaceUtils::delete__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
+		CIMNameSpaceUtils::delete__Namespace(CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
 }
 
-void getProperty(OW_CIMOMHandleIFC& hdl)
+void getProperty(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing getProperty() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
+		String ofClass = "EXP_BionicComputerSystem";
+		CIMObjectPath cop(ofClass, "/root/acltest");
+		cop.addKey("CreationClassName", CIMValue(ofClass));
+		cop.addKey("Name", CIMValue(String("SixMillion")));
 
-		OW_CIMValue v = hdl.getProperty("/root/acltest", cop, "OptionalArg");
+		CIMValue v = hdl.getProperty("/root/acltest", cop, "OptionalArg");
 		if (mode != "r" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
 			throw;
 	}
 }
 
-void setProperty(OW_CIMOMHandleIFC& hdl)
+void setProperty(CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing setProperty() *******\n" << endl;
 	try
 	{
-		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
-		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
+		String ofClass = "EXP_BionicComputerSystem2";
+		CIMObjectPath cop(ofClass, "/root/acltest");
+		cop.addKey("CreationClassName", CIMValue(ofClass));
+		cop.addKey("Name", CIMValue(String("SixMillion")));
 
-		hdl.setProperty("/root/acltest", cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
+		hdl.setProperty("/root/acltest", cop, "OptionalArg", CIMValue(Bool(true)));
 		if (mode != "w" && mode != "rw")
 			TEST_ASSERT(0);
 	}
-	catch (OW_CIMException& e)
+	catch (CIMException& e)
 	{
 		cerr << e << endl;
-		TEST_ASSERT(e.getErrNo() == OW_CIMException::ACCESS_DENIED);
+		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 			throw;
 	}
@@ -751,16 +752,16 @@ int main(int argc, char* argv[])
 
 		if (argc == 4)
 		{
-			OW_String sockDumpOut = "/tmp/owACLDumpOut";
-			OW_String sockDumpIn = "/tmp/owACLDumpIn";
+			String sockDumpOut = "/tmp/owACLDumpOut";
+			String sockDumpIn = "/tmp/owACLDumpIn";
 			sockDumpOut += argv[3];
 			sockDumpIn += argv[3];
-			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 		else
 		{
-			OW_SocketBaseImpl::setDumpFiles("","");
+			SocketBaseImpl::setDumpFiles("","");
 		}
 
 		mode = argv[2];
@@ -774,24 +775,24 @@ int main(int argc, char* argv[])
 			mode = "";
 		}
 
-		OW_String url(argv[1]);
+		String url(argv[1]);
 
-		OW_URL owurl(url);
-		OW_CIMOMHandleIFCRef rchRef;
+		URL owurl(url);
+		CIMOMHandleIFCRef rchRef;
 
-		OW_CIMProtocolIFCRef client;
-		client = new OW_HTTPClient(url);
+		CIMProtocolIFCRef client;
+		client = new HTTPClient(url);
 
 		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		{
-			rchRef = new OW_BinaryCIMOMHandle(client);
+			rchRef = new BinaryCIMOMHandle(client);
 		}
 		else
 		{
-			rchRef = new OW_CIMXMLCIMOMHandle(client);
+			rchRef = new CIMXMLCIMOMHandle(client);
 		}
 
-		OW_CIMOMHandleIFC& rch = *rchRef;
+		CIMOMHandleIFC& rch = *rchRef;
 
 
 		createNameSpace(rch);
@@ -829,11 +830,11 @@ int main(int argc, char* argv[])
 		return 0;
 
 	}
-	catch (OW_Assertion& a)
+	catch (Assertion& a)
 	{
 		cerr << "Caught Assertion: " << a << endl;
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cerr << e << endl;
 	}

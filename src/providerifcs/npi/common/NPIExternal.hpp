@@ -13,34 +13,32 @@
  *
  * Description: <Some descriptive text>
  */
-
 // administrative functions
 #ifndef NPIExternal_h
 #define NPIExternal_h
-
 #include "OW_FTABLERef.hpp"
+
+namespace OpenWBEM
+{
 
 extern "C" 
 void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type);
-
-extern "C"  OW_CIMClass NPI_getmyClass(
+extern "C"  CIMClass NPI_getmyClass(
     NPIHandle* npiHandle,
-    const OW_String& nameSpace, const OW_String& className);
-
-extern "C" OW_CIMObjectPathEnumeration
+    const String& nameSpace, const String& className);
+extern "C" CIMObjectPathEnumeration
     NPI_enumeratemyInstanceNames(
     NPIHandle* npiHandle,
-    const OW_String& nameSpace, const OW_String& className);
-
-extern "C" OW_CIMInstanceEnumeration
+    const String& nameSpace, const String& className);
+extern "C" CIMInstanceEnumeration
     NPI_enumeratemyInstances(
     NPIHandle* npiHandle,
-    const OW_String& nameSpace, const OW_String& className);
-
-extern "C" OW_CIMInstance
+    const String& nameSpace, const String& className);
+extern "C" CIMInstance
     NPI_getmyInstance(
     NPIHandle* npiHandle,
-    const OW_CIMObjectPath & owcop, const int localOnly);
+    const CIMObjectPath & owcop, const int localOnly);
+}
 
 //Vector functions
 extern "C"  Vector VectorNew ( NPIHandle* npiHandle);
@@ -50,7 +48,6 @@ extern "C"
     int VectorSize( NPIHandle* npiHandle, Vector v);
 extern "C"
     void* _VectorGet( NPIHandle* npiHandle, Vector v, int pos);
-
 //CIMValue functions
 extern "C"
     ::CIMType CIMValueGetType (NPIHandle* npiHandle, ::CIMValue cv);
@@ -66,7 +63,6 @@ extern "C"
     int CIMValueGetInteger(NPIHandle* npiHandle, ::CIMValue cv);
 extern "C"
     ::CIMObjectPath CIMValueGetRef(NPIHandle* npiHandle, ::CIMValue cv);
-
 //CIMParameter functions
 extern "C"
     ::CIMType CIMParameterGetType( NPIHandle* npiHandle, ::CIMParameter cp);
@@ -90,7 +86,6 @@ extern "C"
 extern "C"
     CIMObjectPath CIMParameterGetRefValue ( NPIHandle* npiHandle,
               ::CIMParameter cp);
-
 //CIMInstance functions
 extern "C"
     ::CIMInstance CIMClassNewInstance ( NPIHandle* npiHandle, ::CIMClass cc );
@@ -118,7 +113,6 @@ int CIMInstanceGetIntegerValue(NPIHandle* npiHandle,
 extern "C"
 ::CIMObjectPath CIMInstanceGetRefValue(NPIHandle* npiHandle,
                                        CIMInstance ci, const char* name);
-
 // Object path functions
 extern "C"
     ::CIMObjectPath CIMObjectPathNew ( NPIHandle* npiHandle,
@@ -165,9 +159,7 @@ extern "C"
     void CIMObjectPathAddRefKeyValue (NPIHandle* npiHandle,
                                       ::CIMObjectPath cop,
                                       const char* key, ::CIMObjectPath cop2);
-
 // CIMOM functions
-
 extern "C"
     ::CIMClass CIMOMGetClass( NPIHandle* npiHandle,
                              ::CIMObjectPath cop, int localOnly );
@@ -183,18 +175,13 @@ extern "C"
 extern "C" void
 CIMOMDeliverProcessEvent(NPIHandle* npiHandle, char* ns,
                 ::CIMInstance indication);
-
 extern "C" void
 CIMOMDeliverInstanceEvent(NPIHandle* npiHandle, char* ns,
                 ::CIMInstance indication,
                 ::CIMInstance source, ::CIMInstance previous);
-
 // Error handling classes
-
 extern "C" int errorCheck(NPIHandle* npiHandle );
-
 extern "C" void raiseError(NPIHandle* npiHandle, const char* msg );
-
 extern "C"
 char* _ObjectToString(NPIHandle* npiHandle, void* co);
 

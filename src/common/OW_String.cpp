@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
@@ -41,22 +40,22 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_Bool.hpp"
 #include "OW_UTF8Utils.hpp"
-
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
 #include <cstdarg>
 #include <cerrno>
-
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
 #else
 #include <iostream>
 #endif
-
 #include <cmath> // for HUGE_VAL
+
+namespace OpenWBEM
+{
 
 using std::istream;
 using std::ostream;
@@ -64,50 +63,44 @@ using std::ostream;
 DEFINE_EXCEPTION(StringConversion);
 
 //////////////////////////////////////////////////////////////////////////////
-inline int
+static inline int
 strcmpi(const char* s1, const char* s2)
 {
-	OW_String ls1(s1);
-	OW_String ls2(s2);
+	String ls1(s1);
+	String ls2(s2);
 	ls1.toUpperCase();
 	ls2.toUpperCase();
 	return ls1.compareTo(ls2);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-inline int
+static inline int
 strncmpi(const char* s1, const char* s2, size_t n)
 {
-	OW_String ls1(s1, n);
-	OW_String ls2(s2, n);
+	String ls1(s1, n);
+	String ls2(s2, n);
 	ls1.toUpperCase();
 	ls2.toUpperCase();
 	return ls1.compareTo(ls2);
 }
 
-
 // class invariant: m_buf points to a null-terminated sequence of characters. m_buf is m_len+1 bytes long.
-class OW_String::ByteBuf
+class String::ByteBuf
 {
 public:
-
 	ByteBuf(const char* s) :
 		m_len(::strlen(s)), m_buf(new char[m_len+1])
 	{
 		strcpy(m_buf, s);
 	}
-
 	ByteBuf(const ByteBuf& arg) :
 		m_len(arg.m_len), m_buf(new char[m_len+1])
 	{
 		strcpy(m_buf, arg.m_buf);
 	}
-
 	ByteBuf(char* bfr, size_t len)
 		: m_len(len), m_buf(bfr)
 	{
 	}
-
 	~ByteBuf() { delete [] m_buf; }
 	ByteBuf& operator= (const ByteBuf& arg)
 	{
@@ -118,95 +111,80 @@ public:
 		m_len = arg.m_len;
 		return *this;
 	}
-
 	size_t length() const { return m_len; }
 	char* data() const { return m_buf; }
-
 	ByteBuf* clone() const { return new ByteBuf(*this); }
-
 private:
 	size_t m_len;
 	char* m_buf;
 };
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String() :
+String::String() :
 	m_buf(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_Bool parm) :
+String::String(Bool parm) :
 	m_buf(parm.toString().m_buf)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const OW_Char16& parm) :
+String::String(const Char16& parm) :
 	m_buf(parm.toUTF8().m_buf)
 {
 }
-
 #if defined(OW_WIN32)
 #define snprintf _snprintf // stupid windoze...
 #endif
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_Int32 val) :
+String::String(Int32 val) :
 	m_buf(NULL)
 {
 	char tmpbuf[32];
 	int len = snprintf(tmpbuf, sizeof(tmpbuf), "%d", val);
-	OW_AutoPtrVec<char> bfr(new char[len+1]);
+	AutoPtrVec<char> bfr(new char[len+1]);
 	::snprintf(bfr.get(), len+1, "%d", val);
 	m_buf = new ByteBuf(bfr.release(), len);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_UInt32 val) :
+String::String(UInt32 val) :
 	m_buf(NULL)
 {
 	char tmpbuf[32];
 	int len = ::snprintf(tmpbuf, sizeof(tmpbuf), "%u", val);
-	OW_AutoPtrVec<char> bfr(new char[len+1]);
+	AutoPtrVec<char> bfr(new char[len+1]);
 	::snprintf(bfr.get(), len+1, "%u", val);
 	m_buf = new ByteBuf(bfr.release(), len);
 }
 #if defined(OW_WIN32)
 #undef snprintf
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_Int64 val) :
+String::String(Int64 val) :
 	m_buf(NULL)
 {
-	OW_StringStream ss(33);
+	StringStream ss(33);
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_UInt64 val) :
+String::String(UInt64 val) :
 	m_buf(NULL)
 {
-	OW_StringStream ss(33);
+	StringStream ss(33);
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_Real64 val) :
+String::String(Real64 val) :
 	m_buf(NULL)
 {
-	OW_StringStream ss;
+	StringStream ss;
 	ss << val;
 	m_buf = new ByteBuf(ss.c_str());
-
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const char* str) :
+String::String(const char* str) :
 	m_buf(NULL)
 {
 	if(NULL == str)
@@ -218,17 +196,15 @@ OW_String::OW_String(const char* str) :
 		m_buf = new ByteBuf(str);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(ETakeOwnershipFlag, char* allocatedMemory, size_t len) :
+String::String(ETakeOwnershipFlag, char* allocatedMemory, size_t len) :
 	m_buf(NULL)
 {
 	OW_ASSERT(allocatedMemory != 0);
 	m_buf = new ByteBuf(allocatedMemory, len);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const char* str, size_t len) :
+String::String(const char* str, size_t len) :
 	m_buf(NULL)
 {
 	if(NULL == str)
@@ -237,43 +213,39 @@ OW_String::OW_String(const char* str, size_t len) :
 	}
 	else
 	{
-		OW_AutoPtrVec<char> bfr(new char[len+1]);
+		AutoPtrVec<char> bfr(new char[len+1]);
 		::memcpy(bfr.get(), str, len);
 		bfr[len] = '\0';
 		m_buf = new ByteBuf(bfr.release(), len);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const OW_String& arg) :
+String::String(const String& arg) :
 	m_buf(arg.m_buf)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const OW_CIMDateTime& parm) :
+String::String(const CIMDateTime& parm) :
 	m_buf(NULL)
 {
-	OW_String s = parm.toString();
+	String s = parm.toString();
 	m_buf = s.m_buf;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const OW_CIMObjectPath& parm) :
+String::String(const CIMObjectPath& parm) :
 	m_buf(NULL)
 {
-	OW_String s = parm.toString();
+	String s = parm.toString();
 	m_buf = s.m_buf;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(const OW_Char16Array& ra) :
+String::String(const Char16Array& ra) :
 	m_buf(NULL)
 {
 	size_t sz = ra.size();
 	if(sz > 0)
 	{
-		OW_StringBuffer buf(sz * 2);
+		StringBuffer buf(sz * 2);
 		for(size_t i = 0; i < sz; i++)
 		{
 			buf += ra[i].toUTF8();
@@ -285,9 +257,8 @@ OW_String::OW_String(const OW_Char16Array& ra) :
 		m_buf = 0;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(char c) :
+String::String(char c) :
 	m_buf(NULL)
 {
 	if(c != '\0')
@@ -302,25 +273,22 @@ OW_String::OW_String(char c) :
 		m_buf = 0;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String::~OW_String()	
+String::~String()	
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 char*
-OW_String::allocateCString() const
+String::allocateCString() const
 {
 	size_t len = length() + 1;
 	char* str = static_cast<char*>(malloc(len));
 	::strcpy(str, c_str());
 	return str;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_String::length() const
+String::length() const
 {
 	if (m_buf)
 	{
@@ -331,25 +299,21 @@ OW_String::length() const
 		return 0;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_String::UTF8Length() const
+String::UTF8Length() const
 {
-	return OW_UTF8Utils::charCount(c_str());
+	return UTF8Utils::charCount(c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
 #ifdef OW_WIN32
 #define vsnprintf _vsnprintf // stupid windoze
 #endif
-
 int
-OW_String::format(const char* fmt, ...)
+String::format(const char* fmt, ...)
 {
 	int n, size = 64;
-	OW_AutoPtrVec<char> p(new char[size]);
+	AutoPtrVec<char> p(new char[size]);
 	
 	va_list ap;
 	
@@ -359,35 +323,30 @@ OW_String::format(const char* fmt, ...)
 		va_start(ap, fmt);
 		n = vsnprintf(p.get(), size, fmt, ap);
 		va_end(ap);                // If that worked, return the string.
-
 		if(n > -1 && n < size)
 		{
 			m_buf = new ByteBuf(p.release(), n);
 			return static_cast<int>(length());
 		}
-
 		if (n > -1)    // glibc 2.1
 			size = n+1; // precisely what is needed
 		else           // glibc 2.0
 			size *= 2;  // twice the old size
-
 		p = new char[size];
 	}
 }
 #ifdef OW_WIN32
 #undef vsnprintf // stupid windoze
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
 char
-OW_String::charAt(size_t ndx) const
+String::charAt(size_t ndx) const
 {
 	return (m_buf) ? m_buf->data()[ndx] : '\0';
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_String::compareTo(const OW_String& arg) const
+String::compareTo(const String& arg) const
 {
 	const char* lhs = "";
 	const char* rhs = "";
@@ -399,13 +358,11 @@ OW_String::compareTo(const OW_String& arg) const
 	{
 		rhs = arg.m_buf->data();
 	}
-
 	return ::strcmp(lhs, rhs);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_String::compareToIgnoreCase(const OW_String& arg) const
+String::compareToIgnoreCase(const String& arg) const
 {
 	const char* lhs = "";
 	const char* rhs = "";
@@ -417,18 +374,16 @@ OW_String::compareToIgnoreCase(const OW_String& arg) const
 	{
 		rhs = arg.m_buf->data();
 	}
-
 	return strcmpi(lhs, rhs);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::concat(const OW_String& arg)
+String&
+String::concat(const String& arg)
 {
 	if(!arg.empty())
 	{
 		size_t len = length() + arg.length();
-		OW_AutoPtrVec<char> bfr(new char[len+1]);
+		AutoPtrVec<char> bfr(new char[len+1]);
 		bfr[0] = 0;
 		if (m_buf)
 		{
@@ -440,33 +395,27 @@ OW_String::concat(const OW_String& arg)
 		}
 		m_buf = new ByteBuf(bfr.release(), len);
 	}
-
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::concat(char arg)
+String&
+String::concat(char arg)
 {
-    return concat(OW_String(arg));
+    return concat(String(arg));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_String::endsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase) const
+String::endsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
 {
 	if(arg.empty())
 	{
 		return (arg.length() == length());
 	}
-
 	int ndx = static_cast<int>(length() - arg.length());
-
 	if(ndx < 0)
 	{
 		return false;
 	}
-
 	bool cc;
 	
 	const char* lhs = "";
@@ -479,39 +428,33 @@ OW_String::endsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase) const
 	{
 		rhs = arg.m_buf->data();
 	}
-
 	if(ignoreCase)
 	{
-		cc = (::strcmpi(lhs, rhs) == 0);
+		cc = (strcmpi(lhs, rhs) == 0);
 	}
 	else
 	{
 		cc = (::strcmp(lhs, rhs) == 0);
 	}
-
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_String::equals(const OW_String& arg) const
+String::equals(const String& arg) const
 {
 	return(compareTo(arg) == 0);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_String::equalsIgnoreCase(const OW_String& arg) const
+String::equalsIgnoreCase(const String& arg) const
 {
 	return(compareToIgnoreCase(arg) == 0);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_String::hashCode() const
+UInt32
+String::hashCode() const
 {
-	OW_UInt32 hash = 0;
-
+	UInt32 hash = 0;
 	size_t len = length();
 	for(size_t i = 0; i < len; i++)
 	{
@@ -519,8 +462,7 @@ OW_String::hashCode() const
 		// and this loop won't be executed.
 		const char temp = m_buf->data()[i];
 		hash = (hash << 4) + (temp * 13);
-		OW_UInt32 g = hash & 0xf0000000;
-
+		UInt32 g = hash & 0xf0000000;
 		if(g)
 		{
 			hash ^= (g >> 24);
@@ -529,22 +471,20 @@ OW_String::hashCode() const
 	}
 	return hash;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_String::indexOf(char ch, size_t fromIndex) const
+String::indexOf(char ch, size_t fromIndex) const
 {
 	//if(fromIndex < 0)
 	//{
 	//	fromIndex = 0;
 	//}
-
 	size_t cc = npos;
 	if(fromIndex < length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
-		const char* p = OW_String::strchr(m_buf->data()+fromIndex, ch);
+		const char* p = String::strchr(m_buf->data()+fromIndex, ch);
 		if(p)
 		{
 			cc = p - m_buf->data();
@@ -552,16 +492,14 @@ OW_String::indexOf(char ch, size_t fromIndex) const
 	}
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
+String::indexOf(const String& arg, size_t fromIndex) const
 {
 	//if(fromIndex < 0)
 	//{
 	//	fromIndex = 0;
 	//}
-
 	int cc = npos;
 	if(fromIndex < length())
 	{
@@ -576,26 +514,22 @@ OW_String::indexOf(const OW_String& arg, size_t fromIndex) const
 		{
 			p = m_buf->data()+fromIndex;
 		}
-
 		if(p != NULL)
 		{
 			cc = static_cast<int>(p - m_buf->data());
 		}
 	}
-
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_String::lastIndexOf(char ch, size_t fromIndex) const
+String::lastIndexOf(char ch, size_t fromIndex) const
 {
 	if(fromIndex == npos)
 	{
 		if((fromIndex = length()-1) == npos)
 			return npos;
 	}
-
 	size_t cc = npos;
 	if(fromIndex < length())
 	{
@@ -612,27 +546,23 @@ OW_String::lastIndexOf(char ch, size_t fromIndex) const
 	}
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 size_t
-OW_String::lastIndexOf(const OW_String& arg, size_t fromIndex) const
+String::lastIndexOf(const String& arg, size_t fromIndex) const
 {
 	if(fromIndex == npos || fromIndex >= length())
 	{
 		if(static_cast<int>(fromIndex = length()-1) < 0)
 			return npos;
 	}
-
 	if(static_cast<int>(fromIndex -= arg.length() - 1) < 0)
 	{
 		return npos;
 	}
-
 	if (!arg.m_buf)
 	{
 		return length() - 1;
 	}
-
 	while(fromIndex != npos)
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
@@ -642,31 +572,26 @@ OW_String::lastIndexOf(const OW_String& arg, size_t fromIndex) const
 		{
 			break;
 		}
-
 		fromIndex--;
 	}
-
 	return fromIndex;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_String::startsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase) const
+String::startsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
 {
 	bool cc = false;
-
 	if(arg.empty())
 	{
 		return (arg.length() == length());
 	}
-
 	if(arg.length() <= length())
 	{
 		// Don't need to check m_buf for NULL, because if length() == 0,
 		// this code won't be executed.
 		if(ignoreCase)
 		{
-			cc = (::strncmpi(m_buf->data(), arg.m_buf->data(), arg.length()) == 0);
+			cc = (strncmpi(m_buf->data(), arg.m_buf->data(), arg.length()) == 0);
 		}
 		else
 		{
@@ -675,20 +600,17 @@ OW_String::startsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase) const
 	}
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_String::substring(size_t beginIndex, size_t len) const
+String
+String::substring(size_t beginIndex, size_t len) const
 {
-	OW_String nil;
+	String nil;
 	size_t count = len;
 	size_t l = length();
-
 	if(0 == l)
 	{
 		return nil;
 	}
-
 	if(beginIndex >= l)
 	{
 		return nil;
@@ -705,144 +627,120 @@ OW_String::substring(size_t beginIndex, size_t len) const
 	{
 		count = l - beginIndex;
 	}
-
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// this code won't be executed.
-	return OW_String(static_cast<const char*>(m_buf->data()+beginIndex), count);
+	return String(static_cast<const char*>(m_buf->data()+beginIndex), count);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_String::isSpaces() const
+String::isSpaces() const
 {
 	if (!m_buf)
 	{
 		return true;
 	}
-
 	char* p = m_buf->data();
 	while(isspace(*p) && *p != '\0')
 	{
 		p++;
 	}
-
 	return (*p == '\0');
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::ltrim()
+String&
+String::ltrim()
 {
 	if (!m_buf)
 	{
 		return *this;
 	}
-
 	char* s1 = m_buf->data();
 	while(isspace(*s1) && *s1 != '\0')
 	{
 		s1++;
 	}
-
 	if(s1 == m_buf->data())
 		return *this;
-
-	*this = OW_String(s1);
+	*this = String(s1);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::rtrim()
+String&
+String::rtrim()
 {
 	if(length() == 0)
 		return *this;
-
 	char* s1 = m_buf->data() + (length()-1);
 	while(isspace(*s1) && s1 >= m_buf->data())
 	{
 		s1--;
 	}
-
 	if(s1 == (m_buf->data() + (length()-1)))
 		return *this;
-
 	if(s1 < m_buf->data())
 	{
-		*this = OW_String();
+		*this = String();
 		return *this;
 	}
-
 	size_t len = (s1 - m_buf->data()) + 1;
-	*this = OW_String(m_buf->data(), len);
+	*this = String(m_buf->data(), len);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::trim()
+String&
+String::trim()
 {
 	if(length() == 0)
 	{
 		return *this;
 	}
-
 	char* s1 = m_buf->data();
 	while(isspace(*s1) && *s1 != '\0')
 	{
 		s1++;
 	}
-
 	if(*s1 == '\0')
 	{
 		// String is all spaces
-		*this = OW_String();
+		*this = String();
 		return *this;
 	}
-
-	const char* p2 = OW_String::strchr(s1, '\0');
+	const char* p2 = String::strchr(s1, '\0');
 	const char* s2 = p2 - 1;
-
 	while(isspace(*s2))
 	{
 		s2--;
 	}
-
 	if(s1 == m_buf->data() && s2 == p2)
 	{
 		// String has no leading or trailing spaces
 		return *this;
 	}
-
 	size_t len = (s2 - s1) + 1;
-	*this = OW_String(s1, len);
+	*this = String(s1, len);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::erase()
+String&
+String::erase()
 {
 	m_buf = 0;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::erase(size_t idx, size_t len)
+String&
+String::erase(size_t idx, size_t len)
 {
 	if( idx >= length() )
 		return *this;
-
 	*this = substring(0, idx) + substring(idx + len);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // ATTN: UTF8 ?
 // TODO: FIXME this is broken wrt i18n
-OW_String&
-OW_String::toLowerCase()
+String&
+String::toLowerCase()
 {
 	size_t len = length();
 	for(size_t i = 0; i < len; i++)
@@ -853,12 +751,11 @@ OW_String::toLowerCase()
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // ATTN: UTF8 ?
 // TODO: FIXME this is broken wrt i18n
-OW_String&
-OW_String::toUpperCase()
+String&
+String::toUpperCase()
 {
 	size_t len = length();
 	for(size_t i = 0; i < len; i++)
@@ -869,49 +766,41 @@ OW_String::toUpperCase()
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_String::readObject(istream& istrm)
+String::readObject(istream& istrm)
 {
-	OW_UInt32 len;
-	OW_BinarySerialization::readLen(istrm, len);
-
-	OW_AutoPtrVec<char> bfr(new char[len+1]);
-	OW_BinarySerialization::read(istrm, bfr.get(), len);
+	UInt32 len;
+	BinarySerialization::readLen(istrm, len);
+	AutoPtrVec<char> bfr(new char[len+1]);
+	BinarySerialization::read(istrm, bfr.get(), len);
 	bfr[len] = '\0';
-
 	m_buf = new ByteBuf(bfr.release(), len);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_String::writeObject(ostream& ostrm) const
+String::writeObject(ostream& ostrm) const
 {
-	OW_UInt32 len = static_cast<OW_UInt32>(length());
-	OW_BinarySerialization::writeLen(ostrm, len);
-
+	UInt32 len = static_cast<UInt32>(length());
+	BinarySerialization::writeLen(ostrm, len);
 	if (len)
 	{
-        OW_BinarySerialization::write(ostrm, m_buf->data(), len);
+        BinarySerialization::write(ostrm, m_buf->data(), len);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String&
-OW_String::operator= (const OW_String& arg)
+String&
+String::operator= (const String& arg)
 {
 	if(m_buf.getPtr() != arg.m_buf.getPtr())
 	{
 		m_buf = arg.m_buf;
 	}
-
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 const char*
-OW_String::c_str() const
+String::c_str() const
 {
 	if (m_buf)
 	{
@@ -922,11 +811,10 @@ OW_String::c_str() const
 		return "";
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static const char cnullChar = '\0';
 const char&
-OW_String::operator[] (size_t ndx) const
+String::operator[] (size_t ndx) const
 {
 #ifdef OW_DEBUG
 	OW_ASSERT(ndx <= length());
@@ -939,11 +827,10 @@ OW_String::operator[] (size_t ndx) const
 	else
 		return cnullChar;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static char nullChar = '\0';
 char&
-OW_String::operator[] (size_t ndx)
+String::operator[] (size_t ndx)
 {
 #ifdef OW_DEBUG
     OW_ASSERT(ndx <= length());
@@ -952,42 +839,37 @@ OW_String::operator[] (size_t ndx)
 	// m_buf->data() won't be executed.
 	return (ndx <= length()) ? m_buf->data()[ndx] : nullChar;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_String::toString() const
+String
+String::toString() const
 {
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static inline void
-throwStringConversion(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
+throwStringConversion(const COWReference<String::ByteBuf>& m_buf, const char* type)
 {
-	OW_THROW(OW_StringConversionException, format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
+	OW_THROW(StringConversionException, format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static inline void
 throwStringConversion(const char* str, const char* type)
 {
-	OW_THROW(OW_StringConversionException, format("Unable to convert \"%1\" into %2", str, type).c_str());
+	OW_THROW(StringConversionException, format("Unable to convert \"%1\" into %2", str, type).c_str());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Char16
-OW_String::toChar16() const
+Char16
+String::toChar16() const
 {
 	if(UTF8Length() != 1)
 	{
-		throwStringConversion(c_str(), "OW_Char16");
+		throwStringConversion(c_str(), "Char16");
 	}
-	return OW_Char16(*this);
+	return Char16(*this);
 }
-
 template <typename T>
 static inline
-T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
+T convertToRealType(const COWReference<String::ByteBuf>& m_buf, const char* type)
 {
 	if (m_buf)
 	{
@@ -1006,26 +888,21 @@ T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char
 	}
 	return T(); // to make compiler happy
 }
-
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Real32
-OW_String::toReal32() const
+Real32
+String::toReal32() const
 {
-	return convertToRealType<OW_Real32>(m_buf, "OW_Real32");
+	return convertToRealType<Real32>(m_buf, "Real32");
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Real64
-OW_String::toReal64() const
+Real64
+String::toReal64() const
 {
-	return convertToRealType<OW_Real64>(m_buf, "OW_Real64");
+	return convertToRealType<Real64>(m_buf, "Real64");
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_String::toBool() const
+String::toBool() const
 {
 	if (equalsIgnoreCase("true"))
 	{
@@ -1041,10 +918,9 @@ OW_String::toBool() const
 	}
 	return false; // to make compiler happy
 }
-
 template <typename T, typename FP, typename FPRT>
 static inline
-T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
+T doConvertToIntType(const COWReference<String::ByteBuf>& m_buf, const char* type, FP fp, int base)
 {
 	if (m_buf)
 	{
@@ -1063,143 +939,121 @@ T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const cha
 	}
 	return T(); // to make compiler happy
 }
-
 typedef unsigned long int (*strtoulfp_t)(const char *, char **,int);
 typedef long int (*strtolfp_t)(const char *, char **,int);
 typedef unsigned long long int (*strtoullfp_t)(const char *, char **,int);
 typedef long long int (*strtollfp_t)(const char *, char **,int);
-
-
 template <typename T>
 static inline
-T convertToUIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUIntType(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul, base);
 }
-
 template <typename T>
 static inline
-T convertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToIntType(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol, base);
 }
-
 template <typename T>
 static inline
-T convertToUInt64Type(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUInt64Type(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
 {
-	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &OW_String::strtoull, base);
+	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &String::strtoull, base);
 }
-
 template <typename T>
 static inline
-T convertToInt64Type(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToInt64Type(const COWReference<String::ByteBuf>& m_buf, const char* msg, int base)
 {
-	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &OW_String::strtoll, base);
+	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &String::strtoll, base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt8
-OW_String::toUInt8(int base) const
+UInt8
+String::toUInt8(int base) const
 {
-	return convertToUIntType<OW_UInt8>(m_buf, "OW_UInt8", base);
+	return convertToUIntType<UInt8>(m_buf, "UInt8", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int8
-OW_String::toInt8(int base) const
+Int8
+String::toInt8(int base) const
 {
-	return convertToIntType<OW_Int8>(m_buf, "OW_Int8", base);
+	return convertToIntType<Int8>(m_buf, "Int8", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt16
-OW_String::toUInt16(int base) const
+UInt16
+String::toUInt16(int base) const
 {
-	return convertToUIntType<OW_UInt16>(m_buf, "OW_UInt16", base);
+	return convertToUIntType<UInt16>(m_buf, "UInt16", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int16
-OW_String::toInt16(int base) const
+Int16
+String::toInt16(int base) const
 {
-	return convertToIntType<OW_Int16>(m_buf, "OW_Int16", base);
+	return convertToIntType<Int16>(m_buf, "Int16", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_String::toUInt32(int base) const
+UInt32
+String::toUInt32(int base) const
 {
-	return convertToUIntType<OW_UInt32>(m_buf, "OW_UInt32", base);
+	return convertToUIntType<UInt32>(m_buf, "UInt32", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_String::toInt32(int base) const
+Int32
+String::toInt32(int base) const
 {
-	return convertToIntType<OW_Int32>(m_buf, "OW_Int32", base);
+	return convertToIntType<Int32>(m_buf, "Int32", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt64
-OW_String::toUInt64(int base) const
+UInt64
+String::toUInt64(int base) const
 {
-	return convertToUInt64Type<OW_UInt64>(m_buf, "OW_UInt64", base);
+	return convertToUInt64Type<UInt64>(m_buf, "UInt64", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int64
-OW_String::toInt64(int base) const
+Int64
+String::toInt64(int base) const
 {
-	return convertToInt64Type<OW_Int64>(m_buf, "OW_Int64", base);
+	return convertToInt64Type<Int64>(m_buf, "Int64", base);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime
-OW_String::toDateTime() const
+CIMDateTime
+String::toDateTime() const
 {
-	return OW_CIMDateTime(*this);
+	return CIMDateTime(*this);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
+StringArray
+String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 {
-	OW_StringArray ra;
-
+	StringArray ra;
 	if(length() == 0 || delims == 0)
 	{
 		return ra;
 	}
-
 	if(delims == NULL)
 	{
 		ra.append(*this);
 		return ra;
 	}
-
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// this code won't be executed.
 	char* pstr = m_buf->data();
-	OW_AutoPtrVec<char> data(new char[m_buf->length()+1]);
+	AutoPtrVec<char> data(new char[m_buf->length()+1]);
 	data[0] = 0;
-
 	int i = 0;
 	while(*pstr)
 	{
-		if(OW_String::strchr(delims, *pstr))
+		if(String::strchr(delims, *pstr))
 		{
 			if(data[0] != 0)
 			{
-				ra.append(OW_String(data.get()));
+				ra.append(String(data.get()));
 				data[0] = 0;
 			}
-
 			if(returnTokens)
 			{
-				ra.append(OW_String(*pstr));
+				ra.append(String(*pstr));
 			}
-
 			i = 0;
 		}
 		else
@@ -1207,26 +1061,21 @@ OW_String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 			data[i++] = *pstr;
 			data[i] = 0;
 		}
-
 		pstr++;
 	}
-
 	if(data[0] != 0)
 	{
-		ra.append(OW_String(data.get()));
+		ra.append(String(data.get()));
 	}
-
 	return ra;
 }
-
 #ifdef OW_HAVE_STRTOLL
 long long int
-OW_String::strtoll(const char* nptr, char** endptr, int base)
+String::strtoll(const char* nptr, char** endptr, int base)
 {
 	return ::strtoll(nptr, endptr, base);
 }
 #else
-
 #ifndef LLONG_MAX
 #if OW_SIZEOF_LONG_LONG_INT == 8
 #define LLONG_MAX 9223372036854775807LL
@@ -1235,15 +1084,13 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 #endif
 #define LLONG_MIN (-LLONG_MAX - 1LL)
 #endif
-
 long long int
-OW_String::strtoll(const char* nptr, char** endptr, int base)
+String::strtoll(const char* nptr, char** endptr, int base)
 {
 	const char *s;
 	long long acc, cutoff;
 	int c;
 	int neg, any, cutlim;
-
 	// Skip white space and pick up leading +/- sign if any.
 	// If base is 0, allow 0x for hex and 0 for octal, else
 	// assume decimal; if base is already 16, allow 0x.
@@ -1252,7 +1099,6 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 	{
 		c = (unsigned char) *s++;
 	} while(isspace(c));
-
 	if(c == '-')
 	{
 		neg = 1;
@@ -1266,7 +1112,6 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 			c = *s++;
 		}
 	}
-
 	if((base == 0 || base == 16)
 		&& c == '0'
 		&& (*s == 'x' || *s == 'X'))
@@ -1279,7 +1124,6 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 	{
 		base = c == '0' ? 8 : 10;
 	}
-
 	// Compute the cutoff value between legal numbers and illegal
 	// numbers.  That is the largest legal value, divided by the
 	// base.  An input number that is greater than this value, if
@@ -1315,7 +1159,6 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
 		else
 			break;
-
 		if(c >= base)
 			break;
 		if(any < 0)
@@ -1353,21 +1196,16 @@ OW_String::strtoll(const char* nptr, char** endptr, int base)
 	}
 	if(endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-
 	return(acc);
 }
-
 #endif	// #ifdef OW_HAVE_STRTOLL
-
 #ifdef OW_HAVE_STRTOULL
 unsigned long long int
-OW_String::strtoull(const char* nptr, char** endptr, int base)
+String::strtoull(const char* nptr, char** endptr, int base)
 {
 	return ::strtoull(nptr, endptr, base);
 }
-
 #else
-
 #ifndef ULLONG_MAX
 #if OW_SIZEOF_LONG_LONG_INT == 8
 #define ULLONG_MAX 18446744073709551615ULL
@@ -1375,21 +1213,18 @@ OW_String::strtoull(const char* nptr, char** endptr, int base)
 #define ULLONG_MAX 4294967295ULL
 #endif
 #endif
-
 unsigned long long int
-OW_String::strtoull(const char* nptr, char** endptr, int base)
+String::strtoull(const char* nptr, char** endptr, int base)
 {
 	const char *s;
 	unsigned long long acc, cutoff, cutlim;
 	unsigned int c;
 	int neg, any;
-
 	s = nptr;
 	do
 	{
 		c = (unsigned char) *s++;
 	} while(isspace(c));
-
 	if(c == '-')
 	{
 		neg = 1;
@@ -1401,7 +1236,6 @@ OW_String::strtoull(const char* nptr, char** endptr, int base)
 		if(c == '+')
 			c = *s++;
 	}
-
 	if((base == 0 || base == 16)
 		&& c == '0'
 		&& (*s == 'x' || *s == 'X'))
@@ -1412,7 +1246,6 @@ OW_String::strtoull(const char* nptr, char** endptr, int base)
 	}
 	if(base == 0)
 		base = c == '0' ? 8 : 10;
-
 	cutoff = ULLONG_MAX / (unsigned long long)base;
 	cutlim = ULLONG_MAX % (unsigned long long)base;
 	for(acc = 0, any = 0;; c = (unsigned char) *s++)
@@ -1423,7 +1256,6 @@ OW_String::strtoull(const char* nptr, char** endptr, int base)
 			c -= isupper(c) ? 'A' - 10 : 'a' - 10;
 		else
 			break;
-
 		if(c >= (unsigned int)base)
 			break;
 		if(any < 0)
@@ -1441,78 +1273,66 @@ OW_String::strtoull(const char* nptr, char** endptr, int base)
 			acc += c;
 		}
 	}
-
 	if(neg && any > 0)
 		acc = -acc;
-
 	if(endptr != 0)
 		*endptr = (char *) (any ? s - 1 : nptr);
-
 	return(acc);
 }
-
 #endif	// #ifdef OW_HAVE_STRTOULL
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-operator + (const OW_String& s1, const OW_String& s2)
+String
+operator + (const String& s1, const String& s2)
 {
-	OW_String rstr(s1);
+	String rstr(s1);
 	rstr += s2;
 	return rstr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-operator + (const char* p, const OW_String& s)
+String
+operator + (const char* p, const String& s)
 {
-	OW_String rstr(p);
+	String rstr(p);
 	rstr += s;
 	return rstr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-operator + (const OW_String& s, const char* p)
+String
+operator + (const String& s, const char* p)
 {
-	OW_String rstr(s);
+	String rstr(s);
 	rstr += p;
 	return rstr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-operator + (char c, const OW_String& s)
+String
+operator + (char c, const String& s)
 {
-	OW_String rstr(c);
+	String rstr(c);
 	rstr += s;
 	return rstr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-operator + (const OW_String& s, char c)
+String
+operator + (const String& s, char c)
 {
-	OW_String rstr(s);
-	rstr += OW_String(c);
+	String rstr(s);
+	rstr += String(c);
 	return rstr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 ostream&
-operator<< (ostream& ostr, const OW_String& arg)
+operator<< (ostream& ostr, const String& arg)
 {
 	ostr << arg.c_str();
 	return ostr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // static
-OW_String
-OW_String::getLine(istream& is)
+String
+String::getLine(istream& is)
 {
-	OW_StringBuffer rv(80);
-
+	StringBuffer rv(80);
 	if(is)
 	{
 		size_t count = 0;
@@ -1536,21 +1356,18 @@ OW_String::getLine(istream& is)
 			rv += static_cast<char>(ch);
 		}
 	}
-
-	OW_String rstr = rv.releaseString();
+	String rstr = rv.releaseString();
 	size_t ndx = rstr.indexOf('\r');
 	if(ndx != npos)
 	{
 		rstr = rstr.substring(0, ndx);
 	}
-
 	return rstr;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 const char*
-OW_String::strchr(const char* theStr, int c)
+String::strchr(const char* theStr, int c)
 {
 	const char* tmpChar = theStr;
 	for (; *tmpChar && *tmpChar != c; tmpChar++)
@@ -1559,4 +1376,6 @@ OW_String::strchr(const char* theStr, int c)
 	}
 	return ((*tmpChar) == c ? tmpChar : 0);
 }
+
+} // end namespace OpenWBEM
 

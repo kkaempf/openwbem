@@ -30,9 +30,13 @@
 #include "OW_config.h"
 #include "OW_SelectableCallbackIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_SelectableCallbackIFC::~OW_SelectableCallbackIFC() 
+SelectableCallbackIFC::~SelectableCallbackIFC() 
 {
 }
 
+} // end namespace OpenWBEM
 

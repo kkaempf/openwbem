@@ -43,7 +43,8 @@
 
 #include <fstream>
 
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 namespace
 {
@@ -51,12 +52,11 @@ namespace
 	// conflict whens the library is dynamically loaded
 
 	using std::ifstream;
-	using namespace OW_WBEMFlags;
 
-	static OW_String getDestClass(const OW_CIMInstance& ci)
+	static String getDestClass(const CIMInstance& ci)
 	{
 
-		OW_String classOfSource = ci.getClassName();
+		String classOfSource = ci.getClassName();
 		if (classOfSource.equalsIgnoreCase("EXP_BionicComputerSystem"))
 		{
 			return "EXP_BionicComputerSystem2";
@@ -71,25 +71,25 @@ namespace
 		}
 	}
 
-	class OW_AssociatorTest : public OW_CppAssociatorProviderIFC, public OW_CppSimpleInstanceProviderIFC
+	class AssociatorTest : public CppAssociatorProviderIFC, public CppSimpleInstanceProviderIFC
 	{
 	public:
-		~OW_AssociatorTest();
+		~AssociatorTest();
 
 		virtual void associators(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& assocClass,
-			const OW_String& resultClass,
-			const OW_String& role,
-			const OW_String& resultRole,
+			const ProviderEnvironmentIFCRef& env,
+			CIMInstanceResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& assocClass,
+			const String& resultClass,
+			const String& role,
+			const String& resultRole,
 			EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList)
+			const StringArray* propertyList)
 		{
-			env->getLogger()->logDebug(format("OW_AssociatorTest associators called "
+			env->getLogger()->logDebug(format("AssociatorTest associators called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %5, resultRole = %6, includeQualifiers = %7, "
 				"includeClassOrigin = %8, propertyList = %9",
@@ -97,182 +97,182 @@ namespace
 				resultClass, role, resultRole, includeQualifiers,
 				includeClassOrigin, propertyList));
 
-			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
-			OW_CIMInstance ci = hdl->getInstance(ns,
+			CIMInstance ci = hdl->getInstance(ns,
 				objectName);
 
-			OW_String destClass = getDestClass(ci);
+			String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
 				return;
 
 			// All other instances of the other class are associated.
-			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(ns,destClass, E_DEEP);
+			CIMInstanceEnumeration instances = hdl->enumInstancesE(ns,destClass, E_DEEP);
 			while (instances.hasMoreElements())
 			{
-				OW_CIMInstance ci = instances.nextElement();
-				ci.setProperty("producedByAssocTest", OW_CIMValue(true));
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", ci));
+				CIMInstance ci = instances.nextElement();
+				ci.setProperty("producedByAssocTest", CIMValue(true));
+				env->getLogger()->logDebug(format("AssociatorTest producing: %1", ci));
 				result.handle(ci.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 
 		}
 
 		virtual void associatorNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& assocClass,
-			const OW_String& resultClass,
-			const OW_String& role,
-			const OW_String& resultRole )
+			const ProviderEnvironmentIFCRef& env,
+			CIMObjectPathResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& assocClass,
+			const String& resultClass,
+			const String& role,
+			const String& resultRole )
 		{
-			env->getLogger()->logDebug(format("OW_AssociatorTest associatorNames called "
+			env->getLogger()->logDebug(format("AssociatorTest associatorNames called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %4, resultRole = %6",
 				ns, objectName.toString(), assocClass, resultClass,
 				role, resultRole));
 
-			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(ns,
+			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+			CIMInstance ci = hdl->getInstance(ns,
 				objectName);
 
-			OW_String destClass = getDestClass(ci);
+			String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
 			{
 				return;
 			}
 
-			OW_CIMInstanceEnumeration instances = hdl->enumInstancesE(
+			CIMInstanceEnumeration instances = hdl->enumInstancesE(
 				ns, destClass);
 			while (instances.hasMoreElements())
 			{
-				OW_CIMInstance ci = instances.nextElement();
-				OW_CIMObjectPath cop(ns, ci);
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", cop));
+				CIMInstance ci = instances.nextElement();
+				CIMObjectPath cop(ns, ci);
+				env->getLogger()->logDebug(format("AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
 		}
 
 		virtual void references(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMInstanceResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& resultClass,
-			const OW_String& role,
+			const ProviderEnvironmentIFCRef& env,
+			CIMInstanceResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& resultClass,
+			const String& role,
 			EIncludeQualifiersFlag includeQualifiers,
 			EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList )
+			const StringArray* propertyList )
 		{
-			env->getLogger()->logDebug(format("OW_AssociatorTest references called "
+			env->getLogger()->logDebug(format("AssociatorTest references called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4, "
 				"includeQualifiers = %5, includeClassOrigin = %6, "
 				"propertyList = %7",
 				ns, objectName.toString(), resultClass, role,
 				includeQualifiers, includeClassOrigin, propertyList));
 
-			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(ns,
+			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+			CIMInstance ci = hdl->getInstance(ns,
 				objectName);
 
-			OW_String destClass = getDestClass(ci);
+			String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
 				return;
 
-			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(
+			CIMInstanceEnumeration e1 = hdl->enumInstancesE(
 				ns, destClass);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(ns,
+				CIMClass cc = hdl->getClass(ns,
 					resultClass);
-				OW_CIMInstance newInstance = cc.newInstance();
-				OW_CIMInstance ci = e1.nextElement();
-				OW_CIMObjectPath path(ns, ci);
+				CIMInstance newInstance = cc.newInstance();
+				CIMInstance ci = e1.nextElement();
+				CIMObjectPath path(ns, ci);
 
-				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
+				newInstance.setProperty("GroupComponent", CIMValue(objectName));
 
-				newInstance.setProperty("PartComponent", OW_CIMValue(path));
-				newInstance.setProperty("producedByAssocTest", OW_CIMValue(true));
+				newInstance.setProperty("PartComponent", CIMValue(path));
+				newInstance.setProperty("producedByAssocTest", CIMValue(true));
 
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newInstance));
+				env->getLogger()->logDebug(format("AssociatorTest producing: %1", newInstance));
 				result.handle(newInstance.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 		}
 
 		virtual void referenceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_String& ns,
-			const OW_CIMObjectPath& objectName,
-			const OW_String& resultClass,
-			const OW_String& role )
+			const ProviderEnvironmentIFCRef& env,
+			CIMObjectPathResultHandlerIFC& result,
+			const String& ns,
+			const CIMObjectPath& objectName,
+			const String& resultClass,
+			const String& role )
 		{
-			env->getLogger()->logDebug(format("OW_AssociatorTest referenceNames called "
+			env->getLogger()->logDebug(format("AssociatorTest referenceNames called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4",
 				ns, objectName.toString(), resultClass, role));
 
-			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-			OW_CIMInstance ci = hdl->getInstance(ns,
+			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+			CIMInstance ci = hdl->getInstance(ns,
 				objectName);
 
-			OW_String destClass = getDestClass(ci);
+			String destClass = getDestClass(ci);
 
 			if (destClass.length() == 0)
 				return;
 
-			OW_CIMInstanceEnumeration e1 = hdl->enumInstancesE(ns, destClass);
+			CIMInstanceEnumeration e1 = hdl->enumInstancesE(ns, destClass);
 
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(ns, resultClass);
-				OW_CIMInstance newInstance = cc.newInstance();
+				CIMClass cc = hdl->getClass(ns, resultClass);
+				CIMInstance newInstance = cc.newInstance();
 
-				OW_CIMInstance ci = e1.nextElement();
-				OW_CIMObjectPath path(ns, ci);
+				CIMInstance ci = e1.nextElement();
+				CIMObjectPath path(ns, ci);
 
-				newInstance.setProperty("GroupComponent", OW_CIMValue(objectName));
+				newInstance.setProperty("GroupComponent", CIMValue(objectName));
 
-				newInstance.setProperty("PartComponent", OW_CIMValue(path));
+				newInstance.setProperty("PartComponent", CIMValue(path));
 
-				OW_CIMObjectPath newPath(ns, newInstance);
+				CIMObjectPath newPath(ns, newInstance);
 
-				env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newPath));
+				env->getLogger()->logDebug(format("AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}
 		}
 
-		virtual void initialize(const OW_ProviderEnvironmentIFCRef& env);
+		virtual void initialize(const ProviderEnvironmentIFCRef& env);
 
 		virtual void doSimpleEnumInstances(
-			const OW_ProviderEnvironmentIFCRef &env, 
-			const OW_String &ns, 
-			const OW_CIMClass &cimClass, 
-			OW_CIMInstanceResultHandlerIFC &result,
+			const ProviderEnvironmentIFCRef &env, 
+			const String &ns, 
+			const CIMClass &cimClass, 
+			CIMInstanceResultHandlerIFC &result,
 			EPropertiesFlag propertiesFlag)
 		{
 			(void)propertiesFlag;
-			env->getLogger()->logDebug("OW_AssociatorTest doSimpleEnumInstances called ");
+			env->getLogger()->logDebug("AssociatorTest doSimpleEnumInstances called ");
 
-			OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
 			try
 			{
-				OW_CIMInstanceEnumeration insts1e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem");
-				OW_CIMInstanceArray insts1;
+				CIMInstanceEnumeration insts1e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem");
+				CIMInstanceArray insts1;
 				while (insts1e.hasMoreElements())
 				{
 					insts1.push_back(insts1e.nextElement());
 				}
-				OW_CIMInstanceEnumeration insts2e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem2");
-				OW_CIMInstanceArray insts2;
+				CIMInstanceEnumeration insts2e = hdl->enumInstancesE(ns, "EXP_BionicComputerSystem2");
+				CIMInstanceArray insts2;
 				while (insts2e.hasMoreElements())
 				{
 					insts2.push_back(insts2e.nextElement());
@@ -283,40 +283,40 @@ namespace
 				{
 					for (size_t j = 0; j < insts2.size(); ++j)
 					{
-						OW_CIMInstance newInstance(cimClass.newInstance());
-						newInstance.setProperty("GroupComponent", OW_CIMValue(OW_CIMObjectPath(ns, insts1[i])));
+						CIMInstance newInstance(cimClass.newInstance());
+						newInstance.setProperty("GroupComponent", CIMValue(CIMObjectPath(ns, insts1[i])));
 
-						newInstance.setProperty("PartComponent", OW_CIMValue(OW_CIMObjectPath(ns, insts2[j])));
-						env->getLogger()->logDebug(format("OW_AssociatorTest producing: %1", newInstance.toMOF()));
+						newInstance.setProperty("PartComponent", CIMValue(CIMObjectPath(ns, insts2[j])));
+						env->getLogger()->logDebug(format("AssociatorTest producing: %1", newInstance.toMOF()));
 						result.handle(newInstance);
 					}
 				}
 			}
-			catch (OW_CIMException&)
+			catch (CIMException&)
 			{
 				// just ignore errors for the test.
 			}
 		}
 
-		void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
+		void deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 		{
 			// do nothing.
 		}
 
-		OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &ns, const OW_CIMInstance &inst)
+		CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &, const String &ns, const CIMInstance &inst)
 		{
 			// do nothing.
-			return OW_CIMObjectPath(ns, inst);
+			return CIMObjectPath(ns, inst);
 		}
 
 		void modifyInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& modifiedInstance,
-			const OW_CIMInstance& previousInstance,
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& modifiedInstance,
+			const CIMInstance& previousInstance,
 			EIncludeQualifiersFlag includeQualifiers,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& theClass)
+			const StringArray* propertyList,
+			const CIMClass& theClass)
 		{
 			(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
 			// do nothing.
@@ -324,7 +324,7 @@ namespace
 	};
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_AssociatorTest::~OW_AssociatorTest()
+	AssociatorTest::~AssociatorTest()
 	{
 	}
 
@@ -332,12 +332,12 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 	void
-		OW_AssociatorTest::initialize(const OW_ProviderEnvironmentIFCRef& env)
+		AssociatorTest::initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger()->logDebug("OW_AssociatorTest initialize called");
+		env->getLogger()->logDebug("AssociatorTest initialize called");
 	}
 
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY(OW_AssociatorTest, associatortest);
+OW_PROVIDERFACTORY(AssociatorTest, associatortest);
 

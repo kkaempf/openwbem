@@ -27,75 +27,67 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 
-DEFINE_EXCEPTION(UnnamedPipe);
+namespace OpenWBEM
+{
 
+DEFINE_EXCEPTION(UnnamedPipe);
 //////////////////////////////////////////////////////////////////////////////
-OW_UnnamedPipe::~OW_UnnamedPipe()
+UnnamedPipe::~UnnamedPipe()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_UnnamedPipe::writeInt(int value)
+UnnamedPipe::writeInt(int value)
 {
 	return this->write(&value, sizeof(int));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_UnnamedPipe::writeString(const OW_String& strData)
+UnnamedPipe::writeString(const String& strData)
 {
 	int rc;
 	int len = static_cast<int>(strData.length()+1);
-
 	if((rc = this->writeInt(len)) != -1)
 	{
 		rc = this->write(strData.c_str(), len);
 	}
-
 	return rc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_UnnamedPipe::readInt(int* value)
+UnnamedPipe::readInt(int* value)
 {
 	return this->read(value, sizeof(int));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_UnnamedPipe::readString(OW_String& strData)
+UnnamedPipe::readString(String& strData)
 {
 	int len;
 	int rc;
 	if((rc = this->readInt(&len)) != -1)
 	{
-		OW_AutoPtrVec<char> p(new char[len+1]);
+		AutoPtrVec<char> p(new char[len+1]);
 		if((rc = this->read(p.get(), len)) != -1)
 		{	
-			strData = OW_String(p.get(), len);
+			strData = String(p.get(), len);
 		}
 	}
-
 	return rc;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_UnnamedPipe::readAll()
+String
+UnnamedPipe::readAll()
 {
 	char buf[1024];
 	int readbytes;
-	OW_StringBuffer retval;
+	StringBuffer retval;
 	do
 	{
 		readbytes = this->read(buf, sizeof(buf)-1, true); // throws on error
@@ -104,3 +96,6 @@ OW_UnnamedPipe::readAll()
 	} while (readbytes > 0); // keep going until we don't fill up the buffer.
 	return retval.releaseString();
 }
+
+} // end namespace OpenWBEM
+

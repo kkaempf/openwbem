@@ -27,21 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_Format.hpp"
-
 #ifdef OW_HAVE_SLP_H
+
+namespace OpenWBEM
+{
 
 struct CBData
 {
-	OW_Array<OW_String> urls;
-	OW_Array<OW_UInt16> lifetimes;
+	Array<String> urls;
+	Array<UInt16> lifetimes;
 	SLPError errcode;
 };
-
 extern "C"
 {
 SLPBoolean MySLPSrvURLCallback( SLPHandle /*hslp*/, 
@@ -63,16 +62,11 @@ SLPBoolean MySLPSrvURLCallback( SLPHandle /*hslp*/,
 			((CBData*)cookie)->errcode = errcode;
 			break;
 	}
-
-
-
 	/* return SLP_TRUE because we want to be called again */ 
 	/* if more services were found                        */ 
-
 	return SLP_TRUE; 
 } 
 //////////////////////////////////////////////////////////////////////////////
-
 SLPBoolean MySLPAttrCallback(SLPHandle /*hslp*/, 
                             const char* attrlist, 
                             SLPError errcode, 
@@ -80,84 +74,75 @@ SLPBoolean MySLPAttrCallback(SLPHandle /*hslp*/,
 { 
 	if(errcode == SLP_OK) 
 	{ 
-		(*(OW_String*)cookie) = attrlist;
+		(*(String*)cookie) = attrlist;
 	} 
 	
 	return SLP_FALSE; 
 }
-
 } // extern "C"
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMLocatorSLP::OW_CIMOMLocatorSLP()	
+CIMOMLocatorSLP::CIMOMLocatorSLP()	
 {
 	SLPError err = SLPOpen("en", SLP_FALSE, &m_hslp);
 	if (err != SLP_OK)
 	{
 		SLPClose(m_hslp);
-		OW_THROW(OW_CIMOMLocatorException, 
+		OW_THROW(CIMOMLocatorException, 
 			format("Error opening SLP handle: %1", err).c_str());
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_CIMOMLocatorSLP::processAttributes(const OW_String& attrs, 
-		OW_CIMOMInfo& info)
+CIMOMLocatorSLP::processAttributes(const String& attrs, 
+		CIMOMInfo& info)
 {
-	OW_String sattrs(attrs);
+	String sattrs(attrs);
 	size_t idx = sattrs.indexOf('(');
-	while (idx != OW_String::npos)
+	while (idx != String::npos)
 	{
 		sattrs = sattrs.substring(idx + 1);
 		size_t endIdx = sattrs.indexOf('=');
-		OW_String key = sattrs.substring(0, endIdx);
+		String key = sattrs.substring(0, endIdx);
 		sattrs = sattrs.substring(endIdx + 1);
 		endIdx = sattrs.indexOf(')');
-		OW_String val = sattrs.substring(0, endIdx);
+		String val = sattrs.substring(0, endIdx);
 		info[key] = val;
 		idx = sattrs.indexOf('(');
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMInfoArray 
-OW_CIMOMLocatorSLP::findCIMOMs()
+CIMOMInfoArray 
+CIMOMLocatorSLP::findCIMOMs()
 {
 	SLPError err;
 	CBData data;
-
-	OW_CIMOMInfoArray rval;
-
+	CIMOMInfoArray rval;
 	err = SLPFindSrvs(m_hslp, OW_CIMOM_SLP_SERVICE_TYPE, 0, 0, MySLPSrvURLCallback, &data);
 	if((err != SLP_OK) || (data.errcode != SLP_OK)) 
 	{ 
-		OW_THROW(OW_CIMOMLocatorException, 
+		OW_THROW(CIMOMLocatorException, 
 			format("Error finding service: %1.  SLP Error code: %2",
 				OW_CIMOM_SLP_SERVICE_TYPE, err).c_str());
 	} 
-
 	for (size_t i = 0; i < data.urls.size(); ++i)
 	{
-		OW_CIMOMInfo info;
-		OW_String SLPUrl = data.urls[i];
+		CIMOMInfo info;
+		String SLPUrl = data.urls[i];
 		size_t idx = SLPUrl.indexOf("http");
 		info.setURL(SLPUrl.substring(idx));
-		OW_String attrList;
-
+		String attrList;
 		err = SLPFindAttrs(m_hslp, data.urls[i].c_str(), "", "", 
 			MySLPAttrCallback, &attrList);
 		if (err != SLP_OK)
 		{
-			OW_THROW(OW_CIMOMLocatorException, 
+			OW_THROW(CIMOMLocatorException, 
 				format("Error retrieving attributes for %1",
 					data.urls[i]).c_str());
 		}
-
 		processAttributes(attrList, info);
 		
-		OW_String url = info.getURL();
+		String url = info.getURL();
 		char* cpUrl = 0;
 		err = SLPUnescape(url.c_str(), &cpUrl, SLP_FALSE);
 		if (err != SLP_OK)
@@ -166,26 +151,23 @@ OW_CIMOMLocatorSLP::findCIMOMs()
 			{
 				SLPFree(cpUrl);
 			}
-			OW_THROW(OW_CIMOMLocatorException, 
+			OW_THROW(CIMOMLocatorException, 
 				format("Error unescaping URL: %1", err).c_str());
 		}
 		url = cpUrl;
 		SLPFree(cpUrl);
-
-
 		info.setURL(url);
-
 		rval.push_back(info);
 	}
 	
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMOMLocatorSLP::~OW_CIMOMLocatorSLP()	
+CIMOMLocatorSLP::~CIMOMLocatorSLP()	
 {
 	SLPClose(m_hslp);
 }
+#endif // OW_HAVE_SLP_H
 
-#endif // HAVE_SLP_H
+} // end namespace OpenWBEM
 

@@ -27,10 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NoSuchQualifierException.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(NoSuchQualifier)
 
+} // end namespace OpenWBEM
 

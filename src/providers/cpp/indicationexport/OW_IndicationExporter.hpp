@@ -27,45 +27,41 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_INDICATION_EXPORTER_HPP_
 #define OW_INDICATION_EXPORTER_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_XMLQualifier.hpp"
 #include "OW_Param.hpp"
 
-class OW_IndicationExporter : OW_XMLQualifier
+namespace OpenWBEM
+{
+
+class IndicationExporter : XMLQualifier
 {
 public:
-	OW_IndicationExporter( OW_CIMProtocolIFCRef prot );
-
+	IndicationExporter( CIMProtocolIFCRef prot );
 	/**
 	 * Export the indication.
 	 * @param ci The indication to export.
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	void exportIndication( const OW_String& ns, const OW_CIMInstance& ci );
-
-
+	void exportIndication( const String& ns, const CIMInstance& ci );
 private:
 	void sendXMLHeader(std::ostream& ostr);
 	void sendXMLTrailer(std::ostream& ostr);
-	void doSendRequest(OW_Reference<std::iostream> ostr, const OW_String& methodName,
-		const OW_String& ns);
+	void doSendRequest(Reference<std::iostream> ostr, const String& methodName,
+		const String& ns);
 	/**
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	void checkNodeForCIMError(OW_CIMXMLParser& parser,
-		const OW_String& operation);
+	void checkNodeForCIMError(CIMXMLParser& parser,
+		const String& operation);
 	
-	OW_CIMProtocolIFCRef m_protocol;
-
-	OW_Int32 m_iMessageID;
-
+	CIMProtocolIFCRef m_protocol;
+	Int32 m_iMessageID;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

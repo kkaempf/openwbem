@@ -27,38 +27,34 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_UserInfo.hpp"
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_UserInfo::OW_UserInfo(const OW_String& userName) :
+UserInfo::UserInfo(const String& userName) :
 	m_userName(userName), m_internal(false) {}
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UserInfo::OW_UserInfo(const OW_UserInfo& arg) :
+UserInfo::UserInfo(const UserInfo& arg) :
 	m_userName(arg.m_userName), m_internal(arg.m_internal) {}
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UserInfo& OW_UserInfo::operator= (const OW_UserInfo& arg)
+UserInfo& UserInfo::operator= (const UserInfo& arg)
 {
 	m_userName = arg.m_userName;
 	m_internal = arg.m_internal;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_UserInfo::getUserName() const { return m_userName; }
-
-
+String UserInfo::getUserName() const { return m_userName; }
 //////////////////////////////////////////////////////////////////////////////
-OW_UserInfo::OW_UserInfo() :
+UserInfo::UserInfo() :
 	m_userName(), m_internal(true) {}
-
 //////////////////////////////////////////////////////////////////////////////
-bool OW_UserInfo::getInternal() const { return m_internal; }
-
+bool UserInfo::getInternal() const { return m_internal; }
 //////////////////////////////////////////////////////////////////////////////
-void OW_UserInfo::setInternal() { m_internal = true; }
+void UserInfo::setInternal() { m_internal = true; }
 
+} // end namespace OpenWBEM
 

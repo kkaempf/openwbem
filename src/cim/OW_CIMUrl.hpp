@@ -27,226 +27,190 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMURL_HPP_INCLUDE_GUARD_
 #define OW_CIMURL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMException.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMNULL.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-class OW_IOException;
+namespace OpenWBEM
+{
 
+//////////////////////////////////////////////////////////////////////////////
+class IOException;
 /**
- * The OW_CIMUrl is an abstract data type that represents a Uniform resource
- * locator. OW_CIMUrl objects are ref counted and copy on write.
+ * The CIMUrl is an abstract data type that represents a Uniform resource
+ * locator. CIMUrl objects are ref counted and copy on write.
  */
-class OW_CIMUrl : public OW_CIMBase
+class CIMUrl : public CIMBase
 {
 private:
-
 	struct URLData;
-	friend bool operator<(const OW_CIMUrl::URLData& x, 
-			const OW_CIMUrl::URLData& y); 
-
+	friend bool operator<(const CIMUrl::URLData& x, 
+			const CIMUrl::URLData& y); 
 public:
-
 	/**
-	 * Create a new OW_CIMUrl object.
+	 * Create a new CIMUrl object.
 	 */
-	OW_CIMUrl();
-
+	CIMUrl();
 	/**
-	 * Create a NULL OW_CIMUrl object.
+	 * Create a NULL CIMUrl object.
 	 */
-	explicit OW_CIMUrl(OW_CIMNULL_t);
-
+	explicit CIMUrl(CIMNULL_t);
 	/**
-	 * Create a new OW_CIMUrl object from a URL string
+	 * Create a new CIMUrl object from a URL string
 	 * (i.e. http://localhost:5988/cimom)
 	 * @param spec The string that contains the URL
 	 */
-	explicit OW_CIMUrl(const OW_String& spec);
-
+	explicit CIMUrl(const String& spec);
 	/**
-	 * Create a new OW_CIMUrl object.
+	 * Create a new CIMUrl object.
 	 * @param protocol The protocol component of the url (i.e. http, https)
 	 * @param host The host component of the URL (i.e. calder.com)
 	 * @param file The file component of the URL
 	 * @param port The port component of the URL
 	 */
-	OW_CIMUrl(const OW_String& protocol, const OW_String& host,
-		const OW_String& file, OW_Int32 port=0);
-
+	CIMUrl(const String& protocol, const String& host,
+		const String& file, Int32 port=0);
 	/**
 	 * Copy constructor
-	 * @param arg The OW_CIMUrl object to make this object a copy of.
+	 * @param arg The CIMUrl object to make this object a copy of.
 	 */
-	OW_CIMUrl(const OW_CIMUrl& arg);
+	CIMUrl(const CIMUrl& arg);
 	
 	/**
-	 * Create a new OW_CIMUrl object.
-	 * Creates an OW_CIMUrl by parsing the specification spec within a specified
+	 * Create a new CIMUrl object.
+	 * Creates an CIMUrl by parsing the specification spec within a specified
 	 * context. If the context argument is not null and the spec argument is a
 	 * partial URL specification, then any of the strings missing components are
 	 * inherited from the context argument.
-	 * @param context The OW_CIMUrl that will provide the missing components
-	 * @param spec The OW_String representation of the URL
+	 * @param context The CIMUrl that will provide the missing components
+	 * @param spec The String representation of the URL
 	 */
-	OW_CIMUrl(const OW_CIMUrl& context, const OW_String& spec);
-
+	CIMUrl(const CIMUrl& context, const String& spec);
 	/**
-	 * Destroy this OW_CIMUrl object.
+	 * Destroy this CIMUrl object.
 	 */
-	~OW_CIMUrl();
-
+	~CIMUrl();
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMUrl object to assign to this one.
-	 * @return A reference to this OW_CIMUrl object.
+	 * @param arg The CIMUrl object to assign to this one.
+	 * @return A reference to this CIMUrl object.
 	 */
-	OW_CIMUrl& operator= (const OW_CIMUrl& arg);
-
+	CIMUrl& operator= (const CIMUrl& arg);
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 	/**
-	 * Check this OW_CIMUrl object against another for equality.
-	 * @param arg The OW_CIMUrl object to check for equality against.
-	 * @return true If arg is equal to this OW_CIMUrl object. Otherwise false.
+	 * Check this CIMUrl object against another for equality.
+	 * @param arg The CIMUrl object to check for equality against.
+	 * @return true If arg is equal to this CIMUrl object. Otherwise false.
 	 */
-	bool equals(const OW_CIMUrl& arg) const;
-
+	bool equals(const CIMUrl& arg) const;
 	/**
 	 * Equality operator
-	 * @param arg The OW_CIMUrl object to check for equality against.
-	 * @return true If arg is equal to this OW_CIMUrl object. Otherwise false.
+	 * @param arg The CIMUrl object to check for equality against.
+	 * @return true If arg is equal to this CIMUrl object. Otherwise false.
 	 */
-	bool operator== (const OW_CIMUrl& arg) const
+	bool operator== (const CIMUrl& arg) const
 			{  return equals(arg); }
-
 	/**
 	 * Inequality operator
-	 * @param arg The OW_CIMUrl object to check for inequality against.
-	 * @return true If arg is non equal to this OW_CIMUrl object.
+	 * @param arg The CIMUrl object to check for inequality against.
+	 * @return true If arg is non equal to this CIMUrl object.
 	 * Otherwise false.
 	 */
-	bool operator!= (const OW_CIMUrl& arg) const
+	bool operator!= (const CIMUrl& arg) const
 		{  return !equals(arg); }
-
 	/**
-	 * @return The OW_String representation of the entire URL
+	 * @return The String representation of the entire URL
 	 */
-	OW_String getSpec() const;
-
+	String getSpec() const;
 	/**
 	 * @return The protocol component of the URL
 	 */
-	OW_String getProtocol() const;
-
+	String getProtocol() const;
 	/**
 	 * Set the protocol component of the url
 	 * @param protocol The new protocol component for the url
 	 * @return a reference to *this
 	 */
-	OW_CIMUrl& setProtocol(const OW_String& protocol);
-
-
+	CIMUrl& setProtocol(const String& protocol);
 	/**
 	 * @return The host component of the URL
 	 */
-	OW_String getHost() const;
-
+	String getHost() const;
 	/**
 	 * Set the host component of the URL
-	 * @param host The new host component for this OW_CIMUrl object.
+	 * @param host The new host component for this CIMUrl object.
 	 * @return a reference to *this
 	 */
-	OW_CIMUrl& setHost(const OW_String& host);
-
+	CIMUrl& setHost(const String& host);
 	/**
 	 * @return The port component of the URL
 	 */
-	OW_Int32 getPort() const;
-
+	Int32 getPort() const;
 	/**
 	 * @return The file component of the URL
 	 */
-	OW_String getFile() const;
-
+	String getFile() const;
 	/**
 	 * @return The reference data portion of the URL
 	 */
-	OW_String getRef() const;
-
+	String getRef() const;
 	/**
 	 * Determine if the file component of this URL is the same as the file
 	 * component on another URL
-	 *	@param arg The OW_CIMUrl object to compare the file component of.
+	 *	@param arg The CIMUrl object to compare the file component of.
 	 * @return true if this file component are the same. Otherwise false.
 	 */
-	bool sameFile(const OW_CIMUrl& arg) const;
-
+	bool sameFile(const CIMUrl& arg) const;
 	/**
 	 * @return true if this URL reference a resource on the local machine.
 	 */
 	bool isLocal() const;
-
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return The string representation of this OW_CIMUrl object.
+	 * @return The string representation of this CIMUrl object.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return The MOF representation of this OW_CIMUrl object as an OW_String.
+	 * @return The MOF representation of this CIMUrl object as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 private:
-
 	void setLocalHost();
-
 	void setComponents();
 	void buildSpec();
 	void checkRef();
 	void setDefaultValues();
-
-	OW_COWReference<URLData> m_pdata;
-
-	friend bool operator<(const OW_CIMUrl& lhs, const OW_CIMUrl& rhs);
+	COWReference<URLData> m_pdata;
+	friend bool operator<(const CIMUrl& lhs, const CIMUrl& rhs);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

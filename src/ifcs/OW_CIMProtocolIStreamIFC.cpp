@@ -30,20 +30,23 @@
 #include "OW_config.h"
 #include "OW_CIMProtocolIStreamIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMProtocolIStreamIFC::OW_CIMProtocolIStreamIFC(std::streambuf* strbuf) 
+CIMProtocolIStreamIFC::CIMProtocolIStreamIFC(std::streambuf* strbuf) 
 	: std::istream(strbuf) 
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMProtocolIStreamIFC::checkForError() const 
+CIMProtocolIStreamIFC::checkForError() const 
+{
+}
+///////////////////////////////////////////////////////////////////////////////
+CIMProtocolIStreamIFC::~CIMProtocolIStreamIFC() 
 {
 }
 
-///////////////////////////////////////////////////////////////////////////////
-OW_CIMProtocolIStreamIFC::~OW_CIMProtocolIStreamIFC() 
-{
-}
+} // end namespace OpenWBEM
 

@@ -27,46 +27,43 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_MOF_PARSER_ERROR_HANDLER_IFC_HPP_
 #define OW_MOF_PARSER_ERROR_HANDLER_IFC_HPP_
 #include "OW_config.h"
 #include "OW_MOFLineInfo.hpp"
 #include "OW_Exception.hpp"
 
-DECLARE_EXCEPTION(MofParseFatalError);
+namespace OpenWBEM
+{
 
+namespace MOF
+{
+
+DECLARE_EXCEPTION(ParseFatalError);
 // this is an abstract base class for create concrete error handlers for the mof parser
-class OW_MofParserErrorHandlerIFC
+class ParserErrorHandlerIFC
 {
 public:
-	OW_MofParserErrorHandlerIFC();
-	virtual ~OW_MofParserErrorHandlerIFC();
-
+	ParserErrorHandlerIFC();
+	virtual ~ParserErrorHandlerIFC();
 	void fatalError( const char* error, const lineInfo& li );
-
 	enum ParserAction
 	{
 		Abort,
 		Ignore
 	};
-
 	void recoverableError( const char* error, const lineInfo& li );
-
 	void progressMessage( const char* message, const lineInfo& li );
-
 	long errorCount();
-
 protected:
 	virtual void doFatalError( const char* error, const lineInfo& li ) = 0;
 	virtual ParserAction doRecoverableError( const char* error, const lineInfo & li ) = 0;
 	virtual void doProgressMessage( const char* message, const lineInfo& li ) = 0;
-
-
 private:
 	long m_errorCount;
-
 };
 
+} // end namespace MOF
+} // end namespace OpenWBEM
 
 #endif //MOF_PARSER_ERROR_HANDLER_HPP

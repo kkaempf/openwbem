@@ -27,22 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_File.hpp"
-
 #include <fcntl.h>
 #ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
+namespace OpenWBEM
+{
+
 /////////////////////////////////////////////////////////////////////////////
-OW_File::OW_File(const OW_File& x) : m_hdl(dup(x.m_hdl))
+File::File(const File& x) : m_hdl(dup(x.m_hdl))
 {
 }
-
-
-
 namespace {
 /////////////////////////////////////////////////////////////////////////////
 // implementation of lock functions
@@ -58,29 +56,24 @@ doLock(int hdl, int cmd, short int type)
 	return ::fcntl(hdl, cmd, &lck);
 }
 } // end unnamed namespace
-
 /////////////////////////////////////////////////////////////////////////////
 int 
-OW_File::getLock()
+File::getLock()
 {
 	return doLock(m_hdl, F_SETLKW, F_WRLCK);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 int
-OW_File::tryLock()
+File::tryLock()
 {
 	return doLock(m_hdl, F_SETLK, F_WRLCK);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 int
-OW_File::unlock()
+File::unlock()
 {
 	return doLock(m_hdl, F_SETLK, F_UNLCK);
 }
 
-
-
-
+} // end namespace OpenWBEM
 

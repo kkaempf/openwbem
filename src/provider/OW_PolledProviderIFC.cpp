@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_PolledProviderIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_PolledProviderIFC::~OW_PolledProviderIFC()
+PolledProviderIFC::~PolledProviderIFC()
 {
 }
+
+} // end namespace OpenWBEM
 

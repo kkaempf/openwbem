@@ -30,7 +30,13 @@
 #include "OW_CIMProperty.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_CIMProperty(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_CIMProperty>(name);
+
+void registerArrayImpl_CIMProperty(const char* name)
+{
+    registerArrayImpl<CIMProperty>(name);
 }
+
+} // end namespace OpenWBEM
+

@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_StackTrace.hpp"
 #include "OW_Mutex.hpp"
-
 #include <cstring>
 #include <cstdlib>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -41,18 +39,18 @@
 #else
 #include <iostream>
 #endif
-
 #include <algorithm> // for std::swap
 
-OW_Mutex* OW_Exception::m_mutex = new OW_Mutex();
+namespace OpenWBEM
+{
 
+Mutex* Exception::m_mutex = new Mutex();
 //////////////////////////////////////////////////////////////////////////////					
 static void freeBuf(char** ptr)
 {
 	delete [] *ptr;
 	*ptr = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 static char* dupString(const char* str)
 {
@@ -64,51 +62,47 @@ static char* dupString(const char* str)
 	strcpy(rv, str);
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception::OW_Exception()
+Exception::Exception()
 	: std::exception()
 	, m_file(0)
 	, m_line(0)
 	, m_msg(0)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	OW_StackTrace::getStackTrace();
+	StackTrace::getStackTrace();
 #endif
 	m_mutex->acquire();
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception::OW_Exception(const char* file, int line, const char* msg)
+Exception::Exception(const char* file, int line, const char* msg)
 	: std::exception()
 	, m_file(0)
 	, m_line(line)
 	, m_msg(0)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	OW_StackTrace::getStackTrace();
+	StackTrace::getStackTrace();
 #endif
 	m_mutex->acquire();
 	m_file = dupString(file);
 	m_msg = dupString(msg);
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception::OW_Exception(const char* msg)
+Exception::Exception(const char* msg)
 	: std::exception()
 	, m_file(0)
 	, m_line(0)
 	, m_msg(0)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
-	OW_StackTrace::getStackTrace();
+	StackTrace::getStackTrace();
 #endif
 	m_mutex->acquire();
 	m_msg = dupString(msg);
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception::OW_Exception( const OW_Exception& e )
+Exception::Exception( const Exception& e )
 	: std::exception(e)
 	, m_file(0)
 	, m_line(e.m_line)
@@ -118,9 +112,8 @@ OW_Exception::OW_Exception( const OW_Exception& e )
 	m_file = dupString(e.m_file);
 	m_msg = dupString(e.m_msg);
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception::~OW_Exception() throw()
+Exception::~Exception() throw()
 {
 	try
 	{
@@ -133,18 +126,16 @@ OW_Exception::~OW_Exception() throw()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////					
-OW_Exception&
-OW_Exception::operator=(OW_Exception rhs)
+Exception&
+Exception::operator=(Exception rhs)
 {
 	rhs.swap(*this);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 void
-OW_Exception::swap(OW_Exception& rhs)
+Exception::swap(Exception& rhs)
 {
 	std::swap(m_file, rhs.m_file);
 	std::swap(m_line, rhs.m_line);
@@ -153,21 +144,19 @@ OW_Exception::swap(OW_Exception& rhs)
 		
 //////////////////////////////////////////////////////////////////////////////					
 const char*
-OW_Exception::getMessage() const
+Exception::getMessage() const
 {
 	return (m_msg != NULL) ? m_msg : "";
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 const char*
-OW_Exception::getFile() const
+Exception::getFile() const
 {
 	return (m_file != NULL) ? m_file : "";
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 std::ostream&
-operator<<(std::ostream& os, const OW_Exception& e)
+operator<<(std::ostream& os, const Exception& e)
 {
 	if(*e.getFile() == '\0')
 	{
@@ -177,7 +166,6 @@ operator<<(std::ostream& os, const OW_Exception& e)
 	{
 		os << e.getFile() << ": ";
 	}
-
 	if(e.getLine() == 0)
 	{
 		os << "[no line] ";
@@ -186,9 +174,7 @@ operator<<(std::ostream& os, const OW_Exception& e)
 	{
 		os << e.getLine() << ' ';
 	}
-
 	os << e.type() << ": ";
-
 	if(*e.getMessage() == '\0')
 	{
 		os << "[no message]";
@@ -197,14 +183,14 @@ operator<<(std::ostream& os, const OW_Exception& e)
 	{
 		os << e.getMessage();
 	}
-
 	return os;
 }
-
 //////////////////////////////////////////////////////////////////////////////					
 const char*
-OW_Exception::what() const throw()
+Exception::what() const throw()
 {
 	return getMessage();
 }
+
+} // end namespace OpenWBEM
 

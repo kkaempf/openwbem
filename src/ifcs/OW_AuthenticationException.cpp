@@ -1,5 +1,3 @@
-
-
 /*******************************************************************************
 * Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
@@ -32,6 +30,10 @@
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(Authentication)
 
+} // end namespace OpenWBEM
 

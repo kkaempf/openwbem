@@ -27,48 +27,44 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_BYTE_SWAP_HPP_
 #define OW_BYTE_SWAP_HPP_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
-
-
 // this will be defined by the configure script.
 #ifndef OW_WORDS_BIGENDIAN
-
 #if defined(OW_HAVE_BYTESWAP_H) && !defined(OW_DEBUG_MEMORY)
 #include <byteswap.h>
 
-inline OW_UInt16 OW_hton16(OW_UInt16 v) { return __bswap_16(v); }
-inline OW_UInt32 OW_hton32(OW_UInt32 v) { return __bswap_32(v); }
-inline OW_UInt64 OW_hton64(OW_UInt64 v) { return __bswap_64(v); }
-inline OW_UInt16 OW_ntoh16(OW_UInt16 v) { return __bswap_16(v); }
-inline OW_UInt32 OW_ntoh32(OW_UInt32 v) { return __bswap_32(v); }
-inline OW_UInt64 OW_ntoh64(OW_UInt64 v) { return __bswap_64(v); }
-
-#else
-
-inline OW_UInt16 OW_hton16(OW_UInt16 v)
+namespace OpenWBEM
 {
-	OW_UInt16 rval;
+
+inline UInt16 hton16(UInt16 v) { return __bswap_16(v); }
+inline UInt32 hton32(UInt32 v) { return __bswap_32(v); }
+inline UInt64 hton64(UInt64 v) { return __bswap_64(v); }
+inline UInt16 ntoh16(UInt16 v) { return __bswap_16(v); }
+inline UInt32 ntoh32(UInt32 v) { return __bswap_32(v); }
+inline UInt64 ntoh64(UInt64 v) { return __bswap_64(v); }
+#else
+inline UInt16 hton16(UInt16 v)
+{
+	UInt16 rval;
 	(reinterpret_cast<unsigned char*>(&rval))[1] = (reinterpret_cast<unsigned char*>(&v))[0];
 	(reinterpret_cast<unsigned char*>(&rval))[0] = (reinterpret_cast<unsigned char*>(&v))[1];
 	return rval;
 }
-inline OW_UInt32 OW_hton32(OW_UInt32 v)
+inline UInt32 hton32(UInt32 v)
 {
-	OW_UInt32 rval;
+	UInt32 rval;
 	(reinterpret_cast<unsigned char*>(&rval))[3] = (reinterpret_cast<unsigned char*>(&v))[0];
 	(reinterpret_cast<unsigned char*>(&rval))[2] = (reinterpret_cast<unsigned char*>(&v))[1];
 	(reinterpret_cast<unsigned char*>(&rval))[1] = (reinterpret_cast<unsigned char*>(&v))[2];
 	(reinterpret_cast<unsigned char*>(&rval))[0] = (reinterpret_cast<unsigned char*>(&v))[3];
 	return rval;
 }
-inline OW_UInt64 OW_hton64(OW_UInt64 v)
+inline UInt64 hton64(UInt64 v)
 {
-	OW_UInt64 rval;
+	UInt64 rval;
 	(reinterpret_cast<unsigned char*>(&rval))[7] = (reinterpret_cast<unsigned char*>(&v))[0];
 	(reinterpret_cast<unsigned char*>(&rval))[6] = (reinterpret_cast<unsigned char*>(&v))[1];
 	(reinterpret_cast<unsigned char*>(&rval))[5] = (reinterpret_cast<unsigned char*>(&v))[2];
@@ -79,30 +75,28 @@ inline OW_UInt64 OW_hton64(OW_UInt64 v)
 	(reinterpret_cast<unsigned char*>(&rval))[0] = (reinterpret_cast<unsigned char*>(&v))[7];
 	return rval;
 }
-inline OW_UInt16 OW_ntoh16(OW_UInt16 v)
+inline UInt16 ntoh16(UInt16 v)
 {
-	return OW_hton16(v);
+	return hton16(v);
 }
-inline OW_UInt32 OW_ntoh32(OW_UInt32 v)
+inline UInt32 ntoh32(UInt32 v)
 {
-	return OW_hton32(v);
+	return hton32(v);
 }
-inline OW_UInt64 OW_ntoh64(OW_UInt64 v)
+inline UInt64 ntoh64(UInt64 v)
 {
-	return OW_hton64(v);
+	return hton64(v);
 }
-
-
 #endif //#ifdef OW_HAVE_BYTESWAP_H
-
 #else
-inline OW_UInt16 OW_hton16(OW_UInt16 v) { return v; }
-inline OW_UInt32 OW_hton32(OW_UInt32 v) { return v; }
-inline OW_UInt64 OW_hton64(OW_UInt64 v) { return v; }
-inline OW_UInt16 OW_ntoh16(OW_UInt16 v) { return v; }
-inline OW_UInt32 OW_ntoh32(OW_UInt32 v) { return v; }
-inline OW_UInt64 OW_ntoh64(OW_UInt64 v) { return v; }
+inline UInt16 hton16(UInt16 v) { return v; }
+inline UInt32 hton32(UInt32 v) { return v; }
+inline UInt64 hton64(UInt64 v) { return v; }
+inline UInt16 ntoh16(UInt16 v) { return v; }
+inline UInt32 ntoh32(UInt32 v) { return v; }
+inline UInt64 ntoh64(UInt64 v) { return v; }
 #endif
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -1,5 +1,3 @@
-
-
 /*******************************************************************************
 * Copyright (C) 2001 Center 7, Inc All rights reserved.
 *
@@ -30,9 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-
 #include "OW_Array.hpp"
+
+namespace OpenWBEM
+{
 
 DEFINE_EXCEPTION(OutOfBounds);
 
+} // end namespace OpenWBEM
 

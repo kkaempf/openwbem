@@ -39,75 +39,77 @@
 #include "OW_WQLImpl.hpp"
 
 #include <iostream>
-#include <assert.h>
 
 using std::cout;
 using std::endl;
 using std::cerr;
+using namespace OpenWBEM;
+
+#define TEST_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
 namespace
 {
-class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 {
 public:
-	CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+	CIMInstanceEnumBuilder(CIMInstanceEnumeration& e) : m_e(e) {}
 protected:
-	virtual void doHandle(const OW_CIMInstance &i)
+	virtual void doHandle(const CIMInstance &i)
 	{
 		m_e.addElement(i);
 	}
 private:
-	OW_CIMInstanceEnumeration& m_e;
+	CIMInstanceEnumeration& m_e;
 };
 
 
 
 int queryCount = 0;
 
-OW_CIMInstanceArray testQueryRemote(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
+CIMInstanceArray testQueryRemote(CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
 	cout << "\nExecuting query " << queryCount << " remote: " << query << endl;
-	OW_CIMInstanceEnumeration cie = rch->execQueryE("/root/testsuite", query, "wql2");
+	CIMInstanceEnumeration cie = rch->execQueryE("/root/testsuite", query, "wql2");
 	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
 		expectedSize << endl;
-	OW_CIMInstanceArray cia;
+	CIMInstanceArray cia;
 	while (cie.hasMoreElements())
 	{
-		OW_CIMInstance i = cie.nextElement();
+		CIMInstance i = cie.nextElement();
 		cia.push_back(i);
         cout << i.toMOF() << endl;
 	}
 	if (expectedSize >= 0)
 	{
-		assert(cia.size() == static_cast<size_t>(expectedSize));
+		TEST_ASSERT(cia.size() == static_cast<size_t>(expectedSize));
 	}
 	return cia;
 }
 
-OW_CIMInstanceArray testQueryLocal(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
+CIMInstanceArray testQueryLocal(CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
 	cout << "\nExecuting query " << queryCount << " local: " << query << endl;
-	OW_Reference<OW_WQLIFC> wql(new OW_WQLImpl);
-	OW_CIMInstanceEnumeration cie;
+	Reference<WQLIFC> wql(new WQLImpl);
+	CIMInstanceEnumeration cie;
 	CIMInstanceEnumBuilder builder(cie);
 	wql->evaluate("/root/testsuite", builder, query, "wql2", rch);
 	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
 		expectedSize << endl;
-	OW_CIMInstanceArray cia;
+	CIMInstanceArray cia;
 	while (cie.hasMoreElements())
 	{
-		OW_CIMInstance i = cie.nextElement();
+		CIMInstance i = cie.nextElement();
 		cia.push_back(i);
         cout << i.toMOF() << endl;
 	}
 	if (expectedSize >= 0)
 	{
-		assert(cia.size() == static_cast<size_t>(expectedSize));
+		TEST_ASSERT(cia.size() == static_cast<size_t>(expectedSize));
 	}
 	return cia;
 }
 
-OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
+CIMInstanceArray testQuery(CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
 	++queryCount;
 	testQueryLocal(rch,query,expectedSize);
@@ -126,22 +128,22 @@ int main(int argc, char* argv[])
 
 	try
 	{
-		OW_String url = argv[1];
-		OW_CIMProtocolIFCRef httpClient( new OW_HTTPClient(url) );
+		String url = argv[1];
+		CIMProtocolIFCRef httpClient( new HTTPClient(url) );
 
-		OW_URL owurl(url);
-		OW_CIMOMHandleIFCRef rch;
+		URL owurl(url);
+		CIMOMHandleIFCRef rch;
 
 		if (owurl.path.equalsIgnoreCase("/owbinary"))
 		{
-			rch = new OW_BinaryCIMOMHandle(httpClient);
+			rch = new BinaryCIMOMHandle(httpClient);
 		}
 		else
 		{
-			rch = new OW_CIMXMLCIMOMHandle(httpClient);
+			rch = new CIMXMLCIMOMHandle(httpClient);
 		}
 
-		OW_CIMInstanceArray cia;
+		CIMInstanceArray cia;
 
 		// some basic selects
 		testQuery(rch, "select * from wqlTestClass", 10);
@@ -153,15 +155,15 @@ int main(int argc, char* argv[])
 
 		// test some equals on the where clause
 		cia = testQuery(rch, "select * from wqlTestClass where name = \"test1\"", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(0))) );
-		assert( cia[0].getProperty("name").getValue().equal(OW_CIMValue(OW_String("test1"))) );
+		TEST_ASSERT( cia[0].getProperty("sint32Data").getValue().equal(CIMValue(static_cast<Int32>(0))) );
+		TEST_ASSERT( cia[0].getProperty("name").getValue().equal(CIMValue(String("test1"))) );
 		testQuery(rch, "select * from wqlTestClass where \"test1\" = name", 1);
 		testQuery(rch, "select * from wqlTestClass where sint32Data = 0", 1);
 		testQuery(rch, "select * from wqlTestClass where 0 = sint32Data", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data = b'1010'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(10))) );
+		TEST_ASSERT( cia[0].getProperty("sint32Data").getValue().equal(CIMValue(static_cast<Int32>(10))) );
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data = x'A'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(10))) );
+		TEST_ASSERT( cia[0].getProperty("sint32Data").getValue().equal(CIMValue(static_cast<Int32>(10))) );
 		testQuery(rch, "select * from wqlTestClass where booleanData = TRUE", 1);
 		testQuery(rch, "select * from wqlTestClass where TRUE = booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData = FALSE", 1);
@@ -179,9 +181,9 @@ int main(int argc, char* argv[])
 		testQuery(rch, "select * from wqlTestClass where sint32Data <> 0", 1);
 		testQuery(rch, "select * from wqlTestClass where 0 <> sint32Data", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data <> b'1010'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(0))) );
+		TEST_ASSERT( cia[0].getProperty("sint32Data").getValue().equal(CIMValue(static_cast<Int32>(0))) );
 		cia = testQuery(rch, "select * from wqlTestClass where sint32Data <> x'A'", 1);
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(static_cast<OW_Int32>(0))) );
+		TEST_ASSERT( cia[0].getProperty("sint32Data").getValue().equal(CIMValue(static_cast<Int32>(0))) );
 		testQuery(rch, "select * from wqlTestClass where booleanData <> TRUE", 1);
 		testQuery(rch, "select * from wqlTestClass where TRUE <> booleanData", 1);
 		testQuery(rch, "select * from wqlTestClass where booleanData <> FALSE", 1);
@@ -283,18 +285,18 @@ int main(int argc, char* argv[])
 		{
 			testQueryRemote(rch, "INSERT INTO wqlTestClass (name, booleanData, stringData) VALUES (\"test11\", true, \"test11String\")", 1);
 		}
-		catch (OW_CIMException& e)
+		catch (CIMException& e)
 		{
 		}
 		
 		cia = testQuery(rch, "select * from wqlTestClass where name = "
 			"\"test11\"", 1);
-		assert( cia[0].getProperty("booleanData").getValue().equal(OW_CIMValue(
-			OW_Bool(true))) );
-		assert( cia[0].getProperty("stringData").getValue().equal(OW_CIMValue(
-			OW_String("test11String"))) );
-		assert( cia[0].getProperty("name").getValue().equal(OW_CIMValue(
-			OW_String("test11"))) );
+		TEST_ASSERT( cia[0].getProperty("booleanData").getValue().equal(CIMValue(
+			Bool(true))) );
+		TEST_ASSERT( cia[0].getProperty("stringData").getValue().equal(CIMValue(
+			String("test11String"))) );
+		TEST_ASSERT( cia[0].getProperty("name").getValue().equal(CIMValue(
+			String("test11"))) );
 
 		testQueryLocal(rch, "INSERT INTO wqlTestClass VALUES (\"test12\", 32, true, 64, \"test12String\", 50.0)", 1);
 		
@@ -303,23 +305,23 @@ int main(int argc, char* argv[])
 		testQuery(rch, "UPDATE wqlTestClass SET booleanData=false, sint32Data="
 			"12345 WHERE name=\"test11\"", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where name = \"test11\"", 1);
-		assert( cia[0].getProperty("booleanData").getValue().equal(OW_CIMValue(
-			OW_Bool(false))) );
-		assert( cia[0].getProperty("stringData").getValue().equal(OW_CIMValue(
-			OW_String("test11String"))) );
-		assert( cia[0].getProperty("sint32Data").getValue().equal(OW_CIMValue(
-			static_cast<OW_Int32>(12345))) );
-		assert( cia[0].getProperty("name").getValue().equal(OW_CIMValue(
-			OW_String("test11"))) );
+		TEST_ASSERT( cia[0].getProperty("booleanData").getValue().equal(CIMValue(
+			Bool(false))) );
+		TEST_ASSERT( cia[0].getProperty("stringData").getValue().equal(CIMValue(
+			String("test11String"))) );
+		TEST_ASSERT( cia[0].getProperty("sint32Data").getValue().equal(CIMValue(
+			static_cast<Int32>(12345))) );
+		TEST_ASSERT( cia[0].getProperty("name").getValue().equal(CIMValue(
+			String("test11"))) );
 
 		testQuery(rch, "UPDATE wqlTestClass SET stringData=\"\" WHERE name=\"test11\"", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where name = \"test11\"", 1);
-		assert( cia[0].getProperty("stringData").getValue().equal(OW_CIMValue(
-			OW_String(""))) );
+		TEST_ASSERT( cia[0].getProperty("stringData").getValue().equal(CIMValue(
+			String(""))) );
 
 		testQuery(rch, "UPDATE wqlTestClass SET stringData=null WHERE name=\"test11\"", 1);
 		cia = testQuery(rch, "select * from wqlTestClass where name = \"test11\"", 1);
-		assert( !cia[0].getProperty("stringData").getValue());
+		TEST_ASSERT( !cia[0].getProperty("stringData").getValue());
 
 		// test a simple delete
 		testQueryRemote(rch, "DELETE FROM wqlTestClass WHERE name=\"test11\"", 1);
@@ -329,11 +331,11 @@ int main(int argc, char* argv[])
 
 		return 0;
 	}
-	catch(OW_Assertion& a)
+	catch(Assertion& a)
 	{
 		cerr << "Caught Assertion main() " << a.getMessage() << endl;
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 	}

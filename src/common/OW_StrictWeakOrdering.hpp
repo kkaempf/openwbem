@@ -27,53 +27,50 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_STRICT_WEAK_ORDERING_HPP_INCLUDE_GUARD_
 #define OW_STRICT_WEAK_ORDERING_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 
+namespace OpenWBEM
+{
+
 template<class T1>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1)
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1)
 {
 	return lhs1 < rhs1;
 }
-
 template<class T1, class T2>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2)
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2);
+	else return StrictWeakOrdering(lhs2, rhs2);
 }
-
 template<class T1, class T2, class T3>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3)
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3);
 }
-
 template<class T1, class T2, class T3, class T4>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4)
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4);
 }
-
 template<class T1, class T2, class T3, class T4, class T5>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4,
@@ -81,14 +78,13 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
 			lhs5, rhs5);
 }
-
 template<class T1, class T2, class T3, class T4, class T5, class T6>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4,
@@ -97,16 +93,15 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
 			lhs5, rhs5,
 			lhs6, rhs6);
 }
-
 template<class T1, class T2, class T3, class T4, class T5, class T6, class
 T7>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4,
@@ -116,17 +111,16 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
 			lhs5, rhs5,
 			lhs6, rhs6,
 			lhs7, rhs7);
 }
-
 template<class T1, class T2, class T3, class T4, class T5, class T6, class
 T7, class T8>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4,
@@ -137,7 +131,7 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
 			lhs5, rhs5,
@@ -145,10 +139,9 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 			lhs7, rhs7,
 			lhs8, rhs8);
 }
-
 template<class T1, class T2, class T3, class T4, class T5, class T6, class
 T7, class T8, class T9>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4,
@@ -160,7 +153,7 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
 			lhs5, rhs5,
@@ -169,10 +162,9 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 			lhs8, rhs8,
 			lhs9, rhs9);
 }
-
 template<class T1, class T2, class T3, class T4, class T5, class T6, class
 T7, class T8, class T9, class T10>
-bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
+bool StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 		const T2& lhs2, const T2& rhs2,
 		const T3& lhs3, const T3& rhs3,
 		const T4& lhs4, const T4& rhs4,
@@ -185,7 +177,7 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 {
 	if(lhs1 < rhs1) return true;
 	else if(rhs1 < lhs1) return false;
-	else return OW_StrictWeakOrdering(lhs2, rhs2,
+	else return StrictWeakOrdering(lhs2, rhs2,
 			lhs3, rhs3,
 			lhs4, rhs4,
 			lhs5, rhs5,
@@ -196,5 +188,6 @@ bool OW_StrictWeakOrdering(const T1& lhs1, const T1& rhs1,
 			lhs10, rhs10);
 }
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

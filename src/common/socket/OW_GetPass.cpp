@@ -27,17 +27,9 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-/**
- *
- *
- */
-
 #include "OW_config.h"
 #include "OW_GetPass.hpp"
-
 #include <cstring>
-
 extern "C"
 {
 #ifdef OW_HAVE_UNISTD_H
@@ -45,13 +37,19 @@ extern "C"
 #endif
 }
 
+namespace OpenWBEM
+{
+
 #if !defined(OW_WIN32)
-OW_String
-OW_GetPass::getPass(const OW_String& prompt)
+String
+GetPass::getPass(const String& prompt)
 {
 	char* ptr = ::getpass(prompt.c_str());
-	OW_String retStr = ptr;
+	String retStr = ptr;
 	memset(ptr, 0x00, strlen(ptr) * sizeof(char));
 	return retStr;
 }
 #endif
+
+} // end namespace OpenWBEM
+

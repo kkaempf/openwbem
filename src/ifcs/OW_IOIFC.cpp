@@ -30,8 +30,13 @@
 #include "OW_config.h"
 #include "OW_IOIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_IOIFC::~OW_IOIFC() 
+IOIFC::~IOIFC() 
 {
 }
+
+} // end namespace OpenWBEM
 

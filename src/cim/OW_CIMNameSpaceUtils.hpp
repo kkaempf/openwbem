@@ -27,16 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIM_NAME_SPACE_UTILS_HPP_INCLUDE_GUARD_
 #define OW_CIM_NAME_SPACE_UTILS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 
-namespace OW_CIMNameSpaceUtils
+namespace OpenWBEM
+{
+
+namespace CIMNameSpaceUtils
 {
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -64,11 +65,10 @@ namespace OW_CIMNameSpaceUtils
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
-	 * @exception OW_CIMException If the namespace already exists.
+	 * @exception CIMException If the namespace already exists.
 	 */
-	void createCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, 
-		OW_UInt16 classInfo = 0, const OW_String& descriptionOfClassInfo = "", const OW_String& interopNs = "root");
-
+	void createCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, 
+		UInt16 classInfo = 0, const String& descriptionOfClassInfo = "", const String& interopNs = "root");
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
 	 * CIM_Namespace class. The namespace must be empty of all classes and
@@ -80,11 +80,10 @@ namespace OW_CIMNameSpaceUtils
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
-	 * @exception OW_CIMException If the namespace does not exist.
+	 * @exception CIMException If the namespace does not exist.
 	 */
-	void deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, const OW_String& interopNs = "root");
+	void deleteCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, const String& interopNs = "root");
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * CIM_Namespace class.
@@ -95,11 +94,10 @@ namespace OW_CIMNameSpaceUtils
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
 	 * @return An Array of namespace names as strings.
-	 * @exception OW_CIMException If the namespace does not exist or the object
+	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_StringArray enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& interopNs = "root");
-
+	StringArray enumCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& interopNs = "root");
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * CIM_Namespace class.
@@ -111,12 +109,11 @@ namespace OW_CIMNameSpaceUtils
 	 *  "It is the common practice proposed by this document that instances of
 	 *  CIM_Namespace be created in root unless there is a specific reason to
 	 *  define them in another namespace."
-	 * @exception OW_CIMException If the namespace does not exist or the object
+	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	void enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl,
-		OW_StringResultHandlerIFC& result, const OW_String& interopNs = "root");
-
+	void enumCIM_Namespace(const CIMOMHandleIFCRef& hdl,
+		StringResultHandlerIFC& result, const String& interopNs = "root");
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace by creating an instance of the __Namespace 
@@ -125,10 +122,9 @@ namespace OW_CIMNameSpaceUtils
 	 * of the namespaces.
 	 * @param hdl The cimom handle that will be used.
 	 * @param ns 	The namespace name to be created.
-	 * @exception OW_CIMException If the namespace already exists.
+	 * @exception CIMException If the namespace already exists.
 	 */
-	void create__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns);
-
+	void create__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns);
 	/**
 	 * Delete a specified namespace by deleting an instance of the 
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -136,11 +132,10 @@ namespace OW_CIMNameSpaceUtils
 	 * of the namespaces.
 	 * @param hdl The cimom handle that will be used.
 	 * @param ns	The namespace to delete.
-	 * @exception OW_CIMException If the namespace does not exist.
+	 * @exception CIMException If the namespace does not exist.
 	 */
-	void delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns);
+	void delete__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns);
 #endif
-
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -153,11 +148,10 @@ namespace OW_CIMNameSpaceUtils
 	 *		namespace. If set to SHALLOW  the enuermation will return only the
 	 *		first level children of the enumerated namespace.
 	 * @return An Array of namespace names as strings.
-	 * @exception OW_CIMException If the namespace does not exist or the object
+	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	OW_StringArray enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
-
+	StringArray enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
 	 * __Namespace class.  This method has been deprecated in the CIM Ops spec.
@@ -171,13 +165,11 @@ namespace OW_CIMNameSpaceUtils
 	 *		entire hierarchy of namespaces present under the enumerated
 	 *		namespace. If set to SHALLOW  the enuermation will return only the
 	 *		first level children of the enumerated namespace.
-	 * @exception OW_CIMException If the namespace does not exist or the object
+	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	void enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns,
-		OW_StringResultHandlerIFC& result, OW_WBEMFlags::EDeepFlag deep=OW_WBEMFlags::E_DEEP);
-
-
+	void enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns,
+		StringResultHandlerIFC& result, WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
 	/**
 	 * This function creates a "normalized" namespace.  Because of differing 
 	 * WBEM implementations, it's expected that the following all refer to the
@@ -188,10 +180,9 @@ namespace OW_CIMNameSpaceUtils
 	 * @param ns The namespace name.
 	 * @return ns The normalized version of ns.
 	 */
-	OW_String prepareNamespace(OW_String ns);
-
+	String prepareNamespace(String ns);
 }
 
+} // end namespace OpenWBEM
+
 #endif
-
-

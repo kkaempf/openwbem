@@ -27,32 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ASSERTION_HPP_INCLUDE_GUARD_
 #define OW_ASSERTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
+namespace OpenWBEM
+{
+
 DECLARE_EXCEPTION(Assertion);
-
-typedef OW_AssertionException OW_Assertion;
-
+typedef AssertionException Assertion;
 #ifdef OW_DEBUG
-#define OW_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, \
+#define OW_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, \
 		#CON)
 #else
 #define OW_ASSERT(CON)
 #endif
-
 #ifdef OW_DEBUG
 // MSG should be a string
-#define OW_ASSERTMSG(CON, MSG) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, \
+#define OW_ASSERTMSG(CON, MSG) if(!(CON)) throw AssertionException(__FILE__, __LINE__, \
 		#CON ":" MSG)
 #else
 #define OW_ASSERTMSG(CON, MSG)
 #endif
 
+} // end namespace OpenWBEM
+
 #endif
-
-

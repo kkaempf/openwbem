@@ -30,31 +30,30 @@
 #include "OW_config.h"
 #include "OW_IOIFCStreamBuffer.hpp"
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_IOIFCStreamBuffer::OW_IOIFCStreamBuffer(OW_IOIFC* dev, int bufSize,
+IOIFCStreamBuffer::IOIFCStreamBuffer(IOIFC* dev, int bufSize,
 	const char* direction)
-	: OW_BaseStreamBuffer(bufSize, direction)
+	: BaseStreamBuffer(bufSize, direction)
 	, m_dev(dev)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_IOIFCStreamBuffer::~OW_IOIFCStreamBuffer()
+IOIFCStreamBuffer::~IOIFCStreamBuffer()
 {
 	sync();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_IOIFCStreamBuffer::buffer_from_device(char* c, int n)
+IOIFCStreamBuffer::buffer_from_device(char* c, int n)
 {
 	return m_dev->read(c,n);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_IOIFCStreamBuffer::buffer_to_device(const char* c, int n)
+IOIFCStreamBuffer::buffer_to_device(const char* c, int n)
 {
 	while (n > 0)
 	{
@@ -68,4 +67,6 @@ OW_IOIFCStreamBuffer::buffer_to_device(const char* c, int n)
 	}
 	return 0;
 }
+
+} // end namespace OpenWBEM
 

@@ -27,48 +27,43 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_WQL_INSTANCE_PROPERTY_SOURCE_HPP_INCLUDE_GUARD
 #define OW_WQL_INSTANCE_PROPERTY_SOURCE_HPP_INCLUDE_GUARD
-
 #include "OW_config.h"
 #include "OW_WQLPropertySource.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 
-class OW_WQLInstancePropertySource : public OW_WQLPropertySource
+namespace OpenWBEM
+{
+
+class WQLInstancePropertySource : public WQLPropertySource
 {
 public:
-	OW_WQLInstancePropertySource(const OW_CIMInstance& ci_,
-		const OW_CIMOMHandleIFCRef& hdl,
-		const OW_String& ns)
+	WQLInstancePropertySource(const CIMInstance& ci_,
+		const CIMOMHandleIFCRef& hdl,
+		const String& ns)
 		: ci(ci_)
 		, m_hdl(hdl)
 		, m_ns(ns)
 	{
 	}
-
-	~OW_WQLInstancePropertySource();
-
-	virtual bool evaluateISA(const OW_String &propertyName, const OW_String &className) const;
-
-	virtual bool getValue(const OW_String &propertyName, OW_WQLOperand &value) const;
-
+	~WQLInstancePropertySource();
+	virtual bool evaluateISA(const String &propertyName, const String &className) const;
+	virtual bool getValue(const String &propertyName, WQLOperand &value) const;
 private:
 	// This is for recursion on embedded instances
-	bool evaluateISAAux(const OW_CIMInstance& ci, OW_StringArray propNames, const OW_String &className) const;
-
-	bool classIsDerivedFrom(const OW_String& cls, const OW_String& className) const;
-
+	bool evaluateISAAux(const CIMInstance& ci, StringArray propNames, const String &className) const;
+	bool classIsDerivedFrom(const String& cls, const String& className) const;
 	// This is for recursion on embedded instances
-	static bool getValueAux(const OW_CIMInstance& ci, OW_StringArray propNames, OW_WQLOperand& value);
-
+	static bool getValueAux(const CIMInstance& ci, StringArray propNames, WQLOperand& value);
 private:
-	OW_CIMInstance ci;
-	OW_CIMOMHandleIFCRef m_hdl;
-	OW_String m_ns;
+	CIMInstance ci;
+	CIMOMHandleIFCRef m_hdl;
+	String m_ns;
 };
 
+} // end namespace OpenWBEM
 
 #endif

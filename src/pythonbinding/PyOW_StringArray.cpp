@@ -29,7 +29,13 @@
 *******************************************************************************/
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_String(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_String>(name);
+
+void registerArrayImpl_String(const char* name)
+{
+    registerArrayImpl<String>(name);
 }
+
+} // end namespace OpenWBEM
+

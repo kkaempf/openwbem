@@ -27,111 +27,102 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_INSTANCEREPOSITORY_HPP_INCLUDE_GUARD_
 #define OW_INSTANCEREPOSITORY_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_WBEMFlags.hpp"
 
-class OW_InstanceRepository : public OW_GenericHDBRepository
+namespace OpenWBEM
+{
+
+class InstanceRepository : public GenericHDBRepository
 {
 public:
-
 	/**
-	 * Create a new OW_InstanceRepository object.
+	 * Create a new InstanceRepository object.
 	 */
-	OW_InstanceRepository(OW_ServiceEnvironmentIFCRef env)
-		: OW_GenericHDBRepository(env) {}
-
+	InstanceRepository(ServiceEnvironmentIFCRef env)
+		: GenericHDBRepository(env) {}
 	void getCIMInstances(
-		const OW_String& ns,
-		const OW_String& className, 
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& theClass,
-		OW_CIMInstanceResultHandlerIFC& result,
-		OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList=NULL);
-
-	void getInstanceNames(const OW_String& ns, const OW_CIMClass& theClass,
-		OW_CIMObjectPathResultHandlerIFC& result);
-
+		const String& ns,
+		const String& className, 
+		const CIMClass& requestedClass,
+		const CIMClass& theClass,
+		CIMInstanceResultHandlerIFC& result,
+		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList=NULL);
+	void getInstanceNames(const String& ns, const CIMClass& theClass,
+		CIMObjectPathResultHandlerIFC& result);
 	/**
 	 * Retrieve a specific instance
 	 *
 	 * @param ns The namespace
-	 * @param instanceName The OW_CIMObectPath that specifies the instance
+	 * @param instanceName The CIMObectPath that specifies the instance
 	 * @param theClass The CIM class of the instance to retrieve
-	 * @return An OW_CIMInstance object
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @return An CIMInstance object
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	OW_CIMInstance getCIMInstance(const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& theClass, OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList);
-
+	CIMInstance getCIMInstance(const String& ns,
+		const CIMObjectPath& instanceName,
+		const CIMClass& theClass, WBEMFlags::ELocalOnlyFlag localOnly,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete an existing instance from the store
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param theClass The CIM class of the instance to delete
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
-		const OW_CIMClass& theClass);
-
+	void deleteInstance(const String& ns, const CIMObjectPath& cop,
+		const CIMClass& theClass);
 	/**
 	 * Creates a instance in the store
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param ci The instance that is to be stored with that object path
 	 * @return The object path of the newly added CIMInstance.  This will be
 	 *			cop + the keys from ci.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	void createInstance(const OW_String& ns, const OW_CIMClass& theClass,
-		const OW_CIMInstance& ci);
-
+	void createInstance(const String& ns, const CIMClass& theClass,
+		const CIMInstance& ci);
 	/**
 	 * Update an instance
 	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param cop	The CIMObectPath that specifies the instance
 	 * @param theClass The class the cim instance belongs to.
 	 * @param ci	The instance with the new values
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 * @exception HDBException
+	 * @exception CIMException
+	 * @exception IOException
 	 */
-	void modifyInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
-		const OW_CIMClass& theClass, const OW_CIMInstance& ci,
-		const OW_CIMInstance& oldInst,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList);
-
+	void modifyInstance(const String& ns, const CIMObjectPath& cop,
+		const CIMClass& theClass, const CIMInstance& ci,
+		const CIMInstance& oldInst,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList);
 	/**
 	 * Determin if a given class has instances.
 	 * @param classPath	The object path for the class to check.
 	 * @return true if the class specified has instances.
 	 */
-	bool classHasInstances(const OW_CIMObjectPath& classPath);
-
+	bool classHasInstances(const CIMObjectPath& classPath);
 	/**
 	 * Delete the given namespace and all object contained within it.
 	 * @param nsName	The name of the namespace
 	 */
-	void deleteNameSpace(const OW_String& nsName);
-
+	void deleteNameSpace(const String& nsName);
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.
@@ -139,9 +130,8 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(OW_String ns);
+	virtual int createNameSpace(String ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Ensure there is a container for a given class in the instance
@@ -149,30 +139,23 @@ public:
 	 * @param ns	The namespace for the class
 	 * @param cimClass	The class to create a container for
 	 */
-	void createClass(const OW_String& ns, const OW_CIMClass& cimClass);
-
+	void createClass(const String& ns, const CIMClass& cimClass);
 	/**
 	 * Remove the class name container for a given class.
 	 * @param ns 			The namespace that contains the class
 	 * @param className	The name of the class container to remove.
 	 */
-	void deleteClass(const OW_String& ns, const OW_String& className);
+	void deleteClass(const String& ns, const String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-
-
 private:
-
-	OW_String makeClassKey(const OW_String& ns, const OW_String& className);
-
-	OW_String makeInstanceKey(const OW_String& ns, const OW_CIMObjectPath& cop,
-		const OW_CIMClass& theClass);
-
+	String makeClassKey(const String& ns, const String& className);
+	String makeInstanceKey(const String& ns, const CIMObjectPath& cop,
+		const CIMClass& theClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	void _removeDuplicatedQualifiers(OW_CIMInstance& inst, const OW_CIMClass& theClass);
+	void _removeDuplicatedQualifiers(CIMInstance& inst, const CIMClass& theClass);
 #endif
-
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

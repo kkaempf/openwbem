@@ -29,64 +29,62 @@
 *******************************************************************************/
 #ifndef OW_CPP_SIMPLE_INSTANCE_PROVIDER_IFC_HPP_
 #define OW_CPP_SIMPLE_INSTANCE_PROVIDER_IFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 
+namespace OpenWBEM
+{
+
 /**
  * A provider can derive from this class, and implement doSimpleEnumerateInstances(),
- * and OW_CppSimpleInstanceProviderIFC implements getInstance(),
+ * and CppSimpleInstanceProviderIFC implements getInstance(),
  * enumInstanceNames(), and enumInstances()
  * This class can be part of a multiple-inerhitance diamond.  
  * Thus the "public virtual" inheritance.
  */
-class OW_CppSimpleInstanceProviderIFC : public virtual OW_CppInstanceProviderIFC
+class CppSimpleInstanceProviderIFC : public virtual CppInstanceProviderIFC
 {
 public:
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &instanceName, 
-		OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
-		const OW_StringArray *propertyList, 
-		const OW_CIMClass &cimClass);
-
+	virtual CIMInstance getInstance(
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const CIMObjectPath &instanceName, 
+		WBEMFlags::ELocalOnlyFlag localOnly, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		const StringArray *propertyList, 
+		const CIMClass &cimClass);
 	virtual void enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_String &className, 
-		OW_CIMObjectPathResultHandlerIFC &result, 
-		const OW_CIMClass &cimClass);
-
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const String &className, 
+		CIMObjectPathResultHandlerIFC &result, 
+		const CIMClass &cimClass);
 	virtual void enumInstances(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_String &className, 
-		OW_CIMInstanceResultHandlerIFC &result, 
-		OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EDeepFlag deep, 
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
-		const OW_StringArray *propertyList, 
-		const OW_CIMClass &requestedClass, 
-		const OW_CIMClass &cimClass);
-
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const String &className, 
+		CIMInstanceResultHandlerIFC &result, 
+		WBEMFlags::ELocalOnlyFlag localOnly,
+		WBEMFlags::EDeepFlag deep, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, 
+		const StringArray *propertyList, 
+		const CIMClass &requestedClass, 
+		const CIMClass &cimClass);
 	enum EPropertiesFlag
 	{
 		E_ALL_PROPERTIES,
 		E_KEY_PROPERTIES_ONLY
 	};
-
 	virtual void doSimpleEnumInstances(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_String &ns, 
-		const OW_CIMClass &cimClass, 
-		OW_CIMInstanceResultHandlerIFC &result,
+		const ProviderEnvironmentIFCRef &env, 
+		const String &ns, 
+		const CIMClass &cimClass, 
+		CIMInstanceResultHandlerIFC &result,
 		EPropertiesFlag propertiesFlag) = 0;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

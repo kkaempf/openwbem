@@ -27,24 +27,22 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 //
 // OW_Param.cpp
 //
-
 #include	<OW_config.h>
 #include	"OW_Param.hpp"
 
+namespace OpenWBEM
+{
 
-OW_Param::OW_Param(OW_String argname, int mode, OW_String value) : m_argName(argname), m_argValue(value), m_argMode(mode)
+Param::Param(String argname, int mode, String value) : m_argName(argname), m_argValue(value), m_argMode(mode)
 {
 }
-
-OW_Param::OW_Param(OW_String argname, OW_String value) : m_argName(argname), m_argValue(value), m_argMode(VALUENOTSET)
+Param::Param(String argname, String value) : m_argName(argname), m_argValue(value), m_argMode(VALUENOTSET)
 {
 }
-
-OW_Param::OW_Param(OW_String argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
+Param::Param(String argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
 {
 	if(value)
 	    m_argValue = "TRUE";
@@ -52,24 +50,23 @@ OW_Param::OW_Param(OW_String argname, bool value) : m_argName(argname), m_argVal
 	    m_argValue = "FALSE";
 }
 	
-OW_String
-OW_Param::getArgName() const 
+String
+Param::getArgName() const 
 {
 	return m_argName;
 }
-
-
-OW_String
-OW_Param::getArgValue() const 
+String
+Param::getArgValue() const 
 {
 	if(!m_argValue.empty())
 	{
 		if (m_argMode==VALUENOTSET)
-			return(OW_String("<VALUE>"+m_argValue+"</VALUE>"));
+			return(String("<VALUE>"+m_argValue+"</VALUE>"));
 		else
 			return(m_argValue);
 	}
-	return OW_String();
+	return String();
 }
 
+} // end namespace OpenWBEM
 

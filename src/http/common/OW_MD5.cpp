@@ -27,88 +27,77 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_MD5.hpp"
 #include "OW_String.hpp"
-
 #include <string.h> // for memset
-
 #define HASHHEXLEN 32
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(MD5);
-
 //////////////////////////////////////////////////////////////////////////////
-OW_MD5OStreamBase::OW_MD5OStreamBase(OW_MD5* md5): _buf(md5) {}
-
+MD5OStreamBase::MD5OStreamBase(MD5* md5): _buf(md5) {}
 //////////////////////////////////////////////////////////////////////////////
-OW_MD5StreamBuffer::OW_MD5StreamBuffer(OW_MD5* md5): _md5(md5) {}
-
+MD5StreamBuffer::MD5StreamBuffer(MD5* md5): _md5(md5) {}
 //////////////////////////////////////////////////////////////////////////////
 int 
-OW_MD5StreamBuffer::overflow(int c)
+MD5StreamBuffer::overflow(int c)
 {
 	unsigned char lc = c;
-	OW_MD5::MD5Update(&(_md5->m_ctx), &lc, 1);
+	MD5::MD5Update(&(_md5->m_ctx), &lc, 1);
 	return c;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 std::streamsize 
-OW_MD5StreamBuffer::xsputn(const char* s, std::streamsize num)
+MD5StreamBuffer::xsputn(const char* s, std::streamsize num)
 {
-	OW_MD5::MD5Update(&(_md5->m_ctx), 
+	MD5::MD5Update(&(_md5->m_ctx), 
 							reinterpret_cast<const unsigned char*>(s), num);
 	return num;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_MD5::OW_MD5()
-: OW_MD5OStreamBase(this), std::ostream(&_buf), m_ctx(), m_finished(false)
+MD5::MD5()
+: MD5OStreamBase(this), std::ostream(&_buf), m_ctx(), m_finished(false)
 {
 	MD5Init(&m_ctx);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MD5::init(const OW_String& input)
+MD5::init(const String& input)
 {
 	m_finished = false;
 	MD5Init(&m_ctx);
 	update(input);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_MD5::OW_MD5(const OW_String& input)
-: OW_MD5OStreamBase(this), std::ostream(&_buf), m_ctx(), m_finished(false)
+MD5::MD5(const String& input)
+: MD5OStreamBase(this), std::ostream(&_buf), m_ctx(), m_finished(false)
 {
 	MD5Init(&m_ctx);
 	update(input);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_MD5::update(const OW_String& input)
+MD5::update(const String& input)
 {
 	if (m_finished)
 	{
-		OW_THROW(OW_MD5Exception, "Cannot update after a call to toString()");
+		OW_THROW(MD5Exception, "Cannot update after a call to toString()");
 	}
 	MD5Update(&m_ctx, reinterpret_cast<const unsigned char*>(input.c_str()), 
 				 input.length());
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_MD5::toString()
+String
+MD5::toString()
 {
 	return convertBinToHex(getDigest());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 unsigned char*
-OW_MD5::getDigest()
+MD5::getDigest()
 {
 	if (!m_finished)
 	{
@@ -117,15 +106,13 @@ OW_MD5::getDigest()
 	}
 	return m_digest;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_MD5::convertBinToHex( const unsigned char sBin[ 16 ])
+String
+MD5::convertBinToHex( const unsigned char sBin[ 16 ])
 {
 	unsigned short i;
 	unsigned char j;
 	char Hex[ HASHHEXLEN + 1 ];
-
 	for ( i = 0; i < HASHLEN; i++ )
 	{
 		j = (sBin[i] >> 4) & 0xf;
@@ -140,41 +127,30 @@ OW_MD5::convertBinToHex( const unsigned char sBin[ 16 ])
 			Hex[i*2+1] = (j + 'a' - 10);
 	};
 	Hex[HASHHEXLEN] = '\0';
-	return OW_String(Hex);
+	return String(Hex);
 };
-
 //A.3 md5c.c
-
 /* MD5C.C - RSA Data Security, Inc., MD5 message-digest algorithm
  */
-
 /* Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All
 rights reserved.
-
 License to copy and use this software is granted provided that it
 is identified as the "RSA Data Security, Inc. MD5 Message-Digest
 Algorithm" in all material mentioning or referencing this software
 or this function.
-
 License is also granted to make and use derivative works provided
 that such works are identified as "derived from the RSA Data
 Security, Inc. MD5 Message-Digest Algorithm" in all material
 mentioning or referencing the derived work.
-
 RSA Data Security, Inc. makes no representations concerning either
 the merchantability of this software or the suitability of this
 software for any particular purpose. It is provided "as is"
 without express or implied warranty of any kind.
-
 These notices must be retained in any copies of any part of this
 documentation and/or software.
  */
-
-
-
 /* POINTER defines a generic pointer type */
 typedef unsigned char *POINTER;
-
 /* Constants for MD5Transform routine.
  */
 #define S11 7
@@ -193,58 +169,52 @@ typedef unsigned char *POINTER;
 #define S42 10
 #define S43 15
 #define S44 21
-
-static void MD5Transform(OW_UInt32 [4], const unsigned char [64]);
-static void Encode(unsigned char *, OW_UInt32 *, OW_UInt32);
-static void Decode(OW_UInt32 *, const unsigned char *, OW_UInt32);
-//static void MD5_memcpy(POINTER, POINTER, OW_UInt32);
-//static void MD5_memset(POINTER, OW_Int32, OW_UInt32);
-
+static void MD5Transform(UInt32 [4], const unsigned char [64]);
+static void Encode(unsigned char *, UInt32 *, UInt32);
+static void Decode(UInt32 *, const unsigned char *, UInt32);
+//static void MD5_memcpy(POINTER, POINTER, UInt32);
+//static void MD5_memset(POINTER, Int32, UInt32);
 static unsigned char PADDING[64] = {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-
 /* F, G, H and I are basic MD5 functions.
  */
 #define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
 #define G(x, y, z) (((x) & (z)) | ((y) & (~z)))
 #define H(x, y, z) ((x) ^ (y) ^ (z))
 #define I(x, y, z) ((y) ^ ((x) | (~z)))
-
 /* ROTATE_LEFT rotates x left n bits.
  */
 #define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32-(n))))
-
 /* FF, GG, HH, and II transformations for rounds 1, 2, 3, and 4.
 Rotation is separate from addition to prevent recomputation.
  */
 #define FF(a, b, c, d, x, s, ac) { \
- (a) += F ((b), (c), (d)) + (x) + static_cast<OW_UInt32>(ac); \
+ (a) += F ((b), (c), (d)) + (x) + static_cast<UInt32>(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
 #define GG(a, b, c, d, x, s, ac) { \
- (a) += G ((b), (c), (d)) + (x) + static_cast<OW_UInt32>(ac); \
+ (a) += G ((b), (c), (d)) + (x) + static_cast<UInt32>(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
 #define HH(a, b, c, d, x, s, ac) { \
- (a) += H ((b), (c), (d)) + (x) + static_cast<OW_UInt32>(ac); \
+ (a) += H ((b), (c), (d)) + (x) + static_cast<UInt32>(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
 #define II(a, b, c, d, x, s, ac) { \
- (a) += I ((b), (c), (d)) + (x) + static_cast<OW_UInt32>(ac); \
+ (a) += I ((b), (c), (d)) + (x) + static_cast<UInt32>(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
-
 /* MD5 initialization. Begins an MD5 operation, writing a new context.
  */ // STATIC
 void
-	OW_MD5::MD5Init(MD5_CTX* context)
+	MD5::MD5Init(MD5_CTX* context)
 {
 	context->count[0] = context->count[1] = 0;
 	/* Load magic initialization constants.
@@ -254,29 +224,23 @@ void
 	context->state[2] = 0x98badcfe;
 	context->state[3] = 0x10325476;
 }
-
 /* MD5 block update operation. Continues an MD5 message-digest
   operation, processing another message block, and updating the
   context.
  */ // STATIC
 void
-	OW_MD5::MD5Update(MD5_CTX* context, const unsigned char* input,
-	OW_UInt32 inputLen)
+	MD5::MD5Update(MD5_CTX* context, const unsigned char* input,
+	UInt32 inputLen)
 {
-	OW_UInt32 i, index, partLen;
-
+	UInt32 i, index, partLen;
 	/* Compute number of bytes mod 64 */
 	index = ((context->count[0] >> 3) & 0x3F);
-
 	/* Update number of bits */
 	if ((context->count[0] += (inputLen << 3))
-
 		< (inputLen << 3))
 		context->count[1]++;
 	context->count[1] += (inputLen >> 29);
-
 	partLen = 64 - index;
-
 	/* Transform as many times as possible.
  */
 	if (inputLen >= partLen)
@@ -284,59 +248,47 @@ void
 		memcpy(static_cast<POINTER>(&context->buffer[index]), 
 			static_cast<const unsigned char*>(input), partLen);
 		MD5Transform (context->state, context->buffer);
-
 		for (i = partLen; i + 63 < inputLen; i += 64)
 			MD5Transform (context->state, &input[i]);
-
 		index = 0;
 	}
 	else
 		i = 0;
-
 	/* Buffer remaining input */
 	memcpy
 		(static_cast<POINTER>(&context->buffer[index]), 
 			static_cast<const unsigned char*>(&input[i]),
 		inputLen-i);
 }
-
 /* MD5 finalization. Ends an MD5 message-digest operation, writing the
   the message digest and zeroizing the context.
  */ // STATIC
 void
-	OW_MD5::MD5Final (unsigned char digest[16], MD5_CTX* context)
+	MD5::MD5Final (unsigned char digest[16], MD5_CTX* context)
 {
 	unsigned char bits[8];
-	OW_UInt32 index, padLen;
-
+	UInt32 index, padLen;
 	/* Save number of bits */
 	Encode (bits, context->count, 8);
-
 	/* Pad out to 56 mod 64.
  */
 	index = ((context->count[0] >> 3) & 0x3f);
 	padLen = (index < 56) ? (56 - index) : (120 - index);
 	MD5Update (context, PADDING, padLen);
-
 	/* Append length (before padding) */
 	MD5Update (context, bits, 8);
-
 	/* Store state in digest */
 	Encode (digest, context->state, 16);
-
 	/* Zeroize sensitive information.
  */
 	memset (reinterpret_cast<POINTER>(context), 0, sizeof (*context));
 }
-
 /* MD5 basic transformation. Transforms state based on block.
  */
-static void MD5Transform (OW_UInt32 state[4], const unsigned char block[64])
+static void MD5Transform (UInt32 state[4], const unsigned char block[64])
 {
-	OW_UInt32 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
-
+	UInt32 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
 	Decode (x, block, 64);
-
 	/* Round 1 */
 	FF (a, b, c, d, x[ 0], S11, 0xd76aa478); /* 1 */
 	FF (d, a, b, c, x[ 1], S12, 0xe8c7b756); /* 2 */
@@ -354,7 +306,6 @@ static void MD5Transform (OW_UInt32 state[4], const unsigned char block[64])
 	FF (d, a, b, c, x[13], S12, 0xfd987193); /* 14 */
 	FF (c, d, a, b, x[14], S13, 0xa679438e); /* 15 */
 	FF (b, c, d, a, x[15], S14, 0x49b40821); /* 16 */
-
 	/* Round 2 */
 	GG (a, b, c, d, x[ 1], S21, 0xf61e2562); /* 17 */
 	GG (d, a, b, c, x[ 6], S22, 0xc040b340); /* 18 */
@@ -372,7 +323,6 @@ static void MD5Transform (OW_UInt32 state[4], const unsigned char block[64])
 	GG (d, a, b, c, x[ 2], S22, 0xfcefa3f8); /* 30 */
 	GG (c, d, a, b, x[ 7], S23, 0x676f02d9); /* 31 */
 	GG (b, c, d, a, x[12], S24, 0x8d2a4c8a); /* 32 */
-
 	/* Round 3 */
 	HH (a, b, c, d, x[ 5], S31, 0xfffa3942); /* 33 */
 	HH (d, a, b, c, x[ 8], S32, 0x8771f681); /* 34 */
@@ -390,7 +340,6 @@ static void MD5Transform (OW_UInt32 state[4], const unsigned char block[64])
 	HH (d, a, b, c, x[12], S32, 0xe6db99e5); /* 46 */
 	HH (c, d, a, b, x[15], S33, 0x1fa27cf8); /* 47 */
 	HH (b, c, d, a, x[ 2], S34, 0xc4ac5665); /* 48 */
-
 	/* Round 4 */
 	II (a, b, c, d, x[ 0], S41, 0xf4292244); /* 49 */
 	II (d, a, b, c, x[ 7], S42, 0x432aff97); /* 50 */
@@ -408,23 +357,19 @@ static void MD5Transform (OW_UInt32 state[4], const unsigned char block[64])
 	II (d, a, b, c, x[11], S42, 0xbd3af235); /* 62 */
 	II (c, d, a, b, x[ 2], S43, 0x2ad7d2bb); /* 63 */
 	II (b, c, d, a, x[ 9], S44, 0xeb86d391); /* 64 */
-
 	state[0] += a;
 	state[1] += b;
 	state[2] += c;
 	state[3] += d;
-
 	/* Zeroize sensitive information. */
 	memset (reinterpret_cast<POINTER>(x), 0, sizeof (x));
 }
-
-/* Encodes input (OW_UInt32) into output (unsigned char). Assumes len is
+/* Encodes input (UInt32) into output (unsigned char). Assumes len is
   a multiple of 4.
  */
-static void Encode (unsigned char* output, OW_UInt32* input, OW_UInt32 len)
+static void Encode (unsigned char* output, UInt32* input, UInt32 len)
 {
-	OW_UInt32 i, j;
-
+	UInt32 i, j;
 	for (i = 0, j = 0; j < len; i++, j += 4)
 	{
 		output[j] = (input[i] & 0xff);
@@ -433,38 +378,31 @@ static void Encode (unsigned char* output, OW_UInt32* input, OW_UInt32 len)
 		output[j+3] = ((input[i] >> 24) & 0xff);
 	}
 }
-
-/* Decodes input (unsigned char) into output (OW_UInt32). Assumes len is
+/* Decodes input (unsigned char) into output (UInt32). Assumes len is
   a multiple of 4.
  */
-static void Decode (OW_UInt32* output, const unsigned char* input, OW_UInt32 len)
+static void Decode (UInt32* output, const unsigned char* input, UInt32 len)
 {
-	OW_UInt32 i, j;
-
+	UInt32 i, j;
 	for (i = 0, j = 0; j < len; i++, j += 4)
-		output[i] = (static_cast<OW_UInt32>(input[j])) | ((static_cast<OW_UInt32>(input[j+1])) << 8) |
-			((static_cast<OW_UInt32>(input[j+2])) << 16) | ((static_cast<OW_UInt32>(input[j+3])) << 24);
+		output[i] = (static_cast<UInt32>(input[j])) | ((static_cast<UInt32>(input[j+1])) << 8) |
+			((static_cast<UInt32>(input[j+2])) << 16) | ((static_cast<UInt32>(input[j+3])) << 24);
 }
-
 /* Note: Replace "for loop" with standard memcpy if possible.
  */
-
-//static void MD5_memcpy (POINTER output, POINTER input, OW_UInt32 len)
+//static void MD5_memcpy (POINTER output, POINTER input, UInt32 len)
 //{
-	//OW_UInt32 i;
-
+	//UInt32 i;
 	//for (i = 0; i < len; i++)
 	//	output[i] = input[i];
 //}
-
 /* Note: Replace "for loop" with standard memset if possible. */
-//static void MD5_memset (POINTER output, OW_Int32 value, OW_UInt32 len)
+//static void MD5_memset (POINTER output, Int32 value, UInt32 len)
 //{
-	//OW_UInt32 i;
-
+	//UInt32 i;
 	//for (i = 0; i < len; i++)
 	//	((char *)output)[i] = (char)value;
 //}
 
-
+} // end namespace OpenWBEM
 

@@ -27,21 +27,21 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMSCOPE_HPP_
 #define OW_CIMSCOPE_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMScope class encapsulated the data and functionality the is
+ * The CIMScope class encapsulated the data and functionality the is
  * associated with CIM scopes.
  */
-class OW_CIMScope : public OW_CIMBase
+class CIMScope : public CIMBase
 {
 public:
-
 	// An enumeration of the scope values that this class understands
 	enum Scope
 	{
@@ -58,80 +58,70 @@ public:
 		ANY			= 11,	// Any CIM element
 		MAXSCOPE	= 12
 	};
-
 	/**
 	 * Create an invalid scope.
 	 */
-	OW_CIMScope() : OW_CIMBase(), m_val(BAD) {}
-
+	CIMScope() : CIMBase(), m_val(BAD) {}
 	/**
 	 * Create a scope with a specified scoping value.
 	 * @param scopeVal The scoping value.
 	 */
-	OW_CIMScope(Scope scopeVal) : OW_CIMBase(), m_val(scopeVal)
+	CIMScope(Scope scopeVal) : CIMBase(), m_val(scopeVal)
 	{
 		if(!validScope(scopeVal))
 			m_val = BAD;
 	}
-
 	/**
 	 * Copy constructor
-	 * @param arg The OW_CIMScopy to make this object a copy of.
+	 * @param arg The CIMScopy to make this object a copy of.
 	 */
-	OW_CIMScope(const OW_CIMScope& arg) :
-		OW_CIMBase(), m_val(arg.m_val) {}
-
+	CIMScope(const CIMScope& arg) :
+		CIMBase(), m_val(arg.m_val) {}
 	/**
 	 * Set this to a null object.
 	 */
 	virtual void setNull() {  m_val = BAD; }
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMScopy to assign to this object.
+	 * @param arg The CIMScopy to assign to this object.
 	 * @return A reference to this object after the assignment has been made.
 	 */
-	OW_CIMScope& operator= (const OW_CIMScope& arg)
+	CIMScope& operator= (const CIMScope& arg)
 	{
 		m_val = arg.m_val;
 		return *this;
 	}
-
 	/**
 	 * @return The scoping value of this scope.
 	 */
 	Scope getScope() const {  return m_val; }
-
 	/**
 	 * Determine if another scope is equal to this one.
 	 * @param arg The scope to check for equality against.
 	 * @return true if arg is equal to this scope. Otherwise false.
 	 */
-	bool equals(const OW_CIMScope& arg) const
+	bool equals(const CIMScope& arg) const
 	{
 		return (m_val == arg.m_val);
 	}
-
 	/**
 	 * Determine if another scope is equal to this one.
 	 * @param arg The scope to check for equality against.
 	 * @return true if arg is equal to this scope. Otherwise false.
 	 */
-	bool operator == (const OW_CIMScope& arg) const
+	bool operator == (const CIMScope& arg) const
 	{
 		return equals(arg);
 	}
-
 	/**
 	 * Determine if another scope is not equal to this one.
 	 * @param arg The scope to check for inequality against.
 	 * @return true if arg is not equal to this scope. Otherwise false.
 	 */
-	bool operator != (const OW_CIMScope& arg) const
+	bool operator != (const CIMScope& arg) const
 	{
 		return !equals(arg);
 	}
-
 	/**
 	 * @return true if this is a valid flavor
 	 */
@@ -140,50 +130,42 @@ private:
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (validScope(m_val) == true) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (validScope(m_val) == true) ? 0: &dummy::nonnull; }
-
 	/**
 	 * @return The string representation of this scopy
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
-	 * @return The MOF representation of this scope as an OW_String.
+	 * @return The MOF representation of this scope as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
 	 * Write this object to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 private:
-
 	static bool validScope(Scope val)
 	{
 		return (val > BAD && val < MAXSCOPE);
 	}
-
 	Scope m_val;
-
-	friend bool operator<(const OW_CIMScope& x, const OW_CIMScope& y)
+	friend bool operator<(const CIMScope& x, const CIMScope& y)
 	{
 		return x.m_val < y.m_val;
 	}
 };
+
+} // end namespace OpenWBEM
 
 #endif

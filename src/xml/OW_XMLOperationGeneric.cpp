@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Param.hpp"
 #include "OW_XMLOperationGeneric.hpp"
@@ -35,44 +34,40 @@
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMXMLParser.hpp"
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
-
 void
-OW_XMLOperationGeneric::XMLGetCIMElement(OW_CIMXMLParser& parser)
+XMLOperationGeneric::XMLGetCIMElement(CIMXMLParser& parser)
 {
-    if(!parser.tokenIs(OW_CIMXMLParser::E_CIM))
+    if(!parser.tokenIs(CIMXMLParser::E_CIM))
     {
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
     }
-
-    OW_String str = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
-
-    if(!str.equals(OW_CIMXMLParser::AV_CIMVERSION20_VALUE) &&
-    	!str.equals(OW_CIMXMLParser::AV_CIMVERSION21_VALUE) &&
-	!str.equals(OW_CIMXMLParser::AV_CIMVERSION22_VALUE))
+    String str = parser.mustGetAttribute(CIMXMLParser::A_CIMVERSION);
+    if(!str.equals(CIMXMLParser::AV_CIMVERSION20_VALUE) &&
+    	!str.equals(CIMXMLParser::AV_CIMVERSION21_VALUE) &&
+	!str.equals(CIMXMLParser::AV_CIMVERSION22_VALUE))
     {
-        OW_THROW(OW_CIMErrorException,
-            OW_CIMErrorException::unsupported_cim_version);
+        OW_THROW(CIMErrorException,
+            CIMErrorException::unsupported_cim_version);
     }
-
-    str = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
-    if(!str.equals(OW_CIMXMLParser::AV_DTDVERSION20_VALUE) &&
-    	!str.equals(OW_CIMXMLParser::AV_DTDVERSION21_VALUE))
+    str = parser.mustGetAttribute(CIMXMLParser::A_DTDVERSION);
+    if(!str.equals(CIMXMLParser::AV_DTDVERSION20_VALUE) &&
+    	!str.equals(CIMXMLParser::AV_DTDVERSION21_VALUE))
     {
-        OW_THROW(OW_CIMErrorException,
-            OW_CIMErrorException::unsupported_dtd_version);
+        OW_THROW(CIMErrorException,
+            CIMErrorException::unsupported_dtd_version);
     }
-
     parser.getChild();
     if(!parser)
     {
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
     }
-
     return;
 }
 
-
-
+} // end namespace OpenWBEM
 

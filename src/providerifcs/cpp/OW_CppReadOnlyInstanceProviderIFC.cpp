@@ -34,35 +34,36 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMClass.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppReadOnlyInstanceProviderIFC::deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
+CppReadOnlyInstanceProviderIFC::deleteInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMObjectPath &)
 {
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "DeleteInstance not supported by provider");
+	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath 
-OW_CppReadOnlyInstanceProviderIFC::createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
+CIMObjectPath 
+CppReadOnlyInstanceProviderIFC::createInstance(const ProviderEnvironmentIFCRef &, const String &, const CIMInstance &)
 {
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "DeleteInstance not supported by provider");
+	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppReadOnlyInstanceProviderIFC::modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+CppReadOnlyInstanceProviderIFC::modifyInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 {
 	(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "DeleteInstance not supported by provider");
+	OW_THROWCIMMSG(CIMException::FAILED, "DeleteInstance not supported by provider");
 }
 
+} // end namespace OpenWBEM
 

@@ -27,15 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_HTTPEXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_HTTPStatusCodes.hpp"
 #include "OW_Exception.hpp"
-
 #define HTTP_ERR_NEEDCONTENTLEN "HTTP_ERR_NEEDCONTENTLEN"
 #define HTTP_ERR_OPTIONSREQUESTED "HTTP_ERR_OPTIONSREQUESTED"
 #define HTTP_ERR_AUTHENTICATE "HTTP_ERR_AUTHENTICATE"
@@ -43,28 +39,27 @@
 #define HTTP_ERR_TRUNCATED "HTTP_ERR_TRUNCATED"
 #define HTTP_ERR_ILLEGALRESPONSE "HTTP_ERR_ILLEGALRESPONSE"
 
-class OW_HTTPException : public OW_Exception
+namespace OpenWBEM
+{
+
+class HTTPException : public Exception
 {
 public:
-	OW_HTTPException() : OW_Exception(), m_response(-1) {}
-	OW_HTTPException(const char* file, int line, const char* msg)
-		: OW_Exception(file, line, msg), m_response(-1){}
-	OW_HTTPException(const char* file, int line, const char* msg, int response)
-		: OW_Exception(file, line, msg), m_response(response) {}
-	OW_HTTPException(const char* msg) : OW_Exception(msg),
+	HTTPException() : Exception(), m_response(-1) {}
+	HTTPException(const char* file, int line, const char* msg)
+		: Exception(file, line, msg), m_response(-1){}
+	HTTPException(const char* file, int line, const char* msg, int response)
+		: Exception(file, line, msg), m_response(response) {}
+	HTTPException(const char* msg) : Exception(msg),
 		m_response(-1) {}
 	const char* getId() { return getMessage(); }
 	int getErrorCode() { return m_response; }
-
-	virtual const char* type() const { return "OW_HTTPException"; }
+	virtual const char* type() const { return "HTTPException"; }
 private:
 	int m_response;
 };
+} // end namespace OpenWBEM
 
 #define OW_HTTP_THROW(exType, msg, code) throw exType(__FILE__, __LINE__, msg, code)
 
-
 #endif
-
-
-

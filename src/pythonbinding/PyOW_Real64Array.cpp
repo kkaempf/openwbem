@@ -30,7 +30,13 @@
 #include "OW_Types.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_Real64(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_Real64>(name);
+
+void registerArrayImpl_Real64(const char* name)
+{
+    registerArrayImpl<Real64>(name);
 }
+
+} // end namespace OpenWBEM
+

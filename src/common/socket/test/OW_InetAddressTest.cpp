@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_SocketAddress.hpp"
 #include "OW_InetAddressFactory.hpp"
@@ -35,22 +34,21 @@
 
 int main(int argc, char* argv[])
 {
-	OW_SocketAddress addr;
+	SocketAddress addr;
 	try
 	{
-		addr = OW_InetAddressFactory::getByName(argv[1],80);
+		addr = InetAddressFactory::getByName(argv[1],80);
 	}
-	catch (OW_UnknownHostException)
+	catch (UnknownHostException)
 	{
 		cerr << "Unknown Host" << endl;
 	}
-	cout << OW_InetAddressFactory::getByName(argv[1]).getAddress() << endl;
+	cout << InetAddressFactory::getByName(argv[1]).getAddress() << endl;
 	cout << addr.getName() << endl;
 	cout << addr.getAddress() << endl;
 	cout << addr.getPort() << endl;
-	OW_SocketAddress addr2;
+	SocketAddress addr2;
 	addr2 = addr;
 	cout << addr2.getAddress() << endl;
 }
-
 

@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include <OW_ClientAuthCBIFC.hpp>
-
 // note this comes *after* the OpenWBEM headers, because it has a
 // #define ANY void
 // which really screws up OpenWBEM
@@ -37,31 +36,31 @@
 #undef ANY
 #endif
 
-using namespace boost::python;
-
-namespace {
-
-struct OW_ClientAuthCBIFCWrap : OW_ClientAuthCBIFC
+namespace OpenWBEM
 {
-    OW_ClientAuthCBIFCWrap(PyObject* self_)
+
+using namespace boost::python;
+namespace {
+struct ClientAuthCBIFCWrap : ClientAuthCBIFC
+{
+    ClientAuthCBIFCWrap(PyObject* self_)
         : self(self_) {}
-    bool getCredentials(const OW_String& realm, OW_String& name,
-                        OW_String& passwd, const OW_String& details)
+    bool getCredentials(const String& realm, String& name,
+                        String& passwd, const String& details)
     { 
         return call_method<int>(self, "getCredentials", 
                 realm, name, passwd, details); 
     }
     PyObject* self;
 };
-
 }
-
-void registerOW_ClientAuthCBIFC()
+void registerClientAuthCBIFC()
 {
-    class_<OW_ClientAuthCBIFC, OW_ClientAuthCBIFCWrap, boost::noncopyable>
-        ("OW_ClientAuthCBIFC", no_init)
-       // .def("getCredentials", &OW_ClientAuthCBIFC::getCredentials)
+    class_<ClientAuthCBIFC, ClientAuthCBIFCWrap, boost::noncopyable>
+        ("ClientAuthCBIFC", no_init)
+       // .def("getCredentials", &ClientAuthCBIFC::getCredentials)
     ;
-
 }
+
+} // end namespace OpenWBEM
 

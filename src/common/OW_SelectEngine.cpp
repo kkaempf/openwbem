@@ -27,43 +27,41 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_SelectEngine.hpp"
 #include "OW_Select.hpp"
 
-DEFINE_EXCEPTION(Select)
+namespace OpenWBEM
+{
 
+DEFINE_EXCEPTION(Select)
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SelectEngine::addSelectableObject(OW_SelectableIFCRef obj,
-	OW_SelectableCallbackIFCRef cb)
+SelectEngine::addSelectableObject(SelectableIFCRef obj,
+	SelectableCallbackIFCRef cb)
 {
 	m_selectableObjs.push_back(obj);
 	m_callbacks.push_back(cb);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SelectEngine::go()
+SelectEngine::go()
 {
 	m_stopFlag = false;
-
 	do
 	{
-		OW_SelectTypeArray selObjs;
+		SelectTypeArray selObjs;
 		for (size_t i = 0; i < m_selectableObjs.size(); ++i)
 		{
 			selObjs.push_back(m_selectableObjs[i]->getSelectObj());
 		}
-
-		int selected = OW_Select::select(selObjs);
-		if (selected == OW_Select::OW_SELECT_ERROR)
+		int selected = Select::select(selObjs);
+		if (selected == Select::SELECT_ERROR)
 		{
-			OW_THROW(OW_SelectException, "Select Error");
+			OW_THROW(SelectException, "Select Error");
 		}
-		else if (selected == OW_Select::OW_SELECT_TIMEOUT
-				 || selected == OW_Select::OW_SELECT_INTERRUPTED)
+		else if (selected == Select::SELECT_TIMEOUT
+				 || selected == Select::SELECT_INTERRUPTED)
 		{
 			continue;
 		}
@@ -73,11 +71,12 @@ OW_SelectEngine::go()
 		}
 	} while (!m_stopFlag);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_SelectEngine::stop()
+SelectEngine::stop()
 {
 	m_stopFlag = true;
 }
+
+} // end namespace OpenWBEM
 

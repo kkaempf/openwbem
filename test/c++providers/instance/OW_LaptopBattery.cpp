@@ -43,7 +43,8 @@
 #include <fstream>
 #include <unistd.h>
 
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 namespace
 {
@@ -65,93 +66,93 @@ namespace
 #define STAT_Undefined 10
 #define STAT_Partially_Charge 11
 
-	class OW_LaptopBattery: public OW_CppInstanceProviderIFC
+	class LaptopBattery: public CppInstanceProviderIFC
 	{
 	public:
 		/////////////////////////////////////////////////////////////////////////
 		virtual void enumInstanceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_CIMClass& cimClass )
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMObjectPathResultHandlerIFC& result,
+			const CIMClass& cimClass )
 		{
 			(void)env;
 			(void)cimClass;
-			OW_CIMObjectPath instCop = OW_CIMObjectPath(className, ns);
+			CIMObjectPath instCop = CIMObjectPath(className, ns);
 			char hostbuf[256];
 			gethostname(hostbuf, 256);
-			OW_String hostname(hostbuf);
+			String hostname(hostbuf);
 			instCop.addKey("SystemCreationClassName",
-				OW_CIMValue(OW_String("CIM_System")));
-			instCop.addKey("SystemName", OW_CIMValue(hostname));
-			instCop.addKey("CreationClassName", OW_CIMValue(className));
-			instCop.addKey("DeviceID", OW_CIMValue(OW_String("bat01")));
+				CIMValue(String("CIM_System")));
+			instCop.addKey("SystemName", CIMValue(hostname));
+			instCop.addKey("CreationClassName", CIMValue(className));
+			instCop.addKey("DeviceID", CIMValue(String("bat01")));
 			result.handle(instCop);
 		}
 
 		/////////////////////////////////////////////////////////////////////////
 		virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMInstanceResultHandlerIFC& result,
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMInstanceResultHandlerIFC& result,
 			ELocalOnlyFlag localOnly, 
 			EDeepFlag deep, 
 			EIncludeQualifiersFlag includeQualifiers, 
 			EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& requestedClass,
-			const OW_CIMClass& cimClass )
+			const StringArray* propertyList,
+			const CIMClass& requestedClass,
+			const CIMClass& cimClass )
 		{
 			(void)ns;
 			(void)className;
 			(void)env;
-			OW_CIMInstance inst = this->createLaptopBatInst(cimClass);
+			CIMInstance inst = this->createLaptopBatInst(cimClass);
 			result.handle(inst.clone(localOnly, deep, includeQualifiers, 
 				includeClassOrigin, propertyList, requestedClass, cimClass));
 		}
 
 		/////////////////////////////////////////////////////////////////////////
-		virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& instanceName,
+		virtual CIMInstance getInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& instanceName,
 			ELocalOnlyFlag localOnly,
 			EIncludeQualifiersFlag includeQualifiers, 
 			EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList, 
-			const OW_CIMClass& cimClass )
+			const StringArray* propertyList, 
+			const CIMClass& cimClass )
 		{
 			(void)ns;
 			(void)instanceName;
 			(void)env;
-			OW_CIMInstance rval = this->createLaptopBatInst(cimClass);
+			CIMInstance rval = this->createLaptopBatInst(cimClass);
 			return rval.clone(localOnly, includeQualifiers, includeClassOrigin, propertyList);
 		}
 
 		/////////////////////////////////////////////////////////////////////////
-		virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& cimInstance )
+		virtual CIMObjectPath createInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& cimInstance )
 		{
 
 			(void)env;
 			(void)ns;
 			(void)cimInstance;
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
+			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 		}
 
 		/////////////////////////////////////////////////////////////////////////
 		virtual void modifyInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& modifiedInstance,
-			const OW_CIMInstance& previousInstance,
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& modifiedInstance,
+			const CIMInstance& previousInstance,
 			EIncludeQualifiersFlag includeQualifiers,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& theClass)
+			const StringArray* propertyList,
+			const CIMClass& theClass)
 		{
 			(void)env;
 			(void)ns;
@@ -160,19 +161,19 @@ namespace
 			(void)includeQualifiers;
 			(void)propertyList;
 			(void)theClass;
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 		}
 
 		/////////////////////////////////////////////////////////////////////////
 		virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop)
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& cop)
 		{
 			(void)env;
 			(void)ns;
 			(void)cop;
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+			OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 		}
 
 		/**
@@ -182,7 +183,7 @@ namespace
 		 *
 		 * @return The laptop batter cim instance
 		 */
-		OW_CIMInstance createLaptopBatInst(const OW_CIMClass& cc);
+		CIMInstance createLaptopBatInst(const CIMClass& cc);
 	};
 
 
@@ -190,43 +191,43 @@ namespace
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstance
-		OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
+	CIMInstance
+		LaptopBattery::createLaptopBatInst(const CIMClass& cc)
 	{
-		OW_CIMInstance rval = cc.newInstance();
+		CIMInstance rval = cc.newInstance();
 		rval.setProperty("SystemCreationClassName",
-			OW_CIMValue(OW_String("CIM_System")));
+			CIMValue(String("CIM_System")));
 		char hostbuf[256];
 		gethostname(hostbuf, 256);
-		OW_String hostname(hostbuf);
-		rval.setProperty("SystemName", OW_CIMValue(hostname));
-		rval.setProperty("CreationClassName", OW_CIMValue(cc.getName()));
-		rval.setProperty("DeviceID", OW_CIMValue(OW_String("bat01")));
+		String hostname(hostbuf);
+		rval.setProperty("SystemName", CIMValue(hostname));
+		rval.setProperty("CreationClassName", CIMValue(cc.getName()));
+		rval.setProperty("DeviceID", CIMValue(String("bat01")));
 
 		// /proc/apm typically looks like:
 		// 1.16 1.2 0x03 0x00 0x00 0x01 72% 183 min
 		// or
 		// 1.16 1.2 0x03 0x01 0x03 0x09 93% -1 ?
 		ifstream infile("/proc/apm", std::ios::in);
-		OW_StringStream oss;
+		StringStream oss;
 		oss << infile.rdbuf();
 		infile.close();
-		OW_String fileContents = oss.toString();
-		OW_StringArray toks = fileContents.tokenize();
-		OW_Int32 minutes;
-		OW_UInt16 percent;
+		String fileContents = oss.toString();
+		StringArray toks = fileContents.tokenize();
+		Int32 minutes;
+		UInt16 percent;
 		try
 		{
 			minutes = toks[7].toInt32();
 			toks[6] = toks[6].substring(0, 2); // erase the last %
 			percent = toks[6].toUInt16();
 		}
-		catch (const OW_StringConversionException& e)
+		catch (const StringConversionException& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed parsing /proc/apm");
+			OW_THROWCIMMSG(CIMException::FAILED, "Failed parsing /proc/apm");
 		}
-		OW_UInt16 status = STAT_Unknown;
-		OW_Bool charging = false;
+		UInt16 status = STAT_Unknown;
+		Bool charging = false;
 		if (minutes == -1)
 		{
 			status = STAT_Charging;
@@ -248,16 +249,16 @@ namespace
 				status = STAT_Critical;
 			}
 		}
-		rval.setProperty("EstimatedChargeRemaining", OW_CIMValue(percent));
-		rval.setProperty("EstimatedRunTime", OW_CIMValue(static_cast<OW_UInt32>(minutes)));
-		rval.setProperty("BatteryStatus", OW_CIMValue(status));
-		rval.setProperty("Charging", OW_CIMValue(charging));
+		rval.setProperty("EstimatedChargeRemaining", CIMValue(percent));
+		rval.setProperty("EstimatedRunTime", CIMValue(static_cast<UInt32>(minutes)));
+		rval.setProperty("BatteryStatus", CIMValue(status));
+		rval.setProperty("Charging", CIMValue(charging));
 		return rval;
 	}
 
 }
 
 
-OW_PROVIDERFACTORY(OW_LaptopBattery, laptopbat)
+OW_PROVIDERFACTORY(LaptopBattery, laptopbat)
 
 	

@@ -38,112 +38,98 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
 
-/////////////////////////////////////////////////////////////////////////////
-OW_NPIPolledProviderProxy::~OW_NPIPolledProviderProxy() 
+namespace OpenWBEM
 {
-}
 
 /////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_NPIPolledProviderProxy::getInitialPollingInterval(
-      const OW_ProviderEnvironmentIFCRef& env)
+NPIPolledProviderProxy::~NPIPolledProviderProxy() 
 {
-        env->getLogger()->logDebug("OW_NPIPolledProviderIFC::getInitialPollingInterval()");
+}
+/////////////////////////////////////////////////////////////////////////////
+Int32
+NPIPolledProviderProxy::getInitialPollingInterval(
+      const ProviderEnvironmentIFCRef& env)
+{
+        env->getLogger()->logDebug("NPIPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
-
-
-OW_Int32
-OW_NPIPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
+Int32
+NPIPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
-	OW_CIMValue rval(OW_CIMNULL);
-
+	CIMValue rval(CIMNULL);
 	env->getLogger()->
-		logDebug("OW_NPIPolledProviderIFC::poll()");
-
+		logDebug("NPIPolledProviderIFC::poll()");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		NPIHandleFreer nhf(_npiHandle);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
 		char * expo = "SourceInstance.PercentageSpaceUse 80";
 		SelectExp exp = {expo};
-		CIMObjectPath cop = {NULL};
-
+		::CIMObjectPath cop = {NULL};
 		m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				_npiHandle.providerError);
 		}
 	}
 	return 0;
 }
-
-void OW_NPIPolledProviderProxy::activateFilter(
-	const OW_ProviderEnvironmentIFCRef& env, const OW_String& query,
-	const OW_String& Type)
+void NPIPolledProviderProxy::activateFilter(
+	const ProviderEnvironmentIFCRef& env, const String& query,
+	const String& Type)
 {
 	env->getLogger()->logDebug("activateFilter");
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		NPIHandleFreer nhf(_npiHandle);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
 	    char * expo = query.allocateCString();
 	    char * _type = Type.allocateCString();
 	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
-
+	    ::CIMObjectPath cop = {NULL};
             m_ftable->fp_activateFilter( &_npiHandle, exp, _type, cop, 0);
 	    free(expo);
 	    free(_type);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				_npiHandle.providerError);
 		}
 	}
 }
-
-void OW_NPIPolledProviderProxy::deactivateFilter(
-	const OW_ProviderEnvironmentIFCRef& env, const OW_String& query,
-	const OW_String& Type)
+void NPIPolledProviderProxy::deactivateFilter(
+	const ProviderEnvironmentIFCRef& env, const String& query,
+	const String& Type)
 {
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
+		NPIHandleFreer nhf(_npiHandle);
 		env->getLogger()->logDebug("deactivateFilter2");
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
 	    char * expo = query.allocateCString();
 	    char * _type = Type.allocateCString();
 	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
+	    ::CIMObjectPath cop = {NULL};
 	    char * type = NULL;
-
             m_ftable->fp_deActivateFilter( &_npiHandle, exp, _type, cop, 0);
 	    free(type);
 	    free(expo);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				_npiHandle.providerError);
 		}
 	}
 }
+
+} // end namespace OpenWBEM
+

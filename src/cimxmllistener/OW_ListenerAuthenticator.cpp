@@ -27,27 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_ListenerAuthenticator.hpp"
 #include "OW_RandomNumber.hpp"
 
+namespace OpenWBEM
+{
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ListenerAuthenticator::OW_ListenerAuthenticator()
-	: OW_AuthenticatorIFC(), m_passwdMap()
+ListenerAuthenticator::ListenerAuthenticator()
+	: AuthenticatorIFC(), m_passwdMap()
 {}
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_ListenerAuthenticator::~OW_ListenerAuthenticator() 
+ListenerAuthenticator::~ListenerAuthenticator() 
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_ListenerAuthenticator::doAuthenticate(OW_String& userName,
-		const OW_String& info, OW_String& details)
+ListenerAuthenticator::doAuthenticate(String& userName,
+		const String& info, String& details)
 {
 	bool rval = false;
 	if (info.empty()) // no "Authorization" header
@@ -55,16 +53,14 @@ OW_ListenerAuthenticator::doAuthenticate(OW_String& userName,
 		details = "You must authenticate to access this resource";
 		return rval;
 	}
-
-	OW_String password = info;
-
+	String password = info;
 	if (m_passwdMap.count(userName) < 1) // user not found in password file
 	{
 		rval = false;
 	}
 	else
 	{
-		OW_String truePass = m_passwdMap[userName];
+		String truePass = m_passwdMap[userName];
 		rval = password.equals(truePass);
 	}
 	if (!rval)
@@ -73,21 +69,18 @@ OW_ListenerAuthenticator::doAuthenticate(OW_String& userName,
 	}
 	return rval;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_ListenerAuthenticator::doInit(OW_ServiceEnvironmentIFCRef)
+ListenerAuthenticator::doInit(ServiceEnvironmentIFCRef)
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_ListenerAuthenticator::getNewCredentials()
+String
+ListenerAuthenticator::getNewCredentials()
 {
-	OW_String name, pass;
-
-	OW_RandomNumber rn('0', 'z');
-	OW_MutexLock lock(m_mutex);
+	String name, pass;
+	RandomNumber rn('0', 'z');
+	MutexLock lock(m_mutex);
 	do
 	{
 		name.erase();
@@ -98,11 +91,10 @@ OW_ListenerAuthenticator::getNewCredentials()
 			{ // only allow alpha-numeric
 				continue;
 			}
-			name += OW_String(static_cast<char>(x));
+			name += String(static_cast<char>(x));
 			++i;
 		}
 	} while (m_passwdMap.find(name) != m_passwdMap.end());
-
 	for(size_t i = 0; i < 8;)
 	{
 		int x = rn.getNextNumber();
@@ -110,23 +102,20 @@ OW_ListenerAuthenticator::getNewCredentials()
 		{ // only allow alpha-numeric
 			continue;
 		}
-		pass += OW_String(static_cast<char>(x));
+		pass += String(static_cast<char>(x));
 		++i;
 	}
-
 	m_passwdMap[name] = pass;
 	return name + ":" + pass;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_ListenerAuthenticator::removeCredentials(const OW_String& creds)
+ListenerAuthenticator::removeCredentials(const String& creds)
 {
 	size_t idx = creds.indexOf(":");
-	OW_String name = creds.substring(0, idx);
-	OW_Map<OW_String, OW_String>::iterator iter;
-
-	OW_MutexLock lock(m_mutex);
+	String name = creds.substring(0, idx);
+	Map<String, String>::iterator iter;
+	MutexLock lock(m_mutex);
 	iter = m_passwdMap.find(name);
 	if (iter != m_passwdMap.end())
 	{
@@ -134,4 +123,5 @@ OW_ListenerAuthenticator::removeCredentials(const OW_String& creds)
 	}
 }
 
+} // end namespace OpenWBEM
 

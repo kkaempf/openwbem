@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_FTABLERef.hpp"
 #include "OW_PerlPolledProviderProxy.hpp"
@@ -40,49 +39,45 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
 
-/////////////////////////////////////////////////////////////////////////////
-OW_PerlPolledProviderProxy::~OW_PerlPolledProviderProxy() 
+namespace OpenWBEM
 {
-}
 
 /////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_PerlPolledProviderProxy::getInitialPollingInterval(
-      const OW_ProviderEnvironmentIFCRef& env)
+PerlPolledProviderProxy::~PerlPolledProviderProxy() 
 {
-        env->getLogger()->logDebug("OW_PerlPolledProviderIFC::getInitialPollingInterval()");
+}
+/////////////////////////////////////////////////////////////////////////////
+Int32
+PerlPolledProviderProxy::getInitialPollingInterval(
+      const ProviderEnvironmentIFCRef& env)
+{
+        env->getLogger()->logDebug("PerlPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
-
-
-OW_Int32
-OW_PerlPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
+Int32
+PerlPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
-	OW_CIMValue rval(OW_CIMNULL);
-
+	CIMValue rval(CIMNULL);
 	env->getLogger()->
-		logDebug("OW_PerlPolledProviderIFC::poll()");
-
+		logDebug("PerlPolledProviderIFC::poll()");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		NPIHandleFreer nhf(_npiHandle);
+		ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
-
 	    char * expo = "SourceInstance.PercentageSpaceUse 80";
 	    SelectExp exp = {expo};
-	    CIMObjectPath cop = {NULL};
-
+	    ::CIMObjectPath cop = {NULL};
             m_ftable->fp_mustPoll( &_npiHandle, exp, expo, cop);
-
 		if (_npiHandle.errorOccurred)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
+			OW_THROWCIMMSG(CIMException::FAILED,
 				_npiHandle.providerError);
 		}
 	}
 	return 0;
 }
+
+} // end namespace OpenWBEM
 

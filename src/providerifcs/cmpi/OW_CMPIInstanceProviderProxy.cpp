@@ -30,7 +30,6 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CMPIInstanceProviderProxy.hpp"
 #include "OW_CIMClass.hpp"
@@ -38,115 +37,95 @@
 #include "OW_Format.hpp"
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "cmpisrv.h"
-
 #include <alloca.h>
+
+namespace OpenWBEM
+{
 
 // debugging
 #define DDD(X) // X
-
-using namespace OW_WBEMFlags;
-
+using namespace WBEMFlags;
 /////////////////////////////////////////////////////////////////////////////
-OW_CMPIInstanceProviderProxy::~OW_CMPIInstanceProviderProxy() 
+CMPIInstanceProviderProxy::~CMPIInstanceProviderProxy() 
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-	OW_CMPIInstanceProviderProxy::enumInstanceNames(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMObjectPathResultHandlerIFC& result,
-	const OW_CIMClass& cimClass )
+	CMPIInstanceProviderProxy::enumInstanceNames(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const String& className,
+	CIMObjectPathResultHandlerIFC& result,
+	const CIMClass& cimClass )
 {
 	(void) cimClass;
-
 	env->getLogger()->
-		logDebug("OW_CMPIInstanceProviderProxy::enumInstanceNames()");
-
+		logDebug("CMPIInstanceProviderProxy::enumInstanceNames()");
 	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-
 		::OperationContext context;
-
 		//m_ftable->broker.hdl = 
-		//	new OW_ProviderEnvironmentIFCRef(env);
-		OW_ProviderEnvironmentIFCRef env2(env);
+		//	new ProviderEnvironmentIFCRef(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath cop(className, ns);
+		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
-
 		CMPIFlags flgs=0;
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
-
 		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
 			mi, &eCtx, &eRes, &eRef);
-
-		//delete ((OW_ProviderEnvironmentIFCRef *)(m_ftable->broker.hdl));
-
+		//delete ((ProviderEnvironmentIFCRef *)(m_ftable->broker.hdl));
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstanceNames");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstanceNames");
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-	OW_CMPIInstanceProviderProxy::enumInstances(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_String& ns,
-	const OW_String& className,
-	OW_CIMInstanceResultHandlerIFC& result,
+	CMPIInstanceProviderProxy::enumInstances(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const String& className,
+	CIMInstanceResultHandlerIFC& result,
 	ELocalOnlyFlag localOnly, 
 	EDeepFlag deep, 
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList,
-	const OW_CIMClass& requestedClass,
-	const OW_CIMClass& cimClass )
+	const StringArray* propertyList,
+	const CIMClass& requestedClass,
+	const CIMClass& cimClass )
 {
 	(void) localOnly;
 	(void) deep;
 	(void) requestedClass;
 	(void) cimClass;
-
 	env->getLogger()->
-		logDebug("OW_CMPIInstanceProviderProxy::enumInstances()");
-
+		logDebug("CMPIInstanceProviderProxy::enumInstances()");
 	if (m_ftable->miVector.instMI->ft->enumInstances!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
 		int pCount = 0;
-
 		::OperationContext context;
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath cop(className, ns);
+		CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
-
 		if (propertyList)
 		{
 			if (propertyList->size()>0)
@@ -160,74 +139,59 @@ void
 				props[pCount]=NULL;
 			}
 		}
-
 		CMPIFlags flgs=0;
 		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
 		if (includeClassOrigin)	flgs|=CMPI_FLAG_IncludeClassOrigin;
-
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
-
 		rc = m_ftable->miVector.instMI->ft->enumInstances(
 			mi, &eCtx, &eRes, &eRef, (char **)props);
-
 		if (props && pCount)
 			for (int i=0;i<pCount;i++) free((char *)props[i]);
-
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support enumInstances");
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-	OW_CMPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMObjectPath& instanceName,
+CIMInstance
+	CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
+	const String& ns,
+	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, 
 	EIncludeClassOriginFlag includeClassOrigin,
-	const OW_StringArray* propertyList, 
-	const OW_CIMClass& cimClass)
+	const StringArray* propertyList, 
+	const CIMClass& cimClass)
 {
 	(void) localOnly;
 	(void) cimClass;
-	OW_CIMInstance rval;
-
+	CIMInstance rval;
 	env->getLogger()->
-		logDebug("OW_CMPIInstanceProviderProxy::getInstance()");
-
+		logDebug("CMPIInstanceProviderProxy::getInstance()");
 	if (m_ftable->miVector.instMI->ft->getInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
 		int pCount = 0;
-
 		::OperationContext context;
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath copWithNS(instanceName);
+		CIMObjectPath copWithNS(instanceName);
 		copWithNS.setNameSpace(ns);
-
 		CMPI_ObjectPathOnStack eRef(copWithNS);
 		//CMPI_ResultOnStack eRes(result);
 		CMPIInstanceValueResultHandler instrh;
 		CMPI_ResultOnStack eRes(instrh);
-
 		if (propertyList)
 		{
 			if (propertyList->size()>0)
@@ -241,202 +205,161 @@ OW_CIMInstance
 				props[pCount]=NULL;
 			}
 		}
-
 		CMPIFlags flgs=0;
 		if (includeQualifiers) flgs|=CMPI_FLAG_IncludeQualifiers;
 		if (includeClassOrigin)	flgs|=CMPI_FLAG_IncludeClassOrigin;
-
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
-
 		rc = m_ftable->miVector.instMI->ft->getInstance(
 			mi, &eCtx, &eRes, &eRef, (char **)props);
-
 		if (rc.rc == CMPI_RC_OK)
 		{
 			return instrh.getValue();
 		}
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
 		}
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support getInstance");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support getInstance");
 	}
-
 	return rval;
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
-	OW_CMPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns, const OW_CIMObjectPath& cop)
+	CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
+	const String& ns, const CIMObjectPath& cop)
 {
 	env->getLogger()->
-		logDebug("OW_CMPIInstanceProviderProxy::deleteInstance()");
-
+		logDebug("CMPIInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->miVector.instMI->ft->deleteInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-
 		::OperationContext context;
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath copWithNS(cop);
+		CIMObjectPath copWithNS(cop);
 		copWithNS.setNameSpace(ns);
-
 		CMPI_ObjectPathOnStack eRef(copWithNS);
 		CMPI_ResultOnStack eRes;
-
 		CMPIFlags flgs=0;
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
-
 		rc = m_ftable->miVector.instMI->ft->deleteInstance(
 			mi, &eCtx, &eRes, &eRef);
-
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath
-	OW_CMPIInstanceProviderProxy::createInstance(
-	const OW_ProviderEnvironmentIFCRef &env, const OW_String& ns,
-	const OW_CIMInstance& cimInstance)
+CIMObjectPath
+	CMPIInstanceProviderProxy::createInstance(
+	const ProviderEnvironmentIFCRef &env, const String& ns,
+	const CIMInstance& cimInstance)
 {
-	OW_CIMObjectPath rval;
-
+	CIMObjectPath rval;
 	env->getLogger()->
-		logDebug(format("OW_CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
-
+		logDebug(format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-
 		::OperationContext context;
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath cop(ns, cimInstance);
-
+		CIMObjectPath cop(ns, cimInstance);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_InstanceOnStack eInst(cimInstance);
 		CMPIObjectPathValueResultHandler coprh;
 		CMPI_ResultOnStack eRes(coprh);
-
 		CMPIFlags flgs=0;
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 // Cheating
 		rc = m_ftable->miVector.instMI->ft->createInstance(
 			mi, &eCtx, &eRes, &eRef, &eInst);
-
 		if (rc.rc == CMPI_RC_OK)
 		{
 			return coprh.getValue();
 		}
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
-
 	return rval;
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-	OW_CMPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMInstance& modifiedInstance,
-	const OW_CIMInstance& previousInstance,
+	CMPIInstanceProviderProxy::modifyInstance(const ProviderEnvironmentIFCRef &env,
+	const String& ns,
+	const CIMInstance& modifiedInstance,
+	const CIMInstance& previousInstance,
 	EIncludeQualifiersFlag includeQualifiers,
-	const OW_StringArray* propertyList,
-	const OW_CIMClass& theClass)
+	const StringArray* propertyList,
+	const CIMClass& theClass)
 {
 	(void) includeQualifiers;
 	(void) propertyList;
 	(void) theClass;
-
 	env->getLogger()->
-		logDebug("OW_CMPIInstanceProviderProxy::modifyInstance()");
-
+		logDebug("CMPIInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char ** props = NULL;
 		int pCount = 0;
-
 		::OperationContext context;
-
-		OW_ProviderEnvironmentIFCRef env2(env);
+		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
-
 		CMPI_ContextOnStack eCtx(context);
 		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
-
-		OW_CIMObjectPath instRef(ns, previousInstance);
-
+		CIMObjectPath instRef(ns, previousInstance);
 		CMPI_ObjectPathOnStack eRef(instRef);
 		CMPI_InstanceOnStack eInst(modifiedInstance);
 		//CMPI_ResultOnStack eRes(result);
 		CMPI_ResultOnStack eRes;
-
 		CMPIFlags flgs=0;
 		//if (includeQualifier) flgs|=CMPI_FLAG_IncludeQualifiers;
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
-
 		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
-
 		rc = m_ftable->miVector.instMI->ft->setInstance(
 			mi, &eCtx, &eRes, &eRef, &eInst, (char **)props);
-
 		if (props && pCount)
 			for (int i=0;i<pCount;i++) free((char *)props[i]);
-
 		if (rc.rc == CMPI_RC_OK) return;
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+		OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
+} // end namespace OpenWBEM
 

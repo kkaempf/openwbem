@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
@@ -41,59 +40,53 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_AuthenticatorIFC.hpp" // for OW_AuthenticationException
 #include "OW_MD5.hpp"
-
 #include <cctype>
 #include <cstring>
 #include <cstdio>
-
 #ifdef OW_HAVE_ISTREAM
 #include <istream>
 #else
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
+
 using std::istream;
-
 DEFINE_EXCEPTION(Base64Format);
-
 ///////////////////////////////////////////////////////////////////////////////
 bool
-OW_HTTPUtils::parseHeader(OW_HTTPHeaderMap& map,
-								  OW_Array<OW_String>& array, istream& istr)
+HTTPUtils::parseHeader(HTTPHeaderMap& map,
+								  Array<String>& array, istream& istr)
 {
-	OW_String line;
+	String line;
 	do
 	{ // leading empty lines should be ignored.
-		line = OW_String::getLine(istr);
+		line = String::getLine(istr);
 	} while ( line.isSpaces() && istr );
-
 	if ( !istr )
 	{
 		return false;
 	}
-
 	array = line.tokenize();
-
 	return buildMap(map, istr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // static
 bool
-OW_HTTPUtils::parseHeader(OW_HTTPHeaderMap& map, istream& istr)
+HTTPUtils::parseHeader(HTTPHeaderMap& map, istream& istr)
 {
 	return buildMap(map, istr);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_HTTPUtils::buildMap(OW_HTTPHeaderMap& map, istream& istr)
+HTTPUtils::buildMap(HTTPHeaderMap& map, istream& istr)
 {
-	OW_String line;
-	OW_String key;
+	String line;
+	String key;
 	while ( istr )
 	{
-		line = OW_String::getLine(istr);
+		line = String::getLine(istr);
 		if ( line.isSpaces() )
 		{
 			break; // blank line; end of header.
@@ -115,7 +108,7 @@ OW_HTTPUtils::buildMap(OW_HTTPHeaderMap& map, istream& istr)
 			}
 		}
 		size_t idx = line.indexOf(':');
-		if ( idx == OW_String::npos )	// no ':' found, and not a continuation line.
+		if ( idx == String::npos )	// no ':' found, and not a continuation line.
 		{
 			return false;
 		}
@@ -135,144 +128,133 @@ OW_HTTPUtils::buildMap(OW_HTTPHeaderMap& map, istream& istr)
 	}
 	return true;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_HTTPUtils::date( void )
+String HTTPUtils::date( void )
 {
-	OW_DateTime DateTime;
+	DateTime DateTime;
 	DateTime.setToCurrent();
-
-	OW_Array< OW_String > DateTimeArray = DateTime.toStringGMT().tokenize();
-
+	Array< String > DateTimeArray = DateTime.toStringGMT().tokenize();
 	if ( DateTimeArray.size() < 5 )
 	{
-		OW_THROW(OW_HTTPException, "DateTimeArray has less than 5 elements.");
+		OW_THROW(HTTPException, "DateTimeArray has less than 5 elements.");
 	}
-	OW_String HTTPDateTime = DateTimeArray[ 0 ] + ", " + DateTimeArray[ 2 ] + " " +
+	String HTTPDateTime = DateTimeArray[ 0 ] + ", " + DateTimeArray[ 2 ] + " " +
 									 DateTimeArray[ 1 ] + " " + DateTimeArray[ 4 ] + " " + DateTimeArray[ 3 ] + " GMT";
-
 	return HTTPDateTime;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_HTTPUtils::status2String(int code)
+String
+HTTPUtils::status2String(int code)
 {
 	switch ( code )
 	{
 	case SC_CONTINUE:
-		return OW_String("Continue");
+		return String("Continue");
 	case SC_SWITCHING_PROTOCOLS:
-		return OW_String("Switching protocols");
+		return String("Switching protocols");
 	case SC_OK:
-		return OW_String("Ok");
+		return String("Ok");
 	case SC_CREATED:
-		return OW_String("Created");
+		return String("Created");
 	case SC_ACCEPTED:
-		return OW_String("Accepted");
+		return String("Accepted");
 	case SC_NON_AUTHORITATIVE_INFORMATION:
-		return OW_String("Non-authoritative");
+		return String("Non-authoritative");
 	case SC_NO_CONTENT:
-		return OW_String("No content");
+		return String("No content");
 	case SC_RESET_CONTENT:
-		return OW_String("Reset content");
+		return String("Reset content");
 	case SC_PARTIAL_CONTENT:
-		return OW_String("Partial content");
+		return String("Partial content");
 	case SC_MULTIPLE_CHOICES:
-		return OW_String("Multiple choices");
+		return String("Multiple choices");
 	case SC_MOVED_PERMANENTLY:
-		return OW_String("Moved permanentently");
+		return String("Moved permanentently");
 	case SC_MOVED_TEMPORARILY:
-		return OW_String("Moved temporarily");
+		return String("Moved temporarily");
 	case SC_SEE_OTHER:
-		return OW_String("See other");
+		return String("See other");
 	case SC_NOT_MODIFIED:
-		return OW_String("Not modified");
+		return String("Not modified");
 	case SC_USE_PROXY:
-		return OW_String("Use proxy");
+		return String("Use proxy");
 	case SC_BAD_REQUEST:
-		return OW_String("Bad request");
+		return String("Bad request");
 	case SC_UNAUTHORIZED:
-		return OW_String("Unauthorized");
+		return String("Unauthorized");
 	case SC_PAYMENT_REQUIRED:
-		return OW_String("Payment required");
+		return String("Payment required");
 	case SC_FORBIDDEN:
-		return OW_String("Forbidden");
+		return String("Forbidden");
 	case SC_NOT_FOUND:
-		return OW_String("Not found");
+		return String("Not found");
 	case SC_METHOD_NOT_ALLOWED:
-		return OW_String("Method not allowed");
+		return String("Method not allowed");
 	case SC_NOT_ACCEPTABLE:
-		return OW_String("Not acceptable");
+		return String("Not acceptable");
 	case SC_PROXY_AUTHENTICATION_REQUIRED:
-		return OW_String("Proxy auth required");
+		return String("Proxy auth required");
 	case SC_REQUEST_TIMEOUT:
-		return OW_String("Request timeout");
+		return String("Request timeout");
 	case SC_CONFLICT:
-		return OW_String("Conflict");
+		return String("Conflict");
 	case SC_GONE:
-		return OW_String("Gone");
+		return String("Gone");
 	case SC_LENGTH_REQUIRED:
-		return OW_String("Length required");
+		return String("Length required");
 	case SC_PRECONDITION_FAILED:
-		return OW_String("Precondition failed");
+		return String("Precondition failed");
 	case SC_REQUEST_ENTITY_TOO_LARGE:
-		return OW_String("Request entity too large");
+		return String("Request entity too large");
 	case SC_REQUEST_URI_TOO_LONG:
-		return OW_String("Request URI too large");
+		return String("Request URI too large");
 	case SC_UNSUPPORTED_MEDIA_TYPE:
-		return OW_String("Unsupported media type");
+		return String("Unsupported media type");
 	case SC_INTERNAL_SERVER_ERROR:
-		return OW_String("Internal server error");
+		return String("Internal server error");
 	case SC_NOT_IMPLEMENTED:
-		return OW_String("Not implemented");
+		return String("Not implemented");
 	case SC_BAD_GATEWAY:
-		return OW_String("Bad gateway");
+		return String("Bad gateway");
 	case SC_SERVICE_UNAVAILABLE:
-		return OW_String("Service unavailable");
+		return String("Service unavailable");
 	case SC_GATEWAY_TIMEOUT:
-		return OW_String("Gateway timeout");
+		return String("Gateway timeout");
 	case SC_HTTP_VERSION_NOT_SUPPORTED:
-		return  OW_String("HTTP version not supported");
+		return  String("HTTP version not supported");
 	case SC_NOT_EXTENDED:
-		return OW_String("Not Extended");
+		return String("Not Extended");
 	default:
-		return OW_String() ;
+		return String() ;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_HTTPUtils::getCounterStr()
+String
+HTTPUtils::getCounterStr()
 {
-	int count = OW_HTTPCounter::getCounter();
+	int count = HTTPCounter::getCounter();
 	// string should always be two digits.
 	if ( count < 10 )
 	{
-		return("0" + OW_String(count));
+		return("0" + String(count));
 	}
 	else
 	{
-		return OW_String(count);
+		return String(count);
 	}
 }
-
 static const char* const Base64 =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static const char Pad64 = '=';
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_HTTPUtils::base64Decode(const OW_String& arg)
+String HTTPUtils::base64Decode(const String& arg)
 {
 	char* buf = new char[arg.length() + 1];
 	strcpy(buf, arg.c_str());
-	OW_String rval = base64Decode(buf);
+	String rval = base64Decode(buf);
 	delete [] buf;
 	return rval;
 }
-
-
 static int char2val(char c)
 {
 	switch (c)
@@ -344,40 +326,33 @@ static int char2val(char c)
 		default: return -1;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_HTTPUtils::base64Decode(const char* src)
+String HTTPUtils::base64Decode(const char* src)
 {
-
 	int szdest = strlen(src) * 2;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
 	char* dest = new char[szdest];
 	memset(dest, '\0', szdest);
 	int destidx, state, ch;
 	int b64val;
-
 	state = 0;
 	destidx = 0;
-
 	while ( (ch = *src++) != '\0' )
 	{
 		if ( isspace(ch) ) // Skip whitespace
 			continue;
-
 		if ( ch == Pad64 )
 			break;
-
 		b64val = char2val(ch);
 		if ( b64val == -1 ) // A non-base64 character
-			OW_THROW(OW_Base64FormatException, "non-base64 char");
-
+			OW_THROW(Base64FormatException, "non-base64 char");
 		switch ( state )
 		{
 		case 0:
 			if ( dest )
 			{
 				if ( destidx >= szdest )
-					OW_THROW(OW_Base64FormatException, "non-base64 char");
+					OW_THROW(Base64FormatException, "non-base64 char");
 				dest[destidx] = b64val << 2;
 			}
 			state = 1;
@@ -386,7 +361,7 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 			if ( dest )
 			{
 				if ( destidx + 1 >= szdest )
-					OW_THROW(OW_Base64FormatException, "non-base64 char");
+					OW_THROW(Base64FormatException, "non-base64 char");
 				dest[destidx]   |=  b64val >> 4;
 				dest[destidx+1]  = (b64val & 0x0f) << 4 ;
 			}
@@ -397,7 +372,7 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 			if ( dest )
 			{
 				if ( destidx + 1 >= szdest )
-					OW_THROW(OW_Base64FormatException, "non-base64 char");
+					OW_THROW(Base64FormatException, "non-base64 char");
 				dest[destidx]   |=  b64val >> 2;
 				dest[destidx+1]  = (b64val & 0x03) << 6;
 			}
@@ -408,7 +383,7 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 			if ( dest )
 			{
 				if ( destidx >= szdest )
-					OW_THROW(OW_Base64FormatException, "non-base64 char");
+					OW_THROW(Base64FormatException, "non-base64 char");
 				dest[destidx] |= b64val;
 			}
 			destidx++;
@@ -416,10 +391,8 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 			break;
 		}
 	}
-
 	// We are done decoding Base-64 chars.  Let's see if we ended
 	//	on a byte boundary, and/or with erroneous trailing characters.
-
 	if ( ch == Pad64 )	  // We got a pad char
 	{
 		ch = *src++;		// Skip it, get next
@@ -427,8 +400,7 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 		{
 		case 0:		// Invalid = in first position
 		case 1:		// Invalid = in second position
-			OW_THROW(OW_Base64FormatException, "non-base64 char");
-
+			OW_THROW(Base64FormatException, "non-base64 char");
 		case 2:		// Valid, means one byte of info
 			// Skip any number of spaces
 			for ( ; ch != '\0'; ch = *src++ )
@@ -436,24 +408,22 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 					break;
 				// Make sure there is another trailing = sign
 			if ( ch != Pad64 )
-				OW_THROW(OW_Base64FormatException, "non-base64 char");
+				OW_THROW(Base64FormatException, "non-base64 char");
 			ch = *src++;		// Skip the =
 			// Fall through to "single trailing =" case
 			// FALLTHROUGH
-
 		case 3:		// Valid, means two bytes of info
 			// We know this char is an =.  Is there anything but
 			//	whitespace after it?
 			for ( ; ch != '\0'; ch = *src++ )
 				if ( !isspace(ch) )
-					OW_THROW(OW_Base64FormatException, "non-base64 char");
-
+					OW_THROW(Base64FormatException, "non-base64 char");
 				// Now make sure for cases 2 and 3 that the "extra"
 				//	bits that slopped past the last full byte were
 				//	zeros.  If we don't check them, they become a
 				//	subliminal channel.
 			if ( dest && dest[destidx] != 0 )
-				OW_THROW(OW_Base64FormatException, "non-base64 char");
+				OW_THROW(Base64FormatException, "non-base64 char");
 		}
 	}
 	else
@@ -461,27 +431,24 @@ OW_String OW_HTTPUtils::base64Decode(const char* src)
 		// We ended by seeing the end of the string.  Make sure we
 		//	have no partial bytes lying around.
 		if ( state != 0 )
-			OW_THROW(OW_Base64FormatException, "non-base64 char");
+			OW_THROW(Base64FormatException, "non-base64 char");
 	}
-
 	//return (destidx);
-	OW_String rval(dest);
+	String rval(dest);
 	delete [] dest;
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_HTTPUtils::base64Encode(const OW_String& arg)
+String HTTPUtils::base64Encode(const String& arg)
 {
 	char* buf = new char[arg.length() + 1];
 	strcpy(buf, arg.c_str());
-	OW_String rval = base64Encode(buf);
+	String rval = base64Encode(buf);
 	delete [] buf;
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String OW_HTTPUtils::base64Encode(const char* src)
+String HTTPUtils::base64Encode(const char* src)
 {
 	int szdest = strlen(src) * 3 + 4;
 	// TODO this is likely too big, but safe.  figure out correct minimal size.
@@ -489,13 +456,11 @@ OW_String OW_HTTPUtils::base64Encode(const char* src)
 	char a, b, c, d, *dst;
 	const char* cp;
 	int i, srclen, enclen, remlen;
-
 	cp = src;
 	dst = dest;
 	srclen = strlen(cp);			// length of source
 	enclen = srclen / 3;			  // number of 4 byte encodings (source DIV 3)
 	remlen = srclen - 3 * enclen;	// remainder if srclen not divisible by 3 (source MOD 3)
-
 	for ( i = 0; i < enclen; i++ )
 	{
 		a = (cp[0] >> 2);
@@ -507,21 +472,19 @@ OW_String OW_HTTPUtils::base64Encode(const char* src)
 		cp +=3;
 		if ( dst + 6 - dest > szdest )
 		{
-			OW_THROW(OW_Base64FormatException, "buffer too small");
+			OW_THROW(Base64FormatException, "buffer too small");
 		}
 		sprintf(dst, "%c%c%c%c",Base64[a],Base64[b],Base64[c],Base64[d]);
 		dst+=4;
 	}
-
 	//if (remlen == 0)
 	//	return (dst - dest + 1);
-
 	if ( remlen == 1 )
 	{
 		a = (cp[0] >> 2);
 		b = (cp[0] << 4) & 0x30;
 		if ( dst + 6 - dest > szdest )
-			OW_THROW(OW_Base64FormatException, "buffer too small");
+			OW_THROW(Base64FormatException, "buffer too small");
 		sprintf(dst, "%c%c==",Base64[a],Base64[b]);
 		dst+=4;
 	}
@@ -532,35 +495,29 @@ OW_String OW_HTTPUtils::base64Encode(const char* src)
 		b |= (cp[1] >> 4);
 		c = (cp[1] << 2) & 0x3c;
 		if ( dst + 6 - dest > szdest )
-			OW_THROW(OW_Base64FormatException, "non-base64 char");
+			OW_THROW(Base64FormatException, "non-base64 char");
 		sprintf(dst, "%c%c%c=",Base64[a],Base64[b],Base64[c]);
 		dst+=4;
 	}
 	//return dst - dest + 1;
-	OW_String rval(dest);
+	String rval(dest);
 	delete [] dest;
 	return rval;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-
-
-
 #ifndef OW_DISABLE_DIGEST
 /* calculate H(A1) as per spec */
-void OW_HTTPUtils::DigestCalcHA1(
-	const OW_String &sAlg,
-	const OW_String &sUserName,
-	const OW_String &sRealm,
-	const OW_String &sPassword,
-	const OW_String &sNonce,
-	const OW_String &sCNonce,
-	OW_String &sSessionKey
+void HTTPUtils::DigestCalcHA1(
+	const String &sAlg,
+	const String &sUserName,
+	const String &sRealm,
+	const String &sPassword,
+	const String &sNonce,
+	const String &sCNonce,
+	String &sSessionKey
 	)
 {
-	OW_MD5 md5;
-
+	MD5 md5;
 	md5.update(sUserName);
 	md5.update(":");
 	md5.update(sRealm);
@@ -571,7 +528,7 @@ void OW_HTTPUtils::DigestCalcHA1(
 	{
 		unsigned char sHA1[HASHLEN];
 		memcpy(sHA1, md5.getDigest(), HASHLEN);
-		OW_MD5 md5_2;
+		MD5 md5_2;
 		md5_2.update(reinterpret_cast<const char*>(sHA1));
 		md5_2.update(":");
 		md5_2.update(sNonce);
@@ -580,24 +537,22 @@ void OW_HTTPUtils::DigestCalcHA1(
 		sSessionKey = md5_2.toString();
 	};
 };
-
 /* calculate request-digest/response-digest as per HTTP Digest spec */
-void OW_HTTPUtils::DigestCalcResponse(
-	 const OW_String& sHA1,			 /* H(A1) */
-	 const OW_String& sNonce,		 /* nonce from server */
-	 const OW_String& sNonceCount, /* 8 hex digits */
-	 const OW_String& sCNonce,		 /* client nonce */
-	 const OW_String& sQop,			 /* qop-value: "", "auth", "auth-int" */
-	 const OW_String& sMethod,		 /* method from the request */
-	 const OW_String& sDigestUri,	 /* requested URL */
-	 const OW_String& sHEntity,	 /* H(entity body) if qop="auth-int" */
-	 OW_String& sResponse
+void HTTPUtils::DigestCalcResponse(
+	 const String& sHA1,			 /* H(A1) */
+	 const String& sNonce,		 /* nonce from server */
+	 const String& sNonceCount, /* 8 hex digits */
+	 const String& sCNonce,		 /* client nonce */
+	 const String& sQop,			 /* qop-value: "", "auth", "auth-int" */
+	 const String& sMethod,		 /* method from the request */
+	 const String& sDigestUri,	 /* requested URL */
+	 const String& sHEntity,	 /* H(entity body) if qop="auth-int" */
+	 String& sResponse
 	 )
 {
-	OW_String sHA2Hex;
-
+	String sHA2Hex;
 	// calculate H(A2)
-	OW_MD5 md5;
+	MD5 md5;
 	md5.update(sMethod);
 	md5.update(":");
 	md5.update(sDigestUri);
@@ -607,9 +562,8 @@ void OW_HTTPUtils::DigestCalcResponse(
 		md5.update(sHEntity);
 	};
 	sHA2Hex = md5.toString();
-
 	// calculate response
-	OW_MD5 md5new;
+	MD5 md5new;
 	md5new.update(sHA1);
 	md5new.update(":");
 	md5new.update(sNonce);
@@ -627,14 +581,13 @@ void OW_HTTPUtils::DigestCalcResponse(
 	sResponse = md5new.toString();
 };
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 bool
-OW_HTTPUtils::headerHasKey(const OW_HTTPHeaderMap& headers,
-									const OW_String& key)
+HTTPUtils::headerHasKey(const HTTPHeaderMap& headers,
+									const String& key)
 {
-	OW_HTTPHeaderMap::const_iterator i =
+	HTTPHeaderMap::const_iterator i =
 	headers.find(key.toString().toLowerCase());
 	if ( i != headers.end() )
 	{
@@ -645,14 +598,13 @@ OW_HTTPUtils::headerHasKey(const OW_HTTPHeaderMap& headers,
 		return false;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_String
-OW_HTTPUtils::getHeaderValue(const OW_HTTPHeaderMap& headers,
-									  const OW_String& key)
+String
+HTTPUtils::getHeaderValue(const HTTPHeaderMap& headers,
+									  const String& key)
 {
-	OW_HTTPHeaderMap::const_iterator i =
+	HTTPHeaderMap::const_iterator i =
 	headers.find(key.toString().toLowerCase());
 	if ( i != headers.end() )
 	{
@@ -660,17 +612,16 @@ OW_HTTPUtils::getHeaderValue(const OW_HTTPHeaderMap& headers,
 	}
 	else
 	{
-		return OW_String();
+		return String();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 //STATIC
 void
-OW_HTTPUtils::addHeader(OW_Array<OW_String>& headers,
-								const OW_String& key, const OW_String& value)
+HTTPUtils::addHeader(Array<String>& headers,
+								const String& key, const String& value)
 {
-	OW_String tmpKey = key;
+	String tmpKey = key;
 	tmpKey.trim();
 	if ( !tmpKey.empty())
 	{
@@ -681,41 +632,38 @@ OW_HTTPUtils::addHeader(OW_Array<OW_String>& headers,
 		headers.push_back(" " + value);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_HTTPUtils::eatEntity(istream& istr)
+HTTPUtils::eatEntity(istream& istr)
 {
 	while ( istr )	istr.get();
 }
-
 void
-OW_HTTPUtils::decodeBasicCreds(const OW_String& info, OW_String& name,
-		OW_String& password)
+HTTPUtils::decodeBasicCreds(const String& info, String& name,
+		String& password)
 {
-	OW_String decoded = info;
+	String decoded = info;
 	size_t idx = decoded.indexOf("Basic");
-	if (idx == OW_String::npos)
+	if (idx == String::npos)
 	{
-		OW_THROW(OW_AuthenticationException, "Authentication info is not type "
+		OW_THROW(AuthenticationException, "Authentication info is not type "
 			"\"Basic\"");
 	}
 	decoded = decoded.substring(idx + 6);
 	try
 	{
-		decoded = OW_HTTPUtils::base64Decode(decoded);
+		decoded = HTTPUtils::base64Decode(decoded);
 	}
-	catch (OW_Base64FormatException &e)
+	catch (Base64FormatException &e)
 	{
-		OW_THROW(OW_AuthenticationException, "invalid BASE64 encoding of "
+		OW_THROW(AuthenticationException, "invalid BASE64 encoding of "
 			"credentials");
 	}
-
 	size_t icolon = decoded.indexOf(':');
-	if (icolon == OW_String::npos)
+	if (icolon == String::npos)
 	{
-		OW_THROW(OW_AuthenticationException, "invalid credentials syntax");
+		OW_THROW(AuthenticationException, "invalid credentials syntax");
 	}
 	else
 	{
@@ -724,5 +672,5 @@ OW_HTTPUtils::decodeBasicCreds(const OW_String& info, OW_String& name,
 	}
 }
 
-
+} // end namespace OpenWBEM
 

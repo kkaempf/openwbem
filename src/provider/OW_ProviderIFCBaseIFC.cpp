@@ -30,26 +30,27 @@
 #include "OW_config.h"
 #include "OW_ProviderIFCBaseIFC.hpp"
 
+namespace OpenWBEM
+{
+
 ///////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCBaseIFC::OW_ProviderIFCBaseIFC()
+ProviderIFCBaseIFC::ProviderIFCBaseIFC()
 : signature(0xABCDEFA0)
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCBaseIFC::~OW_ProviderIFCBaseIFC() 
+ProviderIFCBaseIFC::~ProviderIFCBaseIFC() 
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_ProviderIFCBaseIFC::init(const OW_ProviderEnvironmentIFCRef& env,
-	OW_InstanceProviderInfoArray& i,
+ProviderIFCBaseIFC::init(const ProviderEnvironmentIFCRef& env,
+	InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	OW_AssociatorProviderInfoArray& a,
+	AssociatorProviderInfoArray& a,
 #endif
-	OW_MethodProviderInfoArray& m,
-	OW_IndicationProviderInfoArray& ind)
+	MethodProviderInfoArray& m,
+	IndicationProviderInfoArray& ind)
 {
 	doInit(env, i, 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -58,62 +59,57 @@ OW_ProviderIFCBaseIFC::init(const OW_ProviderEnvironmentIFCRef& env,
 		m, 
 		ind);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_InstanceProviderIFCRef 
-OW_ProviderIFCBaseIFC::getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
+InstanceProviderIFCRef 
+ProviderIFCBaseIFC::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return doGetInstanceProvider(env, provIdString);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_MethodProviderIFCRef 
-OW_ProviderIFCBaseIFC::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
+MethodProviderIFCRef 
+ProviderIFCBaseIFC::getMethodProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return doGetMethodProvider(env, provIdString);
 }
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
-OW_AssociatorProviderIFCRef 
-OW_ProviderIFCBaseIFC::getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
+AssociatorProviderIFCRef 
+ProviderIFCBaseIFC::getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return  doGetAssociatorProvider(env, provIdString);
 }
 #endif
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_IndicationExportProviderIFCRefArray 
-OW_ProviderIFCBaseIFC::getIndicationExportProviders(
-	const OW_ProviderEnvironmentIFCRef& env
+IndicationExportProviderIFCRefArray 
+ProviderIFCBaseIFC::getIndicationExportProviders(
+	const ProviderEnvironmentIFCRef& env
 	)
 {
 	return doGetIndicationExportProviders(env);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_PolledProviderIFCRefArray 
-OW_ProviderIFCBaseIFC::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
+PolledProviderIFCRefArray 
+ProviderIFCBaseIFC::getPolledProviders(const ProviderEnvironmentIFCRef& env
 	)
 {
 	return doGetPolledProviders(env);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_ProviderIFCBaseIFC::unloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+ProviderIFCBaseIFC::unloadProviders(const ProviderEnvironmentIFCRef& env)
 {
 	doUnloadProviders(env);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_IndicationProviderIFCRef 
-OW_ProviderIFCBaseIFC::getIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+IndicationProviderIFCRef 
+ProviderIFCBaseIFC::getIndicationProvider(const ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
 {
 	return  doGetIndicationProvider(env, provIdString);
 }
+
+} // end namespace OpenWBEM
 

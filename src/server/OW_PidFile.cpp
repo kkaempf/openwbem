@@ -27,12 +27,9 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_PidFile.hpp"
 
-extern "C"
-{
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -42,7 +39,9 @@ extern "C"
 #include <errno.h>
 #include <sys/types.h>
 #include <fcntl.h>
-}
+
+namespace OpenWBEM
+{
 
 /**
  * Read the contents of a pid file and return the results.
@@ -50,40 +49,33 @@ extern "C"
  * @return	The process id on success. Otherwise -1
  */
 int 
-OW_PidFile::readPid(const char *pidfile)
+PidFile::readPid(const char *pidfile)
 {
 	FILE *f;
 	int pid = -1;
-
 	if(!(f = fopen(pidfile,"r")))
 		return -1;
-
 	fscanf(f,"%d", &pid);
 	fclose(f);
 	return pid;
 }
-
 /**
  * Ensure the pid file corresponds to a currently running process.
  *	@param pidfile	The fully qualified path to the pid file.
  * @return	The process id on success. Otherwise -1
  */
 int 
-OW_PidFile::checkPid(const char *pidfile)
+PidFile::checkPid(const char *pidfile)
 {
 	int pid = readPid(pidfile);
-
 	// Amazing ! _I_ am already holding the pid file...
 	if((!pid) || (pid == getpid()))
 		return -1;
-
 	// Check if the process exists
 	if(kill(pid, 0) && errno == ESRCH)
 		return -1;
-
 	return pid;
 }
-
 /**
  * Writes the pid to the specified file.
  * @param pidfile		The fully qualified path to the pid file
@@ -91,18 +83,16 @@ OW_PidFile::checkPid(const char *pidfile)
  *				the error encountered by this function
  */
 int 
-OW_PidFile::writePid(const char *pidfile)
+PidFile::writePid(const char *pidfile)
 {
 	FILE *f;
 	int fd;
 	int pid;
 	int lerrno;
-
 	if((fd = open(pidfile, O_RDWR|O_CREAT, 0644)) == -1)
 	{
 		return -1;
 	}
-
 	if((f = fdopen(fd, "r+")) == NULL)
 	{
 		lerrno = errno;
@@ -110,7 +100,6 @@ OW_PidFile::writePid(const char *pidfile)
 		errno = lerrno;
 		return -1;
 	}
-
 #ifdef OW_GNU_LINUX
     if(flock(fd, LOCK_EX|LOCK_NB) == -1)
 #elif defined(OW_OPENSERVER)
@@ -125,7 +114,6 @@ OW_PidFile::writePid(const char *pidfile)
 		errno = lerrno;
 		return -1;
 	}
-
 	pid = getpid();
 	if(!fprintf(f,"%d\n", pid))
 	{
@@ -135,7 +123,6 @@ OW_PidFile::writePid(const char *pidfile)
 		return -1;
 	}
 	fflush(f);
-
 #ifdef OW_GNU_LINUX
     if(flock(fd, LOCK_UN) == -1)
     {
@@ -155,20 +142,19 @@ OW_PidFile::writePid(const char *pidfile)
 #else
 	funlockfile(f);
 #endif
-
 	fclose(f);
 	return pid;
 }
-
 /**
  * Remove a pid file.
  *
  * @return	The results of the unlink call.
  */
 int 
-OW_PidFile::removePid(const char *pidfile)
+PidFile::removePid(const char *pidfile)
 {
 	return unlink(pidfile);
 }
 
+} // end namespace OpenWBEM
 

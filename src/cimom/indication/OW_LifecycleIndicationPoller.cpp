@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_LifecycleIndicationPoller.hpp"
 #include "OW_CIMException.hpp"
@@ -37,12 +36,14 @@
 #include "OW_CIMValue.hpp"
 #include "OW_MutexLock.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-OW_LifecycleIndicationPoller::OW_LifecycleIndicationPoller(
-	const OW_String& ns, const OW_String& className,
-	OW_UInt32 pollInterval)
+LifecycleIndicationPoller::LifecycleIndicationPoller(
+	const String& ns, const String& className,
+	UInt32 pollInterval)
 	: m_ns(ns)
 	, m_classname(className)
 	, m_pollInterval(pollInterval)
@@ -52,12 +53,11 @@ OW_LifecycleIndicationPoller::OW_LifecycleIndicationPoller(
     , m_initializedInstances(false)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LifecycleIndicationPoller::addPollOp(PollOp op)
+LifecycleIndicationPoller::addPollOp(PollOp op)
 {
-	OW_MutexLock l(m_guard);
+	MutexLock l(m_guard);
 	switch (op)
 	{
 		case POLL_FOR_INSTANCE_CREATION:
@@ -71,13 +71,12 @@ OW_LifecycleIndicationPoller::addPollOp(PollOp op)
 			break;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // takes a POLL_FOR_INSTANCE* flag
 bool
-OW_LifecycleIndicationPoller::removePollOp(PollOp op)
+LifecycleIndicationPoller::removePollOp(PollOp op)
 {
-	OW_MutexLock l(m_guard);
+	MutexLock l(m_guard);
 	switch (op)
 	{
 		case POLL_FOR_INSTANCE_CREATION:
@@ -92,76 +91,67 @@ OW_LifecycleIndicationPoller::removePollOp(PollOp op)
 	}
     return !willPoll();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_LifecycleIndicationPoller::willPoll() const
+LifecycleIndicationPoller::willPoll() const
 {
-	OW_MutexLock l(m_guard);
+	MutexLock l(m_guard);
 	return m_pollCreation > 0 || m_pollModification > 0 || m_pollDeletion > 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_LifecycleIndicationPoller::addPollInterval(OW_UInt32 newPollInterval)
+UInt32
+LifecycleIndicationPoller::addPollInterval(UInt32 newPollInterval)
 {
-	OW_MutexLock l(m_guard);
+	MutexLock l(m_guard);
 	m_pollInterval = newPollInterval < m_pollInterval ? newPollInterval : m_pollInterval;
 	return m_pollInterval;
 }
 
-#include <iostream>
-using namespace std;
-
 //////////////////////////////////////////////////////////////////////////////
-OW_UInt32
-OW_LifecycleIndicationPoller::getPollInterval()	const
+UInt32
+LifecycleIndicationPoller::getPollInterval()	const
 {
-	OW_MutexLock l(m_guard);
-cout << "OW_LifecycleIndicationPoller::getPollInterval returning " << m_pollInterval << endl;
+	MutexLock l(m_guard);
 	return m_pollInterval;
 }
-
 namespace
 {
 //////////////////////////////////////////////////////////////////////////////
-	class InstanceArrayBuilder : public OW_CIMInstanceResultHandlerIFC
+	class InstanceArrayBuilder : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		InstanceArrayBuilder(OW_CIMInstanceArray& cia_)
+		InstanceArrayBuilder(CIMInstanceArray& cia_)
 		: cia(cia_)
 		{}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &i)
+		virtual void doHandle(const CIMInstance &i)
 		{
 			cia.push_back(i);
 		}
 	private:
-		OW_CIMInstanceArray& cia;
+		CIMInstanceArray& cia;
 	};
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_LifecycleIndicationPoller::getInitialPollingInterval(
-	const OW_ProviderEnvironmentIFCRef &)
+Int32
+LifecycleIndicationPoller::getInitialPollingInterval(
+	const ProviderEnvironmentIFCRef &)
 {
     return 1; // have poll called again in 1 second.
 }
-
 namespace
 {
 	struct sortByInstancePath
 	{
-		bool operator()(const OW_CIMInstance& x, const OW_CIMInstance& y) const
+		bool operator()(const CIMInstance& x, const CIMInstance& y) const
 		{
-			return OW_CIMObjectPath("", x) < OW_CIMObjectPath("", y);
+			return CIMObjectPath("", x) < CIMObjectPath("", y);
 		}
 	};
 } // end anonymous namespace
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
+Int32
+LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 {
 	// do enumInstances to populate m_prevInsts
     if (!m_initializedInstances)
@@ -171,35 +161,31 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
         m_initializedInstances = true;
         return 1; // have poll called again in 1 second.
     }
-
-    env->getLogger()->logDebug(format("OW_LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
+    env->getLogger()->logDebug(format("LifecycleIndicationPoller::poll creation %1 modification %2 deletion %3", m_pollCreation, m_pollModification, m_pollDeletion));
 	if (!willPoll())
 	{
 		// nothing to do, so return 0 to stop polling.
-        env->getLogger()->logDebug("OW_LifecycleIndicationPoller::poll nothing to do, returning 0");
+        env->getLogger()->logDebug("LifecycleIndicationPoller::poll nothing to do, returning 0");
 		return 0;
 	}
-
 	// do enumInstances of the class
-	OW_CIMInstanceArray curInstances;
+	CIMInstanceArray curInstances;
 	InstanceArrayBuilder iab(curInstances);
-	OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+	CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 	try
 	{
 		hdl->enumInstances(m_ns, m_classname, iab, E_SHALLOW, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 	}
-	catch (const OW_CIMException& e)
+	catch (const CIMException& e)
 	{
-		env->getLogger()->logError(format("OW_LifecycleIndicationPoller::poll caught exception: %1", e));
+		env->getLogger()->logError(format("LifecycleIndicationPoller::poll caught exception: %1", e));
 		return 0;
 	}
-
 	// Compare the new instances with the previous instances
 	// and send any indications that may be necessary.
-	typedef OW_SortedVectorSet<OW_CIMInstance, sortByInstancePath> instSet_t;
+	typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;
 	instSet_t prevSet(m_prevInsts.begin(), m_prevInsts.end());
 	instSet_t curSet(curInstances.begin(), curInstances.end());
-
 	typedef instSet_t::const_iterator iter_t;
 	iter_t pi = prevSet.begin();
 	iter_t ci = curSet.begin();
@@ -210,9 +196,9 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			// *pi has been deleted
 			if (m_pollDeletion)
 			{
-				OW_CIMInstance expInst;
+				CIMInstance expInst;
 				expInst.setClassName("CIM_InstDeletion");
-				expInst.setProperty("SourceInstance", OW_CIMValue(*pi));
+				expInst.setProperty("SourceInstance", CIMValue(*pi));
 				hdl->exportIndication(expInst, m_ns);
 			}
 			++pi;
@@ -222,9 +208,9 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			// *ci is new
 			if (m_pollCreation)
 			{
-				OW_CIMInstance expInst;
+				CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
-				expInst.setProperty("SourceInstance", OW_CIMValue(*ci));
+				expInst.setProperty("SourceInstance", CIMValue(*ci));
 				hdl->exportIndication(expInst, m_ns);
 			}
 			++ci;
@@ -235,10 +221,10 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			{
 				if (!pi->propertiesAreEqualTo(*ci))
 				{
-					OW_CIMInstance expInst;
+					CIMInstance expInst;
 					expInst.setClassName("CIM_InstModification");
-					expInst.setProperty("PreviousInstance", OW_CIMValue(*pi));
-					expInst.setProperty("SourceInstance", OW_CIMValue(*ci));
+					expInst.setProperty("PreviousInstance", CIMValue(*pi));
+					expInst.setProperty("SourceInstance", CIMValue(*ci));
 					hdl->exportIndication(expInst, m_ns);
 				}
 			}
@@ -246,12 +232,10 @@ OW_LifecycleIndicationPoller::poll(const OW_ProviderEnvironmentIFCRef &env)
 			++ci;
 		}
 	}
-
 	// save the current instances to m_prevInsts
 	m_prevInsts = curInstances;
-
 	return getPollInterval();
 }
 
-
+} // end namespace OpenWBEM
 

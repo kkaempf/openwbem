@@ -27,18 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SOCKETUTILS_HPP_INCLUDE_GUARD_
 #define OW_SOCKETUTILS_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketFlags.hpp"
 
-class OW_String;
+namespace OpenWBEM
+{
 
-namespace OW_SocketUtils
+class String;
+namespace SocketUtils
 {
 	/**
 	 * Wait for input or output on a socket.
@@ -48,21 +48,18 @@ namespace OW_SocketUtils
 	 * @return zero if we got input before the timeout expired, non-zero
 	 * 	otherwise.
 	 */
-	int waitForIO(OW_SocketHandle_t fd, int timeOutSecs, 
-		OW_SocketFlags::EWaitDirectionFlag forInput);
-
-	OW_String inetAddrToString(OW_UInt64 addr);
-
+	int waitForIO(SocketHandle_t fd, int timeOutSecs, 
+		SocketFlags::EWaitDirectionFlag forInput);
+	String inetAddrToString(UInt64 addr);
 	/**
 	 * Get the fully qualified host name.
 	 * This function can be expensive performance-wise.  It may query multiple DNS servers.
 	 * If the network is not working correctly, it will fail and throw an exception.
-	 * @throws OW_SocketException on failure.
+	 * @throws SocketException on failure.
 	 */
-	OW_String getFullyQualifiedHostName();
+	String getFullyQualifiedHostName();
 }
 
+} // end namespace OpenWBEM
 
 #endif
-
-

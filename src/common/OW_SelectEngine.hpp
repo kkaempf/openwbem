@@ -29,50 +29,45 @@
 *******************************************************************************/
 #ifndef OW_SELECT_ENGINE_HPP_
 #define OW_SELECT_ENGINE_HPP_
-
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_Exception.hpp"
 
-DECLARE_EXCEPTION(Select)
+namespace OpenWBEM
+{
 
-class OW_SelectEngine
+DECLARE_EXCEPTION(Select)
+class SelectEngine
 {
 public:
-	void addSelectableObject(OW_SelectableIFCRef obj,
-		OW_SelectableCallbackIFCRef cb);
-
-	void go(); // Throws OW_SelectException on error
+	void addSelectableObject(SelectableIFCRef obj,
+		SelectableCallbackIFCRef cb);
+	void go(); // Throws SelectException on error
 	void stop();
-
 private:
-	OW_Array<OW_SelectableIFCRef> m_selectableObjs;
-	OW_Array<OW_SelectableCallbackIFCRef> m_callbacks;
+	Array<SelectableIFCRef> m_selectableObjs;
+	Array<SelectableCallbackIFCRef> m_callbacks;
 	bool m_stopFlag;
 };
-
-
-class OW_SelectEngineStopper : public OW_SelectableCallbackIFC
+class SelectEngineStopper : public SelectableCallbackIFC
 {
 public:
-	OW_SelectEngineStopper(OW_SelectEngine& engine)
-		: OW_SelectableCallbackIFC()
+	SelectEngineStopper(SelectEngine& engine)
+		: SelectableCallbackIFC()
 		, m_engine(engine)
 	{}
-
 protected:
-	virtual void doSelected(OW_SelectableIFCRef& selectedObject)
+	virtual void doSelected(SelectableIFCRef& selectedObject)
 	{
 		(void)selectedObject;
 		m_engine.stop();
 	}
-
 private:
-	OW_SelectEngine& m_engine;
+	SelectEngine& m_engine;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  * @name		OW_SSLSocketImpl.hpp
  * @author	J. Bart Whiteley
@@ -37,65 +36,53 @@
  */
 #ifndef OW_INETSSLSOCKETIMPL_HPP_INCLUDE_GUARD_
 #define OW_INETSSLSOCKETIMPL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #ifndef OW_NO_SSL
-
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_SSLException.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_SSLSocketImpl : public OW_SocketBaseImpl
+class SSLSocketImpl : public SocketBaseImpl
 {
 public:
-
-	OW_SSLSocketImpl();
+	SSLSocketImpl();
 	/**
 	 * This constructor is to be used only for server sockets.
 	 * @param fd A socket handle, presumably created by a ServerSocket's
 	 * accept().
 	 */
-	OW_SSLSocketImpl(OW_SocketHandle_t fd, OW_SocketAddress::AddressType addrType);
-
+	SSLSocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType);
 	/**
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
-	OW_SSLSocketImpl(const OW_SocketAddress& addr);
-
-	virtual ~OW_SSLSocketImpl();
-
+	SSLSocketImpl(const SocketAddress& addr);
+	virtual ~SSLSocketImpl();
 	/**
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
-	virtual void connect(const OW_SocketAddress& addr);
+	virtual void connect(const SocketAddress& addr);
 	virtual void disconnect();
-
-	OW_Select_t getSelectObj() const;
-
-
+	Select_t getSelectObj() const;
 private:
 	/**
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
 	virtual int readAux(void* dataIn, int dataInLen);
-
 	/**
-	 * @throws OW_SocketException
+	 * @throws SocketException
 	 */
 	virtual int writeAux(const void* dataOut, int dataOutLen);
-
 	void connectSSL();
-
 	SSL* m_ssl;
 	BIO* m_sbio;
-
-	OW_SSLSocketImpl(const OW_SSLSocketImpl& arg);
-	OW_SSLSocketImpl operator =(const OW_SSLSocketImpl& arg);
+	SSLSocketImpl(const SSLSocketImpl& arg);
+	SSLSocketImpl operator =(const SSLSocketImpl& arg);
 };
-
 #endif // #ifndef OW_NO_SSL
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

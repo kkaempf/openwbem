@@ -34,6 +34,8 @@
 #include "OW_HTTPChunkedOStream.hpp"
 #include "OW_StringStream.hpp"
 
+using namespace OpenWBEM;
+
 void OW_HTTPChunkerTestCases::setUp()
 {
 }
@@ -44,8 +46,8 @@ void OW_HTTPChunkerTestCases::tearDown()
 
 void OW_HTTPChunkerTestCases::testChunking()
 {
-	OW_StringStream chunkedTarget;
-	OW_HTTPChunkedOStream ostr(chunkedTarget);
+	StringStream chunkedTarget;
+	HTTPChunkedOStream ostr(chunkedTarget);
 	ostr << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" << std::flush;
 	unitAssert( chunkedTarget.toString() ==
 			"40\r\n"
@@ -58,8 +60,8 @@ void OW_HTTPChunkerTestCases::testBigChunking()
 	char* lotsOfAs = new char[10000];
 	memset( lotsOfAs, 'A', 9999 );
 	lotsOfAs[9999] = 0;
-	OW_StringStream chunkedTarget;
-	OW_HTTPChunkedOStream ostr(chunkedTarget);
+	StringStream chunkedTarget;
+	HTTPChunkedOStream ostr(chunkedTarget);
 	ostr << lotsOfAs << std::flush;
 	unitAssert( chunkedTarget.toString().length() == 10022 );
 	unitAssert( chunkedTarget.toString()[0] == '1' );

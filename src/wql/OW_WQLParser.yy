@@ -50,6 +50,8 @@
 int yyerror( const char* s);
 int yylex();
 
+using namespace OpenWBEM;
+
 %}
 
 
@@ -191,23 +193,23 @@ int yylex();
 	stmt* pstmt;
 	optSemicolon* poptSemicolon;
 	insertStmt* pinsertStmt;
-	OW_List<targetEl*>* ptargetList;
-	OW_List<OW_String*>* pcolumnList;
+	List<targetEl*>* ptargetList;
+	List<String*>* pcolumnList;
 	insertRest* pinsertRest;
 	deleteStmt* pdeleteStmt;
-	OW_List<updateTargetEl*>* pupdateTargetList;
+	List<updateTargetEl*>* pupdateTargetList;
 	updateStmt* pupdateStmt;
 	selectStmt* pselectStmt;
 	exprSeq* pexprSeq;
 	optDistinct* poptDistinct;
-	OW_List<sortby*>* psortbyList;
+	List<sortby*>* psortbyList;
 	sortClause* psortClause;
 	optSortClause* poptSortClause;
 	sortby* psortby;
-	OW_List<OW_String*>* pnameList;
+	List<String*>* pnameList;
 	optGroupClause* poptGroupClause;
 	optHavingClause* poptHavingClause;
-	OW_List<tableRef*>* pfromList;
+	List<tableRef*>* pfromList;
 	optFromClause* poptFromClause;
 	tableRef* ptableRef;
 	joinedTable* pjoinedTable;
@@ -217,7 +219,7 @@ int yylex();
 	relationExpr* prelationExpr;
 	optWhereClause* poptWhereClause;
 	rowExpr* prowExpr;
-	OW_List<aExpr*>* prowList;
+	List<aExpr*>* prowList;
 	rowDescriptor* prowDescriptor;
 	aExpr* paExpr;
 	bExpr* pbExpr;
@@ -234,7 +236,7 @@ int yylex();
 	targetEl* ptargetEl;
 	updateTargetEl* pupdateTargetEl;
 	aExprConst* paExprConst;
-	OW_String* pstring;
+	String* pstring;
 }
 
 %type <pstmt> stmt
@@ -291,13 +293,13 @@ int yylex();
 
 stmt:
 	selectStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_selectStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::statement = new stmt_selectStmt_optSemicolon($1, $2); }
 	| updateStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_updateStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::statement = new stmt_updateStmt_optSemicolon($1, $2); }
 	| insertStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_insertStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::statement = new stmt_insertStmt_optSemicolon($1, $2); }
 	| deleteStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_deleteStmt_optSemicolon($1, $2); }
+	  { $$ = WQLImpl::statement = new stmt_deleteStmt_optSemicolon($1, $2); }
 	;
 
 
@@ -317,7 +319,7 @@ insertStmt:
 
 targetList:
 	targetEl
-	  { $$ = new OW_List<targetEl*>(1, $1); }
+	  { $$ = new List<targetEl*>(1, $1); }
 	| targetList COMMA targetEl
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -325,7 +327,7 @@ targetList:
 
 columnList:
 	strColumnElem
-	  { $$ = new OW_List<OW_String*>(1, $1); }
+	  { $$ = new List<String*>(1, $1); }
 	| columnList COMMA strColumnElem
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -355,7 +357,7 @@ deleteStmt:
 
 updateTargetList:
 	updateTargetEl
-	  { $$ = new OW_List<updateTargetEl*>(1, $1); }
+	  { $$ = new List<updateTargetEl*>(1, $1); }
 	| updateTargetList COMMA updateTargetEl
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -397,7 +399,7 @@ optDistinct:
 
 sortbyList:
 	sortby
-	  { $$ = new OW_List<sortby*>(1, $1); }
+	  { $$ = new List<sortby*>(1, $1); }
 	| sortbyList COMMA sortby
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -435,7 +437,7 @@ strOptOrderSpecification:
 
 nameList:
 	strName
-	  { $$ = new OW_List<OW_String*>(1, $1); }
+	  { $$ = new List<String*>(1, $1); }
 	| nameList COMMA strName
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -459,7 +461,7 @@ optHavingClause:
 
 fromList:
 	tableRef
-	  { $$ = new OW_List<tableRef*>(1, $1); }
+	  { $$ = new List<tableRef*>(1, $1); }
 	| fromList COMMA tableRef
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -563,17 +565,17 @@ optWhereClause:
 
 strDatetime:
 	YEARP
-	  { $$ = new OW_String("YEAR"); }
+	  { $$ = new String("YEAR"); }
 	| MONTHP
-	  { $$ = new OW_String("MONTH"); }
+	  { $$ = new String("MONTH"); }
 	| DAYP
-	  { $$ = new OW_String("DAY"); }
+	  { $$ = new String("DAY"); }
 	| HOURP
-	  { $$ = new OW_String("HOUR"); }
+	  { $$ = new String("HOUR"); }
 	| MINUTEP
-	  { $$ = new OW_String("MINUTE"); }
+	  { $$ = new String("MINUTE"); }
 	| SECONDP
-	  { $$ = new OW_String("SECOND"); }
+	  { $$ = new String("SECOND"); }
 	;
 
 
@@ -585,7 +587,7 @@ rowExpr:
 
 rowList:
 	aExpr
-	  { $$ = new OW_List<aExpr*>(1, $1); }
+	  { $$ = new List<aExpr*>(1, $1); }
 	| rowList COMMA aExpr
 	  { $1->push_back($3); delete $2; $$ = $1; }
 	;
@@ -833,9 +835,9 @@ strExtractArg:
 	| IDENT
 	  { $$ = $1; }
 	| TIMEZONEHOUR
-	  { $$ = new OW_String("TIMEZONE_HOUR"); }
+	  { $$ = new String("TIMEZONE_HOUR"); }
 	| TIMEZONEMINUTE
-	  { $$ = new OW_String("TIMEZONE_MINUTE"); }
+	  { $$ = new String("TIMEZONE_MINUTE"); }
 	;
 
 
@@ -941,15 +943,15 @@ strFuncName:
 	strColId
 	  { $$ = $1; }
 	| IN
-	  { $$ = new OW_String("IN"); }
+	  { $$ = new String("IN"); }
 	| IS
-	  { $$ = new OW_String("IS"); }
+	  { $$ = new String("IS"); }
 	| ISNULL
-	  { $$ = new OW_String("ISNULL"); }
+	  { $$ = new String("ISNULL"); }
 	| LIKE
-	  { $$ = new OW_String("LIKE"); }
+	  { $$ = new String("LIKE"); }
 	| NOTNULL
-	  { $$ = new OW_String("NOTNULL"); }
+	  { $$ = new String("NOTNULL"); }
 	;
 
 
@@ -965,11 +967,11 @@ aExprConst:
 	| HEXCONST
 	  { $$ = new aExprConst_HEXCONST($1); }
 	| TRUEP
-	  { $$ = new aExprConst_TRUEP(new OW_String("TRUE")); }
+	  { $$ = new aExprConst_TRUEP(new String("TRUE")); }
 	| FALSEP
-	  { $$ = new aExprConst_FALSEP(new OW_String("FALSE")); }
+	  { $$ = new aExprConst_FALSEP(new String("FALSE")); }
 	| NULLP
-	  { $$ = new aExprConst_NULLP(new OW_String("NULL")); }
+	  { $$ = new aExprConst_NULLP(new String("NULL")); }
 	;
 
 
@@ -979,35 +981,35 @@ strColId:
 	| strDatetime
 	  { $$ = $1; }
 	| AT
-	  { $$ = new OW_String("AT"); }
+	  { $$ = new String("AT"); }
 	| BY
-	  { $$ = new OW_String("BY"); }
+	  { $$ = new String("BY"); }
 	| DELETE
-	  { $$ = new OW_String("DELETE"); }
+	  { $$ = new String("DELETE"); }
 	| ESCAPE
-	  { $$ = new OW_String("ESCAPE"); }
+	  { $$ = new String("ESCAPE"); }
 	| INSERT
-	  { $$ = new OW_String("INSERT"); }
+	  { $$ = new String("INSERT"); }
 	| SET
-	  { $$ = new OW_String("SET"); }
+	  { $$ = new String("SET"); }
 	| TIMEZONEHOUR
-	  { $$ = new OW_String("TIMEZONE_HOUR"); }
+	  { $$ = new String("TIMEZONE_HOUR"); }
 	| TIMEZONEMINUTE
-	  { $$ = new OW_String("TIMEZONE_MINUTE"); }
+	  { $$ = new String("TIMEZONE_MINUTE"); }
 	| UPDATE
-	  { $$ = new OW_String("UPDATE"); }
+	  { $$ = new String("UPDATE"); }
 	| VALUES
-	  { $$ = new OW_String("VALUES"); }
+	  { $$ = new String("VALUES"); }
 	| ZONE
-	  { $$ = new OW_String("ZONE"); }
+	  { $$ = new String("ZONE"); }
 	| INTERVAL
-	  { $$ = new OW_String("INTERVAL"); }
+	  { $$ = new String("INTERVAL"); }
 	| NATIONAL
-	  { $$ = new OW_String("NATIONAL"); }
+	  { $$ = new String("NATIONAL"); }
 	| TIME
-	  { $$ = new OW_String("TIME"); }
+	  { $$ = new String("TIME"); }
 	| TIMESTAMP
-	  { $$ = new OW_String("TIMESTAMP"); }
+	  { $$ = new String("TIMESTAMP"); }
 	;
 
 
@@ -1015,103 +1017,103 @@ strColLabel:
 	strColId
 	  { $$ = $1; }
 	| ALL
-	  { $$ = new OW_String("ALL"); }
+	  { $$ = new String("ALL"); }
 	| AND
-	  { $$ = new OW_String("AND"); }
+	  { $$ = new String("AND"); }
 	| ASC
-	  { $$ = new OW_String("ASC"); }
+	  { $$ = new String("ASC"); }
 	| CROSS
-	  { $$ = new OW_String("CROSS"); }
+	  { $$ = new String("CROSS"); }
 	| CURRENTDATE
-	  { $$ = new OW_String("CURRENT_DATE"); }
+	  { $$ = new String("CURRENT_DATE"); }
 	| CURRENTTIME
-	  { $$ = new OW_String("CURRENT_TIME"); }
+	  { $$ = new String("CURRENT_TIME"); }
 	| CURRENTTIMESTAMP
-	  { $$ = new OW_String("CURRENT_TIMESTAMP"); }
+	  { $$ = new String("CURRENT_TIMESTAMP"); }
 	| CURRENTUSER
-	  { $$ = new OW_String("CURRENT_USER"); }
+	  { $$ = new String("CURRENT_USER"); }
 	| DEFAULT
-	  { $$ = new OW_String("DEFAULT"); }
+	  { $$ = new String("DEFAULT"); }
 	| DESC
-	  { $$ = new OW_String("DESC"); }
+	  { $$ = new String("DESC"); }
 	| DISTINCT
-	  { $$ = new OW_String("DISTINCT"); }
+	  { $$ = new String("DISTINCT"); }
 	| EXTRACT
-	  { $$ = new OW_String("EXTRACT"); }
+	  { $$ = new String("EXTRACT"); }
 	| FALSEP
-	  { $$ = new OW_String("FALSE"); }
+	  { $$ = new String("FALSE"); }
 	| FOR
-	  { $$ = new OW_String("FOR"); }
+	  { $$ = new String("FOR"); }
 	| FROM
-	  { $$ = new OW_String("FROM"); }
+	  { $$ = new String("FROM"); }
 	| FULL
-	  { $$ = new OW_String("FULL"); }
+	  { $$ = new String("FULL"); }
 	| GROUP
-	  { $$ = new OW_String("GROUP"); }
+	  { $$ = new String("GROUP"); }
 	| HAVING
-	  { $$ = new OW_String("HAVING"); }
+	  { $$ = new String("HAVING"); }
 	| IN
-	  { $$ = new OW_String("IN"); }
+	  { $$ = new String("IN"); }
 	| INNERP
-	  { $$ = new OW_String("INNER"); }
+	  { $$ = new String("INNER"); }
 	| INTO
-	  { $$ = new OW_String("INTO"); }
+	  { $$ = new String("INTO"); }
 	| IS
-	  { $$ = new OW_String("IS"); }
+	  { $$ = new String("IS"); }
 	| ISA
-	  { $$ = new OW_String("ISA"); }
+	  { $$ = new String("ISA"); }
 	| ISNULL
-	  { $$ = new OW_String("ISNULL"); }
+	  { $$ = new String("ISNULL"); }
 	| JOIN
-	  { $$ = new OW_String("JOIN"); }
+	  { $$ = new String("JOIN"); }
 	| LEADING
-	  { $$ = new OW_String("LEADING"); }
+	  { $$ = new String("LEADING"); }
 	| LEFT
-	  { $$ = new OW_String("LEFT"); }
+	  { $$ = new String("LEFT"); }
 	| LIKE
-	  { $$ = new OW_String("LIKE"); }
+	  { $$ = new String("LIKE"); }
 	| NATURAL
-	  { $$ = new OW_String("NATURAL"); }
+	  { $$ = new String("NATURAL"); }
 	| NOT
-	  { $$ = new OW_String("NOT"); }
+	  { $$ = new String("NOT"); }
 	| NOTNULL
-	  { $$ = new OW_String("NOTNULL"); }
+	  { $$ = new String("NOTNULL"); }
 	| NULLP
-	  { $$ = new OW_String("NULL"); }
+	  { $$ = new String("NULL"); }
 	| ON
-	  { $$ = new OW_String("ON"); }
+	  { $$ = new String("ON"); }
 	| ONLY
-	  { $$ = new OW_String("ONLY"); }
+	  { $$ = new String("ONLY"); }
 	| OR
-	  { $$ = new OW_String("OR"); }
+	  { $$ = new String("OR"); }
 	| ORDER
-	  { $$ = new OW_String("ORDER"); }
+	  { $$ = new String("ORDER"); }
 	| OUTERP
-	  { $$ = new OW_String("OUTER"); }
+	  { $$ = new String("OUTER"); }
 	| POSITION
-	  { $$ = new OW_String("POSITION"); }
+	  { $$ = new String("POSITION"); }
 	| RIGHT
-	  { $$ = new OW_String("RIGHT"); }
+	  { $$ = new String("RIGHT"); }
 	| SELECT
-	  { $$ = new OW_String("SELECT"); }
+	  { $$ = new String("SELECT"); }
 	| SESSIONUSER
-	  { $$ = new OW_String("SESSION_USER"); }
+	  { $$ = new String("SESSION_USER"); }
 	| SUBSTRING
-	  { $$ = new OW_String("SUBSTRING"); }
+	  { $$ = new String("SUBSTRING"); }
 	| TRAILING
-	  { $$ = new OW_String("TRAILING"); }
+	  { $$ = new String("TRAILING"); }
 	| TRIM
-	  { $$ = new OW_String("TRIM"); }
+	  { $$ = new String("TRIM"); }
 	| TRUEP
-	  { $$ = new OW_String("TRUE"); }
+	  { $$ = new String("TRUE"); }
 	| UNION
-	  { $$ = new OW_String("UNION"); }
+	  { $$ = new String("UNION"); }
 	| USER
-	  { $$ = new OW_String("USER"); }
+	  { $$ = new String("USER"); }
 	| USING
-	  { $$ = new OW_String("USING"); }
+	  { $$ = new String("USING"); }
 	| WHERE
-	  { $$ = new OW_String("WHERE"); }
+	  { $$ = new String("WHERE"); }
 	;
 
 %%

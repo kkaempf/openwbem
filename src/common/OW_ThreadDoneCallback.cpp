@@ -27,19 +27,21 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_ThreadDoneCallback.hpp"
 
-//////////////////////////////////////////////////////////////////////
-OW_ThreadDoneCallback::~OW_ThreadDoneCallback() 
+namespace OpenWBEM
 {
-}
 
 //////////////////////////////////////////////////////////////////////
-void OW_ThreadDoneCallback::notifyThreadDone(OW_Thread* t)
+ThreadDoneCallback::~ThreadDoneCallback() 
+{
+}
+//////////////////////////////////////////////////////////////////////
+void ThreadDoneCallback::notifyThreadDone(Thread* t)
 {
 	doNotifyThreadDone(t);
 }
 
+} // end namespace OpenWBEM
 

@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_RequestHandlerIFCXML.hpp"
 #include "OW_XMLParser.hpp"
@@ -40,132 +38,122 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ThreadCancelledException.hpp"
 
-using std::istream;
-using std::ostream;
-
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
-	ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
+namespace OpenWBEM
 {
 
+using std::istream;
+using std::ostream;
+//////////////////////////////////////////////////////////////////////////////
+void
+RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
+	ostream* ostrError, const SortedVectorMap<String, String>& handlerVars)
+{
 	OW_ASSERT(ostrEntity);
 	OW_ASSERT(ostrError);
-
-	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i
-		= handlerVars.find(OW_ConfigOpts::HTTP_PATH_opt);
+	SortedVectorMap<String, String>::const_iterator i
+		= handlerVars.find(ConfigOpts::HTTP_PATH_opt);
 	if (i != handlerVars.end())
 	{
 		setPath((*i).second);
 	}
 	try
 	{
-		OW_CIMXMLParser parser(*istr);
+		CIMXMLParser parser(*istr);
 		if (!parser)
 		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
+			OW_THROW(CIMErrorException, CIMErrorException::request_not_well_formed);
 		}
-		OW_XMLOperationGeneric::XMLGetCIMElement(parser);
+		XMLOperationGeneric::XMLGetCIMElement(parser);
 		if (!parser)
 		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-
-		if (!parser.tokenIs(OW_CIMXMLParser::E_MESSAGE))
+		if (!parser.tokenIs(CIMXMLParser::E_MESSAGE))
 		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+			OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 		}
-
-		OW_String userName;
-		i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
+		String userName;
+		i = handlerVars.find(ConfigOpts::USER_NAME_opt);
 		if (i != handlerVars.end())
 		{
 			userName = (*i).second;
 		}
-
 		try
 		{
 			executeXML(parser, ostrEntity, ostrError, userName);
 		}
-		catch (OW_CIMException& ce)
+		catch (CIMException& ce)
 		{
-			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught CIM "
+			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught CIM "
 				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
-
 			outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
 		}
-		catch (OW_CIMErrorException& cee)
+		catch (CIMErrorException& cee)
 		{
-			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught CIMError "
+			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught CIMError "
 				"exception:File: %1\n Line: %2\nMessage: %3",
 				cee.getFile(), cee.getLine(), cee.getMessage()));
 			m_cimError = cee.getMessage();
-			outputError(OW_CIMException::FAILED, cee.getMessage(), *ostrError);
+			outputError(CIMException::FAILED, cee.getMessage(), *ostrError);
 		}
 		catch (std::exception& e)
 		{
-			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught std exception: %1"
+			OW_LOGDEBUG(format("RequestHandlerIFCXML::doProcess caught std exception: %1"
 				, e.what()));
-			outputError(OW_CIMException::FAILED, e.what(), *ostrError);
+			outputError(CIMException::FAILED, e.what(), *ostrError);
 		}
-		catch (OW_ThreadCancelledException&)
+		catch (ThreadCancelledException&)
 		{
-			OW_LOGDEBUG("OW_RequestHandlerIFCXML::doProcess caught Thread Cancelled exception.");
-			outputError(OW_CIMException::FAILED, "thread cancelled", *ostrError);
+			OW_LOGDEBUG("RequestHandlerIFCXML::doProcess caught Thread Cancelled exception.");
+			outputError(CIMException::FAILED, "thread cancelled", *ostrError);
 			throw;
 		}
 		catch (...)
 		{
-			OW_LOGDEBUG("OW_RequestHandlerIFCXML::doProcess caught unknown exception");
-			outputError(OW_CIMException::FAILED, "Unknown Exception", *ostrError);
+			OW_LOGDEBUG("RequestHandlerIFCXML::doProcess caught unknown exception");
+			outputError(CIMException::FAILED, "Unknown Exception", *ostrError);
 		}
 		if (hasError())
 		{
 			(*ostrError) << "</MESSAGE></CIM>\r\n";
 		}
 	}
-	catch (OW_XMLParseException& e)
+	catch (XMLParseException& e)
 	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
+		OW_THROW(CIMErrorException, CIMErrorException::request_not_well_formed);
 	}
-
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RequestHandlerIFCXML::makeXMLHeader(const OW_String& messageID, ostream& ostr)
+RequestHandlerIFCXML::makeXMLHeader(const String& messageID, ostream& ostr)
 {
 	ostr << XML_CIM_HEADER1;
 	ostr << XML_CIM_HEADER2;
 	ostr << "<MESSAGE ID=\"" << messageID << "\" PROTOCOLVERSION=\""
 		<< CIM_PROTOCOL_VERSION << "\">";
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_RequestHandlerIFCXML::getSupportedContentTypes() const
+StringArray
+RequestHandlerIFCXML::getSupportedContentTypes() const
 {
-	OW_StringArray rval;
+	StringArray rval;
 	rval.push_back("text/xml");
 	rval.push_back("application/xml");
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_RequestHandlerIFCXML::getContentType() const
+String
+RequestHandlerIFCXML::getContentType() const
 {
-	return OW_String("application/xml");
+	return String("application/xml");
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_RequestHandlerIFCXML::setPath(const OW_String& arg)
+RequestHandlerIFCXML::setPath(const String& arg)
 {
 	m_path = arg;
 }
 
+} // end namespace OpenWBEM
 

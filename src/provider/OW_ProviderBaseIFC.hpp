@@ -27,28 +27,29 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_PROVIDERBASEIFC_HPP_
 #define OW_PROVIDERBASEIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 #include "OW_Array.hpp"
 #include "OW_IntrusiveReference.hpp"
 
+namespace OpenWBEM
+{
+
 /**
  * This is the base class implemented by all providers.
  */
-//class OW_ProviderBaseIFC : public virtual OW_IntrusiveCountableBase
-class OW_ProviderBaseIFC
+//class ProviderBaseIFC : public virtual IntrusiveCountableBase
+class ProviderBaseIFC
 {
 	public:
-		virtual ~OW_ProviderBaseIFC();
+		virtual ~ProviderBaseIFC();
 };
+//typedef IntrusiveReference<ProviderBaseIFC> ProviderBaseIFCRef;
+typedef Reference<ProviderBaseIFC> ProviderBaseIFCRef;
+typedef Array<ProviderBaseIFCRef> ProviderBaseIFCRefArray;
 
-//typedef OW_IntrusiveReference<OW_ProviderBaseIFC> OW_ProviderBaseIFCRef;
-typedef OW_Reference<OW_ProviderBaseIFC> OW_ProviderBaseIFCRef;
-typedef OW_Array<OW_ProviderBaseIFCRef> OW_ProviderBaseIFCRefArray;
+} // end namespace OpenWBEM
 
 #endif
-

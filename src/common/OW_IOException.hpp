@@ -27,28 +27,25 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_IOEXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_IOEXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_Exception.hpp"
 
-DECLARE_EXCEPTION(IO);
+namespace OpenWBEM
+{
 
-class OW_BadCIMSignatureException : public OW_IOException
+DECLARE_EXCEPTION(IO);
+class BadCIMSignatureException : public IOException
 {
 public:
-	OW_BadCIMSignatureException();
-	OW_BadCIMSignatureException(const char* file, int line, const char* msg);
-	OW_BadCIMSignatureException(const char* msg);
-	virtual ~OW_BadCIMSignatureException() throw();
-
+	BadCIMSignatureException();
+	BadCIMSignatureException(const char* file, int line, const char* msg);
+	BadCIMSignatureException(const char* msg);
+	virtual ~BadCIMSignatureException() throw();
 	virtual const char* type() const;
 };
 
-
+} // end namespace OpenWBEM
 
 #endif
-

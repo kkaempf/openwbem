@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_ServerSocketImpl.hpp"
 #include "OW_NwIface.hpp"
@@ -36,7 +35,6 @@
 #include "OW_FileSystem.hpp"
 #include "OW_File.hpp"
 #include "OW_Thread.hpp"
-
 extern "C"
 {
 #include <sys/types.h>
@@ -54,19 +52,20 @@ extern "C"
 #endif
 }
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
-OW_ServerSocketImpl::OW_ServerSocketImpl(OW_SocketFlags::ESSLFlag isSSL)
+ServerSocketImpl::ServerSocketImpl(SocketFlags::ESSLFlag isSSL)
 	: m_sockfd(-1)
-	, m_localAddress(OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET))
+	, m_localAddress(SocketAddress::allocEmptyAddress(SocketAddress::INET))
 	, m_isActive(false)
 	, m_isSSL(isSSL)
 	, m_udsFile()
 {
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_ServerSocketImpl::~OW_ServerSocketImpl()
+ServerSocketImpl::~ServerSocketImpl()
 {
 	try
 	{
@@ -77,51 +76,44 @@ OW_ServerSocketImpl::~OW_ServerSocketImpl()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Select_t
-OW_ServerSocketImpl::getSelectObj() const
+Select_t
+ServerSocketImpl::getSelectObj() const
 {
 	return m_sockfd;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL,
-	int queueSize, OW_SocketFlags::EAllInterfacesFlag allInterfaces, 
-	OW_SocketFlags::EReuseAddrFlag reuseAddr)
+ServerSocketImpl::doListen(UInt16 port, SocketFlags::ESSLFlag isSSL,
+	int queueSize, SocketFlags::EAllInterfacesFlag allInterfaces, 
+	SocketFlags::EReuseAddrFlag reuseAddr)
 {
-	m_localAddress = OW_SocketAddress::allocEmptyAddress(OW_SocketAddress::INET);
+	m_localAddress = SocketAddress::allocEmptyAddress(SocketAddress::INET);
 	m_isSSL = isSSL;
 	close();
-
 	if((m_sockfd = ::socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: %1",
 			strerror(errno)).c_str());
 	}
-
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		close();
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl failed to set "
+		OW_THROW(SocketException, format("ServerSocketImpl failed to set "
 			"close-on-exec flag on listen socket: %1",
 			strerror(errno)).c_str());
 	}
-
 	// set listen socket to nonblocking; see Unix Network Programming,
 	// pages 422-424.
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
-
 	// is this safe? Should be, but some OS kernels have problems with it.
 	// It's OK on current linux versions.  Definitely not on
 	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
 	// OpenServer?
 	// See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
 	// or just google for "bind() Security Problems"
-
 	// Let the kernel reuse the port without waiting for it to time out.
 	// Without this line, you can't stop and immediately re-start the daemon.
 	if (reuseAddr)
@@ -129,68 +121,57 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_SocketFlags::ESSLFlag isSSL,
 		int reuse = 1;
 		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 	}
-
 		
-	OW_InetSocketAddress_t inetAddr;
+	InetSocketAddress_t inetAddr;
 	inetAddr.sin_family = AF_INET;
-
 	if(allInterfaces)
 	{
-		inetAddr.sin_addr.s_addr = OW_hton32(INADDR_ANY);
+		inetAddr.sin_addr.s_addr = hton32(INADDR_ANY);
 	}
 	else
 	{
-		OW_NwIface ifc;
+		NwIface ifc;
 		inetAddr.sin_addr.s_addr = ifc.getIPAddress();
 	}
-
-	inetAddr.sin_port = OW_hton16(port);
+	inetAddr.sin_port = hton16(port);
 	if(bind(m_sockfd, reinterpret_cast<sockaddr*>(&inetAddr), sizeof(inetAddr)) == -1)
 	{
 		close();
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: %1",
 				strerror(errno)).c_str());
 	}
-
-
 	if(listen(m_sockfd, queueSize) == -1)
 	{
 		close();
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: %1",
 			strerror(errno)).c_str());
 	}
-
 	fillAddrParms();
 	m_isActive = true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize, bool reuseAddr)
+ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr)
 {
-	m_localAddress = OW_SocketAddress::getUDS(filename);
+	m_localAddress = SocketAddress::getUDS(filename);
 	close();
-
 	if((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
 	{
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: %1",
 			strerror(errno)).c_str());
 	}
-
 	// set the close on exec flag so child process can't keep the socket.
 	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
 	{
 		close();
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl failed to set "
+		OW_THROW(SocketException, format("ServerSocketImpl failed to set "
 			"close-on-exec flag on listen socket: %1",
 			strerror(errno)).c_str());
 	}
-
 	// set listen socket to nonblocking; see Unix Network Programming,
 	// pages 422-424.
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
-
 	// is this safe? Should be, but some OS kernels have problems with it.
 	// It's OK on current linux versions.  Definitely not on
 	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
@@ -205,29 +186,28 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize, bool reu
 		int reuse = 1;
 		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 	}
-
-	OW_String lockfilename = filename + ".lock";
-	m_udsFile = OW_FileSystem::openOrCreateFile(lockfilename);
+	String lockfilename = filename + ".lock";
+	m_udsFile = FileSystem::openOrCreateFile(lockfilename);
 	if (!m_udsFile)
 	{
-		OW_THROW(OW_SocketException,
+		OW_THROW(SocketException,
 			format("Unable to open or create Unix Domain Socket lock: %1, errno: %2(%3)",
 				lockfilename, errno, strerror(errno)).c_str());
 	}
 	// if we can't get a lock, someone else has got it open.
 	if (m_udsFile.tryLock() == -1)
 	{
-		OW_THROW(OW_SocketException,
+		OW_THROW(SocketException,
 			format("Unable to lock Unix Domain Socket: %1, errno: %2(%3)",
 				filename, errno, strerror(errno)).c_str());
 	}
 	// We got the lock, so clobber the UDS if it's there so bind will succeed.
 	// If it's not gone, bind will fail.
-    if (OW_FileSystem::exists(filename))
+    if (FileSystem::exists(filename))
     {
-        if (!OW_FileSystem::removeFile(filename.c_str()))
+        if (!FileSystem::removeFile(filename.c_str()))
         {
-            OW_THROW(OW_SocketException,
+            OW_THROW(SocketException,
                 format("Unable to unlink Unix Domain Socket: %1, errno: %2(%3)",
                     filename, errno, strerror(errno)).c_str());
         }
@@ -237,25 +217,22 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize, bool reu
 		m_localAddress.getNativeFormSize()) == -1)
 	{
 		close();
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: %1",
 				strerror(errno)).c_str());
 	}
-
 	if(listen(m_sockfd, queueSize) == -1)
 	{
 		close();
-		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+		OW_THROW(SocketException, format("ServerSocketImpl: %1",
 			strerror(errno)).c_str());
 	}
-
 	fillAddrParms();
 	m_isActive = true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs, 
-	OW_SocketFlags::EWaitDirectionFlag forInput)
+ServerSocketImpl::waitForIO(int fd, int timeOutSecs, 
+	SocketFlags::EWaitDirectionFlag forInput)
 {
 	fd_set thefds;
 	fd_set* preadfds = NULL;
@@ -263,18 +240,15 @@ OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs,
 	int rc;
 	struct timeval *ptimeval = NULL;
 	struct timeval timeout;
-
 	FD_ZERO(&thefds);
 	FD_SET(fd, &thefds);
-
 	if(timeOutSecs != -1)
 	{
 		timeout.tv_sec = timeOutSecs;
 		timeout.tv_usec = 0;
 		ptimeval = &timeout;
 	}
-
-	if(forInput == OW_SocketFlags::E_WAIT_FOR_INPUT)
+	if(forInput == SocketFlags::E_WAIT_FOR_INPUT)
 	{
 		preadfds = &thefds;
 	}
@@ -282,51 +256,45 @@ OW_ServerSocketImpl::waitForIO(int fd, int timeOutSecs,
 	{
 		pwritefds = &thefds;
 	}
-
 	if ((rc = ::select(fd+1, preadfds, pwritefds, NULL, ptimeval)) == -1)
 	{
 		if (errno == EINTR)
 		{
-			OW_Thread::testCancel();
+			Thread::testCancel();
 		}
-
-		OW_THROW(OW_SocketException, "waitForIO: select");
+		OW_THROW(SocketException, "waitForIO: select");
 	}
-
 	return (rc > 0);
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 /*
-OW_String
-OW_ServerSocketImpl::addrString()
+String
+ServerSocketImpl::addrString()
 {
 	return inetAddrToString(m_localAddress, m_localPort);
 }
 */
 //////////////////////////////////////////////////////////////////////////////
-OW_Socket
-OW_ServerSocketImpl::accept(int timeoutSecs)
+Socket
+ServerSocketImpl::accept(int timeoutSecs)
 {
 	if(!m_isActive)
 	{
-		OW_THROW(OW_SocketException, "OW_ServerSocketImpl::accept: NONE");
+		OW_THROW(SocketException, "ServerSocketImpl::accept: NONE");
 	}
-
-	if(waitForIO(m_sockfd, timeoutSecs, OW_SocketFlags::E_WAIT_FOR_INPUT))
+	if(waitForIO(m_sockfd, timeoutSecs, SocketFlags::E_WAIT_FOR_INPUT))
 	{
 		int clntfd;
 		socklen_t clntlen;
 		struct sockaddr_in clntInetAddr;
 		struct sockaddr_un clntUnixAddr;
 		struct sockaddr* pSA;
-		if (m_localAddress.getType() == OW_SocketAddress::INET)
+		if (m_localAddress.getType() == SocketAddress::INET)
 		{
 			pSA = reinterpret_cast<struct sockaddr*>(&clntInetAddr);
 			clntlen = sizeof(clntInetAddr);
 		}
-		else if (m_localAddress.getType() == OW_SocketAddress::UDS)
+		else if (m_localAddress.getType() == SocketAddress::UDS)
 		{
 			pSA = reinterpret_cast<struct sockaddr*>(&clntUnixAddr);
 			clntlen = sizeof(clntUnixAddr);
@@ -349,18 +317,16 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 				 || errno == ECONNABORTED
 				 || errno == EPROTO)
 			{
-				OW_THROW(OW_SocketException, "Client aborted TCP connection "
+				OW_THROW(SocketException, "Client aborted TCP connection "
 					"between select() and accept()");
 			}
 		
 			if (errno == EINTR)
 			{
-				OW_Thread::testCancel();
+				Thread::testCancel();
 			}
-
-			OW_THROW(OW_SocketException, "OW_ServerSocketImpl::accept");
+			OW_THROW(SocketException, "ServerSocketImpl::accept");
 		}
-
 		// set socket back to blocking; see Unix Network Programming,
 		// pages 422-424.
 		int fdflags = ::fcntl(clntfd, F_GETFL, 0);
@@ -370,44 +336,43 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 		{
 			::fcntl(clntfd, F_SETFL, fdflags ^ O_NONBLOCK);
 		}
-		return OW_Socket(clntfd, m_localAddress.getType(), m_isSSL);
+		return Socket(clntfd, m_localAddress.getType(), m_isSSL);
 	}
 	else
 	{
 		// The timeout expired.
-		OW_THROW(OW_SocketTimeoutException,"Timed out waiting for a connection");
+		OW_THROW(SocketTimeoutException,"Timed out waiting for a connection");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::close()
+ServerSocketImpl::close()
 {
 	if(m_isActive)
 	{
 		::close(m_sockfd);
-		if (m_localAddress.getType() == OW_SocketAddress::UDS)
+		if (m_localAddress.getType() == SocketAddress::UDS)
 		{
-			OW_String filename = m_localAddress.toString();
-			if (!OW_FileSystem::removeFile(filename.c_str()))
+			String filename = m_localAddress.toString();
+			if (!FileSystem::removeFile(filename.c_str()))
 			{
-				OW_THROW(OW_SocketException,
+				OW_THROW(SocketException,
 					format("Unable to unlink Unix Domain Socket: %1, errno: %2",
 						filename, errno).c_str());
 			}
 			if (m_udsFile)
 			{
-				OW_String lockfilename = filename + ".lock";
+				String lockfilename = filename + ".lock";
 				if (m_udsFile.unlock() == -1)
 				{
-					OW_THROW(OW_SocketException,
+					OW_THROW(SocketException,
 						format("Failed to unlock Unix Domain Socket: %1, errno: %2(%3)",
 							lockfilename, errno, strerror(errno)).c_str());
 				}
 				m_udsFile.close();
-				if (!OW_FileSystem::removeFile(lockfilename.c_str()))
+				if (!FileSystem::removeFile(lockfilename.c_str()))
 				{
-					OW_THROW(OW_SocketException,
+					OW_THROW(SocketException,
 						format("Unable to unlink Unix Domain Socket lock: %1, errno: %2",
 							lockfilename, errno).c_str());
 				}
@@ -416,38 +381,33 @@ OW_ServerSocketImpl::close()
 		m_isActive = false;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ServerSocketImpl::fillAddrParms()
+ServerSocketImpl::fillAddrParms()
 {
 	socklen_t len;
-	if (m_localAddress.getType() == OW_SocketAddress::INET)
+	if (m_localAddress.getType() == SocketAddress::INET)
 	{
 		struct sockaddr_in addr;
 		memset(&addr, 0, sizeof(addr));
-
 		len = sizeof(addr);
 		if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
-			OW_THROW(OW_SocketException, "OW_SocketImpl::fillAddrParms: "
+			OW_THROW(SocketException, "SocketImpl::fillAddrParms: "
 				"getsockname");
 		}
-
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
-	else if (m_localAddress.getType() == OW_SocketAddress::UDS)
+	else if (m_localAddress.getType() == SocketAddress::UDS)
 	{
 		struct sockaddr_un addr;
 		memset(&addr, 0, sizeof(addr));
-
 		len = sizeof(addr);
 		if(getsockname(m_sockfd, reinterpret_cast<struct sockaddr*>(&addr), &len) == -1)
 		{
-			OW_THROW(OW_SocketException, "OW_SocketImpl::fillAddrParms: "
+			OW_THROW(SocketException, "SocketImpl::fillAddrParms: "
 				"getsockname");
 		}
-
 		m_localAddress.assignFromNativeForm(&addr, len);
 	}
 	else
@@ -455,4 +415,6 @@ OW_ServerSocketImpl::fillAddrParms()
 		OW_ASSERT(0);
 	}
 }
+
+} // end namespace OpenWBEM
 

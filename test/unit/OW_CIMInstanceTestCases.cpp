@@ -34,6 +34,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMValue.hpp"
 
+using namespace OpenWBEM;
+
 void OW_CIMInstanceTestCases::setUp()
 {
 }
@@ -44,18 +46,18 @@ void OW_CIMInstanceTestCases::tearDown()
 
 void OW_CIMInstanceTestCases::testPropertiesEqualTo()
 {
-	OW_CIMInstance i1;
-	OW_CIMInstance i2;
-	i1.setProperty("foo", OW_CIMValue("x"));
-	i2.setProperty("foo", OW_CIMValue("x"));
+	CIMInstance i1;
+	CIMInstance i2;
+	i1.setProperty("foo", CIMValue("x"));
+	i2.setProperty("foo", CIMValue("x"));
 	unitAssert(i1.propertiesAreEqualTo(i2));
 	unitAssert(i2.propertiesAreEqualTo(i1));
 
-	i2.setProperty("foo", OW_CIMValue("y"));
+	i2.setProperty("foo", CIMValue("y"));
 	unitAssert(!i1.propertiesAreEqualTo(i2));
 	unitAssert(!i2.propertiesAreEqualTo(i1));
 
-	i2.setProperty("foo", OW_CIMValue(OW_UInt16(5)));
+	i2.setProperty("foo", CIMValue(UInt16(5)));
 	unitAssert(!i1.propertiesAreEqualTo(i2));
 	unitAssert(!i2.propertiesAreEqualTo(i1));
 
@@ -65,21 +67,21 @@ void OW_CIMInstanceTestCases::testPropertiesEqualTo()
 
 	// different properties
 	i2.removeProperty("foo");
-	i2.setProperty("foo2", OW_CIMValue(0));
+	i2.setProperty("foo2", CIMValue(0));
 	unitAssert(!i1.propertiesAreEqualTo(i2));
 	unitAssert(!i2.propertiesAreEqualTo(i1));
 
 	// test multiple - non-equal
-	i1.setProperty("x", OW_CIMValue("x"));
-	i2.setProperty("x", OW_CIMValue("x"));
-	i1.setProperty("y", OW_CIMValue('y'));
-	i2.setProperty("y", OW_CIMValue('y'));
+	i1.setProperty("x", CIMValue("x"));
+	i2.setProperty("x", CIMValue("x"));
+	i1.setProperty("y", CIMValue('y'));
+	i2.setProperty("y", CIMValue('y'));
 	unitAssert(!i1.propertiesAreEqualTo(i2));
 	unitAssert(!i2.propertiesAreEqualTo(i1));
 	
 	// test multiple - equal
 	i2.removeProperty("foo2");
-	i2.setProperty("foo", OW_CIMValue("x"));
+	i2.setProperty("foo", CIMValue("x"));
 	unitAssert(i1.propertiesAreEqualTo(i2));
 	unitAssert(i2.propertiesAreEqualTo(i1));
 

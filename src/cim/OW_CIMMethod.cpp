@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMMethod.hpp"
 #include "OW_StringBuffer.hpp"
@@ -38,33 +37,32 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
+namespace OpenWBEM
+{
+
 using std::ostream;
 using std::istream;
-using namespace OW_WBEMFlags;
-
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////													
-struct OW_CIMMethod::METHData
+struct CIMMethod::METHData
 {
 	METHData() 
 		: m_propagated(false)
 	{
 	}
-
-	OW_String m_name;
-	OW_CIMDataType m_returnDatatype;
-	OW_CIMQualifierArray m_qualifiers;
-	OW_CIMParameterArray m_parameters;
-	OW_String m_originClass;
-	OW_String m_override;
-	OW_Bool m_propagated;
-
+	String m_name;
+	CIMDataType m_returnDatatype;
+	CIMQualifierArray m_qualifiers;
+	CIMParameterArray m_parameters;
+	String m_originClass;
+	String m_override;
+	Bool m_propagated;
     METHData* clone() const { return new METHData(*this); }
 };
-
 //////////////////////////////////////////////////////////////////////////////													
-bool operator<(const OW_CIMMethod::METHData& x, const OW_CIMMethod::METHData& y)
+bool operator<(const CIMMethod::METHData& x, const CIMMethod::METHData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_name, y.m_name,
 		x.m_returnDatatype, y.m_returnDatatype,
 		x.m_qualifiers, y.m_qualifiers,
@@ -73,290 +71,252 @@ bool operator<(const OW_CIMMethod::METHData& x, const OW_CIMMethod::METHData& y)
 		x.m_override, y.m_override,
 		x.m_propagated, y.m_propagated);
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::OW_CIMMethod() :
-	OW_CIMElement(), m_pdata(new METHData)
+CIMMethod::CIMMethod() :
+	CIMElement(), m_pdata(new METHData)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::OW_CIMMethod(OW_CIMNULL_t) :
-	OW_CIMElement(), m_pdata(0)
+CIMMethod::CIMMethod(CIMNULL_t) :
+	CIMElement(), m_pdata(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::OW_CIMMethod(const char* name) :
-	OW_CIMElement(), m_pdata(new METHData)
+CIMMethod::CIMMethod(const char* name) :
+	CIMElement(), m_pdata(new METHData)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::OW_CIMMethod(const OW_String& name) :
-	OW_CIMElement(), m_pdata(new METHData)
+CIMMethod::CIMMethod(const String& name) :
+	CIMElement(), m_pdata(new METHData)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::OW_CIMMethod(const OW_CIMMethod& x)
-	: OW_CIMElement(), m_pdata(x.m_pdata)
+CIMMethod::CIMMethod(const CIMMethod& x)
+	: CIMElement(), m_pdata(x.m_pdata)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod::~OW_CIMMethod()
+CIMMethod::~CIMMethod()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////													
 void
-OW_CIMMethod::setNull()
+CIMMethod::setNull()
 {
 	m_pdata = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::operator= (const OW_CIMMethod& x)
+CIMMethod&
+CIMMethod::operator= (const CIMMethod& x)
 {
 	m_pdata = x.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::addQualifier(const OW_CIMQualifier& qual)
+CIMMethod&
+CIMMethod::addQualifier(const CIMQualifier& qual)
 {
 	m_pdata->m_qualifiers.append(qual);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::setQualifiers(const OW_CIMQualifierArray& quals)
+CIMMethod&
+CIMMethod::setQualifiers(const CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMQualifierArray
-OW_CIMMethod::getQualifiers() const
+CIMQualifierArray
+CIMMethod::getQualifiers() const
 {
 	return m_pdata->m_qualifiers;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMQualifier
-OW_CIMMethod::getQualifier(const OW_String& name) const
+CIMQualifier
+CIMMethod::getQualifier(const String& name) const
 {
 	int tsize = m_pdata->m_qualifiers.size();
 	for(int i = 0; i < tsize; i++)
 	{
-		OW_CIMQualifier nq = m_pdata->m_qualifiers[i];
+		CIMQualifier nq = m_pdata->m_qualifiers[i];
 		if(nq.getName().equalsIgnoreCase(name))
 		{
 			return nq;
 		}
 	}
-	return OW_CIMQualifier(OW_CIMNULL);
+	return CIMQualifier(CIMNULL);
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_String
-OW_CIMMethod::getOriginClass() const
+String
+CIMMethod::getOriginClass() const
 {
 	return m_pdata->m_originClass;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::setOriginClass(const OW_String& originCls)
+CIMMethod&
+CIMMethod::setOriginClass(const String& originCls)
 {
 	m_pdata->m_originClass = originCls;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::addParameter(const OW_CIMParameter& param)
+CIMMethod&
+CIMMethod::addParameter(const CIMParameter& param)
 {
 	m_pdata->m_parameters.append(param);
 	return *this;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::setParameters(const OW_CIMParameterArray& inParms)
+CIMMethod&
+CIMMethod::setParameters(const CIMParameterArray& inParms)
 {
 	m_pdata->m_parameters = inParms;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMParameterArray
-OW_CIMMethod::getParameters() const
+CIMParameterArray
+CIMMethod::getParameters() const
 {
 	return m_pdata->m_parameters;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMParameterArray
-OW_CIMMethod::getINParameters() const
+CIMParameterArray
+CIMMethod::getINParameters() const
 {
-	OW_CIMParameterArray rval;
+	CIMParameterArray rval;
 	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
 	{
-		OW_CIMQualifier q = m_pdata->m_parameters[i].getQualifier(OW_CIMQualifier::CIM_QUAL_IN);
-		if (!q || q.getValue() == OW_CIMValue(true))
+		CIMQualifier q = m_pdata->m_parameters[i].getQualifier(CIMQualifier::CIM_QUAL_IN);
+		if (!q || q.getValue() == CIMValue(true))
 		{
 			rval.push_back(m_pdata->m_parameters[i]);
 		}
 	}
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMParameterArray
-OW_CIMMethod::getOUTParameters() const
+CIMParameterArray
+CIMMethod::getOUTParameters() const
 {
-	OW_CIMParameterArray rval;
+	CIMParameterArray rval;
 	for (size_t i = 0; i < m_pdata->m_parameters.size(); ++i)
 	{
-		if (m_pdata->m_parameters[i].hasTrueQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
+		if (m_pdata->m_parameters[i].hasTrueQualifier(CIMQualifier::CIM_QUAL_OUT))
 		{
 			rval.push_back(m_pdata->m_parameters[i]);
 		}
 	}
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::setReturnType(const OW_CIMDataType& type)
+CIMMethod&
+CIMMethod::setReturnType(const CIMDataType& type)
 {
 	m_pdata->m_returnDatatype = type;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMDataType
-OW_CIMMethod::getReturnType() const
+CIMDataType
+CIMMethod::getReturnType() const
 {
 	return m_pdata->m_returnDatatype;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_Int32
-OW_CIMMethod::getReturnDataSize() const
+Int32
+CIMMethod::getReturnDataSize() const
 {
 	return m_pdata->m_returnDatatype.getSize();
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::setOverridingMethod(const OW_String& omname)
+CIMMethod&
+CIMMethod::setOverridingMethod(const String& omname)
 {
 	m_pdata->m_override = omname;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_String
-OW_CIMMethod::getOverridingMethod() const
+String
+CIMMethod::getOverridingMethod() const
 {
 	return m_pdata->m_override;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod
-OW_CIMMethod::clone(EIncludeQualifiersFlag includeQualifiers,
+CIMMethod
+CIMMethod::clone(EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin) const
 {
 	if(m_pdata.isNull())
 	{
-		return OW_CIMMethod(OW_CIMNULL);
+		return CIMMethod(CIMNULL);
 	}
-
-	OW_CIMMethod theMethod;
+	CIMMethod theMethod;
 	theMethod.m_pdata->m_name = m_pdata->m_name;
 	theMethod.m_pdata->m_returnDatatype = m_pdata->m_returnDatatype;
 	theMethod.m_pdata->m_parameters = m_pdata->m_parameters;
 	theMethod.m_pdata->m_override = m_pdata->m_override;
 	theMethod.m_pdata->m_propagated = m_pdata->m_propagated;
-
 	if(includeQualifiers)
 	{
 		theMethod.m_pdata->m_qualifiers = m_pdata->m_qualifiers;
 	}
-
 	if(includeClassOrigin)
 	{
 		theMethod.m_pdata->m_originClass = m_pdata->m_originClass;
 	}
-
 	return theMethod;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_CIMMethod&
-OW_CIMMethod::setPropagated(bool propagated)
+CIMMethod&
+CIMMethod::setPropagated(bool propagated)
 {
 	m_pdata->m_propagated = propagated;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
 bool
-OW_CIMMethod::getPropagated() const
+CIMMethod::getPropagated() const
 {
 	return m_pdata->m_propagated;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_String
-OW_CIMMethod::getName() const
+String
+CIMMethod::getName() const
 {
 	return m_pdata->m_name;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
 void
-OW_CIMMethod::setName(const OW_String& name)
+CIMMethod::setName(const String& name)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
 void
-OW_CIMMethod::readObject(istream &istrm)
+CIMMethod::readObject(istream &istrm)
 {
-	OW_String name;
-	OW_CIMDataType returnDatatype(OW_CIMNULL);
-	OW_CIMQualifierArray qualifiers;
-	OW_CIMParameterArray parameters;
-	OW_String originClass;
-	OW_String override;
-	OW_Bool propagated;
-
-	OW_CIMBase::readSig( istrm, OW_CIMMETHODSIG );
+	String name;
+	CIMDataType returnDatatype(CIMNULL);
+	CIMQualifierArray qualifiers;
+	CIMParameterArray parameters;
+	String originClass;
+	String override;
+	Bool propagated;
+	CIMBase::readSig( istrm, OW_CIMMETHODSIG );
 	name.readObject(istrm);
 	returnDatatype.readObject(istrm);
-	OW_BinarySerialization::readArray(istrm, qualifiers);
-	OW_BinarySerialization::readArray(istrm, parameters);
+	BinarySerialization::readArray(istrm, qualifiers);
+	BinarySerialization::readArray(istrm, parameters);
 	originClass.readObject(istrm);
 	override.readObject(istrm);
 	propagated.readObject(istrm);
-
 	if(m_pdata.isNull())
 	{
 		m_pdata = new METHData;
 	}
-
 	m_pdata->m_name = name;
 	m_pdata->m_originClass = originClass;
 	m_pdata->m_override = override;
@@ -365,35 +325,31 @@ OW_CIMMethod::readObject(istream &istrm)
 	m_pdata->m_qualifiers = qualifiers;
 	m_pdata->m_returnDatatype = returnDatatype;
 }
-
 //////////////////////////////////////////////////////////////////////////////													
 void
-OW_CIMMethod::writeObject(ostream &ostrm) const
+CIMMethod::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMMETHODSIG );
+	CIMBase::writeSig( ostrm, OW_CIMMETHODSIG );
 	m_pdata->m_name.writeObject(ostrm);
 	m_pdata->m_returnDatatype.writeObject(ostrm);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_parameters);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_qualifiers);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_parameters);
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_override.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
 }
-
 //////////////////////////////////////////////////////////////////////////////													
-OW_String
-OW_CIMMethod::toMOF() const
+String
+CIMMethod::toMOF() const
 {
-	OW_StringBuffer rv;
+	StringBuffer rv;
 	size_t i;
-
 	if(m_pdata->m_qualifiers.size() > 0)
 	{
 		rv += '[';
-
 		for(i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			OW_CIMQualifier nq = m_pdata->m_qualifiers[i];
+			CIMQualifier nq = m_pdata->m_qualifiers[i];
 			if(i > 0)
 			{
 				rv += ',';
@@ -402,17 +358,15 @@ OW_CIMMethod::toMOF() const
 		}
 		rv += ']';
 	}
-
 	rv += m_pdata->m_returnDatatype.toMOF();
 	rv += ' ';
 	rv += m_pdata->m_name;
 	rv += '(';
-
 	if(m_pdata->m_parameters.size() > 0)
 	{
 		for(i = 0; i < m_pdata->m_parameters.size(); i++)
 		{
-			OW_CIMParameter nq = m_pdata->m_parameters[i];
+			CIMParameter nq = m_pdata->m_parameters[i];
 			if(i > 0)
 			{
 				rv += ',';
@@ -423,18 +377,19 @@ OW_CIMMethod::toMOF() const
 	rv += ");\n";
 	return rv.releaseString();
 }
-
 /////////////////////////////////////////////////////////////////////////////													
-OW_String
-OW_CIMMethod::toString() const
+String
+CIMMethod::toString() const
 {
-	OW_String rv("OW_CIMMethod NAME = ");
+	String rv("CIMMethod NAME = ");
 	rv += m_pdata->m_name;
 	return rv;
 }
-
 /////////////////////////////////////////////////////////////////////////////													
-bool operator<(const OW_CIMMethod& x, const OW_CIMMethod& y)
+bool operator<(const CIMMethod& x, const CIMMethod& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
+} // end namespace OpenWBEM
+

@@ -29,28 +29,28 @@
 *******************************************************************************/
 #ifndef OW_AUTHLOADER_HPP_INCLUDE_GUARD_
 #define OW_AUTHLOADER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_Array.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 
-class OW_AuthManager
+namespace OpenWBEM
+{
+
+class AuthManager
 {
 public:
-
-	OW_AuthManager();
-	~OW_AuthManager();
-	void init(OW_ServiceEnvironmentIFCRef env);
-	bool authenticate(OW_String& userName,
-		const OW_String& info, OW_String& details);
-
+	AuthManager();
+	~AuthManager();
+	void init(ServiceEnvironmentIFCRef env);
+	bool authenticate(String& userName,
+		const String& info, String& details);
 private:
-
-	OW_AuthenticatorIFCRef m_authenticator;
+	AuthenticatorIFCRef m_authenticator;
 };
+typedef Reference<AuthManager> AuthManagerRef;
 
-typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
+} // end namespace OpenWBEM
 
 #endif

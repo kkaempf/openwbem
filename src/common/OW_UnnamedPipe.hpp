@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_UNNAMEDPIPE_HPP_
 #define OW_UNNAMEDPIPE_HPP_
-
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Exception.hpp"
@@ -38,50 +36,42 @@
 #include "OW_Reference.hpp"
 #include "OW_IOIFC.hpp"
 
-class OW_String;
+namespace OpenWBEM
+{
 
-
+class String;
 DECLARE_EXCEPTION(UnnamedPipe);
-
-class OW_UnnamedPipe;
-typedef OW_Reference<OW_UnnamedPipe> OW_UnnamedPipeRef;
-
-class OW_UnnamedPipe : public OW_SelectableIFC, public OW_IOIFC
+class UnnamedPipe;
+typedef Reference<UnnamedPipe> UnnamedPipeRef;
+class UnnamedPipe : public SelectableIFC, public IOIFC
 {
 public:
-	virtual ~OW_UnnamedPipe();
-
+	virtual ~UnnamedPipe();
 	int writeInt(int value);
-	int writeString(const OW_String& strData);
+	int writeString(const String& strData);
 	int readInt(int* value);
-	int readString(OW_String& strData);
-
+	int readString(String& strData);
 	/**
 	 * Read from the pipe and collect into a string, until the other end of the
 	 * pipe is closed.
-	 * @throws OW_IOException on error
+	 * @throws IOException on error
 	 */
-	OW_String readAll();
-
+	String readAll();
 	virtual void open() = 0;
 	virtual int close() = 0;
 	virtual void setOutputBlocking(bool outputIsBlocking=true) = 0;
-
 	enum EOpen
 	{
 		E_DONT_OPEN,
 		E_OPEN
 	};
-
-	static OW_UnnamedPipeRef createUnnamedPipe(EOpen doOpen=E_OPEN);
-
+	static UnnamedPipeRef createUnnamedPipe(EOpen doOpen=E_OPEN);
 protected:
-	OW_UnnamedPipe()
-		: OW_SelectableIFC()
+	UnnamedPipe()
+		: SelectableIFC()
 	{}
 };
 
+} // end namespace OpenWBEM
+
 #endif	// OW_UNNAMEDPIPE_HPP_
-
-
-

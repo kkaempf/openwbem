@@ -27,47 +27,42 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMBASE_HPP_
 #define OW_CIMBASE_HPP_
-
 #include "OW_config.h"
 #include "OW_ByteSwap.hpp"
 #include "OW_Exception.hpp"
-
 #include <iosfwd>
 
-class OW_String;
+namespace OpenWBEM
+{
 
+class String;
 /**
- * The OW_CIMBase class is used as the base class for all CIM related classes.
- * (i.e. OW_CIMClass, OW_CIMInstance, etc...). It ensures that all derived
+ * The CIMBase class is used as the base class for all CIM related classes.
+ * (i.e. CIMClass, CIMInstance, etc...). It ensures that all derived
  * class will support the specified interface.
  */
-class OW_CIMBase
+class CIMBase
 {
 public:
 	/**
-	 * Destroy this OW_CIMBase object.
+	 * Destroy this CIMBase object.
 	 */
-	virtual ~OW_CIMBase();
-
+	virtual ~CIMBase();
 	/**
-	 * Set this object to NULL. This should invalidate the OW_CIMBase object, so
+	 * Set this object to NULL. This should invalidate the CIMBase object, so
 	 * that subsequent operation will fail.
 	 */
 	virtual void setNull() = 0;
-
 	/**
-	 * @return The OW_String representation of this object.
+	 * @return The String representation of this object.
 	 */
-	virtual OW_String toString() const = 0;
-
+	virtual String toString() const = 0;
 	/**
-	 * @return The MOF representation of this object as an OW_String.
+	 * @return The MOF representation of this object as an String.
 	 */
-	virtual OW_String toMOF() const = 0;
-
+	virtual String toMOF() const = 0;
 	/**
 	 * Read this object from an input stream. The object must have been
 	 * previously written through a call to writeObject.
@@ -75,7 +70,6 @@ public:
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream& istrm) = 0;
-
 	/**
 	 * Write this object to an output stream. The intent is for the object to
 	 * be retrieved later through a call to readObject.
@@ -83,21 +77,19 @@ public:
 	 * @param ostrm	The output stream to write the object to.
 	 */
 	virtual void writeObject(std::ostream& ostrm) const = 0;
-
 	/**
 	 * Read the specified signature from the input stream. Each class derived
-	 * from OW_CIMBase must have a unique signature associated with it. If the
+	 * from CIMBase must have a unique signature associated with it. If the
 	 * signature that is being read from the stream doesn't match the one
-	 * provided, an OW_IOException will be thrown.
+	 * provided, an IOException will be thrown.
 	 *
 	 * @param istrm The input stream to read the signature from.
 	 *
 	 * @param sig The signature to compare the signature read to. This must be
 	 *		a NULL terminated string. If the signature read does not match this
-	 *		string, an OW_IOException will be thrown.
+	 *		string, an IOException will be thrown.
 	 */
 	static void readSig(std::istream& istrm, const char* const sig);
-
 	/**
 	 * Write the given class signature to an output stream.
 	 *
@@ -107,11 +99,8 @@ public:
 	 *		terminated string.
 	 */
 	static void writeSig(std::ostream& ostrm, const char* const sig);
-
 };
-
-std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb);
-
+std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 ///////////////////////////////////////////////////////////////////////////////
 // signatures to be passed to readSig and writeSig
 #define OW_CIMCLASSSIG					"C"	// OW_CIMClass
@@ -131,5 +120,7 @@ std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb);
 #define OW_CIMURLSIG					"U"	// OW_CIMUrl
 #define OW_INTERNNAMESPACESIG			"E"	// Internval namespace class
 #define OW_CIMPARAMVALUESIG				"L"	// OW_CIMParamValue
+
+} // end namespace OpenWBEM
 
 #endif	// OW_CIMBASE_HPP_

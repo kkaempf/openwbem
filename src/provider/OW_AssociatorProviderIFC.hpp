@@ -27,14 +27,15 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ASSOCIATORPROVIDERIFC_HPP_
 #define OW_ASSOCIATORPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * This interface is implemented by providers of dynamic association
@@ -43,10 +44,10 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
+class AssociatorProviderIFC: public ProviderBaseIFC
 {
 	public:
-		virtual ~OW_AssociatorProviderIFC();
+		virtual ~AssociatorProviderIFC();
 		
 		/**
 		 * This method is invoked in order to do the Associators operation as
@@ -55,7 +56,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * This operation is used to enumerate CIM
 		 * Instances that are associated to a particular source CIM Object.
 		 *
-		 * @param hdl The OW_CIMOMHandleIFC object that should be used to
+		 * @param hdl The CIMOMHandleIFC object that should be used to
 		 *		perform CIM operations during the associators call.
 		 *
 		 * @param assocClass Defines the association that the objectName
@@ -127,7 +128,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @returns If successful, the method returns zero or more CIM Instances
 		 * 	meeting the requested criteria.
 		 *
-		 * @throws OW_CIMException. - The following IDs can be expected.
+		 * @throws CIMException. - The following IDs can be expected.
 		 * 	CIM_ERR_ACCESS_DENIED
 		 * 	CIM_ERR_NOT_SUPPORTED
 		 * 	CIM_ERR_INVALID_NAMESPACE
@@ -136,18 +137,17 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * 	CIM_ERR_FAILED (some other unspecifed error occurred)
 		 */
 		virtual void associators(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMInstanceResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& assocClass,
-				const OW_String& resultClass,
-				const OW_String& role,
-				const OW_String& resultRole,
-				OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-				OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-				const OW_StringArray* propertyList) = 0;
-
+				const ProviderEnvironmentIFCRef& env,
+				CIMInstanceResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& assocClass,
+				const String& resultClass,
+				const String& role,
+				const String& resultRole,
+				WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+				WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+				const StringArray* propertyList) = 0;
 		/**
 		 * For the definition of this operation, refer to
 		 * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecAssociatorNames
@@ -155,7 +155,7 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * Instances that are associated to a particular source CIM
 		 * Instance.
 		 *
-		 * @param hdl The OW_CIMOMHandleIFC object that should be used for
+		 * @param hdl The CIMOMHandleIFC object that should be used for
 		 *		CIMOM access during the associatorNames call.
 		 *
 		 * @param assocClass see associator parameter assocClass
@@ -171,25 +171,24 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @returns If successful, the method returns zero or more full CIM
 		 * 	Instance of Objects meeting the requested criteria.
 		 *
-		 * @throws OW_CIMException - as defined in the associator method
+		 * @throws CIMException - as defined in the associator method
 		 */
 		virtual void associatorNames(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPathResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& assocClass,
-				const OW_String& resultClass,
-				const OW_String& role,
-				const OW_String& resultRole ) = 0;
-
+				const ProviderEnvironmentIFCRef& env,
+				CIMObjectPathResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& assocClass,
+				const String& resultClass,
+				const String& role,
+				const String& resultRole ) = 0;
 		/**
 		 * For definition of this operation, refer to
 		 * http://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecReferencesMethod
 		 * This operation is used to enumerate the association objects
 		 * that refer to a particular target CIM Instance.
 		 *
-		 * @param hdl The OW_CIMOMHandleIFC that should be used during the call
+		 * @param hdl The CIMOMHandleIFC that should be used during the call
 		 *		to references.
 		 *
 		 * @param resultClass Defines the association that the objectName object
@@ -216,26 +215,25 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 * @returns If successful, the method returns zero or more CIM Instances
 		 * 	meeting the requested criteria.
 		 *
-		 * @throws OW_CIMException - as defined for the associators method.
+		 * @throws CIMException - as defined for the associators method.
 		 */
 		virtual void references(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMInstanceResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& resultClass,
-				const OW_String& role,
-				OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-				OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-				const OW_StringArray* propertyList) = 0;
-
+				const ProviderEnvironmentIFCRef& env,
+				CIMInstanceResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& resultClass,
+				const String& role,
+				WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+				WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+				const StringArray* propertyList) = 0;
 		/**
 		 * For definition of this operation, refer to
 		 *  ttp://www.dmtf.org/download/spec/xmls/CIM_HTTP_Mapping10.htm#SecReferenceNames
 		 * This operation is used to enumerate the association objects
 		 * that refer to a particular target CIM Instance.
 		 *
-		 * @param hdl The OW_CIMOMHandleIFC that should be used during the call
+		 * @param hdl The CIMOMHandleIFC that should be used during the call
 		 *		to referencenames.
 		 *
 		 * @param resultClass see the reference method.
@@ -246,19 +244,19 @@ class OW_AssociatorProviderIFC: public OW_ProviderBaseIFC
 		 *
 		 * @returns If successful, the method returns the names of zero or more
 		 * full CIM Instance paths of Objects meeting the requested criteria.
-		 * @throws OW_CIMException - as defined for associators method.
+		 * @throws CIMException - as defined for associators method.
 		 */
 		virtual void referenceNames(
-				const OW_ProviderEnvironmentIFCRef& env,
-				OW_CIMObjectPathResultHandlerIFC& result,
-				const OW_String& ns,
-				const OW_CIMObjectPath& objectName,
-				const OW_String& resultClass,
-				const OW_String& role ) = 0;
+				const ProviderEnvironmentIFCRef& env,
+				CIMObjectPathResultHandlerIFC& result,
+				const String& ns,
+				const CIMObjectPath& objectName,
+				const String& resultClass,
+				const String& role ) = 0;
 };
+typedef Reference< AssociatorProviderIFC > AssociatorProviderIFCRef;
+//typedef IntrusiveReference< AssociatorProviderIFC > AssociatorProviderIFCRef;
 
-typedef OW_Reference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
-//typedef OW_IntrusiveReference< OW_AssociatorProviderIFC > OW_AssociatorProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

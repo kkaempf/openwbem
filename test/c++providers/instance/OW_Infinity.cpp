@@ -37,11 +37,12 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 
-using namespace OW_WBEMFlags;
+using namespace OpenWBEM;
+using namespace WBEMFlags;
 
 namespace{
 
-class InfiniteIP : public OW_CppInstanceProviderIFC
+class InfiniteIP : public CppInstanceProviderIFC
 {
 public:
 
@@ -62,20 +63,20 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	void
 		enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass )
 	{
 		(void)cimClass;
 		(void)env;
 
-		OW_UInt64 count = 0;
+		UInt64 count = 0;
 		for (;;++count)
 		{
-			OW_CIMObjectPath newCop(className, ns);
-			newCop.addKey(OW_String("InstanceNumber"), OW_CIMValue(count));
+			CIMObjectPath newCop(className, ns);
+			newCop.addKey(String("InstanceNumber"), CIMValue(count));
 			result.handle(newCop);
 		}
 	}
@@ -84,46 +85,46 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 	void
 		enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass )
 	{
 		(void)env;
 		(void)ns;
 		(void)className;
 
-		OW_UInt64 count = 0;
-		OW_CIMInstance newInst = cimClass.newInstance();
+		UInt64 count = 0;
+		CIMInstance newInst = cimClass.newInstance();
 		for (;;++count)
 		{
-			newInst.setProperty(OW_String("InstanceNumber"), OW_CIMValue(count));
+			newInst.setProperty(String("InstanceNumber"), CIMValue(count));
 			result.handle(newInst.clone(localOnly,deep,includeQualifiers,includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 
 	}
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMInstance
+	CIMInstance
 		getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)env; (void)ns; (void)instanceName; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)cimClass;
-		OW_THROWCIM(OW_CIMException::FAILED);
+		OW_THROWCIM(CIMException::FAILED);
 
 	}
 
@@ -133,28 +134,28 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
-	OW_CIMObjectPath
+	CIMObjectPath
 		createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 		(void)env;
 		(void)ns;
 		(void)cimInstance;
-		OW_THROWCIM(OW_CIMException::FAILED);
+		OW_THROWCIM(CIMException::FAILED);
 	}
 
 //////////////////////////////////////////////////////////////////////////////
 	void
 		modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
@@ -163,20 +164,20 @@ public:
 		(void)includeQualifiers;
 		(void)propertyList;
 		(void)theClass;
-		OW_THROWCIM(OW_CIMException::FAILED);
+		OW_THROWCIM(CIMException::FAILED);
 	}
 
 //////////////////////////////////////////////////////////////////////////////
 	void
 		deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		(void)env;
 		(void)ns;
 		(void)cop;
-		OW_THROWCIM(OW_CIMException::FAILED);
+		OW_THROWCIM(CIMException::FAILED);
 	}
 
 };

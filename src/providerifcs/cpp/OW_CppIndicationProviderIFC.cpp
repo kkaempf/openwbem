@@ -27,73 +27,70 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CppIndicationProviderIFC.hpp"
 
-///////////////////////////////////////////////////////////////////////////////
-OW_CppIndicationProviderIFC::~OW_CppIndicationProviderIFC() {}
+namespace OpenWBEM
+{
 
 ///////////////////////////////////////////////////////////////////////////////
+CppIndicationProviderIFC::~CppIndicationProviderIFC() {}
+///////////////////////////////////////////////////////////////////////////////
 int
-OW_CppIndicationProviderIFC::mustPoll(
-	const OW_ProviderEnvironmentIFCRef &, 
-	const OW_WQLSelectStatement &, 
-	const OW_String &, 
-	const OW_String&, 
-	const OW_StringArray&) 
+CppIndicationProviderIFC::mustPoll(
+	const ProviderEnvironmentIFCRef &, 
+	const WQLSelectStatement &, 
+	const String &, 
+	const String&, 
+	const StringArray&) 
 {
 	return 0; // means don't poll enumInstances.
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_CppIndicationProviderIFC::authorizeFilter(
-	const OW_ProviderEnvironmentIFCRef &, 
-	const OW_WQLSelectStatement &, 
-	const OW_String &, 
-	const OW_String&, 
-	const OW_StringArray&, 
-	const OW_String &) 
+CppIndicationProviderIFC::authorizeFilter(
+	const ProviderEnvironmentIFCRef &, 
+	const WQLSelectStatement &, 
+	const String &, 
+	const String&, 
+	const StringArray&, 
+	const String &) 
 {
 }
 	
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CppIndicationProviderIFC::getIndicationProviderInfo(OW_IndicationProviderInfo&)
+CppIndicationProviderIFC::getIndicationProviderInfo(IndicationProviderInfo&)
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_CppIndicationProviderIFC::activateFilter(
-	const OW_ProviderEnvironmentIFCRef&,
-	const OW_WQLSelectStatement&, 
-	const OW_String&, 
-	const OW_String&,
-	const OW_StringArray&, 
+CppIndicationProviderIFC::activateFilter(
+	const ProviderEnvironmentIFCRef&,
+	const WQLSelectStatement&, 
+	const String&, 
+	const String&,
+	const StringArray&, 
 	bool)
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_CppIndicationProviderIFC::deActivateFilter(
-	const OW_ProviderEnvironmentIFCRef&,
-	const OW_WQLSelectStatement&, 
-	const OW_String&, 
-	const OW_String&,
-	const OW_StringArray&, 
+CppIndicationProviderIFC::deActivateFilter(
+	const ProviderEnvironmentIFCRef&,
+	const WQLSelectStatement&, 
+	const String&, 
+	const String&,
+	const StringArray&, 
 	bool)
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CppIndicationProviderIFC* 
-OW_CppIndicationProviderIFC::getIndicationProvider() 
+CppIndicationProviderIFC* 
+CppIndicationProviderIFC::getIndicationProvider() 
 { 
 	return this; 
 }
 
-
+} // end namespace OpenWBEM
 

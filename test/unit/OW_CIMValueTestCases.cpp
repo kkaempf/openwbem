@@ -36,6 +36,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_Format.hpp"
 
+using namespace OpenWBEM;
+
 void OW_CIMValueTestCases::setUp()
 {
 }
@@ -46,26 +48,26 @@ void OW_CIMValueTestCases::tearDown()
 
 void OW_CIMValueTestCases::testGetArraySize()
 {
-    OW_CIMClassArray ca;
-    ca.push_back(OW_CIMClass(OW_CIMNULL));
-    ca.push_back(OW_CIMClass(OW_CIMNULL));
-    ca.push_back(OW_CIMClass(OW_CIMNULL));
-    OW_CIMValue v1(ca);
+    CIMClassArray ca;
+    ca.push_back(CIMClass(CIMNULL));
+    ca.push_back(CIMClass(CIMNULL));
+    ca.push_back(CIMClass(CIMNULL));
+    CIMValue v1(ca);
 	unitAssert( v1.getArraySize() == 3 );
 
-    OW_CIMInstanceArray ia;
-    ia.push_back(OW_CIMInstance(OW_CIMNULL));
-    ia.push_back(OW_CIMInstance(OW_CIMNULL));
-    ia.push_back(OW_CIMInstance(OW_CIMNULL));
-    ia.push_back(OW_CIMInstance(OW_CIMNULL));
-    ia.push_back(OW_CIMInstance(OW_CIMNULL));
-    OW_CIMValue v2(ia);
+    CIMInstanceArray ia;
+    ia.push_back(CIMInstance(CIMNULL));
+    ia.push_back(CIMInstance(CIMNULL));
+    ia.push_back(CIMInstance(CIMNULL));
+    ia.push_back(CIMInstance(CIMNULL));
+    ia.push_back(CIMInstance(CIMNULL));
+    CIMValue v2(ia);
     unitAssert(v2.getArraySize() == 5);
 
-    OW_CIMValue v3(v1);
+    CIMValue v3(v1);
     unitAssert(v3.getArraySize() == 3);
 
-    OW_CIMValue v4(v2);
+    CIMValue v4(v2);
     unitAssert(v4.getArraySize() == 5);
     unitAssert(v1 == v3);
     unitAssert(v2 == v4);
@@ -75,8 +77,8 @@ void OW_CIMValueTestCases::testGetArraySize()
 
 void OW_CIMValueTestCases::testInserterOp()
 {
-	OW_CIMValue cv = OW_CIMValue(OW_String("String One"));
-	OW_String str = OW_Format("%1", cv);
+	CIMValue cv = CIMValue(String("String One"));
+	String str = Format("%1", cv);
 	unitAssert(str.equals("String One"));
 }
 

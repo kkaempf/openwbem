@@ -27,45 +27,42 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
 #define OW_THREAD_BARRIER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
-
 #include "OW_Reference.hpp"
 
-class OW_ThreadBarrierImpl;
+namespace OpenWBEM
+{
 
+class ThreadBarrierImpl;
 DECLARE_EXCEPTION(ThreadBarrier);
-
 /**
- * The OW_ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will block until <i>threshold</i> number of threads has called wait()
+ * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will block until <i>threshold</i> number of threads has called wait()
  * This class is freely copyable.  All copies reference the same underlying implementation.
  */
-class OW_ThreadBarrier
+class ThreadBarrier
 {
 public:
 	/**
 	 * Constructor
 	 * @param threshold The number of threads that must call wait() before any of them successfully return from the call. The value specified by threshold must be greater than zero.
-	 * @throw OW_ThreadBarrierException if the underlying implementation fails.
+	 * @throw ThreadBarrierException if the underlying implementation fails.
 	 */
-	OW_ThreadBarrier(OW_UInt32 threshold);
-
+	ThreadBarrier(UInt32 threshold);
 	/**
 	 * Synchronize participating threads at the barrier. The calling thread shall block until the required number of threads have called wait().
-	 * @throw OW_ThreadBarrierException if the underlying implementation fails.
+	 * @throw ThreadBarrierException if the underlying implementation fails.
 	 */
 	void wait();
-
-	~OW_ThreadBarrier();
-	OW_ThreadBarrier(const OW_ThreadBarrier& x);
-	OW_ThreadBarrier& operator=(const OW_ThreadBarrier& x);
+	~ThreadBarrier();
+	ThreadBarrier(const ThreadBarrier& x);
+	ThreadBarrier& operator=(const ThreadBarrier& x);
 private:
-	OW_Reference<OW_ThreadBarrierImpl> m_impl;
+	Reference<ThreadBarrierImpl> m_impl;
 };
 
+} // end namespace OpenWBEM
 
 #endif

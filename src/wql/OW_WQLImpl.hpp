@@ -29,44 +29,40 @@
 *******************************************************************************/
 #ifndef OW_WQLIMPL_HPP_
 #define OW_WQLIMPL_HPP_
-
 #include "OW_config.h"
 #include "OW_WQLIFC.hpp"
 #include "OW_Mutex.hpp"
-
 #include <cstdio>
 
-class stmt;
+namespace OpenWBEM
+{
 
-class OW_WQLImpl : public OW_WQLIFC
+class stmt;
+class WQLImpl : public WQLIFC
 {
 public:
-	virtual ~OW_WQLImpl()
+	virtual ~WQLImpl()
 	{
 	}
-
-	virtual void evaluate(const OW_String& nameSpace,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& query, const OW_String& queryLanguage,
-        OW_Reference<OW_CIMOMHandleIFC> hdl);
-
-	virtual OW_WQLSelectStatement createSelectStatement(const OW_String& query);
-
-	virtual bool supportsQueryLanguage(const OW_String& lang);
-
+	virtual void evaluate(const String& nameSpace,
+		CIMInstanceResultHandlerIFC& result,
+		const String& query, const String& queryLanguage,
+        Reference<CIMOMHandleIFC> hdl);
+	virtual WQLSelectStatement createSelectStatement(const String& query);
+	virtual bool supportsQueryLanguage(const String& lang);
 private:
-	static OW_Mutex classLock;
-
+	static Mutex classLock;
 public:
 	static const char* parserInput;
 	static stmt* statement;
 };
 		
+} // end namespace OpenWBEM
 
 extern int yydebug;
 extern int yyparse(void);
 extern FILE* yyin;
-extern void OW_WQLscanner_init(void);
+extern void WQLscanner_init(void);
 
 
 #endif

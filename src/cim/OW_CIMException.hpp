@@ -27,112 +27,88 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMEXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_CIMEXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 
-class OW_CIMException : public OW_Exception
+namespace OpenWBEM
+{
+
+class CIMException : public Exception
 {
 public:
-
 	enum ErrNoType
 	{
 		/** No error */
 		SUCCESS = 0,
-
 		/**
 		 * A general error occured that is not covered by a more specific error
 		 * code
 		 */
 		FAILED = 1,
-
 		/** Access to a CIM resource was not available to the client */
 		ACCESS_DENIED = 2,
-
 		/** The target namespace does not exist */
 		INVALID_NAMESPACE = 3,
-
 		/** One or more parameter values passed to the method were invalid */
 		INVALID_PARAMETER = 4,
-
 		/** The specified Class does not exist */
 		INVALID_CLASS = 5,
-
 		/** The requested object could not be found */
 		NOT_FOUND = 6,
-
 		/** The requested operation is not supported */
 		NOT_SUPPORTED = 7,
-
 		/**
 		 * Operation cannot be carried out on this class since it has subclasses
 		 */
 		CLASS_HAS_CHILDREN = 8,
-
 		/**
 		 * Operation cannot be carried out on this class since it has instances
 		 */
 		CLASS_HAS_INSTANCES = 9,
-
 		/**
 		 * Operation cannot be carried out since the specified superclass does
 		 * not exist
 		 */
 		INVALID_SUPERCLASS = 10,
-
 		/** Operation cannot be carried out because an object already exists */
 		ALREADY_EXISTS = 11,
-
 		/** The specified Property does not exist */
 		NO_SUCH_PROPERTY = 12,
-
 		/** The value supplied is incompatible with the type */
 		TYPE_MISMATCH = 13,
-
 		/** The query language is not recognized or supported */
 		QUERY_LANGUAGE_NOT_SUPPORTED = 14,
-
 		/** The query is not valid for the specified query language */
 		INVALID_QUERY = 15,
-
 		/** The extrinsic Method could not be executed */
 		METHOD_NOT_AVAILABLE = 16,
-
 		/** The specified extrinsic Method does not exist */
 		METHOD_NOT_FOUND = 17
 	};
-
-	OW_CIMException(ErrNoType errval);
-	OW_CIMException(const char* file, int line, ErrNoType errval,
+	CIMException(ErrNoType errval);
+	CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0);
-	~OW_CIMException() throw();
-
-	void swap(OW_CIMException& x);
-
-	OW_CIMException(const OW_CIMException& x);
-	OW_CIMException& operator=(OW_CIMException x);
+	~CIMException() throw();
+	void swap(CIMException& x);
+	CIMException(const CIMException& x);
+	CIMException& operator=(CIMException x);
 	
 	ErrNoType getErrNo() const {  return m_errno; }
 	void setErrNo(ErrNoType e) { m_errno = e; }
-	virtual const char* type() const {  return "OW_CIMException"; }
+	virtual const char* type() const {  return "CIMException"; }
 	virtual const char* getMessage() const;
-
 private:
-
 	ErrNoType m_errno;
 	mutable char* m_longmsg;
 };
-
 #define OW_THROWCIM(errval) \
-	throw OW_CIMException(__FILE__, __LINE__, errval)
+	throw CIMException(__FILE__, __LINE__, errval)
 	
 #define OW_THROWCIMMSG(errval, msg) \
-	throw OW_CIMException(__FILE__, __LINE__, errval, msg)
+	throw CIMException(__FILE__, __LINE__, errval, msg)
+
+} // end namespace OpenWBEM
 
 #endif
-
-
-

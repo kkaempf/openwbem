@@ -27,19 +27,18 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_XMLPRETTYPRINT_HPP_
 #define OW_XMLPRETTYPRINT_HPP_
-
 #include "OW_config.h"
-
 #include "OW_String.hpp"
-
 #include <iosfwd>
 
-OW_String OW_XMLPrettyPrint(const OW_String& xml);
-OW_String OW_XMLPrettyPrint(std::istream& xml);
+namespace OpenWBEM
+{
+
+String XMLPrettyPrint(const String& xml);
+String XMLPrettyPrint(std::istream& xml);
+
+} // end namespace OpenWBEM
 
 #endif
-
-

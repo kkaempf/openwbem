@@ -29,25 +29,29 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
+#include "OW_IndicationProviderInfo.hpp"
+
+namespace OpenWBEM
+{
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_InstClassInfo::OW_InstClassInfo(OW_String const& className_)
+InstClassInfo::InstClassInfo(String const& className_)
 	: className(className_)
 {}
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_InstClassInfo::OW_InstClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
+InstClassInfo::InstClassInfo(String const& className_, StringArray const& namespaces_)
 	: className(className_)
 	, namespaces(namespaces_)
 {}
 	
 ///////////////////////////////////////////////////////////////////////////////
-OW_InstClassInfo::~OW_InstClassInfo() 
+InstClassInfo::~InstClassInfo() 
 {
 }
 
 // Template instantiations
-template class OW_ProviderInfoBase<OW_InstClassInfo>;
+template class ProviderInfoBase<InstClassInfo>;
+template class ProviderInfoBase<IndicationProviderInfoEntry>;
 
-#include "OW_IndicationProviderInfo.hpp"
-template class OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>;
+} // end namespace OpenWBEM
+

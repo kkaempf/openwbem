@@ -29,73 +29,63 @@
 *******************************************************************************/
 #ifndef OW_TYPES_HPP_INCLUDE_GUARD_
 #define OW_TYPES_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
 #include <sys/types.h>
-
 #ifdef __cplusplus
 }
 #endif
-
 #ifdef OW_WIN32
 #include <windows.h>
 #endif
 
-typedef unsigned char      			OW_UInt8;
-typedef signed char        			OW_Int8;
+namespace OpenWBEM
+{
 
+typedef unsigned char      			UInt8;
+typedef signed char        			Int8;
 #if OW_SIZEOF_SHORT_INT == 2
-typedef unsigned short     			OW_UInt16;
-typedef short       				OW_Int16;
+typedef unsigned short     			UInt16;
+typedef short       				Int16;
 #elif OW_SIZEOF_INT == 2
-typedef unsigned int     			OW_UInt16;
-typedef int       					OW_Int16;
+typedef unsigned int     			UInt16;
+typedef int       					Int16;
 #endif
-
 #if OW_SIZEOF_INT == 4
-typedef unsigned int       			OW_UInt32;
-typedef int         				OW_Int32;
+typedef unsigned int       			UInt32;
+typedef int         				Int32;
 #elif OW_SIZEOF_LONG_INT == 4
-typedef unsigned long       		OW_UInt32;
-typedef long         				OW_Int32;
+typedef unsigned long       		UInt32;
+typedef long         				Int32;
 #endif
-
 #if OW_SIZEOF_LONG_INT == 8
-typedef unsigned long   OW_UInt64;
-typedef long    OW_Int64;
+typedef unsigned long   UInt64;
+typedef long    Int64;
 #elif OW_SIZEOF_LONG_LONG_INT == 8
-typedef unsigned long long 			OW_UInt64;
-typedef long long   				OW_Int64;
+typedef unsigned long long 			UInt64;
+typedef long long   				Int64;
 #else
 #error "Compiler must support 64 bit long"
 #endif
-
 #if OW_SIZEOF_DOUBLE == 8
-typedef double						OW_Real64;
+typedef double						Real64;
 #elif OW_SIZEOF_LONG_DOUBLE == 8
-typedef long double					OW_Real64;
+typedef long double					Real64;
 #endif
-
 #if OW_SIZEOF_FLOAT == 4
-typedef float						OW_Real32;
+typedef float						Real32;
 #elif OW_SIZEOF_DOUBLE == 4
-typedef double						OW_Real32;
+typedef double						Real32;
 #endif
-
-typedef off_t	OW_off_t;
-
-// OW_Select_t is the type of object that can be used in
+typedef off_t	off_t;
+// Select_t is the type of object that can be used in
 // synchronous I/O multiplexing (i.e. select). There is a
 // possibility this can be something other than an int on
 // a platform we don't yet support.
-typedef int OW_Select_t;
-
+typedef int Select_t;
 #ifdef OW_WIN32
 #define OW_SHAREDLIB_EXTENSION ".dll"
 #define OW_FILENAME_SEPARATOR "\\"
@@ -105,17 +95,15 @@ typedef int OW_Select_t;
 #define OW_FILENAME_SEPARATOR "/"
 #define OW_PATHNAME_SEPARATOR ":"
 #endif
-
-typedef int		OW_FileHandle;
-
+typedef int		FileHandle;
 #ifdef OW_WIN32
-typedef int OW_UserId;
-typedef DWORD OW_ProcId;
+typedef int UserId;
+typedef DWORD ProcId;
 #else
-typedef uid_t OW_UserId;
-typedef pid_t OW_ProcId;
+typedef uid_t UserId;
+typedef pid_t ProcId;
 #endif
 
+} // end namespace OpenWBEM
+
 #endif
-
-

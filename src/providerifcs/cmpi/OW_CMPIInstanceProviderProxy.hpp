@@ -30,26 +30,23 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_CMPI_INSTANCE_PROVIDER_PROXY_HPP_
 #define OW_CMPI_INSTANCE_PROVIDER_PROXY_HPP_
-
 #include "OW_config.h"
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-class OW_CMPIInstanceProviderProxy : public OW_InstanceProviderIFC
+namespace OpenWBEM
+{
+
+class CMPIInstanceProviderProxy : public InstanceProviderIFC
 {
 public:
-
-	OW_CMPIInstanceProviderProxy(const OW_CMPIFTABLERef& f)
+	CMPIInstanceProviderProxy(const CMPIFTABLERef& f)
 		: m_ftable(f)
 	{
 	}
-
-	virtual ~OW_CMPIInstanceProviderProxy();
-
-
+	virtual ~CMPIInstanceProviderProxy();
 	/**
 	 * This method enumerates
 	 * all instances of the class which is specified in className.  The entire
@@ -63,30 +60,29 @@ public:
 	 * @param localOnly If true, only the non-inherited properties are to be
 	 * 	returned, otherwise all properties are required.
 	 *
-	 * @returns An array of OW_CIMInstance containing names of the enumerated
+	 * @returns An array of CIMInstance containing names of the enumerated
 	 * 	instances.
 	 *
-	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist.
+	 * @throws CIMException - thrown if cop is incorrect or does not exist.
 	 */
 	virtual void enumInstanceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_CIMClass& cimClass );
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMObjectPathResultHandlerIFC& result,
+			const CIMClass& cimClass );
 	virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMInstanceResultHandlerIFC& result,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-			OW_WBEMFlags::EDeepFlag deep, 
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& requestedClass,
-			const OW_CIMClass& cimClass );
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMInstanceResultHandlerIFC& result,
+			WBEMFlags::ELocalOnlyFlag localOnly, 
+			WBEMFlags::EDeepFlag deep, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList,
+			const CIMClass& requestedClass,
+			const CIMClass& cimClass );
 	
 	/**
 	 * This method retrieves the instance specified in the object path.
@@ -103,33 +99,31 @@ public:
 	 *
 	 * @returns The retrieved instance
 	 *
-	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist
+	 * @throws CIMException - thrown if cop is incorrect or does not exist
 	 */
 	
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		OW_WBEMFlags::ELocalOnlyFlag localOnly,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass);
-
+	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
+		WBEMFlags::ELocalOnlyFlag localOnly,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray* propertyList, 
+		const CIMClass& cimClass);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * This method deletes the instance specified in the object path
 	 *
 	 * @param cop The instance to be deleted
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop);
-
+	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env,
+		const String& ns,
+		const CIMObjectPath& cop);
 	/**
 	 * This method creates the instance specified in the object path.  If the
-	 * instance does exist an OW_CIMException with ID CIM_ERR_ALREADY_EXISTS
+	 * instance does exist an CIMException with ID CIM_ERR_ALREADY_EXISTS
 	 * must be thrown.  The parameter should be the instance name.
 	 *
 	 * @param cop The path to the instance to be set.  The import part in
@@ -139,16 +133,15 @@ public:
 	 *
 	 * @returns A CIM ObjectPath of the instance that was created.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
 	
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef &env, const OW_String& ns,
-		const OW_CIMInstance& cimInstance);
-
+	virtual CIMObjectPath createInstance(
+		const ProviderEnvironmentIFCRef &env, const String& ns,
+		const CIMInstance& cimInstance);
 	/**
 	 * This method sets the instance specified in the object path.  If the
-	 * instance does not exist an OW_CIMException with ID CIM_ERR_NOT_FOUND
+	 * instance does not exist an CIMException with ID CIM_ERR_NOT_FOUND
 	 * must be thrown.  The parameter should be the instance name.
 	 *
 	 * @param cop The path of the instance to be set.  The important part in
@@ -156,20 +149,21 @@ public:
 	 *
 	 * @param cimInstance The instance to be set.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass);
+	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList,
+		const CIMClass& theClass);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 private:
-	OW_CMPIFTABLERef m_ftable;
+	CMPIFTABLERef m_ftable;
 };
 										
-#endif
 
+} // end namespace OpenWBEM
+
+#endif

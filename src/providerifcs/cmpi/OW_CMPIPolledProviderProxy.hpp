@@ -30,24 +30,23 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_CMPI_POLLED_PROVIDER_PROXY_HPP_
 #define OW_CMPI_POLLED_PROVIDER_PROXY_HPP_
-
 #include "OW_config.h"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-class OW_CMPIPolledProviderProxy: public OW_PolledProviderIFC
+namespace OpenWBEM
+{
+
+class CMPIPolledProviderProxy: public PolledProviderIFC
 {
 public:
-	OW_CMPIPolledProviderProxy(const OW_CMPIFTABLERef& f)
+	CMPIPolledProviderProxy(const CMPIFTABLERef& f)
 		: m_ftable(f)
 	{
 	}
-
-	virtual ~OW_CMPIPolledProviderProxy();
-
+	virtual ~CMPIPolledProviderProxy();
 	/**
 	 * The CIMOM calls this method when the method specified in the parameters
 	 * is to be invoked.
@@ -55,31 +54,29 @@ public:
 	 * @param cop Contains the path to the instance whose method must be
 	 * 	invoked.
 	 * @param methodName The name of the method.
-	 * @param inParams An array of OW_CIMValues which are the input parameters
+	 * @param inParams An array of CIMValues which are the input parameters
 	 * 	for this method.
-	 * @param outParams An array of OW_CIMValues which are the output
+	 * @param outParams An array of CIMValues which are the output
 	 * 	parameters for this method.
 	 *
-	 * @returns OW_CIMValue - The return value of the method.  Must be a
-	 *    valid OW_CIMValue.
+	 * @returns CIMValue - The return value of the method.  Must be a
+	 *    valid CIMValue.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env);
-
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env);
-	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& query, const OW_String& Type);
-	virtual void deactivateFilter(const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& query, const OW_String& Type);
-
-	virtual OW_CMPIPolledProviderProxy* getPolledProvider() { return this; }
-
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env);
+	virtual Int32 poll(const ProviderEnvironmentIFCRef &env);
+	virtual void activateFilter(const ProviderEnvironmentIFCRef& env,
+			const String& query, const String& Type);
+	virtual void deactivateFilter(const ProviderEnvironmentIFCRef& env,
+			const String& query, const String& Type);
+	virtual CMPIPolledProviderProxy* getPolledProvider() { return this; }
 private:
-	OW_CMPIFTABLERef m_ftable;
+	CMPIFTABLERef m_ftable;
 };
-
-//typedef OW_SharedLibraryReference<OW_CMPIPolledProviderIFC> OW_CMPIPolledProviderIFCRef;
+//typedef SharedLibraryReference<CMPIPolledProviderIFC> CMPIPolledProviderIFCRef;
 										
-#endif
 
+} // end namespace OpenWBEM
+
+#endif

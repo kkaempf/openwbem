@@ -27,14 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_PROVIDERIFC_HPP_
 #define OW_PROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_String.hpp"
-
 #include "OW_MethodProviderIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -43,9 +40,7 @@
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
-
 #include "OW_ProviderEnvironmentIFC.hpp"
-
 #include "OW_InstanceProviderInfo.hpp"
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderInfo.hpp"
@@ -53,8 +48,11 @@
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_IndicationProviderInfo.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * This class implements a bridge from the CIMOM's OW_ProviderManager to the
+ * This class implements a bridge from the CIMOM's ProviderManager to the
  * providers.  It's main function is location and creation.  This is a base
  * class, and the derived classes each will implement a certain interface to
  * different providers, such as perl, java, python, etc.  The derived classes
@@ -62,7 +60,7 @@
  *
  * Each Derived ProviderIFC must implement the following code:
  *
- * OW_PROVIDERIFCFACTORY(DerivedProviderIFC);
+ * PROVIDERIFCFACTORY(DerivedProviderIFC);
  *
  * Each provider interface must be compiled into it's own shared library.
  *
@@ -70,13 +68,11 @@
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class OW_ProviderIFCBaseIFC
+class ProviderIFCBaseIFC
 {
 public:
-	OW_ProviderIFCBaseIFC();
-
-	virtual ~OW_ProviderIFCBaseIFC();
-
+	ProviderIFCBaseIFC();
+	virtual ~ProviderIFCBaseIFC();
 	/**
 	 * Return the provider's name. The name will be used to identify this
 	 * provider interface from other provider interfaces.
@@ -84,25 +80,22 @@ public:
 	 * @returns The name of the provider interface.
 	 */
 	virtual const char* getName() const = 0;
-
 	/**
 	 * This public data member is to allow openwbem to easily check to make
 	 * sure that the provider interface is valid.  Since it will be compiled into
 	 * a shared library, openwbem cannot trust the code it loads.
 	 */
-	const OW_UInt32 signature;
-
+	const UInt32 signature;
 	/**
 	 * Called when the provider manager loads the interface
 	 */
-	void init(const OW_ProviderEnvironmentIFCRef& env,
-		OW_InstanceProviderInfoArray& i,
+	void init(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		OW_AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& a,
 #endif
-		OW_MethodProviderInfoArray& m,
-		OW_IndicationProviderInfoArray& ind);
-
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind);
 	/**
 	 * Locate an Instance provider.
 	 *
@@ -110,12 +103,11 @@ public:
 	 *								interface will use this to identify the provider
 	 *								being requested.
 	 *
-	 * @returns A ref counted OW_InstanceProvider. If the provider is not found,
-	 * then an OW_NoSuchProviderException is thrown.
+	 * @returns A ref counted InstanceProvider. If the provider is not found,
+	 * then an NoSuchProviderException is thrown.
 	 */
-	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
+	InstanceProviderIFCRef getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
 	/**
 	 * Locate a Method provider.
 	 *
@@ -123,12 +115,11 @@ public:
 	 *								interface will use this to identify the provider
 	 *								being requested.
 	 *
-	 * @returns A ref counted OW_MethodProvider. If the provider is not found,
-	 * then an OW_NoSuchProviderException is thrown.
+	 * @returns A ref counted MethodProvider. If the provider is not found,
+	 * then an NoSuchProviderException is thrown.
 	 */
-	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
+	MethodProviderIFCRef getMethodProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Locate an Associator provider.
@@ -137,31 +128,27 @@ public:
 	 *								interface will use this to identify the provider
 	 *								being requested.
 	 *
-	 * @returns A ref counted OW_AssociatorProvider. If the provider is not
-	 * found, then an OW_NoSuchProviderException is thrown.
+	 * @returns A ref counted AssociatorProvider. If the provider is not
+	 * found, then an NoSuchProviderException is thrown.
 	 */
-	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
+	AssociatorProviderIFCRef getAssociatorProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 #endif
-
 	/**
 	 * @return all available indication export providers from the available
 	 * provider interfaces.
 	 */
-	OW_IndicationExportProviderIFCRefArray getIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env);
-
+	IndicationExportProviderIFCRefArray getIndicationExportProviders(
+		const ProviderEnvironmentIFCRef& env);
 	/**
 	 * @return all available indication trigger providers from the available
 	 * provider interfaces.
 	 */
-	OW_PolledProviderIFCRefArray getPolledProviders(const OW_ProviderEnvironmentIFCRef& env);
-
+	PolledProviderIFCRefArray getPolledProviders(const ProviderEnvironmentIFCRef& env);
 	/**
 	 * Unload providers in memory that haven't been used for a while
 	 */
-	void unloadProviders(const OW_ProviderEnvironmentIFCRef& env);
-
+	void unloadProviders(const ProviderEnvironmentIFCRef& env);
 	/**
 	 * Locate an Indication provider.
 	 *
@@ -169,56 +156,50 @@ public:
 	 *								interface will use this to identify the provider
 	 *								being requested.
 	 *
-	 * @returns A ref counted OW_IndicationProvider. If the provider is not
-	 * found, then an OW_NoSuchProviderException is thrown.
+	 * @returns A ref counted IndicationProvider. If the provider is not
+	 * found, then an NoSuchProviderException is thrown.
 	 */
-	OW_IndicationProviderIFCRef getIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+	IndicationProviderIFCRef getIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
 protected:
 	/**
 	 * The derived classes must override these functions to implement the
 	 * desired functionality.
 	 */
-	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
-		OW_InstanceProviderInfoArray& i,
+	virtual void doInit(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		OW_AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& a,
 #endif
-		OW_MethodProviderInfoArray& m,
-		OW_IndicationProviderInfoArray& ind) = 0;
-
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind) = 0;
+	virtual InstanceProviderIFCRef doGetInstanceProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
-
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
+	virtual MethodProviderIFCRef doGetMethodProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual AssociatorProviderIFCRef doGetAssociatorProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 #endif
-
-	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
+		const ProviderEnvironmentIFCRef& env
 		) = 0;
-
-	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual PolledProviderIFCRefArray doGetPolledProviders(
+		const ProviderEnvironmentIFCRef& env
 		) = 0;
-
-	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual IndicationProviderIFCRef doGetIndicationProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
-
-	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env) = 0;
+	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env) = 0;
 };
 
-typedef OW_SharedLibraryReference<OW_ProviderIFCBaseIFC> OW_ProviderIFCBaseIFCRef;
+typedef SharedLibraryReference<ProviderIFCBaseIFC> ProviderIFCBaseIFCRef;
+
+} // end namespace OpenWBEM
 
 #define OW_PROVIDERIFCFACTORY(prov) \
-extern "C" OW_ProviderIFCBaseIFC* \
+extern "C" OpenWBEM::ProviderIFCBaseIFC* \
 createProviderIFC() \
 { \
 	return new prov; \
@@ -230,4 +211,3 @@ getOWVersion() \
 }
 
 #endif
-

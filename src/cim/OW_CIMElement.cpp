@@ -27,13 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////				
-OW_String OW_CIMElement::toString() const
+String CIMElement::toString() const
 {
 	return getName();
 }
+
+} // end namespace OpenWBEM
 

@@ -27,42 +27,41 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_INDICATION_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 #define OW_INDICATION_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_ProviderInfoBase.hpp"
 
-struct OW_IndicationProviderInfoEntry
+namespace OpenWBEM
 {
-	explicit OW_IndicationProviderInfoEntry(OW_String const& indicationName_)
+
+struct IndicationProviderInfoEntry
+{
+	explicit IndicationProviderInfoEntry(String const& indicationName_)
 		: indicationName(indicationName_)
 	{}
-	OW_IndicationProviderInfoEntry(OW_String const& indicationName_, OW_StringArray const& namespaces_, OW_StringArray const& classes_ = OW_StringArray())
+	IndicationProviderInfoEntry(String const& indicationName_, StringArray const& namespaces_, StringArray const& classes_ = StringArray())
 		: indicationName(indicationName_)
 		, namespaces(namespaces_)
 		, classes(classes_)
 	{}
-	OW_String indicationName;
-	OW_StringArray namespaces;
-	OW_StringArray classes;
+	String indicationName;
+	StringArray namespaces;
+	StringArray classes;
 };
 
-
-class OW_IndicationProviderInfo : public OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>
+class IndicationProviderInfo : public ProviderInfoBase<IndicationProviderInfoEntry>
 {
 public:
 	// pull the names into this class
-	using OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>::ClassInfo;
-	using OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>::ClassInfoArray;
-
+	using ProviderInfoBase<IndicationProviderInfoEntry>::ClassInfo;
+	using ProviderInfoBase<IndicationProviderInfoEntry>::ClassInfoArray;
 };
 
-typedef OW_Array<OW_IndicationProviderInfo> OW_IndicationProviderInfoArray;
+typedef Array<IndicationProviderInfo> IndicationProviderInfoArray;
 
-extern template class OW_ProviderInfoBase<OW_IndicationProviderInfoEntry>;
+extern template class ProviderInfoBase<IndicationProviderInfoEntry>;
+
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -29,43 +29,41 @@
  ******************************************************************************/
 #ifndef OW_ATOMIC_OPS_HPP_
 #define OW_ATOMIC_OPS_HPP_
-
 #include "OW_config.h"
 
 #if defined(__i386__) && defined(__GNUC__)
+
+namespace OpenWBEM
+{
+
 // use fast inline assembly versions
-struct OW_Atomic_t
+struct Atomic_t
 { 
-	OW_Atomic_t() : val(0) {}
-	OW_Atomic_t(int i) : val(i) {}
+	Atomic_t() : val(0) {}
+	Atomic_t(int i) : val(i) {}
 	volatile int val; 
 };
-
-inline void OW_AtomicInc(OW_Atomic_t &v)
+inline void AtomicInc(Atomic_t &v)
 {
 	__asm__ __volatile__(
 		"lock ; " "incl %0"
 		:"=m" (v.val)
 		:"m" (v.val));
 }
-
-inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+inline bool AtomicDecAndTest(Atomic_t &v)
 {
 	unsigned char c;
-
 	__asm__ __volatile__(
 		"lock ; " "decl %0; sete %1"
 		:"=m" (v.val), "=qm" (c)
 		:"m" (v.val) : "memory");
 	return c != 0;
 }
-
-inline int OW_AtomicGet(OW_Atomic_t const &v)
+inline int AtomicGet(Atomic_t const &v)
 {
 	return v.val;
 }
-
-inline void OW_AtomicDec(OW_Atomic_t &v)
+inline void AtomicDec(Atomic_t &v)
 {
 	__asm__ __volatile__(
 		"lock ; " "decl %0"
@@ -73,16 +71,19 @@ inline void OW_AtomicDec(OW_Atomic_t &v)
 		:"m" (v.val));
 }
 
+} // end namespace OpenWBEM
+
 #elif defined(__ppc__) && defined(__GNUC__)
+
+namespace OpenWBEM
+{
+
 // use fast inline assembly versions
-typedef struct { volatile int val; } OW_Atomic_t;
-
+typedef struct { volatile int val; } Atomic_t;
 #define OW_ATOMIC(i)	{ (i) }
-
-inline void OW_AtomicInc(OW_Atomic_t &v)
+inline void AtomicInc(Atomic_t &v)
 {
 	int t;
-
 	__asm__ __volatile__(
 		"1:	lwarx   %0,0,%2\n"
 		"	addic   %0,%0,1\n"
@@ -91,13 +92,10 @@ inline void OW_AtomicInc(OW_Atomic_t &v)
 		: "=&r" (t), "=m" (v.val)
 		: "r" (&v.val), "m" (v.val)
 		: "cc");
-
 }
-
-inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+inline bool AtomicDecAndTest(Atomic_t &v)
 {
 	int c;
-
 	__asm__ __volatile__(
 		"1:	lwarx   %0,0,%1\n"
 		"	addic   %0,%0,-1\n"
@@ -107,19 +105,15 @@ inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 		: "=&r" (c)
 		: "r" (&v.val)
 		: "cc", "memory");
-
 	return c == 0;
 }
-
-inline int OW_AtomicGet(OW_Atomic_t const &v)
+inline int AtomicGet(Atomic_t const &v)
 {
 	return v.val;
 }
-
-inline void OW_AtomicDec(OW_Atomic_t &v)
+inline void AtomicDec(Atomic_t &v)
 {
 	int c;
-
 	__asm__ __volatile__(
 		"1:	lwarx   %0,0,%2\n"
 		"	addic   %0,%0,-1\n"
@@ -128,73 +122,81 @@ inline void OW_AtomicDec(OW_Atomic_t &v)
 		: "=&r" (c), "=m" (v.val)
 		: "r" (&v.val), "m" (v.val)
 		: "cc");
-
 }
+
+} // end namespace OpenWBEM
 
 #elif defined(OW_WIN32)
 #include <Windows.h>
+
+namespace OpenWBEM
+{
+
 // use fast inline assembly versions
-struct OW_Atomic_t
+struct Atomic_t
 { 
-	OW_Atomic_t() : val(0) {}
-	OW_Atomic_t(int i) : val(i) {}
+	Atomic_t() : val(0) {}
+	Atomic_t(int i) : val(i) {}
 	volatile LONG val; 
 };
-
-inline void OW_AtomicInc(OW_Atomic_t &v)
+inline void AtomicInc(Atomic_t &v)
 {
 	InterlockedIncrement(&v.val); 
 }
-
-inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+inline bool AtomicDecAndTest(Atomic_t &v)
 {
 	return InterlockedDecrement(&v.val) == 0;
 }
-
-inline int OW_AtomicGet(OW_Atomic_t const &v)
+inline int AtomicGet(Atomic_t const &v)
 {
 	return v.val;
 }
-
-inline void OW_AtomicDec(OW_Atomic_t &v)
+inline void AtomicDec(Atomic_t &v)
 {
 	InterlockedDecrement(&v.val);
 }
 
-#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
+} // end namespace OpenWBEM
 
+#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
 #include <pthread.h>
-struct OW_Atomic_t
+
+namespace OpenWBEM
 {
-	OW_Atomic_t();
-	OW_Atomic_t(int i);
+
+struct Atomic_t
+{
+	Atomic_t();
+	Atomic_t(int i);
 	int val;
 	pthread_spinlock_t spinlock;
 };
+void AtomicInc(Atomic_t &v);
+bool AtomicDecAndTest(Atomic_t &v);
+int AtomicGet(Atomic_t const &v);
+void AtomicDec(Atomic_t &v);
 
-void OW_AtomicInc(OW_Atomic_t &v);
-bool OW_AtomicDecAndTest(OW_Atomic_t &v);
-int OW_AtomicGet(OW_Atomic_t const &v);
-void OW_AtomicDec(OW_Atomic_t &v);
-
+} // end namespace OpenWBEM
 
 #else
 // use slow mutex protected versions
-#define OW_USE_DEFAULT_ATOMIC_OPS // used in OW_AtomicOps.cpp
+#define OW_USE_OW_DEFAULT_ATOMIC_OPS // used in OW_AtomicOps.cpp
 
+namespace OpenWBEM
+{
 
-struct OW_Atomic_t
+struct Atomic_t
 { 
-	OW_Atomic_t() : val(0) {}
-	OW_Atomic_t(int i) : val(i) {}
+	Atomic_t() : val(0) {}
+	Atomic_t(int i) : val(i) {}
 	volatile int val; 
 };
+void AtomicInc(Atomic_t &v);
+bool AtomicDecAndTest(Atomic_t &v);
+int AtomicGet(Atomic_t const &v);
+void AtomicDec(Atomic_t &v);
 
-void OW_AtomicInc(OW_Atomic_t &v);
-bool OW_AtomicDecAndTest(OW_Atomic_t &v);
-int OW_AtomicGet(OW_Atomic_t const &v);
-void OW_AtomicDec(OW_Atomic_t &v);
+} // end namespace OpenWBEM
 
 #endif
-
 #endif

@@ -27,54 +27,48 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
-
 #include "OW_Thread.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include "OW_ThreadBarrier.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
-
 #include <cstring>
 #include <cstdio>
 #include <cerrno>
 #include <iostream>
 #include <csignal>
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
 DEFINE_EXCEPTION(Thread);
 DEFINE_EXCEPTION(CancellationDenied);
-
 //////////////////////////////////////////////////////////////////////
 // this is what's really passed to threadRunner
-struct OW_ThreadParam
+struct ThreadParam
 {
-	OW_ThreadParam(OW_Thread* t, const OW_Reference<OW_ThreadDoneCallback>& c, const OW_ThreadBarrier& b)
+	ThreadParam(Thread* t, const Reference<ThreadDoneCallback>& c, const ThreadBarrier& b)
 		: thread(t)
 		, cb(c)
 		, barrier(b)
 	{}
-
-	OW_Thread* thread;
-	OW_Reference<OW_ThreadDoneCallback> cb;
-	OW_ThreadBarrier barrier;
+	Thread* thread;
+	Reference<ThreadDoneCallback> cb;
+	ThreadBarrier barrier;
 };
-
-
-static OW_Thread_t zeroThread();
-static OW_Thread_t NULLTHREAD = zeroThread();
-
+static Thread_t zeroThread();
+static Thread_t NULLTHREAD = zeroThread();
 //////////////////////////////////////////////////////////////////////
 static inline bool
-sameId(const OW_Thread_t& t1, const OW_Thread_t& t2)
+sameId(const Thread_t& t1, const Thread_t& t2)
 {
-	return OW_ThreadImpl::sameThreads(t1, t2);
+	return ThreadImpl::sameThreads(t1, t2);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Constructor
-OW_Thread::OW_Thread() 
+Thread::Thread() 
 	: m_id(NULLTHREAD)
 	, m_isRunning(false)
 	, m_isStarting(false)
@@ -82,10 +76,9 @@ OW_Thread::OW_Thread()
 	, m_cancelled(false)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Destructor
-OW_Thread::~OW_Thread()
+Thread::~Thread()
 {
 	try
 	{
@@ -93,15 +86,14 @@ OW_Thread::~OW_Thread()
 		{
 			join();
 		}
-		catch (OW_ThreadException& e)
+		catch (ThreadException& e)
 		{
 			// this will happen if join has already been called
 		}
-
 		OW_ASSERT(m_isRunning == false);
 		if(!sameId(m_id, NULLTHREAD))
 		{
-			OW_ThreadImpl::destroyThread(m_id);
+			ThreadImpl::destroyThread(m_id);
 		}
 	}
 	catch (...)
@@ -109,107 +101,86 @@ OW_Thread::~OW_Thread()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Start the thread
 void
-OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb)
+Thread::start(Reference<ThreadDoneCallback> cb)
 {
 	if(isRunning())
 	{
-		OW_THROW(OW_ThreadException,
-			"OW_Thread::start - thread is already running");
+		OW_THROW(ThreadException,
+			"Thread::start - thread is already running");
 	}
-
 	if(!sameId(m_id, NULLTHREAD))
 	{
-		OW_THROW(OW_ThreadException,
-			"OW_Thread::start - cannot start previously run thread");
+		OW_THROW(ThreadException,
+			"Thread::start - cannot start previously run thread");
 	}
-
 	m_isStarting = true;
-
-	OW_UInt32 flgs = OW_THREAD_FLG_JOINABLE;
-
-	OW_ThreadBarrier barrier(2);
+	UInt32 flgs = OW_THREAD_FLG_JOINABLE;
+	ThreadBarrier barrier(2);
 	// p will be delted by threadRunner
-	OW_ThreadParam* p = new OW_ThreadParam(this, cb, barrier);
-	if(OW_ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
+	ThreadParam* p = new ThreadParam(this, cb, barrier);
+	if(ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
 	{
-		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
+		OW_THROW(Assertion, "ThreadImpl::createThread failed");
 	}
-
 	m_isStarting = false;
-
 	barrier.wait();
-
 	// Note that you can't do *anything* with the this pointer after barrier.wait()
 	// returns, because it may have been deleted already by the thread itself.
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Wait for this object's thread execution (if any) to complete.
-OW_Int32
-OW_Thread::join()
+Int32
+Thread::join()
 {
 	OW_ASSERT(!sameId(m_id, NULLTHREAD));
-
-	OW_Int32 rval;
-	if(OW_ThreadImpl::joinThread(m_id, rval) != 0)
+	Int32 rval;
+	if(ThreadImpl::joinThread(m_id, rval) != 0)
 	{
-		OW_THROW(OW_ThreadException,
-			format("OW_Thread::join - OW_ThreadImpl::joinThread: %1(%2)", 
+		OW_THROW(ThreadException,
+			format("Thread::join - ThreadImpl::joinThread: %1(%2)", 
 				   errno, strerror(errno)).c_str());
 	}
-
 	// need to set this to false, since the thread may have been cancelled, in which case the m_isRunning flag will be wrong.
 	m_isRunning = false;
-
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 // Method used for starting threads
-OW_Int32
-OW_Thread::threadRunner(void* paramPtr)
+Int32
+Thread::threadRunner(void* paramPtr)
 {
-	OW_Thread_t theThreadID;
-	OW_Int32 rval = -1;
+	Thread_t theThreadID;
+	Int32 rval = -1;
 	try
 	{
 		// scope is important so destructors will run before the thread is clobbered by exitThread
 		OW_ASSERT(paramPtr != NULL);
-
-		OW_ThreadParam* pParam = static_cast<OW_ThreadParam*>(paramPtr);
-		OW_Thread* pTheThread = pParam->thread;
-		OW_ThreadImpl::saveThreadInTLS(pTheThread);
+		ThreadParam* pParam = static_cast<ThreadParam*>(paramPtr);
+		Thread* pTheThread = pParam->thread;
+		ThreadImpl::saveThreadInTLS(pTheThread);
 		theThreadID = pTheThread->m_id;
-		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
-		OW_ThreadBarrier barrier = pParam->barrier;
-
+		Reference<ThreadDoneCallback> cb = pParam->cb;
+		ThreadBarrier barrier = pParam->barrier;
 		pTheThread->m_isRunning = true;
-
 		barrier.wait();
-
 		try
 		{
 			rval = pTheThread->run();
 		}
-		catch (OW_ThreadCancelledException&)
+		catch (ThreadCancelledException&)
 		{
 		}
-
-
 		{
-			OW_NonRecursiveMutexLock l(pTheThread->m_cancelLock);
+			NonRecursiveMutexLock l(pTheThread->m_cancelLock);
 			pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 			pTheThread->m_cancelled = true;
 			pTheThread->m_cancelCond.notifyAll();
 		}
-
 		delete pParam;
-
 		// Note that this *has* to come after the 'delete pTheThread' statement.
 		// This is because during shutdown the notifyThreadDone will decrement
 		// the # of threads running, which will allow shutdown to proceed once
@@ -220,94 +191,81 @@ OW_Thread::threadRunner(void* paramPtr)
 		{
 			cb->notifyThreadDone(pTheThread);
 		}
-
 	}
-	catch (OW_Exception& ex)
+	catch (Exception& ex)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Exception: " << ex.type() << " caught in OW_Thread class\n";
+		std::cerr << "!!! Exception: " << ex.type() << " caught in Thread class\n";
 		std::cerr << ex << std::endl;
 #endif
 	}
 	catch (...)
 	{
 #ifdef OW_DEBUG		
-		std::cerr << "!!! Unknown Exception caught in OW_Thread class" << std::endl;
+		std::cerr << "!!! Unknown Exception caught in Thread class" << std::endl;
 #endif
 	}
-
 	// end the thread.  exitThread never returns.
-	OW_ThreadImpl::exitThread(theThreadID, rval);
+	ThreadImpl::exitThread(theThreadID, rval);
 	return rval;
 }
-
 //////////////////////////////////////////////////////////////////////
-static OW_Thread_t
+static Thread_t
 zeroThread()
 {
-	OW_Thread_t zthr;
+	Thread_t zthr;
 	::memset(&zthr, 0, sizeof(zthr));
 	return zthr;
 }
-
 //////////////////////////////////////////////////////////////////////
 void
-OW_Thread::cooperativeCancel()
+Thread::cooperativeCancel()
 {
 	if (!isRunning())
 		return;
-
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
-
-	OW_NonRecursiveMutexLock l(m_cancelLock);
+	NonRecursiveMutexLock l(m_cancelLock);
 	m_cancelRequested = true;
-
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
-	// SIGUSR1 is ignored.  It's set to SIG_IGN in OW_ThreadImpl.cpp
-	// If the thread has already exited, an OW_ThreadException will be thrown
+	// SIGUSR1 is ignored.  It's set to SIG_IGN in ThreadImpl.cpp
+	// If the thread has already exited, an ThreadException will be thrown
 	// we just want to ignore that.
 	try
 	{
-		OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+		ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
 	}
-	catch (OW_ThreadException&) 
+	catch (ThreadException&) 
 	{
 	}
 }
-
 //////////////////////////////////////////////////////////////////////
 bool
-OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
+Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 {
 	if (!isRunning())
 		return true;
-
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
-
-	OW_NonRecursiveMutexLock l(m_cancelLock);
+	NonRecursiveMutexLock l(m_cancelLock);
 	m_cancelRequested = true;
-
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
-	// SIGUSR1 is ignored.  It's set to SIG_IGN in OW_ThreadImpl.cpp
-	// If the thread has already exited, an OW_ThreadException will be thrown
+	// SIGUSR1 is ignored.  It's set to SIG_IGN in ThreadImpl.cpp
+	// If the thread has already exited, an ThreadException will be thrown
 	// we just want to ignore that.
 	try
 	{
-		OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+		ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
 	}
-	catch (OW_ThreadException&) 
+	catch (ThreadException&) 
 	{
 	}
-
 	while (!m_cancelled && isRunning())
 	{
 		if (!m_cancelCond.timedWait(l, waitForCooperativeSecs, 0))
 		{
 			// give the thread a chance to clean up a bit or abort the cancellation.
 			doDefinitiveCancel();
-
 			// thread didn't (or won't) exit by itself, we'll have to really kill it.
 			if (!m_cancelled && isRunning())
 			{
@@ -318,39 +276,35 @@ OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
 	}
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////
 void
-OW_Thread::cancel()
+Thread::cancel()
 {
-	// Ignore errors from OW_ThreadImpl (usually caused by the fact that the thread has already exited)
+	// Ignore errors from ThreadImpl (usually caused by the fact that the thread has already exited)
 	try
 	{
-		OW_ThreadImpl::cancel(m_id);
+		ThreadImpl::cancel(m_id);
 	}
-	catch (OW_ThreadException&)
+	catch (ThreadException&)
 	{
 	}
 }
-
 //////////////////////////////////////////////////////////////////////
 void
-OW_Thread::testCancel()
+Thread::testCancel()
 {
-	OW_ThreadImpl::testCancel();
+	ThreadImpl::testCancel();
 }
-
-
 //////////////////////////////////////////////////////////////////////
 void 
-OW_Thread::doCooperativeCancel()
+Thread::doCooperativeCancel()
 {
 }
-
 //////////////////////////////////////////////////////////////////////
 void 
-OW_Thread::doDefinitiveCancel()
+Thread::doDefinitiveCancel()
 {
 }
 
+} // end namespace OpenWBEM
 

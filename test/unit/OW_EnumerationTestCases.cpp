@@ -41,6 +41,8 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
+using namespace OpenWBEM;
+
 void OW_EnumerationTestCases::setUp()
 {
 }
@@ -54,22 +56,22 @@ void OW_EnumerationTestCases::testAll()
 {
 	try
 	{
-		OW_Enumeration<OW_String> e;
+		Enumeration<String> e;
 		for (unsigned int i = 1; i <= loopVal; i++)
 		{
-			e.addElement(OW_String(i));
+			e.addElement(String(i));
 		}
 		for (unsigned int i = 0; i < loopVal; ++i)
 		{
 			unitAssert(e.hasMoreElements());
 			unitAssert(e.numberOfElements() == loopVal - i);
-			unitAssert(e.nextElement() == OW_String(i + 1));
+			unitAssert(e.nextElement() == String(i + 1));
 		}
 		unitAssert(!e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 0);
 		unitAssertThrows(e.nextElement());
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 		throw;
@@ -81,23 +83,23 @@ void OW_EnumerationTestCases::testAllBig()
 {
 	try
 	{
-		OW_Enumeration<OW_String> e;
+		Enumeration<String> e;
 		for (unsigned int i = 1; i <= bigLoopVal; i++)
 		{
-			e.addElement(OW_String(i));
+			e.addElement(String(i));
 		}
 		for (unsigned int i = 0; i < bigLoopVal; ++i)
 		{
 			unitAssert(e.hasMoreElements());
 			unitAssert(e.numberOfElements() == bigLoopVal - i);
-			OW_String foo = e.nextElement();
-			unitAssert(foo == OW_String(i + 1));
+			String foo = e.nextElement();
+			unitAssert(foo == String(i + 1));
 		}
 		unitAssert(!e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 0);
 		unitAssertThrows(e.nextElement());
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 		throw;
@@ -108,24 +110,24 @@ void OW_EnumerationTestCases::testQueue()
 {
 	try
 	{
-		OW_Enumeration<OW_String> e;
+		Enumeration<String> e;
 		// now test it's queue like capabilities
 		e.addElement("9");
 		for (unsigned int i = 10; i <= loopVal; ++i)
 		{
-			e.addElement(OW_String(i));
+			e.addElement(String(i));
 			unitAssert(e.hasMoreElements());
 			unitAssert(e.numberOfElements() == 2);
-			unitAssert(e.nextElement() == OW_String(i - 1));
+			unitAssert(e.nextElement() == String(i - 1));
 		}
 		unitAssert(e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 1);
-		unitAssert(e.nextElement() == OW_String(loopVal));
+		unitAssert(e.nextElement() == String(loopVal));
 		unitAssert(!e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 0);
 		unitAssertThrows(e.nextElement());
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cout << e;
 		throw;
@@ -136,25 +138,25 @@ void OW_EnumerationTestCases::testQueueBig()
 {
 	try
 	{
-		OW_Enumeration<OW_String> e;
+		Enumeration<String> e;
 		// now test it's queue like capabilities
 		e.addElement("9");
 		for (unsigned int i = 10; i <= bigLoopVal; ++i)
 		{
-			e.addElement(OW_String(i));
+			e.addElement(String(i));
 			unitAssert(e.hasMoreElements());
 			unitAssert(e.numberOfElements() == 2);
-			OW_String foo = e.nextElement();
-			unitAssert(foo == OW_String(i - 1));
+			String foo = e.nextElement();
+			unitAssert(foo == String(i - 1));
 		}
 		unitAssert(e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 1);
-		unitAssert(e.nextElement() == OW_String(bigLoopVal));
+		unitAssert(e.nextElement() == String(bigLoopVal));
 		unitAssert(!e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 0);
 		unitAssertThrows(e.nextElement());
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cout << e;
 		throw;
@@ -163,7 +165,7 @@ void OW_EnumerationTestCases::testQueueBig()
 
 void OW_EnumerationTestCases::testCreation()
 {
-	OW_Enumeration<OW_String> e;
+	Enumeration<String> e;
 	e.addElement("5");
 	unitAssert(e.numberOfElements() == 1);
 }
@@ -172,26 +174,26 @@ void OW_EnumerationTestCases::testInputIterator()
 {
 	try
 	{
-		OW_Enumeration<OW_String> e;
+		Enumeration<String> e;
 		for (unsigned int i = 1; i <= loopVal; i++)
 		{
-			e.addElement(OW_String(i));
+			e.addElement(String(i));
 		}
 
-		std::vector<OW_String> vec;
-		std::copy(OW_Enumeration_input_iterator<OW_String>(e), // start of source
-			OW_Enumeration_input_iterator<OW_String>(), // end of source
+		std::vector<String> vec;
+		std::copy(Enumeration_input_iterator<String>(e), // start of source
+			Enumeration_input_iterator<String>(), // end of source
 			std::back_inserter(vec)); // destination
 
 		for (unsigned int i = 0; i < loopVal; ++i)
 		{
-			unitAssert(vec[i] == OW_String(i + 1));
+			unitAssert(vec[i] == String(i + 1));
 		}
 		unitAssert(!e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 0);
 		unitAssertThrows(e.nextElement());
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cout << e << endl;
 		throw;
@@ -202,26 +204,26 @@ void OW_EnumerationTestCases::testInsertIterator()
 {
 	try
 	{
-		std::vector<OW_String> as;
+		std::vector<String> as;
 		for (unsigned int i = 1; i <= loopVal; i++)
 		{
-			as.push_back(OW_String(i));
+			as.push_back(String(i));
 		}
 
-		OW_Enumeration<OW_String> e;
-		std::copy(as.begin(), as.end(), OW_Enumeration_insert_iterator<OW_String>(e));
+		Enumeration<String> e;
+		std::copy(as.begin(), as.end(), Enumeration_insert_iterator<String>(e));
 
 		for (unsigned int i = 0; i < loopVal; ++i)
 		{
 			unitAssert(e.hasMoreElements());
 			unitAssert(e.numberOfElements() == loopVal - i);
-			unitAssert(e.nextElement() == OW_String(i + 1));
+			unitAssert(e.nextElement() == String(i + 1));
 		}
 		unitAssert(!e.hasMoreElements());
 		unitAssert(e.numberOfElements() == 0);
 		unitAssertThrows(e.nextElement());
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		cout << e << endl;
 		throw;
@@ -230,9 +232,9 @@ void OW_EnumerationTestCases::testInsertIterator()
 
 void OW_EnumerationTestCases::testReleaseFile()
 {
-	OW_String file;
+	String file;
 	{
-		OW_Enumeration<OW_String> e;
+		Enumeration<String> e;
 		e.addElement("5");
 		unitAssert(e.numberOfElements() == 1);
 		e.addElement("a");
@@ -242,11 +244,11 @@ void OW_EnumerationTestCases::testReleaseFile()
 		unitAssert(file.length() > 0);
 		unitAssert(e.numberOfElements() == 0);
 	}
-	OW_Enumeration<OW_String> e2(file);
+	Enumeration<String> e2(file);
 	unitAssert(e2.numberOfElements() == 2);
-	unitAssert(e2.nextElement() == OW_String("5"));
+	unitAssert(e2.nextElement() == String("5"));
 	unitAssert(e2.numberOfElements() == 1);
-	unitAssert(e2.nextElement() == OW_String("a"));
+	unitAssert(e2.nextElement() == String("a"));
 	unitAssert(e2.numberOfElements() == 0);
 }
 

@@ -27,25 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #include "OW_config.h"
 #include <iostream>
 #include <stdio.h>
-
 extern "C"
 {
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 }
-
 using std::cin;
 using std::endl;
-
 //////////////////////////////////////////////////////////////////////////////
 int
 MY_PAM_conv(int num_msg, const struct pam_message **msgm,
@@ -53,12 +48,9 @@ MY_PAM_conv(int num_msg, const struct pam_message **msgm,
 {
 	int count=0;
 	struct pam_response *reply;
-
 	if (num_msg <= 0)
 		return PAM_CONV_ERR;
-
 	//D(("allocating empty response structure array."));
-
 	reply = static_cast<struct pam_response *>(calloc(num_msg, sizeof(struct pam_response)));
 	if (reply == NULL)
 	{
@@ -66,13 +58,10 @@ MY_PAM_conv(int num_msg, const struct pam_message **msgm,
 		return PAM_CONV_ERR;
 	}
 	bool failed(false);
-
 	//D(("entering conversation function."));
-
 	for (count=0; count < num_msg; ++count)
 	{
 		char *string=NULL;
-
 		if (failed == true)
 		{
 			break;
@@ -122,24 +111,20 @@ MY_PAM_conv(int num_msg, const struct pam_message **msgm,
 						  ,msgm[count]->msg_style);
 				failed = true;
 		}
-
 		if (string)
 		{								  /* must add to reply array */
 			/* add string to list of responses */
-
 			reply[count].resp_retcode = 0;
 			reply[count].resp = string;
 			string = NULL;
 		}
 	}
-
 	/* New (0.59+) behavior is to always have a reply - this is
 		compatable with the X/Open (March 1997) spec. */
 	if (!failed)
 	{
 		*response = reply;
 		reply = NULL;
-
 	}
 	else
 	{
@@ -181,60 +166,43 @@ bool
 authenticate(const char* userName,
 					const char* password)
 {
-
 	char* pPasswd = strdup(password);
 	char* pUserName = strdup(userName);
-
 	struct pam_conv conv = {
 		MY_PAM_conv,
 		pPasswd
 	};
-
 	pam_handle_t *pamh=NULL;
 	int rval;
-
 	rval = pam_start("openwbem", pUserName, &conv, &pamh);
-
 	if (rval == PAM_SUCCESS)
 		rval = pam_authenticate(pamh, 0);	 /* is user really user? */
-
 	if (rval == PAM_SUCCESS)
 		rval = pam_acct_mgmt(pamh, 0);		 /* permitted access? */
-
 	if (rval == PAM_CONV_ERR)
 	{
 		pam_end(pamh, rval);
 		free(pUserName);
 		exit(1);
 	}
-
-
 	if (pam_end(pamh,rval) != PAM_SUCCESS)
 	{		// close Linux-PAM
 		pamh = NULL;
 		exit(1);
 	}
-
 	free(pUserName);
 	return( rval == PAM_SUCCESS ? true : false );		 /* indicate success */
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int main()
 {
 	char name[80];
 	char passwd[80];
-
 	memset(name, 0, sizeof(name));
 	memset(passwd, 0, sizeof(passwd));
-
 	cin >> name;
 	cin >> passwd;
-
 	bool rval = authenticate(name, passwd);
-
 	return (rval == true) ? 0: 1;
 }
-
 

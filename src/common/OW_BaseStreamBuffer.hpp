@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_BASESTREAMBUFFER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
@@ -38,11 +36,12 @@
 #include <streambuf.h>
 #endif
 
+namespace OpenWBEM
+{
+
 const size_t BASE_BUF_SIZE = 256;
 const size_t HTTP_BUF_SIZE = 4096;
-
-
-class OW_BaseStreamBuffer : public std::streambuf
+class BaseStreamBuffer : public std::streambuf
 {
 public:
 	/**
@@ -50,24 +49,20 @@ public:
 	 * @param bufSize size of buffer
 	 * @param direction "in", "out", or "io"
 	 */
-	OW_BaseStreamBuffer(size_t bufSize = BASE_BUF_SIZE,
+	BaseStreamBuffer(size_t bufSize = BASE_BUF_SIZE,
 			const char* direction = "io");
-	~OW_BaseStreamBuffer();
-
+	~BaseStreamBuffer();
 protected:
 	// for input
 	int underflow();
 	//int pbackfail(int c);
-
 	// for output
 	std::streamsize xsputn(const char* s, std::streamsize n);
 	int overflow(int c = EOF);
 	virtual int sync();
-
 	virtual void initBuffers();
 	virtual void initGetBuffer();
 	virtual void initPutBuffer();
-
 	// meant to be overwritten (at least one of them)
 	/**
 	 * Writes the buffer to the "device"
@@ -88,21 +83,18 @@ protected:
 	 *             return the number of bytes read into the buffer.
 	 */
 	virtual int buffer_from_device(char* c, int n);
-
 private:
-
 	std::streamsize m_bufSize;
 	char* m_inputBuffer;
 	char* m_outputBuffer;
-
 	int buffer_in();
 	int buffer_out();
-
 	// prohibit copying and assigning
 	// NO IMPLEMENTATION
-	OW_BaseStreamBuffer(const OW_BaseStreamBuffer& arg);
-	OW_BaseStreamBuffer& operator=(const OW_BaseStreamBuffer& arg);
-
+	BaseStreamBuffer(const BaseStreamBuffer& arg);
+	BaseStreamBuffer& operator=(const BaseStreamBuffer& arg);
 };
+
+} // end namespace OpenWBEM
 
 #endif

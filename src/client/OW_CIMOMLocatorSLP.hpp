@@ -27,34 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMOMLOCATORSLP_HPP_INCLUDE_GUARD_
 #define OW_CIMOMLOCATORSLP_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_CIMOMLocator.hpp"
-
 #ifdef OW_HAVE_SLP_H
 #include <slp.h>
-
 #define OW_CIMOM_SLP_SERVICE_TYPE "CIM-Object-Manager"
 #define OW_CIMOM_SLP_URL_PREFIX "service:"OW_CIMOM_SLP_SERVICE_TYPE":"
 
-class OW_CIMOMLocatorSLP : public OW_CIMOMLocator
+namespace OpenWBEM
+{
+
+class CIMOMLocatorSLP : public CIMOMLocator
 {
 public:
-	OW_CIMOMLocatorSLP(); 
-
-	OW_CIMOMInfoArray findCIMOMs();
-
-	virtual ~OW_CIMOMLocatorSLP();
+	CIMOMLocatorSLP(); 
+	CIMOMInfoArray findCIMOMs();
+	virtual ~CIMOMLocatorSLP();
 private:
 	SLPHandle m_hslp; 
-
-	static void processAttributes(const OW_String& attrs, OW_CIMOMInfo& info);
-
+	static void processAttributes(const String& attrs, CIMOMInfo& info);
 };
+#endif // OW_HAVE_SLP_H
 
-#endif // HAVE_SLP_H
+} // end namespace OpenWBEM
+
 #endif
-

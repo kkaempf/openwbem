@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_Format.hpp"
@@ -35,53 +34,47 @@
 #include "OW_StringStream.hpp"
 #include "OW_IOException.hpp"
 #include "OW_BinarySerialization.hpp"
-
 #include <cstring>
+
+namespace OpenWBEM
+{
 
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////		
 // static
 void
-OW_CIMBase::readSig( istream& istr, const char* const sig )
+CIMBase::readSig( istream& istr, const char* const sig )
 {
 	char expected, read;
 	OW_ASSERT( strlen(sig) == 1 );
-
 	expected = sig[0];
-	OW_BinarySerialization::read(istr, &read, sizeof(read));
-
+	BinarySerialization::read(istr, &read, sizeof(read));
 	if(expected != read)
 	{
-		OW_THROW(OW_BadCIMSignatureException,
-			format("Signature does not match. In OW_CIMBase::readSig. "
+		OW_THROW(BadCIMSignatureException,
+			format("Signature does not match. In CIMBase::readSig. "
 				"signature read: %1, expected: %2",
 				read, sig).c_str() );
 	}
 }
-
-
-
-
 //////////////////////////////////////////////////////////////////////////////		
 // static
-void OW_CIMBase::writeSig( ostream& ostr, const char* const sig )
+void CIMBase::writeSig( ostream& ostr, const char* const sig )
 {
 	OW_ASSERT(strlen(sig) == 1);
-	OW_BinarySerialization::write(ostr, sig, 1);
+	BinarySerialization::write(ostr, sig, 1);
 }
-
-
 //////////////////////////////////////////////////////////////////////////////		
-std::ostream& operator<<(std::ostream& ostr, const OW_CIMBase& cb)
+std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb)
 {
 	ostr << cb.toString();
 	return ostr;
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMBase::~OW_CIMBase() 
+CIMBase::~CIMBase() 
 {
 }
+
+} // end namespace OpenWBEM
 

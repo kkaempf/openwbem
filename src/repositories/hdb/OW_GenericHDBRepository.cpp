@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_Assertion.hpp"
@@ -36,11 +35,13 @@
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
 
+namespace OpenWBEM
+{
+
 static const int HDL_NOTINUSE = -1;
 static const int HDL_NOTCACHED = -2;
-
 //////////////////////////////////////////////////////////////////////////////
-OW_GenericHDBRepository::OW_GenericHDBRepository(OW_ServiceEnvironmentIFCRef env)
+GenericHDBRepository::GenericHDBRepository(ServiceEnvironmentIFCRef env)
 	: m_hdb()
 	, m_opened(false)
 	, m_guard()
@@ -48,9 +49,8 @@ OW_GenericHDBRepository::OW_GenericHDBRepository(OW_ServiceEnvironmentIFCRef env
 	, m_env(env)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_GenericHDBRepository::~OW_GenericHDBRepository()
+GenericHDBRepository::~GenericHDBRepository()
 {
 	try
 	{
@@ -61,12 +61,11 @@ OW_GenericHDBRepository::~OW_GenericHDBRepository()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HDBHandle
-OW_GenericHDBRepository::getHandle()
+HDBHandle
+GenericHDBRepository::getHandle()
 {
-	OW_MutexLock ml(m_guard);
+	MutexLock ml(m_guard);
 	for(int i = 0; i < int(m_handles.size()); i++)
 	{
 		if(m_handles[i].getUserValue() == HDL_NOTINUSE)
@@ -75,8 +74,7 @@ OW_GenericHDBRepository::getHandle()
 			return m_handles[i];
 		}
 	}
-
-	OW_HDBHandle hdl = m_hdb.getHandle();
+	HDBHandle hdl = m_hdb.getHandle();
 	if(m_handles.size() < MAXHANDLES)
 	{
 		hdl.setUserValue(m_handles.size());
@@ -86,193 +84,171 @@ OW_GenericHDBRepository::getHandle()
 	{
 		hdl.setUserValue(HDL_NOTCACHED);
 	}
-
 	return hdl;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::freeHandle(OW_HDBHandle& hdl)
+GenericHDBRepository::freeHandle(HDBHandle& hdl)
 {
-	OW_MutexLock ml(m_guard);
-	OW_Int32 uv = hdl.getUserValue();
-	if(uv > HDL_NOTINUSE && uv < OW_Int32(m_handles.size()))
+	MutexLock ml(m_guard);
+	Int32 uv = hdl.getUserValue();
+	if(uv > HDL_NOTINUSE && uv < Int32(m_handles.size()))
 	{
 		// Handle is from the cache, so flag it as not in use.
 		hdl.flush();
 		m_handles[uv].setUserValue(HDL_NOTINUSE);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::open(const OW_String& path)
+GenericHDBRepository::open(const String& path)
 {
-	OW_MutexLock ml(m_guard);
+	MutexLock ml(m_guard);
 	close();
 	m_hdb.open(path.c_str());
 	m_opened = true;
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	// Create root namespace
 	createNameSpace("root");
 #endif
-	//OW_HDBHandleLock hdl(this, getHandle());
-	//OW_String contk("root");
+	//HDBHandleLock hdl(this, getHandle());
+	//String contk("root");
 	//contk.toLowerCase();
-	//OW_HDBNode node = hdl->getNode(contk);
+	//HDBNode node = hdl->getNode(contk);
 	//if(!node)
 	//{
-	//	node = OW_HDBNode(contk, contk.length()+1,
+	//	node = HDBNode(contk, contk.length()+1,
 	//		reinterpret_cast<const unsigned char*>(contk.c_str()));
-	//	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
+	//	hdl->turnFlagsOn(node, HDBNSNODE_FLAG);
 	//	hdl->addRootNode(node);
 	//}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::close()
+GenericHDBRepository::close()
 {
-	OW_MutexLock ml(m_guard);
-
+	MutexLock ml(m_guard);
 	if(!m_opened)
 	{
 		return;
 	}
-
 	m_opened = false;
 	for(int i = 0; i < int(m_handles.size()); i++)
 	{
 		if(m_handles[i].getUserValue() > HDL_NOTINUSE)
 		{
-			//cerr << "OW_GenericHDBRepository::close HANDLES ARE STILL IN USE!!!!"
+			//cerr << "GenericHDBRepository::close HANDLES ARE STILL IN USE!!!!"
 			//	<< endl;
 			break;
 		}
 	}
-
 	m_handles.clear();
 	m_hdb.close();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HDBNode
-OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
-	OW_String ck)
+HDBNode
+GenericHDBRepository::getNameSpaceNode(HDBHandleLock& hdl,
+	String ck)
 {
 	if(ck.empty())
 	{
-		return OW_HDBNode();
+		return HDBNode();
 	}
-
-	OW_HDBNode node = hdl->getNode(ck);
+	HDBNode node = hdl->getNode(ck);
 	if(node)
 	{
-		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
-			OW_THROW(OW_IOException, "logic error. Expected namespace node");
+			OW_THROW(IOException, "logic error. Expected namespace node");
 		}
 	}
-
 	return node;
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_GenericHDBRepository::createNameSpace(OW_String ns)
+GenericHDBRepository::createNameSpace(String ns)
 {
 	throwIfNotOpen();
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node;
-
+	HDBHandleLock hdl(this, getHandle());
+	HDBNode node;
 	if(ns.empty())
 	{
 		return -1;
 	}
-
 	node = hdl->getNode(ns);
 	if(!node)
 	{
 		// create the namespace
-		node = OW_HDBNode(ns, ns.length()+1,
+		node = HDBNode(ns, ns.length()+1,
 			reinterpret_cast<const unsigned char*>(ns.c_str()));
-		hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
+		hdl->turnFlagsOn(node, HDBNSNODE_FLAG);
 		hdl->addRootNode(node);
 		logDebug(format("created namespace %1", ns));
 	}
 	else
 	{
 		// it already exists, return -1.
-		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
-			OW_THROW(OW_IOException,
+			OW_THROW(IOException,
 				"logic error. read namespace node that is not a namespace");
 		}
 		return -1;
 	}
-
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::deleteNameSpace(OW_String key)
+GenericHDBRepository::deleteNameSpace(String key)
 {
 	throwIfNotOpen();
 	if(key.equals("root"))
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::FAILED,
 			"cannot delete root namespace");
 	}
-
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(key);
+	HDBHandleLock hdl(this, getHandle());
+	HDBNode node = hdl->getNode(key);
 	if(node)
 	{
-		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
-			OW_THROW(OW_IOException, "logic error. deleting non-namespace node");
+			OW_THROW(IOException, "logic error. deleting non-namespace node");
 		}
-
 		hdl->removeNode(node);
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Unable to delete namespace %1", key).c_str());
+		OW_THROWCIMMSG(CIMException::FAILED, format("Unable to delete namespace %1", key).c_str());
 	}
 }
 #endif
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_GenericHDBRepository::nameSpaceExists(OW_String key)
+GenericHDBRepository::nameSpaceExists(String key)
 {
 	throwIfNotOpen();
-
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(key);
+	HDBHandleLock hdl(this, getHandle());
+	HDBNode node = hdl->getNode(key);
 	if(node)
 	{
-		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		if(!node.areAllFlagsOn(HDBNSNODE_FLAG))
 		{
 			return false;
 		}
-
 		return true;
 	}
 	return false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::nodeToCIMObject(OW_CIMBase& cimObj,
-	const OW_HDBNode& node)
+GenericHDBRepository::nodeToCIMObject(CIMBase& cimObj,
+	const HDBNode& node)
 {
 	if(node)
 	{
-		OW_RepositoryIStream istrm(node.getDataLen(), node.getData());
+		RepositoryIStream istrm(node.getDataLen(), node.getData());
 		cimObj.readObject(istrm);
 	}
 	else
@@ -280,47 +256,45 @@ OW_GenericHDBRepository::nodeToCIMObject(OW_CIMBase& cimObj,
 		cimObj.setNull();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::getCIMObject(OW_CIMBase& cimObj, const OW_String& key,
-	OW_HDBHandle hdl)
+GenericHDBRepository::getCIMObject(CIMBase& cimObj, const String& key,
+	HDBHandle hdl)
 {
 	nodeToCIMObject(cimObj, hdl.getNode(key));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::updateCIMObject(const OW_CIMBase& cimObj,
-	OW_HDBNode& node, OW_HDBHandle hdl)
+GenericHDBRepository::updateCIMObject(const CIMBase& cimObj,
+	HDBNode& node, HDBHandle hdl)
 {
-	OW_RepositoryOStream ostrm;
+	RepositoryOStream ostrm;
 	cimObj.writeObject(ostrm);
 	hdl.updateNode(node, ostrm.length(), ostrm.getData());
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
-	const OW_String& key, OW_HDBNode& parentNode, OW_HDBHandle hdl,
-	OW_UInt32 nodeFlags)
+GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
+	const String& key, HDBNode& parentNode, HDBHandle hdl,
+	UInt32 nodeFlags)
 {
-	OW_RepositoryOStream ostrm;
+	RepositoryOStream ostrm;
 	cimObj.writeObject(ostrm);
-	OW_HDBNode node(key, ostrm.length(), ostrm.getData());
+	HDBNode node(key, ostrm.length(), ostrm.getData());
 	node.turnFlagsOn(hdl, nodeFlags);
 	hdl.addChild(parentNode, node);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::addCIMObject(const OW_CIMBase& cimObj,
-	const OW_String& key, OW_HDBHandle hdl, OW_UInt32 nodeFlags)
+GenericHDBRepository::addCIMObject(const CIMBase& cimObj,
+	const String& key, HDBHandle hdl, UInt32 nodeFlags)
 {
-	OW_RepositoryOStream ostrm;
+	RepositoryOStream ostrm;
 	cimObj.writeObject(ostrm);
-	OW_HDBNode node(key, ostrm.length(), ostrm.getData());
+	HDBNode node(key, ostrm.length(), ostrm.getData());
 	node.turnFlagsOn(hdl, nodeFlags);
 	hdl.addRootNode(node);
 }
+
+} // end namespace OpenWBEM
 

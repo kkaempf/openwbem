@@ -27,37 +27,36 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_RESULTHANDLERIFC_HPP_
 #define OW_RESULTHANDLERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 
+namespace OpenWBEM
+{
+
 template <typename T>
-class OW_ResultHandlerIFC
+class ResultHandlerIFC
 {
 public:
 	void handle(const T& x)
 	{
 		doHandle(x);
 	}
-	virtual ~OW_ResultHandlerIFC();
-
+	virtual ~ResultHandlerIFC();
 protected:
 	virtual void doHandle(const T& x) = 0;
 };
-
 template <typename T>
-OW_ResultHandlerIFC<T>::~OW_ResultHandlerIFC()
+ResultHandlerIFC<T>::~ResultHandlerIFC()
 {
 }
+typedef ResultHandlerIFC<CIMClass> CIMClassResultHandlerIFC;
+typedef ResultHandlerIFC<CIMInstance> CIMInstanceResultHandlerIFC;
+typedef ResultHandlerIFC<CIMObjectPath> CIMObjectPathResultHandlerIFC;
+typedef ResultHandlerIFC<String> StringResultHandlerIFC;
+typedef ResultHandlerIFC<CIMQualifierType> CIMQualifierTypeResultHandlerIFC;
 
-typedef OW_ResultHandlerIFC<OW_CIMClass> OW_CIMClassResultHandlerIFC;
-typedef OW_ResultHandlerIFC<OW_CIMInstance> OW_CIMInstanceResultHandlerIFC;
-typedef OW_ResultHandlerIFC<OW_CIMObjectPath> OW_CIMObjectPathResultHandlerIFC;
-typedef OW_ResultHandlerIFC<OW_String> OW_StringResultHandlerIFC;
-typedef OW_ResultHandlerIFC<OW_CIMQualifierType> OW_CIMQualifierTypeResultHandlerIFC;
+} // end namespace OpenWBEM
 
 #endif
-

@@ -37,6 +37,8 @@
 
 using std::ifstream;
 
+using namespace OpenWBEM;
+
 void OW_StackTraceTestCases::setUp()
 {
 }

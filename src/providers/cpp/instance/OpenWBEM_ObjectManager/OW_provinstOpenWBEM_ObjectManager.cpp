@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CIMClass.hpp"
@@ -38,117 +37,101 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_SocketAddress.hpp"
 
-using namespace OW_WBEMFlags;
-
 namespace OpenWBEM
 {
 
-class OpenWBEM_ObjectManagerInstProv : public OW_CppInstanceProviderIFC
+using namespace WBEMFlags;
+class OpenWBEM_ObjectManagerInstProv : public CppInstanceProviderIFC
 {
 private:
-	OW_CIMInstance m_inst;
-
+	CIMInstance m_inst;
 public:
-
 	////////////////////////////////////////////////////////////////////////////
 	OpenWBEM_ObjectManagerInstProv()
-		: m_inst(OW_CIMNULL)
+		: m_inst(CIMNULL)
 	{
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual ~OpenWBEM_ObjectManagerInstProv()
 	{
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("OpenWBEM_ObjectManager");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass )
 	{
 		(void)className;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
-
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);
 		}
-
-		OW_CIMObjectPath newCop(ns, m_inst);
-
+		CIMObjectPath newCop(ns, m_inst);
 		result.handle(newCop);
 	}
-
-	OW_CIMInstance createTheInst(const OW_CIMClass& cimClass)
+	CIMInstance createTheInst(const CIMClass& cimClass)
 	{
 		// Only have one Object Manager
-
-		OW_CIMInstance newInst = cimClass.newInstance();
-		newInst.setProperty("Version", OW_CIMValue(OW_VERSION));
-		//newInst.setProperty("GatherStatisticalData", OW_CIMValue(/* TODO: Put the value here */));
-
+		CIMInstance newInst = cimClass.newInstance();
+		newInst.setProperty("Version", CIMValue(OW_VERSION));
+		//newInst.setProperty("GatherStatisticalData", CIMValue(/* TODO: Put the value here */));
 		// This property is a KEY, it must be filled out
-		newInst.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
+		newInst.setProperty("SystemCreationClassName", CIMValue("CIM_System"));
 		// This property is a KEY, it must be filled out
-		OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
-		newInst.setProperty("SystemName", OW_CIMValue(addr.getName()));
+		SocketAddress addr = SocketAddress::getAnyLocalHost();
+		newInst.setProperty("SystemName", CIMValue(addr.getName()));
 		// This property is a KEY, it must be filled out
-		newInst.setProperty("CreationClassName", OW_CIMValue("OpenWBEM_ObjectManager"));
+		newInst.setProperty("CreationClassName", CIMValue("OpenWBEM_ObjectManager"));
 		// This property is a KEY, it must be filled out
-		newInst.setProperty("Name", OW_CIMValue("owcimomd"));
-		newInst.setProperty("Started", OW_CIMValue(true));
-		newInst.setProperty("EnabledStatus", OW_CIMValue(OW_UInt16(2))); // 2 = Enabled
-		newInst.setProperty("Caption", OW_CIMValue("owcimomd"));
-		newInst.setProperty("Description", OW_CIMValue("owcimomd"));
+		newInst.setProperty("Name", CIMValue("owcimomd"));
+		newInst.setProperty("Started", CIMValue(true));
+		newInst.setProperty("EnabledStatus", CIMValue(UInt16(2))); // 2 = Enabled
+		newInst.setProperty("Caption", CIMValue("owcimomd"));
+		newInst.setProperty("Description", CIMValue("owcimomd"));
 		return newInst;
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)className;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstances");
-
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);
 		}
-
 		result.handle(m_inst.clone(localOnly,deep,includeQualifiers,
 			includeClassOrigin,propertyList,requestedClass,cimClass));
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+	virtual CIMInstance getInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)instanceName;
@@ -158,32 +141,29 @@ public:
 		{
 			m_inst = createTheInst(cimClass);
 		}
-
 		return m_inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+	virtual CIMObjectPath createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 		(void)env;
 		(void)ns;
 		(void)cimInstance;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support createInstance");
+        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support createInstance");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
@@ -192,30 +172,23 @@ public:
 		(void)includeQualifiers;
 		(void)propertyList;
 		(void)theClass;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		(void)env;
 		(void)ns;
 		(void)cop;
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+        OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support deleteInstance");
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-
 };
 
-
-}
-
+} // end namespace OpenWBEM
 
 OW_PROVIDERFACTORY(OpenWBEM::OpenWBEM_ObjectManagerInstProv, owprovinstOpenWBEM_ObjectManager)
-
-
 

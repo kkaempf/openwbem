@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CppSimpleInstanceProviderIFC.hpp"
 #include "OW_CIMClass.hpp"
@@ -39,140 +38,125 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_UserInfo.hpp"
 
-using namespace OW_WBEMFlags;
-
 namespace OpenWBEM
 {
 
+using namespace WBEMFlags;
 	namespace
 	{
-
-		class NSHandlerInst : public OW_StringResultHandlerIFC
+		class NSHandlerInst : public StringResultHandlerIFC
 		{
 		public:
-			NSHandlerInst(OW_CIMInstanceResultHandlerIFC& result_,
-				const OW_CIMClass& cls,
-				const OW_String& sccn, const OW_String& sn,
-				const OW_String& omccn, const OW_String& omn)
+			NSHandlerInst(CIMInstanceResultHandlerIFC& result_,
+				const CIMClass& cls,
+				const String& sccn, const String& sn,
+				const String& omccn, const String& omn)
 			: result(result_)
 			, inst(cls.newInstance())
 			{
-				inst.setProperty("SystemCreationClassName", OW_CIMValue(sccn));
-				inst.setProperty("SystemName", OW_CIMValue(sn));
-				inst.setProperty("ObjectManagerCreationClassName", OW_CIMValue(omccn));
-				inst.setProperty("ObjectManagerName", OW_CIMValue(omn));
-				inst.setProperty("CreationClassName", OW_CIMValue("CIM_Namespace"));
+				inst.setProperty("SystemCreationClassName", CIMValue(sccn));
+				inst.setProperty("SystemName", CIMValue(sn));
+				inst.setProperty("ObjectManagerCreationClassName", CIMValue(omccn));
+				inst.setProperty("ObjectManagerName", CIMValue(omn));
+				inst.setProperty("CreationClassName", CIMValue("CIM_Namespace"));
 			}
 	
-			void doHandle(const OW_String& s)
+			void doHandle(const String& s)
 			{
-				inst.setProperty("Name", OW_CIMValue(s));
+				inst.setProperty("Name", CIMValue(s));
 				// This property is Required
-				inst.setProperty("ClassInfo", OW_CIMValue(0));
-				//newInst.setProperty("Caption", OW_CIMValue(/* TODO: Put the value here */));
-				//newInst.setProperty("Description", OW_CIMValue(/* TODO: Put the value here */));
-				//newInst.setProperty("ElementName", OW_CIMValue(/* TODO: Put the value here */));
-
+				inst.setProperty("ClassInfo", CIMValue(0));
+				//newInst.setProperty("Caption", CIMValue(/* TODO: Put the value here */));
+				//newInst.setProperty("Description", CIMValue(/* TODO: Put the value here */));
+				//newInst.setProperty("ElementName", CIMValue(/* TODO: Put the value here */));
 				result.handle(inst);
 			}
 		private:
-			OW_CIMInstanceResultHandlerIFC& result;
-			OW_CIMInstance inst;
+			CIMInstanceResultHandlerIFC& result;
+			CIMInstance inst;
 		};
-
-		class DeleteHandler : public OW_StringResultHandlerIFC
+		class DeleteHandler : public StringResultHandlerIFC
 		{
 		public:
-			void doHandle(const OW_String&)
+			void doHandle(const String&)
 			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED, "Cannot delete namespace because it is not empty");
+				OW_THROWCIMMSG(CIMException::FAILED, "Cannot delete namespace because it is not empty");
 			}
 		};
-
 	}
-
-class CIM_NamespaceInstProv : public OW_CppSimpleInstanceProviderIFC
+class CIM_NamespaceInstProv : public CppSimpleInstanceProviderIFC
 {
 public:
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual ~CIM_NamespaceInstProv()
 	{
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_Namespace");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void doSimpleEnumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMClass& cimClass,
-		OW_CIMInstanceResultHandlerIFC& result,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMClass& cimClass,
+		CIMInstanceResultHandlerIFC& result,
 		EPropertiesFlag propertiesFlag)
 	{
 		(void)propertiesFlag;
-
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::enumInstances");
-
-		OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-		OW_CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "OpenWBEM_ObjectManager");
+		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "OpenWBEM_ObjectManager");
 		if (e.numberOfElements() < 1)
 		{
 			return;
 		}
 		// assume there'll only be one OpenWBEM_ObjectManager.
-		OW_CIMObjectPath objectManager = e.nextElement();
-		OW_String sccn = objectManager.getKeyT("SystemCreationClassName").getValueT().toString();
-		OW_String sn = objectManager.getKeyT("SystemName").getValueT().toString();
-		OW_String omccn = objectManager.getKeyT("CreationClassName").getValueT().toString();
-		OW_String omn = objectManager.getKeyT("Name").getValueT().toString();
+		CIMObjectPath objectManager = e.nextElement();
+		String sccn = objectManager.getKeyT("SystemCreationClassName").getValueT().toString();
+		String sn = objectManager.getKeyT("SystemName").getValueT().toString();
+		String omccn = objectManager.getKeyT("CreationClassName").getValueT().toString();
+		String omn = objectManager.getKeyT("Name").getValueT().toString();
 		
 		NSHandlerInst nshandler(result, cimClass, sccn, sn, omccn, omn);
-		OW_RepositoryIFCRef rep = env->getRepository();
-		rep->enumNameSpace(nshandler, OW_UserInfo(env->getUserName()));
+		RepositoryIFCRef rep = env->getRepository();
+		rep->enumNameSpace(nshandler, UserInfo(env->getUserName()));
 	}
-
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+	virtual CIMObjectPath createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::createInstance");
 		try
 		{
-			OW_String name = cimInstance.getPropertyT("Name").getValueT().toString();
-			OW_RepositoryIFCRef rep = env->getRepository();
-			rep->createNameSpace(name, OW_UserInfo(env->getUserName()));
+			String name = cimInstance.getPropertyT("Name").getValueT().toString();
+			RepositoryIFCRef rep = env->getRepository();
+			rep->createNameSpace(name, UserInfo(env->getUserName()));
 		}
-		catch (const OW_CIMException& e)
+		catch (const CIMException& e)
 		{
 			throw;
 		}
-		catch (const OW_Exception& e)
+		catch (const Exception& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, e.getMessage());
+			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, e.getMessage());
 		}
-		return OW_CIMObjectPath(ns, cimInstance);
+		return CIMObjectPath(ns, cimInstance);
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
@@ -183,47 +167,38 @@ public:
 		(void)theClass;
 		// This is just a no-op since we don't really care about any properties
 		// other than the keys (which can't change.)
-        //OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
+        //OW_THROWCIMMSG(CIMException::FAILED, "Provider does not support modifyInstance");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		(void)ns;
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::createInstance");
 		try
 		{
-			OW_String name = cop.getKeyT("Name").getValueT().toString();
-			OW_RepositoryIFCRef rep = env->getRepository();
-
+			String name = cop.getKeyT("Name").getValueT().toString();
+			RepositoryIFCRef rep = env->getRepository();
 			// The client can't delete a non-empty namespace.  If we find any class names, we'll throw an exception
 			DeleteHandler handler;
-			rep->enumClassNames(name,"", handler, E_SHALLOW, OW_UserInfo(env->getUserName()));
-
-			rep->deleteNameSpace(name, OW_UserInfo(env->getUserName()));
+			rep->enumClassNames(name,"", handler, E_SHALLOW, UserInfo(env->getUserName()));
+			rep->deleteNameSpace(name, UserInfo(env->getUserName()));
 		}
-		catch (const OW_CIMException& e)
+		catch (const CIMException& e)
 		{
 			throw;
 		}
-		catch (const OW_Exception& e)
+		catch (const Exception& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, e.getMessage());
+			OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
 		}
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-
 };
 
-
-}
-
+} // end namespace OpenWBEM
 
 OW_PROVIDERFACTORY(OpenWBEM::CIM_NamespaceInstProv, owprovinstCIM_Namespace)
-
-
 

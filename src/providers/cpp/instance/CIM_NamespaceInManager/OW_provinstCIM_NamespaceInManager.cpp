@@ -41,127 +41,114 @@
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_Assertion.hpp"
 
-using namespace OW_WBEMFlags;
-
 namespace OpenWBEM
 {
 
-using namespace OW_WBEMFlags;
+using namespace WBEMFlags;
 
 class CIM_NamespaceInManagerInstProv :
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-public OW_CppAssociatorProviderIFC
+public CppAssociatorProviderIFC
 #else
-public OW_CppInstanceProviderIFC
+public CppInstanceProviderIFC
 #endif
 {
 public:
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual ~CIM_NamespaceInManagerInstProv()
 	{
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass("CIM_NamespaceInManager");
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass )
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass )
 	{
 		(void)cimClass;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::enumInstanceNames");
-
-		OW_CIMObjectPath newCop(className, ns);
-
-		OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-		OW_CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
-		OW_CIMObjectPathEnumeration namespaces = hdl->enumInstanceNamesE(ns, "CIM_Namespace");
+		CIMObjectPath newCop(className, ns);
+		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
+		CIMObjectPathEnumeration namespaces = hdl->enumInstanceNamesE(ns, "CIM_Namespace");
 		if (!objectManagers.hasMoreElements())
 		{
 			return;
 		}
 		
 		// should only be one ObjectManager
-		OW_CIMObjectPath omPath = objectManagers.nextElement();
+		CIMObjectPath omPath = objectManagers.nextElement();
 		while (namespaces.hasMoreElements())
 		{
-			OW_CIMObjectPath nsPath = namespaces.nextElement();
-			newCop.setKeys(OW_CIMPropertyArray());
-			newCop.addKey("Antecedent", OW_CIMValue(omPath));
-			newCop.addKey("Dependent", OW_CIMValue(nsPath));
+			CIMObjectPath nsPath = namespaces.nextElement();
+			newCop.setKeys(CIMPropertyArray());
+			newCop.addKey("Antecedent", CIMValue(omPath));
+			newCop.addKey("Dependent", CIMValue(nsPath));
 			result.handle(newCop);
 		}
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		(void)className;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::enumInstances");
-
-		OW_CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-		OW_CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
-		OW_CIMObjectPathEnumeration namespaces = hdl->enumInstanceNamesE(ns, "CIM_Namespace");
+		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
+		CIMObjectPathEnumeration objectManagers = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
+		CIMObjectPathEnumeration namespaces = hdl->enumInstanceNamesE(ns, "CIM_Namespace");
 		if (!objectManagers.hasMoreElements())
 		{
 			return;
 		}
 		
 		// should only be one ObjectManager
-		OW_CIMObjectPath omPath = objectManagers.nextElement();
+		CIMObjectPath omPath = objectManagers.nextElement();
 		while (namespaces.hasMoreElements())
 		{
-			OW_CIMObjectPath nsPath = namespaces.nextElement();
-			OW_CIMInstance newInst = cimClass.newInstance();
-			newInst.setProperty("Antecedent", OW_CIMValue(omPath));
-			newInst.setProperty("Dependent", OW_CIMValue(nsPath));
-
+			CIMObjectPath nsPath = namespaces.nextElement();
+			CIMInstance newInst = cimClass.newInstance();
+			newInst.setProperty("Antecedent", CIMValue(omPath));
+			newInst.setProperty("Dependent", CIMValue(nsPath));
 			result.handle(newInst.clone(localOnly,deep,includeQualifiers,
 				includeClassOrigin,propertyList,requestedClass,cimClass));
 		}
 	}
-
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMInstance getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+	virtual CIMInstance getInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass )
+		const StringArray* propertyList, 
+		const CIMClass& cimClass )
 	{
 		(void)ns;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::getInstance");
-		OW_CIMInstance inst = cimClass.newInstance();
-
+		CIMInstance inst = cimClass.newInstance();
 		try
 		{
-
 			// first verify that the object manager exists.
-			OW_CIMObjectPath objectManagerPath(instanceName.getKeyT("Antecedent").getValueT().toCIMObjectPath());
-			OW_String omNs = objectManagerPath.getNameSpace();
+			CIMObjectPath objectManagerPath(instanceName.getKeyT("Antecedent").getValueT().toCIMObjectPath());
+			String omNs = objectManagerPath.getNameSpace();
 			if (omNs.empty())
 			{
 				omNs = ns;
@@ -170,8 +157,8 @@ public:
 			// This will throw if it doesn't exist
 			env->getCIMOMHandle()->getInstance(omNs, objectManagerPath);
 	
-			OW_CIMObjectPath nsPath(instanceName.getKeyT("Dependent").getValueT().toCIMObjectPath());
-			OW_String nsNs = nsPath.getNameSpace();
+			CIMObjectPath nsPath(instanceName.getKeyT("Dependent").getValueT().toCIMObjectPath());
+			String nsNs = nsPath.getNameSpace();
 			if (nsNs.empty())
 			{
 				nsNs = ns;
@@ -182,44 +169,41 @@ public:
 	
 	
 			inst = cimClass.newInstance();
-			inst.setProperty("Antecedent", OW_CIMValue(objectManagerPath));
-			inst.setProperty("Dependent", OW_CIMValue(nsPath));
+			inst.setProperty("Antecedent", CIMValue(objectManagerPath));
+			inst.setProperty("Dependent", CIMValue(nsPath));
 	
 		}
-		catch (const OW_CIMException& e)
+		catch (const CIMException& e)
 		{
 			throw;
 		}
-		catch (const OW_Exception& e)
+		catch (const Exception& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, e.getMessage());
+			OW_THROWCIMMSG(CIMException::NOT_FOUND, e.getMessage());
 		}
-
 		return inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
-	virtual OW_CIMObjectPath createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance )
+	virtual CIMObjectPath createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance )
 	{
 		(void)env;
 		(void)cimInstance;
 		// just ignore createInstance.
-		return OW_CIMObjectPath(ns, cimInstance);
+		return CIMObjectPath(ns, cimInstance);
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 	{
 		(void)env;
 		(void)ns;
@@ -230,12 +214,11 @@ public:
 		(void)theClass;
 		// just ignore, since there nothing they can modify.
 	}
-
 	////////////////////////////////////////////////////////////////////////////
 	virtual void deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 	{
 		(void)env;
 		(void)ns;
@@ -243,78 +226,69 @@ public:
 		// just ignore deleteInstance.
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Associator provider functions.
-	virtual void getAssociatorProviderInfo(OW_AssociatorProviderInfo &info) 
+	virtual void getAssociatorProviderInfo(AssociatorProviderInfo &info) 
 	{
 		info.addInstrumentedClass("CIM_NamespaceInManager");
 	}
-
-	class InstanceToObjectPathHandler : public OW_CIMInstanceResultHandlerIFC
+	class InstanceToObjectPathHandler : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		InstanceToObjectPathHandler(OW_CIMObjectPathResultHandlerIFC& result_, const OW_String& ns_)
+		InstanceToObjectPathHandler(CIMObjectPathResultHandlerIFC& result_, const String& ns_)
 		: result(result_)
 		, ns(ns_)
 		{}
-
-		void doHandle(const OW_CIMInstance& inst)
+		void doHandle(const CIMInstance& inst)
 		{
-			result.handle(OW_CIMObjectPath(ns, inst));
+			result.handle(CIMObjectPath(ns, inst));
 		}
 	private:
-		OW_CIMObjectPathResultHandlerIFC& result;
-		OW_String ns;
+		CIMObjectPathResultHandlerIFC& result;
+		String ns;
 	};
-
 	virtual void associatorNames(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		OW_CIMObjectPathResultHandlerIFC &result, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &objectName, 
-		const OW_String &assocClass,
-		const OW_String &resultClass, 
-		const OW_String &role, 
-		const OW_String &resultRole) 
+		const ProviderEnvironmentIFCRef &env, 
+		CIMObjectPathResultHandlerIFC &result, 
+		const String &ns, 
+		const CIMObjectPath &objectName, 
+		const String &assocClass,
+		const String &resultClass, 
+		const String &role, 
+		const String &resultRole) 
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::associatorNames");
-
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-
 		InstanceToObjectPathHandler handler(result, ns);
 		associators(env, handler, ns, objectName, assocClass, resultClass, role, resultRole, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
-
 	virtual void referenceNames(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		OW_CIMObjectPathResultHandlerIFC &result, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &objectName, 
-		const OW_String &resultClass,
-		const OW_String &role) 
+		const ProviderEnvironmentIFCRef &env, 
+		CIMObjectPathResultHandlerIFC &result, 
+		const String &ns, 
+		const CIMObjectPath &objectName, 
+		const String &resultClass,
+		const String &role) 
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::referenceNames");
 		
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-
 		InstanceToObjectPathHandler handler(result, ns);
 		references(env, handler, ns, objectName, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0);
 	}
-
-	class AssociatorFilter : public OW_CIMInstanceResultHandlerIFC
+	class AssociatorFilter : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		AssociatorFilter(const OW_CIMObjectPath& objectName_, OW_CIMInstanceResultHandlerIFC& result_, 		
-			OW_CIMOMHandleIFCRef hdl_,
-			const OW_String& ns_,
+		AssociatorFilter(const CIMObjectPath& objectName_, CIMInstanceResultHandlerIFC& result_, 		
+			CIMOMHandleIFCRef hdl_,
+			const String& ns_,
 			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
-			const OW_StringArray* propertyList_)
+			const StringArray* propertyList_)
 		: objectName(objectName_)
 		, result(result_)
 		, hdl(hdl_)
@@ -323,69 +297,63 @@ public:
 		, includeClassOrigin(includeClassOrigin_)
 		, propertyList(propertyList_)
 		{}
-
-		void doHandle(const OW_CIMInstance& i)
+		void doHandle(const CIMInstance& i)
 		{
-			OW_CIMObjectPath op = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
+			CIMObjectPath op = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
 			if (op == objectName)
 			{
-				OW_CIMObjectPath toGet = i.getPropertyT("Dependent").getValueT().toCIMObjectPath();
-				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+				CIMObjectPath toGet = i.getPropertyT("Dependent").getValueT().toCIMObjectPath();
+				CIMInstance assocInst = hdl->getInstance(ns, toGet, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 				assocInst.clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
-				//OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
+				//CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
 				//assocInst.setKeys(toGet.getKeys());
 				result.handle(assocInst);
 				return;
 			}
-
 			op = i.getPropertyT("Dependent").getValueT().toCIMObjectPath();
 			if (op == objectName)
 			{
-				OW_CIMObjectPath toGet = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
-				OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+				CIMObjectPath toGet = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
+				CIMInstance assocInst = hdl->getInstance(ns, toGet, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
 				assocInst.clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList);
-				//OW_CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
+				//CIMInstance assocInst = hdl->getInstance(ns, toGet, false, includeQualifiers, includeClassOrigin, propertyList);
 				//assocInst.setKeys(toGet.getKeys());
 				result.handle(assocInst);
 			}
 		}
 	private:
-		const OW_CIMObjectPath& objectName;
-		OW_CIMInstanceResultHandlerIFC& result;
-		OW_CIMOMHandleIFCRef hdl;
-		OW_String ns;
+		const CIMObjectPath& objectName;
+		CIMInstanceResultHandlerIFC& result;
+		CIMOMHandleIFCRef hdl;
+		String ns;
 		EIncludeQualifiersFlag includeQualifiers;
 		EIncludeClassOriginFlag includeClassOrigin;
-		const OW_StringArray* propertyList;
+		const StringArray* propertyList;
 	};
-
 	virtual void associators(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		OW_CIMInstanceResultHandlerIFC &result, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &objectName, 
-		const OW_String &assocClass,
-		const OW_String &resultClass, 
-		const OW_String &role, 
-		const OW_String &resultRole, 
+		const ProviderEnvironmentIFCRef &env, 
+		CIMInstanceResultHandlerIFC &result, 
+		const String &ns, 
+		const CIMObjectPath &objectName, 
+		const String &assocClass,
+		const String &resultClass, 
+		const String &role, 
+		const String &resultRole, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin, 
-		const OW_StringArray *propertyList) 
+		const StringArray *propertyList) 
 	{
 		(void)resultClass;
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::associators");
-
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-
 		if (objectName.getObjectName().equalsIgnoreCase("OpenWBEM_ObjectManager"))
 		{
 			if (!role.empty() && !role.equalsIgnoreCase("Antecedent"))
 			{
 				return;
 			}
-
 			if (!resultRole.empty() && !resultRole.equalsIgnoreCase("Dependent"))
 			{
 				return;
@@ -397,34 +365,30 @@ public:
 			{
 				return;
 			}
-
 			if (!resultRole.empty() && !resultRole.equalsIgnoreCase("Antecedent"))
 			{
 				return;
 			}
 		}
-		OW_CIMClass theClass = env->getCIMOMHandle()->getClass(ns, "CIM_NamespaceInManager");
+		CIMClass theClass = env->getCIMOMHandle()->getClass(ns, "CIM_NamespaceInManager");
 		AssociatorFilter handler(objectName, result, env->getCIMOMHandle(), ns, includeQualifiers, includeClassOrigin, propertyList);
 		enumInstances(env, ns, "CIM_NamespaceInManager", handler, E_NOT_LOCAL_ONLY, E_DEEP, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass, theClass);
 	}
-
-	class ReferencesFilter : public OW_CIMInstanceResultHandlerIFC
+	class ReferencesFilter : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		ReferencesFilter(const OW_CIMObjectPath& objectName_, OW_CIMInstanceResultHandlerIFC& result_)
+		ReferencesFilter(const CIMObjectPath& objectName_, CIMInstanceResultHandlerIFC& result_)
 		: objectName(objectName_)
 		, result(result_)
 		{}
-
-		void doHandle(const OW_CIMInstance& i)
+		void doHandle(const CIMInstance& i)
 		{
-			OW_CIMObjectPath op = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
+			CIMObjectPath op = i.getPropertyT("Antecedent").getValueT().toCIMObjectPath();
 			if (op == objectName)
 			{
 				result.handle(i);
 				return;
 			}
-
 			op = i.getPropertyT("Dependent").getValueT().toCIMObjectPath();
 			if (op == objectName)
 			{
@@ -432,26 +396,24 @@ public:
 			}
 		}
 	private:
-		const OW_CIMObjectPath& objectName;
-		OW_CIMInstanceResultHandlerIFC& result;
+		const CIMObjectPath& objectName;
+		CIMInstanceResultHandlerIFC& result;
 	};
-
 	virtual void references(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		OW_CIMInstanceResultHandlerIFC &result, 
-		const OW_String &ns, 
-		const OW_CIMObjectPath &objectName, 
-		const OW_String &resultClass,
-		const OW_String &role, 
+		const ProviderEnvironmentIFCRef &env, 
+		CIMInstanceResultHandlerIFC &result, 
+		const String &ns, 
+		const CIMObjectPath &objectName, 
+		const String &resultClass,
+		const String &role, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin, 
-		const OW_StringArray *propertyList) 
+		const StringArray *propertyList) 
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInManagerInstProv::references");
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-
 		if (objectName.getObjectName().equalsIgnoreCase("OpenWBEM_ObjectManager"))
 		{
 			if (!role.empty() && !role.equalsIgnoreCase("Antecedent"))
@@ -466,19 +428,13 @@ public:
 				return;
 			}
 		}
-		OW_CIMClass theClass = env->getCIMOMHandle()->getClass(ns, "CIM_NamespaceInManager");
+		CIMClass theClass = env->getCIMOMHandle()->getClass(ns, "CIM_NamespaceInManager");
 		ReferencesFilter handler(objectName, result);
 		enumInstances(env, ns, "CIM_NamespaceInManager", handler, E_NOT_LOCAL_ONLY, E_DEEP, includeQualifiers, includeClassOrigin, propertyList, theClass, theClass);
 	}
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 };
-
-
-}
-
+} // end namespace OpenWBEM
 
 OW_PROVIDERFACTORY(OpenWBEM::CIM_NamespaceInManagerInstProv, owprovinstCIM_NamespaceInManager)
-
-
 

@@ -27,31 +27,26 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_LIST_HPP_INCLUDE_GUARD_
 #define OW_LIST_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
-
 #ifdef OW_NEW
 #undef new
 #endif
-
 #include <list>
-
 #ifdef OW_NEW
 #define new OW_NEW
 #endif
 
+namespace OpenWBEM
+{
 
-template<class T> class OW_List
+template<class T> class List
 {
 private:
-
 	typedef std::list<T> L;
-	OW_COWReference<L> m_impl;
-
+	COWReference<L> m_impl;
 public:
 	typedef typename L::value_type value_type;
 	typedef typename L::pointer pointer;
@@ -64,286 +59,229 @@ public:
 	typedef typename L::const_iterator const_iterator;
 	typedef typename L::reverse_iterator reverse_iterator;
 	typedef typename L::const_reverse_iterator const_reverse_iterator;
-
-	OW_List() : m_impl(new L) {}
-
-	explicit OW_List(L* toWrap) : m_impl(toWrap)
+	List() : m_impl(new L) {}
+	explicit List(L* toWrap) : m_impl(toWrap)
 	{  }
-
 	template<class InputIterator>
-	OW_List(InputIterator first, InputIterator last) : m_impl(new L(first, last))
+	List(InputIterator first, InputIterator last) : m_impl(new L(first, last))
 	{
 	}
-
-	OW_List(size_type n, const T& value) : m_impl(new L(n, value))
+	List(size_type n, const T& value) : m_impl(new L(n, value))
 	{
 	}
-
-	OW_List(int n, const T& value) : m_impl(new L(n, value))
+	List(int n, const T& value) : m_impl(new L(n, value))
 	{
 	}
-
-	OW_List(long n, const T& value) : m_impl(new L(n, value))
+	List(long n, const T& value) : m_impl(new L(n, value))
 	{
 	}
-
-	explicit OW_List(size_type n) : m_impl(new L(n))
+	explicit List(size_type n) : m_impl(new L(n))
 	{
 	}
-
 	L* getImpl()
 	{
 		return &*m_impl;
 	}
-
 	iterator begin()
 	{
 		return m_impl->begin();
 	}
-
 	const_iterator begin() const
 	{
 		return m_impl->begin();
 	}
-
 	iterator end()
 	{
 		return m_impl->end();
 	}
-
 	const_iterator end() const
 	{
 		return m_impl->end();
 	}
-
 	reverse_iterator rbegin()
 	{
 		return m_impl->rbegin();
 	}
-
 	const_reverse_iterator rbegin() const
 	{
 		return m_impl->rbegin();
 	}
-
 	reverse_iterator rend()
 	{
 		return m_impl->rend();
 	}
-
 	const_reverse_iterator rend() const
 	{
 		return m_impl->rend();
 	}
-
 	bool empty() const
 	{
 		return m_impl->empty();
 	}
-
 	size_type size() const
 	{
 		return m_impl->size();
 	}
-
 	size_type max_size() const
 	{
 		return m_impl->max_size();
 	}
-
 	reference front()
 	{
 		return m_impl->front();
 	}
-
 	const_reference front() const
 	{
 		return m_impl->front();
 	}
-
 	reference back()
 	{
 		return m_impl->back();
 	}
-
 	const_reference back() const
 	{
 		return m_impl->back();
 	}
-
-	void swap(OW_List<T>& x)
+	void swap(List<T>& x)
 	{
 		m_impl.swap(x.m_impl);
 	}
-
 	iterator insert(iterator position, const T& x)
 	{
 		return m_impl->insert(position, x);
 	}
-
 	iterator insert(iterator position)
 	{
 		return m_impl->insert(position);
 	}
-
 	template<class InputIterator>
 	void insert(iterator position, InputIterator first, InputIterator last)
 	{
 		m_impl->insert(position, first, last);
 	}
-
 	void insert(iterator pos, size_type n, const T& x)
 	{
 		m_impl->insert(pos, n, x);
 	}
-
 	void insert(iterator pos, int n, const T& x)
 	{
 		m_impl->insert(pos, n, x);
 	}
-
 	void insert(iterator pos, long n, const T& x)
 	{
 		m_impl->insert(pos, n, x);
 	}
-
 	void push_front(const T& x)
 	{
 		m_impl->push_front(x);
 	}
-
 	void push_back(const T& x)
 	{
 		m_impl->push_back(x);
 	}
-
 	iterator erase(iterator position)
 	{
 		return m_impl->erase(position);
 	}
-
 	iterator erase(iterator first, iterator last)
 	{
 		return m_impl->erase(first, last);
 	}
-
 	void resize(size_type new_size, const T& x)
 	{
 		m_impl->resize(new_size, x);
 	}
-
 	void resize(size_type new_size)
 	{
 		m_impl->resize(new_size);
 	}
-
 	void clear()
 	{
 		m_impl->clear();
 	}
-
 	void pop_front()
 	{
 		m_impl->pop_front();
 	}
-
 	void pop_back()
 	{
 		m_impl->pop_back();
 	}
-
-	void splice(iterator position, OW_List& x)
+	void splice(iterator position, List& x)
 	{
 		m_impl->splice(position, *x.m_impl);
 	}
-
-	void splice(iterator position, OW_List& x, iterator i)
+	void splice(iterator position, List& x, iterator i)
 	{
 		m_impl->splice(position, *x.m_impl, i);
 	}
-
-	void splice(iterator position, OW_List& x, iterator first, iterator last)
+	void splice(iterator position, List& x, iterator first, iterator last)
 	{
 		m_impl->splice(position, *x.m_impl, first, last);
 	}
-
 	void remove(const T& value)
 	{
 		m_impl->remove(value);
 	}
-
 	void unique()
 	{
 		m_impl->unique();
 	}
-
-	void merge(OW_List& x)
+	void merge(List& x)
 	{
 		m_impl->merge(*x.m_impl);
 	}
-
 	void reverse()
 	{
 		m_impl->reverse();
 	}
-
 	void sort()
 	{
 		m_impl->sort();
 	}
-
 	template<class Predicate> void remove_if(Predicate p)
 	{
 		m_impl->remove_if(p);
 	}
-
 	template<class BinaryPredicate> void unique(BinaryPredicate bp)
 	{
 		m_impl->unique(bp);
 	}
-
-	template<class StrictWeakOrdering> void merge(OW_List& x, StrictWeakOrdering swo)
+	template<class StrictWeakOrdering> void merge(List& x, StrictWeakOrdering swo)
 	{
 		m_impl->merge(*x.m_impl, swo);
 	}
-
 	template<class StrictWeakOrdering> void
 		sort(StrictWeakOrdering swo)
 	{
 		m_impl->sort(swo);
 	}
-
-	friend bool operator== <>(const OW_List<T>& x,
-		const OW_List<T>& y);
-
-	friend bool operator< <>(const OW_List<T>& x,
-		const OW_List<T>& y);
+	friend bool operator== <>(const List<T>& x,
+		const List<T>& y);
+	friend bool operator< <>(const List<T>& x,
+		const List<T>& y);
 };
-
 template <class T>
-inline bool operator==(const OW_List<T>& x, const OW_List<T>& y)
+inline bool operator==(const List<T>& x, const List<T>& y)
 {
 	return *x.m_impl == *y.m_impl;
 }
-
 template <class T>
-inline bool operator<(const OW_List<T>& x, const OW_List<T>& y)
+inline bool operator<(const List<T>& x, const List<T>& y)
 {
 	return *x.m_impl < *y.m_impl;
 }
-
 template <class T>
-inline void swap(OW_List<T>& x, OW_List<T>& y)
+inline void swap(List<T>& x, List<T>& y)
 {
 	x.swap(y);
 }
-
 template <class T>
-std::list<T>* OW_COWReferenceClone(std::list<T>* obj)
+std::list<T>* COWReferenceClone(std::list<T>* obj)
 {
     return new std::list<T>(*obj);
 }
 
+} // end namespace OpenWBEM
+
 #endif
-
-

@@ -27,225 +27,198 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include <cctype>
 
+namespace OpenWBEM
+{
+
 using std::ostream;
 using std::istream;
-
 //////////////////////////////////////////////////////////////////////////////
-struct OW_CIMNameSpace::NSData
+struct CIMNameSpace::NSData
 {
-	OW_String m_nameSpace;
-	OW_CIMUrl m_url;
-
+	String m_nameSpace;
+	CIMUrl m_url;
     NSData* clone() const { return new NSData(*this); }
 };
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMNameSpace::NSData& x, const OW_CIMNameSpace::NSData& y)
+bool operator<(const CIMNameSpace::NSData& x, const CIMNameSpace::NSData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_nameSpace, y.m_nameSpace,
 		x.m_url, y.m_url);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::OW_CIMNameSpace() :
-	OW_CIMBase(), m_pdata(new NSData)
+CIMNameSpace::CIMNameSpace() :
+	CIMBase(), m_pdata(new NSData)
 {
-	//m_pdata->m_nameSpace = CIM_DEFAULT_NS;
+	//m_pdata->m_nameSpace = CIM_OW_DEFAULT_NS;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::OW_CIMNameSpace(OW_CIMNULL_t) :
-	OW_CIMBase(), m_pdata(0)
+CIMNameSpace::CIMNameSpace(CIMNULL_t) :
+	CIMBase(), m_pdata(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::OW_CIMNameSpace(const OW_CIMUrl& hostUrl,
-	const OW_String& nameSpace) :
-	OW_CIMBase(), m_pdata(new NSData)
+CIMNameSpace::CIMNameSpace(const CIMUrl& hostUrl,
+	const String& nameSpace) :
+	CIMBase(), m_pdata(new NSData)
 {
 	m_pdata->m_url = hostUrl;
 	if(nameSpace.empty())
 	{
-		//m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
+		//m_pdata->m_nameSpace = String(CIM_OW_DEFAULT_NS);
 	}
 	else
 	{
 		setNameSpace(nameSpace);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::OW_CIMNameSpace(const OW_String& nameSpace) :
-	OW_CIMBase(), m_pdata(new NSData)
+CIMNameSpace::CIMNameSpace(const String& nameSpace) :
+	CIMBase(), m_pdata(new NSData)
 {
 	if(nameSpace.empty())
 	{
-		//m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
+		//m_pdata->m_nameSpace = String(CIM_OW_DEFAULT_NS);
 	}
 	else
 	{
 		setNameSpace(nameSpace);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::OW_CIMNameSpace(const char* nameSpace) :
-	OW_CIMBase(), m_pdata(new NSData)
+CIMNameSpace::CIMNameSpace(const char* nameSpace) :
+	CIMBase(), m_pdata(new NSData)
 {
 	if(nameSpace == 0 || nameSpace[0] == '\0')
 	{
-		//m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
+		//m_pdata->m_nameSpace = String(CIM_OW_DEFAULT_NS);
 	}
 	else
 	{
 		setNameSpace(nameSpace);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
-OW_CIMNameSpace::OW_CIMNameSpace(const OW_CIMNameSpace& arg) :
-	OW_CIMBase(), m_pdata(arg.m_pdata)
+CIMNameSpace::CIMNameSpace(const CIMNameSpace& arg) :
+	CIMBase(), m_pdata(arg.m_pdata)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace::~OW_CIMNameSpace()
+CIMNameSpace::~CIMNameSpace()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMNameSpace::setNull()
+CIMNameSpace::setNull()
 {
 	m_pdata = 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace&
-OW_CIMNameSpace::operator= (const OW_CIMNameSpace& arg)
+CIMNameSpace&
+CIMNameSpace::operator= (const CIMNameSpace& arg)
 {
 	m_pdata = arg.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMNameSpace::getNameSpace() const
+String
+CIMNameSpace::getNameSpace() const
 {
 	return m_pdata->m_nameSpace;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMNameSpace::getHost() const
+String
+CIMNameSpace::getHost() const
 {
 	return m_pdata->m_url.getHost();
 }
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMUrl
-OW_CIMNameSpace::getHostUrl() const
+CIMUrl
+CIMNameSpace::getHostUrl() const
 {
 	return m_pdata->m_url;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_CIMNameSpace::getPortNumber() const
+Int32
+CIMNameSpace::getPortNumber() const
 {
 	return m_pdata->m_url.getPort();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMNameSpace::getProtocol() const
+String
+CIMNameSpace::getProtocol() const
 {
 	return m_pdata->m_url.getProtocol();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMNameSpace::getFileName() const
+String
+CIMNameSpace::getFileName() const
 {
 	return m_pdata->m_url.getFile();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMNameSpace::isLocal() const
+CIMNameSpace::isLocal() const
 {
 	return m_pdata->m_url.isLocal();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMNameSpace::toString() const
+String
+CIMNameSpace::toString() const
 {
-	return OW_String(m_pdata->m_nameSpace);
+	return String(m_pdata->m_nameSpace);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace&
-OW_CIMNameSpace::setNameSpace(const OW_String& nameSpace)
+CIMNameSpace&
+CIMNameSpace::setNameSpace(const String& nameSpace)
 {
 	// Remove any preceeding '/' chars or spaces
-	OW_String tns(nameSpace);
+	String tns(nameSpace);
 	tns.trim();
 	const char* p = tns.c_str();
 	while(*p && *p == '/')
 	{
 		p++;
 	}
-
 	m_pdata->m_nameSpace = p;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace&
-OW_CIMNameSpace::setHostUrl(const OW_CIMUrl& hostUrl)
+CIMNameSpace&
+CIMNameSpace::setHostUrl(const CIMUrl& hostUrl)
 {
 	m_pdata->m_url = hostUrl;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace&
-OW_CIMNameSpace::setHost(const OW_String& host)
+CIMNameSpace&
+CIMNameSpace::setHost(const String& host)
 {
 	m_pdata->m_url.setHost(host);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMNameSpace&
-OW_CIMNameSpace::setProtocol(const OW_String& protocol)
+CIMNameSpace&
+CIMNameSpace::setProtocol(const String& protocol)
 {
 	m_pdata->m_url.setProtocol(protocol);
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMNameSpace::readObject(istream &istrm)
+CIMNameSpace::readObject(istream &istrm)
 {
-	OW_CIMBase::readSig( istrm, OW_CIMNAMESPACESIG );
-	OW_String ns;
+	CIMBase::readSig( istrm, OW_CIMNAMESPACESIG );
+	String ns;
 	ns.readObject(istrm);
-
-	OW_CIMUrl url(OW_CIMNULL);
+	CIMUrl url(CIMNULL);
 	url.readObject(istrm);
-
 	// Assign here in case exception gets thrown on preceeding readObjects
 	if(m_pdata.isNull())
 	{
@@ -254,18 +227,19 @@ OW_CIMNameSpace::readObject(istream &istrm)
 	m_pdata->m_nameSpace = ns;
 	m_pdata->m_url = url;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMNameSpace::writeObject(ostream &ostrm) const
+CIMNameSpace::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMNAMESPACESIG );
+	CIMBase::writeSig( ostrm, OW_CIMNAMESPACESIG );
 	m_pdata->m_nameSpace.writeObject(ostrm);
 	m_pdata->m_url.writeObject(ostrm);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMNameSpace& lhs, const OW_CIMNameSpace& rhs)
+bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs)
 {
 	return *lhs.m_pdata < *rhs.m_pdata;
 }
+
+} // end namespace OpenWBEM
+

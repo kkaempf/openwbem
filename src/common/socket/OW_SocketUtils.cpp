@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_SocketException.hpp"
 #include "OW_SocketUtils.hpp"
@@ -36,6 +35,11 @@
 #include "OW_Socket.hpp"
 #include "OW_Format.hpp"
 #include "OW_Thread.hpp"
+
+#ifndef OW_HAVE_GETHOSTBYNAME_R
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+#endif
 
 extern "C"
 {
@@ -56,63 +60,56 @@ extern "C"
 #endif
 }
 
-namespace OW_SocketUtils 
+namespace OpenWBEM
 {
 
+namespace SocketUtils 
+{
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-inetAddrToString(OW_UInt64 addr)
+String
+inetAddrToString(UInt64 addr)
 {
 	struct in_addr iaddr;
 	iaddr.s_addr = addr;
-	OW_String s(inet_ntoa(iaddr));
+	String s(inet_ntoa(iaddr));
 	return s;
 }
-
-#ifndef OW_MAX
-	#define OW_MAX(A,B) (((A) > (B))? (A): (B))
+#ifndef MAX
+	#define MAX(A,B) (((A) > (B))? (A): (B))
 #endif
 //////////////////////////////////////////////////////////////////////////////
-
 int
-waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionFlag forInput)
+waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput)
 {
 	fd_set readfds;
 	fd_set writefds;
 	int rc;
 	struct timeval *ptimeval = 0;
 	struct timeval timeout;
-
-	OW_PosixUnnamedPipeRef lUPipe;
-
+	PosixUnnamedPipeRef lUPipe;
 	int pipefd = -1;
-
-	if (OW_Socket::m_pUpipe)
+	if (Socket::m_pUpipe)
 	{
-		lUPipe = OW_Socket::m_pUpipe.cast_to<OW_PosixUnnamedPipe>();
+		lUPipe = Socket::m_pUpipe.cast_to<PosixUnnamedPipe>();
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();
 		
 	}
-
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
-
 	if (timeOutSecs != -1)
 	{
 		timeout.tv_sec = timeOutSecs;
 		timeout.tv_usec = 0;
 		ptimeval = &timeout;
 	}
-
 	int maxfd = fd;
-
 	if (pipefd != -1)
 	{
 		FD_SET(pipefd, &readfds);
-		maxfd = OW_MAX(fd, pipefd);
+		maxfd = MAX(fd, pipefd);
 	}
-	if (forInput == OW_SocketFlags::E_WAIT_FOR_INPUT)
+	if (forInput == SocketFlags::E_WAIT_FOR_INPUT)
 	{
 		FD_SET(fd, &readfds);
 	}
@@ -120,25 +117,20 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionF
 	{
 		FD_SET(fd, &writefds);
 	}
-
 	rc = ::select(maxfd + 1, &readfds, &writefds,
 					  NULL, ptimeval);
-
 	switch (rc)
 	{
 		case 0:
 			rc = ETIMEDOUT;
 			break;
-
 		case -1:
 			if (errno == EINTR)
 			{
-				OW_Thread::testCancel();
+				Thread::testCancel();
 			}
-
-			OW_THROW(OW_SocketException, format("OW_SocketUtils::waitForIO: select failed: %1(%2)", errno, strerror(errno)).c_str());
+			OW_THROW(SocketException, format("SocketUtils::waitForIO: select failed: %1(%2)", errno, strerror(errno)).c_str());
 			break;
-
 		default:
 			if (pipefd != -1)
 			{
@@ -156,24 +148,19 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_SocketFlags::EWaitDirectionF
 				rc = 0;
 			}
 	}
-
 	return rc;
 }
 
 #ifndef OW_HAVE_GETHOSTBYNAME_R
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
-extern OW_Mutex OW_gethostbynameMutex;  // defined in OW_SocketAddress.cpp
+extern Mutex gethostbynameMutex;  // defined in SocketAddress.cpp
 #endif
-
-OW_String getFullyQualifiedHostName()
+String getFullyQualifiedHostName()
 {
 	char hostName [2048];
-
 	if (gethostname (hostName, sizeof(hostName)) == 0)
 	{
 #ifndef OW_HAVE_GETHOSTBYNAME_R
-		OW_MutexLock lock(OW_gethostbynameMutex);
+		MutexLock lock(gethostbynameMutex);
 		struct hostent *he;
 		if ((he = gethostbyname (hostName)) != 0)
 		{
@@ -181,14 +168,13 @@ OW_String getFullyQualifiedHostName()
 		}
 		else
 		{
-			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname failed: %1", h_errno).c_str());
+			OW_THROW(SocketException, format("SocketUtils::getFullyQualifiedHostName: gethostbyname failed: %1", h_errno).c_str());
 		}
 #else
 		hostent hostbuf;
 		hostent* host = &hostbuf;
 		char buf[2048];
 		int h_err = 0;
-
 		// gethostbyname_r will randomly fail on some platforms/networks
 		// maybe the DNS server is overloaded or something.  So we'll
 		// give it a few tries to see if it can get it right.
@@ -202,23 +188,23 @@ OW_String getFullyQualifiedHostName()
 				break;
 			}
 		}
-
 		if (worked && host != 0)
 		{
 			return host->h_name;
 		}
 		else
 		{
-			OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostbyname_r(%1) failed: %2", hostName, h_err).c_str());
+			OW_THROW(SocketException, format("SocketUtils::getFullyQualifiedHostName: gethostbyname_r(%1) failed: %2", hostName, h_err).c_str());
 		}
 #endif
 	}
 	else
 	{
-		OW_THROW(OW_SocketException, format("OW_SocketUtils::getFullyQualifiedHostName: gethostname failed: %1(%2)", errno, strerror(errno)).c_str());
+		OW_THROW(SocketException, format("SocketUtils::getFullyQualifiedHostName: gethostname failed: %1(%2)", errno, strerror(errno)).c_str());
 	}
-
 	return "";
 }
+} // end namespace SocketUtils
 
-}
+} // end namespace OpenWBEM
+

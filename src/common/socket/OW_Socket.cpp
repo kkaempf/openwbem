@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Socket.hpp"
 #include "OW_UnnamedPipe.hpp"
@@ -37,105 +36,100 @@
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
 
+namespace OpenWBEM
+{
+
 DEFINE_EXCEPTION(Socket)
 DEFINE_EXCEPTION(SocketTimeout)
-
-OW_UnnamedPipeRef OW_Socket::m_pUpipe;
-
-OW_Socket::OW_Socket(OW_SocketFlags::ESSLFlag isSSL)
+UnnamedPipeRef Socket::m_pUpipe;
+Socket::Socket(SocketFlags::ESSLFlag isSSL)
 {
-	if (isSSL == OW_SocketFlags::E_SSL)
+	if (isSSL == SocketFlags::E_SSL)
 	{
 #ifndef OW_NO_SSL
-		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl);
+		m_impl = SocketBaseImplRef(new SSLSocketImpl);
 #else
-		OW_THROW(OW_SSLException, "Not built with SSL");
+		OW_THROW(SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	}
 	else
 	{
-		m_impl = OW_SocketBaseImplRef(new OW_SocketImpl);
+		m_impl = SocketBaseImplRef(new SocketImpl);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Socket::OW_Socket(OW_SocketHandle_t fd,
-	OW_SocketAddress::AddressType addrType, OW_SocketFlags::ESSLFlag isSSL)
+Socket::Socket(SocketHandle_t fd,
+	SocketAddress::AddressType addrType, SocketFlags::ESSLFlag isSSL)
 {
-	if (isSSL == OW_SocketFlags::E_SSL)
+	if (isSSL == SocketFlags::E_SSL)
 	{
 #ifndef OW_NO_SSL
-		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl(fd, addrType));
+		m_impl = SocketBaseImplRef(new SSLSocketImpl(fd, addrType));
 #else
-		OW_THROW(OW_SSLException, "Not built with SSL");
+		OW_THROW(SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	}
 	else
 	{
-		m_impl = OW_SocketBaseImplRef(new OW_SocketImpl(fd, addrType));
+		m_impl = SocketBaseImplRef(new SocketImpl(fd, addrType));
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Socket::OW_Socket(const OW_SocketAddress& addr, OW_SocketFlags::ESSLFlag isSSL)
+Socket::Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL)
 {
-	if (isSSL == OW_SocketFlags::E_SSL)
+	if (isSSL == SocketFlags::E_SSL)
 #ifndef OW_NO_SSL
-		m_impl = OW_SocketBaseImplRef(new OW_SSLSocketImpl(addr));
+		m_impl = SocketBaseImplRef(new SSLSocketImpl(addr));
 #else
-		OW_THROW(OW_SSLException, "Not built with SSL");
+		OW_THROW(SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
 	else
 	{
-		m_impl = OW_SocketBaseImplRef(new OW_SocketImpl(addr));
+		m_impl = SocketBaseImplRef(new SocketImpl(addr));
 	}
 }
-
 static bool b_gotShutDown = false;
-static OW_Mutex shutdownMutex;
-
+static Mutex shutdownMutex;
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_Socket::shutdownAllSockets()
+Socket::shutdownAllSockets()
 {
-	OW_MutexLock mlock(shutdownMutex);
+	MutexLock mlock(shutdownMutex);
 	OW_ASSERT(m_pUpipe);
 	b_gotShutDown = true;
 	if (m_pUpipe->writeString("die!") == -1)
 	{
-		OW_THROW(OW_IOException, "Failed writing to socket shutdown pipe");
+		OW_THROW(IOException, "Failed writing to socket shutdown pipe");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_Socket::createShutDownMechanism()
+Socket::createShutDownMechanism()
 {
-	OW_MutexLock mlock(shutdownMutex);
+	MutexLock mlock(shutdownMutex);
 	OW_ASSERT(!m_pUpipe);
-	m_pUpipe = OW_UnnamedPipe::createUnnamedPipe();
+	m_pUpipe = UnnamedPipe::createUnnamedPipe();
 	b_gotShutDown = false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-OW_Socket::deleteShutDownMechanism()
+Socket::deleteShutDownMechanism()
 {
-	OW_MutexLock mlock(shutdownMutex);
+	MutexLock mlock(shutdownMutex);
 	OW_ASSERT(m_pUpipe);
 	m_pUpipe = 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 bool
-OW_Socket::gotShutDown()
+Socket::gotShutDown()
 {
-	OW_MutexLock mlock(shutdownMutex);
+	MutexLock mlock(shutdownMutex);
 	return b_gotShutDown;
 }
 
+} // end namespace OpenWBEM
 

@@ -27,32 +27,31 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_CIMOMInfo.hpp"
 
-
-
-const OW_String
-OW_CIMOMInfo::operator[](const OW_String& key) const
+namespace OpenWBEM
 {
-	OW_Map<OW_String, OW_String>::const_iterator it = m_attributes.find(key);
+
+const String
+CIMOMInfo::operator[](const String& key) const
+{
+	Map<String, String>::const_iterator it = m_attributes.find(key);
 	if (it != m_attributes.end())
 	{
 		return it->second;
 	}
 	else
 	{
-		return OW_String();
+		return String();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String& 
-OW_CIMOMInfo::operator[](const OW_String& key)
+String& 
+CIMOMInfo::operator[](const String& key)
 {
 	return m_attributes[key];
 }
 
+} // end namespace OpenWBEM
 

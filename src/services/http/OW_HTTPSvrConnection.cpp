@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPSvrConnection.hpp"
 #include "OW_IOException.hpp"
@@ -52,31 +51,28 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_ThreadCancelledException.hpp"
 
+namespace OpenWBEM
+{
+
 using std::ios;
 using std::istream;
 using std::ostream;
 using std::flush;
-
 #ifndef OW_LOGDEBUG
 #define OW_LOGDEBUG(x) m_options.env->getLogger()->logDebug(x)
 #endif
-
 #ifndef OW_LOGERROR
 #define OW_LOGERROR(x) m_options.env->getLogger()->logError(x)
 #endif
-
 #ifndef OW_LOGCUSTINFO
 #define OW_LOGCUSTINFO(x) m_options.env->getLogger()->logCustInfo(x)
 #endif
-
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_Socket socket,
-	OW_HTTPServer* htin,
-	OW_Reference<OW_UnnamedPipe>& upipe,
-	const OW_HTTPServer::Options& opts)
-	: OW_Runnable()
+HTTPSvrConnection::HTTPSvrConnection(Socket socket,
+	HTTPServer* htin,
+	Reference<UnnamedPipe>& upipe,
+	const HTTPServer::Options& opts)
+	: Runnable()
 	, m_requestLine(), m_requestHeaders(), m_pHTTPServer(htin)
 	, m_socket(socket), m_ostr(socket.getOutputStream())
 	, m_resCode(SC_OK), m_needSendError(false)
@@ -98,10 +94,9 @@ OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_Socket socket,
 {
 	m_socket.setTimeouts(m_options.timeout);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // Destructor
-OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
+HTTPSvrConnection::~HTTPSvrConnection()
 {
 	try
 	{
@@ -112,17 +107,14 @@ OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
 		// don't let exceptions escape
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::run()
+HTTPSvrConnection::run()
 {
-	OW_Reference<OW_CIMProtocolIStreamIFC> istrToReadFrom(0);
-	OW_SelectTypeArray selArray;
-
+	Reference<CIMProtocolIStreamIFC> istrToReadFrom(0);
+	SelectTypeArray selArray;
 	selArray.push_back(m_upipe->getSelectObj());
 	selArray.push_back(m_socket.getSelectObj());
-
 	try
 	{
 		m_isAuthenticated = false;
@@ -142,30 +134,27 @@ OW_HTTPSvrConnection::run()
 			// Add response headers common to all responses
 			//
 			addHeader("Date",
-				OW_HTTPUtils::date());
+				HTTPUtils::date());
 			addHeader("Cache-Control",
 				"no-cache");
 			addHeader("Server",
 				"OpenWBEM/" OW_VERSION " (CIMOM)");
-
-			int selType = OW_Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
-			if(selType == OW_Select::OW_SELECT_ERROR)
+			int selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
+			if(selType == Select::SELECT_ERROR)
 			{
-			   OW_THROW(OW_SocketException, "Error occurred during select()");
+			   OW_THROW(SocketException, "Error occurred during select()");
 			}
-			if(selType == OW_Select::OW_SELECT_INTERRUPTED)
+			if(selType == Select::SELECT_INTERRUPTED)
 			{
-			   OW_THROW(OW_SocketException, "select() was interrupted.");
+			   OW_THROW(SocketException, "select() was interrupted.");
 			}
-
-			if(selType == OW_Select::OW_SELECT_TIMEOUT)
+			if(selType == Select::SELECT_TIMEOUT)
 			{
 			   m_resCode = SC_REQUEST_TIMEOUT;
 			   m_errDetails = "Timeout waiting for request.";
 			   sendError(m_resCode);
 			   return;
 			}
-
 			if(selType == 0)	// Unnamped pipe selected
 			{
 			   m_resCode = SC_SERVICE_UNAVAILABLE;
@@ -174,15 +163,13 @@ OW_HTTPSvrConnection::run()
 			   sendError(m_resCode);
 			   return;
 			}
-
 			if(selType != 1)	// If this isn't the socket - something is wrong
 			{
-			   OW_THROW(OW_Assertion, "Unexpected return code from select");
+			   OW_THROW(Assertion, "Unexpected return code from select");
 			}
-
-			if (!OW_HTTPUtils::parseHeader(m_requestHeaders, m_requestLine, m_istr))
+			if (!HTTPUtils::parseHeader(m_requestHeaders, m_requestLine, m_istr))
 			{
-				if (OW_Socket::gotShutDown())
+				if (Socket::gotShutDown())
 				{
 					m_errDetails = "Server is shutting down!";
 					m_resCode = SC_INTERNAL_SERVER_ERROR;
@@ -200,37 +187,29 @@ OW_HTTPSvrConnection::run()
 				sendError(m_resCode);
 				return;
 			}
-
 			//
 			// Process request line
 			//
-
 			m_resCode = processRequestLine();
 			if (m_resCode >= 300)	// problem with request detected in request line.
 			{
 				sendError(m_resCode);
 				return;
 			}
-
 			//
 			// Process Headers
 			//
-
 			m_resCode = processHeaders();
 			istrToReadFrom = convertToFiniteStream(m_istr);
-
 			if (m_resCode >= 300)	// problem with request detected in headers.
 			{
 				cleanUpIStreams(istrToReadFrom);
 				sendError(m_resCode);
 				return;
 			}
-
 			//
 			// Set up input stream to read entity
 			//
-
-
 			switch (m_method)
 			{
 				case TRACE:
@@ -240,7 +219,7 @@ OW_HTTPSvrConnection::run()
 				case POST:
 					if (istrToReadFrom.isNull())
 					{
-						OW_THROW(OW_HTTPException,
+						OW_THROW(HTTPException,
 							"POST, but no content-length or chunking");
 					}
 					post(*istrToReadFrom);
@@ -256,30 +235,27 @@ OW_HTTPSvrConnection::run()
 					sendError(m_resCode);
 					return;
 			} // switch (m_method)
-
 			m_ostr.flush();
-
 			cleanUpIStreams(istrToReadFrom);
-
 			if(m_isClose)
 			{
 				break;
 			}
 		} // while(m_istr.good())
 	} // try
-	catch (OW_CIMErrorException& cee)
+	catch (CIMErrorException& cee)
 	{
 		addHeader("CIMError", cee.getMessage());
 		if (m_errDetails.empty())
 		{
-			m_errDetails = OW_String("CIMError: ") + cee.getMessage();
+			m_errDetails = String("CIMError: ") + cee.getMessage();
 		}
 		cleanUpIStreams(istrToReadFrom);
-		OW_String errMsg(cee.getMessage());
-		if (errMsg == OW_CIMErrorException::unsupported_protocol_version ||
-			errMsg == OW_CIMErrorException::multiple_requests_unsupported ||
-			errMsg == OW_CIMErrorException::unsupported_cim_version ||
-			errMsg == OW_CIMErrorException::unsupported_dtd_version)
+		String errMsg(cee.getMessage());
+		if (errMsg == CIMErrorException::unsupported_protocol_version ||
+			errMsg == CIMErrorException::multiple_requests_unsupported ||
+			errMsg == CIMErrorException::unsupported_cim_version ||
+			errMsg == CIMErrorException::unsupported_dtd_version)
 		{
 			sendError(SC_NOT_IMPLEMENTED);
 		}
@@ -288,15 +264,15 @@ OW_HTTPSvrConnection::run()
 			sendError(SC_BAD_REQUEST);
 		}
 	}
-	catch (OW_Assertion& a)
+	catch (Assertion& a)
 	{
-		OW_LOGERROR(OW_Format("Caught ASSERTION in OW_HTTPSvrConnection::run: %1",
+		OW_LOGERROR(Format("Caught OW_ASSERTION in HTTPSvrConnection::run: %1",
 			a));
 		m_errDetails = a.getMessage();
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		OW_LOGERROR(format("%1", e));
 		m_errDetails = e.getMessage();
@@ -313,14 +289,14 @@ OW_HTTPSvrConnection::run()
 #endif
 	catch (std::exception& e)
 	{
-		m_errDetails = format("Caught std::exception (%1) in OW_HTTPSvrConnection::run()", e.what());
+		m_errDetails = format("Caught std::exception (%1) in HTTPSvrConnection::run()", e.what());
 		OW_LOGERROR(m_errDetails);
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
 	}
-	catch (OW_ThreadCancelledException&)
+	catch (ThreadCancelledException&)
 	{
-		OW_LOGERROR("Got Thread Cancelled Exception in OW_HTTPSvrConnection::run()");
+		OW_LOGERROR("Got Thread Cancelled Exception in HTTPSvrConnection::run()");
 		m_errDetails = "HTTP Server thread cancelled";
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
@@ -328,27 +304,25 @@ OW_HTTPSvrConnection::run()
 	}
 	catch (...)
 	{
-		OW_LOGERROR("Got Unknown Exception in OW_HTTPSvrConnection::run()");
+		OW_LOGERROR("Got Unknown Exception in HTTPSvrConnection::run()");
 		m_errDetails = "HTTP Server caught unknown exception";
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
 	}
 	//m_socket.disconnect();
 }
-
 void
-OW_HTTPSvrConnection::cleanUpIStreams(OW_Reference<OW_CIMProtocolIStreamIFC> istr)
+HTTPSvrConnection::cleanUpIStreams(Reference<CIMProtocolIStreamIFC> istr)
 {
 	if (!istr.isNull())
 	{
-		OW_HTTPUtils::eatEntity(*istr);
+		HTTPUtils::eatEntity(*istr);
 	}
 }
-
 void
-OW_HTTPSvrConnection::beginPostResponse()
+HTTPSvrConnection::beginPostResponse()
 {
-	m_respHeaderPrefix = OW_HTTPUtils::getCounterStr();
+	m_respHeaderPrefix = HTTPUtils::getCounterStr();
 	addHeader(
 		"Content-Type", m_requestHandler->getContentType() + "; charset=\"utf-8\"");
 	if (m_method == M_POST)
@@ -358,12 +332,10 @@ OW_HTTPSvrConnection::beginPostResponse()
 	addHeader("Man",
 		"http://www.dmtf.org/cim/mapping/http/v1.0 ; ns=" + m_respHeaderPrefix);
 	m_respHeaderPrefix += "-";
-
 	if (m_deflateCompressionOut && m_chunkedOut)
 	{
 		addHeader("Content-Encoding", "deflate");
 	}
-
 	if (m_chunkedOut)
 	{
 		addHeader( "Transfer-Encoding", "chunked");
@@ -375,40 +347,38 @@ OW_HTTPSvrConnection::beginPostResponse()
 		sendHeaders(m_resCode);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
+HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 {
 	if (m_chunkedOut)
 	{
-		ostrEntity = new OW_HTTPChunkedOStream(m_ostr);
+		ostrEntity = new HTTPChunkedOStream(m_ostr);
 		ostrEntity->exceptions(std::ios::badbit);
 		if (m_deflateCompressionOut)
 		{
 #ifdef OW_HAVE_ZLIB_H
-			ostrEntity = new OW_HTTPDeflateOStream(*ostrEntity);
+			ostrEntity = new HTTPDeflateOStream(*ostrEntity);
 			ostrEntity->exceptions(std::ios::badbit);
 #else
-			OW_THROW(OW_HTTPException, "Trying to deflate output, but no zlib!");
+			OW_THROW(HTTPException, "Trying to deflate output, but no zlib!");
 #endif
 		}
 	}
 	else
 	{
-		ostrEntity = new OW_TempFileStream;
+		ostrEntity = new TempFileStream;
 		ostrEntity->exceptions(std::ios::badbit);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
-	OW_TempFileStream& ostrError)
+HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
+	TempFileStream& ostrError)
 {
 	int clen = -1;
-	OW_Int32 errCode = 0;
-	OW_String errDescr = "";
+	Int32 errCode = 0;
+	String errDescr = "";
 	if (!m_chunkedOut)
 	{
 		ostream* ostrToSend = ostrEntity;
@@ -416,15 +386,12 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		{
 			ostrToSend = &ostrError;
 		}
-
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
-
-		OW_TempFileStream* tfs = NULL;
-		if ((tfs = dynamic_cast<OW_TempFileStream*>(ostrToSend)))
+		TempFileStream* tfs = NULL;
+		if ((tfs = dynamic_cast<TempFileStream*>(ostrToSend)))
 		{
 			clen = tfs->getSize();
 		}
-
 		if (m_deflateCompressionOut && tfs)
 		{
 			addHeader("Transfer-Encoding", "chunked");
@@ -440,7 +407,6 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		{
 			sendHeaders(m_resCode, clen);
 		}
-
 		if (tfs)
 		{
 			if (clen > 0)
@@ -449,13 +415,13 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				{
 #ifdef OW_HAVE_ZLIB_H
 					// gzip test
-					OW_HTTPChunkedOStream costr(m_ostr);
-					OW_HTTPDeflateOStream deflateostr(costr);
+					HTTPChunkedOStream costr(m_ostr);
+					HTTPDeflateOStream deflateostr(costr);
 					deflateostr << tfs->rdbuf();
 					deflateostr.termOutput();
 					costr.termOutput();
 #else
-					OW_THROW(OW_HTTPException, "Attempting to deflate response "
+					OW_THROW(HTTPException, "Attempting to deflate response "
 						" but we're not compiled with zlib!  (shouldn't happen)");
 #endif // #ifdef OW_HAVE_ZLIB_H
 				}
@@ -464,7 +430,7 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 					m_ostr << tfs->rdbuf();
 					if (!m_ostr)
 					{
-						OW_THROW(OW_IOException, "Failed writing");
+						OW_THROW(IOException, "Failed writing");
 					}
 				}
 			}
@@ -473,34 +439,33 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 	} // if !m_chunkedOut
 	else // m_chunkedOut
 	{
-		OW_HTTPChunkedOStream* ostrChunk = NULL;
+		HTTPChunkedOStream* ostrChunk = NULL;
 		if (m_deflateCompressionOut)
 		{
 #ifdef OW_HAVE_ZLIB_H
-			OW_HTTPDeflateOStream* deflateostr = dynamic_cast<OW_HTTPDeflateOStream*>
+			HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>
 				(ostrEntity);
 			deflateostr->termOutput();
-			ostrChunk = dynamic_cast<OW_HTTPChunkedOStream*>
+			ostrChunk = dynamic_cast<HTTPChunkedOStream*>
 				(&deflateostr->getOutputStreamOrig());
 #else
-			OW_THROW(OW_HTTPException, "Attempting to deflate response "
+			OW_THROW(HTTPException, "Attempting to deflate response "
 				" but we're not compiled with zlib!  (shouldn't happen)");
 #endif
 		}
 		else
 		{
-			ostrChunk = dynamic_cast<OW_HTTPChunkedOStream*>
+			ostrChunk = dynamic_cast<HTTPChunkedOStream*>
 				(ostrEntity);
 		}
-
 		OW_ASSERT(ostrChunk);
 		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
 			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorCode",
-				OW_String(errCode));
+				String(errCode));
 			if (!errDescr.empty())
 			{
-				OW_StringArray lines = errDescr.tokenize("\n");
+				StringArray lines = errDescr.tokenize("\n");
 				errDescr.erase();
 				for (size_t i = 0; i < lines.size(); ++i)
 				{
@@ -518,10 +483,9 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		ostrChunk->termOutput();
 	} // else m_chunkedOut
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPSvrConnection::processRequestLine()
+HTTPSvrConnection::processRequestLine()
 {
 	switch (m_requestLine.size())
 	{ // first check the request line to determine HTTP version
@@ -547,10 +511,9 @@ OW_HTTPSvrConnection::processRequestLine()
 			break;
 		default:
 			m_errDetails = "Invalid number of tokens on request line: " +
-				OW_String(static_cast<unsigned int>(m_requestLine.size()));
+				String(static_cast<unsigned int>(m_requestLine.size()));
 			return SC_BAD_REQUEST;
 	}
-
 	// check for a supported method.
 	if (m_requestLine[0].equals("M-POST"))
 	{
@@ -574,7 +537,6 @@ OW_HTTPSvrConnection::processRequestLine()
 		m_errDetails = "Method not allowed by server: " + m_requestLine[0];
 		return SC_METHOD_NOT_ALLOWED;
 	}
-
 	// make sure they're trying to hit the right resource
 	/* TODO: Fix this with respect to listeners
 	if (!m_requestLine[1].equalsIgnoreCase("/cimom") && m_method != OPTIONS)
@@ -584,16 +546,13 @@ OW_HTTPSvrConnection::processRequestLine()
 		return SC_FORBIDDEN;
 	}
 	*/
-
 	return SC_OK;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 // This function may seem large and complex, but it is composed of many
 // small, independent blocks.
 int
-OW_HTTPSvrConnection::processHeaders()
+HTTPSvrConnection::processHeaders()
 {
 //
 // check for required headers with HTTP/1.1
@@ -609,12 +568,9 @@ OW_HTTPSvrConnection::processHeaders()
 			return SC_BAD_REQUEST;
 		}
 	}
-
-
 //
 // determine if connection is persistent.
 //
-
 	if (m_httpVersion != HTTP_VER_11)
 	{
 		m_isClose = true;	 // pre 1.1 version, no persistent connections.
@@ -652,7 +608,7 @@ OW_HTTPSvrConnection::processHeaders()
 		// No chunking.  get the content-length.
 		if (headerHasKey("Content-Length"))
 		{
-			OW_String cLen = getHeaderValue("Content-Length");
+			String cLen = getHeaderValue("Content-Length");
 			if (!cLen.empty())
 			{
 				m_contentLength = cLen.toInt64();
@@ -680,15 +636,13 @@ OW_HTTPSvrConnection::processHeaders()
 			}
 		}
 	} // if (!m_chunkedIn)
-
 //
 // Check for content-encoding
 //
-
 	m_deflateCompressionIn = false;
 	if (headerHasKey("Content-Encoding"))
 	{
-		OW_String cc = getHeaderValue("Content-Encoding");
+		String cc = getHeaderValue("Content-Encoding");
 		if (cc.equalsIgnoreCase("deflate"))
 		{
 #ifdef OW_HAVE_ZLIB_H
@@ -710,18 +664,16 @@ OW_HTTPSvrConnection::processHeaders()
 			return SC_NOT_ACCEPTABLE;
 		}
 	}
-
 //
 // Check for correct Accept value
 //
-
 	if (m_method == POST || m_method == M_POST)
 	{
 		if (headerHasKey("Accept"))
 		{
-			OW_String ac = getHeaderValue("Accept");
-			if (ac.indexOf("text/xml") == OW_String::npos 
-				&& ac.indexOf("application/xml") == OW_String::npos)
+			String ac = getHeaderValue("Accept");
+			if (ac.indexOf("text/xml") == String::npos 
+				&& ac.indexOf("application/xml") == String::npos)
 			{
 				m_errDetails = "Only entities of type \"text/xml\" or "
 					"\"application/xml\" are supported.";
@@ -729,33 +681,28 @@ OW_HTTPSvrConnection::processHeaders()
 			}
 		}
 	}
-
 //
 // Check for Accept charset
 //
-
 	if (m_method == POST || m_method == M_POST)
 	{
 		if (headerHasKey("Accept-Charset"))
 		{
-			if (getHeaderValue("Accept-Charset").indexOf("utf-8") == OW_String::npos)
+			if (getHeaderValue("Accept-Charset").indexOf("utf-8") == String::npos)
 			{
 				m_errDetails = "Only the utf-8 charset is acceptable.";
 				return SC_NOT_ACCEPTABLE;
 			}
 		}
 	}
-
 //
 // Check for Accept-Encoding
 //
-
 	if (m_method == POST || m_method == M_POST)
 	{
 		if (headerHasKey("Accept-Encoding"))
 		{
-
-			if (getHeaderValue("Accept-Encoding").indexOf("deflate") != OW_String::npos)
+			if (getHeaderValue("Accept-Encoding").indexOf("deflate") != String::npos)
 			{
 #ifdef OW_HAVE_ZLIB_H
 				m_deflateCompressionOut = m_options.enableDeflate;
@@ -763,41 +710,34 @@ OW_HTTPSvrConnection::processHeaders()
 			}
 			
 			// TODO I should really look to q != 0 after deflate as well...
-
 			/*   // SNIA has Accept-Encoding with no "identity", so this is commented out...
 			if (getHeaderValue("Accept-Encoding").indexOf("identity") < 0)
 			{
 				m_errDetails = "The \"identity\" encoding must be accepted.";
-
 				return SC_NOT_ACCEPTABLE;
 			}
 			*/
 		}
 	}
-
 //
 // Check for TE header
 //
-
-	if (getHeaderValue("TE").indexOf("trailers") != OW_String::npos)
+	if (getHeaderValue("TE").indexOf("trailers") != String::npos)
 	{
 		// Trailers not standardized yet, so only do it we're talking to
 		// ourselves.
-		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) != OW_String::npos)
+		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) != String::npos)
 		{
 			m_chunkedOut = true;
 		}
 	}
-
 //
 // Check for Accept-Languages
 //
 	// TODO
-
 //
 // Check for forbidden header keys.
 //
-
 	if (
 		headerHasKey("Accept-Ranges")
 		|| headerHasKey("Content-Range")
@@ -810,34 +750,28 @@ OW_HTTPSvrConnection::processHeaders()
 			"http://www.dmtf.org/cim/mapping/http/v1.0";
 		return SC_NOT_ACCEPTABLE;
 	}
-
-
 //
 // Content-Language
 //
 	// TODO
-
 //
 // Content-Type
 //	
-
 	if (m_method == M_POST || m_method == POST)
 	{
 		if (headerHasKey("Content-Type"))
 		{
-			OW_String ct = getHeaderValue("Content-Type");
+			String ct = getHeaderValue("Content-Type");
 			// strip off the parameters from the content type
 			ct = ct.substring(0, ct.indexOf(';'));
 			
 			// TODO: parse and handle the parameters we may possibly care about.
-
 			m_requestHandler = m_options.env->getRequestHandler(ct);
 			if (m_requestHandler.isNull())
 			{
 				m_errDetails = format("Content-Type \"%1\" is not supported.", ct);
 				return SC_UNSUPPORTED_MEDIA_TYPE;
 			}
-
 		}
 		else
 		{
@@ -845,25 +779,23 @@ OW_HTTPSvrConnection::processHeaders()
 			return SC_NOT_ACCEPTABLE;
 		}
 	}
-
 	/*
 	// set the path for the handler
-	if (m_requestLine[1].equalsIgnoreCase("/" OW_BINARY_ID))
+	if (m_requestLine[1].equalsIgnoreCase("/" BINARY_ID))
 	{
 		m_options.env->getLogger()->logDebug("Using binary request handler");
-		m_requestHandler = m_options.env->getRequestHandler(OW_BINARY_ID);
+		m_requestHandler = m_options.env->getRequestHandler(BINARY_ID);
 	}
 	else
 	{
 		m_options.env->getLogger()->logDebug("Using CIM/XML request handler");
-		m_requestHandler = m_options.env->getRequestHandler(OW_CIMXML_ID);
+		m_requestHandler = m_options.env->getRequestHandler(CIMXML_ID);
 	}
 	if (!m_requestHandler)
 	{
-		OW_HTTP_THROW(OW_HTTPException, "Invalid Path", SC_NOT_FOUND);
+		HTTP_OW_THROW(HTTPException, "Invalid Path", SC_NOT_FOUND);
 	}
 	*/
-
 //
 // Check for "Man: " header and get ns value.
 //
@@ -871,21 +803,21 @@ OW_HTTPSvrConnection::processHeaders()
 	{
 		if (headerHasKey("Man"))
 		{
-			OW_String manLine = getHeaderValue("Man");
-			if (manLine.indexOf("http://www.dmtf.org/cim/mapping/http/v1.0") == OW_String::npos)
+			String manLine = getHeaderValue("Man");
+			if (manLine.indexOf("http://www.dmtf.org/cim/mapping/http/v1.0") == String::npos)
 			{
 				m_errDetails = "Unknown extension URI";
 				return SC_NOT_EXTENDED;
 			}
 			size_t idx = manLine.indexOf(';');
-			if (idx > 0 && idx != OW_String::npos)
+			if (idx > 0 && idx != String::npos)
 			{
 				manLine = manLine.substring(idx + 0);
 				idx = manLine.indexOf("ns");
-				if (idx != OW_String::npos)
+				if (idx != String::npos)
 				{
 					idx = manLine.indexOf('=');
-					if (idx > 0 && idx != OW_String::npos)
+					if (idx > 0 && idx != String::npos)
 					{
 						m_reqHeaderPrefix = manLine.substring(idx + 1).trim();
 					}
@@ -903,7 +835,6 @@ OW_HTTPSvrConnection::processHeaders()
 // Check for Authentication
 //
 	// if m_options.allowAnonymous is true, we don't check.
-
 	if (m_options.allowAnonymous == false)
 	{
 		if (!m_isAuthenticated)
@@ -913,9 +844,8 @@ OW_HTTPSvrConnection::processHeaders()
 			{
 				if (performAuthentication(getHeaderValue("Authorization")) < 300 )
 						m_isAuthenticated = true;
-
 			}
-			catch (OW_AuthenticationException& e)
+			catch (AuthenticationException& e)
 			{
 				m_errDetails = e.getMessage();
 				m_isAuthenticated = false;
@@ -927,71 +857,57 @@ OW_HTTPSvrConnection::processHeaders()
 			}
 		}
 	}
-
 //
 //
 //
-
 	return SC_OK;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::trace()
+HTTPSvrConnection::trace()
 {
 	addHeader("TransferEncoding", "chunked");
 	sendHeaders(m_resCode);
-	OW_HTTPChunkedOStream ostr(m_ostr);
+	HTTPChunkedOStream ostr(m_ostr);
 	for (size_t i = 0; i < m_requestLine.size(); i++)
 	{
 		ostr << m_requestLine[i] << " ";
 	}
 	ostr << "\r\n";
-	OW_Map<OW_String, OW_String>::iterator iter;
+	Map<String, String>::iterator iter;
 	for (iter = m_requestHeaders.begin(); iter != m_requestHeaders.end(); iter++)
 	{
 		ostr << iter->first << ": " << iter->second << "\r\n" ;
 	}
 	ostr.termOutput();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::post(istream& istr)
+HTTPSvrConnection::post(istream& istr)
 {
 	ostream* ostrEntity = NULL;
-	OW_TempFileStream ostrError(400);
-
+	TempFileStream ostrError(400);
 	initRespStream(ostrEntity);
 	OW_ASSERT(ostrEntity);
-
 					
 /*
-	OW_TempFileStream ltfs;
+	TempFileStream ltfs;
 	ltfs << istr.rdbuf();
 	ofstream ofstr("/tmp/HTTPSvrConnectionXMLDump", ios::app);
 	ofstr << "************* New entity **** Size: " << ltfs.getSize() << " Should be: " << getHeaderValue("Content-Length") << endl;
 	ofstr << ltfs.rdbuf();
 	ltfs.rewind();
 */
-
-
 	m_requestHandler->setEnvironment(m_options.env);
-
 	beginPostResponse();
-
 	// process the request
-	OW_SortedVectorMap<OW_String, OW_String> handlerVars;
-	handlerVars[OW_ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
-	handlerVars[OW_ConfigOpts::USER_NAME_opt] = m_userName;
+	SortedVectorMap<String, String> handlerVars;
+	handlerVars[ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
+	handlerVars[ConfigOpts::USER_NAME_opt] = m_userName;
 	m_requestHandler->process(&istr, ostrEntity, &ostrError, handlerVars);
-
 	sendPostResponse(ostrEntity, ostrError);
-
-
 #ifdef OW_HAVE_ZLIB_H
-	OW_HTTPDeflateOStream* deflateostr = dynamic_cast<OW_HTTPDeflateOStream*>(ostrEntity);
+	HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>(ostrEntity);
 	if (deflateostr)
 	{
 		ostrEntity = &deflateostr->getOutputStreamOrig();
@@ -1000,52 +916,44 @@ OW_HTTPSvrConnection::post(istream& istr)
 #endif // #ifdef OW_HAVE_ZLIB_H
 	delete ostrEntity;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::options()
+HTTPSvrConnection::options()
 {
-
 	addHeader("Allow","POST, M-POST, OPTIONS, TRACE");
-
 #ifdef OW_HAVE_ZLIB_H
 	if (m_options.enableDeflate)
 		addHeader("Accept-Encoding", "deflate");
 #endif
-
-	OW_String hp = OW_HTTPUtils::getCounterStr();
-	OW_CIMFeatures cf;
+	String hp = HTTPUtils::getCounterStr();
+	CIMFeatures cf;
 	
 	m_requestHandler = m_options.env->getRequestHandler("application/xml");
 	if (!m_requestHandler)
 	{
-		OW_HTTP_THROW(OW_HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
+		OW_HTTP_THROW(HTTPException, "OPTIONS is only implemented for XML requests", SC_NOT_IMPLEMENTED);
 	}
-
 	m_requestHandler->setEnvironment(m_options.env);
-
-	OW_SortedVectorMap<OW_String, OW_String> handlerVars;
-	handlerVars[OW_ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
-	handlerVars[OW_ConfigOpts::USER_NAME_opt] = m_userName;
+	SortedVectorMap<String, String> handlerVars;
+	handlerVars[ConfigOpts::HTTP_PATH_opt] = m_requestLine[1];
+	handlerVars[ConfigOpts::USER_NAME_opt] = m_userName;
 	
 	m_requestHandler->options(cf, handlerVars);
 	
 	addHeader("Opt", cf.extURL + " ; ns=" + hp);
 	hp += "-";
 	addHeader(hp + "CIMProtocolVersion", cf.protocolVersion);
-	OW_String headerKey;
-
+	String headerKey;
 	switch (cf.cimProduct)
 	{
-		case OW_CIMFeatures::SERVER:
+		case CIMFeatures::SERVER:
 			if (cf.supportsBatch)
 			{
 				addHeader(hp + "CIMSupportsMultipleOperations", "");
 			}
 			headerKey = hp + "CIMSupportedFunctionalGroups";
 			break;
-		case OW_CIMFeatures::LISTENER:
+		case CIMFeatures::LISTENER:
 			if (cf.supportsBatch)
 			{
 				addHeader(hp + "CIMSupportsMultipleExports", "");
@@ -1053,10 +961,10 @@ OW_HTTPSvrConnection::options()
 			headerKey = hp + "CIMSupportedExportGroups";
 			break;
 		default:
-			OW_THROW(OW_Exception, "Attempting OPTIONS on a CIMProductIFC "
+			OW_THROW(Exception, "Attempting OPTIONS on a CIMProductIFC "
 				"that is not a LISTENER or SERVER");
 	}
-	OW_String headerVal;
+	String headerVal;
 	for (size_t i = 0; i < cf.supportedGroups.size(); i++)
 	{
 		headerVal += cf.supportedGroups[i];
@@ -1066,17 +974,14 @@ OW_HTTPSvrConnection::options()
 		}
 	}
 	addHeader(headerKey, headerVal);
-
 	if (!cf.cimom.empty())
 	{
 		addHeader(hp + "CIMOM", cf.cimom);
 	}
-
 	if (!cf.validation.empty())
 	{
 		addHeader(hp + "CIMValidation", cf.validation);
 	}
-
 	if (cf.supportedQueryLanguages.size() > 0)
 	{
 		headerVal.erase();
@@ -1090,34 +995,31 @@ OW_HTTPSvrConnection::options()
 		}
 		addHeader(hp + "CIMSupportedQueryLanguages", headerVal);
 	}
-
 	sendHeaders(m_resCode);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::sendError(int resCode)
+HTTPSvrConnection::sendError(int resCode)
 {
 	if (!m_ostr)
 	{
 		// connection closed, bail out
 		return;
 	}
-
 	if (m_socket.receiveTimeOutExpired())
 	{
 		resCode = SC_REQUEST_TIMEOUT;
 		m_errDetails = "Timeout waiting for request.";
 	}
-	else if (OW_Socket::gotShutDown())
+	else if (Socket::gotShutDown())
 	{
 		resCode = SC_SERVICE_UNAVAILABLE;
 		m_errDetails = "The server is shutting down.  Please try "
 			"again later.";
 	}
-	OW_String resMessage = OW_HTTPUtils::status2String(resCode) +
+	String resMessage = HTTPUtils::status2String(resCode) +
 		": " + m_errDetails;
-	OW_String reqProtocol;
+	String reqProtocol;
 	if (m_httpVersion == HTTP_VER_11)
 	{
 		reqProtocol = "HTTP/1.1";
@@ -1126,15 +1028,12 @@ OW_HTTPSvrConnection::sendError(int resCode)
 	{
 		reqProtocol = "HTTP/1.0";
 	}
-
-
 	m_ostr << reqProtocol << " " << resCode << " " << resMessage << "\r\n";
-
 	// TODO more headers (date and such)
 	addHeader("Connection", "close");
 	addHeader("Content-Length", "0");
 	//addHeader("Content-Length",
-	//	OW_String(tmpOstr.length()));
+	//	String(tmpOstr.length()));
 	//addHeader("Content-Type", "text/html");
 	for (size_t i = 0; i < m_responseHeaders.size(); i++)
 	{
@@ -1143,11 +1042,9 @@ OW_HTTPSvrConnection::sendError(int resCode)
 	m_ostr << "\r\n";
 	m_ostr.flush();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPSvrConnection::performAuthentication(const OW_String& info)
+HTTPSvrConnection::performAuthentication(const String& info)
 {
 	if(m_pHTTPServer->authenticate(this, m_userName, info))
 	{
@@ -1158,17 +1055,16 @@ OW_HTTPSvrConnection::performAuthentication(const OW_String& info)
 		return SC_UNAUTHORIZED;
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPSvrConnection::sendHeaders(int sc, int len)
+HTTPSvrConnection::sendHeaders(int sc, int len)
 {
 	if (len >= 0)
 	{
 		addHeader("Content-Length",
-			OW_String(len));
+			String(len));
 	}
-	m_ostr << "HTTP/1.1 " << sc << " " << OW_HTTPUtils::status2String(sc) <<
+	m_ostr << "HTTP/1.1 " << sc << " " << HTTPUtils::status2String(sc) <<
 		"\r\n";
 	for (size_t i = 0; i < m_responseHeaders.size(); i++)
 	{
@@ -1176,42 +1072,41 @@ OW_HTTPSvrConnection::sendHeaders(int sc, int len)
 	}
 	m_ostr << "\r\n";
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_HTTPSvrConnection::getHostName()
+String
+HTTPSvrConnection::getHostName()
 {
 	//return m_socket.getLocalAddress().getName();
-	return OW_SocketAddress::getAnyLocalHost().getName();
+	return SocketAddress::getAnyLocalHost().getName();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Reference<OW_CIMProtocolIStreamIFC>
-OW_HTTPSvrConnection::convertToFiniteStream(istream& istr)
+Reference<CIMProtocolIStreamIFC>
+HTTPSvrConnection::convertToFiniteStream(istream& istr)
 {
-	OW_Reference<OW_CIMProtocolIStreamIFC> rval(0);
+	Reference<CIMProtocolIStreamIFC> rval(0);
 	if (m_chunkedIn)
 	{
-		rval = new OW_HTTPChunkedIStream(istr);
+		rval = new HTTPChunkedIStream(istr);
 	}
 	else if (m_contentLength > 0)
 	{
-		rval = new OW_HTTPLenLimitIStream(istr, m_contentLength);
+		rval = new HTTPLenLimitIStream(istr, m_contentLength);
 	}
 	else
 	{
 		return rval;
 	}
-
 	if (m_deflateCompressionIn)
 	{
 #ifdef OW_HAVE_ZLIB_H
-		rval = new OW_HTTPDeflateIStream(rval);
+		rval = new HTTPDeflateIStream(rval);
 #else
-		OW_THROW(OW_HTTPException, "Attempting to deflate request, but "
+		OW_THROW(HTTPException, "Attempting to deflate request, but "
 				"we're not linked with zlib!  (shouldn't happen)");
 #endif // #ifdef OW_HAVE_ZLIB_H
 	}
 	return rval;
 }
+
+} // end namespace OpenWBEM
+

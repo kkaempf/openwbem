@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SharedLibrary.hpp"
@@ -35,29 +34,29 @@
 #include "OW_Format.hpp"
 #include "OW_SignalScope.hpp"
 #include "OW_Exception.hpp"
-
 #include <utility> // for std::pair
 #include <setjmp.h> // for setjmp, longjmp and jmp_buf
 
+namespace OpenWBEM
+{
+
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
-class OW_SafeLibCreate
+class SafeLibCreate
 {
 	typedef T* (*createFunc_t)();
 	typedef const char* (*versionFunc_t)();
-
 public:
-
-	typedef std::pair<OW_Reference<T>, OW_SharedLibraryRef> return_type;
-	typedef OW_SharedLibraryReference<T> return_obj;
+	typedef std::pair<Reference<T>, SharedLibraryRef> return_type;
+	typedef SharedLibraryReference<T> return_obj;
 	
 	static return_type
-	loadAndCreate(OW_String const& libname, OW_String const& createFuncName,
-		const OW_LoggerRef& logger)
+	loadAndCreate(String const& libname, String const& createFuncName,
+		const LoggerRef& logger)
 	{
-		OW_SharedLibraryLoaderRef sll =
-			OW_SharedLibraryLoader::createSharedLibraryLoader();
-		OW_SharedLibraryRef sl = sll->loadSharedLibrary(libname, logger);
+		SharedLibraryLoaderRef sll =
+			SharedLibraryLoader::createSharedLibraryLoader();
+		SharedLibraryRef sl = sll->loadSharedLibrary(libname, logger);
 		T* ptr = 0;
 		if ( !sl.isNull() )
 		{
@@ -68,16 +67,15 @@ public:
 			logger->logDebug(format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
-		return std::make_pair(OW_Reference<T>(ptr),sl);
+		return std::make_pair(Reference<T>(ptr),sl);
 	}
-
 	static return_obj
-	loadAndCreateObject(OW_String const& libname,
-		OW_String const& createFuncName, const OW_LoggerRef& logger)
+	loadAndCreateObject(String const& libname,
+		String const& createFuncName, const LoggerRef& logger)
 	{
-		OW_SharedLibraryLoaderRef sll =
-			OW_SharedLibraryLoader::createSharedLibraryLoader();
-		OW_SharedLibraryRef sl = sll->loadSharedLibrary(libname, logger);
+		SharedLibraryLoaderRef sll =
+			SharedLibraryLoader::createSharedLibraryLoader();
+		SharedLibraryRef sl = sll->loadSharedLibrary(libname, logger);
 		T* ptr = 0;
 		if ( !sl.isNull() )
 		{
@@ -88,13 +86,11 @@ public:
 			logger->logDebug(format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
-
 		return return_obj(sl, ptr);
 	}
-
 	static T*
-	create(OW_SharedLibraryRef sl, OW_String const& createFuncName,
-		const OW_LoggerRef& logger)
+	create(SharedLibraryRef sl, String const& createFuncName,
+		const LoggerRef& logger)
 	{
 		logger->logDebug(format("safeLibCreate::create called.  createFuncName = %1",
 			createFuncName).c_str());
@@ -102,15 +98,15 @@ public:
 		try
 		{
 			int sigtype;
-			OW_SignalScope r1( SIGFPE,  theSignalHandler );
-			OW_SignalScope r3( SIGSEGV, theSignalHandler );
-			OW_SignalScope r4( SIGBUS,  theSignalHandler );
-			OW_SignalScope r5( SIGABRT, theSignalHandler );
+			SignalScope r1( OW_SIGFPE,  theSignalHandler );
+			SignalScope r3( OW_SIGSEGV, theSignalHandler );
+			SignalScope r4( OW_SIGBUS,  theSignalHandler );
+			SignalScope r5( OW_SIGABRT, theSignalHandler );
 			sigtype = setjmp(theLoaderBuf);
 			if ( sigtype == 0 )
 			{
 				versionFunc_t versFunc;
-				if (!OW_SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
+				if (!SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
 				{
 					logger->logError("safeLibCreate::create failed getting"
 						" function pointer to \"getOWVersion\" from library");
@@ -129,7 +125,7 @@ public:
 				else
 				{
 					createFunc_t createFunc;
-					if (!OW_SharedLibrary::getFunctionPointer( sl, createFuncName
+					if (!SharedLibrary::getFunctionPointer( sl, createFuncName
 						, createFunc ))
 					{
 						logger->logError(format("safeLibCreate::create failed"
@@ -152,7 +148,7 @@ public:
 				return 0;
 			}
 		}
-		catch(OW_Exception& e)
+		catch(Exception& e)
 		{
 			logger->logError("safeLibCreate::create");
 			logger->logError(format("File: %1", e.getFile()));
@@ -184,10 +180,8 @@ private:
 	//} // extern "C"
 	
 };
-
 template <typename T>
-jmp_buf OW_SafeLibCreate<T>::theLoaderBuf;
+jmp_buf SafeLibCreate<T>::theLoaderBuf;
 
-
-
+} // end namespace OpenWBEM
 

@@ -30,7 +30,13 @@
 #include "OW_Bool.hpp"
 #include "PyOW_Array.hpp"
 
-void registerOW_ArrayImpl_OW_Bool(const char* name)
+namespace OpenWBEM
 {
-    registerOW_ArrayImpl<OW_Bool>(name);
+
+void registerArrayImpl_Bool(const char* name)
+{
+    registerArrayImpl<Bool>(name);
 }
+
+} // end namespace OpenWBEM
+

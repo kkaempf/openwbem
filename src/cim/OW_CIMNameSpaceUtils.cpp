@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMException.hpp"
@@ -39,50 +38,46 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMQualifier.hpp"
 
-using namespace OW_WBEMFlags;
-
-namespace OW_CIMNameSpaceUtils
+namespace OpenWBEM
 {
 
+using namespace WBEMFlags;
+namespace CIMNameSpaceUtils
+{
 namespace
 {
-	OW_CIMClass the__NamespaceClass(OW_CIMNULL);
-
-	class StringArrayBuilder : public OW_StringResultHandlerIFC
+	CIMClass the__NamespaceClass(CIMNULL);
+	class StringArrayBuilder : public StringResultHandlerIFC
 	{
 	public:
-		StringArrayBuilder(OW_StringArray& a) : m_a(a)
+		StringArrayBuilder(StringArray& a) : m_a(a)
 		{
 		}
 	protected:
-		virtual void doHandle(const OW_String &s)
+		virtual void doHandle(const String &s)
 		{
 			m_a.push_back(s);
 		}
 	private:
-		OW_StringArray& m_a;
+		StringArray& m_a;
 	};
-
-	class NamespaceObjectPathToStringHandler : public OW_CIMObjectPathResultHandlerIFC
+	class NamespaceObjectPathToStringHandler : public CIMObjectPathResultHandlerIFC
 	{
 	public:
-		NamespaceObjectPathToStringHandler(OW_StringResultHandlerIFC& result_)
+		NamespaceObjectPathToStringHandler(StringResultHandlerIFC& result_)
 			: result(result_)
 		{}
-
-		void doHandle(const OW_CIMObjectPath& op)
+		void doHandle(const CIMObjectPath& op)
 		{
 			result.handle(op.getKeyT("Name").getValueT().toString());
 		}
-
 	private:
-		OW_StringResultHandlerIFC& result;
+		StringResultHandlerIFC& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-prepareNamespace(OW_String ns)
+String
+prepareNamespace(String ns)
 {
 	// translate \\ to /
 	for (size_t i = 0; i < ns.length(); ++i )
@@ -92,186 +87,154 @@ prepareNamespace(OW_String ns)
 			ns[i] = '/';
 		}
 	}
-
 	while (!ns.empty() && ns[0] == '/')
 	{
 		ns = ns.substring(1);
 	}
-
 	return ns;
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
-createCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, OW_UInt16 classInfo, const OW_String& descriptionOfClassInfo, const OW_String& interopNs)
+createCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_, UInt16 classInfo, const String& descriptionOfClassInfo, const String& interopNs)
 {
-	OW_String ns(prepareNamespace(ns_));
-
-	OW_CIMClass theCIM_NamespaceClass = hdl->getClass(interopNs, "CIM_Namespace");
-	OW_CIMClass theAssocCls = hdl->getClass(interopNs, "CIM_NamespaceInManager");
-
-	OW_CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
+	String ns(prepareNamespace(ns_));
+	CIMClass theCIM_NamespaceClass = hdl->getClass(interopNs, "CIM_Namespace");
+	CIMClass theAssocCls = hdl->getClass(interopNs, "CIM_NamespaceInManager");
+	CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
 	if (e.numberOfElements() != 1)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed to get one instance of "
+		OW_THROWCIMMSG(CIMException::FAILED, "Failed to get one instance of "
 			"CIM_ObjectManager.  Unable to create an instance of CIM_Namespace");
 	}
-	OW_CIMObjectPath theObjectManager = e.nextElement();
-
-	OW_CIMInstance cimInstance = theCIM_NamespaceClass.newInstance();
+	CIMObjectPath theObjectManager = e.nextElement();
+	CIMInstance cimInstance = theCIM_NamespaceClass.newInstance();
 	cimInstance.setProperty(theObjectManager.getKeyT("SystemCreationClassName"));
 	cimInstance.setProperty(theObjectManager.getKeyT("SystemName"));
 	cimInstance.setProperty("ObjectManagerCreationClassName", theObjectManager.getKeyT("CreationClassName").getValue());
 	cimInstance.setProperty("ObjectManagerName", theObjectManager.getKeyT("Name").getValue());
-	cimInstance.setProperty("CreationClassName", OW_CIMValue("CIM_Namespace"));
-	cimInstance.setProperty("Name", OW_CIMValue(ns));
-	cimInstance.setProperty("ClassInfo", OW_CIMValue(classInfo));
+	cimInstance.setProperty("CreationClassName", CIMValue("CIM_Namespace"));
+	cimInstance.setProperty("Name", CIMValue(ns));
+	cimInstance.setProperty("ClassInfo", CIMValue(classInfo));
 	if (!descriptionOfClassInfo.empty())
 	{
-		cimInstance.setProperty("DescriptionOfClassInfo", OW_CIMValue(descriptionOfClassInfo));
+		cimInstance.setProperty("DescriptionOfClassInfo", CIMValue(descriptionOfClassInfo));
 	}
-
-	OW_CIMObjectPath theNewNsPath = hdl->createInstance(interopNs, cimInstance);
-
-	OW_CIMInstance theAssoc = theAssocCls.newInstance();
-	theAssoc.setProperty("Antecedent", OW_CIMValue(theObjectManager));
-	theAssoc.setProperty("Dependent", OW_CIMValue(theNewNsPath));
-
+	CIMObjectPath theNewNsPath = hdl->createInstance(interopNs, cimInstance);
+	CIMInstance theAssoc = theAssocCls.newInstance();
+	theAssoc.setProperty("Antecedent", CIMValue(theObjectManager));
+	theAssoc.setProperty("Dependent", CIMValue(theNewNsPath));
 	hdl->createInstance(interopNs, theAssoc);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, const OW_String& interopNs)
+deleteCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_, const String& interopNs)
 {
-	OW_String ns(prepareNamespace(ns_));
-
-	OW_CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
+	String ns(prepareNamespace(ns_));
+	CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
 	if (e.numberOfElements() != 1)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed to get one instance of "
+		OW_THROWCIMMSG(CIMException::FAILED, "Failed to get one instance of "
 			"CIM_ObjectManager.  Unable to create an instance of CIM_Namespace");
 	}
-	OW_CIMObjectPath theObjectManager = e.nextElement();
-
-	OW_CIMObjectPath nsPath("CIM_Namespace", interopNs);
+	CIMObjectPath theObjectManager = e.nextElement();
+	CIMObjectPath nsPath("CIM_Namespace", interopNs);
 	nsPath.addKey(theObjectManager.getKeyT("SystemCreationClassName"));
 	nsPath.addKey(theObjectManager.getKeyT("SystemName"));
 	nsPath.addKey("ObjectManagerCreationClassName", theObjectManager.getKeyT("CreationClassName").getValue());
 	nsPath.addKey("ObjectManagerName", theObjectManager.getKeyT("Name").getValue());
-	nsPath.addKey("CreationClassName", OW_CIMValue("CIM_Namespace"));
-	nsPath.addKey("Name", OW_CIMValue(ns));
-
-
-	OW_CIMObjectPath theAssoc("CIM_NamespaceInManager", interopNs);
-	theAssoc.addKey("Antecedent", OW_CIMValue(theObjectManager));
-	theAssoc.addKey("Dependent", OW_CIMValue(nsPath));
-
+	nsPath.addKey("CreationClassName", CIMValue("CIM_Namespace"));
+	nsPath.addKey("Name", CIMValue(ns));
+	CIMObjectPath theAssoc("CIM_NamespaceInManager", interopNs);
+	theAssoc.addKey("Antecedent", CIMValue(theObjectManager));
+	theAssoc.addKey("Dependent", CIMValue(nsPath));
 	hdl->deleteInstance(interopNs, theAssoc);
 	hdl->deleteInstance(interopNs, nsPath);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 /////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& interopNs)
+StringArray
+enumCIM_Namespace(const CIMOMHandleIFCRef& hdl, const String& interopNs)
 {
-	OW_StringArray rval;
+	StringArray rval;
 	StringArrayBuilder handler(rval);
 	enumCIM_Namespace(hdl, handler, interopNs);
 	return rval;
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl,
-	OW_StringResultHandlerIFC& result, const OW_String& interopNs)
+enumCIM_Namespace(const CIMOMHandleIFCRef& hdl,
+	StringResultHandlerIFC& result, const String& interopNs)
 {
 	NamespaceObjectPathToStringHandler handler(result);
 	hdl->enumInstanceNames(interopNs, "CIM_Namespace", handler);
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
-create__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
+create__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_)
 {
-	OW_String ns(prepareNamespace(ns_));
-
+	String ns(prepareNamespace(ns_));
 	size_t index = ns.lastIndexOf('/');
-
-	OW_String parentPath = ns.substring(0, index);
-	OW_String newNameSpace = ns.substring(index + 1);
-
+	String parentPath = ns.substring(0, index);
+	String newNameSpace = ns.substring(index + 1);
 	if (!the__NamespaceClass)
 	{
-		the__NamespaceClass = OW_CIMClass("__Namespace");
-
-		OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
-		cimProp.setDataType(OW_CIMDataType::STRING);
-		cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
+		the__NamespaceClass = CIMClass("__Namespace");
+		CIMProperty cimProp(CIMProperty::NAME_PROPERTY);
+		cimProp.setDataType(CIMDataType::STRING);
+		cimProp.addQualifier(CIMQualifier::createKeyQualifier());
 		the__NamespaceClass.addProperty(cimProp);
 	}
-
-	OW_CIMInstance cimInstance = the__NamespaceClass.newInstance();
-	OW_CIMValue cv(newNameSpace);
+	CIMInstance cimInstance = the__NamespaceClass.newInstance();
+	CIMValue cv(newNameSpace);
 	cimInstance.setProperty("Name", cv);
-
 	hdl->createInstance(parentPath, cimInstance);
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
+delete__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_)
 {
-	OW_String ns(prepareNamespace(ns_));
-
+	String ns(prepareNamespace(ns_));
 	size_t index = ns.lastIndexOf('/');
-
-	OW_String parentPath = ns.substring(0,index);
-	OW_String newNameSpace = ns.substring(index + 1);
-
-	OW_CIMPropertyArray v;
-	OW_CIMValue cv(newNameSpace);
-	OW_CIMProperty cp("Name", cv);
-	cp.setDataType(OW_CIMDataType::STRING);
+	String parentPath = ns.substring(0,index);
+	String newNameSpace = ns.substring(index + 1);
+	CIMPropertyArray v;
+	CIMValue cv(newNameSpace);
+	CIMProperty cp("Name", cv);
+	cp.setDataType(CIMDataType::STRING);
 	v.push_back(cp);
-
-	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, v);
+	CIMObjectPath path(CIMClass::NAMESPACECLASS, v);
 	hdl->deleteInstance(parentPath, path);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 /////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, EDeepFlag deep)
+StringArray
+enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns, EDeepFlag deep)
 {
-	OW_StringArray rval;
+	StringArray rval;
 	StringArrayBuilder handler(rval);
 	enum__Namespace(hdl, ns, handler, deep);
 	return rval;
 }
-
 namespace
 {
 //////////////////////////////////////////////////////////////////////////////
 	void
-	enumNameSpaceAux(const OW_CIMOMHandleIFCRef& hdl,
-		const OW_String& ns,
-		OW_StringResultHandlerIFC& result, EDeepFlag deep)
+	enumNameSpaceAux(const CIMOMHandleIFCRef& hdl,
+		const String& ns,
+		StringResultHandlerIFC& result, EDeepFlag deep)
 	{
 		// can't use the callback version of enumInstances, because the recursion
 		// throws a wrench in the works.  Each CIM Method call has to finish
 		// before another one can begin.
-		OW_CIMInstanceEnumeration en = hdl->enumInstancesE(ns,
-			OW_String(OW_CIMClass::NAMESPACECLASS), E_SHALLOW, E_LOCAL_ONLY);
+		CIMInstanceEnumeration en = hdl->enumInstancesE(ns,
+			String(CIMClass::NAMESPACECLASS), E_SHALLOW, E_LOCAL_ONLY);
 		while (en.hasMoreElements())
 		{
-			OW_CIMInstance i = en.nextElement();
-			OW_CIMProperty nameProp;
-
-			OW_CIMPropertyArray keys = i.getKeyValuePairs();
+			CIMInstance i = en.nextElement();
+			CIMProperty nameProp;
+			CIMPropertyArray keys = i.getKeyValuePairs();
 			if (keys.size() == 1)
 			{
 				nameProp = keys[0];
@@ -286,12 +249,10 @@ namespace
 						break;
 					}
 				}
-
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
+				OW_THROWCIMMSG(CIMException::FAILED,
 					"Name of namespace not found");
 			}
-
-			OW_String tmp;
+			String tmp;
 			nameProp.getValue().get(tmp);
 			result.handle(ns + "/" + tmp);
 			if (deep)
@@ -301,20 +262,16 @@ namespace
 		}
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////
 void
-enum__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_,
-	OW_StringResultHandlerIFC& result, EDeepFlag deep)
+enum__Namespace(const CIMOMHandleIFCRef& hdl, const String& ns_,
+	StringResultHandlerIFC& result, EDeepFlag deep)
 {
-	OW_String ns(prepareNamespace(ns_));
-
+	String ns(prepareNamespace(ns_));
 	result.handle(ns);
 	enumNameSpaceAux(hdl, ns, result, deep);
 }
-
 } // end namespace OW_CIMNameSpaceUtils
 
-
-
+} // end namespace OpenWBEM
 

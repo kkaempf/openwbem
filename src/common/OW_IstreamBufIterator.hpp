@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ISTREAMBUFITERATOR_HPP_INCLUDE_GUARD_
 #define OW_ISTREAMBUFITERATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
@@ -37,28 +36,26 @@
 #include <iostream>
 #endif
 
+namespace OpenWBEM
+{
 
-class OW_IstreamBufIterator
+class IstreamBufIterator
 {
 public:
 	class proxy
 	{
-		friend class OW_IstreamBufIterator;
-
+		friend class IstreamBufIterator;
 	public:
 		char operator*() {  return m_keep; }
-
 	private:
 		proxy(char c, std::streambuf* sb) : m_keep(c), m_sbuf(sb) {}
 		char m_keep;
 		std::streambuf* m_sbuf;
 	};
-
-	OW_IstreamBufIterator() : m_sbuf(0) {}
-	OW_IstreamBufIterator(std::istream& s) : m_sbuf(s.rdbuf()) {}
-	OW_IstreamBufIterator(std::streambuf* b) : m_sbuf(b) {}
-	OW_IstreamBufIterator(const proxy& p) : m_sbuf(p.m_sbuf) {}
-
+	IstreamBufIterator() : m_sbuf(0) {}
+	IstreamBufIterator(std::istream& s) : m_sbuf(s.rdbuf()) {}
+	IstreamBufIterator(std::streambuf* b) : m_sbuf(b) {}
+	IstreamBufIterator(const proxy& p) : m_sbuf(p.m_sbuf) {}
 	char operator*() const
 	{
 		if (m_sbuf)
@@ -70,8 +67,7 @@ public:
 			return 0;
 		}
 	}
-
-	OW_IstreamBufIterator& operator++()
+	IstreamBufIterator& operator++()
 	{
 		if (m_sbuf)
 		{
@@ -83,7 +79,6 @@ public:
 		}
 		return *this;
 	}
-
 	proxy operator++(int)
 	{
 		if (m_sbuf)
@@ -102,7 +97,7 @@ public:
 		}
 	}
 	
-	bool equal(const OW_IstreamBufIterator& b) const
+	bool equal(const IstreamBufIterator& b) const
 	{
 		if (((m_sbuf == 0) && (b.m_sbuf == 0)) || ((m_sbuf != 0) && (b.m_sbuf != 0)))
 		{
@@ -113,23 +108,18 @@ public:
 			return false;
 		}
 	}
-
 private:
 	std::streambuf* m_sbuf;
 };
-
-
-inline bool operator==(const OW_IstreamBufIterator& lhs, const OW_IstreamBufIterator& rhs)
+inline bool operator==(const IstreamBufIterator& lhs, const IstreamBufIterator& rhs)
 {
 	return lhs.equal(rhs);
 }
-
-inline bool operator!=(const OW_IstreamBufIterator& lhs, const OW_IstreamBufIterator& rhs)
+inline bool operator!=(const IstreamBufIterator& lhs, const IstreamBufIterator& rhs)
 {
 	return !lhs.equal(rhs);
 }
 
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -27,51 +27,46 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SHARED_LIBRARY_REFERENCE_HPP_
 #define OW_SHARED_LIBRARY_REFERENCE_HPP_
-
 #include "OW_config.h"
 #include "OW_Reference.hpp"
 #include "OW_SharedLibrary.hpp"
 
+namespace OpenWBEM
+{
+
 template <class T>
-class OW_SharedLibraryReference
+class SharedLibraryReference
 {
 public:
-	OW_SharedLibraryReference(OW_SharedLibraryRef lib, OW_Reference<T> obj)
+	SharedLibraryReference(SharedLibraryRef lib, Reference<T> obj)
 	: m_sharedLib(lib), m_obj(obj)
 	{}
-
-	OW_SharedLibraryReference(OW_SharedLibraryRef lib, T* obj)
-	: m_sharedLib(lib), m_obj(OW_Reference<T>(obj))
+	SharedLibraryReference(SharedLibraryRef lib, T* obj)
+	: m_sharedLib(lib), m_obj(Reference<T>(obj))
 	{}
-
-	OW_SharedLibraryReference(const OW_SharedLibraryReference<T>& arg)
+	SharedLibraryReference(const SharedLibraryReference<T>& arg)
 	: m_sharedLib(arg.m_sharedLib), m_obj(arg.m_obj)
 	{
 	}
-
 	/* construct out of a reference to a derived type.  U should be
 	derived from T */
 	template <class U>
-	OW_SharedLibraryReference(const OW_SharedLibraryReference<U>& arg)
+	SharedLibraryReference(const SharedLibraryReference<U>& arg)
 	: m_sharedLib(arg.m_sharedLib), m_obj(arg.m_obj)
 	{
 	}
-
-	OW_SharedLibraryReference()
+	SharedLibraryReference()
 	: m_sharedLib(), m_obj()
 	{}
-
-	OW_SharedLibraryReference<T>& operator=(const OW_SharedLibraryReference<T>& arg)
+	SharedLibraryReference<T>& operator=(const SharedLibraryReference<T>& arg)
 	{
 		m_obj = arg.m_obj;
 		m_sharedLib = arg.m_sharedLib;
 		return *this;
 	}
-
-	~OW_SharedLibraryReference()
+	~SharedLibraryReference()
 	{
 		try
 		{
@@ -83,12 +78,10 @@ public:
 			// don't let exceptions escape
 		}
 	}
-
-	OW_SharedLibraryRef getLibRef() const
+	SharedLibraryRef getLibRef() const
 	{
 		return m_sharedLib;
 	}
-
 	T* operator->() const
 	{
 		return &*m_obj;
@@ -99,15 +92,12 @@ private:
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (m_obj) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (m_obj) ? 0: &dummy::nonnull; }
-
 	void setNull()
 	{
 		m_obj = 0;
@@ -115,30 +105,29 @@ public:
 	}
 	
 	template <class U>
-	OW_SharedLibraryReference<U> cast_to() const
+	SharedLibraryReference<U> cast_to() const
 	{
-		OW_SharedLibraryReference<U> rval;
+		SharedLibraryReference<U> rval;
 		rval.m_obj = m_obj.cast_to<U>();
 		rval.m_sharedLib = m_sharedLib;
 		return rval;
 	}
-
 	template <class U>
-	void useRefCountOf(const OW_SharedLibraryReference<U>& arg)
+	void useRefCountOf(const SharedLibraryReference<U>& arg)
 	{
 		m_obj.useRefCountOf(arg.m_obj);
 	}
-
 	bool isNull() const
 	{
 		return m_obj.isNull();
 	}
 	/* This is so cast_to will work */
-	template <class U> friend class OW_SharedLibraryReference;
-
+	template <class U> friend class SharedLibraryReference;
 private:
-	OW_SharedLibraryRef m_sharedLib;
-	OW_Reference<T> m_obj;
+	SharedLibraryRef m_sharedLib;
+	Reference<T> m_obj;
 };
+
+} // end namespace OpenWBEM
 
 #endif

@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_ASSOCDB_HPP_INCLUDE_GUARD_
 #define OW_ASSOCDB_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Index.hpp"
@@ -44,134 +42,106 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_AssocDbEntry represents an entry in the association database.
+ * The AssocDbEntry represents an entry in the association database.
  */
-class OW_AssocDbEntry
+class AssocDbEntry
 {
 public:
-	OW_AssocDbEntry(std::istream& istrm);
-
-	OW_AssocDbEntry() 
-		: m_objectName(OW_CIMNULL)
+	AssocDbEntry(std::istream& istrm);
+	AssocDbEntry() 
+		: m_objectName(CIMNULL)
 		, m_offset(-1L)
 	{}
-
-	OW_AssocDbEntry(const OW_CIMObjectPath& objectName,
-		const OW_String& role,
-		const OW_String& resultRole);
-
+	AssocDbEntry(const CIMObjectPath& objectName,
+		const String& role,
+		const String& resultRole);
 	struct entry
 	{
 		entry ()
-			: m_associatedObject(OW_CIMNULL)
-			, m_associationPath(OW_CIMNULL)
+			: m_associatedObject(CIMNULL)
+			, m_associationPath(CIMNULL)
 		{}
-
-		OW_String m_assocClass;
-		OW_String m_resultClass;
-		OW_CIMObjectPath m_associatedObject; // value for associtor(Name)s
-		OW_CIMObjectPath m_associationPath;  // value for reference(Name)s
+		String m_assocClass;
+		String m_resultClass;
+		CIMObjectPath m_associatedObject; // value for associtor(Name)s
+		CIMObjectPath m_associationPath;  // value for reference(Name)s
 		
 		void writeObject(std::ostream& ostrm) const;
 		void readObject(std::istream& istrm);
 	};
-
 	void writeObject(std::ostream& ostrm) const;
 	void readObject(std::istream& istrm);
-
-	OW_Int32 getOffset() const { return m_offset; }
-	void setOffset(OW_Int32 offset) { m_offset = offset; }
-
-	static OW_String makeKey(const OW_CIMObjectPath& objectName, const OW_String& role,
-		const OW_String& resultRole);
+	Int32 getOffset() const { return m_offset; }
+	void setOffset(Int32 offset) { m_offset = offset; }
+	static String makeKey(const CIMObjectPath& objectName, const String& role,
+		const String& resultRole);
 	
-	OW_String makeKey() const;
-
+	String makeKey() const;
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (m_objectName) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (m_objectName) ? 0: &dummy::nonnull; }
-
 public:
-
-	OW_CIMObjectPath m_objectName; // part 1 of key
-	OW_String m_role; // part 2 of key
-	OW_String m_resultRole; // part 3 of key
-
-	OW_Array<entry> m_entries;
-
-	OW_Int32 m_offset;
+	CIMObjectPath m_objectName; // part 1 of key
+	String m_role; // part 2 of key
+	String m_resultRole; // part 3 of key
+	Array<entry> m_entries;
+	Int32 m_offset;
 };
-
-std::ostream& operator << (std::ostream& ostrm, const OW_AssocDbEntry& arg);
-
-typedef OW_Array<OW_AssocDbEntry> OW_AssocDbEntryArray;
-
-bool operator==(const OW_AssocDbEntry::entry& lhs, const OW_AssocDbEntry::entry& rhs);
-
+std::ostream& operator << (std::ostream& ostrm, const AssocDbEntry& arg);
+typedef Array<AssocDbEntry> AssocDbEntryArray;
+bool operator==(const AssocDbEntry::entry& lhs, const AssocDbEntry::entry& rhs);
 //////////////////////////////////////////////////////////////////////////////
-
-class OW_AssocDb;
-
+class AssocDb;
 //////////////////////////////////////////////////////////////////////////////
-typedef OW_ResultHandlerIFC<OW_AssocDbEntry::entry> OW_AssocDbEntryResultHandlerIFC;
-
-
-class OW_AssocDbHandle
+typedef ResultHandlerIFC<AssocDbEntry::entry> AssocDbEntryResultHandlerIFC;
+class AssocDbHandle
 {
 private:
-
 	struct AssocDbHandleData
 	{
 		AssocDbHandleData();
 		AssocDbHandleData(const AssocDbHandleData& arg);
-		AssocDbHandleData(OW_AssocDb* pdb, OW_File file);
+		AssocDbHandleData(AssocDb* pdb, File file);
 		~AssocDbHandleData();
 		AssocDbHandleData& operator= (const AssocDbHandleData& arg);
-
-		OW_AssocDb* m_pdb;
-		OW_File m_file;
+		AssocDb* m_pdb;
+		File m_file;
 	};
-
 public:
-
-	OW_AssocDbHandle() : m_pdata(NULL) {}
-
-	OW_AssocDbHandle(const OW_AssocDbHandle& arg) : m_pdata(arg.m_pdata) {}
-
-	OW_AssocDbHandle& operator= (const OW_AssocDbHandle& arg)
+	AssocDbHandle() : m_pdata(NULL) {}
+	AssocDbHandle(const AssocDbHandle& arg) : m_pdata(arg.m_pdata) {}
+	AssocDbHandle& operator= (const AssocDbHandle& arg)
 	{
 		m_pdata = arg.m_pdata;
 		return *this;
 	}
-
 	/**
 	 * @return true if there are association entries in the association
 	 * database for the given target object.
 	 */
-	bool hasAssocEntries(const OW_String& ns, const OW_CIMObjectPath& instanceName);
-
+	bool hasAssocEntries(const String& ns, const CIMObjectPath& instanceName);
 	/**
-	 * Add an OW_AssocDbEntry& to the database.
-	 * @param newEntry	The OW_AssocDbEntry to add to the database.
+	 * Add an AssocDbEntry& to the database.
+	 * @param newEntry	The AssocDbEntry to add to the database.
 	 */
-	//void addEntry(const OW_AssocDbEntry& newEntry);
-	void addEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath);
-
+	//void addEntry(const AssocDbEntry& newEntry);
+	void addEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath);
 	/**
 	 * Add all entries to the database that are reference by the
 	 * given association.
@@ -179,26 +149,23 @@ public:
 	 * @param 	assocInstance The instance of the association referenced by
 	 *				assocKey
 	 */
-	void addEntries(const OW_String& ns, const OW_CIMInstance& assocInstance);
-	void addEntries(const OW_String& ns, const OW_CIMClass& assocClass);
-
+	void addEntries(const String& ns, const CIMInstance& assocInstance);
+	void addEntries(const String& ns, const CIMClass& assocClass);
 	/**
-	 * Remove an OW_AssocDbEntry& from the database.
-	 * @param entryToDelete	The OW_AssocDbEntry to delete from the database.
+	 * Remove an AssocDbEntry& from the database.
+	 * @param entryToDelete	The AssocDbEntry to delete from the database.
 	 */
-	//void deleteEntry(const OW_AssocDbEntry& entryToDelete);
-	void deleteEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath);
-
+	//void deleteEntry(const AssocDbEntry& entryToDelete);
+	void deleteEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath);
 	/**
-	 * Remove all OW_AssocDbEntry objects specified in an array.
-	 * @param entryra	The Array OW_AssocDbEntry objects to delete.
+	 * Remove all AssocDbEntry objects specified in an array.
+	 * @param entryra	The Array AssocDbEntry objects to delete.
 	 */
-	//void deleteEntries(const OW_AssocDbEntryArray& entryra);
-
+	//void deleteEntries(const AssocDbEntryArray& entryra);
 	/**
 	 * Remove all entries from the database that are reference by the
 	 * given association.
@@ -206,9 +173,8 @@ public:
 	 * @param 	assocInstance The instance of the association referenced by
 	 *				assocKey
 	 */
-	void deleteEntries(const OW_String& ns, const OW_CIMInstance& assocInstance);
-	void deleteEntries(const OW_String& ns, const OW_CIMClass& assocClass);
-
+	void deleteEntries(const String& ns, const CIMInstance& assocInstance);
+	void deleteEntries(const String& ns, const CIMClass& assocClass);
 	/**
 	 * Delete all entries in the association database that referenct the
 	 * given target object name.
@@ -216,180 +182,149 @@ public:
 	 *									This is the string version of the object path for
 	 *									the target object.
 	 */
-	//void deleteEntries(const OW_String& objectName);
-
+	//void deleteEntries(const String& objectName);
 	/**
-	 * Get all of the OW_AssocDbEntries that fit the given criterion.
+	 * Get all of the AssocDbEntries that fit the given criterion.
 	 * @param objectName	The target object that all entries must have.
 	 * @param assocClasses	If specified, the association class name from all
 	 *								entries must be found in this array.
 	 * @param propertyName	All entries must have this property name.
-	 * @return An OW_AssocDbEntryArray that contains all of the entries that
+	 * @return An AssocDbEntryArray that contains all of the entries that
 	 * meet the given criterion.
 	 */
-	void getAllEntries(const OW_CIMObjectPath& objectName,
-		const OW_SortedVectorSet<OW_String>* passocClasses,
-		const OW_SortedVectorSet<OW_String>* presultClasses,
-		const OW_String& role,
-		const OW_String& resultRole,
-		OW_AssocDbEntryResultHandlerIFC& result);
-
-	OW_File getFile() const { return m_pdata->m_file; }
-
+	void getAllEntries(const CIMObjectPath& objectName,
+		const SortedVectorSet<String>* passocClasses,
+		const SortedVectorSet<String>* presultClasses,
+		const String& role,
+		const String& resultRole,
+		AssocDbEntryResultHandlerIFC& result);
+	File getFile() const { return m_pdata->m_file; }
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
-
 private:
 	
-	void addOrDeleteEntries(const OW_String& ns, const OW_CIMInstance& assocInstance, bool add);
-	void addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& assocClass, bool add);
-	OW_AssocDbHandle(OW_AssocDb* pdb, OW_File file) :
+	void addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add);
+	void addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add);
+	AssocDbHandle(AssocDb* pdb, File file) :
 		m_pdata(new AssocDbHandleData(pdb, file)) {}
-
-	OW_Reference<AssocDbHandleData> m_pdata;
-
-	friend class OW_AssocDb;
+	Reference<AssocDbHandleData> m_pdata;
+	friend class AssocDb;
 };
-
-
 // The following structure represents the format of header that
 // preceeds all records in the associations db
 // TODO: Fix all the code that uses this thing that assumes it's all packed data.
 struct AssocDbRecHeader
 {
 	AssocDbRecHeader() { memset(this, 0, sizeof(*this)); }
-
-	OW_UInt32 chkSum;
-	OW_Int32 nextFree;
-	OW_UInt32 blkSize;
-	OW_UInt32 flags;
+	UInt32 chkSum;
+	Int32 nextFree;
+	UInt32 blkSize;
+	UInt32 flags;
 	size_t dataSize;
 };
-
 #define OW_ASSOCSIGNATURE "OWASSOCIATORFILE"
 #define OW_ASSOCSIGLEN 17
-
 // The following structure represents the file header for the
 // associations database
-struct OW_AssocDbHeader
+struct AssocDbHeader
 {
 	char signature[OW_ASSOCSIGLEN];
-	OW_Int32 firstFree;
+	Int32 firstFree;
 };
-
-class OW_AssocDb
+class AssocDb
 {
 public:
-
 	/**
-	 * Create a new OW_AssocDb object.
+	 * Create a new AssocDb object.
 	 */
-	OW_AssocDb(OW_ServiceEnvironmentIFCRef env);
-
+	AssocDb(ServiceEnvironmentIFCRef env);
 	/**
-	 * Destroy this OW_AssocDb object.
+	 * Destroy this AssocDb object.
 	 */
-	~OW_AssocDb();
-
+	~AssocDb();
 	/**
-	 * Open this OW_AssocDb object up for business.
+	 * Open this AssocDb object up for business.
 	 * @param fileName	The file name associated with the database
-	 * @exception OW_HDBException if an error occurs opening/creating files.
+	 * @exception HDBException if an error occurs opening/creating files.
 	 */
-	void open(const OW_String& fileName);
-
+	void open(const String& fileName);
 	/**
-	 * Close this OW_AssocDb object
+	 * Close this AssocDb object
 	 */
 	void close();
-
 	/**
-	 * Create a new OW_HDBHandle that is associated with this OW_HDB object.
-	 * @return An OW_HDBHandle object that can be used to operate on this
-	 * OW_HDB object.
-	 * @exception OW_HDBException if this OW_HDB is not opened.
+	 * Create a new HDBHandle that is associated with this HDB object.
+	 * @return An HDBHandle object that can be used to operate on this
+	 * HDB object.
+	 * @exception HDBException if this HDB is not opened.
 	 */
-	OW_AssocDbHandle getHandle();
-
+	AssocDbHandle getHandle();
 	/**
-	 * @return true if this OW_AssocDb is currently opened.
+	 * @return true if this AssocDb is currently opened.
 	 */
 private:
 	struct dummy
 	{
 		void nonnull() {};
 	};
-
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (m_opened) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (m_opened) ? 0: &dummy::nonnull; }
-
 	/**
-	 * @return The number of outstanding handles on this OW_AssocDb
+	 * @return The number of outstanding handles on this AssocDb
 	 */
 	int getHandleCount() const { return m_hdlCount; }
-
 	/**
-	 * @return The file name for this OW_HDB object
+	 * @return The file name for this HDB object
 	 */
-	OW_String getFileName() const { return m_fileName; }
-
+	String getFileName() const { return m_fileName; }
 private:
-
-	OW_AssocDbEntry findEntry(const OW_String& objectKey,
-		OW_AssocDbHandle& hdl);
-	OW_AssocDbEntry nextEntry(OW_AssocDbHandle& hdl);
-	void deleteEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl);
-	void deleteEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath, OW_AssocDbHandle& hdl);
-
-	void addEntry(const OW_AssocDbEntry& entry, OW_AssocDbHandle& hdl);
-	void addEntry(const OW_CIMObjectPath& objectName, 
-		const OW_String& assocClassName, const OW_String& resultClass,
-		const OW_String& role, const OW_String& resultRole, 
-		const OW_CIMObjectPath& associatedObject, 
-		const OW_CIMObjectPath& assocClassPath, OW_AssocDbHandle& hdl);
-
+	AssocDbEntry findEntry(const String& objectKey,
+		AssocDbHandle& hdl);
+	AssocDbEntry nextEntry(AssocDbHandle& hdl);
+	void deleteEntry(const AssocDbEntry& entry, AssocDbHandle& hdl);
+	void deleteEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl);
+	void addEntry(const AssocDbEntry& entry, AssocDbHandle& hdl);
+	void addEntry(const CIMObjectPath& objectName, 
+		const String& assocClassName, const String& resultClass,
+		const String& role, const String& resultRole, 
+		const CIMObjectPath& associatedObject, 
+		const CIMObjectPath& assocClassPath, AssocDbHandle& hdl);
 	void decHandleCount();
-	OW_MutexLock getDbLock() { return OW_MutexLock(m_guard); }
-
-	OW_AssocDbEntry readEntry(OW_Int32 offset, OW_AssocDbHandle& hdl);
-	void addToFreeList(OW_Int32 offset, OW_AssocDbHandle& hdl);
-	AssocDbRecHeader getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
-		OW_AssocDbHandle& hdl);
-
+	MutexLock getDbLock() { return MutexLock(m_guard); }
+	AssocDbEntry readEntry(Int32 offset, AssocDbHandle& hdl);
+	void addToFreeList(Int32 offset, AssocDbHandle& hdl);
+	AssocDbRecHeader getNewBlock(Int32& offset, UInt32 blkSize,
+		AssocDbHandle& hdl);
 	bool createFile();
 	bool checkFile();
-
-	OW_AssocDbHeader m_hdrBlock;
-	OW_IndexRef m_pIndex;
-	OW_String m_fileName;
+	AssocDbHeader m_hdrBlock;
+	IndexRef m_pIndex;
+	String m_fileName;
 	int m_hdlCount;
 	bool m_opened;
-	OW_Mutex m_guard;
-	OW_ServiceEnvironmentIFCRef m_env;
-
-	friend class OW_AssocDbHandle;
-	friend struct OW_AssocDbHandle::AssocDbHandleData;
+	Mutex m_guard;
+	ServiceEnvironmentIFCRef m_env;
+	friend class AssocDbHandle;
+	friend struct AssocDbHandle::AssocDbHandleData;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
 #define OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Runnable.hpp"
 #include "OW_Mutex.hpp"
@@ -45,69 +44,64 @@
 #include <iosfwd>
 #include <fstream>
 
-class OW_UnnamedPipe;
-class OW_TempFileStream;
+namespace OpenWBEM
+{
 
-class OW_HTTPSvrConnection: public OW_Runnable
+class UnnamedPipe;
+class TempFileStream;
+class HTTPSvrConnection: public Runnable
 {
 public:
-
 	/**
 	 * Start a new http server connection.  This is called after
-	 * OW_HTTPServer accepts the connection.
+	 * HTTPServer accepts the connection.
 	 * @param socket the socket (just accepted)
-	 * @param htin a pointer to the OW_HTTPServer
+	 * @param htin a pointer to the HTTPServer
 	 * @param upipe a pipe to receive a shutdown signal from
-	 * @param opts The configuration options struct (see OW_HTTPServer.hpp)
+	 * @param opts The configuration options struct (see HTTPServer.hpp)
 	 */
-	OW_HTTPSvrConnection(OW_Socket socket, OW_HTTPServer* htin,
-		OW_Reference<OW_UnnamedPipe>& upipe,
-		const OW_HTTPServer::Options& opts);
-	~OW_HTTPSvrConnection();
-
+	HTTPSvrConnection(Socket socket, HTTPServer* htin,
+		Reference<UnnamedPipe>& upipe,
+		const HTTPServer::Options& opts);
+	~HTTPSvrConnection();
 	/**
 	 * start processing the connection
 	 */
 	virtual void run();
-
 	// these are public so that authentication modules can access them.
 	/**
 	 * Do the request headers contain a specific key?
 	 * @param key the key to look for
 	 * @return true if the key is found in the request headers.
 	 */
-	bool headerHasKey(const OW_String& key) const
+	bool headerHasKey(const String& key) const
 	{
-		return OW_HTTPUtils::headerHasKey(m_requestHeaders, key);
+		return HTTPUtils::headerHasKey(m_requestHeaders, key);
 	}
-
 	/**
 	 * Get the value associated with a key in the request headers.
 	 * @param key the key to look up
 	 * @return the value associated with the key in the request headers.
 	 */
-	OW_String getHeaderValue(const OW_String& key) const
+	String getHeaderValue(const String& key) const
 	{
-		return OW_HTTPUtils::getHeaderValue(m_requestHeaders, key);
+		return HTTPUtils::getHeaderValue(m_requestHeaders, key);
 	}
-
 	/**
 	 * Add a header to the response headers.
 	 * @param key the key of the header (left of the ':')
 	 * @param value the value (right of the ':')
 	 */
-	void addHeader(const OW_String& key, const OW_String& value)
+	void addHeader(const String& key, const String& value)
 	{
-		OW_HTTPUtils::addHeader(m_responseHeaders, key, value);
+		HTTPUtils::addHeader(m_responseHeaders, key, value);
 	}
-
 	/**
 	 * Get the request status line
 	 *  example: POST /cimom HTTP/1.1
 	 * @return a string array containing the tokenized request status line.
 	 */
-	OW_Array<OW_String> getRequestLine() const { return m_requestLine; }
-
+	Array<String> getRequestLine() const { return m_requestLine; }
 	/**
 	 * Set the details of the error to be returned.  This is usefull for
 	 * auth modules to be able to describe why authentication failed.
@@ -118,17 +112,14 @@ public:
 	 * 	// and return 401, the response status line would look like this:
 	 * 	// HTTP/1.1 401 Unauthorized: foo
 	 */
-	void setErrorDetails(const OW_String& details) { m_errDetails = details; }
+	void setErrorDetails(const String& details) { m_errDetails = details; }
 	
 	/**
 	 * Get the hostname of the server.
 	 */
-	OW_String getHostName();
-
+	String getHostName();
 protected:
-
 private:
-
 	typedef enum requestMethod_t
 	{
 		BAD = 0,
@@ -137,44 +128,39 @@ private:
 		TRACE,
 		OPTIONS
 	};
-
 	typedef enum httpVerFlag_t
 	{
 		HTTP_VER_BAD = 0,
 		HTTP_VER_10,
 		HTTP_VER_11
 	};
-
-	OW_Array<OW_String> m_requestLine;
-	OW_HTTPHeaderMap m_requestHeaders;
-	OW_HTTPServer* m_pHTTPServer;
+	Array<String> m_requestLine;
+	HTTPHeaderMap m_requestHeaders;
+	HTTPServer* m_pHTTPServer;
 	std::istream* m_pIn;
 	std::ofstream m_tempFile;
-	OW_Socket m_socket;
+	Socket m_socket;
 	std::ostream& m_ostr;
 	int m_resCode;
 	bool m_needSendError;
-	OW_Array<OW_String> m_responseHeaders;
-
+	Array<String> m_responseHeaders;
 	httpVerFlag_t m_httpVersion;
 	requestMethod_t m_method;
 	std::istream& m_istr;
 	bool m_isClose;
-	OW_Int64 m_contentLength;
+	Int64 m_contentLength;
 	bool m_chunkedIn;
 	bool m_deflateCompressionIn;
 	bool m_deflateCompressionOut;
-	OW_String m_errDetails;
-	OW_String m_reqHeaderPrefix;
-	OW_String m_respHeaderPrefix;
+	String m_errDetails;
+	String m_reqHeaderPrefix;
+	String m_respHeaderPrefix;
 	bool m_isAuthenticated;
-	OW_Reference<OW_UnnamedPipe> m_upipe;
+	Reference<UnnamedPipe> m_upipe;
 	bool m_chunkedOut;
-	OW_String m_userName;
-	OW_RequestHandlerIFCRef m_requestHandler;
-	OW_HTTPServer::Options m_options;
-
-
+	String m_userName;
+	RequestHandlerIFCRef m_requestHandler;
+	HTTPServer::Options m_options;
 	int processRequestLine();
 	int processHeaders();
 	void trace();
@@ -184,13 +170,14 @@ private:
 	void beginPostResponse();
 	void initRespStream(std::ostream*& ostrEntity);
 	void sendPostResponse(std::ostream* ostrEntity,
-		OW_TempFileStream& ostrError);
-	int performAuthentication(const OW_String& info);
+		TempFileStream& ostrError);
+	int performAuthentication(const String& info);
 	void sendHeaders(int sc, int len = -1);
-	void cleanUpIStreams(OW_Reference<OW_CIMProtocolIStreamIFC> istrm);
-	OW_Reference<OW_CIMProtocolIStreamIFC> convertToFiniteStream(
+	void cleanUpIStreams(Reference<CIMProtocolIStreamIFC> istrm);
+	Reference<CIMProtocolIStreamIFC> convertToFiniteStream(
 			std::istream& istr);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

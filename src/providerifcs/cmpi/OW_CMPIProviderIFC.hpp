@@ -30,104 +30,85 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_CMPIPROVIDERIFC_HPP_
 #define OW_CMPIPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_SharedLibrary.hpp"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_Map.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_FTABLERef.hpp"
-
 #include "cmpisrv.h"
 #include "cmpidt.h"
 #include "cmpift.h"
 
+namespace OpenWBEM
+{
 
 /**
- * This class implements a bridge from the CIMOM's OW_ProviderManager to the
+ * This class implements a bridge from the CIMOM's ProviderManager to the
  * C++ providers.  It's main function is location and creation of providers.
  */
 //static ::CMPIBroker broker;
-
-class OW_CMPIProviderIFC : public OW_ProviderIFCBaseIFC
+class CMPIProviderIFC : public ProviderIFCBaseIFC
 {
 public:
 	static const char * const CREATIONFUNC;
-
-	OW_CMPIProviderIFC();
-	~OW_CMPIProviderIFC();
-
+	CMPIProviderIFC();
+	~CMPIProviderIFC();
         //static ::CMPIBroker * getBroker() { return &(_broker); }
-
 protected:
-
 	//static ::CMPIBroker _broker;
-
 	virtual const char* getName() const { return "cmpi"; }
-
-	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
-		OW_InstanceProviderInfoArray& i,
+	virtual void doInit(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		OW_AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& a,
 #endif
-		OW_MethodProviderInfoArray& m,
-		OW_IndicationProviderInfoArray& ind);
-
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind);
+	virtual InstanceProviderIFCRef doGetInstanceProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual MethodProviderIFCRef doGetMethodProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual AssociatorProviderIFCRef doGetAssociatorProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 #endif
-
-	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual IndicationProviderIFCRef doGetIndicationProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
+		const ProviderEnvironmentIFCRef& env
 		);
-
-	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual PolledProviderIFCRefArray doGetPolledProviders(
+		const ProviderEnvironmentIFCRef& env
 		);
-
-	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
+	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	{
 		(void)env;
 		// TODO
 	}
-
 private:
-
-	typedef OW_Map<OW_String, OW_CMPIFTABLERef> ProviderMap;
-	//typedef OW_Array<OW_SharedLibraryObject<OW_CMPIFTABLERef> > LoadedProviderArray;
-	typedef OW_Array<OW_CMPIFTABLERef > LoadedProviderArray;
-
-	OW_CMPIFTABLERef getProvider(const OW_ProviderEnvironmentIFCRef& env,
+	typedef Map<String, CMPIFTABLERef> ProviderMap;
+	//typedef Array<SharedLibraryObject<CMPIFTABLERef> > LoadedProviderArray;
+	typedef Array<CMPIFTABLERef > LoadedProviderArray;
+	CMPIFTABLERef getProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-	void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
-
+	void loadNoIdProviders(const ProviderEnvironmentIFCRef& env);
 	ProviderMap m_provs;
-	OW_Mutex m_guard;
+	Mutex m_guard;
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
-
 // BMMU
 	MIs miVector;
 	::CMPI_Broker _broker;
 };
+typedef SharedLibraryReference<CMPIProviderIFC> CMPIProviderIFCRef;
 
-typedef OW_SharedLibraryReference<OW_CMPIProviderIFC> OW_CMPIProviderIFCRef;
+} // end namespace OpenWBEM
+
 #endif
-

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_MOFCompiler.hpp"
 #include "OW_Format.hpp"
 #include "OW_MOFParserDecls.hpp"
@@ -37,34 +36,37 @@
 #include <assert.h>
 #include <cctype>
 
-MofCompiler::MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& nameSpace, OW_Reference<OW_MofParserErrorHandlerIFC> mpeh )
+namespace OpenWBEM
+{
+
+namespace MOF
+{
+
+Compiler::Compiler( Reference<CIMOMHandleIFC> ch, const String& nameSpace, Reference<ParserErrorHandlerIFC> mpeh )
 	: theErrorHandler(mpeh)
 	, include_stack_ptr(0)
 	, m_ch(ch)
 	, m_nameSpace(nameSpace)
 {
 }
-
-MofCompiler::~MofCompiler()
+Compiler::~Compiler()
 {
 }
-
-long MofCompiler::compile( const OW_String& filename )
+long Compiler::compile( const String& filename )
 {
 	theLineInfo = lineInfo(filename,1);
-
 	try
 	{
 		try
 		{
 			size_t i = filename.lastIndexOf('/');
-			if (i != OW_String::npos)
+			if (i != String::npos)
 			{
 				basepath = filename.substring(0,i);
 			}
 			else
 			{
-				basepath = OW_String();
+				basepath = String();
 			}
 			if (filename != "-")
 			{
@@ -75,30 +77,26 @@ long MofCompiler::compile( const OW_String& filename )
 					return 1;
 				}
 			}
-
 			theErrorHandler->progressMessage("Starting parsing",
 					lineInfo(filename, 0));
 			#ifdef YYOW_DEBUG
 			yydebug = 1;
 			#endif
-
 			yyparse(this);
-
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
-
 			CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
 			mofSpecification->Accept(&v);
 		}
-		catch (const OW_MofParseFatalErrorException&)
+		catch (const ParseFatalErrorException&)
 		{
 			// error has already been reported.
 		}
-		catch (OW_Assertion& e)
+		catch (Assertion& e)
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
 		}
-		catch (OW_Exception& e)
+		catch (Exception& e)
 		{
 			theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), theLineInfo);
 		}
@@ -106,7 +104,7 @@ long MofCompiler::compile( const OW_String& filename )
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
 		}
-		catch (OW_ThreadCancelledException&)
+		catch (ThreadCancelledException&)
 		{
 			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", theLineInfo);
 			throw;
@@ -116,17 +114,15 @@ long MofCompiler::compile( const OW_String& filename )
 			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
 		}
 	}
-	catch (const OW_MofParseFatalErrorException&)
+	catch (const ParseFatalErrorException&)
 	{
 		// error has already been reported.
 	}
 	return theErrorHandler->errorCount();
 }
-
 void yy_delete_buffer(YY_BUFFER_STATE b);
 YY_BUFFER_STATE yy_scan_bytes( const char *bytes, int len );
 namespace {
-
 	struct yyBufferDeleter
 	{
 		yyBufferDeleter(YY_BUFFER_STATE buf) : m_buf(buf) {}
@@ -134,12 +130,10 @@ namespace {
 		YY_BUFFER_STATE m_buf;
 	};
 }
-
-long MofCompiler::compileString( const OW_String& mof )
+long Compiler::compileString( const String& mof )
 {
-	OW_String filename = "string";
+	String filename = "string";
 	theLineInfo = lineInfo(filename,1);
-
 	try
 	{
 		try
@@ -151,24 +145,21 @@ long MofCompiler::compileString( const OW_String& mof )
 			#ifdef YYOW_DEBUG
 			yydebug = 1;
 			#endif
-
 			yyparse(this);
-
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
-
 			CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
 			mofSpecification->Accept(&v);
 		}
-		catch (const OW_MofParseFatalErrorException&)
+		catch (const ParseFatalErrorException&)
 		{
 			// error has already been reported.
 		}
-		catch (OW_Assertion& e)
+		catch (Assertion& e)
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
 		}
-		catch (OW_Exception& e)
+		catch (Exception& e)
 		{
 			theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
 		}
@@ -176,7 +167,7 @@ long MofCompiler::compileString( const OW_String& mof )
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
 		}
-		catch (OW_ThreadCancelledException&)
+		catch (ThreadCancelledException&)
 		{
 			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", theLineInfo);
 			throw;
@@ -186,22 +177,21 @@ long MofCompiler::compileString( const OW_String& mof )
 			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
 		}
 	}
-	catch (const OW_MofParseFatalErrorException&)
+	catch (const ParseFatalErrorException&)
 	{
 		// error has already been reported.
 	}
 	return theErrorHandler->errorCount();
 }
-
 // STATIC
-OW_String MofCompiler::fixParsedString(const OW_String& s)
+String Compiler::fixParsedString(const String& s)
 {
-	OW_Array<OW_String> sa = s.tokenize("\n\r");
-	OW_String retval;
+	StringArray sa = s.tokenize("\n\r");
+	String retval;
 	for (size_t i = 0; i < sa.size(); ++i)
 	{
 		// trim off whitespace
-		OW_String trimmed = sa[i];
+		String trimmed = sa[i];
 		trimmed.trim();
 		// cut off the quotes and concatenate
 		if (trimmed.length() > 2)
@@ -210,8 +200,7 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 			retval += trimmed.substring(1, trimmed.length() - 2);
 		}
 	}
-	OW_StringBuffer unescaped;
-
+	StringBuffer unescaped;
 	for(size_t i = 0; i < retval.length(); ++i)
 	{
 		if (retval[i] == '\\')
@@ -219,7 +208,7 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 			/* this can never happen, unless someone messes up the lexer
 			if (i+1 >= retval.length())
 			{
-				OW_THROW(OW_Exception, "String cannot end with '\\'");
+				OW_THROW(Exception, "String cannot end with '\\'");
 			}*/
 			++i;
 			switch(retval[i])
@@ -252,7 +241,7 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 				case 'X':
 					{
 						// The lexer guarantees that there will be from 1-4 hex chars.
-						OW_UInt16 hex = 0;
+						UInt16 hex = 0;
 						for (size_t j = 0; j < 4; ++j)
 						{
 							hex <<= 4;
@@ -273,15 +262,14 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 						}
 						if (hex > CHAR_MAX)
 						{
-							OW_THROW(OW_Exception, "Escape sequence larger than supported maximum");
+							OW_THROW(Exception, "Escape sequence larger than supported maximum");
 						}
 						unescaped += static_cast<char>(hex);
 					}
 					break;
-
 				default:
 					/* this could never happen unless someone meses up the lexer
-					OW_THROW(OW_Exception, "Invalid escape sequence"); */
+					OW_THROW(Exception, "Invalid escape sequence"); */
 					break;
 			}
 		}
@@ -293,4 +281,7 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 	
 	return unescaped.releaseString();
 }
+
+} // end namespace MOF
+} // end namespace OpenWBEM
 

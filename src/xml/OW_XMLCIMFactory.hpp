@@ -29,23 +29,25 @@
 *******************************************************************************/
 #ifndef OW_XMLCIMFACTORY_HPP_
 #define OW_XMLCIMFACTORY_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 
-class OW_CIMXMLParser;
-
-struct OW_XMLCIMFactory
+namespace OpenWBEM
 {
-	static OW_CIMObjectPath createObjectPath(OW_CIMXMLParser& parser);
-	static OW_CIMClass createClass(OW_CIMXMLParser& parser);
-	static OW_CIMInstance createInstance(OW_CIMXMLParser& parser);
-	static OW_CIMValue createValue(OW_CIMXMLParser& parser, OW_String const& type);
-	static OW_CIMQualifier createQualifier(OW_CIMXMLParser& parser);
-	static OW_CIMMethod createMethod(OW_CIMXMLParser& parser);
-	static OW_CIMProperty createProperty(OW_CIMXMLParser& parser);
-	static OW_CIMParameter createParameter(OW_CIMXMLParser& parser);
+
+class CIMXMLParser;
+struct XMLCIMFactory
+{
+	static CIMObjectPath createObjectPath(CIMXMLParser& parser);
+	static CIMClass createClass(CIMXMLParser& parser);
+	static CIMInstance createInstance(CIMXMLParser& parser);
+	static CIMValue createValue(CIMXMLParser& parser, String const& type);
+	static CIMQualifier createQualifier(CIMXMLParser& parser);
+	static CIMMethod createMethod(CIMXMLParser& parser);
+	static CIMProperty createProperty(CIMXMLParser& parser);
+	static CIMParameter createParameter(CIMXMLParser& parser);
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

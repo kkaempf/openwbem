@@ -27,17 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
 #define OW_STRINGENUMERATION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Enumeration.hpp"
 #include "OW_String.hpp"
 
-typedef OW_Enumeration<OW_String> OW_StringEnumeration;
+namespace OpenWBEM
+{
 
+typedef Enumeration<String> StringEnumeration;
+
+} // end namespace OpenWBEM
 
 #endif
-

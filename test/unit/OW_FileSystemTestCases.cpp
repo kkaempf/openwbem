@@ -39,6 +39,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+using namespace OpenWBEM;
+
 void OW_FileSystemTestCases::setUp()
 {
 }
@@ -49,14 +51,14 @@ void OW_FileSystemTestCases::tearDown()
 
 void OW_FileSystemTestCases::testgetLock()
 {
-    OW_File f = OW_FileSystem::openFile("Makefile");
+    File f = FileSystem::openFile("Makefile");
     unitAssert(f);
 	unitAssert( f.getLock() == 0 );
 }
 
 void OW_FileSystemTestCases::testtryLock()
 {
-    OW_File f = OW_FileSystem::openFile("Makefile");
+    File f = FileSystem::openFile("Makefile");
     unitAssert(f);
 	unitAssert( f.getLock() == 0 );
     // the lock is recursive, meaning to get a block, we've got to try to
@@ -91,7 +93,7 @@ void OW_FileSystemTestCases::testtryLock()
 
 void OW_FileSystemTestCases::testunlock()
 {
-    OW_File f = OW_FileSystem::openFile("Makefile");
+    File f = FileSystem::openFile("Makefile");
     unitAssert(f);
 	unitAssert( f.getLock() == 0 );
 	unitAssert( f.unlock() == 0 );
@@ -128,16 +130,16 @@ void OW_FileSystemTestCases::testunlock()
 void OW_FileSystemTestCases::testopenOrCreateFile()
 {
 	// make sure it's gone.
-	OW_FileSystem::removeFile("testfile");
+	FileSystem::removeFile("testfile");
 	// first it should be created
-	OW_File f = OW_FileSystem::openOrCreateFile("testfile");
+	File f = FileSystem::openOrCreateFile("testfile");
 	unitAssert(f);
 	unitAssert(f.close() == 0);
 	// now it will be opened
-	f = OW_FileSystem::openOrCreateFile("testfile");
+	f = FileSystem::openOrCreateFile("testfile");
 	unitAssert(f);
 	unitAssert(f.close() == 0);
-	unitAssert(OW_FileSystem::removeFile("testfile"));
+	unitAssert(FileSystem::removeFile("testfile"));
 }
 
 Test* OW_FileSystemTestCases::suite()

@@ -27,20 +27,21 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_XMLUNESCAPE_HPP_
 #define OW_XMLUNESCAPE_HPP_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * Unescape an XML string.
  * @param escapedText The text to be unescaped
  * @return the unescaped text.
  */
-OW_String OW_XMLUnescape(const char* escapedText, unsigned len);
+String XMLUnescape(const char* escapedText, unsigned len);
 
+} // end namespace OpenWBEM
 
 #endif // OW_XMLUNESCAPE_HPP_
-

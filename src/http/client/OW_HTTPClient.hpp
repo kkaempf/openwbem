@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HTTPCLIENT_HPP_
 #define OW_HTTPCLIENT_HPP_
-
 #include "OW_config.h"
 #include "OW_Socket.hpp"
 #include "OW_AutoPtr.hpp"
@@ -39,10 +37,11 @@
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_TempFileStream;
-
-class OW_HTTPClient : public OW_CIMProtocolIFC
+class TempFileStream;
+class HTTPClient : public CIMProtocolIFC
 {
 	public:
 		/**
@@ -52,11 +51,10 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		 * 		URLs have this form:
 		 * 		http[s]://[user:passwd@]hostname[:port][/path]	
 		 */
-		OW_HTTPClient( const OW_String& url);
-		virtual ~OW_HTTPClient();
-
-		virtual OW_Reference<std::iostream> beginRequest(
-				const OW_String& methodName, const OW_String& nameSpace);
+		HTTPClient( const String& url);
+		virtual ~HTTPClient();
+		virtual Reference<std::iostream> beginRequest(
+				const String& methodName, const String& nameSpace);
 		/**
 		 * Establishes a connection (if not already connected) to the
 		 * CIMOM and sends a request.  An istream& is returned containing
@@ -66,56 +64,46 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		 * @param methodName The CIM method that corresponds to the request.
 		 * @nameSpace the namespace the request applies to.
 		 * @return an istream& containing the response from the server
-		 * @exception OW_HTTPException
-		 * @exception OW_SocketException
+		 * @exception HTTPException
+		 * @exception SocketException
 		 *
 		 */
-		virtual OW_Reference<OW_CIMProtocolIStreamIFC> 
-			endRequest(OW_Reference<std::iostream> request,
-				const OW_String& methodName, const OW_String& nameSpace);
-
+		virtual Reference<CIMProtocolIStreamIFC> 
+			endRequest(Reference<std::iostream> request,
+				const String& methodName, const String& nameSpace);
 		/**
 		 * Sends an OPTIONS request to the HTTP server, and reports the
 		 * results.
-		 * @return a OW_CIMFeatures object listing the features of the CIMOM.
+		 * @return a CIMFeatures object listing the features of the CIMOM.
 		 */
-		virtual OW_CIMFeatures getFeatures();
-
-
+		virtual CIMFeatures getFeatures();
 		/**
 		 * Gets the address of the local machine
-		 * @return An OW_SocketAddress corresponding to the local machine.
+		 * @return An SocketAddress corresponding to the local machine.
 		 */
-		OW_SocketAddress getLocalAddress() const;
-
+		SocketAddress getLocalAddress() const;
 		/**
 		 * Gets the address of the peer connection
-		 * @return An OW_SocketAddress corresponding to the peer connection
+		 * @return An SocketAddress corresponding to the peer connection
 		 */
-		OW_SocketAddress getPeerAddress()  const;
-
-
-
+		SocketAddress getPeerAddress()  const;
 	private:
-
 		void setUrl();
 		void cleanUpIStreams();
 		void receiveAuthentication();
 		void sendAuthorization();
 		bool receiveOptions( void );
 		
-		OW_String m_sAuthorization;
+		String m_sAuthorization;
 		
 #ifndef OW_DISABLE_DIGEST
-		OW_String m_sRealm;
-		OW_String m_sDigestNonce;
-		OW_String m_sDigestCNonce;
-		OW_UInt8 m_iDigestNonceCount;
-		OW_String m_sDigestSessionKey;
-		OW_String m_sDigestResponse;
+		String m_sRealm;
+		String m_sDigestNonce;
+		String m_sDigestCNonce;
+		UInt8 m_iDigestNonceCount;
+		String m_sDigestSessionKey;
+		String m_sDigestResponse;
 #endif
-
-
 		typedef enum Resp_t
 		{
 			FATAL,
@@ -123,56 +111,50 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 			GOOD,
 			CONTINUE
 		};
-
-		OW_SocketAddress m_serverAddress;
-		OW_URL m_url;
-		OW_HTTPHeaderMap m_responseHeaders;
-		OW_Array<OW_String> m_requestHeadersCommon;
-		OW_Array<OW_String> m_requestHeadersNew;
-		OW_Reference<OW_CIMProtocolIStreamIFC> m_pIstrReturn;
-		mutable OW_Socket m_socket;
-		OW_String m_requestMethod;
+		SocketAddress m_serverAddress;
+		URL m_url;
+		HTTPHeaderMap m_responseHeaders;
+		Array<String> m_requestHeadersCommon;
+		Array<String> m_requestHeadersNew;
+		Reference<CIMProtocolIStreamIFC> m_pIstrReturn;
+		mutable Socket m_socket;
+		String m_requestMethod;
 		bool m_authRequired;
 		mutable bool m_needsConnect;
 		std::istream& m_istr;
 		std::ostream& m_ostr;
 		bool m_doDeflateOut;
 		int m_retryCount;
-
-
-		bool headerHasKey(const OW_String& key)
+		bool headerHasKey(const String& key)
 		{
-			return OW_HTTPUtils::headerHasKey(m_responseHeaders, key);
+			return HTTPUtils::headerHasKey(m_responseHeaders, key);
 		}
-		OW_String getHeaderValue(const OW_String& key)
+		String getHeaderValue(const String& key)
 		{
-			return OW_HTTPUtils::getHeaderValue(m_responseHeaders, key);
+			return HTTPUtils::getHeaderValue(m_responseHeaders, key);
 		}
-		void addHeaderCommon(const OW_String& key, const OW_String& value)
+		void addHeaderCommon(const String& key, const String& value)
 		{
-			OW_HTTPUtils::addHeader(m_requestHeadersCommon, key, value);
+			HTTPUtils::addHeader(m_requestHeadersCommon, key, value);
 		}
-		void addHeaderNew(const OW_String& key, const OW_String& value)
+		void addHeaderNew(const String& key, const String& value)
 		{
-			OW_HTTPUtils::addHeader(m_requestHeadersNew, key, value);
+			HTTPUtils::addHeader(m_requestHeadersNew, key, value);
 		}
-		void sendHeaders(const OW_String& method,
-			const OW_String& prot);
-		Resp_t processHeaders(OW_String& statusLine);
-
-		OW_Reference<OW_CIMProtocolIStreamIFC> convertToFiniteStream();
+		void sendHeaders(const String& method,
+			const String& prot);
+		Resp_t processHeaders(String& statusLine);
+		Reference<CIMProtocolIStreamIFC> convertToFiniteStream();
 		void prepareForRetry();
-
 		void handleAuth(); // process authorization
 		void checkConnection();
-		OW_String checkResponse(Resp_t& rt);
+		String checkResponse(Resp_t& rt);
 		void prepareHeaders();
-
-		void sendDataToServer( OW_Reference<OW_TempFileStream> tfs, const OW_String& methodName, const OW_String& nameSpace );
-
-		OW_HTTPClient(const OW_HTTPClient&);
-		OW_HTTPClient& operator=(const OW_HTTPClient&);
+		void sendDataToServer( Reference<TempFileStream> tfs, const String& methodName, const String& nameSpace );
+		HTTPClient(const HTTPClient&);
+		HTTPClient& operator=(const HTTPClient&);
 };
 
+} // end namespace OpenWBEM
 
 #endif	// OW_HTTPCLIENT_HPP_

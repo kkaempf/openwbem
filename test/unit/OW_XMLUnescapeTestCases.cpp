@@ -36,6 +36,8 @@
 
 #define TESTSTRING "&amp;&quot;&lt;&gt;&#9;&apos;"
 
+using namespace OpenWBEM;
+
 void OW_XMLUnescapeTestCases::setUp()
 {
 }
@@ -46,7 +48,7 @@ void OW_XMLUnescapeTestCases::tearDown()
 
 void OW_XMLUnescapeTestCases::test()
 {
-	unitAssert( OW_XMLUnescape(TESTSTRING, strlen(TESTSTRING)) == "&\"<>\x9'" );
+	unitAssert( XMLUnescape(TESTSTRING, strlen(TESTSTRING)) == "&\"<>\x9'" );
 }
 
 Test* OW_XMLUnescapeTestCases::suite()

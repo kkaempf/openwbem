@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_MD5.hpp"
 #include "OW_String.hpp"
@@ -40,25 +38,24 @@
 #include <fstream>
 #include <stdlib.h>
 
+using namespace OpenWBEM;
+
 using std::ofstream;
 using std::cout;
 using std::cerr;
 using std::endl;
-
 void usage(const char* cmd)
 {
 	cerr << "Usage: " << cmd << " -l <login_name> [-h <hostname>] "
 		"-f <password_file> [-p <password>]" << endl;
 }
-
 int main(int argc, char* argv[])
 {
 	const char* const short_options = "l:h:f:p:";
-	OW_String name;
-	OW_String hostname;
-	OW_String filename;
-	OW_String passwd;
-
+	String name;
+	String hostname;
+	String filename;
+	String passwd;
 	int c = getopt(argc, argv, short_options);
 	while (c != -1)
 	{
@@ -82,34 +79,29 @@ int main(int argc, char* argv[])
 		}
 		c = getopt(argc, argv, short_options);
 	}
-
 	if (filename.empty() || name.empty() )
 	{
 		usage(argv[0]);
 		exit(1);
 	}
-
 	if (hostname.empty())
 	{
-		OW_SocketAddress iaddr = OW_SocketAddress::getAnyLocalHost();
+		SocketAddress iaddr = SocketAddress::getAnyLocalHost();
 		hostname = iaddr.getName();
 	}
-
 	ofstream outfile(filename.c_str(), std::ios::app);
-
 	if(!outfile)
 	{
 		cerr << "Unable to open password file " << filename << endl;
 		exit(1);
 	}
-
 	if (passwd.empty())
 	{
 		for(;;)
 		{
-			passwd = OW_GetPass::getPass("Please enter the password for " +
+			passwd = GetPass::getPass("Please enter the password for " +
 				name + ": ");
-			OW_String rePasswd = OW_GetPass::getPass("Please retype the password for " +
+			String rePasswd = GetPass::getPass("Please retype the password for " +
 				name + ": ");
 			if(passwd.equals(rePasswd))
 			{
@@ -122,20 +114,14 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-
-	OW_MD5 md5;
-
+	MD5 md5;
 	md5.update(name);
 	md5.update(":");
 	md5.update(hostname);
 	md5.update(":");
 	md5.update(passwd);
-
 	outfile << name << ":" << hostname << ":" << md5.toString() << endl;
-
 	return 0;
 }
-
-
 
 

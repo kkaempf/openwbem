@@ -39,6 +39,8 @@
 #include "OW_Array.hpp"
 #include "OW_UnnamedPipe.hpp"
 
+using namespace OpenWBEM;
+
 void OW_MemTracerTestCases::setUp()
 {
 }
@@ -52,16 +54,16 @@ void OW_MemTracerTestCases::testSomething()
 #ifdef OW_DEBUG_MEMORY
 	enum codes
 	{
-		OW_UNDERRUN=1,
-		OW_OVERRUN=2,
-		OW_UNKNOWN_ADDR=3,
-		OW_DOUBLE_DELETE=4,
-		OW_DOUBLE_DELETE_NOFREE=5,
+		UNDERRUN=1,
+		OVERRUN=2,
+		UNKNOWN_ADDR=3,
+		DOUBLE_DELETE=4,
+		DOUBLE_DELETE_NOFREE=5,
 		AGGRESSIVE=7
 	};
 
 
-	OW_String execName = "./MemTracerTest";
+	String execName = "./MemTracerTest";
 
 	bool wasDisabled = false;
 	if (getenv("OW_MEM_DISABLE") && getenv("OW_MEM_DISABLE")[0] == '1')
@@ -73,54 +75,54 @@ void OW_MemTracerTestCases::testSomething()
 	putenv("OW_MEM_AGGRESSIVE=0");
 	putenv("OW_MEM_NOFREE=0");
 
-	OW_Array<OW_String> cmd;
+	Array<String> cmd;
 	cmd.append(execName);
-	cmd.append(OW_String(OW_UNDERRUN));
-	OW_PopenStreams rval = OW_Exec::safePopen(cmd);
-	OW_String er = rval.err()->readAll();
+	cmd.append(String(UNDERRUN));
+	PopenStreams rval = Exec::safePopen(cmd);
+	String er = rval.err()->readAll();
 	size_t idx = er.indexOf("UNDERRUN");
-	unitAssert(idx != OW_String::npos);
+	unitAssert(idx != String::npos);
 
 	cmd.clear();
 	cmd.append(execName);
-	cmd.append(OW_String(OW_OVERRUN));
-	rval = OW_Exec::safePopen(cmd);
+	cmd.append(String(OVERRUN));
+	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
 	idx = er.indexOf("OVERRUN");
-	unitAssert(idx != OW_String::npos);
+	unitAssert(idx != String::npos);
 
 	cmd.clear();
 	cmd.append(execName);
-	cmd.append(OW_String(OW_UNKNOWN_ADDR));
-	rval = OW_Exec::safePopen(cmd);
+	cmd.append(String(UNKNOWN_ADDR));
+	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
 	idx = er.indexOf("UNKNOWN ADDRESS");
-	unitAssert(idx != OW_String::npos);
+	unitAssert(idx != String::npos);
 
 	cmd.clear();
 	cmd.append(execName);
-	cmd.append(OW_String(OW_DOUBLE_DELETE));
-	rval = OW_Exec::safePopen(cmd);
+	cmd.append(String(DOUBLE_DELETE));
+	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
 	idx = er.indexOf("DOUBLE DELETE");
-	unitAssert(idx != OW_String::npos);
+	unitAssert(idx != String::npos);
 
 	putenv("OW_MEM_NOFREE=1");
 
 	cmd.clear();
 	cmd.append(execName);
-	cmd.append(OW_String(OW_DOUBLE_DELETE));
-	rval = OW_Exec::safePopen(cmd);
+	cmd.append(String(DOUBLE_DELETE));
+	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
 	idx = er.indexOf("DOUBLE DELETE (NOFREE)");
-	unitAssert(idx != OW_String::npos);
+	unitAssert(idx != String::npos);
 
 	putenv("OW_MEM_NOFREE=0");
 
 	cmd.clear();
 	cmd.append(execName);
-	cmd.append(OW_String(AGGRESSIVE));
-	rval = OW_Exec::safePopen(cmd);
+	cmd.append(String(AGGRESSIVE));
+	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
 	idx = rval.getExitStatus();
 	unitAssert(idx == 0);
@@ -129,11 +131,11 @@ void OW_MemTracerTestCases::testSomething()
 
 	cmd.clear();
 	cmd.append(execName);
-	cmd.append(OW_String(AGGRESSIVE));
-	rval = OW_Exec::safePopen(cmd);
+	cmd.append(String(AGGRESSIVE));
+	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
 	idx = er.indexOf("OVERRUN");
-	unitAssert(idx != OW_String::npos);
+	unitAssert(idx != String::npos);
 
 	putenv("OW_MEM_AGGRESSIVE=0");
 	if (wasDisabled)

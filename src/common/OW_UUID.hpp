@@ -27,22 +27,22 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_UUID_HPP_INCLUDE_GUARD
 #define OW_UUID_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 
-DECLARE_EXCEPTION(UUID);
+namespace OpenWBEM
+{
 
+DECLARE_EXCEPTION(UUID);
 /**
  * UUIDs (Universally Unique IDentifiers), also known as GUIDs (Globally Unique 
  * IDentifiers), are 128 bits long. It is either guaranteed to be different
  * from all other UUIDs/GUIDs generated until 3400 A.D. or extremely
  * likely to be different.
- * sizeof(OW_UUID) == 16.  The internal data is stored in network byte order, 
+ * sizeof(UUID) == 16.  The internal data is stored in network byte order, 
  * independent of host byte order.
  *
  * This implementation based off of IETF internet draft: draft-leach-uuids-guids-01.txt
@@ -50,15 +50,14 @@ DECLARE_EXCEPTION(UUID);
  *   DCE: Remote Procedure Call, Open Group CAE Specification C309
  *    ISBN 1-85912-041-5 28cm. 674p. pbk. 1,655g. 8/94
  */
-class OW_UUID
+class UUID
 {
 public:
 	/**
 	 * Create a new UUID.  Version 1, based on MAC address (or random if not 
 	 * available) and time+counter.
 	 */
-	OW_UUID();
-
+	UUID();
 	/**
 	 * Construct a UUID from string representation.
 	 * The formal definition of the UUID string representation is provided
@@ -82,25 +81,20 @@ public:
 	 *
 	 *  The following is an example of the string representation of a UUID:
 	 *       f81d4fae-7dec-11d0-a765-00a0c91e6bf6
-	 * @throw OW_UUIDException if uuidStr isn't valid.
+	 * @throw UUIDException if uuidStr isn't valid.
 	 */
-	OW_UUID(const OW_String& uuidStr);
-
+	UUID(const String& uuidStr);
 	/**
 	 * Get the string representation of this UUID.
 	 */
-	OW_String toString() const;
-
-
-
+	String toString() const;
 private:
 	unsigned char m_uuid[16];
-
-	friend bool operator==(const OW_UUID& x, const OW_UUID& y);
-	friend bool operator<(const OW_UUID& x, const OW_UUID& y);
+	friend bool operator==(const UUID& x, const UUID& y);
+	friend bool operator<(const UUID& x, const UUID& y);
 };
+bool operator!=(const UUID& x, const UUID& y);
 
-bool operator!=(const OW_UUID& x, const OW_UUID& y);
+} // end namespace OpenWBEM
 
 #endif
-

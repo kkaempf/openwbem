@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NPIMethodProviderProxy.hpp"
 #include "NPIExternal.hpp"
@@ -39,71 +38,62 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMParamValue.hpp"
 
+namespace OpenWBEM
+{
+
 /////////////////////////////////////////////////////////////////////////////
-OW_NPIMethodProviderProxy::~OW_NPIMethodProviderProxy() 
+NPIMethodProviderProxy::~NPIMethodProviderProxy() 
 {
 }
-
 /////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_NPIMethodProviderProxy::invokeMethod(
-	const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String &methodName,
-    const OW_CIMParamValueArray &in, OW_CIMParamValueArray &out)
+CIMValue
+NPIMethodProviderProxy::invokeMethod(
+	const ProviderEnvironmentIFCRef &env,
+	const String& ns,
+	const CIMObjectPath& path,
+	const String &methodName,
+    const CIMParamValueArray &in, CIMParamValueArray &out)
 {
-        OW_CIMValue rval(OW_CIMNULL);
-
+        CIMValue rval(CIMNULL);
         env->getLogger()->
-            logDebug("OW_NPIInstanceProviderProxy::invokeMethod()");
-
+            logDebug("NPIInstanceProviderProxy::invokeMethod()");
         if (m_ftable->fp_invokeMethod != NULL)
         {
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-			OW_NPIHandleFreer nhf(_npiHandle);
-
-			OW_ProviderEnvironmentIFCRef env2(env);
+			NPIHandleFreer nhf(_npiHandle);
+			ProviderEnvironmentIFCRef env2(env);
             _npiHandle.thisObject = static_cast<void *>(&env2);
-
             //  may the arguments must be copied verbatim
             //  to avoid locking problems
-
-            OW_CIMObjectPath owcop = path;
+            CIMObjectPath owcop = path;
 			owcop.setNameSpace(ns);
-            CIMObjectPath _cop= {static_cast<void *> (&owcop)};
-
-            Vector parm_in = VectorNew(&_npiHandle);
-            Vector parm_out = VectorNew(&_npiHandle);
-
+            ::CIMObjectPath _cop= {static_cast<void *> (&owcop)};
+            ::Vector parm_in = VectorNew(&_npiHandle);
+            ::Vector parm_out = VectorNew(&_npiHandle);
             for (int i = 0, n = in.size(); i < n; i++)
             {
-                OW_CIMParamValue * owpv = new OW_CIMParamValue(in[i]);
+                CIMParamValue * owpv = new CIMParamValue(in[i]);
 		_NPIGarbageCan(&_npiHandle, owpv, CIM_PARAMVALUE);
                 _VectorAddTo(
                     &_npiHandle, parm_in, static_cast<void *> (owpv) );
             }
-
-            CIMValue cv = m_ftable->fp_invokeMethod(
+            ::CIMValue cv = m_ftable->fp_invokeMethod(
                 &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
-
 			if (_npiHandle.errorOccurred)
 			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
+				OW_THROWCIMMSG(CIMException::FAILED,
 					_npiHandle.providerError);
 			}
-
-            rval = * static_cast<OW_CIMValue *> (cv.ptr);
-
+            rval = * static_cast<CIMValue *> (cv.ptr);
             for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
             {
-                OW_CIMParamValue owpv = * static_cast<OW_CIMParamValue *>
+                CIMParamValue owpv = * static_cast<CIMParamValue *>
                     (_VectorGet(&_npiHandle, parm_out, i));
                 out.append(owpv);
             }
         }
-
         return rval;
 }
 
+} // end namespace OpenWBEM
 

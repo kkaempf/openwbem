@@ -27,36 +27,32 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  *
  *
  */
-
-
 #include "OW_config.h"
 #include "OW_HTTPLenLimitIStream.hpp"
 
-using std::istream;
+namespace OpenWBEM
+{
 
-OW_HTTPLengthLimitStreamBuffer::OW_HTTPLengthLimitStreamBuffer(
-		istream& istr, OW_Int64 length)
-	: OW_BaseStreamBuffer(HTTPLL_STREAM_BUF_SIZE, "in"), m_istr(istr),
+using std::istream;
+HTTPLengthLimitStreamBuffer::HTTPLengthLimitStreamBuffer(
+		istream& istr, Int64 length)
+	: BaseStreamBuffer(HTTPLL_STREAM_BUF_SIZE, "in"), m_istr(istr),
 	  m_length(length), m_pos(0), m_isEnd(false)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPLengthLimitStreamBuffer::~OW_HTTPLengthLimitStreamBuffer()
+HTTPLengthLimitStreamBuffer::~HTTPLengthLimitStreamBuffer()
 {
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
+HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
 {
 	if (m_isEnd)
 	{
@@ -73,34 +69,30 @@ OW_HTTPLengthLimitStreamBuffer::buffer_from_device(char* c, int n)
 	}
 	return lastRead;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPLengthLimitStreamBuffer::resetLen(OW_Int64 len)
+HTTPLengthLimitStreamBuffer::resetLen(Int64 len)
 {
 	initGetBuffer();
 	m_length = len;
   	m_pos = 0;
 	m_isEnd = false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPLenLimitIStream::resetLen(OW_Int64 len)
+HTTPLenLimitIStream::resetLen(Int64 len)
 {
 	clear();
 	m_strbuf.resetLen(len);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPLenLimitIStream::OW_HTTPLenLimitIStream(istream& istr, OW_Int64 len)
-	: OW_HTTPLenLimitIStreamBase(istr, len)
-	, OW_CIMProtocolIStreamIFC(&m_strbuf)
+HTTPLenLimitIStream::HTTPLenLimitIStream(istream& istr, Int64 len)
+	: HTTPLenLimitIStreamBase(istr, len)
+	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 
-
+} // end namespace OpenWBEM
 

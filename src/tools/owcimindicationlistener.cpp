@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_HTTPXMLCIMListener.hpp"
 #include "OW_String.hpp"
@@ -38,45 +37,39 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_Semaphore.hpp"
 #include "OW_MutexLock.hpp"
-
 #include <iostream> // for cout and cerr
+
+using namespace OpenWBEM;
 
 using std::cout;
 using std::endl;
 using std::cerr;
-
-OW_Mutex coutMutex;
-
-class myCallBack : public OW_CIMListenerCallback
+Mutex coutMutex;
+class myCallBack : public CIMListenerCallback
 {
 protected:
-	virtual void doIndicationOccurred(OW_CIMInstance &ci,
-		const OW_String &listenerPath)
+	virtual void doIndicationOccurred(CIMInstance &ci,
+		const String &listenerPath)
 	{
 		(void)listenerPath;
-		OW_MutexLock lock(coutMutex);
+		MutexLock lock(coutMutex);
 		cout << ci.toString() << "\n";
 	}
 };
-
-
-class ListenerLogger : public OW_Logger
+class ListenerLogger : public Logger
 {
 protected:
-	virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const
+	virtual void doLogMessage(const String &message, const LogLevel) const
 	{
 		cerr << message << endl;
 	}
 };
-
-OW_Semaphore shutdownSem;
-
+Semaphore shutdownSem;
 extern "C" 
 void sig_handler(int)
 {
 	shutdownSem.signal();
 }
-
 int main(int argc, char* argv[])
 {
 	try
@@ -86,35 +79,24 @@ int main(int argc, char* argv[])
 			cerr << "Usage: " << argv[0] << " <URL> <namespace> <filter query>" << endl;
 			exit(1);
 		}
-
 		signal(SIGINT, sig_handler);
-
-		OW_String url(argv[1]);
-		OW_String ns(argv[2]);
-		OW_String query(argv[3]);
-
-		OW_CIMListenerCallbackRef mcb(new myCallBack);
-
-		OW_LoggerRef logger(new ListenerLogger);
-
-		OW_HTTPXMLCIMListener hxcl(logger);
-
-		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
-		OW_CIMXMLCIMOMHandle rch(httpClient);
-
-		OW_String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb);
-
+		String url(argv[1]);
+		String ns(argv[2]);
+		String query(argv[3]);
+		CIMListenerCallbackRef mcb(new myCallBack);
+		LoggerRef logger(new ListenerLogger);
+		HTTPXMLCIMListener hxcl(logger);
+		CIMProtocolIFCRef httpClient(new HTTPClient(url));
+		CIMXMLCIMOMHandle rch(httpClient);
+		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb);
 		// wait until we get a SIGINT
 		shutdownSem.wait();
-
 		cout << "De-registering and shutting down." << endl;
-
 		hxcl.shutdownHttpServer();
 		hxcl.deregisterForIndication(handle);
-
 		return 0;
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 	}
@@ -128,4 +110,5 @@ int main(int argc, char* argv[])
 	}
 	return 1;
 }
+
 

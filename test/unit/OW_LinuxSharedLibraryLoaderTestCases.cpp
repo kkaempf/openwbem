@@ -34,6 +34,8 @@
 #include "OW_SharedLibraryLoader.hpp"
 #include "UnitTestEnvironment.hpp"
 
+using namespace OpenWBEM;
+
 void OW_LinuxSharedLibraryLoaderTestCases::setUp()
 {
 }
@@ -44,23 +46,23 @@ void OW_LinuxSharedLibraryLoaderTestCases::tearDown()
 
 void OW_LinuxSharedLibraryLoaderTestCases::testLoadLibrary()
 {
-	OW_SharedLibraryLoaderRef sll = OW_SharedLibraryLoader::createSharedLibraryLoader();
-	OW_SharedLibraryRef lib = sll->loadSharedLibrary(
+	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
+	SharedLibraryRef lib = sll->loadSharedLibrary(
 			"../../src/common/libopenwbem.so", g_testEnvironment->getLogger());
 	unitAssert( !lib.isNull() );
 }
 
 void OW_LinuxSharedLibraryLoaderTestCases::testGetFunctionPointer()
 {
-	OW_SharedLibraryLoaderRef sll = OW_SharedLibraryLoader::createSharedLibraryLoader();
-	OW_SharedLibraryRef lib = sll->loadSharedLibrary(
+	SharedLibraryLoaderRef sll = SharedLibraryLoader::createSharedLibraryLoader();
+	SharedLibraryRef lib = sll->loadSharedLibrary(
 			"../../src/server/libowserver.so", g_testEnvironment->getLogger());
 	unitAssert( !lib.isNull() );
 /*
-	OW_SharedLibraryLoaderRef (*createFunc)();
-	unitAssert( OW_SharedLibrary::getFunctionPointer( lib, "createSharedLibraryLoader__22OW_SharedLibraryLoader", createFunc ) );
+	SharedLibraryLoaderRef (*createFunc)();
+	unitAssert( SharedLibrary::getFunctionPointer( lib, "createSharedLibraryLoader__22SharedLibraryLoader", createFunc ) );
 	unitAssert( createFunc != 0 );
-	OW_SharedLibraryLoaderRef sll2 = createFunc();
+	SharedLibraryLoaderRef sll2 = createFunc();
 	unitAssert( !sll2.isNull() );
 	*/
 }

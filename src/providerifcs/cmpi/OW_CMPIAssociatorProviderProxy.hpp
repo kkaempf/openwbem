@@ -30,71 +30,67 @@
 * Author:        Markus Mueller <sedgewick_de@yahoo.de>
 *
 *******************************************************************************/
-
 #ifndef OW_CMPI_ASSOCIATOR_PROVIDER_PROXY_HPP_
 #define OW_CMPI_ASSOCIATOR_PROVIDER_PROXY_HPP_
-
 #include "OW_config.h"
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_FTABLERef.hpp"
 
-class OW_CMPIAssociatorProviderProxy : public OW_AssociatorProviderIFC
+namespace OpenWBEM
+{
+
+class CMPIAssociatorProviderProxy : public AssociatorProviderIFC
 {
 public:
-	OW_CMPIAssociatorProviderProxy(const OW_CMPIFTABLERef& f)
+	CMPIAssociatorProviderProxy(const CMPIFTABLERef& f)
 	: m_ftable(f)
 	{
 	}
-
-	virtual ~OW_CMPIAssociatorProviderProxy()
+	virtual ~CMPIAssociatorProviderProxy()
 	{
 	}
-
 	virtual void associatorNames(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole);
 	virtual void associators(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList);
 	virtual void references(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultClass,
-		const OW_String& role,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray *propertyList);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray *propertyList);
 	virtual void referenceNames(
-		const OW_ProviderEnvironmentIFCRef &env,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultClass,
-		const OW_String& role);
-
+		const ProviderEnvironmentIFCRef &env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role);
 private:
-	OW_CMPIFTABLERef m_ftable;
+	CMPIFTABLERef m_ftable;
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

@@ -27,23 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_SSLEXCEPTION_HPP_INCLUDE_GUARD_
 #define OW_SSLEXCEPTION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_SocketException.hpp"
 
-class OW_SSLException : public OW_SocketException
+namespace OpenWBEM
+{
+
+class SSLException : public SocketException
 {
 public:
-	OW_SSLException() : OW_SocketException() {}
-	OW_SSLException(const char* file, int line, const char* msg)
-		: OW_SocketException(file, line, msg) {}
-	OW_SSLException(const char* msg) : OW_SocketException(msg) {}
-
-	virtual const char* type() const { return "OW_SSLException"; }
+	SSLException() : SocketException() {}
+	SSLException(const char* file, int line, const char* msg)
+		: SocketException(file, line, msg) {}
+	SSLException(const char* msg) : SocketException(msg) {}
+	virtual const char* type() const { return "SSLException"; }
 };
+
+} // end namespace OpenWBEM
 
 #endif

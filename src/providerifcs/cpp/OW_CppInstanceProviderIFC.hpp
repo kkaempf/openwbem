@@ -27,14 +27,15 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPP_INSTANCEPROVIDERIFC_HPP_
 #define OW_CPP_INSTANCEPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_InstanceProviderInfo.hpp"
+
+namespace OpenWBEM
+{
 
 /**
  * Classes wishing to implement an instance provider must derive from this
@@ -42,11 +43,10 @@
  * All calls to the derived provider will be serialized so that providers need
  * not worry about multi-threading issues.
  */
-class OW_CppInstanceProviderIFC: public virtual OW_CppProviderBaseIFC
+class CppInstanceProviderIFC: public virtual CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppInstanceProviderIFC();
-
+	virtual ~CppInstanceProviderIFC();
 	/**
 	 * A provider should override this method to report which classes in
 	 * which namespaces it instruments.
@@ -61,11 +61,10 @@ public:
 	 * provider location method is removed, this member function will be pure
 	 * virtual.
 	 */
-	virtual void getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		(void)info;
 	}
-
 	/**
 	 * This method enumerates all names of instances of the class which is
 	 * specified in cop.
@@ -73,18 +72,17 @@ public:
 	 * @param cop The object path specifies the class that must be enumerated.
 	 * @param cimClass The class reference
 	 *
-	 * @returns An array of OW_CIMObjectPath containing names of the
+	 * @returns An array of CIMObjectPath containing names of the
 	 * 	enumerated instances.
-	 * @throws OW_CIMException - throws if the CIMObjectPath is incorrect
+	 * @throws CIMException - throws if the CIMObjectPath is incorrect
 	 * 	or does not exist.
 	 */
 	virtual void enumInstanceNames(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMObjectPathResultHandlerIFC& result,
-			const OW_CIMClass& cimClass ) = 0;
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMObjectPathResultHandlerIFC& result,
+			const CIMClass& cimClass ) = 0;
 	/**
 	 * This method enumerates
 	 * all instances of the class which is specified in className.  The entire
@@ -98,24 +96,23 @@ public:
 	 * @param localOnly If true, only the non-inherited properties are to be
 	 * 	returned, otherwise all properties are required.
 	 *
-	 * @returns An array of OW_CIMInstance containing names of the enumerated
+	 * @returns An array of CIMInstance containing names of the enumerated
 	 * 	instances.
 	 *
-	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist.
+	 * @throws CIMException - thrown if cop is incorrect or does not exist.
 	 */
 	virtual void enumInstances(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_String& className,
-			OW_CIMInstanceResultHandlerIFC& result,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly, 
-			OW_WBEMFlags::EDeepFlag deep, 
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& requestedClass,
-			const OW_CIMClass& cimClass ) = 0;
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const String& className,
+			CIMInstanceResultHandlerIFC& result,
+			WBEMFlags::ELocalOnlyFlag localOnly, 
+			WBEMFlags::EDeepFlag deep, 
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList,
+			const CIMClass& requestedClass,
+			const CIMClass& cimClass ) = 0;
 	/**
 	 * This method retrieves the instance specified in the object path.
 	 *
@@ -131,22 +128,21 @@ public:
 	 *
 	 * @returns The retrieved instance
 	 *
-	 * @throws OW_CIMException - thrown if cop is incorrect or does not exist
+	 * @throws CIMException - thrown if cop is incorrect or does not exist
 	 */
-	virtual OW_CIMInstance getInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& instanceName,
-			OW_WBEMFlags::ELocalOnlyFlag localOnly,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
-			OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-			const OW_StringArray* propertyList, 
-			const OW_CIMClass& cimClass ) = 0;
-
+	virtual CIMInstance getInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& instanceName,
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+			const StringArray* propertyList, 
+			const CIMClass& cimClass ) = 0;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * This method creates the instance specified in the object path.  If the
-	 * instance does exist an OW_CIMException with ID CIM_ERR_ALREADY_EXISTS
+	 * instance does exist an CIMException with ID CIM_ERR_ALREADY_EXISTS
 	 * must be thrown.  The parameter should be the instance name.
 	 *
 	 * @param cop The path to the instance to be set.  The import part in
@@ -156,16 +152,15 @@ public:
 	 *
 	 * @returns A CIM ObjectPath of the instance that was created.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
-	virtual OW_CIMObjectPath createInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& cimInstance ) = 0;
-
+	virtual CIMObjectPath createInstance(
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& cimInstance ) = 0;
 	/**
 	 * This method sets the instance specified in the object path.  If the
-	 * instance does not exist an OW_CIMException with ID CIM_ERR_NOT_FOUND
+	 * instance does not exist an CIMException with ID CIM_ERR_NOT_FOUND
 	 * must be thrown.  The parameter should be the instance name.
 	 *
 	 * @param cop The path of the instance to be set.  The important part in
@@ -173,34 +168,32 @@ public:
 	 *
 	 * @param cimInstance The instance to be set.
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
 	virtual void modifyInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMInstance& modifiedInstance,
-			const OW_CIMInstance& previousInstance,
-			OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-			const OW_StringArray* propertyList,
-			const OW_CIMClass& theClass) = 0;
-
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMInstance& modifiedInstance,
+			const CIMInstance& previousInstance,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+			const StringArray* propertyList,
+			const CIMClass& theClass) = 0;
 	/**
 	 * This method deletes the instance specified in the object path
 	 *
 	 * @param cop The instance to be deleted
 	 *
-	 * @throws OW_CIMException
+	 * @throws CIMException
 	 */
 	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop) = 0;
+			const ProviderEnvironmentIFCRef& env,
+			const String& ns,
+			const CIMObjectPath& cop) = 0;
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
-	virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return this; }
+	virtual CppInstanceProviderIFC* getInstanceProvider() { return this; }
 };
+typedef SharedLibraryReference<CppInstanceProviderIFC> CppInstanceProviderIFCRef;
 
-typedef OW_SharedLibraryReference<OW_CppInstanceProviderIFC> OW_CppInstanceProviderIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-

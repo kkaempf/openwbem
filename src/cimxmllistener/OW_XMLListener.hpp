@@ -27,43 +27,36 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_XMLLISTENER_HPP_INCLUDE_GUARD_
 #define OW_XMLLISTENER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_RequestHandlerIFCXML.hpp"
 #include <iosfwd>
 
-class OW_CIMListenerCallback;
+namespace OpenWBEM
+{
 
-class OW_XMLListener : public OW_RequestHandlerIFCXML
+class CIMListenerCallback;
+class XMLListener : public RequestHandlerIFCXML
 {
 public:
-
 	/**
-	 * Create a new OW_XMLListener.
-	 * @param callback a pointer to a OW_CIMListenerCallback object whose
+	 * Create a new XMLListener.
+	 * @param callback a pointer to a CIMListenerCallback object whose
 	 * 	method should be called when an indication occurrs.
 	 *
 	 */
-	OW_XMLListener(OW_CIMListenerCallback* callback);
-	virtual ~OW_XMLListener();
-
-	virtual OW_RequestHandlerIFC* clone() const
+	XMLListener(CIMListenerCallback* callback);
+	virtual ~XMLListener();
+	virtual RequestHandlerIFC* clone() const
 	{
-		return new OW_XMLListener(*this);
+		return new XMLListener(*this);
 	}
-
-	virtual OW_StringArray getSupportedContentTypes() const;
-
-	virtual OW_String getContentType() const;
-
+	virtual StringArray getSupportedContentTypes() const;
+	virtual String getContentType() const;
 protected:
-
-
 	/**
 	 * After doProcess is called, and the XML is parsed, executeXML
 	 * is called on the root node.
@@ -73,27 +66,22 @@ protected:
 	 * @param userName the user performing the action
 	 * @return a HTTP status code, I think.
 	 */
-	virtual int executeXML(OW_CIMXMLParser &parser, std::ostream *ostrEntity,
-		std::ostream *ostrError, const OW_String& userName);
-
-
+	virtual int executeXML(CIMXMLParser &parser, std::ostream *ostrEntity,
+		std::ostream *ostrError, const String& userName);
 	/**
 	 * Based on a path, what options are available?
-	 * @param cf a OW_CIMFeatures object to fill out.
+	 * @param cf a CIMFeatures object to fill out.
 	 * @param path the path of inquiry.
 	 */
-	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
-
-	virtual void outputError(OW_CIMException::ErrNoType errorCode,
-		OW_String msg, std::ostream& ostr);
+	virtual void doOptions(CIMFeatures &cf, const SortedVectorMap<String, String>& handlerVars);
+	virtual void outputError(CIMException::ErrNoType errorCode,
+		String msg, std::ostream& ostr);
 private:
-	OW_CIMListenerCallback* m_callback;
-
-	void processSimpleExpReq(OW_CIMXMLParser& parser, std::ostream& ostrEntity,
-		std::ostream& ostrError, const OW_String& messageId);
+	CIMListenerCallback* m_callback;
+	void processSimpleExpReq(CIMXMLParser& parser, std::ostream& ostrEntity,
+		std::ostream& ostrError, const String& messageId);
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

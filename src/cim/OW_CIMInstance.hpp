@@ -27,13 +27,9 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
 #define OW_CIMINSTANCE_HPP_INCLUDE_GUARD_
-
-
 #include "OW_config.h"
-
 #include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
@@ -42,13 +38,16 @@
 #include "OW_Array.hpp"
 #include "OW_WBEMFlags.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_CIMInstance class encapsulates all information pertinent to a
- * CIMInstance. OW_CIMInstances are ref counted, copy on write objects.
- * It is possible to have an OW_CIMInstance object that is NULL. The method
+ * The CIMInstance class encapsulates all information pertinent to a
+ * CIMInstance. CIMInstances are ref counted, copy on write objects.
+ * It is possible to have an CIMInstance object that is NULL. The method
  * to check for this condition is as follows:
  *
- *		OW_CIMInstance ci = ch.getInstance(...);
+ *		CIMInstance ci = ch.getInstance(...);
  *		if(!ci)
  *		{
  *			// Null instance
@@ -58,205 +57,176 @@
  *			// Valid instance
  *		}
  */
-class OW_CIMInstance : public OW_CIMElement
+class CIMInstance : public CIMElement
 {
 public:
-
 	struct INSTData;
-
 	/**
 	 * Default ctor
 	 */
-	OW_CIMInstance();
-
+	CIMInstance();
 	/**
-	 * This OW_CIMInstance object will be NULL. All subsequent operations on 
+	 * This CIMInstance object will be NULL. All subsequent operations on 
 	 * an instance of this type will fail.
 	 */
-	explicit OW_CIMInstance(OW_CIMNULL_t);
-
+	explicit CIMInstance(CIMNULL_t);
 	/**
 	 * Copy ctor
-	 * @param arg The OW_CIMInstance that this object will be a copy of.
+	 * @param arg The CIMInstance that this object will be a copy of.
 	 */
-	OW_CIMInstance(const OW_CIMInstance& arg);
-
+	CIMInstance(const CIMInstance& arg);
 	/**
-	 * Create an OW_CIMInstance.
-	 * @param name	The class name of this OW_CIMInstance.
+	 * Create an CIMInstance.
+	 * @param name	The class name of this CIMInstance.
 	 */
-	explicit OW_CIMInstance(const OW_String& name);
-
+	explicit CIMInstance(const String& name);
 	/**
-	 * Create an OW_CIMInstance.
-	 * @param name	The class name of this OW_CIMInstance as a NULL terminated string.
+	 * Create an CIMInstance.
+	 * @param name	The class name of this CIMInstance as a NULL terminated string.
 	 */
-	explicit OW_CIMInstance(const char* name);
-
+	explicit CIMInstance(const char* name);
 	/**
-	 * Destroy this OW_CIMInstance object.
+	 * Destroy this CIMInstance object.
 	 */
-	~OW_CIMInstance();
-
+	~CIMInstance();
 	/**
 	 * Set this to a null object. All subsequent operation will fail after this
 	 * call is made.
 	 */
 	virtual void setNull();
-
 	/**
 	 * Assignment operator
-	 * @param arg The OW_CIMInstance to assign to this one.
+	 * @param arg The CIMInstance to assign to this one.
 	 * @return A reference to this object after the assignment is made.
 	 */
-	OW_CIMInstance& operator= (const OW_CIMInstance& arg);
-
+	CIMInstance& operator= (const CIMInstance& arg);
 	/**
 	 * @return The name of the class for this instance.
 	 */
-	OW_String getClassName() const;
-
+	String getClassName() const;
 	/**
 	 * Set the keys for this instance
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setKeys(const OW_CIMPropertyArray& keys);
-
+	CIMInstance& setKeys(const CIMPropertyArray& keys);
 	/**
 	 * Sets the class name for this instance.
 	 * @param name	The new class name for this instance.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setClassName(const OW_String& name);
-
+	CIMInstance& setClassName(const String& name);
 	/**
-	 * @return The qualifiers for this instance as an array of OW_CIMQualifiers.
+	 * @return The qualifiers for this instance as an array of CIMQualifiers.
 	 */
-	OW_CIMQualifierArray getQualifiers() const;
-
+	CIMQualifierArray getQualifiers() const;
 	/**
 	 * Get the qualifier associated with the given name.
 	 * @param qualName The name of the qualifier to retrieve.
-	 * @return A valid OW_CIMQalifier on success. Otherwise a null
-	 * OW_CIMQualifier
+	 * @return A valid CIMQalifier on success. Otherwise a null
+	 * CIMQualifier
 	 */
-	OW_CIMQualifier getQualifier(const OW_String& qualName) const;
-
+	CIMQualifier getQualifier(const String& qualName) const;
 	/**
-	 * Remove the named qualifier from this OW_CIMInstance.
+	 * Remove the named qualifier from this CIMInstance.
 	 * @param qualName The name of the qualifier to remove.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& removeQualifier(const OW_String& qualName);
-
+	CIMInstance& removeQualifier(const String& qualName);
 	/**
 	 * Set the qualifiers for this instance. Any old qualifiers will removed.
-	 * @param quals An OW_CIMQualifierArray with the new qualifers for this
+	 * @param quals An CIMQualifierArray with the new qualifers for this
 	 *		instance.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setQualifiers(const OW_CIMQualifierArray& quals);
-
+	CIMInstance& setQualifiers(const CIMQualifierArray& quals);
 	/**
 	 * Set/Add a qualifier to this instance's qualifier list
 	 * @param qual	The qualifier to add to this instance.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setQualifier(const OW_CIMQualifier& qual);
-
+	CIMInstance& setQualifier(const CIMQualifier& qual);
 	/**
 	 * Get all the properties of a specific datatype from this instance.
 	 * @param valueDataType	All properties returned must have this datatype.
-	 * 	If OW_CIMDataType::INVALID is specified, all properties will be
+	 * 	If CIMDataType::INVALID is specified, all properties will be
 	 *		returned.
 	 * @return The properties associated with this instance if valueDataType is
-	 * OW_CIMDataType::INVALID. Otherwise only properties that have a values
+	 * CIMDataType::INVALID. Otherwise only properties that have a values
 	 * that have a data type specified by the valueDataType parameter.
 	 */
-	OW_CIMPropertyArray getProperties(
-		OW_Int32 valueDataType = OW_CIMDataType::INVALID) const;
-
+	CIMPropertyArray getProperties(
+		Int32 valueDataType = CIMDataType::INVALID) const;
 	/**
 	 * Set the properties associated with this instance.
-	 * @param props An OW_CIMPropertyArray that contains the new properties for
+	 * @param props An CIMPropertyArray that contains the new properties for
 	 * 	this instance.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setProperties(const OW_CIMPropertyArray& props);
-
+	CIMInstance& setProperties(const CIMPropertyArray& props);
 	/**
 	 * Get the property identified by a given name and origin class.
 	 * @param name The name of the property to retrieve.
 	 * @param originClass The name of the origin class of the property.
-	 * @return The OW_CIMProperty identified by the given parameters on success.
+	 * @return The CIMProperty identified by the given parameters on success.
 	 * Otherwise a null CIMProperty object.
 	 */
-	OW_CIMProperty getProperty(const OW_String& name,
-		const OW_String& originClass) const;
-
+	CIMProperty getProperty(const String& name,
+		const String& originClass) const;
 	/**
 	 * Gets a property with the specified name.
 	 * @param name The name of the property to retrieve.
-	 * @return The OW_CIMProperty identified by the name on success. Otherwise a
+	 * @return The CIMProperty identified by the name on success. Otherwise a
 	 * null CIMProperty object.
 	 */
-	OW_CIMProperty getProperty(const OW_String& name) const;
-
+	CIMProperty getProperty(const String& name) const;
 	/**
 	 * Gets a property with the specified name.
 	 * @param name The name of the property to retrieve.
-	 * @return The OW_CIMProperty identified by the name on success.
-	 * @throws an OW_NoSuchPropertyException if the property is not found or NULL.
+	 * @return The CIMProperty identified by the name on success.
+	 * @throws an NoSuchPropertyException if the property is not found or NULL.
 	 */
-	OW_CIMProperty getPropertyT(const OW_String& name) const;
-
+	CIMProperty getPropertyT(const String& name) const;
 	/**
-	 * @return An OW_CIMPropertyArray that contains all of the keys for this
+	 * @return An CIMPropertyArray that contains all of the keys for this
 	 * instance.
 	 */
-	OW_CIMPropertyArray getKeyValuePairs() const;
-
+	CIMPropertyArray getKeyValuePairs() const;
 	/**
 	 * Update the property values for this instance
-	 * @param props An OW_CIMPropertyArray that contains the properties to update
+	 * @param props An CIMPropertyArray that contains the properties to update
 	 *		this instance's properties with.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& updatePropertyValues(const OW_CIMPropertyArray& props);
-
+	CIMInstance& updatePropertyValues(const CIMPropertyArray& props);
 	/**
 	 * Update a single property value.
-	 * @param prop	The OW_CIMProperty to update in this instance. This
-	 *		OW_CIMProperty with contain the new value.
+	 * @param prop	The CIMProperty to update in this instance. This
+	 *		CIMProperty with contain the new value.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& updatePropertyValue(const OW_CIMProperty& prop);
-
+	CIMInstance& updatePropertyValue(const CIMProperty& prop);
 	/**
 	 * Update the value of a property if it exists. Otherwise add a new one.
 	 * @param name	The name of the property to add or update.
-	 * @param cv The OW_CIMValue that contains the new value for the property.
+	 * @param cv The CIMValue that contains the new value for the property.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setProperty(const OW_String& name, const OW_CIMValue& cv);
-
+	CIMInstance& setProperty(const String& name, const CIMValue& cv);
 	/**
 	 * Update a property in the property list if it exists. Otherwise add a
 	 * new one.
 	 * @param prop The property to add or update.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& setProperty(const OW_CIMProperty& prop);
-
+	CIMInstance& setProperty(const CIMProperty& prop);
 	/**
-	 * Remove a property from this OW_CIMInstance
+	 * Remove a property from this CIMInstance
 	 * @param propName The name of the property to remove.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& removeProperty(const OW_String& propName);
-
+	CIMInstance& removeProperty(const String& propName);
 	/**
-	 * Create an OW_CIMInstance with properties and qualifiers from this
+	 * Create an CIMInstance with properties and qualifiers from this
 	 * instance based on filtering criteria. All properties and qualifiers that
 	 * designate keys will be retained.
 	 * @param propertyList The list of property names to include in the instance
@@ -268,16 +238,15 @@ public:
 	 * 	all properties and qualifiers.
 	 * @param ignorePropertyList If true the propertyList parameter will be
 	 *		ignored.
-	 * @return An OW_CIMInstance with properties and qualifiers from this
+	 * @return An CIMInstance with properties and qualifiers from this
 	 * instance based on the filtering criteria. All properties and qualifiers
 	 * that designate keys will be retained.
 	 */
-	OW_CIMInstance filterProperties(const OW_StringArray& propertyList,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+	CIMInstance filterProperties(const StringArray& propertyList,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		bool ignorePropertyList=false) const;
-
 	/**
-	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified
+	 * Create a new CIMInstance from this CIMInstance using the specified
 	 * criteria
 	 * @param localOnly If true, all inherited properties and qualifiers will be
 	 *		omitted.
@@ -287,17 +256,16 @@ public:
 	 * @param propertyList An array of property names that specifies the only
 	 *		properties to be included in the returned instance.
 	 * @param noProps If true, all properties will be omitted from the returned
-	 *		OW_CIMInstance object regardless of the property list parameter.
-	 * @return An OW_CIMInstance object based on this one, filtered according
+	 *		CIMInstance object regardless of the property list parameter.
+	 * @return An CIMInstance object based on this one, filtered according
 	 *		to the specified criteria.
 	 */
-	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray& propertyList=OW_StringArray(),
+	CIMInstance clone(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
+		const StringArray& propertyList=StringArray(),
 		bool noProps=false) const;
-
 	/**
-	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified
+	 * Create a new CIMInstance from this CIMInstance using the specified
 	 * criteria
 	 * @param localOnly If true, all inherited properties and qualifiers will be
 	 *		omitted.
@@ -309,14 +277,13 @@ public:
 	 *		instance. If NULL, all properties are included. If not NULL and
 	 *		the array is empty, no properties are included. If not NULL and
 	 *		the array is not empty, only those properties will be included.
-	 * @return An OW_CIMInstance object based on this one, filtered according
+	 * @return An CIMInstance object based on this one, filtered according
 	 *		to the specified criteria.
 	 */
-	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList) const;
-
+	CIMInstance clone(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList) const;
 	/**
-	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified
+	 * Create a new CIMInstance from this CIMInstance using the specified
 	 * criteria.  This is useful for implementing enumInstances correctly
 	 * for the localOnly and deep parameters.
 	 * @param localOnly If true, all inherited properties and qualifiers will be
@@ -334,13 +301,12 @@ public:
 	 * 		call.  This is used in filtering the properties.
 	 * @param cimClass The class of this instance. This is used in filtering
 	 *		the properties.
-	 * @return An OW_CIMInstance object based on this one, filtered according
+	 * @return An CIMInstance object based on this one, filtered according
 	 *		to the specified criteria.
 	 */
-	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EDeepFlag deep, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass, const OW_CIMClass& cimClass) const;
-
+	CIMInstance clone(WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EDeepFlag deep, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
+		const CIMClass& requestedClass, const CIMClass& cimClass) const;
 	/**
 	 * Synchronize this instance with the given class. This will ensure that
 	 * all properties found on the class exist on thist instance. It will also
@@ -353,9 +319,8 @@ public:
 	 *		kept in the instance.
 	 * @return a reference to *this
 	 */
-	OW_CIMInstance& syncWithClass(const OW_CIMClass& cc, 
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_EXCLUDE_QUALIFIERS);
-
+	CIMInstance& syncWithClass(const CIMClass& cc, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS);
 	/**
 	 * Create an instance with the set of changes that will occur for a 
 	 * modifyInstance call.  This instance is the new instance.  The
@@ -378,46 +343,39 @@ public:
 	 *	in the specified Instance."
 	 * @param theClass The class of this instance.
 	 */
-	OW_CIMInstance createModifiedInstance(
-		const OW_CIMInstance& previousInstance,
-		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass) const;
-
+	CIMInstance createModifiedInstance(
+		const CIMInstance& previousInstance,
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
+		const StringArray* propertyList,
+		const CIMClass& theClass) const;
 	/**
 	 * @return The name of the class for this instance.
 	 */
-	virtual OW_String getName() const;
-
+	virtual String getName() const;
 	/**
 	 * Sets the class name for this instance.
 	 * @param name	The new class name for this instance.
 	 * @return a reference to *this
 	 */
-	virtual void setName(const OW_String& name);
-
+	virtual void setName(const String& name);
 	/**
-	 * Read this OW_CIMInstance from an input stream.
+	 * Read this CIMInstance from an input stream.
 	 * @param istrm The input stream to read this object from.
 	 */
 	virtual void readObject(std::istream &istrm);
-
 	/**
-	 * Write this OW_CIMInstance to an output stream.
+	 * Write this CIMInstance to an output stream.
 	 * @param ostrm The output stream to write this object to.
 	 */
 	virtual void writeObject(std::ostream &ostrm) const;
-
 	/**
-	 * @return The MOF representation of this OW_CIMInstance as an OW_String.
+	 * @return The MOF representation of this CIMInstance as an String.
 	 */
-	virtual OW_String toMOF() const;
-
+	virtual String toMOF() const;
 	/**
-	 * @return The string representation of the OW_CIMInstance object.
+	 * @return The string representation of the CIMInstance object.
 	 */
-	virtual OW_String toString() const;
-
+	virtual String toString() const;
 	/**
 	 * This compares the properties of the instances, and returns true
 	 * if they are equal.  It will sort the properties before comparing,
@@ -425,12 +383,10 @@ public:
 	 * @param other The instance to compare
 	 * @return true if the properties are the same
 	 */
-	bool propertiesAreEqualTo(const OW_CIMInstance& other) const;
-
+	bool propertiesAreEqualTo(const CIMInstance& other) const;
 private:
 	struct dummy { void nonnull() {}; };
 	typedef void (dummy::*safe_bool)();
-
 public:
 	operator safe_bool () const
 		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
@@ -438,14 +394,12 @@ public:
 		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 	
 protected:
-
 	void _buildKeys();
-
-	OW_COWReference<INSTData> m_pdata;
+	COWReference<INSTData> m_pdata;
 	
-	friend bool operator<(const OW_CIMInstance& x, const OW_CIMInstance& y);
+	friend bool operator<(const CIMInstance& x, const CIMInstance& y);
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

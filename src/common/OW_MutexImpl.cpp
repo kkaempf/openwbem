@@ -27,13 +27,13 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_MutexImpl.hpp"
-
 #include <cerrno>
 #include <cassert>
 
+namespace OpenWBEM
+{
 
 /**
  * Create a platform specific mutext handle.
@@ -42,10 +42,10 @@
  */
 // static 
 int
-OW_MutexImpl::createMutex(OW_Mutex_t& handle)
+MutexImpl::createMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
-	OW_ThreadImpl::initThreads();
+	ThreadImpl::initThreads();
 	int cc = 0;
 	if(!pth_mutex_init(&handle))
 	{
@@ -53,7 +53,6 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
 	}
 	return cc;
 #elif defined (OW_USE_PTHREAD)
-
     pthread_mutexattr_t attr;
     int res = pthread_mutexattr_init(&attr);
     assert(res == 0);
@@ -82,17 +81,13 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
 	handle.valid_id = false;
 	handle.count = 0;
 #endif
-
 	return 0;
-
 #elif defined (OW_USE_WIN32_THREADS)
 	return 0;
 #else
 #error "port me!"
 #endif
 }
-
-
 /**
  * Destroy a mutex previously created with createMutex.
  * @param handle The handle to the mutex that will be destroyed.
@@ -104,7 +99,7 @@ OW_MutexImpl::createMutex(OW_Mutex_t& handle)
  */
 // static
 int
-OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
+MutexImpl::destroyMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	(void)handle;
@@ -114,18 +109,15 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 	{
 		case 0:
 			break;
-
 		case EBUSY:
-			//cerr << "OW_MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
+			//cerr << "MutexImpl::destroyMutex - got EBUSY on destroy" << endl;
 			return -1;
 			break;
-
 		default:
-			//cerr << "OW_MutexImpl::destroyMutex - Error on destroy: "
+			//cerr << "MutexImpl::destroyMutex - Error on destroy: "
 			//	<< cc << endl;
 			return -2;
 	}
-
 	int res = 0;
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
     res = pthread_cond_destroy(&handle.unlocked);
@@ -138,8 +130,6 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 #error "port me!"
 #endif
 }
-
-
 /**
  * Acquire the mutex specified by a given mutex handle. This method should
  * block until the desired mutex can be acquired. The error return value is
@@ -150,13 +140,12 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
  */
 // static
 int
-OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
+MutexImpl::acquireMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	pth_mutex_acquire(&handle, false, 0);
 	return 0;
 #elif defined (OW_USE_PTHREAD)
-
     int res = pthread_mutex_lock(&handle.mutex);
     assert(res == 0);
  
@@ -187,8 +176,6 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
 #error "port me!"
 #endif
 }
-
-
 /**
  * Release a mutex that was previously acquired with the acquireMutex
  * method.
@@ -197,7 +184,7 @@ OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
  */
 // static
 int
-OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
+MutexImpl::releaseMutex(Mutex_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
 	// TODO: ?!?!
@@ -241,5 +228,5 @@ OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
 #endif
 }
 
-
+} // end namespace OpenWBEM
 

@@ -27,24 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_HTTPCHUNKEXCEPTION_H_INCLUDE_GUARD_
 #define OW_HTTPCHUNKEXCEPTION_H_INCLUDE_GUARD_
-
 #include "OW_config.h"
-
 #include "OW_SocketException.hpp"
 
-class OW_HTTPChunkException : public OW_SocketException
+namespace OpenWBEM
+{
+
+class HTTPChunkException : public SocketException
 {
 public:
-	OW_HTTPChunkException() : OW_SocketException() {}
-	OW_HTTPChunkException(const char* file, int line, const char* msg)
-		: OW_SocketException(file, line, msg) {}
-	OW_HTTPChunkException(const char* msg) : OW_SocketException(msg) {}
-
-	virtual const char* type() const { return "OW_HTTPChunkException"; }
+	HTTPChunkException() : SocketException() {}
+	HTTPChunkException(const char* file, int line, const char* msg)
+		: SocketException(file, line, msg) {}
+	HTTPChunkException(const char* msg) : SocketException(msg) {}
+	virtual const char* type() const { return "HTTPChunkException"; }
 };
 
-#endif
+} // end namespace OpenWBEM
 
+#endif

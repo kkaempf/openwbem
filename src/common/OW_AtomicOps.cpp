@@ -29,32 +29,30 @@
  ******************************************************************************/
 #include "OW_config.h"
 #include "OW_AtomicOps.hpp"
-
 #if defined(__i386__) && defined(__GNUC__)
 // inline in the header
-
 #elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
-OW_Atomic_t::OW_Atomic_t()
+
+namespace OpenWBEM
+{
+
+Atomic_t::Atomic_t()
 	: val(0)
 {
 	pthread_spin_init(&spinlock);
 }
-
-OW_Atomic_t::OW_Atomic_t(int i)
+Atomic_t::Atomic_t(int i)
 	: val(i)
 {
 	pthread_spin_init(&spinlock);
 }
-
-void OW_AtomicInc(OW_Atomic_t &v)
+void AtomicInc(Atomic_t &v)
 {
 	pthread_spin_lock(&v.spinlock);
 	++v.val;
 	pthread_spin_unlock(&v.spinlock);
 }
-
-
-bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+bool AtomicDecAndTest(Atomic_t &v)
 {
 	pthread_spin_lock(&v.spinlock);
 	--v.val;
@@ -62,68 +60,66 @@ bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 	pthread_spin_unlock(&v.spinlock);
 	return b;
 }
-
-int OW_AtomicGet(OW_Atomic_t const &v)
+int AtomicGet(Atomic_t const &v)
 {
 	return v.val;
 }
-
-void OW_AtomicDec(OW_Atomic_t &v)
+void AtomicDec(Atomic_t &v)
 {
 	pthread_spin_lock(&v.spinlock);
 	--v.val;
 	pthread_spin_unlock(&v.spinlock);
 }
 
+} // end namespace OpenWBEM
+
 #else
-
-#if defined(OW_USE_DEFAULT_ATOMIC_OPS)
-
+#if defined(OW_USE_OW_DEFAULT_ATOMIC_OPS)
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+
+namespace OpenWBEM
+{
 
 // this needs to be a pointer because of static initialization order conflicts.  
 // It shouldn't ever be deleted b/c it may be referenced by a destructor of a 
 // static variable that is being deleted.
-static OW_Mutex* guard = 0;
-
+static Mutex* guard = 0;
 static void initGuard()
 {
 	if (guard == 0)
 	{
-		guard = new OW_Mutex();
+		guard = new Mutex();
 	}
 }
-
-void OW_AtomicInc(OW_Atomic_t &v)
+void AtomicInc(Atomic_t &v)
 {
 	initGuard();
-	OW_MutexLock lock(*guard);
+	MutexLock lock(*guard);
 	++v.val;
 }
-
-bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+bool AtomicDecAndTest(Atomic_t &v)
 {
 	initGuard();
-	OW_MutexLock lock(*guard);
+	MutexLock lock(*guard);
 	return --v.val == 0;
 }
-
-int OW_AtomicGet(OW_Atomic_t const &v)
+int AtomicGet(Atomic_t const &v)
 {
 	initGuard();
-	OW_MutexLock lock(*guard);
+	MutexLock lock(*guard);
 	return v.val;
 }
-
-void OW_AtomicDec(OW_Atomic_t &v)
+void AtomicDec(Atomic_t &v)
 {
 	initGuard();
-	OW_MutexLock lock(*guard);
+	MutexLock lock(*guard);
 	--v.val;
 }
 
-	#endif
+} // end namespace OpenWBEM
 
 #endif
+#endif
+
 

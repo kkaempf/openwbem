@@ -37,29 +37,29 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 
+namespace OpenWBEM
+{
+
 namespace
 {
 	// anonymous namespace is to prevent possible linkage problems or identifier
 	// conflict whens the library is dynamically loaded
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_CppIndicationExportXMLHTTPProvider::~OW_CppIndicationExportXMLHTTPProvider()
+CppIndicationExportXMLHTTPProvider::~CppIndicationExportXMLHTTPProvider()
 {
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 // Export the given indication
 void
-OW_CppIndicationExportXMLHTTPProvider::exportIndication(
-	const OW_ProviderEnvironmentIFCRef& env,
-	const OW_String& ns,
-	const OW_CIMInstance &indHandlerInst,
-	const OW_CIMInstance &indicationInst)
+CppIndicationExportXMLHTTPProvider::exportIndication(
+	const ProviderEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMInstance &indHandlerInst,
+	const CIMInstance &indicationInst)
 {
-	env->getLogger()->logDebug(format("OW_CppIndicationExportXMLHTTPProvider "
+	env->getLogger()->logDebug(format("CppIndicationExportXMLHTTPProvider "
 		"exporting indication.  Handler = %1, Indication = %2",
 		indHandlerInst.toString(), indicationInst.toString()));
-
 	if (indHandlerInst.getClassName().
 			equalsIgnoreCase("CIM_IndicationHandlerXMLHTTP")
 		 || indHandlerInst.getClassName().
@@ -69,49 +69,46 @@ OW_CppIndicationExportXMLHTTPProvider::exportIndication(
 		 || indHandlerInst.getClassName().
 			equalsIgnoreCase("CIM_IndicationHandlerCIMXML"))
 	{
-		OW_String listenerUrl;
+		String listenerUrl;
 		indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
 		if (indHandlerInst.getClassName().
 			 equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS"))
 		{
-			OW_URL url(listenerUrl);
+			URL url(listenerUrl);
 			if (!url.protocol.equals("https"))
 			{
 				url.protocol = "https";
 				listenerUrl = url.toString();
 			}
 		}
-
-		OW_IndicationExporter exporter(OW_CIMProtocolIFCRef(
-			new OW_HTTPClient(listenerUrl)));
+		IndicationExporter exporter(CIMProtocolIFCRef(
+			new HTTPClient(listenerUrl)));
 		exporter.exportIndication(ns, indicationInst);
 	}
 	else
 	{
 		env->getLogger()->logError(
-			format("OW_CppIndicationExportXMLHTTPProvider::exportIndication "
+			format("CppIndicationExportXMLHTTPProvider::exportIndication "
 				"called with wrong indication handler class: %1",
 				indHandlerInst.getClassName()));
 	}
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 // @return The class names of all the CIM_IndicationHandler sub-classes
-// this OW_IndicationExportProvider handles.
-OW_StringArray
-OW_CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
+// this IndicationExportProvider handles.
+StringArray
+CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 {
-	OW_StringArray rv;
+	StringArray rv;
 	rv.append("CIM_IndicationHandlerXMLHTTP");
 	rv.append("CIM_IndicationHandlerXMLHTTPS");
 	rv.append("CIM_IndicationHandlerCIM-XML"); // new name in the 2.6 schema
 	rv.append("CIM_IndicationHandlerCIMXML"); // new name in the 2.6 schema
 	return rv;
 }
-
 } // end anonymous namespace
+} // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////
-OW_NOIDPROVIDERFACTORY(OW_CppIndicationExportXMLHTTPProvider);
-
+OW_NOIDPROVIDERFACTORY(OpenWBEM::CppIndicationExportXMLHTTPProvider);
 

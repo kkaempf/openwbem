@@ -29,21 +29,22 @@
 *******************************************************************************/
 #ifndef OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
 #define OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Array.hpp"
 #include "OW_Reference.hpp"
 
-class OW_SelectableIFC
+namespace OpenWBEM
+{
+
+class SelectableIFC
 {
 public:
-   virtual ~OW_SelectableIFC();
-   virtual OW_Select_t getSelectObj() const = 0;
+   virtual ~SelectableIFC();
+   virtual Select_t getSelectObj() const = 0;
 };
+typedef Reference<SelectableIFC> SelectableIFCRef;
 
-typedef OW_Reference<OW_SelectableIFC> OW_SelectableIFCRef;
+} // end namespace OpenWBEM
 
 #endif
-
-

@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_ConfigOpts.hpp"
@@ -37,40 +36,34 @@
 #include <exception>
 #include <iostream> // for cout
 
+using namespace OpenWBEM;
+
 static bool processCommandLine(int argc, char* argv[],
-	OW_CIMOMEnvironmentRef env);
-
+	CIMOMEnvironmentRef env);
 static void printUsage(std::ostream& ostrm);
-
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	OW_CIMOMEnvironmentRef env = OW_CIMOMEnvironment::g_cimomEnvironment = new OW_CIMOMEnvironment;
-
+	CIMOMEnvironmentRef env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
 	try
 	{
 		bool debugMode = processCommandLine(argc, argv, env);
-
 		// Initilize the cimom environment object
 		env->init();
-
 		// Call platform specific code to become a daemon/service
 		try
 		{
-			OW_Platform::daemonize(debugMode, OW_DAEMON_NAME);
+			Platform::daemonize(debugMode, OW_DAEMON_NAME);
 		}
-		catch (const OW_DaemonException& e)
+		catch (const DaemonException& e)
 		{
 			env->logError(e.getMessage());
 			env->logError("CIMOM failed to initialize. Aborting...");
 			return 1;
 		}
-
 		// Start all of the cimom services
 		env->startServices();
-
 		env->logCustInfo("CIMOM is now running!");
-
 		int sig;
 		bool shuttingDown(false);
 		while(!shuttingDown)
@@ -78,47 +71,43 @@ int main(int argc, char* argv[])
 			// runSelectEngine will only return once something has been put into
 			// the signal pipe or an error has happened
 			env->runSelectEngine();
-			sig = OW_Platform::popSig();
+			sig = Platform::popSig();
 			switch (sig)
 			{
-				case OW_Platform::SHUTDOWN:
+				case Platform::SHUTDOWN:
 					shuttingDown = true;
 					env->logCustInfo("CIMOM received shutdown notification."
 						" Initiating shutdown");
-
 					env->shutdown();
 					break;
-
-				case OW_Platform::REINIT:
+				case Platform::REINIT:
 					env->logCustInfo("CIMOM received restart notification."
 						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
-					env = OW_CIMOMEnvironment::g_cimomEnvironment = 0;
-					env = OW_CIMOMEnvironment::g_cimomEnvironment = new OW_CIMOMEnvironment;
+					env = CIMOMEnvironment::g_cimomEnvironment = 0;
+					env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
 					processCommandLine(argc, argv, env);
 					env->init();
 					env->startServices();
 					break;
-
 				default:
 					break;
 			}
 		}
-
 		// Call platform specific shutdown routine
-		OW_Platform::daemonShutdown(OW_DAEMON_NAME);
+		Platform::daemonShutdown(OW_DAEMON_NAME);
 	}
-	catch (OW_Assertion& e)
+	catch (Assertion& e)
 	{
 		env->logError("**************************************************");
-		env->logError("* ASSERTION CAUGHT IN CIMOM MAIN!");
+		env->logError("* OW_ASSERTION CAUGHT IN CIMOM MAIN!");
 		env->logError(format("* Condition: %1", e.getMessage()));
 		env->logError(format("* File: %1", e.getFile()));
 		env->logError(format("* Line: %1", e.getLine()));
 		env->logError("**************************************************");
 	}
-	catch (OW_Exception& e)
+	catch (Exception& e)
 	{
 		env->logError("**************************************************");
 		env->logError("* EXCEPTION CAUGHT IN CIMOM MAIN!");
@@ -141,19 +130,16 @@ int main(int argc, char* argv[])
 		env->logError("* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
 		env->logError("**************************************************");
 	}
-
-	OW_CIMOMEnvironment::g_cimomEnvironment = 0;
+	CIMOMEnvironment::g_cimomEnvironment = 0;
 	env->logCustInfo("CIMOM has shutdown");
 	return 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static bool
-processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
+processCommandLine(int argc, char* argv[], CIMOMEnvironmentRef env)
 {
 	// Process command line options
-	OW_Platform::Options opts = OW_Platform::daemonInit(argc, argv);
-
+	Platform::Options opts = Platform::daemonInit(argc, argv);
 	// If the user only specified the help option on the command
 	// line then get out
 	if(opts.help)
@@ -165,21 +151,17 @@ processCommandLine(int argc, char* argv[], OW_CIMOMEnvironmentRef env)
 		printUsage(std::cout);
 		exit(0);
 	}
-
 	if(opts.debug)
 	{
-		env->setConfigItem(OW_ConfigOpts::OW_DEBUG_opt, "true", OW_ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
-		env->setConfigItem(OW_ConfigOpts::LOG_LEVEL_opt, "debug");
+		env->setConfigItem(ConfigOpts::DEBUG_opt, "true", ServiceEnvironmentIFC::E_PRESERVE_PREVIOUS);
+		env->setConfigItem(ConfigOpts::LOG_LEVEL_opt, "debug");
 	}
-
 	if (opts.configFile)
 	{
-		env->setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, opts.configFilePath);
+		env->setConfigItem(ConfigOpts::CONFIG_FILE_opt, opts.configFilePath);
 	}
-
 	return  opts.debug;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 static void
 printUsage(std::ostream& ostrm)
@@ -190,5 +172,4 @@ printUsage(std::ostream& ostrm)
 	ostrm << "\t-c, --config Specifiy an alternate config file" << std::endl;
 	ostrm << "\t-h, --help   Print this help information" << std::endl;
 }
-
 

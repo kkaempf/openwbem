@@ -44,6 +44,8 @@ using std::endl;
 using std::ifstream;
 using std::string;
 
+using namespace OpenWBEM;
+
 void OW_LoggerTestCases::setUp()
 {
 }
@@ -54,19 +56,19 @@ void OW_LoggerTestCases::tearDown()
 
 void OW_LoggerTestCases::testCreateFileLogger()
 {
-	OW_String logname = "/tmp/testlog";
-	OW_LoggerRef pLogger = OW_Logger::createLogger(logname, false);
+	String logname = "/tmp/testlog";
+	LoggerRef pLogger = Logger::createLogger(logname, false);
 
 	unitAssert( pLogger );
 	unitAssert( remove(logname.c_str()) != -1 );
 
-	OW_String badfilename = "some/dir/that/doesn't/exist";
-	unitAssertThrows(OW_Logger::createLogger(badfilename, false));
+	String badfilename = "some/dir/that/doesn't/exist";
+	unitAssertThrows(Logger::createLogger(badfilename, false));
 }
 
 void OW_LoggerTestCases::testCreateSyslogLogger()
 {
-	OW_LoggerRef pLogger = OW_Logger::createLogger(OW_String("syslog"), false);
+	LoggerRef pLogger = Logger::createLogger(String("syslog"), false);
 	unitAssert( pLogger );
 }
 
@@ -86,8 +88,8 @@ void OW_LoggerTestCases::verifyFileLog( const char* file, int line, const char* 
 
 void OW_LoggerTestCases::testFileLogging()
 {
-	OW_String filename = "/tmp/test";
-	OW_LoggerRef pLogger = OW_Logger::createLogger(filename, false);
+	String filename = "/tmp/test";
+	LoggerRef pLogger = Logger::createLogger(filename, false);
 	pLogger->logError( "error1" );
 	pLogger->logCustInfo( "custinfo1" );
 	pLogger->logDebug( "debug1" );
@@ -118,8 +120,8 @@ void OW_LoggerTestCases::testFileLogging()
 
 void OW_LoggerTestCases::testSyslogLogging()
 {
-	OW_String filename = "syslog";
-	OW_LoggerRef pLogger = OW_Logger::createLogger(filename, false);
+	String filename = "syslog";
+	LoggerRef pLogger = Logger::createLogger(filename, false);
 	pLogger->logError( "error1" );
 	pLogger->logCustInfo( "custinfo1" );
 	pLogger->logDebug( "debug1" );

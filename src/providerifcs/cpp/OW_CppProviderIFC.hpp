@@ -27,10 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_CPPPROVIDERIFC_HPP_
 #define OW_CPPPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_Map.hpp"
@@ -38,98 +36,83 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_MutexLock.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * This class implements a bridge from the CIMOM's OW_ProviderManager to the
+ * This class implements a bridge from the CIMOM's ProviderManager to the
  * C++ providers.  It's main function is location and creation of providers.
  */
-class OW_CppProviderIFC : public OW_ProviderIFCBaseIFC
+class CppProviderIFC : public ProviderIFCBaseIFC
 {
 public:
 	static const char* const CREATIONFUNC;
-
-	OW_CppProviderIFC();
-	~OW_CppProviderIFC();
-
+	CppProviderIFC();
+	~CppProviderIFC();
 protected:
-
 	virtual const char* getName() const { return "c++"; }
-
 	/**
 	 * The derived classes must override these functions to implement the
 	 * desired functionality.
 	 */
-	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
-		OW_InstanceProviderInfoArray& i,
+	virtual void doInit(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		OW_AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& a,
 #endif
-		OW_MethodProviderInfoArray& m,
-		OW_IndicationProviderInfoArray& ind);
-
-	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind);
+	virtual InstanceProviderIFCRef doGetInstanceProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-	virtual OW_MethodProviderIFCRef doGetMethodProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual MethodProviderIFCRef doGetMethodProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual AssociatorProviderIFCRef doGetAssociatorProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 #endif
-
-	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
-		const OW_ProviderEnvironmentIFCRef& env,
+	virtual IndicationProviderIFCRef doGetIndicationProvider(
+		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
-
-	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
+		const ProviderEnvironmentIFCRef& env
 		);
-
-	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
-		const OW_ProviderEnvironmentIFCRef& env
+	virtual PolledProviderIFCRefArray doGetPolledProviders(
+		const ProviderEnvironmentIFCRef& env
 		);
-
-	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env);
-
+	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 private:
-
-	typedef OW_Map<OW_String, OW_CppProviderBaseIFCRef> ProviderMap;
-	typedef OW_Array<OW_CppProviderBaseIFCRef> LoadedProviderArray;
-
+	typedef Map<String, CppProviderBaseIFCRef> ProviderMap;
+	typedef Array<CppProviderBaseIFCRef> LoadedProviderArray;
 	enum StoreProviderFlag
 	{
 		dontStoreProvider,
 		storeProvider
 	};
-
 	enum InitializeProviderFlag
 	{
 		dontInitializeProvider,
 		initializeProvider
 	};
-
-	OW_CppProviderBaseIFCRef getProvider(const OW_ProviderEnvironmentIFCRef& env,
+	CppProviderBaseIFCRef getProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString, StoreProviderFlag = storeProvider,
 		InitializeProviderFlag = initializeProvider);
-
-	void loadProviders(const OW_ProviderEnvironmentIFCRef& env,
-		OW_InstanceProviderInfoArray& i,
+	void loadProviders(const ProviderEnvironmentIFCRef& env,
+		InstanceProviderInfoArray& i,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		OW_AssociatorProviderInfoArray& a,
+		AssociatorProviderInfoArray& a,
 #endif
-		OW_MethodProviderInfoArray& m,
-		OW_IndicationProviderInfoArray& ind);
-
-
+		MethodProviderInfoArray& m,
+		IndicationProviderInfoArray& ind);
 	ProviderMap m_provs;
-	OW_Mutex m_guard;
+	Mutex m_guard;
 	LoadedProviderArray m_noidProviders;
 	bool m_loadDone;
 };
+typedef SharedLibraryReference<CppProviderIFC> CppProviderIFCRef;
 
-typedef OW_SharedLibraryReference<OW_CppProviderIFC> OW_CppProviderIFCRef;
+} // end namespace OpenWBEM
+
 #endif
-

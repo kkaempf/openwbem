@@ -27,15 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef OW_CIMPROTOCOLISTREAMIFC_HPP_INCLUDE_GUARD_
 #define OW_CIMPROTOCOLISTREAMIFC_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Reference.hpp"
-
 #if defined(OW_HAVE_ISTREAM)
 #include <istream>
 #elif defined(OW_HAVE_ISTREAM_H)
@@ -44,16 +40,15 @@
 #include <iostream>
 #endif
 
-class OW_CIMProtocolIStreamIFC;
+namespace OpenWBEM
+{
 
-typedef OW_Reference<OW_CIMProtocolIStreamIFC> OW_CIMProtocolIStreamIFCRef;
-
-
-class OW_CIMProtocolIStreamIFC : public std::istream
+class CIMProtocolIStreamIFC;
+typedef Reference<CIMProtocolIStreamIFC> CIMProtocolIStreamIFCRef;
+class CIMProtocolIStreamIFC : public std::istream
 {
 public:
-	OW_CIMProtocolIStreamIFC(std::streambuf* strbuf);
-
+	CIMProtocolIStreamIFC(std::streambuf* strbuf);
 	/**
 	 * This function should be called after the end of the stream has 
 	 * been reached.  It will check the trailers for an error, and throw
@@ -61,10 +56,9 @@ public:
 	 * trailers).
 	 */
 	virtual void checkForError() const;
-	virtual ~OW_CIMProtocolIStreamIFC();
+	virtual ~CIMProtocolIStreamIFC();
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-

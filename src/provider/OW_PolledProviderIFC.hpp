@@ -27,23 +27,23 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_POLLEDPROVIDERIFC_HPP_
 #define OW_POLLEDPROVIDERIFC_HPP_
-
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_Array.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
-class OW_PolledProviderIFC : public OW_ProviderBaseIFC
+namespace OpenWBEM
+{
+
+class PolledProviderIFC : public ProviderBaseIFC
 {
 public:
-
-	virtual ~OW_PolledProviderIFC();
+	virtual ~PolledProviderIFC();
 	/**
-	 * Called by the CIMOM to give this OW_PolledProviderIFC to
+	 * Called by the CIMOM to give this PolledProviderIFC to
 	 * opportunity to export indications if needed.
 	 * @param ch	A CIMOM handle the provider can use to export
 	 *					indications if needed.
@@ -51,21 +51,19 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env) = 0;
-
+	virtual Int32 poll(const ProviderEnvironmentIFCRef& env) = 0;
 	/**
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env) = 0;
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
 };
+//typedef IntrusiveReference<PolledProviderIFC>
+typedef Reference<PolledProviderIFC>
+		PolledProviderIFCRef;
+typedef Array<PolledProviderIFCRef>
+		PolledProviderIFCRefArray;
 
-//typedef OW_IntrusiveReference<OW_PolledProviderIFC>
-typedef OW_Reference<OW_PolledProviderIFC>
-		OW_PolledProviderIFCRef;
-
-typedef OW_Array<OW_PolledProviderIFCRef>
-		OW_PolledProviderIFCRefArray;
+} // end namespace OpenWBEM
 
 #endif
-

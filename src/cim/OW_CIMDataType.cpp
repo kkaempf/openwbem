@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMDataType.hpp"
 #include "OW_StringStream.hpp"
@@ -35,113 +34,99 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////
-struct OW_CIMDataType::DTData
+struct CIMDataType::DTData
 {
 	DTData() :
-		m_type(OW_CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0)
+		m_type(CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0)
 	{}
-
-	OW_CIMDataType::Type m_type;
-	OW_Int32 m_numberOfElements;
-	OW_Int32 m_sizeRange;
-	OW_String m_reference;
-
+	CIMDataType::Type m_type;
+	Int32 m_numberOfElements;
+	Int32 m_sizeRange;
+	String m_reference;
     DTData* clone() const { return new DTData(*this); }
 };
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMDataType::DTData& x, const OW_CIMDataType::DTData& y)
+bool operator<(const CIMDataType::DTData& x, const CIMDataType::DTData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_type, y.m_type,
 		x.m_numberOfElements, y.m_numberOfElements,
 		x.m_sizeRange, y.m_sizeRange,
 		x.m_reference, y.m_reference);
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType() :
-	OW_CIMBase(), m_pdata(new DTData)
+CIMDataType::CIMDataType() :
+	CIMBase(), m_pdata(new DTData)
 {
 	m_pdata->m_type = CIMNULL;
 	m_pdata->m_numberOfElements = 0;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(OW_CIMNULL_t) :
-	OW_CIMBase(), m_pdata(NULL)
+CIMDataType::CIMDataType(CIMNULL_t) :
+	CIMBase(), m_pdata(NULL)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type) :
-	OW_CIMBase(), m_pdata(new DTData)
+CIMDataType::CIMDataType(CIMDataType::Type type) :
+	CIMBase(), m_pdata(new DTData)
 {
 	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = 1;
 	m_pdata->m_sizeRange = SIZE_SINGLE;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(OW_CIMDataType::Type type, OW_Int32 size) :
-	OW_CIMBase(), m_pdata(new DTData)
+CIMDataType::CIMDataType(CIMDataType::Type type, Int32 size) :
+	CIMBase(), m_pdata(new DTData)
 {
 	OW_ASSERT(type >= CIMNULL && type < MAXDATATYPE);
-
 	m_pdata->m_type = type;
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
 	m_pdata->m_sizeRange = m_pdata->m_numberOfElements >= 1 ? SIZE_LIMITED
 		: SIZE_UNLIMITED;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(const OW_CIMDataType& arg) :
-	OW_CIMBase(), m_pdata(arg.m_pdata) {}
-
+CIMDataType::CIMDataType(const CIMDataType& arg) :
+	CIMBase(), m_pdata(arg.m_pdata) {}
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::~OW_CIMDataType()
+CIMDataType::~CIMDataType()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMDataType::setNull()
+CIMDataType::setNull()
 {
 	m_pdata = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType&
-OW_CIMDataType::operator = (const OW_CIMDataType& arg)
+CIMDataType&
+CIMDataType::operator = (const CIMDataType& arg)
 {
 	m_pdata = arg.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDataType::isArrayType() const
+CIMDataType::isArrayType() const
 {
 	return (m_pdata->m_sizeRange != SIZE_SINGLE);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDataType::isNumericType() const
+CIMDataType::isNumericType() const
 {
 	return isNumericType(m_pdata->m_type);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 bool
-OW_CIMDataType::isNumericType(OW_CIMDataType::Type type)
+CIMDataType::isNumericType(CIMDataType::Type type)
 {
 	switch(type)
 	{
@@ -159,40 +144,34 @@ OW_CIMDataType::isNumericType(OW_CIMDataType::Type type)
 		default:
 			return false;
 	}
-
 	return false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDataType::isReferenceType() const
+CIMDataType::isReferenceType() const
 {
 	return (m_pdata->m_type == REFERENCE);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::Type
-OW_CIMDataType::getType() const
+CIMDataType::Type
+CIMDataType::getType() const
 {
 	return m_pdata->m_type;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_Int32
-OW_CIMDataType::getSize() const
+Int32
+CIMDataType::getSize() const
 {
 	return m_pdata->m_numberOfElements;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMDataType::getRefClassName() const
+String
+CIMDataType::getRefClassName() const
 {
 	return m_pdata->m_reference;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::operator OW_CIMDataType::safe_bool () const
+CIMDataType::operator CIMDataType::safe_bool () const
 {
 	safe_bool cc = 0;
 	if(!m_pdata.isNull())
@@ -202,10 +181,9 @@ OW_CIMDataType::operator OW_CIMDataType::safe_bool () const
 	}
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::safe_bool
-OW_CIMDataType::operator!() const
+CIMDataType::safe_bool
+CIMDataType::operator!() const
 {
 	safe_bool cc = &dummy::nonnull;
 	if(!m_pdata.isNull())
@@ -215,33 +193,27 @@ OW_CIMDataType::operator!() const
 	}
 	return cc;
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDataType::setToArrayType(OW_Int32 size)
+CIMDataType::setToArrayType(Int32 size)
 {
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
 	m_pdata->m_sizeRange = m_pdata->m_numberOfElements >= 1 ? SIZE_LIMITED
 		: SIZE_UNLIMITED;
 	return true;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDataType::syncWithValue(const OW_CIMValue& value)
+CIMDataType::syncWithValue(const CIMValue& value)
 {
 	if(!value && !(*this))
 		return false;
-
 	bool rv(false);
-
 	if(m_pdata.isNull())
 	{
 		m_pdata = new DTData;
 		m_pdata->m_type = CIMNULL;
 	}
-
 	if(!value)
 	{
 		m_pdata->m_type = CIMNULL;
@@ -263,69 +235,57 @@ OW_CIMDataType::syncWithValue(const OW_CIMValue& value)
 	}
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::OW_CIMDataType(const OW_String& refClassName) :
-	OW_CIMBase(), m_pdata(new DTData)
+CIMDataType::CIMDataType(const String& refClassName) :
+	CIMBase(), m_pdata(new DTData)
 {
 	m_pdata->m_type = REFERENCE;
 	m_pdata->m_numberOfElements = 1;
 	m_pdata->m_sizeRange = SIZE_SINGLE;
 	m_pdata->m_reference = refClassName;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMDataType::equals(const OW_CIMDataType& arg) const
+CIMDataType::equals(const CIMDataType& arg) const
 {
 	return (m_pdata->m_type == arg.m_pdata->m_type
 		&& m_pdata->m_sizeRange == arg.m_pdata->m_sizeRange);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMDataType::readObject(istream &istrm)
+CIMDataType::readObject(istream &istrm)
 {
-	OW_UInt32 type;
-	OW_UInt32 numberOfElements;
-	OW_UInt32 sizeRange;
-	OW_String ref;
-
-	OW_CIMBase::readSig( istrm, OW_CIMDATATYPESIG );
-
-	OW_BinarySerialization::readLen(istrm, type);
-	OW_BinarySerialization::readLen(istrm, numberOfElements);
-	OW_BinarySerialization::readLen(istrm, sizeRange);
-
+	UInt32 type;
+	UInt32 numberOfElements;
+	UInt32 sizeRange;
+	String ref;
+	CIMBase::readSig( istrm, OW_CIMDATATYPESIG );
+	BinarySerialization::readLen(istrm, type);
+	BinarySerialization::readLen(istrm, numberOfElements);
+	BinarySerialization::readLen(istrm, sizeRange);
 	ref.readObject(istrm);
-
 	if(m_pdata.isNull())
 	{
 		m_pdata = new DTData;
 	}
-
-	m_pdata->m_type = OW_CIMDataType::Type(type);
+	m_pdata->m_type = CIMDataType::Type(type);
 	m_pdata->m_numberOfElements = numberOfElements;
 	m_pdata->m_sizeRange = sizeRange;
 	m_pdata->m_reference = ref;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMDataType::writeObject(ostream &ostrm) const
+CIMDataType::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
-
-	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_type);
-	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_numberOfElements);
-	OW_BinarySerialization::writeLen(ostrm, m_pdata->m_sizeRange);
-
+	CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
+	BinarySerialization::writeLen(ostrm, m_pdata->m_type);
+	BinarySerialization::writeLen(ostrm, m_pdata->m_numberOfElements);
+	BinarySerialization::writeLen(ostrm, m_pdata->m_sizeRange);
 	m_pdata->m_reference.writeObject(ostrm);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMDataType::toString() const
+String
+CIMDataType::toString() const
 {
 	switch(m_pdata->m_type)
 	{
@@ -346,13 +306,12 @@ OW_CIMDataType::toString() const
 		case REFERENCE: return "REF"; break;
 		case EMBEDDEDCLASS: case EMBEDDEDINSTANCE: return "string"; break;
 		default:
-			return "** INVALID DATA TYPE IN OW_CIMDATATYPE - toString **";
+			return "** INVALID DATA TYPE IN CIMDATATYPE - toString **";
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMDataType::toMOF() const
+String
+CIMDataType::toMOF() const
 {
 	if (m_pdata->m_type == REFERENCE)
 	{
@@ -363,88 +322,69 @@ OW_CIMDataType::toMOF() const
 		return toString();
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_CIMDataType::Type
-OW_CIMDataType::strToSimpleType(const OW_String& strType)
+CIMDataType::Type
+CIMDataType::strToSimpleType(const String& strType)
 {
 	if(strType.empty())
 	{
 		return INVALID;
 	}
-
 	if(strType.equalsIgnoreCase("uint8"))
 		return UINT8;
-
 	else if(strType.equalsIgnoreCase("sint8"))
 		return SINT8;
-
 	else if(strType.equalsIgnoreCase("uint16"))
 		return UINT16;
-
 	else if(strType.equalsIgnoreCase("sint16"))
 		return SINT16;
-
 	else if(strType.equalsIgnoreCase("uint32"))
 		return UINT32;
-
 	else if(strType.equalsIgnoreCase("sint32"))
 		return SINT32;
-
 	else if(strType.equalsIgnoreCase("uint64"))
 		return UINT64;
-
 	else if(strType.equalsIgnoreCase("sint64"))
 		return SINT64;
-
 	else if(strType.equalsIgnoreCase("real64"))
 		return REAL64;
-
 	else if(strType.equalsIgnoreCase("real32"))
 		return REAL32;
-
 	else if(strType.equalsIgnoreCase("char16"))
 		return CHAR16;
-
 	else if(strType.equalsIgnoreCase("string"))
 		return STRING;
-
 	else if(strType.equalsIgnoreCase("boolean"))
 		return BOOLEAN;
-
 	else if(strType.equalsIgnoreCase("datetime"))
 		return DATETIME;
-
 	else if(strType.equalsIgnoreCase("REF"))
 		return REFERENCE;
-
 	else if(strType.equalsIgnoreCase("reference"))
 		return REFERENCE;
-
 	return INVALID;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_CIMDataType
-OW_CIMDataType::getDataType(const OW_String& strType)
+CIMDataType
+CIMDataType::getDataType(const String& strType)
 {
 	if(strType.empty())
 	{
-		return OW_CIMDataType();
+		return CIMDataType();
 	}
-
 	Type type = strToSimpleType(strType);
 	if(type != INVALID)
 	{
-		return OW_CIMDataType(type);
+		return CIMDataType(type);
 	}
-
-	return OW_CIMDataType(OW_CIMNULL);
+	return CIMDataType(CIMNULL);
 }
-
-bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y)
+bool operator<(const CIMDataType& x, const CIMDataType& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
+} // end namespace OpenWBEM
+

@@ -29,27 +29,25 @@
 *******************************************************************************/
 #ifndef OW_CONDITION_HPP_INCLUDE_GUARD_
 #define OW_CONDITION_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Types.hpp"
 
-class OW_NonRecursiveMutexLock;
-class OW_NonRecursiveMutex;
+namespace OpenWBEM
+{
 
+class NonRecursiveMutexLock;
+class NonRecursiveMutex;
 DECLARE_EXCEPTION(ConditionLock);
 DECLARE_EXCEPTION(ConditionResource);
-
-class OW_Condition
+class Condition
 {
 public:
-	OW_Condition();
-	~OW_Condition();
-
+	Condition();
+	~Condition();
 	void notifyOne();
 	void notifyAll();
-
 	/**
 	 * Atomically unlocks the mutex and waits for the condition variable 
 	 * to be notified. The thread execution is suspended and does not 
@@ -60,13 +58,12 @@ public:
 	 * This function should always be called within a while loop that
 	 * checks the condition.
 	 */
-	void wait(OW_NonRecursiveMutexLock& lock);
-
+	void wait(NonRecursiveMutexLock& lock);
 	/**
-	 * Acquire ownership of this OW_Mutex object.
+	 * Acquire ownership of this Mutex object.
 	 * This call will block if another thread has ownership of 
-	 * this OW_Mutex. When it returns, the current thread will be
-	 * the owner of this OW_Mutex object.
+	 * this Mutex. When it returns, the current thread will be
+	 * the owner of this Mutex object.
 	 * @param sTimeout The number of seconds to wait for the mutex.
 	 * @param usTimeout The number of micro seconds (1/1000000th) to wait
 	 * The total wait time is sTimeout * 1000000 + usTimeout micro seconds.
@@ -74,20 +71,16 @@ public:
 	 * checks the condition.
 	 * @returns true if the lock was acquired, false if timeout occurred.
 	 */
-	bool timedWait(OW_NonRecursiveMutexLock& lock, OW_UInt32 sTimeout, OW_UInt32 usTimeout=0);
-
+	bool timedWait(NonRecursiveMutexLock& lock, UInt32 sTimeout, UInt32 usTimeout=0);
 private:
-
 	// unimplemented
-	OW_Condition(const OW_Condition&);
-	OW_Condition& operator=(const OW_Condition&);
-
-
-	void doWait(OW_NonRecursiveMutex& mutex);
-	bool doTimedWait(OW_NonRecursiveMutex& mutex, OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	OW_ConditionVar_t m_condition;
+	Condition(const Condition&);
+	Condition& operator=(const Condition&);
+	void doWait(NonRecursiveMutex& mutex);
+	bool doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout);
+	ConditionVar_t m_condition;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

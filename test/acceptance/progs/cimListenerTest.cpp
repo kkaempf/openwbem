@@ -50,25 +50,26 @@
 using std::cout;
 using std::endl;
 using std::cerr;
+using namespace OpenWBEM;
 
-OW_Semaphore sem(0);
-OW_Semaphore test1sem(0);
-OW_Semaphore test2sem(0);
-OW_Mutex coutMutex;
+Semaphore sem(0);
+Semaphore test1sem(0);
+Semaphore test2sem(0);
+Mutex coutMutex;
 
-class myCallBack : public OW_CIMListenerCallback
+class myCallBack : public CIMListenerCallback
 {
 public:
 	myCallBack() : m_count(0) {}
 protected:
-	virtual void doIndicationOccurred(OW_CIMInstance &ci,
-		const OW_String &listenerPath)
+	virtual void doIndicationOccurred(CIMInstance &ci,
+		const String &listenerPath)
 	{
 		(void)listenerPath;
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
-		OW_MutexLock lock(coutMutex);
+		MutexLock lock(coutMutex);
 		++m_count;
 		cout << "\nmyCallBack::doIndicationOccurred: Got indication: " << m_count << "\n";
 		cout << ci.toString() << "\n";
@@ -78,34 +79,34 @@ private:
 	int m_count;
 };
 
-class test1CallBack : public OW_CIMListenerCallback
+class test1CallBack : public CIMListenerCallback
 {
 protected:
-	virtual void doIndicationOccurred(OW_CIMInstance &ci,
-		const OW_String &listenerPath)
+	virtual void doIndicationOccurred(CIMInstance &ci,
+		const String &listenerPath)
 	{
 		(void)listenerPath;
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
-		OW_MutexLock lock(coutMutex);
+		MutexLock lock(coutMutex);
 		cout << "\ntest1CallBack::doIndicationOccurred: Got indication:\n";
 		cout << ci.toString() << "\n";
 		test1sem.signal();
 	}
 };
 
-class test2CallBack : public OW_CIMListenerCallback
+class test2CallBack : public CIMListenerCallback
 {
 protected:
-	virtual void doIndicationOccurred(OW_CIMInstance &ci,
-		const OW_String &listenerPath)
+	virtual void doIndicationOccurred(CIMInstance &ci,
+		const String &listenerPath)
 	{
 		(void)listenerPath;
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
-		OW_MutexLock lock(coutMutex);
+		MutexLock lock(coutMutex);
 		cout << "\ntest2CallBack::doIndicationOccurred: Got indication:\n";
 		cout << ci.toString() << "\n";
 		test2sem.signal();
@@ -114,17 +115,17 @@ protected:
 
 
 
-void createClass(OW_CIMOMHandleIFC& hdl)
+void createClass(CIMOMHandleIFC& hdl)
 {
-	OW_CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", "Key");
-	OW_CIMQualifier cimQualifierKey(cqt);
-	cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
+	CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", "Key");
+	CIMQualifier cimQualifierKey(cqt);
+	cimQualifierKey.setValue(CIMValue(Bool(true)));
 
-	OW_CIMClass cimClass;
+	CIMClass cimClass;
 	cimClass.setName("EXP_IndicationTestComputerSystem");
 	cimClass.setSuperClass("CIM_ComputerSystem");
 
-	OW_Array<OW_String> zargs;
+	Array<String> zargs;
 	zargs.push_back("CreationClassName");
 	zargs.push_back("string");
 	zargs.push_back("true");
@@ -135,33 +136,33 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 	zargs.push_back("boolean");
 	zargs.push_back("false");
 
-	OW_String name;
-	OW_String type;
-	OW_String isKey;
+	String name;
+	String type;
+	String isKey;
 
 	for (size_t i = 0; i < zargs.size(); i += 3)
 	{
 		name = zargs[i];
 		type = zargs[i + 1];
 		isKey = zargs[i + 2];
-		OW_CIMProperty cimProp;
+		CIMProperty cimProp;
 		if (type.equals("string"))
 		{
-			cimProp.setDataType(OW_CIMDataType::STRING);
+			cimProp.setDataType(CIMDataType::STRING);
 		}
 		else if (type.equals("uint16"))
 		{
-			cimProp.setDataType(OW_CIMDataType::UINT16);
+			cimProp.setDataType(CIMDataType::UINT16);
 		}
 		else if (type.equals("boolean"))
 		{
-			cimProp.setDataType(OW_CIMDataType::BOOLEAN);
+			cimProp.setDataType(CIMDataType::BOOLEAN);
 		}
 		else if (type.equals("datatime"))
 		{
-			cimProp.setDataType(OW_CIMDataType::DATETIME);
+			cimProp.setDataType(CIMDataType::DATETIME);
 		}
-		else cimProp.setDataType(OW_CIMDataType::STRING);
+		else cimProp.setDataType(CIMDataType::STRING);
 
 		cimProp.setName(name);
 		if (isKey.equals("true"))
@@ -175,57 +176,57 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 }
 
 
-void modifyClass(OW_CIMOMHandleIFC& hdl)
+void modifyClass(CIMOMHandleIFC& hdl)
 {
-	OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+	CIMClass cimClass = hdl.getClass("root/testsuite",
 		"EXP_IndicationTestComputerSystem");
-	OW_CIMProperty cimProp;
-	cimProp.setDataType(OW_CIMDataType::STRING);
+	CIMProperty cimProp;
+	cimProp.setDataType(CIMDataType::STRING);
 	cimProp.setName("BrandNewProperty");
 	cimClass.addProperty(cimProp);
 	hdl.modifyClass("root/testsuite", cimClass);
 }
 
 
-void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
+void createInstance(CIMOMHandleIFC& hdl, const String& newInstance)
 {
-	OW_String fromClass = "EXP_IndicationTestComputerSystem";
+	String fromClass = "EXP_IndicationTestComputerSystem";
 
-	OW_CIMClass cimClass = hdl.getClass("root/testsuite", fromClass);
+	CIMClass cimClass = hdl.getClass("root/testsuite", fromClass);
 
-	OW_CIMInstance newInst = cimClass.newInstance();
+	CIMInstance newInst = cimClass.newInstance();
 
-	newInst.setProperty(OW_CIMProperty::NAME_PROPERTY,
-							  OW_CIMValue(newInstance));
+	newInst.setProperty(CIMProperty::NAME_PROPERTY,
+							  CIMValue(newInstance));
 	newInst.setProperty("CreationClassName",
-							  OW_CIMValue(fromClass));
+							  CIMValue(fromClass));
 
 	hdl.createInstance("root/testsuite", newInst);
 }
 
 
-void getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+void getInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
-	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass);
-	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-	cop.addKey("Name", OW_CIMValue(theInstance));
+	String ofClass = "EXP_IndicationTestComputerSystem";
+	CIMObjectPath cop(ofClass);
+	cop.addKey("CreationClassName", CIMValue(ofClass));
+	cop.addKey("Name", CIMValue(theInstance));
 
-	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop);
+	CIMInstance in = hdl.getInstance("root/testsuite", cop);
 	//cout << in.toMOF();
 }
 
-void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+void modifyInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
-	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass);
-	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-	cop.addKey("Name", OW_CIMValue(theInstance));
+	String ofClass = "EXP_IndicationTestComputerSystem";
+	CIMObjectPath cop(ofClass);
+	cop.addKey("CreationClassName", CIMValue(ofClass));
+	cop.addKey("Name", CIMValue(theInstance));
 
-	OW_CIMInstance in = hdl.getInstance("root/testsuite", cop);
+	CIMInstance in = hdl.getInstance("root/testsuite", cop);
 
-	in.setProperty(OW_CIMProperty("BrandNewProperty",
-											OW_CIMValue(OW_Bool(true))));
+	in.setProperty(CIMProperty("BrandNewProperty",
+											CIMValue(Bool(true))));
 
 	// getInstance with includeQualifiers = false doesn't have any keys, so
 	// we'll have to set them so modifyInstance will work.
@@ -234,26 +235,26 @@ void modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	hdl.modifyInstance("root/testsuite", in);
 }
 
-void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 {
-	OW_String ofClass = "EXP_IndicationTestComputerSystem";
-	OW_CIMObjectPath cop(ofClass, "root/testsuite");
-	cop.addKey("CreationClassName", OW_CIMValue(ofClass));
-	cop.addKey("Name", OW_CIMValue(theInstance));
+	String ofClass = "EXP_IndicationTestComputerSystem";
+	CIMObjectPath cop(ofClass, "root/testsuite");
+	cop.addKey("CreationClassName", CIMValue(ofClass));
+	cop.addKey("Name", CIMValue(theInstance));
 	hdl.deleteInstance("root/testsuite", cop);
 }
 
 
-void deleteClass(OW_CIMOMHandleIFC& hdl)
+void deleteClass(CIMOMHandleIFC& hdl)
 {
-	OW_String delClass = "EXP_IndicationTestComputerSystem";
+	String delClass = "EXP_IndicationTestComputerSystem";
 	hdl.deleteClass("root/testsuite", delClass);
 }
 
-class ListenerLogger : public OW_Logger
+class ListenerLogger : public Logger
 {
 protected:
-	virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const
+	virtual void doLogMessage(const String &message, const LogLevel) const
 	{
 		cout << message << endl;
 	}
@@ -262,11 +263,11 @@ protected:
 int main(int argc, char* argv[])
 {
 	// these need to be out of the try, so that a potential deadlock won't happen
-	// the problem is that OW_Exception has a mutex, and the OW_HTTPXMLCIMListener
-	// destructor shouldn't run when the OW_Exception mutex is locked.
-	OW_LoggerRef logger(new ListenerLogger);
+	// the problem is that Exception has a mutex, and the HTTPXMLCIMListener
+	// destructor shouldn't run when the Exception mutex is locked.
+	LoggerRef logger(new ListenerLogger);
 
-	OW_HTTPXMLCIMListener hxcl(logger);
+	HTTPXMLCIMListener hxcl(logger);
 
 	try
 	{
@@ -276,33 +277,33 @@ int main(int argc, char* argv[])
 			exit(1);
 		}
 
-		OW_String url(argv[1]);
+		String url(argv[1]);
 
 		if (argc == 3)
 		{
-			OW_String sockDumpOut = argv[2];
-			OW_String sockDumpIn = argv[2];
+			String sockDumpOut = argv[2];
+			String sockDumpIn = argv[2];
 			sockDumpOut += "SockDumpOut";
 			sockDumpIn += "SockDumpIn";
 			cerr << "argc = " << argc << " sockDumpOut = " << sockDumpOut << endl;
-			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
+			SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
 
-		OW_String ns("/root/testsuite");
+		String ns("/root/testsuite");
 
-		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
-		OW_CIMXMLCIMOMHandle rch(httpClient);
+		CIMProtocolIFCRef httpClient(new HTTPClient(url));
+		CIMXMLCIMOMHandle rch(httpClient);
 
 		rch.execQueryE("/root/testsuite", "delete from CIM_IndicationSubscription", "wql2");
 
 
-		OW_Array<OW_String> registrationHandles;
-		OW_String handle;
+		Array<String> registrationHandles;
+		String handle;
 
-		OW_CIMListenerCallbackRef mcb(new myCallBack);
-		OW_CIMListenerCallbackRef test1cb(new test1CallBack);
-		OW_CIMListenerCallbackRef test2cb(new test2CallBack);
+		CIMListenerCallbackRef mcb(new myCallBack);
+		CIMListenerCallbackRef test1cb(new test1CallBack);
+		CIMListenerCallbackRef test2cb(new test2CallBack);
 
 		if (getenv("OWLONGTEST"))
 		{
@@ -318,25 +319,25 @@ int main(int argc, char* argv[])
 			registrationHandles.append(handle);
 
 			// Now wait for our test trigger providers to send out their indications.
-			// we'll wait for 5 OW_TestIndication1 indications.
+			// we'll wait for 5 TestIndication1 indications.
 			for (size_t i = 0; i < 5; ++i)
 			{
 				if (!test1sem.timedWait(25))
 				{
-					OW_THROW(OW_Exception, "semaphore 1 timed out");
+					OW_THROW(Exception, "semaphore 1 timed out");
 				}
 			}
-			// we'll wait for 5 OW_TestIndication2 indications.
+			// we'll wait for 5 TestIndication2 indications.
 //			for (size_t i = 0; i < 5; ++i)
 //			{
 //				if (!test2sem.timedWait(25))
 //				{
-//					OW_THROW(OW_Exception, "semaphore 2 timed out");
+//					OW_THROW(Exception, "semaphore 2 timed out");
 //				}
 //			}
 
 			// now deregister
-			OW_MutexLock guard1(coutMutex);
+			MutexLock guard1(coutMutex);
 			cout << "Now deregistering" << endl;
 			guard1.release();
 
@@ -355,18 +356,18 @@ int main(int argc, char* argv[])
 		{
 			deleteInstance(rch, "MyInstance");
 		}
-		catch(OW_CIMException& e)
+		catch(CIMException& e)
 		{
-			OW_MutexLock guard2(coutMutex);
+			MutexLock guard2(coutMutex);
 			cout << e.getMessage() << endl;
 		}
 		try
 		{
 			deleteClass(rch);
 		}
-		catch(OW_CIMException& e)
+		catch(CIMException& e)
 		{
-			OW_MutexLock guard3(coutMutex);
+			MutexLock guard3(coutMutex);
 			cout << e.getMessage() << endl;
 		}
 
@@ -424,13 +425,13 @@ int main(int argc, char* argv[])
 		{
 			if (!sem.timedWait(25))
 			{
-				OW_THROW(OW_Exception, "timeout on semaphore");
+				OW_THROW(Exception, "timeout on semaphore");
 			}
-			OW_MutexLock guard4(coutMutex);
+			MutexLock guard4(coutMutex);
 			cout << i << endl;
 		}
 
-		OW_MutexLock guard5(coutMutex);
+		MutexLock guard5(coutMutex);
 		cout << "Now deregistering and shutting down..." << endl;
 		guard5.release();
 
@@ -445,7 +446,7 @@ int main(int argc, char* argv[])
 		cout << "Success!" << endl;
 		return 0;
 	}
-	catch(OW_Exception& e)
+	catch(Exception& e)
 	{
 		cerr << e << endl;
 	}

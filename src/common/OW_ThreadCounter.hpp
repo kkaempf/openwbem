@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
 #define OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_NonRecursiveMutex.hpp"
@@ -37,52 +36,47 @@
 #include "OW_Reference.hpp"
 #include "OW_ThreadDoneCallback.hpp"
 
+namespace OpenWBEM
+{
+
 // Note: Do not inline any functions in these classes, the code must
 // be contained in the main library, if a loadable library contains any,
 // it will cause a race-condition that may segfault the cimom.
-class OW_ThreadCounter
+class ThreadCounter
 {
 public:
-	OW_ThreadCounter(OW_Int32 maxThreads);
-	~OW_ThreadCounter();
-
-	// Throws OW_TimeoutException in case of timeout
-	void incThreadCount(OW_UInt32 sTimeout, OW_UInt32 usTimeout);
+	ThreadCounter(Int32 maxThreads);
+	~ThreadCounter();
+	// Throws TimeoutException in case of timeout
+	void incThreadCount(UInt32 sTimeout, UInt32 usTimeout);
 	void decThreadCount();
-	OW_Int32 getThreadCount();
-	// Throws OW_TimeoutException in case of timeout
-	void waitForAll(OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	void setMax(OW_Int32 maxThreads);
-
+	Int32 getThreadCount();
+	// Throws TimeoutException in case of timeout
+	void waitForAll(UInt32 sTimeout, UInt32 usTimeout);
+	void setMax(Int32 maxThreads);
 private:
-	OW_Int32 m_maxThreads;
-	OW_Int32 m_runCount;
-	OW_NonRecursiveMutex m_runCountGuard;
-	OW_Condition m_runCountCondition;
-
+	Int32 m_maxThreads;
+	Int32 m_runCount;
+	NonRecursiveMutex m_runCountGuard;
+	Condition m_runCountCondition;
 	// noncopyable
-	OW_ThreadCounter(OW_ThreadCounter const&);
-	OW_ThreadCounter& operator=(OW_ThreadCounter const&);
+	ThreadCounter(ThreadCounter const&);
+	ThreadCounter& operator=(ThreadCounter const&);
 };
-
-typedef OW_Reference<OW_ThreadCounter> OW_ThreadCounterRef;
-
-class OW_ThreadCountDecrementer : public OW_ThreadDoneCallback
+typedef Reference<ThreadCounter> ThreadCounterRef;
+class ThreadCountDecrementer : public ThreadDoneCallback
 {
 public:
-	OW_ThreadCountDecrementer(OW_ThreadCounterRef const& x);
-	virtual ~OW_ThreadCountDecrementer();
-
+	ThreadCountDecrementer(ThreadCounterRef const& x);
+	virtual ~ThreadCountDecrementer();
 private:
-	virtual void doNotifyThreadDone(OW_Thread *);
-
-	OW_ThreadCounterRef m_counter;
-
+	virtual void doNotifyThreadDone(Thread *);
+	ThreadCounterRef m_counter;
 	// noncopyable
-	OW_ThreadCountDecrementer(OW_ThreadCountDecrementer const&);
-	OW_ThreadCountDecrementer& operator=(OW_ThreadCountDecrementer const&);
+	ThreadCountDecrementer(ThreadCountDecrementer const&);
+	ThreadCountDecrementer& operator=(ThreadCountDecrementer const&);
 };
+
+} // end namespace OpenWBEM
 
 #endif
-
-

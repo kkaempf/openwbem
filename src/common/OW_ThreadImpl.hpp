@@ -27,28 +27,27 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_THREADIMPL_HPP_INCLUDE_GUARD_
 #define OW_THREADIMPL_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_ThreadTypes.hpp"
+
+namespace OpenWBEM
+{
 
 /*----------------------------------
  * Definitions to support threading.
  -----------------------------------*/
 #define OW_THREAD_FLG_JOINABLE 0x000000001
-
-typedef OW_Int32 (*OW_ThreadFunction)(void*);
-
+typedef Int32 (*ThreadFunction)(void*);
 /**
- * The OW_ThreadImpl namespace represents the functionality needed by the
- * OpenWbem Thread class (OW_Thread). It also contains other misellaneous 
+ * The ThreadImpl namespace represents the functionality needed by the
+ * OpenWbem Thread class (Thread). It also contains other misellaneous 
  * functions which are useful for synchronization and threads.
  * It is essentially an abstraction layer over a thread implementation.
  */
-namespace OW_ThreadImpl
+namespace ThreadImpl
 {
 	/**
 	 * Starts a thread running the given function.
@@ -57,28 +56,26 @@ namespace OW_ThreadImpl
 	 * @param funcParm The parameter to func
 	 * @param flags	The flags to use when creating the thread.
 	 *	Currently flags can contain the following:
-	 *		OW_THREAD_JOINABLE - Thread will be created in the joinable state.
+	 *		THREAD_JOINABLE - Thread will be created in the joinable state.
 	 *			
 	 * @return 0 on success. Otherwise -1
 	 */
-	int createThread(OW_Thread_t& handle, OW_ThreadFunction func,
-		void* funcParm, OW_UInt32 threadFlags);
-
+	int createThread(Thread_t& handle, ThreadFunction func,
+		void* funcParm, UInt32 threadFlags);
 	/**
 	 * Destroy any resources associated with a thread that was created with
 	 * the createThread method.
 	 * @param handle	A platform specific thread handle
 	 */
-	void destroyThread(OW_Thread_t& handle);
-
+	void destroyThread(Thread_t& handle);
 	/**
 	 * Check two platform dependant thread types for equality.
 	 * @param handle1	The 1st thread type for the comparison.
 	 * @param handle2	The 2nd thread type for the comparison.
 	 * @return true if the thread types are equal. Otherwise false
 	 */
-	inline bool sameThreads(const volatile OW_Thread_t& handle1,
-		const volatile OW_Thread_t& handle2)
+	inline bool sameThreads(const volatile Thread_t& handle1,
+		const volatile Thread_t& handle2)
 	{
 	#if defined(OW_USE_GNU_PTH) || defined(OW_WIN32)
 		return handle1 == handle2;
@@ -86,8 +83,6 @@ namespace OW_ThreadImpl
 		return pthread_equal(handle1, handle2);
 	#endif
 	}
-
-
 	/**
 	 * Exit thread method. This method is called everytime a thread exits.
 	 * When the POSIX threads are being used, pthread_exit is called.
@@ -95,12 +90,11 @@ namespace OW_ThreadImpl
 	 * @param handle The thread handle of the calling thread.
 	 * @param rval The thread's return value. This can get picked up by joinThread.
 	 */
-	void exitThread(OW_Thread_t& handle, OW_Int32 rval);
-
+	void exitThread(Thread_t& handle, Int32 rval);
 	/**
 	 * @return The thread handle for the current running thread.
 	 */
-	inline OW_Thread_t currentThread()
+	inline Thread_t currentThread()
 	{
 	#ifdef OW_USE_GNU_PTH
 		initThreads();
@@ -111,8 +105,6 @@ namespace OW_ThreadImpl
 		return pthread_self();
 	#endif
 	}
-
-
 	/**
 	 * Set a thread that was previously in the joinable state to a detached
 	 * state. This will allow the threads resources to be released upon
@@ -121,8 +113,7 @@ namespace OW_ThreadImpl
 	 * @param handle		The thread to set to the detached state.
 	 * @return 0 on success. Otherwise -1
 	 */
-	int setThreadDetached(OW_Thread_t& handle);
-
+	int setThreadDetached(Thread_t& handle);
 	/**
 	 * Join a thread that has been previously set to joinable. It is
 	 * Assumed that if the thread has already terminated, this method
@@ -131,21 +122,18 @@ namespace OW_ThreadImpl
 	 * @param rval An out parameter of the thread's return code.
 	 * @return 0 on success. Otherwise -1
 	 */
-	int joinThread(OW_Thread_t& handle, OW_Int32& rval);
-
+	int joinThread(Thread_t& handle, Int32& rval);
 	/**
 	 * Voluntarily yield to the processor giving the next thread in the chain
 	 * the opportunity to run.
 	 */
 	void yield();
-
 	/**
 	 * Suspend execution of the current thread until the given number
 	 * of milliSeconds have elapsed.
 	 * @param milliSeconds	The number of milliseconds to suspend execution for.
 	 */
-	void sleep(OW_UInt32 milliSeconds);
-
+	void sleep(UInt32 milliSeconds);
 	/**
 	 * "Multi-processor cache coherency.  Certain multi-processor platforms,
 	 * such as the COMPAQ Alpha and Intel Itanium, perform aggressive memory
@@ -171,13 +159,11 @@ namespace OW_ThreadImpl
 		#if defined(__ia64__) || defined(__ia64)
 		__asm__ __volatile__("mf");
 		#endif
-
 	}
-
 	/**
 	 * Test if this thread has been cancelled.  If so, a 
-	 * OW_ThreadCancelledException will be thrown.  DO NOT catch this exception.
-	 * OW_ThreadCancelledException is not derived from anything.
+	 * ThreadCancelledException will be thrown.  DO NOT catch this exception.
+	 * ThreadCancelledException is not derived from anything.
 	 * Do not write code like this:
 	 * try {
 	 *  //...
@@ -188,13 +174,13 @@ namespace OW_ThreadImpl
 	 * Instead do this:
 	 * try {
 	 *  //...
-	 * } catch (OW_ThreadCancelledException&) {
+	 * } catch (ThreadCancelledException&) {
 	 *  throw;
 	 * } catch (std::exception& e) {
 	 *  // handle the exception
 	 * }
-	 * The only place OW_ThreadCancelledException should be caught is in 
-	 * OW_Thread::threadRunner(). main() shouldn't need to catch it, as the main
+	 * The only place ThreadCancelledException should be caught is in 
+	 * Thread::threadRunner(). main() shouldn't need to catch it, as the main
 	 * thread of an application should never be cancelled.  The main thread
 	 * shouldn't need to ever call testCancel.
 	 * Note that this method is staic, and it will check the the current running
@@ -202,15 +188,11 @@ namespace OW_ThreadImpl
 	 * represent the current running thread and expect it to work.
 	 */
 	void testCancel();
-
 	void saveThreadInTLS(void* pTheThread);
-
-	void sendSignalToThread(OW_Thread_t threadID, int signo);
-
-	void cancel(OW_Thread_t threadID);
+	void sendSignalToThread(Thread_t threadID, int signo);
+	void cancel(Thread_t threadID);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-
-

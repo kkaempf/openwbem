@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Memory.h
@@ -45,19 +44,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef OW_MEMORY_HPP_INCLUDE_GUARD_
 #define OW_MEMORY_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include <cstring>
 
+namespace OpenWBEM
+{
+
 template<class T>
-inline void OW_zeros(T* items, OW_UInt32 size)
+inline void zeros(T* items, UInt32 size)
 {
 	::memset(items, 0, sizeof(T) * size);
 }
-
 template<class T>
-inline void OW_destroy(T* items, OW_UInt32 size)
+inline void destroy(T* items, UInt32 size)
 {
 	while(size--)
 	{
@@ -65,155 +65,129 @@ inline void OW_destroy(T* items, OW_UInt32 size)
 		items++;
 	}
 }
-
-inline void OW_destroy(bool* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_UInt8* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_Int8* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_UInt16* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_Int16* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_UInt32* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_Int32* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_UInt64* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_Int64* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_Real32* /*items*/, OW_UInt32 /*size*/) {  }
-inline void OW_destroy(OW_Real64* /*items*/, OW_UInt32 /*size*/) {  }
-
+inline void destroy(bool* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(UInt8* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(Int8* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(UInt16* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(Int16* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(UInt32* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(Int32* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(UInt64* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(Int64* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(Real32* /*items*/, UInt32 /*size*/) {  }
+inline void destroy(Real64* /*items*/, UInt32 /*size*/) {  }
 #ifdef OW_NEW
 #undef new
 #endif
-
 template<class T, class U>
-inline void OW_copyToRaw(T* to, const U* from, OW_UInt32 size)
+inline void copyToRaw(T* to, const U* from, UInt32 size)
 {
 	while(size--)
 	{
 		new(to++) T(*from++);
 	}
 }
-
 template<class T>
-inline void OW_initializeRaw(T* items, OW_UInt32 size)
+inline void initializeRaw(T* items, UInt32 size)
 {
 	while(size--)
 	{
 		new(items++) T();
 	}
 }
-
 #ifdef OW_NEW
 #define new OW_NEW
 #endif
-
-inline void OW_copyToRaw(bool* to, const bool* from, OW_UInt32 size)
+inline void copyToRaw(bool* to, const bool* from, UInt32 size)
 {
 	::memcpy(to, from, sizeof(bool) * size);
 }
-
-inline void OW_copyToRaw(OW_UInt8* to, const OW_UInt8* from, OW_UInt32 size)
+inline void copyToRaw(UInt8* to, const UInt8* from, UInt32 size)
 {
-	::memcpy(to, from, sizeof(OW_UInt8) * size);
+	::memcpy(to, from, sizeof(UInt8) * size);
+}
+inline void copyToRaw(Int8* to, const Int8* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(Int8) * size);
+}
+inline void copyToRaw(UInt16* to, const UInt16* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(UInt16) * size);
+}
+inline void copyToRaw(Int16* to, const Int16* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(Int16) * size);
+}
+inline void copyToRaw(UInt32* to, const UInt32* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(UInt32) * size);
+}
+inline void copyToRaw(Int32* to, const Int32* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(Int32) * size);
+}
+inline void copyToRaw(UInt64* to, const UInt64* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(UInt64) * size);
+}
+inline void copyToRaw(Int64* to, const Int64* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(Int64) * size);
+}
+inline void copyToRaw(Real32* to, const Real32* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(Real32) * size);
+}
+inline void copyToRaw(Real64* to, const Real64* from, UInt32 size)
+{
+	::memcpy(to, from, sizeof(Real64) * size);
+}
+inline void initializeRaw(bool* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(UInt8* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(Int8* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(UInt16* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(Int16* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(UInt32* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(Int32* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(UInt64* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(Int64* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(Real32* items, UInt32 size)
+{
+	zeros(items, size);
+}
+inline void initializeRaw(Real64* items, UInt32 size) 
+{
+	zeros(items, size);
 }
 
-inline void OW_copyToRaw(OW_Int8* to, const OW_Int8* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_Int8) * size);
-}
-
-inline void OW_copyToRaw(OW_UInt16* to, const OW_UInt16* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_UInt16) * size);
-}
-
-inline void OW_copyToRaw(OW_Int16* to, const OW_Int16* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_Int16) * size);
-}
-
-inline void OW_copyToRaw(OW_UInt32* to, const OW_UInt32* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_UInt32) * size);
-}
-
-inline void OW_copyToRaw(OW_Int32* to, const OW_Int32* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_Int32) * size);
-}
-
-inline void OW_copyToRaw(OW_UInt64* to, const OW_UInt64* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_UInt64) * size);
-}
-
-inline void OW_copyToRaw(OW_Int64* to, const OW_Int64* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_Int64) * size);
-}
-
-inline void OW_copyToRaw(OW_Real32* to, const OW_Real32* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_Real32) * size);
-}
-
-inline void OW_copyToRaw(OW_Real64* to, const OW_Real64* from, OW_UInt32 size)
-{
-	::memcpy(to, from, sizeof(OW_Real64) * size);
-}
-
-inline void OW_initializeRaw(bool* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_UInt8* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_Int8* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_UInt16* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_Int16* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_UInt32* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_Int32* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_UInt64* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_Int64* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_Real32* items, OW_UInt32 size)
-{
-	OW_zeros(items, size);
-}
-
-inline void OW_initializeRaw(OW_Real64* items, OW_UInt32 size) 
-{
-	OW_zeros(items, size);
-}
+} // end namespace OpenWBEM
 
 #endif
-
 	

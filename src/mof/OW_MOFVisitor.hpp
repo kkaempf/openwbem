@@ -28,10 +28,16 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef VISITOR_H
-#define VISITOR_H
+#ifndef OW_VISITOR_HPP_INCLUDE_GUARD_
+#define OW_VISITOR_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+
+namespace OpenWBEM
+{
+
+namespace MOF
+{
 
 // forward declarations
 class MOFSpecification;
@@ -204,5 +210,7 @@ public:
 	virtual void VisitValueInitializer( const ValueInitializer * ) = 0;
 };
 
+} // end namespace MOF
+} // end namespace OpenWBEM
 
 #endif

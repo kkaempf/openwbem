@@ -27,8 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #include "OW_config.h"
 #include "OW_HTTPServer.hpp"
 #include <stdlib.h>
@@ -38,7 +36,6 @@ int main(int argc, char* argv[])
 {
 	int port1 = 8080;
 	int port2 = 4433;
-
 	if (argc > 1)
 	{
 		port1 = atoi(argv[1]);
@@ -47,13 +44,11 @@ int main(int argc, char* argv[])
 	{
 		port2 = atoi(argv[2]);
 	}
-
 	cout << "Starting HTTPServer on ports " << port1 << " and " <<
 		port2 << endl;
 	
-	OW_HTTPServer htin(port1, port2);
+	HTTPServer htin(port1, port2);
 	htin.process();
 	for(;;);
 }
-
 

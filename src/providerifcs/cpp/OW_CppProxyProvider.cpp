@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CppProxyProvider.hpp"
 #include "OW_CIMValue.hpp"
@@ -35,202 +34,192 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
-OW_CppAssociatorProviderProxy::OW_CppAssociatorProviderProxy(
-	OW_CppAssociatorProviderIFCRef pProv) :
-	OW_AssociatorProviderIFC(), m_pProv(pProv)
+CppAssociatorProviderProxy::CppAssociatorProviderProxy(
+	CppAssociatorProviderIFCRef pProv) :
+	AssociatorProviderIFC(), m_pProv(pProv)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppAssociatorProviderProxy::associators(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole,
+CppAssociatorProviderProxy::associators(
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->associators(env, result, ns, objectName, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppAssociatorProviderProxy::associatorNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& assocClass,
-		const OW_String& resultClass,
-		const OW_String& role,
-		const OW_String& resultRole)
+CppAssociatorProviderProxy::associatorNames(
+		const ProviderEnvironmentIFCRef& env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& assocClass,
+		const String& resultClass,
+		const String& role,
+		const String& resultRole)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->associatorNames(env, result, ns, objectName, assocClass, resultClass,
 			role, resultRole);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppAssociatorProviderProxy::references(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultClass,
-		const OW_String& role,
+CppAssociatorProviderProxy::references(
+		const ProviderEnvironmentIFCRef& env,
+		CIMInstanceResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role,
 		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList)
+		const StringArray* propertyList)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->references(env, result, ns, objectName, resultClass, role,
 			includeQualifiers, includeClassOrigin, propertyList);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppAssociatorProviderProxy::referenceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String& ns,
-		const OW_CIMObjectPath& objectName,
-		const OW_String& resultClass,
-		const OW_String& role)
+CppAssociatorProviderProxy::referenceNames(
+		const ProviderEnvironmentIFCRef& env,
+		CIMObjectPathResultHandlerIFC& result,
+		const String& ns,
+		const CIMObjectPath& objectName,
+		const String& resultClass,
+		const String& role)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->referenceNames(env, result, ns, objectName, resultClass, role);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CppInstanceProviderProxy::OW_CppInstanceProviderProxy(
-		OW_CppInstanceProviderIFCRef pProv) :
-	OW_InstanceProviderIFC(), m_pProv(pProv)
+CppInstanceProviderProxy::CppInstanceProviderProxy(
+		CppInstanceProviderIFCRef pProv) :
+	InstanceProviderIFC(), m_pProv(pProv)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppInstanceProviderProxy::enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass)
+CppInstanceProviderProxy::enumInstanceNames(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->enumInstanceNames(env, ns, className, result, cimClass);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppInstanceProviderProxy::enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+CppInstanceProviderProxy::enumInstances(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass)
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->enumInstances(env, ns, className, result, localOnly, deep, 
 		includeQualifiers, includeClassOrigin, propertyList, requestedClass, 
 		cimClass);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMInstance
-OW_CppInstanceProviderProxy::getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+CIMInstance
+CppInstanceProviderProxy::getInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass)
+		const StringArray* propertyList, 
+		const CIMClass& cimClass)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->getInstance(env, ns, instanceName, localOnly, 
 		includeQualifiers, includeClassOrigin, propertyList, cimClass);
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMObjectPath
-OW_CppInstanceProviderProxy::createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance)
+CIMObjectPath
+CppInstanceProviderProxy::createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->createInstance(env, ns, cimInstance);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppInstanceProviderProxy::modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+CppInstanceProviderProxy::modifyInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, 
 		includeQualifiers, propertyList, theClass);
 }
-
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppInstanceProviderProxy::deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+CppInstanceProviderProxy::deleteInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 {
 	m_pProv->updateAccessTime();
 	m_pProv->deleteInstance(env, ns, cop);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CppMethodProviderProxy::OW_CppMethodProviderProxy(OW_CppMethodProviderIFCRef pProv) :
-	OW_MethodProviderIFC(), m_pProv(pProv)
+CppMethodProviderProxy::CppMethodProviderProxy(CppMethodProviderIFCRef pProv) :
+	MethodProviderIFC(), m_pProv(pProv)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////		
-OW_CIMValue
-OW_CppMethodProviderProxy::invokeMethod(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& path,
-		const OW_String& methodName,
-		const OW_CIMParamValueArray& in,
-		OW_CIMParamValueArray& out)
+CIMValue
+CppMethodProviderProxy::invokeMethod(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& path,
+		const String& methodName,
+		const CIMParamValueArray& in,
+		CIMParamValueArray& out)
 {
 	m_pProv->updateAccessTime();
 	return m_pProv->invokeMethod(env, ns, path, methodName, in, out);
 }
 
+} // end namespace OpenWBEM
 

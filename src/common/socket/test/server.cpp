@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /*
 #include "OW_config.h"
 #include "easyaddress.h"
@@ -35,18 +34,14 @@
 #include "easysocket.h"
 #include "easyserver.h"
 */
-
 #include "OW_ServerSocket.hpp"
 #include "OW_SocketAddress.hpp"
-
 #include <iostream>
 #include <fstream.h>
 #include <string>
 #include <stdlib.h>
 #include <unistd.h>
-
 using namespace std;
-
 int main(void)
 {
 	try
@@ -54,40 +49,35 @@ int main(void)
 		cout << "What port do you want this server to squat on? ";
 		unsigned short port;
 		cin >> port;
-
-		OW_ServerSocket svr(port);
-		OW_SocketAddress localAddr = svr.getLocalAddress();
+		ServerSocket svr(port);
+		SocketAddress localAddr = svr.getLocalAddress();
 		cout << "Listening on address " << localAddr.getName() << 
 			"(" << localAddr.getAddress() << ")" << ":" 
 			<< localAddr.getPort() << endl;
 		cout.flush();
-
-		OW_Socket sock = svr.accept();
-		OW_SocketAddress peerAddr = sock.getPeerAddress();
+		Socket sock = svr.accept();
+		SocketAddress peerAddr = sock.getPeerAddress();
 		cout << "Connection is made. Client is " << peerAddr.getName() << 
 			"(" << peerAddr.getAddress() << ")" << ":" 
 			<< peerAddr.getPort() << endl;
 		ostream& ostrm = sock.getOutputStream();
 		ostrm << "Hello, this is a silly server. Enter a line of text!\n\r";
 		ostrm.flush();
-
 		ifstream& istrm = (ifstream&) sock.getInputStream();
 		char bfr[512];
 		sock.waitForInput();
 		istrm.getline(bfr, sizeof(bfr), '\n');
-
 		cout << bfr;
 		cout.flush();
 		cout << endl;
-
 		svr.close();
 		sock.disconnect();
 	}
-	catch(OW_SocketException &e)
+	catch(SocketException &e)
 	{
 		cerr << "An exception occurred in " << endl;
 		return 1;
 	}
-
 	return 0;
 }
+

@@ -27,97 +27,94 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef OW_FUNC_NAME_PRINTER_HPP
 #define OW_FUNC_NAME_PRINTER_HPP
-
 #include "OW_config.h"
 #include "OW_Format.hpp"
 #include <stdio.h>
 #include <unistd.h>
 
+namespace OpenWBEM
+{
 
-class OW_FuncNamePrinter
+class FuncNamePrinter
 {
 private:
 	const char* m_funcName;
 public:
 	
-	OW_FuncNamePrinter(const char* funcName) : m_funcName(funcName)
+	FuncNamePrinter(const char* funcName) : m_funcName(funcName)
 	{
 		fprintf(stderr, "%d Entering: %s\n", getpid(), funcName);
 	}
 	template<typename A>
-		OW_FuncNamePrinter(const char* funcName, const A& a) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1)", a).c_str());
 		}
 	template<typename A, typename B>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2)", a, b).c_str());
 		}
 	template<typename A, typename B, typename C>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3)", a, b, c).c_str());
 		}
 	template<typename A, typename B, typename C, typename D>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4)", a, b, c, d).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4, %5)", a, b, c, d, e).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4, %5, %6)", a, b, c, d, e, f).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4, %5, %6, %7)", a, b, c, d, e, f, g).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G, typename H>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4, %5, %6, %7, %8)", a, b, c, d, e, f, g, h).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G, typename H, typename I>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4, %5, %6, %7, %8, %9)", a, b, c, d, e, f, g, h, i).c_str());
 		}
 	template<typename A, typename B, typename C, typename D, typename E, typename F,
 	typename G, typename H, typename I, typename J>
-		OW_FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i, const J& j) : m_funcName(funcName)
+		FuncNamePrinter(const char* funcName, const A& a, const B& b, const C& c, const D& d, const E& e, const F& f, const G& g, const H& h, const I& i, const J& j) : m_funcName(funcName)
 		{
 			fprintf(stderr, "%d Entering: %s\n\t%s\n", getpid(), funcName, 
 				format("(%1, %2, %3, %4, %5, %6, %7, %8, %9)", a, b, c, d, e, f, g, h, format("%1, %2", i, j)).c_str());
 		}
-
-	~OW_FuncNamePrinter()
+	~FuncNamePrinter()
 		{ fprintf(stderr, "%d Leaving:  %s\n", getpid(), m_funcName); }
+}; // class FuncNamePrinter
 
-}; // class OW_FuncNamePrinter
-
-
+} // end namespace OpenWBEM
 
 #endif //#define OW_FUNC_NAME_PRINTER_HPP

@@ -29,22 +29,22 @@
 *******************************************************************************/
 #ifndef OW_LIFE_CYCLE_INDICATION_POLLER_HPP_INCLUDE_GUARD_
 #define OW_LIFE_CYCLE_INDICATION_POLLER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_Mutex.hpp"
 
-class OW_LifecycleIndicationPoller : public OW_CppPolledProviderIFC
+namespace OpenWBEM
+{
+
+class LifecycleIndicationPoller : public CppPolledProviderIFC
 {
 public:
-	OW_LifecycleIndicationPoller(const OW_String& ns, const OW_String& className,
-		OW_UInt32 pollInterval);
-
-	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef &env);
-	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env);
-
+	LifecycleIndicationPoller(const String& ns, const String& className,
+		UInt32 pollInterval);
+	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef &env);
+	virtual Int32 poll(const ProviderEnvironmentIFCRef &env);
 	// used to determine what types of indications to create
 	enum PollOp
 	{
@@ -52,39 +52,32 @@ public:
 		POLL_FOR_INSTANCE_MODIFICATION,
 		POLL_FOR_INSTANCE_DELETION
 	};
-
 	// takes a POLL_FOR_INSTANCE* flag and indicates a provider has requested
 	// we poll for it.
 	void addPollOp(PollOp op);
-
 	// takes a POLL_FOR_INSTANCE* flag and indicates a provider has requested
 	// we poll for it, and the subscription was removed.
     // returns !willPoll().
 	bool removePollOp(PollOp op);
-
 	// returns true if the there are any poll operations to do
 	bool willPoll() const;
-
 	// a new poll interval will be considered.  The new interval will be the
 	// min of newPollInterval and the current poll interval.  The new interval
 	// is returned.
-	OW_UInt32 addPollInterval(OW_UInt32 newPollInterval);
-
+	UInt32 addPollInterval(UInt32 newPollInterval);
 private:
-	OW_UInt32 getPollInterval() const;
-
-	OW_String m_ns;
-	OW_String m_classname;
-	OW_UInt32 m_pollInterval;
-	OW_UInt32 m_pollCreation;
-	OW_UInt32 m_pollModification;
-	OW_UInt32 m_pollDeletion;
-	mutable OW_Mutex m_guard;
-	OW_CIMInstanceArray m_prevInsts;
+	UInt32 getPollInterval() const;
+	String m_ns;
+	String m_classname;
+	UInt32 m_pollInterval;
+	UInt32 m_pollCreation;
+	UInt32 m_pollModification;
+	UInt32 m_pollDeletion;
+	mutable Mutex m_guard;
+	CIMInstanceArray m_prevInsts;
     bool m_initializedInstances;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-
-

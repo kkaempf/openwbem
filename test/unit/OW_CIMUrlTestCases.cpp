@@ -35,6 +35,8 @@
 #include "OW_String.hpp"
 #include "OW_URL.hpp"
 
+using namespace OpenWBEM;
+
 void OW_CIMUrlTestCases::setUp()
 {
 }
@@ -46,7 +48,7 @@ void OW_CIMUrlTestCases::tearDown()
 void OW_CIMUrlTestCases::testToString()
 {
 	/* TODO: Finish this
-	OW_CIMUrl url(OW_String("http://test2:pass2@localhost:30926"));
+	CIMUrl url(String("http://test2:pass2@localhost:30926"));
 	unitAssert( url.getFile() == "cimom" );
 	unitAssert( url.getHost() == "localhost" );
 	unitAssert( url.getPort() == 30926 );
@@ -55,8 +57,8 @@ void OW_CIMUrlTestCases::testToString()
 	unitAssert( url.getSpec() == "" );
 	unitAssert( url.toString() == "http://test2:pass2@localhost:30926" );
 	*/
-	OW_String surl = "proto://user:pass@hostname.foo.com:1234/my/path";
-	OW_URL url(surl);
+	String surl = "proto://user:pass@hostname.foo.com:1234/my/path";
+	URL url(surl);
 	unitAssert(url.host.equals("hostname.foo.com"));
 	unitAssert(url.password.equals("pass"));
 	unitAssert(url.path.equals("/my/path"));

@@ -27,36 +27,39 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_Select.hpp"
 #include "OW_Assertion.hpp"
-
 extern "C"
 {
 #ifdef OW_HAVE_SYS_TIME_H
-#include <sys/time.h>
+ #include <sys/time.h>
 #endif
+
 #include <sys/types.h>
+
 #ifdef OW_HAVE_UNISTD_H
-#include <unistd.h>
+ #include <unistd.h>
 #endif
+
 #include <errno.h>
+
 #ifdef OW_USE_GNU_PTH
-#include <pth.h>
+ #include <pth.h>
 #endif
 }
 
+namespace OpenWBEM
+{
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
+Select::select(const SelectTypeArray& selarray, UInt32 ms)
 {
    fd_set rfds;
    struct timeval tv;
    int rc;
    int maxfd = 0;
-
    FD_ZERO(&rfds);
    for(size_t i = 0; i < selarray.size(); i++)
    {
@@ -64,10 +67,8 @@ OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
 	  {
 		 maxfd = selarray[i];
 	  }
-
 	  FD_SET(selarray[i], &rfds);
    }
-
    struct timeval* ptv = NULL;
    if (ms != ~0U)
    {
@@ -75,30 +76,26 @@ OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
 	   tv.tv_sec = ms / 1000;
 	   tv.tv_usec = (ms % 1000) * 1000;
    }
-
 #ifdef OW_USE_GNU_PTH
    rc = pth_select(maxfd+1, &rfds, NULL, NULL, ptv);
 #else
    rc = ::select(maxfd+1, &rfds, NULL, NULL, ptv);
 #endif
-
    if(rc < 0)
    {
 	   if (errno == EINTR)
 	   {
-		   return OW_Select::OW_SELECT_INTERRUPTED;
+		   return Select::SELECT_INTERRUPTED;
 	   }
 	   else
 	   {
-		   return OW_Select::OW_SELECT_ERROR;
+		   return Select::SELECT_ERROR;
 	   }
    }
-
    if(rc == 0)
    {
-	   return OW_Select::OW_SELECT_TIMEOUT;
+	   return Select::SELECT_TIMEOUT;
    }
-
    for(size_t i = 0; i < selarray.size(); i++)
    {
 	  if(FD_ISSET(selarray[i], &rfds))
@@ -106,8 +103,9 @@ OW_Select::select(const OW_SelectTypeArray& selarray, OW_UInt32 ms)
 		 return int(i);
 	  }
    }
-
-   OW_THROW(OW_Assertion, "Logic error in OW_Select. Didn't find file handle");
-   return OW_Select::OW_SELECT_ERROR;
+   OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");
+   return Select::SELECT_ERROR;
 }
+
+} // end namespace OpenWBEM
 

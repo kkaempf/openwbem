@@ -27,32 +27,28 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_XMLPARSER_HPP_
 #define OW_XMLPARSER_HPP_
-
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_IstreamBufIterator.hpp"
-
-
 #ifdef OW_NEW
 #undef new
 #endif
-
 #include <stack>
 #include <iosfwd>
-
 #ifdef OW_NEW
 #define new OW_NEW
 #endif
 
-class OW_XMLParseException : public OW_Exception
+namespace OpenWBEM
+{
+
+class XMLParseException : public Exception
 {
 	public:
-
 		enum Code
 		{
 			BAD_START_TAG = 1,
@@ -73,50 +69,38 @@ class OW_XMLParseException : public OW_Exception
 			VALIDATION_ERROR,
 			SEMANTIC_ERROR
 		};
-
-		OW_XMLParseException(
+		XMLParseException(
 				Code code,
 				unsigned int lineNumber,
 				const char* message);
-
-		OW_XMLParseException(
+		XMLParseException(
 				Code code,
 				unsigned int lineNumber);
-
-		OW_XMLParseException(
+		XMLParseException(
 				const char* file,
 				unsigned int line,
 				const char* msg);
-
-		OW_XMLParseException::Code getCode() const
+		XMLParseException::Code getCode() const
 		{
 			return _code;
 		}
-
 	private:
-
 		Code _code;
 };
-
-class OW_XMLParseValidationError : public OW_XMLParseException
+class XMLParseValidationError : public XMLParseException
 {
 	public:
-
-		OW_XMLParseValidationError(unsigned int lineNumber, const char* message);
+		XMLParseValidationError(unsigned int lineNumber, const char* message);
 };
-
-class OW_XMLParseSemanticError : public OW_XMLParseException
+class XMLParseSemanticError : public XMLParseException
 {
 	public:
-
-		OW_XMLParseSemanticError(unsigned int lineNumber, const char* message);
+		XMLParseSemanticError(unsigned int lineNumber, const char* message);
 };
-
-struct OW_XMLToken
+struct XMLToken
 {
-	OW_XMLToken() : type(INVALID), text(8096), attributeCount(0)
+	XMLToken() : type(INVALID), text(8096), attributeCount(0)
 	{}
-
 	enum XMLType
 	{
 		INVALID,
@@ -129,88 +113,63 @@ struct OW_XMLToken
 		DOCTYPE,
 		CONTENT
 	};
-
 	struct Attribute
 	{
 		Attribute(): name(64), value(512)
 		{
 		}
-
-		OW_StringBuffer name;
-		OW_StringBuffer value;
+		StringBuffer name;
+		StringBuffer value;
 	};
-
 	enum { MAX_ATTRIBUTES = 10 };
-
 	XMLType type;
-	OW_StringBuffer text;
+	StringBuffer text;
 	Attribute attributes[MAX_ATTRIBUTES];
 	unsigned int attributeCount;
-
 };
-
-class  OW_XMLParser
+class  XMLParser
 {
 	public:
-
-		OW_XMLParser(std::istream& input) : _line(1), _current(), _foundRoot(false), _tagIsEmpty(false)
+		XMLParser(std::istream& input) : _line(1), _current(), _foundRoot(false), _tagIsEmpty(false)
 		{
 			setInput(input);
 		}
-
-		OW_XMLParser(): _line(1), _current(), _foundRoot(false), _tagIsEmpty(false)
+		XMLParser(): _line(1), _current(), _foundRoot(false), _tagIsEmpty(false)
 		{
 		}
-
-		~OW_XMLParser()
+		~XMLParser()
 		{
 		}
-
 		void setInput(std::istream& input)
 		{
-			_current = OW_IstreamBufIterator(input);
+			_current = IstreamBufIterator(input);
 		}
-
-		bool next(OW_XMLToken& entry);
-
+		bool next(XMLToken& entry);
 		unsigned int getLine() const
 		{
 			return _line;
 		}
-
 	private:
-
 		void _skipWhitespace();
-
-		bool _getElementName(OW_XMLToken& entry);
-
-		bool _getOpenElementName(OW_XMLToken& entry, bool& openCloseElement);
-
-		void _getAttributeNameAndEqual(OW_XMLToken::Attribute& att);
-
-		void _getAttributeValue(OW_XMLToken::Attribute& att);
-
+		bool _getElementName(XMLToken& entry);
+		bool _getOpenElementName(XMLToken& entry, bool& openCloseElement);
+		void _getAttributeNameAndEqual(XMLToken::Attribute& att);
+		void _getAttributeValue(XMLToken::Attribute& att);
 		void _getComment();
-
-		void _getCData(OW_XMLToken& entry);
-
+		void _getCData(XMLToken& entry);
 		void _getDocType();
-
-		void _getContent(OW_XMLToken& entry);
-		//void _getContent(OW_XMLToken& entry, bool& isWhiteSpace);
-
-		void _getElement(OW_XMLToken& entry);
-
+		void _getContent(XMLToken& entry);
+		//void _getContent(XMLToken& entry, bool& isWhiteSpace);
+		void _getElement(XMLToken& entry);
 		unsigned int _line;
-		OW_IstreamBufIterator _current;
+		IstreamBufIterator _current;
 		char _restoreChar;
-
 		// used to verify elements' begin and end tags match.
-		std::stack<OW_String> _stack;
+		std::stack<String> _stack;
 		bool _foundRoot;
 		bool _tagIsEmpty;
 };
 
+} // end namespace OpenWBEM
 
 #endif
-

@@ -27,31 +27,30 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NON_RECURSIVE_MUTEX_IMPL_INCLUDE_GUARD_HPP_
 #define OW_NON_RECURSIVE_MUTEX_IMPL_INCLUDE_GUARD_HPP_
-
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 
+namespace OpenWBEM
+{
+
 /**
- * The OW_NonRecursiveMutexImpl class represents the functionality needed by the
- * OpenWbem non recursive Mutex class (OW_NonRecursiveMutex). The implementation for this class
+ * The NonRecursiveMutexImpl class represents the functionality needed by the
+ * OpenWbem non recursive Mutex class (NonRecursiveMutex). The implementation for this class
  * must be provided on all platforms that OpenWbem runs on. It is essentially
  * an abstraction layer over another mutex implementation.
  */
-class OW_NonRecursiveMutexImpl
+class NonRecursiveMutexImpl
 {
 public:
-
 	/**
 	 * Create a platform specific mutext handle.
 	 * @param handle	The mutex handle that should be initialized by this method
 	 * @param isRecursive Specified whether to create a recursive mutex
 	 * @return 0 on success. Otherwise -1.
 	 */
-	static int createMutex(OW_NonRecursiveMutex_t& handle);
-
+	static int createMutex(NonRecursiveMutex_t& handle);
 	/**
 	 * Destroy a mutex previously created with createMutex.
 	 * @param handle The handle to the mutex that will be destroyed.
@@ -61,8 +60,7 @@ public:
 	 *				locked.
 	 *		-2:	All other error conditions
 	 */
-	static int destroyMutex(OW_NonRecursiveMutex_t& handle);
-
+	static int destroyMutex(NonRecursiveMutex_t& handle);
 	/**
 	 * Acquire the mutex specified by a given mutex handle. This method should
 	 * block until the desired mutex can be acquired. The error return value is
@@ -71,20 +69,19 @@ public:
 	 * @param handle The mutex to acquire.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int acquireMutex(OW_NonRecursiveMutex_t& handle);
-
+	static int acquireMutex(NonRecursiveMutex_t& handle);
 	/**
 	 * Release a mutex that was previously acquired with the acquireMutex
 	 * method.
 	 * @param handle The handle to the mutex that is being released.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	static int releaseMutex(OW_NonRecursiveMutex_t& handle);
+	static int releaseMutex(NonRecursiveMutex_t& handle);
 	
-	static int conditionPreWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state);
-	static int conditionPostWait(OW_NonRecursiveMutex_t& handle, OW_NonRecursiveMutexLockState& state);
+	static int conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
+	static int conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

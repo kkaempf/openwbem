@@ -27,12 +27,10 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 /**
  *
  *
  */
-
 #include "OW_config.h"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPUtils.hpp"
@@ -40,25 +38,24 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMErrorException.hpp"
 
-using std::istream;
+namespace OpenWBEM
+{
 
+using std::istream;
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedIStreamBuffer::OW_HTTPChunkedIStreamBuffer(istream& istr,
-	OW_HTTPChunkedIStream* chunker)
-	: OW_BaseStreamBuffer(HTTP_BUF_SIZE, "in"), m_istr(istr),
+HTTPChunkedIStreamBuffer::HTTPChunkedIStreamBuffer(istream& istr,
+	HTTPChunkedIStream* chunker)
+	: BaseStreamBuffer(HTTP_BUF_SIZE, "in"), m_istr(istr),
 	m_inLen(-1), m_inPos(0), m_isEOF(false), m_pChunker(chunker)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-
-OW_HTTPChunkedIStreamBuffer::~OW_HTTPChunkedIStreamBuffer()
+HTTPChunkedIStreamBuffer::~HTTPChunkedIStreamBuffer()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
+HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 {
 	if(m_isEOF)
 		return -1;
@@ -72,7 +69,7 @@ OW_HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 			m_istr >> std::hex >> m_inLen >> std::dec;
 			if (m_istr.fail() || m_istr.bad())
 				return -1;
-				//OW_THROW(OW_HTTPChunkException, "Invalid length in chunk header");
+				//OW_THROW(HTTPChunkException, "Invalid length in chunk header");
 					// skip past the trailing \r\n
 			while(m_istr.get() != '\n' && m_istr.good());
 			m_inPos = 0;
@@ -105,10 +102,9 @@ OW_HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 	}
 	return offset; // should be equal to n if we reached this.
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPChunkedIStreamBuffer::resetInput()
+HTTPChunkedIStreamBuffer::resetInput()
 {
 	initGetBuffer();
 	m_inLen = -1;
@@ -116,46 +112,40 @@ OW_HTTPChunkedIStreamBuffer::resetInput()
 	m_isEOF = false;
 }
 //////////////////////////////////////////////////////////////////////////////
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedIStream::OW_HTTPChunkedIStream(istream& istr)
-	: OW_HTTPChunkedIStreamBase(istr, this)
-	, OW_CIMProtocolIStreamIFC(&m_strbuf)
+HTTPChunkedIStream::HTTPChunkedIStream(istream& istr)
+	: HTTPChunkedIStreamBase(istr, this)
+	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)
 	, m_trailerMap()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_HTTPChunkedIStream::~OW_HTTPChunkedIStream()
+HTTPChunkedIStream::~HTTPChunkedIStream()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPChunkedIStream::resetInput()
+HTTPChunkedIStream::resetInput()
 {
 	clear();
 	m_strbuf.resetInput();
 }
-
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HTTPChunkedIStream::buildTrailerMap()
+HTTPChunkedIStream::buildTrailerMap()
 {
-	if (!OW_HTTPUtils::parseHeader(m_trailerMap, m_istr))
+	if (!HTTPUtils::parseHeader(m_trailerMap, m_istr))
 	{
 		m_trailerMap.clear();
-		OW_THROW(OW_HTTPException, "Error parsing trailers");
+		OW_THROW(HTTPException, "Error parsing trailers");
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String 
-OW_HTTPChunkedIStream::getTrailer(const OW_String& key) const
+String 
+HTTPChunkedIStream::getTrailer(const String& key) const
 {
-	for (OW_Map<OW_String, OW_String>::const_iterator iter = m_trailerMap.begin();
+	for (Map<String, String>::const_iterator iter = m_trailerMap.begin();
 		  iter != m_trailerMap.end(); ++iter)
 	{
 		if (iter->first.substring(3).equalsIgnoreCase(key))
@@ -163,34 +153,34 @@ OW_HTTPChunkedIStream::getTrailer(const OW_String& key) const
 			return iter->second;
 		}
 	}
-	return OW_String();
+	return String();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-void OW_HTTPChunkedIStream::checkForError() const
+void HTTPChunkedIStream::checkForError() const
 {
-	OW_String errorStr;
+	String errorStr;
 	errorStr = getTrailer("CIMError");
 	if (!errorStr.empty())
 	{
-		OW_THROW(OW_CIMErrorException, errorStr.c_str());
+		OW_THROW(CIMErrorException, errorStr.c_str());
 	}
 	errorStr = getTrailer("CIMErrorCode");
 	if (!errorStr.empty())
 	{
-		OW_String descr;
+		String descr;
 		descr = getTrailer("CIMErrorDescription");
 		if (!descr.empty())
 		{
-			OW_THROWCIMMSG(OW_CIMException::ErrNoType(errorStr.toInt32()), 
+			OW_THROWCIMMSG(CIMException::ErrNoType(errorStr.toInt32()), 
 				descr.c_str());
 		}
 		else
 		{
-			OW_THROWCIM(OW_CIMException::ErrNoType(errorStr.toInt32()));
+			OW_THROWCIM(CIMException::ErrNoType(errorStr.toInt32()));
 		}
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
+
+} // end namespace OpenWBEM
 

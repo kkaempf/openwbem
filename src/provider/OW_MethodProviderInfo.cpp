@@ -30,51 +30,49 @@
 #include "OW_config.h"
 #include "OW_MethodProviderInfo.hpp"
 
-///////////////////////////////////////////////////////////////////////////////
-OW_MethodProviderInfo::ClassInfo::ClassInfo(OW_String const& className_)
-	: className(className_)
-{}
+namespace OpenWBEM
+{
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_MethodProviderInfo::ClassInfo::ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_, OW_StringArray const& methods_)
+MethodProviderInfo::ClassInfo::ClassInfo(String const& className_)
+	: className(className_)
+{}
+///////////////////////////////////////////////////////////////////////////////
+MethodProviderInfo::ClassInfo::ClassInfo(String const& className_, StringArray const& namespaces_, StringArray const& methods_)
 	: className(className_)
 	, namespaces(namespaces_)
 	, methods(methods_)
 {}
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_MethodProviderInfo::addInstrumentedClass(OW_String const& className)
+MethodProviderInfo::addInstrumentedClass(String const& className)
 {
 	m_instrumentedClasses.push_back(ClassInfo(className));
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_MethodProviderInfo::addInstrumentedClass(OW_MethodProviderInfo::ClassInfo const& classInfo)
+MethodProviderInfo::addInstrumentedClass(MethodProviderInfo::ClassInfo const& classInfo)
 {
 	m_instrumentedClasses.push_back(classInfo);
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-const OW_MethodProviderInfo::ClassInfoArray& 
-OW_MethodProviderInfo::getClassInfo() const
+const MethodProviderInfo::ClassInfoArray& 
+MethodProviderInfo::getClassInfo() const
 {
 	return m_instrumentedClasses;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_MethodProviderInfo::setProviderName(OW_String const& name)
+MethodProviderInfo::setProviderName(String const& name)
 {
 	m_name = name;
 }
-
 ///////////////////////////////////////////////////////////////////////////////
-OW_String 
-OW_MethodProviderInfo::getProviderName() const
+String 
+MethodProviderInfo::getProviderName() const
 {
 	return m_name;
 }
 
+} // end namespace OpenWBEM
 

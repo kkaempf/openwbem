@@ -29,49 +29,44 @@
 *******************************************************************************/
 #ifndef OW_CACHE_INCLUDE_GUARD_HPP_
 #define OW_CACHE_INCLUDE_GUARD_HPP_
-
 #include "OW_config.h"
-
 #include "OW_HashMap.hpp"
 #include "OW_String.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include <list>
 
+namespace OpenWBEM
+{
+
 /** This class encapsulates the functionality of a cache. */
 template <typename T>
-class OW_Cache
+class Cache
 {
 public:
-    OW_Cache();
-
+    Cache();
     /** Add an item to the cache.
      * @param cc The item to add
      * @param key The key for the item
      * @precondition cc is not already in the cache.  Adding duplicate items into the cache will waste space.
      */
-    void addToCache(const T& cc, const OW_String& key);
-
+    void addToCache(const T& cc, const String& key);
     /** Get an item from the cache.  Average complexity is constant time. Worst case is linear in the size of the cache.
      * @param key The key for the item to retrieve.
-     * @return The item if found, else the item constructed with OW_CIMNULL parameter.
+     * @return The item if found, else the item constructed with CIMNULL parameter.
      */
-    T getFromCache(const OW_String& key);
-
+    T getFromCache(const String& key);
     /** Remove an item from the cache.  Average complexity is constant time. Worst case is linear in the size of the cache.
      * It does not matter if the item is not in the cache.
      * @param key The key for the item to remove.
      */
-    void removeFromCache(const OW_String& key);
-
+    void removeFromCache(const String& key);
     /** Remove all items from the cache.
      */
     void clearCache();
-
     /** Set the maximum number of items the cache will hold.
      */
-    void setMaxCacheSize(OW_UInt32);
-
+    void setMaxCacheSize(UInt32);
 private:
     // a list of items that are cached.  The list is sorted by lru.  The least
     // recently acessed item will be at begin(), and the most recenly acessed
@@ -81,54 +76,46 @@ private:
     // to the end of the list when they're accessed. Also we need iterators
     // into the list to be stable.  We can re-arrange items in the list
     // without having to update the HashMap index.
-    typedef std::list<std::pair<T, OW_String> > class_cache_t;
+    typedef std::list<std::pair<T, String> > class_cache_t;
     // the index into the cache.  Speeds up finding an item when we need to.
-    typedef OW_HashMap<OW_String, typename class_cache_t::iterator> cache_index_t;
-
+    typedef HashMap<String, typename class_cache_t::iterator> cache_index_t;
     class_cache_t theCache;
     cache_index_t theCacheIndex;
-    OW_Mutex cacheGuard;
-    OW_UInt32 maxCacheSize;
-
+    Mutex cacheGuard;
+    UInt32 maxCacheSize;
 };
-
-
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
-OW_Cache<T>::OW_Cache()
+Cache<T>::Cache()
     : maxCacheSize(100)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-OW_Cache<T>::addToCache(const T& cc, const OW_String& key)
+Cache<T>::addToCache(const T& cc, const String& key)
 {
-	OW_MutexLock l(cacheGuard);
-
+	MutexLock l(cacheGuard);
 	if(theCacheIndex.size() >= maxCacheSize)
 	{
 		if (!theCache.empty())
 		{
-			OW_String key = theCache.begin()->second;
+			String key = theCache.begin()->second;
 			theCache.pop_front();
 			theCacheIndex.erase(key);
 		}
 	}
-
 	typename class_cache_t::iterator i = theCache.insert(theCache.end(),
 		typename class_cache_t::value_type(cc, key));
 	theCacheIndex.insert(cache_index_t::value_type(key, i));
 }
-
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 T
-OW_Cache<T>::getFromCache(const OW_String& key)
+Cache<T>::getFromCache(const String& key)
 {
-	OW_MutexLock l(cacheGuard);
-	T cc(OW_CIMNULL);
+	MutexLock l(cacheGuard);
+	T cc(CIMNULL);
 	// look up key in the index
 	typename cache_index_t::iterator ii = theCacheIndex.find(key);
 	if (ii != theCacheIndex.end())
@@ -141,18 +128,15 @@ OW_Cache<T>::getFromCache(const OW_String& key)
 		theCache.splice(theCache.end(),theCache,i);
 		// because splice doesn't actually move the elements, we don't have to
 		// update the iterator in theCacheIndex
-
 	}
-
 	return cc;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-OW_Cache<T>::removeFromCache(const OW_String& key)
+Cache<T>::removeFromCache(const String& key)
 {
-	OW_MutexLock l(cacheGuard);
+	MutexLock l(cacheGuard);
 	typename cache_index_t::iterator i = theCacheIndex.find(key);
 	if (i != theCacheIndex.end())
 	{
@@ -161,39 +145,33 @@ OW_Cache<T>::removeFromCache(const OW_String& key)
 		theCache.erase(ci);
 	}
 }
-
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-OW_Cache<T>::clearCache()
+Cache<T>::clearCache()
 {
-	OW_MutexLock l(cacheGuard);
+	MutexLock l(cacheGuard);
 	theCache.clear();
 	theCacheIndex.clear();
 }
-
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
 void
-OW_Cache<T>::setMaxCacheSize(OW_UInt32 max)
+Cache<T>::setMaxCacheSize(UInt32 max)
 {
-	OW_MutexLock l(cacheGuard);
+	MutexLock l(cacheGuard);
     maxCacheSize = max;
-
 	while(theCacheIndex.size() >= maxCacheSize)
 	{
 		if (!theCache.empty())
 		{
-			OW_String key = theCache.begin()->second;
+			String key = theCache.begin()->second;
 			theCache.pop_front();
 			theCacheIndex.erase(key);
 		}
 	}
-
 }
 
-
-
+} // end namespace OpenWBEM
 
 #endif
-

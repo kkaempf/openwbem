@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_NameSpaceProvider.hpp"
 #include "OW_Exception.hpp"
@@ -43,23 +42,24 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_UserInfo.hpp"
 
-using namespace OW_WBEMFlags;
+namespace OpenWBEM
+{
 
+using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class namespaceFilterer : public OW_StringResultHandlerIFC
+	class namespaceFilterer : public StringResultHandlerIFC
 	{
 	public:
-		namespaceFilterer(const OW_String& ns_, bool deep_, OW_StringResultHandlerIFC& result_)
+		namespaceFilterer(const String& ns_, bool deep_, StringResultHandlerIFC& result_)
 			: ns(ns_.tokenize("/"))
 			, deep(deep_)
 			, result(result_)
 		{}
-
-		void doHandle(const OW_String& s)
+		void doHandle(const String& s)
 		{
-			OW_StringArray split(s.tokenize("/"));
+			StringArray split(s.tokenize("/"));
 			if (split.size() <= ns.size())
 			{
 				// it's a parent or the same namespace, so ignore it.
@@ -81,223 +81,205 @@ namespace
 			// match, pass it on.
 			result.handle(s);
 		}
-
 	private:
-		OW_StringArray ns;
+		StringArray ns;
 		bool deep;
-		OW_StringResultHandlerIFC& result;
+		StringResultHandlerIFC& result;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_NameSpaceProvider::~OW_NameSpaceProvider()
+NameSpaceProvider::~NameSpaceProvider()
 {
 }
-
 namespace
 {
-	class StringArrayBuilder : public OW_StringResultHandlerIFC
+	class StringArrayBuilder : public StringResultHandlerIFC
 	{
 	public:
-		StringArrayBuilder(OW_StringArray& a) : m_a(a) {}
+		StringArrayBuilder(StringArray& a) : m_a(a) {}
 	protected:
-		virtual void doHandle(const OW_String &s)
+		virtual void doHandle(const String &s)
 		{
 			m_a.push_back(s);
 		}
 	private:
-		OW_StringArray& m_a;
+		StringArray& m_a;
 	};
 	
-	OW_StringArray enumNameSpaceE(const OW_ProviderEnvironmentIFCRef& env, const OW_String& ns)
+	StringArray enumNameSpaceE(const ProviderEnvironmentIFCRef& env, const String& ns)
 	{
-		OW_RepositoryIFCRef rep = env->getRepository();
-		OW_StringArray rval;
+		RepositoryIFCRef rep = env->getRepository();
+		StringArray rval;
 		StringArrayBuilder arrayBuilder(rval);
 		namespaceFilterer handler(ns, true, arrayBuilder);
-		rep->enumNameSpace(handler, OW_UserInfo(env->getUserName()));
+		rep->enumNameSpace(handler, UserInfo(env->getUserName()));
 		return rval;
 	}
-
-	void enumNameSpace(const OW_ProviderEnvironmentIFCRef& env, const OW_String& ns, OW_StringResultHandlerIFC& result, bool deep)
+	void enumNameSpace(const ProviderEnvironmentIFCRef& env, const String& ns, StringResultHandlerIFC& result, bool deep)
 	{
-		OW_RepositoryIFCRef rep = env->getRepository();
+		RepositoryIFCRef rep = env->getRepository();
 		namespaceFilterer handler(ns, deep, result);
-		rep->enumNameSpace(handler, OW_UserInfo(env->getUserName()));
+		rep->enumNameSpace(handler, UserInfo(env->getUserName()));
 	}
-
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
+NameSpaceProvider::deleteInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& cop)
 {
-	OW_CIMPropertyArray pra = cop.getKeys();
+	CIMPropertyArray pra = cop.getKeys();
 	if(pra.size() == 0)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
+		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 			"root namespace cannot be deleted");
 	}
-
-	OW_CIMProperty nameProp = cop.getKey(OW_CIMProperty::NAME_PROPERTY);
+	CIMProperty nameProp = cop.getKey(CIMProperty::NAME_PROPERTY);
 	if (!nameProp)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::FAILED,
 			"Name property not found");
 	}
 	
-	OW_CIMValue cv = nameProp.getValue();
+	CIMValue cv = nameProp.getValue();
 	if(!cv)
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::FAILED,
 			"Name property doesn't have a value");
 	}
-	OW_String nsName;
+	String nsName;
 	cv.get(nsName);
-
 	if(nsName.empty())
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
+		OW_THROWCIMMSG(CIMException::FAILED,
 			"Name property contains an empty value");
 	}
-
-	OW_String newns = ns + "/" + nsName;
-
+	String newns = ns + "/" + nsName;
 	// deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
-	OW_StringArray nstodel = enumNameSpaceE(env, newns);
-	OW_UserInfo acl(env->getUserName());
+	StringArray nstodel = enumNameSpaceE(env, newns);
+	UserInfo acl(env->getUserName());
 	for (size_t i = 0; i < nstodel.size(); ++i)
 	{
 		env->getRepository()->deleteNameSpace(nstodel[i], acl);
 	}
-
 	env->getRepository()->deleteNameSpace(newns, acl);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 namespace
 {
-	class CIMInstanceToObjectPath : public OW_CIMInstanceResultHandlerIFC
+	class CIMInstanceToObjectPath : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		CIMInstanceToObjectPath(OW_CIMObjectPathResultHandlerIFC& h,
-			const OW_String& ns_,
-			const OW_String& className_) : m_h(h), cop(className_, ns_) {}
+		CIMInstanceToObjectPath(CIMObjectPathResultHandlerIFC& h,
+			const String& ns_,
+			const String& className_) : m_h(h), cop(className_, ns_) {}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &ci)
+		virtual void doHandle(const CIMInstance &ci)
 		{
 			cop.setKeys(ci.getKeyValuePairs());
 			m_h.handle(cop);
 		}
 	private:
-		OW_CIMObjectPathResultHandlerIFC& m_h;
-		OW_CIMObjectPath cop;
+		CIMObjectPathResultHandlerIFC& m_h;
+		CIMObjectPath cop;
 	};
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::enumInstanceNames(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_CIMClass& cimClass)
+NameSpaceProvider::enumInstanceNames(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMObjectPathResultHandlerIFC& result,
+		const CIMClass& cimClass)
 {
 	CIMInstanceToObjectPath handler(result, ns, className);
 	enumInstances(env, ns, className, handler, E_NOT_LOCAL_ONLY, E_SHALLOW, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, cimClass, cimClass);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-	class NameSpaceEnumBuilder : public OW_StringResultHandlerIFC
+	class NameSpaceEnumBuilder : public StringResultHandlerIFC
 	{
 	public:
-		NameSpaceEnumBuilder(OW_CIMInstanceResultHandlerIFC& handler_,
-			const OW_CIMClass& cimClass_)
+		NameSpaceEnumBuilder(CIMInstanceResultHandlerIFC& handler_,
+			const CIMClass& cimClass_)
 		: handler(handler_)
 		, cimClass(cimClass_)
 		{}
 	protected:
-		virtual void doHandle(const OW_String &s)
+		virtual void doHandle(const String &s)
 		{
-			OW_String nameSpaceName = s;
+			String nameSpaceName = s;
 			size_t ndx = nameSpaceName.lastIndexOf('/');
-			if(ndx != OW_String::npos)
+			if(ndx != String::npos)
 			{
 				nameSpaceName = nameSpaceName.substring(ndx+1);
 			}
-
-			OW_CIMInstance ci = cimClass.newInstance();
-			ci.setProperty("Name", OW_CIMValue(nameSpaceName));
+			CIMInstance ci = cimClass.newInstance();
+			ci.setProperty("Name", CIMValue(nameSpaceName));
 			handler.handle(ci);
 		}
 	private:
-		OW_CIMInstanceResultHandlerIFC& handler;
-		const OW_CIMClass& cimClass;
+		CIMInstanceResultHandlerIFC& handler;
+		const CIMClass& cimClass;
 	};
-
-	class CIMInstanceEnumBuilder : public OW_CIMInstanceResultHandlerIFC
+	class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 	{
 	public:
-		CIMInstanceEnumBuilder(OW_CIMInstanceEnumeration& e) : m_e(e) {}
+		CIMInstanceEnumBuilder(CIMInstanceEnumeration& e) : m_e(e) {}
 	protected:
-		virtual void doHandle(const OW_CIMInstance &ci)
+		virtual void doHandle(const CIMInstance &ci)
 		{
 			m_e.addElement(ci);
 		}
 	private:
-		OW_CIMInstanceEnumeration& m_e;
+		CIMInstanceEnumeration& m_e;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::enumInstances(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_String& className,
-		OW_CIMInstanceResultHandlerIFC& result,
+NameSpaceProvider::enumInstances(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const String& className,
+		CIMInstanceResultHandlerIFC& result,
 		ELocalOnlyFlag localOnly, 
 		EDeepFlag deep, 
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& requestedClass,
-		const OW_CIMClass& cimClass)
+		const StringArray* propertyList,
+		const CIMClass& requestedClass,
+		const CIMClass& cimClass)
 {
 	(void)className; (void)localOnly; (void)deep; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)requestedClass;
 	NameSpaceEnumBuilder handler(result, cimClass);
 	enumNameSpace(env, ns, handler, false);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_NameSpaceProvider::getInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
+CIMInstance
+NameSpaceProvider::getInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
 		EIncludeQualifiersFlag includeQualifiers, 
 		EIncludeClassOriginFlag includeClassOrigin,
-		const OW_StringArray* propertyList, 
-		const OW_CIMClass& cimClass)
+		const StringArray* propertyList, 
+		const CIMClass& cimClass)
 {
 	(void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
-	OW_CIMProperty cp = instanceName.getKey(OW_CIMProperty::NAME_PROPERTY);
-	OW_CIMValue nsVal(OW_CIMNULL);
+	CIMProperty cp = instanceName.getKey(CIMProperty::NAME_PROPERTY);
+	CIMValue nsVal(CIMNULL);
 	if (cp)
 	{
 		nsVal = cp.getValue();
 	}
-
-	if (nsVal && nsVal.getType() == OW_CIMDataType::STRING)
+	if (nsVal && nsVal.getType() == CIMDataType::STRING)
 	{
-		OW_CIMInstanceEnumeration cie;
+		CIMInstanceEnumeration cie;
 		CIMInstanceEnumBuilder handler(cie);
 		enumInstances(env, ns, instanceName.getObjectName(), handler,
 			E_NOT_LOCAL_ONLY, E_SHALLOW, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, cimClass,
@@ -305,18 +287,18 @@ OW_NameSpaceProvider::getInstance(
 		
 		while (cie.hasMoreElements())
 		{
-			OW_CIMInstance ci = cie.nextElement();
+			CIMInstance ci = cie.nextElement();
 			if (ci)
 			{
-				OW_CIMProperty cp = ci.getProperty(OW_CIMProperty::NAME_PROPERTY);
+				CIMProperty cp = ci.getProperty(CIMProperty::NAME_PROPERTY);
 				if (cp)
 				{
-					OW_CIMValue v = cp.getValue();
-					if (v && v.getType() == OW_CIMDataType::STRING)
+					CIMValue v = cp.getValue();
+					if (v && v.getType() == CIMDataType::STRING)
 					{
-						OW_String vval;
+						String vval;
 						v.get(vval);
-						OW_String nsValStr;
+						String nsValStr;
 						nsVal.get(nsValStr);
 						if (vval == nsValStr)
 						{
@@ -327,72 +309,63 @@ OW_NameSpaceProvider::getInstance(
 			}
 		}
 	}
-
-	OW_THROWCIM(OW_CIMException::NOT_FOUND);
+	OW_THROWCIM(CIMException::NOT_FOUND);
 }
-
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPath
-OW_NameSpaceProvider::createInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& cimInstance)
+CIMObjectPath
+NameSpaceProvider::createInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& cimInstance)
 {
-	OW_CIMProperty cp = cimInstance.getProperty(OW_CIMProperty::NAME_PROPERTY);
+	CIMProperty cp = cimInstance.getProperty(CIMProperty::NAME_PROPERTY);
 	if(!cp)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
+		OW_THROWCIMMSG(CIMException::INVALID_NAMESPACE,
 			"Instance \"Name\" property is not set");
 	}
-
-	OW_CIMValue cv = cp.getValue();
-	OW_String newName;
+	CIMValue cv = cp.getValue();
+	String newName;
 	cv.get(newName);
-
 	newName = newName.substring(newName.indexOf('=') + 1);
-	OW_String newNameSpace = ns;
+	String newNameSpace = ns;
 	newNameSpace += "/";
 	newNameSpace += newName;
-
-	env->getLogger()->logDebug(format("OW_NameSpaceProvider::createInstance calling"
+	env->getLogger()->logDebug(format("NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
-
-	env->getRepository()->createNameSpace(newNameSpace, OW_UserInfo(env->getUserName()));
-
-	return OW_CIMObjectPath(ns, cimInstance);
+	env->getRepository()->createNameSpace(newNameSpace, UserInfo(env->getUserName()));
+	return CIMObjectPath(ns, cimInstance);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::modifyInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		const OW_CIMInstance& previousInstance,
+NameSpaceProvider::modifyInstance(
+		const ProviderEnvironmentIFCRef& env,
+		const String& ns,
+		const CIMInstance& modifiedInstance,
+		const CIMInstance& previousInstance,
 		EIncludeQualifiersFlag includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_CIMClass& theClass)
+		const StringArray* propertyList,
+		const CIMClass& theClass)
 {
 	(void)env; (void)ns; (void)modifiedInstance; (void)previousInstance; (void)includeQualifiers; (void)propertyList; (void)theClass;
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
+	OW_THROWCIMMSG(CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::initialize(const OW_ProviderEnvironmentIFCRef& env)
+NameSpaceProvider::initialize(const ProviderEnvironmentIFCRef& env)
 {
-	env->getLogger()->logDebug("OW_NameSpaceProvider initialize called");
+	env->getLogger()->logDebug("NameSpaceProvider initialize called");
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NameSpaceProvider::getInstanceProviderInfo(OW_InstanceProviderInfo& info)
+NameSpaceProvider::getInstanceProviderInfo(InstanceProviderInfo& info)
 {
 	info.addInstrumentedClass("__Namespace");
 }
 
-OW_PROVIDERFACTORY(OW_NameSpaceProvider, owprovinstOW_NameSpace);
+} // end namespace OpenWBEM
 
+OW_PROVIDERFACTORY(OpenWBEM::NameSpaceProvider, owprovinstOW_NameSpace);
 

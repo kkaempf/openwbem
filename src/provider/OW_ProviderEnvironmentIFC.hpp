@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_PROVIDER_ENVIRONMENT_HPP_
 #define OW_PROVIDER_ENVIRONMENT_HPP_
-
 #include "OW_config.h"
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
@@ -37,28 +36,29 @@
 #include "OW_Reference.hpp"
 #include "OW_RepositoryIFC.hpp"
 
-class OW_ProviderEnvironmentIFC
+namespace OpenWBEM
+{
+
+class ProviderEnvironmentIFC
 {
 public:
-	virtual ~OW_ProviderEnvironmentIFC();
-
+	virtual ~ProviderEnvironmentIFC();
 	// This function returns a regular cimom handle that does access checking and may call providers.
-	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const = 0;
-
-	// This function returns a cimom handle that directly accesses the repository (OW_CIMServer is bypassed).
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const = 0;
+	// This function returns a cimom handle that directly accesses the repository (CIMServer is bypassed).
 	// no providers will be called.  This function should only be called if getCIMOMHandle()
 	// is insufficent.
-	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
-
+	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
 	// This function returns a reference to the repository.  This function should only
 	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
-	virtual OW_RepositoryIFCRef getRepository() const = 0;
-
-	virtual OW_LoggerRef getLogger() const = 0;
-	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const = 0;
-    virtual OW_String getUserName() const = 0;
+	virtual RepositoryIFCRef getRepository() const = 0;
+	virtual LoggerRef getLogger() const = 0;
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
+    virtual String getUserName() const = 0;
 };
-
-typedef OW_Reference<OW_ProviderEnvironmentIFC> OW_ProviderEnvironmentIFCRef;
+typedef Reference<ProviderEnvironmentIFC> ProviderEnvironmentIFCRef;
 									
+
+} // end namespace OpenWBEM
+
 #endif									

@@ -38,6 +38,8 @@
 
 #include <iostream>
 
+using namespace OpenWBEM;
+
 void OW_UUIDTestCases::setUp()
 {
 }
@@ -51,10 +53,10 @@ void OW_UUIDTestCases::testUnique()
 	// Create 10000, and then make sure they're all different.  
 	// More would be better, but we need to keep the tests fast.
 	const int NUM = 100000;
-	OW_Array<OW_UUID> uuids;
+	Array<UUID> uuids;
 	uuids.reserve(NUM); 
 	for (int i = 0; i < NUM; ++i)
-		uuids.push_back(OW_UUID());
+		uuids.push_back(UUID());
 
 	std::sort(uuids.begin(), uuids.end());
 	for (int i = 0; i < NUM-1; ++i)
@@ -65,31 +67,31 @@ void OW_UUIDTestCases::testUnique()
 
 void OW_UUIDTestCases::testStringConversion()
 {
-	OW_UUID uuid1;
-	OW_String suuid1(uuid1.toString());
-	OW_UUID uuid1_2(suuid1);
+	UUID uuid1;
+	String suuid1(uuid1.toString());
+	UUID uuid1_2(suuid1);
 	unitAssert(uuid1 == uuid1_2);
 
 	// test round-tripping
-	OW_String suuid1_2(uuid1_2.toString());
+	String suuid1_2(uuid1_2.toString());
 	unitAssert(suuid1 == suuid1_2);
 
 	// construct from invalid make sure it throws.
-	unitAssertThrows(OW_UUID("too short"));
+	unitAssertThrows(UUID("too short"));
 	// wrong format
-	unitAssertThrows(OW_UUID("6ba7b810-9dad-11d1-80b40-0c04fd430c8"));
+	unitAssertThrows(UUID("6ba7b810-9dad-11d1-80b40-0c04fd430c8"));
 	// non-hex value
-	unitAssertThrows(OW_UUID("6ba7b810-9dad-11d1-80b4-X0c04fd430c8"));
+	unitAssertThrows(UUID("6ba7b810-9dad-11d1-80b4-X0c04fd430c8"));
 
 	// construct 2 from the same string, make sure they're equal
-	unitAssert(OW_UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8") ==
-		OW_UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"));
-	unitAssert(OW_UUID("11111111-1111-1111-1111-111111111111") !=
-		OW_UUID("22222222-2222-2222-2222-222222222222"));
+	unitAssert(UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8") ==
+		UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"));
+	unitAssert(UUID("11111111-1111-1111-1111-111111111111") !=
+		UUID("22222222-2222-2222-2222-222222222222"));
 
 	// copy 1 and make sure it outputs the same string
-	OW_UUID uuid3;
-	OW_UUID uuid3_2(uuid3);
+	UUID uuid3;
+	UUID uuid3_2(uuid3);
 	unitAssert(uuid3.toString() == uuid3_2.toString());
 }
 

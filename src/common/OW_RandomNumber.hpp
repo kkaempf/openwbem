@@ -27,28 +27,27 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
-
 #ifndef OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
 #define OW_RANDOMNUMBER_HPP_INCLUDE_GUARD_
-
 #include "OW_config.h"
 #include "OW_Types.hpp"
-
 #include <stdlib.h> // for RAND_MAX
 
-class OW_RandomNumber
+namespace OpenWBEM
+{
+
+class RandomNumber
 {
 public:
 	// Precondition: lowVal < highVal
-	OW_RandomNumber(OW_Int32 lowVal = 0, OW_Int32 highVal = RAND_MAX);
-	OW_Int32 getNextNumber();
+	RandomNumber(Int32 lowVal = 0, Int32 highVal = RAND_MAX);
+	Int32 getNextNumber();
 	
 private:
-	OW_Int32 m_lowVal;
-	OW_Int32 m_highVal;
+	Int32 m_lowVal;
+	Int32 m_highVal;
 };
 
+} // end namespace OpenWBEM
+
 #endif
-
-

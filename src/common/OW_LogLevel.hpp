@@ -27,18 +27,20 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_LOGLEVEL_HPP_
 #define OW_LOGLEVEL_HPP_
-
 #include "OW_config.h"
 
-enum OW_LogLevel
+namespace OpenWBEM
+{
+
+enum LogLevel
 {
 	ErrorLevel,
 	CustInfoLevel,
 	DebugLevel
 };
 
+} // end namespace OpenWBEM
 
 #endif // OW_LOGLEVEL_HPP_

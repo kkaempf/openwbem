@@ -27,7 +27,6 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #include "OW_config.h"
 #include "OW_CIMQualifier.hpp"
 #include "OW_StringBuffer.hpp"
@@ -39,157 +38,139 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMFlavor.hpp"
 
+namespace OpenWBEM
+{
+
 using std::istream;
 using std::ostream;
-
 //////////////////////////////////////////////////////////////////////////////
-struct OW_CIMQualifier::QUALData
+struct CIMQualifier::QUALData
 {
 	QUALData() 
-		: m_qualifierValue(OW_CIMNULL)
+		: m_qualifierValue(CIMNULL)
 		, m_propagated(false) 
 	{}
-
-	OW_String m_name;
-	OW_CIMValue m_qualifierValue;
-	OW_CIMQualifierType m_qualifierType;
-	OW_Bool m_propagated;
-	OW_CIMFlavorArray m_flavors;
-
+	String m_name;
+	CIMValue m_qualifierValue;
+	CIMQualifierType m_qualifierType;
+	Bool m_propagated;
+	CIMFlavorArray m_flavors;
     QUALData* clone() const { return new QUALData(*this); }
 };
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMQualifier::QUALData& x, const OW_CIMQualifier::QUALData& y)
+bool operator<(const CIMQualifier::QUALData& x, const CIMQualifier::QUALData& y)
 {
-	return OW_StrictWeakOrdering(
+	return StrictWeakOrdering(
 		x.m_name, y.m_name,
 		x.m_qualifierValue, y.m_qualifierValue,
 		x.m_qualifierType, y.m_qualifierType,
 		x.m_propagated, y.m_propagated,
 		x.m_flavors, y.m_flavors);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier() :
-	OW_CIMElement(), m_pdata(new QUALData)
+CIMQualifier::CIMQualifier() :
+	CIMElement(), m_pdata(new QUALData)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(OW_CIMNULL_t) :
-	OW_CIMElement(), m_pdata(0)
+CIMQualifier::CIMQualifier(CIMNULL_t) :
+	CIMElement(), m_pdata(0)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(const OW_String& name) :
-	OW_CIMElement(), m_pdata(new QUALData)
+CIMQualifier::CIMQualifier(const String& name) :
+	CIMElement(), m_pdata(new QUALData)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(const char* name) :
-	OW_CIMElement(), m_pdata(new QUALData)
+CIMQualifier::CIMQualifier(const char* name) :
+	CIMElement(), m_pdata(new QUALData)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(const OW_CIMQualifierType& cgt) :
-	OW_CIMElement(), m_pdata(new QUALData)
+CIMQualifier::CIMQualifier(const CIMQualifierType& cgt) :
+	CIMElement(), m_pdata(new QUALData)
 {
 	m_pdata->m_name = cgt.getName();
 	m_pdata->m_qualifierType = cgt;
 	m_pdata->m_qualifierValue = cgt.getDefaultValue();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::OW_CIMQualifier(const OW_CIMQualifier& x) :
-	OW_CIMElement(), m_pdata(x.m_pdata)
+CIMQualifier::CIMQualifier(const CIMQualifier& x) :
+	CIMElement(), m_pdata(x.m_pdata)
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::~OW_CIMQualifier()
+CIMQualifier::~CIMQualifier()
 {
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMQualifier::setNull()
+CIMQualifier::setNull()
 {
 	m_pdata = NULL;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier&
-OW_CIMQualifier::operator= (const OW_CIMQualifier& x)
+CIMQualifier&
+CIMQualifier::operator= (const CIMQualifier& x)
 {
 	m_pdata = x.m_pdata;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMQualifier::isKeyQualifier() const
+CIMQualifier::isKeyQualifier() const
 {
-	return m_pdata->m_name.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_KEY);
+	return m_pdata->m_name.equalsIgnoreCase(CIMQualifier::CIM_QUAL_KEY);
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMQualifier::isAssociationQualifier() const
+CIMQualifier::isAssociationQualifier() const
 {
 	return m_pdata->m_name.equalsIgnoreCase(
-		OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
+		CIMQualifier::CIM_QUAL_ASSOCIATION);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMQualifier::getValue() const
+CIMValue
+CIMQualifier::getValue() const
 {
 	return m_pdata->m_qualifierValue;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMQualifier::getValueT() const
+CIMValue
+CIMQualifier::getValueT() const
 {
 	if (!m_pdata->m_qualifierValue)
 	{
-		OW_THROW(OW_NULLValueException, "");
+		OW_THROW(NULLValueException, "");
 	}
 	return m_pdata->m_qualifierValue;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier&
-OW_CIMQualifier::setValue(const OW_CIMValue& value)
+CIMQualifier&
+CIMQualifier::setValue(const CIMValue& value)
 {
 	m_pdata->m_qualifierValue = value;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier&
-OW_CIMQualifier::setDefaults(const OW_CIMQualifierType& qtype)
+CIMQualifier&
+CIMQualifier::setDefaults(const CIMQualifierType& qtype)
 {
 	m_pdata->m_qualifierType = qtype;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_CIMQualifier::getDefaults() const
+CIMQualifierType
+CIMQualifier::getDefaults() const
 {
 	return m_pdata->m_qualifierType;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMQualifier::hasFlavor(const OW_CIMFlavor& flavor) const
+CIMQualifier::hasFlavor(const CIMFlavor& flavor) const
 {
 	if(flavor)
 	{
@@ -202,18 +183,15 @@ OW_CIMQualifier::hasFlavor(const OW_CIMFlavor& flavor) const
 			}
 		}
 	}
-
 	return(false);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier&
-OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
+CIMQualifier&
+CIMQualifier::addFlavor(const CIMFlavor& flavor)
 {
 	if(flavor)
 	{
-		OW_Int32 flavorValue = flavor.getFlavor();
-
+		Int32 flavorValue = flavor.getFlavor();
 		//
 		// Don't add it if its already present
 		//
@@ -225,33 +203,28 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 				return *this;
 			}
 		}
-
 		switch(flavorValue)
 		{
-			case OW_CIMFlavor::ENABLEOVERRIDE:
-				removeFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
+			case CIMFlavor::ENABLEOVERRIDE:
+				removeFlavor(CIMFlavor::DISABLEOVERRIDE);
 				break;
-			case OW_CIMFlavor::DISABLEOVERRIDE:
-				removeFlavor(OW_CIMFlavor::ENABLEOVERRIDE);
+			case CIMFlavor::DISABLEOVERRIDE:
+				removeFlavor(CIMFlavor::ENABLEOVERRIDE);
 				break;
-
-			case OW_CIMFlavor::RESTRICTED:
-				removeFlavor(OW_CIMFlavor::TOSUBCLASS);
+			case CIMFlavor::RESTRICTED:
+				removeFlavor(CIMFlavor::TOSUBCLASS);
 				break;
-
-			case OW_CIMFlavor::TOSUBCLASS:
-				removeFlavor(OW_CIMFlavor::RESTRICTED);
+			case CIMFlavor::TOSUBCLASS:
+				removeFlavor(CIMFlavor::RESTRICTED);
 				break;
 		}
-
 		m_pdata->m_flavors.append(flavor);
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier&
-OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
+CIMQualifier&
+CIMQualifier::removeFlavor(Int32 flavor)
 {
 	for(size_t i = 0; i < m_pdata->m_flavors.size(); i++)
 	{
@@ -262,127 +235,108 @@ OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 	}
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMQualifier::hasValue() const
+CIMQualifier::hasValue() const
 {
 	return (m_pdata->m_qualifierValue) ? true : false;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMQualifier::equals(const OW_CIMQualifier& arg) const
+CIMQualifier::equals(const CIMQualifier& arg) const
 {
 	return m_pdata->m_name.equals(arg.getName());
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMFlavorArray
-OW_CIMQualifier::getFlavor() const
+CIMFlavorArray
+CIMQualifier::getFlavor() const
 {
 	return m_pdata->m_flavors;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier&
-OW_CIMQualifier::setPropagated(bool propagated)
+CIMQualifier&
+CIMQualifier::setPropagated(bool propagated)
 {
 	m_pdata->m_propagated = propagated;
 	return *this;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_CIMQualifier::getPropagated() const
+CIMQualifier::getPropagated() const
 {
 	return m_pdata->m_propagated;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMQualifier::getName() const
+String
+CIMQualifier::getName() const
 {
 	return m_pdata->m_name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMQualifier::setName(const OW_String& name)
+CIMQualifier::setName(const String& name)
 {
 	m_pdata->m_name = name;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMQualifier::readObject(istream &istrm)
+CIMQualifier::readObject(istream &istrm)
 {
-	OW_String name;
-	OW_CIMValue qualifierValue(OW_CIMNULL);
-	OW_CIMQualifierType qualifierType(OW_CIMNULL);
-	OW_Bool propagated;
-	OW_CIMFlavorArray flavors;
-	OW_Bool isValue;
-
-	OW_CIMBase::readSig( istrm, OW_CIMQUALIFIERSIG );
+	String name;
+	CIMValue qualifierValue(CIMNULL);
+	CIMQualifierType qualifierType(CIMNULL);
+	Bool propagated;
+	CIMFlavorArray flavors;
+	Bool isValue;
+	CIMBase::readSig( istrm, OW_CIMQUALIFIERSIG );
 	name.readObject(istrm);
-
 	isValue.readObject(istrm);
 	if(isValue)
 	{
 		qualifierValue.readObject(istrm);
 	}
-
 	qualifierType.readObject(istrm);
 	propagated.readObject(istrm);
-	OW_BinarySerialization::readArray(istrm, flavors);
-
+	BinarySerialization::readArray(istrm, flavors);
 	if(m_pdata.isNull())
 	{
 		m_pdata = new QUALData;
 	}
-
 	m_pdata->m_name = name;
 	m_pdata->m_qualifierValue = qualifierValue;
 	m_pdata->m_qualifierType = qualifierType;
 	m_pdata->m_propagated = propagated;
 	m_pdata->m_flavors = flavors;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMQualifier::writeObject(ostream &ostrm) const
+CIMQualifier::writeObject(ostream &ostrm) const
 {
-	OW_CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG);
+	CIMBase::writeSig(ostrm, OW_CIMQUALIFIERSIG);
 	m_pdata->m_name.writeObject(ostrm);
-
-    OW_CIMValue qv = m_pdata->m_qualifierValue;
+    CIMValue qv = m_pdata->m_qualifierValue;
 	if(!qv && m_pdata->m_qualifierType)
 	{
 		qv = m_pdata->m_qualifierType.getDefaultValue();
 	}
-
 	if(m_pdata->m_qualifierValue)
 	{
-		OW_Bool(true).writeObject(ostrm);
+		Bool(true).writeObject(ostrm);
 		qv.writeObject(ostrm);
 	}
 	else
 	{
-		OW_Bool(false).writeObject(ostrm);
+		Bool(false).writeObject(ostrm);
 	}
-
 	m_pdata->m_qualifierType.writeObject(ostrm);
 	m_pdata->m_propagated.writeObject(ostrm);
-	OW_BinarySerialization::writeArray(ostrm, m_pdata->m_flavors);
+	BinarySerialization::writeArray(ostrm, m_pdata->m_flavors);
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMQualifier::toMOF() const
+String
+CIMQualifier::toMOF() const
 {
-	OW_StringBuffer rv;
-
+	StringBuffer rv;
 	rv += m_pdata->m_name;
 	if(m_pdata->m_qualifierValue)
 	{
@@ -392,74 +346,72 @@ OW_CIMQualifier::toMOF() const
 	}
 	return rv.releaseString();
 }
-
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMQualifier::toString() const
+String
+CIMQualifier::toString() const
 {
-	OW_String rv = "OW_CIMQualifier(" + m_pdata->m_name + ')';
+	String rv = "CIMQualifier(" + m_pdata->m_name + ')';
 	return rv;
 }
-
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_CIMQualifier
-OW_CIMQualifier::createKeyQualifier()
+CIMQualifier
+CIMQualifier::createKeyQualifier()
 {
-	OW_CIMQualifier cq(OW_CIMQualifier::CIM_QUAL_KEY);
-	cq.setValue(OW_CIMValue(OW_Bool(true)));
+	CIMQualifier cq(CIMQualifier::CIM_QUAL_KEY);
+	cq.setValue(CIMValue(Bool(true)));
 	return cq;
 }
-
 //////////////////////////////////////////////////////////////////////////////
-bool operator<(const OW_CIMQualifier& x, const OW_CIMQualifier& y)
+bool operator<(const CIMQualifier& x, const CIMQualifier& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
-
 // Meta qualifiers
-const char* const OW_CIMQualifier::CIM_QUAL_ASSOCIATION		= "Association";
-const char* const OW_CIMQualifier::CIM_QUAL_INDICATION		= "Indication";
-
+const char* const CIMQualifier::CIM_QUAL_ASSOCIATION		= "Association";
+const char* const CIMQualifier::CIM_QUAL_INDICATION		= "Indication";
 // Standard qualifiers
-const char* const OW_CIMQualifier::CIM_QUAL_ABSTRACT 		= "abstract";
-const char* const OW_CIMQualifier::CIM_QUAL_AGGREGATE 		= "aggregate";
-const char* const OW_CIMQualifier::CIM_QUAL_AGGREGATION 	= "aggregation";
-const char* const OW_CIMQualifier::CIM_QUAL_ALIAS 			= "alias";
-const char* const OW_CIMQualifier::CIM_QUAL_ARRAYTYPE 		= "arraytype";
-const char* const OW_CIMQualifier::CIM_QUAL_BITMAP 			= "bitmap";
-const char* const OW_CIMQualifier::CIM_QUAL_BITVALUES 		= "bitvalues";
-const char* const OW_CIMQualifier::CIM_QUAL_COUNTER 		= "counter";
-const char* const OW_CIMQualifier::CIM_QUAL_DESCRIPTION 	= "description";
-const char* const OW_CIMQualifier::CIM_QUAL_DISPLAYNAME 	= "displayname";
-const char* const OW_CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT 	= "embeddedobject";
-const char* const OW_CIMQualifier::CIM_QUAL_GAUGE 			= "gauge";
-const char* const OW_CIMQualifier::CIM_QUAL_IN 				= "in";
-const char* const OW_CIMQualifier::CIM_QUAL_KEY 			= "key";
-const char* const OW_CIMQualifier::CIM_QUAL_MAPPINGSTRINGS	= "mappingstrings";
-const char* const OW_CIMQualifier::CIM_QUAL_MAX 			= "max";
-const char* const OW_CIMQualifier::CIM_QUAL_MAXLEN 			= "maxlen";
-const char* const OW_CIMQualifier::CIM_QUAL_MAXVALUE 		= "maxvalue";
-const char* const OW_CIMQualifier::CIM_QUAL_MIN 			= "min";
-const char* const OW_CIMQualifier::CIM_QUAL_MINVALUE 		= "minvalue";
-const char* const OW_CIMQualifier::CIM_QUAL_NONLOCAL 		= "nonlocal";
-const char* const OW_CIMQualifier::CIM_QUAL_NONLOCALTYPE 	= "nonlocaltype";
-const char* const OW_CIMQualifier::CIM_QUAL_NULLVALUE 		= "nullvalue";
-const char* const OW_CIMQualifier::CIM_QUAL_OUT 			= "out";
-const char* const OW_CIMQualifier::CIM_QUAL_OVERRIDE 		= "override";
-const char* const OW_CIMQualifier::CIM_QUAL_PROPAGATED 		= "propagated";
-const char* const OW_CIMQualifier::CIM_QUAL_READ 			= "read";
-const char* const OW_CIMQualifier::CIM_QUAL_REQUIRED 		= "required";
-const char* const OW_CIMQualifier::CIM_QUAL_REVISION 		= "revision";
-const char* const OW_CIMQualifier::CIM_QUAL_SCHEMA 			= "schema";
-const char* const OW_CIMQualifier::CIM_QUAL_SOURCE 			= "source";
-const char* const OW_CIMQualifier::CIM_QUAL_SOURCETYPE 		= "sourcetype";
-const char* const OW_CIMQualifier::CIM_QUAL_STATIC 			= "static";
-const char* const OW_CIMQualifier::CIM_QUAL_TERMINAL 		= "terminal";
-const char* const OW_CIMQualifier::CIM_QUAL_UNITS 			= "units";
-const char* const OW_CIMQualifier::CIM_QUAL_VALUEMAP 		= "valuemap";
-const char* const OW_CIMQualifier::CIM_QUAL_VALUES 			= "values";
-const char* const OW_CIMQualifier::CIM_QUAL_VERSION 		= "version";
-const char* const OW_CIMQualifier::CIM_QUAL_WEAK 			= "weak";
-const char* const OW_CIMQualifier::CIM_QUAL_WRITE 			= "write";
-const char* const OW_CIMQualifier::CIM_QUAL_PROVIDER		= "provider";
+const char* const CIMQualifier::CIM_QUAL_ABSTRACT 		= "abstract";
+const char* const CIMQualifier::CIM_QUAL_AGGREGATE 		= "aggregate";
+const char* const CIMQualifier::CIM_QUAL_AGGREGATION 	= "aggregation";
+const char* const CIMQualifier::CIM_QUAL_ALIAS 			= "alias";
+const char* const CIMQualifier::CIM_QUAL_ARRAYTYPE 		= "arraytype";
+const char* const CIMQualifier::CIM_QUAL_BITMAP 			= "bitmap";
+const char* const CIMQualifier::CIM_QUAL_BITVALUES 		= "bitvalues";
+const char* const CIMQualifier::CIM_QUAL_COUNTER 		= "counter";
+const char* const CIMQualifier::CIM_QUAL_DESCRIPTION 	= "description";
+const char* const CIMQualifier::CIM_QUAL_DISPLAYNAME 	= "displayname";
+const char* const CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT 	= "embeddedobject";
+const char* const CIMQualifier::CIM_QUAL_GAUGE 			= "gauge";
+const char* const CIMQualifier::CIM_QUAL_IN 				= "in";
+const char* const CIMQualifier::CIM_QUAL_KEY 			= "key";
+const char* const CIMQualifier::CIM_QUAL_MAPPINGSTRINGS	= "mappingstrings";
+const char* const CIMQualifier::CIM_QUAL_MAX 			= "max";
+const char* const CIMQualifier::CIM_QUAL_MAXLEN 			= "maxlen";
+const char* const CIMQualifier::CIM_QUAL_MAXVALUE 		= "maxvalue";
+const char* const CIMQualifier::CIM_QUAL_MIN 			= "min";
+const char* const CIMQualifier::CIM_QUAL_MINVALUE 		= "minvalue";
+const char* const CIMQualifier::CIM_QUAL_NONLOCAL 		= "nonlocal";
+const char* const CIMQualifier::CIM_QUAL_NONLOCALTYPE 	= "nonlocaltype";
+const char* const CIMQualifier::CIM_QUAL_NULLVALUE 		= "nullvalue";
+const char* const CIMQualifier::CIM_QUAL_OUT 			= "out";
+const char* const CIMQualifier::CIM_QUAL_OVERRIDE 		= "override";
+const char* const CIMQualifier::CIM_QUAL_PROPAGATED 		= "propagated";
+const char* const CIMQualifier::CIM_QUAL_READ 			= "read";
+const char* const CIMQualifier::CIM_QUAL_REQUIRED 		= "required";
+const char* const CIMQualifier::CIM_QUAL_REVISION 		= "revision";
+const char* const CIMQualifier::CIM_QUAL_SCHEMA 			= "schema";
+const char* const CIMQualifier::CIM_QUAL_SOURCE 			= "source";
+const char* const CIMQualifier::CIM_QUAL_SOURCETYPE 		= "sourcetype";
+const char* const CIMQualifier::CIM_QUAL_STATIC 			= "static";
+const char* const CIMQualifier::CIM_QUAL_TERMINAL 		= "terminal";
+const char* const CIMQualifier::CIM_QUAL_UNITS 			= "units";
+const char* const CIMQualifier::CIM_QUAL_VALUEMAP 		= "valuemap";
+const char* const CIMQualifier::CIM_QUAL_VALUES 			= "values";
+const char* const CIMQualifier::CIM_QUAL_VERSION 		= "version";
+const char* const CIMQualifier::CIM_QUAL_WEAK 			= "weak";
+const char* const CIMQualifier::CIM_QUAL_WRITE 			= "write";
+const char* const CIMQualifier::CIM_QUAL_PROVIDER		= "provider";
+
+} // end namespace OpenWBEM
+

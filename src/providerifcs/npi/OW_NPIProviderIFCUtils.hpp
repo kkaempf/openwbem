@@ -27,24 +27,24 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-
 #ifndef OW_NPI_PROFIDER_IFC_UTILS_HPP_
 #define OW_NPI_PROFIDER_IFC_UTILS_HPP_
-
 #include "OW_config.h"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "NPIExternal.hpp"
 
+namespace OpenWBEM
+{
 
-class OW_NPIVectorFreer
+class NPIVectorFreer
 {
 public:
-	OW_NPIVectorFreer(::Vector v) : m_vector(v)
+	NPIVectorFreer(::Vector v) : m_vector(v)
 	{
 	}
-	~OW_NPIVectorFreer()
+	~NPIVectorFreer()
 	{
 		int n = ::VectorSize(0,m_vector);
 		for (int i=0; i < n; i++)
@@ -56,18 +56,17 @@ public:
 private:
 	::Vector m_vector;
 };
-
-class OW_NPIHandleFreer
+class NPIHandleFreer
 {
 public:
-	OW_NPIHandleFreer(::NPIHandle& h) : m_handle(h)
+	NPIHandleFreer(::NPIHandle& h) : m_handle(h)
 	{
 //printf("Garbage array created\n");
 	}
-	~OW_NPIHandleFreer()
+	~NPIHandleFreer()
 	{
 	   // delete perlcontext garbage first
-	   OW_UInt32 sz = ((NPIContext *)(m_handle.context))->garbage.size();
+	   UInt32 sz = ((NPIContext *)(m_handle.context))->garbage.size();
 //printf("Garbage array size is %x\n", sz);
 	   for (int i= sz-1; i>=0; i--)
 	   {
@@ -81,26 +80,26 @@ public:
 	            delete(static_cast<charVect *>(obj_ptr));
 	            break;
 	         case CIM_VALUE:
-	            delete(static_cast<OW_CIMValue *>(obj_ptr));
+	            delete(static_cast<CIMValue *>(obj_ptr));
 	            break;
 	         case CIM_QUALIFIER:
-	          //delete(static_cast<OW_CIMQualifier *>(
+	          //delete(static_cast<CIMQualifier *>(
 	          //       ((NPIContext *)(m_handle.context))->garbage[i]) );
 	            break;
 	         case CIM_PARAMVALUE:
-	            delete(static_cast<OW_CIMParamValue *>(obj_ptr));
+	            delete(static_cast<CIMParamValue *>(obj_ptr));
 	            break;
 	         case CIM_PROPERTY:
-	            delete(static_cast<OW_CIMProperty *>(obj_ptr));
+	            delete(static_cast<CIMProperty *>(obj_ptr));
 	            break;
 	         case CIM_INSTANCE:
-	            delete(static_cast<OW_CIMInstance *>(obj_ptr));
+	            delete(static_cast<CIMInstance *>(obj_ptr));
 	            break;
 	         case CIM_OBJECTPATH:
-	            delete(static_cast<OW_CIMObjectPath *>(obj_ptr));
+	            delete(static_cast<CIMObjectPath *>(obj_ptr));
 	            break;
 	         case CIM_CLASS:
-	            delete(static_cast<OW_CIMClass *>(obj_ptr));
+	            delete(static_cast<CIMClass *>(obj_ptr));
 	            break;
 	         default:
 	            break;
@@ -108,7 +107,6 @@ public:
 	   }
 	   ((NPIContext *)(m_handle.context))->garbage.clear();
 	   ((NPIContext *)(m_handle.context))->garbageType.clear();
-
 		if (m_handle.providerError != NULL)
 		{
 			free(const_cast<void*>(static_cast<const void*>(m_handle.providerError)));
@@ -118,5 +116,6 @@ private:
 	::NPIHandle& m_handle;
 };
 
+} // end namespace OpenWBEM
 
 #endif
