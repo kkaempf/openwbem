@@ -85,6 +85,14 @@ mv $RPM_BUILD_ROOT/%{prefix}/man/* $RPM_BUILD_ROOT/%{_mandir}/
 
 #rm -f $RPM_BUILD_ROOT/%{prefix}/lib/perl5/*/*/perllocal.pod
 
+# Load the schema. 
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RPM_BUILD_ROOT/%{prefix}/lib \
+    $RPM_BUILD_ROOT/%{prefix}/bin/owmofc -c -n root/cimv2 \
+    -d $RPM_BUILD_ROOT/%{localstatedir}/openwbem \
+    schemas/cim28/CIM_Schema28.mof mof/OpenWBEM_Interop.mof \
+    mof/OpenWBEM_Acl1.0.mof
+
+
 %Clean
 %{__rm} -rf $RPM_BUILD_ROOT
 
