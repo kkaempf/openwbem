@@ -30,44 +30,16 @@
 
 #include "OW_config.h"										
 #include "OW_ClientCIMOMHandle.hpp"
-#include "OW_CIMNameSpace.hpp"
-#include "OW_CIMException.hpp"
-#include "OW_String.hpp"
-#include "OW_CIMClass.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_CIMQualifier.hpp"
-#include "OW_Format.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 
 
-static OW_CIMClass nsClass(OW_CIMNULL);
-
-//////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_ClientCIMOMHandle::prepareNamespace(OW_String ns)
-{
-	while (!ns.empty() && ns[0] == '/')
-	{
-		ns = ns.substring(1);
-	}
-
-    // translate \\ to /
-    for (size_t i = 0; i < ns.length(); ++i )
-    {
-        if (ns[i] == '\\')
-        {
-            ns[i] = '/';
-        }
-    }
-    return ns;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns_)
+OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 {
+    OW_CIMNameSpaceUtils::create__Namespace(OW_CIMOMHandleIFCRef(this, true), ns);
+    /*
     OW_String ns(prepareNamespace(ns_));
 
 	int index = ns.lastIndexOf('/');
@@ -98,12 +70,15 @@ OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns_)
 	cimInstance.setProperty("Name", cv);
 
 	createInstance(parentPath, cimInstance);
+    */
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
 {
+    OW_CIMNameSpaceUtils::delete__Namespace(OW_CIMOMHandleIFCRef(this, true), ns_);
+    /*
     OW_String ns(prepareNamespace(ns_));
 
 	int index = ns.lastIndexOf('/');
@@ -125,52 +100,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
 
 	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, v);
 	deleteInstance(parentPath, path);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-static void
-	enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
-	const OW_String& ns,
-	OW_StringResultHandlerIFC& result, OW_Bool deep)
-{
-	// can't use the callback version of enumInstances, because the recursion
-	// throws a wrench in the works.  Each CIM Method call has to finish
-	// before another one can begin.
-	OW_CIMInstanceEnumeration en = hdl->enumInstancesE(ns,
-		OW_String(OW_CIMClass::NAMESPACECLASS), false, true);
-	while (en.hasMoreElements())
-	{
-		OW_CIMInstance i = en.nextElement();
-		OW_CIMProperty nameProp;
-
-		OW_CIMPropertyArray keys = i.getKeyValuePairs();
-		if (keys.size() == 1)
-		{
-			nameProp = keys[0];
-		}
-		else
-		{
-			for (size_t i = 0; i < keys.size(); i++)
-			{
-				if (keys[i].getName().equalsIgnoreCase("Name"))
-				{
-					nameProp = keys[i];
-					break;
-				}
-			}
-
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"Name of namespace not found");
-		}
-
-		OW_String tmp;
-		nameProp.getValue().get(tmp);
-		result.handle(ns + "/" + tmp);
-		if (deep)
-		{
-			enumNameSpaceAux(hdl, ns + "/" + tmp, result, deep);
-		}
-	}
+    */
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -178,10 +108,13 @@ void
 OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns_,
 	OW_StringResultHandlerIFC &result, OW_Bool deep)
 {
+    OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(this, true), ns_, result, deep);
+    /*
     OW_String ns(prepareNamespace(ns_));
 
 	result.handle(ns);
 	enumNameSpaceAux(this, ns, result, deep);
+    */
 }
 
 

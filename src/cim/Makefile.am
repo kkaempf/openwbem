@@ -13,6 +13,7 @@ OW_CIMFlavor.cpp \
 OW_CIMInstance.cpp \
 OW_CIMMethod.cpp \
 OW_CIMNameSpace.cpp \
+OW_CIMNameSpaceUtils.cpp \
 OW_CIMObjectPath.cpp \
 OW_CIMParameter.cpp \
 OW_CIMProperty.cpp \
@@ -37,6 +38,7 @@ OW_CIMInstance.hpp \
 OW_CIMInstanceEnumeration.hpp \
 OW_CIMMethod.hpp \
 OW_CIMNameSpace.hpp \
+OW_CIMNameSpaceUtils.hpp \
 OW_CIMNULL.hpp \
 OW_CIMObjectPath.hpp \
 OW_CIMObjectPathEnumeration.hpp \

@@ -66,6 +66,7 @@ OW_CIMOMHandleIFC::exportIndication(const OW_CIMInstance& instance,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
+    // TODO: Put these into a common header.  Make them available for re-use.
 	class CIMClassEnumBuilder : public OW_CIMClassResultHandlerIFC
 	{
 	public:
