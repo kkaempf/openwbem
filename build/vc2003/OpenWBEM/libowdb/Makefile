@@ -44,7 +44,7 @@ $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 
 clean:
 	-@del /Q $(OBJDIR)\*.*
-	-@def /Q $(TARGETDIR)\$(LIBNAME).*
+	-@del /Q $(TARGETDIR)\$(LIBNAME).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 /// This logger just discards all log messages.
-class NullLogger : public Logger
+class OW_COMMON_API NullLogger : public Logger
 {
 public:
 	NullLogger();

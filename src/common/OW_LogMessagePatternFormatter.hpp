@@ -71,7 +71,16 @@ public: // implementation details
 
 private:
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Array<ConverterRef> m_patternConverters;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	// non-copyable
 	LogMessagePatternFormatter(const LogMessagePatternFormatter&);

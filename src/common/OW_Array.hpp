@@ -60,7 +60,18 @@ OW_DECLARE_APIEXCEPTION(OutOfBounds, OW_COMMON_API);
 template<class T> class Array
 {
 	typedef std::vector<T, std::allocator<T> > V;
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	COWReference<V> m_impl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 public:
 	typedef typename V::value_type value_type;
 	typedef typename V::pointer pointer;

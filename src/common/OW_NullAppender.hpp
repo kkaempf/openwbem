@@ -44,7 +44,7 @@ namespace OpenWBEM
 /**
  * This class sends log messges to the bit bucket
  */
-class NullAppender : public LogAppender
+class OW_COMMON_API NullAppender : public LogAppender
 {
 public:
 	NullAppender(const StringArray& components,

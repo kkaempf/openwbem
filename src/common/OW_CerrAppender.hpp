@@ -44,7 +44,7 @@ namespace OpenWBEM
 /**
  * This class sends log messges to cerr
  */
-class CerrAppender : public LogAppender
+class OW_COMMON_API CerrAppender : public LogAppender
 {
 public:
 	CerrAppender(const StringArray& components,

@@ -46,7 +46,7 @@ namespace OpenWBEM
 /**
  * This implementation of Logger is used to send a Log message to multiple LogAppenders
  */
-class AppenderLogger : public Logger
+class OW_COMMON_API AppenderLogger : public Logger
 {
 public:
 	AppenderLogger(const String& defaultComponent, ELogLevel level, const LogAppenderRef& appender);
@@ -62,7 +62,16 @@ private:
 	static ELogLevel getLevel(const Array<LogAppenderRef>& appenders);
 
 private:
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	Array<LogAppenderRef> m_appenders;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 };
 
 } // end namespace OpenWBEM

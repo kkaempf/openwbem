@@ -37,6 +37,10 @@
 #include "OW_LogMessage.hpp"
 #include "OW_LogAppender.hpp"
 
+#ifdef OW_WIN32
+#include <algorithm>
+#endif
+
 namespace OpenWBEM
 {
 
@@ -105,13 +109,22 @@ AppenderLogger::doClone() const
 }
 
 /////////////////////////////////////////////////////////////////////////////
+#ifdef OW_WIN32
+using namespace std;
+#endif
+
 ELogLevel
 AppenderLogger::getLevel(const Array<LogAppenderRef>& appenders)
 {
 	ELogLevel rv = E_FATAL_ERROR_LEVEL;
 	for (size_t i = 0; i < appenders.size(); ++i)
 	{
+#ifdef OW_WIN32
+		// This format was necessary on windoz C2589
+		rv = max(rv, appenders[i]->getLogLevel());
+#else
 		rv = std::max(rv, appenders[i]->getLogLevel());
+#endif
 	}
 	return rv;
 }

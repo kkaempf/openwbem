@@ -40,10 +40,14 @@
 
 // Yeah I know this is forbidden by the standard, but what am I gonna do?  #include <algorithm> ? I think not.
 // If it causes a problem on some compiler, just #ifdef a fix in.
+#ifdef OW_WIN32
+#include <functional>
+#else
 namespace std
 {
 	template <typename T> class less;
 }
+#endif
 
 namespace OpenWBEM
 {
@@ -56,7 +60,7 @@ typedef IntrusiveReference<Logger> LoggerRef;
 class LogAppender;
 typedef IntrusiveReference<LogAppender> LogAppenderRef;
 
-class String;
+class OW_COMMON_API String;
 typedef Array<String> StringArray;
 
 class Char16;

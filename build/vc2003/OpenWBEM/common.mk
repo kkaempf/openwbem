@@ -1,4 +1,3 @@
-DEBUG = 1
 BASEDIR = ..
 SRCDIR = ..\..\..\..\src
 LINK = link

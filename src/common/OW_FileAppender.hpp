@@ -47,7 +47,7 @@ namespace OpenWBEM
 /**
  * This class sends log messges to a file
  */
-class FileAppender : public LogAppender
+class OW_COMMON_API FileAppender : public LogAppender
 {
 public:
 	static const unsigned int NO_MAX_LOG_SIZE = 0;

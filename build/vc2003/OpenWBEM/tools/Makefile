@@ -191,7 +191,15 @@ $(OBJDIR)\$(ENUMCLS).obj: $(TOOLSRCDIR)\$(@B).cpp $(OBJDIR)
 
 clean:
 	-@del /Q $(OBJDIR)\*.*
-	-@del /Q $(EXES)
+	-@del /Q $(TARGETDIR)\$(ENUMCLSNAMES).*
+	-@del /Q $(TARGETDIR)\$(CIMLISTENER).*
+	-@del /Q $(TARGETDIR)\$(CREATENS).*
+	-@del /Q $(TARGETDIR)\$(DELETENS).*
+	-@del /Q $(TARGETDIR)\$(ENUMCLS).*
+	-@del /Q $(TARGETDIR)\$(MOFC).*
+	-@del /Q $(TARGETDIR)\$(EXECWQL).*
+	-@del /Q $(TARGETDIR)\$(ENUMNS).*
+	-@del /Q $(TARGETDIR)\$(ENUMQUALS).*
 
 $(TARGETDIR):
 	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))

@@ -59,7 +59,14 @@ template<class T, class Compare = std::less<T> >
 class SortedVectorSet
 {
 	typedef std::vector<T> container_t;
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
 	COWReference<container_t> m_impl;
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 public:
 	typedef          T key_type;
 	typedef          T data_type;
@@ -148,9 +155,21 @@ public:
 	{
 		m_impl->clear();
 	}
-	iterator find(const key_type& x) const
+	iterator find(const key_type& x)
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
+		if (pos != m_impl->end() && equivalent(*pos, x)) 
+		{
+			return pos;
+		}
+		else
+		{
+			return m_impl->end();
+		}
+	}
+	const_iterator find(const key_type& x) const
+	{
+		const_iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 		if (pos != m_impl->end() && equivalent(*pos, x)) 
 		{
 			return pos;
@@ -171,19 +190,35 @@ public:
 			return 0;
 		}
 	}
-	iterator lower_bound(const key_type& x) const
+	iterator lower_bound(const key_type& x)
 	{
 		return std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}
-	iterator upper_bound(const key_type& x) const
+	const_iterator lower_bound(const key_type& x) const
+	{
+		return std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
+	}
+	iterator upper_bound(const key_type& x)
 	{
 		return std::upper_bound(m_impl->begin(), m_impl->end(), x, Compare());
 	}
+	const_iterator upper_bound(const key_type& x) const
+	{
+		return std::upper_bound(m_impl->begin(), m_impl->end(), x, Compare());
+	}
+
 	std::pair<iterator, iterator>
+		equal_range(const key_type& x)
+	{
+		return std::equal_range(m_impl->begin(), m_impl->end(), x, Compare());
+	}
+
+	std::pair<const_iterator, const_iterator>
 		equal_range(const key_type& x) const
 	{
 		return std::equal_range(m_impl->begin(), m_impl->end(), x, Compare());
 	}
+
 	friend bool operator== <>(const SortedVectorSet<T, Compare>& x,
 		const SortedVectorSet<T, Compare>& y);
 	friend bool operator< <>(const SortedVectorSet<T, Compare>& x,

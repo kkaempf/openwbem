@@ -27,12 +27,14 @@ uuid.lib
 
 COMMONSRCDIR = $(SRCDIR)\common
 COMMONOBJS = \
+	$(OBJDIR)\OW_AppenderLogger.obj \
 	$(OBJDIR)\OW_Array.obj \
 	$(OBJDIR)\OW_Assertion.obj \
 	$(OBJDIR)\OW_AtomicOps.obj \
 	$(OBJDIR)\OW_BaseStreamBuffer.obj \
 	$(OBJDIR)\OW_BinarySerialization.obj \
 	$(OBJDIR)\OW_Bool.obj \
+	$(OBJDIR)\OW_CerrAppender.obj \
 	$(OBJDIR)\OW_CIMErrorException.obj \
 	$(OBJDIR)\OW_COWIntrusiveCountableBase.obj \
 	$(OBJDIR)\OW_COWIntrusiveReference.obj \
@@ -48,16 +50,21 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_DateTime.obj \
 	$(OBJDIR)\OW_EnumerationException.obj \
 	$(OBJDIR)\OW_Exception.obj \
+	$(OBJDIR)\OW_FileAppender.obj \
 	$(OBJDIR)\OW_Format.obj \
 	$(OBJDIR)\OW_IntrusiveCountableBase.obj \
 	$(OBJDIR)\OW_IOException.obj \
 	$(OBJDIR)\OW_IOIFCStreamBuffer.obj \
+	$(OBJDIR)\OW_LogAppender.obj \
 	$(OBJDIR)\OW_Logger.obj \
+	$(OBJDIR)\OW_LogMessagePatternFormatter.obj \
 	$(OBJDIR)\OW_LoggerImpls.obj \
 	$(OBJDIR)\OW_MD5.obj \
 	$(OBJDIR)\OW_MemTracer.obj \
 	$(OBJDIR)\OW_Mutex.obj \
 	$(OBJDIR)\OW_MutexImpl.obj \
+	$(OBJDIR)\OW_NullAppender.obj \
+	$(OBJDIR)\OW_NullLogger.obj \
 	$(OBJDIR)\OW_NULLValueException.obj \
 	$(OBJDIR)\OW_NoSuchPropertyException.obj \
 	$(OBJDIR)\OW_NoSuchProviderException.obj \
@@ -122,6 +129,7 @@ CIMOBJS = \
 	$(OBJDIR)\OW_CIMFlavor.obj \
 	$(OBJDIR)\OW_CIMInstance.obj \
 	$(OBJDIR)\OW_CIMMethod.obj \
+	$(OBJDIR)\OW_CIMName.obj \
 	$(OBJDIR)\OW_CIMNameSpace.obj \
 	$(OBJDIR)\OW_CIMNameSpaceUtils.obj \
 	$(OBJDIR)\OW_CIMObjectPath.obj \
@@ -190,6 +198,9 @@ $(OBJDIR):
 
 ###############################################################################
 
+$(OBJDIR)\OW_AppenderLogger.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
 $(OBJDIR)\OW_Array.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
@@ -206,6 +217,9 @@ $(OBJDIR)\OW_BinarySerialization.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_Bool.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_CerrAppender.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_CIMErrorException.obj: $(COMMONSRCDIR)\$(@B).cpp
@@ -253,6 +267,9 @@ $(OBJDIR)\OW_EnumerationException.obj: $(COMMONSRCDIR)\$(@B).cpp
 $(OBJDIR)\OW_Exception.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
+$(OBJDIR)\OW_FileAppender.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
 $(OBJDIR)\OW_Format.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
@@ -265,7 +282,13 @@ $(OBJDIR)\OW_IOException.obj: $(COMMONSRCDIR)\$(@B).cpp
 $(OBJDIR)\OW_IOIFCStreamBuffer.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
+$(OBJDIR)\OW_LogAppender.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
 $(OBJDIR)\OW_Logger.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_LogMessagePatternFormatter.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_LoggerImpls.obj: $(COMMONSRCDIR)\$(@B).cpp
@@ -281,6 +304,12 @@ $(OBJDIR)\OW_Mutex.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_MutexImpl.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_NullAppender.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_NullLogger.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_NULLValueException.obj: $(COMMONSRCDIR)\$(@B).cpp
@@ -465,6 +494,9 @@ $(OBJDIR)\OW_CIMInstance.obj: $(CIMSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(CIMSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_CIMMethod.obj: $(CIMSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(CIMSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_CIMName.obj: $(CIMSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(CIMSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_CIMNameSpace.obj: $(CIMSRCDIR)\$(@B).cpp

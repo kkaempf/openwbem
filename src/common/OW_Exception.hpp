@@ -181,7 +181,7 @@ namespace ExceptionDetail
 	//
 	void portable_strerror_r(int errnum, char * buf, unsigned n);
 
-	class FormatMsgImpl;
+	struct FormatMsgImpl;
 
 	class FormatMsg
 	{

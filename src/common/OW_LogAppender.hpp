@@ -41,8 +41,14 @@
 #include "OW_LogLevel.hpp"
 #include "OW_LogMessagePatternFormatter.hpp"
 
+
 namespace OpenWBEM
 {
+
+#ifdef OW_WIN32
+template class OW_COMMON_API Array<String>;
+template class OW_COMMON_API SortedVectorSet<String>;
+#endif
 
 class OW_COMMON_API LogAppender : public IntrusiveCountableBase
 {
