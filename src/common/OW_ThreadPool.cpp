@@ -40,6 +40,8 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_Format.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <deque>
 
@@ -77,7 +79,27 @@ public:
 	}
 	virtual Int32 run();
 private:
+	virtual void doCooperativeCancel()
+	{
+		MutexLock lock(m_guard);
+		if (m_currentRunnable)
+		{
+			m_currentRunnable->doCooperativeCancel();
+		}
+	}
+	virtual void doDefinitiveCancel()
+	{
+		MutexLock lock(m_guard);
+		if (m_currentRunnable)
+		{
+			m_currentRunnable->doCooperativeCancel();
+		}
+	}
+
 	FixedSizePoolImpl* m_thePool;
+
+	Mutex m_guard;
+	RunnableRef m_currentRunnable;
 
 	// non-copyable
 	FixedSizePoolWorkerThread(const FixedSizePoolWorkerThread&);
@@ -402,7 +424,16 @@ Int32 FixedSizePoolWorkerThread::run()
 		{
 			return 0;
 		}
+		// save this off so it can be cancelled by another thread.
+		{
+			MutexLock lock(m_guard);
+			m_currentRunnable = work;
+		}
 		runRunnable(work);
+		{
+			MutexLock lock(m_guard);
+			m_currentRunnable = 0;
+		}
 	}
 	return 0;
 }
@@ -418,7 +449,27 @@ public:
 	}
 	virtual Int32 run();
 private:
+	virtual void doCooperativeCancel()
+	{
+		MutexLock lock(m_guard);
+		if (m_currentRunnable)
+		{
+			m_currentRunnable->doCooperativeCancel();
+		}
+	}
+	virtual void doDefinitiveCancel()
+	{
+		MutexLock lock(m_guard);
+		if (m_currentRunnable)
+		{
+			m_currentRunnable->doCooperativeCancel();
+		}
+	}
+
 	DynamicSizePoolImpl* m_thePool;
+
+	Mutex m_guard;
+	RunnableRef m_currentRunnable;
 
 	// non-copyable
 	DynamicSizePoolWorkerThread(const DynamicSizePoolWorkerThread&);
@@ -539,7 +590,16 @@ Int32 DynamicSizePoolWorkerThread::run()
 		{
 			return 0;
 		}
+		// save this off so it can be cancelled by another thread.
+		{
+			MutexLock lock(m_guard);
+			m_currentRunnable = work;
+		}
 		runRunnable(work);
+		{
+			MutexLock lock(m_guard);
+			m_currentRunnable = 0;
+		}
 	}
 	return 0;
 }

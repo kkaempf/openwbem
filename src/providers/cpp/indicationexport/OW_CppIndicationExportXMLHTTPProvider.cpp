@@ -41,14 +41,22 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_MutexLock.hpp"
 
 namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
+CppIndicationExportXMLHTTPProvider::CppIndicationExportXMLHTTPProvider()
+	: m_cancelled(false)
+{
+}
+
+///////////////////////////////////////////////////////////////////////////////
 CppIndicationExportXMLHTTPProvider::~CppIndicationExportXMLHTTPProvider()
 {
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 // Export the given indication
 void
@@ -82,15 +90,21 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 		}
 	}
 
-	HTTPClient* pHTTPClient = new HTTPClient(listenerUrl);
-	IndicationExporter exporter = IndicationExporter(CIMProtocolIFCRef(
-		pHTTPClient)); // takes ownership of pHTTPClient
+	{
+		MutexLock lock(m_guard);
+		if (m_cancelled)
+		{
+			return;
+		}
+		m_httpClient = new HTTPClient(listenerUrl);
+	}
+	IndicationExporter exporter = IndicationExporter(m_httpClient);
 
 	// the OW 2.0 HTTPXMLCIMListener uses the HTTP path to differentiate different
 	// subscriptions.  This is stored in namespace name of the URL.
 	if (!url.namespaceName.empty())
 	{
-		pHTTPClient->setHTTPPath('/' + url.namespaceName);
+		m_httpClient->setHTTPPath('/' + url.namespaceName);
 	}
 
 	exporter.exportIndication(ns, indicationInst);
@@ -110,6 +124,20 @@ CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 
 	return rv;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+void
+CppIndicationExportXMLHTTPProvider::doCooperativeCancel()
+{
+	MutexLock lock(m_guard);
+	m_cancelled = true;
+	if (m_httpClient)
+	{
+		m_httpClient->close();
+	}
+}
+
+
 } // end namespace OpenWBEM
 
 //////////////////////////////////////////////////////////////////////////////

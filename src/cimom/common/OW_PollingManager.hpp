@@ -79,6 +79,8 @@ private:
 		Int32 m_pollInterval;
 		PollingManager* m_pollMan;
 		CIMOMEnvironmentRef m_env;
+	private:
+		void doCooperativeCancel();
 	};
 	typedef IntrusiveReference<TriggerRunner> TriggerRunnerRef;
 	Array<TriggerRunnerRef> m_triggerRunners;
@@ -93,6 +95,8 @@ private:
 	// m_triggerGuard must be locked before calling this function.
 	void processTriggers();
 	friend class TriggerRunner;
+
+	virtual void doCooperativeCancel();
 };
 typedef IntrusiveReference<PollingManager> PollingManagerRef;
 

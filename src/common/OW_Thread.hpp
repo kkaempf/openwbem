@@ -175,8 +175,8 @@ public:
 	 * Thread::threadRunner(). main() shouldn't need to catch it, as the main
 	 * thread of an application should never be cancelled.  The main thread
 	 * shouldn't need to ever call testCancel.
-	 * Note that this method is staic, and it will check the the current running
-	 * thread has been cacelled.  Thus, you can't call it on an object that doesn't
+	 * Note that this method is staic, and it will check if the current running
+	 * thread has been cancelled.  Thus, you can't call it on an object that doesn't
 	 * represent the current running thread and expect it to work.
 	 *
 	 */

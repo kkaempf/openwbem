@@ -346,5 +346,21 @@ PollingManager::TriggerRunner::run()
 	m_pollMan->m_triggerCondition.notifyOne();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::TriggerRunner::doCooperativeCancel()
+{
+	m_itp->doCooperativeCancel();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+PollingManager::doCooperativeCancel()
+{
+	NonRecursiveMutexLock l(m_triggerGuard);
+	m_shuttingDown = true;
+	m_triggerCondition.notifyAll();
+}
+
 } // end namespace OpenWBEM
 

@@ -107,6 +107,11 @@ public:
 		m_cond.notifyAll(); // wake up run() so it will exit.
 	}
 
+	virtual void doCooperativeCancel()
+	{
+		shutdown();
+	}
+
 	void addCreationFilter()
 	{
 		NonRecursiveMutexLock l(m_guard);

@@ -62,6 +62,12 @@ public:
 	 * If this method returns zero, then the poll method is never called.
 	 */
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env) = 0;
+	/**
+	 * This function will be called if the polled provider is running and a
+	 * thread cancellation has been requested.
+	 */
+	virtual void doCooperativeCancel() = 0;
+	virtual void doDefinitiveCancel() = 0;
 };
 
 typedef IntrusiveReference<PolledProviderIFC> PolledProviderIFCRef;

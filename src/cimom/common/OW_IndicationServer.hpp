@@ -61,7 +61,6 @@ public:
 	virtual void startCreateSubscription(const String& ns, const CIMInstance& subInst, const String& username) = 0;
 	virtual void startModifySubscription(const String& ns, const CIMInstance& subInst) = 0;
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst) = 0;
-protected:
 };
 typedef SharedLibraryReference< IntrusiveReference<IndicationServer> > IndicationServerRef;
 

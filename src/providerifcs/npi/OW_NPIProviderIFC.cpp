@@ -148,20 +148,8 @@ NPIProviderIFC::doGetIndicationExportProviders(const ProviderEnvironmentIFCRef& 
 PolledProviderIFCRefArray
 NPIProviderIFC::doGetPolledProviders(const ProviderEnvironmentIFCRef& env)
 {
-	loadNoIdProviders(env);
+	// NPI doesn't support polled providers
 	PolledProviderIFCRefArray rvra;
-	for (size_t i = 0; i < m_noidProviders.size(); i++)
-	{
-		//NPIProviderBaseIFCRef pProv = m_noidProviders[i];
-		FTABLERef pProv = m_noidProviders[i];
-		//  if (pProv->isPolledProvider())
-		if (pProv->fp_activateFilter)
-		{
-			rvra.append(
-				PolledProviderIFCRef(new
-					NPIPolledProviderProxy(pProv)));
-		}
-	}
 	return rvra;
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -168,6 +168,7 @@ private:
 
 	RequestHandlerIFCRef m_requestHandler;
 	HTTPServer::Options m_options;
+
 	int processRequestLine();
 	int processHeaders(OperationContext& context);
 	void trace();
@@ -186,6 +187,7 @@ private:
 	String getContentLanguage(OperationContext& context, bool& setByProvider,
 		bool& clientSpecified);
 
+	void doCooperativeCancel();
 };
 
 } // end namespace OpenWBEM

@@ -204,6 +204,15 @@ public:
 	{
 		m_pProv->exportIndication(env, ns, indHandlerInst, indicationInst);
 	}
+
+	virtual void doCooperativeCancel()
+	{
+		m_pProv->doCooperativeCancel();
+	}
+	virtual void doDefinitiveCancel()
+	{
+		m_pProv->doDefinitiveCancel();
+	}
 private:
 	CppIndicationExportProviderIFCRef m_pProv;
 };
@@ -216,6 +225,14 @@ public:
 			{ return m_pProv->poll(env); }
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env )
 			{ return m_pProv->getInitialPollingInterval(env); }
+	virtual void doCooperativeCancel()
+	{
+		m_pProv->doCooperativeCancel();
+	}
+	virtual void doDefinitiveCancel()
+	{
+		m_pProv->doDefinitiveCancel();
+	}
 private:
 	CppPolledProviderIFCRef m_pProv;
 };

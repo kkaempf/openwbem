@@ -83,6 +83,9 @@ public:
 	void modifySubscription(const String& ns, const CIMInstance& subInst);
 	
 	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst);
+
+	virtual void doCooperativeCancel();
+
 private:
 	struct Subscription
 	{

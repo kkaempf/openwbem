@@ -215,6 +215,7 @@ public:
 			OW_THROW(IOException, "Writing to the termination pipe failed");
 		}
 	}
+
 private:
 	Reference<Array<SelectablePair_t> > m_selectables;
 	UnnamedPipeRef m_stopObject;

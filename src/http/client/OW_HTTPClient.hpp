@@ -265,6 +265,8 @@ class OW_HTTP_API HTTPClient : public CIMProtocolIFC
 		HTTPClient& operator=(const HTTPClient&);
 };
 
+typedef IntrusiveReference<HTTPClient> HTTPClientRef;
+
 } // end namespace OpenWBEM
 
-#endif	// OW_HTTPCLIENT_HPP_
+#endif

@@ -97,6 +97,7 @@ public:
 		m_pmgr(pmgr), m_trans(ntrans) {}
 	virtual void run();
 private:
+	virtual void doCooperativeCancel();
 	IndicationServerImpl* m_pmgr;
 	NotifyTrans m_trans;
 };
@@ -178,6 +179,12 @@ Notifier::run()
 	{
 		env->logError("Unknown exception caught while exporting indication");
 	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+Notifier::doCooperativeCancel()
+{
+	m_trans.m_provider->doCooperativeCancel();
 }
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
@@ -1186,6 +1193,14 @@ IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterIn
 	// make this a little more friendly, we could allow modification as long
 	// as there's not subscriptions associated to it.
 	OW_THROWCIMMSG(CIMException::FAILED, "modifying a filter is not supported");
+}
+
+void
+IndicationServerImpl::doCooperativeCancel()
+{
+	NonRecursiveMutexLock l(m_mainLoopGuard);
+	m_shuttingDown = true;
+	m_mainLoopCondition.notifyAll();
 }
 
 } // end namespace OpenWBEM

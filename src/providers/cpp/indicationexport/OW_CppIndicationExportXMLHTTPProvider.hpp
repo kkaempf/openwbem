@@ -36,6 +36,8 @@
 #define OW_CPPINDICATIONEXPORTXMLHTTPPROVIDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CppIndicationExportProviderIFC.hpp"
+#include "OW_HTTPClient.hpp"
+#include "OW_Mutex.hpp"
 
 namespace OpenWBEM
 {
@@ -43,6 +45,7 @@ namespace OpenWBEM
 class CppIndicationExportXMLHTTPProvider : public CppIndicationExportProviderIFC
 {
 public:
+	CppIndicationExportXMLHTTPProvider();
 	~CppIndicationExportXMLHTTPProvider();
 	/**
 	 * Export the given indication
@@ -63,6 +66,14 @@ public:
 	 * @throws CIMException
 	 */
 	virtual void initialize(const ProviderEnvironmentIFCRef&) {}
+
+	virtual void doCooperativeCancel();
+private:
+	// We store this (vs. keeping it on the stack) so that when a cancellation request is made
+	// close() can be called which will stop the exporting thread.
+	HTTPClientRef m_httpClient; 
+	Mutex m_guard;
+	bool m_cancelled;
 };
 
 } // end namespace OpenWBEM

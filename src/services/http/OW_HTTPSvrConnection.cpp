@@ -59,6 +59,8 @@
 #include "OW_SessionLanguage.hpp"
 #include "OW_AuthenticationException.hpp"
 
+#include <ios> // for std::ios::badbit
+
 #if defined(BAD)
 #undef BAD
 #endif
@@ -1254,6 +1256,12 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 	return contentLang;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPSvrConnection::doCooperativeCancel()
+{
+	m_socket.disconnect();
+}
 
 } // end namespace OpenWBEM
 
