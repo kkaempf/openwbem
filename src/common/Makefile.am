@@ -116,7 +116,7 @@ OW_Cache.hpp \
 OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
-OW_CmdLineParser.cpp \
+OW_CmdLineParser.hpp \
 OW_Condition.hpp \
 OW_ConfigException.hpp \
 OW_ConfigFile.hpp \
