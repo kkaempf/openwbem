@@ -25,7 +25,6 @@ FAKE_EXTENSION=.fsl
 
 SUFFIX1=.a
 SUFFIX2=.so
-SUFFIX3=.nlm
 
 # This assumes that the libraries have already been created.
 
@@ -59,19 +58,13 @@ extract_creation_name_from_lib()
     # If the symbol is not undefined, doesn't have a leading '.' or '_', then
     # export it.  This will also be required to match the export prefix (if the
     # export prefix is empty, then all symbols will be exported).
-    if [ "x$MINUS_NLM" != "x$1" ]
-    then
-      IMPORT_FILE=$BASE_LIBNAME".imp"
-      CREATION_FUNCTION_NAME=`grep "$EXPORT_PREFIX" $IMPORT_FILE | sort -u`
-    else
-      CREATION_FUNCTION_NAME=`nm -Bpg $DEMANGLE_PREVENTION_FLAGS $1 |
+    CREATION_FUNCTION_NAME=`nm -Bpg $DEMANGLE_PREVENTION_FLAGS $1 |
 	grep "$EXPORT_PREFIX" |
 	awk '{ 
 		if ( ($2 != "U") && (substr($3,1,1) != ".") &&  (substr($3,1,1) != "_") )
 		{ print $3 } 
 	}' | 
 	sort -u`
-    fi
   else
     echo "extract_creation_name_from_lib() requires exactly one argument."
   fi
@@ -88,15 +81,10 @@ create_fake_library()
     LIB_EXT=
 
     MINUS_A=`basename $FILENAME $SUFFIX1`
-    MINUS_NLM=`basename $FILENAME $SUFFIX3`
     if [ "x$MINUS_A" != "x$FILENAME" ]
     then
       LIB_EXT=$SUFFIX1
       BASE_LIBNAME=$MINUS_A
-    elif [ "x$MINUS_NLM" != "x$FILENAME" ]
-    then
-      LIB_EXT=$SUFFIX3
-      BASE_LIBNAME=$MINUS_NLM
     else
       MINUS_SO=`basename $FILENAME $SUFFIX2`
       if [ "x$MINUS_SO" != "x$FILENAME" ]
