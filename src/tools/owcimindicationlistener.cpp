@@ -64,6 +64,9 @@ protected:
 		cerr << message << endl;
 	}
 };
+
+// TODO: Using a Semaphore from a signal handler isn't safe.  It could deadlock.
+// Figure out a better way to do it.
 Semaphore shutdownSem;
 extern "C" 
 void sig_handler(int)
