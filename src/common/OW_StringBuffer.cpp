@@ -243,10 +243,14 @@ StringBuffer&
 StringBuffer::operator += (Real32 v)
 {
 	char bfr[128];
+#if FLT_RADIX == 2
 #if defined(OW_REAL32_IS_FLOAT)
 	::snprintf(bfr, sizeof(bfr), "%.*g", FLT_MANT_DIG * 3 / 10 + 1, static_cast<double>(v));
 #elif defined(OW_REAL32_IS_DOUBLE)
 	::snprintf(bfr, sizeof(bfr), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, v);
+#endif
+#else
+#error "The formula for computer the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
 #endif
 	return append(bfr);
 }
@@ -255,10 +259,14 @@ StringBuffer&
 StringBuffer::operator += (Real64 v)
 {
 	char bfr[32];
+#if FLT_RADIX == 2
 #if defined(OW_REAL64_IS_DOUBLE)
 	::snprintf(bfr, sizeof(bfr), "%.*g", DBL_MANT_DIG * 3 / 10 + 1, v);
 #elif defined(OW_REAL64_IS_LONG_DOUBLE)
 	::snprintf(bfr, sizeof(bfr), "%.*Lg", LDBL_MANT_DIG * 3 / 10 + 1, v);
+#endif
+#else
+#error "The formula for computer the number of digits of precision for a floating point needs to be implmented. It's ceiling(bits * log(FLT_RADIX) / log(10))"
 #endif
 	return append(bfr);
 }
