@@ -61,6 +61,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_AuthorizerIFC.hpp"
 #include "OW_ExceptionIds.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 #include <iostream>
 
