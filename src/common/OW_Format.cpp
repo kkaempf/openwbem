@@ -106,7 +106,7 @@ char Format::process(String& str, char numArgs)
 std::ostream&
 operator<<(std::ostream& os, const Format& f)
 {
-	os << f.oss.toString();
+	os.write(f.oss.c_str(), f.oss.length());
 	return os;
 }
 /////////////////////////////////////////////////////////////////////////////

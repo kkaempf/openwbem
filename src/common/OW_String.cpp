@@ -1489,7 +1489,7 @@ operator + (const String& s, char c)
 ostream&
 operator<< (ostream& ostr, const String& arg)
 {
-	ostr << arg.c_str();
+	ostr.write(arg.c_str(), arg.length());
 	return ostr;
 }
 //////////////////////////////////////////////////////////////////////////////

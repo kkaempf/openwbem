@@ -379,7 +379,7 @@ StringBuffer::getLine(std::istream& is, bool resetBuffer)
 //////////////////////////////////////////////////////////////////////////////
 std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b)
 {
-	ostr << b.c_str();
+	ostr.write(b.c_str(), b.length());
 	return ostr;
 }
 
