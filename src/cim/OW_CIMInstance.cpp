@@ -510,13 +510,13 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 	//
 	// Process qualifiers
 	//
-	if (includeQualifiers)
+	if (includeQualifiers == E_INCLUDE_QUALIFIERS)
 	{
 		CIMQualifierArray qra;
 		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			CIMQualifier cq = m_pdata->m_qualifiers[i];
-			if (localOnly && cq.getPropagated())
+			if ((localOnly == E_LOCAL_ONLY) && cq.getPropagated())
 			{
 				continue;
 			}
@@ -530,7 +530,7 @@ CIMInstance::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQuali
 		for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
 			CIMProperty prop = m_pdata->m_properties[i];
-			if (localOnly && prop.getPropagated())
+			if ((localOnly == E_LOCAL_ONLY) && prop.getPropagated())
 			{
 				continue;
 			}
