@@ -244,7 +244,7 @@ COWReference<T>::cast_to() const
 	rval.m_pObj = dynamic_cast<U*>(m_pObj);
 	if (rval.m_pObj)
 	{
-		rval.m_pRefCount = m_pRefCount;
+		rval.useRefCountOf(*this);
 		rval.incRef();
 	}
 	return rval;
