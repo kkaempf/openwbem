@@ -211,7 +211,10 @@ http_server.SSL_cert = /etc/ssl/private/hostkey+cert.pem
 
 ################################################################################
 # Tell the http server to use digest authorization
-http_server.use_digest = true
+# digest will bypass the normal authentication mechanism.  You must set up
+# the digest password file using owdigestgenpass to use digest.
+# The default for this option is true
+http_server.use_digest = false
 
 ################################################################################
 # If the digest authentication module is used, this needs to be the path to
