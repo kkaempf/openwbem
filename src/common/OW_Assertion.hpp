@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,8 +32,6 @@
 #define OW_ASSERTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include <iosfwd>
-
 #include "OW_Exception.hpp"
 
 DECLARE_EXCEPTION(Assertion);
