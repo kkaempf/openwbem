@@ -39,8 +39,8 @@ namespace OpenWBEM
 
 class NonRecursiveMutexLock;
 class NonRecursiveMutex;
-DECLARE_EXCEPTION(ConditionLock);
-DECLARE_EXCEPTION(ConditionResource);
+OW_DECLARE_EXCEPTION(ConditionLock);
+OW_DECLARE_EXCEPTION(ConditionResource);
 class Condition
 {
 public:

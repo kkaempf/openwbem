@@ -39,7 +39,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(Deadlock)
+OW_DEFINE_EXCEPTION(Deadlock)
 NonRecursiveMutex::NonRecursiveMutex()
 {
 	if(NonRecursiveMutexImpl::createMutex(m_mutex) != 0)

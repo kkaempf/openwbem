@@ -39,8 +39,8 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(UnknownHost);
-DECLARE_EXCEPTION(SocketAddress);
+OW_DECLARE_EXCEPTION(UnknownHost);
+OW_DECLARE_EXCEPTION(SocketAddress);
 class SocketAddress
 {
 public:

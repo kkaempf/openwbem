@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef _OW_INDICATION_REP_LAYER_HPP_
-#define _OW_INDICATION_REP_LAYER_HPP_
+#ifndef OW_INDICATION_REP_LAYER_HPP_INCLUDE_GUARD_
+#define OW_INDICATION_REP_LAYER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
 

@@ -34,7 +34,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(Select)
+OW_DEFINE_EXCEPTION(Select)
 //////////////////////////////////////////////////////////////////////////////
 void
 SelectEngine::addSelectableObject(SelectableIFCRef obj,

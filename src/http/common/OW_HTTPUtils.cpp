@@ -53,7 +53,7 @@ namespace OpenWBEM
 {
 
 using std::istream;
-DEFINE_EXCEPTION(Base64Format);
+OW_DEFINE_EXCEPTION(Base64Format);
 ///////////////////////////////////////////////////////////////////////////////
 bool
 HTTPUtils::parseHeader(HTTPHeaderMap& map,

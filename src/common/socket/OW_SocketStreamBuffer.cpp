@@ -35,7 +35,9 @@ namespace OpenWBEM
 {
 
 SocketStreamBuffer::SocketStreamBuffer(SocketBaseImpl* sock)
-	: IOIFCStreamBuffer(sock, SOCK_STREAM_BUF_SIZE)
+	: IOIFCStreamBuffer(sock, 2048) 
+// 2048 is a nice power of 2 that should be more than enough to hold most
+// packets, since ethernet MTU is 1500
 {
 }
 

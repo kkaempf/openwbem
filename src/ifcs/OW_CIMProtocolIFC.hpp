@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(CIMProtocol);
+OW_DECLARE_EXCEPTION(CIMProtocol);
 class CIMProtocolIFC
 {
 public:

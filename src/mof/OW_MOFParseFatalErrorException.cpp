@@ -36,7 +36,7 @@ namespace OpenWBEM
 namespace MOF
 {
 
-DEFINE_EXCEPTION(ParseFatalError)
+OW_DEFINE_EXCEPTION(ParseFatalError)
 
 } // end namespace MOF
 } // end namespace OpenWBEM

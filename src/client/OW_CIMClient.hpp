@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef src_client_OW_CIMClient_hpp_INCLUDE_GUARD_
-#define src_client_OW_CIMClient_hpp_INCLUDE_GUARD_
+#ifndef OW_CIMClient_hpp_INCLUDE_GUARD_
+#define OW_CIMClient_hpp_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_ClientAuthCBIFC.hpp"

@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Base64Format);
+OW_DECLARE_EXCEPTION(Base64Format);
 
 } // end namespace OpenWBEM
 

@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Enumeration);
+OW_DECLARE_EXCEPTION(Enumeration);
 template <class T>
 class TempFileEnumerationImpl
 {

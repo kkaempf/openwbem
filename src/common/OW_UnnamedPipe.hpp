@@ -40,7 +40,7 @@ namespace OpenWBEM
 {
 
 class String;
-DECLARE_EXCEPTION(UnnamedPipe);
+OW_DECLARE_EXCEPTION(UnnamedPipe);
 class UnnamedPipe;
 typedef Reference<UnnamedPipe> UnnamedPipeRef;
 class UnnamedPipe : public SelectableIFC, public IOIFC

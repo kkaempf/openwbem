@@ -47,7 +47,7 @@ class CIMObjectPath;
 class String;
 typedef Array<String> StringArray;
 class Bool;
-DECLARE_EXCEPTION(StringConversion);
+OW_DECLARE_EXCEPTION(StringConversion);
 /**
  * This String class is an abstract data type that represents as NULL
  * terminated string of characters. String objects are ref counted and

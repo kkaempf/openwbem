@@ -38,7 +38,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Daemon);
+OW_DECLARE_EXCEPTION(Daemon);
 namespace Platform
 {
 	enum

@@ -45,7 +45,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(ThreadBarrier);
+OW_DEFINE_EXCEPTION(ThreadBarrier);
 
 #if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
 class ThreadBarrierImpl

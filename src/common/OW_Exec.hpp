@@ -38,9 +38,9 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(ExecTimeout);
-DECLARE_EXCEPTION(ExecBufferFull);
-DECLARE_EXCEPTION(ExecError);
+OW_DECLARE_EXCEPTION(ExecTimeout);
+OW_DECLARE_EXCEPTION(ExecBufferFull);
+OW_DECLARE_EXCEPTION(ExecError);
 class UnnamedPipe;
 typedef Reference<UnnamedPipe> UnnamedPipeRef;
 class PopenStreamsImpl;

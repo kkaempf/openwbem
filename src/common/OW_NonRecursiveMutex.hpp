@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Deadlock)
+OW_DECLARE_EXCEPTION(Deadlock)
 class NonRecursiveMutex
 {
 public:

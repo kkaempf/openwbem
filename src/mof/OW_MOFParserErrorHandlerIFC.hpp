@@ -39,7 +39,7 @@ namespace OpenWBEM
 namespace MOF
 {
 
-DECLARE_EXCEPTION(ParseFatalError);
+OW_DECLARE_EXCEPTION(ParseFatalError);
 // this is an abstract base class for create concrete error handlers for the mof parser
 class ParserErrorHandlerIFC
 {

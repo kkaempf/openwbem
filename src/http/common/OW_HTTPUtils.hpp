@@ -35,8 +35,6 @@
 #include "OW_String.hpp"
 #include "OW_Base64FormatException.hpp"
 #include <iosfwd>
-#define HASHLEN 16
-#define HASHHEXLEN 32
 
 namespace OpenWBEM
 {

@@ -37,8 +37,8 @@
 
 using namespace OpenWBEM;
 
-DECLARE_EXCEPTION(Test);
-DEFINE_EXCEPTION(Test);
+OW_DECLARE_EXCEPTION(Test);
+OW_DEFINE_EXCEPTION(Test);
 
 void OW_ExceptionTestCases::setUp()
 {

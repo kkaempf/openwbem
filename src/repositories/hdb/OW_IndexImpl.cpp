@@ -50,8 +50,8 @@ static int recCompare(const DBT* key1, const DBT* key2);
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Index);
-DEFINE_EXCEPTION(Index);
+OW_DECLARE_EXCEPTION(Index);
+OW_DEFINE_EXCEPTION(Index);
 
 /////////////////////////////////////////////////////////////////////////////
 class IndexImpl : public Index

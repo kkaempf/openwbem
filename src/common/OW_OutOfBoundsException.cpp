@@ -33,7 +33,7 @@
 namespace OpenWBEM
 {
 // This is declared in OW_Array.hpp
-DEFINE_EXCEPTION(OutOfBounds);
+OW_DEFINE_EXCEPTION(OutOfBounds);
 
 } // end namespace OpenWBEM
 

@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef CIMOMVISITOR_HPP_
-#define CIMOMVISITOR_HPP_
+#ifndef OW_CIMOMVISITOR_HPP_INCLUDE_GUARD_
+#define OW_CIMOMVISITOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_Map.hpp"

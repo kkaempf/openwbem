@@ -38,7 +38,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(RWLocker);
+OW_DECLARE_EXCEPTION(RWLocker);
 //////////////////////////////////////////////////////////////////////////////
 class RWLocker
 {

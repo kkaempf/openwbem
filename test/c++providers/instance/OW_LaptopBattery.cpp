@@ -54,17 +54,17 @@ namespace
 	using std::ofstream;
 	using std::endl;
 
-#define STAT_Other 1
-#define STAT_Unknown 2
-#define STAT_Fully_Charged 3
-#define STAT_Low 4
-#define STAT_Critical 5
-#define STAT_Charging 6
-#define STAT_Charging_and_High 7
-#define STAT_Charging_and_Low 8
-#define STAT_Charging_and_Critical 9
-#define STAT_Undefined 10
-#define STAT_Partially_Charge 11
+	const int STAT_Other = 1;
+	const int STAT_Unknown = 2;
+	const int STAT_Fully_Charged = 3;
+	const int STAT_Low = 4;
+	const int STAT_Critical = 5;
+	const int STAT_Charging = 6;
+	const int STAT_Charging_and_High = 7;
+	const int STAT_Charging_and_Low = 8;
+	const int STAT_Charging_and_Critical = 9;
+	const int STAT_Undefined = 10;
+	const int STAT_Partially_Charge = 11;
 
 	class LaptopBattery: public CppInstanceProviderIFC
 	{

@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(NoSuchQualifier);
+OW_DECLARE_EXCEPTION(NoSuchQualifier);
 
 } // end namespace OpenWBEM
 

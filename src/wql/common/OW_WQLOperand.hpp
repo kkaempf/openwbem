@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(TypeMismatch);
+OW_DECLARE_EXCEPTION(TypeMismatch);
 /** Tag used to force invocation of the integer value form of the WQLOperand
   Constructor.
  */

@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(UUID);
+OW_DECLARE_EXCEPTION(UUID);
 /**
  * UUIDs (Universally Unique IDentifiers), also known as GUIDs (Globally Unique 
  * IDentifiers), are 128 bits long. It is either guaranteed to be different

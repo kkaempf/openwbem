@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef LINE_INFO_HPP_
-#define LINE_INFO_HPP_
+#ifndef OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
+#define OW_MOF_LINE_INFO_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
 

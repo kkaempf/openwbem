@@ -33,7 +33,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(Authentication)
+OW_DEFINE_EXCEPTION(Authentication)
 
 } // end namespace OpenWBEM
 

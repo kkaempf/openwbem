@@ -29,7 +29,6 @@
 *******************************************************************************/
 #ifndef OW_SOCKETSTREAMBUFFER_HPP_INCLUDE_GUARD_
 #define OW_SOCKETSTREAMBUFFER_HPP_INCLUDE_GUARD_
-#define SOCK_STREAM_BUF_SIZE 4096
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_IOIFCStreamBuffer.hpp"

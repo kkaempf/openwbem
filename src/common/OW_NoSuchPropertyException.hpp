@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(NoSuchProperty);
+OW_DECLARE_EXCEPTION(NoSuchProperty);
 
 } // end namespace OpenWBEM
 

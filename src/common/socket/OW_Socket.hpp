@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(SocketTimeout)
+OW_DECLARE_EXCEPTION(SocketTimeout)
 class Socket : public SelectableIFC, public IOIFC
 {
 public:

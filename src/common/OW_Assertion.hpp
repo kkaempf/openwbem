@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Assertion);
+OW_DECLARE_EXCEPTION(Assertion);
 typedef AssertionException Assertion;
 #ifdef OW_DEBUG
 #define OW_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, \

@@ -33,7 +33,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(Assertion)
+OW_DEFINE_EXCEPTION(Assertion)
 
 } // end namespace OpenWBEM
 

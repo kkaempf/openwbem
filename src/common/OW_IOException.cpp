@@ -33,8 +33,8 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(IO)
-// Don't use DEFINE_EXCEPTION because we're not derived directly from 
+OW_DEFINE_EXCEPTION(IO)
+// Don't use OW_DEFINE_EXCEPTION because we're not derived directly from 
 // Exception which is what the macro assumes.
 BadCIMSignatureException::BadCIMSignatureException() : IOException() {}
 BadCIMSignatureException::BadCIMSignatureException(const char* file, int line, const char* msg)

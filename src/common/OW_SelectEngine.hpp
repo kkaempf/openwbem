@@ -38,7 +38,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Select)
+OW_DECLARE_EXCEPTION(Select)
 class SelectEngine
 {
 public:

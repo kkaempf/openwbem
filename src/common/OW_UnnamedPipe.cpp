@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(UnnamedPipe);
+OW_DEFINE_EXCEPTION(UnnamedPipe);
 //////////////////////////////////////////////////////////////////////////////
 UnnamedPipe::~UnnamedPipe()
 {

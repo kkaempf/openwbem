@@ -57,9 +57,9 @@ namespace OpenWBEM
 
 using std::cerr;
 using std::endl;
-DEFINE_EXCEPTION(ExecTimeout);
-DEFINE_EXCEPTION(ExecBufferFull);
-DEFINE_EXCEPTION(ExecError);
+OW_DEFINE_EXCEPTION(ExecTimeout);
+OW_DEFINE_EXCEPTION(ExecBufferFull);
+OW_DEFINE_EXCEPTION(ExecError);
 
 class PopenStreamsImpl
 {

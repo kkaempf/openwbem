@@ -39,8 +39,8 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(Socket)
-DEFINE_EXCEPTION(SocketTimeout)
+OW_DEFINE_EXCEPTION(Socket)
+OW_DEFINE_EXCEPTION(SocketTimeout)
 UnnamedPipeRef Socket::m_pUpipe;
 Socket::Socket(SocketFlags::ESSLFlag isSSL)
 {

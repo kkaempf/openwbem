@@ -31,7 +31,8 @@
 #include "OW_UnloaderProvider.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_Format.hpp"
-#define POLLING_INTERVAL 60
+
+#define OW_POLLING_INTERVAL 60 // 1 min is the smallest interval for unloading
 
 namespace OpenWBEM
 {
@@ -69,8 +70,8 @@ UnloaderProvider::getInitialPollingInterval(const
 {
 	env->getLogger()->logDebug(format(
 		"Calling getInitialPollingInterval in ProviderUnloader; returning %1",
-		POLLING_INTERVAL));
-	return POLLING_INTERVAL;
+		OW_POLLING_INTERVAL));
+	return OW_POLLING_INTERVAL;
 }
 } // end namespace OpenWBEM
 

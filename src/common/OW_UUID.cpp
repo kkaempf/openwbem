@@ -42,7 +42,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(UUID);
+OW_DEFINE_EXCEPTION(UUID);
 namespace {
 // typedefs
 typedef UInt64 uuid_time_t;

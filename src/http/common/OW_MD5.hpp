@@ -68,7 +68,7 @@ documentation and/or software.
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(MD5);
+OW_DECLARE_EXCEPTION(MD5);
 const int MD5HASHLEN = 16;
 class String;
 class MD5;

@@ -39,7 +39,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(CIMOMLocator);
+OW_DECLARE_EXCEPTION(CIMOMLocator);
 typedef std::pair<String, String> CIMOMAttribute;
 typedef Array<CIMOMAttribute> CIMOMAttributeArray;
 class CIMOMLocator;

@@ -45,7 +45,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(OutOfBounds);
+OW_DECLARE_EXCEPTION(OutOfBounds);
 
 #ifdef OW_CHECK_ARRAY_INDEXING
 void throwArrayOutOfBoundsException(size_t size, size_t idx);

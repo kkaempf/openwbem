@@ -42,8 +42,10 @@ namespace OpenWBEM
 using std::istream;
 HTTPLengthLimitStreamBuffer::HTTPLengthLimitStreamBuffer(
 		istream& istr, Int64 length)
-	: BaseStreamBuffer(HTTPLL_STREAM_BUF_SIZE, "in"), m_istr(istr),
+	: BaseStreamBuffer(2048, "in"), m_istr(istr),
 	  m_length(length), m_pos(0), m_isEnd(false)
+// 2048 is a nice power of 2 that should be more than enough to hold most
+// packets, since ethernet MTU is 1500
 {
 }
 //////////////////////////////////////////////////////////////////////////////

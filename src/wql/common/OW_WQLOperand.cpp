@@ -34,7 +34,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(TypeMismatch);
+OW_DEFINE_EXCEPTION(TypeMismatch);
 String WQLOperand::toString() const
 {
 	StringBuffer result;

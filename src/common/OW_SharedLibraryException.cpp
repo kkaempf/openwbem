@@ -33,7 +33,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(SharedLibrary)
+OW_DEFINE_EXCEPTION(SharedLibrary)
 
 } // end namespace OpenWBEM
 

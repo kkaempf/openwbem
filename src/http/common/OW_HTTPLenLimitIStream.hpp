@@ -33,7 +33,6 @@
  */
 #ifndef OW_HTTPLENLIMITSTREAM_HPP_INCLUDE_GUARD_
 #define OW_HTTPLENLIMITSTREAM_HPP_INCLUDE_GUARD_
-#define HTTPLL_STREAM_BUF_SIZE 256
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_BaseStreamBuffer.hpp"

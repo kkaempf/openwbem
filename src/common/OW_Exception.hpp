@@ -62,7 +62,7 @@ private:
 std::ostream& operator<< (std::ostream& os, const Exception& e);
 #define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, msg)
 #define OW_THROWL(exType, line, msg) throw exType(__FILE__, line, msg)
-#define DECLARE_EXCEPTION(NAME) \
+#define OW_DECLARE_EXCEPTION(NAME) \
 class NAME##Exception : public Exception \
 { \
 public: \
@@ -72,7 +72,7 @@ public: \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
 };
-#define DEFINE_EXCEPTION(NAME) \
+#define OW_DEFINE_EXCEPTION(NAME) \
 NAME##Exception::NAME##Exception() : Exception() {} \
 NAME##Exception::NAME##Exception(const char* file, int line, const char* msg) \
 	: Exception(file, line, msg) {} \

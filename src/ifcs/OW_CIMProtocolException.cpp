@@ -33,7 +33,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(CIMProtocol)
+OW_DEFINE_EXCEPTION(CIMProtocol)
 
 } // end namespace OpenWBEM
 

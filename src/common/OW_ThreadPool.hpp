@@ -40,7 +40,7 @@ namespace OpenWBEM
 {
 
 class ThreadPoolImpl;
-DECLARE_EXCEPTION(ThreadPool);
+OW_DECLARE_EXCEPTION(ThreadPool);
 /**
  * The ThreadPool class is used to coordinate a group of threads.  There is
  * a queue maintained of work to do.  As each thread in the group is available

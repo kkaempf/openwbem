@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef MOF_COMPILER_HPP_
-#define MOF_COMPILER_HPP_
+#ifndef OW_MOF_COMPILER_HPP_INCLUDE_GUARD_
+#define OW_MOF_COMPILER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"

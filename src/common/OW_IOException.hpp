@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(IO);
+OW_DECLARE_EXCEPTION(IO);
 class BadCIMSignatureException : public IOException
 {
 public:

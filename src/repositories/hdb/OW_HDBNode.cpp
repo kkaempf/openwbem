@@ -32,7 +32,6 @@
 #include "OW_HDB.hpp"
 #include "OW_AutoPtr.hpp"
 #include <cstring>
-#define SZ(x)	sizeof((x))
 
 namespace OpenWBEM
 {
@@ -41,7 +40,7 @@ namespace OpenWBEM
 HDBNode::HDBNodeData::HDBNodeData() :
 	m_blk(), m_key(), m_bfrLen(0), m_bfr(NULL), m_offset(-1L), m_version(0)
 {
-	::memset(&m_blk, 0, SZ(m_blk));
+	::memset(&m_blk, 0, sizeof(m_blk));
 }
 //////////////////////////////////////////////////////////////////////////////
 HDBNode::HDBNodeData::HDBNodeData(const HDBNodeData& x) :
@@ -351,7 +350,7 @@ HDBNode::write(HDBHandle& hdl, EWriteHeaderFlag onlyHeader)
 	m_pdata->m_blk.dataLength = m_pdata->m_bfrLen + m_pdata->m_key.length() + 1;
 	File file = hdl.getFile();
 	HDB* phdb = hdl.getHDB();
-	int totalSize = m_pdata->m_blk.dataLength + SZ(m_pdata->m_blk);
+	int totalSize = m_pdata->m_blk.dataLength + sizeof(m_pdata->m_blk);
 	m_pdata->m_blk.isFree = false;
 	if(m_pdata->m_offset <= 0)	// Is this a new node?
 	{
@@ -622,7 +621,7 @@ void
 HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 {
 	AutoPtrVec<unsigned char>
-		pbfr(new unsigned char[LMAX(SZ(fblk), fblk.keyLength)]);
+		pbfr(new unsigned char[LMAX(sizeof(fblk), fblk.keyLength)]);
 	File file = hdl.getFile();
 	Int32 coffset = fblk.lastChild;
 	if(coffset > 0)
@@ -639,7 +638,7 @@ HDBNode::removeBlock(HDBHandle& hdl, HDBBlock& fblk, Int32 offset)
 		}
 	}
 	// Need to read the key for this block to update the index
-	if(file.read(pbfr.get(), fblk.keyLength, offset + SZ(fblk))
+	if(file.read(pbfr.get(), fblk.keyLength, offset + sizeof(fblk))
 		!= size_t(fblk.keyLength))
 	{
 		OW_THROW(HDBException, "Failed to read node's key for removal");

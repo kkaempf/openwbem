@@ -48,8 +48,8 @@ extern "C"
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(UnknownHost);
-DEFINE_EXCEPTION(SocketAddress);
+OW_DEFINE_EXCEPTION(UnknownHost);
+OW_DEFINE_EXCEPTION(SocketAddress);
 //static
 SocketAddress
 SocketAddress::getUDS(const String& filename)

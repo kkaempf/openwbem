@@ -36,8 +36,8 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(ConditionLock);
-DEFINE_EXCEPTION(ConditionResource);
+OW_DEFINE_EXCEPTION(ConditionLock);
+OW_DEFINE_EXCEPTION(ConditionResource);
 #if defined(OW_USE_PTHREAD)
 /////////////////////////////////////////////////////////////////////////////
 Condition::Condition()

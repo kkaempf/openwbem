@@ -38,7 +38,7 @@ namespace OpenWBEM
 {
 
 class ThreadBarrierImpl;
-DECLARE_EXCEPTION(ThreadBarrier);
+OW_DECLARE_EXCEPTION(ThreadBarrier);
 /**
  * The ThreadBarrier class is used to synchronize threads.  Each thread that calls wait() will block until <i>threshold</i> number of threads has called wait()
  * This class is freely copyable.  All copies reference the same underlying implementation.

@@ -57,8 +57,8 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(BadStream)
-DEFINE_EXCEPTION(BadStream)
+OW_DECLARE_EXCEPTION(BadStream)
+OW_DEFINE_EXCEPTION(BadStream)
 using std::ostream;
 using namespace WBEMFlags;
 

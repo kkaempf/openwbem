@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Timeout);
+OW_DECLARE_EXCEPTION(Timeout);
 
 } // end namespace OpenWBEM
 

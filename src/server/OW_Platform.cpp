@@ -60,7 +60,7 @@ namespace OpenWBEM
 using std::ostream;
 using std::endl;
 
-DEFINE_EXCEPTION(Daemon);
+OW_DEFINE_EXCEPTION(Daemon);
 
 namespace Platform
 {

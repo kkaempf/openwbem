@@ -39,7 +39,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Authentication);
+OW_DECLARE_EXCEPTION(Authentication);
 class AuthenticatorIFC
 {
 public:

@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(NoSuchProvider)
+OW_DECLARE_EXCEPTION(NoSuchProvider)
 
 } // end namespace OpenWBEM
 

@@ -38,8 +38,8 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 namespace {
-DECLARE_EXCEPTION(FoundTheInst);
-DEFINE_EXCEPTION(FoundTheInst);
+OW_DECLARE_EXCEPTION(FoundTheInst);
+OW_DEFINE_EXCEPTION(FoundTheInst);
 //////////////////////////////////////////////////////////////////////////////
 class GetInstanceHandler : public CIMInstanceResultHandlerIFC
 {

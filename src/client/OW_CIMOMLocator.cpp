@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(CIMOMLocator);
+OW_DEFINE_EXCEPTION(CIMOMLocator);
 //////////////////////////////////////////////////////////////////////////////
 CIMOMLocator::~CIMOMLocator() 
 {

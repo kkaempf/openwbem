@@ -35,7 +35,7 @@
 namespace OpenWBEM
 {
 
-DECLARE_EXCEPTION(Socket);
+OW_DECLARE_EXCEPTION(Socket);
 
 } // end namespace OpenWBEM
 

@@ -39,7 +39,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(ValueCast);
+OW_DEFINE_EXCEPTION(ValueCast);
 static bool isCompatible(CIMDataType::Type from, CIMDataType::Type to);
 static void makeValueArray(CIMValue& theValue);
 static CIMValue convertString(const String& strValue,

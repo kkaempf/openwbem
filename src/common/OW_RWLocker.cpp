@@ -36,7 +36,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(RWLocker);
+OW_DEFINE_EXCEPTION(RWLocker);
 //////////////////////////////////////////////////////////////////////////////
 RWLocker::RWLocker()
 	: m_waiting_writers()

@@ -43,8 +43,8 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-DEFINE_EXCEPTION(Thread);
-DEFINE_EXCEPTION(CancellationDenied);
+OW_DEFINE_EXCEPTION(Thread);
+OW_DEFINE_EXCEPTION(CancellationDenied);
 //////////////////////////////////////////////////////////////////////
 // this is what's really passed to threadRunner
 struct ThreadParam

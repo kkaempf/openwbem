@@ -60,7 +60,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 
-DEFINE_EXCEPTION(StringConversion);
+OW_DEFINE_EXCEPTION(StringConversion);
 
 //////////////////////////////////////////////////////////////////////////////
 static inline int

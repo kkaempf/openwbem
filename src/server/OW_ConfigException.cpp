@@ -33,7 +33,7 @@
 namespace OpenWBEM
 {
 
-DEFINE_EXCEPTION(Config);
+OW_DEFINE_EXCEPTION(Config);
 
 } // end namespace OpenWBEM
 
