@@ -113,6 +113,10 @@ EditConfig()
 	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
 	cp openwbem.conf-t openwbem.conf-t~
 	sed -e "$1"  openwbem.conf-t~ > openwbem.conf-t
+	if cmp -s openwbem.conf-t~ openwbem.conf-t; then
+		diff openwbem.conf-t~ openwbem.conf-t
+		ExitWithFail "EditConfig didn't work for $1"
+	fi
 	cd $OLDDIR
 }
 
@@ -197,11 +201,11 @@ RestartDaemon()
 	else
 		PID=`cat $PIDFILE`
 		if kill -1 $PID; then # HUP
-            :
-        else
-            echo "Failed to HUP daemon"
-            Exit 1
-        fi
+			:
+		else
+			echo "Failed to HUP daemon"
+			Exit 1
+		fi
 	fi
 	echo "Waiting for daemon to re-initialize"
 	if [ "$OWVALGRIND" = "1" ]; then
@@ -209,13 +213,13 @@ RestartDaemon()
 	else
 		sleep 4
 	fi
-    PID=`cat $PIDFILE`
-    if kill -0 $PID; then # Test if it's running
-        :
-    else
-        echo "Daemon failed to start"
-        Exit 1
-    fi
+	PID=`cat $PIDFILE`
+	if kill -0 $PID; then # Test if it's running
+		:
+	else
+		echo "Daemon failed to start"
+		Exit 1
+	fi
 }
 
 #############################################################################
@@ -291,10 +295,10 @@ int main()
 }
 EOS
 	echo "Compiling..."
-   g++ -o testInstalledHeaders.o -c $OUTFILE -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include || Exit 1
+   g++ -o testInstalledHeaders.o -c $OUTFILE -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include || ExitWithFail "Failed to compile headers" 
 #	echo "Linking..."
 #	g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o testInstalledHeaders \
-#		testInstalledHeaders.o || Exit 1
+#		testInstalledHeaders.o || ExitWithFail "Failed to link header test"
 #	echo "Executing main()"
 #	./testInstalledHeaders
 	echo "Headers Passed"
@@ -329,7 +333,7 @@ int main(int argc, char* argv[])
 EOS
 		  echo "$EXECFILE:."
 		  g++ -o $EXECFILE.o -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include -c $OUTFILE \
-			   || Exit 1
+			   || ExitWithFail "Failed to compile header test"
 		  echo "."
 #		  g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o $EXECFILE \
 #			   $EXECFILE.o || ExitWithFail
@@ -616,7 +620,7 @@ TestAuth()
 	EditConfig "s!owcimomd.allow_anonymous = true!;owcimomd.allow_anonymous = true!g" 
 
 	# switch from digest to simple
-	EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
+	#EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
 	echo "2. Testing Simple Authentication Module and GetFeatures"
 	RestartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
@@ -684,17 +688,26 @@ TestAuth()
 	fi
 
 	if grep "define OW_HAVE_PAM" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
-        # just start with the pam authentication module to make sure it can be loaded.
-        EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pam\2!g" \
-        EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
-        RestartDaemon
-        # switch back from pam
-        EditConfig "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
-        EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
-        RestartDaemon
-    else
-        echo "OpenWBEM was not build with pam support"
-    fi
+		# just start with the pam authentication module to make sure it can be loaded.
+		EditConfig "s!owcimomd.authentication_module\(.*\)simple\(.*\)!owcimomd.authentication_module\1pam\2!g"
+		EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
+		RestartDaemon
+		
+		# if we have a pam username/password, then try it out
+		if [ ! -z "$OWPAMUSERNAME" ] && [ ! -z "$OWPAMPASS" ]; then
+			$BUILDDIR/test/acceptance/progs/fakeclient http://${OWPAMUSERNAME}:${OWPAMPASS}@localhost:30926 \
+				 > $RESULTDIR/GetFeatures.out 2>&1
+			RVAL=$?
+			[ "$RVAL" = "0" ] || \
+			ExitWithFail "10. Authentication test (pam): fakeclient return wrong code. $RVAL != 0"
+		fi
+		# switch back from pam
+		EditConfig "s!owcimomd.authentication_module\(.*\)pam\(.*\)!owcimomd.authentication_module\1simple\2!g" \
+		EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
+		RestartDaemon
+	else
+		echo "OpenWBEM was not build with pam support"
+	fi
 }
 
 #############################################################################
