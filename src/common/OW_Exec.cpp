@@ -46,9 +46,6 @@ extern "C"
 #include <errno.h>
 #include <stdio.h> // for perror
 #include <signal.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 }
 #include <iostream>	// for cerr
 
@@ -135,11 +132,7 @@ void PopenStreamsImpl::pid(pid_t newPid)
 //////////////////////////////////////////////////////////////////////
 static inline pid_t lwaitpid(pid_t pid, int* status, int options)
 {
-#ifdef OW_USE_PTH
-	return pth_waitpid(pid, status, options);
-#else
 	return ::waitpid(pid, status, options);
-#endif
 }
 //////////////////////////////////////////////////////////////////////
 static pid_t
@@ -343,11 +336,7 @@ safeSystem(const Array<String>& command)
 	pid_t pid;
 	if (command.size() == 0)
 		return 1;
-#ifdef OW_USE_GNU_PTH
-	pid = pth_fork();
-#else
 	pid = fork();
-#endif
 	if (pid == -1)
 		return -1;
 	if (pid == 0)
@@ -423,11 +412,7 @@ safePopen(const Array<String>& command,
 	{
 		OW_THROW(ExecErrorException, "command is empty");
 	}
-#ifdef OW_USE_GNU_PTH
-	retval.pid ( pth_fork() );
-#else
 	retval.pid ( fork() );
-#endif
 	if (retval.pid() == -1)
 		OW_THROW(ExecErrorException, "fork() failed");
 	if (retval.pid() == 0)

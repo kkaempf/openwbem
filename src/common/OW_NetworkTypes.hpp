@@ -77,11 +77,7 @@ typedef int 			SocketHandle_t;
 } // end namespace OpenWBEM
 
 #ifndef OW_HAVE_SOCKLEN_T
- #ifdef OW_USE_GNU_PTH // pth.h typedefs socklen_t
-  #include <pth.h>
- #else
-  typedef unsigned socklen_t;
- #endif
+ typedef unsigned socklen_t;
 #endif
 
 #endif

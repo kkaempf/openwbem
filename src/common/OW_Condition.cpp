@@ -96,64 +96,6 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 	ret = res != ETIMEDOUT;
 	return ret;
 }
-#elif defined (OW_USE_PTH)
-/////////////////////////////////////////////////////////////////////////////
-Condition::Condition()
-{
-	int res = pth_cond_init(&m_condition, 0);
-	if (res != 0)
-	{
-		OW_THROW(ConditionResourceException, "Failed initializing condition variable");
-	}
-}
-/////////////////////////////////////////////////////////////////////////////
-Condition::~Condition()
-{
-	int res = pth_cond_destroy(&m_condition);
-	assert(res == 0);
-}
-/////////////////////////////////////////////////////////////////////////////
-void 
-Condition::notifyOne()
-{
-	int res = pth_cond_signal(&m_condition);
-	assert(res == 0);
-}
-/////////////////////////////////////////////////////////////////////////////
-void 
-Condition::notifyAll()
-{
-	int res = pth_cond_broadcast(&m_condition);
-	assert(res == 0);
-}
-/////////////////////////////////////////////////////////////////////////////
-void 
-Condition::doWait(NonRecursiveMutex& mutex)
-{
-	int res;
-	NonRecursiveMutexLockState state;
-	mutex.conditionPreWait(state);
-	res = pth_cond_wait(&m_condition, state.pmutex);
-	mutex.conditionPostWait(state);
-	assert(res == 0);
-}
-/////////////////////////////////////////////////////////////////////////////
-bool 
-Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeout)
-{
-	int res;
-	NonRecursiveMutexLockState state;
-	mutex.conditionPreWait(state);
-	bool ret = false;
-	timespec ts;
-	ts.tv_sec = time(NULL) + sTimeout;
-	ts.tv_nsec = usTimeout * 1000;
-	res = pth_cond_timedwait(&m_condition, state.pmutex);
-	mutex.conditionPostWait(state);
-	assert(res == 0 || res == ETIMEDOUT);
-	ret = res != ETIMEDOUT;
-	return ret;
-}
 #elif defined (OW_USE_WIN32_THREADS)
 /////////////////////////////////////////////////////////////////////////////
 Condition::Condition()

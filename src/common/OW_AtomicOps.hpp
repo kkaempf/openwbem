@@ -163,8 +163,10 @@ inline void AtomicDec(Atomic_t &v)
 
 } // end namespace OpenWBEM
 
-#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
+#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK)
 #include <pthread.h>
+
+#define OW_USE_PTHREAD_SPIN_LOCK_ATOMIC_OPS // used in OW_AtomicOps.cpp
 
 namespace OpenWBEM
 {

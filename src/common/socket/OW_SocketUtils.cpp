@@ -55,9 +55,6 @@ extern "C"
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 }
 
 namespace OpenWBEM

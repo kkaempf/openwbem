@@ -29,9 +29,8 @@
  ******************************************************************************/
 #include "OW_config.h"
 #include "OW_AtomicOps.hpp"
-#if defined(__i386__) && defined(__GNUC__)
-// inline in the header
-#elif defined(OW_HAVE_PTHREAD_SPIN_LOCK) && !defined(OW_USE_GNU_PTH)
+
+#if defined(OW_USE_PTHREAD_SPIN_LOCK_ATOMIC_OPS)
 
 namespace OpenWBEM
 {
@@ -73,8 +72,7 @@ void AtomicDec(Atomic_t &v)
 
 } // end namespace OpenWBEM
 
-#else
-#if defined(OW_USE_OW_DEFAULT_ATOMIC_OPS)
+#elif defined(OW_USE_OW_DEFAULT_ATOMIC_OPS)
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 
@@ -119,7 +117,6 @@ void AtomicDec(Atomic_t &v)
 
 } // end namespace OpenWBEM
 
-#endif
 #endif
 
 

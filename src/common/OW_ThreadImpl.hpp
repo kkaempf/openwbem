@@ -77,7 +77,7 @@ namespace ThreadImpl
 	inline bool sameThreads(const volatile Thread_t& handle1,
 		const volatile Thread_t& handle2)
 	{
-	#if defined(OW_USE_GNU_PTH) || defined(OW_WIN32)
+	#if defined(OW_WIN32)
 		return handle1 == handle2;
 	#elif OW_HAVE_PTHREAD_H
 		return pthread_equal(handle1, handle2);
@@ -96,10 +96,7 @@ namespace ThreadImpl
 	 */
 	inline Thread_t currentThread()
 	{
-	#ifdef OW_USE_GNU_PTH
-		initThreads();
-		return pth_self();
-	#elif defined(OW_WIN32)
+	#if defined(OW_WIN32)
 		return GetCurrentThreadId();
 	#else
 		return pthread_self();

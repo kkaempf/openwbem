@@ -51,9 +51,6 @@ extern "C"
 #include <errno.h>
 #include <fcntl.h>
 #include <netinet/in.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 }
 #include <fstream>
 
@@ -195,13 +192,8 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	int n;
 	int flags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, flags | O_NONBLOCK);
-#ifdef OW_USE_GNU_PTH
-	if((n = ::pth_connect(m_sockfd, addr.getNativeForm(),
-					addr.getNativeFormSize())) < 0)
-#else
 	if((n = ::connect(m_sockfd, addr.getNativeForm(),
 					addr.getNativeFormSize())) < 0)
-#endif
 	{
 		if(errno != EINPROGRESS)
 		{

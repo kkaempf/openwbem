@@ -46,9 +46,6 @@ extern "C"
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 }
 
 namespace OpenWBEM
@@ -310,11 +307,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 			OW_ASSERT(0);
 		}
 		
-#ifdef OW_USE_GNU_PTH
-		clntfd = ::pth_accept(m_sockfd, pSA, &clntlen);
-#else
 		clntfd = ::accept(m_sockfd, pSA, &clntlen);
-#endif
 		if(clntfd < 0)
 		{
 			// check to see if client aborts connection between select and accept.

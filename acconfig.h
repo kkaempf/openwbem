@@ -59,9 +59,6 @@
 /* Defined if --enable-profile was passed to configure */
 #undef PROFILE
 
-/* Defined if we are building gnu pth version */
-#undef USE_GNU_PTH
-
 /* Defined if we are building gnu pthreads version */
 #undef USE_PTHREAD
 

@@ -37,10 +37,6 @@
 #include "OW_config.h"
 #include "OW_SocketImpl.hpp"
 
-#ifdef OW_USE_GNU_PTH
- #include <pth.h>
-#endif
-
 namespace OpenWBEM
 {
 
@@ -72,20 +68,12 @@ SocketImpl::getSelectObj() const
 //////////////////////////////////////////////////////////////////////////////
 int SocketImpl::readAux(void* dataIn, int dataInLen) 
 {
-#ifdef OW_USE_GNU_PTH
 	return ::read(m_sockfd, dataIn, dataInLen);
-#else
-	return ::read(m_sockfd, dataIn, dataInLen);
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int SocketImpl::writeAux(const void* dataOut, int dataOutLen)
 {
-#ifdef OW_USE_GNU_PTH
 	return ::write(m_sockfd, dataOut, dataOutLen);
-#else
-	return ::write(m_sockfd, dataOut, dataOutLen);
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 

@@ -36,12 +36,6 @@
  */
 #include "OW_config.h"
 #include "OW_SSLSocketImpl.hpp"
-#ifdef OW_USE_GNU_PTH
-extern "C"
-{
-#include <pth.h>
-}
-#endif
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/err.h>
 
@@ -60,9 +54,6 @@ SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd,
 	SocketAddress::AddressType addrType) 
 	: SocketBaseImpl(fd, addrType)
 {
-#ifdef OW_USE_GNU_PTH
-	pth_yield(NULL);
-#endif
 	m_ssl = SSL_new(SSLCtxMgr::getSSLCtxServer());
 	if (!m_ssl)
 	{
@@ -127,9 +118,6 @@ SSLSocketImpl::connect(const SocketAddress& addr)
 void 
 SSLSocketImpl::connectSSL()
 {
-#ifdef OW_USE_GNU_PTH
-	pth_yield(NULL);
-#endif
 	m_isConnected = false;
 	m_ssl = SSL_new(SSLCtxMgr::getSSLCtxClient());
 	if (!m_ssl)
@@ -157,9 +145,6 @@ SSLSocketImpl::connectSSL()
 void
 SSLSocketImpl::disconnect()
 {
-#ifdef OW_USE_GNU_PTH
-	pth_yield(NULL);
-#endif
 	if(m_sockfd != -1 && m_isConnected)
 	{
 		if (m_ssl)
@@ -175,9 +160,6 @@ SSLSocketImpl::disconnect()
 int 
 SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
 {
-#ifdef OW_USE_GNU_PTH
-	pth_yield(NULL);
-#endif
 	return SSLCtxMgr::sslWrite(m_ssl, static_cast<const char*>(dataOut), 
 			dataOutLen);
 }
@@ -185,9 +167,6 @@ SSLSocketImpl::writeAux(const void* dataOut, int dataOutLen)
 int 
 SSLSocketImpl::readAux(void* dataIn, int dataInLen)
 {
-#ifdef OW_USE_GNU_PTH
-	pth_yield(NULL);
-#endif
 	return SSLCtxMgr::sslRead(m_ssl, static_cast<char*>(dataIn), 
 			dataInLen);
 }

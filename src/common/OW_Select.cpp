@@ -44,9 +44,6 @@ extern "C"
 
 #include <errno.h>
 
-#ifdef OW_USE_GNU_PTH
- #include <pth.h>
-#endif
 }
 
 namespace OpenWBEM
@@ -78,11 +75,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 	   tv.tv_sec = ms / 1000;
 	   tv.tv_usec = (ms % 1000) * 1000;
    }
-#ifdef OW_USE_GNU_PTH
-   rc = pth_select(maxfd+1, &rfds, NULL, NULL, ptv);
-#else
    rc = ::select(maxfd+1, &rfds, NULL, NULL, ptv);
-#endif
    if(rc < 0)
    {
 	   if (errno == EINTR)

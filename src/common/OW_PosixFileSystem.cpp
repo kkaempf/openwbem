@@ -48,9 +48,6 @@ extern "C"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 }
 #include <cstdio> // for rename
 #include <fstream>
@@ -195,11 +192,7 @@ read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	{
 		::lseek(hdl, offset, SEEK_SET);
 	}
-#ifdef OW_USE_GNU_PTH
-	return pth_read(hdl, bfr, numberOfBytes);
-#else
 	return ::read(hdl, bfr, numberOfBytes);
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
@@ -210,11 +203,7 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	{
 		::lseek(hdl, offset, SEEK_SET);
 	}
-#ifdef OW_USE_GNU_PTH
-	return pth_write(hdl, bfr, numberOfBytes);
-#else
 	return ::write(hdl, bfr, numberOfBytes);
-#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int

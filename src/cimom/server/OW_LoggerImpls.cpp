@@ -41,9 +41,6 @@
 #include <iostream> // for cerr
 #include <syslog.h>
 #include <unistd.h> // for getpid
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 
 namespace OpenWBEM
 {

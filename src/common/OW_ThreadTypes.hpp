@@ -31,25 +31,7 @@
 #define OW_THREAD_TYPES_HPP_
 #include "OW_config.h"
 
-#ifdef OW_USE_GNU_PTH
-
-	#include <pth.h>
-
-	namespace OpenWBEM
-	{
-
-		// Platform specific thread type
-		typedef pth_t			Thread_t;
-		// Platform specific mutex type
-		typedef pth_mutex_t	Mutex_t;
-		typedef pth_mutex_t NativeMutex_t;
-		typedef pth_mutex_t	NonRecursiveMutex_t;
-		// Platform specific conditional variable type
-		typedef pth_cond_t	ConditionVar_t;
-
-	} // end namespace OpenWBEM
-
-#elif OW_HAVE_PTHREAD_H
+#if defined(OW_USE_PTHREAD)
 
 	#include <pthread.h>
 
@@ -95,7 +77,7 @@
 
 	} // end namespace OpenWBEM
 
-#elif OW_WIN32
+#elif defined(OW_WIN32)
 
 	#include <Windows.h>
 

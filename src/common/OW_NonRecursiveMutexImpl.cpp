@@ -46,15 +46,7 @@ namespace NonRecursiveMutexImpl
 int
 createMutex(NonRecursiveMutex_t& handle)
 {
-#ifdef OW_USE_GNU_PTH
-	ThreadImpl::initThreads();
-	int cc = 0;
-	if(!pth_mutex_init(&handle))
-	{
-		cc = -1;
-	}
-	return cc;
-#elif defined OW_USE_PTHREAD
+#if defined OW_USE_PTHREAD
 	pthread_mutexattr_t attr;
 	int res = pthread_mutexattr_init(&attr);
 	assert(res == 0);
@@ -84,10 +76,7 @@ createMutex(NonRecursiveMutex_t& handle)
 int
 destroyMutex(NonRecursiveMutex_t& handle)
 {
-#ifdef OW_USE_GNU_PTH
-	(void)handle;
-	return 0;
-#elif defined(OW_USE_PTHREAD)
+#if defined(OW_USE_PTHREAD)
 	switch (pthread_mutex_destroy(&handle.mutex))
 	{
 		case 0:
@@ -116,10 +105,7 @@ destroyMutex(NonRecursiveMutex_t& handle)
 int
 acquireMutex(NonRecursiveMutex_t& handle)
 {
-#ifdef OW_USE_GNU_PTH
-	pth_mutex_acquire(&handle, false, 0);
-	return 0;
-#elif defined (OW_USE_PTHREAD)
+#if defined (OW_USE_PTHREAD)
 	int res = pthread_mutex_lock(&handle.mutex);
 	assert(res == 0);
 	return res;
@@ -138,11 +124,7 @@ acquireMutex(NonRecursiveMutex_t& handle)
 int
 releaseMutex(NonRecursiveMutex_t& handle)
 {
-#ifdef OW_USE_GNU_PTH
-	// TODO: ?!?!
-	(void)handle;
-	return 0;
-#elif defined (OW_USE_PTHREAD)
+#if defined (OW_USE_PTHREAD)
 	int res = pthread_mutex_unlock(&handle.mutex);
 	assert(res == 0);
 	return res;

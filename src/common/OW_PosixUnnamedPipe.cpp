@@ -42,9 +42,6 @@ extern "C"
 #endif
 #include <fcntl.h>
 #include <errno.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 #ifdef OW_WIN32
 #include <io.h>
 #endif

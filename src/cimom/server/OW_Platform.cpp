@@ -46,9 +46,6 @@ extern "C"
 #include <unistd.h> // for getpid, getuid, etc.
 #include <signal.h>
 #include <fcntl.h>
-#ifdef OW_USE_GNU_PTH
-#include <pth.h>
-#endif
 #include <pwd.h>
 #include <sys/resource.h>
 }

@@ -206,8 +206,6 @@ case "$host" in
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
 	;;
-*-next-*)
-	;;
 *-*-solaris*)
 	PLATFORMDIR="posix"
 	AC_DEFINE(SOLARIS)
@@ -220,54 +218,6 @@ case "$host" in
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
-	;;
-*-*-sunof4*)
-	;;
-*-ncr-sysv*)
-	;;
-*-sni-svsv*)
-	;;
-*-*-sysv4.2*)
-	;;
-*-*-sysv5*)
-	PLATFORMDIR="posix"
-	AC_DEFINE(OPENUNIX)
-	LIBS="$LIBS"
-	PLAT_CFLAGS="-pthread -fPIC -D_REENTRANT"
-	PLAT_CXXFLAGS="-pthread -fPIC -D_REENTRANT"
-	CXXCOMMONLINKFLAGS="-pthread"
-	#CXXBINLINKFLAGS="-Wl,-Bexport"
-	CXXBINLINKFLAGS="-lsocket -Wl,-Bdynamic,-Bexport"
-	#CXXSHAREDLIBLINKFLAGS='-fpic -shared -Wl,-h,$@,-z,text -lstdc++'
-	#CXXSHAREDLIBLINKFLAGS='-shared -Wl,-h,$@,-z,text -nodefaultlibs'
-	#CXXSHAREDLIBLINKFLAGS='-shared -G -h $@ -nodefaultlibs'
-	CXXSHAREDLIBLINKFLAGS='-fPIC -shared -Wl,-h,$@,-z,text -nodefaultlibs'
-	LDFLAGS="$LDFLAGS"
-	PLAT_OPTFLAGS="-O3"
-	PIDFILEDIR="/etc"
-	LIB_EXT="so"
-	;;
-*-*-sysv*)
-	;;
-*-*-sco3.2v4*)
-	;;
-*-*-sco3.2v5*)
-	PLATFORMDIR="posix"
-	AC_DEFINE(OPENSERVER)
-		AC_DEFINE(USE_GNU_PTH)
-	LIBS="$LIBS -lpth -lsocket -lstdc++"
-	PLAT_CFLAGS="-fPIC"
-	PLAT_CXXFLAGS="-fPIC"
-	CXXCOMMONLINKFLAGS=""
-	CXXBINLINKFLAGS="-Wl,-Bdynamic,-Bexport"
-	CXXSHAREDLIBLINKFLAGS='-fPIC -shared -G -h $@'
-	LDFLAGS="$LDFLAGS"
-	CXXLINK="g++"
-	PLAT_OPTFLAGS="-O0"
-	PIDFILEDIR="/etc"
-	LIB_EXT="so"
-	;;
-*-dec-osf*)
 	;;
 esac
 
@@ -607,30 +557,8 @@ AC_SUBST(PACKAGE_PREFIX_D)
 AC_DEFINE_UNQUOTED(PACKAGE_PREFIX, "$PACKAGE_PREFIX")
 
 
+dnl for now everything that uses the configure script uses pthreads
 AC_DEFINE(USE_PTHREAD)
-dnl This doesn't work, so I'll comment it out for now.
-dnl AC_ARG_ENABLE(gnu-pth,
-dnl OW_HELP_STRING(--enable-gnu-pth,use pth library),
-dnl   [
-dnl 
-dnl   AC_DEFINE(USE_GNU_PTH)
-dnl 
-dnl   case "$host" in
-dnl   *-*-linux*)
-dnl      PLATFORMDIR="posix"
-dnl      CXXBINLINKFLAGS="-lpth $CXXBINLINKFLAGS"
-dnl   ;;
-dnl   esac
-dnl   ],[
-dnl   AC_DEFINE(USE_PTHREAD)
-dnl   case "$host" in
-dnl   *-*-linux*)
-dnl 	 CXXBINLINKFLAGS="-lpthread $CXXBINLINKFLAGS"
-dnl 	 CFLAGS="$CFLAGS -D_REENTRANT"
-dnl 	 CXXFLAGS="$CXXFLAGS -D_REENTRANT"
-dnl   ;;
-dnl   esac 
-dnl   ])
 
 AC_ARG_WITH(search-dir,
 	OW_HELP_STRING(--with-search-dir=PATH,Specify an additional directory to look for include/ and lib/ sub dirs),
