@@ -7,7 +7,7 @@ install-ow-shared-libs:
 				ln -sf `echo $$i|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $$i|cut -f1 -d'.'`.$(LIB_EXT); \
 			else \
 				$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-                ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \ 
+				ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 			fi; \
 		else \
 			$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
