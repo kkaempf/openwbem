@@ -86,6 +86,17 @@ public:
 	 * Set a pipe to the process's stderr
 	 */
 	void err(const UnnamedPipeRef& pipe);
+
+	/**
+	 * Get additional pipes that may be connected to the process
+	 */
+	Array<UnnamedPipeRef> extraPipes() const;
+
+	/**
+	 * Set additional pipes that may be connected to the process
+	 */
+	void setExtraPipes(const Array<UnnamedPipeRef>& pipes);
+
 	/**
 	 * Get the process's pid.  If the process's exit status has already been
 	 * read by calling getExitStatus(), then this will return -1
@@ -155,6 +166,7 @@ namespace Exec
 	OW_COMMON_API int safeSystem(const Array<String>& command,
 		const char* const envp[] = 0);
 
+	// TODO: Add a timeout to this and rewrite the impl to use safePopen()
 	/**
 	 * Execute a command.
 	 * The command will inherit stdin, stdout, and stderr from the parent
@@ -244,6 +256,8 @@ namespace Exec
 	 *         ExecErrorException If command.size() == 0 or if fork() fails.
 	 */
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command, const EnvVars& envVars);
+
+	// TODO: Create a version of safePopen that allows the caller to specify the number of extra pipes to be opened.
 
 	/**
 	 * The use of initialInput is deprecated, because it's not safe to use it in a

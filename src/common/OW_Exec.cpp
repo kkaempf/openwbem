@@ -86,12 +86,15 @@ class PopenStreamsImpl : public IntrusiveCountableBase
 public:
 	PopenStreamsImpl();
 	~PopenStreamsImpl();
-	UnnamedPipeRef in();
+	UnnamedPipeRef in() const;
 	void in(const UnnamedPipeRef& pipe);
-	UnnamedPipeRef out();
+	UnnamedPipeRef out() const;
 	void out(const UnnamedPipeRef& pipe);
-	UnnamedPipeRef err();
+	UnnamedPipeRef err() const;
 	void err(const UnnamedPipeRef& pipe);
+	Array<UnnamedPipeRef> extraPipes() const;
+	void setExtraPipes(const Array<UnnamedPipeRef>& pipes);
+
 	pid_t pid();
 	void pid(pid_t newPid);
 	int getExitStatus();
@@ -103,6 +106,7 @@ private:
 	UnnamedPipeRef m_in;
 	UnnamedPipeRef m_out;
 	UnnamedPipeRef m_err;
+	Array<UnnamedPipeRef> m_extraPipes;
 	pid_t m_pid;
 	int m_processstatus;
 };
@@ -113,7 +117,7 @@ PopenStreamsImpl::PopenStreamsImpl()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreamsImpl::in()
+UnnamedPipeRef PopenStreamsImpl::in() const
 {
 	return m_in;
 }
@@ -123,7 +127,7 @@ void PopenStreamsImpl::in(const UnnamedPipeRef& pipe)
 	m_in = pipe;
 }
 //////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreamsImpl::out()
+UnnamedPipeRef PopenStreamsImpl::out() const
 {
 	return m_out;
 }
@@ -133,7 +137,7 @@ void PopenStreamsImpl::out(const UnnamedPipeRef& pipe)
 	m_out = pipe;
 }
 //////////////////////////////////////////////////////////////////////////////
-UnnamedPipeRef PopenStreamsImpl::err()
+UnnamedPipeRef PopenStreamsImpl::err() const
 {
 	return m_err;
 }
@@ -141,6 +145,16 @@ UnnamedPipeRef PopenStreamsImpl::err()
 void PopenStreamsImpl::err(const UnnamedPipeRef& pipe)
 {
 	m_err = pipe;
+}
+//////////////////////////////////////////////////////////////////////////////
+Array<UnnamedPipeRef> PopenStreamsImpl::extraPipes() const
+{
+	return m_extraPipes;
+}
+//////////////////////////////////////////////////////////////////////////////
+void PopenStreamsImpl::setExtraPipes(const Array<UnnamedPipeRef>& pipes)
+{
+	m_extraPipes = pipes;
 }
 //////////////////////////////////////////////////////////////////////////////
 pid_t PopenStreamsImpl::pid()
@@ -337,6 +351,16 @@ UnnamedPipeRef PopenStreams::err() const
 void PopenStreams::err(const UnnamedPipeRef& pipe)
 {
 	m_impl->err(pipe);
+}
+/////////////////////////////////////////////////////////////////////////////
+Array<UnnamedPipeRef> PopenStreams::extraPipes() const
+{
+	return m_impl->extraPipes();
+}
+/////////////////////////////////////////////////////////////////////////////
+void PopenStreams::setExtraPipes(const Array<UnnamedPipeRef>& pipes)
+{
+	m_impl->setExtraPipes(pipes);
 }
 /////////////////////////////////////////////////////////////////////////////
 pid_t PopenStreams::pid() const
