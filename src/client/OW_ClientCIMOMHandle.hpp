@@ -87,8 +87,10 @@ public:
 	 * authCb->getCredentials() will be called to obtain credentials.
 	 * 
 	 * @return a ClientCIMOMHandleRef suitable for connecting to the given url.
+	 * 
 	 * @throws MalformedURLException If the url is bad
 	 * @throws std::bad_alloc
+	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
 	static ClientCIMOMHandleRef createFromURL(const String& url, const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 };
