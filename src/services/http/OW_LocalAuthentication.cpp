@@ -125,13 +125,7 @@ namespace
 
 	String createFileHelper(const String& uid, const String& cookie)
 	{
-		String filename = runHelper(CREATE_CMD, uid + "\n" + cookie + "\n");
-		// remove the trailing \n
-		if (filename.length() > 0 && filename[filename.length()-1] == '\n')
-		{
-			filename.erase(filename.length()-1);
-		}
-		return filename;
+		return runHelper(CREATE_CMD, uid + "\n" + cookie + "\n");
 	}
 
 }
