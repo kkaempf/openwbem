@@ -426,6 +426,9 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 				String msg(Format("C++ provider ifc got invalid version from provider: %1", strVer));
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
+				msg = Format("C++ provider ifc version: %1  provider version: %2  library: %3",
+					OW_VERSION, strVer, libName);
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
 				OW_THROW(CppProviderIFCException, msg.c_str());
 			}
@@ -596,7 +599,9 @@ CppProviderIFC::loadProvider(const String& libName, LoggerRef logger)
 	const char* strVer = (*versFunc)();
 	if (strcmp(strVer, OW_VERSION))
 	{
-		OW_LOG_ERROR(logger, Format("C++ provider ifc got invalid version from provider: %1.", libName));
+		OW_LOG_ERROR(logger, "C++ provider ifc got invalid version from provider");
+		OW_LOG_ERROR(logger, Format("C++ provider ifc version: %1  provider version: %2  library: %3",
+					OW_VERSION, strVer, libName));
 		return CppProviderBaseIFCRef();
 	}
 
