@@ -116,6 +116,7 @@ New features:
     - Add a page to the website similar to http://cygwin.com/bugs.html
      - Add rbac authentication
     - Validate the "Required" qualifier on properties during create & modifyInstance.
+    - Add config items and code to do ssl client authentication.
 
 Refactorings:
     - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
