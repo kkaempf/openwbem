@@ -676,16 +676,22 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 	String propName;
 	CIMPropertyArray classProps = theClass.getAllProperties();
 	CIMPropertyArray instProps = getProperties();
+	
 	// Remove properties that are not defined in the class
-	for(int i = 0; i < int(instProps.size()); i++)
+	size_t i = 0;
+	while (i < instProps.size())
 	{
 		propName = instProps[i].getName();
 		if(!theClass.getProperty(propName))
 		{
 			instProps.remove(i);
-			i--;
+		}
+		else
+		{
+			++i;
 		}
 	}
+
 	// Add missing properties and ensure existing have right class origin,
 	// and qualifiers
 	for(size_t i = 0; i < classProps.size(); i++)
