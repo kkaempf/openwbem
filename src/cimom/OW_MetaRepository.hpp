@@ -27,8 +27,8 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __OW_METAREPOSITORY_HPP__
-#define __OW_METAREPOSITORY_HPP__
+#ifndef OW_METAREPOSITORY_HPP_
+#define OW_METAREPOSITORY_HPP_
 
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
@@ -37,6 +37,7 @@
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_SortedVectorMap.hpp"
 
 class OW_MetaRepository : public OW_GenericHDBRepository
 {
@@ -45,8 +46,7 @@ public:
 	/**
 	 * Create a new OW_MetaRepository object.
 	 */
-	OW_MetaRepository(OW_CIMOMEnvironmentRef env)
-		: OW_GenericHDBRepository(env) {}
+	OW_MetaRepository(OW_CIMOMEnvironmentRef env);
 
 	~OW_MetaRepository();
 
@@ -211,6 +211,10 @@ public:
 
 private:
 
+	// unimplemented
+	OW_MetaRepository(const OW_MetaRepository& x);
+	OW_MetaRepository& operator=(const OW_MetaRepository& x);
+
 	/**
 	 * Get the node for the qualifier container. Create the node if it
 	 * doesn't already exist.
@@ -266,8 +270,21 @@ private:
 
 	void _throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass);
 
-	//friend class OW_CIMServer;
+	struct ClassCacheRec;
+	struct lruCompare;
+
+	typedef OW_SortedVectorMap<OW_String, ClassCacheRec> cache_t;
+	cache_t theCache;
+	OW_Mutex cacheGuard;
+	OW_UInt32 maxCacheSize;
+	void addClassToCache(const OW_CIMClass& cc, const OW_String& key);
+
+	OW_CIMClass getClassFromCache(const OW_String& key);
+
+	void removeClassFromCache(const OW_String& key);
+
+	void clearClassCache();
 };
 
-#endif	// __OW_METAREPOSITORY_HPP__
+#endif
 

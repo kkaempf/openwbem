@@ -102,6 +102,12 @@ owcimomd.wql_lib = @libdir@/libowwql.so
 owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthentication.so
 
 ################################################################################
+# 2.0
+# the maximum number of classes that will be cached by the cimom.
+# The default is 20
+;owcimomd.max_class_cache_size = 20
+
+################################################################################
 # a space delimited list of system users who are allowed to acces the CIMOM
 pam.allowed_users = root
 
@@ -124,10 +130,10 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ;owcimomd.ACL_superuser =
 
 ################################################################################
-# owcimomd.request_handler_TTL specifies how many minutes the request 
+# owcimomd.request_handler_TTL specifies how many minutes the request
 # handlers will stay loaded after they are accessed.  If the value of this
 # option is -1, the request handlers will never be unloaded.  The default
-# value is 5 minutes. 
+# value is 5 minutes.
 ;owcimomd.request_handler_TTL = 5
 
 ################################################################################
@@ -139,11 +145,18 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
 # cppprovifc.prov_TTL specifies how many minutes the C++ provider manager
-# will keep a provider in memory.  If a provider has not been accessed for 
+# will keep a provider in memory.  If a provider has not been accessed for
 # longer than this value, it will be unloaded and the memory associated with
-# it will be freed.  If the value of this option is -1, the providers will 
-# never be unloaded.  The default value is 5 minutes. 
+# it will be freed.  If the value of this option is -1, the providers will
+# never be unloaded.  The default value is 5 minutes.
 ;cppprovifc.prov_TTL = 5
+
+################################################################################
+# One of the provider interfaces provided with owcimomd is the simple C++ provider
+# interface. The simplecppprovifc.prov_location option specifies where the C++
+# provider interface will load it's providers from. The default for this option
+# is "/usr/local/lib/openwbem/simplec++providers"
+simplecppprovifc.prov_location = @libdir@/openwbem/simplec++providers
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the NPI provider
@@ -168,7 +181,7 @@ npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 ;http_server.disable.slp = false
 
 ################################################################################
-# http_server.http_port option specifies the port number owcimomd will listen 
+# http_server.http_port option specifies the port number owcimomd will listen
 # on for all HTTP communications. The default for this option is 5988.
 # Set this to -1 if you do not want to support HTTP connections (for
 # instance, you only want to support HTTPS connections).  If a value of 0
@@ -176,7 +189,7 @@ npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 ;http_server.http_port = 5988
 
 ################################################################################
-# http_server.https_port specifies the port number owcimomd will listen on 
+# http_server.https_port specifies the port number owcimomd will listen on
 # for all HTTPS communications. The default for this option is 5989
 # Set this to -1 if you do not want to support HTTPS connections.
 # If a value of 0 is given, a port will be dynamically assigned at run-time.
@@ -211,7 +224,7 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 ;http_server.single_thread = false
 
 ################################################################################
-# http_server.use_UDS specifies whether the http server will listen on a 
+# http_server.use_UDS specifies whether the http server will listen on a
 # Unix Domain Socket.  The default value is true.
 ;http_server.use_UDS = true
 

@@ -152,7 +152,7 @@ public:
 		return m_impl->rend();
 	}
 
-	OW_Bool empty() const
+	bool empty() const
 	{
 		return m_impl->empty();
 	}
@@ -185,12 +185,19 @@ public:
 		m_impl->swap(*x.m_impl);
 	}
 
-	std::pair<iterator, OW_Bool> insert(const value_type& x) /*throw (std::exception)*/
+	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
 
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		return m_impl->insert(i, x);
+		if (i != m_impl->end() && i->first == x.first)
+		{
+			return std::pair<iterator, bool>(i, false);
+		}
+		else
+		{
+			return std::pair<iterator, bool>(m_impl->insert(i, x), true);
+		}
 	}
 
 	iterator insert(iterator, const value_type& x) /*throw (std::exception)*/
@@ -212,38 +219,45 @@ public:
 			m_impl->push_back(*first);
 		}
 		std::sort(m_impl->begin(), m_impl->end(), Compare());
-
 	}
 
 	void erase(iterator position) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
-		return m_impl->erase(position);
+		m_impl->erase(position);
 	}
 
 	size_type erase(const key_type& x) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		return m_impl->erase(i);
+		if (i != m_impl->end() && i->first == x)
+		{
+			m_impl->erase(i);
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	void erase(iterator first, iterator last) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
-		return m_impl->erase(first, last);
+		m_impl->erase(first, last);
 	}
 
 	void clear() /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
-		return m_impl->clear();
+		m_impl->clear();
 	}
 
 	const_iterator find(const key_type& x) const /*throw (std::exception)*/
 	{
 		const_iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (pos->first == x)
+		if (pos != m_impl->end() && pos->first == x)
 		{
 			return pos;
 		}
@@ -256,7 +270,7 @@ public:
 	iterator find(const key_type& x) /*throw (std::exception)*/
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (pos->first == x)
+		if (pos != m_impl->end() && pos->first == x)
 		{
 			return pos;
 		}
@@ -294,22 +308,22 @@ public:
 		return std::equal_range(m_impl->begin(), m_impl->end(), x, Compare());
 	}
 
-	friend OW_Bool operator== <>(const OW_SortedVectorMap<Key, T, Compare>& x,
+	friend bool operator== <>(const OW_SortedVectorMap<Key, T, Compare>& x,
 		const OW_SortedVectorMap<Key, T, Compare>& y);
 
-	friend OW_Bool operator< <>(const OW_SortedVectorMap<Key, T, Compare>& x,
+	friend bool operator< <>(const OW_SortedVectorMap<Key, T, Compare>& x,
 		const OW_SortedVectorMap<Key, T, Compare>& y);
 };
 
 template<class Key, class T, class Compare>
-inline OW_Bool operator==(const OW_SortedVectorMap<Key, T, Compare>& x,
+inline bool operator==(const OW_SortedVectorMap<Key, T, Compare>& x,
 	const OW_SortedVectorMap<Key, T, Compare>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template<class Key, class T, class Compare>
-inline OW_Bool operator<(const OW_SortedVectorMap<Key, T, Compare>& x,
+inline bool operator<(const OW_SortedVectorMap<Key, T, Compare>& x,
 	const OW_SortedVectorMap<Key, T, Compare>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl < *y.m_impl;

@@ -39,6 +39,7 @@
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Array.hpp"
+#include "OW_ConfigOpts.hpp"
 
 #include <iostream>
 #if defined(OW_HAVE_STREAMBUF)
@@ -51,117 +52,72 @@
 
 #define QUAL_CONTAINER "openwbemqualifiers"
 
-struct ClassCacheRec
+//////////////////////////////////////////////////////////////////////////////
+struct OW_MetaRepository::ClassCacheRec
 {
 	ClassCacheRec() :
-		key(), cc(), lastAccess(0) {}
+		lastAccess(0) {}
 
-	ClassCacheRec(const ClassCacheRec& arg) :
-		key(arg.key), cc(arg.cc), lastAccess(arg.lastAccess) {}
-
-	ClassCacheRec& operator= (const ClassCacheRec& arg)
-	{
-		key = arg.key;
-		cc = arg.cc;
-		lastAccess = arg.lastAccess;
-		return *this;
-	}
-
-	OW_String key;
 	OW_CIMClass cc;
 	time_t lastAccess;
 };
 
-#define CACHE_SIZE 20
-
-static OW_Array<ClassCacheRec> theCache;
-static OW_Mutex cacheGuard;
-static bool cacheInitialized = false;
+//////////////////////////////////////////////////////////////////////////////
+struct OW_MetaRepository::lruCompare :
+	public std::binary_function<OW_MetaRepository::cache_t::value_type,
+		OW_MetaRepository::cache_t::value_type, bool>
+{
+	bool operator()(const OW_MetaRepository::cache_t::value_type& x, const OW_MetaRepository::cache_t::value_type& y) const
+	{
+		return x.second.lastAccess < y.second.lastAccess;
+	}
+};
 
 //////////////////////////////////////////////////////////////////////////////
-static void
-addClassToCache(const OW_CIMClass& cc, const OW_String& key)
+void
+OW_MetaRepository::addClassToCache(const OW_CIMClass& cc, const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
 
-	if(!cacheInitialized)
-	{
-		theCache = OW_Array<ClassCacheRec>();
-		cacheInitialized = true;
-	}
-
 	ClassCacheRec cr;
-	cr.key = key;
 	cr.cc = cc;
 	cr.lastAccess = time(NULL);
-	if(theCache.size() > CACHE_SIZE)
+	if(theCache.size() > maxCacheSize)
 	{
-		size_t toRem = 0;
-		time_t lru = LONG_MAX;
-		for(size_t i = 0; i < theCache.size(); i++)
-		{
-			if(theCache[i].lastAccess < lru)
-			{
-				lru = theCache[i].lastAccess;
-				toRem = i;
-			}
-		}
-
-		theCache.remove(toRem);
+		cache_t::iterator toRem =
+			std::min_element(theCache.begin(), theCache.end(), lruCompare());
+		theCache.erase(toRem);
 	}
 
-	theCache.append(cr);
+	theCache.insert(cache_t::value_type(key, cr));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static OW_CIMClass
-getClassFromCache(const OW_String& key)
+OW_CIMClass
+OW_MetaRepository::getClassFromCache(const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
-	if(!cacheInitialized)
-	{
-		theCache = OW_Array<ClassCacheRec>();
-		cacheInitialized = true;
-	}
-
 	OW_CIMClass cc;
-	for(size_t i = 0; i < theCache.size(); i++)
+	cache_t::const_iterator i = theCache.find(key);
+	if (i != theCache.end())
 	{
-		if(theCache[i].key.equals(key))
-		{
-			theCache[i].lastAccess = time(NULL);
-			cc = theCache[i].cc;
-			break;
-		}
+		cc = (*i).second.cc;
 	}
 
 	return cc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static void
-removeClassFromCache(const OW_String& key)
+void
+OW_MetaRepository::removeClassFromCache(const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
-	if(!cacheInitialized)
-	{
-		theCache = OW_Array<ClassCacheRec>();
-		cacheInitialized = true;
-	}
-
-	for(size_t i = 0; i < theCache.size(); i++)
-	{
-		if(theCache[i].key.equals(key))
-		{
-			theCache.remove(i);
-			break;
-		}
-	}
+	theCache.erase(key);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-static void
-clearClassCache()
+void
+OW_MetaRepository::clearClassCache()
 {
 	OW_MutexLock l(cacheGuard);
 	theCache.clear();
@@ -170,7 +126,6 @@ clearClassCache()
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::~OW_MetaRepository()
 {
-	clearClassCache();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1214,4 +1169,18 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)
+	: OW_GenericHDBRepository(env)
+{
+	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt);
+	try
+	{
+		maxCacheSize = maxCacheSizeOpt.toUInt32();
+	}
+	catch (const OW_StringConversionException&)
+	{
+		maxCacheSize = DEFAULT_MAX_CLASS_CACHE_SIZE;
+	}
+}
 

@@ -107,7 +107,14 @@ public:
 		OW_MutexLock lock = m_impl.getWriteLock();
 
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		return m_impl->insert(i, x);
+		if (i != m_impl->end() && *i == x)
+		{
+			return std::pair<iterator, bool>(i, false);
+		}
+		else
+		{
+			return std::pair<iterator, bool>(m_impl->insert(i, x), true);
+		}
 	}
 
 	iterator insert(iterator, const value_type& x) /*throw (std::exception)*/
@@ -135,32 +142,40 @@ public:
 	void erase(iterator position) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
-		return m_impl->erase(position);
+		m_impl->erase(position);
 	}
 
 	size_type erase(const key_type& x) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
 		iterator i = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		return m_impl->erase(i);
+		if (i != m_impl->end() && *i == x)
+		{
+			m_impl->erase(i);
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 
 	void erase(iterator first, iterator last) /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
-		return m_impl->erase(first, last);
+		m_impl->erase(first, last);
 	}
 
 	void clear() /*throw (std::exception)*/
 	{
 		OW_MutexLock lock = m_impl.getWriteLock();
-		return m_impl->clear();
+		m_impl->clear();
 	}
 
 	iterator find(const key_type& x) const /*throw (std::exception)*/
 	{
 		iterator pos = std::lower_bound(m_impl->begin(), m_impl->end(), x, Compare());
-		if (*pos == x)
+		if (pos != m_impl->end() && *pos == x)
 		{
 			return pos;
 		}

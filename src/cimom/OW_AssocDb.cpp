@@ -343,13 +343,9 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& ass
 					if (add)
 					{
 						addEntry(entry1);
-						std::cout << "adding entry : " << entry1 << endl;
 						addEntry(entry2);
-						std::cout << "adding entry : " << entry2 << endl;
 						addEntry(entry3);
-						std::cout << "adding entry : " << entry3 << endl;
 						addEntry(entry4);
-						std::cout << "adding entry : " << entry4 << endl;
 					}
 					else
 					{
@@ -380,30 +376,21 @@ OW_AssocDbHandle::getAllEntries(const OW_CIMObjectPath& objectName,
 		const OW_String& resultRole,
 		OW_AssocDbEntryResultHandlerIFC& result)
 {
-	cout << "passocClasses = " << passocClasses << endl;
-	if (passocClasses)
-	{
-		cout << "passocClasses->size() = " << passocClasses->size() << endl;
-	}
 	if ((passocClasses && passocClasses->size() == 0)
 		|| presultClasses && presultClasses->size() == 0)
 	{
-		cout << "getAllEntries returning because filters will eliminate all output" << endl;
 		return; // one of the filter will reject everything, so don't even bother
 	}
 	OW_String key = OW_AssocDbEntry::makeKey(objectName, role, resultRole);
 
 	OW_MutexLock l = m_pdata->m_pdb->getDbLock();
 
-	cout << "getAllEntries searching for key: " << key << endl;
 	OW_AssocDbEntry dbentry = m_pdata->m_pdb->findEntry(key, *this);
 	while(dbentry && dbentry.makeKey() == key)
 	{
-		cout << "dbentry = " << dbentry << endl;
 		if(((passocClasses == 0) || (passocClasses->count(dbentry.getAssocClass()) > 0))
 		   && ((presultClasses == 0) || (presultClasses->count(dbentry.getResultClass()) > 0)))
 		{
-			cout << "matched entry" << endl;
 			result.handleEntry(dbentry);
 		}
 

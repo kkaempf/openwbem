@@ -136,6 +136,10 @@
 #define DEFAULT_REQ_HANDLER_TTL "5"
 #endif
 
+#ifndef DEFAULT_MAX_CLASS_CACHE_SIZE
+#define DEFAULT_MAX_CLASS_CACHE_SIZE 20
+#endif
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
@@ -178,6 +182,7 @@ namespace OW_ConfigOpts
 	static const char* const CPPIFC_PROV_TTL_opt = "cppprovifc.prov_TTL";
 	static const char* const REQ_HANDLER_TTL_opt = "owcimomd.request_handler_TTL";
 	static const char* const SIMPLECPPIFC_PROV_LOC_opt = "simplecppprovifc.prov_location";
+	static const char* const MAX_CLASS_CACHE_SIZE_opt = "owcimomd.max_class_cache_size";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__
