@@ -42,7 +42,6 @@ Fix problems:
     - Document public/internal classes.
     - Indication server should not require that subscriptions have indication 
       providers.
-    - Add forwarding headers for each directory.
     - Doxygen appears to ignore global functions associated with a class in 
       the header file for that class -- for example, when you look up String, 
       it doesn't show you the associated relational operators ==, !=, <, etc.
@@ -56,6 +55,7 @@ Fix problems:
       valid. Indication provider environments can be saved.
     - Indication server needs to call deActivateFilter on all active providers
       when shutting down.
+    - Change all cmd line utilities to use the CmdLineParser class and support --help and --version
 
 New features:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
