@@ -636,7 +636,7 @@ private:
 		CIMClassResultHandlerIFC* pcresult,
 		OperationContext& context);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	void _validatePropagatedKeys(const String& ns,
+	void _validatePropagatedKeys(OperationContext& context, const String& ns,
 		const CIMInstance& ci, const CIMClass& theClass);
 
 private:

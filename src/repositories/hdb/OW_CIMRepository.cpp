@@ -890,7 +890,7 @@ CIMObjectPath
 CIMRepository::createInstance(
 	const String& ns,
 	const CIMInstance& ci,
-	OperationContext&)
+	OperationContext& context)
 {
 	CIMObjectPath rval(ns, ci);
 	try
@@ -925,8 +925,8 @@ CIMRepository::createInstance(
 					CIMClass rcc(CIMNULL);
 					try
 					{
-						rcc = _instGetClass(ns,op.getClassName());
-						m_iStore.getCIMInstance(ns, op,rcc,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
+						m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
+							ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
 					}
 					catch (CIMException& e)
 					{
@@ -936,7 +936,7 @@ CIMRepository::createInstance(
 					}
 				}
 			}
-			_validatePropagatedKeys(ns, ci, theClass);
+			_validatePropagatedKeys(context, ns, ci, theClass);
 		}
 		//TODO: _checkRequiredProperties(theClass, ci);
 		m_iStore.createInstance(ns, theClass, ci);
@@ -1401,7 +1401,8 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
-	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS), result,
+	staticReferencesInstResultHandler handler(context, m_env->getCIMOMHandle(context,
+		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, CIMName(), handler);
@@ -1499,7 +1500,8 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
-	staticAssociatorsInstResultHandler handler(context, m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS), result,
+	staticAssociatorsInstResultHandler handler(context, m_env->getCIMOMHandle(context,
+		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, ServiceEnvironmentIFC::E_USE_PROVIDERS, ServiceEnvironmentIFC::E_NO_LOCKING), result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
@@ -1782,7 +1784,7 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMRepository::_validatePropagatedKeys(const String& ns,
+CIMRepository::_validatePropagatedKeys(OperationContext& context, const String& ns,
 	const CIMInstance& ci, const CIMClass& theClass)
 {
 	CIMObjectPathArray rv;
@@ -1867,8 +1869,8 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 			op.setClassName(classes[i]);
 			try
 			{
-				CIMClass c = _instGetClass(ns,classes[i]);
-				m_iStore.getCIMInstance(ns, op, c, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0);
+				m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, ServiceEnvironmentIFC::E_USE_PROVIDERS,
+					ServiceEnvironmentIFC::E_NO_LOCKING)->getInstance(ns, op);
 				// if the previous line didn't throw, then we found it.
 				found = true;
 				break;
