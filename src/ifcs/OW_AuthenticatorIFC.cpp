@@ -44,5 +44,11 @@ AuthenticatorIFC::~AuthenticatorIFC()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void 
+AuthenticatorIFC::doInit(ServiceEnvironmentIFCRef) 
+{
+}
+
 } // end namespace OpenWBEM
 

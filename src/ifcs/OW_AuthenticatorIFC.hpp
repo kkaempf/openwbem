@@ -112,7 +112,7 @@ protected:
 	 * @exception Any exception may be thrown because other classes which
 	 *	derive from this may need to throw exceptions in init()
 	 */
-	virtual void doInit(ServiceEnvironmentIFCRef) {}
+	virtual void doInit(ServiceEnvironmentIFCRef);
 	Mutex m_mutex;
 };
 typedef SharedLibraryReference<IntrusiveReference<AuthenticatorIFC> > AuthenticatorIFCRef;
