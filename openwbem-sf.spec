@@ -10,7 +10,7 @@
 %define startnum 36
 %define killnum 64
 %define initname owcimomd
-%define owversion 3.0.0pre1
+%define owversion 3.0.0pre2
 # You can define values like those above. 
 
 # The name is prefixed by either "" or "lsb-" 
