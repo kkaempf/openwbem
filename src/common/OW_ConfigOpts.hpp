@@ -76,6 +76,10 @@
 #define DEFAULT_CMPI_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/cmpiproviders"
 #endif
 
+#ifndef DEFAULT_PERL_PROVIDER_LOCATION
+#define DEFAULT_PERL_PROVIDER_LOCATION DEFAULT_OWLIB_DIR"/perlproviders"
+#endif
+
 #ifndef DEFAULT_AUTH_MOD
 #define DEFAULT_AUTH_MOD DEFAULT_OWLIB_DIR"/authentication/libpamauthentication.so"
 #endif
@@ -173,8 +177,6 @@ namespace OW_ConfigOpts
 	static const char* const USER_NAME_opt = "internal.user.Name";
 	static const char* const USE_UDS_opt = "http_server.use_UDS";
 	static const char* const NPIIFC_PROV_LOC_opt = "npiprovifc.prov_location";
-	static const char* const PERLIFC_PROV_LOC_opt = "npiprovifc.prov_location";
-	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
 	static const char* const SERVICE_LIB_PATH_opt = "daemon.service_lib_path";
 	static const char* const REQUEST_HANDLER_LIB_PATH_opt = "daemon.request_handler_lib_path";
 	static const char* const SINGLE_THREAD_opt = "http_server.single_thread";
@@ -192,6 +194,8 @@ namespace OW_ConfigOpts
 
 	// 2.1 additions
 	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
+	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
+ 	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
 };
 
 #endif

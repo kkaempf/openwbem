@@ -175,6 +175,13 @@ npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 
 ################################################################################
+# One of the provider interfaces provided with owcimomd is the perl provider
+# interface. The perlprovifc.prov_location option specifies where the perl
+# provider interface will load it's providers from. The default for this option
+# is "@libdir@/openwbem/perlproviders"
+perlprovifc.prov_location = @libdir@/openwbem/perlproviders
+
+################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
 # responses.  This option controls whether it will acutally use it or not.
 # The default is true.

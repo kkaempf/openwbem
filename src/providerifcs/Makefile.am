@@ -1,3 +1,3 @@
-SUBDIRS = cpp npi simplecpp 
+SUBDIRS = cpp npi simplecpp perl
 #Add this back when it doesn't crash the cimom 
 #cmpi
