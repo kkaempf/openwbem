@@ -260,10 +260,15 @@ public:
 	 */
 	bool getPropagated() const;
 	/**
-	 * Clear all qualifiers except for the Key qualifier from this property.
+	 * Clear all qualifiers from this property.
 	 * @return a reference to *this
 	 */
 	CIMProperty& clearQualifiers();
+	/**
+	 * Clear all qualifiers except for the Key qualifier from this property.
+	 * @return a reference to *this
+	 */
+	CIMProperty& clearNonKeyQualifiers();
 	/**
 	 * @return The name of this CIMProperty
 	 */

@@ -432,6 +432,13 @@ CIMProperty::setName(const String& name)
 CIMProperty&
 CIMProperty::clearQualifiers()
 {
+	m_pdata->m_qualifiers.clear();
+	return *this;
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMProperty&
+CIMProperty::clearNonKeyQualifiers()
+{
 	CIMQualifier key = getQualifier(CIMQualifier::CIM_QUAL_KEY);
 	m_pdata->m_qualifiers.clear();
 	if (key)
