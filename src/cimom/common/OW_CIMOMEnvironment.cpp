@@ -986,6 +986,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 {
 	// m_authorizerManager should actually be a valid AuthorizerManager
 	// already, but it doesn't have a authorizer loaded yet.
+	// It is also already added to the m_services array.
 
 	String libname = getConfigItem(ConfigOpts::AUTHORIZATION2_LIB_opt);
 
@@ -1027,8 +1028,6 @@ CIMOMEnvironment::_createAuthorizerManager()
 
 	m_authorizerManager->setAuthorizer(
 		Authorizer2IFCRef(authorizerLib,Authorizer2IFCRef::element_type(p)));
-
-	m_services.push_back(ServiceIFCRef(SharedLibraryRef(), m_authorizerManager));
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
