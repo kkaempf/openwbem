@@ -166,7 +166,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # library will be loaded from.
 # If this option is empty or commented out, no authorization module will be
 # used.
-owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@lib_ext@
+;owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@lib_ext@
 
 ################################################################################
 # owcimomd.interop_schema_namespace specifies the namespace which contains the
