@@ -288,6 +288,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			if (error != 0)
 			{
 				::close(m_sockfd);
+				errno = error;
 				OW_THROW_ERRNO_MSG(SocketException,
 						"SocketBaseImpl::connect() failed");
 			}
