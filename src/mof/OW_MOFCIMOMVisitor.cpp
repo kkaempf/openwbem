@@ -1001,10 +1001,12 @@ CIMQualifierType CIMOMVisitor::getQualifierType(const String& qualName, const li
 {
 	String lcqualName = qualName;
 	lcqualName.toLowerCase();
+	// TODO: Fix this to include the namespace in the key
 	CIMQualifierType qt = m_dataTypeCache.getFromCache(lcqualName);
 	if (!qt)
 	{
 		qt = CIMOMgetQualifierType(qualName, li);
+		// TODO: Fix this to include the namespace in the key
 		m_dataTypeCache.addToCache(qt, lcqualName);
 	}
 	return qt;
@@ -1013,10 +1015,12 @@ CIMClass CIMOMVisitor::getClass(const String& className, const lineInfo& li)
 {
 	String lcclassName = className;
 	lcclassName.toLowerCase();
+	// TODO: Fix this to include the namespace in the key
 	CIMClass c = m_classCache.getFromCache(lcclassName);
 	if (!c)
 	{
 		c = CIMOMgetClass(className, li);
+		// TODO: Fix this to include the namespace in the key
 		m_classCache.addToCache(c, lcclassName);
 	}
 	return c;
@@ -1090,6 +1094,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 		// save it in the cache
 		String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();
+		// TODO: Fix this to include the namespace in the key
 		m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
 	}
 	catch (const CIMException& ce)
