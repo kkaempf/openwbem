@@ -88,11 +88,13 @@ static char* setPath(NPIHandle *nh, char *path)
    return path;
 } 
 
-static void initialize( NPIHandle *nh, CIMOMHandle ch)
+static char * initialize ( NPIHandle *nh, CIMOMHandle ch)
 {
     char *args[] = {"","","initialize"};
     int error;
     char msg[512],script[256];
+
+    char * classList;
 
     PerlInterpreter * my_perl;
 
@@ -119,12 +121,14 @@ static void initialize( NPIHandle *nh, CIMOMHandle ch)
 
     if (error) {
         nh->errorOccurred = -1;
-        return;
+        return NULL;
     }
     else
     {
         dSP;
         int count;
+	SV * retval;
+	STRLEN n_a;
 
         ENTER;
         SAVETMPS;
@@ -132,14 +136,20 @@ static void initialize( NPIHandle *nh, CIMOMHandle ch)
         PUSHMARK(SP);
         PUTBACK;
 
-        count = call_pv("initialize", G_EVAL|G_DISCARD|G_NOARGS);
+        /* count = call_pv("initialize", G_EVAL|G_DISCARD|G_NOARGS); */
+        count = call_pv("initialize", G_EVAL|G_SCALAR|G_NOARGS);
             
         SPAGAIN;
+        retval = POPs;
+        classList = strdup(SvPV(retval, n_a));
+	fprintf(stderr, "ClassList is %s, len %d\n", classList, n_a);
+	if (n_a <= 1) {free(classList); classList = NULL;}
 
         PUTBACK;
         FREETMPS;
         LEAVE;
     }
+    return classList;
 }
 
 static void cleanup (NPIHandle *nh)

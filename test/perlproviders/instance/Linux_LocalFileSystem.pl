@@ -7,6 +7,9 @@ print "I shan't be printed.";
  
 sub initialize {
     print time;
+    print "Linux_FileSystem Provider\n";
+    
+    return "CIM_UnixLocalFileSystem,Linux_Ext2FileSystem,Linux_Ext3FileSystem"; 
 }
 
 sub enumInstanceNames {

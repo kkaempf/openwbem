@@ -69,7 +69,7 @@ typedef struct { void * ptr; } Vector;
 typedef struct { void * ptr; } SelectExp;
   
 /* typedefs for CIMProvider function pointers for the linked libraries */
-typedef void (*FP_INITIALIZE) ( NPIHandle *, CIMOMHandle );
+typedef char * (*FP_INITIALIZE) ( NPIHandle *, CIMOMHandle );
 typedef void (*FP_CLEANUP) ( NPIHandle * );
 
 /* typedefs for InstanceProvider function pointers for the linked libraries */

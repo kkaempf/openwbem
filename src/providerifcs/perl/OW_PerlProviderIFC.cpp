@@ -315,6 +315,16 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			delete ((NPIContext *)fTable.npicontext);
 			continue;
 		}
+
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
+                //NPIHandleFreer nhf(_npiHandle);
+		::CIMOMHandle ch;
+
+		//char * classList = (* (fTable.fp_initialize))(
+		//	&_npiHandle, ch);
+		StringArray classList = OW_String((* (fTable.fp_initialize))(
+		  	&_npiHandle, ch)).tokenize(",");
+
 		// now register the perl script for every type
 		// without trying to call
 		// TODO: implement check for perl subroutines
@@ -329,22 +339,24 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		MethodProviderInfo meth_info;
 		meth_info.setProviderName(guessProvId);
 		methodProviderInfo.push_back(meth_info);
+
 		IndicationProviderInfo ind_info;
-		IndicationProviderInfoEntry e("CIM_InstCreation");
-		// BMMU used for testing
-		//e.classes.push_back("CIM_LocalFileSystem");
-		//e.classes.push_back("Linux_Ext2FileSystem");
-		ind_info.addInstrumentedClass(e);
-		e.indicationName = "CIM_InstModification";
-		ind_info.addInstrumentedClass(e);
-		e.indicationName = "CIM_InstDeletion";
-		ind_info.addInstrumentedClass(e);
-		e.indicationName = "CIM_InstIndication";
-		ind_info.addInstrumentedClass(e);
-		e.indicationName = "CIM_Indication";
-		ind_info.addInstrumentedClass(e);
-		ind_info.setProviderName(guessProvId);
-		indicationProviderInfo.push_back(ind_info);
+		if (! classList.empty())
+		{
+			IndicationProviderInfoEntry e("CIM_InstCreation");
+			for (unsigned int cnt = 0; cnt < classList.size();
+				cnt++)
+			{
+				e.classes.push_back(classList[cnt]);
+			}
+			ind_info.addInstrumentedClass(e);
+			e.indicationName = "CIM_InstModification";
+			ind_info.addInstrumentedClass(e);
+			e.indicationName = "CIM_InstDeletion";
+			ind_info.addInstrumentedClass(e);
+			ind_info.setProviderName(guessProvId);
+			indicationProviderInfo.push_back(ind_info);
+		}
 		continue;
 	}
 }

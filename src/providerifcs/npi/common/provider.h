@@ -28,7 +28,7 @@
 /* 
  * These are the CIMProvider methods, that have to be written for any provider.
  */
-static void initialize ( NPIHandle *, CIMOMHandle );
+static char * initialize ( NPIHandle *, CIMOMHandle );
 static void cleanup ( NPIHandle * );
 
 

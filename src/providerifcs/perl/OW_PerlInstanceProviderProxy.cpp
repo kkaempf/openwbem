@@ -84,7 +84,7 @@ PerlInstanceProviderProxy::enumInstanceNames(
 				my_cop.ptr = _VectorGet(&_npiHandle,v,i);
 				CIMObjectPath ow_cop(*
 					static_cast<CIMObjectPath *>(my_cop.ptr) );
-				ow_cop.setObjectName(cimClass.getName());
+				ow_cop.setClassName(cimClass.getName());
 		result.handle(ow_cop);
 			}
 			//printf("Leaving enumInstanceNames\n");
