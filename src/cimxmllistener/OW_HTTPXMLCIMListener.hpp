@@ -40,12 +40,12 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
-#include "OW_Thread.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Mutex.hpp"
 
 class OW_HTTPServer;
 class OW_ListenerAuthenticator;
+class OW_Thread;
 
 class OW_HTTPXMLCIMListener : public OW_CIMListenerCallback
 {

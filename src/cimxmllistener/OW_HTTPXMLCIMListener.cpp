@@ -49,6 +49,7 @@
 #include "OW_SelectEngine.hpp"
 #include "OW_SelectableIFC.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Thread.hpp"
 
 #include <algorithm> // for std::remove
 

@@ -37,7 +37,6 @@
 #include "OW_List.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
-#include "OW_Thread.hpp"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_CIMInstance.hpp"

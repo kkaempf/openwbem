@@ -31,7 +31,6 @@
 #define OW_LIFE_CYCLE_INDICATION_POLLER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Thread.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CppPolledProviderIFC.hpp"

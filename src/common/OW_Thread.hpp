@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -38,55 +38,14 @@
 #include "OW_ThreadImpl.hpp"
 #include "OW_Reference.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Runnable.hpp"
+#include "OW_ThreadDoneCallback.hpp"
 
 
 DECLARE_EXCEPTION(Thread);
 
 
-/**
- * There are two methods for creating a thread of execution in the OW systems.
- * One is to derive from OW_Thread and implement the run method and call start
- * on instances of the class to get the thread running.
- * The other method is to derive from OW_Runnable and pass references of the
- * derived class to the static run method on OW_Thread that takes an
- * OW_RunnableRef class. This technique allows the caller to run the
- * OW_Runnable object as a separate thread or in the same thread based on
- * the separateThread argument passed to the OW_Thread::run method.
- *
- * Example:
- *
- *		class MyRunnable : public OW_Runnable
- *		{
- *			virtual void run()
- *			{
- *				Some meaningful stuff for MyRunnable
- *			}
- *		};
- *
- *		void foo()
- *		{
- *			OW_RunnableRef rref(new MyRunnable);
- *			bool sepThreadFlag = (if wanted in separate thread) ? true : false;
- *			OW_Thread::run(rref, sepThreadFlag);
- *
- *			// If sepThreadFlag was true, then when we return from foo,
- *			// the MyRunnable object is still running.
- *		}
- */
-class OW_Runnable
-{
-public:
-	virtual ~OW_Runnable()
-	{
-	}
-	virtual void run() = 0;
-};
 
-typedef OW_Reference<OW_Runnable> OW_RunnableRef;
-
-
-class OW_ThreadDoneCallback;
-typedef OW_Reference<OW_ThreadDoneCallback> OW_ThreadDoneCallbackRef;
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_Thread
@@ -233,22 +192,13 @@ private:
 	};
 
 	static OW_Int32 threadRunner(void* paramPtr);
+	
+	// non-copyable
+	OW_Thread(const OW_Thread&);
+	OW_Thread& operator=(const OW_Thread&);
+	
 };
 
-
-class OW_ThreadDoneCallback
-{
-public:
-	virtual ~OW_ThreadDoneCallback();
-
-	void notifyThreadDone(OW_Thread* t)
-	{
-		doNotifyThreadDone(t);
-	}
-protected:
-	virtual void doNotifyThreadDone(OW_Thread* t) = 0;
-};
-
-
+typedef OW_Reference<OW_Thread> OW_ThreadRef;
 
 #endif

@@ -48,6 +48,8 @@
 #endif
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
+#include "OW_ThreadDoneCallback.hpp"
+#include "OW_Thread.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()

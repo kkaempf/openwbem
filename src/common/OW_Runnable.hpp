@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -27,62 +27,52 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
-#define OW_THREAD_COUNTER_HPP_INCLUDE_GUARD_
+
+#ifndef OW_RUNNABLE_HPP_INCLUDE_GUARD_
+#define OW_RUNNABLE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_Condition.hpp"
 #include "OW_Reference.hpp"
-#include "OW_ThreadDoneCallback.hpp"
 
-// Note: Do not inline any functions in these classes, the code must
-// be contained in the main library, if a loadable library contains any,
-// it will cause a race-condition that may segfault the cimom.
-class OW_ThreadCounter
+/**
+ * There are two methods for creating a thread of execution in the OW systems.
+ * One is to derive from OW_Thread and implement the run method and call start
+ * on instances of the class to get the thread running.
+ * The other method is to derive from OW_Runnable and pass references of the
+ * derived class to the static run method on OW_Thread that takes an
+ * OW_RunnableRef class. This technique allows the caller to run the
+ * OW_Runnable object as a separate thread or in the same thread based on
+ * the separateThread argument passed to the OW_Thread::run method.
+ *
+ * Example:
+ *
+ *		class MyRunnable : public OW_Runnable
+ *		{
+ *			virtual void run()
+ *			{
+ *				Some meaningful stuff for MyRunnable
+ *			}
+ *		};
+ *
+ *		void foo()
+ *		{
+ *			OW_RunnableRef rref(new MyRunnable);
+ *			bool sepThreadFlag = (if wanted in separate thread) ? true : false;
+ *			OW_Thread::run(rref, sepThreadFlag);
+ *
+ *			// If sepThreadFlag was true, then when we return from foo,
+ *			// the MyRunnable object is still running.
+ *		}
+ */
+class OW_Runnable
 {
 public:
-	OW_ThreadCounter(OW_Int32 maxThreads);
-	~OW_ThreadCounter();
-
-	// Throws OW_TimeoutException in case of timeout
-	void incThreadCount(OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	void decThreadCount();
-	OW_Int32 getThreadCount();
-	// Throws OW_TimeoutException in case of timeout
-	void waitForAll(OW_UInt32 sTimeout, OW_UInt32 usTimeout);
-	void setMax(OW_Int32 maxThreads);
-
-private:
-	OW_Int32 m_maxThreads;
-	OW_Int32 m_runCount;
-	OW_NonRecursiveMutex m_runCountGuard;
-	OW_Condition m_runCountCondition;
-
-	// noncopyable
-	OW_ThreadCounter(OW_ThreadCounter const&);
-	OW_ThreadCounter& operator=(OW_ThreadCounter const&);
+	virtual ~OW_Runnable();
+	virtual void run() = 0;
 };
 
-typedef OW_Reference<OW_ThreadCounter> OW_ThreadCounterRef;
+typedef OW_Reference<OW_Runnable> OW_RunnableRef;
 
-class OW_ThreadCountDecrementer : public OW_ThreadDoneCallback
-{
-public:
-	OW_ThreadCountDecrementer(OW_ThreadCounterRef const& x);
-	virtual ~OW_ThreadCountDecrementer();
-
-private:
-	virtual void doNotifyThreadDone(OW_Thread *);
-
-	OW_ThreadCounterRef m_counter;
-
-	// noncopyable
-	OW_ThreadCountDecrementer(OW_ThreadCountDecrementer const&);
-	OW_ThreadCountDecrementer& operator=(OW_ThreadCountDecrementer const&);
-};
 
 #endif
-
 

@@ -31,7 +31,7 @@
 #define OW_HTTPSVRCONNECTION_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Thread.hpp"
+#include "OW_Runnable.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
