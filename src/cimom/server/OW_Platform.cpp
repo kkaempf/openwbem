@@ -262,6 +262,12 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 #ifndef WIN32
 	setupSigHandler(dbgFlg);
 #endif
+
+#ifdef OW_HAVE_PTHREAD_ATFORK
+	// this registers shutdownSig to be run in the child whenever a fork() happens. 
+	// This will prevent a child process from writing to the signal pipe and shutting down the parent.
+	::pthread_atfork(NULL, NULL, &shutdownSig);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
