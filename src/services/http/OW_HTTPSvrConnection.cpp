@@ -840,7 +840,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 //
 // Check for Accept-Language
 //
-	SessionLanguage *psl = new SessionLanguage;
+	SessionLanguageRef psl(new SessionLanguage);
 	if (headerHasKey("Accept-Language"))
 	{
 		String al = getHeaderValue("Accept-Language");
@@ -849,7 +849,7 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			psl->assign(al.c_str());
 		}
 	}
-	context.setData(SESSION_LANGUAGE_KEY, OperationContext::DataRef(psl));
+	context.setData(SESSION_LANGUAGE_KEY, psl);
 
 //
 // Check for forbidden header keys.
@@ -1211,25 +1211,29 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 	setByProvider = false;
 	clientSpecified = false;
 	String contentLang = m_options.defaultContentLanguage;
-	try
+
+	OperationContext::DataRef dataref = context.getData(
+		SESSION_LANGUAGE_KEY);
+	if (!dataref)
 	{
-		OperationContext::DataRef dataref = context.getData(
-			SESSION_LANGUAGE_KEY);
-		SessionLanguageRef slref = dataref.cast_to<SessionLanguage>();
-		if(slref->langCount() > 0)
-		{
-			clientSpecified = true;
-		}
-		String pcl = slref->getContentLanguage();
-		if(pcl.length())
-		{
-			contentLang = pcl;
-			setByProvider = true;
-		}
+		return contentLang;
 	}
-	catch(ContextDataNotFoundException&)
+
+	SessionLanguageRef slref = dataref.cast_to<SessionLanguage>();
+	if (!slref)
 	{
-		// Ignore?
+		return contentLang;
+	}
+
+	if(slref->langCount() > 0)
+	{
+		clientSpecified = true;
+	}
+	String pcl = slref->getContentLanguage();
+	if(pcl.length())
+	{
+		contentLang = pcl;
+		setByProvider = true;
 	}
 
 	return contentLang;
