@@ -35,6 +35,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_Format.hpp"
+#include "OW_CIMDateTime.hpp"
 
 using namespace OpenWBEM;
 
@@ -82,6 +83,13 @@ void OW_CIMValueTestCases::testInserterOp()
 	unitAssert(str.equals("String One"));
 }
 
+void OW_CIMValueTestCases::testToMOF()
+{
+	CIMValue v = CIMValue(CIMDateTime("00000000000000.000000:000"));
+	unitAssert(v.toMOF() == "\"00000000000000.000000:000\"");
+	unitAssert(v.toString() == "00000000000000.000000:000");
+}
+
 Test* OW_CIMValueTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMValue");
@@ -92,6 +100,9 @@ Test* OW_CIMValueTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
 			("testInserterOp", 
 			&OW_CIMValueTestCases::testInserterOp));
+	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
+			("testToMOF", 
+			&OW_CIMValueTestCases::testToMOF));
 
 	return testSuite;
 }

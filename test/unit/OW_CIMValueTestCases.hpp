@@ -47,6 +47,7 @@ private:
 	// test methods
 	void testGetArraySize();
 	void testInserterOp();
+	void testToMOF();
 };
 
 #endif
