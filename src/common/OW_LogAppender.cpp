@@ -55,6 +55,11 @@ namespace OpenWBEM
 
 
 //////////////////////////////////////////////////////////////////////////////
+const StringArray LogAppender::ALL_COMPONENTS(String("*").tokenize());
+const StringArray LogAppender::ALL_CATEGORIES(String("*").tokenize());
+const String LogAppender::STR_TTCC_MESSAGE_FORMAT("%r [%t] %-5p %c - %m");
+
+//////////////////////////////////////////////////////////////////////////////
 LogAppender::LogAppender(const StringArray& components, const StringArray& categories, const String& pattern)
 	: m_components(components.begin(), components.end())
 	, m_categories(categories.begin(), categories.end())

@@ -90,6 +90,14 @@ public:
 		const String& type,
 		const ConfigFile::ConfigMap& configItems);
 
+	/// Pass to createLogAppender to indicate all components.
+	static const StringArray ALL_COMPONENTS;
+	/// Pass to createLogAppender to indicate all categories.
+	static const StringArray ALL_CATEGORIES;
+	/// The Log4j TTCC message format - TTCC is acronym for Time Thread Category Component.
+	/// "%r [%t] %-5p %c - %m"
+	static const String STR_TTCC_MESSAGE_FORMAT;
+
 protected:
 
 	LogAppender(const StringArray& components, const StringArray& categories, const String& pattern);
