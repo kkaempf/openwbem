@@ -305,5 +305,6 @@ test13()
 
 
 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:../db"
-export LD_LIBRARY_PATH
+LIBPATH="$LIBPATH:../db"
+export LD_LIBRARY_PATH LIBPATH
 main $*
