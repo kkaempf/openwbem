@@ -294,7 +294,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 			BinarySerialization::write(*ostrError, BIN_EXCEPTION);
 			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));
 			BinarySerialization::write(*ostrError, e.getMessage());
-			setError(e.getErrNo(), e.getMessage());
+			setError(e.getErrNo(), e.getDescription());
 		}
 	}
 	catch(Exception& e)

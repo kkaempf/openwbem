@@ -1374,7 +1374,7 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		OW_LOGDEBUG(Format("XMLExecute::processSimpleReq caught CIM "
 			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
-		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
+		outputError(ce.getErrNo(), ce.getDescription(), ostrError);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1409,9 +1409,15 @@ XMLExecute::outputError(CIMException::ErrNoType errorCode,
 		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
 	}
 
-	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
+	ostr << "<ERROR CODE=\"" << errorCode << "\"";
+	// always have to send DESCRIPTION, since there are clients that can't handle it not being there.
+	//if (!msg.empty())
+	//{
+		ostr << " DESCRIPTION=\"" <<
 		XMLEscape(msg) <<
-		"\"></ERROR>\r\n";
+		"\"";
+	//}
+	ostr << "></ERROR>\r\n";
 
 	if (m_isIntrinsic)
 	{

@@ -106,7 +106,7 @@ RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 			OW_LOGINFO(Format("RequestHandlerIFCXML::doProcess caught CIM "
 				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
-			outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
+			outputError(ce.getErrNo(), ce.getDescription(), *ostrError);
 		}
 		catch (CIMErrorException& cee)
 		{
