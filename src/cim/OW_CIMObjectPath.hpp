@@ -215,9 +215,15 @@ public:
 	OW_String getHost() const;
 
 	/**
-	 * @return The object name for this object path
+	 * This function is deprecated in favor of getClassName()
+	 * @return The class name for this object path
 	 */
 	OW_String getObjectName() const;
+
+	/**
+	 * @return The class name for this object path
+	 */
+	OW_String getClassName() const;
 
 	/**
 	 * Convert a string representation of an object path to an OW_CIMObjectPath.
@@ -242,11 +248,19 @@ public:
 	OW_CIMObjectPath& setNameSpace(const OW_String& ns);
 
 	/**
-	 * Assign an object name to this object path.
-	 * @param objectName	The name of the object to assign to this object path.
+	 * Assign a class name to this object path.
+	 * This function is deprecated in favor of setClassName()
+	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	OW_CIMObjectPath& setObjectName(const OW_String& objectName);
+	OW_CIMObjectPath& setObjectName(const OW_String& className);
+
+	/**
+	 * Assign a class name to this object path.
+	 * @param className	The name of the class to assign to this object path.
+	 * @return a reference to *this
+	 */
+	OW_CIMObjectPath& setClassName(const OW_String& className);
 
 	/**
 	 * Compare this object path with another.

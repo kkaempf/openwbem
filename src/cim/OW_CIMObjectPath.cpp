@@ -252,6 +252,13 @@ OW_CIMObjectPath::getObjectName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_CIMObjectPath::getClassName() const
+{
+	return m_pdata->m_objectName;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath&
 OW_CIMObjectPath::setHost(const OW_String& host)
 {
@@ -269,9 +276,17 @@ OW_CIMObjectPath::setNameSpace(const OW_String& ns)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath&
-OW_CIMObjectPath::setObjectName(const OW_String& objectName)
+OW_CIMObjectPath::setObjectName(const OW_String& className)
 {
-	m_pdata->m_objectName = objectName;
+	m_pdata->m_objectName = className;
+	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath&
+OW_CIMObjectPath::setClassName(const OW_String& className)
+{
+	m_pdata->m_objectName = className;
 	return *this;
 }
 
