@@ -34,6 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_XMLParseException.hpp"
+#include "OW_ExceptionIds.hpp"
 #include "OW_Format.hpp"
 
 namespace OpenWBEM
@@ -64,16 +65,37 @@ static const char* _xmlMessages[] =
 	"Validation error",
 	"Semantic error"
 };
+////////////////////////////////////////////////////////////////////////////////
 XMLParseException::XMLParseException(
 	const char* file,
 	unsigned int line,
 	Code code,
 	const char* msg,
 	unsigned int xmlline)
-: Exception(file, line, Format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
-	msg).c_str())
+: Exception(ExceptionIds::XMLParseExceptionId, file, line, Format("Line %1: %2: %3", xmlline, _xmlMessages[code - 1],
+	msg).c_str(), code)
 {
 }
+
+////////////////////////////////////////////////////////////////////////////////
+XMLParseException* 
+XMLParseException::clone() const throw()
+{
+	return new(std::nothrow) XMLParseException(*this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+XMLParseException::~XMLParseException() throw()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+const char* 
+XMLParseException::type() const
+{
+	return "XMLParseException";
+}
+
 
 } // end namespace OpenWBEM
 

@@ -43,6 +43,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #include <assert.h>
 #include <cctype>
@@ -54,7 +55,7 @@ YY_BUFFER_STATE owmof_scan_bytes( const char *bytes, int len );
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(MOFCompiler)
+OW_DEFINE_EXCEPTION_WITH_ID(MOFCompiler)
 
 namespace MOF
 {

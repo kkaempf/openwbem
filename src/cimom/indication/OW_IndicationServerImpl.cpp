@@ -53,12 +53,13 @@
 #include "OW_WQLInstancePropertySource.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(IndicationServer);
-OW_DEFINE_EXCEPTION(IndicationServer);
+OW_DEFINE_EXCEPTION_WITH_ID(IndicationServer);
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////

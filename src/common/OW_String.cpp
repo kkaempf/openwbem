@@ -46,6 +46,8 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_Bool.hpp"
 #include "OW_UTF8Utils.hpp"
+#include "OW_ExceptionIds.hpp"
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -66,7 +68,7 @@ namespace OpenWBEM
 using std::istream;
 using std::ostream;
 
-OW_DEFINE_EXCEPTION(StringConversion);
+OW_DEFINE_EXCEPTION_WITH_ID(StringConversion);
 
 //////////////////////////////////////////////////////////////////////////////
 // TODO: Move these 2 functions into UTF8Utils

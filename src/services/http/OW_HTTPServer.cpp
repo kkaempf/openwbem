@@ -56,11 +56,12 @@
 #include "OW_Runnable.hpp"
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_ThreadPool.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(HTTPServer)
+OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
 
 //////////////////////////////////////////////////////////////////////////////
 HTTPServer::HTTPServer()

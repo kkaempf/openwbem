@@ -37,11 +37,12 @@
 #include "OW_String.hpp"
 #include "OW_UserInfo.hpp"
 #include "OW_Array.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(ContextDataNotFound);
+OW_DEFINE_EXCEPTION_WITH_ID(ContextDataNotFound);
 
 /////////////////////////////////////////////////////////////////////////////
 OperationContext::OperationContext()

@@ -38,11 +38,13 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_String.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(UnnamedPipe);
+OW_DEFINE_EXCEPTION_WITH_ID(UnnamedPipe);
+
 //////////////////////////////////////////////////////////////////////////////
 UnnamedPipe::~UnnamedPipe()
 {

@@ -37,6 +37,7 @@
 #define OW_CIMERROREXCEPTION_H_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Exception.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
@@ -45,7 +46,7 @@ class CIMErrorException: public Exception
 {
 public:
 	CIMErrorException(const char* file, int line, const char* msg)
-		: Exception(file, line, msg) {}
+		: Exception(ExceptionIds::CIMErrorExceptionId, file, line, msg, Exception::UNKNOWN_ERROR_CODE) {}
 	virtual const char* type() const { return "CIMErrorException"; }
 	static const char* const unsupported_protocol_version; 
 	static const char* const multiple_requests_unsupported; 

@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_HTTPStatusCodes.hpp"
 #include "OW_Exception.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
@@ -46,12 +47,13 @@ class HTTPException : public Exception
 {
 public:
 	HTTPException(const char* file, int line, const char* msg)
-		: Exception(file, line, msg), m_response(-1){}
+		: Exception(ExceptionIds::HTTPExceptionId, file, line, msg, Exception::UNKNOWN_ERROR_CODE), m_response(-1){}
 	HTTPException(const char* file, int line, const char* msg, int response)
-		: Exception(file, line, msg), m_response(response) {}
+		: Exception(ExceptionIds::HTTPExceptionId, file, line, msg, response), m_response(response) {}
 	const char* getId() { return getMessage(); }
 	int getErrorCode() { return m_response; }
 	virtual const char* type() const { return "HTTPException"; }
+	virtual HTTPException* clone() const throw() { return new (std::nothrow)HTTPException(*this); }
 private:
 	int m_response;
 };

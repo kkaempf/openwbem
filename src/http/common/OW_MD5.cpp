@@ -36,6 +36,8 @@
 #include "OW_config.h"
 #include "OW_MD5.hpp"
 #include "OW_String.hpp"
+#include "OW_ExceptionIds.hpp"
+
 #include <string.h> // for memset
 
 namespace OpenWBEM
@@ -43,7 +45,7 @@ namespace OpenWBEM
 
 const int MD5HASHHEXLEN = 32;
 
-OW_DEFINE_EXCEPTION(MD5);
+OW_DEFINE_EXCEPTION_WITH_ID(MD5);
 //////////////////////////////////////////////////////////////////////////////
 MD5OStreamBase::MD5OStreamBase(MD5* md5): _buf(md5) {}
 //////////////////////////////////////////////////////////////////////////////

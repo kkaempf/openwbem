@@ -34,6 +34,7 @@
  */
 
 #include "OW_config.h"
+#include "OW_ExceptionIds.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_String.hpp"
 #include <cstring>
@@ -47,7 +48,7 @@ static String getMsg(CIMException::ErrNoType errval, const char* msg = 0);
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const char* file, int line, CIMException::ErrNoType errval,
 	const char* msg) :
-	Exception(file, line, msg), m_errno(errval), m_longmsg(0)
+	Exception(ExceptionIds::CIMExceptionId, file, line, msg, errval), m_longmsg(0)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,6 @@ CIMException::~CIMException() throw()
 //////////////////////////////////////////////////////////////////////////////
 CIMException::CIMException(const CIMException& x)
 	: Exception(x)
-	, m_errno(x.m_errno)
 	, m_longmsg(x.m_longmsg ? strdup(x.m_longmsg) : 0)
 {
 }
@@ -78,7 +78,6 @@ CIMException::swap(CIMException& x)
 {
 	Exception::swap(x);
 	std::swap(m_longmsg, x.m_longmsg);
-	std::swap(m_errno, x.m_errno);
 }
 //////////////////////////////////////////////////////////////////////////////					
 const char*
@@ -86,7 +85,7 @@ CIMException::getMessage() const
 {
 	if (!m_longmsg)
 	{
-		m_longmsg = strdup(getMsg(m_errno, Exception::getMessage()).c_str());
+		m_longmsg = strdup(getMsg(ErrNoType(getErrorCode()), Exception::getMessage()).c_str());
 	}
 	return m_longmsg;
 }
@@ -143,6 +142,12 @@ getMsg(CIMException::ErrNoType err, const char* msg)
 		rstr += ")";
 	}
 	return rstr;
+}
+
+CIMException* 
+CIMException::clone() const throw()
+{
+	return new(std::nothrow) CIMException(*this);
 }
 
 } // end namespace OpenWBEM

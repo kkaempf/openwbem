@@ -36,6 +36,7 @@
 #include "OW_ThreadBarrier.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
  #include <pthread.h>
@@ -50,7 +51,7 @@
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(ThreadBarrier);
+OW_DEFINE_EXCEPTION_WITH_ID(ThreadBarrier);
 
 #if defined(OW_USE_PTHREAD) && defined(OW_HAVE_PTHREAD_BARRIER)
 class ThreadBarrierImpl

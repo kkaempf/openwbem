@@ -36,11 +36,12 @@
 #include "OW_config.h"
 #include "OW_SelectEngine.hpp"
 #include "OW_Select.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Select)
+OW_DEFINE_EXCEPTION_WITH_ID(Select);
 //////////////////////////////////////////////////////////////////////////////
 void
 SelectEngine::addSelectableObject(SelectableIFCRef obj,

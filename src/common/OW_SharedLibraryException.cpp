@@ -34,11 +34,12 @@
 
 #include "OW_config.h"
 #include "OW_SharedLibraryException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(SharedLibrary)
+OW_DEFINE_EXCEPTION_WITH_ID(SharedLibrary);
 
 } // end namespace OpenWBEM
 

@@ -41,6 +41,8 @@
 #include "OW_IOException.hpp"
 #include "OW_Thread.hpp"
 #include "OW_Select.hpp"
+#include "OW_ExceptionIds.hpp"
+
 extern "C"
 {
 #ifdef OW_HAVE_SYS_RESOURCE_H
@@ -59,9 +61,9 @@ namespace OpenWBEM
 
 using std::cerr;
 using std::endl;
-OW_DEFINE_EXCEPTION(ExecTimeout);
-OW_DEFINE_EXCEPTION(ExecBufferFull);
-OW_DEFINE_EXCEPTION(ExecError);
+OW_DEFINE_EXCEPTION_WITH_ID(ExecTimeout);
+OW_DEFINE_EXCEPTION_WITH_ID(ExecBufferFull);
+OW_DEFINE_EXCEPTION_WITH_ID(ExecError);
 
 class PopenStreamsImpl
 {

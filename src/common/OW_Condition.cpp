@@ -34,14 +34,16 @@
 #include "OW_config.h"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_ExceptionIds.hpp"
+
 #include <cassert>
 #include <cerrno>
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(ConditionLock);
-OW_DEFINE_EXCEPTION(ConditionResource);
+OW_DEFINE_EXCEPTION_WITH_ID(ConditionLock);
+OW_DEFINE_EXCEPTION_WITH_ID(ConditionResource);
 #if defined(OW_USE_PTHREAD)
 /////////////////////////////////////////////////////////////////////////////
 Condition::Condition()

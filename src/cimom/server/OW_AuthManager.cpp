@@ -39,11 +39,12 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_SafeLibCreate.hpp"
 #include "OW_ThreadCancelledException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(AuthManager)
+OW_DEFINE_EXCEPTION_WITH_ID(AuthManager)
 
 ///////////////////////////////////////////////////////////////////////////////
 AuthManager::AuthManager()

@@ -35,11 +35,12 @@
 
 #include "OW_config.h"
 #include "OW_AuthenticatorIFC.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Authentication)
+OW_DEFINE_EXCEPTION_WITH_ID(Authentication);
 
 } // end namespace OpenWBEM
 

@@ -34,11 +34,12 @@
 
 #include "OW_config.h"
 #include "OW_NULLValueException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(NULLValue)
+OW_DEFINE_EXCEPTION_WITH_ID(NULLValue);
 
 } // end namespace OpenWBEM
 

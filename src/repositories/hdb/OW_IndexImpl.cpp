@@ -38,6 +38,8 @@
 #include "OW_FileSystem.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"
+#include "OW_ExceptionIds.hpp"
+
 extern "C"
 {
 #include <unistd.h>
@@ -57,7 +59,7 @@ namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(Index);
-OW_DEFINE_EXCEPTION(Index);
+OW_DEFINE_EXCEPTION_WITH_ID(Index);
 
 /////////////////////////////////////////////////////////////////////////////
 class IndexImpl : public Index

@@ -188,7 +188,7 @@ namespace HTTPUtils
 	 */
 	String escapeCharForURL(char c);
 
-	OW_DECLARE_EXCEPTION(unescapeCharForURL);
+	OW_DECLARE_EXCEPTION(UnescapeCharForURL);
 	/**
 	 * Apply the standard URI [RFC 2396, section 2] unescaping mechanism to 
 	 * the String s, formatted in the ""%" HEX HEX" convention)

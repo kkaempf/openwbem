@@ -36,11 +36,12 @@
 #include "OW_config.h"
 #include "OW_URL.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(MalformedURL)
+OW_DEFINE_EXCEPTION_WITH_ID(MalformedURL);
 
 //////////////////////////////////////////////////////////////////////////////
 String

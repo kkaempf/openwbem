@@ -30,11 +30,12 @@
 #include "OW_config.h"
 #include "OW_WQLOperand.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(TypeMismatch);
+OW_DEFINE_EXCEPTION_WITH_ID(TypeMismatch);
 String WQLOperand::toString() const
 {
 	StringBuffer result;

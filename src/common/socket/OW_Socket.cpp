@@ -41,12 +41,13 @@
 #include "OW_SSLException.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Socket)
-OW_DEFINE_EXCEPTION(SocketTimeout)
+OW_DEFINE_EXCEPTION_WITH_ID(Socket);
+OW_DEFINE_EXCEPTION_WITH_ID(SocketTimeout);
 UnnamedPipeRef Socket::m_pUpipe;
 Socket::Socket(SocketFlags::ESSLFlag isSSL)
 {

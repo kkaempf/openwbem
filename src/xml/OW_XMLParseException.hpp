@@ -73,6 +73,10 @@ class XMLParseException : public Exception
 		{
 			return _code;
 		}
+		virtual XMLParseException* clone() const throw();
+		virtual ~XMLParseException() throw();
+		virtual const char* type() const;
+
 	private:
 		Code _code;
 };

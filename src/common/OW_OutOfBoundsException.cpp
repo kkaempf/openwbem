@@ -34,11 +34,12 @@
 
 #include "OW_config.h"
 #include "OW_Array.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 // This is declared in OW_Array.hpp
-OW_DEFINE_EXCEPTION(OutOfBounds);
+OW_DEFINE_EXCEPTION_WITH_ID(OutOfBounds);
 
 } // end namespace OpenWBEM
 

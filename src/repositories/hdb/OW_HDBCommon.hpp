@@ -43,14 +43,8 @@
 namespace OpenWBEM
 {
 
-class HDBException : public Exception
-{
-public:
-	HDBException(const char* file, int line, const char* msg) :
-		Exception(file, line, msg) {}
-		
-	virtual const char* type() const { return "HDBException"; }
-};
+OW_DECLARE_EXCEPTION(HDB);
+
 #define OW_HDBSIGNATURE "OWHIERARCHICADB"
 const int HDBSIGLEN = 16;
 // The general idea is to have it be a concatenation of release numbers with

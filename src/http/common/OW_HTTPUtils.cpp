@@ -44,6 +44,7 @@
 #include "OW_MD5.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_Format.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #include <cctype>
 #include <cstring>
@@ -57,7 +58,7 @@
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Base64Format);
+OW_DEFINE_EXCEPTION_WITH_ID(Base64Format);
 
 namespace HTTPUtils
 {
@@ -680,7 +681,8 @@ String escapeCharForURL(char c)
 	return String(rval);
 }
 
-OW_DEFINE_EXCEPTION(unescapeCharForURL)
+OW_DEFINE_EXCEPTION_WITH_ID(UnescapeCharForURL);
+
 namespace {
 	inline char digitToVal(char c)
 	{
@@ -693,7 +695,7 @@ char unescapeCharForURL(const char* str)
 {
 	if (strlen(str) < 3 || str[0] != '%' || !isxdigit(str[1]) || !isxdigit(str[2]))
 	{
-		OW_THROW(unescapeCharForURLException, Format("Invalid escape: %1", str).c_str());
+		OW_THROW(UnescapeCharForURLException, Format("Invalid escape: %1", str).c_str());
 	}
 	return (digitToVal(str[1]) << 4 ) | digitToVal(str[2]);
 }

@@ -41,11 +41,12 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(ValueCast);
+OW_DEFINE_EXCEPTION_WITH_ID(ValueCast);
 static bool isCompatible(CIMDataType::Type from, CIMDataType::Type to);
 static void makeValueArray(CIMValue& theValue);
 static CIMValue convertString(const String& strValue,

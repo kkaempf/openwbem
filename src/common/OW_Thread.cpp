@@ -39,6 +39,8 @@
 #include "OW_Format.hpp"
 #include "OW_ThreadBarrier.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_ExceptionIds.hpp"
+
 #include <cstring>
 #include <cstdio>
 #include <cerrno>
@@ -49,8 +51,8 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-OW_DEFINE_EXCEPTION(Thread);
-OW_DEFINE_EXCEPTION(CancellationDenied);
+OW_DEFINE_EXCEPTION_WITH_ID(Thread);
+OW_DEFINE_EXCEPTION_WITH_ID(CancellationDenied);
 //////////////////////////////////////////////////////////////////////
 // this is what's really passed to threadRunner
 struct ThreadParam

@@ -39,6 +39,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ExceptionIds.hpp"
 
 extern "C"
 {
@@ -54,8 +55,8 @@ extern "C"
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(UnknownHost);
-OW_DEFINE_EXCEPTION(SocketAddress);
+OW_DEFINE_EXCEPTION_WITH_ID(UnknownHost);
+OW_DEFINE_EXCEPTION_WITH_ID(SocketAddress);
 
 const char* const SocketAddress::ALL_LOCAL_ADDRESSES = "0.0.0.0";
 

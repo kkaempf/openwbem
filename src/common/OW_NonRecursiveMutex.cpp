@@ -40,12 +40,14 @@
 #include "OW_Exception.hpp"
 #include "OW_Format.hpp"
 #include "OW_NonRecursiveMutexImpl.hpp"
+#include "OW_ExceptionIds.hpp"
+
 #include <cstring>
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Deadlock)
+OW_DEFINE_EXCEPTION_WITH_ID(Deadlock);
 NonRecursiveMutex::NonRecursiveMutex()
 {
 	if(NonRecursiveMutexImpl::createMutex(m_mutex) != 0)

@@ -35,11 +35,12 @@
 #include "OW_config.h"
 #include "OW_Logger.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Logger)
+OW_DEFINE_EXCEPTION_WITH_ID(Logger);
 
 
 Mutex loggerMutex;

@@ -46,13 +46,14 @@
 #include "OW_Assertion.hpp"
 #include "OW_Array.hpp"
 #include "OW_Format.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #include <string.h> // for strlen
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(InvalidUTF8);
+OW_DEFINE_EXCEPTION_WITH_ID(InvalidUTF8);
 
 namespace UTF8Utils
 {

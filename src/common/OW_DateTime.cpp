@@ -40,6 +40,7 @@
 #include "OW_Format.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -62,7 +63,7 @@ using std::istream;
 using std::ostream;
 
 //////////////////////////////////////////////////////////////////////////////
-OW_DEFINE_EXCEPTION(DateTime)
+OW_DEFINE_EXCEPTION_WITH_ID(DateTime);
 
 //////////////////////////////////////////////////////////////////////////////
 DateTime::DateTime() 

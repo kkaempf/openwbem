@@ -60,6 +60,7 @@
 #include "OW_SocketException.hpp"
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #include <algorithm>
 
@@ -67,7 +68,7 @@ namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(BadStream)
-OW_DEFINE_EXCEPTION(BadStream)
+OW_DEFINE_EXCEPTION_WITH_ID(BadStream)
 using std::ostream;
 using namespace WBEMFlags;
 

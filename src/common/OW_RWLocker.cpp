@@ -38,11 +38,12 @@
 #include "OW_Assertion.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_TimeoutException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(RWLocker);
+OW_DEFINE_EXCEPTION_WITH_ID(RWLocker);
 //////////////////////////////////////////////////////////////////////////////
 RWLocker::RWLocker()
 	: m_waiting_writers()

@@ -39,6 +39,8 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 #include "OW_PidFile.hpp"
+#include "OW_ExceptionIds.hpp"
+
 extern "C"
 {
 #include <sys/types.h>
@@ -64,7 +66,7 @@ namespace OpenWBEM
 using std::ostream;
 using std::endl;
 
-OW_DEFINE_EXCEPTION(Daemon);
+OW_DEFINE_EXCEPTION_WITH_ID(Daemon);
 
 namespace Platform
 {

@@ -35,6 +35,7 @@ $(ASSOCIATION_S) \
 OW_CIMRepository.cpp \
 OW_GenericHDBRepository.cpp \
 OW_HDB.cpp \
+OW_HDBException.cpp \
 OW_HDBNode.cpp \
 OW_Index.cpp \
 OW_IndexImpl.cpp \

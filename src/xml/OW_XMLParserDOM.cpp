@@ -40,11 +40,12 @@
 #include "OW_XMLParserCore.hpp" // for XMLToken
 #include "OW_XMLParseException.hpp"
 #include "OW_Format.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(DOM);
+OW_DEFINE_EXCEPTION_WITH_ID(DOM);
 
 using std::istream;
 

@@ -34,6 +34,7 @@
 
 #include "OW_config.h"
 #include "OW_MOFParserErrorHandlerIFC.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
@@ -41,7 +42,7 @@ namespace OpenWBEM
 namespace MOF
 {
 
-OW_DEFINE_EXCEPTION(ParseFatalError)
+OW_DEFINE_EXCEPTION_WITH_ID(ParseFatalError)
 
 } // end namespace MOF
 } // end namespace OpenWBEM

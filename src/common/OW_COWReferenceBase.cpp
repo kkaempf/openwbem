@@ -36,6 +36,7 @@
 #include "OW_COWReferenceBase.hpp"
 #ifdef OW_CHECK_NULL_REFERENCES
 #include "OW_Exception.hpp"
+#include "OW_ExceptionIds.hpp"
 #endif
 #ifdef OW_DEBUG
 #include <cstdlib> // for abort
@@ -46,7 +47,7 @@ namespace OpenWBEM
 
 #ifdef OW_CHECK_NULL_REFERENCES
 OW_DECLARE_EXCEPTION(NULLCOWReference);
-OW_DEFINE_EXCEPTION(NULLCOWReference);
+OW_DEFINE_EXCEPTION_WITH_ID(NULLCOWReference);
 
 void COWReferenceBase::throwNULLException()
 {

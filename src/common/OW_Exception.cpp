@@ -64,7 +64,11 @@ static char* dupString(const char* str)
 	{
 		return 0;
 	}
-	char* rv = new char[strlen(str)+1];
+	char* rv = new (std::nothrow) char[strlen(str)+1];
+	if (!rv)
+	{
+		return 0;
+	}
 	strcpy(rv, str);
 	return rv;
 }
@@ -74,6 +78,26 @@ Exception::Exception(const char* file, int line, const char* msg)
 	, m_file(0)
 	, m_line(line)
 	, m_msg(0)
+	, m_subClassId(UNKNOWN_SUBCLASS_ID)
+	, m_subException(0)
+	, m_errorCode(UNKNOWN_ERROR_CODE)
+{
+#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
+	StackTrace::printStackTrace();
+#endif
+	m_mutex->acquire();
+	m_file = dupString(file);
+	m_msg = dupString(msg);
+}
+//////////////////////////////////////////////////////////////////////////////					
+Exception::Exception(int subClassId, const char* file, int line, const char* msg, int errorCode, const Exception* subException)
+	: std::exception()
+	, m_file(0)
+	, m_line(line)
+	, m_msg(0)
+	, m_subClassId(subClassId)
+	, m_subException(subException ? subException->clone() : 0)
+	, m_errorCode(errorCode)
 {
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	StackTrace::printStackTrace();
@@ -84,20 +108,22 @@ Exception::Exception(const char* file, int line, const char* msg)
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception::Exception( const Exception& e )
-	: std::exception(e)
-	, m_file(0)
-	, m_line(e.m_line)
-	, m_msg(0)
+    : std::exception(e)
+    , m_file(dupString(e.m_file))
+    , m_line(e.m_line)
+    , m_msg(dupString(e.m_msg))
+	, m_subClassId(e.m_subClassId)
+    , m_subException(e.m_subException ? e.m_subException->clone() : 0)
+	, m_errorCode(e.m_errorCode)
 {
-	m_mutex->acquire();
-	m_file = dupString(e.m_file);
-	m_msg = dupString(e.m_msg);
+    m_mutex->acquire();
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception::~Exception() throw()
 {
 	try
 	{
+		delete m_subException;
 		freeBuf(&m_file);
 		freeBuf(&m_msg);
 		m_mutex->release();
@@ -109,18 +135,22 @@ Exception::~Exception() throw()
 }
 //////////////////////////////////////////////////////////////////////////////					
 Exception&
-Exception::operator=(Exception rhs)
+Exception::operator=(const Exception& rhs)
 {
-	rhs.swap(*this);
-	return *this;
+    Exception(rhs).swap(*this);
+    return *this;
 }
 //////////////////////////////////////////////////////////////////////////////					
 void
 Exception::swap(Exception& rhs)
 {
+	std::swap(static_cast<std::exception&>(*this), static_cast<std::exception&>(rhs));
 	std::swap(m_file, rhs.m_file);
 	std::swap(m_line, rhs.m_line);
 	std::swap(m_msg, rhs.m_msg);
+	std::swap(m_subClassId, rhs.m_subClassId);
+	std::swap(m_subException, rhs.m_subException);
+	std::swap(m_errorCode, rhs.m_errorCode);
 }
 		
 //////////////////////////////////////////////////////////////////////////////					
@@ -185,6 +215,48 @@ const char*
 Exception::what() const throw()
 {
 	return getMessage();
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+int
+Exception::getSubClassId() const
+{
+	return m_subClassId;
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+void
+Exception::setSubClassId(int subClassId)
+{
+	m_subClassId = subClassId;
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+Exception* 
+Exception::clone() const throw()
+{
+	return new(std::nothrow) Exception(*this);
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+const Exception* 
+Exception::getSubException() const
+{
+	return m_subException;
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+int
+Exception::getErrorCode() const
+{
+	return m_errorCode;
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+void
+Exception::setErrorCode(int errorCode)
+{
+	m_errorCode = errorCode;
 }
 
 } // end namespace OpenWBEM

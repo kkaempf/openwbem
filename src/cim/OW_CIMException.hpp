@@ -100,12 +100,12 @@ public:
 	CIMException(const CIMException& x);
 	CIMException& operator=(CIMException x);
 	
-	ErrNoType getErrNo() const {  return m_errno; }
-	void setErrNo(ErrNoType e) { m_errno = e; }
+	ErrNoType getErrNo() const {  return ErrNoType(getErrorCode()); }
+	void setErrNo(ErrNoType e) { setErrorCode(e); }
 	virtual const char* type() const {  return "CIMException"; }
 	virtual const char* getMessage() const;
+	virtual CIMException* clone() const throw();
 private:
-	ErrNoType m_errno;
 	mutable char* m_longmsg;
 };
 #define OW_THROWCIM(errval) \

@@ -34,11 +34,12 @@
 
 #include "OW_config.h"
 #include "OW_NoSuchProviderException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(NoSuchProvider)
+OW_DEFINE_EXCEPTION_WITH_ID(NoSuchProvider);
 
 } // end namespace OpenWBEM
 

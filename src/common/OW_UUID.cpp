@@ -39,6 +39,7 @@
 #include "OW_Types.hpp"
 #include "OW_Format.hpp"
 #include "OW_RandomNumber.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #ifdef OW_WIN32
 #include <windows.h>	// Time functions
@@ -53,7 +54,7 @@
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(UUID);
+OW_DEFINE_EXCEPTION_WITH_ID(UUID);
 
 namespace {
 // typedefs

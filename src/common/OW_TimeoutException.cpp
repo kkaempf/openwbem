@@ -34,11 +34,12 @@
 
 #include "OW_config.h"
 #include "OW_TimeoutException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OpenWBEM
 {
 
-OW_DEFINE_EXCEPTION(Timeout);
+OW_DEFINE_EXCEPTION_WITH_ID(Timeout);
 
 } // end namespace OpenWBEM
 

@@ -60,6 +60,7 @@
 #include "OW_IndicationRepLayerMediator.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_AuthorizerIFC.hpp"
+#include "OW_ExceptionIds.hpp"
 
 #include <iostream>
 
@@ -67,7 +68,7 @@ namespace OpenWBEM
 {
 
 OW_DECLARE_EXCEPTION(CIMOMEnvironment)
-OW_DEFINE_EXCEPTION(CIMOMEnvironment)
+OW_DEFINE_EXCEPTION_WITH_ID(CIMOMEnvironment)
 
 using std::cerr;
 using std::endl;

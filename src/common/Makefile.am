@@ -130,6 +130,7 @@ OW_DataStreams.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \
 OW_Exception.hpp \
+OW_ExceptionIds.hpp \
 OW_Exec.hpp \
 OW_File.hpp \
 OW_FileSystem.hpp \
