@@ -176,6 +176,7 @@ public:
 	static const char* const A_DESCRIPTION;
 	static const char* const A_ARRAYSIZE;
 	static const char* const A_ISARRAY;
+	static const char* const A_EMBEDDEDOBJECT;
 	static const char* const AV_CIMVERSION20_VALUE;
 	static const char* const AV_CIMVERSION21_VALUE;
 	static const char* const AV_CIMVERSION22_VALUE;
@@ -183,6 +184,8 @@ public:
 	static const char* const AV_DTDVERSION21_VALUE;
 	static const char* const AV_PROTOCOLVERSION10_VALUE;
 	static const char* const AV_PROTOCOLVERSION11_VALUE;
+	static const char* const AV_EMBEDDEDOBJECT_OBJECT_VALUE;
+	static const char* const AV_EMBEDDEDOBJECT_INSTANCE_VALUE;
 	static const char* const P_ClassName;
 	static const char* const P_PropertyList;
 	static const char* const P_DeepInheritance;

@@ -697,6 +697,9 @@ namespace
 				{
 					returnType = "string";
 				}
+
+				XMLCIMFactory::EEmbeddedObjectFlag embeddedObjectType = XMLCIMFactory::getEmbeddedObjectType(parser);
+
 				parser.mustGetChild();
 				if (!parser.tokenIsId(CIMXMLParser::E_VALUE) &&
 					!parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
@@ -705,7 +708,7 @@ namespace
 						"<RETURNVALUE> did not contain a <VALUE> or "
 						"<VALUE.REFERENCE> element");
 				}
-				result = XMLCIMFactory::createValue(parser, returnType);
+				result = XMLCIMFactory::createValue(parser, returnType, embeddedObjectType);
 				parser.mustGetEndTag(); // pass /RETURNVALUE
 			}
 			// handle PARAMVALUE*
@@ -719,6 +722,7 @@ namespace
 				{
 					type = "string";
 				}
+				XMLCIMFactory::EEmbeddedObjectFlag embeddedObjectType = XMLCIMFactory::getEmbeddedObjectType(parser);
 				parser.getNextTag();
 				
 				if (outParams.size() <= outParamCount)
@@ -726,20 +730,20 @@ namespace
 					// make sure there's enough space in the vector
 					outParams.resize(outParamCount + 1);
 				}
+
 				int token = parser.getToken();
+
 				if (token != CIMXMLParser::E_VALUE
 					&& token != CIMXMLParser::E_VALUE_REFERENCE
 					&& token != CIMXMLParser::E_VALUE_ARRAY
 					&& token != CIMXMLParser::E_VALUE_REFARRAY
 					)
 				{
-					outParams[outParamCount] = CIMParamValue(name,
-						CIMValue(CIMNULL));
+					outParams[outParamCount] = CIMParamValue(name, CIMValue(CIMNULL));
 				}
 				else
 				{
-					outParams[outParamCount] = CIMParamValue(name,
-						XMLCIMFactory::createValue(parser, type));
+					outParams[outParamCount] = CIMParamValue(name, XMLCIMFactory::createValue(parser, type, embeddedObjectType));
 				}
 				parser.mustGetEndTag(); // pass /PARAMVALUE
 			}
@@ -1056,7 +1060,7 @@ namespace
 			if (!parser.tokenIsId(CIMXMLParser::E_IRETURNVALUE))
 			{
 				// "string" because we don't know the type--defect in the spec.
-				result = XMLCIMFactory::createValue(parser, "string");
+				result = XMLCIMFactory::createValue(parser, "string", XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 			}
 			// else it was a NULL value
 		}

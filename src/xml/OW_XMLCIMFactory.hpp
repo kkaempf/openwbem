@@ -47,7 +47,18 @@ namespace XMLCIMFactory
 	OW_XML_API CIMObjectPath createObjectPath(CIMXMLParser& parser);
 	OW_XML_API CIMClass createClass(CIMXMLParser& parser);
 	OW_XML_API CIMInstance createInstance(CIMXMLParser& parser);
-	OW_XML_API CIMValue createValue(CIMXMLParser& parser, String const& type);
+	enum EEmbeddedObjectFlag
+	{
+		E_VALUE_IS_EMBEDDED_OBJECT,
+		E_VALUE_IS_EMBEDDED_INSTANCE,
+		E_VALUE_NOT_EMBEDDED_OBJECT
+	};
+	/**
+	 * parser must be positioned on a node that has the EmbeddedObject attribute
+	 */
+	OW_XML_API EEmbeddedObjectFlag getEmbeddedObjectType(const CIMXMLParser& parser);
+	OW_XML_API CIMValue createValue(CIMXMLParser& parser, String const& type) OW_DEPRECATED;
+	OW_XML_API CIMValue createValue(CIMXMLParser& parser, String const& type, EEmbeddedObjectFlag embeddedObjectFlag);
 	OW_XML_API CIMQualifier createQualifier(CIMXMLParser& parser);
 	OW_XML_API CIMMethod createMethod(CIMXMLParser& parser);
 	OW_XML_API CIMProperty createProperty(CIMXMLParser& parser);

@@ -178,7 +178,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 					getKeyValue(parser,value);
 					break;
 				case CIMXMLParser::E_VALUE_REFERENCE:
-					value = XMLCIMFactory::createValue(parser, "REF");
+					value = XMLCIMFactory::createValue(parser, "REF", E_VALUE_NOT_EMBEDDED_OBJECT);
 					break;
 				default:
 					OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
@@ -200,7 +200,7 @@ static void getInstanceName(CIMXMLParser& parser, CIMObjectPath& cimPath)
 	}
 	else if (parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 	{
-		CIMValue value = XMLCIMFactory::createValue(parser, "REF");
+		CIMValue value = XMLCIMFactory::createValue(parser, "REF", E_VALUE_NOT_EMBEDDED_OBJECT);
 		cp = CIMProperty();
 		cp.setDataType(CIMDataType::REFERENCE);
 		cp.setValue(value);
@@ -454,10 +454,95 @@ convertCimType(Array<T>& ra, CIMXMLParser& parser)
 		parser.mustGetEndTag();
 	}
 }
+
 ///////////////////////////////////
 CIMValue
-createValue(CIMXMLParser& parser,
-	String const& valueType)
+createValue(CIMXMLParser& parser, String const& valueType)
+{
+	return createValue(parser, valueType, E_VALUE_NOT_EMBEDDED_OBJECT);
+}
+
+namespace
+{
+
+CIMValue
+convertXMLtoEmbeddedObject(const String& str)
+{
+	CIMValue rval(CIMNULL);
+	// try to convert the string to an class or instance
+	TempFileStream ostr;
+	ostr << str;
+	try
+	{
+		try
+		{
+			ostr.rewind();
+			CIMXMLParser parser(ostr);
+			CIMInstance ci = XMLCIMFactory::createInstance(parser);
+			rval = CIMValue(ci);
+		}
+		catch (const CIMException&)
+		{
+			// XML wasn't an instance, so try an class
+			try
+			{
+				ostr.rewind();
+				CIMXMLParser parser(ostr);
+				CIMClass cc = XMLCIMFactory::createClass(parser);
+				rval = CIMValue(cc);
+			}
+			catch (const CIMException&)
+			{
+				// XML isn't a class or an instance, so just leave it alone
+			}
+		}
+	}
+	catch (XMLParseException& xmlE)
+	{
+	}
+	return rval;
+}
+
+struct valueIsEmbeddedInstance
+{
+	bool operator()(const CIMValue& v)
+	{
+		return v.getType() == CIMDataType::EMBEDDEDINSTANCE;
+	}
+};
+
+struct valueIsEmbeddedClass
+{
+	bool operator()(const CIMValue& v)
+	{
+		return v.getType() == CIMDataType::EMBEDDEDCLASS;
+	}
+};
+
+bool isKnownEmbeddedObjectName(const String& name)
+{
+	// This is a bad hack, hopefully EmbeddedObject will become a real
+	// data type someday.
+	// This is all property names in the CIM Schema (as of 2.7.1) that have
+	// an EmbeddedObject(true) qualifier.
+	// If this list gets much bigger, use a HashMap
+	String lname(name);
+	lname.toLowerCase();
+	return
+		lname.equals("sourceinstance") ||
+		lname.equals("previousinstance") ||
+		lname.equals("methodparameters") ||
+		lname.equals("classdefinition") ||
+		lname.equals("previousclassdefinition") ||
+		lname.equals("indobject");
+}
+
+} // anonymous namespace
+
+
+///////////////////////////////////
+CIMValue
+createValue(CIMXMLParser& parser, String const& valueType, EEmbeddedObjectFlag embeddedObjectFlag)
 {
 	CIMValue rval(CIMNULL);
 	try
@@ -634,7 +719,7 @@ createValue(CIMXMLParser& parser,
 					while (parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 					{
 						CIMObjectPath cop(CIMNULL);
-						CIMValue v = createValue(parser, valueType);
+						CIMValue v = createValue(parser, valueType, E_VALUE_NOT_EMBEDDED_OBJECT);
 						v.get(cop);
 	
 						opArray.append(cop);
@@ -658,6 +743,68 @@ createValue(CIMXMLParser& parser,
 				OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 					"Not value XML");
 		}
+
+
+		// handle embedded class or instance
+		if (embeddedObjectFlag == E_VALUE_IS_EMBEDDED_INSTANCE || embeddedObjectFlag == E_VALUE_IS_EMBEDDED_OBJECT)
+		{
+			if (rval.getCIMDataType().isArrayType())
+			{
+				StringArray xmlstrings;
+				rval.get(xmlstrings);
+				CIMValueArray values;
+				for (size_t i = 0; i < xmlstrings.size(); ++i)
+				{
+					CIMValue v = convertXMLtoEmbeddedObject(xmlstrings[i]);
+					if (!v)
+					{
+						break;
+					}
+					values.push_back(v);
+				}
+				if (values.size() == xmlstrings.size() && values.size() > 0)
+				{
+					if (std::find_if (values.begin(), values.end(), valueIsEmbeddedInstance()) == values.end())
+					{
+						// no instances, so they all must be classes
+						CIMClassArray classes;
+						for (size_t i = 0; i < values.size(); ++i)
+						{
+							CIMClass c(CIMNULL);
+							values[i].get(c);
+							classes.push_back(c);
+						}
+						rval = CIMValue(classes);
+					}
+					else if (std::find_if (values.begin(), values.end(), valueIsEmbeddedClass()) == values.end())
+					{
+						// no classes, the all must be instances
+						CIMInstanceArray instances;
+						for (size_t i = 0; i < values.size(); ++i)
+						{
+							CIMInstance c(CIMNULL);
+							values[i].get(c);
+							instances.push_back(c);
+						}
+						rval = CIMValue(instances);
+					}
+					else
+					{
+						// there are both classes and instances - we cannot handle this!
+						// we'll just leave the property alone (as a string)
+					}
+				}
+			}
+			else
+			{
+				CIMValue v = convertXMLtoEmbeddedObject(rval.toString());
+				if (v)
+				{
+					rval = v;
+				}
+			}
+		}
+
 	
 	}
 	catch (const StringConversionException& e)
@@ -758,7 +905,7 @@ createQualifier(CIMXMLParser& parser)
 	if (parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
 		|| parser.tokenIsId(CIMXMLParser::E_VALUE))
 	{
-		rval.setValue(createValue(parser, cimType));
+		rval.setValue(createValue(parser, cimType, E_VALUE_NOT_EMBEDDED_OBJECT));
 	}
 	parser.mustGetEndTag();
 	return rval;
@@ -818,78 +965,22 @@ createMethod(CIMXMLParser& parser)
 	parser.mustGetEndTag();
 	return rval;
 }
-static CIMValue
-convertXMLtoEmbeddedObject(const String& str)
+
+EEmbeddedObjectFlag getEmbeddedObjectType(const CIMXMLParser& parser)
 {
-	CIMValue rval(CIMNULL);
-	// try to convert the string to an class or instance
-	TempFileStream ostr;
-	ostr << str;
-	ostr.rewind();
-	CIMXMLParser parser(ostr);
-	try
+	EEmbeddedObjectFlag embeddedObjectType = E_VALUE_NOT_EMBEDDED_OBJECT;
+	String embeddedObjectValue = parser.getAttribute(CIMXMLParser::A_EMBEDDEDOBJECT);
+	if (embeddedObjectValue == CIMXMLParser::AV_EMBEDDEDOBJECT_OBJECT_VALUE)
 	{
-		if (parser)
-		{
-			try
-			{
-				CIMClass cc = XMLCIMFactory::createClass(parser);
-				rval = CIMValue(cc);
-			}
-			catch (const CIMException&)
-			{
-				// XML wasn't a class, so try an instance
-				try
-				{
-					CIMInstance ci = XMLCIMFactory::createInstance(parser);
-					rval = CIMValue(ci);
-				}
-				catch (const CIMException&)
-				{
-					// XML isn't a class or an instance, so just leave it alone
-				}
-			}
-		}
+		embeddedObjectType = E_VALUE_IS_EMBEDDED_OBJECT;
 	}
-	catch (XMLParseException& xmlE)
+	else if (embeddedObjectValue == CIMXMLParser::AV_EMBEDDEDOBJECT_INSTANCE_VALUE)
 	{
+		embeddedObjectType = E_VALUE_IS_EMBEDDED_INSTANCE;
 	}
-	return rval;
+	return embeddedObjectType;
 }
-namespace
-{
-struct valueIsEmbeddedInstance
-{
-	bool operator()(const CIMValue& v)
-	{
-		return v.getType() == CIMDataType::EMBEDDEDINSTANCE;
-	}
-};
-struct valueIsEmbeddedClass
-{
-	bool operator()(const CIMValue& v)
-	{
-		return v.getType() == CIMDataType::EMBEDDEDCLASS;
-	}
-};
-bool isKnownEmbeddedObjectName(const String& name)
-{
-	// This is a bad hack, hopefully EmbeddedObject will become a real
-	// data type someday.
-	// This is all property names in the CIM Schema (as of 2.7.1) that have
-	// an EmbeddedObject(true) qualifier.
-	// If this list gets much bigger, use a HashMap
-	String lname(name);
-	lname.toLowerCase();
-	return
-		lname.equals("sourceinstance") ||
-		lname.equals("previousinstance") ||
-		lname.equals("methodparameters") ||
-		lname.equals("classdefinition") ||
-		lname.equals("previousclassdefinition") ||
-		lname.equals("indobject");
-}
-}
+
 ///////////////////////////////////
 CIMProperty
 createProperty(CIMXMLParser& parser)
@@ -908,6 +999,9 @@ createProperty(CIMXMLParser& parser)
 	String classOrigin = parser.getAttribute(
 		CIMXMLParser::A_CLASSORIGIN);
 	String propagate = parser.getAttribute(CIMXMLParser::A_PROPAGATED);
+	
+	EEmbeddedObjectFlag embeddedObjectType = getEmbeddedObjectType(parser);
+
 	CIMProperty rval(propName);
 	//
 	// If no return data type, then property isn't properly defined
@@ -964,100 +1058,50 @@ createProperty(CIMXMLParser& parser)
 	{
 		rval.addQualifier(createQualifier(parser));
 	}
+
 	if (parser.tokenIsId(CIMXMLParser::E_VALUE)
 		|| parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY)
 		|| parser.tokenIsId(CIMXMLParser::E_VALUE_REFERENCE))
 	{
-		rval.setValue(createValue(parser,cimType));
-		
-// Shouldn't need to cast this.
-//         if (rval.getDataType().getType() != rval.getValue().getType()
-//             || rval.getDataType().isArrayType() !=
-//             rval.getValue().isArray())
-//         {
-//             rval.setValue(CIMValueCast::castValueToDataType(
-//                 rval.getValue(), rval.getDataType()));
-//         }
-	}
-	// handle embedded class or instance
-	// This checks for prescense of EmbeddedObject(true) qualifier
-	// or if the name of the property is a known embedded object from the
-	// CIM Schema (ClassDefinition, PreviousClassDefinition, SourceInstance,
-	// PreviousInstance, MethodParameters, IndObject)
-	// Unfortunately qualifiers usually aren't on instances, and we don't
-	// want to always try to convert any string property to an embedded
-	// instance, so we just settle for known cases.  SourceInstance is
-	// the name of the embedded
-	if ((rval.hasTrueQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
-		rval.getDataType().getType() == CIMDataType::STRING &&
-		rval.getValue()) ||
-		isKnownEmbeddedObjectName(rval.getName())
-		)
-	{
-		if (rval.getDataType().isArrayType())
+		// embeddedObjectType would only be set to E_VALUE_IS_EMBEDDED_OBJECT or E_VALUE_IS_EMBEDDED_INSTANCE if the xml contains the EmbeddedObject attribute.
+		if (embeddedObjectType == E_VALUE_NOT_EMBEDDED_OBJECT)
 		{
-			StringArray xmlstrings;
-			rval.getValue().get(xmlstrings);
-			CIMValueArray values;
-			for (size_t i = 0; i < xmlstrings.size(); ++i)
+			// check for old ways to enable the embedded decoding
+			if ((rval.hasTrueQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT) &&
+				 rval.getDataType().getType() == CIMDataType::STRING &&
+				 rval.getValue()) ||
+				isKnownEmbeddedObjectName(rval.getName())
+				)
 			{
-				CIMValue v = convertXMLtoEmbeddedObject(xmlstrings[i]);
-				if (!v)
-				{
-					break;
-				}
-				values.push_back(v);
-			}
-			if (values.size() == xmlstrings.size() && values.size() > 0)
-			{
-				if (std::find_if (values.begin(), values.end(), valueIsEmbeddedInstance()) == values.end())
-				{
-					// no instances, so they all must be classes
-					CIMClassArray classes;
-					for (size_t i = 0; i < values.size(); ++i)
-					{
-						CIMClass c(CIMNULL);
-						values[i].get(c);
-						classes.push_back(c);
-					}
-					rval.setValue(CIMValue(classes));
-					CIMDataType dt(CIMDataType::EMBEDDEDCLASS, rval.getDataType().getSize());
-					rval.setDataType(dt);
-				}
-				else if (std::find_if (values.begin(), values.end(), valueIsEmbeddedClass()) == values.end())
-				{
-					// no classes, the all must be instances
-					CIMInstanceArray instances;
-					for (size_t i = 0; i < values.size(); ++i)
-					{
-						CIMInstance c(CIMNULL);
-						values[i].get(c);
-						instances.push_back(c);
-					}
-					rval.setValue(CIMValue(instances));
-					CIMDataType dt(CIMDataType::EMBEDDEDINSTANCE, rval.getDataType().getSize());
-					rval.setDataType(dt);
-				}
-				else
-				{
-					// there are both classes and instances - we cannot handle this!
-					// we'll just leave the property alone (as a string)
-				}
+				embeddedObjectType = E_VALUE_IS_EMBEDDED_OBJECT;
 			}
 		}
-		else
+
+		CIMDataType dt = rval.getDataType();
+		CIMValue val = createValue(parser, cimType, embeddedObjectType);
+		if (val)
 		{
-			CIMValue v = convertXMLtoEmbeddedObject(rval.getValue().toString());
-			if (v)
+			dt.syncWithValue(val);
+		}
+		else if (embeddedObjectType == E_VALUE_IS_EMBEDDED_OBJECT || embeddedObjectType == E_VALUE_IS_EMBEDDED_INSTANCE)
+		{
+			if (dt.isArrayType())
 			{
-				rval.setDataType(rval.getDataType());
-				rval.setValue(v);
+				dt = CIMDataType(CIMDataType::EMBEDDEDINSTANCE, dt.getSize());
+			}
+			else
+			{
+				dt = CIMDataType(CIMDataType::EMBEDDEDINSTANCE);
 			}
 		}
+		rval.setDataType(dt);
+
+		rval.setValue(val);
 	}
 	parser.mustGetEndTag();
 	return rval;
 }
+
 ///////////////////////////////////
 CIMParameter
 createParameter(CIMXMLParser& parser)

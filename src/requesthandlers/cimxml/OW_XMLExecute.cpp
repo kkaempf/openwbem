@@ -296,7 +296,12 @@ XMLExecute::doInvokeMethod(ostream& ostr, CIMXMLParser& parser,
 	{
 		ostr << "<RETURNVALUE PARAMTYPE=\"";
 		CIMtoXML(cv.getCIMDataType(), ostr);
-		ostr << "\">";
+		ostr << "\" ";
+		if (cv.getCIMDataType().isEmbeddedObjectType())
+		{
+			ostr << "EmbeddedObject=\"object\" ";
+		}
+		ostr << '>';
 		CIMtoXML(cv, ostr);
 		ostr << "</RETURNVALUE>";
 	}
@@ -332,6 +337,9 @@ XMLExecute::getParameters(CIMXMLParser& parser,
 		{
 			parameterType = "string";
 		}
+
+		XMLCIMFactory::EEmbeddedObjectFlag embeddedObjectType = XMLCIMFactory::getEmbeddedObjectType(parser);
+
 		parser.getNextTag();
 		int token = parser.getToken();
 		if (token != CIMXMLParser::E_VALUE
@@ -345,8 +353,7 @@ XMLExecute::getParameters(CIMXMLParser& parser,
 		}
 		else
 		{
-			params.push_back(CIMParamValue(parameterName,
-				XMLCIMFactory::createValue(parser, parameterType)));
+			params.push_back(CIMParamValue(parameterName, XMLCIMFactory::createValue(parser, parameterType, embeddedObjectType)));
 		}
 		parser.mustGetEndTag(); // pass </PARAMVALUE>
 	}
@@ -491,7 +498,7 @@ namespace
 									i->name).c_str());
 						}
 						i->isSet = true;
-						i->val = XMLCIMFactory::createValue(parser, "boolean");
+						i->val = XMLCIMFactory::createValue(parser, "boolean", XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 						break;
 					case param::STRINGARRAY:
 						if (!parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY))
@@ -501,7 +508,7 @@ namespace
 									i->name).c_str());
 						}
 						i->isSet = true;
-						i->val = XMLCIMFactory::createValue(parser, "string");
+						i->val = XMLCIMFactory::createValue(parser, "string", XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 						break;
 					case param::INSTANCENAME:
 						if (!parser.tokenIsId(CIMXMLParser::E_INSTANCENAME))
@@ -538,7 +545,7 @@ namespace
 									i->name).c_str());
 						}
 						i->isSet = true;
-						i->val = XMLCIMFactory::createValue(parser, "string");
+						i->val = XMLCIMFactory::createValue(parser, "string", XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 						break;
 					case param::OBJECTNAME:
 						if (!parser.tokenIsId(CIMXMLParser::E_INSTANCENAME)
@@ -561,7 +568,7 @@ namespace
 									i->name).c_str());
 						}
 						i->isSet = true;
-						i->val = XMLCIMFactory::createValue(parser, "string");
+						i->val = XMLCIMFactory::createValue(parser, "string", XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 						break;
 					default:
 						OW_ASSERT(0);

@@ -150,7 +150,7 @@ processQualifierDecl(CIMXMLParser& parser,
 		parser.tokenIsId(CIMXMLParser::E_VALUE_ARRAY))
 	{
 		// process optional value or value.array child
-		CIMValue val = XMLCIMFactory::createValue(parser,qualType);
+		CIMValue val = XMLCIMFactory::createValue(parser,qualType, XMLCIMFactory::E_VALUE_NOT_EMBEDDED_OBJECT);
 		cimQualifier.setDefaultValue(val);
 	}
 	parser.mustGetEndTag(); // pass </QUALIFIER.DECLARATION>
