@@ -11,6 +11,15 @@ set -a
 set -x
 set -u
 
+# echo is to get rid of extra spaces
+NUM_PROCS=`echo \`cat /proc/cpuinfo | grep processor | wc -l\``
+if [ -n "$NUM_PROCS" ] && [ "x$NUM_PROCS" != "x1" ]; then
+	let NUM_PROCS_PLUS_1=$NUM_PROCS + 1
+	MAKE_PARALLEL="-j$NUM_PROCS_PLUS_1"
+else
+	MAKE_PARALLEL=""
+fi
+
 killowcimomd()
 {
 	kill $(ps -C owcimomd -o pid=) || true
@@ -19,7 +28,7 @@ killowcimomd()
 doMakeDistCheck()
 {
 	killowcimomd
-	make -j3 distcheck
+	make $MAKE_PARALLEL distcheck
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
 		echo "doMakeDistCheck failed!"
@@ -35,9 +44,9 @@ doATest()
 	./cvsbootstrap.sh
 	./configure $CONFIGOPTS
 	killowcimomd
-	make -j3 \
-		&& make -j3 check \
-		&& OWLONGTEST=1 make -j3 check \
+	make $MAKE_PARALLEL \
+		&& make $MAKE_PARALLEL check \
+		&& OWLONGTEST=1 make $MAKE_PARALLEL check \
 		&& make clean
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
@@ -53,7 +62,7 @@ doACompileOnlyTest()
 	./cvsbootstrap.sh
 	./configure $CONFIGOPTS
 	killowcimomd
-	make -j3 \
+	make $MAKE_PARALLEL \
 		&& make clean
 	RVAL=$?
 	if [ $RVAL != 0 ]; then
