@@ -161,6 +161,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 			default:
 				_exit(0); 
 		}
+#endif
 		chdir("/");
 		close(0);
 		close(1);
@@ -168,20 +169,10 @@ daemonize(bool dbgFlg, const String& daemonName)
 		open("/dev/null", O_RDONLY);
 		open("/dev/null", O_WRONLY);
 		dup(1);
-#endif
 	}
 	else
 	{
 		pid = getpid();
-#if defined(OW_NETWARE)
-		chdir("/");
-		close(0);
-		close(1);
-		close(2);
-		open("/dev/null", O_RDONLY);
-		open("/dev/null", O_WRONLY);
-		dup(1);
-#endif
 	}
 	umask(0077); // ensure all files we create are only accessible by us.
 	PidFile::writePid(pidFile.c_str());
