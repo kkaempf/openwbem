@@ -91,7 +91,7 @@ public:
 	 * This constructor is for non-array and non-reference types.
 	 * @param type	An integer specifying the data type of this object.
 	 */
-	explicit OW_CIMDataType(Type type);
+	OW_CIMDataType(Type type);
 
 	/**
 	 * Create a new OW_CIMDataType object representing the given type.

@@ -240,11 +240,8 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 		newInst.setProperty("CreationClassName",
 								  OW_CIMValue(fromClass));
 
-		cop = OW_CIMObjectPath(fromClass, newInst.getKeyValuePairs());
-		cop.setNameSpace("/root/acltest");
-
 		bionicInstance = newInst;
-		hdl.createInstance(cop, newInst);
+		hdl.createInstance("/root/acltest", newInst);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

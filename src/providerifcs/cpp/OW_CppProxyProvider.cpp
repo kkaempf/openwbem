@@ -169,11 +169,11 @@ OW_CppInstanceProviderProxy::getInstance(
 OW_CIMObjectPath
 OW_CppInstanceProviderProxy::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
 		const OW_CIMInstance& cimInstance)
 {
 	m_pProv->updateAccessTime();
-	return m_pProv->createInstance(env, cop, cimInstance);
+	return m_pProv->createInstance(env, ns, cimInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

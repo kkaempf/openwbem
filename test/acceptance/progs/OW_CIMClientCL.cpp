@@ -414,10 +414,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 		newInst.setProperty("CreationClassName",
 								  OW_CIMValue(fromClass));
 
-		OW_CIMObjectPath cop(fromClass, newInst.getKeyValuePairs());
-		cop.setNameSpace("root/testsuite");
-
-		hdl.createInstance(cop, newInst);
+		hdl.createInstance("root/testsuite", newInst);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -701,10 +698,7 @@ void createAssociation(OW_CIMOMHandleIFC& hdl, const OW_String& assocName,
 
 		inst.setProperty(propName2, OW_CIMValue(cop2));
 
-		OW_CIMObjectPath cop(inst.getClassName(), inst.getKeyValuePairs());
-		cop.setNameSpace("root/testsuite");
-
-		hdl.createInstance(cop, inst);
+		hdl.createInstance("root/testsuite", inst);
 
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1352,7 +1346,7 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 
 		OW_CIMValue v = hdl.getProperty(cop, "OptionalArg");
 		// with xml, this is a string.  we want a bool.
-		v = OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+		v = OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::BOOLEAN);
 		cout << "** getProperty returned. CIMValue: " << v.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(v, tfs);

@@ -51,7 +51,7 @@ void OW_CIMClassTestCases::testNewInstance()
 	OW_CIMClass c("c");
 	OW_CIMValue v(OW_UInt16(10));
 	OW_CIMProperty p("p");
-	p.setDataType(OW_CIMDataType(OW_CIMDataType::UINT16));
+	p.setDataType(OW_CIMDataType::UINT16);
 	p.setValue(v);
 	c.addProperty(p);
 	OW_CIMInstance i = c.newInstance();
@@ -62,8 +62,8 @@ Test* OW_CIMClassTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMClass");
 
-	testSuite->addTest (new TestCaller <OW_CIMClassTestCases> 
-			("testNewInstance", 
+	testSuite->addTest (new TestCaller <OW_CIMClassTestCases>
+			("testNewInstance",
 			&OW_CIMClassTestCases::testNewInstance));
 
 	return testSuite;

@@ -127,17 +127,17 @@ static void getKeyValue(OW_CIMXMLParser& parser, OW_CIMValue& value)
 	// cast the value to the correct type, if not a string
 	if (valuetype == "boolean")
 	{
-		value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+		value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType::BOOLEAN);
 	}
 	else if (valuetype == "numeric")
 	{
 		try
 		{
-			value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType(OW_CIMDataType::SINT64));
+			value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType::SINT64);
 		}
 		catch (const OW_CIMException& e)
 		{
-			value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType(OW_CIMDataType::REAL64));
+			value = OW_CIMValueCast::castValueToDataType(value,OW_CIMDataType::REAL64);
 		}
 	}
 }
@@ -208,7 +208,7 @@ static void getInstanceName(OW_CIMXMLParser& parser, OW_CIMObjectPath& cimPath)
 	{
 		OW_CIMValue value = OW_XMLCIMFactory::createValue(parser, "REF");
 		cp = OW_CIMProperty(OW_Bool(true));
-		cp.setDataType(OW_CIMDataType(OW_CIMDataType::REFERENCE));
+		cp.setDataType(OW_CIMDataType::REFERENCE);
 		cp.setValue(value);
 		propertyArray.push_back(cp);
 	}

@@ -134,7 +134,7 @@ public:
 	 * Create a new interval type of OW_CIMDateTime set to 0's
 	 * @param notNull If false, then this object will have a null implementation.
 	 */
-	OW_CIMDateTime(OW_Bool notNull=true);
+	explicit OW_CIMDateTime(OW_Bool notNull=true);
 
 	/**
 	 * Create a new OW_CIMDateTime object that is a copy of another.
@@ -149,21 +149,21 @@ public:
 	 * @param arg An OW_String that contains the string form of the CIM Date
 	 *		time.
 	 */
-	OW_CIMDateTime(const OW_String& arg);
+	explicit OW_CIMDateTime(const OW_String& arg);
 
 	/**
 	 * Create an OW_CIMDateTime object from a regular OW_DateTime object.
 	 * @param arg The OW_DateTime object to use in determining the value of
 	 *		this OW_CIMDateTime object.
 	 */
-	OW_CIMDateTime(const OW_DateTime& arg);
+	explicit OW_CIMDateTime(const OW_DateTime& arg);
 
 	/**
 	 * Create an OW_CIMDateTime object that represents an interval.
 	 * @param microSeconds The number of micro seconds that this interval
 	 *		represents.
 	 */
-	OW_CIMDateTime(OW_UInt64 microSeconds);
+	explicit OW_CIMDateTime(OW_UInt64 microSeconds);
 
 	/**
 	 * Assignment operation

@@ -322,7 +322,7 @@ public:
 	 * @exception OW_CIMException If the CIM instance already exists in the
 	 *										namespace
 	 */
-	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &name,
+	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci);
 
 	/**

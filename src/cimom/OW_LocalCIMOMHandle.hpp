@@ -326,7 +326,7 @@ public:
 	 * @param ci	the OW_CIMInstance to be added
 	 * @return An OW_CIMObjectPath of the created instance.
 	 */
-	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &name,
+	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci);
 
 	/**

@@ -44,7 +44,7 @@ class OW_CIMFlavor : public OW_CIMBase
 {
 public:
 
-	enum
+	enum Flavor
 	{
 		/** Invalid flavor */
 		INVALID				= 0,
@@ -93,7 +93,7 @@ public:
 	 * 	OW_CIMFlavor::TRANSLATE			= qualifier can be specified in multiple
 	 *												  locales
 	 */
-	OW_CIMFlavor(OW_Int32 iflavor) :
+	OW_CIMFlavor(Flavor iflavor) :
 		OW_CIMBase(), m_flavor(iflavor)
 	{
 		if(!validFlavor(iflavor))

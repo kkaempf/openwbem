@@ -54,7 +54,7 @@ void OW_StringArrayPropertyTestCases::testSomething()
 		OW_CIMClass cc = OW_CIMClass(true);
 		cc.setName("Class");
 		OW_CIMProperty prop = OW_CIMProperty("SA");
-		OW_CIMDataType dt = OW_CIMDataType(OW_CIMDataType::STRING);
+		OW_CIMDataType dt = OW_CIMDataType::STRING;
 		dt.setToArrayType(-1);
 		prop.setDataType(dt);
 		OW_CIMInstance inst = cc.newInstance();

@@ -164,11 +164,11 @@ public:
 	////////////////////////////////////////////////////////////////////////////
 	virtual OW_CIMObjectPath createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
 		const OW_CIMInstance& cimInstance )
 	{
 		(void)env;
-		(void)cop;
+		(void)ns;
 		(void)cimInstance;
 		OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 	}

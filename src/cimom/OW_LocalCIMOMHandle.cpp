@@ -288,13 +288,11 @@ OW_LocalCIMOMHandle::modifyInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_LocalCIMOMHandle::createInstance(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::createInstance(const OW_String& ns,
 	const OW_CIMInstance& ci)
 {
 	OW_WriteLock wl = getWriteLock();
-
-	OW_CIMInstance lci(ci);
-	return m_pServer->createInstance(name, lci, m_aclInfo);
+	return m_pServer->createInstance(ns, ci, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -58,13 +58,13 @@ public:
 	 * Create an OW_CIMParameter object with a given name.
 	 * @param name	The name for this parameter.
 	 */
-	OW_CIMParameter(const OW_String& name);
+	explicit OW_CIMParameter(const OW_String& name);
 
 	/**
 	 * Create an OW_CIMParameter object with a given name.
 	 * @param name	The name for this parameter as a NULL terminated string.
 	 */
-	OW_CIMParameter(const char* name);
+	explicit OW_CIMParameter(const char* name);
 
 	/**
 	 * Copy constructor

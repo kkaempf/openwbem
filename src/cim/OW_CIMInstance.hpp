@@ -82,13 +82,13 @@ public:
 	 * Create an OW_CIMInstance with a name.
 	 * @param name	The name of this OW_CIMInstance as an OW_String.
 	 */
-	OW_CIMInstance(const OW_String& name);
+	explicit OW_CIMInstance(const OW_String& name);
 
 	/**
 	 * Create an OW_CIMInstance with a name.
 	 * @param name	The name of this OW_CIMInstance as a NULL terminated string.
 	 */
-	OW_CIMInstance(const char* name);
+	explicit OW_CIMInstance(const char* name);
 
 	/**
 	 * Create an OW_CIMInstance from an OW_XMLNode.

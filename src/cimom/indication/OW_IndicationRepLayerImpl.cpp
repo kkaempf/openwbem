@@ -267,26 +267,21 @@ OW_IndicationRepLayerImpl::modifyInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
-	OW_CIMInstance& ci, const OW_ACLInfo& aclInfo)
+OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
+	const OW_CIMInstance& ci, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMInstance lci(ci);
-	OW_CIMObjectPath rval = m_pServer->createInstance(name, lci, aclInfo);
-
-	OW_CIMObjectPath op(name);
-	op.setKeys(ci.getKeyValuePairs());
-
-	OW_ACLInfo intAclInfo;
+	OW_CIMObjectPath rval = m_pServer->createInstance(ns, ci, aclInfo);
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+		OW_ACLInfo intAclInfo;
+		OW_CIMClass expCC = m_pServer->getClass(ns,
 			"CIM_InstCreation", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
-		// TODO refer to MOF.  What about filtering the properties in ss?
-		expInst.setProperty("SourceInstance", OW_CIMValue(lci));
-		exportIndication(expInst, name.getNameSpace());
+		// TODO refer to MOF.  What about filtering the properties in ci?
+		expInst.setProperty("SourceInstance", OW_CIMValue(ci));
+		exportIndication(expInst, ns);
 	}
 	catch(OW_CIMException&)
 	{

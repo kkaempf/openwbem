@@ -1418,13 +1418,15 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
+OW_CIMServer::createInstance(
+	const OW_String& ns,
+	const OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMObjectPath rval = cop;
-	OW_String ns = cop.getNameSpace();
+	OW_CIMObjectPath rval(ci.getClassName(), ci.getKeyValuePairs());
+
 	// Check to see if user has rights to create the instance
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, cop.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, ns, aclInfo);
 
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
 		OW_ACLInfo(), true);
@@ -1433,11 +1435,14 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 	try
 	{
-		OW_CIMClass theClass = _getNameSpaceClass(cop.getObjectName());
+		OW_String className = ci.getClassName();
+
+		// TODO: Why don't we just use getClass instead of repeating this 10 times in this file?
+		OW_CIMClass theClass = _getNameSpaceClass(className);
 		if(!theClass)
 		{
-			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
-			checkGetClassRvalAndThrowInst(rc, cop.getNameSpace(), ci.getClassName());
+			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, theClass);
+			checkGetClassRvalAndThrowInst(rc, ns, className);
 		}
 
 		OW_CIMQualifier acq = theClass.getQualifier(
@@ -1471,7 +1476,7 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 
 			if(instancep)
 			{
-				rval = instancep->createInstance(createProvEnvRef(real_ch), cop, ci);
+				rval = instancep->createInstance(createProvEnvRef(real_ch), ns, ci);
 				created = true;
 			}
 		}
@@ -1527,9 +1532,14 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 				}
 			}
 
-			m_env->logDebug(format("OW_CIMServer::createInstance.  cop = %1", cop.toString()));
-			m_iStore.createInstance(cop, theClass, ci);
-			_validatePropagatedKeys(cop, ci, theClass);
+			// Make sure instance jives with class definition
+			OW_CIMInstance lci(ci);
+			lci.syncWithClass(theClass, false);
+
+			m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
+				"instance = %2", ns, lci.toString()));
+			m_iStore.createInstance(ns, theClass, lci);
+			_validatePropagatedKeys(ns, lci, theClass);
 		}
 
 		if(theClass.isAssociation())
@@ -1545,11 +1555,11 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 			if(!assocP)
 			{
 				OW_AssocDbHandle hdl = m_assocDb.getHandle();
-				hdl.addEntries(cop.getNameSpace(), ci);
+				hdl.addEntries(ns, ci);
 			}
 		}
 
-		_setProviderProperties(ns, cop, ci, theClass, aclInfo);
+		_setProviderProperties(ns, ci, theClass, aclInfo);
 		OW_ASSERT(rval);
 		return rval;
 	}
@@ -1636,7 +1646,7 @@ OW_CIMServer::modifyInstance(
 			}
 		}
 
-		_setProviderProperties(ns, cop, modifiedInstance, theClass, aclInfo);
+		_setProviderProperties(ns, modifiedInstance, theClass, aclInfo);
 		OW_ASSERT(oldInst);
 		return oldInst;
 	}
@@ -2176,7 +2186,7 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 			OW_CIMQualifier cimQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 			cimQualifier.setValue(OW_CIMValue(OW_String(NAMESPACE_PROVIDER)));
 			OW_CIMProperty cimProp(OW_CIMProperty::NAME_PROPERTY);
-			cimProp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
+			cimProp.setDataType(OW_CIMDataType::STRING);
 			cimProp.addQualifier(OW_CIMQualifier::createKeyQualifier());
 			m_nsClass__Namespace.addQualifier(cimQualifier);
 			m_nsClass__Namespace.addProperty(cimProp);
@@ -3120,8 +3130,8 @@ OW_CIMServer::_isDynamicAssoc(const OW_CIMClass& cc,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
-	OW_CIMInstance& ci, const OW_CIMClass& theClass)
+OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
+	const OW_CIMInstance& ci, const OW_CIMClass& theClass)
 {
 	OW_CIMObjectPathArray rv;
 	OW_CIMPropertyArray kprops = theClass.getKeys();
@@ -3187,12 +3197,10 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 	if(theMap.size() == 0)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("Cannot create instance. Propagated key properties missing:"
-				" %1", cop.toString()).c_str());
+			"Cannot create instance. Propagated key properties missing");
 	}
 
-	OW_String ns = cop.getNameSpace();
-	OW_CIMObjectPath op(cop);
+	OW_CIMObjectPath op(ci.getClassName(), ci.getKeyValuePairs());
 	OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.begin();
 	while(it != theMap.end())
 	{
@@ -3229,7 +3237,7 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::_setProviderProperties(const OW_String& ns,
-	const OW_CIMObjectPath& cop, const OW_CIMInstance& ci,
+	const OW_CIMInstance& ci,
 	const OW_CIMClass& theClass, const OW_ACLInfo& aclInfo)
 {
 	OW_ACLInfo intAclInfo;
@@ -3266,7 +3274,7 @@ OW_CIMServer::_setProviderProperties(const OW_String& ns,
 				if(propp)
 				{
 					OW_CIMValue cv = cp.getValue();
-					OW_CIMObjectPath cop2(cop);
+					OW_CIMObjectPath cop2(ci.getClassName(), ci.getKeyValuePairs());
 					cop2.setNameSpace(ns);
 					propp->setPropertyValue(createProvEnvRef(real_ch),
 						/*ns, cop,*/ cop2, cp.getOriginClass(),

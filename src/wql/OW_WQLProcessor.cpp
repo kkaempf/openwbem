@@ -184,10 +184,8 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	}
 	
 	// create the instance
-	OW_CIMObjectPath cop(ci.getClassName(), m_ns);
-	cop.setKeys(ci.getKeyValuePairs());
 	//OW_LOGDEBUG(format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
-	m_hdl->createInstance(cop, ci);
+	m_hdl->createInstance(m_ns, ci);
 	instances.clear();
 	instances.push_back(ci);
 }
@@ -266,10 +264,8 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 		ci.setProperty(cp);
 	}
 	// create the instance
-	OW_CIMObjectPath cop(ci.getClassName(), m_ns);
-	cop.setKeys(ci.getKeyValuePairs());
 	//OW_LOGDEBUG(format("About to create instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
-	m_hdl->createInstance(cop, ci);
+	m_hdl->createInstance(m_ns, ci);
 	instances.clear();
 	instances.push_back(ci);
 }
@@ -2264,12 +2260,12 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 							/* Don't handle UINT64 */)
 						{
 							// Upgrade cv to be a INT64, so the comparison will work
-							cv = OW_CIMValueCast::castValueToDataType(cv, OW_CIMDataType(OW_CIMDataType::SINT64));
+							cv = OW_CIMValueCast::castValueToDataType(cv, OW_CIMDataType::SINT64);
 						}
 						else if (valType == OW_CIMDataType::REAL32)
 						{
 							// Upgrade a REAL32 to a REAL64
-							cv = OW_CIMValueCast::castValueToDataType(cv, OW_CIMDataType(OW_CIMDataType::REAL64));
+							cv = OW_CIMValueCast::castValueToDataType(cv, OW_CIMDataType::REAL64);
 						}
 					}
 					if (compare(cv, val))

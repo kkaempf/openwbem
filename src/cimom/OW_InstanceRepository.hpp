@@ -98,8 +98,8 @@ public:
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
 	 */
-	void createInstance(const OW_CIMObjectPath& cop, const OW_CIMClass& theClass,
-		OW_CIMInstance& ci);
+	void createInstance(const OW_String& ns, const OW_CIMClass& theClass,
+		const OW_CIMInstance& ci);
 
 	/**
 	 * Update an instance

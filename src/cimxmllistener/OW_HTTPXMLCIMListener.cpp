@@ -356,12 +356,9 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("CreationClassName", OW_CIMValue(ipAddress));
 	ci.setProperty("Name", OW_CIMValue(httpPath));
 
-	OW_CIMObjectPath cop;
 	try
 	{
-		cop = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
-		cop.setNameSpace(ns);
-		reg.handler = hdl.createInstance(cop, ci);
+		reg.handler = hdl.createInstance(ns, ci);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -372,7 +369,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 		}
 		else
 		{
-			reg.handler = cop;
+			reg.handler = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
 		}
 	}
 	
@@ -391,9 +388,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("CreationClassName", OW_CIMValue(ipAddress));
 	ci.setProperty("Name", OW_CIMValue(httpPath));
 	// create instance of filter
-	cop = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
-	cop.setNameSpace(ns);
-	reg.filter = hdl.createInstance(cop, ci);
+	reg.filter = hdl.createInstance(ns, ci);
 
 	// get class of CIM_IndicationSubscription and new instance of it.
 	// CIM_IndicationSubscription is an association class that connects
@@ -408,9 +403,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 
 	// creating the instance the CIM_IndicationSubscription creates
 	// the event subscription
-	cop = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
-	cop.setNameSpace(ns);
-	reg.subscription = hdl.createInstance(cop, ci);
+	reg.subscription = hdl.createInstance(ns, ci);
 
 	//save info for deletion later and callback delivery
 	reg.callback = cb;

@@ -316,7 +316,7 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& ass
 	for(size_t i = 0; i < propRa.size(); i++)
 	{
 		OW_CIMProperty p1 = propRa[i];
-		if(p1.getDataType() == OW_CIMDataType(OW_CIMDataType::REFERENCE))
+		if(p1.getDataType().getType() == OW_CIMDataType::REFERENCE)
 		{
 			// found first reference, search for others
 			for (size_t j = 0; j < propRa.size(); ++j)
@@ -326,7 +326,7 @@ OW_AssocDbHandle::addOrDeleteEntries(const OW_String& ns, const OW_CIMClass& ass
 					continue; // don't bother with same ones.
 				}
 				OW_CIMProperty p2 = propRa[j];
-				if(p2.getDataType() == OW_CIMDataType(OW_CIMDataType::REFERENCE))
+				if(p2.getDataType().getType() == OW_CIMDataType::REFERENCE)
 				{
 					// found another reference, now set up the vars we need
 					// and create index entries.

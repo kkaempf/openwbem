@@ -68,14 +68,14 @@ public:
 	 * Create an OW_CIMClass object with the given name.
 	 * @param name The name for this OW_CIMClass specified as an OW_String.
 	 */
-	OW_CIMClass(const OW_String& name);
+	explicit OW_CIMClass(const OW_String& name);
 
 	/**
 	 * Create an OW_CIMClass object with the given name.
 	 * @param name The name for this OW_CIMClass specified as a NULL terminated
 	 *		string.
 	 */
-	OW_CIMClass(const char* name);
+	explicit OW_CIMClass(const char* name);
 
 	OW_CIMClass(const OW_CIMClass& x);
 	

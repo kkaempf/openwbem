@@ -248,8 +248,8 @@ OW_WQLFilterRep::enumInstanceNames(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_WQLFilterRep::createInstance(const OW_CIMObjectPath &/*cop*/,
-	OW_CIMInstance &/*ci*/, const OW_ACLInfo& /*aclInfo*/)
+OW_WQLFilterRep::createInstance(const OW_String&,
+	const OW_CIMInstance &/*ci*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");

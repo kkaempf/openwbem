@@ -370,7 +370,7 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 	}
 	else
 	{
-		if (qt.getDataType() == OW_CIMDataType(OW_CIMDataType::BOOLEAN))
+		if (qt.getDataType().getType() == OW_CIMDataType::BOOLEAN)
 		{
 			m_curQualifier.setValue(OW_CIMValue(OW_Bool(true)));
 		}
@@ -1180,13 +1180,11 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 {
 	OW_CIMObjectPath cop(m_curInstance.getClassName(), m_curInstance.getKeyValuePairs());
 	cop.setNameSpace(m_namespace);
-	MofCompiler::theErrorHandler->progressMessage(format("Processing Instance: %1", cop.modelPath()).c_str(), li);
+	MofCompiler::theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
 	try
 	{
-
-		m_hdl->createInstance(cop,
-			m_curInstance);
-		MofCompiler::theErrorHandler->progressMessage(format("Created Instance: %1", cop.modelPath()).c_str(), li);
+		m_hdl->createInstance(m_namespace, m_curInstance);
+		MofCompiler::theErrorHandler->progressMessage(format("Created Instance: %1", cop.toString()).c_str(), li);
 	}
 	catch (const OW_CIMException& ce)
 	{
@@ -1195,7 +1193,7 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 			try
 			{
 				m_hdl->modifyInstance(m_namespace, m_curInstance);
-				MofCompiler::theErrorHandler->progressMessage(format("Updated Instance: %1", cop.modelPath()).c_str(), li);
+				MofCompiler::theErrorHandler->progressMessage(format("Updated Instance: %1", cop.toString()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)
 			{

@@ -201,10 +201,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 	newInst.setProperty("CreationClassName",
 							  OW_CIMValue(fromClass));
 
-	OW_CIMObjectPath cop(fromClass, newInst.getKeyValuePairs());
-	cop.setNameSpace("root/testsuite");
-
-	hdl.createInstance(cop, newInst);
+	hdl.createInstance("root/testsuite", newInst);
 }
 
 

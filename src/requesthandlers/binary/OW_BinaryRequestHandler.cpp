@@ -334,11 +334,11 @@ void
 OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath path(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMInstance cimInstance(OW_BinIfcIO::readInstance(istrm));
 
 	OW_String className = cimInstance.getClassName();
-	OW_CIMObjectPath realPath(className, path.getNameSpace());
+	//OW_CIMObjectPath realPath(className, path.getNameSpace());
 
 	// Special treatment for __Namespace class
 	if(className.equals(OW_CIMClass::NAMESPACECLASS))
@@ -364,6 +364,7 @@ OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
 		cimInstance.setProperty(prop);
 	}
 
+	/* This should be done in the CIM Server
 	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
 	if (keys.size() == 0)
 	{
@@ -382,7 +383,9 @@ OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	realPath.setKeys(keys);
-	OW_CIMObjectPath newPath = chdl->createInstance(realPath, cimInstance);
+	*/
+
+	OW_CIMObjectPath newPath = chdl->createInstance(ns, cimInstance);
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::writeObjectPath(ostrm, newPath);

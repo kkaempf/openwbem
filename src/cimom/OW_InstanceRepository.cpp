@@ -348,26 +348,23 @@ OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPat
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_InstanceRepository::createInstance(const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass, OW_CIMInstance& ci)
+OW_InstanceRepository::createInstance(const OW_String& ns,
+	const OW_CIMClass& theClass, const OW_CIMInstance& ci)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 
-	OW_String ckey = makeClassKey(cop.getNameSpace(), ci.getClassName());
+	OW_String ckey = makeClassKey(ns, ci.getClassName());
 	OW_HDBNode clsNode = getNameSpaceNode(hdl, ckey);
 	if(!clsNode)
 	{
+		// Theoretically this should never happen, but just in case...
 		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, ci.getClassName().c_str());
 	}
 
-	// Make sure instance jives with class definition
-	ci.syncWithClass(theClass, false);
-
 	// Create object path with keys from new instance
-	OW_CIMObjectPath icop(cop);
-	icop.setKeys(ci.getKeyValuePairs());
-	OW_String instanceKey = makeInstanceKey(icop.getNameSpace(), icop, theClass);
+	OW_CIMObjectPath icop(ci.getClassName(), ci.getKeyValuePairs());
+	OW_String instanceKey = makeInstanceKey(ns, icop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)
 	{

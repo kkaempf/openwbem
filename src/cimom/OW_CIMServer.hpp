@@ -440,7 +440,8 @@ public:
 	 *		CIM_ERR_INVALID_CLASS
 	 *		CIM_ERR_FAILED
 	 */
-	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
+	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
+		const OW_CIMInstance& ci,
 		const OW_ACLInfo& aclInfo);
 
 	/**
@@ -701,11 +702,10 @@ private:
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
 		const OW_String& className, const OW_ACLInfo& aclInfo);
 
-	void _validatePropagatedKeys(const OW_CIMObjectPath& cop,
-		OW_CIMInstance& ci, const OW_CIMClass& theClass);
+	void _validatePropagatedKeys(const OW_String& ns,
+		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
 
 	void _setProviderProperties(const OW_String& ns,
-		const OW_CIMObjectPath& cop,
 		const OW_CIMInstance& ci, const OW_CIMClass& theClass,
 		const OW_ACLInfo& aclInfo);
 

@@ -102,6 +102,16 @@ OW_CIMObjectPath::OW_CIMObjectPath(const OW_String& className,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath::OW_CIMObjectPath(const OW_String& ns,
+	const OW_CIMInstance& inst) :
+	OW_CIMBase(), m_pdata(new OPData)
+{
+	m_pdata->m_nameSpace.setNameSpace(ns);
+	m_pdata->m_objectName = inst.getClassName();
+	m_pdata->m_keys = inst.getKeyValuePairs();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath::OW_CIMObjectPath(const OW_CIMObjectPath& arg) :
 	OW_CIMBase(), m_pdata(arg.m_pdata)
 {
@@ -558,7 +568,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 				}
 
 				cp.setValue(OW_CIMValue(keyvalue));
-				cp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
+				cp.setDataType(OW_CIMDataType::STRING);
 				tmpkeys.append(cp);
 				break;
 			}
@@ -597,7 +607,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 			OW_CIMProperty cp(true);
 			cp.setName(keyprop);
 			cp.setValue(OW_CIMValue(keyvalue));
-			cp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
+			cp.setDataType(OW_CIMDataType::STRING);
 			tmpkeys.append(cp);
 			singleKey = false;
 		}

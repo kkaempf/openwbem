@@ -61,11 +61,7 @@ OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 	OW_CIMValue cv(newNameSpace);
 	cimInstance.setProperty("Name", cv);
 
-	OW_CIMObjectPath cimPath(OW_CIMClass::NAMESPACECLASS,
-		cimInstance.getKeyValuePairs());
-
-	cimPath.setNameSpace(parentPath);
-	createInstance(cimPath, cimInstance);
+	createInstance(parentPath, cimInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -87,7 +83,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
 	OW_CIMPropertyArray v;
 	OW_CIMValue cv(newNameSpace);
 	OW_CIMProperty cp("Name", cv);
-	cp.setDataType(OW_CIMDataType(OW_CIMDataType::STRING));
+	cp.setDataType(OW_CIMDataType::STRING);
 	v.push_back(cp);
 
 	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, v);

@@ -227,7 +227,7 @@ main(int argc, char* argv[])
 		OW_CIMObjectPath ccop("TestInstance", "root");
 		OW_CIMObjectPath icop = ccop;
 		icop.addKey("Name", OW_CIMValue(OW_String("One")));
-		rch.createInstance(icop, inst);
+		rch.createInstance("root", inst);
 
 		cout << "** Enumerating instances (1 instance)" << endl;
 		copEnu = rch.enumInstanceNamesE("root", "TestInstance");

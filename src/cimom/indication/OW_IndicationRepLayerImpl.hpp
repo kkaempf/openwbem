@@ -160,8 +160,8 @@ public:
 	}
 
 
-	virtual OW_CIMObjectPath createInstance(const OW_CIMObjectPath &name,
-		OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
+	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
+		const OW_CIMInstance &ci, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMClass modifyClass(const OW_String &ns,
 		const OW_CIMClass& cc, const OW_ACLInfo& aclInfo);

@@ -746,11 +746,13 @@ void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
+
 	parser.mustGetChild();		// Point parser to <INSTANCE> tag
 
 	OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(parser);
 	OW_String className = cimInstance.getClassName();
-	OW_CIMObjectPath realPath = OW_CIMObjectPath(className, path.getNameSpace());
+	//OW_CIMObjectPath realPath = OW_CIMObjectPath(className, path.getNameSpace());
 
 	// Special treatment for __Namespace class
 	if(className.equalsIgnoreCase(OW_CIMClass::NAMESPACECLASS))
@@ -776,6 +778,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 		cimInstance.setProperty(prop);
 	}
 
+	/* This should be done in CIMServer
 	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
 	if(keys.size() == 0)
 	{
@@ -794,10 +797,9 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 
 	realPath.setKeys(keys);
+	*/
 
-	OW_CIMObjectPath newPath = hdl.createInstance(realPath, cimInstance);
-	// do we still need to do this below?
-	newPath.setNameSpace(path.getNameSpace());
+	OW_CIMObjectPath newPath = hdl.createInstance(ns, cimInstance);
 	OW_CIMtoXML(newPath, ostr, OW_CIMtoXMLFlags::isInstanceName);
 }
 

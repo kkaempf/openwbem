@@ -72,13 +72,13 @@ public:
 	 * Create an OW_CIMMethod with a name
 	 * @param name	The name of this OW_CIMMethod.
 	 */
-	OW_CIMMethod(const OW_String& name);
+	explicit OW_CIMMethod(const OW_String& name);
 
 	/**
 	 * Create an OW_CIMMethod with a name
 	 * @param name	The name of this OW_CIMMethod as a NULL terminated string.
 	 */
-	OW_CIMMethod(const char* name);
+	explicit OW_CIMMethod(const char* name);
 
 	/**
 	 * Create an OW_CIMMethod from an XML definition.

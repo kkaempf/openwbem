@@ -313,7 +313,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMQualifier::CIM_QUAL_KEY);
 	OW_CIMQualifier keyQual(keyQualType);
 	keyQual.setValue(OW_CIMValue(true));
-	OW_CIMProperty theKeyProp("theKeyProp", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+	OW_CIMProperty theKeyProp("theKeyProp", OW_CIMDataType::BOOLEAN);
 	theKeyProp.addQualifier(keyQual);
 	theKeyProp.setValue(OW_CIMValue(true));
 
@@ -368,9 +368,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "root/testsuite");
-		cop.setKeys(ci);
-		hdl->createInstance(cop, ci);
+		hdl->createInstance("root/testsuite", ci);
 	}
 	catch (const OW_CIMException& e)
 	{
@@ -401,7 +399,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		// test adding an key to a subclass when the parent already has keys.
 		OW_CIMClass cc2("invalidTestSub");
 		cc2.setSuperClass("invalidTestBase");
-		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType::BOOLEAN);
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
 		hdl->createClass("root/testsuite", cc2);
@@ -457,9 +455,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "badNamespace");
-		cop.setKeys(ci);
-		hdl->createInstance(cop, ci);
+		hdl->createInstance("badNamespace", ci);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -475,9 +471,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setClassName("nonexistentClass");
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "root/testsuite");
-		cop.setKeys(ci);
-		hdl->createInstance(cop, ci);
+		hdl->createInstance("root/testsuite", ci);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -490,9 +484,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
-		OW_CIMObjectPath cop("foo", "root/testsuite");
-		cop.setKeys(ci);
-		hdl->createInstance(cop, ci);
+		hdl->createInstance("root/testsuite", ci);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -549,7 +541,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		// test adding an key to a subclass when the parent already has keys.
 		OW_CIMClass cc2("invalidTestSub");
 		cc2.setSuperClass("invalidTestBase");
-		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType::BOOLEAN);
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
 		hdl->modifyClass("root/testsuite", cc2);
@@ -606,16 +598,15 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	ci.setProperty(theKeyProp);
 	try
 	{
-		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
-		cop.setKeys(ci);
 		try
 		{
+			OW_CIMObjectPath cop(baseClass.getName(), ci.getKeyValuePairs());
 			hdl->deleteInstance("root/testsuite", cop);
 		}
 		catch (const OW_CIMException& e)
 		{
 		}
-		hdl->createInstance(cop, ci);
+		hdl->createInstance("root/testsuite", ci);
 	}
 	catch (const OW_CIMException& e)
 	{

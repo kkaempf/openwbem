@@ -1008,22 +1008,15 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_CIMXMLCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
+OW_CIMXMLCIMOMHandle::createInstance(const OW_String& ns,
 	const OW_CIMInstance& ci)
 {
 	static const char* const commandName = "CreateInstance";
-	OW_String pathName = path.getObjectName();
 
-	//
-	// Check that the path has specified at least one key (can't have
-	// an instance without such keys)
-	//
-	OW_CIMPropertyArray validKeys = path.getKeys();
-	if (validKeys.size() == 0)
+	if (ci.getKeyValuePairs().empty())
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, format("The "
-						   "path (%1) for the instance does not specify any keys",
-							 pathName).c_str());
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"The instance does not have any keys");
 	}
 
 	OW_StringStream ostr;
@@ -1039,9 +1032,8 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
 
 	OW_CIMObjectPath rval;
 	createInstanceOp op(rval);
-	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
-												 ostr.toString());
-	rval.setNameSpace(path.getNameSpace());
+	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(), ostr.toString());
+	rval.setNameSpace(ns);
 	return rval;
 }
 

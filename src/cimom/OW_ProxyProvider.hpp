@@ -163,10 +163,10 @@ public:
 
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_CIMObjectPath& cop,
+			const OW_String& ns,
 			const OW_CIMInstance& cimInstance)
 	{
-		return m_pProv->createInstance(env,cop,cimInstance);
+		return m_pProv->createInstance(env,ns,cimInstance);
 	}
 
 	virtual void modifyInstance(

@@ -102,6 +102,14 @@ public:
 		const OW_CIMPropertyArray& keys);
 
 	/**
+	 * Create an OW_CIMObjectPath for an instance and namespace.
+	 * @param ns The namespace
+	 * @param inst An instance.
+	 */
+	OW_CIMObjectPath(const OW_String& className,
+		const OW_CIMInstance& inst);
+
+	/**
 	 * Create a new OW_CIMObject path from another.
 	 * @param arg The OW_CIMObjectPath this object will be a copy of.
 	 */

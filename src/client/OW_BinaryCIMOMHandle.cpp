@@ -530,19 +530,21 @@ OW_BinaryCIMOMHandle::modifyInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_BinaryCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::createInstance(const OW_String& ns,
 	const OW_CIMInstance& ci)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"CreateInstance", path.getNameSpace());;
+		"CreateInstance", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_CREATEINST);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeInstance(strm, ci);
 	
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
-		"CreateInstance", path.getNameSpace());
-	return readCIMObject<OW_CIMObjectPath>(in);
+		"CreateInstance", ns);
+	OW_CIMObjectPath rval = readCIMObject<OW_CIMObjectPath>(in);
+	rval.setNameSpace(ns);
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////

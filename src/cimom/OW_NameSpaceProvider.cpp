@@ -233,7 +233,7 @@ OW_NameSpaceProvider::getInstance(
 OW_CIMObjectPath
 OW_NameSpaceProvider::createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMObjectPath& cop,
+		const OW_String& ns,
 		const OW_CIMInstance& cimInstance)
 {
 	OW_CIMProperty cp = cimInstance.getProperty(OW_CIMProperty::NAME_PROPERTY);
@@ -248,7 +248,7 @@ OW_NameSpaceProvider::createInstance(
 	cv.get(newName);
 
 	newName = newName.substring(newName.indexOf('=') + 1);
-	OW_String newNameSpace = cop.getNameSpace();
+	OW_String newNameSpace = ns;
 	newNameSpace += "/";
 	newNameSpace += newName;
 
@@ -257,7 +257,7 @@ OW_NameSpaceProvider::createInstance(
 
 	env->getCIMOMHandle()->createNameSpace(newNameSpace);
 
-	return cop;
+	return OW_CIMObjectPath(ns, cimInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////

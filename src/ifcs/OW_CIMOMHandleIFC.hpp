@@ -450,15 +450,14 @@ public:
 
 	/**
 	 * Add the specified CIM instance to the specified namespace.
-	 * @param instanceName The OW_CIMObjectPath that identifies the CIM
-	 *		instance to be added.
+	 * @param ns The namespace
 	 * @param instance the OW_CIMInstance to be added
 	 * @return An OW_CIMObjectPath of the created instance.
 	 * @exception OW_CIMException If the CIM instance already exists in the
 	 *		namespace
 	 */
 	virtual OW_CIMObjectPath createInstance(
-		const OW_CIMObjectPath& instanceName,
+		const OW_String& ns,
 		const OW_CIMInstance& instance) = 0;
 
 	/**
