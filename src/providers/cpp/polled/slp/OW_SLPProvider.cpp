@@ -97,6 +97,8 @@ struct slpHandleCloser
 	SLPHandle& m_hdl;
 };
 
+const String COMPONENT_NAME("ow.provider.SLPProvider");
+
 }
 
 class SLPProvider : public CppPolledProviderIFC
