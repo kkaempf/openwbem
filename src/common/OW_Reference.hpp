@@ -58,13 +58,10 @@ class OW_Reference
 		OW_Reference(const OW_Reference<U>& arg);
 
 		~OW_Reference();
-
-		void incRef();
-		void decRef();
-
-
-		OW_Reference<T>& operator= (const OW_Reference<T> arg);
+		OW_Reference<T>& operator= (const OW_Reference<T>& arg);
 		OW_Reference<T>& operator= (T* newObj);
+        void swap(OW_Reference<T>& arg);
+
 		T* operator->() const;
 		T& operator*() const;
 		T* getPtr() const;
@@ -91,6 +88,9 @@ class OW_Reference
 		void useRefCountOf(const OW_Reference<U>&);
 
 	private:
+		void incRef();
+		void decRef();
+
 		T* volatile m_pObj;
 		OW_RefCount* volatile m_pRefCount;
 		/* This is so the templated constructor will work */
@@ -195,8 +195,10 @@ inline void OW_Reference<T>::decRef()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T> arg)
+inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T>& arg)
 {
+    OW_Reference<T>(arg).swap(*this);
+    /*
 	if(arg.m_pRefCount != m_pRefCount
 			|| (arg.m_pRefCount == 0 && m_pRefCount == 0))
 	{
@@ -205,6 +207,7 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T> arg)
 		m_pRefCount = arg.m_pRefCount;
 		incRef();
 	}
+    */
 	return *this;
 }
 
@@ -212,13 +215,33 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T> arg)
 template<class T>
 inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 {
+    OW_Reference<T>(newObj).swap(*this);
+    /*
 	if(newObj != m_pObj)
 	{
 		decRef();
 		m_pObj = newObj;
 		m_pRefCount = new OW_RefCount;
 	}
+    */
 	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+void OW_RefSwap(T& x, T&y)
+{
+    T t = x;
+    x = y;
+    y = t;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template <class T>
+inline void OW_Reference<T>::swap(OW_Reference<T>& arg)
+{
+    OW_RefSwap(m_pObj, arg.m_pObj);
+    OW_RefSwap(m_pRefCount, arg.m_pRefCount);
 }
 
 //////////////////////////////////////////////////////////////////////////////
