@@ -79,7 +79,7 @@ namespace OpenWBEM
 {
 
 // static
-int dlSharedLibrary::m_call_dlclose = 1;
+bool dlSharedLibrary::s_call_dlclose = true;
 
 Mutex dlSharedLibrary_guard;
 
@@ -100,7 +100,7 @@ dlSharedLibrary::dlSharedLibrary(void * libhandle, const String& libName)
 dlSharedLibrary::~dlSharedLibrary()
 {
 #if !defined(OW_VALGRIND_SUPPORT) // dlclose()ing shared libs make it impossible to see where memory leaks occurred with valgrind.
-	if (m_call_dlclose)
+	if (s_call_dlclose)
 	{
 		dlclose( m_libhandle );
 	}

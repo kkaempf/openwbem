@@ -64,7 +64,10 @@ public:
 	 * memory mapped to the shared library will never be freed up. New versions
 	 * of the library can't be loaded (if a provider is updated)
 	 */
-	static int m_call_dlclose;
+	static void setCallDlclose(bool callDlclose)
+	{
+		s_call_dlclose = callDlclose;
+	}
 
 	/**
 	 * Returns if the given path is a fake library or not.
@@ -92,6 +95,9 @@ private:
 
 	void initializeSymbolMap();
 #endif /* defined(OW_USE_FAKE_LIBS) */
+
+	static bool s_call_dlclose;
+
 };
 
 } // end namespace OpenWBEM
