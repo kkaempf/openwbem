@@ -177,10 +177,20 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 		OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(pra[0].getValue(),
 			kprops[0].getDataType());
 
+		if (cv.getType() == OW_CIMDataType::REFERENCE)
+		{
+			OW_CIMObjectPath cop(cv.toCIMObjectPath());
+			if (cop.getNameSpace().empty())
+			{
+				cop.setNameSpace(ns);
+				cv = OW_CIMValue(cop);
+			}
+		}
 		rv += cv.toString();
 		return rv.releaseString();
 	}
 
+	// TODO: Is this necessary?
 	// Ensure no non-key properties were specified in the path
 	for(size_t i = 0; i < pra.size(); i++)
 	{
@@ -254,6 +264,7 @@ OW_InstanceRepository::getInstanceNames(const OW_String& ns,
 	{
 		OW_CIMInstance ci(OW_CIMNULL);
 		nodeToCIMObject(ci, node);
+		ci.syncWithClass(theClass); // need to do this to set up the keys
 		OW_CIMObjectPath op(ci.getClassName(), ns);
 		op.setKeys(ci.getKeyValuePairs());
 		result.handle(op);
@@ -601,7 +612,7 @@ void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
 	OW_CIMQualifierArray newQuals;
 	for (size_t i = 0; i < quals.size(); ++i)
 	{
-		OW_CIMQualifier iq = quals[i];
+		OW_CIMQualifier& iq = quals[i];
 		OW_CIMQualifier cq = theClass.getQualifier(iq.getName());
 		if (!cq)
 		{
@@ -615,6 +626,32 @@ void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
 		}
 	}
 	inst.setQualifiers(newQuals);
+
+	OW_CIMPropertyArray props = inst.getProperties();
+	for (size_t i = 0; i < props.size(); ++i)
+	{
+		OW_CIMProperty& p = props[i];
+		OW_CIMProperty clsp = theClass.getProperty(p.getName());
+		OW_CIMQualifierArray quals(p.getQualifiers());
+		OW_CIMQualifierArray newQuals;
+		for (size_t j = 0; j < quals.size(); ++j)
+		{
+			OW_CIMQualifier& ipq = quals[j];
+			OW_CIMQualifier cpq = clsp.getQualifier(ipq.getName());
+			if (!cpq)
+			{
+				newQuals.push_back(ipq);
+				continue;
+			}
+			if (ipq.getValue() != cpq.getValue())
+			{
+				newQuals.push_back(ipq);
+				continue;
+			}
+		}
+		p.setQualifiers(newQuals);
+	}
+	inst.setProperties(props);
 }
 
 
