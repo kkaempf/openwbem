@@ -251,7 +251,7 @@ case "$host" in
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@ -lpthread'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(OPENWBEM_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
@@ -282,7 +282,7 @@ case "$host" in
 	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	CXXCOMMONLINKFLAGS="-pthread"
 	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(OPENWBEM_VERSION)'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
@@ -309,7 +309,7 @@ case "$host" in
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@ -lpthread'
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@.$(OPENWBEM_VERSION) -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="so"
