@@ -262,7 +262,6 @@ case "$host" in
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
-	AM_CONDITIONAL(OW_NETWARE_INSTALL, true)
 	PLATFORMDIR="posix"
 	AC_DEFINE(USE_FAKE_LIBS, 1, Fake libraries are enabled)
 	STATIC_SERVICES=1
@@ -426,6 +425,8 @@ AC_SUBST(platform_pamdir)
 AC_SUBST(PAM_LIB)
 
 AM_CONDITIONAL(USE_AIX_AUTHENTICATE, test x$AIX = x1)
+
+AM_CONDITIONAL(OW_NETWARE_INSTALL, test x$NETWARE = x1)
 
 AC_ARG_ENABLE(zlib,
 OW_HELP_STRING(--disable-zlib,disable zlib integration))
