@@ -42,6 +42,12 @@
 #include "OW_PidFile.hpp"
 #include "OW_ExceptionIds.hpp"
 
+#ifdef OW_NETWARE
+#include "OW_Condition.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
+#endif
+
 extern "C"
 {
 #include <sys/types.h>
@@ -95,6 +101,12 @@ static UnnamedPipeRef daemonize_upipe;
 
 static char** g_argv = 0;
 
+#ifdef OW_NETWARE
+static Condition g_shutdownCond; 
+static bool g_shutDown = false; 
+static NonRecursiveMutex g_shutdownGuard; 
+#endif
+
 //////////////////////////////////////////////////////////////////////////////
 Options
 daemonInit( int argc, char* argv[] )
@@ -109,6 +121,12 @@ daemonInit( int argc, char* argv[] )
 void
 daemonize(bool dbgFlg, const String& daemonName)
 {
+#ifdef OW_NETWARE
+	{
+		NonRecursiveMutexLock l(g_shutdownGuard); 
+		g_shutDown = false; 
+	}
+#endif
 	initDaemonizePipe(); 
 
 	int pid = -1; 
@@ -190,15 +208,21 @@ daemonize(bool dbgFlg, const String& daemonName)
 int
 daemonShutdown(const String& daemonName)
 {
-#if !defined(OW_NETWARE)
+#if defined(OW_NETWARE)
+	(void)daemonName; 
+	{
+		NonRecursiveMutexLock l(g_shutdownGuard); 
+		g_shutDown = true; 
+		g_shutdownCond.notifyAll(); 
+		pthread_yield(); 
+	}
+#else
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
 	pidFile += OW_PACKAGE_PREFIX;
 	pidFile += daemonName;
 	pidFile += ".pid";
 	PidFile::removePid(pidFile.c_str());
-#else
-	(void)daemonName; 
 #endif
 	shutdownSig();
 	return 0;
@@ -408,6 +432,12 @@ static void
 netwareExitHandler(void*)
 {
 	theSigHandler(SIGTERM); 
+	pthread_yield();
+	NonRecursiveMutexLock l(g_shutdownGuard); 
+	while(!g_shutDown)
+	{
+		g_shutdownCond.wait(l); 
+	}
 }
 #endif
 
