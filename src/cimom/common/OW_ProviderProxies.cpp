@@ -425,7 +425,7 @@ namespace
 			// Inst/Assoc/Meth provs don't need one of these
 			return ServiceEnvironmentIFCRef(0);
 		}
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		virtual void createNameSpace(const String &ns,
 			OperationContext &context)
 		{

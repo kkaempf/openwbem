@@ -20,6 +20,7 @@ The next 4 options deal with the functional profiles defined in the WBEM specifi
 --disable-schema-manipulation 
 --disable-instance-manipulation (This also disables the "Basic Write" profile, since SetProperty is really Instance Manipulation, and depends on it in the internal OpenWBEM implementation.)
 --disable-property-operations (disables GetProperty and SetProperty, and doesn't correspond with the functional profiles in the spec.)
+--disable-namespace-manipulation (disables the ability to create or delete namespaces.)
 
 --disable-ssl  Disable integration with SSL.  SSL is used to secure the http connection.  If you are concerned about security, you should use either SSL and/or digest authentication.  If you don't use either, the username and password will be sent in plaintext over the network and can be intercepted. 41K disk footprint.  
 

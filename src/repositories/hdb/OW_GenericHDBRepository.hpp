@@ -74,7 +74,7 @@ public:
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close();
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.

@@ -73,7 +73,7 @@ public:
 	void setNameSpace(const String& arg) { m_namespace = arg; }
 	String getNameSpace() const { return m_namespace; }
 	
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace name to be created.

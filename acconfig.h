@@ -115,6 +115,7 @@
 #undef DISABLE_SCHEMA_MANIPULATION
 #undef DISABLE_INSTANCE_MANIPULATION
 #undef DISABLE_PROPERTY_OPERATIONS
+#undef DISABLE_NAMESPACE_MANIPULATION
 
 /* Define to enable workarounds so we can work with valgrind */
 #undef VALGRIND_SUPPORT

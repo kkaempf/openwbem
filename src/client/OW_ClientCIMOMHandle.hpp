@@ -53,7 +53,7 @@ typedef Reference<ClientCIMOMHandle> ClientCIMOMHandleRef;
 class ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void createNameSpace(const String& ns) OW_DEPRECATED;
 	/** This method is deprecated.  Use CIMNameSpaceUtils::deleteCIM_Namespace() instead. */

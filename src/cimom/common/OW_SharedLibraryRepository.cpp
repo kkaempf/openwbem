@@ -56,7 +56,7 @@ ServiceEnvironmentIFCRef SharedLibraryRepository::getEnvironment() const
 {
 	return m_ref->getEnvironment();
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 void SharedLibraryRepository::createNameSpace(const String& ns,
 	OperationContext& context)
 {

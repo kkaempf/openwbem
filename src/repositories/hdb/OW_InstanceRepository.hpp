@@ -124,6 +124,9 @@ public:
 	 * @return true if the class specified has instances.
 	 */
 	bool classHasInstances(const CIMObjectPath& classPath);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
 	 * Delete the given namespace and all object contained within it.
 	 * @param nsName	The name of the namespace

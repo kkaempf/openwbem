@@ -49,7 +49,7 @@ public:
 	virtual void shutdown();
 	virtual void open(const String &path);
 	virtual ServiceEnvironmentIFCRef getEnvironment() const;
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	virtual void createNameSpace(const String& ns,
 		OperationContext& context);
 	virtual void deleteNameSpace(const String& ns,

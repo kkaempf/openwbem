@@ -7,7 +7,11 @@ else
 if DISABLE_QUALIFIER_DECLARATION
 MOFDIR=
 else
+if DISABLE_NAMESPACE_MANIPULATION
+MOFDIR=
+else
 MOFDIR= mof
+endif
 endif
 endif
 endif

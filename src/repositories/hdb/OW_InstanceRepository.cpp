@@ -465,6 +465,9 @@ InstanceRepository::modifyInstance(const String& ns,
 	}
 	hdl.getHandle().updateNode(node, ostrm.length(), ostrm.getData());
 }
+#endif
+
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 InstanceRepository::deleteNameSpace(const String& nsName)
@@ -479,7 +482,8 @@ InstanceRepository::createNameSpace(String ns)
 {
 	return GenericHDBRepository::createNameSpace(ns);
 }
-#endif
+#endif // #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
+
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -185,7 +185,7 @@ public:
 	void getTopLevelAssociations(const String& ns,
 		CIMClassResultHandlerIFC& result);
 #endif
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
 	 * Delete the given namespace and all object contained within it.
 	 * @param nsName	The name of the namespace

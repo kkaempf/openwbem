@@ -745,6 +745,16 @@ if test "$enable_property_operations" = no; then
 fi
 AM_CONDITIONAL(DISABLE_PROPERTY_OPERATIONS, test x$OW_DISABLE_PROPERTY_OPERATIONS = x1)
 
+AC_ARG_ENABLE(namespace-manipulation,
+OW_HELP_STRING(--disable-namespace-manipulation,disable namespace manipulation))
+
+OW_DISABLE_NAMESPACE_MANIPULATION=0
+if test "$enable_namespace_manipulation" = no; then
+	AC_DEFINE(DISABLE_NAMESPACE_MANIPULATION)
+	OW_DISABLE_NAMESPACE_MANIPULATION=1
+fi
+AM_CONDITIONAL(DISABLE_NAMESPACE_MANIPULATION, test x$OW_DISABLE_NAMESPACE_MANIPULATION = x1)
+
 AC_ARG_ENABLE(valgrind-support,
 OW_HELP_STRING(--enable-valgrind-support,enable workarounds so the code can work well with valgrind),
 [

@@ -472,7 +472,7 @@ void IndicationRepLayerImpl::execQuery(
 {
 	m_pServer->execQuery(ns, result, query, queryLanguage, context);
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 void IndicationRepLayerImpl::deleteNameSpace(const String &ns, OperationContext& context)
 {
 	m_pServer->deleteNameSpace(ns, context);

@@ -74,7 +74,7 @@ public:
 	virtual void open(const String& path);
 	virtual void close();
 	virtual void shutdown();
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace to be created.

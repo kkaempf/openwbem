@@ -113,7 +113,7 @@ GenericHDBRepository::open(const String& path)
 	close();
 	m_hdb.open(path.c_str());
 	m_opened = true;
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	// Create root namespace
 	createNameSpace("root");
 #endif
@@ -170,7 +170,7 @@ GenericHDBRepository::getNameSpaceNode(HDBHandleLock& hdl,
 	}
 	return node;
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 int
 GenericHDBRepository::createNameSpace(String ns)

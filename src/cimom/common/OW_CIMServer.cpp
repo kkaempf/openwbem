@@ -177,7 +177,7 @@ CIMServer::_checkNameSpaceAccess(OperationContext& context, const String& ns,
 			Format("Access to namespace %1 is not allowed", ns).c_str());
 	}
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMServer::createNameSpace(const String& ns,

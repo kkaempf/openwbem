@@ -1002,7 +1002,7 @@ MetaRepository::_getClassNameNodes(StringResultHandlerIFC& result, HDBNode node,
 		}
 	}
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 MetaRepository::deleteNameSpace(const String& nsName)

@@ -69,7 +69,7 @@ WQLFilterRep::enumNameSpace(
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 ///////////////////////////////////////////////////////////////////////////////
 void
 WQLFilterRep::createNameSpace(const String& /*ns*/,

@@ -87,7 +87,7 @@ void registerCIMClient()
 	class_<CIMClient>("CIMClient", init<const String&, const String&, optional<const ClientAuthCBIFCRef&> >())
 		.def("setNameSpace", &CIMClient::setNameSpace)
 		.def("getNameSpace", &CIMClient::getNameSpace)
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		.def("createNameSpace", &CIMClient::createNameSpace)
 		.def("deleteNameSpace", &CIMClient::deleteNameSpace)
 #endif

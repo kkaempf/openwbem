@@ -140,7 +140,7 @@ public:
 		RepositoryIFCRef rep = env->getRepository();
 		rep->enumNameSpace(nshandler, env->getOperationContext());
 	}
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION)
 	////////////////////////////////////////////////////////////////////////////
 	virtual CIMObjectPath createInstance(
 		const ProviderEnvironmentIFCRef& env,
@@ -148,7 +148,8 @@ public:
 		const CIMInstance& cimInstance )
 	{
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::createInstance");
-		try
+#if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
+ 		try
 		{
 			String name = cimInstance.getPropertyT("Name").getValueT().toString();
 			RepositoryIFCRef rep = env->getRepository();
@@ -162,6 +163,9 @@ public:
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, e.getMessage());
 		}
+#else
+		OW_THROWCIMMSG(CIMException::FAILED, "namespace creation not supported");
+#endif
 		return CIMObjectPath(ns, cimInstance);
 	}
 	////////////////////////////////////////////////////////////////////////////
@@ -193,6 +197,7 @@ public:
 	{
 		(void)ns;
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::createInstance");
+#if !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 		try
 		{
 			String name = cop.getKeyT("Name").getValueT().toString();
@@ -210,6 +215,9 @@ public:
 		{
 			OW_THROWCIMMSG(CIMException::FAILED, e.getMessage());
 		}
+#else
+		OW_THROWCIMMSG(CIMException::FAILED, "namespace creation not supported");
+#endif
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 };

@@ -185,7 +185,7 @@ AuthorizerManager::allowAccessToNameSpace(
 	AuthorizerMarker am(env);
 	return m_authorizer->doAllowAccessToNameSpace(env, ns, accessType);
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 bool 
 AuthorizerManager::allowCreateNameSpace(

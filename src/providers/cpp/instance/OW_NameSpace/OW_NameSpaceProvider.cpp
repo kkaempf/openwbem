@@ -126,7 +126,7 @@ namespace
 		rep->enumNameSpace(handler, env->getOperationContext());
 	}
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 NameSpaceProvider::deleteInstance(
@@ -314,7 +314,7 @@ NameSpaceProvider::getInstance(
 	}
 	OW_THROWCIM(CIMException::NOT_FOUND);
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 NameSpaceProvider::createInstance(

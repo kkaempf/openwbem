@@ -189,7 +189,7 @@ public:
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String& queryLanguage,
 		OperationContext& context);
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	void deleteNameSpace(const String &ns, OperationContext& context);
 	void createNameSpace(const String& ns, OperationContext& context);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION

@@ -57,7 +57,7 @@ CIMClient::CIMClient(const String& url, const String& ns,
 
 	m_namespace = ns;
 }
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 ///////////////////////////////////////////////////////////////////////////////
 void CIMClient::createNameSpace(const String& ns)
 {

@@ -45,7 +45,7 @@ namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
-#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+#if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 void
 ClientCIMOMHandle::createNameSpace(const String& ns)
