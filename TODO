@@ -33,6 +33,8 @@ x Remove any bad NOT_SUPPORTED exceptions.
 x Split out the internal provider ifc from the Provider Manager.  
 x Fix CIM Server so that an instance provider can provide associations.
 x Trailers need to strip newlines from error description.
+x Use <asm/atomic.h> operations for reference counting (and reduce header 
+  dependencies).
 
 
 Testing:
@@ -53,10 +55,13 @@ Testing:
 Fix problems:
     - On startup of UDS if the UDS already exists, SocketImpl need to figure 
       out if someone else is listening. If so, then fail, otherwise delete it.
-
+      Use fcntl locking (if available, else try flock) to check.
+    - OW_File needs to be more C++ish with a destructor, reasonable copy
+      semantics, etc.
 
 New features:
-    - Providers/Provider interfaces in a different process.
+    - Providers/Provider interfaces in a different process. Implement with 
+      fork/exec/pipes for communication?
     - Internationalization.
     - Deal with locale on WBEM requests. (at least reject those that won't work)
     - Add better error handling/messages to the MOF compiler.
@@ -72,6 +77,14 @@ New features:
           UTF8, and fix the lexer to handle UTF8 strings and identifiers.
         - Or replace the lexer with something that can handle unicode,
           possibly the slex lexer from spirit.
+    - Have an option for the mof compiler to parse a string.  Add interfaces
+      such as OW_CIMQualifierType createQualifierType(const OW_String& qualMof)
+      and OW_CIMClass createClass(const OW_String& clsMof) to the MOFCompiler
+      class.
+    - Use Boost.Python to create a python binding to the client library, to
+      allow for easy scripting or dynamic CIMOM interaction.
+    - Write a command line utility to register for and print indications.
+    - Add -I flag for mof include search path.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
@@ -91,5 +104,3 @@ Documentation:
 Optimizations:
     - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
     - Switch OW_Reference to be intrusive reference counted.
-    - Use <asm/atomic.h> operations for reference counting (and reduce header 
-      dependencies).
