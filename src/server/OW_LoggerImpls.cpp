@@ -193,7 +193,7 @@ protected:
 OW_LoggerRef OW_Logger::createLogger( const OW_String& type, const OW_Bool& debug )
 {
 	OW_LoggerRef retval;
-	if (type.empty())
+	if (type.empty() || type.equalsIgnoreCase("null"))
 		retval = new OW_NullLogger;
 	else if ( type == "syslog" )
 		retval = new OW_SyslogLogger;
