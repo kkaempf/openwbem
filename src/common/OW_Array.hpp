@@ -46,8 +46,14 @@ void throwArrayOutOfBoundsException(size_t size, size_t idx);
 #endif
 
 /**
- * The OW_Array class essentially takes the vector class of the stl and
- * adds ref counting and copy on write capability.
+ * Array<> wraps std::vector<> in COWReference<> adding ref counting and copy 
+ * on write capability.  It also adds valid range checks to operator[] if
+ * OW_CHECK_ARRAY_INDEXING is defined.
+ *
+ * Invariants: See std::vector<>
+ * Thread safety: read
+ * Copy semantics: Copy On Write
+ * Exception safety: same as std::vector<T>
  */
 template<class T> class Array
 {
