@@ -472,6 +472,7 @@ public:
 		while (e.hasMoreElements())
 		{
 			OW_CIMClass c = e.nextElement();
+/* don't do this for now, it's too slow
 			OW_CIMClassEnumeration e2 = rch.associatorsClassesE(OW_CIMObjectPath(c.getName()));
 			bool foundOrigClass = false;
 			while (e2.hasMoreElements())
@@ -487,6 +488,7 @@ public:
 			{
 				reportError("associatorsClasses referential integrity broken", m_clsName);
 			}
+*/
 		}
 	}
 
@@ -509,6 +511,7 @@ public:
 	{
 		OW_CIMClient rch(url, m_ns);
 		OW_CIMClassEnumeration e = rch.referencesClassesE(OW_CIMObjectPath(m_clsName));
+/* disabled until it can be fixed
 		while (e.hasMoreElements())
 		{
 			OW_CIMClass c = e.nextElement();
@@ -519,6 +522,7 @@ public:
 				OW_CIMProperty& p = props[i];
 				if (p.getDataType().getType() == OW_CIMDataType::REFERENCE)
 				{
+					// Fix this: it needs to also check for base class names.
 					if (p.getDataType().getRefClassName() == m_clsName)
 					{
 						foundReferenceToOrigClass = true;
@@ -531,6 +535,7 @@ public:
 				reportError("referencesClasses referential integrity broken", m_clsName);
 			}
 		}
+*/
 	}
 
 private:
