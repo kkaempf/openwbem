@@ -1179,12 +1179,12 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 			}
 			catch (const OW_CIMException& ce)
 			{
-				theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+				theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+			theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 		}
 	}
 }
@@ -1203,7 +1203,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 	}
 	catch (const OW_CIMException& ce)
 	{
-		theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 }
 
@@ -1228,12 +1228,12 @@ void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 			}
 			catch (const OW_CIMException& ce)
 			{
-				theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+				theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 			}
 		}
 		else
 		{
-			theErrorHandler->recoverableError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+			theErrorHandler->recoverableError(format("Error: %1", ce.getMessage()).c_str(), li);
 		}
 	}
 }
@@ -1246,7 +1246,7 @@ OW_CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const OW_String& qualNam
 	}
 	catch (const OW_CIMException& ce)
 	{
-		theErrorHandler->fatalError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 	return OW_CIMQualifierType();
 }
@@ -1259,7 +1259,7 @@ OW_CIMClass CIMOMVisitor::CIMOMgetClass(const OW_String& className, const lineIn
 	}
 	catch (const OW_CIMException& ce)
 	{
-		theErrorHandler->fatalError(format("Received error from CIMOM: %1", ce.getMessage()).c_str(), li);
+		theErrorHandler->fatalError(format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 	return OW_CIMClass();
 }
