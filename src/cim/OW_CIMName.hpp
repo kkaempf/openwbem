@@ -107,12 +107,12 @@ private:
 
 };
 
-bool operator<(const CIMName& x, const CIMName& y);
-bool operator==(const CIMName& x, const CIMName& y);
-bool operator<=(const CIMName& x, const CIMName& y);
-bool operator>(const CIMName& x, const CIMName& y);
-bool operator>=(const CIMName& x, const CIMName& y);
-bool operator!=(const CIMName& x, const CIMName& y);
+OW_COMMON_API bool operator<(const CIMName& x, const CIMName& y);
+OW_COMMON_API bool operator==(const CIMName& x, const CIMName& y);
+OW_COMMON_API bool operator<=(const CIMName& x, const CIMName& y);
+OW_COMMON_API bool operator>(const CIMName& x, const CIMName& y);
+OW_COMMON_API bool operator>=(const CIMName& x, const CIMName& y);
+OW_COMMON_API bool operator!=(const CIMName& x, const CIMName& y);
 
 OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMName& name);
 

@@ -21,6 +21,7 @@ INCS = \
 /I$(SRCDIR)\cim \
 /I$(SRCDIR)\client \
 /I$(SRCDIR)\cimxmllistener \
+/I$(SRCDIR)\services\http \
 /I$(SRCDIR)\repositories\hdb \
 /I$(SRCDIR)\mof \
 /I$(SRCDIR)\repositories\hdb \

@@ -35,6 +35,7 @@ COMMONOBJS = \
 	$(OBJDIR)\OW_BinarySerialization.obj \
 	$(OBJDIR)\OW_Bool.obj \
 	$(OBJDIR)\OW_CerrAppender.obj \
+	$(OBJDIR)\OW_CerrLogger.obj \
 	$(OBJDIR)\OW_CIMErrorException.obj \
 	$(OBJDIR)\OW_COWIntrusiveCountableBase.obj \
 	$(OBJDIR)\OW_COWIntrusiveReference.obj \
@@ -220,6 +221,9 @@ $(OBJDIR)\OW_Bool.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_CerrAppender.obj: $(COMMONSRCDIR)\$(@B).cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
+
+$(OBJDIR)\OW_CerrLogger.obj: $(COMMONSRCDIR)\$(@B).cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(COMMONSRCDIR)\$(@B).cpp
 
 $(OBJDIR)\OW_CIMErrorException.obj: $(COMMONSRCDIR)\$(@B).cpp

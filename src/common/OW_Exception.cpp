@@ -367,7 +367,7 @@ namespace ExceptionDetail
 	}
 #endif
 
-	struct FormatMsgImpl
+	struct OW_COMMON_API FormatMsgImpl
 	{
 		String fm;
 	};

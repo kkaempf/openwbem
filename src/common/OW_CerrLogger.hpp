@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 /// This logger sends all log messages to cerr (stderr)
-class CerrLogger : public Logger
+class OW_COMMON_API CerrLogger : public Logger
 {
 public:
 	CerrLogger();

@@ -174,18 +174,30 @@ private:
 
 };
 
+
 namespace ExceptionDetail
 {
 
 	// Reconciles GNU strerror_r and POSIX strerror_r.
 	//
-	void portable_strerror_r(int errnum, char * buf, unsigned n);
+	OW_COMMON_API void portable_strerror_r(int errnum, char * buf, unsigned n);
 
-	struct FormatMsgImpl;
+	struct OW_COMMON_API FormatMsgImpl;
 
-	class FormatMsg
+	class OW_COMMON_API FormatMsg
 	{
+
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 		AutoPtr<FormatMsgImpl> pImpl;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	public:
 		FormatMsg(char const * msg, int errnum);
 		~FormatMsg();
