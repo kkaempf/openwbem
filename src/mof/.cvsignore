@@ -6,9 +6,9 @@ Makefile
 *.la
 lib*so*
 owmofc
-moflexer.cc
-mofparser.cc
-mofparser.h
-mofparser.output
-mofparser.tab.cpp
-mofparser.tab.hpp
+OW_MOFLexer.cc
+OW_MOFParser.cc
+OW_MOFParser.h
+OW_MOFParser.output
+OW_MOFParser.tab.cpp
+OW_MOFParser.tab.hpp
