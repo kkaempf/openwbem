@@ -65,10 +65,6 @@ public:
 	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env);
 
 	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef &env);
-	virtual void activateFilter(const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& query, const OW_String& Type);
-	virtual void deactivateFilter(const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& query, const OW_String& Type);
 
 	virtual OW_PerlPolledProviderProxy* getPolledProvider() { return this; }
 
