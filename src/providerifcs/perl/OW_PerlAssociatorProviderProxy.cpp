@@ -151,12 +151,20 @@ PerlAssociatorProviderProxy::associators(
 		env->getLogger()->logDebug(Format("PerlAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
+		//we need  a localOnly flag here
+		//as local_only cannot be specified in associators calls we assume 'NO'
+		ELocalOnlyFlag localOnly = E_NOT_LOCAL_ONLY;
 		for (int i=0; i < n; i++)
 		{
 			my_inst.ptr = _VectorGet(&_npiHandle,v,i);
 			CIMInstance ow_inst(*
 				static_cast<CIMInstance *>(my_inst.ptr) );
-		result.handle(ow_inst);
+			// result.handle(ow_inst);
+			//
+			// we clone our instance to set the property list & includequalifier stuff
+			// 
+			result.handle( ow_inst.clone(localOnly,includeQualifiers,
+				includeClassOrigin,propertyList) );
 		}
 	}
 	else
@@ -219,13 +227,21 @@ PerlAssociatorProviderProxy::references(
 		int n = ::VectorSize(&_npiHandle,v);
 		env->getLogger()->logDebug(Format("PerlAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
+		//we need  a localOnly flag here
+		//as local_only cannot be specified in associators calls we assume 'NO'
+		ELocalOnlyFlag localOnly = E_NOT_LOCAL_ONLY;
 		::CIMInstance my_inst;
 		for (int i=0; i < n; i++)
 		{
 			my_inst.ptr = _VectorGet(&_npiHandle,v,i);
 			CIMInstance ow_inst(*
 				static_cast<CIMInstance *>(my_inst.ptr) );
-		result.handle(ow_inst);
+			// result.handle(ow_inst);
+			//
+			// we clone our instance to set the property list & includequalifier stuff
+			// 
+			result.handle( ow_inst.clone(localOnly,includeQualifiers,
+				includeClassOrigin,propertyList) );
 		}
 	}
 	else
