@@ -49,19 +49,22 @@
 
 extern "C"
 {
+#if !defined(OW_WIN32)
 #include <ctype.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <sys/resource.h>
 #include <netdb.h>
-#include <stdio.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <errno.h>
+#endif
 }
+
+#include <cstring>
+#include <cstdio>
+#include <cerrno>
 
 namespace OpenWBEM
 {
@@ -88,8 +91,8 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 {
 	OW_ASSERT(Socket::m_SocketsEvent != NULL);
 
-	DWORD timeout = (secsToTimeout > 0)
-		? static_cast<DWORD>(secsToTimeout * 1000)
+	DWORD timeout = (timeOutSecs > 0)
+		? static_cast<DWORD>(timeOutSecs * 1000)
 		: INFINITE;
 
 	if(forInput == SocketFlags::E_WAIT_FOR_INPUT)
