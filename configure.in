@@ -421,26 +421,32 @@ dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADER(pthread.h, have_pthread=1)
 AC_CHECK_HEADER(pth.h, have_pth=1)
-use_pam=1
-AC_CHECK_HEADERS(pam/pam_misc.h pam/pam_appl.h, true, use_pam=0)
-if test x$use_pam = x0; then
-	AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h, 
-		use_pam=1, use_pam=0)
-fi
 
-AM_CONDITIONAL(USE_PAM, test x$use_pam = x1)
-if test x$use_pam = x1; then
-	AC_DEFINE(HAVE_PAM)
-	PAM_LIB="-lpam"
-else
-	AC_MSG_WARN(*** No PAM headers found! The PAM authentication module ***)
-	AC_MSG_WARN(*** will not be built. The config file defaults to      ***)
-	AC_MSG_WARN(*** using PAM authentication.                           ***)
-	AC_MSG_WARN(*** You must edit the config file and use a different   ***)
-	AC_MSG_WARN(*** authentication module or else the daemon won't start***)
+
+use_pam=0
+AC_ARG_ENABLE(pam,
+OW_HELP_STRING(--disable-pam,disable pam integration))
+if test "$enable_pam" != no; then
+	use_pam=1
+	AC_CHECK_HEADERS(pam/pam_misc.h pam/pam_appl.h, true, use_pam=0)
+	if test x$use_pam = x0; then
+		AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h, 
+			use_pam=1, use_pam=0)
+	fi
+
+	if test x$use_pam = x1; then
+		AC_DEFINE(HAVE_PAM)
+		PAM_LIB="-lpam"
+	else
+		AC_MSG_WARN(*** No PAM headers found! The PAM authentication module ***)
+		AC_MSG_WARN(*** will not be built. The config file defaults to      ***)
+		AC_MSG_WARN(*** using PAM authentication.                           ***)
+		AC_MSG_WARN(*** You must edit the config file and use a different   ***)
+		AC_MSG_WARN(*** authentication module or else the daemon won't start***)
+	fi
 fi
-AC_SUBST(platform_pamdir)
 AC_SUBST(PAM_LIB)
+AM_CONDITIONAL(USE_PAM, test x$use_pam = x1)
 
 AM_CONDITIONAL(USE_AIX_AUTHENTICATE, test x$AIX = x1)
 

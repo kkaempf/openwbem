@@ -84,6 +84,7 @@ doTests()
 	doATest "--disable-check-null-references --disable-check-array-indexing" || return 1
 	doATest "--disable-digest" || return 1
 	doATest "--disable-ssl" || return 1
+	doATest "--disable-pam" || return 1
 	doATest "--with-package-prefix=foo" || return 1
 	doACompileOnlyTest "--enable-perl-providerifc" || return 1
 	doACompileOnlyTest "--enable-debug-mode --enable-perl-providerifc" || return 1
