@@ -41,6 +41,7 @@
 #include "OW_FileSystem.hpp"
 #include "OW_Format.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_UserUtils.hpp"
 
 #ifdef OW_HAVE_PWD_H
 #include <pwd.h>
@@ -175,10 +176,12 @@ LocalAuthentication::authenticate(String& userName,
 		AutoPtr<char> buf(new char[pwnbufsize]);
 		struct passwd pw;
 		struct passwd* ppw = 0;
-		int rv = ::getpwuid_r(uid, &pw, buf.get(), pwnbufsize, &ppw);
-		if (rv == 0 && ppw)
+		
+		bool ok;
+		String uname(UserUtils::getUserName(uid, ok));
+		if(ok)
 		{
-			userName = pw.pw_name;
+			userName = uname;
 		}
 		else
 		{
