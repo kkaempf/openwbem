@@ -128,6 +128,9 @@ Refactorings:
     - Rename OW_Types.h to OW_Types.hpp
     - Put common request handlers into a header (e.g. InstanceArrayBuilder)
     - Rename mof compiler files/classes to have OW_MOF prefix.
+    - XML Things:
+      - Split OW_CIMXMLParser into OW_XMLPullParser (generic) and OW_CIMXMLParser (CIM/XML specific)
+      - Resurrect the old OW_XMLParser and create OW_XMLSaxParser and OW_XMLDOMParser
 
       Post 3.0
     - Create a base class for all the common code in the provider interfaces.
