@@ -540,8 +540,12 @@ CMPIProviderIFC::getProvider(
 
 	///////////////////////////////////////////
 	// Now it's time to initialize the providers
-	ProviderEnvironmentIFCRef * provenv = (ProviderEnvironmentIFCRef *)(&env);
-	_broker.hdl = new ProviderEnvironmentIFCRef(* provenv);
+
+	// This is a bad hack for the broken CMPI architecture.  Even though the 
+	// _broker.hdl pointer will outlive the lifetime of nonConstEnv (or env),
+	// it won't (shouldn't) ever be used after initialization.
+	ProviderEnvironmentIFCRef nonConstEnv(env);
+	_broker.hdl = &nonConstEnv; 
 	_broker.bft = CMPI_Broker_Ftab;
 	_broker.eft = CMPI_BrokerEnc_Ftab;
 	::CMPIOperationContext opc;
@@ -616,7 +620,7 @@ CMPIProviderIFC::getProvider(
 
 	env->getLogger()->logDebug(Format("CMPI provider ifc: provider %1 loaded and initialized",
 		provId));
-	CompleteMI * completeMI = new  CompleteMI;
+	CMPIFTABLERef completeMI(theLib, new CompleteMI);
 	completeMI->miVector = miVector;
 	completeMI->broker = _broker;
 	//MIs * _miVector = new MIs(miVector);
@@ -624,7 +628,7 @@ CMPIProviderIFC::getProvider(
 	{
 		env->getLogger()->logDebug("CMPI provider ifc: WARNING Vector mismatch");
 	}
-	m_provs[provId] = CMPIFTABLERef(theLib, completeMI);
+	m_provs[provId] = completeMI;
 	return m_provs[provId];
 }
 
