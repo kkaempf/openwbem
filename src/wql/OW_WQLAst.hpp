@@ -36,8 +36,12 @@
 #define OW_WQLAST_HPP_HPP_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
+#include "OW_Format.hpp"
 #include "OW_List.hpp"
+#include "OW_WQLLogger.hpp"
 #include "OW_WQLVisitor.hpp"
+
+#include <typeinfo>
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -49,6 +53,13 @@ class OW_WQL_API node
 {
 	public:
 		virtual ~node() {}
+	  void accept_interface( WQLVisitor * v)
+	{
+		WQL_LOG_DEBUG(Format("About to accept node of type: %1 , using visitor : %2", typeid(*this).name(), typeid(*v).name()));
+		accept(v);
+		WQL_LOG_DEBUG(Format("Finished accepting node of type: %1 , using visitor : %2", typeid(*this).name(), typeid(*v).name()));
+	}
+private:
 		virtual void accept( WQLVisitor * ) const = 0;
 };
 class OW_WQL_API stmt: public node

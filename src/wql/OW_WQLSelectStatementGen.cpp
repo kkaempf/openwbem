@@ -53,10 +53,10 @@ void WQLSelectStatementGen::visit_stmt_selectStmt_optSemicolon(
 	const stmt_selectStmt_optSemicolon* pstmt_selectStmt_optSemicolon
 	)
 {
-	pstmt_selectStmt_optSemicolon->m_pselectStmt1->accept(this);
+	pstmt_selectStmt_optSemicolon->m_pselectStmt1->accept_interface(this);
 	if (pstmt_selectStmt_optSemicolon->m_poptSemicolon2)
 	{
-		pstmt_selectStmt_optSemicolon->m_poptSemicolon2->accept(this);
+		pstmt_selectStmt_optSemicolon->m_poptSemicolon2->accept_interface(this);
 	}
 }
 void WQLSelectStatementGen::visit_stmt_updateStmt_optSemicolon(
@@ -135,38 +135,38 @@ void WQLSelectStatementGen::visit_selectStmt(
 	// visit the unused ones, to detect an invalid query
 	if (pselectStmt->m_poptDistinct2)
 	{
-		pselectStmt->m_poptDistinct2->accept(this);
+		pselectStmt->m_poptDistinct2->accept_interface(this);
 	}
 	if (pselectStmt->m_poptGroupClause6)
 	{
-		pselectStmt->m_poptGroupClause6->accept(this);
+		pselectStmt->m_poptGroupClause6->accept_interface(this);
 	}
 	if (pselectStmt->m_poptHavingClause7)
 	{
-		pselectStmt->m_poptHavingClause7->accept(this);
+		pselectStmt->m_poptHavingClause7->accept_interface(this);
 	}
 	if (pselectStmt->m_poptSortClause8)
 	{
-		pselectStmt->m_poptSortClause8->accept(this);
+		pselectStmt->m_poptSortClause8->accept_interface(this);
 	}
 	// start fresh
 	m_stmt.clear();
 	// FROM clause
 	if (pselectStmt->m_poptFromClause4)
 	{
-		pselectStmt->m_poptFromClause4->accept(this);
+		pselectStmt->m_poptFromClause4->accept_interface(this);
 	}
 	// WHERE
 	if (pselectStmt->m_poptWhereClause5)
 	{
-		pselectStmt->m_poptWhereClause5->accept(this);
+		pselectStmt->m_poptWhereClause5->accept_interface(this);
 	}
 	// desired properties
 	for (List<targetEl*>::const_iterator i = pselectStmt->m_ptargetList3->begin();
 		i != pselectStmt->m_ptargetList3->end();
 		++i )
 	{
-		(*i)->accept(this);
+		(*i)->accept_interface(this);
 	}
 }
 void WQLSelectStatementGen::visit_exprSeq_aExpr(
@@ -271,7 +271,7 @@ void WQLSelectStatementGen::visit_optFromClause_FROM_fromList(
 		i != poptFromClause_FROM_fromList->m_pfromList2->end();
 		++i, ++count )
 	{
-		(*i)->accept(this);
+		(*i)->accept_interface(this);
 		// only handle one class name in the FROM clause for now.
 		if (count != 0)
 		{
@@ -283,7 +283,7 @@ void WQLSelectStatementGen::visit_tableRef_relationExpr(
 	const tableRef_relationExpr* ptableRef_relationExpr
 	)
 {
-	ptableRef_relationExpr->m_prelationExpr1->accept(this);
+	ptableRef_relationExpr->m_prelationExpr1->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_tableRef_relationExpr_aliasClause(
 	const tableRef_relationExpr_aliasClause*
@@ -432,7 +432,7 @@ void WQLSelectStatementGen::visit_optWhereClause_WHERE_aExpr(
 	const optWhereClause_WHERE_aExpr* poptWhereClause_WHERE_aExpr
 	)
 {
-	poptWhereClause_WHERE_aExpr->m_paExpr2->accept(this);
+	poptWhereClause_WHERE_aExpr->m_paExpr2->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_rowExpr(
 	const rowExpr*
@@ -450,7 +450,7 @@ void WQLSelectStatementGen::visit_aExpr_cExpr(
 	const aExpr_cExpr* paExpr_cExpr
 	)
 {
-	paExpr_cExpr->m_pcExpr1->accept(this);
+	paExpr_cExpr->m_pcExpr1->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_AT_TIME_ZONE_cExpr(
 	const aExpr_aExpr_AT_TIME_ZONE_cExpr*
@@ -534,71 +534,71 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_LESSTHAN_aExpr(
 	const aExpr_aExpr_LESSTHAN_aExpr* paExpr_aExpr_LESSTHAN_aExpr
 	)
 {
-	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_LESSTHAN_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_LT);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_LESSTHANOREQUALS_aExpr(
 	const aExpr_aExpr_LESSTHANOREQUALS_aExpr* paExpr_aExpr_LESSTHANOREQUALS_aExpr
 	)
 {
-	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_LESSTHANOREQUALS_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_LE);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_GREATERTHAN_aExpr(
 	const aExpr_aExpr_GREATERTHAN_aExpr* paExpr_aExpr_GREATERTHAN_aExpr
 	)
 {
-	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_GREATERTHAN_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_GT);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_GREATERTHANOREQUALS_aExpr(
 	const aExpr_aExpr_GREATERTHANOREQUALS_aExpr* paExpr_aExpr_GREATERTHANOREQUALS_aExpr
 	)
 {
-	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_GREATERTHANOREQUALS_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_GE);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_EQUALS_aExpr(
 	const aExpr_aExpr_EQUALS_aExpr* paExpr_aExpr_EQUALS_aExpr
 	)
 {
-	paExpr_aExpr_EQUALS_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_EQUALS_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_EQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_EQUALS_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_EQ);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_NOTEQUALS_aExpr(
 	const aExpr_aExpr_NOTEQUALS_aExpr* paExpr_aExpr_NOTEQUALS_aExpr
 	)
 {
-	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_NOTEQUALS_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_NE);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_AND_aExpr(
 	const aExpr_aExpr_AND_aExpr* paExpr_aExpr_AND_aExpr
 	)
 {
-	paExpr_aExpr_AND_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_AND_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_AND_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_AND_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_AND);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_OR_aExpr(
 	const aExpr_aExpr_OR_aExpr* paExpr_aExpr_OR_aExpr
 	)
 {
-	paExpr_aExpr_OR_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_OR_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_OR_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_OR_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_OR);
 }
 void WQLSelectStatementGen::visit_aExpr_NOT_aExpr(
 	const aExpr_NOT_aExpr* paExpr_NOT_aExpr
 	)
 {
-	paExpr_NOT_aExpr->m_paExpr2->accept(this);
+	paExpr_NOT_aExpr->m_paExpr2->accept_interface(this);
 	m_stmt.appendOperation(WQL_NOT);
 }
 void WQLSelectStatementGen::visit_aExpr_aExpr_CONCATENATION_aExpr(
@@ -635,7 +635,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_ISNULL(
 	const aExpr_aExpr_ISNULL* paExpr_aExpr_ISNULL
 	)
 {
-	paExpr_aExpr_ISNULL->m_paExpr1->accept(this);
+	paExpr_aExpr_ISNULL->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand()); // default constructor creates NULL operand
 	m_stmt.appendOperation(WQL_EQ);
 }
@@ -643,7 +643,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_IS_NULLP(
 	const aExpr_aExpr_IS_NULLP* paExpr_aExpr_IS_NULLP
 	)
 {
-	paExpr_aExpr_IS_NULLP->m_paExpr1->accept(this);
+	paExpr_aExpr_IS_NULLP->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand()); // default constructor creates NULL operand
 	m_stmt.appendOperation(WQL_EQ);
 }
@@ -651,7 +651,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_NOTNULL(
 	const aExpr_aExpr_NOTNULL* paExpr_aExpr_NOTNULL
 	)
 {
-	paExpr_aExpr_NOTNULL->m_paExpr1->accept(this);
+	paExpr_aExpr_NOTNULL->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand()); // default constructor creates NULL operand
 	m_stmt.appendOperation(WQL_NE);
 }
@@ -659,7 +659,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_NULLP(
 	const aExpr_aExpr_IS_NOT_NULLP* paExpr_aExpr_IS_NOT_NULLP
 	)
 {
-	paExpr_aExpr_IS_NOT_NULLP->m_paExpr1->accept(this);
+	paExpr_aExpr_IS_NOT_NULLP->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand()); // default constructor creates NULL operand
 	m_stmt.appendOperation(WQL_NE);
 }
@@ -667,7 +667,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_IS_TRUEP(
 	const aExpr_aExpr_IS_TRUEP* paExpr_aExpr_IS_TRUEP
 	)
 {
-	paExpr_aExpr_IS_TRUEP->m_paExpr1->accept(this);
+	paExpr_aExpr_IS_TRUEP->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand(true, WQL_BOOLEAN_VALUE_TAG));
 	m_stmt.appendOperation(WQL_EQ);
 }
@@ -675,7 +675,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_FALSEP(
 	const aExpr_aExpr_IS_NOT_FALSEP* paExpr_aExpr_IS_NOT_FALSEP
 	)
 {
-	paExpr_aExpr_IS_NOT_FALSEP->m_paExpr1->accept(this);
+	paExpr_aExpr_IS_NOT_FALSEP->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand(false, WQL_BOOLEAN_VALUE_TAG));
 	m_stmt.appendOperation(WQL_NE);
 }
@@ -683,7 +683,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_IS_FALSEP(
 	const aExpr_aExpr_IS_FALSEP* paExpr_aExpr_IS_FALSEP
 	)
 {
-	paExpr_aExpr_IS_FALSEP->m_paExpr1->accept(this);
+	paExpr_aExpr_IS_FALSEP->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand(false, WQL_BOOLEAN_VALUE_TAG));
 	m_stmt.appendOperation(WQL_EQ);
 }
@@ -691,7 +691,7 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_IS_NOT_TRUEP(
 	const aExpr_aExpr_IS_NOT_TRUEP* paExpr_aExpr_IS_NOT_TRUEP
 	)
 {
-	paExpr_aExpr_IS_NOT_TRUEP->m_paExpr1->accept(this);
+	paExpr_aExpr_IS_NOT_TRUEP->m_paExpr1->accept_interface(this);
 	m_stmt.appendOperand(WQLOperand(true, WQL_BOOLEAN_VALUE_TAG));
 	m_stmt.appendOperation(WQL_NE);
 }
@@ -699,8 +699,8 @@ void WQLSelectStatementGen::visit_aExpr_aExpr_ISA_aExpr(
 		const aExpr_aExpr_ISA_aExpr* paExpr_aExpr_ISA_aExpr
 		)
 {
-	paExpr_aExpr_ISA_aExpr->m_paExpr1->accept(this);
-	paExpr_aExpr_ISA_aExpr->m_paExpr3->accept(this);
+	paExpr_aExpr_ISA_aExpr->m_paExpr1->accept_interface(this);
+	paExpr_aExpr_ISA_aExpr->m_paExpr3->accept_interface(this);
 	m_stmt.appendOperation(WQL_ISA);
 }
 void WQLSelectStatementGen::visit_aExpr_rowExpr(
@@ -713,7 +713,7 @@ void WQLSelectStatementGen::visit_bExpr_cExpr(
 	const bExpr_cExpr* pbExpr_cExpr
 	)
 {
-	pbExpr_cExpr->m_pcExpr1->accept(this);
+	pbExpr_cExpr->m_pcExpr1->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_bExpr_PLUS_bExpr(
 	const bExpr_PLUS_bExpr*
@@ -833,7 +833,7 @@ void WQLSelectStatementGen::visit_cExpr_attr(
 	const cExpr_attr* pcExpr_attr
 	)
 {
-	pcExpr_attr->m_pattr1->accept(this);
+	pcExpr_attr->m_pattr1->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_cExpr_strColId_optIndirection(
 	const cExpr_strColId_optIndirection* pcExpr_strColId_optIndirection
@@ -850,20 +850,20 @@ void WQLSelectStatementGen::visit_cExpr_strColId_optIndirection(
 	}
 	if (pcExpr_strColId_optIndirection->m_poptIndirection2)
 	{
-		pcExpr_strColId_optIndirection->m_poptIndirection2->accept(this);
+		pcExpr_strColId_optIndirection->m_poptIndirection2->accept_interface(this);
 	}
 }
 void WQLSelectStatementGen::visit_cExpr_aExprConst(
 	const cExpr_aExprConst* pcExpr_aExprConst
 	)
 {
-	pcExpr_aExprConst->m_paExprConst1->accept(this);
+	pcExpr_aExprConst->m_paExprConst1->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_cExpr_LEFTPAREN_aExpr_RIGHTPAREN(
 	const cExpr_LEFTPAREN_aExpr_RIGHTPAREN* pcExpr_LEFTPAREN_aExpr_RIGHTPAREN
 	)
 {
-	pcExpr_LEFTPAREN_aExpr_RIGHTPAREN->m_paExpr2->accept(this);
+	pcExpr_LEFTPAREN_aExpr_RIGHTPAREN->m_paExpr2->accept_interface(this);
 }
 void WQLSelectStatementGen::visit_cExpr_strFuncName_LEFTPAREN_RIGHTPAREN(
 	const cExpr_strFuncName_LEFTPAREN_RIGHTPAREN* pcExpr_strFuncName_LEFTPAREN_RIGHTPAREN
@@ -1091,7 +1091,7 @@ void WQLSelectStatementGen::visit_attr(
 	m_attrName = *pattr->m_pstrRelationName1;
 	
 	// This call may append onto m_attrName
-	pattr->m_pattrs3->accept(this);
+	pattr->m_pattrs3->accept_interface(this);
 	if (m_isPropertyList)
 	{
 		m_stmt.appendSelectPropertyName(m_attrName);
@@ -1105,7 +1105,7 @@ void WQLSelectStatementGen::visit_attr(
 	// TODO: What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
 	{
-		pattr->m_poptIndirection4->accept(this);
+		pattr->m_poptIndirection4->accept_interface(this);
 	}
 }
 void WQLSelectStatementGen::visit_attrs_strAttrName(
@@ -1119,7 +1119,7 @@ void WQLSelectStatementGen::visit_attrs_attrs_PERIOD_strAttrName(
 	)
 {
 	// This handles embedded properties or ClassName.PropertyName
-	pattrs_attrs_PERIOD_strAttrName->m_pattrs1->accept(this);
+	pattrs_attrs_PERIOD_strAttrName->m_pattrs1->accept_interface(this);
 	m_attrName = m_attrName + "." + *pattrs_attrs_PERIOD_strAttrName->m_pstrAttrName3;
 }
 void WQLSelectStatementGen::visit_attrs_attrs_PERIOD_ASTERISK(
@@ -1127,7 +1127,7 @@ void WQLSelectStatementGen::visit_attrs_attrs_PERIOD_ASTERISK(
 	)
 {
 	// This handles embedded properties or ClassName.PropertyName
-	pattrs_attrs_PERIOD_ASTERISK->m_pattrs1->accept(this);
+	pattrs_attrs_PERIOD_ASTERISK->m_pattrs1->accept_interface(this);
 	m_attrName = m_attrName + ".*";
 }
 void WQLSelectStatementGen::visit_targetEl_aExpr_AS_strColLabel(
@@ -1142,7 +1142,7 @@ void WQLSelectStatementGen::visit_targetEl_aExpr(
 {
 	// setting this causes appendSelectPropertyName to be called
 	m_isPropertyList = true;
-	ptargetEl_aExpr->m_paExpr1->accept(this);
+	ptargetEl_aExpr->m_paExpr1->accept_interface(this);
 	m_isPropertyList = false;
 }
 void WQLSelectStatementGen::visit_targetEl_strRelationName_PERIOD_ASTERISK(

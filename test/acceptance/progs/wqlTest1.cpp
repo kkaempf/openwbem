@@ -1,3 +1,4 @@
+
 /*******************************************************************************
 * Copyright (C) 2003-2004 Vintela, Inc. All rights reserved.
 *
@@ -33,6 +34,7 @@
  */
 
 #include "OW_ClientCIMOMHandle.hpp"
+#include "OW_AppenderLogger.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMName.hpp"
@@ -41,6 +43,11 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_ConfigFile.hpp"
+#include "OW_Format.hpp"
+#include "OW_FileAppender.hpp"
+#include "OW_Logger.hpp"
+#include "OW_LogAppender.hpp"
 #include "OW_WQLImpl.hpp"
 #include "OW_Bool.hpp"
 
@@ -54,8 +61,46 @@ using namespace OpenWBEM;
 
 #define TEST_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, #CON)
 
+
+#ifdef __GNUC__
+#define OW_FUNCTION_NAME	__PRETTY_FUNCTION__
+#else
+#define OW_FUNCTION_NAME "Function name not available"
+#endif
+
+#define LOG_DEBUG(message)												\
+do																								\
+{																									\
+	String messageWithFunction(message);						\
+	messageWithFunction+= String(" ") + String(OW_FUNCTION_NAME) + String(" "); \
+	OW_LOG_DEBUG(getLogger(), messageWithFunction);	\
+}while(0);
+
+
 namespace
 {
+	LoggerRef createWqlTestLogger()
+	{
+		Array<LogAppenderRef> appenders;
+		StringArray components; components.push_back("test.wql.schema_query");
+		StringArray categories; categories.push_back("*");
+		String messageFormat("%r [%t] %p %c - %m");
+		appenders.push_back
+			( LogAppenderRef
+				( new FileAppender
+					(components, categories, components[0].c_str(), messageFormat)
+			  )
+		  );
+
+		return LoggerRef(new AppenderLogger(components[0], appenders));
+	}
+	
+	LoggerRef getLogger()
+	{
+		static LoggerRef logger(createWqlTestLogger());
+		return logger;
+	}
+	
 class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 {
 public:
@@ -99,6 +144,7 @@ CIMInstanceArray testQueryLocal(CIMOMHandleIFCRef& rch, const char* query, int e
 	WQLIFCRef::element_type wql(new WQLImpl);
 	CIMInstanceEnumeration cie;
 	CIMInstanceEnumBuilder builder(cie);
+	LOG_DEBUG("wql->evaluate(\"/root/testsuite\", builder, query, \"wql2\", rch);");
 	wql->evaluate("/root/testsuite", builder, query, "wql2", rch);
 	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
 		expectedSize << endl;
@@ -119,7 +165,9 @@ CIMInstanceArray testQueryLocal(CIMOMHandleIFCRef& rch, const char* query, int e
 CIMInstanceArray testQuery(CIMOMHandleIFCRef& rch, const char* query, int expectedSize)
 {
 	++queryCount;
+	LOG_DEBUG(Format("Testing query %1 %2 locally.", queryCount, query));
 	testQueryLocal(rch,query,expectedSize);
+	LOG_DEBUG(Format("Testing query %1 %2 remotely.", queryCount, query));
 	return testQueryRemote(rch,query,expectedSize);
 }
 
@@ -128,10 +176,12 @@ namespace testSchemaQuery
 {
 	void mkChildren(CIMClassArray& result, char const* parentName, size_t children= 3)
 	{
+		LOG_DEBUG(Format("Making %1 children of %2 .", children, parentName));
 		for(size_t current= 0; current < children ; ++current)
 		{
 			std::ostringstream childName;
 			childName << "Child" << current << "Of" << parentName;
+			LOG_DEBUG(Format("Making child %1 of %2 .", childName.str(), parentName));
 			CIMClass child(childName.str().c_str());
 			child.setSuperClass(CIMName(parentName));
 			result.push_back(child);
@@ -139,6 +189,7 @@ namespace testSchemaQuery
 	}
 	void mkChildren(CIMOMHandleIFCRef& rch, char const* ns, char const* parentName, size_t children= 3)
 	{
+		LOG_DEBUG(Format("Making %1 children of %2 .", children, parentName));
 		CIMClassArray ch;
 		mkChildren(ch, parentName, children);
 		for(size_t current= 0; current < children; ++current)
@@ -148,6 +199,7 @@ namespace testSchemaQuery
 	}
 	void mkChildren2Level(CIMOMHandleIFCRef& rch, char const* ns, char const* parentName, size_t children= 3)
 	{
+		LOG_DEBUG(Format("Making %1 children of %2 .", children, parentName));
 		CIMClassArray ch;
 		mkChildren(ch, parentName, children);
 		for(size_t current= 0; current < children; ++current)
@@ -157,27 +209,41 @@ namespace testSchemaQuery
 			mkChildren(ch2, ch[current].getName().c_str());
 			for(size_t current2= 0; current2 < children; ++current2)
 			{
-				rch->createClass(ns, ch[current2]);
+				rch->createClass(ns, ch2[current2]);
 			}
 		}
 	}
 	void addTestClasses(CIMOMHandleIFCRef& rch)
 	{
-		String ns("");
+		String ns("/root/testsuite");
+		LOG_DEBUG(Format("Adding test classes to namespace %1 .", ns));
 		rch->createClass(ns, CIMClass("ClassWithNoChildren"));
 		rch->createClass(ns, CIMClass("ClassWithManyChildren"));
+		rch->createClass(ns, CIMClass("ClassWithManyChildren2Level"));
 		mkChildren(rch, ns.c_str(), "ClassWithManyChildren");
 		mkChildren2Level(rch, ns.c_str(), "ClassWithManyChildren2Level");
 	}
 	
 	void doesNotExist(CIMOMHandleIFCRef& rch, String const& schemaQueryOperator, String const& schemaQueryOperand)
 	{
-		std::ostringstream query;
-		query << "SELECT \"*\" FROM meta_class WHERE " << schemaQueryOperand << " " << schemaQueryOperator << "  \"ClassWhichDoesNotExist\" ";
-		testQuery(rch, query.str().c_str(), 0);
+		try
+		{
+			LOG_DEBUG(Format("schemaQueryOperator: %1 schemaQueryOperand: %2", rch, schemaQueryOperator, schemaQueryOperand));
+			std::ostringstream query;
+			query << "SELECT \"*\" FROM meta_class WHERE " << schemaQueryOperand << " " << schemaQueryOperator << "  \"ClassWhichDoesNotExist\" ";
+			testQuery(rch, query.str().c_str(), 0);
+		}
+		catch(CIMException const& ex)
+		{
+			//This query is supposed to throw an exception.
+			LOG_DEBUG(Format("CIMException %1 caught, good.", ex.what()));
+			return;
+		}
+		TEST_ASSERT(0);
 	}
 	void wrongOperator(CIMOMHandleIFCRef& rch, String const& schemaQueryOperator, String const& schemaQueryOperand)
 	{
+		LOG_DEBUG(Format("schemaQueryOperator: %1 schemaQueryOperand: %2", rch, schemaQueryOperator, schemaQueryOperand));
 		try
 		{
 			std::ostringstream query;
@@ -187,12 +253,15 @@ namespace testSchemaQuery
 		catch(CIMException const& ex)
 		{
 			//This query is supposed to throw an exception.
+			LOG_DEBUG(Format("CIMException %1 caught, good.", ex.what()));
 			return;
 		}
+		LOG_DEBUG("CIMException not caught, bad.");
 		TEST_ASSERT(0);
 	}
 	void noChildren(CIMOMHandleIFCRef& rch, String const& schemaQueryOperator, String const& schemaQueryOperand)
 	{
+		LOG_DEBUG(Format("schemaQueryOperator: %1 schemaQueryOperand: %2", rch, schemaQueryOperator, schemaQueryOperand));
 		std::ostringstream query;
 		query << "SELECT \"*\" FROM meta_class WHERE " << schemaQueryOperand << " " << schemaQueryOperator << " \"ClassWithNoChildren\" ";
 		testQuery(rch, query.str().c_str(), 1);
@@ -201,6 +270,7 @@ namespace testSchemaQuery
 	{
 		void caseInsensitive(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			size_t const sz= 3;
 			String thisCase[sz]=
 				{String("__this"), String("__This"), String("__THIS")};
@@ -213,22 +283,26 @@ namespace testSchemaQuery
 
 		void manyChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithManyChildren\" ", 4);
 		}
 		
 		void manyLevelsOfChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithManyChildren2Level\" ", 13);
 		}
 
 		void root(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			//FIXME: differentiate this from manyLevelsOfChildren somehow.
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"ClassWithManyChildren2Level\" ", 13);
 		}
 		
 		void notRoot(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"Child1OfClassWithManyChildren2Level\" ", 4);
 		}
 		
@@ -237,6 +311,7 @@ namespace testSchemaQuery
 	{
 		void caseInsensitive(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			size_t const sz= 3;
 			String thisCase[sz]=
 				{String("__class"), String("__Class"), String("__CLASS")};
@@ -249,21 +324,25 @@ namespace testSchemaQuery
 		
 		void noChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"ClassWithNoChildren\" ", 1);
 		}
 
 		void manyChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"ClassWithManyChildren\" ", 1);
 		}
 		
 		void manyLevelsOfChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"ClassWithManyChildren2Level\" ", 1);
 		}
 
 		void notRoot(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"Child1OfClassWithManyChildren2Level\" ", 1);
 		}
 	}
@@ -271,6 +350,7 @@ namespace testSchemaQuery
 	{
 		void caseInsensitive(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			size_t const sz= 3;
 			String thisCase[sz]=
 				{String("__dynasty"), String("__Dynasty"), String("__DYNASTY")};
@@ -283,26 +363,31 @@ namespace testSchemaQuery
 		
 		void noChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"ClassWithNoChildren\" ", 1);
 		}
 
 		void manyChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"ClassWithManyChildren\" ", 4);
 		}
 		
 		void manyLevelsOfChildren(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"ClassWithManyChildren2Level\" ", 13);
 		}
 
 		void notRoot(CIMOMHandleIFCRef& rch)
 		{
+			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"Child1OfClassWithManyChildren2Level\" ", 0);
 		}
 	}
 	void testThis(CIMOMHandleIFCRef& rch)
 	{
+		LOG_DEBUG("");
 		thisTests::caseInsensitive(rch);
 		doesNotExist(rch, "ISA", "__this");
 		wrongOperator(rch, "=", "__this");
@@ -315,6 +400,7 @@ namespace testSchemaQuery
 
 	void testClass(CIMOMHandleIFCRef& rch)
 	{
+		LOG_DEBUG("");
 		classTests::caseInsensitive(rch);
 		doesNotExist(rch, "=", "__class");
 		wrongOperator(rch, "ISA", "__class");
@@ -326,25 +412,40 @@ namespace testSchemaQuery
 
 	void testDynasty(CIMOMHandleIFCRef& rch)
 	{
+		LOG_DEBUG("");
 		dynastyTests::caseInsensitive(rch);
 		doesNotExist(rch, "=", "__dynasty");
 		wrongOperator(rch, "ISA", "__dynasty");
 		noChildren(rch, "=", "__dynasty");
 		dynastyTests::manyChildren(rch);
 		dynastyTests::manyLevelsOfChildren(rch);
-		dynastyTests::notRoot(rch);
+		//For __dynasty, notRoot *must* fail.
+		try
+		{
+			dynastyTests::notRoot(rch);
+		}
+		catch(CIMException const& ex)
+		{
+			//This query is supposed to throw an exception.
+			LOG_DEBUG(Format("CIMException %1 caught, good.", ex.what()));
+			return;
+		}
+		LOG_DEBUG("CIMException not caught, bad.");
+		TEST_ASSERT(0);
 	}
 }
-#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 void testSchemaQueries(CIMOMHandleIFCRef& rch)
 {
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+	testSchemaQuery::addTestClasses(rch);
 	testSchemaQuery::testThis(rch);
-	//testSchemaQuery::testClass(rch);
-	//testSchemaQuery::testDynasty(rch);
-#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+	testSchemaQuery::testClass(rch);
+	testSchemaQuery::testDynasty(rch);
+	testSchemaQuery::testClass(rch);
+	testSchemaQuery::testDynasty(rch);
 }
+
+#endif //#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 } // end anonymous namespace
 
@@ -550,7 +651,9 @@ int main(int argc, char* argv[])
 
 
 		// test some simple schema queries.
-		// testSchemaQueries(rch);
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+		testSchemaQueries(rch);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 		return 0;
 	}

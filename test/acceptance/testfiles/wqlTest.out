@@ -6350,3 +6350,825 @@ Got back 0 instances.  Expected 0
 
 Executing query 118 remote: select * from wqlTestClass where name = "test12"
 Got back 0 instances.  Expected 0
+
+Executing query 119 local: SELECT "*" FROM meta_class WHERE __this ISA  "ClassWhichDoesNotExist" 
+
+Executing query 120 local: SELECT "*" FROM meta_class WHERE __This ISA  "ClassWhichDoesNotExist" 
+
+Executing query 121 local: SELECT "*" FROM meta_class WHERE __THIS ISA  "ClassWhichDoesNotExist" 
+
+Executing query 122 local: SELECT "*" FROM meta_class WHERE __this ISA  "ClassWhichDoesNotExist" 
+
+Executing query 123 local: SELECT "*" FROM meta_class WHERE __this = "ClassWhichDoesNotExist" 
+
+Executing query 124 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 124 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 125 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren";
+};
+
+
+Executing query 125 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren";
+};
+
+
+Executing query 126 local: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren2Level" 
+Got back 13 instances.  Expected 13
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild2OfClassWithManyChildren2Level";
+};
+
+
+Executing query 126 remote: SELECT "*" FROM meta_class WHERE __this ISA "ClassWithManyChildren2Level" 
+Got back 13 instances.  Expected 13
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild2OfClassWithManyChildren2Level";
+};
+
+
+Executing query 127 local: SELECT "*" FROM meta_class WHERE __this ISA "Child1OfClassWithManyChildren2Level" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+
+Executing query 127 remote: SELECT "*" FROM meta_class WHERE __this ISA "Child1OfClassWithManyChildren2Level" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+
+Executing query 128 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+
+Executing query 129 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
+
+Executing query 130 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
+
+Executing query 131 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+
+Executing query 132 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
+
+Executing query 133 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 133 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 134 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+
+Executing query 134 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+
+Executing query 135 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+
+Executing query 135 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+
+Executing query 136 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+
+Executing query 136 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+
+Executing query 137 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 138 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 139 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
+
+Executing query 140 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 141 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
+
+Executing query 142 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 142 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 143 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren";
+};
+
+
+Executing query 143 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren";
+};
+
+
+Executing query 144 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Got back 13 instances.  Expected 13
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild2OfClassWithManyChildren2Level";
+};
+
+
+Executing query 144 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Got back 13 instances.  Expected 13
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild2OfClassWithManyChildren2Level";
+};
+
+
+Executing query 145 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 
+
+Executing query 146 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+
+Executing query 147 local: SELECT "*" FROM meta_class WHERE __Class =  "ClassWhichDoesNotExist" 
+
+Executing query 148 local: SELECT "*" FROM meta_class WHERE __CLASS =  "ClassWhichDoesNotExist" 
+
+Executing query 149 local: SELECT "*" FROM meta_class WHERE __class =  "ClassWhichDoesNotExist" 
+
+Executing query 150 local: SELECT "*" FROM meta_class WHERE __class ISA "ClassWhichDoesNotExist" 
+
+Executing query 151 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 151 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 152 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+
+Executing query 152 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+
+Executing query 153 local: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+
+Executing query 153 remote: SELECT "*" FROM meta_class WHERE __class = "ClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+
+Executing query 154 local: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+
+Executing query 154 remote: SELECT "*" FROM meta_class WHERE __class = "Child1OfClassWithManyChildren2Level" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+
+Executing query 155 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 156 local: SELECT "*" FROM meta_class WHERE __Dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 157 local: SELECT "*" FROM meta_class WHERE __DYNASTY =  "ClassWhichDoesNotExist" 
+
+Executing query 158 local: SELECT "*" FROM meta_class WHERE __dynasty =  "ClassWhichDoesNotExist" 
+
+Executing query 159 local: SELECT "*" FROM meta_class WHERE __dynasty ISA "ClassWhichDoesNotExist" 
+
+Executing query 160 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 160 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithNoChildren" 
+Got back 1 instances.  Expected 1
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithNoChildren";
+};
+
+
+Executing query 161 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren";
+};
+
+
+Executing query 161 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren" 
+Got back 4 instances.  Expected 4
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren";
+};
+
+
+Executing query 162 local: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Got back 13 instances.  Expected 13
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild2OfClassWithManyChildren2Level";
+};
+
+
+Executing query 162 remote: SELECT "*" FROM meta_class WHERE __dynasty = "ClassWithManyChildren2Level" 
+Got back 13 instances.  Expected 13
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="ClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild0OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild1OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child0OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child1OfChild2OfClassWithManyChildren2Level";
+};
+
+INSTANCE OF __SchemaQueryResult
+{
+  CimClass="Child2OfChild2OfClassWithManyChildren2Level";
+};
+
+
+Executing query 163 local: SELECT "*" FROM meta_class WHERE __dynasty = "Child1OfClassWithManyChildren2Level" 

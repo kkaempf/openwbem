@@ -53,7 +53,9 @@ OW_WQLProcessor.hpp \
 OW_WQLProcessor.cpp \
 OW_WQLImpl.cpp \
 OW_WQLSelectStatementGen.hpp \
-OW_WQLSelectStatementGen.cpp
+OW_WQLSelectStatementGen.cpp \
+OW_WQLLogger.hpp \
+OW_WQLLogger.cpp
 
 EXTRA_DIST = \
 $(top_builddir)/src/wql/OW_WQLParser.cc \

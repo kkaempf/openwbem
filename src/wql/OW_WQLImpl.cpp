@@ -36,6 +36,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_WQLProcessor.hpp"
 #include "OW_WQLAst.hpp"
+#include "OW_WQLLogger.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_WQLSelectStatementGen.hpp"
@@ -56,6 +57,7 @@ void WQLImpl::evaluate(const String& nameSpace,
 	const String& query, const String& queryLanguage,
 	const CIMOMHandleIFCRef& hdl)
 {
+	WQL_LOG_DEBUG(Format("nameSpace %1, query %2, queryLanguage %3 .", nameSpace, query, queryLanguage));
 	MutexLock lock(s_classLock);
 	// set up the parser's input
 	s_parserInput = query.c_str();
@@ -63,6 +65,7 @@ void WQLImpl::evaluate(const String& nameSpace,
 #ifdef YYOW_DEBUG
 	owwqldebug = 1;
 #endif
+	WQL_LOG_DEBUG("Parsing: ");
 	int owwqlresult = owwqlparse();
 	if (owwqlresult)
 	{
@@ -70,18 +73,19 @@ void WQLImpl::evaluate(const String& nameSpace,
 	}
 	else
 	{
-		//LOGDEBUG("Parse succeeded");
+		WQL_LOG_DEBUG("Parse succeeded");
 	}
+	WQL_LOG_DEBUG("Processing: ");
 	WQLProcessor p(hdl, nameSpace);
 	AutoPtr<stmt> pAST(WQLImpl::s_statement);
 	lock.release();
 	if (pAST.get())
 	{
-		pAST->accept(&p);
+		pAST->accept_interface(&p);
 	}
 	else
 	{
-		//LOGDEBUG("pAST was NULL!");
+		WQL_LOG_DEBUG("pAST was NULL!");
 	}
 	CIMInstanceArray instances = p.getInstances();
 	for (size_t i = 0; i < instances.size(); ++i)
@@ -109,18 +113,18 @@ WQLImpl::createSelectStatement(const String& query)
 	}
 	else
 	{
-		//LOGDEBUG("Parse succeeded");
+		WQL_LOG_DEBUG("Parse succeeded");
 	}
 	WQLSelectStatementGen p;
 	AutoPtr<stmt> pAST(WQLImpl::s_statement);
 	lock.release();
 	if (pAST.get())
 	{
-		pAST->accept(&p);
+		pAST->accept_interface(&p);
 	}
 	else
 	{
-		//LOGDEBUG("pAST was NULL!");
+		WQL_LOG_DEBUG("pAST was NULL!");
 	}
 	
 	s_parserInput = 0;
