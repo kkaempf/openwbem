@@ -569,9 +569,10 @@ OW_HELP_STRING(--disable-openslp,disable openslp integration))
 
 OW_HAVE_SLP=0
 if test "$enable_openslp" != no; then
-	AC_CHECK_HEADERS(slp.h, LIBS="$LIBS -lslp"; OW_HAVE_SLP=1)
+	AC_CHECK_HEADERS(slp.h, SLP_LIB="-lslp"; OW_HAVE_SLP=1)
 fi
 AM_CONDITIONAL(HAVE_SLP, test "x$OW_HAVE_SLP" = "x1")
+AC_SUBST(SLP_LIB)
 
 AC_ARG_ENABLE(memory-debug-mode,
 OW_HELP_STRING(--enable-memory-debug-mode,enable memory debug mode),
@@ -910,6 +911,11 @@ AC_TRY_RUN(
 #include <assert.h>
 int main()
 {
+/* glibc has buggy pthread_spin_lock on PPC & we don't need it anyway. */
+#if defined(__ppc__) && defined(__GNUC__)
+	return 1;
+#endif
+
 	pthread_spinlock_t spinlock;
 	if (pthread_spin_init(&spinlock, 0) != 0)
 		return 1;
