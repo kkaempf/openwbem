@@ -182,37 +182,37 @@ public:
 	 * Set the receive timeout on the socket
 	 * @param seconds the number of seconds for the receive timeout
 	 */
-	void setReceiveTimeout(int seconds);
+	virtual void setReceiveTimeout(int seconds);
 	/**
 	 * Get the receive timeout
 	 * @return The number of seconds of the receive timeout
 	 */
-	int getReceiveTimeout() const;
+	virtual int getReceiveTimeout() const;
 	/**
 	 * Set the send timeout on the socket
 	 * @param seconds the number of seconds for the send timeout
 	 */
-	void setSendTimeout(int seconds);
+	virtual void setSendTimeout(int seconds);
 	/**
 	 * Get the send timeout
 	 * @return The number of seconds of the send timeout
 	 */
-	int getSendTimeout() const;
+	virtual int getSendTimeout() const;
 	/**
 	 * Set the connect timeout on the socket
 	 * @param seconds the number of seconds for the connect timeout
 	 */
-	void setConnectTimeout(int seconds);
+	virtual void setConnectTimeout(int seconds);
 	/**
 	 * Get the connect timeout
 	 * @return The number of seconds of the connect timeout
 	 */
-	int getConnectTimeout() const;
+	virtual int getConnectTimeout() const;
 	/**
 	 * Set all timeouts (send, receive, connect)
 	 * @param seconds the number of seconds for the timeouts
 	 */
-	void setTimeouts(int seconds);
+	virtual void setTimeouts(int seconds);
 
 private:
 	/*
