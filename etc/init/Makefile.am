@@ -5,7 +5,7 @@ EXTRA_DIST = owcimomd.sh
 
 CLEANFILES = $(PACKAGE_PREFIX_D)owcimomd
 
-$(PACKAGE_PREFIX_D)owcimomd: owcimomd.sh
+$(PACKAGE_PREFIX_D)owcimomd: owcimomd.sh Makefile
 	@RM@ -f $@ $@-t
 	@SED@ \
 		-e 's!@''sbindir''@!$(sbindir)!g' \

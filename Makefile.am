@@ -24,14 +24,14 @@ CLEANFILES = Doxyfile $(PACKAGE_PREFIX_D)openwbem.spec
 SUFFIXES = .sh 
 
 
-.sh:
+.sh: Makefile
 	@RM@ -f $@ $@-t
 	@SED@ \
 		-e 's!@''srcdir''@!$(srcdir)!g' \
 	$< > $@-t
 	@MV@	$@-t $@
 
-$(PACKAGE_PREFIX_D)openwbem.spec: generic-company-openwbem.spec.in
+$(PACKAGE_PREFIX_D)openwbem.spec: generic-company-openwbem.spec.in Makefile
 	@RM@ -f $@ $@-t
 	@SED@ \
 		-e 's!@''GENERIC_D''@!$(PACKAGE_PREFIX_D)!g' \

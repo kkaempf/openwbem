@@ -10,7 +10,7 @@ clean-local:
 CLEANFILES = acceptance.sh
 SUFFIXES = .fb
 
-.fb:
+.fb: Makefile
 	@RM@ -f $@ $@-t
 	@SED@ \
 		-e 's!@''sysconfdir''@!$(sysconfdir)!g' \
