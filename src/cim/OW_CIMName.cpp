@@ -99,7 +99,7 @@ CIMName::isValid() const
 }
 
 ///////////////////////////////////////////////////////////////////////////
-CIMName::operator safe_bool () const
+CIMName::operator CIMName::safe_bool () const
 {
 	return isValid() ? &CIMName::m_name : 0;
 }
