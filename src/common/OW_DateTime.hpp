@@ -491,7 +491,8 @@ public:
 	   by an ODD number of half-hours.
 	 */
 	static Int16 getGMTOffset();
-	// Removed due to the above problems
+	// Removed due to the above problems.  Use toLocal() or 
+	// getGMTOffsetMinutesNow() instead.
 #endif
 
 	/**
@@ -521,7 +522,7 @@ private:
 	UInt32	m_microseconds;
 	tm getTm(ETimeOffset timeOffset) const;
 	void setTime(tm& tmarg, ETimeOffset timeOffset);
-        static Int16 localTimeAndOffset(time_t t, struct tm & tt);
+	static Int16 localTimeAndOffset(time_t t, struct tm & tt);
 };
 
 } // end namespace OpenWBEM
