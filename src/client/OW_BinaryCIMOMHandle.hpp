@@ -638,6 +638,7 @@ public:
 	virtual bool getHTTPResponseHeader(const String& hdrName,
 		String& valueOut) const;
 
+private:
 	CIMProtocolIFCRef m_protocol;
 };
 
