@@ -141,7 +141,7 @@ StartDaemon()
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	sleep 1
+	sleep 3
 	if [ -d /proc ] && [ ! -d /proc/$PID ]; then
 	  echo "** Daemon failed to start!  Another instance could be running Check"
 	  echo "** $STAGEDIR/results/owcimomd.output "
@@ -166,7 +166,7 @@ RestartDaemon()
 	PID=`cat $PIDFILE`
 	kill -HUP $PID
 	echo "Waiting for daemon to re-initialize"
-	sleep 2
+	sleep 4
 }
 
 #############################################################################
@@ -485,6 +485,7 @@ TestAuth()
 	EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
 	echo "Testing Simple Authentication Module and GetFeatures"
 	RestartDaemon
+	echo "Daemon restarted."
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "2" ] || \
