@@ -135,10 +135,10 @@ doLock(int hdl, int cmd, short int type)
 {
 	struct flock lck;
 	::memset (&lck, '\0', sizeof (lck));
-	lck.l_type = type;       /* write (exclusive) lock */
-	lck.l_whence = 0;           /* 0 offset for l_start */
-	lck.l_start = 0L;           /* lock starts at BOF */
-	lck.l_len = 0L;             /* extent is entire file */
+	lck.l_type = type;          // type of lock
+	lck.l_whence = 0;           // 0 offset for l_start
+	lck.l_start = 0L;           // lock starts at BOF
+	lck.l_len = 0L;             // extent is entire file
 	return ::fcntl(hdl, cmd, &lck);
 }
 } // end unnamed namespace
