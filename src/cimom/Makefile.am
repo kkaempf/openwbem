@@ -47,4 +47,8 @@ else
 #use this rule to create the data dir
 install-exec-local:
 	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
+
+#need this in both sections of the conditional
+clean-local:
+
 endif

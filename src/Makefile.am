@@ -155,4 +155,11 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 
 clean-local:
 	rm -f static_cimomd $(OPENWBEM_STATIC_ALL)
+
+else
+
+# need to have a version of this so 'make clean' doesn't puke.
+clean-local:
+
 endif
+
