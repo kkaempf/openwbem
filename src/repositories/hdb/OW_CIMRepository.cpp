@@ -339,7 +339,7 @@ CIMClass
 CIMRepository::_getClass(const String& ns, const CIMName& className)
 {
 	CIMClass theClass(CIMNULL);
-	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className.toString(), E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
+	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
 	checkGetClassRvalAndThrow(rval, ns, className);
 	return theClass;
 }
@@ -348,7 +348,7 @@ CIMClass
 CIMRepository::_instGetClass(const String& ns, const CIMName& className)
 {
 	CIMClass theClass(CIMNULL);
-	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className.toString(), E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
+	CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, theClass);
 	checkGetClassRvalAndThrowInst(rval, ns, className);
 	return theClass;
 }
@@ -459,6 +459,34 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 		// m_mStore.createClass modifies cimClass to be consistent with base
 		// classes, etc.
 		CIMClass cimClass(cimClass_);
+
+		// validate that any reference properties are valid classes
+		CIMPropertyArray props(cimClass.getAllProperties());
+		for (size_t i = 0; i < props.size(); ++i)
+		{
+			CIMProperty& prop(props[i]);
+			CIMDataType type(prop.getDataType());
+			if (type.isReferenceType())
+			{
+				CIMName refClassName(type.getRefClassName());
+				try
+				{
+					_getClass(ns, refClassName);
+				}
+				catch (CIMException& e)
+				{
+					// if we have a NOT_FOUND, change it into a INVALID_PARAMETER
+					if (e.getErrNo() == CIMException::NOT_FOUND)
+					{
+						OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
+							Format("Class %1 referenced by reference property %2 doesn't exist in namespace %3",
+								refClassName, prop.getName(), ns).c_str());
+					}
+					throw;
+				}
+			}
+		}
+
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);
 		// we need to re-get the class, so that it will be consistent.  currently
