@@ -43,27 +43,26 @@ namespace OpenWBEM
 
 dyldSharedLibrary::~dyldSharedLibrary()
 {
-	NSUnLinkModule(m_libhandle, FALSE);
+	NSUnLinkModule(m_libhandle, NSUNLINKMODULE_OPTION_NONE);
 }
 bool dyldSharedLibrary::doGetFunctionPointer(const String& functionName,
-		void** fp) const
+					void** fp) const
 {
-    void *retval = NULL;
-    NSSymbol symbol;
+	void *retval = NULL;
+	NSSymbol symbol;
 	String arg = '_' + functionName;
-    symbol = NSLookupAndBindSymbol(arg.c_str());
-    if (symbol == NULL) 
+	symbol = NSLookupSymbolInModule(m_libhandle, arg.c_str());	
+	if (symbol == NULL) 
 	{
-    	return false;
-    }
-    retval = NSAddressOfSymbol(symbol);
-    if (retval == NULL) 
+		return false;
+	}
+	retval = NSAddressOfSymbol(symbol);
+	if (retval == NULL) 
 	{
-    	return false;
-    }
-    *fp = retval;
-    return true;
-
+		return false;
+	}
+	*fp = retval;
+	return true;
 }
 
 } // end namespace OpenWBEM
