@@ -31,6 +31,26 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
 
+# Rules for NetWare
+
+CREATE_IMPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
+			$(AWK) '{ if((($$2 == "T") || \
+				   ($$2 == "D") || \
+				   ($$2 == "B")) && \
+				  (substr($$3,1,1) != ".")) \
+				{ print $$3 } }' | \
+			sort -u > $(@:%.nlm=%.imp)
+
+%.nlm : %.a
+	rm -rf $(TMPLIBDIR)
+	mkdir $(TMPLIBDIR)
+	cd $(TMPLIBDIR) && \
+	$(AR) x ../$<
+	$(CREATE_IMPORTS)
+	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $@ $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	cp $@ $(SOFILENAME)
+	rm -rf $(TMPLIBDIR)
+
 # Rules for Darwin so we can get the plugable modules built
 # at the same time. Requires that either MAKEDYLIB or MAKEBUNDLE
 # be inserted into Makefile.am in the appropriate directory.
