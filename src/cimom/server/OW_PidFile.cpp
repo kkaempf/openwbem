@@ -35,16 +35,18 @@
 
 #include "OW_config.h"
 #include "OW_PidFile.hpp"
+#include "OW_File.hpp"
+#include "OW_FileSystem.hpp"
+#include "OW_String.hpp"
 
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/stat.h>
-#include <sys/file.h>
-#include <fcntl.h>
+#include <sys/types.h>
 #include <signal.h>
 #include <errno.h>
-#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
+
 
 namespace OpenWBEM
 {
@@ -108,14 +110,8 @@ writePid(const char *pidfile)
 		errno = lerrno;
 		return -1;
 	}
-	// TODO: replace this with the locking code in OW_File
-#if defined (OW_GNU_LINUX) || defined (OW_DARWIN)
-	if (flock(fd, LOCK_EX|LOCK_NB) == -1)
-#elif defined(OW_OPENSERVER)
-	if (lockf(fd, F_TLOCK, 0) == -1)
-#else
-	if (ftrylockfile(f) != 0)
-#endif
+	File OWf(::dup(fd)); // need a dup, since the FILE* will close it.
+	if (OWf.tryLock() == -1)
 	{
 		lerrno = errno;
 		fscanf(f, "%d", &pid);
@@ -132,25 +128,7 @@ writePid(const char *pidfile)
 		return -1;
 	}
 	fflush(f);
-#if defined (OW_GNU_LINUX) || defined (OW_DARWIN)
-	if (flock(fd, LOCK_UN) == -1)
-	{
-		lerrno = errno;
-		fclose(f);
-		errno = lerrno;
-		return -1;
-	}
-#elif defined (OW_OPENSERVER)
-	if (lockf(fd, F_ULOCK, 0) == -1)
-	{
-		lerrno = errno;
-		fclose(f);
-		errno = lerrno;
-		return -1;
-	}
-#else
-	funlockfile(f);
-#endif
+	OWf.unlock();
 	fclose(f);
 	return pid;
 }
@@ -162,7 +140,7 @@ writePid(const char *pidfile)
 int 
 removePid(const char *pidfile)
 {
-	return unlink(pidfile);
+	return FileSystem::removeFile(pidfile);
 }
 
 } // end namespace PidFile
