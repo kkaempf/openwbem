@@ -144,7 +144,7 @@ public:
 		{
 			// TODO: Make a better way to do this that doesn't bypass the provider manager or use a no-delete reference or use g_cimomEnvironment.
 			OW_PollingManagerRef pm = OW_CIMOMEnvironment::g_cimomEnvironment->getPollingManager();
-			pm->addPolledProvider(OW_PolledProviderIFCRef(new OW_CppPolledProviderProxy(OW_CppPolledProviderIFCRef(OW_SharedLibraryRef(), OW_Reference<OW_CppPolledProviderIFC>(this, true)))));
+//			pm->addPolledProvider(OW_PolledProviderIFCRef(new OW_CppPolledProviderProxy(OW_CppPolledProviderIFCRef(OW_SharedLibraryRef(), OW_Reference<OW_CppPolledProviderIFC>(this, true)))));
 		}
 	}
 	
