@@ -25,6 +25,15 @@ owcimomd.services_path = @libdir@/openwbem/services
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 
 ################################################################################
+# 2.0
+# owcimomd.disable.slp - If set to "true" and the HTTP service has been
+# configured to do slp registration, the slp registration will never take place.
+# If the HTTP service was not configured with slp registration, this config
+# item it ignored.
+# The default is "false"
+;owcimomd.disable.slp = "false"
+
+################################################################################
 # owcimomd.http_port option specifies the port number owcimomd will listen on
 # for all HTTP communications. The default for this option is 5988.
 # Set this to -1 if you do not want to support HTTP connections (for

@@ -151,6 +151,7 @@ namespace OW_ConfigOpts
 	// 2.0 additions
 	static const char* const CIMOM_SERVICES_LOCATION_opt = "owcimomd.services_path";
 	static const char* const CIMOM_REQUEST_HANDLER_LOCATION_opt = "owcimomd.request_handler_path";
+	static const char* const HTTP_SLP_DISABLED_opt = "owcimomd.disable.slp";
 };
 
 #endif //_OW_CONFIGOPTS_HPP__

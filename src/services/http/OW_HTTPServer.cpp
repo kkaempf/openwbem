@@ -378,8 +378,18 @@ OW_HTTPServer::startService()
 
 	OW_InetSocket::createShutDownMechanism();
 
-	// Start SLP Registration thread
-	m_slpRegistrator.start();
+
+	if(env->getConfigItem(
+		OW_ConfigOpts::HTTP_SLP_DISABLED_opt).equalsIgnoreCase("true"))
+	{
+		lgr->logCustInfo("CIMOM SLP Registration has been disabled in config"
+			" file");
+	}
+	else
+	{
+		// Start SLP Registration thread
+		m_slpRegistrator.start();
+	}
 
 	lgr->logDebug("HTTP Service has started");
 }
