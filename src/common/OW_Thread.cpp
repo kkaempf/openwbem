@@ -183,9 +183,9 @@ OW_Thread::threadRunner(void* paramPtr)
 		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
 		OW_ThreadBarrier barrier = pParam->barrier;
 
-		barrier.wait();
-
 		pTheThread->m_isRunning = true;
+
+		barrier.wait();
 
 		try
 		{
@@ -193,12 +193,15 @@ OW_Thread::threadRunner(void* paramPtr)
 		}
 		catch (OW_ThreadCancelledException&)
 		{
+		}
+
+
+		{
 			OW_NonRecursiveMutexLock l(pTheThread->m_cancelLock);
+			pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 			pTheThread->m_cancelled = true;
 			pTheThread->m_cancelCond.notifyAll();
 		}
-
-		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
 		delete pParam;
 
@@ -258,6 +261,9 @@ zeroThread()
 void
 OW_Thread::cooperativeCancel()
 {
+	if (!isRunning())
+		return;
+
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
 
@@ -266,13 +272,24 @@ OW_Thread::cooperativeCancel()
 
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
 	// SIGUSR1 is ignored.  It's set to SIG_IGN in OW_ThreadImpl.cpp
-	OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+	// If the thread has already exited, an OW_ThreadException will be thrown
+	// we just want to ignore that.
+	try
+	{
+		OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+	}
+	catch (OW_ThreadException&) 
+	{
+	}
 }
 
 //////////////////////////////////////////////////////////////////////
 bool
 OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
 {
+	if (!isRunning())
+		return true;
+
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
 
@@ -281,8 +298,17 @@ OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
 
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
 	// SIGUSR1 is ignored.  It's set to SIG_IGN in OW_ThreadImpl.cpp
-	OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
-	while (!m_cancelled)
+	// If the thread has already exited, an OW_ThreadException will be thrown
+	// we just want to ignore that.
+	try
+	{
+		OW_ThreadImpl::sendSignalToThread(m_id, SIGUSR1);
+	}
+	catch (OW_ThreadException&) 
+	{
+	}
+
+	while (!m_cancelled && isRunning())
 	{
 		if (!m_cancelCond.timedWait(l, waitForCooperativeSecs, 0))
 		{
@@ -290,7 +316,10 @@ OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
 			doDefinitiveCancel();
 
 			// thread didn't (or won't) exit by itself, we'll have to really kill it.
-			this->cancel();
+			if (!m_cancelled && isRunning())
+			{
+				this->cancel();
+			}
 			return false;
 		}
 	}
@@ -301,7 +330,14 @@ OW_Thread::definitiveCancel(OW_UInt32 waitForCooperativeSecs)
 void
 OW_Thread::cancel()
 {
-	OW_ThreadImpl::cancel(m_id);
+	// Ignore errors from OW_ThreadImpl (usually caused by the fact that the thread has already exited)
+	try
+	{
+		OW_ThreadImpl::cancel(m_id);
+	}
+	catch (OW_ThreadException&)
+	{
+	}
 }
 
 //////////////////////////////////////////////////////////////////////

@@ -41,33 +41,7 @@
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_ThreadDoneCallback.hpp"
-
-
-/**
- * In the event a thread has been cancelled, a 
- * OW_ThreadCancelledException will be thrown.  DO NOT catch this exception.
- * OW_ThreadCancelledException is not derived from anything.
- * Do not write code like this:
- * try {
- *  //...
- * } catch (...) {
- *  // swallow all exceptions
- * }
- *
- * Instead do this:
- * try {
- *  //...
- * } catch (OW_ThreadCancelledException&) {
- *  throw;
- * } catch (std::exception& e) {
- *  // handle the exception
- * }
- * The only place OW_ThreadCancelledException should be caught is in 
- * OW_Thread::threadRunner(). main() shouldn't need to catch it, as the main
- * thread of an application should never be cancelled.  The main thread
- * shouldn't need to ever call testCancel.
- */
-struct OW_ThreadCancelledException {};
+#include "OW_ThreadCancelledException.hpp"
 
 
 //////////////////////////////////////////////////////////////////////////////
