@@ -90,8 +90,7 @@ public:
 	 */
 	ProcId pid() const;
 	/**
-	 * Set the process's pid.  This is only usefule when constructing an
-	 * instance of this class.
+	 * Set the process's pid.
 	 */
 	void pid(ProcId newPid);
 	/**
@@ -197,6 +196,41 @@ namespace Exec
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
 	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
+	
+	/**
+	 * TODO: Write this, and change the other gatherOutput() to use it.
+	 * Wait for output from child processes.  The function returns when the
+	 * processes have exited. In the case that a child process doesn't exit, if a
+	 * timout is specified, then an ExecTimeoutException is thrown.
+	 *
+	 * @param output A callback, whenever data is received from a process, it will
+	 *  be passed to output.handleData().
+	 * @param streams The connections to the child processes.
+	 * @param processstatus An out parameter, which will contain a bool flag 
+	 *  indicating if the process has exited, and if it has, the processes'
+	 *  status. The pair::second value, if pair::first == true, should be evaluated
+	 *  using the family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
+	 *  Each status corresponds to the element at the same index in streams.
+	 *  If processstatuses.size() != streams.size(), it will be resized.
+	 *  Each element will be set to (false, 0) or else (true, the status of the exited process).
+	 * @param timeoutsecs Specifies the number of seconds to wait for all the
+	 *  processes to exit. If no output has been received and all the processes
+	 *  haven't exited after timeoutsecs seconds, an ExecTimeoutException will 
+	 *  be thrown. If timeoutsecs < 0, the timeout will be infinite, and no 
+	 *  exception will ever be thrown.
+	 *
+	 * @throws ProcessError on error.
+	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
+	 */
+	//class OutputCallback
+	//{
+	//public:
+	//	virtual ~OutputCallback();
+	//	void handleData(const char* data, size_t dataLen, PopenStreams& theStream);
+	//private:
+	//	void doHandleData(const char* data, size_t dataLen, PopenStreams& theStream);
+	//};
+	//OW_COMMON_API void gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<pair<bool, int> >& processstatuses, int timeoutsecs = -1);
 	
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The
