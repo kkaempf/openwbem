@@ -91,7 +91,7 @@ protected:
 	virtual EParserAction doRecoverableError(const char *error, const lineInfo& li )
 	{
 		cerr << "Recoverable error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
-		return E_IGNORE;
+		return E_IGNORE_ACTION;
 	}
 	virtual void doProgressMessage( const char* message, const lineInfo& li )
 	{

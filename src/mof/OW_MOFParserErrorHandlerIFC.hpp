@@ -56,8 +56,8 @@ public:
 	void fatalError( const char* error, const lineInfo& li );
 	enum EParserAction
 	{
-		E_ABORT,
-		E_IGNORE
+		E_ABORT_ACTION,
+		E_IGNORE_ACTION,
 	};
 	void recoverableError( const char* error, const lineInfo& li );
 	void progressMessage( const char* message, const lineInfo& li );

@@ -459,7 +459,7 @@ protected:
 	virtual EParserAction doRecoverableError(const char *error, const lineInfo &li)
 	{
 		errors.push_back(error);
-		return ParserErrorHandlerIFC::E_ABORT;
+		return ParserErrorHandlerIFC::E_ABORT_ACTION;
 	}
 public:
 	StringArray errors;
