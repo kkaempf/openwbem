@@ -123,6 +123,7 @@ CIMInstanceArray testQuery(CIMOMHandleIFCRef& rch, const char* query, int expect
 	return testQueryRemote(rch,query,expectedSize);
 }
 
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 namespace testSchemaQuery
 {
 	void mkChildren(CIMClassArray& result, char const* parentName, size_t children= 3)
@@ -334,12 +335,15 @@ namespace testSchemaQuery
 		dynastyTests::notRoot(rch);
 	}
 }
+#endif #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 void testSchemaQueries(CIMOMHandleIFCRef& rch)
 {
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	testSchemaQuery::testThis(rch);
 	//testSchemaQuery::testClass(rch);
 	//testSchemaQuery::testDynasty(rch);
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 }
 
 } // end anonymous namespace
