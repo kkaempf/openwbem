@@ -172,6 +172,7 @@ common/OWBI1_IntrusiveReference.hpp \
 common/OWBI1_CommonFwd.hpp \
 common/OWBI1_ArrayFwd.hpp \
 cim/OWBI1_CIMFwd.hpp \
+OWBI1_Fwd.hpp \
 OWBI1_ProviderBaseIFC.hpp \
 OWBI1_SimpleAssociatorProviderIFC.hpp \
 OWBI1_AssociatorProviderIFC.hpp \
