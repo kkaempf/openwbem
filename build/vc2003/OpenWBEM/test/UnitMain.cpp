@@ -126,7 +126,7 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_SocketUtils", OW_SocketUtilsTestCases::suite());
 	runner.addTest( "OW_RWLocker", OW_RWLockerTestCases::suite());
 	runner.addTest( "OW_FileSystem", OW_FileSystemTestCases::suite());
-	//-runner.addTest( "OW_CIMProperty", OW_CIMPropertyTestCases::suite());
+	runner.addTest( "OW_CIMProperty", OW_CIMPropertyTestCases::suite());
 	//-runner.addTest( "OW_CIMInstance", OW_CIMInstanceTestCases::suite());
 	//-runner.addTest( "OW_StringArrayProperty", OW_StringArrayPropertyTestCases::suite());
 	//-runner.addTest( "OW_CIMValue", OW_CIMValueTestCases::suite());

@@ -499,6 +499,16 @@ exitThread(Thread_t&, Int32 rval)
 {
 	::_endthreadex(static_cast<unsigned>(rval));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+unsigned long thread_t_ToUnsignedLong(Thread_t thr)
+{
+	//  This should really be a compile time assert.
+	OW_ASSERTMSG(sizeof(unsigned long) >= sizeof(Thread_t),"  Thread_t truncated!");
+	return static_cast<unsigned long>(thr);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void

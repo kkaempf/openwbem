@@ -40,6 +40,7 @@
 	#include <io.h>
 	#include <stdlib.h>
 	#include <stdio.h>
+	#include <memory.h>
 #else
 	#include <fcntl.h>
 	#ifdef OW_HAVE_UNISTD_H
@@ -69,8 +70,10 @@ doLock(HANDLE hFile, bool doWait)
 		flags |= LOCKFILE_FAIL_IMMEDIATELY;
 	}
 
+	OVERLAPPED ov;
+	memset(&ov, 0, sizeof(ov));
 	if (!LockFileEx(hFile, flags, 0, 0xffffffff,
-		0xffffffff, NULL))
+		0xffffffff, &ov))
 	{
 		return -1;
 	}
@@ -107,7 +110,9 @@ File::unlock()
 		return -1;
 	}
 
-	if (!UnlockFileEx(m_hdl, 0, 0xffffffff, 0xffffffff, NULL))
+	OVERLAPPED ov;
+	memset(&ov, 0, sizeof(ov));
+	if (!UnlockFileEx(m_hdl, 0, 0xffffffff, 0xffffffff, &ov))
 	{
 		return -1;
 	}
