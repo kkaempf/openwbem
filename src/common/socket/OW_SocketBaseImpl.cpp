@@ -519,3 +519,4 @@ SocketBaseImpl::setDumpFiles(const String& in, const String& out)
 } // end namespace OpenWBEM
 
 #endif	// #if !defined(OW_WIN32)
+

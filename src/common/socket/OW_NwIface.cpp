@@ -302,3 +302,4 @@ NwIface::getInterfaceName(SocketHandle_t sockfd)
 } // end namespace OpenWBEM
 
 #endif	// #if !defined(OW_WIN32)
+
