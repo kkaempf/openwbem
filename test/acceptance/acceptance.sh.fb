@@ -74,7 +74,7 @@ $BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@ \
 $BUILDDIR/test/c++providers/instance/libtestinstance.@lib_ext@ \
 $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 "
-	make DESTDIR=$STAGEDIR EXTERNAL_PROVIDERS="$PROVIDERS" install || ExitWithFail "make install didn't work"
+	$MAKE DESTDIR=$STAGEDIR EXTERNAL_PROVIDERS="$PROVIDERS" install || ExitWithFail "$MAKE install didn't work"
 
 	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
 	sed \
@@ -152,7 +152,7 @@ SwitchToLinks()
 		FNAME=`find $TOPSRCDIR -name $BASENAME -perm -0111 ! -type d ! -type l`
 		FNAME=$STAGEDIR/$FNAME
 		echo "Creating symbolic link: $i -> $FNAME"
-		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed 'make distcheck'"
+		ln -sf $FNAME $i || ExitWithFail "Link creation failed.  Check that you don't have the remants of a failed '$MAKE distcheck'"
 	done
 }
 
@@ -1089,6 +1089,10 @@ export LD_LIBRARY_PATH LIBPATH SHLIB_PATH
 
 RANDFILE=$STAGEDIR/ssl_randfile
 export RANDFILE
+
+if [ -z "$MAKE" ]; then
+  MAKE=gmake
+fi
 
 Install
 
