@@ -86,3 +86,5 @@ Documentation:
 Optimizations:
     - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
     - Switch OW_Reference to be intrusive reference counted.
+    - Use <asm/atomic.h> operations for reference counting (and reduce header 
+      dependencies).
