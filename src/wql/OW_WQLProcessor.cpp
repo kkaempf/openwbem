@@ -948,7 +948,7 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 	DataType rhs = m_exprValue;
 	doComparison(lhs, rhs, Compare(Compare::EqualsType));
 }
-void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compare compare)
+void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, const Compare& compare)
 {
 	switch (lhs.type)
 	{
@@ -995,7 +995,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 			{
 				case DataType::ColumnNameType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.str), compare.reverseOrder()));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.str), Compare(compare).reverseOrder()));
 				}
 				break;
 				
@@ -1013,7 +1013,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 			{
 				case DataType::ColumnNameType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.i), compare.reverseOrder()));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.i), Compare(compare).reverseOrder()));
 				}
 				break;
 				
@@ -1031,7 +1031,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 			{
 				case DataType::ColumnNameType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.b), compare.reverseOrder()));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.b), Compare(compare).reverseOrder()));
 				}
 				break;
 				
@@ -1050,7 +1050,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 			{
 				case DataType::ColumnNameType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.r), compare.reverseOrder()));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(lhs.r), Compare(compare).reverseOrder()));
 				}
 				break;
 				
@@ -1069,7 +1069,7 @@ void WQLProcessor::doComparison(const DataType& lhs, const DataType& rhs, Compar
 			{
 				case DataType::ColumnNameType:
 				{
-					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(CIMNULL), compare.reverseOrder()));
+					m_exprValue = DataType(filterInstancesOnPropertyValue(rhs.str, CIMValue(CIMNULL), Compare(compare).reverseOrder()));
 				}
 				break;
 				

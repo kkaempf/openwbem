@@ -478,7 +478,7 @@ InstanceRepository::deleteNameSpace(const String& nsName)
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-InstanceRepository::createNameSpace(String ns)
+InstanceRepository::createNameSpace(const String& ns)
 {
 	return GenericHDBRepository::createNameSpace(ns);
 }

@@ -392,7 +392,7 @@ namespace
 		param(const String& name_,
 			bool optional_ = true,
 			Type type_ = STRING,
-			CIMValue defaultVal_ = CIMValue(CIMNULL))
+			const CIMValue& defaultVal_ = CIMValue(CIMNULL))
 			: name(name_)
 			, optional(optional_)
 			, type(type_)

@@ -114,12 +114,12 @@ public:
 	 *        callbackURL is provided, providers will be unable to callback
 	 *        to the CIMOM. 
 	 */
-	ProviderAgent(ConfigFile::ConfigMap configMap, 
-				  Array<CppProviderBaseIFCRef> providers, 
-				  Array<CIMClass> classes, 
-				  Array<RequestHandlerIFCRef> requestHandlers, 
-				  AuthenticatorIFCRef authenticator,
-				  LoggerRef logger = LoggerRef(0), 
+	ProviderAgent(const ConfigFile::ConfigMap& configMap, 
+				  const Array<CppProviderBaseIFCRef>& providers, 
+				  const Array<CIMClass>& classes, 
+				  const Array<RequestHandlerIFCRef>& requestHandlers, 
+				  const AuthenticatorIFCRef& authenticator,
+				  const LoggerRef& logger = LoggerRef(0), 
 				  const String& callbackURL = String("")); 
 	~ProviderAgent();
 	/**

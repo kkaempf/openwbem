@@ -61,7 +61,7 @@ public:
 	 * @param logger If a logger specified then it will receive log messages, otherwise
 	 *  all log messages will be discarded.
 	 */
-	HTTPXMLCIMListener(LoggerRef logger = LoggerRef(0));
+	HTTPXMLCIMListener(const LoggerRef& logger = LoggerRef(0));
 	~HTTPXMLCIMListener();
 	/**
 	 * Register for an indication.  The destructor will attempt to deregister
@@ -86,7 +86,7 @@ public:
 		const String& ns, const String& filter,
 		const String& querylanguage, 
 		const String& sourceNamespace,
-		CIMListenerCallbackRef cb, 
+		const CIMListenerCallbackRef& cb, 
 		const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 
 	/**

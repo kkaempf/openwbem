@@ -66,7 +66,7 @@ public:
 	 * @param upipe a pipe to receive a shutdown signal from
 	 * @param opts The configuration options struct (see HTTPServer.hpp)
 	 */
-	HTTPSvrConnection(Socket socket, HTTPServer* htin,
+	HTTPSvrConnection(const Socket& socket, HTTPServer* htin,
 		IntrusiveReference<UnnamedPipe>& upipe,
 		const HTTPServer::Options& opts);
 	~HTTPSvrConnection();
@@ -181,7 +181,7 @@ private:
 		TempFileStream& ostrError, OperationContext& context);
 	int performAuthentication(const String& info, OperationContext& context);
 	void sendHeaders(int sc, int len = -1);
-	void cleanUpIStreams(CIMProtocolIStreamIFCRef istrm);
+	void cleanUpIStreams(const CIMProtocolIStreamIFCRef& istrm);
 	CIMProtocolIStreamIFCRef convertToFiniteStream(
 			std::istream& istr);
 	String getContentLanguage(OperationContext& context, bool& setByProvider,

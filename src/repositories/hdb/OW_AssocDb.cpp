@@ -60,8 +60,8 @@ using std::endl;
 //////////////////////////////////////////////////////////////////////////////
 // Local functions
 static UInt32 calcCheckSum(unsigned char* src, Int32 len);
-static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file);
-static void readRecHeader(AssocDbRecHeader& rh, Int32 offset, File file);
+static void writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file);
+static void readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file);
 //////////////////////////////////////////////////////////////////////////////
 AssocDbEntry::AssocDbEntry(istream& istrm)
 	: m_objectName(CIMNULL)
@@ -160,7 +160,7 @@ AssocDbHandle::AssocDbHandleData::AssocDbHandleData(
 }
 //////////////////////////////////////////////////////////////////////////////
 AssocDbHandle::AssocDbHandleData::AssocDbHandleData(AssocDb* pdb,
-	File file) :
+	const File& file) :
 	m_pdb(pdb), m_file(file)
 {
 }
@@ -405,7 +405,7 @@ AssocDbHandle::getAllEntries(const CIMObjectPath& objectName,
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-AssocDb::AssocDb(ServiceEnvironmentIFCRef env)
+AssocDb::AssocDb(const ServiceEnvironmentIFCRef& env)
 	: m_hdrBlock()
 	, m_pIndex(NULL)
 	, m_fileName()
@@ -517,7 +517,7 @@ AssocDbHandle
 AssocDb::getHandle()
 {
 	MutexLock l = getDbLock();
-	File file = FileSystem::openFile(m_fileName + ".dat");
+	const File& file = FileSystem::openFile(m_fileName + ".dat");
 	if (!file)
 	{
 		OW_THROW(IOException,
@@ -663,9 +663,10 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	Int32 offset;
 	AssocDbRecHeader rh = getNewBlock(offset, blkSize, hdl);
 	rh.dataSize = ostrm.length();
-	writeRecHeader(rh, offset, hdl.getFile());
+	File f = hdl.getFile();
+	writeRecHeader(rh, offset, f);
 	
-	if (hdl.getFile().write(ostrm.getData(), ostrm.length()) !=
+	if (f.write(ostrm.getData(), ostrm.length()) !=
 		size_t(ostrm.length()))
 	{
 		OW_THROW(IOException, "Failed to write data assoc db");
@@ -714,9 +715,10 @@ AssocDb::addToFreeList(Int32 offset, AssocDbHandle& hdl)
 	AssocDbRecHeader rh;
 	readRecHeader(rh, offset, hdl.getFile());
 	rh.nextFree = m_hdrBlock.firstFree;
-	writeRecHeader(rh, offset, hdl.getFile());
+	File f = hdl.getFile();
+	writeRecHeader(rh, offset, f);
 	m_hdrBlock.firstFree = offset;
-	if (hdl.getFile().write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
+	if (f.write(&m_hdrBlock, sizeof(m_hdrBlock), 0L) !=
 		sizeof(m_hdrBlock))
 	{
 		OW_THROW(IOException, "Failed write file header on deletion");
@@ -740,7 +742,8 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
 			if (lastOffset != -1L)
 			{
 				lh.nextFree = rh.nextFree;
-				writeRecHeader(lh, lastOffset, hdl.getFile());
+				File f = hdl.getFile();
+				writeRecHeader(lh, lastOffset, f);
 			}
 			if (m_hdrBlock.firstFree == coffset)
 			{
@@ -753,7 +756,8 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
 				}
 			}
 			rh.nextFree = 0L;
-			writeRecHeader(rh, coffset, hdl.getFile());
+			File f = hdl.getFile();
+			writeRecHeader(rh, coffset, f);
 			offset = coffset;
 			return rh;
 		}
@@ -769,7 +773,7 @@ AssocDb::getNewBlock(Int32& offset, UInt32 blkSize,
 }
 //////////////////////////////////////////////////////////////////////////////
 static void
-writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
+writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File& file)
 {
 	rh.chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&rh.nextFree),
 		sizeof(rh) - sizeof(rh.chkSum));
@@ -780,7 +784,7 @@ writeRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
 }
 //////////////////////////////////////////////////////////////////////////////
 static void
-readRecHeader(AssocDbRecHeader& rh, Int32 offset, File file)
+readRecHeader(AssocDbRecHeader& rh, Int32 offset, const File& file)
 {
 	if (file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{

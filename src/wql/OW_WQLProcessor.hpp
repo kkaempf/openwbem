@@ -748,7 +748,7 @@ private:
 	bool m_doingSelect;
 	StringArray m_propertyArray;
 	CIMInstanceArray filterInstancesOnPropertyValue(const String& propName, const CIMValue& val, const Compare& compare);
-	void doComparison(const DataType& lhs, const DataType& rhs, Compare compare);
+	void doComparison(const DataType& lhs, const DataType& rhs, const Compare& compare);
 	void populateInstances(const String& className);
 	void populateInstances();
 	bool instanceIsDerivedFrom(const CIMInstance& inst,

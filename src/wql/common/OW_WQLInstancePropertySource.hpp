@@ -62,7 +62,7 @@ private:
 	bool evaluateISAAux(const CIMInstance& ci, StringArray propNames, const String &className) const;
 	bool classIsDerivedFrom(const String& cls, const String& className) const;
 	// This is for recursion on embedded instances
-	static bool getValueAux(const CIMInstance& ci, StringArray propNames, WQLOperand& value);
+	static bool getValueAux(const CIMInstance& ci, const StringArray& propNames, WQLOperand& value);
 private:
 	CIMInstance ci;
 	CIMOMHandleIFCRef m_hdl;

@@ -168,7 +168,7 @@ namespace FileSystem
 	 * @return The number of bytes read. If EOF or an error occurs, a short
 	 * count or zero is returned.
 	 */
-	size_t read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
+	size_t read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 		off_t offset=-1L);
 	/**
 	 * Write data to a file.
@@ -193,25 +193,25 @@ namespace FileSystem
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	off_t seek(FileHandle& hdl, off_t offset, int whence);
+	off_t seek(const FileHandle& hdl, off_t offset, int whence);
 	/**
 	 * @param hdl	The file handle to use in the tell operation.
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	off_t tell(FileHandle& hdl);
+	off_t tell(const FileHandle& hdl);
 	/**
 	 * Position the file pointer associated with the given file handle to the
 	 * beginning of the file.
 	 * @param hdl	The file handle to use in the rewind operation.
 	 */
-	void rewind(FileHandle& hdl);
+	void rewind(const FileHandle& hdl);
 	/**
 	 * Close file handle.
 	 * @param hdl	The file handle to close.
 	 * @return 0 on success. Otherwise -1.
 	 */
-	int close(FileHandle& hdl);
+	int close(const FileHandle& hdl);
 	/**
 	 * Flush any buffered data to the file if buffering supported.
 	 * @param hdl	The file handle to flush the buffer on.

@@ -60,7 +60,7 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-CIMRepository::CIMRepository(ServiceEnvironmentIFCRef env)
+CIMRepository::CIMRepository(const ServiceEnvironmentIFCRef& env)
 	: RepositoryIFC()
 	, m_nStore(env)
 	, m_iStore(env)

@@ -310,7 +310,7 @@ renameFile(const String& oldFileName,
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
-read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
+read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
 	if (offset != -1L)
@@ -332,25 +332,25 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
-seek(FileHandle& hdl, off_t offset, int whence)
+seek(const FileHandle& hdl, off_t offset, int whence)
 {
 	return _LSEEK(hdl, offset, whence);
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
-tell(FileHandle& hdl)
+tell(const FileHandle& hdl)
 {
 	return _LSEEK(hdl, 0, SEEK_CUR);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-rewind(FileHandle& hdl)
+rewind(const FileHandle& hdl)
 {
 	_LSEEK(hdl, 0, SEEK_SET);
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-close(FileHandle& hdl)
+close(const FileHandle& hdl)
 {
 	return _CLOSEFILE(hdl);
 }

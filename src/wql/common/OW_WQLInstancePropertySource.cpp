@@ -122,7 +122,7 @@ bool WQLInstancePropertySource::classIsDerivedFrom(const String& cls, const Stri
 	return false;
 }
 ///////////////////////////////////////////////////////////////////////////////	
-bool WQLInstancePropertySource::getValueAux(const CIMInstance& ci, StringArray propNames, WQLOperand& value)
+bool WQLInstancePropertySource::getValueAux(const CIMInstance& ci, const StringArray& propNames, WQLOperand& value)
 {
 	if (propNames.empty())
 	{
@@ -181,14 +181,14 @@ bool WQLInstancePropertySource::getValueAux(const CIMInstance& ci, StringArray p
 			break;
 		case CIMDataType::EMBEDDEDINSTANCE:
 		{
-			propNames.remove(0);
 			CIMInstance embed;
 			v.get(embed);
 			if (!embed)
 			{
 				return false;
 			}
-			return getValueAux(embed, propNames, value);
+			StringArray newPropNames(propNames.begin() + 1, propNames.end());
+			return getValueAux(embed, newPropNames, value);
 		}
 		break;
 		default:

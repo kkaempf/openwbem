@@ -66,14 +66,14 @@ public:
 		DONT_RETRIEVE_CLASSES, 
 		RETRIEVE_CLASSES
 	}; 
-	ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
-		Array<CppProviderBaseIFCRef> providers, 
-		Array<CIMClass> cimClasses, 
-		AuthenticatorIFCRef authenticator,
-		Array<RequestHandlerIFCRef> requestHandlers, 
-		LoggerRef logger,
+	ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,
+		const Array<CppProviderBaseIFCRef>& providers, 
+		const Array<CIMClass>& cimClasses, 
+		const AuthenticatorIFCRef& authenticator,
+		const Array<RequestHandlerIFCRef>& requestHandlers, 
+		const LoggerRef& logger,
         const String& callbackURL, 
-		Reference<Array<SelectablePair_t> > selectables); 
+		const Reference<Array<SelectablePair_t> >& selectables); 
 	virtual ~ProviderAgentEnvironment(); 
 	virtual bool authenticate(String &userName,
 		const String &info, String &details, OperationContext& context); 

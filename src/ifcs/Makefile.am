@@ -17,7 +17,8 @@ OW_SelectableIFC.cpp \
 OW_SerializableIFC.cpp \
 OW_ServiceIFC.cpp \
 OW_ServiceEnvironmentIFC.cpp \
-OW_CIMProtocolException.cpp
+OW_CIMProtocolException.cpp \
+OW_WQLIFC.cpp
 
 pkginclude_HEADERS = \
 OW_AuthenticatorIFC.hpp \

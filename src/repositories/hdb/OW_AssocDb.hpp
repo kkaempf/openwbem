@@ -120,7 +120,7 @@ private:
 	{
 		AssocDbHandleData();
 		AssocDbHandleData(const AssocDbHandleData& arg);
-		AssocDbHandleData(AssocDb* pdb, File file);
+		AssocDbHandleData(AssocDb* pdb, const File& file);
 		~AssocDbHandleData();
 		AssocDbHandleData& operator= (const AssocDbHandleData& arg);
 		AssocDb* m_pdb;
@@ -218,7 +218,7 @@ private:
 	
 	void addOrDeleteEntries(const String& ns, const CIMInstance& assocInstance, bool add);
 	void addOrDeleteEntries(const String& ns, const CIMClass& assocClass, bool add);
-	AssocDbHandle(AssocDb* pdb, File file) :
+	AssocDbHandle(AssocDb* pdb, const File& file) :
 		m_pdata(new AssocDbHandleData(pdb, file)) {}
 	AssocDbHandleDataRef m_pdata;
 	friend class AssocDb;
@@ -250,7 +250,7 @@ public:
 	/**
 	 * Create a new AssocDb object.
 	 */
-	AssocDb(ServiceEnvironmentIFCRef env);
+	AssocDb(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Destroy this AssocDb object.
 	 */

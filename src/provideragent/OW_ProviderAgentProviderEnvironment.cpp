@@ -45,8 +45,8 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(LoggerRef logger, 
-								 ConfigFile::ConfigMap configMap,
+ProviderAgentProviderEnvironment::ProviderAgentProviderEnvironment(const LoggerRef& logger, 
+								 const ConfigFile::ConfigMap& configMap,
 								 OperationContext& operationContext, 
 								 const String& callbackURL,
 								 ClientCIMOMHandleConnectionPool& pool)

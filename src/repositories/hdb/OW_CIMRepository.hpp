@@ -67,7 +67,7 @@ public:
 	/**
 	 * Create a new CIMRepository object.
 	 */
-	CIMRepository(ServiceEnvironmentIFCRef env);
+	CIMRepository(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Destroy this CIMRepository object.
 	 */

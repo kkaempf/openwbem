@@ -1023,7 +1023,7 @@ MetaRepository::deleteNameSpace(const String& nsName)
 }
 //////////////////////////////////////////////////////////////////////////////
 int
-MetaRepository::createNameSpace(String ns)
+MetaRepository::createNameSpace(const String& ns)
 {
 	// First create the name space in the class container.
 	if (GenericHDBRepository::createNameSpace(CLASS_CONTAINER + "/" + ns) == -1)
@@ -1036,7 +1036,7 @@ MetaRepository::createNameSpace(String ns)
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-MetaRepository::MetaRepository(ServiceEnvironmentIFCRef env)
+MetaRepository::MetaRepository(const ServiceEnvironmentIFCRef& env)
 	: GenericHDBRepository(env)
 {
 	String maxCacheSizeOpt = env->getConfigItem(ConfigOpts::MAX_CLASS_CACHE_SIZE_opt, OW_DEFAULT_MAX_CLASS_CACHE_SIZE_S);

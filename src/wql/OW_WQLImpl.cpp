@@ -50,7 +50,7 @@ stmt* WQLImpl::s_statement = 0;
 void WQLImpl::evaluate(const String& nameSpace,
 	CIMInstanceResultHandlerIFC& result,
 	const String& query, const String& queryLanguage,
-	CIMOMHandleIFCRef hdl)
+	const CIMOMHandleIFCRef& hdl)
 {
 	MutexLock lock(s_classLock);
 	// set up the parser's input

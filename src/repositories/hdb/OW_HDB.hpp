@@ -57,7 +57,7 @@ class HDBHandle
 private:
 	struct HDBHandleData : public IntrusiveCountableBase
 	{
-		HDBHandleData(HDB* pdb, File file) :
+		HDBHandleData(HDB* pdb, const File& file) :
 			m_pdb(pdb), m_file(file), m_writeDone(false),
 			m_userVal(0L) {}
 		HDBHandleData() :
@@ -227,7 +227,7 @@ public:
 	bool operator!() const
 		{  return !m_pdata; }
 private:
-	HDBHandle(HDB* pdb, File file);
+	HDBHandle(HDB* pdb, const File& file);
 	File getFile() { return m_pdata->m_file; }
 	HDB* getHDB() { return m_pdata->m_pdb; }
 	Int32 registerWrite();
@@ -296,7 +296,7 @@ public:
 	 * @param offset	The offset to write the block to.
 	 * @return The number of bytes written on success. Otherwise -1
 	 */
-	static void writeBlock(HDBBlock& fblk, File file, Int32 offset);
+	static void writeBlock(HDBBlock& fblk, File& file, Int32 offset);
 	/**
 	 * Read the given HDBBlock.
 	 * @param fblk	The HDBBlock to read.
@@ -305,22 +305,22 @@ public:
 	 * @return The number of bytes read on success. Otherwise -1
 	 * @exception HDBException
 	 */
-	static void readBlock(HDBBlock& fblk, File file, Int32 offset);
+	static void readBlock(HDBBlock& fblk, const File& file, Int32 offset);
 private:
 	bool createFile();
 	bool checkFile();
-	void setOffsets(File file, Int32 firstRootOffset, Int32 lastRootOffset,
+	void setOffsets(File& file, Int32 firstRootOffset, Int32 lastRootOffset,
 		Int32 firstFreeOffset);
-	void setFirstRootOffSet(File file, Int32 offset);
-	void setLastRootOffset(File file, Int32 offset);
-	void setFirstFreeOffSet(File file, Int32 offset);
+	void setFirstRootOffSet(File& file, Int32 offset);
+	void setLastRootOffset(File& file, Int32 offset);
+	void setFirstFreeOffSet(File& file, Int32 offset);
 	Int32 getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
 	Int32 getLastRootOffset() { return m_hdrBlock.lastRoot; }
 	Int32 getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
-	Int32 findBlock(File file, int size);
-	void removeBlockFromFreeList(File file, HDBBlock& fblk);
-	void addRootNode(File file, HDBBlock& fblk, Int32 offset);
-	void addBlockToFreeList(File file, const HDBBlock& parmblk,
+	Int32 findBlock(File& file, int size);
+	void removeBlockFromFreeList(File& file, HDBBlock& fblk);
+	void addRootNode(File& file, HDBBlock& fblk, Int32 offset);
+	void addBlockToFreeList(File& file, const HDBBlock& parmblk,
 		Int32 offset);
 	Int32 getVersion() { return m_version; }
 	Int32 incVersion();

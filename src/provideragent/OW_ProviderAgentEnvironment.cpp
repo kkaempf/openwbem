@@ -55,14 +55,14 @@ namespace OpenWBEM
 {
 
 
-ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configMap,
-		Array<CppProviderBaseIFCRef> providers, 
-		Array<CIMClass> cimClasses, 
-		AuthenticatorIFCRef authenticator,
-		Array<RequestHandlerIFCRef> requestHandlers, 
-		LoggerRef logger,
+ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,
+		const Array<CppProviderBaseIFCRef>& providers, 
+		const Array<CIMClass>& cimClasses, 
+		const AuthenticatorIFCRef& authenticator,
+		const Array<RequestHandlerIFCRef>& requestHandlers, 
+		const LoggerRef& logger,
 		const String& callbackURL, 
-		Reference<Array<SelectablePair_t> > selectables)
+		const Reference<Array<SelectablePair_t> >& selectables)
 	: m_configItems(configMap)
 	, m_authenticator(authenticator)
 	, m_logger(logger ? logger : LoggerRef(new DummyLogger))

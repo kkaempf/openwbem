@@ -173,7 +173,7 @@ GenericHDBRepository::getNameSpaceNode(HDBHandleLock& hdl,
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
 int
-GenericHDBRepository::createNameSpace(String ns)
+GenericHDBRepository::createNameSpace(const String& ns)
 {
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
@@ -206,7 +206,7 @@ GenericHDBRepository::createNameSpace(String ns)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-GenericHDBRepository::deleteNameSpace(String key)
+GenericHDBRepository::deleteNameSpace(const String& key)
 {
 	throwIfNotOpen();
 	if (key.equals("root"))
@@ -232,7 +232,7 @@ GenericHDBRepository::deleteNameSpace(String key)
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool
-GenericHDBRepository::nameSpaceExists(String key)
+GenericHDBRepository::nameSpaceExists(const String& key)
 {
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());

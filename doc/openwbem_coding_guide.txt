@@ -480,4 +480,9 @@ m_memberVariable
 s_staticClassMemberVariable
 
 
+-----------------------------------------------------------------------------
+Pass objects by reference instead of by value. An exception is made for Bool
+and Char16.
+
+Pass native types by value instead of by reference, unless it's an out parameter.
 

@@ -82,14 +82,14 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(String ns);
+	virtual int createNameSpace(const String& ns);
 	/**
 	 * Delete a container and all of its' children
 	 * @param key	The key to the container to remove
 	 * @exception IOException If the database is not opened.
 	 * @exception HDBException
 	 */
-	void deleteNameSpace(String key);
+	void deleteNameSpace(const String& key);
 #endif
 	/**
 	 * Check whether a namespace exists
@@ -98,7 +98,7 @@ public:
 	 * @exception HDBException
 	 * @return Whether the namespace key exists.
 	 */
-	bool nameSpaceExists(String key);
+	bool nameSpaceExists(const String& key);
 	/**
 	 * @return true if this repository is open. Otherwise false.
 	 */

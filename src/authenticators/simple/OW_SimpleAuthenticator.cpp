@@ -69,7 +69,7 @@ private:
 	* Loads the password file into a hash map so it only has to
 	* take the hit of loading from a file once.
 	*/
-	void loadPasswordFile(ServiceEnvironmentIFCRef env);
+	void loadPasswordFile(const ServiceEnvironmentIFCRef& env);
 	bool doAuthenticate(const String& userName, const String& passwd);
 };
 SimpleAuthenticator::SimpleAuthenticator()
@@ -118,7 +118,7 @@ SimpleAuthenticator::doAuthenticate(const String& userName,
 //////////////////////////////////////////////////////////////////////////////
 // Private
 void
-SimpleAuthenticator::loadPasswordFile(ServiceEnvironmentIFCRef env)
+SimpleAuthenticator::loadPasswordFile(const ServiceEnvironmentIFCRef& env)
 {
 	// get path to password file from config file
 	String passwdFile = env->getConfigItem(

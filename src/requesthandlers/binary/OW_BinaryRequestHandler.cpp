@@ -332,7 +332,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::createClass(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::createClass(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -342,7 +342,7 @@ BinaryRequestHandler::createClass(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::modifyClass(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::modifyClass(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -352,7 +352,7 @@ BinaryRequestHandler::modifyClass(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::deleteClass(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::deleteClass(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -451,7 +451,7 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumClasses(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumClasses(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -472,7 +472,7 @@ BinaryRequestHandler::enumClasses(CIMOMHandleIFCRef chdl,
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::deleteQual(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::deleteQual(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -482,7 +482,7 @@ BinaryRequestHandler::deleteQual(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::setQual(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::setQual(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -492,7 +492,7 @@ BinaryRequestHandler::setQual(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumQualifiers(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumQualifiers(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -506,7 +506,7 @@ BinaryRequestHandler::enumQualifiers(CIMOMHandleIFCRef chdl,
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getClass(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getClass(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	StringArray propList;
@@ -529,7 +529,7 @@ BinaryRequestHandler::getClass(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getInstance(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getInstance(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -552,7 +552,7 @@ BinaryRequestHandler::getInstance(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getQual(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getQual(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -564,7 +564,7 @@ BinaryRequestHandler::getQual(CIMOMHandleIFCRef chdl,
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::createInstance(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::createInstance(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -615,7 +615,7 @@ BinaryRequestHandler::createInstance(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::deleteInstance(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::deleteInstance(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -625,7 +625,7 @@ BinaryRequestHandler::deleteInstance(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::modifyInstance(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::modifyInstance(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -645,7 +645,7 @@ BinaryRequestHandler::modifyInstance(CIMOMHandleIFCRef chdl,
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::setProperty(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::setProperty(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -666,7 +666,7 @@ BinaryRequestHandler::setProperty(CIMOMHandleIFCRef chdl,
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getProperty(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getProperty(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns (BinarySerialization::readString(istrm));
@@ -684,7 +684,7 @@ BinaryRequestHandler::getProperty(CIMOMHandleIFCRef chdl,
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumClassNames(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumClassNames(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -699,7 +699,7 @@ BinaryRequestHandler::enumClassNames(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumInstances(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumInstances(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	StringArray propList;
@@ -727,7 +727,7 @@ BinaryRequestHandler::enumInstances(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::enumInstanceNames(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::enumInstanceNames(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -741,7 +741,7 @@ BinaryRequestHandler::enumInstanceNames(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::invokeMethod(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::invokeMethod(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns (BinarySerialization::readString(istrm));
@@ -768,7 +768,7 @@ BinaryRequestHandler::invokeMethod(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::execQuery(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::execQuery(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -784,7 +784,7 @@ BinaryRequestHandler::execQuery(CIMOMHandleIFCRef chdl,
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::associators(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::associators(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	StringArray propList;
@@ -828,7 +828,7 @@ BinaryRequestHandler::associators(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::associatorNames(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::associatorNames(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -847,7 +847,7 @@ BinaryRequestHandler::associatorNames(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::references(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::references(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	StringArray propList;
@@ -888,7 +888,7 @@ BinaryRequestHandler::references(CIMOMHandleIFCRef chdl,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::referenceNames(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::referenceNames(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
@@ -905,7 +905,7 @@ BinaryRequestHandler::referenceNames(CIMOMHandleIFCRef chdl,
 #endif
 //////////////////////////////////////////////////////////////////////////////
 void
-BinaryRequestHandler::getServerFeatures(CIMOMHandleIFCRef chdl,
+BinaryRequestHandler::getServerFeatures(const CIMOMHandleIFCRef& chdl,
 	std::ostream& ostrm, std::istream& /*istrm*/)
 {
 	CIMFeatures f = chdl->getServerFeatures();

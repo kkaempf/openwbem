@@ -49,13 +49,11 @@ class WQLSelectStatement;
 class WQLIFC : public IntrusiveCountableBase
 {
 public:
-	virtual ~WQLIFC()
-	{
-	}
+	virtual ~WQLIFC();
 	virtual void evaluate(const String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage,
-				CIMOMHandleIFCRef hdl) = 0;
+				const CIMOMHandleIFCRef& hdl) = 0;
 	virtual WQLSelectStatement createSelectStatement(const String& query) = 0;
 	virtual bool supportsQueryLanguage(const String& lang) = 0;
 };

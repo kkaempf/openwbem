@@ -50,7 +50,7 @@ public:
 	/**
 	 * Create a new InstanceRepository object.
 	 */
-	InstanceRepository(ServiceEnvironmentIFCRef env)
+	InstanceRepository(const ServiceEnvironmentIFCRef& env)
 		: GenericHDBRepository(env) {}
 	void getCIMInstances(
 		const String& ns,
@@ -139,7 +139,7 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(String ns);
+	virtual int createNameSpace(const String& ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**

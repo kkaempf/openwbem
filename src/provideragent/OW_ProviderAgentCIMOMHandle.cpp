@@ -61,12 +61,12 @@ namespace OpenWBEM
 
 //using namespace WBEMFlags;
 
-ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIFCRef> assocProvs, 
-												   Map<String, CppProviderBaseIFCRef> instProvs, 
-												   Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
-												   Map<String, CppProviderBaseIFCRef> methodProvs, 
+ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(const Map<String, CppProviderBaseIFCRef>& assocProvs, 
+												   const Map<String, CppProviderBaseIFCRef>& instProvs, 
+												   const Map<String, CppProviderBaseIFCRef>& secondaryInstProvs, 
+												   const Map<String, CppProviderBaseIFCRef>& methodProvs, 
 												   Cache<CIMClass>& cimClasses, 
-												   ProviderEnvironmentIFCRef env, 
+												   const ProviderEnvironmentIFCRef& env, 
 												   ProviderAgentEnvironment::LockingType lt, 
 												   ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
 												   UInt32 lockingTimeout)
@@ -562,8 +562,8 @@ ProviderAgentCIMOMHandle::PALocker::~PALocker()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(PALockerRef locker)
-	: m_locker(locker.getPtr())
+ProviderAgentCIMOMHandle::PAReadLock::PAReadLock(const PALockerRef& locker)
+	: m_locker(locker)
 {
 	m_locker->getReadLock(); 
 }
@@ -645,8 +645,8 @@ ProviderAgentCIMOMHandle::PALocker::getWriteLock()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(PALockerRef locker)
-	: m_locker(locker.getPtr())
+ProviderAgentCIMOMHandle::PAWriteLock::PAWriteLock(const PALockerRef& locker)
+	: m_locker(locker)
 {
 	m_locker->getWriteLock(); 
 }

@@ -176,7 +176,7 @@ HDB::getHandle()
 	{
 		OW_THROW(HDBException, "Can't get handle from closed HDB");
 	}
-	File file = FileSystem::openFile(m_fileName);
+	const File& file = FileSystem::openFile(m_fileName);
 	if (!file)
 	{
 		return HDBHandle();
@@ -193,7 +193,7 @@ HDB::decHandleCount()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HDB::setOffsets(File file, Int32 firstRootOffset, Int32 lastRootOffset,
+HDB::setOffsets(File& file, Int32 firstRootOffset, Int32 lastRootOffset,
 	Int32 firstFreeOffset)
 {
 	MutexLock l(m_guard);
@@ -207,19 +207,19 @@ HDB::setOffsets(File file, Int32 firstRootOffset, Int32 lastRootOffset,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HDB::setFirstRootOffSet(File file, Int32 offset)
+HDB::setFirstRootOffSet(File& file, Int32 offset)
 {
 	setOffsets(file, offset, m_hdrBlock.lastRoot, m_hdrBlock.firstFree);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HDB::setLastRootOffset(File file, Int32 offset)
+HDB::setLastRootOffset(File& file, Int32 offset)
 {
 	setOffsets(file, m_hdrBlock.firstRoot, offset, m_hdrBlock.firstFree);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HDB::setFirstFreeOffSet(File file, Int32 offset)
+HDB::setFirstFreeOffSet(File& file, Int32 offset)
 {
 	setOffsets(file, m_hdrBlock.firstRoot, m_hdrBlock.lastRoot, offset);
 }
@@ -228,7 +228,7 @@ HDB::setFirstFreeOffSet(File file, Int32 offset)
 // size. If no block in the free list is large enough or the free list
 // is empty, then the offset to the end of the file is returned
 Int32
-HDB::findBlock(File file, Int32 size)
+HDB::findBlock(File& file, Int32 size)
 {
 	MutexLock l(m_guard);
 	Int32 offset = -1;
@@ -279,7 +279,7 @@ HDB::findBlock(File file, Int32 size)
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HDB::removeBlockFromFreeList(File file, HDBBlock& fblk)
+HDB::removeBlockFromFreeList(File& file, HDBBlock& fblk)
 {
 	MutexLock l(m_guard);
 	HDBBlock cblk;
@@ -312,7 +312,7 @@ HDB::removeBlockFromFreeList(File file, HDBBlock& fblk)
 //////////////////////////////////////////////////////////////////////////////
 // Add a block to the free list.
 void
-HDB::addBlockToFreeList(File file, const HDBBlock& parmblk,
+HDB::addBlockToFreeList(File& file, const HDBBlock& parmblk,
 	Int32 offset)
 {
 	MutexLock l(m_guard);
@@ -378,7 +378,7 @@ HDB::addBlockToFreeList(File file, const HDBBlock& parmblk,
 // Upon return the file pointer should be positioned immediately after
 // the given node in the file.
 void
-HDB::addRootNode(File file, HDBBlock& fblk, Int32 offset)
+HDB::addRootNode(File& file, HDBBlock& fblk, Int32 offset)
 {
 	MutexLock l(m_guard);
 	fblk.parent = -1;
@@ -402,7 +402,7 @@ HDB::addRootNode(File file, HDBBlock& fblk, Int32 offset)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-HDB::writeBlock(HDBBlock& fblk, File file, Int32 offset)
+HDB::writeBlock(HDBBlock& fblk, File& file, Int32 offset)
 {
 	fblk.chkSum = 0;
 	UInt32 chkSum = calcCheckSum(reinterpret_cast<unsigned char*>(&fblk), sizeof(fblk));
@@ -416,7 +416,7 @@ HDB::writeBlock(HDBBlock& fblk, File file, Int32 offset)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC	
 void
-HDB::readBlock(HDBBlock& fblk, File file, Int32 offset)
+HDB::readBlock(HDBBlock& fblk, const File& file, Int32 offset)
 {
 	int cc = file.read(&fblk, sizeof(fblk), offset);
 	if (cc != sizeof(fblk))
@@ -550,7 +550,7 @@ HDBHandle::HDBHandle() :
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-HDBHandle::HDBHandle(HDB* pdb, File file) :
+HDBHandle::HDBHandle(HDB* pdb, const File& file) :
 	m_pdata(new HDBHandleData(pdb, file))
 {
 }

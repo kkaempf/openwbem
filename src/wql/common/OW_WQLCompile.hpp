@@ -44,7 +44,7 @@ public:
 	{
 		term_el()
 		{}
-		term_el(bool mark_, WQLOperation op_, WQLOperand opn1_, WQLOperand opn2_)
+		term_el(bool mark_, WQLOperation op_, const WQLOperand& opn1_, const WQLOperand& opn2_)
 			: mark(mark_)
 			, op(op_)
 			, opn1(opn1_)

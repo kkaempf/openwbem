@@ -82,22 +82,29 @@ using std::flush;
 #define OW_LOGFATALERROR(x) m_options.env->getLogger()->logFatalError(x)
 #endif
 //////////////////////////////////////////////////////////////////////////////
-HTTPSvrConnection::HTTPSvrConnection(Socket socket,
+HTTPSvrConnection::HTTPSvrConnection(const Socket& socket,
 	HTTPServer* htin,
 	IntrusiveReference<UnnamedPipe>& upipe,
 	const HTTPServer::Options& opts)
 	: Runnable()
-	, m_requestLine(), m_requestHeaders(), m_pHTTPServer(htin)
-	, m_socket(socket), m_ostr(socket.getOutputStream())
-	, m_resCode(SC_OK), m_needSendError(false)
-	, m_responseHeaders(), m_httpVersion(HTTP_VER_BAD)
-	, m_method(BAD), m_istr(socket.getInputStream())
+	, m_requestLine()
+	, m_requestHeaders()
+	, m_pHTTPServer(htin)
+	, m_socket(socket)
+	, m_ostr(m_socket.getOutputStream())
+	, m_resCode(SC_OK)
+	, m_needSendError(false)
+	, m_responseHeaders()
+	, m_httpVersion(HTTP_VER_BAD)
+	, m_method(BAD)
+	, m_istr(m_socket.getInputStream())
 	, m_isClose(false)
 	, m_contentLength(-1)
 	, m_chunkedIn(false)
 	, m_deflateCompressionIn(false)
 	, m_deflateCompressionOut(false)
-	, m_errDetails(), m_reqHeaderPrefix()
+	, m_errDetails()
+	, m_reqHeaderPrefix()
 	, m_respHeaderPrefix()
 	, m_isAuthenticated(false)
 	, m_upipe(upipe)
@@ -322,7 +329,7 @@ HTTPSvrConnection::run()
 	//m_socket.disconnect();
 }
 void
-HTTPSvrConnection::cleanUpIStreams(CIMProtocolIStreamIFCRef istr)
+HTTPSvrConnection::cleanUpIStreams(const CIMProtocolIStreamIFCRef& istr)
 {
 	if (istr)
 	{

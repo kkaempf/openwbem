@@ -89,7 +89,7 @@ public:
 	 * @return The number of bytes read. If EOF or an error occurs, a short
 	 * count or zero is returned.
 	 */
-	size_t read(void* bfr, size_t numberOfBytes, off_t offset=-1L)
+	size_t read(void* bfr, size_t numberOfBytes, off_t offset=-1L) const
 	{
 		return FileSystem::read(m_hdl, bfr, numberOfBytes, offset);
 	}
@@ -116,7 +116,7 @@ public:
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	int seek(off_t offset, int whence)
+	int seek(off_t offset, int whence) const
 	{
 		return FileSystem::seek(m_hdl, offset, whence);
 	}
@@ -124,14 +124,14 @@ public:
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	off_t tell()
+	off_t tell() const
 	{
 		return FileSystem::tell(m_hdl);
 	}
 	/**
 	 * Position the file pointer to the beginning of the file.
 	 */
-	void rewind()
+	void rewind() const
 	{
 		FileSystem::rewind(m_hdl);
 	}

@@ -56,12 +56,12 @@ using namespace WBEMFlags;
 class ProviderAgentCIMOMHandle : public CIMOMHandleIFC
 {
 public:
-	ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIFCRef> assocProvs, 
-							 Map<String, CppProviderBaseIFCRef> instProvs, 
-							 Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
-							 Map<String, CppProviderBaseIFCRef> methodProvs, 
+	ProviderAgentCIMOMHandle(const Map<String, CppProviderBaseIFCRef>& assocProvs, 
+							 const Map<String, CppProviderBaseIFCRef>& instProvs, 
+							 const Map<String, CppProviderBaseIFCRef>& secondaryInstProvs, 
+							 const Map<String, CppProviderBaseIFCRef>& methodProvs, 
 							 Cache<CIMClass>& cimClasses, 
-							 ProviderEnvironmentIFCRef env,
+							 const ProviderEnvironmentIFCRef& env,
 							 ProviderAgentEnvironment::LockingType lt, 
 							 ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
 							 UInt32 lockingTimeout); 
@@ -713,18 +713,18 @@ private:
 	class PAReadLock
 	{
 	public: 
-		PAReadLock(PALockerRef pl); 
+		PAReadLock(const PALockerRef& pl); 
 		~PAReadLock(); 
 	private: 
-		PALocker* m_locker; 
+		PALockerRef m_locker; 
 	}; 
 	class PAWriteLock
 	{
 	public: 
-		PAWriteLock(PALockerRef pl); 
+		PAWriteLock(const PALockerRef& pl); 
 		~PAWriteLock(); 
 	private: 
-		PALocker* m_locker; 
+		PALockerRef m_locker; 
 	}; 
 	Map<String, CppProviderBaseIFCRef> m_assocProvs; 
 	Map<String, CppProviderBaseIFCRef> m_instProvs; 

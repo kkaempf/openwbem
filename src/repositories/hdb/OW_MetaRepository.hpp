@@ -52,7 +52,7 @@ public:
 	/**
 	 * Create a new MetaRepository object.
 	 */
-	MetaRepository(ServiceEnvironmentIFCRef env);
+	MetaRepository(const ServiceEnvironmentIFCRef& env);
 	~MetaRepository();
 	/**
 	 * Open this MetaRepository.
@@ -198,7 +198,7 @@ public:
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(String ns);
+	virtual int createNameSpace(const String& ns);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 private:
 	// unimplemented

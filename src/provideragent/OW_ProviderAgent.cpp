@@ -61,7 +61,7 @@ namespace
 class SelectEngineThread : public Thread
 {
 public:
-	SelectEngineThread(Reference<Array<SelectablePair_t> > selectables)
+	SelectEngineThread(const Reference<Array<SelectablePair_t> >& selectables)
 	: Thread()
 	, m_selectables(selectables)
 	, m_stopObject(UnnamedPipe::createUnnamedPipe())
@@ -107,12 +107,12 @@ const char* const ProviderAgent::LockingType_opt = "provider_agent.locking_type"
 const char* const ProviderAgent::LockingTimeout_opt = "provider_agent.locking_timeout";
 const char* const ProviderAgent::DynamicClassRetrieval_opt = "provider_agent.dynamic_class_retrieval"; 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap, 
-							 Array<CppProviderBaseIFCRef> providers, 
-							 Array<CIMClass> cimClasses, 
-							 Array<RequestHandlerIFCRef> requestHandlers, 
-							 AuthenticatorIFCRef authenticator,
-							 LoggerRef logger, 
+ProviderAgent::ProviderAgent(const ConfigFile::ConfigMap& configMap, 
+							 const Array<CppProviderBaseIFCRef>& providers, 
+							 const Array<CIMClass>& cimClasses, 
+							 const Array<RequestHandlerIFCRef>& requestHandlers, 
+							 const AuthenticatorIFCRef& authenticator,
+							 const LoggerRef& logger, 
 							 const String& callbackURL)
 	: m_httpServer(new HTTPServer)
 {

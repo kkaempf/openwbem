@@ -75,7 +75,7 @@ public:
 	HTTPXMLCIMListenerServiceEnvironment(
 		IntrusiveReference<ListenerAuthenticator> authenticator,
 		RequestHandlerIFCRef listener,
-		LoggerRef logger,
+		const LoggerRef& logger,
 		Reference<Array<SelectablePair_t> > selectables)
 	: m_pLAuthenticator(authenticator)
 	, m_XMLListener(listener)
@@ -179,7 +179,7 @@ private:
 class SelectEngineThread : public Thread
 {
 public:
-	SelectEngineThread(Reference<Array<SelectablePair_t> > selectables)
+	SelectEngineThread(const Reference<Array<SelectablePair_t> >& selectables)
 	: Thread()
 	, m_selectables(selectables)
 	, m_stopObject(UnnamedPipe::createUnnamedPipe())
@@ -218,7 +218,7 @@ private:
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-HTTPXMLCIMListener::HTTPXMLCIMListener(LoggerRef logger)
+HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger)
 	: m_XMLListener(SharedLibraryRef(0), new XMLListener(this))
 	, m_pLAuthenticator(new ListenerAuthenticator)
 	, m_httpServer(new HTTPServer)
@@ -303,7 +303,7 @@ HTTPXMLCIMListener::registerForIndication(
 	const String& filter,
 	const String& querylanguage,
 	const String& sourceNamespace,
-	CIMListenerCallbackRef cb,
+	const CIMListenerCallbackRef& cb,
 	const ClientAuthCBIFCRef& authCb)
 {
 	registrationInfo reg;

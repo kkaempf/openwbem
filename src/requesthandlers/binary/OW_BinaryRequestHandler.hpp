@@ -57,67 +57,67 @@ public:
 	virtual String getContentType() const;
 private:
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
-	void createClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void createClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void modifyClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void deleteClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	void createInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void createInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void deleteInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void modifyInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-	void setProperty(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void setProperty(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-	void enumClasses(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumClasses(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void getClass(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getClass(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void getInstance(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getInstance(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	
-	void getQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getQual(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-	void setQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void setQual(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void enumQualifiers(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumQualifiers(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void deleteQual(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteQual(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-	void getProperty(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getProperty(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
-	void enumClassNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumClassNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void enumInstances(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumInstances(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void enumInstanceNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void enumInstanceNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 			std::istream& istrm);
-	void invokeMethod(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void invokeMethod(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void execQuery(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void execQuery(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	void associators(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void associators(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void associatorNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void associatorNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void references(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void references(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
-	void referenceNames(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void referenceNames(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif
-	void getServerFeatures(CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void getServerFeatures(const CIMOMHandleIFCRef& chdl, std::ostream& ostrm,
 		std::istream& istrm);
 	void writeError(std::ostream& ostrm, const char* msg);
 	bool writeFileName(std::ostream& ostrm, const String& fname);

@@ -48,8 +48,8 @@ namespace OpenWBEM
 class ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
 {
 public:
-	ProviderAgentProviderEnvironment(LoggerRef logger, 
-									 ConfigFile::ConfigMap configMap,
+	ProviderAgentProviderEnvironment(const LoggerRef& logger, 
+									 const ConfigFile::ConfigMap& configMap,
 									 OperationContext& operationContext, 
 									 const String& callbackURL, 
 									 ClientCIMOMHandleConnectionPool& pool); 
