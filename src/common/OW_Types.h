@@ -111,6 +111,8 @@ typedef int OW_Select_t;
 #define OW_SHAREDLIB_EXTENSION ".dylib"
 #elif defined OW_HPUX
 #define OW_SHAREDLIB_EXTENSION ".sl"
+#elif defined OW_NETWARE
+#define OW_SHAREDLIB_EXTENSION ".nlm"
 #else
 #define OW_SHAREDLIB_EXTENSION ".so"
 #endif
