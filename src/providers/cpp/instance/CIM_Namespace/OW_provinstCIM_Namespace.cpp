@@ -304,6 +304,11 @@ public:
 			}
 	
 			OW_CIMInstance inst = cimClass.newInstance();
+
+			for (size_t i = 0; i < instanceName.getKeys().size(); ++i)
+			{
+				inst.setProperty(instanceName.getKeys()[i]);
+			}
 			// This property is Required
 			inst.setProperty("ClassInfo", OW_CIMValue(0));
 			//newInst.setProperty("DescriptionOfClassInfo", OW_CIMValue(/* TODO: Put the value here */));
