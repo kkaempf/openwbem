@@ -445,17 +445,18 @@ TestInstalledHeadersOneByOne()
 	fi
 
 	cd $STAGEDIR
-		echo "Testing header inclusion one-by-one..."
-		rm -rf compilation
-		mkdir compilation
-		cd compilation
-		  INCLUSION_FAIL_LIST=""
-		for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
-		  EXECFILE=`basename $i`
-		  OUTFILE=$EXECFILE.cpp
-		  echo '#include "OW_config.h"' >> $OUTFILE
-		  echo '#include "'"$EXECFILE"'"' >> $OUTFILE
-	  cat <<EOS >> $OUTFILE
+	echo "Testing header inclusion one-by-one..."
+	rm -rf compilation
+	mkdir compilation
+	cd compilation
+	INCLUSION_FAIL_LIST=""
+
+	for i in `ls $STAGEDIR/$OWINCLUDEDIR/openwbem/*`; do
+		EXECFILE=`basename $i`
+		OUTFILE=$EXECFILE.cpp
+		echo '#include "OW_config.h"' >> $OUTFILE
+		echo '#include "'"$EXECFILE"'"' >> $OUTFILE
+		cat <<EOS >> $OUTFILE
 #include <iostream>
 int main(int argc, char* argv[])
 {
@@ -468,45 +469,42 @@ EOS
 		g++ -o $EXECFILE.o -I$STAGEDIR/$OWINCLUDEDIR/openwbem -I/usr/local/ssl/include -c $OUTFILE \
 			|| ExitWithFail "Failed to compile header test"
 		echo "."
-#		g++ -L$STAGEDIR/$OWLIBDIR -lopenwbem -lowserver -o $EXECFILE \
-#			$EXECFILE.o || ExitWithFail
-#		echo "."
-#		./$EXECFILE || ExitWithFail
 
 		# check for inclusion of OW_config.h
-			if [ ! "$EXECFILE" = "OW_config.h" ] \
-				&& [ ! "$EXECFILE" = "config.h" ] \
-				&& [ ! "$EXECFILE" = "OW_MemTracer.hpp" ];
-			then
-				grep "OW_config.h" $i > /dev/null
-				if [ ! "$?" = "0" ]; then
-					echo " ##### Doesn't include \"OW_config.h\"!"
-					INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
-				fi
-
-				grep "Copyright" $i > /dev/null
-				if [ ! "$?" = "0" ]; then
-					echo " ##### Doesn't have a Copyright!"
-					INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
-				fi
-
-				grep "[Aa]uthor" $i > /dev/null
-				if [ ! "$?" = "0" ]; then
-					echo " ##### Doesn't have an @author!"
-					INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
-				fi
+		if [ ! "$EXECFILE" = "OW_config.h" ] \
+			&& [ ! "$EXECFILE" = "config.h" ] \
+			&& [ ! "$EXECFILE" = "OW_MemTracer.hpp" ];
+		then
+			grep "OW_config.h" $i > /dev/null
+			if [ ! "$?" = "0" ]; then
+				echo " ##### Doesn't include \"OW_config.h\"!"
+				INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
 			fi
-			echo "."
-		done
-		if [ ! "$INCLUSION_FAIL_LIST" = "" ]; then
-		echo "FAIL!  ## The following headers do not include \"OW_config.h\":"
-			for j in $INCLUSION_FAIL_LIST; do
-				echo "   ###   $j"
-			done
-			ExitWithFail
+
+			grep "Copyright" $i > /dev/null
+			if [ ! "$?" = "0" ]; then
+				echo " ##### Doesn't have a Copyright!"
+				INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
+			fi
+
+			grep "[Aa]uthor" $i > /dev/null
+			if [ ! "$?" = "0" ]; then
+				echo " ##### Doesn't have an @author!"
+				INCLUSION_FAIL_LIST="$INCLUSION_FAIL_LIST $EXECFILE"
+			fi
 		fi
-		cd ..		   
-		echo 'Header inclusion (one-by-one) passed!' 
+		echo "."
+	done
+
+	if [ ! "$INCLUSION_FAIL_LIST" = "" ]; then
+	echo "FAIL!  ## The following headers failed the test:"
+		for j in $INCLUSION_FAIL_LIST; do
+			echo "   ###   $j"
+		done
+		ExitWithFail
+	fi
+	cd ..		   
+	echo 'Header inclusion (one-by-one) passed!' 
 }
 
 #############################################################################
