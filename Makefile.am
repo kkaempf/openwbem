@@ -6,7 +6,6 @@ ow_ar.sh \
 Makefile-shared-lib.inc \
 AuthModule.HOWTO \
 ACL.HOWTO \
-C++Provider.HOWTO \
 PORTING.txt \
 ProviderInterface.HOWTO \
 LICENSE \
