@@ -17,9 +17,9 @@ TMPLIBDIR = .$@.libs
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
 
-all-local: $(OW_SHARED_LIBS)
+all-ow-shared-libs: $(OW_SHARED_LIBS)
 
-clean-local:
+clean-ow-shared-libs:
 	for i in $(OW_SHARED_LIBS); do \
 		rm -rf $$i* .$$i.libs; \
 	done

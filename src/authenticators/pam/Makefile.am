@@ -1,6 +1,12 @@
 if USE_PAM
 include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
+install-exec-local : install-ow-shared-libs
+uninstall-local : uninstall-ow-shared-libs
+
 
 OW_SHARED_LIBS = libpamauthentication.so
 SHAREDLIBADD = -lpam
