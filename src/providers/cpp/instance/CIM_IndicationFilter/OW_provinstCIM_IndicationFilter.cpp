@@ -62,7 +62,7 @@ public:
 		// get the indication server and save it.
 		if (indicationsEnabled)
 		{
-			if (!CIMOMEnvironment::g_cimomEnvironment->getIndicationServer())
+			if (!CIMOMEnvironment::instance()->getIndicationServer())
 			{
 				indicationsEnabled = false;
 			}
@@ -110,7 +110,7 @@ public:
 		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
 		// Tell the indication server about the modified subscription.
-		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->modifyFilter(
+		CIMOMEnvironment::instance()->getIndicationServer()->modifyFilter(
 			ns,
 			modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass),
 			env->getUserName());

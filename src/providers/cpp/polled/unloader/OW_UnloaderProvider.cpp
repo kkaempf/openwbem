@@ -68,8 +68,8 @@ Int32
 UnloaderProvider::poll(const ProviderEnvironmentIFCRef &/*env*/)
 {
 	//OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "Polling UnloaderProvider");
-	CIMOMEnvironment::g_cimomEnvironment->unloadProviders();
-	CIMOMEnvironment::g_cimomEnvironment->unloadReqHandlers();
+	CIMOMEnvironment::instance()->unloadProviders();
+	CIMOMEnvironment::instance()->unloadReqHandlers();
 	return -1;
 }
 /**

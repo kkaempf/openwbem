@@ -52,8 +52,50 @@ class OW_COMMON_API ServiceIFC : public IntrusiveCountableBase
 {
 public:
 	virtual ~ServiceIFC();
-	virtual void setServiceEnvironment(const ServiceEnvironmentIFCRef& env) = 0;
-	virtual void startService() = 0;
+	/**
+	 * init() will be called to give the derived class an opportunity to initialize itself.
+	 * Do not create threads which interact with the environment until start() is called.
+	 * During the loading/initializing phase, the environment is single-threaded.
+	 * @param env The service's interface to it's environment. A copy of this may be saved and re-used.
+	 *  All copies of env or objects obtained by calling member functions of env should be set to 0 in
+	 *  shutdown() to prevent circular reference counts.
+	 */
+	virtual void init(const ServiceEnvironmentIFCRef& env) = 0;
+	/**
+	 * initialized() will be called after init() has been sucessfully called on all services.
+	 * This gives a service the chance to communicate with another service if necessary.
+	 * The default implementation does nothing.
+	 */
+	virtual void initialized();
+
+	/**
+	 * In start(), a service should start doing whatever it does, such as starting a new thread or adding
+	 * selectables to the environment.
+	 * A service can't rely on the order of initalization, so if it needs to communicate with another one,
+	 * that works hould be done in started()
+	 * start() should not return until the service is actually started, but it must return.
+	 */
+	virtual void start() = 0;
+
+	/**
+	 * started() will be called on all services after start() has been called on all services.
+	 * The default implementation does nothing.
+	 */
+	virtual void started();
+
+	/**
+	 * shuttingdown() will be called before shutdown() is called on all services. This gives a service the
+	 * chance to communicate with any other services before they are shutdown.  After shuttingDown() is called
+	 * the services will begin to be shutdown.
+	 * The default implementation does nothing.
+	 */
+	virtual void shuttingDown();
+
+	/**
+	 * The service must shutdown completely before returning from this function.
+	 * All copies of the service environment or objects obtained from it should be set to 0 to avoid
+	 * circular reference counts.
+	 */
 	virtual void shutdown() = 0;
 };
 

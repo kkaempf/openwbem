@@ -114,25 +114,25 @@ const char* const ProviderAgent::UseConnectionCredentials_opt = "provider_agent.
 
 //////////////////////////////////////////////////////////////////////////////
 ProviderAgent::ProviderAgent(
-	const ConfigFile::ConfigMap& configMap, 
-	const Array<CppProviderBaseIFCRef>& providers, 
-	const Array<CIMClass>& cimClasses, 
-	const Array<RequestHandlerIFCRef>& requestHandlers, 
+	const ConfigFile::ConfigMap& configMap,
+	const Array<CppProviderBaseIFCRef>& providers,
+	const Array<CIMClass>& cimClasses,
+	const Array<RequestHandlerIFCRef>& requestHandlers,
 	const AuthenticatorIFCRef& authenticator,
-	const LoggerRef& logger, 
+	const LoggerRef& logger,
 	const String& callbackURL,
 	const ProviderAgentLockerIFCRef& locker)
 	: m_httpServer(new HTTPServer)
 {
-	Reference<Array<SelectablePair_t> > 
+	Reference<Array<SelectablePair_t> >
 			selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new ProviderAgentEnvironment(configMap,
-			providers, cimClasses, authenticator, requestHandlers, 
+			providers, cimClasses, authenticator, requestHandlers,
 			logger, callbackURL, selectables, locker));
-	m_httpServer->setServiceEnvironment(env);
-	m_httpServer->startService();  // The http server will add it's server
+	m_httpServer->init(env);
+	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
-	// the selectabls defined above.  We'll give these to the select engine 
+	// the selectabls defined above.  We'll give these to the select engine
 	// thread below which will use them to run the select engine.
 	
 	// start a thread to run the http server

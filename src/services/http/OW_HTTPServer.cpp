@@ -261,7 +261,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
+HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 {
 	try
 	{
@@ -463,7 +463,7 @@ private:
 };
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPServer::startService()
+HTTPServer::start()
 {
 	ServiceEnvironmentIFCRef env = m_options.env;
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);

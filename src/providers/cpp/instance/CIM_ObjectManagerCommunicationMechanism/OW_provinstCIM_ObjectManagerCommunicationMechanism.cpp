@@ -77,7 +77,7 @@ public:
 	{
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
-		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
+		CIMInstanceArray insts = CIMOMEnvironment::instance()->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))
@@ -106,7 +106,7 @@ public:
 		const CIMClass& cimClass )
 	{
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
-		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
+		CIMInstanceArray insts = CIMOMEnvironment::instance()->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))
@@ -144,7 +144,7 @@ public:
 		{
 			OW_THROWCIM(CIMException::NOT_FOUND);
 		}
-		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
+		CIMInstanceArray insts = CIMOMEnvironment::instance()->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
 			if (insts[i].getClassName().equalsIgnoreCase(className))

@@ -130,8 +130,9 @@ public:
 	virtual void setInteropInstance(const CIMInstance& inst);
 
 
-	// do not use this variable unless absolutely necessary!
-	static CIMOMEnvironmentRef g_cimomEnvironment;
+	// do not use this unless absolutely necessary!
+	static CIMOMEnvironmentRef& instance();
+
 private:
 	void _createLogger();
 	void _loadConfigItemsFromFile(const String& filename);

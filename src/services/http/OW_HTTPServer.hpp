@@ -58,8 +58,8 @@ class OW_HTTP_API HTTPServer : public ServiceIFC
 public:
 	HTTPServer();
 	virtual ~HTTPServer();
-	virtual void setServiceEnvironment(const ServiceEnvironmentIFCRef& env);
-	virtual void startService();
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void start();
 	/**
 	 * Shutdown the http server.  This function does not return
 	 * untill all connections have been terminated, and cleaned up.

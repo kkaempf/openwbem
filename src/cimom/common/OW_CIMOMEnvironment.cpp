@@ -82,8 +82,21 @@ OW_DEFINE_EXCEPTION_WITH_ID(CIMOMEnvironment)
 using std::cerr;
 using std::endl;
 
-// static global
-CIMOMEnvironmentRef CIMOMEnvironment::g_cimomEnvironment;
+namespace
+{
+// the one and only
+CIMOMEnvironmentRef g_cimomEnvironment;
+}
+
+CIMOMEnvironmentRef&
+CIMOMEnvironment::instance()
+{
+	if (!g_cimomEnvironment)
+	{
+		g_cimomEnvironment = CIMOMEnvironmentRef(new CIMOMEnvironment);
+	}
+	return g_cimomEnvironment;
+}
 
 String CIMOMEnvironment::COMPONENT_NAME("ow.owcimomd");
 
@@ -290,7 +303,7 @@ private:
 void
 CIMOMEnvironment::startServices()
 {
-	// TODO: Split this up into 3 sections: load, init, start
+	// TODO: Split this up into 3 sections: load, init, initialized, start, started
 	{
 		MutexLock ml(m_monitor);
 
@@ -329,7 +342,7 @@ CIMOMEnvironment::startServices()
 
 	for (size_t i = 0; i < m_services.size(); i++)
 	{
-		m_services[i]->startService();
+		m_services[i]->start();
 	}
 	if (!getConfigItem(ConfigOpts::SINGLE_THREAD_opt).equalsIgnoreCase("true"))
 	{
@@ -625,10 +638,10 @@ CIMOMEnvironment::_loadServices()
 			continue;
 		}
 #ifdef OW_DARWIN
-                if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
-                {
-                        continue;
-                }
+		if (dirEntries[i].indexOf(OW_VERSION) != String::npos)
+		{
+				continue;
+		}
 #endif // OW_DARWIN
 		String libName = libPath;
 		libName += dirEntries[i];
@@ -637,10 +650,10 @@ CIMOMEnvironment::_loadServices()
 				"createService", getLogger(COMPONENT_NAME));
 		if (srv)
 		{
-			// save it first so if setServiceEnvironment throws it won't get
+			// save it first so if init throws it won't get
 			// unloaded until later.
 			m_services.append(srv);
-			srv->setServiceEnvironment(g_cimomEnvironment);
+			srv->init(g_cimomEnvironment);
 			OW_LOG_INFO(m_Logger, Format("CIMOM loaded service from file: %1", libName));
 		}
 		else

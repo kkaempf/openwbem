@@ -67,7 +67,7 @@ const String COMPONENT_NAME("ow.owcimomd");
 int main(int argc, char* argv[])
 {
     int rval = 0;
-	CIMOMEnvironmentRef env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
+	CIMOMEnvironmentRef env = CIMOMEnvironment::instance();
 	
 	// until the config file is read and parsed, just use a logger that prints everything to stderr.
 	LoggerRef logger(new CerrLogger());
@@ -164,13 +164,13 @@ int main(int argc, char* argv[])
 						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
-					env = CIMOMEnvironment::g_cimomEnvironment = 0;
+					env = CIMOMEnvironment::instance() = 0;
 					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
 					Platform::rerunDaemon();
 
 					// typically on *nix, restartDaemon() doesn't return, however to account for environments where
 					// it won't we'll leave this code here to re-initialize.
-					env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
+					env = CIMOMEnvironment::instance() = new CIMOMEnvironment;
 					processCommandLine(argc, argv, env);
 					env->init();
 					env->startServices();
@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
-	CIMOMEnvironment::g_cimomEnvironment = 0;
+	CIMOMEnvironment::instance() = 0;
 	OW_LOG_INFO(logger, "CIMOM has shutdown");
 	return rval;
 }

@@ -305,8 +305,8 @@ HTTPXMLCIMListener::HTTPXMLCIMListener(const LoggerRef& logger)
 		selectables(new Array<SelectablePair_t>);
 	ServiceEnvironmentIFCRef env(new HTTPXMLCIMListenerServiceEnvironment(
 		m_pLAuthenticator, m_XMLListener, logger, selectables));
-	m_httpServer->setServiceEnvironment(env);
-	m_httpServer->startService();  // The http server will add it's server
+	m_httpServer->init(env);
+	m_httpServer->start();  // The http server will add it's server
 	// sockets to the environment's selectables, which is really
 	// the selectabls defined above.  We'll give these to the select engine thread
 	// below which will use them to run the select engine.
