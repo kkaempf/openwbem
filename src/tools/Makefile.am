@@ -43,7 +43,6 @@ owexecwql \
 owenumnamespace \
 $(NAMESPACE_MANIPULATION_PROGS) \
 $(ENUMQUALPROG) \
-owtruststore \
 owenumclassnames \
 owenumclasses \
 owrepositorydump
@@ -204,17 +203,17 @@ owrepositorydump_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owrepositorydump$(EXEEXT)
 
-### owenumclasses
-owtruststore_SOURCES = owtruststore.cpp
+### owtruststore
+#owtruststore_SOURCES = owtruststore.cpp
 
-owtruststore_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
-$(SSL_LIBS) \
-$(BINLINKAPPENDFLAGS)
+#owtruststore_LDADD = \
+#-L$(top_builddir)/src/common -lopenwbem \
+#$(SSL_LIBS) \
+#$(BINLINKAPPENDFLAGS)
 
-owtruststore_LDFLAGS = \
-$(CXXBINLINKFLAGS) \
--o owtruststore$(EXEEXT)
+#owtruststore_LDFLAGS = \
+#$(CXXBINLINKFLAGS) \
+#-o owtruststore$(EXEEXT)
 
 
 
