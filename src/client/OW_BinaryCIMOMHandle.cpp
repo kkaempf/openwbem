@@ -52,7 +52,6 @@
 #include <iostream>
 #endif
 
-
 using std::ostream;
 using std::iostream;
 using std::istream;
@@ -434,7 +433,7 @@ OW_BinaryCIMOMHandle::invokeMethod(const OW_CIMObjectPath& name,
 		}
 
 		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_PARAMVALUEARRAY);
-		outParams.readObject(strm);
+		outParams.readObject(*in);
 	}
 	catch(OW_IOException& e)
 	{
