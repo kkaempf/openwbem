@@ -53,7 +53,7 @@ public:
 	/**
 	 * Create a NULL File object.
 	 */
-	File() : m_hdl(-1)
+	File() : m_hdl(OW_INVALID_FILEHANDLE)
 	{
 	}
 	/**
@@ -141,10 +141,10 @@ public:
 	 */
 	int close()
 	{
-		if (m_hdl != -1)
+		if (m_hdl != OW_INVALID_FILEHANDLE)
 		{
 			int rv = FileSystem::close(m_hdl);
-			m_hdl = -1;
+			m_hdl = OW_INVALID_FILEHANDLE;
 			return rv;
 		}
 		return 0;
@@ -192,9 +192,9 @@ public:
 	 * @return true if this is a valid File object.
 	 */
 	operator safe_bool () const
-		{  return (m_hdl != -1) ? &File::m_hdl : 0; }
+		{  return (m_hdl != OW_INVALID_FILEHANDLE) ? &File::m_hdl : 0; }
 	bool operator!() const
-		{  return m_hdl == -1; }
+		{  return m_hdl == OW_INVALID_FILEHANDLE; }
 	/**
 	 * Equality operator.
 	 * @param rhs The File object to compare this object to.

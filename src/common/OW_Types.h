@@ -120,12 +120,12 @@ typedef int OW_Select_t;
 #define OW_PATHNAME_SEPARATOR ":"
 #endif
 
-typedef int		OW_FileHandle;
-
 #ifdef OW_WIN32
+typedef HANDLE OW_FileHandle;
 typedef int OW_UserId;
 typedef DWORD OW_ProcId;
 #else
+typedef int OW_FileHandle;
 typedef uid_t OW_UserId;
 typedef pid_t OW_ProcId;
 #endif

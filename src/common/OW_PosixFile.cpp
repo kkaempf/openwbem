@@ -52,16 +52,17 @@ namespace OpenWBEM
 {
 #ifdef OW_WIN32
 /////////////////////////////////////////////////////////////////////////////
-File::File(const File& x) : m_hdl(_dup(x.m_hdl))
+File::File(const File& x) : m_hdl(OW_INVALID_FILEHANDLE)
 {
+	DuplicateHandle(GetCurrentProcess(), x.m_hdl, GetCurrentProcess(),
+		&m_hdl , 0, FALSE, DUPLICATE_SAME_ACCESS);
 }
 namespace {
 /////////////////////////////////////////////////////////////////////////////
 // implementation of lock functions
 int
-doLock(int hdl, bool doWait)
+doLock(HANDLE hFile, bool doWait)
 {
-	HANDLE hFile = (HANDLE) _get_osfhandle(hdl);
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		return -1;
@@ -95,13 +96,12 @@ File::tryLock()
 int
 File::unlock()
 {
-	HANDLE hFile = (HANDLE) _get_osfhandle(m_hdl);
-	if (hFile == INVALID_HANDLE_VALUE)
+	if (m_hdl == INVALID_HANDLE_VALUE)
 	{
 		return -1;
 	}
 
-	if (!UnlockFileEx(hFile, 0, 0xffffffff, 0xffffffff, NULL))
+	if (!UnlockFileEx(m_hdl, 0, 0xffffffff, 0xffffffff, NULL))
 	{
 		return -1;
 	}

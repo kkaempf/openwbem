@@ -120,8 +120,11 @@ File
 openFile(const String& path)
 {
 #ifdef OW_WIN32
-	return File(::_sopen( path.c_str(), _O_RDWR, _SH_DENYNO, 
-        _S_IREAD | _S_IWRITE ));
+	HANDLE fh = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+
+	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
 #else
 	return File(::open(path.c_str(), O_RDWR));
 #endif
@@ -132,17 +135,19 @@ File
 createFile(const String& path)
 {
 #ifdef OW_WIN32
-	int fd = ::_sopen(path.c_str(), _O_CREAT | _O_EXCL | _O_TRUNC | _O_RDWR,
-		_SH_DENYNO, _S_IREAD | _S_IWRITE);
+	HANDLE fh = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
 #else
 	int fd = ::open(path.c_str(), O_CREAT | O_EXCL | O_TRUNC | O_RDWR, 0660);
-#endif
-
 	if (fd != -1)
 	{
 		return File(fd);
 	}
 	return File();
+#endif
+
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -150,8 +155,10 @@ File
 openOrCreateFile(const String& path)
 {
 #ifdef OW_WIN32
-	return File(::_sopen(path.c_str(), O_RDWR | O_CREAT, _SH_DENYNO,
-		_S_IREAD | _S_IWRITE));
+	HANDLE fh = CreateFile(path.c_str(), GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+	return (fh  != INVALID_HANDLE_VALUE) ? File(fh) : File();
 #else
 	return File(::open(path.c_str(), O_RDWR | O_CREAT, 0660));
 #endif
@@ -313,53 +320,107 @@ size_t
 read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
+#ifdef OW_WIN32
+	if(offset != -1L)
+	{
+		SetFilePointer(hdl, (LONG)offset, NULL, FILE_BEGIN);
+	}
+
+	DWORD bytesRead;
+	size_t cc = (size_t)-1;
+	if(ReadFile(hdl, bfr, (DWORD)numberOfBytes, &bytesRead, NULL))
+	{
+		cc = (size_t)bytesRead;
+	}
+	return cc;
+#else
 	if (offset != -1L)
 	{
 		_LSEEK(hdl, offset, SEEK_SET);
 	}
 	return _READ(hdl, bfr, numberOfBytes);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 size_t
 write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	off_t offset)
 {
+#ifdef OW_WIN32
+	if(offset != -1L)
+	{
+		SetFilePointer(hdl, (LONG)offset, NULL, FILE_BEGIN);
+	}
+
+	DWORD bytesWritten;
+	size_t cc = (size_t)-1;
+	if(WriteFile(hdl, bfr, (DWORD)numberOfBytes, &bytesWritten, NULL))
+	{
+		cc = (size_t)bytesWritten;
+	}
+	return cc;
+#else
+
 	if (offset != -1L)
 	{
 		_LSEEK(hdl, offset, SEEK_SET);
 	}
 	return _WRITE(hdl, bfr, numberOfBytes);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
 seek(const FileHandle& hdl, off_t offset, int whence)
 {
+#ifdef OW_WIN32
+	DWORD moveMethod;
+	switch(whence)
+	{
+		case SEEK_END: moveMethod = FILE_END; break;
+		case SEEK_CUR: moveMethod = FILE_CURRENT; break;
+		default: moveMethod = FILE_BEGIN; break;
+	}
+	return (off_t) SetFilePointer(hdl, (LONG)offset, NULL, moveMethod);
+#else
 	return _LSEEK(hdl, offset, whence);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 off_t
 tell(const FileHandle& hdl)
 {
+#ifdef OW_WIN32
+	return (off_t) SetFilePointer(hdl, 0L, NULL, FILE_CURRENT);
+#else
 	return _LSEEK(hdl, 0, SEEK_CUR);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 rewind(const FileHandle& hdl)
 {
+#ifdef OW_WIN32
+	SetFilePointer(hdl, 0L, NULL, FILE_BEGIN);
+#else
 	_LSEEK(hdl, 0, SEEK_SET);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 close(const FileHandle& hdl)
 {
+#ifdef OW_WIN32
+	return (CloseHandle(hdl)) ? 0 : -1;
+#else
 	return _CLOSEFILE(hdl);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int
 flush(FileHandle& hdl)
 {
 #ifdef OW_WIN32
-	return _commit(hdl);
+	return (FlushFileBuffers(hdl)) ? 0 : -1;
 #else
 	#ifdef OW_DARWIN
 		return ::fsync(hdl);
@@ -373,12 +434,32 @@ void
 initRandomFile(const String& filename)
 {
 #ifdef OW_WIN32
-	int hdl = ::_sopen(filename.c_str(), _O_CREAT | _O_TRUNC | _O_WRONLY,
-		_SH_DENYNO, _S_IREAD | _S_IWRITE );
+	char bfr[1024];
+	RandomNumber rnum(0, 0xFF);
+	for (size_t i = 0; i < 1024; ++i)
+	{
+		bfr[i] = (char)rnum.getNextNumber();
+	}
+	HANDLE fh = CreateFile(filename.c_str(), GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+	if(fh == INVALID_HANDLE_VALUE)
+	{
+		OW_THROW(FileSystemException, 
+			Format("Can't open random file %1 for writing",
+			filename).c_str());
+	}
+	DWORD bytesWritten;
+	size_t cc = (size_t)-1;
+	bool success = (WriteFile(fh, bfr, (DWORD)1024, &bytesWritten, NULL) != 0);
+	CloseHandle(fh);
+	if(!success || bytesWritten < 1024)
+	{
+		OW_THROW(FileSystemException, 
+			Format("Failed writing data to random file %1", filename).c_str());
+	}
 #else
 	int hdl = ::open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, 0600);
-#endif
-
 	if (hdl == -1)
 	{
 		OW_THROW(FileSystemException, Format("Can't open random file %1 for writing", filename).c_str());
@@ -390,6 +471,7 @@ initRandomFile(const String& filename)
 		_WRITE(hdl, &c, 1);
 	}
 	_CLOSEFILE(hdl);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
