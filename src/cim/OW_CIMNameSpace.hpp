@@ -218,6 +218,8 @@ public:
 private:
 
 	OW_COWReference<NSData> m_pdata;
+
+	friend bool operator<(const OW_CIMNameSpace& lhs, const OW_CIMNameSpace& rhs);
 };
 
 #endif

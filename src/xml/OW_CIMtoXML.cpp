@@ -32,11 +32,25 @@
 #include "OW_config.h"
 #include "OW_CIMtoXML.hpp"
 #include "OW_String.hpp"
-#include "OW_CIM.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_StringStream.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMFlavor.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMScope.hpp"
+#include "OW_CIMDateTime.hpp"
+#include "OW_CIMUrl.hpp"
+#include "OW_CIMQualifier.hpp"
+#include "OW_CIMMethod.hpp"
+#include "OW_CIMParameter.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -303,7 +317,7 @@ void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 	{
 		// Class object path
 
-		if (cop.getNameSpace() != CIM_DEFAULT_NS)
+		if (!cop.getNameSpace().empty())
 		{
 			if (cop.getFullNameSpace().isLocal())
 			{

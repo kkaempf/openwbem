@@ -33,9 +33,6 @@
 
 // TODO: Get rid of this file!
 
-// TODO: Get rid of this!
-#define CIM_DEFAULT_NS	"root"
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Char16.hpp"

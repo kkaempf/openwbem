@@ -29,7 +29,9 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMUrl.hpp"
+#include "OW_StrictWeakOrdering.hpp"
 #include <cctype>
 
 using std::ostream;
@@ -45,10 +47,18 @@ struct OW_CIMNameSpace::NSData
 };
 
 //////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMNameSpace::NSData& x, const OW_CIMNameSpace::NSData& y)
+{
+	return OW_StrictWeakOrdering(
+		x.m_nameSpace, y.m_nameSpace,
+		x.m_url, y.m_url);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMNameSpace::OW_CIMNameSpace() :
 	OW_CIMBase(), m_pdata(new NSData)
 {
-	m_pdata->m_nameSpace = CIM_DEFAULT_NS;
+	//m_pdata->m_nameSpace = CIM_DEFAULT_NS;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -65,7 +75,7 @@ OW_CIMNameSpace::OW_CIMNameSpace(const OW_CIMUrl& hostUrl,
 	m_pdata->m_url = hostUrl;
 	if(nameSpace.empty())
 	{
-		m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
+		//m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
 	}
 	else
 	{
@@ -79,7 +89,7 @@ OW_CIMNameSpace::OW_CIMNameSpace(const OW_String& nameSpace) :
 {
 	if(nameSpace.empty())
 	{
-		m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
+		//m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
 	}
 	else
 	{
@@ -93,7 +103,7 @@ OW_CIMNameSpace::OW_CIMNameSpace(const char* nameSpace) :
 {
 	if(nameSpace == 0 || nameSpace[0] == '\0')
 	{
-		m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
+		//m_pdata->m_nameSpace = OW_String(CIM_DEFAULT_NS);
 	}
 	else
 	{
@@ -117,7 +127,7 @@ OW_CIMNameSpace::~OW_CIMNameSpace()
 void
 OW_CIMNameSpace::setNull()
 {
-	m_pdata = NULL;
+	m_pdata = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -254,4 +264,8 @@ OW_CIMNameSpace::writeObject(ostream &ostrm) const
 	m_pdata->m_url.writeObject(ostrm);
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMNameSpace& lhs, const OW_CIMNameSpace& rhs)
+{
+	return *lhs.m_pdata < *rhs.m_pdata;
+}
