@@ -49,7 +49,7 @@ namespace OpenWBEM
 // Param allows parameters to be built for transmission
 // in an XML request
 //
-class Param
+class OW_XML_API Param
 {
 public:
 	enum ParamValues { VALUENOTSET = 0, VALUESET = 1 };

@@ -41,8 +41,8 @@
 namespace OpenWBEM
 {
 
-String XMLPrettyPrint(const String& xml);
-String XMLPrettyPrint(std::istream& xml);
+OW_XML_API String XMLPrettyPrint(const String& xml);
+OW_XML_API String XMLPrettyPrint(std::istream& xml);
 
 } // end namespace OpenWBEM
 

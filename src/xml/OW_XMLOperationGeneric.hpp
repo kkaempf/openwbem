@@ -50,7 +50,7 @@ namespace XMLOperationGeneric
 	/**
 	 * @throws CIMException
 	 */
-	void XMLGetCIMElement(CIMXMLParser& node);
+	OW_XML_API void XMLGetCIMElement(CIMXMLParser& node);
 } // end namespace XMLOperationGeneric
 
 } // end namespace OpenWBEM

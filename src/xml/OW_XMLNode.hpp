@@ -63,7 +63,7 @@ typedef Array<XMLNode> XMLNodeArray;
  * @version 1.0
  * @since 1/26/2001
  */
-class XMLNode
+class OW_XML_API XMLNode
 {
 public:
 	
@@ -408,9 +408,9 @@ private:
 	friend class XMLNodeImpl;
 };
 
-std::ostream& operator<<(std::ostream& ostr, const XMLNode& node);
+OW_XML_API std::ostream& operator<<(std::ostream& ostr, const XMLNode& node);
 
-class XMLNodeImpl : public IntrusiveCountableBase
+class OW_XML_API XMLNodeImpl : public IntrusiveCountableBase
 {
 public:
 	XMLNodeImpl(const String& name, const XMLAttributeArray& attrArray);

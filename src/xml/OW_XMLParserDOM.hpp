@@ -47,7 +47,7 @@ namespace OpenWBEM
 class String;
 class XMLNode;
 
-OW_DECLARE_EXCEPTION(DOM);
+OW_DECLARE_APIEXCEPTION(DOM, OW_XML_API)
 
 namespace XMLParserDOM
 {
@@ -59,7 +59,7 @@ namespace XMLParserDOM
 	 * Guaranteed to not be NULL.
 	 * @throws DOMException if xml is no good.
 	 */
-	XMLNode parse(const String& xmlData);
+	OW_XML_API XMLNode parse(const String& xmlData);
 	
 	/**
 	 * Parse the XML document to be read from the std::istream data
@@ -69,7 +69,7 @@ namespace XMLParserDOM
 	 * Guaranteed to not be NULL.
 	 * @throws DOMException if xml is no good.
 	 */
-	XMLNode parse(std::istream& data);
+	OW_XML_API XMLNode parse(std::istream& data);
 	
 
 } // end namespace XMLParserDOM

@@ -46,18 +46,18 @@ class CIMXMLParser;
 
 namespace XMLQualifier
 {
-	void processQualifierDecl(CIMXMLParser& result,
+	OW_XML_API void processQualifierDecl(CIMXMLParser& result,
 		CIMQualifierType& cimQualifier);
 
 	/**
 	 * @throws CIMException
 	 */
-	String getQualifierName(CIMXMLParser& node);
+	OW_XML_API String getQualifierName(CIMXMLParser& node);
 
 	/**
 	 * @throws CIMException
 	 */
-	void processScope(CIMXMLParser& parser,
+	OW_XML_API void processScope(CIMXMLParser& parser,
 		CIMQualifierType& cqt, const char* attrName,
 		CIMScope::Scope scopeValue);
 } // end namespace XMLQualifiers

@@ -49,7 +49,7 @@
 namespace OpenWBEM
 {
 
-class XMLPullParser
+class OW_XML_API XMLPullParser
 {
 public:
 	XMLPullParser(const String& str);

@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class CIMXMLParser : public XMLPullParser
+class OW_XML_API CIMXMLParser : public XMLPullParser
 {
 public:
 	// These must be sorted alphabetically, except E_UNKNOWN, which must be last!!!!!!!!!!!!!!!!!!!!!!!!!

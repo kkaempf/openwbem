@@ -48,7 +48,7 @@ const char *const CIM_PROTOCOL_VERSION = "1.0";
 const char *const XML_CIM_HEADER1 = "<?xml version=\"1.0\" ?>";
 const char *const XML_CIM_HEADER2 = "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
 
-class RequestHandlerIFCXML : public RequestHandlerIFC
+class OW_XML_API RequestHandlerIFCXML : public RequestHandlerIFC
 {
 public:
 	RequestHandlerIFCXML(): m_path() {}

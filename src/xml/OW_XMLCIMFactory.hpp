@@ -44,14 +44,14 @@ namespace OpenWBEM
 class CIMXMLParser;
 namespace XMLCIMFactory
 {
-	CIMObjectPath createObjectPath(CIMXMLParser& parser);
-	CIMClass createClass(CIMXMLParser& parser);
-	CIMInstance createInstance(CIMXMLParser& parser);
-	CIMValue createValue(CIMXMLParser& parser, String const& type);
-	CIMQualifier createQualifier(CIMXMLParser& parser);
-	CIMMethod createMethod(CIMXMLParser& parser);
-	CIMProperty createProperty(CIMXMLParser& parser);
-	CIMParameter createParameter(CIMXMLParser& parser);
+	OW_XML_API CIMObjectPath createObjectPath(CIMXMLParser& parser);
+	OW_XML_API CIMClass createClass(CIMXMLParser& parser);
+	OW_XML_API CIMInstance createInstance(CIMXMLParser& parser);
+	OW_XML_API CIMValue createValue(CIMXMLParser& parser, String const& type);
+	OW_XML_API CIMQualifier createQualifier(CIMXMLParser& parser);
+	OW_XML_API CIMMethod createMethod(CIMXMLParser& parser);
+	OW_XML_API CIMProperty createProperty(CIMXMLParser& parser);
+	OW_XML_API CIMParameter createParameter(CIMXMLParser& parser);
 };
 
 } // end namespace OpenWBEM

@@ -45,7 +45,7 @@ namespace OpenWBEM
  * @param escapedText The text to be unescaped
  * @return the unescaped text.
  */
-String XMLUnescape(const char* escapedText, unsigned len);
+OW_XML_API String XMLUnescape(const char* escapedText, unsigned len);
 
 } // end namespace OpenWBEM
 

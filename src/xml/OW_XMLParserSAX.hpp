@@ -54,7 +54,7 @@ namespace XMLParserSAX
 // -----------------------------------------------------------------------
 //  SAXDocumentHandler abstract interface
 // -----------------------------------------------------------------------
-class SAXDocumentHandler
+class OW_XML_API SAXDocumentHandler
 {
 public:
 	virtual ~SAXDocumentHandler();
@@ -71,7 +71,7 @@ public:
 // -----------------------------------------------------------------------
 //  SAXErrorHandler abstract interface
 // -----------------------------------------------------------------------
-class SAXErrorHandler
+class OW_XML_API SAXErrorHandler
 {
 public:
 	virtual ~SAXErrorHandler();
@@ -87,14 +87,14 @@ public:
  *
  * @param fileName The name of the file containing the XML document to parse
  */
-void parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
+OW_XML_API void parse(const String& xmlData, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
 
 /**
  * Parse the XML document to be read from the std::istream data
  *
  * @param data   std::istream to read the XML document to be parsed
  */
-void parse(std::istream& data, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
+OW_XML_API void parse(std::istream& data, SAXDocumentHandler& docHandler, SAXErrorHandler& errHandler);
 	
 
 } // end namespace XMLParserSAX

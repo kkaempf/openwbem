@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class XMLAttribute
+class OW_XML_API XMLAttribute
 {
 public:
 

@@ -76,7 +76,7 @@ struct XMLToken
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class  XMLParserCore
+class OW_XML_API XMLParserCore
 {
 public:
 	XMLParserCore(std::istream& input) : m_line(1), m_current(), m_foundRoot(false), m_tagIsEmpty(false)

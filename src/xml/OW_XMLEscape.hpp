@@ -46,7 +46,7 @@ namespace OpenWBEM
  * @param unescapedText The text to be escaped
  * @return the escaped text.
  */
-String XMLEscape(const char* escapedText, unsigned len);
+OW_XML_API String XMLEscape(const char* escapedText, unsigned len);
 inline String XMLEscape(const String& str)
 {
 	return XMLEscape(str.c_str(), str.length());

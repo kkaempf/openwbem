@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-class XMLParseException : public Exception
+class OW_XML_API XMLParseException : public Exception
 {
 	public:
 		enum Code

@@ -46,11 +46,11 @@ class CIMXMLParser;
 
 namespace XMLClass
 {
-	String getNameSpace(CIMXMLParser& parser);
-	CIMObjectPath getObjectWithPath(CIMXMLParser& parser,
+	OW_XML_API String getNameSpace(CIMXMLParser& parser);
+	OW_XML_API CIMObjectPath getObjectWithPath(CIMXMLParser& parser,
 			CIMClass& c, CIMInstance& i);
-	CIMClass readClass(CIMXMLParser& parser, CIMObjectPath& path);
-	CIMInstance readInstance(CIMXMLParser& parser,
+	OW_XML_API CIMClass readClass(CIMXMLParser& parser, CIMObjectPath& path);
+	OW_XML_API CIMInstance readInstance(CIMXMLParser& parser,
 			CIMObjectPath& path);
 } // end namespace XMLClass
 

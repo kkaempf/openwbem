@@ -43,49 +43,49 @@ namespace OpenWBEM
 {
 
 /////////////////////////////////////////////////////////////
-void CIMNameSpacetoXML(CIMNameSpace const& ns, std::ostream& ostr);
+OW_XML_API void CIMNameSpacetoXML(CIMNameSpace const& ns, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void LocalCIMNameSpacetoXML(CIMNameSpace const& ns, std::ostream& ostr);
+OW_XML_API void LocalCIMNameSpacetoXML(CIMNameSpace const& ns, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMQualifierType const& cqt, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMQualifierType const& cqt, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMClassPathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
+OW_XML_API void CIMClassPathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMInstancePathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
+OW_XML_API void CIMInstancePathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMLocalInstancePathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
+OW_XML_API void CIMLocalInstancePathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMInstanceNametoXML(CIMObjectPath const& cop, std::ostream& ostr);
+OW_XML_API void CIMInstanceNametoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMClass const& cc, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMClass const& cc, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMInstancetoXML(CIMInstance const& ci, std::ostream& ostr);
+OW_XML_API void CIMInstancetoXML(CIMInstance const& ci, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMInstanceNameAndInstancetoXML(CIMInstance const& instance, 
+OW_XML_API void CIMInstanceNameAndInstancetoXML(CIMInstance const& instance, 
 	std::ostream& ostr, CIMObjectPath const& instanceName);
 /////////////////////////////////////////////////////////////
-void CIMInstancePathAndInstancetoXML(CIMInstance const& instance, 
+OW_XML_API void CIMInstancePathAndInstancetoXML(CIMInstance const& instance, 
 	std::ostream& ostr, CIMObjectPath const& instancePath);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMValue const& cv, std::ostream& out);
+OW_XML_API void CIMtoXML(CIMValue const& cv, std::ostream& out);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMDataType const& cdt, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMDataType const& cdt, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMFlavor const& cf, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMFlavor const& cf, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMQualifier const& cq, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMQualifier const& cq, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMProperty const& cp, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMProperty const& cp, std::ostream& ostr);
 				
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMMethod const& cm, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMMethod const& cm, std::ostream& ostr);
 				
 /////////////////////////////////////////////////////////////
-void CIMtoXML(CIMParameter const& cp, std::ostream& ostr);
+OW_XML_API void CIMtoXML(CIMParameter const& cp, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-//void CIMClassPathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
+//OW_XML_API void CIMClassPathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
-void CIMParamValueToXML(CIMParamValue const& pv, std::ostream& ostr);
+OW_XML_API void CIMParamValueToXML(CIMParamValue const& pv, std::ostream& ostr);
 
 } // end namespace OpenWBEM
 
