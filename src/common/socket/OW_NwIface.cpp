@@ -78,7 +78,7 @@ extern "C"
 #include "OW_SocketUtils.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-OW_NwIface::OW_NwIface() /*throw (OW_SocketException)*/
+OW_NwIface::OW_NwIface()
 {
 	int s, lerrno;
 	struct ifreq ifr;
@@ -213,7 +213,7 @@ OW_NwIface::stringToAddress(const OW_String& straddr)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd) /*throw (OW_SocketException)*/
+OW_NwIface::getInterfaceName(OW_SocketHandle_t sockfd)
 {
 	char *p;
 	int numreqs = 30;

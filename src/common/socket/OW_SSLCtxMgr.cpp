@@ -103,7 +103,6 @@ static void locking_function(int mode, int n, const char*, int)
 //////////////////////////////////////////////////////////////////////////////
 SSL_CTX*
 OW_SSLCtxMgr::initCtx(const OW_String& keyfile)
-	/*throw (OW_SSLException)*/
 {
 	if (!m_bio_err)
 	{
@@ -206,7 +205,6 @@ static OW_SSLCtxDestroyer g_sslCtxDestroyer;
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SSLCtxMgr::loadDHParams(SSL_CTX* ctx, const OW_String& file)
-	/*throw (OW_SSLException)*/
 {
 	DH* ret = 0;
 	BIO* bio;
@@ -228,7 +226,6 @@ OW_SSLCtxMgr::loadDHParams(SSL_CTX* ctx, const OW_String& file)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SSLCtxMgr::generateEphRSAKey(SSL_CTX* ctx)
-	/*throw (OW_SSLException)*/
 {
 	RSA* rsa;
 	rsa = RSA_generate_key(512, RSA_F4, NULL, NULL);
@@ -243,7 +240,6 @@ OW_SSLCtxMgr::generateEphRSAKey(SSL_CTX* ctx)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SSLCtxMgr::initClient(const OW_String& keyfile)
-	/*throw (OW_SSLException)*/
 {
 	if (m_ctxClient)
 	{
@@ -260,7 +256,6 @@ OW_SSLCtxMgr::initClient(const OW_String& keyfile)
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_SSLCtxMgr::initServer(const OW_String& keyfile)
-	/*throw (OW_SSLException)*/
 {
 	if (m_ctxServer)
 	{
@@ -373,7 +368,7 @@ OW_SSLCtxMgr::checkCert(SSL* ssl, const OW_String& hostName,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len) /*throw (OW_SSLException)*/
+OW_SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len)
 {
 	int r;
 	r = SSL_read(ssl, buf, len);
@@ -394,7 +389,6 @@ OW_SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len) /*throw (OW_SSLException)*/
 // STATIC
 int
 OW_SSLCtxMgr::sslWrite(SSL* ssl, const char* buf, int len)
-	/*throw (OW_SSLException)*/
 {
 	int r;
 	int myLen = len;
