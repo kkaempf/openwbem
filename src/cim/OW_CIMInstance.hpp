@@ -82,7 +82,7 @@ public:
 
 	/**
 	 * Create an OW_CIMInstance with a name.
-	 * @param name	The name of this OW_CIMInstance as an OW_String.
+	 * @param name	The name of this OW_CIMInstance as an OW_String. NOT the Class name.
 	 */
 	explicit OW_CIMInstance(const OW_String& name);
 
