@@ -50,7 +50,7 @@
 #include <csignal>
 #include <iostream> // for cout and cerr
 
-
+#include <unistd.h> // for getpid()
 
 
 using namespace OpenWBEM;
