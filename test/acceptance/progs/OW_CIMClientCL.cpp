@@ -418,6 +418,7 @@ testDynInstances(OW_CIMClient& hdl)
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
 		OW_CIMObjectPath cop1(ci);
+		cop1.setNameSpace("root/testsuite");
 		ci = hdl.getInstance( cop1);
 		OW_TempFileStream tfs;
 		tfs << "<CIM>";
@@ -439,6 +440,7 @@ testDynInstances(OW_CIMClient& hdl)
 		ci.setProperty("params", OW_CIMValue(params));
 		hdl.createInstance( ci);
 		OW_CIMObjectPath cop2(ci);
+		cop2.setNameSpace("root/testsuite");
 		ci = hdl.getInstance( cop2);
 		tfs.reset();
 		tfs << "<CIM>";
@@ -1666,10 +1668,14 @@ main(int argc, char* argv[])
 		
 		
 		/**********************************************************************
-		 * Here we create the concrete OW_CIMProtocol that we want
-		 * our OW_CIMXMLCIMOMHandle to use.  We'll use the OW_HTTPClient
+		 * Create an instance of our authentication callback class.
+		 **********************************************************************/
+		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+
+		/**********************************************************************
+		 * Here we create the OW_CIMClient.  It'll uses the OW_HTTPClient
 		 * (capable of handling HTTP/1.1 and HTTPS -- HTTP over SSL).
-		 * The OW_HTTPClient takes a URL in it's constructor, representing
+		 * The OW_CIMClient takes a URL in it's constructor, representing
 		 * the CIM Server that it will connect to.  A URL has the form
 		 *   http[s]://[USER:PASSWORD@]HOSTNAME[:PORT][/PATH].
 		 *
@@ -1679,21 +1685,10 @@ main(int argc, char* argv[])
 		 * and 5989 for HTTPS.  If no username and password are given,
 		 * and the CIM Server requires authentication, a callback may
 		 * be provided to retrieve authentication credentials.
-		 **********************************************************************/
-		/**********************************************************************
-		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
-		 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
-		 * a OW_Reference<OW_CIMProtocol> it it's constructor, so
-		 * we have to make a OW_Reference out of our HTTP Client first.
-		 * By doing this, we don't have to worry about deleting our
-		 * OW_HTTPClient.  OW_Reference will delete it for us when the
-		 * last copy goes out of scope (reference count goes to zero).
+		 * If the path is /owbinary then the openwbem binary protocol will be
+		 * used, otherwise it uses CIM/XML
 		 **********************************************************************/
 
-		/**********************************************************************
-		 * Create an instance of our authentication callback class.
-		 **********************************************************************/
-		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		OW_CIMClient rch(url, "root/testsuite", getLoginInfo);
 
 
