@@ -99,7 +99,10 @@ XMLListener::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		OW_THROW(CIMErrorException, CIMErrorException::request_not_loosely_valid);
 	}
 	(void)ostrError;
-	(*ostrEntity) << "</MESSAGE></CIM>\r\n";
+	if (!hasError())
+	{
+		(*ostrEntity) << "</MESSAGE></CIM>\r\n";
+	}
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -195,7 +195,10 @@ XMLExecute::executeXML(CIMXMLParser& parser, ostream* ostrEntity,
 		OW_THROWCIMMSG(CIMException::FAILED,
 			"No <SIMPLEREQ> or <MULTIREQ> tag");
 	}
-	(*m_ostrEntity) << "</MESSAGE></CIM>\r\n";
+	if (!hasError())
+	{
+		(*m_ostrEntity) << "</MESSAGE></CIM>\r\n";
+	}
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
