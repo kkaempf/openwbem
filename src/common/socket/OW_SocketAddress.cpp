@@ -85,7 +85,9 @@ OW_SocketAddress::OW_SocketAddress()
 }
 
 
-static OW_Mutex gethostbynameMutex;
+#ifndef OW_HAVE_GETHOSTBYNAME_R
+OW_Mutex OW_gethostbynameMutex;
+#endif
 
 //static
 OW_SocketAddress
@@ -105,10 +107,8 @@ OW_SocketAddress::getByName(
 #else
 	hostent* host = NULL;
 
-    {
-        OW_MutexLock mlock(gethostbynameMutex);
-        host = gethostbyname(hostName.c_str());
-    }
+	OW_MutexLock mlock(OW_gethostbynameMutex);
+	host = gethostbyname(hostName.c_str());
 
 #endif
 	if (!host) {
