@@ -485,8 +485,9 @@ public:
 			return false;
 		}
 
-		// we can't touch m_threads until *after* we check for the queue being closed, shutdown requires that m_threads not change after the 
-		// clean up dead threads (before we add the new one, so we don't need to check it)
+		// Can't touch m_threads until *after* we check for the queue being closed, shutdown 
+		// requires that m_threads not change after the queue is closed.
+		// Now clean up dead threads (before we add the new one, so we don't need to check it)
 		size_t i = 0;
 		while (i < m_threads.size())
 		{
