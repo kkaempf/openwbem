@@ -1217,6 +1217,22 @@ CIMServer::modifyInstance(
 
 	CIMObjectPath cop(ns, lci);
 
+	// syncWithClass() adds back in all the default properties that were't set on lci.
+	// If the client specified a propertyList, we need to remove any other properties from
+	// the instance, so providers don't have to worry about making sure properties
+	// are in the propertyList
+	if (propertyList)
+	{
+		CIMPropertyArray keys(lci.getKeyValuePairs());
+		CIMPropertyArray newProps;
+		for (size_t i = 0; i < propertyList->size(); ++i)
+		{
+			newProps.push_back(lci.getPropertyT((*propertyList)[i]));
+		}
+		lci.setProperties(newProps); // this will rebuild the keys, which may get lost if they're not in the propertyList
+		lci.setKeys(keys);
+	}
+
 	// Allow authorizer a chance to determine if the mofify is allowed
 	if (!m_authorizerMgr->allowWriteInstance(m_env, ns, cop,
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
