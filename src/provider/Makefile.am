@@ -8,5 +8,7 @@ OW_PropertyProviderIFC.hpp \
 OW_ProviderBaseIFC.hpp \
 OW_ProviderEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \
-OW_InstanceProviderInfo.hpp
+OW_InstanceProviderInfo.hpp \
+OW_AssociatorProviderInfo.hpp \
+OW_MethodProviderInfo.hpp
 
