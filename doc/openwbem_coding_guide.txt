@@ -153,8 +153,13 @@ almost bound to run into it if you have a static mutex and you try and lock it
 in a static object's constructor in another translation unit, or even possibly
 in the same translation unit, if the mutex is declared after the other static
 object.
+Also related to this: don't use function-scope static objects.  The first
+time the function is called, the object will be constructed. The
+destructor will be registered to be run at exit time (see atexit()).
+Unfortunately, the shared library can be unloaded, and then at exit,
+non-existent code (the destructor) will be run, resulting in a segfault.
 -----------------------------------------------------------------------------
-memory & low-level C-stlye code:
+memory & low-level C-style code:
 The #1 rule in OpenWBEM is that you can't segfault or leak memory!  This is
 typically associated with low-level C-style code, so #2 rule is that you can't
 write code like that unless you have a really good reason (no, optimization
