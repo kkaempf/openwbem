@@ -41,9 +41,11 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
+#include "OW_CIMObjectPath.hpp"
 #include "OW_IndicationServer.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_ThreadCounter.hpp"
+#include "OW_HashMultiMap.hpp"
 
 
 class OW_NotifyTrans;
@@ -119,6 +121,17 @@ private:
 
 	OW_CIMOMEnvironmentRef m_env;
 	OW_Semaphore* m_startedSem;
+
+	struct Subscription
+	{
+		OW_CIMObjectPath m_subPath;
+	};
+
+	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"
+	typedef OW_HashMultiMap<OW_String, Subscription> subscriptions_t;
+	subscriptions_t m_subscriptions;
+	OW_Mutex m_subGuard;
+
 };
 
 #endif

@@ -31,6 +31,9 @@
 #ifndef __OW_CIM_HPP__
 #define __OW_CIM_HPP__
 
+// TODO: Get rid of this file!
+
+// TODO: Get rid of this!
 #define CIM_DEFAULT_NS	"root"
 
 #include "OW_config.h"

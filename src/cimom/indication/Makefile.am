@@ -1,7 +1,7 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 noinst_LIBRARIES = libowindicationserver.a libowindicationreplayer.a
-SHAREDLIBADD = 
+SHAREDLIBADD = -L$(top_builddir)/src/wql/common -lowwqlcommon
 
 OW_SHARED_LIBS = libowindicationserver.so libowindicationreplayer.so
 thelibdir = $(libdir)/openwbem
@@ -39,6 +39,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/server \
--I$(top_srcdir)/src/providerifcs/cpp 
+-I$(top_srcdir)/src/providerifcs/cpp \
+-I$(top_srcdir)/src/wql/common
 
 

@@ -38,6 +38,8 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_ACLInfo.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
+#include "OW_WQLSelectStatement.hpp"
+#include "OW_WQLCompile.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
@@ -586,14 +588,125 @@ OW_IndicationServerImpl::getProvider(const OW_String& className)
 void 
 OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath)
 {
-	(void)ns; (void)subPath;
+	OW_CIMObjectPath cop(subPath);
+	cop.setNameSpace(ns);
+	
+	OW_MutexLock l(m_subGuard);
+	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end(); ++iter)
+	{
+		if (cop.equals(iter->second.m_subPath))
+		{
+			m_subscriptions.erase(iter);
+			// there can only be one subscription with this object path, so no use searching more.
+			return; 
+		}
+	}
+	// if we got here, there's something horribly wrong!
+	OW_ASSERT(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst)
 {
-	(void)ns; (void)subInst;
+	// get the filter
+	OW_CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle();
+	OW_CIMObjectPath filterPath = subInst.getProperty("Filter").getValueT().toCIMObjectPath();
+	OW_String filterNS = filterPath.getNameSpace();
+	OW_CIMInstance filterInst = hdl->getInstance(filterNS, filterPath);
+	OW_String filterQuery = filterInst.getPropertyT("Query").getValueT().toString();
+
+	// parse the filter
+	// Get query language
+	OW_String queryLanguage = filterInst.getPropertyT("QueryLanguage").getValueT().toString();
+
+	// get the wql library
+	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
+
+	if (!wqlRef)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Cannot process indications, because there is no "
+			"WQL library.");
+	}
+
+	if (!wqlRef->supportsQueryLanguage(queryLanguage))
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Filter uses queryLanguage %1, which is"
+			" not supported", queryLanguage).c_str());
+	}
+
+	OW_WQLSelectStatement selectStmt(wqlRef->createSelectStatement(filterQuery));
+	OW_WQLCompile compiledStmt(selectStmt);
+	OW_WQLCompile::Tableau& tableau(compiledStmt.getTableau());
+
+	// collect up all the class names
+	OW_StringArray isaClassNames;
+	for (size_t i = 0; i < tableau.size(); ++i)
+	{
+		for (size_t j = 0; j < tableau[i].size(); ++j)
+		{
+			if (tableau[i][j].op == WQL_ISA)
+			{
+				OW_WQLOperand& opn1(tableau[i][j].opn1);
+				OW_WQLOperand& opn2(tableau[i][j].opn2);
+				if (opn1.getType() == OW_WQLOperand::PROPERTY_NAME && opn1.getPropertyName() == "SourceInstance")
+				{
+					if (opn2.getType() == OW_WQLOperand::PROPERTY_NAME)
+					{
+						isaClassNames.push_back(opn2.getPropertyName());
+					}
+					else if (opn2.getType() == OW_WQLOperand::STRING_VALUE)
+					{
+						isaClassNames.push_back(opn2.getStringValue());
+					}
+				}
+
+			}
+		}
+	}
+
+	// get rid of duplicates - unique requires that the range be sorted
+	std::sort(isaClassNames.begin(), isaClassNames.end());
+	isaClassNames.erase(std::unique(isaClassNames.begin(), isaClassNames.end()), isaClassNames.end());
+
+
+	// find providers that support this query. If none are found, throw an exception.
+	OW_ProviderManagerRef pm (m_env->getProviderManager());
+	OW_IndicationProviderIFCRefArray providers;
+	if (isaClassNames.empty())
+	{
+		providers = pm->getIndicationProviders(createProvEnvRef(m_env, 
+			m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()), ns, 
+			selectStmt.getClassName(), "");
+	}
+	else
+	{
+		for (size_t i = 0; i < isaClassNames.size(); ++i)
+		{
+			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env, 
+				m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()), 
+				ns, selectStmt.getClassName(), isaClassNames[i]));
+		}
+	}
+
+	if (providers.empty())
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "No indication provider found for this subscription");
+	}
+
+
+	// create a subscription (save the compiled filter)
+	Subscription sub;
+
+	// verify that there is a provider that can handle the handler for the subscription
+
+	// call authorize on all the providers
+
+	// get the lock and put it in m_subscriptions
+
+	// call enableSubscription on all the providers
+	// enableSubscription calls fail or throw, just ignore it and keep going.  If none succeed, we need to throw to indicate that subscription creation failed.
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

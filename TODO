@@ -54,7 +54,8 @@ New features:
         X indication (mustPoll = true) OW_IndicationProviderTest1
         X indication (mustPoll = false) w/ extra thread
         X indication/polled (mustPoll = false) and no extra thread.
-        - Modify OW_TriggerProviderTest* to be indication providers.
+        - Remove OW_TriggerProviderTest*.
+        - Fix cimListener.cpp to use the new indication providers.
       X Add a command line event listener.
       - OW_IndicationServerImpl::deleteSubscription
       - OW_IndicationServerImpl::createSubscription
