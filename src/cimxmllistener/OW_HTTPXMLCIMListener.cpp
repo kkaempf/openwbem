@@ -319,14 +319,10 @@ HTTPXMLCIMListener::~HTTPXMLCIMListener()
 			{
 				deleteRegistrationObjects(reg);
 			}
-			catch (CIMException& ce)
+			catch (Exception&)
 			{
 				// if an error occured, then just ignore it.  We don't have any way
 				// of logging it!
-			}
-			catch (HTTPException& e)
-			{
-				// a network error occured, we can't do anything about it.
 			}
 			catch (...)
 			{
