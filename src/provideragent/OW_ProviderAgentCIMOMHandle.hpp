@@ -167,6 +167,7 @@ public:
 	 * @exception CIMException If the class does not exists
 	 */
 	virtual void modifyClass(const String &ns, const CIMClass &cimClass); 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Deletes the CIM instance specified by path from namespace ns.
 	 * @param ns The namespace containing the instance.
@@ -208,6 +209,7 @@ public:
 	 */
 	virtual CIMObjectPath createInstance(const String &ns, 
 										 const CIMInstance &instance); 
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Get the specified CIM instance property.
 	 * @param ns The namespace
