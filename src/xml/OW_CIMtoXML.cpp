@@ -1019,9 +1019,21 @@ CIMtoXML(CIMProperty const& cp, ostream& ostr)
 	{
 		CIMtoXML(cp.getQualifiers()[i], ostr);
 	}
-	if(cp.getValue())
+	CIMValue val = cp.getValue();
+	if(val)
 	{
-		CIMtoXML(cp.getValue(), ostr);
+		// if there isn't an EmbeddedObject qualifier on an embedded object, then output one.
+		if (val.getType() == CIMDataType::EMBEDDEDINSTANCE || val.getType() == CIMDataType::EMBEDDEDCLASS)
+		{
+			if (!cp.getQualifier(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT))
+			{
+				CIMQualifier embeddedObject(CIMQualifier::CIM_QUAL_EMBEDDEDOBJECT);
+				embeddedObject.setValue(CIMValue(true));
+				CIMtoXML(embeddedObject, ostr);
+			}
+		}
+
+		CIMtoXML(val, ostr);
 	}
 	if(isArray)
 	{
