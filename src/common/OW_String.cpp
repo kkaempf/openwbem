@@ -669,13 +669,14 @@ OW_String::substring(size_t beginIndex, size_t len) const
 {
 	OW_String nil;
 	size_t count = len;
+	size_t l = length();
 
-	if(0 == length())
+	if(0 == l)
 	{
 		return nil;
 	}
 
-	if(beginIndex >= length())
+	if(beginIndex >= l)
 	{
 		return nil;
 	}
@@ -685,7 +686,11 @@ OW_String::substring(size_t beginIndex, size_t len) const
 	}
 	else if(-1 == int(len))
 	{
-		count = length() - beginIndex;
+		count = l - beginIndex;
+	}
+	if (count + beginIndex > l)
+	{
+		count = l - beginIndex;
 	}
 
 	// Don't need to check m_buf for NULL, because if length() == 0,
