@@ -43,6 +43,10 @@ perlNPI.marker:
 	chmod -R +w perlNPI
 	if test -e perlNPI/Makefile; then $(MAKE) -C perlNPI clean;fi
 	cd perlNPI;$(PERL) Makefile.PL;cd ..
+# need to fix up the makefile to honor $(DESTDIR)
+#	echo "look at the makefile!"
+#	false
+# hmm, it seems to be okay with the perl on Fedora Core 1
 	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI
 
 perlxsi.c:
@@ -55,7 +59,6 @@ install-exec-local:
 		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
 		ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
 	done
-	cd perlNPI;$(PERL) Makefile.PL PREFIX=$(DESTDIR)/$(prefix) INSTALLDIRS=vendor;cd ..
 	$(MAKE) -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
 
 uninstall-local:

@@ -28,3 +28,8 @@ SUFFIXES = .sh
 
 docs: Doxyfile
 	doxygen Doxyfile
+
+# This will ensure the perl provider doesn't get build during make distcheck,
+# since it tries to install itself into /usr/lib/blah, and ignores $prefix
+# (which is correct, even if it doesn't seem so at first thought).
+DISTCHECK_CONFIGURE_FLAGS= --with-perl=no
