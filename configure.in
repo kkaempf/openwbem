@@ -1155,6 +1155,7 @@ src/authenticators/pamcl/Makefile
 src/authenticators/aix/Makefile
 src/authorizers/Makefile
 src/authorizers/simple/Makefile
+src/authorizers/simple2/Makefile
 src/cim/Makefile
 src/cimom/Makefile
 src/cimom/common/Makefile
