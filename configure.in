@@ -228,7 +228,7 @@ case "$host" in
 	CPPFLAGS="-AA $CPPFLAGS" # need this so the configure tests work right.
 	CXXCOMMONLINKFLAGS="-AA -mt +Z -Wl,+b${libdir}:/usr/lib -Wl,+s"
 	CXXBINLINKFLAGS="$LDFLAGS"
-	CXXSHAREDLIBLINKFLAGS="-b +h $@.\$(LIBRARY_BINARY_VERSION)"
+	CXXSHAREDLIBLINKFLAGS="-b -Wl,+h,\$@.\$(LIBRARY_BINARY_VERSION)"
 	PLAT_OPTFLAGS="+O2"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="sl"
