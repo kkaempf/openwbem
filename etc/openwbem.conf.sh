@@ -1,15 +1,16 @@
 ###############################################################################
 # owcimomd configuration file
 # Note:
-#	All lines that start with a '#' or a ';' character are ignored.
+#  All lines that start with a '#' or a ';' character are ignored.
 #
-#	All of the options in this file are read by owcimomd at start up. The options
-#	that are prefixed with "owcimomd." are meant specifically for owcimomd.
-#	Other options are prefixed with an identifier of the component that is
-#	specifically interested in the options. For example the
+#  All of the options in this file are read by owcimomd at start up. The 
+#  options that are prefixed with "owcimomd." are meant specifically for 
+#  owcimomd.
+#  Other options are prefixed with an identifier of the component that is
+#  specifically interested in the options. For example the
 #  "cppprovifc.prov_location" option is meant specifically for the C++ provider
-#	interface. This options is read from the config file by owcimomd and
-#	made available to the C++ provider interface upon request.
+#  interface. This option is read from the config file by owcimomd and
+#  made available to the C++ provider interface upon request.
 ###############################################################################
 
 ################################################################################
@@ -27,20 +28,21 @@ owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 ################################################################################
 # owcimomd.libexecdir specifies the locaction of the libexec directory.
 # Binaries that owcimomd relies on are expected to be in this directory
-# the default for is option is "/usr/local/libexec/openwbem"
-owcimomd.libexecdir = @libexecdir@/openwbem/
+# the default for is option is "@libexecdir@/openwbem"
+owcimomd.libexecdir = @libexecdir@/openwbem
 
 ################################################################################
 # owcimomd.owlibdir specifies the locaction of the lib directory.
 # Dynamicall loaded Libraries that owcimomd relies on are expected to be in
 # this directory.
-# The default for is option is "/usr/local/lib/openwbem"
-owcimomd.owlibdir = @libdir@/openwbem/
+# The default for is option is "@libdir@/openwbem"
+owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
 # owcimomd.datadir specifies the directory where owcimomd will place its data
-# file (repositories). The default for this options is "/var/lib/openwbem"
-owcimomd.datadir = @localstatedir@/openwbem/
+# file (repositories). The default for this option is 
+# "@localstatedir@/openwbem"
+owcimomd.datadir = @localstatedir@/openwbem
 
 ################################################################################
 # If owcimomd.allow_anonymous is set to true anonymous logins are allowed by
@@ -59,9 +61,9 @@ owcimomd.datadir = @localstatedir@/openwbem/
 ################################################################################
 # The owcimomd.log_level option specifies the level of logging. This can be
 # any one of the following:
-#		"debug"		- All debug, custinfo and error messages are logged
-#		"custinfo"	- All custinfo and error messages are logged
-#		"error"		- Only error messages are logged. This is the default.
+#   "debug"    - All debug, custinfo and error messages are logged
+#   "custinfo" - All custinfo and error messages are logged
+#   "error"    - Only error messages are logged. This is the default.
 ;owcimomd.log_level = error
 
 ################################################################################
@@ -69,13 +71,13 @@ owcimomd.datadir = @localstatedir@/openwbem/
 # interfaces will be loaded from. owcimomd assumes all shared libraries in
 # this directory are provider interfaces. If a shared library in this directory
 # does not support the provider interface api, it will be rejected. The default
-# for this option is "/usr/local/lib/openwbem/provifcs"
+# for this option is "@libdir@/openwbem/provifcs"
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 
 ################################################################################
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
-# The default for this option is "/usr/local/lib/libowwql.so"
+# The default for this option is "@libdir@/libowwql.so"
 owcimomd.wql_lib = @libdir@/libowwql.so
 
 ################################################################################
@@ -140,7 +142,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option
-# is "/usr/local/lib/openwbem/c++providers"
+# is "@libdir@/openwbem/c++providers"
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
@@ -155,14 +157,14 @@ cppprovifc.prov_location = @libdir@/openwbem/c++providers
 # One of the provider interfaces provided with owcimomd is the simple C++ provider
 # interface. The simplecppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option
-# is "/usr/local/lib/openwbem/simplec++providers"
+# is "@libdir@/openwbem/simplec++providers"
 simplecppprovifc.prov_location = @libdir@/openwbem/simplec++providers
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the NPI provider
 # interface. The npiprovifc.prov_location option specifies where the NPI
 # provider interface will load it's providers from. The default for this option
-# is "/usr/local/lib/openwbem/npiproviders"
+# is "@libdir@/openwbem/npiproviders"
 npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
 ################################################################################
@@ -218,7 +220,7 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 
 ################################################################################
 # http_server.single_thread specifies whether or not owcimomd process connection
-# in a separate thread or in the same thread as the server. This options is
+# in a separate thread or in the same thread as the server. This option is
 # really only for debug purposes and should not be of any use to the
 # typical user. The default for this option is false.
 ;http_server.single_thread = false
