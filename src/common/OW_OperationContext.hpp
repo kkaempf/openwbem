@@ -126,6 +126,8 @@ public:
 	static const char* const HTTP_PATH;
 	static const char* const CURUSER_UIDKEY;
 	static const char* const BYPASS_LOCKERKEY;
+	static const char* const SESSION_LANGUAGE_KEY;
+	static const char* const HTTP_ACCEPT_LANGUAGE_KEY;
 
 
 

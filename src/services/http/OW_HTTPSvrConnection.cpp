@@ -871,16 +871,17 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 //
 // Check for Accept-Language
 //
-	SessionLanguageRef psl(new SessionLanguage);
 	if (headerHasKey("Accept-Language"))
 	{
 		String al = getHeaderValue("Accept-Language");
 		if (al.length())
 		{
+			SessionLanguageRef psl(new SessionLanguage);
 			psl->assign(al.c_str());
+			context.setData(OperationContext::SESSION_LANGUAGE_KEY, psl);
+			context.setStringData(OperationContext::HTTP_ACCEPT_LANGUAGE_KEY, al);
 		}
 	}
-	context.setData(SESSION_LANGUAGE_KEY, psl);
 
 //
 // Check for forbidden header keys.
@@ -1246,7 +1247,7 @@ HTTPSvrConnection::getContentLanguage(OperationContext& context,
 	String contentLang = m_options.defaultContentLanguage;
 
 	OperationContext::DataRef dataref = context.getData(
-		SESSION_LANGUAGE_KEY);
+		OperationContext::SESSION_LANGUAGE_KEY);
 	if (!dataref)
 	{
 		return contentLang;

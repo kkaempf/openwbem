@@ -144,11 +144,14 @@ OperationContext::getStringDataWithDefault(const String& key, const String& def)
 	return strData->m_str;
 }
 
+/////////////////////////////////////////////////////////////////////////////
 const char* const OperationContext::USER_NAME = "USER_NAME";
 const char* const OperationContext::USER_PASSWD = "USER_PASSWD";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
 const char* const OperationContext::CURUSER_UIDKEY = "CURUSER_UIDKEY";
 const char* const OperationContext::BYPASS_LOCKERKEY = "BYPASS_LOCKER"; 
+const char* const OperationContext::SESSION_LANGUAGE_KEY = "SESSION_LANGUAGE_KEY";
+const char* const OperationContext::HTTP_ACCEPT_LANGUAGE_KEY = "HTTP_ACCEPT_LANGUAGE_KEY";
 
 
 } // end namespace OpenWBEM

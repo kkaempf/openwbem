@@ -238,7 +238,7 @@ public:
 
 		String al;
 		OperationContext::DataRef dataRef =
-			env->getOperationContext().getData(SESSION_LANGUAGE_KEY);
+			env->getOperationContext().getData(OperationContext::SESSION_LANGUAGE_KEY);
 
 		if (dataRef)
 		{

@@ -112,6 +112,8 @@ private:
 typedef Array<LanguageTag> LanguageTagArray;
 
 //////////////////////////////////////////////////////////////////////////////
+/// When getting a SessionLanguage instance from the OperationContext, use
+/// OperationContext::SESSION_LANGUAGE_KEY as the key.
 class OW_COMMON_API SessionLanguage : public OperationContext::Data
 {
 public:
@@ -154,8 +156,6 @@ private:
 	String m_acceptLanguageString;
 };
 
-// Key to use when getting SessionLanguage from the OperationContext
-#define SESSION_LANGUAGE_KEY "_oWsEsSiOnLaNgUaGe_kEy_"
 
 }	// End of namespace OpenWBEM
 
