@@ -122,7 +122,6 @@ public:
 
 	/**
 	 * Create an OW_CIMQualifier with a name and type
-	 * @param name The name for this OW_CIMQualifier
 	 * @param qtype The qualifier type that this qualifier is based upon.
 	 */
 	OW_CIMQualifier(const OW_CIMQualifierType& qtype);
