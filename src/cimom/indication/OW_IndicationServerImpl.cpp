@@ -583,6 +583,28 @@ OW_IndicationServerImpl::getProvider(const OW_String& className)
 
 
 //////////////////////////////////////////////////////////////////////////////
+void 
+OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath)
+{
+	(void)ns; (void)subPath;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst)
+{
+	(void)ns; (void)subInst;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_IndicationServerImpl::modifySubscription(const OW_String& ns, const OW_CIMInstance& subInst)
+{
+	(void)ns; (void)subInst;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 extern "C" OW_IndicationServer*
 createIndicationServer()
 {

@@ -56,6 +56,11 @@ public:
 		const OW_String& instNS) = 0;
 
 	virtual void setStartedSemaphore(OW_Semaphore* sem) = 0;
+
+	// these functions are call by the CIM_IndicationSubscription pass-thru provider.
+	virtual void deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath) = 0;
+	virtual void createSubscription(const OW_String& ns, const OW_CIMInstance& subInst) = 0;
+	virtual void modifySubscription(const OW_String& ns, const OW_CIMInstance& subInst) = 0;
 protected:
 };
 
