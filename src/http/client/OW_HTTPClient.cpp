@@ -80,7 +80,10 @@ HTTPClient::HTTPClient( const String &sURL )
 	// turn off exceptions, since we're not coded to handle them.
 	m_istr.exceptions(std::ios::goodbit);
 	m_ostr.exceptions(std::ios::goodbit);
+
+	// TODO: figure out a better way to do this.
 	signal(SIGPIPE, SIG_IGN);
+
 	setUrl();
 	//m_socket.setReceiveTimeout(300);
 	//m_socket.setSendTimeout(300);
