@@ -97,6 +97,7 @@ OW_SharedLibraryException.cpp \
 OW_SharedLibraryLoader.cpp \
 OW_shlSharedLibrary.cpp \
 OW_shlSharedLibraryLoader.cpp \
+OW_SafeLibCreate.cpp \
 OW_StackTrace.cpp \
 OW_StringBuffer.cpp \
 OW_String.cpp \
