@@ -345,14 +345,7 @@ CIMOMEnvironment::shutdown()
 	MutexLock ml(m_monitor);
 
 	// this is a global thing, so do it here
-	try
-	{
-		Socket::shutdownAllSockets();
-	}
-	catch (AssertionException&)
-	{
-		// shutdownAllSockets() will throw if it's already deleted, we just want to ignore that.
-	}
+	Socket::shutdownAllSockets();
 
 	// Shutdown the polling manager
 	if (m_pollingManager)
@@ -435,15 +428,6 @@ CIMOMEnvironment::shutdown()
 	{
 		m_providerManager->shutdown();
 		m_providerManager = 0;
-	}
-
-	try
-	{
-		Socket::deleteShutDownMechanism();
-	}
-	catch (AssertionException&)
-	{
-		// deleteShutDownMechanism() will throw if it's already deleted, we just want to ignore that.
 	}
 
 	logDebug("CIMOM Environment has shut down");
