@@ -424,21 +424,44 @@ int main(int argc, char* argv[])
 			//registrationHandles.append(handle);
 
 
-			//cout << "Executing createClass()" << endl;
+			MutexLock coutGuard(coutMutex);
+			cout << "Executing createClass()" << endl;
+			coutGuard.release();
 			createClass(rch);
-			//cout << "Executing createInstance()" << endl;
+
+			coutGuard.lock();
+			cout << "Executing createInstance()" << endl;
+			coutGuard.release();
 			createInstance(rch, "MyInstance");
-			//cout << "Executing modifyInstance()" << endl;
+
+			coutGuard.lock();
+			cout << "Executing modifyInstance()" << endl;
+			coutGuard.release();
 			modifyInstance(rch, "MyInstance");
-			//cout << "Executing getInstance()" << endl;
+
+			coutGuard.lock();
+			cout << "Executing getInstance()" << endl;
+			coutGuard.release();
 			getInstance(rch, "MyInstance");
-			//cout << "Executing deleteInstance()" << endl;
+
+			coutGuard.lock();
+			cout << "Executing deleteInstance()" << endl;
+			coutGuard.release();
 			deleteInstance(rch, "MyInstance");
-			//cout << "Executing modifyClass()" << endl;
+
+			coutGuard.lock();
+			cout << "Executing modifyClass()" << endl;
+			coutGuard.release();
 			modifyClass(rch);
-			//cout << "Executing deleteClass()" << endl;
+
+			coutGuard.lock();
+			cout << "Executing deleteClass()" << endl;
+			coutGuard.release();
 			deleteClass(rch);
-			//cout << "Done running intrinsic methods." << endl;
+
+			coutGuard.lock();
+			cout << "Done running intrinsic methods." << endl;
+			coutGuard.release();
 			//invokeMethod(rch, 2); // TODO
 
 			//cout << "Now waiting for intrinsic method indications" << endl;
