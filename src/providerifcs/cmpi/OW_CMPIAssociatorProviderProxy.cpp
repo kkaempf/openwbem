@@ -66,6 +66,8 @@ void CMPIAssociatorProviderProxy::associatorNames(
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::associatorNames()");
 
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.assocMI->ft->associatorNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -127,6 +129,8 @@ void CMPIAssociatorProviderProxy::associators(
 	const StringArray *propertyList)
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::associators()");
+
+	m_ftable->lastAccessTime.setToCurrent();
 
 	if (m_ftable->miVector.assocMI->ft->associators != NULL)
 	{
@@ -216,6 +220,8 @@ void CMPIAssociatorProviderProxy::references(
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::references()");
 
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.assocMI->ft->references != NULL)
 	{
 		char **props = NULL;
@@ -295,6 +301,8 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	const String& role)
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::referenceNames()");
+
+	m_ftable->lastAccessTime.setToCurrent();
 
 	if (m_ftable->miVector.assocMI->ft->referenceNames != NULL)
 	{

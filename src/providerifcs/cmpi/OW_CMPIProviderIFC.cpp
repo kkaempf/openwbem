@@ -632,6 +632,87 @@ CMPIProviderIFC::getProvider(
 	return m_provs[provId];
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void 
+CMPIProviderIFC::doUnloadProviders(
+	const ProviderEnvironmentIFCRef& env)
+{
+	String timeWindow = env->getConfigItem(ConfigOpts::CMPIIFC_PROV_TTL_opt, OW_DEFAULT_CMPIIFC_PROV_TTL);
+	Int32 iTimeWindow;
+	try
+	{
+		iTimeWindow = timeWindow.toInt32();
+	}
+	catch(const StringConversionException&)
+	{
+		iTimeWindow = String(OW_DEFAULT_CPPIFC_PROV_TTL).toInt32();
+	}
+
+	if (iTimeWindow < 0)
+	{
+		return;
+	}
+
+	DateTime dt;
+	dt.setToCurrent();
+	MutexLock ml(m_guard);
+	ProviderMap::iterator it = m_provs.begin();
+	while (it != m_provs.end())
+	{
+		DateTime provDt = it->second->lastAccessTime;
+		provDt.addMinutes(iTimeWindow);
+		if(provDt < dt)
+		{
+			//CMPIInstanceMI * mi = it->second->instMI;
+			MIs miVector = it->second->miVector;
+
+			// If instance provider, allow instance prov cleanup to run
+			if (miVector.instMI)
+			{
+				::CMPIOperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx);
+			}
+
+			// If associator provider, allow associator prov cleanup to run
+			if (miVector.assocMI)
+			{
+				::CMPIOperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx);
+			}
+
+			// If method provider, allow method prov cleanup to run
+			if (miVector.methMI)
+			{
+				::CMPIOperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx);
+			}
+
+			// If property provider, allow property prov cleanup to run
+			if (miVector.propMI)
+			{
+				::CMPIOperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx);
+			}
+
+			// If indication provider, allow indication prov cleanup to run
+			if (miVector.indMI)
+			{
+				::CMPIOperationContext context;
+				CMPI_ContextOnStack eCtx(context);
+				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx);
+			}
+
+			it->second.setNull();
+		}
+		it++;
+	}
+}
+
+
 } // end namespace OW_NAMESPACE
 
 OW_PROVIDERIFCFACTORY(OpenWBEM::CMPIProviderIFC, cmpi)

@@ -88,10 +88,7 @@ protected:
 	virtual PolledProviderIFCRefArray doGetPolledProviders(
 		const ProviderEnvironmentIFCRef& env
 		);
-	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env)
-	{
-		// TODO
-	}
+	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
 private:
 	typedef Map<String, CMPIFTABLERef> ProviderMap;
 	//typedef Array<SharedLibraryObject<CMPIFTABLERef> > LoadedProviderArray;

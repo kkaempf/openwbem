@@ -70,6 +70,9 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	const CIMClass& cimClass )
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::enumInstanceNames()");
+
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -118,6 +121,8 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& cimClass )
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::enumInstances()");
+
+	m_ftable->lastAccessTime.setToCurrent();
 
 	if (m_ftable->miVector.instMI->ft->enumInstances!= NULL)
 	{
@@ -185,6 +190,8 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 {
 	CIMInstance rval;
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::getInstance()");
+
+	m_ftable->lastAccessTime.setToCurrent();
 
 	if (m_ftable->miVector.instMI->ft->getInstance != NULL)
 	{
@@ -255,6 +262,9 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::deleteInstance()");
+
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.instMI->ft->deleteInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -295,6 +305,9 @@ CIMObjectPath
 {
 	CIMObjectPath rval;
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -342,6 +355,9 @@ void
 	const CIMClass& theClass)
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::modifyInstance()");
+
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};

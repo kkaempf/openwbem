@@ -68,6 +68,8 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIMethodProviderProxy::invokeMethod()");
 
+	m_ftable->lastAccessTime.setToCurrent();
+
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};

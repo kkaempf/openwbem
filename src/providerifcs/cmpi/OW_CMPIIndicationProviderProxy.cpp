@@ -60,6 +60,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 {
 	bool lastActivation = (--m_activationCount == 0);
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "deactivateFilter");
+	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->deActivateFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -107,6 +108,7 @@ CMPIIndicationProviderProxy::activateFilter(
 {
 	bool firstActivation = (m_activationCount++ == 0);
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "activateFilter");
+	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->activateFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -155,6 +157,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 	const String &owner)
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "authorizeFilter");
+	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->authorizeFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -201,6 +204,7 @@ CMPIIndicationProviderProxy::mustPoll(
 	const StringArray &classes)
 {
 	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "mustPoll");
+	m_ftable->lastAccessTime.setToCurrent();
 	if (m_ftable->miVector.indMI->ft->mustPoll != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};

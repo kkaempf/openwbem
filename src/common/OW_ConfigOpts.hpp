@@ -121,6 +121,9 @@
 #ifndef OW_DEFAULT_CPPIFC_PROV_TTL
 #define OW_DEFAULT_CPPIFC_PROV_TTL "5"
 #endif
+#ifndef OW_DEFAULT_CMPIIFC_PROV_TTL
+#define OW_DEFAULT_CMPIIFC_PROV_TTL "-1"
+#endif
 #ifndef OW_DEFAULT_REQ_HANDLER_TTL
 #define OW_DEFAULT_REQ_HANDLER_TTL "5"
 #endif
@@ -257,6 +260,7 @@ namespace ConfigOpts
 	// 3.0 additions
 	static const char* const REUSE_ADDR_opt = "http_server.reuse_addr";
 	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
+	static const char* const CMPIIFC_PROV_TTL_opt = "cmpiprovifc.prov_TTL";
 	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
 	static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
 	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
