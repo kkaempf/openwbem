@@ -102,6 +102,7 @@ daemonize(bool dbgFlg, const String& daemonName)
 	}
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
+	pidFile += OW_PACKAGE_PREFIX;
 	pidFile += daemonName;
 	pidFile += ".pid";
 	int pid = PidFile::checkPid(pidFile.c_str());
@@ -171,6 +172,7 @@ daemonShutdown(const String& daemonName)
 {
 	String pidFile(OW_PIDFILE_DIR);
 	pidFile += "/";
+	pidFile += OW_PACKAGE_PREFIX;
 	pidFile += daemonName;
 	pidFile += ".pid";
 	PidFile::removePid(pidFile.c_str());
