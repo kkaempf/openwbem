@@ -89,7 +89,7 @@ OStringStream::~OStringStream()
 }
 ///////////////////////////////////////////////////////////////////////////////
 OStringStream::OStringStream(const OStringStream& ostr)
-	: OStringStreamBase(ostr.length()), std::ostream(&m_buf)
+	: std::basic_ios<char, std::char_traits<char> >(), OStringStreamBase(ostr.length()),  std::ostream(&m_buf)
 {
 	*this << ostr.toString();
 }
