@@ -36,6 +36,8 @@
 #include "OW_Format.hpp"
 #include <cassert>
 #include <cstring>
+#include <cstddef>
+
 extern "C"
 {
 #ifdef OW_HAVE_SYS_TIME_H
