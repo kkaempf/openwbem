@@ -308,6 +308,8 @@ void
 OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	const OW_String& instNS)
 {
+	m_env->logDebug(format("OW_IndicationServerImpl::_processIndication "
+		"instanceArg = %1 instNS = %2", instanceArg.toString(), instNS));
 	OW_ACLInfo aclInfo;
 
 	OW_CIMInstance instance(instanceArg);
@@ -368,16 +370,59 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			OW_CIMObjectPath cop;
 
 			// Get object path to filter object
-			subscription.getProperty("Filter").getValue().get(cop);
-			OW_CIMInstance filter = hdl->getInstance(cop.getNameSpace(), cop);
+			OW_CIMProperty filterProp = subscription.getProperty("Filter");
+			if (!filterProp)
+			{
+				m_env->logError("Indication subscription has no Filter property");
+				continue;
+			}
+			OW_CIMValue fpv = filterProp.getValue();
+			if (!fpv)
+			{
+				m_env->logError("Indication subscription Filter property is NULL");
+				continue;
+			}
+			fpv.get(cop);
+
+			OW_CIMInstance filterInst = hdl->getInstance(cop.getNameSpace(), cop);
 
 			// Get query string
 			OW_String query;
-			filter.getProperty("Query").getValue().get(query);
+			OW_CIMProperty queryProp = filterInst.getProperty("Query");
+			if (!queryProp)
+			{
+				m_env->logError("Indication subscription has no Query property");
+				continue;
+			}
+			OW_CIMValue qpv = queryProp.getValue();
+			if (!qpv)
+			{
+				m_env->logError("Indication subscription Query property is NULL");
+				continue;
+			}
+			qpv.get(query);
 
 			// Get query language
 			OW_String queryLanguage;
-			filter.getProperty("QueryLanguage").getValue().get(queryLanguage);
+			OW_CIMProperty queryLangProp = filterInst.getProperty("QueryLanguage");
+			if (!queryLangProp)
+			{
+				m_env->logDebug("Indication subscription has no Query property, assuming wql1");
+				queryLanguage = "wql1";
+			}
+			else
+			{
+				OW_CIMValue qlpv = queryLangProp.getValue();
+				if (!qlpv || qlpv.getType() != OW_CIMDataType::STRING)
+				{
+					m_env->logDebug("Indication subscription has NULL Query property, assuming wql1");
+					queryLanguage = "wql1";
+				}
+				else
+				{
+					qlpv.get(queryLanguage);
+				}
+			}
 
 			// TEMP
 			OW_CIMInstance filteredInstance = instance;

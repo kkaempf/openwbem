@@ -1,3 +1,9 @@
+Sat Nov 30 11:09:58 MST 2002
+- Moved the hash map stuff from OW_MetaRepository.hpp into OW_HashMap.hpp and
+  changed OW_ProviderManager to use it.
+- Fixed up OW_IndicationServerImpl::_processIndication to be more tolerant of
+  non-existent properties or values.
+
 Fri Nov 29 06:53:48 MST 2002
 - Fixed the pam module.  Added some code to the acceptance test to make sure
   the daemon will start with the pam module authentication.
