@@ -31,13 +31,17 @@
 #define OW_BYTE_SWAP_HPP_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-// this will be defined by the configure script.
-#ifndef OW_WORDS_BIGENDIAN
-#if defined(OW_HAVE_BYTESWAP_H) && !defined(OW_DEBUG_MEMORY)
+
+#if !defined(OW_WORDS_BIGENDIAN) && defined(OW_HAVE_BYTESWAP_H) && !defined(OW_DEBUG_MEMORY)
 #include <byteswap.h>
+#endif
 
 namespace OpenWBEM
 {
+
+// this will be defined by the configure script.
+#ifndef OW_WORDS_BIGENDIAN
+#if defined(OW_HAVE_BYTESWAP_H) && !defined(OW_DEBUG_MEMORY)
 
 inline UInt16 hton16(UInt16 v) { return __bswap_16(v); }
 inline UInt32 hton32(UInt32 v) { return __bswap_32(v); }
@@ -87,8 +91,8 @@ inline UInt64 ntoh64(UInt64 v)
 {
 	return hton64(v);
 }
-#endif //#ifdef OW_HAVE_BYTESWAP_H
-#else
+#endif
+#else // we're big-endian, just pass-thru
 inline UInt16 hton16(UInt16 v) { return v; }
 inline UInt32 hton32(UInt32 v) { return v; }
 inline UInt64 hton64(UInt64 v) { return v; }
