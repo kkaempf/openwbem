@@ -483,10 +483,18 @@ class RandomOutputGatherer : public Exec::OutputCallback
 private:
 	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
 	{
-		// streamIndex is the index into the PopenStreams array which correlates to randomSourceCommands
-		::RAND_add(data, dataLen, randomSourceCommands[streamIndex].usefulness * static_cast<double>(dataLen) / 1024.0);
-		// the actual length of stuff we got could be random
-		::RAND_add(&dataLen, sizeof(dataLen), 0.01);
+		if (outputSource == Exec::E_STDERR)
+		{
+			// for all the commands we run, anything output to stderr doesn't have any entropy.
+			::RAND_add(data, dataLen, 0.0);
+		}
+		else
+		{
+			// streamIndex is the index into the PopenStreams array which correlates to randomSourceCommands
+			::RAND_add(data, dataLen, randomSourceCommands[streamIndex].usefulness * static_cast<double>(dataLen) / 1024.0);
+		}
+		// the actual length of stuff we got could be random, but we can't say for sure, so it gets 0.0 entropy.
+		::RAND_add(&dataLen, sizeof(dataLen), 0.0);
 		::RAND_add(&outputSource, sizeof(outputSource), 0.0);
 		// The timing is random too.
 		generateRandomDataFromTime(0.1);
