@@ -37,7 +37,7 @@
 
 #include "OW_config.h"
 #include "OW_ProviderEnvironmentIFC.hpp"
-#include "OW_AuthorizerIFC.hpp"
+#include "OW_Authorizer2IFC.hpp"
 
 namespace OpenWBEM
 {
@@ -47,11 +47,11 @@ class AuthorizerManager
 public:
 
 	AuthorizerManager();
-	AuthorizerManager(AuthorizerIFCRef authorizerRef);
+	AuthorizerManager(Authorizer2IFCRef authorizerRef);
 	
 	~AuthorizerManager();
 
-	void setAuthorizer(AuthorizerIFCRef authorizerRef)
+	void setAuthorizer(Authorizer2IFCRef authorizerRef)
 	{
 		m_authorizer = authorizerRef;
 	}
@@ -102,8 +102,8 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns,
 		const CIMObjectPath& op,
-		AuthorizerIFC::EDynamicFlag dynamic,
-		AuthorizerIFC::EWriteFlag flag);
+		Authorizer2IFC::EDynamicFlag dynamic,
+		Authorizer2IFC::EWriteFlag flag);
 #endif
 
 	/**
@@ -127,7 +127,7 @@ public:
 	bool allowWriteSchema(
 		const ProviderEnvironmentIFCRef& env,
 		const String& ns, 
-		AuthorizerIFC::EWriteFlag flag);
+		Authorizer2IFC::EWriteFlag flag);
 #endif
 
 	/**
@@ -138,7 +138,8 @@ public:
 	 */
 	bool allowAccessToNameSpace(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const String& ns,
+		Authorizer2IFC::EAccessType accessType);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
@@ -194,7 +195,7 @@ public:
 
 private:
 
-	AuthorizerIFCRef m_authorizer;
+	Authorizer2IFCRef m_authorizer;
 	bool m_initialized;
 };
 

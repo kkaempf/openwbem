@@ -35,13 +35,13 @@
 #ifndef OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
 #define OW_SIMPLE_AUTHORIZER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_AuthorizerIFC.hpp"
+#include "OW_Authorizer2IFC.hpp"
 
 namespace OpenWBEM
 {
 
 // This class is responsible for Access control.
-class SimpleAuthorizer : public AuthorizerIFC
+class SimpleAuthorizer : public Authorizer2IFC
 {
 public:
 	/**
@@ -134,11 +134,13 @@ public:
 	 * Determine if the user is allowed access to a namespace.
 	 * @param env A reference to a provider environment.
 	 * @param ns The namespace that will be accessed.
+	 * @param actype - See Authorizer2IFC
 	 * @return true if access is allowed. Otherwise false.
 	 */
 	virtual bool doAllowAccessToNameSpace(
 		const ProviderEnvironmentIFCRef& env,
-		const String& ns);
+		const String& ns,
+		Authorizer2IFC::EAccessType actype);
 
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**

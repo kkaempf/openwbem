@@ -54,7 +54,7 @@ AuthorizerManager::AuthorizerManager()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-AuthorizerManager::AuthorizerManager(AuthorizerIFCRef authorizerRef)
+AuthorizerManager::AuthorizerManager(Authorizer2IFCRef authorizerRef)
 	: m_authorizer(authorizerRef)
 {
 }
@@ -107,8 +107,8 @@ AuthorizerManager::allowWriteInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns, 
 	const CIMObjectPath& op,
-	AuthorizerIFC::EDynamicFlag dynamic,
-	AuthorizerIFC::EWriteFlag flag)
+	Authorizer2IFC::EDynamicFlag dynamic,
+	Authorizer2IFC::EWriteFlag flag)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
@@ -149,7 +149,7 @@ bool
 AuthorizerManager::allowWriteSchema(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns, 
-	AuthorizerIFC::EWriteFlag flag)
+	Authorizer2IFC::EWriteFlag flag)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
@@ -169,7 +169,8 @@ AuthorizerManager::allowWriteSchema(
 bool 
 AuthorizerManager::allowAccessToNameSpace(
 	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const String& ns,
+	Authorizer2IFC::EAccessType accessType)
 {
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
@@ -182,7 +183,7 @@ AuthorizerManager::allowAccessToNameSpace(
 	}
 
 	AuthorizerMarker am(env);
-	return m_authorizer->doAllowAccessToNameSpace(env, ns);
+	return m_authorizer->doAllowAccessToNameSpace(env, ns, accessType);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////

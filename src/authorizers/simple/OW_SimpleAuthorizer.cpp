@@ -50,6 +50,10 @@
 
 #include <cstring>
 
+#include <iostream>
+using std::cerr;
+using std::endl;
+
 namespace OpenWBEM
 {
 
@@ -64,7 +68,7 @@ const String ACCESS_READWRITE("rw");
 	
 //////////////////////////////////////////////////////////////////////////////
 SimpleAuthorizer::SimpleAuthorizer()
-	: AuthorizerIFC()
+	: Authorizer2IFC()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -90,7 +94,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 
 	LoggerRef lgr = env->getLogger();
 	String lns(ns);
-	while (!lns.empty() && lns[0] == '/')
+	while(lns.startsWith('/'))
 	{
 		lns = lns.substring(1);
 	}
@@ -152,7 +156,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 					if (capability.indexOf(opType) == String::npos)
 					{
 						// Access to namespace denied for user
-						return false;
+						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
 				else
@@ -160,7 +164,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 					if (!capability.equals("rw") && !capability.equals("wr"))
 					{
 						// Access to namespace denied for user
-						return false;
+						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
 
@@ -168,6 +172,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 				return true;
 			}
 		}
+
 		// use default policy for namespace
 		try
 		{
@@ -214,7 +219,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 				if (capability.indexOf(opType) == String::npos)
 				{
 					// Access namespace denied for user
-					return false;
+				   	OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
 			else
@@ -222,7 +227,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 				if (!capability.equals("rw") && !capability.equals("wr"))
 				{
 					// Access to namespace denied for user
-					return false;
+				   	OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
 
@@ -238,8 +243,10 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 	}
 
 	// Access to namespace denied for user
+   	OW_THROWCIM(CIMException::ACCESS_DENIED);
 	return false;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowReadInstance(
@@ -249,19 +256,19 @@ SimpleAuthorizer::doAllowReadInstance(
 	const StringArray* clientPropertyList,
 	StringArray& authorizedPropertyList)
 {
-	return checkAccess(ACCESS_READ, ns, env);
+	return true;
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-bool 
+	bool 
 SimpleAuthorizer::doAllowWriteInstance(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns, 
 	const CIMObjectPath& instanceName, 
-	AuthorizerIFC::EDynamicFlag dynamic,
-	AuthorizerIFC::EWriteFlag flag)
+	Authorizer2IFC::EDynamicFlag dynamic,
+	Authorizer2IFC::EWriteFlag flag)
 {
-	return checkAccess(ACCESS_WRITE, ns, env);
+	return true;
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -270,7 +277,7 @@ SimpleAuthorizer::doAllowReadSchema(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns)
 {
-	return checkAccess(ACCESS_READ, ns, env);
+	return true;
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -278,23 +285,33 @@ bool
 SimpleAuthorizer::doAllowWriteSchema(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns, 
-	AuthorizerIFC::EWriteFlag flag)
+	Authorizer2IFC::EWriteFlag flag)
 {
-	return checkAccess(ACCESS_WRITE, ns, env);
+	return true;
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowAccessToNameSpace(
 	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const String& ns,
+	Authorizer2IFC::EAccessType accessType)
 {
-	bool cc = checkAccess(ACCESS_READ, ns, env);
-	if(!cc)
+	String actype;
+	switch(accessType)
 	{
-		bool cc = checkAccess(ACCESS_WRITE, ns, env);
+		case Authorizer2IFC::E_READ:
+			actype = ACCESS_READ;
+			break;
+		case Authorizer2IFC::E_WRITE:
+			actype = ACCESS_WRITE;
+			break;
+		default:
+			actype = ACCESS_READWRITE;
+			break;
 	}
-	return cc;
+
+	return checkAccess(actype, ns, env);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -303,9 +320,7 @@ SimpleAuthorizer::doAllowCreateNameSpace(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns)
 {
-	// Don't need to check ACLs, since this is a result of calling
-	// createInstance.
-	return true;
+	return doAllowAccessToNameSpace(env, ns, Authorizer2IFC::E_WRITE);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
@@ -313,9 +328,9 @@ SimpleAuthorizer::doAllowDeleteNameSpace(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns)
 {
-	// Don't need to check ACLs, since this is a result of calling
-	// deleteInstance.
-	return true;
+cerr << "<<< SimpleAuthorizer::doAllowDeleteNameSpace called. ns = " << ns << endl;
+
+	return doAllowAccessToNameSpace(env, ns, Authorizer2IFC::E_WRITE);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -323,9 +338,8 @@ bool
 SimpleAuthorizer::doAllowEnumNameSpace(
 		const ProviderEnvironmentIFCRef& env)
 {
-	// Don't need to check ACLs, since this is a result of calling
-	// enumInstances.
-	return true;
+	return true; // ?
+	// return doAllowAccessToNameSpace(env, "root", Authorizer2IFC::E_READ);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
@@ -335,10 +349,15 @@ SimpleAuthorizer::doAllowMethodInvocation(
 	const CIMObjectPath path, 
 	const String& methodName)
 {
+	return true;
+/*
+cerr << "<<< SimpleAuthorizer::doAllowMethodInvocation called" << endl;
+
 	return checkAccess(ACCESS_READWRITE, ns, env);
+*/
 }
 
 } // end namespace OpenWBEM
 
 
-OW_AUTHORIZER_FACTORY(OpenWBEM::SimpleAuthorizer, simple);
+OW_AUTHORIZER2_FACTORY(OpenWBEM::SimpleAuthorizer, simple);

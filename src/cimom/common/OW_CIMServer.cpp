@@ -167,10 +167,11 @@ CIMServer::shutdown()
 }
 //////////////////////////////////////////////////////////////////////////////
 void 
-CIMServer::_checkNameSpaceAccess(OperationContext& context, const String& ns)
+CIMServer::_checkNameSpaceAccess(OperationContext& context, const String& ns,
+	Authorizer2IFC::EAccessType acType)
 {
 	if(!m_authorizerMgr->allowAccessToNameSpace(
-		createProvEnvRef(context, m_env), ns))
+		createProvEnvRef(context, m_env), ns, acType))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Access to namespace %1 is not allowed", ns).c_str());
@@ -229,7 +230,7 @@ CIMServer::getQualifierType(const String& ns,
 	const String& qualifierName,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	if(!m_authorizerMgr->allowReadSchema(
 		createProvEnvRef(context, m_env), ns))
@@ -249,7 +250,7 @@ CIMServer::enumQualifierTypes(
 	CIMQualifierTypeResultHandlerIFC& result,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	if(!m_authorizerMgr->allowReadSchema(
 		createProvEnvRef(context, m_env), ns))
@@ -265,10 +266,10 @@ void
 CIMServer::deleteQualifierType(const String& ns, const String& qualName,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, AuthorizerIFC::E_DELETE))
+		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_DELETE))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Deletion of qualifier %1 is not allowed",
@@ -283,10 +284,10 @@ CIMServer::setQualifierType(
 	const String& ns,
 	const CIMQualifierType& qt, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, AuthorizerIFC::E_MODIFY))
+		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_MODIFY))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Modification of qualifier %1 is not allowed",
@@ -303,7 +304,7 @@ CIMServer::getClass(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	if(!m_authorizerMgr->allowReadSchema(
 		createProvEnvRef(context, m_env), ns))
@@ -352,10 +353,10 @@ CIMClass
 CIMServer::deleteClass(const String& ns, const String& className,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, AuthorizerIFC::E_DELETE))
+		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_DELETE))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Deletion of class %1 is not allowed",
@@ -369,10 +370,10 @@ void
 CIMServer::createClass(const String& ns, const CIMClass& cimClass,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, AuthorizerIFC::E_CREATE))
+		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_CREATE))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Creation of class %1 is not allowed",
@@ -394,10 +395,10 @@ CIMServer::modifyClass(
 	const CIMClass& cc,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, AuthorizerIFC::E_MODIFY))
+		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_MODIFY))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Modification of class %1 is not allowed",
@@ -415,7 +416,7 @@ CIMServer::enumClasses(const String& ns,
 		EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	if(!m_authorizerMgr->allowReadSchema(
 		createProvEnvRef(context, m_env), ns))
@@ -435,7 +436,7 @@ CIMServer::enumClassNames(
 	StringResultHandlerIFC& result,
 	EDeepFlag deep, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	if(!m_authorizerMgr->allowReadSchema(
 		createProvEnvRef(context, m_env), ns))
 	{
@@ -490,7 +491,7 @@ CIMServer::enumInstanceNames(
 	EDeepFlag deep,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	InstNameEnumerator ie(ns, result, context, m_env, this);
 	CIMClass theClass = _instGetClass(ns, className,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
@@ -593,7 +594,8 @@ CIMServer::enumInstances(
 	const StringArray* propertyList, EEnumSubclassesFlag enumSubclasses,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+
 	CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, 
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, context);
 
@@ -790,7 +792,6 @@ CIMServer::_getCIMInstances(
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-
 	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass, context));
 
 	// See if the authorizer allows reading of these instances and give it
@@ -881,7 +882,8 @@ CIMServer::getInstance(
 	const StringArray* propertyList, CIMClass* pOutClass,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+
 	CIMObjectPath instanceName(instanceName_);
 	String className = instanceName.getClassName();
 	CIMClass cc = _instGetClass(ns, className,
@@ -965,7 +967,8 @@ CIMInstance
 CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+
 	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
 	if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
@@ -982,8 +985,8 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	// Allow authorizer a chance to determine if the deletion is allowed
 	if(!m_authorizerMgr->allowWriteInstance(
 		createProvEnvRef(context, m_env), ns, cop,
-		(instancep) ? AuthorizerIFC::E_DYNAMIC : AuthorizerIFC::E_NOT_DYNAMIC,
-		AuthorizerIFC::E_DELETE))
+		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+		Authorizer2IFC::E_DELETE))
 	{
 		m_env->logDebug(Format("Authorizer did NOT authorize deletion of %1"
 			" instances from namespace %2", theClass.getName(), ns));
@@ -1021,7 +1024,7 @@ CIMServer::createInstance(
 	const CIMInstance& ci,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	String className = ci.getClassName();
 	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0,
@@ -1050,13 +1053,14 @@ CIMServer::createInstance(
 
 	// Allow authorizer a chance to determine if the creation is allowed
 	CIMObjectPath cop(ns, lci);
+
 	if(!m_authorizerMgr->allowWriteInstance(
 		createProvEnvRef(context, m_env), ns, cop,
-		(instancep) ? AuthorizerIFC::E_DYNAMIC : AuthorizerIFC::E_NOT_DYNAMIC,
-		AuthorizerIFC::E_CREATE))
+		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+		Authorizer2IFC::E_CREATE))
 	{
 		m_env->logDebug(Format("Authorizer did NOT authorize creation of %1"
-			" instances in namespace %2", lci.getClassName(), ns));
+			" instances	 in namespace %2", lci.getClassName(), ns));
 
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("You are not authorized to create %1 instances in"
@@ -1095,7 +1099,7 @@ CIMServer::modifyInstance(
 	const StringArray* propertyList,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 
 	CIMInstance oldInst(CIMNULL);
 	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(),
@@ -1111,8 +1115,8 @@ CIMServer::modifyInstance(
 	// Allow authorizer a chance to determine if the mofify is allowed
 	if(!m_authorizerMgr->allowWriteInstance(
 		createProvEnvRef(context, m_env), ns, cop,
-		(instancep) ? AuthorizerIFC::E_DYNAMIC : AuthorizerIFC::E_NOT_DYNAMIC,
-		AuthorizerIFC::E_MODIFY))
+		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+		Authorizer2IFC::E_MODIFY))
 	{
 		m_env->logDebug(Format("Authorizer did NOT authorize modification of %1"
 			" instances in namespace %2", lci.getClassName(), ns));
@@ -1172,7 +1176,7 @@ CIMServer::getProperty(
 	const CIMObjectPath& name,
 	const String& propertyName, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	CIMClass theClass = _instGetClass(ns,name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1199,7 +1203,7 @@ CIMServer::setProperty(
 	const String& propertyName, const CIMValue& valueArg,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
 	CIMClass theClass = _instGetClass(ns, name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1256,7 +1260,7 @@ CIMServer::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READWRITE);
 
 	// Allow authorizer a chance to determine if the mofify is allowed
 	if(!m_authorizerMgr->allowMethodInvocation(
@@ -1562,7 +1566,7 @@ CIMServer::execQuery(
 	const String &query,
 	const String& queryLanguage, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	WQLIFCRef wql = m_env->getWQLRef();
 	if (wql && wql->supportsQueryLanguage(queryLanguage))
 	{
@@ -1673,7 +1677,7 @@ CIMServer::associators(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	// Allow authorizer to intercept instances that will be returned
 	InstanceAuthorizer ia(createProvEnvRef(context, m_env),
@@ -1695,7 +1699,7 @@ CIMServer::associatorsClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
 		context);
@@ -1710,7 +1714,7 @@ CIMServer::associatorNames(
 	const String& role, const String& resultRole,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0, context);
 }
@@ -1724,7 +1728,7 @@ CIMServer::references(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 
 	// Allow authorizer to intercept instances that will be returned
 	InstanceAuthorizer ia(createProvEnvRef(context, m_env),
@@ -1744,7 +1748,7 @@ CIMServer::referencesClasses(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
 		includeClassOrigin, propertyList, 0, 0, &result, context);
 }
@@ -1757,7 +1761,7 @@ CIMServer::referenceNames(
 	const String& resultClass, const String& role,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns);
+	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
 	_commonReferences(ns, path, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0,
 		context);
 }

@@ -142,14 +142,20 @@ void createClass(CIMOMHandleIFC& hdl)
 
 		hdl.createClass("/root/acltest", cimClass);
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "create class should have failed." << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "create class should not have failed." << endl;
 			throw;
+		}
 	}
 }
 
@@ -160,14 +166,20 @@ void enumClassNames(CIMOMHandleIFC& hdl)
 	{
 		StringEnumeration enu = hdl.enumClassNamesE("/root/acltest", "", E_DEEP);
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "enumClassNamesE should have failed." << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
+		{
+			cerr << "enumClassNamesE should NOT have failed." << endl;
 			throw;
+		}
 	}
 }
 
@@ -178,14 +190,20 @@ void enumClasses(CIMOMHandleIFC& hdl)
 	{
 		CIMClassEnumeration enu = hdl.enumClassE("root/acltest", "", E_DEEP);
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "enumClassE should have failed" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
+		{
+			cerr << "enumClassE should NOT have failed" << endl;
 			throw;
+		}
 	}
 }
 
@@ -202,14 +220,20 @@ void modifyClass(CIMOMHandleIFC& hdl)
 		bionicClass = cimClass;
 		hdl.modifyClass("/root/acltest", cimClass);
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "modifyClass should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "modifyClass should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -222,14 +246,20 @@ void getClass(CIMOMHandleIFC& hdl)
 		CIMClass cimClass = hdl.getClass("/root/acltest",
 			"EXP_BionicComputerSystem");
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "getClass should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
+		{
+			cerr << "getClass should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -253,14 +283,20 @@ void createInstance(CIMOMHandleIFC& hdl, const String& newInstance)
 		bionicInstance = newInst;
 		hdl.createInstance("/root/acltest", newInst);
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "createInstance should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "createInstance should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -272,14 +308,20 @@ void enumerateInstanceNames(CIMOMHandleIFC& hdl)
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE("/root/acltest", ofClass);
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "enumInstanceNamesE should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
+		{
+			cerr << "enumInstanceNamesE should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -291,14 +333,20 @@ void enumerateInstances(CIMOMHandleIFC& hdl)
 		String ofClass = "EXP_BionicComputerSystem";
 		CIMInstanceEnumeration enu = hdl.enumInstancesE("/root/acltest", ofClass, E_DEEP);
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "enumInstancesE should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
+		{
+			cerr << "enumInstancesE should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -314,14 +362,20 @@ void getInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 
 		CIMInstance in = hdl.getInstance("/root/acltest", cop);
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "getInstance should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "r" || mode == "rw")
+		{
+			cerr << "getInstance should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -336,19 +390,23 @@ void modifyInstance(CIMOMHandleIFC& hdl)
 
 		hdl.modifyInstance("/root/acltest", in);
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "modifyInstance should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "modifyInstance should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
-
-void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance)
-{
+void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance) {
 	cout << "\n\n******* Doing deleteInstance() *******\n" << endl;
 	try
 	{
@@ -358,14 +416,20 @@ void deleteInstance(CIMOMHandleIFC& hdl, const String& theInstance)
 		cop.setKeyValue("Name", CIMValue(theInstance));
 		hdl.deleteInstance("/root/acltest", cop);
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "deleteInstance should have failed here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "deleteInstance should NOT have failed here" << endl;
 			throw;
+		}
 	}
 }
 
@@ -652,14 +716,20 @@ void createNameSpace(CIMOMHandleIFC& hdl)
 	{
 		CIMNameSpaceUtils::create__Namespace(hdl, "/root/acltest/sub1");
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "create__Namespace should have failed" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "create__Namespace should NOT failed." << endl;
 			throw;
+		}
 	}
 }
 
@@ -670,7 +740,10 @@ void enumNameSpace(CIMOMHandleIFC& hdl)
 	{
 		StringArray rval = CIMNameSpaceUtils::enum__Namespace(hdl, "/root/acltest", E_DEEP);
 		if (mode != "r" && mode != "rw")
+		{
+			cerr << "mode == " << mode << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
@@ -688,14 +761,21 @@ void deleteNameSpace(CIMOMHandleIFC& hdl)
 	{
 		CIMNameSpaceUtils::delete__Namespace(hdl, "/root/acltest/sub1");
 		if (mode != "w" && mode != "rw")
+		{
+			cerr << "delete__Namespace should NOT have worked here" << endl;
 			TEST_ASSERT(0);
+		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
+		{
+			cerr << "delete__Namespace should have worked here. mode = "
+				<< mode << endl;
 			throw;
+		}
 	}
 }
 

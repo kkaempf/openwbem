@@ -59,7 +59,7 @@
 #include "OW_SharedLibraryRepository.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_AuthorizerIFC.hpp"
+#include "OW_Authorizer2IFC.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_AuthorizerManager.hpp"
@@ -833,9 +833,9 @@ CIMOMEnvironment::_createAuthorizerManager()
 		logFatalError(msg);
 		OW_THROW(CIMOMEnvironmentException, msg.c_str());
 	}
-	AuthorizerIFC* p =
-		SafeLibCreate<AuthorizerIFC>::create(
-			authorizerLib, "createAuthorizer", m_Logger);
+	Authorizer2IFC* p =
+		SafeLibCreate<Authorizer2IFC>::create(
+			authorizerLib, "createAuthorizer2", m_Logger);
 	if(!p)
 	{
 		String msg = Format("CIMOM failed to load authorization"
@@ -845,7 +845,7 @@ CIMOMEnvironment::_createAuthorizerManager()
 	}
 
 	m_authorizerManager->setAuthorizer(
-		AuthorizerIFCRef(authorizerLib,Reference<AuthorizerIFC>(p)));
+		Authorizer2IFCRef(authorizerLib,Reference<Authorizer2IFC>(p)));
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
