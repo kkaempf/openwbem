@@ -378,4 +378,101 @@ which are completely different, so just a whole chunk of the file is
 enclosed inside an #ifdef OW_WIN32.  Also sometimes the build system does
 the selection of code using automake conditionals.  
 -----------------------------------------------------------------------------
+All blocks must have braces on their own line. The only exception is the
+closing brace on a do/while loop.
+Yes:
+	if (x)
+	{
+		return;
+	}
+
+	while (foo())
+	{
+		// do nothing -- foo() will eventually return false
+	}
+
+	do
+	{
+		// ...
+	} while (x);
+
+No:
+	if (x)
+		return;
+
+	while (foo());
+
+	try {
+		// ...
+	} catch {
+		// ...
+	}
+
+	while (!x.eof()) x.readNext();
+
+-----------------------------------------------------------------------------
+To differentiate between function calls, put spaces between control statements
+and the open parentheses. For functions, don't put any space.
+Yes:
+	if (x)
+	{
+		// ...
+	}
+
+	for (...)
+	{
+		// ...
+	}
+
+	doSomething(...);
+No:
+	if(x)
+	{
+		// ...
+	}
+
+	for(...)
+	{
+		// ...
+	}
+
+	doSomething (...);
+-----------------------------------------------------------------------------
+Always use the virtual keyword for virtual functions in derived classes to 
+document the fact that they are virtual.
+
+Don't make inline virtual functions, since the compiler can't inline them,
+but must instantiate them any *every* translation unit which #include's the
+header it causes code bloat.
+
+No:
+	class A
+	{
+		virtual doSomething()
+		{
+			// ...
+		}
+		// ...
+	};
+
+-----------------------------------------------------------------------------
+Use an atomic, non-throwing swap operation to implement the copy-assignment
+operator.
+
+	A& A::operator=(const A& rhs)
+	{
+		A(rhs).swap(*this);
+		return *this;
+	}
+	void swap(A& rhs) throw()
+	{
+		// call non-throwing swap on the base class & each member variable
+	}
+
+Using this pattern prevents many of the common bugs in assignment operators.
+(Exceptional C++ Item 41)
+-----------------------------------------------------------------------------
+In a for() loop, don't modify the counter in the body of the loop.  If you
+need to modify the counter, use a while loop instead.
+
 
