@@ -381,6 +381,24 @@ if test "$enable_check_array_indexing" != no; then
     AC_DEFINE(CHECK_ARRAY_INDEXING)
 fi
 
+OW_ENABLE_PROPERTY_PROVIDERS=0
+AC_ARG_ENABLE(property-providers,
+[  --enable-property-providers     enable property providers],
+  [
+    AC_MSG_RESULT([Property providers enabled])
+    AC_DEFINE(ENABLE_PROPERTY_PROVIDERS)
+    OW_ENABLE_PROPERTY_PROVIDERS=1
+  ],
+  [
+    AC_MSG_RESULT([Property providers disabled])
+  ],
+  [
+    AC_MSG_RESULT([Property providers disabled])
+  ]
+  )
+AM_CONDITIONAL(ENABLE_PROPERTY_PROVIDERS, test x$OW_ENABLE_PROPERTY_PROVIDERS = x1)
+
+
 AC_ARG_ENABLE(gnu-pth,
 [  --enable-gnu-pth   use pth library],
   [

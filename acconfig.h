@@ -86,6 +86,7 @@
 #undef HAVE_PAM
 
 #undef DISABLE_ACLS
+#undef ENABLE_PROPERTY_PROVIDERS
 
 @BOTTOM@
 

@@ -36,7 +36,9 @@
 #include "OW_String.hpp"
 
 #include "OW_MethodProviderIFC.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderIFC.hpp"
+#endif
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
@@ -48,7 +50,9 @@
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 #include "OW_MethodProviderInfo.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderInfo.hpp"
+#endif
 #include "OW_IndicationProviderInfo.hpp"
 
 /**
@@ -97,7 +101,9 @@ public:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
+#endif
 		OW_IndicationProviderInfoArray& ind);
 
 	/**
@@ -126,6 +132,7 @@ public:
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	/**
 	 * Locate a Property provider.
 	 *
@@ -138,6 +145,7 @@ public:
 	 */
 	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
+#endif
 
 	/**
 	 * Locate an Associator provider.
@@ -192,7 +200,9 @@ protected:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
+#endif
 		OW_IndicationProviderInfoArray& ind) = 0;
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -201,8 +211,10 @@ protected:
 	virtual OW_MethodProviderIFCRef doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
+#endif
 
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
 		const OW_ProviderEnvironmentIFCRef& env,

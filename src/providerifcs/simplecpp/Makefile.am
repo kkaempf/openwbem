@@ -21,6 +21,13 @@ clean-local:
 	done
 
 
+if ENABLE_PROPERTY_PROVIDERS
+PROPERTY_PROVIDER_S= \
+OW_SimpleCppPropertyProviderIFC.hpp \
+OW_SimpleCppPropertyProviderIFC.cpp
+else
+PROPERTY_PROVIDER_S=
+endif
 
 
 libsimplecppprovifc_a_SOURCES = \
@@ -28,8 +35,7 @@ OW_SimpleCppAssociatorProviderIFC.hpp \
 OW_SimpleCppAssociatorProviderIFC.cpp \
 OW_SimpleCppInstanceProviderIFC.hpp \
 OW_SimpleCppInstanceProviderIFC.cpp \
-OW_SimpleCppPropertyProviderIFC.hpp \
-OW_SimpleCppPropertyProviderIFC.cpp \
+$(PROPERTY_PROVIDER_S) \
 OW_SimpleCppProviderBaseIFC.hpp \
 OW_SimpleCppProviderIFC.cpp \
 OW_SimpleCppProviderIFC.hpp \

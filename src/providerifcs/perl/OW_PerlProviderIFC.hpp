@@ -59,7 +59,9 @@ protected:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
+#endif
 		OW_IndicationProviderInfoArray& ind);
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
@@ -70,9 +72,11 @@ protected:
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
+#endif
 
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -94,7 +98,9 @@ protected:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
+#endif
 		OW_IndicationProviderInfoArray& ind);
 
 	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)

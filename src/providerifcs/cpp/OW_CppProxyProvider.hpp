@@ -35,14 +35,18 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderIFC.hpp"
+#endif
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_CppPropertyProviderIFC.hpp"
+#endif
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
@@ -176,6 +180,7 @@ private:
 	OW_CppMethodProviderIFCRef m_pProv;
 };
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class OW_CppPropertyProviderProxy : public OW_PropertyProviderIFC
 {
 public:
@@ -198,6 +203,7 @@ public:
 private:
 	OW_CppPropertyProviderIFCRef m_pProv;
 };
+#endif
 
 class OW_CppIndicationExportProviderProxy : public OW_IndicationExportProviderIFC
 {

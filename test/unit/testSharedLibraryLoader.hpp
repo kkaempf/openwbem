@@ -136,6 +136,7 @@ public:
 	}
 };
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class TestPropertyProvider : public OW_PropertyProviderIFC
 {
 public:
@@ -147,6 +148,7 @@ public:
 	{
 	}
 };
+#endif
 
 class TestIndicationProvider : public OW_IndicationProviderIFC
 {
@@ -176,7 +178,9 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			OW_InstanceProviderInfoArray& ia,
 			OW_AssociatorProviderInfoArray& aa,
 			OW_MethodProviderInfoArray& ma,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 			OW_PropertyProviderInfoArray& pa,
+#endif
 			OW_IndicationProviderInfoArray& inda)
 		{
 			if (m_name == "lib1")
@@ -254,6 +258,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					api.addInstrumentedClass(ci);
 					aa.push_back(api);
 				}
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 				// property provider registration
 				{
 					OW_PropertyProviderInfo ppi;
@@ -298,6 +303,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					ppi.addInstrumentedClass(ci);
 					pa.push_back(ppi);
 				}
+#endif
 				// indication provider registration
 				{
 					OW_IndicationProviderInfo indi;
@@ -382,6 +388,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
@@ -391,6 +398,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			}
 			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
+#endif
 
 		virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)

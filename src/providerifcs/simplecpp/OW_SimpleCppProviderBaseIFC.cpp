@@ -50,9 +50,11 @@ OW_SimpleCppProviderBaseIFC::getInstanceProvider() { return 0; }
 OW_SimpleCppAssociatorProviderIFC* 
 OW_SimpleCppProviderBaseIFC::getAssociatorProvider() { return 0; }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 ///////////////////////////////////////////////////////////////////////////////
 OW_SimpleCppPropertyProviderIFC* 
 OW_SimpleCppProviderBaseIFC::getPropertyProvider() { return 0; }
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_DateTime 

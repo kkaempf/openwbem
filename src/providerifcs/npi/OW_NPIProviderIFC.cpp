@@ -97,7 +97,9 @@ OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_InstanceProviderInfoArray&,
 	OW_AssociatorProviderInfoArray&,
 	OW_MethodProviderInfoArray&,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray&,
+#endif
 	OW_IndicationProviderInfoArray&)
 {
 	return;
@@ -202,6 +204,7 @@ OW_NPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
 OW_NPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -229,6 +232,7 @@ OW_NPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef

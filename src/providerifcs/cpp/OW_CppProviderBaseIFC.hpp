@@ -41,7 +41,9 @@
 class OW_CppInstanceProviderIFC;
 class OW_CppMethodProviderIFC;
 class OW_CppAssociatorProviderIFC;
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class OW_CppPropertyProviderIFC;
+#endif
 class OW_CppIndicationExportProviderIFC;
 class OW_CppPolledProviderIFC;
 class OW_CppIndicationProviderIFC;
@@ -85,7 +87,9 @@ public:
 	virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
 	virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
 	virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
+#endif
 	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
 	virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }
 	virtual OW_CppIndicationProviderIFC* getIndicationProvider() { return 0; }

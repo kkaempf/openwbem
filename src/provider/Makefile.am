@@ -1,12 +1,19 @@
 noinst_LIBRARIES = libowprovider.a
 
+if ENABLE_PROPERTY_PROVIDERS
+PROPERTY_PROVIDER_S= \
+OW_PropertyProviderIFC.cpp
+else
+PROPERTY_PROVIDER_S=
+endif
+
 libowprovider_a_SOURCES = \
 OW_AssociatorProviderIFC.cpp \
 OW_IndicationExportProviderIFC.cpp \
 OW_InstanceProviderIFC.cpp \
 OW_MethodProviderIFC.cpp \
 OW_PolledProviderIFC.cpp \
-OW_PropertyProviderIFC.cpp \
+$(PROPERTY_PROVIDER_S) \
 OW_ProviderBaseIFC.cpp \
 OW_ProviderEnvironmentIFC.cpp \
 OW_ProviderIFCBaseIFC.cpp \
@@ -14,20 +21,27 @@ OW_MethodProviderInfo.cpp \
 OW_IndicationProviderIFC.cpp \
 OW_ProviderInfoBase.cpp
 
+if ENABLE_PROPERTY_PROVIDERS
+PROPERTY_PROVIDER_H= \
+OW_PropertyProviderIFC.hpp \
+OW_PropertyProviderInfo.hpp
+else
+PROPERTY_PROVIDER_H=
+endif
+
 pkginclude_HEADERS = \
 OW_AssociatorProviderIFC.hpp \
 OW_IndicationExportProviderIFC.hpp \
 OW_InstanceProviderIFC.hpp \
 OW_MethodProviderIFC.hpp \
 OW_PolledProviderIFC.hpp \
-OW_PropertyProviderIFC.hpp \
+$(PROPERTY_PROVIDER_H) \
 OW_ProviderBaseIFC.hpp \
 OW_ProviderEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \
 OW_InstanceProviderInfo.hpp \
 OW_AssociatorProviderInfo.hpp \
 OW_MethodProviderInfo.hpp \
-OW_PropertyProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \
 OW_IndicationProviderInfo.hpp \
 OW_ProviderInfoBase.hpp

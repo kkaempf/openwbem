@@ -104,7 +104,9 @@ OW_CMPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_InstanceProviderInfoArray&,
 	OW_AssociatorProviderInfoArray&,
 	OW_MethodProviderInfoArray&,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray&,
+#endif
 	OW_IndicationProviderInfoArray&)
 {
 	return;
@@ -213,6 +215,7 @@ OW_CMPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
 OW_CMPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -242,6 +245,7 @@ OW_CMPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& en
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef

@@ -317,15 +317,23 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 		OW_InstanceProviderInfoArray instanceProviderInfo;
 		OW_AssociatorProviderInfoArray associatorProviderInfo;
 		OW_MethodProviderInfoArray methodProviderInfo;
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray propertyProviderInfo;
+#endif
 		OW_IndicationProviderInfoArray indicationProviderInfo;
 		m_IFCArray[i]->init(env, instanceProviderInfo, associatorProviderInfo, 
-			methodProviderInfo, propertyProviderInfo, indicationProviderInfo);
+			methodProviderInfo, 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
+			propertyProviderInfo, 
+#endif
+			indicationProviderInfo);
 
 		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
 		processProviderInfo(env, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
 		processProviderInfo(env, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		processProviderInfo(env, propertyProviderInfo, m_IFCArray[i], m_registeredPropProvs);
+#endif
 		processProviderInfo(env, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
 }
@@ -459,6 +467,7 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	return OW_MethodProviderIFCRef(0);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
 OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -501,6 +510,7 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 
 	return OW_PropertyProviderIFCRef(0);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef

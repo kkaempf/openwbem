@@ -99,10 +99,16 @@ OW_PerlProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
 	OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& p,
+#endif
 	OW_IndicationProviderInfoArray& ind)
 {
-	loadProviders(env, i, a, m, p, ind);
+	loadProviders(env, i, a, m, 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
+		p, 
+#endif
+		ind);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -201,6 +207,7 @@ OW_PerlProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
 OW_PerlProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -228,6 +235,7 @@ OW_PerlProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& en
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
@@ -289,10 +297,14 @@ OW_PerlProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
 	OW_MethodProviderInfoArray& methodProviderInfo,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& propertyProviderInfo,
+#endif
 	OW_IndicationProviderInfoArray& indicationProviderInfo)
 {
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	(void) propertyProviderInfo;
+#endif
 
 	OW_MutexLock ml(m_guard);
 

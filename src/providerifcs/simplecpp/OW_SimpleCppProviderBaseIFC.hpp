@@ -41,7 +41,9 @@
 class OW_SimpleCppInstanceProviderIFC;
 class OW_SimpleCppMethodProviderIFC;
 class OW_SimpleCppAssociatorProviderIFC;
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class OW_SimpleCppPropertyProviderIFC;
+#endif
 class OW_SimpleCppIndicationExportProviderIFC;
 class OW_SimpleCppPolledProviderIFC;
 
@@ -83,7 +85,9 @@ public:
 
 	virtual OW_SimpleCppInstanceProviderIFC* getInstanceProvider();
 	virtual OW_SimpleCppAssociatorProviderIFC* getAssociatorProvider();
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	virtual OW_SimpleCppPropertyProviderIFC* getPropertyProvider();
+#endif
 
 	OW_DateTime getLastAccessTime() const;
 

@@ -34,7 +34,9 @@
 #include "OW_config.h"
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderIFC.hpp"
+#endif
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
@@ -120,6 +122,7 @@ public:
 	OW_MethodProviderIFCRef getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns, const OW_CIMClass& cc, const OW_CIMMethod& method) const;
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	/**
 	 * Locate a Property provider.
 	 *
@@ -136,6 +139,7 @@ public:
 	 */
 	OW_PropertyProviderIFCRef getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& property) const;
+#endif
 
 	/**
 	 * Locate an Associator provider.

@@ -229,6 +229,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 	
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 void OW_ProviderManagerTestCases::testGetPropertyProvider()
 {
 	OW_ProviderManager mgr;
@@ -330,6 +331,7 @@ void OW_ProviderManagerTestCases::testGetPropertyProvider()
 		createProvEnvRef(hdl), "root/foo", c8, OW_CIMProperty("BadProperty")));
 	unitAssert(!provRef);
 }
+#endif
 
 void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
@@ -466,9 +468,11 @@ Test* OW_ProviderManagerTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetMethodProvider",
 			&OW_ProviderManagerTestCases::testGetMethodProvider));
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetPropertyProvider",
 			&OW_ProviderManagerTestCases::testGetPropertyProvider));
+#endif
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetAssociatorProvider",
 			&OW_ProviderManagerTestCases::testGetAssociatorProvider));

@@ -109,7 +109,9 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instInfos,
 	OW_AssociatorProviderInfoArray& assocInfos,
 	OW_MethodProviderInfoArray& methInfos,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& propInfos,
+#endif
 	OW_IndicationProviderInfoArray& indInfos)
 {
 	OW_MutexLock l(m_guard);
@@ -154,6 +156,7 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			methInfos.push_back(provInfo);
 		}
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_CppPropertyProviderIFC* pPP = it->second.m_pProv->getPropertyProvider();
 		if (pPP)
 		{
@@ -162,6 +165,7 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			pPP->getProviderInfo(provInfo);
 			propInfos.push_back(provInfo);
 		}
+#endif
 
 		OW_CppIndicationProviderIFC* pIndP = it->second.m_pProv->getIndicationProvider();
 		if (pIndP)
@@ -308,6 +312,7 @@ OW_InternalProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& 
 	return OW_MethodProviderIFCRef(new OW_MethodProviderProxy(mpRef));
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
 OW_InternalProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -341,6 +346,7 @@ OW_InternalProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef
 
 	return OW_PropertyProviderIFCRef(new OW_PropertyProviderProxy(ppRef));
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef

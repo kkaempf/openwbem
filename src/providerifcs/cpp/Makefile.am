@@ -30,6 +30,13 @@ OW_CppProxyProvider.hpp \
 OW_CppProviderIFC.hpp \
 OW_CppIndicationProviderIFC.cpp
 
+if ENABLE_PROPERTY_PROVIDERS
+PROPERTY_PROVIDER_H= \
+OW_CppPropertyProviderIFC.hpp
+else
+PROPERTY_PROVIDER_H=
+endif
+
 pkginclude_HEADERS = \
 OW_CppProviderBaseIFC.hpp \
 OW_CppAssociatorProviderIFC.hpp \
@@ -37,8 +44,8 @@ OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
-OW_CppPropertyProviderIFC.hpp \
-OW_CppIndicationProviderIFC.hpp
+OW_CppIndicationProviderIFC.hpp \
+$(PROPERTY_PROVIDER_H)
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM

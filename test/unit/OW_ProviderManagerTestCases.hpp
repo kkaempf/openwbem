@@ -31,6 +31,7 @@
 #ifndef UC_OW_ProviderManager_TEST_CASES_HPP_
 #define UC_OW_ProviderManager_TEST_CASES_HPP_
 
+#include "OW_config.h"
 #include "TestCase.hpp"
 
 class OW_ProviderManager;
@@ -50,7 +51,9 @@ private:
 	void testInit();
 	void testGetInstanceProvider();
 	void testGetMethodProvider();
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	void testGetPropertyProvider();
+#endif
 	void testGetAssociatorProvider();
 	void testGetIndicationProvider();
 };

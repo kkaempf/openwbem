@@ -34,10 +34,14 @@
 #include "OW_config.h"
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_InstanceProviderIFC.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderIFC.hpp"
+#endif
 #include "OW_SimpleCppAssociatorProviderIFC.hpp"
 #include "OW_SimpleCppInstanceProviderIFC.hpp"
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_SimpleCppPropertyProviderIFC.hpp"
+#endif
 
 class OW_SimpleCppAssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
@@ -149,6 +153,7 @@ private:
 	OW_SimpleCppInstanceProviderIFCRef m_pProv;
 };
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class OW_SimpleCppPropertyProviderProxy : public OW_PropertyProviderIFC
 {
 public:
@@ -171,7 +176,7 @@ public:
 private:
 	OW_SimpleCppPropertyProviderIFCRef m_pProv;
 };
-
+#endif
 
 #endif
 

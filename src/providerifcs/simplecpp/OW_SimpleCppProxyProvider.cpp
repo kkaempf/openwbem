@@ -261,6 +261,7 @@ OW_SimpleCppInstanceProviderProxy::modifyInstance(
 	m_pProv->modifyInstance(env, newInst);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////		
 OW_SimpleCppPropertyProviderProxy::OW_SimpleCppPropertyProviderProxy(
 		OW_SimpleCppPropertyProviderIFCRef pProv) :
@@ -299,4 +300,5 @@ OW_SimpleCppPropertyProviderProxy::setPropertyValue(
 	(void)ns;
 	m_pProv->setPropertyValue(env, cop, propertyName, val);
 }
+#endif
 

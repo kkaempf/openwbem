@@ -47,10 +47,16 @@ OW_ProviderIFCBaseIFC::init(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
 	OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& p,
+#endif
 	OW_IndicationProviderInfoArray& ind)
 {
-	doInit(env, i, a, m, p, ind);
+	doInit(env, i, a, m, 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
+		p, 
+#endif
+		ind);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,6 +75,7 @@ OW_ProviderIFCBaseIFC::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env
 	return doGetMethodProvider(env, provIdString);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 ///////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef 
 OW_ProviderIFCBaseIFC::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -76,6 +83,7 @@ OW_ProviderIFCBaseIFC::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& e
 {
 	return doGetPropertyProvider(env, provIdString);
 }
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef 

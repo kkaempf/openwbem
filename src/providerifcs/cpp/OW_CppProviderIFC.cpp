@@ -90,10 +90,16 @@ OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
 	OW_MethodProviderInfoArray& m,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& p,
+#endif
 	OW_IndicationProviderInfoArray& ind)
 {
-	loadProviders(env, i, a, m, p, ind);
+	loadProviders(env, i, a, m, 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
+		p, 
+#endif
+		ind);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -196,6 +202,7 @@ OW_CppProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
 OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -222,6 +229,7 @@ OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
@@ -283,7 +291,9 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
 	OW_MethodProviderInfoArray& methodProviderInfo,
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& propertyProviderInfo,
+#endif
 	OW_IndicationProviderInfoArray& indicationProviderInfo)
 {
 	OW_MutexLock ml(m_guard);
@@ -398,6 +408,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_mp->getProviderInfo(info);
 				methodProviderInfo.push_back(info);
 			}
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 			OW_CppPropertyProviderIFC* p_pp = p->getPropertyProvider();
 			if (p_pp)
 			{
@@ -406,6 +417,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_pp->getProviderInfo(info);
 				propertyProviderInfo.push_back(info);
 			}
+#endif
 			OW_CppIndicationProviderIFC* p_indp = p->getIndicationProvider();
 			if (p_indp)
 			{
@@ -616,7 +628,9 @@ OW_CppAssociatorProviderIFC::~OW_CppAssociatorProviderIFC(){}
 OW_CppIndicationExportProviderIFC::~OW_CppIndicationExportProviderIFC(){}
 OW_CppMethodProviderIFC::~OW_CppMethodProviderIFC() {}
 OW_CppPolledProviderIFC::~OW_CppPolledProviderIFC() {}
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 OW_CppPropertyProviderIFC::~OW_CppPropertyProviderIFC() {}
+#endif
 
 //OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)
 

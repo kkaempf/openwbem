@@ -227,6 +227,7 @@ OW_CppMethodProviderProxy::invokeMethod(
 	return m_pProv->invokeMethod(env, ns, path, methodName, in, out);
 }
 
+#ifdef OW_ENABLE_PROPERTY_PROVIDERS
 //////////////////////////////////////////////////////////////////////////////		
 OW_CppPropertyProviderProxy::OW_CppPropertyProviderProxy(
 		OW_CppPropertyProviderIFCRef pProv) :
@@ -261,4 +262,5 @@ OW_CppPropertyProviderProxy::setPropertyValue(
 	m_pProv->updateAccessTime();
 	m_pProv->setPropertyValue(env, ns, cop, originClass, propertyName, val);
 }
+#endif
 
