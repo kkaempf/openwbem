@@ -50,6 +50,10 @@ class OW_WQL_API WQLImpl : public WQLIFC
 {
 public:
 	virtual ~WQLImpl();
+	
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
+
 	virtual void evaluate(const String& nameSpace,
 		CIMInstanceResultHandlerIFC& result,
 		const String& query, const String& queryLanguage,

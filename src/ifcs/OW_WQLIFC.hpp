@@ -39,7 +39,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
+#include "OW_ServiceIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -51,7 +51,7 @@ namespace OpenWBEM
 class WQLSelectStatement;
 // TODO: FIX THIS! This class in libopenwbem cannot depend on anything outside of libopenwbem.
 // Either move this class out of libopenwbem or else move WQLSelectStatement into libopenwbem
-class OW_COMMON_API WQLIFC : public IntrusiveCountableBase
+class OW_COMMON_API WQLIFC : public ServiceIFC
 {
 public:
 	virtual ~WQLIFC();

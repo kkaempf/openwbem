@@ -151,6 +151,18 @@ bool WQLImpl::supportsQueryLanguage(const String& lang)
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+WQLImpl::init(const ServiceEnvironmentIFCRef& env)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+WQLImpl::shutdown()
+{
+}
+
 } // end namespace OpenWBEM
 
 OW_WQLFACTORY(OpenWBEM::WQLImpl,wqlimpl);
