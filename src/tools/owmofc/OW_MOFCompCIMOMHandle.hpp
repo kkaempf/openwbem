@@ -34,6 +34,7 @@
 #include "OW_config.h"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
+#include "OW_UserInfo.hpp"
 
 /**
  * The OW_MOFCompCIMOMHandle class is a derivitive of the OW_CIMOMHandleIFC that
@@ -45,7 +46,7 @@ public:
 
 	/**
 	 * Create a new OW_MOFCompCIMOMHandle with a given repository interface
-	 * and user access contol information.
+	 * and user access control information.
 	 * @param env A reference to an OW_CIMOMEnvironment object.
 	 * @param pRepos A reference to an OW_Repository that will be used by this
 	 *		OW_MOFCompCIMOMHandle.

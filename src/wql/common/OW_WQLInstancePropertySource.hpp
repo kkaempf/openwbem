@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,20 +28,47 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef _OW_INDICATION_REP_LAYER_HPP_
-#define _OW_INDICATION_REP_LAYER_HPP_
+#ifndef OW_WQL_INSTANCE_PROPERTY_SOURCE_HPP_INCLUDE_GUARD
+#define OW_WQL_INSTANCE_PROPERTY_SOURCE_HPP_INCLUDE_GUARD
 
 #include "OW_config.h"
-#include "OW_RepositoryIFC.hpp"
+#include "OW_WQLPropertySource.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_String.hpp"
 
-class OW_IndicationRepLayer : public OW_RepositoryIFC
+class OW_WQLInstancePropertySource : public OW_WQLPropertySource
 {
 public:
-	virtual ~OW_IndicationRepLayer();
+	OW_WQLInstancePropertySource(const OW_CIMInstance& ci_,
+		const OW_CIMOMHandleIFCRef& hdl,
+		const OW_String& ns)
+		: ci(ci_)
+		, m_hdl(hdl)
+		, m_ns(ns)
+	{
+	}
 
-	virtual void setCIMServer(const OW_RepositoryIFCRef& src) = 0;
+	~OW_WQLInstancePropertySource();
+
+	virtual bool evaluateISA(const OW_String &propertyName, const OW_String &className) const;
+
+	virtual bool getValue(const OW_String &propertyName, OW_WQLOperand &value) const;
+
+private:
+	// This is for recursion on embedded instances
+	bool evaluateISAAux(const OW_CIMInstance& ci, OW_StringArray propNames, const OW_String &className) const;
+
+	bool classIsDerivedFrom(const OW_String& cls, const OW_String& className) const;
+
+	// This is for recursion on embedded instances
+	static bool getValueAux(const OW_CIMInstance& ci, OW_StringArray propNames, OW_WQLOperand& value);
+
+private:
+	OW_CIMInstance ci;
+	OW_CIMOMHandleIFCRef m_hdl;
+	OW_String m_ns;
 };
 
+
 #endif
-
-

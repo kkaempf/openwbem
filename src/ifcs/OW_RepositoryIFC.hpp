@@ -33,7 +33,8 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_UserInfo.hpp"
+//#include "OW_UserInfo.hpp"
+class OW_UserInfo;
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"

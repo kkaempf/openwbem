@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -37,6 +37,7 @@
 #include "OW_RepositoryIFC.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_CIMOMEnvironment.hpp"
+#include "OW_UserInfo.hpp"
 
 /**
  * The OW_LocalCIMOMHandle class is a derivitive of the OW_CIMOMHandleIFC that
