@@ -1,0 +1,6 @@
+[Description("RPM Package Class. It is the SoftwareElement for Linux RPMs."),
+  provider("perl::PersonProvider.pl")
+ ]
+class My_Person: CIM_Person
+{
+};

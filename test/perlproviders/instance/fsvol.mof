@@ -1,0 +1,20 @@
+// abridged version of fsvol from the SBLIM project
+
+[provider("perl::Linux_LocalFileSystem.pl")]
+class Linux_Ext2FileSystem : CIM_UnixLocalFileSystem
+{
+    uint8 PercentageSpaceUse;
+};
+
+[provider("perl::Linux_LocalFileSystem.pl")]
+class Linux_Ext3FileSystem : CIM_UnixLocalFileSystem
+{
+    uint8 PercentageSpaceUse;
+};
+
+[provider("perl::Linux_LocalFileSystem.pl")]
+class Linux_ReiserFileSystem : CIM_UnixLocalFileSystem
+{
+    uint8 PercentageSpaceUse;
+};
+

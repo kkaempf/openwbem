@@ -1,0 +1,20 @@
+[Description("RPM Package Class. It is the SoftwareElement for Linux RPMs."),
+  provider("perl::RpmProvider.pl")
+ ]
+class RPM_Package : CIM_SoftwareElement
+{
+};
+ 
+ [Description("RPM File Specification Class. File information for an RPM."),
+  provider("perl::RpmFileProvider.pl")
+ ]
+class RPM_FileCheck : CIM_FileSpecification
+{
+};
+ 
+ [Association,Description("Association between RPM Package and File Spec."),
+  provider("perl::RpmProvider.pl")
+ ]
+class RPM_AssociatedFile : CIM_SoftwareElementChecks
+{
+};
