@@ -102,6 +102,14 @@ public:
 	 * Get the process's exit status.  
 	 * If the child process is still running, this function will do everything
 	 * possible to terminate it.
+	 * The following steps will be taken to attempt to terminate the child
+	 * process.
+	 * 1. The input and output pipes will be closed.  This may cause the
+	 *    child to get a SIGPIPE which may terminate it.
+	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM 
+	 *    is sent.
+	 * 3. If the child still hasn't terminated after 3 seconds, a SIGKILL
+	 *    is sent.
 	 * After calling this function, the pipes to will be closed, and this object
 	 * is basically useless.
 	 * @return The exit status of the process.  This should be evaluated using
@@ -210,7 +218,18 @@ public:
 	 * the absolute path to the binary should be specified.  If the path needs
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
 	 * and then fill in the rest of the array with the command you wish to 
-	 * execute.
+	 * execute. Exercise caution when doing this, as you may be creating a
+	 * security hole.
+	 * If the process does not terminate by itself, or if an exception is 
+	 * thrown because a limit has been reached (time or output), then the
+	 * the following steps will be taken to attempt to terminate the child
+	 * process.
+	 * 1. The input and output pipes will be closed.  This may cause the
+	 *    child to get a SIGPIPE which may terminate it.
+	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM 
+	 *    is sent.
+	 * 3. If the child still hasn't terminated after 3 seconds, a SIGKILL
+	 *    is sent.
 	 *
 	 * @param command
 	 *  command[0] is the binary to be executed.
@@ -224,13 +243,16 @@ public:
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
 	 * @param timeoutsecs Specifies the number of seconds to wait for the 
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an OW_ExecTimeoutException will be thrown. If timeoutsecs < 0, the 
-	 *  timeout will be infinite, and no exception will ever be thrown.
+	 *  an OW_ExecTimeoutException will be thrown, and the process will be 
+	 *  killed. 
+	 *  If timeoutsecs < 0, the timeout will be infinite, and a 
+	 *  OW_ExecTimeoutException will not be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
 	 *  more data than will fit into output, then an OW_ExecBufferFullException
-	 *  is thrown. If outputlimit < 0, the limit will be infinite, and an
-	 *  OW_ExecBufferFullException will never be thrown.
+	 *  is thrown, and the process will be killed. 
+	 *  If outputlimit < 0, the limit will be infinite, and an
+	 *  OW_ExecBufferFullException will not be thrown.
 	 *
 	 * @throws OW_ProcessError on error. 
 	 * @throws OW_ProcessTimeout if the process hasn't finished within timeoutsecs. 
