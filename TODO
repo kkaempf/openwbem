@@ -67,6 +67,11 @@ New features:
       providers?)
         - add handling for new namespace model
         - New model for provider registration .
+    - Fix the lexer of the MOF compiler to parse unicode MOF files.  
+        - Replace the input functions so that they translate from Unicode to
+          UTF8, and fix the lexer to handle UTF8 strings and identifiers.
+        - Or replace the lexer with something that can handle unicode,
+          possibly the slex lexer from spirit.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
