@@ -157,6 +157,7 @@ template<class T>
 inline T* Reference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
+	checkNull(this);
 	checkNull(m_pObj);
 #endif
 	
@@ -167,6 +168,7 @@ template<class T>
 inline T& Reference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
+	checkNull(this);
 	checkNull(m_pObj);
 #endif
 	

@@ -41,7 +41,7 @@ namespace OpenWBEM
 {
 
 #ifdef OW_CHECK_NULL_REFERENCES
-void ReferenceBase::throwNULLException() const
+void ReferenceBase::throwNULLException()
 {
 #ifdef OW_DEBUG
 	assert(0); // segfault so we can get a core

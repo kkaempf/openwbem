@@ -174,6 +174,7 @@ template<class T>
 inline T* COWReference<T>::operator->()
 {
 #ifdef OW_CHECK_NULL_REFERENCES
+	checkNull(this);
 	checkNull(m_pObj);
 #endif
 	getWriteLock();
@@ -185,6 +186,7 @@ template<class T>
 inline T& COWReference<T>::operator*()
 {
 #ifdef OW_CHECK_NULL_REFERENCES
+	checkNull(this);
 	checkNull(m_pObj);
 #endif
 	getWriteLock();
@@ -196,6 +198,7 @@ template<class T>
 inline const T* COWReference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
+	checkNull(this);
 	checkNull(m_pObj);
 #endif
 	
@@ -206,6 +209,7 @@ template<class T>
 inline const T& COWReference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
+	checkNull(this);
 	checkNull(m_pObj);
 #endif
 	

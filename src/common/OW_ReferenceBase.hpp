@@ -87,8 +87,8 @@ public:
 	}
 	
 #ifdef OW_CHECK_NULL_REFERENCES
-	void throwNULLException() const;
-	void checkNull(void *p) const
+	static void throwNULLException();
+	static void checkNull(const void *p)
 	{
 		if (p == 0)
 		{
