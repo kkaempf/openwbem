@@ -131,14 +131,10 @@ OW_CIMObjectPathEnumeration
 
    sort(lines.begin(), lines.end());
 
-   int rv = pos.getExitStatus();
-   cout << "*** getExitStatus() returned " << rv << endl;
-   /*
    if (pos.getExitStatus() != 0)
    {
 	  OW_THROWCIMMSG(OW_CIMException::NOT_SUPPORTED, "Bad exit status from popen");
    }
-   */
 
 
    for(OW_StringArray::const_iterator iter = lines.begin(); 
@@ -239,6 +235,7 @@ OW_Bool
    cmd += name;
    OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 
+   OW_StringArray lines = pos.out()->readAll().tokenize("\n");
    if(pos.getExitStatus() != 0)
    {
 	  return OW_Bool(false);
@@ -246,7 +243,6 @@ OW_Bool
    // TODO parse output and add properties
 
    OW_String curName, value;
-   OW_StringArray lines = pos.out()->readAll().tokenize("\n");
    for(OW_StringArray::const_iterator iter = lines.begin(); 
 	  iter != lines.end(); ++iter)
    {
