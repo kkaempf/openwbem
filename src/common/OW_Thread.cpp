@@ -33,6 +33,8 @@
 #include "OW_Thread.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
+#include "OW_Condition.hpp"
+#include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 
 #include <cstring>
@@ -46,7 +48,7 @@ DEFINE_EXCEPTION(Thread);
 class OW_RunnableThread : public OW_Thread
 {
 public:
-	OW_RunnableThread(const OW_RunnableRef& theRunnable) :
+	OW_RunnableThread(OW_RunnableRef theRunnable) :
 		OW_Thread(false), m_runnable(theRunnable)
 	{
 		setSelfDelete(true);
@@ -81,11 +83,43 @@ sameId(const OW_Thread_t& t1, const OW_Thread_t& t2)
 	return OW_ThreadImpl::sameThreads(t1, t2);
 }
 
+// this is what's really passed to threadRunner
+struct OW_ThreadParam
+{
+	OW_Thread* thread;
+	OW_Reference<OW_ThreadDoneCallback> cb;
+	bool m_started;
+	OW_NonRecursiveMutex m_mutex;
+	OW_Condition m_cond;
+
+	OW_ThreadParam(OW_Thread* t, const OW_Reference<OW_ThreadDoneCallback>& c)
+		: thread(t)
+		, cb(c)
+		, m_started(false)
+	{
+	}
+
+	void wait()
+	{
+		OW_NonRecursiveMutexLock l(m_mutex);
+		while (!m_started)
+		{
+			m_cond.wait(l);
+		}
+	}
+
+	void started()
+	{
+		OW_NonRecursiveMutexLock l(m_mutex);
+		m_started = true;
+		m_cond.notifyOne();
+	}
+};
+
 //////////////////////////////////////////////////////////////////////////////
 // Constructor
 OW_Thread::OW_Thread(OW_Bool isjoinable) :
-	m_id(NULLTHREAD), m_isJoinable(isjoinable), m_deleteSelf(false),
-	m_state(Created)
+	m_id(NULLTHREAD), m_isJoinable(isjoinable), m_deleteSelf(false)
 {
 }
 
@@ -93,18 +127,8 @@ OW_Thread::OW_Thread(OW_Bool isjoinable) :
 // Destructor
 OW_Thread::~OW_Thread()
 {
-	// Should never have to do this
-	// while(m_isRunning)
-	//{
-	//	OW_Thread::sleep(1);
-	//}
-
 	try
 	{
-		{
-			OW_NonRecursiveMutexLock l(m_stateMtx);
-			OW_ASSERT(m_state == Finished);
-		}
 		if(!sameId(m_id, NULLTHREAD))
 		{
 			OW_ThreadImpl::destroyThread(m_id);
@@ -121,35 +145,23 @@ OW_Thread::~OW_Thread()
 void
 OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadException)*/
 {
+	if(!sameId(m_id, NULLTHREAD))
 	{
-		OW_NonRecursiveMutexLock l(m_stateMtx);
-		if(m_state != Created)
-		{
-			OW_THROW(OW_ThreadException,
-				"OW_Thread::start - thread is already running");
-		}
-
-		m_state = Starting;
-		m_stateCond.notifyAll();
+		OW_THROW(OW_ThreadException,
+			"OW_Thread::start - cannot start previously run thread");
 	}
 
 	OW_UInt32 flgs = (m_isJoinable == true) ? OW_THREAD_FLG_JOINABLE : 0;
 
-	// p will be delted by threadRunner
-	OW_ThreadParam* p = new OW_ThreadParam;
-	p->thread = this;
-	p->cb = cb;
-	if(OW_ThreadImpl::createThread(m_id, threadRunner, p, flgs) != 0)
+	OW_ThreadParam p(this, cb);
+//	p.thread = this;
+//	p.cb = cb;
+//	p.m_started = false;
+	if(OW_ThreadImpl::createThread(m_id, threadRunner, &p, flgs) != 0)
 	{
 		OW_THROW(OW_Assertion, "OW_ThreadImpl::createThread failed");
 	}
-
-	// can't do this because the thread may already be deleted. wait until the thread moves out of the Starting state
-	//OW_NonRecursiveMutexLock l(m_stateMtx);
-	//while(m_state == Starting)
-	//{
-	//	m_stateCond.wait(l);
-	//}
+	p.wait();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -162,16 +174,8 @@ OW_Thread::join() /*throw (OW_ThreadException)*/
 		OW_THROW(OW_ThreadException, "OW_Thread::join - thread is not joinable");
 	}
 
-	OW_NonRecursiveMutexLock l(m_stateMtx);
-	if(!sameId(m_id, NULLTHREAD) && m_state != Created)
+	if(!sameId(m_id, NULLTHREAD))
 	{
-		// If thread is starting up, let it finish
-		while(m_state == Starting)
-		{
-			m_stateCond.wait(l);
-		}
-		l.release();
-
 		if(OW_ThreadImpl::joinThread(m_id) != 0)
 		{
 			OW_THROW(OW_ThreadException,
@@ -220,12 +224,8 @@ OW_Thread::threadRunner(void* paramPtr)
 		OW_Thread* pTheThread = pParam->thread;
 		theThreadID = pTheThread->m_id;
 		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
+		pParam->started();
 
-		{
-			OW_NonRecursiveMutexLock l(pTheThread->m_stateMtx);
-			pTheThread->m_state = Running;
-			pTheThread->m_stateCond.notifyAll();
-		}
 		try
 		{
 			pTheThread->run();
@@ -243,18 +243,11 @@ OW_Thread::threadRunner(void* paramPtr)
 			std::cerr << "!!! Unknown Exception caught in OW_Thread::threadRunner" << std::endl;
 #endif
 		}
-		{
-			OW_NonRecursiveMutexLock l(pTheThread->m_stateMtx);
-			pTheThread->m_state = Finished;
-			pTheThread->m_stateCond.notifyAll();
-		}
 
 		if(pTheThread->getSelfDelete() == true)
 		{
 			delete pTheThread;
 		}
-
-		delete pParam;
 
 		if (cb)
 		{
@@ -291,18 +284,6 @@ zeroThread()
 
 //////////////////////////////////////////////////////////////////////
 OW_ThreadDoneCallback::~OW_ThreadDoneCallback() 
-{
-}
-
-//////////////////////////////////////////////////////////////////////
-OW_Bool OW_Thread::isRunning() 
-{
-	OW_NonRecursiveMutexLock l(m_stateMtx);
-	return m_state == Running;
-}
-
-//////////////////////////////////////////////////////////////////////
-OW_Runnable::~OW_Runnable()
 {
 }
 

@@ -37,8 +37,6 @@
 #include "OW_String.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_Reference.hpp"
-#include "OW_NonRecursiveMutex.hpp"
-#include "OW_Condition.hpp"
 
 
 DECLARE_EXCEPTION(Thread);
@@ -77,7 +75,9 @@ DECLARE_EXCEPTION(Thread);
 class OW_Runnable
 {
 public:
-	virtual ~OW_Runnable();
+	virtual ~OW_Runnable()
+	{
+	}
 	virtual void run() = 0;
 };
 
@@ -138,12 +138,6 @@ public:
 	{
 		return m_deleteSelf;
 	}
-
-	/**
-	 * @return true if this thread is currently running. Otherwise false.
-	 */
-	OW_Bool isRunning();
-
 
 	/**
 	 * Join with this OW_Thread's execution. The thread must be a joinable
@@ -213,26 +207,7 @@ protected:
 	OW_Bool m_isJoinable;
 	OW_Bool m_deleteSelf;
 
-	enum ThreadState
-	{
-		Created,
-		Starting,
-		Running,
-		Finished
-	};
-
-	OW_NonRecursiveMutex m_stateMtx;
-	OW_Condition m_stateCond;
-	ThreadState m_state;
-
 private:
-
-	// this is what's really passed to threadRunner
-	struct OW_ThreadParam
-	{
-		OW_Thread* thread;
-		OW_Reference<OW_ThreadDoneCallback> cb;
-	};
 
 	static void* threadRunner(void* paramPtr);
 };
