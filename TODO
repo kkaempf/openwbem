@@ -16,6 +16,7 @@ o Remove IPC service and have HTTP service handle UDS
 o PKI authentication
 o fix make install to symlink libowhttpservice.so to $PREFIX/lib
 o Add client SSL authentication
+o Unload request handlers if not used after X minutes.
 - Binary Indications
 - clean up stale indication subscriptions
 - new scheme for mapping providers to schema
