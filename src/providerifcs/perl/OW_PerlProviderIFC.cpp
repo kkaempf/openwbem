@@ -291,7 +291,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		}
 		NPIFP_INIT_FT createProvider;
 		String creationFuncName = "perlProvider_initFunctionTable";
-		if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+		if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 		{
 			env->getLogger()->logError(format("Perl provider ifc: "
 				"Library %1 does not contain %2 function",
@@ -392,7 +392,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  }
 #if 0
 	  versionFunc_t versFunc;
-	  if(!SharedLibrary::getFunctionPointer(theLib, "getOWVersion",
+	  if(!theLib->getFunctionPointer("getOWVersion",
 			 versFunc))
 	  {
 		 env->getLogger()->logError(format("Perl provider ifc failed getting"
@@ -412,7 +412,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	//String creationFuncName = guessProvId + "_initFunctionTable";
 	String creationFuncName = "perlProvider_initFunctionTable";
    env->getLogger()->logError(format("LoadNoIDproviders 4b : %1", creationFuncName));
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("Perl provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
@@ -492,7 +492,7 @@ PerlProviderIFC::getProvider(
 	}
 	NPIFP_INIT_FT createProvider;
 	String creationFuncName = "perlProvider_initFunctionTable";
-	if(!SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
+	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("Perl provider ifc: Libary %1 does not contain"
 			" %2 function", libName, creationFuncName));
