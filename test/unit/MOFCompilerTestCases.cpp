@@ -41,6 +41,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMQualifierType.hpp"
 
 using namespace OpenWBEM;
 
@@ -52,41 +54,26 @@ void MOFCompilerTestCases::tearDown()
 {
 }
 
-void MOFCompilerTestCases::testcompileInstance()
-{
-	CIMInstance inst(CIMNULL);
-	unitAssertNoThrow( inst = MOF::compileInstanceFromMOF(
-		"INSTANCE OF fooClass {\n"
-		"  strprop=\"x\";\n"
-		"  intprop=55;\n"
-		"};") );
-	unitAssert(inst.getClassName() == "fooClass");
-	unitAssert(inst.getProperties().size() == 2);
-	unitAssert(inst.getProperty("strprop").getValue() == CIMValue("x"));
-	// don't check the actual type, since it probably won't be right.
-	unitAssert(inst.getProperty("intprop").getValue().toString() == CIMValue(55).toString());
-
-	unitAssertThrows(MOF::compileInstanceFromMOF("this is not good mof"));
-	unitAssertThrows(MOF::compileInstanceFromMOF("instance of one{x=1;}; instance of two{x=2;};"));
-}
-
-void MOFCompilerTestCases::testcompileInstances()
+void MOFCompilerTestCases::testcompileMOF()
 {
 	CIMInstanceArray insts;
-	unitAssertNoThrow( insts = MOF::compileInstancesFromMOF(
+	CIMClassArray classes;
+	CIMQualifierTypeArray qualTypes;
+	unitAssertNoThrow( MOF::compileMOF(
 		"INSTANCE OF fooClass {\n"
 		"  strprop=\"x\";\n"
 		"  intprop=55;\n"
-		"};") );
+		"};", CIMOMHandleIFCRef(), "", insts, classes, qualTypes) );
 	unitAssert(insts.size() == 1);
 	unitAssert(insts[0].getClassName() == "fooClass");
 	unitAssert(insts[0].getProperties().size() == 2);
 	unitAssert(insts[0].getProperty("strprop").getValue() == CIMValue("x"));
 	// don't check the actual type, since it probably won't be right.
 	unitAssert(insts[0].getProperty("intprop").getValue().toString() == CIMValue(55).toString());
-				   
-	unitAssertThrows(MOF::compileInstancesFromMOF("this is not good mof"));
-	unitAssertNoThrow(insts = MOF::compileInstancesFromMOF("instance of one{x=1;}; instance of two{x=2;};"));
+	insts.clear();
+	unitAssertThrows(MOF::compileMOF("this is not good mof", CIMOMHandleIFCRef(), "", insts, classes, qualTypes));
+	insts.clear();
+	unitAssertNoThrow(MOF::compileMOF("instance of one{x=1;}; instance of two{x=2;};", CIMOMHandleIFCRef(), "", insts, classes, qualTypes));
 	unitAssert(insts.size() == 2);
 }
 
@@ -94,8 +81,7 @@ Test* MOFCompilerTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("MOFCompiler");
 
-	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileInstance);
-	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileInstances);
+	ADD_TEST_TO_SUITE(MOFCompilerTestCases, testcompileMOF);
 
 	return testSuite;
 }

@@ -51,8 +51,7 @@ public:
 
 private:
 	// test methods
-	void testcompileInstance();
-	void testcompileInstances();
+	void testcompileMOF();
 };
 
 #endif

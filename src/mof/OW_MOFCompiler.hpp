@@ -148,9 +148,16 @@ private:
 };
 
 
-OW_MOF_API CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logger = LoggerRef());
-OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const LoggerRef& logger = LoggerRef());
-OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns, const LoggerRef& logger = LoggerRef());
+OW_MOF_API CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logger = LoggerRef()) OW_DEPRECATED; // in 3.2.0
+OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const LoggerRef& logger = LoggerRef()) OW_DEPRECATED; // in 3.2.0
+OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns, const LoggerRef& logger = LoggerRef()) OW_DEPRECATED; // in 3.2.0
+
+/**
+ * @param realhdl If null, a dummy handle will be used which will supply "fake" CIMClasses and CIMQualifierTypes to the mof compiler
+ */
+OW_MOF_API void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const String& ns,
+	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes, const LoggerRef& logger = LoggerRef());
+
 
 
 } // end namespace MOF

@@ -45,8 +45,8 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_Enumeration.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Logger.hpp"
 
 #include <assert.h>
@@ -67,8 +67,8 @@ namespace MOF
 
 namespace
 {
-// since flex/bison and our implementation aren't re-entrant or thread-safe.
-Mutex g_guard;
+// since flex/bison aren't re-entrant or thread-safe.
+NonRecursiveMutex g_guard;
 }
 
 Compiler::Compiler( const CIMOMHandleIFCRef& ch, const Options& opts, const ParserErrorHandlerIFCRef& mpeh )
@@ -83,7 +83,6 @@ Compiler::~Compiler()
 }
 long Compiler::compile( const String& filename )
 {
-	MutexLock lock(g_guard);
 	include_stack_ptr = 0;
 	theLineInfo = LineInfo(filename,1);
 	try
@@ -110,10 +109,15 @@ long Compiler::compile( const String& filename )
 			}
 			theErrorHandler->progressMessage("Starting parsing",
 					LineInfo(filename, 0));
-			#ifdef YYOW_DEBUG
-			owmofdebug = 1;
-			#endif
-			owmofparse(this);
+			
+			{
+				NonRecursiveMutexLock lock(g_guard);
+				#ifdef YYOW_DEBUG
+				owmofdebug = 1;
+				#endif
+				owmofparse(this);
+			}
+
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
 			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
@@ -161,7 +165,6 @@ namespace {
 }
 long Compiler::compileString( const String& mof )
 {
-	MutexLock lock(g_guard);
 	include_stack_ptr = 0;
 	String filename = "string";
 	theLineInfo = LineInfo(filename,1);
@@ -169,14 +172,19 @@ long Compiler::compileString( const String& mof )
 	{
 		try
 		{
-			YY_BUFFER_STATE buf = owmof_scan_bytes(mof.c_str(), mof.length());
-			owmofBufferDeleter deleter(buf);
-			theErrorHandler->progressMessage("Starting parsing",
-					LineInfo(filename, 0));
-			#ifdef YYOW_DEBUG
-			owmofdebug = 1;
-			#endif
-			owmofparse(this);
+			NonRecursiveMutexLock lock(g_guard);
+			
+				YY_BUFFER_STATE buf = owmof_scan_bytes(mof.c_str(), mof.length());
+				owmofBufferDeleter deleter(buf);
+				theErrorHandler->progressMessage("Starting parsing",
+						LineInfo(filename, 0));
+				#ifdef YYOW_DEBUG
+				owmofdebug = 1;
+				#endif
+				owmofparse(this);
+			
+			lock.release();
+
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
 			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
@@ -217,21 +225,6 @@ long Compiler::compileString( const String& mof )
 // STATIC
 String Compiler::fixParsedString(const String& s)
 {
-	//StringArray sa = s.tokenize("\n\r");
-	//StringBuffer retval;
-
-	//for (size_t i = 0; i < sa.size(); ++i)
-	//{
-		// trim off whitespace
-	//	String trimmed = sa[i];
-	//	trimmed.trim();
-		// cut off the quotes and concatenate
-	//	if (trimmed.length() > 2)
-	//	{
-	//		assert(trimmed[0] == '"' && trimmed[trimmed.length()-1] == '"');
-	//		retval += trimmed.substring(1, trimmed.length() - 2);
-	//	}
-	//}
 	bool inString = false;
 	StringBuffer unescaped;
 	for (size_t i = 0; i < s.length(); ++i)
@@ -240,12 +233,11 @@ String Compiler::fixParsedString(const String& s)
 		{
 			if (s[i] == '\\')
 			{
-				/* this can never happen, unless someone messes up the lexer
-				if (i+1 >= retval.length())
-				{
-					OW_THROW(Exception, "String cannot end with '\\'");
-				}*/
 				++i;
+
+				/* this can never happen, unless someone messes up the lexer */
+				OW_ASSERT(i < s.length());
+
 				switch (s[i])
 				{
 					case 'b':
@@ -304,7 +296,7 @@ String Compiler::fixParsedString(const String& s)
 						break;
 					default:
 						// this could never happen unless someone messes up the lexer
-						OW_ASSERT("Invalid escape sequence" == 0);
+						OW_ASSERTMSG(0, "Invalid escape sequence");
 						break;
 				}
 			}
@@ -330,11 +322,14 @@ String Compiler::fixParsedString(const String& s)
 	return unescaped.releaseString();
 }
 
-class StoreLocalInstancesHandle : public CIMOMHandleIFC
+class StoreLocalDataHandle : public CIMOMHandleIFC
 {
 public:
-	StoreLocalInstancesHandle(const CIMOMHandleIFCRef& hdl)
+	StoreLocalDataHandle(const CIMOMHandleIFCRef& hdl, CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes)
 		: m_realhdl(hdl)
+		, m_instances(instances)
+		, m_classes(classes)
+		, m_qualifierTypes(qualifierTypes)
 	{
 	}
 	virtual CIMObjectPath createInstance(const String &ns, const CIMInstance &instance)
@@ -348,15 +343,29 @@ public:
 		WBEMFlags:: EIncludeClassOriginFlag includeClassOrigin=WBEMFlags:: E_INCLUDE_CLASS_ORIGIN,
 		const StringArray *propertyList=0)
 	{
+		// first get back a class contained in the mof.
+		for (size_t i = 0; i < m_classes.size(); ++i)
+		{
+			if (m_classes[i].getName() == CIMName(className))
+			{
+				return m_classes[i];
+			}
+		}
+		// try getting it from the cimom handle
 		if (m_realhdl)
 		{
-			return m_realhdl->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList);
+			try
+			{
+				return m_realhdl->getClass(ns, className, localOnly, includeQualifiers, includeClassOrigin, propertyList);
+			}
+			catch (CIMException& e)
+			{
+				// ignore it.
+			}
 		}
-		else
-		{
-			// just give back an empty class, with just the name set.
-			return CIMClass(className);
-		}
+
+		// just give back an empty class, with just the name set.
+		return CIMClass(className);
 	}
 
 	virtual CIMQualifierType getQualifierType(const String &ns, const String &qualifierName)
@@ -371,23 +380,25 @@ public:
 		}
 	}
 
-	CIMInstanceArray getInstances() const { return m_instances; }
+	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType)
+	{
+		m_qualifierTypes.push_back(qualifierType);
+	}
+
+	virtual void createClass(const String &ns, const CIMClass &cimClass)
+	{
+		m_classes.push_back(cimClass);
+	}
 
 private:
-	CIMInstanceArray m_instances;
 	CIMOMHandleIFCRef m_realhdl;
+	CIMInstanceArray& m_instances;
+	CIMClassArray& m_classes;
+	CIMQualifierTypeArray& m_qualifierTypes;
 
 #define THROW_ERROR_NOT_IMPLEMENTED(name) OW_THROWCIMMSG(CIMException::FAILED, Format("Not implemented: %1", (name)).c_str())
 #define THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME() THROW_ERROR_NOT_IMPLEMENTED(OW_LOGGER_PRETTY_FUNCTION)
 	// all these throw FAILED
-	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType)
-	{
-		THROW_ERROR_NOT_IMPLEMENTED(Format("Create qualifier: %1:%2", ns, qualifierType.getName()));
-	}
-	virtual void createClass(const String &ns, const CIMClass &cimClass)
-	{
-		THROW_ERROR_NOT_IMPLEMENTED(Format("Create class: %1:%2", ns, cimClass.getName()));
-	}
 	virtual void enumClassNames(const String &ns, const String &className, StringResultHandlerIFC &result, WBEMFlags:: EDeepFlag deep=WBEMFlags:: E_DEEP)
 	{
 		THROW_ERROR_NOT_IMPLEMENTED_FUNCNAME();
@@ -519,7 +530,10 @@ public:
 
 CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logger)
 {
-	CIMInstanceArray cia = compileInstancesFromMOF(instMOF, logger);
+	CIMInstanceArray cia;
+	CIMClassArray dummyClasses;
+	CIMQualifierTypeArray dummyQualifierTypes;
+	compileMOF(instMOF, CIMOMHandleIFCRef(), "", cia, dummyClasses, dummyQualifierTypes, logger);
 	if (cia.size() == 1)
 	{
 		return cia[0];
@@ -529,12 +543,19 @@ CIMInstance compileInstanceFromMOF(const String& instMOF, const LoggerRef& logge
 
 CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const LoggerRef& logger)
 {
-	return compileInstancesFromMOF(instMOF, CIMOMHandleIFCRef(), "", logger);
+	CIMInstanceArray cia;
+	CIMClassArray dummyClasses;
+	CIMQualifierTypeArray dummyQualifierTypes;
+	compileMOF(instMOF, CIMOMHandleIFCRef(), "", cia, dummyClasses, dummyQualifierTypes, logger);
+	return cia;
 }
 
 CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns, const LoggerRef& logger)
 {
-	IntrusiveReference<StoreLocalInstancesHandle> hdl(new StoreLocalInstancesHandle(realhdl));
+	CIMInstanceArray cia;
+	CIMClassArray dummyClasses;
+	CIMQualifierTypeArray dummyQualifierTypes;
+	IntrusiveReference<StoreLocalDataHandle> hdl(new StoreLocalDataHandle(realhdl, cia, dummyClasses, dummyQualifierTypes));
 	MOF::Compiler::Options opts;
 	opts.m_namespace = ns;
 	IntrusiveReference<LoggerErrHandler> errHandler(new LoggerErrHandler(logger));
@@ -545,8 +566,32 @@ CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandl
 		// just report the first message, since anything else is too complicated :-{
 		OW_THROW(MOFCompilerException, errHandler->errors.size() > 0 ? errHandler->errors[0].c_str() : "");
 	}
-	CIMInstanceArray cia = hdl->getInstances();
 	return cia;
+}
+
+void compileMOF(const String& mof, const CIMOMHandleIFCRef& realhdl, const String& ns,
+	CIMInstanceArray& instances, CIMClassArray& classes, CIMQualifierTypeArray& qualifierTypes, const LoggerRef& logger)
+{
+	IntrusiveReference<StoreLocalDataHandle> hdl(new StoreLocalDataHandle(realhdl, instances, classes, qualifierTypes));
+	MOF::Compiler::Options opts;
+	opts.m_namespace = ns;
+	IntrusiveReference<LoggerErrHandler> errHandler(new LoggerErrHandler(logger));
+	MOF::Compiler comp(hdl, opts, errHandler);
+	long errors = comp.compileString(mof);
+	if (errors > 0)
+	{
+		// just report the first message, since anything else is too complicated :-{
+		StringBuffer errorStrs;
+		for (size_t i = 0; i < errHandler->errors.size(); ++i)
+		{
+			if (i > 0)
+			{
+				errorStrs += '\n';
+			}
+			errorStrs += errHandler->errors[i];
+		}
+		OW_THROW(MOFCompilerException, errorStrs.c_str());
+	}
 }
 
 } // end namespace MOF
