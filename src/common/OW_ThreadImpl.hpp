@@ -82,8 +82,16 @@ public:
 	 * @param handle2	The 2nd thread type for the comparison.
 	 * @return true if the thread types are equal. Otherwise false
 	 */
-	static OW_Bool sameThreads(const volatile OW_Thread_t& handle1,
-		const volatile OW_Thread_t& handle2);
+	static bool sameThreads(const volatile OW_Thread_t& handle1,
+		const volatile OW_Thread_t& handle2)
+	{
+	#ifdef OW_USE_GNU_PTH
+		return handle1 == handle2;
+	#else
+		return pthread_equal(handle1, handle2);
+	#endif
+	}
+
 
 	/**
 	 * Exit thread method. This method is called everytime a thread exits.
@@ -96,7 +104,16 @@ public:
 	/**
 	 * @return The thread handle for the current running thread.
 	 */
-	static OW_Thread_t currentThread();
+	static OW_Thread_t currentThread()
+	{
+	#ifdef OW_USE_GNU_PTH
+		initThreads();
+		return pth_self();
+	#else
+		return pthread_self();
+	#endif
+	}
+
 
 	/**
 	 * Set a thread that was previously in the joinable state to a detached
@@ -129,53 +146,6 @@ public:
 	 * @param milliSeconds	The number of milliseconds to suspend execution for.
 	 */
 	static void sleep(OW_UInt32 milliSeconds);
-};
-
-/**
- * The OW_MutexImpl class represents the functionality needed by the
- * OpenWbem Mutex class (OW_Mutex). The implementation for this class
- * must be provided on all platforms that OpenWbem runs on. It is essentially
- * an abstraction layer over another mutex implementation.
- */
-class OW_MutexImpl
-{
-public:
-
-	/**
-	 * Create a platform specific mutext handle.
-	 * @param handle	The mutex handle that should be initialized by this method
-	 * @return 0 on success. Otherwise -1.
-	 */
-	static int createMutex(OW_Mutex_t& handle);
-
-	/**
-	 * Destroy a mutex previously created with createMutex.
-	 * @param handle The handle to the mutex that will be destroyed.
-	 * @return The following error codes:
-	 *		 0:	success
-	 *		-1:	Could not be acquired for destruction because it is currently
-	 *				locked.
-	 *		-2:	All other error conditions
-	 */
-	static int destroyMutex(OW_Mutex_t& handle);
-
-	/**
-	 * Acquire the mutex specified by a given mutex handle. This method should
-	 * block until the desired mutex can be acquired. The error return value is
-	 * used to indicate critical errors.
-	 *
-	 * @param handle The mutex to acquire.
-	 * @return 0 on success. -1 indicates a critical error.
-	 */
-	static int acquireMutex(OW_Mutex_t& handle);
-
-	/**
-	 * Release a mutex that was previously acquired with the acquireMutex
-	 * method.
-	 * @param handle The handle to the mutex that is being released.
-	 * @return 0 on success. -1 indicates a critical error.
-	 */
-	static int releaseMutex(OW_Mutex_t& handle);
 };
 
 /**

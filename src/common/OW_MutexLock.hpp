@@ -33,22 +33,64 @@
 
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
+#include <cassert>
 
 //////////////////////////////////////////////////////////////////////////////
 class OW_MutexLock
 {
 public:
-	OW_MutexLock();
-	OW_MutexLock(OW_Mutex& mutex, OW_Bool doLock=true);
-	OW_MutexLock(const OW_MutexLock& arg);
-	~OW_MutexLock();
-	OW_MutexLock& operator= (const OW_MutexLock& arg);
-	void lock();
-	void release();
+	explicit OW_MutexLock(OW_Mutex& mutex, bool initially_locked=true)
+		: m_mutex(&mutex), m_locked(false)
+	{
+		if(initially_locked)
+		{
+			lock();
+		}
+	}
+
+	~OW_MutexLock()
+	{
+		if (m_locked)
+		{
+			release();
+		}
+	}
+
+	void lock()
+	{
+		assert(m_locked == false);
+		m_mutex->acquire();
+		m_locked = true;
+	}
+
+	void release()
+	{
+		assert(m_locked == true);
+		m_mutex->release();
+		m_locked = false;
+	}
+
+	OW_MutexLock(const OW_MutexLock& arg)
+		: m_mutex(arg.m_mutex), m_locked(arg.m_locked)
+	{
+		arg.m_locked = false;
+	}
+
+	/*
+	OW_MutexLock& operator= (const OW_MutexLock& arg)
+	{
+		release();
+		m_locked = arg.m_locked;
+		m_mutex = arg.m_mutex;
+		arg.m_locked = false;
+		return *this;
+	}
+	*/
 
 private:
 
-	OW_Mutex* m_pMutex;
+
+	OW_Mutex* m_mutex;
 	mutable bool m_locked;
 };
 

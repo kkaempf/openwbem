@@ -33,6 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
+#include "OW_Mutex.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_Bool.hpp"
 
@@ -47,7 +48,7 @@ public:
 	}
 
 
-	~OW_Semaphore() 
+	~OW_Semaphore()
 	{
 	}
 

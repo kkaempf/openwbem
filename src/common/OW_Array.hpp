@@ -190,7 +190,7 @@ public:
 
 	void readObject(std::istream& istr)
 	{
-		OW_MutexLock mlock = m_impl.getWriteLock();
+		OW_MutexLock mlock(m_impl.getWriteLock());
 		m_impl->clear();
 		OW_UInt32 len;
 		OW_BinIfcIO::read(istr, &len, sizeof(len));

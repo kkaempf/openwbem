@@ -30,6 +30,7 @@
 
 #include "OW_config.h"
 #include "OW_ThreadImpl.hpp"
+#include "OW_Mutex.hpp"
 #include "OW_Assertion.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
@@ -207,19 +208,6 @@ threadStarter(void* arg)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
-OW_ThreadImpl::sameThreads(const volatile OW_Thread_t& handle1,
-									const volatile OW_Thread_t& handle2)
-{
-#ifdef OW_USE_GNU_PTH
-    return handle1 == handle2;
-#else
-	return pthread_equal(handle1, handle2);
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_ThreadImpl::exitThread(OW_Thread_t&)
 {
@@ -227,19 +215,6 @@ OW_ThreadImpl::exitThread(OW_Thread_t&)
     pth_exit(NULL);
 #else
 	pthread_exit(NULL);
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-OW_Thread_t
-OW_ThreadImpl::currentThread()
-{
-#ifdef OW_USE_GNU_PTH
-    initThreads();
-    return pth_self();
-#else
-	return pthread_self();
 #endif
 }
 
@@ -352,46 +327,6 @@ OW_MutexImpl::destroyMutex(OW_Mutex_t& handle)
 			cc = -2;
 	}
 	return cc;
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-int
-OW_MutexImpl::acquireMutex(OW_Mutex_t& handle)
-{
-#ifdef OW_USE_GNU_PTH
-    pth_mutex_acquire(&handle, false, NULL);
-    return 0;
-#else
-	int cc = pthread_mutex_lock(&handle);
-	if(cc != 0)
-	{
-		//cerr << "OW_MutexImpl::acquireMutex got err on lock: " << cc << endl;
-		return cc;
-	}
-
-	return 0;
-#endif
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-int
-OW_MutexImpl::releaseMutex(OW_Mutex_t& handle)
-{
-#ifdef OW_USE_GNU_PTH
-    (void)handle;
-    return 0;
-#else
-	int cc = pthread_mutex_unlock(&handle);
-	if(cc != 0)
-	{
-		//cerr << "OW_MutexImpl::releaseMutex got err on lock: " << cc << endl;
-		return -1;
-	}
-
-	return 0;
 #endif
 }
 

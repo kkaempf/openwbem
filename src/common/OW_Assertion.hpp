@@ -32,7 +32,6 @@
 #define _OW_ASSERTION_HPP__
 
 #include "OW_config.h"
-#include "OW_String.hpp"
 #include <iosfwd>
 
 #include "OW_Exception.hpp"

@@ -32,10 +32,10 @@
 #define OW_EXCEPTION_HPP_
 
 #include "OW_config.h"
-#include "OW_Mutex.hpp"
 #include <iosfwd>
 #include <exception>
 
+class OW_Mutex;
 
 class OW_Exception : public std::exception
 {
@@ -60,7 +60,7 @@ protected:
 	char* m_msg;
 
 private:
-	static OW_Mutex m_mutex;
+	static OW_Mutex* m_mutex;
 };
 
 std::ostream& operator<< (std::ostream& os, const OW_Exception& e);

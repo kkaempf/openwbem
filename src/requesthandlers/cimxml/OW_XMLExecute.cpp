@@ -1436,14 +1436,14 @@ namespace
 
 			cop.setNameSpace(ns);
 
-			ostr << "<VALUE.NAMEDINSTANCE>";
+			ostr << "<VALUE.OBJECTWITHPATH>";
 			OW_CIMtoXML(i, ostr, cop,
-				OW_CIMtoXMLFlags::isInstanceName,
+				OW_CIMtoXMLFlags::isNotInstanceName,
 				OW_CIMtoXMLFlags::notLocalOnly,
 				OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,
 				OW_StringArray());
-			ostr << "</VALUE.NAMEDINSTANCE>";
+			ostr << "</VALUE.OBJECTWITHPATH>";
 		}
 	private:
 		std::ostream& ostr;

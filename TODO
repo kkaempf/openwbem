@@ -21,6 +21,8 @@ x configurable Class cache in meta repository.
 x long and short versions of make check
 x add a test for the matrix on the bottom of
   http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
+x change XML parser to be lazy. 
+x fix execQuery XML
 
 
 - Providers/Provider interfaces in a different process.
@@ -40,9 +42,12 @@ x add a test for the matrix on the bottom of
 - XMLExecute has handling of flags like localonly, etc.  remove this
   and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
 
-- change XML parser to be lazy. 
 - Fix? socket write/read also select on shutdown pipe.
-- inline the smaller functions in OW_String, OW_Reference, OW_Mutex, OW_MutexLock and other commonly used classes.
+- inline the smaller functions in OW_String, OW_StringBuffer, and other commonly used classes.
 - add a test for extrinsic methods with OUT and IN/OUT parameters
 - pretty-print the XML in the test suites.
-- fix execQuery XML
+- do some interop testing
+  - snia
+  - wbem services
+  - pegasus
+  - openwbem 1.3.2 1.2.x (make sure binary fails)

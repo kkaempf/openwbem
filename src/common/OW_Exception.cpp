@@ -43,7 +43,7 @@
 
 #include <algorithm> // for std::swap
 
-OW_Mutex OW_Exception::m_mutex;
+OW_Mutex* OW_Exception::m_mutex = new OW_Mutex();
 
 //////////////////////////////////////////////////////////////////////////////					
 static void freeBuf(char** ptr)
@@ -74,7 +74,7 @@ OW_Exception::OW_Exception()
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	OW_StackTrace::getStackTrace();
 #endif
-	m_mutex.acquire();
+	m_mutex->acquire();
 }
 
 //////////////////////////////////////////////////////////////////////////////					
@@ -87,7 +87,7 @@ OW_Exception::OW_Exception(const char* file, int line, const char* msg)
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	OW_StackTrace::getStackTrace();
 #endif
-	m_mutex.acquire();
+	m_mutex->acquire();
 	m_file = dupString(file);
 	m_msg = dupString(msg);
 }
@@ -102,7 +102,7 @@ OW_Exception::OW_Exception(const char* msg)
 #ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	OW_StackTrace::getStackTrace();
 #endif
-	m_mutex.acquire();
+	m_mutex->acquire();
 	m_msg = dupString(msg);
 }
 
@@ -113,7 +113,7 @@ OW_Exception::OW_Exception( const OW_Exception& e )
 	, m_line(e.m_line)
 	, m_msg(0)
 {
-	m_mutex.acquire();
+	m_mutex->acquire();
 	m_file = dupString(e.m_file);
 	m_msg = dupString(e.m_msg);
 }
@@ -123,7 +123,7 @@ OW_Exception::~OW_Exception() throw()
 {
 	freeBuf(&m_file);
 	freeBuf(&m_msg);
-	m_mutex.release();
+	m_mutex->release();
 }
 
 //////////////////////////////////////////////////////////////////////////////					

@@ -1479,8 +1479,7 @@ OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 	params.push_back(OW_Param(XMLP_QUERY, OW_XMLEscape(query)));
 
 	OW_CIMObjectPath cop("", path.getNameSpace());
-	// TODO: This is WRONG!!!
-	enumInstancesOp op(result);
+	objectWithPathOp op(&result, 0, path.getNameSpace());
 	intrinsicMethod(cop, commandName, op, params);
 }
 

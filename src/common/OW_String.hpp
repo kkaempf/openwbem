@@ -35,6 +35,7 @@
 #include "OW_Types.h"
 #include "OW_Reference.hpp"
 #include "OW_ArrayFwd.hpp"
+#include "OW_Exception.hpp"
 
 #include <iosfwd>
 
