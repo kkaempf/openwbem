@@ -266,7 +266,7 @@ OW_CIMOMEnvironment::startServices()
         if (m_pollingManager)
         {
             // Start up the polling manager
-            m_Logger->logDebug("CIMOM starting Polling Manager");
+            logDebug("CIMOM starting Polling Manager");
 			OW_Semaphore sem;
 			m_pollingManager->setStartedSemaphore(&sem);
             m_pollingManager->start();
@@ -276,7 +276,7 @@ OW_CIMOMEnvironment::startServices()
         if (m_indicationServer)
         {
             // Start up the indication server
-            m_Logger->logDebug("CIMOM starting IndicationServer");
+            logDebug("CIMOM starting IndicationServer");
 			OW_Semaphore sem;
             m_indicationServer->init(OW_CIMOMEnvironmentRef(this, true), &sem);
             m_indicationServer->start();
@@ -377,7 +377,7 @@ OW_CIMOMEnvironment::shutdown()
 
 	logDebug("CIMOM Environment has shut down");
 
-	m_Logger = 0;
+	//m_Logger = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -439,7 +439,7 @@ OW_CIMOMEnvironment::_createIndicationServer()
 
 		if (!m_indicationServer)
 		{
-			m_Logger->logError(format("CIMOM Failed to load indication server"
+			logError(format("CIMOM Failed to load indication server"
 				" from library %1. Indication are currently DISABLED!",
 				indicationLib));
 
@@ -468,13 +468,13 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		libPath += "/";
 	}
 
-	m_Logger->logCustInfo(format("CIMOM loading request handlers from"
+	logCustInfo(format("CIMOM loading request handlers from"
 		" directory %1", libPath));
 
 	OW_StringArray dirEntries;
 	if(!OW_FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		m_Logger->logError(format("CIMOM failed geeting the contents of the"
+		logError(format("CIMOM failed geeting the contents of the"
 			" request handler directory: %1", libPath));
 		return;
 	}
@@ -523,7 +523,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		}
 	}
 
-	m_Logger->logCustInfo(format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
+	logCustInfo(format("CIMOM: Handling %1 Content-Types from %2 Request Handlers",
 		m_reqHandlers.size(), reqHandlerCount));
 }
 
@@ -545,13 +545,13 @@ OW_CIMOMEnvironment::_loadServices()
 		libPath += "/";
 	}
 
-	m_Logger->logCustInfo(format("CIMOM loading services from directory %1",
+	logCustInfo(format("CIMOM loading services from directory %1",
 		libPath));
 
 	OW_StringArray dirEntries;
 	if(!OW_FileSystem::getDirectoryContents(libPath, dirEntries))
 	{
-		m_Logger->logError(format("CIMOM failed geeting the contents of the"
+		logError(format("CIMOM failed geeting the contents of the"
 			" services directory: %1", libPath));
 		return;
 	}
@@ -591,14 +591,11 @@ OW_CIMOMEnvironment::_loadServices()
 void
 OW_CIMOMEnvironment::_createLogger()
 {
-	if(!m_Logger)
-	{
-		OW_Bool debugFlag = getConfigItem(
-			OW_ConfigOpts::OW_DEBUG_opt).equalsIgnoreCase("true");
+	OW_Bool debugFlag = getConfigItem(
+		OW_ConfigOpts::OW_DEBUG_opt).equalsIgnoreCase("true");
 
-		m_Logger = OW_LoggerRef(OW_Logger::createLogger(getConfigItem(
-			OW_ConfigOpts::LOG_LOCATION_opt), debugFlag));
-	}
+	m_Logger = OW_LoggerRef(OW_Logger::createLogger(getConfigItem(
+		OW_ConfigOpts::LOG_LOCATION_opt), debugFlag));
 
 	m_Logger->setLogLevel(getConfigItem(OW_ConfigOpts::LOG_LEVEL_opt));
 }
@@ -805,7 +802,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 			OW_String libname = getConfigItem(OW_ConfigOpts::OWLIB_DIR_opt);
 			libname += "/libowindicationreplayer.so";
 
-			m_Logger->logDebug(format("CIMOM loading indication libary %1",
+			logDebug(format("CIMOM loading indication libary %1",
 				libname));
 
 			OW_SharedLibraryLoaderRef sll =
