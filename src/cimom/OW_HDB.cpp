@@ -31,6 +31,7 @@
 #include "OW_config.h"
 #include "OW_HDB.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_Format.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -110,7 +111,7 @@ OW_HDB::open(const char* fileName)
 OW_Bool
 OW_HDB::createFile()
 {
-	OW_HDBHeaderBlock b = { OW_HDBSIGNATURE, OW_HDBMAJOR, -1L, -1L, -1L };
+	OW_HDBHeaderBlock b = { OW_HDBSIGNATURE, OW_HDBVERSION, -1L, -1L, -1L };
 	m_hdrBlock = b;
 
 	OW_File f = OW_FileSystem::createFile(m_fileName + ".dat");
@@ -157,6 +158,11 @@ OW_HDB::checkFile()
 		OW_String msg("Invalid format for HDB file: ");
 		msg += m_fileName;
 		OW_THROW(OW_HDBException, msg.c_str());
+	}
+
+	if (m_hdrBlock.version != OW_HDBVERSION)
+	{
+		OW_THROW(OW_HDBException, format("Invalid version (%1) for file (%2). Expected (%3)", m_hdrBlock.version, m_fileName, OW_HDBVERSION).c_str());
 	}
 
 	m_pindex = OW_Index::createIndexObject();

@@ -51,8 +51,8 @@ public:
 };
 
 #define OW_HDBSIGNATURE "OWHIERARCHICALDB"
-#define OW_HDBMAJOR 1
-#define OW_HDBSIGLEN 17
+const int OW_HDBSIGLEN = 17;
+const OW_UInt32 OW_HDBVERSION = 3000001;
 
 /**
  * The OW_HDBHeaderBlock structure represent the header information for
@@ -61,7 +61,7 @@ public:
 struct OW_HDBHeaderBlock
 {
 	char signature[OW_HDBSIGLEN];
-	OW_UInt32 major;
+	OW_UInt32 version;
 	OW_Int32 firstRoot;
 	OW_Int32 lastRoot;
 	OW_Int32 firstFree;
