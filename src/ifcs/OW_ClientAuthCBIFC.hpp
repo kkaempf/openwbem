@@ -56,8 +56,8 @@ public:
 	 *
 	 * @param realm A string describing the server or area within the
 	 * 	server for which the client needs access (typically a URL).
-	 * @param name A non-const String&.  The function should assign	a valid
-	 * 	user name here. 
+	 * @param name A out param String&.  The function should assign a valid
+	 * 	user name here. "" is not a valid user name.
 	 * @param passwd Similar to "name". The callback assigns the password
 	 * 	here. 
 	 * @return true means the http client should retry the request with
