@@ -32,6 +32,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_String.hpp"
+#include "OW_StringBuffer.hpp"
 
 DEFINE_EXCEPTION(UnnamedPipe);
 
@@ -94,12 +95,12 @@ OW_UnnamedPipe::readAll()
 {
 	char buf[1024];
 	int readbytes;
-	OW_String retval;
+	OW_StringBuffer retval;
 	do
 	{
 		readbytes = this->read(buf, sizeof(buf)-1, true); // throws on error
 		buf[readbytes] = 0; // null-terminate the buffer
 		retval += buf;
 	} while (readbytes > 0); // keep going until we don't fill up the buffer.
-	return retval;
+	return retval.releaseString();
 }
