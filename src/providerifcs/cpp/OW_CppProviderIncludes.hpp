@@ -32,7 +32,7 @@
  * This header is meant for providers convenience so they can just include one
  * file to get all the classes which a typical provider may use.
  * No includes in this header will ever be removed. Some headers may
- * be pulled in transitively, and these may change, so don't rely on transitive 
+ * be pulled in transitively, and these may change, so don't rely on transitive
  * includes.
  *
  * @author Dan Nuffer
@@ -56,6 +56,7 @@
 #include "OW_CppIndicationProviderIFC.hpp"
 #include "OW_CppReadOnlyInstanceProviderIFC.hpp"
 #include "OW_CppSimpleInstanceProviderIFC.hpp"
+#include "OW_CppSimpleAssociatorProviderIFC.hpp"
 #include "OW_Format.hpp"
 #include "OW_Enumeration.hpp"
 #include "OW_Logger.hpp"
