@@ -43,6 +43,8 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_UserUtils.hpp"
 #include "OW_AuthenticationException.hpp"
+#include "OW_Exec.hpp"
+#include "OW_LocalAuthenticationCommon.hpp"
 
 #ifdef OW_HAVE_PWD_H
 #include <pwd.h>
@@ -61,8 +63,93 @@
 namespace OW_NAMESPACE
 {
 
-OW_DECLARE_EXCEPTION(LocalAuthentication);
-OW_DEFINE_EXCEPTION(LocalAuthentication);
+using namespace LocalAuthenticationCommon;
+
+namespace
+{
+	bool useHelper()
+	{
+		// only root can change file ownership, so unless we can, we'll have to rely on owlocalhelper to do it.
+		return ::geteuid() != 0;
+	}
+
+	String runHelper(const String& inputCmd, const String& extraInput = String())
+	{
+		StringArray cmd;
+		cmd.push_back(OWLOCALHELPER_BINARY);
+		String output;
+		int processStatus = -1;
+		try
+		{
+			PopenStreams helper = Exec::safePopen(cmd); //, inputCmd + "\n" + extraInput);
+			String input = inputCmd + "\n" + extraInput;
+			
+			// purposely ignore this return code
+			helper.in()->write(input.c_str(), input.length());
+
+			const int TIMEOUT = 10;
+			const int OUTPUT_LIMIT = 1024;
+			Exec::gatherOutput(output, helper, processStatus, TIMEOUT, OUTPUT_LIMIT);
+			if (processStatus == -1)
+			{
+				processStatus = helper.getExitStatus();
+			}
+		}
+		catch (Exception& e)
+		{
+			OW_THROW(LocalAuthenticationException, Format("Failed running %1: %2. command = %3, output = \"%4\"", OWLOCALHELPER_BINARY, e, inputCmd, output).c_str());
+		}
+		if (!WIFEXITED(processStatus) || WEXITSTATUS(processStatus) != 0)
+		{
+			OW_THROW(LocalAuthenticationException, Format("%1 failed with exit status %2. command = %3, output = \"%4\"", 
+				OWLOCALHELPER_BINARY, processStatus, inputCmd, output).c_str());
+		}
+		return output;
+	}
+
+	void initializeHelper()
+	{
+		runHelper(INITIALIZE_CMD);
+	}
+
+	void cleanupEntryHelper(const String& pathToFile, const String& cookie)
+	{
+		size_t begin = pathToFile.lastIndexOf(OW_FILENAME_SEPARATOR);
+		if (begin == String::npos)
+		{
+			begin = 0;
+		}
+		String fileName = pathToFile.substring(begin);
+		runHelper(REMOVE_CMD, fileName + "\n" + cookie + "\n");
+	}
+
+	String createFileHelper(const String& uid, const String& cookie)
+	{
+		String filename = runHelper(CREATE_CMD, uid + "\n" + cookie + "\n");
+		// remove the trailing \n
+		if (filename.length() > 0 && filename[filename.length()-1] == '\n')
+		{
+			filename.erase(filename.length()-1);
+		}
+		return filename;
+	}
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+LocalAuthentication::LocalAuthentication(const LoggerRef& logger)
+	: m_logger(logger)
+{
+	if (useHelper())
+	{
+		initializeHelper();
+	}
+	else
+	{
+		LocalAuthenticationCommon::initializeDir();
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////
 LocalAuthentication::~LocalAuthentication()
@@ -73,6 +160,16 @@ LocalAuthentication::~LocalAuthentication()
 		{
 			cleanupEntry(m_authEntries[i]);
 		}
+		catch (Exception& e)
+		{
+			try
+			{
+				OW_LOG_ERROR(m_logger, Format("LocalAuthentication::~LocalAuthentication() caught exception from cleanupEntry(): %1", e));
+			}
+			catch (...)
+			{
+			}
+		}
 		catch (...)
 		{
 			// eat all exceptions
@@ -81,15 +178,15 @@ LocalAuthentication::~LocalAuthentication()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace {
+
+//////////////////////////////////////////////////////////////////////////////
 String
-LocalAuthentication::generateNewNonce()
+generateNewNonce()
 {
 	UUID u;
 	return u.toString();
 }
-
-//////////////////////////////////////////////////////////////////////////////
-namespace {
 
 void
 parseInfo(const String& pinfo, SortedVectorMap<String, String>& infoMap)
@@ -130,6 +227,29 @@ parseInfo(const String& pinfo, SortedVectorMap<String, String>& infoMap)
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie)
+{
+	// Generate random number to put in file for client to read
+	// TODO: This should use a cryptographic quality random number.
+	RandomNumber rng;
+	UInt32 rn1 = rng.getNextNumber();
+	UInt32 rn2 = rng.getNextNumber();
+	UInt32 rn3 = rng.getNextNumber();
+	UInt32 rn4 = rng.getNextNumber();
+	cookie = Format("%1%2%3%4", rn1, rn2, rn3, rn4);
+
+	if (useHelper())
+	{
+		cookieFileName = createFileHelper(uid, cookie);
+	}
+	else
+	{
+		cookieFileName = LocalAuthenticationCommon::createFile(uid, cookie);
+	}
+}
+
 } // end unnamed namespace
 
 //////////////////////////////////////////////////////////////////////////////
@@ -137,102 +257,113 @@ bool
 LocalAuthentication::authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon)
 {
-	cleanupStaleEntries();
-
-	if (info.empty())
+	try
 	{
-		htcon->setErrorDetails("You must authenticate to access this resource");
-		return false;
-	}
-	
-	typedef SortedVectorMap<String, String> map_t;
-	map_t infoMap;
 
-	parseInfo(info, infoMap);
-
-	// look for an initial connection where the client specifies their uid
-	map_t::const_iterator iter = infoMap.find("uid");
-	if (iter != infoMap.end() && !iter->second.empty())
-	{
-		String uidStr = iter->second;
+		cleanupStaleEntries();
 	
-		// Lookup the username given the uid
-		uid_t uid;
-		try
+		if (info.empty())
 		{
-			uid = uidStr.toUInt32();
-		}
-		catch (StringConversionException& e)
-		{
-			htcon->setErrorDetails("Invalid uid");
+			htcon->setErrorDetails("You must authenticate to access this resource");
 			return false;
 		}
 		
-		bool ok;
-		String uname(UserUtils::getUserName(uid, ok));
-		if (ok)
+		typedef SortedVectorMap<String, String> map_t;
+		map_t infoMap;
+	
+		parseInfo(info, infoMap);
+	
+		// look for an initial connection where the client specifies their uid
+		map_t::const_iterator iter = infoMap.find("uid");
+		if (iter != infoMap.end() && !iter->second.empty())
 		{
-			userName = uname;
-		}
-		else
-		{
-			htcon->setErrorDetails("Invalid uid");
+			String uidStr = iter->second;
+		
+			// Lookup the username given the uid
+			uid_t uid;
+			try
+			{
+				uid = uidStr.toUInt32();
+			}
+			catch (StringConversionException& e)
+			{
+				htcon->setErrorDetails("Invalid uid");
+				return false;
+			}
+			
+			bool ok;
+			String uname(UserUtils::getUserName(uid, ok));
+			if (ok)
+			{
+				userName = uname;
+			}
+			else
+			{
+				htcon->setErrorDetails("Invalid uid");
+				return false;
+			}
+	
+			// give them back the challenge
+			htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr, userName));
+			htcon->setErrorDetails("You must authenticate to access this resource");
 			return false;
 		}
-
-		// give them back the challenge
-		htcon->addHeader("WWW-Authenticate", createNewChallenge(uidStr, userName));
-		return false;
-	}
-
-	// it's not an initial connection, so it's phase 2, look for the nonce and cookie
-	iter = infoMap.find("nonce");
-	if (iter == infoMap.end() || iter->second.empty())
-	{
-		htcon->setErrorDetails("No nonce was provided");
-		return false;
-	}
-
-	String sNonce = iter->second;
-
-	bool nonceFound = false;
-	size_t i;
-	if (!sNonce.empty())
-	{
-		for (i = 0; i < m_authEntries.size(); ++i)
+	
+		// it's not an initial connection, so it's phase 2, look for the nonce and cookie
+		iter = infoMap.find("nonce");
+		if (iter == infoMap.end() || iter->second.empty())
 		{
-			if (sNonce == m_authEntries[i].nonce)
+			htcon->setErrorDetails("No nonce was provided");
+			return false;
+		}
+	
+		String sNonce = iter->second;
+	
+		bool nonceFound = false;
+		size_t i;
+		if (!sNonce.empty())
+		{
+			for (i = 0; i < m_authEntries.size(); ++i)
 			{
-				nonceFound = true;
-				break;
+				if (sNonce == m_authEntries[i].nonce)
+				{
+					nonceFound = true;
+					break;
+				}
 			}
 		}
-	}
-	if (!nonceFound)
-	{
-		htcon->setErrorDetails("invalid nonce");
+		if (!nonceFound)
+		{
+			htcon->setErrorDetails("invalid nonce");
+			return false;
+		}
+	
+		userName = m_authEntries[i].userName;
+	
+		iter = infoMap.find("cookie");
+		if (iter == infoMap.end() || iter->second.empty())
+		{
+			htcon->setErrorDetails("No cookie was provided");
+			return false;
+		}
+		String cookie = iter->second;
+		if ( cookie == m_authEntries[i].cookie )
+		{
+			// Match! Authenticated. Clean up.
+			cleanupEntry(m_authEntries[i]);
+			m_authEntries.erase(m_authEntries.begin() + i);
+			return true;
+		}
+	
+		htcon->setErrorDetails("invalid cookie");
 		return false;
 	}
-
-	userName = m_authEntries[i].userName;
-
-	iter = infoMap.find("cookie");
-	if (iter == infoMap.end() || iter->second.empty())
+	catch(LocalAuthenticationException& e)
 	{
-		htcon->setErrorDetails("No cookie was provided");
+		OW_LOG_ERROR(m_logger, Format("LocalAuthentication::authenticate(): %1", e));
+		htcon->setErrorDetails(Format("%1", e));
 		return false;
 	}
-	String cookie = iter->second;
-	if ( cookie == m_authEntries[i].cookie )
-	{
-		// Match! Authenticated. Clean up.
-		cleanupEntry(m_authEntries[i]);
-		m_authEntries.erase(m_authEntries.begin() + i);
-		return true;
-	}
-
-	htcon->setErrorDetails("invalid cookie");
-	return false;
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -258,78 +389,17 @@ LocalAuthentication::createNewChallenge(const String& uid, const String& userNam
 void
 LocalAuthentication::cleanupEntry(const AuthEntry& entry)
 {
-	if (!FileSystem::removeFile(entry.fileName))
+	if (useHelper())
 	{
-		// failed, now what?
+		cleanupEntryHelper(entry.fileName, entry.cookie);
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFileName, String& cookie)
-{
-	uid_t userid = uid.toUInt32();
-
-	// TODO: Put all the platform specific stuff into FileSystem and a new UserID class.
-
-	//-- Create temporary file for auth process
-	// The fact that the umask is set to 0077 makes this safe from prying eyes.
-	char tfname[64];
-	int authfd;
-	::strcpy(tfname, "/tmp/OwAuThTmpFileXXXXXX");
-	authfd = ::mkstemp(tfname);
-	if (authfd == -1)
+	else
 	{
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException, "mkstemp failed");
+		if (!FileSystem::removeFile(entry.fileName))
+		{
+			OW_LOG_ERROR(m_logger, Format("LocalAuthentication::cleanupEntry(): Failed to remove %1: %2", entry.fileName, errno));
+		}
 	}
-	cookieFileName = tfname;
-
-	//-- Change file permission on temp file to read/write for user only
-	if (::fchmod(authfd, 0400) == -1)
-	{
-		int lerrno = errno;
-		::close(authfd);
-		::unlink(tfname);
-		errno = lerrno;
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException,
-			Format("OWLocal Authenticate: Failed changing permissions on temp "
-				"file %1", tfname).c_str());
-	}
-
-	//-- Change file so the user connecting is the owner
-	if (::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
-	{
-		int lerrno = errno;
-		::close(authfd);
-		::unlink(tfname);
-		errno = lerrno;
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException,
-			Format("OWLocal Authenticate: Failed changing ownership on file %1 to userid %2", tfname, userid).c_str());
-	}
-
-	// Generate random number to put in file for client to read
-	// TODO: This should use a cryptographic quality random number.
-	RandomNumber rng;
-	UInt32 rn1 = rng.getNextNumber();
-	UInt32 rn2 = rng.getNextNumber();
-	UInt32 rn3 = rng.getNextNumber();
-	UInt32 rn4 = rng.getNextNumber();
-	cookie = Format("%1%2%3%4", rn1, rn2, rn3, rn4);
-
-		
-	// Write the servers random number to the temp file
-	if (::write(authfd, cookie.c_str(), cookie.length()) != static_cast<ssize_t>(cookie.length()))
-	{
-		int lerrno = errno;
-		::close(authfd);
-		::unlink(tfname);
-		errno = lerrno;
-		OW_THROW_ERRNO_MSG(LocalAuthenticationException,
-			Format("OWLocal Authenticate: Failed writing to temp file %1", tfname).c_str());
-	}
-
-	::close(authfd);
-	
 }
 
 //////////////////////////////////////////////////////////////////////////////

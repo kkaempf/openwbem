@@ -38,6 +38,7 @@ OWBINDIR=@bindir@
 OWSBINDIR=@sbindir@
 OWINCLUDEDIR=@includedir@
 OWPKGLIBDIR=@pkglibdir@
+OWLIBEXECDIR=@libexecdir@
 TOPSRCDIR=../@top_srcdir@
 TESTMOFDONE=0
 STATIC_SERVICES=0
@@ -92,7 +93,7 @@ $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
 			-e "s!;owcimomd.disable_indications =.*!owcimomd.disable_indications = true!g" \
 			-e "s!;http_server.timeout =.*!http_server.timeout = 3000!g" \
 			-e "s!;owcimomd.restart_on_error =.*!owcimomd.restart_on_error = false!g" \
-			-e "s!owcimomd.allowed_users =.*!owcimomd.allowed_users = test test1 test2 test3 $USER!g" \
+			-e "s!owcimomd.allowed_users =.*!owcimomd.allowed_users = test test1 test2 test3 root $USER!g" \
 			-e "s!;http_server.ssl_trust_store =.*!http_server.ssl_trust_store = $STAGEDIR$OWSYSCONFDIR/openwbem/truststore!g" \
 			-e "s!;owcimomd.check_referential_integrity =.*!owcimomd.check_referential_integrity = true!g" \
 			-e "s!;owcimomd.pidfile =.*!owcimomd.pidfile = $PIDFILE!g" \
@@ -412,6 +413,18 @@ InstallProvider()
 		rm $PROVIDER_DIR_NAME/$PROVIDER_BASE_NAME.fsl
 	else
 		ln -sf $PROVIDER $STAGEDIR/$OWPKGLIBDIR/c++providers/
+	fi
+}
+
+#############################################################################
+IAmRoot()
+{
+	if [ -n "$EUID" -a "$EUID" != "0" ] || [ -n "$UID" -a "$UID" != "0" ]; then
+		if  id | grep 'uid=0' >/dev/null 2>/dev/null; then
+			return 0
+		else
+			return 1
+		fi
 	fi
 }
 
@@ -746,6 +759,21 @@ TestMultiReq()
 }
 
 #############################################################################
+CanRunLocalAuthTest()
+{
+	if IAmRoot; then
+		return 0
+	fi
+
+	# it'll fail unless owlocalhelper is setuid root and the current user is owcimomd
+	if [ -u $OWLIBEXECDIR/openwbem/owlocalhelper ] && [ $USER = "owcimomd" ]; then
+		return 0
+	fi
+
+	return 1
+}
+
+#############################################################################
 TestAuth()
 {
 	if [ ! -z "$OWTESTLIST" ] && echo $OWTESTLIST | grep -v -i \
@@ -873,18 +901,24 @@ TestAuth()
 	fi
 
 	# enable http_server.allow_local_authentication
-	EditConfig "s!;http_server.allow_local_authentication = false!http_server.allow_local_authentication = true!g" 
-	
-	echo "11. Testing Local Authentication"
-	RestartDaemon
-	echo "fakeclient http://localhost:30926"
-	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
-		>> $RESULTDIR/AuthTest.out 2>&1
-	[ "$?" = "0" ] || ExitWithFail "11. Local Authentication Failed"
+	# This test can only work if we're root or owlocalhelper is setuid root.
+	# Also, because of the security sensitive nature of owlocalhelper, it has to be installed in it's final location.
+	# owcimomd will only run it from there.
+#	if IAmRoot || [ -u $OWLIBEXECDIR/openwbem/owlocalhelper ]; then
+	if CanRunLocalAuthTest; then
+		EditConfig "s!;http_server.allow_local_authentication = false!http_server.allow_local_authentication = true!g" 
+		
+		echo "11. Testing Local Authentication"
+		RestartDaemon
+		echo "fakeclient http://localhost:30926"
+		$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
+			>> $RESULTDIR/AuthTest.out 2>&1
+		[ "$?" = "0" ] || ExitWithFail "11. Local Authentication Failed"
 
-	# disable http_server.allow_local_authentication
-	EditConfig "s!http_server.allow_local_authentication = true!;http_server.allow_local_authentication = false!g" 
-	RestartDaemon
+		# disable http_server.allow_local_authentication
+		EditConfig "s!http_server.allow_local_authentication = true!;http_server.allow_local_authentication = false!g" 
+		RestartDaemon
+	fi
 
 }
 
@@ -1157,6 +1191,9 @@ if [ $SYSNAME = "Linux" ]; then
 	ulimit -c unlimited
 	# turn on symlinks
 	OWSYMLINKS=1
+	# This causes glibc to abort() if we do anything funky with memory.
+	MALLOC_CHECK_=2
+	export MALLOC_CHECK_
 fi
 
 STAGEDIR=`pwd`/stage

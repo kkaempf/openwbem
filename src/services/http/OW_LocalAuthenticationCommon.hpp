@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -29,54 +29,36 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
  * @author Dan Nuffer
  */
 
-#ifndef OW_LOCAL_AUTHENTICATION_HPP_INCLUDE_GUARD
-#define OW_LOCAL_AUTHENTICATION_HPP_INCLUDE_GUARD
+#ifndef OW_LOCAL_AUTHENTICATION_COMMON_HPP_INCLUDE_GUARD
+#define OW_LOCAL_AUTHENTICATION_COMMON_HPP_INCLUDE_GUARD
 #include "OW_config.h"
-#include "OW_String.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
-#include "OW_ServicesHttpFwd.hpp"
-
-#include <vector>
+#include "OW_Exception.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OW_NAMESPACE
 {
 
-class OW_HTTP_API LocalAuthentication : public IntrusiveCountableBase
+namespace LocalAuthenticationCommon
 {
-public:
-	LocalAuthentication(const LoggerRef& logger);
-	~LocalAuthentication();
 
-	bool authenticate(String& userName,
-		const String& info, HTTPSvrConnection* htcon);
+OW_DECLARE_EXCEPTION(LocalAuthentication);
 
-private:
-	struct AuthEntry
-	{
-		String fileName;
-		String cookie;
-		String nonce;
-		DateTime creationTime;
-		String userName;
-	};
+void initializeDir();
+String createFile(const String& uid, const String& cookie);
 
-	String createNewChallenge(const String& uid, const String& userName);
-	void cleanupEntry(const AuthEntry& entry);
-	void cleanupStaleEntries();
+static const char* const OWLOCALHELPER_BINARY = OW_DEFAULT_LIBEXEC_DIR "/openwbem/owlocalhelper";
+static const char* const REMOVE_CMD = "remove";
+static const char* const INITIALIZE_CMD = "initialize";
+static const char* const CREATE_CMD = "create";
 
-	std::vector<AuthEntry> m_authEntries;
-	LoggerRef m_logger;
+#define LOCAL_AUTH_DIR OW_DEFAULT_STATE_DIR "/openwbem/OWLocal"
 
-	// unimplemented
-	LocalAuthentication(const LocalAuthentication&);
-	LocalAuthentication& operator=(const LocalAuthentication&);
-};
+} // end namespace LocalAuthenticationCommon
 
 } // end namespace OW_NAMESPACE
 
 #endif
+

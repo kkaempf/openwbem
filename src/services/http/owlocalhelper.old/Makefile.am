@@ -1,4 +1,5 @@
-libexec_PROGRAMS = owlocalhelper
+owlocalhelperbin_PROGRAMS = owlocalhelper
+owlocalhelperbindir = $(libexecdir)/openwbem
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \

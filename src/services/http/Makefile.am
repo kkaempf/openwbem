@@ -53,6 +53,8 @@ OW_HTTPServer.hpp \
 OW_HTTPSvrConnection.hpp \
 OW_LocalAuthentication.cpp \
 OW_LocalAuthentication.hpp \
+OW_LocalAuthenticationCommon.cpp \
+OW_LocalAuthenticationCommon.hpp \
 $(DIGEST_SOURCE_FILES)
 
 pkginclude_HEADERS = \

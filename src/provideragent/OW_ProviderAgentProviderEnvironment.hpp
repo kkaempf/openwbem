@@ -49,7 +49,7 @@
 namespace OW_NAMESPACE
 {
 
-class OW_PROVIDERAGENT_API ProviderAgentProviderEnvironment: public ProviderEnvironmentIFC
+class OW_PROVIDERAGENT_API ProviderAgentProviderEnvironment : public ProviderEnvironmentIFC
 {
 public:
 	ProviderAgentProviderEnvironment(

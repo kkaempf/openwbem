@@ -20,6 +20,7 @@ SUFFIXES = .fb
 		-e 's!@''libdir''@!$(libdir)!g' \
 		-e 's!@''includedir''@!$(includedir)!g' \
 		-e 's!@''pkglibdir''@!$(pkglibdir)!g' \
+		-e 's!@''libexecdir''@!$(libexecdir)!g' \
 		-e 's!@''PACKAGE_PREFIX_D''@!$(PACKAGE_PREFIX_D)!g' \
 		-e 's!@''PACKAGE_PREFIX''@!$(PACKAGE_PREFIX)!g' \
 		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \

@@ -345,7 +345,7 @@ HTTPServer::init(const ServiceEnvironmentIFCRef& env)
 		if (m_options.allowLocalAuthentication)
 		{
 			m_localAuthentication = IntrusiveReference<LocalAuthentication>(
-				new LocalAuthentication());
+				new LocalAuthentication(env->getLogger(COMPONENT_NAME)));
 		}
 #endif
 
