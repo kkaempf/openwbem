@@ -26,8 +26,6 @@ cmpiTestProvider.c
 
 EXTRA_DIST = \
 cmpiProviderTest.mof
-#IndicationTest.mof \
-#testind.mof \
 
 INCLUDES = \
 -I$(top_srcdir)/src/providerifcs/cmpi/common 
