@@ -14,6 +14,7 @@ OW_CIMProtocolIStreamIFC.hpp \
 OW_IOIFC.hpp \
 OW_RepositoryIFC.hpp \
 OW_RequestHandlerIFC.hpp \
+OW_RepositoryIFC.hpp \
 OW_ResultHandlerIFC.hpp \
 OW_SelectableCallbackIFC.hpp \
 OW_SelectableIFC.hpp \

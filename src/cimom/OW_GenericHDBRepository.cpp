@@ -225,7 +225,7 @@ OW_GenericHDBRepository::deleteNameSpace(OW_String key)
     key.toLowerCase();
 	if(key.equals("root"))
 	{
-		OW_THROWCIMMSG(OW_CIMException::ACCESS_DENIED,
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
 			"cannot delete root namespace");
 	}
 

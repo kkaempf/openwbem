@@ -33,6 +33,7 @@
 #include "OW_config.h"
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
+#include "OW_RepositoryIFC.hpp"
 #include "OW_Reference.hpp"
 #include "OW_RepositoryIFC.hpp"
 
@@ -41,14 +42,16 @@ class OW_ProviderEnvironmentIFC
 public:
 	virtual ~OW_ProviderEnvironmentIFC(){}
 
-	// this is a regular cimom handle that does access checking and may call providers
+	// This function returns a regular cimom handle that does access checking and may call providers.
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const = 0;
 
-	// this is a cimom handle that directly accesses the repository (OW_CIMServer is bypassed).
+	// This function returns a cimom handle that directly accesses the repository (OW_CIMServer is bypassed).
 	// no providers will be called.  This function should only be called if getCIMOMHandle()
 	// is insufficent.
 	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
 
+	// This function returns a reference to the repository.  This function should only
+	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
 	virtual OW_RepositoryIFCRef getRepository() const = 0;
 
 	virtual OW_LoggerRef getLogger() const = 0;

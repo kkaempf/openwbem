@@ -54,9 +54,11 @@ class OpenWBEM_CommMechanismForAdapter : CIM_CommMechanismForAdapter
 {
 };
 
+/* not needed for now
 class OpenWBEM_Namespace : CIM_Namespace
 {
 };
+*/
 
 class OpenWBEM_SystemIdentification : CIM_SystemIdentification
 {
