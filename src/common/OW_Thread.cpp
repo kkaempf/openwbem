@@ -148,6 +148,7 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 	}
 
 	m_isStarting = false;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -155,25 +156,21 @@ OW_Thread::start(OW_Reference<OW_ThreadDoneCallback> cb) /*throw (OW_ThreadExcep
 void
 OW_Thread::join() /*throw (OW_ThreadException)*/
 {
-	if(!isJoinable())
-	{
-		OW_THROW(OW_ThreadException, "OW_Thread::join - thread is not joinable");
-	}
+	OW_ASSERT(isJoinable());
 
-	if(!sameId(m_id, NULLTHREAD))
-	{
-		// If thread is starting up, let it finish
-		while(!m_isRunning && m_isStarting)
-		{
-			yield();
-		}
+	OW_ASSERT(!sameId(m_id, NULLTHREAD));
 
-		if(OW_ThreadImpl::joinThread(m_id) != 0)
-		{
-			OW_THROW(OW_ThreadException,
-				format("OW_Thread::join - OW_ThreadImpl::joinThread: %1(%2)", 
-					   errno, strerror(errno)).c_str());
-		}
+	// If thread is starting up, let it finish
+	//while(!m_isRunning && m_isStarting)
+	//{
+	//	yield();
+	//}
+
+	if(OW_ThreadImpl::joinThread(m_id) != 0)
+	{
+		OW_THROW(OW_ThreadException,
+			format("OW_Thread::join - OW_ThreadImpl::joinThread: %1(%2)", 
+				   errno, strerror(errno)).c_str());
 	}
 }
 
@@ -215,8 +212,9 @@ OW_Thread::threadRunner(void* paramPtr)
 		OW_ThreadParam* pParam = static_cast<OW_ThreadParam*>(paramPtr);
 		OW_Thread* pTheThread = pParam->thread;
 		theThreadID = pTheThread->m_id;
-		pTheThread->m_isRunning = true;
 		OW_Reference<OW_ThreadDoneCallback> cb = pParam->cb;
+
+		pTheThread->m_isRunning = true;
 
 		while(pTheThread->m_isStarting)
 		{
@@ -227,17 +225,31 @@ OW_Thread::threadRunner(void* paramPtr)
 
 		pTheThread->m_isRunning = pTheThread->m_isStarting = false;
 
-		if(pTheThread->getSelfDelete() == true)
-		{
-			delete pTheThread;
-		}
-
 		delete pParam;
 
+		if(pTheThread->getSelfDelete() == true)
+		{
+			// There is an race condition wrt the deletion of the thread.
+			// If the OW_Thread::start() function hasn't returned yet, it will
+			// cause memory corruption.  The sleep here give OW_Thread::start()
+			// enough of a chance to actually return.  If you know of a better
+			// way to accomplish this, please let me know.
+			OW_ThreadImpl::sleep(100); 
+			delete pTheThread;
+			pTheThread = 0;
+		}
+
+		// Note that this *has* to come after the 'delete pTheThread' statement.
+		// This is because during shutdown the notifyThreadDone will decrement
+		// the # of threads running, which will allow shutdown to proceed once
+		// the # == 0, and then subsequently the library that contains the 
+		// thread's code will be unloaded.  If the destructor of pTheThread 
+		// runs after the library is unloaded, then *boom*, segfault.
 		if (cb)
 		{
 			cb->notifyThreadDone(pTheThread);
 		}
+
 	}
 	catch(OW_Exception& ex)
 	{
