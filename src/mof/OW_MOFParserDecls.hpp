@@ -33,9 +33,9 @@
 #include "OW_Exception.hpp"
 #include <stdio.h>
 
-extern int yydebug;
-extern int yyparse(void *context);
-extern FILE* yyin;
+extern int owmofdebug;
+extern int owmofparse(void *context);
+extern FILE* owmofin;
 
 namespace OpenWBEM
 {

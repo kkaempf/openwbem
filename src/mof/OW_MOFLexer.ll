@@ -48,8 +48,8 @@ using namespace OpenWBEM::MOF;
 #define WHITE_RETURN(x) /* skip it */
 #define NEWLINE_RETURN() WHITE_RETURN('\n')
 
-#define RETURN_VAL(x) yylval->pString = 0; return(x);
-#define RETURN_STR(x) yylval->pString = new String(yytext); return(x);
+#define RETURN_VAL(x) owmoflval->pString = 0; return(x);
+#define RETURN_STR(x) owmoflval->pString = new String(owmoftext); return(x);
 
 namespace OpenWBEM
 {
@@ -62,7 +62,7 @@ OW_DEFINE_EXCEPTION(MOFLexer)
 	OW_THROW(OpenWBEM::MOFLexerException, msg);
 
 #define YYLEX_PARAM context
-#define YY_DECL int yylex(YYSTYPE *yylval, void* YYLEX_PARAM)
+#define YY_DECL int owmoflex(YYSTYPE *owmoflval, void* YYLEX_PARAM)
 #define MOF_COMPILER (reinterpret_cast<Compiler*>(context))
 %}
 
@@ -215,13 +215,13 @@ true					{RETURN_STR(TRUE_TOK);}
 {stringValue}(({ws}|[\r\n])*{stringValue})*		{
 	/* figure out how many lines we passed over */
 	int i;
-	for (i = 0; i < yyleng; ++i)
+	for (i = 0; i < owmofleng; ++i)
 	{
-		if ( yytext[i] == '\r' || yytext[i] == '\n' )
+		if ( owmoftext[i] == '\r' || owmoftext[i] == '\n' )
 		{
 			++MOF_COMPILER->theLineInfo.lineNum;
-			if ( ( i + 1 ) < yyleng )
-				if ( yytext[i] == '\r' && yytext[i + 1] == '\n' )
+			if ( ( i + 1 ) < owmofleng )
+				if ( owmoftext[i] == '\r' && owmoftext[i + 1] == '\n' )
 					++i;
 		}
 	}
@@ -237,11 +237,11 @@ true					{RETURN_STR(TRUE_TOK);}
 	}
 	else
 	{
-		yy_delete_buffer( YY_CURRENT_BUFFER );
+		owmof_delete_buffer( YY_CURRENT_BUFFER );
 		MOF_COMPILER->theErrorHandler->progressMessage("Finished parsing.", MOF_COMPILER->theLineInfo);
 		MOF_COMPILER->theLineInfo = MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo;
-		yy_switch_to_buffer(
-			MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].yyBufferState );
+		owmof_switch_to_buffer(
+			MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].owmofBufferState );
 	}
 }
 
@@ -276,8 +276,8 @@ void lexIncludeFile( void* context, const String& filename )
 		filenameWithPath = filename;
 	}
 	
-	yyin = newfile;
-	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].yyBufferState = YY_CURRENT_BUFFER;
+	owmofin = newfile;
+	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].owmofBufferState = YY_CURRENT_BUFFER;
 	MOF_COMPILER->include_stack[MOF_COMPILER->include_stack_ptr].theLineInfo = MOF_COMPILER->theLineInfo;
 	MOF_COMPILER->theLineInfo.filename = filenameWithPath;
 	MOF_COMPILER->theLineInfo.lineNum = 1;
@@ -285,7 +285,7 @@ void lexIncludeFile( void* context, const String& filename )
 	
 	++(MOF_COMPILER->include_stack_ptr);
 
-	yy_switch_to_buffer( yy_create_buffer( yyin, YY_BUF_SIZE ) );
+	owmof_switch_to_buffer( owmof_create_buffer( owmofin, YY_BUF_SIZE ) );
 
 
 	(void)yyunput; // To get rid of compiler warning about unused variable.

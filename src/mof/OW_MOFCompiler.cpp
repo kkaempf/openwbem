@@ -42,8 +42,8 @@
 #include <cctype>
 
 // forward declarations of some lex/yacc functions we need to call.
-void yy_delete_buffer(YY_BUFFER_STATE b);
-YY_BUFFER_STATE yy_scan_bytes( const char *bytes, int len );
+void owmof_delete_buffer(YY_BUFFER_STATE b);
+YY_BUFFER_STATE owmof_scan_bytes( const char *bytes, int len );
 
 namespace OpenWBEM
 {
@@ -81,8 +81,8 @@ long Compiler::compile( const String& filename )
 			}
 			if (filename != "-")
 			{
-				yyin = fopen(filename.c_str(), "r");
-				if (!yyin)
+				owmofin = fopen(filename.c_str(), "r");
+				if (!owmofin)
 				{
 					theErrorHandler->fatalError("Unable to open file", lineInfo(filename, 0));
 					return 1;
@@ -91,9 +91,9 @@ long Compiler::compile( const String& filename )
 			theErrorHandler->progressMessage("Starting parsing",
 					lineInfo(filename, 0));
 			#ifdef YYOW_DEBUG
-			yydebug = 1;
+			owmofdebug = 1;
 			#endif
-			yyparse(this);
+			owmofparse(this);
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
 			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);
@@ -132,10 +132,10 @@ long Compiler::compile( const String& filename )
 	return theErrorHandler->errorCount();
 }
 namespace {
-	struct yyBufferDeleter
+	struct owmofBufferDeleter
 	{
-		yyBufferDeleter(YY_BUFFER_STATE buf) : m_buf(buf) {}
-		~yyBufferDeleter() {yy_delete_buffer(m_buf);}
+		owmofBufferDeleter(YY_BUFFER_STATE buf) : m_buf(buf) {}
+		~owmofBufferDeleter() {owmof_delete_buffer(m_buf);}
 		YY_BUFFER_STATE m_buf;
 	};
 }
@@ -147,14 +147,14 @@ long Compiler::compileString( const String& mof )
 	{
 		try
 		{
-			YY_BUFFER_STATE buf = yy_scan_bytes(mof.c_str(), mof.length());
-			yyBufferDeleter deleter(buf);
+			YY_BUFFER_STATE buf = owmof_scan_bytes(mof.c_str(), mof.length());
+			owmofBufferDeleter deleter(buf);
 			theErrorHandler->progressMessage("Starting parsing",
 					lineInfo(filename, 0));
 			#ifdef YYOW_DEBUG
-			yydebug = 1;
+			owmofdebug = 1;
 			#endif
-			yyparse(this);
+			owmofparse(this);
 			theErrorHandler->progressMessage("Finished parsing",
 					theLineInfo);
 			CIMOMVisitor v(m_ch, m_opts, theErrorHandler);

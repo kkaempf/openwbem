@@ -38,7 +38,7 @@
 #include "OW_Array.hpp"
 
 // these 2 need to be at global scope because flex also declares them.
-struct yy_buffer_state;
+struct owmof_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 namespace OpenWBEM
@@ -117,7 +117,7 @@ public:
 
 	struct include_t
 	{
-		YY_BUFFER_STATE yyBufferState;
+		YY_BUFFER_STATE owmofBufferState;
 		lineInfo theLineInfo;
 	};
 

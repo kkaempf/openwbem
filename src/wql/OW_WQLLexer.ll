@@ -1,3 +1,5 @@
+%option noyywrap
+
 %{
 /*-------------------------------------------------------------------------
  *
@@ -55,11 +57,6 @@ using namespace OpenWBEM;
 
 static const char *parseCh;
 
-/* some versions of lex define this as a macro */
-#if defined(yywrap)
-#undef yywrap
-#endif /* yywrap */
-
 /* set up my input handler --- need one flavor for flex, one for lex */
 #if defined(FLEX_SCANNER)
 
@@ -86,16 +83,16 @@ void unput(char);
 
 #endif /* FLEX_SCANNER */
 
-extern YYSTYPE yylval;
+extern YYSTYPE owwqllval;
 
 
 static int		xcdepth = 0;	/* depth of nesting in slash-star comments */
 
 static StringBuffer strbuffer;
 
-#define RETURN_VAL(x) yylval.pstring = 0; return(x);
-#define RETURN_STR(x) yylval.pstring = new String(yytext); return(x);
-#define RETURN_BUFF_VAL(x) yylval.pstring = new String(strbuffer.c_str()); return(x);
+#define RETURN_VAL(x) owwqllval.pstring = 0; return(x);
+#define RETURN_STR(x) owwqllval.pstring = new String(owwqltext); return(x);
+#define RETURN_BUFF_VAL(x) owwqllval.pstring = new String(strbuffer.c_str()); return(x);
 
 %}
 /*
@@ -311,7 +308,7 @@ other			.
 				
 <xh>{xhinside} |
 <xbit>{xbitinside}		{
-					strbuffer.append(yytext, yyleng);
+					strbuffer.append(owwqltext, owwqlleng);
 				}
 				
 <xh>{xhcat} |
@@ -352,7 +349,7 @@ other			.
 <xq>{xqdouble}	|
 <xq>{xqinside}	|
 <xq>{xqliteral} 		{
-					strbuffer.append(yytext, yyleng);
+					strbuffer.append(owwqltext, owwqlleng);
 				}
 				
 <xq>{xqcat}			{ /* ignore */ }
@@ -373,11 +370,11 @@ other			.
 				}
 				
 <xd>{xddouble} 			{
-					strbuffer.append(yytext, yyleng-1);
+					strbuffer.append(owwqltext, owwqlleng-1);
 				}
 				
 <xd>{xdinside}			{
-					strbuffer.append(yytext, yyleng);
+					strbuffer.append(owwqltext, owwqlleng);
 				}
 				
 <xd><<EOF>>			{ OW_THROWCIMMSG( CIMException::INVALID_QUERY, "Unterminated quoted identifier"); }
@@ -489,7 +486,7 @@ ZONE { RETURN_VAL(ZONE); }
 					char* endptr;
 
 					errno = 0;
-					val = strtol(static_cast<char *>(yytext), &endptr, 10);
+					val = strtol(static_cast<char *>(owwqltext), &endptr, 10);
 					if (*endptr != '\0' || errno == ERANGE)
 					{
 						/* integer too large, treat it as a float */
@@ -510,20 +507,14 @@ ZONE { RETURN_VAL(ZONE); }
 					RETURN_STR(IDENT);
 				}
 
-{other}				{ return yytext[0]; }
+{other}				{ return owwqltext[0]; }
 
 %%
 
 void
-yyerror(const char *message)
+owwqlerror(const char *message)
 {
-	printf( "parser: %s at or near \"%s\"", message, yytext);
-}
-
-int
-yywrap(void)
-{
-	return(1);
+	printf( "parser: %s at or near \"%s\"", message, owwqltext);
 }
 
 /*
@@ -542,7 +533,7 @@ WQLscanner_init(void)
 	
 #if defined(FLEX_SCANNER)
 	if (YY_CURRENT_BUFFER)
-		yy_flush_buffer(YY_CURRENT_BUFFER);
+		owwql_flush_buffer(YY_CURRENT_BUFFER);
 #endif /* FLEX_SCANNER */
 	BEGIN INITIAL;
 }

@@ -44,10 +44,10 @@ $(top_builddir)/src/wql/OW_WQLLexer.cc \
 $(top_builddir)/src/wql/OW_WQLParser.h
 
 #debug versions
-#AM_YFLAGS = -d -t -v
-#AM_LFLAGS = -d -i
+#AM_YFLAGS = -d -t -v -powwql
+#AM_LFLAGS = -d -i -Powwql
 
 
-AM_YFLAGS = -d
-AM_LFLAGS = -i -Cfe
+AM_YFLAGS = -d -powwql
+AM_LFLAGS = -i -Cfe -Powwql -olex.yy.c
 

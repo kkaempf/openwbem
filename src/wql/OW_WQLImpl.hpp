@@ -59,9 +59,9 @@ public:
 		
 } // end namespace OpenWBEM
 
-extern int yydebug;
-extern int yyparse(void);
-extern FILE* yyin;
+extern int owwqldebug;
+extern int owwqlparse(void);
+extern FILE* owwqlin;
 extern void WQLscanner_init(void);
 
 

@@ -49,11 +49,11 @@ $(top_builddir)/src/mof/OW_MOFLexer.cc \
 $(top_builddir)/src/mof/OW_MOFParser.h
 
 #debug versions
-#AM_YFLAGS = -d -t -v
-#AM_LFLAGS = -d -i
+#AM_YFLAGS = -d -t -v -powmof
+#AM_LFLAGS = -d -i -Powmof
 
 
-AM_YFLAGS = -d
-AM_LFLAGS = -i -Cfe
+AM_YFLAGS = -d -powmof
+AM_LFLAGS = -i -Cfe -Powmof -olex.yy.c
 
 

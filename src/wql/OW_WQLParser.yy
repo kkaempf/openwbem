@@ -47,8 +47,8 @@
 #include "OW_WQLAst.hpp"
 #include "OW_WQLImpl.hpp"
 
-int yyerror( const char* s);
-int yylex();
+int owwqlerror( const char* s);
+int owwqllex();
 
 using namespace OpenWBEM;
 

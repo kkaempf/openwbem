@@ -52,10 +52,10 @@ void WQLImpl::evaluate(const String& nameSpace,
 	parserInput = query.c_str();
 	WQLscanner_init();
 #ifdef YYOW_DEBUG
-	yydebug = 1;
+	owwqldebug = 1;
 #endif
-	int yyresult = yyparse();
-	if (yyresult)
+	int owwqlresult = owwqlparse();
+	if (owwqlresult)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
 	}
@@ -88,10 +88,10 @@ WQLImpl::createSelectStatement(const String& query)
 	parserInput = query.c_str();
 	WQLscanner_init();
 #ifdef YYOW_DEBUG
-	yydebug = 1;
+	owwqldebug = 1;
 #endif
-	int yyresult = yyparse();
-	if (yyresult)
+	int owwqlresult = owwqlparse();
+	if (owwqlresult)
 	{
 		OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Parse failed");
 	}
