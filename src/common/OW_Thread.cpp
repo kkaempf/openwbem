@@ -48,6 +48,11 @@
 #include <csignal>
 #include <cassert>
 
+#ifdef OW_HAVE_OPENSSL
+#include <openssl/err.h>
+#endif
+
+
 namespace OW_NAMESPACE
 {
 
@@ -241,6 +246,11 @@ Thread::doneRunning(const ThreadDoneCallbackRef& cb)
 	{
 		cb->notifyThreadDone(this);
 	}
+
+#ifdef OW_HAVE_OPENSSL
+	// this is necessary to free memory associated with the OpenSSL error queue for this thread.
+	ERR_remove_state(0);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////
