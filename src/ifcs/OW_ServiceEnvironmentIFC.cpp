@@ -55,7 +55,7 @@ ServiceEnvironmentIFC::~ServiceEnvironmentIFC()
 RepositoryIFCRef
 ServiceEnvironmentIFC::getRepository() const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "getRepository Not Implemented");
 	return RepositoryIFCRef();
 }
 
@@ -70,14 +70,14 @@ ServiceEnvironmentIFC::getRepositoryCIMOMHandle(OperationContext& context) const
 void
 ServiceEnvironmentIFC::addSelectable(const SelectableIFCRef& obj, const SelectableCallbackIFCRef& cb)
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "addSelectable Not Implemented");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 ServiceEnvironmentIFC::removeSelectable(const SelectableIFCRef& obj)
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "removeSelectable Not Implemented");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,14 +91,14 @@ ServiceEnvironmentIFC::getConfigItem(const String& name, const String& defRetVal
 void
 ServiceEnvironmentIFC::setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "setConfigItem Not Implemented");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFCRef
 ServiceEnvironmentIFC::getRequestHandler(const String& id) const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "getRequestHandler Not Implemented");
 	return RequestHandlerIFCRef();
 }
 
@@ -106,7 +106,7 @@ ServiceEnvironmentIFC::getRequestHandler(const String& id) const
 LoggerRef
 ServiceEnvironmentIFC::getLogger() const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "getLogger Not Implemented");
 	return LoggerRef();
 }
 
@@ -114,7 +114,7 @@ ServiceEnvironmentIFC::getLogger() const
 LoggerRef
 ServiceEnvironmentIFC::getLogger(const String& componentName) const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "getLogger(const String& componentName) Not Implemented");
 	return LoggerRef();
 }
 
@@ -122,7 +122,7 @@ ServiceEnvironmentIFC::getLogger(const String& componentName) const
 bool
 ServiceEnvironmentIFC::authenticate(String& userName, const String& info, String& details, OperationContext& context) const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "authenticate Not Implemented");
 	return true;
 }
 
@@ -132,7 +132,7 @@ ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
 	EBypassProvidersFlag bypassProviders,
 	ELockingFlag locking) const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "getCIMOMHandle Not Implemented");
 	return CIMOMHandleIFCRef();
 }
 
@@ -141,7 +141,7 @@ ServiceEnvironmentIFC::getCIMOMHandle(OperationContext& context,
 WQLIFCRef
 ServiceEnvironmentIFC::getWQLRef() const
 {
-	OW_ASSERTMSG(0, "Not Implemented");
+	OW_ASSERTMSG(0, "getWQLRef Not Implemented");
 	return WQLIFCRef();
 }
 
