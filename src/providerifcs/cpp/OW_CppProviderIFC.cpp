@@ -444,15 +444,13 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		// If we reach this point, the NO_ID provider factory was used. This
 		// means that the provider doesn't have an identifier (i.e. doesn't
 		// do instance, methods, associators and such.
-		CppProviderBaseIFC* pProv = (*createProvider)();
-		if(!pProv)
+		AutoPtr<CppProviderBaseIFC> pProv((*createProvider)());
+		if(!pProv.get())
 		{
 			env->getLogger()->logError(Format("C++ provider ifc: Libary %1 - %2 returned null"
 				" provider", libName, creationFuncName));
 			continue;
 		}
-		// TODO: Make this exception safe, so pProv gets deleted if any of the
-		// following throws.
 		CppPolledProviderIFC* p_itp = pProv->getPolledProvider();
 		CppIndicationExportProviderIFC* p_iep =
 			pProv->getIndicationExportProvider();
@@ -469,11 +467,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 					"lib: %1 - initializing", libName));
 			}
 			pProv->initialize(env);
-			m_noUnloadProviders.append(CppProviderBaseIFCRef(theLib, pProv));
-		}
-		else
-		{
-			delete pProv;
+			m_noUnloadProviders.append(CppProviderBaseIFCRef(theLib, pProv.release()));
 		}
 	}
 }
