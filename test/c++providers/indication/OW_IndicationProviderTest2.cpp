@@ -56,7 +56,7 @@ namespace
 {
 
 // This is an example/test of a simple instance/indication provider.  It 
-// returns zero from mustPoll.  The CIMOM will call the *Filter methods.
+// doesn't implement mustPoll.  The CIMOM will call the *Filter methods.
 // We'll start up a separate thread to "watch" the instances we are 
 // instrumenting.  Really, we'll just change them once a second, so this
 // provider has something to do.  A real indication provider should only
