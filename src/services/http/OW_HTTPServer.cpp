@@ -69,8 +69,7 @@ OW_Bool
 OW_HTTPServer::authenticate(OW_HTTPSvrConnection* pconn,
 	OW_String& userName, const OW_String& info)
 {
-	static OW_Mutex guard;
-	OW_MutexLock lock(guard);
+	OW_MutexLock lock(m_guard);
 	
 	if (info.length() < 1)
 	{
