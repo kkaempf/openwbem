@@ -193,13 +193,11 @@ public:
 
 	/**
 	 * Create a null terminated string that contains the contents of this
-	 * OW_String. The returned pointer MUST be deleted by the caller.
-	 * @param extraBytes The number of extra bytes the caller wants allocated
-	 *		in addition to the number of bytes in this OW_String object.
+	 * OW_String. The returned pointer MUST be deleted by the caller using free().
 	 * @return A pointer to the newly allocated buffer that contains the
 	 *		contents of this OW_String object.
 	 */
-	char* allocateCString(size_t extraBytes=0) const;
+	char* allocateCString() const;
 
 	/**
 	 * @return The length of this OW_String.

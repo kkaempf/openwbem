@@ -306,11 +306,10 @@ OW_String::~OW_String()
 
 //////////////////////////////////////////////////////////////////////////////
 char*
-OW_String::allocateCString(size_t extraBytes) const
+OW_String::allocateCString() const
 {
-	size_t len = length() + + extraBytes + 1;
-	char* str = new char[len];
-	::memset(str, 0, len);
+	size_t len = length() + 1;
+	char* str = (char*)malloc(len);
 	::strcpy(str, c_str());
 	return str;
 }
