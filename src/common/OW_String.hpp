@@ -482,67 +482,80 @@ public:
 
 	/**
 	 * @return the Char16 value for this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Char16 toChar16() const;
 
 	/**
 	 * @return The OW_Real32 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Real32 toReal32() const;
 
 	/**
 	 * @return The OW_Real64 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Real64 toReal64() const;
 
 	/**
 	 * @return The boolean value of this OW_String object. The string is
 	 * assumed to be the value of "TRUE"/"FALSE" ignoring case.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Bool toBool() const;
 
 	/**
 	 * @return The OW_UInt8 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_UInt8 toUInt8(int base=10) const;
 
 	/**
 	 * @return The OW_Int8 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Int8 toInt8(int base=10) const;
 
 	/**
 	 * @return The OW_UInt16 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_UInt16 toUInt16(int base=10) const;
 
 	/**
 	 * @return The OW_Int16 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Int16 toInt16(int base=10) const;
 
 	/**
 	 * @return The OW_UInt32 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_UInt32 toUInt32(int base=10) const;
 
 	/**
 	 * @return The OW_Int32 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Int32 toInt32(int base=10) const;
 
 	/**
 	 * @return The OW_UInt64 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_UInt64 toUInt64(int base=10) const;
 
 	/**
 	 * @return The OW_Int64 value of this OW_String object.
+	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
 	OW_Int64 toInt64(int base=10) const;
 
 	/**
 	 * @return The OW_CIMDateTime value of this OW_String object.
+	 * @throws OW_CIMDateTimeException if the string is not a valid CIMDateTime.
 	 */
 	OW_CIMDateTime toDateTime() const;
 
