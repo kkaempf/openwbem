@@ -41,7 +41,7 @@ Testing:
     - bad xml tests
     - do some interop testing (client-server & server-client)
       - snia old and new (http://www.opengroup.org/snia-cimom/)
-      - wbem services
+      - wbem services (get cimworkshop talking to owcimomd)
       - pegasus
       - openwbem 1.3.2 1.2.x (make sure binary fails)
     - various make check components to have separate namespaces.
@@ -82,3 +82,7 @@ Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
       Architecture and Developers Guide" found at 
       http://www.opengroup.org/snia-cimom/)
+
+Optimizations:
+    - OW_IndicationServerImpl::_processIndication() rewrite (see comment)
+    - Switch OW_Reference to be intrusive reference counted.

@@ -313,6 +313,14 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 		return;
 	}
 
+	// TODO: Make this function much more efficient.
+	//		1. Put the code into a callback so we don't have to build an enumeration.
+	//		2. Don't start with the subscriptions.  Get the filters, and test
+	//			each filter.  If the filter passes, call associators to get
+	//			the handler instances and then deliver the indication.
+	//	Gotcha: We'll need to make sure that we're re-entrant if the
+	//		enumInstances callback calls associators.
+
 	OW_CIMInstanceEnumeration subscriptions;
 	try
 	{

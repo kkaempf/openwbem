@@ -795,7 +795,7 @@ OW_CIMClass::toMOF() const
 
 	if(m_pdata->m_qualifiers.size() != 0)// || m_pdata->m_associationFlag)
 	{
-		rv += "[\n";
+		rv += "[";
 
 		OW_CIMQualifierArray qra = m_pdata->m_qualifiers;
 
@@ -840,7 +840,7 @@ OW_CIMClass::toMOF() const
 		{
 			if(i > 0)
 			{
-				rv += ',';
+				rv += ",\n ";
 			}
 
 			rv += qra[i].toMOF();

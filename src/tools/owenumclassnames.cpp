@@ -34,7 +34,7 @@
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMObjectPath.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 
 #include <iostream>
@@ -62,12 +62,12 @@ class GetLoginInfo : public OW_ClientAuthCBIFC
 		}
 };
 
-class qualPrinter : public OW_CIMQualifierTypeResultHandlerIFC
+class classNamePrinter : public OW_CIMObjectPathResultHandlerIFC
 {
 	public:
-		void doHandle(const OW_CIMQualifierType& t)
+		void doHandle(const OW_CIMObjectPath& t)
 		{
-			cout << t.toMOF() << endl;
+			cout << t.getObjectName() << '\n';
 		}
 };	
 
@@ -75,9 +75,9 @@ class qualPrinter : public OW_CIMQualifierTypeResultHandlerIFC
 
 int main(int argc, char* argv[])
 {
-	if (argc != 3)
+	if (argc != 4)
 	{
-		cout << "Usage: <URL> <namespace>" << endl;
+		cout << "Usage: <URL> <namespace> <classname>" << endl;
 		return 1;
 	}
 
@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
 	{
 		OW_String url = argv[1];
 		OW_String ns = argv[2];
+		OW_String classname = argv[3];
 
 		OW_URL owurl(url);
 
@@ -124,8 +125,8 @@ int main(int argc, char* argv[])
 			rch = new OW_CIMXMLCIMOMHandle(client);
 		}
 
-		qualPrinter handler;
-		rch->enumQualifierTypes(ns, handler);
+		classNamePrinter handler;
+		rch->enumClassNames(ns, classname, handler);
 
 		return 0;
 	}

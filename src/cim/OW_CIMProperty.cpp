@@ -593,7 +593,7 @@ OW_CIMProperty::toMOF() const
 
 	if(m_pdata->m_qualifiers.size() > 0)
 	{
-		rv += '[';
+		rv += "  [";
 
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
@@ -604,9 +604,10 @@ OW_CIMProperty::toMOF() const
 			}
 			rv += nq.toMOF();
 		}
-		rv += ']';
+		rv += "]\n";
 	}
 
+	rv += "  ";
 	rv += m_pdata->m_propertyDataType.toMOF();
 	rv += ' ';
 	rv += m_pdata->m_name;

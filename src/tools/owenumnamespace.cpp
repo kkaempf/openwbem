@@ -116,7 +116,6 @@ int main(int argc, char* argv[])
 			rch = new OW_CIMXMLCIMOMHandle(client);
 		}
 
-		cout << "Enumerating namespace (" << ns << ")" << endl;
         bool deep = true; // TODO: get this from a command line argument
 		
 		OW_StringArray rval = rch->enumNameSpaceE(ns, deep);

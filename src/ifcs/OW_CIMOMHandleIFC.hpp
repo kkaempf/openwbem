@@ -203,7 +203,7 @@ public:
 		OW_Bool includeClassOrigin = OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN);
 
 	/**
-	 * Enumerates the class specified by the OW_CIMObjectPath.
+	 * Enumerates the class specified by className.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will

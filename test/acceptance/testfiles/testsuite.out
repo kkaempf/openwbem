@@ -11,24 +11,36 @@ Namespace: root/testsuite/caldera/test
 *** Doing createClass() ***
 *** Doing createClass() ***
 *** Doing modifyClass() ***
-CIMClass before: [
-Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
+CIMClass before: [Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
 class EXP_BionicComputerSystem:CIM_ComputerSystem
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName;
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name;
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName;
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name;
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
 };
 
 <CLASS NAME="EXP_BionicComputerSystem" SUPERCLASS="CIM_ComputerSystem">
@@ -371,25 +383,37 @@ boolean OptionalArg;
 </CLASS>
 
 
-CIMClass after: [
-Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
+CIMClass after: [Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
 class EXP_BionicComputerSystem:CIM_ComputerSystem
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName;
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name;
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
-string BrandNewProperty;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName;
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name;
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
+  string BrandNewProperty;
 };
 
 <CLASS NAME="EXP_BionicComputerSystem" SUPERCLASS="CIM_ComputerSystem">
@@ -736,25 +760,37 @@ string BrandNewProperty;
 
 *** Doing getClass() ***
 localOnly = false
-CIMClass: [
-Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
+CIMClass: [Description("A class derived from System that is a special collection of ManagedSystemElements. This collection provides compute capabilities and serves as aggregation point to associate one or more of the following elements: FileSystem, OperatingSystem, Processor and Memory (Volatile and/or NonVolatile Storage).")]
 class EXP_BionicComputerSystem:CIM_ComputerSystem
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName;
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name;
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
-string BrandNewProperty;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName;
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name;
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
+  string BrandNewProperty;
 };
 
 <CLASS NAME="EXP_BionicComputerSystem" SUPERCLASS="CIM_ComputerSystem">
@@ -1102,8 +1138,8 @@ string BrandNewProperty;
 localOnly = true
 CIMClass: class EXP_BionicComputerSystem:CIM_ComputerSystem
 {
-boolean OptionalArg;
-string BrandNewProperty;
+  boolean OptionalArg;
+  string BrandNewProperty;
 };
 
 <CLASS NAME="EXP_BionicComputerSystem" SUPERCLASS="CIM_ComputerSystem">
@@ -1252,19 +1288,19 @@ string BrandNewProperty;
 *** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string CreationClassName="EXP_BartComputerSystem";
-string Name="test";
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string CreationClassName="EXP_BartComputerSystem";
+  string Name="test";
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BartComputerSystem">
@@ -1305,19 +1341,19 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SixMillion";
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SixMillion";
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -1358,19 +1394,19 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SevenMillion";
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SevenMillion";
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -1411,19 +1447,19 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SixMillion";
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SixMillion";
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -1464,19 +1500,19 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SevenMillion";
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SevenMillion";
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -1518,19 +1554,19 @@ string Description;
 *** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string CreationClassName="EXP_BartComputerSystem";
-string Name="test";
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string CreationClassName="EXP_BartComputerSystem";
+  string Name="test";
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BartComputerSystem">
@@ -1571,21 +1607,21 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SixMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
-string BrandNewProperty;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SixMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -1630,21 +1666,21 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SevenMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
-string BrandNewProperty;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -1689,20 +1725,20 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SixMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SixMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -1745,20 +1781,20 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SevenMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -1802,19 +1838,19 @@ string Description;
 *** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = false, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string CreationClassName="EXP_BartComputerSystem";
-string Name="test";
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string CreationClassName="EXP_BartComputerSystem";
+  string Name="test";
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BartComputerSystem">
@@ -1855,21 +1891,21 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SixMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
-string BrandNewProperty;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SixMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -1914,21 +1950,21 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SevenMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
-string BrandNewProperty;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -1973,20 +2009,20 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SixMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SixMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -2029,20 +2065,20 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SevenMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -2086,19 +2122,32 @@ string Description;
 *** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = true, includeClassOrigin = false, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BartComputerSystem";
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="test";
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName="EXP_BartComputerSystem";
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name="test";
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BartComputerSystem">
@@ -2442,21 +2491,34 @@ INSTANCE OF EXP_BartComputerSystem
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem";
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SixMillion";
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
-string BrandNewProperty;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName="EXP_BionicComputerSystem";
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name="SixMillion";
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -2804,21 +2866,34 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem";
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SevenMillion";
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
-string BrandNewProperty;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName="EXP_BionicComputerSystem";
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -3166,20 +3241,33 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem2";
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SixMillion";
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName="EXP_BionicComputerSystem2";
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name="SixMillion";
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -3525,20 +3613,33 @@ boolean OptionalArg;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-[Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]string CreationClassName="EXP_BionicComputerSystem2";
-[Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]string Name="SevenMillion";
-boolean OptionalArg;
-[Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]string NameFormat;
-[MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]string OtherIdentifyingInfo;
-[ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]string IdentifyingDescriptions;
-[Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]uint16 Dedicated;
-[MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]string PrimaryOwnerContact;
-[MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]string PrimaryOwnerName;
-[Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]string Roles;
-[Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]datetime InstallDate;
-[MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]string Status;
-[MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]string Caption;
-[Description("The Description property provides a textual description of the object.")]string Description;
+  [Key(true),MaxLen(256),Description("CreationClassName indicates the name of the class or the subclass used in the creation of an instance. When used with the other key properties of this class, this property allows all instances of this class and its subclasses to be uniquely identified.")]
+  string CreationClassName="EXP_BionicComputerSystem2";
+  [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  string NameFormat;
+  [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
+  string OtherIdentifyingInfo;
+  [ArrayType("Indexed"),Description("An array of free-form strings providing explanations and details behind the entries in the OtherIdentifyingInfo array. Note, each entry of this array is related to the entry in OtherIdentifyingInfo that is located at the same index."),ModelCorrespondence({"CIM_ComputerSystem.OtherIdentifyingInfo"})]
+  string IdentifyingDescriptions;
+  [Description("Enumeration indicating whether the ComputerSystem is a special-purpose System (ie, dedicated to a particular use), versus being 'general purpose'. For example, one could specify that the System is dedicated to \"Print\" (value=11) or acts as a \"Hub\" (value=8)."),Values({"Not Dedicated","Unknown","Other","Storage","Router","Switch","Layer 3 Switch","Central Office Switch","Hub","Access Server","Firewall","Print","I/O","Web Caching","Management"})]
+  uint16 Dedicated;
+  [MaxLen(256),Description("A string that provides information on how the primary system owner can be reached (e.g. phone number, email address, ...)."),MappingStrings({"MIF.DMTF|General Information|001.3"})]
+  string PrimaryOwnerContact;
+  [MaxLen(64),Description("The name of the primary system owner."),MappingStrings({"MIF.DMTF|General Information|001.4"})]
+  string PrimaryOwnerName;
+  [Description("An array (bag) of strings that specify the roles this System plays in the IT-environment. Subclasses of System may override this property to define explicit Roles values. Alternately, a Working Group may describe the heuristics, conventions and guidelines for specifying Roles. For example, for an instance of a networking system, the Roles property might contain the string, 'Switch' or 'Bridge'.")]
+  string Roles;
+  [Description("A datetime value indicating when the object was installed. A lack of a value does not indicate that the object is not installed."),MappingStrings({"MIF.DMTF|ComponentID|001.5"})]
+  datetime InstallDate;
+  [MaxLen(10),Description("  A string indicating the current status of the object. Various operational and non-operational statuses are defined. Operational statuses are \"OK\", \"Degraded\", \"Stressed\" and \"Pred Fail\". \"Stressed\" indicates that the Element is functioning, but needs attention. Examples of \"Stressed\" states are overload, overheated, etc. The condition \"Pred Fail\" (failure predicted) indicates that an Element is functioning properly but predicting a failure in the near future. An example is a SMART-enabled hard drive. \n  Non-operational statuses can also be specified. These are \"Error\", \"NonRecover\", \"Starting\", \"Stopping\",  \"Stopped\", \"Service\", \"No Contact\" and \"Lost Comm\". \"NonRecover\" indicates that a non-recoverable error has occurred. \"Service\" describes an Element being configured, maintained, cleaned, or otherwise administered. This status could apply during mirror-resilvering of a disk, reload of a user permissions list, or other administrative task. Not all such work is on-line, yet the Element is neither \"OK\" nor in one of the other states. \"No Contact\" indicates that the current instance of the monitoring system has knowledge of this Element but has never been able to establish communications with it. \"Lost Comm\" indicates that the ManagedSystemElement is known to exist and has been contacted successfully in the past, but is currently unreachable.\"Stopped\" indicates that the ManagedSystemElement is known to exist, it is not operational (i.e. it is unable to provide service to users), but it has not failed. It has purposely been made non-operational. The Element may have never been \"OK\", the Element may have initiated its own stop, or a management system may have initiated the stop."),ValueMap({"OK","Error","Degraded","Unknown","Pred Fail","Starting","Stopping","Service","Stressed","NonRecover","No Contact","Lost Comm","Stopped"})]
+  string Status;
+  [MaxLen(64),Description("The Caption property is a short textual description (one-line string) of the object.")]
+  string Caption;
+  [Description("The Description property provides a textual description of the object.")]
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -3885,19 +3986,19 @@ boolean OptionalArg;
 *** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string CreationClassName="EXP_BartComputerSystem";
-string Name="test";
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string CreationClassName="EXP_BartComputerSystem";
+  string Name="test";
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BartComputerSystem">
@@ -3938,21 +4039,21 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SixMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
-string BrandNewProperty;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SixMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -3997,21 +4098,21 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string CreationClassName="EXP_BionicComputerSystem";
-string Name="SevenMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
-string BrandNewProperty;
+  string CreationClassName="EXP_BionicComputerSystem";
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -4056,20 +4157,20 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SixMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SixMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -4112,20 +4213,20 @@ string Description;
 
 INSTANCE OF EXP_BionicComputerSystem2
 {
-string CreationClassName="EXP_BionicComputerSystem2";
-string Name="SevenMillion";
-boolean OptionalArg;
-string NameFormat;
-string OtherIdentifyingInfo;
-string IdentifyingDescriptions;
-uint16 Dedicated;
-string PrimaryOwnerContact;
-string PrimaryOwnerName;
-string Roles;
-datetime InstallDate;
-string Status;
-string Caption;
-string Description;
+  string CreationClassName="EXP_BionicComputerSystem2";
+  string Name="SevenMillion";
+  boolean OptionalArg;
+  string NameFormat;
+  string OtherIdentifyingInfo;
+  string IdentifyingDescriptions;
+  uint16 Dedicated;
+  string PrimaryOwnerContact;
+  string PrimaryOwnerName;
+  string Roles;
+  datetime InstallDate;
+  string Status;
+  string Caption;
+  string Description;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem2">
@@ -4218,7 +4319,7 @@ INSTANCE OF EXP_BartComputerSystem
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string BrandNewProperty;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -4229,7 +4330,7 @@ string BrandNewProperty;
 
 INSTANCE OF EXP_BionicComputerSystem
 {
-string BrandNewProperty;
+  string BrandNewProperty;
 };
 
 <INSTANCE CLASSNAME="EXP_BionicComputerSystem">
@@ -4257,11 +4358,11 @@ INSTANCE OF EXP_BionicComputerSystem2
 *** Doing enumInstances(ofClass = Example_C1, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-string K1="1k1";
-string K2="1k2";
-string P1="1p1";
-string P2="1p2";
-string P3="1p3";
+  string K1="1k1";
+  string K2="1k2";
+  string P1="1p1";
+  string P2="1p2";
+  string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
@@ -4295,12 +4396,12 @@ string P3="1p3";
 
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string P4="2p4";
-string K1="2k1";
-string K2="2k2";
-string P1="2p1";
-string P3="2p3";
+  string P2="2p2";
+  string P4="2p4";
+  string K1="2k1";
+  string K2="2k2";
+  string P1="2p1";
+  string P3="2p3";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4339,13 +4440,13 @@ string P3="2p3";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
-string P4="3p4";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
+  string P4="3p4";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4390,11 +4491,11 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C1, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-string K1="1k1";
-string K2="1k2";
-string P1="1p1";
-string P2="1p2";
-string P3="1p3";
+  string K1="1k1";
+  string K2="1k2";
+  string P1="1p1";
+  string P2="1p2";
+  string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
@@ -4428,12 +4529,12 @@ string P3="1p3";
 
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string P4="2p4";
-string K1="2k1";
-string K2="2k2";
-string P1="2p1";
-string P3="2p3";
+  string P2="2p2";
+  string P4="2p4";
+  string K1="2k1";
+  string K2="2k2";
+  string P1="2p1";
+  string P3="2p3";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4472,13 +4573,13 @@ string P3="2p3";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
-string P4="3p4";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
+  string P4="3p4";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4523,11 +4624,11 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C1, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-string K1="1k1";
-string K2="1k2";
-string P1="1p1";
-string P2="1p2";
-string P3="1p3";
+  string K1="1k1";
+  string K2="1k2";
+  string P1="1p1";
+  string P2="1p2";
+  string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
@@ -4561,11 +4662,11 @@ string P3="1p3";
 
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string K1="2k1";
-string K2="2k2";
-string P1="2p1";
-string P3="2p3";
+  string P2="2p2";
+  string K1="2k1";
+  string K2="2k2";
+  string P1="2p1";
+  string P3="2p3";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4599,11 +4700,11 @@ string P3="2p3";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4638,11 +4739,11 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C1, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C1
 {
-string K1="1k1";
-string K2="1k2";
-string P1="1p1";
-string P2="1p2";
-string P3="1p3";
+  string K1="1k1";
+  string K2="1k2";
+  string P1="1p1";
+  string P2="1p2";
+  string P3="1p3";
 };
 
 <INSTANCE CLASSNAME="Example_C1">
@@ -4676,11 +4777,11 @@ string P3="1p3";
 
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string K1="2k1";
-string K2="2k2";
-string P1="2p1";
-string P3="2p3";
+  string P2="2p2";
+  string K1="2k1";
+  string K2="2k2";
+  string P1="2p1";
+  string P3="2p3";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4714,11 +4815,11 @@ string P3="2p3";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4753,8 +4854,8 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C2, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string P4="2p4";
+  string P2="2p2";
+  string P4="2p4";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4773,10 +4874,10 @@ string P4="2p4";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
-string P4="3p4";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
+  string P4="3p4";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4806,12 +4907,12 @@ string P4="3p4";
 *** Doing enumInstances(ofClass = Example_C2, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string P4="2p4";
-string K1="2k1";
-string K2="2k2";
-string P1="2p1";
-string P3="2p3";
+  string P2="2p2";
+  string P4="2p4";
+  string K1="2k1";
+  string K2="2k2";
+  string P1="2p1";
+  string P3="2p3";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4850,13 +4951,13 @@ string P3="2p3";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
-string P4="3p4";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
+  string P4="3p4";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4901,8 +5002,8 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C2, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string P4="2p4";
+  string P2="2p2";
+  string P4="2p4";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4921,8 +5022,8 @@ string P4="2p4";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P4="3p4";
+  string P2="3p2";
+  string P4="3p4";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -4942,12 +5043,12 @@ string P4="3p4";
 *** Doing enumInstances(ofClass = Example_C2, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C2
 {
-string P2="2p2";
-string P4="2p4";
-string K1="2k1";
-string K2="2k2";
-string P1="2p1";
-string P3="2p3";
+  string P2="2p2";
+  string P4="2p4";
+  string K1="2k1";
+  string K2="2k2";
+  string P1="2p1";
+  string P3="2p3";
 };
 
 <INSTANCE CLASSNAME="Example_C2">
@@ -4986,12 +5087,12 @@ string P3="2p3";
 
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P4="3p4";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string P4="3p4";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -5031,9 +5132,9 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C3, deep = true, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -5058,13 +5159,13 @@ string P5="3p5";
 *** Doing enumInstances(ofClass = Example_C3, deep = true, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
-string P4="3p4";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
+  string P4="3p4";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -5109,9 +5210,9 @@ string P1="3p1";
 *** Doing enumInstances(ofClass = Example_C3, deep = false, localOnly = true, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
 };
 
 <INSTANCE CLASSNAME="Example_C3">
@@ -5136,13 +5237,13 @@ string P5="3p5";
 *** Doing enumInstances(ofClass = Example_C3, deep = false, localOnly = false, includeQualifiers = false, includeClassOrigin = true, propertyList? 0) ***
 INSTANCE OF Example_C3
 {
-string P2="3p2";
-string P3="3p3";
-string P5="3p5";
-string P4="3p4";
-string K1="3k1";
-string K2="3k2";
-string P1="3p1";
+  string P2="3p2";
+  string P3="3p3";
+  string P5="3p5";
+  string P4="3p4";
+  string K1="3k1";
+  string K2="3k2";
+  string P1="3p1";
 };
 
 <INSTANCE CLASSNAME="Example_C3">

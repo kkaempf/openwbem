@@ -15,13 +15,12 @@ export LD_LIBRARY_PATH
 if [ "$1" = "vg" ]; then
   valgrind \
 	--leak-check=yes \
-	--gdb-attach=yes \
 	--error-limit=no \
 	--num-callers=9 \
+	--logfile-fd=9 \
+	9>> valgrind.out \
 	$STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t 
-#	--logfile-fd=9 \
-#	9>> valgrind.out
 else
   $STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
