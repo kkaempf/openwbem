@@ -48,10 +48,20 @@ namespace
 	const String CLASS_OpenWBEM_InternalData("OpenWBEM_InternalData");
 	const String dataKey("OpenWBEM_ObjectManager.Name");
 	const String CLASS_CIM_InstModification("CIM_InstModification");
+	const String CLASS_OpenWBEM_HostedObjectManager("OpenWBEM_HostedObjectManager");
+	const String PROP_Antecedent("Antecedent");
+	const String PROP_SystemCreationClassName("SystemCreationClassName");
+	const String PROP_CreationClassName("CreationClassName");
+	const String PROP_Name("Name");
+	const String PROP_SystemName("SystemName");
 }
 
 using namespace WBEMFlags;
-class OpenWBEM_ObjectManagerInstProv : public CppReadOnlyInstanceProviderIFC, public CppSimpleInstanceProviderIFC, public CppIndicationProviderIFC
+class OpenWBEM_ObjectManagerInstProv
+	: public CppReadOnlyInstanceProviderIFC
+	, public CppSimpleInstanceProviderIFC
+	, public CppIndicationProviderIFC
+	, public CppSimpleAssociatorProviderIFC
 {
 private:
 	// Only have one Object Manager
@@ -68,6 +78,12 @@ public:
 	virtual void getInstanceProviderInfo(InstanceProviderInfo& info)
 	{
 		info.addInstrumentedClass(CLASS_OpenWBEM_ObjectManager);
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	virtual void getAssociatorProviderInfo(AssociatorProviderInfo& info)
+	{
+		info.addInstrumentedClass(CLASS_OpenWBEM_HostedObjectManager);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -122,7 +138,7 @@ public:
 		{
 			// get the uuid
 			CIMObjectPath omNamePath(CLASS_OpenWBEM_InternalData, interopNS);
-			omNamePath.setKeyValue("Name", CIMValue(dataKey));
+			omNamePath.setKeyValue(PROP_Name, CIMValue(dataKey));
 			CIMInstance nameInst(rephdl->getInstance(interopNS, omNamePath));
 			omName = nameInst.getPropertyValue("Value").toString();
 		}
@@ -142,7 +158,7 @@ public:
 				// now save it
 				CIMClass OpenWBEM_InternalData(rephdl->getClass(interopNS, CLASS_OpenWBEM_InternalData));
 				CIMInstance newData(OpenWBEM_InternalData.newInstance());
-				newData.updatePropertyValue("Name", CIMValue(dataKey));
+				newData.updatePropertyValue(PROP_Name, CIMValue(dataKey));
 				newData.updatePropertyValue("Value", CIMValue(omName));
 				rephdl->createInstance(interopNS, newData);
 #else
@@ -207,14 +223,14 @@ public:
 		newInst.updatePropertyValue("Version", CIMValue(OW_VERSION));
 		
 		// This property is a KEY, it must be filled out
-		newInst.updatePropertyValue("SystemCreationClassName", computerSystem.getKeyValue("CreationClassName"));
+		newInst.updatePropertyValue(PROP_SystemCreationClassName, computerSystem.getKeyValue(PROP_CreationClassName));
 		// This property is a KEY, it must be filled out
-		newInst.updatePropertyValue("SystemName", computerSystem.getKeyValue("Name"));
+		newInst.updatePropertyValue(PROP_SystemName, computerSystem.getKeyValue(PROP_Name));
 		// This property is a KEY, it must be filled out
-		newInst.updatePropertyValue("CreationClassName", CIMValue(newInst.getClassName()));
+		newInst.updatePropertyValue(PROP_CreationClassName, CIMValue(newInst.getClassName()));
 
 		// This property is a KEY, it must be filled out
-		newInst.updatePropertyValue("Name", CIMValue(omName));
+		newInst.updatePropertyValue(PROP_Name, CIMValue(omName));
 
 		newInst.updatePropertyValue("Started", CIMValue(true));
 		newInst.updatePropertyValue("EnabledState", CIMValue(UInt16(2))); // 2 = Enabled
@@ -233,6 +249,32 @@ public:
 		EPropertiesFlag propertiesFlag)
 	{
 		result.handle(m_inst);
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	void doReferences(const ProviderEnvironmentIFCRef &env,
+		CIMInstanceResultHandlerIFC &result,
+		const String &ns,
+		const CIMObjectPath &objectName,
+		const CIMClass &assocClass,
+		const String &resultClass,
+		const String &role,
+		const String &resultRole)
+	{
+		if (role.equalsIgnoreCase(PROP_Antecedent))
+		{
+			// need to return the ObjectManager
+			result.handle(m_inst);
+		}
+		else
+		{
+			// return the ComputerSystem
+			String systemCreationClassName(m_inst.getPropertyValue(PROP_SystemCreationClassName).toString());
+			CIMObjectPath csPath(systemCreationClassName, ns);
+			csPath.setKeyValue(PROP_CreationClassName, CIMValue(systemCreationClassName));
+			csPath.setKeyValue(PROP_Name, m_inst.getPropertyValue(PROP_SystemName));
+			result.handle(env->getCIMOMHandle()->getInstance(ns, csPath));
+		}
 	}
 };
 

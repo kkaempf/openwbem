@@ -72,8 +72,6 @@ Later:
 New features:
 For 3.1.0
     - Implement the CIM_Interop build-in providers.
-      - OpenWBEM_BinaryCommunicationMechanism
-      - CIM_HostedService
       - CIM_CommMechanismForManager
       - CIM_ObjectManagerAdapter
       - CIM_CommMechanismForObjectManagerAdapter

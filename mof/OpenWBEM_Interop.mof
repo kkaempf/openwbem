@@ -5,6 +5,24 @@ class OpenWBEM_ObjectManager : CIM_ObjectManager
     string Version;
 };
 
+// ==================================================================
+// HostedObjectManager
+// ==================================================================
+   [Association, Description (
+       "HostedObjectManager is an association between an "
+       "ObjectManager and the hosting ComputerSystem.")]
+class OpenWBEM_HostedObjectManager : CIM_HostedService
+{
+      [Override ( "Antecedent" ), Min ( 1 ), Max ( 1 ), Description (
+          "The ComputerSystem hosting the ObjectManager")]
+   CIM_ComputerSystem REF Antecedent;
+
+      [Override ( "Dependent" ), Weak, Description (
+          "The ObjectManager.")]
+   OpenWBEM_ObjectManager REF Dependent;
+};
+
+/* not implemented yet
 [Description("This class specializes ObjectManagerCommunicationMechanism, "
     "adding properties specific to the OpenWBEM binary protocol.")]
 class OpenWBEM_BinaryCommunicationMechanism : CIM_ObjectManagerCommunicationMechanism
@@ -17,6 +35,7 @@ class OpenWBEM_BinaryCommunicationMechanism : CIM_ObjectManagerCommunicationMech
 class OpenWBEM_CommMechanismForManager : CIM_CommMechanismForManager
 {
 };
+*/
 
 class OpenWBEM_UnitaryComputerSystem : CIM_UnitaryComputerSystem
 {
