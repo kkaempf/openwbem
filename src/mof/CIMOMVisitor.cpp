@@ -198,6 +198,7 @@ void CIMOMVisitor::VisitClassDeclaration( const ClassDeclaration *pClassDeclarat
 
 	if ( pClassDeclaration->pAlias.get() != 0 )
 	{
+		theErrorHandler->recoverableError("Class aliases are deprecated per DMTF CR817", pClassDeclaration->theLineInfo);
 		m_aliasMap[*(pClassDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			*(pClassDeclaration->pClassName->pClassName);
 	}
@@ -241,6 +242,7 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 
 	if ( pAssocDeclaration->pAlias.get() != 0 )
 	{
+		theErrorHandler->recoverableError("Class aliases are deprecated per DMTF CR817", pAssocDeclaration->theLineInfo);
 		m_aliasMap[*(pAssocDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			*(pAssocDeclaration->pClassName->pClassName);
 	}
@@ -283,6 +285,7 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 
 	if ( pIndicDeclaration->pAlias.get() != 0 )
 	{
+		theErrorHandler->recoverableError("Class aliases are deprecated per DMTF CR817", pIndicDeclaration->theLineInfo);
 		m_aliasMap[*(pIndicDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			*(pIndicDeclaration->pClassName->pClassName);
 	}
