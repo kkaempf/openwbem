@@ -45,6 +45,9 @@
 namespace OpenWBEM
 {
 
+class ClientCIMOMHandleConnectionPool;
+typedef Reference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
+
 /**
  * This class is responsible for pooling ClientCIMOMHandleRef instances.
  * Each separate url is considered a different cimom.  Connections are
@@ -74,7 +77,12 @@ public:
 	 * ClientAuthCBIFCRef will not be supplied to the ClientCIMOMHandleRef.
 	 * 
 	 * @param url The url.
+	 * 
 	 * @return A ClientCIMOMHandleRef connected to url.
+	 * 
+	 * @throws MalformedURLException If the url is bad
+	 * @throws std::bad_alloc
+	 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.
 	 */
 	ClientCIMOMHandleRef getConnection(const String& url);
 
@@ -90,6 +98,30 @@ public:
 	 */
 	void addConnectionToPool(const ClientCIMOMHandleRef& handle, const String& url);
 
+	/**
+	 * This class facilitates usage of RAII when using a ClientCIMOMHandleConnectionPool
+	 */
+	class HandleReturner
+	{
+	public:
+		HandleReturner(ClientCIMOMHandleRef& hdl, ClientCIMOMHandleConnectionPoolRef& pool, const String& url)
+			: m_hdl(hdl)
+			, m_pool(pool)
+			, m_url(url)
+		{
+		}
+	
+		~HandleReturner()
+		{
+			m_pool->addConnectionToPool(m_hdl, m_url);
+		}
+	private:
+		ClientCIMOMHandleRef& m_hdl;
+		ClientCIMOMHandleConnectionPoolRef& m_pool;
+		const String& m_url;
+	};
+
+
 private:
 
 	// unimplemented
@@ -102,8 +134,6 @@ private:
 	typedef std::multimap<String, ClientCIMOMHandleRef> pool_t;
 	pool_t m_pool;
 };
-
-typedef Reference<ClientCIMOMHandleConnectionPool> ClientCIMOMHandleConnectionPoolRef;
 
 }
 
