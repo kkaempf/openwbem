@@ -28,13 +28,11 @@ INCLUDES = \
 -I$(top_srcdir)/src/repositories/hdb \
 -I$(top_srcdir)/src/providerifcs/cpp
 
-
 OW_SHARED_LIBS = libowcimomcommon.$(LIB_EXT)
 # increment this number every time a release breaks binary compatibility
 LIBRARY_BINARY_VERSION = 4
 thelibdir = $(libdir)
 owstatlibdir = $(thelibdir)
-
 
 libowcimomcommon_a_SOURCES =	\
 OW_CimomCommonFwd.hpp \
@@ -61,4 +59,7 @@ OW_AuthorizerManager.hpp \
 OW_ProviderManager.cpp \
 OW_ProviderManager.hpp \
 OW_ProviderProxies.cpp \
-OW_ProviderProxies.hpp
+OW_ProviderProxies.hpp \
+OW_NetwareIdentity.cpp \
+OW_NetwareIdentity.hpp
+
