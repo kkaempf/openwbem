@@ -42,7 +42,7 @@
 
 namespace OpenWBEM
 {
-
+// TODO: uninline this class.
 class Semaphore
 {
 public:
