@@ -110,12 +110,19 @@ public:
 	 */
 	OW_CIMUrl& operator= (const OW_CIMUrl& arg);
 
-	/**
-	 * @return A NULL pointer if this object does not have any underlying data
-	 * or implementation. Otherwise a non-NULL pointer. THIS POINTER SHOULD
-	 * NEVER DEREFERENCED!
-	 */
-	operator void*() const {  return (void*)(!m_pdata.isNull()); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 	/**
 	 * Check this OW_CIMUrl object against another for equality.

@@ -53,14 +53,49 @@
 using std::ostream;
 using std::istream;
 
-static void fillDateTimeData(OW_DateTimeData& data, const char* str);
+static void fillDateTimeData(OW_CIMDateTime::OW_DateTimeData& data, const char* str);
 static OW_Int16 getGMTOffset();
+
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_DateTimeData::compare(const OW_DateTimeData& arg)
+OW_CIMDateTime::OW_DateTimeData::compare(const OW_CIMDateTime::OW_DateTimeData& arg)
 {
 	return ::memcmp(this, &arg, sizeof(*this));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMDateTime::OW_DateTimeData& x, const OW_CIMDateTime::OW_DateTimeData& y)
+{
+	if (x.m_year == y.m_year)
+	{
+		if (x.m_month == y.m_month)
+		{
+			if (x.m_days == y.m_days)
+			{
+				if (x.m_hours == y.m_hours)
+				{
+					if (x.m_minutes == y.m_minutes)
+					{
+						if (x.m_seconds == y.m_seconds)
+						{
+							if (x.m_utc == y.m_utc)
+							{
+								return x.m_isInterval < y.m_isInterval;
+							}
+							return x.m_utc < y.m_utc;
+						}
+						return x.m_seconds < y.m_seconds;
+					}
+					return x.m_minutes < y.m_minutes;
+				}
+				return x.m_hours < y.m_hours;
+			}
+			return x.m_days < y.m_days;
+		}
+		return x.m_month < y.m_month;
+	}
+	return x.m_year < y.m_year;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -126,20 +161,40 @@ OW_CIMDateTime::operator= (const OW_CIMDateTime& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMDateTime::operator void*() const
+OW_CIMDateTime::operator OW_CIMDateTime::safe_bool() const
 {
 	if(!m_dptr.isNull())
 	{
-		return (void*)(m_dptr->m_days != 0
+		return (m_dptr->m_days != 0
 			|| m_dptr->m_year != 0
 			|| m_dptr->m_month != 0
 			|| m_dptr->m_hours != 0
 			|| m_dptr->m_minutes != 0
 			|| m_dptr->m_seconds != 0
-			|| m_dptr->m_microSeconds != 0);
+			|| m_dptr->m_microSeconds != 0) ?
+			&dummy::nonnull : 0;
 	}
 
 	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDateTime::safe_bool
+OW_CIMDateTime::operator !() const
+{
+	if(!m_dptr.isNull())
+	{
+		return (m_dptr->m_days != 0
+			|| m_dptr->m_year != 0
+			|| m_dptr->m_month != 0
+			|| m_dptr->m_hours != 0
+			|| m_dptr->m_minutes != 0
+			|| m_dptr->m_seconds != 0
+			|| m_dptr->m_microSeconds != 0) ?
+			0 : &dummy::nonnull;
+	}
+
+	return &dummy::nonnull;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -284,9 +339,9 @@ OW_CIMDateTime::toString() const
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-fillDateTimeData(OW_DateTimeData& data, const char* str)
+fillDateTimeData(OW_CIMDateTime::OW_DateTimeData& data, const char* str)
 {
-	::memset(&data, 0, sizeof(OW_DateTimeData));
+	::memset(&data, 0, sizeof(OW_CIMDateTime::OW_DateTimeData));
 	if(str == NULL || *str == (char)0)
 		return;
 
@@ -365,4 +420,8 @@ getGMTOffset()
 	return gmtOffset;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMDateTime& x, const OW_CIMDateTime& y)
+{
+	return *x.m_dptr < *y.m_dptr;
+}

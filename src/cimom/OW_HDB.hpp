@@ -239,7 +239,19 @@ public:
 	/**
 	 * @return true if the is a valid OW_HDBHandle. Otherwise false.
 	 */
-	operator void*() const { return (void*)(!m_pdata.isNull()); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 private:
 
@@ -301,7 +313,19 @@ public:
 	/**
 	 * @return true if this OW_HDB is currently opened.
 	 */
-	operator void*() const { return (void*)(m_opened != false); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (m_opened) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (m_opened) ? 0: &dummy::nonnull; }
 
 	/**
 	 * @return The number of outstanding handles on this OW_HDB

@@ -480,12 +480,19 @@ public:
 	 */
 	virtual void setNull();
 
-	/**
-	 * @return a NULL pointer if this OW_CIMValue has no data or
-	 * implementation associated with it. Otherwise return a non-NULL pointer.
-	 * THIS POINTER MUST NOT BE DEREFERENCED!
-	 */
-	operator void*() const {  return (void*)(!m_impl.isNull());}
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_impl.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_impl.isNull()) ? 0: &dummy::nonnull; }
 
 	/**
 	 * Assign another OW_CIMValue to this one.

@@ -213,13 +213,19 @@ public:
 	 */
 	virtual void setName(const OW_String& name);
 
-	/**
-	 * @return A NULL pointer if this object does not have any data or
-	 * implementation associated with it. Otherwise return a non-NULL pointer.
-	 * THIS POINTER SHOULD NEVER BE DEREFERENCED!
-	 */
-	operator void*() const
-		{  return (void*)(!m_pdata.isNull()); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 private:
 

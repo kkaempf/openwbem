@@ -56,10 +56,9 @@
  */
 class OW_CIMMethod : public OW_CIMElement
 {
-private:
-	struct METHData;
-
 public:
+
+	struct METHData;
 
 	/**
 	 * Create a new OW_CIMMethod object.
@@ -259,16 +258,25 @@ public:
 	 */
 	virtual OW_String toString() const;
 
-	/**
-	 * @return NULL if this is not a valid OW_CIMMethod. Non-Null indicates
-	 * a valid OW_CIMMethod object. THE POINTER FROM THIS METHOD SHOULD
-	 * NEVER BE DE-REFERENCED!
-	 */
-	operator void*() const {  return (void*)(!m_pdata.isNull()); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 protected:
 
 	OW_Reference<METHData> m_pdata;
+
+	friend bool operator<(const OW_CIMMethod& x, const OW_CIMMethod& y);
 };
 
 #endif	// __OW_CIMMETHOD_HPP__

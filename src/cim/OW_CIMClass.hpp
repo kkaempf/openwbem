@@ -48,11 +48,8 @@
  */
 class OW_CIMClass : public OW_CIMElement
 {
-private:
-
-	struct CLSData;
-
 public:
+	struct CLSData;
 
 	/** Name of the internal namespace class */
 	static const char* const NAMESPACECLASS;
@@ -395,14 +392,33 @@ public:
 	/**
 	 * @return true if this OW_CIMClass in not a NULL object.
 	 */
-	operator void*() const;
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
 
-protected:
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+	{
+		return (this->m_pdata.isNull()) ? 0 : &dummy::nonnull;
+	}
+
+	safe_bool operator!() const
+	{
+		return (this->m_pdata.isNull()) ? &dummy::nonnull : 0;
+	}
+
+private:
 
 	static OW_String splitName1(const OW_String& inName);
 	static OW_String splitName2(const OW_String& inName);
 
 	OW_Reference<CLSData> m_pdata;
+
+	friend bool operator<(const OW_CIMClass& x, const OW_CIMClass& y);
 };
 
 #endif	// __OW_CIMClass_HPP__

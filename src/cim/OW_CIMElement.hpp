@@ -33,8 +33,7 @@
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
 #include "OW_Bool.hpp"
-
-class OW_String;
+#include "OW_String.hpp"
 
 /**
  * The OW_CIMElement class is used to enforce behavior from class that make
@@ -58,76 +57,28 @@ public:
 	virtual void setName(const OW_String& name) = 0;
 
 	/**
-	 * Compare this OW_CIMElement object with another.
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return 0 if this OW_CIMElenent is equal to arg. Less than 0 if this
-	 * OW_CIMElement is less than arg. Greater than 0 if this OW_CIMElement is
-	 * greater than arg.
-	 */
-	int compare(const OW_CIMElement& arg);
-
-	/**
-	 * Compare this OW_CIMElement object with another.
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is equal to the given OW_CIMElement.
-	 * Otherwise false.
-	 */
-	OW_Bool equals(const OW_CIMElement& arg) 
-		{  return (compare(arg) == 0); }
-
-	/**
-	 * Equality operator
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is equal to the given OW_CIMElement.
-	 * Otherwise false.
-	 */
-	OW_Bool operator== (const OW_CIMElement& arg) {  return equals(arg); }
-
-	/**
-	 * Inequality operator
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is not equal to the given 
-	 * OW_CIMElement. Otherwise false.
-	 */
-	OW_Bool operator!= (const OW_CIMElement& arg) {  return (compare(arg) != 0); }
-
-	/**
-	 * Less than operator
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is less than the given OW_CIMElement.
-	 * Otherwise false.
-	 */
-	OW_Bool operator< (const OW_CIMElement& arg) {  return (compare(arg) < 0); }
-
-	/**
-	 * Less than or equal operator
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is less than or equal to the given 
-	 * OW_CIMElement. Otherwise false.
-	 */
-	OW_Bool operator<= (const OW_CIMElement& arg) {  return (compare(arg) <= 0); }
-
-	/**
-	 * Greater than operator
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is greater than the given 
-	 * OW_CIMElement. Otherwise false.
-	 */
-	OW_Bool operator> (const OW_CIMElement& arg) {  return (compare(arg) > 0); }
-
-	/**
-	 * Greate than or equal operator
-	 * @param arg	The OW_CIMElement object to compare this one to.
-	 * @return true if this OW_CIMElement is greater than or equal to the given 
-	 * OW_CIMElement. Otherwise false.
-	 */
-	OW_Bool operator>= (const OW_CIMElement& arg) {  return (compare(arg) >= 0); }
-
-	/**
 	 * @return An OW_String representing this OW_CIMElement.
 	 */
 	virtual OW_String toString() const;
 
+	int compare(const OW_CIMElement& arg)
+	{
+		return getName().compareToIgnoreCase(arg.getName());
+	}
+	bool equals(const OW_CIMElement& arg)
+	{
+		return (compare(arg) == 0);
+	}
+
+	bool operator== (const OW_CIMElement& arg)
+	{
+		return equals(arg);
+	}
+
+	bool operator!= (const OW_CIMElement& arg)
+	{
+		return compare(arg) != 0;
+	}
 };
 
 #endif	// __OW_CIMELEMENT_HPP__

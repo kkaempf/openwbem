@@ -39,29 +39,37 @@
 using std::istream;
 using std::ostream;
 
+//////////////////////////////////////////////////////////////////////////////
 struct OW_CIMDataType::DTData
 {
 	DTData() :
-		m_type(OW_CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0), m_reference() {}
-
-	DTData(const DTData& x) :
-		m_type(x.m_type), m_numberOfElements(x.m_numberOfElements),
-		m_sizeRange(x.m_sizeRange), m_reference(x.m_reference) {}
-
-	DTData& operator = (const DTData& x)
-	{
-		m_type = x.m_type;
-		m_numberOfElements = x.m_numberOfElements;
-		m_sizeRange = x.m_sizeRange;
-		m_reference = x.m_reference;
-		return *this;
-	}
+		m_type(OW_CIMDataType::CIMNULL), m_numberOfElements(0), m_sizeRange(0)
+	{}
 
 	OW_CIMDataType::Type m_type;
 	OW_Int32 m_numberOfElements;
 	OW_Int32 m_sizeRange;
 	OW_String m_reference;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMDataType::DTData& x, const OW_CIMDataType::DTData& y)
+{
+	if (x.m_type == y.m_type)
+	{
+		if (x.m_numberOfElements == y.m_numberOfElements)
+		{
+			if (x.m_sizeRange == y.m_sizeRange)
+			{
+				return x.m_reference < y.m_reference;
+			}
+			return x.m_sizeRange == y.m_sizeRange;
+		}
+		return x.m_numberOfElements < y.m_numberOfElements;
+	}
+	return x.m_type < y.m_type;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMDataType::OW_CIMDataType(OW_Bool notNull) :
@@ -190,6 +198,31 @@ OW_CIMDataType::getRefClassName() const
 	return m_pdata->m_reference;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDataType::operator OW_CIMDataType::safe_bool () const
+{
+	safe_bool cc = 0;
+	if(!m_pdata.isNull())
+	{
+		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
+			? &dummy::nonnull : 0;
+	}
+	return cc;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMDataType::safe_bool
+OW_CIMDataType::operator!() const
+{
+	safe_bool cc = &dummy::nonnull;
+	if(!m_pdata.isNull())
+	{
+		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
+			? 0: &dummy::nonnull;
+	}
+	return cc;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
@@ -248,17 +281,6 @@ OW_CIMDataType::OW_CIMDataType(const OW_String& refClassName) :
 	m_pdata->m_numberOfElements = 1;
 	m_pdata->m_sizeRange = SIZE_SINGLE;
 	m_pdata->m_reference = refClassName;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMDataType::operator void*() const
-{
-	int cc = 0;
-	if(!m_pdata.isNull())
-	{
-		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID);
-	}
-	return (void*)cc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -432,4 +454,7 @@ OW_CIMDataType::getDataType(const OW_String& strType)
 	return OW_CIMDataType();
 }
 
-
+bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}

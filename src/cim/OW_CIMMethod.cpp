@@ -41,34 +41,14 @@
 using std::ostream;
 using std::istream;
 
+//////////////////////////////////////////////////////////////////////////////													
 struct OW_CIMMethod::METHData
 {
 	METHData() :
-		m_name(), m_returnDatatype(true), m_qualifiers(), m_parameters(),
-		m_originClass(), m_override(), m_propagated(false)
+		m_returnDatatype(true),
+		m_propagated(false)
 	{
 	}
-
-	METHData(const METHData& x) :
-		m_name(x.m_name), m_returnDatatype(x.m_returnDatatype),
-		m_qualifiers(x.m_qualifiers), m_parameters(x.m_parameters),
-		m_originClass(x.m_originClass), m_override(x.m_override),
-		m_propagated(x.m_propagated)
-	{
-	}
-
-	METHData& operator= (const METHData& x)
-	{
-		m_name = x.m_name;
-		m_returnDatatype = x.m_returnDatatype;
-		m_qualifiers = x.m_qualifiers;
-		m_parameters = x.m_parameters;
-		m_originClass = x.m_originClass;
-		m_override = x.m_override;
-		m_propagated = x.m_propagated;
-		return *this;
-	}
-
 
 	OW_String m_name;
 	OW_CIMDataType m_returnDatatype;
@@ -78,6 +58,36 @@ struct OW_CIMMethod::METHData
 	OW_String m_override;
 	OW_Bool m_propagated;
 };
+
+//////////////////////////////////////////////////////////////////////////////													
+bool operator<(const OW_CIMMethod::METHData& x, const OW_CIMMethod::METHData& y)
+{
+	if (x.m_name == y.m_name)
+	{
+		if (x.m_returnDatatype == y.m_returnDatatype)
+		{
+			if (x.m_qualifiers == y.m_qualifiers)
+			{
+				if (x.m_parameters == y.m_parameters)
+				{
+					if (x.m_originClass == y.m_originClass)
+					{
+						if (x.m_override == y.m_override)
+						{
+							return x.m_propagated < y.m_propagated;
+						}
+						return x.m_override < y.m_override;
+					}
+					return x.m_originClass < y.m_originClass;
+				}
+				return x.m_parameters < y.m_parameters;
+			}
+			return x.m_qualifiers < y.m_qualifiers;
+		}
+		return x.m_returnDatatype == y.m_returnDatatype;
+	}
+	return x.m_name < y.m_name;
+}
 
 //////////////////////////////////////////////////////////////////////////////													
 OW_CIMMethod::OW_CIMMethod(OW_Bool notNull) :
@@ -403,4 +413,8 @@ OW_CIMMethod::toString() const
 	return rv;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////													
+bool operator<(const OW_CIMMethod& x, const OW_CIMMethod& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}

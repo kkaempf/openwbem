@@ -79,10 +79,19 @@ public:
 		return &*m_obj;
 	}
 	
-	operator void*() const
+private:
+	struct dummy
 	{
-		return (void*)m_obj;
-	}
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (m_obj) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (m_obj) ? 0: &dummy::nonnull; }
 
 	void setNull()
 	{

@@ -44,7 +44,7 @@
 DEFINE_EXCEPTION(UnknownHost);
 DEFINE_EXCEPTION(SocketAddress);
 
-class OW_SocketAddress 
+class OW_SocketAddress
 {
 public:
 
@@ -126,14 +126,12 @@ public:
 	size_t getNativeFormSize() const;
 
 
-	/** 
+	/**
 	 * Returns the IP address and the port with a colon in between.
 	 *
 	 * @return The IP and port seperated by a colon.
 	 */
 	const OW_String toString() const;
-
-	//operator void*() const { return (void*)m_impl; }
 
 	void assignFromNativeForm(const OW_InetSocketAddress_t* address, size_t len);
 	void assignFromNativeForm(const OW_UnixSocketAddress_t* address, size_t len);

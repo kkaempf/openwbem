@@ -42,23 +42,8 @@ using std::ostream;
 struct OW_CIMQualifier::QUALData
 {
 	QUALData() :
-		m_name(), m_qualifierValue(), m_qualifierType(OW_Bool(true)),
-		m_propagated(false), m_flavors() {}
-
-	QUALData(const QUALData& x) :
-		m_name(x.m_name), m_qualifierValue(x.m_qualifierValue),
-		m_qualifierType(x.m_qualifierType), m_propagated(x.m_propagated),
-		m_flavors(x.m_flavors) {}
-
-	QUALData& operator= (const QUALData& x)
-	{
-		m_name = x.m_name;
-		m_qualifierValue = x.m_qualifierValue;
-		m_qualifierType = x.m_qualifierType;
-		m_propagated = x.m_propagated;
-		m_flavors = x.m_flavors;
-		return *this;
-	}
+		m_qualifierType(OW_Bool(true)),
+		m_propagated(false) {}
 
 	OW_String m_name;
 	OW_CIMValue m_qualifierValue;
@@ -66,6 +51,28 @@ struct OW_CIMQualifier::QUALData
 	OW_Bool m_propagated;
 	OW_CIMFlavorArray m_flavors;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMQualifier::QUALData& x, const OW_CIMQualifier::QUALData& y)
+{
+	if (x.m_name == y.m_name)
+	{
+		if (x.m_qualifierValue == y.m_qualifierValue)
+		{
+			if (x.m_qualifierType == y.m_qualifierType)
+			{
+				if (x.m_propagated == y.m_propagated)
+				{
+					return x.m_flavors < y.m_flavors;
+				}
+				return x.m_propagated < y.m_propagated;
+			}
+			return x.m_qualifierType < y.m_qualifierType;
+		}
+		return x.m_qualifierValue < y.m_qualifierValue;
+	}
+	return x.m_name < y.m_name;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifier::OW_CIMQualifier(OW_Bool notNull) :
@@ -246,7 +253,7 @@ OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 OW_Bool
 OW_CIMQualifier::hasValue() const
 {
-	return OW_Bool((void*)m_pdata->m_qualifierValue != 0);
+	return (m_pdata->m_qualifierValue) ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -276,12 +283,6 @@ OW_Bool
 OW_CIMQualifier::getPropagated() const
 {
 	return m_pdata->m_propagated;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifier::operator void*() const
-{
-	return (void*)(!m_pdata.isNull());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -397,6 +398,11 @@ OW_CIMQualifier::createKeyQualifier()
 	return cq;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMQualifier& x, const OW_CIMQualifier& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}
 
 // Meta qualifiers
 const char* const OW_CIMQualifier::CIM_QUAL_ASSOCIATION		= "Association";

@@ -135,10 +135,21 @@ public:
 	}
 
 	/**
-	 * @return A NULL pointer if this scope is invalid. Otherwise return a
-	 * non-NULL pointer. THIS POINTER SHOULD NEVER BE DEREFERENCE!
+	 * @return true if this is a valid flavor
 	 */
-	operator void*() const {  return (void*)(validScope(m_val) == true); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (validScope(m_val) == true) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (validScope(m_val) == true) ? 0: &dummy::nonnull; }
 
 	/**
 	 * @return The string representation of this scopy

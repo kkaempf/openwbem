@@ -29,18 +29,11 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMElement.hpp"
 
-//////////////////////////////////////////////////////////////////////////////				 
-int 
-OW_CIMElement::compare(const OW_CIMElement& arg)
+//////////////////////////////////////////////////////////////////////////////				
+OW_String OW_CIMElement::toString() const
 {
-	return getName().compareToIgnoreCase(arg.getName());
-}
-
-
-OW_String OW_CIMElement::toString() const 
-{ 
-	return getName(); 
+	return getName();
 }
 

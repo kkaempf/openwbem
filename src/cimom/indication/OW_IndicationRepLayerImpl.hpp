@@ -308,7 +308,19 @@ public:
 	}
 
 
-	operator void*() { return (void*)m_pServer; }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (m_pServer) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (m_pServer) ? 0: &dummy::nonnull; }
 
 	virtual void setCIMServer(OW_RepositoryIFC *src)
 	{

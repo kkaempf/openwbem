@@ -109,12 +109,19 @@ public:
 	 */
 	OW_CIMNameSpace& operator= (const OW_CIMNameSpace& arg);
 
-	/**
-	 * @return NULL if this is not a valid OW_CIMNameSpace object. Otherwise
-	 * return non-NULL. DO NOT DEREFERENCE THE POINTER RETURNED FROM THIS
-	 * METHOD!
-	 */
-	operator void*() const {  return (void*)(!m_pdata.isNull()); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 	/**
 	 * @return The namespace component of this OW_CIMNameSpace object.

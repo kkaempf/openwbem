@@ -194,7 +194,19 @@ public:
 	/**
 	 * @return true if this OW_HDBNode is valid.
 	 */
-	operator void*() const { return (void*)(m_pdata.isNull() == false); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 private:
 

@@ -271,10 +271,19 @@ public:
 	 */
 	operator char() const { return (char) m_value; }
 
-	/**
-	 * @return The value of this object as a void pointer.
-	 */
-	operator void*() const { return reinterpret_cast<void*>(m_value); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (m_value) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (m_value) ? 0: &dummy::nonnull; }
 
 	/**
 	 * @return The unsigned 8 bit value of this object.

@@ -244,7 +244,7 @@ public:
 	 * Copy constructor
 	 * @param x	The OW_File object to copy.
 	 */
-	OW_File(const OW_File& x) : m_hdl(x.m_hdl) 
+	OW_File(const OW_File& x) : m_hdl(x.m_hdl)
 	{
 	}
 
@@ -362,19 +362,28 @@ public:
 	/**
 	 * @return true if this is a valid OW_File object.
 	 */
-	operator void*() const 
-	{ 
-		return (void*)(m_hdl != 0); 
-	}
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (m_hdl) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (m_hdl) ? 0: &dummy::nonnull; }
 
 	/**
 	 * Equality operator.
 	 * @param rhs The OW_File object to compare this object to.
 	 * @return true if this OW_File represents the same file as rhs.
 	 */
-	bool operator==(const OW_File& rhs) 
-	{ 
-		return m_hdl == rhs.m_hdl; 
+	bool operator==(const OW_File& rhs)
+	{
+		return m_hdl == rhs.m_hdl;
 	}
 
 	/**
@@ -382,9 +391,9 @@ public:
 	 * This allows OW_File objects to be compared directly to zero.
 	 * @return true if this OW_File is a NULL object.
 	 */
-	bool operator==(const OW_FileNullPtr*) 
-	{ 
-		return m_hdl == 0; 
+	bool operator==(const OW_FileNullPtr*)
+	{
+		return m_hdl == 0;
 	}
 
 	/**
@@ -392,14 +401,14 @@ public:
 	 * This allows OW_File objects to be compared directly to zero.
 	 * @return true if this OW_File is not a NULL object.
 	 */
-	bool operator!=(const OW_FileNullPtr*) 
-	{ 
-		return m_hdl != 0; 
+	bool operator!=(const OW_FileNullPtr*)
+	{
+		return m_hdl != 0;
 	}
 
 private:
 
-	OW_File(OW_FileHandle& hdl) : m_hdl(hdl) 
+	OW_File(OW_FileHandle& hdl) : m_hdl(hdl)
 	{
 	}
 

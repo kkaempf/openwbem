@@ -44,9 +44,9 @@
  */
 class OW_CIMParameter : public OW_CIMElement
 {
-	struct PARMData;
 public:
 
+	struct PARMData;
 	/**
 	 * Create a new OW_CIMParameter object.
 	 * @param notNull If false, this object will not have any data or
@@ -65,13 +65,6 @@ public:
 	 * @param name	The name for this parameter as a NULL terminated string.
 	 */
 	OW_CIMParameter(const char* name);
-
-	/**
-	 * Create an OW_CIMParameter from an XML definition.
-	 * @param node	The OW_XMLNode that contains the definition for this
-	 * 	parameter.
-	 */
-	//OW_CIMParameter(const OW_XMLNode& node);
 
 	/**
 	 * Copy constructor
@@ -99,7 +92,19 @@ public:
 	/**
 	 * @return true if this a valid OW_CIMParameter object.
 	 */
-	operator void*() const {  return (void*)(!m_pdata.isNull()); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 	/**
 	 * Set the qualifiers for this parameter
@@ -177,6 +182,8 @@ public:
 private:
 
 	OW_Reference<PARMData> m_pdata;
+
+	friend bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y);
 };
 
 #endif	// __OW_CIMPARAMETER_HPP__

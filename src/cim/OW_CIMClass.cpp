@@ -47,6 +47,7 @@ using std::ostream;
 
 #include <algorithm>
 
+//////////////////////////////////////////////////////////////////////////////
 struct OW_CIMClass::CLSData
 {
 	CLSData() :
@@ -60,6 +61,37 @@ struct OW_CIMClass::CLSData
 	OW_Bool m_associationFlag;
 	OW_Bool m_isKeyed;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMClass::CLSData& x, const OW_CIMClass::CLSData& y)
+{
+	if (x.m_name == y.m_name)
+	{
+		if (x.m_parentClassName == y.m_parentClassName)
+		{
+			if (x.m_qualifiers == y.m_qualifiers)
+			{
+				if (x.m_properties == y.m_properties)
+				{
+					if (x.m_methods == y.m_methods)
+					{
+						if (x.m_associationFlag == y.m_associationFlag)
+						{
+							return x.m_isKeyed < y.m_isKeyed;
+						}
+						return x.m_associationFlag < y.m_associationFlag;
+					}
+					return x.m_methods < y.m_methods;
+				}
+				return x.m_properties < y.m_properties;
+			}
+			return x.m_qualifiers < y.m_qualifiers;
+		}
+		return x.m_parentClassName < y.m_parentClassName;
+	}
+	return x.m_name < y.m_name;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass::OW_CIMClass(OW_Bool notNull) :
@@ -901,9 +933,9 @@ OW_CIMClass::getName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMClass::operator void*() const
+bool operator<(const OW_CIMClass& x, const OW_CIMClass& y)
 {
-	return (void*)(!m_pdata.isNull());
+	return *x.m_pdata < *y.m_pdata;
 }
 
 //////////////////////////////////////////////////////////////////////////////

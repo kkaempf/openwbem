@@ -37,27 +37,30 @@
 using std::istream;
 using std::ostream;
 
+//////////////////////////////////////////////////////////////////////////////
 struct OW_CIMParameter::PARMData
 {
 	PARMData() :
-		m_name(), m_dataType(true), m_qualifiers() {}
-
-	PARMData(const PARMData& x) :
-		m_name(x.m_name), m_dataType(x.m_dataType),
-		m_qualifiers(x.m_qualifiers) {}
-
-	PARMData& operator= (const PARMData& x)
-	{
-		m_name = x.m_name;
-		m_dataType = x.m_dataType;
-		m_qualifiers = x.m_qualifiers;
-		return *this;
-	}
+		m_dataType(true) {}
 
 	OW_String m_name;
 	OW_CIMDataType m_dataType;
 	OW_CIMQualifierArray m_qualifiers;
 };
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMParameter::PARMData& x, const OW_CIMParameter::PARMData& y)
+{
+	if (x.m_name == y.m_name)
+	{
+		if (x.m_dataType == y.m_dataType)
+		{
+			return x.m_qualifiers < y.m_qualifiers;
+		}
+		return x.m_dataType < y.m_dataType;
+	}
+	return x.m_name < y.m_name;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMParameter::OW_CIMParameter(OW_Bool notNull) :
@@ -246,4 +249,8 @@ OW_CIMParameter::toMOF() const
 }
 
 
-
+//////////////////////////////////////////////////////////////////////////////
+bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y)
+{
+	return *x.m_pdata < *y.m_pdata;
+}

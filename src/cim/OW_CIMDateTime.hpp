@@ -49,26 +49,6 @@ public:
 		{  return "OW_CIMDateTimeException"; }
 };
 
-struct OW_DateTimeData
-{
-	OW_DateTimeData() :
-		m_year(0), m_month(0), m_days(0), m_hours(0),
-		m_minutes(0), m_seconds(0), m_microSeconds(0), m_utc(0),
-		m_isInterval(1) {}
-
-	int compare(const OW_DateTimeData& arg);
-
-	OW_UInt16 m_year;
-	OW_UInt8 m_month;
-	OW_UInt32 m_days;
-	OW_UInt8 m_hours;
-	OW_UInt8 m_minutes;
-	OW_UInt8 m_seconds;
-	OW_UInt32 m_microSeconds;
-	OW_Int16 m_utc;
-	OW_UInt8 m_isInterval;
-};
-
 class OW_DateTime;
 
 /**
@@ -127,6 +107,28 @@ class OW_DateTime;
 class OW_CIMDateTime
 {
 public:
+
+	//////////////////////////////////////////////////////////////////////////////
+	struct OW_DateTimeData
+	{
+		OW_DateTimeData() :
+			m_year(0), m_month(0), m_days(0), m_hours(0),
+			m_minutes(0), m_seconds(0), m_microSeconds(0), m_utc(0),
+			m_isInterval(1) {}
+	
+		int compare(const OW_DateTimeData& arg);
+	
+		OW_UInt16 m_year;
+		OW_UInt8 m_month;
+		OW_UInt32 m_days;
+		OW_UInt8 m_hours;
+		OW_UInt8 m_minutes;
+		OW_UInt8 m_seconds;
+		OW_UInt32 m_microSeconds;
+		OW_Int16 m_utc;
+		OW_UInt8 m_isInterval;
+	};
+	
 
 	/**
 	 * Create a new interval type of OW_CIMDateTime set to 0's
@@ -318,10 +320,22 @@ public:
 	/**
 	 * @return true If this OW_CIMDateTime is not comprised of zero values.
 	 */
-	operator void*() const;
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const;
+	safe_bool operator!() const;
 
 private:
 	OW_Reference<OW_DateTimeData> m_dptr;
+
+	friend bool operator<(const OW_CIMDateTime& x, const OW_CIMDateTime& y);
 };
 
 std::ostream& operator<< (std::ostream& ostr, const OW_CIMDateTime& arg);

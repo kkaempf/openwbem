@@ -376,18 +376,19 @@ public:
 	 */
 	OW_XMLNode mustGetChild() const /*throw (OW_CIMException)*/;
 	
-	/**
-	 * This operator allows a comparison of an OW_XMLNode to be
-	 * made with 0 or 1.  If an empty OW_XMLNode is created, it
-	 * will compare true to 0.  When an OW_XMLNode is valid and
-	 * contains valid data, it compares true to 1.
-	 *
-	 * @return bool 1 or 0
-	 */
-	operator void*() const
+private:
+	struct dummy
 	{
-		return (void*)(!m_impl.isNull());
-	}
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_impl.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_impl.isNull()) ? 0: &dummy::nonnull; }
 
 
 	enum tokenId

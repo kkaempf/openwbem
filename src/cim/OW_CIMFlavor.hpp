@@ -120,7 +120,19 @@ public:
 	/**
 	 * @return true if this is a valid flavor
 	 */
-	operator void*() const {  return (void*)(validFlavor(m_flavor) == true); }
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (validFlavor(m_flavor) == true) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (validFlavor(m_flavor) == true) ? 0: &dummy::nonnull; }
 
 	/**
 	 * Set this to a null object.
@@ -220,6 +232,11 @@ private:
 
 	/** The integral representation of this flavor */
 	OW_Int32 m_flavor;
+
+	friend bool operator<(const OW_CIMFlavor& x, const OW_CIMFlavor& y)
+	{
+		return x.m_flavor < y.m_flavor;
+	}
 };
 
 #endif	// __OW_CIMFLAVOR_HPP__

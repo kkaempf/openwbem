@@ -55,11 +55,11 @@ class OW_ReadLock
 	class RLData
 	{
 	public:
-		RLData(OW_RWLocker* pl) : m_locker(pl), m_released(false) 
+		RLData(OW_RWLocker* pl) : m_locker(pl), m_released(false)
 		{
 		}
 		RLData(const RLData& x) :
-			m_locker(x.m_locker), m_released(x.m_released) 
+			m_locker(x.m_locker), m_released(x.m_released)
 		{
 		}
 		~RLData();
@@ -69,11 +69,11 @@ class OW_ReadLock
 	};
 
 public:
-	OW_ReadLock() : m_pdata(NULL) 
+	OW_ReadLock() : m_pdata(NULL)
 	{
 	}
 	OW_ReadLock(const OW_ReadLock& arg) :
-		m_pdata(arg.m_pdata) 
+		m_pdata(arg.m_pdata)
 	{
 	}
 
@@ -84,14 +84,23 @@ public:
 	}
 
 	void release();
-	operator void*() 
-	{ 
-		return (void*)(m_pdata.isNull() == false); 
-	}
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 private:
 	OW_ReadLock(OW_RWLocker* locker) :
-		m_pdata(new RLData(locker)) 
+		m_pdata(new RLData(locker))
 	{
 	}
 	
@@ -106,11 +115,11 @@ class OW_WriteLock
 	class WLData
 	{
 	public:
-		WLData(OW_RWLocker* pl) : m_locker(pl), m_released(false) 
+		WLData(OW_RWLocker* pl) : m_locker(pl), m_released(false)
 		{
 		}
 		WLData(const WLData& x) :
-			m_locker(x.m_locker), m_released(x.m_released) 
+			m_locker(x.m_locker), m_released(x.m_released)
 		{
 		}
 		~WLData();
@@ -121,11 +130,11 @@ class OW_WriteLock
 	};
 
 public:
-	OW_WriteLock() : m_pdata(NULL) 
+	OW_WriteLock() : m_pdata(NULL)
 	{
 	}
 	OW_WriteLock(const OW_WriteLock& arg) :
-		m_pdata(arg.m_pdata) 
+		m_pdata(arg.m_pdata)
 	{
 	}
 
@@ -137,14 +146,23 @@ public:
 
 	void release();
 
-	operator void*() 
-	{ 
-		return (void*)(m_pdata.isNull() == false); 
-	}
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 private:
 	OW_WriteLock(OW_RWLocker* locker) :
-		m_pdata(new WLData(locker)) 
+		m_pdata(new WLData(locker))
 	{
 	}
 	
@@ -170,7 +188,7 @@ private:
 	struct OW_RWQEntry
 	{
 		OW_RWQEntry(OW_Bool isWriter) :
-			m_event(), m_isWriter(isWriter) 
+			m_event(), m_isWriter(isWriter)
 		{
 		}
 		OW_RWQEntry(const OW_RWQEntry& arg) :

@@ -45,11 +45,9 @@
  */
 class OW_CIMQualifier : public OW_CIMElement
 {
-private:
+public:
 
 	struct QUALData;
-
-public:
 
 	// Meta qualifiers
 	static const char* const CIM_QUAL_ASSOCIATION;
@@ -230,12 +228,19 @@ public:
 	 */
 	OW_Bool getPropagated() const;
 
-	/**
-	 * @return A NULL pointer if this qualifier does not have any underlying
-	 * data or implementation. Otherwise return a non-NULL pointer. THE
-	 * POINTER RETURNED SHOULD NEVER BE DEREFERENCED!
-	 */
-	operator void*() const;
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const
+		{  return (!m_pdata.isNull()) ? &dummy::nonnull : 0; }
+	safe_bool operator!() const
+		{  return (!m_pdata.isNull()) ? 0: &dummy::nonnull; }
 
 	/**
 	 * @return The name of this qualifier as an OW_String.
@@ -278,6 +283,8 @@ public:
 private:
 
 	OW_Reference<QUALData> m_pdata;
+
+	friend bool operator<(const OW_CIMQualifier& x, const OW_CIMQualifier& y);
 };
 
 #endif	// __OW_CIMQUALIFIER_HPP__

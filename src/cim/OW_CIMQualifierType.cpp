@@ -302,7 +302,7 @@ OW_CIMQualifierType::getFlavors() const
 OW_Bool
 OW_CIMQualifierType::hasDefaultValue() const
 {
-	return OW_Bool((void*)m_pdata->m_defaultValue != NULL);
+	return m_pdata->m_defaultValue ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

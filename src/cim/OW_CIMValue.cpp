@@ -124,8 +124,6 @@ public:
 
 	OW_Int32 getArraySize() const;
 
-	operator void*() const;
-
 	OW_CIMValueImpl& operator= (const OW_CIMValueImpl& arg);
 	OW_CIMValueImpl& set(const OW_CIMValueImpl& arg);
 
@@ -1214,12 +1212,6 @@ OW_CIMValue::OW_CIMValueImpl::getArraySize() const
 	}
 
 	return sz;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMValue::OW_CIMValueImpl::operator void*() const
-{
-	return (void*)(m_type != OW_CIMDataType::CIMNULL);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -76,7 +76,20 @@ class OW_Reference
 		T& operator*() const;
 		T* getPtr() const;
 		OW_Bool isNull() const;
-		operator void*() const;
+
+	private:
+		struct dummy
+		{
+			void nonnull() {};
+		};
+	
+		typedef void (dummy::*safe_bool)();
+	
+	public:
+		operator safe_bool () const
+			{  return (!isNull()) ? &dummy::nonnull : 0; }
+		safe_bool operator!() const
+			{  return (!isNull()) ? 0: &dummy::nonnull; }
 
 		template <class U>
 		OW_Reference<U> cast_to();
@@ -277,13 +290,6 @@ template<class T>
 OW_Bool OW_Reference<T>::isNull() const
 {
 	return (m_pObj == (T*)0);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-template<class T>
-OW_Reference<T>::operator void*() const
-{
-	return (void*)(m_pObj);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -45,7 +45,7 @@ class OW_CIMValue;
  */
 class OW_CIMDataType : public OW_CIMBase
 {
-private:
+public:
 
 	struct DTData;
 	enum
@@ -54,9 +54,6 @@ private:
 		SIZE_UNLIMITED,	// indicates array type unlimited
 		SIZE_LIMITED		// array but limited size (NOTSUN)
 	};
-
-
-public:
 
 	enum Type
 	{
@@ -184,7 +181,17 @@ public:
 	/**
 	 * @return true if this OW_CIMDataType is a valid CIM data type
 	 */
-	operator void*() const;
+private:
+	struct dummy
+	{
+		void nonnull() {};
+	};
+
+	typedef void (dummy::*safe_bool)();
+
+public:
+	operator safe_bool () const;
+	safe_bool operator!() const;
 
 	/**
 	 * Create an OW_CIMDataType object represented by a given string.
@@ -242,6 +249,8 @@ public:
 private:
 
 	OW_Reference<DTData> m_pdata;
+
+	friend bool operator<(const OW_CIMDataType& x, const OW_CIMDataType& y);
 };
 
 #endif	// __OW_CIMDATATYPE_HPP__
