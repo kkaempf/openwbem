@@ -97,7 +97,7 @@ OW_TempFileBuffer::initGetBuffer()
 //////////////////////////////////////////////////////////////////////////////
 OW_TempFileBuffer::~OW_TempFileBuffer()
 {
-	delete m_buffer;
+	delete [] m_buffer;
 	delete m_tempFile;
 }
 
