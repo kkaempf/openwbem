@@ -147,17 +147,17 @@ public:
 	iterator insert(iterator position, const T& x)
 		{ return m_impl->insert(position, x); }
 
-	void insert(size_t position, const T& x)
+	void insert(size_type position, const T& x)
 		{ m_impl->insert(m_impl->begin() + position, x); }
 
-	void remove(size_t index)
+	void remove(size_type index)
 	{
 #ifdef OW_CHECK_ARRAY_INDEXING
 		checkValidIndex(index);
 #endif
 		m_impl->erase(m_impl->begin() + index);
 	}
-	void remove(size_t begin, size_t end)
+	void remove(size_type begin, size_type end)
 	{
 #ifdef OW_CHECK_ARRAY_INDEXING
 		checkValidIndex(begin);
@@ -216,7 +216,7 @@ public:
 
 private:
 #ifdef OW_CHECK_ARRAY_INDEXING
-	void checkValidIndex(size_t index) const
+	void checkValidIndex(size_type index) const
 	{
 		if (index >= size())
 		{
