@@ -154,6 +154,8 @@ public:
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
 	}
 
+	static void writeLen(std::ostream& ostrm, OW_UInt32 len);
+
 	static void write(std::ostream& ostrm, OW_UInt8 val)
 	{
 		OW_BinIfcIO::write(ostrm, &val, sizeof(val));
@@ -278,6 +280,8 @@ public:
 		OW_BinIfcIO::read(istrm, &val, sizeof(val));
 		val = OW_ntoh32(val);
 	}
+
+	static void readLen(std::istream& istrm, OW_UInt32& len);
 
 	static void read(std::istream& istrm, OW_UInt16& val)
 	{

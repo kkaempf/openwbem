@@ -485,8 +485,7 @@ OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
 	m_pdata->m_originClass.writeObject(ostrm);
 	m_pdata->m_propertyDataType.writeObject(ostrm);
 
-	OW_Int32 nv = OW_hton32(m_pdata->m_sizeDataType);
-	OW_BinIfcIO::write(ostrm, &nv, sizeof(nv));
+	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_sizeDataType);
 	m_pdata->m_propagated.writeObject(ostrm);
 
 	if(includeQualifiers)
@@ -495,8 +494,7 @@ OW_CIMProperty::writeObject(ostream &ostrm, OW_Bool includeQualifiers) const
 	}
 	else
 	{
-		OW_UInt32 nv = 0;
-		OW_BinIfcIO::write(ostrm, &nv, sizeof(nv));
+		OW_CIMQualifierArray().writeObject(ostrm);
 	}
 
 	if(m_pdata->m_cimValue)
@@ -519,7 +517,7 @@ OW_CIMProperty::readObject(istream &istrm)
 	OW_String originClass;
 	OW_CIMValue cimValue(OW_CIMNULL);
 	OW_CIMDataType propertyDataType(OW_CIMNULL);
-	OW_Int32 sizeDataType;
+	OW_UInt32 sizeDataType;
 	OW_Bool propagated;
 	OW_CIMQualifierArray qualifiers;
 
@@ -529,8 +527,7 @@ OW_CIMProperty::readObject(istream &istrm)
 	originClass.readObject(istrm);
 	propertyDataType.readObject(istrm);
 
-	OW_BinIfcIO::read(istrm, &sizeDataType, sizeof(sizeDataType));
-	sizeDataType = OW_ntoh32(sizeDataType);
+	OW_BinIfcIO::readLen(istrm, sizeDataType);
 
 	propagated.readObject(istrm);
 

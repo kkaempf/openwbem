@@ -1,5 +1,6 @@
 Wed Jun  4 09:23:06 MDT 2003
 - Add binary interface versioning.
+- Worked on reducing the size of binary serializations of cim objects.
 
 Fri May 30 09:51:10 MDT 2003
 - Added repository versioning.

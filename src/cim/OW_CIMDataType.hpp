@@ -77,7 +77,7 @@ public:
 		EMBEDDEDCLASS	= 16,		// Embedded Class				(SUPPORTED)
 		EMBEDDEDINSTANCE	= 17,		// Embedded Instance				(SUPPORTED)
 		MAXDATATYPE		= 18,		// Marker for valid checks
-		INVALID			= 255		// Invalid type
+		INVALID			= 99		// Invalid type
 	};
 
 	/**

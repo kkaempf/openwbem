@@ -83,6 +83,7 @@ strncmpi(const char* s1, const char* s2, size_t n)
 }
 
 
+// class invariant: m_buf points to a null-terminated sequence of characters. m_buf is m_len+1 bytes long.
 class OW_String::ByteBuf
 {
 public:
@@ -871,29 +872,26 @@ void
 OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 {
 	OW_UInt32 len;
-	OW_BinIfcIO::read(istrm, &len, sizeof(len));
+	OW_BinIfcIO::readLen(istrm, len);
 
-	len = OW_ntoh32(len);
-	char* bfr = new char[len];
+	char* bfr = new char[len+1];
 	OW_BinIfcIO::read(istrm, bfr, len);
+	bfr[len] = '\0';
 
-	m_buf = new ByteBuf(bfr, len-1);
+	m_buf = new ByteBuf(bfr, len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_String::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 {
-	OW_UInt32 len = length()+1;
-	OW_UInt32 nl = OW_hton32(len);
-	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
+	OW_UInt32 len = length();
+	OW_BinIfcIO::writeLen(ostrm, len);
 
-	const char* p = "";
-	if (m_buf)
+	if (len)
 	{
-		p = m_buf->data();
+        OW_BinIfcIO::write(ostrm, m_buf->data(), len);
 	}
-	OW_BinIfcIO::write(ostrm, p, len);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -411,7 +411,7 @@ OW_Array<T>::readObject(std::istream& istr)
 {
 	m_impl->clear();
 	OW_UInt32 len;
-	OW_BinIfcIO::read(istr, len);
+	OW_BinIfcIO::readLen(istr, len);
 	
 	m_impl->reserve(len);
 	for(OW_UInt32 i = 0; i < len; i++)
@@ -429,7 +429,7 @@ void
 OW_Array<T>::writeObject(std::ostream& ostrm) const
 {
 	OW_UInt32 len = m_impl->size();
-	OW_BinIfcIO::write(ostrm, len);
+	OW_BinIfcIO::writeLen(ostrm, len);
 	for(OW_UInt32 i = 0; i < len; i++)
 	{
 		m_impl->operator[](i).writeObject(ostrm);

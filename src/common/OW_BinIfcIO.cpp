@@ -88,4 +88,95 @@ OW_BinIfcIO::readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResul
 	readEnum(istrm, result, &OW_BinIfcIO::readQual, OW_BINSIG_QUALENUM, OW_END_QUALENUM);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+OW_BinIfcIO::writeLen(std::ostream& ostrm, OW_UInt32 len)
+{
+	// This is ASN.1 length encoding
+	/*
+	 * short len if it's less than 128 - one byte giving the len,
+	 * with bit 8 0.
+	 */
+
+	if ( len <= 127 )
+	{
+		OW_UInt8 length_byte = static_cast<OW_UInt8>(len);
+		write(ostrm, &length_byte, 1);
+		return;
+	}
+
+	/*
+	 * long len otherwise - one byte with bit 8 set, giving the
+	 * length of the length, followed by the length itself.
+	 */
+
+	/* find the first non-all-zero byte */
+	OW_UInt8 lenlen;
+	if (len <= 255)
+	{
+		lenlen = 1;
+	}
+	else if (len <= 65536)
+	{
+		lenlen = 2;
+	}
+	else if (len <= 16777216)
+	{
+		lenlen = 3;
+	}
+	else
+	{
+		lenlen = 4;
+	}
+
+	OW_UInt8 netlenlen = lenlen | 0x80UL;
+
+	/* write the length of the length */
+	write(ostrm, &netlenlen, 1);
+
+	OW_UInt8 netlen[sizeof(len)];
+	for (int j = 0; j < lenlen; j++)
+	{
+		netlen[(sizeof(len)-1) - j] = static_cast<OW_UInt8>(len & 0xffU);
+		len >>= 8;
+	}
+
+	/* write the length itself */
+	write(ostrm, static_cast<void *>(&netlen[sizeof(len)-lenlen]), lenlen);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
+OW_BinIfcIO::readLen(std::istream& istrm, OW_UInt32& len)
+{
+	// This is ASN.1 length encoding
+	OW_UInt8 lc;
+	read(istrm, lc);
+
+	if (lc & 0x80U) 
+	{
+		OW_UInt8 noctets = lc & 0x7fU;
+
+		if ( noctets > sizeof(len) ) {
+			OW_THROW(OW_IOException, "Failed reading data: length length is too large");
+		}
+
+		OW_UInt8 netlen[sizeof(len)];
+		read(istrm, static_cast<void *>(netlen), noctets);
+
+		len = 0;
+		for(int i = 0; i < noctets; i++ ) {
+			len <<= 8;
+			len |= netlen[i];
+		}
+
+	} else {
+		len = lc;
+	}
+}
+
+
+
 

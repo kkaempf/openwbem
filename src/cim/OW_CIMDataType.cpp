@@ -287,16 +287,16 @@ OW_CIMDataType::equals(const OW_CIMDataType& arg) const
 void
 OW_CIMDataType::readObject(istream &istrm)
 {
-	OW_Int32 type;
-	OW_Int32 numberOfElements;
-	OW_Int32 sizeRange;
+	OW_UInt32 type;
+	OW_UInt32 numberOfElements;
+	OW_UInt32 sizeRange;
 	OW_String ref;
 
 	OW_CIMBase::readSig( istrm, OW_CIMDATATYPESIG );
 
-	OW_BinIfcIO::read(istrm, &type, sizeof(type));
-	OW_BinIfcIO::read(istrm, &numberOfElements, sizeof(numberOfElements));
-	OW_BinIfcIO::read(istrm, &sizeRange, sizeof(sizeRange));
+	OW_BinIfcIO::readLen(istrm, type);
+	OW_BinIfcIO::readLen(istrm, numberOfElements);
+	OW_BinIfcIO::readLen(istrm, sizeRange);
 
 	ref.readObject(istrm);
 
@@ -305,9 +305,9 @@ OW_CIMDataType::readObject(istream &istrm)
 		m_pdata = new DTData;
 	}
 
-	m_pdata->m_type = OW_CIMDataType::Type(OW_ntoh32(type));
-	m_pdata->m_numberOfElements = OW_ntoh32(numberOfElements);
-	m_pdata->m_sizeRange = OW_ntoh32(sizeRange);
+	m_pdata->m_type = OW_CIMDataType::Type(type);
+	m_pdata->m_numberOfElements = numberOfElements;
+	m_pdata->m_sizeRange = sizeRange;
 	m_pdata->m_reference = ref;
 }
 
@@ -317,12 +317,9 @@ OW_CIMDataType::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMDATATYPESIG );
 
-	OW_UInt32 nl = OW_hton32(m_pdata->m_type);
-	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
-	nl = OW_hton32(m_pdata->m_numberOfElements);
-	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
-	nl = OW_hton32(m_pdata->m_sizeRange);
-	OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
+	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_type);
+	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_numberOfElements);
+	OW_BinIfcIO::writeLen(ostrm, m_pdata->m_sizeRange);
 
 	m_pdata->m_reference.writeObject(ostrm);
 }
