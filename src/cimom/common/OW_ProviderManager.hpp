@@ -87,6 +87,13 @@ public:
 	virtual void shutdown();
 
 	/**
+	* Called just prior to shutting down the CIMOM, to allow shutdown
+    * activities that still require access to the CIMOM.  See
+    * description in base class ServiceIFC.
+	*/
+	virtual void shuttingDown();
+
+	/**
 	 * Locate an Instance provider.
 	 *
 	 * @param ns The namespace of the class.

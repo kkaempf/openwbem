@@ -63,7 +63,7 @@ protected:
 		const String &listenerPath)
 	{
 		MutexLock lock(coutMutex);
-		cout << ci.toString() << "\n";
+		cout << ci.toString() << endl;
 	}
 };
 

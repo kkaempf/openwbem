@@ -147,6 +147,10 @@ CppProviderBaseIFC::setPersist(bool persist)
 	m_persist = persist; 
 }
 
+void CppProviderBaseIFC::shuttingDown()
+{
+}
+
 } // end namespace OpenWBEM
 
 

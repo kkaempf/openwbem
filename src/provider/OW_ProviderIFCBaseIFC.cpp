@@ -125,6 +125,11 @@ ProviderIFCBaseIFC::getIndicationProvider(const ProviderEnvironmentIFCRef& env,
 {
 	return  doGetIndicationProvider(env, provIdString);
 }
+///////////////////////////////////////////////////////////////////////////////
+void ProviderIFCBaseIFC::shuttingDown()
+{
+	doShuttingDown();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
@@ -187,6 +192,9 @@ ProviderIFCBaseIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 {
 }
 
+void ProviderIFCBaseIFC::doShuttingDown()
+{
+}
 
 } // end namespace OpenWBEM
 

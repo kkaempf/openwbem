@@ -89,6 +89,15 @@ void ProviderManager::shutdown()
 	m_IFCArray.clear();
 }
 
+void ProviderManager::shuttingDown()
+{
+	size_t const n = m_IFCArray.size();
+	for (size_t i = 0; i < n; ++i)
+	{
+		m_IFCArray[i]->shuttingDown();
+	}
+}
+
 namespace {
 //////////////////////////////////////////////////////////////////////////////
 void registerProviderInfo(

@@ -738,5 +738,14 @@ CppProviderIFC::doUnloadProviders(const ProviderEnvironmentIFCRef& env)
 	}
 }
 
+void CppProviderIFC::doShuttingDown()
+{
+	ProviderMap::iterator it, itend = m_provs.end();
+	for (it = m_provs.begin(); it != itend; ++it)
+	{
+		it->second->getProvider()->shuttingDown();
+	}
+}
+
 } // end namespace OpenWBEM
 

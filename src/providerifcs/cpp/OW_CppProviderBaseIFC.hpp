@@ -90,6 +90,14 @@ public:
 	 * @throws CIMException
 	 */
 	virtual void initialize(const ProviderEnvironmentIFCRef& env);
+
+	/**
+	 * Called by the CIMOM just before it starts shutting down services.
+	 * Providers should override this to do any portion of their
+	 * shutdown process that requires access to the CIMOM.
+	 */
+	virtual void shuttingDown();
+
 	/**
 	 * We do the following because gcc seems to have a problem with
 	 * dynamic_cast.  If often fails, especially when compiling with

@@ -183,6 +183,14 @@ public:
 	 */
 	IndicationProviderIFCRef getIndicationProvider(const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
+
+	/*
+	 * This function gets called for all providers just before the CIMOM
+	 * shuts down.  It gives providers the opportunity to do any cleanup
+	 * needed for shutdown, while the CIMOM services are still available.
+	 */
+	void shuttingDown();
+
 protected:
 	/**
 	 * The derived classes must override these functions to implement the
@@ -217,6 +225,7 @@ protected:
 		const ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
 	virtual void doUnloadProviders(const ProviderEnvironmentIFCRef& env);
+	virtual void doShuttingDown();
 };
 
 typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > ProviderIFCBaseIFCRef;
