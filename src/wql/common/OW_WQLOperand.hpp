@@ -208,7 +208,7 @@ public:
 	/** Gets this object as an DOUBLE_VALUE.
 	  @exception TypeMismatchException is not the expected type.
 	 */
-	Real32 getDoubleValue() const
+	Real64 getDoubleValue() const
 	{
 		if (_type != DOUBLE_VALUE)
 			OW_THROW(TypeMismatchException, "Type mismatch");
