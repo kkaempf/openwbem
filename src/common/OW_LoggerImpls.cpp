@@ -76,7 +76,7 @@ class FileLogger : public Logger
 			// Need to remove newline after DateTime.
 			String tmp = DateTime.toString();
 			tmp.erase(tmp.length() - 1);
-			log << tmp << " [" << ThreadImpl::thread_t_ToUnsignedLong(OpenWBEM::ThreadImpl::currentThread()) << "]: " << s << endl;
+			log << tmp << " [" << ThreadImpl::thread_t_ToUInt64(OpenWBEM::ThreadImpl::currentThread()) << "]: " << s << endl;
 		}
 	private:
 		mutable ofstream log;
@@ -121,7 +121,7 @@ class SyslogLogger : public Logger
 			for (size_t i = 0; i < a.size(); ++i)
 			{
 				StringBuffer msg("[");
-				msg += Format("%1",ThreadImpl::thread_t_ToUnsignedLong(ThreadImpl::currentThread()));
+				msg += Format("%1",ThreadImpl::thread_t_ToUInt64(ThreadImpl::currentThread()));
 				msg += "]";
 				msg += a[i];
 				syslog( syslogPriority, "%s", msg.c_str() );
@@ -182,7 +182,7 @@ class CerrLogger : public Logger
 		virtual void doLogMessage( const String& s,
 			const ELogLevel /*level*/ ) const
 		{
-			std::cerr << '[' << OpenWBEM::ThreadImpl::thread_t_ToUnsignedLong(OpenWBEM::ThreadImpl::currentThread()) << "] " << s << std::endl;
+			std::cerr << '[' << OpenWBEM::ThreadImpl::thread_t_ToUInt64(OpenWBEM::ThreadImpl::currentThread()) << "] " << s << std::endl;
 		}
 };
 class NullLogger : public Logger

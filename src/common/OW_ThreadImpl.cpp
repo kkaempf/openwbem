@@ -267,20 +267,26 @@ exitThread(Thread_t&, Int32 rval)
 	pthread_exit(prval);
 }
 
-unsigned long thread_t_ToUnsignedLong(Thread_t thr)
-{
-	//  This should really be a compile time assert.
-	OW_ASSERTMSG(sizeof(unsigned long) >= sizeof(Thread_t),"  Thread_t truncated!");
-#ifdef OW_NETWARE
-	return static_cast<unsigned long>(thr);
+
+#if defined(OW_SIZEOF_PTHREAD_T)
+#if OW_SIZEOF_PTHREAD_T == 2
+#define OW_THREAD_CONVERTER UInt16
+#elif OW_SIZEOF_PTHREAD_T == 4
+#define OW_THREAD_CONVERTER UInt32
+#elif OW_SIZEOF_PTHREAD_T == 8
+#define OW_THREAD_CONVERTER UInt64
 #else
-	//Posix does not require pthread_t to be an integral type,
-	//  and , guest what, on some platforms, like FreeBSD, it isn't!
-	//  (See http://www.opengroup.org/onlinepubs/009695399/basedefs/sys/types.h.html)
-	//  so this can't be a static_cast<> on all platforms.
-	return reinterpret_cast<unsigned long>(thr);
-#endif
+#error Unexpected size for pthread_t
+#endif /* OW_SIZEOF_PTHREAD_T */
+#else
+#error No pthread_t size was found!
+#endif /* defined(OW_SIZEOF_PTHREAD_T) */
+
+UInt64 thread_t_ToUInt64(Thread_t thr)
+{
+	return UInt64(OW_THREAD_CONVERTER(thr));
 }
+#undef OW_THREAD_CONVERTER
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -506,7 +512,7 @@ exitThread(Thread_t&, Int32 rval)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-unsigned long thread_t_ToUnsignedLong(Thread_t thr)
+unsigned long thread_t_ToUInt64(Thread_t thr)
 {
 	//  This should really be a compile time assert.
 	OW_ASSERTMSG(sizeof(unsigned long) >= sizeof(Thread_t),"  Thread_t truncated!");

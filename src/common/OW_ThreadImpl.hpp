@@ -114,14 +114,14 @@ namespace ThreadImpl
 
 
 	/**
-	 * Convert a Thread_t to an unsigned long. This hides platform
+	 * Convert a Thread_t to an UInt64. This hides platform
 	 * dependencies like that fact that on some platforms (e.g linux)
 	 * Thread_t is integral type, and can therefor be static_cast<>ed to
 	 * unsigned long, but on other platforms, like FreeBSD, Thread_t is
 	 * void*, or something else, and reinterpret_cast<> (hopefully that
 	 * works ...) must be used.
 	 */
-	OW_COMMON_API unsigned long thread_t_ToUnsignedLong(Thread_t thr);
+	OW_COMMON_API UInt64 thread_t_ToUInt64(Thread_t thr);
 
 	/**
 	 * Set a thread that was previously in the joinable state to a detached
