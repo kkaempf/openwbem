@@ -794,6 +794,7 @@ IndicationServerImplThread::_processIndicationRange(
 			CIMInstance filteredInstance(filterInstance(instanceArg,
 				sub.m_selectStmt.getSelectPropertyNames()));
 			// Now get the export handler for this indication subscription
+			// TODO: get this when the subscription is created. No reason to keep fetching it whenever an indication is exported. We'll have to watch it for changes.
 			CIMObjectPath handlerCOP =
 				sub.m_subPath.getKeyT("Handler").getValueT().toCIMObjectPath();
 
