@@ -423,7 +423,7 @@ Array<char> base64Decode(const char* src)
 		if ( state != 0 )
 			OW_THROW(Base64FormatException, "non-base64 char");
 	}
-	Array<char> rval(dest.release(), dest.get()+destidx+1);
+	Array<char> rval(dest.get(), dest.get()+destidx+1);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
