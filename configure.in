@@ -805,7 +805,8 @@ AC_TRY_RUN(
 int main()
 {
 	pthread_spinlock_t spinlock;
-	pthread_spin_init(&spinlock, 0);
+	if (pthread_spin_init(&spinlock, 0) != 0)
+		return 1;
 	if (pthread_spin_lock(&spinlock) != 0)
 		return 1;
 	if (pthread_spin_unlock(&spinlock) != 0)
