@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#include <cstddef>
 #include <cctype>
 #include <cassert>
 #include <cstdio>
