@@ -1,0 +1,135 @@
+The OpenWBEM 3.1.0 release is available as source code and binary RPMS for various Linux distributions.
+The release can be downloaded from the OpenWBEM website at http://openwbem.sourceforge.net/
+
+In addition, the release is available through CVS with the tag RELEASE_3_1_0. The instructions for acquiring the code from CVS are on the website.
+
+See the "OpenWBEM Getting Started Guide" for detailed information on configuring, building & installing OpenWBEM.
+
+
+The supported platforms for the current release are:
+
+  * Linux
+  * Netware
+  * Solaris
+  * Mac OS X
+  * AIX
+  * HP-UX
+
+
+The following documentation is available with the distribution or on the website:
+
+  * Getting Started Guide
+  * APIs - See the header files and the HTML documentation that is on
+    the website. Also tests and sample code are available.
+  * Utilities - Some have man pages, otherwise, use the --help option for the command.
+
+
+Changes from 3.0.x:
+
+New Features:
+  * SMI-S Server Profile is now fully implemented.
+  * Added provider implementation of OpenWBEM_CIMXMLCommMechanismForOpenWBEMManager : CIM_CommMechanismForManager.
+  * Added instance provider instrumentation for OpenWBEM_HostedObjectManager.
+  * New supported platform: Netware.
+  * Added support for WBEM i18n. Providers can use a SessionLanguage instance which is accessible via the OperationContext.
+  * Preliminary support for the client library on win32 platform.
+  * Added shutdown indication support to OpenWBEM_ObjectManager.
+  * Modified library versioning so that it's not explicitly tied to the version of OpenWBEM. This will allow for better control and predictability of binary compatibility.
+  * Added instance provider instrumentation for OpenWBEM_UnitaryComputerSystem.
+  * Added a shuttingDown() method for Cpp providers so they can do shutdown activities before anything has actually stopped working.
+  * Added instrumentation of CIM_HostedAccessPoint.
+  * Added instrumentation of CIM_CIMXMLCommunicationMechanism.
+  * Added an openwbem.m4 file that other applications can use to detect OpenWBEM headers and libraries. Thanks to Anaz Nashif, Jason Long, and Mattias Holzer-Klupfel.
+  * New logging infrastructure that is much more configurable and flexible.
+  * Added WQL support for schema queries.
+  * Added owmofc and MOF::Compiler option to remove objects instead of creating them.
+  * Added local authentication.
+  * Added client SSL authentication and trust store management.
+  * Added a doCooperativeCancel() and doDefinitiveCancel() so that Runnables, indication export and polled providers can get notified of thread shutdown/cancellation.
+  * Added a remote provider interface. Thanks to Nortel.
+  * Added the provider agent API. Thanks to Nortel.
+  * openwbem-devel rpm now provides static libraries.
+  * Added Authorizer2IFC, which is another, simpler, authorizer interface.
+
+Configuration:
+  * Added --disable-pam configure option.
+  * Added an config option to disable the automatic loading of the cpp provider interface.
+  * The threads-run-as-user feature is now disabled by default, and must be enabled by the --enable-threads-run-as-user configure option.
+  * Have owcimomd.allowed_users which is the most basic form of ACLS, and pam.allowed_users is deprecated.
+  * Old logging options are deprecated, and many new options exist for the new logging functionality.
+  * Added --disable-namespace-manipulation.
+  * Multiple c++ provider directories can now be specified in the config file.
+  * Added configure options to configure rpath support.
+  * Added --enable-valgrind-support configure option.
+  * Added --disable-property-operations configure option.
+
+Behavior Changes:
+  * Updated all utilities to use new consistent command line options.
+  * Providers built against a different version of OpenWBEM are no longer automatically rejected.
+  * Server now adds the client ip address to the operation context.  Thanks to Brent Marshall.
+  * Fixed indication server to call deActivateFilter on all providers when shutting down.
+  * Removing qualifiers from indications before exporting them, in case the indication generator included qualifiers.
+  * CIMProperty::clone() now calls clone() on embedded instances.
+  * Indication server now scrubs the IndicationFilter.SourceNamespace property since some clients use /root or other silly things like that.
+  * CIMRepository now uses a CIMOMHandle which can call providers for checking referential integrity instead of only looking in the repository.
+  * Logging the time in the socket dump.
+  * HTTPClient now detects server errors as soon as they are received instead of after the request has been fully sent.
+  * Server no longer includes the textual description of a CIMException code as part of the ERROR xml, since it's redundant with the numeric code. The specific error text is still sent.
+  * Implementing basic version support in the client and sending the CIMProtocolVersion header if necessary.
+  * Modified the cpp provider interface to throw an exception which will abort startup if a provider fails to load.
+  * Fixed a lot of code to properly propagate chanined exceptions by using OW_THROWCIM_SUBEX and OW_THROWCIMMSG_SUBEX
+  * The repository now validates that ref properties refer to a valid class in createClass.
+  * CIMOMEnvironment now has a much more structured/phased startup and shutdown sequences. Services can also specify dependencies and dependents so that the order will be correct.
+  * CIMInstance::toMOF(): Not printing properties with the INVISIBLE qualifier.
+  * CIMServer: Fixed modifyInstance() to not set default values on properties that werent specified in the propertyList.
+  * Indication server now allows IndicationFilter instances to be modified.
+  * Indication provider registration now differentiates between lifecycle indication registrations and non-lifecycle indication provider registrations, so it's no longer necessary for indication providers to have to report all lifecycle base class names.
+  * CIMOMHandles given to providers will now cause lifecycle indications.
+  * Modified all select() blocking to use timeout and periodically check for thread cancellation.
+  * Made the binary representation of CIM Objects use a version so that the current code can load all old versions for backward compatibility.
+
+API/code additions/changes:
+  * Added #defines: OW_OPENWBEM_MAJOR_VERSION, OW_OPENWBEM_MICRO_VERSION, OW_OPENWBEM_MINOR_VERSION, and OW_OPENWBEM_VERSION which indicate the version of OpenWBEM
+  * Deprecated CIMClient::enumNameSpace() and CIMClient::enumNameSpaceE() in favor of enumCIM_NamespaceE() and enumCIM_Namespace().
+  * ThreadPool: Added a new thread pool type: DynamicSizeNoQueue.
+  * Exception: Made dupString() public so subclasses can access it.
+  * Added StringBuffer comparison operators.
+  * Changed operator<<(ostream&, Exception&) to output chained sub exceptions.
+  * CIMInstance: Added a 2 parameter version of updatePropertyValue().
+  * CIMOMEnvironment: Changed g_cimomEnvironment to instance().
+  * Added a version of DateTime::toString() that lets you pass in a strftime() format string.
+  * Added forward declaration headers for each directory so that all forward declarations are not duplicated.
+  * String: Added toInt() and toUnsignedInt().
+  * Added CIMName class which should be used for all CIM Names (it does a case-insensitive compare for operator==, !=, <, etc.)
+  * String: Adding a long and unsigned long constructor for platforms on which long doesnt map to Int32 or Int64.
+  * Removed the function DateTime::getGMTOffset(), since it was ill-conceived.
+  * Added ability to set network timeouts to HTTPClient
+  * Identified non-public headers with a comment saying so.
+  * Changed almost everything to use new IntrusiveReference class which is more efficient than Reference.
+  * Enhanced the Exception class by adding a subclass code, an error code, sub exception tracking and macros to use the new features. Fixed most Exception subclasses to have an id.
+
+Bug fixes:
+  * Fixed return type of WQLOperand::getDoubleValue()
+  * Fixed the server from blocking on a select when it already had data. Thanks to Scott Loach for finding the bug.
+  * Fixed CIMRepository::_validatePropagatedKeys() to use the correct class name.
+  * Fixed HTTPClient so it won't keep retrying forever if the server returns us something we don't handle.
+  * HTTPServer now sends back a 503 error if the thread pool is full instead of just closing the socket.
+  * Client xml parsing now treats ERROR DESCRIPTION attribute as optional.
+  * Fixed MOF::Compiler thread safety.
+  * Fixed MOF::Compiler include problem if compile() was called more than once.
+  * Fixed OpenWBEM_ObjectManager to save the name persistently in the repository.
+  * Fixed a potential deadlock with providers initialize() that ended up causing the loading of another provider.
+  * OW_SSLSocketImpl.cpp: fixed potential memory leak.
+  * Fixed restart on crash to release all posix file record locks and reset the signal mask, since they persist across exec() calls.
+  * Fixed incorrect inheritance for CppSecondaryInstanceProviderIFC -- it needed to take CppProviderBaseIFC as a *virtual* base class.
+  * Fixed thread-safety for calls to strerror() on platforms where strerror() isn't thread safe.
+  * HTTPUtils.cpp: Moving a call to release() to outside of the function where the value would be used.
+  * Fixes to NPI and perlNPI from Kutter Martin.
+  * Fixed SSL from incorrectly blocking on a large input request.
+  * Fixed a bug in the conversion from DateTime to CIMDateTime that produced wrong GMT offsets in some cases.
+  * Indication server now correctly handles subclasses of filter ISA classes.
+  * CMPI fixes thanks to Oleg Khaydukov.
+  * CIMRepository now uses an advisory lock so that multiple process can't open the same repository and corrupt it.
+  * Fixed segfault catching code to use siglongjmp() so it will work more than once.
+
+

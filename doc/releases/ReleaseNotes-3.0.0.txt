@@ -1,0 +1,187 @@
+The OpenWBEM 3.0.0 release is available as source code and binary RPMS for various Linux distributions.
+The release can be downloaded from the OpenWBEM website at http://openwbem.sourceforge.net/
+
+In addition, the release is available through CVS with the tag RELEASE_3_0_0. The instructions for acquiring the code from CVS are on the website.
+
+See the "OpenWBEM Getting Started Guide" for detailed information on configuring, building & installing OpenWBEM.
+
+OpenWBEM supports this rich set of functionality:
+
+
+	* CIM Server
+		  o CIM Operations over HTTP 1.1 is fully supported, including ExecQuery & batch operations.
+		  o CIM 2.2 is supported, including embedded instances, which are necessary for proper indication support.
+		  o HTTPS (Requires OpenSSL)
+		  o Extensible Authentication through authentication plug-in modules.  Provided modules:
+				+ PAM (Uses the native system authentication)
+				+ Simple (Uses a password file. A good sample of how to write an Authentication Module)
+				+ HTTP Digest (Useful because it doesn't send passwords in clear text)
+		  o Fast scalable hierarchical repository with indexing based on Berkely DB library.
+		  o Extensible Provider Interface through Provider Interface plug-ins
+				+ C++
+				+ NPI. Thanks to Markus Mueller/IBM
+				+ CMPI. Thanks to Markus Mueller/IBM and Jon Carey/Novell
+				+ Perl. Thanks to Markus Mueller/IBM
+		  o CIM Providers Support:
+				+ Writing providers is easy. Base class adapters are provided for the most common situations which reduces development time and provider size. Helper functions are available that make it easy to correctly write providers.
+				+ Providers run in a transactional environment, making it much easier to write a robust provider free from deadlocks and race conditions.
+				+ Providers are automatically detected, so there is no need to use the provider qualifier or registration schema.
+				+ Instance
+				+ Secondary Instance
+				+ Method
+				+ Associator
+				+ Indication
+				+ Indication Export
+		  o Other types of dynamic pluggable providers:
+				+ Polled
+				+ Authentication
+				+ Authorization
+				+ CIM Repository
+				+ WQL
+		  o Indications and CIM Listener support. Both lifecycle and alert indications are supported.
+		  o WQL Level 2 support for server and client
+		  o Access Control Lists
+		  o Discovery via SLP Integration on the CIMOM and client side using any RFC 2614 compliant SLP implementation (e.g. OpenSLP)
+		  o Support for a binary protocol that is more efficient than CIM/XML
+		  o http deflate compression with zlib. (Using the binary protocol and compression is very bandwidth efficient.)
+		  o http chunking & trailers allows OpenWBEM to transfer large transactions (e.g. enumClasses on the entire schema) with no buffering. Memory usage stays constant. Even if the client doesn't support chunking & trailers, large requests are buffered on disk to save memory.
+		  o Communication over TCP/IP or Domain sockets.
+		  o The MOF compiler & cimom have full support for UTF-8, so classes and instances can contain the full set of Unicode characters.
+		  o The owcimomd daemon is heavily tested and we believe it to be free from deadlocks & crashes.  It also has a restart feature to recover from buggy providers.
+		  o The code has been run through a memory debugger and there are no known memory leaks or unconstrained growth.
+		  o The build system automatically configures itself to the platform and available headers & libraries.
+		  o The owcimomd daemon has been designed to be non-intrusive and have a small footprint. Many features are loaded as shared libraries so you can pick and choose what features you really need and not waste memory with unused code. Optional features include:
+				+ Indication support
+				+ WQL library
+				+ Authentication modules
+				+ Authorization modules
+				+ Provider interfaces
+				+ Providers are unloaded from memory if they are not used for a configurable amount of time
+				+ SLP support is implemented as a provider
+				+ Request handlers (CIM/XML or binary) can be loaded/unloaded on demand with a configurable unload timeout
+				+ HTTP compression
+				+ HTTP digest authorization
+				+ HTTPS (SSL)
+				+ Functional Profiles (Association Traversal, Instance Manipulation, etc.)
+		  o Available Providers:
+				+ __Namespace - Allows manipulation of namespaces for legacy CIM Clients using the deprecated __Namespace class.
+				+ CIM_Namespace - Allows manipulation of namespaces.
+				+ OpenWBEM_ObjectManager : CIM_ObjectManager - Represents owcimomd.
+				+ CIM_NamespaceInManager - Association between CIM_Namespace and CIM_ObjectManager.
+				+ CIM_ObjectManagerCommunicationMechanism
+				+ CIM_IndicationSubscription - For indication support.
+				+ CIM_IndicationFilter - For indication support.
+				+ SLP advertisement
+				+ IBM has a lot of system level providers available via the SBLIM project.  All these NPI & CMPI providers work with OpenWBEM.
+				+ Test providers, used by the OpenWBEM acceptance test suite.
+				+ Example providers show how to implement providers.  These providers implement processes, RPMs, and laptop batteries. These make for good demos as well.
+	* Additional Software
+		  o C++ CIM model & WBEM Client API library
+		  o MOF Compiler w/embeddable library. 
+				+ Includes support for aliases.
+				+ Public API & library can be utilized from any application. This also has an API to convert mof text into a C++ CIM class/instance without talking to a cimom.
+		  o WQL command-line utility
+		  o WQL client library. Use WQL with servers which don't support it or don't support your particular queries.
+
+
+The fully supported platforms for the current release are:
+
+Most versions of Linux on any architecture (known to work on x86, x86-64, ia64, PPC, SPARC, s390)
+	* Note that gcc 2.96 does *NOT* work correctly, and mis-compiles OpenWBEM. gcc 3.0.x has bugs in the standard library which prevent OpenWBEM from working correctly.
+Solaris 8 & 9 on SPARC & x86 using gcc.
+
+Partial support is available for:
+Microsoft Windows using Microsoft Visual C++ 2003 (only portions of the client library are ported.  The cimom is *not* ported.)
+Mac OS X
+
+Work is in progress to port OpenWBEM to:
+AIX 5.1
+HP-UX 11i
+ 
+
+The following documentation is available with the distribution or on the website:
+
+    * Getting Started Guide
+    * APIs - See the header files and the HTML documentation that is on
+      the website. Also tests and sample code are available.
+    * Utilities - Use the -h option for the command.
+
+
+
+Changes from 2.0.x:
+
+	* Updated to comply with CIM Operations over HTTP 1.1
+	* Fixed some interopability issues with WBEMServices and OpenPegasus.
+	* Updated to CIM 2.8 schema. Other schemas still work. CIM 2.5
+	  or greater is required for indication support.
+	* Modified server to always synchronize incoming objects with 
+	  the class, so providers always have a consistent working 
+	  environment.
+	* Added more tests.
+	* Lots of bug fixes.
+	* Improvements in the binary encoding of CIM Objects make the
+	  repository and binary protocol smaller and faster.
+	* All URI handling in the API and tools is compliant with the
+	  new WBEM URI spec.
+	* Now use a gcc-only feature to mark APIs as deprecated which
+	  causes warnings to be emitted when called.
+	* Added more API level documentation.
+	* Added documentation on OpenWBEM coding practices.
+	* Added documentation on providers.
+	* Added documentation on OpenWBEM architecture.
+	* Removed support for GNU pth.
+	* Added secondary instance providers which can filter instances.
+	* Make Authorization be a shared library, so custom ACL schemes 
+	  can be used.
+	* Updated SLP provider & client to adhere to the new WBEM SLP
+	  template.
+	* Implemented some of the CIM_Interop schema, Including CIM_Namespace
+	  and CIM_ObjectManager.
+	* Major optimizations in the indication server.
+	* Improved UTF8 support.
+	* Added the option to allow the cimom to be configured to listen 
+	  only on certain addresses.
+	* Added HowToCreateAMinimalOpenWBEM doc on minimizing footprint.
+	* Added the --remove-descriptions option to owmofc to save space.
+	* Began porting to AIX, HP-UX and Mac OS X
+	* Added support for CMPI providers.
+	* Added support for perl providers (use --enable-perl-providerifc)
+	* Added configure options to disable functional profiles to save
+	  on code size.
+	* Added code to have instance/associator/method providers run 
+	  with the effective uid of the authenticated user.
+	* Moved ACL checking into a new library libowsimpleauthorizer. 
+	  It's pluggable so custom versions can be created and specified
+	  in the config file.
+	* Lots of various optimizations.
+	* Various enhancements to the common library classes to make it
+	  easier to do common operations and promote re-use.
+	* Added --with-package-prefix which modifies OW so that multiple
+	  versions can coexist.
+	* Added a feature to restart the cimom instead of crashing in the
+	  case a provider has a bug.
+	* Modified to use thread pools.
+	* Modified all code to be in namespace OpenWBEM and not use the OW_
+	  prefix (except for macros).
+	* Miscellaneous API cleanups and fixes.
+	* Added provider adapter base classes to make it easier to write
+	  providers in common situations.
+	* Added support for building part of the common library on Windows.
+	* Added options to configure the maximum number of concurrent 
+	  threads used in owcimomd.
+	* Major revamp of threading code to make it safer and harder to
+	  cause deadlocks.
+	* Removed support for property providers.
+	* Added new command line interface to the mof compiler.
+	* Added ability for the mof compiler to compile directly to the
+	  repository, bypassing all communication with a cimom.
+	* Added provider self registration.  It's not necessary to import any
+	  mof for a provider.  Simply install it and restart the cimom.
+	* Some changes to reduce code bloat from inline functions and templates.
+	* Modified the CIM repository to be a dynamically loaded shared library.
+	  This will make it easier to plug-in a replacement if desired.
+	* Enhanced WQL support to make it easier for code to parse and understand
+	  WQL statements.
+	* Improved caching.
+
+
