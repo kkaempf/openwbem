@@ -195,7 +195,6 @@ ldconfig
 %doc openwbem-faq.html
 %dir %{@GENERIC@prefix}/lib/openwbem
 %{@GENERIC@prefix}/lib/openwbem/*
-%dir %{@GENERIC@prefix}/libexec/openwbem
 %dir %{@GENERIC@prefix}/share/openwbem
 %dir %{@GENERIC@localstatedir}/openwbem
 %config %{@GENERIC@sysconfdir}/*
@@ -205,7 +204,6 @@ ldconfig
 %{@GENERIC@prefix}/lib/lib*
 %{@GENERIC@prefix}/bin/*
 %{@GENERIC@prefix}/sbin/*
-%{@GENERIC@prefix}/libexec/openwbem/*
 %{@GENERIC@prefix}/share/openwbem/*
 
 # Files for sub-packages. 
