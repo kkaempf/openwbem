@@ -216,6 +216,26 @@ AC_CHECK_FUNC(gethostbyname_r,
 ] )
 dnl end of gethostbyname_r checks.
 
+dnl Check for the sighandler_t typedef
+AC_MSG_CHECKING(for sighandler_t)
+AC_TRY_COMPILE(
+[
+#include <signal.h>
+],
+[ 
+	sighandler_t s;
+],
+dnl Yes, it exists
+[
+AC_MSG_RESULT(yes)
+AC_DEFINE(HAVE_SIGHANDLER_T, 1, Have sighandler_t)
+],
+dnl else (not 6 args)
+[
+AC_MSG_RESULT(no)
+])
+
+
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_BIGENDIAN
 
@@ -449,7 +469,7 @@ AC_ARG_ENABLE(debug-mode,
 OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 [
 	AC_DEFINE(DEBUG)
-	CFLAGS="$PLAT_CFLAGS -g -Werror -Wall -W"
+	CFLAGS="$PLAT_CFLAGS -g -Werror -Wall -W -Wno-format"
 	CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
 	#CXXFLAGS="$PLAT_CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -fno-implicit-templates -fno-implicit-inline-templates -fno-implement-inlines"
 ],[
