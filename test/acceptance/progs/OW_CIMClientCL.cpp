@@ -976,6 +976,7 @@ associatorNames(OW_CIMClient& hdl, const OW_String& assocClass,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
+			v[x].setHost("localhost");
 			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
@@ -1012,6 +1013,7 @@ associatorNamesClass(OW_CIMClient& hdl, const OW_String& assocClass,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
+			v[x].setHost("localhost");
 			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
@@ -1150,6 +1152,7 @@ referenceNames(OW_CIMClient& hdl,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
+			v[x].setHost("localhost");
 			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
@@ -1185,6 +1188,7 @@ referenceNamesClass(OW_CIMClient& hdl,
 		std::sort(v.begin(), v.end(), sorter<OW_CIMObjectPath>());
 		for (size_t x = 0; x < v.size(); ++x)
 		{
+			v[x].setHost("localhost");
 			cout << "Associated path: " << v[x].toString() << endl;
 		}
 
