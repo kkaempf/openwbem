@@ -1,13 +1,11 @@
-noinst_DATA = $(PACKAGE_PREFIX)owcimomd
+noinst_DATA = $(PACKAGE_PREFIX_D)owcimomd
 #openwbemdir = $(sysconfdir)/rc.d/init.d
 
 EXTRA_DIST = owcimomd.sh
 
-CLEANFILES = $(PACKAGE_PREFIX)owcimomd
+CLEANFILES = $(PACKAGE_PREFIX_D)owcimomd
 
-SUFFIXES = .sh
-
-.sh:
+$(PACKAGE_PREFIX_D)owcimomd: owcimomd.sh
 	@RM@ -f $@ $@-t
 	@SED@ \
 		-e 's!@''sbindir''@!$(sbindir)!g' \
