@@ -41,7 +41,6 @@
 #include "OW_IOException.hpp"
 #include "OW_Socket.hpp"
 #include "OW_Format.hpp"
-#include "OW_UnnamedPipe.hpp"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ConfigOpts.hpp"
@@ -57,7 +56,10 @@
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_ThreadPool.hpp"
 #include "OW_ExceptionIds.hpp"
+#ifndef OW_WIN32
+#include "OW_UnnamedPipe.hpp"
 #include "OW_LocalAuthentication.hpp"
+#endif
 #include "OW_SSLException.hpp"
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_AuthenticationException.hpp"
@@ -71,13 +73,21 @@ OW_DEFINE_EXCEPTION_WITH_ID(HTTPServer)
 
 //////////////////////////////////////////////////////////////////////////////
 HTTPServer::HTTPServer()
+#ifdef OW_WIN32
+	: m_event(NULL)
+#else
 	: m_upipe(UnnamedPipe::createUnnamedPipe())
+#endif
 	, m_allowAllUsers(false)
 	, m_sslCtx(0)
 	, m_shuttingDown(false)
 	, m_trustStore(0)
 {
+#ifdef OW_WIN32
+	m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+#else
 	m_upipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPServer::~HTTPServer()
@@ -101,6 +111,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 
 	
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
+#ifndef OW_WIN32
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
 		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing OWLocal");
@@ -115,6 +126,8 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		}
 		return rv;
 	}
+#endif
+
 #ifndef OW_NO_SSL
 	if (m_sslopts.verifyMode != SSLOpts::MODE_DISABLED)
 	{
@@ -254,8 +267,10 @@ HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
 
 		m_options.defaultContentLanguage = env->getConfigItem(
 			ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE);
-		
+	
+#ifndef OW_WIN32
 		m_options.UDSFilename = env->getConfigItem(ConfigOpts::UDS_FILENAME_opt, OW_DEFAULT_UDS_FILENAME);
+#endif
 		
 		item = env->getConfigItem(ConfigOpts::USE_UDS_opt, OW_DEFAULT_USE_UDS);
 		m_options.useUDS = item.equalsIgnoreCase("true");
@@ -299,7 +314,8 @@ HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
 		// TODO: right now basic and digest are mutually exclusive because of the config file setup.  
 		// When possible deprecate the existing config items and make them independent.
 		m_options.allowBasicAuthentication = !m_options.allowDigestAuthentication;
-		
+	
+#ifndef OW_WIN32
 		item = env->getConfigItem(ConfigOpts::HTTP_ALLOW_LOCAL_AUTHENTICATION_opt, OW_DEFAULT_ALLOW_LOCAL_AUTHENTICATION);
 		m_options.allowLocalAuthentication = !item.equalsIgnoreCase("false");
 		if (m_options.allowLocalAuthentication)
@@ -307,6 +323,7 @@ HTTPServer::setServiceEnvironment(const ServiceEnvironmentIFCRef& env)
 			m_localAuthentication = IntrusiveReference<LocalAuthentication>(
 				new LocalAuthentication());
 		}
+#endif
 
 		String dumpPrefix = env->getConfigItem(ConfigOpts::DUMP_SOCKET_IO_opt);
 		if (!dumpPrefix.empty())
@@ -381,8 +398,13 @@ public:
 			{
 				newOpts.enableDeflate = false;
 			}
+#ifdef OW_WIN32
+			RunnableRef rref(new HTTPSvrConnection(socket,
+				 m_HTTPServer, m_HTTPServer->m_event, newOpts));
+#else
 			RunnableRef rref(new HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
+#endif
 			if (!m_HTTPServer->m_threadPool->tryAddWork(rref))
 			{
 				// TODO: Send back a server too busy error.  We'll need a different thread pool for that, since our
@@ -444,6 +466,7 @@ HTTPServer::startService()
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");
 	}
+#ifndef OW_WIN32
 	if (m_options.useUDS)
 	{
 		try
@@ -464,6 +487,7 @@ HTTPServer::startService()
 			throw;
 		}
 	}
+#endif
 	String listenAddressesOpt = env->getConfigItem(ConfigOpts::LISTEN_ADDRESSES_opt, OW_DEFAULT_LISTEN_ADDRESSES);
 	StringArray listenAddresses = listenAddressesOpt.tokenize(" ");
 	if (listenAddresses.empty())
@@ -664,10 +688,18 @@ HTTPServer::shutdown()
 	m_options.env->removeSelectable(m_pUDSServerSocket);
 
 	// now stop all current connections
+#ifdef OW_WIN32
+	if (!::SetEvent(m_event))
+	{
+		OW_THROW(IOException, 
+			"Failed signaling event for HTTP server shutdown");
+	}
+#else
 	if (m_upipe->writeString("shutdown") == -1)
 	{
 		OW_THROW(IOException, "Failed writing to HTTPServer shutdown pipe");
 	}
+#endif
 	// not going to finish off what's in the queue, and we'll give the threads 60 seconds to exit before they're clobbered.
 	m_threadPool->shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 60);
 	m_pHttpServerSocket = 0;

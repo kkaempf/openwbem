@@ -58,12 +58,14 @@ class HTTPSvrConnection;
 class DigestAuthentication;
 #endif
 class HTTPServer;
+#ifndef OW_WIN32
 class UnnamedPipe;
 class LocalAuthentication;
+#endif
 
 OW_DECLARE_EXCEPTION(HTTPServer)
 
-class HTTPServer : public ServiceIFC
+class OW_HTTP_API HTTPServer : public ServiceIFC
 {
 public:
 	HTTPServer();
@@ -131,7 +133,11 @@ private:
 
 	Mutex m_guard;
 	Options m_options;
+#ifdef OW_WIN32
+	HANDLE m_event;
+#else
 	IntrusiveReference<UnnamedPipe> m_upipe;
+#endif
 	Array<URL> m_urls;
 	IntrusiveReference<ServerSocket> m_pHttpServerSocket;
 	IntrusiveReference<ServerSocket> m_pHttpsServerSocket;
@@ -139,7 +145,9 @@ private:
 #ifndef OW_DISABLE_DIGEST
 	IntrusiveReference<DigestAuthentication> m_digestAuthentication;
 #endif
+#ifndef OW_WIN32
 	IntrusiveReference<LocalAuthentication> m_localAuthentication;
+#endif
 	Mutex m_authGuard;
 	IntrusiveReference<ThreadPool> m_threadPool;
 	SortedVectorSet<String> m_allowedUsers;

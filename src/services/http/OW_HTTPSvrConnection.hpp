@@ -52,11 +52,25 @@
 namespace OpenWBEM
 {
 
+#ifndef OW_WIN32
 class UnnamedPipe;
+#endif
 class TempFileStream;
-class HTTPSvrConnection: public Runnable
+class OW_HTTP_API HTTPSvrConnection: public Runnable
 {
 public:
+#ifdef OW_WIN32
+	/**
+	 * Start a new http server connection.  This is called after
+	 * HTTPServer accepts the connection.
+	 * @param socket the socket (just accepted)
+	 * @param htin a pointer to the HTTPServer
+	 # @param eventArg Handle to an event that gets signaled on shutdown
+	 * @param opts The configuration options struct (see HTTPServer.hpp)
+	 */
+	HTTPSvrConnection(const Socket& socket, HTTPServer* htin,
+		HANDLE eventArg, const HTTPServer::Options& opts);
+#else
 	/**
 	 * Start a new http server connection.  This is called after
 	 * HTTPServer accepts the connection.
@@ -68,6 +82,8 @@ public:
 	HTTPSvrConnection(const Socket& socket, HTTPServer* htin,
 		IntrusiveReference<UnnamedPipe>& upipe,
 		const HTTPServer::Options& opts);
+#endif
+
 	~HTTPSvrConnection();
 	/**
 	 * start processing the connection
@@ -161,7 +177,11 @@ private:
 	String m_reqHeaderPrefix;
 	String m_respHeaderPrefix;
 	bool m_isAuthenticated;
+#ifdef OW_WIN32
+	HANDLE m_event;
+#else
 	IntrusiveReference<UnnamedPipe> m_upipe;
+#endif
 	bool m_chunkedOut;
 	String m_userName;
 	bool m_clientIsOpenWBEM2;

@@ -47,7 +47,7 @@ namespace OpenWBEM
 
 class HTTPSvrConnection;
 
-class LocalAuthentication : public IntrusiveCountableBase
+class OW_HTTP_API LocalAuthentication : public IntrusiveCountableBase
 {
 public:
 	LocalAuthentication() {}

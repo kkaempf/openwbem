@@ -82,11 +82,20 @@ using std::flush;
 #ifndef OW_LOGFATALERROR
 #define OW_LOGFATALERROR(x) m_options.env->getLogger()->logFatalError(x)
 #endif
+
 //////////////////////////////////////////////////////////////////////////////
+#ifdef OW_WIN32
+HTTPSvrConnection::HTTPSvrConnection(
+	const Socket& socket, 
+	HTTPServer* htin,
+	HANDLE eventArg, 
+	const HTTPServer::Options& opts)
+#else
 HTTPSvrConnection::HTTPSvrConnection(const Socket& socket,
 	HTTPServer* htin,
 	IntrusiveReference<UnnamedPipe>& upipe,
 	const HTTPServer::Options& opts)
+#endif
 	: Runnable()
 	, m_requestLine()
 	, m_requestHeaders()
@@ -108,7 +117,11 @@ HTTPSvrConnection::HTTPSvrConnection(const Socket& socket,
 	, m_reqHeaderPrefix()
 	, m_respHeaderPrefix()
 	, m_isAuthenticated(false)
+#ifdef OW_WIN32
+	, m_event(eventArg)
+#else
 	, m_upipe(upipe)
+#endif
 	, m_chunkedOut(false)
 	, m_userName()
 	, m_clientIsOpenWBEM2(false)
@@ -137,7 +150,13 @@ HTTPSvrConnection::run()
 {
 	CIMProtocolIStreamIFCRef istrToReadFrom(0);
 	SelectTypeArray selArray;
+#ifdef OW_WIN32
+	Select_t st;
+	st.event = m_event;
+	selArray.push_back(st);
+#else
 	selArray.push_back(m_upipe->getSelectObj());
+#endif
 	selArray.push_back(m_socket.getSelectObj());
 	try
 	{
@@ -180,7 +199,7 @@ HTTPSvrConnection::run()
 			   sendError(m_resCode);
 			   return;
 			}
-			if (selType == 0)	// Unnamped pipe selected
+			if (selType == 0)	// Unnamped pipe/event selected
 			{
 			   m_resCode = SC_SERVICE_UNAVAILABLE;
 			   m_errDetails = "Server is shutting down."

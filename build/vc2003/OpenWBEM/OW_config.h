@@ -538,6 +538,10 @@
 #undef OW_HAVE_SLP_H
 #endif
 
+#ifndef OW_DISABLE_DIGEST
+#define OW_DISABLE_DIGEST
+#endif
+
 // Statements like:
 // #pragma message(Reminder "Fix this problem!")
 // Which will cause messages like:
