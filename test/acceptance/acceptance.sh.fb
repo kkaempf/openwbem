@@ -709,7 +709,7 @@ TestAuth()
 	echo "TestAuth"
 
 	# enable allow_anonymous
-	EditConfig "s!;owcimomd.allow_anonymous = true!owcimomd.allow_anonymous = true!g" 
+	EditConfig "s!;owcimomd.allow_anonymous = .*!owcimomd.allow_anonymous = true!g" 
 	
 	echo "1. Testing Allow Anonymous"
 	RestartDaemon
@@ -718,7 +718,7 @@ TestAuth()
 	[ "$?" = "0" ] || ExitWithFail "1. Allow Anonymous Failed"
 
 	# disable allow_anonymous
-	EditConfig "s!owcimomd.allow_anonymous = true!;owcimomd.allow_anonymous = true!g" 
+	EditConfig "s!owcimomd.allow_anonymous = true!owcimomd.allow_anonymous = false!g" 
 
 	# switch from digest to simple
 	#EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
