@@ -74,13 +74,13 @@ public:
 	static void initSig() { plat_upipe = OW_UnnamedPipe::createUnnamedPipe(); }
 	static void pushSig(int sig)
 	{
-		if (plat_upipe->write(sig) == -1)
+		if (plat_upipe->writeInt(sig) == -1)
 			OW_THROW(OW_IOException, "Failed writing signal to pipe");
 	}
 	static int popSig()
 	{
 		int tmp = -2;
-		if (plat_upipe->read(&tmp) < 0)
+		if (plat_upipe->readInt(&tmp) < 0)
 			return -1;
 		return tmp;
 	}

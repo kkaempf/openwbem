@@ -745,8 +745,7 @@ OW_CIMInstance::readObject(istream &istrm)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMInstance::writeObject(std::ostream &ostrm,
-	OW_Bool includeQualifiers) const
+OW_CIMInstance::writeObject(std::ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMINSTANCESIG );
 	m_pdata->m_name.writeObject(ostrm);
@@ -754,24 +753,7 @@ OW_CIMInstance::writeObject(std::ostream &ostrm,
 	m_pdata->m_aliasName.writeObject(ostrm);
 	m_pdata->m_keys.writeObject(ostrm);
     m_pdata->m_properties.writeObject(ostrm);
-
-	if(includeQualifiers)
-	{
-		// Write The qualifier array
-		m_pdata->m_qualifiers.writeObject(ostrm);
-	}
-	else
-	{
-		OW_UInt32 nl = 0;
-		OW_BinIfcIO::write(ostrm, &nl, sizeof(nl));
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMInstance::writeObject(ostream &ostrm) const
-{
-	writeObject(ostrm, true);
+	m_pdata->m_qualifiers.writeObject(ostrm);
 }
 
 //////////////////////////////////////////////////////////////////////////////

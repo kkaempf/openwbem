@@ -95,11 +95,19 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
 
-//#ifdef OW_DEBUG // TODO is this safe?
+#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
+	// is this safe? Should be, but some OS kernels have problems with it.
+	// It's OK on current linux versions.  Definitely not on
+	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
+	// OpenServer?
+	// See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
+	// or just google for "bind() Security Problems"
+
 	// Let the kernel reuse the port without waiting for it to time out.
+	// Without this line, you can't stop and immediately re-start the daemon.
 	int reuse = 1;
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-//#endif
+#endif
 
 		
 	OW_InetSocketAddress_t inetAddr;
@@ -153,11 +161,19 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
 
-//#ifdef OW_DEBUG // TODO is this safe?
+#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
+	// is this safe? Should be, but some OS kernels have problems with it.
+	// It's OK on current linux versions.  Definitely not on
+	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
+	// OpenServer?
+	// See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
+	// or just google for "bind() Security Problems"
+	
 	// Let the kernel reuse the port without waiting for it to time out.
+	// Without this line, you can't stop and immediately re-start the daemon.
 	int reuse = 1;
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-//#endif
+#endif
 
 // This seems to cause problems, so just leave the file sitting there.
 //    if (OW_FileSystem::exists(filename))
@@ -282,7 +298,6 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 		{
 			// check to see if client aborts connection between select and accept.
 			// see Unix Network Programming pages 422-424.
-			// TODO should we just check for one? eg. the proper one for
 			if (errno == EWOULDBLOCK
 				 || errno == ECONNABORTED
 				 || errno == EPROTO)
@@ -297,9 +312,8 @@ OW_ServerSocketImpl::accept(int timeoutSecs)
 		// set socket back to blocking; see Unix Network Programming,
 		// pages 422-424.
 		int fdflags = ::fcntl(clntfd, F_GETFL, 0);
-		// TODO we never get inside this if block.  Is the man page flawed
-		// when it claims that NONBLOCK is inherited from the listen socket
-		// though accept()? or is my logic flawed below?
+		// On most OSs non-blocking is inherited from the listen socket,
+		// but it's not on Openserver.
 		if ((fdflags & O_NONBLOCK) == O_NONBLOCK)
 		{
 			::fcntl(clntfd, F_SETFL, fdflags ^ O_NONBLOCK);

@@ -371,8 +371,10 @@ OW_InstanceRepository::createInstance(const OW_String& ns,
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS, instanceKey.c_str());
 	}
 
+	// TODO: Remove qualifiers duplicated from the class to save space
+
 	OW_RepositoryOStream ostrm;
-	ci.writeObject(ostrm, false);
+	ci.writeObject(ostrm);
 	node = OW_HDBNode(instanceKey, ostrm.length(), ostrm.getData());
 	hdl.getHandle().addChild(clsNode, node);
 }
@@ -403,27 +405,17 @@ OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 void
 OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass, const OW_CIMInstance& ci_)
+	const OW_CIMClass& theClass, const OW_CIMInstance& ci_,
+	const OW_CIMInstance& oldInst)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 
-	// Get old instance
-	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
-	OW_HDBNode node = hdl->getNode(instanceKey);
-	if(!node)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
-	}
-
-	// Retrieve the old instance
-	OW_CIMInstance oldInst;
-	nodeToCIMObject(oldInst, node);
-
+	OW_CIMInstance ci(ci_);
 	// Now move properties from the old instance that are missing in the
 	// new instance
+	/* We don't want to do this!
 	OW_CIMPropertyArray pra = oldInst.getProperties();
-	OW_CIMInstance ci(ci_);
 	OW_CIMPropertyArray npra = ci.getProperties();
 	for(size_t i = 0; i < pra.size(); i++)
 	{
@@ -434,6 +426,7 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	}
 
 	ci.setProperties(npra);
+	*/
 
 	// Now sync the new instance with the class. This will remove any properties
 	// that shouldn't be on the instance and add properties that should be
@@ -484,7 +477,15 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 	}
 
 	OW_RepositoryOStream ostrm;
-	ci.writeObject(ostrm, false);
+
+	// TODO: Remove qualifiers duplicated from the class to save space
+	ci.writeObject(ostrm);
+	OW_String instanceKey = makeInstanceKey(ns, cop, theClass);
+	OW_HDBNode node = hdl->getNode(instanceKey);
+	if (!node)
+	{
+		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, cop.toString().c_str());
+	}
 	hdl.getHandle().updateNode(node, ostrm.length(), ostrm.getData());
 }
 

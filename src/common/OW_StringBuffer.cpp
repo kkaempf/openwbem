@@ -37,47 +37,48 @@
 #include <cstring>
 #include <cstdio>
 #include <iostream>
+#include <algorithm> // for std::swap
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer::OW_StringBuffer(int allocSize) :
-	m_len(0), m_incSize(allocSize > 0 ? allocSize : DEFAULT_ALLOCATION_UNIT),
-	m_allocated(m_incSize), m_bfr(0)
+	m_len(0),
+	m_allocated(allocSize > 0 ? allocSize : DEFAULT_ALLOCATION_UNIT),
+	m_bfr(new char[m_allocated])
 {
-	m_bfr = new char[m_allocated];
 	m_bfr[0] = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer::OW_StringBuffer(const OW_String& arg) :
-	m_len(arg.length()), m_incSize(m_len + DEFAULT_ALLOCATION_UNIT),
-	m_allocated(m_incSize), m_bfr(0)
+OW_StringBuffer::OW_StringBuffer(const char* arg) :
+	m_len(strlen(arg)),
+	m_allocated(m_len + DEFAULT_ALLOCATION_UNIT),
+	m_bfr(new char[m_allocated])
 {
-	m_bfr = new char[m_allocated];
+	::strcpy(m_bfr, arg);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_StringBuffer::OW_StringBuffer(const OW_String& arg) :
+	m_len(arg.length()),
+	m_allocated(m_len + DEFAULT_ALLOCATION_UNIT),
+	m_bfr(new char[m_allocated])
+{
 	::strcpy(m_bfr, arg.c_str());
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer::OW_StringBuffer(const OW_StringBuffer& arg) :
-	m_len(arg.m_len), m_incSize(arg.m_incSize), m_allocated(arg.m_allocated),
-	m_bfr(0)
+	m_len(arg.m_len), m_allocated(arg.m_allocated),
+	m_bfr(new char[arg.m_allocated])
 {
-	m_bfr = new char[m_allocated];
-	::memmove(m_bfr, arg.m_bfr, m_allocated);
+	::memmove(m_bfr, arg.m_bfr, arg.m_len + 1);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer&
 OW_StringBuffer::operator= (const OW_String& arg)
 {
-	int len = arg.length();
-	clear(len);
-	if(len > 0)
-	{
-		m_len = len;
-		::memmove(m_bfr, arg.c_str(), len);
-		m_bfr[m_len] = (char)0;
-	}
-
+	OW_StringBuffer(arg).swap(*this);
 	return *this;
 }
 
@@ -85,16 +86,7 @@ OW_StringBuffer::operator= (const OW_String& arg)
 OW_StringBuffer&
 OW_StringBuffer::operator= (const char* str)
 {
-	if(str == NULL || *str == (char)0)
-	{
-		clear();
-		return *this;
-	}
-
-	int len = ::strlen(str);
-	clear(len);
-	::strcpy(m_bfr, str);
-	m_len = len;
+	OW_StringBuffer(str).swap(*this);
 	return *this;
 }
 
@@ -102,7 +94,17 @@ OW_StringBuffer::operator= (const char* str)
 OW_StringBuffer&
 OW_StringBuffer::operator =(const OW_StringBuffer& arg)
 {
-	return operator =(arg.c_str());
+	OW_StringBuffer(arg).swap(*this);
+	return *this;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_StringBuffer::swap(OW_StringBuffer& x)
+{
+	std::swap(m_len, x.m_len);
+	std::swap(m_allocated, x.m_allocated);
+	std::swap(m_bfr, x.m_bfr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -110,42 +112,6 @@ void
 OW_StringBuffer::reset()
 {
 	m_len = 0;
-	m_bfr[0] = (char)0;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_StringBuffer::clear(int newSize)
-{
-	m_len = 0;
-	int toAlloc = m_incSize;
-	if(newSize > 0)
-	{
-		if(newSize >= m_allocated)
-		{
-			checkAvail(newSize+1);
-			m_bfr[0] = (char)0;
-			return;
-		}
-		else
-		{
-			if(newSize > m_incSize)
-			{
-				toAlloc = newSize / m_incSize;
-				if(newSize % m_incSize)
-					toAlloc++;
-
-				toAlloc *= m_incSize;
-			}
-		}
-	}
-
-	if(toAlloc != m_allocated)
-	{
-		delete[] m_bfr;
-		m_bfr = new char[toAlloc];
-		m_allocated = toAlloc;
-	}
 	m_bfr[0] = (char)0;
 }
 
@@ -270,27 +236,6 @@ OW_StringBuffer::operator += (OW_Real64 v)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer&
-OW_StringBuffer::append(char c)
-{
-	checkAvail();
-	m_bfr[m_len++] = c;
-	m_bfr[m_len] = (char)0;
-	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
-OW_StringBuffer::append(const char* str)
-{
-	int len = ::strlen(str);
-	checkAvail(len+1);
-	::strcpy(m_bfr+m_len, str);
-	m_len += len;
-	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer&
 OW_StringBuffer::append(const char* str, const size_t len)
 {
 	checkAvail(len+1);
@@ -298,29 +243,6 @@ OW_StringBuffer::append(const char* str, const size_t len)
 	m_len += len;
     m_bfr[m_len] = '\0';
 	return *this;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_StringBuffer::checkAvail(int len)
-{
-	int freeSpace = m_allocated - (m_len+1);
-
-	if(len > freeSpace)
-	{
-		int nlen = len - freeSpace;
-		m_incSize <<= 1;
-		int neededBlocks = nlen / m_incSize;
-		if(nlen % m_incSize)
-			neededBlocks++;
-
-		int toalloc = m_allocated + (neededBlocks * m_incSize);
-		char* bfr = new char[toalloc];
-		::memmove(bfr, m_bfr, m_allocated);
-		delete [] m_bfr;
-		m_allocated = toalloc;
-		m_bfr = bfr;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

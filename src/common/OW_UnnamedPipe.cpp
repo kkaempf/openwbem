@@ -33,22 +33,26 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_String.hpp"
 
+//////////////////////////////////////////////////////////////////////////////
+OW_UnnamedPipe::~OW_UnnamedPipe()
+{
+}
 
 //////////////////////////////////////////////////////////////////////////////
-int 
-OW_UnnamedPipe::write(int value)
+int
+OW_UnnamedPipe::writeInt(int value)
 {
 	return this->write(&value, sizeof(int));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int 
-OW_UnnamedPipe::write(const OW_String& strData)
+int
+OW_UnnamedPipe::writeString(const OW_String& strData)
 {
 	int rc;
 	int len = strData.length()+1;
 
-	if((rc = this->write(len)) != -1)
+	if((rc = this->writeInt(len)) != -1)
 	{
 		rc = this->write(strData.c_str(), len);
 	}
@@ -57,19 +61,19 @@ OW_UnnamedPipe::write(const OW_String& strData)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int 
-OW_UnnamedPipe::read(int* value)
+int
+OW_UnnamedPipe::readInt(int* value)
 {
 	return this->read(value, sizeof(int));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int 
-OW_UnnamedPipe::read(OW_String& strData)
+int
+OW_UnnamedPipe::readString(OW_String& strData)
 {
 	int len;
 	int rc;
-	if((rc = this->read(&len)) != -1)
+	if((rc = this->readInt(&len)) != -1)
 	{
 		OW_AutoPtrVec<char> p(new char[len+1]);
 		if((rc = this->read(p.get(), len)) != -1)

@@ -153,9 +153,7 @@ public:
 	 */
 	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env,
 		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		OW_Bool includeQualifiers,
-		OW_StringArray* propertyList);
+		const OW_CIMInstance& modifiedInstance);
 
 private:
 	OW_FTABLERef m_ftable;

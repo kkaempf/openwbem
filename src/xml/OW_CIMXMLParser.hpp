@@ -127,7 +127,11 @@ public:
 
 
 
-	OW_String mustGetAttribute(const char* const attrId);
+	OW_String mustGetAttribute(const char* const attrId)
+	{
+		return getAttribute(attrId, true);
+	}
+
 	OW_String getAttribute(const char* const attrId, bool throwIfError = false);
 
 	void getChild();
@@ -136,16 +140,40 @@ public:
 	void getNextTag(bool throwIfError = false);
 	void getNext(tokenId beginTok, bool throwIfError = false);
 	void getNext(bool throwIfError = false);
-	void mustGetNext();
-	void mustGetNextTag();
-	void mustGetNext(tokenId beginTok);
+	void mustGetNext()
+	{
+		getNext(true);
+	}
+
+	void mustGetNextTag()
+	{
+		getNextTag(true);
+	}
+
+	void mustGetNext(tokenId beginTok)
+	{
+		getNext(beginTok, true);
+	}
+
 	void mustGetEndTag();
 
-	bool tokenIs(const char* const arg) const;
-	bool tokenIs(tokenId tId) const;
+	bool tokenIs(const char* const arg) const
+	{
+		return m_curTok.text.equals(arg);
+	}
+
+	bool tokenIs(tokenId tId) const
+	{
+		return tokenIs(g_elems[tId].name);
+	}
+
 	void mustTokenIs(tokenId tId) const;
 
-	tokenId getToken() const;
+	tokenId getToken() const
+	{
+		return getTokenFromName(m_curTok.text.c_str());
+	}
+
 
 	OW_String getName() const;
 	OW_String getData() const;

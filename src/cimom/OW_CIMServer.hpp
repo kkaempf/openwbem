@@ -610,7 +610,7 @@ private:
 		const OW_ACLInfo& aclInfo);
 
 public:
-	OW_Bool _isDynamicAssoc(const OW_CIMClass& cc, const OW_ACLInfo& aclInfo);
+	OW_Bool _isDynamicAssoc(const OW_CIMClass& cc);
 
 private:
 	void _commonAssociators(
@@ -714,8 +714,9 @@ private:
 	void _getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 		OW_HDBNode node);
 
-	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
-		const OW_String& className, const OW_ACLInfo& aclInfo);
+	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_CIMClass& cls);
+	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_CIMClass& cls);
+	OW_PropertyProviderIFCRef _getPropertyProvider(const OW_CIMProperty& cls);
 
 	void _validatePropagatedKeys(const OW_String& ns,
 		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
@@ -732,6 +733,8 @@ public:
 private:
 	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);
 	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);
+	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className);
+	OW_CIMClass _instGetClass(const OW_String& ns, const OW_String& className);
 
 	OW_GenericHDBRepository m_nStore;
 	OW_InstanceRepository m_iStore;

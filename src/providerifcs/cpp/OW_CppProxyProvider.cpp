@@ -185,13 +185,10 @@ void
 OW_CppInstanceProviderProxy::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		OW_Bool includeQualifiers,
-		OW_StringArray* propertyList)
+		const OW_CIMInstance& modifiedInstance)
 {
 	m_pProv->updateAccessTime();
-	m_pProv->modifyInstance(env, ns, modifiedInstance, includeQualifiers,
-		propertyList);
+	m_pProv->modifyInstance(env, ns, modifiedInstance);
 }
 
 //////////////////////////////////////////////////////////////////////////////		

@@ -421,7 +421,7 @@ testDynInstances(OW_CIMClient& hdl)
 			OW_CIMtoXMLFlags::includeQualifiers,
 			OW_CIMtoXMLFlags::includeClassOrigin,
 			OW_StringArray());
-		tfs << "</CIM>"; 
+		tfs << "</CIM>";
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 
@@ -442,7 +442,7 @@ testDynInstances(OW_CIMClient& hdl)
 			OW_CIMtoXMLFlags::includeQualifiers,
 			OW_CIMtoXMLFlags::includeClassOrigin,
 			OW_StringArray());
-		tfs << "</CIM>"; 
+		tfs << "</CIM>";
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 
@@ -461,7 +461,7 @@ testDynInstances(OW_CIMClient& hdl)
 			OW_CIMtoXMLFlags::includeQualifiers,
 			OW_CIMtoXMLFlags::includeClassOrigin,
 			OW_StringArray());
-		tfs << "</CIM>"; 
+		tfs << "</CIM>";
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 
@@ -621,9 +621,14 @@ getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-modifyInstance(OW_CIMClient& hdl, const OW_String& theInstance)
+modifyInstance(OW_CIMClient& hdl, const OW_String& theInstance,
+	bool includeQualifiers, OW_StringArray* propList,
+	bool addProperty, bool addQualifier)
 {
-	testStart("modifyInstance");
+	OW_String pstr = format("includeQualifiers=%1, "
+			"propertyList? %2, addProperty = %3, addQualifier = %4",
+			includeQualifiers, propList != 0, addProperty, addQualifier);
+	testStart("modifyInstance", pstr.c_str());
 
 	try
 	{
@@ -634,14 +639,31 @@ modifyInstance(OW_CIMClient& hdl, const OW_String& theInstance)
 
 		OW_CIMInstance in = hdl.getInstance( cop, false);
 
-		in.setProperty(OW_CIMProperty("BrandNewProperty",
-			OW_CIMValue(OW_String("true"))));
+		if (addProperty)
+		{
+			in.setProperty(OW_CIMProperty("BrandNewProperty",
+				OW_CIMValue(OW_String("true"))));
+		}
+		else
+		{
+			in.removeProperty("BrandNewProperty");
+		}
+
+		if (addQualifier)
+		{
+			OW_CIMQualifierType borg = hdl.getQualifierType("version");
+			in.setQualifier(OW_CIMQualifier(borg));
+		}
+		else
+		{
+			in.removeQualifier("version");
+		}
 
 		// getInstance with includeQualifiers = false doesn't have any keys, so
 		// we'll have to set them so modifyInstance will work.
 		in.setKeys(cop.getKeys());
 
-		hdl.modifyInstance( in);
+		hdl.modifyInstance(in, includeQualifiers, propList);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1652,10 +1674,41 @@ main(int argc, char* argv[])
 		sa.push_back(OW_String("BrandNewProperty"));
 		getInstance(rch, "SevenMillion", false, false, false, &sa);
 
-		modifyInstance(rch, "SixMillion");
-		getInstance(rch, "SixMillion");
-		modifyInstance(rch, "SevenMillion");
-		getInstance(rch, "SevenMillion");
+		// add a property and a qualifier
+		modifyInstance(rch, "SixMillion", true, 0, true, true);
+		getInstance(rch, "SixMillion", true, true);
+		// add a property, remove a qualifier
+		modifyInstance(rch, "SixMillion", true, 0, true, false);
+		getInstance(rch, "SixMillion", true, true);
+		// remove a property, remove a qualifier
+		modifyInstance(rch, "SixMillion", true, 0, false, false);
+		getInstance(rch, "SixMillion", true, true);
+		// remove a property, add a qualifier
+		modifyInstance(rch, "SixMillion", true, 0, false, true);
+		getInstance(rch, "SixMillion", true, true);
+
+		// includeQualifier = false.  don't add qualifier, add property, qual should still be there.
+		modifyInstance(rch, "SixMillion", false, 0, true, false);
+		getInstance(rch, "SixMillion", true, true);
+
+		// includeQualifier = true, don't add qualifier or property, qual and prop should be gone.
+		modifyInstance(rch, "SixMillion", true, 0, false, false);
+		getInstance(rch, "SixMillion", true, true);
+		
+		// add the property, but it shouldn't appear, because the prop list is empty.
+		sa.clear();
+		modifyInstance(rch, "SixMillion", true, &sa, true, false);
+		getInstance(rch, "SixMillion", true, true);
+
+		// add the property, now it should appear.
+		sa.push_back(OW_String("BrandNewProperty"));
+		modifyInstance(rch, "SixMillion", false, &sa, true, false);
+		getInstance(rch, "SixMillion", true, true);
+
+		// try another instance
+		modifyInstance(rch, "SevenMillion", false, &sa, true, false);
+		getInstance(rch, "SevenMillion", true, true);
+
 		setProperty(rch, "SixMillion");
 		getProperty(rch, "SixMillion");
 		getInstance(rch, "SixMillion");

@@ -107,7 +107,7 @@ OW_Socket::shutdownAllSockets()
 	OW_MutexLock mlock(shutdownMutex);
 	OW_ASSERT(m_pUpipe);
 	b_gotShutDown = true;
-	if (m_pUpipe->write("die!") == -1)
+	if (m_pUpipe->writeString("die!") == -1)
 	{
 		OW_THROW(OW_IOException, "Failed writing to socket shutdown pipe");
 	}

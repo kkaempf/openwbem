@@ -351,15 +351,6 @@ public:
 	virtual void writeObject(std::ostream &ostrm) const;
 
 	/**
-	 * Write this OW_CIMInstance to an output stream, optionally excluding
-	 * all qualifiers (except key designators).
-	 * @param ostrm The output stream to write this object to.
-	 * @param includeQualifiers If false qualifiers will be omitted when the
-	 *		object is written (this doesn't include key qualifiers).
-	 */
-	void writeObject(std::ostream &ostrm, OW_Bool includeQualifiers) const;
-
-	/**
 	 * @return The MOF representation of this OW_CIMInstance as an OW_String.
 	 */
 	virtual OW_String toMOF() const;

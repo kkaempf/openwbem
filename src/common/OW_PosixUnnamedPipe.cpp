@@ -159,7 +159,7 @@ OW_PosixUnnamedPipe::closeOutputHandle()
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::write(const void* data, int dataLen)
+OW_PosixUnnamedPipe::write(const void* data, int dataLen, OW_Bool errorAsException)
 {
 	int rc = -1;
 
@@ -170,13 +170,17 @@ OW_PosixUnnamedPipe::write(const void* data, int dataLen)
         // indirectly when it pushes a signal that has been received.
 		rc = ::write(m_fds[1], data, dataLen);
 	}
+	if (errorAsException && rc == -1)
+	{
+		OW_THROW(OW_Exception, "pipe write failed");
+	}
 
 	return rc;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_PosixUnnamedPipe::read(void* buffer, int bufferLen)
+OW_PosixUnnamedPipe::read(void* buffer, int bufferLen, OW_Bool errorAsException)
 {
 	int rc = -1;
 
@@ -187,6 +191,10 @@ OW_PosixUnnamedPipe::read(void* buffer, int bufferLen)
 #else
 		rc = ::read(m_fds[0], buffer, bufferLen);
 #endif
+	}
+	if (errorAsException && rc == -1)
+	{
+		OW_THROW(OW_Exception, "pipe write failed");
 	}
 	return rc;
 }

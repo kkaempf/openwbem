@@ -265,9 +265,7 @@ void
 OW_NameSpaceProvider::modifyInstance(
 		const OW_ProviderEnvironmentIFCRef& /*env*/,
 		const OW_String&,
-		const OW_CIMInstance&,
-		OW_Bool,
-		OW_StringArray*)
+		const OW_CIMInstance&)
 {
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
 }

@@ -259,7 +259,7 @@ OW_HTTPXMLCIMListener::shutdownHttpServer()
 	{
 		// write something into the stop pipe to stop the select engine so the
 		// thread will exit
-		if (m_stopHttpPipe->write(0) == -1)
+		if (m_stopHttpPipe->writeInt(0) == -1)
 		{
 			OW_THROW(OW_IOException, "Writing to the termination pipe failed");
 		}

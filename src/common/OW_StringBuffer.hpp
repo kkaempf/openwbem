@@ -34,6 +34,7 @@
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
+#include <cstring>
 
 class OW_CIMDateTime;
 class OW_CIMObjectPath;
@@ -44,6 +45,7 @@ public:
 	static const int DEFAULT_ALLOCATION_UNIT = 128;
 
 	OW_StringBuffer(int allocSize = DEFAULT_ALLOCATION_UNIT);
+	OW_StringBuffer(const char* arg);
 	OW_StringBuffer(const OW_String& arg);
 	OW_StringBuffer(const OW_StringBuffer& arg);
 	~OW_StringBuffer() { delete [] m_bfr; }
@@ -51,10 +53,25 @@ public:
 	OW_StringBuffer& operator= (const OW_StringBuffer& arg);
 	OW_StringBuffer& operator= (const OW_String& arg);
 	OW_StringBuffer& operator= (const char* str);
+	void swap(OW_StringBuffer& x);
 
-	// TODO: inline some of these that are heavily used
-	OW_StringBuffer& append(char c);
-	OW_StringBuffer& append(const char* str);
+	OW_StringBuffer& append(char c)
+	{
+		checkAvail();
+		m_bfr[m_len++] = c;
+		m_bfr[m_len] = (char)0;
+		return *this;
+	}
+
+	OW_StringBuffer& append(const char* str)
+	{
+		int len = ::strlen(str);
+		checkAvail(len+1);
+		::strcpy(m_bfr+m_len, str);
+		m_len += len;
+		return *this;
+	}
+
 	OW_StringBuffer& append(const char* str, const size_t len);
 	OW_StringBuffer& append(const OW_String& arg) 	
 		{ return append(arg.c_str()); }
@@ -104,8 +121,6 @@ public:
 
 	int length() const {  return m_len; }
 	int allocated() const {  return m_allocated; }
-	int getIncSize() const {  return m_incSize; }
-	void clear(int newSize=0);
 	void reset();
 	const char* c_str() const {  return m_bfr; }
 	bool equals(const char* arg) const;
@@ -113,10 +128,23 @@ public:
 	friend std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b);
 
 private:
-	void checkAvail(int len=1);
+	void checkAvail(int len=1)
+	{
+		int freeSpace = m_allocated - (m_len+1);
+	
+		if(len > freeSpace)
+		{
+			int toalloc = m_allocated * 2 + len;
+			char* bfr = new char[toalloc];
+			::memmove(bfr, m_bfr, m_len);
+			delete [] m_bfr;
+			m_allocated = toalloc;
+			m_bfr = bfr;
+		}
+	}
+
 
 	int m_len;
-	int m_incSize;
 	int m_allocated;
 	char* m_bfr;
 };

@@ -112,7 +112,8 @@ public:
 	 * @exception OW_IOException
 	 */
 	void modifyInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
-		const OW_CIMClass& theClass, const OW_CIMInstance& ci);
+		const OW_CIMClass& theClass, const OW_CIMInstance& ci,
+		const OW_CIMInstance& oldInst);
 
 	/**
 	 * Determines if an instance already exists

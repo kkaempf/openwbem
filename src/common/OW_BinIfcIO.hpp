@@ -115,7 +115,6 @@ class OW_BinIfcIO
 {
 public:
 
-	// TODO: inline these functions, they are used quite heavily.
 	static void write(std::ostream& ostrm, const void* dataOut,
 		int dataOutLen)
 	{

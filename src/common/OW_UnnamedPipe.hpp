@@ -37,6 +37,7 @@
 #include "OW_Bool.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_Reference.hpp"
+#include "OW_IOIFC.hpp"
 
 class OW_String;
 
@@ -46,20 +47,16 @@ DEFINE_EXCEPTION(UnnamedPipe);
 class OW_UnnamedPipe;
 typedef OW_Reference<OW_UnnamedPipe> OW_UnnamedPipeRef;
 
-// TODO: Make this class derive from OW_IOIFC
-class OW_UnnamedPipe : public OW_SelectableIFC
+class OW_UnnamedPipe : public OW_SelectableIFC, public OW_IOIFC
 {
 public:
-	virtual ~OW_UnnamedPipe() {}
+	virtual ~OW_UnnamedPipe();
 
-	int write(int value);
-	int write(const OW_String& strData);
-	int read(int* value);
-	int read(OW_String& strData);
+	int writeInt(int value);
+	int writeString(const OW_String& strData);
+	int readInt(int* value);
+	int readString(OW_String& strData);
 	OW_String readAll();
-
-	virtual int write(const void* data, int dataLen) = 0;
-	virtual int read(void* buffer, int bufferLen) = 0;
 
 	virtual void open() = 0;
 	virtual int close() = 0;

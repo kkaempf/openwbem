@@ -511,7 +511,7 @@ OW_HTTPServer::shutdown()
 
 
 	OW_Socket::shutdownAllSockets();
-	if (m_upipe->write("shutdown") == -1)
+	if (m_upipe->writeString("shutdown") == -1)
 	{
 		OW_THROW(OW_IOException, "Failed writing to OW_HTTPServer shutdown pipe");
 	}

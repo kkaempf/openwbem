@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef POSIX_UNNAMED_PIPE_HPP_
-#define POSIX_UNNAMED_PIPE_HPP_
+#ifndef OW_POSIX_UNNAMED_PIPE_HPP_
+#define OW_POSIX_UNNAMED_PIPE_HPP_
 
 #include "OW_config.h"
 #include "OW_UnnamedPipe.hpp"
@@ -39,8 +39,8 @@ class OW_PosixUnnamedPipe : public OW_UnnamedPipe
 public:
 	OW_PosixUnnamedPipe(OW_Bool doOpen=true);
 	virtual ~OW_PosixUnnamedPipe();
-	virtual int write(const void* data, int dataLen);
-	virtual int read(void* buffer, int bufferLen);
+	virtual int write(const void* data, int dataLen, OW_Bool errorAsException=false);
+	virtual int read(void* buffer, int bufferLen, OW_Bool errorAsException=false);
 	int getInputHandle() { return m_fds[0]; }
 	int getOutputHandle() { return m_fds[1]; }
 	virtual void open();

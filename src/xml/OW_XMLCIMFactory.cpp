@@ -385,6 +385,7 @@ OW_XMLCIMFactory::createInstance(OW_CIMXMLParser& parser)
 
 	rval.setProperties(props);
 	parser.mustGetEndTag();
+
 	return rval;
 }
 

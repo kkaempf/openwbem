@@ -90,17 +90,13 @@ OW_CIMXMLParser::OW_CIMXMLParser(std::istream& istr)
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_CIMXMLParser::OW_CIMXMLParser()
-	: m_ptfs()
-	, m_parser()
-	, m_curTok()
-	, m_good(false)
+	: m_good(false)
 {
 }
 
 
-// It would appear that this needs to be sorted alphabetically,
-// although Dan didn't put any such comment here.  :)
-// Also, if you add an entry, make sure and update g_elemsEnd.
+// This needs to be sorted alphabetically.
+// Also, if you add an entry, make sure and update the size and g_elemsEnd.
 OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[62] =
 {
 	{ "CIM", OW_CIMXMLParser::E_CIM },
@@ -172,7 +168,7 @@ OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[62] =
 OW_CIMXMLParser::ElemEntry* OW_CIMXMLParser::g_elemsEnd = &OW_CIMXMLParser::g_elems[61];
 
 //////////////////////////////////////////////////////////////////////////////
-bool
+inline bool
 OW_CIMXMLParser::elemEntryCompare(const OW_CIMXMLParser::ElemEntry& f1,
 	const OW_CIMXMLParser::ElemEntry& f2)
 {
@@ -262,13 +258,6 @@ OW_CIMXMLParser::getAttribute(const char* const attrId, bool throwIfError)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String
-OW_CIMXMLParser::mustGetAttribute(const char* const attrId)
-{
-	return getAttribute(attrId, true);
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLParser::mustGetChild(OW_CIMXMLParser::tokenId tId)
 {
@@ -345,22 +334,6 @@ OW_CIMXMLParser::getChild()
 
 
 //////////////////////////////////////////////////////////////////////////////
-bool
-OW_CIMXMLParser::tokenIs(const char* const arg) const
-{
-	return m_curTok.text.equals(arg);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-OW_CIMXMLParser::tokenIs(OW_CIMXMLParser::tokenId tId) const
-{
-//	cout << "tokenIs(" << g_elems[tId].name << ") = " << tokenIs(g_elems[tId].name) << "\n";
-	return tokenIs(g_elems[tId].name);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId) const
 {
@@ -373,27 +346,6 @@ OW_CIMXMLParser::mustTokenIs(OW_CIMXMLParser::tokenId tId) const
 	}
 }
 
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLParser::mustGetNextTag()
-{
-	getNextTag(true);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLParser::mustGetNext()
-{
-	getNext(true);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLParser::mustGetNext(OW_CIMXMLParser::tokenId beginTok)
-{
-	getNext(beginTok, true);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -458,14 +410,6 @@ OW_CIMXMLParser::mustGetEndTag()
 	}
 	getNext();
 	skipData();
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMXMLParser::tokenId
-OW_CIMXMLParser::getToken() const
-{
-	return getTokenFromName(m_curTok.text.c_str());
 }
 
 

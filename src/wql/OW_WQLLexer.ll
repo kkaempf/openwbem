@@ -267,7 +267,7 @@ other			.
 
 {xbitstart}			{
 					BEGIN(xbit);
-					strbuffer.clear(10);
+					strbuffer.reset();
 					//strbuffer += "b";
 				}
 				
@@ -292,7 +292,7 @@ other			.
 
 {xhstart}			{
 					BEGIN(xh);
-					strbuffer.clear(10);
+					strbuffer.reset();
 				}
 				
 <xh>{xhstop}			{
@@ -312,7 +312,7 @@ other			.
 
 {xqstart}			{
 					BEGIN(xq);
-					strbuffer.clear(10);
+					strbuffer.reset();
 				}
 				
 <xq>{xqstop}			{
@@ -333,7 +333,7 @@ other			.
 
 {xdstart}			{
 					BEGIN(xd);
-					strbuffer.clear(10);
+					strbuffer.reset();
 				}
 				
 <xd>{xdstop}			{
@@ -517,7 +517,7 @@ OW_WQLscanner_init(void)
 	   to know when to pass the string to lex/flex */
 	parseCh = NULL;
 
-	strbuffer.clear(10);
+	strbuffer.reset();
 	
 #if defined(FLEX_SCANNER)
 	if (YY_CURRENT_BUFFER)
