@@ -274,17 +274,21 @@ public:
 	 */
 	int compareToIgnoreCase(const char* arg) const;
 	/**
-	 * Append another String object to this String object.
-	 * @param arg	The String object to append to this String object.
-	 * @return A reference to this String object.
-	 */
-	String& concat(const String& arg);
-	/**
 	 * Append a C string to this String object.
 	 * @param arg	The C string to append to this String object.
 	 * @return A reference to this String object.
 	 */
 	String& concat(const char* arg);
+
+	/**
+	 * Append another String object to this String object.
+	 * @param arg	The String object to append to this String object.
+	 * @return A reference to this String object.
+	 */
+	String& concat(const String& arg)
+	{
+		return concat(arg.c_str());
+	}
 
 	/**
 	 * Append a char to this String object.
