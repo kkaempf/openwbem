@@ -111,7 +111,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		{
 			String instanceID = curReg.getPropertyT("InstanceID").getValueT().toString();
 			ProvRegInfo info;
-			info.namespaceName = curReg.getPropertyT("Namespace").getValueT().toString();
+			info.namespaceName = curReg.propertyHasValue("Namespace") ? curReg.getPropertyT("Namespace").getValueT().toString() : String();
 			info.className = curReg.getPropertyT("ClassName").getValueT().toString();
 			UInt16Array providerTypes = curReg.getPropertyT("ProviderTypes").getValueT().toUInt16Array();
 			info.url = curReg.getPropertyT("Url").getValueT().toString();
@@ -134,7 +134,10 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 							InstanceProviderInfo ipi;
 							ipi.setProviderName(instanceID);
 							StringArray namespaces;
-							namespaces.push_back(info.namespaceName);
+							if (!info.namespaceName.empty())
+							{
+								namespaces.push_back(info.namespaceName);
+							}
 							InstanceProviderInfo::ClassInfo classInfo(info.className, namespaces);
 							ipi.addInstrumentedClass(classInfo);
 							ipia.push_back(ipi);
@@ -148,7 +151,10 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 							SecondaryInstanceProviderInfo sipi;
 							sipi.setProviderName(instanceID);
 							StringArray namespaces;
-							namespaces.push_back(info.namespaceName);
+							if (!info.namespaceName.empty())
+							{
+								namespaces.push_back(info.namespaceName);
+							}
 							SecondaryInstanceProviderInfo::ClassInfo classInfo(info.className, namespaces);
 							sipi.addInstrumentedClass(classInfo);
 							sipia.push_back(sipi);
@@ -163,7 +169,10 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 							AssociatorProviderInfo api;
 							api.setProviderName(instanceID);
 							StringArray namespaces;
-							namespaces.push_back(info.namespaceName);
+							if (!info.namespaceName.empty())
+							{
+								namespaces.push_back(info.namespaceName);
+							}
 							AssociatorProviderInfo::ClassInfo classInfo(info.className, namespaces);
 							api.addInstrumentedClass(classInfo);
 							apia.push_back(api);
@@ -185,7 +194,10 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 							MethodProviderInfo mpi;
 							mpi.setProviderName(instanceID);
 							StringArray namespaces;
-							namespaces.push_back(info.namespaceName);
+							if (!info.namespaceName.empty())
+							{
+								namespaces.push_back(info.namespaceName);
+							}
 							StringArray methods; // leaving this empty means all methods
 							MethodProviderInfo::ClassInfo classInfo(info.className, namespaces, methods);
 							mpi.addInstrumentedClass(classInfo);
