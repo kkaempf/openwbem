@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_CIMDateTimeTestCases.hpp"

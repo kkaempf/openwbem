@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_XMLPARSERSAX_HPP_INCLUDE_GUARD_
 #define OW_XMLPARSERSAX_HPP_INCLUDE_GUARD_
 

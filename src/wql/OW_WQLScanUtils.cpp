@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 /*-------------------------------------------------------------------------
  *
  * Portions Copyright (c) 1996-2001, PostgreSQL Global Development Group

@@ -28,6 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
+
 //
 // XMLAttribute.hpp
 //

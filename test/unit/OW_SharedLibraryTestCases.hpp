@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #ifndef UC_OW_SharedLibrary_TEST_CASES_HPP_
 #define UC_OW_SharedLibrary_TEST_CASES_HPP_
 

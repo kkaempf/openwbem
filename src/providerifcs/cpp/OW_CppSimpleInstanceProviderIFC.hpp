@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_CPP_SIMPLE_INSTANCE_PROVIDER_IFC_HPP_
 #define OW_CPP_SIMPLE_INSTANCE_PROVIDER_IFC_HPP_
 #include "OW_config.h"

@@ -43,6 +43,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #include <stdlib.h>
 #include "OW_WQLAst.hpp"
 #include "OW_WQLImpl.hpp"

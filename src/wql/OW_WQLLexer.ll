@@ -41,6 +41,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #include "OW_WQLAst.hpp"
 #include "OW_WQLImpl.hpp"
 #include "OW_StringBuffer.hpp"

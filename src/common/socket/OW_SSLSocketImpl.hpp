@@ -27,9 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
 /**
  * @name		OW_SSLSocketImpl.hpp
  * @author	J. Bart Whiteley
+ * @author Dan Nuffer
  *
  * @description
  *		Interface file for the OW_SSLSocketImpl class

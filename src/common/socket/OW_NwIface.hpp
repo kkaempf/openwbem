@@ -27,9 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
 /**
  * @name		OW_NwIface.hpp
  * @author	Jon M. Carey
+ * @author Dan Nuffer
  *
  * @description
  *		This is the interface file for the OW_NwIface class.

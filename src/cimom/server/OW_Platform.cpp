@@ -27,6 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Jon Carey
+ * @author Dan Nuffer
+ */
+
 #include "OW_config.h"
 #include "OW_Platform.hpp"
 //#include "OW_Environment.hpp"

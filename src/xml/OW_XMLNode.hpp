@@ -28,6 +28,13 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Calvin R. Gaisford
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_XMLNODE_HPP_INCLUDE_GUARD_
 #define OW_XMLNODE_HPP_INCLUDE_GUARD_
 

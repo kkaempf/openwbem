@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_VISITOR_HPP_INCLUDE_GUARD_
 #define OW_VISITOR_HPP_INCLUDE_GUARD_
 

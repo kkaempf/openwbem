@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 #ifndef OW_SORTED_VECTOR_SET_HPP_
 #define OW_SORTED_VECTOR_SET_HPP_
 #include "OW_config.h"

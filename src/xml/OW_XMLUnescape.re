@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 /* a simple lexical scanner to escape xml */
 #include "OW_config.h"
 #include "OW_XMLUnescape.hpp"

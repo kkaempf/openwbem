@@ -28,6 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
 #define OW_XMLATTRIBUTE_HPP_INCLUDE_GUARD_
 

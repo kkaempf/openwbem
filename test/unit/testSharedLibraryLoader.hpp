@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #ifndef testSharedLibraryLoader_HPP_
 #define testSharedLibraryLoader_HPP_
 

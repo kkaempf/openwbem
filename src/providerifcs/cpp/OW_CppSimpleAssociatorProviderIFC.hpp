@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Bart Whiteley
+ */
+
+
 #ifndef OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
 #define OW_CPPSIMPLEASSOCIATORPROVIDER_INCLUDE_GUARD_
 

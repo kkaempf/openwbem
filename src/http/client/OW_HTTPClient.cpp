@@ -27,6 +27,12 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Bart Whiteley
+ * @author Dan Nuffer
+ */
+
 #include "OW_config.h"
 #include "OW_HTTPClient.hpp"
 #include "OW_HTTPUtils.hpp"

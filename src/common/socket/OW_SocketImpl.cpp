@@ -27,13 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
 /**
  * @name		OW_SocketImpl.cpp
  * @author	J. Bart Whiteley
+ * @author Dan Nuffer
  *
  * @description
  *		Implementation file for the OW_SocketImpl class.
  */
+
 #include "OW_config.h"
 #include "OW_SocketImpl.hpp"
 

@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #ifndef OW_CIMUrl_TEST_CASES_HPP_
 #define OW_CIMUrl_TEST_CASES_HPP_
 

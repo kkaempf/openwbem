@@ -27,6 +27,11 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
+/**
+ * @author Dan Nuffer
+ */
+
 // Portions of this file based on utf/detail/utf8_algo.hpp
 //
 //  Copyright (c) 2003 Alberto Barbati

@@ -28,6 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Dan Nuffer
+ */
+
+
 #include "OW_config.h"
 #include "OW_HTTPXMLCIMListener.hpp"
 #include "OW_Semaphore.hpp"

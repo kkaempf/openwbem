@@ -27,13 +27,16 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
+
 /**
  * @name		OW_SSLSocketImpl.cpp
  * @author	J. Bart Whiteley
+ * @author Dan Nuffer
  *
  * @description
  *		Implementation file for the OW_SSLSocketImpl class.
  */
+
 #include "OW_config.h"
 #include "OW_SSLSocketImpl.hpp"
 #ifdef OW_HAVE_OPENSSL
