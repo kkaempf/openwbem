@@ -61,9 +61,9 @@ void OW_FormatTestCases::testPercent()
 
 void OW_FormatTestCases::testError()
 {
-	unitAssert( Format("%1,%2xx", 1).toString() == "1,\n*** Parameter specifier too large.\n*** Error in Format string at \"2xx\".\n" );
-	unitAssert( Format("%xABC", 'e').toString() == "\n*** Error in Format string at \"xABC\".\n" );
-	unitAssert( Format("%0ABC", 'e').toString() == "\n*** Error in Format string at \"0ABC\".\n" );
+	unitAssert( Format("%1,%2xx", 1).toString() == "1,\n*** Parameter specifier too large.\n*** Error in format string at \"2xx\".\n" );
+	unitAssert( Format("%xABC", 'e').toString() == "\n*** Error in format string at \"xABC\".\n" );
+	unitAssert( Format("%0ABC", 'e').toString() == "\n*** Error in format string at \"0ABC\".\n" );
 }
 
 Test* OW_FormatTestCases::suite()
