@@ -53,14 +53,30 @@ DECLARE_EXCEPTION(ThreadPool);
 class OW_ThreadPool
 {
 public:
+	enum PoolType
+	{
+		FIXED_SIZE,
+		DYNAMIC_SIZE
+	};
+
 	/**
 	 * Constructor
+	 *
+	 * @param poolType The type of pool, either FIXED_SIZE or DYNAMIC_SIZE
+	 * FIXED_SIZE - numThreads threads will be created at instantiation time.
+	 *  No threads are created or destroyed until the pool is shutdown.
+	 * DYNAMIC_SIZE - Threads will be created as work is added.  The number
+	 *  of threads will always be less than numThreads. Threads exit when no
+	 *  more work is available in the queue.
+	 *
 	 * @param numThreads The number of threads in the pool.
+	 *
 	 * @param maxQueueSize The upper bound on the size of the queue.  0 means
 	 *  no limit.
+	 *
 	 * @throw OW_ThreadPoolException if the underlying implementation fails.
 	 */
-	OW_ThreadPool(OW_UInt32 numThreads, OW_UInt32 maxQueueSize);
+	OW_ThreadPool(PoolType poolType, OW_UInt32 numThreads, OW_UInt32 maxQueueSize);
 
 	/**
 	 * Add an OW_RunnableRef for the pool to execute.
@@ -79,11 +95,18 @@ public:
 	/**
 	 * Instruct all threads to exit and stop working.  After shutdown() is
 	 * called, addWork() and tryAddWork() will return false.
+	 *
 	 * @param finishWorkInQueue If true, threads will continue to process the
 	 *  current work in the queue, before shutting down.  If false, the work in
 	 *  the queue will be discarded.
+	 *
+	 * @param timeoutSecs The number of seconds to wait for the threads to finish
+	 *  their work (and possibly the work in the queue) before attempting to
+	 *  cancel the threads.  If timeoutSecs < 0, the timeout will be unlimited,
+	 *  the threads will not be cancelled, and shutdown() will return once
+	 *  all the threads have exited.
 	 */
-	void shutdown(bool finishWorkInQueue=true);
+	void shutdown(bool finishWorkInQueue=true, int timeoutSecs=-1);
 
 	/**
 	 * Wait for the queue to empty out.
@@ -101,5 +124,6 @@ private:
 	OW_Reference<OW_ThreadPoolImpl> m_impl;
 };
 
+typedef OW_Reference<OW_ThreadPool> OW_ThreadPoolRef;
 
 #endif
