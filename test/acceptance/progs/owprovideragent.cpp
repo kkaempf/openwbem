@@ -57,15 +57,6 @@ using namespace OpenWBEM;
 using namespace WBEMFlags;
 using namespace std;
 
-class RPALogger : public Logger
-{
-protected:
-	virtual void doLogMessage(const String &message, const ELogLevel) const
-	{
-		cerr << message << endl;
-	}
-};
-
 UnnamedPipeRef sigPipe;
 extern "C"
 void sig_handler(int)
@@ -222,8 +213,10 @@ int main(int argc, char* argv[])
 			ConfigFile::setConfigItem(cmap, ProviderAgent::DynamicClassRetieval_opt, "true", ConfigFile::E_PRESERVE_PREVIOUS);
 		}
 
-		LoggerRef logger(new RPALogger);
-		logger->setLogLevel(E_DEBUG_LEVEL);
+		bool debugMode = false;
+
+		LoggerRef logger = Logger::createLogger(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION), debugMode);
+		logger->setLogLevel(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LEVEL_opt, OW_DEFAULT_LOG_LEVEL));
 
 
 
