@@ -15,6 +15,7 @@ SHAREDLIBADD = \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/services/http -lowservicehttp 
 
 
