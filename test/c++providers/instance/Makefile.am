@@ -4,14 +4,16 @@ noinst_LIBRARIES = \
 liblaptopbat.a \
 liblinuxprocess.a \
 librpmip.a \
-libtestinstance.a
+libtestinstance.a \
+libinfiniteip.a
 
 
 OW_SHARED_LIBS = \
 liblaptopbat.so \
 liblinuxprocess.so \
 librpmip.so \
-libtestinstance.so 
+libtestinstance.so \
+libinfiniteip.so
 
 all-local: $(OW_SHARED_LIBS)
 	
@@ -20,6 +22,8 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
+libinfiniteip_a_SOURCES = \
+OW_Infinity.cpp
 
 liblaptopbat_a_SOURCES = \
 OW_LaptopBattery.cpp
@@ -33,7 +37,15 @@ OW_RPM.cpp
 libtestinstance_a_SOURCES = \
 testinstance.cpp
 
-EXTRA_DIST = LaptopBattery.mof LinuxProcess.mof SoftwarePackage.mof
+EXTRA_DIST = \
+demo_device.mof \
+demo.mof \
+demo_system.mof \
+LaptopBattery.mof \
+InfiniteInstances.mof \
+LinuxProcess.mof \
+SoftwarePackage.mof \
+testinstance.mof
 
 INCLUDES = \
 -I$(top_srcdir)/src/common -I$(top_srcdir)/src/thread -I$(top_srcdir)/src \

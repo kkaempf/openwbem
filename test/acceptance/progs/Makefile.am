@@ -1,5 +1,15 @@
-noinst_PROGRAMS = cimlistener wqlTest1 aclTest CIMOMLocator owcimclientcl \
-	fakeclient testinstprov testCIMExceptions
+noinst_PROGRAMS = \
+cimlistener \
+wqlTest1 \
+aclTest \
+CIMOMLocator \
+owcimclientcl \
+fakeclient \
+testinstprov \
+testCIMExceptions \
+infiniteClient
+
+
 
 #CIMOMLocator
 CIMOMLocator_LDFLAGS = \
@@ -62,6 +72,22 @@ $(CXXBINLINKFLAGS) \
 
 aclTest_SOURCES = \
 aclTest.cpp
+
+#infiniteClient
+infiniteClient_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+infiniteClient_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o infiniteClient
+
+infiniteClient_SOURCES = \
+InfiniteClient.cpp
+
 
 #owcimclientcl
 owcimclientcl_LDADD = \

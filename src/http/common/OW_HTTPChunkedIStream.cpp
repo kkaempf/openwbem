@@ -151,14 +151,13 @@ OW_HTTPChunkedIStream::buildTrailerMap()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
-OW_String
-OW_HTTPChunkedIStream::getError() const
+OW_String 
+OW_HTTPChunkedIStream::getTrailer(const OW_String& key) const
 {
 	for (OW_Map<OW_String, OW_String>::const_iterator iter = m_trailerMap.begin();
 		  iter != m_trailerMap.end(); ++iter)
 	{
-		if (iter->first.substring(3).equalsIgnoreCase("CIMErrorTrailer"))
+		if (iter->first.substring(3).equalsIgnoreCase(key))
 		{
 			return iter->second;
 		}
@@ -166,6 +165,14 @@ OW_HTTPChunkedIStream::getError() const
 	return OW_String();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_HTTPChunkedIStream::getError() const
+{
+	return getTrailer("CIMErrorTrailer");
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_UInt32
 OW_HTTPChunkedIStream::getError(std::ostream& ostr) const
 {

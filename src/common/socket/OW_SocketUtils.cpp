@@ -102,14 +102,14 @@ OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInpu
 
 	int maxfd = fd;
 
+	if (lUPipe)
+	{
+		FD_SET(pipefd, &readfds);
+		maxfd = OW_MAX(fd, pipefd);
+	}
 	if (forInput)
 	{
 		FD_SET(fd, &readfds);
-		if (lUPipe)
-		{
-			FD_SET(pipefd, &readfds);
-			maxfd = OW_MAX(fd, pipefd);
-		}
 	}
 	else
 	{
@@ -138,7 +138,7 @@ OW_SocketUtils::waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInpu
 		default:
 			if (lUPipe)
 			{
-				if (forInput && FD_ISSET(pipefd, &readfds))
+				if (FD_ISSET(pipefd, &readfds))
 				{
 					rc = -1;
 				}

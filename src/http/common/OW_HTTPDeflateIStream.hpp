@@ -92,6 +92,8 @@ public:
 	 */
 	OW_Reference<OW_CIMProtocolIStreamIFC> getInputStreamOrig() { return m_istr; };
 
+	virtual OW_String getTrailer(const OW_String& key) const
+			{ return m_istr->getTrailer(key); }
 	virtual OW_String getError() const { return m_istr->getError(); }
 	virtual OW_UInt32 getError(std::ostream& ostr) const 
 			{ return m_istr->getError(ostr); }

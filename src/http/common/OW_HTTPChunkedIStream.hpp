@@ -111,6 +111,7 @@ class OW_HTTPChunkedIStream : private OW_HTTPChunkedIStreamBase,
 		 */
 		void resetInput();
 
+		virtual OW_String getTrailer(const OW_String& key) const;
 		virtual OW_String getError() const;
 		virtual OW_UInt32 getError(std::ostream& ostr) const;
 

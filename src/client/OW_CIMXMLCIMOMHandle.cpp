@@ -188,10 +188,11 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 		OW_TempFileStream error(500);
 		istr->getError(error);
 		OW_CIMXMLParser errorParser(error);
-		return checkNodeForCIMError(errorParser, methodName, isIntrinsic);
+		checkNodeForCIMError(errorParser, methodName, isIntrinsic);
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	const OW_String& operation, bool isIntrinsic)
