@@ -43,16 +43,16 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(ExecTimeout);
-OW_DECLARE_EXCEPTION(ExecBufferFull);
-OW_DECLARE_EXCEPTION(ExecError);
+OW_DECLARE_APIEXCEPTION(ExecTimeout, OW_COMMON_API);
+OW_DECLARE_APIEXCEPTION(ExecBufferFull, OW_COMMON_API);
+OW_DECLARE_APIEXCEPTION(ExecError, OW_COMMON_API);
 class UnnamedPipe;
 typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
 class PopenStreamsImpl;
 /**
  * This class represents a connection to a process.
  */
-class PopenStreams
+class OW_COMMON_API PopenStreams
 {
 public:
 	PopenStreams();
@@ -144,7 +144,7 @@ namespace Exec
 	 * fails,  -1 if there was another error and the return code
 	 * of the command otherwise.
 	 */
-	int safeSystem(const Array<String>& command);
+	OW_COMMON_API int safeSystem(const Array<String>& command);
 	/**
 	 * Execute a command.
 	 * The command's stdin, stdout, and stderr will be connected via pipes to
@@ -166,7 +166,7 @@ namespace Exec
 	 * @return A PopenStreams object which can be used to access the child
 	 *  process and/or get it's return value.
 	 */
-	PopenStreams safePopen(const Array<String>& command,
+	OW_COMMON_API PopenStreams safePopen(const Array<String>& command,
 			const String& initialInput = String());
 	/**
 	 * Wait for output from a child process.  The function returns when the
@@ -196,7 +196,7 @@ namespace Exec
 	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
+	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
 	
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The 
@@ -249,7 +249,8 @@ namespace Exec
 	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
-	void executeProcessAndGatherOutput(const Array<String>& command,
+	OW_COMMON_API void executeProcessAndGatherOutput(
+		const Array<String>& command,
 		String& output, int& processstatus,
 		int timeoutsecs = -1, int outputlimit = -1);
 	

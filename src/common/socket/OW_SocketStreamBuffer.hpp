@@ -42,7 +42,7 @@ namespace OpenWBEM
 {
 
 class SocketBaseImpl;
-class SocketStreamBuffer : public IOIFCStreamBuffer
+class OW_COMMON_API SocketStreamBuffer : public IOIFCStreamBuffer
 {
 public:
 	SocketStreamBuffer(SocketBaseImpl* sock);

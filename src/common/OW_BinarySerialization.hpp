@@ -142,9 +142,9 @@ const UInt8 END_STRINGENUM =		154;
 //////////////////////////////////////////////////////////////////////////////
 namespace BinarySerialization
 {
-	void write(std::ostream& ostrm, const void* dataOut,
+	OW_COMMON_API void write(std::ostream& ostrm, const void* dataOut,
 		int dataOutLen);
-	void verifySignature(std::istream& istrm, UInt8 validSig);
+	OW_COMMON_API void verifySignature(std::istream& istrm, UInt8 validSig);
 	inline void write(std::ostream& ostrm, Int32 val)
 	{
 		val = hton32(val);
@@ -155,7 +155,7 @@ namespace BinarySerialization
 		val = hton32(val);
 		BinarySerialization::write(ostrm, &val, sizeof(val));
 	}
-	void writeLen(std::ostream& ostrm, UInt32 len);
+	OW_COMMON_API void writeLen(std::ostream& ostrm, UInt32 len);
 	inline void write(std::ostream& ostrm, UInt8 val)
 	{
 		BinarySerialization::write(ostrm, &val, sizeof(val));
@@ -216,7 +216,7 @@ namespace BinarySerialization
 		BinarySerialization::write(ostrm, BINSIG_STR);
 		str.writeObject(ostrm);
 	}
-	void readLen(std::istream& istrm, UInt32& len);
+	OW_COMMON_API void readLen(std::istream& istrm, UInt32& len);
 	/////////////////////////////////////////////////////////////////////////////
 	template <typename T>
 	inline void
@@ -254,11 +254,11 @@ namespace BinarySerialization
 		BinarySerialization::write(ostrm, BINSIG_STRARRAY);
 		writeArray(ostrm, stra);
 	}
-	void writeStringArray(std::ostream& ostrm,
+	OW_COMMON_API void writeStringArray(std::ostream& ostrm,
 		const StringArray* propertyList);
 	
 	
-	void read(std::istream& istrm, void* dataIn, int dataInLen);
+	OW_COMMON_API void read(std::istream& istrm, void* dataIn, int dataInLen);
 	inline void read(std::istream& istrm, String& arg)
 	{
 		arg.readObject(istrm);
@@ -349,11 +349,11 @@ namespace BinarySerialization
 		readArray(istrm, stra);
 		return stra;
 	}
-	void readObjectPathEnum(std::istream& istrm, CIMObjectPathResultHandlerIFC& result);
-	void readClassEnum(std::istream& istrm, CIMClassResultHandlerIFC& result);
-	void readInstanceEnum(std::istream& istrm, CIMInstanceResultHandlerIFC& result);
-	void readQualifierTypeEnum(std::istream& istrm, CIMQualifierTypeResultHandlerIFC& result);
-	void readStringEnum(std::istream& istrm, StringResultHandlerIFC& result);
+	OW_COMMON_API void readObjectPathEnum(std::istream& istrm, CIMObjectPathResultHandlerIFC& result);
+	OW_COMMON_API void readClassEnum(std::istream& istrm, CIMClassResultHandlerIFC& result);
+	OW_COMMON_API void readInstanceEnum(std::istream& istrm, CIMInstanceResultHandlerIFC& result);
+	OW_COMMON_API void readQualifierTypeEnum(std::istream& istrm, CIMQualifierTypeResultHandlerIFC& result);
+	OW_COMMON_API void readStringEnum(std::istream& istrm, StringResultHandlerIFC& result);
 } // end namespace BinarySerialization
 
 } // end namespace OpenWBEM

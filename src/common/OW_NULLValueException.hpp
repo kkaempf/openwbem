@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(NULLValue);
+OW_DECLARE_APIEXCEPTION(NULLValue, OW_COMMON_API);
 
 } // end namespace OpenWBEM
 

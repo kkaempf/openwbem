@@ -49,7 +49,7 @@ namespace OpenWBEM
 
 class UserInfo;
 
-OW_DECLARE_EXCEPTION(ContextDataNotFound);
+OW_DECLARE_APIEXCEPTION(ContextDataNotFound, OW_COMMON_API);
 
 /**
  * This class is used to store general information (the context) of a
@@ -63,7 +63,7 @@ OW_DECLARE_EXCEPTION(ContextDataNotFound);
  * Thread safety: None
  * Copy Semantics: Non-copyable
  */
-class OperationContext
+class OW_COMMON_API OperationContext
 {
 public:
 	

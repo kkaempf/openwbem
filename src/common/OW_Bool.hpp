@@ -50,7 +50,7 @@ class String;
  * functions safer (ie it'll be less likely the compiler will pick the wrong
  * overload.)
  */
-class Bool
+class OW_COMMON_API Bool
 {
 public:
 		
@@ -149,7 +149,7 @@ private:
 	Bool(volatile void*);
 	bool m_val;
 };
-std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
+OW_COMMON_API std::ostream& operator << (std::ostream& ostrm, const Bool& arg);
 
 } // end namespace OpenWBEM
 

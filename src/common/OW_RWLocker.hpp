@@ -44,9 +44,9 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(RWLocker);
+OW_DECLARE_APIEXCEPTION(RWLocker, OW_COMMON_API);
 //////////////////////////////////////////////////////////////////////////////
-class RWLocker
+class OW_COMMON_API RWLocker
 {
 public:
 	RWLocker();
@@ -72,7 +72,7 @@ private:
 	Thread_t m_writer;
 };
 //////////////////////////////////////////////////////////////////////////////
-class ReadLock
+class OW_COMMON_API ReadLock
 {
 public:
 	ReadLock(RWLocker& locker, UInt32 sTimeout, UInt32 usTimeout=0)
@@ -109,7 +109,7 @@ private:
 	ReadLock& operator=(const ReadLock&);
 };
 //////////////////////////////////////////////////////////////////////////////
-class WriteLock
+class OW_COMMON_API WriteLock
 {
 public:
 	WriteLock(RWLocker& locker, UInt32 sTimeout, UInt32 usTimeout=0)

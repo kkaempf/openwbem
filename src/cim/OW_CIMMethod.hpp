@@ -61,7 +61,7 @@ namespace OpenWBEM
  *			// Valid method
  *		}
  */
-class CIMMethod : public CIMElement
+class OW_COMMON_API CIMMethod : public CIMElement
 {
 public:
 	struct METHData;

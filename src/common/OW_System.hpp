@@ -43,8 +43,8 @@ namespace OpenWBEM
 namespace System
 {
 
-String errorMsg(int errorCode);
-String lastErrorMsg(bool socketError=false);
+OW_COMMON_API String errorMsg(int errorCode);
+OW_COMMON_API String lastErrorMsg(bool socketError=false);
 
 }	// End of System namespace
 }	// End of OpenWBEM namespace

@@ -47,7 +47,7 @@ namespace OpenWBEM
 
 class CIMDateTime;
 class CIMObjectPath;
-class StringBuffer
+class OW_COMMON_API StringBuffer
 {
 public:
 #if defined(OW_AIX)

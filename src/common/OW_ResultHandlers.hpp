@@ -42,7 +42,7 @@ namespace OpenWBEM
 {
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMClassEnumBuilder : public CIMClassResultHandlerIFC
+class OW_COMMON_API CIMClassEnumBuilder : public CIMClassResultHandlerIFC
 {
 public:
 	CIMClassEnumBuilder(CIMClassEnumeration& e) : m_e(e) {}
@@ -54,7 +54,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMClassArrayBuilder : public CIMClassResultHandlerIFC
+class OW_COMMON_API CIMClassArrayBuilder : public CIMClassResultHandlerIFC
 {
 public:
 	CIMClassArrayBuilder(CIMClassArray& a) : m_a(a) {}
@@ -66,7 +66,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class StringArrayBuilder : public StringResultHandlerIFC
+class OW_COMMON_API StringArrayBuilder : public StringResultHandlerIFC
 {
 public:
 	StringArrayBuilder(StringArray& a) : m_a(a) {}
@@ -78,7 +78,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class StringEnumBuilder : public StringResultHandlerIFC
+class OW_COMMON_API StringEnumBuilder : public StringResultHandlerIFC
 {
 public:
 	StringEnumBuilder(StringEnumeration& e) : m_e(e) {}
@@ -90,7 +90,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMObjectPathEnumBuilder : public CIMObjectPathResultHandlerIFC
+class OW_COMMON_API CIMObjectPathEnumBuilder : public CIMObjectPathResultHandlerIFC
 {
 public:
 	CIMObjectPathEnumBuilder(CIMObjectPathEnumeration& e) : m_e(e) {}
@@ -102,7 +102,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMObjectPathArrayBuilder : public CIMObjectPathResultHandlerIFC
+class OW_COMMON_API CIMObjectPathArrayBuilder : public CIMObjectPathResultHandlerIFC
 {
 public:
 	CIMObjectPathArrayBuilder(CIMObjectPathArray& a) : m_a(a) {}
@@ -114,7 +114,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
+class OW_COMMON_API CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
 {
 public:
 	CIMInstanceEnumBuilder(CIMInstanceEnumeration& e) : m_e(e) {}
@@ -126,7 +126,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMInstanceArrayBuilder : public CIMInstanceResultHandlerIFC
+class OW_COMMON_API CIMInstanceArrayBuilder : public CIMInstanceResultHandlerIFC
 {
 public:
 	CIMInstanceArrayBuilder(CIMInstanceArray& a) : m_a(a) {}
@@ -138,7 +138,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMQualifierTypeEnumBuilder : public CIMQualifierTypeResultHandlerIFC
+class OW_COMMON_API CIMQualifierTypeEnumBuilder : public CIMQualifierTypeResultHandlerIFC
 {
 public:
 	CIMQualifierTypeEnumBuilder(CIMQualifierTypeEnumeration& e) : m_e(e) {}
@@ -150,7 +150,7 @@ private:
 };
 
 /////////////////////////////////////////////////////////////////////////////
-class CIMQualifierTypeArrayBuilder : public CIMQualifierTypeResultHandlerIFC
+class OW_COMMON_API CIMQualifierTypeArrayBuilder : public CIMQualifierTypeResultHandlerIFC
 {
 public:
 	CIMQualifierTypeArrayBuilder(CIMQualifierTypeArray& a) : m_a(a) {}

@@ -50,7 +50,7 @@
 namespace OpenWBEM
 {
 
-class ServerSocketImpl : public SelectableIFC
+class OW_COMMON_API ServerSocketImpl : public SelectableIFC
 {
 public:
 	ServerSocketImpl(SocketFlags::ESSLFlag isSSL);

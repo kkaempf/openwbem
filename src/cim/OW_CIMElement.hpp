@@ -48,7 +48,7 @@ namespace OpenWBEM
  * CIMMethod, CIMParameter, CIMProperty, CIMQualifier and
  * CIMQualifierType.
  */
-class CIMElement : public CIMBase
+class OW_COMMON_API CIMElement : public CIMBase
 {
 public:
 	virtual ~CIMElement();

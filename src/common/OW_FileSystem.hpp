@@ -50,7 +50,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(FileSystem)
+OW_DECLARE_APIEXCEPTION(FileSystem, OW_COMMON_API)
 
 class File;
 class String;
@@ -65,7 +65,7 @@ namespace FileSystem
 	 * Open a file for read/write and return an File object that can be used
 	 * for reading and writing.
 	 */
-	File openFile(const String& path);
+	OW_COMMON_API File openFile(const String& path);
 	/**
 	 * Create the file for the given name.
 	 * @param path	The name of the file to create.
@@ -73,81 +73,81 @@ namespace FileSystem
 	 * writing. Otherwise a NULL File object.  If the file exists, a NULL
 	 * File object will be returned.
 	 */
-	File createFile(const String& path);
+	OW_COMMON_API File createFile(const String& path);
 	/**
 	 * Opens or creates the file for the given name.
 	 * @param path	The name of the file to create.
 	 * @return On success an File object that can be used for reading and
 	 * writing. Otherwise a null File object.
 	 */
-	File openOrCreateFile(const String& path);
+	OW_COMMON_API File openOrCreateFile(const String& path);
 	/**
 	 * Change the given file ownership
 	 * @param filename The name of the file to change ownership on.
 	 * @param userId The user id to change ownership to
 	 * @return 0 on success. Otherwise -1
 	 */
-	int changeFileOwner(const String& filename,
+	OW_COMMON_API int changeFileOwner(const String& filename,
 		const UserId& userId);
 	/**
 	 * @return true if the file exists (and false otherwise).
 	 */
-	bool exists(const String& path);
+	OW_COMMON_API bool exists(const String& path);
 	/**
 	 * @return true if the file exists and can be read
 	 */
-	bool canRead(const String& path);
+	OW_COMMON_API bool canRead(const String& path);
 	/**
 	 * @return true if the file exists and can be written
 	 */
-	bool canWrite(const String& path);
-  /**
-   * @return true if file exists and is a symbolic link
-   */
-  bool isLink(const String& path);
+	OW_COMMON_API bool canWrite(const String& path);
+	/**
+     * @return true if file exists and is a symbolic link
+     */
+	OW_COMMON_API bool isLink(const String& path);
 	/**
 	 * @return true if file exists and is a directory
 	 */
-	bool isDirectory(const String& path);
+	OW_COMMON_API bool isDirectory(const String& path);
 	/**
 	 * Change to the given directory
 	 * @param path	The directory to change to
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool changeDirectory(const String& path);
+	OW_COMMON_API bool changeDirectory(const String& path);
 	/**
 	 * Create a directory
 	 * @param path	The name of the directory to create.
 	 * @param mode specifies the permissions to use.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool makeDirectory(const String& path, int mode=0777);
+	OW_COMMON_API bool makeDirectory(const String& path, int mode=0777);
 	/**
 	 * Get the size of the file in bytes
 	 * @param path	The name of the file to get the size for.
 	 * @param size	Put the size of the file in this variable.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool getFileSize(const String& path, off_t& size);
+	OW_COMMON_API bool getFileSize(const String& path, off_t& size);
 	/**
 	 * Remove the given directory
 	 * @param path	The name of the directory to remove
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool removeDirectory(const String& path);
+	OW_COMMON_API bool removeDirectory(const String& path);
 	/**
 	 * Remove the given file
 	 * @param path	The name of the file to remove.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool removeFile(const String& path);
+	OW_COMMON_API bool removeFile(const String& path);
 	/**
 	 * Get the names of the files (and directories) in the given directory
 	 * @param path			The name of the directory to get the contents of.
 	 * @param dirEntries	The directory contents will be placed in this array.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool getDirectoryContents(const String& path,
+	OW_COMMON_API bool getDirectoryContents(const String& path,
 		StringArray& dirEntries);
 	/**
 	 * Rename the given file to the new name
@@ -155,7 +155,7 @@ namespace FileSystem
 	 * @param newFileName	The new name for the olFileName
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool renameFile(const String& oldFileName,
+	OW_COMMON_API bool renameFile(const String& oldFileName,
 		const String& newFileName);
 	/**
 	 * Read data from file.
@@ -168,7 +168,7 @@ namespace FileSystem
 	 * @return The number of bytes read. If EOF or an error occurs, a short
 	 * count or zero is returned.
 	 */
-	size_t read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
+	OW_COMMON_API size_t read(const FileHandle& hdl, void* bfr, size_t numberOfBytes,
 		off_t offset=-1L);
 	/**
 	 * Write data to a file.
@@ -180,7 +180,7 @@ namespace FileSystem
 	 * @return The number of bytes written. If an error occurs, a short count
 	 * or zero is returned.
 	 */
-	size_t write(FileHandle& hdl, const void* bfr,
+	OW_COMMON_API size_t write(FileHandle& hdl, const void* bfr,
 		size_t numberOfBytes, off_t offset=-1L);
 	/**
 	 * Seek to a given offset within the file.
@@ -193,35 +193,35 @@ namespace FileSystem
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	off_t seek(const FileHandle& hdl, off_t offset, int whence);
+	OW_COMMON_API off_t seek(const FileHandle& hdl, off_t offset, int whence);
 	/**
 	 * @param hdl	The file handle to use in the tell operation.
 	 * @return The current position in the file relative to the beginning of
 	 * the file on success. Otherwise -1.
 	 */
-	off_t tell(const FileHandle& hdl);
+	OW_COMMON_API off_t tell(const FileHandle& hdl);
 	/**
 	 * Position the file pointer associated with the given file handle to the
 	 * beginning of the file.
 	 * @param hdl	The file handle to use in the rewind operation.
 	 */
-	void rewind(const FileHandle& hdl);
+	OW_COMMON_API void rewind(const FileHandle& hdl);
 	/**
 	 * Close file handle.
 	 * @param hdl	The file handle to close.
 	 * @return 0 on success. Otherwise -1.
 	 */
-	int close(const FileHandle& hdl);
+	OW_COMMON_API int close(const FileHandle& hdl);
 	/**
 	 * Flush any buffered data to the file if buffering supported.
 	 * @param hdl	The file handle to flush the buffer on.
 	 */
-	int flush(FileHandle& hdl);
+	OW_COMMON_API int flush(FileHandle& hdl);
 	/**
 	 * Create a file with random data suitable for use with SSL initialization
 	 * @param filename  The name of the file to write the random data to
 	 */
-	void initRandomFile(const String& file);
+	OW_COMMON_API void initRandomFile(const String& file);
 	/**
 	 * Read and return the contents of a text file.  If the file contains a null
 	 * character ('\0') then only previous data will be returned.
@@ -229,7 +229,7 @@ namespace FileSystem
 	 * @exception FileSystemException if the file doesn't exist or reading fails
 	 * for any reason.
 	 */
-	String getFileContents(const String& filename);
+	OW_COMMON_API String getFileContents(const String& filename);
 	/**
 	 * Read and return the lines of a test file. If the file contains a null
 	 * character ('\0') then only previous data will be returned.
@@ -237,7 +237,7 @@ namespace FileSystem
 	 * @exception FileSystemException if the file doesn't exist or reading fails
 	 * for any reason.
 	 */
-	StringArray getFileLines(const String& filename);
+	OW_COMMON_API StringArray getFileLines(const String& filename);
 
 } // end namespace FileSystem
 

@@ -44,7 +44,7 @@ extern FILE* owmofin;
 
 namespace OpenWBEM
 {
-OW_DECLARE_EXCEPTION(MOFParser)
+OW_DECLARE_APIEXCEPTION(MOFParser, OW_MOF_API);
 }
 
 #endif // MOF_PARSER_DECLS_HPP_

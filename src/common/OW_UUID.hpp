@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(UUID);
+OW_DECLARE_APIEXCEPTION(UUID, OW_COMMON_API);
 /**
  * UUIDs (Universally Unique IDentifiers), also known as GUIDs (Globally Unique 
  * IDentifiers), are 128 bits long. It is either guaranteed to be different
@@ -55,7 +55,7 @@ OW_DECLARE_EXCEPTION(UUID);
  *   DCE: Remote Procedure Call, Open Group CAE Specification C309
  *    ISBN 1-85912-041-5 28cm. 674p. pbk. 1,655g. 8/94
  */
-class UUID
+class OW_COMMON_API UUID
 {
 public:
 	/**
@@ -100,7 +100,7 @@ private:
 	friend bool operator==(const UUID& x, const UUID& y);
 	friend bool operator<(const UUID& x, const UUID& y);
 };
-bool operator!=(const UUID& x, const UUID& y);
+OW_COMMON_API bool operator!=(const UUID& x, const UUID& y);
 
 } // end namespace OpenWBEM
 

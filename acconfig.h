@@ -197,7 +197,38 @@
 #define OW_PRINT_FUNC_NAME
 #endif /* #ifdef OW_PRINT_FUNC_DEBUG */
 
+#ifdef OW_WIN32
+#define EXPORT __declspec(dllexport)
+#define IMPORT __declspec(dllimport)
+#else
+#define EXPORT
+#define IMPORT
+#endif
+
+#ifdef OW_COMMON_BUILD
+#define COMMON_API OW_EXPORT
+#else
+#define COMMON_API OW_IMPORT
+#endif
+
+#ifdef OW_XML_BUILD
+#define XML_API OW_EXPORT
+#else
+#define XML_API OW_IMPORT
+#endif
+
+#ifdef OW_MOF_BUILD
+#define MOF_API OW_EXPORT
+#else
+#define MOF_API OW_IMPORT
+#endif
+
+
+#ifdef OW_HTTP_BUILD
+#define HTTP_API OW_EXPORT
+#else
+#define HTTP_API OW_IMPORT
+#endif
 
 #endif /* #ifdef __cplusplus */
-
 

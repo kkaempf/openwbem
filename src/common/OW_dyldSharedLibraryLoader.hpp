@@ -49,7 +49,7 @@ namespace OpenWBEM
  * Copy semantics: Value
  * Exception safety: Strong
  */
-class dyldSharedLibraryLoader : public SharedLibraryLoader
+class OW_COMMON_API dyldSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~dyldSharedLibraryLoader();

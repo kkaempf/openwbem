@@ -49,7 +49,7 @@ namespace OpenWBEM
  * DLLSharedLibrary loads and queries shared libraries. Using LoadLibrary,
  * GetProcAddress & friends.
  */
-class DLLSharedLibrary : public SharedLibrary
+class OW_COMMON_API DLLSharedLibrary : public SharedLibrary
 {
 public:
 	DLLSharedLibrary(HINSTANCE libhandle, const String& libName);

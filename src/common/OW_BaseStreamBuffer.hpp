@@ -48,7 +48,7 @@ namespace OpenWBEM
 
 const size_t BASE_BUF_SIZE = 256;
 const size_t HTTP_BUF_SIZE = 4096;
-class BaseStreamBuffer : public std::streambuf
+class OW_COMMON_API BaseStreamBuffer : public std::streambuf
 {
 public:
 	/**

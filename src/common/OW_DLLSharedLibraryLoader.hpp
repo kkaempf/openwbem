@@ -51,7 +51,7 @@ namespace OpenWBEM
  * Copy semantics: Value
  * Exception safety: Strong
  */
-class DLLSharedLibraryLoader : public SharedLibraryLoader
+class OW_COMMON_API DLLSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~DLLSharedLibraryLoader();

@@ -50,7 +50,7 @@ class IOException;
  * The CIMUrl is an abstract data type that represents a Uniform resource
  * locator. CIMUrl objects are ref counted and copy on write.
  */
-class CIMUrl : public CIMBase
+class OW_COMMON_API CIMUrl : public CIMBase
 {
 private:
 	struct URLData;

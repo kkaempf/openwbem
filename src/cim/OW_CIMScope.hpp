@@ -49,7 +49,7 @@ namespace OpenWBEM
  * The CIMScope class encapsulated the data and functionality the is
  * associated with CIM scopes.
  */
-class CIMScope : public CIMBase
+class OW_COMMON_API CIMScope : public CIMBase
 {
 public:
 	// An enumeration of the scope values that this class understands

@@ -130,7 +130,7 @@ class ValueInitializer;
 //class Identifier;
 
 
-class Visitor {
+class OW_MOF_API Visitor {
 public:
 	Visitor();
 	virtual ~Visitor();

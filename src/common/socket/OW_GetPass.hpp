@@ -59,7 +59,7 @@ namespace GetPass
 	 * @param prompt The prompt to be displayed
 	 * @return the password
 	 */
-	String getPass(const String& prompt);
+	OW_COMMON_API String getPass(const String& prompt);
 
 } // end namespace GetPass
 

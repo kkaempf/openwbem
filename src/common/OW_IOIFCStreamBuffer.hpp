@@ -42,7 +42,7 @@
 namespace OpenWBEM
 {
 
-class IOIFCStreamBuffer : public BaseStreamBuffer
+class OW_COMMON_API IOIFCStreamBuffer : public BaseStreamBuffer
 {
 public:
 	IOIFCStreamBuffer(IOIFC* dev, int bufSize = BASE_BUF_SIZE,

@@ -52,7 +52,7 @@ namespace OpenWBEM
  * ref counted and copy on write. It is possible to have a NULL CIMNameSpace
  * object.
  */
-class CIMNameSpace : public CIMBase
+class OW_COMMON_API CIMNameSpace : public CIMBase
 {
 private:
 	struct NSData;

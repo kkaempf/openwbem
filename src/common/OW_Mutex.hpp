@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class Mutex
+class OW_COMMON_API Mutex
 {
 public:
 	/**

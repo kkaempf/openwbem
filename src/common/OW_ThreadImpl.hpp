@@ -69,14 +69,14 @@ namespace ThreadImpl
 	 *			
 	 * @return 0 on success. Otherwise -1
 	 */
-	int createThread(Thread_t& handle, ThreadFunction func,
+	OW_COMMON_API int createThread(Thread_t& handle, ThreadFunction func,
 		void* funcParm, UInt32 threadFlags);
 	/**
 	 * Destroy any resources associated with a thread that was created with
 	 * the createThread method.
 	 * @param handle	A platform specific thread handle
 	 */
-	void destroyThread(Thread_t& handle);
+	OW_COMMON_API void destroyThread(Thread_t& handle);
 	/**
 	 * Check two platform dependant thread types for equality.
 	 * @param handle1	The 1st thread type for the comparison.
@@ -99,7 +99,7 @@ namespace ThreadImpl
 	 * @param handle The thread handle of the calling thread.
 	 * @param rval The thread's return value. This can get picked up by joinThread.
 	 */
-	void exitThread(Thread_t& handle, Int32 rval);
+	OW_COMMON_API void exitThread(Thread_t& handle, Int32 rval);
 	/**
 	 * @return The thread handle for the current running thread.
 	 */
@@ -121,7 +121,7 @@ namespace ThreadImpl
 	 * void*, or something else, and reinterpret_cast<> (hopefully that
 	 * works ...) must be used.
 	 */
-	unsigned long thread_t_ToUnsignedLong(Thread_t thr);
+	OW_COMMON_API unsigned long thread_t_ToUnsignedLong(Thread_t thr);
 
 	/**
 	 * Set a thread that was previously in the joinable state to a detached
@@ -131,7 +131,7 @@ namespace ThreadImpl
 	 * @param handle		The thread to set to the detached state.
 	 * @return 0 on success. Otherwise -1
 	 */
-	int setThreadDetached(Thread_t& handle);
+	OW_COMMON_API int setThreadDetached(Thread_t& handle);
 	/**
 	 * Join a thread that has been previously set to joinable. It is
 	 * Assumed that if the thread has already terminated, this method
@@ -140,18 +140,18 @@ namespace ThreadImpl
 	 * @param rval An out parameter of the thread's return code.
 	 * @return 0 on success. Otherwise -1
 	 */
-	int joinThread(Thread_t& handle, Int32& rval);
+	OW_COMMON_API int joinThread(Thread_t& handle, Int32& rval);
 	/**
 	 * Voluntarily yield to the processor giving the next thread in the chain
 	 * the opportunity to run.
 	 */
-	void yield();
+	OW_COMMON_API void yield();
 	/**
 	 * Suspend execution of the current thread until the given number
 	 * of milliSeconds have elapsed.
 	 * @param milliSeconds	The number of milliseconds to suspend execution for.
 	 */
-	void sleep(UInt32 milliSeconds);
+	OW_COMMON_API void sleep(UInt32 milliSeconds);
 	/**
 	 * "Multi-processor cache coherency.  Certain multi-processor platforms,
 	 * such as the COMPAQ Alpha and Intel Itanium, perform aggressive memory
@@ -205,10 +205,10 @@ namespace ThreadImpl
 	 * thread has been cacelled.  Thus, you can't call it on an object that doesn't
 	 * represent the current running thread and expect it to work.
 	 */
-	void testCancel();
-	void saveThreadInTLS(void* pTheThread);
-	void sendSignalToThread(Thread_t threadID, int signo);
-	void cancel(Thread_t threadID);
+	OW_COMMON_API void testCancel();
+	OW_COMMON_API void saveThreadInTLS(void* pTheThread);
+	OW_COMMON_API void sendSignalToThread(Thread_t threadID, int signo);
+	OW_COMMON_API void cancel(Thread_t threadID);
 };
 
 } // end namespace OpenWBEM

@@ -49,7 +49,7 @@ namespace OpenWBEM
  * to a CIM qualifier that is found on classes, properties and methods.
  * CIMQualifier objects are ref counted and copy on write.
  */
-class CIMQualifier : public CIMElement
+class OW_COMMON_API CIMQualifier : public CIMElement
 {
 public:
 	struct QUALData;

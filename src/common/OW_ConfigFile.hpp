@@ -54,12 +54,12 @@ namespace ConfigFile
 	 * Items which already exist in rval will not be overwritten.
 	 * @throws ConfigException if the file doesn't exist or is malformed
 	 */
-	void loadConfigFile(const String& filename, ConfigMap& rval);
+	OW_COMMON_API void loadConfigFile(const String& filename, ConfigMap& rval);
 
 	/**
 	 * Retrieve itemName item from configItems. If it's not present, defRetVal will be returned.
 	 */
-	String getConfigItem(const ConfigMap& configItems, const String &itemName, const String& defRetVal = String());
+	OW_COMMON_API String getConfigItem(const ConfigMap& configItems, const String &itemName, const String& defRetVal = String());
 
 	enum EOverwritePreviousFlag
 	{
@@ -72,7 +72,7 @@ namespace ConfigFile
 	 * @param overwritePrevious E_PRESERVE_PREVIOUS - If itemName already exists in configItems, will not be changed.
 	 *   E_OVERWRITE_PREVIOUS - If itemName already exists, it's value will be set to value.
 	 */
-	void setConfigItem(ConfigMap& configItems, const String& itemName,
+	OW_COMMON_API void setConfigItem(ConfigMap& configItems, const String& itemName,
 		const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
 
 

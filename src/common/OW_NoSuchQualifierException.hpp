@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(NoSuchQualifier);
+OW_DECLARE_APIEXCEPTION(NoSuchQualifier, OW_COMMON_API);
 
 } // end namespace OpenWBEM
 

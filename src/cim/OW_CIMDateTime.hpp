@@ -46,7 +46,7 @@
 namespace OpenWBEM
 {
 
-class CIMDateTimeException : public CIMException
+class OW_COMMON_API CIMDateTimeException : public CIMException
 {
 public:
 	CIMDateTimeException(const char* file, int line, const char* msg);
@@ -117,7 +117,7 @@ class DateTime;
  */
 
 // TODO: Document valid ranges for values in the class and add asserts for them.
-class CIMDateTime
+class OW_COMMON_API CIMDateTime
 {
 public:
 	struct DateTimeData;
@@ -322,7 +322,7 @@ private:
 	COWIntrusiveReference<DateTimeData> m_dptr;
 	friend bool operator<(const CIMDateTime& x, const CIMDateTime& y);
 };
-std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
+OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
 
 inline bool operator!=(const CIMDateTime& x, const CIMDateTime& y)
 {

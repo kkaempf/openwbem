@@ -71,7 +71,7 @@ namespace Select
 	* object that input has become available on. SELECT_ERROR on error.
 	* SELECT_TIMEOUT if the given timeout value has expired.
 	*/
-   int select(const SelectTypeArray& selarray, UInt32 ms = ~0U);
+   OW_COMMON_API int select(const SelectTypeArray& selarray, UInt32 ms = ~0U);
 } // end namespace Select
 
 } // end namespace OpenWBEM

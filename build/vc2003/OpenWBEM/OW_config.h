@@ -556,6 +556,9 @@
 
 // Including winsock2.h should also bring in windows.h
 #include <winsock2.h>
+
+#define OW_EXPORT __declspec(dllexport)
+#define OW_IMPORT __declspec(dllimport)
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

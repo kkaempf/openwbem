@@ -66,7 +66,7 @@ namespace OpenWBEM
 {
 
 class TmpFile;
-class TempFileBuffer : public std::streambuf
+class OW_COMMON_API TempFileBuffer : public std::streambuf
 {
 public:
 	TempFileBuffer(size_t bufSize);
@@ -102,7 +102,7 @@ private:
 	TempFileBuffer(const TempFileBuffer& arg);
 	TempFileBuffer& operator=(const TempFileBuffer& arg);
 };
-class TempFileStream : public std::iostream
+class OW_COMMON_API TempFileStream : public std::iostream
 {
 public:
 	TempFileStream(size_t bufSize = 4096);

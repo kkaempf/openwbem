@@ -44,14 +44,14 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Logger)
+OW_DECLARE_APIEXCEPTION(Logger, OW_COMMON_API)
 
 class Logger;
 typedef IntrusiveReference<Logger> LoggerRef;
 /**
  * Logging interface.
  */
-class Logger : public IntrusiveCountableBase
+class OW_COMMON_API Logger : public IntrusiveCountableBase
 {
 	public:
 		/**

@@ -54,7 +54,7 @@ inline void RefSwap(T& x, T&y)
 //////////////////////////////////////////////////////////////////////////////
 // This class contains the non-templated code for Reference, to help 
 // minimize code bloat.
-class ReferenceBase
+class OW_COMMON_API ReferenceBase
 {
 #if !defined(__GNUC__) || __GNUC__ > 2 // because of a gcc 2.95 ICE
 protected:

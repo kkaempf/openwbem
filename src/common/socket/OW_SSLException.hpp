@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class SSLException : public SocketException
+class OW_COMMON_API SSLException : public SocketException
 {
 public:
 	SSLException(const char* file, int line, const char* msg)

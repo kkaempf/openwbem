@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(NoSuchProvider)
+OW_DECLARE_APIEXCEPTION(NoSuchProvider, OW_COMMON_API)
 
 } // end namespace OpenWBEM
 

@@ -57,7 +57,7 @@ class Mutex;
  * Exceptions should be thrown by using one of the OW_THROW_* macros which 
  * inserts the file and line number among other helpful things.
  */
-class Exception : public std::exception
+class OW_COMMON_API Exception : public std::exception
 {
 protected:
 	/**
@@ -156,7 +156,7 @@ private:
  * Writes the exception object to the stream in the form: 
  *  <file>: <line> <type>: <message>
  */
-std::ostream& operator<< (std::ostream& os, const Exception& e);
+OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
 
 /**
  * Throw an exception using __FILE__ and __LINE__.  If applicable, 
@@ -229,12 +229,46 @@ public: \
 };
 
 /**
+ * Declare a new exception class named <NAME>Exception that derives from <BASE>.
+ * This macro is typically used in a header file. The exception class
+ * declaration will be prefaced with the linkage_spec parm. This allows
+ * the use of OW_COMMON_API when declaring exceptions. Example:
+ * 		OW_DECLARE_APIEXCEPTION(Bogus, CIMException, OW_COMMON_API)
+ * 
+ * @param NAME The name of the new class (Exception will be postfixed)
+ * @param BASE The base class.
+ * @param LINKAGE_SPEC The linkage specifier for the exception class.
+ */
+#define OW_DECLARE_APIEXCEPTION2(NAME, BASE, LINKAGE_SPEC) \
+class LINKAGE_SPEC NAME##Exception : public BASE \
+{ \
+public: \
+	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0); \
+	virtual ~NAME##Exception() throw(); \
+	virtual const char* type() const; \
+	virtual NAME##Exception* clone() const; \
+};
+
+
+
+
+/**
  * Declare a new exception class named <NAME>Exception that derives from Exception
  * This macro is typically used in a header file.
  * 
  * @param NAME The name of the new class (Exception will be postfixed)
  */
 #define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, ::OpenWBEM::Exception) 
+
+/**
+ * Declare a new exception class named <NAME>Exception that derives from Exception
+ * This macro is typically used in a header file.
+ * 
+ * @param NAME The name of the new class (Exception will be postfixed)
+ * @param LINKAGE_SPEC the linkage specifier. If the OW_DEFINE_EXCEPTION is part
+ *		of libopenwbem this would OW_COMMON_API...
+ */
+#define OW_DECLARE_APIEXCEPTION(NAME, LINKAGE_SPEC) OW_DECLARE_APIEXCEPTION2(NAME, ::OpenWBEM::Exception, LINKAGE_SPEC) 
 
 /**
  * Define a new exception class named <NAME>Exception that derives from <BASE>.

@@ -45,7 +45,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(OutOfBounds);
+OW_DECLARE_APIEXCEPTION(OutOfBounds, OW_COMMON_API);
 
 /**
  * Array<> wraps std::vector<> in COWReference<> adding ref counting and copy 

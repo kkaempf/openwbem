@@ -53,9 +53,8 @@
 namespace OpenWBEM
 {
 
-
 ///////////////////////////////////////////////////////////////////////////////
-class IStringStreamBuf : public std::streambuf
+class OW_COMMON_API IStringStreamBuf : public std::streambuf
 {
 public:
 	IStringStreamBuf(const String& s)
@@ -76,14 +75,14 @@ private:
 	friend class OStringStream;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class IStringStreamBase
+class OW_COMMON_API IStringStreamBase
 {
 public:
 	IStringStreamBase(const String& s) : m_buf(s) {}
 	mutable IStringStreamBuf m_buf;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class IStringStream : private IStringStreamBase, public std::istream
+class OW_COMMON_API IStringStream : private IStringStreamBase, public std::istream
 {
 public:
 	IStringStream(const String& s);
@@ -96,7 +95,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class OStringStreamBuf : public BaseStreamBuffer
+class OW_COMMON_API OStringStreamBuf : public BaseStreamBuffer
 {
 public:
 	OStringStreamBuf(size_t size);
@@ -114,14 +113,14 @@ private:
 	friend class OStringStream;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class OStringStreamBase
+class OW_COMMON_API OStringStreamBase
 {
 public:
 	OStringStreamBase(size_t sz);
 	mutable OStringStreamBuf m_buf;
 };
 ///////////////////////////////////////////////////////////////////////////////
-class OStringStream : private OStringStreamBase, public std::ostream
+class OW_COMMON_API OStringStream : private OStringStreamBase, public std::ostream
 {
 public:
 	OStringStream(size_t size = 256);

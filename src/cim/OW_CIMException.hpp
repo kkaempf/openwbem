@@ -41,7 +41,7 @@
 namespace OpenWBEM
 {
 
-class CIMException : public Exception
+class OW_COMMON_API CIMException : public Exception
 {
 public:
 	enum ErrNoType

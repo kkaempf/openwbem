@@ -43,7 +43,7 @@ namespace OpenWBEM
 
 class Thread;
 
-class ThreadDoneCallback : public IntrusiveCountableBase
+class OW_COMMON_API ThreadDoneCallback : public IntrusiveCountableBase
 {
 public:
 	virtual ~ThreadDoneCallback();

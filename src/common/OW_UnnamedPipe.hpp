@@ -49,13 +49,13 @@ class String;
 class UnnamedPipe;
 typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
 
-OW_DECLARE_EXCEPTION(UnnamedPipe);
+OW_DECLARE_APIEXCEPTION(UnnamedPipe, OW_COMMON_API);
 
 /**
  * Abstract interface for an UnnamedPipe.
  * Blocking is enabled by default.
  */
-class UnnamedPipe : public SelectableIFC, public IOIFC
+class OW_COMMON_API UnnamedPipe : public SelectableIFC, public IOIFC
 {
 public:
 	virtual ~UnnamedPipe();

@@ -56,7 +56,7 @@ namespace OpenWBEM
  * Copy semantics: Value
  * Exception safety: Strong
  */
-class UserInfo
+class OW_COMMON_API UserInfo
 {
 public:
 	/**

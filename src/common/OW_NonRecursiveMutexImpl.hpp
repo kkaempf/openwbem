@@ -57,7 +57,7 @@ namespace NonRecursiveMutexImpl
 	 * @param isRecursive Specified whether to create a recursive mutex
 	 * @return 0 on success. Otherwise -1.
 	 */
-	int createMutex(NonRecursiveMutex_t& handle);
+	OW_COMMON_API int createMutex(NonRecursiveMutex_t& handle);
 	/**
 	 * Destroy a mutex previously created with createMutex.
 	 * @param handle The handle to the mutex that will be destroyed.
@@ -67,7 +67,7 @@ namespace NonRecursiveMutexImpl
 	 *				locked.
 	 *		-2:	All other error conditions
 	 */
-	int destroyMutex(NonRecursiveMutex_t& handle);
+	OW_COMMON_API int destroyMutex(NonRecursiveMutex_t& handle);
 	/**
 	 * Acquire the mutex specified by a given mutex handle. This method should
 	 * block until the desired mutex can be acquired. The error return value is
@@ -76,17 +76,17 @@ namespace NonRecursiveMutexImpl
 	 * @param handle The mutex to acquire.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	int acquireMutex(NonRecursiveMutex_t& handle);
+	OW_COMMON_API int acquireMutex(NonRecursiveMutex_t& handle);
 	/**
 	 * Release a mutex that was previously acquired with the acquireMutex
 	 * method.
 	 * @param handle The handle to the mutex that is being released.
 	 * @return 0 on success. -1 indicates a critical error.
 	 */
-	int releaseMutex(NonRecursiveMutex_t& handle);
+	OW_COMMON_API int releaseMutex(NonRecursiveMutex_t& handle);
 	
-	int conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
-	int conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
+	OW_COMMON_API int conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
+	OW_COMMON_API int conditionPostWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state);
 } // end namespace NonRecursiveMutexImpl
 
 } // end namespace OpenWBEM

@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class MutexLock
+class OW_COMMON_API MutexLock
 {
 public:
 	explicit MutexLock(Mutex& mutex, bool initially_locked=true)

@@ -42,7 +42,7 @@
 namespace OpenWBEM
 {
 
-class CIMErrorException: public Exception
+class OW_COMMON_API CIMErrorException: public Exception
 {
 public:
 	CIMErrorException(const char* file, int line, const char* msg);

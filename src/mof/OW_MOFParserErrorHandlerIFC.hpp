@@ -46,9 +46,9 @@ namespace OpenWBEM
 namespace MOF
 {
 
-OW_DECLARE_EXCEPTION(ParseFatalError);
+OW_DECLARE_APIEXCEPTION(ParseFatalError, OW_MOF_API);
 // this is an abstract base class for create concrete error handlers for the mof parser
-class ParserErrorHandlerIFC : public IntrusiveCountableBase
+class OW_MOF_API ParserErrorHandlerIFC : public IntrusiveCountableBase
 {
 public:
 

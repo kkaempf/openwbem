@@ -41,8 +41,8 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Deadlock)
-class NonRecursiveMutex
+OW_DECLARE_APIEXCEPTION(Deadlock, OW_COMMON_API)
+class OW_COMMON_API NonRecursiveMutex
 {
 public:
 	/**

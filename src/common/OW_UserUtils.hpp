@@ -46,14 +46,14 @@ namespace OpenWBEM
 		/**
 		* Get the effective user id.  On POSIX platforms this calls geteuid().
 		*/
-		String getEffectiveUserId();
-		String getCurrentUserName();
+		OW_COMMON_API String getEffectiveUserId();
+		OW_COMMON_API String getCurrentUserName();
 		/**
 		* If the username is invalid, or if getUserName() fails for any other
 		* reason, 'success' will be set to false. On success, 'success' is
 		* set to true.  
 		*/
-		String getUserName(uid_t uid, bool& success);
+		OW_COMMON_API String getUserName(uid_t uid, bool& success);
 
 	} // end namespace UserUtils
 } // end namespace OpenWBEM

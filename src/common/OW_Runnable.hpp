@@ -52,7 +52,7 @@ typedef IntrusiveReference<Runnable> RunnableRef;
  * The other method is to derive from Runnable and pass references of the
  * derived class to ThreadPool::addWork()
  */
-class Runnable : public IntrusiveCountableBase
+class OW_COMMON_API Runnable : public IntrusiveCountableBase
 {
 public:
 	virtual ~Runnable();

@@ -45,9 +45,9 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(UnknownHost);
-OW_DECLARE_EXCEPTION(SocketAddress);
-class SocketAddress
+OW_DECLARE_APIEXCEPTION(UnknownHost, OW_COMMON_API);
+OW_DECLARE_APIEXCEPTION(SocketAddress, OW_COMMON_API);
+class OW_COMMON_API SocketAddress
 {
 public:
 	static const char* const ALL_LOCAL_ADDRESSES;

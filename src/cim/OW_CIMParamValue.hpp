@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class CIMParamValue : public CIMBase
+class OW_COMMON_API CIMParamValue : public CIMBase
 {
 public:
 	struct Data;

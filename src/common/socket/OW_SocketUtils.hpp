@@ -60,8 +60,8 @@ namespace SocketUtils
 	 * @return zero if we got input before the timeout expired, 
 	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
-	int waitForIO(SocketHandle_t fd, HANDLE event, int timeOutSecs,
-		  long networkEvents=-1L);
+	OW_COMMON_API int waitForIO(SocketHandle_t fd, HANDLE event,
+		int timeOutSecs, long networkEvents=-1L);
 
 #else
 	/**
@@ -76,14 +76,14 @@ namespace SocketUtils
 		SocketFlags::EWaitDirectionFlag forInput);
 #endif
 
-	String inetAddrToString(UInt64 addr);
+	OW_COMMON_API String inetAddrToString(UInt64 addr);
 	/**
 	 * Get the fully qualified host name.
 	 * This function can be expensive performance-wise.  It may query multiple DNS servers.
 	 * If the network is not working correctly, it will fail and throw an exception.
 	 * @throws SocketException on failure.
 	 */
-	String getFullyQualifiedHostName();
+	OW_COMMON_API String getFullyQualifiedHostName();
 }
 
 } // end namespace OpenWBEM

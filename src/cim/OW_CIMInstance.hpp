@@ -63,7 +63,7 @@ namespace OpenWBEM
  *			// Valid instance
  *		}
  */
-class CIMInstance : public CIMElement
+class OW_COMMON_API CIMInstance : public CIMElement
 {
 public:
 	struct INSTData;

@@ -46,7 +46,7 @@
 namespace OpenWBEM
 {
 
-class SocketImpl : public SocketBaseImpl
+class OW_COMMON_API SocketImpl : public SocketBaseImpl
 {
 public:
 	SocketImpl();

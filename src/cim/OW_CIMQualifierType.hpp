@@ -49,7 +49,7 @@ namespace OpenWBEM
  * The CIMQualifierType class encapsulates the data and functionality
  * associated with a CIM qualifier type.
  */
-class CIMQualifierType : public CIMElement
+class OW_COMMON_API CIMQualifierType : public CIMElement
 {
 public:
 	struct QUALTData;

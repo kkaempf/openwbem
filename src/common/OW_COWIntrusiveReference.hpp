@@ -54,7 +54,7 @@ namespace OpenWBEM
 namespace COWIntrusiveReferenceHelpers
 {
 	// these are not part of COWIntrusiveReference to try and avoid template bloat.
-	void throwNULLException();
+	OW_COMMON_API void throwNULLException();
 	inline void checkNull(const void* p)
 	{
 		if (p == 0)

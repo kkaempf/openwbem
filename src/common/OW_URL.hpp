@@ -42,13 +42,13 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(MalformedURL)
+OW_DECLARE_APIEXCEPTION(MalformedURL, OW_COMMON_API);
 
 /**
  * This class represents URLs, and is used to easily parse and manage them.
  * See DMTF DSP0207 WBEM URI Mapping Specification 1.0.0
  */
-struct URL
+struct OW_COMMON_API URL
 {
 	/**
 	 * Creates an URL with empty member variables.  This is mean to be filled

@@ -47,7 +47,7 @@
 namespace OpenWBEM
 {
 
-class SSLSocketImpl : public SocketBaseImpl
+class OW_COMMON_API SSLSocketImpl : public SocketBaseImpl
 {
 public:
 	SSLSocketImpl();

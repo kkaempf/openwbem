@@ -54,7 +54,7 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class DataIStreamBuf : public std::streambuf
+class OW_COMMON_API DataIStreamBuf : public std::streambuf
 {
 public:
 	DataIStreamBuf(int dataLen, const unsigned char* data) :
@@ -71,21 +71,21 @@ protected:
 	}
 };
 //////////////////////////////////////////////////////////////////////////////
-class DataIStreamBase
+class OW_COMMON_API DataIStreamBase
 {
 protected:
 	DataIStreamBase(int dataLen, const unsigned char* data) : m_strbuf(dataLen, data) {}
 	DataIStreamBuf m_strbuf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class DataIStream : private DataIStreamBase, public std::istream
+class OW_COMMON_API DataIStream : private DataIStreamBase, public std::istream
 {
 public:
 	DataIStream(int dataLen, const unsigned char* data)
 	: DataIStreamBase(dataLen, data), std::istream(&m_strbuf)	{}
 };
 //////////////////////////////////////////////////////////////////////////////
-class DataOStreamBuf : public std::streambuf
+class OW_COMMON_API DataOStreamBuf : public std::streambuf
 {
 public:
 	DataOStreamBuf(size_t initialSize = 256);
@@ -99,7 +99,7 @@ private:
 	std::vector<unsigned char> m_bfr;
 };
 //////////////////////////////////////////////////////////////////////////////
-class DataOStreamBase
+class OW_COMMON_API DataOStreamBase
 {
 protected:
 	DataOStreamBase(size_t initialSize = 256)
@@ -108,7 +108,7 @@ protected:
 	DataOStreamBuf m_buf;
 };
 //////////////////////////////////////////////////////////////////////////////
-class DataOStream : private DataOStreamBase, public std::ostream
+class OW_COMMON_API DataOStream : private DataOStreamBase, public std::ostream
 {
 public:
 	DataOStream(size_t initialSize = 256)

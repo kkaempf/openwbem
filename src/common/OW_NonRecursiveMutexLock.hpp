@@ -42,7 +42,7 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class NonRecursiveMutexLock
+class OW_COMMON_API NonRecursiveMutexLock
 {
 public:
 	explicit NonRecursiveMutexLock(NonRecursiveMutex& mutex, bool initially_locked=true)

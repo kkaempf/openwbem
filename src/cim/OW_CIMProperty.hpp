@@ -50,7 +50,7 @@ namespace OpenWBEM
  * The CIMProperty class encapsulates all data and functionality petinent to
  * a CIM property found in a CIM class or a CIM Instance.
  */
-class CIMProperty : public CIMElement
+class OW_COMMON_API CIMProperty : public CIMElement
 {
 public:
 	struct PROPData;

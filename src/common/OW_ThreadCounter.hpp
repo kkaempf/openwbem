@@ -48,7 +48,7 @@ namespace OpenWBEM
 // Note: Do not inline any functions in these classes, the code must
 // be contained in the main library, if a loadable library contains any,
 // it will cause a race-condition that may segfault the cimom.
-class ThreadCounter : public IntrusiveCountableBase
+class OW_COMMON_API ThreadCounter : public IntrusiveCountableBase
 {
 public:
 	ThreadCounter(Int32 maxThreads);
@@ -72,7 +72,7 @@ private:
 
 typedef IntrusiveReference<ThreadCounter> ThreadCounterRef;
 
-class ThreadCountDecrementer : public ThreadDoneCallback
+class OW_COMMON_API ThreadCountDecrementer : public ThreadDoneCallback
 {
 public:
 	ThreadCountDecrementer(ThreadCounterRef const& x);

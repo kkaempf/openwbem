@@ -55,7 +55,7 @@ namespace OpenWBEM
  */
 typedef int (*certVerifyFuncPtr_t)(X509* cert, const String& hostName);
 // TODO: Make this class be a singleton.
-class SSLCtxMgr
+class OW_COMMON_API SSLCtxMgr
 {
 public:
 	/**

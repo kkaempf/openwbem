@@ -49,7 +49,7 @@ namespace OpenWBEM
  * instances. CIMObjectPath is a ref counted, copy on write object. It is
  * possible to have a NULL CIMObjectPath.
  */							
-class CIMObjectPath : public CIMBase
+class OW_COMMON_API CIMObjectPath : public CIMBase
 {
 private:
 	struct OPData;

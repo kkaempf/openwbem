@@ -47,13 +47,13 @@ namespace OpenWBEM
 namespace MOF
 {
 
-class Initializer
+class OW_MOF_API Initializer
 {
 public:
 	virtual ~Initializer() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class Flavor
+class OW_MOF_API Flavor
 {
 public:
 	Flavor( const String *pNewFlavor, const lineInfo& li )
@@ -66,19 +66,19 @@ public:
 	AutoPtr< const String > pFlavor;
 	lineInfo theLineInfo;
 };
-class QualifierParameter
+class OW_MOF_API QualifierParameter
 {
 public:
 	virtual ~QualifierParameter() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class ConstantValue
+class OW_MOF_API ConstantValue
 {
 public:
 	virtual ~ConstantValue() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class ArrayInitializer
+class OW_MOF_API ArrayInitializer
 {
 public:
 	ArrayInitializer( List< ConstantValue * >* pNewConstantValue )
@@ -95,7 +95,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitArrayInitializer( this ); }
 	AutoPtr< List< ConstantValue * > > pConstantValue;
 };
-class QualifierParameterArrayInitializer : public QualifierParameter
+class OW_MOF_API QualifierParameterArrayInitializer : public QualifierParameter
 {
 public:
 	QualifierParameterArrayInitializer(
@@ -113,7 +113,7 @@ public:
 	AutoPtr< const ArrayInitializer > pArrayInitializer;
 	lineInfo theLineInfo;
 };
-class QualifierParameterConstantValue : public QualifierParameter
+class OW_MOF_API QualifierParameterConstantValue : public QualifierParameter
 {
 public:
 	QualifierParameterConstantValue( const ConstantValue* pNewConstantValue,
@@ -130,7 +130,7 @@ public:
 	AutoPtr< const ConstantValue > pConstantValue;
 	lineInfo theLineInfo;
 };
-class QualifierName
+class OW_MOF_API QualifierName
 {
 public:
 	QualifierName( const String* pNewQualifierName )
@@ -140,7 +140,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitQualifierName( this ); }
 	AutoPtr< const String > pQualifierName;
 };
-class Qualifier
+class OW_MOF_API Qualifier
 {
 public:
 	Qualifier( const QualifierName* pNewQualifierName,
@@ -167,7 +167,7 @@ public:
 	AutoPtr< List< Flavor * > > pFlavor;
 	lineInfo theLineInfo;
 };
-class DefaultValue
+class OW_MOF_API DefaultValue
 {
 public:
 	DefaultValue( const Initializer* pNewInitializer)
@@ -177,7 +177,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitDefaultValue( this ); }
 	AutoPtr< const Initializer > pInitializer;
 };
-class ValueInitializer
+class OW_MOF_API ValueInitializer
 {
 public:
 	ValueInitializer( List< Qualifier * >* pNewQualifier,
@@ -200,7 +200,7 @@ public:
 	AutoPtr< const String > pValueInitializer;
 	AutoPtr< const DefaultValue > pDefaultValue;
 };
-class PropertyName
+class OW_MOF_API PropertyName
 {
 public:
 	PropertyName( const String* pNewPropertyName )
@@ -210,7 +210,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitPropertyName( this ); }
 	AutoPtr< const String > pPropertyName;
 };
-class ClassName
+class OW_MOF_API ClassName
 {
 public:
 	ClassName( const String* pNewClassName )
@@ -220,7 +220,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitClassName( this ); }
 	AutoPtr< const String > pClassName;
 };
-class AliasIdentifier
+class OW_MOF_API AliasIdentifier
 {
 public:
 	AliasIdentifier( const String* pNewAliasIdentifier, lineInfo li )
@@ -232,7 +232,7 @@ public:
 	AutoPtr< const String > pAliasIdentifier;
 	lineInfo theLineInfo;
 };
-class Alias
+class OW_MOF_API Alias
 {
 public:
 	Alias( const AliasIdentifier* pNewAliasIdentifier )
@@ -242,7 +242,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitAlias( this ); }
 	AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
-class InstanceDeclaration
+class OW_MOF_API InstanceDeclaration
 {
 public:
 	InstanceDeclaration(
@@ -278,7 +278,7 @@ public:
 	AutoPtr< List< ValueInitializer * > > pValueInitializer;
 	 lineInfo theLineInfo;
 };
-class DefaultFlavor
+class OW_MOF_API DefaultFlavor
 {
 public:
 	DefaultFlavor( List< Flavor * >* pNewFlavor )
@@ -296,7 +296,7 @@ public:
 	
 	AutoPtr< List< Flavor * > > pFlavor;
 };
-class MetaElement
+class OW_MOF_API MetaElement
 {
 public:
 	MetaElement( const String* pNewMetaElement, const lineInfo& li )
@@ -308,7 +308,7 @@ public:
 	AutoPtr< const String > pMetaElement;
 	lineInfo theLineInfo;
 };
-class Scope
+class OW_MOF_API Scope
 {
 public:
 	Scope( List< MetaElement * >* pNewMetaElement )
@@ -326,7 +326,7 @@ public:
 	
 	AutoPtr< List< MetaElement * > > pMetaElement;
 };
-class DataType
+class OW_MOF_API DataType
 {
 public:
 	DataType( const String* pNewDataType )
@@ -336,13 +336,13 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitDataType( this ); }
 	AutoPtr< const String > pDataType;
 };
-class IntegerValue
+class OW_MOF_API IntegerValue
 {
 public:
 	virtual ~IntegerValue() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class Array
+class OW_MOF_API Array
 {
 public:
 	Array( const IntegerValue* pNewArray )
@@ -352,7 +352,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitArray( this ); }
 	AutoPtr< const IntegerValue > pArray;
 };
-class QualifierType
+class OW_MOF_API QualifierType
 {
 public:
 	QualifierType( const DataType* pNewDataType,
@@ -370,7 +370,7 @@ public:
 	AutoPtr< const DefaultValue > pDefaultValue;
 };
 	
-class QualifierDeclaration
+class OW_MOF_API QualifierDeclaration
 {
 public:
 	QualifierDeclaration(
@@ -393,7 +393,7 @@ public:
 	AutoPtr< const DefaultFlavor > pDefaultFlavor;
 	lineInfo theLineInfo;
 };
-class ReferenceName
+class OW_MOF_API ReferenceName
 {
 public:
 	ReferenceName( const String* pNewReferenceName )
@@ -403,7 +403,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitReferenceName( this ); }
 	AutoPtr< const String > pReferenceName;
 };
-class IntegerValueBinaryValue : public IntegerValue
+class OW_MOF_API IntegerValueBinaryValue : public IntegerValue
 {
 public:
 	IntegerValueBinaryValue( const String* pNewBinaryValue )
@@ -416,7 +416,7 @@ public:
 	}
 	AutoPtr< const String > pBinaryValue;
 };
-class IntegerValueOctalValue : public IntegerValue
+class OW_MOF_API IntegerValueOctalValue : public IntegerValue
 {
 public:
 	IntegerValueOctalValue( const String* pNewOctalValue )
@@ -429,7 +429,7 @@ public:
 	}
 	AutoPtr< const String > pOctalValue;
 };
-class IntegerValueDecimalValue : public IntegerValue
+class OW_MOF_API IntegerValueDecimalValue : public IntegerValue
 {
 public:
 	IntegerValueDecimalValue( const String* pNewDecimalValue )
@@ -442,7 +442,7 @@ public:
 	}
 	AutoPtr< const String > pDecimalValue;
 };
-class IntegerValueHexValue : public IntegerValue
+class OW_MOF_API IntegerValueHexValue : public IntegerValue
 {
 public:
 	IntegerValueHexValue( const String* pNewHexValue )
@@ -455,7 +455,7 @@ public:
 	}
 	AutoPtr< const String > pHexValue;
 };
-class ConstantValueIntegerValue : public ConstantValue
+class OW_MOF_API ConstantValueIntegerValue : public ConstantValue
 {
 public:
 	ConstantValueIntegerValue( const IntegerValue* pNewIntegerValue )
@@ -468,7 +468,7 @@ public:
 	}
 	AutoPtr< const IntegerValue > pIntegerValue;
 };
-class ConstantValueFloatValue : public ConstantValue
+class OW_MOF_API ConstantValueFloatValue : public ConstantValue
 {
 public:
 	ConstantValueFloatValue( const String* pNewFloatValue )
@@ -481,7 +481,7 @@ public:
 	}
 	AutoPtr< const String > pFloatValue;
 };
-class ConstantValueCharValue : public ConstantValue
+class OW_MOF_API ConstantValueCharValue : public ConstantValue
 {
 public:
 	ConstantValueCharValue( const String* pNewCharValue )
@@ -494,7 +494,7 @@ public:
 	}
 	AutoPtr< const String > pCharValue;
 };
-class ConstantValueStringValue : public ConstantValue
+class OW_MOF_API ConstantValueStringValue : public ConstantValue
 {
 public:
 	ConstantValueStringValue( const String* pNewStringValue )
@@ -507,7 +507,7 @@ public:
 	}
 	AutoPtr< const String > pStringValue;
 };
-class ConstantValueBooleanValue : public ConstantValue
+class OW_MOF_API ConstantValueBooleanValue : public ConstantValue
 {
 public:
 	ConstantValueBooleanValue( const String* pNewBooleanValue )
@@ -520,7 +520,7 @@ public:
 	}
 	AutoPtr< const String > pBooleanValue;
 };
-class ConstantValueNullValue : public ConstantValue
+class OW_MOF_API ConstantValueNullValue : public ConstantValue
 {
 public:
 	ConstantValueNullValue( const String* pNewNullValue )
@@ -533,7 +533,7 @@ public:
 	}
 	AutoPtr< const String > pNullValue;
 };
-class ObjectHandle
+class OW_MOF_API ObjectHandle
 {
 public:
 	ObjectHandle( const String* pNewObjectHandle )
@@ -543,13 +543,13 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitObjectHandle( this ); }
 	AutoPtr< const String > pObjectHandle;
 };
-class ReferenceInitializer
+class OW_MOF_API ReferenceInitializer
 {
 public:
 	virtual ~ReferenceInitializer() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class ReferenceInitializerAliasIdentifier : public ReferenceInitializer
+class OW_MOF_API ReferenceInitializerAliasIdentifier : public ReferenceInitializer
 {
 public:
 	ReferenceInitializerAliasIdentifier(
@@ -564,7 +564,7 @@ public:
 	
 	AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
-class ReferenceInitializerObjectHandle : public ReferenceInitializer
+class OW_MOF_API ReferenceInitializerObjectHandle : public ReferenceInitializer
 {
 public:
 	ReferenceInitializerObjectHandle( const ObjectHandle* pNewObjectHandle )
@@ -577,7 +577,7 @@ public:
 	}
 	AutoPtr< const ObjectHandle > pObjectHandle;
 };
-class InitializerReferenceInitializer : public Initializer
+class OW_MOF_API InitializerReferenceInitializer : public Initializer
 {
 public:
 	InitializerReferenceInitializer(
@@ -591,7 +591,7 @@ public:
 	}
 	AutoPtr< const ReferenceInitializer > pReferenceInitializer;
 };		
-class InitializerArrayInitializer : public Initializer
+class OW_MOF_API InitializerArrayInitializer : public Initializer
 {
 public:
 	InitializerArrayInitializer( const ArrayInitializer* pNewArrayInitializer)
@@ -604,7 +604,7 @@ public:
 	}
 	AutoPtr< const ArrayInitializer > pArrayInitializer;
 };		
-class InitializerConstantValue : public Initializer
+class OW_MOF_API InitializerConstantValue : public Initializer
 {
 public:
 	InitializerConstantValue( const ConstantValue *pNewConstantValue )
@@ -617,7 +617,7 @@ public:
 	}
 	AutoPtr< const ConstantValue > pConstantValue;
 };		
-class ParameterName
+class OW_MOF_API ParameterName
 {
 public:
 	ParameterName( const String* pNewParameterName )
@@ -627,13 +627,13 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitParameterName( this ); }
 	AutoPtr< const String > pParameterName;
 };
-class Parameter
+class OW_MOF_API Parameter
 {
 public:
 	virtual ~Parameter() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class ObjectRef
+class OW_MOF_API ObjectRef
 {
 public:
 	ObjectRef( const ClassName* pNewClassName )
@@ -643,7 +643,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitObjectRef( this ); }
 	AutoPtr< const ClassName > pClassName;
 };
-class ParameterObjectRef : public Parameter
+class OW_MOF_API ParameterObjectRef : public Parameter
 {
 public:
 	ParameterObjectRef(
@@ -670,7 +670,7 @@ public:
 	AutoPtr< const ParameterName > pParameterName;
 	AutoPtr< const Array > pArray;	
 };
-class ParameterDataType : public Parameter
+class OW_MOF_API ParameterDataType : public Parameter
 {
 public:
 	ParameterDataType(
@@ -697,7 +697,7 @@ public:
 	AutoPtr< const ParameterName > pParameterName;
 	AutoPtr< const Array > pArray;	
 };
-class MethodName
+class OW_MOF_API MethodName
 {
 public:
 	MethodName( const String* pNewMethodName )
@@ -707,7 +707,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitMethodName( this ); }
 	AutoPtr< const String > pMethodName;
 };
-class MethodDeclaration
+class OW_MOF_API MethodDeclaration
 {
 public:
 	MethodDeclaration(
@@ -740,7 +740,7 @@ public:
 	AutoPtr< const MethodName > pMethodName;
 	AutoPtr< List< Parameter * > > pParameter;
 };
-class ReferenceDeclaration
+class OW_MOF_API ReferenceDeclaration
 {
 public:
 	ReferenceDeclaration(
@@ -768,7 +768,7 @@ public:
 	AutoPtr< const ReferenceName > pReferenceName;
 	AutoPtr< const DefaultValue > pDefaultValue;
 };
-class PropertyDeclaration
+class OW_MOF_API PropertyDeclaration
 {
 public:
 	PropertyDeclaration(
@@ -801,19 +801,19 @@ public:
 	AutoPtr< const DefaultValue > pDefaultValue;
 	lineInfo theLineInfo;
 };
-class AssociationFeature
+class OW_MOF_API AssociationFeature
 {
 public:
 	virtual ~AssociationFeature() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class ClassFeature
+class OW_MOF_API ClassFeature
 {
 public:
 	virtual ~ClassFeature() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class AssociationFeatureClassFeature : public AssociationFeature
+class OW_MOF_API AssociationFeatureClassFeature : public AssociationFeature
 {
 public:
 	AssociationFeatureClassFeature( const ClassFeature* pNewClassFeature )
@@ -827,7 +827,7 @@ public:
 	
 	AutoPtr< const ClassFeature > pClassFeature;
 };
-class ClassFeatureMethodDeclaration : public ClassFeature
+class OW_MOF_API ClassFeatureMethodDeclaration : public ClassFeature
 {
 public:
 	ClassFeatureMethodDeclaration(
@@ -842,7 +842,7 @@ public:
 	
 	AutoPtr< const MethodDeclaration > pMethodDeclaration;
 };
-class ClassFeaturePropertyDeclaration : public ClassFeature
+class OW_MOF_API ClassFeaturePropertyDeclaration : public ClassFeature
 {
 public:
 	ClassFeaturePropertyDeclaration(
@@ -859,7 +859,7 @@ public:
 };
 /* Note: This should be in AssociationFeature, but I found some MOF files
 	that use this in ClassFeature */
-class ClassFeatureReferenceDeclaration : public ClassFeature
+class OW_MOF_API ClassFeatureReferenceDeclaration : public ClassFeature
 {
 public:
 	ClassFeatureReferenceDeclaration(
@@ -874,7 +874,7 @@ public:
 	
 	AutoPtr< const ReferenceDeclaration > pReferenceDeclaration;
 };
-class SuperClass
+class OW_MOF_API SuperClass
 {
 public:
 	SuperClass( const ClassName* pNewClassName )
@@ -885,7 +885,7 @@ public:
 	
 	AutoPtr< const ClassName > pClassName;
 };
-class IndicDeclaration
+class OW_MOF_API IndicDeclaration
 {
 public:
 	IndicDeclaration(
@@ -924,7 +924,7 @@ public:
 	AutoPtr< List< ClassFeature * > > pClassFeature;
 	lineInfo theLineInfo;
 };
-class AssocDeclaration
+class OW_MOF_API AssocDeclaration
 {
 public:
 	AssocDeclaration(
@@ -963,7 +963,7 @@ public:
 	AutoPtr< List< AssociationFeature * > > pAssociationFeature;
 	lineInfo theLineInfo;
 };
-class ClassDeclaration
+class OW_MOF_API ClassDeclaration
 {
 public:
 	ClassDeclaration(
@@ -1002,7 +1002,7 @@ public:
 	AutoPtr< List< ClassFeature * > > pClassFeature;
 	lineInfo theLineInfo;
 };
-class PragmaParameter
+class OW_MOF_API PragmaParameter
 {
 public:
 	PragmaParameter( const String* pNewPragmaParameter )
@@ -1012,7 +1012,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitPragmaParameter( this ); }
 	AutoPtr< const String > pPragmaParameter;
 };
-class PragmaName
+class OW_MOF_API PragmaName
 {
 public:
 	PragmaName( const String* pNewPragmaName )
@@ -1022,7 +1022,7 @@ public:
 	void Accept( Visitor *pV ) const { pV->VisitPragmaName( this ); }
 	AutoPtr< const String > pPragmaName;
 };
-class CompilerDirective
+class OW_MOF_API CompilerDirective
 {
 public:
 	CompilerDirective(
@@ -1040,12 +1040,12 @@ public:
 	AutoPtr< const PragmaParameter > pPragmaParameter;
 	lineInfo theLineInfo;
 };
-class MOFProduction {
+class OW_MOF_API MOFProduction {
 public:
 	virtual ~MOFProduction() {}
 	virtual void Accept( Visitor * ) const = 0;
 };
-class MOFProductionInstanceDeclaration : public MOFProduction
+class OW_MOF_API MOFProductionInstanceDeclaration : public MOFProduction
 {
 public:
 	MOFProductionInstanceDeclaration(
@@ -1060,7 +1060,7 @@ public:
 	
 	AutoPtr< const InstanceDeclaration > pInstanceDeclaration;
 };
-class MOFProductionQualifierDeclaration : public MOFProduction
+class OW_MOF_API MOFProductionQualifierDeclaration : public MOFProduction
 {
 public:
 	MOFProductionQualifierDeclaration(
@@ -1075,7 +1075,7 @@ public:
 	
 	AutoPtr< const QualifierDeclaration > pQualifierDeclaration;
 };
-class MOFProductionIndicDeclaration : public MOFProduction
+class OW_MOF_API MOFProductionIndicDeclaration : public MOFProduction
 {
 public:
 	MOFProductionIndicDeclaration(
@@ -1090,7 +1090,7 @@ public:
 	
 	AutoPtr< const IndicDeclaration > pIndicDeclaration;
 };
-class MOFProductionAssocDeclaration : public MOFProduction
+class OW_MOF_API MOFProductionAssocDeclaration : public MOFProduction
 {
 public:
 	MOFProductionAssocDeclaration(
@@ -1105,7 +1105,7 @@ public:
 	
 	AutoPtr< const AssocDeclaration > pAssocDeclaration;
 };
-class MOFProductionClassDeclaration : public MOFProduction
+class OW_MOF_API MOFProductionClassDeclaration : public MOFProduction
 {
 public:
 	MOFProductionClassDeclaration(
@@ -1120,7 +1120,7 @@ public:
 	
 	AutoPtr< const ClassDeclaration > pClassDeclaration;
 };
-class MOFProductionCompilerDirective : public MOFProduction
+class OW_MOF_API MOFProductionCompilerDirective : public MOFProduction
 {
 public:
 	MOFProductionCompilerDirective(
@@ -1134,7 +1134,7 @@ public:
 	}
 	AutoPtr< const CompilerDirective > pCompilerDirective;
 };
-class MOFSpecification {
+class OW_MOF_API MOFSpecification {
 public:
 	MOFSpecification( List< MOFProduction * >* pNewMOFProduction )
 		: pMOFProduction(pNewMOFProduction)

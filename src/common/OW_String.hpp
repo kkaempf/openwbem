@@ -53,7 +53,7 @@ class String;
 typedef Array<String> StringArray;
 class Bool;
 
-OW_DECLARE_EXCEPTION(StringConversion);
+OW_DECLARE_APIEXCEPTION(StringConversion, OW_COMMON_API);
 
 /**
  * This String class is an abstract data type that represents as NULL
@@ -67,7 +67,7 @@ OW_DECLARE_EXCEPTION(StringConversion);
  * length() returns the size in bytes of the string.  Use UTF8Length() to
  * get the number of chars in the string.
  */
-class String
+class OW_COMMON_API String
 {
 public:
 	class ByteBuf;
@@ -717,12 +717,12 @@ public:
 private:
 	buf_t m_buf;
 };
-std::ostream& operator<< (std::ostream& ostr, const String& arg);
-String operator + (const String& s1, const String& s2);
-String operator + (const char* p, const String& s);
-String operator + (const String& s, const char* p);
-String operator + (char c, const String& s);
-String operator + (const String& s, char c);
+OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const String& arg);
+OW_COMMON_API String operator + (const String& s1, const String& s2);
+OW_COMMON_API String operator + (const char* p, const String& s);
+OW_COMMON_API String operator + (const String& s, const char* p);
+OW_COMMON_API String operator + (char c, const String& s);
+OW_COMMON_API String operator + (const String& s, char c);
 inline bool
 operator == (const String& s1, const String& s2)
 {

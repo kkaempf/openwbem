@@ -50,14 +50,14 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(MOFCompiler)
+OW_DECLARE_APIEXCEPTION(MOFCompiler, OW_MOF_API);
 
 class CIMInstance;
 
 namespace MOF
 {
 
-class Compiler
+class OW_MOF_API Compiler
 {
 public:
 	struct Options
@@ -140,9 +140,9 @@ private:
 };
 
 
-CIMInstance compileInstanceFromMOF(const String& instMOF);
-CIMInstanceArray compileInstancesFromMOF(const String& instMOF);
-CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns);
+OW_MOF_API CIMInstance compileInstanceFromMOF(const String& instMOF);
+OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF);
+OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const CIMOMHandleIFCRef& realhdl, const String& ns);
 
 
 } // end namespace MOF

@@ -48,7 +48,7 @@ namespace OpenWBEM
  * The RepositoryCIMOMHandle class is a derivitive of the CIMOMHandleIFC that
  * is used by all components that need access to CIM Services.
  */
-class RepositoryCIMOMHandle : public CIMOMHandleIFC
+class OW_COMMON_API RepositoryCIMOMHandle : public CIMOMHandleIFC
 {
 public:
 

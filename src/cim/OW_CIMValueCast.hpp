@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-OW_DECLARE_EXCEPTION(ValueCast);
+OW_DECLARE_APIEXCEPTION(ValueCast, OW_COMMON_API);
 //////////////////////////////////////////////////////////////////////////////
 namespace CIMValueCast
 {
@@ -54,7 +54,7 @@ namespace CIMValueCast
 	 * @param dataType	The data type to convert the value to.
 	 * @throws ValueCastException if the convertion is not possible.
 	 */
-	CIMValue castValueToDataType(const CIMValue& value,
+	OW_COMMON_API CIMValue castValueToDataType(const CIMValue& value,
 		const CIMDataType& dataType);
 
 } // end namespace CIMValueCast

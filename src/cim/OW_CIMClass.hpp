@@ -54,7 +54,7 @@ namespace OpenWBEM
  * hold onto the pointer of an CIMClass object since the ref counting
  * mechanism is driven by the construction and destruction process.
  */
-class CIMClass : public CIMElement
+class OW_COMMON_API CIMClass : public CIMElement
 {
 public:
 	struct CLSData;

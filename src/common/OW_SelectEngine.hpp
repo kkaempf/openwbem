@@ -47,8 +47,8 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Select)
-class SelectEngine
+OW_DECLARE_APIEXCEPTION(Select, OW_COMMON_API)
+class OW_COMMON_API SelectEngine
 {
 public:
 	void addSelectableObject(const SelectableIFCRef& obj,
@@ -61,7 +61,7 @@ private:
 	bool m_stopFlag;
 };
 
-class SelectEngineStopper : public SelectableCallbackIFC
+class OW_COMMON_API SelectEngineStopper : public SelectableCallbackIFC
 {
 public:
 	SelectEngineStopper(SelectEngine& engine);

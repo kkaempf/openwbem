@@ -43,7 +43,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(CmdLineParser)
+OW_DECLARE_APIEXCEPTION(CmdLineParser, OW_COMMON_API)
 
 /**
  * Do command line parsing.
@@ -52,7 +52,7 @@ OW_DECLARE_EXCEPTION(CmdLineParser)
  * Copy semantics: Value
  * Exception safety: Strong
  */
-class CmdLineParser
+class OW_COMMON_API CmdLineParser
 {
 public:
 	enum EArgumentTypeFlag

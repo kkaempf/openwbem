@@ -49,7 +49,7 @@ class String;
  * (i.e. CIMClass, CIMInstance, etc...). It ensures that all derived
  * class will support the specified interface.
  */
-class CIMBase : public SerializableIFC
+class OW_COMMON_API CIMBase : public SerializableIFC
 {
 public:
 	virtual ~CIMBase();
@@ -132,7 +132,7 @@ public:
 		UInt32 version);
 
 };
-std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
+OW_COMMON_API std::ostream& operator<<(std::ostream& ostr, const CIMBase& cb);
 ///////////////////////////////////////////////////////////////////////////////
 // signatures for non-versioned format of objects. These are pass to the
 // readSig and writeSig methods.

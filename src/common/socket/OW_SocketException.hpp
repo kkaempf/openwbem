@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(Socket);
+OW_DECLARE_APIEXCEPTION(Socket, OW_COMMON_API);
 
 } // end namespace OpenWBEM
 

@@ -49,7 +49,7 @@
 namespace OpenWBEM
 {
 
-class TmpFileImpl : public IntrusiveCountableBase
+class OW_COMMON_API TmpFileImpl : public IntrusiveCountableBase
 {
 public:
 	TmpFileImpl();
@@ -87,7 +87,7 @@ private:
 #endif
 };
 
-class TmpFile
+class OW_COMMON_API TmpFile
 {
 public:
 	TmpFile() :

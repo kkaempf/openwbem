@@ -352,7 +352,7 @@ Array<T>::clear()
 
 #ifdef OW_CHECK_ARRAY_INDEXING
 /////////////////////////////////////////////////////////////////////////////
-void throwArrayOutOfBoundsException(size_t size, size_t idx);
+OW_COMMON_API void throwArrayOutOfBoundsException(size_t size, size_t idx);
 
 /////////////////////////////////////////////////////////////////////////////
 template <typename T>

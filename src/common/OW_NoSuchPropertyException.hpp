@@ -40,7 +40,7 @@
 namespace OpenWBEM
 {
 
-OW_DECLARE_EXCEPTION(NoSuchProperty);
+OW_DECLARE_APIEXCEPTION(NoSuchProperty, OW_COMMON_API);
 
 } // end namespace OpenWBEM
 

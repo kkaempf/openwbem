@@ -60,7 +60,7 @@ namespace MOF
 {
 
 struct lineInfo;
-class CIMOMVisitor : public Visitor
+class OW_MOF_API CIMOMVisitor : public Visitor
 {
 public:
 	CIMOMVisitor(const CIMOMHandleIFCRef& hdl, const Compiler::Options& opts,

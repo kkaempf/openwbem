@@ -52,7 +52,7 @@ class CIMValue;
  * The CIMDataType is used to represent the CIM data type of underlying data
  * in other CIM objects, such as CIMValue objects.
  */
-class CIMDataType : public CIMBase
+class OW_COMMON_API CIMDataType : public CIMBase
 {
 public:
 	struct DTData;

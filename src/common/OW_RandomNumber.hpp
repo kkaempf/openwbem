@@ -42,7 +42,7 @@
 namespace OpenWBEM
 {
 
-class RandomNumber
+class OW_COMMON_API RandomNumber
 {
 public:
 	// Precondition: lowVal < highVal

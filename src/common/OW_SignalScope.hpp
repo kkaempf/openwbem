@@ -51,7 +51,7 @@ extern "C" {
 typedef void (*sighandler_t)(int);
 }
 
-class SignalScope
+class OW_COMMON_API SignalScope
 {
 public:
 	SignalScope( int sig, sighandler_t handler )

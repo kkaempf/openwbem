@@ -51,10 +51,10 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-OW_DECLARE_EXCEPTION(CancellationDenied);
-OW_DECLARE_EXCEPTION(Thread);
+OW_DECLARE_APIEXCEPTION(CancellationDenied, OW_COMMON_API);
+OW_DECLARE_APIEXCEPTION(Thread, OW_COMMON_API);
 //////////////////////////////////////////////////////////////////////////////
-class Thread : public IntrusiveCountableBase
+class OW_COMMON_API Thread : public IntrusiveCountableBase
 {
 public:
 	/**

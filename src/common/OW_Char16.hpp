@@ -48,7 +48,7 @@ class String;
 /**
  * The Char16 class is an abstraction for a double byte character.
  */
-class Char16
+class OW_COMMON_API Char16
 {
 public:
 	/**
@@ -325,7 +325,7 @@ inline Char16 operator/ (const Char16& arg1, const Char16& arg2)
 {
 	return Char16(UInt16(arg1.getValue() / arg2.getValue()));
 }
-std::ostream& operator<< (std::ostream& ostrm, const Char16& arg);
+OW_COMMON_API std::ostream& operator<< (std::ostream& ostrm, const Char16& arg);
 typedef Array<Char16> Char16Array;
 
 } // end namespace OpenWBEM

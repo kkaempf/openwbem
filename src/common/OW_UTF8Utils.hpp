@@ -45,7 +45,7 @@ namespace OpenWBEM
 class String;
 class StringBuffer;
 
-OW_DECLARE_EXCEPTION(InvalidUTF8);
+OW_DECLARE_APIEXCEPTION(InvalidUTF8, OW_COMMON_API);
 
 namespace UTF8Utils
 {
@@ -56,7 +56,7 @@ namespace UTF8Utils
  * @param utf8str string in UTF-8 encoding.
  * @return Number of chars in the string.
  */
-size_t charCount(const char* utf8str);
+OW_COMMON_API size_t charCount(const char* utf8str);
 /**
  * Convert one UTF-8 char (possibly multiple bytes) into a UCS2 16-bit char
  * @param utc8char pointer to the UTF-8 char to convert
@@ -64,26 +64,26 @@ size_t charCount(const char* utf8str);
  *  invalid UTF-8 sequence.  Not all UTF-8 chars are handled. UTF-8 chars 
  *  outside the range of a UCS2 char will produce 0xFFFF.
  */
-UInt16 UTF8toUCS2(const char* utf8char);
+OW_COMMON_API UInt16 UTF8toUCS2(const char* utf8char);
 /**
  * Convert one UCS2 16-bit char into a UTF-8 char (possibly multiple bytes)
  * @param ucs2char UCS2 char to convert.
  * @return The corresponding UTF-8 char.
  */
-String UCS2toUTF8(UInt16 ucs2char);
+OW_COMMON_API String UCS2toUTF8(UInt16 ucs2char);
 /**
  * Convert one UTF-8 char (possibly multiple bytes) into a UCS4 32-bit char
  * @param utc8char pointer to the UTF-8 char to convert
  * @return The corresponding UCS4 char.  0xFFFFFFFF if utf8char points to an
  *  invalid UTF-8 sequence.
  */
-UInt32 UTF8toUCS4(const char* utf8char);
+OW_COMMON_API UInt32 UTF8toUCS4(const char* utf8char);
 /**
  * Convert one UCS4 32-bit char into a UTF-8 char (possibly multiple bytes)
  * @param ucs4char UCS4 char to convert.
  * @return The corresponding UTF-8 char.
  */
-String UCS4toUTF8(UInt32 ucs4char);
+OW_COMMON_API String UCS4toUTF8(UInt32 ucs4char);
 /**
  * Convert one UCS4 32-bit char into a UTF-8 char (possibly multiple bytes)
  * This version is faster to use in a loop than the version which returns a
@@ -91,7 +91,7 @@ String UCS4toUTF8(UInt32 ucs4char);
  * @param ucs4char UCS4 char to convert.
  * @param sb The corresponding UTF-8 char will be appended to the end of sb.
  */
-void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb);
+OW_COMMON_API void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb);
 
 /**
  * Compares 2 UTF-8 strings, ignoring any case differences as defined by the
@@ -101,34 +101,34 @@ void UCS4toUTF8(UInt32 ucs4char, StringBuffer& sb);
  * @return a value less than, equal to, or greater than 0 if str1 is found to
  * be less than, equal to, or greater than str2
  */
-int compareToIgnoreCase(const char* str1, const char* str2);
+OW_COMMON_API int compareToIgnoreCase(const char* str1, const char* str2);
 /**
  * Convert a UTF-8 (or ASCII) string into a UCS2 string
  * @param input The UTF-8 string
  * @return An Array of UCS2 characters
  * @throws InvalidUTF8Exception if input contains invalid UTF-8 characters.
  */
-Array<UInt16> StringToUCS2(const String& input);
+OW_COMMON_API Array<UInt16> StringToUCS2(const String& input);
 
 /**
  * Convert a UCS2 string into a UTF-8 (or ASCII) string
  * @param input An Array of UCS2 characters
  * @return The UTF-8 string
  */
-String UCS2ToString(const Array<UInt16>& input);
+OW_COMMON_API String UCS2ToString(const Array<UInt16>& input);
 /**
  * Convert a UCS2 string into a UTF-8 (or ASCII) string
  * @param input An Array of UCS2 characters
  * @return The UTF-8 string
  */
-String UCS2ToString(const Array<char>& input);
+OW_COMMON_API String UCS2ToString(const Array<char>& input);
 /**
  * Convert a UCS2 string into a UTF-8 (or ASCII) string
  * @param input An Array of UCS2 characters
  * @param inputLength The size (in bytes) of input.
  * @return The UTF-8 string
  */
-String UCS2ToString(const void* input, size_t inputLength);
+OW_COMMON_API String UCS2ToString(const void* input, size_t inputLength);
 
 } // end namespace UTF8Utils
 

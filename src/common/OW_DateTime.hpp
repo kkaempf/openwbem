@@ -49,7 +49,7 @@ namespace OpenWBEM
 
 class String;
 
-OW_DECLARE_EXCEPTION(DateTime)
+OW_DECLARE_APIEXCEPTION(DateTime, OW_COMMON_API)
 
 /**
  * The DateTime class is an abstraction for date time data.
@@ -71,7 +71,7 @@ OW_DECLARE_EXCEPTION(DateTime)
  * otherwise this class' implementation relies on the global variable timezone 
  * (from time.h) which reflects the system's timezone.
  */
-class DateTime
+class OW_COMMON_API DateTime
 {
 public:
 	/**

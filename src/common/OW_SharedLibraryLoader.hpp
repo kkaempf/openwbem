@@ -50,7 +50,7 @@ typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
  * SharedLibraryLoader is the base class for a platform class for loading
  * shared libraries.
  */
-class SharedLibraryLoader : public IntrusiveCountableBase
+class OW_COMMON_API SharedLibraryLoader : public IntrusiveCountableBase
 {
 public:
 	virtual ~SharedLibraryLoader();

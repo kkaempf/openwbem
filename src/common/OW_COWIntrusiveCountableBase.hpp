@@ -57,7 +57,7 @@ namespace OpenWBEM
  * 
  * Derived classes must implement: Derived* clone()
  */
-class COWIntrusiveCountableBase
+class OW_COMMON_API COWIntrusiveCountableBase
 {
 private:
 	RefCount m_usecount;

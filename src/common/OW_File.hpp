@@ -47,7 +47,7 @@ namespace OpenWBEM
  * The purpose of the File class is to provide an abstraction layer
  * over the platform dependant functionality related to a file.
  */
-class File
+class OW_COMMON_API File
 {
 public:
 	/**

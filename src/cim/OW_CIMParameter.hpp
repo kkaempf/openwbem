@@ -48,7 +48,7 @@ namespace OpenWBEM
  * The CIMParameter class encapsulates all data and functionality pertinent
  * to a parameter to a method within a CIM class.
  */
-class CIMParameter : public CIMElement
+class OW_COMMON_API CIMParameter : public CIMElement
 {
 public:
 	struct PARMData;

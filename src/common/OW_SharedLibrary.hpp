@@ -46,7 +46,7 @@ namespace OpenWBEM
  * SharedLibrary is a base class for platform classes that implement the
  * functionality of loading and querying shared libraries.
  */
-class SharedLibrary : public IntrusiveCountableBase
+class OW_COMMON_API SharedLibrary : public IntrusiveCountableBase
 {
 public:
 	virtual ~SharedLibrary();

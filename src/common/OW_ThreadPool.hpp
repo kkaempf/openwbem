@@ -46,7 +46,7 @@ namespace OpenWBEM
 {
 
 class ThreadPoolImpl;
-OW_DECLARE_EXCEPTION(ThreadPool);
+OW_DECLARE_APIEXCEPTION(ThreadPool, OW_COMMON_API);
 /**
  * The ThreadPool class is used to coordinate a group of threads.  There is
  * a queue maintained of work to do.  As each thread in the group is available
@@ -56,7 +56,7 @@ OW_DECLARE_EXCEPTION(ThreadPool);
  * This class is freely copyable.  All copies reference the same underlying implementation.
  * This class is thread safe.
  */
-class ThreadPool : public IntrusiveCountableBase
+class OW_COMMON_API ThreadPool : public IntrusiveCountableBase
 {
 public:
 	enum PoolType

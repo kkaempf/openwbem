@@ -46,7 +46,7 @@
 namespace OpenWBEM
 {
 
-class ServerSocket : public SelectableIFC
+class OW_COMMON_API ServerSocket : public SelectableIFC
 {
 public:
 	/** Allocate a new Inet Server Socket.

@@ -44,7 +44,7 @@ namespace OpenWBEM
 {
 
 //////////////////////////////////////////////////////////////////////////////
-class LanguageTag
+class OW_COMMON_API LanguageTag
 {
 public:
 	LanguageTag();
@@ -111,7 +111,7 @@ private:
 typedef Array<LanguageTag> LanguageTagArray;
 
 //////////////////////////////////////////////////////////////////////////////
-class SessionLanguage : public OperationContext::Data
+class OW_COMMON_API SessionLanguage : public OperationContext::Data
 {
 public:
 	SessionLanguage();

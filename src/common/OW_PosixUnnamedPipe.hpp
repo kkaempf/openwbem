@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class PosixUnnamedPipe : public UnnamedPipe
+class OW_COMMON_API PosixUnnamedPipe : public UnnamedPipe
 {
 public:
 	PosixUnnamedPipe(EOpen doOpen=E_OPEN);

@@ -47,7 +47,7 @@ namespace OpenWBEM
  * The CIMFlavor class represents the flavor that is associated with a
  * CIMQualifier.
  */
-class CIMFlavor : public CIMBase
+class OW_COMMON_API CIMFlavor : public CIMBase
 {
 public:
 	enum Flavor

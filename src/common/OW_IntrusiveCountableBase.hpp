@@ -55,7 +55,7 @@ namespace OpenWBEM
  * from this class.  Note that if multiple inheritance is used, you must derive
  * "virtual"ly.
  */
-class IntrusiveCountableBase
+class OW_COMMON_API IntrusiveCountableBase
 {
 private:
 	RefCount m_useCount;

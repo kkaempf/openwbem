@@ -50,7 +50,7 @@ namespace OpenWBEM
  * The CIMValue class is an abstraction for all CIM data types.
  * CIMValue objects are ref counted and copy on write.
  */
-class CIMValue : public CIMBase
+class OW_COMMON_API CIMValue : public CIMBase
 {
 	class CIMValueImpl;
 public:

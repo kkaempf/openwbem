@@ -44,7 +44,7 @@
 namespace OpenWBEM
 {
 
-class TempFileEnumerationImplBase : public IntrusiveCountableBase
+class OW_COMMON_API TempFileEnumerationImplBase : public IntrusiveCountableBase
 {
 
 public:

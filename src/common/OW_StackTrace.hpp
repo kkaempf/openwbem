@@ -46,7 +46,7 @@ namespace OpenWBEM
 
 namespace StackTrace
 {
-	void printStackTrace();
+	OW_COMMON_API void printStackTrace();
 } // end namespace StackTrace
 
 } // end namespace OpenWBEM

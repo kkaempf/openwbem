@@ -59,7 +59,7 @@ namespace OpenWBEM
 
 class SocketBaseImpl;
 typedef IntrusiveReference<SocketBaseImpl> SocketBaseImplRef;
-class SocketBaseImpl : public SelectableIFC, public IOIFC
+class OW_COMMON_API SocketBaseImpl : public SelectableIFC, public IOIFC
 {
 public:
 	SocketBaseImpl();
