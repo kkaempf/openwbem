@@ -51,10 +51,10 @@ static CMPIArray* arrayClone(CMPIArray* eArray, CMPIStatus* rc)
 	CMPIArray * nArray=(CMPIArray *)new CMPI_Object(nDta, CMPI_Array_Ftab);
 	CMPIStatus rrc={CMPI_RC_OK, NULL};
 
-	if (dta->type & CMPI_ENC) for (uint i=1; i<=dta->value.uint32; i++)
+	if (dta->type & CMPI_ENC) for (unsigned int i=1; i<=dta->value.uint32; i++)
 		nDta[i].state=CMPI_nullValue;
 
-	for (uint i=0; i<=dta->value.uint32; i++)
+	for (unsigned int i=0; i<=dta->value.uint32; i++)
 	{
 		nDta[i] = dta[i];
 		if (dta->type & CMPI_ENC && dta[i].state==0)

@@ -100,7 +100,7 @@ static CMPIArray* mbEncNewArray(CMPIBroker*, CMPICount count, CMPIType type,
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;
 	dta->value.uint32 = count;
-	for (uint i=1; i<=count; i++)
+	for (unsigned int i=1; i<=count; i++)
 	{
 		dta[i].type = type;
 		dta[i].state = CMPI_nullValue;
