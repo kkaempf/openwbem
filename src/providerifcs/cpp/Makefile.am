@@ -1,10 +1,10 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
-noinst_LIBRARIES = libcppprovifc.a
-OW_SHARED_LIBS = libcppprovifc.so
+noinst_LIBRARIES = libowcppprovifc.a
+OW_SHARED_LIBS = libowcppprovifc.so
 SHAREDLIBADD =
 
-thelibdir = $(pkglibdir)/provifcs
+thelibdir = $(libdir)
 
 all-local: $(OW_SHARED_LIBS)
 
@@ -23,7 +23,7 @@ clean-local:
 
 
 
-libcppprovifc_a_SOURCES = \
+libowcppprovifc_a_SOURCES = \
 OW_CppAssociatorProviderIFC.hpp \
 OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \

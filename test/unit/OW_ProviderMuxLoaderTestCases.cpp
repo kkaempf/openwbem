@@ -91,9 +91,10 @@ Test* OW_ProviderMuxLoaderTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_ProviderMuxLoaderTestCases>
 			("testFailLoadIFCs",
 			&OW_ProviderMuxLoaderTestCases::testFailLoadIFCs));
-	testSuite->addTest (new TestCaller <OW_ProviderMuxLoaderTestCases>
-			("testLoadCppIFC",
-			&OW_ProviderMuxLoaderTestCases::testLoadCppIFC));
+	// Test doesn't work anymore since the cpp ifc is now a non-loadable ifc.
+	//testSuite->addTest (new TestCaller <OW_ProviderMuxLoaderTestCases>
+	//		("testLoadCppIFC",
+	//		&OW_ProviderMuxLoaderTestCases::testLoadCppIFC));
 
 	return testSuite;
 }

@@ -62,6 +62,7 @@ $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/db/db -lowdb -ldl
 
 unitMain_LDFLAGS = \

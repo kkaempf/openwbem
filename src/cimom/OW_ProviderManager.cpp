@@ -40,6 +40,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMProperty.hpp"
+#include "OW_CppProviderIFC.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_ProviderManager::load(const OW_ProviderIFCLoaderRef& IFCLoader)
@@ -49,6 +50,13 @@ void OW_ProviderManager::load(const OW_ProviderIFCLoaderRef& IFCLoader)
 	m_internalIFC = pi.cast_to<OW_InternalProviderIFC>();
 	// 0 because there is no shared library.
 	m_IFCArray.push_back(OW_ProviderIFCBaseIFCRef(OW_SharedLibraryRef(0), pi));
+
+	// now the CPP provider is linked to the cimom, not loaded dynamically, So
+	// we have to create it here.
+	OW_Reference<OW_ProviderIFCBaseIFC> cpppi(new OW_CppProviderIFC);
+	// 0 because there is no shared library.
+	m_IFCArray.push_back(OW_ProviderIFCBaseIFCRef(OW_SharedLibraryRef(0), cpppi));
+
 }
 
 namespace {

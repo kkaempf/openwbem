@@ -604,5 +604,18 @@ OW_CppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 	}
 }
 
-OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)
+
+// TODO: Move these into their own files.
+OW_CppProviderBaseIFC::~OW_CppProviderBaseIFC() {}
+void OW_CppProviderBaseIFC::updateAccessTime() { m_dt.setToCurrent(); }
+
+OW_CppIndicationProviderIFC::~OW_CppIndicationProviderIFC() {}
+OW_CppInstanceProviderIFC::~OW_CppInstanceProviderIFC() {}
+OW_CppAssociatorProviderIFC::~OW_CppAssociatorProviderIFC(){}
+OW_CppIndicationExportProviderIFC::~OW_CppIndicationExportProviderIFC(){}
+OW_CppMethodProviderIFC::~OW_CppMethodProviderIFC() {}
+OW_CppPolledProviderIFC::~OW_CppPolledProviderIFC() {}
+OW_CppPropertyProviderIFC::~OW_CppPropertyProviderIFC() {}
+
+//OW_PROVIDERIFCFACTORY(OW_CppProviderIFC)
 
