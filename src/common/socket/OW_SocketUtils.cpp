@@ -42,6 +42,7 @@
 #include "OW_Format.hpp"
 #include "OW_Thread.hpp"
 #include "OW_System.hpp"
+#include "OW_Select.hpp"
 
 #ifndef OW_HAVE_GETHOSTBYNAME_R
 #include "OW_Mutex.hpp"
@@ -51,10 +52,6 @@
 extern "C"
 {
 #if !defined(OW_WIN32)
-#ifdef OW_HAVE_SYS_SELECT_H
-#include <sys/select.h>
-#endif
-
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -188,9 +185,23 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		return -1;
 	}
 
-	fd_set readfds;
-	fd_set writefds;
-	int rc;
+	Select::SelectObject so(fd); 
+	if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
+	{
+		so.rEvents = true; 
+	}
+	else if (waitFlag == SocketFlags::E_WAIT_FOR_OUTPUT)
+	{
+		so.wEvents = true; 
+	}
+	else
+	{
+		so.rEvents = true; 
+		so.wEvents = true; 
+	}
+	Select::SelectObjectArray selarray; 
+	selarray.push_back(so); 
+
 	PosixUnnamedPipeRef lUPipe;
 	int pipefd = -1;
 	if (Socket::getShutDownMechanism())
@@ -200,78 +211,40 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();
 	}
-	// here we spin checking for thread cancellation every so often.
-	UInt32 remainingMsWait = timeOutSecs != Socket::INFINITE_TIMEOUT ? timeOutSecs * 1000 : ~0U;
-	do
+	if (pipefd != -1)
 	{
-		FD_ZERO(&readfds);
-		FD_ZERO(&writefds);
-		int maxfd = fd;
-		if (pipefd != -1 && pipefd < FD_SETSIZE)
-		{
-			FD_SET(pipefd, &readfds);
-			maxfd = MAX(fd, pipefd);
-		}
-		if (fd < 0 || fd >= FD_SETSIZE)
-		{
-			errno = EINVAL;
-			return -1;
-		}
-		if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
-		{
-			FD_SET(fd, &readfds);
-		}
-		else if (waitFlag == SocketFlags::E_WAIT_FOR_OUTPUT)
-		{
-			FD_SET(fd, &writefds);
-		}
-		else
-		{
-			FD_SET(fd, &readfds);
-			FD_SET(fd, &writefds);
-		}
+		so = Select::SelectObject(pipefd); 
+		so.rEvents = true; 
+		selarray.push_back(so); 
+	}
 
-		const UInt32 waitMs = 100; // 1/10 of a second
-		struct timeval tv;
-		tv.tv_sec = 0;
-		tv.tv_usec = std::min((waitMs % 1000), remainingMsWait) * 1000;
-		Thread::testCancel();
-		rc = ::select(maxfd+1, &readfds, &writefds, NULL, &tv);
-		if (timeOutSecs != Socket::INFINITE_TIMEOUT)
-		{
-			remainingMsWait -= std::min(waitMs, remainingMsWait);
-		}
-	} while (rc == 0 && remainingMsWait > 0);
-
+	int rc = Select::selectRW(selarray, timeOutSecs*1000); 
 	switch (rc)
 	{
-		case 0:
-			rc = ETIMEDOUT;
-			break;
-		case -1:
-			if (errno == EINTR)
+	case Select::SELECT_TIMEOUT:
+		rc = ETIMEDOUT; 
+		break; 
+	case 2:
+		rc = -1; // pipe was signalled
+		break; 
+	case 1: 
+		if (pipefd != -1)
+		{
+			if (selarray[1].rAvailable)
 			{
-				Thread::testCancel();
+				rc = -1; 
 			}
-			break;
-		default:
-			if (pipefd != -1)
-			{
-				if (FD_ISSET(pipefd, &readfds))
-				{
-					rc = -1;
-				}
-				else
-				{
-					rc = 0;
-				}
-			}
-			else
-			{
-				rc = 0;
-			}
+		}
+		if (selarray[0].wAvailable || selarray[0].rAvailable)
+		{
+			rc = 0; 
+		}
+		break; 
+	default: 
+		rc = -1; 
 	}
-	return rc;
+	return rc; 
+
 }
 #endif	// 
 
