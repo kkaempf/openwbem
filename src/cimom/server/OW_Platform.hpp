@@ -41,6 +41,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_Exception.hpp"
 #include "OW_IOException.hpp"
+#include "OW_UserUtils.hpp"
 
 namespace OpenWBEM
 {
@@ -86,7 +87,7 @@ namespace Platform
 	int popSig();
 	void shutdownSig();
 	SelectableIFCRef getSigSelectable();
-	String getCurrentUserName();
+	using UserUtils::getCurrentUserName;
 
 	/** 
 	 * Restart the daemon.  This closes all file handles and then calls
@@ -98,8 +99,6 @@ namespace Platform
 	void restartDaemon();
 	void installFatalSignalHandlers();
 	void removeFatalSignalHandlers();
-
-
 }; // end namespace Platform
 
 
