@@ -263,6 +263,13 @@ public:
 	 */
 	CIMInstance& updatePropertyValue(const CIMProperty& prop);
 	/**
+	 * Update a single property value. Does not add prop is it doesn't exist.
+	 * @param name	The name of the property to update.
+	 * @param cv The new value for the property.
+	 * @return a reference to *this
+	 */
+	CIMInstance& updatePropertyValue(const CIMName& name, const CIMValue& cv);
+	/**
 	 * Update the value of a property if it exists. Otherwise add a new one.
 	 * In most cases, updatePropertyValue() should be called instead of this
 	 * function, because it won't add a new property. An instance is

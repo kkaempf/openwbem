@@ -376,6 +376,13 @@ CIMInstance::updatePropertyValue(const CIMProperty& prop)
 
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance&
+CIMInstance::updatePropertyValue(const CIMName& name, const CIMValue& value)
+{
+	return updatePropertyValue(CIMProperty(name, value));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMInstance&
 CIMInstance::setProperty(const CIMName& name, const CIMValue& cv)
 {
 	int tsize = m_pdata->m_properties.size();
