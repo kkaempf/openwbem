@@ -73,7 +73,7 @@ public: \
 	virtual const char* type() const; \
 };
 
-#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, Exception) 
+#define OW_DECLARE_EXCEPTION(NAME) OW_DECLARE_EXCEPTION2(NAME, ::OpenWBEM::Exception) 
 
 #define OW_DEFINE_EXCEPTION2(NAME, BASE) \
 NAME##Exception::NAME##Exception(const char* file, int line, const char* msg) \
@@ -81,7 +81,7 @@ NAME##Exception::NAME##Exception(const char* file, int line, const char* msg) \
 NAME##Exception::~NAME##Exception() throw() { } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; } \
 
-#define OW_DEFINE_EXCEPTION(NAME) OW_DEFINE_EXCEPTION2(NAME, Exception)
+#define OW_DEFINE_EXCEPTION(NAME) OW_DEFINE_EXCEPTION2(NAME, ::OpenWBEM::Exception)
 
 } // end namespace OpenWBEM
 
