@@ -33,19 +33,17 @@
 
 
 class CMPI_ThreadContext {
-   static unsigned long hiKey;
-   unsigned long key;
-   CMPI_ThreadContext* prev;
+   static unsigned long theKey;
+   CMPI_ThreadContext* m_prev;
    CMPI_Object *CIMfirst,*CIMlast;
    void add(CMPI_Object *o);
    void remove(CMPI_Object *o);
    void setThreadContext();
    void setContext();
-   static CMPI_ThreadContext* getContext(unsigned long *kp=NULL);
+   static CMPI_ThreadContext* getContext();
   public:
    static void addObject(CMPI_Object*);
    static void remObject(CMPI_Object*);
-   static CMPI_ThreadContext* getThreadContext();
    CMPI_ThreadContext();
    ~CMPI_ThreadContext();
 };

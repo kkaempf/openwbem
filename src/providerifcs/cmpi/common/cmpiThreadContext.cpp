@@ -22,99 +22,113 @@
 #include "cmpisrv.h"
 #include <pthread.h>
 #include <limits.h>
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_NonRecursiveMutexLock.hpp"
+#include "OW_Format.hpp"
 
+static const unsigned long NOKEY = PTHREAD_KEYS_MAX+1;
+unsigned long CMPI_ThreadContext::theKey=NOKEY;
+static OW_NonRecursiveMutex keyGuard;
 
-unsigned long CMPI_ThreadContext::hiKey=PTHREAD_KEYS_MAX+1;
-
-#if OW_SIZEOF_CHAR_P == 8
-#define KEY_VAL 0xFFFFFFFFFFFFFC00
-#else
-#define KEY_VAL 0xFFFFFC00
-#endif
-
-CMPI_ThreadContext* CMPI_ThreadContext::getContext(unsigned long *kp) {
-   int i;
-   unsigned long k;
-   for (i=hiKey,k=0; i>=0 && ((k)&KEY_VAL)!=KEY_VAL; i--)
-       k=(unsigned long)pthread_getspecific(i);
-   if (i<0) return NULL;
-   k&=0x3ff;
-   if (kp) *kp=k;
-   return (CMPI_ThreadContext*)pthread_getspecific(k);
+CMPI_ThreadContext* CMPI_ThreadContext::getContext()
+{
+	return (CMPI_ThreadContext*)pthread_getspecific(theKey);
 }
 
-void CMPI_ThreadContext::setContext() {
-   pthread_key_t k;
-   pthread_key_create(&k,NULL);
-   pthread_key_create((pthread_key_t*)&key,NULL);
-   pthread_setspecific(k,this);
-   pthread_setspecific((pthread_key_t)key,(void*)(KEY_VAL|k));
+void CMPI_ThreadContext::setContext()
+{
+	pthread_key_t k;
+	int rc = pthread_key_create(&k,NULL);
+	if (rc != 0)
+		OW_THROW(OW_Exception, format("pthread_key_create failed. error = %1", rc).c_str());
+
+	rc = pthread_setspecific(k,this);
+	if (rc != 0)
+		OW_THROW(OW_Exception, format("pthread_setspecific failed. error = %1", rc).c_str());
+
+	theKey = k;
+	std::cout<<"--- setThreadContext(1) theKey: " << theKey << std::endl;
 }
 
 #undef KEY_VAL
 
-void CMPI_ThreadContext::setThreadContext() {
-   unsigned long k;
-   CMPI_ThreadContext* prevCtx;
+void CMPI_ThreadContext::setThreadContext()
+{
+	// if this is the first time setThreadContext() has run.
+	// hiKey is initially PTHREAD_KEYS_MAX+1, but then gets set as 
+	// CMPI_ThreadContext objects are created.
+	if (theKey == NOKEY)
+	{
+		// double-checked locking pattern
+		OW_NonRecursiveMutexLock l(keyGuard);
+		if (theKey == NOKEY)
+		{
+			m_prev=NULL;
 
-   if (hiKey>PTHREAD_KEYS_MAX) {
-      prev=NULL;
-      setContext();
-      hiKey=key;
-      // cout<<"--- setThreadContext(1) key: "<<key<<endl;
-      return;
-   }
-   if ((prevCtx=getContext(&k))!=NULL) {
-      prev=prevCtx;
-      pthread_setspecific(k,this);
-      return;
-   }
-   setContext();
-   prev=NULL;
-   if (hiKey<key) hiKey=key;
-   //cout<<"--- setThreadContext(2) key: "<<key<<endl;
-   return;
+			// this adds us to the tsd and sets m_key
+			setContext();
+
+			return;
+		}
+	}
+
+	// another context already exists or existed
+
+	// if we get one, then one exists
+	m_prev=getContext();
+
+	// set this as the context
+	int rc = pthread_setspecific(theKey,this);
+	if (rc != 0)
+		OW_THROW(OW_Exception, format("pthread_setspecific failed. error = %1", rc).c_str());
+
+	return;
 }
 
-void CMPI_ThreadContext::add(CMPI_Object *o) {
-   ENQ_TOP_LIST(o,CIMfirst,CIMlast,next,prev);
+void CMPI_ThreadContext::add(CMPI_Object *o)
+{
+	ENQ_TOP_LIST(o,CIMfirst,CIMlast,next,prev);
 }
 
-void CMPI_ThreadContext::addObject(CMPI_Object* o) {
-   CMPI_ThreadContext* ctx=getContext();
-   ctx->add(o);
+void CMPI_ThreadContext::addObject(CMPI_Object* o)
+{
+	CMPI_ThreadContext* ctx=getContext();
+	ctx->add(o);
 }
 
-void CMPI_ThreadContext::remove(CMPI_Object *o) {
-   DEQ_FROM_LIST(o,CIMfirst,CIMlast,next,prev);
+void CMPI_ThreadContext::remove(CMPI_Object *o)
+{
+	DEQ_FROM_LIST(o,CIMfirst,CIMlast,next,prev);
 }
 
-void CMPI_ThreadContext::remObject(CMPI_Object* o) {
-   CMPI_ThreadContext* ctx=getContext();
-   ctx->remove(o);
+void CMPI_ThreadContext::remObject(CMPI_Object* o)
+{
+	CMPI_ThreadContext* ctx=getContext();
+	ctx->remove(o);
 }
 
-CMPI_ThreadContext* CMPI_ThreadContext::getThreadContext() {
-   return NULL;
+CMPI_ThreadContext::CMPI_ThreadContext()
+	: m_prev(0)
+	, CIMfirst(0)
+	, CIMlast(0)
+{
+	setThreadContext();
 }
 
-CMPI_ThreadContext::CMPI_ThreadContext() {
-   CIMfirst=CIMlast=NULL;
-   setThreadContext();
-}
+CMPI_ThreadContext::~CMPI_ThreadContext()
+{
 
-CMPI_ThreadContext::~CMPI_ThreadContext() {
+	for (CMPI_Object *nxt,*cur=CIMfirst; cur; cur=nxt)
+	{
+		nxt=cur->next;
+		((CMPIInstance*)cur)->ft->release((CMPIInstance*)cur);
+	}
 
-   for (CMPI_Object *nxt,*cur=CIMfirst; cur; cur=nxt) {
-      nxt=cur->next;
-      ((CMPIInstance*)cur)->ft->release((CMPIInstance*)cur);
-   }
-
-   unsigned long k=(unsigned long)pthread_getspecific(key);
-   if (prev!=NULL) {
-      pthread_setspecific(k&0x3ff,prev);
-      return;
-   }
-   pthread_key_delete(key);
-   pthread_key_delete(k&0x3ff);
+	if (m_prev != NULL)
+	{
+		int rc = pthread_setspecific(theKey, m_prev);
+		if (rc != 0)
+			OW_THROW(OW_Exception, format("pthread_setspecific failed. error = %1", rc).c_str());
+		return;
+	}
 }
