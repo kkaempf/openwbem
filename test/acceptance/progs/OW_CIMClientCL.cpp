@@ -231,10 +231,8 @@ enumClasses(OW_CIMClient& hdl)
 			OW_CIMClass c = enu.nextElement();
 			cout << "CIMClass: " << c.toMOF() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
+			OW_CIMtoXML(c,tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
@@ -253,10 +251,8 @@ enumClasses(OW_CIMClient& hdl)
 			OW_CIMClass c = enu.nextElement();
 			cout << "CIMClass: " << c.toMOF() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
+			OW_CIMtoXML(c,tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
@@ -275,10 +271,8 @@ enumClasses(OW_CIMClient& hdl)
 			OW_CIMClass c = enu.nextElement();
 			cout << "CIMClass: " << c.toMOF() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::localOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
+			OW_CIMtoXML(c,tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
@@ -297,10 +291,8 @@ enumClasses(OW_CIMClient& hdl)
 			OW_CIMClass c = enu.nextElement();
 			cout << "CIMClass: " << c.toMOF() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(c,tfs,OW_CIMtoXMLFlags::localOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
+			OW_CIMtoXML(c,tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
@@ -325,10 +317,8 @@ modifyClass(OW_CIMClient& hdl)
 			"EXP_BionicComputerSystem");
 		cout << "CIMClass before: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
-		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMtoXML(cimClass,tfs);
+		tfs << '\n';
 		cout << OW_XMLPrettyPrint(tfs);
 
 		OW_CIMProperty cimProp;
@@ -340,10 +330,8 @@ modifyClass(OW_CIMClient& hdl)
 		cimClass = hdl.getClass( "EXP_BionicComputerSystem");
 		cout << "CIMClass after: " << cimClass.toMOF() << endl;
 		tfs.reset();
-		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMtoXML(cimClass,tfs);
+		tfs << '\n';
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 
@@ -369,10 +357,8 @@ getClass(OW_CIMClient& hdl)
 			"EXP_BionicComputerSystem", E_NOT_LOCAL_ONLY);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
-		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMtoXML(cimClass,tfs);
+		tfs << '\n';
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 	}
@@ -388,10 +374,8 @@ getClass(OW_CIMClient& hdl)
 			"EXP_BionicComputerSystem", E_LOCAL_ONLY);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
-		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::localOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMtoXML(cimClass,tfs);
+		tfs << '\n';
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 	}
@@ -422,11 +406,8 @@ testDynInstances(OW_CIMClient& hdl)
 		ci = hdl.getInstance(cop1);
 		OW_TempFileStream tfs;
 		tfs << "<CIM>";
-		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
-			OW_CIMtoXMLFlags::localOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMInstancePathAndInstancetoXML(ci, tfs, cop1);
+		tfs << '\n';
 		tfs << "</CIM>";
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
@@ -443,11 +424,8 @@ testDynInstances(OW_CIMClient& hdl)
 		ci = hdl.getInstance(cop2);
 		tfs.reset();
 		tfs << "<CIM>";
-		OW_CIMtoXML(ci, tfs, cop2, OW_CIMtoXMLFlags::isNotInstanceName,
-			OW_CIMtoXMLFlags::localOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMInstancePathAndInstancetoXML(ci, tfs, cop2);
+		tfs << '\n';
 		tfs << "</CIM>";
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
@@ -462,11 +440,8 @@ testDynInstances(OW_CIMClient& hdl)
 		ci = hdl.getInstance(cop1);
 		tfs.reset();
 		tfs << "<CIM>";
-		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
-			OW_CIMtoXMLFlags::localOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
+		OW_CIMInstancePathAndInstancetoXML(ci, tfs, cop1);
+		tfs << '\n';
 		tfs << "</CIM>";
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
@@ -661,10 +636,8 @@ enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, EDeepFlag deep, ELocalO
 			OW_CIMInstance i = enu.nextElement();
 			cout << i.toMOF() << endl;
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(i,tfs, OW_CIMObjectPath(OW_CIMNULL),
-				OW_CIMtoXMLFlags::isNotInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			OW_CIMInstancetoXML(i,tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 		}
@@ -701,10 +674,8 @@ getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 		OW_CIMInstance in = hdl.getInstance( cop, localOnly, includeQualifiers,
 				includeClassOrigin, propertyList);
 		OW_TempFileStream tfs;
-		OW_CIMtoXML(in, tfs, OW_CIMObjectPath(OW_CIMNULL),
-			OW_CIMtoXMLFlags::isNotInstanceName,
-			OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+		OW_CIMInstancetoXML(in, tfs);
+		tfs << '\n';
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 	}
@@ -1060,10 +1031,8 @@ associators(OW_CIMClient& hdl, const OW_String& assocClass,
 		{
 			cout << "Association Instance: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(OW_CIMNULL),
-				OW_CIMtoXMLFlags::isNotInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			OW_CIMInstancetoXML(v[x], tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 			cout << endl;
@@ -1108,9 +1077,8 @@ associatorsClasses(OW_CIMClient& hdl, const OW_String& assocClass,
 		{
 			cout << "Association Class: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(v[x], tfs,
-				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			OW_CIMtoXML(v[x], tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 			cout << endl;
@@ -1233,10 +1201,8 @@ references(OW_CIMClient& hdl,
 		{
 			cout << "Association Instance: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(v[x], tfs, OW_CIMObjectPath(OW_CIMNULL),
-				OW_CIMtoXMLFlags::isNotInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			OW_CIMInstancetoXML(v[x], tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 			cout << endl;
@@ -1281,9 +1247,8 @@ referencesClasses(OW_CIMClient& hdl,
 		{
 			cout << "Referencing Class: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(v[x], tfs,
-				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			OW_CIMtoXML(v[x], tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 			cout << endl;
@@ -1314,10 +1279,8 @@ execQuery(OW_CIMClient& hdl)
 			OW_CIMInstance i = cie.nextElement();
 			cout << "Instance from Query: ";
 			OW_TempFileStream tfs;
-			OW_CIMtoXML(i, tfs, OW_CIMObjectPath(OW_CIMNULL),
-				OW_CIMtoXMLFlags::isNotInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
+			OW_CIMInstancetoXML(i, tfs);
+			tfs << '\n';
 			tfs.rewind();
 			cout << OW_XMLPrettyPrint(tfs);
 			cout << "In MOF: " << i.toMOF() << endl;

@@ -48,14 +48,17 @@ OW_XMLOperationGeneric::XMLGetCIMElement(OW_CIMXMLParser& parser)
 
     OW_String str = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
 
-    if(!str.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
+    if(!str.equals(OW_CIMXMLParser::AV_CIMVERSION20_VALUE) &&
+    	!str.equals(OW_CIMXMLParser::AV_CIMVERSION21_VALUE) &&
+	!str.equals(OW_CIMXMLParser::AV_CIMVERSION22_VALUE))
     {
         OW_THROW(OW_CIMErrorException,
             OW_CIMErrorException::unsupported_cim_version);
     }
 
     str = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
-    if(!str.equals(OW_CIMXMLParser::AV_DTDVERSION_VALUE))
+    if(!str.equals(OW_CIMXMLParser::AV_DTDVERSION20_VALUE) &&
+    	!str.equals(OW_CIMXMLParser::AV_DTDVERSION21_VALUE))
     {
         OW_THROW(OW_CIMErrorException,
             OW_CIMErrorException::unsupported_dtd_version);

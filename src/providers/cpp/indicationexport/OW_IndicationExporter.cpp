@@ -57,12 +57,7 @@ OW_IndicationExporter::exportIndication( const OW_String& ns, const OW_CIMInstan
 	OW_Reference<OW_TempFileStream> iostr(new OW_TempFileStream);
 	sendXMLHeader(*iostr);
 	*iostr << "<EXPPARAMVALUE NAME=\"NewIndication\">";
-	OW_CIMtoXML(ci, *iostr, OW_CIMObjectPath(OW_CIMNULL),
-		OW_CIMtoXMLFlags::isNotInstanceName,
-		OW_CIMtoXMLFlags::notLocalOnly,
-		OW_CIMtoXMLFlags::includeQualifiers,
-		OW_CIMtoXMLFlags::includeClassOrigin,
-		OW_StringArray());
+	OW_CIMInstancetoXML(ci, *iostr);
 	*iostr << "</EXPPARAMVALUE>";
 	sendXMLTrailer(*iostr);
 	doSendRequest(iostr, commandName, ns);
@@ -71,13 +66,16 @@ OW_IndicationExporter::exportIndication( const OW_String& ns, const OW_CIMInstan
 void
 OW_IndicationExporter::sendXMLHeader(ostream& ostr)
 {
+	// TODO: merge this with the code in OW_CIMXMLCIMOMHandle.cpp
+	// TODO: WRT the versions, have a way of doing a fallback to older
+	// versions for the sake of compatibility.
 	if (++m_iMessageID > 65535)
 	{
 		m_iMessageID = 1;
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
+	ostr << "<CIM CIMVERSION=\"2.2\" DTDVERSION=\"2.1\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
 	ostr << "<SIMPLEEXPREQ>";
 	ostr << "<EXPMETHODCALL NAME=\"ExportIndication\">";
 }
@@ -120,6 +118,9 @@ void
 OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 		const OW_String& operation)
 {
+// TODO: This code is the same as in OW_CIMXMLCIMOMHandle.cpp.  Put it in a
+// common spot.
+
 	//
 	// Check for <CIM> element
 	//
@@ -127,8 +128,10 @@ OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid XML");
 	}
-
-	OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
+	OW_String cimattr;
+// TODO: Decide if we really should check this or not.
+#if 0
+	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
 	if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -141,7 +144,7 @@ OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for DTDVERSION " + cimattr).c_str());
 	}
-
+#endif
 	//
 	// Find <MESSAGE>
 	//
@@ -154,12 +157,15 @@ OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 										 +OW_String(m_iMessageID)).c_str());
 	}
 
+// TODO: Decide if we really should check this or not.
+#if 0
 	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
 	if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
 	}
+#endif
 
 	// Find <SIMPLEEXPRSP>
 	//

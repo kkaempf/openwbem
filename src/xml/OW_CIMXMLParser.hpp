@@ -251,9 +251,13 @@ public:
 	static const char* const A_DTDVERSION;
 	static const char* const A_MSG_ID;
 	static const char* const A_PROTOCOLVERSION;
-	static const char* const AV_CIMVERSION_VALUE;
-	static const char* const AV_DTDVERSION_VALUE;
-	static const char* const AV_PROTOCOLVERSION_VALUE;
+	static const char* const AV_CIMVERSION20_VALUE;
+	static const char* const AV_CIMVERSION21_VALUE;
+	static const char* const AV_CIMVERSION22_VALUE;
+	static const char* const AV_DTDVERSION20_VALUE;
+	static const char* const AV_DTDVERSION21_VALUE;
+	static const char* const AV_PROTOCOLVERSION10_VALUE;
+	static const char* const AV_PROTOCOLVERSION11_VALUE;
 	static const char* const A_PARAMERRORCODE;
 	static const char* const A_PARAMERRORDESCRIPTION;
 

@@ -649,15 +649,9 @@ namespace
 		AssocCIMInstanceXMLOutputter(
 			std::ostream& ostr_,
 			const OW_String& ns_,
-			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
-			OW_StringArray& propertyList_,
 			const OW_String& host_)
 		: ostr(ostr_)
 		, ns(ns_)
-		, includeQualifiers(includeQualifiers_)
-		, includeClassOrigin(includeClassOrigin_)
-		, isPropertyList(isPropertyList_)
-		, propertyList(propertyList_)
 		, m_host(host_)
 		{}
 	protected:
@@ -667,20 +661,9 @@ namespace
 
 			OW_CIMObjectPath cop( ns, ci );
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
-			try
-			{
-				cop.setHost(m_host);
-			}
-			catch (const OW_SocketException& e)
-			{
-			}
+			cop.setHost(m_host);
 
-			OW_CIMtoXML(ci, ostr, cop,
-				OW_CIMtoXMLFlags::isNotInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,
-				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-				propertyList, (isPropertyList && propertyList.size() == 0));
+			OW_CIMInstancePathAndInstancetoXML(ci, ostr, cop);
 
 			ostr << "</VALUE.OBJECTWITHPATH>\n";
 			checkStream(ostr);
@@ -688,23 +671,16 @@ namespace
 		}
 		std::ostream& ostr;
 		OW_String ns;
-		bool includeQualifiers, includeClassOrigin, isPropertyList;
-		OW_StringArray& propertyList;
 		OW_String m_host;
 	};
+
 	class AssocCIMClassXMLOutputter : public OW_CIMClassResultHandlerIFC
 	{
 	public:
 		AssocCIMClassXMLOutputter(
 			std::ostream& ostr_,
-			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
-			OW_StringArray& propertyList_,
 			const OW_String& ns_)
 		: ostr(ostr_)
-		, includeQualifiers(includeQualifiers_)
-		, includeClassOrigin(includeClassOrigin_)
-		, isPropertyList(isPropertyList_)
-		, propertyList(propertyList_)
 		, ns(ns_)
 		{}
 	protected:
@@ -714,18 +690,13 @@ namespace
 
 			OW_CIMObjectPath cop(cc.getName(), ns);
 			OW_CIMClassPathtoXML(cop,ostr);
-			OW_CIMtoXML(cc, ostr, OW_CIMtoXMLFlags::notLocalOnly,
-				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-				propertyList, (isPropertyList && propertyList.size() == 0));
+			OW_CIMtoXML(cc, ostr);
 
 			ostr << "</VALUE.OBJECTWITHPATH>\n";
 			checkStream(ostr);
 		
 		}
 		std::ostream& ostr;
-		bool includeQualifiers, includeClassOrigin, isPropertyList;
-		OW_StringArray& propertyList;
 		const OW_String& ns;
 
 	};
@@ -773,7 +744,6 @@ void OW_XMLExecute::associators(ostream& ostr,
 
 	bool includeQualifiers = params[5].val.toBool();
 	bool includeClassOrigin = params[6].val.toBool();
-	bool isPropertyList = params[7].isSet;
 	OW_String role = params[3].val.toString();
 	OW_String resultRole = params[4].val.toString();
 
@@ -781,8 +751,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	if (objectName.isClassPath())
 	{
 		// class path
-		AssocCIMClassXMLOutputter handler(ostr, includeQualifiers,
-			includeClassOrigin, isPropertyList, propertyList, ns);
+		AssocCIMClassXMLOutputter handler(ostr, ns);
 
 		hdl.associatorsClasses(ns, objectName, handler,
 			assocClass, resultClass, role, resultRole, 
@@ -793,8 +762,8 @@ void OW_XMLExecute::associators(ostream& ostr,
 	else
 	{
 		// instance path
-		AssocCIMInstanceXMLOutputter handler(ostr, ns, includeQualifiers,
-			includeClassOrigin, isPropertyList, propertyList, getHost());
+		AssocCIMInstanceXMLOutputter handler(ostr, ns, 
+			getHost());
 
 		hdl.associators(ns, objectName, handler,
 			assocClass, resultClass, role, resultRole, 
@@ -1067,26 +1036,17 @@ namespace
 	class CIMClassXMLOutputter : public OW_CIMClassResultHandlerIFC
 	{
 	public:
-		CIMClassXMLOutputter(ostream& ostr_, bool localOnly_,
-			bool includeQualifiers_, bool includeClassOrigin_)
+		CIMClassXMLOutputter(ostream& ostr_)
 		: ostr(ostr_)
-		, localOnly(localOnly_)
-		, includeQualifiers(includeQualifiers_)
-		, includeClassOrigin(includeClassOrigin_)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMClass &c)
 		{
-			OW_CIMtoXML(c, ostr,
-				localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
-				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-				OW_StringArray());
+			OW_CIMtoXML(c, ostr);
 			checkStream(ostr);
 		}
 	private:
 		ostream& ostr;
-		bool localOnly, includeQualifiers, includeClassOrigin;
 	};
 }
 
@@ -1111,14 +1071,18 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 	}
 
 	ostr << "<IRETURNVALUE>";
-	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
-		params[4].val.toBool());
-	hdl.enumClass(ns, className, handler, 
-		params[1].val.toBool() ? E_DEEP : E_SHALLOW, E_NOT_LOCAL_ONLY);
+	bool deep = params[1].val.toBool();
+	bool localOnly = params[2].val.toBool();
+	bool includeQualifiers = params[3].val.toBool();
+	bool includeClassOrigin = params[4].val.toBool();
 
-	// TODO: Switch to this.  It doesn't seem to work though (long make check fails.)
-	//hdl.enumClass(path, deep, localOnly,
-		//includeQualifiers, includeClassOrigin);
+	CIMClassXMLOutputter handler(ostr);
+
+	hdl.enumClass(ns, className, handler, 
+		deep ? E_DEEP : E_SHALLOW, 
+		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
+		includeQualifiers ? E_INCLUDE_QUALIFIERS : E_EXCLUDE_QUALIFIERS,
+		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN);
 
 	ostr << "</IRETURNVALUE>";
 }
@@ -1168,16 +1132,9 @@ namespace
 	public:
 		CIMInstanceXMLOutputter(
 			std::ostream& ostr_,
-			const OW_String& ns_,
-			bool localOnly_, bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
-			OW_StringArray& propertyList_)
+			const OW_String& ns_)
 		: ostr(ostr_)
 		, ns(ns_)
-		, localOnly(localOnly_)
-		, includeQualifiers(includeQualifiers_)
-		, includeClassOrigin(includeClassOrigin_)
-		, isPropertyList(isPropertyList_)
-		, propertyList(propertyList_)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMInstance &i)
@@ -1186,21 +1143,12 @@ namespace
 			OW_CIMObjectPath cop(ns, cimInstance);
 
 			ostr << "<VALUE.NAMEDINSTANCE>";
-			OW_CIMtoXML(cimInstance, ostr, cop,
-				OW_CIMtoXMLFlags::isInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,
-				includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-				includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-				propertyList,
-				(isPropertyList && propertyList.size() == 0));
+			OW_CIMInstanceNameAndInstancetoXML(cimInstance, ostr, cop);
 			ostr << "</VALUE.NAMEDINSTANCE>";
 			checkStream(ostr);
 		}
 		std::ostream& ostr;
 		OW_String ns;
-		bool localOnly, includeQualifiers, includeClassOrigin, isPropertyList;
-		OW_StringArray& propertyList;
-
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1235,9 +1183,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeClassOrigin = params[4].val.toBool();
 
 	ostr << "<IRETURNVALUE>";
-	// TODO: remove as many of these flags from handler as possible
-	CIMInstanceXMLOutputter handler(ostr, ns, localOnly, includeQualifiers,
-		includeClassOrigin, params[5].isSet, propertyList);
+	CIMInstanceXMLOutputter handler(ostr, ns);
 	hdl.enumInstances(ns, className, handler, 
 		deep ? E_DEEP : E_SHALLOW, 
 		localOnly ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,
@@ -1284,12 +1230,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
 	
-	OW_CIMtoXML(cimClass, ostr,
-		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
-		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-		propertyList,
-		(params[4].isSet && propertyList.size() == 0));
+	OW_CIMtoXML(cimClass, ostr);
 	ostr << "</IRETURNVALUE>";
 }
 
@@ -1329,13 +1270,7 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_CIMXMLParser& parser,
 		includeClassOrigin ? E_INCLUDE_CLASS_ORIGIN : E_EXCLUDE_CLASS_ORIGIN,
 		pPropList);
 
-	OW_CIMtoXML(cimInstance, ostr, OW_CIMObjectPath(OW_CIMNULL),
-		OW_CIMtoXMLFlags::isNotInstanceName,
-		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
-		includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
-		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
-		propertyList,
-		(pPropList && propertyList.size() == 0));
+	OW_CIMInstancetoXML(cimInstance, ostr);
 	ostr << "</IRETURNVALUE>";
 }
 
@@ -1436,15 +1371,13 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 
 	bool includeQualifiers = params[3].val.toBool();
 	bool includeClassOrigin = params[4].val.toBool();
-	bool isPropertyList = params[5].isSet;
 	OW_String role = params[2].val.toString();
 	
 	ostr << "<IRETURNVALUE>";
 	if (path.isClassPath())
 	{
 		// It's a class
-		AssocCIMClassXMLOutputter handler(ostr, includeQualifiers,
-			includeClassOrigin, isPropertyList, propertyList, ns);
+		AssocCIMClassXMLOutputter handler(ostr, ns);
 
 		hdl.referencesClasses(ns, path, handler, resultClass,
 			role, 
@@ -1454,8 +1387,8 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 	else
 	{
-		AssocCIMInstanceXMLOutputter handler(ostr, ns, includeQualifiers,
-			includeClassOrigin, isPropertyList, propertyList, getHost());
+		AssocCIMInstanceXMLOutputter handler(ostr, ns,
+			getHost());
 
 		hdl.references(ns, path, handler, resultClass,
 			role, 
@@ -1483,12 +1416,7 @@ namespace
 			OW_CIMObjectPath cop(ns, i);
 
 			ostr << "<VALUE.OBJECTWITHPATH>";
-			OW_CIMtoXML(i, ostr, cop,
-				OW_CIMtoXMLFlags::isNotInstanceName,
-				OW_CIMtoXMLFlags::notLocalOnly,
-				OW_CIMtoXMLFlags::includeQualifiers,
-				OW_CIMtoXMLFlags::includeClassOrigin,
-				OW_StringArray());
+			OW_CIMInstancePathAndInstancetoXML(i, ostr, cop);
 			ostr << "</VALUE.OBJECTWITHPATH>";
 			checkStream(ostr);
 		}

@@ -641,6 +641,7 @@ public:
 	virtual OW_CIMFeatures getServerFeatures();
 
 private:
+	void sendCommonXMLHeader(std::ostream& ostr);
 	void sendIntrinsicXMLHeader(const OW_String &, const OW_String& ns,
 		std::ostream& ostr);
 	void sendExtrinsicXMLHeader(const OW_String &, const OW_String& ns,
@@ -688,6 +689,7 @@ private:
 	OW_CIMProtocolIFCRef m_protocol;
 
 	OW_UInt32 m_iMessageID;
+	bool m_performStrictChecks;
 };
 
 #endif

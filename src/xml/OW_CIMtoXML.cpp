@@ -58,21 +58,25 @@
 using std::ostream;
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMNameSpace const& ns, ostream& ostr,
-	OW_CIMtoXMLFlags::do_local_flag const& dolocal)
+void OW_CIMNameSpacetoXML(OW_CIMNameSpace const& ns, ostream& ostr)
+{
+	ostr
+		<< "<NAMESPACEPATH><HOST>"
+		<< OW_XMLEscape(ns.getHostUrl().getHost())
+		<< "</HOST>";
+
+	OW_LocalCIMNameSpacetoXML(ns, ostr);
+	
+	ostr << "</NAMESPACEPATH>";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void OW_LocalCIMNameSpacetoXML(OW_CIMNameSpace const& ns, ostream& ostr)
 {
 	OW_String name = ns.getNameSpace();
 
 	if(name.empty())
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Namespace not set");
-
-	if(dolocal == OW_CIMtoXMLFlags::dontDoLocal)
-	{
-		ostr
-			<< "<NAMESPACEPATH><HOST>"
-			<< OW_XMLEscape(ns.getHostUrl().getHost())
-			<< "</HOST>";
-	}
 
 	ostr << "<LOCALNAMESPACEPATH>";
 
@@ -99,11 +103,6 @@ void OW_CIMtoXML(OW_CIMNameSpace const& ns, ostream& ostr,
 		<< OW_XMLEscape(name)
 		<< "\"></NAMESPACE>"
 		<< "</LOCALNAMESPACEPATH>";
-	
-	if (dolocal == OW_CIMtoXMLFlags::dontDoLocal)
-	{
-		ostr << "</NAMESPACEPATH>";
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -174,20 +173,6 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 			ostr << "=\"false\" ";
 		}
 	}
-
-	// This is a bug in the spec, but we still support it for backward compatibility.
-	//fv = OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE);
-	//if(cqt.hasFlavor(fv))
-	//{
-	//	OW_CIMtoXML(fv, ostr);
-	//	ostr << "=\"true\" ";
-	//}
-	//else
-	//{
-		//
-		// Not needed, because TOINSTANCE defaults to false!
-	//}
-
 
 	fv = OW_CIMFlavor(OW_CIMFlavor::TRANSLATE);
 	if(cqt.hasFlavor(fv))
@@ -322,16 +307,16 @@ outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
 //////////////////////////////////////////////////////////////////////////////
 void OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 {
-    if (!cop.isClassPath())
-    {
-        OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "cop is an instance path, not a class path as expected.");
-    }
+	if (!cop.isClassPath())
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "cop is an instance path, not a class path as expected.");
+	}
 
 	if (!cop.getNameSpace().empty())
 	{
 		// do <CLASSPATH>
 		ostr << "<CLASSPATH>";
-		OW_CIMtoXML(cop.getFullNameSpace(),ostr,OW_CIMtoXMLFlags::dontDoLocal);
+		OW_CIMNameSpacetoXML(cop.getFullNameSpace(),ostr);
 		ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/></CLASSPATH>";
 	}
 	else
@@ -395,7 +380,7 @@ void OW_CIMInstancePathtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 	if (outputInstancePath)
 	{
 		ostr << "<INSTANCEPATH>";
-		OW_CIMtoXML(cop.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::dontDoLocal);
+		OW_CIMNameSpacetoXML(cop.getFullNameSpace(), ostr);
 	}
 
 	OW_CIMInstanceNametoXML(cop, ostr);
@@ -432,24 +417,14 @@ void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 	}
 	else
 	{
-		//
-		// No keys, so no instances
-		// Not really, this is a singleton, a class without keys
-		//
-		//OW_THROWCIMMSG(OW_CIMException::FAILED,
-		//	"No instance path because no keys");
+		// A singleton, a class without keys
 	}
 
 	ostr << "</INSTANCENAME>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,
-	OW_StringArray const& propertyList,
-	bool noProps)
+void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr)
 {
 	if(cc.getName().empty())
 	{
@@ -465,151 +440,70 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	}
 	ostr << "\">";
 
-	//
-	// Process qualifiers
-	//
-	/*
-	 * If it is an association, we ignore the localOnly flag
-	 * we probably should do the same with indications, but currently
-	 * have no isIndication() flag!  TODO
-	 */
-	const OW_CIMQualifierArray ccquals = cc.getQualifiers();
-//     if (cc.isAssociation() &&
-//         std::find(ccquals.begin(), ccquals.end(),
-//         OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == ccquals.end())
-//     {
-//         ostr << "<QUALIFIER NAME=\"Association\" TYPE=\"boolean\" ";
-//         if (localOnly == OW_CIMtoXMLFlags::localOnly)
-//         {
-//             ostr << "PROPAGATED=\"true\" ";
-//         }
-//         ostr << "OVERRIDABLE=\"false\" ><VALUE>true</VALUE></QUALIFIER>";
-//     }
-	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
+	const OW_CIMQualifierArray& ccquals = cc.getQualifiers();
+	for(size_t i = 0; i < ccquals.size(); i++)
 	{
-		for(size_t i = 0; i < ccquals.size(); i++)
-		{
-			OW_CIMtoXML(ccquals[i], ostr, localOnly);
-		}
+		OW_CIMtoXML(ccquals[i], ostr);
 	}
 
-	if(!noProps)
+	const OW_CIMPropertyArray& props = cc.getAllProperties();
+	for(size_t i = 0; i < props.size(); i++)
 	{
-		for(size_t i = 0; i < cc.getAllProperties().size(); i++)
-		{
-			OW_CIMProperty prop = cc.getAllProperties()[i];
-
-			// If the given property list has any elements, then ensure this
-			// property name is in the property list before including it's xml
-			if(propertyList.size() > 0)
-			{
-				OW_String pName = prop.getName();
-				for(size_t j = 0; j < propertyList.size(); j++)
-				{
-					if(pName.equalsIgnoreCase(propertyList[j]))
-					{
-						OW_CIMtoXML(prop, ostr, localOnly, includeQualifiers,
-							includeClassOrigin);
-						break;
-					}
-				}
-			}
-			else
-			{
-				OW_CIMtoXML(prop, ostr, localOnly, includeQualifiers,
-					includeClassOrigin);
-			}
-		}
+		OW_CIMtoXML(props[i], ostr);
 	}
 
-	// Process methods
-	for(size_t i = 0; i < cc.getAllMethods().size(); i++)
+	const OW_CIMMethodArray& meths = cc.getAllMethods();
+	for(size_t i = 0; i < meths.size(); i++)
 	{
-		OW_CIMtoXML(cc.getAllMethods()[i], ostr, localOnly,includeQualifiers,
-			includeClassOrigin);
+		OW_CIMtoXML(meths[i], ostr);
 	}
 
-	ostr << "</CLASS>\n";
+	ostr << "</CLASS>";
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
-	OW_CIMObjectPath const& cop,
-	OW_CIMtoXMLFlags::is_instance_name_flag const& isInstanceName,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,
-	OW_StringArray const& propertyList,
-	bool noProps)
+void OW_CIMInstancetoXML(OW_CIMInstance const& ci, ostream& ostr)
 {
-	if(cop)
-	{
-		if (isInstanceName == OW_CIMtoXMLFlags::isInstanceName)
-		{
-			OW_CIMInstanceNametoXML(cop, ostr);
-		}
-		else
-		{
-			OW_CIMInstancePathtoXML(cop, ostr);
-		}
-	}
-
-	//
-	// NOTE: don't write the object path here!
-	//
-	if(!ci.getClassName().empty())
-	{
-		ostr << "<INSTANCE CLASSNAME=\"";
-		ostr << ci.getClassName() << "\">";
-	}
-	else
+	if(ci.getClassName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "instance has no class name");
 	}
 
+	ostr << "<INSTANCE CLASSNAME=\"";
+	ostr << ci.getClassName() << "\">";
 	//
 	// Process qualifiers
 	//
-	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
+	for(size_t i = 0; i < ci.getQualifiers().size(); i++)
 	{
-		for(size_t i = 0; i < ci.getQualifiers().size(); i++)
-		{
-			OW_CIMtoXML(ci.getQualifiers()[i], ostr, localOnly);
-		}
+		OW_CIMtoXML(ci.getQualifiers()[i], ostr);
 	}
 
-	if(!noProps)
+	OW_CIMPropertyArray pra = ci.getProperties();
+	for(size_t i = 0; i < pra.size(); i++)
 	{
-		OW_CIMPropertyArray pra = ci.getProperties();
-		for(size_t i = 0; i < pra.size(); i++)
-		{
-			OW_CIMProperty prop = pra[i];
-
-			//
-			// If propertyList is not NULL then check this is a request property
-			//
-			if(propertyList.size() != 0)
-			{
-				OW_String pName = prop.getName();
-				for(size_t j = 0; j < propertyList.size(); j++)
-				{
-					if(pName.equalsIgnoreCase(propertyList[j]))
-					{
-						OW_CIMtoXML(prop,ostr,localOnly ,includeQualifiers,
-							includeClassOrigin);
-						break;
-					}
-				}
-			}
-			else
-			{
-				OW_CIMtoXML(prop,ostr,localOnly ,includeQualifiers,
-					includeClassOrigin);
-			}
-		}
+		OW_CIMtoXML(pra[i],ostr);
 	}
 
-	ostr << "</INSTANCE>\n";
+	ostr << "</INSTANCE>";
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void OW_CIMInstanceNameAndInstancetoXML(OW_CIMInstance const& instance, 
+	ostream& ostr, OW_CIMObjectPath const& instanceName)
+{
+	OW_CIMInstanceNametoXML(instanceName, ostr);
+	OW_CIMInstancetoXML(instance, ostr);
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+void OW_CIMInstancePathAndInstancetoXML(OW_CIMInstance const& instance, 
+	ostream& ostr, OW_CIMObjectPath const& instancePath)
+{
+	OW_CIMInstancePathtoXML(instancePath, ostr);
+	OW_CIMInstancetoXML(instance, ostr);
 }
 
 
@@ -838,10 +732,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				for (size_t i = 0; i < ca.size(); ++i)
 				{
 					OW_StringStream ss;
-					OW_CIMtoXML(ca[i], ss, OW_CIMtoXMLFlags::notLocalOnly,
-						OW_CIMtoXMLFlags::includeQualifiers,
-						OW_CIMtoXMLFlags::includeClassOrigin,
-						OW_StringArray());
+					OW_CIMtoXML(ca[i], ss);
 					sa.push_back(ss.toString());
 				}
 				raToXmlSA(out, sa);
@@ -856,12 +747,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				for (size_t i = 0; i < ia.size(); ++i)
 				{
 					OW_StringStream ss;
-					OW_CIMtoXML(ia[i],ss,OW_CIMObjectPath(OW_CIMNULL),
-						OW_CIMtoXMLFlags::isNotInstanceName,
-						OW_CIMtoXMLFlags::notLocalOnly,
-						OW_CIMtoXMLFlags::includeQualifiers,
-						OW_CIMtoXMLFlags::includeClassOrigin,
-						OW_StringArray());
+					OW_CIMInstancetoXML(ia[i],ss);
 					sa.push_back(ss.toString());
 				}
 				raToXmlSA(out, sa);
@@ -1003,10 +889,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				cv.get(cc);
 				OW_String s;
 				OW_StringStream ss;
-				OW_CIMtoXML(cc, ss, OW_CIMtoXMLFlags::notLocalOnly,
-					OW_CIMtoXMLFlags::includeQualifiers,
-					OW_CIMtoXMLFlags::includeClassOrigin,
-					OW_StringArray());
+				OW_CIMtoXML(cc, ss);
 				out << OW_XMLEscape(ss.toString());
 				break;
 			}
@@ -1017,12 +900,7 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 				cv.get(i);
 				OW_String s;
 				OW_StringStream ss;
-				OW_CIMtoXML(i,ss,OW_CIMObjectPath(OW_CIMNULL),
-					OW_CIMtoXMLFlags::isNotInstanceName,
-					OW_CIMtoXMLFlags::notLocalOnly,
-					OW_CIMtoXMLFlags::includeQualifiers,
-					OW_CIMtoXMLFlags::includeClassOrigin,
-					OW_StringArray());
+				OW_CIMInstancetoXML(i,ss);
 				out << OW_XMLEscape(ss.toString());
 				break;
 			}
@@ -1066,25 +944,13 @@ OW_CIMtoXML(OW_CIMFlavor const& cf, ostream& ostr)
 
 /////////////////////////////////////////////////////////////
 void
-OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly)
+OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr)
 {
 	OW_CIMFlavor fv;
 	
 	if(cq.getName().empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "qualifier must have a name");
-	}
-
-	//
-	// If only local definitions are required and this is a propagated
-	// qualifier then nothing to return. NO- Never ignore the association qualifier.
-	//
-	//if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated() &&
-	//   !cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
-	if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated())
-	{
-		return;
 	}
 
 	OW_CIMValue dv = cq.getDefaults().getDefaultValue();
@@ -1194,10 +1060,7 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 
 /////////////////////////////////////////////////////////////
 void
-OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin)
+OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr)
 {
 	bool isArray = false;
 	bool isRef = false;
@@ -1206,15 +1069,6 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "property must have a name");
 	}
-
-	//
-	// If only local definitions are required and this is a propagated
-	// property then nothing to return
-	//
-	if(localOnly == OW_CIMtoXMLFlags::localOnly && cp.getPropagated())
-	{
-		return;
-	}	
 
 	if(cp.getDataType())
 	{
@@ -1267,8 +1121,7 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 		OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
 	}
 
-	if(includeClassOrigin == OW_CIMtoXMLFlags::includeClassOrigin
-	   && !cp.getOriginClass().empty())
+	if(!cp.getOriginClass().empty())
 	{
 		ostr
 			<< "CLASSORIGIN=\""
@@ -1283,13 +1136,9 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 
 	ostr << '>';
 
-	if(cp.getQualifiers().size() > 0
-	   && includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
+	for(size_t i = 0; i < cp.getQualifiers().size(); i++)
 	{
-		for(size_t i = 0; i < cp.getQualifiers().size(); i++)
-		{
-			OW_CIMtoXML(cp.getQualifiers()[i], ostr, localOnly);
-		}
+		OW_CIMtoXML(cp.getQualifiers()[i], ostr);
 	}
 
 	if(cp.getValue())
@@ -1313,20 +1162,8 @@ OW_CIMtoXML(OW_CIMProperty const& cp, ostream& ostr,
 				
 /////////////////////////////////////////////////////////////
 void
-OW_CIMtoXML(OW_CIMMethod const& cm, ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin)
+OW_CIMtoXML(OW_CIMMethod const& cm, ostream& ostr)
 {
-	//
-	// If only local definitions are required and this is a propagated
-	// method then nothing to return
-	//
-	if(localOnly == OW_CIMtoXMLFlags::localOnly && cm.getPropagated())
-	{
-		return;
-	}
-
 	ostr << "<METHOD ";
 
 	if(cm.getName().empty())
@@ -1346,8 +1183,7 @@ OW_CIMtoXML(OW_CIMMethod const& cm, ostream& ostr,
 		ostr << "\" ";
 	}
 
-	if(includeClassOrigin == OW_CIMtoXMLFlags::includeClassOrigin
-	   && !cm.getOriginClass().empty())
+	if(!cm.getOriginClass().empty())
 	{
 		ostr
 			<< "CLASSORIGIN=\""
@@ -1362,13 +1198,9 @@ OW_CIMtoXML(OW_CIMMethod const& cm, ostream& ostr,
 
 	ostr << '>';
 
-	if(includeQualifiers == OW_CIMtoXMLFlags::includeQualifiers)
+	for(size_t i = 0; i < cm.getQualifiers().size(); i++)
 	{
-		for(size_t i = 0; i < cm.getQualifiers().size(); i++)
-		{
-			OW_CIMtoXML(cm.getQualifiers()[i], ostr,
-				OW_CIMtoXMLFlags::notLocalOnly);
-		}
+		OW_CIMtoXML(cm.getQualifiers()[i], ostr);
 	}
 
 	for(size_t i = 0; i < cm.getParameters().size(); i++)
@@ -1388,8 +1220,7 @@ qualifierXML(OW_CIMParameter const& cp, ostream& ostr)
 		int sz = cp.getQualifiers().size();
 		for(int i = 0; i < sz; i++)
 		{
-			OW_CIMtoXML(cp.getQualifiers()[i], ostr,
-				OW_CIMtoXMLFlags::notLocalOnly);
+			OW_CIMtoXML(cp.getQualifiers()[i], ostr);
 		}
 	}
 }

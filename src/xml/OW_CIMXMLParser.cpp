@@ -223,9 +223,13 @@ const char* const OW_CIMXMLParser::A_CIMVERSION = "CIMVERSION";
 const char* const OW_CIMXMLParser::A_DTDVERSION = "DTDVERSION";
 const char* const OW_CIMXMLParser::A_MSG_ID = "ID";
 const char* const OW_CIMXMLParser::A_PROTOCOLVERSION = "PROTOCOLVERSION";
-const char* const OW_CIMXMLParser::AV_CIMVERSION_VALUE = "2.0";
-const char* const OW_CIMXMLParser::AV_DTDVERSION_VALUE = "2.0";
-const char* const OW_CIMXMLParser::AV_PROTOCOLVERSION_VALUE = "1.0";
+const char* const OW_CIMXMLParser::AV_CIMVERSION20_VALUE = "2.0";
+const char* const OW_CIMXMLParser::AV_CIMVERSION21_VALUE = "2.1";
+const char* const OW_CIMXMLParser::AV_CIMVERSION22_VALUE = "2.2";
+const char* const OW_CIMXMLParser::AV_DTDVERSION20_VALUE = "2.0";
+const char* const OW_CIMXMLParser::AV_DTDVERSION21_VALUE = "2.1";
+const char* const OW_CIMXMLParser::AV_PROTOCOLVERSION10_VALUE = "1.0";
+const char* const OW_CIMXMLParser::AV_PROTOCOLVERSION11_VALUE = "1.1";
 const char* const OW_CIMXMLParser::A_PARAMERRORCODE = "CODE";
 const char* const OW_CIMXMLParser::A_PARAMERRORDESCRIPTION = "DESCRIPTION";
 

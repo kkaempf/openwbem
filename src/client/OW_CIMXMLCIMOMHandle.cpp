@@ -74,7 +74,9 @@ OW_ClientOperation::~OW_ClientOperation()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
-: OW_ClientCIMOMHandle(), m_protocol(prot)
+	: OW_ClientCIMOMHandle()
+	, m_protocol(prot)
+	, m_performStrictChecks(false) // TODO: Make a way to set this to true.
 {
 	m_iMessageID = 0;
 	m_protocol->setContentType("application/xml");
@@ -83,21 +85,28 @@ OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const OW_String &sMethod,
-	const OW_String& ns,
-	ostream& ostr)
+OW_CIMXMLCIMOMHandle::sendCommonXMLHeader(ostream& ostr)
 {
 	if (++m_iMessageID > 65535)
 	{
 		m_iMessageID = 1;
 	}
 	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
+	ostr << "<CIM CIMVERSION=\"2.2\" DTDVERSION=\"2.1\">";
+	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.1\">";
 	ostr << "<SIMPLEREQ>";
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const OW_String &sMethod,
+	const OW_String& ns,
+	ostream& ostr)
+{
+	sendCommonXMLHeader(ostr);
 	OW_CIMNameSpace nameSpace(ns);
 	ostr << "<IMETHODCALL NAME=\"" << sMethod << "\">";
-	OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal );
+	OW_LocalCIMNameSpacetoXML(nameSpace, ostr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,27 +116,20 @@ OW_CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const OW_String &sMethod,
 	const OW_CIMObjectPath& path,
 	ostream& ostr)
 {
-	if (++m_iMessageID > 65535)
-	{
-		m_iMessageID = 1;
-	}
-	ostr << "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << m_iMessageID << "\" PROTOCOLVERSION=\"1.0\">";
-	ostr << "<SIMPLEREQ>";
+	sendCommonXMLHeader(ostr);
 	OW_CIMNameSpace nameSpace(ns);
 	ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
 	if (path.isInstancePath())
 	{
 		ostr << "<LOCALINSTANCEPATH>";
-		OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal);
+		OW_LocalCIMNameSpacetoXML(nameSpace, ostr);
 		OW_CIMInstanceNametoXML(path, ostr);
 		ostr << "</LOCALINSTANCEPATH>";
 	}
 	else // it's a class
 	{
 		ostr << "<LOCALCLASSPATH>";
-		OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal);
+		OW_LocalCIMNameSpacetoXML(nameSpace, ostr);
 		ostr << "<CLASSNAME NAME=\"" << path.getObjectName() << "\"/>";
 		ostr << "</LOCALCLASSPATH>";
 	}
@@ -218,25 +220,32 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid XML");
 	}
-	OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
-	if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return is for CIMVERSION " + cimattr).c_str());
-	}
 
-	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
-	if (!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION_VALUE))
+	if (m_performStrictChecks)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return is for DTDVERSION " + cimattr).c_str());
+		OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
+		if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION20_VALUE) &&
+			!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION21_VALUE) &&
+			!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION22_VALUE))
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+								OW_String("Return is for CIMVERSION " + cimattr).c_str());
+		}
+
+		cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
+		if (!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION20_VALUE) &&
+			!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION21_VALUE))
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+								OW_String("Return is for DTDVERSION " + cimattr).c_str());
+		}
 	}
 
 	//
 	// Find <MESSAGE>
 	//
 	parser.mustGetChild(OW_CIMXMLParser::E_MESSAGE);
-	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
+	OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
 	if (!cimattr.equals(OW_String(m_iMessageID)))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -244,11 +253,15 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 										 +OW_String(m_iMessageID)).c_str());
 	}
 
-	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
-	if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
+	if (m_performStrictChecks)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
+		cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
+		if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION10_VALUE) &&
+			!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION11_VALUE))
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+								OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
+		}
 	}
 
 	//
@@ -891,9 +904,7 @@ OW_CIMXMLCIMOMHandle::modifyClass(const OW_String &ns,
 
 	OW_StringStream extra(1024);
 	extra << "<IPARAMVALUE NAME=\"" << XMLP_MODIFIED_CLASS << "\">";
-	OW_CIMtoXML(cc, extra, OW_CIMtoXMLFlags::notLocalOnly,
-		OW_CIMtoXMLFlags::includeQualifiers, OW_CIMtoXMLFlags::includeClassOrigin,
-		OW_StringArray(), false);
+	OW_CIMtoXML(cc, extra);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
 	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
@@ -909,9 +920,7 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_String& ns,
 
 	OW_StringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewClass\">";
-	OW_CIMtoXML(cc, ostr, OW_CIMtoXMLFlags::notLocalOnly,
-		OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
-		OW_StringArray(), false);
+	OW_CIMtoXML(cc, ostr);
 	ostr << "</IPARAMVALUE>";
 
 	voidRetValOp op;
@@ -964,14 +973,8 @@ OW_CIMXMLCIMOMHandle::modifyInstance(
 	OW_StringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
-	OW_CIMObjectPath path(ns, modifiedInstance);
-	OW_CIMInstanceNametoXML(path, ostr);
-	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(OW_CIMNULL),
-		OW_CIMtoXMLFlags::isInstanceName,
-		OW_CIMtoXMLFlags::notLocalOnly,
-		OW_CIMtoXMLFlags::includeQualifiers,
-		OW_CIMtoXMLFlags::includeClassOrigin,
-		OW_StringArray());
+	OW_CIMInstanceNameAndInstancetoXML(modifiedInstance, ostr, 
+		OW_CIMObjectPath(ns, modifiedInstance));
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	
 	OW_Array<OW_Param> params;
@@ -1024,13 +1027,7 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_String& ns,
 
 	OW_StringStream ostr;
 	ostr << "<IPARAMVALUE NAME=\"NewInstance\">";
-	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(OW_CIMNULL),
-		OW_CIMtoXMLFlags::isInstanceName,
-		OW_CIMtoXMLFlags::notLocalOnly,
-		OW_CIMtoXMLFlags::includeQualifiers,
-		OW_CIMtoXMLFlags::includeClassOrigin,
-		OW_StringArray());
-
+	OW_CIMInstancetoXML(ci, ostr);
 	ostr << "</IPARAMVALUE>";
 
 	OW_CIMObjectPath rval(OW_CIMNULL);

@@ -35,61 +35,11 @@
 #include "OW_CIMFwd.hpp"
 #include <iosfwd>
 
-namespace OW_CIMtoXMLFlags
-{
-
-//////////////////////////////////////////////////////
-enum do_local_flag
-{
-	doLocal,
-	dontDoLocal
-};
-
-//////////////////////////////////////////////////////
-enum local_only_flag
-{
-	localOnly,
-	notLocalOnly
-};
-
-//////////////////////////////////////////////////////
-enum include_qualifiers_flag
-{
-	includeQualifiers,
-	dontIncludeQualifiers
-};
-
-
-//////////////////////////////////////////////////////
-enum include_class_origin_flag
-{
-	includeClassOrigin,
-	dontIncludeClassOrigin
-};
-
-
-//////////////////////////////////////////////////////
-enum property_list_flag
-{
-	ignorePropertyList,
-	usePropertyList
-};
-
-//////////////////////////////////////////////////////
-enum is_instance_name_flag
-{
-	isInstanceName,
-	isNotInstanceName
-};
-
-
-}
-
+/////////////////////////////////////////////////////////////
+void OW_CIMNameSpacetoXML(OW_CIMNameSpace const& ns, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMNameSpace const& ns, std::ostream& ostr,
-	OW_CIMtoXMLFlags::do_local_flag const& doLocal);
-	// doLocal used to default to true
+void OW_LocalCIMNameSpacetoXML(OW_CIMNameSpace const& ns, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMQualifierType const& cqt, std::ostream& ostr);
@@ -104,22 +54,18 @@ void OW_CIMInstancePathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
 void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMClass const& cc, std::ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,
-	OW_StringArray const& propertyList,
-	bool noProps = false);
+void OW_CIMtoXML(OW_CIMClass const& cc, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMInstance const& ci, std::ostream& ostr,
-	OW_CIMObjectPath const& cop,
-	OW_CIMtoXMLFlags::is_instance_name_flag const& isInstanceName,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin,
-	OW_StringArray const& propertyList,
-	bool noProps = false);
+void OW_CIMInstancetoXML(OW_CIMInstance const& ci, std::ostream& ostr);
+
+/////////////////////////////////////////////////////////////
+void OW_CIMInstanceNameAndInstancetoXML(OW_CIMInstance const& instance, 
+	std::ostream& ostr, OW_CIMObjectPath const& instanceName);
+
+/////////////////////////////////////////////////////////////
+void OW_CIMInstancePathAndInstancetoXML(OW_CIMInstance const& instance, 
+	std::ostream& ostr, OW_CIMObjectPath const& instancePath);
 
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMValue const& cv, std::ostream& out);
@@ -131,20 +77,13 @@ void OW_CIMtoXML(OW_CIMDataType const& cdt, std::ostream& ostr);
 void OW_CIMtoXML(OW_CIMFlavor const& cf, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMQualifier const& cq, std::ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly);
+void OW_CIMtoXML(OW_CIMQualifier const& cq, std::ostream& ostr);
 
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMProperty const& cp, std::ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin);
+void OW_CIMtoXML(OW_CIMProperty const& cp, std::ostream& ostr);
 				
 /////////////////////////////////////////////////////////////
-void OW_CIMtoXML(OW_CIMMethod const& cm, std::ostream& ostr,
-	OW_CIMtoXMLFlags::local_only_flag const& localOnly,
-	OW_CIMtoXMLFlags::include_qualifiers_flag const& includeQualifiers,
-	OW_CIMtoXMLFlags::include_class_origin_flag const& includeClassOrigin);
+void OW_CIMtoXML(OW_CIMMethod const& cm, std::ostream& ostr);
 				
 /////////////////////////////////////////////////////////////
 void OW_CIMtoXML(OW_CIMParameter const& cp, std::ostream& ostr);

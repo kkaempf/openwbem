@@ -66,8 +66,7 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 	unitAssert( c1 == c2 );
 
 	OW_TempFileStream ostr;
-	OW_CIMtoXML(p1, ostr, OW_CIMtoXMLFlags::notLocalOnly, OW_CIMtoXMLFlags::includeQualifiers,
-		OW_CIMtoXMLFlags::includeClassOrigin);
+	OW_CIMtoXML(p1, ostr);
 	ostr.rewind();
 	OW_CIMXMLParser parser(ostr);
 
@@ -95,8 +94,7 @@ void OW_CIMPropertyTestCases::testEmbeddedInstance()
 	unitAssert( i1 == i2 );
 
 	OW_TempFileStream ostr;
-	OW_CIMtoXML(p1, ostr, OW_CIMtoXMLFlags::notLocalOnly, OW_CIMtoXMLFlags::includeQualifiers,
-		OW_CIMtoXMLFlags::includeClassOrigin);
+	OW_CIMtoXML(p1, ostr);
 	ostr.rewind();
 	OW_CIMXMLParser parser(ostr);
 
