@@ -31,7 +31,7 @@
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ProviderMuxTestCases.hpp"
-#include "OW_ProviderIFC.hpp"
+#include "OW_ProviderIFCBaseIFC.hpp"
 #include "testSharedLibraryLoader.hpp"
 
 void OW_ProviderMuxTestCases::setUp()
@@ -43,15 +43,15 @@ void OW_ProviderMuxTestCases::tearDown()
 }
 
 void OW_ProviderMuxTestCases::testCreation()
-{								 
-	unitAssertNoThrow( OW_ProviderIFCRef pm( new testProviderMux( "name" ) ) );
-	OW_ProviderIFCRef pm( new testProviderMux( "name" ) );
+{								
+	unitAssertNoThrow( OW_ProviderIFCBaseIFCRef pm( new testProviderMux( "name" ) ) );
+	OW_ProviderIFCBaseIFCRef pm( new testProviderMux( "name" ) );
 	unitAssert(pm->signature == 0xABCDEFA0);
 }
 
 void OW_ProviderMuxTestCases::testGetName()
 {
-	OW_ProviderIFCRef pm( new testProviderMux( "name" ) );
+	OW_ProviderIFCBaseIFCRef pm( new testProviderMux( "name" ) );
 	unitAssert( pm->getName() == OW_String("name") );
 }
 
@@ -59,11 +59,11 @@ Test* OW_ProviderMuxTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_ProviderIFC");
 
-	testSuite->addTest (new TestCaller <OW_ProviderMuxTestCases> 
-			("testCreation", 
+	testSuite->addTest (new TestCaller <OW_ProviderMuxTestCases>
+			("testCreation",
 			&OW_ProviderMuxTestCases::testCreation));
-	testSuite->addTest (new TestCaller <OW_ProviderMuxTestCases> 
-			("testGetName", 
+	testSuite->addTest (new TestCaller <OW_ProviderMuxTestCases>
+			("testGetName",
 			&OW_ProviderMuxTestCases::testGetName));
 
 	return testSuite;

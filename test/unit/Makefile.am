@@ -14,30 +14,49 @@ MemTracerTest.cpp
 check_PROGRAMS = unitMain
 # Note: Do not break up the following line, the newtest.sh script
 # expects all the files to be on one line.
-unitMain_SOURCES = UnitMain.cpp OW_FormatTestCases.cpp OW_StringTestCases.cpp OW_LoggerTestCases.cpp OW_HTTPChunkerTestCases.cpp OW_ProviderManagerTestCases.cpp OW_SharedLibraryTestCases.cpp OW_SharedLibraryLoaderTestCases.cpp OW_ProviderMuxLoaderTestCases.cpp OW_ProviderMuxTestCases.cpp OW_LinuxSharedLibraryLoaderTestCases.cpp OW_FormatTestCases.hpp OW_HTTPChunkerTestCases.hpp OW_LinuxSharedLibraryLoaderTestCases.hpp OW_LoggerTestCases.hpp OW_ProviderManagerTestCases.hpp OW_ProviderMuxLoaderTestCases.hpp OW_ProviderMuxTestCases.hpp OW_SharedLibraryLoaderTestCases.hpp OW_SharedLibraryTestCases.hpp OW_StringTestCases.hpp testSharedLibraryLoader.hpp OW_ExecTestCases.cpp OW_ExecTestCases.hpp OW_StackTraceTestCases.cpp OW_StackTraceTestCases.hpp OW_EnumerationTestCases.cpp OW_EnumerationTestCases.hpp OW_XMLUnescapeTestCases.cpp OW_XMLUnescapeTestCases.hpp OW_XMLEscapeTestCases.cpp OW_XMLEscapeTestCases.hpp OW_MD5TestCases.cpp OW_MD5TestCases.hpp OW_Base64TestCases.cpp OW_Base64TestCases.hpp OW_InetAddressTestCases.cpp OW_InetAddressTestCases.hpp OW_ListenerAuthenticatorTestCases.cpp OW_ListenerAuthenticatorTestCases.hpp OW_EventManagerTestCases.cpp OW_EventManagerTestCases.hpp OW_CIMUrlTestCases.cpp OW_CIMUrlTestCases.hpp OW_MutexTestCases.cpp OW_MutexTestCases.hpp OW_MemTracerTestCases.cpp OW_MemTracerTestCases.hpp OW_StringStreamTestCases.cpp OW_StringStreamTestCases.hpp OW_ExceptionTestCases.cpp OW_ExceptionTestCases.hpp OW_CIMClassTestCases.cpp OW_CIMClassTestCases.hpp
+unitMain_SOURCES = UnitMain.cpp UnitTestEnvironment.cpp OW_FormatTestCases.cpp OW_StringTestCases.cpp OW_LoggerTestCases.cpp OW_HTTPChunkerTestCases.cpp OW_ProviderManagerTestCases.cpp OW_SharedLibraryTestCases.cpp OW_SharedLibraryLoaderTestCases.cpp OW_ProviderMuxLoaderTestCases.cpp OW_ProviderMuxTestCases.cpp OW_LinuxSharedLibraryLoaderTestCases.cpp OW_FormatTestCases.hpp OW_HTTPChunkerTestCases.hpp OW_LinuxSharedLibraryLoaderTestCases.hpp OW_LoggerTestCases.hpp OW_ProviderManagerTestCases.hpp OW_ProviderMuxLoaderTestCases.hpp OW_ProviderMuxTestCases.hpp OW_SharedLibraryLoaderTestCases.hpp OW_SharedLibraryTestCases.hpp OW_StringTestCases.hpp testSharedLibraryLoader.hpp OW_ExecTestCases.cpp OW_ExecTestCases.hpp OW_StackTraceTestCases.cpp OW_StackTraceTestCases.hpp OW_EnumerationTestCases.cpp OW_EnumerationTestCases.hpp OW_XMLUnescapeTestCases.cpp OW_XMLUnescapeTestCases.hpp OW_XMLEscapeTestCases.cpp OW_XMLEscapeTestCases.hpp OW_MD5TestCases.cpp OW_MD5TestCases.hpp OW_Base64TestCases.cpp OW_Base64TestCases.hpp OW_InetAddressTestCases.cpp OW_InetAddressTestCases.hpp OW_ListenerAuthenticatorTestCases.cpp OW_ListenerAuthenticatorTestCases.hpp OW_CIMUrlTestCases.cpp OW_CIMUrlTestCases.hpp OW_MutexTestCases.cpp OW_MutexTestCases.hpp OW_MemTracerTestCases.cpp OW_MemTracerTestCases.hpp OW_StringStreamTestCases.cpp OW_StringStreamTestCases.hpp OW_ExceptionTestCases.cpp OW_ExceptionTestCases.hpp OW_CIMClassTestCases.cpp OW_CIMClassTestCases.hpp
 
 INCLUDES = \
--I$(top_srcdir)/src \
--I$(top_srcdir)/src/common \
 -I$(top_srcdir)/test/CppUnit \
--I$(top_srcdir)/src/thread \
--I$(top_srcdir)/src/http \
--I$(top_srcdir)/src/http/server \
--I$(top_srcdir)/src/net/socket \
+-I$(top_srcdir)/src/common \
+-I$(top_srcdir)/src/http/common \
+-I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/provider \
+-I$(top_srcdir)/src/providerifcs/cpp \
 -I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/cim \
+-I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/server \
--I$(top_srcdir)/src/cimom \
 -I$(top_srcdir)/src/xml \
--I$(top_srcdir)/src/listener \
+-I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/client
 
 unitMain_LDADD = \
+$(top_builddir)/src/cimom/OW_LocalCIMOMHandle.o \
+$(top_builddir)/src/cimom/OW_CIMOMEnvironment.o \
+$(top_builddir)/src/cimom/OW_ProviderManager.o \
+$(top_builddir)/src/cimom/OW_PollingManager.o \
+$(top_builddir)/src/cimom/OW_ProviderIFCLoader.o \
+$(top_builddir)/src/cimom/OW_CIMServer.o \
+$(top_builddir)/src/cimom/OW_MetaRepository.o \
+$(top_builddir)/src/cimom/OW_AssocDb.o \
+$(top_builddir)/src/cimom/OW_IndexImpl.o \
+$(top_builddir)/src/cimom/OW_InstanceRepository.o \
+$(top_builddir)/src/cimom/OW_ProxyProvider.o \
+$(top_builddir)/src/cimom/OW_GenericHDBRepository.o \
+$(top_builddir)/src/cimom/OW_RepositoryStreams.o \
+$(top_builddir)/src/cimom/OW_HDB.o \
+$(top_builddir)/src/cimom/OW_NameSpaceProvider.o \
+$(top_builddir)/src/cimom/OW_WQLFilterRep.o \
+$(top_builddir)/src/cimom/OW_HDBNode.o \
 $(top_builddir)/test/CppUnit/libCppUnit.a \
 -L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/server -lowserver \
--L$(top_builddir)/src/listener -lowhttpxmllistener \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
 -L$(top_builddir)/src/services/http -lowservicehttp \
 -L$(top_builddir)/db/db -lowdb -ldl
 

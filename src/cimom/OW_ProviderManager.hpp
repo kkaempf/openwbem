@@ -75,7 +75,7 @@ public:
 	 * @param ifcLoader the class that will actually load and instantiate the
 	 * 	OW_ProviderIFCBaseIFC classes.
 	 */
-	void init(const OW_ProviderIFCBaseIFCLoaderRef ifcLoader);
+	void init(const OW_ProviderIFCLoaderRef ifcLoader);
 
 	/**
 	 * Make a cimom provider available to the provider manager.

@@ -54,11 +54,11 @@ typedef OW_ProviderIFCBaseIFC* (*createFunc_t)();
 typedef const char* (*versionFunc_t)();
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCBaseIFCLoaderBase::ifc_lib_pair
-OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib(
+OW_ProviderIFCLoaderBase::ifc_lib_pair
+OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 	const OW_String& libname) const
 {
-	m_env->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
+	m_env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
 
 	OW_SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
@@ -71,7 +71,7 @@ OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib(
 	}
 	else
 	{
-		m_env->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::"
+		m_env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::"
 			"createProviderIFCFromLib FAILED loading library %1", libname));
 	}
 
@@ -82,10 +82,10 @@ OW_ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCBaseIFC* 
-OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
+OW_ProviderIFCBaseIFC*
+OW_ProviderIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 {
-	m_env->logDebug("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC called");
+	m_env->getLogger()->logDebug("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC called");
 
 	try
 	{
@@ -100,7 +100,7 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 			versionFunc_t versFunc;
 			if(!OW_SharedLibrary::getFunctionPointer( sl, "getOWVersion", versFunc))
 			{
-				m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC failed getting"
+				m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC failed getting"
 					" function pointer to \"getOWVersion\" from library");
 
 				return 0;
@@ -109,7 +109,7 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 			const char* strVer = (*versFunc)();
 			if(strcmp(strVer, OW_VERSION))
 			{
-				m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC -"
+				m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC -"
 					" Invalid version returned from \"getOWVersion\"");
 				return 0;
 			}
@@ -118,7 +118,7 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 				createFunc_t createFunc;
 				if (!OW_SharedLibrary::getFunctionPointer( sl, "createProviderIFC", createFunc ))
 				{
-					m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
+					m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
 						" failed getting function pointer to"
 						" \"createProviderIFC\" from library");
 
@@ -129,7 +129,7 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 
 				if (ptr->signature != 0xABCDEFA0)
 				{
-					m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
+					m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
 						" encountered invalid signature on OW_ProviderIFCBaseIFC"
 						" object");
 
@@ -140,7 +140,7 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 		}
 		else
 		{
-			m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC setjmp"
+			m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC setjmp"
 				" called failed");
 
 			return 0;
@@ -148,16 +148,16 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 	}
 	catch(OW_Exception& e)
 	{
-		m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
+		m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC"
 			" OW_HDBException:");
 
-		m_env->logError(format("File: %1", e.getFile()));
-		m_env->logError(format("Line: %1", e.getLine()));
-		m_env->logError(format("Msg: %1", e.getMessage()));
+		m_env->getLogger()->logError(format("File: %1", e.getFile()));
+		m_env->getLogger()->logError(format("Line: %1", e.getLine()));
+		m_env->getLogger()->logError(format("Msg: %1", e.getMessage()));
 	}
 	catch (...)
 	{
-		m_env->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC caught unknown"
+		m_env->getLogger()->logError("OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC caught unknown"
 			" exception");
 	}
 
@@ -167,14 +167,14 @@ OW_ProviderIFCBaseIFCLoaderBase::safeCreateIFC( OW_SharedLibraryRef sl ) const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ProviderIFCBaseIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
+OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
 	OW_Array<OW_SharedLibraryRef>& shlibs ) const
 {
-	OW_CIMOMEnvironmentRef env = getEnvironment();
+	OW_ServiceEnvironmentIFCRef env = getEnvironment();
 	OW_String libdir = env->getConfigItem(
 		OW_ConfigOpts::PROVIDER_IFC_LIBS_opt);
 
-	env->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
+	env->getLogger()->logDebug(format("OW_ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
 		" interfaces from: %1", libdir));
 
 	OW_StringArray libs;
@@ -182,7 +182,7 @@ OW_ProviderIFCBaseIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
 
 	if(libs.size() == 0)
 	{
-		env->logDebug("OW_ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
+		env->getLogger()->logDebug("OW_ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
 			" provider interfacess");
 		return;
 	}
@@ -206,21 +206,21 @@ OW_ProviderIFCBaseIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
 		}
 		else
 		{
-			env->logError(format("Unable to load ProviderIFC library %1",
+			env->getLogger()->logError(format("Unable to load ProviderIFC library %1",
 				libs[i]));
 		}
 	}
 
-	env->logDebug(format("Number of provider interfaces loaded: %1",
+	env->getLogger()->logDebug(format("Number of provider interfaces loaded: %1",
 		ifcCount));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_ProviderIFCBaseIFCLoaderRef
-OW_ProviderIFCBaseIFCLoader::createProviderIFCLoader(OW_CIMOMEnvironmentRef env)
+OW_ProviderIFCLoaderRef
+OW_ProviderIFCLoader::createProviderIFCLoader(OW_ServiceEnvironmentIFCRef env)
 {
-	return OW_ProviderIFCBaseIFCLoaderRef(new OW_ProviderIFCBaseIFCLoader(
+	return OW_ProviderIFCLoaderRef(new OW_ProviderIFCLoader(
 		OW_SharedLibraryLoader::createSharedLibraryLoader(), env));
 }
 

@@ -34,8 +34,10 @@
 #include "OW_SharedLibrary.hpp"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_Reference.hpp"
-#include "OW_ProviderIFC.hpp"
+#include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
+#include "OW_LocalCIMOMHandle.hpp"
+#include "UnitTestEnvironment.hpp"
 
 static int testFunction( int i )
 {
@@ -62,11 +64,11 @@ class testSharedLibrary: public OW_SharedLibrary
 		}
 };
 
-class testProviderMux: public OW_ProviderIFC
+class testProviderMux: public OW_ProviderIFCBaseIFC
 {
 	public:
 		testProviderMux( const char* const name )
-			: OW_ProviderIFC(), m_name(name) {}
+			: OW_ProviderIFCBaseIFC(), m_name(name) {}
 		virtual ~testProviderMux() {}
 		virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char*)
@@ -111,7 +113,7 @@ private:
 
 };
 
-static OW_ProviderIFC* testCreateProviderMux()
+static OW_ProviderIFCBaseIFC* testCreateProviderMux()
 {
 	return new testProviderMux( "lib1" );
 }
@@ -137,7 +139,8 @@ class testSharedLibraryLoader: public OW_SharedLibraryLoader
 	public:
 		virtual ~testSharedLibraryLoader(){}
 
-		virtual OW_SharedLibraryRef loadSharedLibrary( const OW_String& name ) const
+		virtual OW_SharedLibraryRef loadSharedLibrary( const OW_String& name,
+            OW_LoggerRef ) const
 		{
 			if ( name == "lib1" )
 				return OW_SharedLibraryRef( new testMuxSharedLibrary );
@@ -146,15 +149,68 @@ class testSharedLibraryLoader: public OW_SharedLibraryLoader
 		}
 };
 
+namespace
+{
+	class DummyLogger : public OW_Logger
+	{
+	protected:
+		virtual void doLogMessage(const OW_String &message, const OW_LogLevel) const
+		{
+			std::cout << message << std::endl;
+		}
+	};
+
+	class testProviderEnvironment : public OW_ProviderEnvironmentIFC
+	{
+	public:
+
+		testProviderEnvironment(const OW_LocalCIMOMHandle& ch, OW_LoggerRef l)
+		: m_ch(new OW_LocalCIMOMHandle(ch)), m_logger(l)
+		{}
+
+		testProviderEnvironment()
+		: m_ch(new OW_LocalCIMOMHandle()), m_logger(new DummyLogger)
+		{}
+
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
+		{
+			return m_ch;
+		}
+		
+		virtual OW_LoggerRef getLogger() const
+		{
+			return m_logger;
+		}
+
+		virtual OW_String getConfigItem(const OW_String &) const
+		{
+			return "";
+		}
+
+
+	private:
+		OW_CIMOMHandleIFCRef m_ch;
+		OW_LoggerRef m_logger;
+	};
+
+	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
+	{
+		return OW_ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
+			OW_LoggerRef(new DummyLogger)));
+	}
+}
+
+
+
 class testMuxLoader: public OW_ProviderIFCLoaderBase
 {
 	public:
 		testMuxLoader( OW_SharedLibraryLoaderRef sll ) :
-			OW_ProviderIFCLoaderBase(sll)
+			OW_ProviderIFCLoaderBase(sll, g_testEnvironment)
 			{}
 		virtual ~testMuxLoader(){}
 		virtual void loadIFCs(
-				OW_Array<OW_ProviderIFCRef>& out,
+				OW_Array<OW_ProviderIFCBaseIFCRef>& out,
 				OW_Array<OW_SharedLibraryRef>& shlibs) const
 		{
 			ifc_lib_pair rval;
@@ -186,11 +242,11 @@ class testMuxLoaderBad: public OW_ProviderIFCLoaderBase
 {
 	public:
 		testMuxLoaderBad( OW_SharedLibraryLoaderRef sll ) :
-			OW_ProviderIFCLoaderBase(sll)
+			OW_ProviderIFCLoaderBase(sll, g_testEnvironment)
 			{}
 		virtual ~testMuxLoaderBad(){}
 		virtual void loadIFCs(
-				OW_Array<OW_ProviderIFCRef>& out,
+				OW_Array<OW_ProviderIFCBaseIFCRef>& out,
 				OW_Array<OW_SharedLibraryRef>& shlibs) const
 		{
 			ifc_lib_pair rval;

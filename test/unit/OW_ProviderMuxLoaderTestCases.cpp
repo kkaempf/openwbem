@@ -32,12 +32,11 @@
 #include "TestCaller.hpp"
 #include "OW_ProviderMuxLoaderTestCases.hpp"
 #include "OW_ProviderIFCLoader.hpp"
-#include "OW_ProviderIFC.hpp"
+#include "OW_ProviderIFCBaseIFC.hpp"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
 #include "OW_Array.hpp"
 #include "testSharedLibraryLoader.hpp"
-#include "OW_Environment.hpp"
 #include "OW_ConfigOpts.hpp"
 #include <iostream>
 
@@ -56,7 +55,7 @@ void OW_ProviderMuxLoaderTestCases::testLoadIFCs()
 {
 	OW_Array<OW_SharedLibraryRef> shlibarray;
 	{ // make sure the muxes are destroyed before the shared libraries.
-		OW_Array<OW_ProviderIFCRef> muxarray;
+		OW_Array<OW_ProviderIFCBaseIFCRef> muxarray;
 		OW_ProviderIFCLoaderRef pml = testCreateMuxLoader();
 		unitAssertNoThrow( pml->loadIFCs( muxarray, shlibarray ) );
 		unitAssert( muxarray.size() == 3 );
@@ -69,7 +68,7 @@ void OW_ProviderMuxLoaderTestCases::testFailLoadIFCs()
 {
 	OW_Array<OW_SharedLibraryRef> shlibarray;
 	{ // make sure the muxes are destroyed before the shared libraries.
-		OW_Array<OW_ProviderIFCRef> muxarray;
+		OW_Array<OW_ProviderIFCBaseIFCRef> muxarray;
 		testMuxLoaderBad pml( testCreateSharedLibraryLoader() );
 		unitAssertNoThrow(pml.loadIFCs( muxarray, shlibarray ));
 		unitAssert( muxarray.size() == 0 );
@@ -80,11 +79,11 @@ void OW_ProviderMuxLoaderTestCases::testLoadCppIFC()
 {
 	OW_Array<OW_SharedLibraryRef> shlibarray;
 	{ // make sure the muxes are destroyed before the shared libraries.
-		OW_Array<OW_ProviderIFCRef> muxarray;
-		OW_Environment::setConfigItem(
+		OW_Array<OW_ProviderIFCBaseIFCRef> muxarray;
+		g_testEnvironment->setConfigItem(
 				OW_ConfigOpts::PROVIDER_IFC_LIBS_opt,
-				"../../src/provider/ifcs/cpp" );
-		OW_ProviderIFCLoaderRef pml = OW_ProviderIFCLoader::createProviderIFCLoader();
+				"../../src/providerifcs/cpp" );
+		OW_ProviderIFCLoaderRef pml = OW_ProviderIFCLoader::createProviderIFCLoader(g_testEnvironment);
 		unitAssertNoThrow( pml->loadIFCs( muxarray, shlibarray ) );
 		cout << "muxarray.size() = " << muxarray.size() << endl;
 		unitAssert( muxarray.size() == 1 );

@@ -40,7 +40,6 @@
 #include "OW_StringStreamTestCases.hpp"
 #include "OW_MutexTestCases.hpp"
 #include "OW_CIMUrlTestCases.hpp"
-#include "OW_EventManagerTestCases.hpp"
 #include "OW_ListenerAuthenticatorTestCases.hpp"
 #include "OW_InetAddressTestCases.hpp"
 #include "OW_Base64TestCases.hpp"
@@ -88,7 +87,6 @@ int main( int argc, char *argv[])
 #endif
 	runner.addTest( "OW_Mutex", OW_MutexTestCases::suite());
 	runner.addTest( "OW_CIMUrl", OW_CIMUrlTestCases::suite());
-	runner.addTest( "OW_EventManager", OW_EventManagerTestCases::suite());
 	runner.addTest( "OW_ListenerAuthenticator", OW_ListenerAuthenticatorTestCases::suite());
 	runner.addTest( "OW_InetAddress", OW_InetAddressTestCases::suite());
 	runner.addTest( "OW_Base64", OW_Base64TestCases::suite());

@@ -75,7 +75,7 @@ OW_ProviderManager::~OW_ProviderManager()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_ProviderManager::init(const OW_ProviderIFCBaseIFCLoaderRef IFCLoader)
+void OW_ProviderManager::init(const OW_ProviderIFCLoaderRef IFCLoader)
 {
 	IFCLoader->loadIFCs(m_IFCArray, m_shlibArray);
 }

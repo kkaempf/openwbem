@@ -163,7 +163,7 @@ OW_CIMOMEnvironment::startServices()
 
 	OW_CIMOMEnvironmentRef eref(this, true);
 	m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
-	m_providerManager->init(OW_ProviderIFCBaseIFCLoader::createProviderIFCLoader(
+	m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
 		eref));
 
 	m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
@@ -558,7 +558,7 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_CIMOMEnvironmentRef eref(this, true);
 
 	if(doIndications
-	   && m_indicationServer 
+	   && m_indicationServer
 	   && !m_indicationsDisabled)
 	{
 		OW_Reference<OW_IndicationRepLayer> irl = _getIndicationRepLayer();

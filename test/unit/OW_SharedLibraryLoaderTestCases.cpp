@@ -47,7 +47,7 @@ void OW_SharedLibraryLoaderTestCases::tearDown()
 void OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary()
 {
 	testSharedLibraryLoader sll;
-	OW_SharedLibraryRef slp = sll.loadSharedLibrary( "testlib" );
+	OW_SharedLibraryRef slp = sll.loadSharedLibrary( "testlib", g_testEnvironment->getLogger() );
 	unitAssert( !slp.isNull() );
 }
 
@@ -55,8 +55,8 @@ Test* OW_SharedLibraryLoaderTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_SharedLibraryLoader");
 
-	testSuite->addTest (new TestCaller <OW_SharedLibraryLoaderTestCases> 
-			("testLoadSharedLibrary", 
+	testSuite->addTest (new TestCaller <OW_SharedLibraryLoaderTestCases>
+			("testLoadSharedLibrary",
 			&OW_SharedLibraryLoaderTestCases::testLoadSharedLibrary));
 
 	return testSuite;

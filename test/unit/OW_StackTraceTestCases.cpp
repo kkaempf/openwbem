@@ -32,7 +32,6 @@
 #include "TestCaller.hpp"
 #include "OW_StackTraceTestCases.hpp"
 #include "OW_StackTrace.hpp"
-#include "OW_Environment.hpp"
 #include "OW_ConfigOpts.hpp"
 #include <fstream>
 
@@ -62,8 +61,8 @@ Test* OW_StackTraceTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_StackTrace");
 
-	testSuite->addTest (new TestCaller <OW_StackTraceTestCases> 
-			("testGetStackTrace", 
+	testSuite->addTest (new TestCaller <OW_StackTraceTestCases>
+			("testGetStackTrace",
 			&OW_StackTraceTestCases::testGetStackTrace));
 
 	return testSuite;

@@ -33,7 +33,6 @@
 #include "OW_ProviderManagerTestCases.hpp"
 #include "OW_ProviderManager.hpp"
 #include "testSharedLibraryLoader.hpp"
-#include "OW_LocalCIMOMHandle.hpp"
 #include "OW_CIMQualifier.hpp"
 
 void OW_ProviderManagerTestCases::setUp()
@@ -50,46 +49,6 @@ void OW_ProviderManagerTestCases::testInit()
 	pm.init(testCreateMuxLoader());
 }
 
-
-namespace
-{
-	class testProviderEnvironment : public OW_ProviderEnvironmentIFC
-	{
-	public:
-
-		testProviderEnvironment(const OW_LocalCIMOMHandle& ch, OW_LoggerRef l)
-		: m_ch(new OW_LocalCIMOMHandle(ch)), m_logger(l)
-		{}
-
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle()
-		{
-			return m_ch;
-		}
-		
-		virtual OW_LoggerRef getLogger()
-		{
-			return m_logger;
-		}
-
-	private:
-		OW_CIMOMHandleIFCRef m_ch;
-		OW_LoggerRef m_logger;
-	};
-
-	class DummyLogger : public OW_Logger
-	{
-	protected:
-		virtual void doLogMessage(const OW_String &, const OW_LogLevel) const
-		{
-		}
-	};
-
-	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
-	{
-		return OW_ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
-			OW_LoggerRef(new DummyLogger)));
-	}
-}
 
 
 void OW_ProviderManagerTestCases::testGetInstanceProvider()
