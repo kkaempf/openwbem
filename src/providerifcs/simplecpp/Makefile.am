@@ -37,6 +37,7 @@ OW_SimpleCppInstanceProviderIFC.hpp \
 OW_SimpleCppInstanceProviderIFC.cpp \
 $(PROPERTY_PROVIDER_S) \
 OW_SimpleCppProviderBaseIFC.hpp \
+OW_SimpleCppProviderBaseIFC.cpp \
 OW_SimpleCppProviderIFC.cpp \
 OW_SimpleCppProviderIFC.hpp \
 OW_SimpleCppProxyProvider.cpp \
