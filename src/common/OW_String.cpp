@@ -1015,7 +1015,7 @@ T doConvertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* 
 		char* endptr;
 		FPRT v = fp(m_buf->data(), &endptr, 10);
 		T rv = v;
-		if (*endptr != '\0' || errno == ERANGE || rv != v)
+		if (*endptr != '\0' || errno == ERANGE || FPRT(rv) != v)
 		{
 			throwStringConversion(m_buf, type);
 		}
