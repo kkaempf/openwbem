@@ -44,6 +44,17 @@
 namespace OpenWBEM
 {
 
+template<class T, class Compare >
+class SortedVectorSet;
+
+template<class T, class Compare>
+inline bool operator==(const SortedVectorSet<T, Compare>& x,
+	const SortedVectorSet<T, Compare>& y);
+
+template<class T, class Compare>
+inline bool operator<(const SortedVectorSet<T, Compare>& x,
+	const SortedVectorSet<T, Compare>& y);
+
 template<class T, class Compare = std::less<T> >
 class SortedVectorSet
 {

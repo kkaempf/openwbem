@@ -43,6 +43,16 @@
 namespace OpenWBEM
 {
 
+// forward declarations are necessary for template friends.
+template<class T> class List;
+
+template <class T>
+inline bool operator==(const List<T>& x, const List<T>& y);
+
+template <class T>
+inline bool operator<(const List<T>& x, const List<T>& y);
+
+	
 template<class T> class List
 {
 private:
