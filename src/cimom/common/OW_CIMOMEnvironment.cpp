@@ -338,7 +338,7 @@ CIMOMEnvironment::startServices()
 void
 CIMOMEnvironment::shutdown()
 {
-	OW_LOG_DEBUG(m_Logger, "CIMOM Environment shutting down...");
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment beginning shutdown process");
 	{
 		MutexLock l(m_stateGuard);
 		m_state = E_STATE_SHUTTING_DOWN;
@@ -347,29 +347,33 @@ CIMOMEnvironment::shutdown()
 
 	// PHASE 1: SHUTDOWNS
 
-	// this is a global thing, so do it here
-	Socket::shutdownAllSockets();
-
-	// Shutdown the polling manager
-	if (m_pollingManager)
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment notifying services of shutdown");
+	// notify all services of impending shutdown.
+	// Do this in reverse order because of dependencies
+	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
-			m_pollingManager->shuttingDown();
-			m_pollingManager->shutdown();
+			//OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment notifying service: %1", m_services[i]->getName()));
+			m_services[i]->shuttingDown();
 		}
 		catch (...)
 		{
 		}
 	}
 
-	// Shutdown any loaded services
-	// For now. We need to unload these in the opposite order that
-	// they were loaded.
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down sockets");
+	// this is a global thing, so do it here
+	Socket::shutdownAllSockets();
+
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down services");
+	// Shutdown all services
+	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		try
 		{
+			//OW_LOG_DEBUG(m_Logger, Format("CIMOMEnvironment shutting down service: %1", m_services[i]->getName()));
 			m_services[i]->shutdown();
 		}
 		catch (...)
@@ -377,44 +381,9 @@ CIMOMEnvironment::shutdown()
 		}
 	}
 
-	// Shutdown indication processing
-	if (m_indicationServer)
-	{
-		try
-		{
-			m_indicationServer->shutdown();
-		}
-		catch (...)
-		{
-		}
-	}
-
-	// Shutdown the cim server
-	if (m_cimServer)
-	{
-		m_cimServer->shutdown();
-	}
-
-	// Shutdown the cim repository
-	if (m_cimRepository)
-	{
-		try
-		{
-			m_cimRepository->close();
-		}
-		catch (...)
-		{
-		}
-		m_cimRepository->shutdown();
-	}
-
-	// Shut down the provider manager
-	if (m_providerManager)
-	{
-		m_providerManager->shutdown();
-	}
-
 	// PHASE 2: unload/delete
+
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment unloading and deleting services");
 
 	m_pollingManager = 0;
 	
@@ -428,7 +397,8 @@ CIMOMEnvironment::shutdown()
 	}
 
 	// We need to unload these in the opposite order that
-	// they were loaded.
+	// they were loaded because of bugs in shared library
+	// handling on certain OSes.
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		m_services[i].setNull();
@@ -460,7 +430,7 @@ CIMOMEnvironment::shutdown()
 		m_state = E_STATE_SHUTDOWN;
 	}
 
-	OW_LOG_DEBUG(m_Logger, "CIMOM Environment has shut down");
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment has shut down");
 }
 //////////////////////////////////////////////////////////////////////////////
 ProviderManagerRef
