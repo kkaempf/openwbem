@@ -46,7 +46,7 @@ namespace OpenWBEM
 #define DDD(X) // X
 using namespace WBEMFlags;
 /////////////////////////////////////////////////////////////////////////////
-CMPIInstanceProviderProxy::~CMPIInstanceProviderProxy() 
+CMPIInstanceProviderProxy::~CMPIInstanceProviderProxy()
 {
 }
 
@@ -65,8 +65,8 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
-		//m_ftable->broker.hdl = 
+		::CMPIOperationContext context;
+		//m_ftable->broker.hdl =
 		//	new ProviderEnvironmentIFCRef(env);
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
@@ -103,9 +103,9 @@ CMPIInstanceProviderProxy::enumInstances(
 	const String& ns,
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
-	ELocalOnlyFlag localOnly, 
-	EDeepFlag deep, 
-	EIncludeQualifiersFlag includeQualifiers, 
+	ELocalOnlyFlag localOnly,
+	EDeepFlag deep,
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	const CIMClass& requestedClass,
@@ -124,7 +124,7 @@ CMPIInstanceProviderProxy::enumInstances(
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
 		int pCount = 0;
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -177,9 +177,9 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
-	EIncludeQualifiersFlag includeQualifiers, 
+	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, 
+	const StringArray* propertyList,
 	const CIMClass& cimClass)
 {
 	(void) localOnly;
@@ -193,7 +193,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
 		int pCount = 0;
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -239,7 +239,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 		}
 		else
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : ""); 
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -260,7 +260,7 @@ CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	if (m_ftable->miVector.instMI->ft->deleteInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -300,7 +300,7 @@ CIMObjectPath
 	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -352,7 +352,7 @@ void
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char ** props = NULL;
 		int pCount = 0;
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);

@@ -137,7 +137,7 @@ CIMRepository::close()
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::createNameSpace(const String& ns,
-	const UserInfo&)
+	OperationContext&)
 {
 	if(ns.empty())
 	{
@@ -159,7 +159,7 @@ CIMRepository::createNameSpace(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::deleteNameSpace(const String& ns,
-	const UserInfo&)
+	OperationContext&)
 {
 	if(ns.empty())
 	{
@@ -179,7 +179,7 @@ CIMRepository::deleteNameSpace(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::enumNameSpace(StringResultHandlerIFC& result,
-	const UserInfo&)
+	OperationContext&)
 {
 	// TODO: Move this into m_nStore
 	HDBHandleLock hdl(&m_nStore, m_nStore.getHandle());
@@ -204,7 +204,7 @@ CIMRepository::enumNameSpace(StringResultHandlerIFC& result,
 CIMQualifierType
 CIMRepository::getQualifierType(const String& ns,
 	const String& qualifierName,
-	const UserInfo&)
+	OperationContext&)
 {
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
@@ -219,7 +219,7 @@ void
 CIMRepository::enumQualifierTypes(
 	const String& ns,
 	CIMQualifierTypeResultHandlerIFC& result,
-	const UserInfo&)
+	OperationContext&)
 {
 	m_mStore.enumQualifierTypes(ns, result);
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
@@ -230,7 +230,7 @@ CIMRepository::enumQualifierTypes(
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
-	const UserInfo&)
+	OperationContext&)
 {
 	// TODO: What happens if the qualifier is being used???
 	if(!m_mStore.deleteQualifierType(ns, qualName))
@@ -256,7 +256,7 @@ CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
 void
 CIMRepository::setQualifierType(
 	const String& ns,
-	const CIMQualifierType& qt, const UserInfo&)
+	const CIMQualifierType& qt, OperationContext&)
 {
 	m_mStore.setQualifierType(ns, qt);
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
@@ -272,7 +272,7 @@ CIMRepository::getClass(
 	const String& ns, const String& className,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
-	const UserInfo&)
+	OperationContext&)
 {
 	try
 	{
@@ -370,7 +370,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
 CIMRepository::deleteClass(const String& ns, const String& className,
-	const UserInfo& acl)
+	OperationContext& acl)
 {
 	try
 	{
@@ -415,7 +415,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
-	const UserInfo&)
+	OperationContext&)
 {
 	try
 	{
@@ -453,7 +453,7 @@ CIMClass
 CIMRepository::modifyClass(
 	const String& ns,
 	const CIMClass& cc,
-	const UserInfo&)
+	OperationContext&)
 {
 	OW_ASSERT(cc);
 	try
@@ -490,7 +490,7 @@ CIMRepository::enumClasses(const String& ns,
 		const String& className,
 		CIMClassResultHandlerIFC& result,
 		EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-		EIncludeClassOriginFlag includeClassOrigin, const UserInfo&)
+		EIncludeClassOriginFlag includeClassOrigin, OperationContext&)
 {
 	try
 	{
@@ -518,7 +518,7 @@ CIMRepository::enumClassNames(
 	const String& ns,
 	const String& className,
 	StringResultHandlerIFC& result,
-	EDeepFlag deep, const UserInfo&)
+	EDeepFlag deep, OperationContext&)
 {
 	try
 	{
@@ -569,7 +569,7 @@ CIMRepository::enumInstanceNames(
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result,
 	EDeepFlag deep,
-	const UserInfo&)
+	OperationContext&)
 {
 	try
 	{
@@ -670,7 +670,7 @@ CIMRepository::enumInstances(
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
-	EEnumSubclassesFlag enumSubclasses, const UserInfo&)
+	EEnumSubclassesFlag enumSubclasses, OperationContext&)
 {
 	// deep means a different thing here than for enumInstanceNames.  See the spec.
 	try
@@ -723,10 +723,10 @@ CIMRepository::getInstance(
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	return getInstance(ns, instanceName, localOnly, includeQualifiers, includeClassOrigin,
-		propertyList, NULL, aclInfo);
+		propertyList, NULL, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance
@@ -736,7 +736,7 @@ CIMRepository::getInstance(
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMClass* pOutClass,
-	const UserInfo&)
+	OperationContext&)
 {
 	StringArray lpropList;
 	if(propertyList)
@@ -766,7 +766,7 @@ CIMRepository::getInstance(
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance
 CIMRepository::deleteInstance(const String& ns, const CIMObjectPath& cop_,
-	const UserInfo& acl)
+	OperationContext& acl)
 {
 	CIMObjectPath cop(cop_);
 	cop.setNameSpace(ns);
@@ -820,7 +820,7 @@ CIMObjectPath
 CIMRepository::createInstance(
 	const String& ns,
 	const CIMInstance& ci,
-	const UserInfo&)
+	OperationContext&)
 {
 	CIMObjectPath rval(ns, ci);
 	try
@@ -896,7 +896,7 @@ CIMRepository::modifyInstance(
 	const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList,
-	const UserInfo& acl)
+	OperationContext& acl)
 {
 	try
 	{
@@ -934,7 +934,7 @@ CIMRepository::setProperty(
 	const String& ns,
 	const CIMObjectPath& name,
 	const String& propertyName, const CIMValue& valueArg,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	CIMClass theClass = _instGetClass(ns, name.getObjectName());
 	CIMProperty cp = theClass.getProperty(propertyName);
@@ -963,7 +963,7 @@ CIMRepository::setProperty(
 		}
 	}
 	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
-		NULL, aclInfo);
+		NULL, context);
 	if(!ci)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, name.toString().c_str());
@@ -977,7 +977,7 @@ CIMRepository::setProperty(
 	}
 	cp.setValue(cv);
 	ci.setProperty(cp);
-	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, 0, aclInfo);
+	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, 0, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -985,7 +985,7 @@ CIMValue
 CIMRepository::getProperty(
 	const String& ns,
 	const CIMObjectPath& name,
-	const String& propertyName, const UserInfo& aclInfo)
+	const String& propertyName, OperationContext& context)
 {
 	CIMClass theClass = _instGetClass(ns,name.getObjectName());
 	CIMProperty cp = theClass.getProperty(propertyName);
@@ -995,7 +995,7 @@ CIMRepository::getProperty(
 			propertyName.c_str());
 	}
 	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
-		NULL, aclInfo);
+		NULL, context);
 	CIMProperty prop = ci.getProperty(propertyName);
 	if(!prop)
 	{
@@ -1010,7 +1010,7 @@ CIMRepository::invokeMethod(
 	const String&,
 	const CIMObjectPath&,
 	const String&, const CIMParamValueArray&,
-	CIMParamValueArray&, const UserInfo&)
+	CIMParamValueArray&, OperationContext&)
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED);
 }
@@ -1020,7 +1020,7 @@ CIMRepository::execQuery(
 	const String&,
 	CIMInstanceResultHandlerIFC&,
 	const String&,
-	const String&, const UserInfo&)
+	const String&, OperationContext&)
 {
 	OW_THROWCIM(CIMException::NOT_SUPPORTED);
 }
@@ -1034,11 +1034,11 @@ CIMRepository::associators(
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, &result, 0, 0,
-		aclInfo);
+		context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1049,11 +1049,11 @@ CIMRepository::associatorsClasses(
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList, 0, 0, &result,
-		aclInfo);
+		context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1063,10 +1063,10 @@ CIMRepository::associatorNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	_commonAssociators(ns, path, assocClass, resultClass, role, resultRole,
-		E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0, aclInfo);
+		E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1076,10 +1076,10 @@ CIMRepository::references(
 	CIMInstanceResultHandlerIFC& result,
 	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
-		includeClassOrigin, propertyList, &result, 0, 0, aclInfo);
+		includeClassOrigin, propertyList, &result, 0, 0, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1089,10 +1089,10 @@ CIMRepository::referencesClasses(
 	CIMClassResultHandlerIFC& result,
 	const String& resultClass, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	_commonReferences(ns, path, resultClass, role, includeQualifiers,
-		includeClassOrigin, propertyList, 0, 0, &result, aclInfo);
+		includeClassOrigin, propertyList, 0, 0, &result, context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1101,10 +1101,10 @@ CIMRepository::referenceNames(
 	const CIMObjectPath& path,
 	CIMObjectPathResultHandlerIFC& result,
 	const String& resultClass, const String& role,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	_commonReferences(ns, path, resultClass, role, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, 0, &result, 0,
-		aclInfo);
+		context);
 }
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -1139,7 +1139,7 @@ CIMRepository::_commonReferences(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC* piresult,
 	CIMObjectPathResultHandlerIFC* popresult,
-	CIMClassResultHandlerIFC* pcresult, const UserInfo& aclInfo)
+	CIMClassResultHandlerIFC* pcresult, OperationContext& context)
 {
 	CIMObjectPath path(path_);
 	path.setNameSpace(ns);
@@ -1152,7 +1152,7 @@ CIMRepository::_commonReferences(
 	// returned.
 	CIMClassArray Assocs;
 	assocClassBuilder assocClassResult(Assocs);
-	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role, aclInfo);
+	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role, context);
 	StringArray resultClassNames;
 	for(size_t i = 0; i < Assocs.size(); i++)
 	{
@@ -1164,7 +1164,7 @@ CIMRepository::_commonReferences(
 		// Process all of the association classes without providers
 		_staticReferencesClass(path,
 			resultClass.empty() ? 0 : &resultClassNamesSet,
-			role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, aclInfo);
+			role, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, context);
 	}
 	else // it's an instance path
 	{
@@ -1174,7 +1174,7 @@ CIMRepository::_commonReferences(
 			// do instances
 			_staticReferences(path,
 				resultClass.empty() ? 0 : &resultClassNamesSet, role,
-				includeQualifiers, includeClassOrigin, propertyList, *piresult, aclInfo);
+				includeQualifiers, includeClassOrigin, propertyList, *piresult, context);
 		}
 		else if (popresult != 0)
 		{
@@ -1219,14 +1219,14 @@ namespace
 			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propList_,
-			const UserInfo& aclInfo_)
+			OperationContext& context_)
 		: result(result_)
 		, server(server_)
 		, ns(ns_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, propList(propList_)
-		, aclInfo(aclInfo_)
+		, context(context_)
 		{}
 	protected:
 		virtual void doHandle(const AssocDbEntry::entry &e)
@@ -1238,7 +1238,7 @@ namespace
 			}
 			CIMClass cc = server.getClass(cop.getNameSpace(),
 				cop.getObjectName(), E_NOT_LOCAL_ONLY, includeQualifiers,
-				includeClassOrigin, propList, aclInfo);
+				includeClassOrigin, propList, context);
 			result.handle(cc);
 		}
 	private:
@@ -1248,14 +1248,14 @@ namespace
 		EIncludeQualifiersFlag includeQualifiers;
 		EIncludeClassOriginFlag includeClassOrigin;
 		const StringArray* propList;
-		const UserInfo& aclInfo;
+		OperationContext& context;
 	};
 //////////////////////////////////////////////////////////////////////////////
 	class staticAssociatorsInstResultHandler : public AssocDbEntryResultHandlerIFC
 	{
 	public:
 		staticAssociatorsInstResultHandler(
-			const UserInfo& intAclInfo_,
+			OperationContext& intAclInfo_,
 			CIMRepository& server_,
 			CIMInstanceResultHandlerIFC& result_,
 			EIncludeQualifiersFlag includeQualifiers_,
@@ -1277,7 +1277,7 @@ namespace
 			result.handle(ci);
 		}
 	private:
-		const UserInfo& intAclInfo;
+		OperationContext& intAclInfo;
 		CIMRepository& server;
 		CIMInstanceResultHandlerIFC& result;
 		EIncludeQualifiersFlag includeQualifiers;
@@ -1289,7 +1289,7 @@ namespace
 	class staticReferencesInstResultHandler : public AssocDbEntryResultHandlerIFC
 	{
 	public:
-		staticReferencesInstResultHandler(const UserInfo& intAclInfo_,
+		staticReferencesInstResultHandler(OperationContext& intAclInfo_,
 			CIMRepository& server_,
 			CIMInstanceResultHandlerIFC& result_,
 			EIncludeQualifiersFlag includeQualifiers_,
@@ -1311,7 +1311,7 @@ namespace
 			result.handle(ci);
 		}
 	private:
-		const UserInfo& intAclInfo;
+		OperationContext& intAclInfo;
 		CIMRepository& server;
 		CIMInstanceResultHandlerIFC& result;
 		EIncludeQualifiersFlag includeQualifiers;
@@ -1325,10 +1325,10 @@ CIMRepository::_staticReferences(const CIMObjectPath& path,
 	const SortedVectorSet<String>* refClasses, const String& role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC& result,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
-	staticReferencesInstResultHandler handler(aclInfo, *this, result,
+	staticReferencesInstResultHandler handler(context, *this, result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		refClasses, 0, role, String(), handler);
@@ -1356,7 +1356,7 @@ CIMRepository::_commonAssociators(
 	CIMInstanceResultHandlerIFC* piresult,
 	CIMObjectPathResultHandlerIFC* popresult,
 	CIMClassResultHandlerIFC* pcresult,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	CIMObjectPath path(path_);
 	path.setNameSpace(ns);
@@ -1367,7 +1367,7 @@ CIMRepository::_commonAssociators(
 	// Get association classes from the association repository
 	CIMClassArray Assocs;
 	assocClassBuilder assocClassResult(Assocs);
-	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role, aclInfo);
+	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role, context);
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
 	StringArray resultClassNames;
@@ -1390,7 +1390,7 @@ CIMRepository::_commonAssociators(
 		// Process all of the association classes without providers
 		_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 			resultClass.empty() ? 0 : &resultClassNamesSet,
-			role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, aclInfo);
+			role, resultRole, includeQualifiers, includeClassOrigin, propertyList, popresult, pcresult, context);
 	}
 	else // it's an instance path
 	{
@@ -1400,7 +1400,7 @@ CIMRepository::_commonAssociators(
 			// do instances
 			_staticAssociators(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 				resultClass.empty() ? 0 : &resultClassNamesSet, role, resultRole,
-				includeQualifiers, includeClassOrigin, propertyList, *piresult, aclInfo);
+				includeQualifiers, includeClassOrigin, propertyList, *piresult, context);
 		}
 		else if (popresult != 0)
 		{
@@ -1423,10 +1423,10 @@ CIMRepository::_staticAssociators(const CIMObjectPath& path,
 	const String& role, const String& resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMInstanceResultHandlerIFC& result,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_instAssocDb.getHandle();
-	staticAssociatorsInstResultHandler handler(aclInfo, *this, result,
+	staticAssociatorsInstResultHandler handler(context, *this, result,
 		includeQualifiers, includeClassOrigin, propertyList);
 	dbhdl.getAllEntries(path,
 		passocClasses, presultClasses, role, resultRole, handler);
@@ -1462,14 +1462,14 @@ namespace
 			EIncludeQualifiersFlag includeQualifiers_,
 			EIncludeClassOriginFlag includeClassOrigin_,
 			const StringArray* propList_,
-			const UserInfo& aclInfo_)
+			OperationContext& context_)
 		: result(result_)
 		, server(server_)
 		, ns(ns_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, propList(propList_)
-		, aclInfo(aclInfo_)
+		, context(context_)
 		{}
 	protected:
 		virtual void doHandle(const AssocDbEntry::entry &e)
@@ -1481,7 +1481,7 @@ namespace
 			}
 			CIMClass cc = server.getClass(cop.getNameSpace(),
 				cop.getObjectName(), E_NOT_LOCAL_ONLY, includeQualifiers,
-				includeClassOrigin, propList, aclInfo);
+				includeClassOrigin, propList, context);
 			result.handle(cc);
 		}
 	private:
@@ -1491,7 +1491,7 @@ namespace
 		EIncludeQualifiersFlag includeQualifiers;
 		EIncludeClassOriginFlag includeClassOrigin;
 		const StringArray* propList;
-		const UserInfo& aclInfo;
+		OperationContext& context;
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1518,7 +1518,7 @@ CIMRepository::_staticAssociatorsClass(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, CIMObjectPathResultHandlerIFC* popresult,
 	CIMClassResultHandlerIFC* pcresult,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 	// need to run the query for every superclass of the class arg.
@@ -1537,7 +1537,7 @@ CIMRepository::_staticAssociatorsClass(
 			String ns = path.getNameSpace();
 			staticAssociatorsClassResultHandler handler(*pcresult,*this,
 				ns, includeQualifiers, includeClassOrigin,
-				propertyList, aclInfo);
+				propertyList, context);
 			dbhdl.getAllEntries(curPath, assocClassNames, resultClasses, role, resultRole,
 				handler);
 		}
@@ -1560,7 +1560,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 	const StringArray* propertyList,
 	CIMObjectPathResultHandlerIFC* popresult,
 	CIMClassResultHandlerIFC* pcresult,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 	// need to run the query for every superclass of the class arg.
@@ -1580,7 +1580,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 			String ns = path.getNameSpace();
 			staticReferencesClassResultHandler handler(*pcresult,*this,
 				ns, includeQualifiers, includeClassOrigin,
-				propertyList, aclInfo);
+				propertyList, context);
 			dbhdl.getAllEntries(curPath, resultClasses, 0, role, String(),
 				handler);
 		}
@@ -1625,7 +1625,7 @@ void
 CIMRepository::_getAssociationClasses(const String& ns,
 		const String& assocClassName, const String& className,
 		CIMClassResultHandlerIFC& result, const String& role,
-		const UserInfo& aclInfo)
+		OperationContext& context)
 {
 	if(!assocClassName.empty())
 	{
@@ -1644,7 +1644,7 @@ CIMRepository::_getAssociationClasses(const String& ns,
 	{
 		// need to get all the assoc classes with dynamic providers
 		CIMObjectPath cop(className, ns);
-		_staticReferencesClass(cop,0,role,E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,0,&result, aclInfo);
+		_staticReferencesClass(cop,0,role,E_INCLUDE_QUALIFIERS,E_EXCLUDE_CLASS_ORIGIN,0,0,&result, context);
 		// TODO: test if this is faster
 		//assocHelper helper(result, m_mStore, ns);
 		//m_mStore.getTopLevelAssociations(ns, helper);
@@ -1816,7 +1816,7 @@ CIMRepository::_validatePropagatedKeys(const String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMRepository::beginOperation(WBEMFlags::EOperationFlag op)
+CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
 // TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
 const UInt32 LockTimeout = 300; // seconds - 5 mins.
@@ -1870,7 +1870,7 @@ const UInt32 LockTimeout = 300; // seconds - 5 mins.
 
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMRepository::endOperation(WBEMFlags::EOperationFlag op)
+CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
 	switch (op)
 	{

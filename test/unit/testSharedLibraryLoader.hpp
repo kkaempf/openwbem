@@ -43,6 +43,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_OperationContext.hpp"
 
 using namespace OpenWBEM;
 
@@ -79,9 +80,9 @@ public:
 			const String& ns,
 			const String& className,
 			CIMInstanceResultHandlerIFC& result,
-			WBEMFlags::ELocalOnlyFlag localOnly, 
-			WBEMFlags::EDeepFlag deep, 
-			WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+			WBEMFlags::ELocalOnlyFlag localOnly,
+			WBEMFlags::EDeepFlag deep,
+			WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 			WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList,
 			const CIMClass& requestedClass,
@@ -97,9 +98,9 @@ public:
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
 		(void)env; (void)ns; (void)instanceName; (void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList; (void)cimClass;
@@ -192,13 +193,13 @@ public:
 class TestIndicationProvider : public IndicationProviderIFC
 {
 public:
-	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& ) 
+	virtual void deActivateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& )
 	{
 	}
-	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& ) 
+	virtual void activateFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray& )
 	{
 	}
-	virtual void authorizeFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, const String &) 
+	virtual void authorizeFilter(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&, const String &)
 	{
 	}
 	virtual int mustPoll(const ProviderEnvironmentIFCRef &, const WQLSelectStatement &, const String &, const String&, const StringArray&)
@@ -527,11 +528,11 @@ namespace
 	public:
 
 		testProviderEnvironment(const LocalCIMOMHandle& ch, LoggerRef l)
-		: m_ch(new LocalCIMOMHandle(ch)), m_logger(l)
+		: m_context(""), m_ch(new LocalCIMOMHandle(ch)), m_logger(l)
 		{}
 
 		testProviderEnvironment()
-		: m_ch(new LocalCIMOMHandle()), m_logger(new DummyLogger)
+		: m_context(""), m_ch(new LocalCIMOMHandle(CIMOMEnvironmentRef(),RepositoryIFCRef(),m_context)), m_logger(new DummyLogger)
 		{}
 
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
@@ -564,8 +565,13 @@ namespace
 			return "";
 		}
 
+		virtual OperationContext& getOperationContext()
+		{
+			return m_context;
+		}
 
 	private:
+		OperationContext m_context;
 		CIMOMHandleIFCRef m_ch;
 		LoggerRef m_logger;
 	};

@@ -83,7 +83,7 @@ typedef SharedLibraryReference<Reference<ServiceIFC> > ServiceIFCRef;
 typedef SharedLibraryReference<Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
 typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
-typedef Reference<IndicationRepLayerMediator> 
+typedef Reference<IndicationRepLayerMediator>
 	IndicationRepLayerMediatorRef;
 class CIMOMEnvironment;
 typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
@@ -96,22 +96,23 @@ public:
 	virtual bool authenticate(String &userName, const String &info,
 		String &details);
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
-	virtual CIMOMHandleIFCRef getCIMOMHandle(const String &username,
-		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS);
 	enum ELockingFlag
 	{
 		E_NO_LOCKING,
 		E_LOCKING
 	};
-	CIMOMHandleIFCRef getCIMOMHandle(const UserInfo& aclinfo,
-		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
-		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
-		ELockingFlag locking = E_LOCKING);
-	CIMOMHandleIFCRef getCIMOMHandle();
-	CIMOMHandleIFCRef getRepositoryCIMOMHandle();
+	
+	// from ServiceEnvironmentIFC
+	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
+		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS);
+	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
+		ESendIndicationsFlag doIndications,
+		EBypassProvidersFlag bypassProviders,
+		ELockingFlag locking);
+	CIMOMHandleIFCRef getRepositoryCIMOMHandle(OperationContext& context);
 	CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const CIMInstance& inst,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	WQLIFCRef getWQLRef();
 	virtual RequestHandlerIFCRef getRequestHandler(
 		const String &id);

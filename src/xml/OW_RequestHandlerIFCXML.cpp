@@ -37,6 +37,7 @@
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_XMLParseException.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

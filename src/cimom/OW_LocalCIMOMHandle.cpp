@@ -43,60 +43,33 @@ namespace OpenWBEM
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
 LocalCIMOMHandle::LocalCIMOMHandle(CIMOMEnvironmentRef env,
-	RepositoryIFCRef pRepos, const UserInfo& aclInfo)
+	RepositoryIFCRef pRepos, OperationContext& context, ELockingFlag lock)
 	: CIMOMHandleIFC()
 	, m_pServer(pRepos)
-	, m_aclInfo(aclInfo)
-	, m_lock(E_LOCKING)
-	, m_env(env)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-LocalCIMOMHandle::LocalCIMOMHandle(const LocalCIMOMHandle& arg)
-	: CIMOMHandleIFC()
-	, m_pServer(arg.m_pServer)
-	, m_aclInfo(arg.m_aclInfo)
-	, m_lock(arg.m_lock)
-	, m_env(arg.m_env)
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-LocalCIMOMHandle::LocalCIMOMHandle(CIMOMEnvironmentRef env,
-	RepositoryIFCRef pRepos, const UserInfo& aclInfo, ELockingFlag lock)
-	: CIMOMHandleIFC()
-	, m_pServer(pRepos)
-	, m_aclInfo(aclInfo)
 	, m_lock(lock)
 	, m_env(env)
+	, m_context(context)
 {
 }
-//////////////////////////////////////////////////////////////////////////////
-LocalCIMOMHandle&
-LocalCIMOMHandle::operator= (const LocalCIMOMHandle& arg)
-{
-	m_pServer = arg.m_pServer;
-	m_aclInfo = arg.m_aclInfo;
-	m_lock = arg.m_lock;
-	return *this;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 class OperationScope
 {
 public:
-	OperationScope(LocalCIMOMHandle* pHdl, EOperationFlag op)
+	OperationScope(LocalCIMOMHandle* pHdl, EOperationFlag op, OperationContext& context)
 	: m_pHdl(pHdl)
 	, m_op(op)
+	, m_context(context)
 	{
-		m_pHdl->beginOperation(m_op);
+		m_pHdl->beginOperation(m_op, m_context);
 	}
 	~OperationScope()
 	{
-		m_pHdl->endOperation(m_op);
+		m_pHdl->endOperation(m_op, m_context);
 	}
 private:
 	LocalCIMOMHandle* m_pHdl;
 	EOperationFlag m_op;
+	OperationContext& m_context;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -114,9 +87,9 @@ LocalCIMOMHandle::enumClass(const String& ns,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin)
 {
-	OperationScope os(this, E_ENUM_CLASSES);
+	OperationScope os(this, E_ENUM_CLASSES, m_context);
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, m_aclInfo);
+		includeClassOrigin, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -125,8 +98,8 @@ LocalCIMOMHandle::enumClassNames(const String& ns,
 		StringResultHandlerIFC& result,
 		EDeepFlag deep)
 {
-	OperationScope os(this, E_ENUM_CLASS_NAMES);
-	m_pServer->enumClassNames(ns, className, result, deep, m_aclInfo);
+	OperationScope os(this, E_ENUM_CLASS_NAMES, m_context);
+	m_pServer->enumClassNames(ns, className, result, deep, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -140,9 +113,9 @@ LocalCIMOMHandle::enumInstances(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_ENUM_INSTANCES);
+	OperationScope os(this, E_ENUM_INSTANCES, m_context);
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, E_ENUM_SUBCLASSES, m_aclInfo);
+		includeClassOrigin, propertyList, E_ENUM_SUBCLASSES, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -151,24 +124,24 @@ LocalCIMOMHandle::enumInstanceNames(
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result)
 {
-	OperationScope os(this, E_ENUM_INSTANCE_NAMES);
-	return m_pServer->enumInstanceNames(ns, className, result, E_DEEP, m_aclInfo);
+	OperationScope os(this, E_ENUM_INSTANCE_NAMES, m_context);
+	return m_pServer->enumInstanceNames(ns, className, result, E_DEEP, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifierType
 LocalCIMOMHandle::getQualifierType(const String& ns,
 		const String& qualifierName)
 {
-	OperationScope os(this, E_GET_QUALIFIER_TYPE);
-	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
+	OperationScope os(this, E_GET_QUALIFIER_TYPE, m_context);
+	return m_pServer->getQualifierType(ns, qualifierName, m_context);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::deleteQualifierType(const String& ns, const String& qualName)
 {
-	OperationScope os(this, E_DELETE_QUALIFIER_TYPE);
-	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
+	OperationScope os(this, E_DELETE_QUALIFIER_TYPE, m_context);
+	m_pServer->deleteQualifierType(ns, qualName, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -176,16 +149,16 @@ LocalCIMOMHandle::enumQualifierTypes(
 	const String& ns,
 	CIMQualifierTypeResultHandlerIFC& result)
 {
-	OperationScope os(this, E_ENUM_QUALIFIER_TYPES);
-	m_pServer->enumQualifierTypes(ns, result, m_aclInfo);
+	OperationScope os(this, E_ENUM_QUALIFIER_TYPES, m_context);
+	m_pServer->enumQualifierTypes(ns, result, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::setQualifierType(const String& ns,
 	const CIMQualifierType& qt)
 {
-	OperationScope os(this, E_SET_QUALIFIER_TYPE);
-	m_pServer->setQualifierType(ns, qt, m_aclInfo);
+	OperationScope os(this, E_SET_QUALIFIER_TYPE, m_context);
+	m_pServer->setQualifierType(ns, qt, m_context);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
@@ -198,9 +171,9 @@ LocalCIMOMHandle::getClass(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_GET_CLASS);
+	OperationScope os(this, E_GET_CLASS, m_context);
 	CIMClass cls = m_pServer->getClass(ns, className, localOnly,
-		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
+		includeQualifiers, includeClassOrigin, propertyList, m_context);
 	return cls;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -213,9 +186,9 @@ LocalCIMOMHandle::getInstance(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_GET_INSTANCE);
+	OperationScope os(this, E_GET_INSTANCE, m_context);
 	return m_pServer->getInstance(ns, instanceName, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, m_aclInfo);
+		includeClassOrigin, propertyList, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
@@ -225,9 +198,9 @@ LocalCIMOMHandle::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams)
 {
-	OperationScope os(this, E_INVOKE_METHOD);
+	OperationScope os(this, E_INVOKE_METHOD, m_context);
 	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
-		m_aclInfo);
+		m_context);
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -236,23 +209,23 @@ LocalCIMOMHandle::modifyClass(
 	const String& ns,
 	const CIMClass& cc)
 {
-	OperationScope os(this, E_MODIFY_CLASS);
-	m_pServer->modifyClass(ns, cc, m_aclInfo);
+	OperationScope os(this, E_MODIFY_CLASS, m_context);
+	m_pServer->modifyClass(ns, cc, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::createClass(const String& ns,
 	const CIMClass& cc)
 {
-	OperationScope os(this, E_CREATE_CLASS);
-	m_pServer->createClass(ns, cc, m_aclInfo);
+	OperationScope os(this, E_CREATE_CLASS, m_context);
+	m_pServer->createClass(ns, cc, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::deleteClass(const String& ns, const String& className)
 {
-	OperationScope os(this, E_DELETE_CLASS);
-	m_pServer->deleteClass(ns, className, m_aclInfo);
+	OperationScope os(this, E_DELETE_CLASS, m_context);
+	m_pServer->deleteClass(ns, className, m_context);
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -264,24 +237,24 @@ LocalCIMOMHandle::modifyInstance(
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_MODIFY_INSTANCE);
+	OperationScope os(this, E_MODIFY_INSTANCE, m_context);
 	m_pServer->modifyInstance(ns, modifiedInstance, includeQualifiers,
-		propertyList, m_aclInfo);
+		propertyList, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 LocalCIMOMHandle::createInstance(const String& ns,
 	const CIMInstance& ci)
 {
-	OperationScope os(this, E_CREATE_INSTANCE);
-	return m_pServer->createInstance(ns, ci, m_aclInfo);
+	OperationScope os(this, E_CREATE_INSTANCE, m_context);
+	return m_pServer->createInstance(ns, ci, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 LocalCIMOMHandle::deleteInstance(const String& ns, const CIMObjectPath& path)
 {
-	OperationScope os(this, E_DELETE_INSTANCE);
-	m_pServer->deleteInstance(ns, path, m_aclInfo);
+	OperationScope os(this, E_DELETE_INSTANCE, m_context);
+	m_pServer->deleteInstance(ns, path, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -290,8 +263,8 @@ LocalCIMOMHandle::setProperty(
 	const CIMObjectPath& name,
 	const String& propertyName, const CIMValue& cv)
 {
-	OperationScope os(this, E_SET_PROPERTY);
-	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
+	OperationScope os(this, E_SET_PROPERTY, m_context);
+	m_pServer->setProperty(ns, name, propertyName, cv, m_context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -301,8 +274,8 @@ LocalCIMOMHandle::getProperty(
 	const CIMObjectPath& name,
 	const String& propertyName)
 {
-	OperationScope os(this, E_GET_PROPERTY);
-	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
+	OperationScope os(this, E_GET_PROPERTY, m_context);
+	return m_pServer->getProperty(ns, name, propertyName, m_context);
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
@@ -314,9 +287,9 @@ LocalCIMOMHandle::associatorNames(
 	const String& assocClass, const String& resultClass,
 	const String& role, const String& resultRole)
 {
-	OperationScope os(this, E_ASSOCIATOR_NAMES);
+	OperationScope os(this, E_ASSOCIATOR_NAMES, m_context);
 	m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
-		resultRole, m_aclInfo);
+		resultRole, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -330,10 +303,10 @@ LocalCIMOMHandle::associators(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_ASSOCIATORS);
+	OperationScope os(this, E_ASSOCIATORS, m_context);
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
-		m_aclInfo);
+		m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -347,10 +320,10 @@ LocalCIMOMHandle::associatorsClasses(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_ASSOCIATORS_CLASSES);
+	OperationScope os(this, E_ASSOCIATORS_CLASSES, m_context);
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
-		m_aclInfo);
+		m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -360,8 +333,8 @@ LocalCIMOMHandle::referenceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const String& resultClass, const String& role)
 {
-	OperationScope os(this, E_REFERENCE_NAMES);
-	m_pServer->referenceNames(ns, path, result, resultClass, role, m_aclInfo);
+	OperationScope os(this, E_REFERENCE_NAMES, m_context);
+	m_pServer->referenceNames(ns, path, result, resultClass, role, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -374,9 +347,9 @@ LocalCIMOMHandle::references(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_REFERENCES);
+	OperationScope os(this, E_REFERENCES, m_context);
 	m_pServer->references(ns, path, result, resultClass, role,
-		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
+		includeQualifiers, includeClassOrigin, propertyList, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -389,9 +362,9 @@ LocalCIMOMHandle::referencesClasses(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	OperationScope os(this, E_REFERENCES_CLASSES);
+	OperationScope os(this, E_REFERENCES_CLASSES, m_context);
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,
-		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
+		includeQualifiers, includeClassOrigin, propertyList, m_context);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
@@ -402,8 +375,8 @@ LocalCIMOMHandle::execQuery(
 	const String& query,
 	const String& queryLanguage)
 {
-	OperationScope os(this, E_EXEC_QUERY);
-	m_pServer->execQuery(ns, result, query, queryLanguage, m_aclInfo);
+	OperationScope os(this, E_EXEC_QUERY, m_context);
+	m_pServer->execQuery(ns, result, query, queryLanguage, m_context);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMFeatures
@@ -441,21 +414,21 @@ LocalCIMOMHandle::exportIndication(const CIMInstance& instance,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-LocalCIMOMHandle::beginOperation(WBEMFlags::EOperationFlag op)
+LocalCIMOMHandle::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& m_context)
 {
 	if (m_lock)
 	{
-		m_pServer->beginOperation(op);
+		m_pServer->beginOperation(op, m_context);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-LocalCIMOMHandle::endOperation(WBEMFlags::EOperationFlag op)
+LocalCIMOMHandle::endOperation(WBEMFlags::EOperationFlag op, OperationContext& m_context)
 {
 	if (m_lock)
 	{
-		m_pServer->endOperation(op);
+		m_pServer->endOperation(op, m_context);
 	}
 }
 

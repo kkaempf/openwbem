@@ -12,7 +12,7 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * 
+ *
  * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: Combined CMPIContext CMPIArgs support
@@ -219,16 +219,16 @@ static CMPIContextFT contextOnStack_FT={
 CMPIContextFT *CMPI_ContextOnStack_Ftab=&contextOnStack_FT;
 
 
-CMPI_Context::CMPI_Context(const OperationContext& ct)
+CMPI_Context::CMPI_Context(const ::CMPIOperationContext& ct)
 {
-	ctx=(OperationContext*)&ct;
+	ctx=(::CMPIOperationContext*)&ct;
 	hdl=(void*)new OpenWBEM::CIMParamValueArray();
 	ft=CMPI_Context_Ftab;
 }
 
-CMPI_ContextOnStack::CMPI_ContextOnStack(const OperationContext& ct)
+CMPI_ContextOnStack::CMPI_ContextOnStack(const ::CMPIOperationContext& ct)
 {
-	ctx=(OperationContext*)&ct;
+	ctx=(::CMPIOperationContext*)&ct;
 	hdl=(void*)new OpenWBEM::CIMParamValueArray();
 	ft=CMPI_ContextOnStack_Ftab;
 }

@@ -31,10 +31,8 @@
 #define OW_SERVICE_ENVIRONMENTIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Reference.hpp"
-#include "OW_String.hpp"
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
-#include "OW_Logger.hpp"
 #include "OW_SharedLibraryReference.hpp"
 
 namespace OpenWBEM
@@ -46,6 +44,11 @@ class ServiceEnvironmentIFC;
 typedef Reference<ServiceEnvironmentIFC> ServiceEnvironmentIFCRef;
 class RequestHandlerIFC;
 typedef SharedLibraryReference< Reference<RequestHandlerIFC> > RequestHandlerIFCRef;
+class OperationContext;
+class Logger;
+typedef Reference<Logger> LoggerRef;
+class String;
+
 class ServiceEnvironmentIFC
 {
 public:
@@ -78,8 +81,8 @@ public:
 		E_USE_PROVIDERS,
 		E_BYPASS_PROVIDERS
 	};
-	virtual CIMOMHandleIFCRef getCIMOMHandle(const String& username,
-		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS, 
+	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
+		ESendIndicationsFlag doIndications = E_SEND_INDICATIONS,
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS) = 0;
 };
 

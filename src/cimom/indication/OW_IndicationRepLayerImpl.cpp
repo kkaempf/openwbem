@@ -64,10 +64,10 @@ IndicationRepLayerImpl::getInstance(
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	CIMInstance theInst = m_pServer->getInstance(ns, instanceName, localOnly,
-		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		includeQualifiers, includeClassOrigin, propertyList, context);
 	
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstReadSubscriptionCount() > 0)
 	{
@@ -91,10 +91,10 @@ IndicationRepLayerImpl::invokeMethod(
 	const String& ns,
 	const CIMObjectPath& path,
 	const String& methodName, const CIMParamValueArray& inParams,
-	CIMParamValueArray& outParams, const UserInfo& aclInfo)
+	CIMParamValueArray& outParams, OperationContext& context)
 {
 	CIMValue rval = m_pServer->invokeMethod(ns, path, methodName, inParams,
-		outParams, aclInfo);
+		outParams, context);
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstMethodCallSubscriptionCount() > 0)
 	{
 		if (path.isInstancePath()) // process the indication only if instance.
@@ -102,9 +102,8 @@ IndicationRepLayerImpl::invokeMethod(
 			try
 			{
 				CIMInstance expInst("CIM_InstMethodCall");
-				UserInfo intAclInfo;
 				CIMInstance theInst = m_pServer->getInstance(ns, path, E_NOT_LOCAL_ONLY,
-					E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, intAclInfo);
+					E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, context);
 	
 				if (!theInst)
 				{
@@ -148,9 +147,9 @@ IndicationRepLayerImpl::invokeMethod(
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
 IndicationRepLayerImpl::modifyClass(const String &ns,
-	const CIMClass& cc, const UserInfo& aclInfo)
+	const CIMClass& cc, OperationContext& context)
 {
-	CIMClass CCOrig = m_pServer->modifyClass(ns, cc, aclInfo);
+	CIMClass CCOrig = m_pServer->modifyClass(ns, cc, context);
 	
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassModificationSubscriptionCount() > 0)
 	{
@@ -173,9 +172,9 @@ IndicationRepLayerImpl::modifyClass(const String &ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 IndicationRepLayerImpl::createClass(const String& ns,
-	const CIMClass& cc, const UserInfo& aclInfo)
+	const CIMClass& cc, OperationContext& context)
 {
-	m_pServer->createClass(ns, cc, aclInfo);
+	m_pServer->createClass(ns, cc, context);
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassCreationSubscriptionCount() > 0)
 	{
 	
@@ -195,9 +194,9 @@ IndicationRepLayerImpl::createClass(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 CIMClass
 IndicationRepLayerImpl::deleteClass(const String& ns, const String& className,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
-	CIMClass cc = m_pServer->deleteClass(ns, className, aclInfo);
+	CIMClass cc = m_pServer->deleteClass(ns, className, context);
 	if (m_pEnv->getIndicationRepLayerMediator()->getClassDeletionSubscriptionCount() > 0)
 	{
 		try
@@ -224,10 +223,10 @@ IndicationRepLayerImpl::modifyInstance(
 	const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	CIMInstance ciOrig = m_pServer->modifyInstance(ns, modifiedInstance,
-		includeQualifiers, propertyList, aclInfo);
+		includeQualifiers, propertyList, context);
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstModificationSubscriptionCount() > 0)
 	{
 		try
@@ -250,9 +249,9 @@ IndicationRepLayerImpl::modifyInstance(
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath
 IndicationRepLayerImpl::createInstance(const String& ns,
-	const CIMInstance& ci, const UserInfo& aclInfo)
+	const CIMInstance& ci, OperationContext& context)
 {
-	CIMObjectPath rval = m_pServer->createInstance(ns, ci, aclInfo);
+	CIMObjectPath rval = m_pServer->createInstance(ns, ci, context);
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstCreationSubscriptionCount() > 0)
 	{
 		try
@@ -272,9 +271,9 @@ IndicationRepLayerImpl::createInstance(const String& ns,
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance
 IndicationRepLayerImpl::deleteInstance(const String& ns, const CIMObjectPath& path,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
-	CIMInstance instOrig = m_pServer->deleteInstance(ns, path, aclInfo);
+	CIMInstance instOrig = m_pServer->deleteInstance(ns, path, context);
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstDeletionSubscriptionCount() > 0)
 	{
 		try
@@ -303,18 +302,18 @@ void IndicationRepLayerImpl::enumClasses(const String& ns,
 	const String& className,
 	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-	EIncludeClassOriginFlag includeClassOrigin, const UserInfo& aclInfo)
+	EIncludeClassOriginFlag includeClassOrigin, OperationContext& context)
 {
 	m_pServer->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, aclInfo);
+		includeClassOrigin, context);
 }
 void IndicationRepLayerImpl::enumClassNames(
 	const String& ns,
 	const String& className,
 	StringResultHandlerIFC& result,
-	EDeepFlag deep, const UserInfo& aclInfo)
+	EDeepFlag deep, OperationContext& context)
 {
-	m_pServer->enumClassNames(ns, className, result, deep, aclInfo);
+	m_pServer->enumClassNames(ns, className, result, deep, context);
 }
 void IndicationRepLayerImpl::enumInstances(
 	const String& ns,
@@ -326,51 +325,51 @@ void IndicationRepLayerImpl::enumInstances(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList,
 	EEnumSubclassesFlag enumSubclasses,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, enumSubclasses, aclInfo);
+		includeClassOrigin, propertyList, enumSubclasses, context);
 }
 void IndicationRepLayerImpl::enumInstanceNames(
 	const String& ns,
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result,
-	EDeepFlag deep, const UserInfo& aclInfo)
+	EDeepFlag deep, OperationContext& context)
 {
-	return m_pServer->enumInstanceNames(ns, className, result, deep, aclInfo);
+	return m_pServer->enumInstanceNames(ns, className, result, deep, context);
 }
 CIMQualifierType IndicationRepLayerImpl::getQualifierType(
 	const String& ns,
-	const String& qualifierName, const UserInfo& aclInfo)
+	const String& qualifierName, OperationContext& context)
 {
-	return m_pServer->getQualifierType(ns, qualifierName, aclInfo);
+	return m_pServer->getQualifierType(ns, qualifierName, context);
 }
 CIMClass IndicationRepLayerImpl::getClass(
 	const String& ns,
 	const String& className,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
 	return m_pServer->getClass(ns, className, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
+		includeClassOrigin, propertyList, context);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 void IndicationRepLayerImpl::enumQualifierTypes(
 	const String& ns,
-	CIMQualifierTypeResultHandlerIFC& result, const UserInfo& aclInfo)
+	CIMQualifierTypeResultHandlerIFC& result, OperationContext& context)
 {
-	m_pServer->enumQualifierTypes(ns, result, aclInfo);
+	m_pServer->enumQualifierTypes(ns, result, context);
 }
 void IndicationRepLayerImpl::deleteQualifierType(const String& ns, const String& qualName,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
-	m_pServer->deleteQualifierType(ns, qualName, aclInfo);
+	m_pServer->deleteQualifierType(ns, qualName, context);
 }
 void IndicationRepLayerImpl::setQualifierType(const String& ns,
-	const CIMQualifierType& qt, const UserInfo& aclInfo)
+	const CIMQualifierType& qt, OperationContext& context)
 {
-	m_pServer->setQualifierType(ns, qt, aclInfo);
+	m_pServer->setQualifierType(ns, qt, context);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -378,17 +377,17 @@ void IndicationRepLayerImpl::setProperty(
 	const String& ns,
 	const CIMObjectPath &name,
 	const String &propertyName, const CIMValue &cv,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
-	m_pServer->setProperty(ns, name, propertyName, cv, aclInfo);
+	m_pServer->setProperty(ns, name, propertyName, cv, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 CIMValue IndicationRepLayerImpl::getProperty(
 	const String& ns,
 	const CIMObjectPath &name,
-	const String &propertyName, const UserInfo& aclInfo)
+	const String &propertyName, OperationContext& context)
 {
-	return m_pServer->getProperty(ns, name, propertyName, aclInfo);
+	return m_pServer->getProperty(ns, name, propertyName, context);
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void IndicationRepLayerImpl::associators(
@@ -398,10 +397,10 @@ void IndicationRepLayerImpl::associators(
 	const String &assocClass, const String &resultClass,
 	const String &role, const String &resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	m_pServer->associators(ns, path, result, assocClass, resultClass, role,
-		resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		resultRole, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 void IndicationRepLayerImpl::associatorsClasses(
 	const String& ns,
@@ -410,10 +409,10 @@ void IndicationRepLayerImpl::associatorsClasses(
 	const String &assocClass, const String &resultClass,
 	const String &role, const String &resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
-		resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		resultRole, includeQualifiers, includeClassOrigin, propertyList, context);
 }
 void IndicationRepLayerImpl::references(
 	const String& ns,
@@ -421,10 +420,10 @@ void IndicationRepLayerImpl::references(
 	CIMInstanceResultHandlerIFC& result,
 	const String &resultClass, const String &role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	m_pServer->references(ns, path, result, resultClass, role,
-		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		includeQualifiers, includeClassOrigin, propertyList, context);
 }
 void IndicationRepLayerImpl::referencesClasses(
 	const String& ns,
@@ -432,10 +431,10 @@ void IndicationRepLayerImpl::referencesClasses(
 	CIMClassResultHandlerIFC& result,
 	const String &resultClass, const String &role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList, const UserInfo& aclInfo)
+	const StringArray* propertyList, OperationContext& context)
 {
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,
-		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		includeQualifiers, includeClassOrigin, propertyList, context);
 }
 void IndicationRepLayerImpl::associatorNames(
 	const String& ns,
@@ -443,51 +442,51 @@ void IndicationRepLayerImpl::associatorNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const String &assocClass,
 	const String &resultClass, const String &role,
-	const String &resultRole, const UserInfo& aclInfo)
+	const String &resultRole, OperationContext& context)
 {
 	m_pServer->associatorNames(ns, path, result, assocClass, resultClass, role,
-		resultRole, aclInfo);
+		resultRole, context);
 }
 void IndicationRepLayerImpl::referenceNames(
 	const String& ns,
 	const CIMObjectPath &path,
 	CIMObjectPathResultHandlerIFC& result,
 	const String &resultClass,
-	const String &role, const UserInfo& aclInfo)
+	const String &role, OperationContext& context)
 {
-	m_pServer->referenceNames(ns, path, result, resultClass, role, aclInfo);
+	m_pServer->referenceNames(ns, path, result, resultClass, role, context);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void IndicationRepLayerImpl::execQuery(
 	const String& ns,
 	CIMInstanceResultHandlerIFC& result,
 	const String &query, const String& queryLanguage,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
-	m_pServer->execQuery(ns, result, query, queryLanguage, aclInfo);
+	m_pServer->execQuery(ns, result, query, queryLanguage, context);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
-void IndicationRepLayerImpl::deleteNameSpace(const String &ns, const UserInfo& aclInfo)
+void IndicationRepLayerImpl::deleteNameSpace(const String &ns, OperationContext& context)
 {
-	m_pServer->deleteNameSpace(ns, aclInfo);
+	m_pServer->deleteNameSpace(ns, context);
 }
-void IndicationRepLayerImpl::createNameSpace(const String& ns, const UserInfo& aclInfo)
+void IndicationRepLayerImpl::createNameSpace(const String& ns, OperationContext& context)
 {
-	m_pServer->createNameSpace(ns, aclInfo);
+	m_pServer->createNameSpace(ns, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 void IndicationRepLayerImpl::enumNameSpace(StringResultHandlerIFC& result,
-	const UserInfo& aclInfo)
+	OperationContext& context)
 {
-	m_pServer->enumNameSpace(result, aclInfo);
+	m_pServer->enumNameSpace(result, context);
 }
-void IndicationRepLayerImpl::beginOperation(WBEMFlags::EOperationFlag op)
+void IndicationRepLayerImpl::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
-	m_pServer->beginOperation(op);
+	m_pServer->beginOperation(op, context);
 }
-void IndicationRepLayerImpl::endOperation(WBEMFlags::EOperationFlag op)
+void IndicationRepLayerImpl::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
-	m_pServer->endOperation(op);
+	m_pServer->endOperation(op, context);
 }
 void IndicationRepLayerImpl::setCIMServer(const RepositoryIFCRef& src)
 {

@@ -39,6 +39,8 @@
 #include "OW_UserInfo.hpp"
 #include "OW_Platform.hpp"
 #include "OW_TimeoutException.hpp"
+#include "OW_OperationContext.hpp"
+
 #include <climits>
 
 namespace OpenWBEM
@@ -73,18 +75,17 @@ namespace
 	class PollingManagerProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
-		PollingManagerProviderEnvironment(const UserInfo& acl,
-			CIMOMEnvironmentRef env)
-			: m_acl(acl)
+		PollingManagerProviderEnvironment(CIMOMEnvironmentRef env)
+			: m_context("")
 			, m_env(env)
 		{}
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
 		{
-			return m_env->getCIMOMHandle(m_acl);
+			return m_env->getCIMOMHandle(m_context);
 		}
 		virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 		{
-			return m_env->getRepositoryCIMOMHandle();
+			return m_env->getRepositoryCIMOMHandle(m_context);
 		}
 		virtual RepositoryIFCRef getRepository() const
 		{
@@ -103,15 +104,18 @@ namespace
 		{
 			return Platform::getCurrentUserName();
 		}
+		virtual OperationContext& getOperationContext()
+		{
+			return m_context;
+		}
 	private:
-		UserInfo m_acl;
+		mutable OperationContext m_context;
 		CIMOMEnvironmentRef m_env;
 	};
 	ProviderEnvironmentIFCRef createProvEnvRef(const UserInfo& acl,
 		CIMOMEnvironmentRef env)
 	{
-		return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(
-			acl, env));
+		return ProviderEnvironmentIFCRef(new PollingManagerProviderEnvironment(env));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////

@@ -36,6 +36,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {

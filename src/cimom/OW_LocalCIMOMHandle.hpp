@@ -51,29 +51,27 @@ public:
 	 * Default constructor. This will create an invalid LocalCIMOMHandle that
 	 * is not suitable for any operations.
 	 */
-	LocalCIMOMHandle() : CIMOMHandleIFC(), m_pServer(0), m_aclInfo(String()) {}
+	//LocalCIMOMHandle() : CIMOMHandleIFC(), m_pServer(0), m_userInfo(String()), m_context(0) {}
+
+	enum ELockingFlag
+	{
+		E_NO_LOCKING,
+		E_LOCKING
+	};
 	/**
 	 * Create a new LocalCIMOMHandle with a given repository interface
 	 * and user access contol information.
 	 * @param env A reference to an CIMOMEnvironment object.
-	 * @param pRepos A reference to an Repository that will be used by this
+	 * @param pRepos A reference to a Repository that will be used by this
 	 *		LocalCIMOMHandle.
-	 * @param aclInfo	The access control information that will be associated with
+	 * @param context The operation context that will be associated with
 	 *		this LocalCIMOMHandle.
+	 * @param noLock If true, the this object will never attempt to acquire a
+	 *		read/write lock on the CIMServer.
 	 */
 	LocalCIMOMHandle(CIMOMEnvironmentRef env, RepositoryIFCRef pRepos,
-		const UserInfo& aclInfo);
-	/**
-	 * Copy constructor
-	 * @param arg	The LocalCIMOMHandle object to make this one a copy of.
-	 */
-	LocalCIMOMHandle(const LocalCIMOMHandle& arg);
-	/**
-	 * Assignment operator
-	 * @param arg	The LocalCIMOMHandle that will be assigned to this one.
-	 * @return A reference to this LocalCIMOMHandle.
-	 */
-	LocalCIMOMHandle& operator= (const LocalCIMOMHandle& arg);
+		OperationContext& context, ELockingFlag lock = E_LOCKING);
+	
 	/**
 	 * @return A reference to the CIMOMEnvironment used by this object.
 	 */
@@ -591,27 +589,9 @@ public:
 		{  return (m_pServer) ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return (m_pServer) ? 0: &dummy::nonnull; }
-	enum ELockingFlag
-	{
-		E_NO_LOCKING,
-		E_LOCKING
-	};
-	/**
-	 * Create a new LocalCIMOMHandle with a given repository interface
-	 * and user access contol information.
-	 * @param env A reference to an CIMOMEnvironment object.
-	 * @param pRepos A reference to a Repository that will be used by this
-	 *		LocalCIMOMHandle.
-	 * @param aclInfo	The access control information that will be associated with
-	 *		this LocalCIMOMHandle.
-	 * @param noLock If true, the this object will never attempt to acquire a
-	 *		read/write lock on the CIMServer.
-	 */
-	LocalCIMOMHandle(CIMOMEnvironmentRef env, RepositoryIFCRef pRepos,
-		const UserInfo& aclInfo, ELockingFlag lock);
-	
-	void beginOperation(WBEMFlags::EOperationFlag op);
-	void endOperation(WBEMFlags::EOperationFlag op);
+	void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+	void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+
 private:
 	/**
 	 * A Reference to the Repository interface that this LocalCIMOMHandle
@@ -619,16 +599,12 @@ private:
 	 */
 	RepositoryIFCRef m_pServer;
 	/**
-	 * The user access control information that is associated with this
-	 * LocalCIMOMHandle
-	 */
-	UserInfo m_aclInfo;
-	/**
 	 * If m_lock is E_NO_LOCKING, then this LocalCIMOMHandle will never attempt
 	 * to acquire a read/write lock on the cim server.
 	 */
 	ELockingFlag m_lock;
 	CIMOMEnvironmentRef m_env;
+	OperationContext& m_context;
 };
 typedef Reference<LocalCIMOMHandle> LocalCIMOMHandleRef;
 

@@ -50,11 +50,11 @@ public:
 	 * @param env A reference to an CIMOMEnvironment object.
 	 * @param pRepos A reference to an Repository that will be used by this
 	 *		MOFCompCIMOMHandle.
-	 * @param aclInfo	The access control information that will be associated with
+	 * @param context The operation context that will be associated with
 	 *		this MOFCompCIMOMHandle.
 	 */
 	MOFCompCIMOMHandle(RepositoryIFCRef pRepos,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Close the connetion to the CIMOM. Currently this does nothing on the
 	 * local cimom handle.
@@ -80,7 +80,7 @@ public:
 		const String& ns,
 		const String& className,
 		CIMClassResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW, 
+		WBEMFlags::EDeepFlag deep = WBEMFlags::E_SHALLOW,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_INCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_INCLUDE_CLASS_ORIGIN);
@@ -155,7 +155,7 @@ public:
 	virtual CIMInstance getInstance(
 		const String& ns,
 		const CIMObjectPath& instanceName,
-		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY, 
+		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList=0);
@@ -189,9 +189,9 @@ public:
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP, 
+		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP,
 		WBEMFlags::ELocalOnlyFlag localOnly = WBEMFlags::E_NOT_LOCAL_ONLY,
-		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS, 
+		WBEMFlags::EIncludeQualifiersFlag includeQualifiers = WBEMFlags::E_EXCLUDE_QUALIFIERS,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = WBEMFlags::E_EXCLUDE_CLASS_ORIGIN,
 		const StringArray* propertyList=0);
 	/**
@@ -574,11 +574,7 @@ private:
 	 * will use.
 	 */
 	RepositoryIFCRef m_pServer;
-	/**
-	 * The user access control information that is associated with this
-	 * MOFCompCIMOMHandle
-	 */
-	UserInfo m_aclInfo;
+	OperationContext& m_context;
 };
 typedef Reference<MOFCompCIMOMHandle> MOFCompCIMOMHandleRef;
 

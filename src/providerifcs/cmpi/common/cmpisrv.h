@@ -46,7 +46,7 @@
 typedef struct {
   void * oc;
   OpenWBEM::ProviderEnvironmentIFCRef cimom;
-} OperationContext;
+} CMPIOperationContext;
 //OperationContext::OperationContext(void * Oc, void * Cimom) :
 //	 oc = OC, cimom = Cimom {}
 
@@ -170,14 +170,14 @@ struct CMPI_Object {
 
 struct CMPI_Context : CMPIContext {
    CMPI_Object *next,*prev;
-   OperationContext* ctx;
-   CMPI_Context(const OperationContext& ct);
+   ::CMPIOperationContext* ctx;
+   CMPI_Context(const ::CMPIOperationContext& ct);
 };
 
 struct CMPI_ContextOnStack : CMPIContext {
    CMPI_Object *next,*prev;
-   OperationContext* ctx;
-   CMPI_ContextOnStack(const OperationContext& ct);
+   ::CMPIOperationContext* ctx;
+   CMPI_ContextOnStack(const ::CMPIOperationContext& ct);
    ~CMPI_ContextOnStack();
 };
 

@@ -37,6 +37,7 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_UserInfo.hpp"
+#include "OW_OperationContext.hpp"
 
 namespace OpenWBEM
 {
@@ -122,7 +123,7 @@ public:
 		
 		NSHandlerInst nshandler(result, cimClass, sccn, sn, omccn, omn);
 		RepositoryIFCRef rep = env->getRepository();
-		rep->enumNameSpace(nshandler, UserInfo(env->getUserName()));
+		rep->enumNameSpace(nshandler, env->getOperationContext());
 	}
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
@@ -136,7 +137,7 @@ public:
 		{
 			String name = cimInstance.getPropertyT("Name").getValueT().toString();
 			RepositoryIFCRef rep = env->getRepository();
-			rep->createNameSpace(name, UserInfo(env->getUserName()));
+			rep->createNameSpace(name, env->getOperationContext());
 		}
 		catch (const CIMException& e)
 		{
@@ -183,8 +184,8 @@ public:
 			RepositoryIFCRef rep = env->getRepository();
 			// The client can't delete a non-empty namespace.  If we find any class names, we'll throw an exception
 			DeleteHandler handler;
-			rep->enumClassNames(name,"", handler, E_SHALLOW, UserInfo(env->getUserName()));
-			rep->deleteNameSpace(name, UserInfo(env->getUserName()));
+			rep->enumClassNames(name,"", handler, E_SHALLOW, env->getOperationContext());
+			rep->deleteNameSpace(name, env->getOperationContext());
 		}
 		catch (const CIMException& e)
 		{

@@ -123,8 +123,8 @@ public:
 	{
 		return m_XMLListener;
 	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(const String& /*username*/,
-		ESendIndicationsFlag /*doIndications*/, 
+	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
+		ESendIndicationsFlag /*doIndications*/,
 		EBypassProvidersFlag /*bypassProviders*/)
 	{
 		OW_ASSERT("Not implemented" == 0);

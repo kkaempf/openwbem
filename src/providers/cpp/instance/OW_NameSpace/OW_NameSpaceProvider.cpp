@@ -112,14 +112,14 @@ namespace
 		StringArray rval;
 		StringArrayBuilder arrayBuilder(rval);
 		namespaceFilterer handler(ns, true, arrayBuilder);
-		rep->enumNameSpace(handler, UserInfo(env->getUserName()));
+		rep->enumNameSpace(handler, env->getOperationContext());
 		return rval;
 	}
 	void enumNameSpace(const ProviderEnvironmentIFCRef& env, const String& ns, StringResultHandlerIFC& result, bool deep)
 	{
 		RepositoryIFCRef rep = env->getRepository();
 		namespaceFilterer handler(ns, deep, result);
-		rep->enumNameSpace(handler, UserInfo(env->getUserName()));
+		rep->enumNameSpace(handler, env->getOperationContext());
 	}
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -159,12 +159,11 @@ NameSpaceProvider::deleteInstance(
 	String newns = ns + "/" + nsName;
 	// deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
 	StringArray nstodel = enumNameSpaceE(env, newns);
-	UserInfo acl(env->getUserName());
 	for (size_t i = 0; i < nstodel.size(); ++i)
 	{
-		env->getRepository()->deleteNameSpace(nstodel[i], acl);
+		env->getRepository()->deleteNameSpace(nstodel[i], env->getOperationContext());
 	}
-	env->getRepository()->deleteNameSpace(newns, acl);
+	env->getRepository()->deleteNameSpace(newns, env->getOperationContext());
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 namespace
@@ -246,9 +245,9 @@ NameSpaceProvider::enumInstances(
 		const String& ns,
 		const String& className,
 		CIMInstanceResultHandlerIFC& result,
-		ELocalOnlyFlag localOnly, 
-		EDeepFlag deep, 
-		EIncludeQualifiersFlag includeQualifiers, 
+		ELocalOnlyFlag localOnly,
+		EDeepFlag deep,
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		const CIMClass& requestedClass,
@@ -265,9 +264,9 @@ NameSpaceProvider::getInstance(
 		const String& ns,
 		const CIMObjectPath& instanceName,
 		ELocalOnlyFlag localOnly,
-		EIncludeQualifiersFlag includeQualifiers, 
+		EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray* propertyList, 
+		const StringArray* propertyList,
 		const CIMClass& cimClass)
 {
 	(void)localOnly; (void)includeQualifiers; (void)includeClassOrigin; (void)propertyList;
@@ -334,7 +333,7 @@ NameSpaceProvider::createInstance(
 	newNameSpace += newName;
 	env->getLogger()->logDebug(format("NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
-	env->getRepository()->createNameSpace(newNameSpace, UserInfo(env->getUserName()));
+	env->getRepository()->createNameSpace(newNameSpace, env->getOperationContext());
 	return CIMObjectPath(ns, cimInstance);
 }
 //////////////////////////////////////////////////////////////////////////////

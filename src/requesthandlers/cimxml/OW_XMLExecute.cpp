@@ -52,6 +52,9 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_SocketUtils.hpp"
 #include "OW_SocketException.hpp"
+#include "OW_Logger.hpp"
+#include "OW_OperationContext.hpp"
+
 #include <algorithm>
 
 namespace OpenWBEM
@@ -1293,7 +1296,8 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 		// <!ATTLIST METHODCALL %CIMName;>
 		m_functionName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 		parser.mustGetChild();
-		CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(userName);
+		OperationContext context(userName);
+		CIMOMHandleIFCRef hdl = this->getEnvironment()->getCIMOMHandle(context);
 		if (m_isIntrinsic)
 		{
 			// <!ELEMENT LOCALNAMESPACEPATH (NAMESPACE+)>
@@ -1341,7 +1345,9 @@ void
 XMLExecute::doOptions(CIMFeatures& cf,
 	const SortedVectorMap<String, String>& /*handlerVars*/)
 {
-	cf = this->getEnvironment()->getCIMOMHandle(String(), ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS)->getServerFeatures();
+	String username = "";
+	OperationContext context(username);
+	cf = this->getEnvironment()->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS)->getServerFeatures();
 }
 //////////////////////////////////////////////////////////////////////////////
 RequestHandlerIFC*

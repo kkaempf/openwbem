@@ -63,7 +63,7 @@ public:
 	 *					cannot be found in the specified namespace.
 	 */
 	virtual void enumNameSpace(StringResultHandlerIFC& result,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
@@ -71,7 +71,7 @@ public:
 	 * @exception CIMException If the namespace already exists.
 	 */
 	virtual void createNameSpace(const String& ns,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Delete a specified namespace.
 	 * @param ns	The namespace to delete.
@@ -79,7 +79,7 @@ public:
 	 * @exception CIMException If the namespace does not exist.
 	 */
 	virtual void deleteNameSpace(const String& ns,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Get an existing qualifier type from the repository.
@@ -92,7 +92,7 @@ public:
 	 */
 	virtual CIMQualifierType getQualifierType(
 		const String& ns,
-		const String& qualifierName, const UserInfo& aclInfo);
+		const String& qualifierName, OperationContext& context);
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
@@ -104,7 +104,7 @@ public:
 	 *										namespace.
 	 */
 	virtual void setQualifierType(const String& ns,
-		const CIMQualifierType &qt, const UserInfo& aclInfo);
+		const CIMQualifierType &qt, OperationContext& context);
 	/**
 	 * Enumerate the qualifier types in a name space.
 	 * @param path	The object path to enumeration the qualifiers in.
@@ -114,7 +114,7 @@ public:
 	 */
 	virtual void enumQualifierTypes(
 		const String& ns,
-		CIMQualifierTypeResultHandlerIFC& result, const UserInfo& aclInfo);
+		CIMQualifierTypeResultHandlerIFC& result, OperationContext& context);
 	/**
 	 * Delete an existing qualifier type from the repository
 	 * @param objPath	The object path fro the qualifer type.
@@ -122,7 +122,7 @@ public:
 	 * @exception CIMException
 	 */
 	virtual void deleteQualifierType(const String& ns, const String& qualName,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -137,7 +137,7 @@ public:
 	 * @exception IOException Couldn't write class object to file.
 	 */
 	virtual void createClass(const String& ns, const CIMClass &cimClass,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * set a class in the store - note children are not affected
 	 *
@@ -150,7 +150,7 @@ public:
 	 * @exception CIMException if the class already exists
 	 */
 	virtual CIMClass modifyClass(const String &ns,
-		const CIMClass &cc, const UserInfo& aclInfo);
+		const CIMClass &cc, OperationContext& context);
 	/**
 	 * Delete an existing class from the store
 	 *
@@ -162,7 +162,7 @@ public:
 	 * @exception CIMException if class does not exist
 	 */
 	virtual CIMClass deleteClass(const String& ns, const String& className,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
 	 * Gets an existing class from a store
@@ -189,7 +189,7 @@ public:
 		const String& className,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Retrieve a specific instance
 	 *
@@ -214,7 +214,7 @@ public:
 		const CIMObjectPath& instanceName,
 		WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const StringArray* propertyList,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param path The CIMObjectPath identifying the class to be enumerated.
@@ -236,7 +236,7 @@ public:
 		const String& className,
 		CIMClassResultHandlerIFC& result,
 		WBEMFlags::EDeepFlag deep, WBEMFlags::ELocalOnlyFlag localOnly, WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
-		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const UserInfo& aclInfo);
+		WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, OperationContext& context);
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param path		The CIMObjectPath identifying the class to be
@@ -254,7 +254,7 @@ public:
 		const String& ns,
 		const String& className,
 		StringResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep, const UserInfo& aclInfo);
+		WBEMFlags::EDeepFlag deep, OperationContext& context);
 	/**
 	 * Retrieve an enumeration of instances (CIMInstance) for a particular
 	 * class
@@ -288,7 +288,7 @@ public:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList,
 		WBEMFlags::EEnumSubclassesFlag enumSubclasses,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Retrieve an enumeration of instances (CIMInstance) for a particular
 	 * class
@@ -309,7 +309,7 @@ public:
 		const String& ns,
 		const String& className,
 		CIMObjectPathResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep, const UserInfo& aclInfo);
+		WBEMFlags::EDeepFlag deep, OperationContext& context);
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Creates a instance in the store
@@ -323,7 +323,7 @@ public:
 	 */
 	virtual CIMObjectPath createInstance(const String& ns,
 		const CIMInstance &ci,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Update an instance
 	 *
@@ -342,7 +342,7 @@ public:
 		const CIMInstance& modifiedInstance,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		const StringArray* propertyList,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Delete an existing instance from the store
 	 *
@@ -355,7 +355,7 @@ public:
 	 *		This is likely usefull only for creating CIM_InstDeletion indications;
 	 */
 	virtual CIMInstance deleteInstance(const String& ns, const CIMObjectPath &cop,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	/**
 	 * Set a property value on an CIMInstance.
 	 * @param name				The object path of the instance
@@ -368,7 +368,7 @@ public:
 		const String& ns,
 		const CIMObjectPath &name,
 		const String &propertyName, const CIMValue &cv,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Get the specified CIM instance property.
@@ -382,7 +382,7 @@ public:
 	virtual CIMValue getProperty(
 		const String& ns,
 		const CIMObjectPath &name,
-		const String &propertyName, const UserInfo& aclInfo);
+		const String &propertyName, OperationContext& context);
 	/**
 	 * Invokes a method
 	 *
@@ -400,7 +400,7 @@ public:
 		const String& ns,
 		const CIMObjectPath& path,
 		const String &methodName, const CIMParamValueArray &inParams,
-		CIMParamValueArray &outParams, const UserInfo& aclInfo);
+		CIMParamValueArray &outParams, OperationContext& context);
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associators(
 		const String& ns,
@@ -409,7 +409,7 @@ public:
 		const String &assocClass, const String &resultClass,
 		const String &role, const String &resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, const UserInfo& aclInfo);
+		const StringArray *propertyList, OperationContext& context);
 	virtual void associatorsClasses(
 		const String& ns,
 		const CIMObjectPath &path,
@@ -417,43 +417,43 @@ public:
 		const String &assocClass, const String &resultClass,
 		const String &role, const String &resultRole,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, const UserInfo& aclInfo);
+		const StringArray *propertyList, OperationContext& context);
 	virtual void referenceNames(
 		const String& ns,
 		const CIMObjectPath &path,
 		CIMObjectPathResultHandlerIFC& result,
 		const String &resultClass,
-		const String &role, const UserInfo& aclInfo);
+		const String &role, OperationContext& context);
 	virtual void associatorNames(
 		const String& ns,
 		const CIMObjectPath &path,
 		CIMObjectPathResultHandlerIFC& result,
 		const String &assocClass,
 		const String &resultClass, const String &role,
-		const String &resultRole, const UserInfo& aclInfo);
+		const String &resultRole, OperationContext& context);
 	virtual void references(
 		const String& ns,
 		const CIMObjectPath &path,
 		CIMInstanceResultHandlerIFC& result,
 		const String &resultClass, const String &role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, const UserInfo& aclInfo);
+		const StringArray *propertyList, OperationContext& context);
 	virtual void referencesClasses(
 		const String& ns,
 		const CIMObjectPath &path,
 		CIMClassResultHandlerIFC& result,
 		const String &resultClass, const String &role,
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		const StringArray *propertyList, const UserInfo& aclInfo);
+		const StringArray *propertyList, OperationContext& context);
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void execQuery(
 		const String& ns,
 		CIMInstanceResultHandlerIFC& result,
 		const String &query, const String &queryLanguage,
-		const UserInfo& aclInfo);
+		OperationContext& context);
 	
-	virtual void beginOperation(WBEMFlags::EOperationFlag op);
-	virtual void endOperation(WBEMFlags::EOperationFlag op);
+	virtual void beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
+	virtual void endOperation(WBEMFlags::EOperationFlag op, OperationContext& context);
 private:
 	CIMInstance m_inst;
 	RepositoryIFCRef m_pCIMServer;

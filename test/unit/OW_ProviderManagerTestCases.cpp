@@ -39,6 +39,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_ConfigOpts.hpp"
+#include "OW_OperationContext.hpp"
 
 using namespace OpenWBEM;
 
@@ -66,7 +67,8 @@ void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	LocalCIMOMHandle hdl;
+	OperationContext context("");
+	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
 	// test qualifier on class
@@ -128,7 +130,8 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	LocalCIMOMHandle hdl;
+	OperationContext context("");
+	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
 	// test qualifier on method
@@ -236,7 +239,8 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	LocalCIMOMHandle hdl;
+	OperationContext context("");
+	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
 	// test qualifier on class
@@ -297,7 +301,8 @@ void OW_ProviderManagerTestCases::testGetIndicationProvider()
 {
 	ProviderManager mgr;
 	mgr.load(testCreateMuxLoader());
-	LocalCIMOMHandle hdl;
+	OperationContext context("");
+	LocalCIMOMHandle hdl = LocalCIMOMHandle(CIMOMEnvironmentRef(), RepositoryIFCRef(), context);
 	mgr.init(createProvEnvRef(hdl));
 
 	// self-registering provider all namespaces

@@ -47,6 +47,8 @@
 #include "OW_MutexLock.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_WQLInstancePropertySource.hpp"
+#include "OW_OperationContext.hpp"
+#include "OW_LocalCIMOMHandle.hpp"
 
 namespace OpenWBEM
 {
@@ -90,14 +92,17 @@ private:
 class IndicationServerProviderEnvironment : public ProviderEnvironmentIFC
 {
 public:
-	IndicationServerProviderEnvironment(const CIMOMHandleIFCRef& ch,
-		CIMOMEnvironmentRef env,
-		const CIMOMHandleIFCRef& repch)
+	IndicationServerProviderEnvironment(
+		CIMOMEnvironmentRef env)
 		: ProviderEnvironmentIFC()
-		, m_ch(ch)
+		, m_ch()
 		, m_env(env)
-		, m_repch(repch)
-	{}
+		, m_repch()
+		, m_opctx("") // no username
+	{
+		m_ch = m_env->getCIMOMHandle(m_opctx);
+		m_repch = m_env->getRepositoryCIMOMHandle(m_opctx);
+	}
 	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
 		return m_ch;
@@ -124,16 +129,19 @@ public:
 	{
 		return Platform::getCurrentUserName();
 	}
+	virtual OperationContext& getOperationContext()
+	{
+		return m_opctx;
+	}
 private:
 	CIMOMHandleIFCRef m_ch;
 	CIMOMEnvironmentRef m_env;
 	CIMOMHandleIFCRef m_repch;
+	OperationContext m_opctx;
 };
 ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 {
-	return ProviderEnvironmentIFCRef(
-		new IndicationServerProviderEnvironment(
-			env->getCIMOMHandle(), env, env->getRepositoryCIMOMHandle()));
+	return ProviderEnvironmentIFCRef(new IndicationServerProviderEnvironment(env));
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -253,7 +261,9 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	// Load map with available indication export providers
 	//-----------------
 	ProviderManagerRef pProvMgr = m_env->getProviderManager();
-	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(aclInfo, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
+	String username = "";
+	OperationContext context(username);
+	CIMOMHandleIFCRef lch = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 	IndicationExportProviderIFCRefArray pra =
 		pProvMgr->getIndicationExportProviders(createProvEnvRef(m_env));
 	m_env->logDebug(format("IndicationServerImpl: %1 export providers found",
@@ -540,7 +550,8 @@ IndicationServerImpl::_processIndication(const CIMInstance& instanceArg_,
 		CIMClass cc;
 		try
 		{
-			cc = m_env->getRepositoryCIMOMHandle()->getClass(instNS, curClassName);
+			OperationContext context("");
+			cc = m_env->getRepositoryCIMOMHandle(context)->getClass(instNS, curClassName);
 			curClassName = cc.getSuperClass();
 		}
 		catch (const CIMException& e)
@@ -555,8 +566,8 @@ IndicationServerImpl::_processIndicationRange(
 	const CIMInstance& instanceArg, const String instNS,
 	std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last)
 {
-	UserInfo aclInfo;
-	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
+	OperationContext context("");
+	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS);
 	for( ;first != last; ++first)
 	{
 		try
@@ -839,7 +850,8 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	LoggerRef log = m_env->getLogger();
 	log->logDebug(format("IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
 	// get the filter
-	CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle();
+	OperationContext context("");
+	CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle(context);
 	CIMObjectPath filterPath = subInst.getProperty("Filter").getValueT().toCIMObjectPath();
 	String filterNS = filterPath.getNameSpace();
 	if (filterNS.empty())

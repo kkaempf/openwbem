@@ -43,6 +43,8 @@
 #include "OW_CIMRepository.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_RequestHandlerIFC.hpp"
+#include "OW_OperationContext.hpp"
+
 #include <iostream>
 #ifdef OW_HAVE_GETOPT_H
 #include <getopt.h>
@@ -179,7 +181,7 @@ processCommandLineOptions(int argc, char** argv)
 }
 class coutLogger : public Logger
 {
-	virtual void doLogMessage(const String &message, const LogLevel) const 
+	virtual void doLogMessage(const String &message, const LogLevel) const
 	{
 		cout << message << endl;
 	}
@@ -187,36 +189,36 @@ class coutLogger : public Logger
 class MOFCompEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	virtual LoggerRef getLogger() const 
+	virtual LoggerRef getLogger() const
 	{
 		return LoggerRef(new coutLogger);
 	}
-	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag) 
+	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag)
 	{
 	}
-	virtual bool authenticate(String &, const String &, String &) 
+	virtual bool authenticate(String &, const String &, String &)
 	{
 		return true;
 	}
-	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) 
+	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef)
 	{
 		OW_ASSERT("Unsupported" == 0);
 	}
-	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef) 
+	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef)
 	{
 		OW_ASSERT("Unsupported" == 0);
 	}
-	virtual RequestHandlerIFCRef getRequestHandler(const String &) 
+	virtual RequestHandlerIFCRef getRequestHandler(const String &)
 	{
 		OW_ASSERT("Unsupported" == 0);
 		return RequestHandlerIFCRef();
 	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(const String &, ESendIndicationsFlag, EBypassProvidersFlag) 
+	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&, ESendIndicationsFlag, EBypassProvidersFlag)
 	{
 		OW_ASSERT("Unsupported" == 0);
 		return CIMOMHandleIFCRef();
 	}
-	virtual String getConfigItem(const String &, const String &defRetVal) const 
+	virtual String getConfigItem(const String &, const String &defRetVal) const
 	{
 		return defRetVal;
 	}
@@ -261,7 +263,8 @@ int main(int argc, char** argv)
 			cimRepository->open(repository_dir);
 			try
 			{
-				cimRepository->createNameSpace(CIMNameSpaceUtils::prepareNamespace(namespace_arg), UserInfo(""));
+				OperationContext context("");
+				cimRepository->createNameSpace(CIMNameSpaceUtils::prepareNamespace(namespace_arg), context);
 			}
 			catch (const CIMException& e)
 			{
@@ -271,7 +274,8 @@ int main(int argc, char** argv)
 					throw e;
 				}
 			}
-			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, UserInfo("")));
+			OperationContext context("");
+			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, context));
 		}
 		else
 		{

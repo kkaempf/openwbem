@@ -57,6 +57,7 @@ OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
 OW_NoSuchQualifierException.cpp \
 OW_NULLValueException.cpp \
+OW_OperationContext.cpp \
 OW_OutOfBoundsException.cpp \
 OW_PosixFile.cpp \
 OW_PosixFileSystem.cpp \
@@ -139,6 +140,7 @@ OW_NonRecursiveMutexImpl.hpp \
 OW_MutexLock.hpp \
 OW_NonRecursiveMutexLock.hpp \
 OW_NetworkTypes.hpp \
+OW_OperationContext.hpp \
 OW_PosixUnnamedPipe.hpp \
 OW_PthDefines.hpp \
 OW_RWLocker.hpp \

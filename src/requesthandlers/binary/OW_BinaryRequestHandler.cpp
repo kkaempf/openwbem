@@ -44,6 +44,9 @@
 #include "OW_MutexLock.hpp"
 #include "OW_SocketException.hpp"
 #include "OW_ThreadCancelledException.hpp"
+#include "OW_Logger.hpp"
+#include "OW_OperationContext.hpp"
+
 extern "C"
 {
 #include <unistd.h>
@@ -127,7 +130,8 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	LoggerRef lgr = getEnvironment()->getLogger();
 	try
 	{
-		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(userName);
+		OperationContext context(userName);
+		CIMOMHandleIFCRef chdl = getEnvironment()->getCIMOMHandle(context);
 		UInt32 version = 0;
 		BinarySerialization::read(*istrm, version);
 		if (version != BinaryProtocolVersion)

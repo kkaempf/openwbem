@@ -40,6 +40,8 @@
 #include "OW_CIMClass.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Logger.hpp"
+
 #include <cstdio> // for SEEK_END
 
 namespace OpenWBEM

@@ -27,68 +27,36 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef OW_UNIT_TEST_ENVIRONMENT_
-#define OW_UNIT_TEST_ENVIRONMENT_
+#include "OW_config.h"
+#include "OW_OperationContext.hpp"
+#include "OW_String.hpp"
+#include "OW_UserInfo.hpp"
 
-#include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_RequestHandlerIFC.hpp"
-#include "OW_CIMOMHandleIFC.hpp"
-#include "OW_Logger.hpp"
-#include "OW_Map.hpp"
-#include "OW_Assertion.hpp"
-#include <iostream>
-
-using namespace OpenWBEM;
-
-class TestLogger : public Logger
+namespace OpenWBEM
 {
-protected:
-	virtual void doLogMessage(const String &message, const LogLevel) const {
-		std::cout << message << std::endl;
-	}
-};
 
-
-class TestEnvironment : public ServiceEnvironmentIFC
+/////////////////////////////////////////////////////////////////////////////
+OperationContext::OperationContext(const String& username)
+	: m_username(username)
 {
-public:
-	virtual LoggerRef getLogger() const {
-		return LoggerRef(new TestLogger);
-	}
-	virtual String getConfigItem(const String &name, const String& defRetVal) const {
-		if (config.find(name) != config.end())
-		{
-			return config.find(name)->second;
-		}
-		else
-			return defRetVal;
-	}
-	virtual void setConfigItem(const String &item, const String &value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) {
-		Map<String, String>::iterator it = config.find(item);
-		if(it == config.end() || overwritePrevious)
-		{
-			config[item] = value;
-		}
-	}
-	virtual bool authenticate(String &, const String &, String &) {
-		return true;
-	}
-	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {
-	}
-	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {
-	}
-	virtual RequestHandlerIFCRef getRequestHandler(const String &) {
-		return RequestHandlerIFCRef();
-	}
-	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext &, ESendIndicationsFlag, EBypassProvidersFlag) {
-		OW_ASSERT("Cannot call TestEnvironment::getCIMOMHandle()" == 0);
-		return CIMOMHandleIFCRef();
-	}
+}
 
-	Map<String, String> config;
-};
+/////////////////////////////////////////////////////////////////////////////
+UserInfo
+OperationContext::getUserInfo() const
+{
+	if (m_username.empty())
+	{
+		return UserInfo();
+	}
+	else
+	{
+		return UserInfo(m_username);
+	}
+}
 
-extern ServiceEnvironmentIFCRef g_testEnvironment;
+} // end namespace OpenWBEM
 
-#endif
+
+
 

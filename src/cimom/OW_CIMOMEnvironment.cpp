@@ -52,6 +52,8 @@
 #include "OW_WQLIFC.hpp"
 #include "OW_SharedLibraryRepository.hpp"
 #include "OW_IndicationRepLayerMediator.hpp"
+#include "OW_OperationContext.hpp"
+
 #include <fstream>
 #include <iostream>
 
@@ -73,6 +75,7 @@ namespace
 	public:
 		CIMOMProviderEnvironment(const CIMOMEnvironment* pCenv)
 			: m_pCenv(pCenv)
+			, m_context("")
 		{}
 		virtual String getConfigItem(const String &name, const String& defRetVal="") const
 		{
@@ -102,8 +105,13 @@ namespace
 		{
 			return Platform::getCurrentUserName();
 		}
+		virtual OperationContext& getOperationContext()
+		{
+			return m_context;
+		}
 	private:
 		const CIMOMEnvironment* m_pCenv;
+		OperationContext m_context;
 	};
 	ProviderEnvironmentIFCRef createProvEnvRef(const CIMOMEnvironment* pcenv)
 	{
@@ -205,26 +213,27 @@ class ProviderEnvironmentServiceEnvironmentWrapper : public ProviderEnvironmentI
 public:
 	ProviderEnvironmentServiceEnvironmentWrapper(CIMOMEnvironment* env_)
 		: env(env_)
+		, m_context("")
 	{}
-	virtual CIMOMHandleIFCRef getCIMOMHandle() const 
+	virtual CIMOMHandleIFCRef getCIMOMHandle() const
 	{
-		return env->getCIMOMHandle();
+		return env->getCIMOMHandle(m_context);
 	}
 	
-	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const 
+	virtual CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
-		return env->getRepositoryCIMOMHandle();
+		return env->getRepositoryCIMOMHandle(m_context);
 	}
 	
 	virtual RepositoryIFCRef getRepository() const
 	{
 		return env->getRepository();
 	}
-	virtual LoggerRef getLogger() const 
+	virtual LoggerRef getLogger() const
 	{
 		return env->getLogger();
 	}
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const 
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const
 	{
 		return env->getConfigItem(name, defRetVal);
 	}
@@ -232,8 +241,13 @@ public:
 	{
 		return Platform::getCurrentUserName();
 	}
+	virtual OperationContext& getOperationContext()
+	{
+		return m_context;
+	}
 private:
 	CIMOMEnvironment* env;
+	mutable OperationContext m_context;
 };
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -631,7 +645,7 @@ CIMOMEnvironment::getConfigItem(const String &name, const String& defRetVal) con
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
 CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
-		const UserInfo& aclInfo)
+		OperationContext& context)
 {
 	{
 		MutexLock l(m_runningGuard);
@@ -644,13 +658,21 @@ CIMOMEnvironment::getWQLFilterCIMOMHandle(const CIMInstance& inst,
 	OW_ASSERT(m_cimServer);
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(
 		g_cimomEnvironment,
-		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), aclInfo));
+		RepositoryIFCRef(new WQLFilterRep(inst, m_cimServer)), context));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
-CIMOMEnvironment::getCIMOMHandle(const UserInfo& aclInfo,
-	ESendIndicationsFlag doIndications, 
-	EBypassProvidersFlag bypassProviders, 
+CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
+	ESendIndicationsFlag doIndications,
+	EBypassProvidersFlag bypassProviders)
+{
+	return getCIMOMHandle(context,doIndications,bypassProviders,E_LOCKING);
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMOMHandleIFCRef
+CIMOMEnvironment::getCIMOMHandle(OperationContext& context,
+	ESendIndicationsFlag doIndications,
+	EBypassProvidersFlag bypassProviders,
 	ELockingFlag locking)
 {
 	{
@@ -680,31 +702,17 @@ CIMOMEnvironment::getCIMOMHandle(const UserInfo& aclInfo,
 		{
 			RepositoryIFCRef rref2(new SharedLibraryRepository(irl));
 			return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref2,
-				aclInfo, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
+				context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
 		}
 	}
 	return CIMOMHandleIFCRef(new LocalCIMOMHandle(g_cimomEnvironment, rref,
-		aclInfo, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
+		context, locking == E_LOCKING ? LocalCIMOMHandle::E_LOCKING : LocalCIMOMHandle::E_NO_LOCKING));
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMOMHandleIFCRef
-CIMOMEnvironment::getCIMOMHandle(const String &username,
-	ESendIndicationsFlag doIndications, 
-	EBypassProvidersFlag bypassProviders)
+CIMOMEnvironment::getRepositoryCIMOMHandle(OperationContext& context)
 {
-	return getCIMOMHandle(UserInfo(username), doIndications, bypassProviders);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef
-CIMOMEnvironment::getCIMOMHandle()
-{
-	return getCIMOMHandle(UserInfo(), E_DONT_SEND_INDICATIONS, E_USE_PROVIDERS);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef
-CIMOMEnvironment::getRepositoryCIMOMHandle()
-{
-	return getCIMOMHandle(UserInfo(), E_DONT_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
+	return getCIMOMHandle(context, E_DONT_SEND_INDICATIONS, E_BYPASS_PROVIDERS);
 }
 //////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
@@ -1010,7 +1018,7 @@ CIMOMEnvironment::getIndicationRepLayerMediator() const
 	return m_indicationRepLayerMediatorRef;
 }
 //////////////////////////////////////////////////////////////////////////////
-RepositoryIFCRef 
+RepositoryIFCRef
 CIMOMEnvironment::getRepository() const
 {
 	return m_cimRepository;

@@ -46,7 +46,7 @@ namespace OpenWBEM
 /////////////////////////////////////////////////////////////////////////////
 void
 CMPIIndicationProviderProxy::deActivateFilter(
-	const ProviderEnvironmentIFCRef &env, 
+	const ProviderEnvironmentIFCRef &env,
 	const WQLSelectStatement &filter,
 	const String &eventType,
 	const String& nameSpace,
@@ -57,7 +57,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 	if (m_ftable->miVector.indMI->ft->deActivateFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ResultOnStack eRes;
@@ -93,7 +93,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 /////////////////////////////////////////////////////////////////////////////
 void
 CMPIIndicationProviderProxy::activateFilter(
-	const ProviderEnvironmentIFCRef &env, 
+	const ProviderEnvironmentIFCRef &env,
 	const WQLSelectStatement &filter,
 	const String &eventType,
 	const String& nameSpace,
@@ -104,7 +104,7 @@ CMPIIndicationProviderProxy::activateFilter(
 	if (m_ftable->miVector.indMI->ft->activateFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ResultOnStack eRes;
@@ -141,18 +141,18 @@ CMPIIndicationProviderProxy::activateFilter(
 /////////////////////////////////////////////////////////////////////////////
 void
 CMPIIndicationProviderProxy::authorizeFilter(
-	const ProviderEnvironmentIFCRef &env, 
-	const WQLSelectStatement &filter, 
-	const String &eventType, 
-	const String &nameSpace, 
-	const StringArray &classes, 
+	const ProviderEnvironmentIFCRef &env,
+	const WQLSelectStatement &filter,
+	const String &eventType,
+	const String &nameSpace,
+	const StringArray &classes,
 	const String &owner)
 {
 	env->getLogger()->logDebug("authorizeFilter");
 	if (m_ftable->miVector.indMI->ft->authorizeFilter != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -188,17 +188,17 @@ CMPIIndicationProviderProxy::authorizeFilter(
 /////////////////////////////////////////////////////////////////////////////
 int
 CMPIIndicationProviderProxy::mustPoll(
-	const ProviderEnvironmentIFCRef &env, 
-	const WQLSelectStatement &filter, 
-	const String &eventType, 
-	const String &nameSpace, 
+	const ProviderEnvironmentIFCRef &env,
+	const WQLSelectStatement &filter,
+	const String &eventType,
+	const String &nameSpace,
 	const StringArray &classes)
 {
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->miVector.indMI->ft->mustPoll != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);

@@ -82,7 +82,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			// If instance provider, allow instance prov cleanup to run
 			if (miVector.instMI)
 			{
-				OperationContext context;
+				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
 				miVector.instMI->ft->cleanup(miVector.instMI, &eCtx);
 			}
@@ -90,7 +90,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			// If associator provider, allow associator prov cleanup to run
 			if(miVector.assocMI)
 			{
-				OperationContext context;
+				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
 				miVector.assocMI->ft->cleanup(miVector.assocMI, &eCtx);
 			}
@@ -98,7 +98,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			// If method provider, allow method prov cleanup to run
 			if(miVector.methMI)
 			{
-				OperationContext context;
+				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
 				miVector.methMI->ft->cleanup(miVector.methMI, &eCtx);
 			}
@@ -106,7 +106,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			// If property provider, allow property prov cleanup to run
 			if(miVector.propMI)
 			{
-				OperationContext context;
+				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
 				miVector.propMI->ft->cleanup(miVector.propMI, &eCtx);
 			}
@@ -114,7 +114,7 @@ CMPIProviderIFC::~CMPIProviderIFC()
 			// If indication provider, allow indication prov cleanup to run
 			if(miVector.indMI)
 			{
-				OperationContext context;
+				::CMPIOperationContext context;
 				CMPI_ContextOnStack eCtx(context);
 				miVector.indMI->ft->cleanup(miVector.indMI, &eCtx);
 			}
@@ -125,12 +125,12 @@ CMPIProviderIFC::~CMPIProviderIFC()
 	
 		m_provs.clear();
 	
-// BMMU: have to cleanup polled providers 
+// BMMU: have to cleanup polled providers
 		for(size_t i = 0; i < m_noidProviders.size(); i++)
 		{
 #if 0
 			CMPIInstanceMI * mi = m_noidProviders[i]->instMI;
-			OperationContext context;
+			::CMPIOperationContext context;
 			CMPI_ContextOnStack eCtx(context);
 			mi->ft->cleanup(mi, &eCtx);
 			m_noidProviders[i].setNull();
@@ -511,7 +511,7 @@ CMPIProviderIFC::getProvider(
 	_broker.bft = CMPI_Broker_Ftab;
 	_broker.eft = CMPI_BrokerEnc_Ftab;
 	_broker.clsCache = NULL;
-	OperationContext opc;
+	::CMPIOperationContext opc;
 	CMPI_ContextOnStack eCtx(opc);
 
 	if (miVector.genericMode)

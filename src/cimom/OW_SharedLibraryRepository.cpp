@@ -52,43 +52,43 @@ ServiceEnvironmentIFCRef SharedLibraryRepository::getEnvironment() const
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 void SharedLibraryRepository::createNameSpace(const String& ns,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	m_ref->createNameSpace(ns, aclInfo);
+	m_ref->createNameSpace(ns, context);
 }
 void SharedLibraryRepository::deleteNameSpace(const String& ns,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	m_ref->deleteNameSpace(ns, aclInfo);
+	m_ref->deleteNameSpace(ns, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 void SharedLibraryRepository::enumNameSpace(StringResultHandlerIFC& result,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	return m_ref->enumNameSpace(result, aclInfo);
+	return m_ref->enumNameSpace(result, context);
 }
 CIMQualifierType SharedLibraryRepository::getQualifierType(
 	const String& ns,
-	const String& qualifierName, const UserInfo &aclInfo)
+	const String& qualifierName, OperationContext& context)
 {
-	return m_ref->getQualifierType(ns, qualifierName, aclInfo);
+	return m_ref->getQualifierType(ns, qualifierName, context);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 void SharedLibraryRepository::enumQualifierTypes(
 	const String& ns,
-	CIMQualifierTypeResultHandlerIFC& result, const UserInfo &aclInfo)
+	CIMQualifierTypeResultHandlerIFC& result, OperationContext& context)
 {
-	return m_ref->enumQualifierTypes(ns, result, aclInfo);
+	return m_ref->enumQualifierTypes(ns, result, context);
 }
 void SharedLibraryRepository::deleteQualifierType(const String& ns, const String& qualName,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	m_ref->deleteQualifierType(ns, qualName, aclInfo);
+	m_ref->deleteQualifierType(ns, qualName, context);
 }
 void SharedLibraryRepository::setQualifierType(const String& ns,
-	const CIMQualifierType &qt, const UserInfo &aclInfo)
+	const CIMQualifierType &qt, OperationContext& context)
 {
-	m_ref->setQualifierType(ns, qt, aclInfo);
+	m_ref->setQualifierType(ns, qt, context);
 }
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 CIMClass SharedLibraryRepository::getClass(
@@ -96,39 +96,39 @@ CIMClass SharedLibraryRepository::getClass(
 	const String& className,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
 	return m_ref->getClass(ns, className, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
+		includeClassOrigin, propertyList, context);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 CIMObjectPath SharedLibraryRepository::createInstance(const String& ns, const CIMInstance &ci,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	return m_ref->createInstance(ns, ci, aclInfo);
+	return m_ref->createInstance(ns, ci, context);
 }
 CIMInstance SharedLibraryRepository::modifyInstance(
 	const String& ns,
 	const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
 	const StringArray* propertyList,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
 	return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
-		propertyList, aclInfo);
+		propertyList, context);
 }
 void SharedLibraryRepository::setProperty(
 	const String& ns,
 	const CIMObjectPath &name,
 	const String &propertyName, const CIMValue &cv,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	m_ref->setProperty(ns, name, propertyName, cv, aclInfo);
+	m_ref->setProperty(ns, name, propertyName, cv, context);
 }
 CIMInstance SharedLibraryRepository::deleteInstance(const String& ns, const CIMObjectPath &cop,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	return m_ref->deleteInstance(ns, cop, aclInfo);
+	return m_ref->deleteInstance(ns, cop, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 void SharedLibraryRepository::enumInstances(
@@ -141,71 +141,71 @@ void SharedLibraryRepository::enumInstances(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList,
 	EEnumSubclassesFlag enumSubclasses,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
 	return m_ref->enumInstances(ns, className, result, deep, localOnly,includeQualifiers,
-		includeClassOrigin, propertyList, enumSubclasses, aclInfo);
+		includeClassOrigin, propertyList, enumSubclasses, context);
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 void SharedLibraryRepository::createClass(const String& ns,
-	const CIMClass &cimClass, const UserInfo &aclInfo)
+	const CIMClass &cimClass, OperationContext& context)
 {
-	m_ref->createClass(ns, cimClass, aclInfo);
+	m_ref->createClass(ns, cimClass, context);
 }
 CIMClass SharedLibraryRepository::modifyClass(const String &ns,
-	const CIMClass &cc, const UserInfo &aclInfo)
+	const CIMClass &cc, OperationContext& context)
 {
-	return m_ref->modifyClass(ns, cc, aclInfo);
+	return m_ref->modifyClass(ns, cc, context);
 }
 CIMClass SharedLibraryRepository::deleteClass(const String& ns, const String& className,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	return m_ref->deleteClass(ns, className, aclInfo);
+	return m_ref->deleteClass(ns, className, context);
 }
 #endif
 void SharedLibraryRepository::enumClasses(const String& ns,
 	const String& className,
 	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
-	EIncludeClassOriginFlag includeClassOrigin, const UserInfo &aclInfo)
+	EIncludeClassOriginFlag includeClassOrigin, OperationContext& context)
 {
 	return m_ref->enumClasses(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, aclInfo);
+		includeClassOrigin, context);
 }
 void SharedLibraryRepository::enumClassNames(
 	const String& ns,
 	const String& className,
 	StringResultHandlerIFC& result,
-	EDeepFlag deep, const UserInfo &aclInfo)
+	EDeepFlag deep, OperationContext& context)
 {
-	m_ref->enumClassNames(ns, className, result, deep, aclInfo);
+	m_ref->enumClassNames(ns, className, result, deep, context);
 }
 CIMValue SharedLibraryRepository::invokeMethod(
 	const String& ns,
 	const CIMObjectPath& path,
 	const String &methodName, const CIMParamValueArray &inParams,
-	CIMParamValueArray &outParams, const UserInfo &aclInfo)
+	CIMParamValueArray &outParams, OperationContext& context)
 {
 	return m_ref->invokeMethod(ns, path, methodName, inParams,
-		outParams, aclInfo);
+		outParams, context);
 }
 void SharedLibraryRepository::enumInstanceNames(
 	const String& ns,
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result,
-	EDeepFlag deep, const UserInfo &aclInfo)
+	EDeepFlag deep, OperationContext& context)
 {
-	return m_ref->enumInstanceNames(ns, className, result, deep, aclInfo);
+	return m_ref->enumInstanceNames(ns, className, result, deep, context);
 }
 CIMInstance SharedLibraryRepository::getInstance(
 	const String& ns,
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin, const StringArray *propertyList,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
 	return m_ref->getInstance(ns, instanceName, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
+		includeClassOrigin, propertyList, context);
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void SharedLibraryRepository::references(
@@ -214,10 +214,10 @@ void SharedLibraryRepository::references(
 	CIMInstanceResultHandlerIFC& result,
 	const String &resultClass, const String &role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray *propertyList, const UserInfo &aclInfo)
+	const StringArray *propertyList, OperationContext& context)
 {
 	m_ref->references(ns, path, result, resultClass, role, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
+		includeClassOrigin, propertyList, context);
 }
 void SharedLibraryRepository::referencesClasses(
 	const String& ns,
@@ -225,18 +225,18 @@ void SharedLibraryRepository::referencesClasses(
 	CIMClassResultHandlerIFC& result,
 	const String &resultClass, const String &role,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray *propertyList, const UserInfo &aclInfo)
+	const StringArray *propertyList, OperationContext& context)
 {
 	m_ref->referencesClasses(ns, path, result, resultClass, role, includeQualifiers,
-		includeClassOrigin, propertyList, aclInfo);
+		includeClassOrigin, propertyList, context);
 }
 #endif
 CIMValue SharedLibraryRepository::getProperty(
 	const String& ns,
 	const CIMObjectPath &name,
-	const String &propertyName, const UserInfo &aclInfo)
+	const String &propertyName, OperationContext& context)
 {
-	return m_ref->getProperty(ns, name, propertyName, aclInfo);
+	return m_ref->getProperty(ns, name, propertyName, context);
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void SharedLibraryRepository::associatorNames(
@@ -245,10 +245,10 @@ void SharedLibraryRepository::associatorNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const String &assocClass,
 	const String &resultClass, const String &role,
-	const String &resultRole, const UserInfo &aclInfo)
+	const String &resultRole, OperationContext& context)
 {
 	m_ref->associatorNames(ns, path, result, assocClass, resultClass, role,
-		resultRole, aclInfo);
+		resultRole, context);
 }
 void SharedLibraryRepository::associators(
 	const String& ns,
@@ -257,11 +257,11 @@ void SharedLibraryRepository::associators(
 	const String &assocClass, const String &resultClass,
 	const String &role, const String &resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray *propertyList, const UserInfo &aclInfo)
+	const StringArray *propertyList, OperationContext& context)
 {
 	m_ref->associators(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
-		aclInfo);
+		context);
 }
 void SharedLibraryRepository::associatorsClasses(
 	const String& ns,
@@ -270,37 +270,37 @@ void SharedLibraryRepository::associatorsClasses(
 	const String &assocClass, const String &resultClass,
 	const String &role, const String &resultRole,
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray *propertyList, const UserInfo &aclInfo)
+	const StringArray *propertyList, OperationContext& context)
 {
 	m_ref->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList,
-		aclInfo);
+		context);
 }
 void SharedLibraryRepository::referenceNames(
 	const String& ns,
 	const CIMObjectPath &path,
 	CIMObjectPathResultHandlerIFC& result,
 	const String &resultClass,
-	const String &role, const UserInfo &aclInfo)
+	const String &role, OperationContext& context)
 {
-	m_ref->referenceNames(ns, path, result, resultClass, role, aclInfo);
+	m_ref->referenceNames(ns, path, result, resultClass, role, context);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void SharedLibraryRepository::execQuery(
 	const String& ns,
 	CIMInstanceResultHandlerIFC& result,
 	const String &query, const String &queryLanguage,
-	const UserInfo &aclInfo)
+	OperationContext& context)
 {
-	m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
+	m_ref->execQuery(ns, result, query, queryLanguage, context);
 }
-void SharedLibraryRepository::beginOperation(WBEMFlags::EOperationFlag op)
+void SharedLibraryRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
-	m_ref->beginOperation(op);
+	m_ref->beginOperation(op, context);
 }
-void SharedLibraryRepository::endOperation(WBEMFlags::EOperationFlag op)
+void SharedLibraryRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context)
 {
-	m_ref->endOperation(op);
+	m_ref->endOperation(op, context);
 }
 
 } // end namespace OpenWBEM

@@ -49,7 +49,7 @@ CMPIMethodProviderProxy::CMPIMethodProviderProxy(const CMPIFTABLERef& f)
 {
 }
 /////////////////////////////////////////////////////////////////////////////
-CMPIMethodProviderProxy::~CMPIMethodProviderProxy() 
+CMPIMethodProviderProxy::~CMPIMethodProviderProxy()
 {
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 																				
@@ -94,8 +94,8 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		}
 		else
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ? 
-				CMGetCharPtr(rc.msg) : ""); 
+			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ?
+				CMGetCharPtr(rc.msg) : "");
 		}
 	}
 

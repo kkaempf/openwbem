@@ -60,7 +60,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	if(m_ftable->miVector.assocMI->ft->associatorNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -126,7 +126,7 @@ void CMPIAssociatorProviderProxy::associators(
 		int pCount = 0;
 
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
 		CMPI_ContextOnStack eCtx(context);
@@ -215,7 +215,7 @@ void CMPIAssociatorProviderProxy::references(
 		int pCount = 0;
 
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 		ProviderEnvironmentIFCRef env2(env);
 
 		m_ftable->broker.hdl = static_cast<void *>(&env2);
@@ -293,7 +293,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	if(m_ftable->miVector.assocMI->ft->referenceNames != NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
-		::OperationContext context;
+		::CMPIOperationContext context;
 
 		ProviderEnvironmentIFCRef env2(env);
 		m_ftable->broker.hdl = static_cast<void *>(&env2);

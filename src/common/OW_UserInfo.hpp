@@ -103,6 +103,7 @@ private:
 	friend class IndicationServerImpl;
 	friend class CIMOMEnvironment;
 	friend class CIMRepository;
+	friend class OperationContext;
 };
 
 } // end namespace OpenWBEM
