@@ -51,6 +51,8 @@ void OW_StringTestCases::testErase()
 	s.erase();
 	unitAssert( s == "" );
 	unitAssert( s.length() == 0 );
+	unitAssert( String("12345").erase(2) == "12" );
+	unitAssert( String("12345").erase(2, 1) == "1245" );
 }
 
 void OW_StringTestCases::testSubstring()

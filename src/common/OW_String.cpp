@@ -758,7 +758,14 @@ String::erase(size_t idx, size_t len)
 {
 	if( idx >= length() )
 		return *this;
-	*this = substring(0, idx) + substring(idx + len);
+	if (len == npos)
+	{
+		*this = substring(0, idx);
+	}
+	else
+	{
+		*this = substring(0, idx) + substring(idx + len);
+	}
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
