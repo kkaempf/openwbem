@@ -119,7 +119,7 @@ NetwareIdentity::NetwareIdentity()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-NetwareIdentity::NetwareIdentity(int* identity, NXPathCtx_t pathContext,
+NetwareIdentity::NetwareIdentity(int identity, NXPathCtx_t pathContext,
 	const String& userName, const String& userDN, bool m_isAdmin)
 	: OperationContext::Data()
 	, m_identity(identity)
@@ -130,7 +130,7 @@ NetwareIdentity::NetwareIdentity(int* identity, NXPathCtx_t pathContext,
 	, m_isAdmin(false)
 {
 	int error;
-	if (!is_valid_identity(*m_identity, &error))
+	if (!is_valid_identity(m_identity, &error))
 	{
 		m_valid = false;
 		cerr << "** Invalid identity passed to NetwareIdentity CTOR: ";
@@ -168,7 +168,7 @@ NetwareIdentity::~NetwareIdentity()
 			}
 		}
 
-		delete_identity(*m_identity);
+		delete_identity(m_identity);
 	}
 }
 
