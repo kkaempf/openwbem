@@ -62,13 +62,50 @@ documentation and/or software.
 #include "OW_Types.h"
 #include "OW_Exception.hpp"
 
+#ifdef OW_HAVE_STREAMBUF
+#include <streambuf>
+#else
+#include <streambuf.h>
+#endif
+
+#ifdef OW_HAVE_OSTREAM
+#include <ostream>
+#elif defined(OW_HAVE_OSTREAM_H)
+#include <ostream.h>
+#else
+#include <iostream>
+#endif
+
 DEFINE_EXCEPTION(MD5);
 
 #define HASHLEN 16
 
 class OW_String;
+class OW_MD5;
 
-class OW_MD5
+//////////////////////////////////////////////////////////////////////////////
+class OW_MD5StreamBuffer : public std::streambuf
+{
+public: 
+	OW_MD5StreamBuffer(OW_MD5* md5);
+
+protected:
+	OW_MD5* _md5;
+
+	virtual int overflow(int c = EOF);
+	virtual std::streamsize xsputn(const char* s, std::streamsize num);
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_MD5OStreamBase 
+{
+public:
+	OW_MD5StreamBuffer _buf;
+	OW_MD5OStreamBase(OW_MD5* md5);
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class OW_MD5 : private OW_MD5OStreamBase, public std::ostream
 {
 /* MD5 context. */
 public:
@@ -110,10 +147,12 @@ private:
 	bool m_finished;
 
 	OW_String convertBinToHex( const unsigned char sBin[ 16 ]);
-	void MD5Init(MD5_CTX * md5ctx);
-	void MD5Update(MD5_CTX *md5ctx, const char* input,
+	static void MD5Init(MD5_CTX * md5ctx);
+	static void MD5Update(MD5_CTX *md5ctx, const char* input,
 		unsigned int inputLen);
-	void MD5Final(unsigned char [16], MD5_CTX *);
+	static void MD5Final(unsigned char [16], MD5_CTX *);
+
+	friend class OW_MD5StreamBuffer;
 };
 
 

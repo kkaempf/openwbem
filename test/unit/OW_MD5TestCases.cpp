@@ -75,6 +75,48 @@ void OW_MD5TestCases::testSomething()
 	md5.init("1234567890123456789012345678901234567890"
 			"1234567890123456789012345678901234567890");
 	unitAssert(md5.toString().equals("57edf4a22be3c955ac49da2e2107b67a"));
+
+	// Now test ostream stuff. 
+	md5.init("");
+	unitAssert(md5.toString().equals("d41d8cd98f00b204e9800998ecf8427e"));
+
+	md5.init("");
+	md5 << "a";
+	unitAssert(md5.toString().equals("0cc175b9c0f1b6a831c399e269772661"));
+
+	md5.init("");
+	md5 << "abc";
+	unitAssert(md5.toString().equals("900150983cd24fb0d6963f7d28e17f72"));
+
+	md5.init("");
+	md5 << "a" << "b" << "c";
+	unitAssert(md5.toString().equals("900150983cd24fb0d6963f7d28e17f72"));
+
+	md5.init("");
+	md5 << "message digest";
+	unitAssert(md5.toString().equals("f96b697d7cb7938d525a2f31aaf161d0"));
+	unitAssert(md5.toString().equals("f96b697d7cb7938d525a2f31aaf161d0"));
+
+	md5.init("");
+	md5 << "abcdefghijklmnopqrstuvwxyz";
+	unitAssert(md5.toString().equals("c3fcd3d76192e4007dfb496cca67e13b"));
+	
+	md5.init("");
+	md5 << "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	unitAssert(md5.toString().equals("d174ab98d277d9f5a5611c2c9f419d9f"));
+
+	md5.init("");
+	md5 << "1234567890123456789012345678901234567890"
+		<<	"1234567890123456789012345678901234567890";
+	unitAssert(md5.toString().equals("57edf4a22be3c955ac49da2e2107b67a"));
+
+	// test formatting
+	md5.init("12345");
+	OW_String s1 = md5.toString();
+	md5.init("");
+	md5 << 12345;
+	unitAssert(md5.toString().equals(s1));
+
 }
 /*
 A.5 Test suite

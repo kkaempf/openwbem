@@ -34,9 +34,32 @@
 
 #define HASHHEXLEN 32
 
+//////////////////////////////////////////////////////////////////////////////
+OW_MD5OStreamBase::OW_MD5OStreamBase(OW_MD5* md5): _buf(md5) {}
 
+//////////////////////////////////////////////////////////////////////////////
+OW_MD5StreamBuffer::OW_MD5StreamBuffer(OW_MD5* md5): _md5(md5) {}
+
+//////////////////////////////////////////////////////////////////////////////
+int 
+OW_MD5StreamBuffer::overflow(int c)
+{
+	char lc = c;
+	OW_MD5::MD5Update(&(_md5->m_ctx), &lc, 1);
+	return c;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+std::streamsize 
+OW_MD5StreamBuffer::xsputn(const char* s, std::streamsize num)
+{
+	OW_MD5::MD5Update(&(_md5->m_ctx), s, num);
+	return num;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_MD5::OW_MD5()
-: m_ctx(), m_finished(false)
+: OW_MD5OStreamBase(this), std::ostream(&_buf), m_ctx(), m_finished(false)
 {
 	MD5Init(&m_ctx);
 }
@@ -52,7 +75,7 @@ OW_MD5::init(const OW_String& input)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MD5::OW_MD5(const OW_String& input)
-: m_ctx(), m_finished(false)
+: OW_MD5OStreamBase(this), std::ostream(&_buf), m_ctx(), m_finished(false)
 {
 	MD5Init(&m_ctx);
 	update(input);
