@@ -17,6 +17,7 @@ Testing:
     - Create a test that does a createInstance with a class that has an 
       infinite number of properties (to try and simulate a DNS attack)
     - Cleanup/integrate some of the tests under src/*/test subdirs
+    - Create a test for mof compiling directly to the repository.
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
