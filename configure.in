@@ -87,6 +87,9 @@ AM_CONDITIONAL(HAVE_PERL_EMBED, test x$HAVE_PERL = xyes)
 STATIC_LINK_FLAGS=
 DYNAMIC_LINK_FLAGS=
 DYNAMIC_EXPORT_FLAG=
+RPATH_LINK_FLAG=
+RPATH_LINK_FLAG_REQUIRED=0
+RPATH_DEFAULT_PATH=
 
 echo "Setting host specific flags..."
 #Figure out which platform dir to compile
@@ -99,6 +102,7 @@ case "$host" in
 	LIBS="$LIBS -lxnet"
 	AIX_COMMON_CFLAGS="-D_REENTRANT -D_XOPEN_SOURCE_EXTENDED=1 -D_XOPEN_SOURCE=500 -D_ALL_SOURCE=1"
 	AIX_COMMON_LFLAGS="-L/usr/lib/threads"
+	RPATH_DEFAULT_PATH="/usr/lib:"
 
 	# This figures out which compiler is invoked, and sets the default flags based on that.
 	AIX_COMPILER=`basename $CXX`
@@ -121,6 +125,7 @@ case "$host" in
 		CXXBINLINKFLAGS="-Wl,-bh:5"
 		STATIC_LINK_FLAGS="-bstatic"
 		DYNAMIC_LINK_FLAGS="-bdynamic"
+		RPATH_LINK_FLAG="-blibpath:"
 		# This is a bad hack, as it includes an export using GNU make (others?)
 		# substitutions. 
 		CXXSHAREDLIBLINKFLAGS='-bdynamic -G -qmkshrobj -bnoentry -bexport:$(@:%.so=%.exp)'
@@ -158,6 +163,7 @@ case "$host" in
 		CXXBINLINKFLAGS="-Wl,-brtl"
 		STATIC_LINK_FLAGS="-Wl,-bstatic"
 		DYNAMIC_LINK_FLAGS="-Wl,-bdynamic"
+		RPATH_LINK_FLAG="-Wl,-blibpath:"
 		# This is a bad hack, as it includes an export using GNU make (others?)
 		# substitutions. 
 		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry -Wl,-bexport:$(@:%.so=%.exp)'
@@ -176,6 +182,7 @@ case "$host" in
 		CXXBINLINKFLAGS=""
 		STATIC_LINK_FLAGS="-Wl,-bstatic"
 		DYNAMIC_LINK_FLAGS="-Wl,-bdynamic"
+		RPATH_LINK_FLAG="-Wl,-blibpath:"
 		# This is a bad hack, as it includes an export using GNU make (others?)
 		# substitutions. 
 		CXXSHAREDLIBLINKFLAGS='-shared -Wl,-G -Wl,-bnoentry -Wl,-bexport:$(@:%.so=%.exp)'
@@ -219,6 +226,7 @@ case "$host" in
 	PLAT_OPTFLAGS="+O2"
 	PIDFILEDIR="/var/run"
 	LIB_EXT="sl"
+	RPATH_LINK_FLAG="-Wl,+s -Wl,+b"
 	;;
 *-*-irix5*)
 	;;
@@ -238,6 +246,7 @@ case "$host" in
 	STATIC_LINK_FLAGS="-Wl,-Bstatic"
 	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
 	DYNAMIC_EXPORT_FLAG=-Wl,--export-dynamic
+	RPATH_LINK_FLAG="-Wl,-rpath "
 	;;
 *-*-netware*)
 	AC_DEFINE(NETWARE, 1, Target OS is NetWare)
@@ -270,6 +279,7 @@ case "$host" in
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
+	RPATH_LINK_FLAG="-R "
 	LIB_EXT="so"
 	;;
 esac
@@ -308,6 +318,47 @@ AC_SUBST(DYNAMIC_EXPORT_FLAG)
 AC_SUBST(LIB_EXT)
 
 AC_DEFINE_UNQUOTED(PIDFILE_DIR, "${PIDFILEDIR}")
+
+AC_ARG_ENABLE(rpath-link,
+OW_HELP_STRING(--enable-rpath-link,enable the encoding of the destination library path into all executables for runtime linking),
+[
+	if test "x$RPATH_LINK_FLAG" != "x"; then
+		RPATH_LINK_FLAG_REQUIRED=1
+		dnl NOTE: Although the flags are required, they are NOT being enabled
+		dnl in the configure script right here. This is because the libdir
+		dnl variable expands to a variable that must be reevaluated. It is 
+		dnl set at the bottom of this script (to prevent any tests from 
+		dnl failing until it can be evaluated properly while running make).
+	else
+		AC_MSG_WARN(***************************************************************************)
+		AC_MSG_WARN(rpath link cannot be enabled on this platform (the proper flag is unknown))
+		AC_MSG_WARN(***************************************************************************)
+		exit 1
+	fi
+],[
+	# This was already set, but it should be set again.
+	RPATH_LINK_FLAG_REQUIRED=0
+])
+
+AC_ARG_WITH(runtime-link-path,
+OW_HELP_STRING(--with-runtime-link-path=PATH,enable the encoding of the specified library search path into all executables for runtime linking),
+[
+	if test "x$RPATH_LINK_FLAG" != "x"; then
+		if test "x${with_runtime_link_path}" != "xyes" -a "x${with_runtime_link_path}" != "xno"; then
+			LDFLAGS="$LDFLAGS $RPATH_LINK_FLAG${with_runtime_link_path}"
+		elif test "x${with_runtime_link_path}" != "xno"; then
+			AC_MSG_WARN(***************************************************************************)
+			AC_MSG_WARN(A runtime path must be specified when using --runtime-link-path            )
+			AC_MSG_WARN(***************************************************************************)
+			exit 1
+		fi
+	else
+		AC_MSG_WARN(***************************************************************************)
+		AC_MSG_WARN(The runtime link path flag is unknown on this platform.                    )
+		AC_MSG_WARN(***************************************************************************)
+		exit 1
+	fi
+])
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -698,7 +749,7 @@ OW_HELP_STRING(--enable-valgrind-support,enable workarounds so the code can work
 ])
 
 AC_ARG_WITH(package-prefix,
-	OW_HELP_STRING(--with-package-prefix=PREFIX,Specify an optional prefix for 
+	OW_HELP_STRING(--with-package-prefix=PREFIX,specify an optional prefix for 
 		use when building a commercial version of OpenWBEM.  This allows separate 
 		versions to simultaneously coexist.),
 	[
@@ -719,7 +770,7 @@ dnl for now everything that uses the configure script uses pthreads
 AC_DEFINE(USE_PTHREAD)
 
 AC_ARG_WITH(search-dir,
-	OW_HELP_STRING(--with-search-dir=PATH,Specify an additional directory to look for include/ and lib/ sub dirs),
+	OW_HELP_STRING(--with-search-dir=PATH,specify an additional directory to look for include/ and lib/ sub dirs),
 	[
 		if test "x$withval" != "xno" ; then
 			CXXFLAGS="$CXXFLAGS -I$withval/include" 
@@ -740,7 +791,7 @@ if test "$enable_ssl" != no; then
 
 # The big search for OpenSSL.  Thanks to the openssh configure.in file!
 AC_ARG_WITH(ssl-dir,
-	OW_HELP_STRING(--with-ssl-dir=PATH,Specify path to OpenSSL installation),
+	OW_HELP_STRING(--with-ssl-dir=PATH,specify path to OpenSSL installation),
 [
 	if test "x$withval" != "xno" ; then
 		tryssldir=$withval
@@ -767,13 +818,13 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 			# $ssldir
 			if test -d "$ssldir/lib" ; then
 				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-				if test ! -z "$need_dash_r" ; then
-					LDFLAGS="$LDFLAGS -R$ssldir/lib"
+				if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
+					LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir/lib"
 				fi
 			else
 				LDFLAGS="$saved_LDFLAGS -L$ssldir"
-				if test ! -z "$need_dash_r" ; then
-					LDFLAGS="$LDFLAGS -R$ssldir"
+				if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
+					LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir"
 				fi
 			fi
 			# Try to use $ssldir/include if it exists, otherwise
@@ -842,13 +893,13 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 		# $ssldir
 		if test -d "$ssldir/lib" ; then
 			LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
-			if test ! -z "$need_dash_r" ; then
-				LDFLAGS="$LDFLAGS -R$ssldir/lib"
+			if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
+				LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir/lib"
 			fi
 		else
 			LDFLAGS="$saved_LDFLAGS -L$ssldir"
-			if test ! -z "$need_dash_r" ; then
-				LDFLAGS="$LDFLAGS -R$ssldir"
+			if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
+				LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}$ssldir"
 			fi
 		fi
 		# Try to use $ssldir/include if it exists, otherwise
@@ -1035,6 +1086,12 @@ else
 	fi
 fi
 AC_DEFINE_UNQUOTED(DEFAULT_SYSCONF_DIR, "${tempDir}")
+
+# This is down at the bottom, because $libdir expands to "${exec_prefix}/lib".
+# This variable won't be available until the makefiles are generated. 
+if test "x$RPATH_LINK_FLAG_REQUIRED" = "x1" ; then
+		LDFLAGS="$LDFLAGS ${RPATH_LINK_FLAG}${RPATH_DEFAULT_PATH}$libdir"
+fi
 
 CXXSHAREDLIBLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXSHAREDLIBLINKFLAGS $LDFLAGS"
 CXXBINLINKFLAGS="$CXXCOMMONLINKFLAGS $CXXBINLINKFLAGS $LDFLAGS"
