@@ -244,6 +244,14 @@ public:
 	OW_CIMQualifier getQualifier(const OW_String& name) const;
 
 	/**
+	 * Get the qualifier associated with the given name from this property.
+	 * @param name	The name of the qualifier to retrieve.
+	 * @return The OW_CIMQualifier associated with the given name if there is
+	 * one. Otherwise a OW_NoSuchQualifierException is thrown.
+	 */
+	OW_CIMQualifier getQualifierT(const OW_String& name) const;
+
+	/**
 	 * Set the value of a qaulifier on this property.
 	 * @param qual	An OW_CIMQualifier to use to update the property qualifier.
 	 * @return a reference to *this

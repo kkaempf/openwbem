@@ -35,6 +35,7 @@
 #include "OW_BinIfcIO.hpp"
 #include "OW_NULLValueException.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_NoSuchQualifierException.hpp"
 
 using std::istream;
 using std::ostream;
@@ -326,6 +327,18 @@ OW_CIMProperty::getQualifier(const OW_String& name) const
 	}
 
 	return OW_CIMQualifier(OW_CIMNULL);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifier
+OW_CIMProperty::getQualifierT(const OW_String& name) const
+{
+	OW_CIMQualifier rval = getQualifier(name);
+	if (!rval)
+	{
+		OW_THROW(OW_NoSuchQualifierException, name.c_str());
+	}
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
