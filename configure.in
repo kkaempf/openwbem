@@ -1082,6 +1082,7 @@ src/mof/Makefile
 src/provider/Makefile
 src/providerifcs/Makefile
 src/providerifcs/cpp/Makefile
+src/providerifcs/remote/Makefile
 src/providerifcs/cmpi/Makefile
 src/providerifcs/cmpi/common/Makefile
 src/providerifcs/npi/Makefile
