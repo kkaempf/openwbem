@@ -56,7 +56,7 @@ int
 OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, const OW_String& /*userName*/)
 {
-	m_hasError = false;
+	clearError();
 
 	OW_String messageId = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
 
@@ -80,10 +80,10 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 		{
 			OW_TempFileStream ostrEnt, ostrErr;
 			processSimpleExpReq(parser, ostrEnt, ostrErr, messageId);
-			if (m_hasError)
+			if (hasError())
 			{
 				(*ostrEntity) << ostrErr.rdbuf();
-				m_hasError = false;
+				clearError();
 			}
 			else
 			{
@@ -156,7 +156,6 @@ OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
 	}
 	catch(OW_CIMException& ce)
 	{
-		m_hasError = true;
 		makeXMLHeader(messageId, ostrError);
 		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
@@ -167,10 +166,10 @@ void
 OW_XMLListener::outputError(OW_CIMException::ErrNoType errorCode,
 	OW_String msg, ostream& ostr)
 {
+	setError(errorCode, msg);
 
 	ostr << "<SIMPLEEXPRSP>";
 	ostr << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
-
 
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
 		OW_XMLEscape(msg) <<

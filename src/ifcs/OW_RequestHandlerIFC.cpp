@@ -57,13 +57,6 @@ void OW_RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
 OW_Bool
 OW_RequestHandlerIFC::hasError(OW_Int32& errCode, OW_String& errDescr)
 {
-	return doHasError(errCode, errDescr);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_RequestHandlerIFC::doHasError(OW_Int32& errCode, OW_String& errDescr)
-{
 	if (m_hasError)
 	{
 		errCode = m_errorCode;
@@ -71,6 +64,7 @@ OW_RequestHandlerIFC::doHasError(OW_Int32& errCode, OW_String& errDescr)
 	}
 	return m_hasError;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_ServiceEnvironmentIFCRef

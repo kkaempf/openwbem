@@ -121,7 +121,7 @@ int
 OW_XMLExecute::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 	ostream* ostrError, const OW_String& userName)
 {
-	m_hasError = false;
+	clearError();
 	m_ostrEntity = ostrEntity;
 	m_ostrError = ostrError;
 	m_isIntrinsic = false;
@@ -145,10 +145,10 @@ OW_XMLExecute::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 		{
 			OW_TempFileStream ostrEnt, ostrErr(500);
 			processSimpleReq(parser, ostrEnt, ostrErr, userName);
-			if (m_hasError)
+			if (hasError())
 			{
 				(*m_ostrEntity) << ostrErr.rdbuf();
-				m_hasError = false;
+				clearError();
 			}
 			else
 			{
@@ -1482,9 +1482,6 @@ OW_XMLExecute::processSimpleReq(OW_CIMXMLParser& parser, ostream& ostrEntity,
 			"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 
-		m_hasError = true;
-		m_errorCode = ce.getErrNo();
-		m_errorDescription = ce.getMessage();
 		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
 }
@@ -1533,6 +1530,8 @@ void
 OW_XMLExecute::outputError(OW_CIMException::ErrNoType errorCode,
 	OW_String msg, ostream& ostr)
 {
+	setError(errorCode, msg);
+
 	ostr << "<SIMPLERSP>\r\n";
 	if (m_isIntrinsic)
 		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";

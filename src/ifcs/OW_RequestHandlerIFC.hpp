@@ -81,6 +81,7 @@ public:
 	 */
 
 	OW_Bool hasError(OW_Int32& errCode, OW_String& errDescr);
+	OW_Bool hasError() { return m_hasError; }
 
 	/**
 	 * What options are available for a particular path?
@@ -101,6 +102,19 @@ public:
 
 	OW_String getCIMError() const { return m_cimError; }
 
+	void setError(OW_Int32 errorCode, const OW_String& errorDescription)
+	{
+		m_hasError = true;
+		m_errorCode = errorCode;
+		m_errorDescription = errorDescription;
+	}
+	void clearError()
+	{
+		m_hasError = false;
+		m_errorCode = 0;
+		m_errorDescription.erase();
+	}
+
 protected:
 	/**
 	 * The HTTP server calls this once all HTTP headers have been
@@ -116,13 +130,6 @@ protected:
 		std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars) = 0;
 
 	/**
-	 * Did an error occur during process()?  (should ostrEntity
-	 * be sent back, or osrtError?)
-	 * @return true if an error occurred.
-	 */
-	virtual OW_Bool doHasError(OW_Int32& errCode, OW_String& errDescr);
-
-	/**
 	 * Fill out the Features that the request handler at the path supports.
 	 * @param cf The features to fill out.
 	 * @param path The requested path
@@ -130,11 +137,14 @@ protected:
 	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars) = 0;
 
 	OW_String m_cimError;
+
+private:
+
+	// set these through setError() and clearError()
 	OW_Bool m_hasError;
 	OW_Int32 m_errorCode;
 	OW_String m_errorDescription;
 
-private:
 	OW_ServiceEnvironmentIFCRef m_env;
 };
 

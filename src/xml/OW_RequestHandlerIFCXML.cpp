@@ -93,7 +93,6 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 				"exception:\nCode: %1\nFile: %2\n Line: %3\nMessage: %4",
 				ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 
-			m_hasError = true;
 			outputError(ce.getErrNo(), ce.getMessage(), *ostrError);
 		}
 		catch (OW_CIMErrorException& cee)
@@ -102,23 +101,20 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 				"exception:File: %1\n Line: %2\nMessage: %3",
 				cee.getFile(), cee.getLine(), cee.getMessage()));
 			m_cimError = cee.getMessage();
-			m_hasError = true;
 			outputError(OW_CIMException::FAILED, cee.getMessage(), *ostrError);
 		}
 		catch (std::exception& e)
 		{
 			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught std exception: %1"
 				, e.what()));
-			m_hasError = true;
 			outputError(OW_CIMException::FAILED, e.what(), *ostrError);
 		}
 		catch (...)
 		{
 			OW_LOGDEBUG("OW_RequestHandlerIFCXML::doProcess caught unknown exception");
-			m_hasError = true;
 			outputError(OW_CIMException::FAILED, "Unknown Exception", *ostrError);
 		}
-		if (m_hasError)
+		if (hasError())
 		{
 			(*ostrError) << "</MESSAGE></CIM>\r\n";
 		}
