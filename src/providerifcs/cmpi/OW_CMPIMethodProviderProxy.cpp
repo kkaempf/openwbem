@@ -95,7 +95,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 		}
 		else
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, rc.msg ?
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ?
 				CMGetCharPtr(rc.msg) : "");
 		}
 	}

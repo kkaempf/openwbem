@@ -97,8 +97,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 
 		if(rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				String(rc.rc).c_str());
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -189,8 +188,7 @@ void CMPIAssociatorProviderProxy::associators(
 	
 		if(rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				String(rc.rc).c_str());
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -274,8 +272,7 @@ void CMPIAssociatorProviderProxy::references(
 
 		if(rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				String(rc.rc).c_str());
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -326,7 +323,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 
 		if(rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, String(rc.rc).c_str());
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else

@@ -81,8 +81,7 @@ CMPIIndicationProviderProxy::deActivateFilter(
 
 		if (rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				 rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -130,8 +129,7 @@ CMPIIndicationProviderProxy::activateFilter(
 
 		if (rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				 rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -178,8 +176,7 @@ CMPIIndicationProviderProxy::authorizeFilter(
 			&exp, _eventType, &eRef, _owner);
 		if (rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				 rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
@@ -223,8 +220,7 @@ CMPIIndicationProviderProxy::mustPoll(
 
 		if (rc.rc != CMPI_RC_OK)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED,
-				 rc.msg ? CMGetCharPtr(rc.msg) : "");
+			OW_THROWCIMMSG(CIMException::ErrNoType(rc.rc), rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
 	else
