@@ -118,10 +118,9 @@ CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const String &sMethod,
 	ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
 	if (path.isInstancePath())
 	{
-		ostr << "<LOCALINSTANCEPATH>";
-		LocalCIMNameSpacetoXML(nameSpace, ostr);
-		CIMInstanceNametoXML(path, ostr);
-		ostr << "</LOCALINSTANCEPATH>";
+		CIMObjectPath pathWithNs(path);
+		pathWithNs.setNameSpace(ns);
+		CIMLocalInstancePathtoXML(pathWithNs,ostr);
 	}
 	else // it's a class
 	{
