@@ -462,6 +462,24 @@
 #endif
 
 
+/* Need this first macro because ## doesn't expand vars, and we need an intermediate step */
+#ifndef OW_NAMESPACE_CAT 
+#define OW_NAMESPACE_CAT(ow, ver) ow ## ver 
+#endif
+#ifndef OW_NAMESPACE_AUX 
+#define OW_NAMESPACE_AUX(ver) OW_NAMESPACE_CAT(OpenWBEM, ver) 
+#endif
+#ifndef OW_NAMESPACE 
+#define OW_NAMESPACE OW_NAMESPACE_AUX(OW_OPENWBEM_LIBRARY_VERSION) 
+#endif
+
+/* need this to set up an alias. */
+namespace OW_NAMESPACE
+{
+}
+
+namespace OpenWBEM = OW_NAMESPACE;
+
 
 
 #ifdef OW_DEBUG_MEMORY
