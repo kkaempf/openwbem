@@ -19,7 +19,8 @@ cimlistener \
 testNamespaces \
 testMisc \
 hammerClient \
-testSecondaryInstanceProviders
+testSecondaryInstanceProviders \
+testLargeRequest
 endif
 endif
 endif
@@ -247,6 +248,21 @@ $(CXXBINLINKFLAGS) \
 
 testSecondaryInstanceProviders_SOURCES = \
 testSecondaryInstanceProviders.cpp
+
+#testLargeRequest
+testLargeRequest_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/xml -lowxml
+
+testLargeRequest_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o testLargeRequest
+
+testLargeRequest_SOURCES = \
+testLargeRequest.cpp
 
 
 INCLUDES = \

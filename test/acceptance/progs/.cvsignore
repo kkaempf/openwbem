@@ -19,3 +19,4 @@ testNamespaces
 testMisc
 hammerClient
 testSecondaryInstanceProviders
+testLargeRequest

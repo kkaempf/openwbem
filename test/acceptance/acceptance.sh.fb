@@ -1096,6 +1096,9 @@ TestMultiReq
 
 TestSecondaryInstanceProvider
 
+RunATest testLargeRequest "http://test1:pass1@localhost:30926"
+RunATest testLargeRequest "owbinary.wbem://test1:pass1@localhost:owipc/"
+
 if [ "z$OWLONGTEST" = "z1" ]; then
   TestHammer "http://test1:pass1@localhost:30926"
   TestHammer "owbinary.wbem://test1:pass1@localhost:owipc/"
