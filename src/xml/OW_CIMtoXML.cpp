@@ -502,13 +502,16 @@ static void valueToXML(T const& x, ostream& out)
 }
 static void valueToXML(CIMObjectPath const& x, ostream& out)
 {
-	if (x.getFullNameSpace().isLocal() && !x.getNameSpace().empty())
+	if (x.getFullNameSpace().isLocal())
 	{
-		CIMLocalInstancePathtoXML(x, out);
-	}
-	else if (x.getFullNameSpace().isLocal() && x.getNameSpace().empty())
-	{
-		CIMInstanceNametoXML(x, out);
+		if (x.getNameSpace().empty())
+		{
+			CIMInstanceNametoXML(x, out);
+		}
+		else
+		{
+			CIMLocalInstancePathtoXML(x, out);
+		}
 	}
 	else
 	{
@@ -726,13 +729,16 @@ void CIMtoXML(CIMValue const& cv, ostream& out)
 		out << "<VALUE.REFERENCE>";
 		CIMObjectPath a(CIMNULL);
 		cv.get(a);
-		if (a.getFullNameSpace().isLocal() && !a.getNameSpace().empty())
+		if (a.getFullNameSpace().isLocal())
 		{
-			CIMLocalInstancePathtoXML(a, out);
-		}
-		else if (a.getFullNameSpace().isLocal() && a.getNameSpace().empty())
-		{
-			CIMInstanceNametoXML(a, out);
+			if (a.getNameSpace().empty())
+			{
+				CIMInstanceNametoXML(a, out);
+			}
+			else
+			{
+				CIMLocalInstancePathtoXML(a, out);
+			}
 		}
 		else
 		{
