@@ -58,19 +58,23 @@ class OW_COMMON_API SignalScope
 {
 public:
 	SignalScope( int sig, sighandler_t handler )
-			: m_sig( sig ), m_oldHandler( 0 ) 
+			: m_sig( sig )
 	{
-		m_oldHandler = signal( m_sig, handler );
+		struct sigaction saNew;
+		saNew.sa_handler = handler;
+		sigemptyset(&saNew.sa_mask);
+		saNew.sa_flags = 0;
+		sigaction(m_sig, &saNew, &m_oldHandler);
 	}
 	~SignalScope()
 	{
-		signal( m_sig, m_oldHandler );
+		sigaction(m_sig, &m_oldHandler, 0);
 	}
 private:
 	SignalScope(const SignalScope&);
 	const SignalScope& operator=(const SignalScope&);
 	int m_sig;
-	sighandler_t m_oldHandler;
+	struct sigaction m_oldHandler;
 };
 
 } // end namespace OW_NAMESPACE
