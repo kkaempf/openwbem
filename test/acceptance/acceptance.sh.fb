@@ -345,7 +345,7 @@ TestSuite()
 		> $RESULTDIR/$DIFF_FILE 2>&1 || \
 		ExitWithFail "TestSuite: owcimclientcl failed with an error.  "
 
-	Diff $DIFF_FILE2 $DIFF_FILE$OWDIFFSUFFIX "TestSuite: Diff test for owcimclientcl failed."
+	Diff $DIFF_FILE2$OWDIFFSUFFIX $DIFF_FILE "TestSuite: Diff test for owcimclientcl failed."
 
 	echo "Testsuite Passed"
 }
