@@ -321,7 +321,6 @@ CIMDateTime::toDateTime() const
 static void
 fillDateTimeData(CIMDateTime::DateTimeData& data, const char* str)
 {
-	::memset(&data, 0, sizeof(CIMDateTime::DateTimeData));
 	if(str == NULL || *str == '\0')
 		return;
 	char bfr[35];
