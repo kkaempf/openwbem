@@ -79,37 +79,25 @@ namespace OW_NAMESPACE
 namespace Select
 {
 #if defined(OW_WIN32)
-#error "Port/Convert selectRW over to new format (see OW_Select.hpp)"
 //////////////////////////////////////////////////////////////////////////////
 int
-selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms)
+selectRW(SelectObjectArray& selarray, UInt32 ms)
 {
 	int rc;
-	size_t hcount = static_cast<DWORD>(input.size() + output.size());
+	size_t hcount = static_cast<DWORD>(selarray.size());
 	AutoPtrVec<HANDLE> hdls(new HANDLE[hcount]);
 
 	size_t handleidx = 0;
-	for (size_t i = 0; i < input.size(); i++, handleidx++)
+	for (size_t i = 0; i < selarray.size(); i++, handleidx++)
 	{
-		if(input[i].s.sockfd != INVALID_SOCKET
-			&& input[i].s.networkevents)
+		if(selarray[i].s.sockfd != INVALID_SOCKET
+			&& selarray[i].s.networkevents)
 		{
-			::WSAEventSelect(input[i].s.sockfd, 
-				input[i].s.event, input[i].s.networkevents);
+			::WSAEventSelect(selarray[i].s.sockfd, 
+				selarray[i].s.event, selarray[i].s.networkevents);
 		}
 				
-		hdls[handleidx] = input[i].s.event;
-	}
-	for (size_t i = 0; i < output.size(); i++, handleidx++)
-	{
-		if(output[i].s.sockfd != INVALID_SOCKET
-			&& output[i].s.networkevents)
-		{
-			::WSAEventSelect(output[i].s.sockfd, 
-				output[i].s.event, output[i].s.networkevents);
-		}
-				
-		hdls[handleidx] = output[i].s.event;
+		hdls[handleidx] = selarray[i].s.event;
 	}
 
 	DWORD timeout = (ms != ~0U) ? ms : INFINITE;
@@ -130,47 +118,22 @@ selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms)
 			
 			// If this is a socket, set it back to 
 			// blocking mode
-			if( rc < input.size() )
+			if(selarray[rc].s.sockfd != INVALID_SOCKET)
 			{
-				if(input[rc].s.sockfd != INVALID_SOCKET)
+				if(selarray[rc].s.networkevents
+					&& selarray[rc].s.doreset == false)
 				{
-					if(input[rc].s.networkevents
-						&& input[rc].s.doreset == false)
-					{
-						::WSAEventSelect(input[rc].s.sockfd, 
-							input[rc].s.event, input[rc].s.networkevents);
-					}
-					else
-					{
-						// Set socket back to blocking
-						::WSAEventSelect(input[rc].s.sockfd, 
-							input[rc].s.event, 0);
-						u_long ioctlarg = 0;
-						::ioctlsocket(input[rc].s.sockfd, FIONBIO, &ioctlarg);
-					}
+					::WSAEventSelect(selarray[rc].s.sockfd, 
+						selarray[rc].s.event, selarray[rc].s.networkevents);
 				}
-			}
-			else
-			{
-				rc -= input.size();
-				if(output[rc].s.sockfd != INVALID_SOCKET)
+				else
 				{
-					if(output[rc].s.networkevents
-						&& output[rc].s.doreset == false)
-					{
-						::WSAEventSelect(output[rc].s.sockfd, 
-							output[rc].s.event, output[rc].s.networkevents);
-					}
-					else
-					{
-						// Set socket back to blocking
-						::WSAEventSelect(output[rc].s.sockfd, 
-							output[rc].s.event, 0);
-						u_long ioctlarg = 0;
-						::ioctlsocket(output[rc].s.sockfd, FIONBIO, &ioctlarg);
-					}
+					// Set socket back to blocking
+					::WSAEventSelect(selarray[rc].s.sockfd, 
+						selarray[rc].s.event, 0);
+					u_long ioctlarg = 0;
+					::ioctlsocket(selarray[rc].s.sockfd, FIONBIO, &ioctlarg);
 				}
-				rc += input.size();
 			}
 			break;
 	}
@@ -179,28 +142,20 @@ selectRW(SelectObjectArray& input, SelectObjectArray& output, UInt32 ms)
 		return rc;
 
 	int availableCount = 0;
-	for (size_t i = 0; i < input.size(); i++)
+	for (size_t i = 0; i < selarray.size(); i++)
 	{
-		if( WaitForSingleObject(input[i].s.event, 0) == WAIT_OBJECT_0 )
+		if( WaitForSingleObject(selarray[i].s.event, 0) == WAIT_OBJECT_0 )
 		{
-			input[i].available = true;
+			if( selarray[i].rEvents )
+				selarray[i].rAvailable = true;
+			if( selarray[i].wEvents )
+				selarray[i].wAvailable = true;
 			++availableCount;
 		}
 		else
 		{
-			input[i].available = false;
-		}
-	}
-	for (size_t i = 0; i < output.size(); i++)
-	{
-		if( WaitForSingleObject(output[i].s.event, 0) == WAIT_OBJECT_0 )
-		{
-			output[i].available = true;
-			++availableCount;
-		}
-		else
-		{
-			output[i].available = false;
+			selarray[i].rAvailable = false;
+			selarray[i].wAvailable = false;
 		}
 	}
 	return availableCount;
