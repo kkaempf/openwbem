@@ -173,6 +173,36 @@ namespace Exec
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command);
 
 	/**
+	 * Execute a command.
+	 * The command's stdin, stdout, and stderr will be connected via pipes to
+	 * the parent process that can be accessed from the return value.
+	 * This function will not search the path for command[0], so
+	 * the absolute path to the binary should be specified.  If the path needs
+	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
+	 * and then fill in the rest of the array with the command you wish to
+	 * execute.
+	 * This function does *not* block until the child process exits.
+	 * If the binary specified in command[0] does not exist, execv() will fail,
+	 * and the return code of the sub-process will be 127. However, this is not
+	 * distinguishable from the command process returning 127.
+	 *
+	 * @param command
+	 *  command[0] is the binary to be executed.
+	 *  command[1] .. command[n] are the command line parameters to the command.
+	 * 
+	 * @param envp an array of strings  of the form "key=value", which are passed
+	 *  as environment to the new program. envp must be terminated by a null 
+	 *  pointer.
+	 *
+	 * @return A PopenStreams object which can be used to access the child
+	 *  process and/or get it's return value.
+	 *
+	 * @throws IOException If writing initialInput to the child process input fails.
+	 *         ExecErrorException If command.size() == 0 or if fork() fails.
+	 */
+	OW_COMMON_API PopenStreams safePopen(const Array<String>& command, const char* const envp[]);
+
+	/**
 	 * The use of initialInput is deprecated, because it's not safe to use it in a
 	 * portable manner. Either use the input parameter to gatherOutput or do it
 	 * manually (not that you must be careful not to cause a deadlock).

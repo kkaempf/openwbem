@@ -455,6 +455,12 @@ safePopen(const Array<String>& command,
 PopenStreams
 safePopen(const Array<String>& command)
 {
+	return safePopen(command, ::environ);
+}
+//////////////////////////////////////////////////////////////////////////////
+PopenStreams
+safePopen(const Array<String>& command, const char* const envp[])
+{
 	PopenStreams retval;
 	retval.in( UnnamedPipe::createUnnamedPipe() );
 	UnnamedPipeRef upipeOut = UnnamedPipe::createUnnamedPipe();
@@ -518,7 +524,7 @@ safePopen(const Array<String>& command)
 			argv[i] = strdup(command[i].c_str());
 		}
 		argv[command.size()] = 0;
-		int rval = execv(argv[0], argv);
+		int rval = execve(argv[0], argv, const_cast<char* const*>(envp));
 		cerr << Format( "Exec::safePopen: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(127);
