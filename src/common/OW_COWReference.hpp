@@ -61,7 +61,6 @@ class COWReference : private COWReferenceBase
 		void swap(COWReference<T>& arg);
 		T* operator->();
 		T& operator*();
-//		T* getPtr();
 		const T* operator->() const;
 		const T& operator*() const;
 		const T* getPtr() const;
@@ -148,9 +147,18 @@ inline void COWReference<T>::getWriteLock()
 {
 	if (COWReferenceBase::refCountGreaterThanOne())
 	{
-		m_pObj = COWReferenceClone(m_pObj);
+		// this needs to happen first to avoid a race condition between 
+		// another thread deleting the object and this one making a copy.
+		T* tmp = COWReferenceClone(m_pObj);
 		// this will decrement the count and then make a new one if we're making a copy.
-		COWReferenceBase::getWriteLock();
+		if (COWReferenceBase::getWriteLock())
+		{
+			delete tmp;
+		}
+		else
+		{
+			m_pObj = tmp;
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -226,13 +234,6 @@ inline const T* COWReference<T>::getPtr() const
 {
 	return m_pObj;
 }
-//////////////////////////////////////////////////////////////////////////////
-//template<class T>
-//inline T* COWReference<T>::getPtr()
-//{
-//    getWriteLock();
-//	return m_pObj;
-//}
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline bool COWReference<T>::isNull() const

@@ -85,17 +85,20 @@ protected:
 		return m_pRefCount->get() > 1;
 	}
 	
-	void getWriteLock()
+	// returns true if we're the only copy.
+	bool getWriteLock()
 	{
 		if (m_pRefCount->decAndTest())
 		{
 			// only copy--don't need to clone, also not a race condition
 			incRef();
+			return true;
 		}
 		else
 		{
 			// need to become unique
 			m_pRefCount = new RefCount;
+			return false;
 		}
 	}
 	
