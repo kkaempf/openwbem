@@ -13,7 +13,7 @@ Testing:
     - Test case insensitivity (eg. try to add a disk and DISK class)
     - Test storing 1 million instances.
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
-    - Test that enumerates all classes & instances, and then does a getInstance on each instance.  This is just to sanity-check all the built-in providers.
+    - Test that enumerates all classes & instances, and then does a getInstance on each instance.  This is just to sanity-check all the built-in providers. Have each operation run in parallel in a separate thread to increase the stress level :-)
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
@@ -45,6 +45,11 @@ New features:
     - client batch support
     - Add support for running under inetd
     - Add a function for providers to store/retrieve data.
+    - Create provider base classes which will make writing providers easier
+      - Have the simple associator providers only have to
+        implement references.  The base class can easily do the rest.
+      - No need for enumerateInstanceNames, just pass the keys in propertyList
+      - Template method base class for weak to ComputerSystem(anything?) providers (almost all hardware)
 
 Post 3.0
     - associators and references can't return an objectpath, only an instance.
@@ -112,8 +117,6 @@ Post 3.0
     - Add rbac authentication
     - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Add config items and code to do ssl client authentication.
-    - Have the simple c++ provider interface associator providers only have to
-      implement references.  The provider interface can easily do the rest.
     - Config item for slp renewal time.
     - Create a config item so people can use a custom repository.
 
@@ -128,11 +131,7 @@ Refactorings:
     - Rename mof compiler files/classes to have OW_ prefix.
 
       Post 3.0
-    - Merge OW_InternalProviderIFC and OW_CppProviderIFC (create a base class,
-      move OW_Cpp*ProviderIFC classes into the cimom.
     - Create a base class for all the common code in the provider interfaces.
-    - Create a common base class for C++ provider ifcs (internal, c++, 
-      simplec++)
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.
     - inline the smaller functions in OW_String, OW_StringBuffer, and other 
@@ -149,7 +148,6 @@ Refactorings:
     - Rewrite the provider manager lookup so it's simpler/less code.
     - simplify the provider manager lookup structure
     - rename cimom to wbem server
-    - remove internal provider ifc
 
 Documentation:
     - Enhance developer documentation (similar to "SNIA CIM Object Manager 
