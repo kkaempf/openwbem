@@ -13,7 +13,15 @@ TMPLIBDIR = .$@.libs
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$< 
 	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
-	rm -f $@
+	rm -rf $@ $(TMPLIBDIR)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
+
+all-ow-shared-libs: $(OW_SHARED_LIBS)
+
+clean-ow-shared-libs:
+	for i in $(OW_SHARED_LIBS); do \
+		rm -rf $$i* .$$i.libs; \
+	done
+
 

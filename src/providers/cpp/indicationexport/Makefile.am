@@ -1,4 +1,11 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
+include $(top_srcdir)/Makefile-shared-lib-inst.inc
+install-exec-local : install-ow-shared-libs
+uninstall-local : uninstall-ow-shared-libs
+
 
 noinst_LIBRARIES = libcppindicationexportxmlhttpprovider.a
 
@@ -7,20 +14,6 @@ SHAREDLIBADD = $(top_builddir)/src/http/common/libowhttpcommon.a $(top_builddir)
 #SHAREDLIBADD = -L$(top_builddir)/src/http/common -lowhttpcommon -L$(top_builddir)/src/http/client -lowhttpclient -L$(top_builddir)/src/xml -lowxml
 
 thelibdir = $(pkglibdir)/c++providers
-all-local: $(OW_SHARED_LIBS)
-
-install-exec-local:
-	@INSTALL@ -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
-		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-	done
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
-
 
 libcppindicationexportxmlhttpprovider_a_SOURCES = \
 OW_CppIndicationExportXMLHTTPProvider.cpp \

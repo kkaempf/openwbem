@@ -1,5 +1,12 @@
 if USE_PAM
 include $(top_srcdir)/Makefile-shared-lib.inc
+all-local : all-ow-shared-libs
+clean-local : clean-ow-shared-libs
+
+include $(top_srcdir)/Makefile-shared-lib-inst.inc
+install-exec-local : install-ow-shared-libs
+uninstall-local : uninstall-ow-shared-libs
+
 
 owpamauthbin_PROGRAMS = OW_PAMAuth
 
@@ -18,19 +25,6 @@ noinst_LIBRARIES = \
 	libpamclauthentication.a 
 
 thelibdir = $(pkglibdir)/authentication
-all-local: $(OW_SHARED_LIBS)
-
-install-exec-local:
-	@INSTALL@ -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
-		@INSTALL@  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
-		ln -s $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
-	done
-	
-clean-local:
-	for i in $(OW_SHARED_LIBS); do \
-		rm -rf $$i* .$$i.libs; \
-	done
 
 libpamclauthentication_a_SOURCES = \
 OW_LinuxPAMAuthenticationCL.cpp
