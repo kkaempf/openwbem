@@ -464,7 +464,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 					HTTPDeflateOStream deflateostr(costr);
 					deflateostr << tfs->rdbuf();
 					deflateostr.termOutput();
-					costr.termOutput();
+					costr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
 #else
 					OW_THROW(HTTPException, "Attempting to deflate response "
 						" but we're not compiled with zlib!  (shouldn't happen)");
@@ -550,8 +550,12 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError",
 					m_requestHandler->getCIMError());
 			}
+			ostrChunk->termOutput(HTTPChunkedOStream::E_DISCARD_LAST_CHUNK);
 		}
-		ostrChunk->termOutput();
+		else
+		{
+			ostrChunk->termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
+		}
 	} // else m_chunkedOut
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -976,7 +980,7 @@ HTTPSvrConnection::trace()
 	{
 		ostr << iter->first << ": " << iter->second << "\r\n" ;
 	}
-	ostr.termOutput();
+	ostr.termOutput(HTTPChunkedOStream::E_SEND_LAST_CHUNK);
 }
 //////////////////////////////////////////////////////////////////////////////
 void

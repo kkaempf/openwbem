@@ -99,17 +99,24 @@ HTTPChunkedOStream::~HTTPChunkedOStream()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-HTTPChunkedOStream::termOutput()
+HTTPChunkedOStream::termOutput(ESendLastChunkFlag sendLastChunk)
 {
-	flush();
+	if (sendLastChunk == E_SEND_LAST_CHUNK)
+	{
+		flush();
+	}
+
 	m_ostr << "0\r\n";
 	for (size_t i = 0; i < m_trailers.size(); i++)
 	{
 		m_ostr << m_trailers[i] << "\r\n";
 	}
-	//m_trailers.clear();  // TODO should this be uncommented?
 	m_ostr << "\r\n";
 	m_ostr.flush();
+
+	// once the output is terminated, we have to reset the stream
+	m_strbuf.initPutBuffer();
+	m_trailers.clear();
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -56,6 +56,7 @@ class HTTPChunkedOStreamBuffer : public BaseStreamBuffer
 public: 
 	HTTPChunkedOStreamBuffer(std::ostream& ostr);
 	virtual ~HTTPChunkedOStreamBuffer();
+
 protected:
 	virtual int sync();
 private:
@@ -64,6 +65,8 @@ private:
 	// disallow copying and assigning
 	HTTPChunkedOStreamBuffer(const HTTPChunkedOStreamBuffer&);
 	HTTPChunkedOStreamBuffer& operator=(const HTTPChunkedOStreamBuffer&);
+
+	friend class HTTPChunkedOStream; // so it can call initPutBuffer()
 };
 //////////////////////////////////////////////////////////////////////////////
 class HTTPChunkedOStreamBase 
@@ -87,12 +90,18 @@ public:
 	HTTPChunkedOStream(std::ostream& ostr);
 	
 	~HTTPChunkedOStream();
+
+	enum ESendLastChunkFlag
+	{
+		E_DISCARD_LAST_CHUNK,
+		E_SEND_LAST_CHUNK
+	};
 	/**
 	 * Call this when the entity has been completely sent.
 	 * This flushes the remaining output, and sends a zero length
 	 * chunk, signalling the end of the entity.
 	 */
-	void termOutput();
+	void termOutput(ESendLastChunkFlag sendLastChunk = E_SEND_LAST_CHUNK);
 	/** Get the original ostream&
 	 * @return the original ostream
 	 */
