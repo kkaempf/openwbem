@@ -1,6 +1,7 @@
 
 SO_EXT = $(OPENWBEM_VERSION)
 SOFILENAME = $@.$(SO_EXT)
+DYFILENAME = `basename -s .dylib $@`.$(SO_EXT).$(LIB_EXT)
 TMPLIBDIR = .$@.libs
 
 
@@ -42,18 +43,18 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$< 
 	if [ "x$(MAKEDYLIB)" = "x1" ]; then \
-		$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+		$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
 	fi;
 	if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
 		if [ "x$(MAKEDYLIB)" = "x1" ]; then \
-		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(SOFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
 		else \
-		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(DYFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
 		fi; \
 	fi;
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
-	ln -s $(SOFILENAME) $@
-	chmod +x $(SOFILENAME)
+	ln -s $(DYFILENAME) $@
+	chmod +x $(DYFILENAME)
 
 
 all-ow-shared-libs: $(OW_SHARED_LIBS)
