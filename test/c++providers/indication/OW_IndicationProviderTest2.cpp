@@ -477,6 +477,6 @@ void OW_TestProviderThread::run()
 } // end anonymous namespace
 
 
-OW_PROVIDERFACTORY(OW_IndicationProviderTest2, owproviderindicationtest1)
+OW_PROVIDERFACTORY(OW_IndicationProviderTest2, indicationtest2)
 
 

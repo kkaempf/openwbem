@@ -455,6 +455,6 @@ private:
 } // end anonymous namespace
 
 
-OW_PROVIDERFACTORY(OW_IndicationProviderTest3, owproviderindicationtest1)
+OW_PROVIDERFACTORY(OW_IndicationProviderTest3, indicationtest3)
 
 

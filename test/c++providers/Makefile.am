@@ -1,2 +1,2 @@
-SUBDIRS = property associator method trigger instance indication
+SUBDIRS = property associator method instance indication
 

@@ -445,11 +445,13 @@ TestIndications()
 		return
 	fi
 
-	#create links to the test trigger providers so they will be loaded
+	#create links to the test indication providers so they will be loaded
 
-	ln -sf $BUILDDIR/test/c++providers/trigger/libtriggertest1.so  \
+	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest1.so  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-	ln -sf $BUILDDIR/test/c++providers/trigger/libtriggertest2.so  \
+	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest2.so  \
+		$STAGEDIR/$OWPKGLIBDIR/c++providers/
+	ln -sf $BUILDDIR/test/c++providers/indication/libindicationtest3.so  \
 		$STAGEDIR/$OWPKGLIBDIR/c++providers/
 
 	# turn on indications
@@ -480,8 +482,9 @@ TestIndications()
 	echo "Indication Testsuite Passed"
 
 	# turn off indications
-	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libtriggertest1.so 
-	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libtriggertest2.so 
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest1.so 
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest2.so 
+	rm -f $STAGEDIR/$OWPKGLIBDIR/c++providers/libindicationtest3.so 
 
 	EditConfig "s!owcimomd.disable_indications = .*!owcimomd.disable_indications = true!g"
 

@@ -9,6 +9,7 @@ cimxmllistener \
  \
 http \
  \
+provider \
 server \
  \
 xml \
@@ -17,7 +18,6 @@ wql \
 authenticators \
 services \
 requesthandlers \
-provider \
 providerifcs \
 providers \
 cimom \

@@ -672,7 +672,6 @@ AC_OUTPUT(./Makefile
 ./test/c++providers/associator/Makefile
 ./test/c++providers/method/Makefile
 ./test/c++providers/property/Makefile
-./test/c++providers/trigger/Makefile
 ./test/c++providers/instance/Makefile
 ./test/c++providers/indication/Makefile
 ./test/npiproviders/Makefile

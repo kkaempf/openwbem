@@ -370,7 +370,9 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 			if (!p)
 			{
 				env->getLogger()->logDebug(format("C++ provider ifc: Libary %1 does not load", libName));
+				continue;
 			}
+
 			OW_CppInstanceProviderIFC* p_ip = p->getInstanceProvider();
 			if (p_ip)
 			{

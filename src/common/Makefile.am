@@ -52,6 +52,7 @@ OW_MemTracer.cpp \
 OW_Mutex.cpp \
 OW_MutexImpl.cpp \
 OW_NoSuchPropertyException.cpp \
+OW_NoSuchProviderException.cpp \
 OW_NULLValueException.cpp \
 OW_OutOfBoundsException.cpp \
 OW_PosixFile.cpp \
@@ -152,6 +153,7 @@ OW_dlSharedLibrary.hpp \
 OW_dlSharedLibraryLoader.hpp \
 OW_SharedLibraryReference.hpp \
 OW_NoSuchPropertyException.hpp \
+OW_NoSuchProviderException.hpp \
 OW_NULLValueException.hpp \
 OW_config.h
 
