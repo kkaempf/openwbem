@@ -83,14 +83,14 @@
 
 	} // end namespace OpenWBEM
 
-#elif defined(OW_USE_WIN32_THREADS)
+#elif defined(OW_WIN32)
 
 	#include <Windows.h>
 
 	namespace OpenWBEM
 	{
 		// Platform specific thread type
-		typedef HANDLE Thread_t;
+		typedef DWORD Thread_t;
 		typedef HANDLE NativeMutex_t;
 		typedef HANDLE NonRecursiveMutex_t;
 		typedef LPCRITICAL_SECTION Mutex_t;

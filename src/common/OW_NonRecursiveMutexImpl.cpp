@@ -64,7 +64,7 @@ createMutex(NonRecursiveMutex_t& handle)
 		return -1;
  
 	return 0;
-#elif defined(OW_USE_WIN32_THREADS)
+#elif defined(OW_WIN32)
 	int cc = -1;
 	__try
 	{
@@ -105,7 +105,7 @@ destroyMutex(NonRecursiveMutex_t& handle)
 			return -2;
 	}
 	return 0;
-#elif defined (OW_USE_WIN32_THREADS)
+#elif defined (OW_WIN32)
 	int cc;
 	__try
 	{
@@ -136,7 +136,7 @@ acquireMutex(NonRecursiveMutex_t& handle)
 	int res = pthread_mutex_lock(&handle.mutex);
 	assert(res == 0);
 	return res;
-#elif defined (OW_USE_WIN32_THREADS)
+#elif defined (OW_WIN32)
 	int cc = -1;
 	__try
 	{
@@ -167,7 +167,7 @@ releaseMutex(NonRecursiveMutex_t& handle)
 	assert(res == 0);
 	return res;
  
-#elif defined (OW_USE_WIN32_THREADS)
+#elif defined (OW_WIN32)
 	int cc = -1;
 	__try
 	{
@@ -189,7 +189,7 @@ releaseMutex(NonRecursiveMutex_t& handle)
 int
 conditionPreWait(NonRecursiveMutex_t& handle, NonRecursiveMutexLockState& state)
 {
-#if defined (OW_USE_WIN32_THREADS)
+#if defined (OW_WIN32)
 	state.pmutex = &handle;
 #else
 	state.pmutex = &handle.mutex;

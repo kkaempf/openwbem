@@ -102,7 +102,7 @@ Condition::doTimedWait(NonRecursiveMutex& mutex, UInt32 sTimeout, UInt32 usTimeo
 	ret = res != ETIMEDOUT;
 	return ret;
 }
-#elif defined (OW_USE_WIN32_THREADS)
+#elif defined (OW_WIN32)
 /////////////////////////////////////////////////////////////////////////////
 Condition::Condition()
 	: m_condition(new ConditionInfo_t)

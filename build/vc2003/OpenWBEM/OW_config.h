@@ -1,8 +1,10 @@
 /* NOT automatically generated for windows */
 #ifndef __SRC_COMMON_OW_CONFIG_H
 #define __SRC_COMMON_OW_CONFIG_H 1
- 
 
+#if !defined(_MT)
+#error The multithreaded C run-time library is required!
+#endif
 
 /* The system has OpenSSL headers and libs */
 #ifndef OW_HAVE_OPENSSL 
@@ -68,6 +70,7 @@
 #define OW_WIN32  1 
 #endif
 
+// Shouldn't be looking at this. OW_WIN32 is enough
 #ifndef OW_USE_WIN32_THREADS
 #define OW_USE_WIN32_THREADS  1
 #endif

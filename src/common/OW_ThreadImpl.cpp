@@ -39,6 +39,10 @@
 #include "OW_Thread.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Format.hpp"
+#if defined(OW_WIN32)
+#include "OW_Map.hpp"
+#include "OW_MutexLock.hpp"
+#endif
 #include <cassert>
 #include <cstring>
 #include <cstddef>
@@ -48,15 +52,23 @@ extern "C"
 #ifdef OW_HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
+
 #include <sys/types.h>
+
 #ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
 #include <errno.h>
 #include <signal.h>
+
 #ifdef OW_USE_PTHREAD
 #include <pthread.h>
 #include <limits.h> // for PTHREAD_KEYS_MAX
+#endif
+
+#ifdef OW_WIN32
+#include <process.h>
 #endif
 }
 
@@ -64,6 +76,7 @@ namespace OpenWBEM
 {
 
 namespace ThreadImpl {
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
@@ -113,13 +126,13 @@ yield()
 #if defined(OW_HAVE_SCHED_YIELD)
 	sched_yield();
 #elif defined(OW_WIN32)
-	Sleep(0);
+	::SwitchToThread();
 #else
 	ThreadImpl::sleep(1);
 #endif
 }
 
-#ifdef OW_USE_PTHREAD
+#if defined(OW_USE_PTHREAD)
 namespace {
 struct LocalThreadParm
 {
@@ -332,26 +345,113 @@ void cancel(Thread_t threadID)
 }
 #endif // #ifdef OW_USE_PTHREAD
 
-#ifdef OW_WIN32
+#if defined(OW_WIN32)
+
+
+namespace {
+
+typedef Map<DWORD, HANDLE> Win32ThreadMap;
+Win32ThreadMap g_threads;
+Mutex g_threadsGuard;
+
+struct LocalThreadParm
+{
+	ThreadFunction m_func;
+	void* m_funcParm;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+extern "C" {
+unsigned __stdcall threadStarter(void* arg)
+{
+	LocalThreadParm* parg = reinterpret_cast<LocalThreadParm*>(arg);
+	ThreadFunction func = parg->m_func;
+	void* funcParm = parg->m_funcParm;
+	delete parg;
+	Int32 rval = (*func)(funcParm);
+	::_endthreadex(static_cast<unsigned>(rval));
+	return rval;
+}
+}	// End extern "C"
+
+//////////////////////////////////////////////////////////////////////////////
+void
+addThreadToMap(DWORD threadId, HANDLE threadHandle)
+{
+	MutexLock ml(g_threadsGuard);
+	g_threads[threadId] = threadHandle;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+HANDLE
+getThreadHandle(DWORD threadId)
+{
+	MutexLock ml(g_threadsGuard);
+	HANDLE chdl = 0;
+	Win32ThreadMap::iterator it = g_threads.find(threadId);
+	if(it != g_threads.end())
+	{
+		chdl = it->second;
+	}
+	return chdl;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+HANDLE
+removeThreadFromMap(DWORD threadId)
+{
+	MutexLock ml(g_threadsGuard);
+	HANDLE chdl = 0;
+	Win32ThreadMap::iterator it = g_threads.find(threadId);
+	if(it != g_threads.end())
+	{
+		chdl = it->second;
+		g_threads.erase(it);
+	}
+	return chdl;
+}
+
+}	// End unnamed namespace
+
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
 createThread(Thread_t& handle, ThreadFunction func,
 	void* funcParm, UInt32 threadFlags)
 {
-	return 0;
+	int cc = -1;
+	HANDLE hThread;
+	unsigned threadId;
+
+	LocalThreadParm* parg = new LocalThreadParm;
+	parg->m_func = func;
+	parg->m_funcParm = funcParm;
+	hThread = reinterpret_cast<HANDLE>(::_beginthreadex(NULL, 0, threadStarter,
+		parg, 0, &threadId));
+	if(hThread != 0)
+	{
+		addThreadToMap(threadId, hThread);
+	}
+
+	return cc;
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
 exitThread(Thread_t&, Int32 rval)
 {
+	::_endthreadex(static_cast<unsigned>(rval));
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
-destroyThread(Thread_t& )
+destroyThread(Thread_t& threadId)
 {
+	HANDLE thdl = removeThreadFromMap(threadId);
+	if(thdl != 0)
+	{
+		::CloseHandle(thdl);
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -364,27 +464,51 @@ setThreadDetached(Thread_t& handle)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-joinThread(Thread_t& handle, Int32& rval)
+joinThread(Thread_t& threadId, Int32& rvalArg)
 {
+	int cc = -1;
+	DWORD rval;
+	HANDLE thdl = getThreadHandle(threadId);
+	if(thdl != 0)
+	{
+		if(::WaitForSingleObject(thdl, INFINITE) != WAIT_FAILED)
+		{
+			if(::GetExitCodeThread(thdl, &rval) != 0)
+			{
+				rvalArg = static_cast<Int32>(rval);
+				cc = 0;
+			}
+		}
+	}
 	return 0;
 }
+
 //////////////////////////////////////////////////////////////////////
 void
 testCancel()
 {
+	// ATTN?
 }
 //////////////////////////////////////////////////////////////////////
 void saveThreadInTLS(void* pTheThread)
 {
+	// ATTN?
 }
 //////////////////////////////////////////////////////////////////////
 void sendSignalToThread(Thread_t threadID, int signo)
 {
+	// ATTN?
 }
 //////////////////////////////////////////////////////////////////////
-void cancel(Thread_t threadID)
+void cancel(Thread_t threadId)
 {
+	HANDLE thdl = removeThreadFromMap(threadId);
+	if(thdl != 0)
+	{
+		::TerminateThread(thdl, -1);
+	}
 }
+
 #endif // #ifdef OW_WIN32
 } // end namespace OW_ThreadImpl
 

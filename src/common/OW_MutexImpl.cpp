@@ -82,7 +82,7 @@ createMutex(Mutex_t& handle)
 	handle.count = 0;
 #endif
 	return 0;
-#elif defined (OW_USE_WIN32_THREADS)
+#elif defined (OW_WIN32)
 	int cc = 0;
 	__try
 	{
@@ -128,7 +128,7 @@ destroyMutex(Mutex_t& handle)
 	assert(res == 0);
 #endif
 	return res;
-#elif defined(OW_USE_WIN32_THREADS)
+#elif defined(OW_WIN32)
 	int cc = 0;
 	__try
 	{
@@ -180,7 +180,7 @@ acquireMutex(Mutex_t& handle)
 	assert(res == 0);
 #endif
 	return res;
-#elif defined(OW_USE_WIN32_THREADS)
+#elif defined(OW_WIN32)
 	int cc = 0;
 	__try
 	{
@@ -235,7 +235,7 @@ releaseMutex(Mutex_t& handle)
 	assert(res == 0);
 	return res;
 #endif
-#elif defined (OW_USE_WIN32_THREADS)
+#elif defined (OW_WIN32)
 	int cc = 0;
 	__try
 	{

@@ -256,11 +256,13 @@ Thread::cooperativeCancel()
 {
 	if (!isRunning())
 		return;
+
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
 	NonRecursiveMutexLock l(m_cancelLock);
 	m_cancelRequested = true;
-#ifndef OW_WIN32
+
+#if !defined(OW_WIN32)
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
 	// SIGUSR1 is ignored.  It's set to SIG_IGN in ThreadImpl.cpp
 	// If the thread has already exited, an ThreadException will be thrown
@@ -280,11 +282,13 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 {
 	if (!isRunning())
 		return true;
+
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
 	NonRecursiveMutexLock l(m_cancelLock);
 	m_cancelRequested = true;
-#ifndef OW_WIN32
+
+#if !defined(OW_WIN32)
 	// send a SIGUSR1 to the thread to break it out of any blocking syscall.
 	// SIGUSR1 is ignored.  It's set to SIG_IGN in ThreadImpl.cpp
 	// If the thread has already exited, an ThreadException will be thrown
@@ -297,6 +301,7 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 	{
 	}
 #endif
+
 	while (!m_cancelled && isRunning())
 	{
 		if (!m_cancelCond.timedWait(l, waitForCooperativeSecs, 0))
@@ -317,7 +322,8 @@ Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 void
 Thread::cancel()
 {
-	// Ignore errors from ThreadImpl (usually caused by the fact that the thread has already exited)
+	// Ignore errors from ThreadImpl (usually caused by the fact that the thread
+	// has already exited)
 	try
 	{
 		ThreadImpl::cancel(m_id);

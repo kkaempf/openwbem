@@ -105,12 +105,13 @@ namespace ThreadImpl
 	 */
 	inline Thread_t currentThread()
 	{
-	#if defined(OW_WIN32)
-		return GetCurrentThread();
-	#else
+#if defined(OW_WIN32)
+		return GetCurrentThreadId();
+#else
 		return pthread_self();
-	#endif
+#endif
 	}
+
 	/**
 	 * Set a thread that was previously in the joinable state to a detached
 	 * state. This will allow the threads resources to be released upon
