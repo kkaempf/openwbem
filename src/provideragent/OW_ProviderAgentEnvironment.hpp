@@ -43,7 +43,7 @@
 #include "OW_AuthenticatorIFC.hpp"
 #include "OW_Map.hpp"
 #include "OW_ClientCIMOMHandleConnectionPool.hpp"
-
+#include "OW_Cache.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
 
 namespace OpenWBEM
@@ -103,16 +103,6 @@ public:
 		EBypassProvidersFlag /*bypassProviders*/); 
 	virtual LoggerRef getLogger() const; 
 
-	class ClassCache
-	{
-	public: 
-		ClassCache(); 
-		CIMClass getClass(const String& key)const; 
-		void addClass(const String& key, const CIMClass& cc); 
-	private: 
-		mutable Mutex m_guard; 
-		Map<String, CIMClass> m_classes; 
-	};
 private:
 	ConfigFile::ConfigMap m_configItems;
 	Reference<AuthenticatorIFC> m_authenticator;
@@ -126,7 +116,7 @@ private:
 	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
 	// TODO Refactor me.  ProviderAgentCIMOMHandles get a reference
 	// (&, not Reference) to m_cimClasses, and modify it. 
-	ClassCache m_cimClasses; 
+	Cache<CIMClass> m_cimClasses; 
 	LockingType m_lockingType; 
 	UInt32 m_lockingTimeout; 
 	ClassRetrievalFlag m_classRetrieval; 

@@ -65,7 +65,7 @@ ProviderAgentCIMOMHandle::ProviderAgentCIMOMHandle(Map<String, CppProviderBaseIF
 												   Map<String, CppProviderBaseIFCRef> instProvs, 
 												   Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
 												   Map<String, CppProviderBaseIFCRef> methodProvs, 
-												   ProviderAgentEnvironment::ClassCache& cimClasses, 
+												   Cache<CIMClass>& cimClasses, 
 												   ProviderEnvironmentIFCRef env, 
 												   ProviderAgentEnvironment::LockingType lt, 
 												   ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
@@ -779,12 +779,12 @@ ProviderAgentCIMOMHandle::helperGetClass(const String& ns,
 	String lns = ns; 
 	lns.toLowerCase(); 
 	String key = lns + ":" + lcn; 
-	rval = m_cimClasses.getClass(key); 
+	rval = m_cimClasses.getFromCache(key); 
 	if (rval)
 	{
 		return rval; 
 	}
-	rval = m_cimClasses.getClass(lcn); 
+	rval = m_cimClasses.getFromCache(lcn); 
 	if (rval)
 	{
 		return rval; 
@@ -797,7 +797,7 @@ ProviderAgentCIMOMHandle::helperGetClass(const String& ns,
 			rval = ch->getClass(ns, className); 
 			if (rval)
 			{
-				m_cimClasses.addClass(key,rval); 
+				m_cimClasses.addToCache(rval,key); 
 			}
 		}
 	}

@@ -60,7 +60,7 @@ public:
 							 Map<String, CppProviderBaseIFCRef> instProvs, 
 							 Map<String, CppProviderBaseIFCRef> secondaryInstProvs, 
 							 Map<String, CppProviderBaseIFCRef> methodProvs, 
-							 ProviderAgentEnvironment::ClassCache& cimClasses, 
+							 Cache<CIMClass>& cimClasses, 
 							 ProviderEnvironmentIFCRef env,
 							 ProviderAgentEnvironment::LockingType lt, 
 							 ProviderAgentEnvironment::ClassRetrievalFlag classRetrieval, 
@@ -726,7 +726,7 @@ private:
 	Map<String, CppProviderBaseIFCRef> m_instProvs; 
 	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
 	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
-	ProviderAgentEnvironment::ClassCache& m_cimClasses; 
+	Cache<CIMClass>& m_cimClasses; 
 	ProviderEnvironmentIFCRef m_PAEnv; 
 	PALockerRef m_locker; 
 	ProviderAgentEnvironment::ClassRetrievalFlag m_classRetrieval; 

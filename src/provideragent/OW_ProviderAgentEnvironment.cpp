@@ -83,7 +83,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 	{
 		String key = iter->getName(); 
 		key.toLowerCase(); 
-		m_cimClasses.addClass(key, *iter); 
+		m_cimClasses.addToCache(*iter, key); 
 	}
 
 	for (Array<CppProviderBaseIFCRef>::const_iterator iter = providers.begin(); 
@@ -351,34 +351,6 @@ ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-ProviderAgentEnvironment::ClassCache::ClassCache()
-	: m_guard()
-	, m_classes()
-{
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMClass
-ProviderAgentEnvironment::ClassCache::getClass(const String& key) const
-{
-	CIMClass rval(CIMNULL); 
-	{
-		MutexLock ml(m_guard); 
-		Map<String, CIMClass>::const_iterator iter = m_classes.find(key); 
-		if (iter != m_classes.end())
-		{
-			rval = iter->second; 
-		}
-	}
-	return rval; 
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentEnvironment::ClassCache::addClass(const String& key, 
-											   const CIMClass& cc)
-{
-	MutexLock ml(m_guard); 
-	m_classes[key] = cc; 
-}
 //////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OpenWBEM
