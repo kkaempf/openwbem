@@ -1,0 +1,184 @@
+key						data (all to be written via writeObject())
+ns/qualifier name		OW_CIMQualifier getQualifier, setQualifier, deleteQualifier
+ns/class name			OW_CIMClass getClass, createClass, modifyClass, deleteClasss
+ns/class name			multi-valued list of subclasses OW_String enumClasses, enumClassNames
+ns						multi-valued list of root classes OW_String enumClasses, enumClassNames
+ns						multi-valued list of qualifiers OW_CIMQualifier enumQualifiers
+?						multi-valued list of namespaces OW_String enumNamespaces, createNamespace, deleteNamespace
+assoc key				OW_AssocDbEntry (possibly re-do this to be multi-valued) associators, associatorNames, references, referenceNames
+ns/class name			multi-valued list of instance names OW_CIMObjectPath enumInstanceNames
+ns/instance name		OW_CIMInstance getInstance
+
+
+---  Schema version  ----
+create table Schema (
+	version     text not null,
+	description text unique not null,
+	flags       text
+);
+
+flags can contain a , delimited list of options.
+"deflate" indicates the data is compressed using zlib deflate compression.
+"xml" indicates the data is in CIM/XML, otherwise it's OW binary format
+
+---  Namespaces  ---
+create table Namespaces (
+	name    text not null unique
+);
+
+create index NamespacesIdx on Namespaces (name);
+
+namespace exists:
+	select count(*)
+	from Namespaces
+	where name = <Namespace>;
+
+CreateNamespace:
+	insert into Namespaces (name) values (<Namespace>);
+
+DeleteNamespace:
+	delete from QualifierTypes
+	where nsname = <Namespace>;
+	
+	enumerate all root classes and delete each one.
+	
+	delete from Namespaces
+	where name = <Namespace>;
+	
+EnumerateNamespaces:
+	select name from Namespaces;
+
+
+---  Qualifier Types  ---
+create table 'QualifierTypes' (
+	'name'      text not null,
+	'nsname'    text not null,
+	'data'      blob not null
+);
+
+create index QualifierTypesIdx on QualifierTypes (name, nsname);
+
+GetQualifier:
+	select data
+	from QualifierTypes
+	where nsname = <Namespace> and name = <Qual Name>;
+
+CreateQualifier (doesn't really exist, but SetQualifier is a transaction of GetQualifier than either CreateQualifier or ModifyQualifier):
+	insert into QualifierTypes
+	values(<Qual Name>, <Namespace>, <Qual Data>);
+
+ModifyQualifier:
+	update QualifierTypes
+	set data=<New Qual Data>
+	where nsname = <Namespace> and name = <Qual Name>;
+
+DeleteQualifier:
+	delete from QualifierTypes
+	where nsname = <Namespace> and name = <Qual Name>;
+	
+EnumerateQualifiers:
+	select data
+	from QualifierTypes as qt
+	where nsname = <Namespace>;
+	
+
+---  Classes  ---
+create table Classes (
+	cid         integer primary key,
+	name        text not null,
+	nsname      text not null,
+	data        blob not null
+);
+
+create index ClassesIdx on Classes (name, nsname);
+
+create table SuperClasses (
+	subcid       integer not null,
+	supercid     integer not null,
+	depth        integer not null
+);
+
+create index SuperClassesIdx on SuperClasses (subcid, supercid, depth);
+
+GetClass:
+	select data
+	from Classes
+	where nsname = <Namespace> and name = <Class Name>;
+	
+DeleteClass:
+	get all subclasses to recursively delete using EnumerateClassNames - maybe be a bit more efficient?
+	
+	delete from SuperClasses
+	where subcid = (select cid from Classes where nsname = <Namespace> and name = <Class Name>);
+	
+	delete from Classes
+	where nsname = <Namespace> and name = <Class Name>;
+	
+CreateClass:
+	insert into Classes	(name, nsname, data)
+	values(<Class Name>, <Namespace>, <Class Data>);
+	
+  If the class has a superclass:
+	insert into SuperClasses
+	select last_insert_rowid(), supercid, depth+1
+	  from Classes as c, SuperClasses as sc
+	  where c.name = <SuperClass Name> and SuperClasses.subcid = c.cid and nsname = <Namespace>
+	union all
+	select last_insert_rowid(), cid, 1
+	  from Classes
+	  where name = <SuperClass Name> and nsname = <Namespace>;
+
+
+ModifyClass:
+	update Classes
+	set data=<New Class Data>
+	where nsname = <Namespace> and name = <Class Name>;
+
+EnumerateClasses - ClassName=NULL, DeepInheritance=true - i.e. all classes:
+	select data
+	from Classes
+	where nsname = <Namespace>;
+	
+EnumerateClasses - ClassName=NULL, DeepInheritance=false - i.e. all root classes:
+	select data
+	from Classes
+	where nsname = <Namespace> and cid not in (select subcid from SuperClasses);
+	
+EnumerateClasses - ClassName=<name>, DeepInheritance=true - i.e. all classes derived from ClassName:
+	select c.data
+	from Classes as c, SuperClasses as sc
+	where c.cid = sc.subcid and sc.supercid in
+	(select cid from Classes where nsname = <Namespace> and name = <ClassName>);
+	
+EnumerateClasses - ClassName=<name>, DeepInheritance=false - i.e. classes directly derived from ClassName:
+	select c.data
+	from Classes as c, SuperClasses as sc
+	where c.cid = sc.subcid and sc.supercid in
+	(select cid from Classes where nsname = <Namespace> and name = <ClassName>)
+	and sc.depth = 1
+	
+EnumerateClassNames - ClassName=NULL, DeepInheritance=true - i.e. all classes:
+	select name
+	from Classes
+	where nsname = <Namespace>;
+	
+EnumerateClassNames - ClassName=NULL, DeepInheritance=false - i.e. all root classes:
+	select name
+	from Classes
+	where nsname = <Namespace> and cid not in (select subcid from SuperClasses);
+	
+EnumerateClassNames - ClassName=<name>, DeepInheritance=true - i.e. all classes derived from ClassName:
+	select c.name
+	from Classes as c, SuperClasses as sc
+	where c.cid = sc.subcid and sc.supercid in
+	(select cid from Classes where nsname = <Namespace> and name = <ClassName>);
+	
+EnumerateClassNames - ClassName=<name>, DeepInheritance=false - i.e. classes directly derived from ClassName:
+	select c.name
+	from Classes as c, SuperClasses as sc
+	where c.cid = sc.subcid and sc.supercid in
+	(select cid from Classes where nsname = <Namespace> and name = <ClassName>)
+	and sc.depth = 1
+	
+
+
