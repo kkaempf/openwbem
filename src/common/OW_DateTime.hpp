@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Center 7, Inc All rights reserved.
+* Copyright (C) 2001-3 Center 7, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -30,6 +30,8 @@
 #ifndef OW_DATETIME_HPP_INCLUDE_GUARD_
 #define OW_DATETIME_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_Exception.hpp"
+#include "OW_Types.hpp"
 
 extern "C"
 {
@@ -41,30 +43,72 @@ namespace OpenWBEM
 
 class String;
 
+OW_DECLARE_EXCEPTION(DateTime)
+
 /**
  * The DateTime class is an abstraction for date time data.
  * It allows easy date/time adjustment, date/time arithmetic and
  * comparison.
+ * All functions which operate on a time_t are based on seconds since the Epoch,
+ * and the timezone is irrelevant.
+ * DateTime cannot represent dates before the Epoch 
+ * (00:00:00 UTC, January 1, 1970), and the upper limit is system dependent.
+ * On a system where time_t is 32-bits, the latest date that can be
+ * represented is Mon Jan 18 20:14:07 2038.  If time_t is 64-bits, then it's
+ * a date so far in the future, that the sun will probably turn into a black
+ * hole before then. (About 500 billion years.)
+ * If an invalid time is created, then get() will return time_t(-1), and the
+ * DateTime represented will be 1 second before the Epoch (23:59:59 UTC, 
+ * December 31, 1969)
+ *
+ * This class implementation relies on the global variable timezone 
+ * (from time.h) which reflects the system's timezone.
  */
 class DateTime
 {
 public:
 	/**
-	 * Create a new DateTime object that represents a 0 length interval.
+	 * The values of this enum are passed to various functions to as a
+	 * flag to indicate the timezone context desired.
+	 * E_LOCAL_TIME means the operation will apply the local system
+	 *  timezone (which may include an offset for daylight saving time).
+	 * E_UTC_TIME means the operation will apply to UTC (or GMT) time.
+	 */
+	enum ETimeOffset
+	{
+		E_LOCAL_TIME,
+		E_UTC_TIME
+	};
+
+	/**
+	 * Create a new DateTime object that represents the Epoch 
+	 * (00:00:00 UTC, January 1, 1970)
 	 */
 	DateTime();
 	/**
-	 * Create a new DateTime object from a string that contains a
-	 * CIM DateTime formated string
-	 * @param str	An String object that contains the CIM DateTime string
+	 * Create a new DateTime object from a string that contains either a
+	 * CIM DateTime formated string (e.g. "19980525133015.000000-300")
+	 * or a ctime() formatted string (e.g. "Wed Jun 30 21:49:08 1993")
+	 * Note that DateTime cannot hold an interval, so you cannot construct
+	 * one from an CIM DateTime interval.
+	 * If str is a CIM DateTime, the timezone is part of the string and
+	 * will be honored.
+	 * Otherwise, if str is a ctime() formatted string, the current C
+	 * timezone will be used.
+	 *
+	 * @param str	An String object that contains the DateTime string
+	 * @throws DateTimeException if str does not contain a valid DateTime
 	 */
-	DateTime(const String& str);
+	explicit DateTime(const String& str);
 	/**
 	 * Create a DateTime object that represents the given time.
 	 *
 	 * @param t      The epoch time that this DateTime object will respresent
+	 * @param microseconds The microsecond component of the time.
+	 *  This is the number of seconds since the Epoch, and should not be
+	 *  adjusted for time zone.
 	 */
-	DateTime(time_t t);
+	explicit DateTime(time_t t, UInt32 microseconds=0);
 	/**
 	 * Create a new DateTime object that represent the given date and time
 	 *
@@ -74,54 +118,67 @@ public:
 	 * @param hour   The hour component of the time
 	 * @param minute The minute component of the time.
 	 * @param second The second component of the time.
+	 * @param microsecond The microsecond component of the time.
 	 */
 	DateTime(int year, int month, int day, int hour=0, int minute=0,
-		int second=0);
+		int second=0, UInt32 microsecond=0, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Destructor
 	 */
 	~DateTime();
 	/**
-	 * @return true if this DateTime represents an interval.
-	 */
-	bool isInterval() const {  return m_isInterval; }
-	/**
 	 * Get the hour of the day for this DateTime object 0-23
 	 *
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return
 	 */
-	int getHour() const;
+	int getHour(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
 	 * Get the minute of the hour for this DateTime object 0-59
 	 *
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return
 	 */
-	int getMinute() const;
+	int getMinute(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
-	 * Get the second of the minute for this DateTime object 0-59
+	 * Get the second of the minute for this DateTime object normally in
+	 * the range 0-59, but can be up to 60 to allow for leap seconds.
+	 *
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @return
+	 */
+	int getSecond(ETimeOffset timeOffset = E_LOCAL_TIME) const;
+	/**
+	 * Get the microsecond of the second for this DateTime object.
+	 * In the range 0-999999.  There are 1 million (1000000) microseconds 
+	 * per second.
 	 *
 	 * @return
 	 */
-	int getSecond() const;
+	UInt32 getMicrosecond() const;
 	/**
 	 * Get the day of the month (1-31)
 	 *
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return
 	 */
-	int getDay() const;
+	int getDay(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return The day of the week for the date represented by this object. This
 	 * will be a value in the range 0-6.
 	 */
-	int getDow() const;
+	int getDow(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return The month of the year. This will be a value in the range 1-12.
 	 */
-	int getMonth() const;
+	int getMonth(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return The year. This value will include the century (e.g. 2001).
 	 */
-	int getYear() const;
+	int getYear(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
 	 * @return The number of seconds since Jan 1, 1970.
 	 */
@@ -129,49 +186,63 @@ public:
 	/**
 	 * Set the hour component of this DateTime object.
 	 * @param hour The new hour for this DateTime object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setHour(int hour);
+	void setHour(int hour, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the minute component of this DateTime object.
 	 * @param minute The new minute for this DateTime object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setMinute(int minute);
+	void setMinute(int minute, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the second component of this DateTime object.
 	 * @param second The new second for this DateTime object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setSecond(int second);
+	void setSecond(int second, ETimeOffset timeOffset = E_LOCAL_TIME);
+	/**
+	 * Set the microsecond component of this DateTime object.
+	 * @param microsecond The new microsecond for this DateTime object.
+	 *  Acceptable range is 0-999999
+	 */
+	void setMicrosecond(UInt32 microsecond);
 	/**
 	 * Set the time component of this DateTime object.
 	 * @param hour The hour component of the time.
 	 * @param minute The minute component of the time.
 	 * @param second The second component of the time.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setTime(int hour, int minute, int second);
+	void setTime(int hour, int minute, int second, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the day component of this DateTime object.
 	 * @param day The new day for this DateTime object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setDay(int day);
+	void setDay(int day, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the month component of this DateTime object.
 	 * @param month The new month for this DateTime object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setMonth(int month);
+	void setMonth(int month, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set the year component of this DateTime object.
 	 * @param year The new year for this DateTime object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void setYear(int year);
+	void setYear(int year, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set this DateTime object with a time_t value.
 	 * @param t A time_t value that represents the number of seconds from
 	 *		Jan 1, 1970.
+	 * @param microseconds The microsecond component of the time.
 	 */
-	void set(time_t t)
+	void set(time_t t, UInt32 microseconds=0)
 	{
 		m_time = t;
-		m_isInterval = false;
+		m_microseconds = microseconds;
 	}
 	/**
 	 * Set the date and time for this DateTime.
@@ -181,8 +252,9 @@ public:
 	 * @param hour The new hour component for this object.
 	 * @param minute The new minute component for this object.
 	 * @param second The new second component for this object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 */
-	void set(int year, int month, int day, int hour, int minute, int second);
+	void set(int year, int month, int day, int hour, int minute, int second, UInt32 microseconds, ETimeOffset timeOffset = E_LOCAL_TIME);
 	/**
 	 * Set this DateTime to the current system time.
 	 */
@@ -238,6 +310,10 @@ public:
 	 */
 	bool operator< ( const DateTime& tm ) const
 	{
+		if (m_time == tm.m_time)
+		{
+			return m_microseconds < tm.m_microseconds;
+		}
 		return m_time < tm.m_time;
 	}
 	/**
@@ -247,7 +323,7 @@ public:
 	 */
 	bool operator> ( const DateTime& tm ) const
 	{
-		return m_time > tm.m_time;
+		return tm < *this;
 	}
 	/**
 	 * Equality operator
@@ -256,7 +332,7 @@ public:
 	 */
 	bool operator== ( const DateTime& tm ) const
 	{
-		return m_time == tm.m_time;
+		return m_time == tm.m_time && m_microseconds == tm.m_microseconds;
 	}
 	/**
 	 * Inequality operator
@@ -265,7 +341,7 @@ public:
 	 */
 	bool operator!= ( const DateTime& tm ) const
 	{
-		return m_time != tm.m_time;
+		return !(*this == tm);
 	}
 	/**
 	 * Less than or equal operator
@@ -275,7 +351,7 @@ public:
 	 */
 	bool operator<= ( const DateTime& tm ) const
 	{
-		return m_time <= tm.m_time;
+		return !(tm < *this);
 	}
 	/**
 	 * Greate than or equal operator
@@ -285,7 +361,7 @@ public:
 	 */
 	bool operator>= ( const DateTime& tm ) const
 	{
-		return m_time >= tm.m_time;
+		return !(*this < tm);
 	}
 	/**
 	 * Add a given number of seconds to this DateTime object.
@@ -308,28 +384,22 @@ public:
 		return *this;
 	}
 	/**
-	 * Assignment operator
-	 * @param tm The DateTime object to assign to this one.
-	 * @return A reference to this object.
+	 * @param timeOffset Indicates whether to use the local timezone or UTC
+	 * @return The string representation of this DateTime object.  The format
+	 * is like "Wed Jun 30 21:49:08 1993\n" as returned by ctime().
 	 */
-	DateTime& operator= (const DateTime& tm)
-	{
-		m_time = tm.m_time;
-		return *this;
-	}
+	String toString(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
-	 * @return The string representation of this DateTime object.
-	 */
-	String toString() const;
-	/**
-	 * @return The string representation of this DateTime object adjust to
-	 * GMT.
+	 * This is the same as toString(E_UTC_TIME).  This function is 
+	 * deprecated and exists for backward compatibility purposes.
 	 */
 	String toStringGMT() const;
+
 private:
 	time_t	m_time;
-	bool	m_isInterval;
-	tm getTm() const;
+	UInt32	m_microseconds;
+	tm getTm(ETimeOffset timeOffset) const;
+	void setTime(tm& tmarg, ETimeOffset timeOffset);
 };
 
 } // end namespace OpenWBEM

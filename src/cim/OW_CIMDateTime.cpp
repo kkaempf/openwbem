@@ -104,7 +104,7 @@ CIMDateTime::CIMDateTime(const DateTime& arg) :
 	m_dptr->m_hours = arg.getHour();
 	m_dptr->m_minutes = arg.getMinute();
 	m_dptr->m_seconds = arg.getSecond();
-	m_dptr->m_isInterval = arg.isInterval();
+	m_dptr->m_isInterval = 0;
 	m_dptr->m_microSeconds = 0;
 	m_dptr->m_utc = getGMTOffset();
 }

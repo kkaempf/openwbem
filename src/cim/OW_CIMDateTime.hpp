@@ -62,15 +62,18 @@ class DateTime;
  *
  *	Where
  *
- *	    yyyy = year (0-1999)
- *	    mm = month (1-12)
- *	    dd = day (1-31)
- *	    hh = hour (0-23)
- *	    mm = minute (0-59)
- *	    ss = second (0-59)
+ *	    yyyy = year (00000-9999)
+ *	    mm = month (01-12)
+ *	    dd = day (01-31)
+ *	    hh = hour (00-23)
+ *	    mm = minute (00-59)
+ *	    ss = second (00-60) normally 59, but a leap second may be present
  *	    mmmmmm = microseconds.
  *	    s = '+' or '-' to represent the UTC sign.
- *	    utc = UTC offset (same as GMT offset).
+ *	    utc = UTC offset (same as GMT offset).  
+ *                utc is the offset from UTC in minutes. It's worth noting that
+ *                when daylight saving time is in effect, the utc will be
+ *                different then when it's not.
  *
  *	An interval has the following form:
  *
@@ -91,6 +94,10 @@ class DateTime;
  *	end time (as one expects when speaking about an interval). It is
  *	better to think of an interval as specifying time elapsed since
  *	some event.
+ *
+ *	Values must be zero-padded so that the entire string is always the 
+ *	same 25-character length. Fields which are not significant must be 
+ *	replaced with asterisk characters.
  *
  *	DateTime objects are constructed from C character strings or from
  *	other DateTime objects. These character strings must be exactly
