@@ -156,6 +156,10 @@ OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
 	{
 		ck = OW_ROOT_CONTAINER;
 	}
+	while (!ck.empty() && ck[0] == '/')
+	{
+		ck = ck.substring(1);
+	}
 
 	OW_HDBNode node = hdl->getNode(ck.toLowerCase());
 	if(node)

@@ -122,8 +122,8 @@ OW_WQLFilterRep::deleteQualifierType(const OW_String& /*ns*/, const OW_String& /
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::createClass(const OW_CIMObjectPath &/*path*/,
-	OW_CIMClass &/*cimClass*/, const OW_ACLInfo& /*aclInfo*/)
+OW_WQLFilterRep::createClass(const OW_String &/*path*/,
+	const OW_CIMClass &/*cimClass*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");

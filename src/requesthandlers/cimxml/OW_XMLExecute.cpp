@@ -718,8 +718,9 @@ void OW_XMLExecute::associators(ostream& ostr,
 void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
 	parser.mustGetChild();
-	hdl.createClass( path, OW_XMLCIMFactory::createClass(parser) );
+	hdl.createClass( ns, OW_XMLCIMFactory::createClass(parser) );
 }
 
 //////////////////////////////////////////////////////////////////////////////

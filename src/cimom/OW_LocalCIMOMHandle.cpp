@@ -266,12 +266,11 @@ OW_LocalCIMOMHandle::modifyClass(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::createClass(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::createClass(const OW_String& ns,
 	const OW_CIMClass& cc)
 {
 	OW_WriteLock wl = getWriteLock();
-	OW_CIMClass lcc(cc);
-	m_pServer->createClass(name, lcc, m_aclInfo);
+	m_pServer->createClass(ns, cc, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

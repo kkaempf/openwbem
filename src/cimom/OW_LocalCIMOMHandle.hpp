@@ -307,7 +307,7 @@ public:
 	 * @param name	An OW_CIMObjectPath that identifies the CIM class to be added.
 	 * @param cc	The OW_CIMClass to be added
 	 */
-	virtual void createClass(const OW_CIMObjectPath &name,
+	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc);
 
 	/**

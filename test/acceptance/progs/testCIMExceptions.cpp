@@ -322,8 +322,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		OW_CIMObjectPath cop("foo", "badNamespace");
-		hdl->createClass(cop, cc);
+		hdl->createClass("badNamespace", cc);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -355,7 +354,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		catch (const OW_CIMException&)
 		{
 		}
-		hdl->createClass(OW_CIMObjectPath(baseClass.getName(), "root/testsuite"), baseClass);
+		hdl->createClass("root/testsuite", baseClass);
 	}
 	catch (const OW_CIMException& e)
 	{
@@ -389,8 +388,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMQualifier assocQual2(assocQual);
 		assocQual2.setValue(OW_CIMValue(false));
 		cc2.addQualifier(assocQual2);
-		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
-		hdl->createClass(cop, cc2);
+		hdl->createClass("root/testsuite", cc2);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -406,8 +404,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
-		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
-		hdl->createClass(cop, cc2);
+		hdl->createClass("root/testsuite", cc2);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -419,8 +416,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		// test adding a class with no keys
 		OW_CIMClass cc2("invalidTestSub");
-		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
-		hdl->createClass(cop, cc2);
+		hdl->createClass("root/testsuite", cc2);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -432,8 +428,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		// test adding a class with no keys
-		OW_CIMObjectPath cop(baseClass.getName(), "root/testsuite");
-		hdl->createClass(cop, baseClass);
+		hdl->createClass("root/testsuite", baseClass);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -446,8 +441,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMClass cc2(baseClass);
 		cc2.setSuperClass("invalid");
-		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
-		hdl->createClass(cop, cc2);
+		hdl->createClass("root/testsuite", cc2);
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -527,7 +521,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMClass cc2("invalidTestSub");
 		cc2.setSuperClass("invalidTestBase");
 		OW_CIMObjectPath cop(cc2.getName(), "root/testsuite");
-		hdl->createClass(cop, cc2);
+		hdl->createClass("root/testsuite", cc2);
 	}
 	catch (const OW_CIMException& e)
 	{

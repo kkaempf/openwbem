@@ -150,8 +150,8 @@ public:
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams, const OW_ACLInfo& aclInfo);
 
-	virtual void createClass(const OW_CIMObjectPath &name,
-		OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
+	virtual void createClass(const OW_String& ns,
+		const OW_CIMClass &cc, const OW_ACLInfo& aclInfo);
 
 	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt, const OW_ACLInfo& aclInfo)

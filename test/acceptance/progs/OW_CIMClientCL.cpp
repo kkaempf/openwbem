@@ -106,7 +106,6 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 
 	try
 	{
-		OW_CIMObjectPath parentPath(name, "root/testsuite");
 		OW_String cqtPath("Key");
 		OW_CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", cqtPath);
 		OW_CIMQualifier cimQualifierKey(cqt);
@@ -163,7 +162,7 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 			cimClass.addProperty(cimProp);
 		}
 
-		hdl.createClass(parentPath, cimClass);
+		hdl.createClass("root/testsuite", cimClass);
 	}
 	catch (OW_CIMException& e)
 	{

@@ -116,7 +116,6 @@ protected:
 
 void createClass(OW_CIMOMHandleIFC& hdl)
 {
-	OW_CIMObjectPath parentPath("EXP_IndicationTestComputerSystem", "root/testsuite");
 	OW_CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", "Key");
 	OW_CIMQualifier cimQualifierKey(cqt);
 	cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
@@ -172,7 +171,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 		cimClass.addProperty(cimProp);
 	}
 
-	hdl.createClass(parentPath, cimClass);
+	hdl.createClass("root/testsuite", cimClass);
 }
 
 

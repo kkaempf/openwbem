@@ -131,10 +131,10 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual void createClass(const OW_CIMObjectPath &path,
-		OW_CIMClass &cimClass, const OW_ACLInfo &aclInfo)
+	virtual void createClass(const OW_String& ns,
+		const OW_CIMClass &cimClass, const OW_ACLInfo &aclInfo)
 	{
-		m_ref->createClass(path, cimClass, aclInfo);
+		m_ref->createClass(ns, cimClass, aclInfo);
 	}
 
 	virtual OW_CIMClass modifyClass(const OW_String &ns,

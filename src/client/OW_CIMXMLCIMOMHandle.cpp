@@ -941,8 +941,8 @@ OW_CIMXMLCIMOMHandle::modifyClass(const OW_String &ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::createClass(const OW_CIMObjectPath& path,
-											 const OW_CIMClass& cc)
+OW_CIMXMLCIMOMHandle::createClass(const OW_String& ns,
+		const OW_CIMClass& cc)
 {
 	static const char* const commandName = "CreateClass";
 
@@ -954,7 +954,7 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_CIMObjectPath& path,
 	ostr << "</IPARAMVALUE>";
 
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
 		ostr.toString());
 }
 

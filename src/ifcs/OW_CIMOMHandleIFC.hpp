@@ -431,7 +431,7 @@ public:
 	 *		namespace.
 	 */
 	virtual void createClass(
-		const OW_CIMObjectPath& className,
+		const OW_String& ns,
 		const OW_CIMClass& cimClass) = 0;
 
 	/**

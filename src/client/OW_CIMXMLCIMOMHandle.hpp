@@ -298,7 +298,7 @@ public:
 	 * @exception OW_CIMException If the CIM class already exists in the
 	 *										namespace.
 	 */
-	virtual void createClass(const OW_CIMObjectPath &name,
+	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc);
 
 	/**

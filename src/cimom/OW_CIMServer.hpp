@@ -225,7 +225,7 @@ public:
 	 *		CIM_ERR_INVALID_SUPERCLASS
 	 *		CIM_ERR_FAILED
 	 */
-	virtual void createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
+	virtual void createClass(const OW_String& ns, const OW_CIMClass& cimClass,
 		const OW_ACLInfo& aclInfo);
 
 	/**

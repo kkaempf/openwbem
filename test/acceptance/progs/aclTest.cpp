@@ -70,7 +70,6 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing createClass() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath parentPath("EXP_BionicComputerSystem2", "/root/acltest");
 		OW_CIMObjectPath cqtPath("Key", "/root/acltest");
 		OW_CIMQualifierType cqt("Key");
 		cqt.setDataType(OW_CIMDataType::BOOLEAN);
@@ -131,7 +130,7 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 		}
 		bionicClass = cimClass;
 
-		hdl.createClass(parentPath, cimClass);
+		hdl.createClass("/root/acltest", cimClass);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

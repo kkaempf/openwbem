@@ -1135,7 +1135,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 	try
 	{
 		MofCompiler::theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
-		m_hdl->createClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace), m_curClass);
+		m_hdl->createClass(m_namespace, m_curClass);
 		MofCompiler::theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
 	}
 	catch (const OW_CIMException& ce)

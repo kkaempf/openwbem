@@ -706,11 +706,11 @@ OW_CIMServer::deleteClass(const OW_String& ns, const OW_String& className,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
+OW_CIMServer::createClass(const OW_String& ns, const OW_CIMClass& cimClass,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to create the class
-	m_accessMgr->checkAccess(OW_AccessMgr::CREATECLASS, path.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::CREATECLASS, ns, aclInfo);
 
 	if(cimClass.getName().equals(OW_CIMClass::NAMESPACECLASS))
 	{
@@ -721,7 +721,6 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 
 	try
 	{
-		OW_String ns = path.getNameSpace();
 		m_env->logDebug(format("Creating class: %1:%2", ns, cimClass.toMOF()));
 		m_mStore.createClass(ns, cimClass);
 		m_iStore.createClass(ns, cimClass);

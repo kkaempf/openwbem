@@ -192,8 +192,8 @@ public:
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't write class object to file.
 	 */
-	virtual void createClass(const OW_CIMObjectPath& path,
-		OW_CIMClass& cimClass, const OW_ACLInfo& aclInfo) = 0;
+	virtual void createClass(const OW_String& ns,
+		const OW_CIMClass& cimClass, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * set a class in the store - note children are not affected

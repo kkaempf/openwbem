@@ -211,21 +211,20 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_String &ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationRepLayerImpl::createClass(const OW_CIMObjectPath& name,
-	OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
+OW_IndicationRepLayerImpl::createClass(const OW_String& ns,
+	const OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass lcc(cc);
-	m_pServer->createClass(name, lcc, aclInfo);
+	m_pServer->createClass(ns, cc, aclInfo);
 	OW_ACLInfo intAclInfo;
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+		OW_CIMClass expCC = m_pServer->getClass(ns,
 			"CIM_ClassCreation", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
-		exportIndication(expInst, name.getNameSpace());
+		exportIndication(expInst, ns);
 	}
 	catch(OW_CIMException&)
 	{
