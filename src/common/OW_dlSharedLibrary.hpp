@@ -33,6 +33,12 @@
 #if defined(OW_USE_DL)
 #include "OW_SharedLibrary.hpp"
 
+#include "OW_Types.h"
+
+#if defined(OW_USE_FAKE_LIBS)
+#include "OW_Map.hpp"
+#endif /* defined(OW_USE_FAKE_LIBS) */
+
 namespace OpenWBEM
 {
 
@@ -43,10 +49,7 @@ namespace OpenWBEM
 class dlSharedLibrary : public SharedLibrary
 {
 public:
-	dlSharedLibrary(void * libhandle, const String& libName)
-		: SharedLibrary(), m_libhandle( libhandle ), m_libName(libName)
-	{
-	}
+	dlSharedLibrary(void * libhandle, const String& libName);
 	virtual ~dlSharedLibrary();
 
 	/** 
@@ -58,6 +61,11 @@ public:
 	 */
 	static int m_call_dlclose;
 
+	/**
+	 * Returns if the given path is a fake library or not.
+	 */
+	static bool isFakeLibrary(const String& library_path);
+  
 protected:
 	/**
 	 * Derived classes have to override this function to implement
@@ -73,6 +81,12 @@ protected:
 private:
 	void* m_libhandle;
 	String m_libName;
+#if defined(OW_USE_FAKE_LIBS)
+	bool m_fakeLibrary;
+	Map<String, String> m_symbolMap;
+
+	void initializeSymbolMap();
+#endif /* defined(OW_USE_FAKE_LIBS) */
 };
 
 } // end namespace OpenWBEM

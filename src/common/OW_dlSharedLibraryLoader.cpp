@@ -43,6 +43,29 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	LoggerRef logger) const
 {
 	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
+	
+	String first_error = dlerror();
+	String second_error;
+
+#if defined(OW_USE_FAKE_LIBS)
+	// This section, if it determines that a library is fake, will attempt
+	// to load NULL (which, on most dlopen platforms should return a handle
+	// to the main executable).  This handle can be used just like any
+	// other, assuming that the main executable was linked with the proper
+	// export flags (--export-dynamic on linux, -bexpall on AIX, etc.).  
+	if( !libhandle )
+	{
+	  if( dlSharedLibrary::isFakeLibrary(filename) )
+	  {
+	    libhandle = dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
+	    
+	    if( !libhandle )
+	    {
+	      second_error = dlerror();
+	    }
+	  }
+	}
+#endif /* defined(OW_USE_FAKE_LIBS) */	
 	if (libhandle)
 	{
 		return SharedLibraryRef( new dlSharedLibrary(libhandle,
@@ -51,10 +74,16 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	else
 	{
 		logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary "
-			"dlopen returned NULL.  Error is: %1", dlerror()));
+			"dlopen returned NULL.  Error is: %1", first_error));
+		if( !second_error.empty() )
+		{
+			logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary (fakelib) "
+				"dlopen returned NULL.  Error is: %1", second_error));		  
+		}
 		return SharedLibraryRef( 0 );
 	}
 }
+
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryLoaderRef 
 SharedLibraryLoader::createSharedLibraryLoader()
