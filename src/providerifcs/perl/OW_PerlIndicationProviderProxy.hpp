@@ -48,31 +48,38 @@ public:
 	}
 
 	virtual void deActivateFilter(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_WQLSelectStatement &filter, 
-		const OW_String &eventType, 
-		const OW_CIMObjectPath &classPath, 
-		bool lastActivation); 
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_WQLSelectStatement& filter, 
+		const OW_String& eventType, 
+		const OW_String& nameSpace,
+		const OW_StringArray& classes, 
+		bool lastActivation
+		); 
 
 	virtual void activateFilter(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_WQLSelectStatement &filter, 
-		const OW_String &eventType, 
-		const OW_CIMObjectPath &classPath, 
-		bool firstActivation);
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_WQLSelectStatement& filter, 
+		const OW_String& eventType, 
+		const OW_String& nameSpace,
+		const OW_StringArray& classes, 
+		bool firstActivation
+		);
 
 	virtual void authorizeFilter(
-		const OW_ProviderEnvironmentIFCRef &env, 
-		const OW_WQLSelectStatement &filter, 
-		const OW_String &eventType, 
-		const OW_CIMObjectPath &classPath, 
-		const OW_String &owner);
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_WQLSelectStatement& filter, 
+		const OW_String& eventType, 
+		const OW_String& nameSpace,
+		const OW_StringArray& classes, 
+		const OW_String& owner
+		);
 
 	virtual int mustPoll(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_WQLSelectStatement& filter, 
 		const OW_String& eventType, 
-		const OW_CIMObjectPath& classPath
+		const OW_String& nameSpace,
+		const OW_StringArray& classes
 		);
 
 private:

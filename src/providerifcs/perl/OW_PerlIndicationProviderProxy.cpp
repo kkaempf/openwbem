@@ -39,10 +39,11 @@
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_PerlIndicationProviderProxy::deActivateFilter(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_WQLSelectStatement &filter, 
-	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_WQLSelectStatement& filter, 
+	const OW_String& eventType, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes, 
 	bool lastActivation)
 {
 	env->getLogger()->logDebug("deactivateFilter");
@@ -56,7 +57,7 @@ OW_PerlIndicationProviderProxy::deActivateFilter(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
+		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
 		CIMObjectPath cop = {&mutablePath};
 
@@ -73,10 +74,11 @@ OW_PerlIndicationProviderProxy::deActivateFilter(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_PerlIndicationProviderProxy::activateFilter(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_WQLSelectStatement &filter, 
-	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_WQLSelectStatement& filter, 
+	const OW_String& eventType, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes, 
 	bool firstActivation)
 {
 	env->getLogger()->logDebug("activateFilter");
@@ -89,7 +91,7 @@ OW_PerlIndicationProviderProxy::activateFilter(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
+		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
 		CIMObjectPath cop = {&mutablePath};
 
@@ -106,11 +108,12 @@ OW_PerlIndicationProviderProxy::activateFilter(
 /////////////////////////////////////////////////////////////////////////////
 void
 OW_PerlIndicationProviderProxy::authorizeFilter(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_WQLSelectStatement &filter, 
-	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
-	const OW_String &owner)
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_WQLSelectStatement& filter, 
+	const OW_String& eventType, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes, 
+	const OW_String& owner)
 {
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
@@ -123,7 +126,7 @@ OW_PerlIndicationProviderProxy::authorizeFilter(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
+		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
 		CIMObjectPath cop = {&mutablePath};
 
@@ -140,10 +143,11 @@ OW_PerlIndicationProviderProxy::authorizeFilter(
 /////////////////////////////////////////////////////////////////////////////
 int
 OW_PerlIndicationProviderProxy::mustPoll(
-	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_WQLSelectStatement &filter, 
-	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath)
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_WQLSelectStatement& filter, 
+	const OW_String& eventType, 
+	const OW_String& nameSpace,
+	const OW_StringArray& classes)
 {
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
@@ -156,7 +160,7 @@ OW_PerlIndicationProviderProxy::mustPoll(
 		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
+		OW_CIMObjectPath mutablePath(classes[0], nameSpace);
 		SelectExp exp = {&mutableFilter};
 		CIMObjectPath cop = {&mutablePath};
 
