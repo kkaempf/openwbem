@@ -185,7 +185,7 @@ public:
 	 * @return The MOF representation of this CIMNameSpace object.
 	 * Currently unimplemented.
 	 */
-	virtual String toMOF() const {  return "UMIMPLEMENTED"; }
+	virtual String toMOF() const;
 private:
 	COWIntrusiveReference<NSData> m_pdata;
 	friend bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs);

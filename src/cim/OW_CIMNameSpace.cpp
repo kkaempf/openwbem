@@ -248,5 +248,12 @@ bool operator<(const CIMNameSpace& lhs, const CIMNameSpace& rhs)
 	return *lhs.m_pdata < *rhs.m_pdata;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+String
+CIMNameSpace::toMOF() const
+{
+	return "UMIMPLEMENTED"; 
+}
+
 } // end namespace OpenWBEM
 
