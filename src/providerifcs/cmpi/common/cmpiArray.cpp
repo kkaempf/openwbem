@@ -83,8 +83,8 @@ static CMPIStatus arraySetElementAt(CMPIArray* eArray, CMPICount pos,
          dta[pos+1].value=*val;
          CMReturn(CMPI_RC_OK);
       }
-      cout<<"--- arraySetElementAt(): CMPI_RC_ERR_TYPE_MISMATCH is "
-         <<(void*)(long)type<<" should be "<<(void*)(long)dta->type<<endl;
+      std::cout<<"--- arraySetElementAt(): CMPI_RC_ERR_TYPE_MISMATCH is "
+         <<(void*)(long)type<<" should be "<<(void*)(long)dta->type<<std::endl;
       CMReturn(CMPI_RC_ERR_TYPE_MISMATCH);
    }
    CMReturn(CMPI_RC_ERR_NOT_FOUND);
