@@ -269,5 +269,5 @@ OW_LaptopBattery::createLaptopBatInst(const OW_CIMClass& cc)
 
 
 
-OW_PROVIDERFACTORY(OW_LaptopBattery)
+OW_PROVIDERFACTORY(OW_LaptopBattery, laptopbat)
 

@@ -45,7 +45,6 @@
 #include "OW_ServiceIFC.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_URL.hpp"
-#include "OW_CIMOMLocatorSLP.hpp"
 #include <ctime>
 
 class OW_ServerSocket;
@@ -54,40 +53,6 @@ class OW_HTTPSvrConnection;
 class OW_DigestAuthentication;
 class OW_HTTPServer;
 
-#ifdef OW_HAVE_SLP_H
-class HTTPSlpRegistrator : public OW_Runnable
-{
-public:
-	HTTPSlpRegistrator(OW_HTTPServer* pServer)
-		: OW_Runnable()
-		, m_pServer(pServer)
-		, m_shuttingDown(false)
-		, m_isRunning(false)
-		, m_threadEvent()
-	{
-	}
-
-	~HTTPSlpRegistrator() { shutdown(); }
-
-	void shutdown();
-	void start();
-	virtual void run();
-
-private:
-	OW_HTTPServer* m_pServer;
-	OW_Bool m_shuttingDown;
-	OW_Bool m_isRunning;
-	OW_ThreadEvent m_threadEvent;
-};
-#else
-class HTTPSlpRegistrator
-{
-public:
-	HTTPSlpRegistrator(OW_HTTPServer*) {}
-	void shutdown() {}
-	void start() {}
-};
-#endif	// OW_HAVE_SLP_H
 
 
 class OW_HTTPServer : public OW_ServiceIFC
@@ -139,11 +104,6 @@ public:
 	};
 
 
-#ifdef OW_HAVE_SLP_H
-	void doSlpRegister();
-	static void slpRegReport(SLPHandle, SLPError, void*);
-#endif
-
 private:
 
 	OW_Bool authenticate(OW_HTTPSvrConnection* pconn,
@@ -164,7 +124,6 @@ private:
 	OW_Reference<OW_ServerSocket> m_pUDSServerSocket;
 	OW_Reference<OW_DigestAuthentication> m_digestAuth;
 	OW_Mutex m_authGuard;
-	HTTPSlpRegistrator m_slpRegistrator;
 
 	friend class OW_HTTPSvrConnection;
 	friend class OW_HTTPListener;

@@ -260,6 +260,6 @@ void
 
 //////////////////////////////////////////////////////////////////////////////
 
-OW_PROVIDERFACTORY(OW_TestInstance)
+OW_PROVIDERFACTORY(OW_TestInstance, testinstance)
 
 	

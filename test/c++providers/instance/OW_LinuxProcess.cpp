@@ -275,6 +275,6 @@ OW_CIMValue
 }
 
 
-OW_PROVIDERFACTORY(LinuxProcess)
+OW_PROVIDERFACTORY(LinuxProcess, linuxprocess)
 
    

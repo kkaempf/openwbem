@@ -196,14 +196,11 @@ public:
 	OW_PolledProviderProxy(OW_CppPolledProviderIFCRef pProv) :
 		m_pProv(pProv) {}
 
-	virtual long poll(const OW_ProviderEnvironmentIFCRef& env
-			) { return m_pProv->poll(env); }
+	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env ) 
+			{ return m_pProv->poll(env); }
 
-	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env
-			)
-	{
-		return m_pProv->getInitialPollingInterval(env);
-	}
+	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env)
+			{ return m_pProv->getInitialPollingInterval(env); }
 
 private:
 	OW_CppPolledProviderIFCRef m_pProv;

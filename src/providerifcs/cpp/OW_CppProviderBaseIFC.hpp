@@ -90,14 +90,16 @@ class OW_CppProviderBaseIFC
 
 typedef OW_SharedLibraryReference<OW_CppProviderBaseIFC> OW_CppProviderBaseIFCRef;
 
-#define OW_PROVIDERFACTORY(prov) \
+#define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
+
+#define OW_PROVIDERFACTORY(prov, name) \
 extern "C" const char* \
 getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
 extern "C" OW_CppProviderBaseIFC* \
-createProvider() \
+createProvider##name() \
 { \
 	return new prov; \
 }

@@ -105,6 +105,6 @@ OW_CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 } // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY(OW_CppIndicationExportXMLHTTPProvider);
+OW_NOIDPROVIDERFACTORY(OW_CppIndicationExportXMLHTTPProvider);
 
 

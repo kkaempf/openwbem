@@ -165,4 +165,4 @@ OW_MethodProviderTest::invokeMethod(
 	(void)out;
 }
 
-OW_PROVIDERFACTORY(OW_MethodProviderTest)
+OW_PROVIDERFACTORY(OW_MethodProviderTest, methodtest)

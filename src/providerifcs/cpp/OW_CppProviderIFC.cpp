@@ -308,11 +308,12 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 		}
 
 		ProviderCreationFunc createProvider;
-		if(!OW_SharedLibrary::getFunctionPointer(theLib, OW_String(CREATIONFUNC),
+		OW_String creationFuncName = OW_String(CREATIONFUNC) + "NO_ID";
+		if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName,
 			createProvider))
 		{
 			env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
-				" %2 function", libName, CREATIONFUNC));
+				" %2 function", libName, creationFuncName));
 			continue;
 		}
 
@@ -320,7 +321,7 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 		if(!pProv)
 		{
 			env->getLogger()->logError(format("C++ provider ifc: Libary %1 - %2 returned null"
-				" provider", libName, CREATIONFUNC));
+				" provider", libName, creationFuncName));
 			continue;
 		}
 
@@ -423,10 +424,11 @@ OW_CppProviderIFC::getProvider(
 	}
 
 	ProviderCreationFunc createProvider;
-	if(!OW_SharedLibrary::getFunctionPointer(theLib, OW_String(CREATIONFUNC), createProvider))
+	OW_String creationFuncName = OW_String(CREATIONFUNC) + provId;
+	if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName, createProvider))
 	{
 		env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
-			" %2 function", libName, CREATIONFUNC));
+			" %2 function", libName, creationFuncName));
 		return OW_CppProviderBaseIFCRef();
 	}
 
@@ -434,7 +436,7 @@ OW_CppProviderIFC::getProvider(
 	if(!pProv)
 	{
 		env->getLogger()->logError(format("C++ provider ifc: Libary %1 - %2 returned null"
-			" provider", libName, CREATIONFUNC));
+			" provider", libName, creationFuncName));
 		return OW_CppProviderBaseIFCRef();
 	}
 

@@ -46,8 +46,8 @@ namespace
 
 
 // Testing polling interval
-static const long INITIAL_POLLING_INTERVAL = 11;
-static const long POLLING_INTERVAL = 3;
+static const OW_Int32 INITIAL_POLLING_INTERVAL = 11;
+static const OW_Int32 POLLING_INTERVAL = 3;
 
 class OW_TriggerProviderTest2 : public OW_CppPolledProviderIFC
 {
@@ -60,7 +60,7 @@ public:
 	 * @return The amount of seconds before the first call to the poll method.
 	 * If this method returns zero, then the poll method is never called.
 	 */
-	virtual long getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env);
+	virtual OW_Int32 getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProvider to
@@ -71,7 +71,7 @@ public:
 	 * method returns -1 then the last polling interval will be used. If it
 	 * returns 0 then the poll method will never be called again.
 	 */
-	virtual long poll(const OW_ProviderEnvironmentIFCRef& env);
+	virtual OW_Int32 poll(const OW_ProviderEnvironmentIFCRef& env);
 
 	/**
 	 * Called by the CIMOM when the provider is initialized
@@ -109,7 +109,7 @@ OW_TriggerProviderTest2::cleanup()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-long
+OW_Int32
 OW_TriggerProviderTest2::getInitialPollingInterval(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug(
@@ -120,7 +120,7 @@ OW_TriggerProviderTest2::getInitialPollingInterval(const OW_ProviderEnvironmentI
 }
 
 //////////////////////////////////////////////////////////////////////////////
-long
+OW_Int32
 OW_TriggerProviderTest2::poll(const OW_ProviderEnvironmentIFCRef& env)
 {
 	env->getLogger()->logDebug(
@@ -166,6 +166,6 @@ OW_TriggerProviderTest2::poll(const OW_ProviderEnvironmentIFCRef& env)
 
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY(OW_TriggerProviderTest2);
+OW_NOIDPROVIDERFACTORY(OW_TriggerProviderTest2);
 
 

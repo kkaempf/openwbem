@@ -130,6 +130,6 @@ OW_OpenLinuxVersion::cleanup()
 } // end anonymous namespace
 
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY(OW_OpenLinuxVersion);
+OW_PROVIDERFACTORY(OW_OpenLinuxVersion, olver);
 
 

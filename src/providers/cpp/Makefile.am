@@ -1,1 +1,1 @@
-SUBDIRS = indicationexport
+SUBDIRS = indicationexport polled

@@ -304,5 +304,5 @@ OW_AssociatorTest::cleanup()
 
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-OW_PROVIDERFACTORY(OW_AssociatorTest);
+OW_PROVIDERFACTORY(OW_AssociatorTest, associatortest);
 

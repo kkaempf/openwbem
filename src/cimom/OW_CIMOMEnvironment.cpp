@@ -354,6 +354,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		return;
 	}
 
+	int reqHandlerCount = 0;
 	for(size_t i = 0; i < dirEntries.size(); i++)
 	{
 		if(!dirEntries[i].endsWith(".so"))
@@ -370,15 +371,19 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 
 		if(rh)
 		{
+			++reqHandlerCount;
 			rh->setEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
 			OW_StringArray supportedContentTypes = rh->getSupportedContentTypes();
+			logCustInfo(format("CIMOM loaded request handler from file: %1",
+				libName));
 			for (OW_StringArray::const_iterator iter = supportedContentTypes.begin();
 				  iter != supportedContentTypes.end(); iter++)
 			{
 				m_reqHandlers[(*iter)] = rh;
+				logCustInfo(format(
+					"CIMOM associating Content-Type %1 with Request Handler %2", 
+					*iter, libName));
 			}
-			logCustInfo(format("CIMOM loaded request handler from file: %1",
-				libName));
 		}
 		else
 		{
@@ -388,7 +393,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 	}
 
 	m_Logger->logCustInfo(format("CIMOM: Number of request handlers loaded: %1",
-		m_reqHandlers.size()));
+		reqHandlerCount);
 }
 
 //////////////////////////////////////////////////////////////////////////////
