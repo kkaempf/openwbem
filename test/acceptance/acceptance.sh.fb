@@ -152,6 +152,7 @@ StartDaemon()
 	echo "Starting owcimomd..."
 	if [ "$OWVALGRIND" = "1" ]; then
 		valgrind \
+			-v \
 			--leak-check=yes \
 			--error-limit=no \
 			--num-callers=99 \
