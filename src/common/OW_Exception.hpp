@@ -92,26 +92,29 @@ public:
 	static const int UNKNOWN_ERROR_CODE = -1;
 
 	/**
-	 * Returns a string representing the concrete type.  e.g. "SocketException"
+	 * Returns a string representing the concrete type.  e.g. "SocketException".  Will not return 0.
+	 * This function will not throw.  Derived class implementations must not throw.
 	 */
 	virtual const char* type() const;
 	/**
-	 * Returns the message.  May return NULL.
+	 * Returns the message.  May return 0.
+	 * This function will not throw.  Derived class implementations must not throw.
 	 */
 	virtual const char* getMessage() const;
 	/**
-	 * Returns the file.  May return NULL.
+	 * Returns the file.  May return 0.
 	 */
 	const char* getFile() const;
 	int getLine() const;
 	int getSubClassId() const;
 	/**
-	 * Returns the sub exception if available, otherwise NULL.
+	 * Returns the sub exception if available, otherwise 0.
 	 */
 	const Exception* getSubException() const;
 	/**
 	 * Returns the error code representing the error which occurred.
 	 * Code are unique only in the scope of the derived exception class.
+	 * May return UNKNONWN_ERROR_CODE if the error is unavailable.
 	 */
 	int getErrorCode() const;
 
@@ -121,11 +124,17 @@ public:
 	virtual const char* what() const throw();
 
 	/**
-	 * Make a copy of this exception object. If allocation fails, return NULL.  
-	 * Subclasses which add data members need to override this function.
-	 * May return UNKNONWN_ERROR_CODE if the error is unavailable.
+	 * Make a copy of this exception object. If allocation fails, return 0.  
+	 * Subclasses need to override this function.  This function must not
+	 * throw.  Here is an example of how to implement this in a derived class:
+	 * 
+	 * virtual DerivedException* clone() const
+	 * {
+	 *     return new(std::nothrow) DerivedException(*this);
+	 * }
+	 * 
 	 */
-	virtual Exception* clone() const throw();
+	virtual Exception* clone() const;
 
 private:
 	char* m_file;
@@ -180,7 +189,13 @@ std::ostream& operator<< (std::ostream& os, const Exception& e);
  * Throw an exception using __FILE__, __LINE__, errno and strerror(errno)
  * @param exType The type of the exception
  */
-#define OW_THROW_ERRNO(exType) throw exType(__FILE__, __LINE__, ::strerror(errno), ::errno)
+#define OW_THROW_ERRNO(exType) throw exType(__FILE__, __LINE__, ::strerror(errno), errno)
+
+/**
+ * Throw an exception using __FILE__, __LINE__, errno and strerror(errno)
+ * @param exType The type of the exception
+ */
+#define OW_THROW_ERRNO_MSG(exType, msg) throw exType(__FILE__, __LINE__, Format("%1: %2(%3)", msg, errno, ::strerror(errno)).c_str(), errno)
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -194,7 +209,6 @@ std::ostream& operator<< (std::ostream& os, const Exception& e);
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from <BASE>.
- * The new class will use UNKNOWN_SUBCLASS_ID for the subclass id.
  * This macro is typically used in a header file.
  * 
  * @param NAME The name of the new class (Exception will be postfixed)
@@ -207,11 +221,11 @@ public: \
 	NAME##Exception(const char* file, int line, const char* msg, int errorCode = ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, const Exception* otherException = 0); \
 	virtual ~NAME##Exception() throw(); \
 	virtual const char* type() const; \
+	virtual NAME##Exception* clone() const; \
 };
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from Exception
- * The new class will use UNKNOWN_SUBCLASS_ID for the subclass id.
  * This macro is typically used in a header file.
  * 
  * @param NAME The name of the new class (Exception will be postfixed)
@@ -230,6 +244,7 @@ public: \
 NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException) \
 	: BASE(::OpenWBEM::Exception::UNKNOWN_SUBCLASS_ID, file, line, msg, errorCode, otherException) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
+NAME##Exception* NAME##Exception::clone() const { return new(std::nothrow) NAME##Exception(*this); } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; }
 
 /**
@@ -245,6 +260,7 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
 NAME##Exception::NAME##Exception(const char* file, int line, const char* msg, int errorCode, const ::OpenWBEM::Exception* otherException) \
 	: BASE(SUB_CLASS_ID, file, line, msg, errorCode, otherException) {} \
 NAME##Exception::~NAME##Exception() throw() { } \
+NAME##Exception* NAME##Exception::clone() const { return new(std::nothrow) NAME##Exception(*this); } \
 const char* NAME##Exception::type() const { return #NAME "Exception"; }
 
 /**

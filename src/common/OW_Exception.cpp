@@ -233,7 +233,7 @@ Exception::setSubClassId(int subClassId)
 
 //////////////////////////////////////////////////////////////////////////////					
 Exception* 
-Exception::clone() const throw()
+Exception::clone() const
 {
 	return new(std::nothrow) Exception(*this);
 }
