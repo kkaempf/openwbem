@@ -534,5 +534,5 @@ PerlProviderIFC::getProvider(
 
 } // end namespace OpenWBEM
 
-OW_PROVIDERIFCFACTORY(OpenWBEM::PerlProviderIFC)
+OW_PROVIDERIFCFACTORY(OpenWBEM::PerlProviderIFC, perl)
 
