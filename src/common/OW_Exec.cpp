@@ -188,13 +188,16 @@ int PopenStreamsImpl::getExitStatus()
 	// then this will cause it to get a SIGPIPE, and it may be able to clean
 	// up after itself.
 	UnnamedPipeRef upr;
-	if (upr = in()) {
+	if (upr = in()) 
+	{
 		upr->close();
 	}
-	if (upr = out()) {
+	if (upr = out()) 
+	{
 		upr->close();
 	}
-	if (upr = err()) {
+	if (upr = err()) 
+	{
 		upr->close();
 	}
 	// Now make sure the process has exited. We do everything possible to make
@@ -407,7 +410,7 @@ safeSystem(const Array<String>& command)
 		}
 		argv[command.size()] = 0;
 		int rval = execv(argv[0], argv);
-		cerr << Format( "Platform::safeSystem: execv failed for program "
+		cerr << Format( "Exec::safeSystem: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(1);
 	}
@@ -441,12 +444,12 @@ safePopen(const Array<String>& command,
 	retval.err( upipeErr );
 	if (command.size() == 0)
 	{
-		OW_THROW(ExecErrorException, "Platform::safePopen: command is empty");
+		OW_THROW(ExecErrorException, "Exec::safePopen: command is empty");
 	}
 	retval.pid ( fork() );
 	if (retval.pid() == -1)
 	{
-		OW_THROW_ERRNO_MSG(ExecErrorException, "Platform::safePopen: fork() failed");
+		OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::safePopen: fork() failed");
 	}
 	if (retval.pid() == 0)
 	{
@@ -497,7 +500,7 @@ safePopen(const Array<String>& command,
 		}
 		argv[command.size()] = 0;
 		int rval = execv(argv[0], argv);
-		cerr << Format( "Platform::safePopen: execv failed for program "
+		cerr << Format( "Exec::safePopen: execv failed for program "
 				"%1, rval is %2", argv[0], rval);
 		_exit(127);
 	}
@@ -520,7 +523,7 @@ safePopen(const Array<String>& command,
 	{
 		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
 		{
-			OW_THROW_ERRNO_MSG(IOException, "Platform::safePopen: Failed writing input to process");
+			OW_THROW_ERRNO_MSG(IOException, "Exec::safePopen: Failed writing input to process");
 		}
 	}
 
