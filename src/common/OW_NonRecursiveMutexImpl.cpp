@@ -65,7 +65,9 @@ createMutex(NonRecursiveMutex_t& handle)
  
 	return 0;
 #elif OW_USE_WIN32_THREADS
-	return 0;
+	handle.thread_id = -1;
+	handle.valid_id = false;
+	return ((handle.sem = CreateSemaphore(NULL, 1, 1, NULL)) == NULL) ? -1 : 0;
 #else
 #error "port me!"
 #endif
@@ -95,7 +97,10 @@ destroyMutex(NonRecursiveMutex_t& handle)
 	}
 	return 0;
 #elif defined (OW_USE_WIN32_THREADS)
-	return 0;
+	ReleaseSemaphore(handle.sem, 1, 0);
+	handle.thread_id = 0;
+	handle.valid_id = false;
+	return (CloseHandle(handle.sem) == 0) ? -2 : 0;
 #else
 #error "port me!"
 #endif
@@ -116,6 +121,12 @@ acquireMutex(NonRecursiveMutex_t& handle)
 	assert(res == 0);
 	return res;
 #elif defined (OW_USE_WIN32_THREADS)
+    if(WaitForSingleObject(handle.sem, INFINITE) == WAIT_FAILED)
+	{
+		return -1;
+	}
+	handle.thread_id = GetCurrentThreadId();
+	handle.valid_id = true;
 	return 0;
 #else
 #error "port me!"
@@ -136,6 +147,19 @@ releaseMutex(NonRecursiveMutex_t& handle)
 	return res;
  
 #elif defined (OW_USE_WIN32_THREADS)
+	if(handle.valid_id && handle.thread_id != GetCurrentThreadId())
+	{
+		// Mutex not owned by current thread
+		return -1;
+	}
+
+	if(!ReleaseSemaphore(handle.sem, 1, 0))
+	{
+		return -1;
+	}
+
+	handle.thread_id = 0;
+	handle.valid_id = false;
 	return 0;
 #else
 #error "port me!"

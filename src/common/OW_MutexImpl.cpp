@@ -83,7 +83,8 @@ createMutex(Mutex_t& handle)
 #endif
 	return 0;
 #elif defined (OW_USE_WIN32_THREADS)
-	return 0;
+	return ((handle.mutex = CreateMutex(NULL, false, NULL)) == NULL)
+		? -1 : 0;
 #else
 #error "port me!"
 #endif
@@ -117,8 +118,8 @@ destroyMutex(Mutex_t& handle)
 	assert(res == 0);
 #endif
 	return res;
-#elif defined OW_USE_WIN32_THREADS
-	return 0;
+#elif defined(OW_USE_WIN32_THREADS)
+	return (CloseHandle(handle.mutex) == 0) ? -1 : 0;
 #else
 #error "port me!"
 #endif
@@ -159,8 +160,9 @@ acquireMutex(Mutex_t& handle)
 	assert(res == 0);
 #endif
 	return res;
-#elif defined OW_USE_WIN32_THREADS
-	return 0;
+#elif defined(OW_USE_WIN32_THREADS)
+	return (WaitForSingleObject(handle.mutex, INFINITE) == WAIT_FAILED)
+		? -1 : 0;
 #else
 #error "port me!"
 #endif
@@ -206,7 +208,7 @@ releaseMutex(Mutex_t& handle)
 	return res;
 #endif
 #elif defined (OW_USE_WIN32_THREADS)
-	return 0;
+	return (ReleaseMutex(handle.mutex) == 0) ? -1 : 0;
 #else
 #error "port me!"
 #endif

@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="libopenwbem"
 	ProjectGUID="{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}"
+	RootNamespace="libopenwbem"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -14,17 +15,17 @@
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;..\..\..\..\..\openssl\include"
+				AdditionalIncludeDirectories="..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				DisableLanguageExtensions="FALSE"
 				TreatWChar_tAsBuiltInType="FALSE"
 				ForceConformanceInForLoopScope="TRUE"
@@ -37,8 +38,7 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/libopenwbem.lib"/>
+				Name="VCLinkerTool"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -53,6 +53,8 @@
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
 			<Tool
 				Name="VCManagedWrapperGeneratorTool"/>
 			<Tool
@@ -112,6 +114,9 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			<File
+				RelativePath="..\..\..\..\src\common\OW_Array.cpp">
+			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_Assertion.cpp">
 			</File>
@@ -221,13 +226,34 @@
 				RelativePath="..\..\..\..\src\common\OW_Condition.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ConfigException.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ConfigFile.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_COWReferenceBase.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_COWReferenceBase.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_DataStreams.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_DateTime.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_dlSharedLibrary.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_dlSharedLibraryLoader.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_dyldSharedLibrary.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_dyldSharedLibraryLoader.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_EnumerationException.cpp">
@@ -281,7 +307,16 @@
 				RelativePath="..\..\..\..\src\common\OW_NULLValueException.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_OperationContext.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_OutOfBoundsException.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_PosixFile.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_PosixFileSystem.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_PosixUnnamedPipe.cpp">
@@ -296,10 +331,19 @@
 				RelativePath="..\..\..\..\src\common\OW_ReferenceBase.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_RepositoryCIMOMHandle.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_RepositoryIFC.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_RequestHandlerIFC.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ResultHandlers.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_Runnable.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_RWLocker.cpp">
@@ -327,6 +371,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_SharedLibraryException.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_shlSharedLibrary.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_shlSharedLibraryLoader.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_Socket.cpp">
@@ -359,16 +409,31 @@
 				RelativePath="..\..\..\..\src\common\OW_Thread.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadBarrier.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadCancelledException.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadCounter.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadDoneCallback.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadImpl.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadPool.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_TimeoutException.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_TmpFile.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\utf8CodeGenerators\OW_to_UTF8.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UnnamedPipe.cpp">
@@ -378,6 +443,15 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UserInfo.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_UTF8Utils.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_UTF8UtilscompareToIgnoreCase.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_UUID.cpp">
 			</File>
 		</Filter>
 		<Filter
@@ -532,10 +606,19 @@
 				RelativePath="..\OW_config.h">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ConfigException.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ConfigFile.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_ConfigOpts.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_COWReference.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_DataStreams.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_DateTime.hpp">
@@ -547,13 +630,16 @@
 				RelativePath="..\..\..\..\src\common\OW_dlSharedLibraryLoader.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_dyldSharedLibrary.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_dyldSharedLibraryLoader.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_Enumeration.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_Exception.hpp">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\common\OW_Exec.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_File.hpp">
@@ -646,6 +732,9 @@
 				RelativePath="..\..\..\..\src\common\socket\OW_NwIface.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_OperationContext.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_PosixUnnamedPipe.hpp">
 			</File>
 			<File
@@ -661,6 +750,9 @@
 				RelativePath="..\..\..\..\src\common\OW_Reference.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_RepositoryCIMOMHandle.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_RepositoryIFC.hpp">
 			</File>
 			<File
@@ -668,6 +760,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_ResultHandlerIFC.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ResultHandlers.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_Runnable.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_RWLocker.hpp">
@@ -689,6 +787,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_Semaphore.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\ifcs\OW_SerializableIFC.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\ifcs\OW_SerializableIFC.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_ServerSocket.hpp">
@@ -713,6 +817,12 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_SharedLibraryReference.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_shlSharedLibrary.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_shlSharedLibraryLoader.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_SignalScope.hpp">
@@ -781,10 +891,22 @@
 				RelativePath="..\..\..\..\src\common\OW_Thread.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadBarrier.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadCancelledException.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadCounter.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadDoneCallback.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadImpl.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadPool.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadTypes.hpp">
@@ -799,6 +921,9 @@
 				RelativePath="..\..\..\..\src\common\OW_Types.h">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_Types.hpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_UnnamedPipe.hpp">
 			</File>
 			<File
@@ -806,6 +931,15 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UserInfo.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_UTF8Utils.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_UUID.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_WBEMFlags.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_WQLIFC.hpp">

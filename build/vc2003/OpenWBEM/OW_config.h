@@ -142,11 +142,6 @@
 #define OW_HAVE_ISTREAM  1 
 #endif
 
-/* Define to 1 if you have the <istream.h> header file. */
-/* #ifndef OW_HAVE_ISTREAM_H 
-#define OW_HAVE_ISTREAM_H  1 
-#endif */
-
 /* Define to 1 if you have the <limits.h> header file. */
 #ifndef OW_HAVE_LIMITS_H 
 #define OW_HAVE_LIMITS_H  1 
@@ -537,7 +532,6 @@
 #endif // #ifdef OW_PRINT_FUNC_DEBUG
 
 #define OW_USE_OW_DEFAULT_ATOMIC_OPS 1
-
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

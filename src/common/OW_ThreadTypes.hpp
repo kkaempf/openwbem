@@ -83,32 +83,30 @@
 
 	} // end namespace OpenWBEM
 
-#elif defined(OW_WIN32)
+#elif defined(OW_USE_WIN32_THREADS)
 
 	#include <Windows.h>
 
 	namespace OpenWBEM
 	{
-
 		// Platform specific thread type
-		typedef DWORD Thread_t;
+		typedef HANDLE Thread_t;
 		typedef HANDLE NativeMutex_t;
 		struct NonRecursiveMutex_t
 		{
-			HANDLE mutex;
-			HANDLE thread_id;
+			HANDLE sem;
+			DWORD thread_id;
 			bool valid_id;
 		};
 		struct Mutex_t
 		{
-			void* mutex;
-			unsigned long count;
+			HANDLE mutex;
 		};
 		// Platform specific conditional variable type
 		typedef void* 			ConditionVar_t;
 		struct NonRecursiveMutexLockState
 		{
-			void* thread_id;
+			DWORD thread_id;
 			NativeMutex_t* pmutex;
 		};
 
