@@ -559,12 +559,12 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 	// send another request
 	checkForClosedConnection();
 
-	String statusLine;
+	String reasonPhrase;
 	Resp_t rt = RETRY;
 	do
 	{
 		sendDataToServer(tfs, methodName, cimObject, requestType);
-		statusLine = checkResponse(rt);
+		reasonPhrase = checkResponse(rt);
 	} while (rt == RETRY);
 	if (rt == FATAL)
 	{
@@ -572,12 +572,12 @@ HTTPClient::endRequest(const Reference<std::iostream>& request, const String& me
 		if (CIMError.empty())
 		{
 			OW_THROW(HTTPException, Format("Unable to process request: %1",
-				statusLine).c_str());
+				reasonPhrase).c_str());
 		}
 		else
 		{
 			OW_THROW(HTTPException, Format("Unable to process request: %1:%2",
-				statusLine, CIMError).c_str());
+				reasonPhrase, CIMError).c_str());
 		}
 	}
 	m_pIstrReturn = convertToFiniteStream();
@@ -715,7 +715,7 @@ HTTPClient::sendHeaders(const String& method,
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::Resp_t
-HTTPClient::processHeaders(String& statusLine)
+HTTPClient::processHeaders(String& reasonPhrase)
 {
 	if (getHeaderValue("Connection").equalsIgnoreCase("close"))
 	{
@@ -723,20 +723,19 @@ HTTPClient::processHeaders(String& statusLine)
 	}
 
 	Resp_t rt = RETRY;
+	String statusLine(m_statusLine);
 	size_t idx = statusLine.indexOf(' ');
-	String respProt;
 	String sc; // http status code
 	int isc = 500; // status code (int)
 	if (idx > 0 && idx != String::npos)
 	{
-		respProt = statusLine.substring(0, idx);
 		statusLine = statusLine.substring(idx + 1);
 	}
 	idx = statusLine.indexOf(' ');
 	if (idx > 0 && idx != String::npos)
 	{
 		sc = statusLine.substring(0,idx);
-		statusLine = statusLine.substring(idx + 1);
+		reasonPhrase = statusLine.substring(idx + 1);
 		try
 		{
 			isc = sc.toInt32();

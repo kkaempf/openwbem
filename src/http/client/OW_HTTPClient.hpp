@@ -298,11 +298,18 @@ private:
 	}
 	void sendHeaders(const String& method,
 		const String& prot);
-	Resp_t processHeaders(String& statusLine);
+	/**
+	 * precondition: m_statusLine is set to the status line, and the headers have been read
+	 * @param reasonPhrase - out parameter that will contain the reason phrase portion of the HTTP status line.
+	 */
+	Resp_t processHeaders(String& reasonPhrase);
 	CIMProtocolIStreamIFCRef convertToFiniteStream();
 	void prepareForRetry();
 	void handleAuth(); // process authorization
 	void checkConnection();
+	/**
+	 * @return The reason phrase from the HTTP status line of the response
+	 */
 	String checkResponse(Resp_t& rt);
 	void prepareHeaders();
 	void sendDataToServer( const Reference<TempFileStream>& tfs, const String& methodName, const String& cimObject, ERequestType requestType );
