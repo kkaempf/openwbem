@@ -69,7 +69,7 @@ protected:
 
 	COWIntrusiveCountableBase & operator=(COWIntrusiveCountableBase const &x)
 	{
-		m_usecount = RefCount(0);
+		// don't assign or change the ref count, since it won't be different.
 		return *this;
 	}
 
