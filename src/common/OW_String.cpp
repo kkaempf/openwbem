@@ -128,8 +128,8 @@ public:
 	{
 		strcpy(m_buf, arg.m_buf);
 	}
-	ByteBuf(char* bfr, size_t len)
-		: m_len(len), m_buf(bfr)
+	ByteBuf(AutoPtrVec<char>& s, size_t len) 
+		: m_len(len), m_buf(s.release())
 	{
 	}
 	~ByteBuf() { delete [] m_buf; }
@@ -175,7 +175,7 @@ String::String(Int32 val) :
 	int len = snprintf(tmpbuf, sizeof(tmpbuf), "%d", val);
 	AutoPtrVec<char> bfr(new char[len+1]);
 	::snprintf(bfr.get(), len+1, "%d", val);
-	m_buf = new ByteBuf(bfr.release(), len);
+	m_buf = new ByteBuf(bfr, len);
 }
 //////////////////////////////////////////////////////////////////////////////
 String::String(UInt32 val) :
@@ -185,7 +185,7 @@ String::String(UInt32 val) :
 	int len = ::snprintf(tmpbuf, sizeof(tmpbuf), "%u", val);
 	AutoPtrVec<char> bfr(new char[len+1]);
 	::snprintf(bfr.get(), len+1, "%u", val);
-	m_buf = new ByteBuf(bfr.release(), len);
+	m_buf = new ByteBuf(bfr, len);
 }
 #if defined(OW_WIN32)
 #undef snprintf
@@ -232,7 +232,8 @@ String::String(ETakeOwnershipFlag, char* allocatedMemory, size_t len) :
 	m_buf(NULL)
 {
 	OW_ASSERT(allocatedMemory != 0);
-	m_buf = new ByteBuf(allocatedMemory, len);
+	AutoPtrVec<char> p(allocatedMemory);
+	m_buf = new ByteBuf(p, len);
 }
 //////////////////////////////////////////////////////////////////////////////
 String::String(const char* str, size_t len) :
@@ -247,7 +248,7 @@ String::String(const char* str, size_t len) :
 		AutoPtrVec<char> bfr(new char[len+1]);
 		::memcpy(bfr.get(), str, len);
 		bfr[len] = '\0';
-		m_buf = new ByteBuf(bfr.release(), len);
+		m_buf = new ByteBuf(bfr, len);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -356,7 +357,7 @@ String::format(const char* fmt, ...)
 		va_end(ap);                // If that worked, return the string.
 		if(n > -1 && n < size)
 		{
-			m_buf = new ByteBuf(p.release(), n);
+			m_buf = new ByteBuf(p, n);
 			return static_cast<int>(length());
 		}
 		if (n > -1)    // glibc 2.1
@@ -424,7 +425,7 @@ String::concat(const String& arg)
 		{
 			::strcat(bfr.get(), arg.m_buf->data());
 		}
-		m_buf = new ByteBuf(bfr.release(), len);
+		m_buf = new ByteBuf(bfr, len);
 	}
 	return *this;
 }
@@ -806,7 +807,7 @@ String::readObject(istream& istrm)
 	AutoPtrVec<char> bfr(new char[len+1]);
 	BinarySerialization::read(istrm, bfr.get(), len);
 	bfr[len] = '\0';
-	m_buf = new ByteBuf(bfr.release(), len);
+	m_buf = new ByteBuf(bfr, len);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
