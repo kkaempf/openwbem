@@ -161,6 +161,7 @@ OW_RefCount.hpp \
 OW_Reference.hpp \
 OW_ReferenceBase.hpp \
 OW_RepositoryCIMOMHandle.hpp \
+OW_ResultHandlers.hpp \
 OW_Runnable.hpp \
 OW_Select.hpp \
 OW_SelectEngine.hpp \

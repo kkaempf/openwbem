@@ -1630,7 +1630,7 @@ testSingleton(CIMClient& hdl)
 		CIMObjectPathEnumeration e(hdl.enumInstanceNamesE("singletonClass"));
 		TEST_ASSERT(e.numberOfElements() == 1);
 		CIMObjectPath gotpath = e.nextElement();
-		TEST_ASSERT(gotpath.getObjectName() == "singletonClass");
+		TEST_ASSERT(gotpath.getClassName() == "singletonClass");
 		TEST_ASSERT(gotpath.getKeys().size() == 0);
 
 		CIMInstanceEnumeration e2(hdl.enumInstancesE("singletonClass"));

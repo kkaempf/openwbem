@@ -118,30 +118,18 @@ OpenWBEM::CIMClass* mbGetClass(CMPIBroker *mb, const OpenWBEM::CIMObjectPath &co
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbGetClass()");
 
 	CMPI_Broker * xBroker = (CMPI_Broker*)mb;
-	OpenWBEM::String clsId = cop.getNameSpace()+":"+cop.getObjectName();
+	OpenWBEM::String clsId = cop.getNameSpace()+":"+cop.getClassName();
 	OpenWBEM::CIMClass ccp;
-	if(xBroker->clsCache)
-	{
-		if((ccp = xBroker->clsCache->getFromCache(clsId)))
-		{
-			return new OpenWBEM::CIMClass(ccp);
-		}
-	}
-	else
-	{
-		xBroker->clsCache=new ClassCache();
-	}
 
 	try
 	{
 		OpenWBEM::CIMClass cc=CM_CIMOM(mb)->getClass(
 			cop.getNameSpace(),
-			cop.getObjectName(),
+			cop.getClassName(),
 			E_NOT_LOCAL_ONLY, 
 			E_INCLUDE_QUALIFIERS, 
 			E_EXCLUDE_CLASS_ORIGIN);
 
-		xBroker->clsCache->addToCache(cc, clsId);
 		return new OpenWBEM::CIMClass(cc);
 	}
 	catch(OpenWBEM::CIMException &e)
@@ -373,7 +361,7 @@ static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
 	{
 		CM_CIMOM(mb)->enumInstances(
 			CM_ObjectPath(cop)->getNameSpace(),
-			CM_ObjectPath(cop)->getObjectName(),
+			CM_ObjectPath(cop)->getClassName(),
 			result,
 			CM_DeepInheritance(flgs) ? E_DEEP : E_SHALLOW,
 			CM_LocalOnly(flgs) ? E_LOCAL_ONLY : E_NOT_LOCAL_ONLY,

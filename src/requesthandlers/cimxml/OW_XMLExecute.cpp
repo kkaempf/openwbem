@@ -430,7 +430,7 @@ namespace
 									i->name).c_str());
 						}
 						i->isSet = true;
-						i->val = CIMValue(XMLCIMFactory::createObjectPath(parser).getObjectName());
+						i->val = CIMValue(XMLCIMFactory::createObjectPath(parser).getClassName());
 						break;
 					case param::BOOLEAN:
 						if (!parser.tokenIsId(CIMXMLParser::E_VALUE))

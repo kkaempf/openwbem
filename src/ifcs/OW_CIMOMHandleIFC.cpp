@@ -38,6 +38,7 @@
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_Array.hpp"
+#include "OW_ResultHandlers.hpp"
 
 namespace OpenWBEM
 {
@@ -61,136 +62,6 @@ CIMOMHandleIFC::exportIndication(const CIMInstance& instance,
 	OW_THROWCIM(CIMException::FAILED);
 	(void)instance;
 	(void)instNS;
-}
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	// TODO: Put these into a common header.  Make them available for re-use.
-	class CIMClassEnumBuilder : public CIMClassResultHandlerIFC
-	{
-	public:
-		CIMClassEnumBuilder(CIMClassEnumeration& e) : m_e(e) {}
-	protected:
-		virtual void doHandle(const CIMClass &c)
-		{
-			m_e.addElement(c);
-		}
-	private:
-		CIMClassEnumeration& m_e;
-	};
-
-	class CIMClassArrayBuilder : public CIMClassResultHandlerIFC
-	{
-	public:
-		CIMClassArrayBuilder(CIMClassArray& a) : m_a(a) {}
-	protected:
-		virtual void doHandle(const CIMClass &c)
-		{
-			m_a.push_back(c);
-		}
-	private:
-		CIMClassArray& m_a;
-	};
-	
-	class StringArrayBuilder : public StringResultHandlerIFC
-	{
-	public:
-		StringArrayBuilder(StringArray& a) : m_a(a) {}
-	protected:
-		virtual void doHandle(const String &s)
-		{
-			m_a.push_back(s);
-		}
-	private:
-		StringArray& m_a;
-	};
-	
-	class StringEnumBuilder : public StringResultHandlerIFC
-	{
-	public:
-		StringEnumBuilder(StringEnumeration& e) : m_e(e) {}
-	protected:
-		virtual void doHandle(const String &s)
-		{
-			m_e.addElement(s);
-		}
-	private:
-		StringEnumeration& m_e;
-	};
-	
-	class CIMObjectPathEnumBuilder : public CIMObjectPathResultHandlerIFC
-	{
-	public:
-		CIMObjectPathEnumBuilder(CIMObjectPathEnumeration& e) : m_e(e) {}
-	protected:
-		virtual void doHandle(const CIMObjectPath &cop)
-		{
-			m_e.addElement(cop);
-		}
-	private:
-		CIMObjectPathEnumeration& m_e;
-	};
-	class CIMObjectPathArrayBuilder : public CIMObjectPathResultHandlerIFC
-	{
-	public:
-		CIMObjectPathArrayBuilder(CIMObjectPathArray& a) : m_a(a) {}
-	protected:
-		virtual void doHandle(const CIMObjectPath &cop)
-		{
-			m_a.push_back(cop);
-		}
-	private:
-		CIMObjectPathArray& m_a;
-	};
-	class CIMInstanceEnumBuilder : public CIMInstanceResultHandlerIFC
-	{
-	public:
-		CIMInstanceEnumBuilder(CIMInstanceEnumeration& e) : m_e(e) {}
-	protected:
-		virtual void doHandle(const CIMInstance &i)
-		{
-			m_e.addElement(i);
-		}
-	private:
-		CIMInstanceEnumeration& m_e;
-	};
-	class CIMInstanceArrayBuilder : public CIMInstanceResultHandlerIFC
-	{
-	public:
-		CIMInstanceArrayBuilder(CIMInstanceArray& a) : m_a(a) {}
-	protected:
-		virtual void doHandle(const CIMInstance &i)
-		{
-			m_a.push_back(i);
-		}
-	private:
-		CIMInstanceArray& m_a;
-	};
-	
-	class CIMQualifierTypeEnumBuilder : public CIMQualifierTypeResultHandlerIFC
-	{
-	public:
-		CIMQualifierTypeEnumBuilder(CIMQualifierTypeEnumeration& e) : m_e(e) {}
-	protected:
-		virtual void doHandle(const CIMQualifierType &qt)
-		{
-			m_e.addElement(qt);
-		}
-	private:
-		CIMQualifierTypeEnumeration& m_e;
-	};
-	class CIMQualifierTypeArrayBuilder : public CIMQualifierTypeResultHandlerIFC
-	{
-	public:
-		CIMQualifierTypeArrayBuilder(CIMQualifierTypeArray& a) : m_a(a) {}
-	protected:
-		virtual void doHandle(const CIMQualifierType &qt)
-		{
-			m_a.push_back(qt);
-		}
-	private:
-		CIMQualifierTypeArray& m_a;
-	};
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClassEnumeration

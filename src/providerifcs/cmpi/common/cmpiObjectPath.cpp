@@ -45,7 +45,7 @@ static CMPIStatus refReleaseNop(CMPIObjectPath* eRef)
 static CMPIObjectPath* refClone(CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath *ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	//OpenWBEM::CIMObjectPath *nRef=new OpenWBEM::CIMObjectPath(ref->getObjectName(),
+	//OpenWBEM::CIMObjectPath *nRef=new OpenWBEM::CIMObjectPath(ref->getClassName(),
 	//                                       ref->getNameSpace());
 	//nRef->setHost(ref->getHost());
 	//nRef->setKeys(ref->getKeys());
@@ -82,7 +82,7 @@ static CMPIStatus refSetClassName(CMPIObjectPath * eRef,char * cl)
 static CMPIString* refGetClassName(CMPIObjectPath* eRef, CMPIStatus* rc)
 {
 	OpenWBEM::CIMObjectPath * ref=(OpenWBEM::CIMObjectPath*)eRef->hdl;
-	const OpenWBEM::String &cn=ref->getObjectName();
+	const OpenWBEM::String &cn=ref->getClassName();
 	CMPIString* eCn=string2CMPIString(cn);
 	CMSetStatus(rc,CMPI_RC_OK);
 	return eCn;

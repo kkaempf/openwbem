@@ -279,7 +279,7 @@ NameSpaceProvider::getInstance(
 	{
 		CIMInstanceEnumeration cie;
 		CIMInstanceEnumBuilder handler(cie);
-		enumInstances(env, ns, instanceName.getObjectName(), handler,
+		enumInstances(env, ns, instanceName.getClassName(), handler,
 			E_NOT_LOCAL_ONLY, E_SHALLOW, E_EXCLUDE_QUALIFIERS, E_EXCLUDE_CLASS_ORIGIN, 0, cimClass,
 			cimClass);
 		

@@ -254,7 +254,7 @@ AssocDbHandle::addOrDeleteEntries(const String& ns, const CIMInstance& assocInst
 					{
 						objectName.setNameSpace(ns);
 					}
-					String resultClass = associatedObject.getObjectName();
+					String resultClass = associatedObject.getClassName();
 					String role = propRa[i].getName();
 					String resultRole = propRa[j].getName();
 					if (add)

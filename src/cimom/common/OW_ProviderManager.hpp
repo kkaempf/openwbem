@@ -97,7 +97,7 @@ public:
 	 * @return An array of secondary instance providers which have registered
 	 * for the class identified by the className argument.
 	 */
-	SeconaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
+	SecondaryInstanceProviderIFCRefArray getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
 		const String& ns, const String& className) const;
 	/**
 	 * Locate a Method provider.

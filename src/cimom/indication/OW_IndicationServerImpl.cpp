@@ -938,7 +938,7 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	}
 	// verify that there is an indication export provider that can handle the handler for the subscription
 	CIMObjectPath handlerPath = subInst.getProperty("Handler").getValueT().toCIMObjectPath();
-	String handlerClass = handlerPath.getObjectName();
+	String handlerClass = handlerPath.getClassName();
 	if (!getProvider(handlerClass))
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, "No indication export provider found for this subscription");

@@ -55,7 +55,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop,
 		//              ((flgs & CMPI_FLAG_IncludeClassOrigin)!=0));
 	}
 	else
-		ci.setClassName(cop->getObjectName());
+		ci.setClassName(cop->getClassName());
 
 	CMPIInstance * neInst = (CMPIInstance *)new CMPI_Object(
 					new OpenWBEM::CIMInstance(ci));

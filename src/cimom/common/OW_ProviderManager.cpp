@@ -429,7 +429,7 @@ ProviderManager::getInstanceProvider(const ProviderEnvironmentIFCRef& env,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-SeconaryInstanceProviderIFCRefArray 
+SecondaryInstanceProviderIFCRefArray 
 ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& env,
 	const String& ns, const String& className) const
 {
@@ -454,7 +454,7 @@ ProviderManager::getSecondaryInstanceProviders(const ProviderEnvironmentIFCRef& 
 		lci = range.first;
 		uci = range.second;
 	}
-	SeconaryInstanceProviderIFCRefArray rval;
+	SecondaryInstanceProviderIFCRefArray rval;
 	if (lci != m_registeredSecInstProvs.end())
 	{
 		// loop through the matching range and put them in rval

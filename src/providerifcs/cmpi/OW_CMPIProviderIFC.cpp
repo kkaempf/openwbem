@@ -538,7 +538,6 @@ CMPIProviderIFC::getProvider(
 	_broker.hdl = new ProviderEnvironmentIFCRef(* provenv);
 	_broker.bft = CMPI_Broker_Ftab;
 	_broker.eft = CMPI_BrokerEnc_Ftab;
-	_broker.clsCache = NULL;
 	::CMPIOperationContext opc;
 	CMPI_ContextOnStack eCtx(opc);
 

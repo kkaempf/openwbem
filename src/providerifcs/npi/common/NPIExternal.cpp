@@ -662,7 +662,7 @@ CIMObjectPathGetClassName(NPIHandle* npiHandle, ::CIMObjectPath cop)
 {
 	(void)npiHandle;
 	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *> (cop.ptr);
-	return ref->getObjectName().allocateCString();
+	return ref->getClassName().allocateCString();
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" char*
@@ -879,7 +879,7 @@ CIMOMGetClass(NPIHandle* npiHandle, ::CIMObjectPath cop, int localOnly)
 	(void)localOnly;
 	OpenWBEM::CIMObjectPath * ref = static_cast<OpenWBEM::CIMObjectPath *>(cop.ptr);
 	String nameSpace = ref->getNameSpace();
-	String className = ref->getObjectName();
+	String className = ref->getClassName();
 	OpenWBEM::CIMClass cc = NPI_getmyClass(npiHandle, nameSpace, className);
 	OpenWBEM::CIMClass * my_cc = new OpenWBEM::CIMClass(cc);
 	::CIMClass localcc = { static_cast<void *> (my_cc)};
@@ -893,7 +893,7 @@ CIMOMEnumInstanceNames(NPIHandle* npiHandle, ::CIMObjectPath cop, int i)
 	(void)i;
 	OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
 	String nameSpace = ref->getNameSpace();
-	String className = ref->getObjectName();
+	String className = ref->getClassName();
 	CIMObjectPathEnumeration instNames =
 		NPI_enumeratemyInstanceNames(npiHandle,nameSpace,className);
 	// Full Copy
@@ -915,7 +915,7 @@ CIMOMEnumInstances(NPIHandle* npiHandle, ::CIMObjectPath cop, int i, int j)
 	(void)j;
 	OpenWBEM::CIMObjectPath * ref = (OpenWBEM::CIMObjectPath *) cop.ptr;
 	String nameSpace = ref->getNameSpace();
-	String className = ref->getObjectName();
+	String className = ref->getClassName();
 	CIMInstanceEnumeration insts =
 		NPI_enumeratemyInstances(npiHandle,nameSpace,className);
 	// Full Copy

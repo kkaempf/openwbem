@@ -744,7 +744,7 @@ CIMRepository::getInstance(
 		lpropList = *propertyList;
 	}
 	CIMInstance ci(CIMNULL);
-	CIMClass cc(_instGetClass(ns, instanceName.getObjectName()));
+	CIMClass cc(_instGetClass(ns, instanceName.getClassName()));
 	try
 	{
 		ci = m_iStore.getCIMInstance(ns, instanceName, cc, localOnly,
@@ -855,7 +855,7 @@ CIMRepository::createInstance(
 					CIMClass rcc(CIMNULL);
 					try
 					{
-						rcc = _instGetClass(ns,op.getObjectName());
+						rcc = _instGetClass(ns,op.getClassName());
 						m_iStore.getCIMInstance(ns, op,rcc,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0);
 					}
 					catch (CIMException&)
@@ -936,7 +936,7 @@ CIMRepository::setProperty(
 	const String& propertyName, const CIMValue& valueArg,
 	OperationContext& context)
 {
-	CIMClass theClass = _instGetClass(ns, name.getObjectName());
+	CIMClass theClass = _instGetClass(ns, name.getClassName());
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
@@ -987,7 +987,7 @@ CIMRepository::getProperty(
 	const CIMObjectPath& name,
 	const String& propertyName, OperationContext& context)
 {
-	CIMClass theClass = _instGetClass(ns,name.getObjectName());
+	CIMClass theClass = _instGetClass(ns,name.getClassName());
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
@@ -1152,7 +1152,7 @@ CIMRepository::_commonReferences(
 	// returned.
 	CIMClassArray Assocs;
 	assocClassBuilder assocClassResult(Assocs);
-	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role, context);
+	_getAssociationClasses(ns, resultClass, path.getClassName(), assocClassResult, role, context);
 	StringArray resultClassNames;
 	for(size_t i = 0; i < Assocs.size(); i++)
 	{
@@ -1237,7 +1237,7 @@ namespace
 				cop.setNameSpace(ns);
 			}
 			CIMClass cc = server.getClass(cop.getNameSpace(),
-				cop.getObjectName(), E_NOT_LOCAL_ONLY, includeQualifiers,
+				cop.getClassName(), E_NOT_LOCAL_ONLY, includeQualifiers,
 				includeClassOrigin, propList, context);
 			result.handle(cc);
 		}
@@ -1367,7 +1367,7 @@ CIMRepository::_commonAssociators(
 	// Get association classes from the association repository
 	CIMClassArray Assocs;
 	assocClassBuilder assocClassResult(Assocs);
-	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role, context);
+	_getAssociationClasses(ns, assocClassName, path.getClassName(), assocClassResult, role, context);
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
 	StringArray resultClassNames;
@@ -1480,7 +1480,7 @@ namespace
 				cop.setNameSpace(ns);
 			}
 			CIMClass cc = server.getClass(cop.getNameSpace(),
-				cop.getObjectName(), E_NOT_LOCAL_ONLY, includeQualifiers,
+				cop.getClassName(), E_NOT_LOCAL_ONLY, includeQualifiers,
 				includeClassOrigin, propList, context);
 			result.handle(cc);
 		}
@@ -1522,7 +1522,7 @@ CIMRepository::_staticAssociatorsClass(
 {
 	AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 	// need to run the query for every superclass of the class arg.
-	String curClsName = path.getObjectName();
+	String curClsName = path.getClassName();
 	CIMObjectPath curPath = path;
 	while (!curClsName.empty())
 	{
@@ -1546,7 +1546,7 @@ CIMRepository::_staticAssociatorsClass(
 			OW_ASSERT(0);
 		}
 		// get the current class so we can get the name of the superclass
-		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getObjectName());
+		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getClassName());
 		curClsName = theClass.getSuperClass();
 		curPath.setObjectName(curClsName);
 	}
@@ -1564,7 +1564,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 {
 	AssocDbHandle dbhdl = m_classAssocDb.getHandle();
 	// need to run the query for every superclass of the class arg.
-	String curClsName = path.getObjectName();
+	String curClsName = path.getClassName();
 	CIMObjectPath curPath = path;
 	while (!curClsName.empty())
 	{
@@ -1589,7 +1589,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 			OW_ASSERT(0);
 		}
 		// get the current class so we can get the name of the superclass
-		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getObjectName());
+		CIMClass theClass = _getClass(curPath.getNameSpace(), curPath.getClassName());
 		curClsName = theClass.getSuperClass();
 		curPath.setObjectName(curClsName);
 	}
@@ -1701,7 +1701,7 @@ namespace
 		{}
 		void doHandle(const CIMObjectPath& op)
 		{
-			names.push_back(op.getObjectName());
+			names.push_back(op.getClassName());
 		}
 	private:
 		StringArray& names;

@@ -205,7 +205,7 @@ public:
 	 * This function is deprecated in favor of getClassName()
 	 * @return The class name for this object path
 	 */
-	String getObjectName() const;
+	String getObjectName() const OW_DEPRECATED;
 	/**
 	 * @return The class name for this object path
 	 */

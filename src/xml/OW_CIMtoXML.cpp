@@ -287,12 +287,12 @@ void CIMClassPathtoXML(CIMObjectPath const& cop, ostream& ostr)
 		// do <CLASSPATH>
 		ostr << "<CLASSPATH>";
 		CIMNameSpacetoXML(cop.getFullNameSpace(),ostr);
-		ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/></CLASSPATH>";
+		ostr << "<CLASSNAME NAME=\"" << cop.getClassName() << "\"/></CLASSPATH>";
 	}
 	else
 	{
 		// do <CLASSNAME>
-		ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() << "\"/>";
+		ostr << "<CLASSNAME NAME=\"" << cop.getClassName() << "\"/>";
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -358,7 +358,7 @@ void CIMInstancePathtoXML(CIMObjectPath const& cop, ostream& ostr)
 void CIMInstanceNametoXML(CIMObjectPath const& cop, ostream& ostr)
 {
 	ostr << "<INSTANCENAME CLASSNAME=\"";
-	ostr << cop.getObjectName() << "\">";
+	ostr << cop.getClassName() << "\">";
 	//
 	// If keys > 1 then must use KEYBINDING - we also use it for
 	// the key == 1 case - most implementations can't cope with

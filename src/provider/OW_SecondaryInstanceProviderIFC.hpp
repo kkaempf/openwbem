@@ -137,7 +137,7 @@ public:
 };
 
 typedef Reference<SecondaryInstanceProviderIFC> SecondaryInstanceProviderIFCRef;
-typedef Array<SecondaryInstanceProviderIFCRef> SeconaryInstanceProviderIFCRefArray;
+typedef Array<SecondaryInstanceProviderIFCRef> SecondaryInstanceProviderIFCRefArray;
 
 } // end namespace OpenWBEM
 

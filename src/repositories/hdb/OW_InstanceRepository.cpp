@@ -107,12 +107,12 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER, "no object path");
 	}
 	// Start return value with the namespace
-	StringBuffer rv(makeClassKey(ns, cop.getObjectName()));
+	StringBuffer rv(makeClassKey(ns, cop.getClassName()));
 	rv += '/';
 	CIMPropertyArray kprops = theClass.getKeys();
 	if(kprops.size() == 0)
 	{
-		rv += cop.getObjectName();
+		rv += cop.getClassName();
 		return rv.releaseString();
 		// don't do this to allow for singleton classes without keys.
 		//OW_THROWCIMMSG(CIMException::INVALID_CLASS,
@@ -382,7 +382,7 @@ InstanceRepository::classHasInstances(const CIMObjectPath& classPath)
 	throwIfNotOpen();
 	HDBHandleLock hdl(this, getHandle());
 	String ckey = makeClassKey(classPath.getNameSpace(),
-		classPath.getObjectName());
+		classPath.getClassName());
 	HDBNode node = hdl->getNode(ckey);
 	if(node)
 	{

@@ -127,7 +127,7 @@ CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const String &sMethod,
 	{
 		ostr << "<LOCALCLASSPATH>";
 		LocalCIMNameSpacetoXML(nameSpace, ostr);
-		ostr << "<CLASSNAME NAME=\"" << path.getObjectName() << "\"/>";
+		ostr << "<CLASSNAME NAME=\"" << path.getClassName() << "\"/>";
 		ostr << "</LOCALCLASSPATH>";
 	}
 }
@@ -1155,7 +1155,7 @@ CIMXMLCIMOMHandle::associatorNames(
 	else
 	{
 		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">" <<
-		"<CLASSNAME NAME=\"" << path.getObjectName() <<
+		"<CLASSNAME NAME=\"" << path.getClassName() <<
 		"\"/></IPARAMVALUE>";
 	}
 	if (!assocClass.empty())
@@ -1253,7 +1253,7 @@ CIMXMLCIMOMHandle::associatorsCommon(
 	else
 	{
 		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">" <<
-		"<CLASSNAME NAME=\"" << path.getObjectName() <<
+		"<CLASSNAME NAME=\"" << path.getClassName() <<
 		"\"/></IPARAMVALUE>";
 	}
 	if (!assocClass.empty())
@@ -1296,7 +1296,7 @@ CIMXMLCIMOMHandle::referenceNames(
 	else
 	{
 		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">" <<
-		"<CLASSNAME NAME=\"" << path.getObjectName() <<
+		"<CLASSNAME NAME=\"" << path.getClassName() <<
 		"\"></CLASSNAME></IPARAMVALUE>";
 	}
 	if (!resultClass.empty())
@@ -1381,7 +1381,7 @@ CIMXMLCIMOMHandle::referencesCommon(
 	else
 	{
 		extra << "<IPARAMVALUE NAME=\"" << CIMXMLParser::P_ObjectName << "\">"
-		<< "<CLASSNAME NAME=\"" << path.getObjectName()
+		<< "<CLASSNAME NAME=\"" << path.getClassName()
 		<< "\"></CLASSNAME></IPARAMVALUE>";
 	}
 	if (!resultClass.empty())
