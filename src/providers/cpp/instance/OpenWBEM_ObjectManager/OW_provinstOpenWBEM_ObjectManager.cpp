@@ -110,7 +110,7 @@ public:
 
 		newInst.setProperty("Name", CIMValue(Name));
 		newInst.setProperty("Started", CIMValue(true));
-		newInst.setProperty("EnabledStatus", CIMValue(UInt16(2))); // 2 = Enabled
+		newInst.setProperty("EnabledState", CIMValue(UInt16(2))); // 2 = Enabled
 		newInst.setProperty("Caption", CIMValue("owcimomd"));
 		newInst.setProperty("Description", CIMValue("owcimomd"));
 		return newInst;
