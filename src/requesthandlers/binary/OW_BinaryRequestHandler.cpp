@@ -119,14 +119,7 @@ void
 BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	std::ostream* ostrError, OperationContext& context)
 {
-	String userName;
-	try
-	{
-		userName = context.getStringData(OperationContext::USER_NAME);
-	}
-	catch (ContextDataNotFoundException&)
-	{
-	}
+	String userName = context.getStringDataWithDefault(OperationContext::USER_NAME);
 	if(!userName.empty())
 	{
 		if(!getUserId(userName, m_userId))

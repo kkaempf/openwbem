@@ -110,17 +110,7 @@ struct AuthorizerMarker
 	
 	static bool active(OperationContext& context)
 	{
-		bool cc = false;
-		try
-		{
-			cc = (context.getStringData(AUTH_ACTIVE_KEY) == "1");
-		}
-		catch (ContextDataNotFoundException& e)
-		{
-			// Ignore
-		}
-	
-		return cc;
+		return context.getStringDataWithDefault(AUTH_ACTIVE_KEY) == "1";
 	}
 };
 
@@ -154,17 +144,7 @@ bool
 AuthorizerManager::isOn(
 	OperationContext& context)
 {
-	bool cc = true;
-	try
-	{
-		cc = (context.getStringData(DISABLED_KEY) != "1");
-	}
-	catch (ContextDataNotFoundException& e)
-	{
-		// Ignore
-	}
-
-	return cc;
+	return context.getStringDataWithDefault(DISABLED_KEY) != "1";
 }
 //////////////////////////////////////////////////////////////////////////////
 AuthorizerManager::AuthorizerManager()

@@ -176,18 +176,9 @@ AccessMgr::checkAccess(int op, const String& ns,
 	}
 
 	const char* const ACCESS_MSG_INTERNAL_CALL = "ACCESS_MSG_INTERNAL_CALL";
-	try
+	if (context.getStringDataWithDefault(ACCESS_MSG_INTERNAL_CALL) == "1")
 	{
-		// Avoid an infinite recursion loop
-		String val = context.getStringData(ACCESS_MSG_INTERNAL_CALL);
-		if (val == "1")
-		{
-			return;
-		}
-	}
-	catch (ContextDataNotFoundException& e)
-	{
-		// this means we're good to go.
+		return;
 	}
 
 	// now set the value so that we won't cause an infinite recursion loop

@@ -765,28 +765,22 @@ namespace
 		cimomuid = 0;
 		useruid = 0;
 
-		try
-		{
-			String wk = env->getOperationContext().getStringData(
-				OperationContext::CIMOM_UIDKEY);
+		String wk = env->getOperationContext().getStringDataWithDefault(
+			OperationContext::CIMOM_UIDKEY);
 
+		if(!wk.empty())
+		{
+			cimomuid = wk.toUInt32();
+			wk = env->getOperationContext().getStringDataWithDefault(
+				OperationContext::CURUSER_UIDKEY);
 			if(!wk.empty())
 			{
-				cimomuid = wk.toUInt32();
-				wk = env->getOperationContext().getStringData(
-					OperationContext::CURUSER_UIDKEY);
-				if(!wk.empty())
-				{
-					useruid = wk.toUInt32();
-				}
-				else
-				{
-					useruid = cimomuid;
-				}
+				useruid = wk.toUInt32();
 			}
-		}
-		catch(ContextDataNotFoundException&)
-		{
+			else
+			{
+				useruid = cimomuid;
+			}
 		}
 	}
 
