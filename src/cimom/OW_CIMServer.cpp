@@ -1098,20 +1098,25 @@ CIMServer::modifyInstance(
 	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(),
 		E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, context);
 	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass, context));
+
+	// Make sure instance jives with class definition
+	CIMInstance lci(modifiedInstance);
+	lci.syncWithClass(theClass);
+
 	if(!instancep)
 	{
 		// No instance provider qualifier found
-		oldInst = m_cimRepository->modifyInstance(ns, modifiedInstance,
+		oldInst = m_cimRepository->modifyInstance(ns, lci,
 			includeQualifiers, propertyList, context);
 	}
 	else
 	{
 		// Look for dynamic instances
-		CIMObjectPath cop(ns, modifiedInstance);
+		CIMObjectPath cop(ns, lci);
 		oldInst = _getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, NULL,
 			context);
 		instancep->modifyInstance(createProvEnvRef(context, m_env), ns,
-			modifiedInstance, oldInst, includeQualifiers, propertyList, theClass);
+			lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
 	OW_ASSERT(oldInst);
 	return oldInst;
