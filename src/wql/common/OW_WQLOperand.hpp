@@ -140,7 +140,7 @@ public:
 
 	/** Initializes object as INTEGER_VALUE.
 	 */
-	OW_WQLOperand(OW_Int32 x, WQLIntegerValueTag)
+	OW_WQLOperand(OW_Int64 x, WQLIntegerValueTag)
 	{
 		_integerValue = x;
 		_type = INTEGER_VALUE;
@@ -226,7 +226,7 @@ public:
 
 	/** Gets this object as an INTEGER_VALUE.
 	 */
-	OW_Int32 getIntegerValue() const
+	OW_Int64 getIntegerValue() const
 	{
 		if (_type != INTEGER_VALUE)
 			OW_THROW(OW_TypeMismatchException, "Type mismatch");
@@ -284,7 +284,7 @@ public:
 
 private:
 
-	OW_Int32 _integerValue;
+	OW_Int64 _integerValue;
 	OW_Real64 _doubleValue;
 	OW_Bool _booleanValue;
 	OW_String _stringValue;

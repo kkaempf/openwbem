@@ -114,7 +114,8 @@ enum OW_WQLOperation
 	WQL_IS_TRUE,
 	WQL_IS_NOT_TRUE,
 	WQL_IS_FALSE,
-	WQL_IS_NOT_FALSE
+	WQL_IS_NOT_FALSE,
+	WQL_ISA
 };
 
 #endif

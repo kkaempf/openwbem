@@ -28,21 +28,24 @@ INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/client
+-I$(top_srcdir)/src/client \
+-I$(top_srcdir)/src/wql/common
 
 pkginclude_HEADERS = \
 OW_WQLImpl.hpp \
 OW_WQLScanUtils.hpp \
 OW_WQLAst.hpp \
-OW_WQLProcessor.hpp \
 OW_WQLVisitor.hpp 
 
 libowwql_a_SOURCES = \
 OW_WQLParser.yy \
 OW_WQLLexer.ll \
 OW_WQLScanUtils.cpp \
+OW_WQLProcessor.hpp \
 OW_WQLProcessor.cpp \
-OW_WQLImpl.cpp
+OW_WQLImpl.cpp \
+OW_WQLSelectStatementGen.hpp \
+OW_WQLSelectStatementGen.cpp
 
 EXTRA_DIST = \
 $(top_builddir)/src/wql/OW_WQLParser.cc \

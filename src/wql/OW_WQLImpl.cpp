@@ -33,6 +33,7 @@
 #include "OW_WQLAst.hpp"
 #include "OW_AutoPtr.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_WQLSelectStatementGen.hpp"
 
 OW_Mutex OW_WQLImpl::classLock;
 const char* OW_WQLImpl::parserInput;
@@ -80,6 +81,45 @@ void OW_WQLImpl::evaluate(const OW_String& nameSpace,
 	{
 		result.handle(p.instances[i]);
 	}
+}
+
+ 
+OW_WQLSelectStatement
+OW_WQLImpl::createSelectStatement(const OW_String& query)
+{
+	OW_MutexLock lock(classLock);
+
+	// set up the parser's input
+	parserInput = query.c_str();
+	OW_WQLscanner_init();
+
+#ifdef YYOW_DEBUG
+	yydebug = 1;
+#endif
+
+	int yyresult = yyparse();
+	if (yyresult)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Parse failed");
+	}
+	else
+	{
+		//OW_LOGDEBUG("Parse succeeded");
+	}
+
+	OW_WQLSelectStatementGen p;
+	OW_AutoPtr<stmt> pAST(OW_WQLImpl::statement);
+	lock.release();
+
+	if (pAST.get())
+	{
+		pAST->accept(&p);
+	}
+	else
+	{
+		//OW_LOGDEBUG("pAST was NULL!");
+	}
+	return p.getSelectStatement();
 }
 
 OW_Bool OW_WQLImpl::supportsQueryLanguage(const OW_String& lang)

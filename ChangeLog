@@ -1,3 +1,7 @@
+Wed Dec 11 08:29:05 MST 2002
+- Created OW_WQLSelectStatementGen which ties into the WQL parser to create
+  an OW_WQLSelectStatement.
+
 Tue Dec 10 21:26:33 MST 2002
 - Added some WQL classes so indication providers can be effectively 
   implemented. Thanks to Markus Mueller for the code.

@@ -45,12 +45,14 @@ public:
 	{
 	}
 
-	void evaluate(const OW_String& nameSpace,
+	virtual void evaluate(const OW_String& nameSpace,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage,
         OW_Reference<OW_CIMOMHandleIFC> hdl);
 
-	OW_Bool supportsQueryLanguage(const OW_String& lang);
+	virtual OW_WQLSelectStatement createSelectStatement(const OW_String& query);
+
+	virtual OW_Bool supportsQueryLanguage(const OW_String& lang);
 
 private:
 	static OW_Mutex classLock;

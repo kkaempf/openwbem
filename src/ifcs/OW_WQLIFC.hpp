@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2001, 2002 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -36,6 +36,8 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
+// this class is part of the wqlcommon library, which is not in libopenwbem
+class OW_WQLSelectStatement;
 
 class OW_WQLIFC
 {
@@ -48,6 +50,8 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage,
                 OW_Reference<OW_CIMOMHandleIFC> hdl) = 0;
+
+	virtual OW_WQLSelectStatement createSelectStatement(const OW_String& query) = 0;
 
 	virtual OW_Bool supportsQueryLanguage(const OW_String& lang) = 0;
 

@@ -316,6 +316,11 @@ bool OW_WQLSelectStatement::evaluateWhereClause(
 					stack.push(op.getType() != OW_WQLOperand::NULL_VALUE);
 					break;
 				}
+			case WQL_ISA:
+				{
+					// TODO!
+					break;
+				}
 		}
 	}
 

@@ -446,6 +446,11 @@ void OW_WQLCompile::_buildEvalHeap(const OW_WQLSelectStatement * wqs)
 
 					break;
 				}
+			case WQL_ISA:
+				{
+					// TODO!
+					break;
+				}
 		}
 	}
 
