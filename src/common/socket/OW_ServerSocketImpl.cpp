@@ -164,21 +164,16 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 			"close-on-exec flag on listen socket: %1",
 			strerror(errno)).c_str());
 	}
+
 	// set listen socket to nonblocking; see Unix Network Programming,
 	// pages 422-424.
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
-	// is this safe? Should be, but some OS kernels have problems with it.
-	// It's OK on current linux versions.  Definitely not on
-	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
-	// OpenServer?
-	// See http://monkey.org/openbsd/archive/misc/9601/msg00031.html
-	// or just google for "bind() Security Problems"
 	
-	// Let the kernel reuse the port without waiting for it to time out.
-	// Without this line, you can't stop and immediately re-start the daemon.
 	if (reuseAddr)
 	{
+		// Let the kernel reuse the port without waiting for it to time out.
+		// Without this line, you can't stop and immediately re-start the daemon.
 		int reuse = 1;
 		::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
 	}
