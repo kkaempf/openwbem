@@ -112,7 +112,7 @@ char *	CIMValueNewRef(npiHandle, cref)
 
 int	CIMParameterGetType(npiHandle, cp)
 	char * npiHandle
-	void * cp
+	char * cp
 	PREINIT:
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMParameter ccp = {argsfromperl(cp)};
@@ -123,7 +123,7 @@ int	CIMParameterGetType(npiHandle, cp)
 
 char *	CIMParameterGetName(npiHandle, cp)
 	char * npiHandle
-	void * cp
+	char * cp
 	PREINIT:
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMParameter ccp = {argsfromperl(cp)};
@@ -174,7 +174,7 @@ char *	CIMParameterNewRef(npiHandle, name, value)
 
 char *	CIMParameterGetString(npiHandle, cp)
 	char * npiHandle
-	void * cp
+	char * cp
 	PREINIT:
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMParameter ccp = {argsfromperl(cp)};
@@ -185,7 +185,7 @@ char *	CIMParameterGetString(npiHandle, cp)
 	
 int	CIMParameterGetInteger(npiHandle, cp)
 	char * npiHandle
-	void * cp
+	char * cp
 	PREINIT:
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMParameter ccp = {argsfromperl(cp)};
@@ -196,7 +196,7 @@ int	CIMParameterGetInteger(npiHandle, cp)
 	
 char *	CIMParameterGetRefValue(npiHandle, cp)
 	char * npiHandle
-	void * cp
+	char * cp
 	PREINIT:
 	CIMObjectPath cop;
 	NPIHandle * nh = argsfromperl(npiHandle);
@@ -592,4 +592,3 @@ void	raiseError(npiHandle, errorstr)
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CODE:
 	raiseError(nh, errorstr);
-
