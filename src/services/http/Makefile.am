@@ -5,7 +5,12 @@ all-local : all-ow-shared-libs
 clean-local : clean-ow-shared-libs
 
 include $(top_srcdir)/Makefile-shared-lib-inst.inc
+
+# This is an exception to the rule, we need libowservicehttp to be in $(libdir) 
+# for listeners to use as well as the services dir for the cimom to use.
 install-exec-local : install-ow-shared-libs
+	ln -sf $(DESTDIR)$(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
+
 uninstall-local : uninstall-ow-shared-libs
 
 EXPORT_PREFIX=createService
