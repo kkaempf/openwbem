@@ -391,7 +391,7 @@ public:
 	 * String object.
 	 */
 	String substring(size_t beginIndex,
-		size_t length=static_cast<size_t>(-1)) const;
+		size_t length=npos) const;
 	/**
 	 * @return true if this String object contains nothing but space
 	 * characters.
