@@ -190,6 +190,15 @@ OW_SocketBaseImpl::connect(const OW_SocketAddress& addr)
 			format("Failed to create a socket: %1", strerror(errno)).c_str());
 	}
 
+	// set the close on exec flag so child process can't keep the socket.
+	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		::close(m_sockfd);
+		OW_THROW(OW_SocketException, format("OW_SocketBaseImpl::connect() failed to set "
+			"close-on-exec flag on socket: %1",
+			strerror(errno)).c_str());
+	}
+
 	int lerrno;
 
 	if(m_connectTimeout > 0)

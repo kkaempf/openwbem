@@ -99,6 +99,15 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 			strerror(errno)).c_str());
 	}
 
+	// set the close on exec flag so child process can't keep the socket.
+	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		close();
+		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl failed to set "
+			"close-on-exec flag on listen socket: %1",
+			strerror(errno)).c_str());
+	}
+
 	// set listen socket to nonblocking; see Unix Network Programming,
 	// pages 422-424.
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
@@ -162,6 +171,15 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	if((m_sockfd = ::socket(PF_UNIX,SOCK_STREAM, 0)) == -1)
 	{
 		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl: %1",
+			strerror(errno)).c_str());
+	}
+
+	// set the close on exec flag so child process can't keep the socket.
+	if (::fcntl(m_sockfd, F_SETFD, FD_CLOEXEC) == -1)
+	{
+		close();
+		OW_THROW(OW_SocketException, format("OW_ServerSocketImpl failed to set "
+			"close-on-exec flag on listen socket: %1",
 			strerror(errno)).c_str());
 	}
 
