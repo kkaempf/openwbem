@@ -28,41 +28,52 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_XMLLISTENER_HPP_
-#define OW_XMLLISTENER_HPP_
+#ifndef OW_REQUESTHANDLERIFCXML_HPP_
+#define OW_REQUESTHANDLERIFCXML_HPP_
 
 #include "OW_config.h"
-#include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_RequestHandlerIFC.hpp"
 #include "OW_XMLNode.hpp"
-#include "OW_CIMFeatures.hpp"
-#include "OW_RequestHandlerIFCXML.hpp"
 #include <iosfwd>
 
-class OW_CIMListenerCallback;
+const char *const CIM_PROTOCOL_VERSION = "1.0";
+const char *const XML_CIM_HEADER1 = "<?xml version=\"1.0\" ?>";
+const char *const XML_CIM_HEADER2 = "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
 
-class OW_XMLListener : public OW_RequestHandlerIFCXML
+#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
+#define OW_LOGCUSTINFO(msg) this->getEnvironment()->getLogger()->logCustInfo(msg)
+#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
+
+class OW_RequestHandlerIFCXML : public OW_RequestHandlerIFC
 {
 public:
 
-	/**
-	 * Create a new OW_XMLListener.
-	 * @param callback a pointer to a OW_CIMListenerCallback object whose
-	 * 	method should be called when an indication occurrs.
-	 *
-	 */
-	OW_XMLListener(OW_CIMListenerCallback* callback);
-	virtual ~OW_XMLListener() {}
+	OW_RequestHandlerIFCXML(): m_hasError(false), m_path() {}
 
-	virtual OW_RequestHandlerIFC* clone() const
+	virtual ~OW_RequestHandlerIFCXML()
 	{
-		return new OW_XMLListener(*this);
 	}
 
 	virtual OW_StringArray getSupportedContentTypes() const;
 
 	virtual OW_String getContentType() const;
 
+	/**
+	 * has an error occurred?
+	 * @return true if an error occurred.
+	 */
+	virtual OW_Bool doHasError() { return m_hasError; }
+
 protected:
+	/**
+	 * Process the input stream and generate appropriate output.
+	 * @param istr the istream containing the input.
+	 * @param ostrEntity write to this ostream if no errors occur.
+	 * @param ostrError write to this ostream if an error occurs.
+	 * @param userName the name of the user performing the action.
+	 */
+	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
+		std::ostream *ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
 
 
 	/**
@@ -74,26 +85,26 @@ protected:
 	 * @param userName the user performing the action
 	 * @return a HTTP status code, I think.
 	 */
-	virtual int executeXML(OW_XMLNode &node, std::ostream *ostrEntity,
-		std::ostream *ostrError, const OW_String& userName);
-
+	virtual int executeXML(OW_XMLNode& node, std::ostream* ostrEntity,
+		std::ostream* ostrError, const OW_String& userName) = 0;
 
 	/**
-	 * Based on a path, what options are available?
-	 * @param cf a OW_CIMFeatures object to fill out.
-	 * @param path the path of inquiry.
+	 * Write a XML header based on the messageId, and write it to ostr
+	 * @param messageId the message ID
+	 * @param ostr the ostream to write the header to.
 	 */
-	virtual void doOptions(OW_CIMFeatures &cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
+	void makeXMLHeader(const OW_String& messageId, std::ostream& ostr);
 
+	void setPath(const OW_String& id);
 	virtual void outputError(OW_CIMException::ErrNoType errorCode, 
-		OW_String msg, std::ostream& ostr);
-private:
-	OW_CIMListenerCallback* m_callback;
+		OW_String, std::ostream& ostr) = 0;
 
-	void processSimpleExpReq(const OW_XMLNode& startNode, std::ostream& ostrEntity,
-		std::ostream& ostrError, const OW_String& messageId);
+	OW_Bool m_hasError;
+	OW_String m_path;
+
 };
 
 
-#endif // __OW_XMLLISTENER_HPP__
 
+
+#endif //  _OW_CIMPRODUCTIFCXML_HPP__

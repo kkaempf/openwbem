@@ -44,5 +44,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/client \
--I$(top_srcdir)/src/xml
+-I$(top_srcdir)/src/xml \
+-I$(top_srcdir)/src/requesthandlers/cimxml
 

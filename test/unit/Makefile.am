@@ -2,7 +2,8 @@ noinst_PROGRAMS = MemTracerTest
 
 
 MemTracerTest_LDADD = \
--L$(top_builddir)/src/common -lopenwbem
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/ -lopenwbem 
 
 MemTracerTest_LDFLAGS = \
 $(CXXBINLINKFLAGS) \

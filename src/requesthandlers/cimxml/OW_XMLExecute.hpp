@@ -55,10 +55,11 @@ public:
 
 protected:
 	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars);
-	OW_Bool doHasError() { return m_hasError; }
 	virtual void doLogDebug(const OW_String& message);
 	virtual void doLogError(const OW_String& message);
 	virtual void doLogCustInfo(const OW_String& message);
+	virtual void outputError(OW_CIMException::ErrNoType errorCode, 
+		OW_String msg, std::ostream& ostr);
 
 private:
 
@@ -67,11 +68,8 @@ private:
 	std::ostream* m_ostrEntity;
 	std::ostream* m_ostrError;
 
-	OW_Bool m_hasError;
 	OW_Bool m_isIntrinsic;
 	OW_String m_functionName;
-
-	void outputError(const OW_CIMException& ce, std::ostream& ostr);
 
 
 	void executeIntrinsic(std::ostream& osrt, OW_XMLNode node, OW_CIMOMHandleIFC& hdl,

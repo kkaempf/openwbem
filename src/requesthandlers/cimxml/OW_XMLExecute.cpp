@@ -56,9 +56,6 @@
 using std::ostream;
 
 
-#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger()->logDebug(msg)
-#define OW_LOGCUSTINFO(msg) this->getEnvironment()->getLogger()->logCustInfo(msg)
-#define OW_LOGERROR(msg) this->getEnvironment()->getLogger()->logError(msg)
 
 OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
 {
@@ -147,7 +144,6 @@ OW_XMLExecute::OW_XMLExecute()
 	: OW_RequestHandlerIFCXML(),
 	m_ostrEntity(NULL),
 	m_ostrError(NULL),
-	m_hasError(false),
 	m_isIntrinsic(false),
 	m_functionName()
 {
@@ -206,10 +202,6 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 	{
 		makeXMLHeader(messageId, *m_ostrError);
 		processSimpleReq(node, *m_ostrEntity, *m_ostrError, userName);
-		if (m_hasError)
-		{
-			(*m_ostrError) << "</MESSAGE></CIM>\r\n";
-		}
 	}
 	else
 	{
@@ -407,31 +399,6 @@ OW_XMLExecute::getParameters(OW_XMLNode& node,
 	return node;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// Private
-void
-OW_XMLExecute::outputError(const OW_CIMException& ce, ostream& ostr)
-{
-	int errorCode;
-	ostr << "<SIMPLERSP>";
-	if (m_isIntrinsic)
-		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName << "\">";
-	else
-		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">";
-
-	errorCode = ce.getErrNo();
-
-	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
-		OW_XMLEscape(ce.getMessage()) <<
-		"\"></ERROR>";
-
-	if (m_isIntrinsic)
-		ostr << "</IMETHODRESPONSE>";
-	else
-		ostr << "</METHODRESPONSE>";
-
-	ostr << "</SIMPLERSP>";
-}
 
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -1520,7 +1487,7 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 
 		m_hasError = true;
-		outputError(ce, ostrError);
+		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
 }
 
@@ -1562,6 +1529,29 @@ OW_XMLExecute::clone() const
 	return new OW_XMLExecute(*this);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// Protected
+void
+OW_XMLExecute::outputError(OW_CIMException::ErrNoType errorCode, 
+	OW_String msg, ostream& ostr)
+{
+	ostr << "<SIMPLERSP>\r\n";
+	if (m_isIntrinsic)
+		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
+	else
+		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
+
+	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
+		OW_XMLEscape(msg) << 
+		"\"></ERROR>\r\n";
+
+	if (m_isIntrinsic)
+		ostr << "</IMETHODRESPONSE>\r\n";
+	else
+		ostr << "</METHODRESPONSE>\r\n";
+
+	ostr << "</SIMPLERSP>\r\n";
+}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_REQUEST_HANDLER_FACTORY(OW_XMLExecute);

@@ -49,71 +49,10 @@ using std::ostream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_XMLListener::OW_XMLListener(OW_CIMListenerCallback* callback)
-: OW_RequestHandlerIFC(), m_hasError(false), m_callback(callback)
+: OW_RequestHandlerIFCXML(),  m_callback(callback)
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLListener::doProcess(std::istream* istr, std::ostream* ostrEntity,
-        std::ostream* ostrError, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars)
-{
-
-	OW_ASSERT(ostrEntity);
-	OW_ASSERT(ostrError);
-
-	OW_SortedVectorMap<OW_String, OW_String>::const_iterator i = handlerVars.find(OW_ConfigOpts::HTTP_PATH_opt);
-	if (i != handlerVars.end())
-	{
-		setPath((*i).second);
-	}
-
-	OW_XMLNode node;
-	try
-	{
-		OW_XMLParser parser(istr);
-		node = parser.parse();
-		if (!node)
-		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
-		}
-	}
-	catch (OW_XMLException& e)
-	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
-	}
-
-	node = OW_XMLOperationGeneric::XMLGetCIMElement(node);
-	if (!node)
-	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
-	}
-
-	node = node.mustFindElement(OW_XMLNode::XML_ELEMENT_MESSAGE);
-	if (!node)
-	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
-	}
-
-	OW_String userName;
-	i = handlerVars.find(OW_ConfigOpts::USER_NAME_opt);
-	if (i != handlerVars.end())
-	{
-		userName = (*i).second;
-	}
-
-	executeXML(node, ostrEntity, ostrError, userName);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-static void
-makeXMLHeader(const OW_String& messageID, ostream& ostr)
-{
-	ostr << "<?xml version=\"1.0\" ?>";
-	ostr << "<CIM CIMVERSION=\"2.0\" DTDVERSION=\"2.0\">";
-	ostr << "<MESSAGE ID=\"" << messageID << "\" PROTOCOLVERSION=\"1.0\">";
-}
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
@@ -215,24 +154,23 @@ OW_XMLListener::processSimpleExpReq(const OW_XMLNode& startNode,
 	catch(OW_CIMException& ce)
 	{
 		m_hasError = true;
-		outputError(ce, ostrError, messageId);
+		makeXMLHeader(messageId, ostrError);
+		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_XMLListener::outputError(const OW_CIMException& ce, ostream& ostr, const OW_String& messageId)
+OW_XMLListener::outputError(OW_CIMException::ErrNoType errorCode, 
+	OW_String msg, ostream& ostr)
 {
-	int errorCode;
-	makeXMLHeader(messageId, ostr);
 
 	ostr << "<SIMPLEEXPRSP>";
 	ostr << "<EXPMETHODRESPONSE NAME=\"ExportIndication\">";
 
-	errorCode = ce.getErrNo();
 
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
-		OW_XMLEscape(ce.getMessage()) <<
+		OW_XMLEscape(msg) << 
 		"\"></ERROR>";
 
 	ostr << "</EXPMETHODRESPONSE>";
@@ -242,12 +180,6 @@ OW_XMLListener::outputError(const OW_CIMException& ce, ostream& ostr, const OW_S
 }
 
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLListener::setPath(const OW_String& id)
-{
-	m_path = id;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray

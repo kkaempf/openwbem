@@ -99,6 +99,8 @@ public:
 
 	virtual OW_String getContentType() const = 0;
 
+	OW_String getCIMError() const { return m_cimError; }
+
 protected:
 	/**
 	 * The HTTP server calls this once all HTTP headers have been
@@ -126,6 +128,8 @@ protected:
 	 * @param path The requested path
 	 */
 	virtual void doOptions(OW_CIMFeatures& cf, const OW_SortedVectorMap<OW_String, OW_String>& handlerVars) = 0;
+
+	OW_String m_cimError;
 
 private:
 	OW_ServiceEnvironmentIFCRef m_env;

@@ -394,6 +394,11 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			addHeader("Content-Encoding", "deflate");
 			sendHeaders(m_resCode, -1);
 		}
+		if (m_requestHandler->getCIMError().length() > 0)
+		{
+			addHeader(m_respHeaderPrefix + "CIMError", 
+				m_requestHandler->getCIMError());
+		}
 		else
 		{
 			sendHeaders(m_resCode, clen);
@@ -494,6 +499,11 @@ OW_HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 			}
 			*/
 			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorTrailer", escapedError.toString());
+			if (m_requestHandler->getCIMError().length() > 0)
+			{
+				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMError", 
+					m_requestHandler->getCIMError());
+			}
 		}
 		ostrChunk->termOutput();
 	} // else m_chunkedOut
