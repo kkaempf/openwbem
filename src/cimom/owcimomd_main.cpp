@@ -80,6 +80,7 @@ int main(int argc, char* argv[])
 
 		// logger's not set up according to the config file until after init()
 		logger = env->getLogger(COMPONENT_NAME);
+		OW_LOG_INFO(logger, "CIMOM beginning startup");
 
 		// Call platform specific code to become a daemon/service
 		try
