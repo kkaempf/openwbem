@@ -57,13 +57,35 @@ void OW_HTTPUtilsTestCases::testescapeCharForURL()
 	unitAssert( HTTPUtils::escapeCharForURL('\xAA') == "%AA" );
 }
 
+void OW_HTTPUtilsTestCases::testunescapeCharForURL()
+{
+	unitAssert( HTTPUtils::unescapeCharForURL("%41") == 'A' );
+	unitAssert( HTTPUtils::unescapeCharForURL("%22") == '\x22' );
+	unitAssert( HTTPUtils::unescapeCharForURL("%FF") == '\xFF' );
+	unitAssert( HTTPUtils::unescapeCharForURL("%AA") == '\xAA' );
+	unitAssert( HTTPUtils::unescapeCharForURL("%bc") == '\xbc' );
+	unitAssert( HTTPUtils::unescapeCharForURL("%10E") == '\x10' );
+	unitAssertThrows( HTTPUtils::unescapeCharForURL("") );
+	unitAssertThrows( HTTPUtils::unescapeCharForURL("abc") );
+	unitAssertThrows( HTTPUtils::unescapeCharForURL("%") );
+	unitAssertThrows( HTTPUtils::unescapeCharForURL("%1") );
+	unitAssertThrows( HTTPUtils::unescapeCharForURL("%1Z") );
+}
+
 void OW_HTTPUtilsTestCases::testescapeForURL()
 {
 	unitAssert( HTTPUtils::escapeForURL("Hello") == "Hello" );
 	unitAssert( HTTPUtils::escapeForURL("-_.!*\'()") == "-_.!*\'()");
 	unitAssert( HTTPUtils::escapeForURL("\x1\x4\x10\x20\xFF%") == "%01%04%10%20%FF%25" );
 }
-#include <iostream>
+
+void OW_HTTPUtilsTestCases::testunescapeForURL()
+{
+	unitAssert( HTTPUtils::unescapeForURL("Hello") == "Hello" );
+	unitAssert( HTTPUtils::unescapeForURL("-_.!*\'()") == "-_.!*\'()");
+	unitAssert( HTTPUtils::unescapeForURL("%01%04%10%20%FF%25") == "\x1\x4\x10\x20\xFF%");
+}
+
 void OW_HTTPUtilsTestCases::testbase64Encode()
 {
 	// These values taken from /usr/lib/python2.2/test/test_base64.py
@@ -100,7 +122,9 @@ Test* OW_HTTPUtilsTestCases::suite()
 	TestSuite *testSuite = new TestSuite ("OW_HTTPUtils");
 
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testescapeCharForURL);
+	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testunescapeCharForURL);
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testescapeForURL);
+	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testunescapeForURL);
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64Encode);
 	ADD_TEST_TO_SUITE(OW_HTTPUtilsTestCases, testbase64Decode);
 

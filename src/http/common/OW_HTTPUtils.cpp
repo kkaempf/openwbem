@@ -43,6 +43,8 @@
 #include "OW_AuthenticatorIFC.hpp" // for OW_AuthenticationException
 #include "OW_MD5.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_Format.hpp"
+
 #include <cctype>
 #include <cstring>
 #include <cstdio>
@@ -678,6 +680,24 @@ String escapeCharForURL(char c)
 	return String(rval);
 }
 
+OW_DEFINE_EXCEPTION(unescapeCharForURL)
+namespace {
+	inline char digitToVal(char c)
+	{
+		return isdigit(c) ? c - '0' : toupper(c) - 'A' + 10;
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+char unescapeCharForURL(const char* str)
+{
+	if (strlen(str) < 3 || str[0] != '%' || !isxdigit(str[1]) || !isxdigit(str[2]))
+	{
+		OW_THROW(unescapeCharForURLException, Format("Invalid escape: %1", str).c_str());
+	}
+	return (digitToVal(str[1]) << 4 ) | digitToVal(str[2]);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 String escapeForURL(const String& input)
 {
@@ -707,6 +727,27 @@ String escapeForURL(const String& input)
 		default:
 			rval += escapeCharForURL(input[i]);
 			break;
+		}
+	}
+	return rval.releaseString();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String unescapeForURL(const String& input)
+{
+	StringBuffer rval(input.length());
+	const char* pos = input.c_str();
+	while (*pos != '\0')
+	{
+		if (*pos == '%')
+		{
+			rval += unescapeCharForURL(pos);
+			pos += 3;
+		}
+		else
+		{
+			rval += *pos;
+			++pos;
 		}
 	}
 	return rval.releaseString();

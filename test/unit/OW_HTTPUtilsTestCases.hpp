@@ -52,7 +52,9 @@ public:
 private:
 	// test methods
 	void testescapeCharForURL();
+	void testunescapeCharForURL();
 	void testescapeForURL();
+	void testunescapeForURL();
 	void testbase64Encode();
 	void testbase64Decode();
 };

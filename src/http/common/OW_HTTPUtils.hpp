@@ -181,19 +181,38 @@ namespace HTTPUtils
 	
 	bool buildMap(HTTPHeaderMap& map, std::istream& istr);
 	/**
-	 * Apply the standard URI [16, section 2] escaping mechanism to 
+	 * Apply the standard URI [RFC 2396, section 2] escaping mechanism to 
 	 * the char c, using the ""%" HEX HEX" convention)
 	 * @param c The char to escape
 	 * @return The escaped char
 	 */
 	String escapeCharForURL(char c);
+
+	OW_DECLARE_EXCEPTION(unescapeCharForURL);
 	/**
-	 * Apply the standard URI [16, section 2] escaping mechanism to 
+	 * Apply the standard URI [RFC 2396, section 2] unescaping mechanism to 
+	 * the String s, formatted in the ""%" HEX HEX" convention)
+	 * @param str The string to unescape.  Only the first 3 characters are
+	 *  considered.  Following characters are ignored.
+	 * @return The unescaped char
+	 * @throws unEscapeCharForURLException If the string doesn't contain a 
+	 *  valid escape sequence
+	 */
+	char unescapeCharForURL(const char* str);
+	/**
+	 * Apply the standard URI [RFC 2396, section 2] escaping mechanism to 
 	 * the string input, using the ""%" HEX HEX" convention)
 	 * @param input The string to escape
 	 * @return The escaped string
 	 */
 	String escapeForURL(const String& input);
+	/**
+	 * Apply the standard URI [RFC 2396, section 2] unescaping mechanism to 
+	 * the string input, using the ""%" HEX HEX" convention)
+	 * @param input The string to unescape
+	 * @return The unescaped string
+	 */
+	String unescapeForURL(const String& input);
 };
 
 } // end namespace OpenWBEM
