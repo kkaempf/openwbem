@@ -190,6 +190,9 @@
 				RelativePath="..\..\..\..\src\common\OW_COWReferenceBase.hpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_CryptographicRandomNumber.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_DataStreams.cpp">
 			</File>
 			<File
@@ -385,6 +388,9 @@
 				RelativePath="..\..\..\..\src\common\OW_ThreadImpl.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadOnce.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadPool.cpp">
 			</File>
 			<File
@@ -496,6 +502,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_COWReference.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_CryptographicRandomNumber.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_DataStreams.hpp">
@@ -757,6 +766,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadImpl.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\OW_ThreadOnce.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\OW_ThreadPool.hpp">
