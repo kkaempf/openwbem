@@ -94,11 +94,11 @@ void registerProviderInfo(
 	ProviderManager::ProvRegMap_t::const_iterator ci = regMap.find(name);
 	if (ci != regMap.end())
 	{
-		env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format("More than one provider is registered to instrument class (%1). %2::%3 and %4::%5",
+		OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("More than one provider is registered to instrument class (%1). %2::%3 and %4::%5",
 			name, ci->second.ifc->getName(), ci->second.provName, ifc->getName(), providerName));
 		return;
 	}
-	env->getLogger(ProviderManager::COMPONENT_NAME)->logDebug(Format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
+	OW_LOG_DEBUG(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
 	// now save it so we can look it up quickly when needed
 	ProviderManager::ProvReg reg;
 	reg.ifc = ifc;
@@ -119,7 +119,7 @@ void registerProviderInfo(
 {
 	String name(name_);
 	name.toLowerCase();
-	env->getLogger(ProviderManager::COMPONENT_NAME)->logDebug(Format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
+	OW_LOG_DEBUG(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
 	// now save it so we can look it up quickly when needed
 	ProviderManager::ProvReg reg;
 	reg.ifc = ifc;
@@ -148,7 +148,7 @@ void processProviderClassExtraInfo(
 			String extraName = extra[i];
 			if (extraName.empty())
 			{
-				env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format("Provider sub-name is "
+				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider sub-name is "
 					"empty for %1 by provider %2::%3",
 					name, ifc->getName(), providerName));
 				continue;
@@ -176,7 +176,7 @@ void processProviderClassExtraInfo(
 			String extraName = extra[i];
 			if (extraName.empty())
 			{
-				env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format("Provider sub-name is "
+				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider sub-name is "
 					"empty for %1 by provider %2::%3",
 					name, ifc->getName(), providerName));
 				continue;
@@ -220,7 +220,7 @@ void processProviderClassInfo(
 			String ns = classInfo.namespaces[l];
 			if (ns.empty())
 			{
-				env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format("Provider namespace is "
+				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider namespace is "
 					"empty for class %1 by provider %2::%3",
 					getClassName(classInfo), ifc->getName(), providerName));
 				continue;
@@ -249,7 +249,7 @@ void processProviderClassInfo(
 			String ns = classInfo.namespaces[l];
 			if (ns.empty())
 			{
-				env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format("Provider namespace is "
+				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider namespace is "
 					"empty for class %1 by provider %2::%3",
 					classInfo.className, ifc->getName(), providerName));
 				continue;
@@ -278,7 +278,7 @@ void processProviderClassInfo(
 			String ns = classInfo.namespaces[l];
 			if (ns.empty())
 			{
-				env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format("Provider namespace is "
+				OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format("Provider namespace is "
 					"empty for class %1 by provider %2::%3",
 					classInfo.indicationName, ifc->getName(), providerName));
 				continue;
@@ -303,7 +303,7 @@ void processProviderInfo(
 		String providerName = providerInfo[j].getProviderName();
 		if (providerName.empty())
 		{
-			env->getLogger(ProviderManager::COMPONENT_NAME)->logError(Format(
+			OW_LOG_ERROR(env->getLogger(ProviderManager::COMPONENT_NAME), Format(
 				"Provider name not supplied for provider class registrations from IFC %1", ifc->getName()));
 			continue;
 		}
@@ -747,7 +747,7 @@ ProviderManager::unloadProviders(const ProviderEnvironmentIFCRef& env)
 		}
 		catch (const Exception& e)
 		{
-			m_logger->logError(Format("Caught exception while calling unloadProviders for provider interface %1: %2", m_IFCArray[i]->getName(), e));
+			OW_LOG_ERROR(m_logger, Format("Caught exception while calling unloadProviders for provider interface %1: %2", m_IFCArray[i]->getName(), e));
 		}
 	}
 }
@@ -761,7 +761,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	provStr = String();
 	if (!qual.getName().equalsIgnoreCase(CIMQualifier::CIM_QUAL_PROVIDER))
 	{
-		m_logger->logError(Format("Provider Manager - invalid provider qualifier: %1",
+		OW_LOG_ERROR(m_logger, Format("Provider Manager - invalid provider qualifier: %1",
 			qual.getName()));
 		return rref;
 	}
@@ -773,7 +773,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 		{
 			dt.setToArrayType(cv.getArraySize());
 		}
-		m_logger->logError(Format(
+		OW_LOG_ERROR(m_logger, Format(
 			"Provider Manager - qualifier has incompatible data type: %1",
 			dt.toString()));
 		return rref;
@@ -787,7 +787,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 		ndx = qvstr.indexOf(":");
 		if (ndx == String::npos)
 		{
-			m_logger->logError(Format(
+			OW_LOG_ERROR(m_logger, Format(
 				"Provider Manager - Invalid Format for provider string: %1", qvstr));
 			return rref;
 		}
@@ -805,7 +805,7 @@ ProviderManager::getProviderIFC(const ProviderEnvironmentIFCRef& env,
 	}
 	if (!rref)
 	{
-		m_logger->logError(Format(
+		OW_LOG_ERROR(m_logger, Format(
 			"Provider Manager - Invalid provider interface identifier: %1",
 			ifcStr));
 	}

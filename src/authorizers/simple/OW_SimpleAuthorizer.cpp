@@ -162,8 +162,8 @@ namespace
 	{
 		OperationContext& m_context;
 		String m_key;
-		InternalDataRemover(OperationContext& context, const char* key) 
-			: m_context(context) 
+		InternalDataRemover(OperationContext& context, const char* key)
+			: m_context(context)
 			, m_key(key)
 		{}
 		~InternalDataRemover() { m_context.removeData(m_key); }
@@ -196,8 +196,8 @@ AccessMgr::checkAccess(int op, const String& ns,
 	LoggerRef lgr = m_env->getLogger(COMPONENT_NAME);
 	if (lgr->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		lgr->logDebug(Format("Checking access to namespace: \"%1\"", ns));
-		lgr->logDebug(Format("UserName is: \"%1\" Operation is : %2",
+		OW_LOG_DEBUG(lgr, Format("Checking access to namespace: \"%1\"", ns));
+		OW_LOG_DEBUG(lgr, Format("UserName is: \"%1\" Operation is : %2",
 			userInfo.getUserName(), op));
 	}
 	String lns(ns);
@@ -214,7 +214,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 				m_env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 			if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 			{
-				lgr->logDebug("User is SuperUser: checkAccess returning.");
+				OW_LOG_DEBUG(lgr, "User is SuperUser: checkAccess returning.");
 				return;
 			}
 			try
@@ -225,7 +225,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			}
 			catch(CIMException&)
 			{
-				lgr->logDebug("OpenWBEM_UserACL class non-existent in"
+				OW_LOG_DEBUG(lgr, "OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return;
 			}
@@ -261,7 +261,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 				{
 					if (capability.indexOf(opType) == String::npos)
 					{
-						lgr->logInfo(Format(
+						OW_LOG_INFO(lgr, Format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							userInfo.m_userName, lns));
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -271,13 +271,13 @@ AccessMgr::checkAccess(int op, const String& ns,
 				{
 					if (!capability.equals("rw") && !capability.equals("wr"))
 					{
-						lgr->logInfo(Format(
+						OW_LOG_INFO(lgr, Format(
 							"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 							userInfo.m_userName, lns));
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
-				lgr->logInfo(Format(
+				OW_LOG_INFO(lgr, Format(
 					"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 					userInfo.m_userName, lns));
 				return;
@@ -292,7 +292,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(CIMException&)
 		{
-			lgr->logDebug("OpenWBEM_NamespaceACL class non-existent in"
+			OW_LOG_DEBUG(lgr, "OpenWBEM_NamespaceACL class non-existent in"
 				" /root/security. namespace ACLs disabled");
 			return;
 		}
@@ -308,7 +308,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		{
 			if (lgr->getLogLevel() == E_DEBUG_LEVEL)
 			{
-				lgr->logDebug(Format("Caught exception: %1 in"
+				OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in"
 					" AccessMgr::checkAccess", ce));
 			}
 			ci.setNull();
@@ -332,7 +332,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 			{
 				if (capability.indexOf(opType) == String::npos)
 				{
-					lgr->logInfo(Format(
+					OW_LOG_INFO(lgr, Format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						userInfo.m_userName, lns));
 					OW_THROWCIM(CIMException::ACCESS_DENIED);
@@ -342,13 +342,13 @@ AccessMgr::checkAccess(int op, const String& ns,
 			{
 				if (!capability.equals("rw") && !capability.equals("wr"))
 				{
-					lgr->logInfo(Format(
+					OW_LOG_INFO(lgr, Format(
 						"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 						userInfo.m_userName, lns));
 					OW_THROWCIM(CIMException::ACCESS_DENIED);
 				}
 			}
-			lgr->logInfo(Format(
+			OW_LOG_INFO(lgr, Format(
 				"ACCESS GRANTED to user \"%1\" for namespace \"%2\"",
 				userInfo.m_userName, lns));
 			return;
@@ -360,7 +360,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		lns = lns.substring(0, idx);
 	}
-	lgr->logInfo(Format(
+	OW_LOG_INFO(lgr, Format(
 		"ACCESS DENIED to user \"%1\" for namespace \"%2\"",
 		userInfo.m_userName, lns));
 	OW_THROWCIM(CIMException::ACCESS_DENIED);

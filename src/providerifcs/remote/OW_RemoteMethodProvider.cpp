@@ -73,14 +73,14 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		CIMParamValueArray& out )
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
+	OW_LOG_DEBUG(lgr, Format("RemoteMethodProvider::invokeMethod ns = %1, path = %2, methodName = %3", ns, path, methodName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteMethodProvider::invokeMethod got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteMethodProvider::invokeMethod calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteMethodProvider::invokeMethod calling remote WBEM server");
 
 	CIMValue rval(CIMNULL);
 	try
@@ -93,13 +93,13 @@ CIMValue RemoteMethodProvider::invokeMethod(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteMethodProvider::invokeMethod remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteMethodProvider::invokeMethod failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 	return rval;

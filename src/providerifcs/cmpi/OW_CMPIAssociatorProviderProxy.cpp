@@ -62,8 +62,7 @@ void CMPIAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIAssociatorProviderProxy::associatorNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::associatorNames()");
 
 	if (m_ftable->miVector.assocMI->ft->associatorNames != NULL)
 	{
@@ -125,8 +124,7 @@ void CMPIAssociatorProviderProxy::associators(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIAssociatorProviderProxy::associators()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::associators()");
 
 	if (m_ftable->miVector.assocMI->ft->associators != NULL)
 	{
@@ -214,8 +212,7 @@ void CMPIAssociatorProviderProxy::references(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray *propertyList)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIAssociatorProviderProxy::references()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::references()");
 
 	if (m_ftable->miVector.assocMI->ft->references != NULL)
 	{
@@ -295,8 +292,7 @@ void CMPIAssociatorProviderProxy::referenceNames(
 	const String& resultClass,
 	const String& role)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIAssociatorProviderProxy::referenceNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIAssociatorProviderProxy::referenceNames()");
 
 	if (m_ftable->miVector.assocMI->ft->referenceNames != NULL)
 	{

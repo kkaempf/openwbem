@@ -77,7 +77,7 @@ void
 MetaRepository::open(const String& path)
 {
 	GenericHDBRepository::open(path);
-	logInfo(Format("Using MetaRepository: %1", path));
+	OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Using MetaRepository: %1", path));
 	// Create root qualifier container
 	HDBHandleLock hdl(this, getHandle());
 	String qcontk(QUAL_CONTAINER);
@@ -341,9 +341,9 @@ MetaRepository::getCIMClass(const String& ns, const String& className,
 		}
 	}
 	// now do some filtering
-	if (propertyList 
-		|| localOnly == E_LOCAL_ONLY 
-		|| includeQualifiers == E_EXCLUDE_QUALIFIERS 
+	if (propertyList
+		|| localOnly == E_LOCAL_ONLY
+		|| includeQualifiers == E_EXCLUDE_QUALIFIERS
 		|| includeClassOrigin == E_EXCLUDE_CLASS_ORIGIN)
 	{ // only clone if we have to
 		StringArray lpropList;
@@ -734,7 +734,7 @@ MetaRepository::adjustClass(const String& ns, CIMClass& childClass,
 						}
 						else
 						{
-							logInfo(Format("Error: %1.%2: qualifier %3 was "
+							OW_LOG_INFO(m_env->getLogger(COMPONENT_NAME), Format("Error: %1.%2: qualifier %3 was "
 										"overridden, but the qualifier can't be "
 										"overridden because it has DisableOverride flavor",
 										childClass.getName(), propArray[i].getName(),
@@ -830,7 +830,7 @@ MetaRepository::_resolveQualifiers(const String& ns,
 		}
 		else
 		{
-			logError(Format("Unable to find qualifier: %1",
+			OW_LOG_ERROR(m_env->getLogger(COMPONENT_NAME), Format("Unable to find qualifier: %1",
 				quals[i].getName()));
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				Format("Unable to find qualifier: %1",

@@ -100,8 +100,8 @@ typedef SharedLibraryReference<IntrusiveReference<RequestHandlerIFC> > RequestHa
 typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
 
-class AuthorizerIFC; 
-typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef; 
+class AuthorizerIFC;
+typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
 
 class AuthorizerManager;
 typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
@@ -173,10 +173,6 @@ public:
 	void shutdown();
 	ProviderManagerRef getProviderManager();
 	void runSelectEngine();
-	void logInfo(const String& s) const;
-	void logDebug(const String& s) const;
-	void logError(const String& s) const;
-	void logFatalError(const String& s) const;
 	void exportIndication(const CIMInstance& instance,
 		const String& instNS);
 	void unloadReqHandlers();

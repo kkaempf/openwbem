@@ -73,14 +73,14 @@ RemoteInstanceProvider::enumInstanceNames(
 		const CIMClass& cimClass )
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteInstanceProvider::enumInstanceNames ns = %1, className = %2", ns, className));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstanceNames ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteInstanceProvider::enumInstanceNames got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstanceNames got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteInstanceProvider::enumInstanceNames calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::enumInstanceNames calling remote WBEM server");
 
 	try
 	{
@@ -92,13 +92,13 @@ RemoteInstanceProvider::enumInstanceNames(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteInstanceProvider::enumInstanceNames remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::enumInstanceNames remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteInstanceProvider::enumInstanceNames failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
@@ -119,14 +119,14 @@ RemoteInstanceProvider::enumInstances(
 		const CIMClass& cimClass )
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteInstanceProvider::enumInstances ns = %1, className = %2", ns, className));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstances ns = %1, className = %2", ns, className));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteInstanceProvider::enumInstances got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::enumInstances got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteInstanceProvider::enumInstances calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::enumInstances calling remote WBEM server");
 
 	try
 	{
@@ -138,13 +138,13 @@ RemoteInstanceProvider::enumInstances(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteInstanceProvider::enumInstances remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::enumInstances remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteInstanceProvider::enumInstances failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
@@ -162,14 +162,14 @@ RemoteInstanceProvider::getInstance(
 		const CIMClass& cimClass )
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteInstanceProvider::getInstance ns = %1, instanceName = %2", ns, instanceName));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::getInstance ns = %1, instanceName = %2", ns, instanceName));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteInstanceProvider::getInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::getInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteInstanceProvider::getInstance calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::getInstance calling remote WBEM server");
 
 	CIMInstance rval(CIMNULL);
 	try
@@ -182,13 +182,13 @@ RemoteInstanceProvider::getInstance(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteInstanceProvider::getInstance remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::getInstance remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteInstanceProvider::getInstance failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 	return rval;
@@ -203,14 +203,14 @@ RemoteInstanceProvider::createInstance(
 		const CIMInstance& cimInstance )
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteInstanceProvider::createInstance ns = %1", ns));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::createInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::createInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteInstanceProvider::createInstance calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::createInstance calling remote WBEM server");
 
 	CIMObjectPath rval(CIMNULL);
 	try
@@ -223,13 +223,13 @@ RemoteInstanceProvider::createInstance(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteInstanceProvider::createInstance remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::createInstance remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteInstanceProvider::createInstance failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 	return rval;
@@ -247,14 +247,14 @@ RemoteInstanceProvider::modifyInstance(
 		const CIMClass& theClass)
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteInstanceProvider::modifyInstance ns = %1", ns));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::modifyInstance ns = %1", ns));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::modifyInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteInstanceProvider::modifyInstance calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::modifyInstance calling remote WBEM server");
 
 	try
 	{
@@ -266,13 +266,13 @@ RemoteInstanceProvider::modifyInstance(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteInstanceProvider::modifyInstance remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::modifyInstance remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteInstanceProvider::modifyInstance failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }
@@ -285,14 +285,14 @@ RemoteInstanceProvider::deleteInstance(
 		const CIMObjectPath& cop)
 {
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug(Format("RemoteInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::deleteInstance ns = %1, cop = %2", ns, cop));
 	String lUrl(m_url);
 	ClientCIMOMHandleRef hdl = RemoteProviderUtils::getRemoteClientCIMOMHandle(lUrl, m_useConnectionCredentials, env, m_pool, m_alwaysSendCredentials);
-	lgr->logDebug(Format("RemoteInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
+	OW_LOG_DEBUG(lgr, Format("RemoteInstanceProvider::deleteInstance got ClientCIMOMHandleRef for url: %1", lUrl));
 
 	ClientCIMOMHandleConnectionPool::HandleReturner returner(hdl, m_pool, lUrl);
 
-	lgr->logDebug("RemoteInstanceProvider::deleteInstance calling remote WBEM server");
+	OW_LOG_DEBUG(lgr, "RemoteInstanceProvider::deleteInstance calling remote WBEM server");
 
 	try
 	{
@@ -304,13 +304,13 @@ RemoteInstanceProvider::deleteInstance(
 		{
 			e.setErrNo(CIMException::FAILED); // providers shouldn't ever throw NOT_SUPPORTED
 		}
-		lgr->logInfo(Format("RemoteInstanceProvider::deleteInstance remote WBEM server threw: %1", e));
+		OW_LOG_INFO(lgr, Format("RemoteInstanceProvider::deleteInstance remote WBEM server threw: %1", e));
 		throw;
 	}
 	catch (const Exception& e)
 	{
 		String msg = Format("RemoteInstanceProvider::deleteInstance failed calling remote WBEM server: %1", e);
-		lgr->logError(msg);
+		OW_LOG_ERROR(lgr, msg);
 		OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 	}
 }

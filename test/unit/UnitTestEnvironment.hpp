@@ -42,35 +42,16 @@
 #include "OW_Map.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
-#include "OW_LogMessage.hpp"
+#include "OW_CerrLogger.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;
-
-class TestLogger : public Logger
-{
-public:
-	TestLogger()
-		: Logger("UnitTest", E_ERROR_LEVEL)
-	{
-	}
-protected:
-	virtual void doProcessLogMessage(const LogMessage& message) const
-	{
-		std::cout << message.message << std::endl;
-	}
-	virtual LoggerRef doClone() const
-	{
-		return LoggerRef(new TestLogger(*this));
-	}
-};
-
 
 class TestEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	virtual LoggerRef getLogger() const {
-		return LoggerRef(new TestLogger);
+		return LoggerRef(new CerrLogger);
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
@@ -106,7 +87,7 @@ public:
 		return CIMOMHandleIFCRef();
 	}
 
-	virtual CIMInstanceArray getInteropInstances(const String& className) const 
+	virtual CIMInstanceArray getInteropInstances(const String& className) const
 	{
 		return CIMInstanceArray();
 	}

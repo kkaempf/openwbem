@@ -76,18 +76,10 @@ namespace
 	const String COMPONENT_NAME("ow.httpserver");
 }
 
-#ifndef OW_LOGDEBUG
-#define OW_LOGDEBUG(x) m_options.env->getLogger(COMPONENT_NAME)->logDebug(x)
-#endif
-#ifndef OW_LOGERROR
-#define OW_LOGERROR(x) m_options.env->getLogger(COMPONENT_NAME)->logError(x)
-#endif
-#ifndef OW_LOGCUSTINFO
-#define OW_LOGCUSTINFO(x) m_options.env->getLogger(COMPONENT_NAME)->logInfo(x)
-#endif
-#ifndef OW_LOGFATALERROR
-#define OW_LOGFATALERROR(x) m_options.env->getLogger(COMPONENT_NAME)->logFatalError(x)
-#endif
+#define OW_LOGDEBUG(x) OW_LOG_DEBUG(m_options.env->getLogger(COMPONENT_NAME), x)
+#define OW_LOGERROR(x) OW_LOG_ERROR(m_options.env->getLogger(COMPONENT_NAME), x)
+#define OW_LOGCUSTINFO(x) OW_LOG_INFO(m_options.env->getLogger(COMPONENT_NAME), x)
+#define OW_LOGFATALERROR(x) OW_LOG_FATAL_ERROR(m_options.env->getLogger(COMPONENT_NAME), x)
 
 //////////////////////////////////////////////////////////////////////////////
 #ifdef OW_WIN32

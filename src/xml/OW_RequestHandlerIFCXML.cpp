@@ -46,10 +46,10 @@
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
 
-#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logDebug(msg)
-#define OW_LOGINFO(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(msg)
-#define OW_LOGERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logError(msg)
-#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logFatalError(msg)
+#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGINFO(msg) OW_LOG_INFO(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGERROR(msg) OW_LOG_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 
 namespace OpenWBEM
 {

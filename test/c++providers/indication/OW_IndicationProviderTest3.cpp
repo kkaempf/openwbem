@@ -103,7 +103,7 @@ public:
 		const StringArray& classes,
 		bool firstActivation)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::activateFilter");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest3::activateFilter");
 		
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -164,7 +164,7 @@ public:
 		const StringArray& classes,
 		bool lastActivation)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::deActivateFilter");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest3::deActivateFilter");
 		
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -292,7 +292,7 @@ public:
 		const StringArray *propertyList,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::getInstance");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest3::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -325,7 +325,7 @@ public:
 		const CIMClass &requestedClass,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::enumInstances");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest3::enumInstances");
 		// m_insts could be accessed from multiple threads
 		MutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -341,7 +341,7 @@ public:
 		CIMObjectPathResultHandlerIFC &result,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::enumInstanceNames");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest3::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		MutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -380,7 +380,7 @@ public:
 
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest3::getInitialPollingInterval");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest3::getInitialPollingInterval");
 		MutexLock l(m_guard);
 		// return a 1 second interval if we need to be polled, otherwise return 0 which means we won't be polled.
 		if (m_creationFilterCount + m_modificationFilterCount + m_deletionFilterCount > 0)

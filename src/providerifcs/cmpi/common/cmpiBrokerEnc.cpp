@@ -38,7 +38,7 @@ namespace
 static CMPIInstance* mbEncNewInstance(CMPIBroker*, CMPIObjectPath* eCop,
 						 CMPIStatus *rc)
 {
-	CM_LOGGER()->logDebug("CMPIBrokerEnc: mbEncNewInstance()");
+	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewInstance()");
 
 	OpenWBEM::CIMObjectPath * cop = static_cast<OpenWBEM::CIMObjectPath *>(eCop->hdl);
 
@@ -71,7 +71,7 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker*, CMPIObjectPath* eCop,
 static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker*, char *ns, char *cls,
 				  CMPIStatus *rc)
 {
-	CM_LOGGER()->logDebug("CMPIBrokerEnc: mbEncNewObjectPath()");
+	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewObjectPath()");
 	OpenWBEM::String className(cls);
 	OpenWBEM::String nameSpace(ns);
 	OpenWBEM::CIMObjectPath * cop = new OpenWBEM::CIMObjectPath(className,nameSpace);
@@ -100,7 +100,7 @@ CMPIString* mbIntNewString(char *s) {
 static CMPIArray* mbEncNewArray(CMPIBroker*, CMPICount count, CMPIType type,
 								CMPIStatus *rc)
 {
-	CM_LOGGER()->logDebug("CMPIBrokerEnc: mbEncNewArray()");
+	OW_LOG_DEBUG(CM_LOGGER(), "CMPIBrokerEnc: mbEncNewArray()");
 	CMSetStatus(rc,CMPI_RC_OK);
 	CMPIData * dta = new CMPIData[count+1];
 	dta->type = type;

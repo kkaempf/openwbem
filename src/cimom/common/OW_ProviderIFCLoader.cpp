@@ -54,7 +54,7 @@ ProviderIFCLoaderBase::createProviderIFCFromLib(
 	const String& libname) const
 {
 	LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
-	lgr->logDebug(Format(
+	OW_LOG_DEBUG(lgr, Format(
 		"ProviderIFCBaseIFCLoaderBase::createProviderIFCFromLib"
 		" loading library %1", libname));
 	SharedLibraryRef sl = m_sll->loadSharedLibrary(libname,
@@ -67,7 +67,7 @@ ProviderIFCLoaderBase::createProviderIFCFromLib(
 	}
 	else
 	{
-		lgr->logDebug(Format("ProviderIFCBaseIFCLoaderBase::"
+		OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::"
 			"createProviderIFCFromLib FAILED loading library %1", libname));
 	}
 	ProviderIFCBaseIFCRef retval(sl, ptr);
@@ -80,13 +80,13 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	String libdir = env->getConfigItem(
 		ConfigOpts::PROVIDER_IFC_LIBS_opt);
 	LoggerRef lgr(env->getLogger(COMPONENT_NAME));
-	lgr->logDebug(Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
+	OW_LOG_DEBUG(lgr, Format("ProviderIFCBaseIFCLoaderBase::loadIFC getting provider"
 		" interfaces from: %1", libdir));
 	StringArray libs;
 	FileSystem::getDirectoryContents(libdir, libs);
 	if (libs.size() == 0)
 	{
-		lgr->logDebug("ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
+		OW_LOG_DEBUG(lgr, "ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
 			" provider interfaces");
 		return;
 	}
@@ -115,16 +115,16 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			}
 			else
 			{
-				lgr->logError(Format("Unable to load ProviderIFC library %1",
+				OW_LOG_ERROR(lgr, Format("Unable to load ProviderIFC library %1",
 					libs[i]));
 			}
 		}
 		catch (const Exception& e)
 		{
-			lgr->logError(Format("Caught exception: \"%1\" while loading library: %2", e, libs[i]));
+			OW_LOG_ERROR(lgr, Format("Caught exception: \"%1\" while loading library: %2", e, libs[i]));
 		}
 	}
-	lgr->logDebug(Format("Number of provider interfaces loaded: %1",
+	OW_LOG_DEBUG(lgr, Format("Number of provider interfaces loaded: %1",
 		ifcCount));
 }
 //////////////////////////////////////////////////////////////////////////////

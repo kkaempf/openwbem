@@ -55,8 +55,7 @@ PerlAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("PerlAssociatorProviderProxy::associatorNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlAssociatorProviderProxy::associatorNames()");
 	if (m_ftable->fp_associatorNames != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -110,8 +109,7 @@ PerlAssociatorProviderProxy::associators(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("PerlAssociatorProviderProxy::associators()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlAssociatorProviderProxy::associators()");
 	if (m_ftable->fp_associators != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -153,7 +151,7 @@ PerlAssociatorProviderProxy::associators(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("PerlAssociatorProviderProxy::"
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("PerlAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		//we need  a localOnly flag here
@@ -190,7 +188,7 @@ PerlAssociatorProviderProxy::references(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger(COMPONENT_NAME)->logDebug("PerlAssociatorProviderProxy::references()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlAssociatorProviderProxy::references()");
 	if (m_ftable->fp_references != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -230,7 +228,7 @@ PerlAssociatorProviderProxy::references(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("PerlAssociatorProviderProxy::"
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("PerlAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
 		//we need  a localOnly flag here
 		//as local_only cannot be specified in associators calls we assume 'NO'
@@ -264,8 +262,7 @@ PerlAssociatorProviderProxy::referenceNames(
 		const String& resultClass,
 		const String& role)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("PerlAssociatorProviderProxy::referenceNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlAssociatorProviderProxy::referenceNames()");
 	if (m_ftable->fp_referenceNames != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

@@ -97,6 +97,14 @@ public:
 	/// The Log4j TTCC message format - TTCC is acronym for Time Thread Category Component.
 	/// "%r [%t] %-5p %c - %m"
 	static const String STR_TTCC_MESSAGE_FORMAT;
+	/// String of the type of the syslog log appender
+	static const String TYPE_SYSLOG;
+	/// String of the type of the stderr log appender
+	static const String TYPE_STDERR;
+	/// String of the type of the file log appender
+	static const String TYPE_FILE;
+	/// String of the type of the null log appender
+	static const String TYPE_NULL;
 
 protected:
 

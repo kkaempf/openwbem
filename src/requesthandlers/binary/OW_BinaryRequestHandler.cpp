@@ -137,78 +137,78 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 			switch (funcNo)
 			{
 				case BIN_GETQUAL:
-					lgr->logDebug("BinaryRequestHandler get qualifier"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get qualifier"
 						" request");
 					getQual(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 				case BIN_SETQUAL:
-					lgr->logDebug("BinaryRequestHandler set qualifier"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler set qualifier"
 						" request");
 					setQual(chdl, *ostrm, *istrm);
 					break;
 				case BIN_DELETEQUAL:
-					lgr->logDebug("BinaryRequestHandler delete qualifier"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete qualifier"
 						" request");
 					deleteQual(chdl, *ostrm, *istrm);
 					break;
 				case BIN_ENUMQUALS:
-					lgr->logDebug("BinaryRequestHandler enum qualifiers"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum qualifiers"
 						" request");
 					enumQualifiers(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 				case BIN_GETCLS:
-					lgr->logDebug("BinaryRequestHandler get class"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get class"
 						" request");
 					getClass(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 				case BIN_CREATECLS:
-					lgr->logDebug("BinaryRequestHandler create class"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler create class"
 						" request");
 					createClass(chdl, *ostrm, *istrm);
 					break;
 				case BIN_MODIFYCLS:
-					lgr->logDebug("BinaryRequestHandler modify class"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler modify class"
 						" request");
 					modifyClass(chdl, *ostrm, *istrm);
 					break;
 				case BIN_DELETECLS:
-					lgr->logDebug("BinaryRequestHandler delete class"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete class"
 						" request");
 					deleteClass(chdl, *ostrm, *istrm);
 					break;
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 				case BIN_ENUMCLSS:
-					lgr->logDebug("BinaryRequestHandler enum classes"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum classes"
 						" request");
 					enumClasses(chdl, *ostrm, *istrm);
 					break;
 				case BIN_GETINST:
-					lgr->logDebug("BinaryRequestHandler get instance"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
 						" request");
 					getInstance(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 				case BIN_CREATEINST:
-					lgr->logDebug("BinaryRequestHandler create instance"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler create instance"
 						" request");
 					createInstance(chdl, *ostrm, *istrm);
 					break;
 				case BIN_MODIFYINST:
-					lgr->logDebug("BinaryRequestHandler get instance"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get instance"
 						" request");
 					modifyInstance(chdl, *ostrm, *istrm);
 					break;
 				case BIN_DELETEINST:
-					lgr->logDebug("BinaryRequestHandler delete instance"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler delete instance"
 						" request");
 					deleteInstance(chdl, *ostrm, *istrm);
 					break;
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BIN_SETPROP:
-					lgr->logDebug("BinaryRequestHandler set property"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler set property"
 						" request");
 					setProperty(chdl, *ostrm, *istrm);
 					break;
@@ -216,65 +216,65 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BIN_GETPROP:
-					lgr->logDebug("BinaryRequestHandler get property"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get property"
 						" request");
 					getProperty(chdl, *ostrm, *istrm);
 					break;
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 				case BIN_ENUMCLSNAMES:
-					lgr->logDebug("BinaryRequestHandler enum class names"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum class names"
 						" request");
 					enumClassNames(chdl, *ostrm, *istrm);
 					break;
 				case BIN_ENUMINSTS:
-					lgr->logDebug("BinaryRequestHandler enum instances"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum instances"
 						" request");
 					enumInstances(chdl, *ostrm, *istrm);
 					break;
 				case BIN_ENUMINSTNAMES:
-					lgr->logDebug("BinaryRequestHandler enum instance"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler enum instance"
 						" names request");
 					enumInstanceNames(chdl, *ostrm, *istrm);
 					break;
 				case BIN_INVMETH:
-					lgr->logDebug("BinaryRequestHandler invoke method"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler invoke method"
 						" request");
 					invokeMethod(chdl, *ostrm, *istrm);
 					break;
 				case BIN_EXECQUERY:
-					lgr->logDebug("BinaryRequestHandler exec query"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler exec query"
 						" request");
 					execQuery(chdl, *ostrm, *istrm);
 					break;
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 				case BIN_ASSOCIATORS:
-					lgr->logDebug("BinaryRequestHandler associators"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler associators"
 						" request");
 					associators(chdl, *ostrm, *istrm);
 					break;
 				case BIN_ASSOCNAMES:
-					lgr->logDebug("BinaryRequestHandler associator names"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler associator names"
 						" request");
 					associatorNames(chdl, *ostrm, *istrm);
 					break;
 				case BIN_REFERENCES:
-					lgr->logDebug("BinaryRequestHandler references"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler references"
 						" request");
 					references(chdl, *ostrm, *istrm);
 					break;
 				case BIN_REFNAMES:
-					lgr->logDebug("BinaryRequestHandler reference names"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler reference names"
 						" request");
 					referenceNames(chdl, *ostrm, *istrm);
 					break;
 #endif
 				case BIN_GETSVRFEATURES:
-					lgr->logDebug("BinaryRequestHandler get server"
+					OW_LOG_DEBUG(lgr, "BinaryRequestHandler get server"
 						" features request");
 					getServerFeatures(chdl, *ostrm, *istrm);
 					break;
 				default:
-					lgr->logDebug(Format("BinaryRequestHandler: Received"
+					OW_LOG_DEBUG(lgr, Format("BinaryRequestHandler: Received"
 						" invalid function number: %1", funcNo));
 					writeError(*ostrError, "Invalid function number");
 					break;
@@ -282,7 +282,7 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		}
 		catch(CIMException& e)
 		{
-			lgr->logInfo(Format("CIM Exception caught in"
+			OW_LOG_INFO(lgr, Format("CIM Exception caught in"
 				" BinaryRequestHandler: %1", e));
 			BinarySerialization::write(*ostrError, BIN_EXCEPTION);
 			BinarySerialization::write(*ostrError, UInt16(e.getErrNo()));
@@ -292,32 +292,32 @@ BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 	}
 	catch(Exception& e)
 	{
-		lgr->logError("Exception caught in BinaryRequestHandler");
-		lgr->logError(Format("Type: %1", e.type()));
-		lgr->logError(Format("File: %1", e.getFile()));
-		lgr->logError(Format("Line: %1", e.getLine()));
-		lgr->logError(Format("Msg: %1", e.getMessage()));
+		OW_LOG_ERROR(lgr, "Exception caught in BinaryRequestHandler");
+		OW_LOG_ERROR(lgr, Format("Type: %1", e.type()));
+		OW_LOG_ERROR(lgr, Format("File: %1", e.getFile()));
+		OW_LOG_ERROR(lgr, Format("Line: %1", e.getLine()));
+		OW_LOG_ERROR(lgr, Format("Msg: %1", e.getMessage()));
 		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e).c_str());
 		setError(CIMException::FAILED, e.getMessage());
 		
 	}
 	catch(std::exception& e)
 	{
-		lgr->logError(Format("Caught %1 exception in BinaryRequestHandler",
+		OW_LOG_ERROR(lgr, Format("Caught %1 exception in BinaryRequestHandler",
 			e.what()));
 		writeError(*ostrError, Format("BinaryRequestHandler caught exception: %1", e.what()).c_str());
 		setError(CIMException::FAILED, e.what());
 	}
 	catch (ThreadCancelledException&)
 	{
-		lgr->logError("Thread cancelled in BinaryRequestHandler");
+		OW_LOG_ERROR(lgr, "Thread cancelled in BinaryRequestHandler");
 		writeError(*ostrError, "Thread cancelled");
 		setError(CIMException::FAILED, "Thread cancelled");
 		throw;
 	}
 	catch(...)
 	{
-		lgr->logError("Unknown exception caught in BinaryRequestHandler");
+		OW_LOG_ERROR(lgr, "Unknown exception caught in BinaryRequestHandler");
 		writeError(*ostrError, "BinaryRequestHandler caught unknown exception");
 		setError(CIMException::FAILED, "Caught unknown exception");
 	}
@@ -927,7 +927,7 @@ BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	LoggerRef lgr = getEnvironment()->getLogger(COMPONENT_NAME);
 	if (m_userId == UserId(-1))
 	{
-		lgr->logError("Binary request handler cannot change file ownership:"
+		OW_LOG_ERROR(lgr, "Binary request handler cannot change file ownership:"
 			" Owner unknown");
 		return false;
 	}
@@ -935,7 +935,7 @@ BinaryRequestHandler::writeFileName(std::ostream& ostrm,
 	{
 		if (FileSystem::changeFileOwner(fname, m_userId) != 0)
 		{
-			lgr->logError(Format("Binary request handler failed changing"
+			OW_LOG_ERROR(lgr, Format("Binary request handler failed changing"
 				" ownership on file %1", fname));
 			return false;
 		}

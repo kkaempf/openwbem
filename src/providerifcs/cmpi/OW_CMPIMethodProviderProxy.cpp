@@ -65,8 +65,7 @@ CMPIMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const String &methodName,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIMethodProviderProxy::invokeMethod()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIMethodProviderProxy::invokeMethod()");
 
 	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{

@@ -36,6 +36,7 @@ OW_BaseStreamBuffer.cpp \
 OW_BinarySerialization.cpp \
 OW_Bool.cpp \
 OW_CerrAppender.cpp \
+OW_CerrLogger.cpp \
 OW_Char16.cpp \
 OW_CIMErrorException.cpp \
 OW_CmdLineParser.cpp \
@@ -72,6 +73,7 @@ OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
 OW_NoSuchQualifierException.cpp \
 OW_NullAppender.cpp \
+OW_NullLogger.cpp \
 OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
 OW_OutOfBoundsException.cpp \
@@ -131,6 +133,7 @@ OW_Bool.hpp \
 OW_ByteSwap.hpp \
 OW_Cache.hpp \
 OW_CerrAppender.hpp \
+OW_CerrLogger.hpp \
 OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
@@ -188,6 +191,7 @@ OW_NoSuchPropertyException.hpp \
 OW_NoSuchProviderException.hpp \
 OW_NoSuchQualifierException.hpp \
 OW_NullAppender.hpp \
+OW_NullLogger.hpp \
 OW_NULLValueException.hpp \
 OW_OperationContext.hpp \
 OW_PosixUnnamedPipe.hpp \

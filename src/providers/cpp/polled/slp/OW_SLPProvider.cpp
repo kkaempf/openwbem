@@ -80,7 +80,7 @@ slpRegReport(SLPHandle hdl, SLPError errArg, void* cookie)
 	if (errArg < SLP_OK)
 	{
 		LoggerRef* pLogger = (LoggerRef*)cookie;
-		(*pLogger)->logError(Format("cimom received error durring SLP registration: %1",
+		OW_LOG_ERROR((*pLogger), Format("cimom received error durring SLP registration: %1",
 			(int)errArg));
 	}
 }
@@ -114,7 +114,7 @@ public:
 			return 0;
 		}
 		Int32 rval = INITIAL_POLLING_INTERVAL;
-		env->getLogger(COMPONENT_NAME)->logDebug(Format(
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
 			"SLPProvider::getInitialPollingInterval returning %1",
 			INITIAL_POLLING_INTERVAL).c_str());
 		m_httpsPort = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
@@ -158,8 +158,8 @@ public:
 		}
 		catch (CIMException& e)
 		{
-			env->getLogger(COMPONENT_NAME)->logError(Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
-			env->getLogger(COMPONENT_NAME)->logError("SLP provider unable to determine service-id");
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "SLP provider unable to determine service-id");
 		}
 
 		m_queryEnabled = !env->getConfigItem(ConfigOpts::WQL_LIB_opt, OW_DEFAULT_WQL_LIB).empty();
@@ -199,7 +199,7 @@ private:
 		SLPHandle slpHandle;
 		if ((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
 		{
-			env->getLogger(COMPONENT_NAME)->logError(Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
+			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
 				err).c_str());
 			return;
 		}
@@ -347,12 +347,12 @@ private:
 				&lgr);						// Give cimom handle to callback
 			if (err != SLP_OK)
 			{
-				env->getLogger(COMPONENT_NAME)->logError(Format("cimom failed to register url with SLP: %1",
+				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), Format("cimom failed to register url with SLP: %1",
 					urlString).c_str());
 			}
 			else
 			{
-				env->getLogger(COMPONENT_NAME)->logDebug(Format("cimom registered service url with SLP: %1",
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("cimom registered service url with SLP: %1",
 					urlString).c_str());
 			}
 		}

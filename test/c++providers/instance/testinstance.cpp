@@ -200,7 +200,7 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& theClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::modifyInstance");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::modifyInstance");
 		String name;
 		StringArray params;
 		modifiedInstance.getProperty("Name").getValue().get(name);
@@ -246,7 +246,7 @@ public:
 	String
 	procAcceptLanguage(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage");
 
 		String al;
 		OperationContext::DataRef dataRef =
@@ -259,22 +259,22 @@ public:
 			{
 				al = slref->getAcceptLanguageString();
 				slref->addContentLanguage("x-testinst");
-				env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage"
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage"
 					" setting content-language in SessionLanguage object");
 				String cl = slref->getContentLanguage();
-				env->getLogger(COMPONENT_NAME)->logDebug(Format(
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format(
 					"TestInstance::procAcceptLanguage content-language"
 					" now is %1", cl).c_str());
 			}
 			else
 			{
-				env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage"
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage"
 					" didn't find SessionLanguage object in opctx");
 			}
 		}
 		else
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug("TestInstance::procAcceptLanguage"
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "TestInstance::procAcceptLanguage"
 				" didn't find SESSION_LANGUAGE_KEY in opctx");
 		}
 

@@ -45,7 +45,7 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-SharedLibraryRef 
+SharedLibraryRef
 DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	const LoggerRef& logger) const
 {
@@ -56,7 +56,7 @@ DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
 			filename));
 	}
 
-	logger->logError(Format("DLLSharedLibraryLoader::loadSharedLibrary "
+	OW_LOG_ERROR(logger, Format("DLLSharedLibraryLoader::loadSharedLibrary "
 		"LoadLibrary returned NULL.  Error is: %1",
 		System::lastErrorMsg()).c_str());
 		
@@ -64,7 +64,7 @@ DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-SharedLibraryLoaderRef 
+SharedLibraryLoaderRef
 SharedLibraryLoader::createSharedLibraryLoader()
 {
 	return SharedLibraryLoaderRef(new DLLSharedLibraryLoader);

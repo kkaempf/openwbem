@@ -60,8 +60,7 @@ PerlMethodProviderProxy::invokeMethod(const ProviderEnvironmentIFCRef &env,
 	const CIMParamValueArray &in, CIMParamValueArray &out)
 {
 		CIMValue rval(CIMNULL);
-		env->getLogger(COMPONENT_NAME)->
-			logDebug("PerlInstanceProviderProxy::invokeMethod()");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlInstanceProviderProxy::invokeMethod()");
 		if (m_ftable->fp_invokeMethod != NULL)
 		{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

@@ -45,7 +45,7 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-SharedLibraryRef 
+SharedLibraryRef
 shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	const LoggerRef& logger) const
 {
@@ -65,13 +65,13 @@ shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	}
 	else
 	{
-		logger->logError(Format("shlSharedLibraryLoader::loadSharedLibrary "
+		OW_LOG_ERROR(logger, Format("shlSharedLibraryLoader::loadSharedLibrary "
 			"shl_load returned NULL.  Error is: %1(%2)", errno, strerror(errno)));
 		return SharedLibraryRef( 0 );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////
-SharedLibraryLoaderRef 
+SharedLibraryLoaderRef
 SharedLibraryLoader::createSharedLibraryLoader()
 {
 	return SharedLibraryLoaderRef(new shlSharedLibraryLoader);

@@ -68,8 +68,7 @@ CMPIInstanceProviderProxy::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const CIMClass& cimClass )
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIInstanceProviderProxy::enumInstanceNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::enumInstanceNames()");
 	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -117,8 +116,7 @@ CMPIInstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIInstanceProviderProxy::enumInstances()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::enumInstances()");
 
 	if (m_ftable->miVector.instMI->ft->enumInstances!= NULL)
 	{
@@ -185,8 +183,7 @@ CMPIInstanceProviderProxy::getInstance(const ProviderEnvironmentIFCRef &env,
 	const CIMClass& cimClass)
 {
 	CIMInstance rval;
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIInstanceProviderProxy::getInstance()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::getInstance()");
 
 	if (m_ftable->miVector.instMI->ft->getInstance != NULL)
 	{
@@ -256,8 +253,7 @@ void
 CMPIInstanceProviderProxy::deleteInstance(const ProviderEnvironmentIFCRef &env,
 	const String& ns, const CIMObjectPath& cop)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIInstanceProviderProxy::deleteInstance()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::deleteInstance()");
 	if (m_ftable->miVector.instMI->ft->deleteInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -297,8 +293,7 @@ CIMObjectPath
 	const CIMInstance& cimInstance)
 {
 	CIMObjectPath rval;
-	env->getLogger(COMPONENT_NAME)->
-		logDebug(Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
@@ -345,8 +340,7 @@ void
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("CMPIInstanceProviderProxy::modifyInstance()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "CMPIInstanceProviderProxy::modifyInstance()");
 	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)
 	{
 		CMPIStatus rc = {CMPI_RC_OK, NULL};

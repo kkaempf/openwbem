@@ -74,7 +74,7 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 	LoggerRef logger = env->getLogger(COMPONENT_NAME);
 	if (logger->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		logger->logDebug(Format("CppIndicationExportXMLHTTPProvider "
+		OW_LOG_DEBUG(logger, Format("CppIndicationExportXMLHTTPProvider "
 			"exporting indication.  Handler = %1, Indication = %2",
 			indHandlerInst.toString(), indicationInst.toString()));
 	}

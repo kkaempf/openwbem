@@ -101,6 +101,8 @@ ow.owcimomd.PollingManager        - The polling manager
 ow.owcimomd.ProviderIFCLoader     - The Provider interface loader
 ow.owcimomd.indication.Server     - The indication server
 ow.owcimomd.indication.LifecyclePoller - Indication lifecycle poller
+ow.owcimomd.indication.LifecycleCreator - The lifecycle
+                                    indicatition creator.
 ow.owcimomd.AuthManager           - AuthManager responsible for loading
                                     authentication modules.
 ow.requesthandler.cimxml          - cimxml request handler/operation decoder
@@ -122,10 +124,5 @@ ow.provider.*                     - Each OW provider uses it's name with the
                                     ow.provider. prefix
 ow.owmofc                         - The mof compiler utility
 ow.owrepositorydump               - The owrepositorydump utility
-
-
-Code modifications:
-- Switch log statements to use the logging macros.
-- Redo all subclasses of LoggerIFC to use LogAppenderIFC and LoggerIFC::createLogger()
 
 

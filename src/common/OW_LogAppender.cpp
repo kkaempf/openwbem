@@ -58,6 +58,11 @@ namespace OpenWBEM
 const StringArray LogAppender::ALL_COMPONENTS(String("*").tokenize());
 const StringArray LogAppender::ALL_CATEGORIES(String("*").tokenize());
 const String LogAppender::STR_TTCC_MESSAGE_FORMAT("%r [%t] %-5p %c - %m");
+const String LogAppender::TYPE_SYSLOG("syslog");
+const String LogAppender::TYPE_STDERR("stderr");
+const String LogAppender::TYPE_FILE("file");
+const String LogAppender::TYPE_NULL("null");
+
 
 //////////////////////////////////////////////////////////////////////////////
 LogAppender::LogAppender(const StringArray& components, const StringArray& categories, const String& pattern)
@@ -145,21 +150,21 @@ LogAppender::createLogAppender(
 	// can use name to find the appropriate config items.
 
 	LogAppenderRef appender;
-	if (type.empty() || type.equalsIgnoreCase("null"))
+	if (type.empty() || type.equalsIgnoreCase(TYPE_NULL))
 	{
 		appender = new NullAppender(components, categories, messageFormat);
 	}
 #ifndef OW_WIN32
-	else if ( type == "syslog" )
+	else if ( type == TYPE_SYSLOG )
 	{
 		appender = new SyslogAppender(components, categories, messageFormat);
 	}
 #endif
-	else if (type == "stderr" || type == "cerr")
+	else if (type == TYPE_STDERR || type == "cerr")
 	{
 		appender = new CerrAppender(components, categories, messageFormat);
 	}
-	else if (type == "file")
+	else if (type == TYPE_FILE)
 	{
 		String configItem = Format(ConfigOpts::LOG_1_LOCATION_opt, name);
 		String filename = ConfigFile::getConfigItem(configItems, configItem);

@@ -1,19 +1,19 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
 *
 *  - Redistributions of source code must retain the above copyright notice,
-*    this list of conditions and the following disclaimer.
+*	this list of conditions and the following disclaimer.
 *
 *  - Redistributions in binary form must reproduce the above copyright notice,
-*    this list of conditions and the following disclaimer in the documentation
-*    and/or other materials provided with the distribution.
+*	this list of conditions and the following disclaimer in the documentation
+*	and/or other materials provided with the distribution.
 *
 *  - Neither the name of Vintela, Inc. nor the names of its
-*    contributors may be used to endorse or promote products derived from this
-*    software without specific prior written permission.
+*	contributors may be used to endorse or promote products derived from this
+*	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -32,23 +32,31 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_LOGLEVEL_HPP_
-#define OW_LOGLEVEL_HPP_
+#ifndef OW_NULL_LOGGER_HPP_INCLUDE_GUARD_
+#define OW_NULL_LOGGER_HPP_INCLUDE_GUARD_
+
 #include "OW_config.h"
+#include "OW_Logger.hpp"
+#include "OW_commonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-enum ELogLevel
+/// This logger just discards all log messages.
+class NullLogger : public Logger
 {
-	E_NONE_LEVEL,
-	E_FATAL_ERROR_LEVEL,
-	E_ERROR_LEVEL,
-	E_INFO_LEVEL,
-	E_DEBUG_LEVEL,
-	E_ALL_LEVEL
+public:
+	NullLogger();
+
+	virtual void doProcessLogMessage(const LogMessage&) const;
+
+	virtual LoggerRef doClone() const;
 };
 
 } // end namespace OpenWBEM
 
-#endif // OW_LOGLEVEL_HPP_
+
+#endif
+
+
+

@@ -89,7 +89,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 	}
 
 	CIMOMHandleIFCRef lch = env->getCIMOMHandle(context,
-		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
+		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS,
 		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
@@ -100,7 +100,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
 		if (superUser.equalsIgnoreCase(userInfo.getUserName()))
 		{
-			lgr->logDebug("User is SuperUser: checkAccess returning.");
+			OW_LOG_DEBUG(lgr, "User is SuperUser: checkAccess returning.");
 			return true;
 		}
 	}
@@ -123,7 +123,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 			}
 			catch(CIMException&)
 			{
-				lgr->logDebug("OpenWBEM_UserACL class non-existent in"
+				OW_LOG_DEBUG(lgr, "OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return true;
 			}
@@ -201,7 +201,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			lgr->logDebug(Format("Caught exception: %1 in"
+			OW_LOG_DEBUG(lgr, Format("Caught exception: %1 in"
 				" AccessMgr::checkAccess. line=%2", ce, __LINE__));
 			ci.setNull();
 		}
@@ -254,7 +254,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowReadInstance(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
@@ -267,11 +267,11 @@ SimpleAuthorizer2::doAllowReadInstance(
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowWriteInstance(
 	const ServiceEnvironmentIFCRef& env,
-	const String& ns, 
-	const CIMObjectPath& instanceName, 
+	const String& ns,
+	const CIMObjectPath& instanceName,
 	Authorizer2IFC::EDynamicFlag dynamic,
 	Authorizer2IFC::EWriteFlag flag,
 	OperationContext& context)
@@ -280,7 +280,7 @@ SimpleAuthorizer2::doAllowWriteInstance(
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowReadSchema(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
@@ -290,10 +290,10 @@ SimpleAuthorizer2::doAllowReadSchema(
 }
 #if !defined(OW_DISABLE_SCHEMA_MANIPULATION) || !defined(OW_DISABLE_QUALIFIER_DECLARATION)
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowWriteSchema(
 	const ServiceEnvironmentIFCRef& env,
-	const String& ns, 
+	const String& ns,
 	Authorizer2IFC::EWriteFlag flag,
 	OperationContext& context)
 {
@@ -301,7 +301,7 @@ SimpleAuthorizer2::doAllowWriteSchema(
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowAccessToNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns,
@@ -326,7 +326,7 @@ SimpleAuthorizer2::doAllowAccessToNameSpace(
 }
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowCreateNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns_,
@@ -336,7 +336,7 @@ SimpleAuthorizer2::doAllowCreateNameSpace(
 		context);
 }
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowDeleteNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	const String& ns_,
@@ -347,7 +347,7 @@ SimpleAuthorizer2::doAllowDeleteNameSpace(
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowEnumNameSpace(
 	const ServiceEnvironmentIFCRef& env,
 	OperationContext& context)
@@ -355,11 +355,11 @@ SimpleAuthorizer2::doAllowEnumNameSpace(
 	return true; // ?
 }
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 SimpleAuthorizer2::doAllowMethodInvocation(
-	const ServiceEnvironmentIFCRef& env, 
-	const String& ns, 
-	const CIMObjectPath& path, 
+	const ServiceEnvironmentIFCRef& env,
+	const String& ns,
+	const CIMObjectPath& path,
 	const String& methodName,
 	OperationContext& context)
 {

@@ -58,9 +58,6 @@ public:
 	virtual RequestHandlerIFC* clone() const;
 protected:
 	virtual void doOptions(CIMFeatures& cf, OperationContext& context);
-	virtual void doLogDebug(const String& message);
-	virtual void doLogError(const String& message);
-	virtual void doLogInfo(const String& message);
 	virtual void outputError(CIMException::ErrNoType errorCode,
 		const String& msg, std::ostream& ostr);
 private:

@@ -186,13 +186,13 @@ public:
 		const StringArray& classes,
 		bool firstActivation)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// create the thread now that someone is listening for our events.
 		if (m_threadStarted == false && !m_thread)
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::activateFilter creating helper thread");
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::activateFilter creating helper thread");
 			m_thread = new TestProviderThread(this);
 		}
 		// eventType contains the name of the indication the listener subscribed to.
@@ -236,7 +236,7 @@ public:
 		// start the thread now that someone is listening for our events.
 		if (m_threadStarted == false)
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::activateFilter starting helper thread");
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::activateFilter starting helper thread");
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -250,18 +250,18 @@ public:
 		const StringArray& classes,
 		bool lastActivation)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
 		NonRecursiveMutexLock l(m_mtx);
 		// terminate the thread if no one is listening for our events.
 		if (lastActivation && m_thread && m_threadStarted == true)
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
 			m_thread->join();
 			m_thread = 0;
 			m_threadStarted = false;
-			env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::deActivateFilter helper thread stopped");
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::deActivateFilter helper thread stopped");
 			return;
 		}
 
@@ -384,7 +384,7 @@ public:
 		const StringArray *propertyList,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::getInstance");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::getInstance");
 		Int32 id = 0;
 		try
 		{
@@ -417,7 +417,7 @@ public:
 		const CIMClass &requestedClass,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::enumInstances");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::enumInstances");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -433,7 +433,7 @@ public:
 		CIMObjectPathResultHandlerIFC &result,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::enumInstanceNames");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::enumInstanceNames");
 		// m_insts could be accessed from multiple threads
 		NonRecursiveMutexLock l(m_guard);
 		for (size_t i = 0; i < m_insts.size(); ++i)
@@ -456,7 +456,7 @@ public:
 
 	virtual void initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("IndicationProviderTest2::initialize - creating the thread");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::initialize - creating the thread");
 		NonRecursiveMutexLock l(m_mtx);
 		m_threadStarted = false;
 	}

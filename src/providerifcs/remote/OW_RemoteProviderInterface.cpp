@@ -104,14 +104,14 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 	}
 	catch (CIMException& e)
 	{
-		lgr->logDebug(Format("RemoteProviderInterface::doInit() caught exception (%1) while enumerating instances of "
+		OW_LOG_DEBUG(lgr, Format("RemoteProviderInterface::doInit() caught exception (%1) while enumerating instances of "
 			"OpenWBEM_RemoteProviderRegistration in namespace %2", e, interopNs));
 	}
-	lgr->logDebug(Format("RemoteProviderInterface::doInit() found %1 registrations", registrations.size()));
+	OW_LOG_DEBUG(lgr, Format("RemoteProviderInterface::doInit() found %1 registrations", registrations.size()));
 	for (size_t i = 0; i < registrations.size(); ++i)
 	{
 		CIMInstance& curReg = registrations[i];
-		lgr->logDebug(Format("RemoteProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
+		OW_LOG_DEBUG(lgr, Format("RemoteProviderInterface::doInit() processing registration %1: %2", i, curReg.toString()));
 		try
 		{
 			String instanceID = curReg.getPropertyT("InstanceID").getValueT().toString();
@@ -125,7 +125,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 
 			if (providerTypes.empty())
 			{
-				lgr->logError("ProviderTypes property value has no entries");
+				OW_LOG_ERROR(lgr, "ProviderTypes property value has no entries");
 			}
 			for (size_t j = 0; j < providerTypes.size(); ++j)
 			{
@@ -182,13 +182,13 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 							api.addInstrumentedClass(classInfo);
 							apia.push_back(api);
 #else
-							lgr->logError("Remote associator providers not supported");
+							OW_LOG_ERROR(lgr, "Remote associator providers not supported");
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 						}
 						break;
 					case E_INDICATION:
 						{
-							lgr->logError("Remote indication providers not supported");
+							OW_LOG_ERROR(lgr, "Remote indication providers not supported");
 						}
 						break;
 					case E_METHOD:
@@ -210,18 +210,18 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 						}
 						break;
 					default:
-						lgr->logError(Format("Invalid value (%1) in ProviderTypes", providerTypes[j]));
+						OW_LOG_ERROR(lgr, Format("Invalid value (%1) in ProviderTypes", providerTypes[j]));
 						break;
 				}
 			}
 		}
 		catch (NoSuchPropertyException& e)
 		{
-			lgr->logError(Format("Registration instance %1 has no property: %2", curReg.toString(), e));
+			OW_LOG_ERROR(lgr, Format("Registration instance %1 has no property: %2", curReg.toString(), e));
 		}
 		catch (NULLValueException& e)
 		{
-			lgr->logError(Format("Registration instance %1 property has null value: %2", curReg.toString(), e));
+			OW_LOG_ERROR(lgr, Format("Registration instance %1 property has null value: %2", curReg.toString(), e));
 		}
 	}
 

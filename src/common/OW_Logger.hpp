@@ -75,10 +75,12 @@ class OW_COMMON_API Logger : public IntrusiveCountableBase
 {
 public:
 
+	static const String STR_NONE_CATEGORY;
 	static const String STR_FATAL_CATEGORY;
 	static const String STR_ERROR_CATEGORY;
 	static const String STR_INFO_CATEGORY;
 	static const String STR_DEBUG_CATEGORY;
+	static const String STR_ALL_CATEGORY;
 	static const String STR_DEFAULT_COMPONENT; // "none"
 
 	enum ELoggerErrorCodes
@@ -348,7 +350,10 @@ do \
 #define OW_LOG_FATAL_ERROR(logger, message) \
 do \
 { \
-	(logger)->logMessage(::OpenWBEM::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__); \
+	if ((logger)->getLogLevel() >= ::OpenWBEM::E_FATAL_ERROR_LEVEL) \
+	{ \
+		(logger)->logMessage(::OpenWBEM::Logger::STR_FATAL_CATEGORY, (message), __FILE__, __LINE__); \
+	} \
 } while (0)
 
 /**

@@ -56,6 +56,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMProtocolIFC.hpp"
+#include "OW_NullLogger.hpp"
 
 #include <algorithm> // for std::remove
 
@@ -136,7 +137,7 @@ public:
 		Reference<Array<SelectablePair_t> > selectables)
 	: m_pLAuthenticator(authenticator)
 	, m_XMLListener(listener)
-	, m_logger(logger ? logger : LoggerRef(new DummyLogger))
+	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_selectables(selectables)
 	{
 		m_configItems[ConfigOpts::HTTP_PORT_opt] = String(0);
@@ -233,24 +234,6 @@ private:
 	RequestHandlerIFCRef m_XMLListener;
 	LoggerRef m_logger;
 	Reference<Array<SelectablePair_t> > m_selectables;
-	class DummyLogger : public Logger
-	{
-	public:
-		DummyLogger()
-			: Logger("Dummy", E_FATAL_ERROR_LEVEL)
-		{
-		}
-
-	protected:
-		virtual void doProcessLogMessage(const LogMessage& message) const
-		{
-			return;
-		}
-		virtual LoggerRef doClone() const
-		{
-			return LoggerRef(new DummyLogger(*this));
-		}
-	};
 };
 class SelectEngineThread : public Thread
 {

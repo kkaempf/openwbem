@@ -40,6 +40,9 @@
 #include "OW_Platform.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
+#include "OW_Logger.hpp"
+#include "OW_CerrLogger.hpp"
+
 #include <exception>
 #include <iostream> // for cout
 #include <new> // for new handler stuff
@@ -57,17 +60,27 @@ void printUsage(std::ostream& ostrm);
 
 void owcimomd_new_handler();
 
+const String COMPONENT_NAME("ow.owcimomd");
+
 }
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-    int rval = 0; 
+    int rval = 0;
 	CIMOMEnvironmentRef env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
+	
+	// until the config file is read and parsed, just use a logger that prints everything to stderr.
+	LoggerRef logger(new CerrLogger());
+
 	try
 	{
 		bool debugMode = processCommandLine(argc, argv, env);
 		// Initilize the cimom environment object
 		env->init();
+
+		// logger's not set up according to the config file until after init()
+		logger = env->getLogger(COMPONENT_NAME);
+
 		// Call platform specific code to become a daemon/service
 		try
 		{
@@ -75,13 +88,13 @@ int main(int argc, char* argv[])
 		}
 		catch (const DaemonException& e)
 		{
-			env->logFatalError(e.getMessage());
-			env->logFatalError("CIMOM failed to initialize. Aborting...");
+			OW_LOG_FATAL_ERROR(logger, e.getMessage());
+			OW_LOG_FATAL_ERROR(logger, "CIMOM failed to initialize. Aborting...");
 			return 1;
 		}
 		// Start all of the cimom services
 		env->startServices();
-		env->logInfo("CIMOM is now running!");
+		OW_LOG_INFO(logger, "CIMOM is now running!");
 
 		// Do this after initialization to prevent an infinite loop.
 		std::unexpected_handler oldUnexpectedHandler = 0;
@@ -90,7 +103,7 @@ int main(int argc, char* argv[])
 
 		if (env->getConfigItem(ConfigOpts::RESTART_ON_ERROR_opt, OW_DEFAULT_RESTART_ON_ERROR).equalsIgnoreCase("true"))
 		{
-			const char* const restartDisabledMessage = 
+			const char* const restartDisabledMessage =
 				"WARNING: even though the owcimomd.restart_on_error config option = true, it\n"
 				"is not enabled. Possible reasons are that OpenWBEM is built in debug mode,\n"
 				"owcimomd is running in debug mode (-d), or owcimomd was not run using an\n"
@@ -106,17 +119,17 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				env->logInfo(restartDisabledMessage);
+				OW_LOG_INFO(logger, restartDisabledMessage);
 			}
 #else
-			env->logInfo(restartDisabledMessage);
+			OW_LOG_INFO(logger, restartDisabledMessage);
 #endif
 		}
 
 		int sig;
 		bool shuttingDown(false);
 
-		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_SUCCESS); 
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_SUCCESS);
 		while (!shuttingDown)
 		{
 			// runSelectEngine will only return once something has been put into
@@ -141,12 +154,12 @@ int main(int argc, char* argv[])
 					}
 #endif
 
-					env->logInfo("CIMOM received shutdown notification."
+					OW_LOG_INFO(logger, "CIMOM received shutdown notification."
 						" Initiating shutdown");
 					env->shutdown();
 					break;
 				case Platform::REINIT:
-					env->logInfo("CIMOM received restart notification."
+					OW_LOG_INFO(logger, "CIMOM received restart notification."
 						" Initiating restart");
 					env->shutdown();
 					env->clearConfigItems();
@@ -154,7 +167,7 @@ int main(int argc, char* argv[])
 					// don't try to catch the DeamonException, because if it's thrown, stuff is so whacked, we should just exit!
 					Platform::rerunDaemon();
 
-					// typically on *nix, restartDaemon() doesn't return, however to account for environments where 
+					// typically on *nix, restartDaemon() doesn't return, however to account for environments where
 					// it won't we'll leave this code here to re-initialize.
 					env = CIMOMEnvironment::g_cimomEnvironment = new CIMOMEnvironment;
 					processCommandLine(argc, argv, env);
@@ -170,35 +183,35 @@ int main(int argc, char* argv[])
 	}
 	catch (Exception& e)
 	{
-		env->logFatalError("**************************************************");
-		env->logFatalError("* EXCEPTION CAUGHT IN CIMOM MAIN!");
-		env->logFatalError(Format("* Type: %1", e.type()));
-		env->logFatalError(Format("* Msg: %1", e.getMessage()));
-		env->logFatalError(Format("* File: %1", e.getFile()));
-		env->logFatalError(Format("* Line: %1", e.getLine()));
-		env->logFatalError("**************************************************");
-		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL); 
-		rval = 1; 
+		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		OW_LOG_FATAL_ERROR(logger, "* EXCEPTION CAUGHT IN CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, Format("* Type: %1", e.type()));
+		OW_LOG_FATAL_ERROR(logger, Format("* Msg: %1", e.getMessage()));
+		OW_LOG_FATAL_ERROR(logger, Format("* File: %1", e.getFile()));
+		OW_LOG_FATAL_ERROR(logger, Format("* Line: %1", e.getLine()));
+		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
+		rval = 1;
 	}
 	catch (std::exception& se)
 	{
-		env->logFatalError("**************************************************");
-		env->logFatalError("* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
-		env->logFatalError(Format("* Type: %1", se.what()));
-		env->logFatalError("**************************************************");
-		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL); 
-		rval = 1; 
+		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		OW_LOG_FATAL_ERROR(logger, "* Standard EXCEPTION CAUGHT IN CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, Format("* Type: %1", se.what()));
+		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
+		rval = 1;
 	}
 	catch(...)
 	{
-		env->logFatalError("**************************************************");
-		env->logFatalError("* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
-		env->logFatalError("**************************************************");
-		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL); 
-		rval = 1; 
+		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		OW_LOG_FATAL_ERROR(logger, "* UNKNOWN EXCEPTION CAUGHT CIMOM MAIN!");
+		OW_LOG_FATAL_ERROR(logger, "**************************************************");
+		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
+		rval = 1;
 	}
 	CIMOMEnvironment::g_cimomEnvironment = 0;
-	env->logInfo("CIMOM has shutdown");
+	OW_LOG_INFO(logger, "CIMOM has shutdown");
 	return rval;
 }
 

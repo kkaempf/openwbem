@@ -174,7 +174,7 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("in RPM::enumInstances");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "in RPM::enumInstances");
 		String cmd = "/usr/bin/apt-cache search .*";
 		PopenStreams pos = Exec::safePopen(cmd.tokenize());
 

@@ -42,16 +42,20 @@
 #include "OW_LogMessagePatternFormatter.hpp"
 #include "OW_AppenderLogger.hpp"
 #include "OW_LogAppender.hpp"
+#include "OW_ConfigOpts.hpp"
+#include "OW_Format.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Logger);
 
+const String Logger::STR_NONE_CATEGORY("NONE");
 const String Logger::STR_FATAL_CATEGORY("FATAL");
 const String Logger::STR_ERROR_CATEGORY("ERROR");
 const String Logger::STR_INFO_CATEGORY("INFO");
 const String Logger::STR_DEBUG_CATEGORY("DEBUG");
+const String Logger::STR_ALL_CATEGORY("ALL");
 const String Logger::STR_DEFAULT_COMPONENT("none");
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,6 +111,14 @@ Logger::setLogLevel(const String& l)
 	else if (l.equalsIgnoreCase(STR_ERROR_CATEGORY))
 	{
 		setLogLevel(E_ERROR_LEVEL);
+	}
+	else if (l.equalsIgnoreCase(STR_ALL_CATEGORY))
+	{
+		setLogLevel(E_ALL_LEVEL);
+	}
+	else if (l.equalsIgnoreCase(STR_NONE_CATEGORY))
+	{
+		setLogLevel(E_NONE_LEVEL);
 	}
 	else
 	{
@@ -243,23 +255,29 @@ Logger::setLogLevel(ELogLevel logLevel)
 LoggerRef
 Logger::createLogger( const String& type, bool debug )
 {
-	StringArray components;
-	components.push_back("*");
-
-	StringArray categories;
-	categories.push_back("*");
-
 	ConfigFile::ConfigMap configItems;
 
 	Array<LogAppenderRef> appenders;
-	// TODO: we need a special case for filenames in the type, since createLogAppender only handles types it knows about
-	appenders.push_back(LogAppender::createLogAppender("", components, categories,
-		LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, type, configItems));
+	String name("");
+	if (type == LogAppender::TYPE_SYSLOG || type == LogAppender::TYPE_STDERR || type == LogAppender::TYPE_NULL)
+	{
+		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
+			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, type, configItems));
+	}
+	else
+	{
+		// we need a special case for filenames in the type, since createLogAppender only handles types it knows about
+		String configItem = Format(ConfigOpts::LOG_1_LOCATION_opt, name);
+		String filename = type;
+		ConfigFile::setConfigItem(configItems, configItem, filename);
+		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
+			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, LogAppender::TYPE_FILE, configItems));
+	}
 
 	if ( debug )
 	{
-		appenders.push_back(LogAppender::createLogAppender("", components, categories,
-			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, "stderr", configItems));
+		appenders.push_back(LogAppender::createLogAppender(name, LogAppender::ALL_COMPONENTS, LogAppender::ALL_CATEGORIES,
+			LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, LogAppender::TYPE_STDERR, configItems));
 
 	}
 
@@ -284,7 +302,7 @@ Logger::Logger(const Logger& x)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-Logger& 
+Logger&
 Logger::operator=(const Logger& x)
 {
 	m_logLevel = x.m_logLevel;

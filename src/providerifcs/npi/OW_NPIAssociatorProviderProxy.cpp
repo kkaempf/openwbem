@@ -56,8 +56,7 @@ NPIAssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("NPIAssociatorProviderProxy::associatorNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIAssociatorProviderProxy::associatorNames()");
 	if (m_ftable->fp_associatorNames != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -111,8 +110,7 @@ NPIAssociatorProviderProxy::associators(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("NPIAssociatorProviderProxy::associators()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIAssociatorProviderProxy::associators()");
 	if (m_ftable->fp_associators != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -154,7 +152,7 @@ NPIAssociatorProviderProxy::associators(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("NPIAssociatorProviderProxy::"
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIAssociatorProviderProxy::"
 			"associators() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		//we need  a localOnly flag here
@@ -191,7 +189,7 @@ NPIAssociatorProviderProxy::references(
 		EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray *propertyList)
 {
-	env->getLogger(COMPONENT_NAME)->logDebug("NPIAssociatorProviderProxy::references()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIAssociatorProviderProxy::references()");
 	if (m_ftable->fp_references != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
@@ -231,7 +229,7 @@ NPIAssociatorProviderProxy::references(
 			OW_THROWCIMMSG(CIMException::FAILED, _npiHandle.providerError);
 		}
 		int n = ::VectorSize(&_npiHandle,v);
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("NPIAssociatorProviderProxy::"
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("NPIAssociatorProviderProxy::"
 			"references() got %1 associator instances", n - 1));
 		::CIMInstance my_inst;
 		//we need  a localOnly flag here
@@ -265,8 +263,7 @@ NPIAssociatorProviderProxy::referenceNames(
 		const String& resultClass,
 		const String& role)
 {
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("NPIAssociatorProviderProxy::referenceNames()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "NPIAssociatorProviderProxy::referenceNames()");
 	if (m_ftable->fp_referenceNames != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

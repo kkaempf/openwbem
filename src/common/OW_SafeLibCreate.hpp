@@ -80,7 +80,7 @@ public:
 		}
 		else
 		{
-			logger->logDebug(Format("safeLibCreate::loadAndCreate"
+			OW_LOG_DEBUG(logger, Format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
 		return std::make_pair(IntrusiveReference<T>(ptr),sl);
@@ -99,7 +99,7 @@ public:
 		}
 		else
 		{
-			logger->logDebug(Format("safeLibCreate::loadAndCreate"
+			OW_LOG_DEBUG(logger, Format("safeLibCreate::loadAndCreate"
 				" FAILED loading library %1", libname));
 		}
 		return return_obj(sl, ptr);
@@ -108,7 +108,7 @@ public:
 	create(SharedLibraryRef sl, String const& createFuncName,
 		const LoggerRef& logger)
 	{
-		logger->logDebug(Format("safeLibCreate::create called.  createFuncName = %1",
+		OW_LOG_DEBUG(logger, Format("safeLibCreate::create called.  createFuncName = %1",
 			createFuncName).c_str());
 		
 		try
@@ -126,7 +126,7 @@ public:
 				versionFunc_t versFunc;
 				if (!sl->getFunctionPointer( "getOWVersion", versFunc))
 				{
-					logger->logError("safeLibCreate::create failed getting"
+					OW_LOG_ERROR(logger, "safeLibCreate::create failed getting"
 						" function pointer to \"getOWVersion\" from library");
 	
 					return 0;
@@ -136,7 +136,7 @@ public:
 				strVer = (*versFunc)();
 				if (!strVer || strncmp(strVer, OW_VERSION,strlen(OW_VERSION)) != 0)
 				{
-					logger->logError("safeLibCreate::create -"
+					OW_LOG_ERROR(logger, "safeLibCreate::create -"
 						" Invalid version returned from \"getOWVersion\"");
 					return 0;
 				}
@@ -146,7 +146,7 @@ public:
 					if (!sl->getFunctionPointer( createFuncName
 						, createFunc ))
 					{
-						logger->logError(Format("safeLibCreate::create failed"
+						OW_LOG_ERROR(logger, Format("safeLibCreate::create failed"
 							" getting function pointer to \"%1\" from"
 							" library", createFuncName));
 
@@ -160,7 +160,7 @@ public:
 			}
 			else
 			{
-				logger->logError(Format("safeLibCreate::create sigsetjmp call"
+				OW_LOG_ERROR(logger, Format("safeLibCreate::create sigsetjmp call"
 					" returned %1, we caught a segfault.  "
 					"getOWVersion() or %2() is misbehaving", sigtype, createFuncName));
 	
@@ -169,14 +169,14 @@ public:
 		}
 		catch(Exception& e)
 		{
-			logger->logError("safeLibCreate::create");
-			logger->logError(Format("File: %1", e.getFile()));
-			logger->logError(Format("Line: %1", e.getLine()));
-			logger->logError(Format("Msg: %1", e.getMessage()));
+			OW_LOG_ERROR(logger, "safeLibCreate::create");
+			OW_LOG_ERROR(logger, Format("File: %1", e.getFile()));
+			OW_LOG_ERROR(logger, Format("Line: %1", e.getLine()));
+			OW_LOG_ERROR(logger, Format("Msg: %1", e.getMessage()));
 		}
 		catch (...)
 		{
-			logger->logError("safeLibCreate::create caught unknown"
+			OW_LOG_ERROR(logger, "safeLibCreate::create caught unknown"
 				" exception");
 		}
 	

@@ -234,10 +234,10 @@ void OW_LoggerTestCases::testSyslogLogging()
 {
 	String filename = "syslog";
 	LoggerRef pLogger = createLogger(filename);
-	pLogger->logFatalError("fatalerror1");
-	pLogger->logError( "error1" );
-	pLogger->logInfo( "custinfo1" );
-	pLogger->logDebug( "debug1" );
+	OW_LOG_FATAL_ERROR(pLogger, "fatalerror1");
+	OW_LOG_ERROR(pLogger,  "error1" );
+	OW_LOG_INFO(pLogger,  "custinfo1" );
+	OW_LOG_DEBUG(pLogger,  "debug1" );
 }
 
 void OW_LoggerTestCases::testComponentLog()
@@ -245,7 +245,7 @@ void OW_LoggerTestCases::testComponentLog()
 	StringArray outputMessages;
 	LoggerRef lgr = createStringLogger("testcomponent1", "*", "testcomponent1", outputMessages);
 	// assume default - should get logged.
-	lgr->logError("error1");
+	OW_LOG_ERROR(lgr, "error1");
 	unitAssert(outputMessages.size() == 1);
 	unitAssert(outputMessages[0] == "error1");
 
@@ -271,7 +271,7 @@ void OW_LoggerTestCases::testCategoryLog()
 	LoggerRef lgr = createStringLogger("*", Logger::STR_INFO_CATEGORY, "testcomponent1", outputMessages);
 
 	// assume default - should get logged.
-	lgr->logInfo("info1");
+	OW_LOG_INFO(lgr, "info1");
 	unitAssert(outputMessages.size() == 1);
 	unitAssert(outputMessages[0] == "info1");
 
@@ -304,7 +304,7 @@ void OW_LoggerTestCases::testComponentCategoryLog()
 		LoggerRef lgr = createStringLogger("cp", "ct", "main", outputMessages);
 
 		// default - no log
-		lgr->logInfo("info1");
+		OW_LOG_INFO(lgr, "info1");
 		unitAssert(outputMessages.size() == 0);
 
 		// try category and message - component should be the default
@@ -332,7 +332,7 @@ void OW_LoggerTestCases::testComponentCategoryLog()
 		LoggerRef lgr = createStringLogger("cp1 cp2 cp3", "ct1 ct2", "main", outputMessages);
 
 		// default - no log
-		lgr->logInfo("info1");
+		OW_LOG_INFO(lgr, "info1");
 		unitAssert(outputMessages.size() == 0);
 
 		// try category and message - component should be the default
@@ -405,7 +405,7 @@ void OW_LoggerTestCases::testMultipleComponentLogs()
 
 
     // should get logged to 4
-	lgr->logError("error1");
+	OW_LOG_ERROR(lgr, "error1");
     // should get logged to 1, 4
 	lgr->logMessage("testcomponent1", "foo", "foo1");
     // should get logged to 1, 2, 4
@@ -452,7 +452,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%m");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		//std::cout << "\n01234567890123456789\n" << outputMessages[0] << std::endl;
 		unitAssert(outputMessages.size() == 1);
 		unitAssert(outputMessages[0] == "error1");
@@ -460,7 +460,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{	// %d outputs the date in ISO8601 format: "YYYY-mm-dd HH:mm:ss,SSS"
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%d");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		// too hard to check the actual date, we'll just check the delimiters.
 		unitAssert(outputMessages[0][4] == '-' && outputMessages[0][7] == '-' &&
@@ -470,7 +470,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{	// %d{ISO8601} outputs the date in ISO8601 format: "YYYY-mm-dd HH:mm:ss,SSS"
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%d{ISO8601}");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		// too hard to check the actual date, we'll just check the delimiters.
 		unitAssert(outputMessages[0][4] == '-' && outputMessages[0][7] == '-' &&
@@ -480,7 +480,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{	// %d{ABSOLUTE} outputs the date in format: %H:%M:%S,%Q for example, "15:49:37,459"
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%d{ABSOLUTE}");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		// too hard to check the actual date, we'll just check the delimiters.
 		unitAssert(outputMessages[0][2] == ':' && outputMessages[0][5] == ':' &&
@@ -489,7 +489,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{	// %d{DATE} outputs the date in format: "%d %b %Y %H:%M:%S,%Q" for example, "06 Nov 1994 15:49:37,459"
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%d{DATE}");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		// too hard to check the actual date, we'll just check the delimiters.
 		unitAssert(outputMessages[0][2] == ' ' && outputMessages[0][6] == ' ' &&
@@ -499,7 +499,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{	// date in format: "%d %b %Y %H:%M:%S,%Q" for example, "06 Nov 1994 15:49:37,459"
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%d{%d %b %Y %H:%M:%S,%Q}");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		// too hard to check the actual date, we'll just check the delimiters.
 		unitAssert(outputMessages[0][2] == ' ' && outputMessages[0][6] == ' ' &&
@@ -509,7 +509,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{ // test some literal text together with %m
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "This is a test message: \"%m\" and here's a %%%n \\x41 \\x \\n\\r\\\\ \\t end");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 #ifdef OW_WIN32
 #define NEWLINE "\r\n"
@@ -523,11 +523,11 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{ // test all the variations on width formatting and justification.
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, ",%m,%.4m,%2m,%2.4m,%-.4m,%-2m,%-2.4m,");
-		lgr->logError("1");
-		lgr->logError("22");
-		lgr->logError("333");
-		lgr->logError("4444");
-		lgr->logError("12345");
+		OW_LOG_ERROR(lgr, "1");
+		OW_LOG_ERROR(lgr, "22");
+		OW_LOG_ERROR(lgr, "333");
+		OW_LOG_ERROR(lgr, "4444");
+		OW_LOG_ERROR(lgr, "12345");
 		unitAssert(outputMessages.size() == 5);
 		unitAssert(outputMessages[0] == ",1,1, 1, 1,1,1 ,1 ,");
 		unitAssert(outputMessages[1] == ",22,22,22,22,22,22,22,");
@@ -538,7 +538,7 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{ // test thread id %t
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%t");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		unitAssertNoThrow(outputMessages[0].toUInt64());
 	}
@@ -550,14 +550,14 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{ // test component %c
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x.y.z", outputMessages, "%c");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		unitAssert(outputMessages[0] == "x.y.z");
 	}
 	{ // test component %c{2}
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x.y.z", outputMessages, "%c{2}");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		unitAssert(outputMessages[0] == "y.z");
 	}
@@ -585,22 +585,22 @@ void OW_LoggerTestCases::testLogMessageFormat()
 	{ // test priority (category) %p
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x.y.z", outputMessages, "%p");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		unitAssert(outputMessages[0] == Logger::STR_ERROR_CATEGORY);
 	}
 	{ // test relative time %r
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%r");
-		lgr->logError("error1");
+		OW_LOG_ERROR(lgr, "error1");
 		unitAssert(outputMessages.size() == 1);
 		unitAssertNoThrow(outputMessages[0].toUInt64());
 	}
 	{ // XML escaped message %e
 		StringArray outputMessages;
 		LoggerRef lgr = createStringLogger("*", "*", "x", outputMessages, "%e");
-		lgr->logError("error1");
-		lgr->logError("]]>err]]>or1]]>");
+		OW_LOG_ERROR(lgr, "error1");
+		OW_LOG_ERROR(lgr, "]]>err]]>or1]]>");
 		unitAssert(outputMessages.size() == 2);
 		unitAssert(outputMessages[0] == "<![CDATA[error1]]>");
 		//std::cout << "\n01234567890123456789\n" << outputMessages[1] << std::endl;

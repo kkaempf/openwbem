@@ -43,7 +43,7 @@ namespace OpenWBEM
 {
 
 ///////////////////////////////////////////////////////////////////////////////
-SharedLibraryRef 
+SharedLibraryRef
 dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	const LoggerRef& logger) const
 {
@@ -57,13 +57,13 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	// to load NULL (which, on most dlopen platforms should return a handle
 	// to the main executable).  This handle can be used just like any
 	// other, assuming that the main executable was linked with the proper
-	// export flags (--export-dynamic on linux, -bexpall on AIX, etc.).  
+	// export flags (--export-dynamic on linux, -bexpall on AIX, etc.).
 	if ( !libhandle )
 	{
 	  if ( dlSharedLibrary::isFakeLibrary(filename) )
 	  {
 	    libhandle = dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
-	    
+	
 	    if ( !libhandle )
 	    {
 	      second_error = dlerror();
@@ -78,19 +78,19 @@ dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	}
 	else
 	{
-		logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary "
+		OW_LOG_ERROR(logger, Format("dlSharedLibraryLoader::loadSharedLibrary "
 			"dlopen returned NULL.  Error is: %1", first_error));
 		if ( !second_error.empty() )
 		{
-			logger->logError(Format("dlSharedLibraryLoader::loadSharedLibrary (fakelib) "
-				"dlopen returned NULL.  Error is: %1", second_error));		  
+			OW_LOG_ERROR(logger, Format("dlSharedLibraryLoader::loadSharedLibrary (fakelib) "
+				"dlopen returned NULL.  Error is: %1", second_error));		
 		}
 		return SharedLibraryRef( 0 );
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-SharedLibraryLoaderRef 
+SharedLibraryLoaderRef
 SharedLibraryLoader::createSharedLibraryLoader()
 {
 	return SharedLibraryLoaderRef(new dlSharedLibraryLoader);

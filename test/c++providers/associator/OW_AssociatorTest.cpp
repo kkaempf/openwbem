@@ -98,7 +98,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList)
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest associators called "
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest associators called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %5, resultRole = %6, includeQualifiers = %7, "
 				"includeClassOrigin = %8, propertyList = %9",
@@ -122,7 +122,7 @@ namespace
 			{
 				CIMInstance ci = instances.nextElement();
 				ci.setProperty("producedByAssocTest", CIMValue(true));
-				env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest producing: %1", ci));
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest producing: %1", ci));
 				result.handle(ci.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 
@@ -138,7 +138,7 @@ namespace
 			const String& role,
 			const String& resultRole )
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest associatorNames called "
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest associatorNames called "
 				"ns = %1, objectName = %2, assocClass = %3, resultClass = %4, "
 				"role = %4, resultRole = %6",
 				ns, objectName.toString(), assocClass, resultClass,
@@ -161,7 +161,7 @@ namespace
 			{
 				CIMInstance ci = instances.nextElement();
 				CIMObjectPath cop(ns, ci);
-				env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest producing: %1", cop));
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest producing: %1", cop));
 				result.handle(cop);
 			}
 		}
@@ -177,7 +177,7 @@ namespace
 			EIncludeClassOriginFlag includeClassOrigin,
 			const StringArray* propertyList )
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest references called "
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest references called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4, "
 				"includeQualifiers = %5, includeClassOrigin = %6, "
 				"propertyList = %7",
@@ -210,7 +210,7 @@ namespace
 				newInstance.setProperty("PartComponent", CIMValue(path));
 				newInstance.setProperty("producedByAssocTest", CIMValue(true));
 
-				env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest producing: %1", newInstance));
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest producing: %1", newInstance));
 				result.handle(newInstance.clone(E_NOT_LOCAL_ONLY,includeQualifiers,includeClassOrigin,propertyList));
 			}
 		}
@@ -223,7 +223,7 @@ namespace
 			const String& resultClass,
 			const String& role )
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest referenceNames called "
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest referenceNames called "
 				"ns = %1, objectName = %2, resultClass = %3, role = %4",
 				ns, objectName.toString(), resultClass, role));
 
@@ -253,7 +253,7 @@ namespace
 
 				CIMObjectPath newPath(ns, newInstance);
 
-				env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest producing: %1", newPath));
+				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest producing: %1", newPath));
 				result.handle(newPath);
 			}
 		}
@@ -267,7 +267,7 @@ namespace
 			CIMInstanceResultHandlerIFC &result,
 			EPropertiesFlag propertiesFlag)
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug("AssociatorTest doSimpleEnumInstances called ");
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "AssociatorTest doSimpleEnumInstances called ");
 
 			CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
 
@@ -295,7 +295,7 @@ namespace
 						newInstance.setProperty("GroupComponent", CIMValue(CIMObjectPath(ns, insts1[i])));
 
 						newInstance.setProperty("PartComponent", CIMValue(CIMObjectPath(ns, insts2[j])));
-						env->getLogger(COMPONENT_NAME)->logDebug(Format("AssociatorTest producing: %1", newInstance.toMOF()));
+						OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("AssociatorTest producing: %1", newInstance.toMOF()));
 						result.handle(newInstance);
 					}
 				}
@@ -341,7 +341,7 @@ namespace
 	void
 		AssociatorTest::initialize(const ProviderEnvironmentIFCRef& env)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("AssociatorTest initialize called");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "AssociatorTest initialize called");
 	}
 
 } // end anonymous namespace

@@ -1,19 +1,19 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
 *
 *  - Redistributions of source code must retain the above copyright notice,
-*    this list of conditions and the following disclaimer.
+*	this list of conditions and the following disclaimer.
 *
 *  - Redistributions in binary form must reproduce the above copyright notice,
-*    this list of conditions and the following disclaimer in the documentation
-*    and/or other materials provided with the distribution.
+*	this list of conditions and the following disclaimer in the documentation
+*	and/or other materials provided with the distribution.
 *
 *  - Neither the name of Vintela, Inc. nor the names of its
-*    contributors may be used to endorse or promote products derived from this
-*    software without specific prior written permission.
+*	contributors may be used to endorse or promote products derived from this
+*	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -32,23 +32,45 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_LOGLEVEL_HPP_
-#define OW_LOGLEVEL_HPP_
 #include "OW_config.h"
+#include "OW_CerrLogger.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
+#include "OW_LogMessage.hpp"
+
+#include <iostream>
 
 namespace OpenWBEM
 {
 
-enum ELogLevel
+/////////////////////////////////////////////////////////////////////////////
+CerrLogger::CerrLogger()
+	: Logger("cerr", E_ALL_LEVEL)
 {
-	E_NONE_LEVEL,
-	E_FATAL_ERROR_LEVEL,
-	E_ERROR_LEVEL,
-	E_INFO_LEVEL,
-	E_DEBUG_LEVEL,
-	E_ALL_LEVEL
-};
+}
+
+namespace
+{
+	Mutex guard;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+CerrLogger::doProcessLogMessage(const LogMessage& message) const
+{
+	MutexLock l(guard);
+	std::cerr << message.message << std::endl;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+LoggerRef
+CerrLogger::doClone() const
+{
+	return LoggerRef(new CerrLogger(*this));
+}
 
 } // end namespace OpenWBEM
 
-#endif // OW_LOGLEVEL_HPP_
+
+
+

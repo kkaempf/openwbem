@@ -44,7 +44,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_LogMessage.hpp"
+#include "OW_CerrLogger.hpp"
 
 #include <iostream> // for cout and cerr
 #include <csignal>
@@ -64,23 +64,6 @@ protected:
 	{
 		MutexLock lock(coutMutex);
 		cout << ci.toString() << "\n";
-	}
-};
-class ListenerLogger : public Logger
-{
-public:
-	ListenerLogger()
-		: Logger("owcimindicationlistener", E_ERROR_LEVEL)
-	{
-	}
-protected:
-	virtual void doProcessLogMessage(const LogMessage& message) const
-	{
-		cerr << message.message << endl;
-	}
-	virtual LoggerRef doClone() const
-	{
-		return LoggerRef(new ListenerLogger(*this));
 	}
 };
 
@@ -157,7 +140,7 @@ int main(int argc, char* argv[])
 		String ns(argv[2]);
 		String query(argv[3]);
 		CIMListenerCallbackRef mcb(new myCallBack);
-		LoggerRef logger(new ListenerLogger);
+		LoggerRef logger(new CerrLogger);
 		HTTPXMLCIMListener hxcl(logger);
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		String handle = hxcl.registerForIndication(url, ns, query, "wql1", ns, mcb, getLoginInfo);

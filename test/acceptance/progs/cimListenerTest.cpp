@@ -50,7 +50,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Bool.hpp"
 #include "OW_SocketBaseImpl.hpp"
-#include "OW_LogMessage.hpp"
+#include "OW_CerrLogger.hpp"
 
 #include <iostream> // for cout and cerr
 
@@ -264,30 +264,12 @@ void deleteClass(CIMOMHandleIFC& hdl)
 	hdl.deleteClass("root/testsuite", delClass);
 }
 
-class ListenerLogger : public Logger
-{
-public:
-	ListenerLogger()
-		: Logger("cimListenerTest", E_DEBUG_LEVEL)
-	{
-	}
-protected:
-	virtual void doProcessLogMessage(const LogMessage& message) const
-	{
-		cout << message.message << endl;
-	}
-	virtual LoggerRef doClone() const
-	{
-		return LoggerRef(new ListenerLogger(*this));
-	}
-};
-
 int main(int argc, char* argv[])
 {
 	// these need to be out of the try, so that a potential deadlock won't happen
 	// the problem is that Exception has a mutex, and the HTTPXMLCIMListener
 	// destructor shouldn't run when the Exception mutex is locked.
-	LoggerRef logger(new ListenerLogger);
+	LoggerRef logger(new CerrLogger);
 
 	HTTPXMLCIMListener hxcl(logger);
 

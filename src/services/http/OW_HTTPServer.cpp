@@ -121,15 +121,15 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 #ifndef OW_WIN32
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
-		getEnvironment()->getLogger(COMPONENT_NAME)->logDebug("HTTPServer::authenticate: processing OWLocal");
+		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing OWLocal");
 		bool rv = m_localAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
 		if (rv)
 		{
-			getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else
 		{
-			getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 		return rv;
 	}
@@ -149,10 +149,10 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 				String uid;
 				if (!m_trustStore->getUser(hash, userName, uid))
 				{
-					getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
+					OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1.  (Cert verified, but unknown user)", userName));
 					return false;
 				}
-                getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+                OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
 				if (!uid.empty())
 				{
 					context.setStringData(OperationContext::CURUSER_UIDKEY, uid);
@@ -165,21 +165,21 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 	if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
-		getEnvironment()->getLogger(COMPONENT_NAME)->logDebug("HTTPServer::authenticate: processing Digest");
+		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing Digest");
 		rv = m_digestAuthentication->authenticate(userName, info, pconn) && isAllowedUser(userName);
 		if (rv)
 		{
-			getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 		else
 		{
-			getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authentication failed for: %1", userName));
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authentication failed for: %1", userName));
 		}
 #endif
 	}
 	else if (m_options.allowBasicAuthentication && info.startsWith("Basic"))
 	{
-		getEnvironment()->getLogger(COMPONENT_NAME)->logDebug("HTTPServer::authenticate: processing Basic");
+		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: processing Basic");
 		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\"";
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.
@@ -192,7 +192,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			// decoding failed
 			pconn->setErrorDetails("Problem decoding credentials");
 			pconn->addHeader("WWW-Authenticate", authChallenge);
-			getEnvironment()->getLogger(COMPONENT_NAME)->logDebug("HTTPServer::authenticate: Problem decoding credentials");
+			OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), "HTTPServer::authenticate: Problem decoding credentials");
 			return false;
 		}
 		String details;
@@ -201,11 +201,11 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 		{
 			pconn->setErrorDetails(details);
 			pconn->addHeader("WWW-Authenticate", authChallenge);
-			getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: failed: %1", details));
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: failed: %1", details));
 		}
 		else
 		{
-			getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(Format("HTTPServer::authenticate: authenticated %1", userName));
+			OW_LOG_INFO(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: authenticated %1", userName));
 		}
 	}
 	else
@@ -229,7 +229,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 			default:
 				OW_ASSERT("Internal implementation error! m_options.defaultAuthChallenge is invalid!" == 0);
 		}
-		getEnvironment()->getLogger(COMPONENT_NAME)->logDebug(Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
+		OW_LOG_DEBUG(getEnvironment()->getLogger(COMPONENT_NAME), Format("HTTPServer::authenticate: Returning WWW-Authenticate: %1", authChallenge));
 		pconn->addHeader("WWW-Authenticate", authChallenge);
 		return false;
 	}
@@ -250,7 +250,7 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
                             }
                             catch (SSLException& e)
                             {
-                                getEnvironment()->getLogger(COMPONENT_NAME)->logError(e.getMessage());
+                                OW_LOG_ERROR(getEnvironment()->getLogger(COMPONENT_NAME), e.getMessage());
                             }
                     }
                 }
@@ -395,7 +395,7 @@ public:
 			}
 			Socket socket = pServerSocket->accept(2);
 			LoggerRef logger = m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME);
-			logger->logInfo(
+			OW_LOG_INFO(logger,
 				 Format("Received connection on %1 from %2",
 				 socket.getLocalAddress().toString(),
 				 socket.getPeerAddress().toString()));
@@ -415,33 +415,33 @@ public:
 			{
 				// TODO: Send back a server too busy error.  We'll need a different thread pool for that, since our
 				// main thread can't block.
-				logger->logInfo("Server too busy, closing connection");
+				OW_LOG_INFO(logger, "Server too busy, closing connection");
 				socket.disconnect();
 			}
 		}
 		catch (SSLException& se)
 		{
-			m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME)->logInfo(
+			OW_LOG_INFO(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME),
 				Format("SSL Handshake failed: %1", se.getMessage()).c_str());
 		}
 		catch (SocketTimeoutException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME)->logInfo(Format(
+			OW_LOG_INFO(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
 				"Socket TimeOut in HTTPServer: %1", e));
 		}
 		catch (SocketException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME)->logInfo(Format(
+			OW_LOG_INFO(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
 				"Socket Exception in HTTPServer: %1", e));
 		}
 		catch (IOException &e)
 		{
-			m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME)->logError(Format(
+			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
 				"IO Exception in HTTPServer: %1", e));
 		}
 		catch (Exception& e)
 		{
-			m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME)->logError(Format(
+			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME), Format(
 				"Exception in HTTPServer: %1", e));
 			throw;
 		}
@@ -451,7 +451,7 @@ public:
 		}
 		catch (...)
 		{
-			m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME)->logError(
+			OW_LOG_ERROR(m_HTTPServer->m_options.env->getLogger(COMPONENT_NAME),
 				"Unknown exception in HTTPServer.");
 			throw;
 		}
@@ -467,7 +467,7 @@ HTTPServer::startService()
 {
 	ServiceEnvironmentIFCRef env = m_options.env;
 	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
-	lgr->logDebug("HTTP Service is starting...");
+	OW_LOG_DEBUG(lgr, "HTTP Service is starting...");
 	if (m_options.httpPort < 0 && m_options.httpsPort < 0 && !m_options.useUDS)
 	{
 		OW_THROW(SocketException, "No ports to listen on and use_UDS set to false");
@@ -479,7 +479,7 @@ HTTPServer::startService()
 		{
 			m_pUDSServerSocket = new ServerSocket;
 			m_pUDSServerSocket->doListen(m_options.UDSFilename, 1000, m_options.reuseAddr);
-			lgr->logInfo("HTTP server listening on Unix Domain Socket");
+			OW_LOG_INFO(lgr, "HTTP server listening on Unix Domain Socket");
 			String theURL = "ipc://localhost/cimom";
 			addURL(URL(theURL));
 			
@@ -489,7 +489,7 @@ HTTPServer::startService()
 		}
 		catch (SocketException& e)
 		{
-			lgr->logError(Format("HTTP Server failed to listen on UDS: %1", e));
+			OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on UDS: %1", e));
 			throw;
 		}
 	}
@@ -513,7 +513,7 @@ HTTPServer::startService()
 					1000, curAddress,
 					m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 				m_options.httpPort = m_pHttpServerSocket->getLocalAddress().getPort();
-				lgr->logInfo(Format("HTTP server listening on: %1:%2",
+				OW_LOG_INFO(lgr, Format("HTTP server listening on: %1:%2",
 				   curAddress, m_options.httpPort));
 				String theURL = "http://" + SocketAddress::getAnyLocalHost().getName()
 					+ ":" + String(m_options.httpPort) + "/cimom";
@@ -525,7 +525,7 @@ HTTPServer::startService()
 			}
 			catch (SocketException& e)
 			{
-				lgr->logError(Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
+				OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
 				throw;
 			}
 		}
@@ -542,7 +542,7 @@ HTTPServer::startService()
 			{
 				String msg = Format("Unable to listen on %1:%2.  "
 						"OpenWBEM not built with SSL support.", curAddress, m_options.httpsPort);
-				lgr->logError(msg);
+				OW_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 			}
 #else
@@ -585,7 +585,7 @@ HTTPServer::startService()
 			}
 			catch (SSLException& e)
 			{
-				lgr->logError(Format("HTTP Service: Error initializing SSL: %1",
+				OW_LOG_ERROR(lgr, Format("HTTP Service: Error initializing SSL: %1",
 					e.getMessage()));
 				throw;
 			}
@@ -602,7 +602,7 @@ HTTPServer::startService()
 						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
 					m_options.httpsPort =
 					   m_pHttpsServerSocket->getLocalAddress().getPort();
-					lgr->logInfo(Format("HTTPS server listening on: %1:%2",
+					OW_LOG_INFO(lgr, Format("HTTPS server listening on: %1:%2",
 					   curAddress, m_options.httpsPort));
 					String theURL = "https://" +
 						SocketAddress::getAnyLocalHost().getName() + ":" +
@@ -614,7 +614,7 @@ HTTPServer::startService()
 				}
 				catch (SocketException& e)
 				{
-					lgr->logError(Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
+					OW_LOG_ERROR(lgr, Format("HTTP Server failed to listen on: %1:%2.  Msg: %3", curAddress, m_options.httpPort, e));
 					throw;
 				}
 			}
@@ -629,13 +629,13 @@ HTTPServer::startService()
 				}
 				String msg = Format("Unable to listen on: %1:%2.  "
 					"SSL not initialized in server mode.", curAddress, m_options.httpsPort);
-				lgr->logError(msg);
+				OW_LOG_ERROR(lgr, msg);
 				OW_THROW(HTTPServerException, msg.c_str());
 
 			}
 		} // if (m_httpsPort > 0)
 	}
-	lgr->logDebug("HTTP Service has started");
+	OW_LOG_DEBUG(lgr, "HTTP Service has started");
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -690,7 +690,7 @@ HTTPServer::shutdown()
 		MutexLock lock(m_shutdownGuard);
 		m_shuttingDown = true;
 	}
-	m_options.env->getLogger(COMPONENT_NAME)->logDebug("HTTP Service is shutting down...");
+	OW_LOG_DEBUG(m_options.env->getLogger(COMPONENT_NAME), "HTTP Service is shutting down...");
 	// first stop all new connections
 	m_options.env->removeSelectable(m_pHttpServerSocket);
 	m_options.env->removeSelectable(m_pHttpsServerSocket);
@@ -714,7 +714,7 @@ HTTPServer::shutdown()
 	m_pHttpServerSocket = 0;
 	m_pHttpsServerSocket = 0;
 	m_pUDSServerSocket = 0;
-	m_options.env->getLogger(COMPONENT_NAME)->logDebug("HTTP Service has shut down");
+	OW_LOG_DEBUG(m_options.env->getLogger(COMPONENT_NAME), "HTTP Service has shut down");
 
 	// clear out variables to avoid circular reference counts.
 	m_options.env = 0;

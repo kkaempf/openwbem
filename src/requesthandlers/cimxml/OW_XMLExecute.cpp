@@ -64,10 +64,10 @@
 
 #include <algorithm>
 
-#define OW_LOGDEBUG(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logDebug(msg)
-#define OW_LOGINFO(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logInfo(msg)
-#define OW_LOGERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logError(msg)
-#define OW_LOGFATALERROR(msg) this->getEnvironment()->getLogger(COMPONENT_NAME)->logFatalError(msg)
+#define OW_LOGDEBUG(msg) OW_LOG_DEBUG(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGINFO(msg) OW_LOG_INFO(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGERROR(msg) OW_LOG_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
+#define OW_LOGFATALERROR(msg) OW_LOG_FATAL_ERROR(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 
 namespace OpenWBEM
 {
@@ -1356,24 +1356,6 @@ XMLExecute::processSimpleReq(CIMXMLParser& parser, ostream& ostrEntity,
 			ce.getErrNo(), ce.getFile(), ce.getLine(), ce.getMessage()));
 		outputError(ce.getErrNo(), ce.getMessage(), ostrError);
 	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-XMLExecute::doLogDebug(const String& message)
-{
-	OW_LOGDEBUG(message);
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-XMLExecute::doLogInfo(const String& message)
-{
-	OW_LOGINFO(message);
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-XMLExecute::doLogError(const String& message)
-{
-	OW_LOGERROR(message);
 }
 //////////////////////////////////////////////////////////////////////////////
 void

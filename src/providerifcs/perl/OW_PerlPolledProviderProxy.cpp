@@ -56,15 +56,14 @@ Int32
 PerlPolledProviderProxy::getInitialPollingInterval(
 	  const ProviderEnvironmentIFCRef& env)
 {
-		env->getLogger(COMPONENT_NAME)->logDebug("PerlPolledProviderIFC::getInitialPollingInterval()");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlPolledProviderIFC::getInitialPollingInterval()");
 	return 1;
 }
 Int32
 PerlPolledProviderProxy::poll(const ProviderEnvironmentIFCRef &env)
 {
 	CIMValue rval(CIMNULL);
-	env->getLogger(COMPONENT_NAME)->
-		logDebug("PerlPolledProviderIFC::poll()");
+	OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "PerlPolledProviderIFC::poll()");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
 		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};

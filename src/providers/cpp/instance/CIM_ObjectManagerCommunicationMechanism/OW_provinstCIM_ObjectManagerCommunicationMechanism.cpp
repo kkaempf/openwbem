@@ -73,7 +73,7 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstanceNames");
 		CIMObjectPath newCop(className, ns);
 		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
@@ -103,7 +103,7 @@ public:
 		const CIMClass& requestedClass,
 		const CIMClass& cimClass )
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_ObjectManagerCommunicationMechanismInstProv::enumInstances");
 		CIMInstanceArray insts = CIMOMEnvironment::g_cimomEnvironment->getInteropInstances("CIM_ObjectManagerCommunicationMechanism");
 		for (size_t i = 0; i < insts.size(); ++i)
 		{
@@ -131,7 +131,7 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In CIM_ObjectManagerCommunicationMechanismInstProv::getInstance");
 		CIMInstance inst = cimClass.newInstance();
 		inst.updatePropertyValues(instanceName.getKeys());
 		String className = cimClass.getName();

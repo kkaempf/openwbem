@@ -50,53 +50,35 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_RWLocker.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_NullLogger.hpp"
 
 #include <algorithm> // for std::find
 
 namespace OpenWBEM
 {
-namespace 
+namespace
 {
 
 const String COMPONENT_NAME("ow.provideragent");
 
-class DummyLogger : public Logger
-{
-public:
-	DummyLogger()
-		: Logger("Dummy", E_FATAL_ERROR_LEVEL)
-	{
-	}
-
-protected:
-	virtual void doProcessLogMessage(const LogMessage& message) const
-	{
-		return;
-	}
-	virtual LoggerRef doClone() const
-	{
-		return LoggerRef(new DummyLogger(*this));
-	}
-};
-
 class PALockerNone : public ProviderAgentLockerIFC
 {
-public: 
+public:
 	PALockerNone() {}
 	virtual ~PALockerNone() {}
 	virtual void doGetReadLock() {}
 	virtual void doGetWriteLock() {}
 	virtual void doReleaseReadLock() {}
 	virtual void doReleaseWriteLock() {}
-private: 
+private:
 	//non-copyable
 	PALockerNone(const PALockerNone&);
 	PALockerNone& operator=(const PALockerNone&);
-}; 
+};
 
 class PALockerSWMR : public ProviderAgentLockerIFC
 {
-public: 
+public:
 	PALockerSWMR(UInt32 timeout)
 		: m_timeout(timeout)
 	{
@@ -118,18 +100,18 @@ public:
 	{
 		m_rwlocker.releaseWriteLock();
 	}
-private: 
+private:
 	//non-copyable
 	PALockerSWMR(const PALockerSWMR&);
 	PALockerSWMR& operator=(const PALockerSWMR&);
 
-	RWLocker m_rwlocker; 
-	UInt32 m_timeout; 
-}; 
+	RWLocker m_rwlocker;
+	UInt32 m_timeout;
+};
 
 class PALockerSingleThreaded : public ProviderAgentLockerIFC
 {
-public: 
+public:
 	PALockerSingleThreaded() {}
 	virtual ~PALockerSingleThreaded() {}
 	virtual void doGetReadLock()
@@ -148,29 +130,29 @@ public:
 	{
 		m_mutex.release();
 	}
-private: 
+private:
 	//non-copyable
 	PALockerSingleThreaded(const PALockerSingleThreaded&);
 	PALockerSingleThreaded& operator=(const PALockerSingleThreaded&);
 
-	Mutex m_mutex; 
-}; 
+	Mutex m_mutex;
+};
 
 }
 
 
 ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,
-		const Array<CppProviderBaseIFCRef>& providers, 
-		const Array<CIMClass>& cimClasses, 
+		const Array<CppProviderBaseIFCRef>& providers,
+		const Array<CIMClass>& cimClasses,
 		const AuthenticatorIFCRef& authenticator,
-		const Array<RequestHandlerIFCRef>& requestHandlers, 
+		const Array<RequestHandlerIFCRef>& requestHandlers,
 		const LoggerRef& logger,
-		const String& callbackURL, 
+		const String& callbackURL,
 		const Reference<Array<SelectablePair_t> >& selectables,
 		const ProviderAgentLockerIFCRef& locker)
 	: m_configItems(configMap)
 	, m_authenticator(authenticator)
-	, m_logger(logger ? logger : LoggerRef(new DummyLogger))
+	, m_logger(logger ? logger : LoggerRef(new NullLogger))
 	, m_callbackURL(callbackURL)
 	, m_requestHandlers(requestHandlers)
 	, m_selectables(selectables)
@@ -180,130 +162,130 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	, m_useConnectionCredentials(E_DONT_USE_CONNECTION_CREDENTIALS)
 {
 	m_cimClasses.setMaxCacheSize(cimClasses.size() + 100); // 100 extra just in case.
-	for (Array<CIMClass>::const_iterator iter = cimClasses.begin(); 
+	for (Array<CIMClass>::const_iterator iter = cimClasses.begin();
 		  iter < cimClasses.end(); ++iter)
 	{
-		String key = iter->getName(); 
-		key.toLowerCase(); 
-		m_cimClasses.addToCache(*iter, key); 
+		String key = iter->getName();
+		key.toLowerCase();
+		m_cimClasses.addToCache(*iter, key);
 	}
 
-	for (Array<CppProviderBaseIFCRef>::const_iterator iter = providers.begin(); 
+	for (Array<CppProviderBaseIFCRef>::const_iterator iter = providers.begin();
 		  iter < providers.end(); ++iter)
 	{
-		CppProviderBaseIFCRef prov = *iter; 
+		CppProviderBaseIFCRef prov = *iter;
 
-		OperationContext oc; 
+		OperationContext oc;
 		ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
-			m_logger, m_configItems, oc, m_callbackURL, m_connectionPool, E_DONT_USE_CONNECTION_CREDENTIALS)); 
-		prov->initialize(pe); 
-		CppMethodProviderIFC* methodProv = prov->getMethodProvider(); 
+			m_logger, m_configItems, oc, m_callbackURL, m_connectionPool, E_DONT_USE_CONNECTION_CREDENTIALS));
+		prov->initialize(pe);
+		CppMethodProviderIFC* methodProv = prov->getMethodProvider();
 		if (methodProv)
 		{
-			MethodProviderInfo info; 
-			methodProv->getMethodProviderInfo(info); 
-			MethodProviderInfo::ClassInfoArray cia = info.getClassInfo(); 
-			for (MethodProviderInfo::ClassInfoArray::const_iterator citer  = cia.begin(); 
+			MethodProviderInfo info;
+			methodProv->getMethodProviderInfo(info);
+			MethodProviderInfo::ClassInfoArray cia = info.getClassInfo();
+			for (MethodProviderInfo::ClassInfoArray::const_iterator citer  = cia.begin();
 				  citer < cia.end(); ++citer)
 			{
-				const MethodProviderInfo::ClassInfo& ci = *citer; 
-				String className = ci.className; 
-				StringArray namespaces = ci.namespaces; 
-				StringArray methods = ci.methods; 
+				const MethodProviderInfo::ClassInfo& ci = *citer;
+				String className = ci.className;
+				StringArray namespaces = ci.namespaces;
+				StringArray methods = ci.methods;
 				if (namespaces.size() == 0)
 				{
-					namespaces.push_back(""); 
+					namespaces.push_back("");
 				}
-				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+				for (StringArray::const_iterator nsiter = namespaces.begin();
 					  nsiter < namespaces.end(); ++nsiter)
 				{
-					for (StringArray::const_iterator miter = methods.begin(); 
+					for (StringArray::const_iterator miter = methods.begin();
 						  miter < methods.end(); ++miter)
 					{
-						String key = *nsiter + ":" + className + ":" + *miter; 
-						key.toLowerCase(); 
-						m_methodProvs[key] = *iter; 
+						String key = *nsiter + ":" + className + ":" + *miter;
+						key.toLowerCase();
+						m_methodProvs[key] = *iter;
 					}
 				}
 			}
 			m_methodProvs["*"] = *iter;
 		}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-		CppAssociatorProviderIFC* assocProv = prov->getAssociatorProvider(); 
+		CppAssociatorProviderIFC* assocProv = prov->getAssociatorProvider();
 		if (assocProv)
 		{
-			AssociatorProviderInfo api;  
-			assocProv->getAssociatorProviderInfo(api); 
-			AssociatorProviderInfo::ClassInfoArray cia = api.getClassInfo(); 
-			for (AssociatorProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+			AssociatorProviderInfo api;
+			assocProv->getAssociatorProviderInfo(api);
+			AssociatorProviderInfo::ClassInfoArray cia = api.getClassInfo();
+			for (AssociatorProviderInfo::ClassInfoArray::const_iterator citer = cia.begin();
 				  citer < cia.end(); ++citer)
 			{
-				const AssociatorProviderInfo::ClassInfo& ci = *citer; 
-				String className = ci.className; 
-				StringArray namespaces = ci.namespaces; 
+				const AssociatorProviderInfo::ClassInfo& ci = *citer;
+				String className = ci.className;
+				StringArray namespaces = ci.namespaces;
 				if (namespaces.size() == 0)
 				{
-					namespaces.push_back(String("")); 
+					namespaces.push_back(String(""));
 				}
-				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+				for (StringArray::const_iterator nsiter = namespaces.begin();
 					  nsiter < namespaces.end(); ++nsiter)
 				{
-					String key = *nsiter + ":" + className; 
-					key.toLowerCase(); 
-					m_assocProvs[key] = *iter; 
+					String key = *nsiter + ":" + className;
+					key.toLowerCase();
+					m_assocProvs[key] = *iter;
 				}
 			}
 			m_assocProvs["*"] = *iter;
 		}
 #endif
-		CppInstanceProviderIFC* instProv = prov->getInstanceProvider(); 
+		CppInstanceProviderIFC* instProv = prov->getInstanceProvider();
 		if (instProv)
 		{
-			InstanceProviderInfo ipi;  
-			instProv->getInstanceProviderInfo(ipi); 
-			InstanceProviderInfo::ClassInfoArray cia = ipi.getClassInfo(); 
-			for (InstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+			InstanceProviderInfo ipi;
+			instProv->getInstanceProviderInfo(ipi);
+			InstanceProviderInfo::ClassInfoArray cia = ipi.getClassInfo();
+			for (InstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin();
 				  citer < cia.end(); ++citer)
 			{
-				const InstanceProviderInfo::ClassInfo& ci = *citer; 
-				String className = ci.className; 
-				StringArray namespaces = ci.namespaces; 
+				const InstanceProviderInfo::ClassInfo& ci = *citer;
+				String className = ci.className;
+				StringArray namespaces = ci.namespaces;
 				if (namespaces.size() == 0)
 				{
-					namespaces.push_back(String("")); 
+					namespaces.push_back(String(""));
 				}
-				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+				for (StringArray::const_iterator nsiter = namespaces.begin();
 					  nsiter < namespaces.end(); ++nsiter)
 				{
-					String key = *nsiter + ":" + className; 
-					key.toLowerCase(); 
-					m_instProvs[key] = *iter; 
+					String key = *nsiter + ":" + className;
+					key.toLowerCase();
+					m_instProvs[key] = *iter;
 				}
 			}
 			m_instProvs["*"] = *iter;
 		}
-		CppSecondaryInstanceProviderIFC* secInstProv = prov->getSecondaryInstanceProvider(); 
+		CppSecondaryInstanceProviderIFC* secInstProv = prov->getSecondaryInstanceProvider();
 		if (secInstProv)
 		{
-			SecondaryInstanceProviderInfo ipi;  
-			secInstProv->getSecondaryInstanceProviderInfo(ipi); 
-			SecondaryInstanceProviderInfo::ClassInfoArray cia = ipi.getClassInfo(); 
-			for (SecondaryInstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin(); 
+			SecondaryInstanceProviderInfo ipi;
+			secInstProv->getSecondaryInstanceProviderInfo(ipi);
+			SecondaryInstanceProviderInfo::ClassInfoArray cia = ipi.getClassInfo();
+			for (SecondaryInstanceProviderInfo::ClassInfoArray::const_iterator citer = cia.begin();
 				  citer < cia.end(); ++citer)
 			{
-				const SecondaryInstanceProviderInfo::ClassInfo& ci = *citer; 
-				String className = ci.className; 
-				StringArray namespaces = ci.namespaces; 
+				const SecondaryInstanceProviderInfo::ClassInfo& ci = *citer;
+				String className = ci.className;
+				StringArray namespaces = ci.namespaces;
 				if (namespaces.size() == 0)
 				{
-					namespaces.push_back(String("")); 
+					namespaces.push_back(String(""));
 				}
-				for (StringArray::const_iterator nsiter = namespaces.begin(); 
+				for (StringArray::const_iterator nsiter = namespaces.begin();
 					  nsiter < namespaces.end(); ++nsiter)
 				{
-					String key = *nsiter + ":" + className; 
-					key.toLowerCase(); 
-					m_secondaryInstProvs[key] = *iter; 
+					String key = *nsiter + ":" + className;
+					key.toLowerCase();
+					m_secondaryInstProvs[key] = *iter;
 				}
 			}
 			m_secondaryInstProvs["*"] = *iter;
@@ -313,23 +295,23 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	// if the caller didn't provide their own custom locker
 	if (!m_locker)
 	{
-		String confItem = getConfigItem(ProviderAgent::LockingType_opt, "none"); 
-		confItem.toLowerCase(); 
+		String confItem = getConfigItem(ProviderAgent::LockingType_opt, "none");
+		confItem.toLowerCase();
 		if (confItem == ProviderAgent::LockingTypeNone)
 		{
 			m_locker = new PALockerNone;
 		}
 		else if (confItem == ProviderAgent::LockingTypeSWMR)
 		{
-			confItem = getConfigItem(ProviderAgent::LockingTimeout_opt, "300"); 
+			confItem = getConfigItem(ProviderAgent::LockingTimeout_opt, "300");
 			UInt32 lockingTimeout(300);
 			try
 			{
-				lockingTimeout = confItem.toUInt32(); 
+				lockingTimeout = confItem.toUInt32();
 			}
 			catch (StringConversionException&)
 			{
-				OW_THROW(ConfigException, "invalid locking timeout"); 
+				OW_THROW(ConfigException, "invalid locking timeout");
 			}
 			m_locker = new PALockerSWMR(lockingTimeout);
 		}
@@ -339,15 +321,15 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 		}
 		else
 		{
-			OW_THROW(ConfigException, "unknown locking type"); 
+			OW_THROW(ConfigException, "unknown locking type");
 		}
 	}
 
-	String confItem = getConfigItem(ProviderAgent::DynamicClassRetrieval_opt, "false"); 
-	confItem.toLowerCase(); 
+	String confItem = getConfigItem(ProviderAgent::DynamicClassRetrieval_opt, "false");
+	confItem.toLowerCase();
 	if (confItem == "true")
 	{
-		m_classRetrieval = E_RETRIEVE_CLASSES; 
+		m_classRetrieval = E_RETRIEVE_CLASSES;
 	}
 	else
 	{
@@ -355,10 +337,10 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	}
 
 	confItem = getConfigItem(ProviderAgent::UseConnectionCredentials_opt, "false");
-	confItem.toLowerCase(); 
+	confItem.toLowerCase();
 	if (confItem == "true")
 	{
-		m_useConnectionCredentials = E_USE_CONNECTION_CREDENTIALS; 
+		m_useConnectionCredentials = E_USE_CONNECTION_CREDENTIALS;
 	}
 	else
 	{
@@ -371,7 +353,7 @@ ProviderAgentEnvironment::~ProviderAgentEnvironment() {}
 
 
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 ProviderAgentEnvironment::authenticate(String &userName,
 		const String &info, String &details, OperationContext& context)
 {
@@ -379,7 +361,7 @@ ProviderAgentEnvironment::authenticate(String &userName,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 ProviderAgentEnvironment::addSelectable(const SelectableIFCRef& obj,
 		const SelectableCallbackIFCRef& cb)
 {
@@ -387,14 +369,14 @@ ProviderAgentEnvironment::addSelectable(const SelectableIFCRef& obj,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 ProviderAgentEnvironment::removeSelectable(const SelectableIFCRef& obj)
 {
 	m_selectables->erase(std::remove_if (m_selectables->begin(), m_selectables->end(),
 		selectableFinder(obj)), m_selectables->end());
 }
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRetVal) const
 {
 	ConfigFile::ConfigMap::const_iterator i =
@@ -409,8 +391,8 @@ ProviderAgentEnvironment::getConfigItem(const String &name, const String& defRet
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
-ProviderAgentEnvironment::setConfigItem(const String& item, const String& value, 
+void
+ProviderAgentEnvironment::setConfigItem(const String& item, const String& value,
 										EOverwritePreviousFlag overwritePrevious)
 {
 	if (overwritePrevious == E_OVERWRITE_PREVIOUS || getConfigItem(item) == "")
@@ -420,37 +402,37 @@ ProviderAgentEnvironment::setConfigItem(const String& item, const String& value,
 }
 	
 //////////////////////////////////////////////////////////////////////////////
-RequestHandlerIFCRef 
+RequestHandlerIFCRef
 ProviderAgentEnvironment::getRequestHandler(const String& ct)
 {
-	for (Array<RequestHandlerIFCRef>::const_iterator iter = m_requestHandlers.begin(); 
+	for (Array<RequestHandlerIFCRef>::const_iterator iter = m_requestHandlers.begin();
 		  iter != m_requestHandlers.end(); ++iter)
 	{
-		StringArray sa = (*iter)->getSupportedContentTypes(); 
+		StringArray sa = (*iter)->getSupportedContentTypes();
 		if (std::find(sa.begin(), sa.end(), ct) != sa.end())
 		{
 			RequestHandlerIFCRef ref = RequestHandlerIFCRef(iter->getLibRef(),
 				(*iter)->clone());
 			ref->setEnvironment(ServiceEnvironmentIFCRef(this));
-			return ref; 
+			return ref;
 		}
 	}
-	return RequestHandlerIFCRef(SharedLibraryRef(0), 0);  //TODO need to throw? 
+	return RequestHandlerIFCRef(SharedLibraryRef(0), 0);  //TODO need to throw?
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMOMHandleIFCRef 
+CIMOMHandleIFCRef
 ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 		ESendIndicationsFlag /*doIndications*/,
 		EBypassProvidersFlag /*bypassProviders*/)
 {
 	ProviderEnvironmentIFCRef pe(new ProviderAgentProviderEnvironment(
-		m_logger, m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials)); 
+		m_logger, m_configItems, context, m_callbackURL, m_connectionPool, m_useConnectionCredentials));
 	return CIMOMHandleIFCRef(new ProviderAgentCIMOMHandle(
-		m_assocProvs, m_instProvs, m_secondaryInstProvs, m_methodProvs, 
-		m_cimClasses, pe, m_classRetrieval, m_locker)); 
+		m_assocProvs, m_instProvs, m_secondaryInstProvs, m_methodProvs,
+		m_cimClasses, pe, m_classRetrieval, m_locker));
 }
 //////////////////////////////////////////////////////////////////////////////
-LoggerRef 
+LoggerRef
 ProviderAgentEnvironment::getLogger() const
 {
 	return getLogger(COMPONENT_NAME);
@@ -466,18 +448,18 @@ ProviderAgentEnvironment::getLogger(const String& componentName) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMInstanceArray 
-ProviderAgentEnvironment::getInteropInstances(const String& className)const 
+CIMInstanceArray
+ProviderAgentEnvironment::getInteropInstances(const String& className)const
 {
-	OW_ASSERT("not implemented" == 0); 
+	OW_ASSERT("not implemented" == 0);
 	return CIMInstanceArray();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
 {
-	OW_ASSERT("not implemented" == 0); 
+	OW_ASSERT("not implemented" == 0);
 }
 
 

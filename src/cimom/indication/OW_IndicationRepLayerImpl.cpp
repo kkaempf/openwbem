@@ -48,9 +48,15 @@
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_Logger.hpp"
 
 namespace OpenWBEM
 {
+
+namespace
+{
+	const String COMPONENT_NAME("ow.owcimomd.indication.LifecycleCreator");
+}
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
@@ -82,7 +88,7 @@ IndicationRepLayerImpl::getInstance(
 		}
 		catch (CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for getInstance"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for getInstance"
 				" because CIM_InstRead does not exist");
 		}
 	}
@@ -139,7 +145,7 @@ IndicationRepLayerImpl::invokeMethod(
 			}
 			catch (CIMException&)
 			{
-				m_pEnv->logDebug("Unable to export indication for"
+				OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for"
 					" invokeMethod because CIM_InstMethodCall does not exist");
 			}
 		}
@@ -166,7 +172,7 @@ IndicationRepLayerImpl::modifyClass(const String &ns,
 		}
 		catch (CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for modifyClass"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for modifyClass"
 				" because CIM_ClassModification does not exist");
 		}
 	}
@@ -189,7 +195,7 @@ IndicationRepLayerImpl::createClass(const String& ns,
 		}
 		catch(CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for createClass"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for createClass"
 				" because CIM_ClassCreation does not exist");
 		}
 	}
@@ -210,7 +216,7 @@ IndicationRepLayerImpl::deleteClass(const String& ns, const String& className,
 		}
 		catch (CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for"
 				" deleteClass because CIM_ClassDeletion does not exist");
 		}
 	}
@@ -243,7 +249,7 @@ IndicationRepLayerImpl::modifyInstance(
 		}
 		catch (CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for modifyInstance"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for modifyInstance"
 				" because CIM_InstModification does not exist");
 		}
 	}
@@ -265,7 +271,7 @@ IndicationRepLayerImpl::createInstance(const String& ns,
 		}
 		catch(CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for createInstance"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for createInstance"
 				" because CIM_InstCreation does not exist");
 		}
 	}
@@ -287,7 +293,7 @@ IndicationRepLayerImpl::deleteInstance(const String& ns, const CIMObjectPath& pa
 		}
 		catch (CIMException&)
 		{
-			m_pEnv->logDebug("Unable to export indication for deleteInstance"
+			OW_LOG_DEBUG(m_pEnv->getLogger(COMPONENT_NAME), "Unable to export indication for deleteInstance"
 				" because CIM_InstDeletion does not exist");
 		}
 	}

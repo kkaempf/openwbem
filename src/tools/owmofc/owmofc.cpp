@@ -55,7 +55,7 @@
 #include "OW_Logger.hpp"
 #include "OW_Reference.hpp"
 #include "OW_CmdLineParser.hpp"
-#include "OW_LogMessage.hpp"
+#include "OW_CerrLogger.hpp"
 
 #include <iostream>
 
@@ -125,7 +125,7 @@ String g_url;
 String g_encoding;
 StringArray g_filelist;
 
-enum 
+enum
 {
 	E_OPThelp,
 	E_OPTversion,
@@ -147,49 +147,49 @@ enum
 	E_OPTinvalid
 };
 
-CmdLineParser::Option options[] = 
+CmdLineParser::Option options[] =
 {
 	{ E_OPThelp, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{ E_OPTversion, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
-	{ E_OPTdirect, 'd', "direct", CmdLineParser::E_REQUIRED_ARG, 0,  
+	{ E_OPTdirect, 'd', "direct", CmdLineParser::E_REQUIRED_ARG, 0,
 		"Create a repository in the specified directory without connecting to a cimom. "
 		"Be extremely cautious using this option. Bypassing "
 		"the cimom can have the following negative consequences:\n"
 		"- Instances may incorrectly bypass providers.\n"
 		"- The repository will be corrupted if the cimom is running simultaneously."},
-	{ E_OPTurl, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0, 
+	{ E_OPTurl, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
 		"The url of the cimom. Default is http://localhost/root/cimv2 if not specified."},
-	{ E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTremove_descriptions, 'm', "remove-descriptions", CmdLineParser::E_NO_ARG, 0,
 		"Remove all the Description qualifiers to save space."},
-	{ E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTcreate_namespaces, 'c', "create-namespaces", CmdLineParser::E_NO_ARG, 0,
 		"If the namespace doesn't exist, create it."},
-	{ E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTremove, 'r', "remove", CmdLineParser::E_NO_ARG, 0,
 		"Instead of creating objects, remove them."},
-	{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0, 
+	{ E_OPTnamespace, 'n', "namespace", CmdLineParser::E_REQUIRED_ARG, 0,
 		"This option is deprecated (in 3.1.0) in favor of the URL namespace. The initial namespace "
-		"to use. Default is root/cimv2 if not specified via this option or in the URL."}, 
-	{ E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0, 
+		"to use. Default is root/cimv2 if not specified via this option or in the URL."},
+	{ E_OPTencoding, 'e', "encoding", CmdLineParser::E_REQUIRED_ARG, 0,
 		"This option is deprecated (in 3.1.0) in favor of the URL scheme. "
 		"Specify the encoding, valid values are cimxml and owbinary. "
 		"This can also be specified by using the owbinary.wbem URI scheme."},
 #if 0
-	{ E_OPTcheck_syntax, 's', "check-syntax", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTcheck_syntax, 's', "check-syntax", CmdLineParser::E_NO_ARG, 0,
 		"Only parse the mof, don't actually do anything. <UNIMPLEMENTED>"},
-	{ E_OPTdump_xml, 'x', "dump-xml", CmdLineParser::E_REQUIRED_ARG, 0, 
+	{ E_OPTdump_xml, 'x', "dump-xml", CmdLineParser::E_REQUIRED_ARG, 0,
 		"Write the xml to the specified file. <UNIMPLEMENTED>"},
-	{ E_OPTpreserve, 'p', "preserve", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTpreserve, 'p', "preserve", CmdLineParser::E_NO_ARG, 0,
 		"If a class or instance already exists, don't overwrite it with the one in the mof. <UNIMPLEMENTED>"},
-	{ E_OPTupgrade, 'g', "upgrade", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTupgrade, 'g', "upgrade", CmdLineParser::E_NO_ARG, 0,
 		"Overwrite a class only if it has a larger Version qualifier. <UNIMPLEMENTED>"},
-	{ E_OPTsuppress_warnings, 'w', "suppress-warnings", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTsuppress_warnings, 'w', "suppress-warnings", CmdLineParser::E_NO_ARG, 0,
 		"Only print errors. <UNIMPLEMENTED>"},
-	{ E_OPTquiet, 'q', "quiet", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTquiet, 'q', "quiet", CmdLineParser::E_NO_ARG, 0,
 		"Don't print anything. <UNIMPLEMENTED>"},
-	{ E_OPTinclude, 'I', "include", CmdLineParser::E_REQUIRED_ARG, 0, 
+	{ E_OPTinclude, 'I', "include", CmdLineParser::E_REQUIRED_ARG, 0,
 		"Add the specifed directory to the include search path. <UNIMPLEMENTED>"},
-	{ E_OPTignore_double_includes, 'i', "ignore-double-includes", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTignore_double_includes, 'i', "ignore-double-includes", CmdLineParser::E_NO_ARG, 0,
 		"If a mof file has already been included, don't parse it again. <UNIMPLEMENTED>"},
-	{ E_OPTignore_includes, '\0', "ignore-includes", CmdLineParser::E_NO_ARG, 0, 
+	{ E_OPTignore_includes, '\0', "ignore-includes", CmdLineParser::E_NO_ARG, 0,
 		"Only process files specified on the command line. <UNIMPLEMENTED>"},
 #endif
 	{ 0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
@@ -260,7 +260,7 @@ processCommandLineOptions(int argc, char** argv)
 		{
 			g_opts.m_removeDescriptions = true;
 		}
-		if (parser.isSet(E_OPTremove)) 
+		if (parser.isSet(E_OPTremove))
 		{
 			g_opts.m_removeObjects = true;
 		}
@@ -307,29 +307,12 @@ processCommandLineOptions(int argc, char** argv)
 	return true;
 }
 
-class coutLogger : public Logger
-{
-public:
-	coutLogger()
-		: Logger("ow.owmofc", E_ERROR_LEVEL)
-	{
-	}
-
-	virtual void doProcessLogMessage(const LogMessage& message) const
-	{
-		cout << message.message << endl;
-	}
-	virtual LoggerRef doClone() const
-	{
-		return LoggerRef(new coutLogger(*this));
-	}
-};
 class MOFCompEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	virtual LoggerRef getLogger() const
 	{
-		return LoggerRef(new coutLogger);
+		return LoggerRef(new CerrLogger);
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{

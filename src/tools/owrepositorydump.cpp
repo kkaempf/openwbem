@@ -43,7 +43,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
-#include "OW_LogMessage.hpp"
+#include "OW_CerrLogger.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -59,29 +59,12 @@ using namespace WBEMFlags;
 namespace
 {
 
-class coutLogger : public Logger
-{
-public:
-	coutLogger()
-		: Logger("ow.owrepositorydump", E_ERROR_LEVEL)
-	{
-	}
-	virtual void doProcessLogMessage(const LogMessage& message) const
-	{
-		cout << message.message << endl;
-	}
-	virtual LoggerRef doClone() const
-	{
-		return LoggerRef(new coutLogger(*this));
-	}
-};
-
 class TheServiceEnvironment : public ServiceEnvironmentIFC
 {
 public:
 	virtual LoggerRef getLogger() const
 	{
-		return LoggerRef(new coutLogger);
+		return LoggerRef(new CerrLogger);
 	}
 	virtual LoggerRef getLogger(const String& componentName) const
 	{
@@ -133,7 +116,7 @@ enum
 	OUTPUT_OPT
 };
 
-CmdLineParser::Option g_options[] = 
+CmdLineParser::Option g_options[] =
 {
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},

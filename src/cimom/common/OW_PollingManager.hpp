@@ -79,6 +79,7 @@ private:
 		Int32 m_pollInterval;
 		PollingManager* m_pollMan;
 		CIMOMEnvironmentRef m_env;
+		LoggerRef m_logger;
 	private:
 		void doCooperativeCancel();
 		void doDefinitiveCancel();
@@ -89,8 +90,10 @@ private:
 	NonRecursiveMutex m_triggerGuard;
 	Condition m_triggerCondition;
 	CIMOMEnvironmentRef m_env;
+	LoggerRef m_logger;
 	ThreadBarrier m_startedBarrier;
 	ThreadPoolRef m_triggerRunnerThreadPool;
+
 	// m_triggerGuard must be locked before calling this function.
 	UInt32 calcSleepTime(bool& rightNow, bool doInit);
 	// m_triggerGuard must be locked before calling this function.

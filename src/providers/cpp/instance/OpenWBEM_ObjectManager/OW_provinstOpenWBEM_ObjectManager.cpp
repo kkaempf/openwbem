@@ -81,7 +81,7 @@ public:
 		CIMObjectPathResultHandlerIFC& result,
 		const CIMClass& cimClass )
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);
@@ -130,7 +130,7 @@ public:
 		const StringArray* propertyList,
 		const CIMClass& cimClass )
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "In OpenWBEM_ObjectManagerInstProv::getInstance");
 		if (!m_inst)
 		{
 			m_inst = createTheInst(cimClass);

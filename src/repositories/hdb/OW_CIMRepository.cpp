@@ -173,7 +173,7 @@ CIMRepository::createNameSpace(const String& ns,
 	m_mStore.createNameSpace(ns);
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository created namespace: %1", ns));
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository created namespace: %1", ns));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -192,7 +192,7 @@ CIMRepository::deleteNameSpace(const String& ns,
 	
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository deleted namespace: %1", ns));
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository deleted namespace: %1", ns));
 	}
 }
 #endif
@@ -217,7 +217,7 @@ CIMRepository::enumNameSpace(StringResultHandlerIFC& result,
 	}
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug("CIMRepository enumerated namespaces");
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), "CIMRepository enumerated namespaces");
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ CIMRepository::getQualifierType(const String& ns,
 {
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository getting qualifier type: %1",
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository getting qualifier type: %1",
 			CIMObjectPath(qualifierName,ns).toString()));
 	}
 	return m_mStore.getQualifierType(ns, qualifierName);
@@ -244,7 +244,7 @@ CIMRepository::enumQualifierTypes(
 	m_mStore.enumQualifierTypes(ns, result);
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository enumerated qualifiers in namespace: %1", ns));
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated qualifiers in namespace: %1", ns));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ CIMRepository::deleteQualifierType(const String& ns, const String& qualName,
 	
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository deleted qualifier type: %1 in namespace: %2", qualName, ns));
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -281,7 +281,7 @@ CIMRepository::setQualifierType(
 	m_mStore.setQualifierType(ns, qt);
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository set qualifier type: %1 in "
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository set qualifier type: %1 in "
 			"namespace: %2", qt.toString(), ns));
 	}
 }
@@ -303,7 +303,7 @@ CIMRepository::getClass(
 		checkGetClassRvalAndThrow(rval, ns, className);
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository got class: %1 from "
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository got class: %1 from "
 				"namespace: %2", theClass.getName(), ns));
 		}
 		return theClass;
@@ -418,7 +418,7 @@ CIMRepository::deleteClass(const String& ns, const String& className,
 		ccd.handle(cc);
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository deleted class: %1 in "
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository deleted class: %1 in "
 				"namespace: %2", className, ns));
 		}
 		return cc;
@@ -456,7 +456,7 @@ CIMRepository::createClass(const String& ns, const CIMClass& cimClass_,
 #endif
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("Created class: %1:%2", ns, cimClass.toMOF()));
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("Created class: %1:%2", ns, cimClass.toMOF()));
 		}
 	}
 	catch (HDBException& e)
@@ -489,7 +489,7 @@ CIMRepository::modifyClass(
 		OW_ASSERT(origClass);
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("Modified class: %1:%2 from %3 to %4", ns,
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("Modified class: %1:%2 from %3 to %4", ns,
 				cc.getName(), origClass.toMOF(), cc.toMOF()));
 		}
 		return origClass;
@@ -519,7 +519,7 @@ CIMRepository::enumClasses(const String& ns,
 			localOnly, includeQualifiers, includeClassOrigin);
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository enumerated classes: %1:%2", ns,
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated classes: %1:%2", ns,
 				className));
 		}
 	}
@@ -545,7 +545,7 @@ CIMRepository::enumClassNames(
 		m_mStore.enumClassNames(ns, className, result, deep);
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository enumerated class names: %1:%2", ns,
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated class names: %1:%2", ns,
 				className));
 		}
 	}
@@ -597,7 +597,7 @@ CIMRepository::enumInstanceNames(
 		m_iStore.getInstanceNames(ns, theClass, result);
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository enumerated instance names: %1:%2", ns,
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated instance names: %1:%2", ns,
 				className));
 		}
 		if (!deep)
@@ -619,7 +619,7 @@ CIMRepository::enumInstanceNames(
 			m_iStore.getInstanceNames(ns, theClass, result);
 			if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 			{
-				m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository enumerated derived instance names: %1:%2", ns,
+				OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated derived instance names: %1:%2", ns,
 					classNames[i]));
 			}
 		}
@@ -667,7 +667,7 @@ public:
 			deep, localOnly, includeQualifiers, includeClassOrigin, propertyList);
 		if (rep.m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			rep.m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository Enumerated derived instances: %1:%2", ns, className));
+			OW_LOG_DEBUG(rep.m_env->getLogger(COMPONENT_NAME), Format("CIMRepository Enumerated derived instances: %1:%2", ns, className));
 		}
 	}
 private:
@@ -704,7 +704,7 @@ CIMRepository::enumInstances(
 		
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository Enumerated instances: %1:%2", ns,
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository Enumerated instances: %1:%2", ns,
 				className));
 		}
 		if (enumSubclasses)
@@ -779,7 +779,7 @@ CIMRepository::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	cop.setNameSpace(ns);
 	if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository::deleteInstance.  cop = %1",
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository::deleteInstance.  cop = %1",
 			cop.toString()));
 	}
 	try
@@ -834,7 +834,7 @@ CIMRepository::createInstance(
 	{
 		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug(Format("CIMRepository::createInstance.  ns = %1, "
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository::createInstance.  ns = %1, "
 				"instance = %2", ns, ci.toMOF()));
 		}
 		CIMClass theClass = _instGetClass(ns, ci.getClassName());
@@ -1578,7 +1578,7 @@ CIMRepository::_staticReferencesClass(const CIMObjectPath& path,
 	CIMObjectPath curPath = path;
 	while (!curClsName.empty())
 	{
-		m_env->getLogger(COMPONENT_NAME)->logDebug(Format("curPath = %1", curPath.toString()));
+		OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("curPath = %1", curPath.toString()));
 		if (popresult != 0)
 		{
 			staticReferencesObjectPathResultHandler handler(*popresult);

@@ -82,7 +82,7 @@ public:
 	 */
 	virtual void createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("SecondaryInstanceTest2::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("SecondaryInstanceTest2::createInstance ns = %1, cimInstance = %2", ns, cimInstance));
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public:
 	 */
 	virtual void deleteInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &cop)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("SecondaryInstanceTest2::deleteInstance ns = %1, cop = %2", ns, cop));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("SecondaryInstanceTest2::deleteInstance ns = %1, cop = %2", ns, cop));
 	}
 	
 	/**
@@ -143,17 +143,17 @@ public:
 		const CIMClass &requestedClass,
 		const CIMClass &cimClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("SecondaryInstanceTest2::filterInstances"
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("SecondaryInstanceTest2::filterInstances"
 			" ns = %1, className = %2, localOnly = %3, deep = %4,"
 			" includeQualifiers = %5, includeClassOrigin = %6,"
 			" propertyList = %7, requestedClass = %8, cimClass = %9",
 			ns, className, localOnly, deep, includeQualifiers,
 			includeClassOrigin, propertyList, requestedClass, cimClass));
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("SecondaryInstanceTest2::filterInstances"
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("SecondaryInstanceTest2::filterInstances"
 			" instances.size() = %1", instances.size()));
 		for (size_t i = 0; i < instances.size(); ++i)
 		{
-			env->getLogger(COMPONENT_NAME)->logDebug(Format("SecondaryInstanceTest2::filterInstances"
+			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("SecondaryInstanceTest2::filterInstances"
 				" instances[%1] = %2", i, instances[i]));
 
 			instances[i].setProperty("prop4", CIMValue("from secondary prov 2"));
@@ -172,7 +172,7 @@ public:
 	 */
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance, WBEMFlags:: EIncludeQualifiersFlag includeQualifiers, const StringArray *propertyList, const CIMClass &theClass)
 	{
-		env->getLogger(COMPONENT_NAME)->logDebug(Format("SecondaryInstanceTest2::modifyInstance ns = %1, modifiedInstance = %2, previousInstance = %3", ns, modifiedInstance, previousInstance));
+		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), Format("SecondaryInstanceTest2::modifyInstance ns = %1, modifiedInstance = %2, previousInstance = %3", ns, modifiedInstance, previousInstance));
 	}
 };
 

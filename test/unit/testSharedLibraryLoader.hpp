@@ -48,7 +48,7 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_OperationContext.hpp"
-#include "OW_LogMessage.hpp"
+#include "OW_CerrLogger.hpp"
 
 using namespace OpenWBEM;
 
@@ -515,24 +515,6 @@ class testSharedLibraryLoader: public SharedLibraryLoader
 
 namespace
 {
-	class DummyLogger : public Logger
-	{
-	public:
-		DummyLogger()
-			: Logger("testSharedLibraryLoader", E_ERROR_LEVEL)
-		{
-		}
-	protected:
-		virtual void doProcessLogMessage(const LogMessage& message) const
-		{
-			std::cout << message.message << std::endl;
-		}
-		virtual LoggerRef doClone() const
-		{
-			return LoggerRef(new DummyLogger(*this));
-		}
-	};
-
 	class testProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
@@ -542,7 +524,7 @@ namespace
 		{}
 
 		testProviderEnvironment()
-		: m_context(), m_ch(new LocalCIMOMHandle(CIMOMEnvironmentRef(),RepositoryIFCRef(),m_context)), m_logger(new DummyLogger)
+		: m_context(), m_ch(new LocalCIMOMHandle(CIMOMEnvironmentRef(),RepositoryIFCRef(),m_context)), m_logger(new CerrLogger)
 		{}
 
 		virtual CIMOMHandleIFCRef getCIMOMHandle() const
@@ -593,7 +575,7 @@ namespace
 
 	ProviderEnvironmentIFCRef createProvEnvRef(const LocalCIMOMHandle& ch)
 	{
-		LoggerRef log(new DummyLogger);
+		LoggerRef log(new CerrLogger);
 		log->setLogLevel(E_DEBUG_LEVEL);
 		return ProviderEnvironmentIFCRef(new testProviderEnvironment(ch,
 			log));

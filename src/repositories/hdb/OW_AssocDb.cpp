@@ -427,7 +427,7 @@ AssocDb::~AssocDb()
 	{
 		if (m_hdlCount > 0)
 		{
-			m_env->getLogger(COMPONENT_NAME)->logDebug("*** AssocDb::~AssocDb - STILL OUTSTANDING"
+			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), "*** AssocDb::~AssocDb - STILL OUTSTANDING"
 				" HANDLES ***");
 		}
 		close();
@@ -679,7 +679,7 @@ AssocDb::addEntry(const AssocDbEntry& nentry, AssocDbHandle& hdl)
 	
 	if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 	{
-		m_env->getLogger(COMPONENT_NAME)->logError(Format("AssocDb::addEntry failed to add entry to"
+		OW_LOG_ERROR(m_env->getLogger(COMPONENT_NAME), Format("AssocDb::addEntry failed to add entry to"
 			" association index: ", nentry.makeKey()));
 		OW_THROW(IOException, "Failed to add entry to association index");
 	}

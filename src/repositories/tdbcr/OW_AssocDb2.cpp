@@ -457,7 +457,7 @@ AssocDb2::addEntry(const AssocDbEntry2& nentry)
 //
 //     if (!m_pIndex->add(nentry.makeKey().c_str(), offset))
 //     {
-//         m_env->getLogger(COMPONENT_NAME)->logError(format("AssocDb2::addEntry failed to add entry to"
+//         OW_LOG_ERROR(m_env->getLogger(COMPONENT_NAME), format("AssocDb2::addEntry failed to add entry to"
 //             " association index: ", nentry.makeKey()));
 //         OW_THROW(IOException, "Failed to add entry to association index");
 //     }
