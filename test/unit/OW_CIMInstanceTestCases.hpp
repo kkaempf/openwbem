@@ -45,7 +45,7 @@ public:
 
 private:
 	// test methods
-	void testSomething();
+	void testPropertiesEqualTo();
 };
 
 #endif

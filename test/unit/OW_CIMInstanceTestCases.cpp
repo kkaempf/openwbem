@@ -32,6 +32,7 @@
 #include "TestCaller.hpp"
 #include "OW_CIMInstanceTestCases.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_CIMValue.hpp"
 
 void OW_CIMInstanceTestCases::setUp()
 {
@@ -41,26 +42,62 @@ void OW_CIMInstanceTestCases::tearDown()
 {
 }
 
-void OW_CIMInstanceTestCases::testSomething()
+void OW_CIMInstanceTestCases::testPropertiesEqualTo()
 {
-	/*
-	OW_CIMClass cc("ClassName");
-	OW_CIMProperty prop("PropOne");
-	OW_CIMQualifierType cqt("KEY");
-	OW_CIMQualifier cq(
-	prop.addQualifier(
-	cc.setP
-	*/
-	unitAssert(true);
+	OW_CIMInstance i1(true);
+	OW_CIMInstance i2(true);
+	i1.setProperty("foo", OW_CIMValue("x"));
+	i2.setProperty("foo", OW_CIMValue("x"));
+	unitAssert(i1.propertiesAreEqualTo(i2));
+	unitAssert(i2.propertiesAreEqualTo(i1));
+
+	i2.setProperty("foo", OW_CIMValue("y"));
+	unitAssert(!i1.propertiesAreEqualTo(i2));
+	unitAssert(!i2.propertiesAreEqualTo(i1));
+
+	i2.setProperty("foo", OW_CIMValue(OW_UInt16(5)));
+	unitAssert(!i1.propertiesAreEqualTo(i2));
+	unitAssert(!i2.propertiesAreEqualTo(i1));
+
+	// test identity
+	unitAssert(i1.propertiesAreEqualTo(i1));
+	unitAssert(i2.propertiesAreEqualTo(i2));
+
+	// different properties
+	i2.removeProperty("foo");
+	i2.setProperty("foo2", OW_CIMValue(0));
+	unitAssert(!i1.propertiesAreEqualTo(i2));
+	unitAssert(!i2.propertiesAreEqualTo(i1));
+
+	// test multiple - non-equal
+	i1.setProperty("x", OW_CIMValue("x"));
+	i2.setProperty("x", OW_CIMValue("x"));
+	i1.setProperty("y", OW_CIMValue('y'));
+	i2.setProperty("y", OW_CIMValue('y'));
+	unitAssert(!i1.propertiesAreEqualTo(i2));
+	unitAssert(!i2.propertiesAreEqualTo(i1));
+	
+	// test multiple - equal
+	i2.removeProperty("foo2");
+	i2.setProperty("foo", OW_CIMValue("x"));
+	unitAssert(i1.propertiesAreEqualTo(i2));
+	unitAssert(i2.propertiesAreEqualTo(i1));
+
+	i2.removeProperty("y");
+	unitAssert(!i1.propertiesAreEqualTo(i2));
+	unitAssert(!i2.propertiesAreEqualTo(i1));
+
+	i1.removeProperty("y");
+	unitAssert(i1.propertiesAreEqualTo(i2));
+	unitAssert(i2.propertiesAreEqualTo(i1));
+	
 }
 
 Test* OW_CIMInstanceTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMInstance");
 
-	testSuite->addTest (new TestCaller <OW_CIMInstanceTestCases> 
-			("testSomething", 
-			&OW_CIMInstanceTestCases::testSomething));
+	ADD_TEST_TO_SUITE(OW_CIMInstanceTestCases, testPropertiesEqualTo);
 
 	return testSuite;
 }
