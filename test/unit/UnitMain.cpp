@@ -35,6 +35,8 @@
 #endif
 
 // test cases includes -- DO NOT EDIT THIS COMMENT
+#include "OW_ThreadTestCases.hpp"
+#include "OW_ThreadBarrierTestCases.hpp"
 #include "OW_ReferenceTestCases.hpp"
 #include "OW_SocketUtilsTestCases.hpp"
 #include "OW_RWLockerTestCases.hpp"
@@ -78,6 +80,8 @@ int main( int argc, char *argv[])
 	TestRunner runner;
 	
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
+	runner.addTest( "OW_Thread", OW_ThreadTestCases::suite());
+	runner.addTest( "OW_ThreadBarrier", OW_ThreadBarrierTestCases::suite());
 	runner.addTest( "OW_Reference", OW_ReferenceTestCases::suite());
 	runner.addTest( "OW_SocketUtils", OW_SocketUtilsTestCases::suite());
 	runner.addTest( "OW_RWLocker", OW_RWLockerTestCases::suite());
