@@ -23,7 +23,6 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
-#OW_CMPIAssociatorProviderProxy.cpp \
 #OW_CMPIPolledProviderProxy.cpp  \
 #OW_CMPIIndicationProviderProxy.cpp \
 #OW_CMPIMethodProviderProxy.cpp  
@@ -32,6 +31,7 @@ libcmpiprovifc_a_SOURCES = \
 CMPIProvider.hpp \
 OW_CMPIInstanceProviderProxy.cpp \
 OW_CMPIInstanceProviderProxy.hpp \
+OW_CMPIAssociatorProviderProxy.cpp \
 OW_CMPIAssociatorProviderProxy.hpp \
 OW_CMPIMethodProviderProxy.hpp  \
 OW_CMPIPolledProviderProxy.hpp  \
