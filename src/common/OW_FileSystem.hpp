@@ -39,6 +39,7 @@
 #include "OW_Types.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_Exception.hpp"
+#include "OW_CommonFwd.hpp"
 
 #ifdef OW_HAVE_SYS_PARAM_H
 #include <sys/param.h>
@@ -52,9 +53,6 @@ namespace OpenWBEM
 
 OW_DECLARE_APIEXCEPTION(FileSystem, OW_COMMON_API)
 
-class File;
-class String;
-typedef Array<String> StringArray;
 /**
  * The purpose of the FileSystem class is to provide an abstraction layer
  * over the platform dependant functionality related to a file system.

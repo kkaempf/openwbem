@@ -38,12 +38,10 @@
 #include "OW_Types.hpp"
 #include "OW_ArrayFwd.hpp"
 #include "OW_Exception.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
-
-class String;
-class StringBuffer;
 
 OW_DECLARE_APIEXCEPTION(InvalidUTF8, OW_COMMON_API);
 
@@ -61,7 +59,7 @@ OW_COMMON_API size_t charCount(const char* utf8str);
  * Convert one UTF-8 char (possibly multiple bytes) into a UCS2 16-bit char
  * @param utc8char pointer to the UTF-8 char to convert
  * @return The corresponding UCS2 char.  0xFFFF if utf8char points to an
- *  invalid UTF-8 sequence.  Not all UTF-8 chars are handled. UTF-8 chars 
+ *  invalid UTF-8 sequence.  Not all UTF-8 chars are handled. UTF-8 chars
  *  outside the range of a UCS2 char will produce 0xFFFF.
  */
 OW_COMMON_API UInt16 UTF8toUCS2(const char* utf8char);

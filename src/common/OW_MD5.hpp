@@ -58,6 +58,7 @@ documentation and/or software.
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_Exception.hpp"
+#include "OW_CommonFwd.hpp"
 #ifdef OW_HAVE_STREAMBUF
 #include <streambuf>
 #else
@@ -77,12 +78,10 @@ namespace OpenWBEM
 OW_DECLARE_APIEXCEPTION(MD5, OW_COMMON_API)
 
 const int MD5HASHLEN = 16;
-class String;
-class MD5;
 //////////////////////////////////////////////////////////////////////////////
 class OW_COMMON_API MD5StreamBuffer : public std::streambuf
 {
-public: 
+public:
 	MD5StreamBuffer(MD5* md5);
 protected:
 	MD5* _md5;
@@ -90,7 +89,7 @@ protected:
 	virtual std::streamsize xsputn(const char* s, std::streamsize num);
 };
 //////////////////////////////////////////////////////////////////////////////
-class OW_COMMON_API MD5OStreamBase 
+class OW_COMMON_API MD5OStreamBase
 {
 public:
 	MD5StreamBuffer _buf;

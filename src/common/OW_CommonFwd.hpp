@@ -87,6 +87,20 @@ class Bool;
 typedef Array<Bool>       			BoolArray;
 
 struct CIMFeatures;
+class NonRecursiveMutexLock;
+class NonRecursiveMutex;
+
+class UnnamedPipe;
+typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
+
+class File;
+class MD5;
+class UserInfo;
+
+class SharedLibraryLoader;
+typedef IntrusiveReference<SharedLibraryLoader> SharedLibraryLoaderRef;
+class TmpFile;
+
 
 } // end namespace OpenWBEM
 

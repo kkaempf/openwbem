@@ -39,6 +39,7 @@
 #include "OW_IntrusiveReference.hpp"
 #include "OW_String.hpp"
 #include "OW_ArrayFwd.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -46,8 +47,7 @@ namespace OpenWBEM
 OW_DECLARE_APIEXCEPTION(ExecTimeout, OW_COMMON_API);
 OW_DECLARE_APIEXCEPTION(ExecBufferFull, OW_COMMON_API);
 OW_DECLARE_APIEXCEPTION(ExecError, OW_COMMON_API);
-class UnnamedPipe;
-typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
+
 class PopenStreamsImpl;
 /**
  * This class represents a connection to a process.
@@ -90,19 +90,19 @@ public:
 	 */
 	ProcId pid() const;
 	/**
-	 * Set the process's pid.  This is only usefule when constructing an 
+	 * Set the process's pid.  This is only usefule when constructing an
 	 * instance of this class.
 	 */
 	void pid(ProcId newPid);
 	/**
-	 * Get the process's exit status.  
+	 * Get the process's exit status.
 	 * If the child process is still running, this function will do everything
 	 * possible to terminate it.
 	 * The following steps will be taken to attempt to terminate the child
 	 * process.
 	 * 1. The input and output pipes will be closed.  This may cause the
 	 *    child to get a SIGPIPE which may terminate it.
-	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM 
+	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM
 	 *    is sent.
 	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
 	 *    is sent.
@@ -130,7 +130,7 @@ namespace Exec
 	 * process.  This function will not search the path for command[0], so
 	 * the absolute path to the binary should be specified.  If the path needs
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to 
+	 * and then fill in the rest of the array with the command you wish to
 	 * execute.
 	 * This function blocks until the child process exits.  Be careful that
 	 * the command you run doesn't hang.  It is recommended to use
@@ -152,7 +152,7 @@ namespace Exec
 	 * This function will not search the path for command[0], so
 	 * the absolute path to the binary should be specified.  If the path needs
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to 
+	 * and then fill in the rest of the array with the command you wish to
 	 * execute.
 	 * This function does *not* block until the child process exits.
 	 *
@@ -170,21 +170,21 @@ namespace Exec
 			const String& initialInput = String());
 	/**
 	 * Wait for output from a child process.  The function returns when the
-	 * process exits. In the case that the child process doesn't exit, if a 
+	 * process exits. In the case that the child process doesn't exit, if a
 	 * timout is specified, then an ExecTimeoutException is thrown.
-	 * If the process outputs more bytes than outputlimit, an 
+	 * If the process outputs more bytes than outputlimit, an
 	 * ExecBufferFullException is thrown.
 	 *
-	 * @param output An out parameter, the process output will be appended to 
+	 * @param output An out parameter, the process output will be appended to
 	 *  this string.
 	 * @param streams The connection to the child process.
 	 * @param processstatus An out parameter, which will contain the process
-	 *  status.  It is only valid if the funtion returns. In the case an 
-	 *  exception is thrown, it's undefined. It should be evaluated using the 
+	 *  status.  It is only valid if the funtion returns. In the case an
+	 *  exception is thrown, it's undefined. It should be evaluated using the
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 * @param timeoutsecs Specifies the number of seconds to wait for the 
+	 * @param timeoutsecs Specifies the number of seconds to wait for the
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an ExecTimeoutException will be thrown. If timeoutsecs < 0, the 
+	 *  an ExecTimeoutException will be thrown. If timeoutsecs < 0, the
 	 *  timeout will be infinite, and no exception will ever be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
@@ -192,32 +192,32 @@ namespace Exec
 	 *  is thrown. If outputlimit < 0, the limit will be infinite, and an
 	 *  ExecBufferFullException will never be thrown.
 	 *
-	 * @throws ProcessError on error. 
-	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
+	 * @throws ProcessError on error.
+	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
 	OW_COMMON_API void gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs = -1, int outputlimit = -1);
 	
 	/**
-	 * Run a process, collect the output, and wait for it to exit.  The 
+	 * Run a process, collect the output, and wait for it to exit.  The
 	 * function returns when the
-	 * process exits. In the case that the child process doesn't exit, if a 
+	 * process exits. In the case that the child process doesn't exit, if a
 	 * timout is specified, then an ExecTimeoutException is thrown.
-	 * If the process outputs more bytes than outputlimit, an 
+	 * If the process outputs more bytes than outputlimit, an
 	 * ExecBufferFullException is thrown.
 	 * This function will not search the path for command[0], so
 	 * the absolute path to the binary should be specified.  If the path needs
 	 * to be searched, you can set command[0] = "/bin/sh"; command[1] = "-c";
-	 * and then fill in the rest of the array with the command you wish to 
+	 * and then fill in the rest of the array with the command you wish to
 	 * execute. Exercise caution when doing this, as you may be creating a
 	 * security hole.
-	 * If the process does not terminate by itself, or if an exception is 
+	 * If the process does not terminate by itself, or if an exception is
 	 * thrown because a limit has been reached (time or output), then the
 	 * the following steps will be taken to attempt to terminate the child
 	 * process.
 	 * 1. The input and output pipes will be closed.  This may cause the
 	 *    child to get a SIGPIPE which may terminate it.
-	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM 
+	 * 2. If the child still hasn't terminated after 10 seconds, a SIGTERM
 	 *    is sent.
 	 * 3. If the child still hasn't terminated after 10 seconds, a SIGKILL
 	 *    is sent.
@@ -225,28 +225,28 @@ namespace Exec
 	 * @param command
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
-	 * @param output An out parameter, the process output will be appended to 
+	 * @param output An out parameter, the process output will be appended to
 	 *  this string.
 	 * @param streams The connection to the child process.
 	 * @param processstatus An out parameter, which will contain the process
-	 *  status.  It is only valid if the funtion returns. In the case an 
-	 *  exception is thrown, it's undefined. It should be evaluated using the 
+	 *  status.  It is only valid if the funtion returns. In the case an
+	 *  exception is thrown, it's undefined. It should be evaluated using the
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 * @param timeoutsecs Specifies the number of seconds to wait for the 
+	 * @param timeoutsecs Specifies the number of seconds to wait for the
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
-	 *  an ExecTimeoutException will be thrown, and the process will be 
-	 *  killed. 
-	 *  If timeoutsecs < 0, the timeout will be infinite, and a 
+	 *  an ExecTimeoutException will be thrown, and the process will be
+	 *  killed.
+	 *  If timeoutsecs < 0, the timeout will be infinite, and a
 	 *  ExecTimeoutException will not be thrown.
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
 	 *  more data than will fit into output, then an ExecBufferFullException
-	 *  is thrown, and the process will be killed. 
+	 *  is thrown, and the process will be killed.
 	 *  If outputlimit < 0, the limit will be infinite, and an
 	 *  ExecBufferFullException will not be thrown.
 	 *
-	 * @throws ProcessError on error. 
-	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs. 
+	 * @throws ProcessError on error.
+	 * @throws ProcessTimeout if the process hasn't finished within timeoutsecs.
 	 * @throws ProcessBufferFull if the process output exceeds outputlimit bytes.
 	 */
 	OW_COMMON_API void executeProcessAndGatherOutput(

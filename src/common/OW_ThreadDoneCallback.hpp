@@ -37,11 +37,10 @@
 #include "OW_config.h"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
-
-class Thread;
 
 class OW_COMMON_API ThreadDoneCallback : public IntrusiveCountableBase
 {

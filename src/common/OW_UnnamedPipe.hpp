@@ -39,15 +39,11 @@
 #include "OW_Exception.hpp"
 #include "OW_IntrusiveReference.hpp"
 #include "OW_IOIFC.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-// forward decls
-class String;
-
-class UnnamedPipe;
-typedef IntrusiveReference<UnnamedPipe> UnnamedPipeRef;
 
 OW_DECLARE_APIEXCEPTION(UnnamedPipe, OW_COMMON_API);
 
@@ -61,8 +57,8 @@ public:
 	virtual ~UnnamedPipe();
 	
 	/**
-	 * Write an int (native binary representation) to the pipe.  If 
-	 *  blocking is enabled, writeInt() will block for up to 
+	 * Write an int (native binary representation) to the pipe.  If
+	 *  blocking is enabled, writeInt() will block for up to
 	 *  getWriteTimeout() seconds or forever if getWriteTimeout() == -1.
 	 * Exception safety: No-throw
 	 * @param value The value to write.
@@ -72,8 +68,8 @@ public:
 
 	/**
 	 * Writes a String to the pipe.  This should be read from the other side
-	 *  by readString.  If blocking is enabled, writeString() 
-	 *  will block for up to getWriteTimeout() seconds or forever if 
+	 *  by readString.  If blocking is enabled, writeString()
+	 *  will block for up to getWriteTimeout() seconds or forever if
 	 *  getWriteTimeout() == -1.
 	 * Exception safety: No-throw
 	 * @param strData The String to write.
@@ -82,7 +78,7 @@ public:
 	int writeString(const String& strData);
 
 	/**
-	 * Reads an int (native binary representation) from the pipe.  If 
+	 * Reads an int (native binary representation) from the pipe.  If
 	 *  blocking is enabled, readInt() will block for
 	 *  up to getReadTimeout() seconds or forever if getReadTimeout() == -1.
 	 * Exception safety: No-throw
@@ -92,11 +88,11 @@ public:
 	int readInt(int* value);
 
 	/**
-	 * Reads a String from the pipe.  If blocking is enabled, 
+	 * Reads a String from the pipe.  If blocking is enabled,
 	 *  readInt() will block for up to getReadTimeout() seconds or forever if
 	 *  getReadTimeout() == -1.
-	 * Exception safety: Strong for the C++ instance. Fubared for the pipe. 
-	 *  If an exception is thrown, the pipe won't be reset to it's pre-call 
+	 * Exception safety: Strong for the C++ instance. Fubared for the pipe.
+	 *  If an exception is thrown, the pipe won't be reset to it's pre-call
 	 *  state.
 	 * @param value Out parameter where the read int will be stored.
 	 * @return The number of bytes read, -1 on error, ETIMEDOUT on timeout.
@@ -133,7 +129,7 @@ public:
 	 */
 	int getWriteTimeout() { return m_writeTimeout; }
 	/**
-	 * Sets the read & write timeout values.  If blocking is enabled this is 
+	 * Sets the read & write timeout values.  If blocking is enabled this is
 	 * the number of seconds a read or write operation will block.
 	 * Exception safety: No-throw
 	 * @param seconds The new timeout.
@@ -143,8 +139,8 @@ public:
 	/**
 	 * Read from the pipe and collect into a string, until the other end of the
 	 * pipe is closed.
-	 * Exception safety: Strong for the C++ instance. Fubared for the pipe. 
-	 *  If an exception is thrown, the pipe won't be reset to it's pre-call 
+	 * Exception safety: Strong for the C++ instance. Fubared for the pipe.
+	 *  If an exception is thrown, the pipe won't be reset to it's pre-call
 	 *  state.
 	 * @throws IOException on error
 	 */
@@ -181,7 +177,7 @@ public:
 		E_OPEN
 	};
 	/**
-	 * Create an instance of the concrete class that implements the UnnamedPipe 
+	 * Create an instance of the concrete class that implements the UnnamedPipe
 	 *  interface.
 	 * @param doOpen Open the pipe or not.
 	 */

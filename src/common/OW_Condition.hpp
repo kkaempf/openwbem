@@ -38,12 +38,11 @@
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
 #include "OW_Types.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class NonRecursiveMutexLock;
-class NonRecursiveMutex;
 OW_DECLARE_APIEXCEPTION(ConditionLock, OW_COMMON_API);
 OW_DECLARE_APIEXCEPTION(ConditionResource, OW_COMMON_API);
 class OW_COMMON_API Condition
@@ -54,11 +53,11 @@ public:
 	void notifyOne();
 	void notifyAll();
 	/**
-	 * Atomically unlocks the mutex and waits for the condition variable 
-	 * to be notified. The thread execution is suspended and does not 
-	 * consume any CPU time until the condition variable is notified. 
-	 * The mutex lock must  be locked  by the calling thread on entrance 
-	 * to wait. Before returning to the calling thread, wait re-acquires  
+	 * Atomically unlocks the mutex and waits for the condition variable
+	 * to be notified. The thread execution is suspended and does not
+	 * consume any CPU time until the condition variable is notified.
+	 * The mutex lock must  be locked  by the calling thread on entrance
+	 * to wait. Before returning to the calling thread, wait re-acquires
 	 * the mutex lock.
 	 * This function should always be called within a while loop that
 	 * checks the condition.
@@ -66,7 +65,7 @@ public:
 	void wait(NonRecursiveMutexLock& lock);
 	/**
 	 * Acquire ownership of this Mutex object.
-	 * This call will block if another thread has ownership of 
+	 * This call will block if another thread has ownership of
 	 * this Mutex. When it returns, the current thread will be
 	 * the owner of this Mutex object.
 	 * @param sTimeout The number of seconds to wait for the mutex.

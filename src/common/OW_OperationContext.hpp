@@ -40,14 +40,13 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_SortedVectorMap.hpp"
 #include "OW_Exception.hpp"
+#include "OW_CommonFwd.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
 
 namespace OpenWBEM
 {
-
-class UserInfo;
 
 OW_DECLARE_APIEXCEPTION(ContextDataNotFound, OW_COMMON_API);
 
@@ -59,7 +58,7 @@ OW_DECLARE_APIEXCEPTION(ContextDataNotFound, OW_COMMON_API);
  * pass a smart pointer to it into setData().
  * Convenience functions (and a subclass) are provided to use a String for
  * the Data.
- * 
+ *
  * Thread safety: None
  * Copy Semantics: Non-copyable
  */
@@ -126,7 +125,7 @@ public:
 	static const char* const USER_PASSWD;
 	static const char* const HTTP_PATH;
 	static const char* const CURUSER_UIDKEY;
-	static const char* const BYPASS_LOCKERKEY; 
+	static const char* const BYPASS_LOCKERKEY;
 
 
 

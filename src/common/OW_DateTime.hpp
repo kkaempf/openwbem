@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_Types.hpp"
+#include "OW_CommonFwd.hpp"
 
 extern "C"
 {
@@ -47,8 +48,6 @@ extern "C"
 namespace OpenWBEM
 {
 
-class String;
-
 OW_DECLARE_APIEXCEPTION(DateTime, OW_COMMON_API)
 
 /**
@@ -57,22 +56,22 @@ OW_DECLARE_APIEXCEPTION(DateTime, OW_COMMON_API)
  * comparison.
  * All functions which operate on a time_t are based on seconds since the Epoch,
  * and the timezone is irrelevant.
- * DateTime cannot represent dates before the Epoch 
+ * DateTime cannot represent dates before the Epoch
  * (00:00:00 UTC, January 1, 1970), and the upper limit is system dependent.
  * On a system where time_t is 32-bits, the latest date that can be
  * represented is Mon Jan 18 20:14:07 2038.  If time_t is 64-bits, then it's
  * a date so far in the future, that the sun will probably turn into a black
  * hole before then. (About 500 billion years.)
  * If an invalid time is created, then get() will return time_t(-1), and the
- * DateTime represented will be 1 second before the Epoch (23:59:59 UTC, 
+ * DateTime represented will be 1 second before the Epoch (23:59:59 UTC,
  * December 31, 1969)
  *
- * If the non-standard function timegm() is available, it will be used, 
- * otherwise this class' implementation relies on the global variable timezone 
+ * If the non-standard function timegm() is available, it will be used,
+ * otherwise this class' implementation relies on the global variable timezone
  * (from time.h) which reflects the system's timezone.
- * 
+ *
  * For constructor or setter member functions, if parameter values are outside
- * their legal interval, they will be normalized (so that, e.g., 40 October 
+ * their legal interval, they will be normalized (so that, e.g., 40 October
  * is changed into 9 November).
  */
 class OW_COMMON_API DateTime
@@ -92,7 +91,7 @@ public:
 	};
 
 	/**
-	 * Create a new DateTime object that represents the Epoch 
+	 * Create a new DateTime object that represents the Epoch
 	 * (00:00:00 UTC, January 1, 1970)
 	 */
 	DateTime();
@@ -123,7 +122,7 @@ public:
 	 *
 	 *       Day of month (required)
 	 *       A number.  Currently, the first free-standing number found is
-	 *       assumed to be the day of month. 
+	 *       assumed to be the day of month.
 	 *
 	 *       Year (required)
 	 *       A number.  Currently, the second free-standing number found is
@@ -158,10 +157,10 @@ public:
 	 *     Valid Examples of free-form date strings:
 	 *       Thu Jan 29 11:02:42 MST 2004
 	 *       Oct 3 17:52:56 EDT 1998
-	 *       5:41:26 PDT Aug 15 1984	  
+	 *       5:41:26 PDT Aug 15 1984	
 	 *       7 November 2003 13:35:03 GMT
 	 *       Monday May 1 8:27:39 UTC 2003
-	 *       June 1 23:49 2003	 
+	 *       June 1 23:49 2003	
 	 *
 	 * Note that DateTime cannot hold an interval, so you cannot construct
 	 * one from an CIM DateTime interval.
@@ -226,7 +225,7 @@ public:
 	int getSecond(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
 	 * Get the microsecond of the second for this DateTime object.
-	 * In the range 0..999999.  There are 1 million (1000000) microseconds 
+	 * In the range 0..999999.  There are 1 million (1000000) microseconds
 	 * per second.
 	 *
 	 * @return
@@ -478,7 +477,7 @@ public:
 	 */
 	String toString(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 	/**
-	 * This is the same as toString(E_UTC_TIME).  This function is 
+	 * This is the same as toString(E_UTC_TIME).  This function is
 	 * deprecated and exists for backward compatibility purposes.
 	 */
 	String toStringGMT() const OW_DEPRECATED; // in 3.0.0
@@ -491,7 +490,7 @@ public:
 	   by an ODD number of half-hours.
 	 */
 	static Int16 getGMTOffset();
-	// Removed due to the above problems.  Use toLocal() or 
+	// Removed due to the above problems.  Use toLocal() or
 	// getGMTOffsetMinutesNow() instead.
 #endif
 

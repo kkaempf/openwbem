@@ -39,21 +39,20 @@
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
 #include "OW_Bool.hpp"
+#include "OW_CIMFwd.hpp"
 #include <iosfwd>
 #include <cstring>
 
 namespace OpenWBEM
 {
 
-class CIMDateTime;
-class CIMObjectPath;
 class OW_COMMON_API StringBuffer
 {
 public:
 #if defined(OW_AIX)
 	static const size_t OW_DEFAULT_ALLOCATION_UNIT;
 #else
-	static const size_t OW_DEFAULT_ALLOCATION_UNIT = 128;  
+	static const size_t OW_DEFAULT_ALLOCATION_UNIT = 128;
 #endif // OW_AIX
 	StringBuffer(size_t allocSize = OW_DEFAULT_ALLOCATION_UNIT);
 	StringBuffer(const char* arg);

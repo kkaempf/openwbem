@@ -48,6 +48,7 @@
 #include "OW_Types.hpp"
 #include "OW_String.hpp"
 #include "OW_AutoPtr.hpp"
+#include "OW_CommonFwd.hpp"
 
 #if defined(OW_HAVE_STREAMBUF)
 #include <streambuf>
@@ -65,7 +66,6 @@
 namespace OpenWBEM
 {
 
-class TmpFile;
 class OW_COMMON_API TempFileBuffer : public std::streambuf
 {
 public:

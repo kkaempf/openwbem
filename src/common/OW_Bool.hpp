@@ -36,12 +36,12 @@
 #ifndef OW_BOOL_HPP_INCLUDE_GUARD_
 #define OW_BOOL_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
 {
 
-class String;
 /**
  * The Bool class is an abstraction for the boolean data type.  It's not
  * meant to be a replacement for bool.  Use it if you need a type that

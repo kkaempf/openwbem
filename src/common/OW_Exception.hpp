@@ -37,16 +37,15 @@
 #define OW_EXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_AutoPtr.hpp"
+#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
+#include "OW_CommonFwd.hpp" // for Mutex
+#endif
 #include <iosfwd>
 #include <exception>
 #include <new>
 
 namespace OpenWBEM
 {
-
-#if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
-class Mutex;
-#endif
 
 /**
  * This class is the base of all exceptions thrown by OpenWBEM code.
