@@ -48,6 +48,21 @@ Fix problems:
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.
+    - Send indications as a thread per handler, which can stay around for a
+      while.  This will allow the socket to remain open and will also serialize
+      the indications being sent to a particular listener.  Each thread will
+      have a queue of indications to send. The indication export providers will
+      need to be modified to separate connecting and sending indications into
+      separate steps.
+      Maybe have a map<subscription,queue of indications>.  When a new
+      indication is generated it's stuck in the correct queue where the
+      delivery thread can pick it up. If the subscription isn't in the queue,
+      it's added and a new thread is created for it. Unless the thread limit has
+      been reached, then it's added to the overflow queue so the overflow
+      thread can deliver it.  If a thread's queue empties out, it will switch
+      to getting indications from the overflow queue, and it that's empty it
+      will wait for a configurable period of time for a new indication to
+      arrive before exiting.
     - Implement the CIM_Interop27 build-in providers.
       - CIM_CIMXMLCommunicationMechanism
       - OpenWBEM_BinaryCommunicationMechanism
