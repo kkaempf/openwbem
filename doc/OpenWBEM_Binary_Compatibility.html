@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>OpenWBEM Binary Compatibility</title>
+</head>
+<body>
+<h1>Binary compatibility</h1>
+<br>
+We will not worry about maintaining binary compatibility with the
+client APIs between different versions of OW, since it is trivial to
+solve the problem by installing 2 or more different versions of the
+client libraries. This is just an issue for package developers to
+provide some way for multiple versions of the client libraries to be
+installed simultaneously.&nbsp; Note that we do try hard to maintain
+source compatibility for client applications, if at all possible we
+mark interfaces as deprecated when a replacement has been created. They
+are deprecated for at least one release and then removed after client
+applications have had a chance to migrate.<br>
+<br>
+Likewise, we will not worry about internal server components (such as
+Services, provider interfaces, request handlers, etc) since these are
+mostly provided with OW and there aren't a lot of people developing
+them (the one exception being Jason Long's owperl provider interface.)<br>
+<br>
+What we do need to worry about are providers, since there can only be
+one version of the cimom running and listening on port 5988. Granted,
+you could run multiple cimoms as long as they are not trying to listen
+on the same port or use the same repository, but that is a waste or
+resources and they are essentially invisible to the external
+world.&nbsp; The goal is to allow multiple sets of providers (possibly
+from different sources or products) to all coexist in the "official"
+system cimom, and to ensure that all future installed versions of the
+cimom can be installed and correctly use the providers. Note that we
+will only support this for providers which follow the rules we
+establish. If a provider doesn't follow the rules, there will be no
+guarantee.<br>
+<br>
+The purpose of this document is to explore various ways to achieve the
+goal of allowing multiple sets of providers (some build against older
+versions of OW) to coexist.<br>
+<br>
+<h2>Out of process</h2>
+Use the remote provider interface and provider agent (or similar items)
+to talk to providers that are out of the cimom's process.<br>
+<br>
+Advantages:<br>
+<ul>
+  <li>Functionality to do this is already implemented, and so it's
+possible to do this now without any additional work.<br>
+  </li>
+</ul>
+<br>
+Disadvantages:&nbsp;&nbsp;&nbsp;&nbsp; <br>
+<ul>
+  <li>Uses more memory. Additional process(es) hosting the providers
+have to be running.<br>
+  </li>
+  <li>Slower. Serializing the CIM objects and WBEM calls for IPC isn't
+free.<br>
+  </li>
+  <li>Harder to configure. Setting up the cimom&lt;-&gt;provider agent
+communication and initialization is extra work.<br>
+  </li>
+  <li>Less reliable. More components and communication links provide
+additional points of failure.<br>
+  </li>
+  <li>More packaging work for provider suppliers, since each product
+needs to provide their own binary compatible "provider agent"</li>
+  <li>No support for indication, polled, or indication export providers.<br>
+  </li>
+</ul>
+<br>
+<h2>Maintain binary compatibility for all OW code</h2>
+To do this we will have to adopt a strict set of rules about what we
+can change in the code.&nbsp; To allow for a bit more flexibility (e.g.
+adding a new data member) all classes will need to be converted to use
+the pimpl idiom.<br>
+<br>
+Advantages:<br>
+<ul>
+  <li>Providers may use any of the classes available.</li>
+</ul>
+Disadvantages:<br>
+<ul>
+  <li>This will take a lot of work to implement. All classes will have
+to be converted to use the pimpl idiom or else have their data members
+frozen for all eternity.<br>
+  </li>
+  <li>Very restricted in refactorings that we could do. Changing class
+names, function signatures and inheritance hierarchies will be
+impossible. Other changes will be limited.<br>
+  </li>
+  <li>Higher maintenance effort.&nbsp; Constant vigilance of the binary
+API will have to be done. Changes will have to follow the binary api
+rules, which will take more work than otherwise.<br>
+  </li>
+  <li>New features which need new functionality not possible with the
+present APIs may have to invent a similar/second/duplicate API so as to
+not change the original.</li>
+  <li>Overall performance decrease (possibly noticable) because of
+switching classes to use pimpl idiom &amp; non-inline functions.<br>
+  </li>
+</ul>
+<h2>Maintain binary compatibility only for a new provider interface</h2>
+The idea behind this is to create a new C++ provider interface which
+will provide all the functionality a provider needs. Providers that
+only use symbols from the provider interface will work with any future
+version of OW.&nbsp; A provider should not use any classes/functions
+outside of the provider interface. The strict binary compatibility
+rules will be applied only to the provider interface.<br>
+<br>
+Advantages:<br>
+<ul>
+  <li>Maintain freedom to refactor most OW code.</li>
+  <li>Good separation of the Provider API from the rest of the code.<br>
+  </li>
+</ul>
+Disadvantages:<br>
+<ul>
+  <li>Duplication. Many of the classes in the common library will have
+to be duplicated. We could use some techniques to reduce the
+duplication, but that takes more up front effort, and may be less
+efficient.</li>
+  <li>Performance hit in translating to/from the provider APIs vs
+current method.<br>
+  </li>
+</ul>
+<h2>CMPI</h2>
+CMPI is a C provider API invented by IBM that is being standardized by
+the OpenGroup. The API should be stable and maintain backward
+compatibility.<br>
+<br>
+Advantages:<br>
+<ul>
+  <li>Binary compatibility across different cimoms (including different
+versions of OW).</li>
+  <li>Exists today and so would require no work to begin using it.<br>
+  </li>
+</ul>
+Disadvantages:<br>
+<ul>
+  <li>No support for secondary instance, indication, polled, or
+indication export providers.</li>
+  <li>The CMPI interface is all C, and thus is difficult and error
+prone to use.</li>
+  <li>The CMPI provider interface implementation is not well
+maintained, and has had numerous bugs.</li>
+  <li>CMPI has been designed with garbage collection in mind, and so
+has no provision for providers to free temporary objects they have
+created. They are all freed after the provider is finished and returns.
+This can lead to a large memory footprint if the provider returns a
+large number of instances. The native providers don't suffer from this
+problem.<br>
+  </li>
+</ul>
+</body>
+</html>
