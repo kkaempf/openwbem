@@ -369,6 +369,7 @@ CIMProperty::removeQualifier(const String& name)
 bool
 CIMProperty::isKey() const
 {
+	// TODO: Evaluate this.  It's not necessarily true that a REF is a key.  That's just the DMTF CIM Schema convention.
 	if(getDataType().isReferenceType()
 	   || hasTrueQualifier(CIMQualifier::CIM_QUAL_KEY))
 	{
@@ -431,7 +432,12 @@ CIMProperty::setName(const String& name)
 CIMProperty&
 CIMProperty::clearQualifiers()
 {
+	CIMQualifier key = getQualifier(CIMQualifier::CIM_QUAL_KEY);
 	m_pdata->m_qualifiers.clear();
+	if (key)
+	{
+		addQualifier(key);
+	}
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
