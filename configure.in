@@ -1387,6 +1387,7 @@ src/providerifcs/npi/Makefile
 src/providerifcs/npi/common/Makefile
 src/providerifcs/perl/Makefile
 src/providerifcs/perl/perlProvider/Makefile
+src/providerifcs/owbi1/Makefile
 src/providers/Makefile
 src/providers/cpp/Makefile
 src/providers/cpp/indicationexport/Makefile
@@ -1435,3 +1436,5 @@ test/performance/Makefile
 )
 
 AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/common/OW_config.h], OW, [config.h])
+AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/providerifcs/owbi1/OWBI1_AuxConfig.h], OWBI1, [config.h])
+
