@@ -156,6 +156,7 @@ Documentation:
       (no locks are held.)
     - Make a web page that has a list of projects/products that are using 
       OpenWBEM.
+    - Update javadoc on header files in ifcs, common, client, and provider.
 
 Optimizations:
     - Use KCacheGrind to find any hot spots
