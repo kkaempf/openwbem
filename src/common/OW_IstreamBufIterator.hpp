@@ -36,6 +36,9 @@
 #include <iostream>
 #endif
 
+// This class is just a replacement for std::istreambuf_iterator<>, since it
+// doesn't exist in the gcc 2.95.x standard lib.
+
 namespace OpenWBEM
 {
 

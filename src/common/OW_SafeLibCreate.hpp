@@ -40,6 +40,9 @@
 #include <utility> // for std::pair
 #include <setjmp.h> // for setjmp, longjmp and jmp_buf
 
+// The classes and functions defined in this file are not meant for general
+// use, they are internal implementation details.  They may change at any time.
+
 namespace OpenWBEM
 {
 

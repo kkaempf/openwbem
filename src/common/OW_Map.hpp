@@ -34,6 +34,7 @@
 #include <map>
 #include <functional>
 
+// This class is a wrapper around std::map<> and adds COW capabilities.
 namespace OpenWBEM
 {
 

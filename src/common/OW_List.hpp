@@ -33,6 +33,7 @@
 #include "OW_COWReference.hpp"
 #include <list>
 
+// This class is a wrapper around std::list<> and adds COW capabilities.
 namespace OpenWBEM
 {
 
