@@ -983,7 +983,7 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 		asctime_r(&tmarg, buff);
 #else
 		// if the c library isn't thread-safe, we'll need a mutex here.
-		char* buff asctime(&tmarg);
+		char* buff = asctime(&tmarg);
 #endif
 		OW_THROW(DateTimeException, Format("Unable to represent time \"%1\" as a time_t", buff).c_str());
 	}
