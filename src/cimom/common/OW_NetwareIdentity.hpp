@@ -28,6 +28,10 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+/**
+ * @author Jon Carey
+ */
+
 #ifndef __OW_NETWAREIDENTITY_HPP__
 #define __OW_NETWAREIDENTITY_HPP__
 
