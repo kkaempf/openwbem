@@ -1,5 +1,5 @@
 DEBUG = 1
-WARNLEVEL = /W0
+WARNLEVEL = 0
 LIBNAME = libowxml
 OPENSSLBASE = C:\openssl
 
@@ -11,12 +11,12 @@ SRCDIR = ..\..\..\..\src
 !IFDEF DEBUG
 BUILDTYPE = Debug
 CPPDEFS = /D"OW_XML_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
+CPPFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 LINKDBG = /DEBUG
 !ELSE
 BUILDTYPE = Release
 CPPDEFS = /D"OW_XML_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CPPFLAGS = /GF /GX /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
+CPPFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
 LINKDBG = 
 !ENDIF
 
@@ -72,8 +72,8 @@ OBJS = \
 
 $(TARGETDIR)\$(TARGET): $(OBJDIR) $(TARGETDIR) $(OBJS)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO $(LIBPATHS) /DLL /DEBUG \
-		/MAP:"$(TARGETDIR)\libowxml.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
-		/IMPLIB:"$(TARGETDIR)\libowxml.lib" $(OBJS) $(LIBS)
+		/MAP:"$(TARGETDIR)\$(LIBNAME).map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
+		/IMPLIB:"$(TARGETDIR)\$(LIBNAME).lib" $(OBJS) $(LIBS)
 
 clean:
 	-@del $(OBJDIR)\*.obj

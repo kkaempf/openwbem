@@ -618,5 +618,18 @@ typedef long off_t;
 #define OW_HDB_API OW_IMPORT
 #endif
 
+#ifdef OW_WQL_BUILD
+#define OW_WQL_API OW_EXPORT
+#else
+#define OW_WQL_API OW_IMPORT
+#endif
+
+#ifdef OW_WQLCOMMON_BUILD
+#define OW_WQLCOMMON_API OW_EXPORT
+#else
+#define OW_WQLCOMMON_API OW_IMPORT
+#endif
+
+
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

@@ -65,12 +65,12 @@ CREATENS = owcreatenamespace
 CREATENSEXE = $(TARGETDIR)\$(CREATENS).exe
 DELETENS = owdeletenamespace
 DELETENSEXE = $(TARGETDIR)\$(DELETENS).exe
-
 ENUMCLS = owenumclasses
 ENUMCLSEXE = $(TARGETDIR)\$(ENUMCLS).exe
-
 MOFC = owmofc
 MOFCEXE = $(TARGETDIR)\$(MOFC).exe
+EXECWQL = owexecwql
+EXECWQLEXE = $(TARGETDIR)\$(EXECWQL).exe
 
 
 EXES = \
@@ -78,7 +78,8 @@ $(CREATENSEXE) \
 $(DELETENSEXE) \
 $(ENUMCLSEXE) \
 $(CIMLISTENEREXE) \
-$(MOFCEXE)
+$(MOFCEXE) \
+$(EXECWQLEXE)
 
 ALL: $(EXES)
 
