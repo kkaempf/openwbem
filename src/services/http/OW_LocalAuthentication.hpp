@@ -52,7 +52,7 @@ public:
 	LocalAuthentication() {}
 	~LocalAuthentication();
 
-	bool authorize(String& userName,
+	bool authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon);
 
 private:

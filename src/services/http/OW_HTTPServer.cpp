@@ -80,20 +80,22 @@ HTTPServer::authenticate(HTTPSvrConnection* pconn,
 {
 	MutexLock lock(m_authGuard);
 	
-	getEnvironment()->getLogger()->logDebug(Format("HTTPServer::authenticate: processing: %1", info));
 	// user supplied creds.  Find out what type of auth they're using.  We currently support Basic, Digest & OWLocal
 	if (m_options.allowLocalAuthentication && info.startsWith("OWLocal"))
 	{
-		return m_localAuthentication->authorize(userName, info, pconn);
+		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing OWLocal");
+		return m_localAuthentication->authenticate(userName, info, pconn);
 	}
 	else if (m_options.allowDigestAuthentication && info.startsWith("Digest"))
 	{
 #ifndef OW_DISABLE_DIGEST
-		return m_digestAuthentication->authorize(userName, info, pconn);
+		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing Digest");
+		return m_digestAuthentication->authenticate(userName, info, pconn);
 #endif
 	}
 	else if (m_options.allowBasicAuthentication && info.startsWith("Basic"))
 	{
+		getEnvironment()->getLogger()->logDebug("HTTPServer::authenticate: processing Basic");
 		String authChallenge = "Basic realm=\"" + pconn->getHostName() + "\""; 
 		String password;
 		// info is a username:password string that is base64 encoded. decode it.

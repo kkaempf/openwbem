@@ -48,7 +48,7 @@ class DigestAuthentication
 public:
 	DigestAuthentication(const String& passwdFile);
 	~DigestAuthentication() {}
-	bool authorize(String& userName,
+	bool authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon);
 	String getChallenge(const String& hostname);
 private:

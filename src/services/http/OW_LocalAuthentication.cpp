@@ -130,7 +130,7 @@ parseInfo(const String& pinfo, SortedVectorMap<String, String>& infoMap)
 } // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
 bool
-LocalAuthentication::authorize(String& userName,
+LocalAuthentication::authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon)
 {
 	cleanupStaleEntries();
@@ -272,7 +272,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 {
 	uid_t userid = uid.toUInt32();
 
-	// TODO: Put all the platform specific stuff into FileSystem and a new User class.
+	// TODO: Put all the platform specific stuff into FileSystem and a new UserID class.
 
 	//-- Create temporary file for auth process
 	// The fact that the umask is set to 0077 makes this safe from prying eyes.

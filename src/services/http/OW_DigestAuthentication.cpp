@@ -160,7 +160,7 @@ parseInfo(const String& pinfo, Map<String, String>& infoMap)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-DigestAuthentication::authorize(String& userName,
+DigestAuthentication::authenticate(String& userName,
 		const String& info, HTTPSvrConnection* htcon)
 {
 	String hostname = htcon->getHostName();
