@@ -490,7 +490,7 @@ public:
 		const OW_ACLInfo& aclInfo) = 0;
 
 	virtual void exportIndication(const OW_CIMInstance&,
-		const OW_String&) {};
+		const OW_String&) {}
 
 	virtual OW_ReadLock getReadLock() = 0;
 	virtual OW_WriteLock getWriteLock() = 0;
