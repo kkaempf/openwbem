@@ -463,6 +463,10 @@ OW_HTTPClient::getFeatures()
 	{
 		m_requestMethod = "POST";
 	}
+	if (getHeaderValue("Accept-Encoding").indexOf("deflate") != OW_String::npos)
+	{
+		m_doDeflateOut = true;
+	}
 
 	OW_String extURL = getHeaderValue("Opt");
 	size_t idx = extURL.indexOf(';');
