@@ -209,7 +209,9 @@ ldconfig
 %{@GENERIC@prefix}/lib/lib*
 %{@GENERIC@prefix}/bin/*
 %{@GENERIC@prefix}/sbin/*
+%{@GENERIC@prefix}/man/*/*
 %{@GENERIC@prefix}/share/openwbem/*
+%{@GENERIC@localstatedir}/openwbem/*
 
 # Files for sub-packages. 
 %Files devel
