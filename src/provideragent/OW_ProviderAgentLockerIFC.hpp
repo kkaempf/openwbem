@@ -48,7 +48,7 @@ class ProviderAgentLockerIFC : public IntrusiveCountableBase
 {
 public: 
 	ProviderAgentLockerIFC(); 
-	~ProviderAgentLockerIFC(); 
+	virtual ~ProviderAgentLockerIFC(); 
 	void getReadLock()
 	{
 		doGetReadLock();

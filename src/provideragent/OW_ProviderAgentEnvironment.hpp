@@ -51,21 +51,11 @@
 namespace OpenWBEM
 {
 
-class RWLocker; 
-class Mutex; 
-
 typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
 
 class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 {
 public:
-	enum ELockingType
-	{
-		E_NONE, 
-		E_SWMR, 
-		E_SINGLE_THREADED
-	}; 
-	
 	enum EClassRetrievalFlag
 	{
 		E_DONT_RETRIEVE_CLASSES, 
@@ -136,25 +126,6 @@ private:
 	ClientCIMOMHandleConnectionPool m_connectionPool; 
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 
-	class PALocker : public ProviderAgentLockerIFC
-	{
-	public: 
-		PALocker(ProviderAgentEnvironment::ELockingType lt, UInt32 timeout); 
-		~PALocker(); 
-		virtual void doGetReadLock(); 
-		virtual void doGetWriteLock(); 
-		virtual void doReleaseReadLock();
-		virtual void doReleaseWriteLock();
-	private: 
-		//non-copyable
-		PALocker(const PALocker&);
-		PALocker& operator=(const PALocker&);
-
-		ProviderAgentEnvironment::ELockingType m_lt; 
-		Reference<Mutex> m_mutex; 
-		Reference<RWLocker> m_rwlocker; 
-		UInt32 m_timeout; 
-	}; 
 };
 
 } // end namespace OpenWBEM

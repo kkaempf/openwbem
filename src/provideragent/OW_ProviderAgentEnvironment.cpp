@@ -65,6 +65,84 @@ protected:
 		return;
 	}
 };
+
+class PALockerNone : public ProviderAgentLockerIFC
+{
+public: 
+	PALockerNone() {}
+	virtual ~PALockerNone() {}
+	virtual void doGetReadLock() {}
+	virtual void doGetWriteLock() {}
+	virtual void doReleaseReadLock() {}
+	virtual void doReleaseWriteLock() {}
+private: 
+	//non-copyable
+	PALockerNone(const PALockerNone&);
+	PALockerNone& operator=(const PALockerNone&);
+}; 
+
+class PALockerSWMR : public ProviderAgentLockerIFC
+{
+public: 
+	PALockerSWMR(UInt32 timeout)
+		: m_timeout(timeout)
+	{
+	}
+	virtual ~PALockerSWMR() {}
+	virtual void doGetReadLock()
+	{
+		m_rwlocker.getReadLock(m_timeout);
+	}
+	virtual void doGetWriteLock()
+	{
+		m_rwlocker.getWriteLock(m_timeout);
+	}
+	virtual void doReleaseReadLock()
+	{
+		m_rwlocker.releaseReadLock();
+	}
+	virtual void doReleaseWriteLock()
+	{
+		m_rwlocker.releaseWriteLock();
+	}
+private: 
+	//non-copyable
+	PALockerSWMR(const PALockerSWMR&);
+	PALockerSWMR& operator=(const PALockerSWMR&);
+
+	RWLocker m_rwlocker; 
+	UInt32 m_timeout; 
+}; 
+
+class PALockerSingleThreaded : public ProviderAgentLockerIFC
+{
+public: 
+	PALockerSingleThreaded() {}
+	virtual ~PALockerSingleThreaded() {}
+	virtual void doGetReadLock()
+	{
+		m_mutex.acquire();
+	}
+	virtual void doGetWriteLock()
+	{
+		m_mutex.acquire();
+	}
+	virtual void doReleaseReadLock()
+	{
+		m_mutex.release();
+	}
+	virtual void doReleaseWriteLock()
+	{
+		m_mutex.release();
+	}
+private: 
+	//non-copyable
+	PALockerSingleThreaded(const PALockerSingleThreaded&);
+	PALockerSingleThreaded& operator=(const PALockerSingleThreaded&);
+
+	Mutex m_mutex; 
+}; 
+
 }
 
 
@@ -224,34 +302,32 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(const ConfigFile::ConfigMap& 
 	{
 		String confItem = getConfigItem(ProviderAgent::LockingType_opt, "none"); 
 		confItem.toLowerCase(); 
-		ELockingType lockingType(E_SINGLE_THREADED);
 		if (confItem == ProviderAgent::LockingTypeNone)
 		{
-			lockingType = E_NONE; 
+			m_locker = new PALockerNone;
 		}
 		else if (confItem == ProviderAgent::LockingTypeSWMR)
 		{
-			lockingType = E_SWMR; 
+			confItem = getConfigItem(ProviderAgent::LockingTimeout_opt, "300"); 
+			UInt32 lockingTimeout(300);
+			try
+			{
+				lockingTimeout = confItem.toUInt32(); 
+			}
+			catch (StringConversionException&)
+			{
+				OW_THROW(ConfigException, "invalid locking timeout"); 
+			}
+			m_locker = new PALockerSWMR(lockingTimeout);
 		}
 		else if (confItem == ProviderAgent::LockingTypeSingleThreaded)
 		{
-			lockingType = E_SINGLE_THREADED;  
+			m_locker = new PALockerSingleThreaded();
 		}
 		else
 		{
 			OW_THROW(ConfigException, "unknown locking type"); 
 		}
-		confItem = getConfigItem(ProviderAgent::LockingTimeout_opt, "300"); 
-		UInt32 lockingTimeout(300);
-		try
-		{
-			lockingTimeout = confItem.toUInt32(); 
-		}
-		catch (StringConversionException&)
-		{
-			OW_THROW(ConfigException, "invalid locking timeout"); 
-		}
-		m_locker = new PALocker(lockingType, lockingTimeout);
 	}
 
 	String confItem = getConfigItem(ProviderAgent::DynamicClassRetrieval_opt, "false"); 
@@ -382,106 +458,6 @@ ProviderAgentEnvironment::setInteropInstance(const CIMInstance& inst)
 	OW_ASSERT("not implemented" == 0); 
 }
 
-//////////////////////////////////////////////////////////////////////////////
-ProviderAgentEnvironment::PALocker::PALocker(ProviderAgentEnvironment::ELockingType lt, 
-											 UInt32 timeout)
-	: m_lt(lt)
-	, m_mutex(0)
-	, m_rwlocker(0)
-	, m_timeout(timeout)
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::E_NONE:
-		break; 
-	case ProviderAgentEnvironment::E_SWMR:
-		m_rwlocker = new RWLocker; 
-		break; 
-	case ProviderAgentEnvironment::E_SINGLE_THREADED:
-		m_mutex = new Mutex; 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-ProviderAgentEnvironment::PALocker::~PALocker()
-{
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentEnvironment::PALocker::doReleaseReadLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::E_NONE:
-		break; 
-	case ProviderAgentEnvironment::E_SWMR:
-		m_rwlocker->releaseReadLock(); 
-		break; 
-	case ProviderAgentEnvironment::E_SINGLE_THREADED:
-		m_mutex->release(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentEnvironment::PALocker::doGetReadLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::E_NONE:
-		break; 
-	case ProviderAgentEnvironment::E_SWMR:
-		m_rwlocker->getReadLock(m_timeout); 
-		break; 
-	case ProviderAgentEnvironment::E_SINGLE_THREADED:
-		m_mutex->acquire(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentEnvironment::PALocker::doReleaseWriteLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::E_NONE:
-		break; 
-	case ProviderAgentEnvironment::E_SWMR:
-		m_rwlocker->releaseWriteLock(); 
-		break; 
-	case ProviderAgentEnvironment::E_SINGLE_THREADED:
-		m_mutex->release(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
-//////////////////////////////////////////////////////////////////////////////
-void
-ProviderAgentEnvironment::PALocker::doGetWriteLock()
-{
-	switch (m_lt)
-	{
-	case ProviderAgentEnvironment::E_NONE:
-		break; 
-	case ProviderAgentEnvironment::E_SWMR:
-		m_rwlocker->getWriteLock(m_timeout); 
-		break; 
-	case ProviderAgentEnvironment::E_SINGLE_THREADED:
-		m_mutex->acquire(); 
-		break; 
-	default: 
-		OW_ASSERT("shouldn't happen" == 0); 
-	}
-}
 
 } // end namespace OpenWBEM
 
