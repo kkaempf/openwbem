@@ -412,11 +412,11 @@ SessionLanguage::langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 
 //////////////////////////////////////////////////////////////////////////////
 String 
-SessionLanguage::getBestLanguage(const StringArray& languages) const
+SessionLanguage::getBestLanguage(const StringArray& languages, const String& defaultLanguage) const
 {
 	if (languages.size() == 0)
 	{
-		return String();
+		return defaultLanguage;
 	}
 
 	if (m_langTags.size() == 0)
@@ -454,7 +454,7 @@ SessionLanguage::getBestLanguage(const StringArray& languages) const
 		}
 	}  
 
-	return (bestWeight > -1) ? languages[bestIndex] : String();
+	return (bestWeight > -1) ? languages[bestIndex] : defaultLanguage;
 }
 
 //////////////////////////////////////////////////////////////////////////////

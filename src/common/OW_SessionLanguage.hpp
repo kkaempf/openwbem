@@ -123,7 +123,14 @@ public:
 	int langCount() const { return m_langTags.size(); }
 	String getAcceptLanguageString() const { return m_acceptLanguageString; }
 	SessionLanguage& assign(const char* acceptLangHdrValue);
-	String getBestLanguage(const StringArray& languages) const;
+
+	/**
+	 * Evaluate the best language to use, based upon what the http client specified, 
+	 * as represented by this SessionLanguage object, and what the caller supports.
+	 * @param languages The set of languages the caller supports.
+	 * @param defaultLanguage The default language returned if no match is made.
+	 */
+	String getBestLanguage(const StringArray& languages, const String& defaultLanguage = String()) const;
 	void addContentLanguage(const String& contentLanguage);
 	String getContentLanguage() const;
 
