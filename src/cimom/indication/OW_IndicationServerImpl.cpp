@@ -954,17 +954,29 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 		}
 	}
 
+	//"The path to a local namespace where the Indications "
+	//"originate. If NULL, the namespace of the Filter registration "
+	//"is assumed."
+	// first try to get it from the property
+	String filterSourceNameSpace = getSourceNameSpace(filterInst);
+	if (filterSourceNameSpace.empty())
+	{
+		filterSourceNameSpace = filterNS;
+	}
+
 	// look up all the subclasses of the classes in isaClassNames.
 	StringArray subClasses;
 	for (size_t i = 0; i < isaClassNames.size(); ++i)
 	{
 		try
 		{
-			subClasses.appendArray(hdl->enumClassNamesA(ns, isaClassNames[i]));
+			subClasses.appendArray(hdl->enumClassNamesA(filterSourceNameSpace, isaClassNames[i]));
 		}
 		catch (CIMException& e)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, Format("Failed to get subclass names of %1 because: %2", isaClassNames[i], e).c_str());
+			String msg = Format("Indication Server (subscription creation): failed to get subclass names of %1:%2 because: %3", filterSourceNameSpace, isaClassNames[i], e);
+			log->logError(msg);
+			OW_THROWCIMMSG(CIMException::FAILED, msg.c_str());
 		}
 	}
 	isaClassNames.appendArray(subClasses);
@@ -1106,12 +1118,8 @@ IndicationServerImpl::createSubscription(const String& ns, const CIMInstance& su
 	//"originate. If NULL, the namespace of the Filter registration "
 	//"is assumed."
 	// first try to get it from the property
-	String filterSourceNameSpace = getSourceNameSpace(filterInst);
-	if (filterSourceNameSpace.empty())
-	{
-		filterSourceNameSpace = filterNS;
-	}
 	sub.m_filterSourceNameSpace = filterSourceNameSpace;
+
 	// get the lock and put it in m_subscriptions
 	{
 		MutexLock l(m_subGuard);
