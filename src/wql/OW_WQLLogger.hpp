@@ -22,6 +22,7 @@
 #define OW_TYPE_NAME typeid(type_or_object).name()
 #endif
 
+#ifdef OW_CREATE_UGLY_WQL_LOG
 #define WQL_LOG_DEBUG(message)												\
 do																								\
 {																									\
@@ -41,6 +42,9 @@ namespace OpenWBEM
 		LoggerRef getLogger();
 	}
 }
+#else
+#define WQL_LOG_DEBUG(message) /*nothing*/
+#endif //OW_CREATE_UGLY_WQL_LOG
 
 #endif
 /* endif OW_WQLLOGGER_HPP */
