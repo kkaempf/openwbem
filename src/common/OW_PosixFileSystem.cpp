@@ -529,10 +529,23 @@ namespace Path
 String realPath(const String& path)
 {
 #ifdef OW_WIN32
-	char c, *bfr, *pname;
+	char c, *bfr, *pname, *pathcstr;
 	DWORD cc;
 	String rstr;
 
+	pathcstr = path.c_str();
+	while (*pathcstr == '/' || *pathcstr == '\\')
+	{
+		++pathcstr;
+	}
+
+	// if we ate some '\' or '/' chars, the back up to
+	// allow for 1
+	if(pathcstr != path.c_str())
+	{
+		--pathcstr;
+	}
+		
 	cc = GetFullPathName(path.c_str(), 1, &c &pname);
 	if(!cc)
 	{
