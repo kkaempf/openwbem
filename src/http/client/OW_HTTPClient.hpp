@@ -160,9 +160,9 @@ class HTTPClient : public CIMProtocolIFC
 		bool receiveOptions( void );
 		
 		String m_sAuthorization;
+		String m_sRealm;
 		
 #ifndef OW_DISABLE_DIGEST
-		String m_sRealm;
 		String m_sDigestNonce;
 		String m_sDigestCNonce;
 		UInt8 m_iDigestNonceCount;
