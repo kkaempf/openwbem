@@ -145,6 +145,8 @@ OW_SignalScope.hpp \
 OW_dlSharedLibrary.hpp \
 OW_dlSharedLibraryLoader.hpp \
 OW_SharedLibraryReference.hpp \
+OW_NoSuchPropertyException.hpp \
+OW_NULLValueException.hpp \
 OW_config.h
 
 libopenwbem_a_LIBADD = \
