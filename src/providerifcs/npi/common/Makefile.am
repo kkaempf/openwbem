@@ -24,7 +24,6 @@ clean-local:
 libnpisupport_a_SOURCES = \
 NPIExternal.cpp \
 NPIExternal.hpp \
-OW_FTABLERef.hpp \
 mlogsup.c \
 npicrash.c 
 
