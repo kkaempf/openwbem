@@ -1,18 +1,11 @@
 OpenWBEM Provider Interface HOWTO
 -------------------------------------------------------------------------------
 
-Just a little information on how to create a new provider interface for the
-OpenWBEM CIMOM. I know there's not much information, but hopefully it will be
-somewhat helpful in getting you started. We plan on providing much more detailed
-documentation in the future.
-
 CONTENTS
 
    1.0 - Provider Interface Multiplexor
    2.0 - Writing a Provider Interface
    3.0 - Provider Interfaces Already Provided.
-      3.1 - C++ Provider Interface
-      3.2 - CIMOM Provider Interface
 
 -------------------------------------------------------------------------------
 1.0 Extensible Provider Interface
@@ -51,95 +44,35 @@ CONTENTS
    library it loads to have a createProviderIFC function. The prototype for this
    function is as follows:
    
-      extern "C" OW_ProviderIFC* createProviderIFC();
+      extern "C" OW_ProviderIFCBaseIFC* createProviderIFC();
       
    The createProviderIFC function is responsible for creating an instance
-   of some sub-class of OW_ProviderIFC and returning to the provider manager.
-   The OW_ProviderIFC instance will be owned by the OW_ProviderManager from
+   of some sub-class of OW_ProviderIFCBaseIFC and returning to the provider manager.
+   The OW_ProviderIFCBaseIFC instance will be owned by the OW_ProviderManager from
    that point. It will be deleted when it is no longer needed.
       
-   If the OW_Provider does not find createProviderIFC function, the shared
+   If the provider manager does not find createProviderIFC function, the shared
    library will be ignored.
    
 -------------------------------------------------------------------------------
 2.0 Writing a Provider Interface
 
    Writing a provider interface is actually a relatively simple thing to do.
-   There is a base class called OW_ProviderIFC found in OW_ProviderIFC.hpp.
-   You will have to create a class that sub-classes OW_ProviderIFC:
+   There is a base class called OW_ProviderIFCBaseIFC found in 
+   OW_ProviderIFCBaseIFC.hpp.
+   You will have to create a class that sub-classes OW_ProviderIFCBaseIFC:
    
-      #include <OW_ProviderIFC.hpp>
+      #include <OW_ProviderIFCBaseIFC.hpp>
       
-      class MyProviderIFC : public OW_ProviderIFC
+      class MyProviderIFC : public OW_ProviderIFCBaseIFC
       {
-      protected:
-         virtual const char* getName() const;
-         
-         virtual OW_InstanceProviderRef doGetInstanceProvider(
-            OW_LocalCIMOMHandle &ch, const char *provIdString);
-
-	      virtual OW_MethodProviderRef doGetMethodProvider(
-            OW_LocalCIMOMHandle &ch, const char *provIdString);
-
-         virtual OW_PropertyProviderRef doGetPropertyProvider(
-            OW_LocalCIMOMHandle &ch,const char *provIdString);
-
-	      virtual OW_AssociatorProviderRef doGetAssociatorProvider(
-            OW_LocalCIMOMHandle &ch, const char *provIdString);
-				
-			virtual OW_IndicationExportProviderRefArray
-				doGetIndicationExportProviders(OW_LocalCIMOMHandle& ch);
-
-			virtual OW_IndicationTriggerProviderRefArray
-				doGetIndicationTriggerProviders(OW_LocalCIMOMHandle& ch);
+	     ...
       };
 
       
-   getName - This method must return a null terminated string
-   that will be used to uniquely identify this provider interface.
-   
-   doGetInstanceProvider - This method will be called by the cimom when a
-   request has been made for an InstanceProvider that your provider interface
-   is responsible for. It returns an OW_InstanceProviderRef (see
-   OW_InstanceProvider.hpp). This provider must be an instance of a sub-class of
-   OW_InstanceProvider. The virtual methods of OW_InstanceProvider that must be
-   implemented are documented in OW_InstanceProvider.hpp.
-   
-   doGetMethodProvider - This method will be called by the cimom when a
-   request has been made for a MethodProvider that your provider interface
-   is responsible for. It returns an OW_MethodProviderRef (see
-   OW_MethodProvider.hpp). This provider must be an instance of a sub-class of
-   OW_MethodProvider. The virtual methods of OW_MethodProvider that must be
-   implemented are documented in OW_MethodProvider.hpp.
-   
-   doGetPropertyProvider - This method will be called by the cimom when a
-   request has been made for a PropertyProvider that your provider interface
-   is responsible for. It returns an OW_PropertyProviderRef (see
-   OW_PropertyProvider.hpp). This provider must be an instance of a sub-class of
-   OW_PropertyProvider. The virtual methods of OW_PropertyProvider that must be
-   implemented are documented in OW_PropertyProvider.hpp.
-   
-   doGetAssociatorProvider - This method will be called by the cimom when a
-   request has been made for an AssociatorProvider that your provider interface
-   is responsible for. It returns an OW_AssociatorProviderRef (see
-   OW_AssociatorProvider.hpp). This provider must be an instance of a sub-class
-   of OW_AssociatorProvider. The virtual methods of OW_AssociatorProvider that
-   must be implemented are documented in OW_AssociatorProvider.hpp.
-
-	doGetIndicationExportProviders - This method will be called by the cimom
-	while it is initializing. It returns an array of references to instances of
-	some sub-class of OW_IndicationExportProvider (see
-	OW_IndicationExportProvider.hpp). 
+   Please see the header file OW_ProviderIFCBaseIFC.hpp for a description of
+   all the methods that need to be implemented.
 	
-	doGetIndicationTriggerProviders - This method will be called by the cimom
-	while it is initializing. It returns an array of references to instances of
-	some sub-class of OW_IndicationTriggerProvider (see
-	OW_IndicationTriggerProvider.hpp). 
-   
-   All providers are ultimately derived from the OW_Provider class.
-	OW_Provider doesn't contain any methods or data members. It is used
-	primarily for all other provider classes to be derived from.
-
    The provider interface must be placed in a shared library that provides
    a createProviderIFC() function. This function is described in section
    1.0 Extensible Provider Interface.
@@ -163,26 +96,13 @@ CONTENTS
             ./src/ifcs/cpp/OW_CppProviderIFC.hpp
             ./src/ifcs/cpp/OW_CppProviderIFC.cpp
 
-      3.2 CIMOM Provider Interface
-         This provider interface is compiled into the CIMOM. It allows
-         The CIMOM to be identified by the provider interface multi-plexor
-         as a provider interface. The CIMOM actually has a compiled in
-         provider that deals with namespace operations. The provider
-         interface multi-plexor doesn't know the difference between this
-         provider and one that was loaded from a shared library. The format
-         of the provider qualifier for the compiled in interface would be
-         "cimom::provider id". The provider id string would have to 
-         identify a provider that is compiled into the cimom. For example,
-         the compiled in namespace provider is identified by the provider
-         qualifier "cimom::namespace". The source code for this provider
-         interface is actually in our provider manager:
-            ./src/server/OW_ProviderManager.hpp
-            ./src/server/OW_ProviderManager.cpp
-            
-         Using the OW_ProviderManager class as an example might not be the best
-			choice though, since this class is really much more that just a
-			provider interface. It was just a convenient place to put the in memory
-			provider interface. The C++ provider interface (OW_CppProviderIFC)
-			would probably be easier to understand and most likely more applicable
-			to a typical provider interface.
-			
+      3.2 NPI
+	  3.3 CMPI
+	  3.4 Perl
+	  3.5 Simple C++
+	  3.6 Remote - Not completed yet.
+	  3.7 Java - Not completed yet.
+
+
+This file last updated: Wed Jul 16 15:51:53 MDT 2003
+
