@@ -111,6 +111,19 @@ Array<UInt16> StringToUCS2(const String& input);
  * @return The UTF-8 string
  */
 String UCS2ToString(const Array<UInt16>& input);
+/**
+ * Convert a UCS2 string into a UTF-8 (or ASCII) string
+ * @param input An Array of UCS2 characters
+ * @return The UTF-8 string
+ */
+String UCS2ToString(const Array<char>& input);
+/**
+ * Convert a UCS2 string into a UTF-8 (or ASCII) string
+ * @param input An Array of UCS2 characters
+ * @param inputLength The size (in bytes) of input.
+ * @return The UTF-8 string
+ */
+String UCS2ToString(const void* input, size_t inputLength);
 
 } // end namespace UTF8Utils
 

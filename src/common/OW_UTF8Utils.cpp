@@ -277,17 +277,29 @@ Array<UInt16> StringToUCS2(const String& input)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-String UCS2ToString(const Array<UInt16>& input)
+String UCS2ToString(const void* input, size_t inputLength)
 {
 	// start out with 1 byte/char in input, this is just big enough for a
 	// standard ASCII string.  If any chars are bigger, we'll only incur 1 or
 	// 2 (worse case) reallocations of the buffer.
-	StringBuffer sb(input.size() + 1);
-	for (size_t i = 0; i < input.size(); ++i)
+	size_t numchars = inputLength/2;
+	StringBuffer sb(numchars + 1);
+	for (size_t i = 0; i < numchars; ++i)
 	{
-		UCS4toUTF8(input[i], sb);
+		UCS4toUTF8(reinterpret_cast<const UInt16*>(input)[i], sb);
 	}
 	return sb.releaseString();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+String UCS2ToString(const Array<UInt16>& input)
+{
+	return UCS2ToString(&input[0], input.size() * sizeof(UInt16));
+}
+/////////////////////////////////////////////////////////////////////////////
+String UCS2ToString(const Array<char>& input)
+{
+	return UCS2ToString(&input[0], input.size());
 }
 
 } // end namespace OW_UTF8Utils
