@@ -12,7 +12,8 @@
  * http://oss.software.ibm.com/developerworks/opensource/license-cpl.html
  *
  * Author:        Adrian Schuur <schuur@de.ibm.com>
- * Contributors:
+ * 
+ * Contributor:   Markus Mueller <sedgewick_de@yahoo.de>
  *
  * Description: Combined CMPIContext CMPIArgs support
  *
