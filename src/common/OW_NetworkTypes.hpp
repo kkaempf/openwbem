@@ -57,6 +57,10 @@ extern "C"
 #ifdef OW_HAVE_SYS_UN_H
  #include <sys/un.h>
 #endif
+
+#if defined(OW_WIN32)
+#include <winsock2.h>
+#endif
 }
 
 #undef shutdown // On OpenUnix, sys/socket.h defines shutdown to be
@@ -77,13 +81,23 @@ typedef sockaddr_in		InetSocketAddress_t;
 
 // Platform specific socket address type
 typedef in_addr		InetAddress_t;
+
+#if defined (OW_WIN32)
+// Platform specific socket fd type
+typedef SOCKET			SocketHandle_t;
+#else
 // Platform specific socket fd type
 typedef int 			SocketHandle_t;
+#endif
 
 } // end namespace OpenWBEM
 
-#ifndef OW_HAVE_SOCKLEN_T
- typedef unsigned socklen_t;
+#if defined(OW_WIN32)
+	typedef int socklen_t;
+#else
+	#ifndef OW_HAVE_SOCKLEN_T
+		typedef unsigned socklen_t;
+	#endif
 #endif
 
 #endif

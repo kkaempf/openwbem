@@ -44,9 +44,6 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-#ifdef OW_WIN32
-#include <windows.h>
-#endif
 
 namespace OpenWBEM
 {

@@ -48,10 +48,6 @@ extern "C"
 }
 #endif
 
-#ifdef OW_WIN32
-#include <windows.h>
-#endif
-
 typedef unsigned char      			OW_UInt8;
 typedef signed char        			OW_Int8;
 

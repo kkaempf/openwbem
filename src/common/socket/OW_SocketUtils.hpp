@@ -39,12 +39,30 @@
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketFlags.hpp"
 
+#ifndef ETIMEDOUT
+#define ETIMEDOUT 110
+#endif
+
 namespace OpenWBEM
 {
 
 class String;
 namespace SocketUtils
 {
+#if defined(OW_WIN32)
+	/**
+	 * Wait for input or output on a socket.
+	 * @param fd the handle of the socket to wait on.
+	 * @param event The event associated with the socket that will
+	 *		be signaled when I/O is available
+	 * @param timeOutSecs the number of seconds to wait.
+	 * @param forInput true if we are waiting for input.
+	 * @return zero if we got input before the timeout expired, 
+	 *  -1 on error, and ETIMEDOUT on timeout.
+	 */
+	int waitForIO(SocketHandle_t fd, HANDLE event, int timeOutSecs,
+		  SocketFlags::EWaitDirectionFlag forInput);
+#else
 	/**
 	 * Wait for input or output on a socket.
 	 * @param fd the handle of the socket to wait on.
@@ -55,6 +73,8 @@ namespace SocketUtils
 	 */
 	int waitForIO(SocketHandle_t fd, int timeOutSecs, 
 		SocketFlags::EWaitDirectionFlag forInput);
+#endif
+
 	String inetAddrToString(UInt64 addr);
 	/**
 	 * Get the fully qualified host name.

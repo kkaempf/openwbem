@@ -43,12 +43,15 @@
 
 extern "C"
 {
+#if !defined(OW_WIN32)
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/param.h>
 #include <sys/utsname.h>
 #include <unistd.h>
+#endif
+
 #include <errno.h>
 }
 
@@ -60,6 +63,8 @@ OW_DEFINE_EXCEPTION_WITH_ID(SocketAddress);
 
 const char* const SocketAddress::ALL_LOCAL_ADDRESSES = "0.0.0.0";
 
+#if !defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
 //static
 SocketAddress
 SocketAddress::getUDS(const String& filename)
@@ -93,13 +98,20 @@ SocketAddress::getUDS(const String& filename)
 #endif
 	return rval;
 }
+
+#endif	// #if !defined(OW_WIN32)
+
+//////////////////////////////////////////////////////////////////////////////
 SocketAddress::SocketAddress()
 	: m_nativeSize(0) , m_type(UNSET)
 {
 }
+
 #ifndef OW_HAVE_GETHOSTBYNAME_R
 Mutex gethostbynameMutex;
 #endif
+
+//////////////////////////////////////////////////////////////////////////////
 //static
 SocketAddress
 SocketAddress::getByName(
@@ -138,25 +150,35 @@ SocketAddress::getByName(
 	MutexLock mlock(gethostbynameMutex);
 	host = gethostbyname(hostName.c_str());
 #endif /* defined(OW_HAVE_GETHOSTBYNAME_R) && defined(OW_GETHOSTBYNAME_R_ARGUMENTS) */
-	if (!host) {
+
+	if (!host)
+	{
 		OW_THROW(UnknownHostException, hostName.c_str());
 	}
 	in_addr addr;
 	memcpy(&addr, host->h_addr_list[0], sizeof(addr));
 	return getFromNativeForm(addr, port, host->h_name);
 }
+
+//////////////////////////////////////////////////////////////////////////////
 //static
 SocketAddress
 SocketAddress::getFromNativeForm( const InetSocketAddress_t& nativeForm)
 {
 	return SocketAddress(nativeForm);
 }
+
+#if !defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
 //static
 SocketAddress
 SocketAddress::getFromNativeForm( const UnixSocketAddress_t& nativeForm)
 {
 	return SocketAddress(nativeForm);
 }
+#endif	// !defined(OW_WIN32)
+
+//////////////////////////////////////////////////////////////////////////////
 //static
 SocketAddress
 SocketAddress::getFromNativeForm( const InetAddress_t& nativeForm,
@@ -172,35 +194,41 @@ SocketAddress::getFromNativeForm( const InetAddress_t& nativeForm,
 	p.m_name = hostName;
 	return p;
 }
+//////////////////////////////////////////////////////////////////////////////
 const SocketAddress_t* SocketAddress::getNativeForm() const
 {
 	if (m_type == INET)
 	{
 		return reinterpret_cast<const sockaddr*>(&m_inetNativeAddress);
 	}
+
+#if !defined(OW_WIN32)
 	else if (m_type == UDS)
 	{
 		return reinterpret_cast<const sockaddr*>(&m_UDSNativeAddress);
 	}
-	else return 0;
+#endif
+
+	return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
 const InetSocketAddress_t* SocketAddress::getInetAddress() const
 {
 	return &m_inetNativeAddress;
 }
 
 #if !defined(OW_WIN32)
-/**
- * Get a pointer to the UnixSocketAddress_t
- * precondition: getType() == UDS
- */
+//////////////////////////////////////////////////////////////////////////////
+// Get a pointer to the UnixSocketAddress_t
+// precondition: getType() == UDS
 const UnixSocketAddress_t* SocketAddress::getUnixAddress() const
 {
 	return &m_UDSNativeAddress;
 }
 #endif
 
+//////////////////////////////////////////////////////////////////////////////
 SocketAddress
 SocketAddress::getAnyLocalHost(UInt16 port)
 {
@@ -255,6 +283,8 @@ SocketAddress::getAnyLocalHost(UInt16 port)
 	rval.m_name = hname;
 	return rval;
 }
+
+//////////////////////////////////////////////////////////////////////////////
 void SocketAddress::assignFromNativeForm(
 	const InetSocketAddress_t* address, size_t /*size*/)
 {
@@ -263,6 +293,9 @@ void SocketAddress::assignFromNativeForm(
 	m_address = inet_ntoa(m_inetNativeAddress.sin_addr);
 	m_nativeSize = sizeof(m_inetNativeAddress);
 }
+
+#if !defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
 void SocketAddress::assignFromNativeForm(
 	const UnixSocketAddress_t* address, size_t /*size*/)
 {
@@ -271,33 +304,46 @@ void SocketAddress::assignFromNativeForm(
 	m_address = m_name = m_UDSNativeAddress.sun_path;
 	m_nativeSize = sizeof(m_UDSNativeAddress);
 }
+#endif	// !defined(OW_WIN32)
+
+//////////////////////////////////////////////////////////////////////////////
 UInt16 SocketAddress::getPort() const
 {
 	OW_ASSERT(m_type == INET);
 	return ntoh16(m_inetNativeAddress.sin_port);
 }
+
+#if !defined(OW_WIN32)
+//////////////////////////////////////////////////////////////////////////////
 SocketAddress::SocketAddress(const UnixSocketAddress_t& nativeForm)
 	: m_nativeSize(0), m_type(UDS)
 {
 	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
 }
+#endif	// !defined(OW_WIN32)
+
+//////////////////////////////////////////////////////////////////////////////
 SocketAddress::SocketAddress(const InetSocketAddress_t& nativeForm)
 	: m_nativeSize(0), m_type(INET)
 {
 	assignFromNativeForm(&nativeForm, sizeof(nativeForm));
 }
+//////////////////////////////////////////////////////////////////////////////
 const String SocketAddress::getName() const
 {
 	return m_name;
 }
+//////////////////////////////////////////////////////////////////////////////
 const String SocketAddress::getAddress() const
 {
 	return m_address;
 }
+//////////////////////////////////////////////////////////////////////////////
 size_t SocketAddress::getNativeFormSize() const
 {
 	return m_nativeSize;
 }
+//////////////////////////////////////////////////////////////////////////////
 SocketAddress SocketAddress::allocEmptyAddress(AddressType type)
 {
 	if (type == INET)
@@ -307,6 +353,7 @@ SocketAddress SocketAddress::allocEmptyAddress(AddressType type)
 		addr.sin_family = AF_INET;
 		return SocketAddress(SocketAddress::getFromNativeForm(addr));
 	}
+#if !defined(OW_WIN32)
 	else if (type == UDS)
 	{
 		sockaddr_un addr;
@@ -314,11 +361,11 @@ SocketAddress SocketAddress::allocEmptyAddress(AddressType type)
 		addr.sun_family = AF_UNIX;
 		return SocketAddress(SocketAddress::getFromNativeForm(addr));
 	}
-	else
-	{
-		OW_THROW(SocketAddressException, "Bad Address Type");
-	}
+#endif
+
+	OW_THROW(SocketAddressException, "Bad Address Type");
 }
+//////////////////////////////////////////////////////////////////////////////
 const String
 SocketAddress::toString() const
 {

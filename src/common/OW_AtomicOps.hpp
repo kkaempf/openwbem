@@ -140,7 +140,6 @@ inline void AtomicDec(Atomic_t &v)
 } // end namespace OpenWBEM
 
 #elif defined(OW_WIN32)
-#include <Windows.h>
 
 namespace OpenWBEM
 {

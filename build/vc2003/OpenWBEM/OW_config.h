@@ -537,6 +537,9 @@
 #define _WIN32_WINNT 0x0400
 #define OW_USE_DLL 1
 //#define OW_DEBUG_MEMORY 1
+
+// Including winsock2.h should also bring in windows.h
+#include <winsock2.h>
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

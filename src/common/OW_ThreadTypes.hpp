@@ -85,8 +85,6 @@
 
 #elif defined(OW_WIN32)
 
-	#include <Windows.h>
-
 	namespace OpenWBEM
 	{
 		// Platform specific thread type

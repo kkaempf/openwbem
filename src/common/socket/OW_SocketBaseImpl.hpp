@@ -93,13 +93,20 @@ public:
 protected:
 	virtual int readAux(void* dataIn, int dataInLen) = 0;
 	virtual int writeAux(const void* dataOut, int dataOutLen) = 0;
+
 	bool m_isConnected;
 	SocketHandle_t m_sockfd;
 	SocketAddress m_localAddress;
 	SocketAddress m_peerAddress;
+
 private:
 	void fillInetAddrParms();
+#if !defined(OW_WIN32)
 	void fillUnixAddrParms();
+#endif
+	SocketBaseImpl(const SocketBaseImpl& arg);
+	SocketBaseImpl& operator= (const SocketBaseImpl& arg);
+
 	bool m_recvTimeoutExprd;
 	SocketStreamBuffer m_streamBuf;
 	std::istream m_in;
@@ -108,11 +115,16 @@ private:
 	int m_recvTimeout;
 	int m_sendTimeout;
 	int m_connectTimeout;
+#if defined(OW_WIN32)
+	HANDLE m_event;
+
+	static int waitForEvent(HANDLE event, int secsToTimeout=-1);
+#endif
 	
 	static String m_traceFileOut;
 	static String m_traceFileIn;
-	SocketBaseImpl(const SocketBaseImpl& arg);
-	SocketBaseImpl& operator= (const SocketBaseImpl& arg);
+
+
 };
 
 } // end namespace OpenWBEM

@@ -214,7 +214,13 @@ public:
 	 * @return the socket handle
 	 */
 	SocketHandle_t getfd() { return m_impl->getfd(); }
+
+#if defined(OW_WIN32)
+	static HANDLE m_SocketsEvent;
+#else
 	static UnnamedPipeRef m_pUpipe;
+#endif
+
 	static void createShutDownMechanism();
 	/**
 	 * Call this to shutdown all sockets.  This is usefull when the CIMOM

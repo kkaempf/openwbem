@@ -80,6 +80,66 @@ inetAddrToString(UInt64 addr)
 #ifndef MAX
 	#define MAX(A,B) (((A) > (B))? (A): (B))
 #endif
+
+#if defined(OW_WIN32)
+int
+waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
+		  SocketFlags::EWaitDirectionFlag forInput)
+{
+	OW_ASSERT(Socket::m_SocketsEvent != NULL);
+
+	DWORD timeout = (secsToTimeout > 0)
+		? static_cast<DWORD>(secsToTimeout * 1000)
+		: INFINITE;
+
+	if(forInput == SocketFlags::E_WAIT_FOR_INPUT)
+	{
+		::WSAEventSelect(fd, eventArg, FD_READ);
+	}
+	else
+	{
+		::WSAEventSelect(fd, eventArg, FD_WRITE);
+	}
+
+	HANDLE events[2];
+	events[0] = Socket::m_SocketsEvent;
+	events[1] = eventArg;
+
+	DWORD index = ::WaitForMultipleObjects(
+		2,
+		events,
+		FALSE,
+		timeout);
+
+	int cc;
+
+	switch(index)
+	{
+		case WAIT_FAILED:
+			cc = -1;
+			break;
+		case WAIT_TIMEOUT:
+			cc = ETIMEDOUT;
+			break;
+		default:
+			index -= WAIT_OBJECT_0;
+			// If not shutdown event, then reset
+			if(index != 0)
+			{
+				::ResetEvent(eventArg);
+				cc = 0;
+			}
+			else
+			{
+				cc = -1;
+			}
+			break;
+	}
+
+	return cc;
+}
+
+#else
 //////////////////////////////////////////////////////////////////////////////
 int
 waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag forInput)
@@ -97,7 +157,6 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag fo
   		lUPipe = foo.cast_to<PosixUnnamedPipe>();
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();
-		
 	}
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
@@ -153,6 +212,7 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag fo
 	}
 	return rc;
 }
+#endif	// 
 
 #ifndef OW_HAVE_GETHOSTBYNAME_R
 } // end namespace SocketUtils

@@ -78,9 +78,7 @@ public:
 	 *
 	 * @return An Array of SocketAddresses for the host and port
 	 */
-	//static Array<SocketAddress> getAllByName(const String& hostName,
-	//		unsigned short port = 0);
-	static SocketAddress getUDS(const String& filename);
+
 	/**
 	 * Get an SocketAddress appropriate for referring to the local host
 	 * @param port The port
@@ -120,11 +118,17 @@ public:
 	const InetSocketAddress_t* getInetAddress() const;
 
 #if !defined(OW_WIN32)
+	//static Array<SocketAddress> getAllByName(const String& hostName,
+	//		unsigned short port = 0);
+	static SocketAddress getUDS(const String& filename);
+
 	/**
 	 * Get a pointer to the UnixSocketAddress_t
 	 * precondition: getType() == UDS
 	 */
 	const UnixSocketAddress_t* getUnixAddress() const;
+
+	void assignFromNativeForm(const UnixSocketAddress_t* address, size_t len);
 #endif
 
 	/**
@@ -134,32 +138,36 @@ public:
 	 */
 	const String toString() const;
 	void assignFromNativeForm(const InetSocketAddress_t* address, size_t len);
-#if !defined(OW_WIN32)
-	void assignFromNativeForm(const UnixSocketAddress_t* address, size_t len);
-#endif
+
 	SocketAddress();
 private:
 	SocketAddress(const InetSocketAddress_t& nativeForm);
+
 #if !defined(OW_WIN32)
 	SocketAddress(const UnixSocketAddress_t& nativeForm);
 #endif
+
 	String m_name;
 	String m_address;
 	size_t m_nativeSize;
 	
 	InetSocketAddress_t m_inetNativeAddress;
+
 #if !defined(OW_WIN32)
 	UnixSocketAddress_t m_UDSNativeAddress;
 #endif
+
 	AddressType m_type;
 	static SocketAddress getFromNativeForm(const InetAddress_t& nativeForm,
 			UInt16 nativePort, const String& hostname );
 	static SocketAddress getFromNativeForm(
 		const InetSocketAddress_t& nativeForm);
+
 #if !defined(OW_WIN32)
 	static SocketAddress getFromNativeForm(
 		const UnixSocketAddress_t& nativeForm);
 #endif
+
 };
 
 } // end namespace OpenWBEM

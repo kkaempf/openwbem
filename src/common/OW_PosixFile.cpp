@@ -40,7 +40,6 @@
 	#include <io.h>
 	#include <stdlib.h>
 	#include <stdio.h>
-	#include <windows.h>
 #else
 	#include <fcntl.h>
 	#ifdef OW_HAVE_UNISTD_H

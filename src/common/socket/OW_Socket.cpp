@@ -48,7 +48,13 @@ namespace OpenWBEM
 
 OW_DEFINE_EXCEPTION_WITH_ID(Socket);
 OW_DEFINE_EXCEPTION_WITH_ID(SocketTimeout);
+
+#if defined(OW_WIN32)
+HANDLE Socket::m_SocketsEvent = NULL;
+#else
 UnnamedPipeRef Socket::m_pUpipe;
+#endif
+
 Socket::Socket(SocketFlags::ESSLFlag isSSL)
 {
 	if (isSSL == SocketFlags::E_SSL)
@@ -103,12 +109,19 @@ void
 Socket::shutdownAllSockets()
 {
 	MutexLock mlock(shutdownMutex);
+
+#if defined(OW_WIN32)
+	OW_ASSERT(m_SocketsEvent != NULL);
+	b_gotShutDown = true;
+	::SetEvent(m_SocketsEvent);
+#else
 	OW_ASSERT(m_pUpipe);
 	b_gotShutDown = true;
 	if (m_pUpipe->writeString("die!") == -1)
 	{
 		OW_THROW(IOException, "Failed writing to socket shutdown pipe");
 	}
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -116,9 +129,15 @@ void
 Socket::createShutDownMechanism()
 {
 	MutexLock mlock(shutdownMutex);
+#if defined(OW_WIN32)
+	OW_ASSERT(m_SocketsEvent == NULL);
+	m_SocketsEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+	OW_ASSERT(m_SocketsEvent != NULL);
+#else
 	OW_ASSERT(!m_pUpipe);
 	m_pUpipe = UnnamedPipe::createUnnamedPipe();
 	m_pUpipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
+#endif
 	b_gotShutDown = false;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -127,8 +146,14 @@ void
 Socket::deleteShutDownMechanism()
 {
 	MutexLock mlock(shutdownMutex);
+#if defined(OW_WIN32)
+	OW_ASSERT(m_SocketsEvent != NULL);
+	::CloseHandle(m_SocketsEvent);
+	m_SocketsEvent = NULL;
+#else
 	OW_ASSERT(m_pUpipe);
 	m_pUpipe = 0;
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

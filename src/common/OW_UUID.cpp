@@ -41,9 +41,7 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_ExceptionIds.hpp"
 
-#ifdef OW_WIN32
-#include <windows.h>	// Time functions
-#else
+#if !defined(OW_WIN32)
 #include <sys/time.h> // for gettimeofday
 #endif
 

@@ -474,6 +474,9 @@
 			<File
 				RelativePath="..\..\..\..\src\common\OW_UUID.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_Win32SocketBaseImpl.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
