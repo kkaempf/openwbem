@@ -32,6 +32,8 @@ Fix problems:
     - To prevent DNS attacks, set a limit on incoming data.
     - Audit classes in src/{cim,common}, especially comparison operators and 
       operator<<
+    - Indication server should not require that subscriptions have indication 
+      providers.
 
 New features:
     - Start to use __attribute__ ((warn_unused_result)) where applicable.
