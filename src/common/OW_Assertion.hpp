@@ -37,16 +37,27 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(Assertion);
 
-// for backward compatibility?
+// for backward compatibility
 typedef AssertionException Assertion OW_DEPRECATED;
 
-
+/**
+ * OW_ASSERT works similar to the assert() macro.  But instead of calling 
+ * abort(), instead it throws an AssertionException.
+ * @param CON The condition which will be evaluated.
+ */
 #ifdef OW_DEBUG
 #define OW_ASSERT(CON) if(!(CON)) throw AssertionException(__FILE__, __LINE__, \
 		#CON)
 #else
 #define OW_ASSERT(CON)
 #endif
+
+/**
+ * OW_ASSERTMSG works the same as OW_ASSERT, but with a second string parameter
+ * that will be added to the exception message on failure.
+ * @param CON The condition which will be evaluated.
+ * @param MSG The extra message.  A C string literal.
+ */
 #ifdef OW_DEBUG
 // MSG should be a string
 #define OW_ASSERTMSG(CON, MSG) if(!(CON)) throw AssertionException(__FILE__, __LINE__, \
