@@ -253,6 +253,12 @@ OW_ProviderManager::getIndicationExportProviders(const OW_ProviderEnvironmentIFC
 			rv.appendArray(pra);
 		}
 	}
+    OW_IndicationExportProviderIFCRefArray pra =
+            this->doGetIndicationExportProviders(env);
+    if(pra.size() > 0)
+    {
+        rv.appendArray(pra);
+    }
 
 	return rv;
 }
@@ -274,6 +280,13 @@ OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 			rv.appendArray(pra);
 		}
 	}
+    OW_PolledProviderIFCRefArray pra =
+            this->doGetPolledProviders(env);
+
+    if(pra.size() > 0)
+    {
+        rv.appendArray(pra);
+    }
 
 	return rv;
 }
