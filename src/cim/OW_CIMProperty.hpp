@@ -312,30 +312,6 @@ public:
 	 */
 	virtual OW_String toMOF() const;
 	
-	/**
-	 * Write the XML representation of this object to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	
-	//virtual void toXML(std::ostream& ostr) const
-	//{
-	//	toXML(ostr, false, true, true);
-	//}
-	
-
-	/**
-	 * Write the XML representation of this object to an output stream.
-	 * @param ostr	The output stream to write the XML to.
-	 * @param localOnly If true and this property was inherited from a parent
-	 *		class, then the XML will not be written.
-	 * @param includeQualifiers If true, the XML for the qualifiers will be
-	 *		included in output.
-	 * @param includeClassOrigin If true, the class origin XML will be included
-	 *		in the output.
-	 */
-	//void toXML(std::ostream& ostr, OW_Bool localOnly, OW_Bool includeQualifiers,
-	//	OW_Bool includeClassOrigin) const;
-
 private:
 
 	OW_Reference<PROPData> m_pdata;

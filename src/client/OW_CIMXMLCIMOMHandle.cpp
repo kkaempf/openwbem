@@ -85,7 +85,6 @@ OW_CIMXMLCIMOMHandle::sendXMLHeader( const OW_String &sMethod,
 	{
 		ostr << "<IMETHODCALL NAME=\"" << sMethod << "\">";
 		OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal );
-		//path.getFullNameSpace().toXML( ostr, true );
 	}
 	else
 	{
@@ -93,8 +92,6 @@ OW_CIMXMLCIMOMHandle::sendXMLHeader( const OW_String &sMethod,
 		if (path.getKeys().size() > 0) // it's an instance
 		{
 			ostr << "<LOCALINSTANCEPATH>";
-			//path.getFullNameSpace().toXML(ostr, true);
-			//path.toXML(ostr);
 			OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal);
 			OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
 			ostr << "</LOCALINSTANCEPATH>";
@@ -102,7 +99,6 @@ OW_CIMXMLCIMOMHandle::sendXMLHeader( const OW_String &sMethod,
 		else // it's a class
 		{
 			ostr << "<LOCALCLASSPATH>";
-			//path.getFullNameSpace().toXML(ostr, true);
 			OW_CIMtoXML(path.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::doLocal);
 			ostr << "<CLASSNAME NAME=\"" << path.getObjectName() << "\"/>";
 			ostr << "</LOCALCLASSPATH>";
@@ -453,7 +449,6 @@ instanceNameToKey(const OW_CIMObjectPath& path,
 		OW_StringStream ss;
 		OW_CIMtoXML(path, ss, OW_CIMtoXMLFlags::isNotInstanceName);
 		text += ss.toString();
-		//text += path.convertToXML();
 	}
 	catch(OW_CIMMalformedUrlException& me)
 	{
@@ -905,7 +900,6 @@ OW_CIMXMLCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
 	static const char* const commandName = "SetQualifier";
 	OW_StringStream extra;
 	extra << "<IPARAMVALUE NAME=\"QualifierDeclaration\">";
-	//qt.toXML(extra);
 	OW_CIMtoXML(qt, extra);
 	extra << "</IPARAMVALUE>";
 
@@ -926,7 +920,6 @@ OW_CIMXMLCIMOMHandle::modifyClass(const OW_CIMObjectPath& path,
 	OW_CIMtoXML(cc, extra ,OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers, OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray(), false);
-	//cc.toXML(extra, true);
 	extra << "</IPARAMVALUE>";
 	intrinsicMethod(path, commandName, OW_Array<OW_Param>(), extra.toString());
 }
@@ -943,7 +936,6 @@ OW_CIMXMLCIMOMHandle::createClass(const OW_CIMObjectPath& path,
 	OW_CIMtoXML(cc, ostr, OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers , OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray(), false);
-	//cc.toXML(ostr);
 	ostr << "</IPARAMVALUE>";
 
 	intrinsicMethod(path, commandName, OW_Array<OW_Param>(), ostr.toString());
@@ -962,13 +954,11 @@ OW_CIMXMLCIMOMHandle::modifyInstance(const OW_CIMObjectPath& path,
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
 	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
-	//path.toXML(ostr);
 	OW_CIMtoXML(ci, ostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray());
-	//ci.toXML(ostr, OW_CIMObjectPath());
 	ostr << "</VALUE.NAMEDINSTANCE></IPARAMVALUE>";
 	intrinsicMethod(path, commandName, OW_Array<OW_Param>(), ostr.toString());
 }
@@ -1000,7 +990,6 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
 		OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray());
-	//ci.toXML(ostr);
 
 	ostr << "</IPARAMVALUE>";
 
@@ -1070,7 +1059,6 @@ OW_CIMXMLCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
 	OW_StringStream ostr;
 	OW_CIMtoXML(cv, ostr);
-	//cv.toXML(ostr);
 	params.push_back(OW_Param(XMLP_NewValue,OW_Param::VALUESET, ostr.toString()));
 
 	intrinsicMethod(path, commandName, params,
@@ -1100,7 +1088,6 @@ OW_CIMXMLCIMOMHandle::associatorNames(const OW_CIMObjectPath& path,
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
-		//path.toXML(extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1192,7 +1179,6 @@ OW_CIMXMLCIMOMHandle::associators(const OW_CIMObjectPath& path,
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
-		//path.toXML(extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1259,7 +1245,6 @@ OW_CIMXMLCIMOMHandle::referenceNames(const OW_CIMObjectPath& path,
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
-		//path.toXML(extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1338,7 +1323,6 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isNotInstanceName);
-		//path.toXML(extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else

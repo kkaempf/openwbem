@@ -766,39 +766,137 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// EnumerateInstanceNames
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		OW_CIMObjectPath cop("foo", "badNamespace");
+		hdl->enumInstanceNames(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_INVALID_CLASS
+	try
+	{
+		OW_CIMObjectPath cop("badClass", "root");
+		hdl->enumInstanceNames(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+	}
+
 	
 
 	// ExecQuery
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->execQuery(OW_CIMNameSpace("badNameSpace"), "select * from junk", "wql1");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED
+	try
+	{
+		hdl->execQuery(OW_CIMNameSpace("root"), "select * from junk", "badql");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED);
+	}
+
 	// CIM_ERR_INVALID_QUERY
+	try
+	{
+		hdl->execQuery(OW_CIMNameSpace("root"), "xxx", "wql1");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_QUERY);
+	}
+
+	try
+	{
+		hdl->execQuery(OW_CIMNameSpace("root"), "select * from junk", "wql1");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_QUERY);
+	}
 
 
 	// Associators
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->associators(OW_CIMObjectPath("foo", "badNamespace"),"","","","");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
+
 	// CIM_ERR_INVALID_PARAMETER
 	
 	
 	// AssociatorNames
 
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->associatorNames(OW_CIMObjectPath("foo", "badNamespace"), "", "", "", "");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 	
 
 	// References
 	
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->references(OW_CIMObjectPath("foo", "badNamespace"),"","");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 
 	
 	// ReferenceNames
 	
 	// CIM_ERR_INVALID_NAMESPACE
+	try
+	{
+		hdl->referenceNames(OW_CIMObjectPath("foo", "badNamespace"),"","");
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+	}
 	// CIM_ERR_INVALID_PARAMETER
 
 

@@ -404,38 +404,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this OW_CIMClass object to an output
-	 * stream.
-	 * @param ostr The output stream to write to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
-	 * Write the XML representation of this OW_CIMClass object to an output
-	 * stream, Optionally including qualifiers.
-	 * @param ostr The output stream to write to.
-	 * @param includeQualifiers If true, include the qualifiers for this class.
-	 */
-	//void toXML(std::ostream& ostr, OW_Bool includeQualifiers) const;
-
-	/**
-	 * Write the XML representation of this OW_CIMClass object to an output
-	 * stream, Optionally including qualifiers, class origin, and given
-	 * properties.
-	 * @param ostr The output stream to write to.
-	 * @param localOnly If true, only include local elements.
-	 * @param includeQualifiers If true, include the qualifiers for this class.
-	 * @param includeClassOrigin If true, include the class origin.
-	 * @param propertList A list that specifies the properties to allow in the
-	 *		XML.
-	 * @param noProps If true, no properties will be included in the xml
-	 * @return An OW_String object that contains the XML.
-	 */
-	//void toXML(std::ostream& ostr, OW_Bool localOnly, OW_Bool includeQualifiers,
-	//	OW_Bool includeClassOrigin, const OW_StringArray& propertyList,
-	//	OW_Bool noProps=false) const;
-
-	/**
 	 * @return The string representation of this OW_CIMClass. This yields the
 	 * same results as toMOF.
 	 */

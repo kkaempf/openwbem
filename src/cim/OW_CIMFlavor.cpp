@@ -64,26 +64,6 @@ OW_CIMFlavor::toMOF() const
 }
 
 //////////////////////////////////////////////////////////////////////////////		
-/*
-void
-OW_CIMFlavor::toXML(ostream& ostr) const
-{
-	const char* strf;
-	switch(m_flavor)
-	{
-		case ENABLEOVERRIDE: strf = "OVERRIDABLE"; break;
-		case DISABLEOVERRIDE: strf = "OVERRIDABLE"; break;
-		case TOSUBCLASS: strf = "TOSUBCLASS"; break;
-		case RESTRICTED: strf = "TOSUBCLASS"; break;
-		case TRANSLATE: strf = "TRANSLATABLE"; break;
-		default: strf = "BAD FLAVOR"; break;
-	}
-
-	ostr << strf;
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////		
 void
 OW_CIMFlavor::readObject(istream &istrm)
 {

@@ -204,13 +204,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this OW_CIMFlavor object to an output
-	 * stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
 	 * @return the integral value of this OW_CIMFlavor object.
 	 */
 	int getFlavor() const {  return m_flavor; }

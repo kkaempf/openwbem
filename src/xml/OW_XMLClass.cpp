@@ -235,34 +235,5 @@ OW_XMLClass::getInstanceName(OW_XMLNode& result,
 	cimPath.setKeys(propertyArray);
 }
 
-//////////////////////////////////////////////////////////////////////////////		
-/*
-OW_String
-OW_XMLClass::instanceNameToKey(const OW_CIMObjectPath& path,
-	const OW_String& parameterName)
-{
-	OW_String text;
-	
-	if(parameterName.length())
-	{
-		text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
-	}
-	
-	try
-	{
-		text += path.convertToXML();
-	}
-	catch(OW_CIMMalformedUrlException& me)
-	{
-	    OW_THROWCIMMSG(OW_CIMException::FAILED, me.getMessage());
-	}
-
-	if(parameterName.length())
-	{
-	    text += "</IPARAMVALUE>";
-	}
-	return(text);
-}
-*/
 
 

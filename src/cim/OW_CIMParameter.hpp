@@ -174,15 +174,7 @@ public:
 	 */
 	virtual OW_String toMOF() const;
 	
-	/**
-	 * Write the XML representation of this OW_CIMParameter to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
 private:
-
-	//void qualifierXML(std::ostream& ostr) const;
 
 	OW_Reference<PARMData> m_pdata;
 };

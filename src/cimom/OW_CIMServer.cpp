@@ -833,11 +833,7 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 		if(!theClass)
 		{
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
-
-			if(rval != OW_CIMException::SUCCESS)
-			{
-				OW_THROWCIM(rval);
-			}
+			checkGetClassRvalAndThrowInst(rval, lcop);
 		}
 
 		_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
@@ -856,13 +852,7 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 		{
 			lcop.setObjectName(classNames[i]);
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
-
-			if(rval != OW_CIMException::SUCCESS)
-			{
-				OW_String msg("Invalid class in repository: ");
-				msg += classNames[i];
-				OW_THROWCIMMSG(rval, msg.c_str());
-			}
+			checkGetClassRvalAndThrowInst(rval, lcop);
 
 			_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
 		}
@@ -973,7 +963,6 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 	// Check to see if user has rights to enumerate instances
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCES, path, aclInfo);
 
-	cout << "1" << endl;
 	try
 	{
 		OW_ACLInfo intAclInfo;
@@ -982,15 +971,13 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
 		if(!theClass)
 		{
-			cout << "2" << endl;
 			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(lcop, theClass);
 			checkGetClassRvalAndThrowInst(rval, lcop);
-			cout << "3" << endl;
 		}
 
 		OW_Bool deepHonored = _getCIMInstances(lcop, theClass, en, deep, localOnly,
 			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-		cout << "4" << endl;
+		
 		// DEBUG
 		//OW_ASSERT(en.numberOfElements() == 1);
 		//OW_CIMInstance debugInst = en.nextElement();
@@ -1022,12 +1009,7 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 		{
 			lcop.setObjectName(classNames[i]);
 			OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(lcop, theClass);
-			if(rc != OW_CIMException::SUCCESS)
-			{
-				OW_String msg("Invalid class in repository: ");
-				msg += classNames[i];
-				OW_THROWCIMMSG(rc, msg.c_str());
-			}
+			checkGetClassRvalAndThrowInst(rc, lcop);
 
 			_getCIMInstances(lcop, theClass, en, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList, aclInfo);
@@ -1167,6 +1149,11 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 		ci = instancep->getInstance(
 			createProvEnvRef(real_ch),
 				cop, cc, localOnly);
+		if (!ci)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				"Provider erroneously returned a NULL CIMInstance");
+		}
 	}
 	else
 	{
@@ -1370,9 +1357,9 @@ OW_CIMServer::createInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 					}
 
 					OW_CIMClass rcc;
-					int rc = m_mStore.getCIMClass(op, rcc);
+					OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(op, rcc);
 
-					if(rc == 0)
+					if(rc == OW_CIMException::SUCCESS)
 					{
 						OW_CIMInstance rci = m_iStore.getCIMInstance(op, rcc);
 
@@ -1542,8 +1529,8 @@ OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
 	}
 	else
 	{
-		int rc = m_mStore.getCIMClass(icop, cc);
-		if (rc != 0)
+		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(icop, cc);
+		if (rc != OW_CIMException::SUCCESS)
 		{
 			return false;
 		}
@@ -1833,7 +1820,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns,
 	{
 		try
 		{
-			if(m_mStore.getCIMClass(ns, className, cc) != 0);
+			if(m_mStore.getCIMClass(ns, className, cc) != OW_CIMException::SUCCESS);
 			{
 				break;
 			}
@@ -1920,8 +1907,32 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns, const OW_String &query,
 		OW_CIMOMHandleIFCRef lch(new OW_LocalCIMOMHandle(m_env,
 			OW_RepositoryIFCRef(this, true), aclInfo, true));
 
-		OW_CIMInstanceArray rval = wql->evaluate(ns, query, queryLanguage,
-			lch);
+		OW_CIMInstanceArray rval;
+		try
+		{
+			rval = wql->evaluate(ns, query, queryLanguage, lch);
+		}
+		catch (const OW_CIMException& ce)
+		{
+			// translate any error except INVALID_NAMESPACE, INVALID_QUERY,
+			// ACCESS_DENIED or FAILED into an INVALID_QUERY
+			if (ce.getErrNo() != OW_CIMException::FAILED
+				&& ce.getErrNo() != OW_CIMException::INVALID_NAMESPACE
+				&& ce.getErrNo() != OW_CIMException::INVALID_QUERY
+				&& ce.getErrNo() != OW_CIMException::ACCESS_DENIED)
+			{
+				// the " " added to the beginning of the message is a little
+				// trick to fool the OW_CIMException constructor from stripping
+				// away the old "canned" CIMException message.
+				throw OW_CIMException(ce.getFile(), ce.getLine(),
+					OW_CIMException::INVALID_QUERY,
+					OW_String(OW_String(" ") + ce.getMessage()).c_str());
+			}
+			else
+			{
+				throw ce;
+			}
+		}
 
 		return rval;
 	}
@@ -2424,7 +2435,7 @@ OW_CIMServer::_getAssociationClasses(const OW_String& ns,
 		OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, className, cc);
 		if (rc != OW_CIMException::SUCCESS)
 		{
-			OW_THROWCIM(rc);
+			OW_THROWCIM(OW_CIMException::FAILED);
 		}
 		renum.addElement(cc);
 	}
@@ -2564,16 +2575,16 @@ OW_CIMServer::_validatePropagatedKeys(const OW_CIMObjectPath& cop,
 		op.setKeys(it->second);
 
 		OW_CIMClass cc;
-		if(m_mStore.getCIMClass(ns, it->first, cc) != 0);
+		if(m_mStore.getCIMClass(ns, it->first, cc) != OW_CIMException::SUCCESS);
 		{
-			OW_THROW(OW_HDBException,
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				format("Failed to get class for propagated key: %1",
 					it->first).c_str());
 		}
 
 		if(!m_iStore.instanceExists(op, cc))
 		{
-			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				format("Propagated keys refer to non-existent object: %1",
 					op.toString()).c_str());
 		}

@@ -603,13 +603,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this OW_CIMValue object to an output
-	 * stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
 	 * @return true if this OW_CIMValue object contains a numeric type.
 	 */
 	OW_Bool isNumericType() const;

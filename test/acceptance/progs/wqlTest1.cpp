@@ -31,8 +31,6 @@ OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int 
 	for (size_t i = 0; i < cia.size(); ++i)
 	{
         cout << cia[i].toMOF() << endl;
-		//cia[i].toXML(cout);
-        //cout << endl;
 	}
 	if (expectedSize >= 0)
 	{

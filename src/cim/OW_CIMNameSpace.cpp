@@ -194,57 +194,6 @@ OW_CIMNameSpace::toString() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMNameSpace::toXML(ostream& ostr, OW_Bool dolocal) const
-{
-	OW_String name = m_pdata->m_nameSpace;
-
-	if(name.length() == 0)
-		OW_THROW(OW_CIMMalformedUrlException, "Namespace not set");
-
-	if(!dolocal)
-	{
-		ostr
-			<< "<NAMESPACEPATH><HOST>"
-			<< OW_XMLEscape(m_pdata->m_url.getHost())
-			<< "</HOST>";
-	}
-
-	ostr << "<LOCALNAMESPACEPATH>";
-
-	for (;;)
-	{
-		int index = name.indexOf('/');
-
-		if (index == -1)
-			break;
-
-		if(index != 0)
-		{
-			ostr
-				<< "<NAMESPACE NAME=\""
-				<< OW_XMLEscape(name.substring(0, index))
-            << "\"></NAMESPACE>";
-		}
-
-		name = name.substring(index+1);
-	}
-	
-	ostr
-		<< "<NAMESPACE NAME=\""
-		<< OW_XMLEscape(name)
-		<< "\"></NAMESPACE>"
-		<< "</LOCALNAMESPACEPATH>";
-	
-	if (!dolocal)
-	{
-		ostr << "</NAMESPACEPATH>";
-	}
-}
-*/
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMNameSpace::setNameSpace(const OW_String& nameSpace)
 {
@@ -278,7 +227,7 @@ OW_CIMNameSpace::setHost(const OW_String& host)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_CIMNameSpace::setProtocol(const OW_String& protocol)
 {
 	OW_MutexLock l = m_pdata.getWriteLock();

@@ -487,32 +487,32 @@ public:
 		const OW_String& resultRole) = 0;
 
 	/**
-	 * This operation is used to enumerate CIM Objects (Classes or Instances)
+	 * This operation is used to enumerate CIMInstances
 	 * that are associated to a particular source CIM Object.
 	 *
-	 * @param objectName Defines the source CIM Object whose associated Objects
+	 * @param objectName Defines the source CIM Object whose associated Instances
 	 * are to be returned. This may be either a Class name or Instance name
 	 * (modelpath).
 	 *
-	 * @param assocClass The AssocClass input parameter, if not NULL, MUST be a
+	 * @param assocClass The AssocClass input parameter, if not "", MUST be a
 	 * valid CIM Association Class name. It acts as a filter on the returned set
 	 * of Objects by mandating that each returned Object MUST be associated to
 	 * the source Object via an Instance of this Class or one of its subclasses.
 	 *
-	 * @param resultClass The ResultClass input parameter, if not NULL, MUST be
+	 * @param resultClass The ResultClass input parameter, if not "", MUST be
 	 * a valid CIM Class name. It acts as a filter on the returned set of
 	 * Objects by mandating that each returned Object MUST be either an Instance
 	 * of this Class (or one of its subclasses) or be this Class (or one of its
 	 * subclasses).
 	 *
-	 * @param role The Role input parameter, if not NULL, MUST be a valid
+	 * @param role The Role input parameter, if not NULL, "" be a valid
 	 * Property name. It acts as a filter on the returned set of Objects by
 	 * mandating that each returned Object MUST be associated to the source
 	 * Object via an Association in which the source Object plays the specified
 	 * role (i.e. the name of the Property in the Association Class that refers
 	 * to the source Object MUST match the value of this parameter).
 	 *
-	 * @param resultRole The ResultRole input parameter, if not NULL, MUST be a
+	 * @param resultRole The ResultRole input parameter, if not "", MUST be a
 	 * valid Property name. It acts as a filter on the returned set of Objects
 	 * by mandating that each returned Object MUST be associated to the source
 	 * Object via an Association in which the returned Object plays the

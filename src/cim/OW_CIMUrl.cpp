@@ -394,10 +394,4 @@ OW_CIMUrl::writeObject(ostream &ostrm) const
 OW_String
 OW_CIMUrl::toMOF() const {  return "UNIMPLEMENTED"; }
 
-//////////////////////////////////////////////////////////////////////////////
-/*
-void
-OW_CIMUrl::toXML(std::ostream& ostr) const
-	{  ostr << "UNIMPLEMENTED"; }
-*/
 

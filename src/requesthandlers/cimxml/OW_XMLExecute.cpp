@@ -302,7 +302,6 @@ OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_XMLNode& node,
 	if(cv)
 	{
 		OW_CIMtoXML(cv, ostr);
-		//cv.toXML(ostr);
 	}
 
 	if(parameters.size() == 0)
@@ -318,7 +317,6 @@ OW_XMLExecute::doInvokeMethod(ostream& ostr, OW_XMLNode& node,
 		{
 			ostr << "<PARAMVALUE NAME=\"" << cp.getName() << "\">";
 			OW_CIMtoXML(outParams[outParamsIdx++], ostr);
-			//outParams[outParamsIdx++].toXML(ostr);
 			ostr << "</PARAMVALUE";
 		}
 	}
@@ -494,7 +492,6 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_XMLNode& node,
 		OW_CIMObjectPath cop = assocNames.nextElement();
 
 		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
-		//cop.toXML(ostr);
 	}
 }
 
@@ -566,8 +563,6 @@ void OW_XMLExecute::associators(ostream& ostr,
 			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 			propertyList, (isPropertyList && propertyList.size() == 0));
-		//ci.toXML(ostr, cop, false, includeQualifiers, includeClassOrigin,
-		//	propertyList, (isPropertyList && propertyList.size() == 0));
 
 		ostr << "</VALUE.OBJECTWITHPATH>\r\n";
 	}
@@ -774,11 +769,11 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_XMLNode& node,
 
 	path.setObjectName(className);
 	//
-	// Note that while the SUN API allows deep the
-	// XML encodings don't so we simply assume deep
+	// Note that while the API allows deep the
+	// XML encodings don't.
 	//
 
-	OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(path, true);
+	OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNames(path);
 	while (enu.hasMoreElements())
 	{
 		OW_CIMtoXML(enu.nextElement(), ostr, OW_CIMtoXMLFlags::isInstanceName);
@@ -814,7 +809,6 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 		OW_Bool(false));
 
 	path.setObjectName(className);
-	//OW_CIMClass cimClass = hdl.getClass(path, false);
 
 	OW_StringArray* pPropList = (isPropertyList) ? &propertyList : NULL;
 
@@ -832,19 +826,6 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_XMLNode& node,
 			cimInstance.getKeyValuePairs());
 
 		cop.setNameSpace(path.getNameSpace());
-
-		/*
-		if(!cc.getName().equalsIgnoreCase(cimInstance.getClassName()))
-		{
-			cc = hdl.getClass(cop, false);
-			if(!cc)
-			{
-				OW_THROW(OW_Exception, "Have instance for unknown class");
-			}
-		}
-
-		cimInstance.syncWithClass(cc, includeQualifiers);
-		*/
 
 		OW_CIMtoXML(cimInstance, ostr, cop,
 			localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
@@ -865,7 +846,6 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_XMLNode& /*node*/,
 	{
 		OW_CIMQualifierType qual = enu.nextElement();
 		OW_CIMtoXML(qual, ostr);
-		//qual.toXML(ostr);
 
 	}
 	return;

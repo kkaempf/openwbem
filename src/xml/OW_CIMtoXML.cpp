@@ -134,14 +134,12 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 	if(cqt.hasFlavor(fv))
 	{
 		// NOT NECESSARY, default is TRUE
-		// text += fv.toXML() + "=\"true\" ";
 	}
 	else
 	{
 		fv = OW_CIMFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
 		if(cqt.hasFlavor(fv))
 		{
-			//fv.toXML(ostr);
 			OW_CIMtoXML(fv, ostr);
 			ostr << "=\"false\" ";
 		}
@@ -151,14 +149,12 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 	if(cqt.hasFlavor(fv))
 	{
 		// NOT NECESSARY, default is TRUE
-		// text += fv.toXML() + "=\"true\" ";
 	}
 	else
 	{
 		fv = OW_CIMFlavor(OW_CIMFlavor::RESTRICTED);
 		if(cqt.hasFlavor(fv))
 		{
-			//fv.toXML(ostr);
 			OW_CIMtoXML(fv, ostr);
 			ostr << "=\"false\" ";
 		}
@@ -167,7 +163,6 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 	fv = OW_CIMFlavor(OW_CIMFlavor::TOINSTANCE);
 	if(cqt.hasFlavor(fv))
 	{
-		//fv.toXML(ostr);
 		OW_CIMtoXML(fv, ostr);
 		ostr << "=\"true\" ";
 	}
@@ -175,21 +170,18 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 	{
 		//
 		// Not needed, because TOINSTANCE defaults to false!
-		//text += fv.toXML() + "=\"false\" ";
 	}
 
 
 	fv = OW_CIMFlavor(OW_CIMFlavor::TRANSLATE);
 	if(cqt.hasFlavor(fv))
 	{
-		//fv.toXML(ostr);
 		OW_CIMtoXML(fv, ostr);
 		ostr << "=\"true\" ";
 	}
 	//
-	// NOT NECESSARY, default is FALSE
 	//else
-	//  text += fv.toXML() + "=\"false\" ";
+	// NOT NECESSARY, default is FALSE
 
 	ostr << "><SCOPE ";
 
@@ -251,7 +243,6 @@ void OW_CIMtoXML(OW_CIMQualifierType const& cqt, ostream& ostr)
 
 	if(cqt.getDefaultValue())
 	{
-		//m_pdata->m_defaultValue.toXML(ostr);
 		OW_CIMtoXML(cqt.getDefaultValue(), ostr);
 	}
 
@@ -272,7 +263,6 @@ outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
 
 	if(dtype.isReferenceType())
 	{
-		//cp.getValue().toXML(ostr);
 		OW_CIMtoXML(cp.getValue(),ostr);
 		return;
 	}
@@ -318,7 +308,6 @@ void OW_CIMtoXML(OW_CIMObjectPath const& cop, ostream& ostr,
 	if (isInstanceName == OW_CIMtoXMLFlags::isNotInstanceName)
 	{
 		ostr << "<INSTANCEPATH>";
-		//m_pdata->m_nameSpace.toXML(ostr, false);
 		OW_CIMtoXML(cop.getFullNameSpace(), ostr, OW_CIMtoXMLFlags::dontDoLocal);
 	}
 
@@ -397,9 +386,6 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	 * we probably should do the same with indications, but currently
 	 * have no isIndication() flag!  TODO
 	 */
-	//OW_CIMQualifierArray::const_iterator iter = std::find(
-	//	cc.getQualifiers().begin(), cc.getQualifiers().end(),
-	//	OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
 	if (cc.isAssociation() &&
 		std::find(cc.getQualifiers().begin(), cc.getQualifiers().end(),
 		OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == cc.getQualifiers().end())
@@ -416,20 +402,6 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 		for(size_t i = 0; i < cc.getQualifiers().size(); i++)
 		{
 			OW_CIMQualifier q(cc.getQualifiers()[i]);
-			/*
-			if (q.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
-			{
-				if (q.getValue() && q.getValue().getType() == OW_CIMDataType::BOOLEAN)
-				{
-					OW_Bool b;
-					q.getValue.get(b);
-					if (b)
-					{
-						continue;
-					}
-				}
-			}
-			*/
 			OW_CIMtoXML(q, ostr, localOnly);
 		}
 	}
@@ -449,8 +421,6 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 				{
 					if(pName.equalsIgnoreCase(propertyList[j]))
 					{
-						//prop.toXML(ostr, localOnly, includeQualifiers,
-						//	includeClassOrigin);
 						OW_CIMtoXML(prop, ostr, localOnly, includeQualifiers,
 							includeClassOrigin);
 						break;
@@ -459,8 +429,6 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 			}
 			else
 			{
-				//prop.toXML(ostr, localOnly, includeQualifiers,
-				//	includeClassOrigin);
 				OW_CIMtoXML(prop, ostr, localOnly, includeQualifiers,
 					includeClassOrigin);
 			}
@@ -470,8 +438,6 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	// Process methods
 	for(size_t i = 0; i < cc.getAllMethods().size(); i++)
 	{
-		//m_pdata->m_methods[i].toXML(ostr, localOnly, includeQualifiers,
-		//	includeClassOrigin);
 		OW_CIMtoXML(cc.getAllMethods()[i], ostr, localOnly,includeQualifiers,
 			includeClassOrigin);
 	}
@@ -513,7 +479,6 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 	{
 		for(size_t i = 0; i < ci.getQualifiers().size(); i++)
 		{
-			//m_pdata->m_qualifiers[i].toXML(ostr, localOnly);
 			OW_CIMtoXML(ci.getQualifiers()[i], ostr, localOnly);
 		}
 	}
@@ -535,8 +500,6 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 				{
 					if(pName.equalsIgnoreCase(propertyList[j]))
 					{
-						//prop.toXML(ostr, localOnly, includeQualifiers,
-						//	includeClassOrigin);
 						OW_CIMtoXML(prop,ostr,localOnly ,includeQualifiers,
 							includeClassOrigin);
 						break;
@@ -545,8 +508,6 @@ void OW_CIMtoXML(OW_CIMInstance const& ci, ostream& ostr,
 			}
 			else
 			{
-				//prop.toXML(ostr, localOnly, includeQualifiers,
-				//	includeClassOrigin);
 				OW_CIMtoXML(prop,ostr,localOnly ,includeQualifiers,
 					includeClassOrigin);
 			}
@@ -1047,7 +1008,6 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	{
 		//
 		// Not needed, because OVERRIDABLE defaults to true!
-		//text += fv.toXml() + "=\"true\" ";
 	}
 	else
 	{
@@ -1064,7 +1024,6 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	{
 		//
 		// Not needed, because TOSUBCLASS defaults to true!
-		//text += fv.toXML() + "=\"true\" ";
 	}
 	else
 	{
@@ -1086,7 +1045,6 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	{
 		//
 		// Not needed, because TOINSTANCE defaults to false!
-		//text += fv.toXML() + "=\"false\" ";
 	}
 
 	fv = OW_CIMFlavor(OW_CIMFlavor::TRANSLATE);
@@ -1099,7 +1057,6 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 	{
 		//
 		// Not needed, because TRANSLATABLE defaults to false!
-		//text += fv.toXML() + "=\"false\" ";
 	}
 
 	ostr << '>';

@@ -461,7 +461,6 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_Bool deep, OW_Bool localOnly,
 			OW_CIMtoXML(enu.nextElement(),cout, OW_CIMObjectPath(),
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-			//enu.nextElement().toXML(cout);
 		   cout << endl;
 		}
 	}
@@ -499,7 +498,6 @@ getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 		OW_CIMtoXML(in, cout, OW_CIMObjectPath(),
 				OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 				OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-		//in.toXML(cout);
 		cout << endl;
 	}
 	catch (OW_CIMException& e)
@@ -785,7 +783,6 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 			  	OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-				//enu.nextElement().toXML(cout);
 			  	cout << endl;
 			}
 			else
@@ -870,7 +867,6 @@ references(OW_CIMOMHandleIFC& hdl,
 			  	OW_CIMtoXML(enu.nextElement(), cout, OW_CIMObjectPath(),
 					OW_CIMtoXMLFlags::notLocalOnly,OW_CIMtoXMLFlags::includeQualifiers,
 					OW_CIMtoXMLFlags::includeClassOrigin,OW_StringArray());
-				//enu.nextElement().toXML(cout);
 			  	cout << endl;
 			}
 			else

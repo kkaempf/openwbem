@@ -68,14 +68,6 @@ public:
 	virtual OW_String toMOF() const = 0;
 
 	/**
-	 * Write the XML representation of this object out to the output stream
-	 * according to the appropriate XML DTD specified for the object type.
-	 *
-	 * @param ostrm The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostrm) const = 0;
-
-	/**
 	 * Read this object from an input stream. The object must have been
 	 * previously written through a call to writeObject.
 	 *
@@ -114,14 +106,6 @@ public:
 	 *		terminated string.
 	 */
 	static void writeSig(std::ostream& ostrm, const char* const sig);
-
-	/**
-	 * This is a convenience method, that allows the caller to get the XML
-	 * representation of this class without an output stream.
-	 *
-	 * @return The XML representation of this class as an OW_String.
-	 */
-	//OW_String convertToXML() const;
 
 };
 

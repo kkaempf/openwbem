@@ -230,11 +230,6 @@ public:
 	 */
 	virtual OW_String toMOF() const;
 
-	/**
-	 * Write the XML representation of this OW_CIMUrl to an output stream.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
 	friend std::ostream& operator<< (std::ostream& ostrm, const OW_CIMUrl& arg);
 
 private:
