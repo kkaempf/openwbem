@@ -12,5 +12,6 @@ stringArray.mof \
 wqlTest.mof \
 wqlTest.out \
 testsuite.out \
-testsuite.mof
+testsuite.mof \
+wqlTest2.out
 
