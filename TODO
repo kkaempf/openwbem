@@ -15,17 +15,6 @@ Testing:
       specifically, the indication delivery is known to be different. 
     - Test case insensitivity (eg. try to add a disk and DISK class)
 
-Fix problems:
-    - On startup of UDS if the UDS already exists, SocketImpl need to figure 
-      out if someone else is listening. If so, then fail, otherwise delete it.
-      Use fcntl locking (if available, else try flock) to check.
-    - OW_File needs to be more C++ish with a destructor, reasonable copy
-      semantics, etc.
-    - Use kill(pid, 0) to detect a stale pid file.
-    - Daemon doesn't withstand repeated HUP signals.
-    - Get rid of OW_ThreadEvent because it is subject to race conditions.
-      Replace it with a condition variable class.
-
 New features:
     - Providers/Provider interfaces in a different process. Implement with 
       fork/exec/pipes for communication?
