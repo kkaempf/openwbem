@@ -90,7 +90,7 @@ extern "C"
 #include <cstdio>
 #include <iostream>
 
-using namespace std; 
+using namespace std;
 
 namespace OW_NAMESPACE
 {
@@ -111,7 +111,7 @@ namespace
 {
 const String COMPONENT_NAME("ow.owcimomd");
 
-const int DAEMONIZE_PIPE_TIMEOUT = 25; 
+const int DAEMONIZE_PIPE_TIMEOUT = 25;
 
 Options processCommandLineOptions(int argc, char** argv);
 void handleSignal(int sig);
@@ -119,14 +119,14 @@ void setupSigHandler(bool dbgFlg);
 
 UnnamedPipeRef plat_upipe;
 
-UnnamedPipeRef daemonize_upipe; 
+UnnamedPipeRef daemonize_upipe;
 
 char** g_argv = 0;
 
 #ifdef OW_NETWARE
-Condition g_shutdownCond; 
-bool g_shutDown = false; 
-NonRecursiveMutex g_shutdownGuard; 
+Condition g_shutdownCond;
+bool g_shutDown = false;
+NonRecursiveMutex g_shutdownGuard;
 void* WarnFuncRef = NULL;
 rtag_t EventRTag;
 event_handle_t DownEvent;
@@ -152,8 +152,8 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 #ifndef WIN32
 #ifdef OW_NETWARE
 	{
-		NonRecursiveMutexLock l(g_shutdownGuard); 
-		g_shutDown = false; 
+		NonRecursiveMutexLock l(g_shutdownGuard);
+		g_shutDown = false;
 	}
 #endif
 	initDaemonizePipe();
@@ -183,7 +183,7 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 	}
 
 
-	int pid = -1; 
+	int pid = -1;
 #if !defined(OW_NETWARE)
 	String pidFile(env->getConfigItem(ConfigOpts::PIDFILE_opt, OW_DEFAULT_PIDFILE));
 	pid = PidFile::checkPid(pidFile.c_str());
@@ -206,13 +206,13 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 			case -1:
 				OW_THROW_ERRNO_MSG(DaemonException,
 					"FAILED TO DETACH FROM THE TERMINAL - First fork");
-			default: 
-				int status = DAEMONIZE_FAIL; 
-				if (daemonize_upipe->readInt(&status) < 1 
+			default:
+				int status = DAEMONIZE_FAIL;
+				if (daemonize_upipe->readInt(&status) < 1
 						|| status != DAEMONIZE_SUCCESS)
 				{
 					cerr << "Error starting CIMOM.  Check the log files." << endl;
-					_exit(1); 
+					_exit(1);
 				}
 				_exit(0); // exit the original process
 		}
@@ -227,12 +227,12 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 			case 0:
 				break;
 			case -1:
-				sendDaemonizeStatus(DAEMONIZE_FAIL); 
+				sendDaemonizeStatus(DAEMONIZE_FAIL);
 				OW_THROW_ERRNO_MSG(DaemonException,
 					"FAILED TO DETACH FROM THE TERMINAL - Second fork");
 				exit(1);
 			default:
-				_exit(0); 
+				_exit(0);
 		}
 #endif
 		chdir("/");
@@ -251,7 +251,7 @@ daemonize(bool dbgFlg, const String& daemonName, const ServiceEnvironmentIFCRef&
 #if !defined(OW_NETWARE)
 	if (PidFile::writePid(pidFile.c_str()) == -1)
 	{
-		sendDaemonizeStatus(DAEMONIZE_FAIL); 
+		sendDaemonizeStatus(DAEMONIZE_FAIL);
 		OW_THROW_ERRNO_MSG(DaemonException,
 			Format("Failed to write the pid file (%1)", pidFile).c_str());
 	}
@@ -269,11 +269,11 @@ daemonShutdown(const String& daemonName, const ServiceEnvironmentIFCRef& env)
 {
 #ifndef WIN32
 #if defined(OW_NETWARE)
-	(void)daemonName; 
+	(void)daemonName;
 	{
-		NonRecursiveMutexLock l(g_shutdownGuard); 
-		g_shutDown = true; 
-		g_shutdownCond.notifyAll(); 
+		NonRecursiveMutexLock l(g_shutdownGuard);
+		g_shutDown = true;
+		g_shutdownCond.notifyAll();
 		pthread_yield();
 		if(!FromEventHandler)
 		{
@@ -353,14 +353,14 @@ void rerunDaemon()
 {
 #ifndef WIN32
 #ifdef OW_HAVE_PTHREAD_KILL_OTHER_THREADS_NP
-	// do this, since it seems that on some distros (debian sarge for instance) 
-	// it doesn't happen when calling execv(), and it shouldn't hurt if it's 
+	// do this, since it seems that on some distros (debian sarge for instance)
+	// it doesn't happen when calling execv(), and it shouldn't hurt if it's
 	// called twice.
 	pthread_kill_other_threads_np();
 #endif
 
 #ifdef OW_DARWIN
-	// On Darwin, execv() fails with a ENOTIMP if any threads are running. 
+	// On Darwin, execv() fails with a ENOTIMP if any threads are running.
 	// The only way we have to really get rid of all the threads is to call fork() and exit() the parent.
 	// Note that we don't do this on other platforms because fork() isn't safe to call from a signal handler, and isn't necessary.
 	if (::fork() != 0)
@@ -373,7 +373,7 @@ void rerunDaemon()
 	// On Linux pthreads will kill off all the threads when we call
 	// execv().  If we close all the fds, then that breaks pthreads and
 	// execv() will just hang.
-	// Instead set the close on exec flag so all file descriptors are closed 
+	// Instead set the close on exec flag so all file descriptors are closed
 	// by the kernel when we evecv() and we won't leak them.
 	rlimit rl;
 	int i = sysconf(_SC_OPEN_MAX);
@@ -527,6 +527,7 @@ extern "C" {
 static void
 theSigHandler(int sig, siginfo_t* info, void* context)
 {
+	int savedErrno = errno;
 	try
 	{
 		Signal::SignalInformation extractedSignal;
@@ -540,7 +541,7 @@ theSigHandler(int sig, siginfo_t* info, void* context)
 			case SIGTERM:
 			case SIGINT:
 #if defined(OW_NETWARE)
-			case SIGABRT: 
+			case SIGABRT:
 #endif
 				extractedSignal.signalAction = SHUTDOWN;
 				pushSig(extractedSignal);
@@ -556,6 +557,8 @@ theSigHandler(int sig, siginfo_t* info, void* context)
 	catch (...) // can't let exceptions escape from here or we'll segfault.
 	{
 	}
+	errno = savedErrno;
+
 }
 
 #ifndef WIN32
@@ -572,12 +575,12 @@ fatalSigHandler(int sig, siginfo_t* info, void* context)
 static void
 netwareExitHandler(void*)
 {
-	theSigHandler(SIGTERM); 
+	theSigHandler(SIGTERM);
 	pthread_yield();
-	NonRecursiveMutexLock l(g_shutdownGuard); 
+	NonRecursiveMutexLock l(g_shutdownGuard);
 	while(!g_shutDown)
 	{
-		g_shutdownCond.wait(l); 
+		g_shutdownCond.wait(l);
 	}
 }
 
@@ -586,12 +589,12 @@ netwareShutDownEventHandler(void*,
 	void*, void*)
 {
 	FromEventHandler = true;
-	theSigHandler(SIGTERM); 
+	theSigHandler(SIGTERM);
 	pthread_yield();
-	NonRecursiveMutexLock l(g_shutdownGuard); 
+	NonRecursiveMutexLock l(g_shutdownGuard);
 	while(!g_shutDown)
 	{
-		g_shutdownCond.wait(l); 
+		g_shutdownCond.wait(l);
 	}
 	return 0;
 }
@@ -675,12 +678,12 @@ setupSigHandler(bool dbgFlg)
 	//handleSignal(SIGSTKFLT);
 
 #ifdef OW_NETWARE
-	int rv; 
+	int rv;
 	if ((rv = NXVmRegisterExitHandler(netwareExitHandler, 0) != 0))
 	{
 		OW_THROW(DaemonException,
 			Format("FAILED TO REGISTER EXIT HANDLER "
-			"NXVmRegisterExitHandler returned %1", rv).c_str()); 
+			"NXVmRegisterExitHandler returned %1", rv).c_str());
 	}
 	EventRTag = AllocateResourceTag(getnlmhandle(), "Server down event",
 		EventSignature);
@@ -750,7 +753,7 @@ void removeFatalSignalHandlers()
 void initDaemonizePipe()
 {
 	daemonize_upipe = UnnamedPipe::createUnnamedPipe();
-	daemonize_upipe->setTimeouts(DAEMONIZE_PIPE_TIMEOUT); 
+	daemonize_upipe->setTimeouts(DAEMONIZE_PIPE_TIMEOUT);
 }
 
 //////////////////////////////////////////////////////////////////////////////
