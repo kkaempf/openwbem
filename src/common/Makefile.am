@@ -145,7 +145,6 @@ OW_LogLevel.hpp \
 OW_Logger.hpp \
 OW_Map.hpp \
 OW_MemTracer.hpp \
-OW_Memory.hpp \
 OW_Mutex.hpp \
 OW_MutexImpl.hpp \
 OW_NonRecursiveMutex.hpp \
