@@ -138,7 +138,7 @@ InstanceRepository::makeInstanceKey(const String& ns, const CIMObjectPath& cop,
 		if(!pra[i].getValue())
 		{
 			OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
-				"object path has key with missing value");
+				Format("object path (%1) has key (%2) with NULL value", cop, pra[i].getName()).c_str());
 		}
 	}
 	// If not all the key properties were specified, throw an exception
