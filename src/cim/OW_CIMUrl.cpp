@@ -39,6 +39,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_Bool.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
+#include "OW_StringBuffer.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -326,19 +327,26 @@ CIMUrl::checkRef()
 void
 CIMUrl::buildSpec()
 {
-	m_pdata->m_spec = m_pdata->m_protocol + "://" + m_pdata->m_host;
+	StringBuffer tmp(m_pdata->m_protocol);
+	tmp += "://";
+	tmp += m_pdata->m_host;
 	if (m_pdata->m_port > 0)
 	{
-		m_pdata->m_spec += ":" + String(m_pdata->m_port);
+		tmp += ":";
+		tmp += String(m_pdata->m_port);
 	}
 	if (!m_pdata->m_file.empty())
 	{
-		m_pdata->m_spec += "/" + m_pdata->m_file;
+		tmp += '/';
+		tmp += m_pdata->m_file;
 	}
 	if (!m_pdata->m_ref.empty())
 	{
-		m_pdata->m_spec += "#" + m_pdata->m_ref;
+		tmp += '#';
+		tmp += m_pdata->m_ref;
 	}
+
+	m_pdata->m_spec = tmp.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
