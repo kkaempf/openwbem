@@ -17,6 +17,7 @@
 #ifndef _NPI_H_
 #define _NPI_H_
 
+#define _COMPILE_UNIX
 #include "os_compile.h"
 
 #ifdef _COMPILE_WIN32

@@ -27,51 +27,48 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __NPIBASEPROVIDER_HPP__
-#define __NPIBASEPROVIDER_HPP__
 
-#include "NPIExternal.hpp"
-#include <Pegasus/Common/Config.h>
-#include <Pegasus/Provider2/CIMInstanceProvider.h>
+#ifndef OW_NPI_METHOD_PROVIDER_PROXY_HPP_
+#define OW_NPI_METHOD_PROVIDER_PROXY_HPP_
 
+#include "OW_config.h"
+#include "OW_MethodProviderIFC.hpp"
+#include "OW_FTABLERef.hpp"
 
-PEGASUS_NAMESPACE_BEGIN
-
-class PEGASUS_PROVIDER_LINKAGE NPIBaseProvider : public virtual CIMBaseProvider
+class OW_NPIMethodProviderProxy : public OW_MethodProviderIFC
 {
 public:
+	OW_NPIMethodProviderProxy(const OW_FTABLERef& f)
+		: m_ftable(f)
+	{
+	}
 
-    NPIBaseProvider();
-    //virtual ~NPIBaseProvider();
-    ~NPIBaseProvider();
+	virtual ~OW_NPIMethodProviderProxy() {}
 
-    //CIMBaseProvider Interface
-    virtual void initialize(CIMOMHandle & cimom) {}
-    virtual void terminate() {}
-    void NPI_initialize(CIMOMHandle & cimom, char * libraryName);
-    void NPI_terminate();
+	/**
+	 * The CIMOM calls this method when the method specified in the parameters
+	 * is to be invoked.
+	 *
+	 * @param cop Contains the path to the instance whose method must be
+	 * 	invoked.
+	 * @param methodName The name of the method.
+	 * @param inParams An array of OW_CIMValues which are the input parameters
+	 * 	for this method.
+	 * @param outParams An array of OW_CIMValues which are the output
+	 * 	parameters for this method.
+	 *
+	 * @returns OW_CIMValue - The return value of the method.  Must be a
+	 *    valid OW_CIMValue.
+	 *
+	 * @throws OW_CIMException
+	 */
+	virtual OW_CIMValue invokeMethod(const OW_ProviderEnvironmentIFCRef &env,
+		const OW_CIMObjectPath &cop, const OW_String &methodName,
+		const OW_CIMValueArray &in, OW_CIMValueArray &out);
 
-    // this function is introduced to be overloaded if necessary
-
-    char * getOperationContext();
-    void setOperationContext(char * oc);
-
-protected:
-
-    NPIHandle * _npiHandle;
-    CIMOMHandle _cimomHandle;
-    CIMRepository * _repository;
-    // necessary to construct cimomhandle with synchronous message queue
-    //MessageQueue * _NPIoutputQueue;
-    NPIenv * _env;
-    int _libraryCount;
-    void * _libraryHandle;
-    FTABLE _functionTable;
-
-    char * _operationContext; // needed for perl
+private:
+	OW_FTABLERef m_ftable;
 };
-
-PEGASUS_NAMESPACE_END
-
-#endif // __NPIBASEPROVIDER_HPP__
+										
+#endif
 

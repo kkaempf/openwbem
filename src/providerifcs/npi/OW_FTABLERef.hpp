@@ -27,51 +27,17 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#ifndef __NPIBASEPROVIDER_HPP__
-#define __NPIBASEPROVIDER_HPP__
 
-#include "NPIExternal.hpp"
-#include <Pegasus/Common/Config.h>
-#include <Pegasus/Provider2/CIMInstanceProvider.h>
+#ifndef OW_FTABLE_REF_HPP_
+#define OW_FTABLE_REF_HPP_
+
+#include "OW_config.h"
+
+#include "OW_SharedLibraryReference.hpp"
+#include "npi.h"
+
+typedef OW_SharedLibraryReference< ::FTABLE> OW_FTABLERef;
 
 
-PEGASUS_NAMESPACE_BEGIN
-
-class PEGASUS_PROVIDER_LINKAGE NPIBaseProvider : public virtual CIMBaseProvider
-{
-public:
-
-    NPIBaseProvider();
-    //virtual ~NPIBaseProvider();
-    ~NPIBaseProvider();
-
-    //CIMBaseProvider Interface
-    virtual void initialize(CIMOMHandle & cimom) {}
-    virtual void terminate() {}
-    void NPI_initialize(CIMOMHandle & cimom, char * libraryName);
-    void NPI_terminate();
-
-    // this function is introduced to be overloaded if necessary
-
-    char * getOperationContext();
-    void setOperationContext(char * oc);
-
-protected:
-
-    NPIHandle * _npiHandle;
-    CIMOMHandle _cimomHandle;
-    CIMRepository * _repository;
-    // necessary to construct cimomhandle with synchronous message queue
-    //MessageQueue * _NPIoutputQueue;
-    NPIenv * _env;
-    int _libraryCount;
-    void * _libraryHandle;
-    FTABLE _functionTable;
-
-    char * _operationContext; // needed for perl
-};
-
-PEGASUS_NAMESPACE_END
-
-#endif // __NPIBASEPROVIDER_HPP__
+#endif
 
