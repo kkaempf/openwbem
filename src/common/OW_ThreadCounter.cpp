@@ -30,6 +30,7 @@
 #include "OW_config.h"
 #include "OW_ThreadCounter.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_Assertion.hpp"
 
 OW_ThreadCounter::OW_ThreadCounter(OW_Int32 maxThreads)
 	: m_maxThreads(maxThreads)
@@ -48,29 +49,25 @@ OW_ThreadCounter::incThreadCount()
 		m_runCountCondition.wait(l);
 	}
 	++m_runCount;
-	m_runCountCondition.notifyAll();
 }
 
 void
 OW_ThreadCounter::decThreadCount()
 {
 	OW_MutexLock l(m_runCountGuard);
-	while (m_runCount <= 0)
-	{
-		m_runCountCondition.wait(l);
-	}
+	OW_ASSERT(m_runCount > 0);
 	--m_runCount;
 	m_runCountCondition.notifyAll();
 }
 
-OW_Int32 
+OW_Int32
 OW_ThreadCounter::getThreadCount()
 {
 	OW_MutexLock l(m_runCountGuard);
 	return m_runCount;
 }
 
-void 
+void
 OW_ThreadCounter::waitForAll()
 {
 	OW_MutexLock runCountLock(m_runCountGuard);
