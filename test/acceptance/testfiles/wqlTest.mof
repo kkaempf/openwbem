@@ -79,6 +79,6 @@ instance of wqlTestClass
 {
 	name = "test10";
 
-	realData = 456.0e78;
+	realData = 456.0e18;
 };
 

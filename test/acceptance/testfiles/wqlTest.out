@@ -98,7 +98,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -201,7 +201,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -748,7 +748,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -851,7 +851,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -1640,7 +1640,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -1733,7 +1733,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -1826,7 +1826,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -1919,7 +1919,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2140,7 +2140,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2153,7 +2153,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2166,7 +2166,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2179,7 +2179,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2202,7 +2202,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2225,7 +2225,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2248,7 +2248,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2271,7 +2271,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2364,7 +2364,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2457,7 +2457,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2550,7 +2550,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2643,7 +2643,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2746,7 +2746,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -2849,7 +2849,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -3166,7 +3166,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -3189,7 +3189,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -3384,7 +3384,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -3447,7 +3447,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -3576,7 +3576,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -3679,7 +3679,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4036,7 +4036,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4059,7 +4059,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4122,7 +4122,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4185,7 +4185,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4384,7 +4384,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4477,7 +4477,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4604,7 +4604,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4617,7 +4617,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4762,7 +4762,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4815,7 +4815,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -4914,7 +4914,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5007,7 +5007,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5174,7 +5174,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5187,7 +5187,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5240,7 +5240,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5293,7 +5293,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5838,7 +5838,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5861,7 +5861,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5884,7 +5884,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5907,7 +5907,7 @@ INSTANCE OF wqlTestClass
   boolean booleanData;
   uint64 uint64Data;
   string stringData;
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 
@@ -5998,7 +5998,7 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   string name="test10";
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 INSTANCE OF wqlTestClass
@@ -6013,7 +6013,7 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   string name="test10";
-  real64 realData=4.56e+80;
+  real64 realData=4.56e+20;
 };
 
 INSTANCE OF wqlTestClass
