@@ -30,6 +30,8 @@
 #include "OW_config.h"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_SocketUtils.hpp"
+#include "OW_SocketException.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_RequestHandlerIFC::OW_RequestHandlerIFC()
@@ -78,5 +80,37 @@ void
 OW_RequestHandlerIFC::setEnvironment(OW_ServiceEnvironmentIFCRef env)
 {
 	m_env = env;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_RequestHandlerIFC::getHost()
+{
+	if (!m_cachedHost.empty())
+	{
+		return m_cachedHost;
+	}
+
+	try
+	{
+		// first try doing a DNS lookup for our full hostname
+		m_cachedHost = OW_SocketUtils::getFullyQualifiedHostName();
+	}
+	catch (const OW_SocketException&)
+	{
+	}
+	
+	if (m_cachedHost.empty())
+	{
+		// TODO:
+		// now try setting it to the ip on the incoming socket, if we got a tcp connection.
+		// if the connection came in on the domain socket, just set it to the first ip we can get.
+	}
+
+	if (m_cachedHost.empty())
+	{
+		m_cachedHost = "localhost";
+	}
+	return m_cachedHost;
 }
 

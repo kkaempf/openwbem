@@ -155,6 +155,7 @@ private:
 	static FuncEntry g_funcs[];
 	static bool funcEntryCompare(const FuncEntry& f1, const FuncEntry& f2);
 	static FuncEntry* g_funcsEnd;
+
 };
 
 

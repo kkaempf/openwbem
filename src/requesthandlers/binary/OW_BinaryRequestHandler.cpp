@@ -42,6 +42,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_SocketException.hpp"
 
 extern "C"
 {
@@ -63,7 +64,7 @@ OW_BinaryRequestHandler::OW_BinaryRequestHandler()
 OW_RequestHandlerIFC*
 OW_BinaryRequestHandler::clone() const
 {
-	return new OW_BinaryRequestHandler();
+	return new OW_BinaryRequestHandler(*this);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -406,23 +407,31 @@ namespace
 	class BinaryCIMObjectPathWriter : public OW_CIMObjectPathResultHandlerIFC
 	{
 	public:
-		BinaryCIMObjectPathWriter(std::ostream& ostrm_)
+		BinaryCIMObjectPathWriter(std::ostream& ostrm_, const OW_String& host_)
 		: ostrm(ostrm_)
+		, m_host(host_)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMObjectPath &cop_)
 		{
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
 			OW_CIMObjectPath cop(cop_);
-            if (cop.getFullNameSpace().isLocal())
+			if (cop.getFullNameSpace().isLocal())
 			{
-				cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+				try
+				{
+					cop.setHost(m_host);
+				}
+				catch (const OW_SocketException& e)
+				{
+				}
 			}
 
 			OW_BinarySerialization::writeObjectPath(ostrm, cop);
 		}
 	private:
 		std::ostream& ostrm;
+		OW_String m_host;
 	};
 
 	class BinaryCIMInstanceWriter : public OW_CIMInstanceResultHandlerIFC
@@ -712,7 +721,7 @@ OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	chdl->setProperty(ns, op, propName, cv);
-    OW_BinarySerialization::write(ostrm, OW_BIN_OK);
+	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
@@ -795,7 +804,7 @@ OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleIFCRef chdl,
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
 	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
-	BinaryCIMObjectPathWriter handler(ostrm);
+	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->enumInstanceNames(ns, className, handler);
 
 	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
@@ -914,7 +923,7 @@ OW_BinaryRequestHandler::associatorNames(OW_CIMOMHandleIFCRef chdl,
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
 	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
-	BinaryCIMObjectPathWriter handler(ostrm);
+	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->associatorNames(ns, op, handler, assocClass,
 		resultClass, role, resultRole);
 	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
@@ -977,7 +986,7 @@ OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
 	OW_BinarySerialization::write(ostrm, OW_BINSIG_OPENUM);
-	BinaryCIMObjectPathWriter handler(ostrm);
+	BinaryCIMObjectPathWriter handler(ostrm, getHost());
 	chdl->referenceNames(ns, op, handler, resultClass, role);
 	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
 	OW_BinarySerialization::write(ostrm, OW_END_OPENUM);
@@ -1061,8 +1070,6 @@ OW_BinaryRequestHandler::getContentType() const
 {
 	return OW_String("application/x-owbinary");
 }
-
-//////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 OW_REQUEST_HANDLER_FACTORY(OW_BinaryRequestHandler);

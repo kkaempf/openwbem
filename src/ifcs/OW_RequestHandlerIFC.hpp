@@ -138,6 +138,9 @@ protected:
 
 	OW_String m_cimError;
 
+	OW_String getHost();
+	OW_String m_cachedHost;
+
 private:
 
 	// set these through setError() and clearError()

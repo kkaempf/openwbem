@@ -341,8 +341,9 @@ namespace
 	class CIMObjectPathXMLOutputter : public OW_CIMObjectPathResultHandlerIFC
 	{
 	public:
-		CIMObjectPathXMLOutputter(ostream& ostr_)
+		CIMObjectPathXMLOutputter(ostream& ostr_, const OW_String& host)
 		: ostr(ostr_)
+		, m_host(host)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMObjectPath &cop_)
@@ -355,8 +356,7 @@ namespace
 			{
 				try
 				{
-					// TODO: Cache this value?
-					cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+					cop.setHost(m_host);
 				}
 				catch (const OW_SocketException& e)
 				{
@@ -376,6 +376,7 @@ namespace
 		}
 	private:
 		ostream& ostr;
+		OW_String m_host;
 	};
 }
 
@@ -632,7 +633,7 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 
 	ostr << "<IRETURNVALUE>";
-	CIMObjectPathXMLOutputter handler(ostr);
+	CIMObjectPathXMLOutputter handler(ostr, getHost());
 	hdl.associatorNames(ns, objectName, handler, assocClass, resultClass,
 		params[3].val.toString(), params[4].val.toString());
 	ostr << "</IRETURNVALUE>";
@@ -648,13 +649,15 @@ namespace
 			std::ostream& ostr_,
 			const OW_String& ns_,
 			bool includeQualifiers_, bool includeClassOrigin_, bool isPropertyList_,
-			OW_StringArray& propertyList_)
+			OW_StringArray& propertyList_,
+			const OW_String& host_)
 		: ostr(ostr_)
 		, ns(ns_)
 		, includeQualifiers(includeQualifiers_)
 		, includeClassOrigin(includeClassOrigin_)
 		, isPropertyList(isPropertyList_)
 		, propertyList(propertyList_)
+		, m_host(host_)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMInstance &ci)
@@ -666,8 +669,7 @@ namespace
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
 			try
 			{
-				// TODO: Cache this value?
-				cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+				cop.setHost(m_host);
 			}
 			catch (const OW_SocketException& e)
 			{
@@ -688,7 +690,7 @@ namespace
 		OW_String ns;
 		bool includeQualifiers, includeClassOrigin, isPropertyList;
 		OW_StringArray& propertyList;
-
+		OW_String m_host;
 	};
 	class AssocCIMClassXMLOutputter : public OW_CIMClassResultHandlerIFC
 	{
@@ -790,7 +792,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	{
 		// instance path
 		AssocCIMInstanceXMLOutputter handler(ostr, ns, includeQualifiers,
-			includeClassOrigin, isPropertyList, propertyList);
+			includeClassOrigin, isPropertyList, propertyList, getHost());
 
 		hdl.associators(ns, objectName, handler,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
@@ -1380,7 +1382,7 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 
 	ostr << "<IRETURNVALUE>";
-	CIMObjectPathXMLOutputter handler(ostr);
+	CIMObjectPathXMLOutputter handler(ostr, getHost());
 	hdl.referenceNames(ns, path, handler, resultClass, params[2].val.toString());
 	ostr << "</IRETURNVALUE>";
 }
@@ -1435,7 +1437,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	else
 	{
 		AssocCIMInstanceXMLOutputter handler(ostr, ns, includeQualifiers,
-			includeClassOrigin, isPropertyList, propertyList);
+			includeClassOrigin, isPropertyList, propertyList, getHost());
 
 		hdl.references(ns, path, handler, resultClass,
 			role, includeQualifiers, includeClassOrigin, pPropList);
