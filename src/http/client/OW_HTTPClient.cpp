@@ -388,7 +388,7 @@ OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& 
 	// add common headers
 	prepareHeaders();
 	OW_ASSERT(!m_contentType.empty());
-	addHeaderCommon("Content-Type", m_contentType);
+	addHeaderCommon("Content-Type", m_contentType + "; charset=\"utf-8\"");
 
 	if (!m_doDeflateOut)
 	{

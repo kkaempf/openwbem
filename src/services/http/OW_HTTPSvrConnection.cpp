@@ -350,7 +350,7 @@ OW_HTTPSvrConnection::beginPostResponse()
 {
 	m_respHeaderPrefix = OW_HTTPUtils::getCounterStr();
 	addHeader(
-		"Content-Type","application/xml; charset=\"utf-8\"");
+		"Content-Type", m_requestHandler->getContentType() + "; charset=\"utf-8\"");
 	if (m_method == M_POST)
 	{
 		addHeader("Ext","");
