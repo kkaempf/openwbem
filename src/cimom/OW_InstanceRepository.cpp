@@ -540,10 +540,9 @@ OW_InstanceRepository::deleteNameSpace(const OW_String& nsName)
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_InstanceRepository::createNameSpace(const OW_StringArray& nameComps,
-	OW_Bool rootCheck)
+OW_InstanceRepository::createNameSpace(OW_String ns)
 {
-	return OW_GenericHDBRepository::createNameSpace(nameComps, rootCheck);
+	return OW_GenericHDBRepository::createNameSpace(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////////

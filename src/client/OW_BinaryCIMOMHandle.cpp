@@ -192,8 +192,9 @@ OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_CIMProtocolIFCRef prot)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className)
+OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns_, const OW_String& className)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteClass", ns);
 	std::iostream& strm = *strmRef;
@@ -207,8 +208,9 @@ OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& classNam
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& inst)
+OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns_, const OW_CIMObjectPath& inst)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteInstance", ns);;
 	std::iostream& strm = *strmRef;
@@ -221,8 +223,9 @@ OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
+OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns_, const OW_String& qualName)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"DeleteQualifier", ns);
 	std::iostream& strm = *strmRef;
@@ -235,11 +238,12 @@ OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::enumClassNames(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClassNames", ns);
 	std::iostream& strm = *strmRef;
@@ -255,11 +259,12 @@ OW_BinaryCIMOMHandle::enumClassNames(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::enumClass(const OW_String& ns,
+OW_BinaryCIMOMHandle::enumClass(const OW_String& ns_,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateClasses", ns);
 	std::iostream& strm = *strmRef;
@@ -280,10 +285,11 @@ OW_BinaryCIMOMHandle::enumClass(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::enumInstanceNames(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstanceNames", ns);
 	std::iostream& strm = *strmRef;
@@ -299,12 +305,13 @@ OW_BinaryCIMOMHandle::enumInstanceNames(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::enumInstances(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result, OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateInstances", ns);
 	std::iostream& strm = *strmRef;
@@ -325,9 +332,10 @@ OW_BinaryCIMOMHandle::enumInstances(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::enumQualifierTypes(
-	const OW_String& ns,
+	const OW_String& ns_,
 	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"EnumerateQualifiers", ns);
 	std::iostream& strm = *strmRef;
@@ -343,12 +351,13 @@ OW_BinaryCIMOMHandle::enumQualifierTypes(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
 OW_BinaryCIMOMHandle::getClass(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_String& className,
 	OW_Bool localOnly,
     OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetClass", ns);
 	std::iostream& strm = *strmRef;
@@ -369,11 +378,12 @@ OW_BinaryCIMOMHandle::getClass(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_BinaryCIMOMHandle::getInstance(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& instanceName,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetInstance", ns);
 	std::iostream& strm = *strmRef;
@@ -394,12 +404,13 @@ OW_BinaryCIMOMHandle::getInstance(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_BinaryCIMOMHandle::invokeMethod(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	const OW_String& methodName,
 	const OW_CIMParamValueArray& inParams,
 	OW_CIMParamValueArray& outParams)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		methodName, ns);
 	std::iostream& strm = *strmRef;
@@ -438,9 +449,10 @@ OW_BinaryCIMOMHandle::invokeMethod(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
-OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns,
+OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns_,
 		const OW_String& qualifierName)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetQualifier", ns);
 	std::iostream& strm = *strmRef;
@@ -456,9 +468,10 @@ OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns,
+OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns_,
 		const OW_CIMQualifierType& qt)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetQualifier", ns);
 	std::iostream& strm = *strmRef;
@@ -473,9 +486,10 @@ OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::modifyClass(const OW_String &ns,
+OW_BinaryCIMOMHandle::modifyClass(const OW_String &ns_,
 		const OW_CIMClass& cc)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyClass", ns);
 	std::iostream& strm = *strmRef;
@@ -490,9 +504,10 @@ OW_BinaryCIMOMHandle::modifyClass(const OW_String &ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::createClass(const OW_String& ns,
+OW_BinaryCIMOMHandle::createClass(const OW_String& ns_,
 		const OW_CIMClass& cc)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateClass", ns);
 	std::iostream& strm = *strmRef;
@@ -508,11 +523,12 @@ OW_BinaryCIMOMHandle::createClass(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::modifyInstance(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMInstance& modifiedInstance,
 	OW_Bool includeQualifiers,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ModifyInstance", ns);
 	std::iostream& strm = *strmRef;
@@ -529,9 +545,10 @@ OW_BinaryCIMOMHandle::modifyInstance(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
-OW_BinaryCIMOMHandle::createInstance(const OW_String& ns,
+OW_BinaryCIMOMHandle::createInstance(const OW_String& ns_,
 	const OW_CIMInstance& ci)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"CreateInstance", ns);
 	std::iostream& strm = *strmRef;
@@ -549,10 +566,11 @@ OW_BinaryCIMOMHandle::createInstance(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_BinaryCIMOMHandle::getProperty(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	const OW_String& propName)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"GetProperty", ns);
 	std::iostream& strm = *strmRef;
@@ -587,11 +605,12 @@ OW_BinaryCIMOMHandle::getProperty(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::setProperty(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	const OW_String& propName,
 	const OW_CIMValue& cv)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"SetProperty", ns);
 	std::iostream& strm = *strmRef;
@@ -614,12 +633,13 @@ OW_BinaryCIMOMHandle::setProperty(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::associatorNames(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
 	const OW_String& role, const OW_String& resultRole)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"AssociatorNames", ns);
 	std::iostream& strm = *strmRef;
@@ -640,7 +660,7 @@ OW_BinaryCIMOMHandle::associatorNames(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::associators(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
@@ -648,6 +668,7 @@ OW_BinaryCIMOMHandle::associators(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	if (path.getKeys().size() == 0)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -677,7 +698,7 @@ OW_BinaryCIMOMHandle::associators(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::associatorsClasses(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass, const OW_String& resultClass,
@@ -685,6 +706,7 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	if (path.getKeys().size() > 0)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -713,12 +735,13 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::referenceNames(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	OW_CIMObjectPathResultHandlerIFC& result,
 	const OW_String& resultClass,
 	const OW_String& role)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ReferenceNames", ns);
 	std::iostream& strm = *strmRef;
@@ -737,13 +760,14 @@ OW_BinaryCIMOMHandle::referenceNames(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::references(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	if (path.getKeys().size() == 0)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -771,13 +795,14 @@ OW_BinaryCIMOMHandle::references(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::referencesClasses(
-	const OW_String& ns,
+	const OW_String& ns_,
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass, const OW_String& role,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
+    OW_String ns(prepareNamespace(ns_));
 	if (path.getKeys().size() > 0)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -814,10 +839,11 @@ OW_BinaryCIMOMHandle::execQuery(
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::execQuery(
-	const OW_String& ns,
+	const OW_String& ns_,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage)
 {
+    OW_String ns(prepareNamespace(ns_));
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
 		"ExecQuery", ns);
 	std::iostream& strm = *strmRef;

@@ -79,22 +79,15 @@ public:
 		const OW_ACLInfo& aclInfo) = 0;
 
 	/**
-	 * Gets a list of the namespaces within the namespace specified by the CIM
-	 * object path.
-	 * @param ns	The parent namespace to enumerate.
-	 * @param deep	If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *					contain the entire hierarchy of namespaces present
-	 *             under the enumerated namespace. If set to
-	 *					OW_CIMClient::SHALLOW  the enuermation will return only the
-	 *					first level children of the enumerated namespace.
+	 * Gets a list of the namespaces.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An Array of namespace names as strings.
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	virtual void enumNameSpace(const OW_String& ns,
+	virtual void enumNameSpace(
 		OW_StringResultHandlerIFC& result,
-		OW_Bool deep, const OW_ACLInfo& aclInfo) = 0;
+		const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * Get an existing qualifier type from the repository.

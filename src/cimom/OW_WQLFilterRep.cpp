@@ -65,9 +65,9 @@ OW_WQLFilterRep::getQualifierType(const OW_String&,
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::enumNameSpace(const OW_String& /*path*/,
+OW_WQLFilterRep::enumNameSpace(
 	OW_StringResultHandlerIFC&,
-	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
+	const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");

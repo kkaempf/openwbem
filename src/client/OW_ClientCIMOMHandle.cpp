@@ -43,17 +43,40 @@
 
 
 static OW_CIMClass nsClass(OW_CIMNULL);
+
+//////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_ClientCIMOMHandle::prepareNamespace(OW_String ns)
+{
+	while (!ns.empty() && ns[0] == '/')
+	{
+		ns = ns.substring(1);
+	}
+
+    // translate \\ to /
+    for (size_t i = 0; i < ns.length(); ++i )
+    {
+        if (ns[i] == '\\')
+        {
+            ns[i] = '/';
+        }
+    }
+    return ns;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
-	OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
+OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns_)
 {
+    OW_String ns(prepareNamespace(ns_));
+
 	int index = ns.lastIndexOf('/');
 
-	if (index==-1)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			"A Namespace must only be created in an existing Namespace");
-	}
+	//if (index==-1)
+	//{
+	//	OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+	//		"A Namespace must only be created in an existing Namespace");
+	//}
 
 	OW_String parentPath = ns.substring(0, index);
 	OW_String newNameSpace = ns.substring(index + 1);
@@ -79,18 +102,19 @@ void
 
 //////////////////////////////////////////////////////////////////////////////
 void
-	OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
+OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
 {
-	OW_String parentPath;
+    OW_String ns(prepareNamespace(ns_));
+
 	int index = ns.lastIndexOf('/');
 
-	if (index == -1)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			"A Namespace must only be created in an existing Namespace");
-	}
+	//if (index == -1)
+	//{
+	//	OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+	//		"A Namespace must only be created in an existing Namespace");
+	//}
 
-	parentPath = ns.substring(0,index);
+	OW_String parentPath = ns.substring(0,index);
 	OW_String newNameSpace = ns.substring(index + 1);
 
 	OW_CIMPropertyArray v;
@@ -151,9 +175,11 @@ static void
 
 //////////////////////////////////////////////////////////////////////////////
 void
-	OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns,
+OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns_,
 	OW_StringResultHandlerIFC &result, OW_Bool deep)
 {
+    OW_String ns(prepareNamespace(ns_));
+
 	result.handle(ns);
 	enumNameSpaceAux(this, ns, result, deep);
 }

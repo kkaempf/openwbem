@@ -305,25 +305,15 @@ public:
 
 
 	/**
-	 * Gets a list of the namespaces within the namespace specified by the CIM
-	 * object path.
-	 * @param path	The OW_CIMObjectPath identifying the namespace to be
-	 *					enumerated.
-	 * @param deep	If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *					contain the entire hierarchy of namespaces present
-	 *             under the enumerated namespace. If set to
-	 *					OW_CIMClient::SHALLOW  the enuermation will return only the
-	 *					first level children of the enumerated namespace.
+	 * Gets a list of the namespaces.
 	 * @return An Array of namespace names as strings.
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	void enumNameSpace(const OW_String& ns,
-		OW_StringResultHandlerIFC& result,
-		OW_Bool deep,
+	void enumNameSpace(OW_StringResultHandlerIFC& result,
 		const OW_ACLInfo& aclInfo)
 	{
-		m_pServer->enumNameSpace(ns, result, deep, aclInfo);
+		m_pServer->enumNameSpace(result, aclInfo);
 	}
 
 

@@ -43,6 +43,9 @@ public:
 	virtual void deleteNameSpace(const OW_String& ns);
 	virtual void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC &result, OW_Bool deep);
+
+protected:
+    OW_String prepareNamespace(OW_String ns);
 };
 
 #endif

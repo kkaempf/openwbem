@@ -419,13 +419,13 @@ OW_CIMServer::enumQualifierTypes(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumNameSpace(const OW_String& nsName,
-	OW_StringResultHandlerIFC& result, OW_Bool deep,
+OW_CIMServer::enumNameSpace(OW_StringResultHandlerIFC& result,
 	const OW_ACLInfo& aclInfo)
 {
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
-		aclInfo);
-	m_cimRepository->enumNameSpace(nsName,result,deep,aclInfo);
+    // TODO: Do we check access for enumerate namespace, now that they're not hierarchial?
+	//m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
+	//	aclInfo);
+	m_cimRepository->enumNameSpace(result,aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -134,29 +134,15 @@ OW_CIMRepository::createNameSpace(const OW_String& ns,
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
 
-	OW_StringArray nameComps = ns.tokenize("/");
-
-	OW_String parns;
-	size_t sz = nameComps.size() - 1;
-	for(size_t i = 0; i < sz; i++)
-	{
-		if(!parns.empty())
-		{
-			parns += "/";
-		}
-
-		parns += nameComps[i].toString();
-	}
-
-	if(m_nStore.createNameSpace(nameComps) == -1)
+	if(m_nStore.createNameSpace(ns) == -1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::ALREADY_EXISTS,
 			ns.c_str());
 	}
 
 	// TODO: Make this exception safe.
-	m_iStore.createNameSpace(nameComps, true);
-	m_mStore.createNameSpace(nameComps, true);
+	m_iStore.createNameSpace(ns);
+	m_mStore.createNameSpace(ns);
 
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
@@ -217,52 +203,30 @@ OW_CIMRepository::enumQualifierTypes(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMRepository::enumNameSpace(const OW_String& nsName,
-	OW_StringResultHandlerIFC& result, OW_Bool deep,
+OW_CIMRepository::enumNameSpace(OW_StringResultHandlerIFC& result,
 	const OW_ACLInfo&)
 {
 	// TODO: Move this into m_nStore
 	OW_HDBHandleLock hdl(&m_nStore, m_nStore.getHandle());
 
-	OW_HDBNode nsNode = m_nStore.getNameSpaceNode(hdl, nsName);
-	if(!nsNode)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, nsName.c_str());
-	}
+	OW_HDBNode nsNode = hdl->getFirstRoot();
+	//OW_HDBNode nsNode = m_nStore.getNameSpaceNode(hdl, nsName);
+	//if(!nsNode)
+	//{
+	//	OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, nsName.c_str());
+	//}
 
-	nsNode = hdl->getFirstChild(nsNode);
+	//nsNode = hdl->getFirstChild(nsNode);
 
 	while(nsNode)
 	{
-		if(!deep)
-		{
-			result.handle(nsNode.getKey());
-		}
-		else
-		{
-			_enumNamespaceDeep(hdl.getHandle(), result, nsNode);
-		}
+		result.handle(nsNode.getKey());
 		nsNode = hdl->getNextSibling(nsNode);
 	}
 
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
-		m_env->logDebug(format("OW_CIMRepository enumerated namespace: %1", nsName));
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// PRIVATE
-void
-OW_CIMRepository::_enumNamespaceDeep(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
-	OW_HDBNode node)
-{
-	result.handle(node.getKey());
-	node = hdl.getFirstChild(node);
-	while(node)
-	{
-		_enumNamespaceDeep(hdl, result, node);
-		node = hdl.getNextSibling(node);
+		m_env->logDebug("OW_CIMRepository enumerated namespaces");
 	}
 }
 
@@ -274,7 +238,7 @@ OW_CIMRepository::deleteQualifierType(const OW_String& ns, const OW_String& qual
 	// TODO: What happens if the qualifier is being used???
 	if(!m_mStore.deleteQualifierType(ns, qualName))
 	{
-		if (m_mStore.nameSpaceExists(ns))
+		if (m_nStore.nameSpaceExists(ns))
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 				OW_String(ns + "/" + qualName).c_str());

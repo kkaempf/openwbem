@@ -36,8 +36,8 @@
 #include "OW_IOException.hpp"
 #include "OW_Format.hpp"
 
-#define HDL_NOTINUSE		-1
-#define HDL_NOTCACHED	-2
+static const int HDL_NOTINUSE = -1;
+static const int HDL_NOTCACHED = -2;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_GenericHDBRepository::OW_GenericHDBRepository(OW_CIMOMEnvironmentRef env)
@@ -113,18 +113,19 @@ OW_GenericHDBRepository::open(const OW_String& path)
 	m_hdb.open(path.c_str());
 	m_opened = true;
 
-	// Create root container
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_String contk(OW_ROOT_CONTAINER);
-	contk.toLowerCase();
-	OW_HDBNode node = hdl->getNode(contk);
-	if(!node)
-	{
-		node = OW_HDBNode(contk, contk.length()+1,
-			reinterpret_cast<const unsigned char*>(contk.c_str()));
-		hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
-		hdl->addRootNode(node);
-	}
+	// Create root namespace
+    createNameSpace("root");
+	//OW_HDBHandleLock hdl(this, getHandle());
+	//OW_String contk("root");
+	//contk.toLowerCase();
+	//OW_HDBNode node = hdl->getNode(contk);
+	//if(!node)
+	//{
+	//	node = OW_HDBNode(contk, contk.length()+1,
+	//		reinterpret_cast<const unsigned char*>(contk.c_str()));
+	//	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
+	//	hdl->addRootNode(node);
+	//}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -156,17 +157,16 @@ OW_GenericHDBRepository::close()
 //////////////////////////////////////////////////////////////////////////////
 OW_HDBNode
 OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
-	const OW_String& key)
+	OW_String ck)
 {
-	OW_String ck(key);
 	if(ck.empty())
 	{
-		ck = OW_ROOT_CONTAINER;
+		return OW_HDBNode();
 	}
-	while (!ck.empty() && ck[0] == '/')
-	{
-		ck = ck.substring(1);
-	}
+	//while (!ck.empty() && ck[0] == '/')
+	//{
+	//	ck = ck.substring(1);
+	//}
 
 	OW_HDBNode node = hdl->getNode(ck.toLowerCase());
 	if(node)
@@ -182,122 +182,60 @@ OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
-	OW_Bool rootCheck)
+OW_GenericHDBRepository::createNameSpace(OW_String ns)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node;
-	OW_HDBNode pnode;
-	OW_String ks;
 
-	if(nameComps.size() == 0)
+	if(ns.empty())
 	{
 		return -1;
 	}
 
-	if(rootCheck)
-	{
-		if(!nameComps[0].equalsIgnoreCase(OW_ROOT_CONTAINER))
-		{
-			pnode = this->getNameSpaceNode(hdl, OW_ROOT_CONTAINER);
-			if(!pnode)
-			{
-				OW_THROW(OW_IOException, "root container node is missing!");
-			}
-			ks = OW_ROOT_CONTAINER;
-		}
-		else
-		{
-			if(nameComps.size() == 1)
-			{
-				return -1;
-			}
-		}
-	}
+    node = hdl->getNode(ns.toLowerCase());
+    if(!node)
+    {
+        // create the namespace
+        node = OW_HDBNode(ns, ns.length()+1,
+            reinterpret_cast<const unsigned char*>(ns.c_str()));
+        hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
+        hdl->addRootNode(node);
+        logDebug(format("created namespace %1", ns));
+    }
+    else
+    {
+        // it already exists, return -1.
+        if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+        {
+            OW_THROW(OW_IOException,
+                "logic error. read namespace node that is not a namespace");
+        }
+        return -1;
+    }
 
-	size_t sz = nameComps.size() - 1;
-	for(size_t i = 0; i < sz; i++)
-	{
-		if(!ks.empty())
-		{
-			ks += "/";
-		}
-
-		ks += nameComps[i].toString().toLowerCase();
-		node = hdl->getNode(ks);
-		if(!node)
-		{
-			node = OW_HDBNode(ks, ks.length()+1,
-				reinterpret_cast<const unsigned char*>(ks.c_str()));
-			hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
-
-			if(!pnode)
-			{
-				hdl->addRootNode(node);
-			}
-			else
-			{
-				hdl->addChild(pnode, node);
-			}
-		}
-		else
-		{
-			if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
-			{
-				OW_THROW(OW_IOException,
-					"logic error. read namespace node that is not a namespace");
-			}
-		}
-
-		pnode = node;
-	}
-
-	OW_ASSERT(pnode);
-
-	if(!ks.empty())
-	{
-		ks += "/";
-	}
-
-	ks += nameComps[sz].toString().toLowerCase();
-	node = hdl->getNode(ks);
-	if(node)
-	{
-		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
-		{
-			OW_THROW(OW_IOException,
-				"logic error. read namespace node that is not a namespace");
-		}
-
-		return -1;
-	}
-
-	node = OW_HDBNode(ks, ks.length()+1, reinterpret_cast<const unsigned char*>(ks.c_str()));
-	hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
-	hdl->addChild(pnode, node);
 	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_GenericHDBRepository::deleteNameSpace(const OW_String& key)
+OW_GenericHDBRepository::deleteNameSpace(OW_String key)
 {
 	throwIfNotOpen();
-	if(key.equalsIgnoreCase(OW_ROOT_CONTAINER))
+    key.toLowerCase();
+	if(key.equals("root"))
 	{
 		OW_THROWCIMMSG(OW_CIMException::ACCESS_DENIED,
 			"cannot delete root namespace");
 	}
 
-	OW_String k(key.toString().toLowerCase());
-	while (k.length() > 0 && k[0] == '/')
-	{
-		k = k.substring(1);
-	}
+	//while (k.length() > 0 && k[0] == '/')
+	//{
+	//	k = k.substring(1);
+	//}
 
 	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(k);
+	OW_HDBNode node = hdl->getNode(key);
 	if(node)
 	{
 		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
@@ -309,24 +247,24 @@ OW_GenericHDBRepository::deleteNameSpace(const OW_String& key)
 	}
 	else
 	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Unable to delete namespace %1", k).c_str());
+		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Unable to delete namespace %1", key).c_str());
 	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
 bool
-OW_GenericHDBRepository::nameSpaceExists(const OW_String& key)
+OW_GenericHDBRepository::nameSpaceExists(OW_String key)
 {
 	throwIfNotOpen();
 
-	OW_String k(key.toString().toLowerCase());
-	while (k.length() > 0 && k[0] == '/')
-	{
-		k = k.substring(1);
-	}
+    key.toLowerCase();
+	//while (k.length() > 0 && k[0] == '/')
+	//{
+	//	k = k.substring(1);
+	//}
 
 	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(k);
+	OW_HDBNode node = hdl->getNode(key);
 	if(node)
 	{
 		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))

@@ -39,8 +39,6 @@
 #include "OW_CIMBase.hpp"
 #include "OW_CIMOMEnvironment.hpp"
 
-#define OW_ROOT_CONTAINER "root"
-
 class OW_HDBHandleLock;
 
 class OW_GenericHDBRepository
@@ -77,13 +75,11 @@ public:
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.
-	 * @param nameComps	The names of the idividual containers where the 1st
-	 * element in the array is the topmost container.
+	 * @param ns	The name of the namespace to create
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const OW_StringArray& nameComps,
-		OW_Bool rootCheck=true);
+	virtual int createNameSpace(OW_String ns);
 
 	/**
 	 * Delete a container and all of its' children
@@ -91,7 +87,7 @@ public:
 	 * @exception OW_IOException If the database is not opened.
 	 * @exception OW_HDBException
 	 */
-	void deleteNameSpace(const OW_String& key);
+	void deleteNameSpace(OW_String key);
 
 	/**
 	 * Check whether a namespace exists
@@ -100,7 +96,7 @@ public:
 	 * @exception OW_HDBException
 	 * @return Whether the namespace key exists.
 	 */
-	bool nameSpaceExists(const OW_String& key);
+	bool nameSpaceExists(OW_String key);
 
 	/**
 	 * @return true if this repository is open. Otherwise false.
@@ -144,7 +140,7 @@ public:
 	 * @return On success the OW_HDBNode associated with the given key.
 	 * Otherwise a null OW_HDBNode
 	 */
-	OW_HDBNode getNameSpaceNode(OW_HDBHandleLock& hdl, const OW_String& key);
+	OW_HDBNode getNameSpaceNode(OW_HDBHandleLock& hdl, OW_String key);
 
 	void logError(const OW_String& s) { m_env->logError(s); }
 	void logCustInfo(const OW_String& s) { m_env->logCustInfo(s); }
@@ -206,9 +202,9 @@ private:
 	OW_HDBHandle m_hdl;
 };
 
-#define OW_HDBNSNODE_FLAG			0x40000000
-#define OW_HDBCLSNODE_FLAG			0x20000000
-#define OW_HDBCLSASSOCNODE_FLAG	0x08000000
+static const OW_UInt32 OW_HDBNSNODE_FLAG = 0x40000000;
+static const OW_UInt32 OW_HDBCLSNODE_FLAG = 0x20000000;
+static const OW_UInt32 OW_HDBCLSASSOCNODE_FLAG = 0x08000000;
 
 #endif
 

@@ -43,11 +43,27 @@
 #include "OW_Array.hpp"
 #include "OW_ConfigOpts.hpp"
 
-#define QUAL_CONTAINER "openwbemqualifiers"
+static const OW_String QUAL_CONTAINER("q");
+static const OW_String CLASS_CONTAINER("c");
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::~OW_MetaRepository()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+static void createRootNode(OW_String& qcontk, OW_HDBHandleLock& hdl)
+{
+	qcontk.toLowerCase();
+	OW_HDBNode rnode = hdl->getNode(qcontk);
+	if(!rnode)
+	{
+		rnode = OW_HDBNode(qcontk, qcontk.length()+1,
+			reinterpret_cast<const unsigned char*>(qcontk.c_str()));
+
+		hdl->turnFlagsOn(rnode, OW_HDBNSNODE_FLAG);
+		hdl->addRootNode(rnode);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -60,27 +76,18 @@ OW_MetaRepository::open(const OW_String& path)
 	// Create root qualifier container
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_String qcontk(QUAL_CONTAINER);
-	qcontk.toLowerCase();
-	OW_HDBNode rnode = hdl->getNode(qcontk);
-	if(!rnode)
-	{
-		rnode = OW_HDBNode(qcontk, qcontk.length()+1,
-			reinterpret_cast<const unsigned char*>(qcontk.c_str()));
+    createRootNode(qcontk, hdl);
 
-		hdl->turnFlagsOn(rnode, OW_HDBNSNODE_FLAG);
-		hdl->addRootNode(rnode);
-	}
+	qcontk += "/" + OW_String("root");
+    createRootNode(qcontk,hdl);
 
-	qcontk = QUAL_CONTAINER "/" OW_ROOT_CONTAINER;
-	qcontk.toLowerCase();
-	OW_HDBNode node = hdl->getNode(qcontk);
-	if(!node)
-	{
-		node = OW_HDBNode(qcontk, qcontk.length()+1,
-			reinterpret_cast<const unsigned char*>(qcontk.c_str()));
-		hdl->turnFlagsOn(node, OW_HDBNSNODE_FLAG);
-		hdl->addChild(rnode, node);
-	}
+    // Create root class container
+    qcontk = CLASS_CONTAINER;
+    createRootNode(qcontk, hdl);
+    
+    qcontk += "/" + OW_String("root");
+    createRootNode(qcontk,hdl);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -89,13 +96,13 @@ OW_MetaRepository::_getQualContainer(OW_HDBHandleLock& hdl, const OW_String& ns_
 {
 	OW_String qcontk(QUAL_CONTAINER);
 	OW_String ns(ns_);
-	while (!ns.empty() && ns[0] == '/')
-	{
-		ns = ns.substring(1);
-	}
+	//while (!ns.empty() && ns[0] == '/')
+	//{
+	//	ns = ns.substring(1);
+	//}
 	if(!ns.empty())
 	{
-		qcontk += "/";
+		qcontk += "/";                        
 		qcontk += ns;
 	}
 
@@ -107,22 +114,19 @@ OW_String
 OW_MetaRepository::_makeQualPath(const OW_String& ns_, const OW_String& qualName)
 {
 	OW_String ns(ns_);
-	while (!ns.empty() && ns[0] == '/')
-	{
-		ns = ns.substring(1);
-	}
+	//while (!ns.empty() && ns[0] == '/')
+	//{
+	//	ns = ns.substring(1);
+	//}
 
-	OW_String qp(QUAL_CONTAINER "/");
-	if(!ns.empty())
-	{
-		qp += ns;
-	}
-
-	if(!qualName.empty())
-	{
-		qp += "/";
-		qp += qualName;
-	}
+	OW_String qp(QUAL_CONTAINER);
+    qp += "/";
+	qp += ns;
+    if (!qualName.empty())
+    {
+        qp += "/";
+        qp += qualName;
+    }
 
 	return qp.toLowerCase();
 }
@@ -132,15 +136,14 @@ OW_String
 OW_MetaRepository::_makeClassPath(const OW_String& ns,
 	const OW_String& className)
 {
-	OW_String cp(ns);
-	while (!cp.empty() && cp[0] == '/')
-	{
-		cp = cp.substring(1);
-	}
-	if(!cp.empty() )
-	{
-		cp += "/";
-	}
+	//while (!cp.empty() && cp[0] == '/')
+	//{
+	//	cp = cp.substring(1);
+	//}
+	OW_String cp(CLASS_CONTAINER);
+    cp += "/";
+    cp += ns;
+	cp += "/";
 	cp += className;
 
 	return cp.toLowerCase();
@@ -214,7 +217,7 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
 
 	if (!qualType)
 	{
-		if (nameSpaceExists(ns))
+		if (nameSpaceExists(QUAL_CONTAINER + "/" + ns))
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 				format("CIM QualifierType \"%1\" not found in namespace: %2",
@@ -610,7 +613,7 @@ OW_MetaRepository::createClass(const OW_String& ns, OW_CIMClass& cimClass)
 	// pnode is null if there is no parent class, so get namespace node
 	if(!pnode)
 	{
-		if(!(pnode = getNameSpaceNode(hdl, ns)))
+		if(!(pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns)))
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE,
 				ns.c_str());
@@ -912,7 +915,7 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = getNameSpaceNode(hdl, ns);
+	OW_HDBNode node = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
 	if(!node)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
@@ -951,7 +954,7 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 		pnode = hdl->getNode(ckey);
 		if(!pnode)
 		{
-			pnode = getNameSpaceNode(hdl, ns);
+			pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns);
 			if(!pnode)
 			{
 				OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
@@ -969,7 +972,7 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 		{
 			ns2 = ns2.substring(1);
 		}
-		pnode = getNameSpaceNode(hdl, ns2);
+		pnode = getNameSpaceNode(hdl, CLASS_CONTAINER + "/" + ns2);
 		if(!pnode)
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns2.c_str());
@@ -1076,141 +1079,36 @@ OW_MetaRepository::deleteNameSpace(const OW_String& nsName)
 
 	// ATTN: Do we need to do more later? Associations?
 
-	OW_GenericHDBRepository::deleteNameSpace(nsName);
+	OW_GenericHDBRepository::deleteNameSpace(QUAL_CONTAINER + "/" + nsName);
+	OW_GenericHDBRepository::deleteNameSpace(CLASS_CONTAINER + "/" + nsName);
+    /*
 	OW_HDBHandleLock hdl(this, getHandle());
 	OW_HDBNode node = _getQualContainer(hdl, nsName);
 	if(node)
 	{
 		hdl->removeNode(node);
 	}
+    */
 
 	m_classCache.clearCache();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 int
-OW_MetaRepository::createNameSpace(const OW_StringArray& nameComps,
-	OW_Bool /*rootCheck*/)
+OW_MetaRepository::createNameSpace(OW_String ns)
 {
-	if(OW_GenericHDBRepository::createNameSpace(nameComps) == -1)
+	// First create the name space in the class container.
+	if(OW_GenericHDBRepository::createNameSpace(CLASS_CONTAINER + "/" + ns) == -1)
 	{
 		return -1;
 	}
 
 	// Now create the same name space in the qualifier container.
-	OW_StringArray ra;
-	ra.append(QUAL_CONTAINER);
-	if(!nameComps[0].equalsIgnoreCase(OW_ROOT_CONTAINER))
-	{
-		ra.append(OW_ROOT_CONTAINER);
-	}
-
-	ra.appendArray(nameComps);
-	return OW_GenericHDBRepository::createNameSpace(ra, false);
+    // TODO: If the second create fails, we need to undo the first one.
+	return OW_GenericHDBRepository::createNameSpace(QUAL_CONTAINER + "/" + ns);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// Since singletons (classes w/out keys that can have one instance) are allowed
-// in the spec, this function is unnecessary, and wrong.
-#if 0
-void
-OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& parentClass)
-{
-	OW_Bool isKeyed = cc.isKeyed();
-
-	enum QualState
-	{
-		EFALSE,
-		ETRUE,
-		EUNSET
-	};
-
-	QualState isIndication = EUNSET;
-	QualState isAbstract = EUNSET;
-	
-	if(!isKeyed)
-	{
-		// Right now. all reference fields are part of an association's key
-		// We need to find out if this is the right thing to do.
-		isKeyed = cc.isAssociation();
-	}
-
-	OW_CIMQualifierArray qra = cc.getQualifiers();
-	if (parentClass)
-	{
-		OW_CIMQualifierArray pqra = parentClass.getQualifiers();
-		for (OW_CIMQualifierArray::const_iterator iter = pqra.begin();
-				iter != pqra.end(); ++iter)
-		{
-			qra.push_back(*iter);
-		}
-	}
-	/*
-	if (parentClass)
-	{
-		qra.appendArray(parentClass.getQualifiers());
-	}
-	*/
-	for(size_t i = 0; i < qra.size(); i++)
-	{
-		OW_String qname = qra[i].getName();
-		OW_CIMValue cv = qra[i].getValue();
-		if(isAbstract == EUNSET
-			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ABSTRACT)
-			&& cv)
-		{
-			if (cv == OW_CIMValue(OW_Bool(true)))
-			{
-				isAbstract = ETRUE;
-			}
-			else
-			{
-				isAbstract = EFALSE;
-			}
-			if(isIndication == ETRUE || isIndication == EFALSE)
-			{
-				break;
-			}
-			continue;
-		}
-
-		if(isIndication == EUNSET
-			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_INDICATION)
-			&& cv)
-		{
-			if (cv == OW_CIMValue(OW_Bool(true)))
-			{
-				isIndication = ETRUE;
-			}
-			else
-			{
-				isIndication = EFALSE;
-			}
-			if(isAbstract == ETRUE || isAbstract == EFALSE)
-			{
-				break;
-			}
-		}
-	}
-
-	if (isIndication == EUNSET)
-	{
-		isIndication = EFALSE;
-	}
-	if (isAbstract == EUNSET)
-	{
-		isAbstract = EFALSE;
-	}
-
-	if(isIndication == EFALSE && isAbstract == EFALSE && !isKeyed)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			format("Non-abstract class must have key properties: %1",
-				cc.getName()).c_str());
-	}
-}
-#endif
-
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)
 	: OW_GenericHDBRepository(env)

@@ -85,6 +85,13 @@ OW_NameSpaceProvider::deleteInstance(
 
 	OW_String newns = ns + "/" + nsName;
 
+    // now deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
+    OW_StringArray nstodel = env->getCIMOMHandle()->enumNameSpaceE(newns, true);
+    for (size_t i = 0; i < nstodel.size(); ++i)
+    {
+        env->getCIMOMHandle()->deleteNameSpace(nstodel[i]);
+    }
+
 	env->getCIMOMHandle()->deleteNameSpace(newns);
 }
 

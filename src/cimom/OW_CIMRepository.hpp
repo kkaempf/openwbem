@@ -98,21 +98,13 @@ public:
 		const OW_ACLInfo& aclInfo);
 
 	/**
-	 * Gets a list of the namespaces within the namespace specified by the CIM
-	 * object path.
-	 * @param ns The parent ns to enumerate
-	 * @param deep	If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *					contain the entire hierarchy of namespaces present
-	 *             under the enumerated namespace. If set to
-	 *					OW_CIMClient::SHALLOW  the enuermation will return only the
-	 *					first level children of the enumerated namespace.
+	 * Gets a list of the namespaces
 	 * @param aclInfo ignored
 	 * @param result result.handle() will be called for each namespace.
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	virtual void enumNameSpace(const OW_String& ns,
-		OW_StringResultHandlerIFC& result, OW_Bool deep,
+	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
 		const OW_ACLInfo& aclInfo);
 
 	/**
@@ -578,9 +570,6 @@ public:
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
 private:
-
-	void _enumNamespaceDeep(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
-		OW_HDBNode node);
 
 	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className);
 

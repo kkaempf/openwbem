@@ -145,13 +145,11 @@ public:
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.
-	 * @param nameComps	The names of the idividual containers where the 1st
-	 * element in the array is the topmost container.
+	 * @param ns	The name of the namespace
 	 * @return 0 on success. Otherwise -1 if the bottom most container already
 	 * exists.
 	 */
-	virtual int createNameSpace(const OW_StringArray& nameComps,
-		OW_Bool rootCheck);
+	virtual int createNameSpace(OW_String ns);
 
 	/**
 	 * Ensure there is a container for a given class in the instance
