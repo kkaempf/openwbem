@@ -1351,8 +1351,12 @@ CIMServer::setProperty(
 	{
 		try
 		{
-			// this throws a FAILED CIMException if it can't convert
-			cv = CIMValueCast::castValueToDataType(cv, cp.getDataType());
+			// workaround for the stupid dmtf string/embedded object hack
+			if (cv.getType() != CIMDataType::EMBEDDEDCLASS && cv.getType() != CIMDataType::EMBEDDEDINSTANCE)
+			{
+				// this throws a FAILED CIMException if it can't convert
+				cv = CIMValueCast::castValueToDataType(cv, cp.getDataType());
+			}
 		}
 		catch (CIMException& ce)
 		{
@@ -1500,8 +1504,12 @@ CIMServer::invokeMethod(
 			{
 				try
 				{
-					orderedParams[i].setValue(CIMValueCast::castValueToDataType(
-						v, methodInParams[i].getType()));
+					// workaround for the stupid dmtf string/embedded object hack
+					if (v.getType() != CIMDataType::EMBEDDEDCLASS && v.getType() != CIMDataType::EMBEDDEDINSTANCE)
+					{
+						orderedParams[i].setValue(CIMValueCast::castValueToDataType(
+							v, methodInParams[i].getType()));
+					}
 				}
 				catch (CIMException& ce)
 				{
@@ -1571,8 +1579,12 @@ CIMServer::invokeMethod(
 		{
 			if (methodOutParams[i].getType().getType() != v.getType())
 			{
-				outParams[i].setValue(CIMValueCast::castValueToDataType(
-					v, methodOutParams[i].getType()));
+				// workaround for the stupid dmtf string/embedded object hack
+				if (v.getType() != CIMDataType::EMBEDDEDCLASS && v.getType() != CIMDataType::EMBEDDEDINSTANCE)
+				{
+					outParams[i].setValue(CIMValueCast::castValueToDataType(
+						v, methodOutParams[i].getType()));
+				}
 			}
 		}
 	}

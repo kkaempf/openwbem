@@ -768,10 +768,12 @@ CIMClass::toMOF() const
 	for (i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		rv += m_pdata->m_properties[i].toMOF();
+// TODO:		rv += '\n';
 	}
 	for (i = 0; i < m_pdata->m_methods.size(); i++)
 	{
 		rv += m_pdata->m_methods[i].toMOF();
+// TODO:		rv += '\n';
 	}
 	rv += "};\n";
 	return rv.releaseString();

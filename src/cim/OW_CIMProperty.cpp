@@ -205,7 +205,8 @@ CIMProperty::setOriginClass(const CIMName& originCls)
 CIMProperty&
 CIMProperty::setValue(const CIMValue& val)
 {
-	if (m_pdata->m_propertyDataType && val && val.getCIMDataType() != m_pdata->m_propertyDataType)
+	if (m_pdata->m_propertyDataType && val && val.getCIMDataType() != m_pdata->m_propertyDataType && 
+		val.getType() != CIMDataType::EMBEDDEDCLASS && val.getType() != CIMDataType::EMBEDDEDINSTANCE)
 	{
 		m_pdata->m_cimValue = CIMValueCast::castValueToDataType(val, m_pdata->m_propertyDataType);
 	}
@@ -242,8 +243,12 @@ CIMProperty::setDataType(const CIMDataType& type)
 			|| m_pdata->m_propertyDataType.isArrayType() !=
 			m_pdata->m_cimValue.isArray())
 		{
-			m_pdata->m_cimValue = CIMValueCast::castValueToDataType(
-				m_pdata->m_cimValue, m_pdata->m_propertyDataType);
+			if (m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDCLASS && 
+				m_pdata->m_cimValue.getType() != CIMDataType::EMBEDDEDINSTANCE)
+			{
+				m_pdata->m_cimValue = CIMValueCast::castValueToDataType(
+					m_pdata->m_cimValue, m_pdata->m_propertyDataType);
+			}
 		}
 	}
 	return *this;
@@ -559,6 +564,7 @@ CIMProperty::toMOF() const
 			if (i > 0)
 			{
 				rv += ',';
+// TODO:				rv += ",\n   ";
 			}
 			rv += nq.toMOF();
 		}

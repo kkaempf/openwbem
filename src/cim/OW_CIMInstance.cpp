@@ -707,8 +707,12 @@ CIMInstance::syncWithClass(const CIMClass& theClass,
 				{
 					if (cv.getType() != iprop.getDataType().getType())
 					{
-						cv = CIMValueCast::castValueToDataType(cv,
-							iprop.getDataType());
+						// workaround for the stupid dmtf string/embedded object hack
+						if (cv.getType() != CIMDataType::EMBEDDEDCLASS && cv.getType() != CIMDataType::EMBEDDEDINSTANCE)
+						{
+							cv = CIMValueCast::castValueToDataType(cv,
+								iprop.getDataType());
+						}
 					}
 					iprop.setValue(cv);
 				}
