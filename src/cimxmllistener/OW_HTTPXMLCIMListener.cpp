@@ -369,7 +369,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 		}
 		else
 		{
-			reg.handler = OW_CIMObjectPath(ci.getClassName(), ci.getKeyValuePairs());
+			reg.handler = OW_CIMObjectPath(ci);
 		}
 	}
 	

@@ -344,7 +344,9 @@ public:
 	 * @param propertyName The name of the property to set the value on.
 	 * @param newValue The new value for property propertyName.
 	 */
-	virtual void setProperty(const OW_CIMObjectPath &name,
+	virtual void setProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv);
 
 	/**

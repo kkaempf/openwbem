@@ -166,11 +166,13 @@ public:
 	virtual OW_CIMClass modifyClass(const OW_String &ns,
 		const OW_CIMClass& cc, const OW_ACLInfo& aclInfo);
 
-	virtual void setProperty(const OW_CIMObjectPath &name,
+	virtual void setProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_ACLInfo& aclInfo)
 	{
-		m_pServer->setProperty(name, propertyName, cv, aclInfo);
+		m_pServer->setProperty(ns, name, propertyName, cv, aclInfo);
 	}
 
 

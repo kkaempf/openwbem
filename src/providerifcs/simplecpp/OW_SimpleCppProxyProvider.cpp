@@ -298,6 +298,7 @@ OW_SimpleCppPropertyProviderProxy::getPropertyValue(
 void
 OW_SimpleCppPropertyProviderProxy::setPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop,
 		const OW_String& originClass,
 		const OW_String& propertyName,
@@ -305,6 +306,7 @@ OW_SimpleCppPropertyProviderProxy::setPropertyValue(
 {
 	m_pProv->updateAccessTime();
 	(void)originClass;
+	(void)ns;
 	m_pProv->setPropertyValue(env, cop, propertyName, val);
 }
 

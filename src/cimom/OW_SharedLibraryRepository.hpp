@@ -229,11 +229,13 @@ public:
 			propertyList, aclInfo);
 	}
 
-	virtual void setProperty(const OW_CIMObjectPath &name,
+	virtual void setProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_ACLInfo &aclInfo)
 	{
-		m_ref->setProperty(name, propertyName, cv, aclInfo);
+		m_ref->setProperty(ns, name, propertyName, cv, aclInfo);
 	}
 
 	virtual OW_CIMValue getProperty(

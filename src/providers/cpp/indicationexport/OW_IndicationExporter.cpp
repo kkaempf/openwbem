@@ -49,9 +49,8 @@ OW_IndicationExporter::OW_IndicationExporter( OW_CIMProtocolIFCRef prot )
 }
 
 void
-OW_IndicationExporter::exportIndication( const OW_CIMInstance& ci )
+OW_IndicationExporter::exportIndication( const OW_String& ns, const OW_CIMInstance& ci )
 {
-	OW_CIMObjectPath path(ci.getName(), ci.getKeyValuePairs());
 	static const char* const commandName = "ExportIndication";
 	OW_Array<OW_Param> params;
 	
@@ -68,7 +67,7 @@ OW_IndicationExporter::exportIndication( const OW_CIMInstance& ci )
 	*iostr << "</IPARAMVALUE>";
 //	*iostr << "</EXPPARAMVALUE>";
 	sendXMLTrailer(*iostr);
-	doSendRequest(iostr, commandName, path);
+	doSendRequest(iostr, commandName, ns);
 }
 
 void
@@ -97,10 +96,10 @@ OW_IndicationExporter::sendXMLTrailer(ostream& ostr)
 	
 void
 OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_String& methodName,
-		const OW_CIMObjectPath& path)
+		const OW_String& ns)
 {
 	OW_CIMProtocolIStreamIFCRef istr = m_protocol->endRequest(ostr, methodName,
-		path.getNameSpace());
+		ns);
 
 	// Debug stuff
 	/*

@@ -308,11 +308,13 @@ OW_LocalCIMOMHandle::getProperty(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::setProperty(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::setProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& name,
 	const OW_String& propertyName, const OW_CIMValue& cv)
 {
 	OW_WriteLock wl = getWriteLock();
-	m_pServer->setProperty(name, propertyName, cv, m_aclInfo);
+	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -292,7 +292,9 @@ OW_WQLFilterRep::associatorsClasses(const OW_CIMObjectPath &/*path*/,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::setProperty(const OW_CIMObjectPath &/*name*/,
+OW_WQLFilterRep::setProperty(
+	const OW_String&,
+	const OW_CIMObjectPath &/*name*/,
 	const OW_String& /*propertyName*/, const OW_CIMValue &/*cv*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {

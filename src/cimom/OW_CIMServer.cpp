@@ -1085,7 +1085,7 @@ namespace
 		virtual void doHandle(const OW_CIMInstance &c)
 		{
 			OW_CIMInstance ci(c);
-			OW_CIMObjectPath lcop(ci.getClassName(), ci.getKeyValuePairs());
+			OW_CIMObjectPath lcop(ci);
 
 			server._getProviderProperties(ns, lcop, ci, theClass, aclInfo);
 			result.handle(ci.clone(false, includeQualifiers,
@@ -1423,7 +1423,7 @@ OW_CIMServer::createInstance(
 	const OW_CIMInstance& ci,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_CIMObjectPath rval(ci.getClassName(), ci.getKeyValuePairs());
+	OW_CIMObjectPath rval(ci);
 
 	// Check to see if user has rights to create the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::CREATEINSTANCE, ns, aclInfo);
@@ -1591,8 +1591,7 @@ OW_CIMServer::modifyInstance(
 	try
 	{
 		OW_ACLInfo intAclInfo;
-		OW_CIMObjectPath cop(modifiedInstance.getClassName(),
-			modifiedInstance.getKeyValuePairs());
+		OW_CIMObjectPath cop(modifiedInstance);
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			NULL, intAclInfo);
 
@@ -1714,7 +1713,7 @@ OW_CIMServer::getProperty(
 	const OW_String& propertyName, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::GETPROPERTY, name.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::GETPROPERTY, ns, aclInfo);
 
 	OW_ACLInfo intAclInfo;
 	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
@@ -1764,17 +1763,19 @@ OW_CIMServer::getProperty(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
+OW_CIMServer::setProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& name,
 	const OW_String& propertyName, const OW_CIMValue& valueArg,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get the property
-	m_accessMgr->checkAccess(OW_AccessMgr::SETPROPERTY, name.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::SETPROPERTY, ns, aclInfo);
 
 	OW_ACLInfo intAclInfo;
 	OW_CIMClass theClass;
-	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), theClass);
-	checkGetClassRvalAndThrowInst(rc, name.getNameSpace(), name.getObjectName());
+	OW_CIMException::ErrNoType rc = m_mStore.getCIMClass(ns, name.getObjectName(), theClass);
+	checkGetClassRvalAndThrowInst(rc, ns, name.getObjectName());
 
 	OW_CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
@@ -1806,7 +1807,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 	OW_CIMQualifier cq = cp.getQualifier(OW_CIMQualifier::CIM_QUAL_PROVIDER);
 	if(!cq)
 	{
-		OW_CIMInstance ci = getInstance(name.getNameSpace(), name, false, true, true, NULL,
+		OW_CIMInstance ci = getInstance(ns, name, false, true, true, NULL,
 			NULL, intAclInfo);
 
 		if(!ci)
@@ -1825,7 +1826,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 		cp.setValue(cv);
 		ci.setProperty(cp);
-		modifyInstance(name.getNameSpace(), ci, true, 0, intAclInfo);
+		modifyInstance(ns, ci, true, 0, intAclInfo);
 	}
 	else
 	{
@@ -1848,7 +1849,7 @@ OW_CIMServer::setProperty(const OW_CIMObjectPath& name,
 
 		propp->setPropertyValue(
 			createProvEnvRef(real_ch),
-				/*name.getNameSpace(), */name, cp.getOriginClass(), cp.getName(), cv);
+				ns, name, cp.getOriginClass(), cp.getName(), cv);
 	}
 }
 
@@ -3202,7 +3203,7 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 			"Cannot create instance. Propagated key properties missing");
 	}
 
-	OW_CIMObjectPath op(ci.getClassName(), ci.getKeyValuePairs());
+	OW_CIMObjectPath op(ci);
 	OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.begin();
 	while(it != theMap.end())
 	{
@@ -3276,10 +3277,9 @@ OW_CIMServer::_setProviderProperties(const OW_String& ns,
 				if(propp)
 				{
 					OW_CIMValue cv = cp.getValue();
-					OW_CIMObjectPath cop2(ci.getClassName(), ci.getKeyValuePairs());
-					cop2.setNameSpace(ns);
+					OW_CIMObjectPath cop(ci);
 					propp->setPropertyValue(createProvEnvRef(real_ch),
-						/*ns, cop,*/ cop2, cp.getOriginClass(),
+						ns, cop, cp.getOriginClass(),
 						cp.getName(), cv);
 				}
 			}

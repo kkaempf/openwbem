@@ -962,7 +962,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(
 	OW_StringStream ostr(1000);
 	ostr << "<IPARAMVALUE NAME=\"ModifiedInstance\">";
 	ostr << "<VALUE.NAMEDINSTANCE>";
-	OW_CIMObjectPath path(modifiedInstance.getClassName(), modifiedInstance.getKeyValuePairs());
+	OW_CIMObjectPath path(modifiedInstance);
 	path.setNameSpace(ns);
 	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
 	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(),
@@ -1081,9 +1081,11 @@ OW_CIMXMLCIMOMHandle::getProperty(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
-											 const OW_String& propName,
-											 const OW_CIMValue& cv)
+OW_CIMXMLCIMOMHandle::setProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String& propName,
+	const OW_CIMValue& cv)
 {
 	static const char* const commandName = "SetProperty";
 	OW_Array<OW_Param> params;
@@ -1093,7 +1095,7 @@ OW_CIMXMLCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_NEWVALUE, OW_Param::VALUESET, ostr.toString()));
 
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, params,
+	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 }
 

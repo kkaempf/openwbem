@@ -49,8 +49,10 @@ OW_CppIndicationExportXMLHTTPProvider::~OW_CppIndicationExportXMLHTTPProvider()
 // Export the given indication
 void
 OW_CppIndicationExportXMLHTTPProvider::exportIndication(
-	const OW_ProviderEnvironmentIFCRef& env, OW_CIMInstance &indHandlerInst,
-	OW_CIMInstance &indicationInst)
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_String& ns,
+	const OW_CIMInstance &indHandlerInst,
+	const OW_CIMInstance &indicationInst)
 {
 	env->getLogger()->logDebug(format("OW_CppIndicationExportXMLHTTPProvider "
 		"exporting indication.  Handler = %1, Indication = %2",
@@ -78,7 +80,7 @@ OW_CppIndicationExportXMLHTTPProvider::exportIndication(
 
 		OW_IndicationExporter exporter(OW_CIMProtocolIFCRef(
 			new OW_HTTPClient(listenerUrl)));
-		exporter.exportIndication(indicationInst);
+		exporter.exportIndication(ns, indicationInst);
 	}
 	else
 	{

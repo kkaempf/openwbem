@@ -659,12 +659,8 @@ CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, CIMInstance ci)
 	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
 	OW_String host;
-	OW_String className = owci->getClassName();
 
-	//OW_CIMPropertyArray props = owci->getProperties();
-	OW_CIMPropertyArray props = owci->getKeyValuePairs();
-
-	OW_CIMObjectPath * ref = new OW_CIMObjectPath(className,props);
+	OW_CIMObjectPath * ref = new OW_CIMObjectPath(*owci);
 
 	//CIMObjectPath cop = { static_cast<void *> (ref.toBlob()) };
 

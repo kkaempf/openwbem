@@ -288,7 +288,7 @@ OW_InstanceRepository::getCIMInstances(
 
 		if(pServer && pACLInfo)
 		{
-			OW_CIMObjectPath lcop(ci.getClassName(), ci.getKeyValuePairs());
+			OW_CIMObjectPath lcop(ci);
 			pServer->_getProviderProperties(ns, lcop, ci, theClass, *pACLInfo);
 		}
 
@@ -363,7 +363,7 @@ OW_InstanceRepository::createInstance(const OW_String& ns,
 	}
 
 	// Create object path with keys from new instance
-	OW_CIMObjectPath icop(ci.getClassName(), ci.getKeyValuePairs());
+	OW_CIMObjectPath icop(ci);
 	OW_String instanceKey = makeInstanceKey(ns, icop, theClass);
 	OW_HDBNode node = hdl->getNode(instanceKey);
 	if(node)

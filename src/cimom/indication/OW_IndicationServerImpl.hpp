@@ -49,24 +49,16 @@ class OW_IndicationServerImpl;
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
 {
-	OW_NotifyTrans() : m_indication(), m_handler(), m_provider(0) {}
+	OW_NotifyTrans() : m_provider(0) {}
 
-	OW_NotifyTrans(const OW_CIMInstance& indication,
+	OW_NotifyTrans(
+		const OW_String& ns,
+		const OW_CIMInstance& indication,
 		const OW_CIMInstance& handler,
 		const OW_IndicationExportProviderIFCRef provider) :
-			m_indication(indication), m_handler(handler), m_provider(provider) {}
+			m_ns(ns), m_indication(indication), m_handler(handler), m_provider(provider) {}
 
-	OW_NotifyTrans(const OW_NotifyTrans& arg) : m_indication(arg.m_indication),
-		m_handler(arg.m_handler), m_provider(arg.m_provider) {}
-
-	OW_NotifyTrans& operator= (const OW_NotifyTrans& arg)
-	{
-		m_indication = arg.m_indication;
-		m_handler = arg.m_handler;
-		m_provider = arg.m_provider;
-		return *this;
-	}
-
+	OW_String m_ns;
 	OW_CIMInstance m_indication;
 	OW_CIMInstance m_handler;
 	OW_IndicationExportProviderIFCRef m_provider;
@@ -124,7 +116,8 @@ private:
 		const OW_String& instNS);
 
 
-	void addTrans(const OW_CIMInstance& indication, OW_CIMInstance& handler,
+	void addTrans(const OW_String& ns, const OW_CIMInstance& indication,
+		const OW_CIMInstance& handler,
 		OW_IndicationExportProviderIFCRef provider);
 
 	OW_IndicationExportProviderIFCRef getProvider(const OW_String& className);

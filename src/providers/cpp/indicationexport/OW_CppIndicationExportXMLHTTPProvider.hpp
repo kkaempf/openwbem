@@ -44,7 +44,8 @@ public:
 	 * Export the given indication
 	 */
 	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstance &indHandlerInst, OW_CIMInstance &indicationInst);
+		const OW_String& ns,
+		const OW_CIMInstance &indHandlerInst, const OW_CIMInstance &indicationInst);
 
 	/**
 	 * @return The class names of all the CIM_CppIndicationHandler sub-classes

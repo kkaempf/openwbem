@@ -83,6 +83,7 @@ public:
 	 */
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
 			const OW_String& propertyName,

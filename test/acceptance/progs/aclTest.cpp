@@ -719,11 +719,11 @@ void setProperty(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem2";
-		OW_CIMObjectPath cop(ofClass, "/root/acltest");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String("SixMillion")));
 
-		hdl.setProperty(cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
+		hdl.setProperty("/root/acltest", cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

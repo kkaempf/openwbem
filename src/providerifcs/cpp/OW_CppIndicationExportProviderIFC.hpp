@@ -48,7 +48,8 @@ public:
 	 * Export the given indication
 	 */
 	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstance& indHandlerInst, OW_CIMInstance& indicationInst) = 0;
+		const OW_String& ns,
+		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst) = 0;
 
 	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return this; }
 };

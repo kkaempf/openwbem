@@ -600,7 +600,7 @@ namespace
 		{
 			ostr <<  "<VALUE.OBJECTWITHPATH>";
 
-			OW_CIMObjectPath cop( ci.getClassName(), ci.getKeyValuePairs() );
+			OW_CIMObjectPath cop( ci );
 			cop.setNameSpace( path.getNameSpace() );
 
 			OW_CIMtoXML(ci, ostr, cop,
@@ -997,8 +997,7 @@ namespace
 		virtual void doHandle(const OW_CIMInstance &i)
 		{
 			const OW_CIMInstance& cimInstance = i;
-			OW_CIMObjectPath cop(cimInstance.getClassName(),
-				cimInstance.getKeyValuePairs());
+			OW_CIMObjectPath cop(cimInstance);
 
 			cop.setNameSpace(ns);
 
@@ -1354,6 +1353,7 @@ void
 OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
+	OW_String ns = path.getNameSpace();
 	OW_Array<param> params;
 	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
 	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, OW_CIMValue("")));
@@ -1361,11 +1361,9 @@ OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String ns = path.getNameSpace();
-	path = params[0].val.toCIMObjectPath();
-	path.setNameSpace(ns);
+	OW_CIMObjectPath instpath = params[0].val.toCIMObjectPath();
 
-	hdl.setProperty(path, params[1].val.toString(), params[2].val);
+	hdl.setProperty(ns, instpath, params[1].val.toString(), params[2].val);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1381,8 +1379,7 @@ namespace
 	protected:
 		virtual void doHandle(const OW_CIMInstance &i)
 		{
-			OW_CIMObjectPath cop(i.getClassName(),
-				i.getKeyValuePairs() );
+			OW_CIMObjectPath cop(i);
 
 			cop.setNameSpace(ns);
 

@@ -46,14 +46,14 @@ public:
 	 * @param ci The indication to export.
 	 * @throws OW_CIMException
 	 */
-	void exportIndication( const OW_CIMInstance& ci ); // may throw an OW_CIMException
+	void exportIndication( const OW_String& ns, const OW_CIMInstance& ci ); // may throw an OW_CIMException
 
 
 private:
 	void sendXMLHeader(std::ostream& ostr);
 	void sendXMLTrailer(std::ostream& ostr);
 	void doSendRequest(OW_Reference<std::iostream> ostr, const OW_String& methodName,
-		const OW_CIMObjectPath& path);
+		const OW_String& ns);
 	void checkNodeForCIMError(OW_CIMXMLParser& parser,
 		const OW_String& operation); // throws a CIMException
 	

@@ -1370,11 +1370,11 @@ setProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass);
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(instName));
 
-		hdl.setProperty(cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
+		hdl.setProperty("root/testsuite", cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
 	}
 	catch (OW_CIMException& e)
 	{

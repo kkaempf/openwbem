@@ -48,6 +48,8 @@ Fix problems:
     - Intrinsic indications are fetched from root namespace.  Less than optimal.
     - Remove any bad NOT_SUPPORTED exceptions.
     - Trailers need to strip newlines from error description.
+    - On startup of UDS if the UDS already exists, SocketImpl need to figure 
+      out if someone else is listening. If so, then fail, otherwise delete it.
 
 
 New features:

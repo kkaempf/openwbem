@@ -122,7 +122,7 @@ OW_Notifier::run()
 		try
 		{
 			m_trans->m_provider->exportIndication(createProvEnvRef(
-				m_pmgr->getEnvironment(), lch), m_trans->m_handler,
+				m_pmgr->getEnvironment(), lch), m_trans->m_ns, m_trans->m_handler,
 				m_trans->m_indication);
 		}
 		catch(OW_Exception& e)
@@ -438,7 +438,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 				continue;
 			}
 
-			addTrans(filteredInstance, handler, pref);
+			addTrans(instNS, filteredInstance, handler, pref);
 		}
 		catch(OW_Exception& e)
 		{
@@ -450,12 +450,14 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_IndicationServerImpl::addTrans(const OW_CIMInstance& indication,
-	OW_CIMInstance& handler, OW_IndicationExportProviderIFCRef provider)
+OW_IndicationServerImpl::addTrans(
+	const OW_String& ns,
+	const OW_CIMInstance& indication,
+	const OW_CIMInstance& handler, OW_IndicationExportProviderIFCRef provider)
 {
 	OW_MutexLock ml(m_guard);
 
-	OW_NotifyTrans trans(indication, handler, provider);
+	OW_NotifyTrans trans(ns, indication, handler, provider);
 	if(getRunCount() < MAX_NOTIFIERS)
 	{
 		OW_Notifier* pnotifier = new OW_Notifier(this, trans);

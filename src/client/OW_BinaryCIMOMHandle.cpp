@@ -587,14 +587,17 @@ OW_BinaryCIMOMHandle::getProperty(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
-											 const OW_String& propName,
-											 const OW_CIMValue& cv)
+OW_BinaryCIMOMHandle::setProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String& propName,
+	const OW_CIMValue& cv)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"SetProperty", path.getNameSpace());;
+		"SetProperty", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_SETPROP);
+	OW_BinIfcIO::writeString(strm, ns);
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeString(strm, propName);
 	OW_Bool isValue = (cv) ? true : false;
@@ -604,7 +607,8 @@ OW_BinaryCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 		OW_BinIfcIO::writeValue(strm, cv);
 	}
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "SetProperty", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"SetProperty", ns);
 	checkError(in);
 }
 

@@ -61,6 +61,7 @@ public:
 
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
 			const OW_String& propertyName,
@@ -103,15 +104,16 @@ OW_OpenLinuxVersion::getPropertyValue(
 void
 OW_OpenLinuxVersion::setPropertyValue(
 		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
 		const OW_CIMObjectPath& cop,
 		const OW_String& originClass,
 		const OW_String& propertyName,
 		const OW_CIMValue& val )
 {
 	env->getLogger()->logDebug(format("OW_OpenLinuxVersion::setPropertyValue: "
-				"cop = %1, originClass = %2, propertyName = %3, "
-				"val = %4",
-				cop.toString(), originClass, propertyName, val.toString()));
+				"ns = %1, cop = %2, originClass = %3, propertyName = %4, "
+				"val = %5",
+				ns, cop.toString(), originClass, propertyName, val.toString()));
 	ofstream out("/etc/.installdata", std::ios::trunc);
 	out << val.toString();
 }

@@ -476,6 +476,7 @@ public:
 
 	/**
 	 * Set the specified CIM instance property.
+	 * @param ns The namespace
 	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance
 	 *		to be accessed
 	 * @param propertyName The name of the property to set the value on.
@@ -483,6 +484,7 @@ public:
 	 * @exception OW_CIMException
 	 */
 	virtual void setProperty(
+		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
 		const OW_String& propertyName,
 		const OW_CIMValue& newValue) = 0;

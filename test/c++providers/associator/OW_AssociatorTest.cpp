@@ -137,7 +137,7 @@ namespace
 			while (instances.hasMoreElements())
 			{
 				OW_CIMInstance ci = instances.nextElement();
-				OW_CIMObjectPath cop(ci.getClassName(), ci.getKeyValuePairs());
+				OW_CIMObjectPath cop(ci);
 				result.handle(cop);
 			}
 		}
@@ -178,8 +178,7 @@ namespace
 					assocName.getObjectName(), false);
 				OW_CIMInstance newInstance = cc.newInstance();
 				OW_CIMInstance ci = e1.nextElement();
-				OW_CIMObjectPath path(ci.getClassName(),
-					ci.getKeyValuePairs());
+				OW_CIMObjectPath path(ci);
 
 				newInstance.setProperty("firstRef", OW_CIMValue(objectName));
 
@@ -219,15 +218,13 @@ namespace
 				OW_CIMInstance newInstance = cc.newInstance();
 
 				OW_CIMInstance ci = e1.nextElement();
-				OW_CIMObjectPath path(ci.getClassName(),
-					ci.getKeyValuePairs());
+				OW_CIMObjectPath path(ci);
 
 				newInstance.setProperty("firstRef", OW_CIMValue(objectName));
 
 				newInstance.setProperty("secondRef", OW_CIMValue(path));
 
-				OW_CIMObjectPath newPath(assocName.getObjectName(),
-					newInstance.getKeyValuePairs());
+				OW_CIMObjectPath newPath(newInstance);
 
 				newPath.setNameSpace(assocName.getNameSpace());
 				result.handle(newPath);

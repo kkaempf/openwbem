@@ -1020,7 +1020,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 	
 	if ( pInstanceDeclaration->pAlias.get() != 0 )
 	{
-		OW_CIMObjectPath cop(m_curInstance.getClassName(), m_curInstance.getKeyValuePairs());
+		OW_CIMObjectPath cop(m_curInstance);
 		
 		m_aliasMap[*(pInstanceDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			cop.modelPath();
@@ -1178,7 +1178,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 
 void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 {
-	OW_CIMObjectPath cop(m_curInstance.getClassName(), m_curInstance.getKeyValuePairs());
+	OW_CIMObjectPath cop(m_curInstance);
 	cop.setNameSpace(m_namespace);
 	MofCompiler::theErrorHandler->progressMessage(format("Processing Instance: %1", cop.toString()).c_str(), li);
 	try

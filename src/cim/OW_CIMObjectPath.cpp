@@ -112,6 +112,14 @@ OW_CIMObjectPath::OW_CIMObjectPath(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPath::OW_CIMObjectPath(const OW_CIMInstance& inst) :
+	OW_CIMBase(), m_pdata(new OPData)
+{
+	m_pdata->m_objectName = inst.getClassName();
+	m_pdata->m_keys = inst.getKeyValuePairs();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath::OW_CIMObjectPath(const OW_CIMObjectPath& arg) :
 	OW_CIMBase(), m_pdata(arg.m_pdata)
 {

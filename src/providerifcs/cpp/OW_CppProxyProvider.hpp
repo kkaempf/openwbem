@@ -175,6 +175,7 @@ public:
 
 	virtual void setPropertyValue(
 			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
 			const OW_CIMObjectPath& cop,
 			const OW_String& originClass,
 			const OW_String& propertyName, 	
@@ -196,9 +197,10 @@ public:
 	}
 	
 	virtual void exportIndication(const OW_ProviderEnvironmentIFCRef& env,
-		OW_CIMInstance& indHandlerInst, OW_CIMInstance& indicationInst)
+		const OW_String& ns,
+		const OW_CIMInstance& indHandlerInst, const OW_CIMInstance& indicationInst)
 	{
-		m_pProv->exportIndication(env, indHandlerInst, indicationInst);
+		m_pProv->exportIndication(env, ns, indHandlerInst, indicationInst);
 	}
 
 private:

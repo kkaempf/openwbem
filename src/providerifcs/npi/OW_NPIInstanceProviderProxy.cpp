@@ -268,7 +268,7 @@ OW_NPIInstanceProviderProxy::createInstance(
 
             CIMInstance _ci = { (void*)static_cast<const void *> (&cimInstance)};
 
-			OW_CIMObjectPath cop(cimInstance.getClassName(), cimInstance.getKeyValuePairs());
+			OW_CIMObjectPath cop(cimInstance);
 			cop.setNameSpace(ns);
             CIMObjectPath _cop = { static_cast<void *> (const_cast<OW_CIMObjectPath*>(&cop))};
 
@@ -316,7 +316,7 @@ OW_NPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef &
 
 		CIMInstance _ci = { (void*)static_cast<const void *> (&modifiedInstance)};
 
-		OW_CIMObjectPath cop(modifiedInstance.getClassName(), modifiedInstance.getKeyValuePairs());
+		OW_CIMObjectPath cop(modifiedInstance);
 		cop.setNameSpace(ns);
 		CIMObjectPath _cop = { (void*)static_cast<const void *> (&cop)};
 
