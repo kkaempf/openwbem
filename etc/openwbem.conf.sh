@@ -271,3 +271,8 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # The default value is true.
 ;http_server.reuse_addr = true
 
+################################################################################
+# http_server.timeout specifies the number of seconds that the server will use
+# as a timeout when communicting with clients. The value must be > 0.
+# The default for this option is 300 (5 minutes).
+;http_server.timeout = 300;

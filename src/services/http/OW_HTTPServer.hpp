@@ -104,6 +104,7 @@ public:
 		bool useUDS;
 		bool reuseAddr;
 		OW_ServiceEnvironmentIFCRef env;
+		OW_Int32 timeout;
 	};
 
 

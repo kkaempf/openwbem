@@ -52,7 +52,7 @@ OW_PollingManager::OW_PollingManager(OW_CIMOMEnvironmentRef env)
 	OW_Int32 maxThreads;
 	try
 	{
-		maxThreads = env->getConfigItem(OW_ConfigOpts::POLLING_MANAGER_MAX_THREADS, OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
+		maxThreads = env->getConfigItem(OW_ConfigOpts::POLLING_MANAGER_MAX_THREADS_opt, OW_DEFAULT_POLLING_MANAGER_MAX_THREADS).toInt32();
 	}
 	catch (const OW_StringConversionException&)
 	{

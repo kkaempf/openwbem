@@ -156,6 +156,10 @@
 #define OW_DEFAULT_POLLING_MANAGER_MAX_THREADS "256"
 #endif
 
+#ifndef OW_DEFAULT_HTTP_TIMEOUT
+#define OW_DEFAULT_HTTP_TIMEOUT "300"
+#endif
+
 namespace OW_ConfigOpts
 {
 	static const char* const OW_DEBUG_opt = "owcimomd.debugflag";
@@ -206,7 +210,8 @@ namespace OW_ConfigOpts
 	static const char* const CMPIIFC_PROV_LOC_opt = "cmpiprovifc.prov_location";
  	static const char* const PERLIFC_PROV_LOC_opt = "perlprovifc.prov_location";
     static const char* const CHECK_REFERENTIAL_INTEGRITY_opt = "owcimomd.check_referential_integrity";
-	static const char* const POLLING_MANAGER_MAX_THREADS = "owcimomd.polling_manager_max_threads";
+	static const char* const POLLING_MANAGER_MAX_THREADS_opt = "owcimomd.polling_manager_max_threads";
+	static const char* const HTTP_TIMEOUT_opt = "http_server.timeout";
 };
 
 #endif

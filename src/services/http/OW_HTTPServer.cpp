@@ -186,6 +186,9 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 
 		item = env->getConfigItem(OW_ConfigOpts::REUSE_ADDR_opt);
 		m_options.reuseAddr = !item.equalsIgnoreCase("false");
+		
+		item = env->getConfigItem(OW_ConfigOpts::HTTP_TIMEOUT_opt, OW_DEFAULT_HTTP_TIMEOUT);
+		m_options.timeout = item.toInt32();
 	}
 	catch (const OW_StringConversionException& e)
 	{

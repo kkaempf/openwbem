@@ -56,11 +56,6 @@ using std::istream;
 using std::ostream;
 using std::flush;
 
-#ifndef SOCKET_TIMEOUT
-#define SOCKET_TIMEOUT 300
-#endif
-
-
 #ifndef OW_LOGDEBUG
 #define OW_LOGDEBUG(x) m_options.env->getLogger()->logDebug(x)
 #endif
@@ -100,7 +95,7 @@ OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_Socket socket,
 	, m_requestHandler()
 	, m_options(opts)
 {
-	m_socket.setTimeouts(SOCKET_TIMEOUT);
+	m_socket.setTimeouts(m_options.timeout);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -152,7 +147,7 @@ OW_HTTPSvrConnection::run()
 			addHeader("Server",
 				"OpenWBEM/" OW_VERSION " (CIMOM)");
 
-			int selType = OW_Select::select(selArray, SOCKET_TIMEOUT * 1000);
+			int selType = OW_Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
 			if(selType == OW_Select::OW_SELECT_ERROR)
 			{
 			   OW_THROW(OW_SocketException, "Error occurred during select()");
