@@ -33,7 +33,7 @@
 
 
 class CMPI_ThreadContext {
-   static unsigned long theKey;
+   static volatile unsigned long theKey;
    CMPI_ThreadContext* m_prev;
    CMPI_Object *CIMfirst,*CIMlast;
    void add(CMPI_Object *o);

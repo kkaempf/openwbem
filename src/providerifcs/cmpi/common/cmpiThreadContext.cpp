@@ -25,9 +25,10 @@
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Format.hpp"
+#include "OW_ThreadImpl.hpp"
 
 static const unsigned long NOKEY = PTHREAD_KEYS_MAX+1;
-unsigned long CMPI_ThreadContext::theKey=NOKEY;
+volatile unsigned long CMPI_ThreadContext::theKey=NOKEY;
 static OW_NonRecursiveMutex keyGuard;
 
 CMPI_ThreadContext* CMPI_ThreadContext::getContext()
@@ -57,9 +58,10 @@ void CMPI_ThreadContext::setThreadContext()
 	// if this is the first time setThreadContext() has run.
 	// hiKey is initially PTHREAD_KEYS_MAX+1, but then gets set as 
 	// CMPI_ThreadContext objects are created.
+	OW_ThreadImpl::memoryBarrier();
 	if (theKey == NOKEY)
 	{
-		// double-checked locking pattern
+		// double-checked locking pattern.  See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
 		OW_NonRecursiveMutexLock l(keyGuard);
 		if (theKey == NOKEY)
 		{
