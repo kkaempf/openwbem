@@ -150,40 +150,6 @@ OW_MetaRepository::_makeClassPath(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_MetaRepository::enumQualifierTypes(const OW_String& ns,
-	OW_CIMQualifierTypeResultHandlerIFC& result)
-{
-	throwIfNotOpen();
-
-	OW_String nskey = _makeQualPath(ns, OW_String());
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(nskey);
-	if(!node)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
-	}
-
-	if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
-	{
-		OW_THROW(OW_HDBException, "Expected namespace node");
-	}
-
-	node = hdl->getFirstChild(node);
-	while(node)
-	{
-		// If this is not a namespace node, assume it's a qualifier
-		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
-		{
-			OW_CIMQualifierType qual(OW_CIMNULL);
-			nodeToCIMObject(qual, node);
-			result.handle(qual);
-		}
-		node = hdl->getNextSibling(node);
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
 OW_MetaRepository::getQualifierType(const OW_String& ns,
 	const OW_String& qualName, OW_HDBHandle* phdl)
@@ -233,6 +199,41 @@ OW_MetaRepository::getQualifierType(const OW_String& ns,
     m_qualCache.addToCache(qualType, qkey);
 
 	return qualType;
+}
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_MetaRepository::enumQualifierTypes(const OW_String& ns,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
+{
+	throwIfNotOpen();
+
+	OW_String nskey = _makeQualPath(ns, OW_String());
+	OW_HDBHandleLock hdl(this, getHandle());
+	OW_HDBNode node = hdl->getNode(nskey);
+	if(!node)
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_NAMESPACE, ns.c_str());
+	}
+
+	if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+	{
+		OW_THROW(OW_HDBException, "Expected namespace node");
+	}
+
+	node = hdl->getFirstChild(node);
+	while(node)
+	{
+		// If this is not a namespace node, assume it's a qualifier
+		if(!node.areAllFlagsOn(OW_HDBNSNODE_FLAG))
+		{
+			OW_CIMQualifierType qual(OW_CIMNULL);
+			nodeToCIMObject(qual, node);
+			result.handle(qual);
+		}
+		node = hdl->getNextSibling(node);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -344,6 +345,7 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
         m_qualCache.addToCache(qt, qkey);
 	}
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMException::ErrNoType

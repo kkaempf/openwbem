@@ -362,6 +362,7 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 	}
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 void setQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing setQualifier() *******\n" << endl;
@@ -410,6 +411,7 @@ void enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 			throw;
 	}
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 void getQualifier(OW_CIMOMHandleIFC& hdl)
 {
@@ -571,6 +573,7 @@ void execWriteQuery(OW_CIMOMHandleIFC& hdl)
 	}
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n\n******* Doing deleteQualifier() *******\n" << endl;
@@ -588,6 +591,8 @@ void deleteQualifier(OW_CIMOMHandleIFC& hdl)
 			throw;
 	}
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
@@ -809,8 +814,10 @@ int main(int argc, char* argv[])
 		modifyInstance(rch);
 		setProperty(rch);
 		getProperty(rch);
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		setQualifier(rch);
 		enumerateQualifiers(rch);
+#endif
 		getQualifier(rch);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -824,7 +831,9 @@ int main(int argc, char* argv[])
 
 		deleteInstance(rch, "SixMillion");
 		deleteClass(rch);
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		deleteQualifier(rch);
+#endif
 
 		invokeMethod(rch, 1);
 

@@ -54,16 +54,6 @@ OW_WQLFilterRep::getEnvironment() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_WQLFilterRep::getQualifierType(const OW_String&,
-	const OW_String&,
-	const OW_UserInfo& /*aclInfo*/)
-{
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
-}
-
-///////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::enumNameSpace(
 	OW_StringResultHandlerIFC&,
@@ -92,6 +82,17 @@ OW_WQLFilterRep::deleteNameSpace(const OW_String& /*ns*/,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifierType
+OW_WQLFilterRep::getQualifierType(const OW_String&,
+	const OW_String&,
+	const OW_UserInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+///////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::setQualifierType(const OW_String &/*ns*/,
 	const OW_CIMQualifierType &/*qt*/, const OW_UserInfo& /*aclInfo*/)
@@ -118,6 +119,7 @@ OW_WQLFilterRep::deleteQualifierType(const OW_String& /*ns*/, const OW_String& /
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 ///////////////////////////////////////////////////////////////////////////////
 void

@@ -79,12 +79,16 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 	{ "createinstance", &OW_XMLExecute::createInstance },
 	{ "deleteclass", &OW_XMLExecute::deleteClass },
 	{ "deleteinstance", &OW_XMLExecute::deleteInstance },
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "deletequalifier", &OW_XMLExecute::deleteQualifier },
+#endif
 	{ "enumerateclasses", &OW_XMLExecute::enumerateClasses },
 	{ "enumerateclassnames", &OW_XMLExecute::enumerateClassNames },
 	{ "enumerateinstancenames", &OW_XMLExecute::enumerateInstanceNames },
 	{ "enumerateinstances", &OW_XMLExecute::enumerateInstances },
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "enumeratequalifiers", &OW_XMLExecute::enumerateQualifiers },
+#endif
 	{ "execquery", &OW_XMLExecute::execQuery },
 	{ "getclass", &OW_XMLExecute::getClass },
 	{ "getinstance", &OW_XMLExecute::getInstance },
@@ -97,7 +101,9 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 	{ "references", &OW_XMLExecute::references },
 #endif
 	{ "setproperty", &OW_XMLExecute::setProperty },
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "setqualifier", &OW_XMLExecute::setQualifier },
+#endif
 	{ "garbage", 0 }
 };
 
@@ -826,6 +832,29 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	hdl.deleteInstance( ns, instPath );
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
+{
+	OW_String argName = parser.mustGetAttribute(paramName);
+
+	if (!argName.equalsIgnoreCase(XMLP_QUALIFIERDECL))
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+			"invalid qualifier xml");
+	}
+
+	parser.mustGetChild(
+		OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
+	
+	OW_CIMQualifierType cimQualifier;
+	OW_XMLQualifier::processQualifierDecl(parser, cimQualifier);
+
+	hdl.setQualifierType(ns, cimQualifier);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
@@ -834,6 +863,39 @@ OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 	OW_String qualName = getQualifierName(parser);
 	hdl.deleteQualifierType(ns, qualName);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMQualifierTypeXMLOutputter : public OW_CIMQualifierTypeResultHandlerIFC
+	{
+	public:
+		CIMQualifierTypeXMLOutputter(
+			std::ostream& ostr_)
+		: ostr(ostr_)
+		{}
+	protected:
+		virtual void doHandle(const OW_CIMQualifierType &i)
+		{
+			OW_CIMtoXML(i, ostr);
+			checkStream(ostr);
+		}
+		std::ostream& ostr;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
+{
+	ostr << "<IRETURNVALUE>";
+	CIMQualifierTypeXMLOutputter handler(ostr);
+	hdl.enumQualifierTypes(ns, handler);
+	ostr << "</IRETURNVALUE>";
+}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 //////////////////////////////////////////////////////////////////////////////
 namespace
@@ -1055,38 +1117,6 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 		includeQualifiers, includeClassOrigin, pPropList);
 	ostr << "</IRETURNVALUE>";
 }
-
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class CIMQualifierTypeXMLOutputter : public OW_CIMQualifierTypeResultHandlerIFC
-	{
-	public:
-		CIMQualifierTypeXMLOutputter(
-			std::ostream& ostr_)
-		: ostr(ostr_)
-		{}
-	protected:
-		virtual void doHandle(const OW_CIMQualifierType &i)
-		{
-			OW_CIMtoXML(i, ostr);
-			checkStream(ostr);
-		}
-		std::ostream& ostr;
-	};
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
-	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
-{
-	ostr << "<IRETURNVALUE>";
-	CIMQualifierTypeXMLOutputter handler(ostr);
-	hdl.enumQualifierTypes(ns, handler);
-	ostr << "</IRETURNVALUE>";
-}
-
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1410,28 +1440,6 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_CIMXMLParser& parser,
 	execQueryXMLOutputter handler(ostr, ns);
 	hdl.execQuery(ns, handler, params[1].val.toString(), params[0].val.toString());
 	ostr << "</IRETURNVALUE>";
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLExecute::setQualifier(ostream& /*ostr*/, OW_CIMXMLParser& parser,
-	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
-{
-	OW_String argName = parser.mustGetAttribute(paramName);
-
-	if (!argName.equalsIgnoreCase(XMLP_QUALIFIERDECL))
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-			"invalid qualifier xml");
-	}
-
-	parser.mustGetChild(
-		OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
-	
-	OW_CIMQualifierType cimQualifier;
-	OW_XMLQualifier::processQualifierDecl(parser, cimQualifier);
-
-	hdl.setQualifierType(ns, cimQualifier);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -373,19 +373,6 @@ OW_CIMXMLCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
-{
-	static const char* const commandName = "DeleteQualifier";
-	OW_Array<OW_Param> params;
-
-	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualName));
-
-	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params);
-}
-
-//////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class enumClassNamesOp : public OW_ClientOperation
@@ -600,41 +587,6 @@ OW_CIMXMLCIMOMHandle::enumInstances(
 
 	enumInstancesOp op(result);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
-}
-
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class enumQualifierTypesOp : public OW_ClientOperation
-	{
-	public:
-		enumQualifierTypesOp(OW_CIMQualifierTypeResultHandlerIFC& result_)
-			: result(result_)
-		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
-		{
-			while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
-			{
-				OW_CIMQualifierType cqt;
-				OW_XMLQualifier::processQualifierDecl(parser, cqt);
-				result.handle(cqt);
-			}
-		}
-
-		OW_CIMQualifierTypeResultHandlerIFC& result;
-	};
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::enumQualifierTypes(
-	const OW_String& ns,
-	OW_CIMQualifierTypeResultHandlerIFC& result)
-{
-	static const char* const commandName = "EnumerateQualifiers";
-
-	enumQualifierTypesOp op(result);
-	intrinsicMethod(ns, commandName, op);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -895,6 +847,7 @@ OW_CIMXMLCIMOMHandle::getQualifierType(const OW_String& ns,
 	return rval;
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::setQualifierType(const OW_String& ns,
@@ -910,6 +863,55 @@ OW_CIMXMLCIMOMHandle::setQualifierType(const OW_String& ns,
 	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
 						 extra.toString());
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
+{
+	static const char* const commandName = "DeleteQualifier";
+	OW_Array<OW_Param> params;
+
+	params.push_back(OW_Param(XMLP_QUALIFIERNAME, qualName));
+
+	voidRetValOp op;
+	intrinsicMethod(ns, commandName, op, params);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class enumQualifierTypesOp : public OW_ClientOperation
+	{
+	public:
+		enumQualifierTypesOp(OW_CIMQualifierTypeResultHandlerIFC& result_)
+			: result(result_)
+		{}
+		virtual void operator ()(OW_CIMXMLParser &parser)
+		{
+			while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
+			{
+				OW_CIMQualifierType cqt;
+				OW_XMLQualifier::processQualifierDecl(parser, cqt);
+				result.handle(cqt);
+			}
+		}
+
+		OW_CIMQualifierTypeResultHandlerIFC& result;
+	};
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::enumQualifierTypes(
+	const OW_String& ns,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
+{
+	static const char* const commandName = "EnumerateQualifiers";
+
+	enumQualifierTypesOp op(result);
+	intrinsicMethod(ns, commandName, op);
+}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

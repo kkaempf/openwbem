@@ -89,6 +89,16 @@ public:
 	virtual void deleteNameSpace(const OW_String& ns, const OW_UserInfo& aclInfo);
 
 	/**
+	 * Gets a list of the namespaces
+	 * @param aclInfo ignored
+	 * @param result result.handle() will be called for each namespace.
+	 * @exception 	OW_CIMException If the namespace does not exist or the object
+	 *					cannot be found in the specified namespace.
+	 */
+	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
+		const OW_UserInfo& aclInfo);
+
+	/**
 	 * Get an existing qualifier type from the repository.
 	 * @param ns The namespace of the qualifier type
 	 * @param qualifierName	The name of the qualifier type.
@@ -101,16 +111,7 @@ public:
 		const OW_String& qualifierName,
 		const OW_UserInfo& aclInfo);
 
-	/**
-	 * Gets a list of the namespaces
-	 * @param aclInfo ignored
-	 * @param result result.handle() will be called for each namespace.
-	 * @exception 	OW_CIMException If the namespace does not exist or the object
-	 *					cannot be found in the specified namespace.
-	 */
-	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
-		const OW_UserInfo& aclInfo);
-
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Enumerate the qualifier types in a name space.
 	 * @param ns	The namespace to enumerate the qualifiers in.
@@ -144,6 +145,8 @@ public:
 	 */
 	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt, const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 	/**
 	 * Gets an existing class from a store

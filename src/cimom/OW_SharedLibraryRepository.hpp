@@ -36,6 +36,8 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+// TODO: Uninline all these functions, since they can't be inlined by the
+// compiler (because they're virtual), they just cause bloat.
 class OW_SharedLibraryRepository : public OW_RepositoryIFC
 {
 public:
@@ -47,13 +49,6 @@ public:
 	virtual void close() { m_ref->close(); }
 
 	virtual void open(const OW_String &path) { m_ref->open(path); }
-
-	virtual OW_CIMQualifierType getQualifierType(
-		const OW_String& ns,
-		const OW_String& qualifierName, const OW_UserInfo &aclInfo)
-	{
-		return m_ref->getQualifierType(ns, qualifierName, aclInfo);
-	}
 
 	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const
 	{
@@ -78,6 +73,14 @@ public:
 		return m_ref->enumNameSpace(result, aclInfo);
 	}
 
+	virtual OW_CIMQualifierType getQualifierType(
+		const OW_String& ns,
+		const OW_String& qualifierName, const OW_UserInfo &aclInfo)
+	{
+		return m_ref->getQualifierType(ns, qualifierName, aclInfo);
+	}
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
 		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo &aclInfo)
@@ -96,6 +99,8 @@ public:
 	{
 		m_ref->setQualifierType(ns, qt, aclInfo);
 	}
+
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 	virtual OW_CIMClass getClass(
 		const OW_String& ns,

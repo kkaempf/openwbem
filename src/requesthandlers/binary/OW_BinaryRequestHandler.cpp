@@ -120,16 +120,17 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 		{
 			switch(funcNo)
 			{
-				case OW_BIN_SETQUAL:
-					lgr->logDebug("OW_BinaryRequestHandler set qualifier"
-						" request");
-					setQual(chdl, *ostrm, *istrm);
-					break;
-
 				case OW_BIN_GETQUAL:
 					lgr->logDebug("OW_BinaryRequestHandler get qualifier"
 						" request");
 					getQual(chdl, *ostrm, *istrm);
+					break;
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+				case OW_BIN_SETQUAL:
+					lgr->logDebug("OW_BinaryRequestHandler set qualifier"
+						" request");
+					setQual(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_DELETEQUAL:
@@ -137,6 +138,13 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 						" request");
 					deleteQual(chdl, *ostrm, *istrm);
 					break;
+
+				case OW_BIN_ENUMQUALS:
+					lgr->logDebug("OW_BinaryRequestHandler enum qualifiers"
+						" request");
+					enumQualifiers(chdl, *ostrm, *istrm);
+					break;
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 				case OW_BIN_CREATECLS:
 					lgr->logDebug("OW_BinaryRequestHandler create class"
@@ -220,12 +228,6 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					lgr->logDebug("OW_BinaryRequestHandler enum instance"
 						" names request");
 					enumInstanceNames(chdl, *ostrm, *istrm);
-					break;
-
-				case OW_BIN_ENUMQUALS:
-					lgr->logDebug("OW_BinaryRequestHandler enum qualifiers"
-						" request");
-					enumQualifiers(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_INVMETH:
@@ -499,6 +501,7 @@ OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleIFCRef chdl,
@@ -509,6 +512,34 @@ OW_BinaryRequestHandler::deleteQual(OW_CIMOMHandleIFCRef chdl,
 	chdl->deleteQualifierType(ns, qualName);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryRequestHandler::setQual(OW_CIMOMHandleIFCRef chdl,
+	std::ostream& ostrm, std::istream& istrm)
+{
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_CIMQualifierType qt(OW_BinIfcIO::readQual(istrm));
+	chdl->setQualifierType(ns, qt);
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleIFCRef chdl,
+	std::ostream& ostrm, std::istream& istrm)
+{
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_QUALENUM);
+	BinaryCIMQualifierTypeWriter handler(ostrm);
+	chdl->enumQualifierTypes(ns, handler);
+
+	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
+}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -574,17 +605,6 @@ OW_BinaryRequestHandler::getQual(OW_CIMOMHandleIFCRef chdl,
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::writeQual(ostrm, qt);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::setQual(OW_CIMOMHandleIFCRef chdl,
-	std::ostream& ostrm, std::istream& istrm)
-{
-	OW_String ns(OW_BinIfcIO::readString(istrm));
-	OW_CIMQualifierType qt(OW_BinIfcIO::readQual(istrm));
-	chdl->setQualifierType(ns, qt);
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -723,22 +743,6 @@ OW_BinaryRequestHandler::enumInstanceNames(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleIFCRef chdl,
-	std::ostream& ostrm, std::istream& istrm)
-{
-	OW_String ns(OW_BinIfcIO::readString(istrm));
-
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_QUALENUM);
-	BinaryCIMQualifierTypeWriter handler(ostrm);
-	chdl->enumQualifierTypes(ns, handler);
-
-	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
-	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////

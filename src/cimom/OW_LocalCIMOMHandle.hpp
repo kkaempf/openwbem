@@ -95,12 +95,6 @@ public:
 	virtual void close();
 
 	/**
-	 * Deletes the CIM qualfier for the object specified by the CIM object path.
-	 * @param path	The OW_CIMObjectPath identifying the qualifier type to delete.
-	 */
-	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName);
-
-	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param path The OW_CIMObjectPath identifying the class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
@@ -152,6 +146,15 @@ public:
 	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path);
 
 	/**
+	 * Gets the CIM qualifier type specified in the CIM object path.
+	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
+	 * @return An OW_CIMQualifierType identified by name.
+	 */
+	virtual OW_CIMQualifierType getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName);
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+	/**
 	 * Enumerates the qualifiers defined in a namespace.
     * @param path	The OW_CIMObjectPath identifying the namespace whose qualifier
 	 *					definitions are to be enumerated.
@@ -159,6 +162,23 @@ public:
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
 		OW_CIMQualifierTypeResultHandlerIFC& result);
+
+	/**
+	 * Deletes the CIM qualfier for the object specified by the CIM object path.
+	 * @param path	The OW_CIMObjectPath identifying the qualifier type to delete.
+	 */
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName);
+
+	/**
+	 * Updates the specified CIM qualifier type in the specified namespace if
+	 * it exist. If it doesn't exist, it will be added.
+	 * @param name	An OW_CIMObjectPath that identifies the CIM qualifier type.
+	 * @param qt	The CIM qualifier type to be updated or added.
+	 */
+	virtual void setQualifierType(const OW_String& ns,
+		const OW_CIMQualifierType& qt);
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 	/**
 	 * Gets the CIM instance for the specified CIM object path.
@@ -243,14 +263,6 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result);
 
 	/**
-	 * Gets the CIM qualifier type specified in the CIM object path.
-	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
-	 * @return An OW_CIMQualifierType identified by name.
-	 */
-	virtual OW_CIMQualifierType getQualifierType(const OW_String& ns,
-		const OW_String& qualifierName);
-
-	/**
 	 * Gets the CIM class for the specified CIM object path.
 	 * @param name The OW_CIMObjectPath that identifies the CIM class
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
@@ -300,15 +312,6 @@ public:
 	 */
 	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc);
-
-	/**
-	 * Updates the specified CIM qualifier type in the specified namespace if
-	 * it exist. If it doesn't exist, it will be added.
-	 * @param name	An OW_CIMObjectPath that identifies the CIM qualifier type.
-	 * @param qt	The CIM qualifier type to be updated or added.
-	 */
-	virtual void setQualifierType(const OW_String& ns,
-		const OW_CIMQualifierType& qt);
 
 	/**
 	 * Add the specified CIM instance to the specified namespace.

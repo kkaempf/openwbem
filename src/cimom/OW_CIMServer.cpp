@@ -404,6 +404,17 @@ OW_CIMServer::deleteNameSpace(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMServer::enumNameSpace(OW_StringResultHandlerIFC& result,
+	const OW_UserInfo& aclInfo)
+{
+    // TODO: Do we check access for enumerate namespace, now that they're not hierarchial?
+	//m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
+	//	aclInfo);
+	m_cimRepository->enumNameSpace(result,aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
 OW_CIMServer::getQualifierType(const OW_String& ns,
 	const OW_String& qualifierName,
@@ -416,6 +427,7 @@ OW_CIMServer::getQualifierType(const OW_String& ns,
 	return m_cimRepository->getQualifierType(ns,qualifierName,aclInfo);
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::enumQualifierTypes(
@@ -427,17 +439,6 @@ OW_CIMServer::enumQualifierTypes(
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, ns, aclInfo);
 #endif
 	m_cimRepository->enumQualifierTypes(ns,result,aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMServer::enumNameSpace(OW_StringResultHandlerIFC& result,
-	const OW_UserInfo& aclInfo)
-{
-    // TODO: Do we check access for enumerate namespace, now that they're not hierarchial?
-	//m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATENAMESPACE, nsName,
-	//	aclInfo);
-	m_cimRepository->enumNameSpace(result,aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -464,6 +465,8 @@ OW_CIMServer::setQualifierType(
 
 	m_cimRepository->setQualifierType(ns,qt,aclInfo);
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass

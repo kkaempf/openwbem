@@ -99,6 +99,7 @@ public:
 		const OW_String& ns,
 		const OW_String& qualifierName, const OW_UserInfo& aclInfo) = 0;
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Enumerate the qualifier types in a name space.
 	 * @param path	The object path to enumeration the qualifiers in.
@@ -131,6 +132,7 @@ public:
 	 */
 	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt, const OW_UserInfo& aclInfo) = 0;
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 	/**
 	 * Gets an existing class from a store

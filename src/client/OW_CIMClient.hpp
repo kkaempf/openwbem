@@ -116,13 +116,6 @@ public:
 	void deleteInstance(const OW_CIMObjectPath& path);
 
 	/**
-	 * Deletes a CIM qualfier type.
-	 * @param qualName The qualifier type to delete.
-	 * @exception OW_CIMException If the qualifier type does not exist.
-	 */
-	void deleteQualifierType(const OW_String& qualName);
-
-	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param className The class to be enumerated.
 	 * @param deep If set to DEEP, the enumeration returned will
@@ -230,16 +223,6 @@ public:
 		const OW_String& className);
 
 	/**
-	 * Enumerates the qualifiers defined in a namespace.
-	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
-	 *										found
-	 */
-	void enumQualifierTypes(
-		OW_CIMQualifierTypeResultHandlerIFC& result);
-
-	OW_CIMQualifierTypeEnumeration enumQualifierTypesE();
-
-	/**
 	 * Gets the CIM class for the specified CIM object path.
 	 * @param classNname The CIM class
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
@@ -322,12 +305,31 @@ public:
 	 */
 	OW_CIMQualifierType getQualifierType(const OW_String& qualifierName);
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace if
 	 * it exist. If it doesn't exist, it will be added.
 	 * @param qualifierType The CIM qualifier type to be updated or added.
 	 */
 	void setQualifierType(const OW_CIMQualifierType& qualifierType);
+
+	/**
+	 * Deletes a CIM qualfier type.
+	 * @param qualName The qualifier type to delete.
+	 * @exception OW_CIMException If the qualifier type does not exist.
+	 */
+	void deleteQualifierType(const OW_String& qualName);
+
+	/**
+	 * Enumerates the qualifiers defined in a namespace.
+	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
+	 *										found
+	 */
+	void enumQualifierTypes(
+		OW_CIMQualifierTypeResultHandlerIFC& result);
+
+	OW_CIMQualifierTypeEnumeration enumQualifierTypesE();
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 	/**
 	 * Updates the CIM class associated with the specified namespace.

@@ -174,14 +174,6 @@ OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath&
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
-{
-	OW_CIMServerSchemaWriteLocker wl(this);
-	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_LocalCIMOMHandle::enumClass(const OW_String& ns,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
@@ -231,6 +223,24 @@ OW_LocalCIMOMHandle::enumInstanceNames(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifierType
+OW_LocalCIMOMHandle::getQualifierType(const OW_String& ns,
+		const OW_String& qualifierName)
+{
+	OW_CIMServerSchemaReadLocker rl(this);
+	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
+}
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& qualName)
+{
+	OW_CIMServerSchemaWriteLocker wl(this);
+	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_LocalCIMOMHandle::enumQualifierTypes(
 	const OW_String& ns,
@@ -239,6 +249,16 @@ OW_LocalCIMOMHandle::enumQualifierTypes(
 	OW_CIMServerSchemaReadLocker srl(this);
 	m_pServer->enumQualifierTypes(ns, result, m_aclInfo);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_LocalCIMOMHandle::setQualifierType(const OW_String& ns,
+	const OW_CIMQualifierType& qt)
+{
+	OW_CIMServerSchemaWriteLocker wl(this);
+	m_pServer->setQualifierType(ns, qt, m_aclInfo);
+}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
@@ -287,24 +307,6 @@ OW_LocalCIMOMHandle::invokeMethod(
 	OW_CIMServerInstanceWriteLocker irl(this);
 	return m_pServer->invokeMethod(ns, path, methodName, inParams, outParams,
 		m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_LocalCIMOMHandle::getQualifierType(const OW_String& ns,
-		const OW_String& qualifierName)
-{
-	OW_CIMServerSchemaReadLocker rl(this);
-	return m_pServer->getQualifierType(ns, qualifierName, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_LocalCIMOMHandle::setQualifierType(const OW_String& ns,
-	const OW_CIMQualifierType& qt)
-{
-	OW_CIMServerSchemaWriteLocker wl(this);
-	m_pServer->setQualifierType(ns, qt, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -498,7 +500,9 @@ OW_LocalCIMOMHandle::getServerFeatures()
 	cf.supportedGroups.push_back("basic-write");
 	cf.supportedGroups.push_back("schema-manipulation");
 	cf.supportedGroups.push_back("instance-manipulation");
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	cf.supportedGroups.push_back("qualifier-declaration");
+#endif
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	cf.supportedGroups.push_back("association-traversal");
 #endif

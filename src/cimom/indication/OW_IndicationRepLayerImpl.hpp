@@ -39,6 +39,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierType.hpp"
 
+// TODO: uninline all these virtual functions, they're just causing bloat.
 class OW_IndicationRepLayerImpl : public OW_IndicationRepLayer
 {
 public:
@@ -54,12 +55,6 @@ public:
 	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const
 	{
 		return m_pEnv;
-	}
-
-	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
-		const OW_UserInfo& aclInfo)
-	{
-		m_pServer->deleteQualifierType(ns, qualName, aclInfo);
 	}
 
 
@@ -86,13 +81,6 @@ public:
 
 	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path,
 		const OW_UserInfo& aclInfo);
-
-	virtual void enumQualifierTypes(
-		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo& aclInfo)
-	{
-		m_pServer->enumQualifierTypes(ns, result, aclInfo);
-	}
 
 
 	virtual OW_CIMInstance getInstance(
@@ -155,11 +143,27 @@ public:
 	virtual void createClass(const OW_String& ns,
 		const OW_CIMClass &cc, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+	virtual void enumQualifierTypes(
+		const OW_String& ns,
+		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_UserInfo& aclInfo)
+	{
+		m_pServer->enumQualifierTypes(ns, result, aclInfo);
+	}
+
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
+		const OW_UserInfo& aclInfo)
+	{
+		m_pServer->deleteQualifierType(ns, qualName, aclInfo);
+	}
+
 	virtual void setQualifierType(const OW_String& ns,
 		const OW_CIMQualifierType& qt, const OW_UserInfo& aclInfo)
 	{
 		m_pServer->setQualifierType(ns, qt, aclInfo);
 	}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,

@@ -122,14 +122,6 @@ public:
 	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path) = 0;
 
 	/**
-	 * Deletes a CIM qualfier type.
-	 * @param ns The namespace containing the qualifier type
-	 * @param qualName The qualifier type to delete.
-	 * @exception OW_CIMException If the qualifier type does not exist.
-	 */
-	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName) = 0;
-
-	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated.
@@ -273,21 +265,6 @@ public:
 		const OW_String& className);
 
 	/**
-	 * Enumerates the qualifiers defined in a namespace.
-    * @param ns	The namespace whose qualifier definitions are to be enumerated.
-	 * @return 	An Enumeration of OW_CIMQualifierTypes
-	 *				(OW_CIMQualifierEnumeration)
-	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
-	 *										found
-	 */
-	virtual void enumQualifierTypes(
-		const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result) = 0;
-
-	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypesE(
-		const OW_String& ns);
-
-	/**
 	 * Gets the CIM class for the specified CIM object path.
 	 * @param ns The namespace
 	 * @param classNname The CIM class
@@ -379,6 +356,7 @@ public:
 		const OW_String& ns,
 		const OW_String& qualifierName) = 0;
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace if
 	 * it exist. If it doesn't exist, it will be added.
@@ -388,6 +366,30 @@ public:
 	virtual void setQualifierType(
 		const OW_String& ns,
 		const OW_CIMQualifierType& qualifierType) = 0;
+
+	/**
+	 * Deletes a CIM qualfier type.
+	 * @param ns The namespace containing the qualifier type
+	 * @param qualName The qualifier type to delete.
+	 * @exception OW_CIMException If the qualifier type does not exist.
+	 */
+	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName) = 0;
+
+	/**
+	 * Enumerates the qualifiers defined in a namespace.
+     * @param ns	The namespace whose qualifier definitions are to be enumerated.
+	 * @return 	An Enumeration of OW_CIMQualifierTypes
+	 *				(OW_CIMQualifierEnumeration)
+	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
+	 *										found
+	 */
+	virtual void enumQualifierTypes(
+		const OW_String& ns,
+		OW_CIMQualifierTypeResultHandlerIFC& result) = 0;
+
+	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypesE(
+		const OW_String& ns);
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 	/**
 	 * Updates the CIM class associated with the specified namespace.

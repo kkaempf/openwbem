@@ -67,6 +67,7 @@ public:
 	OW_CIMQualifierType getQualifierType(const OW_String& ns,
 		const OW_String& qualName, OW_HDBHandle* hdl=0);
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Delete an existing qualifier from the repository
 	 * @param ns	The namespace for the qualifier name.
@@ -85,6 +86,15 @@ public:
 	 * @exception OW_CIMException
 	 */
 	void setQualifierType(const OW_String& ns, const OW_CIMQualifierType& qt);
+
+	/**
+	 * Enumerator the qualifiers in a given namespace
+	 * @param ns	The namespace to get the qualifiers from
+	 * @return An enumeration of the qualifier types in the namespace.
+	 */
+	void enumQualifierTypes(const OW_String& ns,
+		OW_CIMQualifierTypeResultHandlerIFC& result);
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 	/**
 	 * Gets an existing class from the store
@@ -156,14 +166,6 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin);
 
 	/**
-	 * Enumerator the qualifiers in a given namespace
-	 * @param ns	The namespace to get the qualifiers from
-	 * @return An enumeration of the qualifier types in the namespace.
-	 */
-	void enumQualifierTypes(const OW_String& ns,
-		OW_CIMQualifierTypeResultHandlerIFC& result);
-
-	/**
 	 * Gets the children of a class
 	 *
 	 * @param ns		 The namespace for the class
@@ -230,6 +232,7 @@ private:
 	 */
 	OW_String _makeClassPath(const OW_String& ns, const OW_String& className);
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Add a qualifier type to the repository
 	 * @param ns	The namespace for the qualifier type
@@ -238,6 +241,7 @@ private:
 	 */
 	void _addQualifierType(const OW_String& ns, const OW_CIMQualifierType& qt,
 		OW_HDBHandle* phdl=0);
+#endif
 
 	void _getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
 		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,

@@ -179,36 +179,6 @@ OW_CIMRepository::deleteNameSpace(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierType
-OW_CIMRepository::getQualifierType(const OW_String& ns,
-	const OW_String& qualifierName,
-	const OW_UserInfo&)
-{
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
-	{
-		m_env->getLogger()->logDebug(format("OW_CIMRepository getting qualifier type: %1",
-			OW_CIMObjectPath(qualifierName,ns).toString()));
-	}
-
-	return m_mStore.getQualifierType(ns, qualifierName);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMRepository::enumQualifierTypes(
-	const OW_String& ns,
-	OW_CIMQualifierTypeResultHandlerIFC& result,
-	const OW_UserInfo&)
-{
-	m_mStore.enumQualifierTypes(ns, result);
-
-	if (m_env->getLogger()->getLogLevel() == DebugLevel)
-	{
-		m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated qualifiers in namespace: %1", ns));
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMRepository::enumNameSpace(OW_StringResultHandlerIFC& result,
 	const OW_UserInfo&)
@@ -234,6 +204,37 @@ OW_CIMRepository::enumNameSpace(OW_StringResultHandlerIFC& result,
 	if (m_env->getLogger()->getLogLevel() == DebugLevel)
 	{
 		m_env->getLogger()->logDebug("OW_CIMRepository enumerated namespaces");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifierType
+OW_CIMRepository::getQualifierType(const OW_String& ns,
+	const OW_String& qualifierName,
+	const OW_UserInfo&)
+{
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->getLogger()->logDebug(format("OW_CIMRepository getting qualifier type: %1",
+			OW_CIMObjectPath(qualifierName,ns).toString()));
+	}
+
+	return m_mStore.getQualifierType(ns, qualifierName);
+}
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMRepository::enumQualifierTypes(
+	const OW_String& ns,
+	OW_CIMQualifierTypeResultHandlerIFC& result,
+	const OW_UserInfo&)
+{
+	m_mStore.enumQualifierTypes(ns, result);
+
+	if (m_env->getLogger()->getLogLevel() == DebugLevel)
+	{
+		m_env->getLogger()->logDebug(format("OW_CIMRepository enumerated qualifiers in namespace: %1", ns));
 	}
 }
 
@@ -276,6 +277,7 @@ OW_CIMRepository::setQualifierType(
 			"namespace: %2", qt.toString(), ns));
 	}
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass

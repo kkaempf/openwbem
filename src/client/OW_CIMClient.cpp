@@ -139,13 +139,6 @@ void
 
 ///////////////////////////////////////////////////////////////////////////////
 void 
-OW_CIMClient::deleteQualifierType(const OW_String& qualName)
-{
-	m_ch->deleteQualifierType(m_namespace, qualName);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void 
 OW_CIMClient::enumClass(const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
 	OW_Bool deep, OW_Bool localOnly,
@@ -234,21 +227,6 @@ OW_CIMClient::enumInstanceNamesE(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void 
-OW_CIMClient::enumQualifierTypes(
-	OW_CIMQualifierTypeResultHandlerIFC& result)
-{
-	m_ch->enumQualifierTypes(m_namespace, result);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-OW_CIMQualifierTypeEnumeration 
-OW_CIMClient::enumQualifierTypesE()
-{
-	return m_ch->enumQualifierTypesE(m_namespace);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 OW_CIMClass 
 	OW_CIMClient::getClass(
 	const OW_String& className,
@@ -292,12 +270,36 @@ OW_CIMQualifierType
 	return m_ch->getQualifierType(m_namespace, qualifierName);
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 ///////////////////////////////////////////////////////////////////////////////
 void 
 	OW_CIMClient::setQualifierType(const OW_CIMQualifierType& qualifierType)
 {
 	m_ch->setQualifierType(m_namespace, qualifierType);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+OW_CIMClient::deleteQualifierType(const OW_String& qualName)
+{
+	m_ch->deleteQualifierType(m_namespace, qualName);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void 
+OW_CIMClient::enumQualifierTypes(
+	OW_CIMQualifierTypeResultHandlerIFC& result)
+{
+	m_ch->enumQualifierTypes(m_namespace, result);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+OW_CIMQualifierTypeEnumeration 
+OW_CIMClient::enumQualifierTypesE()
+{
+	return m_ch->enumQualifierTypesE(m_namespace);
+}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 ///////////////////////////////////////////////////////////////////////////////
 void 

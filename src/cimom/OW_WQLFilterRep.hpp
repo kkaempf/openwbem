@@ -61,19 +61,6 @@ public:
 	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const;
 
 	/**
-	 * Get an existing qualifier type from the repository.
-	 * @param objPath	The object path for the qaulifer type.
-	 * @param aclInfo ACL object describing user making request.
-	 * @return A valid OW_CIMQaulifer type on success. Otherwise a NULL
-	 * OW_CIMQualifier type.
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
-	 */
-	virtual OW_CIMQualifierType getQualifierType(
-		const OW_String& ns,
-		const OW_String& qualifierName, const OW_UserInfo& aclInfo);
-
-	/**
 	 * Gets a list of the namespaces.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An Array of namespace names as strings.
@@ -100,6 +87,20 @@ public:
 	virtual void deleteNameSpace(const OW_String& ns,
 		const OW_UserInfo& aclInfo);
 
+	/**
+	 * Get an existing qualifier type from the repository.
+	 * @param objPath	The object path for the qaulifer type.
+	 * @param aclInfo ACL object describing user making request.
+	 * @return A valid OW_CIMQaulifer type on success. Otherwise a NULL
+	 * OW_CIMQualifier type.
+	 * @exception OW_CIMException
+	 * @exception OW_IOException
+	 */
+	virtual OW_CIMQualifierType getQualifierType(
+		const OW_String& ns,
+		const OW_String& qualifierName, const OW_UserInfo& aclInfo);
+
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace.
 	 * @param name	Am OW_CIMObjectPath that identifies the CIM qualifier type.
@@ -131,6 +132,8 @@ public:
 	 */
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
 		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 	/**
 	 * creates a class in the store

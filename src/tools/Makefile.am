@@ -1,4 +1,12 @@
-SUBDIRS = owmofc
+if DISABLE_QUALIFIER_DECLARATION
+MOFC_DIR=
+ENUMQUALPROG=
+else
+MOFC_DIR= owmofc
+ENUMQUALPROG= owenumqualifiers
+endif
+
+SUBDIRS = $(MOFC_DIR)
 
 sbin_PROGRAMS = owdigestgenpass 
 bin_PROGRAMS = \
@@ -6,7 +14,7 @@ owexecwql \
 owcreatenamespace \
 owdeletenamespace \
 owenumnamespace \
-owenumqualifiers \
+$(ENUMQUALPROG) \
 owenumclassnames \
 owenumclasses \
 owcimindicationlistener
@@ -78,6 +86,8 @@ owenumnamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumnamespace
 
+if DISABLE_QUALIFIER_DECLARATION
+else
 ### owenumqualifiers
 owenumqualifiers_SOURCES = owenumqualifiers.cpp
 
@@ -91,6 +101,7 @@ owenumqualifiers_LDADD = \
 owenumqualifiers_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumqualifiers
+endif
 
 ### owenumclassnames
 owenumclassnames_SOURCES = owenumclassnames.cpp

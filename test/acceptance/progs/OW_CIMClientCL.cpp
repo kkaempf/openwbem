@@ -813,6 +813,7 @@ deleteAssociations(OW_CIMClient& hdl)
 }
 #endif
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 setQualifier(OW_CIMClient& hdl)
@@ -871,6 +872,7 @@ enumerateQualifiers(OW_CIMClient& hdl)
 
 	testDone();
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1333,6 +1335,7 @@ execQuery(OW_CIMClient& hdl)
 	testDone();
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 deleteQualifier(OW_CIMClient& hdl)
@@ -1350,6 +1353,8 @@ deleteQualifier(OW_CIMClient& hdl)
 
 	testDone();
 }
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1897,8 +1902,10 @@ main(int argc, char* argv[])
 		setProperty(rch, "SixMillion");
 		getProperty(rch, "SixMillion");
 		getInstance(rch, "SixMillion");
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		setQualifier(rch);
 		enumerateQualifiers(rch);
+#endif
 		getQualifier(rch);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
@@ -2005,7 +2012,9 @@ main(int argc, char* argv[])
 		deleteInstance(rch, "EXP_BionicComputerSystem2", "SevenMillion");
 		deleteClass(rch, "EXP_BionicComputerSystem");
 		deleteClass(rch, "EXP_BionicComputerSystem2");
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 		deleteQualifier(rch);
+#endif
 
 		testDynInstances(rch);
         testModifyProviderQualifier(rch);

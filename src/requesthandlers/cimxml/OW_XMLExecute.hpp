@@ -100,8 +100,6 @@ private:
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void deleteInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
-	void deleteQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
-		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void enumerateClassNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void enumerateClasses( std::ostream& ostr, OW_CIMXMLParser& parser,
@@ -110,8 +108,6 @@ private:
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void enumerateInstances(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl) ;
-	void enumerateQualifiers(std::ostream& ostr, OW_CIMXMLParser& /*parser*/,
-		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void getClass(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl) ;
 	void getInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
@@ -132,8 +128,14 @@ private:
 #endif
 	void setProperty(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	void setQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+	void deleteQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
+		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+	void enumerateQualifiers(std::ostream& ostr, OW_CIMXMLParser& /*parser*/,
+		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+#endif
 	void execQuery(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 

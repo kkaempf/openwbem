@@ -1,3 +1,9 @@
+if DISABLE_QUALIFIER_DECLARATION
+DIRS_THAT_NEED_QUAL_DECL=
+else
+DIRS_THAT_NEED_QUAL_DECL= mof
+endif
+
 SUBDIRS = \
 cim \
 ifcs \
@@ -23,6 +29,6 @@ providers \
 repositories \
 cimom \
  \
-mof \
+$(DIRS_THAT_NEED_QUAL_DECL) \
 tools
 

@@ -226,21 +226,6 @@ OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns_, const OW_CIMObjectPat
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns_, const OW_String& qualName)
-{
-    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"DeleteQualifier", ns);
-	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_DELETEQUAL);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeString(strm, qualName);
-	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_BinaryCIMOMHandle::enumClassNames(
 	const OW_String& ns_,
 	const OW_String& className,
@@ -334,26 +319,6 @@ OW_BinaryCIMOMHandle::enumInstances(
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"EnumerateInstances", ns);
-	readAndDeliver(in, result);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::enumQualifierTypes(
-	const OW_String& ns_,
-	OW_CIMQualifierTypeResultHandlerIFC& result)
-{
-    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"EnumerateQualifiers", ns);
-	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_ENUMQUALS);
-	OW_BinIfcIO::writeString(strm, ns);
-
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
-		"EnumerateQualifiers", ns);
-
 	readAndDeliver(in, result);
 }
 
@@ -479,6 +444,7 @@ OW_BinaryCIMOMHandle::getQualifierType(const OW_String& ns_,
 	return readCIMObject<OW_CIMQualifierType>(in);
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns_,
@@ -497,6 +463,43 @@ OW_BinaryCIMOMHandle::setQualifierType(const OW_String& ns_,
 		"SetQualifier", ns);
 	checkError(in);
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::enumQualifierTypes(
+	const OW_String& ns_,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
+{
+    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"EnumerateQualifiers", ns);
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
+	OW_BinIfcIO::write(strm, OW_BIN_ENUMQUALS);
+	OW_BinIfcIO::writeString(strm, ns);
+
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"EnumerateQualifiers", ns);
+
+	readAndDeliver(in, result);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::deleteQualifierType(const OW_String& ns_, const OW_String& qualName)
+{
+    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"DeleteQualifier", ns);
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
+	OW_BinIfcIO::write(strm, OW_BIN_DELETEQUAL);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, qualName);
+	checkError(m_protocol->endRequest(strmRef, "DeleteQualifier", ns));
+}
+#endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
+
 
 //////////////////////////////////////////////////////////////////////////////
 void

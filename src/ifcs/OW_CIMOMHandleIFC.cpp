@@ -198,6 +198,7 @@ OW_CIMOMHandleIFC::enumInstanceNamesE(
 	return rval;
 }
 
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierTypeEnumeration
 OW_CIMOMHandleIFC::enumQualifierTypesE(
@@ -208,6 +209,7 @@ OW_CIMOMHandleIFC::enumQualifierTypesE(
 	enumQualifierTypes(ns, handler);
 	return rval;
 }
+#endif
 
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
