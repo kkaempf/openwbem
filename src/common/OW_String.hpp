@@ -300,6 +300,15 @@ public:
 	 * return false.
 	 */
 	bool endsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
+
+	/**
+	 * Determine if this String object ends with a given character.
+	 * @param arg The character to test for.
+	 * @return true if this String ends with the given character. Otherwise
+	 * return false.
+	 */
+	bool endsWith(char arg) const;
+
 	/**
 	 * Determine if another String object is equal to this String object.
 	 * @param arg The String object to check this String object against
@@ -382,6 +391,15 @@ public:
 	 * Otherwise false.
 	 */
 	bool startsWith(const String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
+
+	/**
+	 * Determine if this String object starts with a given character.
+	 * @param arg The character to test for.
+	 * @return true if this String object starts with the given character.
+	 * Otherwise false.
+	 */
+	bool startsWith(char arg) const;
+
 	/**
 	 * Create another String object that is comprised of a substring of this
 	 * String object.
@@ -464,6 +482,15 @@ public:
 	 * taken place.
 	 */
 	String& operator+= (const String& arg) { return concat(arg); }
+
+	/**
+	 * Character concatination operator.
+	 * @param arg	The character to append to the end of this String.
+	 * @return A reference to this String object after the concatination has
+	 * taken place.
+	 */
+	String& operator+= (char arg) { return concat(arg); }
+
 	/**
 	 * Read this String object from the given istream. An String must have
 	 * been previously written to this location of the stream.

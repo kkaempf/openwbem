@@ -414,12 +414,41 @@ String::concat(const String& arg)
 	}
 	return *this;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+String&
+String::concat(char arg)
+{
+	size_t newlen = length() + 1;
+	AutoPtrVec<char> bfr(new char[newlen+1]);
+	bfr[0] = 0;
+	if(m_buf)
+	{
+		::strcpy(bfr.get(), m_buf->data());
+	}
+	*(bfr.get()+length()) = arg;
+	*(bfr.get()+newlen) = 0;
+	m_buf = new ByteBuf(bfr, newlen);
+	return *this;
+}
+/*
 //////////////////////////////////////////////////////////////////////////////
 String&
 String::concat(char arg)
 {
 	return concat(String(arg));
 }
+*/
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+String::endsWith(char arg) const
+{
+	return (m_buf 
+			&& m_buf->length() 
+			&& m_buf->data()[m_buf->length()-1] == arg);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 String::endsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
@@ -605,6 +634,16 @@ String::lastIndexOf(const String& arg, size_t fromIndex) const
 	}
 	return fromIndex;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool 
+String::startsWith(char arg) const
+{
+	return (m_buf
+			&& m_buf->length()
+			&& m_buf->data()[0] == arg);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 bool
 String::startsWith(const String& arg, EIgnoreCaseFlag ignoreCase) const
