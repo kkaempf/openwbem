@@ -52,6 +52,12 @@ private:
 	// test methods
 	void testToDateTime();
 	void testConstructor();
+	void testSetMethodsInterval();
+	void testGetMethodsInterval();
+	void testStringConstructorInterval();
+	void testSetMethods();
+	void testGetMethods();
+	void testStringConstructor();
 };
 
 #endif
