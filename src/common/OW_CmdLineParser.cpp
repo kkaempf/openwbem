@@ -78,13 +78,13 @@ namespace
 }
 
 /////////////////////////////////////////////////////////////////////////////
-CmdLineParser::CmdLineParser(int argc, const char* argv[], const Option* options)
-	: m_options(options)
+CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Option* options)
 {
 	OW_ASSERT(argc > 0); // have to get at least the name
-	OW_ASSERT(argv != 0);
+	OW_ASSERT(argv_ != 0);
 	OW_ASSERT(options != 0);
-	const char** argvEnd(argv + argc);
+	char const* const* argv(argv_);
+	char const* const* argvEnd(argv + argc);
 	const Option* optionsEnd;
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longopt.
@@ -177,8 +177,9 @@ CmdLineParser::CmdLineParser(int argc, const char* argv[], const Option* options
 }
 
 /////////////////////////////////////////////////////////////////////////////
+// static
 String
-CmdLineParser::getUsage() const
+CmdLineParser::getUsage(const Option* options)
 {
 // looks like this:
 //     "Options:\n"
@@ -188,7 +189,7 @@ CmdLineParser::getUsage() const
 	StringBuffer usage("Options:\n");
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longOpt.
-	for (const Option* curOption = m_options; curOption->shortopt != '\0' && curOption->shortopt != 0; ++curOption)
+	for (const Option* curOption = options; curOption->shortopt != '\0' && curOption->shortopt != 0; ++curOption)
 	{
 		StringBuffer curLine;
 		curLine += "  ";

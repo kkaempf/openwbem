@@ -45,6 +45,13 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(CmdLineParser)
 
+/**
+ * Do command line parsing.
+ * 
+ * Thread safety: read/write
+ * Copy semantics: Value
+ * Exception safety: Strong
+ */
 class CmdLineParser
 {
 public:
@@ -74,23 +81,12 @@ public:
 
 	/**
 	 * @param argc Count of pointers in argv.  Pass value from main().
-	 * @param argv Arguments.  Pass value from main().
+	 * @param argv Arguments.  Pass value from main(). Value is not saved.
 	 * @param options An array of Option terminated by a final entry that has a '\0' shortopt && 0 longopt.
-	 *   Caller is responsible for lifetime management.  CmdLineParser stores a copy of options, but doesn't release it.
+	 *   Value is not saved.
 	 * @throws CmdLineParserException if the given command line is invalid.
 	 */
-	CmdLineParser(int argc, const char* argv[], const Option* options);
-
-	/**
-	 * Generate a usage string for the options.  e.g.:
-	 * "Options:\n"
-	 * "  -1, --one                 first description\n"
-	 * "  -2, --two [arg]           second description (default is optional)\n"
-	 * "  -3, --three <arg>         third description\n"
-	 * 
-	 * [arg] is used for E_OPTIONAL_ARG options, and <arg> for E_REQUIRED_ARG options.
-	 */
-	String getUsage() const;
+	CmdLineParser(int argc, char const* const* const argv, const Option* options);
 
 	/**
 	 * Read out a string option.
@@ -122,6 +118,19 @@ public:
 	 */
 	String getNonOptionArg(size_t n) const;
  	
+	/**
+	 * Generate a usage string for the options.  e.g.:
+	 * "Options:\n"
+	 * "  -1, --one                 first description\n"
+	 * "  -2, --two [arg]           second description (default is optional)\n"
+	 * "  -3, --three <arg>         third description\n"
+	 * 
+	 * [arg] is used for E_OPTIONAL_ARG options, and <arg> for E_REQUIRED_ARG options.
+	 * 
+	 * @param options An array of Option terminated by a final entry that has a '\0' shortopt && 0 longopt.
+	 */
+	static String getUsage(const Option* options);
+
 
 private:
 
@@ -129,8 +138,6 @@ private:
 	typedef SortedVectorMap<int, StringArray> optionsMap_t;
 	optionsMap_t m_parsedOptions;
 	StringArray m_nonOptionArgs;
-
-	const Option* m_options;
 };
 
 } // end namespace OpenWBEM

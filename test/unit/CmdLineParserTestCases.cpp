@@ -174,12 +174,7 @@ void CmdLineParserTestCases::testSomething()
 		}
 	}
 	{
-		int argc = 1;
-		const char* argv[] = {
-			"progname",
-		};
-		CmdLineParser parser(argc, argv, options);
-		unitAssert(parser.getUsage() ==
+		unitAssert(CmdLineParser::getUsage(options) ==
 			"Options:\n"
 			"  -1, --one                 first description\n"
 			"  -2, --two [arg]           second description (default is optional)\n"
