@@ -235,8 +235,17 @@ CIMDateTime::setUtc(Int16 arg)
 bool
 CIMDateTime::equal(const CIMDateTime& arg) const
 {
-	return (::memcmp(arg.m_dptr.getPtr(), m_dptr.getPtr(),
-		sizeof(DateTimeData)) == 0);
+	return (
+		m_dptr->m_year == arg.m_dptr->m_year &&
+		m_dptr->m_month == arg.m_dptr->m_month &&
+		m_dptr->m_days == arg.m_dptr->m_days &&
+		m_dptr->m_hours == arg.m_dptr->m_hours &&
+		m_dptr->m_minutes == arg.m_dptr->m_minutes &&
+		m_dptr->m_seconds == arg.m_dptr->m_seconds &&
+		m_dptr->m_microSeconds == arg.m_dptr->m_microSeconds &&
+		m_dptr->m_utc == arg.m_dptr->m_utc &&
+		m_dptr->m_isInterval == arg.m_dptr->m_isInterval);
+	
 }
 //////////////////////////////////////////////////////////////////////////////
 void
