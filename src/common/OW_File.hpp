@@ -183,8 +183,8 @@ public:
 	 * not prevent non-coordinated access to the file.
 	 * @return 0 on sucess.  On error, -1 is returned, and errno is set 
 	 * appropriately.
-	 * errno may be one of: EAGAIN, EBADF, EDEADLK, EINVAL, ENOLCK.
-	 * EAGAIN signifies the file is already locked.
+	 * errno may be one of: EACCES, EAGAIN, EBADF, EDEADLK, EINVAL, ENOLCK.
+	 * EACCES or EAGAIN signifies the file is already locked.
 	 */
 	int tryLock();
 
