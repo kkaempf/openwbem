@@ -176,29 +176,6 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 		details = "Invalid credentials";
 	}
 
-#ifdef OW_THREADS_RUN_AS_USER
-	if (retval)
-	{
-		uid_t cimomuid = ::getuid();	// Get CIMOM user id
-		uid_t useruid = cimomuid;
-
-		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
-		char buf[pwnbufsize];
-		struct passwd pw;
-		struct passwd* ppw = 0;
-	    int rv = ::getpwnam_r(userName.c_str(), &pw, buf, pwnbufsize, &ppw);
-		if (rv == 0 && ppw)
-		{
-			useruid = pw.pw_uid;
-		}
-
-		if (useruid != cimomuid)
-		{
-			context.setStringData(OperationContext::CIMOM_UIDKEY, String(UInt32(cimomuid)));
-			context.setStringData(OperationContext::CURUSER_UIDKEY, String(UInt32(useruid)));
-		}
-	}
-#endif
 
 	return retval;
 }

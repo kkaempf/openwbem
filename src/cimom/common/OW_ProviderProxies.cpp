@@ -50,6 +50,17 @@
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMFeatures.hpp"
 
+#ifdef OW_GNU_LINUX
+	#ifdef OW_HAVE_PWD_H
+	#include <pwd.h>
+	#endif
+	#ifdef OW_HAVE_UNISTD_H
+	#include <unistd.h>
+	#endif
+	#ifdef OW_HAVE_SYS_TYPES_H
+	#include <sys/types.h>
+	#endif
+#endif
 
 namespace OpenWBEM
 {
@@ -63,17 +74,25 @@ namespace
 	public:
 		UIDManager(uid_t tempUid, uid_t resetUid)
 			: m_resetUid(resetUid)
+			, m_uidsDiffer(tempUid != resetUid)
 		{
-			::seteuid(tempUid);
+			if (m_uidsDiffer)
+			{
+				::seteuid(tempUid);
+			}
 		}
 
 		~UIDManager()
 		{
-			::setuid(m_resetUid);
+			if (m_uidsDiffer)
+			{
+				::setuid(m_resetUid);
+			}
 		}
 		
 	private:
 		uid_t m_resetUid;
+		bool m_uidsDiffer; 
 	};
 
 	class RUIDManager
@@ -81,17 +100,25 @@ namespace
 	public:
 		RUIDManager(uid_t tempUid, uid_t resetUid)
 			: m_resetUid(resetUid)
+			, m_uidsDiffer(tempUid != resetUid)
 		{
-			::setuid(tempUid);
+			if (m_uidsDiffer)
+			{
+				::setuid(tempUid);
+			}
 		}
 
 		~RUIDManager()
 		{
-			::seteuid(m_resetUid);
+			if (m_uidsDiffer)
+			{
+				::seteuid(m_resetUid);
+			}
 		}
 		
 	private:
 		uid_t m_resetUid;
+		bool m_uidsDiffer; 
 	};
 
 
@@ -762,25 +789,18 @@ namespace
 	void getUIDS(const ProviderEnvironmentIFCRef& env,
 		uid_t& cimomuid, uid_t& useruid)
 	{
-		cimomuid = 0;
-		useruid = 0;
+		cimomuid = ::getuid();	// Get CIMOM user id
+		useruid = cimomuid;
+		String userName = env->getUserName(); 
 
-		String wk = env->getOperationContext().getStringDataWithDefault(
-			OperationContext::CIMOM_UIDKEY);
-
-		if (!wk.empty())
+		long pwnbufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+		char buf[pwnbufsize];
+		struct passwd pw;
+		struct passwd* ppw = 0;
+	    int rv = ::getpwnam_r(userName.c_str(), &pw, buf, pwnbufsize, &ppw);
+		if (rv == 0 && ppw)
 		{
-			cimomuid = wk.toUInt32();
-			wk = env->getOperationContext().getStringDataWithDefault(
-				OperationContext::CURUSER_UIDKEY);
-			if (!wk.empty())
-			{
-				useruid = wk.toUInt32();
-			}
-			else
-			{
-				useruid = cimomuid;
-			}
+			useruid = pw.pw_uid;
 		}
 	}
 
