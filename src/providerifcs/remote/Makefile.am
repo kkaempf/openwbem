@@ -30,7 +30,9 @@ OW_RemoteInstanceProvider.cpp \
 OW_RemoteMethodProvider.hpp \
 OW_RemoteMethodProvider.cpp \
 OW_RemoteSecondaryInstanceProvider.hpp \
-OW_RemoteSecondaryInstanceProvider.cpp
+OW_RemoteSecondaryInstanceProvider.cpp \
+OW_RemoteProviderUtils.hpp \
+OW_RemoteProviderUtils.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
