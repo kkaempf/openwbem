@@ -550,6 +550,15 @@ npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 
 ################################################################################
+# cmpiprovifc.prov_TTL specifies how many minutes the CMPI provider manager
+# will keep a provider in memory.  If a provider has not been accessed for
+# longer than this value, it will be unloaded and the memory associated with
+# it will be freed.  If the value of this option is -1, the providers will
+# never be unloaded.
+# The default is -1
+;cmpiprovifc.prov_TTL = -1
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the perl provider
 # interface. The perlprovifc.prov_location option specifies where the perl
 # provider interface will load it's providers from.
