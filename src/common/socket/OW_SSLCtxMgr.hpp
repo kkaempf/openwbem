@@ -188,7 +188,7 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-struct SSLOpts
+struct OW_COMMON_API SSLOpts
 {
 	SSLOpts(); 
 	String keyfile; 
@@ -205,7 +205,7 @@ struct SSLOpts
 
 
 //////////////////////////////////////////////////////////////////////////////
-class SSLCtxBase
+class OW_COMMON_API SSLCtxBase
 {
 public: 
 	SSL_CTX* getSSLCtx() const; 
@@ -217,7 +217,7 @@ protected:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class SSLServerCtx : public SSLCtxBase, public IntrusiveCountableBase
+class OW_COMMON_API SSLServerCtx : public SSLCtxBase, public IntrusiveCountableBase
 {
 public: 
 	SSLServerCtx(const SSLOpts& opts); 
@@ -225,7 +225,7 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class SSLClientCtx : public SSLCtxBase, public IntrusiveCountableBase
+class OW_COMMON_API SSLClientCtx : public SSLCtxBase, public IntrusiveCountableBase
 {
 public: 
 	SSLClientCtx(const SSLOpts& opts = SSLOpts()); 
@@ -235,7 +235,7 @@ typedef IntrusiveReference<SSLServerCtx> SSLServerCtxRef;
 typedef IntrusiveReference<SSLClientCtx> SSLClientCtxRef; 
 
 //////////////////////////////////////////////////////////////////////////////
-class SSLTrustStore: public IntrusiveCountableBase
+class OW_COMMON_API SSLTrustStore: public IntrusiveCountableBase
 {
 public: 
 	SSLTrustStore(const String& storeLocation); 
@@ -261,7 +261,7 @@ private:
 typedef IntrusiveReference<SSLTrustStore> SSLTrustStoreRef; 
 //////////////////////////////////////////////////////////////////////////////
 
-struct OWSSLContext
+struct OW_COMMON_API OWSSLContext
 {
 	enum CertVerifyState_t
 	{

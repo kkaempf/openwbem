@@ -53,6 +53,7 @@ INCS = \
 /I$(SRCDIR)\client \
 /I$(SRCDIR)\cimlistener \
 /I$(SRCDIR)\repositories\hdb \
+/I$(OPENSSLBASE)\include
 
 LIBPATH = \
 /LIBPATH:$(OPENSSLBASE)\lib\vc \

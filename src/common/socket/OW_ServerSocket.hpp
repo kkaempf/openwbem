@@ -90,6 +90,7 @@ public:
 	void doListen(UInt16 port, int queueSize=10,
 			const String& listenAddr = SocketAddress::ALL_LOCAL_ADDRESSES, 
 			SocketFlags::EReuseAddrFlag reuseAddr = SocketFlags::E_REUSE_ADDR); 
+#ifndef OW_WIN32
 	/**
 	 * Start listening on a Unix Domain Socket
 	 *
@@ -99,6 +100,7 @@ public:
 	 */
 	void doListen(const String& filename, int queueSize=10, 
 		bool reuseAddr=true); 
+#endif
 	/**
 	 * Close the listen socket
 	 * @throws SocketException

@@ -165,6 +165,7 @@ SOCKETOBJS = \
 	$(OBJDIR)\OW_SSLCtxMgr.obj \
 	$(OBJDIR)\OW_SSLSocketImpl.obj \
 	$(OBJDIR)\OW_ServerSocketImpl.obj \
+	$(OBJDIR)\OW_ServerSocket.obj \
 	$(OBJDIR)\OW_Socket.obj \
 	$(OBJDIR)\OW_SocketAddress.obj \
 	$(OBJDIR)\OW_SocketBaseImpl.obj \
@@ -544,6 +545,9 @@ $(OBJDIR)\OW_SSLSocketImpl.obj: $(SOCKETSRCDIR)/OW_SSLSocketImpl.cpp
 
 $(OBJDIR)\OW_ServerSocketImpl.obj: $(SOCKETSRCDIR)/OW_ServerSocketImpl.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SOCKETSRCDIR)/OW_ServerSocketImpl.cpp
+
+$(OBJDIR)\OW_ServerSocket.obj: $(SOCKETSRCDIR)/OW_ServerSocket.cpp
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SOCKETSRCDIR)/OW_ServerSocket.cpp
 
 $(OBJDIR)\OW_Socket.obj: $(SOCKETSRCDIR)/OW_Socket.cpp
 	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(SOCKETSRCDIR)/OW_Socket.cpp

@@ -20,7 +20,8 @@ INCS = \
 /I$(SRCDIR)\xml \
 /I$(SRCDIR)\http\common \
 /I$(SRCDIR)\http\client \
-/I$(ZLIBBASE)\include
+/I$(ZLIBBASE)\include \
+/I$(OPENSSLBASE)\include
 
 
 !IFDEF DEBUG

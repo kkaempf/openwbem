@@ -78,11 +78,13 @@ ServerSocket::doListen(UInt16 port, int queueSize,
 	m_impl->doListen(port, queueSize, listenAddr, reuseAddr);
 }
 //////////////////////////////////////////////////////////////////////////////
+#ifndef OW_WIN32
 void 
 ServerSocket::doListen(const String& filename, int queueSize, bool reuseAddr)
 {
 	m_impl->doListen(filename, queueSize, reuseAddr);
 }
+#endif
 //////////////////////////////////////////////////////////////////////////////
 void 
 ServerSocket::close() 
