@@ -64,7 +64,9 @@ public:
 	
 	OperationContext();
 
-	// caller creats a subclass of Data and passes it in.
+	/**
+	 * caller creats a subclass of Data and passes it in.
+	 */
 	void setData(const String& key, const DataRef& data);
 
 	/**
@@ -74,14 +76,21 @@ public:
 	 */
 	void removeData(const String& key);
 	
-	// caller uses Reference::cast_to<>() on the return value to attempt to
-	// recover the original type passed into storeData.
+	/**
+	 * caller uses Reference::cast_to<>() on the return value to attempt to
+	 * recover the original type passed into storeData.
+	 */
 	DataRef getData(const String& key) const;
 	
-	// These are for convenience, and are implemented in terms of
-	// the first 2 functions.
+	/**
+	 * These are for convenience, and are implemented in terms of
+	 * the first 2 functions.
+	 */
 	void setStringData(const String& key, const String& str);
-	// @throws ContextDataNotFoundException if key is not found
+
+	/**
+	 * @throws ContextDataNotFoundException if key is not found
+	 */
 	String getStringData(const String& key) const;
 	
 	// Keys values we use.
