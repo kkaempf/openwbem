@@ -33,8 +33,9 @@
 
 #include "OW_config.h"
 #include "OW_Types.h"
-#include "OW_Reference.hpp"
+#include "OW_COWReference.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_Bool.hpp"
 
 class OW_CIMDateTimeException : OW_CIMException
 {
@@ -333,7 +334,7 @@ public:
 	safe_bool operator!() const;
 
 private:
-	OW_Reference<OW_DateTimeData> m_dptr;
+	OW_COWReference<OW_DateTimeData> m_dptr;
 
 	friend bool operator<(const OW_CIMDateTime& x, const OW_CIMDateTime& y);
 };

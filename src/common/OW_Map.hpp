@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 
-#include "OW_Reference.hpp"
+#include "OW_COWReference.hpp"
 
 #ifdef OW_NEW
 #undef new
@@ -50,7 +50,7 @@ template<class Key, class T, class Compare = std::less<Key> > class OW_Map
 {
 
 	typedef std::map<Key, T, Compare > M;
-	OW_Reference<M> m_impl;
+	OW_COWReference<M> m_impl;
 
 public:
 	typedef typename M::key_type key_type;
@@ -148,7 +148,7 @@ public:
 		return m_impl->rend();
 	}
 
-	OW_Bool empty() const /*throw (std::exception)*/
+	bool empty() const /*throw (std::exception)*/
 	{
 		return m_impl->empty();
 	}
@@ -173,7 +173,7 @@ public:
 		m_impl->swap(*x.m_impl);
 	}
 
-	std::pair<iterator, OW_Bool> insert(const value_type& x) /*throw (std::exception)*/
+	std::pair<iterator, bool> insert(const value_type& x) /*throw (std::exception)*/
 	{
 		return m_impl->insert(x);
 	}
@@ -255,22 +255,22 @@ public:
 		return m_impl->equal_range(x);
 	}
 
-	friend OW_Bool operator== <>(const OW_Map<Key, T, Compare>& x, 
+	friend bool operator== <>(const OW_Map<Key, T, Compare>& x, 
 		const OW_Map<Key, T, Compare>& y);
 
-	friend OW_Bool operator< <>(const OW_Map<Key, T, Compare>& x, 
+	friend bool operator< <>(const OW_Map<Key, T, Compare>& x, 
 		const OW_Map<Key, T, Compare>& y);
 };
 
 template<class Key, class T, class Compare>
-inline OW_Bool operator==(const OW_Map<Key, T, Compare>& x,
+inline bool operator==(const OW_Map<Key, T, Compare>& x,
 	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template<class Key, class T, class Compare>
-inline OW_Bool operator<(const OW_Map<Key, T, Compare>& x,
+inline bool operator<(const OW_Map<Key, T, Compare>& x,
 	const OW_Map<Key, T, Compare>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl < *y.m_impl;

@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
 using std::istream;
@@ -112,7 +111,6 @@ OW_CIMParameter::operator= (const OW_CIMParameter& x)
 void
 OW_CIMParameter::setQualifiers(const OW_CIMQualifierArray& quals)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers = quals;
 }
 
@@ -127,7 +125,6 @@ OW_CIMParameter::getQualifiers() const
 void
 OW_CIMParameter::setDataType(const OW_CIMDataType& type)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_dataType = type;
 }
 
@@ -172,7 +169,6 @@ OW_CIMParameter::getName() const
 void
 OW_CIMParameter::setName(const OW_String& name)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -204,7 +200,6 @@ OW_CIMParameter::readObject(istream &istrm)
 		m_pdata = new PARMData;
 	}
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_dataType = dataType;
 	m_pdata->m_qualifiers = qualifiers;

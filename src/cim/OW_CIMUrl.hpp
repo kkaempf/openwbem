@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_CIMException.hpp"
 #include "OW_CIMBase.hpp"
-#include "OW_Reference.hpp"
+#include "OW_COWReference.hpp"
 #include "OW_Bool.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ private:
 	void checkRef();
 	void setDefaultValues();
 
-	OW_Reference<URLData> m_pdata;
+	OW_COWReference<URLData> m_pdata;
 };
 
 #endif	// __OW_CIMURL_HPP__

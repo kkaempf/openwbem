@@ -33,7 +33,6 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_String.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_BinIfcIO.hpp"
 
@@ -125,7 +124,6 @@ OW_CIMInstance& OW_CIMInstance::operator= (const OW_CIMInstance& x)
 void
 OW_CIMInstance::setKeys(const OW_CIMPropertyArray& keys)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_keys = keys;
 }
 
@@ -140,7 +138,6 @@ OW_CIMInstance::getClassName() const
 void
 OW_CIMInstance::setClassName(const OW_String& name)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_owningClassName = name;
 }
 
@@ -171,7 +168,6 @@ OW_CIMInstance::getQualifier(const OW_String& qualName) const
 void
 OW_CIMInstance::removeQualifier(const OW_String& qualName)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
 		if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
@@ -188,7 +184,6 @@ OW_CIMInstance::setQualifier(const OW_CIMQualifier& qual)
 {
 	if(qual)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		OW_String qualName = qual.getName();
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
@@ -206,7 +201,6 @@ OW_CIMInstance::setQualifier(const OW_CIMQualifier& qual)
 void
 OW_CIMInstance::setQualifiers(const OW_CIMQualifierArray& quals)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers = quals;
 }
 
@@ -236,7 +230,6 @@ OW_CIMInstance::getProperties(OW_Int32 valueDataType) const
 void
 OW_CIMInstance::setProperties(const OW_CIMPropertyArray& props)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_properties = props;
 	_buildKeys();
 }
@@ -292,7 +285,6 @@ OW_CIMInstance::getAlias() const
 void
 OW_CIMInstance::setAlias(const OW_String& aliasName)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_aliasName = aliasName;
 }
 
@@ -325,7 +317,6 @@ OW_CIMInstance::getKeyValuePairs() const
 void
 OW_CIMInstance::updatePropertyValues(const OW_CIMPropertyArray& props)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	int tsize = props.size();
 	for(int i = 0; i < tsize; i++)
 	{
@@ -341,7 +332,6 @@ OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 
 	if(prop)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		OW_String name = prop.getName();
 
 		int tsize = m_pdata->m_properties.size();
@@ -377,7 +367,6 @@ OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 void
 OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	int tsize = m_pdata->m_properties.size();
 
 	for(int i = 0; i < tsize; i++)
@@ -423,7 +412,6 @@ OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 {
 	if(prop)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		OW_String propName = prop.getName();
 
 		int tsize = m_pdata->m_properties.size();
@@ -461,7 +449,6 @@ OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 void
 OW_CIMInstance::removeProperty(const OW_String& propName)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	int tsize = m_pdata->m_properties.size();
 	for(int i = 0; i < tsize; i++)
 	{
@@ -692,7 +679,6 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 
 	setProperties(instProps);
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 	if(!includeQualifiers)
 	{
 		for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
@@ -706,7 +692,6 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 void
 OW_CIMInstance::setName(const OW_String& name)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -734,7 +719,6 @@ OW_CIMInstance::readObject(istream &istrm)
 		m_pdata = new INSTData;
 	}
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_owningClassName = owningClassName;
 	m_pdata->m_aliasName = aliasName;

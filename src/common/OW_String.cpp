@@ -115,8 +115,8 @@ public:
 		return *this;
 	}
 
-	size_t length() { return m_len; }
-	char* data() { return m_buf; }
+	size_t length() const { return m_len; }
+	char* data() const { return m_buf; }
 
 private:
 	size_t m_len;
@@ -831,7 +831,6 @@ OW_String::toLowerCase()
 {
 	if (length())
 	{
-		OW_MutexLock l = m_buf.getWriteLock();
 		for(size_t i = 0; i < length(); i++)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
@@ -848,7 +847,6 @@ OW_String::toUpperCase()
 {
 	if (length())
 	{
-		OW_MutexLock l = m_buf.getWriteLock();
 		for(size_t i = 0; i < length(); i++)
 		{
 			// Don't need to check m_buf for NULL, because if length() == 0,
@@ -933,7 +931,7 @@ OW_String::toString() const
 
 //////////////////////////////////////////////////////////////////////////////
 static inline void
-throwStringConversion(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type)
+throwStringConversion(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
 {
 	OW_THROW(OW_StringConversionException, format("Unable to convert \"%1\" into %2", m_buf->data(), type).c_str());
 }
@@ -958,7 +956,7 @@ OW_String::toChar16() const
 
 template <typename T>
 static inline
-T convertToRealType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type)
+T convertToRealType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type)
 {
 	if (m_buf.getPtr())
 	{
@@ -1015,7 +1013,7 @@ OW_String::toBool() const
 
 template <typename T, typename FP, typename FPRT>
 static inline
-T doConvertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
+T doConvertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* type, FP fp, int base)
 {
 	if (m_buf.getPtr())
 	{
@@ -1043,28 +1041,28 @@ typedef long long int (*strtollfp_t)(const char *, char **,int);
 
 template <typename T>
 static inline
-T convertToUIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoulfp_t, unsigned long int>(m_buf, msg, &strtoul, base);
 }
 
 template <typename T>
 static inline
-T convertToIntType(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToIntType(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtolfp_t, long int>(m_buf, msg, &strtol, base);
 }
 
 template <typename T>
 static inline
-T convertToUInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToUInt64Type(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtoullfp_t, unsigned long long int>(m_buf, msg, &OW_String::strtoull, base);
 }
 
 template <typename T>
 static inline
-T convertToInt64Type(const OW_Reference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
+T convertToInt64Type(const OW_COWReference<OW_String::ByteBuf>& m_buf, const char* msg, int base)
 {
 	return doConvertToIntType<T, strtollfp_t, long long int>(m_buf, msg, &OW_String::strtoll, base);
 }

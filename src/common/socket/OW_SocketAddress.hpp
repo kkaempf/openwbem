@@ -35,7 +35,6 @@
 
 #include "OW_config.h"
 #include "OW_Array.hpp"
-#include "OW_Reference.hpp"
 #include "OW_Types.h"
 #include "OW_NetworkTypes.hpp"
 #include "OW_String.hpp"

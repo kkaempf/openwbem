@@ -34,6 +34,7 @@ INCLUDES = \
 
 libopenwbem_a_SOURCES =	\
 OW_Assertion.cpp \
+OW_AtomicOps.cpp \
 OW_BaseStreamBuffer.cpp \
 OW_BinIfcIO.cpp \
 OW_Bool.cpp \
@@ -70,6 +71,7 @@ pkginclude_HEADERS =	\
 OW_Array.hpp \
 OW_ArrayFwd.hpp \
 OW_Assertion.hpp \
+OW_AtomicOps.hpp \
 OW_AutoPtr.hpp \
 OW_BaseStreamBuffer.hpp \
 OW_BinIfcIO.hpp \
@@ -79,6 +81,7 @@ OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
 OW_ConfigOpts.hpp \
+OW_COWReference.hpp \
 OW_DataBlockStream.hpp \
 OW_DateTime.hpp \
 OW_Enumeration.hpp \
@@ -104,6 +107,7 @@ OW_PosixUnnamedPipe.hpp \
 OW_PthDefines.hpp \
 OW_RWLocker.hpp \
 OW_RandomNumber.hpp \
+OW_RefCount.hpp \
 OW_Reference.hpp \
 OW_Select.hpp \
 OW_SelectEngine.hpp \

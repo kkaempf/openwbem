@@ -34,7 +34,7 @@
 
 #include "OW_config.h"
 
-#include "OW_Reference.hpp"
+#include "OW_COWReference.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 
@@ -288,7 +288,7 @@ public:
 
 protected:
 
-	OW_Reference<METHData> m_pdata;
+	OW_COWReference<METHData> m_pdata;
 
 	friend bool operator<(const OW_CIMMethod& x, const OW_CIMMethod& y);
 };

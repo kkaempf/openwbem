@@ -32,7 +32,7 @@
 #define __OW_CIMCLASS_HPP__
 
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_COWReference.hpp"
 #include "OW_Bool.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
@@ -416,7 +416,7 @@ private:
 	static OW_String splitName1(const OW_String& inName);
 	static OW_String splitName2(const OW_String& inName);
 
-	OW_Reference<CLSData> m_pdata;
+	OW_COWReference<CLSData> m_pdata;
 
 	friend bool operator<(const OW_CIMClass& x, const OW_CIMClass& y);
 };

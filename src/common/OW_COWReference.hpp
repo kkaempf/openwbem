@@ -26,10 +26,10 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- *******************************************************************************/
+ ******************************************************************************/
 
-#ifndef OW_REFERENCE_HPP_
-#define OW_REFERENCE_HPP_
+#ifndef OW_COWREFERENCE_HPP_
+#define OW_COWREFERENCE_HPP_
 
 #include "OW_config.h"
 #include "OW_RefCount.hpp"
@@ -43,30 +43,32 @@
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-class OW_Reference
+class OW_COWReference
 {
 	public:
 
-		OW_Reference();
-		explicit OW_Reference(T* ptr);
-		OW_Reference(T* ptr, bool noDelete);
-		OW_Reference(const OW_Reference<T>& arg);
+		OW_COWReference();
+		explicit OW_COWReference(T* ptr);
+		OW_COWReference(T* ptr, bool noDelete);
+		OW_COWReference(const OW_COWReference<T>& arg);
 		
 		/* construct out of a reference to a derived type.  U should be
 		derived from T */
 		template <class U>
-		OW_Reference(const OW_Reference<U>& arg);
+		OW_COWReference(const OW_COWReference<U>& arg);
 
-		~OW_Reference();
+		~OW_COWReference();
 
 		void incRef();
 		void decRef();
 
 
-		OW_Reference<T>& operator= (const OW_Reference<T> arg);
-		OW_Reference<T>& operator= (T* newObj);
-		T* operator->() const;
-		T& operator*() const;
+		OW_COWReference<T>& operator= (const OW_COWReference<T> arg);
+		OW_COWReference<T>& operator= (T* newObj);
+		T* operator->();
+		T& operator*();
+		const T* operator->() const;
+		const T& operator*() const;
 		T* getPtr() const;
 		bool isNull() const;
 
@@ -85,40 +87,41 @@ class OW_Reference
 			{  return (!isNull()) ? 0: &dummy::nonnull; }
 
 		template <class U>
-		OW_Reference<U> cast_to();
+		OW_COWReference<U> cast_to();
 
 		template <class U>
-		void useRefCountOf(const OW_Reference<U>&);
+		void useRefCountOf(const OW_COWReference<U>&);
 
 	private:
 		T* volatile m_pObj;
 		OW_RefCount* volatile m_pRefCount;
 		/* This is so the templated constructor will work */
-		template <class U> friend class OW_Reference;
+		template <class U> friend class OW_COWReference;
 
 #ifdef OW_CHECK_NULL_REFERENCES
 		void checkNull() const;
 #endif
+		void getWriteLock();
 };
 
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>::OW_Reference()
+inline OW_COWReference<T>::OW_COWReference()
 	: m_pObj(0), m_pRefCount(0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>::OW_Reference(T* ptr)
+inline OW_COWReference<T>::OW_COWReference(T* ptr)
 	: m_pObj(ptr), m_pRefCount((ptr != 0) ? new OW_RefCount : 0)
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>::OW_Reference(T* ptr, bool noDelete)
+inline OW_COWReference<T>::OW_COWReference(T* ptr, bool noDelete)
 	: m_pObj(ptr), m_pRefCount(0)
 {
 	if(ptr != 0 && !noDelete)
@@ -129,7 +132,7 @@ inline OW_Reference<T>::OW_Reference(T* ptr, bool noDelete)
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>::OW_Reference(const OW_Reference<T>& arg)
+inline OW_COWReference<T>::OW_COWReference(const OW_COWReference<T>& arg)
 	: m_pObj(arg.m_pObj), m_pRefCount(0)
 {
 	if(arg.m_pRefCount)
@@ -142,7 +145,7 @@ inline OW_Reference<T>::OW_Reference(const OW_Reference<T>& arg)
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
 template<class U>
-inline OW_Reference<T>::OW_Reference(const OW_Reference<U>& arg)
+inline OW_COWReference<T>::OW_COWReference(const OW_COWReference<U>& arg)
 	: m_pObj(arg.m_pObj), m_pRefCount(0)
 {
 	if(arg.m_pRefCount)
@@ -154,7 +157,7 @@ inline OW_Reference<T>::OW_Reference(const OW_Reference<U>& arg)
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>::~OW_Reference()
+inline OW_COWReference<T>::~OW_COWReference()
 {
 	try
 	{
@@ -168,7 +171,7 @@ inline OW_Reference<T>::~OW_Reference()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void OW_Reference<T>::incRef()
+inline void OW_COWReference<T>::incRef()
 {
 	if(m_pRefCount)
 	{
@@ -178,7 +181,7 @@ inline void OW_Reference<T>::incRef()
 	
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void OW_Reference<T>::decRef()
+inline void OW_COWReference<T>::decRef()
 {
 	typedef char type_must_be_complete[sizeof(T)];
 	if(m_pRefCount)
@@ -195,7 +198,33 @@ inline void OW_Reference<T>::decRef()
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T> arg)
+inline void OW_COWReference<T>::getWriteLock()
+{
+	if(!m_pRefCount)
+	{
+#ifdef OW_DEBUG
+        assert(0); // this is a coding violation
+#endif
+        return;
+//		OW_THROW(OW_Exception, "writeLock not allowed on non-delete "
+//				"or NULL object");
+	}
+
+    if (m_pRefCount->decAndTest())
+    {
+        m_pRefCount->inc();
+        return;
+    }
+    else
+    {
+		m_pObj = new T(*m_pObj);
+		m_pRefCount = new OW_RefCount;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+inline OW_COWReference<T>& OW_COWReference<T>::operator= (const OW_COWReference<T> arg)
 {
 	if(arg.m_pRefCount != m_pRefCount
 			|| (arg.m_pRefCount == 0 && m_pRefCount == 0))
@@ -210,7 +239,7 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (const OW_Reference<T> arg)
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
+inline OW_COWReference<T>& OW_COWReference<T>::operator= (T* newObj)
 {
 	if(newObj != m_pObj)
 	{
@@ -223,7 +252,31 @@ inline OW_Reference<T>& OW_Reference<T>::operator= (T* newObj)
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline T* OW_Reference<T>::operator->() const
+inline T* OW_COWReference<T>::operator->()
+{
+    getWriteLock();
+#ifdef OW_CHECK_NULL_REFERENCES
+	checkNull();
+#endif
+	
+	return m_pObj;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+inline T& OW_COWReference<T>::operator*()
+{
+    getWriteLock();
+#ifdef OW_CHECK_NULL_REFERENCES
+	checkNull();
+#endif
+	
+	return *(m_pObj);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+template<class T>
+inline const T* OW_COWReference<T>::operator->() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
 	checkNull();
@@ -234,7 +287,7 @@ inline T* OW_Reference<T>::operator->() const
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline T& OW_Reference<T>::operator*() const
+inline const T& OW_COWReference<T>::operator*() const
 {
 #ifdef OW_CHECK_NULL_REFERENCES
 	checkNull();
@@ -245,14 +298,14 @@ inline T& OW_Reference<T>::operator*() const
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline T* OW_Reference<T>::getPtr() const
+inline T* OW_COWReference<T>::getPtr() const
 {
 	return m_pObj;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline bool OW_Reference<T>::isNull() const
+inline bool OW_COWReference<T>::isNull() const
 {
 	return (m_pObj == (T*)0);
 }
@@ -260,27 +313,27 @@ inline bool OW_Reference<T>::isNull() const
 //////////////////////////////////////////////////////////////////////////////
 #ifdef OW_CHECK_NULL_REFERENCES
 template<class T>
-inline void OW_Reference<T>::checkNull() const
+inline void OW_COWReference<T>::checkNull() const
 {
 	if (this == 0 || isNull())
 	{
 #ifdef OW_DEBUG
 		assert(0); // segfault so we can get a core
 #endif
-		OW_THROW(OW_Exception, "NULL OW_Reference dereferenced");
+		OW_THROW(OW_Exception, "NULL OW_COWReference dereferenced");
 		//throw OW_Exception(__FILE__, __LINE__,
-			//"NULL OW_Reference dereferenced");
+			//"NULL OW_COWReference dereferenced");
 	}
 }
 #endif
 
 template <class T>
 template <class U>
-inline OW_Reference<U>
-OW_Reference<T>::cast_to()
+inline OW_COWReference<U>
+OW_COWReference<T>::cast_to()
 {
 	incRef();
-	OW_Reference<U> rval;
+	OW_COWReference<U> rval;
 	rval.m_pObj = reinterpret_cast<U*>(m_pObj);
 	rval.m_pRefCount = m_pRefCount;
 	return rval;
@@ -289,7 +342,7 @@ OW_Reference<T>::cast_to()
 template <class T>
 template <class U>
 inline void
-OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
+OW_COWReference<T>::useRefCountOf(const OW_COWReference<U>& arg)
 {
 	if(m_pRefCount)
 	{
@@ -306,13 +359,13 @@ OW_Reference<T>::useRefCountOf(const OW_Reference<U>& arg)
 //////////////////////////////////////////////////////////////////////////////
 // Comparisons
 template <class T, class U>
-inline bool operator==(const OW_Reference<T>& a, const OW_Reference<U>& b)
+inline bool operator==(const OW_COWReference<T>& a, const OW_COWReference<U>& b)
 {
 	return a.getPtr() == b.getPtr();
 }
 
 template <class T, class U>
-inline bool operator!=(const OW_Reference<T>& a, const OW_Reference<U>& b)
+inline bool operator!=(const OW_COWReference<T>& a, const OW_COWReference<U>& b)
 {
 	return a.getPtr() != b.getPtr();
 }

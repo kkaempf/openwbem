@@ -32,7 +32,7 @@
 #define __OW_LIST_HPP__
 
 #include "OW_config.h"
-#include "OW_Reference.hpp"
+#include "OW_COWReference.hpp"
 
 #ifdef OW_NEW
 #undef new
@@ -50,7 +50,7 @@ template<class T> class OW_List
 private:
 
 	typedef std::list<T> L;
-	OW_Reference<L> m_impl;
+	OW_COWReference<L> m_impl;
 
 public:
 	typedef typename L::value_type value_type;
@@ -139,7 +139,7 @@ public:
 		return m_impl->rend();
 	}
 
-	OW_Bool empty() const /*throw (std::exception)*/
+	bool empty() const /*throw (std::exception)*/
 	{
 		return m_impl->empty();
 	}
@@ -319,21 +319,21 @@ public:
 		m_impl->sort(swo);
 	}
 
-	friend OW_Bool operator== <>(const OW_List<T>& x,
+	friend bool operator== <>(const OW_List<T>& x,
 		const OW_List<T>& y);
 
-	friend OW_Bool operator< <>(const OW_List<T>& x,
+	friend bool operator< <>(const OW_List<T>& x,
 		const OW_List<T>& y);
 };
 
 template <class T>
-inline OW_Bool operator==(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
+inline bool operator==(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl == *y.m_impl;
 }
 
 template <class T>
-inline OW_Bool operator<(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
+inline bool operator<(const OW_List<T>& x, const OW_List<T>& y) /*throw (std::exception)*/
 {
 	return *x.m_impl < *y.m_impl;
 }

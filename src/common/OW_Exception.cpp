@@ -31,6 +31,7 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_StackTrace.hpp"
+#include "OW_Mutex.hpp"
 
 #include <cstring>
 #include <cstdlib>

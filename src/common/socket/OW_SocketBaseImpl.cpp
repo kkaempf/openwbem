@@ -34,6 +34,8 @@
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_IOException.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 extern "C"
 {

@@ -256,7 +256,6 @@ OW_CIMValue::readObject(istream &istrm)
 		m_impl = new OW_CIMValueImpl;
 	}
 
-	OW_MutexLock l = m_impl.getWriteLock();
 	m_impl->readObject(istrm);
 }
 

@@ -221,7 +221,7 @@ private:
 	OW_Int32 getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
 	OW_Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
 	OW_Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
-	OW_Int32 getOffset() { return m_pdata->m_offset; }
+	OW_Int32 getOffset() const { return m_pdata->m_offset; }
 	OW_Bool remove(OW_HDBHandle& hdl);
 	void removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset);
 	void addChild(OW_HDBHandle& hdl, OW_HDBNode& arg);

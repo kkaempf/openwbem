@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_CIMUrl.hpp"
 #include "OW_String.hpp"
-#include "OW_MutexLock.hpp"
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
 #include <ostream>
@@ -220,7 +219,6 @@ OW_CIMUrl::setDefaultValues()
 void
 OW_CIMUrl::setHost(const OW_String& host)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_host = host;
 	setLocalHost();
 	buildSpec();
@@ -230,7 +228,6 @@ OW_CIMUrl::setHost(const OW_String& host)
 void
 OW_CIMUrl::setProtocol(const OW_String& protocol)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_protocol = protocol;
 	buildSpec();
 }
@@ -370,7 +367,6 @@ OW_CIMUrl::readObject(istream &istrm)
 		m_pdata = new URLData;
 	}
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_spec = spec;
 	setComponents();
 }

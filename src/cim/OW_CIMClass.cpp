@@ -32,7 +32,6 @@
 #include "OW_CIMClass.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMProperty.hpp"
@@ -117,7 +116,6 @@ OW_CIMClass::OW_CIMClass(const OW_String& name) :
 void
 OW_CIMClass::setName(const OW_String& name)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -132,7 +130,6 @@ OW_CIMClass::getSuperClass() const
 void
 OW_CIMClass::setSuperClass(const OW_String& pname)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_parentClassName = pname;
 }
 
@@ -147,7 +144,6 @@ OW_CIMClass::isKeyed() const
 void
 OW_CIMClass::setIsKeyed(OW_Bool isKeyedParm)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_isKeyed = isKeyedParm;
 }
 
@@ -293,7 +289,6 @@ OW_CIMClass::isAssociation() const
 void
 OW_CIMClass::setIsAssociation(OW_Bool isAssocFlag)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_associationFlag = isAssocFlag;
 }
 
@@ -377,7 +372,6 @@ OW_CIMClass::addProperty(const OW_CIMProperty& prop)
 {
 	if(prop)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		m_pdata->m_properties.append(prop);
 		if(prop.isKey())
 		{
@@ -397,7 +391,6 @@ OW_CIMClass::numberOfProperties() const
 void
 OW_CIMClass::setProperties(const OW_CIMPropertyArray& props)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_properties = props;
 }
 
@@ -405,7 +398,6 @@ OW_CIMClass::setProperties(const OW_CIMPropertyArray& props)
 void
 OW_CIMClass::setProperty(const OW_CIMProperty& prop)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	OW_String argName = prop.getName();
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
@@ -424,7 +416,6 @@ OW_CIMClass::setProperty(const OW_CIMProperty& prop)
 void
 OW_CIMClass::setMethod(const OW_CIMMethod& meth)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	OW_String argName = meth.getName();
 	for(size_t i = 0; i < m_pdata->m_methods.size(); i++)
 	{
@@ -447,7 +438,6 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 		return;
 	}
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 
 	//
 	// See if qualifier already present
@@ -514,8 +504,6 @@ OW_CIMClass::removeQualifier(const OW_CIMQualifier& qual)
 
 	if(qual)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
-
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
 			OW_CIMQualifier cq = m_pdata->m_qualifiers[i];
@@ -536,7 +524,6 @@ OW_Bool
 OW_CIMClass::removeQualifier(const OW_String& name)
 {
 	OW_Bool cc = false;
-	OW_MutexLock l = m_pdata.getWriteLock();
 
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
@@ -557,7 +544,6 @@ OW_Bool
 OW_CIMClass::removeProperty(const OW_String& name)
 {
 	OW_Bool cc = false;
-	OW_MutexLock l = m_pdata.getWriteLock();
 
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
@@ -577,7 +563,6 @@ OW_CIMClass::removeProperty(const OW_String& name)
 void
 OW_CIMClass::setQualifiers(const OW_CIMQualifierArray& quals)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_qualifiers = quals;
 }
 
@@ -587,7 +572,6 @@ OW_CIMClass::setQualifier(const OW_CIMQualifier& qual)
 {
 	if(qual)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		OW_Bool found = false;
 
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
@@ -614,7 +598,6 @@ OW_CIMClass::addMethod(const OW_CIMMethod& meth)
 {
 	if(meth)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		m_pdata->m_methods.append(meth);
 	}
 }
@@ -623,7 +606,6 @@ OW_CIMClass::addMethod(const OW_CIMMethod& meth)
 void
 OW_CIMClass::setMethods(const OW_CIMMethodArray& meths)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_methods = meths;
 }
 
@@ -762,7 +744,6 @@ OW_CIMClass::readObject(istream &istrm)
 		m_pdata = new CLSData;
 	}
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_parentClassName = pcName;
 	m_pdata->m_associationFlag = isAssocFlag;

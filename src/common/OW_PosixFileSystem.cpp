@@ -32,6 +32,8 @@
 #include "OW_FileSystem.hpp"
 #include "OW_RandomNumber.hpp"
 #include "OW_Exception.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 extern "C"
 {

@@ -152,8 +152,10 @@ public:
 		return m_Data.usingTempFile();
 	}
 
+
 private:
-	// prevent copying or assignment
+
+	// Prevent copying or assignment
 	OW_TempFileEnumerationImpl( const OW_TempFileEnumerationImpl<T>& );
 	OW_TempFileEnumerationImpl<T>& operator=( const OW_TempFileEnumerationImpl<T>& );
 

@@ -33,6 +33,7 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 #include "OW_Array.hpp"
+#include "OW_Reference.hpp"
 
 class OW_SelectableIFC
 {

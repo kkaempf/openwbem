@@ -33,6 +33,7 @@
 #include "OW_SocketAddress.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Mutex.hpp"
 
 #include <netdb.h>
 

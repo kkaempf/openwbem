@@ -32,7 +32,6 @@
 #include "OW_CIM.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_BinIfcIO.hpp"
 
 #include <algorithm> // for std::sort
@@ -141,7 +140,6 @@ OW_CIMQualifierType::getDefaultValue() const
 void
 OW_CIMQualifierType::setDataType(const OW_CIMDataType& dataType)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	try
 	{
 		m_pdata->m_dataType = dataType;
@@ -168,7 +166,6 @@ OW_CIMQualifierType::setDataType(const OW_CIMDataType::Type& dataType)
 void
 OW_CIMQualifierType::setDefaultValue(const OW_CIMValue& defValue)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_defaultValue = defValue;
 	if(m_pdata->m_defaultValue)
 	{
@@ -183,7 +180,6 @@ OW_CIMQualifierType::addScope(const OW_CIMScope& newScope)
 {
 	if(newScope)
 	{
-		OW_MutexLock l = m_pdata.getWriteLock();
 		if(!hasScope(newScope))
 		{
 			if (newScope == OW_CIMScope::ANY)
@@ -256,7 +252,6 @@ OW_CIMQualifierType::addFlavor(const OW_CIMFlavor& newFlavor)
 					break;
 			}
 
-			OW_MutexLock l = m_pdata.getWriteLock();
 			m_pdata->m_flavor.append(newFlavor);
 		}
 	}
@@ -266,7 +261,6 @@ OW_CIMQualifierType::addFlavor(const OW_CIMFlavor& newFlavor)
 void
 OW_CIMQualifierType::removeFlavor(const OW_Int32 flavor)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	for(size_t i = 0; i < m_pdata->m_flavor.size(); i++)
 	{
 		if(m_pdata->m_flavor[i].getFlavor() == flavor)
@@ -313,7 +307,6 @@ OW_CIMQualifierType::getName() const
 void
 OW_CIMQualifierType::setName(const OW_String& name)
 {
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 }
 
@@ -367,7 +360,6 @@ OW_CIMQualifierType::readObject(istream &istrm)
 		m_pdata = new QUALTData;
 	}
 
-	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
 	m_pdata->m_dataType = dataType;
 	m_pdata->m_scope = scope;
@@ -413,14 +405,15 @@ OW_CIMQualifierType::toMOF() const
 	if(m_pdata->m_scope.size() > 0)
 	{
 		rv += ", Scope(";
-		std::sort(m_pdata->m_scope.begin(), m_pdata->m_scope.end());
-		for(i = 0; i < m_pdata->m_scope.size(); i++)
+        OW_CIMScopeArray scopes(m_pdata->m_scope);
+		std::sort(scopes.begin(), scopes.end());
+		for(i = 0; i < scopes.size(); i++)
 		{
 			if(i > 0)
 			{
 				rv += ',';
 			}
-			rv += m_pdata->m_scope[i].toMOF();
+			rv += scopes[i].toMOF();
 		}
 		rv += ')';
 	}
