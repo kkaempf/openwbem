@@ -263,6 +263,47 @@ StringBuffer::equals(const char* arg) const
 {
 	return strcmp(arg, m_bfr) == 0;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Get one line from an input stream. This StringBuffer object will be
+// reset (cleared) before an attempt is made to retrieve the line.
+const char*
+StringBuffer::getLine(std::istream& is)
+{
+	reset();
+	if(is)
+	{
+		size_t count = 0;
+		std::streambuf *sb = is.rdbuf();
+		
+		while(1)
+		{
+			int ch = sb->sbumpc();
+			if(ch == EOF)
+			{
+				is.setstate(count == 0
+					? (std::ios::failbit | std::ios::eofbit) : std::ios::eofbit);
+				break;
+			}
+			
+			++count;
+			
+			if(ch == '\n')
+				break;
+
+			append(static_cast<char>(ch));
+		}
+	}
+
+	const char* p = ::strchr(m_bfr, '\r');
+	if(p)
+	{
+		truncate(size_t(p-m_bfr));
+	}
+
+	return m_bfr;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 std::ostream& operator<<(std::ostream& ostr, const StringBuffer& b)
 {

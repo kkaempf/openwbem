@@ -1366,36 +1366,8 @@ String
 String::getLine(istream& is)
 {
 	StringBuffer rv(80);
-	if(is)
-	{
-		size_t count = 0;
-		std::streambuf *sb = is.rdbuf();
-		
-		while(1)
-		{
-			int ch = sb->sbumpc();
-			if(ch == EOF)
-			{
-				is.setstate(count == 0
-					? (std::ios::failbit | std::ios::eofbit) : std::ios::eofbit);
-				break;
-			}
-			
-			++count;
-			
-			if(ch == '\n')
-				break;
-			
-			rv += static_cast<char>(ch);
-		}
-	}
-	String rstr = rv.releaseString();
-	size_t ndx = rstr.indexOf('\r');
-	if(ndx != npos)
-	{
-		rstr = rstr.substring(0, ndx);
-	}
-	return rstr;
+	rv.getLine(is);
+	return rv.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

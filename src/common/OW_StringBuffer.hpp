@@ -33,6 +33,7 @@
 #include "OW_String.hpp"
 #include "OW_Char16.hpp"
 #include "OW_Bool.hpp"
+#include <iosfwd>
 #include <cstring>
 
 namespace OpenWBEM
@@ -124,6 +125,14 @@ public:
 	 * is done.
 	 */
 	void truncate(size_t index);
+
+	/**
+	 * Fill this StringBuffer object with the next line from the given
+	 * input stream.
+	 * @param is The input stream to retrieve the next line from
+	 * @return const char* pointer to the line of text just read.
+	 */
+	const char* getLine(std::istream& is);
 
 	size_t allocated() const {  return m_allocated; }
 	void reset();
