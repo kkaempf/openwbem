@@ -485,7 +485,7 @@ http_server.reuse_addr = true
 # http_server.timeout specifies the number of seconds that the server will use
 # as a timeout when communicting with clients. The value must be > 0.
 # The default is 300 (5 minutes).
-http_server.timeout = 300;
+http_server.timeout = 300
 
 ################################################################################
 # http.default_content_language specified the default content-laguage that
