@@ -1882,8 +1882,8 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_SET_PROPERTY:
 	case E_INVOKE_METHOD:
 	case E_EXEC_QUERY:
-		m_schemaLock.releaseWriteLock();
 		m_instanceLock.releaseWriteLock();
+		m_schemaLock.releaseWriteLock();
 		break;
 	case E_ENUM_NAMESPACE:
 	case E_GET_QUALIFIER_TYPE:
@@ -1910,8 +1910,8 @@ CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& cont
 	case E_ASSOCIATORS:
 	case E_REFERENCE_NAMES:
 	case E_REFERENCES:
-		m_schemaLock.releaseReadLock();
 		m_instanceLock.releaseReadLock();
+		m_schemaLock.releaseReadLock();
 		break;
 	case E_EXPORT_INDICATION:
 	default:
