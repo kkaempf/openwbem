@@ -32,7 +32,7 @@
 #define OW_CPPPROVIDERIFC_HPP_
 
 #include "OW_config.h"
-#include "OW_ProviderIFC.hpp"
+#include "OW_ProviderIFCBaseIFCBaseIFC.hpp"
 #include "OW_Map.hpp"
 #include "OW_SharedLibrary.hpp"
 #include "OW_CppProviderBaseIFC.hpp"
@@ -42,7 +42,7 @@
  * This class implements a bridge from the CIMOM's OW_ProviderManager to the
  * C++ providers.  It's main function is location and creation of providers.
  */
-class OW_CppProviderIFC : public OW_ProviderIFC
+class OW_CppProviderIFC : public OW_ProviderIFCBaseIFC
 {
 public:
 	static const char* const CREATIONFUNC;

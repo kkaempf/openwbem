@@ -42,8 +42,8 @@
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppPropertyProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_ProviderIFCLoader.hpp"
-#include "OW_ProviderIFC.hpp"
+#include "OW_ProviderIFCBaseIFCLoader.hpp"
+#include "OW_ProviderIFCBaseIFCBaseIFC.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_Map.hpp"
 
@@ -52,7 +52,7 @@
  * It will keep the list of provider interfaces and query them when searching
  * for providers.
  */
-class OW_ProviderManager : public OW_ProviderIFC
+class OW_ProviderManager : public OW_ProviderIFCBaseIFC
 {
 public:
 
@@ -69,13 +69,13 @@ public:
 	~OW_ProviderManager();
 
 	/**
-	 * Load and instantiate the OW_ProviderIFC classes using the
+	 * Load and instantiate the OW_ProviderIFCBaseIFC classes using the
 	 * ifcLoader to do the work.
 	 *
 	 * @param ifcLoader the class that will actually load and instantiate the
-	 * 	OW_ProviderIFC classes.
+	 * 	OW_ProviderIFCBaseIFC classes.
 	 */
-	void init(const OW_ProviderIFCLoaderRef ifcLoader);
+	void init(const OW_ProviderIFCBaseIFCLoaderRef ifcLoader);
 
 	/**
 	 * Make a cimom provider available to the provider manager.
@@ -210,11 +210,11 @@ private:
 
 	typedef OW_Map<OW_String, CimProv> ProviderMap;
 
-	OW_ProviderIFCRef getProviderIFC(const OW_ProviderEnvironmentRef& env,
+	OW_ProviderIFCBaseIFCRef getProviderIFC(const OW_ProviderEnvironmentRef& env,
 		const OW_CIMQualifier& qual,
 		OW_String& provStr) const;
 
-	OW_Array<OW_ProviderIFCRef> m_IFCArray;
+	OW_Array<OW_ProviderIFCBaseIFCRef> m_IFCArray;
 	OW_Array<OW_SharedLibraryRef> m_shlibArray;
 	ProviderMap m_cimomProviders;
 	OW_Mutex m_guard;

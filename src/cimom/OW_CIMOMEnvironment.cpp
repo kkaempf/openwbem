@@ -163,7 +163,7 @@ OW_CIMOMEnvironment::startServices()
 
 	OW_CIMOMEnvironmentRef eref(this, true);
 	m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
-	m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
+	m_providerManager->init(OW_ProviderIFCBaseIFCLoader::createProviderIFCLoader(
 		eref));
 
 	m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,

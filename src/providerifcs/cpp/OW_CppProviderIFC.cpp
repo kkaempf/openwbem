@@ -46,7 +46,7 @@ const char* const OW_CppProviderIFC::CREATIONFUNC = "createProvider";
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CppProviderIFC::OW_CppProviderIFC()
-	: OW_ProviderIFC()
+	: OW_ProviderIFCBaseIFC()
 	, m_provs()
 	, m_guard()
 	, m_noidProviders()

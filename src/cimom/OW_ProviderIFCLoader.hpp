@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_SharedLibraryLoader.hpp"
 #include "OW_SharedLibrary.hpp"
-#include "OW_ProviderIFC.hpp"
+#include "OW_ProviderIFCBaseIFCBaseIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMOMEnvironment.hpp"
@@ -48,20 +48,20 @@
  * overridden, and then the createProviderIFCFromLib function can be used to 
  * actually load the shared library.
  */
-class OW_ProviderIFCLoaderBase
+class OW_ProviderIFCBaseIFCLoaderBase
 {
 public:
-	typedef std::pair<OW_ProviderIFCRef, OW_SharedLibraryRef> ifc_lib_pair;
+	typedef std::pair<OW_ProviderIFCBaseIFCRef, OW_SharedLibraryRef> ifc_lib_pair;
 
 
-	OW_ProviderIFCLoaderBase(OW_SharedLibraryLoaderRef sll,
+	OW_ProviderIFCBaseIFCLoaderBase(OW_SharedLibraryLoaderRef sll,
 		OW_CIMOMEnvironmentRef env)
 		: m_sll( sll )
 		, m_env(env)
 	{
 	}
 
-	virtual ~OW_ProviderIFCLoaderBase() {}
+	virtual ~OW_ProviderIFCBaseIFCLoaderBase() {}
 
 	/**
 	 * This function needs to be overridden by derived classes and implement a
@@ -78,7 +78,7 @@ public:
 	 *
 	 * The derived classes code will probably be similar to this:
 	 * 	virtual void loadIFCs(
-	 * 		OW_Array<OW_ProviderIFCRef>& ifcs,
+	 * 		OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
 	 * 		OW_Array<OW_SharedLibraryRef>& shlibs) const
 	 * 	{
 	 * 		ifc_lib_pair rval;
@@ -99,17 +99,17 @@ public:
 	 *
 	 */
 	virtual void loadIFCs(
-			OW_Array<OW_ProviderIFCRef>& interfaces,
+			OW_Array<OW_ProviderIFCBaseIFCRef>& interfaces,
 			OW_Array<OW_SharedLibraryRef>& shlibs) const = 0;
 
 protected:
 	/**
 	 * Function uses the OW_SharedLibraryLoader to load the library designated
-	 * by libname (probably a filename) and creates an OW_ProviderIFCRef.
+	 * by libname (probably a filename) and creates an OW_ProviderIFCBaseIFCRef.
 	 *
 	 * @param libname The name of the library to load.
 	 *
-	 * @returns A pair containing a ref counted pointer to the OW_ProviderIFC 
+	 * @returns A pair containing a ref counted pointer to the OW_ProviderIFCBaseIFC 
 	 * 	corresponding to libname and a ref counted point to the corresponding
 	 * 	OW_SharedLibrary.  If loading the library fails, null is returned.
 	 * 	e.g. retval.first.isNull() == true and retval.second.isNull() == true.
@@ -123,27 +123,27 @@ protected:
 
 private:
 
-	OW_ProviderIFC* safeCreateIFC(OW_SharedLibraryRef sl) const;
+	OW_ProviderIFCBaseIFC* safeCreateIFC(OW_SharedLibraryRef sl) const;
 	
 	const OW_SharedLibraryLoaderRef m_sll;
 	OW_CIMOMEnvironmentRef m_env;
 };
 
-typedef OW_Reference<OW_ProviderIFCLoaderBase> OW_ProviderIFCLoaderRef;
+typedef OW_Reference<OW_ProviderIFCBaseIFCLoaderBase> OW_ProviderIFCBaseIFCLoaderRef;
 
-class OW_ProviderIFCLoader : public OW_ProviderIFCLoaderBase
+class OW_ProviderIFCBaseIFCLoader : public OW_ProviderIFCBaseIFCLoaderBase
 {
 public:
-	OW_ProviderIFCLoader(OW_SharedLibraryLoaderRef sll,
+	OW_ProviderIFCBaseIFCLoader(OW_SharedLibraryLoaderRef sll,
 		OW_CIMOMEnvironmentRef env)
-		: OW_ProviderIFCLoaderBase(sll, env) {}
+		: OW_ProviderIFCBaseIFCLoaderBase(sll, env) {}
 
-	virtual ~OW_ProviderIFCLoader(){}
+	virtual ~OW_ProviderIFCBaseIFCLoader(){}
 
-	virtual void loadIFCs(OW_Array<OW_ProviderIFCRef>& ifcs,
+	virtual void loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs,
 		OW_Array<OW_SharedLibraryRef>& shlibs) const;
 
-	static OW_ProviderIFCLoaderRef createProviderIFCLoader(
+	static OW_ProviderIFCBaseIFCLoaderRef createProviderIFCLoader(
 		OW_CIMOMEnvironmentRef env);
 };
 

@@ -559,8 +559,8 @@ AC_OUTPUT(./Makefile
 ./src/mof/Makefile
 ./src/mof/testfiles/Makefile
 ./src/provider/Makefile
-./src/provider/ifcs/Makefile
-./src/provider/ifcs/cpp/Makefile
+./src/providerifcs/Makefile
+./src/providerifcs/cpp/Makefile
 ./src/providers/Makefile
 ./src/providers/cpp/Makefile
 ./src/providers/cpp/indicationexport/Makefile

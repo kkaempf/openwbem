@@ -59,15 +59,15 @@
  * declared inside an anonymous namespace to prevent possible identifier
  * collisions between providers or the openwbem libraries.
  */
-class OW_ProviderIFC
+class OW_ProviderIFCBaseIFC
 {
 public:
-	OW_ProviderIFC()
+	OW_ProviderIFCBaseIFC()
 	: signature(0xABCDEFA0)
 	{
 	}
 
-	virtual ~OW_ProviderIFC() {}
+	virtual ~OW_ProviderIFCBaseIFC() {}
 
 	/**
 	 * Return the provider's name. The name will be used to identify this
@@ -196,10 +196,10 @@ protected:
 		) = 0;
 };
 
-typedef OW_Reference<OW_ProviderIFC> OW_ProviderIFCRef;
+typedef OW_Reference<OW_ProviderIFCBaseIFC> OW_ProviderIFCBaseIFCRef;
 
 #define OW_PROVIDERIFCFACTORY(prov) \
-extern "C" OW_ProviderIFC* \
+extern "C" OW_ProviderIFCBaseIFC* \
 createProviderIFC() \
 { \
 	return new prov; \

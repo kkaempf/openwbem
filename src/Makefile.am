@@ -1,19 +1,28 @@
-SUBDIRS = cim \
-http \
-client \
-net \
-thread \
-xml \
-listener \
-platform \
+SUBDIRS = \
 common \
-wql \
-server \
-indication \
+cim \
+ifcs \
 provider \
-newcimom \
-newdaemon \
-tools \
-mof \
+ \
+client \
+ \
+cimxmllistener \
+ \
+http \
+ \
+server \
+ \
+xml \
+ \
+wql \
+authenticators \
 services \
-requesthandlers
+requesthandlers \
+providerifcs \
+providers \
+cimom \
+frameworks \
+ \
+mof \
+tools
+

@@ -40,7 +40,7 @@
 
 //////////////////////////////////////////////////////////////////////////////
 OW_ProviderManager::OW_ProviderManager() :
-	OW_ProviderIFC(), m_IFCArray(), m_shlibArray(), m_cimomProviders(),
+	OW_ProviderIFCBaseIFC(), m_IFCArray(), m_shlibArray(), m_cimomProviders(),
 	m_guard(), m_noIdProviders()
 {
 }
@@ -75,7 +75,7 @@ OW_ProviderManager::~OW_ProviderManager()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_ProviderManager::init(const OW_ProviderIFCLoaderRef IFCLoader)
+void OW_ProviderManager::init(const OW_ProviderIFCBaseIFCLoaderRef IFCLoader)
 {
 	IFCLoader->loadIFCs(m_IFCArray, m_shlibArray);
 }
@@ -177,7 +177,7 @@ OW_ProviderManager::getInstanceProvider(const OW_ProviderEnvironmentRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
-	OW_ProviderIFCRef theIFC = getProviderIFC(env, qual, provStr);
+	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 	if(theIFC.isNull())
 	{
 		return OW_InstanceProviderIFCRef(0);
@@ -192,7 +192,7 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
-	OW_ProviderIFCRef theIFC = getProviderIFC(env, qual, provStr);
+	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 	if(theIFC.isNull())
 	{
 		return OW_MethodProviderIFCRef(0);
@@ -207,7 +207,7 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
-	OW_ProviderIFCRef theIFC = getProviderIFC(env, qual, provStr);
+	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 	if(theIFC.isNull())
 	{
 		return OW_PropertyProviderIFCRef(0);
@@ -222,7 +222,7 @@ OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentRef& env,
 	const OW_CIMQualifier& qual) const
 {
 	OW_String provStr;
-	OW_ProviderIFCRef theIFC = getProviderIFC(env, qual, provStr);
+	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
 	if(theIFC.isNull())
 	{
 		return OW_AssociatorProviderIFCRef(0);
@@ -273,12 +273,12 @@ OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentRef& env
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_ProviderIFCRef
+OW_ProviderIFCBaseIFCRef
 OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentRef& env,
 	const OW_CIMQualifier& qual,
 	OW_String& provStr) const
 {
-	OW_ProviderIFCRef rref(0);
+	OW_ProviderIFCBaseIFCRef rref(0);
 
 	provStr = "";
 	if(!qual.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_PROVIDER))
@@ -319,7 +319,7 @@ OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentRef& env,
 
 	if(ifcStr.equalsIgnoreCase(OW_String(CIMOM_PROVIDER_IFC)))
 	{
-		return OW_ProviderIFCRef((OW_ProviderIFC*)this, true);
+		return OW_ProviderIFCBaseIFCRef((OW_ProviderIFCBaseIFC*)this, true);
 	}
 
 	for (size_t i = 0; i < m_IFCArray.size(); i++)
