@@ -45,7 +45,7 @@
 #include <iterator> // for back_inserter
 #include <algorithm> // for set_union
 
-#include <iostream> // for debugging
+//#include <iostream> // for debugging
 
 const char * typeStrings[] =
 {
@@ -2014,7 +2014,7 @@ void OW_WQLProcessor::visit_attr(
 	const attr* pattr
 	)
 {
-	m_exprValue = DataType(*pattr->m_pstrRelationName1 + ".", DataType::ColumnNameType);
+	m_exprValue = DataType(*pattr->m_pstrRelationName1, DataType::ColumnNameType);
 	pattr->m_pattrs3->accept(this);
 
 	// TODO: What does indirection mean?
@@ -2026,7 +2026,7 @@ void OW_WQLProcessor::visit_attrs_strAttrName(
 	const attrs_strAttrName* pattrs_strAttrName
 	)
 {
-	m_exprValue = DataType(*pattrs_strAttrName->m_pstrAttrName1, DataType::ColumnNameType);
+	m_exprValue = DataType(m_exprValue.str + "." + *pattrs_strAttrName->m_pstrAttrName1, DataType::ColumnNameType);
 }
 
 void OW_WQLProcessor::visit_attrs_attrs_PERIOD_strAttrName(
@@ -2227,7 +2227,36 @@ OW_WQLProcessor::filterInstancesOnPropertyValue(const OW_String& propName, const
 			}
 			else
 			{
-				OW_CIMProperty cp = ci.getProperty(propName);
+				OW_CIMProperty cp;
+				if (propName.indexOf('.') != -1)
+				{
+					// it's an embedded property
+					OW_String curPropName;
+					OW_CIMInstance curci = ci;
+					OW_StringArray propNames = propName.tokenize(".");
+					for (size_t i = 0; i < propNames.size(); ++i)
+					{
+						cp = curci.getProperty(propNames[i]);
+						if (cp)
+						{
+	
+							if (i < propNames.size() - 1)
+							{
+								if (cp.getValue().getType() != OW_CIMDataType::EMBEDDEDINSTANCE)
+								{
+									cp.setNull();
+									break;
+								}
+								cp.getValue().get(curci);
+							}
+						}
+					}
+				}
+				else
+				{
+					cp = ci.getProperty(propName);
+				}
+				
 				if (cp)
 				{
 					OW_CIMValue cv = cp.getValue();
