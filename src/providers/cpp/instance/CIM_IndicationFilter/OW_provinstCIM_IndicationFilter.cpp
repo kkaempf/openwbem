@@ -81,7 +81,7 @@ public:
 	{
 		if (!indicationsEnabled)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
+			OW_THROWCIMMSG(CIMException::FAILED, "Indications are disabled.  Filter creation is not allowed.");
 		}
 
 		// TODO: Remove this or do something better.
@@ -103,12 +103,15 @@ public:
 	{
 		if (!indicationsEnabled)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
+			OW_THROWCIMMSG(CIMException::FAILED, "Indications are disabled.  Filter creation is not allowed.");
 		}
 		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
 		// Tell the indication server about the modified subscription.
-		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->modifyFilter(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
+		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->modifyFilter(
+			ns,
+			modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass), 
+			env->getUserName());
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,

@@ -82,7 +82,7 @@ public:
 	void createSubscription(const String& ns, const CIMInstance& subInst, const String& username);
 	void modifySubscription(const String& ns, const CIMInstance& subInst);
 	
-	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst);
+	virtual void modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName);
 
 	virtual void doCooperativeCancel();
 

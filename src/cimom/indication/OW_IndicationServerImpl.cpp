@@ -108,10 +108,10 @@ public:
 	IndicationServerProviderEnvironment(
 		CIMOMEnvironmentRef env)
 		: ProviderEnvironmentIFC()
+		, m_opctx()
 		, m_ch()
 		, m_env(env)
 		, m_repch()
-		, m_opctx()
 	{
 		m_ch = m_env->getCIMOMHandle(m_opctx);
 		m_repch = m_env->getRepositoryCIMOMHandle(m_opctx);
@@ -147,10 +147,10 @@ public:
 		return m_opctx;
 	}
 private:
+	OperationContext m_opctx;
 	CIMOMHandleIFCRef m_ch;
 	CIMOMEnvironmentRef m_env;
 	CIMOMHandleIFCRef m_repch;
-	OperationContext m_opctx;
 };
 ProviderEnvironmentIFCRef createProvEnvRef(CIMOMEnvironmentRef env)
 {
@@ -276,11 +276,14 @@ IndicationServerImpl::init(CIMOMEnvironmentRef env)
 	}
 	m_notifierThreadPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE,
 				maxIndicationExportThreads, maxIndicationExportThreads * 100, env->getLogger(), "Indication Server Notifiers"));
+	
 	// pool to handle threads modifying subscriptions
 	m_subscriptionPool = ThreadPoolRef(new ThreadPool(ThreadPool::DYNAMIC_SIZE,
-		1, // 1 thread because only 1 can run at a time because of mutex locking
+		1, // 1 thread because only 1 can run at a time because of mutex locking.  
+		   // Also modifyFilter() takes advantage of this detail to make sure a delete/create are processed in order.
 		0, // unlimited size queue
 		env->getLogger(), "Indication Server Subscriptions"));
+
 	//-----------------
 	// Load map with available indication export providers
 	//-----------------
@@ -1214,16 +1217,36 @@ IndicationServerImpl::modifySubscription(const String& ns, const CIMInstance& su
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst)
+IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
 {
-	// If this were to update the filters, it would be quite a bit of work.
-	// Basically all the subscriptions that use the old filter would have to
-	// be unregistered, and then re-registered with the new filter.  If any
-	// of the providers doesn't support the new filter, what then?
-	// So, it's just easiest to disallow filter modification.  If we wanted to
-	// make this a little more friendly, we could allow modification as long
-	// as there's not subscriptions associated to it.
-	OW_THROWCIMMSG(CIMException::FAILED, "modifying a filter is not supported");
+	// Implementation note: This depends on the fact that the indication subscription creation/deletion events are
+	// processed sequentially (the thread pool only has 1 worker thread), so that the deletion is processed
+	// before the creation.
+	try
+	{
+		OperationContext context;
+		CIMOMHandleIFCRef hdl(m_env->getRepositoryCIMOMHandle(context));
+		// get all the CIM_IndicationSubscription instances referencing the filter
+		CIMObjectPath filterPath(ns, filterInst);
+		CIMInstanceArray subscriptions(hdl->referencesA(ns, filterPath, "CIM_IndicationSubscription", "Filter"));
+
+		// call startDeleteSubscription on the old instances
+		for (size_t i = 0; i < subscriptions.size(); ++i)
+		{
+			startDeleteSubscription(ns, CIMObjectPath(ns, subscriptions[i]));
+		}
+		
+		// call startCreateSubscription on the new instances
+		for (size_t i = 0; i < subscriptions.size(); ++i)
+		{
+			startCreateSubscription(ns, subscriptions[i], userName);
+		}
+
+	}
+	catch (CIMException& e)
+	{
+		OW_THROWCIMMSG(CIMException::FAILED, Format("modifying the filter failed: %1", e).c_str());
+	}
 }
 
 void
