@@ -178,12 +178,15 @@ private:
 	void beginPostResponse();
 	void initRespStream(std::ostream*& ostrEntity);
 	void sendPostResponse(std::ostream* ostrEntity,
-		TempFileStream& ostrError);
+		TempFileStream& ostrError, OperationContext& context);
 	int performAuthentication(const String& info, OperationContext& context);
 	void sendHeaders(int sc, int len = -1);
 	void cleanUpIStreams(CIMProtocolIStreamIFCRef istrm);
 	CIMProtocolIStreamIFCRef convertToFiniteStream(
 			std::istream& istr);
+	String getContentLanguage(OperationContext& context, bool& setByProvider,
+		bool& clientSpecified);
+
 };
 
 } // end namespace OpenWBEM

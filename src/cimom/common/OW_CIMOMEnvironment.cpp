@@ -210,6 +210,10 @@ CIMOMEnvironment::init()
 		OW_DEFAULT_WQL_LIB, E_PRESERVE_PREVIOUS);
 	setConfigItem(ConfigOpts::REQ_HANDLER_TTL_opt,
 		OW_DEFAULT_REQ_HANDLER_TTL, E_PRESERVE_PREVIOUS);
+
+	// Default Content-Language
+	setConfigItem(ConfigOpts::DEFAULT_CONTENT_LANGUAGE_opt, 
+		OW_DEFAULT_CONTENT_LANGUAGE, E_PRESERVE_PREVIOUS);
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -111,7 +111,7 @@ LanguageTag::assign(const char* arg)
 {
 	m_weight = 0;
 	m_explicitQualityValue = false;
-    setSubTags(arg);
+    return setSubTags(arg);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -303,20 +303,26 @@ LanguageTag::setWeight(const char* arg)
 
 //////////////////////////////////////////////////////////////////////////////
 SessionLanguage::SessionLanguage()
-	: m_langTags()
+	: OperationContext::Data()
+	, m_langTags()
+	, m_contentLanguage()
 {
 }
 
 //////////////////////////////////////////////////////////////////////////////
 SessionLanguage::SessionLanguage(const char* acceptLangHdrValue)
-	: m_langTags()
+	: OperationContext::Data()
+	, m_langTags()
+	, m_contentLanguage()
 {
     assign(acceptLangHdrValue);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 SessionLanguage::SessionLanguage(const SessionLanguage& arg)
-	: m_langTags(arg.m_langTags)
+	: OperationContext::Data()
+	, m_langTags(arg.m_langTags)
+	, m_contentLanguage(arg.m_contentLanguage)
 {
 }
 
@@ -325,6 +331,7 @@ SessionLanguage&
 SessionLanguage::operator=(const SessionLanguage& arg)
 {
 	m_langTags = arg.m_langTags;
+	m_contentLanguage = arg.m_contentLanguage;
 	return *this;
 }
 
@@ -425,6 +432,25 @@ SessionLanguage::getBestLanguage(const StringArray& languages) const
 	}  
 
 	return (bestWeight > -1) ? languages[bestIndex] : String();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+SessionLanguage::addContentLanguage(const String& contentLanguage)
+{
+	if(m_contentLanguage.length())
+	{
+		m_contentLanguage += ", ";
+	}
+
+	m_contentLanguage += contentLanguage;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String 
+SessionLanguage::getContentLanguage() const
+{
+	return m_contentLanguage;
 }
 
 }	// End of namespace OpenWBEM

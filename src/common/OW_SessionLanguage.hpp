@@ -122,6 +122,8 @@ public:
 	int langCount() const { return m_langTags.size(); }
 	SessionLanguage& assign(const char* acceptLangHdrValue);
 	String getBestLanguage(const StringArray& languages) const;
+	void addContentLanguage(const String& contentLanguage);
+	String getContentLanguage() const;
 
 private:
 	void buildLangTags(const char* acceptLangHdrValue);
@@ -129,9 +131,13 @@ private:
 		int level);
 
     LanguageTagArray m_langTags;
+	String m_contentLanguage;
 };
 
 typedef IntrusiveReference<SessionLanguage> SessionLanguageRef;
+
+// Key to use when getting SessionLanguage from the OperationContext
+#define SESSION_LANGUAGE_KEY "_oWsEsSiOnLaNgUaGe_kEy_"
 
 }	// End of namespace OpenWBEM
 

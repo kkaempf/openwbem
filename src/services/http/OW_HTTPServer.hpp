@@ -112,6 +112,7 @@ public:
 		bool reuseAddr;
 		ServiceEnvironmentIFCRef env;
 		Int32 timeout;
+		String defaultContentLanguage;
 	};
 private:
 	bool authenticate(HTTPSvrConnection* pconn,

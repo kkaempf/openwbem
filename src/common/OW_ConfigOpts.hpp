@@ -169,6 +169,9 @@
 #ifndef OW_DEFAULT_ALLOWED_USERS
 #define OW_DEFAULT_ALLOWED_USERS "*"
 #endif
+#ifndef OW_DEFAULT_CONTENT_LANGUAGE
+#define OW_DEFAULT_CONTENT_LANGUAGE "en"
+#endif
 
 namespace OpenWBEM
 {
@@ -230,7 +233,7 @@ namespace ConfigOpts
 	static const char* const HTTP_ALLOW_LOCAL_AUTHENTICATION_opt = "http_server.allow_local_authentication";
 	static const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt = "remoteprovifc.max_connections_per_url";
 	static const char* const ALLOWED_USERS_opt = "owcimomd.allowed_users";
-
+	static const char* const DEFAULT_CONTENT_LANGUAGE_opt = "http.default_content_language";
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
 

@@ -286,10 +286,15 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 ;http_server.timeout = 300;
 
 ################################################################################
+# http.default_content_language specified the default content-laguage that
+# will be returned to an HTTP client when the accept-language header was used
+# on the request and a provider has not explicity set the content-language.
+;http.default_content_language = en
+
+################################################################################
 # slp.enable_advertisement controls whether the slp provider advertises with SLP
 # The default is true.
 ;slp.enable_advertisement = true
-
 
 ################################################################################
 # The following options will probably not need to be modified.

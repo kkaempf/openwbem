@@ -190,6 +190,9 @@ HTTPServer::setServiceEnvironment(ServiceEnvironmentIFCRef env)
 		
 		item = env->getConfigItem(ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
 		m_options.httpsPort = item.toInt32();
+
+		m_options.defaultContentLanguage = env->getConfigItem(
+			ConfigOpts::DEFAULT_CONTENT_LANGUAGE_opt, OW_DEFAULT_CONTENT_LANGUAGE);
 		
 		m_options.UDSFilename = env->getConfigItem(ConfigOpts::UDS_FILENAME_opt, OW_DEFAULT_UDS_FILENAME);
 		

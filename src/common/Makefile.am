@@ -79,6 +79,7 @@ OW_Runnable.cpp \
 OW_RWLocker.cpp \
 OW_Select.cpp \
 OW_SelectEngine.cpp \
+OW_SessionLanguage.cpp \
 OW_SharedLibrary.cpp \
 OW_SharedLibraryException.cpp \
 OW_shlSharedLibrary.cpp \
@@ -179,6 +180,7 @@ OW_Runnable.hpp \
 OW_RWLocker.hpp \
 OW_SafeLibCreate.hpp \
 OW_SelectEngine.hpp \
+OW_SessionLanguage.cpp \
 OW_Select.hpp \
 OW_Semaphore.hpp \
 OW_SharedLibraryException.hpp \

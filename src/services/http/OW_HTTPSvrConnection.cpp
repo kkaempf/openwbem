@@ -56,6 +56,7 @@
 #include "OW_StringBuffer.hpp"
 #include "OW_ThreadCancelledException.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_SessionLanguage.hpp"
 
 #if defined(BAD)
 #undef BAD
@@ -398,7 +399,7 @@ HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 //////////////////////////////////////////////////////////////////////////////
 void
 HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
-	TempFileStream& ostrError)
+	TempFileStream& ostrError, OperationContext& context)
 {
 	int clen = -1;
 	Int32 errCode = 0;
@@ -406,6 +407,18 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 	if (!m_chunkedOut)
 	{
 		ostream* ostrToSend = ostrEntity;
+
+		//
+		// Set content-langage header here
+		//
+		bool clientSpecified, setByProvider;
+		String clang = getContentLanguage(context, setByProvider,
+			clientSpecified);
+		if(setByProvider || clientSpecified)
+		{
+			addHeader("Content-Language", clang);
+		}
+
 		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
 			ostrToSend = &ostrError;
@@ -483,6 +496,18 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				(ostrEntity);
 		}
 		OW_ASSERT(ostrChunk);
+
+		//
+		// Add trailer for content-language
+		//
+		bool clientSpecified, setByProvider;
+		String clang = getContentLanguage(context, setByProvider,
+			clientSpecified);
+		if(setByProvider || clientSpecified)
+		{
+			ostrChunk->addTrailer("Content-Language", clang);
+		}
+
 		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
 			const char* CIMStatusCodeTrailer = "CIMStatusCode";
@@ -813,9 +838,19 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 		}
 	}
 //
-// Check for Accept-Languages
+// Check for Accept-Language
 //
-	// TODO
+	SessionLanguage *psl = new SessionLanguage;
+	if (headerHasKey("Accept-Language"))
+	{
+		String al = getHeaderValue("Accept-Language");
+		if(al.length())
+		{
+			psl->assign(al.c_str());
+		}
+	}
+	context.setData(SESSION_LANGUAGE_KEY, OperationContext::DataRef(psl));
+
 //
 // Check for forbidden header keys.
 //
@@ -954,7 +989,7 @@ HTTPSvrConnection::post(istream& istr, OperationContext& context)
 		// process the request
 
 		m_requestHandler->process(&istr, ostrEntity, &ostrError, context);
-		sendPostResponse(ostrEntity, ostrError);
+		sendPostResponse(ostrEntity, ostrError, context);
 	}
 	catch (...)
 	{
@@ -1168,6 +1203,38 @@ HTTPSvrConnection::convertToFiniteStream(istream& istr)
 	}
 	return rval;
 }
+//////////////////////////////////////////////////////////////////////////////
+String 
+HTTPSvrConnection::getContentLanguage(OperationContext& context,
+	bool& setByProvider, bool& clientSpecified)
+{
+	setByProvider = false;
+	clientSpecified = false;
+	String contentLang = m_options.defaultContentLanguage;
+	try
+	{
+		OperationContext::DataRef dataref = context.getData(
+			SESSION_LANGUAGE_KEY);
+		SessionLanguageRef slref = dataref.cast_to<SessionLanguage>();
+		if(slref->langCount() > 0)
+		{
+			clientSpecified = true;
+		}
+		String pcl = slref->getContentLanguage();
+		if(pcl.length())
+		{
+			contentLang = pcl;
+			setByProvider = true;
+		}
+	}
+	catch(ContextDataNotFoundException&)
+	{
+		// Ignore?
+	}
+
+	return contentLang;
+}
+
 
 } // end namespace OpenWBEM
 
