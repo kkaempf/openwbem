@@ -224,7 +224,14 @@ OW_CIMProperty::setOriginClass(const OW_String& originCls)
 OW_CIMProperty&
 OW_CIMProperty::setValue(const OW_CIMValue& val)
 {
-	m_pdata->m_cimValue = val;
+	if (m_pdata->m_propertyDataType && val && val.getCIMDataType() != m_pdata->m_propertyDataType)
+	{
+		m_pdata->m_cimValue = OW_CIMValueCast::castValueToDataType(val, m_pdata->m_propertyDataType);
+	}
+	else
+	{
+		m_pdata->m_cimValue = val;
+	}
 	return *this;
 }
 
