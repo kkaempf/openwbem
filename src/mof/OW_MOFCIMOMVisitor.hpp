@@ -195,9 +195,12 @@ private:
 	
 	// Functions that call into the remote cimom handle
 	CIMClass CIMOMgetClass(const String& className, const LineInfo& li);
-	void CIMOMcreateClass(const LineInfo& li);
-	void CIMOMsetQualifierType(const LineInfo& li);
-	void CIMOMcreateInstance(const LineInfo& li);
+	void CIMOMprocessClass(const LineInfo& li);
+	void CIMOMprocessClassAux(const LineInfo& li);
+	void CIMOMprocessQualifierType(const LineInfo& li);
+	void CIMOMprocessQualifierTypeAux();
+	void CIMOMprocessInstance(const LineInfo& li);
+	void CIMOMprocessInstanceAux();
 	CIMQualifierType CIMOMgetQualifierType(const String& qualName, const LineInfo& li);
 	void CIMOMcreateNamespace(const LineInfo& li);
 	

@@ -212,7 +212,7 @@ void CIMOMVisitor::VisitClassDeclaration( const ClassDeclaration *pClassDeclarat
 			(*i)->Accept( this );
 		}
 	}
-	CIMOMcreateClass(pClassDeclaration->theLineInfo);
+	CIMOMprocessClass(pClassDeclaration->theLineInfo);
 }
 void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclaration )
 {
@@ -253,7 +253,7 @@ void CIMOMVisitor::VisitAssocDeclaration( const AssocDeclaration *pAssocDeclarat
 			(*i)->Accept( this );
 		}
 	}
-	CIMOMcreateClass(pAssocDeclaration->theLineInfo);
+	CIMOMprocessClass(pAssocDeclaration->theLineInfo);
 }
 void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclaration )
 {
@@ -295,7 +295,7 @@ void CIMOMVisitor::VisitIndicDeclaration( const IndicDeclaration *pIndicDeclarat
 			(*i)->Accept( this );
 		}
 	}
-	CIMOMcreateClass(pIndicDeclaration->theLineInfo);
+	CIMOMprocessClass(pIndicDeclaration->theLineInfo);
 }
 void CIMOMVisitor::VisitClassName( const ClassName * )
 {
@@ -754,7 +754,7 @@ void CIMOMVisitor::VisitQualifierDeclaration( const QualifierDeclaration *pQuali
 	{
 		pQualifierDeclaration->pDefaultFlavor->Accept( this );
 	}
-	CIMOMsetQualifierType(pQualifierDeclaration->theLineInfo);
+	CIMOMprocessQualifierType(pQualifierDeclaration->theLineInfo);
 }
 void CIMOMVisitor::VisitQualifierName( const QualifierName * )
 {
@@ -958,7 +958,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 		m_aliasMap[*(pInstanceDeclaration->pAlias->pAliasIdentifier->pAliasIdentifier)] =
 			cop.modelPath();
 	}
-	CIMOMcreateInstance(pInstanceDeclaration->theLineInfo);
+	CIMOMprocessInstance(pInstanceDeclaration->theLineInfo);
 }
 void CIMOMVisitor::VisitValueInitializer( const ValueInitializer *pValueInitializer )
 {
@@ -1065,28 +1065,55 @@ CIMClass CIMOMVisitor::getClass(const String& className, const LineInfo& li)
 	}
 	return c;
 }
-void CIMOMVisitor::CIMOMcreateClass(const LineInfo& li)
+
+void CIMOMVisitor::CIMOMprocessClassAux(const LineInfo& li)
+{
+	if (m_opts.m_removeObjects)
+	{
+		// since we don't go to the effort of deleting the classes backwards, the first classes we come across in a typical mof may
+		// be base classes. If a base class is deleted, all sub classes go with it, so subsequent delete classes may cause an
+		// exception to be thrown, which we just want to ignore.
+		try
+		{
+			m_hdl->deleteClass(m_namespace, m_curClass.getName());
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() != CIMException::NOT_FOUND && e.getErrNo() != CIMException::INVALID_CLASS)
+			{
+				throw;
+			}
+		}
+	}
+	else
+	{
+		m_hdl->createClass(m_namespace, m_curClass);
+	}
+}
+
+void CIMOMVisitor::CIMOMprocessClass(const LineInfo& li)
 {
 	try
 	{
-		theErrorHandler->progressMessage(Format("Processing class: %1", m_curClass.getName()).c_str(), li);
+		theErrorHandler->progressMessage(Format("Processing Class: %1", m_curClass.getName()).c_str(), li);
 		try
 		{
-			m_hdl->createClass(m_namespace, m_curClass);
+			CIMOMprocessClassAux(li);
 		}
 		catch (CIMException& e)
 		{
 			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
 			{
 				CIMOMcreateNamespace(li);
-				m_hdl->createClass(m_namespace, m_curClass);
+				CIMOMprocessClassAux(li);
 			}
 			else
 			{
 				throw;
 			}
 		}
-		theErrorHandler->progressMessage(Format("Created class: %1", m_curClass.getName()).c_str(), li);
+		const char* const msg = m_opts.m_removeObjects ? "Deleted Class: %1" : "Created Class: %1";
+		theErrorHandler->progressMessage(Format(msg, m_curClass.getName()).c_str(), li);
 		// Note we won't add the class to the cache, since mof usually is just creating classes, it'll be mostly a waste of time.  getClass will put classes in the cache,
 		// in the case that there are lots of instances, each class will only have to be fetched once.
 	}
@@ -1097,7 +1124,7 @@ void CIMOMVisitor::CIMOMcreateClass(const LineInfo& li)
 			try
 			{
 				m_hdl->modifyClass(m_namespace, m_curClass);
-				theErrorHandler->progressMessage(Format("Updated class: %1", m_curClass.getName()).c_str(), li);
+				theErrorHandler->progressMessage(Format("Updated Class: %1", m_curClass.getName()).c_str(), li);
 			}
 			catch (const CIMException& ce)
 			{
@@ -1110,21 +1137,42 @@ void CIMOMVisitor::CIMOMcreateClass(const LineInfo& li)
 		}
 	}
 }
-void CIMOMVisitor::CIMOMsetQualifierType(const LineInfo& li)
+void CIMOMVisitor::CIMOMprocessQualifierTypeAux()
+{
+	if (m_opts.m_removeObjects)
+	{
+		try
+		{
+			m_hdl->deleteQualifierType(m_namespace, m_curQualifierType.getName());
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() != CIMException::NOT_FOUND)
+			{
+				throw;
+			}
+		}
+	}
+	else
+	{
+		m_hdl->setQualifierType(m_namespace, m_curQualifierType);
+	}
+}
+void CIMOMVisitor::CIMOMprocessQualifierType(const LineInfo& li)
 {
 	try
 	{
-		theErrorHandler->progressMessage(Format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
+		theErrorHandler->progressMessage(Format("Processing Qualifier Type: %1", m_curQualifierType.getName()).c_str(), li);
 		try
 		{
-			m_hdl->setQualifierType(m_namespace, m_curQualifierType);
+			CIMOMprocessQualifierTypeAux();
 		}
 		catch (CIMException& e)
 		{
 			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
 			{
 				CIMOMcreateNamespace(li);
-				m_hdl->setQualifierType(m_namespace, m_curQualifierType);
+				CIMOMprocessQualifierTypeAux();
 			}
 			else
 			{
@@ -1136,13 +1184,42 @@ void CIMOMVisitor::CIMOMsetQualifierType(const LineInfo& li)
 		lcqualName.toLowerCase();
 		// TODO: Fix this to include the namespace in the key
 		m_dataTypeCache.addToCache(m_curQualifierType, lcqualName);
+
+		const char* const msg = m_opts.m_removeObjects ? "Deleted Qualifier Type: %1" : "Created Qualifier Type: %1";
+		theErrorHandler->progressMessage(Format(msg, m_curQualifierType.getName()).c_str(), li);
 	}
 	catch (const CIMException& ce)
 	{
 		theErrorHandler->fatalError(Format("Error: %1", ce.getMessage()).c_str(), li);
 	}
 }
-void CIMOMVisitor::CIMOMcreateInstance(const LineInfo& li)
+
+void CIMOMVisitor::CIMOMprocessInstanceAux()
+{
+	if (m_opts.m_removeObjects)
+	{
+		// since we don't go to the effort of deleting the classes & instances backwards, the first classes we come across in a typical mof may
+		// be base classes. If a base class is deleted, all sub classes and instances go with it, so subsequent deleteInstance()s may cause an
+		// exception to be thrown, which we just want to ignore.
+		try
+		{
+			m_hdl->deleteInstance(m_namespace, CIMObjectPath(m_namespace, m_curInstance));
+		}
+		catch (CIMException& e)
+		{
+			if (e.getErrNo() != CIMException::NOT_FOUND && e.getErrNo() != CIMException::INVALID_CLASS)
+			{
+				throw;
+			}
+		}
+	}
+	else
+	{
+		m_hdl->createInstance(m_namespace, m_curInstance);
+	}
+}
+
+void CIMOMVisitor::CIMOMprocessInstance(const LineInfo& li)
 {
 	CIMObjectPath cop(m_namespace, m_curInstance);
 	theErrorHandler->progressMessage(Format("Processing Instance: %1", cop.toString()).c_str(), li);
@@ -1150,21 +1227,22 @@ void CIMOMVisitor::CIMOMcreateInstance(const LineInfo& li)
 	{
 		try
 		{
-			m_hdl->createInstance(m_namespace, m_curInstance);
+			CIMOMprocessInstanceAux();
 		}
 		catch (CIMException& e)
 		{
 			if (e.getErrNo() == CIMException::INVALID_NAMESPACE && m_opts.m_createNamespaces)
 			{
 				CIMOMcreateNamespace(li);
-				m_hdl->createInstance(m_namespace, m_curInstance);
+				CIMOMprocessInstanceAux();
 			}
 			else
 			{
 				throw;
 			}
 		}
-		theErrorHandler->progressMessage(Format("Created Instance: %1", cop.toString()).c_str(), li);
+		const char* const msg = m_opts.m_removeObjects ? "Deleted Instance: %1" : "Created Instance: %1";
+		theErrorHandler->progressMessage(Format(msg, cop.toString()).c_str(), li);
 	}
 	catch (const CIMException& ce)
 	{
@@ -1230,7 +1308,15 @@ CIMClass CIMOMVisitor::CIMOMgetClass(const String& className, const LineInfo& li
 			}
 			else
 			{
-				throw;
+				// if we're removing things, the class is already gone, so just hand back a dummy
+				if (e.getErrNo() == CIMException::NOT_FOUND && m_opts.m_removeObjects)
+				{
+					return CIMClass(className);
+				}
+				else
+				{
+					throw;
+				}
 			}
 		}
 	}
@@ -1246,7 +1332,7 @@ void CIMOMVisitor::CIMOMcreateNamespace(const LineInfo& li)
 	// don't bother catching exceptions here.  This function is only called if
 	// the namespace needs to exist.  If we can't create the namespace, that's
 	// a fatal error.
-	theErrorHandler->progressMessage(Format("Creating namespace: %1", m_namespace).c_str(), li);
+	theErrorHandler->progressMessage(Format("Creating Namespace: %1", m_namespace).c_str(), li);
 	if (m_rephdl)
 	{
 		m_rephdl->createNameSpace(m_namespace);
@@ -1264,7 +1350,7 @@ void CIMOMVisitor::CIMOMcreateNamespace(const LineInfo& li)
 		}
 
 	}
-	theErrorHandler->progressMessage(Format("Created namespace: %1", m_namespace).c_str(), li);
+	theErrorHandler->progressMessage(Format("Created Namespace: %1", m_namespace).c_str(), li);
 }
 
 } // end namespace MOF

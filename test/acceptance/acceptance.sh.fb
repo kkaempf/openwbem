@@ -341,7 +341,20 @@ ImportMOF()
 	MOFFILE=$1
 	OUT_FILE=$RESULTDIR/`basename $MOFFILE`.owmofc_output
 
-	$STAGEDIR/$OWBINDIR/owmofc -u http://test1:pass1@localhost:30926/ -c \
+	$STAGEDIR/$OWBINDIR/owmofc --url http://test1:pass1@localhost:30926/ --create-namespaces \
+			$MOFFILE > $OUT_FILE 2>&1 || \
+			ExitWithFail "owmofc exited with error. Check $OUT_FILE."
+}
+
+#############################################################################
+RemoveMOF()
+{
+	echo "RemoveMOF $*"
+
+	MOFFILE=$1
+	OUT_FILE=$RESULTDIR/`basename $MOFFILE`.owmofc_output
+
+	$STAGEDIR/$OWBINDIR/owmofc --remove --url http://test1:pass1@localhost:30926/ --create-namespaces \
 			$MOFFILE > $OUT_FILE 2>&1 || \
 			ExitWithFail "owmofc exited with error. Check $OUT_FILE."
 }
@@ -1043,6 +1056,7 @@ TestSecondaryInstanceProvider()
 	RestartDaemon
 	ImportMOF $TOPSRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
 	RunATest testSecondaryInstanceProviders "http://test1:pass1@localhost:30926"
+	RemoveMOF $TOPSRCDIR/test/c++providers/secondary_instance/SecondaryInstanceTest.mof
 }
 
 #############################################################################
