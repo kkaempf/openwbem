@@ -34,6 +34,7 @@ Fix problems:
       operator<<
 
 New features:
+    - Start to use __attribute__ ((warn_unused_result)) where applicable.
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.
     - Send indications as a thread per handler, which can stay around for a
