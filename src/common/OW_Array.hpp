@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_ARRAY_HPP_
-#define OW_ARRAY_HPP_
+#ifndef OW_ARRAY_HPP_INCLUDE_GUARD_
+#define OW_ARRAY_HPP_INCLUDE_GUARD_
 
 
 #include "OW_config.h"
@@ -47,6 +47,8 @@ DECLARE_EXCEPTION(OutOfBounds);
 namespace std {
 template <class _Tp, class _Alloc>
 class vector;
+template <class T>
+class allocator;
 }
 
 /**

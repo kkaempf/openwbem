@@ -38,7 +38,6 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMProperty.hpp"
-#include "OW_LocalCIMOMHandle.hpp"
 #include "OW_StringStream.hpp"
 
 #include <fstream>
@@ -67,10 +66,6 @@ namespace
 	class OW_LaptopBattery: public OW_CppInstanceProviderIFC
 	{
 	public:
-		virtual ~OW_LaptopBattery()
-		{
-		}
-
 		/////////////////////////////////////////////////////////////////////////
 		virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,

@@ -34,7 +34,6 @@
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
 #include "OW_ACLInfo.hpp"
-#include "OW_RWLocker.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"

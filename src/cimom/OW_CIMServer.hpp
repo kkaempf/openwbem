@@ -39,6 +39,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_SortedVectorSet.hpp" // fwd?
 #include "OW_CIMException.hpp"
+#include "OW_RWLocker.hpp"
 
 
 class OW_AccessMgr;

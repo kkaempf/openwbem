@@ -69,6 +69,7 @@ OW_SharedLibraryException.cpp \
 OW_StackTrace.cpp \
 OW_String.cpp \
 OW_StringBuffer.cpp \
+OW_StringStream.cpp \
 OW_TempFileStream.cpp \
 OW_Thread.cpp \
 OW_ThreadCounter.cpp \

@@ -50,20 +50,15 @@
 class OW_StringStreamBuf : public OW_BaseStreamBuffer
 {
 public:
-	OW_StringStreamBuf(size_t size)
-		: OW_BaseStreamBuffer(size, "out"), m_buf(size) {}
-	virtual ~OW_StringStreamBuf() {}
-	OW_String toString() const { return m_buf.toString(); }
-	size_t length() const { return m_buf.length(); }
-	const char* c_str() const { return m_buf.c_str(); }
-	void reset() { m_buf.reset(); }
+	OW_StringStreamBuf(size_t size);
+	virtual ~OW_StringStreamBuf();
+	OW_String toString() const;
+	size_t length() const;
+	const char* c_str() const;
+	void reset();
 
 protected:
-	virtual int buffer_to_device(const char *c, int n)
-	{
-		m_buf.append(c, n);
-		return 0;
-	}
+	virtual int buffer_to_device(const char *c, int n);
 
 private:
 	OW_StringBuffer m_buf;
@@ -75,7 +70,7 @@ private:
 class OW_StringStreamBase
 {
 public:
-	OW_StringStreamBase(size_t sz) : m_buf(sz) {}
+	OW_StringStreamBase(size_t sz);
 
 	mutable OW_StringStreamBuf m_buf;
 };
@@ -84,14 +79,12 @@ public:
 class OW_StringStream : private OW_StringStreamBase, public std::ostream
 {
 public:
-	OW_StringStream(size_t size = 256)
-		: OW_StringStreamBase(size), std::ostream(&m_buf)
-	{}
-	
-	OW_String toString() const { m_buf.sync(); return m_buf.toString(); }
-	size_t length() const { m_buf.sync(); return m_buf.length(); }
-	const char* c_str() const { m_buf.sync(); return m_buf.c_str(); }
-	void reset() { m_buf.reset(); }
+	OW_StringStream(size_t size = 256);
+	~OW_StringStream();
+	OW_String toString() const;
+	size_t length() const;
+	const char* c_str() const;
+	void reset();
 
 private:
 
