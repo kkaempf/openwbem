@@ -92,19 +92,19 @@ long MofCompiler::compile( const OW_String& filename )
         }
         catch (OW_Assertion& e)
         {
-            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
         }
         catch (OW_Exception& e)
         {
-            theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+            theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), theLineInfo);
         }
         catch (std::exception& e)
         {
-            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
         }
         catch(...)
         {
-            theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
+            theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
         }
     }
     catch (const OW_MofParseFatalErrorException&)
