@@ -116,7 +116,7 @@ OW_CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const OW_String &sMethod,
 	{
 		ostr << "<LOCALINSTANCEPATH>";
 		OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal);
-		OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
+		OW_CIMInstanceNametoXML(path, ostr);
 		ostr << "</LOCALINSTANCEPATH>";
 	}
 	else // it's a class
@@ -349,7 +349,7 @@ instanceNameToKey(const OW_CIMObjectPath& path,
 	OW_StringBuffer text = "<IPARAMVALUE NAME=\"" + parameterName + "\">";
 	
 	OW_StringStream ss;
-	OW_CIMtoXML(path, ss, OW_CIMtoXMLFlags::isInstanceName);
+	OW_CIMInstanceNametoXML(path, ss);
 	text += ss.toString();
 
     text += "</IPARAMVALUE>";
@@ -964,7 +964,7 @@ OW_CIMXMLCIMOMHandle::modifyInstance(
 	ostr << "<VALUE.NAMEDINSTANCE>";
 	OW_CIMObjectPath path(modifiedInstance);
 	path.setNameSpace(ns);
-	OW_CIMtoXML(path, ostr, OW_CIMtoXMLFlags::isInstanceName);
+	OW_CIMInstanceNametoXML(path, ostr);
 	OW_CIMtoXML(modifiedInstance, ostr, OW_CIMObjectPath(),
 		OW_CIMtoXMLFlags::isInstanceName,
 		OW_CIMtoXMLFlags::notLocalOnly,
@@ -1161,7 +1161,7 @@ OW_CIMXMLCIMOMHandle::associatorNames(
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
+		OW_CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1314,7 +1314,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
+		OW_CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1363,7 +1363,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
+		OW_CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
@@ -1453,7 +1453,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(
 	if (path.getKeys().size() > 0)
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
-		OW_CIMtoXML(path, extra, OW_CIMtoXMLFlags::isInstanceName);
+		OW_CIMInstanceNametoXML(path, extra);
 		extra << "</IPARAMVALUE>";
 	}
 	else
