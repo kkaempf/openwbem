@@ -72,6 +72,22 @@ public:
 		m_obj = 0;
 		m_sharedLib = 0;
 	}
+	
+	template <class U>
+	OW_SharedLibraryReference<U> cast_to()
+	{
+		OW_SharedLibraryReference<U> rval;
+		rval.m_obj = m_obj.cast_to<U>();
+		rval.m_sharedLib = m_sharedLib;
+		return rval;
+	}
+
+	OW_Bool isNull() const
+	{
+		return m_obj.isNull();
+	}
+	/* This is so cast_to will work */
+	template <class U> friend class OW_SharedLibraryReference;
 
 private:
 	OW_SharedLibraryRef m_sharedLib;
