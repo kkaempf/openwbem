@@ -305,6 +305,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	}
 	::fcntl(m_sockfd, F_SETFL, flags);
 	m_isConnected = true;
+	m_peerAddress = addr; // To get the hostname from addr
 	if (addr.getType() == SocketAddress::INET)
 	{
 		fillInetAddrParms();

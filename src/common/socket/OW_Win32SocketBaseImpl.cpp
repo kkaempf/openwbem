@@ -418,6 +418,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 
 	m_isConnected = true;
 
+	m_peerAddress = addr; // To get the hostname from addr
 
 	OW_ASSERT(addr.getType() == SocketAddress::INET);
 
