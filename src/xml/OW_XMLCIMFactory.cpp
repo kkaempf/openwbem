@@ -690,15 +690,23 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 	catch (const OW_StringConversionException& e)
 	{
 		// Workaround for SNIA client which sends <VALUE>NULL</VALUE> for NULL values
-		if (parser.getData().equalsIgnoreCase("NULL"))
+		if (parser.isData())
 		{
-			rval = OW_CIMValue(OW_CIMNULL);
-			parser.getNextTag();
-			parser.mustGetEndTag(); // pass <VALUE.REFARRAY>
+			if (parser.getData().equalsIgnoreCase("NULL"))
+			{
+				rval = OW_CIMValue(OW_CIMNULL);
+				parser.getNextTag();
+				parser.mustGetEndTag();
+			}
+			else
+			{
+				OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, e.getMessage());
+			}
 		}
 		else
 		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, e.getMessage());
+			rval = OW_CIMValue(OW_CIMNULL);
+			parser.mustGetEndTag();
 		}
 	}
 
