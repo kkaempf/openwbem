@@ -442,7 +442,7 @@ namespace
 	// This doesn't return the exact number of seconds, since it assumes all previous years are 366 days long,
 	// In essense we're introducing some empty space in the range of this function, but that's good enough to
 	// use in comparing dates.
-	Int64 secondsFromEpoch(const CIMDateTime& dt)
+	Int64 getMagnitude(const CIMDateTime& dt)
 	{
 		OW_ASSERT(!dt.isInterval());
 
@@ -455,10 +455,10 @@ namespace
 		const int EPOCH_YEAR = 1970;
 
 		int dayOfYear = monthYearDay[isLeap(dt.getYear())][dt.getMonth() - 1] + dt.getDay() - 1;
-		int daysFromEpoch = 366 * (dt.getYear() - EPOCH_YEAR) + dayOfYear; // leap years are accounted for by 366 instead of 365.
+		int days = 366 * (dt.getYear() - EPOCH_YEAR) + dayOfYear; // leap years are accounted for by 366 instead of 365.
 		return dt.getSeconds()
 			+ 60 * (dt.getMinutes() + dt.getUtc())
-			+ 3600 * static_cast<Int64>(dt.getHours() + 24 * daysFromEpoch);
+			+ 3600 * static_cast<Int64>(dt.getHours() + 24 * days);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -486,7 +486,7 @@ bool operator<(const CIMDateTime& x, const CIMDateTime& y)
 		{
 			// they're both date/times
 			return StrictWeakOrdering(
-				secondsFromEpoch(x), secondsFromEpoch(y),
+				getMagnitude(x), getMagnitude(y),
 				x.getMicroSeconds(), y.getMicroSeconds());
 		}
 	}
