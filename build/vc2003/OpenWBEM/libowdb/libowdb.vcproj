@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="libowdb"
 	ProjectGUID="{C567CA5C-6EC4-4F2E-9050-2B04E7346CEF}"
+	RootNamespace="libowdb"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -19,15 +20,18 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;C:\Documents and Settings\Jon\proj\openwbem20\src\common&quot;;&quot;C:\Documents and Settings\Jon\proj\openwbem20\db\include&quot;;&quot;C:\Documents and Settings\Jon\proj\openwbem20\build\vc2003\OpenWBEM&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\..\..\..\src\common&quot;;&quot;$(SolutionDir)\..\..\..\db\include&quot;;&quot;$(SolutionDir)&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBOWDB_EXPORTS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				ForceConformanceInForLoopScope="TRUE"
+				RuntimeTypeInfo="TRUE"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				CompileAs="1"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -36,6 +40,8 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/libowdb.pdb"
+				GenerateMapFile="TRUE"
+				MapFileName="$(OutDir)/libowdb.map"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/libowdb.lib"
 				TargetMachine="1"/>

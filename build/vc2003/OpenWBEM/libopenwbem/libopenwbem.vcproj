@@ -21,7 +21,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBOPENWBEM_EXPORTS;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -34,13 +34,22 @@
 				WarningLevel="0"
 				WarnAsError="FALSE"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				CompileAs="2"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libeay32.lib ssleay32.lib"
-				AdditionalLibraryDirectories="C:\OpenSSL\lib\VC"/>
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="C:\OpenSSL\lib\VC"
+				GenerateDebugInformation="TRUE"
+				GenerateMapFile="TRUE"
+				MapFileName="$(OutDir)/$(ProjectName).map"
+				MapExports="TRUE"
+				SubSystem="2"
+				ImportLibrary="$(OutDir)/libopenwbem.lib"
+				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
