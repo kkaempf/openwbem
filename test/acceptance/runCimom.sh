@@ -9,11 +9,6 @@ STAGEDIR=`dirname $0`/stage
 LD_LIBRARY_PATH=$STAGEDIR/usr/local/lib:$STAGEDIR/usr/local/lib/openwbem/services:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 
-#gdb $STAGEDIR/usr/local/sbin/owcimomd << EOS
-#b main
-#r -d -c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
-#EOS
-
 if [ "$1" = "vg" ]; then
   valgrind \
 	--leak-check=yes \
@@ -23,6 +18,17 @@ if [ "$1" = "vg" ]; then
 	9>> valgrind.out \
 	$STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t 
+elif [ "x$1" = "xgdb" ]; then
+#	gdb $STAGEDIR/usr/local/sbin/owcimomd << EOS
+	gdb $STAGEDIR/usr/local/sbin/owcimomd 
+#b main
+#r -d -c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
+#EOS
+elif [ "x$1" = "xinsight" ]; then
+	insight $STAGEDIR/usr/local/sbin/owcimomd << EOS
+b main
+r -d -c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
+EOS
 else
   $STAGEDIR/usr/local/sbin/owcimomd -d \
 	-c $STAGEDIR/usr/local/etc/openwbem/openwbem.conf-t
