@@ -63,3 +63,6 @@ OW_ProviderProxies.hpp \
 OW_NetwareIdentity.cpp \
 OW_NetwareIdentity.hpp
 
+pkginclude_HEADERS = \
+OW_NetwareIdentity.hpp
+
