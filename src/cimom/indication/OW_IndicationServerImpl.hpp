@@ -116,7 +116,7 @@ private:
 
 	void _processIndicationRange(
 		const OW_CIMInstance& instanceArg, const OW_String instNS,
-		subscriptions_t::iterator first, subscriptions_t::iterator last);
+		std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last);
 
 	void addTrans(const OW_String& ns, const OW_CIMInstance& indication,
 		const OW_CIMInstance& handler,

@@ -724,7 +724,12 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
             std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
                 m_subscriptions.equal_range(key);
             m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
-            _processIndicationRange(instanceArg, instNS, range.first, range.second);
+			
+			// make a copy so we can free the lock, otherwise we may cause a deadlock.
+			std::vector<subscriptions_t::value_type> subs(range.first, range.second);
+			lock.release();
+
+            _processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
         }
 
         OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
@@ -745,7 +750,12 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 					std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
 						m_subscriptions.equal_range(key);
 					m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
-					_processIndicationRange(instanceArg, instNS, range.first, range.second);
+					
+					// make a copy so we can free the lock, otherwise we may cause a deadlock.
+					std::vector<subscriptions_t::value_type> subs(range.first, range.second);
+					lock.release();
+
+					_processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
 				}
 			}
 		}
@@ -767,7 +777,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 void
 OW_IndicationServerImpl::_processIndicationRange(
 	const OW_CIMInstance& instanceArg, const OW_String instNS,
-	subscriptions_t::iterator first, subscriptions_t::iterator last)
+	std::vector<subscriptions_t::value_type>::iterator first, std::vector<subscriptions_t::value_type>::iterator last)
 {
 	OW_ACLInfo aclInfo;
 	OW_CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(aclInfo, false);
