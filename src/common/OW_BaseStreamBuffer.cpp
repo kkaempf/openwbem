@@ -178,7 +178,7 @@ BaseStreamBuffer::underflow()
 #endif
 		if (gptr() < egptr())
 		{
-			return static_cast<unsigned char>(*gptr());
+			return static_cast<unsigned char>(*gptr());	// need a static_cast so a -1 doesn't turn into an EOF
 		}
 		if (buffer_in() < 0)
 		{
@@ -186,7 +186,7 @@ BaseStreamBuffer::underflow()
 		}
 		else
 		{
-			return static_cast<unsigned char>(*gptr());
+			return static_cast<unsigned char>(*gptr());	// need a static_cast so a -1 doesn't turn into an EOF
 		}
 #if __GNUC__ == 2 && __GNUC_MINOR__ <= 96
 	}

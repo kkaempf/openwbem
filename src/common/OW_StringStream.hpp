@@ -68,7 +68,7 @@ public:
 protected:
 	int underflow()
 	{
-		return (gptr() < egptr()) ? static_cast<int>(*gptr()) : EOF;
+		return (gptr() < egptr()) ? static_cast<unsigned char>(*gptr()) : EOF; 	// need a static_cast so a -1 doesn't turn into an EOF
 	}
 private:
 	String m_buf;
