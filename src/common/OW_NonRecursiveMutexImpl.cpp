@@ -167,10 +167,10 @@ OW_NonRecursiveMutexImpl::releaseMutex(OW_NonRecursiveMutex_t& handle)
         return -2;
     }
 
+    handle.valid_id = false;
+
 	int res = pthread_mutex_unlock(&handle.mutex);
 	assert(res == 0);
-
-    handle.valid_id = false;
 
 	return res;
  
