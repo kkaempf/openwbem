@@ -25,7 +25,13 @@ clean-local:
 
 libnpiprovifc_a_SOURCES = \
 OW_NPIProviderIFC.cpp \
-OW_NPIProviderIFC.hpp
+OW_NPIProviderIFC.hpp \
+OW_NPIAssociatorProviderProxy.cpp \
+OW_NPIAssociatorProviderProxy.hpp \
+OW_NPIInstanceProviderProxy.cpp \
+OW_NPIInstanceProviderProxy.hpp \
+OW_NPIMethodProviderProxy.cpp \
+OW_NPIMethodProviderProxy.hpp
 
 #libOW_CppIFC_a_LDFLAGS = -L$(top_builddir)/src/common/
 #libOW_CppIFC_a_LIBADD = -lOpenWBEM
