@@ -58,6 +58,12 @@ install-exec-local:
 	cd perlNPI;$(PERL) Makefile.PL PREFIX=$(DESTDIR)/$(prefix) INSTALLDIRS=vendor;cd ..
 	make -e TOP_SRCDIR=$(top_srcdir)/../ -C perlNPI install
 
+uninstall-local:
+	for i in $(OW_SHARED_LIBS); do \
+		rm -f $(DESTDIR)$(thelibdir)/$$i.$(SO_EXT); \
+		rm -f $(DESTDIR)$(thelibdir)/$$i; \
+	done
+
 clean-local:
 	for i in $(OW_SHARED_LIBS); do \
 		rm -rf $$i* .$$i.libs; \
