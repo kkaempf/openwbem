@@ -1100,8 +1100,8 @@ CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
 	String className = inst.getClassName();
 
 	MutexLock lock(m_interopInstancesLock);
-	interopInstances_t::const_iterator citer = m_interopInstances.find(className);
-	if (citer == m_interopInstances.end())
+	interopInstances_t::iterator iter = m_interopInstances.find(className);
+	if (iter == m_interopInstances.end())
 	{
 		interopInstances_t::data_type s;
 		s.insert(inst);
@@ -1109,8 +1109,19 @@ CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
 	}
 	else
 	{
-		// erase it first, since 
-		//citer->insert(inst);
+		// look for and erase a pre-existing instance with the same path first, to handle updates.
+		CIMObjectPath newInstPath = CIMObjectPath(String(), inst);
+		typedef interopInstances_t::data_type::const_iterator citer_t;
+		for (citer_t curInstance = iter->second.begin(); curInstance != iter->second.end(); ++iter)
+		{
+			if (newInstPath == CIMObjectPath(String(), *curInstance))
+			{
+				iter->second.erase(*curInstance);
+				break;
+			}
+		}
+
+		iter->second.insert(inst);
 	}
 }
 
