@@ -331,7 +331,7 @@ public:
 	/**
 	 * Gets the current node's next sibling
 	 *
-	 * @return OS_XMLNode holding the next sibling of the current node
+	 * @return XMLNode holding the next sibling of the current node
 	 */
 	XMLNode getNext() const;
 	
