@@ -626,6 +626,38 @@ CIMNameArray getClassChildren(MetaRepository& rep, const String& ns, const CIMNa
 	rep.enumClassNames(ns, clsName.toString(), handler, E_DEEP);
 	return result;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+class InstNameEnumerator : public CIMClassResultHandlerIFC
+{
+public:
+	InstNameEnumerator(
+		const String& ns_,
+		CIMObjectPathResultHandlerIFC& result_,
+		const ServiceEnvironmentIFCRef& env_,
+		InstanceRepository& iStore)
+		: ns(ns_)
+		, result(result_)
+		, m_env(env_)
+		, m_iStore(iStore)
+	{}
+protected:
+	virtual void doHandle(const CIMClass &cc)
+	{
+		LoggerRef lgr(m_env->getLogger(COMPONENT_NAME));
+		if (lgr->getLogLevel() == E_DEBUG_LEVEL)
+		{
+			OW_LOG_DEBUG(lgr, Format("CIMServer InstNameEnumerator enumerated derived instance names: %1:%2", ns,
+				cc.getName()));
+		}
+		m_iStore.getInstanceNames(ns, cc, result);
+	}
+private:
+	String ns;
+	CIMObjectPathResultHandlerIFC& result;
+	const ServiceEnvironmentIFCRef& m_env;
+	InstanceRepository& m_iStore;
+};
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -638,37 +670,23 @@ CIMRepository::enumInstanceNames(
 {
 	try
 	{
+		InstNameEnumerator ie(ns, result, m_env, m_iStore);
 		CIMClass theClass = _instGetClass(ns, className);
-		m_iStore.getInstanceNames(ns, theClass, result);
-		if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
-		{
-			OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated instance names: %1:%2", ns,
-				className));
-		}
-		if (!deep)
+		ie.handle(theClass);
+		// If this is the namespace class then just return now
+		if (className.equals(CIMClass::NAMESPACECLASS)
+			|| !deep)
 		{
 			return;
 		}
-		// This code probably won't ever be executed, because CIMServer
-		// has to do each class at a time because of providers, and will
-		// thus only call us with deep=false.
-		// If the situation ever changes, fix and enable the code below.
-		OW_THROWCIMMSG(CIMException::FAILED, "Internal server error. CIMRepository::enumInstanceNames() cannot be called with deep==E_DEEP");
-		// TODO: Switch this to use a callback interface.
-		/*
-		StringArray classNames = m_mStore.getClassChildren(ns,
-			theClass.getName());
-		for (size_t i = 0; i < classNames.size(); i++)
+		else
 		{
-			theClass = _instGetClass(ns, classNames[i]);
-			m_iStore.getInstanceNames(ns, theClass, result);
-			if (m_env->getLogger(COMPONENT_NAME)->getLogLevel() == E_DEBUG_LEVEL)
-			{
-				OW_LOG_DEBUG(m_env->getLogger(COMPONENT_NAME), Format("CIMRepository enumerated derived instance names: %1:%2", ns,
-					classNames[i]));
-			}
+			// TODO: measure whether it would be faster to use
+			// enumClassNames + getClass() here.
+			m_mStore.enumClass(ns,className,ie,deep,E_NOT_LOCAL_ONLY,
+				E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN);
 		}
-		*/
+
 	}
 	catch (HDBException& e)
 	{
