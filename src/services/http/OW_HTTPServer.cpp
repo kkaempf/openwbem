@@ -351,14 +351,16 @@ HTTPServer::startService()
 #ifdef OW_NO_SSL
 			if (m_options.httpPort < 0 && !m_options.useUDS)
 			{
-				OW_THROW(SocketException, "No ports to listen on.  "
+				OW_THROW(HTTPServerException, "No ports to listen on.  "
 						"SSL unavailable (OpenWBEM not built with SSL support) "
 						"and no http port defined.");
 			}
 			else
 			{
-				lgr->logError(format("Unable to listen on %1:%2.  "
-						"OpenWBEM not built with SSL support.", curAddress, m_options.httpsPort));
+				String msg = Format("Unable to listen on %1:%2.  "
+						"OpenWBEM not built with SSL support.", curAddress, m_options.httpsPort);
+				lgr->logError(msg);
+				OW_THROW(HTTPServerException, msg.c_str());
 			}
 #else
 			try
@@ -406,12 +408,15 @@ HTTPServer::startService()
 			{
 				if (m_options.httpPort < 0 && !m_options.useUDS)
 				{
-					OW_THROW(SocketException, "No ports to listen on.  "
+					OW_THROW(HTTPServerException, "No ports to listen on.  "
 						"SSL unavailable (SSL not initialized in server mode) "
 						"and no http port defined.");
 				}
-				lgr->logError(format("Unable to listen on: %1:%2.  "
-					"SSL not initialized in server mode.", curAddress, m_options.httpsPort));
+				String msg = Format("Unable to listen on: %1:%2.  "
+					"SSL not initialized in server mode.", curAddress, m_options.httpsPort);
+				lgr->logError(msg);
+				OW_THROW(HTTPServerException, msg.c_str());
+
 			}
 		} // if (m_httpsPort > 0)
 	}
