@@ -312,8 +312,7 @@ CIMObjectPath::getFullNameSpace() const
 String
 CIMObjectPath::modelPath() const
 {
-	String lowerObjectName(m_pdata->m_objectName);
-	StringBuffer rv(lowerObjectName);
+	StringBuffer rv(m_pdata->m_objectName);
 	if(m_pdata->m_keys.size() > 0)
 	{
 		for(size_t i = 0; i < m_pdata->m_keys.size(); i++)
