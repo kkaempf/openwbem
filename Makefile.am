@@ -6,14 +6,11 @@ EXTRA_DIST = \
 Doxyfile.sh \
 ow_ar.sh \
 Makefile-shared-lib.inc \
-PORTING.txt \
-ProviderInterface.HOWTO \
 LICENSE \
 ow_ar.sh \
 Makefile-shared-lib-inst.inc \
 openwbem-sf.spec \
-generic-company-openwbem.spec.in \
-openwbem-faq.html
+generic-company-openwbem.spec.in
 
 CLEANFILES = Doxyfile $(PACKAGE_PREFIX_D)openwbem.spec
 
