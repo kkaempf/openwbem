@@ -34,6 +34,7 @@
 #include "OW_ByteSwap.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <netdb.h>
 
