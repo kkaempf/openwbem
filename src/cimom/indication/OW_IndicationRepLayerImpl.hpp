@@ -51,7 +51,7 @@ public:
 
 	virtual void close() {}
 
-	virtual OW_CIMOMEnvironmentRef getEnvironment() const
+	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const
 	{
 		return m_pEnv;
 	}
@@ -375,7 +375,7 @@ public:
 	virtual void setCIMServer(const OW_RepositoryIFCRef& src)
 	{
 		m_pServer = src;
-		m_pEnv = m_pServer->getEnvironment();
+		m_pEnv = m_pServer->getEnvironment().cast_to<OW_CIMOMEnvironment>();
 	}
 
 

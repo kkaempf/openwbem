@@ -43,10 +43,87 @@
 #include "OW_CIMObjectPath.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+    class namespaceFilterer : public OW_StringResultHandlerIFC
+    {
+    public:
+        namespaceFilterer(const OW_String& ns_, bool deep_, OW_StringResultHandlerIFC& result_)
+            : ns(ns_.tokenize("/"))
+            , deep(deep_)
+            , result(result_)
+        {}
+
+        void doHandle(const OW_String& s)
+        {
+            OW_StringArray split(s.tokenize("/"));
+            if (split.size() <= ns.size())
+            {
+                // it's a parent or the same namespace, so ignore it.
+                return;
+            }
+            if (!deep && split.size() > ns.size() + 1)
+            {
+                // it's more than one deep, so ignore it.
+                return;
+            }
+            for (size_t i = 0; i < ns.size(); ++i)
+            {
+                if (ns[i] != split[i])
+                {
+                    // it's not under the requested namespace so return.
+                    return;
+                }
+            }
+            // match, pass it on.
+            result.handle(s);
+        }
+
+    private:
+        OW_StringArray ns;
+        bool deep;
+        OW_StringResultHandlerIFC& result;
+    };
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_NameSpaceProvider::~OW_NameSpaceProvider()
 {
 }
 
+namespace
+{
+	class StringArrayBuilder : public OW_StringResultHandlerIFC
+	{
+	public:
+		StringArrayBuilder(OW_StringArray& a) : m_a(a) {}
+	protected:
+		virtual void doHandle(const OW_String &s)
+		{
+			m_a.push_back(s);
+		}
+	private:
+		OW_StringArray& m_a;
+	};
+	
+	OW_StringArray enumNameSpaceE(const OW_ProviderEnvironmentIFCRef& env, const OW_String& ns)
+	{
+		OW_RepositoryIFCRef rep = env->getRepository();
+		OW_StringArray rval;
+		StringArrayBuilder arrayBuilder(rval);
+		namespaceFilterer handler(ns, true, arrayBuilder);
+		rep->enumNameSpace(handler, OW_ACLInfo(env->getUserName()));
+		return rval;
+	}
+
+	void enumNameSpace(const OW_ProviderEnvironmentIFCRef& env, const OW_String& ns, OW_StringResultHandlerIFC& result, bool deep)
+	{
+		OW_RepositoryIFCRef rep = env->getRepository();
+		namespaceFilterer handler(ns, deep, result);
+		rep->enumNameSpace(handler, OW_ACLInfo(env->getUserName()));
+	}
+
+}
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_NameSpaceProvider::deleteInstance(
@@ -84,15 +161,17 @@ OW_NameSpaceProvider::deleteInstance(
 	}
 
 	OW_String newns = ns + "/" + nsName;
+	newns.toLowerCase();
 
     // now deleteNameSpace doesn't automatically delete subnamespaces, so we need to do it.
-    OW_StringArray nstodel = env->getCIMOMHandle()->enumNameSpaceE(newns, true);
+    OW_StringArray nstodel = enumNameSpaceE(env, newns);
+	OW_ACLInfo acl(env->getUserName());
     for (size_t i = 0; i < nstodel.size(); ++i)
     {
-        env->getCIMOMHandle()->deleteNameSpace(nstodel[i]);
+		env->getRepository()->deleteNameSpace(nstodel[i], acl);
     }
 
-	env->getCIMOMHandle()->deleteNameSpace(newns);
+	env->getRepository()->deleteNameSpace(newns, acl);
 }
 
 namespace
@@ -187,8 +266,7 @@ OW_NameSpaceProvider::enumInstances(
 		const OW_CIMClass& cimClass)
 {
 	NameSpaceEnumBuilder handler(result, cimClass);
-	env->getCIMOMHandle()->enumNameSpace(
-		ns, handler, false);
+	enumNameSpace(env, ns, handler, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -272,7 +350,7 @@ OW_NameSpaceProvider::createInstance(
 	env->getLogger()->logDebug(format("OW_NameSpaceProvider::createInstance calling"
 			" createNameSpace with %1", newNameSpace));
 
-	env->getCIMOMHandle()->createNameSpace(newNameSpace);
+	env->getRepository()->createNameSpace(newNameSpace, OW_ACLInfo(env->getUserName()));
 
 	return OW_CIMObjectPath(ns, cimInstance);
 }

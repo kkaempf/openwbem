@@ -80,6 +80,7 @@ OW_dlSharedLibraryLoader.cpp \
 OW_UnnamedPipe.cpp
 
 pkginclude_HEADERS =	\
+OW_ACLInfo.hpp \
 OW_Array.hpp \
 OW_ArrayFwd.hpp \
 OW_Assertion.hpp \

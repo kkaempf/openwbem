@@ -111,6 +111,11 @@ private:
 			OW_THROW(OW_Exception, "Cannot call CIMOMProviderEnvironment::getRepositoryCIMOMHandle()");
 		}
 		
+		virtual OW_RepositoryIFCRef getRepository() const
+		{
+			return m_pCenv->getRepository();
+		}
+
 		virtual OW_LoggerRef getLogger() const
 		{
 			return m_pCenv->getLogger();
@@ -253,6 +258,11 @@ public:
 		return env->getRepositoryCIMOMHandle();
 	}
 	
+	virtual OW_RepositoryIFCRef getRepository() const
+	{
+		return env->getRepository();
+	}
+
 	virtual OW_LoggerRef getLogger() const 
 	{
 		return env->getLogger();
@@ -1187,7 +1197,12 @@ OW_CIMOMEnvironment::getIndicationRepLayerMediator() const
 	return m_indicationRepLayerMediatorRef;
 }
 
-
+//////////////////////////////////////////////////////////////////////////////
+OW_RepositoryIFCRef 
+OW_CIMOMEnvironment::getRepository() const
+{
+	return m_cimRepository;
+}
 
 
 

@@ -587,33 +587,6 @@ public:
 		const OW_String &query, const OW_String& queryLanguage);
 
 	/**
-	 * Delete a specified namespace.
-	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
-	 *					to delete.
-	 */
-	virtual void deleteNameSpace(const OW_String &ns);
-
-	/**
-	 * Create a cim namespace.
-	 * @param ns 	The namespace to be created.
-	 */
-	virtual void createNameSpace(const OW_String& ns);
-
-	/**
-	 * Gets a list of the namespaces within a specified namespace
-	 * @param ns The parent namespace to enumerate
-	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
-	 *		contain the entire hierarchy of namespaces present under the
-	 *		enumerated namespace. If set to	OW_CIMClient::SHALLOW  the
-	 *		enuermation will return only the first level children of the
-	 *		enumerated namespace.
-	 * @return An Array of namespace names as strings.
-	 */
-	virtual void enumNameSpace(const OW_String& ns,
-		OW_StringResultHandlerIFC& result,
-		OW_Bool deep);
-	
-	/**
 	 * @return The features of the CIMOM this OW_CIMOMHandleIFC is connected to as
 	 * an OW_CIMFeatures object.
 	 */

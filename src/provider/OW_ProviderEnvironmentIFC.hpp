@@ -34,6 +34,7 @@
 #include "OW_Logger.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Reference.hpp"
+#include "OW_RepositoryIFC.hpp"
 
 class OW_ProviderEnvironmentIFC
 {
@@ -47,6 +48,9 @@ public:
 	// no providers will be called.  This function should only be called if getCIMOMHandle()
 	// is insufficent.
 	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const = 0;
+
+	virtual OW_RepositoryIFCRef getRepository() const = 0;
+
 	virtual OW_LoggerRef getLogger() const = 0;
 	virtual OW_String getConfigItem(const OW_String &name) const = 0;
     virtual OW_String getUserName() const = 0;

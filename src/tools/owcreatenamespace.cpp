@@ -34,7 +34,7 @@
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMUrl.hpp"
 
 #include <iostream>
@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 		OW_String toCreate(ns);
 
 		cout << "Creating namespace (" << ns << ")" << endl;
-		rch->createNameSpace(toCreate);
+		OW_CIMNameSpaceUtils::create__Namespace(rch, toCreate);
 
 		return 0;
 	}

@@ -567,7 +567,7 @@ public:
 	virtual void releaseInstanceReadLock() {}
 	virtual void releaseInstanceWriteLock() {}
 
-	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
+	OW_ServiceEnvironmentIFCRef getEnvironment() const { return m_env; }
 
 private:
 

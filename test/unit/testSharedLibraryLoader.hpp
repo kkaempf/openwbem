@@ -551,6 +551,11 @@ namespace
 			return m_ch;
 		}
 		
+		virtual OW_RepositoryIFCRef getRepository() const
+		{
+			return OW_RepositoryIFCRef();
+		}
+
 		virtual OW_LoggerRef getLogger() const
 		{
 			return m_logger;

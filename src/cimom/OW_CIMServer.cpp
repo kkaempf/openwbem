@@ -667,6 +667,11 @@ namespace
 			return m_env->getCIMOMHandle(m_acl, false, true, true);
 		}
 		
+		virtual OW_RepositoryIFCRef getRepository() const
+		{
+			return m_env->getRepository();
+		}
+
 		virtual OW_LoggerRef getLogger() const
 		{
 			return m_env->getLogger();

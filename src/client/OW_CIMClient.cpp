@@ -39,6 +39,8 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
+#include "OW_CIMException.hpp"
 
 OW_CIMClient::OW_CIMClient(const OW_String& url, const OW_String& ns,
 	const OW_ClientAuthCBIFCRef& authCB)
@@ -84,7 +86,15 @@ OW_CIMClient::OW_CIMClient(const OW_String& url, const OW_String& ns,
  */
 void OW_CIMClient::createNameSpace(const OW_String& ns)
 {
-	m_ch->createNameSpace(ns);
+    try
+    {
+        OW_CIMNameSpaceUtils::createCIM_Namespace(m_ch,ns);
+    }
+    catch (const OW_CIMException& e)
+    {
+        // server doesn't support CIM_Namespace, try __Namespace
+        OW_CIMNameSpaceUtils::create__Namespace(m_ch,ns);
+    }
 }
 
 /**
@@ -94,7 +104,15 @@ void OW_CIMClient::createNameSpace(const OW_String& ns)
  */
 void OW_CIMClient::deleteNameSpace(const OW_String& ns)
 {
-	m_ch->deleteNameSpace(ns);
+	try
+    {
+        OW_CIMNameSpaceUtils::deleteCIM_Namespace(m_ch,ns);
+    }
+    catch (const OW_CIMException& e)
+    {
+        // server doesn't support CIM_Namespace, try __Namespace
+        OW_CIMNameSpaceUtils::delete__Namespace(m_ch,ns);
+    }
 }
 
 /**
@@ -109,16 +127,16 @@ void OW_CIMClient::deleteNameSpace(const OW_String& ns)
  *		cannot be found in the specified namespace.
  */
 OW_StringArray 
-	OW_CIMClient::enumNameSpaceE(OW_Bool deep)
+OW_CIMClient::enumNameSpaceE(OW_Bool deep)
 {
-	return m_ch->enumNameSpaceE(m_namespace, deep);
+	return OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, deep);
 }
 
 void 
-	OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result, 
+OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result, 
 	OW_Bool deep)
 {
-	m_ch->enumNameSpace(m_namespace, result, deep);
+	OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
 }
 
 /**

@@ -34,7 +34,7 @@
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMUrl.hpp"
 
 #include <iostream>
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
 
         bool deep = true; // TODO: get this from a command line argument
 		
-		OW_StringArray rval = rch->enumNameSpaceE(ns, deep);
+		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(rch, ns, deep);
         copy(rval.begin(), rval.end(), std::ostream_iterator<OW_String>(cout, "\n"));
 
 		return 0;

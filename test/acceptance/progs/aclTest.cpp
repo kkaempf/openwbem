@@ -39,7 +39,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMScope.hpp"
 #include "OW_CIMFlavor.hpp"
-#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
@@ -641,7 +641,7 @@ void createNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing createNameSpace() *******\n" << endl;
 	try
 	{
-		hdl.createNameSpace("/root/acltest/Caldera");
+		OW_CIMNameSpaceUtils::create__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}
@@ -659,7 +659,7 @@ void enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumNameSpace() *******\n" << endl;
 	try
 	{
-		OW_StringArray rval = hdl.enumNameSpaceE("/root/acltest", OW_Bool(true));
+		OW_StringArray rval = OW_CIMNameSpaceUtils::enum__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest", true);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}
@@ -677,7 +677,7 @@ void deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing deleteNameSpace() *******\n" << endl;
 	try
 	{
-		hdl.deleteNameSpace("/root/acltest/Caldera");
+		OW_CIMNameSpaceUtils::delete__Namespace(OW_CIMOMHandleIFCRef(&hdl, true), "/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

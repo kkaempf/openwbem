@@ -54,7 +54,7 @@ public:
 		return m_ref->getQualifierType(ns, qualifierName, aclInfo);
 	}
 
-	virtual OW_CIMOMEnvironmentRef getEnvironment() const
+	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const
 	{
 		return m_ref->getEnvironment();
 	}

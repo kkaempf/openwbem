@@ -32,13 +32,12 @@
 #define OW_REPOSITORYIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_ACLInfo.hpp"
 #include "OW_RWLocker.hpp"
-#include "OW_CIMOMEnvironment.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_ResultHandlerIFC.hpp"
+#include "OW_ServiceEnvironmentIFC.hpp"
 
 class OW_RepositoryIFC
 {
@@ -57,8 +56,7 @@ public:
 	 */
 	virtual void close() = 0;
 
-	// TODO: Change this to return an OW_ServiceEnvironmentIFCRef
-	virtual OW_CIMOMEnvironmentRef getEnvironment() const = 0;
+	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const = 0;
 
 	/**
 	 * Create a cim namespace.

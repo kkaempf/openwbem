@@ -111,39 +111,6 @@ public:
 	virtual void close() = 0;
 
 	/**
-	 * Create a cim namespace.
-	 * @param ns 	The namespace name to be created.
-	 * @exception OW_CIMException If the namespace already exists.
-	 */
-	virtual void createNameSpace(const OW_String& ns) = 0;
-
-	/**
-	 * Delete a specified namespace.
-	 * @param ns	The namespace to delete.
-	 * @exception OW_CIMException If the namespace does not exist.
-	 */
-	virtual void deleteNameSpace(const OW_String& ns) = 0;
-
-	/**
-	 * Gets a list of the namespaces within the namespace specified by the CIM
-	 * object path.
-	 * @param ns The parent namespace to enumerate
-	 * @param deep If set to DEEP, the enumeration returned will contain the
-	 *		entire hierarchy of namespaces present under the enumerated
-	 *		namespace. If set to SHALLOW  the enuermation will return only the
-	 *		first level children of the enumerated namespace.
-	 * @return An Array of namespace names as strings.
-	 * @exception OW_CIMException If the namespace does not exist or the object
-	 *		cannot be found in the specified namespace.
-	 */
-	virtual OW_StringArray enumNameSpaceE(const OW_String& ns,
-		OW_Bool deep=DEEP);
-
-	virtual void enumNameSpace(const OW_String& ns,
-		OW_StringResultHandlerIFC& result,
-		OW_Bool deep=DEEP) = 0;
-
-	/**
 	 * Deletes the CIM class specified by className in namespace ns.
 	 * @param ns The namespace containing the class to delete.
 	 * @param className The class to delete

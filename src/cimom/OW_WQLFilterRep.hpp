@@ -56,9 +56,9 @@ public:
 	virtual void close() {}
 
 	/**
-	 * @return A reference to the OW_CIMOMEvironment this object is using.
+	 * @return A reference to the OW_CIMOMEnvironment this object is using.
 	 */
-	virtual OW_CIMOMEnvironmentRef getEnvironment() const;
+	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const;
 
 	/**
 	 * Get an existing qualifier type from the repository.

@@ -37,7 +37,6 @@ OW_AssocDb.cpp \
 OW_HDB.cpp \
 OW_ProxyProvider.cpp \
 OW_HDBNode.cpp \
-OW_ACLInfo.hpp \
 OW_CIMOMEnvironment.hpp \
 OW_CIMServer.hpp \
 OW_GenericHDBRepository.hpp \
@@ -52,7 +51,6 @@ OW_ProviderIFCLoader.hpp \
 OW_ProviderManager.hpp \
 OW_UnloaderProvider.hpp \
 OW_UnloaderProvider.cpp \
-OW_RepositoryIFC.hpp \
 OW_SharedLibraryRepository.hpp \
 OW_RepositoryStreams.hpp \
 OW_WQLFilterRep.hpp \

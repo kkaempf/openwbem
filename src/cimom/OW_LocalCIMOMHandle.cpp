@@ -150,26 +150,8 @@ private:
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::createNameSpace(const OW_String& ns)
-{
-	OW_CIMServerSchemaWriteLocker swl(this);
-	OW_CIMServerInstanceWriteLocker iwl(this);
-	m_pServer->createNameSpace(ns, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_LocalCIMOMHandle::close()
 {
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_LocalCIMOMHandle::deleteNameSpace(const OW_String& ns)
-{
-	OW_CIMServerSchemaWriteLocker swl(this);
-	OW_CIMServerInstanceWriteLocker iwl(this);
-	m_pServer->deleteNameSpace(ns, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -196,60 +178,6 @@ OW_LocalCIMOMHandle::deleteQualifierType(const OW_String& ns, const OW_String& q
 {
 	OW_CIMServerSchemaWriteLocker wl(this);
 	m_pServer->deleteQualifierType(ns, qualName, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-    class namespaceFilterer : public OW_StringResultHandlerIFC
-    {
-    public:
-        namespaceFilterer(const OW_String& ns_, bool deep_, OW_StringResultHandlerIFC& result_)
-            : ns(ns_.tokenize("/"))
-            , deep(deep_)
-            , result(result_)
-        {}
-
-        void doHandle(const OW_String& s)
-        {
-            OW_StringArray split(s.tokenize("/"));
-            if (split.size() <= ns.size())
-            {
-                // it's a parent or the same namespace, so ignore it.
-                return;
-            }
-            if (!deep && split.size() > ns.size() + 1)
-            {
-                // it's more than one deep, so ignore it.
-                return;
-            }
-            for (size_t i = 0; i < ns.size(); ++i)
-            {
-                if (ns[i] != split[i])
-                {
-                    // it's not under the requested namespace so return.
-                    return;
-                }
-            }
-            // match, pass it on.
-            result.handle(s);
-        }
-
-    private:
-        OW_StringArray ns;
-        bool deep;
-        OW_StringResultHandlerIFC& result;
-    };
-}
-void
-OW_LocalCIMOMHandle::enumNameSpace(const OW_String& ns,
-	OW_StringResultHandlerIFC& result, OW_Bool deep)
-{
-	OW_CIMServerSchemaReadLocker rl(this);
-    (void)ns;
-    (void)deep;
-    namespaceFilterer handler(OW_String(ns).toLowerCase(), deep, result);
-	m_pServer->enumNameSpace(handler, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -44,6 +44,7 @@
 #include "OW_PollingManager.hpp"
 #include "OW_CppProxyProvider.hpp"
 #include "OW_Platform.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
@@ -104,6 +105,11 @@ public:
 	virtual OW_CIMOMHandleIFCRef getRepositoryCIMOMHandle() const
 	{
 		return m_repch;
+	}
+
+	virtual OW_RepositoryIFCRef getRepository() const
+	{
+		return m_env->getRepository();
 	}
 
 	virtual OW_String getConfigItem(const OW_String& name) const
@@ -291,7 +297,8 @@ OW_IndicationServerImpl::init(OW_CIMOMEnvironmentRef env)
 	// This calls createSubscription for every instance of 
 	// CIM_IndicationSubscription in all namespaces.
 	namespaceEnumerator nsHandler(lch, this);
-	lch->enumNameSpace("", nsHandler);
+	OW_CIMNameSpaceUtils::enum__Namespace(lch, "root", nsHandler);
+	// TODO: OW_CIMNameSpaceUtils::enumCIM_Namespace(lch, nsHandler);
 }
 
 //////////////////////////////////////////////////////////////////////////////

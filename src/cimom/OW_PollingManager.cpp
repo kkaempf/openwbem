@@ -80,6 +80,11 @@ namespace
 			return m_env->getRepositoryCIMOMHandle();
 		}
 
+		virtual OW_RepositoryIFCRef getRepository() const
+		{
+			return m_env->getRepository();
+		}
+
 		virtual OW_String getConfigItem(const OW_String& name) const
 		{
 			return m_env->getConfigItem(name);

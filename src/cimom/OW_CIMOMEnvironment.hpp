@@ -148,6 +148,8 @@ public:
 	void unloadReqHandlers();
 	OW_IndicationRepLayerMediatorRef getIndicationRepLayerMediator() const;
 
+	OW_RepositoryIFCRef getRepository() const;
+
 	// do not use this variable unless absolutely necessary!
 	static OW_CIMOMEnvironmentRef g_cimomEnvironment;
 private:

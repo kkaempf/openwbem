@@ -47,7 +47,7 @@ OW_WQLFilterRep::OW_WQLFilterRep(const OW_CIMInstance& inst,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMOMEnvironmentRef
+OW_ServiceEnvironmentIFCRef
 OW_WQLFilterRep::getEnvironment() const
 {
 	return m_pCIMServer->getEnvironment();

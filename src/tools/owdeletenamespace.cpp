@@ -34,7 +34,7 @@
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_CIMNameSpace.hpp"
+#include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_CIMUrl.hpp"
 
 #include <iostream>
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
 		}
 
 		cout << "Deleting namespace (" << ns << ")" << endl;
-		rch->deleteNameSpace(ns);
+		OW_CIMNameSpaceUtils::delete__Namespace(rch, ns);
 
 		return 0;
 	}

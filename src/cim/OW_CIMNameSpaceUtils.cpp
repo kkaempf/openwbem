@@ -129,6 +129,8 @@ deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, const 
     (void)hdl;
     (void)ns;
     (void)interopNs;
+	// TODO: Write me!
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "OW_CIMNameSpaceUtils::deleteCIM_Namespace not yet implemented.");
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -139,6 +141,8 @@ enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& interopNs)
 	StringArrayBuilder handler(rval);
 	enumCIM_Namespace(hdl, handler, interopNs);
 	return rval;
+	// TODO: Write me!
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "OW_CIMNameSpaceUtils::enumCIM_Namespace not yet implemented.");
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -149,6 +153,8 @@ enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl,
     (void)hdl;
     (void)result;
     (void)interopNs;
+	// TODO: Write me!
+	OW_THROWCIMMSG(OW_CIMException::FAILED, "OW_CIMNameSpaceUtils::enumCIM_Namespace not yet implemented.");
 }
 
 /////////////////////////////////////////////////////////////////////////////

@@ -148,17 +148,6 @@ OW_CIMOMHandleIFC::enumClassE(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringArray
-OW_CIMOMHandleIFC::enumNameSpaceE(const OW_String& ns,
-		OW_Bool deep)
-{
-	OW_StringArray rval;
-	StringArrayBuilder handler(rval);
-	enumNameSpace(ns, handler, deep);
-	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMOMHandleIFC::enumClassNamesE(
 	const OW_String& ns,
