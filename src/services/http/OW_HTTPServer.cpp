@@ -624,7 +624,7 @@ HTTPServer::start()
 			{
 				try
 				{
-					m_pHttpsServerSocket = new ServerSocket(m_sslCtx.getPtr());
+					m_pHttpsServerSocket = new ServerSocket(m_sslCtx);
 					m_pHttpsServerSocket->doListen(lport,
 						1000, curAddress,
 						m_options.reuseAddr ? SocketFlags::E_REUSE_ADDR : SocketFlags::E_DONT_REUSE_ADDR);
