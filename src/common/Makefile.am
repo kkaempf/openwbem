@@ -176,7 +176,7 @@ OW_NoSuchProviderException.hpp \
 OW_NoSuchQualifierException.hpp \
 OW_NULLValueException.hpp \
 OW_config.h \
-OW_UTF8Utils.cpp
+OW_UTF8Utils.hpp
 
 libopenwbem_a_LIBADD = \
 ../cim/libOW_cim.a \
