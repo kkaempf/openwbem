@@ -62,8 +62,15 @@ OW_HTTPDeflateOStreamBuffer::OW_HTTPDeflateOStreamBuffer(ostream& ostr)
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPDeflateOStreamBuffer::~OW_HTTPDeflateOStreamBuffer()
 {
-	sync();
-	deflateEnd(&m_zstr);
+	try
+	{
+		sync();
+		deflateEnd(&m_zstr);
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

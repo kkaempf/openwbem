@@ -57,23 +57,30 @@ OW_CppProviderIFC::OW_CppProviderIFC()
 //////////////////////////////////////////////////////////////////////////////
 OW_CppProviderIFC::~OW_CppProviderIFC()
 {
-	ProviderMap::iterator it = m_provs.begin();
-	while(it != m_provs.end())
+	try
 	{
-		it->second->cleanup();
-		it->second.setNull();
-		it++;
+		ProviderMap::iterator it = m_provs.begin();
+		while(it != m_provs.end())
+		{
+			it->second->cleanup();
+			it->second.setNull();
+			it++;
+		}
+	
+		m_provs.clear();
+	
+		for(size_t i = 0; i < m_noidProviders.size(); i++)
+		{
+			m_noidProviders[i]->cleanup();
+			m_noidProviders[i].setNull();
+		}
+	
+		m_noidProviders.clear();
 	}
-
-	m_provs.clear();
-
-	for(size_t i = 0; i < m_noidProviders.size(); i++)
+	catch (...)
 	{
-		m_noidProviders[i]->cleanup();
-		m_noidProviders[i].setNull();
+		// don't let exceptions escape
 	}
-
-	m_noidProviders.clear();
 }
 
 //////////////////////////////////////////////////////////////////////////////

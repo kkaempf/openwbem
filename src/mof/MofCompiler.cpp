@@ -45,10 +45,17 @@ MofCompiler::MofCompiler( OW_Reference<OW_CIMOMHandleIFC> ch, const OW_String& n
 
 MofCompiler::~MofCompiler()
 {
-	MofCompiler::theErrorHandler = 0;
-	MofCompiler::mofSpecification = 0;
-	MofCompiler::basepath = OW_String();
-	MofCompiler::theLineInfo = lineInfo(OW_String(),1);
+	try
+	{
+		MofCompiler::theErrorHandler = 0;
+		MofCompiler::mofSpecification = 0;
+		MofCompiler::basepath = OW_String();
+		MofCompiler::theLineInfo = lineInfo(OW_String(),1);
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 long MofCompiler::compile( const OW_String& filename )

@@ -51,15 +51,22 @@ OW_SimpleCppProviderIFC::OW_SimpleCppProviderIFC()
 //////////////////////////////////////////////////////////////////////////////
 OW_SimpleCppProviderIFC::~OW_SimpleCppProviderIFC()
 {
-	ProviderMap::iterator it = m_provs.begin();
-	while(it != m_provs.end())
+	try
 	{
-		it->second->cleanup();
-		it->second.setNull();
-		it++;
+		ProviderMap::iterator it = m_provs.begin();
+		while(it != m_provs.end())
+		{
+			it->second->cleanup();
+			it->second.setNull();
+			it++;
+		}
+	
+		m_provs.clear();
 	}
-
-	m_provs.clear();
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

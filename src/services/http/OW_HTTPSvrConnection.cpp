@@ -107,7 +107,14 @@ OW_HTTPSvrConnection::OW_HTTPSvrConnection(OW_Socket socket,
 // Destructor
 OW_HTTPSvrConnection::~OW_HTTPSvrConnection()
 {
-	m_socket.disconnect();
+	try
+	{
+		m_socket.disconnect();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

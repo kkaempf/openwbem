@@ -54,24 +54,31 @@ OW_NPIProviderIFC::OW_NPIProviderIFC()
 //////////////////////////////////////////////////////////////////////////////
 OW_NPIProviderIFC::~OW_NPIProviderIFC()
 {
-	ProviderMap::iterator it = m_provs.begin();
-	//OW_Reference<NPIenv> npiHandle(); // TODO: createEnv(...);
-	while(it != m_provs.end())
+	try
 	{
-		it->second->fp_cleanup(0); // TODO: FIX this. m_npiHandle);
-		it->second.setNull();
-		it++;
+		ProviderMap::iterator it = m_provs.begin();
+		//OW_Reference<NPIenv> npiHandle(); // TODO: createEnv(...);
+		while(it != m_provs.end())
+		{
+			it->second->fp_cleanup(0); // TODO: FIX this. m_npiHandle);
+			it->second.setNull();
+			it++;
+		}
+	
+		m_provs.clear();
+	
+		//for(size_t i = 0; i < m_noidProviders.size(); i++)
+		//{
+		//	m_noidProviders[i]->cleanup();
+		//	m_noidProviders[i].setNull();
+		//}
+	
+		//m_noidProviders.clear();
 	}
-
-	m_provs.clear();
-
-	//for(size_t i = 0; i < m_noidProviders.size(); i++)
-	//{
-	//	m_noidProviders[i]->cleanup();
-	//	m_noidProviders[i].setNull();
-	//}
-
-	//m_noidProviders.clear();
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -48,7 +48,14 @@ OW_HTTPChunkedOStreamBuffer::OW_HTTPChunkedOStreamBuffer(ostream& ostr)
 
 OW_HTTPChunkedOStreamBuffer::~OW_HTTPChunkedOStreamBuffer()
 {
-	sync();
+	try
+	{
+		sync();
+	}
+	catch (...)
+	{
+		// don't let exceptions escape
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
