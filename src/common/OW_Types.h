@@ -95,18 +95,22 @@ typedef double						OW_Real32;
 
 typedef off_t	OW_off_t;
 
-/* OW_Select_t is the type of object that can be used in
- * synchronous I/O multiplexing (i.e. select). There is a
- * possibility this can be something other than an int on
- * a platform we don't yet support.
- */
-typedef int OW_Select_t;
-
 #ifdef OW_WIN32
 #define OW_SHAREDLIB_EXTENSION ".dll"
 #define OW_FILENAME_SEPARATOR "\\"
 #define OW_PATHNAME_SEPARATOR ";"
+/* OW_Select_t is the type of object that can be used in
+ * synchronous I/O multiplexing (i.e. select). On Win32
+ * this is a HANDLE. The intention is to call
+ * WaitForMultipleObjects on arrays of this type.
+ */
+typedef HANDLE OW_Select_t;
 #else
+/* OW_Select_t is the type of object that can be used in
+ * synchronous I/O multiplexing (i.e. select).
+ */
+typedef int OW_Select_t;
+
 #if defined OW_DARWIN
 #define OW_SHAREDLIB_EXTENSION ".dylib"
 #elif defined OW_HPUX

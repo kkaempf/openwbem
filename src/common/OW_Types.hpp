@@ -87,17 +87,19 @@ typedef float						Real32;
 typedef double						Real32;
 #endif
 typedef off_t	off_t;
+
+#ifdef OW_WIN32
+#define OW_SHAREDLIB_EXTENSION ".dll"
+#define OW_FILENAME_SEPARATOR "\\"
+#define OW_PATHNAME_SEPARATOR ";"
+typedef HANDLE Select_t;
+#else
 // Select_t is the type of object that can be used in
 // synchronous I/O multiplexing (i.e. select). There is a
 // possibility this can be something other than an int on
 // a platform we don't yet support.
 typedef int Select_t;
 
-#ifdef OW_WIN32
-#define OW_SHAREDLIB_EXTENSION ".dll"
-#define OW_FILENAME_SEPARATOR "\\"
-#define OW_PATHNAME_SEPARATOR ";"
-#else
 #if defined OW_DARWIN
 #define OW_SHAREDLIB_EXTENSION ".dylib"
 #elif defined OW_HPUX

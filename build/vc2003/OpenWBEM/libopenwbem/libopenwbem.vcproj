@@ -313,6 +313,9 @@
 				RelativePath="..\..\..\..\src\common\OW_NULLValueException.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_NwIface.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\OW_OperationContext.cpp">
 			</File>
 			<File
@@ -367,6 +370,9 @@
 				RelativePath="..\..\..\..\src\common\OW_SelectEngine.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_ServerSocketImpl.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\ifcs\OW_ServiceEnvironmentIFC.cpp">
 			</File>
 			<File
@@ -388,7 +394,19 @@
 				RelativePath="..\..\..\..\src\common\socket\OW_Socket.cpp">
 			</File>
 			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_SocketAddress.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_SocketBaseImpl.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_SocketImpl.cpp">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_SocketStreamBuffer.cpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_SocketUtils.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_SSLCtxMgr.cpp">
@@ -847,6 +865,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_SocketException.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\common\socket\OW_SocketFlags.hpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\common\socket\OW_SocketImpl.hpp">

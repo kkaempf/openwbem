@@ -43,7 +43,11 @@
 #include <cstdlib>
 #include <cassert>
 #include <errno.h>
+
+#if !defined(OW_WIN32)
 #include <unistd.h>
+#endif
+
 #define OW_MEM_SIG 0xaaaaaaaa
 #define OW_FREE_MEM_SIG 0xbbbbbbbb
 

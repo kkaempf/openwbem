@@ -536,6 +536,7 @@
 
 #define _WIN32_WINNT 0x0400
 #define OW_USE_DLL 1
+//#define OW_DEBUG_MEMORY 1
  
 /* __SRC_COMMON_OW_CONFIG_H */
 #endif

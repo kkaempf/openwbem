@@ -36,6 +36,12 @@
 #include "OW_config.h"
 #include "OW_Select.hpp"
 #include "OW_Assertion.hpp"
+
+#if defined(OW_WIN32)
+#include "OW_AutoPtr.hpp"
+#include <cassert>
+#endif
+
 extern "C"
 {
 #ifdef OW_HAVE_SYS_TIME_H
@@ -49,7 +55,6 @@ extern "C"
 #endif
 
 #include <errno.h>
-
 }
 
 namespace OpenWBEM
@@ -57,6 +62,42 @@ namespace OpenWBEM
 
 namespace Select
 {
+#if defined(OW_WIN32)
+
+int
+select(const SelectTypeArray& selarray, UInt32 ms)
+{
+	int rc;
+	size_t hcount = static_cast<DWORD>(selarray.size());
+	AutoPtrVec<HANDLE> hdls(new HANDLE[hcount]);
+
+	for(size_t i = 0; i < hcount; i++)
+	{
+		hdls[i] = selarray[i];
+	}
+
+	DWORD timeout = (ms != ~0U) ? ms : INFINITE;
+	DWORD cc = ::WaitForMultipleObjects(hcount, hdls.get(), FALSE, timeout);
+
+	assert(cc != WAIT_ABANDONED);
+
+	switch(cc)
+	{
+		case WAIT_FAILED:
+			rc = Select::SELECT_ERROR;
+			break;
+		case WAIT_TIMEOUT:
+			rc = Select::SELECT_TIMEOUT;
+			break;
+		default:
+			rc = cc - WAIT_OBJECT_0;
+			break;
+	}
+
+	return cc;
+}
+
+#else
 //////////////////////////////////////////////////////////////////////////////
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
@@ -107,6 +148,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
    OW_THROW(Assertion, "Logic error in Select. Didn't find file handle");
    return Select::SELECT_ERROR;
 }
+#endif	// #else OW_WIN32
 
 } // end namespace Select
 
