@@ -232,8 +232,7 @@ void COWIntrusiveReferenceTestCases::n_swap()
 		unitAssert(px.getPtr() == 0);
 		unitAssert(px2.getPtr() == 0);
 
-		using std::swap;
-		swap(px, px2);
+		std::swap(px, px2);
 
 		unitAssert(px.getPtr() == 0);
 		unitAssert(px2.getPtr() == 0);
@@ -253,8 +252,7 @@ void COWIntrusiveReferenceTestCases::n_swap()
 		unitAssert(px3.getPtr() == p);
 		unitAssert(px3->use_count() == 1);
 
-		using std::swap;
-		swap(px, px2);
+		std::swap(px, px2);
 
 		unitAssert(px.getPtr() == 0);
 		unitAssert(px2->use_count() == 1);
@@ -278,8 +276,7 @@ void COWIntrusiveReferenceTestCases::n_swap()
 		unitAssert(px3.getPtr() == p2);
 		unitAssert(px3->use_count() == 1);
 
-		using std::swap;
-		swap(px, px2);
+		std::swap(px, px2);
 
 		unitAssert(px.getPtr() == p1);
 		unitAssert(px->use_count() == 1);
@@ -374,7 +371,10 @@ void COWIntrusiveReferenceTestCases::n_transitive()
 class foo: public COWIntrusiveCountableBase
 {
 public: 
-
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable : 4355)
+#endif
 	foo(): m_self(this)
 	{
 	} 
@@ -382,6 +382,9 @@ public:
 	foo(const foo& x): COWIntrusiveCountableBase(), m_self(this)
 	{
 	}
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 	void suicide()
 	{

@@ -51,7 +51,6 @@ OW_DECLARE_EXCEPTION(ParseFatalError);
 class ParserErrorHandlerIFC : public IntrusiveCountableBase
 {
 public:
-	enum EParserAction { E_ABORT, E_IGNORE };
 
 	ParserErrorHandlerIFC();
 	virtual ~ParserErrorHandlerIFC();
