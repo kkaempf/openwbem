@@ -106,14 +106,14 @@ using std::ostream;
 OW_DEFINE_EXCEPTION_WITH_ID(DateTime);
 
 //////////////////////////////////////////////////////////////////////////////
-DateTime::DateTime() 
+DateTime::DateTime()
 	: m_time(0)
 	, m_microseconds(0)
 
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-namespace 
+namespace
 {
 
 inline void badDateTime(const String& str)
@@ -121,7 +121,7 @@ inline void badDateTime(const String& str)
 	OW_THROW(DateTimeException, Format("Invalid DateTime: %1", str).c_str());
 }
 
-inline void validateRanges(Int32 year, Int32 month, Int32 day, Int32 hour, 
+inline void validateRanges(Int32 year, Int32 month, Int32 day, Int32 hour,
 Int32 minute, Int32 second, Int32 microseconds, const String& str)
 {
 	if (year < 0 || year > 9999 ||
@@ -235,7 +235,7 @@ inline bool isDOWValid(const char* str)
 inline bool isLongDOWValid(const String& s)
 {
 	if ( (s == "Sunday") ||
-	(s == "Monday") ||      
+	(s == "Monday") ||
 	(s == "Tuesday") ||
 	(s == "Wednesday") ||
 	(s == "Thursday") ||
@@ -407,84 +407,84 @@ bool getTimeZoneOffset(const String& timezone, int& offset)
 	{
 		// Single-letter abbrev.
 		// This could be simplified into a couple of if statements with some
-		// character math, but this should work for now. 
+		// character math, but this should work for now.
 		switch ( timezone[0] )
 		{
 			case 'Y': // Yankee   UTC-12
-				temp_offset = -12; 
-				break; 
+				temp_offset = -12;
+				break;
 			case 'X': // Xray     UTC-11
-				temp_offset = -11; 
+				temp_offset = -11;
 				break;
 			case 'W': // Whiskey  UTC-10
-				temp_offset = -10; 
+				temp_offset = -10;
 				break;
 			case 'V': // Victor   UTC-9
 				temp_offset = -9;
 				break;
 			case 'U': // Uniform  UTC-8
 				temp_offset = -8;
-				break; 
+				break;
 			case 'T': // Tango    UTC-7
 				temp_offset = -7;
-				break; 
+				break;
 			case 'S': // Sierra   UTC-6
 				temp_offset = -6;
-				break; 
+				break;
 			case 'R': // Romeo    UTC-5
 				temp_offset = -5;
-				break; 
+				break;
 			case 'Q': // Quebec   UTC-4
 				temp_offset = -4;
-				break; 
+				break;
 			case 'P': // Papa     UTC-3
 				temp_offset = -3;
-				break; 
+				break;
 			case 'O': // Oscar    UTC-2
 				temp_offset = -2;
-				break; 
+				break;
 			case 'N': // November UTC-1
 				temp_offset = -1;
-				break; 
+				break;
 			case 'Z': // Zulu     UTC
 				temp_offset = 0;
-				break; 
+				break;
 			case 'A': // Aplpha   UTC+1
 				temp_offset = 1;
-				break; 
+				break;
 			case 'B': // Bravo    UTC+2
 				temp_offset = 2;
-				break; 
+				break;
 			case 'C': // Charlie  UTC+3
 				temp_offset = 3;
-				break; 
+				break;
 			case 'D': // Delta    UTC+4
 				temp_offset = 4;
-				break; 
+				break;
 			case 'E': // Echo     UTC+5
 				temp_offset = 5;
-				break; 
+				break;
 			case 'F': // Foxtrot  UTC+6
 				temp_offset = 6;
-				break; 
+				break;
 			case 'G': // Golf     UTC+7
 				temp_offset = 7;
-				break; 
+				break;
 			case 'H': // Hotel    UTC+8
 				temp_offset = 8;
-				break; 
+				break;
 			case 'I': // India    UTC+9
 				temp_offset = 9;
-				break; 
+				break;
 			case 'K': // Kilo     UTC+10
 				temp_offset = 10;
-				break; 
+				break;
 			case 'L': // Lima     UTC+11
 				temp_offset = 11;
-				break; 
+				break;
 			case 'M': // Mike     UTC+12
 				temp_offset = 12;
-				break; 
+				break;
 			case 'J': // Juliet   Always local time
 				temp_offset = LOCAL_TIME_OFFSET;
 				break;
@@ -494,7 +494,7 @@ bool getTimeZoneOffset(const String& timezone, int& offset)
 	}
 	else if ( timezone == "UTC" ) // Universal Time Coordinated, civil time
 	{
-		temp_offset = 0; 
+		temp_offset = 0;
 	}
 	// European timezones
 	else if ( timezone == "GMT" ) // Greenwich Mean Time   UTC
@@ -553,7 +553,7 @@ bool getTimeZoneOffset(const String& timezone, int& offset)
 	else if ( timezone == "EST" ) // Eastern Standard Time         UTC-5
 	{
 		// CHECKME! This can also be Australian Eastern Standard Time UTC+10
-		// (UTC+11 in Summer) 
+		// (UTC+11 in Summer)
 		temp_offset = -5;
 	}
 	else if ( timezone == "EDT" ) // Eastern Daylight Saving Time  UTC-4
@@ -568,7 +568,7 @@ bool getTimeZoneOffset(const String& timezone, int& offset)
 	}
 	else if ( timezone == "CST" ) // Central Standard Time         UTC-6
 	{
-		// CHECKME! This can also be Australian Central Standard Time UTC+9.5    
+		// CHECKME! This can also be Australian Central Standard Time UTC+9.5
 		temp_offset = -6;
 	}
 	else if ( timezone == "CDT" ) // Central Daylight Saving Time  UTC-5
@@ -709,7 +709,7 @@ Int32& day, Int32& hour)
 			--day;
 			hour += 24;
 		}
-		// This assumes that the timezone will not shove a date by more than one day.    
+		// This assumes that the timezone will not shove a date by more than one day.
 		if ( day < 1 )
 		{
 			--month;
@@ -737,7 +737,7 @@ DateTime::DateTime(const String& str)
 		{
 			try
 			{
-				// in CIM, "Fields which are not significant must be 
+				// in CIM, "Fields which are not significant must be
 				// replaced with asterisk characters."  We'll convert
 				// asterisks to 0s so we can process them.
 				String strNoAsterisks(str);
@@ -767,7 +767,7 @@ DateTime::DateTime(const String& str)
 				}
 				minute += utc;
 
-				set(year, month, day, hour, minute, second, 
+				set(year, month, day, hour, minute, second,
 				microseconds, E_UTC_TIME);
 				return;
 			}
@@ -819,13 +819,13 @@ DateTime::DateTime(const String& str)
 					}
 					else
 					{
-						weekday = *date_token;      
+						weekday = *date_token;
 					}
 				}
 				else
 				{
 					// Multiple weekdays.
-					badDateTime(str);   
+					badDateTime(str);
 				}
 			}
 			// Only do this comparison if a month has not already been found.
@@ -854,7 +854,7 @@ DateTime::DateTime(const String& str)
 			{
 				day = *date_token;
 			}
-			// If a year hasn't been found, and this is a number, assume it's the year.      
+			// If a year hasn't been found, and this is a number, assume it's the year.
 			else if ( year.empty() && isdigit((*date_token)[0]) )
 			{
 				year = *date_token;
@@ -868,7 +868,7 @@ DateTime::DateTime(const String& str)
 			}
 			else
 			{
-				badDateTime(str);   
+				badDateTime(str);
 			}
 
 		} // for each token.
@@ -928,7 +928,7 @@ DateTime::DateTime(const String& str)
 						minute, second, microseconds, str);
 
 					set(year_number, month_number, day_number, hour,
-						minute, second, microseconds, E_UTC_TIME);      
+						minute, second, microseconds, E_UTC_TIME);
 				}
 			}
 			catch (const StringConversionException&)
@@ -939,17 +939,17 @@ DateTime::DateTime(const String& str)
 		else
 		{
 			// Not all required fields available.
-			badDateTime(str);    
+			badDateTime(str);
 		}
 	}
 	else
 	{
 		// An empty string.
-		badDateTime(str);    
+		badDateTime(str);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////									
-DateTime::DateTime(time_t t, UInt32 microseconds) 
+DateTime::DateTime(time_t t, UInt32 microseconds)
 	: m_time(t)
 	, m_microseconds(microseconds)
 {
@@ -995,8 +995,8 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 #ifdef OW_HAVE_TIMEGM
 		m_time = ::timegm(&tmarg);
 #else
-		// timezone is a global that is set by mktime() which is "the 
-		// difference, in seconds, between Coordinated Universal Time 
+		// timezone is a global that is set by mktime() which is "the
+		// difference, in seconds, between Coordinated Universal Time
 		// (UTC) and local standard time."
 #ifdef OW_NETWARE
 		m_time = ::mktime(&tmarg) - _timezone;
@@ -1222,6 +1222,7 @@ DateTime::toString(ETimeOffset timeOffset) const
 #endif
 }
 
+//////////////////////////////////////////////////////////////////////////////
 String DateTime::toString(char const * format, ETimeOffset timeOffset) const
 {
 	tm theTime = getTm(timeOffset);
@@ -1232,15 +1233,17 @@ String DateTime::toString(char const * format, ETimeOffset timeOffset) const
 	return String(buf);
 }
 
+//////////////////////////////////////////////////////////////////////////////
 char const DateTime::DEFAULT_FORMAT[] = "%c";
 
 //////////////////////////////////////////////////////////////////////////////
 String
-DateTime::toStringGMT() const 
-{ 
-	return toString(E_UTC_TIME); 
+DateTime::toStringGMT() const
+{
+	return toString(E_UTC_TIME);
 }
 
+//////////////////////////////////////////////////////////////////////////////
 Int16 DateTime::localTimeAndOffset(time_t t, struct tm & t_loc)
 {
 	struct tm t_utc;

@@ -479,7 +479,10 @@ public:
 	String toString(ETimeOffset timeOffset = E_LOCAL_TIME) const;
 
 	/**
-	 * @param format is a date/time format string such as used by strftime.
+	 * @param format is a date/time format string such as used by strftime().
+	 *  Note that the underlying representation uses strftime(), so some
+	 *  conversion specifiers may be available which aren't portable. For
+	 *  maximum portability, restrict usage to those defined in ANSI C.
 	 * @param timeOffset Indicates whether to use the local timezone or UTC
 	 * @return Conversion of this DateTime to String using format.
 	 * REQUIRE: formatted time has length at most 1023.
@@ -489,7 +492,9 @@ public:
 
 	/**
 	 * A default date/time format to use with toString().
-	**/
+	 * The value is "%c", which is "The preferred date and time
+	 * representation for the current locale."
+	 **/
 	static char const DEFAULT_FORMAT[];
 
 	/**
