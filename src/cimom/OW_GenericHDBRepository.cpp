@@ -182,7 +182,6 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 
 	if(nameComps.size() == 0)
 	{
-		cout << "returning -1 from createNameSpace because nameComps.size() = 0"  << endl;
 		return -1;
 	}
 
@@ -201,7 +200,6 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 		{
 			if(nameComps.size() == 1)
 			{
-				cout << "returning -1 from createNameSpace because nameComps[0] = " << nameComps[0] << endl;
 				return -1;
 			}
 		}
@@ -261,7 +259,6 @@ OW_GenericHDBRepository::createNameSpace(const OW_StringArray& nameComps,
 				"logic error. read namespace node that is not a namespace");
 		}
 
-		cout << "returning -1 from createNameSpace because namespace really exists"  << endl;
 		return -1;
 	}
 
