@@ -398,7 +398,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 		socklen_t clntlen;
 		struct sockaddr_in clntInetAddr;
 		struct sockaddr_un clntUnixAddr;
-		struct sockaddr* pSA;
+		struct sockaddr* pSA(0);
 		if (m_localAddress.getType() == SocketAddress::INET)
 		{
 			pSA = reinterpret_cast<struct sockaddr*>(&clntInetAddr);
