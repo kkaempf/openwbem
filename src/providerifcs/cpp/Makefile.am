@@ -22,15 +22,16 @@ clean-local:
 
 
 
-
-libcppprovifc_a_SOURCES = \
+pkginclude_HEADERS = \
 OW_CppAssociatorProviderIFC.hpp \
 OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \
 OW_CppPolledProviderIFC.hpp \
 OW_CppPropertyProviderIFC.hpp \
-OW_CppProviderBaseIFC.hpp \
+OW_CppProviderBaseIFC.hpp
+
+libcppprovifc_a_SOURCES = \
 OW_CppProviderIFC.cpp \
 OW_CppProviderIFC.hpp \
 OW_CppProxyProvider.cpp \
