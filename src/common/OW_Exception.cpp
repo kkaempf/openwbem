@@ -277,8 +277,8 @@ Exception::setErrorCode(int errorCode)
 namespace ExceptionDetail
 {
 
-// HPUX has a thread safe strerror(), and has deprecated strerror_r() so we'll just use strerror()
-#if defined(OW_HPUX)
+// HPUX, solaris have a thread safe strerror(), windows doesn't have strerror_r(), and doesn't document whether strerror() is thread safe or not.
+#if defined(OW_HPUX) || defined(OW_SOLARIS) || defined(OW_WIN32)
 
 	void portable_strerror_r(int errnum, char * buf, unsigned n)
 	{
@@ -289,17 +289,26 @@ namespace ExceptionDetail
 #else
 	typedef int (*posix_fct)(int, char *, ::std::size_t);
 	typedef char * (*gnu_fct)(int, char *, ::std::size_t);
+	typedef char * (*aix_fct)(int, char *, int);
 
 	struct dummy
 	{
 	};
 
-	// We make the two strerror_r_wrap functions into templates so that
+	// We make the strerror_r_wrap functions into templates so that
 	// code is generated only for the one that gets used.
 
 	template <typename Dummy>
 	inline int 
 	strerror_r_wrap(posix_fct strerror_r, int errnum, char * buf, unsigned n,
+	                Dummy)
+	{
+		return strerror_r(errnum, buf, n);
+	}
+
+	template <typename Dummy>
+	inline int 
+	strerror_r_wrap(aix_fct strerror_r, int errnum, char * buf, unsigned n,
 	                Dummy)
 	{
 		return strerror_r(errnum, buf, n);
