@@ -23,7 +23,9 @@ clean-local:
 libowindicationserver_a_SOURCES = \
 OW_IndicationServer.hpp \
 OW_IndicationServerImpl.hpp \
-OW_IndicationServerImpl.cpp
+OW_IndicationServerImpl.cpp \
+OW_LifecycleIndicationPoller.hpp \
+OW_LifecycleIndicationPoller.cpp
 
 libowindicationreplayer_a_SOURCES = \
 OW_IndicationRepLayer.hpp \
