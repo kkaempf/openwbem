@@ -91,6 +91,7 @@ New features:
     - Add an option to the CIM Listener to run in single threaded mode.
 
 Post 3.0
+    - Add support for TCP wrappers (/etc/{hosts.allow,hosts.deny}).
     - rewrite the repository with libdb 3 or 4 with support for transactions
       and recovery.
     - Add an option to run as a different user and drop privelidges on startup.
