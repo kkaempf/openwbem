@@ -27,6 +27,10 @@ Fix problems:
     - Man pages aren't getting included in the rpm.
 
 New features:
+    - Generalize the class cache in OW_MetaRepository.cpp
+    - Create caching cimom handles (qualifier, class, instance).
+    - Have the mof compiler and the various test programs use the caching
+      cimom handles.
     - Add a virtual log message to the thread counter class so we can output
       information about threads starting and exiting.
     - Write an event Provider interface.  Create intrinsic providers for
