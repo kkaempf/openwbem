@@ -1219,6 +1219,7 @@ IndicationServerImpl::modifySubscription(const String& ns, const CIMInstance& su
 void
 IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterInst, const String& userName)
 {
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Implementation note: This depends on the fact that the indication subscription creation/deletion events are
 	// processed sequentially (the thread pool only has 1 worker thread), so that the deletion is processed
 	// before the creation.
@@ -1247,6 +1248,10 @@ IndicationServerImpl::modifyFilter(const String& ns, const CIMInstance& filterIn
 	{
 		OW_THROWCIMMSG(CIMException::FAILED, Format("modifying the filter failed: %1", e).c_str());
 	}
+
+#else
+	OW_THROWCIMMSG(CIMException::FAILED, "Modifying the filter no allowed because association traversal is disabled");
+#endif
 }
 
 void
