@@ -374,11 +374,7 @@ safeSystem(const Array<String>& command)
 	do
 	{
 		Thread::testCancel();
-#ifdef OW_USE_GNUPTH
-		if (pth_waitpid(pid, &status, 0) == -1)
-#else
 		if (waitpid(pid, &status, 0) == -1)
-#endif
 		{
 			if (errno != EINTR)
 				return -1;
