@@ -16,10 +16,6 @@ Testing:
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
-    - Fix the error message to be more descriptive when doing SSL, and the cert file isn't there.
-    - Importing mof with SNIA browser is broken.
-    - Write a function to read the output of a popened process, and get the
-      return code, with a time limit and output limit.
     - Rewrite the provider manager lookup so it's simpler/less code.
     - assoc problems:
       - Demo_OSProcess

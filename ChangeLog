@@ -1,3 +1,7 @@
+Mon Jul 14 15:14:13 MDT 2003
+- Wrote a function to read the output of a popened process, and get the
+  return code, with a time limit and output limit.
+
 Thu Jun  5 17:24:10 MDT 2003
 - Reduced the size binary serlizations.
 
