@@ -104,6 +104,20 @@ extern "C"
 extern "C"
 	void CIMInstanceSetRefProperty( NPIHandle* npiHandle, ::CIMInstance ci,
 									 const char* name, ::CIMObjectPath value);
+
+extern "C" 
+	void CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
+									const char* name, const char* value);
+
+extern "C" char*
+CIMInstanceGetStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
+	const char* name, const int pos);
+
+extern "C" void
+CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
+	const char* name, const char* value);
+
+								 
 extern "C"
 char* CIMInstanceGetStringValue(NPIHandle* npiHandle,
 								 ::CIMInstance ci, const char* name);

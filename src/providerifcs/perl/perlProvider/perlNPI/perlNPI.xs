@@ -266,6 +266,42 @@ void	CIMInstanceSetRefProperty(npiHandle, ci, key, value)
 	CODE:
 	CIMInstanceSetRefProperty(nh,cci,key,cop);
 
+void   CIMInstanceAddStringArrayPropertyValue(npiHandle, ci, key, value)
+	char * npiHandle
+	char * ci
+	char * key
+	char * value
+	PREINIT:
+	NPIHandle * nh = argsfromperl(npiHandle);
+	CIMInstance cci = {argsfromperl(ci)};
+	CODE:
+	CIMInstanceAddStringArrayPropertyValue(nh,cci,key,value);
+
+char *	CIMInstanceGetStringArrayPropertyValue(npiHandle, ci, key, pos)
+	char * npiHandle
+	char * ci
+	char * key
+	int pos
+	PREINIT:
+	NPIHandle * nh = argsfromperl(npiHandle);
+	CIMInstance cci = {argsfromperl(ci)};
+	CODE:
+	RETVAL = CIMInstanceGetStringArrayPropertyValue(nh,cci,key, pos);
+	OUTPUT:
+	RETVAL
+
+int CIMInstanceGetStringArrayPropertySize(npiHandle, ci, key)
+	char * npiHandle
+	char * ci
+	char * key
+	PREINIT:
+	NPIHandle * nh = argsfromperl(npiHandle);
+	CIMInstance cci = {argsfromperl(ci)};
+	CODE:
+	RETVAL = CIMInstanceGetStringArrayPropertySize(nh,cci,key);
+	OUTPUT:
+	RETVAL
+
 char *	CIMInstanceGetStringProperty(npiHandle, ci, key)
 	char * npiHandle
 	char * ci

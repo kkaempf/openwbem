@@ -471,6 +471,96 @@ CIMInstanceSetRefProperty(NPIHandle* npiHandle, ::CIMInstance ci,
 	owci->setProperty(Key,Value);
 }
 //////////////////////////////////////////////////////////////////////////////
+//
+// NPI needs arrays, too
+// as NPI doesn't know anything about OpenWBEM::* classes, we cannot expect 
+// or handle a OpenWBEM::StringArray in our parameter list - we would break 
+// NPI if we did.
+// But we can dig a char*, cast it to a OpenWBEM::String and add it to 
+// our property.
+//
+// This means that users will have to add every String of a StringArray 
+// separately by calling something like
+//
+// char * name = 'Foo';
+// char * value = 'Bar';  
+// CIMInstanceAddStringArrayProperty(npiHandle, ci, name, value);
+//
+// but this is the only way to fill our array unless we define a NPI 
+// StringArray type
+//
+extern "C" void
+CIMInstanceAddStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
+	const char* name, const char* value)
+{
+	(void)npiHandle;
+	// Sanity check
+	if (name == NULL) return;
+	if (strlen(name) == 0) return;
+	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+	String Key(name);
+	String Value(value);
+	// get current value
+	OpenWBEM::CIMProperty cp = owci->getProperty(Key);
+	OpenWBEM::CIMValue cv = cp.getValue();
+	OpenWBEM::StringArray sa;
+	if (!cv) {
+		// printf ("Got empty CIMValue\n");
+	} else {
+		// printf("Got StringArray\n");
+		sa = cv.toStringArray();
+	}
+	sa.append(Value);
+	OpenWBEM::CIMValue newcv(sa);
+	owci->setProperty(Key,newcv);
+} 
+
+//////////////////////////////////////////////////////////////////////////////
+// ...and NPI also needs to read that stuff
+//
+extern "C" char*
+CIMInstanceGetStringArrayPropertyValue(NPIHandle* npiHandle, ::CIMInstance ci,
+	const char* name, const int pos)
+{
+	(void)npiHandle;
+	char * result = NULL;
+	// Sanity check
+	if (name == NULL) return result;
+	if (strlen(name) == 0) return result;
+	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+	String Key(name);
+	// get current value
+	OpenWBEM::CIMProperty cp = owci->getProperty(Key);
+	OpenWBEM::CIMValue cv = cp.getValue();
+	OpenWBEM::StringArray sa;
+	sa = cv.toStringArray();
+	return sa[pos].toString().allocateCString();
+} 
+
+//////////////////////////////////////////////////////////////////////////////
+// ...and we need to know how long that is.
+extern "C" int
+CIMInstanceGetStringArrayPropertySize(NPIHandle* npiHandle, ::CIMInstance ci,
+	const char* name)
+{
+	(void)npiHandle;
+	// Sanity check
+	if (name == NULL) return -1;
+	if (strlen(name) == 0) return -1;
+	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
+	String Key(name);
+	// get current value
+	OpenWBEM::CIMProperty cp = owci->getProperty(Key);
+	OpenWBEM::CIMValue cv = cp.getValue();
+	OpenWBEM::StringArray sa;
+	if (!cv) {
+		return -1;
+	}
+	sa = cv.toStringArray();
+	return sa.size();
+} 
+
+//////////////////////////////////////////////////////////////////////////////
 extern "C" char*
 CIMInstanceGetStringValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	const char* name)
