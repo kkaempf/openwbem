@@ -46,7 +46,7 @@ extern "C"
 #include <sys/un.h>
 }
 
-#undef shutdown // On OpenUnix, sys/socket.h defines shutdown to be 
+#undef shutdown // On OpenUnix, sys/socket.h defines shutdown to be
 				// _shutdown.  (which breaks OW_HTTPServer, etc.)
 
 // Platform specific socket address type
@@ -68,10 +68,14 @@ typedef int 			OW_SocketHandle_t;
 //typedef sa_family_t		OW_SAFamily_t;
 
 #ifndef OW_HAVE_SOCKLEN_T
+#ifdef OW_USE_GNU_PTH // pth.h typedefs socklen_t
+#include <pth.h>
+#else
 typedef unsigned socklen_t;
+#endif
 #endif
 
 
-#endif //  #if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX) 
+#endif //  #if defined(OW_GNU_LINUX) || defined(OW_OPENUNIX)
 
 #endif

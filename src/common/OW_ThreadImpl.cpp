@@ -306,7 +306,7 @@ int
 OW_ThreadEventImpl::createThreadEvent(OW_ThreadEvent_t& handle)
 {
 #ifdef OW_USE_GNU_PTH
-    initThreads();
+    OW_ThreadImpl::initThreads();
 #endif
 
 	OW_PlatformThreadEvent* pev = new OW_PlatformThreadEvent;
@@ -678,7 +678,7 @@ void
 OW_SemaphoreImpl::createConditionVar(OW_ConditionVar_t& cond)
 {
 #ifdef OW_USE_GNU_PTH
-    initThreads();
+    OW_ThreadImpl::initThreads();
     if(!pth_cond_init(&cond))
     {
         OW_THROW(OW_Exception, "Failed to create condition variable");

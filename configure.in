@@ -227,9 +227,9 @@ case "$host" in
 	PLAT_CXXFLAGS="-fPIC"
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic,-Bexport"
-	CXXSHAREDLIBLINKFLAGS='-shared -G -h $@'
+	CXXSHAREDLIBLINKFLAGS='-fPIC -shared -G -h $@'
 	LDFLAGS="$LDFLAGS"
-	CXXLINK="gcc"
+	CXXLINK="g++"
 	PLAT_OPTFLAGS="-O0"
 	PIDFILEDIR="/etc"
 	;;
