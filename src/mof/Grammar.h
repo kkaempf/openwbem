@@ -59,7 +59,7 @@ public:
 	
 	void Accept( Visitor *pV ) const { pV->VisitFlavor( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pFlavor;
+	OW_AutoPtr< const OW_String > pFlavor;
 	lineInfo theLineInfo;
 };
 
@@ -97,7 +97,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitArrayInitializer( this ); }
 
-	OW_AutoPtrNoVec< OW_List< ConstantValue * > > pConstantValue;
+	OW_AutoPtr< OW_List< ConstantValue * > > pConstantValue;
 };
 
 
@@ -117,7 +117,7 @@ public:
 		pV->VisitQualifierParameterArrayInitializer( this );
 	}
 	
-	OW_AutoPtrNoVec< const ArrayInitializer > pArrayInitializer;
+	OW_AutoPtr< const ArrayInitializer > pArrayInitializer;
 	lineInfo theLineInfo;
 };
 
@@ -137,7 +137,7 @@ public:
 		pV->VisitQualifierParameterConstantValue( this );
 	}
 	
-	OW_AutoPtrNoVec< const ConstantValue > pConstantValue;
+	OW_AutoPtr< const ConstantValue > pConstantValue;
 	lineInfo theLineInfo;
 };
 
@@ -151,7 +151,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitQualifierName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pQualifierName;
+	OW_AutoPtr< const OW_String > pQualifierName;
 };
 
 
@@ -180,9 +180,9 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitQualifier( this ); }
 	
-	OW_AutoPtrNoVec< const QualifierName > pQualifierName;
-	OW_AutoPtrNoVec< const QualifierParameter > pQualifierParameter;
-	OW_AutoPtrNoVec< OW_List< Flavor * > > pFlavor;
+	OW_AutoPtr< const QualifierName > pQualifierName;
+	OW_AutoPtr< const QualifierParameter > pQualifierParameter;
+	OW_AutoPtr< OW_List< Flavor * > > pFlavor;
 	lineInfo theLineInfo;
 };
 
@@ -196,7 +196,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitDefaultValue( this ); }
 
-	OW_AutoPtrNoVec< const Initializer > pInitializer;
+	OW_AutoPtr< const Initializer > pInitializer;
 };
 
 
@@ -222,9 +222,9 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitValueInitializer( this ); }
 
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const OW_String > pValueInitializer;
-	OW_AutoPtrNoVec< const DefaultValue > pDefaultValue;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const OW_String > pValueInitializer;
+	OW_AutoPtr< const DefaultValue > pDefaultValue;
 };
 
 
@@ -238,7 +238,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitPropertyName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pPropertyName;
+	OW_AutoPtr< const OW_String > pPropertyName;
 };
 
 class ClassName
@@ -251,7 +251,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitClassName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pClassName;
+	OW_AutoPtr< const OW_String > pClassName;
 };
 
 class AliasIdentifier
@@ -266,7 +266,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitAliasIdentifier( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pAliasIdentifier;
+	OW_AutoPtr< const OW_String > pAliasIdentifier;
 	lineInfo theLineInfo;
 };
 
@@ -282,7 +282,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitAlias( this ); }
 
-	OW_AutoPtrNoVec< const AliasIdentifier > pAliasIdentifier;
+	OW_AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
 
 
@@ -318,10 +318,10 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitInstanceDeclaration( this ); }
 	
-    OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-    OW_AutoPtrNoVec< const ClassName > pClassName;
-    OW_AutoPtrNoVec< const Alias > pAlias;
-    OW_AutoPtrNoVec< OW_List< ValueInitializer * > > pValueInitializer;
+    OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+    OW_AutoPtr< const ClassName > pClassName;
+    OW_AutoPtr< const Alias > pAlias;
+    OW_AutoPtr< OW_List< ValueInitializer * > > pValueInitializer;
 	 lineInfo theLineInfo;
 };
 
@@ -344,7 +344,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitDefaultFlavor( this ); }
 	
-    OW_AutoPtrNoVec< OW_List< Flavor * > > pFlavor;
+    OW_AutoPtr< OW_List< Flavor * > > pFlavor;
 };
 
 
@@ -360,7 +360,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitMetaElement( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pMetaElement;
+	OW_AutoPtr< const OW_String > pMetaElement;
 	lineInfo theLineInfo;
 };
 
@@ -383,7 +383,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitScope( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< MetaElement * > > pMetaElement;
+	OW_AutoPtr< OW_List< MetaElement * > > pMetaElement;
 };
 
 
@@ -399,7 +399,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitDataType( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pDataType;
+	OW_AutoPtr< const OW_String > pDataType;
 };
 
 class IntegerValue
@@ -421,7 +421,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitArray( this ); }
 
-	OW_AutoPtrNoVec< const IntegerValue > pArray;
+	OW_AutoPtr< const IntegerValue > pArray;
 };
 
 
@@ -442,9 +442,9 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitQualifierType( this ); }
 	
-	OW_AutoPtrNoVec< const DataType > pDataType;
-	OW_AutoPtrNoVec< const Array > pArray;
-	OW_AutoPtrNoVec< const DefaultValue > pDefaultValue;
+	OW_AutoPtr< const DataType > pDataType;
+	OW_AutoPtr< const Array > pArray;
+	OW_AutoPtr< const DefaultValue > pDefaultValue;
 };
 	
 
@@ -468,10 +468,10 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitQualifierDeclaration( this ); }
 
-	OW_AutoPtrNoVec< const QualifierName > pQualifierName;
-	OW_AutoPtrNoVec< const QualifierType > pQualifierType;
-	OW_AutoPtrNoVec< const Scope > pScope;
-	OW_AutoPtrNoVec< const DefaultFlavor > pDefaultFlavor;
+	OW_AutoPtr< const QualifierName > pQualifierName;
+	OW_AutoPtr< const QualifierType > pQualifierType;
+	OW_AutoPtr< const Scope > pScope;
+	OW_AutoPtr< const DefaultFlavor > pDefaultFlavor;
 	lineInfo theLineInfo;
 };
 
@@ -487,7 +487,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitReferenceName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pReferenceName;
+	OW_AutoPtr< const OW_String > pReferenceName;
 };
 
 class IntegerValueBinaryValue : public IntegerValue
@@ -504,7 +504,7 @@ public:
 		pV->VisitIntegerValueBinaryValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pBinaryValue;
+	OW_AutoPtr< const OW_String > pBinaryValue;
 };
 
 class IntegerValueOctalValue : public IntegerValue
@@ -521,7 +521,7 @@ public:
 		pV->VisitIntegerValueOctalValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pOctalValue;
+	OW_AutoPtr< const OW_String > pOctalValue;
 };
 
 class IntegerValueDecimalValue : public IntegerValue
@@ -538,7 +538,7 @@ public:
 		pV->VisitIntegerValueDecimalValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pDecimalValue;
+	OW_AutoPtr< const OW_String > pDecimalValue;
 };
 
 class IntegerValueHexValue : public IntegerValue
@@ -555,7 +555,7 @@ public:
 		pV->VisitIntegerValueHexValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pHexValue;
+	OW_AutoPtr< const OW_String > pHexValue;
 };
 
 
@@ -573,7 +573,7 @@ public:
 		pV->VisitConstantValueIntegerValue( this );
 	}
 
-	OW_AutoPtrNoVec< const IntegerValue > pIntegerValue;
+	OW_AutoPtr< const IntegerValue > pIntegerValue;
 };
 
 class ConstantValueFloatValue : public ConstantValue
@@ -590,7 +590,7 @@ public:
 		pV->VisitConstantValueFloatValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pFloatValue;
+	OW_AutoPtr< const OW_String > pFloatValue;
 };
 
 class ConstantValueCharValue : public ConstantValue
@@ -607,7 +607,7 @@ public:
 		pV->VisitConstantValueCharValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pCharValue;
+	OW_AutoPtr< const OW_String > pCharValue;
 };
 
 class ConstantValueStringValue : public ConstantValue
@@ -624,7 +624,7 @@ public:
 		pV->VisitConstantValueStringValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pStringValue;
+	OW_AutoPtr< const OW_String > pStringValue;
 };
 
 class ConstantValueBooleanValue : public ConstantValue
@@ -641,7 +641,7 @@ public:
 		pV->VisitConstantValueBooleanValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pBooleanValue;
+	OW_AutoPtr< const OW_String > pBooleanValue;
 };
 
 class ConstantValueNullValue : public ConstantValue
@@ -658,7 +658,7 @@ public:
 		pV->VisitConstantValueNullValue( this );
 	}
 
-	OW_AutoPtrNoVec< const OW_String > pNullValue;
+	OW_AutoPtr< const OW_String > pNullValue;
 };
 
 
@@ -673,7 +673,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitObjectHandle( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pObjectHandle;
+	OW_AutoPtr< const OW_String > pObjectHandle;
 };
 
 
@@ -700,7 +700,7 @@ public:
 		pV->VisitReferenceInitializerAliasIdentifier( this );
 	}
 	
-	OW_AutoPtrNoVec< const AliasIdentifier > pAliasIdentifier;
+	OW_AutoPtr< const AliasIdentifier > pAliasIdentifier;
 };
 
 
@@ -718,7 +718,7 @@ public:
 		pV->VisitReferenceInitializerObjectHandle( this );
 	}
 
-	OW_AutoPtrNoVec< const ObjectHandle > pObjectHandle;
+	OW_AutoPtr< const ObjectHandle > pObjectHandle;
 };
 
 
@@ -738,7 +738,7 @@ public:
 		pV->VisitInitializerReferenceInitializer( this );
 	}
 
-	OW_AutoPtrNoVec< const ReferenceInitializer > pReferenceInitializer;
+	OW_AutoPtr< const ReferenceInitializer > pReferenceInitializer;
 };		
 
 
@@ -756,7 +756,7 @@ public:
 		pV->VisitInitializerArrayInitializer( this );
 	}
 
-	OW_AutoPtrNoVec< const ArrayInitializer > pArrayInitializer;
+	OW_AutoPtr< const ArrayInitializer > pArrayInitializer;
 };		
 
 
@@ -774,7 +774,7 @@ public:
 		pV->VisitInitializerConstantValue( this );
 	}
 
-	OW_AutoPtrNoVec< const ConstantValue > pConstantValue;
+	OW_AutoPtr< const ConstantValue > pConstantValue;
 };		
 
 
@@ -789,7 +789,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitParameterName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pParameterName;
+	OW_AutoPtr< const OW_String > pParameterName;
 };
 
 
@@ -812,7 +812,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitObjectRef( this ); }
 
-	OW_AutoPtrNoVec< const ClassName > pClassName;
+	OW_AutoPtr< const ClassName > pClassName;
 };
 
 
@@ -841,10 +841,10 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitParameterObjectRef( this ); }
 
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const ObjectRef > pObjectRef;
-	OW_AutoPtrNoVec< const ParameterName > pParameterName;
-	OW_AutoPtrNoVec< const Array > pArray;	
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const ObjectRef > pObjectRef;
+	OW_AutoPtr< const ParameterName > pParameterName;
+	OW_AutoPtr< const Array > pArray;	
 };
 
 
@@ -873,10 +873,10 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitParameterDataType( this ); }
 
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const DataType > pDataType;
-	OW_AutoPtrNoVec< const ParameterName > pParameterName;
-	OW_AutoPtrNoVec< const Array > pArray;	
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const DataType > pDataType;
+	OW_AutoPtr< const ParameterName > pParameterName;
+	OW_AutoPtr< const Array > pArray;	
 };
 
 
@@ -891,7 +891,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitMethodName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pMethodName;
+	OW_AutoPtr< const OW_String > pMethodName;
 };
 
 
@@ -925,10 +925,10 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitMethodDeclaration( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const DataType > pDataType;
-	OW_AutoPtrNoVec< const MethodName > pMethodName;
-	OW_AutoPtrNoVec< OW_List< Parameter * > > pParameter;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const DataType > pDataType;
+	OW_AutoPtr< const MethodName > pMethodName;
+	OW_AutoPtr< OW_List< Parameter * > > pParameter;
 };
 
 
@@ -957,10 +957,10 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitReferenceDeclaration( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const ObjectRef > pObjectRef;
-	OW_AutoPtrNoVec< const ReferenceName > pReferenceName;
-	OW_AutoPtrNoVec< const DefaultValue > pDefaultValue;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const ObjectRef > pObjectRef;
+	OW_AutoPtr< const ReferenceName > pReferenceName;
+	OW_AutoPtr< const DefaultValue > pDefaultValue;
 };
 
 
@@ -993,11 +993,11 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitPropertyDeclaration( this ); }
 
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const DataType > pDataType;
-	OW_AutoPtrNoVec< const PropertyName > pPropertyName;
-	OW_AutoPtrNoVec< const Array > pArray;
-	OW_AutoPtrNoVec< const DefaultValue > pDefaultValue;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const DataType > pDataType;
+	OW_AutoPtr< const PropertyName > pPropertyName;
+	OW_AutoPtr< const Array > pArray;
+	OW_AutoPtr< const DefaultValue > pDefaultValue;
 	lineInfo theLineInfo;
 };
 
@@ -1032,7 +1032,7 @@ public:
 		pV->VisitAssociationFeatureClassFeature( this );
 	}
 	
-	OW_AutoPtrNoVec< const ClassFeature > pClassFeature;
+	OW_AutoPtr< const ClassFeature > pClassFeature;
 };
 
 
@@ -1051,7 +1051,7 @@ public:
 		pV->VisitClassFeatureMethodDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const MethodDeclaration > pMethodDeclaration;
+	OW_AutoPtr< const MethodDeclaration > pMethodDeclaration;
 };
 
 
@@ -1070,7 +1070,7 @@ public:
 		pV->VisitClassFeaturePropertyDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const PropertyDeclaration > pPropertyDeclaration;
+	OW_AutoPtr< const PropertyDeclaration > pPropertyDeclaration;
 };
 
 
@@ -1091,7 +1091,7 @@ public:
 		pV->VisitClassFeatureReferenceDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const ReferenceDeclaration > pReferenceDeclaration;
+	OW_AutoPtr< const ReferenceDeclaration > pReferenceDeclaration;
 };
 
 
@@ -1106,7 +1106,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitSuperClass( this ); }
 	
-	OW_AutoPtrNoVec< const ClassName > pClassName;
+	OW_AutoPtr< const ClassName > pClassName;
 };
 
 
@@ -1143,11 +1143,11 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitIndicDeclaration( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const ClassName > pClassName;
-	OW_AutoPtrNoVec< const Alias > pAlias;
-	OW_AutoPtrNoVec< const SuperClass > pSuperClass;
-	OW_AutoPtrNoVec< OW_List< ClassFeature * > > pClassFeature;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const ClassName > pClassName;
+	OW_AutoPtr< const Alias > pAlias;
+	OW_AutoPtr< const SuperClass > pSuperClass;
+	OW_AutoPtr< OW_List< ClassFeature * > > pClassFeature;
 	lineInfo theLineInfo;
 };
 
@@ -1185,11 +1185,11 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitAssocDeclaration( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const ClassName > pClassName;
-	OW_AutoPtrNoVec< const Alias > pAlias;
-	OW_AutoPtrNoVec< const SuperClass > pSuperClass;
-	OW_AutoPtrNoVec< OW_List< AssociationFeature * > > pAssociationFeature;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const ClassName > pClassName;
+	OW_AutoPtr< const Alias > pAlias;
+	OW_AutoPtr< const SuperClass > pSuperClass;
+	OW_AutoPtr< OW_List< AssociationFeature * > > pAssociationFeature;
 	lineInfo theLineInfo;
 };
 
@@ -1227,11 +1227,11 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitClassDeclaration( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< Qualifier * > > pQualifier;
-	OW_AutoPtrNoVec< const ClassName > pClassName;
-	OW_AutoPtrNoVec< const Alias > pAlias;
-	OW_AutoPtrNoVec< const SuperClass > pSuperClass;
-	OW_AutoPtrNoVec< OW_List< ClassFeature * > > pClassFeature;
+	OW_AutoPtr< OW_List< Qualifier * > > pQualifier;
+	OW_AutoPtr< const ClassName > pClassName;
+	OW_AutoPtr< const Alias > pAlias;
+	OW_AutoPtr< const SuperClass > pSuperClass;
+	OW_AutoPtr< OW_List< ClassFeature * > > pClassFeature;
 	lineInfo theLineInfo;
 };
 
@@ -1247,7 +1247,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitPragmaParameter( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pPragmaParameter;
+	OW_AutoPtr< const OW_String > pPragmaParameter;
 };
 
 
@@ -1262,7 +1262,7 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitPragmaName( this ); }
 
-	OW_AutoPtrNoVec< const OW_String > pPragmaName;
+	OW_AutoPtr< const OW_String > pPragmaName;
 };
 
 
@@ -1282,8 +1282,8 @@ public:
 
 	void Accept( Visitor *pV ) const { pV->VisitCompilerDirective( this ); }
 	
-	OW_AutoPtrNoVec< const PragmaName > pPragmaName;
-	OW_AutoPtrNoVec< const PragmaParameter > pPragmaParameter;
+	OW_AutoPtr< const PragmaName > pPragmaName;
+	OW_AutoPtr< const PragmaParameter > pPragmaParameter;
 	lineInfo theLineInfo;
 };
 
@@ -1310,7 +1310,7 @@ public:
 		pV->VisitMOFProductionInstanceDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const InstanceDeclaration > pInstanceDeclaration;
+	OW_AutoPtr< const InstanceDeclaration > pInstanceDeclaration;
 };
 
 
@@ -1329,7 +1329,7 @@ public:
 		pV->VisitMOFProductionQualifierDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const QualifierDeclaration > pQualifierDeclaration;
+	OW_AutoPtr< const QualifierDeclaration > pQualifierDeclaration;
 };
 
 
@@ -1348,7 +1348,7 @@ public:
 		pV->VisitMOFProductionIndicDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const IndicDeclaration > pIndicDeclaration;
+	OW_AutoPtr< const IndicDeclaration > pIndicDeclaration;
 };
 
 
@@ -1367,7 +1367,7 @@ public:
 		pV->VisitMOFProductionAssocDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const AssocDeclaration > pAssocDeclaration;
+	OW_AutoPtr< const AssocDeclaration > pAssocDeclaration;
 };
 
 
@@ -1386,7 +1386,7 @@ public:
 		pV->VisitMOFProductionClassDeclaration( this );
 	}
 	
-	OW_AutoPtrNoVec< const ClassDeclaration > pClassDeclaration;
+	OW_AutoPtr< const ClassDeclaration > pClassDeclaration;
 };
 
 
@@ -1405,7 +1405,7 @@ public:
 		pV->VisitMOFProductionCompilerDirective( this );
 	}
 
-	OW_AutoPtrNoVec< const CompilerDirective > pCompilerDirective;
+	OW_AutoPtr< const CompilerDirective > pCompilerDirective;
 };
 
 
@@ -1425,7 +1425,7 @@ public:
 	}
 	void Accept( Visitor *pV ) const { pV->VisitMOFSpecification( this ); }
 	
-	OW_AutoPtrNoVec< OW_List< MOFProduction * > > pMOFProduction;
+	OW_AutoPtr< OW_List< MOFProduction * > > pMOFProduction;
 };
 
 

@@ -48,7 +48,7 @@ public:
 
 	static OW_String fixParsedString(const OW_String& s);
 	static OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler;
-	static OW_AutoPtrNoVec<MOFSpecification> mofSpecification;
+	static OW_AutoPtr<MOFSpecification> mofSpecification;
 	static OW_String basepath;
 
 	// This variable is only for convenience for the lexer and parser.

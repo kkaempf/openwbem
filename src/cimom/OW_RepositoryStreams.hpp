@@ -68,7 +68,7 @@ public:
 		, m_strbuf(dynamic_cast<OW_RepositoryIStreamBuf*>(rdbuf())) {}
 
 private:
-		OW_AutoPtrNoVec<OW_RepositoryIStreamBuf> m_strbuf;
+		OW_AutoPtr<OW_RepositoryIStreamBuf> m_strbuf;
 };
 
 
@@ -99,16 +99,16 @@ private:
 class OW_RepositoryOStream : public std::ostream
 {
 public:
-	OW_RepositoryOStream() 
+	OW_RepositoryOStream()
 		: std::ostream(new OW_RepositoryOStreamBuf)
-		, m_buf(dynamic_cast<OW_RepositoryOStreamBuf*>(rdbuf())) 
+		, m_buf(dynamic_cast<OW_RepositoryOStreamBuf*>(rdbuf()))
 	{}
 	unsigned char* getData() { return m_buf->getData(); }
 	int length() { return m_buf->length();  }
 	void clearData() { m_buf->clear(); }
 
 private:
-	OW_AutoPtrNoVec<OW_RepositoryOStreamBuf> m_buf;
+	OW_AutoPtr<OW_RepositoryOStreamBuf> m_buf;
 };
 
 #endif	// __OW_REPOSITORYSTREAMS_HPP__

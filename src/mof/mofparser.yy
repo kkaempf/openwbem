@@ -188,7 +188,7 @@ void yyerror( char* );
 /* rules */
 mofSpecification:
 	mofProductionList {
-		OW_AutoPtrNoVec<MOFSpecification> p(new MOFSpecification($1));
+		OW_AutoPtr<MOFSpecification> p(new MOFSpecification($1));
 		MofCompiler::mofSpecification = p;
 		}
 	;

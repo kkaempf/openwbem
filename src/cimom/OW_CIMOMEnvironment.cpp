@@ -197,14 +197,14 @@ OW_CIMOMEnvironment::init()
 	setConfigItem(OW_ConfigOpts::WQL_LIB_opt,
 		DEFAULT_WQL_LIB, false);
 
-	setConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt, 
+	setConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt,
 		DEFAULT_REQ_HANDLER_TTL, false);
 
 	_createLogger();
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_CIMOMEnvironment::unloadProviders()
 {
 	m_providerManager->unloadProviders(createProvEnvRef(this));
@@ -244,6 +244,11 @@ OW_CIMOMEnvironment::startServices()
 void
 OW_CIMOMEnvironment::shutdown()
 {
+	// There are lots of yield() calls in here, because we have race conditions
+	// when shutting down.  Problem is that sometimes a threads' destructor will
+	// be running, and we unload the library out from underneath it, causing
+	// a segfault.
+
 	logDebug("CIMOM Environment shutting down...");
 
 	m_shuttingDown = true;
@@ -255,6 +260,7 @@ OW_CIMOMEnvironment::shutdown()
 	{
 		m_pollingManager->shutdown();
 		m_pollingManager->join();
+		OW_Thread::yield();
 		m_pollingManager = 0;
 	}
 	
@@ -267,36 +273,45 @@ OW_CIMOMEnvironment::shutdown()
 	for(int i = int(m_services.size())-1; i >= 0; i--)
 	{
 		m_services[i]->shutdown();
+		OW_Thread::yield();
 		m_services[i].setNull();
 	}
+	OW_Thread::yield();
 	m_services.clear();
 
 	// Unload all request handlers
+	OW_Thread::yield();
 	m_reqHandlers.clear();
 
 	// Unload the wql library if loaded
+	OW_Thread::yield();
     m_wqlLib = 0;
 
 	// Shutdown indication processing
+	OW_Thread::yield();
 	m_indicationRepLayerLib = 0;
 	if(m_indicationServer)
 	{
 		m_indicationServer->shutdown();
 		m_indicationServer->join();
+		OW_Thread::yield();
 		m_indicationServer.setNull();
 	}
 
 	// Delete the authentication manager
+	OW_Thread::yield();
 	m_authManager = 0;
 
 	// Shutdown the cim server and delete it
 	if(m_cimServer)
 	{
 		m_cimServer->close();
+		OW_Thread::yield();
 		m_cimServer = 0;
 	}
 
 	// Delete the provider manager
+	OW_Thread::yield();
 	m_providerManager = 0;
 
 	// We keep the logger around so all of the shutdown sequence can be
@@ -442,7 +457,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 				m_reqHandlers[(*iter)] = rqData;
 				ml.release();
 				logCustInfo(format(
-					"CIMOM associating Content-Type %1 with Request Handler %2", 
+					"CIMOM associating Content-Type %1 with Request Handler %2",
 					*iter, libName));
 			}
 		}
@@ -768,7 +783,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_RequestHandlerIFCRef
-OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) 
+OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 {
 	OW_RequestHandlerIFCRef ref;
 	ref.setNull();
@@ -779,7 +794,7 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 
 
 	OW_MutexLock ml(m_reqHandlersLock);
-	ReqHandlerMap::iterator iter = 
+	ReqHandlerMap::iterator iter =
 			m_reqHandlers.find(id);
 	if (iter != m_reqHandlers.end())
 	{
@@ -791,7 +806,7 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 		}
 		if (iter->second.rqIFCRef)
 		{
-			ref = OW_RequestHandlerIFCRef(iter->second.rqIFCRef.getLibRef(), 
+			ref = OW_RequestHandlerIFCRef(iter->second.rqIFCRef.getLibRef(),
 				iter->second.rqIFCRef->clone());
 			iter->second.dt.setToCurrent();
 			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
@@ -800,7 +815,7 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 		else
 		{
 			logError(format(
-				"Error loading request handler library %1 for content type %2", 
+				"Error loading request handler library %1 for content type %2",
 				iter->second.filename, id));
 		}
 	}
@@ -822,7 +837,7 @@ OW_CIMOMEnvironment::unloadReqHandlers()
 	OW_DateTime dt;
 	dt.setToCurrent();
 	OW_MutexLock ml(m_reqHandlersLock);
-	for (ReqHandlerMap::iterator iter = m_reqHandlers.begin(); 
+	for (ReqHandlerMap::iterator iter = m_reqHandlers.begin();
 		  iter != m_reqHandlers.end(); ++iter)
 	{
 		if (iter->second.rqIFCRef)

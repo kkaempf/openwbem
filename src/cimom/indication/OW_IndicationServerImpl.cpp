@@ -104,9 +104,9 @@ OW_Notifier::run()
 	{
 		try
 		{
-			m_trans.m_provider->exportIndication(createProvEnvRef(
-				m_pmgr->getEnvironment(), lch), m_trans.m_handler,
-				m_trans.m_indication);
+			m_trans->m_provider->exportIndication(createProvEnvRef(
+				m_pmgr->getEnvironment(), lch), m_trans->m_handler,
+				m_trans->m_indication);
 		}
 		catch(OW_Exception& e)
 		{
@@ -120,10 +120,16 @@ OW_Notifier::run()
 			env->logError("Unknown exception caught in OW_Notifier::run");
 		}
 
-		if(!m_pmgr->notifyDone(m_trans))
+		// delete the transaction before we notifyDone, to avoid a race
+		// condition between the transaction destructor and the CIMOM unloading
+		// the indication library.
+		m_trans.reset();
+		OW_NotifyTrans* t = 0;
+		if(!m_pmgr->notifyDone(t))
 		{
 			break;
 		}
+		m_trans = t;
 	}
 }
 
@@ -243,6 +249,7 @@ OW_IndicationServerImpl::shutdown()
 		{
 			OW_Thread::yield();
 		}
+		OW_Thread::yield();
 	}
 }
 
@@ -284,7 +291,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	}
 	catch(OW_CIMException& e)
 	{
-		m_env->logError(format("%1 caught in OW_Notifier::run", e.type()));
+		m_env->logError(format("%1 caught in OW_IndicationServerImpl::_processIndication", e.type()));
 		m_env->logError(format("File: %1", e.getFile()));
 		m_env->logError(format("Line: %1", e.getLine()));
 		m_env->logError(format("Msg: %1", e.getMessage()));
@@ -417,6 +424,7 @@ OW_IndicationServerImpl::addTrans(const OW_CIMInstance& indication,
 	OW_CIMInstance& handler, OW_IndicationExportProviderIFCRef provider)
 {
 	OW_MutexLock ml(m_guard);
+	OW_MutexLock ml2(m_runCountGuard);
 
 	OW_NotifyTrans trans(indication, handler, provider);
 	if(m_runCount < MAX_NOTIFIERS)
@@ -433,15 +441,16 @@ OW_IndicationServerImpl::addTrans(const OW_CIMInstance& indication,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_IndicationServerImpl::notifyDone(OW_NotifyTrans& outTrans)
+OW_IndicationServerImpl::notifyDone(OW_NotifyTrans*& outTrans)
 {
 	OW_MutexLock ml(m_guard);
+	OW_MutexLock ml2(m_runCountGuard);
 
 	OW_Bool rv = false;
 	m_runCount--;
 	if(m_runCount < MAX_NOTIFIERS && m_trans.size() > 0)
 	{
-		outTrans = m_trans[0];
+		outTrans = new OW_NotifyTrans(m_trans[0]);
 		m_trans.remove(0);
 		m_runCount++;
 		rv = true;

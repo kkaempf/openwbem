@@ -69,8 +69,6 @@ public:
 			const OW_String& methodName, const OW_String& nameSpace) = 0;
 
 
-	//virtual OW_Reference<std::iostream> getStream() = 0;
-
 	/**
 	 * Get the supported features of a CIMOM
 	 * @return a OW_CIMFeatures object listing the features of the CIMOM.

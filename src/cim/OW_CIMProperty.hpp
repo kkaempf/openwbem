@@ -80,6 +80,13 @@ public:
 	OW_CIMProperty(const OW_String& name, const OW_CIMValue& value);
 
 	/**
+	 * Create an OW_CIMProperty object with a name and a type.
+	 * @param name The name for this OW_CIMProperty object.
+	 * @param dt The type of this OW_CIMProperty
+	 */
+	OW_CIMProperty(const OW_String& name, const OW_CIMDataType& dt);
+
+	/**
 	 * Copy constructor
 	 * @param arg The OW_CIMProperty to make this object a copy of.
 	 */

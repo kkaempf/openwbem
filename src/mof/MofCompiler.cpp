@@ -226,5 +226,6 @@ OW_String MofCompiler::fixParsedString(const OW_String& s)
 // static vars
 OW_Reference<OW_MofParserErrorHandlerIFC> MofCompiler::theErrorHandler;
 lineInfo MofCompiler::theLineInfo;
-OW_AutoPtrNoVec<MOFSpecification> MofCompiler::mofSpecification;
+OW_AutoPtr<MOFSpecification> MofCompiler::mofSpecification;
 OW_String MofCompiler::basepath;
+

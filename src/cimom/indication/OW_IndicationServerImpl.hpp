@@ -42,6 +42,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_IndicationServer.hpp"
+#include "OW_AutoPtr.hpp"
 
 class OW_IndicationServerImpl;
 
@@ -76,7 +77,7 @@ class OW_Notifier : public OW_Runnable
 {
 public:
 	OW_Notifier(OW_IndicationServerImpl* pmgr, OW_NotifyTrans& ntrans) :
-		m_pmgr(pmgr), m_trans(ntrans) {}
+		m_pmgr(pmgr), m_trans(new OW_NotifyTrans(ntrans)) {}
 
 	void start();
 
@@ -84,7 +85,11 @@ public:
 
 private:
 	OW_IndicationServerImpl* m_pmgr;
-	OW_NotifyTrans m_trans;
+	OW_AutoPtr<OW_NotifyTrans> m_trans; // This is an AutoPtr so we can delete
+	// the transaction before we notifyDone, to avoid a race
+	// condition between the transaction destructor and the CIMOM unloading
+	// the indication library.
+
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -107,7 +112,7 @@ public:
 	void processIndication(const OW_CIMInstance& instance,
 		const OW_CIMNameSpace& instNS);
 
-	int getRunCount() { return m_runCount; }
+	int getRunCount() { OW_MutexLock ml(m_runCountGuard); return m_runCount; }
 
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
@@ -122,7 +127,7 @@ private:
 
 	OW_IndicationExportProviderIFCRef getProvider(const OW_String& className);
 
-	OW_Bool notifyDone(OW_NotifyTrans& outTrans);
+	OW_Bool notifyDone(OW_NotifyTrans*& outTrans);
 
 	struct ProcIndicationTrans
 	{
@@ -153,6 +158,7 @@ private:
 	OW_Bool m_shuttingDown;
 	OW_ThreadEvent m_wakeEvent;
 	OW_Mutex m_procTransGuard;
+	OW_Mutex m_runCountGuard;
 	OW_Array<ProcIndicationTrans> m_procTrans;
 	OW_Bool m_running;
 	OW_CIMOMEnvironmentRef m_env;

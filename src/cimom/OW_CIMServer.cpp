@@ -672,12 +672,15 @@ OW_CIMServer::deleteClass(const OW_CIMObjectPath& path,
 		// undo so as to not leave things in a weird state?
 
 		// delete the class and any subclasses
+		// TODO: This doesn't seem to delete the sub-classes.  FIXME!!!
 		if(!m_mStore.deleteClass(ns, cname))
 		{
 			OW_THROWCIM(OW_CIMException::NOT_FOUND);
 		}
 
 		// delete any instances of the class
+		// TODO: Does this also delete the instances of the subclasses? If not,
+		// then it needs to be fixed!
 		m_iStore.deleteClass(ns, cname);
 
 

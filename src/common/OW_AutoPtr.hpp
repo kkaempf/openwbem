@@ -28,12 +28,12 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef __OW_AUTOPTR_HPP__
-#define __OW_AUTOPTR_HPP__
+#ifndef OW_AUTOPTR_HPP_
+#define OW_AUTOPTR_HPP_
 
 #include "OW_config.h"
 
-template <class X> class OW_AutoPtrNoVec
+template <class X> class OW_AutoPtr
 {
 private:
 	X* _ptr;
@@ -42,16 +42,16 @@ public:
 	typedef X element_type;
 
 	/**
-	 * Construct a new OW_AutoPtr. 
-	 * @param isArray true if memory is allocated with new[], false if 
+	 * Construct a new OW_AutoPtr.
+	 * @param isArray true if memory is allocated with new[], false if
 	 *        memory is allocated with new.
-	 * @param p pointer to the object 
+	 * @param p pointer to the object
 	 */
-	explicit OW_AutoPtrNoVec(X* p = 0) : _ptr(p) {}
+	explicit OW_AutoPtr(X* p = 0) : _ptr(p) {}
 
-	OW_AutoPtrNoVec(OW_AutoPtrNoVec& a) : _ptr(a.release()) {}
+	OW_AutoPtr(OW_AutoPtr& a) : _ptr(a.release()) {}
 
-	OW_AutoPtrNoVec& operator= (X* p)
+	OW_AutoPtr& operator= (X* p)
 	{
 		if(p != _ptr)
 		{
@@ -61,7 +61,7 @@ public:
 		return *this;
 	}
 
-	OW_AutoPtrNoVec& operator= (OW_AutoPtrNoVec& a)
+	OW_AutoPtr& operator= (OW_AutoPtr& a)
 	{
 		if(&a != this)
 		{
@@ -71,7 +71,7 @@ public:
 		return *this;
 	}
 
-	~OW_AutoPtrNoVec()
+	~OW_AutoPtr()
 	{
 		delete _ptr;
 	}
@@ -102,10 +102,10 @@ public:
 	typedef X element_type;
 
 	/**
-	 * Construct a new OW_AutoPtr. 
-	 * @param isArray true if memory is allocated with new[], false if 
+	 * Construct a new OW_AutoPtrVec.
+	 * @param isArray true if memory is allocated with new[], false if
 	 *        memory is allocated with new.
-	 * @param p pointer to the object 
+	 * @param p pointer to the object
 	 */
 	explicit OW_AutoPtrVec(X* p = 0) : _ptr(p) {}
 

@@ -485,9 +485,14 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 {
 	// If this class has an association qualifier, then ensure
 	// the association flag is on
-	if(child.getQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
+	OW_CIMQualifier childAssocQual = child.getQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
+	if(childAssocQual)
 	{
-		child.setIsAssociation(true);
+		if (!childAssocQual.getValue()
+			|| childAssocQual.getValue() != OW_CIMValue(false))
+		{
+			child.setIsAssociation(true);
+		}
 	}
 
 	// Determine if any properties are keys
@@ -864,6 +869,8 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
   }
 
   // Don't allow the child class to be an association if the parent class isn't.
+  // This shouldn't normally happen, because the association qualifier has
+  // a DISABLEOVERRIDE flavor, so it will be caught in an earlier test.
   if(childClass.isAssociation() && !parentClass.isAssociation())
   {
 	  OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -1109,13 +1116,13 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 
 	enum QualState
 	{
-		UNSET,
-		TRUE,
-		FALSE
+		EFALSE,
+		ETRUE,
+		EUNSET
 	};
 
-	QualState isIndication = UNSET;
-	QualState isAbstract = UNSET;
+	QualState isIndication = EUNSET;
+	QualState isAbstract = EUNSET;
 	
 	if(!isKeyed)
 	{
@@ -1144,45 +1151,54 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 	{
 		OW_String qname = qra[i].getName();
 		OW_CIMValue cv = qra[i].getValue();
-		if(isAbstract == UNSET
+		if(isAbstract == EUNSET
 			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ABSTRACT)
 			&& cv)
 		{
 			if (cv == OW_CIMValue(OW_Bool(true)))
 			{
-				isAbstract = TRUE;
+				isAbstract = ETRUE;
 			}
 			else
 			{
-				isAbstract = FALSE;
+				isAbstract = EFALSE;
 			}
-			if(isIndication != UNSET)
+			if(isIndication != EUNSET)
 			{
 				break;
 			}
 			continue;
 		}
 
-		if(isIndication == UNSET
+		if(isIndication == EUNSET
 			&& qname.equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_INDICATION)
 			&& cv)
 		{
 			if (cv == OW_CIMValue(OW_Bool(true)))
 			{
-				isIndication = TRUE;
+				isIndication = ETRUE;
 			}
 			else
 			{
-				isIndication = FALSE;
+				isIndication = EFALSE;
 			}
-			if(isAbstract != UNSET)
+			if(isAbstract != EUNSET)
 			{
 				break;
 			}
 		}
 	}
 
-	if(isIndication == FALSE && isAbstract == FALSE && !isKeyed)
+	if (isIndication == EUNSET)
+	{
+		isIndication = EFALSE;
+	}
+	if (isAbstract == EUNSET)
+	{
+		isAbstract = EFALSE;
+	}
+
+	if(isIndication == EFALSE && isAbstract == EFALSE && !isKeyed)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("Non-abstract class must have key properties: %1",

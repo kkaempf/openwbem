@@ -177,7 +177,11 @@ OW_XMLCIMFactory::createClass(OW_XMLNode const& node)
 		OW_CIMQualifier cq = createQualifier(valueNode);
 		if(cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 		{
-			rval.setIsAssociation(true);
+			if (!cq.getValue()
+				|| cq.getValue() != OW_CIMValue(false))
+			{
+				rval.setIsAssociation(true);
+			}
 		}
 
 		rval.addQualifier(cq);

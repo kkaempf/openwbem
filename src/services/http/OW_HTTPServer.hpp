@@ -115,7 +115,7 @@ private:
 
 	Options m_options;
 
-	OW_AutoPtrNoVec<OW_Semaphore> m_threadCountSemaphore;
+	OW_AutoPtr<OW_Semaphore> m_threadCountSemaphore;
 	OW_Reference<OW_UnnamedPipe> m_upipe;
 	OW_Array<OW_URL> m_urls;
 

@@ -307,6 +307,14 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CreateClass
 
 	OW_CIMClass cc("footest");
+	OW_CIMQualifierType keyQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_KEY, "root"));
+	OW_CIMQualifier keyQual(keyQualType);
+	keyQual.setValue(OW_CIMValue(true));
+	OW_CIMProperty theKeyProp("theKeyProp", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+	theKeyProp.addQualifier(keyQual);
+
+	cc.addProperty(theKeyProp);
+
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
@@ -330,9 +338,26 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	OW_CIMQualifierType assocQualType = hdl->getQualifierType(OW_CIMObjectPath(OW_CIMQualifier::CIM_QUAL_ASSOCIATION, "root"));
 	OW_CIMQualifier assocQual(assocQualType);
 	assocQual.setValue(OW_CIMValue(true));
+	baseClass.addProperty(theKeyProp);
 	baseClass.addQualifier(assocQual);
+
 	try
 	{
+		try
+		{
+			// shouldn't need to do this, but there seems to be a bug in OpenWBEM
+			hdl->deleteClass(OW_CIMObjectPath("invalidTestSub", "root"));
+		}
+		catch (const OW_CIMException&)
+		{
+		}
+		try
+		{
+			hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
+		}
+		catch (const OW_CIMException&)
+		{
+		}
 		hdl->createClass(OW_CIMObjectPath(baseClass.getName(), "root"), baseClass);
 	}
 	catch (const OW_CIMException& e)
@@ -343,8 +368,10 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		}
 	}
 
+	// setup's done, now do the tests
 	try
 	{
+		// test overriding an DISABLEOVERRIDE qualifier
 		OW_CIMClass cc2("invalidTestSub");
 		cc2.setSuperClass("invalidTestBase");
 		OW_CIMQualifier assocQual2(assocQual);
@@ -358,6 +385,38 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
+
+	try
+	{
+		// test adding an key to a subclass when the parent already has keys.
+		OW_CIMClass cc2("invalidTestSub");
+		cc2.setSuperClass("invalidTestBase");
+		OW_CIMProperty theKeyProp2("theKeyProp2", OW_CIMDataType(OW_CIMDataType::BOOLEAN));
+		theKeyProp2.addQualifier(keyQual);
+		cc2.addProperty(theKeyProp2);
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->createClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+	}
+
+	try
+	{
+		// test adding a class with no keys
+		OW_CIMClass cc2("invalidTestSub");
+		OW_CIMObjectPath cop(cc2.getName(), "root");
+		hdl->createClass(cop, cc2);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+	}
+
+	// cleanup
 
 	hdl->deleteClass(OW_CIMObjectPath(baseClass.getName(), "root"));
 

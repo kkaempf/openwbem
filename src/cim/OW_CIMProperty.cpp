@@ -125,6 +125,15 @@ OW_CIMProperty::OW_CIMProperty(const OW_String& name,
 	m_pdata->m_propertyDataType = value.getCIMDataType();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMProperty::OW_CIMProperty(const OW_String& name,
+	const OW_CIMDataType& dt) :
+	OW_CIMElement(), m_pdata(new PROPData)
+{
+	m_pdata->m_name = name;
+	m_pdata->m_propertyDataType = dt;
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMProperty::OW_CIMProperty(const OW_CIMProperty& x) :
