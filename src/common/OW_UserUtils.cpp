@@ -49,6 +49,9 @@
 #include <pwd.h>
 #endif
 
+#include <cerrno>
+#include <vector>
+
 namespace OW_NAMESPACE
 {
 
@@ -105,10 +108,8 @@ String getUserName(uid_t uid,bool& ok)
 	return String(name);
 #else
 
-#ifdef HAVE_GETPWUID_R
+#ifdef OW_HAVE_GETPWUID_R
 	passwd pw;
-	//I can't imagine an easy way to calculate the size of the additional buffer
-	//  ahead of time. 
 	size_t const additionalSize =
 #ifdef _SC_GETPW_R_SIZE_MAX
 		sysconf (_SC_GETPW_R_SIZE_MAX);
@@ -117,7 +118,15 @@ String getUserName(uid_t uid,bool& ok)
 #endif
 	std::vector<char> additional(additionalSize);
 	passwd* result;
-	::getpwuid_r(uid, &pw, &additional[0], additional.size(), &result);
+	int rv = 0;
+	do
+	{
+		rv = ::getpwuid_r(uid, &pw, &additional[0], additional.size(), &result);
+		if (rv == ERANGE)
+		{
+			additional.resize(additional.size() * 2);
+		}
+	} while (rv == ERANGE);
 #else
 	MutexLock lock(g_getpwMutex);
 	passwd* result = ::getpwuid(uid);
@@ -144,7 +153,7 @@ getUserId(const String& userName, bool& validUserName)
 #else
 
 
-#ifdef HAVE_GETPWNAM_R
+#ifdef OW_HAVE_GETPWNAM_R
 	size_t bufsize =
 #ifdef _SC_GETPW_R_SIZE_MAX
 		sysconf (_SC_GETPW_R_SIZE_MAX);
@@ -154,8 +163,17 @@ getUserId(const String& userName, bool& validUserName)
 	std::vector<char> buf(bufsize);
 	struct passwd pwd;
 	passwd* result = 0;
-	int rv = getpwnam_r(userName.c_str(), &pwd, &buf[0], bufsize, &result);
-	if ((rv != 0) || (p != &pwd))
+	int rv = 0;
+	do
+	{
+		rv = ::getpwnam_r(userName.c_str(), &pwd, &buf[0], bufsize, &result);
+		if (rv == ERANGE)
+		{
+			buf.resize(buf.size() * 2);
+		}
+	} while (rv == ERANGE);
+
+	if (rv != 0)
 	{
 		return INVALID_USERID;
 	}
