@@ -461,7 +461,7 @@ int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
 	int lerrno, rc = 0;
-	pollfd pfds[selarray.size()]; 
+	AutoPtrVec<pollfd> pfds(new pollfd[selarray.size()]); 
 	// here we spin checking for thread cancellation every so often.
 	timeval now, end;
 	const Int32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
@@ -501,7 +501,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 		int loopMSecs = tv.tv_sec * 1000 + tv.tv_usec / 1000; 
 
 		Thread::testCancel();
-		rc = ::poll(pfds, selarray.size(), loopMSecs); 
+		rc = ::poll(pfds.get(), selarray.size(), loopMSecs); 
 		lerrno = errno;
 		Thread::testCancel();
 
