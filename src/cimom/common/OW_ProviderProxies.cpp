@@ -1012,7 +1012,7 @@ InstanceProviderProxy::enumInstanceNames(
 	CIMObjectPathResultHandlerIFC& result,
 	const CIMClass& cimClass )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->enumInstanceNames(proxyEnv(env, m_cimomuid, m_useruid), ns,
 		className, result, cimClass);
 }
@@ -1032,7 +1032,7 @@ InstanceProviderProxy::enumInstances(
 	const CIMClass& requestedClass,
 	const CIMClass& cimClass )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->enumInstances(proxyEnv(env, m_cimomuid, m_useruid), ns, className,
 		result, localOnly, deep, includeQualifiers, includeClassOrigin,
 		propertyList, requestedClass, cimClass);
@@ -1050,7 +1050,7 @@ InstanceProviderProxy::getInstance(
 	const StringArray* propertyList, 
 	const CIMClass& cimClass )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	return m_pProv->getInstance(proxyEnv(env, m_cimomuid, m_useruid), ns,
 		instanceName, localOnly, includeQualifiers, includeClassOrigin,
 		propertyList, cimClass);
@@ -1065,7 +1065,7 @@ InstanceProviderProxy::createInstance(
 	const String& ns,
 	const CIMInstance& cimInstance )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	return m_pProv->createInstance(proxyEnv(env, m_cimomuid, m_useruid), ns,
 		cimInstance);
 }
@@ -1081,7 +1081,7 @@ InstanceProviderProxy::modifyInstance(
 	const StringArray* propertyList,
 	const CIMClass& theClass)
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->modifyInstance(proxyEnv(env, m_cimomuid, m_useruid), ns,
 		modifiedInstance, previousInstance, includeQualifiers, propertyList,
 		theClass);
@@ -1094,7 +1094,7 @@ InstanceProviderProxy::deleteInstance(
 	const String& ns,
 	const CIMObjectPath& cop)
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->deleteInstance(proxyEnv(env, m_cimomuid, m_useruid), ns, cop);
 }
 
@@ -1121,7 +1121,7 @@ MethodProviderProxy::invokeMethod(
 	const CIMParamValueArray& in,
 	CIMParamValueArray& out )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	return m_pProv->invokeMethod(proxyEnv(env, m_cimomuid, m_useruid), ns,
 		path, methodName, in, out);
 }
@@ -1154,7 +1154,7 @@ AssociatorProviderProxy::associators(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->associators(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
 		objectName, assocClass, resultClass, role, resultRole,
 		includeQualifiers, includeClassOrigin, propertyList);
@@ -1172,7 +1172,7 @@ AssociatorProviderProxy::associatorNames(
 	const String& role,
 	const String& resultRole )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->associatorNames(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
 		objectName, assocClass, resultClass, role, resultRole);
 }
@@ -1190,7 +1190,7 @@ AssociatorProviderProxy::references(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->references(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
 		objectName, resultClass, role, includeQualifiers, includeClassOrigin,
 		propertyList);
@@ -1206,7 +1206,7 @@ AssociatorProviderProxy::referenceNames(
 	const String& resultClass,
 	const String& role )
 {
-	UIDManager(m_useruid, m_cimomuid);
+	UIDManager um(m_useruid, m_cimomuid);
 	m_pProv->referenceNames(proxyEnv(env, m_cimomuid, m_useruid), result, ns,
 		objectName, resultClass, role);
 }
