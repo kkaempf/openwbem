@@ -253,7 +253,7 @@ void restartDaemon()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-#if defined (OW_FREEBSD) || defined (OW_DARWIN) || defined (OW_AIX)
+#if !defined(OW_HAVE_SIGHANDLER_T)
 typedef void (*sighandler_t)(int);
 #endif
 
