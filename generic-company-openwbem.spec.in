@@ -124,13 +124,19 @@ install -d $RPM_BUILD_ROOT/etc/pam.d
 install etc/pam.d/openwbem $RPM_BUILD_ROOT/etc/pam.d/@GENERIC@openwbem
 
 #install -d $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib/openwbem/c++providers
-install -d $RPM_BUILD_ROOT/${@GENERIC@localstatedir}/openwbem
+install -d $RPM_BUILD_ROOT/%{@GENERIC@localstatedir}/openwbem
 
 #fix /usr/lib/libowservicehttp.so since RPM can't.
 #rm $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib/libowservicehttp.so
 #ln -s %{@GENERIC@prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib
 
+# Load the schema. 
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib \
+    $RPM_BUILD_ROOT/%{@GENERIC@prefix}/bin/owmofc -c -n root/cimv2 \
+    -d $RPM_BUILD_ROOT/%{@GENERIC@localstatedir}/openwbem \
+    schemas/cim27/CIM_Schema27.mof
 
+# END OF INSTALL
 
 %Clean
 %{__rm} -rf $RPM_BUILD_ROOT
