@@ -181,6 +181,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 		env->getLogger()->logError(format("LifecycleIndicationPoller::poll caught exception: %1", e));
 		return 0;
 	}
+	env->getLogger()->logDebug(Format("LifecycleIndicationPoller::poll got %1 instances", curInstances.size()));
 	// Compare the new instances with the previous instances
 	// and send any indications that may be necessary.
 	typedef SortedVectorSet<CIMInstance, sortByInstancePath> instSet_t;
@@ -231,6 +232,30 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			++pi;
 			++ci;
 		}
+	}
+	while (pi != prevSet.end())
+	{
+		// *pi has been deleted
+		if (m_pollDeletion)
+		{
+			CIMInstance expInst;
+			expInst.setClassName("CIM_InstDeletion");
+			expInst.setProperty("SourceInstance", CIMValue(*pi));
+			hdl->exportIndication(expInst, m_ns);
+		}
+		++pi;
+	}
+	while (ci != curSet.end())
+	{
+		// *ci is new
+		if (m_pollCreation)
+		{
+			CIMInstance expInst;
+			expInst.setClassName("CIM_InstCreation");
+			expInst.setProperty("SourceInstance", CIMValue(*ci));
+			hdl->exportIndication(expInst, m_ns);
+		}
+		++ci;
 	}
 	// save the current instances to m_prevInsts
 	m_prevInsts = curInstances;
