@@ -163,7 +163,8 @@ XMLExecute::XMLExecute()
 	m_ostrEntity(NULL),
 	m_ostrError(NULL),
 	m_isIntrinsic(false),
-	m_functionName()
+	m_functionName(),
+	m_commMechPath(CIMNULL)
 {
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -1545,22 +1546,26 @@ XMLExecute::init(const ServiceEnvironmentIFCRef& env)
 void
 XMLExecute::shutdown()
 {
-	ServiceEnvironmentIFCRef env(getEnvironment());
-	LoggerRef logger(env->getLogger(COMPONENT_NAME));
-	OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_CIMXMLCommunicationMechanism instance");
-	// clean up the instance of CIM_CIMXMLCommunicationMechanism we created in init()
-	try
+	if (m_commMechPath)
 	{
-		String interopNS(m_commMechPath.getNameSpace());
-		OperationContext context;
-		CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
-		hdl->deleteInstance(interopNS, m_commMechPath);
+		// clean up the instance of CIM_CIMXMLCommunicationMechanism we created in init()
+		ServiceEnvironmentIFCRef env(getEnvironment());
+		LoggerRef logger(env->getLogger(COMPONENT_NAME));
+		OW_LOG_DEBUG(logger, "XMLExecute::shutdown() cleaning up CIM_CIMXMLCommunicationMechanism instance");
 
-	}
-	catch (CIMException& e)
-	{
-		// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
-		OW_LOG_DEBUG(logger, Format("Failed deleting CIM_CIMXMLCommunicationMechanism: %1", e));
+		try
+		{
+			String interopNS(m_commMechPath.getNameSpace());
+			OperationContext context;
+			CIMOMHandleIFCRef hdl(env->getCIMOMHandle(context));
+			hdl->deleteInstance(interopNS, m_commMechPath);
+
+		}
+		catch (CIMException& e)
+		{
+			// Something's not set up right. oh well, just log it. It's not even an error, maybe they don't have or want the interop schema.
+			OW_LOG_DEBUG(logger, Format("Failed deleting CIM_CIMXMLCommunicationMechanism: %1", e));
+		}
 	}
 
 	// clear the reference to the environment
