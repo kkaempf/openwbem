@@ -1,0 +1,15 @@
+
+// ===================================================================
+// Software Package
+// ===================================================================
+[Description (
+		"A class with infinite instances for scalability tests"),
+		provider("c++::infiniteip") ]
+		class InfiniteInstances 
+{
+	[ Description("The instance Number"), Key]
+	uint64 InstanceNumber;
+
+};
+
+
