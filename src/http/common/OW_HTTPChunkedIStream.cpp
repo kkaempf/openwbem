@@ -152,7 +152,7 @@ HTTPChunkedIStream::buildTrailerMap()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-String 
+String
 HTTPChunkedIStream::getTrailer(const String& key) const
 {
 	for (Map<String, String>::const_iterator iter = m_trailerMap.begin();
@@ -166,6 +166,7 @@ HTTPChunkedIStream::getTrailer(const String& key) const
 	return String();
 }
 //////////////////////////////////////////////////////////////////////////////
+// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
 void HTTPChunkedIStream::checkForError() const
 {
 	String errorStr;
@@ -191,7 +192,7 @@ void HTTPChunkedIStream::checkForError() const
 		}
 		if (!descr.empty())
 		{
-			OW_THROWCIMMSG(CIMException::ErrNoType(errorStr.toInt32()), 
+			OW_THROWCIMMSG(CIMException::ErrNoType(errorStr.toInt32()),
 				descr.c_str());
 		}
 		else

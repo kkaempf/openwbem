@@ -40,7 +40,7 @@
 
 namespace OpenWBEM
 {
-  
+
 using std::istream;
 HTTPDeflateIStreamBuffer::HTTPDeflateIStreamBuffer(istream& istr)
 	: BaseStreamBuffer(HTTP_BUF_SIZE, "in")
@@ -133,16 +133,17 @@ HTTPDeflateIStream::HTTPDeflateIStream(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void HTTPDeflateIStream::checkForError() const 
-{ 
-	m_istr->checkForError(); 
+// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
+void HTTPDeflateIStream::checkForError() const
+{
+	m_istr->checkForError();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 CIMProtocolIStreamIFCRef
 HTTPDeflateIStream::getInputStreamOrig()
-{ 
-	return m_istr; 
+{
+	return m_istr;
 }
 
 } // end namespace OpenWBEM

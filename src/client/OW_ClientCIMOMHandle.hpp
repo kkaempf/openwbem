@@ -50,7 +50,6 @@ namespace OpenWBEM
 class OW_CLIENT_API ClientCIMOMHandle : public CIMOMHandleIFC
 {
 public:
-	ClientCIMOMHandle() : CIMOMHandleIFC(), m_trailers() {}
 
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/** This method is deprecated.  Use CIMNameSpaceUtils::createCIM_Namespace() instead. */
@@ -116,6 +115,8 @@ public:
 	static ClientCIMOMHandleRef createFromURL(const String& url, const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 
 protected:
+	// TODO: Fix this bad design! This class shouldn't know anything about HTTP or trailers!
+	// HTTPClient should do the trailer processing and storage.
 	void getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr);
 
 #ifdef OW_WIN32

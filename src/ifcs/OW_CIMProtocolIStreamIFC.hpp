@@ -58,6 +58,7 @@ class OW_COMMON_API CIMProtocolIStreamIFC : public IntrusiveCountableBase, publi
 {
 public:
 	CIMProtocolIStreamIFC(std::streambuf* strbuf);
+	// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
 	/**
 	 * This function should be called after the end of the stream has
 	 * been reached.  It will check the trailers for an error, and throw

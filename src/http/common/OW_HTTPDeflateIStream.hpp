@@ -88,6 +88,7 @@ public:
 	 * @return the original istream.
 	 */
 	CIMProtocolIStreamIFCRef getInputStreamOrig();
+	// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
 	virtual void checkForError() const;
 private:
 

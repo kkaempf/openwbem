@@ -99,6 +99,7 @@ class OW_HTTP_API HTTPChunkedIStream : private HTTPChunkedIStreamBase,
 		 * Clear the EOF/BAD bits, so that input can continue.
 		 */
 		void resetInput();
+		// TODO: Move all this knowledge about CIM and specific trailers into HTTPClient
 		virtual void checkForError() const;
 		virtual String getTrailer(const String& key) const;
 	private:
