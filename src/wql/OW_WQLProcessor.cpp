@@ -430,8 +430,8 @@ void OW_WQLProcessor::visit_selectStmt(
 	//OW_LOGDEBUG("Filtering the properties");
 	for (size_t i = 0; i < m_propertyArray.size(); ++i)
 	{
-		int j = m_propertyArray[i].indexOf('.');
-		if (j != -1)
+		size_t j = m_propertyArray[i].indexOf('.');
+		if (j != OW_String::npos)
 		{
 			m_propertyArray[i] = m_propertyArray[i].substring(j+1);
 		}

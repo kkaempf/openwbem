@@ -122,7 +122,7 @@ OW_ListenerAuthenticator::getNewCredentials()
 void
 OW_ListenerAuthenticator::removeCredentials(const OW_String& creds)
 {
-	int idx = creds.indexOf(":");
+	size_t idx = creds.indexOf(":");
 	OW_String name = creds.substring(0, idx);
 	OW_Map<OW_String, OW_String>::iterator iter;
 

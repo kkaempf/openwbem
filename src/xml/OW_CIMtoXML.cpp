@@ -78,9 +78,9 @@ void OW_CIMtoXML(OW_CIMNameSpace const& ns, ostream& ostr,
 
 	for (;;)
 	{
-		int index = name.indexOf('/');
+		size_t index = name.indexOf('/');
 
-		if (index == -1)
+		if (index == OW_String::npos)
 			break;
 
 		if(index != 0)
@@ -88,7 +88,7 @@ void OW_CIMtoXML(OW_CIMNameSpace const& ns, ostream& ostr,
 			ostr
 				<< "<NAMESPACE NAME=\""
 				<< OW_XMLEscape(name.substring(0, index))
-            << "\"></NAMESPACE>";
+				<< "\"></NAMESPACE>";
 		}
 
 		name = name.substring(index+1);

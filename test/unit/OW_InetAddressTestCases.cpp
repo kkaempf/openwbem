@@ -46,7 +46,7 @@ void OW_InetAddressTestCases::testSomething()
 	OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
 	OW_String addrName = addr.getName();
 	unitAssert(addrName.length());
-	//unitAssert(addrName.indexOf('.') > 0);
+	//unitAssert(addrName.indexOf('.') != OW_String::npos);
 }
 
 Test* OW_InetAddressTestCases::suite()

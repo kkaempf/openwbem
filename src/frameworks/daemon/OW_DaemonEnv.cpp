@@ -283,7 +283,7 @@ OW_DaemonEnv::loadConfigItemsFromFile( const OW_String& filename )
 				continue;
 			}
 			size_t idx = line.indexOf('=');
-			if (idx > 0)
+			if (idx != OW_String::npos)
 			{
 				if(idx + 1 < line.length())
 				{

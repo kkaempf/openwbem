@@ -107,11 +107,11 @@ OW_CIMOMLocatorSLP::processAttributes(const OW_String& attrs,
 		OW_CIMOMInfo& info)
 {
 	OW_String sattrs(attrs);
-	int idx = sattrs.indexOf('(');
-	while (idx >= 0)
+	size_t idx = sattrs.indexOf('(');
+	while (idx != OW_String::npos)
 	{
 		sattrs = sattrs.substring(idx + 1);
-		int endIdx = sattrs.indexOf('=');
+		size_t endIdx = sattrs.indexOf('=');
 		OW_String key = sattrs.substring(0, endIdx);
 		sattrs = sattrs.substring(endIdx + 1);
 		endIdx = sattrs.indexOf(')');
@@ -142,7 +142,7 @@ OW_CIMOMLocatorSLP::findCIMOMs()
 	{
 		OW_CIMOMInfo info;
 		OW_String SLPUrl = data.urls[i];
-		int idx = SLPUrl.indexOf("http");
+		size_t idx = SLPUrl.indexOf("http");
 		info.setURL(SLPUrl.substring(idx));
 		OW_String attrList;
 

@@ -164,8 +164,8 @@ OW_SimpleAuthenticator::loadPasswordFile(OW_ServiceEnvironmentIFCRef env)
 		{
 			continue;
 		}
-		int index = line.indexOf(':');
-		if (index > 0)
+		size_t index = line.indexOf(':');
+		if (index != OW_String::npos)
 		{
 			name = line.substring(0, index);
 			passwd = line.substring(index + 1);

@@ -640,8 +640,8 @@ OW_ProviderManager::getProviderIFC(const OW_ProviderEnvironmentIFCRef& env,
 
 	OW_String qvstr;
 	cv.get(qvstr);
-	int ndx = qvstr.indexOf("::");
-	if(ndx == -1)
+	size_t ndx = qvstr.indexOf("::");
+	if(ndx == OW_String::npos)
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - Invalid format for provider string: %1", qvstr));

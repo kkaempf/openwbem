@@ -5,15 +5,15 @@
 * modification, are permitted provided that the following conditions are met:
 *
 *  - Redistributions of source code must retain the above copyright notice,
-*    this list of conditions and the following disclaimer.
+*	this list of conditions and the following disclaimer.
 *
 *  - Redistributions in binary form must reproduce the above copyright notice,
-*    this list of conditions and the following disclaimer in the documentation
-*    and/or other materials provided with the distribution.
+*	this list of conditions and the following disclaimer in the documentation
+*	and/or other materials provided with the distribution.
 *
 *  - Neither the name of Center 7 nor the names of its
-*    contributors may be used to endorse or promote products derived from this
-*    software without specific prior written permission.
+*	contributors may be used to endorse or promote products derived from this
+*	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -101,10 +101,10 @@ namespace
 			return m_pCenv->getLogger();
 		}
 
-        virtual OW_String getUserName() const
-        {
-            return OW_Platform::getCurrentUserName();
-        }
+		virtual OW_String getUserName() const
+		{
+			return OW_Platform::getCurrentUserName();
+		}
 
 	private:
 		const OW_CIMOMEnvironment* m_pCenv;
@@ -253,10 +253,10 @@ public:
 		return env->getConfigItem(name, defRetVal);
 	}
 
-    virtual OW_String getUserName() const
-    {
-        return OW_Platform::getCurrentUserName();
-    }
+	virtual OW_String getUserName() const
+	{
+		return OW_Platform::getCurrentUserName();
+	}
 
 private:
 	OW_CIMOMEnvironment* env;
@@ -656,7 +656,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 	}
 
 	// We don't have a logger at this point
-    std::cout << "CIMOM reading config file: " << filename << std::endl;
+	std::cout << "CIMOM reading config file: " << filename << std::endl;
 
 	OW_String line;
 	int lineNum = 0;
@@ -673,7 +673,7 @@ OW_CIMOMEnvironment::_loadConfigItemsFromFile(const OW_String& filename)
 			}
 
 			size_t idx = line.indexOf('=');
-			if (idx > 0)
+			if (idx != OW_String::npos)
 			{
 				if(idx + 1 < line.length())
 				{
@@ -733,7 +733,7 @@ OW_CIMOMEnvironment::getConfigItem(const OW_String &name, const OW_String& defRe
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
-        const OW_UserInfo& aclInfo)
+		const OW_UserInfo& aclInfo)
 {
 	{
 		OW_MutexLock l(m_runningGuard);
@@ -831,9 +831,9 @@ OW_CIMOMEnvironment::getWQLRef()
 
 	OW_MutexLock ml(m_monitor);
 
-    if (!m_wqlLib)
-    {
-        OW_String libname = getConfigItem(OW_ConfigOpts::WQL_LIB_opt);
+	if (!m_wqlLib)
+	{
+		OW_String libname = getConfigItem(OW_ConfigOpts::WQL_LIB_opt);
 
 		logDebug(format("CIMOM loading wql library %1", libname));
 
@@ -846,7 +846,7 @@ OW_CIMOMEnvironment::getWQLRef()
 			logError(format("CIMOM Failed to load WQL Libary: %1", libname));
 			return OW_WQLIFCRef();
 		}
-    }
+	}
 
 	return  OW_WQLIFCRef(m_wqlLib, OW_SafeLibCreate<OW_WQLIFC>::create(
 		m_wqlLib, "createWQL", m_Logger));
@@ -941,7 +941,7 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 			iter->second.dt.setToCurrent();
 			ref->setEnvironment(g_cimomEnvironment);
 			logDebug(format("Request Handler %1 handling request for content type %2",
-                iter->second.filename, id));
+				iter->second.filename, id));
 		}
 		else
 		{
@@ -967,7 +967,7 @@ OW_CIMOMEnvironment::unloadReqHandlers()
 	catch (const OW_StringConversionException&)
 	{
 		logError(format("Invalid value (%1) for %2 config item.  Using default.",
-            getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt),
+			getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt),
 			OW_ConfigOpts::REQ_HANDLER_TTL_opt));
 		ttl = OW_String(OW_DEFAULT_REQ_HANDLER_TTL).toInt32();
 	}
@@ -1119,7 +1119,7 @@ OW_CIMOMEnvironment::logCustInfo(const OW_String& s) const
 	}
 	else
 	{
-        std::cout << s << std::endl;
+		std::cout << s << std::endl;
 	}
 }
 
@@ -1133,7 +1133,7 @@ OW_CIMOMEnvironment::logDebug(const OW_String& s) const
 	}
 	else
 	{
-        std::cout << s << std::endl;
+		std::cout << s << std::endl;
 	}
 }
 
@@ -1147,7 +1147,7 @@ OW_CIMOMEnvironment::logError(const OW_String& s) const
 	}
 	else
 	{
-        std::cerr << s << std::endl;
+		std::cerr << s << std::endl;
 	}
 }
 

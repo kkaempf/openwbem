@@ -471,13 +471,13 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 	OW_String host = "localhost";
 	OW_Int32 port = 5988;
 
-	int ndx = instanceName.indexOf("://");
-	if(ndx != -1)
+	size_t ndx = instanceName.indexOf("://");
+	if(ndx != OW_String::npos)
 	{
 		protocol = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+3);
 		ndx = instanceName.indexOf('/');
-		if(ndx == -1)
+		if(ndx == OW_String::npos)
 		{
 			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 				format("Invalid instance name: ", instanceNameArg).c_str());
@@ -486,7 +486,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 		host = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
 		ndx = host.indexOf(':');
-		if(ndx != -1)
+		if(ndx != OW_String::npos)
 		{
 			try
 			{
@@ -510,7 +510,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 
 	OW_String nameSpace = "root";
 	ndx = instanceName.indexOf(':');
-	if(ndx != -1)
+	if(ndx != OW_String::npos)
 	{
 		nameSpace = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
@@ -518,7 +518,7 @@ OW_CIMObjectPath::parse(const OW_String& instanceNameArg)
 
 	OW_String className;
 	ndx = instanceName.indexOf('.');
-	if(ndx == -1)
+	if(ndx == OW_String::npos)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("class name not found in instance name:: ",

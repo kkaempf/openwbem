@@ -5,15 +5,15 @@
 * modification, are permitted provided that the following conditions are met:
 *
 *  - Redistributions of source code must retain the above copyright notice,
-*    this list of conditions and the following disclaimer.
+*	this list of conditions and the following disclaimer.
 *
 *  - Redistributions in binary form must reproduce the above copyright notice,
-*    this list of conditions and the following disclaimer in the documentation
-*    and/or other materials provided with the distribution.
+*	this list of conditions and the following disclaimer in the documentation
+*	and/or other materials provided with the distribution.
 *
 *  - Neither the name of Center 7 nor the names of its
-*    contributors may be used to endorse or promote products derived from this
-*    software without specific prior written permission.
+*	contributors may be used to endorse or promote products derived from this
+*	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -129,10 +129,10 @@ public:
 		return m_env->getLogger();
 	}
 
-    virtual OW_String getUserName() const
-    {
-        return OW_Platform::getCurrentUserName();
-    }
+	virtual OW_String getUserName() const
+	{
+		return OW_Platform::getCurrentUserName();
+	}
 
 private:
 	OW_CIMOMHandleIFCRef m_ch;
@@ -218,17 +218,17 @@ public:
 private:
 	void doHandle(const OW_CIMInstance& i)
 	{
-        // try and get the name of whoever first created the subscription
-        OW_String username;
-        OW_CIMProperty p = i.getProperty("__OW_Subscription_UserName");
-        if (p)
-        {
-            OW_CIMValue v = p.getValue();
-            if (v)
-            {
-                username = v.toString();
-            }
-        }
+		// try and get the name of whoever first created the subscription
+		OW_String username;
+		OW_CIMProperty p = i.getProperty("__OW_Subscription_UserName");
+		if (p)
+		{
+			OW_CIMValue v = p.getValue();
+			if (v)
+			{
+				username = v.toString();
+			}
+		}
 
 		is->createSubscription(ns, i, username);
 	}
@@ -353,11 +353,11 @@ OW_IndicationServerImpl::run()
 					l.lock();
 				}
 			}
-            catch (const OW_Exception& e)
-            {
+			catch (const OW_Exception& e)
+			{
 				m_env->logError(format("OW_IndicationServerImpl::run caught "
 					" exception %1", e));
-            }
+			}
 			catch(...)
 			{
 				m_env->logError("OW_IndicationServerImpl::run caught unknown"
@@ -406,40 +406,40 @@ namespace
 void splitUpProps(const OW_StringArray& props, 
 	OW_HashMap<OW_String, OW_StringArray>& map)
 {
-    // This function may appear a little complicated...
-    // It's handling the many cases needed to split up
-    // the props so they can be quickly accessed in
-    // filterInstance().
-    // The props that are possible are:
-    // *
-    // PropertyName
-    // ClassName.PropertyName
-    // ClassName.*
-    // PropertyName.*
-    // PropertyName.EmbedName
-    // ClassName.PropertyName.*
-    // ClassName.PropertyName.EmbedName
+	// This function may appear a little complicated...
+	// It's handling the many cases needed to split up
+	// the props so they can be quickly accessed in
+	// filterInstance().
+	// The props that are possible are:
+	// *
+	// PropertyName
+	// ClassName.PropertyName
+	// ClassName.*
+	// PropertyName.*
+	// PropertyName.EmbedName
+	// ClassName.PropertyName.*
+	// ClassName.PropertyName.EmbedName
 
 	for (size_t i = 0; i < props.size(); ++i)
 	{
 		OW_String prop = props[i];
-        prop.toLowerCase();
-		int idx = prop.indexOf('.');
-        map[""].push_back(prop); // for no ClassName
-		if (idx != -1)
+		prop.toLowerCase();
+		size_t idx = prop.indexOf('.');
+		map[""].push_back(prop); // for no ClassName
+		if (idx != OW_String::npos)
 		{
 			OW_String key = prop.substring(0, idx);
 			OW_String val = prop.substring(idx+1);
 
-            map[""].push_back(key); // Store PropertyName for PropertyName.EmbedName
+			map[""].push_back(key); // Store PropertyName for PropertyName.EmbedName
 			map[key].push_back(val); // Store PropertyName for ClassName.PropertyName and EmbedName for PropertyName.EmbedName
 
-            // now remove trailing periods.
-            idx = val.indexOf('.');
-            if (idx != -1)
-            {
-                val = val.substring(0, idx);
-            }
+			// now remove trailing periods.
+			idx = val.indexOf('.');
+			if (idx != OW_String::npos)
+			{
+				val = val.substring(0, idx);
+			}
 			map[key].push_back(val); // Store PropertyName for ClassName.PropertyName.EmbedName
 		}
 	}
@@ -451,10 +451,10 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 		OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS, 
 		OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN));
 
-    if (props.empty())
-    {
-        return rval;
-    }
+	if (props.empty())
+	{
+		return rval;
+	}
 
 	OW_HashMap<OW_String, OW_StringArray> propMap;
 	splitUpProps(props, propMap);
@@ -489,19 +489,19 @@ OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArr
 					v.get(embed);
 					if (embed)
 					{
-                        OW_StringArray embeddedProps;
-                        for (size_t i = 0; i < propsToKeepArray.size(); ++i)
-                        {
-                            const OW_String& curPropName = propsToKeepArray[i];
-                            if (curPropName.startsWith(lowerPropName))
-                            {
-                                int idx = curPropName.indexOf('.');
-                                if (idx != -1)
-                                {
-                                    embeddedProps.push_back(curPropName.substring(idx));
-                                }
-                            }
-                        }
+						OW_StringArray embeddedProps;
+						for (size_t i = 0; i < propsToKeepArray.size(); ++i)
+						{
+							const OW_String& curPropName = propsToKeepArray[i];
+							if (curPropName.startsWith(lowerPropName))
+							{
+								size_t idx = curPropName.indexOf('.');
+								if (idx != OW_String::npos)
+								{
+									embeddedProps.push_back(curPropName.substring(idx));
+								}
+							}
+						}
 						thePropToKeep.setValue(OW_CIMValue(
 							filterInstance(embed, embeddedProps)));
 					}
@@ -525,15 +525,15 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 	m_env->logDebug(format("OW_IndicationServerImpl::_processIndication "
 		"instanceArg = %1 instNS = %2", instanceArg_.toString(), instNS));
 
-    // If the provider didn't set the IndicationTime property, then we'll set it.
+	// If the provider didn't set the IndicationTime property, then we'll set it.
 	OW_CIMInstance instanceArg(instanceArg_);
-    if (!instanceArg.getProperty("IndicationTime"))
-    {
-        OW_DateTime dtm;
-        dtm.setToCurrent();
-        OW_CIMDateTime cdt(dtm);
-        instanceArg.setProperty("IndicationTime", OW_CIMValue(cdt));
-    }
+	if (!instanceArg.getProperty("IndicationTime"))
+	{
+		OW_DateTime dtm;
+		dtm.setToCurrent();
+		OW_CIMDateTime cdt(dtm);
+		instanceArg.setProperty("IndicationTime", OW_CIMValue(cdt));
+	}
 
 	OW_WQLIFCRef wqlRef = m_env->getWQLRef();
 
@@ -545,34 +545,34 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 	}
 
 
-    OW_String curClassName = instanceArg.getClassName();
+	OW_String curClassName = instanceArg.getClassName();
 	if (curClassName.empty())
 	{
 		m_env->logError("Cannot process indication, because it has no "
 			"class name.");
 	}
-    while (!curClassName.empty())
-    {
-        OW_String key = curClassName;
+	while (!curClassName.empty())
+	{
+		OW_String key = curClassName;
 
-        key.toLowerCase();
+		key.toLowerCase();
 
-        {
-            OW_MutexLock lock(m_subGuard);
-            m_env->logDebug(format("searching for key %1", key));
-            std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
-                m_subscriptions.equal_range(key);
-            m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
+		{
+			OW_MutexLock lock(m_subGuard);
+			m_env->logDebug(format("searching for key %1", key));
+			std::pair<subscriptions_t::iterator, subscriptions_t::iterator> range = 
+				m_subscriptions.equal_range(key);
+			m_env->logDebug(format("found %1 items", distance(range.first, range.second)));
 			
 			// make a copy so we can free the lock, otherwise we may cause a deadlock.
 			std::vector<subscriptions_t::value_type> subs(range.first, range.second);
 			lock.release();
 
-            _processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
-        }
+			_processIndicationRange(instanceArg, instNS, subs.begin(), subs.end());
+		}
 
-        OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
-        if (prop)
+		OW_CIMProperty prop = instanceArg.getProperty("SourceInstance");
+		if (prop)
 		{
 			OW_CIMValue v = prop.getValue();
 			if (v && v.getType() == OW_CIMDataType::EMBEDDEDINSTANCE)
@@ -599,17 +599,17 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg_,
 			}
 		}
 
-        OW_CIMClass cc;
-        try
-        {
-            cc = m_env->getRepositoryCIMOMHandle()->getClass(instNS, curClassName);
-            curClassName = cc.getSuperClass();
-        }
-        catch (const OW_CIMException& e)
-        {
-            curClassName.erase();
-        }
-    }
+		OW_CIMClass cc;
+		try
+		{
+			cc = m_env->getRepositoryCIMOMHandle()->getClass(instNS, curClassName);
+			curClassName = cc.getSuperClass();
+		}
+		catch (const OW_CIMException& e)
+		{
+			curClassName.erase();
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -747,20 +747,20 @@ OW_IndicationServerImpl::getProvider(const OW_String& className)
 void 
 OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObjectPath& subPath)
 {
-    OW_LoggerRef log = m_env->getLogger();
-    log->logDebug(format("OW_IndicationServerImpl::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
+	OW_LoggerRef log = m_env->getLogger();
+	log->logDebug(format("OW_IndicationServerImpl::deleteSubscription ns = %1, subPath = %2", ns, subPath.toString()));
 
 	OW_CIMObjectPath cop(subPath);
 	cop.setNameSpace(ns);
-    log->logDebug(format("cop = %1", cop));
+	log->logDebug(format("cop = %1", cop));
 	
 	OW_MutexLock l(m_subGuard);
 	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end();)
 	{
-        log->logDebug(format("subPath = %1", iter->second.m_subPath));
+		log->logDebug(format("subPath = %1", iter->second.m_subPath));
 		if (cop.equals(iter->second.m_subPath))
 		{
-            log->logDebug("found a match");
+			log->logDebug("found a match");
 			Subscription& sub = iter->second;
 			for (size_t i = 0; i < sub.m_providers.size(); ++i)
 			{
@@ -780,8 +780,8 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 							if (iter != m_pollers.end())
 							{
 								OW_LifecycleIndicationPollerRef p = iter->second;
-                                OW_String subClsName = sub.m_selectStmt.getClassName();
-                                bool removePoller = false;
+								OW_String subClsName = sub.m_selectStmt.getClassName();
+								bool removePoller = false;
 								if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
 								{
 									removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
@@ -794,16 +794,16 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 								{
 									removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
 								}
-                                else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
-                                {
-                                    p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-                                    p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-                                    removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-                                }
-                                if (removePoller)
-                                {
-                                    m_pollers.erase(iter);
-                                }
+								else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
+								{
+									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+									p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+									removePoller = p->removePollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+								}
+								if (removePoller)
+								{
+									m_pollers.erase(iter);
+								}
 							}
 						}
 					}
@@ -856,8 +856,8 @@ OW_String getSourceNameSpace(const OW_CIMInstance& inst)
 void
 OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst, const OW_String& username)
 {
-    OW_LoggerRef log = m_env->getLogger();
-    log->logDebug(format("OW_IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
+	OW_LoggerRef log = m_env->getLogger();
+	log->logDebug(format("OW_IndicationServerImpl::createSubscription ns = %1, subInst = %2", ns, subInst.toString()));
 
 	// get the filter
 	OW_CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle();
@@ -943,7 +943,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	std::sort(providers.begin(), providers.end());
 	providers.erase(std::unique(providers.begin(), providers.end()), providers.end());
 
-    log->logDebug(format("Found %1 providers for the subscription", providers.size()));
+	log->logDebug(format("Found %1 providers for the subscription", providers.size()));
 	if (providers.empty())
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "No indication provider found for this subscription");
@@ -961,21 +961,21 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	// call authorizeFilter on all the indication providers
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
-        log->logDebug(format("Calling authorizeFilter for provider %1", i));
+		log->logDebug(format("Calling authorizeFilter for provider %1", i));
 		providers[i]->authorizeFilter(createProvEnvRef(m_env),
 			selectStmt, indicationClassName, ns, isaClassNames, username);
 	}
 
 	// Call mustPoll on all the providers
-    OW_Array<bool> isPolled(providers.size(), false);
+	OW_Array<bool> isPolled(providers.size(), false);
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
 		try
 		{
-            log->logDebug(format("Calling mustPoll for provider %1", i));
+			log->logDebug(format("Calling mustPoll for provider %1", i));
 			int pollInterval = providers[i]->mustPoll(createProvEnvRef(m_env),
 				selectStmt, indicationClassName, ns, isaClassNames);
-            log->logDebug(format("got pollInterval %1", pollInterval));
+			log->logDebug(format("got pollInterval %1", pollInterval));
 			if (pollInterval > 0)
 			{
 				isPolled[i] = true;
@@ -983,52 +983,52 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 				{
 					OW_String key = isaClassNames[j];
 					key.toLowerCase();
-                    log->logDebug(format("searching on class key %1", isaClassNames[j]));
+					log->logDebug(format("searching on class key %1", isaClassNames[j]));
 					poller_map_t::iterator iter = m_pollers.find(key);
-                    OW_LifecycleIndicationPollerRef p;
+					OW_LifecycleIndicationPollerRef p;
 					if (iter != m_pollers.end())
 					{
-                        log->logDebug(format("found on class key %1: %2", isaClassNames[j], iter->first));
+						log->logDebug(format("found on class key %1: %2", isaClassNames[j], iter->first));
 						p = iter->second;
 					}
 					else
 					{
-                        log->logDebug(format("not found on class key %1", isaClassNames[j]));
+						log->logDebug(format("not found on class key %1", isaClassNames[j]));
 						p = OW_LifecycleIndicationPollerRef(OW_SharedLibraryRef(0), 
 							OW_Reference<OW_LifecycleIndicationPoller>(new OW_LifecycleIndicationPoller(ns, key, pollInterval)));
 
 					}
 
-                    OW_String subClsName = selectStmt.getClassName();
-                    if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
-                    {
-                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-                    }
-                    else if (subClsName.equalsIgnoreCase("CIM_InstModification"))
-                    {
-                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-                    }
-                    else if (subClsName.equalsIgnoreCase("CIM_InstDeletion"))
-                    {
-                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-                    }
-                    else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
-                    {
-                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-                        p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-                    }
-                    p->addPollInterval(pollInterval);
+					OW_String subClsName = selectStmt.getClassName();
+					if (subClsName.equalsIgnoreCase("CIM_InstCreation"))
+					{
+						p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+					}
+					else if (subClsName.equalsIgnoreCase("CIM_InstModification"))
+					{
+						p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+					}
+					else if (subClsName.equalsIgnoreCase("CIM_InstDeletion"))
+					{
+						p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+					}
+					else if (subClsName.equalsIgnoreCase("CIM_InstIndication") || subClsName.equalsIgnoreCase("CIM_Indication"))
+					{
+						p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+						p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+						p->addPollOp(OW_LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+					}
+					p->addPollInterval(pollInterval);
 
-                    if (iter == m_pollers.end())
-                    {
-                        log->logDebug(format("Inserting %1 into m_pollers", key));
+					if (iter == m_pollers.end())
+					{
+						log->logDebug(format("Inserting %1 into m_pollers", key));
 						m_pollers.insert(std::make_pair(key, p));
 						m_env->getPollingManager()->addPolledProvider(
 							OW_PolledProviderIFCRef(
 								new OW_CppPolledProviderProxy(
 									OW_CppPolledProviderIFCRef(p))));
-                    }
+					}
 				}
 			}
 			
@@ -1114,23 +1114,23 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	if (successfulActivations == 0)
 	{
 		// Remove it and throw
-        OW_MutexLock l(m_subGuard);
-        if (isaClassNames.empty())
-        {
-            OW_String subKey = indicationClassName;
-            subKey.toLowerCase();
-            m_subscriptions.erase(subKey);
-        }
-        else
-        {
-            for (size_t i = 0; i < isaClassNames.size(); ++i)
-            {
-                OW_String subKey = indicationClassName + ':' + isaClassNames[i];
-                subKey.toLowerCase();
-                m_subscriptions.erase(subKey);
-            }
-        }
-        OW_THROWCIMMSG(OW_CIMException::FAILED, "activateFilter failed for all providers");
+		OW_MutexLock l(m_subGuard);
+		if (isaClassNames.empty())
+		{
+			OW_String subKey = indicationClassName;
+			subKey.toLowerCase();
+			m_subscriptions.erase(subKey);
+		}
+		else
+		{
+			for (size_t i = 0; i < isaClassNames.size(); ++i)
+			{
+				OW_String subKey = indicationClassName + ':' + isaClassNames[i];
+				subKey.toLowerCase();
+				m_subscriptions.erase(subKey);
+			}
+		}
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "activateFilter failed for all providers");
 	}
 }
 

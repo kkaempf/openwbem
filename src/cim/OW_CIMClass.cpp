@@ -865,8 +865,8 @@ OW_CIMClass::toString() const
 OW_String
 OW_CIMClass::splitName1(const OW_String& inName)
 {
-	int i = inName.indexOf('.');
-	return (i != -1) ? inName.substring(0, i) : OW_String();
+	size_t i = inName.indexOf('.');
+	return (i != OW_String::npos) ? inName.substring(0, i) : OW_String();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -874,8 +874,8 @@ OW_CIMClass::splitName1(const OW_String& inName)
 OW_String
 OW_CIMClass::splitName2(const OW_String& inName)
 {
-	int i = inName.indexOf('.');
-	return (i != -1) ? inName.substring(i+1) : inName;
+	size_t i = inName.indexOf('.');
+	return (i != OW_String::npos) ? inName.substring(i+1) : inName;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -1853,9 +1853,9 @@ OW_CIMRepository::_validatePropagatedKeys(const OW_String& ns,
 		{
 			continue;
 		}
-		int idx = cls.indexOf('.');
+		size_t idx = cls.indexOf('.');
 		OW_String ppropName;
-		if (idx != -1)
+		if (idx != OW_String::npos)
 		{
 			ppropName = cls.substring(idx+1);
 			cls = cls.substring(0,idx);

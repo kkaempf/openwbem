@@ -607,7 +607,7 @@ OW_String::lastIndexOf(char ch, size_t fromIndex) const
 	}
 
 	size_t cc = npos;
-	if(static_cast<size_t>(fromIndex) < length())
+	if(fromIndex < length())
 	{
 		for(size_t i = fromIndex; i != npos; i--)
 		{

@@ -72,7 +72,7 @@ OW_DigestAuthentication::OW_DigestAuthentication(const OW_String& passwdFile)
 	{
 		OW_String line;
 		line = OW_String::getLine(infile);
-		int idx = line.lastIndexOf(':');
+		size_t idx = line.lastIndexOf(':');
 		m_passwdMap[line.substring(0, idx)] = line.substring(idx + 1);
 	}
 }
@@ -134,9 +134,9 @@ OW_DigestAuthentication::generateNewNonce( void )
 static void
 parseInfo(const OW_String& pinfo, OW_Map<OW_String, OW_String>& infoMap)
 {
-	int idx = pinfo.indexOf("Digest");
+	size_t idx = pinfo.indexOf("Digest");
 	OW_String info;
-	if (idx >= 0)
+	if (idx != OW_String::npos)
 	{
 		info = pinfo.substring(7);
 	}
@@ -149,11 +149,11 @@ parseInfo(const OW_String& pinfo, OW_Map<OW_String, OW_String>& infoMap)
 	{
 		OW_String lhs, rhs;
 		idx = infoAr[i].indexOf('=');
-		if (idx > 0)
+		if (idx != OW_String::npos)
 		{
 			lhs = infoAr[i].substring(0, idx);
 			lhs.trim();
-			if (static_cast<size_t>(idx + 1) < infoAr[i].length())
+			if (idx + 1 < infoAr[i].length())
 			{
 				rhs = infoAr[i].substring(idx + 1);
 				rhs.trim();

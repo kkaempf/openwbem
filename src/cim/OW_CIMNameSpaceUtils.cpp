@@ -197,7 +197,7 @@ create__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
 {
 	OW_String ns(prepareNamespace(ns_));
 
-	int index = ns.lastIndexOf('/');
+	size_t index = ns.lastIndexOf('/');
 
 	OW_String parentPath = ns.substring(0, index);
 	OW_String newNameSpace = ns.substring(index + 1);
@@ -225,7 +225,7 @@ delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
 {
 	OW_String ns(prepareNamespace(ns_));
 
-	int index = ns.lastIndexOf('/');
+	size_t index = ns.lastIndexOf('/');
 
 	OW_String parentPath = ns.substring(0,index);
 	OW_String newNameSpace = ns.substring(index + 1);

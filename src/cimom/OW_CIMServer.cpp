@@ -325,8 +325,8 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 			return;
 
 		}
-		int idx = lns.lastIndexOf('/');
-		if (idx <= 0)
+		size_t idx = lns.lastIndexOf('/');
+		if (idx == 0 || idx == OW_String::npos)
 		{
 			break;
 		}

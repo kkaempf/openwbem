@@ -122,8 +122,8 @@ int main(int argc, char* argv[])
 	{
 		cerr << he << endl;
 		OW_String message = he.getMessage();
-		int idx = message.indexOf("Unauthorized");
-		if (idx >= 0)
+		size_t idx = message.indexOf("Unauthorized");
+		if (idx != OW_String::npos)
 		{
 			exit(1);
 		}

@@ -118,7 +118,8 @@ public:
 					return 0;
 				}
 	
-				const char* strVer = (*versFunc)();
+				const char* strVer = 0;
+				strVer = (*versFunc)();
 				if(!strVer || strcmp(strVer, OW_VERSION) != 0)
 				{
 					logger->logError("safeLibCreate::create -"

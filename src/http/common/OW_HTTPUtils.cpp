@@ -114,8 +114,8 @@ OW_HTTPUtils::buildMap(OW_HTTPHeaderMap& map, istream& istr)
 				// data instead
 			}
 		}
-		int idx = line.indexOf(':');
-		if ( idx < 0 )	// no ':' found, and not a continuation line.
+		size_t idx = line.indexOf(':');
+		if ( idx == OW_String::npos )	// no ':' found, and not a continuation line.
 		{
 			return false;
 		}
@@ -699,8 +699,8 @@ OW_HTTPUtils::decodeBasicCreds(const OW_String& info, OW_String& name,
 		OW_String& password)
 {
 	OW_String decoded = info;
-	int idx = decoded.indexOf("Basic");
-	if (idx < 0)
+	size_t idx = decoded.indexOf("Basic");
+	if (idx == OW_String::npos)
 	{
 		OW_THROW(OW_AuthenticationException, "Authentication info is not type "
 			"\"Basic\"");
@@ -716,8 +716,8 @@ OW_HTTPUtils::decodeBasicCreds(const OW_String& info, OW_String& name,
 			"credentials");
 	}
 
-	int icolon = decoded.indexOf(':');
-	if (icolon < 0)
+	size_t icolon = decoded.indexOf(':');
+	if (icolon == OW_String::npos)
 	{
 		OW_THROW(OW_AuthenticationException, "invalid credentials syntax");
 	}

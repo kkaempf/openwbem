@@ -226,8 +226,8 @@ namespace
 		virtual void doHandle(const OW_String &s)
 		{
 			OW_String nameSpaceName = s;
-			int ndx = nameSpaceName.lastIndexOf('/');
-			if(ndx != -1)
+			size_t ndx = nameSpaceName.lastIndexOf('/');
+			if(ndx != OW_String::npos)
 			{
 				nameSpaceName = nameSpaceName.substring(ndx+1);
 			}

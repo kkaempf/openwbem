@@ -5,15 +5,15 @@
 * modification, are permitted provided that the following conditions are met:
 *
 *  - Redistributions of source code must retain the above copyright notice,
-*    this list of conditions and the following disclaimer.
+*	this list of conditions and the following disclaimer.
 *
 *  - Redistributions in binary form must reproduce the above copyright notice,
-*    this list of conditions and the following disclaimer in the documentation
-*    and/or other materials provided with the distribution.
+*	this list of conditions and the following disclaimer in the documentation
+*	and/or other materials provided with the distribution.
 *
 *  - Neither the name of Center 7 nor the names of its
-*    contributors may be used to endorse or promote products derived from this
-*    software without specific prior written permission.
+*	contributors may be used to endorse or promote products derived from this
+*	software without specific prior written permission.
 *
 * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -52,19 +52,19 @@ long MofCompiler::compile( const OW_String& filename )
 {
 	theLineInfo = lineInfo(filename,1);
 
-    try
-    {
-        try
-        {
-            int i = filename.lastIndexOf('/');
-            if (i != -1)
-            {
-                basepath = filename.substring(0,i);
-            }
-            else
-            {
-                basepath = OW_String();
-            }
+	try
+	{
+		try
+		{
+			size_t i = filename.lastIndexOf('/');
+			if (i != OW_String::npos)
+			{
+				basepath = filename.substring(0,i);
+			}
+			else
+			{
+				basepath = OW_String();
+			}
 			if (filename != "-")
 			{
 				yyin = fopen(filename.c_str(), "r");
@@ -75,46 +75,46 @@ long MofCompiler::compile( const OW_String& filename )
 				}
 			}
 
-            theErrorHandler->progressMessage("Starting parsing",
-                    lineInfo(filename, 0));
-            #ifdef YYOW_DEBUG
-            yydebug = 1;
-            #endif
+			theErrorHandler->progressMessage("Starting parsing",
+					lineInfo(filename, 0));
+			#ifdef YYOW_DEBUG
+			yydebug = 1;
+			#endif
 
-            yyparse(this);
+			yyparse(this);
 
-            theErrorHandler->progressMessage("Finished parsing",
-                    theLineInfo);
+			theErrorHandler->progressMessage("Finished parsing",
+					theLineInfo);
 
-            CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
-            mofSpecification->Accept(&v);
-        }
-        catch (const OW_MofParseFatalErrorException&)
-        {
-            // error has already been reported.
-        }
-        catch (OW_Assertion& e)
-        {
-            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
-        }
-        catch (OW_Exception& e)
-        {
-            theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), theLineInfo);
-        }
-        catch (std::exception& e)
-        {
-            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
-        }
-        catch(...)
-        {
-            theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
-        }
-    }
-    catch (const OW_MofParseFatalErrorException&)
-    {
-        // error has already been reported.
-    }
-    return theErrorHandler->errorCount();
+			CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
+			mofSpecification->Accept(&v);
+		}
+		catch (const OW_MofParseFatalErrorException&)
+		{
+			// error has already been reported.
+		}
+		catch (OW_Assertion& e)
+		{
+			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), theLineInfo);
+		}
+		catch (OW_Exception& e)
+		{
+			theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), theLineInfo);
+		}
+		catch (std::exception& e)
+		{
+			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
+		}
+		catch(...)
+		{
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
+		}
+	}
+	catch (const OW_MofParseFatalErrorException&)
+	{
+		// error has already been reported.
+	}
+	return theErrorHandler->errorCount();
 }
 
 void yy_delete_buffer(YY_BUFFER_STATE b);
@@ -134,52 +134,52 @@ long MofCompiler::compileString( const OW_String& mof )
 	OW_String filename = "string";
 	theLineInfo = lineInfo(filename,1);
 
-    try
-    {
-        try
-        {
+	try
+	{
+		try
+		{
 			YY_BUFFER_STATE buf = yy_scan_bytes(mof.c_str(), mof.length());
 			yyBufferDeleter deleter(buf);
-            theErrorHandler->progressMessage("Starting parsing",
-                    lineInfo(filename, 0));
-            #ifdef YYOW_DEBUG
-            yydebug = 1;
-            #endif
+			theErrorHandler->progressMessage("Starting parsing",
+					lineInfo(filename, 0));
+			#ifdef YYOW_DEBUG
+			yydebug = 1;
+			#endif
 
-            yyparse(this);
+			yyparse(this);
 
-            theErrorHandler->progressMessage("Finished parsing",
-                    theLineInfo);
+			theErrorHandler->progressMessage("Finished parsing",
+					theLineInfo);
 
-            CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
-            mofSpecification->Accept(&v);
-        }
-        catch (const OW_MofParseFatalErrorException&)
-        {
-            // error has already been reported.
-        }
-        catch (OW_Assertion& e)
-        {
-            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
-        }
-        catch (OW_Exception& e)
-        {
-            theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
-        }
-        catch (std::exception& e)
-        {
-            theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
-        }
-        catch(...)
-        {
-            theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
-        }
-    }
-    catch (const OW_MofParseFatalErrorException&)
-    {
-        // error has already been reported.
-    }
-    return theErrorHandler->errorCount();
+			CIMOMVisitor v(m_ch, m_nameSpace, theErrorHandler);
+			mofSpecification->Accept(&v);
+		}
+		catch (const OW_MofParseFatalErrorException&)
+		{
+			// error has already been reported.
+		}
+		catch (OW_Assertion& e)
+		{
+			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+		}
+		catch (OW_Exception& e)
+		{
+			theErrorHandler->fatalError(format( "ERROR: %1", e).c_str(), lineInfo("(none)", 0));
+		}
+		catch (std::exception& e)
+		{
+			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+		}
+		catch(...)
+		{
+			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", lineInfo("(none)", 0));
+		}
+	}
+	catch (const OW_MofParseFatalErrorException&)
+	{
+		// error has already been reported.
+	}
+	return theErrorHandler->errorCount();
 }
 
 // STATIC

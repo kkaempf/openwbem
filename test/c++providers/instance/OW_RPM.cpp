@@ -341,7 +341,7 @@ public:
 			}
 			else
 			{
-				unsigned int idx = iter->indexOf(':');
+				size_t idx = iter->indexOf(':');
 				curName = iter->substring(0, idx);
 				value = iter->substring(idx + 1);
 				value.trim();

@@ -289,8 +289,8 @@ OW_CIMUrl::setComponents()
 	m_pdata->m_ref = OW_String();
 	m_pdata->m_localHost = true;
 
-	int ndx = spec.indexOf("://");
-	if(ndx != -1)
+	size_t ndx = spec.indexOf("://");
+	if(ndx != OW_String::npos)
 	{
 		m_pdata->m_protocol = spec.substring(0, ndx);
 		spec = spec.substring(ndx+3);
@@ -298,13 +298,13 @@ OW_CIMUrl::setComponents()
 
 	// parse and remove name and password
 	ndx = spec.indexOf('@');
-	if (ndx != -1)
+	if (ndx != OW_String::npos)
 	{
 		spec = spec.substring(ndx + 1);
 	}
 
 	ndx = spec.indexOf('/');
-	if(ndx != -1)
+	if(ndx != OW_String::npos)
 	{
 		m_pdata->m_host = spec.substring(0, ndx);
 		m_pdata->m_file = spec.substring(ndx+1);
@@ -316,7 +316,7 @@ OW_CIMUrl::setComponents()
 	}
 
 	ndx = m_pdata->m_host.indexOf(':');
-	if(ndx != -1)
+	if(ndx != OW_String::npos)
 	{
 		OW_String sport = m_pdata->m_host.substring(ndx+1);
 		try
@@ -340,8 +340,8 @@ OW_CIMUrl::checkRef()
 {
 	if(!m_pdata->m_file.empty())
 	{
-		int ndx = m_pdata->m_file.indexOf('#');
-		if(ndx != -1)
+		size_t ndx = m_pdata->m_file.indexOf('#');
+		if(ndx != OW_String::npos)
 		{
 			m_pdata->m_ref = m_pdata->m_file.substring(ndx+1);
 			m_pdata->m_file = m_pdata->m_file.substring(0, ndx);
