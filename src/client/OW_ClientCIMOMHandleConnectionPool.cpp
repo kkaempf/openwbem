@@ -69,7 +69,7 @@ ClientCIMOMHandleConnectionPool::addConnectionToPool(const ClientCIMOMHandleRef&
 {
 	MutexLock lock(m_guard);
 	std::pair<pool_t::iterator, pool_t::iterator> range = m_pool.equal_range(url);
-	if (std::distance(range.first, range.second) < m_maxConnectionsPerUrl)
+	if (std::distance(range.first, range.second) < static_cast<ptrdiff_t>(m_maxConnectionsPerUrl))
 	{
 		m_pool.insert(pool_t::value_type(url, handle));
 	}

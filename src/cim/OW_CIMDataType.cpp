@@ -443,12 +443,11 @@ start:
 	#define YYMARKER		q
 	#define YYFILL(n)
 
-start:
 	{
 	YYCTYPE yych;
 	unsigned int yyaccept;
 	goto yy0;
-yy1:	++YYCURSOR;
+	++YYCURSOR;
 yy0:
 	if((YYLIMIT - YYCURSOR) < 10) YYFILL(10);
 	yych = *YYCURSOR;
@@ -538,8 +537,6 @@ yy16:	yych = *++YYCURSOR;
 	}
 yy17:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy18:	//yych = *++YYCURSOR;
-yy19:
 	{ return DATETIME; }
 yy20:	yych = *++YYCURSOR;
 	switch(yych){
@@ -568,8 +565,6 @@ yy24:	yych = *++YYCURSOR;
 	}
 yy25:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy26:	//yych = *++YYCURSOR;
-yy27:
 	{ return BOOLEAN; }
 yy28:	yych = *++YYCURSOR;
 	switch(yych){
@@ -593,8 +588,6 @@ yy31:	yych = *++YYCURSOR;
 	}
 yy32:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy33:	//yych = *++YYCURSOR;
-yy34:
 	{ return CHAR16; }
 yy35:	yych = *++YYCURSOR;
 	switch(yych){
@@ -619,7 +612,6 @@ yy38:	yych = *++YYCURSOR;
 	default:	goto yy11;
 	}
 yy39:	//yych = *++YYCURSOR;
-yy40:
 	{ return REFERENCE; }
 yy41:	yych = *++YYCURSOR;
 	switch(yych){
@@ -643,8 +635,6 @@ yy44:	yych = *++YYCURSOR;
 	}
 yy45:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy46:	//yych = *++YYCURSOR;
-yy47:
 	{ return REFERENCE; }
 yy48:	yych = *++YYCURSOR;
 	switch(yych){
@@ -664,13 +654,9 @@ yy50:	yych = *++YYCURSOR;
 	}
 yy51:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy52:	//yych = *++YYCURSOR;
-yy53:
 	{ return REAL64; }
 yy54:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy55:	//yych = *++YYCURSOR;
-yy56:
 	{ return REAL32; }
 yy57:	yych = *++YYCURSOR;
 	switch(yych){
@@ -715,21 +701,14 @@ yy64:	yych = *++YYCURSOR;
 	}
 yy65:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy66:	//yych = *++YYCURSOR;
-yy67:
 	{ return SINT64; }
 yy68:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy69:	//yych = *++YYCURSOR;
-yy70:
 	{ return SINT32; }
 yy71:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy72:	//yych = *++YYCURSOR;
-yy73:
 	{ return SINT16; }
 yy74:	//yych = *++YYCURSOR;
-yy75:
 	{ return SINT8; }
 yy76:	yych = *++YYCURSOR;
 	switch(yych){
@@ -748,8 +727,6 @@ yy78:	yych = *++YYCURSOR;
 	}
 yy79:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy80:	//yych = *++YYCURSOR;
-yy81:
 	{ return STRING; }
 yy82:	yych = *++YYCURSOR;
 	switch(yych){
@@ -789,21 +766,14 @@ yy88:	yych = *++YYCURSOR;
 	}
 yy89:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy90:	//yych = *++YYCURSOR;
-yy91:
 	{ return UINT64; }
 yy92:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy93:	//yych = *++YYCURSOR;
-yy94:
 	{ return UINT32; }
 yy95:	yych = *++YYCURSOR;
 	if(yych >= '\001')	goto yy11;
-yy96:	//yych = *++YYCURSOR;
-yy97:
 	{ return UINT16; }
 yy98:	//yych = *++YYCURSOR;
-yy99:
 	{ return UINT8; }
 }
 }

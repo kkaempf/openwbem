@@ -319,7 +319,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 
 		
 	// Write the servers random number to the temp file
-	if(::write(authfd, cookie.c_str(), cookie.length()) != cookie.length())
+	if(::write(authfd, cookie.c_str(), cookie.length()) != static_cast<ssize_t>(cookie.length()))
 	{
 		int lerrno = errno;
 		::close(authfd);

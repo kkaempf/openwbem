@@ -47,6 +47,7 @@
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_ConfigException.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_CIMInstance.hpp"
 
 #include <algorithm> // for std::find
 
@@ -62,17 +63,17 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 		LoggerRef logger,
 		const String& callbackURL, 
 		Reference<Array<SelectablePair_t> > selectables)
-	: m_authenticator(authenticator)
+	: m_configItems(configMap)
+	, m_authenticator(authenticator)
 	, m_logger(logger ? logger : LoggerRef(new DummyLogger))
 	, m_callbackURL(callbackURL)
 	, m_requestHandlers(requestHandlers)
 	, m_selectables(selectables)
+	, m_assocProvs()
 	, m_instProvs()
 	, m_secondaryInstProvs()
-	, m_assocProvs()
 	, m_methodProvs()
 	, m_cimClasses()
-	, m_configItems(configMap)
 	, m_lockingType(NONE)
 	, m_lockingTimeout(300)
 	, m_classRetrieval(DONT_RETRIEVE_CLASSES)
@@ -341,6 +342,7 @@ CIMInstanceArray
 ProviderAgentEnvironment::getInteropInstances(const String& className)const 
 {
 	OW_ASSERT("not implemented" == 0); 
+	return CIMInstanceArray();
 }
 
 //////////////////////////////////////////////////////////////////////////////

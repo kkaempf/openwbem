@@ -308,6 +308,8 @@ esac
 CFLAGS="$PLAT_CFLAGS"
 CXXFLAGS="$PLAT_CXXFLAGS"
 
+OW_CHECK_COMPILER_FLAG(fno-enforce-eh-specs,[CXXFLAGS="-fno-enforce-eh-specs $CXXFLAGS"])
+
 # Set up the linker
 if test -z "$CXXLINK" ; then
   CXXLINK="$CXX"
@@ -599,7 +601,15 @@ OW_HELP_STRING(--enable-debug-mode,enable debugging mode),
 	CFLAGS="$CFLAGS -g"
 	#CFLAGS="$CFLAGS -g -Werror -Wall -W -Wno-format"
 	CXXFLAGS="$CXXFLAGS -g"
-	#CXXFLAGS="$CXXFLAGS -g -Werror -Wall -W -Woverloaded-virtual -Wno-unused"
+	OW_CHECK_COMPILER_FLAG(Werror,[CXXFLAGS="$CXXFLAGS -Werror"])
+	OW_CHECK_COMPILER_FLAG(Wall,[CXXFLAGS="$CXXFLAGS -Wall"])
+	OW_CHECK_COMPILER_FLAG(W,[CXXFLAGS="$CXXFLAGS -W"])
+	OW_CHECK_COMPILER_FLAG(Woverloaded-virtual,[CXXFLAGS="$CXXFLAGS -Woverloaded-virtual"])
+	OW_CHECK_COMPILER_FLAG(Wno-unused,[CXXFLAGS="$CXXFLAGS -Wno-unused"])
+	OW_CHECK_COMPILER_FLAG(Wno-unused-label,[CXXFLAGS="$CXXFLAGS -Wno-unused-label"])
+	OW_CHECK_COMPILER_FLAG(Wno-unused-parameter,[CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
+dnl	OW_CHECK_COMPILER_FLAG(Wold-style-cast,[CXXFLAGS="$CXXFLAGS -Wold-style-cast"])
+dnl	OW_CHECK_COMPILER_FLAG(Wsign-promo,[CXXFLAGS="$CXXFLAGS -Wsign-promo"])
 ],[
 	CFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"
 	CXXFLAGS="$CXXFLAGS -DNDEBUG $PLAT_OPTFLAGS"

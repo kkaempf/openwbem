@@ -3,7 +3,7 @@ dnl AC_AS_DIRNAME (PATH)
 dnl this is the macro AS_DIRNAME from autoconf 2.4x
 dnl defined here for use in autoconf 2.1x, remove the AC_ when you use 2.4x 
 dnl
-dnl @version $Id: acinclude.m4,v 1.11 2004-03-04 19:08:16 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.12 2004-06-30 03:55:39 nuffer Exp $
 dnl @author complain to <guidod@gmx.de>
 
 AC_DEFUN([AC_ECHO_MKFILE],
@@ -123,7 +123,7 @@ dnl   library (that has some headers) where some functionality is
 dnl   dependent on the OS-features detected at compile-time. No
 dnl   need to invent some "testpkg-confdefs.h.in" manually. :-)
 dnl
-dnl @version $Id: acinclude.m4,v 1.11 2004-03-04 19:08:16 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.12 2004-06-30 03:55:39 nuffer Exp $
 dnl @author Guido Draheim <guidod@gmx.de>
 
 AC_DEFUN([AC_CREATE_PREFIX_CONFIG_H],
@@ -196,7 +196,7 @@ dnl Check whether sys/socket.h defines type socklen_t. Please note
 dnl that some systems require sys/types.h to be included before
 dnl sys/socket.h can be compiled.
 dnl
-dnl @version $Id: acinclude.m4,v 1.11 2004-03-04 19:08:16 nuffer Exp $
+dnl @version $Id: acinclude.m4,v 1.12 2004-06-30 03:55:39 nuffer Exp $
 dnl @author Lars Brinkhoff <lars@nocrew.org>
 dnl
 AC_DEFUN([TYPE_SOCKLEN_T],
@@ -270,4 +270,29 @@ dnl AC_HELP_STRING, so let's try to call it if we can.
 dnl Note: this define must be on one line so that it can be properly returned
 dnl as the help string.
 AC_DEFUN([OW_HELP_STRING],[ifelse(regexp(AC_ACVERSION, 2\.1), -1, AC_HELP_STRING($1,$2),[  ]$1 substr([                       ],len($1))$2)])dnl
+
+AC_DEFUN(OW_CHECK_COMPILER_FLAG,
+[
+AC_MSG_CHECKING(whether $CXX supports -$1)
+ow_cache=`echo $1 | sed 'y% .=/+-%____p_%'`
+AC_CACHE_VAL(ow_cv_prog_cxx_$ow_cache,
+[
+  AC_LANG_SAVE
+  AC_LANG_CPLUSPLUS
+  save_CXXFLAGS="$CXXFLAGS"
+  CXXFLAGS="$CXXFLAGS -$1"
+  AC_TRY_LINK([],[ return 0; ], [eval "ow_cv_prog_cxx_$ow_cache=yes"], [])
+  CXXFLAGS="$save_CXXFLAGS"
+  AC_LANG_RESTORE
+])
+if eval "test \"`echo '$ow_cv_prog_cxx_'$ow_cache`\" = yes"; then
+ AC_MSG_RESULT(yes)
+ :
+ $2
+else
+ AC_MSG_RESULT(no)
+ :
+ $3
+fi
+])
 

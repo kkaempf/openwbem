@@ -115,6 +115,7 @@ CIMOMHandleIFCRef
 ProviderAgentProviderEnvironment::getRepositoryCIMOMHandle() const
 {
 	OW_ASSERT("not implemented" == 0); 
+	return CIMOMHandleIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
 // This function returns a reference to the repository.  This function should only
@@ -123,6 +124,7 @@ RepositoryIFCRef
 ProviderAgentProviderEnvironment::getRepository() const
 {
 	OW_ASSERT("not implemented" == 0); 
+	return RepositoryIFCRef();
 }
 //////////////////////////////////////////////////////////////////////////////
 LoggerRef 
@@ -135,6 +137,7 @@ String
 ProviderAgentProviderEnvironment::getUserName() const
 {
 	OW_ASSERT("not implemented" == 0); 
+	return String();
 }
 //////////////////////////////////////////////////////////////////////////////
 OperationContext& 
