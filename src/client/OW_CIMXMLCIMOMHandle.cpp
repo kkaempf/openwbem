@@ -1261,6 +1261,7 @@ namespace
 						{
 							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
 						}
+						ci.setKeys(cop.getKeys());
 						iresult->handle(ci);
 					}
 					if (cresult)
