@@ -35,6 +35,7 @@
  */
 
 #include "OW_config.h"
+#include "OW_Array.hpp"
 #include "OW_String.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_AuthenticatorIFC.hpp"
