@@ -53,9 +53,9 @@ New features:
       - Add example of types of indication providers: 
         X indication (mustPoll = true) OW_IndicationProviderTest1
         X indication (mustPoll = false) w/ extra thread
-        - indication/polled (mustPoll = false) and no extra thread.
+        X indication/polled (mustPoll = false) and no extra thread.
         - Modify OW_TriggerProviderTest* to be indication providers.
-      - Add a command line event listener.
+      X Add a command line event listener.
       - OW_IndicationServerImpl::deleteSubscription
       - OW_IndicationServerImpl::createSubscription
         - Only allow subscriptions if a) There is a provider capable of

@@ -8,7 +8,8 @@ owdeletenamespace \
 owenumnamespace \
 owenumqualifiers \
 owenumclassnames \
-owenumclasses
+owenumclasses \
+owcimindicationlistener
 
 ### owdigestgenpass
 owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
@@ -119,6 +120,22 @@ owenumclasses_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumclasses
 
+### owcimindicationlistener
+owcimindicationlistener_SOURCES = owcimindicationlistener.cpp
+
+owcimindicationlistener_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient \
+-L$(top_builddir)/src/cimxmllistener -lowhttpxmllistener \
+-L$(top_builddir)/src/services/http -lowservicehttp
+
+owcimindicationlistener_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owcimindicationlistener
+
 INCLUDES = \
 -I$(top_srcdir)/src/common \
 -I$(top_srcdir)/src/common/socket \
@@ -127,6 +144,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/xml \
 -I$(top_srcdir)/src/cim \
--I$(top_srcdir)/src/client
+-I$(top_srcdir)/src/client \
+-I$(top_srcdir)/src/cimxmllistener
 
 
