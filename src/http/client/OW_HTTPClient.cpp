@@ -764,7 +764,6 @@ HTTPClient::processHeaders(String& statusLine)
 			break;
 		case '2':
 			rt = GOOD;
-			m_retryCount = 0;
 			m_authRequired = false;
 			break;
 		case '3':
@@ -776,7 +775,6 @@ HTTPClient::processHeaders(String& statusLine)
 			{
 				case SC_REQUEST_TIMEOUT:
 					rt = RETRY;
-					++m_retryCount;
 					break;
 				case SC_UNAUTHORIZED:
 					// add authentication info, if available
@@ -923,7 +921,6 @@ HTTPClient::checkResponse(Resp_t& rt)
 		rt = processHeaders(statusLine);
 		if (rt == CONTINUE)
 		{
-			m_retryCount = 0;
 			prepareForRetry();
 		}
 	} while (rt == CONTINUE);
@@ -936,9 +933,12 @@ HTTPClient::checkResponse(Resp_t& rt)
 		}
 		else
 		{
-			rt = RETRY;
 			prepareForRetry();
 		}
+	}
+	else if (rt == GOOD)
+	{
+		m_retryCount = 0;
 	}
 	return statusLine;
 }
