@@ -86,7 +86,7 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 
 	OW_PosixUnnamedPipeRef lUPipe;
 
-	int pipefd = 0;
+	int pipefd = -1;
 
 	if (OW_Socket::m_pUpipe)
 	{
@@ -108,7 +108,7 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 
 	int maxfd = fd;
 
-	if (lUPipe)
+	if (pipefd != -1)
 	{
 		FD_SET(pipefd, &readfds);
 		maxfd = OW_MAX(fd, pipefd);
@@ -141,7 +141,7 @@ waitForIO(OW_SocketHandle_t fd, int timeOutSecs, OW_Bool forInput)
 			break;
 
 		default:
-			if (lUPipe)
+			if (pipefd != -1)
 			{
 				if (FD_ISSET(pipefd, &readfds))
 				{
