@@ -49,12 +49,12 @@ public:
 	virtual int close();
 	int closeInputHandle();
 	int closeOutputHandle();
-	virtual void setBlocking(bool outputIsBlocking);
 	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED;
-	Select_t getSelectObj() const;
+	virtual void setBlocking(EBlockingMode outputIsBlocking=E_BLOCKING);
+	virtual Select_t getSelectObj() const;
 private:
 	int m_fds[2];
-	bool m_blocking;
+	EBlockingMode m_blocking;
 };
 typedef Reference<PosixUnnamedPipe> PosixUnnamedPipeRef;
 

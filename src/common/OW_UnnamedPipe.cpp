@@ -71,12 +71,15 @@ UnnamedPipe::readString(String& strData)
 {
 	int len;
 	int rc;
+	
 	if((rc = this->readInt(&len)) != -1)
 	{
 		AutoPtrVec<char> p(new char[len+1]);
+
+		// writeString() writes the '\0' terminator, so we don't worry about it here.
 		if((rc = this->read(p.get(), len)) != -1)
 		{	
-			strData = String(p.get(), len);
+			strData = String(String::E_TAKE_OWNERSHIP, p.release(), len);
 		}
 	}
 	return rc;

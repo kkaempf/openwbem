@@ -111,7 +111,7 @@ Socket::createShutDownMechanism()
 	MutexLock mlock(shutdownMutex);
 	OW_ASSERT(!m_pUpipe);
 	m_pUpipe = UnnamedPipe::createUnnamedPipe();
-	m_pUpipe->setBlocking(false);
+	m_pUpipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
 	b_gotShutDown = false;
 }
 //////////////////////////////////////////////////////////////////////////////

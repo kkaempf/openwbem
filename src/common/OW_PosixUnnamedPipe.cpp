@@ -60,7 +60,7 @@ UnnamedPipe::createUnnamedPipe(EOpen doOpen)
 }
 //////////////////////////////////////////////////////////////////////////////
 PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
-	: m_blocking(false)
+	: m_blocking(E_BLOCKING)
 {
 	m_fds[0] = m_fds[1] = -1;
 	if(doOpen)
@@ -68,7 +68,7 @@ PosixUnnamedPipe::PosixUnnamedPipe(EOpen doOpen)
 		open();
 	}
 	setTimeouts(60 * 10); // 10 minutes. This helps break deadlocks when using safePopen()
-	setBlocking(true);
+	setBlocking(E_BLOCKING); // necessary to set the pipes up right.
 }
 	
 //////////////////////////////////////////////////////////////////////////////
@@ -78,10 +78,12 @@ PosixUnnamedPipe::~PosixUnnamedPipe()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-PosixUnnamedPipe::setBlocking(bool outputIsBlocking)
+PosixUnnamedPipe::setBlocking(EBlockingMode outputIsBlocking)
 {
 	// precondition
 	OW_ASSERT(m_fds[0] != -1 && m_fds[1] != -1);
+
+	m_blocking = outputIsBlocking;
 
 #ifdef OW_WIN32
 	unsigned long argp = !outputIsBlocking;
@@ -97,7 +99,7 @@ PosixUnnamedPipe::setBlocking(bool outputIsBlocking)
 		{
 			OW_THROW(IOException, "Failed to set pipe to non-blocking");
 		}
-		if(outputIsBlocking)
+		if(outputIsBlocking == E_BLOCKING)
 		{
 			fdflags &= !O_NONBLOCK;
 		}
@@ -119,6 +121,8 @@ PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 {
 	// precondition
 	OW_ASSERT(m_fds[1] != -1);
+	
+	m_blocking = outputIsBlocking ? E_BLOCKING : E_NONBLOCKING ;
 
 #ifdef OW_WIN32
 	unsigned long argp = !outputIsBlocking;
@@ -210,7 +214,7 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[1] != -1)
 	{
-		if (m_blocking)
+		if (m_blocking == E_BLOCKING)
 		{
 			rc = SocketUtils::waitForIO(m_fds[1], m_writeTimeout, SocketFlags::E_WAIT_FOR_OUTPUT);
 			if (rc != 0)
@@ -226,9 +230,6 @@ PosixUnnamedPipe::write(const void* data, int dataLen, bool errorAsException)
 			}
 		}
 
-		// Always use the regular write in this method, instead of the
-		// pth_write. This is because the signal handler calls this method
-		// indirectly when it pushes a signal that has been received.
 		rc = ::write(m_fds[1], data, dataLen);
 	}
 	if (errorAsException && rc == -1)
@@ -244,7 +245,7 @@ PosixUnnamedPipe::read(void* buffer, int bufferLen, bool errorAsException)
 	int rc = -1;
 	if(m_fds[0] != -1)
 	{
-		if (m_blocking)
+		if (m_blocking == E_BLOCKING)
 		{
 			rc = SocketUtils::waitForIO(m_fds[0], m_readTimeout, SocketFlags::E_WAIT_FOR_INPUT);
 			if (rc != 0)

@@ -237,6 +237,7 @@ bool
 ServerSocketImpl::waitForIO(int fd, int timeOutSecs, 
 	SocketFlags::EWaitDirectionFlag forInput)
 {
+	// TODO: Why is this duplicated with the version in SocketUtils?
 	fd_set thefds;
 	fd_set* preadfds = NULL;
 	fd_set* pwritefds = NULL;

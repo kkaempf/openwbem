@@ -60,7 +60,7 @@ OW_DEFINE_EXCEPTION(HTTPServer)
 HTTPServer::HTTPServer()
 	: m_upipe(UnnamedPipe::createUnnamedPipe())
 {
-	m_upipe->setBlocking(false);
+	m_upipe->setBlocking(UnnamedPipe::E_NONBLOCKING);
 }
 //////////////////////////////////////////////////////////////////////////////
 HTTPServer::~HTTPServer()

@@ -157,7 +157,7 @@ public:
 	, m_selectables(selectables)
 	, m_stopObject(UnnamedPipe::createUnnamedPipe())
 	{
-		m_stopObject->setBlocking(false);
+		m_stopObject->setBlocking(UnnamedPipe::E_NONBLOCKING);
 	}
 	/**
 	 * The method that will be run when the start method is called on this
