@@ -333,7 +333,7 @@ sparc-*-*)
 	AC_DEFINE(ARCH_SPARC, 1, SPARC architecture)
 	;;
 hppa2.0*-*-*)
-	AC_DEFINE(ARCH_HPPA20W, 1, HP PA-RISC 2.0 architecture)
+	AC_DEFINE(ARCH_HPPA20, 1, HP PA-RISC 2.0 architecture)
 	;;
 *)
 	AC_DEFINE(ARCH_UNKNOWN, 1, Unknown architecture)
