@@ -951,8 +951,8 @@ CIMOMEnvironment::_clearSelectables()
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMOMEnvironment::addSelectable(SelectableIFCRef obj,
-	SelectableCallbackIFCRef cb)
+CIMOMEnvironment::addSelectable(const SelectableIFCRef& obj,
+	const SelectableCallbackIFCRef& cb)
 {
 	MutexLock ml(m_selectableLock);
 	m_selectables.push_back(obj);
@@ -960,20 +960,19 @@ CIMOMEnvironment::addSelectable(SelectableIFCRef obj,
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMOMEnvironment::removeSelectable(SelectableIFCRef obj,
-	SelectableCallbackIFCRef cb)
+CIMOMEnvironment::removeSelectable(const SelectableIFCRef& obj)
 {
 	MutexLock ml(m_selectableLock);
-	for(size_t i = 0; i < m_selectables.size(); i++)
-	{
-		if(obj == m_selectables[i]
-		   && cb == m_selectableCallbacks[i])
-		{
-			m_selectables.remove(i);
-			m_selectableCallbacks.remove(i);
-			break;
-		}
-	}
+    for(size_t i = 0; i < m_selectables.size(); i++)
+    {
+        if(obj == m_selectables[i])
+        {
+            m_selectables.remove(i);
+            m_selectableCallbacks.remove(i);
+            --i;
+            continue;
+        }
+    }
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -15244,7 +15244,7 @@ In MOF: class CIM_StatisticalData:CIM_ManagedElement
   string ElementName;
   datetime StartStatisticTime;
   datetime StatisticTime;
-  datetime SampleInterval=00000000000000.000000:000;
+  datetime SampleInterval="00000000000000.000000:000";
   string Caption;
   string Description;
 uint32 ResetSelectedStats([IN(true),Description("Array of strings indicating which statistics to reset.")]string SelectedStatistics[]);

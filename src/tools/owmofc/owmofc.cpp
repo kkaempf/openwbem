@@ -221,11 +221,11 @@ public:
 	{
 		return true;
 	}
-	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef)
+	virtual void addSelectable(const SelectableIFCRef& , const SelectableCallbackIFCRef&)
 	{
 		OW_ASSERT("Unsupported" == 0);
 	}
-	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef)
+	virtual void removeSelectable(const SelectableIFCRef&)
 	{
 		OW_ASSERT("Unsupported" == 0);
 	}
@@ -252,7 +252,8 @@ void usage()
 	cout << "  -u,--url <URL>: the url of the cimom. Default is " << def_url_arg << " if not specified\n";
 	cout << "  -n,--namespace <NAMESPACE>: The initial namespace to use. Default is " << def_namespace_arg << " if not specified\n";
 	cout << "  -c,--create-namespaces: If the namespace doesn't exist, create it\n";
-	cout << "  -e,--encoding <ENCODING>: Specify the encoding, valid values are cimxml and owbinary. Default is " << def_encoding_arg << " if not specified\n";
+	cout << "  -e,--encoding <ENCODING>: Specify the encoding, valid values are cimxml and owbinary. "
+		"This can also be specified by using the owbinary.wbem URI scheme.  Default is " << def_encoding_arg << " if not specified\n";
 	cout << "  -s,--check-syntax: Only parse the mof, don't actually do anything <UNIMPLEMENTED>\n";
 	cout << "  -x,--dump-xml <FILE>: Write the xml to FILE <UNIMPLEMENTED>\n";
 	cout << "  -r,--remove: Instead of creating classes and instances, remove them <UNIMPLEMENTED>\n";
@@ -293,7 +294,7 @@ int main(int argc, char** argv)
 			CIMProtocolIFCRef client;
 			client = new HTTPClient(g_url);
 			// TODO: The /owbinary path part is deprecated, remove it post 3.0
-			if(g_encoding == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
+			if(g_encoding == URL::OWBINARY || url.namespaceName.equalsIgnoreCase(URL::OWBINARY) || url.scheme.startsWith(URL::OWBINARY))
 			{
 				handle = CIMOMHandleIFCRef(new BinaryCIMOMHandle(client));
 			}
@@ -303,7 +304,7 @@ int main(int argc, char** argv)
 			}
 			else
 			{
-				cerr << "Invalid encoding.  Valid encodings: cimxml, owbinary" << endl;
+				cerr << "Invalid encoding.  Valid encodings: cimxml, " << URL::OWBINARY << endl;
 				return 1;
 			}
 			client->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));

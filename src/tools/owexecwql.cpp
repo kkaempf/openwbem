@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
 		 * last copy goes out of scope (reference count goes to zero).
 		 **********************************************************************/
 		CIMOMHandleIFCRef rch;
-		if (owurl.path.equalsIgnoreCase("owbinary"))
+		if (owurl.scheme.startsWith(URL::OWBINARY))
 		{
 			rch = new BinaryCIMOMHandle(client);
 		}

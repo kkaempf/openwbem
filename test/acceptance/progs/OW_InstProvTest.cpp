@@ -185,7 +185,7 @@ main(int argc, char* argv[])
 		 **********************************************************************/
 
 		CIMOMHandleIFCRef chRef;
-		if (owurl.path.equalsIgnoreCase("owbinary"))
+		if (owurl.scheme.startsWith(URL::OWBINARY))
 		{
 			chRef = new BinaryCIMOMHandle(client);
 		}

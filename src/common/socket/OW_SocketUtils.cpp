@@ -127,7 +127,6 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag fo
 			{
 				Thread::testCancel();
 			}
-			//OW_THROW(SocketException, format("SocketUtils::waitForIO: select failed: %1(%2)", errno, strerror(errno)).c_str());
 			break;
 		default:
 			if (pipefd != -1)

@@ -63,7 +63,8 @@ CIMClient::CIMClient(const String& url, const String& ns,
 	 * HTTPClient.  Reference will delete it for us when the
 	 * last copy goes out of scope (reference count goes to zero).
 	 **********************************************************************/
-	if (owurl.path.equalsIgnoreCase("/owbinary"))
+	if (owurl.scheme.startsWith(URL::OWBINARY) 
+		|| owurl.namespaceName.equals(URL::OWBINARY)) // the /owbinary is deprecated and may be removed!
 	{
 		m_ch = new BinaryCIMOMHandle(client);
 	}

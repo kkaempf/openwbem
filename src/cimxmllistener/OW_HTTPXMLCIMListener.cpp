@@ -90,15 +90,27 @@ public:
 	{
 		return m_pLAuthenticator->authenticate(userName, info, details, context);
 	}
-	virtual void addSelectable(SelectableIFCRef obj,
-		SelectableCallbackIFCRef cb)
+	virtual void addSelectable(const SelectableIFCRef& obj,
+		const SelectableCallbackIFCRef& cb)
 	{
 		m_selectables->push_back(std::make_pair(obj, cb));
 	}
-	virtual void removeSelectable(SelectableIFCRef obj, SelectableCallbackIFCRef cb)
+
+	struct selectableFinder
 	{
-		m_selectables->erase(std::remove(m_selectables->begin(), m_selectables->end(),
-			std::make_pair(obj, cb)), m_selectables->end());
+		selectableFinder(const SelectableIFCRef& obj) : m_obj(obj) {}
+		template <typename T>
+		bool operator()(const T& x)
+		{
+			return x.first == m_obj;
+		}
+		const SelectableIFCRef& m_obj;
+	};
+
+	virtual void removeSelectable(const SelectableIFCRef& obj)
+	{
+		m_selectables->erase(std::remove_if(m_selectables->begin(), m_selectables->end(),
+			selectableFinder(obj)), m_selectables->end());
 	}
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const
 	{
@@ -296,7 +308,7 @@ HTTPXMLCIMListener::registerForIndication(
 	CIMClass delivery(CIMNULL);
 	String urlPrefix = "https://";
 	UInt16 listenerPort = m_httpsListenPort;
-	bool useHttps = reg.cimomUrl.protocol.equalsIgnoreCase("https");
+	bool useHttps = reg.cimomUrl.scheme.endsWith('s');
 	if (useHttps)
 	{
 		try

@@ -29,6 +29,7 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_URL.hpp"
+#include "OW_StringBuffer.hpp"
 
 namespace OpenWBEM
 {
@@ -39,91 +40,137 @@ OW_DEFINE_EXCEPTION(MalformedURL)
 String
 URL::toString() const
 {
-	String retval;
-	if (!this->protocol.empty())
+	StringBuffer retval;
+	if (!scheme.empty())
 	{
-		retval = this->protocol + "://";
+		retval += scheme;
+		retval += "://";
 	}
-	if ( !this->username.empty())
+	if (!principal.empty() || !credential.empty())
 	{
-		retval += this->username + ":" + this->password + "@";
+		retval += principal;
+		if (!credential.empty())
+		{
+			retval += ':';
+			retval += credential;
+		}
+		retval += '@';
 	}
-	retval += this->host;
-	if ( this->port > 0 )
+	retval += host;
+	if (!port.empty())
 	{
-		retval += ":" + String(static_cast<UInt32>(this->port));
+		retval += ":";
+		retval += port;
 	}
-	if ( !this->path.empty())
+	if (!namespaceName.empty())
 	{
-		retval += this->path;
+		retval += '/';
+		retval += namespaceName;
+		// can only have a modelPath if we have namespaceName
+		if (!modelPath.empty())
+		{
+			retval += "/:";
+			retval += modelPath;
+		}
 	}
-	return retval;
+	return retval.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
-URL::URL()
-: protocol(), username(), password(), host(), port(0), path()
+URL::URL() // default for all data members is okay.
 {
 }
+
 //////////////////////////////////////////////////////////////////////////////
-URL::URL(const String& sUrl): port(0)
+URL::URL(const String& sUrl) // default for all data members is okay.
 {
 	String sURL = sUrl;
 	sURL.trim();
+
+	// get the scheme
 	size_t iBeginIndex = 0;
 	size_t iEndIndex = sURL.indexOf( "://" );
 	if ( iEndIndex != String::npos )
 	{
 		if ( iEndIndex > 0 )
-			protocol = sURL.substring( 0, iEndIndex ).toLowerCase();
+			scheme = sURL.substring( 0, iEndIndex ).toLowerCase();
 		iBeginIndex = iEndIndex + 3;
 	}
-	iEndIndex = sURL.indexOf( "@", iBeginIndex );
+	// get the userinfo
+	iEndIndex = sURL.indexOf( '@', iBeginIndex );
 	if ( iEndIndex != String::npos )
 	{
 		String sNamePass = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );
-		iBeginIndex = sNamePass.indexOf( ":" );
+		iBeginIndex = sNamePass.indexOf( ':' );
 		if ( iBeginIndex != String::npos )
 		{
 			if ( iBeginIndex > 0 )
-				username = sNamePass.substring( 0, iBeginIndex );
+				principal = sNamePass.substring( 0, iBeginIndex );
 			if ( iBeginIndex < iEndIndex-1 )
-				password = sNamePass.substring( iBeginIndex + 1 );
+				credential = sNamePass.substring( iBeginIndex + 1 );
 		}
 		else if ( !sNamePass.empty())
-			username = sNamePass;
+			principal = sNamePass;
 		iBeginIndex = iEndIndex + 1;
 	}
-	iEndIndex = sURL.indexOf( "/", iBeginIndex );
-	if ( iEndIndex != String::npos )
+	// get host[:port]
+	iEndIndex = sURL.indexOf( '/', iBeginIndex );
+	if (iEndIndex == String::npos)
 	{
-		path = sURL.substring( iEndIndex );
-		sURL = sURL.substring( iBeginIndex, iEndIndex - iBeginIndex );
+		iEndIndex = sURL.length();
 	}
-	else
-		sURL = sURL.substring( iBeginIndex );
-	iBeginIndex = sURL.indexOf( ":" );
-	if ( iBeginIndex != String::npos )
-	{
-		host = sURL.substring( 0, iBeginIndex );
-		if ( sURL.length() > iBeginIndex+1 )
-		{
-			try
-			{
-				port = sURL.substring( iBeginIndex + 1 ).toUInt16();
-			}
-			catch (const StringConversionException&)
-			{
-				OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());
-			}
-		}
-	}
-	else if ( iBeginIndex && !sURL.empty() )
-		host = sURL;
-	else
+
+	String hostPort = sURL.substring(iBeginIndex, iEndIndex - iBeginIndex);
+	if (hostPort.empty())
 	{
 		OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());
 	}
+	size_t colonIdx = hostPort.indexOf( ':' );
+	if ( colonIdx != String::npos )
+	{
+		host = hostPort.substring( 0, colonIdx );
+		port = hostPort.substring( colonIdx + 1 );
+	}
+	else
+	{
+		host = hostPort;
+	}
+	if (host.empty())
+	{
+		OW_THROW(MalformedURLException, String("Invalid URL: " + sUrl).c_str());
+	}
+
+	// get namespaceName
+	iBeginIndex = sURL.indexOf('/', iBeginIndex);
+	if ( iBeginIndex != String::npos )
+	{
+		iEndIndex = sURL.indexOf("/:",  iBeginIndex);
+		if (iEndIndex == String::npos)
+		{
+			iEndIndex = sURL.length();
+		}
+		namespaceName = sURL.substring( iBeginIndex+1, iEndIndex - (iBeginIndex+1) );
+
+		// get modelPath
+		iBeginIndex = sURL.indexOf("/:", iBeginIndex);
+		if (iBeginIndex != String::npos)
+		{
+			modelPath = sURL.substring(iBeginIndex + 2); // this is the last piece, so grab everything to the end.
+		}
+	}
 }
+
+// known schemes
+const char* const URL::CIMXML_WBEM = "cimxml.wbem";
+const char* const URL::CIMXML_WBEMS = "cimxml.wbems";
+const char* const URL::HTTP = "http";
+const char* const URL::HTTPS = "https";
+const char* const URL::OWBINARY_WBEM = "owbinary.wbem";
+const char* const URL::OWBINARY_WBEMS = "owbinary.wbems";
+const char* const URL::OWBINARY = "owbinary";
+
+// special port
+const char* const URL::OWIPC = "owipc";
+
 
 } // end namespace OpenWBEM
 

@@ -63,12 +63,13 @@ HTTPClient::HTTPClient( const String &sURL )
 	, m_url(sURL)
 	, m_responseHeaders(), m_requestHeadersCommon()
 	, m_requestHeadersNew(), m_pIstrReturn(0)
-	, m_socket(m_url.protocol.equalsIgnoreCase("https") ? SocketFlags::E_SSL : SocketFlags::E_NOT_SSL)
+	, m_socket(m_url.scheme.endsWith('s') ? SocketFlags::E_SSL : SocketFlags::E_NOT_SSL) // covers https, cimxml.wbems, owbinary.wbems
 	, m_requestMethod("M-POST"), m_authRequired(false)
 	, m_needsConnect(true)
 	, m_istr(m_socket.getInputStream()), m_ostr(m_socket.getOutputStream())
 	, m_doDeflateOut(false)
 	, m_retryCount(0)
+	, m_httpPath("/cimom")
 {
 	signal(SIGPIPE, SIG_IGN);
 	setUrl();
@@ -101,22 +102,22 @@ HTTPClient::cleanUpIStreams()
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::setUrl()
 {
-	if (m_url.protocol.empty())
+	if (m_url.scheme.empty())
 	{
-		m_url.protocol = "http";
+		m_url.scheme = "http";
 	}
-	if (m_url.port == 0)
+	if (m_url.port.empty())
 	{
-		if( m_url.protocol.equalsIgnoreCase("https") )
+		if( m_url.scheme.endsWith('s') ) // https, cimxml.wbems, owbinary.wbems
 		{
-			m_url.port = 5989;
+			m_url.port = "5989";
 		}
-		else if (m_url.protocol.equalsIgnoreCase("http"))
+		else // http, cimxml.wbem, owbinary.wbem
 		{
-			m_url.port = 5988;
+			m_url.port = "5988";
 		}
 	}
-	if (m_url.protocol.equalsIgnoreCase("https"))
+	if (m_url.scheme.endsWith('s'))
 	{
 #ifndef OW_NO_SSL
 		SSLCtxMgr::initClient();
@@ -124,18 +125,15 @@ void HTTPClient::setUrl()
 		OW_THROW(SocketException, "SSL not available");
 #endif // #ifndef OW_NO_SSL
 	}
-	if (m_url.protocol.equalsIgnoreCase("ipc"))
+	if (m_url.port.equalsIgnoreCase(URL::OWIPC) 
+		|| m_url.scheme.equals("ipc")) // the ipc:// scheme is deprecated and will be removed!
 	{
 		m_serverAddress = SocketAddress::getUDS(OW_DOMAIN_SOCKET_NAME);
 	}
 	else
 	{
 		m_serverAddress = SocketAddress::getByName(m_url.host,
-			m_url.port);
-	}
-	if( m_url.path.empty())
-	{
-		m_url.path = "/cimom";
+			m_url.port.toUInt16());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -166,7 +164,7 @@ HTTPClient::receiveAuthentication()
 		m_sRealm = "";
 	}
 #endif // #ifndef OW_DISABLE_DIGEST
-	if (m_url.username.empty())
+	if (m_url.principal.empty())
 	{
 		if (!m_loginCB)
 		{
@@ -190,8 +188,8 @@ HTTPClient::receiveAuthentication()
 			String name, passwd;
 			if (m_loginCB->getCredentials(realm, name, passwd, ""))
 			{
-				m_url.username = name;
-				m_url.password = passwd;
+				m_url.principal = name;
+				m_url.credential = passwd;
 			}
 			else
 			{
@@ -213,8 +211,8 @@ HTTPClient::receiveAuthentication()
 					iEndIndex - iBeginIndex );
 			}
 		}
-		HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
-			m_url.password, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
+		HTTPUtils::DigestCalcHA1( "md5", m_url.principal, m_sRealm,
+			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 		m_iDigestNonceCount = 1;
 	}
 	else if( getHeaderValue("www-authenticate").indexOf( "Digest" ) != String::npos )
@@ -231,8 +229,8 @@ HTTPClient::receiveAuthentication()
 					iBeginIndex );
 			}
 		}
-		HTTPUtils::DigestCalcHA1( "md5", m_url.username, m_sRealm,
-			m_url.password, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
+		HTTPUtils::DigestCalcHA1( "md5", m_url.principal, m_sRealm,
+			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 	}
 	else
 #endif
@@ -255,8 +253,8 @@ void HTTPClient::sendAuthorization()
 		ostr << m_sAuthorization << " ";
 		if( m_sAuthorization == "Basic" )
 		{
-			ostr << HTTPUtils::base64Encode( m_url.username + ":" +
-				m_url.password );
+			ostr << HTTPUtils::base64Encode( m_url.principal + ":" +
+				m_url.credential );
 		}
 #ifndef OW_DISABLE_DIGEST
 		else if( m_sAuthorization == "Digest" )
@@ -264,11 +262,11 @@ void HTTPClient::sendAuthorization()
 			String sNonceCount;
 			sNonceCount.format( "%08x", m_iDigestNonceCount );
 			HTTPUtils::DigestCalcResponse( m_sDigestSessionKey, m_sDigestNonce, sNonceCount,
-				m_sDigestCNonce, "auth", m_requestMethod, m_url.path, "", m_sDigestResponse );
-			ostr << "username=\"" << m_url.username << "\", ";
+				m_sDigestCNonce, "auth", m_requestMethod, m_httpPath, "", m_sDigestResponse );
+			ostr << "username=\"" << m_url.principal << "\", ";
 			ostr << "realm=\"" << m_sRealm << "\", ";
 			ostr << "nonce=\"" << m_sDigestNonce << "\", ";
-			ostr << "uri=\"" << m_url.path << "\", ";
+			ostr << "uri=\"" + m_httpPath + ", ";
 			ostr << "qop=\"auth\", ";	
 			ostr << "nc=" << sNonceCount << ", ";
 			ostr << "cnonce=\"" << m_sDigestCNonce << "\", ";
@@ -407,7 +405,7 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 		errDetails += "sHA1: >" + m_sDigestSessionKey + "< sNonce: >" +
 			m_sDigestNonce + "< Nonce Count >" + sNonceCount + "< sCNonce: >" +
 			m_sDigestCNonce + "< Method >" + m_requestMethod +
-			"< url >" + m_url.path + "<";
+			"< url >" + m_httpPath + "<";
 		*/
 		String CIMError = getHeaderValue("CIMError");
 		if (CIMError.empty())
@@ -532,7 +530,7 @@ void
 HTTPClient::sendHeaders(const String& method,
 	const String& prot)
 {
-	m_ostr << method << " " << m_url.path << " " << prot << "\r\n";
+	m_ostr << method << ' ' << m_httpPath << ' ' << prot << "\r\n";
 	for (size_t i = 0; i < m_requestHeadersCommon.size(); i++)
 	{
 		m_ostr << m_requestHeadersCommon[i] << "\r\n";
@@ -795,6 +793,14 @@ HTTPClient::getPeerAddress() const
 	}
 	return m_socket.getPeerAddress();
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+HTTPClient::setHTTPPath(const String& newPath)
+{
+	m_httpPath = newPath;
+}
+
 
 } // end namespace OpenWBEM
 

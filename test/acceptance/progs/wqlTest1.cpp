@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
 		URL owurl(url);
 		CIMOMHandleIFCRef rch;
 
-		if (owurl.path.equalsIgnoreCase("/owbinary"))
+		if (owurl.scheme.startsWith(URL::OWBINARY))
 		{
 			rch = new BinaryCIMOMHandle(httpClient);
 		}

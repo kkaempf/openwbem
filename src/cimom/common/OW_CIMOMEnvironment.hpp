@@ -136,10 +136,9 @@ public:
 	void clearConfigItems();
 	virtual void setConfigItem(const String &item, const String &value,
 		EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS);
-	virtual void addSelectable(SelectableIFCRef obj,
-		SelectableCallbackIFCRef cb);
-	virtual void removeSelectable(SelectableIFCRef obj,
-		SelectableCallbackIFCRef cb);
+	virtual void addSelectable(const SelectableIFCRef& obj,
+		const SelectableCallbackIFCRef& cb);
+	virtual void removeSelectable(const SelectableIFCRef& obj);
 	void unloadProviders();
 	void startServices();
 	void shutdown();

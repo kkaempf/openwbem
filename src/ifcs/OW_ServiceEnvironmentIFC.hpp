@@ -62,10 +62,9 @@ public:
 	
 	virtual void setConfigItem(const String& item,
 		const String& value, EOverwritePreviousFlag overwritePrevious = E_OVERWRITE_PREVIOUS) = 0;
-	virtual void addSelectable(SelectableIFCRef obj,
-		SelectableCallbackIFCRef cb) = 0;
-	virtual void removeSelectable(SelectableIFCRef obj,
-		SelectableCallbackIFCRef cb) = 0;
+	virtual void addSelectable(const SelectableIFCRef& obj,
+		const SelectableCallbackIFCRef& cb) = 0;
+	virtual void removeSelectable(const SelectableIFCRef& obj) = 0;
 	virtual RequestHandlerIFCRef getRequestHandler(
 		const String& id) = 0;
 	virtual LoggerRef getLogger() const = 0;

@@ -596,6 +596,7 @@ enumerateInstanceNames(CIMClient& hdl)
 		while (enu.hasMoreElements())
 		{
 			CIMObjectPath cop = enu.nextElement();
+			cop.setHost("localhost");
 			cout << cop.toString() << endl;
 			TempFileStream tfs;
 			CIMInstancePathtoXML(cop, tfs);
@@ -1741,7 +1742,7 @@ main(int argc, char* argv[])
 		 * and 5989 for HTTPS.  If no username and password are given,
 		 * and the CIM Server requires authentication, a callback may
 		 * be provided to retrieve authentication credentials.
-		 * If the path is /owbinary then the openwbem binary protocol will be
+		 * If the scheme starts with owbinary then the openwbem binary protocol will be
 		 * used, otherwise it uses CIM/XML
 		 **********************************************************************/
 

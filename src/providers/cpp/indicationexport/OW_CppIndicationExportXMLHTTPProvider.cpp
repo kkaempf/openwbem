@@ -71,18 +71,31 @@ CppIndicationExportXMLHTTPProvider::exportIndication(
 
 	String listenerUrl;
 	indHandlerInst.getProperty("Destination").getValue().get(listenerUrl);
+
+	// this guy parses it out.
+	URL url(listenerUrl);
+
 	if (indHandlerInst.getClassName().
 		 equalsIgnoreCase("CIM_IndicationHandlerXMLHTTPS"))
 	{
-		URL url(listenerUrl);
-		if (!url.protocol.equals("https"))
+		if (!url.scheme.equals(URL::CIMXML_WBEMS))
 		{
-			url.protocol = "https";
+			url.scheme = URL::CIMXML_WBEMS;
 			listenerUrl = url.toString();
 		}
 	}
-	IndicationExporter exporter(CIMProtocolIFCRef(
-		new HTTPClient(listenerUrl)));
+
+	HTTPClient* pHTTPClient = new HTTPClient(listenerUrl);
+	IndicationExporter exporter = IndicationExporter(CIMProtocolIFCRef(
+		pHTTPClient)); // takes ownership of pHTTPClient
+
+	// the OW 2.0 HTTPXMLCIMListener uses the HTTP path to differentiate different
+	// subscriptions.  This is stored in namespace name of the URL.
+	if (!url.namespaceName.empty())
+	{
+		pHTTPClient->setHTTPPath('/' + url.namespaceName);
+	}
+
 	exporter.exportIndication(ns, indicationInst);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,7 +109,6 @@ CppIndicationExportXMLHTTPProvider::getHandlerClassNames()
 	rv.append("CIM_IndicationHandlerXMLHTTPS"); // used by OW 2.0 for HTTPS indications
 	rv.append("CIM_IndicationHandlerCIMXML"); // new name in the 2.6 schema
 	// new in the 2.8 schema
-	rv.append("CIM_ListenerDestination");
 	rv.append("CIM_ListenerDestinationCIMXML"); 
 
 	return rv;

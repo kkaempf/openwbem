@@ -28,45 +28,26 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#include "TestSuite.hpp"
-#include "TestCaller.hpp"
-#include "OW_CIMUrlTestCases.hpp"
-#include "OW_CIMUrl.hpp"
-#include "OW_String.hpp"
-#include "OW_URL.hpp"
+#ifndef OW_URL_TEST_CASES_HPP_
+#define OW_URL_TEST_CASES_HPP_
 
-using namespace OpenWBEM;
+#include "OW_config.h"
+#include "TestCase.hpp"
 
-void OW_CIMUrlTestCases::setUp()
+class URLTestCases : public TestCase
 {
-}
+public:
+	URLTestCases( const char* name )
+		: TestCase( name ) {}
 
-void OW_CIMUrlTestCases::tearDown()
-{
-}
+	void setUp();
+	void tearDown();
+	static Test *suite();
 
-void OW_CIMUrlTestCases::testToString()
-{
-	/* TODO: Finish this
-	CIMUrl url(String("http://test2:pass2@localhost:30926"));
-	unitAssert( url.getFile() == "cimom" );
-	unitAssert( url.getHost() == "localhost" );
-	unitAssert( url.getPort() == 30926 );
-	unitAssert( url.getProtocol() == "http" );
-	unitAssert( url.getRef() == "" );
-	unitAssert( url.getSpec() == "" );
-	unitAssert( url.toString() == "http://test2:pass2@localhost:30926" );
-	*/
-}
+private:
+	// test methods
+	void testURLParsing();
+};
 
-Test* OW_CIMUrlTestCases::suite()
-{
-	TestSuite *testSuite = new TestSuite ("OW_CIMUrl");
-
-	testSuite->addTest (new TestCaller <OW_CIMUrlTestCases>
-			("testToString",
-			&OW_CIMUrlTestCases::testToString));
-
-	return testSuite;
-}
+#endif
 

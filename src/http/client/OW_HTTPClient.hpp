@@ -53,9 +53,18 @@ class HTTPClient : public CIMProtocolIFC
 		 * connection to a CIMOM.
 		 * @param url The URL to the CIMOM the client should connect to.
 		 * 		URLs have this form:
-		 * 		http[s]://[user:passwd@]hostname[:port][/path]	
+		 * 		[scheme"://"][[<principal>][":"<credential>]"@"]<host>[":"<port>]["/"<namespace name>["/:"<model path>]]
+		 * The only required element is <host>
+		 * 
+		 * Standard WBEM schemes are: cimxml.wbem, cimxml.wbems, http, https.
+		 * OW specific WBEM schemes are: owbinary.wbem, owbinary.wbems
+		 * 
+		 * A port may be a number to indicate a TCP port, or it may be the special
+		 *  value owipc which indicates the Unix Domain Socket for the system.
+		 * 
+		 * example: "https://jdd:test@myhost.com:5989/interop/:CIM_Namespace.Name=unknown,CreationClassName=CIM_ComputerSystem"
 		 */
-		HTTPClient( const String& url);
+		HTTPClient(const String& url);
 		virtual ~HTTPClient();
 		virtual Reference<std::iostream> beginRequest(
 				const String& methodName, const String& cimObject);
@@ -97,6 +106,16 @@ class HTTPClient : public CIMProtocolIFC
 		 * @return An SocketAddress corresponding to the peer connection
 		 */
 		SocketAddress getPeerAddress()  const;
+		/**
+		 * Set the HTTP path to use.  Previously this was specified in the URL,
+		 * however now with the WBEM URI spec, that portion of the URL is
+		 * allocated to the namespace name.  To use a different HTTP path (the
+		 * path the M-POST is sent to), call this function.  An initial / will
+		 * not be prepended.  The default HTTP path is "/cimom"
+		 * 
+		 * @param newPath The new HTTP path to use.
+		 */
+		void setHTTPPath(const String& newPath);
 	private:
 		void setUrl();
 		void cleanUpIStreams();
@@ -135,6 +154,8 @@ class HTTPClient : public CIMProtocolIFC
 		std::ostream& m_ostr;
 		bool m_doDeflateOut;
 		int m_retryCount;
+		String m_httpPath;
+
 		bool headerHasKey(const String& key)
 		{
 			return HTTPUtils::headerHasKey(m_responseHeaders, key);

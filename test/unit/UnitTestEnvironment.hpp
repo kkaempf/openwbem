@@ -73,9 +73,9 @@ public:
 	virtual bool authenticate(String &, const String &, String &, OperationContext&) {
 		return true;
 	}
-	virtual void addSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {
+	virtual void addSelectable(const SelectableIFCRef&, const SelectableCallbackIFCRef&) {
 	}
-	virtual void removeSelectable(SelectableIFCRef, SelectableCallbackIFCRef) {
+	virtual void removeSelectable(const SelectableIFCRef&) {
 	}
 	virtual RequestHandlerIFCRef getRequestHandler(const String &) {
 		return RequestHandlerIFCRef();

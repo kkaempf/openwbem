@@ -46,7 +46,7 @@ using std::ostream;
 class CIMValue::CIMValueImpl
 {
 public:
-	static CIMValueImpl createSimpleValue(const String& cimtype,
+	static CIMValueImpl createSimpleValue(CIMDataType::Type cimtype,
 		const String& value);
 	CIMValueImpl();
 	CIMValueImpl(const CIMValueImpl& arg);
@@ -222,12 +222,12 @@ CIMValue
 CIMValue::createSimpleValue(const String& cimtype,
 	const String& value)
 {
-	int type = CIMDataType::strToSimpleType(cimtype);
+	CIMDataType::Type type = CIMDataType::strToSimpleType(cimtype);
 	if(type == CIMDataType::INVALID)
 	{
 		return CIMValue(CIMNULL);
 	}
-	CIMValueImpl impl = CIMValueImpl::createSimpleValue(cimtype, value);
+	CIMValueImpl impl = CIMValueImpl::createSimpleValue(type, value);
 	CIMValue cv(CIMNULL);
 	cv.m_impl = new CIMValueImpl(impl);
 	return cv;
@@ -887,11 +887,10 @@ CIMValue::isNumericType() const
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 CIMValue::CIMValueImpl
-CIMValue::CIMValueImpl::createSimpleValue(const String& cimtype,
+CIMValue::CIMValueImpl::createSimpleValue(CIMDataType::Type type,
 	const String& value)
 {
 	CIMValueImpl cimValue;
-	CIMDataType::Type type = CIMDataType::strToSimpleType(cimtype);
 	switch(type)
 	{
 		case CIMDataType::UINT8:

@@ -460,6 +460,12 @@ void
 HTTPServer::shutdown()
 {
 	m_options.env->getLogger()->logDebug("HTTP Service is shutting down...");
+	// first stop all new connections
+	m_options.env->removeSelectable(m_pHttpServerSocket);
+	m_options.env->removeSelectable(m_pHttpsServerSocket);
+	m_options.env->removeSelectable(m_pUDSServerSocket);
+
+	// now stop all current connections
 	Socket::shutdownAllSockets();
 	if (m_upipe->writeString("shutdown") == -1)
 	{
@@ -470,6 +476,7 @@ HTTPServer::shutdown()
 	Socket::deleteShutDownMechanism();
 	m_pHttpServerSocket = 0;
 	m_pHttpsServerSocket = 0;
+	m_pUDSServerSocket = 0;
 	m_options.env->getLogger()->logDebug("HTTP Service has shut down");
 }
 

@@ -28,44 +28,55 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
+#include "OW_config.h"
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
-#include "OW_CIMUrlTestCases.hpp"
-#include "OW_CIMUrl.hpp"
-#include "OW_String.hpp"
+#include "URLTestCases.hpp"
 #include "OW_URL.hpp"
 
 using namespace OpenWBEM;
 
-void OW_CIMUrlTestCases::setUp()
+void URLTestCases::setUp()
 {
 }
 
-void OW_CIMUrlTestCases::tearDown()
+void URLTestCases::tearDown()
 {
 }
 
-void OW_CIMUrlTestCases::testToString()
+void URLTestCases::testURLParsing()
 {
-	/* TODO: Finish this
-	CIMUrl url(String("http://test2:pass2@localhost:30926"));
-	unitAssert( url.getFile() == "cimom" );
-	unitAssert( url.getHost() == "localhost" );
-	unitAssert( url.getPort() == 30926 );
-	unitAssert( url.getProtocol() == "http" );
-	unitAssert( url.getRef() == "" );
-	unitAssert( url.getSpec() == "" );
-	unitAssert( url.toString() == "http://test2:pass2@localhost:30926" );
-	*/
+	{
+		String surl = "proto://user:pass@hostname.foo.com:1234/my/path/:model_path";
+		URL url(surl);
+		unitAssert(url.host.equals("hostname.foo.com"));
+		unitAssert(url.credential.equals("pass"));
+		unitAssert(url.namespaceName.equals("my/path"));
+		unitAssert(url.port.equals("1234"));
+		unitAssert(url.scheme.equals("proto"));
+		unitAssert(url.principal.equals("user"));
+		unitAssert(url.modelPath.equals("model_path"));
+		unitAssert(url.toString().equals(surl));
+	}
+	{
+		String surl = "hostname.foo.com";
+		URL url(surl);
+		unitAssert(url.host.equals("hostname.foo.com"));
+		unitAssert(url.credential.empty());
+		unitAssert(url.namespaceName.empty());
+		unitAssert(url.port.empty());
+		unitAssert(url.scheme.empty());
+		unitAssert(url.principal.empty());
+		unitAssert(url.modelPath.empty());
+		unitAssert(url.toString().equals(surl));
+	}
 }
 
-Test* OW_CIMUrlTestCases::suite()
+Test* URLTestCases::suite()
 {
-	TestSuite *testSuite = new TestSuite ("OW_CIMUrl");
+	TestSuite *testSuite = new TestSuite ("URL");
 
-	testSuite->addTest (new TestCaller <OW_CIMUrlTestCases>
-			("testToString",
-			&OW_CIMUrlTestCases::testToString));
+	ADD_TEST_TO_SUITE(URLTestCases, testURLParsing);
 
 	return testSuite;
 }

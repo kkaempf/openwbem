@@ -132,7 +132,7 @@ main(int argc, char* argv[])
 		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
 		client->setLoginCallBack(getLoginInfo);
 		CIMOMHandleIFCRef chRef;
-		if (owurl.path.equalsIgnoreCase("/owbinary"))
+		if (owurl.scheme.startsWith(URL::OWBINARY))
 		{
 			chRef = new BinaryCIMOMHandle(client);
 		}

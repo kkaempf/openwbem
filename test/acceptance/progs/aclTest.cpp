@@ -783,7 +783,7 @@ int main(int argc, char* argv[])
 		CIMProtocolIFCRef client;
 		client = new HTTPClient(url);
 
-		if (owurl.path.equalsIgnoreCase("/owbinary"))
+		if (owurl.scheme.startsWith(URL::OWBINARY))
 		{
 			rchRef = new BinaryCIMOMHandle(client);
 		}

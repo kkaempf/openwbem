@@ -354,7 +354,6 @@ CIMDataType::strToSimpleType(const String& strType)
 	}
 	OW_String strType(strType_);
 	strType.toLowerCase();
-	// TODO: This function is heavily used.  Use a FSM to speed it up.
 	if(strType == "uint8")
 		return UINT8;
 	else if(strType == "sint8")
