@@ -33,7 +33,7 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 
 # Rules for NetWare
 
-CREATE_IMPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
+CREATE_IMPORTS=nm -Bpg $(TMPLIBDIR)/*.o | \
 			$(AWK) '{ if((($$2 == "T") || \
 				   ($$2 == "D") || \
 				   ($$2 == "B")) && \
