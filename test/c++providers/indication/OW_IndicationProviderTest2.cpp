@@ -83,13 +83,13 @@ public:
 	// unloaded.  NEVER start a detached thread from a provider.  As soon as
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
-	TestProviderThread(const CIMOMHandleIFCRef& hdl, IndicationProviderTest2* pProv)
+	TestProviderThread(const ProviderEnvironmentIFCRef& env, IndicationProviderTest2* pProv)
 		: Thread()
 		, m_shuttingDown(false)
 		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
-		, m_hdl(hdl)
+		, m_env(env)
 		, m_pProv(pProv)
 	{
 	}
@@ -146,7 +146,7 @@ protected:
 	int m_creationFilterCount;
 	int m_modificationFilterCount;
 	int m_deletionFilterCount;
-	CIMOMHandleIFCRef m_hdl;
+	ProviderEnvironmentIFCRef m_env;
 	IndicationProviderTest2* m_pProv;
 };
 	
@@ -154,12 +154,14 @@ class IndicationProviderTest2 : public CppIndicationProviderIFC, public CppInsta
 {
 public:
 	IndicationProviderTest2()
-		: m_theClass(CIMNULL)
+		: m_threadStarted(false)
+		, m_theClass(CIMNULL)
 	{
 	}
 
 	~IndicationProviderTest2()
 	{
+		std::cout << "IndicationProviderTest2::~IndicationProviderTest2()" << std::endl;
 		do_cleanup();
 	}
 
@@ -168,11 +170,11 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter, 
 		const String& eventType, 
-		const String& /*nameSpace*/,
+		const String& nameSpace,
 		const StringArray& classes, 
 		bool firstActivation)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest2::activateFilter");
+		env->getLogger()->logDebug(Format("IndicationProviderTest2::activateFilter filter = %1, eventType = %2, nameSpace = %3, firstActivation = %4", filter.toString(), eventType, nameSpace, firstActivation));
 		
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -218,6 +220,7 @@ public:
 		{
 			env->getLogger()->logDebug("IndicationProviderTest2::activateFilter starting helper thread");
 			NonRecursiveMutexLock l(m_mtx);
+			OW_ASSERT(m_threadStarted == false);
 			m_thread->start();
 			m_threadStarted = true;
 		}
@@ -227,11 +230,11 @@ public:
 		const ProviderEnvironmentIFCRef& env,
 		const WQLSelectStatement& filter, 
 		const String& eventType, 
-		const String& /*nameSpace*/,
+		const String& nameSpace,
 		const StringArray& classes, 
 		bool lastActivation)
 	{
-		env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter");
+		env->getLogger()->logDebug(Format("IndicationProviderTest2::deActivateFilter filter = %1, eventType = %2, nameSpace = %3, lastActivation = %4", filter.toString(), eventType, nameSpace, lastActivation));
 		
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -277,9 +280,10 @@ public:
 		{
 			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter stopping helper thread");
 			NonRecursiveMutexLock l(m_mtx);
+			OW_ASSERT(m_threadStarted == true);
 			m_thread->shutdown();
 			m_thread->join();
-			m_thread = new TestProviderThread(env->getCIMOMHandle(), this);
+			m_thread = new TestProviderThread(env, this);
 			m_threadStarted = false;
 			env->getLogger()->logDebug("IndicationProviderTest2::deActivateFilter helper thread stopped");
 		}
@@ -429,7 +433,7 @@ public:
 		env->getLogger()->logDebug("IndicationProviderTest2::initialize - creating the thread");
 		NonRecursiveMutexLock l(m_mtx);
 		m_threadStarted = false;
-		m_thread = new TestProviderThread(env->getCIMOMHandle(), this);
+		m_thread = new TestProviderThread(env, this);
 	}
 
 	void do_cleanup() 
@@ -439,7 +443,7 @@ public:
 		// we've got to stop the thread we started
 		cout << "IndicationProviderTest2::do_cleanup" << endl;
 		NonRecursiveMutexLock l(m_mtx);
-		if (m_threadStarted)
+		if (m_threadStarted && m_thread)
 		{
 			cout << "IndicationProviderTest2::do_cleanup - stopping thread" << endl;
 			m_thread->shutdown();
@@ -451,6 +455,7 @@ public:
 
 	void updateInstancesAndSendIndications(const CIMOMHandleIFCRef& hdl, int creat, int mod, int del)
 	{
+		std::cout << "IndicationProviderTest2::updateInstancesAndSendIndications create = " << creat << " mod = " << mod << " del = " << del << std::endl;
 		if (!m_theClass)
 		{
 			m_theClass = hdl->getClass("root/testsuite", "OW_IndicationProviderTest2");
@@ -528,7 +533,7 @@ Int32 TestProviderThread::run()
 	NonRecursiveMutexLock l(m_guard);
 	while (!m_shuttingDown)
 	{
-		m_pProv->updateInstancesAndSendIndications(m_hdl, m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
+		m_pProv->updateInstancesAndSendIndications(m_env->getCIMOMHandle(), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
 		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
 		// to be able to stop the thread when the cimom shuts down or restarts.
 		m_cond.timedWait(l, 1);
