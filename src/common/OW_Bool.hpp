@@ -37,7 +37,12 @@
 class OW_String;
 
 /**
- * The OW_Bool class is an abstraction for the boolean data type.
+ * The OW_Bool class is an abstraction for the boolean data type.  It's not
+ * meant to be a replacement for bool.  Use it if you need a type that
+ * supports toString(), readObject(), or writeObject().  It's also useful for
+ * preventing implicit conversion of char*->bool.  Using it can make overloading
+ * functions safer (ie it'll be less likely the compiler will pick the wrong
+ * overload.)
  */
 class OW_Bool
 {
@@ -141,6 +146,8 @@ public:
 
 private:
 
+	// These are private/unimplemented to help prevent unintended errors of
+	// passing a pointer to the constructor.
 	OW_Bool(const void*);
 	OW_Bool(void*);
 	OW_Bool(volatile const void*);
