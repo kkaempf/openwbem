@@ -284,17 +284,18 @@ void createInstance(CIMOMHandleIFC& hdl, const String& newInstance)
 		hdl.createInstance("/root/acltest", newInst);
 		if (mode != "w" && mode != "rw")
 		{
-			cerr << "createInstance should have failed here" << endl;
+			cerr << "createInstance should have failed here. mode = " << mode << endl;
 			TEST_ASSERT(0);
 		}
 	}
 	catch (CIMException& e)
 	{
 		cerr << e << endl;
+		cerr << "Current Mode = " << mode << endl;
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 		{
-			cerr << "createInstance should NOT have failed here" << endl;
+			cerr << "createInstance should NOT have failed here. mode = " << mode << endl;
 			throw;
 		}
 	}
@@ -717,7 +718,7 @@ void createNameSpace(CIMOMHandleIFC& hdl)
 		CIMNameSpaceUtils::create__Namespace(hdl, "/root/acltest/sub1");
 		if (mode != "w" && mode != "rw")
 		{
-			cerr << "create__Namespace should have failed" << endl;
+			cerr << "create__Namespace should have failed. mode = " << mode << endl;
 			TEST_ASSERT(0);
 		}
 	}
@@ -727,7 +728,7 @@ void createNameSpace(CIMOMHandleIFC& hdl)
 		TEST_ASSERT(e.getErrNo() == CIMException::ACCESS_DENIED);
 		if (mode == "w" || mode == "rw")
 		{
-			cerr << "create__Namespace should NOT failed." << endl;
+			cerr << "create__Namespace should NOT failed. mode = " << mode << endl;
 			throw;
 		}
 	}

@@ -63,6 +63,30 @@ using namespace WBEMFlags;
 /////////////////////////////////////////////////////////////////////////////
 namespace
 {
+	class AuthorizerEnabler
+	{
+	public:
+		AuthorizerEnabler(AuthorizerManagerRef& authorizerMgr,
+			ProviderEnvironmentIFCRef env, bool turnOff=false)
+		: m_authorizerMgr(authorizerMgr)
+		, m_env(env)
+		{
+			if(turnOff)
+			{
+				m_authorizerMgr->turnOff(m_env);
+			}
+		}
+
+		~AuthorizerEnabler()
+		{
+			m_authorizerMgr->turnOn(m_env);
+		}
+
+	private:
+		AuthorizerManagerRef m_authorizerMgr;
+		ProviderEnvironmentIFCRef m_env;
+	};
+
 	class CIMServerProviderEnvironment : public ProviderEnvironmentIFC
 	{
 	public:
@@ -188,16 +212,17 @@ CIMServer::shutdown()
 	m_authorizerMgr = 0;
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
+ProviderEnvironmentIFCRef
 CIMServer::_checkNameSpaceAccess(OperationContext& context, const String& ns,
 	Authorizer2IFC::EAccessType acType)
 {
-	if(!m_authorizerMgr->allowAccessToNameSpace(
-		createProvEnvRef(context, m_env), ns, acType))
+	ProviderEnvironmentIFCRef penvref = createProvEnvRef(context, m_env);
+	if(!m_authorizerMgr->allowAccessToNameSpace(penvref, ns, acType))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Access to namespace %1 is not allowed", ns).c_str());
 	}
+	return penvref;
 }
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 //////////////////////////////////////////////////////////////////////////////
@@ -255,10 +280,10 @@ CIMServer::getQualifierType(const String& ns,
 	const String& qualifierName,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context,
+		ns, Authorizer2IFC::E_READ);
 
-	if(!m_authorizerMgr->allowReadSchema(
-		createProvEnvRef(context, m_env), ns))
+	if(!m_authorizerMgr->allowReadSchema(penvref, ns))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Read of qualifier %1 is not allowed",
@@ -276,10 +301,10 @@ CIMServer::enumQualifierTypes(
 	CIMQualifierTypeResultHandlerIFC& result,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_READ);
 
-	if(!m_authorizerMgr->allowReadSchema(
-		createProvEnvRef(context, m_env), ns))
+	if(!m_authorizerMgr->allowReadSchema(penvref, ns))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			"Enumeration of qualifiers is not allowed");
@@ -293,10 +318,11 @@ void
 CIMServer::deleteQualifierType(const String& ns, const String& qualName,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns, 
+		Authorizer2IFC::E_WRITE);
 
-	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_DELETE))
+	if(!m_authorizerMgr->allowWriteSchema(penvref, ns,
+		Authorizer2IFC::E_DELETE))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Deletion of qualifier %1 is not allowed",
@@ -312,10 +338,11 @@ CIMServer::setQualifierType(
 	const String& ns,
 	const CIMQualifierType& qt, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
 
-	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_MODIFY))
+	if(!m_authorizerMgr->allowWriteSchema(penvref, ns,
+		Authorizer2IFC::E_MODIFY))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Modification of qualifier %1 is not allowed",
@@ -333,10 +360,10 @@ CIMServer::getClass(
 	EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_READ);
 
-	if(!m_authorizerMgr->allowReadSchema(
-		createProvEnvRef(context, m_env), ns))
+	if(!m_authorizerMgr->allowReadSchema(penvref, ns))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Read of class %1 is not allowed", className).c_str());
@@ -383,10 +410,11 @@ CIMClass
 CIMServer::deleteClass(const String& ns, const String& className,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
 
-	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_DELETE))
+	if(!m_authorizerMgr->allowWriteSchema(penvref, ns,
+		Authorizer2IFC::E_DELETE))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Deletion of class %1 is not allowed",
@@ -401,10 +429,11 @@ void
 CIMServer::createClass(const String& ns, const CIMClass& cimClass,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
 
-	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_CREATE))
+	if(!m_authorizerMgr->allowWriteSchema(penvref, ns,
+		Authorizer2IFC::E_CREATE))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Creation of class %1 is not allowed",
@@ -427,10 +456,11 @@ CIMServer::modifyClass(
 	const CIMClass& cc,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
 
-	if(!m_authorizerMgr->allowWriteSchema(
-		createProvEnvRef(context, m_env), ns, Authorizer2IFC::E_MODIFY))
+	if(!m_authorizerMgr->allowWriteSchema(penvref, ns,
+		Authorizer2IFC::E_MODIFY))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			Format("Modification of class %1 is not allowed",
@@ -449,10 +479,10 @@ CIMServer::enumClasses(const String& ns,
 		EDeepFlag deep, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
 		EIncludeClassOriginFlag includeClassOrigin, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_READ);
 
-	if(!m_authorizerMgr->allowReadSchema(
-		createProvEnvRef(context, m_env), ns))
+	if(!m_authorizerMgr->allowReadSchema(penvref, ns))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			"Enumeration of classes is not allowed");
@@ -470,9 +500,10 @@ CIMServer::enumClassNames(
 	StringResultHandlerIFC& result,
 	EDeepFlag deep, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
-	if(!m_authorizerMgr->allowReadSchema(
-		createProvEnvRef(context, m_env), ns))
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_READ);
+
+	if(!m_authorizerMgr->allowReadSchema(penvref, ns))
 	{
 		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
 			"Enumeration of class names is not allowed");
@@ -531,10 +562,11 @@ CIMServer::enumInstanceNames(
 	logOperation(m_env->getLogger(), context, "EnumerateInstanceNames", ns, className);
 
 	InstNameEnumerator ie(ns, result, context, m_env, this);
-	CIMClass theClass = _instGetClass(ns, className,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	CIMClass theClass = _instGetClass(ns, className,E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	ie.handle(theClass);
 	// If this is the namespace class then just return now
-	if(className.equalsIgnoreCase(CIMClass::NAMESPACECLASS)
+	if(className.equals(CIMClass::NAMESPACECLASS)
 		|| !deep)
 	{
 		return;
@@ -543,7 +575,8 @@ CIMServer::enumInstanceNames(
 	{
 		// TODO: measure whether it would be faster to use
 		// enumClassNames + getClass() here.
-		m_cimRepository->enumClasses(ns,className,ie,deep,E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,context);
+		m_cimRepository->enumClasses(ns,className,ie,deep,E_NOT_LOCAL_ONLY,
+			E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,context);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -921,7 +954,8 @@ CIMServer::getInstance(
 	const StringArray* propertyList, CIMClass* pOutClass,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_READ);
 	logOperation(m_env->getLogger(), context, "GetInstance", ns, instanceName_.toString());
 
 	CIMObjectPath instanceName(instanceName_);
@@ -941,9 +975,8 @@ CIMServer::getInstance(
 	// See if the authorizer allows reading of these instances and give it
 	// an opportunity to modify the property list
 	StringArray authorizedPropertyList;
-	if(!m_authorizerMgr->allowReadInstance(
-		createProvEnvRef(context, m_env), ns, className,
-		propertyList, authorizedPropertyList))
+	if(!m_authorizerMgr->allowReadInstance(penvref, ns, className, propertyList,
+		authorizedPropertyList))
 	{
 		m_env->logDebug(Format("Authorizer did NOT authorize reading of %1"
 			" instances from namespace %2", className, ns));
@@ -962,9 +995,8 @@ CIMServer::getInstance(
 	CIMInstance ci(CIMNULL);
 	if(instancep)
 	{
-		ci = instancep->getInstance(
-			createProvEnvRef(context, m_env),
-				ns, instanceName, localOnly, includeQualifiers, includeClassOrigin, propertyList, cc);
+		ci = instancep->getInstance(penvref, ns, instanceName, localOnly,
+			includeQualifiers, includeClassOrigin, propertyList, cc);
 		if (!ci)
 		{
 			OW_THROWCIMMSG(CIMException::FAILED,
@@ -990,9 +1022,9 @@ CIMServer::getInstance(
 		// now let all the secondary providers have at the instance
 		for (size_t i = 0; i < secProvs.size(); ++i)
 		{
-			secProvs[i]->filterInstances(createProvEnvRef(context, m_env), ns, 
-				className, cia, localOnly, E_DEEP, includeQualifiers, 
-				includeClassOrigin, propertyList, cc, cc );
+			secProvs[i]->filterInstances(penvref, ns, className, cia, localOnly,
+				E_DEEP, includeQualifiers, includeClassOrigin, propertyList,
+				cc, cc );
 		}
 		OW_ASSERT(cia.size() == 1); // providers shouldn't add/remove from the array.
 		ci = cia[0];
@@ -1007,7 +1039,8 @@ CIMInstance
 CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
 	logOperation(m_env->getLogger(), context, "DeleteInstance", ns, cop_.toString());
 
 	CIMObjectPath cop(cop_);
@@ -1017,30 +1050,49 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		m_env->logDebug(Format("CIMServer::deleteInstance.  cop = %1",
 			cop.toString()));
 	}
+
+	AuthorizerEnabler ae(m_authorizerMgr, penvref, true);
+
 	CIMClass theClass(CIMNULL);
 	CIMInstance oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, &theClass, context);
 	cop.syncWithClass(theClass);
-	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass, context);
 
-	// Allow authorizer a chance to determine if the deletion is allowed
-	if(!m_authorizerMgr->allowWriteInstance(
-		createProvEnvRef(context, m_env), ns, cop,
-		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
-		Authorizer2IFC::E_DELETE))
+	InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass,
+		context);
+
+	m_authorizerMgr->turnOn(penvref);
+
+	if(theClass.getName().equals(CIMClass::NAMESPACECLASS))
 	{
-		m_env->logDebug(Format("Authorizer did NOT authorize deletion of %1"
-			" instances from namespace %2", theClass.getName(), ns));
-
-		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
-			Format("You are not authorized to delete %1 instances from"
-				" namespace %2", theClass.getName(), ns).c_str());
+		if(!m_authorizerMgr->allowDeleteNameSpace(penvref, ns))
+		{
+			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+				Format("You are not authorized to delete namespace %1",
+					ns).c_str());
+		}
 	}
+	else
+	{
+		// Allow authorizer a chance to determine if the deletion is allowed
+		if(!m_authorizerMgr->allowWriteInstance(penvref, ns, cop,
+			(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+			Authorizer2IFC::E_DELETE))
+		{
+			m_env->logDebug(Format("Authorizer did NOT authorize deletion of %1"
+				" instances from namespace %2", theClass.getName(), ns));
+
+			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+				Format("You are not authorized to delete %1 instances from"
+					" namespace %2", theClass.getName(), ns).c_str());
+		}
+	}
+
+	m_authorizerMgr->turnOff(penvref);
 
 	if(instancep)	// If there is an instance provider, let it do the delete.
 	{
-		instancep->deleteInstance(
-			createProvEnvRef(context, m_env), ns, cop);
+		instancep->deleteInstance(penvref, ns, cop);
 	}
 	else
 	{
@@ -1053,7 +1105,7 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 	// now let all the secondary providers know about the delete
 	for (size_t i = 0; i < secProvs.size(); ++i)
 	{
-		secProvs[i]->deleteInstance(createProvEnvRef(context, m_env), ns, cop);
+		secProvs[i]->deleteInstance(penvref, ns, cop);
 	}
 	
 	return oldInst;
@@ -1065,11 +1117,13 @@ CIMServer::createInstance(
 	const CIMInstance& ci,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
-	logOperation(m_env->getLogger(), context, "CreateInstance", ns, ci.getClassName());
-
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
 	String className = ci.getClassName();
-	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0,
+	logOperation(m_env->getLogger(), context, "CreateInstance", ns, className);
+
+	CIMClass theClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0,
 		context);
 	CIMQualifier acq = theClass.getQualifier(
 			CIMQualifier::CIM_QUAL_ABSTRACT);
@@ -1096,22 +1150,33 @@ CIMServer::createInstance(
 	// Allow authorizer a chance to determine if the creation is allowed
 	CIMObjectPath cop(ns, lci);
 
-	if(!m_authorizerMgr->allowWriteInstance(
-		createProvEnvRef(context, m_env), ns, cop,
-		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
-		Authorizer2IFC::E_CREATE))
+	if(theClass.getName().equals(CIMClass::NAMESPACECLASS))
 	{
-		m_env->logDebug(Format("Authorizer did NOT authorize creation of %1"
-			" instances	 in namespace %2", lci.getClassName(), ns));
+		if(!m_authorizerMgr->allowCreateNameSpace(penvref, ns))
+		{
+			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+				Format("You are not authorized to create namespace %1",
+					ns).c_str());
+		}
+	}
+	else
+	{
+		if(!m_authorizerMgr->allowWriteInstance(penvref, ns, cop,
+			(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
+			Authorizer2IFC::E_CREATE))
+		{
+			m_env->logDebug(Format("Authorizer did NOT authorize creation of %1"
+				" instances	 in namespace %2", lci.getClassName(), ns));
 
-		OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
-			Format("You are not authorized to create %1 instances in"
-				" namespace %2", lci.getClassName(), ns).c_str());
+			OW_THROWCIMMSG(CIMException::ACCESS_DENIED,
+				Format("You are not authorized to create %1 instances in"
+					" namespace %2", lci.getClassName(), ns).c_str());
+		}
 	}
 
 	if (instancep)
 	{
-		rval = instancep->createInstance(createProvEnvRef(context, m_env), ns, lci);
+		rval = instancep->createInstance(penvref, ns, lci);
 	}
 	else
 	{
@@ -1122,7 +1187,7 @@ CIMServer::createInstance(
 	// now let all the secondary providers know about the create
 	for (size_t i = 0; i < secProvs.size(); ++i)
 	{
-		secProvs[i]->createInstance(createProvEnvRef(context, m_env), ns, lci);
+		secProvs[i]->createInstance(penvref, ns, lci);
 	}
 
 	// Prevent lazy providers from causing a problem.
@@ -1141,8 +1206,10 @@ CIMServer::modifyInstance(
 	const StringArray* propertyList,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
-	logOperation(m_env->getLogger(), context, "ModifyInstance", ns, modifiedInstance.getClassName());
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
+	logOperation(m_env->getLogger(), context, "ModifyInstance", ns,
+		modifiedInstance.getClassName());
 
 	CIMInstance oldInst(CIMNULL);
 	CIMClass theClass = _instGetClass(ns, modifiedInstance.getClassName(),
@@ -1156,8 +1223,7 @@ CIMServer::modifyInstance(
 	CIMObjectPath cop(ns, lci);
 
 	// Allow authorizer a chance to determine if the mofify is allowed
-	if(!m_authorizerMgr->allowWriteInstance(
-		createProvEnvRef(context, m_env), ns, cop,
+	if(!m_authorizerMgr->allowWriteInstance(penvref, ns, cop,
 		(instancep) ? Authorizer2IFC::E_DYNAMIC : Authorizer2IFC::E_NOT_DYNAMIC,
 		Authorizer2IFC::E_MODIFY))
 	{
@@ -1179,9 +1245,9 @@ CIMServer::modifyInstance(
 	else
 	{
 		// Look for dynamic instances
-		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, NULL,
-			context);
-		instancep->modifyInstance(createProvEnvRef(context, m_env), ns,
+		oldInst = getInstance(ns, cop, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS,
+			E_INCLUDE_CLASS_ORIGIN, NULL, NULL, context);
+		instancep->modifyInstance(penvref, ns,
 			lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
 	OW_ASSERT(oldInst);
@@ -1190,7 +1256,7 @@ CIMServer::modifyInstance(
 	// now let all the secondary providers know about the modify
 	for (size_t i = 0; i < secProvs.size(); ++i)
 	{
-		secProvs[i]->modifyInstance(createProvEnvRef(context, m_env), ns, lci, oldInst, includeQualifiers, propertyList, theClass);
+		secProvs[i]->modifyInstance(penvref, ns, lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
 
 	
@@ -1221,18 +1287,19 @@ CIMServer::getProperty(
 	const String& propertyName, OperationContext& context)
 {
 	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READ);
-	
+
 	logOperation(m_env->getLogger(), context, "GetProperty", ns, name.toString() + '.' + propertyName);
 
 	CIMClass theClass = _instGetClass(ns,name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
 		OW_THROWCIMMSG(CIMException::NO_SUCH_PROPERTY,
 			propertyName.c_str());
 	}
-	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
-		NULL, context);
+	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, 
+		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, NULL, context);
 	CIMProperty prop = ci.getProperty(propertyName);
 	if(!prop)
 	{
@@ -1250,12 +1317,16 @@ CIMServer::setProperty(
 	const String& propertyName, const CIMValue& valueArg,
 	OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_WRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_WRITE);
+	AuthorizerEnabler ae(m_authorizerMgr, penvref, true);
+
 
 	logOperation(m_env->getLogger(), context, "SetProperty", ns, name.toString());
 	m_env->logInfo(Format("SetProperty: %1=%2", propertyName, valueArg));
 
 	CIMClass theClass = _instGetClass(ns, name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
@@ -1281,8 +1352,8 @@ CIMServer::setProperty(
 			throw ce;
 		}
 	}
-	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL,
-		NULL, context);
+	CIMInstance ci = getInstance(ns, name, E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, NULL, NULL, context);
 	if(!ci)
 	{
 		OW_THROWCIMMSG(CIMException::NOT_FOUND, name.toString().c_str());
@@ -1298,6 +1369,7 @@ CIMServer::setProperty(
 	ci.setProperty(cp);
 	StringArray propertyList;
 	propertyList.push_back(propertyName);
+	m_authorizerMgr->turnOn(penvref);
 	modifyInstance(ns, ci, E_INCLUDE_QUALIFIERS, &propertyList, context);
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -1311,13 +1383,13 @@ CIMServer::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams, OperationContext& context)
 {
-	_checkNameSpaceAccess(context, ns, Authorizer2IFC::E_READWRITE);
+	ProviderEnvironmentIFCRef penvref = _checkNameSpaceAccess(context, ns,
+		Authorizer2IFC::E_READWRITE);
 
 	logOperation(m_env->getLogger(), context, "invokeMethod", ns, path_.toString() + '.' + methodName);
 
 	// Allow authorizer a chance to determine if the mofify is allowed
-	if(!m_authorizerMgr->allowMethodInvocation(
-		createProvEnvRef(context, m_env), ns, path_, methodName))
+	if(!m_authorizerMgr->allowMethodInvocation(penvref, ns, path_, methodName))
 	{
 		m_env->logDebug(Format("Authorizer did NOT authorize invocation of"
 			" method %1 on object path %2", methodName, path_.toString()));
@@ -1328,7 +1400,8 @@ CIMServer::invokeMethod(
 	}
 
 	CIMObjectPath path(path_);
-	CIMClass cc = getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	CIMClass cc = getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,
+		E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	path.syncWithClass(cc);
 	CIMPropertyArray keys = path.getKeys();
 	// If this is an instance, ensure it exists.
@@ -1351,15 +1424,15 @@ CIMServer::invokeMethod(
 	CIMClass cctemp(cc);
 	try
 	{
-		methodp = m_provManager->getMethodProvider(
-			createProvEnvRef(context, m_env), ns, cctemp, method);
+		methodp = m_provManager->getMethodProvider(penvref, ns, cctemp, method);
 	}
 	catch (const NoSuchProviderException&)
 	{
 	}
 	if(!methodp)
 	{
-		OW_THROWCIMMSG(CIMException::NOT_FOUND, Format("No provider for method %1", methodName).c_str());
+		OW_THROWCIMMSG(CIMException::NOT_FOUND,
+			Format("No provider for method %1", methodName).c_str());
 	}
 	CIMParameterArray methodInParams = method.getINParameters();
 	CIMParameterArray methodOutParams = method.getOUTParameters();
@@ -1515,7 +1588,8 @@ CIMServer::invokeMethod(
 }
 //////////////////////////////////////////////////////////////////////////////
 InstanceProviderIFCRef
-CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_, OperationContext& context)
+CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_,
+	OperationContext& context)
 {
 	InstanceProviderIFCRef instancep;
 	CIMClass cc(cc_);

@@ -654,8 +654,8 @@ private:
 		WBEMFlags::EIncludeQualifiersFlag includeQualifiers, WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const StringArray* propertyList, OperationContext& context);
 
-	void _checkNameSpaceAccess(OperationContext& context, const String& ns,
-		Authorizer2IFC::EAccessType acType);
+	ProviderEnvironmentIFCRef _checkNameSpaceAccess(OperationContext& context,
+		const String& ns, Authorizer2IFC::EAccessType acType);
 
 	ProviderManagerRef m_provManager;
 

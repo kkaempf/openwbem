@@ -56,6 +56,10 @@ public:
 		m_authorizer = authorizerRef;
 	}
 
+	void turnOff(const ProviderEnvironmentIFCRef& env);
+	void turnOn(const ProviderEnvironmentIFCRef& env);
+	bool isOn(const ProviderEnvironmentIFCRef& env);
+
 	/**
 	 * Determine if a read of the given instance is allowed. The given
 	 * objectPath could be a class path or an instance path.

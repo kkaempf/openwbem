@@ -81,18 +81,37 @@ bool
 SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 	const ProviderEnvironmentIFCRef& env)
 {
+cerr << "<<< SimpleAuthorizer::checkAccess called..." << endl;
+
+
 	OW_ASSERT(opType == ACCESS_READ || opType == ACCESS_WRITE
 		|| opType == ACCESS_READWRITE);
 
 	UserInfo userInfo = env->getOperationContext().getUserInfo();
 	if (userInfo.getInternal())
 	{
+cerr << "<<< SimpleAuthorizer::checkAccess internal user returning" << endl;
+
 		return true;
 	}
 
 	CIMOMHandleIFCRef lch = env->getCIMOMHandle();
 
 	LoggerRef lgr = env->getLogger();
+
+	if (!userInfo.getUserName().empty())
+	{
+		String superUser =
+			env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
+		if (superUser.equalsIgnoreCase(userInfo.getUserName()))
+		{
+cerr << "<<< SimpleAuthorizer::checkAccess is super user. returning" << endl;
+
+			lgr->logDebug("User is SuperUser: checkAccess returning.");
+			return true;
+		}
+	}
+
 	String lns(ns);
 	while(lns.startsWith('/'))
 	{
@@ -103,13 +122,6 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 	{
 		if (!userInfo.getUserName().empty())
 		{
-			String superUser =
-				env->getConfigItem(ConfigOpts::ACL_SUPERUSER_opt);
-			if (superUser.equalsIgnoreCase(userInfo.getUserName()))
-			{
-				lgr->logDebug("User is SuperUser: checkAccess returning.");
-				return true;
-			}
 			try
 			{
 				CIMClass cc = lch->getClass("root/security",
@@ -118,6 +130,8 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 			}
 			catch(CIMException&)
 			{
+cerr << "<<< SimpleAuthorizer::checkAccess no OpenWBEM_UserACL class. returning" << endl;
+
 				lgr->logDebug("OpenWBEM_UserACL class non-existent in"
 					" /root/security. ACLs disabled");
 				return true;
@@ -151,11 +165,14 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 				}
 
 				capability.toLowerCase();
+cerr << "<<< SimpleAuthorizer::checkAccess opType = " << opType << endl;
+cerr << "<<< SimpleAuthorizer::checkAccess capability = " << opType << endl;
+
 				if (opType.length() == 1)
 				{
 					if (capability.indexOf(opType) == String::npos)
 					{
-						// Access to namespace denied for user
+					    // Access to namespace denied for user
 						OW_THROWCIM(CIMException::ACCESS_DENIED);
 					}
 				}
@@ -197,7 +214,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 		catch(const CIMException& ce)
 		{
 			lgr->logDebug(Format("Caught exception: %1 in"
-				" AccessMgr::checkAccess", ce));
+				" AccessMgr::checkAccess. line=%2", ce, __LINE__));
 			ci.setNull();
 		}
 	
@@ -213,7 +230,15 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 					capability = v.toString();
 				}
 			}
+			else
+			{
+cerr << "<<< SimpleAuthorizer::checkAccess no capability prop" << endl;
+			}
+
 			capability.toLowerCase();
+cerr << "<<< SimpleAuthorizer::checkAccess opType = " << opType << endl;
+cerr << "<<< SimpleAuthorizer::checkAccess capability = " << opType << endl;
+
 			if(opType.length() == 1)
 			{
 				if (capability.indexOf(opType) == String::npos)
@@ -232,6 +257,7 @@ SimpleAuthorizer::checkAccess(const String& opType, const String& ns,
 			}
 
 			// Access to namespace granted for user
+cerr << "<<< SimpleAuthorizer::checkAccess returning true - Bottom" << endl;
 			return true;
 		}
 		size_t idx = lns.lastIndexOf('/');
@@ -256,7 +282,7 @@ SimpleAuthorizer::doAllowReadInstance(
 	const StringArray* clientPropertyList,
 	StringArray& authorizedPropertyList)
 {
-	return true;
+	return checkAccess(ACCESS_READ, ns, env);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -268,7 +294,7 @@ SimpleAuthorizer::doAllowWriteInstance(
 	Authorizer2IFC::EDynamicFlag dynamic,
 	Authorizer2IFC::EWriteFlag flag)
 {
-	return true;
+	return checkAccess(ACCESS_WRITE, ns, env);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -277,7 +303,7 @@ SimpleAuthorizer::doAllowReadSchema(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns)
 {
-	return true;
+	return checkAccess(ACCESS_READ, ns, env);
 }
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -287,7 +313,7 @@ SimpleAuthorizer::doAllowWriteSchema(
 	const String& ns, 
 	Authorizer2IFC::EWriteFlag flag)
 {
-	return true;
+	return checkAccess(ACCESS_WRITE, ns, env);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -311,6 +337,9 @@ SimpleAuthorizer::doAllowAccessToNameSpace(
 			break;
 	}
 
+cerr << "<<< SimpleAuthorizer::doAllowAccessToNameSpace calling checkAccess ns"
+	<< ns << " with access " << actype << endl;
+
 	return checkAccess(actype, ns, env);
 }
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
@@ -318,19 +347,19 @@ SimpleAuthorizer::doAllowAccessToNameSpace(
 bool 
 SimpleAuthorizer::doAllowCreateNameSpace(
 	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const String& ns_)
 {
-	return doAllowAccessToNameSpace(env, ns, Authorizer2IFC::E_WRITE);
+cerr << "<<< SimpleAuthorizer::doAllowCreateNameSpace called: ns = " << ns_ << endl;
+
+	return doAllowAccessToNameSpace(env, ns_, Authorizer2IFC::E_WRITE);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
 SimpleAuthorizer::doAllowDeleteNameSpace(
 	const ProviderEnvironmentIFCRef& env,
-	const String& ns)
+	const String& ns_)
 {
-cerr << "<<< SimpleAuthorizer::doAllowDeleteNameSpace called. ns = " << ns << endl;
-
-	return doAllowAccessToNameSpace(env, ns, Authorizer2IFC::E_WRITE);
+	return doAllowAccessToNameSpace(env, ns_, Authorizer2IFC::E_WRITE);
 }
 #endif
 //////////////////////////////////////////////////////////////////////////////
@@ -339,7 +368,6 @@ SimpleAuthorizer::doAllowEnumNameSpace(
 		const ProviderEnvironmentIFCRef& env)
 {
 	return true; // ?
-	// return doAllowAccessToNameSpace(env, "root", Authorizer2IFC::E_READ);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
@@ -349,12 +377,7 @@ SimpleAuthorizer::doAllowMethodInvocation(
 	const CIMObjectPath path, 
 	const String& methodName)
 {
-	return true;
-/*
-cerr << "<<< SimpleAuthorizer::doAllowMethodInvocation called" << endl;
-
 	return checkAccess(ACCESS_READWRITE, ns, env);
-*/
 }
 
 } // end namespace OpenWBEM

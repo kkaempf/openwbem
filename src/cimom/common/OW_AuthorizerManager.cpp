@@ -3,14 +3,20 @@
 #include "OW_OperationContext.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+#include <iostream>
+using std::cerr;
+using std::endl;
+
+
+
 #define AUTH_ACTIVE_KEY "_aUtHoRiZeR@aCtIvE@kEy_"
+#define DISABLED_KEY "__aUtH@mGr@DiSaBlEd__"
 
 namespace OpenWBEM
 {
 
 namespace
 {
-
 //////////////////////////////////////////////////////////////////////////////
 struct AuthorizerMarker
 {
@@ -46,6 +52,45 @@ struct AuthorizerMarker
 
 }	// End of unnamed namespace
 
+
+//////////////////////////////////////////////////////////////////////////////
+void 
+AuthorizerManager::turnOff(const ProviderEnvironmentIFCRef& env)
+{
+	env->getOperationContext().setStringData(DISABLED_KEY, "1");
+
+}
+//////////////////////////////////////////////////////////////////////////////
+void 
+AuthorizerManager::turnOn(const ProviderEnvironmentIFCRef& env)
+{
+	try
+	{
+		env->getOperationContext().removeData(DISABLED_KEY);
+	}
+	catch(...)
+	{
+		// Ignore?
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+bool
+AuthorizerManager::isOn(const ProviderEnvironmentIFCRef& env)
+{
+	bool cc = true;
+	try
+	{
+		String val = env->getOperationContext().getStringData(
+			DISABLED_KEY);
+		cc = (val != "1");
+	}
+	catch (ContextDataNotFoundException& e)
+	{
+		// Ignore
+	}
+
+	return cc;
+}
 //////////////////////////////////////////////////////////////////////////////
 AuthorizerManager::AuthorizerManager()
 	: m_authorizer()
@@ -91,7 +136,8 @@ AuthorizerManager::allowReadInstance(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -115,7 +161,8 @@ AuthorizerManager::allowWriteInstance(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -135,7 +182,8 @@ AuthorizerManager::allowReadSchema(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -156,7 +204,8 @@ AuthorizerManager::allowWriteSchema(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -177,7 +226,8 @@ AuthorizerManager::allowAccessToNameSpace(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -192,12 +242,30 @@ AuthorizerManager::allowCreateNameSpace(
 	const ProviderEnvironmentIFCRef& env,
 	const String& ns)
 {
+
+	// TEST
+	if(!isOn(env))
+	{
+		cerr << "!!!! AUTHORIZERMANAGER IS OFF !!!" << endl;
+	}
+
+	if(!m_initialized)
+	{
+		cerr << "!!! AUTHORIZERMANAGER IS NOT INITIALIZED !!!" << endl;
+	}
+
+	if(!m_authorizer)
+	{
+		cerr << "!!!! AUTHORIZERMANAGER HAS NO AUTHORIZER !!!" << endl;
+	}
+
 	// If the CIMServer is calling into the AuthorizerManager from the
 	// loaded authorizer, don't do anything and authorize.
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -216,7 +284,8 @@ AuthorizerManager::allowDeleteNameSpace(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+       || !isOn(env))
 	{
 		return true;
 	}
@@ -234,7 +303,8 @@ AuthorizerManager::allowEnumNameSpace(const ProviderEnvironmentIFCRef& env)
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -256,7 +326,8 @@ AuthorizerManager::allowMethodInvocation(
 	// If there is no loaded authorizer, authorize everything.
 	if(AuthorizerMarker::active(env)
 	   || !m_authorizer
-	   || !m_initialized)
+	   || !m_initialized
+	   || !isOn(env))
 	{
 		return true;
 	}
@@ -266,4 +337,4 @@ AuthorizerManager::allowMethodInvocation(
 }
 
 
-}	// End of OpenWBEM namespace
+}	// wEnd of OpenWBEM namespace
