@@ -97,7 +97,7 @@ int
 waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 	long networkEvents)
 {
-	DWORD timeout = (timeOutSecs > 0)
+	DWORD timeout = (timeOutSecs != -1)
 		? static_cast<DWORD>(timeOutSecs * 1000)
 		: INFINITE;
 

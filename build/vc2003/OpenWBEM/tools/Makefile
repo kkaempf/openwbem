@@ -44,6 +44,8 @@ INCS = \
 /I$(SRCDIR)\client \
 /I$(SRCDIR)\cimxmllistener \
 /I$(SRCDIR)\repositories\hdb \
+/I$(SRCDIR)\mof \
+/I$(SRCDIR)\repositories\hdb \
 /I$(OPENSSLBASE)\include
 
 LIBPATH = \
@@ -57,6 +59,8 @@ LIBPATH = \
 #EXECWQLEXE = $(TARGETDIR)\owexecwql.exe
 #REPDUMPEXE = $(TARGETDIR)\owrepositorydump.exe
 
+MOFC = owmofc
+MOFCEXE = $(TARGETTDIR)\$(MOFC).exe
 CIMLISTENER = owcimindicationlistener
 CIMLISTENEREXE = $(TARGETDIR)\$(CIMLISTENER).exe
 CREATENS = owcreatenamespace
@@ -74,6 +78,23 @@ $(ENUMCLSEXE) \
 $(CIMLISTENEREXE)
 
 ALL: $(EXES)
+
+#
+# owmofc
+#
+$(MOFCEXE): $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj $(TARGETDIR)
+	link /OUT:$@ /nologo $(LIBPATH) /DEBUG \
+	/PDB:"$(TARGETDIR)\$(@B).pdb" /MAP /SUBSYSTEM:CONSOLE \
+	/MACHINE:X86 $(OBJDIR)\$(@B).obj $(OBJDIR)\OW_MOFCompCIMOMHandle.obj \
+	libowmofc.lib libowclient.lib libowxml.lib libowhttp.lib \
+	libowrepositoryhdb.lib libowdb.lib libopenwbem.lib \
+	zdll.lib libeay32.lib ssleay32.lib
+	
+$(OBJDIR)\$(MOFC).obj: $(TOOLSRCDIR)\owmofc\$(@B).cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\owmofc\$(@B).cpp
+
+$(OBJDIR)\OW_MOFCompCIMOMHandle.obj: $(TOOLSRCDIR)\owmofc\OW_MOFCompCIMOMHandle.cpp $(OBJDIR)
+	$(CPP) $(CPPDEFS) $(INCS) $(CPPFLAGS) $(TOOLSRCDIR)\owmofc\OW_MOFCompCIMOMHandle.cpp
 
 #
 # owcimindicationlistener

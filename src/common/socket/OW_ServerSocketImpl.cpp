@@ -248,8 +248,7 @@ ServerSocketImpl::accept(int timeoutSecs)
 				System::lastErrorMsg(true)).c_str());
 		}
 
-
-		cc = SocketUtils::waitForIO(m_sockfd, m_event, FD_ACCEPT);
+		cc = SocketUtils::waitForIO(m_sockfd, m_event, INFINITE, FD_ACCEPT);
 		switch (cc)
 		{
 			case -1:

@@ -143,7 +143,7 @@ String SocketBaseImpl::m_traceFileIn;
 int
 SocketBaseImpl::waitForEvent(HANDLE eventArg, int secsToTimeout)
 {
-	DWORD timeout = (secsToTimeout > 0)
+	DWORD timeout = (secsToTimeout != -1)
 		? static_cast<DWORD>(secsToTimeout * 1000)
 		: INFINITE;
 	
@@ -337,14 +337,16 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			_closeSocket(m_sockfd);
 			OW_THROW(SocketException,
 				Format("Failed to connect to: %1: %2(%3)", addr.toString(),
-				lastError, System::lastErrorMsg(true)).c_str());
+					lastError, System::lastErrorMsg(true)).c_str());
 		}
+
+		int tmoutval = (m_connectTimeout > 0) ? m_connectTimeout : INFINITE;
 
 		// Wait for connection event to come through
 		while (true)
 		{
 			// Wait for the socket's event to get signaled
-			if ((cc = waitForEvent(m_event, m_connectTimeout)) < 1)
+			if ((cc = waitForEvent(m_event, tmoutval)) < 1)
 			{
 				_closeSocket(m_sockfd);
 				switch (cc)
@@ -353,8 +355,10 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 						OW_THROW(SocketException,
 							"Sockets have been shutdown");
 					case -1:	// Timed out
-						OW_THROW(SocketException, "SocketBaseImpl::connect()"
-							" wait timedout");
+						OW_THROW(SocketException,
+							Format("Win32SocketBaseImpl connection"
+								" timed out. Timeout val = %1",
+								m_connectTimeout).c_str());
 					default:	// Error on wait
 						OW_THROW(SocketException, Format("SocketBaseImpl::"
 							"connect() wait failed: %1(%2)",

@@ -43,7 +43,9 @@
 #include "OW_CIMObjectPath.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
+#ifndef OW_WIN32
 #include "OW_UnnamedPipe.hpp"
+#endif
 #include "OW_Mutex.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 
@@ -133,7 +135,9 @@ private:
 	void deleteRegistrationObjects( const registrationInfo& reg );
 	Mutex m_mutex;
 	IntrusiveReference<Thread> m_httpThread;
+#ifndef OW_WIN32
 	UnnamedPipeRef m_stopHttpPipe;
+#endif
 };
 
 } // end namespace OpenWBEM

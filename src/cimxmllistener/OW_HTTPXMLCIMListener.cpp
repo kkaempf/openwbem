@@ -65,6 +65,57 @@ namespace OpenWBEM
 using namespace WBEMFlags;
 namespace
 {
+#ifdef OW_WIN32
+class EventSelectable : public SelectableIFC
+{
+public:
+	EventSelectable()
+	{
+		if(!(m_event = ::CreateEvent(NULL, TRUE, FALSE, NULL)))
+		{
+			OW_THROW(IOException, "Unable to create WIN32 event handle");
+		}
+	}
+	~EventSelectable()
+	{
+		if(m_event)
+		{
+			::CloseHandle(m_event);
+		}
+	}
+	Select_t getSelectObj() const
+	{
+		Select_t st;
+		st.event = m_event;
+		return st;
+	}
+
+	void setEvent()
+	{
+		if(m_event)
+		{
+			if(!::SetEvent(m_event))
+			{
+				OW_THROW(IOException, "Signaling termination event failed");
+			}
+		}
+	}
+
+	void resetEvent()
+	{
+		if(m_event)
+		{
+			::ResetEvent(m_event);
+		}
+	}
+
+private:
+	HANDLE m_event;
+};
+typedef IntrusiveReference<EventSelectable> EventSelectableRef;
+
+#endif
+
 // This anonymous namespace has the effect of giving this class internal
 // linkage.  That means it won't cause a link error if another translation
 // unit has a class with the same name.
@@ -185,10 +236,16 @@ public:
 	SelectEngineThread(const Reference<Array<SelectablePair_t> >& selectables)
 	: Thread()
 	, m_selectables(selectables)
+#ifdef OW_WIN32
+	, m_stopObject(new EventSelectable)
+	{
+	}
+#else
 	, m_stopObject(UnnamedPipe::createUnnamedPipe())
 	{
 		m_stopObject->setBlocking(UnnamedPipe::E_NONBLOCKING);
 	}
+#endif
 	/**
 	 * The method that will be run when the start method is called on this
 	 * Thread object.
@@ -208,17 +265,27 @@ public:
 	}
 	virtual void doCooperativeCancel()
 	{
+#ifdef OW_WIN32
+		// signal the event to stop the select engine so the
+		// thread will exit
+		m_stopObject->setEvent();
+#else
 		// write something into the stop pipe to stop the select engine so the
 		// thread will exit
 		if (m_stopObject->writeInt(0) == -1)
 		{
 			OW_THROW(IOException, "Writing to the termination pipe failed");
 		}
+#endif
 	}
 
 private:
 	Reference<Array<SelectablePair_t> > m_selectables;
+#ifdef OW_WIN32
+	EventSelectableRef m_stopObject;
+#else
 	UnnamedPipeRef m_stopObject;
+#endif
 };
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
