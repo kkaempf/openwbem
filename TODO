@@ -19,6 +19,8 @@ x Create a common base class for client CIMOM handles (OW_CIMXMLCIMOMHandle
 x simple C++ provider interface. 
 x configurable Class cache in meta repository. 
 x long and short versions of make check
+x add a test for the matrix on the bottom of
+  http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
 
 
 - Providers/Provider interfaces in a different process.
@@ -39,8 +41,4 @@ x long and short versions of make check
   and let CIMServer do it.  Remove code from CIMtoXML if not needed. 
 
 - change XML parser to be lazy. 
-- add a test for the matrix on the bottom of
-  http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
 - Make socket write/read also select on shutdown pipe.
-
-fix enumInstances to give back an object path AND an instance.
