@@ -38,6 +38,7 @@
 #include "OW_config.h"
 #include "OW_StringTestCases.hpp"
 #include "OW_String.hpp"
+#include "OW_Array.hpp"
 #include "OW_Types.hpp"
 
 using namespace OpenWBEM;
@@ -95,6 +96,141 @@ void OW_StringTestCases::testNumbers()
 	unitAssert(rs.equals(rs2));	
 }
 
+void OW_StringTestCases::testTokenize()
+{
+	String teststring1 = "0.1.2.3.4";
+	StringArray tokenized1 = teststring1.tokenize( "." );
+	unitAssert( tokenized1.size() == 5 );
+	unitAssert( tokenized1[0] == "0" );
+	unitAssert( tokenized1[1] == "1" );
+	unitAssert( tokenized1[2] == "2" );
+	unitAssert( tokenized1[3] == "3" );
+	unitAssert( tokenized1[4] == "4" );
+
+	tokenized1 = teststring1.tokenize( ".", String::E_RETURN_TOKENS );
+	unitAssert( tokenized1.size() == 9 );
+	unitAssert( tokenized1[0] == "0" );
+	unitAssert( tokenized1[1] == "." );
+	unitAssert( tokenized1[2] == "1" );
+	unitAssert( tokenized1[3] == "." );
+	unitAssert( tokenized1[4] == "2" );
+	unitAssert( tokenized1[5] == "." );
+	unitAssert( tokenized1[6] == "3" );
+	unitAssert( tokenized1[7] == "." );
+	unitAssert( tokenized1[8] == "4" );
+
+	tokenized1 = teststring1.tokenize( ".", String::E_DISCARD_TOKENS, String::E_RETURN_EMPTY_TOKENS );
+	unitAssert( tokenized1.size() == 5 );
+	unitAssert( tokenized1[0] == "0" );
+	unitAssert( tokenized1[4] == "4" );
+
+	
+	String teststring2 = "0..1.2.3..4";
+	StringArray tokenized2 = teststring2.tokenize( "." );
+	unitAssert( tokenized2.size() == 5 );
+	unitAssert( tokenized2[0] == "0" );
+	unitAssert( tokenized2[1] == "1" );
+	unitAssert( tokenized2[2] == "2" );
+	unitAssert( tokenized2[3] == "3" );
+	unitAssert( tokenized2[4] == "4" );
+
+	tokenized2 = teststring2.tokenize( ".", String::E_RETURN_TOKENS );
+	unitAssert( tokenized2.size() == 11 );
+	unitAssert( tokenized2[0] == "0" );
+	unitAssert( tokenized2[1] == "." );
+	unitAssert( tokenized2[2] == "." );	
+	unitAssert( tokenized2[3] == "1" );
+	unitAssert( tokenized2[4] == "." );
+	unitAssert( tokenized2[5] == "2" );
+	unitAssert( tokenized2[6] == "." );
+	unitAssert( tokenized2[7] == "3" );
+	unitAssert( tokenized2[8] == "." );
+	unitAssert( tokenized2[9] == "." );
+	unitAssert( tokenized2[10] == "4" );
+
+	tokenized2 = teststring2.tokenize( ".", String::E_DISCARD_TOKENS, String::E_RETURN_EMPTY_TOKENS );
+	unitAssert( tokenized2.size() == 7 );
+	unitAssert( tokenized2[0] == "0" );
+	unitAssert( tokenized2[1] == "" );
+	unitAssert( tokenized2[2] == "1" );
+	unitAssert( tokenized2[3] == "2" );
+	unitAssert( tokenized2[4] == "3" );
+	unitAssert( tokenized2[5] == "" );
+	unitAssert( tokenized2[6] == "4" );
+
+	tokenized2 = teststring2.tokenize( ".", String::E_RETURN_TOKENS, String::E_RETURN_EMPTY_TOKENS );
+	unitAssert( tokenized2.size() == 13 );
+	unitAssert( tokenized2[0] == "0" );
+	unitAssert( tokenized2[1] == "." );
+	unitAssert( tokenized2[2] == "" );	
+	unitAssert( tokenized2[3] == "." );	
+	unitAssert( tokenized2[4] == "1" );
+	unitAssert( tokenized2[5] == "." );
+	unitAssert( tokenized2[6] == "2" );
+	unitAssert( tokenized2[7] == "." );
+	unitAssert( tokenized2[8] == "3" );
+	unitAssert( tokenized2[9] == "." );
+	unitAssert( tokenized2[10] == "" );
+	unitAssert( tokenized2[11] == "." );
+	unitAssert( tokenized2[12] == "4" );	
+
+
+	String teststring3 = "a b c\nd e f\n\r\tg";
+	StringArray tokenized3 = teststring3.tokenize();
+	unitAssert( tokenized3.size() == 7 );
+	unitAssert( tokenized3[0] == "a" );
+	unitAssert( tokenized3[1] == "b" );
+	unitAssert( tokenized3[2] == "c" );
+	unitAssert( tokenized3[3] == "d" );
+	unitAssert( tokenized3[4] == "e" );
+	unitAssert( tokenized3[5] == "f" );
+	unitAssert( tokenized3[6] == "g" );
+
+	tokenized3 = teststring3.tokenize(" \n\r\t",  String::E_RETURN_TOKENS);
+	unitAssert( tokenized3.size() == 15 );
+	unitAssert( tokenized3[0] == "a" );
+	unitAssert( tokenized3[1] == " " );
+	unitAssert( tokenized3[2] == "b" );
+	unitAssert( tokenized3[3] == " " );
+	unitAssert( tokenized3[4] == "c" );
+	unitAssert( tokenized3[5] == "\n");
+	unitAssert( tokenized3[6] == "d" );
+	unitAssert( tokenized3[7] == " " );
+	unitAssert( tokenized3[8] == "e" );
+	unitAssert( tokenized3[9] == " " );
+	unitAssert( tokenized3[10] == "f" );
+	unitAssert( tokenized3[11] == "\n" );
+	unitAssert( tokenized3[12] == "\r" );
+	unitAssert( tokenized3[13] == "\t" );
+	unitAssert( tokenized3[14] == "g" );
+
+	tokenized3 = teststring3.tokenize(" \n\r\t",  String::E_DISCARD_TOKENS, String::E_RETURN_EMPTY_TOKENS);
+	unitAssert( tokenized3.size() == 9 );
+	unitAssert( tokenized3[0] == "a" );
+	unitAssert( tokenized3[1] == "b" );
+	unitAssert( tokenized3[2] == "c" );
+	unitAssert( tokenized3[3] == "d" );
+	unitAssert( tokenized3[4] == "e" );
+	unitAssert( tokenized3[5] == "f" );
+	unitAssert( tokenized3[6] == "" );
+	unitAssert( tokenized3[7] == "" );
+	unitAssert( tokenized3[8] == "g" );	
+
+
+	String teststring4 = "foo bar        baz  quux  flarp   snoz  blarf                    zzyzx   veryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryvery_looooooooooonnnnnnnnggggggg_word";
+	StringArray tokenized4 = teststring4.tokenize();
+	unitAssert( tokenized4.size() == 9 );
+	unitAssert( tokenized4[0] == "foo" );
+	unitAssert( tokenized4[1] == "bar" );
+	unitAssert( tokenized4[2] == "baz" ); 
+	unitAssert( tokenized4[3] == "quux" );
+	unitAssert( tokenized4[4] == "flarp" );
+	unitAssert( tokenized4[5] == "snoz" );
+	unitAssert( tokenized4[6] == "blarf" );
+	unitAssert( tokenized4[7] == "zzyzx" );
+	unitAssert( tokenized4[8].indexOf("veryvery") == 0 );
+}
+
 Test* OW_StringTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_String");
@@ -111,6 +247,9 @@ Test* OW_StringTestCases::suite()
 	testSuite->addTest (new TestCaller <OW_StringTestCases> 
 			("testEqualsIgnoreCase", 
 			&OW_StringTestCases::testEqualsIgnoreCase));
+	testSuite->addTest (new TestCaller <OW_StringTestCases> 
+			("testTokenize", 
+			&OW_StringTestCases::testTokenize));	
 
 	return testSuite;
 }

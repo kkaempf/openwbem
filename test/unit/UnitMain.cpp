@@ -96,6 +96,7 @@ int main( int argc, char *argv[])
 {
 	TestRunner runner;
 	
+	runner.addTest( "OW_String", OW_StringTestCases::suite());
 	// add tests to runner -- DO NOT EDIT THIS COMMENT
 	runner.addTest( "CIMObjectPath", CIMObjectPathTestCases::suite());
 	runner.addTest( "URL", URLTestCases::suite());
@@ -153,7 +154,6 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_ProviderManager", OW_ProviderManagerTestCases::suite());
 	runner.addTest( "OW_HTTPChunker", OW_HTTPChunkerTestCases::suite());
 	runner.addTest( "OW_Logger", OW_LoggerTestCases::suite());
-	runner.addTest( "OW_String", OW_StringTestCases::suite());
 	runner.addTest( "OW_Format", OW_FormatTestCases::suite());
 
 	if ( argc < 2 || ( argc == 2 && OpenWBEM::String("all") == argv[1] ) )

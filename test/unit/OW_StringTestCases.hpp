@@ -54,6 +54,7 @@ private:
 	void testEqualsIgnoreCase();
 	void testSubstring();
 	void testNumbers();
+  	void testTokenize();
 };
 
 #endif
