@@ -16,6 +16,12 @@ Testing:
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
+    - Control template/inline code duplication bloat in shared libraries.
+      - Un-inline non-performance-critical functions.
+      - Separate templates into declaration and definition files.
+      - Explicitly instantiate common templates.
+      - Use -fno-implicit-templates, -fno-implicit-inline-templates, and
+        -fno-implement-inlines when compiling any shared libraries.
 
 New features:
     - Modifying existing filters will affect the indication server, and
