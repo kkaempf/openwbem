@@ -50,13 +50,17 @@ using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPClient::OW_HTTPClient( const OW_String &sURL )
+#ifndef OW_DISABLE_DIGEST
 	: m_sRealm()
   	, m_sDigestNonce()
 	, m_sDigestCNonce()
 	, m_iDigestNonceCount(1)
 	, m_sDigestSessionKey()
-	, m_sDigestResponse()
-	, m_serverAddress()
+	, m_sDigestResponse() ,
+#else
+	:
+#endif
+	 m_serverAddress()
 	, m_url(sURL)
 	, m_responseHeaders(), m_requestHeadersCommon()
 	, m_requestHeadersNew(), m_pIstrReturn(0)
@@ -149,13 +153,9 @@ void OW_HTTPClient::setUrl()
 void
 OW_HTTPClient::receiveAuthentication()
 {
-
-	
-
+#ifndef OW_DISABLE_DIGEST
 	OW_RandomNumber rn(0, 0x7FFFFFFF);
 	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
-
-	
 	
 	OW_String authInfo = getHeaderValue("www-authenticate");
 	OW_Int16 iBeginIndex = authInfo.indexOf( "realm" ) + 7;
@@ -176,6 +176,7 @@ OW_HTTPClient::receiveAuthentication()
 	{
 		m_sRealm = "";
 	}
+#endif // #ifndef OW_DISABLE_DIGEST
 
 	if (m_url.username.empty())
 	{
@@ -186,6 +187,7 @@ OW_HTTPClient::receiveAuthentication()
 		else
 		{
 			OW_String realm;
+#ifndef OW_DISABLE_DIGEST
 			if (m_sRealm.empty())
 			{
 				realm = m_url.toString();
@@ -194,6 +196,9 @@ OW_HTTPClient::receiveAuthentication()
 			{
 				realm = m_sRealm;
 			}
+#else
+			realm = m_url.toString();
+#endif
 			OW_String name, passwd;
 			if (m_loginCB->getCredentials(realm, name, passwd, ""))
 			{

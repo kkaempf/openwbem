@@ -107,15 +107,15 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		
 		OW_String m_sAuthorization;
 		
-
+#ifndef OW_DISABLE_DIGEST
 		OW_String m_sRealm;
 		OW_String m_sDigestNonce;
 		OW_String m_sDigestCNonce;
 		OW_UInt8 m_iDigestNonceCount;
 		OW_String m_sDigestSessionKey;
 		OW_String m_sDigestResponse;
+#endif
 
-		// new stuff
 
 		typedef enum Resp_t
 		{
