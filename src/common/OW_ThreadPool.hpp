@@ -60,7 +60,7 @@ public:
 	// will not block if queue is full.  return true if added to the queue, false if not.
 	bool tryAddWork(const OW_RunnableRef& work);
 
-	void shutdown(bool finishWorkInQueue);
+	void shutdown(bool finishWorkInQueue=true);
 
 	~OW_ThreadPool();
 	OW_ThreadPool(const OW_ThreadPool& x);
