@@ -261,7 +261,6 @@ CIMInstance::getProperty(const String& propertyName) const
 	for(int i = 0; i < tsize; i++)
 	{
 		CIMProperty cp = m_pdata->m_properties[i];
-		String pname = cp.getName();
 		if(propertyName.equalsIgnoreCase(cp.getName()))
 		{
 			return(cp);
