@@ -58,6 +58,10 @@ protected:
 	 * The derived classes must override these functions to implement the
 	 * desired functionality.
 	 */
+	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a);
+
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);

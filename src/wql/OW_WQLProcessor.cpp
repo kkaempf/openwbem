@@ -37,7 +37,6 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_WQLScanUtils.hpp"
 
@@ -1425,9 +1424,9 @@ void OW_WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 
 	paExpr_aExpr_ISA_aExpr->m_paExpr3->accept(this);
 	DataType rhs = m_exprValue;
-	if (rhs.type != DataType::OW_StringType)
+	if (rhs.type != DataType::OW_StringType && rhs.type != DataType::ColumnNameType)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Invalid second parameter type for ISA (should be a string)");
+		OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Invalid second parameter type for ISA (should be a string or class name)");
 	}
 	OW_String className = rhs.str;
 

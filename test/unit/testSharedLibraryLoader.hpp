@@ -70,10 +70,17 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		testProviderMux( const char* const name )
 			: OW_ProviderIFCBaseIFC(), m_name(name) {}
 		virtual ~testProviderMux() {}
-		virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char*)
+		virtual void doInit(const OW_ProviderEnvironmentIFCRef&,
+			OW_InstanceProviderInfoArray&,
+			OW_AssociatorProviderInfoArray&)
 		{
-			return OW_InstanceProviderIFCRef(0);
+			return;
+		}
+
+		virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
+			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
+		{
+			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
 
 		virtual OW_MethodProviderIFCRef doGetMethodProvider(
@@ -89,9 +96,9 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		}
 
 		virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
-			const OW_ProviderEnvironmentIFCRef&, const char*)
+			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
-			return OW_AssociatorProviderIFCRef(0);
+			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
 
 		virtual const char* getName() const { return m_name.c_str(); }

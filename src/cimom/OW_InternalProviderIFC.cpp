@@ -102,6 +102,48 @@ OW_InternalProviderIFC::addCIMOMProvider(const OW_String& providerNameArg,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
+	OW_InstanceProviderInfoArray& instInfos,
+	OW_AssociatorProviderInfoArray& assocInfos)
+{
+	OW_MutexLock l(m_guard);
+	for (ProviderMap::iterator i =  m_cimomProviders.begin(); i != m_cimomProviders.end(); ++i)
+	{
+		i->second.m_pProv->initialize(env);
+		i->second.m_initDone = true;
+	}
+	for (OW_Array<CimProv>::iterator i = m_noIdProviders.begin(); i != m_noIdProviders.end(); ++i)
+	{
+		i->m_pProv->initialize(env);
+		i->m_initDone = true;
+	}
+
+	for (ProviderMap::iterator it =  m_cimomProviders.begin(); it != m_cimomProviders.end(); ++it)
+	{
+		OW_CppInstanceProviderIFC* pIP = it->second.m_pProv->getInstanceProvider();
+
+		if(pIP)
+		{
+			OW_InstanceProviderInfo	provInfo;
+			provInfo.setProviderName(it->first);
+			pIP->getProviderInfo(provInfo);
+			instInfos.push_back(provInfo);
+		}
+		
+		OW_CppAssociatorProviderIFC* pAP = it->second.m_pProv->getAssociatorProvider();
+		if (pAP)
+		{
+			OW_AssociatorProviderInfo provInfo;
+			provInfo.setProviderName(it->first);
+			pAP->getProviderInfo(provInfo);
+			assocInfos.push_back(provInfo);
+		}
+		// TODO: Do method and property providers too.
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray
 OW_InternalProviderIFC::doGetIndicationExportProviders(
 	const OW_ProviderEnvironmentIFCRef& env)
@@ -176,7 +218,7 @@ OW_InternalProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef
 
 	if(it == m_cimomProviders.end())
 	{
-		return OW_InstanceProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	OW_CppInstanceProviderIFC* pIP = it->second.m_pProv->getInstanceProvider();
@@ -185,7 +227,7 @@ OW_InternalProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef
 	{
 		env->getLogger()->logError(format(
 			"Provider Manager - not an instance provider: %1", provIdString));
-		return OW_InstanceProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	OW_CppInstanceProviderIFCRef ipRef(it->second.m_pProv.getLibRef(), pIP);
@@ -282,7 +324,7 @@ OW_InternalProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCR
 
 	if(it == m_cimomProviders.end())
 	{
-		return OW_AssociatorProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	OW_CppAssociatorProviderIFC* pAP = it->second.m_pProv->getAssociatorProvider();
@@ -291,7 +333,7 @@ OW_InternalProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCR
 		env->getLogger()->logError(format(
 			"Provider Manager - not an associator provider: %1", provIdString));
 
-		return OW_AssociatorProviderIFCRef(0);
+		OW_THROW(OW_NoSuchProviderException, provIdString);
 	}
 
 	if(!it->second.m_initDone)

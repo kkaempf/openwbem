@@ -922,22 +922,6 @@ namespace
 		OW_CIMObjectPathResultHandlerIFC& oph;
 		OW_CIMObjectPath& lcop;
 	};
-
-	class CIMClassEnumerationBuilder : public OW_CIMClassResultHandlerIFC
-	{
-	public:
-		CIMClassEnumerationBuilder(OW_CIMClassEnumeration& enu_)
-		: enu(enu_)
-		{}
-
-	protected:
-		virtual void doHandle(const OW_CIMClass &c)
-		{
-			enu.addElement(c);
-		}
-	private:
-		OW_CIMClassEnumeration& enu;
-	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1041,8 +1025,7 @@ namespace
 
 		virtual OW_String getConfigItem(const OW_String &name) const
 		{
-			return m_ch.cast_to<OW_LocalCIMOMHandle>()->getEnvironment()->
-				getConfigItem(name);
+			return m_ch->getEnvironment()->getConfigItem(name);
 		}
 
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
@@ -1052,12 +1035,11 @@ namespace
 		
 		virtual OW_LoggerRef getLogger() const
 		{
-			return m_ch.cast_to<OW_LocalCIMOMHandle>()->getEnvironment()->
-				getLogger();
+			return m_ch->getEnvironment()->getLogger();
 		}
 
 	private:
-		mutable OW_CIMOMHandleIFCRef m_ch;
+		mutable OW_Reference<OW_LocalCIMOMHandle> m_ch;
 	};
 
 	OW_ProviderEnvironmentIFCRef createProvEnvRef(const OW_LocalCIMOMHandle& ch)
@@ -1079,7 +1061,7 @@ OW_CIMServer::_getCIMInstanceNames(const OW_String& ns, const OW_String& classNa
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo,
 		true);
 
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
+	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 	if (instancep)
 	{
 		instancep->enumInstanceNames(createProvEnvRef(real_ch),
@@ -1272,7 +1254,7 @@ OW_CIMServer::_getCIMInstances(
 		OW_ACLInfo(), true);
 	OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true), aclInfo, true);
 
-	OW_InstanceProviderIFCRef instancep(_getInstanceProvider(theClass));
+	OW_InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
 	if (instancep)
 	{
 		HandleLocalOnlyAndDeep handler1(result,theClass,localOnly,deep);
@@ -1345,7 +1327,7 @@ OW_CIMServer::getInstance(
 		throw ce;
 	}
 
-	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(cc);
+	OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, cc);
 
 	if(instancep)
 	{
@@ -1435,13 +1417,13 @@ OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
 		{
 			// If there is no associator provider for this instance, then go ahead
 			// delete the entries from the database for this association.
-			if(!_getAssociatorProvider(theClass))
+			if(!_getAssociatorProvider(ns, theClass))
 			{
 				hdl.deleteEntries(ns, oldInst);
 			}
 		}
 
-		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
+		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 
 		if(instancep)	// If there is an instance provider, let it do the delete.
 		{
@@ -1512,7 +1494,7 @@ OW_CIMServer::createInstance(
 				"instance = %2", ns, lci.toMOF()));
 		}
 
-		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
+		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(ns, theClass);
 		if (instancep)
 		{
 			rval = instancep->createInstance(createProvEnvRef(real_ch), ns, ci);
@@ -1574,7 +1556,7 @@ OW_CIMServer::createInstance(
 
 		if(theClass.isAssociation())
 		{
-			OW_AssociatorProviderIFCRef assocP(_getAssociatorProvider(theClass));
+			OW_AssociatorProviderIFCRef assocP(_getAssociatorProvider(ns, theClass));
 
 			if(!assocP)
 			{
@@ -1658,7 +1640,7 @@ OW_CIMServer::modifyInstance(
 			}
 		}
 
-		OW_InstanceProviderIFCRef instancep(_getInstanceProvider(theClass));
+		OW_InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass));
 
 		if(!instancep)
 		{
@@ -1678,7 +1660,7 @@ OW_CIMServer::modifyInstance(
 		{
 			OW_LocalCIMOMHandle ch(m_env, OW_RepositoryIFCRef(this, true),
 				OW_ACLInfo(), true);
-			OW_AssociatorProviderIFCRef assocP(_getAssociatorProvider(theClass));
+			OW_AssociatorProviderIFCRef assocP(_getAssociatorProvider(ns, theClass));
 
 			if(!assocP)
 			{
@@ -1724,7 +1706,7 @@ OW_CIMServer::_instanceExists(const OW_String& ns, const OW_CIMObjectPath& icop,
 		return false;
 	}
 
-	OW_InstanceProviderIFCRef ip = _getInstanceProvider(cc);
+	OW_InstanceProviderIFCRef ip = _getInstanceProvider(ns, cc);
 	if(ip)
 	{
 		//
@@ -2140,64 +2122,60 @@ OW_CIMServer::invokeMethod(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
-OW_CIMServer::_getInstanceProvider(const OW_CIMClass& cc)
+OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc)
 {
-	OW_CIMQualifier cq = cc.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	
-	if(cq)
+	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
+		OW_ACLInfo(), true);
+	OW_InstanceProviderIFCRef instancep;
+	try
 	{
-		OW_InstanceProviderIFCRef instancep;
-		OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-			OW_ACLInfo(), true);
-		instancep =  m_provManager->getInstanceProvider(
-			createProvEnvRef(internal_ch), cq);
-		if(!instancep)
-		{
-			// if it's not an instance or associator provider, then ERROR!
-			if (!m_provManager->getAssociatorProvider(
-				createProvEnvRef(internal_ch), cq))
-			{
-				OW_String msg("Unknown provider: ");
-				msg += cq.getValue().toString();
-				OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
-			}
-		}
-		return instancep;
+		instancep = 
+			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch), ns, cc);
 	}
-
-	return OW_InstanceProviderIFCRef();
+	catch (const OW_NoSuchProviderException&)
+	{
+		// if it's not an instance or associator provider, then ERROR!
+		try
+		{
+			m_provManager->getAssociatorProvider(
+				createProvEnvRef(internal_ch), ns, cc);
+		}
+		catch (const OW_NoSuchProviderException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, 
+				format("Invalid provider: %1", e.getMessage()).c_str());
+		}
+	}
+	return instancep;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
-OW_CIMServer::_getAssociatorProvider(const OW_CIMClass& cc)
+OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc)
 {
-	OW_CIMQualifier cq = cc.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	
-	if(cq)
+	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
+		OW_ACLInfo(), true);
+	OW_AssociatorProviderIFCRef ap;
+	try
 	{
-		OW_AssociatorProviderIFCRef ap;
-		OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-			OW_ACLInfo(), true);
 		ap =  m_provManager->getAssociatorProvider(
-			createProvEnvRef(internal_ch), cq);
-		if(!ap)
-		{
-			// if it's not an instance or associator provider, then ERROR!
-			if (!m_provManager->getInstanceProvider(
-				createProvEnvRef(internal_ch), cq))
-			{
-				OW_String msg("Unknown provider: ");
-				msg += cq.getValue().toString();
-				OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
-			}
-		}
-		return ap;
+			createProvEnvRef(internal_ch), ns, cc);
 	}
-
-	return OW_AssociatorProviderIFCRef();
+	catch (const OW_NoSuchProviderException&)
+	{
+		// if it's not an instance or associator provider, then ERROR!
+		try
+		{
+			m_provManager->getInstanceProvider(
+				createProvEnvRef(internal_ch), ns, cc);
+		}
+		catch (const OW_NoSuchProviderException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, 
+				format("Invalid provider: %1", e.getMessage()).c_str());
+		}
+	}
+	return ap;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -2426,11 +2404,13 @@ namespace
 			OW_CIMClassArray& staticAssocs_,
 			OW_CIMClassArray& dynamicAssocs_,
 			OW_CIMServer& server_,
-			const OW_ACLInfo& aclInfo_)
+			const OW_ACLInfo& aclInfo_,
+			const OW_String& ns_)
 		: staticAssocs(staticAssocs_)
 		, dynamicAssocs(dynamicAssocs_)
 		, server(server_)
 		, aclInfo(aclInfo_)
+		, ns(ns_)
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMClass &cc)
@@ -2442,7 +2422,7 @@ namespace
 			}
 			// Now separate the association classes that have associator provider from
 			// the ones that don't
-			OW_CIMClassArray* pra = (server._isDynamicAssoc(cc)) ? &dynamicAssocs
+			OW_CIMClassArray* pra = (server._isDynamicAssoc(ns, cc)) ? &dynamicAssocs
 				: &staticAssocs;
 			pra->append(cc);
 		}
@@ -2451,6 +2431,7 @@ namespace
 		OW_CIMClassArray& dynamicAssocs;
 		OW_CIMServer& server;
 		const OW_ACLInfo& aclInfo;
+		OW_String ns;
 	};
 }
 
@@ -2483,7 +2464,7 @@ OW_CIMServer::_commonReferences(
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
 
-	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
+	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo, ns);
 	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
 	OW_StringArray resultClassNames;
 	for(size_t i = 0; i < staticAssocs.size(); i++)
@@ -2552,7 +2533,7 @@ OW_CIMServer::_dynamicReferences(const OW_CIMObjectPath& path,
 	{
 		OW_CIMClass cc = assocClasses[i];
 
-		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(cc);
+		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
 		if(!assocP)
 		{
 			continue;
@@ -2767,7 +2748,7 @@ OW_CIMServer::_commonAssociators(
 	// Get association classes from the association repository
 	OW_CIMClassArray staticAssocs;
 	OW_CIMClassArray dynamicAssocs;
-	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo);
+	assocClassSeparator assocClassResult(staticAssocs, dynamicAssocs, *this, aclInfo, ns);
 	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role);
 
 	// If the result class was specified, get a list of all the classes the
@@ -2850,7 +2831,7 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 	{
 		OW_CIMClass cc = assocClasses[i];
 
-		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(cc);
+		OW_AssociatorProviderIFCRef assocP = _getAssociatorProvider(path.getNameSpace(), cc);
 		if(!assocP)
 		{
 			continue;
@@ -3150,9 +3131,9 @@ OW_CIMServer::_isInStringArray(const OW_StringArray& sra, const OW_String& val)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_CIMServer::_isDynamicAssoc(const OW_CIMClass& cc)
+OW_CIMServer::_isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc)
 {
-	return _getAssociatorProvider(cc) ? true : false;
+	return _getAssociatorProvider(ns, cc) ? true : false;
 }
 
 //////////////////////////////////////////////////////////////////////////////

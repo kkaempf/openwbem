@@ -32,7 +32,6 @@
 #include "OW_HTTPXMLCIMListener.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Semaphore.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
@@ -44,6 +43,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 
 #include <iostream> // for cout and cerr
 

@@ -38,7 +38,6 @@
 #include "OW_Array.hpp"
 #include "OW_String.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include <utility> // for std::pair
 
 
 /**
@@ -51,7 +50,6 @@
 class OW_ProviderIFCLoaderBase
 {
 public:
-	//typedef std::pair<OW_ProviderIFCBaseIFCRef, OW_SharedLibraryRef> ifc_lib_pair;
 
 
 	OW_ProviderIFCLoaderBase(OW_SharedLibraryLoaderRef sll,
@@ -101,6 +99,11 @@ public:
 	virtual void loadIFCs(
 		OW_Array<OW_ProviderIFCBaseIFCRef>& interfaces) const = 0;
 
+	OW_ServiceEnvironmentIFCRef getEnvironment() const
+	{
+		return m_env;
+	}
+
 protected:
 	/**
 	 * Function uses the OW_SharedLibraryLoader to load the library designated
@@ -114,11 +117,6 @@ protected:
 	 * 	e.g. retval.first.isNull() == true and retval.second.isNull() == true.
 	 */
 	OW_ProviderIFCBaseIFCRef createProviderIFCFromLib(const OW_String& libname) const;
-
-	OW_ServiceEnvironmentIFCRef getEnvironment() const
-	{
-		return m_env;
-	}
 
 private:
 
@@ -144,6 +142,7 @@ public:
 	static OW_ProviderIFCLoaderRef createProviderIFCLoader(
 		OW_ServiceEnvironmentIFCRef env);
 };
+
 
 #endif
 

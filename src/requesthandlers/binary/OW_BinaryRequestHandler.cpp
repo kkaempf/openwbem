@@ -36,10 +36,6 @@
 #include "OW_Format.hpp"
 #include "OW_CIM.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
-#include "OW_CIMClassEnumeration.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_CIMParamValue.hpp"
 

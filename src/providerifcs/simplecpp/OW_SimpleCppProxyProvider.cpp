@@ -32,6 +32,8 @@
 #include "OW_SimpleCppProxyProvider.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_SimpleCppAssociatorProviderProxy::OW_SimpleCppAssociatorProviderProxy(

@@ -264,7 +264,6 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
 	 * @exception OW_CIMException  	
  	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
@@ -291,8 +290,6 @@ public:
 	 *						children of the enumerated class.
 	 * @param localOnly Only include properties
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An enumeration of OW_CIMObjectPath objects
-	 * 		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException  	
  	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
@@ -324,7 +321,6 @@ public:
 	 *		empty, then no properties should be returned. If NULL then all
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An OW_CIMInstanceEnumeration object.
 	 * @exception OW_CIMException
  	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
@@ -353,7 +349,6 @@ public:
 	 *							OW_CIMClient::SHALLOW only names of instances belonging
 	 *							to the specified class are returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An OW_CIMObjectPathEnumeration object.
 	 * @exception OW_CIMException
  	 *		CIM_ERR_ACCESS_DENIED
 	 *		CIM_ERR_NOT_SUPPORTED
@@ -608,7 +603,7 @@ private:
 		const OW_ACLInfo& aclInfo);
 
 public:
-	OW_Bool _isDynamicAssoc(const OW_CIMClass& cc);
+	OW_Bool _isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc);
 
 private:
 	void _commonAssociators(
@@ -712,8 +707,9 @@ private:
 	void _getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 		OW_HDBNode node);
 
-	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_CIMClass& cls);
-	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_CIMClass& cls);
+	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns, 
+		const OW_CIMClass& cls);
+	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cls);
 	OW_PropertyProviderIFCRef _getPropertyProvider(const OW_CIMProperty& cls);
 
 	void _validatePropagatedKeys(const OW_String& ns,

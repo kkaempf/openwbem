@@ -38,6 +38,9 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_NameSpaceProvider::~OW_NameSpaceProvider()

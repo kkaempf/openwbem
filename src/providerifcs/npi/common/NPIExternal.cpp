@@ -2,6 +2,8 @@
 #include "NPIProvider.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 
 
 // administrative functions

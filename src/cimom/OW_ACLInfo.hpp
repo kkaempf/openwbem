@@ -117,6 +117,7 @@ private:
 	friend class OW_IndicationRepLayerImpl;
 	friend class OW_PollingManager;
 	friend class OW_IndicationServerImpl;
+	friend class OW_CIMOMEnvironment;
 };
 
 #endif	// __OW_ACLINFO_HPP__

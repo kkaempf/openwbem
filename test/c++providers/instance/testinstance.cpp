@@ -58,8 +58,11 @@ static OW_Array<TestInstance> g_saa;
 class OW_TestInstance: public OW_CppInstanceProviderIFC
 {
 public:
-	virtual ~OW_TestInstance()
+	virtual ~OW_TestInstance(){}
+
+	void getProviderInfo(OW_InstanceProviderInfo& info)
 	{
+		info.addInstrumentedClass("TestInstance");
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -75,7 +78,6 @@ public:
 		(void)env;
 		(void)cimClass;
 		(void)deep;
-		OW_CIMObjectPathEnumeration rval;
 		for (OW_Array<TestInstance>::const_iterator iter = g_saa.begin();
 			iter != g_saa.end(); iter++)
 		{

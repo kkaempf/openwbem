@@ -34,6 +34,7 @@
 #include "OW_ProviderManager.hpp"
 #include "testSharedLibraryLoader.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMClass.hpp"
 
 void OW_ProviderManagerTestCases::setUp()
 {
@@ -46,7 +47,7 @@ void OW_ProviderManagerTestCases::tearDown()
 void OW_ProviderManagerTestCases::testInit()
 {
 	OW_ProviderManager pm;
-	pm.init(testCreateMuxLoader());
+	pm.load(testCreateMuxLoader());
 }
 
 
@@ -54,17 +55,19 @@ void OW_ProviderManagerTestCases::testInit()
 void OW_ProviderManagerTestCases::testGetInstanceProvider()
 {
 	OW_ProviderManager mgr;
-	mgr.init(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader());
 	OW_LocalCIMOMHandle hdl;
+	OW_CIMClass c("TestClass");
+	c.addQualifier(OW_CIMQualifier("TestInstanceProvider"));
 	OW_InstanceProviderIFCRef provRef = mgr.getInstanceProvider(
-		createProvEnvRef(hdl), OW_CIMQualifier("TestInstanceProvider"));
+		createProvEnvRef(hdl), "root", c);
 	unitAssert(provRef.isNull());
 }
 
 void OW_ProviderManagerTestCases::testGetMethodProvider()
 {
 	OW_ProviderManager mgr;
-	mgr.init(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader());
 	OW_LocalCIMOMHandle hdl;
 	OW_MethodProviderIFCRef provRef = mgr.getMethodProvider(
 		createProvEnvRef(hdl), OW_CIMQualifier("TestMethodProvider"));
@@ -74,7 +77,7 @@ void OW_ProviderManagerTestCases::testGetMethodProvider()
 void OW_ProviderManagerTestCases::testGetPropertyProvider()
 {
 	OW_ProviderManager mgr;
-	mgr.init(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader());
 	OW_LocalCIMOMHandle hdl;
 	OW_PropertyProviderIFCRef provRef = mgr.getPropertyProvider(
 		createProvEnvRef(hdl), OW_CIMQualifier("TestPropertyProvider"));
@@ -84,10 +87,12 @@ void OW_ProviderManagerTestCases::testGetPropertyProvider()
 void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
 	OW_ProviderManager mgr;
-	mgr.init(testCreateMuxLoader());
+	mgr.load(testCreateMuxLoader());
 	OW_LocalCIMOMHandle hdl;
+	OW_CIMClass c("TestClass");
+	c.addQualifier(OW_CIMQualifier("TestAssociatorProvider"));
 	OW_AssociatorProviderIFCRef provRef = mgr.getAssociatorProvider(
-		createProvEnvRef(hdl), OW_CIMQualifier("TestAssociatorProvider"));
+		createProvEnvRef(hdl), "root", c);
 	unitAssert(provRef.isNull());
 }
 

@@ -34,8 +34,7 @@
 #include "OW_config.h"
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_SharedLibraryReference.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_InstanceProviderInfo.hpp"
 
 /**
  * This interface is implemented by providers of dynamic association
@@ -49,6 +48,24 @@ class OW_CppAssociatorProviderIFC: public virtual OW_CppProviderBaseIFC
 	public:
 		virtual ~OW_CppAssociatorProviderIFC(){}
 		
+		/**
+		 * A provider should override this method to report which classes in
+		 * which namespaces it instruments.
+		 * It should insert an entry for each class it is responsible for.
+		 *  The entry consists of the class name and an optional list of namespaces.
+		 *  If the namespace list is empty, all namespaces are implied.
+		 * If the method does nothing, then the provider's class must have a
+		 * provider qualifier that identifies the provider.  This old behavior is
+		 * deprecated and will be removed sometime in the future.  This method
+		 * has a default implementation that does nothing, to allow old providers
+		 * to be migrated forward with little or no change, but once the old
+		 * provider location method is removed, this member function will be pure
+		 * virtual.
+		 */
+		virtual void getProviderInfo(OW_AssociatorProviderInfo&)
+		{
+		}
+
 		/**
 		 * This method is invoked in order to do the Associators operation as
 		 * defined by the CIM operations over HTTP spec at

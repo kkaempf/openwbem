@@ -45,6 +45,8 @@
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 class OW_AssociatorProviderProxy : public OW_AssociatorProviderIFC
 {

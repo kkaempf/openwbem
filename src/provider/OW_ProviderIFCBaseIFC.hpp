@@ -41,6 +41,10 @@
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
+#include "OW_Exception.hpp"
+#include "OW_InstanceProviderInfo.hpp"
+
+DEFINE_EXCEPTION(NoSuchProvider);
 
 /**
  * This class implements a bridge from the CIMOM's OW_ProviderManager to the
@@ -85,6 +89,15 @@ public:
 	const OW_UInt32 signature;
 
 	/**
+	 * Called when the provider manager loads the interface
+	 */
+	void init(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a)
+	{
+		doInit(env, i, a);
+	}
+	/**
 	 * Locate an Instance provider.
 	 *
 	 * @param provIdString	The provider interface specific string. The provider
@@ -92,12 +105,18 @@ public:
 	 *								being requested.
 	 *
 	 * @returns A ref counted OW_InstanceProvider. If the provider is not found,
-	 * then null is returned.
+	 * then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
-		return doGetInstanceProvider(env, provIdString);
+		// ensure we don't return NULL
+		OW_InstanceProviderIFCRef p = doGetInstanceProvider(env, provIdString);
+		if (!p)
+		{
+			OW_THROW(OW_NoSuchProviderException, provIdString);
+		}
+		return p;
 	}
 
 	/**
@@ -140,12 +159,18 @@ public:
 	 *								being requested.
 	 *
 	 * @returns A ref counted OW_AssociatorProvider. If the provider is not
-	 * found, then null is returned.
+	 * found, then an OW_NoSuchProviderException is thrown.
 	 */
 	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString)
 	{
-		return doGetAssociatorProvider(env, provIdString);
+		// ensure we don't return NULL
+		OW_AssociatorProviderIFCRef p = doGetAssociatorProvider(env, provIdString);
+		if (!p)
+		{
+			OW_THROW(OW_NoSuchProviderException, provIdString);
+		}
+		return p;
 	}
 
 	/**
@@ -182,6 +207,10 @@ protected:
 	 * The derived classes must override these functions to implement the
 	 * desired functionality.
 	 */
+	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a) = 0;
+
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
 

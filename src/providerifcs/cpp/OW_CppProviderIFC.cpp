@@ -84,6 +84,15 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
+	OW_InstanceProviderInfoArray& i,
+	OW_AssociatorProviderInfoArray& a)
+{
+	loadProviders(env, i, a);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
 OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
@@ -107,14 +116,13 @@ OW_CppProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env
 			provIdString));
 	}
 
-	return OW_InstanceProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray
-OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env)
+OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIFCRef&)
 {
-	loadNoIdProviders(env);
 	OW_IndicationExportProviderIFCRefArray rvra;
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
@@ -136,9 +144,8 @@ OW_CppProviderIFC::doGetIndicationExportProviders(const OW_ProviderEnvironmentIF
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PolledProviderIFCRefArray
-OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef& env)
+OW_CppProviderIFC::doGetPolledProviders(const OW_ProviderEnvironmentIFCRef&)
 {
-	loadNoIdProviders(env);
 	OW_PolledProviderIFCRefArray rvra;
 	for(size_t i = 0; i < m_noidProviders.size(); i++)
 	{
@@ -236,12 +243,14 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 			provIdString));
 	}
 
-	return OW_AssociatorProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
+OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
+	OW_InstanceProviderInfoArray& instanceProviderInfo,
+	OW_AssociatorProviderInfoArray& associatorProviderInfo)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -319,8 +328,33 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 		if(!OW_SharedLibrary::getFunctionPointer(theLib, creationFuncName,
 			createProvider))
 		{
-			env->getLogger()->logError(format("C++ provider ifc: Libary %1 does not contain"
-				" %2 function", libName, creationFuncName));
+			// it's not a no-id provider
+			// try and load it as an id provider
+			OW_String providerid = dirEntries[i];
+			// chop off lib and .so
+			providerid = providerid.substring(3,providerid.length()-6);
+			OW_CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(), dontStoreProvider);
+			if (!p)
+			{
+				env->getLogger()->logDebug(format("C++ provider ifc: Libary %1 does not load", libName));
+			}
+			OW_CppInstanceProviderIFC* p_ip = p->getInstanceProvider();
+			if (p_ip)
+			{
+				OW_InstanceProviderInfo info;
+				info.setProviderName(providerid);
+				p_ip->getProviderInfo(info);
+				instanceProviderInfo.push_back(info);
+			}
+			OW_CppAssociatorProviderIFC* p_ap = p->getAssociatorProvider();
+			if (p_ap)
+			{
+				OW_AssociatorProviderInfo info;
+				info.setProviderName(providerid);
+				p_ap->getProviderInfo(info);
+				associatorProviderInfo.push_back(info);
+			}
+			// TODO: Get info for property and method providers
 			continue;
 		}
 
@@ -366,7 +400,8 @@ OW_CppProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 //////////////////////////////////////////////////////////////////////////////
 OW_CppProviderBaseIFCRef
 OW_CppProviderIFC::getProvider(
-	const OW_ProviderEnvironmentIFCRef& env, const char* provIdString)
+	const OW_ProviderEnvironmentIFCRef& env, const char* provIdString,
+	StoreProviderFlag storeP)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -455,9 +490,13 @@ OW_CppProviderIFC::getProvider(
 	env->getLogger()->logDebug(format("C++ provider ifc: provider %1 loaded and initialized",
 		provId));
 
-	m_provs[provId] = OW_CppProviderBaseIFCRef(theLib, pProv);
+	OW_CppProviderBaseIFCRef rval(theLib, pProv);
+	if (storeP == storeProvider)
+	{
+		m_provs[provId] = rval;
+	}
 
-	return m_provs[provId];
+	return rval;
 }
 
 

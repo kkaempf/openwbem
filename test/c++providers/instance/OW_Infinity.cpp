@@ -35,6 +35,7 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 namespace{
 

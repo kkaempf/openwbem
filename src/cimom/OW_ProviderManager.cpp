@@ -37,15 +37,79 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMClass.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-void OW_ProviderManager::init(const OW_ProviderIFCLoaderRef& IFCLoader)
+void OW_ProviderManager::load(const OW_ProviderIFCLoaderRef& IFCLoader)
 {
 	IFCLoader->loadIFCs(m_IFCArray);
 	OW_Reference<OW_ProviderIFCBaseIFC> pi(new OW_InternalProviderIFC);
 	m_internalIFC = pi.cast_to<OW_InternalProviderIFC>();
 	// 0 because there is no shared library.
 	m_IFCArray.push_back(OW_ProviderIFCBaseIFCRef(OW_SharedLibraryRef(0), pi));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
+{
+	for (size_t i = 0; i < m_IFCArray.size(); ++i)
+	{
+		OW_InstanceProviderInfoArray instanceProviderInfo;
+		OW_AssociatorProviderInfoArray associatorProviderInfo;
+		m_IFCArray[i]->init(env, instanceProviderInfo, associatorProviderInfo);
+		for (size_t j = 0; j < instanceProviderInfo.size(); ++j)
+		{
+			OW_InstanceProviderInfo::ClassInfoArray classInfos = instanceProviderInfo[j].getClassInfo();
+			OW_String providerName = instanceProviderInfo[j].getProviderName();
+			if (providerName.empty())
+			{
+				env->getLogger()->logError(format("Provider name not supplied for instance provider class registrations from IFC %1", m_IFCArray[i]->getName()));
+				continue;
+			}
+			for (size_t k = 0; k < classInfos.size(); ++k)
+			{
+				OW_String className = classInfos[k].className;
+				// search for duplicates
+				InstProvRegMap_t::const_iterator ci = m_registeredInstProvs.find(className);
+				if (ci != m_registeredInstProvs.end())
+				{
+					env->getLogger()->logError(format("More than one instance provider is registered to instrument class (%1). %2::%3 and %4::%5",
+						className, ci->second.ifc->getName(), ci->second.provName, m_IFCArray[i]->getName(), instanceProviderInfo[j].getProviderName()));
+					continue;
+				}
+				InstProvReg reg;
+				reg.ifc = m_IFCArray[i];
+				reg.provName = providerName;
+				m_registeredInstProvs.insert(std::make_pair(className, reg));
+			}
+		}
+		for (size_t j = 0; j < associatorProviderInfo.size(); ++j)
+		{
+			OW_AssociatorProviderInfo::ClassInfoArray classInfos = associatorProviderInfo[j].getClassInfo();
+			OW_String providerName = associatorProviderInfo[j].getProviderName();
+			if (providerName.empty())
+			{
+				env->getLogger()->logError(format("Provider name not supplied for associator provider class registrations from IFC %1", m_IFCArray[i]->getName()));
+				continue;
+			}
+			for (size_t k = 0; k < classInfos.size(); ++k)
+			{
+				OW_String className = classInfos[k].className;
+				// search for duplicates
+				AssocProvRegMap_t::const_iterator ci = m_registeredAssocProvs.find(className);
+				if (ci != m_registeredAssocProvs.end())
+				{
+					env->getLogger()->logError(format("More than one associator provider is registered to instrument class (%1). %2::%3 and %4::%5",
+						className, ci->second.ifc->getName(), ci->second.provName, m_IFCArray[i]->getName(), associatorProviderInfo[j].getProviderName()));
+					continue;
+				}
+				AssocProvReg reg;
+				reg.ifc = m_IFCArray[i];
+				reg.provName = associatorProviderInfo[j].getProviderName();
+				m_registeredAssocProvs.insert(std::make_pair(className, reg));
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -66,16 +130,38 @@ OW_ProviderManager::addCIMOMProvider(const OW_String& providerNameArg,
 //////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
 OW_ProviderManager::getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const OW_CIMQualifier& qual) const
+	const OW_String& ns, const OW_CIMClass& cc) const
 {
-	OW_String provStr;
-	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-	if(theIFC.isNull())
+	// lookup just the class name to see if a provider registered for the 
+	// class in all namespaces.
+	InstProvRegMap_t::const_iterator ci = m_registeredInstProvs.find(cc.getName());
+	if (ci != m_registeredInstProvs.end())
 	{
-		return OW_InstanceProviderIFCRef(0);
+		return ci->second.ifc->getInstanceProvider(env, ci->second.provName.c_str());
 	}
 
-	return theIFC->getInstanceProvider(env, provStr.c_str());
+	// next lookup namespace:classname to see if we've got one for the
+	// specific namespace
+	OW_String nsAndClassName = ns + ':' + cc.getName();
+	ci = m_registeredInstProvs.find(nsAndClassName);
+	if (ci != m_registeredInstProvs.end())
+	{
+		return ci->second.ifc->getInstanceProvider(env, ci->second.provName.c_str());
+	}
+
+	// if we don't have a new registration, try the old method
+	OW_CIMQualifier qual = cc.getQualifier(
+		OW_CIMQualifier::CIM_QUAL_PROVIDER);
+	if (qual)
+	{
+		OW_String provStr;
+		OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
+		if(theIFC)
+		{
+			return theIFC->getInstanceProvider(env, provStr.c_str());
+		}
+	}
+	return OW_InstanceProviderIFCRef(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -85,12 +171,11 @@ OW_ProviderManager::getMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 {
 	OW_String provStr;
 	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-	if(theIFC.isNull())
+	if(theIFC)
 	{
-		return OW_MethodProviderIFCRef(0);
+		return theIFC->getMethodProvider(env, provStr.c_str());
 	}
-
-	return theIFC->getMethodProvider(env, provStr.c_str());
+	return OW_MethodProviderIFCRef(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -100,27 +185,49 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 {
 	OW_String provStr;
 	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-	if(theIFC.isNull())
+	if(theIFC)
 	{
-		return OW_PropertyProviderIFCRef(0);
+		return theIFC->getPropertyProvider(env, provStr.c_str());
 	}
 
-	return theIFC->getPropertyProvider(env, provStr.c_str());
+	return OW_PropertyProviderIFCRef(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
-	const OW_CIMQualifier& qual) const
+	const OW_String& ns, const OW_CIMClass& cc) const
 {
-	OW_String provStr;
-	OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
-	if(theIFC.isNull())
+	// lookup just the class name to see if a provider registered for the 
+	// class in all namespaces.
+	AssocProvRegMap_t::const_iterator ci = m_registeredAssocProvs.find(cc.getName());
+	if (ci != m_registeredAssocProvs.end())
 	{
-		return OW_AssociatorProviderIFCRef(0);
+		return ci->second.ifc->getAssociatorProvider(env, ci->second.provName.c_str());
 	}
 
-	return theIFC->getAssociatorProvider(env, provStr.c_str());
+	// next lookup namespace:classname to see if we've got one for the
+	// specific namespace
+	OW_String nsAndClassName = ns + ':' + cc.getName();
+	ci = m_registeredAssocProvs.find(nsAndClassName);
+	if (ci != m_registeredAssocProvs.end())
+	{
+		return ci->second.ifc->getAssociatorProvider(env, ci->second.provName.c_str());
+	}
+
+	// if we don't have a new registration, try the old method
+	OW_CIMQualifier qual = cc.getQualifier(
+		OW_CIMQualifier::CIM_QUAL_PROVIDER);
+	if (qual)
+	{
+		OW_String provStr;
+		OW_ProviderIFCBaseIFCRef theIFC = getProviderIFC(env, qual, provStr);
+		if(theIFC)
+		{
+			return theIFC->getAssociatorProvider(env, provStr.c_str());
+		}
+	}
+	return OW_AssociatorProviderIFCRef(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////

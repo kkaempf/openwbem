@@ -42,6 +42,8 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMClassEnumeration.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
+#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"

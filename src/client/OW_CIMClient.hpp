@@ -116,7 +116,6 @@ public:
 	 *		property and method qualifiers will be returned.
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be included with all appropriate elements of each class.
-	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
 	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
@@ -139,8 +138,6 @@ public:
 	 *		contain the names of all classes derived from the enumerated class.
 	 *		If set to SHALLOW the enumermation will return only
 	 *		the names of the first level children of the enumerated class.
-	 * @return An enumeration of OW_CIMObjectPath objects
-	 *		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be found
 	 */
@@ -179,7 +176,6 @@ public:
 	 * are returned with the instances subject to constraints specified in the
 	 * other parameters.
 	 *
-	 * @return An Enumeration of OW_CIMInstance (OW_CIMInstanceEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
 	void enumInstances(
@@ -205,7 +201,6 @@ public:
 	 * hierarchy.
 	 *
 	 * @param className The class whose instances are to be enumerated.
-	 * @return An Enumeration of OW_CIMObjectPaths (OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException 	If the object cannot be found
 	 */
 	void enumInstanceNames(
@@ -217,8 +212,6 @@ public:
 
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
-	 * @return 	An Enumeration of OW_CIMQualifierTypes
-	 *				(OW_CIMQualifierEnumeration)
 	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
 	 *										found
 	 */

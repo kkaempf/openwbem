@@ -98,6 +98,8 @@ public:
 	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
 		OW_Bool doIndications=false);
 
+	OW_CIMOMHandleIFCRef getCIMOMHandle();
+
 	OW_CIMOMHandleIFCRef getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 		const OW_ACLInfo& aclInfo);
 

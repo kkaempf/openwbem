@@ -113,7 +113,6 @@ public:
 	 *		property and method qualifiers will be returned.
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be included with all appropriate elements of each class.
-	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
 	 * @exception OW_CIMException If the specified CIMObjectPath object cannot
 	 *		be found
 	 */
@@ -136,8 +135,6 @@ public:
 	 *						enumerated class. If set to OW_CIMClient::SHALLOW the
 	 *						enumermation will return only the names of the first level
 	 *						children of the enumerated class.
-	 * @return An enumeration of OW_CIMObjectPath objects
-	 * 			(OW_CIMObjectPathEnumeration)
 	 */
 	virtual void enumClassNames(
 		const OW_String& ns,
@@ -158,8 +155,6 @@ public:
 	 * Enumerates the qualifiers defined in a namespace.
     * @param path	The OW_CIMObjectPath identifying the namespace whose qualifier
 	 *					definitions are to be enumerated.
-	 * @return 	An Enumeration of OW_CIMQualifierTypes
-	 *				(OW_CIMQualifierEnumeration)
 	 */
 	virtual void enumQualifierTypes(
 		const OW_String& ns,
@@ -220,8 +215,6 @@ public:
 	 * instances. If propertyList IS NULL, then it is ignored and all properties
 	 * are returned with the instances subject to constraints specified in the
 	 * other parameters.
-	 *
-	 * @return An Enumeration of OW_CIMInstance (OW_CIMInstanceEnumeration)
 	 */
 	virtual void enumInstances(
 		const OW_String& ns,
@@ -243,8 +236,6 @@ public:
 	 *							classes derived from it. If set to
 	 *							OW_CIMClient::SHALLOW only instances belonging
 	 *							to the specified class are returned.
-	 * @return An Enumeration of OW_CIMObjectPaths
-	 * 		(OW_CIMObjectPathEnumeration)
 	 */
 	virtual void enumInstanceNames(
 		const OW_String& ns,

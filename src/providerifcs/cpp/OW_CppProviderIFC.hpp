@@ -58,6 +58,10 @@ protected:
 	 * The derived classes must override these functions to implement the
 	 * desired functionality.
 	 */
+	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a);
+
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
@@ -89,9 +93,17 @@ private:
 	typedef OW_Map<OW_String, OW_CppProviderBaseIFCRef> ProviderMap;
 	typedef OW_Array<OW_CppProviderBaseIFCRef> LoadedProviderArray;
 
+	enum StoreProviderFlag
+	{
+		dontStoreProvider,
+		storeProvider
+	};
+
 	OW_CppProviderBaseIFCRef getProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const char* provIdString);
-	void loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env);
+		const char* provIdString, StoreProviderFlag = storeProvider);
+	void loadProviders(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a);
 
 
 	ProviderMap m_provs;

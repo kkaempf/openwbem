@@ -82,6 +82,15 @@ OW_NPIProviderIFC::~OW_NPIProviderIFC()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
+	OW_InstanceProviderInfoArray&,
+	OW_AssociatorProviderInfoArray&)
+{
+	return; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
 OW_NPIProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
@@ -104,7 +113,7 @@ OW_NPIProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env
 			provIdString));
 	}
 
-	return OW_InstanceProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -227,7 +236,7 @@ OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 			provIdString));
 	}
 
-	return OW_AssociatorProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -34,8 +34,6 @@
 #include "OW_config.h"
 #include "OW_ProviderBaseIFC.hpp"
 #include "OW_Reference.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 /**

@@ -43,13 +43,15 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_CIMtoXML.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMQualifier.hpp"
+
 DEFINE_EXCEPTION(BadStream)
 
 #include <algorithm>

@@ -62,8 +62,13 @@ New features:
       specifically disabled.
     - Merge the PollingManager and the SelectEngine to remove a thread.
     - Create a mechanism to share schemas between namespaces.
+    - Add an option to {dis,en}able the IndicationRepLayer (sending intrinsic
+      indications.)
+    - Create a CIM class & provider to control the provider manager (re-scan
+      providers, reload/unload providers, register new providers, etc.)
 
 Refactorings:
+    - Create a base class for all the common code in the provider interfaces.
     - Move some of the XML code around.  Get rid of param* strings.  Move 
       XMLQualifier::* to XMLCIMFactory.
     - Create a common base class for C++ provider ifcs (internal, c++, 
@@ -90,3 +95,4 @@ Optimizations:
     - See if using OW_StringBuffer as the OW_String internal representation is 
       faster than ByteBuf.
     - Redo WQL to only process on instance at a time for better scalability.
+    - Create a OW_HashMap class and use it where appropriate.

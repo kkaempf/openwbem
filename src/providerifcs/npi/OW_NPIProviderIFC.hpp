@@ -53,6 +53,10 @@ protected:
 
 	virtual const char* getName() const { return "npi"; }
 
+	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a);
+
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);

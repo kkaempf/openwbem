@@ -38,6 +38,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 #include <fstream>
 

@@ -38,6 +38,8 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMClassEnumeration.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
+#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
@@ -507,22 +509,16 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 		ci = hdl.getInstance( cop1);
 
         OW_CIMQualifier provQual = cc.getQualifier("provider");
-        cc.removeQualifier(provQual);
-        hdl.modifyClass(cc);
-
-        try
-        {
-            // this should fail since the qualifier is now gone.
-            ci = hdl.getInstance(cop1);
-            TEST_ASSERT(0);
-        }
-        catch (OW_CIMException& e)
-        {
-            TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
-        }
-
+		TEST_ASSERT(!provQual); // shouldn't be there since the provider registers itself.
+		provQual = OW_CIMQualifier("provider");
+		provQual.setValue(OW_CIMValue("somejunk")); // the provider qualifier should be ignored.
         cc.addQualifier(provQual);
         hdl.modifyClass(cc);
+
+        ci = hdl.getInstance(cop1);
+
+        cc.removeQualifier(provQual);
+        hdl.modifyClass(cc); // change it back
 
 		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(
 			"testinstance");
@@ -531,6 +527,52 @@ testModifyProviderQualifier(OW_CIMClient& hdl)
 		hdl.deleteInstance( cop1);
 		enu = hdl.enumInstancesE( "testinstance");
 		TEST_ASSERT(enu.numberOfElements() == 0);
+		
+
+		// now test the old behavior.  Create a new class that the provider 
+		// didn't register for, but we'll have the qualifier point to the 
+		// provider.
+		cc = hdl.getClass( "testinstance");
+		cc.setName("testinstance2");
+		provQual.setValue(OW_CIMValue("c++::testinstance"));
+		cc.addQualifier(provQual);
+		hdl.createClass(cc);
+		ci = cc.newInstance();
+		ci.setProperty("name", OW_CIMValue(OW_String("one")));
+		params.clear();
+		params.push_back("one");
+		params.push_back("two");
+		ci.setProperty("params", OW_CIMValue(params));
+		hdl.createInstance( ci);
+		cop1 = OW_CIMObjectPath(ci);
+		ci = hdl.getInstance( cop1);
+
+        provQual = cc.getQualifier("provider");
+        cc.removeQualifier(provQual);
+        hdl.modifyClass(cc);
+
+		try
+		{
+			// should throw since we removed the qualifier and the provider 
+			// won't be called
+			ci = hdl.getInstance(cop1);
+			TEST_ASSERT(0);
+		}
+		catch (const OW_CIMException& e)
+		{
+			TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		}
+
+        cc.addQualifier(provQual);
+        hdl.modifyClass(cc); // change it back
+
+		enu = hdl.enumInstancesE("testinstance");
+		TEST_ASSERT(enu.numberOfElements() == 1);
+
+		hdl.deleteInstance( cop1);
+		enu = hdl.enumInstancesE( "testinstance");
+		TEST_ASSERT(enu.numberOfElements() == 0);
+		hdl.deleteClass("testinstance2");
 		
 	}
 	catch (OW_CIMException& e)

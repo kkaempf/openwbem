@@ -32,7 +32,6 @@
 #include "OW_PollingManager.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_DateTime.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Format.hpp"
 #include "OW_ConfigOpts.hpp"

@@ -217,6 +217,36 @@ OW_CIMOMEnvironment::unloadProviders()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace {
+class OW_ProviderEnvironmentServiceEnvironmentWrapper : public OW_ProviderEnvironmentIFC
+{
+public:
+	OW_ProviderEnvironmentServiceEnvironmentWrapper(OW_CIMOMEnvironment* env_)
+		: env(env_)
+	{}
+
+	virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const 
+	{
+		return env->getCIMOMHandle();
+	}
+	
+	virtual OW_LoggerRef getLogger() const 
+	{
+		return env->getLogger();
+	}
+
+	virtual OW_String getConfigItem(const OW_String &name) const 
+	{
+		return env->getConfigItem(name);
+	}
+private:
+	OW_CIMOMEnvironment* env;
+};
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMOMEnvironment::startServices()
 {
@@ -227,7 +257,7 @@ OW_CIMOMEnvironment::startServices()
 
 		OW_CIMOMEnvironmentRef eref(this, true);
 		m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
-		m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
+		m_providerManager->load(OW_ProviderIFCLoader::createProviderIFCLoader(
 			eref));
 
 		// Add the unloader provider to the provider manager
@@ -255,6 +285,9 @@ OW_CIMOMEnvironment::startServices()
 		OW_MutexLock l(m_runningGuard);
 		m_running = true;
 	}
+
+	m_providerManager->init(OW_ProviderEnvironmentIFCRef(
+		new OW_ProviderEnvironmentServiceEnvironmentWrapper(this)));
 
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
@@ -750,6 +783,13 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 	const OW_Bool doIndications)
 {
 	return getCIMOMHandle(OW_ACLInfo(username), doIndications);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMOMHandleIFCRef
+OW_CIMOMEnvironment::getCIMOMHandle()
+{
+	return getCIMOMHandle(OW_ACLInfo(), false);
 }
 
 //////////////////////////////////////////////////////////////////////////////

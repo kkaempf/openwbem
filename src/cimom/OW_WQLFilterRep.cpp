@@ -32,8 +32,6 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_Array.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValue.hpp"

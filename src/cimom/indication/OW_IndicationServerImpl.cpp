@@ -37,6 +37,7 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_WQLIFC.hpp"
 #include "OW_ACLInfo.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans

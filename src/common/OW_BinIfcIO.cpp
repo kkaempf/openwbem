@@ -32,7 +32,6 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_ByteSwap.hpp"
 #include "OW_CIMBase.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 template <typename Handler, typename ReaderFunc>

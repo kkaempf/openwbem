@@ -223,7 +223,6 @@ public:
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
@@ -243,8 +242,6 @@ public:
 	 *						enumermation will return only the names of the first level
 	 *						children of the enumerated class.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An enumeration of OW_CIMObjectPath objects
-	 * 		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
@@ -274,7 +271,6 @@ public:
 	 *		empty, then no properties should be returned. If NULL then all
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An OW_CIMInstanceEnumeration object.
 	 * @exception OW_HDBException
 	 * @exception OW_CIMException
 	 * @exception OW_IOException
@@ -299,7 +295,6 @@ public:
 	 *							OW_CIMClient::SHALLOW only names of instances belonging
 	 *							to the specified class are returned.
 	 * @param aclInfo ACL object describing user making request.
-	 * @return An OW_CIMObjectPathEnumeration object.
 	 * @exception OW_HDBException
 	 * @exception OW_CIMException
 	 * @exception OW_IOException

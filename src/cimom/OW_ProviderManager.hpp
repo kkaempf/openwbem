@@ -45,6 +45,7 @@
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_InternalProviderIFC.hpp"
+#include "OW_Map.hpp"
 
 /**
  * This class will be used by the CIMOM as a way of finding providers.
@@ -62,7 +63,7 @@ public:
 	 * @param ifcLoader the class that will actually load and instantiate the
 	 * 	OW_ProviderIFCBaseIFC classes.
 	 */
-	void init(const OW_ProviderIFCLoaderRef& ifcLoader);
+	void load(const OW_ProviderIFCLoaderRef& ifcLoader);
 
 	/**
 	 * Make a cimom provider available to the provider manager.
@@ -78,21 +79,30 @@ public:
 	void addCIMOMProvider(const OW_CppProviderBaseIFCRef& pProv);
 
 	/**
+	 * Initialize the provider interfaces and providers.  This is called after
+	 * the CIM Server is up and running, so the providers can access the
+	 * repository.  None of the services have been started yet however.
+	 */
+	void init(const OW_ProviderEnvironmentIFCRef& env);
+
+	/**
 	 * Locate an Instance provider.
 	 *
-	 * @param qual A qualifier describing the instance provider. This qualifier
+	 * @param ns The namespace of the class.
+	 * @param cc The class may have a qualifier describing the instance provider. This qualifier
 	 * must be a "provider" qualifer with a OW_CIMValue that contains a
 	 * string with the format: "provider interface id::provider string".
 	 * The "provider interface string" is used to identify the provider
 	 * interface. The "provider string" is provider interface specific. It is
 	 * assumed that the provider interface will use this string to identify the
-	 * provider.
+	 * provider.  This function will also return any providers registered for
+	 * the class (without the provider qualifier).
 	 *
 	 * @returns A ref counted OW_InstanceProvider. If no provider is found then
 	 * 	null is returned.
 	 */
 	OW_InstanceProviderIFCRef getInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMQualifier& qual) const;
+		const OW_String& ns, const OW_CIMClass& cc) const;
 
 	/**
 	 * Locate a Method provider.
@@ -131,19 +141,21 @@ public:
 	/**
 	 * Locate an Associator provider.
 	 *
-	 * @param qual A qualifier describing the associator provider. This qualifier
+	 * @param ns The namespace of the class.
+	 * @param cc The class may have a qualifier describing the instance provider. This qualifier
 	 * must be a "provider" qualifer with a OW_CIMValue that contains a
 	 * string with the format: "provider interface id::provider string".
 	 * The "provider interface string" is used to identify the provider
 	 * interface. The "provider string" is provider interface specific. It is
 	 * assumed that the provider interface will use this string to identify the
-	 * provider.
+	 * provider.  This function will also return any providers registered for
+	 * the class (without the provider qualifier).
 	 *
 	 * @returns A ref counted OW_AssociatorProvider. If no provider is found then
 	 * 	null is returned.
 	 */
 	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
-		const OW_CIMQualifier& qual) const;
+		const OW_String& ns, const OW_CIMClass& cc) const;
 
 	/**
 	 * @return all available indication export providers from the available
@@ -179,6 +191,25 @@ private:
 	OW_InternalProviderIFCRef m_internalIFC;
 
 	OW_Mutex m_guard;
+
+	struct InstProvReg
+	{
+		OW_String provName;
+		OW_ProviderIFCBaseIFCRef ifc;
+	};
+
+	typedef InstProvReg AssocProvReg; // same for now
+
+	// The key must be: a classname if the provider supports any namespace,
+	// or namespace:classname for a specific namespace.
+	typedef OW_Map<OW_String, InstProvReg> InstProvRegMap_t;
+	InstProvRegMap_t m_registeredInstProvs;
+
+	// The key must be: a classname if the provider supports any namespace,
+	// or namespace:classname for a specific namespace.
+	typedef OW_Map<OW_String, AssocProvReg> AssocProvRegMap_t;
+	AssocProvRegMap_t m_registeredAssocProvs;
+
 };
 
 typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;

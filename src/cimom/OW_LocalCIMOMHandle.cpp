@@ -33,10 +33,10 @@
 #include "OW_CIMFeatures.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMClassEnumeration.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMQualifierType.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_LocalCIMOMHandle::OW_LocalCIMOMHandle(OW_CIMOMEnvironmentRef env,

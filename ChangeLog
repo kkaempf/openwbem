@@ -1,6 +1,13 @@
 Fri Nov 29 06:53:48 MST 2002
 - Fixed the pam module.  Added some code to the acceptance test to make sure
   the daemon will start with the pam module authentication.
+- Fixed a bug in OW_COWReference which wasted some memory and caused a crash
+  if cast_to was used.
+- Reworked the provider manager and interfaces to support provider
+  self-registration.  This will facilitate built-in providers and negates the
+  need to use the provider qualifier in the schema.
+- Split the provider manager initialization into load and init steps.  Now
+  it's possible for providers to access the repository during initialization.
 
 Thu Nov 28 11:41:42 MST 2002
 - Got rid of OW_ThreadEvent because it is subject to race conditions.

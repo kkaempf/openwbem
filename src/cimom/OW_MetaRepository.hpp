@@ -168,7 +168,6 @@ public:
 	 *		(including properties, methods, and method parameters) are returned.
 	 * @param includeClassOrigin If true, then the class origin attribute will
 	 *		be returned on all appropriate components.
-	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */

@@ -39,14 +39,14 @@
 #include "OW_CIMFlavor.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMQualifier.hpp"
-#include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
 #include "OW_Format.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
-#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_CIMClass.hpp"
 
 #include <iostream>
 

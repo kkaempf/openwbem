@@ -61,6 +61,10 @@ public:
 private:
 	virtual const char* getName() const { return "owcimomd"; }
 
+	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
+		OW_InstanceProviderInfoArray& i,
+		OW_AssociatorProviderInfoArray& a);
+
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char *provIdString);
 

@@ -152,7 +152,7 @@ void
  * @exception OW_CIMException If the qualifier type does not exist.
  */
 void 
-	OW_CIMClient::deleteQualifierType(const OW_String& qualName)
+OW_CIMClient::deleteQualifierType(const OW_String& qualName)
 {
 	m_ch->deleteQualifierType(m_namespace, qualName);
 }
@@ -170,12 +170,11 @@ void
  *		property and method qualifiers will be returned.
  * @param includeClassOrigin If true, then the class origin attribute will
  *		be included with all appropriate elements of each class.
- * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
  * @exception OW_CIMException If the specified CIMObjectPath object cannot
  *		be found
  */
 void 
-	OW_CIMClient::enumClass(const OW_String& className,
+OW_CIMClient::enumClass(const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
 	OW_Bool deep, OW_Bool localOnly,
 	OW_Bool includeQualifiers,
@@ -186,7 +185,7 @@ void
 }
 
 OW_CIMClassEnumeration 
-	OW_CIMClient::enumClassE(const OW_String& className,
+OW_CIMClient::enumClassE(const OW_String& className,
 	OW_Bool deep,
 	OW_Bool localOnly,
 	OW_Bool includeQualifiers,
@@ -203,8 +202,6 @@ OW_CIMClassEnumeration
  *		contain the names of all classes derived from the enumerated class.
  *		If set to SHALLOW the enumermation will return only
  *		the names of the first level children of the enumerated class.
- * @return An enumeration of OW_CIMObjectPath objects
- *		(OW_CIMObjectPathEnumeration)
  * @exception OW_CIMException  	If the specified CIMObjectPath object
  *											cannot be found
  */
@@ -251,11 +248,10 @@ OW_CIMObjectPathEnumeration
  * are returned with the instances subject to constraints specified in the
  * other parameters.
  *
- * @return An Enumeration of OW_CIMInstance (OW_CIMInstanceEnumeration)
  * @exception OW_CIMException 	If the object cannot be found
  */
 void 
-	OW_CIMClient::enumInstances(
+OW_CIMClient::enumInstances(
 	const OW_String& className,
 	OW_CIMInstanceResultHandlerIFC& result,
 	OW_Bool deep,
@@ -269,7 +265,7 @@ void
 }
 
 OW_CIMInstanceEnumeration 
-	OW_CIMClient::enumInstancesE(
+OW_CIMClient::enumInstancesE(
 	const OW_String& className,
 	OW_Bool deep,
 	OW_Bool localOnly,
@@ -287,11 +283,10 @@ OW_CIMInstanceEnumeration
  * hierarchy.
  *
  * @param className The class whose instances are to be enumerated.
- * @return An Enumeration of OW_CIMObjectPaths (OW_CIMObjectPathEnumeration)
  * @exception OW_CIMException 	If the object cannot be found
  */
 void 
-	OW_CIMClient::enumInstanceNames(
+OW_CIMClient::enumInstanceNames(
 	const OW_String& className,
 	OW_CIMObjectPathResultHandlerIFC& result)
 {
@@ -299,7 +294,7 @@ void
 }
 
 OW_CIMObjectPathEnumeration 
-	OW_CIMClient::enumInstanceNamesE(
+OW_CIMClient::enumInstanceNamesE(
 	const OW_String& className)
 {
 	return m_ch->enumInstanceNamesE(m_namespace, className);
@@ -307,20 +302,18 @@ OW_CIMObjectPathEnumeration
 
 /**
  * Enumerates the qualifiers defined in a namespace.
- * @return 	An Enumeration of OW_CIMQualifierTypes
- *				(OW_CIMQualifierEnumeration)
  * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
  *										found
  */
 void 
-	OW_CIMClient::enumQualifierTypes(
+OW_CIMClient::enumQualifierTypes(
 	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	m_ch->enumQualifierTypes(m_namespace, result);
 }
 
 OW_CIMQualifierTypeEnumeration 
-	OW_CIMClient::enumQualifierTypesE()
+OW_CIMClient::enumQualifierTypesE()
 {
 	return m_ch->enumQualifierTypesE(m_namespace);
 }
@@ -659,7 +652,7 @@ OW_CIMObjectPathEnumeration
  * error occurred)
  */
 void 
-	OW_CIMClient::associators(
+OW_CIMClient::associators(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& assocClass,
@@ -676,7 +669,7 @@ void
 }
 
 OW_CIMInstanceEnumeration 
-	OW_CIMClient::associatorsE(
+OW_CIMClient::associatorsE(
 	const OW_CIMObjectPath& path,
 	const OW_String& assocClass,
 	const OW_String& resultClass,
@@ -765,7 +758,7 @@ OW_CIMInstanceEnumeration
  * error occurred)
  */
 void 
-	OW_CIMClient::associatorsClasses(
+OW_CIMClient::associatorsClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& assocClass,
@@ -782,7 +775,7 @@ void
 }
 
 OW_CIMClassEnumeration 
-	OW_CIMClient::associatorsClassesE(
+OW_CIMClient::associatorsClassesE(
 	const OW_CIMObjectPath& path,
 	const OW_String& assocClass,
 	const OW_String& resultClass,
@@ -860,7 +853,7 @@ OW_CIMObjectPathEnumeration
  * @exception OW_CIMException - as defined for associators method.
  */
 void 
-	OW_CIMClient::references(
+OW_CIMClient::references(
 	const OW_CIMObjectPath& path,
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& resultClass,
@@ -874,7 +867,7 @@ void
 }
 
 OW_CIMInstanceEnumeration 
-	OW_CIMClient::referencesE(
+OW_CIMClient::referencesE(
 	const OW_CIMObjectPath& path,
 	const OW_String& resultClass,
 	const OW_String& role,
@@ -887,7 +880,7 @@ OW_CIMInstanceEnumeration
 }
 
 void 
-	OW_CIMClient::referencesClasses(
+OW_CIMClient::referencesClasses(
 	const OW_CIMObjectPath& path,
 	OW_CIMClassResultHandlerIFC& result,
 	const OW_String& resultClass,
@@ -901,7 +894,7 @@ void
 }
 
 OW_CIMClassEnumeration 
-	OW_CIMClient::referencesClassesE(
+OW_CIMClient::referencesClassesE(
 	const OW_CIMObjectPath& path,
 	const OW_String& resultClass,
 	const OW_String& role,
@@ -932,7 +925,7 @@ OW_CIMClassEnumeration
  *		The query specifies a class that does not exist.
  */
 void 
-	OW_CIMClient::execQuery(
+OW_CIMClient::execQuery(
 	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query,
 	const OW_String& queryLanguage) 
@@ -941,7 +934,7 @@ void
 }
 
 OW_CIMInstanceEnumeration 
-	OW_CIMClient::execQueryE(
+OW_CIMClient::execQueryE(
 	const OW_String& query,
 	const OW_String& queryLanguage)
 {

@@ -13,6 +13,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_Format.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMObjectPath.hpp"
 #include <iostream> // for cerr
 
 namespace

@@ -41,6 +41,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_CIMObjectPath.hpp"
 // we're going to need these
 #include "OW_Exec.hpp"
 #include "OW_UnnamedPipe.hpp"

@@ -27,7 +27,6 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMBase.hpp"

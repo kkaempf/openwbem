@@ -41,11 +41,12 @@
 #include "OW_LocalCIMOMHandle.hpp"
 #include "OW_StringStream.hpp"
 
+#include <fstream>
+#include <unistd.h>
+
 namespace
 {
 
-#include <fstream>
-#include <unistd.h>
 
 	using std::ifstream;
 	using std::ofstream;

@@ -34,8 +34,6 @@
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMObjectPathEnumeration.hpp"
 
 class OW_CIMServer;
 

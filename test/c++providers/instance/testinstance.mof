@@ -1,15 +1,13 @@
 // ===================================================================
 // Test Instance
 // ===================================================================
-[Description (
-		"Used to test instance provider."),
-		provider("c++::testinstance") ]
-		class TestInstance
+[Description ("Used to test instance provider.") ]
+class TestInstance
 {
 	[Description ("Name"), KEY]
 		string Name;
-	[Description (
-			"String array of bogus values") ]
+		
+	[Description ("String array of bogus values") ]
 		string Params[];
 };
 

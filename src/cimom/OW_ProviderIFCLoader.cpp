@@ -66,7 +66,6 @@ OW_ProviderIFCLoaderBase::createProviderIFCFromLib(
 	return retval;
 }
 
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const
 {
@@ -95,18 +94,25 @@ OW_ProviderIFCLoader::loadIFCs(OW_Array<OW_ProviderIFCBaseIFCRef>& ifcs) const
 			continue;
 		}
 
-		OW_ProviderIFCBaseIFCRef rval;
-		OW_ProviderIFCBaseIFCRef pmr;
-		rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
-		if(rval)
+		try
 		{
-			ifcCount++;
-			ifcs.push_back(rval);
+			OW_ProviderIFCBaseIFCRef rval;
+			OW_ProviderIFCBaseIFCRef pmr;
+			rval = createProviderIFCFromLib(libdir + OW_FILENAME_SEPARATOR + libs[i]);
+			if(rval)
+			{
+				ifcCount++;
+				ifcs.push_back(rval);
+			}
+			else
+			{
+				env->getLogger()->logError(format("Unable to load ProviderIFC library %1",
+					libs[i]));
+			}
 		}
-		else
+		catch (const OW_Exception& e)
 		{
-			env->getLogger()->logError(format("Unable to load ProviderIFC library %1",
-				libs[i]));
+			env->getLogger()->logError(format("Caught exception: \"%1\" while loading library: %2", e, libs[i])); 
 		}
 	}
 

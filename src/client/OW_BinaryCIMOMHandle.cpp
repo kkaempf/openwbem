@@ -31,9 +31,6 @@
 #include "OW_config.h"										
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Format.hpp"
-#include "OW_CIMInstanceEnumeration.hpp"
-#include "OW_CIMClassEnumeration.hpp"
-#include "OW_CIMQualifierEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
@@ -44,6 +41,7 @@
 #include "OW_BinIfcIO.hpp"
 #include "OW_IOException.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
