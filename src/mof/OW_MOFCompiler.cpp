@@ -370,14 +370,20 @@ public:
 
 	virtual CIMQualifierType getQualifierType(const String &ns, const String &qualifierName)
 	{
+		// first get back a qualifier contained in the mof.
+		for (size_t i = 0; i < m_qualifierTypes.size(); ++i)
+		{
+			if (m_qualifierTypes[i].getName() == CIMName(qualifierName))
+			{
+				return m_qualifierTypes[i];
+			}
+		}
+		// try getting it from the cimom handle
 		if (m_realhdl)
 		{
 			return m_realhdl->getQualifierType(ns, qualifierName);
 		}
-		else
-		{
-			OW_THROWCIM(CIMException::FAILED);
-		}
+		OW_THROWCIM(CIMException::FAILED);
 	}
 
 	virtual void setQualifierType(const String &ns, const CIMQualifierType &qualifierType)
