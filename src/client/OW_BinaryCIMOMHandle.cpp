@@ -69,7 +69,7 @@ using namespace WBEMFlags;
 namespace // anonymous
 {
 void
-_getHTTPTrailers(CIMProtocolIStreamIFCRef istr_, Map<String,String>& trailers)
+_getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr_, Map<String,String>& trailers)
 {
 	IntrusiveReference<HTTPChunkedIStream> istr = 
 		istr_.cast_to<HTTPChunkedIStream>();
@@ -115,7 +115,7 @@ checkError(std::istream& istrm)
 	}
 }
 inline void
-checkError(CIMProtocolIStreamIFCRef istr, Map<String,String>& trailers)
+checkError(const CIMProtocolIStreamIFCRef& istr, Map<String,String>& trailers)
 {
 	try
 	{
@@ -235,7 +235,7 @@ readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result,
 }
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
-BinaryCIMOMHandle::BinaryCIMOMHandle(CIMProtocolIFCRef prot)
+BinaryCIMOMHandle::BinaryCIMOMHandle(const CIMProtocolIFCRef& prot)
 : ClientCIMOMHandle(), m_protocol(prot)
 {
 	m_protocol->setContentType("application/x-owbinary");

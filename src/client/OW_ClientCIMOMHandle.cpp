@@ -90,7 +90,7 @@ ClientCIMOMHandle::createFromURL(const String& url, const ClientAuthCBIFCRef& au
 
 //////////////////////////////////////////////////////////////////////////////
 void
-ClientCIMOMHandle::getHTTPTrailers(CIMProtocolIStreamIFCRef istr_)
+ClientCIMOMHandle::getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr_)
 {
 	m_trailers.clear();
 	IntrusiveReference<HTTPChunkedIStream> istr = 

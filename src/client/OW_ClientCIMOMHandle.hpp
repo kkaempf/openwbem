@@ -123,7 +123,7 @@ public:
 	static ClientCIMOMHandleRef createFromURL(const String& url, const ClientAuthCBIFCRef& authCb = ClientAuthCBIFCRef());
 
 protected:
-	void getHTTPTrailers(CIMProtocolIStreamIFCRef istr);
+	void getHTTPTrailers(const CIMProtocolIStreamIFCRef& istr);
 
 	Map<String, String> m_trailers;
 };

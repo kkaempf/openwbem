@@ -51,8 +51,8 @@ OW_DECLARE_EXCEPTION(Select)
 class SelectEngine
 {
 public:
-	void addSelectableObject(SelectableIFCRef obj,
-		SelectableCallbackIFCRef cb);
+	void addSelectableObject(const SelectableIFCRef& obj,
+		const SelectableCallbackIFCRef& cb);
 	void go(); // Throws SelectException on error
 	void stop();
 private:

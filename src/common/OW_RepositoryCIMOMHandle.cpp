@@ -47,7 +47,7 @@ namespace OpenWBEM
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-RepositoryCIMOMHandle::RepositoryCIMOMHandle(RepositoryIFCRef pRepos, OperationContext& context, ELockingFlag lock)
+RepositoryCIMOMHandle::RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos, OperationContext& context, ELockingFlag lock)
 	: CIMOMHandleIFC()
 	, m_pServer(pRepos)
 	, m_lock(lock)

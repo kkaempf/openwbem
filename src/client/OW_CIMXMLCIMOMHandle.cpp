@@ -80,7 +80,7 @@ CIMXMLCIMOMHandle::ClientOperation::~ClientOperation()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(CIMProtocolIFCRef prot)
+CIMXMLCIMOMHandle::CIMXMLCIMOMHandle(const CIMProtocolIFCRef& prot)
 	: ClientCIMOMHandle()
 	, m_protocol(prot)
 	, m_performStrictChecks(false) // TODO: Make a way to set this to true.
@@ -169,7 +169,7 @@ CIMXMLCIMOMHandle::sendXMLTrailer( ostream& ostr, bool intrinsic)
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMXMLCIMOMHandle::doSendRequest(
-	Reference<std::iostream> ostrRef,
+	const Reference<std::iostream>& ostrRef,
 	const String& methodName,
 	const String& cimObject,
 	bool isIntrinsic,

@@ -67,7 +67,7 @@ public:
 	/**
 	 * Set a pipe to the process's stdin
 	 */
-	void in(UnnamedPipeRef pipe);
+	void in(const UnnamedPipeRef& pipe);
 	/**
 	 * Get a read-only pipe to the process's stdout
 	 */
@@ -75,7 +75,7 @@ public:
 	/**
 	 * Set a pipe to the process's stdout
 	 */
-	void out(UnnamedPipeRef pipe);
+	void out(const UnnamedPipeRef& pipe);
 	/**
 	 * Get a read-only pipe to the process's stderr
 	 */
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Set a pipe to the process's stderr
 	 */
-	void err(UnnamedPipeRef pipe);
+	void err(const UnnamedPipeRef& pipe);
 	/**
 	 * Get the process's pid.  If the process's exit status has already been
 	 * read by calling getExitStatus(), then this will return -1

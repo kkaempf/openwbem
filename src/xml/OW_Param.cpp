@@ -42,13 +42,13 @@
 namespace OpenWBEM
 {
 
-Param::Param(String argname, Param::ParamValues mode, String value) : m_argName(argname), m_argValue(value), m_argMode(mode)
+Param::Param(const String& argname, Param::ParamValues mode, const String& value) : m_argName(argname), m_argValue(value), m_argMode(mode)
 {
 }
-Param::Param(String argname, String value) : m_argName(argname), m_argValue(value), m_argMode(VALUENOTSET)
+Param::Param(const String& argname, const String& value) : m_argName(argname), m_argValue(value), m_argMode(VALUENOTSET)
 {
 }
-Param::Param(String argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
+Param::Param(const String& argname, bool value) : m_argName(argname), m_argValue(), m_argMode(VALUENOTSET)
 {
 	if (value)
 	{

@@ -186,7 +186,7 @@ namespace CIMNameSpaceUtils
 	 * @param ns The namespace name.
 	 * @return ns The normalized version of ns.
 	 */
-	String prepareNamespace(String ns);
+	String prepareNamespace(const String& ns);
 }
 
 } // end namespace OpenWBEM

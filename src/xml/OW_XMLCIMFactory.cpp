@@ -872,21 +872,22 @@ struct valueIsEmbeddedClass
 		return v.getType() == CIMDataType::EMBEDDEDCLASS;
 	}
 };
-bool isKnownEmbeddedObjectName(String name)
+bool isKnownEmbeddedObjectName(const String& name)
 {
 	// This is a bad hack, hopefully EmbeddedObject will become a real
 	// data type someday.
 	// This is all property names in the CIM Schema (as of 2.7.1) that have
 	// an EmbeddedObject(true) qualifier.
 	// If this list gets much bigger, use a HashMap
-	name.toLowerCase();
+	String lname(name);
+	lname.toLowerCase();
 	return
-		name.equals("sourceinstance") ||
-		name.equals("previousinstance") ||
-		name.equals("methodparameters") ||
-		name.equals("classdefinition") ||
-		name.equals("previousclassdefinition") ||
-		name.equals("indobject");
+		lname.equals("sourceinstance") ||
+		lname.equals("previousinstance") ||
+		lname.equals("methodparameters") ||
+		lname.equals("classdefinition") ||
+		lname.equals("previousclassdefinition") ||
+		lname.equals("indobject");
 }
 }
 ///////////////////////////////////

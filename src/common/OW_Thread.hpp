@@ -71,7 +71,7 @@ public:
 	 * Start this Thread's execution.
 	 * @exception ThreadException
 	 */
-	virtual void start(ThreadDoneCallbackRef cb = ThreadDoneCallbackRef(0));
+	virtual void start(const ThreadDoneCallbackRef& cb = ThreadDoneCallbackRef(0));
 	/**
 	 * Attempt to cooperatively cancel this Threads execution.  
 	 * You should still call join() in order to clean up resources allocated

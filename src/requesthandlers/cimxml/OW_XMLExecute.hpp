@@ -62,7 +62,7 @@ protected:
 	virtual void doLogError(const String& message);
 	virtual void doLogInfo(const String& message);
 	virtual void outputError(CIMException::ErrNoType errorCode,
-		String msg, std::ostream& ostr);
+		const String& msg, std::ostream& ostr);
 private:
 	// These pointers will always be NULL when clone() is called
 	// (clone() insures this).  They are assigned in executeXML().

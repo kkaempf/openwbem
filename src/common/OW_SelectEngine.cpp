@@ -44,8 +44,8 @@ namespace OpenWBEM
 OW_DEFINE_EXCEPTION_WITH_ID(Select);
 //////////////////////////////////////////////////////////////////////////////
 void
-SelectEngine::addSelectableObject(SelectableIFCRef obj,
-	SelectableCallbackIFCRef cb)
+SelectEngine::addSelectableObject(const SelectableIFCRef& obj,
+	const SelectableCallbackIFCRef& cb)
 {
 	m_selectableObjs.push_back(obj);
 	m_callbacks.push_back(cb);

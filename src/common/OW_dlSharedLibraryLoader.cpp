@@ -45,7 +45,7 @@ namespace OpenWBEM
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
 dlSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	LoggerRef logger) const
+	const LoggerRef& logger) const
 {
 	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
 	

@@ -126,7 +126,7 @@ HTTPDeflateIStreamBuffer::buffer_from_device(char* c, int n)
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 HTTPDeflateIStream::HTTPDeflateIStream(
-			CIMProtocolIStreamIFCRef istr)
+			const CIMProtocolIStreamIFCRef& istr)
 	: HTTPDeflateIStreamBase(*istr)
 	, CIMProtocolIStreamIFC(&m_strbuf)
 	, m_istr(istr)

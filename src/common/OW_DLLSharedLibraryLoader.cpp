@@ -69,7 +69,7 @@ namespace OpenWBEM
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
 DLLSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	LoggerRef logger) const
+	const LoggerRef& logger) const
 {
 	HINSTANCE libhandle = ::LoadLibrary(filename.c_str());
 	if (libhandle)

@@ -311,7 +311,7 @@ XMLNodeImpl::mustChildFindElementChild(const char* elementName)	const
 
 //////////////////////////////////////////////////////////////////////////////
 void
-XMLNodeImpl::setNext(XMLNodeImplRef node)
+XMLNodeImpl::setNext(const XMLNodeImplRef& node)
 {
 	m_nextNode = node;
 }
@@ -429,7 +429,7 @@ XMLNode::XMLNode(const String& name, const XMLAttributeArray& attrArray)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-XMLNode::XMLNode(XMLNodeImplRef ref) : m_impl(ref)
+XMLNode::XMLNode(const XMLNodeImplRef& ref) : m_impl(ref)
 {
 }
 

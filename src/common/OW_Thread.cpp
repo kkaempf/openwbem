@@ -109,7 +109,7 @@ Thread::~Thread()
 //////////////////////////////////////////////////////////////////////////////
 // Start the thread
 void
-Thread::start(ThreadDoneCallbackRef cb)
+Thread::start(const ThreadDoneCallbackRef& cb)
 {
 	if (isRunning())
 	{

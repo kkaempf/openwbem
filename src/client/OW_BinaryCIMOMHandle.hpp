@@ -57,7 +57,7 @@ public:
 	 * 	// now the binary over ipc connection is established, and
 	 * 	// the remote CIMOM handle can be used.
 	 */
-	BinaryCIMOMHandle( CIMProtocolIFCRef prot );
+	BinaryCIMOMHandle( const CIMProtocolIFCRef& prot );
 	
 	/**
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)

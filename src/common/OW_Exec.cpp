@@ -72,11 +72,11 @@ public:
 	PopenStreamsImpl();
 	~PopenStreamsImpl();
 	UnnamedPipeRef in();
-	void in(UnnamedPipeRef pipe);
+	void in(const UnnamedPipeRef& pipe);
 	UnnamedPipeRef out();
-	void out(UnnamedPipeRef pipe);
+	void out(const UnnamedPipeRef& pipe);
 	UnnamedPipeRef err();
-	void err(UnnamedPipeRef pipe);
+	void err(const UnnamedPipeRef& pipe);
 	pid_t pid();
 	void pid(pid_t newPid);
 	int getExitStatus();
@@ -103,7 +103,7 @@ UnnamedPipeRef PopenStreamsImpl::in()
 	return m_in;
 }
 //////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::in(UnnamedPipeRef pipe)
+void PopenStreamsImpl::in(const UnnamedPipeRef& pipe)
 {
 	m_in = pipe;
 }
@@ -113,7 +113,7 @@ UnnamedPipeRef PopenStreamsImpl::out()
 	return m_out;
 }
 //////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::out(UnnamedPipeRef pipe)
+void PopenStreamsImpl::out(const UnnamedPipeRef& pipe)
 {
 	m_out = pipe;
 }
@@ -123,7 +123,7 @@ UnnamedPipeRef PopenStreamsImpl::err()
 	return m_err;
 }
 //////////////////////////////////////////////////////////////////////////////
-void PopenStreamsImpl::err(UnnamedPipeRef pipe)
+void PopenStreamsImpl::err(const UnnamedPipeRef& pipe)
 {
 	m_err = pipe;
 }
@@ -277,7 +277,7 @@ UnnamedPipeRef PopenStreams::in() const
 	return m_impl->in();
 }
 /////////////////////////////////////////////////////////////////////////////
-void PopenStreams::in(UnnamedPipeRef pipe)
+void PopenStreams::in(const UnnamedPipeRef& pipe)
 {
 	m_impl->in(pipe);
 }
@@ -287,7 +287,7 @@ UnnamedPipeRef PopenStreams::out() const
 	return m_impl->out();
 }
 /////////////////////////////////////////////////////////////////////////////
-void PopenStreams::out(UnnamedPipeRef pipe)
+void PopenStreams::out(const UnnamedPipeRef& pipe)
 {
 	m_impl->out(pipe);
 }
@@ -297,7 +297,7 @@ UnnamedPipeRef PopenStreams::err() const
 	return m_impl->err();
 }
 /////////////////////////////////////////////////////////////////////////////
-void PopenStreams::err(UnnamedPipeRef pipe)
+void PopenStreams::err(const UnnamedPipeRef& pipe)
 {
 	m_impl->err(pipe);
 }

@@ -68,7 +68,7 @@ public:
 	 *  identified by filename.  NULL on failure.
 	 */
 	virtual SharedLibraryRef loadSharedLibrary(const String& filename,
-		LoggerRef logger) const = 0;
+		const LoggerRef& logger) const = 0;
 
 	/**
 	 * @return A reference to an SharedLibraryLoader object.

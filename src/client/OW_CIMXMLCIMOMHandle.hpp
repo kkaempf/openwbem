@@ -71,7 +71,7 @@ public:
 	 * 	// now the XML over HTTPS connection is established, and
 	 * 	// the remote CIMOM handle can be used.
 	 */
-	CIMXMLCIMOMHandle( CIMProtocolIFCRef prot );
+	CIMXMLCIMOMHandle( const CIMProtocolIFCRef& prot );
 	
 	/**
 	 * Get a Reference to the WBEM protocol handler (HTTPClient)
@@ -674,7 +674,7 @@ private:
 		std::ostream& ostr);
 	void sendXMLTrailer(std::ostream& ostr, bool intrinsic = true);
 
-	void doSendRequest(Reference<std::iostream> ostr,
+	void doSendRequest(const Reference<std::iostream>& ostr,
 		const String& methodName, const String& cimObject,
 		bool isIntrinsic,
 		ClientOperation& op);

@@ -82,8 +82,9 @@ namespace
 }
 //////////////////////////////////////////////////////////////////////////////
 String
-prepareNamespace(String ns)
+prepareNamespace(const String& ns_)
 {
+	String ns(ns_);
 	// translate \\ to /
 	for (size_t i = 0; i < ns.length(); ++i )
 	{

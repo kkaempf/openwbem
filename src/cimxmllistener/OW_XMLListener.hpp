@@ -80,7 +80,7 @@ protected:
 	 */
 	virtual void doOptions(CIMFeatures &cf, OperationContext& context);
 	virtual void outputError(CIMException::ErrNoType errorCode,
-		String msg, std::ostream& ostr);
+		const String& msg, std::ostream& ostr);
 private:
 	CIMListenerCallback* m_callback;
 	void processSimpleExpReq(CIMXMLParser& parser, std::ostream& ostrEntity,

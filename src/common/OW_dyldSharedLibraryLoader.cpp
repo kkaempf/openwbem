@@ -60,7 +60,7 @@ std::ostream& operator<<(std::ostream& o, NSObjectFileImageReturnCode code)
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
 dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
-																					 LoggerRef logger) const
+	const LoggerRef& logger) const
 {
 	logger->logDebug(Format("Load request for %1 received.", filename));
 	NSObjectFileImage image = 0;

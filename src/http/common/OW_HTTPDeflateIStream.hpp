@@ -81,7 +81,7 @@ public:
 	 * the original istream, and then inflated.
 	 * @param istr the original istream to wrap.
 	 */
-	HTTPDeflateIStream(CIMProtocolIStreamIFCRef istr);
+	HTTPDeflateIStream(const CIMProtocolIStreamIFCRef& istr);
 	/**
 	 * Get the original istream
 	 * @return the original istream.

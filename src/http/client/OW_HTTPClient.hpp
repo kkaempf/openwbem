@@ -251,7 +251,7 @@ class HTTPClient : public CIMProtocolIFC
 		void checkConnection();
 		String checkResponse(Resp_t& rt);
 		void prepareHeaders();
-		void sendDataToServer( Reference<TempFileStream> tfs, const String& methodName, const String& cimObject, ERequestType requestType );
+		void sendDataToServer( const Reference<TempFileStream>& tfs, const String& methodName, const String& cimObject, ERequestType requestType );
 		/**
 		 * If no credentials were provided in the url to the constructor, but an authentication callback was given, then call the callback to get credentials.
 		 * @postcondition m_url.principal != ""

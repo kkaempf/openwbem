@@ -54,9 +54,9 @@ class Param
 public:
 	enum ParamValues { VALUENOTSET = 0, VALUESET = 1 };
 		
-	Param(String argname, ParamValues mode, String value);
-	Param(String argname, String value);
-	Param(String argname, bool value);
+	Param(const String& argname, ParamValues mode, const String& value);
+	Param(const String& argname, const String& value);
+	Param(const String& argname, bool value);
 		
 	String getArgName() const;
 	String getArgValue() const;

@@ -54,7 +54,7 @@ class dlSharedLibraryLoader : public SharedLibraryLoader
 	public:
 		virtual ~dlSharedLibraryLoader();
 		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
-			LoggerRef logger) const;
+			const LoggerRef& logger) const;
 };
 
 } // end namespace OpenWBEM

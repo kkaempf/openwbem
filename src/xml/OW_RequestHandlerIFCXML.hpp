@@ -86,7 +86,7 @@ protected:
 	void makeXMLHeader(const String& messageId, std::ostream& ostr);
 	void setPath(const String& id);
 	virtual void outputError(CIMException::ErrNoType errorCode,
-		String, std::ostream& ostr) = 0;
+		const String&, std::ostream& ostr) = 0;
 	String m_path;
 };
 

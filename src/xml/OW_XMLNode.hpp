@@ -402,7 +402,7 @@ public:
 
 private:
 
-	XMLNode(XMLNodeImplRef ref);
+	XMLNode(const XMLNodeImplRef& ref);
 	XMLNodeImplRef m_impl;
 
 	friend class XMLNodeImpl;
@@ -435,7 +435,7 @@ public:
 	XMLNodeImplRef mustChildFindElement(const char* elementName) const;
 	XMLNodeImplRef mustChildFindElementChild(const char* elementName) const;
 	
-	void setNext(XMLNodeImplRef node);
+	void setNext(const XMLNodeImplRef& node);
 	XMLNodeImplRef getNext() const;
 	void addChild(const XMLNodeImplRef& node);
 

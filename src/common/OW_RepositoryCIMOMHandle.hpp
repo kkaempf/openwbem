@@ -71,7 +71,7 @@ public:
 	 *  E_NO_LOCKING inside a context where another RepositoryCIMOMHandle is
 	 *  in use and has begun a transaction.
 	 */
-	RepositoryCIMOMHandle(RepositoryIFCRef pRepos,
+	RepositoryCIMOMHandle(const RepositoryIFCRef& pRepos,
 		OperationContext& context, ELockingFlag lock = E_LOCKING);
 	
 	virtual void close();

@@ -384,7 +384,7 @@ void HTTPClient::sendAuthorization()
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
+void HTTPClient::sendDataToServer( const Reference<TempFileStream>& tfs,
 	const String& methodName, const String& cimObject, ERequestType requestType )
 {
 	// Make sure our connection is good

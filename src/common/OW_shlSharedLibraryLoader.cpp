@@ -47,7 +47,7 @@ namespace OpenWBEM
 ///////////////////////////////////////////////////////////////////////////////
 SharedLibraryRef 
 shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
-	LoggerRef logger) const
+	const LoggerRef& logger) const
 {
 	shl_t libhandle = ::shl_load(filename.c_str(), BIND_IMMEDIATE, 0L);
 	if (libhandle)

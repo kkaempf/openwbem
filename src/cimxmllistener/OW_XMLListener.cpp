@@ -168,7 +168,7 @@ XMLListener::processSimpleExpReq(CIMXMLParser& parser,
 //////////////////////////////////////////////////////////////////////////////
 void
 XMLListener::outputError(CIMException::ErrNoType errorCode,
-	String msg, ostream& ostr)
+	const String& msg, ostream& ostr)
 {
 	setError(errorCode, msg);
 	ostr << "<SIMPLEEXPRSP>";
