@@ -48,6 +48,12 @@ namespace ConfigFile
 {
 
 	typedef SortedVectorMap<String, String> ConfigMap;
+
+	/**
+	 * Loads a config file and stores the options in rval.
+	 * Items which already exist in rval will not be overwritten.
+	 * @throws ConfigException if the file doesn't exist or is malformed
+	 */
 	void loadConfigFile(const String& filename, ConfigMap& rval);
 
 } // end namespace ConfigFile
