@@ -45,7 +45,7 @@ static void printUsage(std::ostream& ostrm);
 //////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
-	OW_CIMOMEnvironmentRef env(new OW_CIMOMEnvironment);
+	OW_CIMOMEnvironmentRef env = OW_CIMOMEnvironment::g_cimomEnvironment = new OW_CIMOMEnvironment;
 
 	try
 	{
@@ -140,6 +140,7 @@ int main(int argc, char* argv[])
 		env->logError("**************************************************");
 	}
 
+	OW_CIMOMEnvironment::g_cimomEnvironment = 0;
 	env->logCustInfo("CIMOM has shutdown");
 	return 0;
 }
