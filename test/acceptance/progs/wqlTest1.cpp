@@ -335,7 +335,7 @@ namespace testSchemaQuery
 		dynastyTests::notRoot(rch);
 	}
 }
-#endif #ifndef OW_DISABLE_SCHEMA_MANIPULATION
+#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 void testSchemaQueries(CIMOMHandleIFCRef& rch)
 {
