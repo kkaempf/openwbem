@@ -1064,7 +1064,7 @@ namespace
 	struct objectPathOp : public CIMXMLCIMOMHandle::ClientOperation
 	{
 		objectPathOp(CIMObjectPathResultHandlerIFC& result_,
-			String ns_)
+			const String& ns_)
 			: result(result_)
 			, ns(ns_)
 		{}
@@ -1097,7 +1097,7 @@ namespace
 		objectWithPathOp(
 			CIMInstanceResultHandlerIFC* iresult_,
 			CIMClassResultHandlerIFC* cresult_,
-			String ns_)
+			const String& ns_)
 			: iresult(iresult_)
 			, cresult(cresult_)
 			, ns(ns_)
