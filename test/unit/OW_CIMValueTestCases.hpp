@@ -53,6 +53,7 @@ private:
 	void testGetArraySize();
 	void testInserterOp();
 	void testToMOF();
+	void test_createSimpleValue();
 };
 
 #endif

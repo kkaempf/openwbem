@@ -95,19 +95,25 @@ void OW_CIMValueTestCases::testToMOF()
 	unitAssert(v.toString() == "00000000000000.000000:000");
 }
 
+void OW_CIMValueTestCases::test_createSimpleValue()
+{
+	CIMValue v(CIMNULL);
+	unitAssertNoThrow(v = CIMValue::createSimpleValue("datetime", "00000000000000.000000:000"));
+	unitAssert(v.toString() == "00000000000000.000000:000");
+	unitAssert(v.toMOF() == "\"00000000000000.000000:000\"");
+	unitAssert(v.getType() == CIMDataType::DATETIME);
+	unitAssert(v.isArray() == false);
+	unitAssert(v.toCIMDateTime() == CIMDateTime());
+}
+
 Test* OW_CIMValueTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_CIMValue");
 
-	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
-			("testGetArraySize", 
-			&OW_CIMValueTestCases::testGetArraySize));
-	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
-			("testInserterOp", 
-			&OW_CIMValueTestCases::testInserterOp));
-	testSuite->addTest (new TestCaller <OW_CIMValueTestCases> 
-			("testToMOF", 
-			&OW_CIMValueTestCases::testToMOF));
+	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testGetArraySize);
+	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testInserterOp);
+	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, testToMOF);
+	ADD_TEST_TO_SUITE(OW_CIMValueTestCases, test_createSimpleValue);
 
 	return testSuite;
 }
