@@ -46,8 +46,13 @@
 #include <cstring>
 #include <cstdio>
 
+#ifdef OW_HAVE_ISTREAM
+#include <istream>
+#else
+#include <iostream>
+#endif
+
 using std::istream;
-using std::streambuf;
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_Bool

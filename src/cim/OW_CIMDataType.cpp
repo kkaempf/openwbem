@@ -36,6 +36,9 @@
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
 
+using std::istream;
+using std::ostream;
+
 struct OW_CIMDataType::DTData
 {
 	DTData() :

@@ -42,6 +42,9 @@
 #include "OW_CIMValue.hpp"
 #include "OW_BinIfcIO.hpp"
 
+using std::istream;
+using std::ostream;
+
 #include <algorithm>
 
 struct OW_CIMClass::CLSData

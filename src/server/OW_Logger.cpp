@@ -38,6 +38,7 @@
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include <fstream>
+#include <iostream> // for cerr
 
 extern "C"
 {

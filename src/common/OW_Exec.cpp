@@ -48,6 +48,7 @@ extern "C"
 #endif
 }
 
+#include <iostream>
 
 using std::cerr;
 using std::endl;

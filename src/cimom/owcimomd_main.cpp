@@ -36,6 +36,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include <exception>
+#include <iostream> // for cout
 
 static OW_Bool processCommandLine(int argc, char* argv[],
 	OW_CIMOMEnvironmentRef env);

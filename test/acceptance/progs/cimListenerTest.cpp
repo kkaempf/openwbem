@@ -43,6 +43,7 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMNameSpace.hpp"
+#include <iostream> // for cout and cerr
 
 using std::cout;
 using std::endl;

@@ -12,6 +12,7 @@
 #include "OW_SocketAddress.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_Format.hpp"
+#include <iostream> // for cerr
 
 namespace
 {

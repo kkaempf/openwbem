@@ -36,6 +36,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
 #include <exception>
+#include <iostream> // for cout
 
 using std::ostream;
 using std::endl;
