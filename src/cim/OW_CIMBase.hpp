@@ -52,9 +52,6 @@ class String;
 class CIMBase : public SerializableIFC
 {
 public:
-	/**
-	 * Destroy this CIMBase object.
-	 */
 	virtual ~CIMBase();
 	/**
 	 * Set this object to NULL. This should invalidate the CIMBase object, so
