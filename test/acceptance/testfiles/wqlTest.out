@@ -5,59 +5,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -68,59 +108,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -245,34 +325,42 @@ INSTANCE OF wqlTestClass
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 
@@ -290,34 +378,42 @@ INSTANCE OF wqlTestClass
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 
@@ -335,34 +431,42 @@ INSTANCE OF wqlTestClass
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 
@@ -380,34 +484,42 @@ INSTANCE OF wqlTestClass
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
 };
 
 
@@ -416,45 +528,61 @@ Got back 10 instances.  Expected 10
 INSTANCE OF wqlTestClass
 {
   sint32Data=0;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   sint32Data=10;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
   booleanData=false;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
   booleanData=true;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 
@@ -463,45 +591,61 @@ Got back 10 instances.  Expected 10
 INSTANCE OF wqlTestClass
 {
   sint32Data=0;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   sint32Data=10;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
   booleanData=false;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
   booleanData=true;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
+  sint32Data=NULL;
+  booleanData=NULL;
 };
 
 
@@ -511,59 +655,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -574,59 +758,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -637,6 +861,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -646,6 +874,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -655,6 +887,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -664,6 +900,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -673,6 +913,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -682,6 +926,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -691,6 +939,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -700,6 +952,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -709,6 +965,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -718,6 +978,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -727,6 +991,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -736,6 +1004,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -744,7 +1016,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -753,7 +1029,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -762,7 +1042,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -771,7 +1055,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -780,7 +1068,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -789,7 +1081,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -798,7 +1094,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -807,7 +1107,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -816,6 +1120,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -825,6 +1133,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -834,6 +1146,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -843,6 +1159,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -853,48 +1173,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -904,48 +1256,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -955,48 +1339,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -1006,48 +1422,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -1056,7 +1504,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1065,7 +1517,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1074,7 +1530,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1083,7 +1543,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1093,53 +1557,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1150,53 +1650,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1207,53 +1743,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1264,53 +1836,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1321,6 +1929,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1330,6 +1942,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1339,6 +1955,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1348,6 +1968,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1357,6 +1981,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1366,6 +1994,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1375,6 +2007,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1384,6 +2020,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1392,7 +2032,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1401,7 +2045,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1410,7 +2058,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1419,7 +2071,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1428,7 +2084,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1437,7 +2097,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1446,7 +2110,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1455,7 +2123,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1464,6 +2136,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1473,6 +2149,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1482,6 +2162,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1491,6 +2175,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1500,12 +2188,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1515,12 +2211,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1530,12 +2234,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1545,12 +2257,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1561,53 +2281,89 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1618,53 +2374,89 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1675,53 +2467,89 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1732,53 +2560,89 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1789,59 +2653,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1852,59 +2756,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -1915,6 +2859,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1924,6 +2872,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1933,12 +2885,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1948,12 +2908,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1963,6 +2931,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1972,6 +2944,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1981,6 +2957,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1990,6 +2970,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -1999,6 +2983,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2008,6 +2996,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2016,7 +3008,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2025,7 +3021,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2034,13 +3034,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2049,13 +3057,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2064,13 +3080,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2079,13 +3103,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2094,7 +3126,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2103,7 +3139,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2112,12 +3152,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2127,12 +3175,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2142,6 +3198,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2151,6 +3211,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2160,30 +3224,50 @@ Got back 5 instances.  Expected 5
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2193,30 +3277,50 @@ Got back 5 instances.  Expected 5
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2227,35 +3331,59 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2266,35 +3394,59 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2305,6 +3457,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2314,6 +3470,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2323,59 +3483,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2386,59 +3586,99 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2449,6 +3689,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2458,6 +3702,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2467,12 +3715,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2482,12 +3738,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2497,12 +3761,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2512,12 +3784,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2527,12 +3807,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2542,12 +3830,20 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2556,13 +3852,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2571,13 +3875,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2586,7 +3898,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2595,7 +3911,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2604,7 +3924,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2613,7 +3937,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2622,13 +3950,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2637,13 +3973,21 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2652,6 +3996,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2661,6 +4009,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2670,12 +4022,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2685,12 +4045,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2701,35 +4069,59 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2740,35 +4132,59 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2778,30 +4194,50 @@ Got back 5 instances.  Expected 5
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2811,30 +4247,50 @@ Got back 5 instances.  Expected 5
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -2845,53 +4301,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2902,53 +4394,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -2965,6 +4493,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -2974,6 +4506,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3006,7 +4542,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3015,7 +4555,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3024,7 +4568,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3033,7 +4581,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3048,6 +4600,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3057,6 +4613,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3072,24 +4632,40 @@ Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -3099,24 +4675,40 @@ Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -3127,29 +4719,49 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3160,29 +4772,49 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3199,53 +4831,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3256,53 +4924,89 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3319,6 +5023,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3328,6 +5036,10 @@ INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3337,6 +5049,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3346,6 +5062,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3355,6 +5075,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3364,6 +5088,10 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3372,7 +5100,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3381,7 +5113,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3402,7 +5138,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3411,7 +5151,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3426,6 +5170,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3435,6 +5183,10 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3445,29 +5197,49 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3478,29 +5250,49 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3510,24 +5302,40 @@ Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -3537,24 +5345,40 @@ Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
@@ -3564,7 +5388,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3573,7 +5401,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3582,7 +5414,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3591,7 +5427,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3600,7 +5440,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3609,7 +5453,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3618,7 +5466,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3627,7 +5479,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3637,48 +5493,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -3688,48 +5576,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -3739,48 +5659,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -3790,48 +5742,80 @@ INSTANCE OF wqlTestClass
 {
   name="test1";
   sint32Data=0;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test2";
   sint32Data=10;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test3";
+  sint32Data=NULL;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=5000000000000;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test6";
+  sint32Data=NULL;
+  booleanData=NULL;
   uint64Data=10;
+  stringData=NULL;
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test7";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="abc";
+  realData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test8";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
   stringData="test";
+  realData=NULL;
 };
 
 
@@ -3840,12 +5824,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3855,12 +5847,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3870,12 +5870,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3885,12 +5893,20 @@ Got back 2 instances.  Expected 2
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=123.456;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  sint32Data=NULL;
+  booleanData=NULL;
+  uint64Data=NULL;
+  stringData=NULL;
   realData=4.56e+20;
 };
 
@@ -3900,7 +5916,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3909,7 +5929,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -3924,6 +5948,7 @@ INSTANCE OF wqlTestClass
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  booleanData=NULL;
 };
 
 
@@ -3938,6 +5963,7 @@ INSTANCE OF wqlTestClass
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  booleanData=NULL;
 };
 
 
@@ -3952,6 +5978,7 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
 };
 
@@ -3961,6 +5988,7 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
 };
 
@@ -4000,6 +6028,7 @@ Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
@@ -4011,11 +6040,13 @@ INSTANCE OF wqlTestClass
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  booleanData=NULL;
 };
 
 
@@ -4024,6 +6055,7 @@ Got back 4 instances.  Expected 4
 INSTANCE OF wqlTestClass
 {
   name="test10";
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
@@ -4035,11 +6067,13 @@ INSTANCE OF wqlTestClass
 INSTANCE OF wqlTestClass
 {
   name="test5";
+  booleanData=NULL;
 };
 
 INSTANCE OF wqlTestClass
 {
   name="test9";
+  booleanData=NULL;
 };
 
 
@@ -4048,7 +6082,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -4057,7 +6095,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test4";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -4067,8 +6109,11 @@ INSTANCE OF wqlTestClass
 {
   [key(true)]
   name="test11";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4077,8 +6122,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test11";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4087,8 +6135,11 @@ Got back 1 instances.  Expected 1
 INSTANCE OF wqlTestClass
 {
   name="test11";
+  sint32Data=NULL;
   booleanData=true;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4113,7 +6164,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4124,7 +6177,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4135,7 +6190,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4146,7 +6203,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="test11String";
+  realData=NULL;
 };
 
 
@@ -4157,7 +6216,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="";
+  realData=NULL;
 };
 
 
@@ -4168,7 +6229,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="";
+  realData=NULL;
 };
 
 
@@ -4179,7 +6242,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="";
+  realData=NULL;
 };
 
 
@@ -4190,7 +6255,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
   stringData="";
+  realData=NULL;
 };
 
 
@@ -4201,6 +6268,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -4211,6 +6281,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -4221,6 +6294,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -4231,6 +6307,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 
@@ -4241,6 +6320,9 @@ INSTANCE OF wqlTestClass
   name="test11";
   sint32Data=12345;
   booleanData=false;
+  uint64Data=NULL;
+  stringData=NULL;
+  realData=NULL;
 };
 
 

@@ -838,6 +838,12 @@ CIMInstance::toMOF() const
 			rv += v.toMOF();
 			rv += ";\n";
 		}
+		else
+		{
+			rv += "  ";
+			rv += p.getName();
+			rv += "=NULL;\n";
+		}
 	}
 	rv += "};\n";
 	return rv.releaseString();
