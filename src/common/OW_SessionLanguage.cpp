@@ -461,12 +461,16 @@ SessionLanguage::getBestLanguage(const StringArray& languages, const String& def
 void
 SessionLanguage::addContentLanguage(const String& contentLanguage)
 {
-	if (m_contentLanguage.length())
+	if (!m_contentLanguage.empty())
 	{
 		m_contentLanguage += ", ";
 	}
 
-	m_contentLanguage += contentLanguage;
+	StringArray currentLangs = contentLanguage.tokenize(", ");
+	if (std::find(currentLangs.begin(), currentLangs.end(), contentLanguage) == currentLangs.end())
+	{
+		m_contentLanguage += contentLanguage;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
