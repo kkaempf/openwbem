@@ -1664,5 +1664,5 @@ XMLExecute::shutdown()
 } // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-OW_REQUEST_HANDLER_FACTORY(OpenWBEM::XMLExecute,XMLExecute);
+OW_REQUEST_HANDLER_FACTORY(OW_NAMESPACE::XMLExecute,XMLExecute);
 

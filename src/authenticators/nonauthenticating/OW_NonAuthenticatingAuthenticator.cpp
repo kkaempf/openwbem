@@ -67,4 +67,4 @@ NonAuthenticatingAuthenticator::doInit(ServiceEnvironmentIFCRef)
 
 } // end namespace OW_NAMESPACE
 
-OW_AUTHENTICATOR_FACTORY(OpenWBEM::NonAuthenticatingAuthenticator, nonauthenticating)
+OW_AUTHENTICATOR_FACTORY(OW_NAMESPACE::NonAuthenticatingAuthenticator, nonauthenticating)

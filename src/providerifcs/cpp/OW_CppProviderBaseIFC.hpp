@@ -144,7 +144,7 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
-extern "C" OW_EXPORT OpenWBEM::CppProviderBaseIFC* \
+extern "C" OW_EXPORT OW_NAMESPACE::CppProviderBaseIFC* \
 createProvider##name() \
 { \
 	return new prov; \
@@ -153,7 +153,7 @@ createProvider##name() \
 // This macro is deprecated in 3.2.0, use OW_PROVIDERFACTORY instead.
 #define OW_PROVIDERFACTORY_NOID(prov, name) OW_PROVIDERFACTORY(prov, NO_ID##name)
 #define OW_PROVIDERFACTORY(prov, name) \
-extern "C" OpenWBEM::CppProviderBaseIFC* \
+extern "C" OW_NAMESPACE::CppProviderBaseIFC* \
 createProvider##name() \
 { \
 	return new prov; \

@@ -1443,10 +1443,10 @@ IndicationServerImplThread::doCooperativeCancel()
 } // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-extern "C" OW_EXPORT OpenWBEM::IndicationServer*
+extern "C" OW_EXPORT OW_NAMESPACE::IndicationServer*
 createIndicationServer()
 {
-	return new OpenWBEM::IndicationServerImpl();
+	return new OW_NAMESPACE::IndicationServerImpl();
 }
 //////////////////////////////////////////////////////////////////////////////
 #if !defined(OW_STATIC_SERVICES)

@@ -220,6 +220,6 @@ namespace HTTPUtils
 
 } // end namespace OW_NAMESPACE
 
-namespace OW_HTTPUtils = OpenWBEM::HTTPUtils;
+namespace OW_HTTPUtils = OW_NAMESPACE::HTTPUtils;
 
 #endif	// OW_HTTPUTILS_HPP_

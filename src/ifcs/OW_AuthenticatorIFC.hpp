@@ -118,7 +118,7 @@ protected:
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_AUTHENTICATOR_FACTORY(derived, authenticatorName) \
-extern "C" OW_EXPORT OpenWBEM::AuthenticatorIFC* \
+extern "C" OW_EXPORT OW_NAMESPACE::AuthenticatorIFC* \
 createAuthenticator() \
 { \
 	return new derived; \
@@ -130,7 +130,7 @@ getOWVersion() \
 }
 #else
 #define OW_AUTHENTICATOR_FACTORY(derived, authenticatorName) \
-extern "C" OpenWBEM::AuthenticatorIFC* \
+extern "C" OW_NAMESPACE::AuthenticatorIFC* \
 createAuthenticator_##authenticatorName() \
 { \
 	return new derived; \

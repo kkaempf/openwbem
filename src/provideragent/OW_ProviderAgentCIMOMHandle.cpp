@@ -118,7 +118,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 			}
 			CIMClass cc = helperGetClass(ns, instanceName.getClassName());
 			pSInstProv->filterInstances(m_PAEnv,ns , instanceName.getClassName(),
-                                        ia,localOnly , OpenWBEM::WBEMFlags::E_SHALLOW,
+                                        ia,localOnly , WBEMFlags::E_SHALLOW,
 										includeQualifiers, includeClassOrigin,
 										propertyList, cc, cc); // TODO should the classes be different?
 			OW_ASSERT(ia.size() == 1); // did the secondary instance provider do something horribly wrong?

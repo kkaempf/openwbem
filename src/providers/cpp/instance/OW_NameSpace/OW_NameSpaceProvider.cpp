@@ -375,5 +375,5 @@ NameSpaceProvider::getInstanceProviderInfo(InstanceProviderInfo& info)
 
 } // end namespace OW_NAMESPACE
 
-OW_PROVIDERFACTORY(OpenWBEM::NameSpaceProvider, owprovinstOW_NameSpace);
+OW_PROVIDERFACTORY(OW_NAMESPACE::NameSpaceProvider, owprovinstOW_NameSpace);
 

@@ -234,7 +234,7 @@ typedef SharedLibraryReference< IntrusiveReference<ProviderIFCBaseIFC> > Provide
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_PROVIDERIFCFACTORY(prov, name) \
-extern "C" OW_EXPORT OpenWBEM::ProviderIFCBaseIFC* \
+extern "C" OW_EXPORT OW_NAMESPACE::ProviderIFCBaseIFC* \
 createProviderIFC() \
 { \
 	return new prov; \
@@ -246,7 +246,7 @@ getOWVersion() \
 }
 #else
 #define OW_PROVIDERIFCFACTORY(prov, name) \
-extern "C" OpenWBEM::ProviderIFCBaseIFC* \
+extern "C" OW_NAMESPACE::ProviderIFCBaseIFC* \
 createProviderIFC_##name() \
 { \
 	return new prov; \

@@ -70,14 +70,14 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 } \
-extern "C" OW_EXPORT OpenWBEM::WQLIFC* \
+extern "C" OW_EXPORT OW_NAMESPACE::WQLIFC* \
 createWQL() \
 { \
 	return new derived; \
 }
 #else
 #define OW_WQLFACTORY(derived,wqlname) \
-extern "C" OpenWBEM::WQLIFC* \
+extern "C" OW_NAMESPACE::WQLIFC* \
 createWQL_##wqlname() \
 { \
 	return new derived; \

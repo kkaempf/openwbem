@@ -422,7 +422,7 @@ const char* NAME##Exception::type() const { return #NAME "Exception"; }
 /**
  * Define a new exception class named <NAME>Exception that derives from Exception.
  * The new class will use ExceptionIds::<NAME>ExceptionId for the subclass id.
- * Use this macro to create public exceptions that have an id in the OpenWBEM::ExceptionIds namespace that derive from Exception
+ * Use this macro to create public exceptions that have an id in the OW_NAMESPACE::ExceptionIds namespace that derive from Exception
  * This macro is typically used in a cpp file.
  *
  * @param NAME The name of the new class (Exception will be postfixed)

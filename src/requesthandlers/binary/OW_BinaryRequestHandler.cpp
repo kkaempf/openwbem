@@ -982,5 +982,5 @@ BinaryRequestHandler::shutdown()
 } // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-OW_REQUEST_HANDLER_FACTORY(OpenWBEM::BinaryRequestHandler,BinaryRequest);
+OW_REQUEST_HANDLER_FACTORY(OW_NAMESPACE::BinaryRequestHandler,BinaryRequest);
 

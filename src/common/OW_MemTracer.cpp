@@ -540,35 +540,35 @@ doDelete(void* p)
 void*
 operator new[](std::size_t size, char const* file, int line) throw(std::bad_alloc)
 {
-	return OpenWBEM::doNew(size, file, line);
+	return OW_NAMESPACE::doNew(size, file, line);
 }
 //////////////////////////////////////////////////////////////////////////////
 void*
 operator new(std::size_t size, char const* file, int line) throw(std::bad_alloc)
 {
-	return OpenWBEM::doNew(size, file, line);
+	return OW_NAMESPACE::doNew(size, file, line);
 }
 //////////////////////////////////////////////////////////////////////////////
 void*
 operator new[](std::size_t size) throw(std::bad_alloc)
 {
-	return OpenWBEM::doNew(size, NULL, 0);
+	return OW_NAMESPACE::doNew(size, NULL, 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 void*
 operator new(std::size_t size) throw(std::bad_alloc)
 {
-	return OpenWBEM::doNew(size, NULL, 0);
+	return OW_NAMESPACE::doNew(size, NULL, 0);
 }
 void
 operator delete(void* p)
 {
-	OpenWBEM::doDelete(p);
+	OW_NAMESPACE::doDelete(p);
 }
 void
 operator delete[](void* p)
 {
-	OpenWBEM::doDelete(p);
+	OW_NAMESPACE::doDelete(p);
 }
 
 

@@ -56,9 +56,9 @@
 // need to specialize hash
 namespace OW_HASH_MAP_NS
 {
-template<> struct hash<OpenWBEM::String>
+template<> struct hash<OW_NAMESPACE::String>
 {
-	size_t operator()(const OpenWBEM::String& s) const
+	size_t operator()(const OW_NAMESPACE::String& s) const
 	{
 		return hash<const char*>()(s.c_str());
 	}

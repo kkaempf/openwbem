@@ -131,7 +131,7 @@ public:
 
 #if !defined(OW_STATIC_SERVICES)
 #define OW_SERVICE_FACTORY(derived, serviceName) \
-extern "C" OW_EXPORT OpenWBEM::ServiceIFC* \
+extern "C" OW_EXPORT OW_NAMESPACE::ServiceIFC* \
 createService() \
 { \
 	return new derived; \
@@ -143,7 +143,7 @@ getOWVersion() \
 }
 #else
 #define OW_SERVICE_FACTORY(derived, serviceName) \
-extern "C" OpenWBEM::ServiceIFC* \
+extern "C" OW_NAMESPACE::ServiceIFC* \
 createService_##serviceName() \
 { \
 	return new derived; \

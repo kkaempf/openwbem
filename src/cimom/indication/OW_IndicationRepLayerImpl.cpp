@@ -534,10 +534,10 @@ void IndicationRepLayerImpl::exportIndication(const CIMInstance& instance,
 } // end namespace OW_NAMESPACE
 
 //////////////////////////////////////////////////////////////////////////////
-extern "C" OW_EXPORT OpenWBEM::IndicationRepLayer*
+extern "C" OW_EXPORT OW_NAMESPACE::IndicationRepLayer*
 createIndicationRepLayer()
 {
-	return new OpenWBEM::IndicationRepLayerImpl;
+	return new OW_NAMESPACE::IndicationRepLayerImpl;
 }
 //////////////////////////////////////////////////////////////////////////////
 #if !defined(OW_STATIC_SERVICES)

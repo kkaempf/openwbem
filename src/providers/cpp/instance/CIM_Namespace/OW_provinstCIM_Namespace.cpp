@@ -224,5 +224,5 @@ public:
 
 } // end namespace OW_NAMESPACE
 
-OW_PROVIDERFACTORY(OpenWBEM::CIM_NamespaceInstProv, owprovinstCIM_Namespace)
+OW_PROVIDERFACTORY(OW_NAMESPACE::CIM_NamespaceInstProv, owprovinstCIM_Namespace)
 

@@ -56,6 +56,6 @@ namespace XMLCIMFactory
 
 } // end namespace OW_NAMESPACE
 
-namespace OW_XMLCIMFactory = OpenWBEM::XMLCIMFactory;
+namespace OW_XMLCIMFactory = OW_NAMESPACE::XMLCIMFactory;
 
 #endif
