@@ -148,10 +148,17 @@ public:
 	/**
 	 * Add another key to this object path (for instance paths).
 	 * @param keyname The name of the key property
-	 * @param value The value for the key property
+	 * @param value The value for the key property.  Cannot be null.
 	 * @return a reference to *this
 	 */
 	OW_CIMObjectPath& addKey(const OW_String& keyname, const OW_CIMValue& value);
+
+	/**
+	 * Add another key to this object path (for instance paths).
+	 * @param key The key property.  Cannot be null.  Cannot have a null value.
+	 * @return a reference to *this
+	 */
+	OW_CIMObjectPath& addKey(const OW_CIMProperty& key);
 
 	/**
 	 * Get the keys for this object path
