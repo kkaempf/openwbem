@@ -13,12 +13,12 @@
 #
 # chkconfig: 2345 36 64
 # description: OpenWBEM CIMOM Daemon
-# processname: @PACKAGE_PREFIX@owcimomd
+# processname: owcimomd
 
-NAME=@PACKAGE_PREFIX@owcimomd
+NAME=owcimomd
 DAEMON=@sbindir@/$NAME
 OPTIONS=
-PIDFILE=/var/run/$NAME.pid
+PIDFILE=/var/run/@PACKAGE_PREFIX@$NAME.pid
 
 FUNCTION_FILE=/etc/rc.d/init.d/functions
 SUSE=0
