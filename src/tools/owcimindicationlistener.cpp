@@ -45,6 +45,8 @@
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CerrLogger.hpp"
+#include "OW_CmdLineParser.hpp"
+#include "OW_URL.hpp"
 
 #include <iostream> // for cout and cerr
 #include <csignal>
@@ -108,27 +110,60 @@ public:
 	}
 };
 
+enum
+{
+	HELP_OPT,
+	VERSION_OPT,
+	URL_OPT,
+	FILTER_QUERY_OPT
+};
+
+CmdLineParser::Option g_options[] =
+{
+	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
+	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
+	{URL_OPT, 'u', "url", CmdLineParser::E_REQUIRED_ARG, 0,
+		"The url identifying the cimom and namespace. Default is http://localhost/root/cimv2 if not specified."},
+	{FILTER_QUERY_OPT, 'f', "filter_query", CmdLineParser::E_REQUIRED_ARG, 0, "Set the indication filter WQL query."},
+	{0, 0, 0, CmdLineParser::E_NO_ARG, 0, 0}
+};
+
+void Usage()
+{
+	cerr << "Usage: owcimindicationlistener [options]\n\n";
+	cerr << CmdLineParser::getUsage(g_options) << endl;
+}
+
+
 int main(int argc, char* argv[])
 {
 	try
 	{
-		if (argc != 4)
-		{
-			cerr << "Usage: " << argv[0] << " <URL> <namespace> <filter query>" << endl;
-			exit(1);
-		}
+		CmdLineParser parser(argc, argv, g_options);
 
+		if (parser.isSet(HELP_OPT))
+		{
+			Usage();
+			return 0;
+		}
+		else if (parser.isSet(VERSION_OPT))
+		{
+			cout << "owcimindicationlistener (OpenWBEM) " << OW_VERSION << '\n';
+			cout << "Written by Dan Nuffer.\n";
+			return 0;
+		}
+	
 #ifdef OW_WIN32
 		exitEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
 		if(!exitEvent)
 		{
 			cerr << "Failed to create exit event. Aborting..." << endl;
-			exit(1);
+			return 1;
 		}
 		if(!SetConsoleCtrlHandler(exitHandler, TRUE))
 		{
 			cerr << "Failed to set the console event handler. Aborting..." << endl;
-			exit(1);
+			return 1;
 		}
 #else
 		sigPipe = UnnamedPipe::createUnnamedPipe();
@@ -136,9 +171,26 @@ int main(int argc, char* argv[])
 		::signal(SIGTERM, sig_handler);
 #endif
 
-		String url(argv[1]);
-		String ns(argv[2]);
-		String query(argv[3]);
+		String url = parser.getOptionValue(URL_OPT);
+		if (url.empty())
+		{
+			url = "http://localhost/root/cimv2";
+		}
+		String query = parser.getOptionValue(FILTER_QUERY_OPT);
+		if (query.empty())
+		{
+			cerr << "The filter query must be specified." << endl;
+			Usage();
+			return 1;
+		}
+		String ns = URL(url).namespaceName;
+		if (ns.empty())
+		{
+			cerr << "No namespace given as part of the url." << endl;
+			Usage();
+			return 1;
+		}
+
 		CIMListenerCallbackRef mcb(new myCallBack);
 		LoggerRef logger(new CerrLogger);
 		logger->setLogLevel(E_FATAL_ERROR_LEVEL);
@@ -157,6 +209,22 @@ int main(int argc, char* argv[])
 		hxcl.shutdownHttpServer();
 		hxcl.deregisterForIndication(handle);
 		return 0;
+	}
+	catch (CmdLineParserException& e)
+	{
+		switch (e.getErrorCode())
+		{
+			case CmdLineParser::E_INVALID_OPTION:
+				cerr << "unknown option: " << e.getMessage() << '\n';
+			break;
+			case CmdLineParser::E_MISSING_ARGUMENT:
+				cerr << "missing argument for option: " << e.getMessage() << '\n';
+			break;
+			default:
+				cerr << "failed parsing command line options\n";
+			break;
+		}
+		Usage();
 	}
 	catch(Exception& e)
 	{
