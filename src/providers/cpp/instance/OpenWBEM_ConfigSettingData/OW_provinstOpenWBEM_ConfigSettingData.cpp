@@ -531,7 +531,7 @@ private:
 		}
 		file.close(); 
 
-		for(ConfigOpts::NameAndDefault* niter = &ConfigOpts::g_defaults[0]; 
+		for(const ConfigOpts::NameAndDefault* niter = &ConfigOpts::g_defaults[0]; 
 			 niter != ConfigOpts::g_defaultsEnd; ++niter)
 		{
 			String curValue = env->getConfigItem(niter->name, String(niter->defaultValue));
