@@ -521,7 +521,7 @@ CIMInstanceSetLongProperty(NPIHandle* npiHandle, CIMInstance ci,
 
 	OW_String Key(name);
 
-	OW_CIMValue Value(value);
+	OW_CIMValue Value(static_cast<OW_UInt64>(value));
 
 	owci->setProperty(Key,Value);
 }
