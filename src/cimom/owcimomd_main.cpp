@@ -61,7 +61,6 @@ const String COMPONENT_NAME("ow.owcimomd");
 
 }
 
-OW_EXPORT
 void owcimomd_new_handler();
 
 //////////////////////////////////////////////////////////////////////////////
@@ -265,7 +264,6 @@ printUsage(std::ostream& ostrm)
 
 } // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
-OW_EXPORT
 void owcimomd_new_handler()
 {
 #if defined (OW_DEBUG)  || defined (OW_NETWARE)
