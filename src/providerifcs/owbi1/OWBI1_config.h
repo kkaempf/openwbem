@@ -1,0 +1,20 @@
+#ifndef __SRC_PROVIDERIFCS_OWBI1_OWBI1_CONFIG_H
+#define __SRC_PROVIDERIFCS_OWBI1_OWBI1_CONFIG_H 1
+ 
+#include "OWBI1_AuxConfig.h"
+
+/* now fix up some things */
+#ifndef OW_EXPORT
+#define OW_EXPORT OWBI1_EXPORT
+#endif
+#ifndef OW_IMPORT
+#define OW_IMPORT OWBI1_IMPORT
+#endif
+
+#undef OWBI1_NAMESPACE_CAT
+#undef OWBI1_NAMESPACE_AUX
+#undef OWBI1_NAMESPACE
+
+ 
+/* __SRC_PROVIDERIFCS_OWBI1_OWBI1_CONFIG_H */
+#endif
