@@ -474,15 +474,15 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 {
 	// If this class has an association qualifier, then ensure
 	// the association flag is on
-	OW_CIMQualifier childAssocQual = child.getQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
-	if(childAssocQual)
-	{
-		if (!childAssocQual.getValue()
-			|| childAssocQual.getValue() != OW_CIMValue(false))
-		{
-			child.setIsAssociation(true);
-		}
-	}
+//     OW_CIMQualifier childAssocQual = child.getQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION);
+//     if(childAssocQual)
+//     {
+//         if (!childAssocQual.getValue()
+//             || childAssocQual.getValue() != OW_CIMValue(false))
+//         {
+//             child.setIsAssociation(true);
+//         }
+//     }
 
 	// Determine if any properties are keys
 	OW_CIMPropertyArray propArray = child.getAllProperties();
@@ -523,10 +523,10 @@ OW_MetaRepository::_resolveClass(OW_CIMClass& child, OW_HDBNode& node,
 		addClassToCache(parentClass, pkey);
 	}
 
-	if(parentClass.isAssociation())
-	{
-		child.setIsAssociation(true);
-	}
+	//if(parentClass.isAssociation())
+	//{
+	//	child.setIsAssociation(true);
+	//}
 	if(parentClass.isKeyed())
 	{
 		child.setIsKeyed(true);

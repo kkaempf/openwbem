@@ -71,9 +71,7 @@ bool operator<(const OW_CIMClass::CLSData& x, const OW_CIMClass::CLSData& y)
 		x.m_parentClassName, y.m_parentClassName,
         x.m_qualifiers, y.m_qualifiers,
         x.m_properties, y.m_properties,
-        x.m_methods, y.m_methods,
-        x.m_associationFlag, y.m_associationFlag,
-        x.m_isKeyed, y.m_isKeyed);
+        x.m_methods, y.m_methods);
 }
 
 
@@ -455,18 +453,16 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 
 	if(qual.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 	{
-		if (qual.getValue())
+        OW_CIMValue v = qual.getValue();
+		if (v && v.getType() == OW_CIMDataType::BOOLEAN)
 		{
 			OW_Bool b;
 			qual.getValue().get(b);
-			if (b)
-			{
-				m_pdata->m_associationFlag = true;
-			}
+			m_pdata->m_associationFlag = b;
 		}
 		else
 		{
-			m_pdata->m_associationFlag = true;
+			m_pdata->m_associationFlag = false;
 		}
 	}
 	m_pdata->m_qualifiers.append(qual);

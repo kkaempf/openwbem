@@ -319,14 +319,14 @@ OW_XMLCIMFactory::createClass(OW_CIMXMLParser& parser)
 	while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER))
 	{
 		OW_CIMQualifier cq = createQualifier(parser);
-		if(cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
-		{
-			if (!cq.getValue()
-				|| cq.getValue() != OW_CIMValue(false))
-			{
-				rval.setIsAssociation(true);
-			}
-		}
+//         if(cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
+//         {
+//             if (!cq.getValue()
+//                 || cq.getValue() != OW_CIMValue(false))
+//             {
+//                 rval.setIsAssociation(true);
+//             }
+//         }
 
 		rval.addQualifier(cq);
 	}
