@@ -39,6 +39,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMParameter.hpp"
+#include "OW_CIMName.hpp"
 #include "OW_Array.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
@@ -57,12 +58,12 @@ struct CIMMethod::METHData : public COWIntrusiveCountableBase
 		: m_propagated(false)
 	{
 	}
-	String m_name;
+	CIMName m_name;
 	CIMDataType m_returnDatatype;
 	CIMQualifierArray m_qualifiers;
 	CIMParameterArray m_parameters;
-	String m_originClass;
-	String m_override;
+	CIMName m_originClass;
+	CIMName m_override;
 	Bool m_propagated;
 	METHData* clone() const { return new METHData(*this); }
 };
@@ -95,7 +96,7 @@ CIMMethod::CIMMethod(const char* name) :
 	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////													
-CIMMethod::CIMMethod(const String& name) :
+CIMMethod::CIMMethod(const CIMName& name) :
 	CIMElement(), m_pdata(new METHData)
 {
 	m_pdata->m_name = name;
@@ -144,13 +145,13 @@ CIMMethod::getQualifiers() const
 }
 //////////////////////////////////////////////////////////////////////////////													
 CIMQualifier
-CIMMethod::getQualifier(const String& name) const
+CIMMethod::getQualifier(const CIMName& name) const
 {
 	int tsize = m_pdata->m_qualifiers.size();
 	for (int i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName().equalsIgnoreCase(name))
+		if (nq.getName() == name)
 		{
 			return nq;
 		}
@@ -161,11 +162,11 @@ CIMMethod::getQualifier(const String& name) const
 String
 CIMMethod::getOriginClass() const
 {
-	return m_pdata->m_originClass;
+	return m_pdata->m_originClass.toString();
 }
 //////////////////////////////////////////////////////////////////////////////													
 CIMMethod&
-CIMMethod::setOriginClass(const String& originCls)
+CIMMethod::setOriginClass(const CIMName& originCls)
 {
 	m_pdata->m_originClass = originCls;
 	return *this;
@@ -247,7 +248,7 @@ CIMMethod::getReturnDataSize() const
 }
 //////////////////////////////////////////////////////////////////////////////													
 CIMMethod&
-CIMMethod::setOverridingMethod(const String& omname)
+CIMMethod::setOverridingMethod(const CIMName& omname)
 {
 	m_pdata->m_override = omname;
 	return *this;
@@ -256,7 +257,7 @@ CIMMethod::setOverridingMethod(const String& omname)
 String
 CIMMethod::getOverridingMethod() const
 {
-	return m_pdata->m_override;
+	return m_pdata->m_override.toString();
 }
 //////////////////////////////////////////////////////////////////////////////													
 CIMMethod
@@ -300,11 +301,11 @@ CIMMethod::getPropagated() const
 String
 CIMMethod::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////													
 void
-CIMMethod::setName(const String& name)
+CIMMethod::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 }
@@ -312,12 +313,12 @@ CIMMethod::setName(const String& name)
 void
 CIMMethod::readObject(istream &istrm)
 {
-	String name;
+	CIMName name;
 	CIMDataType returnDatatype(CIMNULL);
 	CIMQualifierArray qualifiers;
 	CIMParameterArray parameters;
-	String originClass;
-	String override;
+	CIMName originClass;
+	CIMName override;
 	Bool propagated;
 	CIMBase::readSig( istrm, OW_CIMMETHODSIG );
 	name.readObject(istrm);
@@ -374,7 +375,7 @@ CIMMethod::toMOF() const
 	}
 	rv += m_pdata->m_returnDatatype.toMOF();
 	rv += ' ';
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	rv += '(';
 	if (m_pdata->m_parameters.size() > 0)
 	{
@@ -396,7 +397,7 @@ String
 CIMMethod::toString() const
 {
 	String rv("CIMMethod NAME = ");
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	return rv;
 }
 /////////////////////////////////////////////////////////////////////////////													

@@ -40,6 +40,7 @@
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMQualifier.hpp"
+#include "OW_CIMName.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
@@ -50,7 +51,7 @@ using std::ostream;
 //////////////////////////////////////////////////////////////////////////////
 struct CIMParameter::PARMData : public COWIntrusiveCountableBase
 {
-	String m_name;
+	CIMName m_name;
 	CIMDataType m_dataType;
 	CIMQualifierArray m_qualifiers;
 	PARMData* clone() const { return new PARMData(*this); }
@@ -80,7 +81,7 @@ CIMParameter::CIMParameter(const char* name) :
 	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMParameter::CIMParameter(const String& name) :
+CIMParameter::CIMParameter(const CIMName& name) :
 	CIMElement(), m_pdata(new PARMData)
 {
 	m_pdata->m_name = name;
@@ -141,12 +142,12 @@ CIMParameter::getDataSize() const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier
-CIMParameter::getQualifier(const String& name) const
+CIMParameter::getQualifier(const CIMName& name) const
 {
 	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName().equalsIgnoreCase(name))
+		if (nq.getName() == name)
 		{
 			return nq;
 		}
@@ -157,11 +158,11 @@ CIMParameter::getQualifier(const String& name) const
 String
 CIMParameter::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMParameter::setName(const String& name)
+CIMParameter::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 }
@@ -178,7 +179,7 @@ CIMParameter::writeObject(ostream &ostrm) const
 void
 CIMParameter::readObject(istream &istrm)
 {
-	String name;
+	CIMName name;
 	CIMDataType dataType(CIMNULL);
 	CIMQualifierArray qualifiers;
 	CIMBase::readSig( istrm, OW_CIMPARAMETERSIG );
@@ -197,7 +198,7 @@ CIMParameter::readObject(istream &istrm)
 String
 CIMParameter::toString() const
 {
-	return "CIMParameter(" + m_pdata->m_name + ")";
+	return "CIMParameter(" + m_pdata->m_name.toString() + ")";
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -220,7 +221,7 @@ CIMParameter::toMOF() const
 	}
 	rv += m_pdata->m_dataType.toMOF();
 	rv += ' ';
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	if (m_pdata->m_dataType.isArrayType())
 	{
 		rv += '[';
@@ -240,7 +241,7 @@ bool operator<(const CIMParameter& x, const CIMParameter& y)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
-CIMParameter::hasTrueQualifier(const String& name) const
+CIMParameter::hasTrueQualifier(const CIMName& name) const
 {
 	CIMQualifier q = getQualifier(name);
 	if (!q)

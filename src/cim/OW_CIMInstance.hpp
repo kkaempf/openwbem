@@ -40,9 +40,10 @@
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp" // for OW_CIMDataType::INVALID
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
+#include "OW_String.hpp" // for default parameter StringArray()
+#include "OW_Array.hpp"
 
 namespace OpenWBEM
 {
@@ -86,7 +87,7 @@ public:
 	 * Create an CIMInstance.
 	 * @param name	The class name of this CIMInstance.
 	 */
-	explicit CIMInstance(const String& name);
+	explicit CIMInstance(const CIMName& name);
 	/**
 	 * Create an CIMInstance.
 	 * @param name	The class name of this CIMInstance as a NULL terminated string.
@@ -121,7 +122,7 @@ public:
 	 * @param name	The new class name for this instance.
 	 * @return a reference to *this
 	 */
-	CIMInstance& setClassName(const String& name);
+	CIMInstance& setClassName(const CIMName& name);
 	/**
 	 * @return the language this CIMClass is using
 	 */
@@ -141,13 +142,13 @@ public:
 	 * @return A valid CIMQalifier on success. Otherwise a null
 	 * CIMQualifier
 	 */
-	CIMQualifier getQualifier(const String& qualName) const;
+	CIMQualifier getQualifier(const CIMName& qualName) const;
 	/**
 	 * Remove the named qualifier from this CIMInstance.
 	 * @param qualName The name of the qualifier to remove.
 	 * @return a reference to *this
 	 */
-	CIMInstance& removeQualifier(const String& qualName);
+	CIMInstance& removeQualifier(const CIMName& qualName);
 	/**
 	 * Set the qualifiers for this instance. Any old qualifiers will removed.
 	 * @param quals An CIMQualifierArray with the new qualifers for this
@@ -190,35 +191,35 @@ public:
 	 * @return The CIMProperty identified by the given parameters on success.
 	 * Otherwise a null CIMProperty object.
 	 */
-	CIMProperty getProperty(const String& name,
-		const String& originClass) const;
+	CIMProperty getProperty(const CIMName& name,
+		const CIMName& originClass) const;
 	/**
 	 * Gets a property with the specified name.
 	 * @param name The name of the property to retrieve.
 	 * @return The CIMProperty identified by the name on success. Otherwise a
 	 * null CIMProperty object.
 	 */
-	CIMProperty getProperty(const String& name) const;
+	CIMProperty getProperty(const CIMName& name) const;
 	/**
 	 * Gets a property with the specified name.
 	 * @param name The name of the property to retrieve.
 	 * @return The CIMProperty identified by the name on success.
 	 * @throws an NoSuchPropertyException if the property is not found or NULL.
 	 */
-	CIMProperty getPropertyT(const String& name) const;
+	CIMProperty getPropertyT(const CIMName& name) const;
 	/**
 	 * Gets a property's value.
 	 * @param name The name of the property value to retrieve.
 	 * @return The CIMValue of the specified property.  It will be NULL if the
 	 * property doesn't exist or the property's value is NULL.
 	 */
-	CIMValue getPropertyValue(const String& name) const;
+	CIMValue getPropertyValue(const CIMName& name) const;
 	/**
 	 * Test whether a property exists and has a non-NULL value.
 	 * @param name The name of the property to test.
 	 * @return bool true if the property exists and has a non-NULL value.
 	 */
-	bool propertyHasValue(const String& name) const;
+	bool propertyHasValue(const CIMName& name) const;
 	/**
 	 * @return An CIMPropertyArray that contains all of the keys for this
 	 * instance.
@@ -244,7 +245,7 @@ public:
 	 * @param cv The CIMValue that contains the new value for the property.
 	 * @return a reference to *this
 	 */
-	CIMInstance& setProperty(const String& name, const CIMValue& cv);
+	CIMInstance& setProperty(const CIMName& name, const CIMValue& cv);
 	/**
 	 * Update a property in the property list if it exists. Otherwise add a
 	 * new one.
@@ -259,7 +260,7 @@ public:
 	 * @param propName The name of the property to remove.
 	 * @return a reference to *this
 	 */
-	CIMInstance& removeProperty(const String& propName);
+	CIMInstance& removeProperty(const CIMName& propName);
 	/**
 	 * Create an CIMInstance with properties and qualifiers from this
 	 * instance based on filtering criteria. All properties and qualifiers that
@@ -390,7 +391,7 @@ public:
 	 * @param name	The new class name for this instance.
 	 * @return a reference to *this
 	 */
-	virtual void setName(const String& name);
+	virtual void setName(const CIMName& name);
 	/**
 	 * Read this CIMInstance from an input stream.
 	 * @param istrm The input stream to read this object from.

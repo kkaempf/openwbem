@@ -41,6 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
 namespace OpenWBEM
 {
@@ -65,7 +66,7 @@ public:
 	 * Create an CIMQualifierType with a given name.
 	 * @param name	The name for this CIMQualifierType object.
 	 */
-	CIMQualifierType(const String& name);
+	CIMQualifierType(const CIMName& name);
 	/**
 	 * Create an CIMQualifierType with a given name.
 	 * @param name	The name for this CIMQualifierType object as a NULL
@@ -199,7 +200,7 @@ public:
 	 * Set the name of this qualifier type.
 	 * @param name The new name for this qualifier type.
 	 */
-	virtual void setName(const String& name);
+	virtual void setName(const CIMName& name);
 
 	typedef COWIntrusiveReference<QUALTData> CIMQualifierType::*safe_bool;
 	operator safe_bool () const

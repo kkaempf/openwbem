@@ -64,7 +64,7 @@ using std::ostream;
 struct CIMObjectPath::OPData : public COWIntrusiveCountableBase
 {
 	CIMNameSpace m_nameSpace;
-	String m_objectName;
+	CIMName m_objectName;
 	CIMPropertyArray m_keys;
 	OPData* clone() const { return new OPData(*this); }
 };
@@ -92,13 +92,13 @@ CIMObjectPath::CIMObjectPath(const char* oname) :
 	m_pdata->m_objectName = oname;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const String& oname) :
+CIMObjectPath::CIMObjectPath(const CIMName& oname) :
 	CIMBase(), m_pdata(new OPData)
 {
 	m_pdata->m_objectName = oname;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const String& oname,
+CIMObjectPath::CIMObjectPath(const CIMName& oname,
 	const String& nspace) :
 	CIMBase(), m_pdata(new OPData)
 {
@@ -106,7 +106,7 @@ CIMObjectPath::CIMObjectPath(const String& oname,
 	m_pdata->m_nameSpace.setNameSpace(nspace);
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMObjectPath::CIMObjectPath(const String& className,
+CIMObjectPath::CIMObjectPath(const CIMName& className,
 	const CIMPropertyArray& keys) :
 	CIMBase(), m_pdata(new OPData)
 {
@@ -148,7 +148,7 @@ CIMObjectPath::operator= (const CIMObjectPath& x)
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
-CIMObjectPath::addKey(const String& keyname, const CIMValue& value)
+CIMObjectPath::addKey(const CIMName& keyname, const CIMValue& value)
 {
     if (value)
     {
@@ -177,11 +177,11 @@ CIMObjectPath::getKeys() const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty
-CIMObjectPath::getKey(const String& keyName) const
+CIMObjectPath::getKey(const CIMName& keyName) const
 {
 	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
 	{
-		if (m_pdata->m_keys[i].getName().equalsIgnoreCase(keyName))
+		if (m_pdata->m_keys[i].getName() == keyName)
 		{
 			return m_pdata->m_keys[i];
 		}
@@ -190,18 +190,18 @@ CIMObjectPath::getKey(const String& keyName) const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty
-CIMObjectPath::getKeyT(const String& keyName) const
+CIMObjectPath::getKeyT(const CIMName& keyName) const
 {
 	CIMProperty p = getKey(keyName);
 	if (!p)
 	{
-		OW_THROW(NoSuchPropertyException, keyName.c_str());
+		OW_THROW(NoSuchPropertyException, keyName.toString().c_str());
 	}
 	return p;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
-CIMObjectPath::getKeyValue(const String& name) const
+CIMObjectPath::getKeyValue(const CIMName& name) const
 {
 	CIMProperty p = this->getKey(name);
 	if (p)
@@ -212,7 +212,7 @@ CIMObjectPath::getKeyValue(const String& name) const
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-CIMObjectPath::keyHasValue(const String& name) const
+CIMObjectPath::keyHasValue(const CIMName& name) const
 {
 	CIMProperty p = this->getKey(name);
 	if (p)
@@ -250,12 +250,12 @@ CIMObjectPath::setKeys(const CIMInstance& instance)
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath& 
-CIMObjectPath::setKeyValue(const String& name, const CIMValue& value)
+CIMObjectPath::setKeyValue(const CIMName& name, const CIMValue& value)
 {
 	OW_ASSERT(value);
 	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
 	{
-		if (m_pdata->m_keys[i].getName().equalsIgnoreCase(name))
+		if (m_pdata->m_keys[i].getName() == name)
 		{
 			m_pdata->m_keys[i].setValue(value);
 			return *this;
@@ -281,13 +281,13 @@ CIMObjectPath::getHost() const
 String
 CIMObjectPath::getObjectName() const
 {
-	return m_pdata->m_objectName;
+	return getClassName();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
 CIMObjectPath::getClassName() const
 {
-	return m_pdata->m_objectName;
+	return m_pdata->m_objectName.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
@@ -305,14 +305,13 @@ CIMObjectPath::setNameSpace(const String& ns)
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
-CIMObjectPath::setObjectName(const String& className)
+CIMObjectPath::setObjectName(const CIMName& className)
 {
-	m_pdata->m_objectName = className;
-	return *this;
+	return setClassName(className);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath&
-CIMObjectPath::setClassName(const String& className)
+CIMObjectPath::setClassName(const CIMName& className)
 {
 	m_pdata->m_objectName = className;
 	return *this;
@@ -330,7 +329,7 @@ CIMObjectPath::equals(const CIMObjectPath& cop) const
 	{
 		return false;
 	}
-	if (!m_pdata->m_objectName.equalsIgnoreCase(cop.m_pdata->m_objectName))
+	if (m_pdata->m_objectName != cop.m_pdata->m_objectName)
 	{
 		return false;
 	}
@@ -375,7 +374,7 @@ CIMObjectPath::getFullNameSpace() const
 String
 CIMObjectPath::modelPath() const
 {
-	StringBuffer rv(m_pdata->m_objectName);
+	StringBuffer rv(m_pdata->m_objectName.toString());
 	if (m_pdata->m_keys.size() > 0)
 	{
 		for (size_t i = 0; i < m_pdata->m_keys.size(); i++)
@@ -446,7 +445,7 @@ void
 CIMObjectPath::readObject(istream& istrm)
 {
 	CIMNameSpace nameSpace(CIMNULL);
-	String objectName;
+	CIMName objectName;
 	CIMPropertyArray keys;
 	CIMBase::readSig( istrm, OW_CIMOBJECTPATHSIG );
 	nameSpace.readObject(istrm);
@@ -524,7 +523,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 		nameSpace = instanceName.substring(0, ndx);
 		instanceName.erase(0, ndx+1);
 	}
-	String className;
+	CIMName className;
 	ndx = instanceName.indexOf('.');
 	if (ndx == String::npos)
 	{
@@ -617,7 +616,7 @@ CIMObjectPath::parse(const String& instanceNameArg)
 				OW_THROWCIMMSG(CIMException::NOT_FOUND,
 					Format("Bad key in string (%1)", instanceName).c_str());
 			}
-			String keyprop = String(&values[keystart], equalspos-keystart-1);
+			CIMName keyprop = String(&values[keystart], equalspos-keystart-1);
 			//
 			// Generally there will be quotes but for integer values
 			// they are not strictly necessary so check for them
@@ -726,7 +725,6 @@ CIMObjectPath::unEscape(const String& inString)
 bool operator<(const CIMObjectPath& lhs, const CIMObjectPath& rhs)
 {
 	return *lhs.m_pdata < *rhs.m_pdata;
-	//return lhs.toString() < rhs.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 bool CIMObjectPath::isClassPath() const
@@ -746,7 +744,7 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 	{
 		return *this;
 	}
-	String propName;
+	CIMName propName;
 	CIMPropertyArray classProps = theClass.getKeys();
 	CIMPropertyArray copProps = getKeys();
 	// Remove properties that are not defined in the class
@@ -772,7 +770,7 @@ CIMObjectPath::syncWithClass(const CIMClass& theClass)
 		for (size_t j = 0; j < copProps.size(); j++)
 		{
 			CIMProperty iprop = copProps[j];
-			if (iprop.getName().equalsIgnoreCase(propName))
+			if (iprop.getName() == propName)
 			{
 				CIMValue cv = iprop.getValue();
 				iprop = cprop;

@@ -40,6 +40,7 @@
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
 namespace OpenWBEM
 {
@@ -64,7 +65,7 @@ public:
 	 * Create an CIMParameter object with a given name.
 	 * @param name	The name for this parameter.
 	 */
-	explicit CIMParameter(const String& name);
+	explicit CIMParameter(const CIMName& name);
 	/**
 	 * Create an CIMParameter object with a given name.
 	 * @param name	The name for this parameter as a NULL terminated string.
@@ -132,7 +133,7 @@ public:
 	 * @return The CIMQualifier associated with the given name if there is
 	 * one. Otherwise a NULL CIMQualifier.
 	 */
-	CIMQualifier getQualifier(const String& name) const;
+	CIMQualifier getQualifier(const CIMName& name) const;
 	/**
 	 * @return The name of this CIMParameter.
 	 */
@@ -141,7 +142,7 @@ public:
 	 * Set the name of this CIMParameter.
 	 * @param name	The new name for this CIMParameter.
 	 */
-	virtual void setName(const String& name);
+	virtual void setName(const CIMName& name);
 	/**
 	 * Write this object to the given output stream.
 	 * @param ostrm The output stream to write this CIMElement to.
@@ -168,7 +169,7 @@ public:
 	 * @param name	The name of the qualifier to test.
 	 * @return true if the qualifier exists and has a value of true.
 	 */
-	bool hasTrueQualifier(const String& name) const;
+	bool hasTrueQualifier(const CIMName& name) const;
 private:
 
 #ifdef OW_WIN32

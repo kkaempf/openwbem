@@ -55,7 +55,7 @@ using namespace WBEMFlags;
 struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 {
 	PROPData();
-	String m_name;
+	CIMName m_name;
 	CIMQualifierArray m_qualifiers;
 	//
 	// Note that we can't rely on the cimValue's datatype
@@ -69,8 +69,8 @@ struct CIMProperty::PROPData : public COWIntrusiveCountableBase
 	// was declared as
 	//
 	Int32 m_sizeDataType;
-	String m_override;
-	String m_originClass;
+	CIMName m_override;
+	CIMName m_originClass;
 	CIMValue m_cimValue;
 	// propagated means inherited without change
 	Bool m_propagated;
@@ -103,7 +103,7 @@ CIMProperty::CIMProperty(CIMNULL_t) :
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const String& name) :
+CIMProperty::CIMProperty(const CIMName& name) :
 	CIMElement(), m_pdata(new PROPData)
 {
 	m_pdata->m_name = name;
@@ -115,7 +115,7 @@ CIMProperty::CIMProperty(const char* name) :
 	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const String& name,
+CIMProperty::CIMProperty(const CIMName& name,
 	const CIMValue& value) :
 	CIMElement(), m_pdata(new PROPData)
 {
@@ -124,7 +124,7 @@ CIMProperty::CIMProperty(const String& name,
 	m_pdata->m_propertyDataType = value.getCIMDataType();
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty::CIMProperty(const String& name,
+CIMProperty::CIMProperty(const CIMName& name,
 	const CIMDataType& dt) :
 	CIMElement(), m_pdata(new PROPData)
 {
@@ -192,11 +192,11 @@ CIMProperty::setQualifiers(const CIMQualifierArray& quals)
 String
 CIMProperty::getOriginClass() const
 {
-	return m_pdata->m_originClass;
+	return m_pdata->m_originClass.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
-CIMProperty::setOriginClass(const String& originCls)
+CIMProperty::setOriginClass(const CIMName& originCls)
 {
 	m_pdata->m_originClass = originCls;
 	return *this;
@@ -227,7 +227,7 @@ CIMProperty::getValueT() const
 {
 	if (!m_pdata->m_cimValue)
 	{
-		OW_THROW(NULLValueException, m_pdata->m_name.c_str());
+		OW_THROW(NULLValueException, m_pdata->m_name.toString().c_str());
 	}
 	return m_pdata->m_cimValue;
 }
@@ -275,7 +275,7 @@ CIMProperty::setDataSize(Int32 size)
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty&
-CIMProperty::setOverridingProperty(const String& opname)
+CIMProperty::setOverridingProperty(const CIMName& opname)
 {
 	m_pdata->m_override = opname;
 	return *this;
@@ -284,7 +284,7 @@ CIMProperty::setOverridingProperty(const String& opname)
 String
 CIMProperty::getOverridingProperty() const
 {
-	return m_pdata->m_override;
+	return m_pdata->m_override.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -294,13 +294,13 @@ CIMProperty::isReference() const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier
-CIMProperty::getQualifier(const String& name) const
+CIMProperty::getQualifier(const CIMName& name) const
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
 	for (size_t i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName().equalsIgnoreCase(name))
+		if (nq.getName() == name)
 		{
 			return nq;
 		}
@@ -309,12 +309,12 @@ CIMProperty::getQualifier(const String& name) const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier
-CIMProperty::getQualifierT(const String& name) const
+CIMProperty::getQualifierT(const CIMName& name) const
 {
 	CIMQualifier rval = getQualifier(name);
 	if (!rval)
 	{
-		OW_THROW(NoSuchQualifierException, name.c_str());
+		OW_THROW(NoSuchQualifierException, name.toString().c_str());
 	}
 	return rval;
 }
@@ -324,10 +324,10 @@ CIMProperty::setQualifier(const CIMQualifier& qual)
 {
 	if (qual)
 	{
-		String qualName = qual.getName();
+		CIMName qualName = qual.getName();
 		for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
-			if (m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
+			if (m_pdata->m_qualifiers[i].getName() == qualName)
 			{
 				m_pdata->m_qualifiers[i] = qual;
 				return *this;
@@ -358,13 +358,13 @@ CIMProperty::addQualifier(const CIMQualifier& qual)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-CIMProperty::removeQualifier(const String& name)
+CIMProperty::removeQualifier(const CIMName& name)
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
 	for (size_t i = 0; i < tsize; i++)
 	{
 		CIMQualifier nq = m_pdata->m_qualifiers[i];
-		if (nq.getName().equalsIgnoreCase(name))
+		if (nq.getName() == name)
 		{
 			m_pdata->m_qualifiers.remove(i);
 			return true;
@@ -427,11 +427,11 @@ CIMProperty::getPropagated() const
 String
 CIMProperty::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMProperty::setName(const String& name)
+CIMProperty::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 }
@@ -493,9 +493,9 @@ CIMProperty::writeObject(ostream &ostrm, EIncludeQualifiersFlag includeQualifier
 void
 CIMProperty::readObject(istream &istrm)
 {
-	String name;
-	String override;
-	String originClass;
+	CIMName name;
+	CIMName override;
+	CIMName originClass;
 	CIMValue cimValue(CIMNULL);
 	CIMDataType propertyDataType(CIMNULL);
 	UInt32 sizeDataType;
@@ -533,7 +533,7 @@ String
 CIMProperty::toString() const
 {
 	StringBuffer rv = m_pdata->m_propertyDataType.toString() + ":"
-		+ m_pdata->m_name + "=";
+		+ m_pdata->m_name.toString() + "=";
 	if (m_pdata->m_cimValue)
 	{
 		rv += m_pdata->m_cimValue.toString();
@@ -567,7 +567,7 @@ CIMProperty::toMOF() const
 	rv += "  ";
 	rv += m_pdata->m_propertyDataType.toMOF();
 	rv += ' ';
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	// If it is an array, show it.
 	rv += m_pdata->m_propertyDataType.getArrayMOF();
 	if (m_pdata->m_cimValue)
@@ -587,7 +587,7 @@ bool operator<(const CIMProperty& x, const CIMProperty& y)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool 
-CIMProperty::hasTrueQualifier(const String& name) const
+CIMProperty::hasTrueQualifier(const CIMName& name) const
 {
 	CIMQualifier q = getQualifier(name);
 	if (!q)

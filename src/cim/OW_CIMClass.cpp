@@ -44,6 +44,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMName.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_StrictWeakOrdering.hpp"
 #include "OW_COWIntrusiveCountableBase.hpp"
@@ -62,8 +63,8 @@ struct CIMClass::CLSData : public COWIntrusiveCountableBase
 {
 	CLSData() :
 		m_associationFlag(false), m_isKeyed(false){  }
-	String m_name;
-	String m_parentClassName;
+	CIMName m_name;
+	CIMName m_parentClassName;
 	CIMQualifierArray m_qualifiers;
 	CIMPropertyArray m_properties;
 	CIMMethodArray m_methods;
@@ -106,14 +107,14 @@ CIMClass::CIMClass(const char* name) :
 	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMClass::CIMClass(const String& name) :
+CIMClass::CIMClass(const CIMName& name) :
 	m_pdata(new CLSData)
 {
 	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMClass::setName(const String& name)
+CIMClass::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 }
@@ -121,11 +122,11 @@ CIMClass::setName(const String& name)
 String
 CIMClass::getSuperClass() const
 {
-	return m_pdata->m_parentClassName;
+	return m_pdata->m_parentClassName.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass&
-CIMClass::setSuperClass(const String& pname)
+CIMClass::setSuperClass(const CIMName& pname)
 {
 	m_pdata->m_parentClassName = pname;
 	return *this;
@@ -160,12 +161,12 @@ CIMClass::getKeys() const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier
-CIMClass::getQualifier(const String& name) const
+CIMClass::getQualifier(const CIMName& name) const
 {
 	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
 		CIMQualifier q = m_pdata->m_qualifiers[i];
-		if (q.getName().equalsIgnoreCase(name))
+		if (q.getName() == name)
 		{
 			return q;
 		}
@@ -174,23 +175,25 @@ CIMClass::getQualifier(const String& name) const
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMProperty
-CIMClass::getProperty(const String& prpName) const
+CIMClass::getProperty(const CIMName& prpName) const
 {
-	String oClass;
-	String propName(prpName);
+	return getProperty(prpName, "");
+}
+//////////////////////////////////////////////////////////////////////////////
+CIMProperty
+CIMClass::getProperty(const CIMName& name,
+	const CIMName& originClass) const
+{
 	//
 	// See if property name is in the form originClass.propName
 	// and if it is, work to find real origin class
 	//
-	oClass = splitName1(propName);
-	if (!oClass.empty())
+	if (originClass != "")
 	{
-		propName = splitName2(propName);
 		for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
 			CIMProperty cp = m_pdata->m_properties[i];
-			if (!cp.getOriginClass().equalsIgnoreCase(oClass)
-				&& cp.getName().equalsIgnoreCase(propName))
+			if (cp.getOriginClass() == originClass && cp.getName() == name)
 			{
 				return cp;
 			}
@@ -201,7 +204,7 @@ CIMClass::getProperty(const String& prpName) const
 		for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 		{
 			CIMProperty cp = m_pdata->m_properties[i];
-			if (cp.getName().equalsIgnoreCase(propName))
+			if (cp.getName() == name)
 			{
 				return(cp);
 			}
@@ -210,32 +213,29 @@ CIMClass::getProperty(const String& prpName) const
 	return CIMProperty(CIMNULL);
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMProperty
-CIMClass::getProperty(const String& name,
-	const String& originClass) const
+CIMMethod
+CIMClass::getMethod(const CIMName& name) const
 {
-	return getProperty(originClass + "." + name);
+	return getMethod(name, "");
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMMethod
-CIMClass::getMethod(const String& name) const
+CIMClass::getMethod(const CIMName& name,
+	const CIMName& originClass) const
 {
-	String oClass;
 	//
 	// See if method name is in the form originClass.propName
 	// and if it is, work to find real origin class
 	//
-	oClass = splitName1(name);
-	if (!oClass.empty())
+	if (originClass != "")
 	{
 		int tsize = m_pdata->m_methods.size();
 		for (int i = 0; i < tsize; i++)
 		{
 			CIMMethod q = m_pdata->m_methods[i];
-			if (!q.getOriginClass().equalsIgnoreCase(oClass)
-				&& (q.getName().equalsIgnoreCase(name)))
+			if (q.getOriginClass() == originClass && (q.getName() == name))
 			{
-				return(q);
+				return q;
 			}
 		}
 	}
@@ -245,20 +245,13 @@ CIMClass::getMethod(const String& name) const
 		for (int i = 0; i < tsize; i++)
 		{
 			CIMMethod q = m_pdata->m_methods[i];
-			if (q.getName().equalsIgnoreCase(name))
+			if (q.getName() == name)
 			{
-				return(q);
+				return q;
 			}
 		}
 	}
 	return CIMMethod(CIMNULL);
-}
-//////////////////////////////////////////////////////////////////////////////
-CIMMethod
-CIMClass::getMethod(const String& name,
-	const String& originClass) const
-{
-	return getMethod(originClass + "." + name);
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -367,10 +360,10 @@ CIMClass::setProperties(const CIMPropertyArray& props)
 CIMClass&
 CIMClass::setProperty(const CIMProperty& prop)
 {
-	String argName = prop.getName();
+	CIMName argName = prop.getName();
 	for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
-		if (argName.equalsIgnoreCase(m_pdata->m_properties[i].getName()))
+		if (argName == m_pdata->m_properties[i].getName())
 		{
 			m_pdata->m_properties[i] = prop;
 			return *this;
@@ -383,10 +376,10 @@ CIMClass::setProperty(const CIMProperty& prop)
 CIMClass&
 CIMClass::setMethod(const CIMMethod& meth)
 {
-	String argName = meth.getName();
+	CIMName argName = meth.getName();
 	for (size_t i = 0; i < m_pdata->m_methods.size(); i++)
 	{
-		if (argName.equalsIgnoreCase(m_pdata->m_methods[i].getName()))
+		if (argName == m_pdata->m_methods[i].getName())
 		{
 			m_pdata->m_methods[i] = meth;
 			return *this;
@@ -475,13 +468,13 @@ CIMClass::removeQualifier(const CIMQualifier& qual)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-CIMClass::removeQualifier(const String& name)
+CIMClass::removeQualifier(const CIMName& name)
 {
 	bool cc = false;
 	for (size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
 		CIMQualifier cq = m_pdata->m_qualifiers[i];
-		if (cq.getName().equalsIgnoreCase(name))
+		if (cq.getName() == name)
 		{
 			m_pdata->m_qualifiers.remove(i);
 			cc = true;
@@ -492,13 +485,13 @@ CIMClass::removeQualifier(const String& name)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-CIMClass::removeProperty(const String& name)
+CIMClass::removeProperty(const CIMName& name)
 {
 	bool cc = false;
 	for (size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
 		CIMProperty prop = m_pdata->m_properties[i];
-		if (prop.getName().equalsIgnoreCase(name))
+		if (prop.getName() == name)
 		{
 			m_pdata->m_properties.remove(i);
 			cc = true;
@@ -619,10 +612,10 @@ CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifie
 			// property name is in the property list before including it
 			if (propertyList.size() > 0)
 			{
-				String pName = prop.getName();
+				CIMName pName = prop.getName();
 				for (size_t j = 0; j < propertyList.size(); j++)
 				{
-					if (pName.equalsIgnoreCase(propertyList[j]))
+					if (pName == propertyList[j])
 					{
 						pra.append(prop.clone(includeQualifiers,
 							includeClassOrigin));
@@ -656,8 +649,8 @@ CIMClass::clone(ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifie
 void
 CIMClass::readObject(istream &istrm)
 {
-	String name;
-	String pcName;
+	CIMName name;
+	CIMName pcName;
 	CIMQualifierArray qra;
 	CIMPropertyArray pra;
 	CIMMethodArray mra;
@@ -766,10 +759,10 @@ CIMClass::toMOF() const
 	}
 	rv += "class ";
 	rv += getName();
-	if (!m_pdata->m_parentClassName.empty())
+	if (m_pdata->m_parentClassName != "")
 	{
 		rv += ':';
-		rv += m_pdata->m_parentClassName;
+		rv += m_pdata->m_parentClassName.toString();
 	}
 	rv += "\n{\n";
 	for (i = 0; i < m_pdata->m_properties.size(); i++)
@@ -788,22 +781,6 @@ String
 CIMClass::toString() const
 {
 	return toMOF();
-}
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-String
-CIMClass::splitName1(const String& inName)
-{
-	size_t i = inName.indexOf('.');
-	return (i != String::npos) ? inName.substring(0, i) : String();
-}
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-String
-CIMClass::splitName2(const String& inName)
-{
-	size_t i = inName.indexOf('.');
-	return (i != String::npos) ? inName.substring(i+1) : inName;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass::~CIMClass()
@@ -831,18 +808,44 @@ CIMClass::setNull()
 String
 CIMClass::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMClass& x, const CIMClass& y)
 {
 	return *x.m_pdata < *y.m_pdata;
 }
+
 //////////////////////////////////////////////////////////////////////////////
 bool operator==(const CIMClass& x, const CIMClass& y)
 {
 	return *x.m_pdata == *y.m_pdata;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<=(const CIMClass& x, const CIMClass& y)
+{
+    return !(y < x);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator>(const CIMClass& x, const CIMClass& y)
+{
+    return y < x;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator>=(const CIMClass& x, const CIMClass& y)
+{
+    return !(x < y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator!=(const CIMClass& x, const CIMClass& y)
+{
+	return !(x == y);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 const char* const CIMClass::NAMESPACECLASS = "__Namespace";
 //////////////////////////////////////////////////////////////////////////////
@@ -861,14 +864,14 @@ CIMClass::getCloneProps(ELocalOnlyFlag localOnly, EDeepFlag deep,
 	if (deep != E_DEEP || localOnly != E_NOT_LOCAL_ONLY)
 	{
 		CIMPropertyArray props = this->getAllProperties();
-		String requestedClassName = requestedClass.getName();
+		CIMName requestedClassName = requestedClass.getName();
 		for (size_t i = 0; i < props.size(); ++i)
 		{
 			CIMProperty p = props[i];
 			CIMProperty clsp = requestedClass.getProperty(p.getName());
 			if (clsp)
 			{
-				if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
+				if (clsp.getOriginClass() == requestedClassName)
 				{
 					rv.push_back(p.getName());
 					continue;
@@ -876,8 +879,7 @@ CIMClass::getCloneProps(ELocalOnlyFlag localOnly, EDeepFlag deep,
 			}
 			if (deep == E_DEEP)
 			{
-				if (!clsp
-					|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
+				if (!clsp || p.getOriginClass() != clsp.getOriginClass())
 				{
 					// the property is from a derived class
 					rv.push_back(p.getName());
@@ -919,10 +921,10 @@ CIMClass::getCloneProps(ELocalOnlyFlag localOnly,
 		//
 		if (propertyList)
 		{
-			String pName = prop.getName();
+			CIMName pName = prop.getName();
 			for (size_t j = 0; j < propertyList->size(); j++)
 			{
-				if (pName.equalsIgnoreCase((*propertyList)[j]))
+				if (pName == (*propertyList)[j])
 				{
 					props.push_back(prop.getName());
 					break;

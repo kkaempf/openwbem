@@ -50,7 +50,7 @@ struct CIMParamValue::Data : public COWIntrusiveCountableBase
 	Data()
 		: m_val(CIMNULL)
 	{}
-	String m_name;
+	CIMName m_name;
 	CIMValue m_val;
 	Data* clone() const { return new Data(*this); }
 };
@@ -72,13 +72,13 @@ CIMParamValue::CIMParamValue(CIMNULL_t) :
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMParamValue::CIMParamValue(const String& name) :
+CIMParamValue::CIMParamValue(const CIMName& name) :
 	m_pdata(new Data)
 {
 	m_pdata->m_name = name;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMParamValue::CIMParamValue(const String& name, const CIMValue& val) :
+CIMParamValue::CIMParamValue(const CIMName& name, const CIMValue& val) :
 	m_pdata(new Data)
 {
 	m_pdata->m_name = name;
@@ -104,11 +104,11 @@ CIMParamValue::operator= (const CIMParamValue& x)
 String
 CIMParamValue::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMParamValue&
-CIMParamValue::setName(const String& name)
+CIMParamValue::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 	return *this;
@@ -152,7 +152,7 @@ CIMParamValue::writeObject(ostream &ostrm) const
 void
 CIMParamValue::readObject(istream &istrm)
 {
-	String name;
+	CIMName name;
 	CIMValue val(CIMNULL);
 	CIMBase::readSig( istrm, OW_CIMPARAMVALUESIG );
 	name.readObject(istrm);
@@ -169,7 +169,7 @@ CIMParamValue::readObject(istream &istrm)
 String
 CIMParamValue::toString() const
 {
-	return "CIMParamValue(" + m_pdata->m_name + "): " + m_pdata->m_val.toString();
+	return "CIMParamValue(" + m_pdata->m_name.toString() + "): " + m_pdata->m_val.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 String

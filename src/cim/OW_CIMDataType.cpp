@@ -55,7 +55,7 @@ struct CIMDataType::DTData : public COWIntrusiveCountableBase
 	CIMDataType::Type m_type;
 	Int32 m_numberOfElements;
 	Int32 m_sizeRange;
-	String m_reference;
+	CIMName m_reference;
 	DTData* clone() const { return new DTData(*this); }
 };
 //////////////////////////////////////////////////////////////////////////////
@@ -66,6 +66,15 @@ bool operator<(const CIMDataType::DTData& x, const CIMDataType::DTData& y)
 		x.m_numberOfElements, y.m_numberOfElements,
 		x.m_sizeRange, y.m_sizeRange,
 		x.m_reference, y.m_reference);
+}
+//////////////////////////////////////////////////////////////////////////////
+bool operator ==(const CIMDataType::DTData& x, const CIMDataType::DTData& y)
+{
+	return 
+		x.m_type == y.m_type &&
+		x.m_numberOfElements == y.m_numberOfElements &&
+		x.m_sizeRange == y.m_sizeRange &&
+		x.m_reference == y.m_reference;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDataType::CIMDataType() :
@@ -175,7 +184,7 @@ CIMDataType::getSize() const
 String
 CIMDataType::getRefClassName() const
 {
-	return m_pdata->m_reference;
+	return m_pdata->m_reference.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMDataType::operator CIMDataType::safe_bool () const
@@ -244,7 +253,7 @@ CIMDataType::syncWithValue(const CIMValue& value)
 	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMDataType::CIMDataType(const String& refClassName) :
+CIMDataType::CIMDataType(const CIMName& refClassName) :
 	CIMBase(), m_pdata(new DTData)
 {
 	m_pdata->m_type = REFERENCE;
@@ -266,7 +275,7 @@ CIMDataType::readObject(istream &istrm)
 	UInt32 type;
 	UInt32 numberOfElements;
 	UInt32 sizeRange;
-	String ref;
+	CIMName ref;
 	CIMBase::readSig( istrm, OW_CIMDATATYPESIG );
 	BinarySerialization::readLen(istrm, type);
 	BinarySerialization::readLen(istrm, numberOfElements);
@@ -372,7 +381,7 @@ CIMDataType::toMOF() const
 {
 	if (m_pdata->m_type == REFERENCE)
 	{
-		return m_pdata->m_reference + " REF";
+		return m_pdata->m_reference.toString() + " REF";
 	}
 	else
 	{
@@ -876,9 +885,41 @@ CIMDataType::getDataType(const String& strType)
 	}
 	return CIMDataType(CIMNULL);
 }
+
+//////////////////////////////////////////////////////////////////////////////
 bool operator<(const CIMDataType& x, const CIMDataType& y)
 {
 	return *x.m_pdata < *y.m_pdata;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator==(const CIMDataType& x, const CIMDataType& y)
+{
+	return *x.m_pdata == *y.m_pdata;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator<=(const CIMDataType& x, const CIMDataType& y)
+{
+    return !(y < x);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator>(const CIMDataType& x, const CIMDataType& y)
+{
+    return y < x;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator>=(const CIMDataType& x, const CIMDataType& y)
+{
+    return !(x < y);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool operator!=(const CIMDataType& x, const CIMDataType& y)
+{
+	return !(x == y);
 }
 
 } // end namespace OpenWBEM

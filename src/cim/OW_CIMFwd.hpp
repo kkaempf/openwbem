@@ -33,8 +33,8 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_CIM_FWD_HPP_
-#define OW_CIM_FWD_HPP_
+#ifndef OW_CIM_FWD_HPP_INCLUDE_GUARD
+#define OW_CIM_FWD_HPP_INCLUDE_GUARD
 #include "OW_config.h"
 #include "OW_ArrayFwd.hpp"
 
@@ -60,15 +60,18 @@ class CIMParameter;
 class CIMParamValue;
 class CIMInstance;
 class CIMValue;
+class CIMName;
 class String;
 class Char16;
 struct CIMFeatures;
+
 template <class T>
 class Enumeration;
 typedef Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
 typedef Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
 typedef Enumeration<CIMClass> CIMClassEnumeration;
 typedef Enumeration<CIMInstance> CIMInstanceEnumeration;
+
 typedef Array<CIMDateTime> 		CIMDateTimeArray;
 typedef Array<CIMBase> 				CIMBaseArray;
 typedef Array<CIMDataType> 		CIMDataTypeArray;

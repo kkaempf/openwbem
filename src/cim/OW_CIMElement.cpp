@@ -35,6 +35,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMElement.hpp"
+#include "OW_String.hpp"
 
 namespace OpenWBEM
 {

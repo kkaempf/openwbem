@@ -58,7 +58,7 @@ struct CIMQualifierType::QUALTData : public COWIntrusiveCountableBase
 	QUALTData()
 		: m_defaultValue(CIMNULL)
 	{}
-	String m_name;
+	CIMName m_name;
 	CIMDataType m_dataType;
 	CIMScopeArray m_scope;
 	CIMFlavorArray m_flavor;
@@ -93,7 +93,7 @@ CIMQualifierType::CIMQualifierType(CIMNULL_t) :
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMQualifierType::CIMQualifierType(const String& name) :
+CIMQualifierType::CIMQualifierType(const CIMName& name) :
 	CIMElement(), m_pdata(new QUALTData)
 {
 	m_pdata->m_name = name;
@@ -309,11 +309,11 @@ CIMQualifierType::isDefaultValueArray() const
 String
 CIMQualifierType::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMQualifierType::setName(const String& name)
+CIMQualifierType::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 }
@@ -340,7 +340,7 @@ CIMQualifierType::writeObject(ostream &ostrm) const
 void
 CIMQualifierType::readObject(istream &istrm)
 {
-	String name;
+	CIMName name;
 	CIMDataType dataType(CIMNULL);
 	CIMScopeArray scope;
 	CIMFlavorArray flavor;
@@ -379,7 +379,7 @@ CIMQualifierType::toMOF() const
 	size_t i;
 	StringBuffer rv;
 	rv = "Qualifier ";
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	rv += " : ";
 	rv += m_pdata->m_dataType.toMOF();
 	if (m_pdata->m_dataType.isArrayType())

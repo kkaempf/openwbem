@@ -39,6 +39,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 #include <iosfwd>
 
 namespace OpenWBEM
@@ -61,12 +62,12 @@ public:
 	 * @param name		The name of the parameter.
 	 * @param val		The value of the parameter.
 	 */
-	CIMParamValue(const String& name, const CIMValue& val);
+	CIMParamValue(const CIMName& name, const CIMValue& val);
 	/**
 	 * Create a new CIMParamValue object.  The value portion will be null.
 	 * @param name		The name of the parameter.
 	 */
-	explicit CIMParamValue(const String& name);
+	explicit CIMParamValue(const CIMName& name);
 	/**
 	 * Copy constructor
 	 * @param arg	The CIMParamValue to make a copy of
@@ -84,7 +85,7 @@ public:
 	 */
 	CIMParamValue& operator = (const CIMParamValue& arg);
 	String getName() const;
-	CIMParamValue& setName(const String& name);
+	CIMParamValue& setName(const CIMName& name);
 	CIMValue getValue() const;
 	CIMParamValue& setValue(const CIMValue& val);
 

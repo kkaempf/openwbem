@@ -57,7 +57,7 @@ struct CIMQualifier::QUALData : public COWIntrusiveCountableBase
 		: m_qualifierValue(CIMNULL)
 		, m_propagated(false) 
 	{}
-	String m_name;
+	CIMName m_name;
 	CIMValue m_qualifierValue;
 	CIMQualifierType m_qualifierType;
 	Bool m_propagated;
@@ -87,7 +87,7 @@ CIMQualifier::CIMQualifier(CIMNULL_t) :
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-CIMQualifier::CIMQualifier(const String& name) :
+CIMQualifier::CIMQualifier(const CIMName& name) :
 	CIMElement(), m_pdata(new QUALData)
 {
 	m_pdata->m_name = name;
@@ -133,14 +133,13 @@ CIMQualifier::operator= (const CIMQualifier& x)
 bool
 CIMQualifier::isKeyQualifier() const
 {
-	return m_pdata->m_name.equalsIgnoreCase(CIMQualifier::CIM_QUAL_KEY);
+	return m_pdata->m_name == CIMQualifier::CIM_QUAL_KEY;
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
 CIMQualifier::isAssociationQualifier() const
 {
-	return m_pdata->m_name.equalsIgnoreCase(
-		CIMQualifier::CIM_QUAL_ASSOCIATION);
+	return m_pdata->m_name == CIMQualifier::CIM_QUAL_ASSOCIATION;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMValue
@@ -260,7 +259,7 @@ CIMQualifier::hasValue() const
 bool
 CIMQualifier::equals(const CIMQualifier& arg) const
 {
-	return m_pdata->m_name.equals(arg.getName());
+	return m_pdata->m_name == arg.getName();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMFlavorArray
@@ -299,11 +298,11 @@ CIMQualifier::getLanguage() const
 String
 CIMQualifier::getName() const
 {
-	return m_pdata->m_name;
+	return m_pdata->m_name.toString();
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-CIMQualifier::setName(const String& name)
+CIMQualifier::setName(const CIMName& name)
 {
 	m_pdata->m_name = name;
 }
@@ -311,7 +310,7 @@ CIMQualifier::setName(const String& name)
 void
 CIMQualifier::readObject(istream &istrm)
 {
-	String name;
+	CIMName name;
 	CIMValue qualifierValue(CIMNULL);
 	CIMQualifierType qualifierType(CIMNULL);
 	Bool propagated;
@@ -379,7 +378,7 @@ String
 CIMQualifier::toMOF() const
 {
 	StringBuffer rv;
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	
 	if (!m_pdata->m_language.empty())
 	{
@@ -401,7 +400,7 @@ String
 CIMQualifier::toString() const
 {
 	StringBuffer rv("CIMQualifier(");
-	rv += m_pdata->m_name;
+	rv += m_pdata->m_name.toString();
 	if (!m_pdata->m_language.empty())
 	{
 		rv += '_';

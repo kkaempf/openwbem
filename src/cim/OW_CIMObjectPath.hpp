@@ -40,6 +40,7 @@
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
 namespace OpenWBEM
 {
@@ -80,7 +81,7 @@ public:
 	 * Create an CIMObjectPath to access the specified object
 	 * @param className The name of the CIM class this object path is for.
 	 */
-	explicit CIMObjectPath(const String& className);
+	explicit CIMObjectPath(const CIMName& className);
 	/**
 	 * Create an CIMObjectPath to access the specified object
 	 * @param className The name of the CIM class this object path is for as a
@@ -94,14 +95,14 @@ public:
 	 * @param nspace The string representation of the name space
 	 *		(e.g. "root/cimv2")
 	 */
-	CIMObjectPath(const String& className, const String& nspace);
+	CIMObjectPath(const CIMName& className, const String& nspace);
 	/**
 	 * Create an CIMObjectPath for an instance.
 	 * @param className	The name of the class for the instance
 	 * @param keys			An CIMPropertyArray that contains the keys for
 	 *							the instance.
 	 */
-	CIMObjectPath(const String& className,
+	CIMObjectPath(const CIMName& className,
 		const CIMPropertyArray& keys);
 	/**
 	 * Create an CIMObjectPath for an instance and namespace.
@@ -134,7 +135,7 @@ public:
 	 * It's just still here for backward compatibility. It's deprecated and will
 	 * be removed in the future.
 	 */
-	CIMObjectPath& addKey(const String& keyname, const CIMValue& value) OW_DEPRECATED; // in 3.0.0
+	CIMObjectPath& addKey(const CIMName& keyname, const CIMValue& value) OW_DEPRECATED; // in 3.0.0
 	/**
 	 * This function is too error prone.  Use setKeyValue() instead.
 	 * It's just still here for backward compatibility. It's deprecated and will
@@ -152,7 +153,7 @@ public:
 	 * @return An CIMProperty corresponding to key.  If there is no key
 	 *  found, a NULL CIMProperty will be returned.
 	 */
-	CIMProperty getKey(const String& keyName) const;
+	CIMProperty getKey(const CIMName& keyName) const;
 	/**
 	 * Get a key from this ObjectPath
 	 * @param key The Name of the key to get
@@ -160,20 +161,20 @@ public:
 	 *  found, an NoSuchPropertyException exception is thrown.
 	 * @throws NoSuchPropertyException if keyName is not a property
 	 */
-	CIMProperty getKeyT(const String& keyName) const;
+	CIMProperty getKeyT(const CIMName& keyName) const;
 	/**
 	 * Gets a key's value.
 	 * @param name The name of the key value to retrieve.
 	 * @return The CIMValue of the specified key.  It will be NULL if the
 	 * key doesn't exist or the key's value is NULL.
 	 */
-	CIMValue getKeyValue(const String& name) const;
+	CIMValue getKeyValue(const CIMName& name) const;
 	/**
 	 * Test whether a key exists and has a non-NULL value.
 	 * @param name The name of the key to test.
 	 * @return bool true if the key exists and has a non-NULL value.
 	 */
-	bool keyHasValue(const String& name) const;
+	bool keyHasValue(const CIMName& name) const;
 	/**
 	 * Set the keys of this object path
 	 * @param newKeys	An CIMPropertyArray that contains the keys for this
@@ -194,7 +195,7 @@ public:
 	 * @param value The value of the key
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setKeyValue(const String& name, const CIMValue& value);
+	CIMObjectPath& setKeyValue(const CIMName& name, const CIMValue& value);
 	/**
 	 * @return The namespace component of the CIMNameSpace for this object path
 	 */
@@ -241,13 +242,13 @@ public:
 	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setObjectName(const String& className) OW_DEPRECATED; // in 3.0.0
+	CIMObjectPath& setObjectName(const CIMName& className) OW_DEPRECATED; // in 3.0.0
 	/**
 	 * Assign a class name to this object path.
 	 * @param className	The name of the class to assign to this object path.
 	 * @return a reference to *this
 	 */
-	CIMObjectPath& setClassName(const String& className);
+	CIMObjectPath& setClassName(const CIMName& className);
 	/**
 	 * Compare this object path with another.
 	 * @param op The object path to compare to this one.

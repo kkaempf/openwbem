@@ -36,18 +36,18 @@
 #ifndef OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 #define OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_CIMFwd.hpp"
 #include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_Types.hpp"
+#include "OW_CIMName.hpp"
 
 #include <iosfwd>
 
 namespace OpenWBEM
 {
 
-class String;
-class CIMValue;
 /**
  * The CIMDataType is used to represent the CIM data type of underlying data
  * in other CIM objects, such as CIMValue objects.
@@ -112,7 +112,7 @@ public:
 	 * Create a new CIMDataType object that represents a REFERENCE data type.
 	 * @param refClassName	The name of the reference class.
 	 */
-	explicit CIMDataType(const String& refClassName);
+	explicit CIMDataType(const CIMName& refClassName);
 	/**
 	 * Copy constructor
 	 * @param arg	The CIMDataType to make a copy of
@@ -246,7 +246,13 @@ private:
 #endif
 
 	friend bool operator<(const CIMDataType& x, const CIMDataType& y);
+	friend bool operator==(const CIMDataType& x, const CIMDataType& y);
 };
+
+bool operator<=(const CIMDataType& x, const CIMDataType& y);
+bool operator>(const CIMDataType& x, const CIMDataType& y);
+bool operator>=(const CIMDataType& x, const CIMDataType& y);
+bool operator!=(const CIMDataType& x, const CIMDataType& y);
 
 } // end namespace OpenWBEM
 

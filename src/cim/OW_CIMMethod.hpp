@@ -41,6 +41,7 @@
 #include "OW_CIMFwd.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
 namespace OpenWBEM
 {
@@ -77,17 +78,12 @@ public:
 	 * Create an CIMMethod with a name
 	 * @param name	The name of this CIMMethod.
 	 */
-	explicit CIMMethod(const String& name);
+	explicit CIMMethod(const CIMName& name);
 	/**
 	 * Create an CIMMethod with a name
 	 * @param name	The name of this CIMMethod as a NULL terminated string.
 	 */
 	explicit CIMMethod(const char* name);
-	/**
-	 * Create an CIMMethod from an XML definition.
-	 * @param node	The XMLNode that contains the definition of this method.
-	 */
-	//CIMMethod(const XMLNode& node);
 	/**
 	 * Copy constructor
 	 * @param arg The CIMMethod this object will be a copy of.
@@ -134,7 +130,7 @@ public:
 	 * @return The CIMQualifier associated with the given name if found.
 	 * Otherwise a NULL CIMQualifier.
 	 */
-	CIMQualifier getQualifier(const String& name) const;
+	CIMQualifier getQualifier(const CIMName& name) const;
 	/**
 	 * Get the origin class for this method.
 	 * @return The name of the origin class.
@@ -145,7 +141,7 @@ public:
 	 * @param originCls	The name of the origin class for this method.
 	 * @return a reference to *this
 	 */
-	CIMMethod& setOriginClass(const String& originCls);
+	CIMMethod& setOriginClass(const CIMName& originCls);
 	
 	/**
 	 * Add a parameter to this CIMMethod.
@@ -197,7 +193,7 @@ public:
 	 * @param omname The name of the overriding method.
 	 * @return a reference to *this
 	 */
-	CIMMethod& setOverridingMethod(const String& omname);
+	CIMMethod& setOverridingMethod(const CIMName& omname);
 	/**
 	 * @return The name of the overriding method.
 	 */
@@ -236,7 +232,7 @@ public:
 	 * Set the name of this method.
 	 * @param name The new name for this method.
 	 */
-	virtual void setName(const String& name);
+	virtual void setName(const CIMName& name);
 	/**
 	 * Read this object from an input stream.
 	 * @param istrm The input stream to read this object from.

@@ -42,6 +42,7 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
 namespace OpenWBEM
 {
@@ -67,7 +68,7 @@ public:
 	 * Create an CIMProperty object with a given name.
 	 * @param name	The name for this CIMProperty object
 	 */
-	explicit CIMProperty(const String& name);
+	explicit CIMProperty(const CIMName& name);
 	/**
 	 * Create an CIMProperty object with a given name.
 	 * @param name	The name for this CIMProperty object as a NULL terminated
@@ -79,13 +80,13 @@ public:
 	 * @param name The name for this CIMProperty object.
 	 * @param value The value of this CIMProperty
 	 */
-	CIMProperty(const String& name, const CIMValue& value);
+	CIMProperty(const CIMName& name, const CIMValue& value);
 	/**
 	 * Create an CIMProperty object with a name and a type.
 	 * @param name The name for this CIMProperty object.
 	 * @param dt The type of this CIMProperty
 	 */
-	CIMProperty(const String& name, const CIMDataType& dt);
+	CIMProperty(const CIMName& name, const CIMDataType& dt);
 	/**
 	 * Copy constructor
 	 * @param arg The CIMProperty to make this object a copy of.
@@ -148,7 +149,7 @@ public:
 	 * @param originCls	The name of the origin class of this property.
 	 * @return a reference to *this
 	 */
-	CIMProperty& setOriginClass(const String& originCls);
+	CIMProperty& setOriginClass(const CIMName& originCls);
 	/**
 	 * Set the value of this property.
 	 * @param val	The CIMValue for this property.
@@ -195,7 +196,7 @@ public:
 	 * @param opname	The name of the overriding property.
 	 * @return a reference to *this
 	 */
-	CIMProperty& setOverridingProperty(const String& opname);
+	CIMProperty& setOverridingProperty(const CIMName& opname);
 	/**
 	 * @return The name of the overriding property.
 	 */
@@ -210,14 +211,14 @@ public:
 	 * @return The CIMQualifier associated with the given name if there is
 	 * one. Otherwise return a NULL CIMQualifier.
 	 */
-	CIMQualifier getQualifier(const String& name) const;
+	CIMQualifier getQualifier(const CIMName& name) const;
 	/**
 	 * Get the qualifier associated with the given name from this property.
 	 * @param name	The name of the qualifier to retrieve.
 	 * @return The CIMQualifier associated with the given name if there is
 	 * one. Otherwise a NoSuchQualifierException is thrown.
 	 */
-	CIMQualifier getQualifierT(const String& name) const;
+	CIMQualifier getQualifierT(const CIMName& name) const;
 	/**
 	 * Set the value of a qaulifier on this property.
 	 * @param qual	An CIMQualifier to use to update the property qualifier.
@@ -235,7 +236,7 @@ public:
 	 * @param qname	The name of the qualifier to remove.
 	 * @return true if the qualifier was found and removed. Otherwise false.
 	 */
-	bool removeQualifier(const String& name);
+	bool removeQualifier(const CIMName& name);
 	/**
 	 * @return true if this property has the key qualifier on it.
 	 */
@@ -278,7 +279,7 @@ public:
 	 * Set the name of this CIMProperty object.
 	 * @param name	The new name for this CIMProperty object.
 	 */
-	virtual void setName(const String& name);
+	virtual void setName(const CIMName& name);
 	/**
 	 * Write this CIMProperty to the given output stream.
 	 * @param ostrm	The output stream to write this object to.
@@ -315,7 +316,7 @@ public:
 	 * @param name	The name of the qualifier to test.
 	 * @return true if the qualifier exists and has a value of true.
 	 */
-	bool hasTrueQualifier(const String& name) const;
+	bool hasTrueQualifier(const CIMName& name) const;
 private:
 
 #ifdef OW_WIN32

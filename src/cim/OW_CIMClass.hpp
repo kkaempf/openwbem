@@ -43,6 +43,7 @@
 #include "OW_Array.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_WBEMFlags.hpp"
+#include "OW_CIMName.hpp" // necessary for implicit conversion (const char* -> CIMName) to work
 
 namespace OpenWBEM
 {
@@ -80,7 +81,7 @@ public:
 	 * Create an CIMClass object with the given name.
 	 * @param name The name for this CIMClass specified as an String.
 	 */
-	explicit CIMClass(const String& name);
+	explicit CIMClass(const CIMName& name);
 	/**
 	 * Create an CIMClass object with the given name.
 	 * @param name The name for this CIMClass specified as a NULL terminated
@@ -113,7 +114,7 @@ public:
 	 * @param pname The name of the parent CIM class for this object.
 	 * @return a reference to *this
 	 */
-	CIMClass& setSuperClass(const String& pname);
+	CIMClass& setSuperClass(const CIMName& pname);
 	/**
 	 * @return true if this CIMClass object has key properties.
 	 */
@@ -141,7 +142,7 @@ public:
 	 * @return The CIMQualifier associated with the given name if found.
 	 * Otherwise a NULL CIMQualifier.
 	 */
-	CIMQualifier getQualifier(const String& name) const;
+	CIMQualifier getQualifier(const CIMName& name) const;
 	/**
 	 * Get a named property from this class.
 	 * @param name	The name of the property to retrieve. If the name is in the
@@ -151,7 +152,7 @@ public:
 	 * @return CIMProperty associated with the name if found. Otherwise a
 	 * NULL CIMProperty object.
 	 */
-	CIMProperty getProperty(const String& name) const;
+	CIMProperty getProperty(const CIMName& name) const;
 	/**
 	 * Get a named property from this CIMClass
 	 * @param name The name of the property to to retreive.
@@ -159,8 +160,8 @@ public:
 	 * @return The CIMProperty associated with the given name and origin, if
 	 * found. Otherwise a NULL CIMProperty object.
 	 */
-	CIMProperty getProperty(const String& name,
-		const String& originClass) const;
+	CIMProperty getProperty(const CIMName& name,
+		const CIMName& originClass) const;
 	/**
 	 * Get the method associated with the given name.
 	 * @param name The name of the method to retrieve. If the name is in the form
@@ -171,7 +172,7 @@ public:
 	 * @return The CIMMethod associated with the name, if found. Otherwise a
 	 * NULL CIMMethod object.
 	 */
-	CIMMethod getMethod(const String& name) const;
+	CIMMethod getMethod(const CIMName& name) const;
 	/**
 	 * Get the method associated with the given name from this CIMClass
 	 * considering the given origin class in the process.
@@ -181,8 +182,8 @@ public:
 	 * @return The CIMMethod associated with the given name on success.
 	 * 	Otherwise a NULL CIMMethod object.
 	 */
-	CIMMethod getMethod(const String& name,
-		const String& originClass) const;
+	CIMMethod getMethod(const CIMName& name,
+		const CIMName& originClass) const;
 	/**
 	 * @return true if this CIMClass is an association.
 	 */
@@ -258,13 +259,13 @@ public:
 	 * @param name The name of the qualifier to remove from this class.
 	 * @return true if the qualifier was removed. Otherwise false.
 	 */
-	bool removeQualifier(const String& name);
+	bool removeQualifier(const CIMName& name);
 	/**
 	 * Remove a property from this class.
 	 * @param name The name of the property to remove from this class.
 	 * @return true if the property was removed. Otherwise false.
 	 */
-	bool removeProperty(const String& name);
+	bool removeProperty(const CIMName& name);
 	/**
 	 * Set the qualifiers for this class. The old qualifiers will be removed.
 	 * @param quals An CIMQualifierArray that contains the new
@@ -376,7 +377,7 @@ public:
 	 * Set the name associated with this CIMClass object.
 	 * @param name	The new name for this CIMClass object.
 	 */
-	virtual void setName(const String& name);
+	virtual void setName(const CIMName& name);
 	/**
 	 * Read this CIMClass object from an input stream.
 	 * @param istrm The input stream to read this CIMClass from.
@@ -411,8 +412,6 @@ public:
 		return !this->m_pdata;
 	}
 private:
-	static String splitName1(const String& inName);
-	static String splitName2(const String& inName);
 
 #ifdef OW_WIN32
 #pragma warning (push)
@@ -428,6 +427,11 @@ private:
 	friend bool operator<(const CIMClass& x, const CIMClass& y);
 	friend bool operator==(const CIMClass& x, const CIMClass& y);
 };
+
+bool operator<=(const CIMClass& x, const CIMClass& y);
+bool operator>(const CIMClass& x, const CIMClass& y);
+bool operator>=(const CIMClass& x, const CIMClass& y);
+bool operator!=(const CIMClass& x, const CIMClass& y);
 
 } // end namespace OpenWBEM
 

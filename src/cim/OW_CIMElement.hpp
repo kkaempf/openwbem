@@ -37,7 +37,7 @@
 #define OW_CIMELEMENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_String.hpp"
+#include "OW_CIMFwd.hpp"
 
 namespace OpenWBEM
 {
@@ -60,11 +60,12 @@ public:
 	 * Set the name of this CIMElement object.
 	 * @param name The new name of this CIMElement object.
 	 */
-	virtual void setName(const String& name) = 0;
+	virtual void setName(const CIMName& name) = 0;
 	/**
 	 * @return An String representing this CIMElement.
 	 */
 	virtual String toString() const;
+	/*
 	int compare(const CIMElement& arg)
 	{
 		return getName().compareToIgnoreCase(arg.getName());
@@ -81,6 +82,7 @@ public:
 	{
 		return compare(arg) != 0;
 	}
+	*/
 };
 
 } // end namespace OpenWBEM

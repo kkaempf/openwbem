@@ -221,14 +221,6 @@ public:
 	 */
 	bool equal(const CIMDateTime& arg) const;
 	/**
-	 * Equality operator
-	 * @param arg The CIMDateTime object to check for equality with this one.
-	 * @return true if the given CIMDateTime object is equal to this one.
-	 * Otherwise false.
-	 */
-	bool operator== (const CIMDateTime& arg) const
-			{  return equal(arg); }
-	/**
 	 * Set the year component of the CIMDateTime object.
 	 * @param arg The new year for this object. Valid values are 0-9999
 	 * @return a reference to *this
@@ -330,29 +322,15 @@ private:
 #pragma warning (pop)
 #endif
 
+	friend OW_COMMON_API bool operator==(const CIMDateTime& x, const CIMDateTime& y);
 	friend OW_COMMON_API bool operator<(const CIMDateTime& x, const CIMDateTime& y);
 };
 OW_COMMON_API std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
 
-inline bool operator!=(const CIMDateTime& x, const CIMDateTime& y)
-{
-	return !(x == y);
-}
-
-inline bool operator>(const CIMDateTime& x, const CIMDateTime& y)
-{
-	return y < x;
-}
-
-inline bool operator<=(const CIMDateTime& x, const CIMDateTime& y)
-{
-	return !(y < x);
-}
-
-inline bool operator>=(const CIMDateTime& x, const CIMDateTime& y)
-{
-	return !(x < y);
-}
+bool operator!=(const CIMDateTime& x, const CIMDateTime& y);
+bool operator>(const CIMDateTime& x, const CIMDateTime& y);
+bool operator<=(const CIMDateTime& x, const CIMDateTime& y);
+bool operator>=(const CIMDateTime& x, const CIMDateTime& y);
 
 
 
