@@ -39,6 +39,7 @@
 #include <sys/time.h> // for gettimeofday
 #include <string.h> // for memcmp
 #include <stdlib.h> // for rand
+#include <ctype.h> // for isxdigit
 
 DEFINE_EXCEPTION(UUID);
 
