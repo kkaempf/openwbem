@@ -55,6 +55,8 @@ namespace
 
 const String COMPONENT_NAME("ow.test.IndicationProviderTest3");
 
+// THIS PROVIDER IS BROKEN.  DON"T USE IT AS A VALID EXAMPLE!!!!!!!!!!!!
+
 // This is an example/test of a simple instance/indication/polled provider.  It
 // doesn't implement mustPoll.  The CIMOM will call the *Filter methods.
 // We'll start up a the polled provider to "watch" the objects we are
