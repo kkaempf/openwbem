@@ -74,5 +74,12 @@ IOIFCStreamBuffer::buffer_to_device(const char* c, int n)
 	return 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void
+IOIFCStreamBuffer::reset()
+{ 
+	initBuffers(); 
+}
+
 } // end namespace OpenWBEM
 

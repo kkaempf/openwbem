@@ -48,7 +48,7 @@ public:
 	IOIFCStreamBuffer(IOIFC* dev, int bufSize = BASE_BUF_SIZE,
 		const char* direction = "io");
 	virtual ~IOIFCStreamBuffer();
-	virtual void reset() { initBuffers(); }
+	virtual void reset();
 private:
 	// unimplemented
 	IOIFCStreamBuffer(const IOIFCStreamBuffer& arg);
