@@ -104,7 +104,7 @@ CIMObjectPath::CIMObjectPath(const String& className,
 	// If there is a namespace but it will be set via CIMClient on
 	// the next call
 	m_pdata->m_objectName = className;
-	m_pdata->m_keys = keys;
+	setKeys(keys);
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath::CIMObjectPath(const String& ns,
@@ -113,7 +113,7 @@ CIMObjectPath::CIMObjectPath(const String& ns,
 {
 	m_pdata->m_nameSpace.setNameSpace(ns);
 	m_pdata->m_objectName = inst.getClassName();
-	m_pdata->m_keys = inst.getKeyValuePairs();
+	setKeys(inst.getKeyValuePairs());
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath::CIMObjectPath(const CIMObjectPath& arg) :
@@ -155,7 +155,9 @@ CIMObjectPath::addKey(const CIMProperty& key)
 {
     OW_ASSERT(key);
     OW_ASSERT(key.getValue());
-    m_pdata->m_keys.append(key);
+	CIMProperty key2(key);
+	key2.clearQualifiers();
+    m_pdata->m_keys.append(key2);
     return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -219,6 +221,10 @@ CIMObjectPath&
 CIMObjectPath::setKeys(const CIMPropertyArray& newKeys)
 {
 	m_pdata->m_keys = newKeys;
+	for (size_t i = 0; i < m_pdata->m_keys.size(); ++i)
+	{
+		m_pdata->m_keys[i].clearQualifiers();
+	}
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -226,7 +232,7 @@ CIMObjectPath&
 CIMObjectPath::setKeys(const CIMInstance& instance)
 {
 	OW_ASSERT(instance);
-	m_pdata->m_keys = instance.getKeyValuePairs();
+	setKeys(instance.getKeyValuePairs());
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
