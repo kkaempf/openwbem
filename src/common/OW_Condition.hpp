@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_ThreadTypes.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 class OW_NonRecursiveMutexLock;
 class OW_NonRecursiveMutex;

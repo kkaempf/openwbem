@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_TmpFile.hpp"
 #include "OW_IOException.hpp"
 #include "OW_MutexLock.hpp"

@@ -32,7 +32,7 @@
 #include "OW_UUID.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Format.hpp"
 #include "OW_RandomNumber.hpp"
 

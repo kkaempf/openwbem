@@ -35,7 +35,7 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_ServerSocketImpl.hpp"
 #include "OW_Reference.hpp"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_SocketFlags.hpp"
 
 class OW_ServerSocket : public OW_SelectableIFC

@@ -32,7 +32,7 @@
 #define OW_CIMXMLCIMOMHANDLE_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_XMLQualifier.hpp"

@@ -32,7 +32,7 @@
 #define OW_NETWORK_TYPES_H_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 extern "C"
 {

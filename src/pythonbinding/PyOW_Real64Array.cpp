@@ -27,7 +27,7 @@
 * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "PyOW_Array.hpp"
 
 void registerOW_ArrayImpl_OW_Real64(const char* name)

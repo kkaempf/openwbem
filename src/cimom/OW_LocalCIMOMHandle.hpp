@@ -32,7 +32,7 @@
 #define OW_LOCALCIMOMHANDLE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_RWLocker.hpp"

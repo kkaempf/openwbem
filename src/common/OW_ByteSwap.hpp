@@ -32,7 +32,7 @@
 #define OW_BYTE_SWAP_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 
 // this will be defined by the configure script.

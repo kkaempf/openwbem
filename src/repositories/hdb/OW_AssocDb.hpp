@@ -32,7 +32,7 @@
 #define OW_ASSOCDB_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Index.hpp"
 #include "OW_Array.hpp"
 #include "OW_String.hpp"

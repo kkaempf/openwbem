@@ -32,7 +32,7 @@
 #define OW_HDBCOMMOM_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Exception.hpp"
 
 #include <cstring>

@@ -37,7 +37,7 @@
 #include "OW_SSLSocketImpl.hpp"
 #include "OW_SocketBaseImpl.hpp"
 #include "OW_String.hpp"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_SocketFlags.hpp"
 

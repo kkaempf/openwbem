@@ -33,7 +33,7 @@
 #define OW_DAEMON_NAME "owcimomd"
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_SharedLibrary.hpp"

@@ -32,7 +32,7 @@
 #define OW_SEMAPHORE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_NonRecursiveMutex.hpp"
 #include "OW_Condition.hpp"
 #include "OW_NonRecursiveMutexLock.hpp"

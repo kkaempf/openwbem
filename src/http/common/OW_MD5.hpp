@@ -59,7 +59,7 @@ documentation and/or software.
 #define OW_MD5_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Exception.hpp"
 
 #ifdef OW_HAVE_STREAMBUF

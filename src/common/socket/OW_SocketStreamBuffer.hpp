@@ -33,7 +33,7 @@
 #define SOCK_STREAM_BUF_SIZE 4096
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_IOIFCStreamBuffer.hpp"
 
 class OW_SocketBaseImpl;

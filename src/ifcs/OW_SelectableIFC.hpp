@@ -31,7 +31,7 @@
 #define OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Array.hpp"
 #include "OW_Reference.hpp"
 

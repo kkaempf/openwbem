@@ -32,7 +32,7 @@
 
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_String.hpp"
 #include "OW_Exception.hpp"
 

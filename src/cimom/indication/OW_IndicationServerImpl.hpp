@@ -31,7 +31,7 @@
 #define OW_INDICATION_SERVER_IMPL_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_List.hpp"

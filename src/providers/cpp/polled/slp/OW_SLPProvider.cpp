@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Format.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_ConfigOpts.hpp"

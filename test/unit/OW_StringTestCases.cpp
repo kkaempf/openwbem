@@ -33,7 +33,7 @@
 #include "OW_config.h"
 #include "OW_StringTestCases.hpp"
 #include "OW_String.hpp"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 
 void OW_StringTestCases::setUp()
 {

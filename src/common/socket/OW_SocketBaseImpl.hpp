@@ -44,7 +44,7 @@
 #include "OW_SocketException.hpp"
 #include "OW_String.hpp"
 #include "OW_SocketAddress.hpp"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_SocketStreamBuffer.hpp"
 #include "OW_IOIFC.hpp"
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)

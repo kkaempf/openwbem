@@ -31,7 +31,7 @@
 #define OW_BinarySerialization_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Bool.hpp"
 #include "OW_ResultHandlerIFC.hpp"

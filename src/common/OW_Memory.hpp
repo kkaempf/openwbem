@@ -47,7 +47,7 @@
 #define OW_MEMORY_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include <cstring>
 
 template<class T>

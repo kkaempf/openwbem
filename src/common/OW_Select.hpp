@@ -32,7 +32,7 @@
 #define OW_SELECT_HPP_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_Array.hpp"
 #include "OW_SelectableIFC.hpp"
 

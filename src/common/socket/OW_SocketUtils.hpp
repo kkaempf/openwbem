@@ -32,7 +32,7 @@
 #define OW_SOCKETUTILS_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Types.h"
+#include "OW_Types.hpp"
 #include "OW_NetworkTypes.hpp"
 #include "OW_SocketFlags.hpp"
 
