@@ -1,6 +1,6 @@
 SUBDIRS = db src etc test mof doc schemas
 
-noinst_SCRIPTS = $(PACKAGE_PREFIX)-openwbem.spec
+noinst_SCRIPTS = $(PACKAGE_PREFIX_D)openwbem.spec
 
 EXTRA_DIST = \
 Doxyfile.sh \
@@ -18,7 +18,7 @@ openwbem.spec \
 generic-company-openwbem.spec.in \
 openwbem-faq.html
 
-CLEANFILES = Doxyfile $(PACKAGE_PREFIX)-openwbem.spec
+CLEANFILES = Doxyfile $(PACKAGE_PREFIX_D)openwbem.spec
 
 
 SUFFIXES = .sh 
@@ -31,9 +31,10 @@ SUFFIXES = .sh
 	$< > $@-t
 	@MV@	$@-t $@
 
-$(PACKAGE_PREFIX)-openwbem.spec: generic-company-openwbem.spec.in
+$(PACKAGE_PREFIX_D)openwbem.spec: generic-company-openwbem.spec.in
 	@RM@ -f $@ $@-t
 	@SED@ \
+		-e 's!@''GENERIC_D''@!$(PACKAGE_PREFIX_D)!g' \
 		-e 's!@''GENERIC''@!$(PACKAGE_PREFIX)!g' \
 		-e 's!@''OWVERSION''@!$(OPENWBEM_VERSION)!g' \
 	$< > $@-t

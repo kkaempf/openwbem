@@ -1,22 +1,22 @@
 # A note about this file.  If a company (maybe yours if you're reading this)
 # is going to package up OpenWBEM as part of a commercial product, you should
-# use the --with-package-prefix=NAME option when you run configure.  This will 
-# customize the OpenWBEM code and build process so that multiple installations 
-# of OpenWBEM can happily coexist as long as NAME is different.
-%define @GENERIC@prefix /opt/@GENERIC@
-%define @GENERIC@localstatedir /var/opt/@GENERIC@
-%define @GENERIC@sysconfdir /etc/opt/@GENERIC@
+# use the --with-package=NAME option when you run configure.  This will customize
+# This file so that multiple installations of OpenWBEM can happily coexist as
+# long as NAME is different.
+%define prefix /opt/
+%define localstatedir /var/opt/
+%define sysconfdir /etc/opt/
 
 %define startnum 36
 %define killnum 64
-%define initname @GENERIC_D@owcimomd
-%define owversion @OWVERSION@
+%define initname owcimomd
+%define owversion 2.9.1
 # You can define values like those above. 
 
-# The name is prefixed by either "@GENERIC_D@" or "lsb-@GENERIC_D@" 
+# The name is prefixed by either "" or "lsb-" 
 # depending on whether the application is certified to be LSB 
 # compliant
-Name        	: @GENERIC_D@openwbem
+Name        	: openwbem
 # Increment the version every time the source code changes. 
 Version     	: %{owversion}
 # Increment the release every time the packaging changes 
@@ -37,7 +37,7 @@ Group       	: Administration/System
 Summary     	: The OpenWBEM CIMOM
 
 Copyright   	: Vintela/BSD style
-Packager    	: support@@GENERIC@.com
+Packager    	: support@.com
 URL         	: http://www.openwbem.org/
 
 # This is necessary to build the RPM as a non-root user. 
@@ -53,7 +53,7 @@ Source0: openwbem-%{version}.tar.gz
 %package devel
 Group           : Programming/Library
 Summary         : Headers files for OpenWBEM
-Requires	: @GENERIC_D@openwbem
+Requires	: openwbem
 
 #%package doc
 #Group           : Programming/Library
@@ -62,7 +62,7 @@ Requires	: @GENERIC_D@openwbem
 #%package perlNPI
 #Group       	: Administration/System
 #Summary     	: PerlNPI provider interface for the OpenWBEM CIMOM
-#Requires	: @GENERIC_D@openwbem, perl
+#Requires	: openwbem, perl
 
 %description
 The OpenWBEM CIMOM
@@ -87,18 +87,18 @@ Headers files for OpenWBEM
 # The binary will look here first for shared libraries.  This way
 # we link against the libraries we want at run-time even if libs
 # by the same name are in /usr/lib or some other path in /etc/ld.so.conf
-LD_RUN_PATH=/opt/@GENERIC@/lib
+LD_RUN_PATH=/opt//lib
 export LD_RUN_PATH
 
 # Use CFLAGS, CXXFLAGS and LDFLAGS to tell the compiler/linker to look 
-# under /opt/@GENERIC@ for headers and libs. 
-CFLAGS="-I/opt/@GENERIC@/include" \
- CXXFLAGS="-I/opt/@GENERIC@/include" \
- LDFLAGS="-L/opt/@GENERIC@/lib" \
+# under /opt/ for headers and libs. 
+CFLAGS="-I/opt//include" \
+ CXXFLAGS="-I/opt//include" \
+ LDFLAGS="-L/opt//lib" \
 	./configure --with-search-dir=/usr/kerberos \
-	--prefix=%{@GENERIC@prefix} \
-	--sysconfdir=%{@GENERIC@sysconfdir} \
-	--localstatedir=%{@GENERIC@localstatedir} \
+	--prefix=%{prefix} \
+	--sysconfdir=%{sysconfdir} \
+	--localstatedir=%{localstatedir} \
    --with-perl=no
 
 
@@ -124,12 +124,12 @@ install etc/init/owcimomd $RPM_BUILD_ROOT/etc/init.d/%{initname}
 install -d $RPM_BUILD_ROOT/etc/pam.d
 install etc/pam.d/openwbem $RPM_BUILD_ROOT/etc/pam.d
 
-#install -d $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib/openwbem/c++providers
-install -d $RPM_BUILD_ROOT/${@GENERIC@localstatedir}/openwbem
+#install -d $RPM_BUILD_ROOT/%{prefix}/lib/openwbem/c++providers
+install -d $RPM_BUILD_ROOT/${localstatedir}/openwbem
 
 #fix /usr/lib/libowservicehttp.so since RPM can't.
-#rm $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib/libowservicehttp.so
-#ln -s %{@GENERIC@prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{@GENERIC@prefix}/lib
+#rm $RPM_BUILD_ROOT/%{prefix}/lib/libowservicehttp.so
+#ln -s %{prefix}/lib/openwbem/services/libowservicehttp.so $RPM_BUILD_ROOT/%{prefix}/lib
 
 
 
@@ -137,9 +137,9 @@ install -d $RPM_BUILD_ROOT/${@GENERIC@localstatedir}/openwbem
 %{__rm} -rf $RPM_BUILD_ROOT
 
 %Post
-# put /opt/@GENERIC@/lib in ld.so.conf
-if ! grep -q '^/opt/@GENERIC@/lib$' /etc/ld.so.conf; then
-	echo "/opt/@GENERIC@/lib" >> /etc/ld.so.conf
+# put /opt//lib in ld.so.conf
+if ! grep -q '^/opt//lib$' /etc/ld.so.conf; then
+	echo "/opt//lib" >> /etc/ld.so.conf
 fi
 # Any RPM that installs a shared library into any directory
 # listed in /etc/ld.so.conf (or into /usr/lib if it hasn't been
@@ -193,35 +193,35 @@ ldconfig
 %doc PORTING.txt README TODO 
 %doc *.HOWTO AUTHORS COPYING ChangeLog INSTALL LICENSE NEWS
 %doc openwbem-faq.html
-%dir %{@GENERIC@prefix}/lib/openwbem
-%{@GENERIC@prefix}/lib/openwbem/*
-%dir %{@GENERIC@prefix}/libexec/openwbem
-%dir %{@GENERIC@prefix}/share/openwbem
-%dir %{@GENERIC@localstatedir}/openwbem
-%config %{@GENERIC@sysconfdir}/*
+%dir %{prefix}/lib/openwbem
+%{prefix}/lib/openwbem/*
+%dir %{prefix}/libexec/openwbem
+%dir %{prefix}/share/openwbem
+%dir %{localstatedir}/openwbem
+%config %{sysconfdir}/*
 #%config /etc/sysconfig/daemons/%{daemonname}
 %config /etc/pam.d/openwbem
 %attr(0755,root,root) /etc/init.d/%{initname}
-%{@GENERIC@prefix}/lib/lib*
-%{@GENERIC@prefix}/bin/*
-%{@GENERIC@prefix}/sbin/*
-%{@GENERIC@prefix}/libexec/openwbem/*
-%{@GENERIC@prefix}/share/openwbem/*
+%{prefix}/lib/lib*
+%{prefix}/bin/*
+%{prefix}/sbin/*
+%{prefix}/libexec/openwbem/*
+%{prefix}/share/openwbem/*
 
 # Files for sub-packages. 
 %Files devel
 %defattr(-,root,root)
-%dir %{@GENERIC@prefix}/include/openwbem
-%{@GENERIC@prefix}/include/openwbem/*
+%dir %{prefix}/include/openwbem
+%{prefix}/include/openwbem/*
 
 #%Files doc
 #%defattr(-,root,root)
 #%doc docs/*
 
 #%Files perlNPI
-#%{@GENERIC@prefix}/lib/perl5/site_perl
+#%{prefix}/lib/perl5/site_perl
 #%defattr(-,root,root)
-#%{@GENERIC@prefix}/share/man/man3
+#%{prefix}/share/man/man3
 
 %ChangeLog
 
