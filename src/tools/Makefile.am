@@ -5,7 +5,8 @@ bin_PROGRAMS = \
 owexecwql \
 owcreatenamespace \
 owdeletenamespace \
-owenumnamespace
+owenumnamespace \
+owenumqualifiers
 
 ### owdigestgenpass
 owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
@@ -73,6 +74,20 @@ owenumnamespace_LDADD = \
 owenumnamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumnamespace
+
+### owenumqualifiers
+owenumqualifiers_SOURCES = owenumqualifiers.cpp
+
+owenumqualifiers_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/client -lowclient \
+-L$(top_builddir)/src/xml -lowxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/http/client -lowhttpclient
+
+owenumqualifiers_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owenumqualifiers
 
 INCLUDES = \
 -I$(top_srcdir)/src/common \
