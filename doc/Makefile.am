@@ -1,7 +1,7 @@
 SUBDIRS = man
 
 EXTRA_DIST = \
-OpenWBEM-pg.sxw \
+OpenWBEM_Getting_Started_Guide.sxw \
 ACL.HOWTO \
 AuthModule.HOWTO \
 HowToCreateAMinimalOpenWBEM \
@@ -12,6 +12,8 @@ pg.tex \
 PerlIFC.sxw \
 remote_providers.txt \
 local_authentication.txt \
-logging.txt
-
+logging.txt \
+architecture.txt \
+openwbem_coding_guide.txt \
+providers.txt
 
