@@ -37,11 +37,11 @@
 #define OW_CIM_FWD_HPP_INCLUDE_GUARD
 #include "OW_config.h"
 #include "OW_ArrayFwd.hpp"
+#include "OW_CommonFwd.hpp"	// for Enumeration<> and because this file used to contain forward declarations for some stuff in common.
 
 namespace OpenWBEM
 {
 
-class Bool;
 class CIMDateTime;
 class CIMBase;
 class CIMDataType;
@@ -61,12 +61,7 @@ class CIMParamValue;
 class CIMInstance;
 class CIMValue;
 class CIMName;
-class String;
-class Char16;
-struct CIMFeatures;
 
-template <class T>
-class Enumeration;
 typedef Enumeration<CIMObjectPath> CIMObjectPathEnumeration;
 typedef Enumeration<CIMQualifierType> CIMQualifierTypeEnumeration;
 typedef Enumeration<CIMClass> CIMClassEnumeration;
@@ -91,9 +86,6 @@ typedef Array<CIMParamValue> 		CIMParamValueArray;
 typedef Array<CIMInstance> 		CIMInstanceArray;
 typedef Array<CIMValue> 			CIMValueArray;
 typedef Array<CIMName> 				CIMNameArray;
-typedef Array<String>				StringArray;
-typedef Array<Char16>				Char16Array;
-typedef Array<Bool>       			BoolArray;
 
 } // end namespace OpenWBEM
 

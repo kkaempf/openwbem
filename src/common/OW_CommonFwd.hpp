@@ -83,6 +83,11 @@ class Thread;
 class ThreadPool;
 typedef IntrusiveReference<ThreadPool> ThreadPoolRef;
 
+class Bool;
+typedef Array<Bool>       			BoolArray;
+
+struct CIMFeatures;
+
 } // end namespace OpenWBEM
 
 #endif
