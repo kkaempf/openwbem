@@ -161,156 +161,10 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	return availableCount;
 }
 
-int
-select(const SelectTypeArray& selarray, UInt32 ms)
-{
-	int rc;
-	size_t hcount = static_cast<DWORD>(selarray.size());
-	AutoPtrVec<HANDLE> hdls(new HANDLE[hcount]);
-
-	for (size_t i = 0; i < hcount; i++)
-	{
-		if(selarray[i].sockfd != INVALID_SOCKET
-			&& selarray[i].networkevents)
-		{
-			::WSAEventSelect(selarray[i].sockfd, 
-				selarray[i].event, selarray[i].networkevents);
-		}
-				
-		hdls[i] = selarray[i].event;
-	}
-
-	DWORD timeout = (ms != ~0U) ? ms : INFINITE;
-	DWORD cc = ::WaitForMultipleObjects(hcount, hdls.get(), FALSE, timeout);
-
-	assert(cc != WAIT_ABANDONED);
-
-	switch (cc)
-	{
-		case WAIT_FAILED:
-			rc = Select::SELECT_ERROR;
-			break;
-		case WAIT_TIMEOUT:
-			rc = Select::SELECT_TIMEOUT;
-			break;
-		default:
-			rc = cc - WAIT_OBJECT_0;
-			
-			// If this is a socket, set it back to 
-			// blocking mode
-			if(selarray[rc].sockfd != INVALID_SOCKET)
-			{
-				if(selarray[rc].networkevents
-					&& selarray[rc].doreset == false)
-				{
-					::WSAEventSelect(selarray[rc].sockfd, 
-						selarray[rc].event, selarray[rc].networkevents);
-				}
-				else
-				{
-					// Set socket back to blocking
-					::WSAEventSelect(selarray[rc].sockfd, 
-						selarray[rc].event, 0);
-					u_long ioctlarg = 0;
-					::ioctlsocket(selarray[rc].sockfd, FIONBIO, &ioctlarg);
-				}
-			}
-			break;
-	}
-
-	return rc;
-}
 
 #else
 
 #ifdef OW_HAVE_SYS_EPOLL_H
-int
-select(const SelectTypeArray& selarray, UInt32 ms)
-{
-	int lerrno, rc = 0;
-	int timeout;
-
-	struct epoll_event event;
-	event.events = (EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP);
-	int epfd = epoll_create(selarray.size());
-	if(epfd == -1)
-	{
-		// Need to return something else?
-		return Select::SELECT_ERROR;
-	}
-
-	for (size_t i = 0; i < selarray.size(); i++)
-	{
-		OW_ASSERT(selarray[i] >= 0);
-		event.data.fd = selarray[i];
-		if(epoll_ctl(epfd, EPOLL_CTL_ADD, selarray[i], &event) != 0)
-		{
-			::close(epfd);
-			// Need to return something else?
-			return Select::SELECT_ERROR;
-		}
-	}
-
-	// here we spin checking for thread cancellation every so often.
-	const Int32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
-	timeval now, end;
-	gettimeofday(&now, NULL);
-	end = now;
-	end.tv_sec  += ms / 1000;
-	end.tv_usec += (ms % 1000) * 1000;
-
-	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
-	{
-		timeval tv;
-		tv.tv_sec = end.tv_sec - now.tv_sec;
-		if (end.tv_usec >= now.tv_usec)
-		{
-			tv.tv_usec = end.tv_usec - now.tv_usec;
-		}
-		else
-		{
-			tv.tv_sec--;
-			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
-		}
-
-		if ((tv.tv_sec != 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
-		{
-			tv.tv_sec = 0;
-			tv.tv_usec = loopMicroSeconds;
-		}
-
-		timeout = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-
-		Thread::testCancel();
-		rc = epoll_wait(epfd, &event, 1, timeout);
-		lerrno = errno;
-		Thread::testCancel();
-		gettimeofday(&now, NULL);
-	}
-
-	::close(epfd);
-	if (rc < 0)
-	{
-		return (lerrno == EINTR) ? Select::SELECT_INTERRUPTED : Select::SELECT_ERROR;
-	}
-	if (rc == 0)
-	{
-		return Select::SELECT_TIMEOUT;
-	}
-
-	for (size_t i = 0; i < selarray.size(); i++)
-	{
-		if(event.data.fd == selarray[i])
-		{
-			return static_cast<int>(i);
-		}
-	}
-
-	OW_THROW(AssertionException, "Logic error in Select. Didn't find file handle");
-	return Select::SELECT_ERROR;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 // epoll version
 int
@@ -412,90 +266,6 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 }
 
 #elif defined (OW_HAVE_SYS_POLL_H)
-int
-select(const SelectTypeArray& selarray, UInt32 ms)
-{
-	int lerrno, rc = 0;
-	AutoPtrVec<pollfd> pfds(new pollfd[selarray.size()]); 
-	// here we spin checking for thread cancellation every so often.
-	timeval now, end;
-	const Int32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
-	gettimeofday(&now, NULL);
-	end = now;
-	end.tv_sec  += ms / 1000;
-	end.tv_usec += (ms % 1000) * 1000;
-	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
-	{
-		for (size_t i = 0; i < selarray.size(); i++)
-		{
-			OW_ASSERT(selarray[i] >= 0);
-			pfds[i].fd = selarray[i]; 
-			pfds[i].events = POLLIN | POLLPRI; 
-		}
-
-		timeval tv;
-		tv.tv_sec = end.tv_sec - now.tv_sec;
-		if (end.tv_usec >= now.tv_usec)
-		{
-			tv.tv_usec = end.tv_usec - now.tv_usec;
-		}
-		else
-		{
-			tv.tv_sec--;
-			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
-		}
-
-		if ((tv.tv_sec != 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
-		{
-			tv.tv_sec = 0;
-			tv.tv_usec = loopMicroSeconds;
-		}
-
-		// TODO optimize this. 
-		int loopMSecs = tv.tv_sec * 1000 + tv.tv_usec / 1000; 
-
-		Thread::testCancel();
-		rc = ::poll(pfds.get(), selarray.size(), loopMSecs); 
-		lerrno = errno;
-		Thread::testCancel();
-
-		gettimeofday(&now, NULL);
-	}
-	
-	if (rc < 0)
-	{
-		if (lerrno == EINTR)
-		{
-#ifdef OW_NETWARE
-			// When the NetWare server is shutting down, select will
-			// set errno to EINTR on return. If this thread does not
-			// yield control (cooperative multitasking) then we end
-			// up in a very tight loop and get a CPUHog server abbend.
-			pthread_yield();
-#endif
-			return Select::SELECT_INTERRUPTED;
-		}
-		else
-		{
-			return Select::SELECT_ERROR;
-		}
-	}
-	if (rc == 0)
-	{
-		return Select::SELECT_TIMEOUT;
-	}
-	for (size_t i = 0; i < selarray.size(); i++)
-	{
-		if (pfds[i].revents & (POLLIN | POLLPRI | POLLHUP))
-		{
-			return static_cast<int>(i);
-		}
-	}
-	OW_THROW(AssertionException, "Logic error in Select. Didn't find file handle");
-	return Select::SELECT_ERROR;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 // poll() version
 int
@@ -604,96 +374,6 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 	return rc;
 }
 #elif defined (OW_HAVE_SYS_SELECT_H)
-int
-select(const SelectTypeArray& selarray, UInt32 ms)
-{
-	int lerrno, rc = 0;
-	fd_set rfds;
-	// here we spin checking for thread cancellation every so often.
-	timeval now, end;
-	const Int32 loopMicroSeconds = 100 * 1000; // 1/10 of a second
-	gettimeofday(&now, NULL);
-	end = now;
-	end.tv_sec  += ms / 1000;
-	end.tv_usec += (ms % 1000) * 1000;
-	while ((rc == 0) && ((ms == INFINITE_TIMEOUT) || (now.tv_sec < end.tv_sec)
-		 || ((now.tv_sec == end.tv_sec) && (now.tv_usec < end.tv_usec))))
-	{
-		int maxfd = 0;
-		FD_ZERO(&rfds);
-		for (size_t i = 0; i < selarray.size(); i++)
-		{
-			OW_ASSERT(selarray[i] >= 0);
-			if (maxfd < selarray[i])
-			{
-				maxfd = selarray[i];
-			}
-			if (selarray[i] < 0 || selarray[i] >= FD_SETSIZE)
-			{
-				return Select::SELECT_ERROR;
-			}
-			FD_SET(selarray[i], &rfds);
-		}
-
-		timeval tv;
-		tv.tv_sec = end.tv_sec - now.tv_sec;
-		if (end.tv_usec >= now.tv_usec)
-		{
-			tv.tv_usec = end.tv_usec - now.tv_usec;
-		}
-		else
-		{
-			tv.tv_sec--;
-			tv.tv_usec = 1000000 + end.tv_usec - now.tv_usec;
-		}
-
-		if ((tv.tv_sec != 0) || (tv.tv_usec > loopMicroSeconds) || (ms == INFINITE_TIMEOUT))
-		{
-			tv.tv_sec = 0;
-			tv.tv_usec = loopMicroSeconds;
-		}
-
-		Thread::testCancel();
-		rc = ::select(maxfd+1, &rfds, NULL, NULL, &tv);
-		lerrno = errno;
-		Thread::testCancel();
-
-		gettimeofday(&now, NULL);
-	}
-	
-	if (rc < 0)
-	{
-		if (lerrno == EINTR)
-		{
-#ifdef OW_NETWARE
-			// When the NetWare server is shutting down, select will
-			// set errno to EINTR on return. If this thread does not
-			// yield control (cooperative multitasking) then we end
-			// up in a very tight loop and get a CPUHog server abbend.
-			pthread_yield();
-#endif
-			return Select::SELECT_INTERRUPTED;
-		}
-		else
-		{
-			return Select::SELECT_ERROR;
-		}
-	}
-	if (rc == 0)
-	{
-		return Select::SELECT_TIMEOUT;
-	}
-	for (size_t i = 0; i < selarray.size(); i++)
-	{
-		if (FD_ISSET(selarray[i], &rfds))
-		{
-			return static_cast<int>(i);
-		}
-	}
-	OW_THROW(AssertionException, "Logic error in Select. Didn't find file handle");
-	return Select::SELECT_ERROR;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 // ::select() version
 int
@@ -824,6 +504,34 @@ selectRW(SelectObjectArray& selarray, UInt32 ms)
 #endif // # epoll/poll/select
 //////////////////////////////////////////////////////////////////////////////
 #endif	// #else OW_WIN32
+
+int
+select(const SelectTypeArray& selarray, UInt32 ms)
+{
+	SelectObjectArray soa;
+	soa.reserve(selarray.size());
+	for (size_t i = 0; i < selarray.size(); ++i)
+	{
+		SelectObject curObj(selarray[i]);
+		curObj.rEvents = true;
+		soa.push_back(curObj);
+	}
+	int rv = selectRW(soa, ms);
+	if (rv <= 0)
+	{
+		return rv;
+	}
+
+	// find the first selected object
+	for (size_t i = 0; i < soa.size(); ++i)
+	{
+		if (soa[i].rAvailable)
+		{
+			return i;
+		}
+	}
+	return SELECT_ERROR;
+}
 
 } // end namespace Select
 
