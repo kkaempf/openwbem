@@ -85,7 +85,7 @@ readInstanceEnum(std::istream& istrm, CIMInstanceResultHandlerIFC& result)
 void
 readQualifierTypeEnum(std::istream& istrm, CIMQualifierTypeResultHandlerIFC& result)
 {
-	readEnum(istrm, result, &readQual, BINSIG_QUALENUM, END_QUALENUM);
+	readEnum(istrm, result, &readQualType, BINSIG_QUAL_TYPEENUM, END_QUALENUM);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC

@@ -107,11 +107,11 @@ const UInt8 BINSIG_BOOL =			104;
 const UInt8 BINSIG_CLSENUM =		105;
 const UInt8 BINSIG_STR =			106;
 const UInt8 BINSIG_STRARRAY =		107;
-const UInt8 BINSIG_QUAL =			108;
+const UInt8 BINSIG_QUAL_TYPE =			108;
 const UInt8 BINSIG_VALUE =		109;
 const UInt8 BINSIG_OPENUM =		110;
 const UInt8 BINSIG_INSTENUM =		111;
-const UInt8 BINSIG_QUALENUM =		112;
+const UInt8 BINSIG_QUAL_TYPEENUM =		112;
 const UInt8 BINSIG_VALUEARRAY =	113;
 const UInt8 BINSIG_PARAMVALUEARRAY =	114;
 const UInt8 BINSIG_STRINGENUM =	115;
@@ -180,9 +180,9 @@ namespace BinarySerialization
 	{
 		BinarySerialization::writeObject(ostrm, BINSIG_INST, ci);
 	}
-	inline void writeQual(std::ostream& ostrm, const CIMQualifierType& qt)
+	inline void writeQualType(std::ostream& ostrm, const CIMQualifierType& qt)
 	{
-		BinarySerialization::writeObject(ostrm, BINSIG_QUAL, qt);
+		BinarySerialization::writeObject(ostrm, BINSIG_QUAL_TYPE, qt);
 	}
 	inline void writeValue(std::ostream& ostrm, const CIMValue& value)
 	{
@@ -303,10 +303,10 @@ namespace BinarySerialization
 		rv.readObject(istrm);
 		return rv;
 	}
-	inline CIMQualifierType readQual(std::istream& istrm)
+	inline CIMQualifierType readQualType(std::istream& istrm)
 	{
 		CIMQualifierType qt(CIMNULL);
-		BinarySerialization::readObject(istrm, BINSIG_QUAL, qt);
+		BinarySerialization::readObject(istrm, BINSIG_QUAL_TYPE, qt);
 		return qt;
 	}
 	inline CIMValue readValue(std::istream& istrm)

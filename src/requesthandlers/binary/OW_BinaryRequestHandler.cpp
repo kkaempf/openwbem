@@ -426,7 +426,7 @@ namespace
 	protected:
 		virtual void doHandle(const CIMQualifierType &cqt)
 		{
-			BinarySerialization::writeQual(ostrm, cqt);
+			BinarySerialization::writeQualType(ostrm, cqt);
 		}
 	private:
 		std::ostream& ostrm;
@@ -483,7 +483,7 @@ BinaryRequestHandler::setQual(CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
 	String ns(BinarySerialization::readString(istrm));
-	CIMQualifierType qt(BinarySerialization::readQual(istrm));
+	CIMQualifierType qt(BinarySerialization::readQualType(istrm));
 	chdl->setQualifierType(ns, qt);
 	BinarySerialization::write(ostrm, BIN_OK);
 }
@@ -494,7 +494,7 @@ BinaryRequestHandler::enumQualifiers(CIMOMHandleIFCRef chdl,
 {
 	String ns(BinarySerialization::readString(istrm));
 	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::write(ostrm, BINSIG_QUALENUM);
+	BinarySerialization::write(ostrm, BINSIG_QUAL_TYPEENUM);
 	BinaryCIMQualifierTypeWriter handler(ostrm);
 	chdl->enumQualifierTypes(ns, handler);
 	BinarySerialization::write(ostrm, END_QUALENUM);
@@ -556,7 +556,7 @@ BinaryRequestHandler::getQual(CIMOMHandleIFCRef chdl,
 	String qualifierName(BinarySerialization::readString(istrm));
 	CIMQualifierType qt = chdl->getQualifierType(ns, qualifierName);
 	BinarySerialization::write(ostrm, BIN_OK);
-	BinarySerialization::writeQual(ostrm, qt);
+	BinarySerialization::writeQualType(ostrm, qt);
 }
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////

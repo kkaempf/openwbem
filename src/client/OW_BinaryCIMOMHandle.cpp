@@ -134,7 +134,7 @@ readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMInstanceResultHandlerIFC& resul
 static inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMQualifierType& arg)
 {
-	arg = BinarySerialization::readQual(*istr);
+	arg = BinarySerialization::readQualType(*istr);
 }
 static inline void
 readCIMObject(CIMProtocolIStreamIFCRef& istr, CIMQualifierTypeResultHandlerIFC& result)
@@ -402,7 +402,7 @@ BinaryCIMOMHandle::setQualifierType(const String& ns_,
 	BinarySerialization::write(strm, BinaryProtocolVersion);
 	BinarySerialization::write(strm, BIN_SETQUAL);
 	BinarySerialization::writeString(strm, ns);
-	BinarySerialization::writeQual(strm, qt);
+	BinarySerialization::writeQualType(strm, qt);
 	Reference<CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"SetQualifier", ns);
 	checkError(in);
