@@ -551,6 +551,8 @@ AC_OUTPUT(./Makefile
 ./etc/sysconfig/Makefile
 ./etc/sysconfig/daemons/Makefile
 ./mof/Makefile
+./schemas/Makefile
+./schemas/cim25/Makefile
 ./src/Makefile
 ./src/authenticators/Makefile
 ./src/authenticators/simple/Makefile
@@ -574,7 +576,6 @@ AC_OUTPUT(./Makefile
 ./src/http/test/certs/Makefile
 ./src/ifcs/Makefile
 ./src/mof/Makefile
-./src/mof/testfiles/Makefile
 ./src/provider/Makefile
 ./src/providerifcs/Makefile
 ./src/providerifcs/cpp/Makefile

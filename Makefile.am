@@ -1,4 +1,4 @@
-SUBDIRS = db src etc test mof doc
+SUBDIRS = db src etc test mof doc schemas
 
 EXTRA_DIST = \
 Doxyfile.sh \
