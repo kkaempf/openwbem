@@ -1,3 +1,15 @@
+Wed Apr 30 12:28:32 MDT 2003
+- Generalize the class cache in OW_MetaRepository.cpp
+- Have the mof compiler use the cache.
+- Add handling for new namespace model.  Make namespaces flat instead
+    of hierarchial.
+- Write a command line utility to register for and print indications.
+- Make event system more scalable.
+- Implement authorizeFilter, activateFilter, deactivateFilter on providers
+- Only parse queries once when they're created.
+- Add an option to {dis,en}able the IndicationRepLayer (sending intrinsic
+indications.)
+
 Fri Mar 28 12:36:02 MST 2003
 - Created a mechanism in the read-write locker to detect simple deadlock,
   the case where one thread acquired a write lock and then later tried

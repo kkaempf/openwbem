@@ -27,14 +27,14 @@ New features:
          OW_IndicationServerImpl.
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.
-    - Add an option to the mof compiler to output provider skeleton code for
-      a MOF class.
-    - Add an option to the mof compiler to output a client class that wraps
-      a CIMInstance for a specific class.
-    - Generalize the class cache in OW_MetaRepository.cpp
-    - Create caching cimom handles (qualifier, class, instance).
-    - Have the mof compiler and the various test programs use the caching
-      cimom handles.
+    - Make the OW_*Repository classes into a shared library, and have a config
+      item so people can use a custom repository.
+    - Implement the CIM_Interop27 build-in providers.
+        - New model for provider registration.
+        - Do the rest of them.
+    - Update SLP provider to use the new standard template.
+
+Post 3.0
     - Add a virtual log message to the thread counter class so we can output
       information about threads starting and exiting.
     - Providers/Provider interfaces in a different process. Implement with 
@@ -43,13 +43,7 @@ New features:
     - Deal with locale on WBEM requests. (at least reject those that won't work)
     - Add better error handling/messages to the MOF compiler.
     - Binary Indications (Possibly re-factor and use CIMXMLListener)
-    - clean up stale indication subscriptions (write provider for this)
     - CMPI
-    - Implement the CIM_Interop27 build-in providers.
-        - add handling for new namespace model.  Make namespaces flat instead
-            of hierarchial.
-        - New model for provider registration.
-        - Do the rest of them.
     - Fix the lexer of the MOF compiler to parse unicode MOF files.  
         - Replace the input functions so that they translate from Unicode to
           UTF8, and fix the lexer to handle UTF8 strings and identifiers.
@@ -61,22 +55,14 @@ New features:
       class.
     - Use Boost.Python to create a python binding to the client library, to
       allow for easy scripting or dynamic CIMOM interaction.
-    - Write a command line utility to register for and print indications.
     - Write a config file provider so the CIMOM config can be programatically
       changed from remote.
-    - Make the OW_*Repository classes into a shared library, and have a config
-      item so people can use a custom repository.
     - Write an SQL repository.
-    - Make event system more scalable.
-      - Only parse queries once when they're created.
-      - Implement authorizeFilter, activateFilter, deactivateFilter on providers
     - Add configure options to disable usage of zlib, pam, ssl, slp
     - Make null reference and array indexing default to on unless 
       specifically disabled.
     - Merge the PollingManager and the SelectEngine to remove a thread.
     - Create a mechanism to share schemas between namespaces.
-    - Add an option to {dis,en}able the IndicationRepLayer (sending intrinsic
-      indications.)
     - Create a CIM class & provider to control the provider manager (re-scan
       providers, reload/unload providers, register new providers, etc.)
     - Deprecated property providers. Add an option to enable them, but leave
@@ -86,6 +72,7 @@ New features:
     - Remove instance qualifiers?
     - Create an indication export provider to the logger (cimom logger,
       syslog, etc.)
+    - Option to have the mof compiler use a local repository.
     - Add some mof compiler options:
       - perform a syntax check (don't really import)
       - delete object(s) from repository
@@ -100,6 +87,7 @@ New features:
     - Add an option for user to specify which interfaces to listen on.
     - ModifyInstance (deprecate empty PropertyList and ignore includeQualifiers)
     - New advanced errors.
+    - Async. methods.
     - Implement new versions of DTD & CIM/XML and support backward 
       compatibility on client & server
     - Support for arrays of references (not currently legal, but there's no
@@ -109,7 +97,7 @@ New features:
     - Use libcwd to improve the new segfault handler on linux.  De-mangle names
        and print filename/line numbers.
     - Add a page to the website similar to http://cygwin.com/bugs.html
-     - Add rbac authentication
+    - Add rbac authentication
     - Validate the "Required" qualifier on properties during create & modifyInstance.
     - Add config items and code to do ssl client authentication.
     - Have the simple c++ provider interface associator providers only have to
