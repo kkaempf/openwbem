@@ -109,12 +109,12 @@ class OpenWBEM_RemoteProviderRegistration
         string InstanceID;
 
         [Description (
-	  "The namespace for this provider registration. If this "
-	  "property is empty of NULL, all namespaces is implied.")]
-        string Namespace;
+          "The namespace for this provider registration. If this "
+          "property is empty of NULL, all namespaces is implied.")]
+        string NamespaceName;
 
         [Required, Description (
-	  "The CIM class name for the provider")]
+          "The CIM class name for the provider")]
         string ClassName;
 
         [Description (
@@ -128,32 +128,32 @@ class OpenWBEM_RemoteProviderRegistration
 
 
         [Required, Description (
-	  "Identifies the WBEM Server the remote provider will connect "
-	  "to in order to fulfill the request. Credentials may be included.")]
+          "Identifies the WBEM Server the remote provider will connect "
+          "to in order to fulfill the request. Credentials may be included.")]
         string Url;
 
         [Required, Description (
-	  "If false, the WBEM client used by the remote provider will "
-	  "use the standard HTTP authentication, and will make an initial "
-	  "request without sending credentials. If the server replies with "
-	  "a 401 Unauthorized error, then the client will send the "
-	  "credentials. If the value is true, the remote provider will"
-	  "assume the WBEM server supports HTTP basic authentication and "
-	  "send the credentials with the first request. THIS MAY BE A "
-	  "SECURITY RISK. Make sure you understand the implications before "
-	  "you enable this. ")]
+          "If false, the WBEM client used by the remote provider will "
+          "use the standard HTTP authentication, and will make an initial "
+          "request without sending credentials. If the server replies with "
+          "a 401 Unauthorized error, then the client will send the "
+          "credentials. If the value is true, the remote provider will"
+          "assume the WBEM server supports HTTP basic authentication and "
+          "send the credentials with the first request. THIS MAY BE A "
+          "SECURITY RISK. Make sure you understand the implications before "
+          "you enable this. ")]
         boolean AlwaysSendCredentials = false;
 
         [Required, Description (
-	  "This property, if true, instructs the remote provider to use the "
-	  "same credentials that were used to connect to the cimom when "
-	  "connecting to the remote WBEM server. The principal can "
-	  "always be obtained, however the credential will only be "
-	  "found if a custom authenticator is used that stored the "
-	  "credential in the OperationContext with the key "
-	  "\"remote_provider.user_credentials\". If this value is false, "
-	  "the only credentials that may be used are those stored in the "
-	  "Url property.")]
+          "This property, if true, instructs the remote provider to use the "
+          "same credentials that were used to connect to the cimom when "
+          "connecting to the remote WBEM server. The principal can "
+          "always be obtained, however the credential will only be "
+          "found if a custom authenticator is used that stored the "
+          "credential in the OperationContext with the key "
+          "\"remote_provider.user_credentials\". If this value is false, "
+          "the only credentials that may be used are those stored in the "
+          "Url property.")]
         boolean UseConnectionCredentials = false;
 };
 

@@ -111,7 +111,7 @@ RemoteProviderInterface::doInit(const ProviderEnvironmentIFCRef& env,
 		{
 			String instanceID = curReg.getPropertyT("InstanceID").getValueT().toString();
 			ProvRegInfo info;
-			info.namespaceName = curReg.propertyHasValue("Namespace") ? curReg.getPropertyT("Namespace").getValueT().toString() : String();
+			info.namespaceName = curReg.propertyHasValue("NamespaceName") ? curReg.getPropertyT("NamespaceName").getValueT().toString() : String();
 			info.className = curReg.getPropertyT("ClassName").getValueT().toString();
 			UInt16Array providerTypes = curReg.getPropertyT("ProviderTypes").getValueT().toUInt16Array();
 			info.url = curReg.getPropertyT("Url").getValueT().toString();
