@@ -181,6 +181,11 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 owcimomd.authorization_lib = @libdir@/openwbem/libowsimpleauthorizer.so
 
 ################################################################################
+# owcimomd.interop_schema_namespace specifies the namespace which contains the
+# CIM Interop schema. The default is root.
+;owcimomd.interop_schema_namespace = root
+
+################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from. The default for this option
@@ -299,3 +304,10 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # as a timeout when communicting with clients. The value must be > 0.
 # The default for this option is 300 (5 minutes).
 ;http_server.timeout = 300;
+
+################################################################################
+# slp.enable_advertisement controls whether the slp provider advertises with SLP
+# The default is true.
+;slp.enable_advertisement = true
+
+
