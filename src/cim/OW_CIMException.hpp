@@ -95,14 +95,14 @@ public:
 	};
 	CIMException(const char* file, int line, ErrNoType errval,
 		const char* msg=0);
-	~CIMException() throw();
+	virtual ~CIMException() throw();
 	void swap(CIMException& x);
 	CIMException(const CIMException& x);
 	CIMException& operator=(const CIMException& x);
 	
 	ErrNoType getErrNo() const {  return ErrNoType(getErrorCode()); }
 	void setErrNo(ErrNoType e) { setErrorCode(e); }
-	virtual const char* type() const {  return "CIMException"; }
+	virtual const char* type() const;
 	virtual const char* getMessage() const;
 	virtual CIMException* clone() const throw();
 private:
