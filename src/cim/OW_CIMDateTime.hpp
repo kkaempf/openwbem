@@ -59,7 +59,7 @@ public:
 class DateTime;
 /**
  *
- *	The DateTime class represents the CIM datetime data type.
+ *	The CIMDateTime class represents the CIM datetime data type.
  *	Recall that a CIM datetime may contain a date or an interval.
  *
  *	A date has the following form:
@@ -105,12 +105,12 @@ class DateTime;
  *	same 25-character length. Fields which are not significant must be 
  *	replaced with asterisk characters.
  *
- *	DateTime objects are constructed from C character strings or from
- *	other DateTime objects. These character strings must be exactly
+ *	CIMDateTime objects are constructed from C character strings or from
+ *	DateTime objects. These character strings must be exactly
  *	twenty-five characters and conform to one of the forms idententified
  *	above.
  *
- *	DateTime objects which are not explicitly initialized will be
+ *	CIMDateTime objects which are not explicitly initialized will be
  *	implicitly initialized with the null time interval:
  *
  *	    00000000000000.000000:000

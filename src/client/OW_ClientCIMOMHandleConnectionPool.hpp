@@ -90,8 +90,7 @@ public:
 	 * Add a ClientCIMOMHandleRef back to the pool.  handle must be connected
 	 * to url. If there are already m_maxConnectionsPerUrl ClientCIMOMHandleRef
 	 * instances for url already in the pool, it won't be added to the pool.
-	 * After handle has been returned to the pool, the caller can no longer use
-	 * it.
+	 * After calling this function, the caller can no longer use handle.
 	 * 
 	 * @param handle The ClientCIMOMHandleRef to add to the pool.
 	 * @param url The url handle is connected to.
