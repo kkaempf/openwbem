@@ -324,14 +324,27 @@ namespace ExceptionDetail
 		buf[n-1] = '\0'; // just in case...
 	}
 
-	void format_msg(char const * msg, int errnum, chvec_t & buf)
+	struct FormatMsgImpl
+	{
+		String fm;
+	};
+
+	FormatMsg::FormatMsg(char const * msg, int errnum)
+		: pImpl(new FormatMsgImpl)
 	{
 		char arr[BUFSZ];
 		portable_strerror_r(errnum, arr, BUFSZ);
 		char const * sarr = static_cast<char const *>(arr);
-		String str = Format("%1: %2(%3)", msg, errnum, sarr).toString();
-		char const * s = str.c_str();
-		buf.assign(s, s + str.length() + 1);
+		pImpl->fm = Format("%1: %2(%3)", msg, errnum, sarr).toString();
+	}
+
+	FormatMsg::~FormatMsg()
+	{
+	}
+
+	char const * FormatMsg::get() const
+	{
+		return pImpl->fm.c_str();
 	}
 
 } // namespace ExceptionDetail

@@ -39,7 +39,7 @@
 #include <iosfwd>
 #include <exception>
 #include <new>
-#include <vector>
+#include "OW_AutoPtr.hpp"
 
 namespace OpenWBEM
 {
@@ -168,12 +168,16 @@ namespace ExceptionDetail
 	//
 	void portable_strerror_r(int errnum, char * buf, unsigned n);
 
-	typedef ::std::vector<char> chvec_t;
+	class FormatMsgImpl;
 
-	// PROMISE: appends to buf at least one character, with '\0'
-	// the last char appended.
-	//
-	void format_msg(char const * msg, int errnum, chvec_t & buf);
+	class FormatMsg
+	{
+		AutoPtr<FormatMsgImpl> pImpl;
+	public:
+		FormatMsg(char const * msg, int errnum);
+		~FormatMsg();
+		char const * get() const;
+	};
 
 	unsigned const BUFSZ = 1024;
 
@@ -197,10 +201,8 @@ namespace ExceptionDetail
 		static exType format(char const * file, int line,
 		                     char const * msg, int errnum)
 		{
-			chvec_t buf;
-			format_msg(msg, errnum, buf);
-			// Elements of vector are guaranteed to be contiguous
-			return exType(file, line, &*buf.begin());
+			FormatMsg fm(msg, errnum);
+			return exType(file, line, fm.get());
 		}
 	}; // struct Errno
 
