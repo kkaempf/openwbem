@@ -56,6 +56,24 @@ using std::ostream;
 using std::istream;
 
 //////////////////////////////////////////////////////////////////////////////
+CIMDateTimeException::CIMDateTimeException(const char* file, int line, const char* msg) 
+	: CIMException(file, line, CIMException::FAILED, msg) 
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+CIMDateTimeException::~CIMDateTimeException() throw()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////
+const char*
+CIMDateTimeException::type() const
+{
+	return "CIMDateTimeException"; 
+}
+
+//////////////////////////////////////////////////////////////////////////////
 struct CIMDateTime::DateTimeData : public COWIntrusiveCountableBase
 {
 	DateTimeData() :

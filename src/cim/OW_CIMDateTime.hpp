@@ -49,11 +49,9 @@ namespace OpenWBEM
 class CIMDateTimeException : public CIMException
 {
 public:
-	CIMDateTimeException(const char* file, int line,
-		const char* msg) :
-		CIMException(file, line, CIMException::FAILED, msg) {}
-	virtual const char* type() const
-		{  return "CIMDateTimeException"; }
+	CIMDateTimeException(const char* file, int line, const char* msg);
+	virtual ~CIMDateTimeException() throw();
+	virtual const char* type() const;
 };
 
 class DateTime;
