@@ -141,7 +141,7 @@ makeDirectory(const String& path, int mode)
 }
 //////////////////////////////////////////////////////////////////////////////
 bool
-getFileSize(const String& path, UInt32& size)
+getFileSize(const String& path, off_t& size)
 {
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
@@ -192,7 +192,7 @@ renameFile(const String& oldFileName,
 //////////////////////////////////////////////////////////////////////////////
 size_t
 read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
-	long offset)
+	off_t offset)
 {
 	if(offset != -1L)
 	{
@@ -203,7 +203,7 @@ read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
 //////////////////////////////////////////////////////////////////////////////
 size_t
 write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
-	long offset)
+	off_t offset)
 {
 	if(offset != -1L)
 	{
@@ -212,7 +212,7 @@ write(FileHandle& hdl, const void* bfr, size_t numberOfBytes,
 	return ::write(hdl, bfr, numberOfBytes);
 }
 //////////////////////////////////////////////////////////////////////////////
-int
+off_t
 seek(FileHandle& hdl, off_t offset, int whence)
 {
 	return ::lseek(hdl, offset, whence);

@@ -89,7 +89,7 @@ public:
 	 * @return The number of bytes read. If EOF or an error occurs, a short
 	 * count or zero is returned.
 	 */
-	size_t read(void* bfr, size_t numberOfBytes, long offset=-1L)
+	size_t read(void* bfr, size_t numberOfBytes, off_t offset=-1L)
 	{
 		return FileSystem::read(m_hdl, bfr, numberOfBytes, offset);
 	}
@@ -102,7 +102,7 @@ public:
 	 * @return The number of bytes written. If an error occurs, a short count
 	 * or zero is returned.
 	 */
-	size_t write(const void* bfr, size_t numberOfBytes, long offset=-1L)
+	size_t write(const void* bfr, size_t numberOfBytes, off_t offset=-1L)
 	{
 		return FileSystem::write(m_hdl, bfr, numberOfBytes, offset);
 	}

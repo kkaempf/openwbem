@@ -124,7 +124,7 @@ namespace FileSystem
 	 * @param size	Put the size of the file in this variable.
 	 * @return true if the operation succeeds. Otherwise false.
 	 */
-	bool getFileSize(const String& path, UInt32& size);
+	bool getFileSize(const String& path, off_t& size);
 	/**
 	 * Remove the given directory
 	 * @param path	The name of the directory to remove
@@ -165,7 +165,7 @@ namespace FileSystem
 	 * count or zero is returned.
 	 */
 	size_t read(FileHandle& hdl, void* bfr, size_t numberOfBytes,
-		long offset=-1L);
+		off_t offset=-1L);
 	/**
 	 * Write data to a file.
 	 * @param hdl				The file handle to perform the write operation on.
@@ -177,7 +177,7 @@ namespace FileSystem
 	 * or zero is returned.
 	 */
 	size_t write(FileHandle& hdl, const void* bfr,
-		size_t numberOfBytes, long offset=-1L);
+		size_t numberOfBytes, off_t offset=-1L);
 	/**
 	 * Seek to a given offset within the file.
 	 * @param hdl			The file handle to use in the seek operation.
@@ -189,7 +189,7 @@ namespace FileSystem
 	 * @return The the current location in the file relative to the beginning
 	 * of the file on success. Other -1.
 	 */
-	int seek(FileHandle& hdl, off_t offset, int whence);
+	off_t seek(FileHandle& hdl, off_t offset, int whence);
 	/**
 	 * @param hdl	The file handle to use in the tell operation.
 	 * @return The current position in the file relative to the beginning of

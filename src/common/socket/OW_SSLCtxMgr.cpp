@@ -148,7 +148,7 @@ SSLCtxMgr::initCtx(const String& keyfile)
 	{
 		OW_THROW(SSLException, "Couldn't obtain random filename");
 	}
-	UInt32 fileSize = 0;
+	off_t fileSize = 0;
 	if (!FileSystem::getFileSize(String(randFile), fileSize)
 			|| fileSize < 1024)
 	{
