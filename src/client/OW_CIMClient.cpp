@@ -84,22 +84,48 @@ void CIMClient::deleteNameSpace(const String& ns)
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
-StringArray 
+StringArray
 CIMClient::enumNameSpaceE(EDeepFlag deep)
 {
-	// TODO: try using CIM_Namespace first
 	return CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, deep);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
-CIMClient::enumNameSpace(StringResultHandlerIFC& result, 
+void
+CIMClient::enumNameSpace(StringResultHandlerIFC& result,
 	EDeepFlag deep)
 {
-	// TODO: try using CIM_Namespace first
 	CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, result, deep);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+StringArray
+CIMClient::enumCIM_NamespaceE()
+{
+	try
+	{
+		return CIMNameSpaceUtils::enumCIM_Namespace(*m_ch);
+	}
+	catch (const CIMException& e)
+	{
+		// server doesn't support CIM_Namespace, try __Namespace
+		return CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, E_DEEP);
+	}
+}
+///////////////////////////////////////////////////////////////////////////////
+void
+CIMClient::enumCIM_Namespace(StringResultHandlerIFC& result)
+{
+	try
+	{
+		CIMNameSpaceUtils::enumCIM_Namespace(*m_ch, result);
+	}
+	catch (const CIMException& e)
+	{
+		// server doesn't support CIM_Namespace, try __Namespace
+		CIMNameSpaceUtils::enum__Namespace(*m_ch, m_namespace, result, E_DEEP);
+	}
+}
+///////////////////////////////////////////////////////////////////////////////
+void
 CIMClient::enumClass(const String& className,
 	CIMClassResultHandlerIFC& result,
 	EDeepFlag deep,
@@ -107,22 +133,22 @@ CIMClient::enumClass(const String& className,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin)
 {
-	m_ch->enumClass(m_namespace, className, result, deep, localOnly, 
+	m_ch->enumClass(m_namespace, className, result, deep, localOnly,
 		includeQualifiers, includeClassOrigin);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMClassEnumeration 
+CIMClassEnumeration
 CIMClient::enumClassE(const String& className,
 	EDeepFlag deep,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin)
 {
-	return m_ch->enumClassE(m_namespace, className, deep, localOnly, includeQualifiers, 
+	return m_ch->enumClassE(m_namespace, className, deep, localOnly, includeQualifiers,
 		includeClassOrigin);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::enumClassNames(
 	const String& className,
 	StringResultHandlerIFC& result,
@@ -131,7 +157,7 @@ void
 	m_ch->enumClassNames(m_namespace, className, result, deep);
 }
 ///////////////////////////////////////////////////////////////////////////////
-StringEnumeration 
+StringEnumeration
 	CIMClient::enumClassNamesE(
 	const String& className,
 	EDeepFlag deep)
@@ -139,7 +165,7 @@ StringEnumeration
 	return m_ch->enumClassNamesE(m_namespace, className, deep);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::enumInstances(
 	const String& className,
 	CIMInstanceResultHandlerIFC& result,
@@ -153,7 +179,7 @@ CIMClient::enumInstances(
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMInstanceEnumeration 
+CIMInstanceEnumeration
 CIMClient::enumInstancesE(
 	const String& className,
 	EDeepFlag deep,
@@ -162,11 +188,11 @@ CIMClient::enumInstancesE(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	return m_ch->enumInstancesE(m_namespace, className, deep, localOnly, 
+	return m_ch->enumInstancesE(m_namespace, className, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::enumInstanceNames(
 	const String& className,
 	CIMObjectPathResultHandlerIFC& result)
@@ -174,14 +200,14 @@ CIMClient::enumInstanceNames(
 	m_ch->enumInstanceNames(m_namespace, className, result);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMObjectPathEnumeration 
+CIMObjectPathEnumeration
 CIMClient::enumInstanceNamesE(
 	const String& className)
 {
 	return m_ch->enumInstanceNamesE(m_namespace, className);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMClass 
+CIMClass
 	CIMClient::getClass(
 	const String& className,
 	ELocalOnlyFlag localOnly,
@@ -189,23 +215,23 @@ CIMClass
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	return m_ch->getClass(m_namespace, className, localOnly, 
+	return m_ch->getClass(m_namespace, className, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMInstance 
+CIMInstance
 	CIMClient::getInstance(
 	const CIMObjectPath& instanceName,
 	ELocalOnlyFlag localOnly,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList) 
+	const StringArray* propertyList)
 {
-	return m_ch->getInstance(m_namespace, instanceName, localOnly, 
+	return m_ch->getInstance(m_namespace, instanceName, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMValue 
+CIMValue
 	CIMClient::invokeMethod(
 	const CIMObjectPath& path,
 	const String& methodName,
@@ -215,33 +241,33 @@ CIMValue
 	return m_ch->invokeMethod(m_namespace, path, methodName, inParams, outParams);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMQualifierType 
+CIMQualifierType
 	CIMClient::getQualifierType(const String& qualifierName)
 {
 	return m_ch->getQualifierType(m_namespace, qualifierName);
 }
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::setQualifierType(const CIMQualifierType& qualifierType)
 {
 	m_ch->setQualifierType(m_namespace, qualifierType);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::deleteQualifierType(const String& qualName)
 {
 	m_ch->deleteQualifierType(m_namespace, qualName);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::enumQualifierTypes(
 	CIMQualifierTypeResultHandlerIFC& result)
 {
 	m_ch->enumQualifierTypes(m_namespace, result);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMQualifierTypeEnumeration 
+CIMQualifierTypeEnumeration
 CIMClient::enumQualifierTypesE()
 {
 	return m_ch->enumQualifierTypesE(m_namespace);
@@ -249,19 +275,19 @@ CIMClient::enumQualifierTypesE()
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
-void 
-	CIMClient::modifyClass(const CIMClass& cimClass) 
+void
+	CIMClient::modifyClass(const CIMClass& cimClass)
 {
 	m_ch->modifyClass(m_namespace, cimClass);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
-	CIMClient::createClass(const CIMClass& cimClass) 
+void
+	CIMClient::createClass(const CIMClass& cimClass)
 {
 	m_ch->createClass(m_namespace, cimClass);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::deleteClass(const String& className)
 {
 	m_ch->deleteClass(m_namespace, className);
@@ -269,7 +295,7 @@ void
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::modifyInstance(const CIMInstance& modifiedInstance,
 	EIncludeQualifiersFlag includeQualifiers,
 	StringArray* propertyList)
@@ -278,24 +304,24 @@ void
 		propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMObjectPath 
-	CIMClient::createInstance(const CIMInstance& instance) 
+CIMObjectPath
+	CIMClient::createInstance(const CIMInstance& instance)
 {
 	return m_ch->createInstance(m_namespace, instance);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::deleteInstance(const CIMObjectPath& path)
 {
 	m_ch->deleteInstance(m_namespace, path);
 }
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::setProperty(
 	const CIMObjectPath& instanceName,
 	const String& propertyName,
-	const CIMValue& newValue) 
+	const CIMValue& newValue)
 {
 	m_ch->setProperty(m_namespace, instanceName, propertyName, newValue);
 }
@@ -303,7 +329,7 @@ void
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 ///////////////////////////////////////////////////////////////////////////////
-CIMValue 
+CIMValue
 	CIMClient::getProperty(
 	const CIMObjectPath& instanceName,
 	const String& propertyName)
@@ -313,7 +339,7 @@ CIMValue
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::associatorNames(
 	const CIMObjectPath& objectName,
 	CIMObjectPathResultHandlerIFC& result,
@@ -326,7 +352,7 @@ void
 		assocClass, resultClass, role, resultRole);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMObjectPathEnumeration 
+CIMObjectPathEnumeration
 	CIMClient::associatorNamesE(
 	const CIMObjectPath& objectName,
 	const String& assocClass,
@@ -334,11 +360,11 @@ CIMObjectPathEnumeration
 	const String& role,
 	const String& resultRole)
 {
-	return m_ch->associatorNamesE(m_namespace, objectName, 
+	return m_ch->associatorNamesE(m_namespace, objectName,
 		assocClass, resultClass, role, resultRole);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::associators(
 	const CIMObjectPath& path,
 	CIMInstanceResultHandlerIFC& result,
@@ -355,7 +381,7 @@ CIMClient::associators(
 		role, resultRole, includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMInstanceEnumeration 
+CIMInstanceEnumeration
 CIMClient::associatorsE(
 	const CIMObjectPath& path,
 	const String& assocClass,
@@ -366,12 +392,12 @@ CIMClient::associatorsE(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	return m_ch->associatorsE(m_namespace, path, assocClass, 
-		resultClass, role, resultRole, includeQualifiers, 
+	return m_ch->associatorsE(m_namespace, path, assocClass,
+		resultClass, role, resultRole, includeQualifiers,
 		includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::associatorsClasses(
 	const CIMObjectPath& path,
 	CIMClassResultHandlerIFC& result,
@@ -383,12 +409,12 @@ CIMClient::associatorsClasses(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	m_ch->associatorsClasses(m_namespace, path, result, assocClass, 
-		resultClass, role, resultRole, includeQualifiers, includeClassOrigin, 
+	m_ch->associatorsClasses(m_namespace, path, result, assocClass,
+		resultClass, role, resultRole, includeQualifiers, includeClassOrigin,
 		propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMClassEnumeration 
+CIMClassEnumeration
 CIMClient::associatorsClassesE(
 	const CIMObjectPath& path,
 	const String& assocClass,
@@ -399,12 +425,12 @@ CIMClient::associatorsClassesE(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	return m_ch->associatorsClassesE(m_namespace, path, assocClass, 
-		resultClass, role, resultRole, includeQualifiers, includeClassOrigin, 
+	return m_ch->associatorsClassesE(m_namespace, path, assocClass,
+		resultClass, role, resultRole, includeQualifiers, includeClassOrigin,
 		propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 	CIMClient::referenceNames(
 	const CIMObjectPath& path,
 	CIMObjectPathResultHandlerIFC& result,
@@ -414,7 +440,7 @@ void
 	m_ch->referenceNames(m_namespace, path, result, resultClass, role);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMObjectPathEnumeration 
+CIMObjectPathEnumeration
 	CIMClient::referenceNamesE(
 	const CIMObjectPath& path,
 	const String& resultClass,
@@ -423,7 +449,7 @@ CIMObjectPathEnumeration
 	return m_ch->referenceNamesE(m_namespace, path, resultClass, role);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::references(
 	const CIMObjectPath& path,
 	CIMInstanceResultHandlerIFC& result,
@@ -431,13 +457,13 @@ CIMClient::references(
 	const String& role,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList) 
+	const StringArray* propertyList)
 {
-	m_ch->references(m_namespace, path, result, resultClass, 
+	m_ch->references(m_namespace, path, result, resultClass,
 		role, includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMInstanceEnumeration 
+CIMInstanceEnumeration
 CIMClient::referencesE(
 	const CIMObjectPath& path,
 	const String& resultClass,
@@ -446,11 +472,11 @@ CIMClient::referencesE(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	return m_ch->referencesE(m_namespace, path, resultClass, role, 
+	return m_ch->referencesE(m_namespace, path, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::referencesClasses(
 	const CIMObjectPath& path,
 	CIMClassResultHandlerIFC& result,
@@ -458,13 +484,13 @@ CIMClient::referencesClasses(
 	const String& role,
 	EIncludeQualifiersFlag includeQualifiers,
 	EIncludeClassOriginFlag includeClassOrigin,
-	const StringArray* propertyList) 
+	const StringArray* propertyList)
 {
-	m_ch->referencesClasses(m_namespace, path, result, resultClass, 
+	m_ch->referencesClasses(m_namespace, path, result, resultClass,
 		role, includeQualifiers, includeClassOrigin, propertyList);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMClassEnumeration 
+CIMClassEnumeration
 CIMClient::referencesClassesE(
 	const CIMObjectPath& path,
 	const String& resultClass,
@@ -473,21 +499,21 @@ CIMClient::referencesClassesE(
 	EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList)
 {
-	return m_ch->referencesClassesE(m_namespace, path, resultClass, role, 
+	return m_ch->referencesClassesE(m_namespace, path, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList);
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMClient::execQuery(
 	CIMInstanceResultHandlerIFC& result,
 	const String& query,
-	const String& queryLanguage) 
+	const String& queryLanguage)
 {
 	m_ch->execQuery(m_namespace, result, query, queryLanguage);
 }
 ///////////////////////////////////////////////////////////////////////////////
-CIMInstanceEnumeration 
+CIMInstanceEnumeration
 CIMClient::execQueryE(
 	const String& query,
 	const String& queryLanguage)
@@ -495,13 +521,13 @@ CIMClient::execQueryE(
 	return m_ch->execQueryE(m_namespace, query, queryLanguage);
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 CIMClient::setHTTPRequestHeader(const String& hdrName, const String& hdrValue)
 {
 	return m_ch->setHTTPRequestHeader(hdrName, hdrValue);
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 CIMClient::getHTTPResponseHeader(const String& hdrName, String& valueOut) const
 {
 	return m_ch->getHTTPResponseHeader(hdrName, valueOut);

@@ -90,6 +90,12 @@ public:
 	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM
 	 * object path.
+	 *
+	 * This is deprecated because namespaces are not hierarchial according to
+	 * the CIM Operations over HTTP 1.1, even though many implementations expose
+	 * namespaces hierarcially using __Namespace.  use enumCIM_NameSpace()
+	 * instead.
+	 *
 	 * @param deep If set to DEEP, the enumeration returned will contain the
 	 *		entire hierarchy of namespaces present under the enumerated
 	 *		namespace. If set to SHALLOW  the enuermation will return only the
@@ -98,9 +104,22 @@ public:
 	 * @exception CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	StringArray enumNameSpaceE(WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
+	StringArray enumNameSpaceE(WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP) OW_DEPRECATED; // in 3.1.0
 	void enumNameSpace(StringResultHandlerIFC& result,
-		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP);
+		WBEMFlags::EDeepFlag deep=WBEMFlags::E_DEEP) OW_DEPRECATED; // in 3.1.0
+	
+	/**
+	 * Gets a list of the namespaces. This will first try enumerating instances
+	 * of root/CIM_Namespace, and if that fails, then a recursive enumeration
+	 * of __Namespace from the current namespace.
+	 *
+	 * @return An Array of namespace names as strings.
+	 * @exception CIMException If the namespace does not exist or the object
+	 *		cannot be found in the specified namespace.
+	 */
+	StringArray enumCIM_NamespaceE();
+	void enumCIM_Namespace(StringResultHandlerIFC& result);
+
 	/**
 	 * Enumerates the class specified by the CIMObjectPath.
 	 * @param className The class to be enumerated.
