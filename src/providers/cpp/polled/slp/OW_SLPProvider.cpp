@@ -34,6 +34,12 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_CIMOMLocatorSLP.hpp"
 #include "OW_SocketAddress.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMValue.hpp"
+
+
 #ifdef OW_GNU_LINUX
 #define OW_STRPLATFORM "Linux"
 #endif
@@ -83,7 +89,8 @@ public:
 	 */
 	virtual Int32 getInitialPollingInterval(const ProviderEnvironmentIFCRef &env)
 	{
-		if (env->getConfigItem(ConfigOpts::HTTP_SLP_DISABLED_opt).equalsIgnoreCase("true"))
+		// TODO: Fix this up to use provider instances instead of just config file options, which may not reflect the real state of the cimom.
+		if (env->getConfigItem(ConfigOpts::SLP_ENABLE_ADVERTISEMENT_opt, OW_DEFAULT_SLP_ENABLE_ADVERTISEMENT).equalsIgnoreCase("false"))
 		{
 			return 0;
 		}
@@ -117,6 +124,30 @@ public:
 		m_allowAnonymous = env->getConfigItem(ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS)
 				.equalsIgnoreCase("true");
 	
+		
+		m_interopSchemaNamespace = env->getConfigItem(ConfigOpts::INTEROP_SCHEMA_NAMESPACE_opt, OW_DEFAULT_INTEROP_SCHEMA_NAMESPACE);
+
+		m_serviceId = "unknown";
+		try
+		{
+			CIMObjectPathArray a = env->getCIMOMHandle()->enumInstanceNamesA(m_interopSchemaNamespace, "CIM_ObjectManager");
+			if (a.size() == 1)
+			{
+				const CIMObjectPath& om = a[0];
+				m_serviceId = om.getKeyT("Name").getValueT().toString();
+			}
+		}
+		catch (CIMException& e)
+		{
+			env->getLogger()->logError(Format("SLP provider caught (%1) when executing enumInstanceNames(%2, \"CIM_ObjectManager\")", e, m_interopSchemaNamespace));
+			env->getLogger()->logError("SLP provider unable to determine service-id");
+		}
+
+		m_queryEnabled = !env->getConfigItem(ConfigOpts::WQL_LIB_opt, OW_DEFAULT_WQL_LIB).empty();
+		m_indicationEnabled = !env->getConfigItem(ConfigOpts::DISABLE_INDICATIONS_opt, OW_DEFAULT_DISABLE_INDICATIONS).equalsIgnoreCase("true");
+
+		
+
 		return rval;
 	}
 	/**
@@ -138,10 +169,23 @@ private:
 	String m_httpPort;
 	bool m_useDigest;
 	bool m_allowAnonymous;
+	String m_serviceId;
+	String m_interopSchemaNamespace;
+	bool m_queryEnabled;
+	bool m_indicationEnabled;
+
 	void doSlpRegister(const ProviderEnvironmentIFCRef& env)
 	{
 		SLPError err;
 		SLPHandle slpHandle;
+		if((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
+		{
+			env->getLogger()->logError(format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
+				err).c_str());
+			return;
+		}
+
+		/*
 		String attributes(
 			"(namespace=root),(implementation=OpenWbem),(version="OW_VERSION"),"
 			"(query-language=WBEMSQL2),(host-os="OW_STRPLATFORM")");
@@ -157,12 +201,89 @@ private:
 				attributes += "Basic)";
 			}
 		}
-		if((err = SLPOpen("en", SLP_FALSE, &slpHandle)) != SLP_OK)
+		*/
+		StringBuffer attributes;
+
+		// service-hi-name - Optional
+
+		// service-hi-description - Optional
+
+		// service-id
+		attributes += "(service-id=";
+		attributes += m_serviceId;
+		attributes += ')';
+
+		// CommunicationMechanism
+		attributes += ",(CommunicationMechanism=cim-xml),";
+
+		// OtherCommunicationMechanismDescription
+        
+		// InteropSchemaNamespace
+		attributes += ",(InteropSchemaNamespace=";
+		attributes += m_interopSchemaNamespace;
+		attributes += ')';
+
+		// ProtocolVersion
+		attributes += ",(ProtocolVersion=1.1),";
+
+		// FunctionalProfilesSupported
+		attributes += ",(FunctionalProfilesSupported=";
+		attributes += 
+			"Basic Read"
+#ifndef OW_DISABLE_SCHEMA_MANIPULATION
+			",Schema Manipulation"
+#endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+			",Basic Write"
+			",Instance Manipulation"
+#endif
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+			",Association Traversal"
+#endif
+#ifndef OW_DISABLE_QUALIFIER_DECLARATION
+			",Qualifier Declaration"
+#endif
+			;
+		if (m_queryEnabled)
 		{
-			env->getLogger()->logError(format("SLPProvider::doSlpRegister - SLPOpenFailed: %1",
-				err).c_str());
-			return;
+			attributes += ",Query Execution";
 		}
+		if (m_indicationEnabled)
+		{
+			attributes += ",Indications";
+		}
+		attributes += ")";
+
+		// FunctionalProfileDescriptions - Only use if we put "Other" in FunctionalProfilesSupported
+
+		// MultipleOperationsSupported
+		attributes += ",(MultipleOperationsSupported=true)";
+
+		// AuthenticationMechanismsSupported
+		attributes += ",(AuthenticationMechanismsSupported=";
+		if (m_allowAnonymous) // this takes precedence over the other schemes
+		{
+			attributes += "None)";
+		}
+		else if (m_useDigest)
+		{
+			attributes += "Digest)";
+		}
+		else
+		{
+			attributes += "Basic)";
+		}
+
+		// AuthenticationMechansimDescriptions - Only use if we put "Other" in AuthenticationMechanismsSupported
+
+		// Namespace - Optional, and it may be more information that we want to advertise.  Evaluate whether we want this when we've got more experience with it.
+		// Classinfo - Options, won't do it for the same reason as Namespace
+
+		// RegisteredProfilesSupported - TODO
+		
+
+
+
 		String hostname = SocketAddress::getAnyLocalHost().getName();
 		StringArray urls;
 		try
@@ -170,7 +291,7 @@ private:
 			if (m_httpPort.toInt32() > 0)
 			{
 				String newUrl = "http://";
-				newUrl += hostname + ":" + m_httpPort + "/cimom";
+				newUrl += hostname + ":" + m_httpPort;
 				urls.push_back(newUrl);
 			}
 		}
@@ -182,7 +303,7 @@ private:
 			if (m_httpsPort.toInt32() > 0)
 			{
 				String newUrl = "https://";
-				newUrl += hostname + ":" + m_httpsPort + "/cimom";
+				newUrl += hostname + ":" + m_httpsPort;
 				urls.push_back(newUrl);
 			}
 		}
