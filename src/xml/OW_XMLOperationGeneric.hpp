@@ -49,20 +49,11 @@ class OW_CIMXMLParser;
 class OW_XMLOperationGeneric : public OW_XMLParameters
 {
 	public:
-		static const char* const CIMVERSION;
-		static const char* const DTDVERSION;
-		static const char* const MSG_ID;
-		static const char* const PROTOCOLVERSION;
-		static const char* const CIMVERSION_VALUE;
-		static const char* const DTDVERSION_VALUE;
-		static const char* const PROTOCOLVERSION_VALUE;
 
 		static void XMLGetCIMElement(OW_CIMXMLParser& node) /*throw (OW_CIMException)*/;
 
 
 	private:
-		static const char* const paramErrorCode;
-		static const char* const paramErrorDescription;
 
 };
 

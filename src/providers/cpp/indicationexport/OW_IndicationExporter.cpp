@@ -34,6 +34,9 @@
 #include "OW_TempFileStream.hpp"
 #include "OW_CIMtoXML.hpp"
 #include "OW_Format.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMXMLParser.hpp"
+#include "OW_CIMException.hpp"
 
 using std::ostream;
 using std::istream;
@@ -91,7 +94,7 @@ OW_IndicationExporter::sendXMLTrailer(ostream& ostr)
 	ostr << "\r\n";
 }
 	
-OW_XMLNode
+void
 OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_String& methodName,
 		const OW_CIMObjectPath& path)
 {
@@ -110,34 +113,32 @@ OW_IndicationExporter::doSendRequest(OW_Reference<iostream> ostr, const OW_Strin
 	*/
 	// end debug stuff
 
-	OW_CIMXMLParser parser(istr.getPtr());
+	OW_CIMXMLParser parser(*istr);
 
-	OW_XMLNode retval = parser.parse();
-	if (!retval)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,
-			"Failed parsing XML response from listener.");
-	}
-	return checkNodeForCIMError(retval, methodName);
+	return checkNodeForCIMError(parser, methodName);
 }
 
-OW_XMLNode
-OW_IndicationExporter::checkNodeForCIMError(OW_XMLNode reply,
+void
+OW_IndicationExporter::checkNodeForCIMError(OW_CIMXMLParser& parser,
 		const OW_String& operation)
 {
 	//
-	// Find <CIM> element
+	// Check for <CIM> element
 	//
-	reply = reply.mustFindElement(OW_XMLNode::XML_ELEMENT_CIM);
-	OW_String cimattr = reply.mustGetAttribute(OW_XMLOperationGeneric::CIMVERSION);
-	if (!cimattr.equals(OW_XMLOperationGeneric::CIMVERSION_VALUE))
+	if (!parser || !parser.tokenIs(OW_CIMXMLParser::E_CIM))
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid XML");
+	}
+
+	OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
+	if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for CIMVERSION " + cimattr).c_str());
 	}
 
-	cimattr = reply.mustGetAttribute(OW_XMLOperationGeneric::DTDVERSION);
-	if (!cimattr.equals(OW_XMLOperationGeneric::DTDVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
+	if (!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for DTDVERSION " + cimattr).c_str());
@@ -146,8 +147,8 @@ OW_IndicationExporter::checkNodeForCIMError(OW_XMLNode reply,
 	//
 	// Find <MESSAGE>
 	//
-	reply = reply.mustChildFindElement(OW_XMLNode::XML_ELEMENT_MESSAGE);
-	cimattr=reply.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+	parser.mustGetChild(OW_CIMXMLParser::E_MESSAGE);
+	cimattr=parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
 	if (!cimattr.equals(OW_String(m_iMessageID)))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -155,41 +156,27 @@ OW_IndicationExporter::checkNodeForCIMError(OW_XMLNode reply,
 										 +OW_String(m_iMessageID)).c_str());
 	}
 
-	cimattr = reply.mustGetAttribute(OW_XMLOperationGeneric::PROTOCOLVERSION);
-	if (!cimattr.equals(OW_XMLOperationGeneric::PROTOCOLVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
+	if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
 	}
 
-	reply = reply.getChild();
-	if (!reply)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							"No XML_ELEMENT_IRETURNVALUE (22)");
-	}
+	parser.mustGetChild();
 
-	//
 	// Find <SIMPLEEXPRSP>
-	//
-	reply = reply.findElementChild(OW_XMLNode::XML_ELEMENT_SIMPLEEXPRSP);
-
 	//
 	// TODO-NICE: need to look for complex EXPRSPs!!
 	//
-	if (!reply)
-	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							"No XML_ELEMENT_SIMPLEEXPRSP");
-	}
+	parser.mustGetChild(OW_CIMXMLParser::E_SIMPLEEXPRSP);
 
 	//
 	// <EXPMETHODRESPONSE>
 	//
-	OW_XMLNode tempReply =
-		reply.findElement(OW_XMLNode::XML_ELEMENT_EXPMETHODRESPONSE);
+	parser.mustGetChild(OW_CIMXMLParser::E_EXPMETHODRESPONSE);
 
-	OW_String nameOfMethod = reply.getAttribute(OW_XMLAttribute::NAME);
+	OW_String nameOfMethod = parser.getAttribute(OW_CIMXMLParser::A_NAME);
 	if (nameOfMethod.length() < 1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -203,37 +190,25 @@ OW_IndicationExporter::checkNodeForCIMError(OW_XMLNode reply,
 										 nameOfMethod).c_str());
 	}
 
-	reply = reply.getChild();
-	if (reply)
+	parser.mustGetChild();
+	if (parser.tokenIs(OW_CIMXMLParser::E_ERROR))
 	{
-		//
-		// See if there was an error, and if there was throw an equivalent
-		// exception on the client
-		//
-		OW_XMLNode errorNode = reply.findElement(OW_XMLNode::XML_ELEMENT_ERROR);
-		if (errorNode)
+		OW_String errCode = parser.mustGetAttribute(
+			OW_XMLParameters::paramErrorCode);
+		OW_String description = parser.mustGetAttribute(
+			OW_XMLParameters::paramErrorDescription);
+		OW_Int32 iErrCode;
+		try
 		{
-			OW_String errCode=errorNode.mustGetAttribute(
-				OW_XMLParameters::paramErrorCode);
-			OW_String description=errorNode.mustGetAttribute(
-				OW_XMLParameters::paramErrorDescription);
-			OW_Int32 iErrCode;
-			try
-			{
-				iErrCode = errCode.toInt32();
-			}
-			catch (const OW_StringConversionException& e)
-			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					format("Invalid XML error code. %1", e.getMessage()).c_str());
-			}
-			OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()),
-				description.c_str());
+			iErrCode = errCode.toInt32();
 		}
+		catch (const OW_StringConversionException& e)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, format("Invalid xml.  %1",
+				e.getMessage()).c_str());
+		}
+		OW_THROWCIMMSG(OW_CIMException::ErrNoType(errCode.toInt32()), description.c_str());
 	}
-
-
-	return reply;
 }
 	
 

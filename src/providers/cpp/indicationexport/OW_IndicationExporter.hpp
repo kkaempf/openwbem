@@ -52,9 +52,9 @@ public:
 private:
 	void sendXMLHeader(std::ostream& ostr);
 	void sendXMLTrailer(std::ostream& ostr);
-	OW_XMLNode doSendRequest(OW_Reference<std::iostream> ostr, const OW_String& methodName,
+	void doSendRequest(OW_Reference<std::iostream> ostr, const OW_String& methodName,
 		const OW_CIMObjectPath& path);
-	OW_XMLNode checkNodeForCIMError(OW_XMLNode reply,
+	void checkNodeForCIMError(OW_CIMXMLParser& parser,
 		const OW_String& operation); // throws a CIMException
 	
 	OW_CIMProtocolIFCRef m_protocol;

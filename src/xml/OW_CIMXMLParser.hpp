@@ -49,72 +49,73 @@ class OW_CIMXMLParser
 
 public:
 
-	// These must be sorted alphabetically!!!!!!!!!!!!!!!!!!!!!!!!!
+	// These must be sorted alphabetically, except E_UNKNOWN, which must be last!!!!!!!!!!!!!!!!!!!!!!!!!
 	enum tokenId
 	{
-		XML_ELEMENT_CIM								,
-		XML_ELEMENT_CLASS								,
-		XML_ELEMENT_CLASSNAME						,
-		XML_ELEMENT_CLASSPATH						,
-		XML_ELEMENT_DECLARATION						,
-		XML_ELEMENT_DECLGROUP_WITHNAME			,
-		XML_ELEMENT_DECLGROUP_WITHPATH			,
-		XML_ELEMENT_ERROR								,
-		XML_ELEMENT_EXPMETHODCALL 					,
-		XML_ELEMENT_EXPMETHODRESPONSE				,
-		XML_ELEMENT_HOST								,
-		XML_ELEMENT_IMETHODCALL						,
-		XML_ELEMENT_IMETHODRESPONSE				,
-		XML_ELEMENT_IMPLICITKEY						,
-		XML_ELEMENT_INSTANCE							,
-		XML_ELEMENT_INSTANCENAME					,
-		XML_ELEMENT_INSTANCEPATH					,
-		XML_ELEMENT_IPARAMVALUE						,
-		XML_ELEMENT_IRETURNVALUE					,
-		XML_ELEMENT_KEYBINDING						,
-		XML_ELEMENT_KEYVALUE							,
-		XML_ELEMENT_LOCALCLASSPATH					,
-		XML_ELEMENT_LOCALINSTANCEPATH				,
-		XML_ELEMENT_LOCALNAMESPACEPATH			,
-		XML_ELEMENT_MESSAGE							,
-		XML_ELEMENT_METHOD							,
-		XML_ELEMENT_METHODCALL						,
-		XML_ELEMENT_METHODRESPONSE					,
-		XML_ELEMENT_MULTIEXPREQ 					,
-		XML_ELEMENT_MULTIEXPRSP						,
-		XML_ELEMENT_MULTIREQ							,
-		XML_ELEMENT_MULTIRSP							,
-		XML_ELEMENT_NAMESPACE						,
-		XML_ELEMENT_NAMESPACEPATH					,
-		XML_ELEMENT_OBJECTPATH						,
-		XML_ELEMENT_PARAMETER						,
-		XML_ELEMENT_PARAMETER_ARRAY				,
-		XML_ELEMENT_PARAMETER_REFARRAY			,
-		XML_ELEMENT_PARAMETER_REFERENCE			,
-		XML_ELEMENT_PARAMVALUE						,
-		XML_ELEMENT_PROPERTY							,
-		XML_ELEMENT_PROPERTY_ARRAY					,
-		XML_ELEMENT_PROPERTY_REF					,
-		XML_ELEMENT_QUALIFIER						,
-		XML_ELEMENT_QUALIFIER_DECLARATION		,
-		XML_ELEMENT_RETURNVALUE						,
-		XML_ELEMENT_SCOPE								,
-		XML_ELEMENT_SIMPLEEXPREQ 					,
-		XML_ELEMENT_SIMPLEEXPRSP					,
-		XML_ELEMENT_SIMPLEREQ						,
-		XML_ELEMENT_SIMPLERSP						,
-		XML_ELEMENT_UNKNOWN							,
-		XML_ELEMENT_VALUE								,
-		XML_ELEMENT_VALUE_ARRAY						,
-		XML_ELEMENT_VALUE_NAMEDINSTANCE			,
-		XML_ELEMENT_VALUE_NAMEDOBJECT				,
-		XML_ELEMENT_VALUE_OBJECT					,
-		XML_ELEMENT_VALUE_OBJECTWITHLOCALPATH	,
-		XML_ELEMENT_VALUE_OBJECTWITHPATH			,
-		XML_ELEMENT_VALUE_REFARRAY					,
-		XML_ELEMENT_VALUE_REFERENCE				
+		E_CIM								,
+		E_CLASS								,
+		E_CLASSNAME						,
+		E_CLASSPATH						,
+		E_DECLARATION						,
+		E_DECLGROUP			,
+		E_DECLGROUP_WITHNAME			,
+		E_DECLGROUP_WITHPATH			,
+		E_ERROR								,
+		E_EXPMETHODCALL 					,
+		E_EXPMETHODRESPONSE				,
+		E_HOST								,
+		E_IMETHODCALL						,
+		E_IMETHODRESPONSE				,
+		E_IMPLICITKEY						,
+		E_INSTANCE							,
+		E_INSTANCENAME					,
+		E_INSTANCEPATH					,
+		E_IPARAMVALUE						,
+		E_IRETURNVALUE					,
+		E_KEYBINDING						,
+		E_KEYVALUE							,
+		E_LOCALCLASSPATH					,
+		E_LOCALINSTANCEPATH				,
+		E_LOCALNAMESPACEPATH			,
+		E_MESSAGE							,
+		E_METHOD							,
+		E_METHODCALL						,
+		E_METHODRESPONSE					,
+		E_MULTIEXPREQ 					,
+		E_MULTIEXPRSP						,
+		E_MULTIREQ							,
+		E_MULTIRSP							,
+		E_NAMESPACE						,
+		E_NAMESPACEPATH					,
+		E_OBJECTPATH						,
+		E_PARAMETER						,
+		E_PARAMETER_ARRAY				,
+		E_PARAMETER_REFARRAY			,
+		E_PARAMETER_REFERENCE			,
+		E_PARAMVALUE						,
+		E_PROPERTY							,
+		E_PROPERTY_ARRAY					,
+		E_PROPERTY_REFERENCE					,
+		E_QUALIFIER						,
+		E_QUALIFIER_DECLARATION		,
+		E_RETURNVALUE						,
+		E_SCOPE								,
+		E_SIMPLEEXPREQ 					,
+		E_SIMPLEEXPRSP					,
+		E_SIMPLEREQ						,
+		E_SIMPLERSP						,
+		E_VALUE								,
+		E_VALUE_ARRAY						,
+		E_VALUE_NAMEDINSTANCE			,
+		E_VALUE_NAMEDOBJECT				,
+		E_VALUE_OBJECT					,
+		E_VALUE_OBJECTWITHLOCALPATH	,
+		E_VALUE_OBJECTWITHPATH			,
+		E_VALUE_REFARRAY					,
+		E_VALUE_REFERENCE				,
 
-//		XML_ELEMENT_EXPPARAMVALUE  				,
+//		E_EXPPARAMVALUE  				,
+		E_UNKNOWN
 	};
 
 
@@ -141,11 +142,14 @@ public:
 
 	tokenId getToken() const;
 
-	OW_String getText() const;
+	OW_String getName() const;
+	OW_String getData() const;
+
+	bool isData() const;
 
 private:
-	OW_XMLParser m_parser;
 	OW_AutoPtr<OW_TempFileStream> m_ptfs;
+	OW_XMLParser m_parser;
 	OW_XMLToken m_curTok;
 	bool m_good;
 
@@ -160,6 +164,8 @@ private:
 	static ElemEntry g_elems[];
 	static bool elemEntryCompare(const ElemEntry& f1, const ElemEntry& f2);
 	static ElemEntry* g_elemsEnd;
+
+	void nextToken();
 
 	// unimplemented
 	OW_CIMXMLParser(const OW_CIMXMLParser& x);
@@ -178,6 +184,47 @@ public:
 		{  return m_good ? &dummy::nonnull : 0; }
 	safe_bool operator!() const
 		{  return m_good ? 0: &dummy::nonnull; }
+
+
+	static const char* const A_ARRAY_SIZE;
+	static const char* const A_ASSOC_CLASS;
+	static const char* const A_CLASS_NAME;
+	static const char* const A_CLASS_ORIGIN;
+	static const char* const A_DEEP_INHERITANCE;
+	static const char* const A_INCLUDE_CLASS_ORIGIN;
+	static const char* const A_INCLUDE_QUALIFIERS;
+	static const char* const A_INSTANCE_NAME;
+	static const char* const A_LOCAL_ONLY;
+	static const char* const A_MODIFIED_CLASS;
+	static const char* const A_NAME;
+	static const char* const A_NEW_VALUE;
+	static const char* const A_OBJECT_NAME;
+	static const char* const A_OVERRIDABLE;
+	static const char* const A_PROPAGATED;
+	static const char* const A_PROPERTY_LIST;
+	static const char* const A_PROPERTY_NAME;
+	static const char* const A_REFERENCE_CLASS;
+	static const char* const A_RESULT_CLASS;
+	static const char* const A_RESULT_ROLE;
+	static const char* const A_ROLE;
+	static const char* const A_SUPER_CLASS;
+	static const char* const A_TOINSTANCE;
+	static const char* const A_TOSUBCLASS;
+	static const char* const A_TRANSLATABLE;
+	static const char* const A_TYPE;
+	static const char* const A_VALUE_TYPE;
+
+	static const char* const A_CIMVERSION;
+	static const char* const A_DTDVERSION;
+	static const char* const A_MSG_ID;
+	static const char* const A_PROTOCOLVERSION;
+	static const char* const AV_CIMVERSION_VALUE;
+	static const char* const AV_DTDVERSION_VALUE;
+	static const char* const AV_PROTOCOLVERSION_VALUE;
+	static const char* const A_PARAMERRORCODE;
+	static const char* const A_PARAMERRORDESCRIPTION;
+
+	friend std::ostream& operator<<(std::ostream& ostr, const OW_CIMXMLParser& p);
 };
 
 #endif //#ifndef _OW_CIMXMLPARSER_HPP__

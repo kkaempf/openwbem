@@ -404,6 +404,7 @@ OW_CIMQualifierType::toMOF() const
 	size_t i;
 	OW_StringBuffer rv;
 
+	rv = m_pdata->m_name;
 	rv += " : ";
 	rv += m_pdata->m_dataType.toMOF();
 

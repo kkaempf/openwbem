@@ -23,9 +23,8 @@ clean-local:
 
 
 libowxml_a_SOURCES = \
+OW_CIMXMLParser.cpp \
 OW_RequestHandlerIFCXML.cpp \
-OW_XMLAttribute.cpp \
-OW_XMLNode.cpp \
 OW_XMLParser.cpp \
 OW_XMLOperationGeneric.cpp \
 OW_Param.cpp \
@@ -38,16 +37,14 @@ OW_XMLCIMFactory.cpp \
 OW_CIMtoXML.cpp
 
 pkginclude_HEADERS = \
+OW_CIMXMLParser.hpp \
 OW_RequestHandlerIFCXML.hpp \
 OW_Param.hpp         \
-OW_XMLAttribute.hpp  \
-OW_XMLNode.hpp \
 OW_XMLClass.hpp \
 OW_XMLOperationGeneric.hpp \
 OW_XMLParameters.hpp \
 OW_XMLParser.hpp \
 OW_XMLQualifier.hpp \
-OW_XMLException.hpp \
 OW_XMLEscape.hpp \
 OW_XMLUnescape.hpp \
 OW_XMLCIMFactory.hpp \

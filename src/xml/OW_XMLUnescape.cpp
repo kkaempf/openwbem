@@ -34,7 +34,7 @@
 #include "OW_config.h"
 #include "OW_XMLUnescape.hpp"
 #include "OW_StringBuffer.hpp"
-#include "OW_XMLException.hpp"
+#include "OW_XMLParser.hpp" // for OW_XMLParseException
 #include "OW_Format.hpp"
 
 #include <limits.h> // for CHAR_MAX
@@ -230,11 +230,11 @@ yy36:	yych = *++YYCURSOR;
 		long lval = strtol( thisTokStart + 2, NULL, 10 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(OW_XMLException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROW(OW_XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
-		thisTokStart = YYCURSOR; goto start; 
+		thisTokStart = YYCURSOR; goto start;
 	}
 yy38:	++YYCURSOR;
 	if(YYLIMIT == YYCURSOR) YYFILL(1);
@@ -259,11 +259,11 @@ yy40:	yych = *++YYCURSOR;
 		long lval = strtol( thisTokStart + 3, NULL, 16 );
 		if (lval > CHAR_MAX)
 		{
-			OW_THROW(OW_XMLException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
+			OW_THROW(OW_XMLParseException, format("XML escape code in unsupported range: %1", YYCURSOR - 1).c_str());
 		}
 		char val = lval;
 		rval += val;
-		thisTokStart = YYCURSOR; goto start; 
+		thisTokStart = YYCURSOR; goto start;
 	}
 }
 #line 92

@@ -31,7 +31,7 @@
 
 #include "OW_config.h"
 #include "OW_XMLListener.hpp"
-#include "OW_XMLOperationGeneric.hpp"
+#include "OW_CIMXMLParser.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_CIMListenerCallback.hpp"
 #include "OW_Format.hpp"
@@ -42,7 +42,6 @@
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_XMLException.hpp"
 
 using std::ostream;
 
@@ -59,7 +58,7 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 {
 	m_hasError = false;
 
-	OW_String messageId = parser.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+	OW_String messageId = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
 
 	parser.getChild();
 
@@ -70,8 +69,8 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 
 	makeXMLHeader(messageId, *ostrEntity);
 
-	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_MULTIEXPREQ))
-	//if (node.getToken() == OW_CIMXMLParser::XML_ELEMENT_MULTIEXPREQ)
+	if (parser.tokenIs(OW_CIMXMLParser::E_MULTIEXPREQ))
+	//if (node.getToken() == OW_CIMXMLParser::E_MULTIEXPREQ)
 	{
 		parser.getChild();
 		if (!parser)
@@ -92,10 +91,10 @@ OW_XMLListener::executeXML(OW_CIMXMLParser& parser, ostream* ostrEntity,
 				(*ostrEntity) << ostrEnt.rdbuf();
 			}
 
-			parser.getNext(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ);
+			parser.getNext(OW_CIMXMLParser::E_SIMPLEEXPREQ);
 		}
 	}
-	else if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ))
+	else if (parser.tokenIs(OW_CIMXMLParser::E_SIMPLEEXPREQ))
 	{
 		processSimpleExpReq(parser, *ostrEntity, *ostrError, messageId);
 	}
@@ -133,14 +132,14 @@ OW_XMLListener::processSimpleExpReq(OW_CIMXMLParser& parser,
 {
 	try
 	{
-		if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SIMPLEEXPREQ))
+		if (!parser.tokenIs(OW_CIMXMLParser::E_SIMPLEEXPREQ))
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
-		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_EXPMETHODCALL);
-//		node = node.mustChildElement(OW_CIMXMLParser::XML_ELEMENT_EXPPARAMVALUE);
-		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_IPARAMVALUE);
-		parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
+		parser.mustGetChild(OW_CIMXMLParser::E_EXPMETHODCALL);
+//		node = node.mustChildElement(OW_CIMXMLParser::E_EXPPARAMVALUE);
+		parser.mustGetChild(OW_CIMXMLParser::E_IPARAMVALUE);
+		parser.mustGetChild(OW_CIMXMLParser::E_INSTANCE);
 		OW_CIMInstance inst = OW_XMLCIMFactory::createInstance(parser);
 		m_callback->indicationOccurred(inst, m_path);
 		ostrEntity << "<SIMPLEEXPRSP>";

@@ -69,13 +69,11 @@ void OW_CIMPropertyTestCases::testEmbeddedClass()
 	OW_CIMtoXML(p1, ostr, OW_CIMtoXMLFlags::notLocalOnly, OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin);
 	ostr.rewind();
-	OW_XMLParser parser(&ostr);
+	OW_CIMXMLParser parser(ostr);
 
-	OW_XMLNode node;
-	unitAssertNoThrow(node = parser.parse());
-	unitAssert(node);
+	unitAssert(parser);
 
-	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(node);
+	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(parser);
 
 	unitAssert(p1 == p2);
 
@@ -100,13 +98,11 @@ void OW_CIMPropertyTestCases::testEmbeddedInstance()
 	OW_CIMtoXML(p1, ostr, OW_CIMtoXMLFlags::notLocalOnly, OW_CIMtoXMLFlags::includeQualifiers,
 		OW_CIMtoXMLFlags::includeClassOrigin);
 	ostr.rewind();
-	OW_XMLParser parser(&ostr);
+	OW_CIMXMLParser parser(ostr);
 
-	OW_XMLNode node;
-	unitAssertNoThrow(node = parser.parse());
-	unitAssert(node);
+	unitAssert(parser);
 
-	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(node);
+	OW_CIMProperty p2 = OW_XMLCIMFactory::createProperty(parser);
 
 	unitAssert(p1 == p2);
 

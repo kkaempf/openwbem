@@ -785,7 +785,10 @@ OW_String OW_CIMValue::toString() const
 	if (m_impl)
 		return m_impl->toString();
 	else
+	{
+		OW_ASSERT(0); // shouldn't ever happen
 		return "(null)";
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -113,7 +113,7 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 	}
 
 	parser.getNext();
-	if(parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_SCOPE))
+	if(parser.tokenIs(OW_CIMXMLParser::E_SCOPE))
 	{
 		// process optional scope child
 		processScope(parser,cimQualifier,"CLASS",OW_CIMScope::CLASS);
@@ -128,8 +128,8 @@ OW_XMLQualifier::processQualifierDecl(OW_CIMXMLParser& parser,
 		parser.mustGetEndTag();
 	}
 
-	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE) ||
-		parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_ARRAY))
+	if (parser.tokenIs(OW_CIMXMLParser::E_VALUE) ||
+		parser.tokenIs(OW_CIMXMLParser::E_VALUE_ARRAY))
 	{
 		// process optional value or value.array child
 		OW_CIMValue val = OW_XMLCIMFactory::createValue(parser,qualType);
@@ -160,7 +160,7 @@ OW_XMLQualifier::processScope(OW_CIMXMLParser& parser,
 OW_String
 OW_XMLQualifier::getQualifierName(OW_CIMXMLParser& parser)
 {
-	if(!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_IPARAMVALUE))
+	if(!parser.tokenIs(OW_CIMXMLParser::E_IPARAMVALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"Expected IPARAMVALUE to lead into QualifierName");
@@ -172,10 +172,19 @@ OW_XMLQualifier::getQualifierName(OW_CIMXMLParser& parser)
 				"Cannot find qualifier name");
 
 	parser.getChild();
-	if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE))
+	if (!parser.tokenIs(OW_CIMXMLParser::E_VALUE))
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Cannot find value for property name");
-	return parser.getText();
+				"Cannot find value for qualifier name");
+	parser.mustGetNext();
+	if (!parser.isData())
+	{
+		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				"Cannot find value for qualifier name");
+	}
+	OW_String name = parser.getData();
+	parser.mustGetNext();
+	parser.mustGetEndTag();
+	return name;
 }
 
 const char* const OW_XMLQualifier::XMLP_QUALIFIERNAME = "QualifierName";

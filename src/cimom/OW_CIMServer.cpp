@@ -473,6 +473,8 @@ OW_CIMServer::getQualifierType(const OW_CIMObjectPath& objPath,
 {
 	// Check to see if user has rights to get a qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::GETQUALIFIER, objPath, aclInfo);
+	
+	m_env->logDebug(format("OW_CIMServer getting qualifier type: %1", objPath.toString()));
 
 	return m_mStore.getQualifierType(objPath.getNameSpace(),
 		objPath.getObjectName());
@@ -573,6 +575,8 @@ OW_CIMServer::setQualifierType(const OW_CIMObjectPath& name,
 {
 	// Check to see if user has rights to update the qualifier
 	m_accessMgr->checkAccess(OW_AccessMgr::SETQUALIFIER, name, aclInfo);
+	m_env->logDebug(format("OW_CIMServer setting qualifier type: %1 in "
+		"namespace: %2", qt.toString(), name.getNameSpace()));
 	m_mStore.setQualiferType(name.getNameSpace(), qt);
 }
 

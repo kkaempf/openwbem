@@ -45,6 +45,8 @@
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMException.hpp"
 
 #include <iostream>
 

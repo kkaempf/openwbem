@@ -70,7 +70,6 @@ OW_XMLParseException::OW_XMLParseException(
 		unsigned int lineNumber)
 : OW_Exception(format("%1: on line %2", _xmlMessages[code - 1], lineNumber).c_str())
 {
-
 }
 
 OW_XMLParseException::OW_XMLParseException(
@@ -80,7 +79,14 @@ OW_XMLParseException::OW_XMLParseException(
 : OW_Exception(format("%1: on line %2: %3", _xmlMessages[code - 1], lineNumber,
 	message).c_str())
 {
+}
 
+OW_XMLParseException::OW_XMLParseException(
+		const char* file,
+		unsigned int line,
+		const char* msg)
+: OW_Exception(file, line, msg)
+{
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +144,7 @@ OW_Bool OW_XMLParser::next(OW_XMLToken& entry)
 		entry.type = OW_XMLToken::END_TAG;
 		entry.attributeCount = 0;
 		entry.text.reset();
+		return true;
 	}
 
 	// Either a "<...>" or content begins next:
@@ -157,7 +164,10 @@ OW_Bool OW_XMLParser::next(OW_XMLToken& entry)
 				throw OW_XMLParseException(OW_XMLParseException::MULTIPLE_ROOTS, _line);
 
 			_foundRoot = true;
-			_stack.push(entry.text.toString());
+			if (!_tagIsEmpty)
+			{
+				_stack.push(entry.text.toString());
+			}
 		}
 		else if (entry.type == OW_XMLToken::END_TAG)
 		{

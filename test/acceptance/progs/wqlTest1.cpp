@@ -6,6 +6,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
+#include "OW_CIMException.hpp"
 
 #include <iostream>
 #include <assert.h>

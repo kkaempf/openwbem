@@ -83,6 +83,11 @@ class OW_XMLParseException : public OW_Exception
 				Code code,
 				unsigned int lineNumber);
 
+		OW_XMLParseException(
+				const char* file,
+				unsigned int line,
+				const char* msg);
+
 		OW_XMLParseException::Code getCode() const
 		{
 			return _code;
@@ -148,12 +153,12 @@ class  OW_XMLParser
 {
 	public:
 
-		OW_XMLParser(std::istream& input) : _line(1), _current(), _foundRoot(false)
+		OW_XMLParser(std::istream& input) : _line(1), _current(), _foundRoot(false), _tagIsEmpty(false)
 		{
 			setInput(input);
 		}
 
-		OW_XMLParser(): _line(1), _current(), _foundRoot(false)
+		OW_XMLParser(): _line(1), _current(), _foundRoot(false), _tagIsEmpty(false)
 		{
 		}
 

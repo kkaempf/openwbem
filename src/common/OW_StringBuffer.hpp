@@ -62,13 +62,13 @@ public:
 		return append(arg.c_str());
 	}
 
-	OW_StringBuffer& operator += (char c) 
+	OW_StringBuffer& operator += (char c)
 		{ return append(c); }
-	OW_StringBuffer& operator += (OW_Char16 c) 
+	OW_StringBuffer& operator += (OW_Char16 c)
 		{ return append(char(c)); }
-	OW_StringBuffer& operator += (const char* str) 
+	OW_StringBuffer& operator += (const char* str)
 		{ return append(str); }
-	OW_StringBuffer& operator += (const OW_String& arg) 
+	OW_StringBuffer& operator += (const OW_String& arg)
 		{ return append(arg); }
 	OW_StringBuffer& operator += (OW_Bool v);
 	OW_StringBuffer& operator += (OW_UInt8 v);
@@ -84,49 +84,49 @@ public:
 	OW_StringBuffer& operator += (const OW_CIMDateTime& arg);
 	OW_StringBuffer& operator += (const OW_CIMObjectPath& arg);
 
-	OW_StringBuffer& operator<< (char c) 
+	OW_StringBuffer& operator<< (char c)
 		{ return append(c); }
 	OW_StringBuffer& operator<< (OW_Char16 c) 	
 		{ return append(char(c)); }
-	OW_StringBuffer& operator<< (const char* str) 
+	OW_StringBuffer& operator<< (const char* str)
 		{ return append(str); }
-	OW_StringBuffer& operator<< (const OW_String& arg) 
+	OW_StringBuffer& operator<< (const OW_String& arg)
 		{ return append(arg); }
-	OW_StringBuffer& operator<< (OW_Bool v) 
+	OW_StringBuffer& operator<< (OW_Bool v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt8 v) 
+	OW_StringBuffer& operator<< (OW_UInt8 v)
 		{  return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int8 v) 
+	OW_StringBuffer& operator<< (OW_Int8 v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt16 v) 
+	OW_StringBuffer& operator<< (OW_UInt16 v)
 		{  return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int16 v) 
+	OW_StringBuffer& operator<< (OW_Int16 v)
 		{  return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt32 v) 
+	OW_StringBuffer& operator<< (OW_UInt32 v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int32 v) 
+	OW_StringBuffer& operator<< (OW_Int32 v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_UInt64 v) 
+	OW_StringBuffer& operator<< (OW_UInt64 v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Int64 v) 
+	OW_StringBuffer& operator<< (OW_Int64 v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Real32 v) 
+	OW_StringBuffer& operator<< (OW_Real32 v)
 		{ return operator+=(v); }
-	OW_StringBuffer& operator<< (OW_Real64 v) 
+	OW_StringBuffer& operator<< (OW_Real64 v)
 		{ return operator+=(v); }
 
-	OW_StringBuffer& operator<< (const OW_CIMDateTime& arg) 
-	{ 
+	OW_StringBuffer& operator<< (const OW_CIMDateTime& arg)
+	{
 		return operator+=(arg);
 	}
 
-	OW_StringBuffer& operator<< (const OW_CIMObjectPath& arg) 
-	{ 
+	OW_StringBuffer& operator<< (const OW_CIMObjectPath& arg)
+	{
 		return operator+=(arg);
 	}
 
 	char operator[] (int ndx) const;
-	OW_String toString() const 
+	OW_String toString() const
 			{ return OW_String(m_bfr); }
 
 	int length() const {  return m_len; }
@@ -136,6 +136,8 @@ public:
 	void reset();
 	const char* c_str() const {  return m_bfr; }
 	bool equals(const char* arg) const;
+
+	friend std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b);
 
 private:
 	void checkAvail(int len=1);

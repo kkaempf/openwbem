@@ -41,21 +41,21 @@ using std::ostream;
 void
 OW_XMLOperationGeneric::XMLGetCIMElement(OW_CIMXMLParser& parser)
 {
-    if(!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_CIM))
+    if(!parser.tokenIs(OW_CIMXMLParser::E_CIM))
     {
 		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
     }
 
-    OW_String str = parser.mustGetAttribute(CIMVERSION);
+    OW_String str = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
 
-    if(!str.equals(CIMVERSION_VALUE))
+    if(!str.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
     {
         OW_THROW(OW_CIMErrorException,
             OW_CIMErrorException::unsupported_cim_version);
     }
 
-    str = parser.mustGetAttribute(DTDVERSION);
-    if(!str.equals(DTDVERSION_VALUE))
+    str = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
+    if(!str.equals(OW_CIMXMLParser::AV_DTDVERSION_VALUE))
     {
         OW_THROW(OW_CIMErrorException,
             OW_CIMErrorException::unsupported_dtd_version);
@@ -71,14 +71,5 @@ OW_XMLOperationGeneric::XMLGetCIMElement(OW_CIMXMLParser& parser)
 }
 
 
-const char* const OW_XMLOperationGeneric::CIMVERSION = "CIMVERSION";
-const char* const OW_XMLOperationGeneric::DTDVERSION = "DTDVERSION";
-const char* const OW_XMLOperationGeneric::MSG_ID = "ID";
-const char* const OW_XMLOperationGeneric::PROTOCOLVERSION = "PROTOCOLVERSION";
-const char* const OW_XMLOperationGeneric::CIMVERSION_VALUE = "2.0";
-const char* const OW_XMLOperationGeneric::DTDVERSION_VALUE = "2.0";
-const char* const OW_XMLOperationGeneric::PROTOCOLVERSION_VALUE = "1.0";
-const char* const OW_XMLOperationGeneric::paramErrorCode = "CODE";
-const char* const OW_XMLOperationGeneric::paramErrorDescription = "DESCRIPTION";
 
 

@@ -47,7 +47,7 @@ class OW_XMLExecute : public OW_RequestHandlerIFCXML, OW_XMLQualifier
 public:
 	OW_XMLExecute();
 	virtual ~OW_XMLExecute() {}
-	int executeXML(OW_CIMXMLParser& node, std::ostream* ostrEntity,
+	int executeXML(OW_CIMXMLParser& parser, std::ostream* ostrEntity,
 
 	std::ostream* ostrError, const OW_String& userName);
 
@@ -72,66 +72,66 @@ private:
 	OW_String m_functionName;
 
 
-	void executeIntrinsic(std::ostream& osrt, OW_CIMXMLParser node, OW_CIMOMHandleIFC& hdl,
+	void executeIntrinsic(std::ostream& osrt, OW_CIMXMLParser& parser, OW_CIMOMHandleIFC& hdl,
 			OW_CIMObjectPath& path);
 		/*throw (OW_IOException); */
-	void executeExtrinsic(std::ostream& ostr, OW_CIMXMLParser node,
+	void executeExtrinsic(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMOMHandleIFC& lch);
 
-	void doInvokeMethod(std::ostream& ostr, OW_CIMXMLParser& node,
+	void doInvokeMethod(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& methodName, OW_CIMOMHandleIFC& lch);
 
-	void processSimpleReq(OW_CIMXMLParser& node, std::ostream& ostrEntity,
+	void processSimpleReq(OW_CIMXMLParser& parser, std::ostream& ostrEntity,
 		std::ostream& ostrError, const OW_String& userName);
 
-	static void getParameters(OW_CIMXMLParser& node,
+	static void getParameters(OW_CIMXMLParser& parser,
 		const OW_Array<OW_CIMParameter>& paramlist, OW_Array<OW_CIMValue>& params);
 
-	void associatorNames(std::ostream& ostr, OW_CIMXMLParser& node,
+	void associatorNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void associators(std::ostream& ostr, OW_CIMXMLParser& node,
+	void associators(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void createClass(std::ostream& /*ostr*/, OW_CIMXMLParser& node,
+	void createClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void createInstance(std::ostream& ostr, OW_CIMXMLParser& node,
+	void createInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void deleteClass(std::ostream& /*ostr*/, OW_CIMXMLParser& node,
+	void deleteClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void deleteInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& node,
+	void deleteInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void deleteQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& qualNode,
+	void deleteQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void enumerateClassNames(std::ostream& ostr, OW_CIMXMLParser& node,
+	void enumerateClassNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void enumerateClasses( std::ostream& ostr, OW_CIMXMLParser& node,
+	void enumerateClasses( std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
-	void enumerateInstanceNames(std::ostream& ostr, OW_CIMXMLParser& node,
+	void enumerateInstanceNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void enumerateInstances(std::ostream& ostr, OW_CIMXMLParser& node,
+	void enumerateInstances(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
-	void enumerateQualifiers(std::ostream& ostr, OW_CIMXMLParser& /*node*/,
+	void enumerateQualifiers(std::ostream& ostr, OW_CIMXMLParser& /*parser*/,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void getClass(std::ostream& ostr, OW_CIMXMLParser& node,
+	void getClass(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
-	void getInstance(std::ostream& ostr, OW_CIMXMLParser& node,
+	void getInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void getProperty(std::ostream& ostr, OW_CIMXMLParser& propNode,
+	void getProperty(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void getQualifier(std::ostream& ostr, OW_CIMXMLParser& node,
+	void getQualifier(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void modifyClass(std::ostream& /*ostr*/, OW_CIMXMLParser& node,
+	void modifyClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void modifyInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& node,
+	void modifyInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void referenceNames(std::ostream& ostr, OW_CIMXMLParser& node,
+	void referenceNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path,OW_CIMOMHandleIFC& hdl) ;
-	void references(std::ostream& ostr, OW_CIMXMLParser& node,
+	void references(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl) ;
-	void setProperty(std::ostream& /*ostr*/, OW_CIMXMLParser& propNode,
+	void setProperty(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void setQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& qualNode,
+	void setQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
-	void execQuery(std::ostream& ostr, OW_CIMXMLParser& qualNode,
+	void execQuery(std::ostream& ostr, OW_CIMXMLParser& parser,
 		OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl);
 
 	typedef void (OW_XMLExecute::*execFuncPtr_t)(std::ostream& ostr,

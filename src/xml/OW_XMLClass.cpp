@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_XMLClass.hpp"
-#include "OW_XMLAttribute.hpp"
 #include "OW_String.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
@@ -47,9 +46,9 @@ OW_XMLClass::getNameSpace(OW_CIMXMLParser& parser)
 {
 	OW_String nameSpace;
 	OW_Bool firstTime = true;
-	while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_NAMESPACE))
+	while (parser.tokenIs(OW_CIMXMLParser::E_NAMESPACE))
 	{
-		OW_String pname = parser.mustGetAttribute(OW_XMLAttribute::NAME);
+		OW_String pname = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
 		if(pname.length() == 0)
 		{
 			OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
@@ -78,20 +77,20 @@ OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClassArray& cArray
 
 	parser.mustGetChild();
 	
-	if (token == OW_CIMXMLParser::XML_ELEMENT_VALUE_OBJECTWITHPATH)
+	if (token == OW_CIMXMLParser::E_VALUE_OBJECTWITHPATH)
 	{
 		OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
 			
 		token = parser.getToken();
 		
-		if (token == OW_CIMXMLParser::XML_ELEMENT_CLASSPATH)
+		if (token == OW_CIMXMLParser::E_CLASSPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::XML_ELEMENT_CLASS);
+			parser.mustGetNext(OW_CIMXMLParser::E_CLASS);
 		    cArray.append(readClass(parser,tmpcop));
 		}
-		else if (token==OW_CIMXMLParser::XML_ELEMENT_INSTANCEPATH)
+		else if (token==OW_CIMXMLParser::E_INSTANCEPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
+			parser.mustGetNext(OW_CIMXMLParser::E_INSTANCE);
 		    iArray.append(readInstance(parser,tmpcop));
 		}
 		else
@@ -101,19 +100,19 @@ OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClassArray& cArray
 		
 		return tmpcop;
 	}
-	else if (token==OW_CIMXMLParser::XML_ELEMENT_VALUE_OBJECTWITHLOCALPATH)
+	else if (token==OW_CIMXMLParser::E_VALUE_OBJECTWITHLOCALPATH)
 	{
 	    OW_CIMObjectPath tmpcop = OW_XMLCIMFactory::createObjectPath(parser);
 			
 	    token = parser.getToken();
-	    if (token == OW_CIMXMLParser::XML_ELEMENT_LOCALCLASSPATH)
+	    if (token == OW_CIMXMLParser::E_LOCALCLASSPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::XML_ELEMENT_CLASS);
+			parser.mustGetNext(OW_CIMXMLParser::E_CLASS);
 		    cArray.append(readClass(parser, tmpcop));
 	    }
-		else if (token == OW_CIMXMLParser::XML_ELEMENT_LOCALINSTANCEPATH)
+		else if (token == OW_CIMXMLParser::E_LOCALINSTANCEPATH)
 		{
-			parser.mustGetNext(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
+			parser.mustGetNext(OW_CIMXMLParser::E_INSTANCE);
 		    iArray.append(readInstance(parser, tmpcop));
 	    }
 		else
@@ -130,7 +129,7 @@ OW_XMLClass::getObjectWithPath(OW_CIMXMLParser& parser, OW_CIMClassArray& cArray
 OW_CIMClass
 OW_XMLClass::readClass(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
 {
-	if(childNode.getToken() == OW_CIMXMLParser::XML_ELEMENT_CLASS)
+	if(childNode.getToken() == OW_CIMXMLParser::E_CLASS)
 	{
 		OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(childNode);
 	
@@ -146,7 +145,7 @@ OW_CIMInstance
 OW_XMLClass::readInstance(OW_CIMXMLParser& childNode, OW_CIMObjectPath& path)
 {
 	(void)path;
-	if (childNode.getToken() == OW_CIMXMLParser::XML_ELEMENT_INSTANCE)
+	if (childNode.getToken() == OW_CIMXMLParser::E_INSTANCE)
 	{
 		OW_CIMInstance cimInstance = OW_XMLCIMFactory::createInstance(childNode);
 	    return(cimInstance);

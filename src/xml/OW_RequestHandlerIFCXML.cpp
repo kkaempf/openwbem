@@ -33,7 +33,6 @@
 #include "OW_RequestHandlerIFCXML.hpp"
 #include "OW_XMLParser.hpp"
 #include "OW_Assertion.hpp"
-#include "OW_XMLException.hpp"
 #include "OW_CIMErrorException.hpp"
 #include "OW_XMLOperationGeneric.hpp"
 #include "OW_Format.hpp"
@@ -72,7 +71,7 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 
-		if (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_MESSAGE))
+		if (!parser.tokenIs(OW_CIMXMLParser::E_MESSAGE))
 		{
 			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
@@ -124,7 +123,7 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 			(*ostrError) << "</MESSAGE></CIM>\r\n";
 		}
 	}
-	catch (OW_XMLException& e)
+	catch (OW_XMLParseException& e)
 	{
 		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
 	}

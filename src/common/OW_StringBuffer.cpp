@@ -36,6 +36,7 @@
 #include "OW_CIMDateTime.hpp"
 #include <cstring>
 #include <cstdio>
+#include <iostream>
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringBuffer::OW_StringBuffer(int allocSize) :
@@ -81,7 +82,7 @@ OW_StringBuffer::operator= (const OW_String& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator= (const char* str)
 {
 	if(str == NULL || *str == (char)0)
@@ -113,7 +114,7 @@ OW_StringBuffer::reset()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 OW_StringBuffer::clear(int newSize)
 {
 	m_len = 0;
@@ -149,7 +150,7 @@ OW_StringBuffer::clear(int newSize)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-char 
+char
 OW_StringBuffer::operator[] (int ndx) const
 {
 	return (ndx > m_len) ? 0 : m_bfr[ndx];
@@ -157,28 +158,28 @@ OW_StringBuffer::operator[] (int ndx) const
 
 //////////////////////////////////////////////////////////////////////////////
 // This operator must write "TRUE"/"FALSE" to support the CIMValue toXML
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Bool v)
 {
 	return append(v.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
-OW_StringBuffer::operator += (const OW_CIMDateTime& arg) 
-{ 
+OW_StringBuffer&
+OW_StringBuffer::operator += (const OW_CIMDateTime& arg)
+{
 	return append(arg.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
-OW_StringBuffer::operator += (const OW_CIMObjectPath& arg) 
-{ 
+OW_StringBuffer&
+OW_StringBuffer::operator += (const OW_CIMObjectPath& arg)
+{
 	return append(arg.toString());
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_UInt8 v)
 {
 	char bfr[6];
@@ -187,7 +188,7 @@ OW_StringBuffer::operator += (OW_UInt8 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Int8 v)
 {
 	char bfr[6];
@@ -196,7 +197,7 @@ OW_StringBuffer::operator += (OW_Int8 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_UInt16 v)
 {
 	char bfr[16];
@@ -205,7 +206,7 @@ OW_StringBuffer::operator += (OW_UInt16 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Int16 v)
 {
 	char bfr[16];
@@ -214,7 +215,7 @@ OW_StringBuffer::operator += (OW_Int16 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_UInt32 v)
 {
 	char bfr[16];
@@ -223,7 +224,7 @@ OW_StringBuffer::operator += (OW_UInt32 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Int32 v)
 {
 	char bfr[16];
@@ -232,7 +233,7 @@ OW_StringBuffer::operator += (OW_Int32 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_UInt64 v)
 {
 	char bfr[28];
@@ -241,7 +242,7 @@ OW_StringBuffer::operator += (OW_UInt64 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Int64 v)
 {
 	char bfr[28];
@@ -250,7 +251,7 @@ OW_StringBuffer::operator += (OW_Int64 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Real32 v)
 {
 	char bfr[32];
@@ -259,7 +260,7 @@ OW_StringBuffer::operator += (OW_Real32 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::operator += (OW_Real64 v)
 {
 	char bfr[32];
@@ -268,7 +269,7 @@ OW_StringBuffer::operator += (OW_Real64 v)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_StringBuffer& 
+OW_StringBuffer&
 OW_StringBuffer::append(char c)
 {
 	checkAvail();
@@ -322,9 +323,15 @@ OW_StringBuffer::checkAvail(int len)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-bool 
+bool
 OW_StringBuffer::equals(const char* arg) const
 {
 	return strcmp(arg, m_bfr) == 0;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+std::ostream& operator<<(std::ostream& ostr, const OW_StringBuffer& b)
+{
+	ostr << b.c_str();
+	return ostr;
+}

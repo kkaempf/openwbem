@@ -66,7 +66,7 @@ public:
 	static const char* const XMLP_MODIFIED_CLASS;
 	static const char* const XMLP_INSTANCENAME;
 	static const char* const XMLP_PROPERTYNAME;
-	static const char* const XMLP_NewValue		;
+	static const char* const XMLP_NEWVALUE		;
 	static const char* const XMLP_ROLE			;
 	static const char* const XMLP_RESULTROLE	;
 	static const char* const XMLP_OBJECTNAME	;

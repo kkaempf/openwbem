@@ -47,6 +47,8 @@
 #include "OW_Format.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMException.hpp"
 
 #include <iostream>
 #include <algorithm> // for sort

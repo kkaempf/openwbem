@@ -52,7 +52,6 @@ using std::flush;
 // static
 void OW_StackTrace::getStackTrace()
 {
-#ifdef OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 	OW_StackTrace* retval = 0;
 	if (getenv("OW_STACKTRACE"))
 	{
@@ -66,12 +65,13 @@ void OW_StackTrace::getStackTrace()
 			outputName += OW_String(OW_UInt32(::getpid()));
 			scriptName += OW_String(OW_UInt32(::getpid())) + ".sh";
 			OW_String exeName("/proc/");
-			exeName += OW_String(OW_UInt32(::getppid())) + "/exe";
+			exeName += OW_String(OW_UInt32(::getpid())) + "/exe";
 			
 			ofstream scriptFile(scriptName.c_str(), std::ios::out);
 			scriptFile << "#!/bin/sh\n"
-				<< "gdb " << exeName << " " << ::getppid() << " << EOS > " << outputName << " 2>&1\n"
-				<< "thread apply all bt\n"
+				<< "gdb " << exeName << " " << ::getpid() << " << EOS > " << outputName << " 2>&1\n"
+// doesn't work with gdb 5.1				<< "thread apply all bt\n"
+				<< "bt\n"
 				<< "detach\n"
 				<< "q\n"
 				<< "EOS\n" << flush;
@@ -102,7 +102,6 @@ void OW_StackTrace::getStackTrace()
 	{
 		std::cerr << *retval << endl;
 	}
-#endif // OW_ENABLE_STACK_TRACE_ON_EXCEPTIONS
 }
 
 OW_StackTrace::OW_StackTrace(const OW_String& trace)

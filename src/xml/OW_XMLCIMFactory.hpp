@@ -37,14 +37,14 @@ class OW_CIMXMLParser;
 
 struct OW_XMLCIMFactory
 {
-	static OW_CIMObjectPath createObjectPath(OW_CIMXMLParser& node);
-	static OW_CIMClass createClass(OW_CIMXMLParser& node);
-	static OW_CIMInstance createInstance(OW_CIMXMLParser& node);
-	static OW_CIMValue createValue(OW_CIMXMLParser& node, OW_String const& type);
-	static OW_CIMQualifier createQualifier(OW_CIMXMLParser& node);
-	static OW_CIMMethod createMethod(OW_CIMXMLParser& node);
-	static OW_CIMProperty createProperty(OW_CIMXMLParser& node);
-	static OW_CIMParameter createParameter(OW_CIMXMLParser& node);
+	static OW_CIMObjectPath createObjectPath(OW_CIMXMLParser& parser);
+	static OW_CIMClass createClass(OW_CIMXMLParser& parser);
+	static OW_CIMInstance createInstance(OW_CIMXMLParser& parser);
+	static OW_CIMValue createValue(OW_CIMXMLParser& parser, OW_String const& type);
+	static OW_CIMQualifier createQualifier(OW_CIMXMLParser& parser);
+	static OW_CIMMethod createMethod(OW_CIMXMLParser& parser);
+	static OW_CIMProperty createProperty(OW_CIMXMLParser& parser);
+	static OW_CIMParameter createParameter(OW_CIMXMLParser& parser);
 };
 
 #endif

@@ -46,6 +46,7 @@
 #include "OW_Format.hpp"
 #include "OW_GetPass.hpp"
 #include "OW_CIMtoXML.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 #include <iostream>
 

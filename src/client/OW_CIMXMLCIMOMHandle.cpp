@@ -31,7 +31,7 @@
 #include "OW_config.h"										
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_HTTPChunkedOStream.hpp"
-#include "OW_XMLOperationGeneric.hpp"
+#include "OW_CIMXMLParser.hpp"
 #include "OW_XMLParameters.hpp"
 #include "OW_Format.hpp"
 #include "OW_XMLEscape.hpp"
@@ -43,7 +43,6 @@
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMParameter.hpp"
 #include "OW_CIMMethod.hpp"
-#include "OW_XMLException.hpp"
 #include "OW_XMLCIMFactory.hpp"
 #include "OW_HTTPChunkedIStream.hpp"
 #include "OW_HTTPUtils.hpp"
@@ -52,7 +51,7 @@
 #include "OW_CIMUrl.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMXMLParser.hpp"
-#include "OW_XMLAttribute.hpp"
+#include "OW_CIMXMLParser.hpp"
 
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -159,10 +158,11 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 
 	try
 	{
+		checkNodeForCIMError(parser, methodName, isIntrinsic);
 		op(parser);
 		OW_HTTPUtils::eatEntity(*istr);
 	}
-	catch (OW_XMLException& xmlE)
+	catch (OW_XMLParseException& xmlE)
 	{
 		OW_HTTPUtils::eatEntity(*istr);
 		if (istr->getError().length() == 0)
@@ -178,7 +178,6 @@ OW_CIMXMLCIMOMHandle::doSendRequest(
 		OW_CIMXMLParser errorParser(error);
 		return checkNodeForCIMError(errorParser, methodName, isIntrinsic);
 	}
-	return checkNodeForCIMError(parser, methodName, isIntrinsic);
 }
 
 void
@@ -186,22 +185,21 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	const OW_String& operation, bool isIntrinsic)
 {
 	//
-	// Find <CIM> element
+	// Check for <CIM> element
 	//
-	if (!parser)
+	if (!parser || !parser.tokenIs(OW_CIMXMLParser::E_CIM))
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid XML");
 	}
-	parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_CIM);
-	OW_String cimattr = parser.mustGetAttribute(OW_XMLOperationGeneric::CIMVERSION);
-	if (!cimattr.equals(OW_XMLOperationGeneric::CIMVERSION_VALUE))
+	OW_String cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_CIMVERSION);
+	if (!cimattr.equals(OW_CIMXMLParser::AV_CIMVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for CIMVERSION " + cimattr).c_str());
 	}
 
-	cimattr = parser.mustGetAttribute(OW_XMLOperationGeneric::DTDVERSION);
-	if (!cimattr.equals(OW_XMLOperationGeneric::DTDVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_DTDVERSION);
+	if (!cimattr.equals(OW_CIMXMLParser::AV_DTDVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for DTDVERSION " + cimattr).c_str());
@@ -210,8 +208,8 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	//
 	// Find <MESSAGE>
 	//
-	parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_MESSAGE);
-	cimattr = parser.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+	parser.mustGetChild(OW_CIMXMLParser::E_MESSAGE);
+	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_MSG_ID);
 	if (!cimattr.equals(OW_String(m_iMessageID)))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -219,8 +217,8 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 										 +OW_String(m_iMessageID)).c_str());
 	}
 
-	cimattr = parser.mustGetAttribute(OW_XMLOperationGeneric::PROTOCOLVERSION);
-	if (!cimattr.equals(OW_XMLOperationGeneric::PROTOCOLVERSION_VALUE))
+	cimattr = parser.mustGetAttribute(OW_CIMXMLParser::A_PROTOCOLVERSION);
+	if (!cimattr.equals(OW_CIMXMLParser::AV_PROTOCOLVERSION_VALUE))
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 							OW_String("Return is for PROTOCOLVERSION "+cimattr).c_str());
@@ -229,7 +227,7 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	//
 	// Find <SIMPLERSP>
 	//
-	parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_SIMPLERSP);
+	parser.mustGetChild(OW_CIMXMLParser::E_SIMPLERSP);
 
 	//
 	// TODO-NICE: need to look for complex RSPs!!
@@ -239,8 +237,8 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	// <METHODRESPONSE> or <IMETHODRESPONSE>
 	//
 	parser.mustGetNext(isIntrinsic ?
-		OW_CIMXMLParser::XML_ELEMENT_IMETHODRESPONSE :
-		OW_CIMXMLParser::XML_ELEMENT_METHODRESPONSE);
+		OW_CIMXMLParser::E_IMETHODRESPONSE :
+		OW_CIMXMLParser::E_METHODRESPONSE);
 
 	OW_String nameOfMethod = parser.mustGetAttribute("NAME");
 
@@ -255,14 +253,14 @@ OW_CIMXMLCIMOMHandle::checkNodeForCIMError(OW_CIMXMLParser& parser,
 	if (!parser)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-							"No XML_ELEMENT_IRETURNVALUE");
+							"No E_IRETURNVALUE");
 	}
 
 	//
 	// See if there was an error, and if there was throw an equivalent
 	// exception on the client
 	//
-	if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_ERROR))
+	if (parser.tokenIs(OW_CIMXMLParser::E_ERROR))
 	{
 		OW_String errCode = parser.mustGetAttribute(
 			OW_XMLParameters::paramErrorCode);
@@ -387,9 +385,9 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_CLASSNAME);
+			parser.mustGetChild(OW_CIMXMLParser::E_CLASSNAME);
 
-			while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_CLASSNAME))
+			while (parser.tokenIs(OW_CIMXMLParser::E_CLASSNAME))
 			{
 				result.handle(OW_XMLCIMFactory::createObjectPath(parser));
 			}
@@ -431,9 +429,9 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_CLASS);
+			parser.mustGetChild(OW_CIMXMLParser::E_CLASS);
 
-			while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_CLASS))
+			while (parser.tokenIs(OW_CIMXMLParser::E_CLASS))
 			{
 				result.handle(OW_XMLCIMFactory::createClass(parser));
 			}
@@ -479,9 +477,9 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME);
+			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
 
-			while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME))
+			while (parser.tokenIs(OW_CIMXMLParser::E_INSTANCENAME))
 			{
 				result.handle(OW_XMLCIMFactory::createObjectPath(parser));
 			}
@@ -527,11 +525,11 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_VALUE_NAMEDINSTANCE);
+			parser.mustGetChild(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE);
 
-			while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_VALUE_NAMEDINSTANCE))
+			while (parser.tokenIs(OW_CIMXMLParser::E_VALUE_NAMEDINSTANCE))
 			{
-				parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME);
+				parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
 				OW_CIMObjectPath iop(OW_XMLCIMFactory::createObjectPath(parser));
 				parser.getNext();
 
@@ -598,9 +596,9 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER_DECLARATION);
+			parser.mustGetChild(OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
 
-			while (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER_DECLARATION))
+			while (parser.tokenIs(OW_CIMXMLParser::E_QUALIFIER_DECLARATION))
 			{
 				OW_CIMQualifierType cqt(OW_Bool(true));
 				OW_XMLQualifier::processQualifierDecl(parser, cqt);
@@ -635,7 +633,7 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_CLASS);
+			parser.mustGetChild(OW_CIMXMLParser::E_CLASS);
 			result = OW_XMLCIMFactory::createClass(parser);
 		}
 
@@ -700,7 +698,7 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCE);
+			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCE);
 			result = OW_XMLCIMFactory::createInstance(parser);
 		}
 
@@ -759,20 +757,20 @@ namespace
 			// RETURNVALUE, PARAMVALUE or /METHODRESPONSE
 
 			// handle RETURNVALUE, which is optional
-			if (parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_RETURNVALUE))
+			if (parser.tokenIs(OW_CIMXMLParser::E_RETURNVALUE))
 			{
-				parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_VALUE);
+				parser.mustGetChild(OW_CIMXMLParser::E_VALUE);
 				result = OW_XMLCIMFactory::createValue(parser, returnType);
 				parser.mustGetEndTag(); // pass /RETURNVALUE
 			}
 
 			// handle PARAMVALUE*
 			for (size_t outParamCount = 0;
-				  parser && parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_PARAMVALUE);
+				  parser && parser.tokenIs(OW_CIMXMLParser::E_PARAMVALUE);
 				  ++outParamCount)
 			{
-				OW_String name = parser.mustGetAttribute(OW_XMLAttribute::NAME);
-				OW_String type = parser.mustGetAttribute(OW_XMLAttribute::TYPE);
+				OW_String name = parser.mustGetAttribute(OW_CIMXMLParser::A_NAME);
+				OW_String type = parser.mustGetAttribute(OW_CIMXMLParser::A_TYPE);
 				parser.getChild();
 				
 				if (outParams.size() <= outParamCount)
@@ -858,7 +856,7 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_QUALIFIER_DECLARATION);
+			parser.mustGetChild(OW_CIMXMLParser::E_QUALIFIER_DECLARATION);
 			OW_XMLQualifier::processQualifierDecl(parser, result);
 		}
 
@@ -972,7 +970,7 @@ namespace
 		{}
 		virtual void operator ()(OW_CIMXMLParser &parser)
 		{
-			parser.mustGetChild(OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME);
+			parser.mustGetChild(OW_CIMXMLParser::E_INSTANCENAME);
 
 			result = OW_XMLCIMFactory::createObjectPath(parser);
 		}
@@ -1068,7 +1066,7 @@ OW_CIMXMLCIMOMHandle::setProperty(const OW_CIMObjectPath& path,
 	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
 	OW_StringStream ostr;
 	OW_CIMtoXML(cv, ostr);
-	params.push_back(OW_Param(XMLP_NewValue,OW_Param::VALUESET, ostr.toString()));
+	params.push_back(OW_Param(XMLP_NEWVALUE, OW_Param::VALUESET, ostr.toString()));
 
 	voidRetValOp op;
 	intrinsicMethod(path, commandName, op, params,
@@ -1090,16 +1088,16 @@ namespace
 		{
 			parser.mustGetChild();
 
-			while (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_IRETURNVALUE))
+			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
 			{
 				OW_CIMXMLParser::tokenId token = parser.getToken();
 				OW_CIMObjectPath cop = OW_XMLCIMFactory::createObjectPath(parser);
 				switch (token)
 				{
-					case OW_CIMXMLParser::XML_ELEMENT_CLASSNAME:
+					case OW_CIMXMLParser::E_CLASSNAME:
 						cop.setNameSpace(ns);
 						break;
-					case OW_CIMXMLParser::XML_ELEMENT_INSTANCENAME:
+					case OW_CIMXMLParser::E_INSTANCENAME:
 						cop.setNameSpace(ns);
 						break;
 					default:
@@ -1222,7 +1220,7 @@ namespace
 		{
 			parser.mustGetChild();
 
-			while (!parser.tokenIs(OW_CIMXMLParser::XML_ELEMENT_IRETURNVALUE))
+			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
 			{
 				OW_CIMInstanceArray cia;
 				OW_CIMClassArray cca;
