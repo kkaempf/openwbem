@@ -146,13 +146,30 @@ CreateNameSpace()
 StartDaemon()
 {
 	echo "Starting owcimomd..."
-	$STAGEDIR/$OWSBINDIR/owcimomd -d -c \
-		$STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
-		>> $RESULTDIR/owcimomd.output 2>&1 &
+	if [ $OWVALGRIND = "1" ]; then
+		valgrind \
+			--leak-check=yes \
+			--error-limit=no \
+			--num-callers=99 \
+			--logfile-fd=9 \
+			--suppressions=../OpenSSL.supp \
+			9>> valgrind.out \
+		$STAGEDIR/$OWSBINDIR/owcimomd -d -c \
+			$STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
+			>> $RESULTDIR/owcimomd.output 2>&1 &
+	else
+		$STAGEDIR/$OWSBINDIR/owcimomd -d -c \
+			$STAGEDIR/$OWSYSCONFDIR/openwbem/openwbem.conf-t \
+			>> $RESULTDIR/owcimomd.output 2>&1 &
+	fi
 	PID=$!
 	echo $PID > $PIDFILE
 	echo "Waiting for daemon to initialize"
-	sleep 3
+	if [ $OWVALGRIND = "1" ]; then
+		sleep 30
+	else
+		sleep 3
+	fi
 	if [ -d /proc ] && [ ! -d /proc/$PID ]; then
 	  echo "** Daemon failed to start!  Another instance could be running Check"
 	  echo "** $STAGEDIR/results/owcimomd.output "
@@ -187,7 +204,11 @@ RestartDaemon()
         fi
 	fi
 	echo "Waiting for daemon to re-initialize"
-	sleep 4
+	if [ $OWVALGRIND = "1" ]; then
+		sleep 30
+	else
+		sleep 4
+	fi
     PID=`cat $PIDFILE`
     if kill -0 $PID; then # Test if it's running
         :
@@ -214,7 +235,11 @@ StopDaemon()
 	  Exit 1
 	fi
 	kill -15 $PID # TERM
-	sleep 1
+	if [ $OWVALGRIND = "1" ]; then
+		sleep 10
+	else
+		sleep 1
+	fi
 	if [ -d /proc ] && [ -d /proc/$PID ]; then
 	  kill -9 $PID # KILL
 	  echo "** Daemon failed to terminate!!!  Check"
