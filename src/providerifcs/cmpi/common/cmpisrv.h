@@ -290,7 +290,7 @@ struct CMPI_Broker : CMPIBroker {
 
 #include "cmpiThreadContext.h"
 
-CMPI_String* string2CMPIString(const OpenWBEM::String &s);
+CMPIString* string2CMPIString(const OpenWBEM::String &s);
 CMPIType type2CMPIType(OpenWBEM::CIMDataType pt, int array);
 OpenWBEM::CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc);
 CMPIrc key2CMPIData(const OpenWBEM::String& v, OpenWBEM::CIMDataType t, CMPIData *data);

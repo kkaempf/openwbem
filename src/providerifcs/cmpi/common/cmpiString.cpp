@@ -24,39 +24,37 @@
 #include "cmpisrv.h"
 #include "OW_String.hpp"
 
-CMPI_String* string2CMPIString(const OpenWBEM::String &s) {
-  char *cp=strdup(s.c_str());
-  CMPI_Object *obj= new CMPI_Object((void*)cp,CMPI_String_Ftab);
-//  CMPIRefs::localRefs().addRef(obj,CMPIRefs::TypeString);
-  return (CMPI_String*)obj;
+CMPIString* string2CMPIString(const OpenWBEM::String &s)
+{
+	return (CMPIString*) new CMPI_Object(s);
 }
 
-static CMPIStatus stringRelease(CMPIString *eStr) {
-   (void) eStr;
-   //std::cout << "--- stringRelease()" << std::endl;
-   CMReturn(CMPI_RC_OK);
+static CMPIStatus stringRelease(CMPIString *eStr)
+{
+	(void) eStr;
+	//std::cout << "****** stringRelease()" << std::endl;
+	CMReturn(CMPI_RC_OK);
 }
 
-static CMPIString* stringClone(CMPIString *eStr, CMPIStatus* rc) {
-   char* str=(char*)eStr->hdl;
-   char* newstr=::strdup(str);
-   CMPI_Object * obj=new CMPI_Object(newstr,CMPI_String_Ftab);
-//   CMPIRefs::localRefs().addRef(obj,CMPIRefs::TypeString);
-   CMSetStatus(rc,CMPI_RC_OK);
-   return (CMPIString*)obj;
+static CMPIString* stringClone(CMPIString *eStr, CMPIStatus* rc)
+{
+	CMSetStatus(rc,CMPI_RC_OK);
+	return (CMPIString*) new CMPI_Object((char*) eStr->hdl);
 }
 
-static char * stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc) {
-   char* ptr=(char*)eStr->hdl;
-   CMSetStatus(rc,CMPI_RC_OK);
-   return ptr;
+static char * stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc)
+{
+	char* ptr = (char*) eStr->hdl;
+	CMSetStatus(rc,CMPI_RC_OK);
+	return ptr;
 }
 
-static CMPIStringFT string_FT={
-	 CMPICurrentVersion,
-	 stringRelease,
-	 stringClone,
-	 stringGetCharPtr,
+static CMPIStringFT string_FT =
+{
+	CMPICurrentVersion,
+	stringRelease,
+	stringClone,
+	stringGetCharPtr,
 };
 
 CMPIStringFT *CMPI_String_Ftab=&string_FT;
