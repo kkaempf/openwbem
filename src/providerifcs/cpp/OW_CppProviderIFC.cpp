@@ -459,7 +459,6 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), msg);
 					OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "****************************************");
 					OW_THROW(CppProviderIFCException, msg.c_str());
-					continue;
 				}
 
 				// The named provider may also be an indication export or a
