@@ -18,6 +18,7 @@ class OpenWBEM_CommMechanismForManager : CIM_CommMechanismForManager
 {
 };
 
+/* These aren't in cim 2.7 final
 class OpenWBEM_Provider : CIM_Provider
 {
 };
@@ -46,6 +47,12 @@ class OpenWBEM_FiltersSupported : CIM_FiltersSupported
 {
 };
 
+class OpenWBEM_ClassSupportForNamespace : CIM_ClassSupportForNamespace
+{
+};
+
+*/
+
 class OpenWBEM_ProtocolAdapter : CIM_ProtocolAdapter
 {
 };
@@ -55,10 +62,6 @@ class OpenWBEM_CommMechanismForAdapter : CIM_CommMechanismForAdapter
 };
 
 class OpenWBEM_SystemIdentification : CIM_SystemIdentification
-{
-};
-
-class OpenWBEM_ClassSupportForNamespace : CIM_ClassSupportForNamespace
 {
 };
 
