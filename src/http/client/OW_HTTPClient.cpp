@@ -976,6 +976,11 @@ HTTPClient::checkResponse(Resp_t& rt)
 		
 		if (!m_istr)
 		{
+			if (m_socket.receiveTimeOutExpired())
+			{
+				reasonPhrase = Format("Client receive timeout (%1 seconds) expired.", m_socket.getReceiveTimeout());
+			}
+			rt = FATAL;
 			close();
 			break;
 		}
