@@ -27,7 +27,6 @@ Testing:
       - Do all this while running under valgrind to detect memory leaks, etc.
 
 Fix problems:
-    - Add tests in configure.in for -W flags supported.
     - Fix String::toUpperCase(), toLowerCase() to be UTF-8 aware.
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
     - To prevent DNS attacks, set a limit on incoming data.
@@ -92,9 +91,6 @@ New features:
       a new class to encapsulate an OW_CIMObjectPath and an OW_CIMInstance.
     - Refactor OW_CIMObjectPath into various classes which represent different
       usages of paths (e.g. ClassName, ModelPath, LocalPath, etc.)
-    - Providers/Provider interfaces in a different process. Implement with 
-      fork/exec/pipes for communication?
-    - Internationalization.
     - Deal with locale on WBEM requests. (at least reject those that won't work)
       Look at unicode.org http://www.unicode.org/Public/ALPHA/CVTUTF-1-1/ConvertUTF.{c,h}
     - Add better error handling/messages to the MOF compiler.
@@ -108,8 +104,6 @@ New features:
     - Create a mechanism to share schemas between namespaces.
     - Create a CIM class & provider to control the provider manager (re-scan
       providers, reload/unload providers, register new providers, etc.)
-    - Deprecated property providers. Add an option to enable them, but leave
-      them disabled by default.  Maybe remove the code in 2.2 (3.0?)
     - Make OW_Cpp*ProviderIFC method virtual (non-pure), so providers don't
       have to override non-implemented methods.
     - Remove instance qualifiers?
