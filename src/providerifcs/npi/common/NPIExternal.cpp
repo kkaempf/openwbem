@@ -484,9 +484,9 @@ CIMInstanceGetStringValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
 	String Key(name);
 	CIMProperty prop = owci->getProperty(Key);
-	if (prop == NULL) return NULL;
+	if (!prop) return NULL;
 	OpenWBEM::CIMValue cv = prop.getValue();
-	if (cv == NULL) return NULL;
+	if (!cv) return NULL;
 	if (cv.getType() != CIMDataType::STRING)	return NULL;
 	cv.get(Key);
 	return Key.allocateCString();
@@ -503,9 +503,9 @@ CIMInstanceGetIntegerValue(NPIHandle* npiHandle, ::CIMInstance ci,
 	OpenWBEM::CIMInstance * owci = static_cast<OpenWBEM::CIMInstance *>(ci.ptr);
 	String Key(name);
 	CIMProperty prop = owci->getProperty(Key);
-	if (prop == NULL) return 0;
+	if (!prop) return 0;
 	OpenWBEM::CIMValue cv = prop.getValue();
-	if (cv == NULL) return 0;
+	if (!cv) return 0;
 	switch (cv.getType())
 	{
 		case CIMDataType::UINT8: {UInt8 i; cv.get(i); return i; break;}
@@ -651,7 +651,7 @@ static void _CIMObjectPathAddKey(OpenWBEM::CIMObjectPath * ref,
 		 return;
 	  }
    }
-   ref->addKey(Key,Value);
+   ref->setKeyValue(Key,Value);
 }
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
