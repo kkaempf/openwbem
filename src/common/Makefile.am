@@ -68,6 +68,7 @@ OW_TempFileStream.cpp \
 OW_TimeoutException.cpp \
 OW_Thread.cpp \
 OW_ThreadBarrier.cpp \
+OW_ThreadCancelledException.cpp \
 OW_ThreadCounter.cpp \
 OW_ThreadDoneCallback.cpp \
 OW_ThreadImpl.cpp \
@@ -148,6 +149,7 @@ OW_TempFileStream.hpp \
 OW_TimeoutException.hpp \
 OW_Thread.hpp \
 OW_ThreadBarrier.hpp \
+OW_ThreadCancelledException.hpp \
 OW_ThreadCounter.hpp \
 OW_ThreadDoneCallback.hpp \
 OW_ThreadImpl.hpp \
