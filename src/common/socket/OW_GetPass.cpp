@@ -48,6 +48,10 @@ extern "C"
 #endif
 }
 
+#ifdef OW_NETWARE
+#include <screen.h>
+#endif
+
 namespace OpenWBEM
 {
 
@@ -79,7 +83,12 @@ GetPass::getPass(const String& prompt)
 String
 GetPass::getPass(const String& prompt)
 {
+#ifdef OW_NETWARE
+        char pw[128];
+	char* ptr = ::getpassword(prompt.c_str(), pw, 128);
+#else
 	char* ptr = ::getpass(prompt.c_str());
+#endif
 	String retStr = ptr;
 	memset(ptr, 0x00, strlen(ptr) * sizeof(char));
 	return retStr;
