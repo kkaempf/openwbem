@@ -59,7 +59,9 @@ New features:
     - Make event system more scalable.
       - Only parse queries once when they're created.
       - Implement authorizeFilter, activateFilter, deactivateFilter on providers
-
+    - Add configure options to disable usage of zlib, pam, ssl, slp
+    - Make null reference and array indexing default to on unless 
+      specifically disabled.
 
 Refactorings:
     - Move some of the XML code around.  Get rid of param* strings.  Move 
