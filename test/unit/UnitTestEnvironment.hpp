@@ -42,6 +42,7 @@
 #include "OW_Map.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_LogMessage.hpp"
 #include <iostream>
 
 using namespace OpenWBEM;
@@ -54,8 +55,13 @@ public:
 	{
 	}
 protected:
-	virtual void doLogMessage(const String &message, const ELogLevel) const {
-		std::cout << message << std::endl;
+	virtual void doProcessLogMessage(const LogMessage& message) const
+	{
+		std::cout << message.message << std::endl;
+	}
+	virtual LoggerRef doClone() const
+	{
+		return LoggerRef(new TestLogger(*this));
 	}
 };
 
@@ -65,6 +71,10 @@ class TestEnvironment : public ServiceEnvironmentIFC
 public:
 	virtual LoggerRef getLogger() const {
 		return LoggerRef(new TestLogger);
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return getLogger();
 	}
 	virtual String getConfigItem(const String &name, const String& defRetVal) const {
 		if (config.find(name) != config.end())

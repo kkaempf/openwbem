@@ -79,6 +79,7 @@ public:
 	virtual RepositoryIFCRef getRepository() const = 0;
 
 	virtual LoggerRef getLogger() const = 0;
+	virtual LoggerRef getLogger(const String& componentName) const = 0;
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const = 0;
 	virtual String getUserName() const = 0;
 	virtual OperationContext& getOperationContext() = 0;

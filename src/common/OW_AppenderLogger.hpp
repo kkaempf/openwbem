@@ -54,10 +54,11 @@ public:
 	virtual ~AppenderLogger();
 
 private:
-	virtual bool useDeprecatedDoLogMessage() const;
 	virtual void doProcessLogMessage(const LogMessage& message) const;
 	bool doComponentAndCategoryAreEnabled(const String& component, const String& category) const;
 	bool doCategoryIsEnabled(const String& category) const;
+	LoggerRef doClone() const;
+
 	static ELogLevel getLevel(const Array<LogAppenderRef>& appenders);
 
 private:

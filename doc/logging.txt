@@ -99,3 +99,20 @@ Code modifications:
   - Fix all code using them.
 - Uninline all the junk in the headers.
 
+
+Components are organized hierarchically using a '.' as the ancestor/child
+separator. In the code, all component namess are represented by a local 
+variable COMPONENT_NAME.
+
+Component list:
+ow                                - Root for all OpenWBEM components
+ow.owcimomd                       - The cimom daemon
+ow.owcimomd.CIMServer             - The CIM Server
+ow.authorizer                     - Authorizers
+ow.authorizer.simple              - SimpleAuthorizer
+ow.authorizer.simple2             - SimpleAuthorizer2
+ow.listener.cimxml                - HTTPXMLCIMListener
+ow.provideragent                  - ProviderAgent
+ow.owmofc                         - The mof compiler utility
+ow.owrepositorydump               - The owrepositorydump utility
+

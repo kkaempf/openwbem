@@ -670,6 +670,7 @@ private:
 	RepositoryIFCRef m_cimRepository;
 	IntrusiveReference<CIMRepository> m_realRepository;
 	AuthorizerManagerRef m_authorizerMgr;
+	LoggerRef m_logger;
 };
 
 } // end namespace OpenWBEM

@@ -109,6 +109,7 @@ public:
 		ESendIndicationsFlag /*doIndications*/,
 		EBypassProvidersFlag /*bypassProviders*/); 
 	virtual LoggerRef getLogger() const; 
+	virtual LoggerRef getLogger(const String& componentName) const;
 
 private:
 	ConfigFile::ConfigMap m_configItems;

@@ -73,6 +73,11 @@ public:
 		return m_env->getLogger();
 	}
 
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return m_env->getLogger(componentName);
+	}
+
 	virtual bool authenticate(String &userName, const String &info,
 		String &details, OperationContext &context)
 	{

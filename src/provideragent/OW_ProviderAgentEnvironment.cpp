@@ -57,6 +57,9 @@ namespace OpenWBEM
 {
 namespace 
 {
+
+const String COMPONENT_NAME("ow.provideragent");
+
 class DummyLogger : public Logger
 {
 public:
@@ -66,9 +69,13 @@ public:
 	}
 
 protected:
-	virtual void doLogMessage(const String &, const ELogLevel) const
+	virtual void doProcessLogMessage(const LogMessage& message) const
 	{
 		return;
+	}
+	virtual LoggerRef doClone() const
+	{
+		return LoggerRef(new DummyLogger(*this));
 	}
 };
 
@@ -446,7 +453,16 @@ ProviderAgentEnvironment::getCIMOMHandle(OperationContext& context,
 LoggerRef 
 ProviderAgentEnvironment::getLogger() const
 {
-	return m_logger;
+	return getLogger(COMPONENT_NAME);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+LoggerRef
+ProviderAgentEnvironment::getLogger(const String& componentName) const
+{
+	LoggerRef rv(m_logger->clone());
+	rv->setDefaultComponent(componentName);
+	return rv;
 }
 
 //////////////////////////////////////////////////////////////////////////////

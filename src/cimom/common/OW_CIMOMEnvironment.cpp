@@ -82,6 +82,8 @@ using std::endl;
 // static global
 CIMOMEnvironmentRef CIMOMEnvironment::g_cimomEnvironment;
 
+String CIMOMEnvironment::COMPONENT_NAME("ow.owcimomd");
+
 namespace
 {
 	class CIMOMProviderEnvironment : public ProviderEnvironmentIFC
@@ -114,6 +116,10 @@ namespace
 		virtual LoggerRef getLogger() const
 		{
 			return m_pCenv->getLogger();
+		}
+		virtual LoggerRef getLogger(const String& componentName) const
+		{
+			return m_pCenv->getLogger(componentName);
 		}
 		virtual String getUserName() const
 		{
@@ -252,6 +258,10 @@ public:
 	virtual LoggerRef getLogger() const
 	{
 		return env->getLogger();
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return env->getLogger(componentName);
 	}
 	virtual String getConfigItem(const String &name, const String& defRetVal="") const
 	{
@@ -503,7 +513,7 @@ CIMOMEnvironment::_createIndicationServer()
 		}
 		indicationLib += "libowindicationserver"OW_SHAREDLIB_EXTENSION;
 		m_indicationServer = SafeLibCreate<IndicationServer>::loadAndCreateObject(
-				indicationLib, "createIndicationServer", getLogger());
+				indicationLib, "createIndicationServer", getLogger(COMPONENT_NAME));
 		if (!m_indicationServer)
 		{
 
@@ -553,7 +563,7 @@ CIMOMEnvironment::_loadRequestHandlers()
 		libName += dirEntries[i];
 		RequestHandlerIFCRef rh =
 			SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-				libName, "createRequestHandler", getLogger());
+				libName, "createRequestHandler", getLogger(COMPONENT_NAME));
 		if (rh)
 		{
 			++reqHandlerCount;
@@ -619,7 +629,7 @@ CIMOMEnvironment::_loadServices()
 		libName += dirEntries[i];
 		ServiceIFCRef srv =
 			SafeLibCreate<ServiceIFC>::loadAndCreateObject(libName,
-				"createService", getLogger());
+				"createService", getLogger(COMPONENT_NAME));
 		if (srv)
 		{
 			// save it first so if setServiceEnvironment throws it won't get
@@ -767,8 +777,7 @@ CIMOMEnvironment::_createLogger()
 		logMainFormat, logMainType, *m_configItems));
 
 
-	String defaultComponent("owcimomd");
-	m_Logger = new AppenderLogger(defaultComponent, appenders);
+	m_Logger = new AppenderLogger(COMPONENT_NAME, appenders);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1076,7 +1085,7 @@ CIMOMEnvironment::getRequestHandler(const String &id)
 		{
 			iter->second.rqIFCRef =
 				SafeLibCreate<RequestHandlerIFC>::loadAndCreateObject(
-					iter->second.filename, "createRequestHandler", getLogger());
+					iter->second.filename, "createRequestHandler", getLogger(COMPONENT_NAME));
 		}
 		if (iter->second.rqIFCRef)
 		{
@@ -1142,7 +1151,16 @@ LoggerRef
 CIMOMEnvironment::getLogger() const
 {
 	OW_ASSERT(m_Logger);
-	return m_Logger;
+	return m_Logger->clone();
+}
+//////////////////////////////////////////////////////////////////////////////
+LoggerRef
+CIMOMEnvironment::getLogger(const String& componentName) const
+{
+	OW_ASSERT(m_Logger);
+	LoggerRef rv(m_Logger->clone());
+	rv->setDefaultComponent(componentName);
+	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
 IndicationServerRef

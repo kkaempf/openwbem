@@ -71,6 +71,7 @@ public:
 	// be called if getCIMOMHandle() and getRepositoryCIMOMHandle() are insufficient.
 	virtual RepositoryIFCRef getRepository() const; 
 	virtual LoggerRef getLogger() const; 
+	virtual LoggerRef getLogger(const String& componentName) const;
 	virtual String getUserName() const; 
 	virtual OperationContext& getOperationContext(); 
 private: 

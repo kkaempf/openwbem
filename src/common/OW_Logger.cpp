@@ -34,8 +34,6 @@
 
 #include "OW_config.h"
 #include "OW_Logger.hpp"
-#include "OW_Mutex.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_ExceptionIds.hpp"
 #include "OW_LogMessage.hpp"
 #include "OW_Assertion.hpp"
@@ -49,11 +47,6 @@ namespace OpenWBEM
 {
 
 OW_DEFINE_EXCEPTION_WITH_ID(Logger);
-
-namespace
-{
-Mutex LoggerMutex;
-}
 
 const String Logger::STR_FATAL_CATEGORY("FATAL");
 const String Logger::STR_ERROR_CATEGORY("ERROR");
@@ -96,33 +89,7 @@ Logger::processLogMessage(const LogMessage& message) const
 	OW_ASSERT(!message.category.empty());
 	OW_ASSERT(!message.message.empty());
 
-	// OW_DEPRECATED in 3.1.0 - Remove this stuff once the old doLogMessage() goes away.
-	if (useDeprecatedDoLogMessage())
-	{
-		ELogLevel l = E_INFO_LEVEL;
-		if (message.category == STR_FATAL_CATEGORY)
-		{
-			l = E_FATAL_ERROR_LEVEL;
-		}
-		else if (message.category == STR_ERROR_CATEGORY)
-		{
-			l = E_ERROR_LEVEL;
-		}
-		else if (message.category == STR_INFO_CATEGORY)
-		{
-			l = E_INFO_LEVEL;
-		}
-		else if (message.category == STR_DEBUG_CATEGORY)
-		{
-			l = E_DEBUG_LEVEL;
-		}
-		MutexLock mtxlck( LoggerMutex );
-		doLogMessage(message.message, l);
-	}
-	else
-	{
-		doProcessLogMessage(message);
-	}
+	doProcessLogMessage(message);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -213,27 +180,6 @@ void
 Logger::logMessage(const String& category, const String& message, const char* filename, int fileline) const
 {
 	processLogMessage(LogMessage(m_defaultComponent, category, message, filename, fileline));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-Logger::doLogMessage( const String& message, const ELogLevel level) const
-{
-	OW_ASSERTMSG(0, "new derived classes which implement doProcessLogMessage() have to implement useOldLogMessage() to return false");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-bool
-Logger::useDeprecatedDoLogMessage() const
-{
-	return true;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-Logger::doProcessLogMessage(const LogMessage& message) const
-{
-	OW_ASSERTMSG(0, "new derived classes which implement useOldLogMessage() to return false must also implement doProcessLogMessage()");
 }
 
 //////////////////////////////////////////////////////////////////////////////

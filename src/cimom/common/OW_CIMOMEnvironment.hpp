@@ -158,7 +158,8 @@ public:
 	WQLIFCRef getWQLRef();
 	virtual RequestHandlerIFCRef getRequestHandler(
 		const String &id);
-	virtual LoggerRef getLogger() const;
+	virtual LoggerRef getLogger() const OW_DEPRECATED;
+	virtual LoggerRef getLogger(const String& componentName) const;
 	IndicationServerRef getIndicationServer() const;
 	PollingManagerRef getPollingManager() const;
 	void clearConfigItems();
@@ -244,6 +245,8 @@ private:
 	mutable Mutex m_interopInstancesLock;
 	typedef HashMap<String, SortedVectorSet<CIMInstance> > interopInstances_t;
 	interopInstances_t m_interopInstances;
+
+	static String COMPONENT_NAME;
 };
 
 } // end namespace OpenWBEM

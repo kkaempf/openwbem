@@ -43,6 +43,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_RequestHandlerIFC.hpp"
+#include "OW_LogMessage.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -62,12 +63,16 @@ class coutLogger : public Logger
 {
 public:
 	coutLogger()
-		: Logger("owrepositorydump", E_ERROR_LEVEL)
+		: Logger("ow.owrepositorydump", E_ERROR_LEVEL)
 	{
 	}
-	virtual void doLogMessage(const String &message, const ELogLevel) const
+	virtual void doProcessLogMessage(const LogMessage& message) const
 	{
-		cout << message << endl;
+		cout << message.message << endl;
+	}
+	virtual LoggerRef doClone() const
+	{
+		return LoggerRef(new coutLogger(*this));
 	}
 };
 
@@ -77,6 +82,10 @@ public:
 	virtual LoggerRef getLogger() const
 	{
 		return LoggerRef(new coutLogger);
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return getLogger();
 	}
 	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag)
 	{

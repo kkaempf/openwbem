@@ -83,7 +83,8 @@ public:
 	virtual void removeSelectable(const SelectableIFCRef& obj) = 0;
 	virtual RequestHandlerIFCRef getRequestHandler(
 		const String& id) = 0;
-	virtual LoggerRef getLogger() const = 0;
+	virtual LoggerRef getLogger() const OW_DEPRECATED = 0; // in 3.1.0
+	virtual LoggerRef getLogger(const String& componentName) const = 0;
 	virtual bool authenticate(String& userName,
 		const String& info, String& details, OperationContext& context) = 0;
 	enum ESendIndicationsFlag

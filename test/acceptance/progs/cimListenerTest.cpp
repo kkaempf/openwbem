@@ -50,6 +50,7 @@
 #include "OW_MutexLock.hpp"
 #include "OW_Bool.hpp"
 #include "OW_SocketBaseImpl.hpp"
+#include "OW_LogMessage.hpp"
 
 #include <iostream> // for cout and cerr
 
@@ -271,9 +272,13 @@ public:
 	{
 	}
 protected:
-	virtual void doLogMessage(const String &message, const ELogLevel) const
+	virtual void doProcessLogMessage(const LogMessage& message) const
 	{
-		cout << message << endl;
+		cout << message.message << endl;
+	}
+	virtual LoggerRef doClone() const
+	{
+		return LoggerRef(new ListenerLogger(*this));
 	}
 };
 

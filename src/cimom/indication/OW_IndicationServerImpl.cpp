@@ -138,6 +138,10 @@ public:
 	{
 		return m_env->getLogger();
 	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return m_env->getLogger(componentName);
+	}
 	virtual String getUserName() const
 	{
 		return Platform::getCurrentUserName();

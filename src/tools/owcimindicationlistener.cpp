@@ -44,6 +44,7 @@
 #include "OW_UnnamedPipe.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_GetPass.hpp"
+#include "OW_LogMessage.hpp"
 
 #include <iostream> // for cout and cerr
 #include <csignal>
@@ -73,9 +74,13 @@ public:
 	{
 	}
 protected:
-	virtual void doLogMessage(const String &message, const ELogLevel) const
+	virtual void doProcessLogMessage(const LogMessage& message) const
 	{
-		cerr << message << endl;
+		cerr << message.message << endl;
+	}
+	virtual LoggerRef doClone() const
+	{
+		return LoggerRef(new ListenerLogger(*this));
 	}
 };
 

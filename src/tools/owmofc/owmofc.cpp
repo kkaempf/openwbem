@@ -55,6 +55,7 @@
 #include "OW_Logger.hpp"
 #include "OW_Reference.hpp"
 #include "OW_CmdLineParser.hpp"
+#include "OW_LogMessage.hpp"
 
 #include <iostream>
 
@@ -310,13 +311,17 @@ class coutLogger : public Logger
 {
 public:
 	coutLogger()
-		: Logger("owmofc", E_ERROR_LEVEL)
+		: Logger("ow.owmofc", E_ERROR_LEVEL)
 	{
 	}
 
-	virtual void doLogMessage(const String &message, const ELogLevel) const
+	virtual void doProcessLogMessage(const LogMessage& message) const
 	{
-		cout << message << endl;
+		cout << message.message << endl;
+	}
+	virtual LoggerRef doClone() const
+	{
+		return LoggerRef(new coutLogger(*this));
 	}
 };
 class MOFCompEnvironment : public ServiceEnvironmentIFC
@@ -325,6 +330,10 @@ public:
 	virtual LoggerRef getLogger() const
 	{
 		return LoggerRef(new coutLogger);
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		return getLogger();
 	}
 	virtual void setConfigItem(const String &, const String &, EOverwritePreviousFlag)
 	{

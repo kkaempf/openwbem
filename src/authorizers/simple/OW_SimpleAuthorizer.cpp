@@ -57,6 +57,7 @@ using namespace WBEMFlags;
 class AccessMgr : public IntrusiveCountableBase
 {
 public:
+	static const String COMPONENT_NAME;
 	enum
 	{
 		GETCLASS,
@@ -104,6 +105,10 @@ private:
 	RepositoryIFCRef m_pServer;
 	ServiceEnvironmentIFCRef m_env;
 };
+	
+const String AccessMgr::COMPONENT_NAME("ow.authorizer.simple");
+
+
 //////////////////////////////////////////////////////////////////////////////
 AccessMgr::AccessMgr(const RepositoryIFCRef& pServer)
 	: m_pServer(pServer)
@@ -188,7 +193,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 	InternalDataRemover internalDataRemover(context, ACCESS_MSG_INTERNAL_CALL);
 
 
-	LoggerRef lgr = m_env->getLogger();
+	LoggerRef lgr = m_env->getLogger(COMPONENT_NAME);
 	if (lgr->getLogLevel() == E_DEBUG_LEVEL)
 	{
 		lgr->logDebug(Format("Checking access to namespace: \"%1\"", ns));
@@ -301,7 +306,7 @@ AccessMgr::checkAccess(int op, const String& ns,
 		}
 		catch(const CIMException& ce)
 		{
-			if (m_env->getLogger()->getLogLevel() == E_DEBUG_LEVEL)
+			if (lgr->getLogLevel() == E_DEBUG_LEVEL)
 			{
 				lgr->logDebug(Format("Caught exception: %1 in"
 					" AccessMgr::checkAccess", ce));

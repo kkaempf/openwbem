@@ -149,7 +149,15 @@ ProviderAgentProviderEnvironment::getRepository() const
 LoggerRef 
 ProviderAgentProviderEnvironment::getLogger() const
 {
-	return m_logger; 
+	return m_logger->clone(); 
+}
+//////////////////////////////////////////////////////////////////////////////
+LoggerRef
+ProviderAgentProviderEnvironment::getLogger(const String& componentName) const
+{
+	LoggerRef rv = m_logger->clone();
+	rv->setDefaultComponent(componentName);
+	return rv;
 }
 //////////////////////////////////////////////////////////////////////////////
 String 

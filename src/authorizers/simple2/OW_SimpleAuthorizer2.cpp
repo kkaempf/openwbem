@@ -61,6 +61,7 @@ namespace
 const String ACCESS_READ("r");
 const String ACCESS_WRITE("w");
 const String ACCESS_READWRITE("rw");
+const String COMPONENT_NAME = "ow.authorizer.simple2";
 }
 	
 //////////////////////////////////////////////////////////////////////////////
@@ -91,7 +92,7 @@ SimpleAuthorizer2::checkAccess(const String& opType, const String& ns,
 		ServiceEnvironmentIFC::E_DONT_SEND_INDICATIONS, 
 		ServiceEnvironmentIFC::E_USE_PROVIDERS);
 
-	LoggerRef lgr = env->getLogger();
+	LoggerRef lgr = env->getLogger(COMPONENT_NAME);
 
 	if (!userInfo.getUserName().empty())
 	{

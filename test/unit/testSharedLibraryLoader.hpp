@@ -48,6 +48,7 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_LogMessage.hpp"
 
 using namespace OpenWBEM;
 
@@ -522,9 +523,13 @@ namespace
 		{
 		}
 	protected:
-		virtual void doLogMessage(const String &message, const ELogLevel) const
+		virtual void doProcessLogMessage(const LogMessage& message) const
 		{
-			std::cout << message << std::endl;
+			std::cout << message.message << std::endl;
+		}
+		virtual LoggerRef doClone() const
+		{
+			return LoggerRef(new DummyLogger(*this));
 		}
 	};
 
@@ -556,6 +561,11 @@ namespace
 		}
 
 		virtual LoggerRef getLogger() const
+		{
+			return m_logger;
+		}
+
+		virtual LoggerRef getLogger(const String& componentName) const
 		{
 			return m_logger;
 		}

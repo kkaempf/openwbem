@@ -244,28 +244,10 @@ protected:
 	Logger(const String& defaultComponent, const ELogLevel logLevel);
 
 	/**
-	 * To be overridden by derived classes with a function that does the
-	 * actual logging.
-	 * All calls to doLogMessage() will be serialized, so the derived class' implemetation does not have to be thread safe.
-	 * This version is deprecated.  OW_DEPRECATED in 3.1.0
-	 * New derived classes should:
-	 * - override useDeprecatedDoLogMessage() and return false
-	 * - override doProcessLogMessage() to log the message
-	 * - don't override doLogMessage() because it won't be called.
-	 */
-	virtual void doLogMessage( const String& message, const ELogLevel level) const;
-
-	/**
-	 * Default implementation returns true.
-	 * Any new derived classes should override this function to return false and implement doProcessLogMessage()
-	 */
-	virtual bool useDeprecatedDoLogMessage() const;
-
-	/**
 	 * Output the message.
-	 * Unlike doLogMessage, calls will not be serialized, so the derived class' implementation must be thread safe.
+	 * Calls will not be serialized, so the derived class' implementation must be thread safe.
 	 */
-	virtual void doProcessLogMessage(const LogMessage& message) const;
+	virtual void doProcessLogMessage(const LogMessage& message) const = 0;
 
 	/**
 	 * Return whether logging is enabled for the category.

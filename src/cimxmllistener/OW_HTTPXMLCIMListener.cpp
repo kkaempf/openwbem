@@ -63,8 +63,15 @@ namespace OpenWBEM
 {
 
 using namespace WBEMFlags;
+
+// This anonymous namespace has the effect of giving this class internal
+// linkage.  That means it won't cause a link error if another translation
+// unit has a class with the same name.
 namespace
 {
+
+const String COMPONENT_NAME("ow.listener.cimxml");
+
 #ifdef OW_WIN32
 class EventSelectable : public SelectableIFC
 {
@@ -118,9 +125,6 @@ typedef IntrusiveReference<EventSelectable> EventSelectableRef;
 
 #endif
 
-// This anonymous namespace has the effect of giving this class internal
-// linkage.  That means it won't cause a link error if another translation
-// unit has a class with the same name.
 typedef std::pair<SelectableIFCRef, SelectableCallbackIFCRef> SelectablePair_t;
 class HTTPXMLCIMListenerServiceEnvironment : public ServiceEnvironmentIFC
 {
@@ -208,7 +212,13 @@ public:
 	}
 	virtual LoggerRef getLogger() const
 	{
-		return m_logger;
+		return getLogger(COMPONENT_NAME);
+	}
+	virtual LoggerRef getLogger(const String& componentName) const
+	{
+		LoggerRef rv(m_logger->clone());
+		rv->setDefaultComponent(componentName);
+		return rv;
 	}
 	virtual CIMInstanceArray getInteropInstances(const String& className) const
 	{
@@ -232,9 +242,13 @@ private:
 		}
 
 	protected:
-		virtual void doLogMessage(const String &, const ELogLevel) const
+		virtual void doProcessLogMessage(const LogMessage& message) const
 		{
 			return;
+		}
+		virtual LoggerRef doClone() const
+		{
+			return LoggerRef(new DummyLogger(*this));
 		}
 	};
 };
