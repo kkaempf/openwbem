@@ -267,27 +267,15 @@ int main(int argc, char** argv)
 			return 1;
 		}
 		Reference<ParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
+		Reference<OperationContext> context;
 		Reference<CIMOMHandleIFC> handle;
 		if (opts.m_useCimRepository)
 		{
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(mofCompEnvironment));
 			cimRepository->open(opts.m_repositoryDir);
-			try
-			{
-				OperationContext context("");
-				cimRepository->createNameSpace(CIMNameSpaceUtils::prepareNamespace(opts.m_namespace), context);
-			}
-			catch (const CIMException& e)
-			{
-				// ignore the already exists error.
-				if (e.getErrNo() != CIMException::ALREADY_EXISTS)
-				{
-					throw e;
-				}
-			}
-			OperationContext context("");
-			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, context));
+			context = Reference<OperationContext>(new OperationContext(""));
+			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
 		}
 		else
 		{
