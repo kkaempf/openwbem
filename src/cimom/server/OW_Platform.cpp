@@ -245,10 +245,13 @@ void rerunDaemon()
 {
 #ifdef OW_HAVE_PTHREAD_KILL_OTHER_THREADS_NP
 	// do this, since it seems that on some distros (debian sarge for instance) 
-	// it doesn't happen when calling execv(), and it should hurt if it's 
+	// it doesn't happen when calling execv(), and it shouldn't hurt if it's 
 	// called twice.
 	pthread_kill_other_threads_np();
 #endif
+	// TODO: try doing a fork() here instead of clearing the file locks and signal mask, which seems to be problematic sometimes.
+	// fork() clears the locks and resets the signal mask for the child process.
+
 	// On Linux pthreads will kill off all the threads when we call
 	// execv().  If we close all the fds, then that breaks pthreads and
 	// execv() will just hang.
