@@ -1,5 +1,6 @@
 //%///////////////////////////////////////////////////////////////////////////////
 // Copyright (c) 2000, 2001 The Open group, BMC Software, Tivoli Systems, IBM
+// Portions Copyright (C) 2003 Center 7, Inc All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to 
@@ -20,7 +21,7 @@
 //==============================================================================//
 // Author: Markus Mueller (sedgewick_de@yahoo.de)
 //
-// Modified By:
+// Modified By: Dan Nuffer
 //
 //%/////////////////////////////////////////////////////////////////////////////
 
