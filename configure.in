@@ -1019,6 +1019,7 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 if (test ! -z "$ac_cv_openssldir") ; then
 	AC_DEFINE(HAVE_OPENSSL)
 	SSL_LIBS="-lssl -lcrypto"
+	LIBS="$saved_LIBS"
 else
 	AC_DEFINE(NO_SSL)
 	SSL_LIBS=""
@@ -1081,7 +1082,6 @@ then
 	then
 		EXTRA_SSL_LIBS=`pkg-config openssl --libs`
 		EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
-#		LIBS="$LIBS $EXTRA_SSL_LIBS"
 		CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
 		AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
 	else
