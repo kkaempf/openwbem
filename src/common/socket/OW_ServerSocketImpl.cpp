@@ -95,7 +95,7 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
 
-#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
+//#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
 	// is this safe? Should be, but some OS kernels have problems with it.
 	// It's OK on current linux versions.  Definitely not on
 	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
@@ -107,7 +107,7 @@ OW_ServerSocketImpl::doListen(OW_UInt16 port, OW_Bool isSSL,
 	// Without this line, you can't stop and immediately re-start the daemon.
 	int reuse = 1;
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-#endif
+//#endif
 
 		
 	OW_InetSocketAddress_t inetAddr;
@@ -161,7 +161,7 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	int fdflags = ::fcntl(m_sockfd, F_GETFL, 0);
 	::fcntl(m_sockfd, F_SETFL, fdflags | O_NONBLOCK);
 
-#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
+//#if defined(OW_DEBUG) || defined(OW_GNU_LINUX)
 	// is this safe? Should be, but some OS kernels have problems with it.
 	// It's OK on current linux versions.  Definitely not on
 	// OLD (kernel < 1.3.60) ones.  Who knows about on other OS's like UnixWare or
@@ -173,7 +173,7 @@ OW_ServerSocketImpl::doListen(const OW_String& filename, int queueSize)
 	// Without this line, you can't stop and immediately re-start the daemon.
 	int reuse = 1;
 	::setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
-#endif
+//#endif
 
 // This seems to cause problems, so just leave the file sitting there.
 //    if (OW_FileSystem::exists(filename))

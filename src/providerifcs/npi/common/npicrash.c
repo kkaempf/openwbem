@@ -15,7 +15,7 @@
  */
 
 
-#if defined(i386) && defined(__GNUC__)
+#if defined(i386) && defined(__GNUC__) && defined(OW_GNU_LINUX)
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
@@ -77,7 +77,7 @@ static void segv_handler(int signum, siginfo_t * info, void * obscure)
 
 void * setupCrashHandler()
 {
-#if defined(i386) && defined(__GNUC__)
+#if defined(i386) && defined(__GNUC__) && defined(OW_GNU_LINUX)
 	/* set up signal handler and return the old handler info */
 	sigset_t sigset;
 	struct sigaction action, *oldaction;
@@ -105,7 +105,7 @@ void * setupCrashHandler()
 
 void  restoreCrashHandler(void *oldac)
 {
-#if defined(i386) && defined(__GNUC__)
+#if defined(i386) && defined(__GNUC__) && defined(OW_GNU_LINUX)
 	/* restore the old signal handler */
 	struct sigaction * oldaction=oldac, origaction;
 	if (oldaction)

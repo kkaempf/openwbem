@@ -1146,7 +1146,7 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 			{
 				isAbstract = EFALSE;
 			}
-			if(isIndication != EUNSET)
+			if(isIndication == ETRUE || isIndication == EFALSE)
 			{
 				break;
 			}
@@ -1165,7 +1165,7 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 			{
 				isIndication = EFALSE;
 			}
-			if(isAbstract != EUNSET)
+			if(isAbstract == ETRUE || isAbstract == EFALSE)
 			{
 				break;
 			}
