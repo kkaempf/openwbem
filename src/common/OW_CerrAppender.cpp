@@ -35,6 +35,8 @@
 #include "OW_config.h"
 #include "OW_CerrAppender.hpp"
 #include "OW_String.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <iostream>
 
@@ -55,9 +57,15 @@ CerrAppender::~CerrAppender()
 }
 
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	Mutex cerrGuard;
+}
+
 void
 CerrAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
 {
+	MutexLock lock(cerrGuard);
 	std::cerr << formattedMessage << std::endl;
 }
 

@@ -37,6 +37,8 @@
 #include "OW_Format.hpp"
 #include "OW_Logger.hpp"
 #include "OW_LogMessage.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 
 #include <fstream>
 
@@ -64,6 +66,10 @@ FileAppender::~FileAppender()
 }
 
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	Mutex fileGuard;
+}
 void
 FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
 {
@@ -74,6 +80,7 @@ FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessa
 	}
 	else
 	{
+		MutexLock lock(fileGuard);
 		log << formattedMessage << std::endl;
 	}
 }

@@ -36,6 +36,8 @@
 #include "OW_SyslogAppender.hpp"
 #include "OW_Logger.hpp"
 #include "OW_LogMessage.hpp"
+#include "OW_Mutex.hpp"
+#include "OW_MutexLock.hpp"
 #include <syslog.h>
 
 namespace OpenWBEM
@@ -58,6 +60,10 @@ SyslogAppender::SyslogAppender(const StringArray& components,
 SyslogAppender::~SyslogAppender() {}
 
 /////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	Mutex syslogGuard;
+}
 void
 SyslogAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
 {
@@ -84,6 +90,7 @@ SyslogAppender::doProcessLogMessage(const String& formattedMessage, const LogMes
 	}
 
 	StringArray a = formattedMessage.tokenize("\n");
+	MutexLock lock(syslogGuard);
 	for (size_t i = 0; i < a.size(); ++i)
 	{
 		syslog( syslogPriority, "%s", a[i].c_str() );
