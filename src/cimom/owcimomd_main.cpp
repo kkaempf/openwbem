@@ -210,11 +210,11 @@ int main(int argc, char* argv[])
 		Platform::sendDaemonizeStatus(Platform::DAEMONIZE_FAIL);
 		rval = 1;
 	}
-	CIMOMEnvironment::instance() = 0;
-	
 	// Call platform specific shutdown routine
 	Platform::daemonShutdown(OW_DAEMON_NAME, env);
 
+	CIMOMEnvironment::instance() = env = 0;
+	
 	OW_LOG_INFO(logger, "owcimomd has shutdown");
 	return rval;
 }
