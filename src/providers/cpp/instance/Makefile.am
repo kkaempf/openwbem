@@ -1,1 +1,1 @@
-SUBDIRS = CIM_IndicationSubscription
+SUBDIRS = CIM_IndicationSubscription OpenWBEM_ObjectManager

@@ -1,6 +1,32 @@
-Could not find property file, CIMOM uses default configuration settings.
-
-// Copyright 2003 Center 7, Inc.
+/*******************************************************************************
+* Copyright (C) 2003 Center 7, Inc All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+*  - Redistributions of source code must retain the above copyright notice,
+*    this list of conditions and the following disclaimer.
+*
+*  - Redistributions in binary form must reproduce the above copyright notice,
+*    this list of conditions and the following disclaimer in the documentation
+*    and/or other materials provided with the distribution.
+*
+*  - Neither the name of Center 7 nor the names of its
+*    contributors may be used to endorse or promote products derived from this
+*    software without specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL Center 7, Inc OR THE CONTRIBUTORS
+* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
 
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
@@ -10,13 +36,23 @@ Could not find property file, CIMOM uses default configuration settings.
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_SocketAddress.hpp"
 
 namespace OpenWBEM
 {
 
 class OpenWBEM_ObjectManagerInstProv : public OW_CppInstanceProviderIFC
 {
+private:
+	OW_CIMInstance m_inst;
+
 public:
+
+	////////////////////////////////////////////////////////////////////////////
+	OpenWBEM_ObjectManagerInstProv()
+		: m_inst(OW_CIMNULL)
+	{
+	}
 
 	////////////////////////////////////////////////////////////////////////////
 	virtual ~OpenWBEM_ObjectManagerInstProv()
@@ -37,20 +73,41 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_CIMClass& cimClass )
 	{
-		(void)cimClass;
+		(void)className;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstanceNames");
 
-		OW_CIMObjectPath newCop(className, ns);
-
-		// TODO: Figure out the instance names
-		while (/* There are more instance name to process */)
+		if (!m_inst)
 		{
-			newCop.addKey("SystemCreationClassName", OW_CIMValue(/* TODO: Put the key value here */));
-			newCop.addKey("SystemName", OW_CIMValue(/* TODO: Put the key value here */));
-			newCop.addKey("CreationClassName", OW_CIMValue(/* TODO: Put the key value here */));
-			newCop.addKey("Name", OW_CIMValue(/* TODO: Put the key value here */));
-			result.handle(newCop);
+			m_inst = createTheInst(cimClass);
 		}
+
+		OW_CIMObjectPath newCop(ns, m_inst);
+
+		result.handle(newCop);
+	}
+
+	OW_CIMInstance createTheInst(const OW_CIMClass& cimClass)
+	{
+		// Only have one Object Manager
+
+		OW_CIMInstance newInst = cimClass.newInstance();
+		newInst.setProperty("Version", OW_CIMValue(OW_VERSION));
+		//newInst.setProperty("GatherStatisticalData", OW_CIMValue(/* TODO: Put the value here */));
+
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
+		// This property is a KEY, it must be filled out
+		OW_SocketAddress addr = OW_SocketAddress::getAnyLocalHost();
+		newInst.setProperty("SystemName", OW_CIMValue(addr.getName()));
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("CreationClassName", OW_CIMValue("OpenWBEM_ObjectManager"));
+		// This property is a KEY, it must be filled out
+		newInst.setProperty("Name", OW_CIMValue("owcimomd"));
+		newInst.setProperty("Started", OW_CIMValue(true));
+		newInst.setProperty("EnabledStatus", OW_CIMValue(OW_UInt16(2))); // 2 = Enabled
+		newInst.setProperty("Caption", OW_CIMValue("owcimomd"));
+		newInst.setProperty("Description", OW_CIMValue("owcimomd"));
+		return newInst;
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -68,40 +125,16 @@ public:
 		const OW_CIMClass& cimClass )
 	{
 		(void)ns;
+		(void)className;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::enumInstances");
 
-		// TODO: Get the instance information
-		while (/* There are more instances to process */)
+		if (!m_inst)
 		{
-			OW_CIMInstance newInst = cimClass.newInstance();
-			newInst.setProperty("Version", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("GatherStatisticalData", OW_CIMValue(/* TODO: Put the value here */));
-			// This property is a KEY, it must be filled out
-			newInst.setProperty("SystemCreationClassName", OW_CIMValue(/* TODO: Put the value here */));
-			// This property is a KEY, it must be filled out
-			newInst.setProperty("SystemName", OW_CIMValue(/* TODO: Put the value here */));
-			// This property is a KEY, it must be filled out
-			newInst.setProperty("CreationClassName", OW_CIMValue(/* TODO: Put the value here */));
-			// This property is a KEY, it must be filled out
-			newInst.setProperty("Name", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("PrimaryOwnerName", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("PrimaryOwnerContact", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("StartMode", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("Started", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("EnabledStatus", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("OtherEnabledStatus", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("RequestedStatus", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("EnabledDefault", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("InstallDate", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("OperationalStatus", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("OtherStatusDescriptions", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("Status", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("Caption", OW_CIMValue(/* TODO: Put the value here */));
-			newInst.setProperty("Description", OW_CIMValue(/* TODO: Put the value here */));
-
-			result.handle(newInst.clone(localOnly,deep,includeQualifiers,
-				includeClassOrigin,propertyList,requestedClass,cimClass));
+			m_inst = createTheInst(cimClass);
 		}
+
+		result.handle(m_inst.clone(localOnly,deep,includeQualifiers,
+			includeClassOrigin,propertyList,requestedClass,cimClass));
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -116,28 +149,17 @@ public:
 		const OW_CIMClass& cimClass )
 	{
 		(void)ns;
+		(void)instanceName;
 		env->getLogger()->logDebug("In OpenWBEM_ObjectManagerInstProv::getInstance");
-		OW_CIMInstance inst = cimClass.newInstance();
-		inst.setProperties(instanceName.getKeys());
+		
+		if (!m_inst)
+		{
+			m_inst = createTheInst(cimClass);
+		}
 
-		newInst.setProperty("Version", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("GatherStatisticalData", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("PrimaryOwnerName", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("PrimaryOwnerContact", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("StartMode", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("Started", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("EnabledStatus", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("OtherEnabledStatus", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("RequestedStatus", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("EnabledDefault", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("InstallDate", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("OperationalStatus", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("OtherStatusDescriptions", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("Status", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("Caption", OW_CIMValue(/* TODO: Put the value here */));
-		newInst.setProperty("Description", OW_CIMValue(/* TODO: Put the value here */));
+		OW_CIMInstance inst = createTheInst(cimClass);
 
-		return inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
+		return m_inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -191,7 +213,7 @@ public:
 }
 
 
-OW_PROVIDERFACTORY(OpenWBEM_ObjectManagerInstProv, owprovinstOpenWBEM_ObjectManager)
+OW_PROVIDERFACTORY(OpenWBEM::OpenWBEM_ObjectManagerInstProv, owprovinstOpenWBEM_ObjectManager)
 
 
 

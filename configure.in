@@ -670,6 +670,7 @@ AC_OUTPUT(./Makefile
 ./src/providers/cpp/polled/slp/Makefile
 ./src/providers/cpp/instance/Makefile
 ./src/providers/cpp/instance/CIM_IndicationSubscription/Makefile
+./src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile
 ./src/providers/cpp/indication/Makefile
 ./src/providers/cpp/indication/IndicationRepLayer/Makefile
 ./src/requesthandlers/Makefile
