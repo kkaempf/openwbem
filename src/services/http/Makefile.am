@@ -9,7 +9,13 @@ include $(top_srcdir)/Makefile-shared-lib-inst.inc
 # This is an exception to the rule, we need libowservicehttp to be in $(libdir) 
 # for listeners to use as well as the services dir for the cimom to use.
 install-exec-local : install-ow-shared-libs
+if OW_NETWARE_INSTALL
+# NetWare does not handle symbolic links so we'll just copy it.
+	rm -f $(DESTDIR)$(libdir)/$(OW_SHARED_LIBS)
+	cp -f $(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
+else
 	ln -sf $(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
+endif
 	if [ "$(LIB_EXT)" = "dylib" ]; then \
 		if [ -f $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle ]; then \
 			mv $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT) $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).dso; \
