@@ -159,6 +159,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 			else
 			{
 				CIMInstance newInst(instanceName.getClassName()); 
+				newInst.setProperties(instanceName.getKeys()); 
 				newInst.setKeys(instanceName.getKeys()); 
 				ia.push_back(newInst); 
 			}
@@ -167,7 +168,7 @@ ProviderAgentCIMOMHandle::getInstance(const String &ns,
 										includeQualifiers, includeClassOrigin, 
 										propertyList, m_cimclass, m_cimclass); 
 			OW_ASSERT(ia.size() == 1); // did the secondary instance provider do something horribly wrong? 
-			rval = ia[1]; 
+			rval = ia[0]; 
 		}
 	}
 	return rval; 
