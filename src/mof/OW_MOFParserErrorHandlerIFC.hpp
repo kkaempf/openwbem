@@ -59,7 +59,7 @@ public:
 	enum EParserAction
 	{
 		E_ABORT_ACTION,
-		E_IGNORE_ACTION,
+		E_IGNORE_ACTION
 	};
 
 	void recoverableError( const char* error, const lineInfo& li );
