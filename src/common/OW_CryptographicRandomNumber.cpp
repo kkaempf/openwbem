@@ -53,6 +53,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(CryptographicRandomNumber);
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_SSLCtxMgr.hpp"
+#include "OW_UnnamedPipe.hpp"
 
 #include <vector>
 #include <climits>
@@ -489,7 +490,7 @@ const cmd randomSourceCommands[] =
 class RandomOutputGatherer : public Exec::OutputCallback
 {
 private:
-	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
+	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer)
 	{
 		if (outputSource == Exec::E_STDERR)
 		{
@@ -508,6 +509,20 @@ private:
 		generateRandomDataFromTime(0.1);
 	}
 
+};
+
+/////////////////////////////////////////////////////////////////////////////
+class RandomInputCallback : public Exec::InputCallback
+{
+private:
+	virtual void doGetData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex)
+	{
+		// none of the processes we run need data from stdin, so just close it.
+		if (theStream.in()->isOpen())
+		{
+			theStream.in()->close();
+		}
+	}
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -670,11 +685,12 @@ CryptographicRandomNumber::initRandomness()
 	}
 
 	RandomOutputGatherer randomOutputGatherer;
+	RandomInputCallback randomInputCallback;
 	Array<Exec::ProcessStatus> processStatuses;
 	const int RANDOM_COMMAND_TIMEOUT = 10;
 	try
 	{
-		gatherOutput(randomOutputGatherer, streams, processStatuses, RANDOM_COMMAND_TIMEOUT);
+		gatherOutput(randomOutputGatherer, streams, processStatuses, randomInputCallback, RANDOM_COMMAND_TIMEOUT);
 	}
 	catch (ExecTimeoutException&)
 	{

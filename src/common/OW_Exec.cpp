@@ -45,6 +45,8 @@
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_DateTime.hpp"
 
+#include <map>
+
 extern "C"
 {
 #ifdef OW_HAVE_SYS_RESOURCE_H
@@ -436,6 +438,23 @@ PopenStreams
 safePopen(const Array<String>& command,
 		const String& initialInput)
 {
+	PopenStreams retval = safePopen(command);
+
+	if (initialInput != "")
+	{
+		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
+		{
+			OW_THROW_ERRNO_MSG(IOException, "Exec::safePopen: Failed writing input to process");
+		}
+	}
+
+	return retval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+PopenStreams
+safePopen(const Array<String>& command)
+{
 	PopenStreams retval;
 	retval.in( UnnamedPipe::createUnnamedPipe() );
 	UnnamedPipeRef upipeOut = UnnamedPipe::createUnnamedPipe();
@@ -519,162 +538,110 @@ safePopen(const Array<String>& command,
 	out->closeOutputHandle();
 	err->closeOutputHandle();
 
-	if (initialInput != "")
-	{
-		if (retval.in()->write(initialInput.c_str(), initialInput.length()) == -1)
-		{
-			OW_THROW_ERRNO_MSG(IOException, "Exec::safePopen: Failed writing input to process");
-		}
-	}
-
 	return retval;
 }
+
+namespace
+{
+
+#ifndef OW_MIN
+#define OW_MIN(x, y) (x) < (y) ? (x) : (y)
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+class StringOutputGatherer : public OutputCallback
+{
+public:
+	StringOutputGatherer(String& output, int outputLimit)
+		: m_output(output)
+		, m_outputLimit(outputLimit)
+	{
+	}
+private:
+	virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer)
+	{
+		if (m_outputLimit >= 0 && m_output.length() + dataLen > static_cast<size_t>(m_outputLimit))
+		{
+			// the process output too much, so just copy what we can and return error
+			int lentocopy = OW_MIN(m_outputLimit - m_output.length(), dataLen);
+			if (lentocopy >= 0)
+			{
+				m_output += String(data, lentocopy);
+			}
+			OW_THROW(ExecBufferFullException, "Exec::StringOutputGatherer::doHandleData(): buffer full");
+		}
+
+		m_output += data;
+	}
+	String& m_output;
+	int m_outputLimit;
+};
+
+/////////////////////////////////////////////////////////////////////////////
+class SingleStringInputCallback : public InputCallback
+{
+public:
+	SingleStringInputCallback(const String& s)
+		: m_s(s)
+	{
+	}
+private:
+	virtual void doGetData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex)
+	{
+		if (m_s.length() > 0)
+		{
+			inputBuffer.insert(inputBuffer.end(), m_s.c_str(), m_s.c_str() + m_s.length());
+			m_s.erase();
+		}
+		else if (theStream.in()->isOpen())
+		{
+			theStream.in()->close();
+		}
+	}
+	String m_s;
+};
+
+}// end anonymous namespace
 
 /////////////////////////////////////////////////////////////////////////////
 void
 executeProcessAndGatherOutput(const Array<String>& command,
-	String& output, int& processstatus,
-	int timeoutsecs, int outputlimit)
+	String& output, int& processStatus,
+	int timeoutSecs, int outputLimit, const String& input)
 {
-	processstatus = -1;
-	PopenStreams streams(safePopen(command));
-	gatherOutput(output, streams, processstatus,
-		timeoutsecs, outputlimit);
-	if (processstatus == -1)
+	processStatus = -1;
+	Array<PopenStreams> streams;
+	streams.push_back(safePopen(command));
+	Array<ProcessStatus> processStatuses(1);
+	SingleStringInputCallback singleStringInputCallback(input);
+
+	StringOutputGatherer gatherer(output, outputLimit);
+	gatherOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
+
+	if (processStatuses[0].hasExited())
 	{
-		processstatus = streams.getExitStatus();
+		processStatus = processStatuses[0].getStatus();
+	}
+	else
+	{
+		processStatus = streams[0].getExitStatus();
 	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// TODO: rewrite this to use the other gatherOutput().
 void
-gatherOutput(String& output, PopenStreams& streams, int& processstatus, int timeoutsecs, int outputlimit)
+gatherOutput(String& output, PopenStreams& stream, int& processStatus, int timeoutSecs, int outputLimit)
 {
-	bool outIsOpen = true;
-	bool errIsOpen = true;
-	bool got_child_return_code = false;
+	Array<PopenStreams> streams;
+	streams.push_back(stream);
+	Array<ProcessStatus> processStatuses(1);
 
-	DateTime curTime;
-	curTime.setToCurrent();
-	DateTime timeoutEnd(curTime);
-	timeoutEnd += timeoutsecs;
-
-	while (outIsOpen || errIsOpen)
+	StringOutputGatherer gatherer(output, outputLimit);
+	SingleStringInputCallback singleStringInputCallback = SingleStringInputCallback(String());
+	gatherOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
+	if (processStatuses[0].hasExited())
 	{
-		SelectTypeArray fdset;
-		if (outIsOpen)
-		{
-			fdset.push_back(streams.out()->getSelectObj());
-		}
-		if (errIsOpen)
-		{
-			fdset.push_back(streams.err()->getSelectObj());
-		}
-		
-		// check if the child has exited
-		if (!got_child_return_code && streams.pid() != -1)
-		{
-			pid_t waitpidrv;
-			waitpidrv = waitpidNoINTR(streams.pid(), &processstatus, WNOHANG);
-			if (waitpidrv == -1)
-			{
-				OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: waitpid() failed");
-			}
-			else if (waitpidrv != 0)
-			{
-				got_child_return_code = true;
-				streams.pid(-1);
-				streams.setProcessStatus(processstatus);
-			}
-		}
-		const int mstimeout = 100; // use 1/10 of a second
-		int selectrval = Select::select(fdset, mstimeout);
-		switch (selectrval)
-		{
-			case Select::SELECT_INTERRUPTED:
-				// if we got interrupted, just try again
-				break;
-			case Select::SELECT_ERROR:
-			{
-				OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: error selecting on stdout and stderr");
-			}
-			break;
-			case Select::SELECT_TIMEOUT:
-			{
-				if (got_child_return_code)
-				{
-					// pretend the child output is closed, since they've exited
-					// and select timed out.
-					outIsOpen = false;
-					errIsOpen = false;
-					break;
-				}
-				else
-				{
-					curTime.setToCurrent();
-					if (timeoutsecs >= 0 && curTime > timeoutEnd)
-					{
-						OW_THROW(ExecTimeoutException, "Exec::gatherOutput: timedout");
-					}
-				}
-			}
-			break;
-			default:
-			{
-				curTime.setToCurrent();
-				timeoutEnd = curTime;
-				timeoutEnd += timeoutsecs;
-
-				UnnamedPipeRef readstream;
-				// if both have output, we'll get error first.
-				if (streams.err()->getSelectObj() == fdset[selectrval])
-				{
-					readstream = streams.err();
-				}
-				else if (streams.out()->getSelectObj() == fdset[selectrval])
-				{
-					readstream = streams.out();
-				}
-				if (readstream)
-				{
-					char buff[1024];
-					int readrc = readstream->read(buff, sizeof(buff) - 1);
-					if (readrc == 0)
-					{
-						if (readstream == streams.out())
-						{
-							outIsOpen = false;
-						}
-						else
-						{
-							errIsOpen = false;
-						}
-					}
-					else if (readrc == -1)
-					{
-						OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: read error");
-					}
-					else
-					{
-						buff[readrc] = 0;
-						if (outputlimit >= 0 && output.length() + readrc > static_cast<size_t>(outputlimit))
-						{
-							// the process output too much, so just copy what we can and return error
-							int lentocopy = outputlimit - output.length();
-							if (lentocopy >= 0 && static_cast<size_t>(lentocopy) < sizeof(buff))
-							{
-								buff[lentocopy] = '\0';
-								output += buff;
-							}
-							OW_THROW(ExecBufferFullException, "Exec::gatherOutput: timedout");
-						}
-						output += buff;
-					}
-				}
-			}
-			break;
-		}
+		processStatus = processStatuses[0].getStatus();
 	}
 }
 
@@ -686,21 +653,37 @@ OutputCallback::~OutputCallback()
 
 /////////////////////////////////////////////////////////////////////////////
 void
-OutputCallback::handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
+OutputCallback::handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer)
 {
-	doHandleData(data, dataLen, outputSource, theStream, streamIndex);
+	doHandleData(data, dataLen, outputSource, theStream, streamIndex, inputBuffer);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+InputCallback::~InputCallback()
+{
+}
+
+/////////////////////////////////////////////////////////////////////////////
+void
+InputCallback::getData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex)
+{
+	doGetData(inputBuffer, theStream, streamIndex);
 }
 
 namespace
 {
 	struct ProcessOutputState
 	{
+		bool inIsOpen;
 		bool outIsOpen;
 		bool errIsOpen;
+		size_t availableDataLen;
 
 		ProcessOutputState()
-			: outIsOpen(true)
+			: inIsOpen(true)
+			, outIsOpen(true)
 			, errIsOpen(true)
+			, availableDataLen(0)
 		{
 		}
 	};
@@ -708,31 +691,61 @@ namespace
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses, int timeoutsecs)
+gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses, InputCallback& input, int timeoutsecs)
 {
 	processStatuses.clear();
 	processStatuses.resize(streams.size());
 
 	Array<ProcessOutputState> processStates(streams.size());
-	int numOpenPipes(streams.size() * 2); // count of stdout & stderr
+	int numOpenPipes(streams.size() * 2); // count of stdout & stderr. Ignore stdin for purposes of algorithm termination.
 
 	DateTime curTime;
 	curTime.setToCurrent();
 	DateTime timeoutEnd(curTime);
 	timeoutEnd += timeoutsecs;
 
+	Array<Array<char> > inputs(processStates.size());
+	for (size_t i = 0; i < processStates.size(); ++i)
+	{
+		input.getData(inputs[i], streams[i], i);
+		processStates[i].availableDataLen = inputs[i].size();
+		if (!streams[i].out()->isOpen())
+		{
+			processStates[i].outIsOpen = false;
+		}
+		if (!streams[i].err()->isOpen())
+		{
+			processStates[i].errIsOpen = false;
+		}
+		if (!streams[i].in()->isOpen())
+		{
+			processStates[i].inIsOpen = false;
+		}
+
+	}
+
 	while (numOpenPipes > 0)
 	{
-		SelectTypeArray fdset;
+		Select::SelectObjectArray inputSelObjs;
+		std::map<int, int> inputIndexProcessIndex;
+		Select::SelectObjectArray outputSelObjs;
+		std::map<int, int> outputIndexProcessIndex;
 		for (size_t i = 0; i < streams.size(); ++i)
 		{
 			if (processStates[i].outIsOpen)
 			{
-				fdset.push_back(streams[i].out()->getSelectObj());
+				inputSelObjs.push_back(streams[i].out()->getSelectObj());
+				inputIndexProcessIndex[inputSelObjs.size() - 1] = i;
 			}
 			if (processStates[i].errIsOpen)
 			{
-				fdset.push_back(streams[i].err()->getSelectObj());
+				inputSelObjs.push_back(streams[i].err()->getSelectObj());
+				inputIndexProcessIndex[inputSelObjs.size() - 1] = i;
+			}
+			if (processStates[i].inIsOpen && processStates[i].availableDataLen > 0)
+			{
+				outputSelObjs.push_back(streams[i].in()->getWriteSelectObj());
+				outputIndexProcessIndex[outputSelObjs.size() - 1] = i;
 			}
 
 			// check if the child has exited - the pid gets set to -1 once it's exited.
@@ -755,7 +768,7 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 		}
 
 		const int mstimeout = 100; // use 1/10 of a second
-		int selectrval = Select::select(fdset, mstimeout);
+		int selectrval = Select::selectRW(inputSelObjs, outputSelObjs, mstimeout);
 		switch (selectrval)
 		{
 			case Select::SELECT_INTERRUPTED:
@@ -774,7 +787,11 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 				{
 					if (streams[i].pid() == -1)
 					{
-						streams[i].in()->close();
+						if (processStates[i].inIsOpen)
+						{
+							processStates[i].inIsOpen = false;
+							streams[i].in()->close();
+						}
 						if (processStates[i].outIsOpen)
 						{
 							processStates[i].outIsOpen = false;
@@ -799,27 +816,37 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 			break;
 			default:
 			{
+				int availableToFind = selectrval;
 				// reset the timeout counter
 				curTime.setToCurrent();
 				timeoutEnd = curTime;
 				timeoutEnd += timeoutsecs;
 
-				for (size_t i = 0; i < streams.size(); ++i)
+				for (size_t i = 0; i < inputSelObjs.size() && availableToFind > 0; ++i)
 				{
-					UnnamedPipeRef readstream;
-					if (processStates[i].outIsOpen)
+					if (!inputSelObjs[i].available)
 					{
-						if (streams[i].out()->getSelectObj() == fdset[selectrval])
+						continue;
+					}
+					else
+					{
+						--availableToFind;
+					}
+					int streamIndex = inputIndexProcessIndex[i];
+					UnnamedPipeRef readstream;
+					if (processStates[streamIndex].outIsOpen)
+					{
+						if (streams[streamIndex].out()->getSelectObj() == inputSelObjs[i].s)
 						{
-							readstream = streams[i].out();
+							readstream = streams[streamIndex].out();
 						}
 					}
 
-					if (!readstream && processStates[i].errIsOpen)
+					if (!readstream && processStates[streamIndex].errIsOpen)
 					{
-						if (streams[i].err()->getSelectObj() == fdset[selectrval])
+						if (streams[streamIndex].err()->getSelectObj() == inputSelObjs[i].s)
 						{
-							readstream = streams[i].err();
+							readstream = streams[streamIndex].err();
 						}
 					}
 
@@ -832,15 +859,15 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 					int readrc = readstream->read(buff, sizeof(buff) - 1);
 					if (readrc == 0)
 					{
-						if (readstream == streams[i].out())
+						if (readstream == streams[streamIndex].out())
 						{
-							processStates[i].outIsOpen = false;
-							streams[i].out()->close();
+							processStates[streamIndex].outIsOpen = false;
+							streams[streamIndex].out()->close();
 						}
 						else
 						{
-							processStates[i].errIsOpen = false;
-							streams[i].err()->close();
+							processStates[streamIndex].errIsOpen = false;
+							streams[streamIndex].err()->close();
 						}
 						--numOpenPipes;
 					}
@@ -851,10 +878,51 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 					else
 					{
 						buff[readrc] = '\0';
-						output.handleData(buff, readrc, readstream == streams[i].out() ? E_STDOUT : E_STDERR, streams[i], i);
+						output.handleData(buff, readrc, readstream == streams[streamIndex].out() ? E_STDOUT : E_STDERR, streams[streamIndex], 
+							streamIndex, inputs[streamIndex]);
+					}
+				}
+
+				// handle stdin for all processes which have data to send to them.
+				for (size_t i = 0; i < outputSelObjs.size() && availableToFind > 0; ++i)
+				{
+					if (!outputSelObjs[i].available)
+					{
+						continue;
+					}
+					else
+					{
+						--availableToFind;
+					}
+					int streamIndex = outputIndexProcessIndex[i];
+					UnnamedPipeRef writestream;
+					if (processStates[streamIndex].inIsOpen)
+					{
+						writestream = streams[streamIndex].in();
 					}
 
-					break; // for loop - doesn't make sense to keep going, since we can only process one fd per call to select.
+					if (!writestream)
+					{
+						continue; // for loop
+					}
+
+					size_t offset = inputs[streamIndex].size() - processStates[streamIndex].availableDataLen;
+					int writerc = writestream->write(&inputs[streamIndex][offset], processStates[streamIndex].availableDataLen);
+					if (writerc == 0)
+					{
+						processStates[streamIndex].inIsOpen = false;
+						streams[streamIndex].in()->close();
+					}
+					else if (writerc == -1)
+					{
+						OW_THROW_ERRNO_MSG(ExecErrorException, "Exec::gatherOutput: write error");
+					}
+					else
+					{
+						inputs[streamIndex].erase(inputs[streamIndex].begin(), inputs[streamIndex].begin() + writerc);
+						input.getData(inputs[streamIndex], streams[streamIndex], streamIndex);
+						processStates[streamIndex].availableDataLen = inputs[streamIndex].size();
+					}
 				}
 			}
 			break;

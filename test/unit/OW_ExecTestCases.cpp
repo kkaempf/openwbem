@@ -69,45 +69,54 @@ void OW_ExecTestCases::testSafePopen()
 	String out = rval.out()->readAll();
 	rval.getExitStatus();
 	unitAssert(out == "hello world\n");
-
-	PopenStreams rval2 = Exec::safePopen( command, "hello to world\n" );
-	rval2.in()->close();
-	out = rval2.out()->readAll();
-	rval2.getExitStatus();
-	unitAssert( out == "hello to world\n" );
 }
 
 void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 {
-	String output;
-	int processstatus(0);
-	Exec::executeProcessAndGatherOutput(String(OW_TRUE_PATHNAME).tokenize(), output, processstatus);
-	unitAssert(output.empty());
-	unitAssert(WIFEXITED(processstatus));
-	unitAssert(WEXITSTATUS(processstatus) == 0);
+	{
+		String output;
+		int processstatus(0);
+		Exec::executeProcessAndGatherOutput(String(OW_TRUE_PATHNAME).tokenize(), output, processstatus);
+		unitAssert(output.empty());
+		unitAssert(WIFEXITED(processstatus));
+		unitAssert(WEXITSTATUS(processstatus) == 0);
+	}
 
-	processstatus = 0;
-	output.erase();
-	Exec::executeProcessAndGatherOutput(String(OW_FALSE_PATHNAME).tokenize(), output, processstatus);
-	unitAssert(output.empty());
-	unitAssert(WIFEXITED(processstatus));
-	unitAssert(WEXITSTATUS(processstatus) == 1);
+	{
+		String output;
+		int processstatus(0);
+		Exec::executeProcessAndGatherOutput(String(OW_FALSE_PATHNAME).tokenize(), output, processstatus);
+		unitAssert(output.empty());
+		unitAssert(WIFEXITED(processstatus));
+		unitAssert(WEXITSTATUS(processstatus) == 1);
+	}
 
-	processstatus = 0;
-	output.erase();
-	Exec::executeProcessAndGatherOutput(String("/bin/echo false").tokenize(), output, processstatus);
-	StringArray out_array = output.tokenize();
-	unitAssert(out_array.size() == 1)
-	unitAssert(*out_array.begin() == "false");
-	unitAssert(WIFEXITED(processstatus));
-	unitAssert(WEXITSTATUS(processstatus) == 0);
+	{
+		String output;
+		int processstatus(0);
+		Exec::executeProcessAndGatherOutput(String("/bin/echo false").tokenize(), output, processstatus);
+		StringArray out_array = output.tokenize();
+		unitAssert(out_array.size() == 1)
+		unitAssert(*out_array.begin() == "false");
+		unitAssert(WIFEXITED(processstatus));
+		unitAssert(WEXITSTATUS(processstatus) == 0);
+	}
+
+	{
+		String output;
+		int processstatus(0);
+		Exec::executeProcessAndGatherOutput(String("/bin/cat").tokenize(), output, processstatus, Exec::INFINITE_TIMEOUT, -1, "hello to world\n");
+		unitAssert(output == "hello to world\n");
+		unitAssert(WIFEXITED(processstatus));
+		unitAssert(WEXITSTATUS(processstatus) == 0);
+	}
 
 	// only do timeout tests if we're doing the long test, since it's slowwww
 	if (getenv("OWLONGTEST"))
 	{
 		// do a timeout
-		processstatus = 0;
-		output.erase();
+		int processstatus = 0;
+		String output;
 		try
 		{
 			StringArray cmd;
@@ -135,30 +144,30 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 		unitAssert(output == "before\n");
 	}
 
-	// test output limit
-	processstatus = 0;
-	output.erase();
-	try
 	{
-		Exec::executeProcessAndGatherOutput(String("/bin/echo 12345").tokenize(), output, processstatus, -1, 4);
-		unitAssert(0);
+		// test output limit
+		int processstatus = 0;
+		String output;
+		try
+		{
+			Exec::executeProcessAndGatherOutput(String("/bin/echo 12345").tokenize(), output, processstatus, -1, 4);
+			unitAssert(0);
+		}
+		catch (const ExecBufferFullException& e)
+		{
+		}
+		unitAssert(output == "1234");
 	}
-	catch (const ExecBufferFullException& e)
+
 	{
+		// test a process that dies from a signal. SIGTERM == 15
+		int processstatus = 0;
+		String output;
+		Exec::executeProcessAndGatherOutput(String(FileSystem::Path::getCurrentWorkingDirectory() + "/exitWithSignal 15").tokenize(), output, processstatus);
+		unitAssert(!WIFEXITED(processstatus));
+		unitAssert(WIFSIGNALED(processstatus));
+		unitAssert(WTERMSIG(processstatus) == 15);
 	}
-	unitAssert(output == "1234");
-
-	// test both
-	//runtest("for x in `seq 10`; do echo $x; sleep $x; done", 5, 100);
-	//runtest("for x in `seq 10`; do echo $x; sleep $x; done", 100, 5);
-
-	// test a process that dies from a signal. SIGTERM == 15
-	processstatus = 0;
-	output.erase();
-	Exec::executeProcessAndGatherOutput(String(FileSystem::Path::getCurrentWorkingDirectory() + "/exitWithSignal 15").tokenize(), output, processstatus);
-	unitAssert(!WIFEXITED(processstatus));
-	unitAssert(WIFSIGNALED(processstatus));
-	unitAssert(WTERMSIG(processstatus) == 15);
 }
 
 class TestOutputGatherer : public Exec::OutputCallback
@@ -169,7 +178,7 @@ public:
 	{
 	}
 private:
-	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex)
+	virtual void doHandleData(const char* data, size_t dataLen, Exec::EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer)
 	{
 		assert(m_outputs[streamIndex].first == theStream); // too bad we can't do unitAssert...
 		assert(outputSource == Exec::E_STDOUT);
@@ -179,11 +188,38 @@ private:
 	Array<pair<PopenStreams, String> >& m_outputs;
 };
 
+class TestInputCallback : public Exec::InputCallback
+{
+public:
+	TestInputCallback(const Array<Array<char> >& inputs)
+		: m_inputs(inputs)
+	{
+	}
+	TestInputCallback()
+	{
+	}
+private:
+	virtual void doGetData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex)
+	{
+		if (streamIndex < m_inputs.size() && m_inputs[streamIndex].size() > 0)
+		{
+			inputBuffer.insert(inputBuffer.end(), m_inputs[streamIndex].begin(), m_inputs[streamIndex].end());
+			m_inputs[streamIndex].clear();
+		}
+		else if (theStream.in()->isOpen())
+		{
+			theStream.in()->close();
+		}
+	}
+	Array<Array<char> > m_inputs;
+};
+
 void OW_ExecTestCases::testgatherOutput()
 {
 	{
 		Array<PopenStreams> streams;
 		Array<pair<PopenStreams, String> > outputs;
+		TestInputCallback inputs;
 		const int TEST_PROC_COUNT = 5;
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{
@@ -194,7 +230,40 @@ void OW_ExecTestCases::testgatherOutput()
 
 		TestOutputGatherer testOutputGatherer(outputs);
 		Array<Exec::ProcessStatus> processStatuses;
-		gatherOutput(testOutputGatherer, streams, processStatuses, Exec::INFINITE_TIMEOUT);
+		gatherOutput(testOutputGatherer, streams, processStatuses, inputs, Exec::INFINITE_TIMEOUT);
+		unitAssert(processStatuses.size() == size_t(TEST_PROC_COUNT));
+		for (int i = 0; i < TEST_PROC_COUNT; ++i)
+		{
+			int exitStatus = streams[i].getExitStatus();
+			if (processStatuses[i].hasExited())
+			{
+				unitAssert(exitStatus == processStatuses[i].getStatus());
+			}
+			unitAssert(WIFEXITED(exitStatus));
+			unitAssert(WEXITSTATUS(exitStatus) == 0);
+			unitAssert(outputs[i].second == String(i) + "\n");
+		}
+	}
+
+	{
+		Array<PopenStreams> streams;
+		Array<pair<PopenStreams, String> > outputs;
+		Array<Array<char> > inputData;
+		const int TEST_PROC_COUNT = 5;
+		for (int i = 0; i < TEST_PROC_COUNT; ++i)
+		{
+			PopenStreams curStream(Exec::safePopen(String("/bin/cat").tokenize()));
+			streams.push_back(curStream);
+			outputs.push_back(make_pair(curStream, String()));
+			String num(i); 
+			num += '\n';
+			inputData.push_back(Array<char>(num.c_str(), num.c_str() + num.length()));
+		}
+		TestInputCallback inputs(inputData);
+
+		TestOutputGatherer testOutputGatherer(outputs);
+		Array<Exec::ProcessStatus> processStatuses;
+		gatherOutput(testOutputGatherer, streams, processStatuses, inputs, Exec::INFINITE_TIMEOUT);
 		unitAssert(processStatuses.size() == size_t(TEST_PROC_COUNT));
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{
@@ -216,6 +285,7 @@ void OW_ExecTestCases::testgatherOutput()
 		Array<pair<PopenStreams, String> > outputs;
 		const int TEST_PROC_COUNT = 4;
 		const int TEST_TIMEOUT = 2;
+		TestInputCallback inputs;
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{
 			StringArray cmd;
@@ -231,7 +301,7 @@ void OW_ExecTestCases::testgatherOutput()
 		Array<Exec::ProcessStatus> processStatuses;
 		try
 		{
-			gatherOutput(testOutputGatherer, streams, processStatuses, TEST_TIMEOUT);
+			gatherOutput(testOutputGatherer, streams, processStatuses, inputs, TEST_TIMEOUT);
 			unitAssert(0);
 		}
 		catch (ExecTimeoutException& e)

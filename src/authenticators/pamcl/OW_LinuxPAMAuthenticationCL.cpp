@@ -94,18 +94,25 @@ LinuxPAMAuthenticationCL::doAuthenticate(String &userName,
 	String pathToPamAuth = m_libexecdir + "/PAMAuth";
 	Array<String> commandLine;
 	commandLine.push_back(pathToPamAuth);
-	bool rval;
-	PopenStreams ps = Exec::safePopen(commandLine,
-		userName + " " + info + "\n");
-	if (ps.getExitStatus() == 0)
+	String output;
+	int status = -1;
+	int timeoutSecs = 60;
+	int outputLimit = 1024;
+	String input = userName + " " + info + "\n";
+	try
 	{
-		rval = true;
+		Exec::executeProcessAndGatherOutput(commandLine, output, status, timeoutSecs, outputLimit, input);
 	}
-	else
+	catch (Exception& e)
 	{
-		rval = false;
+		return false;
 	}
-	return rval;
+
+	if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+	{
+		return true;
+	}
+	return false;
 }
 void
 LinuxPAMAuthenticationCL::doInit(ServiceEnvironmentIFCRef env)

@@ -164,20 +164,21 @@ namespace Exec
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
 	 *
-	 * @param initialInput
-	 *  The string is sent to stdin of the child process. If initialInput.length()
-	 *  >= the kernel's buffer size for an unnamed pipe, the call may block
-	 *  writing data to the child process until the child reads the data and frees
-	 *  up space in the buffer.
-	 *
 	 * @return A PopenStreams object which can be used to access the child
 	 *  process and/or get it's return value.
 	 *
 	 * @throws IOException If writing initialInput to the child process input fails.
 	 *         ExecErrorException If command.size() == 0 or if fork() fails.
 	 */
+	OW_COMMON_API PopenStreams safePopen(const Array<String>& command);
+
+	/**
+	 * The use of initialInput is deprecated, because it's not safe to use it in a
+	 * portable manner. Either use the input parameter to gatherOutput or do it
+	 * manually (not that you must be careful not to cause a deadlock).
+	 */
 	OW_COMMON_API PopenStreams safePopen(const Array<String>& command,
-			const String& initialInput = String());
+			const String& initialInput) OW_DEPRECATED;
 
 	const int INFINITE_TIMEOUT = -1;
 
@@ -221,9 +222,22 @@ namespace Exec
 	{
 	public:
 		virtual ~OutputCallback();
-		void handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex);
+		void handleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer);
 	private:
-		virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex) = 0;
+		/**
+		 * @param data The data output from the process identified by theStream. Will be NULL terminated.  However, if the process
+		 * output 0 bytes, those will be contained in data.
+		 */
+		virtual void doHandleData(const char* data, size_t dataLen, EOutputSource outputSource, PopenStreams& theStream, size_t streamIndex, Array<char>& inputBuffer) = 0;
+	};
+
+	class InputCallback
+	{
+	public:
+		virtual ~InputCallback();
+		void getData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex);
+	private:
+		virtual void doGetData(Array<char>& inputBuffer, PopenStreams& theStream, size_t streamIndex) = 0;
 	};
 
 	enum EProcessRunning
@@ -269,7 +283,9 @@ namespace Exec
 	 *
 	 * @param output A callback, whenever data is received from a process, it will
 	 *  be passed to output.handleData().
+	 * 
 	 * @param streams The connections to the child processes.
+	 * 
 	 * @param processstatus An out parameter, which will contain a enum flag
 	 *  indicating if the process has exited, and if it has, the processes'
 	 *  status. The ProcessStatus::status value, if ProcessStatus::running == E_PROCESS_RUNNING,
@@ -279,17 +295,23 @@ namespace Exec
 	 *  If processStatuses.size() != streams.size(), it will be resized.
 	 *  Each element will be set to (E_PROCESS_RUNNING, 0) or else
 	 *  (E_PROCESS_EXITED, the status of the exited process).
+	 * 
 	 * @param timeoutSecs Specifies the number of seconds to wait for all the
 	 *  processes to exit. If no output has been received and all the processes
 	 *  haven't exited after timeoutSecs seconds, an ExecTimeoutException will
 	 *  be thrown. If timeoutSecs == INFINITE_TIMEOUT, the timeout will be infinite, and no
 	 *  exception will ever be thrown.
+	 * 
+	 * @param input Callback to provide data to be written to the process(es) standard input.
+	 *  input.getData() will be called once for each stream, and subsequently once every time
+	 *  data has been written to a process. output.handleData() may also provide input data
+	 *  via the inputBuffer parameter, it is called every time data is read from a process.
 	 *
 	 * @throws ExecErrorException on error.
 	 * @throws ExecTimeoutException if the process hasn't finished within timeoutSecs.
 	 */
 	OW_COMMON_API void gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses,
-		int timeoutSecs = INFINITE_TIMEOUT);
+		InputCallback& input, int timeoutSecs = INFINITE_TIMEOUT);
 	
 	/**
 	 * Run a process, collect the output, and wait for it to exit.  The
@@ -318,25 +340,33 @@ namespace Exec
 	 * @param command
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
+	 * 
 	 * @param output An out parameter, the process output will be appended to
 	 *  this string.
+	 * 
 	 * @param streams The connection to the child process.
+	 * 
 	 * @param processstatus An out parameter, which will contain the process
 	 *  status.  It is only valid if the funtion returns. In the case an
 	 *  exception is thrown, it's undefined. It should be evaluated using the
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
+	 * 
 	 * @param timeoutsecs Specifies the number of seconds to wait for the
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
 	 *  an ExecTimeoutException will be thrown, and the process will be
 	 *  killed.
 	 *  If timeoutsecs == INFINITE_TIMEOUT, the timeout will be infinite, and a
 	 *  ExecTimeoutException will not be thrown.
+	 * 
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
 	 *  more data than will fit into output, then an ExecBufferFullException
 	 *  is thrown, and the process will be killed.
 	 *  If outputlimit < 0, the limit will be infinite, and an
 	 *  ExecBufferFullException will not be thrown.
+	 * 
+	 * @param input Data to be written to the child's stdin. After the data has been
+	 *  written, stdin will be closed.
 	 *
 	 * @throws ExecErrorException on error.
 	 * @throws ExecTimeoutException if the process hasn't finished within timeoutsecs.
@@ -345,7 +375,7 @@ namespace Exec
 	OW_COMMON_API void executeProcessAndGatherOutput(
 		const Array<String>& command,
 		String& output, int& processstatus,
-		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1);
+		int timeoutsecs = INFINITE_TIMEOUT, int outputlimit = -1, const String& input = String());
 	
 	
 } // end namespace Exec
