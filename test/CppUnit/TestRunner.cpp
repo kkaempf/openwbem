@@ -140,7 +140,7 @@ void TestRunner::runAll ()
 			it != m_mappings.end ();
 			++it) 
 	{
-		cout << (*it).first;
+		cout << (*it).first << std::flush;
 		testToRun = (*it).second;
 		run (testToRun);
 	}

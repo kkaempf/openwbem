@@ -55,7 +55,7 @@ void TextTestResult::addFailure (Test *test, CppUnitException *e)
 void TextTestResult::startTest (Test *test)
 {
 	TestResult::startTest (test);
-	cerr << ".";
+	cerr << "." << std::flush;
 
 }
 
