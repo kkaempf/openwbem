@@ -127,8 +127,8 @@ protected:
 	{
 	}
 	
-	// assumes that m_queueLock is locked
-	bool queueIsFull() const
+	// assumes that m_queueLock is locked. DynamicSizeNoQueuePoolImpl overrides this.
+	virtual bool queueIsFull() const
 	{
 		return ((m_maxQueueSize > 0) && (m_queue.size() == m_maxQueueSize));
 	}
@@ -254,11 +254,13 @@ protected:
 
 		RunnableRef work = m_queue.front();
 		m_queue.pop_front();
-		// handle threads waiting in addWork()
-		if (m_queue.size() == (m_maxQueueSize - 1))
+
+		// handle threads waiting in addWork().
+		if (!queueIsFull())
 		{
 			m_queueNotFull.notifyAll();
 		}
+
 		// handle waiting shutdown thread or callers of waitForEmptyQueue()
 		if (m_queue.size() == 0)
 		{
@@ -475,37 +477,15 @@ public:
 			return false;
 		}
 		NonRecursiveMutexLock l(m_queueLock);
-		if (!blockWhenFull && queueIsFull())
-		{
-			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
-			return false;
-		}
-		while ( queueIsFull() && !queueClosed() )
-		{
-			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
-			m_queueNotFull.wait(l);
-		}
+
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
 			OW_POOL_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
 			return false;
 		}
-		m_queue.push_back(work);
-		
-		OW_POOL_LOG_DEBUG(m_logger, "Work has been added to the queue");
 
-		// Release the lock and wake up a thread waiting for work in the queue
-		// This bit of code is a race condition with the thread,
-		// but if we acquire the lock again before it does, then we
-		// properly handle that case.  The only disadvantage if we win
-		// the "race" is that we'll unnecessarily start a new thread.
-		// In practice it works all the time.
-		l.release();
-		m_queueNotEmpty.notifyOne();
-		Thread::yield(); // give the thread a chance to run
-		l.lock();
-
+		// we can't touch m_threads until *after* we check for the queue being closed, shutdown requires that m_threads not change after the 
 		// clean up dead threads (before we add the new one, so we don't need to check it)
 		size_t i = 0;
 		while (i < m_threads.size())
@@ -521,6 +501,32 @@ public:
 				++i;
 			}
 		}
+
+		if (!blockWhenFull && queueIsFull())
+		{
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
+			return false;
+		}
+		while ( queueIsFull() && !queueClosed() )
+		{
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
+			m_queueNotFull.wait(l);
+		}
+		
+		m_queue.push_back(work);
+		
+		OW_POOL_LOG_DEBUG(m_logger, "Work has been added to the queue");
+
+		// Release the lock and wake up a thread waiting for work in the queue
+		// This bit of code is a race condition with the thread,
+		// but if we acquire the lock again before it does, then we
+		// properly handle that case.  The only disadvantage if we win
+		// the "race" is that we'll unnecessarily start a new thread.
+		// In practice it works all the time.
+		l.release();
+		m_queueNotEmpty.notifyOne();
+		Thread::yield(); // give the thread a chance to run
+		l.lock();
 
 		// Start up a new thread to handle the work in the queue.
 		if (!m_queue.empty() && m_threads.size() < m_maxThreads)
@@ -556,6 +562,12 @@ public:
 		{
 		}
 	}
+protected:
+	UInt32 getMaxThreads() const
+	{
+		return m_maxThreads;
+	}
+
 private:
 	// pool characteristics
 	UInt32 m_maxThreads;
@@ -585,6 +597,30 @@ Int32 DynamicSizePoolWorkerThread::run()
 	return 0;
 }
 
+/////////////////////////////////////////////////////////////////////////////
+class DynamicSizeNoQueuePoolImpl : public DynamicSizePoolImpl
+{
+public:
+	DynamicSizeNoQueuePoolImpl(UInt32 maxThreads, const LoggerRef& logger, const String& poolName)
+		: DynamicSizePoolImpl(maxThreads, maxThreads, logger, poolName) // allow queue in superclass, but prevent it from having any backlog
+	{
+	}
+
+	virtual ~DynamicSizeNoQueuePoolImpl()
+	{
+	}
+
+	// the only difference between this class and DynamicSizePoolImpl is that we change the definition of queueIsFull()
+	virtual bool queueIsFull() const
+	{
+		// don't let the queue get bigger than the number of free threads. This effectively prevents work from being 
+		// queued up which can't be immediately serviced.
+		size_t freeThreads = getMaxThreads() -  m_threads.size(); 
+		return (freeThreads <= m_queue.size());
+	}
+
+};
+
 } // end anonymous namespace
 /////////////////////////////////////////////////////////////////////////////
 ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize, const LoggerRef& logger_, const String& poolName)
@@ -601,6 +637,9 @@ ThreadPool::ThreadPool(PoolType poolType, UInt32 numThreads, UInt32 maxQueueSize
 			break;
 		case DYNAMIC_SIZE:
 			m_impl = new DynamicSizePoolImpl(numThreads, maxQueueSize, logger, poolName);
+			break;
+		case DYNAMIC_SIZE_NO_QUEUE:
+			m_impl = new DynamicSizeNoQueuePoolImpl(numThreads, logger, poolName);
 			break;
 	}
 }

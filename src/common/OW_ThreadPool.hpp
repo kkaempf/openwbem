@@ -62,7 +62,8 @@ public:
 	enum PoolType
 	{
 		FIXED_SIZE,
-		DYNAMIC_SIZE
+		DYNAMIC_SIZE,
+		DYNAMIC_SIZE_NO_QUEUE
 	};
 	/**
 	 * Constructor
