@@ -251,7 +251,7 @@ public:
 	{
 		ThreadImpl::yield();
 	}
-protected:
+private:
 	/**
 	 * The method that will be run when the start method is called.
 	 */
@@ -267,8 +267,9 @@ protected:
 	Condition m_cancelCond;
 	bool m_cancelRequested;
 	bool m_cancelled;
-private:
+
 	static Int32 threadRunner(void* paramPtr);
+	void doneRunning(const ThreadDoneCallbackRef& cb);
 	
 	// non-copyable
 	Thread(const Thread&);

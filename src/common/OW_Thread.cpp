@@ -161,6 +161,7 @@ Thread::threadRunner(void* paramPtr)
 		theThreadID = pTheThread->m_id;
 		Reference<ThreadDoneCallback> cb = pParam->cb;
 		ThreadBarrier barrier = pParam->barrier;
+		delete pParam;
 		pTheThread->m_isRunning = true;
 		barrier.wait();
 
@@ -178,26 +179,24 @@ Thread::threadRunner(void* paramPtr)
 			std::cerr << "!!! Exception: " << ex.type() << " caught in Thread class\n";
 			std::cerr << ex << std::endl;
 #endif
+			pTheThread->doneRunning(cb);
+			// we need to re-throw here, otherwise we'll segfault
+			// if pthread_cancel() does forced stack unwinding.
+			throw;
 		}
 		catch (...)
 		{
 #ifdef OW_DEBUG		
 			std::cerr << "!!! Unknown Exception caught in Thread class" << std::endl;
 #endif
+			pTheThread->doneRunning(cb);
+			// we need to re-throw here, otherwise we'll segfault
+			// if pthread_cancel() does forced stack unwinding.
+			throw;
 		}
 
-		{
-			NonRecursiveMutexLock l(pTheThread->m_cancelLock);
-			pTheThread->m_isRunning = pTheThread->m_isStarting = false;
-			pTheThread->m_cancelled = true;
-			pTheThread->m_cancelCond.notifyAll();
-		}
-		delete pParam;
+		pTheThread->doneRunning(cb);
 		
-		if (cb)
-		{
-			cb->notifyThreadDone(pTheThread);
-		}
 	}
 	catch (Exception& ex)
 	{
@@ -205,17 +204,36 @@ Thread::threadRunner(void* paramPtr)
 		std::cerr << "!!! Exception: " << ex.type() << " caught in Thread class\n";
 		std::cerr << ex << std::endl;
 #endif
+		// end the thread.  exitThread never returns.
+		ThreadImpl::exitThread(theThreadID, rval);
 	}
 	catch (...)
 	{
 #ifdef OW_DEBUG		
 		std::cerr << "!!! Unknown Exception caught in Thread class" << std::endl;
 #endif
+		// end the thread.  exitThread never returns.
+		ThreadImpl::exitThread(theThreadID, rval);
 	}
 	// end the thread.  exitThread never returns.
 	ThreadImpl::exitThread(theThreadID, rval);
 	return rval;
 }
+
+//////////////////////////////////////////////////////////////////////
+void
+Thread::doneRunning(const ThreadDoneCallbackRef& cb)
+{
+	NonRecursiveMutexLock l(m_cancelLock);
+	m_isRunning = m_isStarting = false;
+	m_cancelled = true;
+	m_cancelCond.notifyAll();
+	if (cb)
+	{
+		cb->notifyThreadDone(this);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////
 static Thread_t
 zeroThread()
@@ -295,6 +313,7 @@ Thread::cancel()
 	catch (ThreadException&)
 	{
 	}
+	m_cancelled = true;
 }
 //////////////////////////////////////////////////////////////////////
 void
