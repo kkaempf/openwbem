@@ -130,6 +130,7 @@ $(top_builddir)/src/providers/cpp/instance/CIM_IndicationSubscription/libowprovC
 $(top_builddir)/src/providers/cpp/instance/CIM_NamespaceInManager/libowprovinstCIM_NamespaceInManager.a \
 $(top_builddir)/src/providers/cpp/instance/OW_NameSpace/libowprovinstOW_NameSpace.a \
 $(top_builddir)/src/providers/cpp/instance/OpenWBEM_ObjectManager/libowprovinstOpenWBEM_ObjectManager.a \
+$(top_builddir)/src/providers/cpp/instance/OpenWBEM_UnitaryComputerSystem/libowprovinstOpenWBEM_UnitaryComputerSystem.a \
 $(top_builddir)/src/providers/cpp/polled/unloader/libowprovpollUnloader.a 
 
 STATIC_SERVICE_FLAGS= \
