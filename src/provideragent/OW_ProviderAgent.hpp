@@ -60,9 +60,29 @@ class ProviderAgent
 public:
 	static const char* const LockingType_opt;  
 	static const char* const LockingTimeout_opt; 
+
 	/**
-	 * @param logger If a logger specified then it will receive log messages, otherwise
-	 *  all log messages will be discarded.
+	 * Create a new provider agent, and start the HTTP server. 
+	 * The ProviderAgent can be used as a stand alone process by 
+	 * creating a ProviderAgent within a fairly simple main(), or 
+	 * it can be embedded within an existing daemon or service. 
+	 * 
+	 * @param configMap The configuration parameters for the ProviderAgent
+	 *        and its embedded HTTP server.  This could possibly come from
+	 *        parsing a config file. 
+	 * @param provider A reference to the provider to be embedded in the 
+	 *        ProviderAgent.  This should be a CppInstanceProvider, 
+	 *        CppSecondaryInstanceProvider, CppMethodProvider, or
+	 *        CppAssociatorProvider, or a combination of these. 
+	 * @param requestHandlers An array of request handlers.  The appropriate
+	 *        one will be used for each client request depending on the 
+	 *        HTTP headers of the request.  You can just put a single
+	 *        request handler in the array if you only wish to handle one
+	 *        type of encoding (CIM-XML, for example). 
+	 * @param authenticator A reference to the authenticator to be used 
+	 *        by the embedded HTTP server. 
+	 * @param logger A reference to a logger to be used by the ProviderAgent
+	 *        (and passed to the embedded Provider). 
 	 */
 	ProviderAgent(ConfigFile::ConfigMap configMap, 
 				  CppProviderBaseIFCRef provider, 
@@ -71,9 +91,9 @@ public:
 				  LoggerRef logger = LoggerRef(0)); 
 	~ProviderAgent();
 	/**
-	 * Shut down the http server that is listening for indications.
-	 *	This function blocks until all threads that are running callbacks
-	 *	have terminated.
+	 * Shut down the http server embedded within the ProviderAgent. 
+	 * This function blocks until all threads which may be processing
+	 * requests have terminated.
 	 */
 	void shutdownHttpServer();
 private:

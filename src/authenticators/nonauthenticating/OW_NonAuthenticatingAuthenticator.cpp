@@ -54,6 +54,7 @@ NonAuthenticatingAuthenticator::doAuthenticate(String& userName,
 		const String& info, String& details, OperationContext& context)
 {
 	context.setStringData(OperationContext::USER_NAME, userName); 
+	context.setStringData(OperationContext::USER_PASSWD, info); 
 	return true; 
 }
 ///////////////////////////////////////////////////////////////////////////////
