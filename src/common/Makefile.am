@@ -94,6 +94,7 @@ OW_ThreadPool.cpp \
 OW_TmpFile.cpp \
 OW_URL.cpp \
 OW_UserInfo.cpp \
+OW_UserUtils.cpp \
 OW_UUID.cpp \
 OW_UnnamedPipe.cpp \
 OW_UTF8Utils.cpp \
@@ -192,6 +193,7 @@ OW_Types.hpp \
 OW_URL.hpp \
 OW_UnnamedPipe.hpp \
 OW_UserInfo.hpp \
+OW_UserUtils.hpp \
 OW_UUID.hpp \
 OW_WBEMFlags.hpp \
 OW_SafeLibCreate.hpp \
