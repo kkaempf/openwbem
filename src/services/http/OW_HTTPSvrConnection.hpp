@@ -159,6 +159,8 @@ private:
 	Reference<UnnamedPipe> m_upipe;
 	bool m_chunkedOut;
 	String m_userName;
+	bool m_clientIsOpenWBEM2;
+
 	RequestHandlerIFCRef m_requestHandler;
 	HTTPServer::Options m_options;
 	int processRequestLine();

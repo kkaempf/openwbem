@@ -164,11 +164,21 @@ void HTTPChunkedIStream::checkForError() const
 	{
 		OW_THROW(CIMErrorException, errorStr.c_str());
 	}
-	errorStr = getTrailer("CIMErrorCode");
+	errorStr = getTrailer("CIMStatusCode");
+	if (errorStr.empty())
+	{
+		// try the old OW 2.0.x pre-standard way
+		errorStr = getTrailer("CIMErrorCode");
+	}
 	if (!errorStr.empty())
 	{
 		String descr;
-		descr = getTrailer("CIMErrorDescription");
+		descr = getTrailer("CIMStatusDescription");
+		if (descr.empty())
+		{
+			// try the old OW 2.0.x pre-standard way
+			descr = getTrailer("CIMErrorDescription");
+		}
 		if (!descr.empty())
 		{
 			OW_THROWCIMMSG(CIMException::ErrNoType(errorStr.toInt32()), 

@@ -97,6 +97,7 @@ HTTPSvrConnection::HTTPSvrConnection(Socket socket,
 	, m_upipe(upipe)
 	, m_chunkedOut(false)
 	, m_userName()
+	, m_clientIsOpenWBEM2(false)
 	, m_requestHandler()
 	, m_options(opts)
 {
@@ -147,7 +148,7 @@ HTTPSvrConnection::run()
 			addHeader("Cache-Control",
 				"no-cache");
 			addHeader("Server",
-				"OpenWBEM/" OW_VERSION " (CIMOM)");
+				OW_PACKAGE "/" OW_VERSION " (CIMOM)");
 			int selType = Select::select(selArray, m_options.timeout * 1000); // *1000 to convert seconds to milliseconds
 			if(selType == Select::SELECT_ERROR)
 			{
@@ -347,14 +348,24 @@ HTTPSvrConnection::beginPostResponse()
 	{
 		addHeader("Content-Encoding", "deflate");
 	}
-	if (m_chunkedOut)
+	if (m_chunkedOut) // we only do chunked output is the client says they can handle trailers.
 	{
 		addHeader( "Transfer-Encoding", "chunked");
 		addHeader(m_respHeaderPrefix + "CIMOperation", "MethodResponse");
-		addHeader("Trailers",
-			m_respHeaderPrefix + "CIMError, "
-			+ m_respHeaderPrefix + "CIMErrorCode, "
-			+ m_respHeaderPrefix + "CIMErrorDescription");
+		if (m_clientIsOpenWBEM2) // it uses different trailer names
+		{
+			addHeader("Trailers",
+				m_respHeaderPrefix + "CIMError, "
+				+ m_respHeaderPrefix + "CIMErrorCode, "
+				+ m_respHeaderPrefix + "CIMErrorDescription");
+		}
+		else // talking to someone who can understand 1.2 trailers
+		{
+			addHeader("Trailers",
+				m_respHeaderPrefix + "CIMError, "
+				+ m_respHeaderPrefix + "CIMStatusCode, "
+				+ m_respHeaderPrefix + "CIMStatusDescription");
+		}
 		sendHeaders(m_resCode);
 	}
 }
@@ -472,7 +483,18 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 		OW_ASSERT(ostrChunk);
 		if (m_requestHandler && m_requestHandler->hasError(errCode, errDescr))
 		{
-			ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorCode",
+			const char* CIMStatusCodeTrailer = "CIMStatusCode";
+			if (m_clientIsOpenWBEM2)
+			{
+				CIMStatusCodeTrailer = "CIMErrorCode";
+			}
+			const char* CIMStatusDescriptionTrailer = "CIMStatusDescription";
+			if (m_clientIsOpenWBEM2)
+			{
+				CIMStatusDescriptionTrailer = "CIMErrorDescription";
+			}
+
+			ostrChunk->addTrailer(m_respHeaderPrefix + CIMStatusCodeTrailer,
 				String(errCode));
 			if (!errDescr.empty())
 			{
@@ -482,7 +504,7 @@ HTTPSvrConnection::sendPostResponse(ostream* ostrEntity,
 				{
 					errDescr += lines[i] + " ";
 				}
-				ostrChunk->addTrailer(m_respHeaderPrefix + "CIMErrorDescription",
+				ostrChunk->addTrailer(m_respHeaderPrefix + CIMStatusDescriptionTrailer,
 					errDescr);
 			}
 			if (!m_requestHandler->getCIMError().empty())
@@ -762,11 +784,23 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 //
 	if (getHeaderValue("TE").indexOf("trailers") != String::npos)
 	{
+		// Now that trailers are standardized, we'll just reverse this test to
+		// disable chunking/trailers for broken clients.
+
 		// Trailers not standardized yet, so only do it we're talking to
 		// ourselves.
-		if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) != String::npos)
+		//if (getHeaderValue("User-Agent").indexOf(OW_PACKAGE) != String::npos)
+		//{
+		//	m_chunkedOut = true;
+		//}
+		m_chunkedOut = true;
+
+
+		// now we need to see if the client is an 2.0.x version of OW which
+		// supported a different (pre-standard) version of the trailers.
+		if (getHeaderValue("User-Agent").startsWith("openwbem/2"))
 		{
-			m_chunkedOut = true;
+			m_clientIsOpenWBEM2 = true;
 		}
 	}
 //
