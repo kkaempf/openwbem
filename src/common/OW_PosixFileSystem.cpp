@@ -492,6 +492,54 @@ StringArray getFileLines(const String& filename)
 	return getFileContents(filename).tokenize("\r\n");
 }
 
+//////////////////////////////////////////////////////////////////////////////
+namespace Path
+{
+
+//////////////////////////////////////////////////////////////////////////////
+String realPath(const String& path)
+{
+#ifdef OW_WIN32
+#error "TODO: port realPath"
+#else
+	return path;
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+String dirname(const String& dir)
+{
+#ifdef OW_WIN32
+#error "TODO: port dirname"
+#else
+	// skip over trailing slashes
+	size_t lastSlash = dir.length() - 1;
+	while (lastSlash > 0 && dir[lastSlash] == '/')
+	{
+		--lastSlash;
+	}
+	
+	lastSlash = dir.lastIndexOf('/', lastSlash);
+
+	if (lastSlash == String::npos)
+	{
+		return ".";
+	}
+
+	while (lastSlash > 0 && dir[lastSlash - 1] == '/')
+	{
+		--lastSlash;
+	}
+
+	if (lastSlash == 0)
+	{
+		return "/";
+	}
+	return dir.substring(0, lastSlash);
+#endif
+}
+
+} // end namespace Path
 } // end namespace FileSystem
 } // end namespace OpenWBEM
 

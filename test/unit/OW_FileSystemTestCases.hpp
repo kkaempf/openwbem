@@ -56,6 +56,7 @@ private:
 	void testopenOrCreateFile();
 	void testgetFileContents();
 	void testgetFileLines();
+	void testdirname();
 };
 
 #endif

@@ -48,6 +48,7 @@
 #include <sys/types.h>
 
 using namespace OpenWBEM;
+using namespace std;
 
 void OW_FileSystemTestCases::setUp()
 {
@@ -178,6 +179,25 @@ void OW_FileSystemTestCases::testgetFileLines()
 	unitAssert(FileSystem::removeFile("testfile"));
 }
 
+void OW_FileSystemTestCases::testdirname()
+{
+	unitAssert(FileSystem::Path::dirname("/usr/lib") == "/usr");
+	unitAssert(FileSystem::Path::dirname("/usr/lib/") == "/usr");
+	unitAssert(FileSystem::Path::dirname("/usr/") == "/");
+	unitAssert(FileSystem::Path::dirname("/usr") == "/");
+	unitAssert(FileSystem::Path::dirname("usr") == ".");
+	unitAssert(FileSystem::Path::dirname("//usr") == "/");
+	unitAssert(FileSystem::Path::dirname("///usr////") == "/");
+	unitAssert(FileSystem::Path::dirname("/") == "/");
+	unitAssert(FileSystem::Path::dirname(".") == ".");
+	unitAssert(FileSystem::Path::dirname("..") == ".");
+	unitAssert(FileSystem::Path::dirname("x/") == ".");
+	unitAssert(FileSystem::Path::dirname("x//") == ".");
+	unitAssert(FileSystem::Path::dirname("x///") == ".");
+	unitAssert(FileSystem::Path::dirname("x/y") == "x");
+	unitAssert(FileSystem::Path::dirname("x///y") == "x");
+}
+
 Test* OW_FileSystemTestCases::suite()
 {
 	TestSuite *testSuite = new TestSuite ("OW_FileSystem");
@@ -188,6 +208,7 @@ Test* OW_FileSystemTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testopenOrCreateFile);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetFileContents);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetFileLines);
+	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testdirname);
 
 	return testSuite;
 }

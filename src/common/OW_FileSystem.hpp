@@ -238,6 +238,31 @@ namespace FileSystem
 	 */
 	OW_COMMON_API StringArray getFileLines(const String& filename);
 
+	namespace Path
+	{
+		/**
+		 * Convert path to the canonicalized absolute pathname by expanding all
+		 * symbolic links and resolving references to /./, /../ and extra / 
+		 * characters. If path is relative, it will be interpreted as relative to
+		 * the current working directory. This function is similar to the SuSv3
+		 * function, however it's easier to use and thread safe.
+		 * @param path The path to canonicalize.
+		 * @return The canonicalized version of path.
+		 */
+		OW_COMMON_API String realPath(const String& path);
+
+		/**
+		 * Take a string that contains a pathname, and return a string that is 
+		 * a pathname of the parent directory of that file. Trailing '/' 
+		 * characters in the path are not counted as part of the path.
+		 * If path does not contain a '/', then dirname() shall return the 
+		 * string ".". If path an empty string, dirname() shall return the 
+		 * string ".".
+		 */
+		OW_COMMON_API String dirname(const String& dir);
+
+	} // end namespace Path
+
 } // end namespace FileSystem
 
 } // end namespace OpenWBEM
