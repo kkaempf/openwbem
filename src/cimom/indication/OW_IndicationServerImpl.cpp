@@ -57,6 +57,8 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMDateTime.hpp"
 
+#include <iterator>
+
 namespace OpenWBEM
 {
 

@@ -56,6 +56,8 @@
 #include "OW_ResultHandlers.hpp"
 #include "OW_AuthorizerManager.hpp"	
 
+#include <iterator>
+
 namespace OpenWBEM
 {
 
