@@ -411,6 +411,12 @@ OW_InternalProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCR
 
 
 
+// TODO: Move these into their own files.
 OW_CppProviderBaseIFC::~OW_CppProviderBaseIFC() {}
 OW_CppIndicationProviderIFC::~OW_CppIndicationProviderIFC() {}
 OW_CppInstanceProviderIFC::~OW_CppInstanceProviderIFC() {}
+OW_CppAssociatorProviderIFC::~OW_CppAssociatorProviderIFC(){}
+OW_CppIndicationExportProviderIFC::~OW_CppIndicationExportProviderIFC(){}
+OW_CppMethodProviderIFC::~OW_CppMethodProviderIFC() {}
+OW_CppPolledProviderIFC::~OW_CppPolledProviderIFC() {}
+OW_CppPropertyProviderIFC::~OW_CppPropertyProviderIFC() {}

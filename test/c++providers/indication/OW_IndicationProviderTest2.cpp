@@ -76,13 +76,14 @@ public:
 	// unloaded.  NEVER start a detached thread from a provider.  As soon as
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
-	OW_TestProviderThread(const OW_CIMOMHandleIFCRef& hdl)
+	OW_TestProviderThread(const OW_CIMOMHandleIFCRef& hdl, OW_IndicationProviderTest2* pProv)
 		: OW_Thread(true) // true means joinable.
 		, m_shuttingDown(false)
 		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
 		, m_hdl(hdl)
+		, m_pProv(pProv)
 	{
 	}
 
@@ -390,7 +391,7 @@ public:
 	virtual void initialize(const OW_ProviderEnvironmentIFCRef& env)
 	{
 		env->getLogger()->logDebug("OW_IndicationProviderTest2::initialize - creating the thread");
-		m_thread = new OW_TestProviderThread(env->getCIMOMHandle());
+		m_thread = new OW_TestProviderThread(env->getCIMOMHandle(), this);
 	}
 
 	virtual void cleanup() 
@@ -410,6 +411,10 @@ public:
 
 	void updateInstancesAndSendIndications(const OW_CIMOMHandleIFCRef& hdl, int creat, int mod, int del)
 	{
+		if (!m_theClass)
+		{
+			m_theClass = hdl->getClass("root/testsuite", "OW_IndicationProviderTest2");
+		}
 		// m_insts could be accessed from multiple threads
 		OW_MutexLock l(m_guard);
 		if (m_insts.size() == 5)

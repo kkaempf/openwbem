@@ -46,7 +46,7 @@
 class OW_CppPropertyProviderIFC: public virtual OW_CppProviderBaseIFC
 {
 public:
-	virtual ~OW_CppPropertyProviderIFC() {}
+	virtual ~OW_CppPropertyProviderIFC();
 
 	/**
 	 * A provider should override this method to report which classes in

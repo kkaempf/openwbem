@@ -37,7 +37,7 @@
 class OW_CppIndicationExportProviderIFC : public virtual OW_CppProviderBaseIFC
 {
 public:
-
+	virtual ~OW_CppIndicationExportProviderIFC();
 	/**
 	 * @return The class names of all the CIM_CppIndicationHandler sub-classes
 	 * this OW_IndicationExportProvider handles.

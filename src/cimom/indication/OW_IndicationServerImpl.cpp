@@ -592,17 +592,18 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 	cop.setNameSpace(ns);
 	
 	OW_MutexLock l(m_subGuard);
-	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end(); ++iter)
+	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end();)
 	{
 		if (cop.equals(iter->second.m_subPath))
 		{
-			m_subscriptions.erase(iter);
-			// there can only be one subscription with this object path, so no use searching more.
-			return; 
+			// TODO: call deleteFilter on the provider(s)
+			m_subscriptions.erase(iter++);
+		}
+		else
+		{
+			++iter;
 		}
 	}
-	// if we got here, there's something horribly wrong!
-	OW_ASSERT(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -638,6 +639,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	OW_WQLSelectStatement selectStmt(wqlRef->createSelectStatement(filterQuery));
 	OW_WQLCompile compiledStmt(selectStmt);
 	OW_WQLCompile::Tableau& tableau(compiledStmt.getTableau());
+	OW_String indicationClassName = selectStmt.getClassName();
 
 	// collect up all the class names
 	OW_StringArray isaClassNames;
@@ -665,7 +667,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		}
 	}
 
-	// get rid of duplicates - unique requires that the range be sorted
+	// get rid of duplicates - unique() requires that the range be sorted
 	std::sort(isaClassNames.begin(), isaClassNames.end());
 	isaClassNames.erase(std::unique(isaClassNames.begin(), isaClassNames.end()), isaClassNames.end());
 
@@ -677,7 +679,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	{
 		providers = pm->getIndicationProviders(createProvEnvRef(m_env, 
 			m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()), ns, 
-			selectStmt.getClassName(), "");
+			indicationClassName, "");
 	}
 	else
 	{
@@ -685,7 +687,7 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 		{
 			providers.appendArray(pm->getIndicationProviders(createProvEnvRef(m_env, 
 				m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()), 
-				ns, selectStmt.getClassName(), isaClassNames[i]));
+				ns, indicationClassName, isaClassNames[i]));
 		}
 	}
 
@@ -707,19 +709,43 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	for (size_t i = 0; i < providers.size(); ++i)
 	{
 		providers[i]->authorizeFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
-			selectStmt, selectStmt.getClassName(), ns, isaClassNames, ""); // TODO: figure out the user name
+			selectStmt, indicationClassName, ns, isaClassNames, ""); // TODO: figure out the user name
 	}
 
 	// create a subscription (save the compiled filter)
 	Subscription sub;
-	//sub.m_subPath
+	sub.m_subPath = OW_CIMObjectPath(subInst);
 
 	// get the lock and put it in m_subscriptions
+	{
+		OW_MutexLock l(m_subGuard);
+		if (isaClassNames.empty())
+		{
+			OW_String subKey = indicationClassName;
+			subKey.toLowerCase();
+			m_subscriptions.insert(std::make_pair(subKey, sub));
+		}
+		else
+		{
+			for (size_t i = 0; i < isaClassNames.size(); ++i)
+			{
+				OW_String subKey = indicationClassName + ':' + isaClassNames[i];
+				subKey.toLowerCase();
+				m_subscriptions.insert(std::make_pair(subKey, sub));
+			}
+		}
+	}
 
-	// call enableSubscription on all the providers
-	// If enableSubscription calls fail or throw, just ignore it and keep going.
+	// call activateFilter on all the providers
+	// If activateFilter calls fail or throw, just ignore it and keep going.
 	// If none succeed, we need to remove it from m_subscriptions and throw 
 	// to indicate that subscription creation failed.
+	for (size_t i = 0; i < providers.size(); ++i)
+	{
+		bool firstActivation = true; // TODO: Figure out firstActivation
+		providers[i]->activateFilter(createProvEnvRef(m_env, m_env->getCIMOMHandle(), m_env->getRepositoryCIMOMHandle()),
+			selectStmt, indicationClassName, ns, isaClassNames, firstActivation);
+	}
 
 }
 

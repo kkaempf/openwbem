@@ -37,6 +37,7 @@
 class OW_CppPolledProviderIFC : public virtual OW_CppProviderBaseIFC
 {
 public:
+	virtual ~OW_CppPolledProviderIFC();
 
 	/**
 	 * Called by the CIMOM to give this OW_CppPolledProviderIFC to
