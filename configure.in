@@ -662,6 +662,7 @@ AC_ARG_WITH(ssl-dir,
 
 saved_LDFLAGS="$LDFLAGS"
 saved_CPPFLAGS="$CPPFLAGS"
+saved_LIBS="$LIBS"
 if test "x$prefix" != "xNONE" ; then
 	tryssldir="$tryssldir $prefix"
 fi
@@ -669,7 +670,8 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 	for ssldir in $tryssldir "" /usr/local/openssl /usr/lib/openssl /usr/local/ssl /usr/lib/ssl /usr/local /usr/pkg /opt /opt/openssl ; do
 		CPPFLAGS="$saved_CPPFLAGS"
 		LDFLAGS="$saved_LDFLAGS"
-	        SSL_LIBS="-lssl -lcrypto"
+		SSL_LIBS="-lssl -lcrypto"
+		LIBS="$saved_LIBS $SSL_LIBS"
  
 		# Skip directories if they don't exist
 		if test ! -z "$ssldir" -a ! -d "$ssldir" ; then
@@ -679,12 +681,12 @@ AC_CACHE_CHECK([for OpenSSL directory], ac_cv_openssldir, [
 			# Try to use $ssldir/lib if it exists, otherwise
 			# $ssldir
 			if test -d "$ssldir/lib" ; then
-				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib $SSL_LIBS"
+				LDFLAGS="$saved_LDFLAGS -L$ssldir/lib"
 				if test ! -z "$need_dash_r" ; then
 					LDFLAGS="$LDFLAGS -R$ssldir/lib"
 				fi
 			else
-				LDFLAGS="$saved_LDFLAGS -L$ssldir $SSL_LIBS"
+				LDFLAGS="$saved_LDFLAGS -L$ssldir"
 				if test ! -z "$need_dash_r" ; then
 					LDFLAGS="$LDFLAGS -R$ssldir"
 				fi
@@ -741,7 +743,7 @@ int main(void)
  
 if (test ! -z "$ac_cv_openssldir") ; then
 	AC_DEFINE(HAVE_OPENSSL)
-    	SSL_LIBS="-lssl -lcrypto"
+	SSL_LIBS="-lssl -lcrypto"
 else
 	AC_DEFINE(NO_SSL)
 fi
@@ -771,7 +773,7 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "x(system)") ;
 			CPPFLAGS="$saved_CPPFLAGS -I$ssldir"
 		fi
 	fi
-    	SSL_LIBS="-lssl -lcrypto"
+	SSL_LIBS="-lssl -lcrypto"
 fi
 else
 	AC_DEFINE(NO_SSL)
@@ -779,6 +781,10 @@ fi
 
 AC_SUBST(SSL_LIBS)
 AC_SUBST(EXTRA_SSL_LIBS)
+
+CPPFLAGS="$saved_CPPFLAGS"
+LDFLAGS="$saved_LDFLAGS"
+LIBS="$saved_LIBS"
 
 dnl
 dnl   Fix this section, to make it more 'autoconfish', as this is just a chunk
