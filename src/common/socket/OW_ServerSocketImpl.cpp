@@ -442,7 +442,7 @@ ServerSocketImpl::doListen(const String& filename, int queueSize, bool reuseAddr
 				strerror(errno)).c_str());
 	}
 	// give anybody access to the socket
-#if defined(OW_HPUX) || defined(OW_DARWIN) // on hpux and darwin, fchmod() doesn't work on a UDS
+#if defined(OW_HPUX) || defined(OW_DARWIN) || defined(OW_AIX) // on hpux, darwin, and aixX, fchmod() doesn't work on a UDS
 	if (::chmod(filename.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == -1)
 	{
 		close();
