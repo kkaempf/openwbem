@@ -382,43 +382,42 @@ CIMDataType::strToSimpleType(const String& strType)
 // It's generated from the following re2c input:
 #if 0
 	#define YYCTYPE char
-	#define YYCURSOR        begin
-	#define YYLIMIT         end
-	#define YYMARKER        q
+	#define YYCURSOR		begin
+	#define YYLIMIT		 end
+	#define YYMARKER		q
 	#define YYFILL(n)
 
 start:
 	/*!re2c
 	END = [\000];
 	any = [\000-\377];
-        [uU][iI][nN][tT]"8"END { return UINT8; }
-        [sS][iI][nN][tT]"8"END { return SINT8; }
-        [uU][iI][nN][tT]"16"END { return UINT16; }
-        [sS][iI][nN][tT]"16"END { return SINT16; }
-        [uU][iI][nN][tT]"32"END { return UINT32; }
-        [sS][iI][nN][tT]"32"END { return SINT32; }
-        [uU][iI][nN][tT]"64"END { return UINT64; }
-        [sS][iI][nN][tT]"64"END { return SINT64; }
-	[rR][eE][aA][lL]"32"END { return REAL32; }
-	[rR][eE][aA][lL]"64"END { return REAL64; }
-	[cC][hH][aA][rR]"16"END { return CHAR16; }
-	[sS][tT][rR][iI][nN][gG]END { return STRING; }
-	[bB][oO][oO][lL][eE][aA][nN]END { return BOOLEAN; }
-	[dD][aA][tT][eE][tT][iI][mM][eE]END { return DATETIME; }
-	[rR][eE][fF]END { return REFERENCE; }
-	[rR][eE][fF][eE][rR][eE][nN][cC][eE]END { return REFERENCE; }
-        any { return INVALID; }
+		[uU][iI][nN][tT]"8"END { return UINT8; }
+		[sS][iI][nN][tT]"8"END { return SINT8; }
+		[uU][iI][nN][tT]"16"END { return UINT16; }
+		[sS][iI][nN][tT]"16"END { return SINT16; }
+		[uU][iI][nN][tT]"32"END { return UINT32; }
+		[sS][iI][nN][tT]"32"END { return SINT32; }
+		[uU][iI][nN][tT]"64"END { return UINT64; }
+		[sS][iI][nN][tT]"64"END { return SINT64; }
+		[rR][eE][aA][lL]"32"END { return REAL32; }
+		[rR][eE][aA][lL]"64"END { return REAL64; }
+		[cC][hH][aA][rR]"16"END { return CHAR16; }
+		[sS][tT][rR][iI][nN][gG]END { return STRING; }
+		[bB][oO][oO][lL][eE][aA][nN]END { return BOOLEAN; }
+		[dD][aA][tT][eE][tT][iI][mM][eE]END { return DATETIME; }
+		[rR][eE][fF]END { return REFERENCE; }
+		[rR][eE][fF][eE][rR][eE][nN][cC][eE]END { return REFERENCE; }
+		any { return INVALID; }
 	*/
 #endif
 
 	const char* begin = strType.c_str();
-	const char* end = strType.c_str() + strType.length();
 	const char* q;
 
 	#define YYCTYPE char
-	#define YYCURSOR        begin
-	#define YYLIMIT         end
-	#define YYMARKER        q
+	#define YYCURSOR		begin
+	#define YYLIMIT		 begin
+	#define YYMARKER		q
 	#define YYFILL(n)
 
 start:
