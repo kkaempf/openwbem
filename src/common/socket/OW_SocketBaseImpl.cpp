@@ -397,14 +397,9 @@ SocketBaseImpl::write(const void* dataOut, int dataOutLen, bool errorAsException
 	{
 		rc = -1;
 	}
-	if(rc < 0)
+	if(rc < 0 && errorAsException)
 	{
-		if (m_isConnected)
-		{
-			disconnect();
-		}
-		if(errorAsException)
-			OW_THROW(SocketException, "SocketBaseImpl::write");
+		OW_THROW(SocketException, "SocketBaseImpl::write");
 	}
 	return rc;
 }
