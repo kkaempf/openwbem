@@ -346,16 +346,9 @@ CIMOMEnvironment::startServices()
 void
 CIMOMEnvironment::shutdown()
 {
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment beginning shutdown process");
-	{
-		MutexLock l(m_stateGuard);
-		m_state = E_STATE_SHUTTING_DOWN;
-	}
 
-	// PHASE 1: SHUTDOWNS
-
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment notifying services of shutdown");
 	// notify all services of impending shutdown.
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment notifying services of shutdown");
 	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
@@ -373,12 +366,19 @@ CIMOMEnvironment::shutdown()
 		}
 	}
 
+	// PHASE 1: SHUTDOWNS
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment beginning shutdown process");
+	{
+		MutexLock l(m_stateGuard);
+		m_state = E_STATE_SHUTTING_DOWN;
+	}
+
 	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down sockets");
 	// this is a global thing, so do it here
 	Socket::shutdownAllSockets();
 
-	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down services");
 	// Shutdown all services
+	OW_LOG_DEBUG(m_Logger, "CIMOMEnvironment shutting down services");
 	// Do this in reverse order because of dependencies
 	for (int i = int(m_services.size())-1; i >= 0; i--)
 	{
