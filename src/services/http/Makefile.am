@@ -15,6 +15,7 @@ if OW_NETWARE_INSTALL
 	cp -f $(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
 else
 	ln -sf $(thelibdir)/$(OW_SHARED_LIBS) $(DESTDIR)$(libdir)
+	ln -sf $(thelibdir)/$(OW_SHARED_LIBS:%.so=%.$(LIBRARY_BINARY_VERSION).so) $(DESTDIR)$(libdir)
 endif
 	if [ "$(LIB_EXT)" = "dylib" ]; then \
 		if [ -f $(DESTDIR)$(thelibdir)/`echo $(OW_SHARED_LIBS)|cut -f1 -d'.'`.$(SO_EXT).$(LIB_EXT).bundle ]; then \
