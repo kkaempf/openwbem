@@ -53,6 +53,8 @@ void CIMClassPathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
 void CIMInstancePathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
+void CIMLocalInstancePathtoXML(CIMObjectPath const& cop, std::ostream& ostr);
+/////////////////////////////////////////////////////////////
 void CIMInstanceNametoXML(CIMObjectPath const& cop, std::ostream& ostr);
 /////////////////////////////////////////////////////////////
 void CIMtoXML(CIMClass const& cc, std::ostream& ostr);

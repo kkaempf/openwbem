@@ -16092,18 +16092,13 @@ Associated path: /root/testsuite:TEST_Assoc
 Association Instance: <INSTANCE CLASSNAME="CIM_SystemComponent">
   <PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16116,23 +16111,18 @@ Association Instance: <INSTANCE CLASSNAME="CIM_SystemComponent">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_ManagedSystemElement">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem2">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16145,7 +16135,7 @@ Association Instance: <INSTANCE CLASSNAME="CIM_SystemComponent">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
 </INSTANCE>
@@ -16161,18 +16151,13 @@ In MOF: INSTANCE OF CIM_SystemComponent
 Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice">
   <PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16185,23 +16170,18 @@ Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_LogicalDevice">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16214,7 +16194,7 @@ Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
 </INSTANCE>
@@ -16230,18 +16210,13 @@ In MOF: INSTANCE OF CIM_SystemDevice
 Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice">
   <PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem2">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16254,23 +16229,18 @@ Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_LogicalDevice">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16283,7 +16253,7 @@ Association Instance: <INSTANCE CLASSNAME="CIM_SystemDevice">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
 </INSTANCE>
@@ -16299,18 +16269,13 @@ In MOF: INSTANCE OF CIM_SystemDevice
 Association Instance: <INSTANCE CLASSNAME="TEST_Assoc">
   <PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16323,23 +16288,18 @@ Association Instance: <INSTANCE CLASSNAME="TEST_Assoc">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_LogicalDevice">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem2">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16352,7 +16312,7 @@ Association Instance: <INSTANCE CLASSNAME="TEST_Assoc">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY NAME="producedByAssocTest" TYPE="boolean">
@@ -16374,18 +16334,13 @@ In MOF: INSTANCE OF TEST_Assoc
 Association Instance: <INSTANCE CLASSNAME="TEST_Assoc">
   <PROPERTY.REFERENCE NAME="GroupComponent" REFERENCECLASS="CIM_System">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16398,23 +16353,18 @@ Association Instance: <INSTANCE CLASSNAME="TEST_Assoc">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY.REFERENCE NAME="PartComponent" REFERENCECLASS="CIM_LogicalDevice">
     <VALUE.REFERENCE>
-      <INSTANCEPATH>
-        <NAMESPACEPATH>
-          <HOST>
-            127.0.0.1
-          </HOST>
-          <LOCALNAMESPACEPATH>
-            <NAMESPACE NAME="root">
-            </NAMESPACE>
-            <NAMESPACE NAME="testsuite">
-            </NAMESPACE>
-          </LOCALNAMESPACEPATH>
-        </NAMESPACEPATH>
+      <LOCALINSTANCEPATH>
+        <LOCALNAMESPACEPATH>
+          <NAMESPACE NAME="root">
+          </NAMESPACE>
+          <NAMESPACE NAME="testsuite">
+          </NAMESPACE>
+        </LOCALNAMESPACEPATH>
         <INSTANCENAME CLASSNAME="EXP_BionicComputerSystem2">
           <KEYBINDING NAME="CreationClassName">
             <KEYVALUE VALUETYPE="string">
@@ -16427,7 +16377,7 @@ Association Instance: <INSTANCE CLASSNAME="TEST_Assoc">
             </KEYVALUE>
           </KEYBINDING>
         </INSTANCENAME>
-      </INSTANCEPATH>
+      </LOCALINSTANCEPATH>
     </VALUE.REFERENCE>
   </PROPERTY.REFERENCE>
   <PROPERTY NAME="producedByAssocTest" TYPE="boolean">
