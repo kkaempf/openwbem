@@ -98,6 +98,12 @@ AC_CHECK_HEADERS(security/pam_misc.h security/pam_appl.h,
 AM_CONDITIONAL(USE_PAM, test x$use_pam = x1)
 if test x$use_pam = x1; then
     AC_DEFINE(HAVE_PAM)
+else
+	AC_MSG_WARN(*** No PAM headers found! The PAM authentication module ***)
+	AC_MSG_WARN(*** will not be built. The config file defaults to      ***)
+	AC_MSG_WARN(*** using PAM authentication.                           ***)
+	AC_MSG_WARN(*** You must edit the config file and use a different   ***)
+	AC_MSG_WARN(*** authentication module or else the daemon won't start***)
 fi
 
 AC_CHECK_HEADERS(zlib.h, LIBS="$LIBS -lz")
