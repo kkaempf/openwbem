@@ -1,6 +1,6 @@
 install-ow-shared-libs:
 	$(INSTALL_PROGRAM) -d $(DESTDIR)$(thelibdir)
-	for i in $(OW_SHARED_LIBS); do \
+	@for i in $(OW_SHARED_LIBS); do \
 		if [ "x$(STATIC_SERVICES)" = "x" ]; then \
 			$(INSTALL_PROGRAM)  $$i.$(SO_EXT) $(DESTDIR)$(thelibdir); \
 			ln -sf $$i.$(SO_EXT) $(DESTDIR)$(thelibdir)/$$i; \
