@@ -405,6 +405,7 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
 				 char *role, char *resultRole, char **properties, CMPIStatus *rc) {
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbAssociators()");
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	CMPIFlags flgs = ctx->ft->getEntry(
 		ctx,CMPIInvocationFlags,NULL).value.uint32;
 
@@ -443,6 +444,7 @@ static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbAssociators");
 		if (rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
@@ -454,6 +456,7 @@ static CMPIEnumeration* mbAssociatorNames(CMPIBroker *mb, CMPIContext *ctx,
 	(void) ctx;
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbAssociatorNames()");
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OpenWBEM::CIMObjectPathArray cia;
 	OpenWBEM::CIMObjectPathArrayBuilder result(cia);
 
@@ -482,6 +485,7 @@ static CMPIEnumeration* mbAssociatorNames(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbAssociatorNames");
 		if (rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
@@ -492,6 +496,7 @@ static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
 {
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbReferences()");
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	CMPIFlags flgs = ctx->ft->getEntry(
 			ctx,CMPIInvocationFlags,NULL).value.uint32;
 	OpenWBEM::CIMPropertyArray Props = getList(properties);
@@ -528,6 +533,7 @@ static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbReferences");
 		if (rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }
@@ -539,6 +545,7 @@ static CMPIEnumeration* mbReferenceNames(CMPIBroker *mb, CMPIContext *ctx,
 
 	CM_LOGGER(mb)->logDebug("CMPIBroker: mbReferenceNames()");
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OpenWBEM::CIMObjectPathArray cia;
 	OpenWBEM::CIMObjectPathArrayBuilder result(cia);
 
@@ -565,6 +572,7 @@ static CMPIEnumeration* mbReferenceNames(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LOGGER(mb)->logDebug("CMPIBroker Exception in mbReferenceNames");
 		if (rc) CMSetStatus(rc,CMPI_RC_ERROR_SYSTEM);
 	}
+#endif
 	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
 	return NULL;
 }

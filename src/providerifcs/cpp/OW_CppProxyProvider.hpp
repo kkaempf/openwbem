@@ -46,10 +46,11 @@
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 namespace OpenWBEM
 {
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 class CppAssociatorProviderProxy : public AssociatorProviderIFC
 {
@@ -98,6 +99,7 @@ private:
 	CppAssociatorProviderIFCRef m_pProv;
 };
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 class CppInstanceProviderProxy : public InstanceProviderIFC
 {
 public:

@@ -44,6 +44,7 @@
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMMethod.hpp"
 #include "OW_CIMParameter.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 namespace OpenWBEM
 {
