@@ -214,6 +214,12 @@
 #ifndef OW_DEFAULT_REUSE_ADDR
 #define OW_DEFAULT_REUSE_ADDR "true" 
 #endif
+#ifndef OW_DEFAULT_OWBI1IFC_PROV_LOC
+#define OW_DEFAULT_OWBI1IFC_PROV_LOC OW_DEFAULT_OWLIB_DIR"/owbi1providers"
+#endif
+#ifndef OW_DEFAULT_OWBI1IFC_PROV_TTL
+#define OW_DEFAULT_OWBI1IFC_PROV_TTL "5"
+#endif
 #ifndef OW_DEFAULT_PIDFILE
 #define OW_DEFAULT_PIDFILE OW_PIDFILE_DIR "/" OW_PACKAGE_PREFIX "owcimomd.pid"
 #endif
@@ -302,6 +308,9 @@ namespace ConfigOpts
 	static const char* const LOG_1_LOCATION_opt = "log.%1.location";
 	static const char* const LOG_1_MAX_FILE_SIZE_opt = "log.%1.max_file_size";
 	static const char* const LOG_1_MAX_BACKUP_INDEX_opt = "log.%1.max_backup_index";
+	// 3.2 additions.
+	static const char* const OWBI1IFC_PROV_LOC_opt = "owbi1provifc.prov_location";
+	static const char* const OWBI1IFC_PROV_TTL_opt = "owbi1provifc.prov_ttl";
 	static const char* const LOG_1_FLUSH_opt = "log.%1.flush";
 
 	static const char* const PIDFILE_opt = "owcimomd.pidfile";

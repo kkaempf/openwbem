@@ -543,6 +543,24 @@ owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
+# One of the provider interfaces provided with owcimomd is the OWBI1 provider
+# interface. The owbi1provifc.prov_location option specifies where the OWBI1
+# provider interface will load it's providers from.  Multiple directories
+# can be specified, separated by ':' or ';'.
+# You probably don't need to modify this option.
+# The default is "@libdir@/openwbem/owbi1providers"
+owbi1provifc.prov_location = @libdir@/openwbem/owbi1providers
+
+################################################################################
+# owbi1provifc.prov_TTL specifies how many minutes the OWBI1 provider manager
+# will keep a provider in memory.  If a provider has not been accessed for
+# longer than this value, it will be unloaded and the memory associated with
+# it will be freed.  If the value of this option is -1, the providers will
+# never be unloaded.
+# The default is 5
+;owbi1provifc.prov_TTL = 5
+
+################################################################################
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
 # You probably don't need to modify this option.

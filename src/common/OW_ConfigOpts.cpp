@@ -40,7 +40,7 @@ namespace OW_NAMESPACE
 {
 namespace ConfigOpts
 {
-
+// keep these sorted.
 const NameAndDefault g_defaults[] = 
 {
 	{ ACL_SUPERUSER_opt ,  "" },
@@ -97,6 +97,8 @@ const NameAndDefault g_defaults[] =
 	{ MAX_INDICATION_EXPORT_THREADS_opt ,  OW_DEFAULT_MAX_INDICATION_EXPORT_THREADS },
 	{ NPIIFC_PROV_LOC_opt ,  "" },
 	//{ ONLY_HELP_opt ,  OW_DEFAULT_ONLY_HELP },
+	{ OWBI1IFC_PROV_LOC_opt, OW_DEFAULT_OWBI1IFC_PROV_LOC },
+	{ OWBI1IFC_PROV_TTL_opt, OW_DEFAULT_OWBI1IFC_PROV_TTL },
 	{ OWLIB_DIR_opt ,  OW_DEFAULT_OWLIB_DIR },
 	{ PAM_ALLOWED_USERS_opt ,  "" },
 	{ PERLIFC_PROV_LOC_opt ,  "" },
