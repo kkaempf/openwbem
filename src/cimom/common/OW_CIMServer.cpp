@@ -47,6 +47,7 @@
 #include "OW_OperationContext.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_UserInfo.hpp"
+#include "OW_ResultHandlers.hpp"
 
 namespace OpenWBEM
 {
@@ -442,6 +443,7 @@ CIMServer::enumInstances(
 	OperationContext& context)
 {
 	CIMClass theTopClass = _instGetClass(ns, className, E_NOT_LOCAL_ONLY, E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN, 0, context);
+
 	InstEnumerator ie(ns, result, context, m_env, this, deep, localOnly,
 		includeQualifiers, includeClassOrigin, propertyList, theTopClass);
 	ie.handle(theTopClass);
@@ -554,7 +556,6 @@ namespace
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
-// PRIVATE
 void
 CIMServer::_getCIMInstances(
 	const String& ns,
@@ -564,6 +565,21 @@ CIMServer::_getCIMInstances(
 	ELocalOnlyFlag localOnly, EDeepFlag deep, EIncludeQualifiersFlag includeQualifiers, EIncludeClassOriginFlag includeClassOrigin,
 	const StringArray* propertyList, OperationContext& context)
 {
+	// If we have secondary instance providers, we need to buffer up the 
+	// instances so we can pass them to the seconday instance providers.
+	// Otherwise, we want to just pass them on to result.  presult will point
+	// to either result or a CIMInstanceArrayBuilder.
+	CIMInstanceResultHandlerIFC* presult = &result;
+	CIMInstanceArray savedInstances;
+	CIMInstanceArrayBuilder arrayBuilderResult(savedInstances);
+
+	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, className, context);
+	if (!secProvs.empty())
+	{
+		presult = &arrayBuilderResult;
+	}
+
+
 	InstanceProviderIFCRef instancep(_getInstanceProvider(ns, theClass, context));
 	if (instancep)
 	{
@@ -576,18 +592,31 @@ CIMServer::_getCIMInstances(
 		//HandleLocalOnlyAndDeep handler1(result,theTopClass,localOnly,deep);
 		//HandleProviderInstance handler2(includeQualifiers, includeClassOrigin, propertyList, handler1);
 		instancep->enumInstances(
-			createProvEnvRef(context, m_env), ns, className, result, localOnly,
+			createProvEnvRef(context, m_env), ns, className, *presult, localOnly,
 			deep, includeQualifiers, includeClassOrigin, propertyList,
 			theTopClass, theClass);
 	}
 	else
 	{
-		HandleLocalOnlyAndDeep handler(result, theTopClass, localOnly, deep);
+		HandleLocalOnlyAndDeep handler(*presult, theTopClass, localOnly, deep);
 		// don't pass along deep and localOnly flags, because the handler has
 		// to take care of it.  m_cimRepository can't do it right, because we
 		// can't pass in theTopClass.
 		m_cimRepository->enumInstances(ns, className, handler, E_DEEP, E_NOT_LOCAL_ONLY,
 			includeQualifiers, includeClassOrigin, propertyList, E_DONT_ENUM_SUBCLASSES, context);
+	}
+
+	// now let all the secondary providers have at the instances
+	for (size_t i = 0; i < secProvs.size(); ++i)
+	{
+		secProvs[i]->filterInstances(createProvEnvRef(context, m_env), ns, 
+			className, savedInstances, localOnly, deep, includeQualifiers, 
+			includeClassOrigin, propertyList, theTopClass, theClass );
+	}
+	// this will be empty if there aren't any secondary instance providers.
+	for (size_t i = 0; i < savedInstances.size(); ++i)
+	{
+		result.handle(savedInstances[i]);
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -612,7 +641,8 @@ CIMServer::getInstance(
 	const StringArray* propertyList, CIMClass* pOutClass,
 	OperationContext& context)
 {
-	CIMClass cc = _instGetClass(ns, instanceName.getObjectName(),
+	String className = instanceName.getClassName();
+	CIMClass cc = _instGetClass(ns, className,
 		E_NOT_LOCAL_ONLY,
 		E_INCLUDE_QUALIFIERS,
 		E_INCLUDE_CLASS_ORIGIN,
@@ -646,6 +676,21 @@ CIMServer::getInstance(
 	}
 	OW_ASSERT(ci);
 	
+	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, className, context);
+	if (!secProvs.empty())
+	{
+		CIMInstanceArray cia; cia.push_back(ci);
+		// now let all the secondary providers have at the instance
+		for (size_t i = 0; i < secProvs.size(); ++i)
+		{
+			secProvs[i]->filterInstances(createProvEnvRef(context, m_env), ns, 
+				className, cia, localOnly, E_DEEP, includeQualifiers, 
+				includeClassOrigin, propertyList, cc, cc );
+		}
+		OW_ASSERT(cia.size() == 1); // providers shouldn't add/remove from the array.
+		ci = cia[0];
+	}
+	
 	return ci;
 }
 
@@ -678,6 +723,14 @@ CIMServer::deleteInstance(const String& ns, const CIMObjectPath& cop_,
 		m_cimRepository->deleteInstance(ns, cop, context);
 	}
 	OW_ASSERT(oldInst);
+	
+	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, cop.getClassName(), context);
+	// now let all the secondary providers know about the delete
+	for (size_t i = 0; i < secProvs.size(); ++i)
+	{
+		secProvs[i]->deleteInstance(createProvEnvRef(context, m_env), ns, cop);
+	}
+	
 	return oldInst;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -719,6 +772,14 @@ CIMServer::createInstance(
 	{
 		rval = m_cimRepository->createInstance(ns, lci, context);
 	}
+
+	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, className, context);
+	// now let all the secondary providers know about the create
+	for (size_t i = 0; i < secProvs.size(); ++i)
+	{
+		secProvs[i]->createInstance(createProvEnvRef(context, m_env), ns, lci);
+	}
+
 	// Prevent lazy providers from causing a problem.
 	if (!rval)
 	{
@@ -760,6 +821,15 @@ CIMServer::modifyInstance(
 			lci, oldInst, includeQualifiers, propertyList, theClass);
 	}
 	OW_ASSERT(oldInst);
+	
+	SecondaryInstanceProviderIFCRefArray secProvs = _getSecondaryInstanceProviders(ns, modifiedInstance.getClassName(), context);
+	// now let all the secondary providers know about the modify
+	for (size_t i = 0; i < secProvs.size(); ++i)
+	{
+		secProvs[i]->modifyInstance(createProvEnvRef(context, m_env), ns, lci, oldInst, includeQualifiers, propertyList, theClass);
+	}
+
+	
 	return oldInst;
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
@@ -785,7 +855,7 @@ CIMServer::getProperty(
 	const CIMObjectPath& name,
 	const String& propertyName, OperationContext& context)
 {
-	CIMClass theClass = _instGetClass(ns,name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	CIMClass theClass = _instGetClass(ns,name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
@@ -811,7 +881,7 @@ CIMServer::setProperty(
 	const String& propertyName, const CIMValue& valueArg,
 	OperationContext& context)
 {
-	CIMClass theClass = _instGetClass(ns, name.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	CIMClass theClass = _instGetClass(ns, name.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	CIMProperty cp = theClass.getProperty(propertyName);
 	if(!cp)
 	{
@@ -863,7 +933,7 @@ CIMServer::invokeMethod(
 	const String& methodName, const CIMParamValueArray& inParams,
 	CIMParamValueArray& outParams, OperationContext& context)
 {
-	CIMClass cc = getClass(ns, path.getObjectName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
+	CIMClass cc = getClass(ns, path.getClassName(),E_NOT_LOCAL_ONLY,E_INCLUDE_QUALIFIERS,E_INCLUDE_CLASS_ORIGIN,0,context);
 	CIMPropertyArray keys = path.getKeys();
 	// If this is an instance, ensure it exists.
 	if(keys.size() > 0)
@@ -1065,6 +1135,23 @@ CIMServer::_getInstanceProvider(const String& ns, const CIMClass& cc_, Operation
 			format("Invalid provider: %1", e.getMessage()).c_str());
 	}
 	return instancep;
+}
+//////////////////////////////////////////////////////////////////////////////
+SecondaryInstanceProviderIFCRefArray
+CIMServer::_getSecondaryInstanceProviders(const String& ns, const String& className, OperationContext& context)
+{
+	SecondaryInstanceProviderIFCRefArray rval;
+	try
+	{
+		rval = m_provManager->getSecondaryInstanceProviders(createProvEnvRef(context, m_env), ns, className);
+	}
+	catch (const NoSuchProviderException& e)
+	{
+		// This will only happen if the provider qualifier is incorrect
+		OW_THROWCIMMSG(CIMException::FAILED,
+			format("Invalid provider: %1", e.getMessage()).c_str());
+	}
+	return rval;
 }
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
@@ -1326,7 +1413,7 @@ CIMServer::_commonReferences(
 	CIMClassArray dynamicAssocs;
 	StringArray resultClassNames;
 	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, context, ns, m_env->getLogger());
-	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role, context);
+	_getAssociationClasses(ns, resultClass, path.getClassName(), assocClassResult, role, context);
 	if (path.isClassPath())
 	{
 		// Process all of the association classes without providers
@@ -1506,7 +1593,7 @@ CIMServer::_commonAssociators(
 	CIMClassArray dynamicAssocs;
 	StringArray assocClassNames;
 	assocClassSeparator assocClassResult(!m_realRepository || assocClassName.empty() ? 0 : &assocClassNames, dynamicAssocs, *this, context, ns, m_env->getLogger());
-	_getAssociationClasses(ns, assocClassName, path.getObjectName(), assocClassResult, role, context);
+	_getAssociationClasses(ns, assocClassName, path.getClassName(), assocClassResult, role, context);
 	// If the result class was specified, get a list of all the classes the
 	// objects must be instances of.
 	StringArray resultClassNames;

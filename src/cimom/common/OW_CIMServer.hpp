@@ -627,6 +627,8 @@ private:
 	CIMClass _getNameSpaceClass(const String& className);
 	InstanceProviderIFCRef _getInstanceProvider(const String& ns,
 		const CIMClass& cls, OperationContext& context);
+	SecondaryInstanceProviderIFCRefArray _getSecondaryInstanceProviders(const String& ns, const String& className, OperationContext& context);
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	AssociatorProviderIFCRef _getAssociatorProvider(const String& ns, const CIMClass& cls, OperationContext& context);
 #endif
