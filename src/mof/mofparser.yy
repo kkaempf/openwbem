@@ -661,6 +661,8 @@ initializer:
 arrayInitializer:
 	LBRACE_TOK constantValueList RBRACE_TOK
 		{$$ = new ArrayInitializer($2); delete $1; delete $3;}
+	| LBRACE_TOK RBRACE_TOK
+		{$$ = new ArrayInitializer(0); delete $1; delete $2;}
 	;
 
 constantValueList:

@@ -693,11 +693,14 @@ void CIMOMVisitor::VisitInitializerConstantValue( const InitializerConstantValue
 void CIMOMVisitor::VisitArrayInitializer( const ArrayInitializer *pArrayInitializer )
 {
 	OW_CIMValueArray values;
-	for( OW_List<ConstantValue *>::const_iterator i = pArrayInitializer->pConstantValue->begin();
-		 i != pArrayInitializer->pConstantValue->end(); ++i )
+	if (pArrayInitializer->pConstantValue.get() != 0)
 	{
-		(*i)->Accept( this );
-		values.push_back(m_curValue);
+		for( OW_List<ConstantValue *>::const_iterator i = pArrayInitializer->pConstantValue->begin();
+			 i != pArrayInitializer->pConstantValue->end(); ++i )
+		{
+			(*i)->Accept( this );
+			values.push_back(m_curValue);
+		}
 	}
 	m_curValue = convertValuesIntoValueArray(values);
 }
@@ -784,7 +787,7 @@ OW_CIMValue CIMOMVisitor::convertValuesIntoValueArray( const OW_CIMValueArray& v
 			return doArrayConversion(temp, values);
 		}
 	}
-	return OW_CIMValue(OW_CIMNULL);
+	return OW_CIMValue(OW_StringArray());
 }
 
 
