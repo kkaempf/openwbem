@@ -2157,6 +2157,7 @@ OW_CIMServer::_dynamicAssociators(const OW_CIMObjectPath& path,
 	const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 	OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo)
 {
+cout << "in _dynamicAssociators.  assocClasses.size() = " << assocClasses.size() << endl;
 	// AssocClasses should always have something in it
 	if(assocClasses.size() == 0)
 	{
