@@ -445,7 +445,6 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 	// Not found so add it
 	//
 	OW_CIMProperty cp(name);
-	cp.setValue(cv);
 	if(cv)
 	{
 		cp.setDataType(cv.getType());
@@ -454,6 +453,7 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 	{
 		cp.setDataType(OW_CIMDataType::CIMNULL);
 	}
+	cp.setValue(cv);
 
 	m_pdata->m_properties.append(cp);
 	//
