@@ -3,7 +3,7 @@
 // Filename:    Core27_CoreElements.mof
 // Version:     2.7.0
 // Release:     Final
-// Date:        04/13/03
+// Date:        04/23/03
 // ===================================================================
 // Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -829,15 +829,16 @@ class CIM_Service : CIM_EnabledLogicalElement {
             "StartMode is a string value indicating whether the "
             "Service is automatically started by a System, Operating "
             "System, etc. or only started upon request. This property "
-            "is deprecated in lieu of AutomaticallyStarted, which "
-            "addresses the same semantics. The change to a Boolean or "
-            "uint16 data type was discussed when CIM V2.0 was defined."
-            " However, existing V1.0 implementations used the string "
+            "is deprecated in lieu of the EnabledDefault property "
+            "inherited from EnabledLogicalElement, which addresses "
+            "the same semantics. The change to a uint16 data "
+            "type was discussed when CIM V2.0 was defined. However, "
+            "existing V1.0 implementations used the string "
             "property and did not want to modify their code. "
             "Therefore, StartMode was grandfathered into the Schema. "
             "Use of the Deprecated qualifier allows the maintenance "
             "of the existing property, but also permits an improved, "
-            "clarified definition using AutomaticallyStarted."),  
+            "clarified definition using EnabledDefault."),  
         ValueMap {"Automatic", "Manual"} ] 
     string StartMode;
    

@@ -1,9 +1,9 @@
 // ===================================================================
 // Title:       Device Fibre Channel 2.7
 // Filename:    Device27_FC.mof
-// Version:     2.7.0
+// Version:     2.7.1
 // Release:     Final
-// Date:        04/15/03
+// Date:        04/23/03
 // ===================================================================
 // Copyright 2000-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -50,6 +50,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7.1
+//       - Fix Value/ValueMap mismatch in FCPort.SupportedCOS and
+//         ActiveCOS
+//
 // Change Log for v2.7 Final
 // CR940 - Fix Value/ValueMap mismatch in FCPort.ActiveFC4Types
 // CR948 - Add additional value of "G" to FCPort.PortType
@@ -74,7 +78,7 @@
 // ==================================================================
 // FCPort
 // ==================================================================
-[Version ("2.7.0"), Description (
+[Version ("2.7.1"), Description (
     "Capabilities and management of a Fibre Channel Port Device.") ] 
 class CIM_FCPort : CIM_NetworkPort {
     
@@ -101,14 +105,14 @@ class CIM_FCPort : CIM_NetworkPort {
         "Service that are supported. The active COS are indicated in "
         "ActiveCOS."),
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},
-        Values {"Unknown", "1", "2", "3", "4", "6", "F"} ]
+        Values {"Unknown", "1", "2", "3", "4", "5", "6", "F"} ]
     uint16 SupportedCOS[];
 
     [Description (
         "An array of integers indicating the Classes of Service that "
         "are active. The Active COS is indicated in ActiveCOS."),
         ValueMap {"0", "1", "2", "3", "4", "5", "6", "7"},
-        Values {"Unknown", "1", "2", "3", "4", "6", "F"},
+        Values {"Unknown", "1", "2", "3", "4", "5", "6", "F"},
         ModelCorrespondence {"CIM_FCPort.SupportedCOS"}  ]
     uint16 ActiveCOS[];
 

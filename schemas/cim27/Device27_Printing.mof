@@ -1,9 +1,9 @@
 // ===================================================================
 // Title:       Device Printing 2.7
 // Filename:    Device27_Printing.mof
-// Version:     2.7.0
+// Version:     2.7.1
 // Release:     Final
-// Date:        03/31/03
+// Date:        04/22/03
 // ===================================================================
 // Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -50,6 +50,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7.1
+//       - Fix Value/ValueMap mismatches related to the various
+//         language properties in Printer, PrintJob and PrintService
+//
 // Change Log for v2.7 Final
 // CR990 - Cleanup of PrintQueue
 //
@@ -69,7 +73,7 @@
 // ===================================================================
 // Printer
 // ===================================================================
-[Version ("2.7.0"), Description (
+[Version ("2.7.1"), Description (
     "Capabilities and management of the Printer LogicalDevice.") ] 
 class CIM_Printer : CIM_LogicalDevice {   
 
@@ -177,7 +181,7 @@ class CIM_Printer : CIM_LogicalDevice {
             "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
             "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", 
             "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", 
-            "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+            "40", "41", "42", "43", "44", "45", "46", "47", "48",
             "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", 
             "60"},
         Values {"Other", "Unknown", "PCL", "HPGL", "PJL", "PS",
@@ -226,7 +230,7 @@ class CIM_Printer : CIM_LogicalDevice {
             "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
             "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", 
             "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", 
-            "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+            "40", "41", "42", "43", "44", "45", "46", "47", "48",
             "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", 
             "60"},
         Values {"Other", "Unknown", "PCL", "HPGL", "PJL", "PS",
@@ -268,7 +272,7 @@ class CIM_Printer : CIM_LogicalDevice {
             "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
             "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", 
             "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", 
-            "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+            "40", "41", "42", "43", "44", "45", "46", "47", "48",
             "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", 
             "60"},
         Values {"Other", "Unknown", "PCL", "HPGL", "PJL", "PS",
@@ -646,7 +650,7 @@ class CIM_PrintQueue : CIM_JobDestination {
 // ===================================================================
 // PrintJob
 // ===================================================================
-[Version ("2.7.0"), Description (
+[Version ("2.7.1"), Description (
     "Description of a print request that is either waiting on a "
     "Queue for a Printer to become available, in the process of "
     "being output on a Printer, or that has previously been "
@@ -704,7 +708,7 @@ class CIM_PrintJob : CIM_Job {
             "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
             "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", 
             "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", 
-            "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+            "40", "41", "42", "43", "44", "45", "46", "47", "48", 
             "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", 
             "60"},
         Values {"Other", "Unknown", "PCL", "HPGL", "PJL", "PS",
@@ -885,7 +889,7 @@ class CIM_PrintSAP : CIM_ServiceAccessPoint {
 // ===================================================================
 // PrintService
 // ===================================================================
-[Version ("2.7.0"), Description (
+[Version ("2.7.1"), Description (
     "The Service that provides support for printing. The basic "
     "assumption of the Printing Model is that a PrintService accepts "
     "a PrintJob for processing, via its PrintSAP. The Job is then "
@@ -920,7 +924,7 @@ class CIM_PrintService : CIM_Service {
             "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
             "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", 
             "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", 
-            "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+            "40", "41", "42", "43", "44", "45", "46", "47", "48", 
             "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", 
             "60"},
         Values {"Other", "Unknown", "PCL", "HPGL", "PJL", "PS",

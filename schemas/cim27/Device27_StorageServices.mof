@@ -1,9 +1,9 @@
 // ===================================================================
 // Title:       Device Storage Services 2.7
 // Filename:    Device27_StorageServices.mof
-// Version:     2.7.0
+// Version:     2.7.1
 // Release:     Final
-// Date:        04/15/03
+// Date:        04/22/03
 // ===================================================================
 // Copyright 2002-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -49,6 +49,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7.1
+//       - Fix MaxValue declarations in StorageSettingWithHints - the
+//         properties, AccessDirectionHint and AccessBandwidthWeight
+//
 // Change Log for v2.7 Final
 // CR970 - Removal of the Experimental qualifier
 //       - Remove StoragePool.GetSupportedSize and StoragePool.
@@ -751,7 +755,7 @@ class CIM_StorageConfigurationService : CIM_Service {
 // ====================================================================
 // StorageSettingWithHints
 // ====================================================================
-[Version("2.7.0"), Description (
+[Version("2.7.1"), Description (
     "This subclass of StorageSetting allows a client to specify "
     "'hint's for optimization of the volume performance. The effect "
     "of these hints is implementation dependent.") ]
@@ -769,7 +773,7 @@ class CIM_StorageSettingWithHints: CIM_StorageSetting {
         "10=Entirely Random.") ]
     uint16 AccessRandomnessHint;
  
-    [MinValue (0), MaxValue, Description (
+    [MinValue (0), MaxValue (10), Description (
         "This hint is an indication from a client of the direction "
         "of accesses. Values are 0=Entirely Read to "
         "10=Entirely Write.") ]
@@ -788,7 +792,7 @@ class CIM_StorageSettingWithHints: CIM_StorageSetting {
         "10=Very Important.") ]
     uint16 AccessLatencyHint;
  
-    [MinValue (0), MaxValue, Description (
+    [MinValue (0), MaxValue (10), Description (
         "This hint is an indication from a client of bandwidth "
         "prioritization. Values are 0=Don't Care to "
         "10=Very Important.") ]

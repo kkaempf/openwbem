@@ -1,9 +1,9 @@
 // ===================================================================
 // Title:       Network Routing and Forwarding Services 2.7
 // Filename:    Network27_RoutingForwarding.mof
-// Version:     2.7.0
+// Version:     2.7.1
 // Status:      Final
-// Date:        April 18, 2003
+// Date:        April 22, 2003
 // ===================================================================
 // Copyright 1998-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -50,6 +50,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7.1
+//       - Correct Min(1)->Min(0) overrides (should stay Min(1)) in
+//         HostedForwardingServices and HostedRoutingServices.  
+//
 // Change Log for v2.7
 // CR662 - Deprecate NetworkService and NetworkServicesInAdminDomain
 //       - Modify Descriptions of subclasses of NetworkService 
@@ -265,7 +269,7 @@ class CIM_ForwardsAmong : CIM_ServiceSAPDependency {
 // ==================================================================
 // HostedForwardingServices
 // ==================================================================
-   [Association, Version ("2.7.0"), 
+   [Association, Version ("2.7.1"), 
     Deprecated {"CIM_HostedService"}, Description (
       "This is a specialization of CIM_HostedService, which is an "
       "association between a Service and the System on which the "
@@ -276,7 +280,7 @@ class CIM_ForwardsAmong : CIM_ServiceSAPDependency {
       "reside in a Network or other higher level System.") ]
 class CIM_HostedForwardingServices : CIM_HostedService {
 
-        [Override ("Antecedent"), Min (0), Max (1),
+        [Override ("Antecedent"), Min (1), Max (1),
          Deprecated {"CIM_HostedService.Antecedent"}, 
          Description ("The hosting router.") ]
     CIM_ComputerSystem REF Antecedent;
@@ -360,7 +364,7 @@ class CIM_CalculatesAmong : CIM_ServiceSAPDependency {
 // ==================================================================
 // HostedRoutingServices
 // ==================================================================
-   [Association, Version ("2.7.0"), 
+   [Association, Version ("2.7.1"), 
     Deprecated {"CIM_HostedService"}, Description (
       "This is a specialization of CIM_HostedService, which is an "
       "association between a Service and the System on which the "
@@ -371,7 +375,7 @@ class CIM_CalculatesAmong : CIM_ServiceSAPDependency {
       "reside in a Network or other higher level System.") ]
 class CIM_HostedRoutingServices : CIM_HostedService {
 
-        [Override ("Antecedent"), Min (0), Max (1),
+        [Override ("Antecedent"), Min (1), Max (1),
          Deprecated {"CIM_HostedService.Antecedent"}, 
          Description ("The hosting router.") ]
     CIM_ComputerSystem REF Antecedent;

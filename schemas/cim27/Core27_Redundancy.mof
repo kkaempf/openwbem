@@ -1,9 +1,9 @@
 // ===================================================================
 // Title:       Core Redundancy 2.7
 // Filename:    Core27_Redundancy.mof
-// Version:     2.7.0
+// Version:     2.7.1
 // Release:     Final
-// Date:        04/02/03
+// Date:        04/22/03
 // ===================================================================
 // Copyright 1999-2003 Distributed Management Task Force, Inc. (DMTF).
 // All rights reserved.  
@@ -49,6 +49,10 @@
 //              avoids forward references. Required objects, defined 
 //              by other working groups, are omitted.
 // ==================================================================
+// Change Log for v2.7.1
+//       - Remove aggregate qualifier from the PartComponent of 
+//         RedundancyComponent.
+//
 // Change Log for v2.7
 // CR940 - Fix Value/ValueMap mismatch in StorageRedundancySet.
 //         TypeOfAlgorithm
@@ -110,7 +114,7 @@ class CIM_RedundancyGroup : CIM_LogicalElement {
 // ===================================================================
 // RedundancyComponent
 // ===================================================================
-[Association, Aggregation, Version ("2.6.0"), Description (
+[Association, Aggregation, Version ("2.7.1"), Description (
     "A RedundancyGroup aggregates Managed System Elements and "
     "indicates that these elements, taken together, provide "
     "redundancy. All elements aggregated in a RedundancyGroup "
@@ -123,7 +127,7 @@ class CIM_RedundancyComponent : CIM_Component {
         "in a single RedundancyGroup.") ]
     CIM_RedundancyGroup REF GroupComponent;
     
-    [Override ("PartComponent"), Aggregate, Description (
+    [Override ("PartComponent"), Description (
         "The component of the redundancy group.") ]
     CIM_ManagedSystemElement REF PartComponent;
 };
