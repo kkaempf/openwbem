@@ -267,13 +267,7 @@ struct OW_HDB_API AssocDbHeader
 class OW_HDB_API AssocDb
 {
 public:
-	/**
-	 * Create a new AssocDb object.
-	 */
-	AssocDb(const ServiceEnvironmentIFCRef& env);
-	/**
-	 * Destroy this AssocDb object.
-	 */
+	AssocDb();
 	~AssocDb();
 	/**
 	 * Open this AssocDb object up for business.
@@ -281,6 +275,7 @@ public:
 	 * @exception HDBException if an error occurs opening/creating files.
 	 */
 	void open(const String& fileName);
+	void init(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Close this AssocDb object
 	 */

@@ -48,6 +48,8 @@ public:
 
 	virtual AuthorizerIFC* clone() const = 0;
 	virtual void setSubRepositoryIFC(const RepositoryIFCRef& rep) = 0;
+	virtual void init(const ServiceEnvironmentIFCRef& env);
+	virtual void shutdown();
 
 };
 

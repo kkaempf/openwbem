@@ -114,7 +114,7 @@ public:
 	RepositoryIFCRef getRepository() const;
 	AuthorizerManagerRef getAuthorizerManager() const;
 	virtual CIMInstanceArray getInteropInstances(const String& className) const;
-	virtual void setInteropInstance(const CIMInstance& inst);
+	//virtual void setInteropInstance(const CIMInstance& inst);
 
 
 	// do not use this unless absolutely necessary!

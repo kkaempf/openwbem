@@ -50,11 +50,11 @@ public:
 	/**
 	 * Create a new InstanceRepository object.
 	 */
-	InstanceRepository(const ServiceEnvironmentIFCRef& env)
-		: GenericHDBRepository(env) {}
+	InstanceRepository() {}
+
 	void getCIMInstances(
 		const String& ns,
-		const String& className, 
+		const String& className,
 		const CIMClass& requestedClass,
 		const CIMClass& theClass,
 		CIMInstanceResultHandlerIFC& result,

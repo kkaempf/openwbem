@@ -65,23 +65,9 @@ namespace
 
 using namespace WBEMFlags;
 //////////////////////////////////////////////////////////////////////////////
-CIMRepository::CIMRepository(const ServiceEnvironmentIFCRef& env)
-	: RepositoryIFC()
-	, m_nStore(env)
-	, m_iStore(env)
-	, m_mStore(env)
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	, m_classAssocDb(env)
-	, m_instAssocDb(env)
-#endif
-	, m_env(env)
-	, m_checkReferentialIntegrity(false)
+CIMRepository::CIMRepository()
+	: m_checkReferentialIntegrity(false)
 {
-	if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt,
-		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
-	{
-		m_checkReferentialIntegrity = true;
-	}
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMRepository::~CIMRepository()
@@ -133,6 +119,7 @@ CIMRepository::open(const String& path)
 	m_instAssocDb.open(fname + INST_ASSOC_REPOS_NAME);
 #endif
 }
+
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMRepository::close()
@@ -148,8 +135,28 @@ CIMRepository::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
+CIMRepository::init(const ServiceEnvironmentIFCRef& env)
+{
+	m_nStore.init(env);
+	m_iStore.init(env);
+	m_mStore.init(env);
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	m_classAssocDb.init(env);
+	m_instAssocDb.init(env);
+#endif
+	m_env = env;
+	if (m_env->getConfigItem(ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt,
+		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
+	{
+		m_checkReferentialIntegrity = true;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 CIMRepository::shutdown()
 {
+	close();
 	m_env = 0;
 }
 

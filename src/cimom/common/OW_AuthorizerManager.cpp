@@ -49,10 +49,6 @@ public:
 	{
 		return m_env->getInteropInstances(className);
 	}
-	virtual void setInteropInstance(const CIMInstance &inst)
-	{
-		m_env->setInteropInstance(inst);
-	}
 	virtual void addSelectable(const SelectableIFCRef &obj,
 		const SelectableCallbackIFCRef &cb)
 	{

@@ -53,15 +53,19 @@ class OW_HDB_API GenericHDBRepository
 public:
 	/**
 	 * Create a new GenericHDBRepository object.
-	 * @param path	The path to where the repository files are or will be
-	 *					located.
 	 * @exception HDBException
 	 */
-	GenericHDBRepository(ServiceEnvironmentIFCRef env);
+	GenericHDBRepository();
 	/**
 	 * Destroy this GenericHDBRepository object
 	 */
 	virtual ~GenericHDBRepository();
+	/**
+	 * Initialize
+	 * @param env The service environment
+	 * @exception HDBException
+	 */
+	virtual void init(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Open this GenericHDBRepository.
 	 * @param path	The path to where the repository files are or will be

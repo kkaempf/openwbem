@@ -56,6 +56,8 @@ public:
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close() {}
+	virtual void init(const ServiceEnvironmentIFCRef& env) {}
+	virtual void shutdown() {}
 	/**
 	 * @return A reference to the ServiceEnvironmentIFC this object is using.
 	 */

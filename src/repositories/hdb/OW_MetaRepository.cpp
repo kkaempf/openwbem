@@ -1041,9 +1041,15 @@ MetaRepository::createNameSpace(const String& ns)
 }
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
-MetaRepository::MetaRepository(const ServiceEnvironmentIFCRef& env)
-	: GenericHDBRepository(env)
+MetaRepository::MetaRepository()
 {
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+MetaRepository::init(const ServiceEnvironmentIFCRef& env)
+{
+	this->GenericHDBRepository::init(env);
 	String maxCacheSizeOpt = env->getConfigItem(ConfigOpts::MAX_CLASS_CACHE_SIZE_opt, OW_DEFAULT_MAX_CLASS_CACHE_SIZE_S);
 	try
 	{

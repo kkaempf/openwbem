@@ -67,7 +67,7 @@ public:
 	/**
 	 * Create a new CIMRepository object.
 	 */
-	CIMRepository(const ServiceEnvironmentIFCRef& env);
+	CIMRepository();
 	/**
 	 * Destroy this CIMRepository object.
 	 */
@@ -78,6 +78,8 @@ public:
 	 */
 	virtual void open(const String& path);
 	virtual void close();
+
+	virtual void init(const ServiceEnvironmentIFCRef& env);
 	virtual void shutdown();
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**

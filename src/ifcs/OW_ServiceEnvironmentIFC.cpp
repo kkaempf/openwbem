@@ -147,13 +147,6 @@ ServiceEnvironmentIFC::getInteropInstances(const String& className) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void
-ServiceEnvironmentIFC::setInteropInstance(const CIMInstance& inst)
-{
-	OW_ASSERTMSG(0, "Not Implemented");
-}
-
-///////////////////////////////////////////////////////////////////////////////
 WQLIFCRef
 ServiceEnvironmentIFC::getWQLRef() const
 {

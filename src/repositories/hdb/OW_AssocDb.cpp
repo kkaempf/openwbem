@@ -410,16 +410,13 @@ AssocDbHandle::getAllEntries(const CIMObjectPath& objectName,
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
-AssocDb::AssocDb(const ServiceEnvironmentIFCRef& env)
-	: m_hdrBlock()
-	, m_pIndex(NULL)
-	, m_fileName()
+AssocDb::AssocDb()
+	: m_pIndex(NULL)
 	, m_hdlCount(0)
 	, m_opened(false)
-	, m_guard()
-	, m_env(env)
 {
 }
+
 //////////////////////////////////////////////////////////////////////////////
 AssocDb::~AssocDb()
 {
@@ -436,6 +433,12 @@ AssocDb::~AssocDb()
 	{
 		// logDebug or close could throw.
 	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+AssocDb::init(const ServiceEnvironmentIFCRef& env)
+{
+	m_env = env;
 }
 //////////////////////////////////////////////////////////////////////////////
 void

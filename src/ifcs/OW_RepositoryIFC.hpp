@@ -41,10 +41,9 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
 #include "OW_WBEMFlags.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_IntrusiveCountableBase.hpp"
 #include "OW_CommonFwd.hpp"
 #include "OW_IfcsFwd.hpp"
+#include "OW_ServiceIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -52,8 +51,10 @@
 namespace OpenWBEM
 {
 
-class OW_COMMON_API RepositoryIFC : public IntrusiveCountableBase
+class OW_COMMON_API RepositoryIFC : public ServiceIFC
 {
+	typedef ServiceIFC base_t;
+
 public:
 	RepositoryIFC();
 	RepositoryIFC(const RepositoryIFC& x);
@@ -67,13 +68,7 @@ public:
 	 * Close this RepositoryIFC.
 	 */
 	virtual void close() = 0;
-	/**
-	 * This method will be closed when the server is shutting down.
-	 * Derived classes may override it to implement appropriate
-	 * behavior.  Setting Reference<> member vars to 0 is recommended
-	 * to help break circular dependencies.
-	 */
-	virtual void shutdown();
+
 	virtual ServiceEnvironmentIFCRef getEnvironment() const = 0;
 #if !defined(OW_DISABLE_INSTANCE_MANIPULATION) && !defined(OW_DISABLE_NAMESPACE_MANIPULATION)
 	/**

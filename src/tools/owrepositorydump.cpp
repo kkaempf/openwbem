@@ -170,7 +170,8 @@ int main(int argc, char** argv)
 		g_output << "Hello\n";
 	
 		OperationContext context;
-		RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(ServiceEnvironmentIFCRef(new TheServiceEnvironment)));
+		RepositoryIFCRef cimRepository = new CIMRepository;
+		cimRepository->init(new TheServiceEnvironment);
 		cimRepository->open(repositoryDir);
 	
 		return 0;

@@ -79,6 +79,10 @@ public:
 	 */
 	virtual void open(const String& path);
 	/**
+	 * Called after construction
+	 */
+	void init(const ServiceEnvironmentIFCRef& env);
+	/**
 	 * Close this GenericHDBRepository.
 	 */
 	virtual void close();

@@ -299,13 +299,14 @@ CIMOMEnvironment::startServices()
 	m_providerManager = new ProviderManager;
 	m_providerManager->load(ProviderIFCLoader::createProviderIFCLoader(
 		this));
-	m_cimRepository = new CIMRepository(this);
+	m_cimRepository = new CIMRepository;
 	m_cimServer = RepositoryIFCRef(new CIMServer(this,
 		m_providerManager, m_cimRepository, m_authorizerManager));
 
 
 	// 2. init
 
+	m_cimRepository->init(this);
 	m_cimRepository->open(getConfigItem(ConfigOpts::DATA_DIR_opt));
 	_loadAuthorizer();  // old stuff
 	_createAuthorizerManager();  // new stuff
@@ -1284,36 +1285,36 @@ CIMInstanceArray CIMOMEnvironment::getInteropInstances(const String& className) 
 	return CIMInstanceArray(citer->second.begin(), citer->second.end());
 }
 //////////////////////////////////////////////////////////////////////////////
-void
-CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
-{
-	String className = inst.getClassName();
-
-	MutexLock lock(m_interopInstancesLock);
-	interopInstances_t::iterator iter = m_interopInstances.find(className);
-	if (iter == m_interopInstances.end())
-	{
-		interopInstances_t::data_type s;
-		s.insert(inst);
-		m_interopInstances.insert(interopInstances_t::value_type(className, s));
-	}
-	else
-	{
-		// look for and erase a pre-existing instance with the same path first, to handle updates.
-		CIMObjectPath newInstPath = CIMObjectPath(String(), inst);
-		typedef interopInstances_t::data_type::const_iterator citer_t;
-		for (citer_t curInstance = iter->second.begin(); curInstance != iter->second.end(); ++iter)
-		{
-			if (newInstPath == CIMObjectPath(String(), *curInstance))
-			{
-				iter->second.erase(*curInstance);
-				break;
-			}
-		}
-
-		iter->second.insert(inst);
-	}
-}
+// void
+// CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
+// {
+//     String className = inst.getClassName();
+//
+//     MutexLock lock(m_interopInstancesLock);
+//     interopInstances_t::iterator iter = m_interopInstances.find(className);
+//     if (iter == m_interopInstances.end())
+//     {
+//         interopInstances_t::data_type s;
+//         s.insert(inst);
+//         m_interopInstances.insert(interopInstances_t::value_type(className, s));
+//     }
+//     else
+//     {
+//         // look for and erase a pre-existing instance with the same path first, to handle updates.
+//         CIMObjectPath newInstPath = CIMObjectPath(String(), inst);
+//         typedef interopInstances_t::data_type::const_iterator citer_t;
+//         for (citer_t curInstance = iter->second.begin(); curInstance != iter->second.end(); ++iter)
+//         {
+//             if (newInstPath == CIMObjectPath(String(), *curInstance))
+//             {
+//                 iter->second.erase(*curInstance);
+//                 break;
+//             }
+//         }
+//
+//         iter->second.insert(inst);
+//     }
+// }
 
 //////////////////////////////////////////////////////////////////////////////
 void

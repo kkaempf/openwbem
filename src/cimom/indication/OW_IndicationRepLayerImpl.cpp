@@ -303,6 +303,8 @@ IndicationRepLayerImpl::deleteInstance(const String& ns, const CIMObjectPath& pa
 IndicationRepLayerImpl::IndicationRepLayerImpl() : IndicationRepLayer(), m_pServer(0) {}
 void IndicationRepLayerImpl::open(const String&) {}
 void IndicationRepLayerImpl::close() {}
+void IndicationRepLayerImpl::init(const ServiceEnvironmentIFCRef& env) {}
+void IndicationRepLayerImpl::shutdown() {}
 ServiceEnvironmentIFCRef IndicationRepLayerImpl::getEnvironment() const
 {
 	return m_pEnv;

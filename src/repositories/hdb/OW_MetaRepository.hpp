@@ -52,13 +52,14 @@ public:
 	/**
 	 * Create a new MetaRepository object.
 	 */
-	MetaRepository(const ServiceEnvironmentIFCRef& env);
+	MetaRepository();
 	~MetaRepository();
 	/**
 	 * Open this MetaRepository.
 	 * @param the Fully qalified path to the database (minus extension)
 	 */
 	void open(const String& path);
+	virtual void init(const ServiceEnvironmentIFCRef& env);
 	/**
 	 * Get an existing qualifier type from the repository.
 	 * @param ns			The namespace for the qualifier name.
