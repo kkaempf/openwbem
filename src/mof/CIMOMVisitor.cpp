@@ -372,15 +372,23 @@ void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 	}
 	else
 	{
-		if (qt.getDataType().getType() == OW_CIMDataType::BOOLEAN)
+		// CIM spec 4.7: The MOF syntax allows specifying a qualifier without
+		// an explicit value. In this case, the assumed value depends on the
+		// qualifier type: booleans are true, numeric types are null, strings
+		// are null and arrays are empty.
+		if (qt.getDataType().isArrayType())
+		{
+			// create an empty array of the right type.  An empty String array
+			// will cast to anything.
+			m_curQualifier.setValue(OW_CIMValueCast::castValueToDataType(OW_CIMValue(OW_StringArray()),qt.getDataType()));
+		}
+		else if (qt.getDataType().getType() == OW_CIMDataType::BOOLEAN)
 		{
 			m_curQualifier.setValue(OW_CIMValue(OW_Bool(true)));
 		}
 		else
 		{
-			theErrorHandler->fatalError(
-				"Missing value for non-boolean qualifier.",
-				pQualifier->theLineInfo);
+			m_curQualifier.setValue(OW_CIMValue());
 		}
 	}
 

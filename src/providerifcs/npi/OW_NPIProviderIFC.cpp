@@ -82,6 +82,17 @@ OW_NPIProviderIFC::~OW_NPIProviderIFC()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
+	OW_InstanceProviderInfoArray&,
+	OW_AssociatorProviderInfoArray&,
+	OW_MethodProviderInfoArray&,
+	OW_PropertyProviderInfoArray&)
+{
+	return;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 OW_InstanceProviderIFCRef
 OW_NPIProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 	const char* provIdString)
@@ -104,7 +115,7 @@ OW_NPIProviderIFC::doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env
 			provIdString));
 	}
 
-	return OW_InstanceProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -173,7 +184,7 @@ OW_NPIProviderIFC::doGetMethodProvider(const OW_ProviderEnvironmentIFCRef& env,
 			provIdString));
 	}
 
-	return OW_MethodProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -201,7 +212,7 @@ OW_NPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 	}
 	*/
 
-	return OW_PropertyProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -227,7 +238,7 @@ OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 			provIdString));
 	}
 
-	return OW_AssociatorProviderIFCRef(0);
+	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
 
 //////////////////////////////////////////////////////////////////////////////

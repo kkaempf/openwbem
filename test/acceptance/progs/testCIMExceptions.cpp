@@ -55,6 +55,7 @@
 
 #include <iostream>
 
+#define TEST_ASSERT(CON) if(!(CON)) throw OW_AssertionException(__FILE__, __LINE__, #CON)
 
 using std::cerr;
 using std::cin;
@@ -162,11 +163,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->getClass("badNamespace", "foo");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER - Can't do without doing straight XML.  Handle it in a separate test.
@@ -175,11 +176,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->getClass("root/testsuite", "fooXXX");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -191,11 +192,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->getInstance("badNamespace", cop);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER - Can't do without doing straight XML.  Handle it in a separate test.
@@ -206,11 +207,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("fooXXX");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->getInstance("root/testsuite", cop);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	// CIM_ERR_NOT_FOUND
@@ -220,11 +221,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
 		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->getInstance("root/testsuite", cop);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -234,11 +235,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->deleteClass("badNamespace", "foo");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 
@@ -248,11 +249,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->deleteClass("root/testsuite", "fooXXX");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -269,11 +270,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->deleteInstance("badNamespace", cop);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER - Can only be done with doctored XML
@@ -284,11 +285,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("fooXXX");
 		cop.addKey("fooKey", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->deleteInstance("root/testsuite", cop);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	// CIM_ERR_NOT_FOUND
@@ -298,11 +299,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
 		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
 		hdl->deleteInstance("root/testsuite", cop);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -323,11 +324,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->createClass("badNamespace", cc);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER - thrown from OW_MetaRepository::_throwIfBadClass() and OW_MetaRepository::adjustClass()
@@ -372,7 +373,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(0);
+		TEST_ASSERT(0);
 	}
 
 
@@ -387,11 +388,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		assocQual2.setValue(OW_CIMValue(false));
 		cc2.addQualifier(assocQual2);
 		hdl->createClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
 	try
@@ -403,11 +404,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
 		hdl->createClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
 	try
@@ -415,11 +416,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		// test adding a class with no keys
 		OW_CIMClass cc2("invalidTestSub");
 		hdl->createClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
 	// CIM_ERR_ALREADY_EXISTS
@@ -427,11 +428,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		// test adding a class with no keys
 		hdl->createClass("root/testsuite", baseClass);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::ALREADY_EXISTS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ALREADY_EXISTS);
 	}
 
 	// CIM_ERR_INVALID_SUPERCLASS
@@ -440,11 +441,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMClass cc2(baseClass);
 		cc2.setSuperClass("invalid");
 		hdl->createClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
 	}
 
 
@@ -456,11 +457,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
 		hdl->createInstance("badNamespace", ci);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -472,11 +473,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		ci.setClassName("nonexistentClass");
 		ci.setProperty(theKeyProp);
 		hdl->createInstance("root/testsuite", ci);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	// CIM_ERR_ALREADY_EXISTS
@@ -485,11 +486,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMInstance ci = baseClass.newInstance();
 		ci.setProperty(theKeyProp);
 		hdl->createInstance("root/testsuite", ci);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::ALREADY_EXISTS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::ALREADY_EXISTS);
 	}
 
 
@@ -499,11 +500,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->modifyClass("badNamespace", cc);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -517,7 +518,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	
 	try
@@ -529,11 +530,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		assocQual2.setValue(OW_CIMValue(false));
 		cc2.addQualifier(assocQual2);
 		hdl->modifyClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
 	try
@@ -545,11 +546,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		theKeyProp2.addQualifier(keyQual);
 		cc2.addProperty(theKeyProp2);
 		hdl->modifyClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
 	try
@@ -557,11 +558,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		// test adding a class with no keys
 		OW_CIMClass cc2("invalidTestSub");
 		hdl->modifyClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
 	}
 
 	// CIM_ERR_NOT_FOUND
@@ -569,11 +570,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	{
 		OW_CIMClass cc2("invalidTestSub2");
 		hdl->modifyClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 	// CIM_ERR_INVALID_SUPERCLASS
@@ -582,11 +583,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMClass cc2(baseClass);
 		cc2.setSuperClass("invalid");
 		hdl->modifyClass("root/testsuite", cc2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_SUPERCLASS);
 	}
 
 	// CIM_ERR_CLASS_HAS_CHILDREN - Can't get OpenWBEM to produce this as of July 30, 2002
@@ -610,7 +611,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(0);
+		TEST_ASSERT(0);
 	}
 
 
@@ -618,11 +619,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->modifyInstance("badNamespace", ci);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -632,11 +633,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMInstance ci2(ci);
 		ci2.setClassName("fooBad");
 		hdl->modifyInstance("root/testsuite", ci2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	// CIM_ERR_NOT_FOUND
@@ -645,11 +646,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMInstance ci2(ci);
 		ci2.setProperty("theKeyProp", OW_CIMValue(false));
 		hdl->modifyInstance("root/testsuite", ci2);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -660,11 +661,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumClassE("badNamespace", "foo");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -672,11 +673,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumClassE("root/testsuite", "badClass");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 
@@ -687,11 +688,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumClassNamesE("badNamespace", "foo");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -699,11 +700,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumClassNamesE("root/testsuite", "badClass");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 
@@ -714,11 +715,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumInstancesE("badNamespace", "foo");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -726,11 +727,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumInstancesE("root/testsuite", "badClass");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 
@@ -740,11 +741,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumInstanceNamesE("badNamespace", "foo");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -752,11 +753,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumInstanceNamesE("root/testsuite", "badClass");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	
@@ -767,11 +768,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->execQueryE("badNameSpace", "select * from junk", "wql1");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -779,32 +780,32 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->execQueryE("root/testsuite", "select * from junk", "badql");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::QUERY_LANGUAGE_NOT_SUPPORTED);
 	}
 
 	// CIM_ERR_INVALID_QUERY
 	try
 	{
 		hdl->execQueryE("root/testsuite", "xxx", "wql1");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_QUERY);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_QUERY);
 	}
 
 	try
 	{
 		hdl->execQueryE("root/testsuite", "select * from junk", "wql1");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_QUERY);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_QUERY);
 	}
 
 
@@ -816,11 +817,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->associatorsE("badNamespace", cop,"","","","");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 
 	// CIM_ERR_INVALID_PARAMETER
@@ -834,11 +835,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->associatorNamesE("badNamespace", cop, "", "", "", "");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 	
@@ -851,11 +852,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->referencesE("badNamespace", cop,"","");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 
@@ -868,11 +869,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->referenceNamesE("badNamespace", cop,"","");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 
@@ -885,11 +886,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->getProperty("badNamespace", cop, "theKeyProp");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	
 	// CIM_ERR_INVALID_PARAMETER
@@ -899,11 +900,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("badClass");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->getProperty("root/testsuite", cop, "theKeyProp");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	// CIM_ERR_NOT_FOUND
@@ -912,11 +913,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(false));
 		hdl->getProperty("root/testsuite", cop, "theKeyProp");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 	
 	// CIM_ERR_NO_SUCH_PROPERTY
@@ -925,11 +926,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->getProperty("root/testsuite", cop, "badProp");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NO_SUCH_PROPERTY);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NO_SUCH_PROPERTY);
 	}
 	
 
@@ -942,11 +943,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("foo");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty("badNamespace", cop, "theKeyProp", OW_CIMValue(true));
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	
 	// CIM_ERR_INVALID_PARAMETER
@@ -956,11 +957,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop("badClass");
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty("root/testsuite", cop, "theKeyProp", OW_CIMValue(true));
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_CLASS);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_CLASS);
 	}
 
 	// CIM_ERR_NOT_FOUND
@@ -969,11 +970,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(false));
 		hdl->setProperty("root/testsuite", cop, "theKeyProp", OW_CIMValue(false));
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 	
 	// CIM_ERR_NO_SUCH_PROPERTY
@@ -982,11 +983,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty("root/testsuite", cop, "badProp", OW_CIMValue(true));
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NO_SUCH_PROPERTY);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NO_SUCH_PROPERTY);
 	}
 	
 	// CIM_ERR_TYPE_MISMATCH
@@ -995,11 +996,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		OW_CIMObjectPath cop(baseClass.getName());
 		cop.addKey("theKeyProp", OW_CIMValue(true));
 		hdl->setProperty("root/testsuite", cop, "theKeyProp", OW_CIMValue(OW_String("x")));
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::TYPE_MISMATCH);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::TYPE_MISMATCH);
 	}
 	
 
@@ -1010,22 +1011,22 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->getQualifierType("badNamespace", OW_CIMQualifier::CIM_QUAL_ABSTRACT);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_NOT_FOUND
 	try
 	{
 		hdl->getQualifierType("root/testsuite", "badQualifierType");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -1038,11 +1039,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		cqt.setDataType(OW_CIMDataType::BOOLEAN);
 		cqt.addScope(OW_CIMScope::ANY);
 		hdl->setQualifierType("badNamespace", cqt);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 
@@ -1053,22 +1054,22 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->deleteQualifierType("badNamespace", OW_CIMQualifier::CIM_QUAL_ABSTRACT);
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 	// CIM_ERR_NOT_FOUND
 	try
 	{
 		hdl->deleteQualifierType("root/testsuite", "badQualifierType");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
 	}
 
 
@@ -1078,11 +1079,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	try
 	{
 		hdl->enumQualifierTypesE("badNamespace");
-		assert(0);
+		TEST_ASSERT(0);
 	}
 	catch (const OW_CIMException& e)
 	{
-		assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
 
@@ -1099,11 +1100,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     {
         OW_CIMParamValueArray in, out;
         hdl->invokeMethod("badNamespace", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
     }
 
     // CIM_ERR_INVALID_PARAMETER - wrong number of params
@@ -1111,11 +1112,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     {
         OW_CIMParamValueArray in, out;
         hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
     }
 
     // CIM_ERR_INVALID_PARAMETER - wrong name of some parameter
@@ -1131,11 +1132,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         in.push_back(OW_CIMParamValue("pathsBAD", OW_CIMValue(paths)));
 
         hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
     }
 
     // CIM_ERR_INVALID_PARAMETER - wrong type of some parameter
@@ -1152,11 +1153,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         in.push_back(OW_CIMParamValue("paths", OW_CIMValue(paths)));
 
         hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
     }
 
     // CIM_ERR_INVALID_PARAMETER - duplicate parameter
@@ -1172,11 +1173,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         in.push_back(OW_CIMParamValue("uint8array", OW_CIMValue(paths)));
 
         hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("EXP_BartComputerSystem"), "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_PARAMETER);
     }
 
     // CIM_ERR_NOT_FOUND - no class
@@ -1184,11 +1185,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
     {
         OW_CIMParamValueArray in, out;
         hdl->invokeMethod("root/testsuite", OW_CIMObjectPath("BADEXP_BartComputerSystem"), "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
     }
 
     // CIM_ERR_NOT_FOUND - no instance
@@ -1199,11 +1200,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         cop.addKey("Name", OW_CIMValue("badKey"));
         cop.addKey("CreationClassName", OW_CIMValue("badKey"));
         hdl->invokeMethod("root/testsuite", cop, "getstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
     }
 
     // CIM_ERR_METHOD_NOT_FOUND
@@ -1212,11 +1213,11 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
         OW_CIMParamValueArray in, out;
         OW_CIMObjectPath cop("EXP_BartComputerSystem");
         hdl->invokeMethod("root/testsuite", cop, "BADgetstate", in, out);
-		assert(0);
+		TEST_ASSERT(0);
     }
     catch (const OW_CIMException& e)
     {
-        assert(e.getErrNo() == OW_CIMException::METHOD_NOT_FOUND);
+        TEST_ASSERT(e.getErrNo() == OW_CIMException::METHOD_NOT_FOUND);
     }
 
 

@@ -295,6 +295,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	const OW_String& ns,
 	const OW_String& filter,
 	const OW_String& querylanguage,
+    const OW_String& sourceNamespace,
 	OW_CIMListenerCallbackRef cb)
 {
 	registrationInfo reg;
@@ -332,7 +333,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 			}
 			else
 				throw;
-		}
+        }
 	}
 
 	if (!useHttps)
@@ -358,10 +359,11 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	ci.setProperty("Destination", OW_CIMValue(urlPrefix + reg.httpCredentials + "@" +
 		ipAddress + ":" + OW_String(OW_UInt32(listenerPort)) + httpPath));
 
-	ci.setProperty("SystemCreationClassName", OW_CIMValue(ipAddress));
+	ci.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
 	ci.setProperty("SystemName", OW_CIMValue(ipAddress));
-	ci.setProperty("CreationClassName", OW_CIMValue(ipAddress));
+	ci.setProperty("CreationClassName", OW_CIMValue(delivery.getName()));
 	ci.setProperty("Name", OW_CIMValue(httpPath));
+    ci.setProperty("Owner", OW_CIMValue("OW_HTTPXMLCIMListener on " + ipAddress));
 
 	try
 	{
@@ -390,10 +392,16 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	// set QueryLanguage property
 	ci.setProperty("QueryLanguage", OW_CIMValue(querylanguage));
 
-	ci.setProperty("SystemCreationClassName", OW_CIMValue(ipAddress));
+	ci.setProperty("SystemCreationClassName", OW_CIMValue("CIM_System"));
 	ci.setProperty("SystemName", OW_CIMValue(ipAddress));
-	ci.setProperty("CreationClassName", OW_CIMValue(ipAddress));
+	ci.setProperty("CreationClassName", OW_CIMValue(cimFilter.getName()));
 	ci.setProperty("Name", OW_CIMValue(httpPath));
+
+    if (!sourceNamespace.empty())
+    {
+        ci.setProperty("SourceNamespace", OW_CIMValue(sourceNamespace));
+    }
+
 	// create instance of filter
 	reg.filter = hdl.createInstance(ns, ci);
 

@@ -74,8 +74,10 @@ public:
 	static void initSig() { plat_upipe = OW_UnnamedPipe::createUnnamedPipe(); }
 	static void pushSig(int sig)
 	{
-		if (plat_upipe->writeInt(sig) == -1)
-			OW_THROW(OW_IOException, "Failed writing signal to pipe");
+		plat_upipe->writeInt(sig);
+		//if (plat_upipe->writeInt(sig) == -1)
+		//	std::cerr << "Failed writing signal to pipe";
+		// don't throw from this function, it may cause a segfault or deadlock.
 	}
 	static int popSig()
 	{

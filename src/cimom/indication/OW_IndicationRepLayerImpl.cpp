@@ -280,6 +280,10 @@ OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		// TODO refer to MOF.  What about filtering the properties in ci?
+		// I think the MOF comment is incorrect, since it referes to filtering
+		// the values of the new instance via the query.  HOWEVER, the query
+		// is NOT run (or written) against the instance that changed, but
+		// against the indication instance!
 		expInst.setProperty("SourceInstance", OW_CIMValue(ci));
 		exportIndication(expInst, ns);
 	}

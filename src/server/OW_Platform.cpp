@@ -276,15 +276,21 @@ extern "C" {
 static void
 theSigHandler(int sig)
 {
-	switch(sig)
+	try
 	{
-		case SIGTERM:
-		case SIGINT:
-			OW_Platform::pushSig(OW_Platform::SHUTDOWN);
-			break;
-		case SIGHUP:
-			OW_Platform::pushSig(OW_Platform::REINIT);
-			break;
+		switch(sig)
+		{
+			case SIGTERM:
+			case SIGINT:
+				OW_Platform::pushSig(OW_Platform::SHUTDOWN);
+				break;
+			case SIGHUP:
+				OW_Platform::pushSig(OW_Platform::REINIT);
+				break;
+		}
+	}
+	catch (...) // can't let exceptions escape from here or we'll segfault.
+	{
 	}
 }
 

@@ -2,6 +2,8 @@
 #include "NPIProvider.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_CIMObjectPathEnumeration.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 
 
 // administrative functions
@@ -44,6 +46,7 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	{
 		// cerr << "Class or Namespace do not exist\n";
 		// TODO: log this, and catch the correct exception.
+		npiHandle->errorOccurred = 1;
 	}
 
 	return cc;
@@ -67,6 +70,7 @@ NPI_enumeratemyInstanceNames(NPIHandle* npiHandle,
 	{
 		// cerr << "Class or Namespace do not exist\n";
 		// TODO: log this, and catch the correct exception.
+		npiHandle->errorOccurred = 1;
 	}
 	return crefs;
 }
@@ -92,6 +96,7 @@ NPI_enumeratemyInstances(NPIHandle* npiHandle, const OW_String& nameSpace,
 	{
 		// cerr << "Class or Namespace do not exist\n";
 		// TODO: log this, and catch the correct exception.
+		npiHandle->errorOccurred = 1;
 	}
 
 	return cinsts;
@@ -116,6 +121,7 @@ NPI_getmyInstance(NPIHandle* npiHandle, const OW_CIMObjectPath& owcop,
 	{
 		// cerr << "Instance does not exist\n";
 		// TODO: log this, and catch the correct exception.
+		npiHandle->errorOccurred = 1;
 	}
 
 	return ci;
@@ -1013,8 +1019,10 @@ extern "C" void
 raiseError(NPIHandle* npiHandle, const char* msg)
 {
 	if (npiHandle->providerError != NULL)
-		//free ( (void*) npiHandle->providerError );
-		npiHandle->providerError = strdup ( msg );
+		free ( (void*) npiHandle->providerError );
+
+	npiHandle->errorOccurred = 1;
+	npiHandle->providerError = strdup ( msg );
 }
 
 //static void raiseNPIException( void* env, char* msg) {}

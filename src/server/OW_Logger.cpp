@@ -123,17 +123,14 @@ class OW_SyslogLogger : public OW_Logger
 class OW_TeeLogger : public OW_Logger
 {
 	public:
-		// OW_TeeLogger takes ownership of first and second
-		OW_TeeLogger( OW_Logger* first, OW_Logger* second ):
+		OW_TeeLogger( OW_LoggerRef const& first, OW_LoggerRef const& second ):
 			m_first(first), m_second(second)
-			{
-				m_first->setLogLevel(DebugLevel);
-				m_second->setLogLevel(DebugLevel);
-			}
+		{
+			m_first->setLogLevel(DebugLevel);
+			m_second->setLogLevel(DebugLevel);
+		}
 		virtual ~OW_TeeLogger()
 		{
-			delete m_first;
-			delete m_second;
 		}
 
 	protected:
@@ -160,8 +157,8 @@ class OW_TeeLogger : public OW_Logger
 		}
 
 	private:
-		OW_Logger* m_first;
-		OW_Logger* m_second;
+		OW_LoggerRef m_first;
+		OW_LoggerRef m_second;
 };
 
 class OW_CerrLogger : public OW_Logger
@@ -180,20 +177,34 @@ class OW_CerrLogger : public OW_Logger
 		}
 };
 
+class OW_NullLogger : public OW_Logger
+{
+public:
+	virtual ~OW_NullLogger() {}
+
+protected:
+	virtual void doLogMessage(const OW_String &, 
+		const OW_LogLevel) const 
+	{
+	}
+};
+
 OW_LoggerRef OW_Logger::createLogger( const OW_String& type, const OW_Bool& debug )
 {
-	OW_Logger* retval;
-	if ( type == "syslog" )
+	OW_LoggerRef retval;
+	if (type.empty())
+		retval = new OW_NullLogger;
+	else if ( type == "syslog" )
 		retval = new OW_SyslogLogger;
 	else
 		retval = new OW_FileLogger( type.c_str() );
 
 	if ( debug )
 	{
-		retval = new OW_TeeLogger( retval, new OW_CerrLogger );
+		retval = new OW_TeeLogger( retval, OW_LoggerRef(new OW_CerrLogger) );
 	}
 
-	return OW_LoggerRef(retval);
+	return retval;
 }
 
 

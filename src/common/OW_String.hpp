@@ -425,7 +425,7 @@ public:
 	 * if len == -1, erase to the end of the string.
 	 * @return A referernce to this object.
 	 */
-	OW_String& erase( size_t idx, size_t len = -1 );
+	OW_String& erase( size_t idx, size_t len = size_t(-1) );
 
 	/**
 	 * Assignment operator.

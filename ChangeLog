@@ -1,9 +1,47 @@
+Tue Dec  3 11:25:46 MST 2002
+- Fixed mof compiler wrt default qualifiers (see cim spec 4.7).  Now the CIM
+  2.7 schema imports without errors.
+
+Fri Nov 15 08:05:33 MST 2002
+- Fixed bugs with NPI errors.
+
+Wed Nov 13 14:25:35 MST 2002
+- Fixed a bug in _validatePropagatedKeys when the name of the key that the
+  Propagated qualifier refered to was different than the name of the
+  qualifier's property.
+
+Mon Nov 11 07:39:29 MST 2002
+- Fixed registerForIndication to set the key properties correctly on
+  CIM_IndicationFilter and CIM_IndicationHandler* instances.
+
+Sat Nov  9 22:10:51 MST 2002
+- Added a test for more than 1 propagated key.  
+- Fixed a bug in _validatePropagatedKeys when there was more than 1.  
+- Fixed instanceExists to catch exceptions thrown from makeInstanceKey.
+
 Mon Nov  4 10:44:51 MST 2002
+- Fixed OW_CIMClientCL.cpp to work property in non-debug mode.
 - Refactored OW_Reference and OW_COWReference to help minimize code bloat
 - Fixed up a few spots that were calling OW_*Reference::getPtr() that didn't
   need to.
 - Changed a few places that were using a raw OW_CIMServer pointer to use a
   OW_RepositoryIFCRef instead.
+- Fixed compile problem on systems w/out OpenSSL
+- Enhancements to the acceptance test suite
+- Refactored OW_Reference to use more efficient assembly code instead of
+  mutexes for reference counting.
+- Created OW_COWReference so there is no need for code to explicitly manage
+  COW semantics.
+- Refactored OW_Reference and OW_COWReference to have a non-template base
+  class to reduce code bloat.
+- Changed owmofc to not create XML dump files in /tmp
+- Fixed enumInstances in OW_RPM provider.
+- Worked on making the mof compiler re-entrant.
+- Fixed a bug in the NPI interface.  Thanks to Viktor Mihajlovski.
+- Added a test for associator providers.
+- Fixed a bug where an associator provider wasn't being called in
+  certain situations.
+- Some cleanup and optimizations with operator= on some classes.
 
 Fri Nov  1 11:36:06 MST 2002
 - A lot of this was done pre-2.0.0 but it just got moved into the ChangeLog

@@ -2,7 +2,7 @@ if USE_PAM
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libpamauthentication.so
-SHAREDLIBADD = 
+SHAREDLIBADD = -lpam
 
 noinst_LIBRARIES = \
 	libpamauthentication.a 

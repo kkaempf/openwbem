@@ -160,7 +160,6 @@ class OW_COWReference : private OW_COWReferenceBase
 
 	private:
 		T* volatile m_pObj;
-		OW_RefCount* volatile m_pRefCount;
 		/* This is so the templated constructor will work */
 		template <class U> friend class OW_COWReference;
 

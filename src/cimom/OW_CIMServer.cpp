@@ -1424,7 +1424,7 @@ OW_CIMServer::createInstance(
 		lci.syncWithClass(theClass, false);
 
 		m_env->logDebug(format("OW_CIMServer::createInstance.  ns = %1, "
-			"instance = %2", ns, lci.toString()));
+			"instance = %2", ns, lci.toMOF()));
 
 		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
 		if (instancep)
@@ -1482,8 +1482,8 @@ OW_CIMServer::createInstance(
 				}
 			}
 
-			m_iStore.createInstance(ns, theClass, lci);
 			_validatePropagatedKeys(ns, lci, theClass);
+			m_iStore.createInstance(ns, theClass, lci);
 		}
 
 		if(theClass.isAssociation())
@@ -3090,7 +3090,6 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 	{
 		OW_CIMQualifier cq = kprops[i].getQualifier(
 			OW_CIMQualifier::CIM_QUAL_PROPAGATED);
-
 		if(!cq)
 		{
 			continue;
@@ -3109,6 +3108,13 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 		{
 			continue;
 		}
+		int idx = cls.indexOf('.');
+		OW_String ppropName;
+		if (idx != -1)
+		{
+			ppropName = cls.substring(idx+1);
+			cls = cls.substring(0,idx);
+		}
 
 		OW_CIMProperty cp = ci.getProperty(kprops[i].getName());
 		if(!cp || !cp.getValue())
@@ -3117,18 +3123,17 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 				format("Cannot create instance. Propagated key field missing:"
 					" %1", kprops[i].getName()).c_str());
 		}
+		if (!ppropName.empty())
+		{
+			// We need to use the propagated property name, not the property
+			// name on ci.  e.g. Given 
+			// [Propagated("fooClass.fooPropName")] string myPropName;
+			// we need to check for fooPropName as the key to the propagated
+			// instance, not myPropName.
+			cp.setName(ppropName);
+		}
 
-		OW_Map<OW_String, OW_CIMPropertyArray>::iterator it = theMap.find(cls);
-		if(it != theMap.end())
-		{
-			it->second.append(cp);
-		}
-		else
-		{
-			OW_CIMPropertyArray tprops;
-			tprops.append(cp);
-			theMap[cls] = tprops;
-		}
+		theMap[cls].append(cp);
 	}
 
 	if(!hasPropagatedKeys)
@@ -3148,11 +3153,6 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 	{
 		OW_CIMClass cc;
 		OW_String clsname = it->first;
-		int idx = clsname.indexOf('.');
-		if (idx != -1)
-		{
-			clsname = clsname.substring(0,idx);
-		}
 		
 		op.setObjectName(clsname);
 		op.setKeys(it->second);
