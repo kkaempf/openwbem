@@ -923,20 +923,19 @@ OW_CIMXMLCIMOMHandle::setQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::modifyClass(const OW_CIMObjectPath& path,
-										 const OW_CIMClass& cc)
+OW_CIMXMLCIMOMHandle::modifyClass(const OW_String &ns,
+		const OW_CIMClass& cc)
 {
 	static const char* const commandName = "ModifyClass";
-	OW_String className = path.getObjectName();
 
 	OW_StringStream extra(1024);
 	extra << "<IPARAMVALUE NAME=\"" << XMLP_MODIFIED_CLASS << "\">";
-	OW_CIMtoXML(cc, extra ,OW_CIMtoXMLFlags::notLocalOnly,
+	OW_CIMtoXML(cc, extra, OW_CIMtoXMLFlags::notLocalOnly,
 		OW_CIMtoXMLFlags::includeQualifiers, OW_CIMtoXMLFlags::includeClassOrigin,
 		OW_StringArray(), false);
 	extra << "</IPARAMVALUE>";
 	voidRetValOp op;
-	intrinsicMethod(path.getNameSpace(), commandName, op, OW_Array<OW_Param>(),
+	intrinsicMethod(ns, commandName, op, OW_Array<OW_Param>(),
 		extra.toString());
 }
 

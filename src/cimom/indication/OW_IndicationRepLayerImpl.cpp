@@ -185,22 +185,21 @@ OW_IndicationRepLayerImpl::invokeMethod(
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
-	OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
+OW_IndicationRepLayerImpl::modifyClass(const OW_String &ns,
+	const OW_CIMClass& cc, const OW_ACLInfo& aclInfo)
 {
-	OW_CIMClass lcc(cc);
-	OW_CIMClass CCOrig = m_pServer->modifyClass(name, lcc, aclInfo);
+	OW_CIMClass CCOrig = m_pServer->modifyClass(ns, cc, aclInfo);
 	OW_ACLInfo intAclInfo;
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+		OW_CIMClass expCC = m_pServer->getClass(ns,
 			"CIM_ClassModification", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
-		expInst.setProperty("ClassDefinition", OW_CIMValue(lcc));
-		exportIndication(expInst, name.getNameSpace());
+		expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
+		exportIndication(expInst, ns);
 	}
 	catch (OW_CIMException&)
 	{

@@ -248,7 +248,9 @@ public:
 	 *		CIM_ERR_CLASS_HAS_INSTANCES
 	 *		CIM_ERR_FAILED
 	 */
-	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
+	virtual OW_CIMClass modifyClass(
+		const OW_String& ns,
+		const OW_CIMClass& cc,
 		const OW_ACLInfo& aclInfo);
 
 	/**

@@ -185,14 +185,13 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing modifyClass() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem2", "/root/acltest");
 		OW_CIMClass cimClass = bionicClass;
 		OW_CIMProperty cimProp(OW_Bool(true));
 		cimProp.setDataType(OW_CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
 		bionicClass = cimClass;
-		hdl.modifyClass(cop, cimClass);
+		hdl.modifyClass("/root/acltest", cimClass);
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

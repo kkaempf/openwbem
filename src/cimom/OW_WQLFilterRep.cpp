@@ -131,8 +131,8 @@ OW_WQLFilterRep::createClass(const OW_CIMObjectPath &/*path*/,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_WQLFilterRep::modifyClass(const OW_CIMObjectPath &/*name*/,
-	OW_CIMClass &/*cc*/, const OW_ACLInfo& /*aclInfo*/)
+OW_WQLFilterRep::modifyClass(const OW_String &/*name*/,
+	const OW_CIMClass &/*cc*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");

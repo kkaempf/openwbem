@@ -393,8 +393,8 @@ public:
 
 	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.
-	 * @param qualifierName The OW_CIMObjectPath that identifies the CIM
-	 *		qualifier type.
+	 * @param ns The namespace
+	 * @param qualifierName The name of the CIM qualifier type.
 	 * @return An OW_CIMQualifierType identified by name.
 	 * @exception OW_CIMException If the CIM qualifier type cannot be found
 	 */
@@ -405,8 +405,7 @@ public:
 	/**
 	 * Updates the specified CIM qualifier type in the specified namespace if
 	 * it exist. If it doesn't exist, it will be added.
-	 * @param qualifierName An OW_CIMObjectPath that identifies the CIM
-	 *		qualifier type.
+	 * @param ns The namespace
 	 * @param qualifierType The CIM qualifier type to be updated or added.
 	 */
 	virtual void setQualifierType(
@@ -415,13 +414,12 @@ public:
 
 	/**
 	 * Updates the CIM class associated with the specified namespace.
-	 * @param className An OW_CIMObjectPath that identifies the CIM class to be
-	 *		updated.
+	 * @param ns The namespace
 	 * @param cimClass The OW_CIMClass to be updated
 	 * @exception OW_CIMException If the class does not exists
 	 */
 	virtual void modifyClass(
-		const OW_CIMObjectPath& className,
+		const OW_String& ns,
 		const OW_CIMClass& cimClass) = 0;
 
 	/**

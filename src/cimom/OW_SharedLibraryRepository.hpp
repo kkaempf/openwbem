@@ -137,10 +137,10 @@ public:
 		m_ref->createClass(path, cimClass, aclInfo);
 	}
 
-	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath &name,
-		OW_CIMClass &cc, const OW_ACLInfo &aclInfo)
+	virtual OW_CIMClass modifyClass(const OW_String &ns,
+		const OW_CIMClass &cc, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->modifyClass(name, cc, aclInfo);
+		return m_ref->modifyClass(ns, cc, aclInfo);
 	}
 
 	virtual void enumClasses(const OW_String& ns,

@@ -1144,7 +1144,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		{
 			try
 			{
-				m_hdl->modifyClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace), m_curClass);
+				m_hdl->modifyClass(m_namespace, m_curClass);
 				MofCompiler::theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)

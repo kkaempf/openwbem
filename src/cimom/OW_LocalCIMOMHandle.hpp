@@ -335,7 +335,7 @@ public:
 	 *					updated.
 	 * @param cc	The OW_CIMClass to be updated
 	 */
-	virtual void modifyClass(const OW_CIMObjectPath &name, const OW_CIMClass &cc);
+	virtual void modifyClass(const OW_String &ns, const OW_CIMClass &cc);
 
 	/**
 	 * Set the specified CIM instance property.

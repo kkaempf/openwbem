@@ -256,12 +256,12 @@ OW_LocalCIMOMHandle::setQualifierType(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::modifyClass(const OW_CIMObjectPath& name,
+OW_LocalCIMOMHandle::modifyClass(
+	const OW_String& ns,
 	const OW_CIMClass& cc)
 {
 	OW_WriteLock wl = getWriteLock();
-	OW_CIMClass lcc(cc);
-	m_pServer->modifyClass(name, lcc, m_aclInfo);
+	m_pServer->modifyClass(ns, cc, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

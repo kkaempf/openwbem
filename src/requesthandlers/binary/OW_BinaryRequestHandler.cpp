@@ -593,9 +593,9 @@ void
 OW_BinaryRequestHandler::modifyClass(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 	OW_CIMClass cc(OW_BinIfcIO::readClass(istrm));
-	chdl->modifyClass(op, cc);
+	chdl->modifyClass(ns, cc);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 

@@ -154,7 +154,7 @@ public:
 	 * @param cimClass The class to update
 	 * @exception CIMException if the class already exists
 	 */
-	void modifyClass(const OW_String& ns, OW_CIMClass& cimClass);
+	void modifyClass(const OW_String& ns, const OW_CIMClass& cimClass);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.

@@ -1195,7 +1195,8 @@ void
 OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
-	OW_String name=parser.mustGetAttribute(paramName);
+	OW_String ns = path.getNameSpace();
+	OW_String name = parser.mustGetAttribute(paramName);
 	if (!name.equalsIgnoreCase(XMLP_MODIFIED_CLASS))
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			format("Parameter name was %1", name).c_str());
@@ -1206,9 +1207,8 @@ OW_XMLExecute::modifyClass(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	// Process <CLASS> element
 	//
 	OW_CIMClass cimClass = OW_XMLCIMFactory::createClass(parser);
-	path.setObjectName(cimClass.getName());
 
-	hdl.modifyClass(path,cimClass);
+	hdl.modifyClass(ns, cimClass);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -862,10 +862,11 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::modifyClass(const OW_String& ns,
-	OW_CIMClass& cimClass)
+	const OW_CIMClass& cimClass_)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
+	OW_CIMClass cimClass(cimClass_);
 	adjustClass(ns, cimClass, hdl.getHandle());
 
 	OW_String ckey = _makeClassPath(ns, cimClass.getName());

@@ -206,8 +206,8 @@ public:
 	 *		CIM_ClassModification indications.
 	 * @exception CIMException if the class already exists
 	 */
-	virtual OW_CIMClass modifyClass(const OW_CIMObjectPath& name,
-		OW_CIMClass& cc, const OW_ACLInfo& aclInfo) = 0;
+	virtual OW_CIMClass modifyClass(const OW_String &ns,
+		const OW_CIMClass& cc, const OW_ACLInfo& aclInfo) = 0;
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.

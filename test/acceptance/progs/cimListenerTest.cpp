@@ -184,8 +184,7 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 	cimProp.setDataType(OW_CIMDataType::STRING);
 	cimProp.setName("BrandNewProperty");
 	cimClass.addProperty(cimProp);
-	OW_CIMObjectPath cop("EXP_IndicationTestComputerSystem", "root/testsuite");
-	hdl.modifyClass(cop, cimClass);
+	hdl.modifyClass("root/testsuite", cimClass);
 }
 
 

@@ -743,22 +743,21 @@ OW_CIMServer::createClass(const OW_CIMObjectPath& path, OW_CIMClass& cimClass,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
+OW_CIMServer::modifyClass(
+	const OW_String& ns,
+	const OW_CIMClass& cc,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to create the class
-	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYCLASS, name.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYCLASS, ns, aclInfo);
 
-	if (!cc)
-	{
-		OW_THROW(OW_Exception, "Calling updateClass with a NULL class");
-	}
-
+	OW_ASSERT(cc);
 	try
 	{
 		OW_CIMClass origClass;
-		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(name.getNameSpace(), name.getObjectName(), origClass);
-		checkGetClassRvalAndThrow(rval, name.getNameSpace(), name.getObjectName());
+		OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns,
+			cc.getName(), origClass);
+		checkGetClassRvalAndThrow(rval, ns, cc.getName());
 
 		// TODO: this needs to update the subclasses of the modified class.
 		//			If that's not possible, then we need to throw a
@@ -768,7 +767,7 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 		//			If that's not possible, then we need to throw a
 		//			CLASS_HAS_INSTANCES CIMException.
 
-		m_mStore.modifyClass(name.getNameSpace(), cc);
+		m_mStore.modifyClass(ns, cc);
 		OW_ASSERT(origClass);
 		return origClass;
 	}

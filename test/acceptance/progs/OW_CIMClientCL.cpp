@@ -315,7 +315,6 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
 		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
 			"EXP_BionicComputerSystem", false);
 		cout << "CIMClass before: " << cimClass.toMOF() << endl;
@@ -330,7 +329,7 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 		cimProp.setDataType(OW_CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
-		hdl.modifyClass(cop, cimClass);
+		hdl.modifyClass("root/testsuite", cimClass);
 
 		cimClass = hdl.getClass("root/testsuite", "EXP_BionicComputerSystem", false);
 		cout << "CIMClass after: " << cimClass.toMOF() << endl;
