@@ -99,6 +99,7 @@ public:
 	static const char* const HTTP_PATH;
 	static const char* const CIMOM_UIDKEY;
 	static const char* const CURUSER_UIDKEY;
+	static const char* const BYPASS_LOCKERKEY; 
 
 
 

@@ -48,6 +48,9 @@ namespace OpenWBEM
 typedef Map<String, String> HTTPHeaderMap;
 namespace HTTPUtils
 {
+	extern const char* const Header_BypassLocker; 
+	extern const char* const HeaderValue_true; 
+	extern const char* const HeaderValue_false; 
 	/**
 	 * Read from an input stream, and fill out a <String, String> map and
 	 * String Array representing the status line.

@@ -303,6 +303,11 @@ void HTTPClient::getCredentialsIfNecessary()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void HTTPClient::addCustomHeader(const String& name, const String& value)
+{
+	this->addHeaderCommon(name, value); 
+}
+//////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendAuthorization()
 {
 	if( !m_sAuthorization.empty())

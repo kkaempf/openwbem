@@ -151,6 +151,14 @@ class HTTPClient : public CIMProtocolIFC
 		 */
 		virtual void close();
 
+		/**
+		 * Add a custom header to add to requests.  "<name>: <value>" 
+		 * will be added to each request. 
+		 * @param name The header name
+		 * @param value The header value
+		 */ 
+		void addCustomHeader(const String& name, const String& value); 
+
 	private:
 		/*
 		 * @throws SocketException If an SSL connection was requested, but support for SSL is not available.

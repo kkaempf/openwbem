@@ -38,6 +38,7 @@
 #include "OW_ProviderAgentProviderEnvironment.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_ClientCIMOMHandle.hpp"
+#include "OW_HTTPClient.hpp"
 
 
 namespace OpenWBEM
@@ -76,6 +77,17 @@ ProviderAgentProviderEnvironment::getCIMOMHandle() const
 		return CIMOMHandleIFCRef(0); 
 	}
 	ClientCIMOMHandleRef client = m_connectionPool.getConnection(m_callbackURL); 
+
+	CIMProtocolIFCRef tmp = client->getWBEMProtocolHandler();
+	if (tmp)
+	{
+		Reference<HTTPClient> httpClient = tmp.cast_to<HTTPClient>();
+		if (httpClient)
+		{
+			httpClient->addCustomHeader(HTTPUtils::Header_BypassLocker,
+										HTTPUtils::HeaderValue_true); 
+		}
+	}
 	m_CIMOMHandleRA.push_back(client); 
 	return client; 
 }

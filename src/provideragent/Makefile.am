@@ -41,6 +41,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/cim \
 -I$(top_srcdir)/src/ifcs \
 -I$(top_srcdir)/src/http/common \
+-I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/services/http \
 -I$(top_srcdir)/src/xml \
 -I$(top_srcdir)/src/providerifcs/cpp \

@@ -53,6 +53,7 @@
 #include "OW_CIMValue.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_CIMObjectPath.hpp"
+#include "OW_OperationContext.hpp"
 
 namespace OpenWBEM
 {
@@ -1837,7 +1838,6 @@ CIMRepository::beginOperation(WBEMFlags::EOperationFlag op, OperationContext& co
 {
 // TODO: Make this configurable?  Maybe even a parameter that can be specifed by the client on each request?
 const UInt32 LockTimeout = 300; // seconds - 5 mins.
-
 	switch (op)
 	{
 	case E_CREATE_NAMESPACE:
@@ -1889,6 +1889,16 @@ const UInt32 LockTimeout = 300; // seconds - 5 mins.
 void
 CIMRepository::endOperation(WBEMFlags::EOperationFlag op, OperationContext& context, WBEMFlags::EOperationResultFlag result)
 {
+	try
+	{
+		if (context.getStringData(OperationContext::BYPASS_LOCKERKEY) == "true")
+		{
+			return; 
+		}
+	}
+	catch (ContextDataNotFoundException&)
+	{
+	}
 	switch (op)
 	{
 	case E_CREATE_NAMESPACE:

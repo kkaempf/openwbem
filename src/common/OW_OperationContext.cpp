@@ -129,6 +129,7 @@ const char* const OperationContext::USER_PASSWD = "USER_PASSWD";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
 const char* const OperationContext::CIMOM_UIDKEY = "CIMOM_UIDKEY";
 const char* const OperationContext::CURUSER_UIDKEY = "CURUSER_UIDKEY";
+const char* const OperationContext::BYPASS_LOCKERKEY = "BYPASS_LOCKER"; 
 
 
 } // end namespace OpenWBEM

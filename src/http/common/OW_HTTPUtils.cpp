@@ -46,6 +46,7 @@
 #include "OW_Format.hpp"
 #include "OW_ExceptionIds.hpp"
 
+#include <algorithm> // for std::find
 #include <cctype>
 #include <cstring>
 #include <cstdio>
@@ -62,12 +63,15 @@ OW_DEFINE_EXCEPTION_WITH_ID(Base64Format);
 
 namespace HTTPUtils
 {
-
 using std::istream;
+
+///////////////////////////////////////////////////////////////////////////////
+const char* const Header_BypassLocker = "OW_BypassLocker"; 
+const char* const HeaderValue_true = "true"; 
+const char* const HeaderValue_false = "false"; 
 ///////////////////////////////////////////////////////////////////////////////
 bool
-parseHeader(HTTPHeaderMap& map,
-								  Array<String>& array, istream& istr)
+parseHeader(HTTPHeaderMap& map, Array<String>& array, istream& istr)
 {
 	String line;
 	do
@@ -580,8 +584,7 @@ void DigestCalcResponse(
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 bool
-headerHasKey(const HTTPHeaderMap& headers,
-									const String& key)
+headerHasKey(const HTTPHeaderMap& headers, const String& key)
 {
 	HTTPHeaderMap::const_iterator i =
 	headers.find(key.toString().toLowerCase());
@@ -597,8 +600,7 @@ headerHasKey(const HTTPHeaderMap& headers,
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 String
-getHeaderValue(const HTTPHeaderMap& headers,
-									  const String& key)
+getHeaderValue(const HTTPHeaderMap& headers, const String& key)
 {
 	HTTPHeaderMap::const_iterator i =
 	headers.find(key.toString().toLowerCase());
@@ -614,14 +616,17 @@ getHeaderValue(const HTTPHeaderMap& headers,
 //////////////////////////////////////////////////////////////////////////////
 //STATIC
 void
-addHeader(Array<String>& headers,
-								const String& key, const String& value)
+addHeader(Array<String>& headers, const String& key, const String& value)
 {
 	String tmpKey = key;
 	tmpKey.trim();
 	if ( !tmpKey.empty())
 	{
-		headers.push_back(key + ": " + value);
+		String newHeader = key + ": " + value;
+		if (std::find(headers.begin(), headers.end(), newHeader) == headers.end())
+		{
+			headers.push_back(newHeader); 
+		}
 	}
 	else
 	{ // a "folded" continuation line
@@ -636,8 +641,7 @@ eatEntity(istream& istr)
 	while ( istr )	istr.get();
 }
 void
-decodeBasicCreds(const String& info, String& name,
-		String& password)
+decodeBasicCreds(const String& info, String& name, String& password)
 {
 	String decoded = info;
 	size_t idx = decoded.indexOf("Basic");

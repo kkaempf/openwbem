@@ -896,6 +896,17 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 		}
 	} // if (m_method == M_POST)
 //
+// Check for Custom OW_BypassLocker header
+//
+	if (headerHasKey(HTTPUtils::Header_BypassLocker))
+	{
+		if (getHeaderValue(HTTPUtils::Header_BypassLocker) == HTTPUtils::HeaderValue_true)
+		{
+			context.setStringData(OperationContext::BYPASS_LOCKERKEY, "true"); 
+		}
+	}
+
+//
 //
 //
 	return SC_OK;
