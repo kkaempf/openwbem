@@ -128,6 +128,7 @@ public:
 		return m_impl->end();
 	}
 
+	// These are slightly dangerous, if you use them, DON'T CHANGE THE KEY!
 	iterator begin()
 	{
 		return m_impl->begin();
