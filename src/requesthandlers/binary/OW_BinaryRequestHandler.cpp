@@ -518,7 +518,8 @@ OW_BinaryRequestHandler::getClass(OW_CIMOMHandleIFCRef chdl,
 	OW_StringArray propList;
 	OW_StringArray* propListPtr = 0;
 
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_String className(OW_BinIfcIO::readString(istrm));
 	OW_Bool localOnly(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeQualifiers(OW_BinIfcIO::readBool(istrm));
 	OW_Bool includeClassOrigin(OW_BinIfcIO::readBool(istrm));
@@ -529,7 +530,7 @@ OW_BinaryRequestHandler::getClass(OW_CIMOMHandleIFCRef chdl,
 		propListPtr = &propList;
 	}
 
-	OW_CIMClass cc = chdl->getClass(op, localOnly, includeQualifiers,
+	OW_CIMClass cc = chdl->getClass(ns, className, localOnly, includeQualifiers,
 		includeClassOrigin, propListPtr);
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
@@ -721,12 +722,12 @@ void
 OW_BinaryRequestHandler::enumQualifiers(OW_CIMOMHandleIFCRef chdl,
 	std::ostream& ostrm, std::istream& istrm)
 {
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	OW_String ns(OW_BinIfcIO::readString(istrm));
 
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 	OW_BinIfcIO::write(ostrm, OW_BINSIG_QUALENUM);
 	BinaryCIMQualifierTypeWriter handler(ostrm);
-	chdl->enumQualifierTypes(op, handler);
+	chdl->enumQualifierTypes(ns, handler);
 
 	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_QUALENUM);

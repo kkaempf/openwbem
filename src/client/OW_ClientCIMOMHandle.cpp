@@ -54,15 +54,8 @@ OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 
 	OW_String parentPath = ns.substring(0, index);
 	OW_String newNameSpace = ns.substring(index + 1);
-	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, parentPath);
 
-	OW_CIMClass cimClass = getClass(path, false);
-	if(!cimClass)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("Could not find internal class %1",
-				OW_CIMClass::NAMESPACECLASS).c_str());
-	}
+	OW_CIMClass cimClass = getClass(parentPath, OW_CIMClass::NAMESPACECLASS, false);
 
 	OW_CIMInstance cimInstance = cimClass.newInstance();
 	OW_CIMValue cv(newNameSpace);

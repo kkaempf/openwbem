@@ -51,7 +51,7 @@ struct lineInfo;
 class CIMOMVisitor : public Visitor
 {
 public:
-	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_CIMNameSpace& ns );
+	CIMOMVisitor( OW_CIMOMHandleIFCRef hdl, OW_String& ns );
 	~CIMOMVisitor();
 
 	void VisitMOFSpecification( const MOFSpecification * );
@@ -136,30 +136,30 @@ public:
 private:
 	OW_CIMClass m_curClass;
 	OW_CIMInstance m_curInstance;
-   OW_CIMQualifier m_curQualifier;
+	OW_CIMQualifier m_curQualifier;
 	OW_CIMQualifierType m_curQualifierType;
-   OW_CIMValue m_curValue;
-   OW_CIMProperty m_curProperty;
-   OW_CIMMethod m_curMethod;
-   OW_CIMParameter m_curParameter;
+	OW_CIMValue m_curValue;
+	OW_CIMProperty m_curProperty;
+	OW_CIMMethod m_curMethod;
+	OW_CIMParameter m_curParameter;
 	OW_Reference<OW_CIMOMHandleIFC> m_hdl;
 	OW_Map<OW_String, OW_String> m_aliasMap;
-   OW_CIMNameSpace m_namespace;
-
+	OW_String m_namespace;
+	
 	OW_String m_instanceLocale;
 	OW_String m_locale;
-
+	
 	OW_String m_nonLocal;
 	OW_String m_nonLocalType;
 	OW_String m_source;
 	OW_String m_sourceType;
-
+	
 	OW_Map<OW_String, OW_CIMQualifierType> m_dataTypeCache;
-   OW_CIMDataType getQualifierDataType(const OW_String& qualName, const lineInfo& li);
+	OW_CIMDataType getQualifierDataType(const OW_String& qualName, const lineInfo& li);
 	OW_CIMQualifierType getQualifierType(const OW_String& qualName, const lineInfo& li);
-
+	
 	OW_CIMValue convertValuesIntoValueArray( const OW_CIMValueArray& values );
-
+	
 	// Functions that call into the remote cimom handle
 	void CIMOMcreateClass(const lineInfo& li);
 	void CIMOMsetQualifierType(const lineInfo& li);

@@ -28,8 +28,6 @@ extern "C" OW_CIMClass
 NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	const OW_String& className)
 {
-	OW_CIMObjectPath op(className, nameSpace);
-
 	OW_ProviderEnvironmentIFCRef * provenv =
 		static_cast<OW_ProviderEnvironmentIFCRef *>(npiHandle->thisObject);
 
@@ -37,7 +35,8 @@ NPI_getmyClass(NPIHandle* npiHandle, const OW_String& nameSpace,
 	try
 	{
 		cc = provenv->getPtr()->getCIMOMHandle()->getClass(
-			op, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+			nameSpace, className,
+			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN, NULL);
 	}

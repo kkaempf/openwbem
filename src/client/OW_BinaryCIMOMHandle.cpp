@@ -330,31 +330,37 @@ OW_BinaryCIMOMHandle::enumInstances(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
+OW_BinaryCIMOMHandle::enumQualifierTypes(
+	const OW_String& ns,
 	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"EnumerateQualifiers", path.getNameSpace());;
+		"EnumerateQualifiers", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_ENUMQUALS);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateQualifiers", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"EnumerateQualifiers", ns);
 
 	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_BinaryCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
+OW_BinaryCIMOMHandle::getClass(
+	const OW_String& ns,
+	const OW_String& className,
+	OW_Bool localOnly,
     OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"GetClass", path.getNameSpace());;
+		"GetClass", ns);
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_GETCLS);
-	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeString(strm, className);
 	OW_BinIfcIO::writeBool(strm, localOnly);
 	OW_BinIfcIO::writeBool(strm, includeQualifiers);
 	OW_BinIfcIO::writeBool(strm, includeClassOrigin);
@@ -365,7 +371,8 @@ OW_BinaryCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 		OW_BinIfcIO::writeStringArray(strm, *propertyList);
 	}
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "GetClass", path.getNameSpace());
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"GetClass", ns);
 
 	return readCIMObject<OW_CIMClass>(in);
 }

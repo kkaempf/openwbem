@@ -70,7 +70,7 @@ public:
 	 */
 	OW_String registerForIndication(const OW_String& url,
 		const OW_String& ns, const OW_String& filter,
-		const OW_String& querylanguage, OW_CIMListenerCallback& cb);
+		const OW_String& querylanguage, OW_CIMListenerCallbackRef cb);
 
 	/**
 	 * De-register for an indication
@@ -99,7 +99,7 @@ private:
 		OW_CIMObjectPath handler;
 		OW_CIMObjectPath filter;
 		OW_CIMObjectPath subscription;
-		OW_CIMListenerCallback* callback;
+		OW_CIMListenerCallbackRef callback;
 		OW_String httpCredentials;
 	};
 

@@ -316,7 +316,8 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
-		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+			"EXP_BionicComputerSystem", false);
 		cout << "CIMClass before: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -331,7 +332,7 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 		cimClass.addProperty(cimProp);
 		hdl.modifyClass(cop, cimClass);
 
-		cimClass = hdl.getClass(cop, false);
+		cimClass = hdl.getClass("root/testsuite", "EXP_BionicComputerSystem", false);
 		cout << "CIMClass after: " << cimClass.toMOF() << endl;
 		tfs.reset();
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -359,8 +360,8 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = false" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
-		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+			"EXP_BionicComputerSystem", false);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -378,8 +379,8 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = true" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "root/testsuite");
-		OW_CIMClass cimClass = hdl.getClass(cop, true);
+		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+			"EXP_BionicComputerSystem", true);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::localOnly,
@@ -405,8 +406,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 
 	try
 	{
-		OW_CIMObjectPath cop(fromClass, "root/testsuite");
-		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		OW_CIMClass cimClass = hdl.getClass("root/testsuite", fromClass, false);
 
 		OW_CIMInstance newInst = cimClass.newInstance();
 
@@ -416,7 +416,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 		newInst.setProperty("CreationClassName",
 								  OW_CIMValue(fromClass));
 
-		cop = OW_CIMObjectPath(fromClass, newInst.getKeyValuePairs());
+		OW_CIMObjectPath cop(fromClass, newInst.getKeyValuePairs());
 		cop.setNameSpace("root/testsuite");
 
 		hdl.createInstance(cop, newInst);
@@ -644,8 +644,7 @@ enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPath cop("", "root/testsuite");
-		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE(cop);
+		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE("root/testsuite");
 		while (enu.hasMoreElements())
 		{
 			OW_CIMQualifierType cqt = enu.nextElement();
@@ -696,7 +695,7 @@ void createAssociation(OW_CIMOMHandleIFC& hdl, const OW_String& assocName,
 		const OW_String& propName2, const OW_CIMObjectPath& cop2)
 {
 
-		OW_CIMClass cc = hdl.getClass(OW_CIMObjectPath(assocName, "root/testsuite"));
+		OW_CIMClass cc = hdl.getClass("root/testsuite", assocName);
 		OW_CIMInstance inst = cc.newInstance();
 			
 		inst.setProperty(propName1, OW_CIMValue(cop1));

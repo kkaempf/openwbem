@@ -179,7 +179,8 @@ namespace
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(assocName, false);
+				OW_CIMClass cc = hdl->getClass(assocName.getNameSpace(),
+					assocName.getObjectName(), false);
 				OW_CIMInstance newInstance = cc.newInstance();
 				OW_CIMInstance ci = e1.nextElement();
 				OW_CIMObjectPath path(ci.getClassName(),
@@ -219,7 +220,8 @@ namespace
 			// Just assume that all other instances of the other class are associated!
 			while (e1.hasMoreElements())
 			{
-				OW_CIMClass cc = hdl->getClass(assocName, false);
+				OW_CIMClass cc = hdl->getClass(assocName.getNameSpace(),
+					assocName.getObjectName(), false);
 				OW_CIMInstance newInstance = cc.newInstance();
 
 				OW_CIMInstance ci = e1.nextElement();

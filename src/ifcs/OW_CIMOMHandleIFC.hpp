@@ -297,23 +297,23 @@ public:
 
 	/**
 	 * Enumerates the qualifiers defined in a namespace.
-    * @param path	The OW_CIMObjectPath identifying the namespace whose qualifier
-	 *					definitions are to be enumerated.
+    * @param ns	The namespace whose qualifier definitions are to be enumerated.
 	 * @return 	An Enumeration of OW_CIMQualifierTypes
 	 *				(OW_CIMQualifierEnumeration)
 	 * @exception OW_CIMException	If the specified OW_CIMObjectPath cannot be
 	 *										found
 	 */
 	virtual void enumQualifierTypes(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
 		OW_CIMQualifierTypeResultHandlerIFC& result) = 0;
 
 	virtual OW_CIMQualifierTypeEnumeration enumQualifierTypesE(
-		const OW_CIMObjectPath& path);
+		const OW_String& ns);
 
 	/**
 	 * Gets the CIM class for the specified CIM object path.
-	 * @param name The OW_CIMObjectPath that identifies the CIM class
+	 * @param ns The namespace
+	 * @param classNname The CIM class
 	 * @param localOnly	If set to LOCAL_ONLY, only the non-inherited properties
 	 *		and methods	are returned, otherwise all properties and methods are
 	 *		returned.
@@ -330,7 +330,8 @@ public:
 	 *										the object cannot be found
 	 */
 	virtual OW_CIMClass getClass(
-		const OW_CIMObjectPath& name,
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool localOnly = NOT_LOCAL_ONLY,
 		OW_Bool includeQualifiers = INCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin = INCLUDE_CLASS_ORIGIN,

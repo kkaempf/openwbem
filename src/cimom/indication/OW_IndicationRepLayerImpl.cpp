@@ -53,8 +53,8 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& cla
 
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(
-				OW_CIMObjectPath("CIM_ClassDeletion", ns), false, true, true, NULL,
+			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_ClassDeletion",
+				false, true, true, NULL,
 				intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
@@ -79,8 +79,8 @@ OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjec
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstDeletion", ns), false, true, true, NULL,
+		OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_InstDeletion",
+			false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
@@ -108,8 +108,8 @@ OW_IndicationRepLayerImpl::getInstance(const OW_CIMObjectPath& name,
 
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(OW_CIMObjectPath("CIM_InstRead", name.getNameSpace()),
-				false, true, true, NULL, intAclInfo);
+			OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+				"CIM_InstRead", false, true, true, NULL, intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			expInst.setProperty("SourceInstance", OW_CIMValue(theInst));
 			exportIndication(expInst, name.getFullNameSpace());
@@ -138,9 +138,9 @@ OW_IndicationRepLayerImpl::invokeMethod(const OW_CIMObjectPath& name,
 		OW_ACLInfo intAclInfo;
 		try
 		{
-			OW_CIMClass expCC = m_pServer->getClass(
-					OW_CIMObjectPath("CIM_InstMethodCall", name.getNameSpace()), false, true, true, NULL,
-				intAclInfo);
+			OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+					"CIM_InstMethodCall", false, true, true, NULL,
+					intAclInfo);
 			OW_CIMInstance expInst = expCC.newInstance();
 			OW_CIMInstance theInst = m_pServer->getInstance(name, false,
 				true, true, NULL, intAclInfo);
@@ -194,8 +194,8 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_ClassModification", name.getNameSpace()), false, true, true, NULL,
+		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+			"CIM_ClassModification", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
@@ -221,8 +221,8 @@ OW_IndicationRepLayerImpl::createClass(const OW_CIMObjectPath& name,
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(
-			  OW_CIMObjectPath("CIM_ClassCreation", name.getNameSpace()), false, true, true, NULL,
+		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+			"CIM_ClassCreation", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("ClassDefinition", OW_CIMValue(cc));
@@ -246,8 +246,8 @@ OW_IndicationRepLayerImpl::modifyInstance(const OW_CIMObjectPath& name,
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstModification", name.getNameSpace()), false, true, true, NULL,
+		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+			"CIM_InstModification", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		expInst.setProperty("PreviousInstance", OW_CIMValue(ciOrig));
@@ -278,8 +278,8 @@ OW_IndicationRepLayerImpl::createInstance(const OW_CIMObjectPath& name,
 
 	try
 	{
-		OW_CIMClass expCC = m_pServer->getClass(
-			OW_CIMObjectPath("CIM_InstCreation", name.getNameSpace()), false, true, true, NULL,
+		OW_CIMClass expCC = m_pServer->getClass(name.getNameSpace(),
+			"CIM_InstCreation", false, true, true, NULL,
 			intAclInfo);
 		OW_CIMInstance expInst = expCC.newInstance();
 		// TODO refer to MOF.  What about filtering the properties in ss?

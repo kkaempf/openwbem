@@ -406,7 +406,7 @@ namespace
 									i->name).c_str());
 						}
 						i->isSet = true;
-						i->val = OW_CIMValue(OW_XMLCIMFactory::createObjectPath(parser));
+						i->val = OW_CIMValue(OW_XMLCIMFactory::createObjectPath(parser).getObjectName());
 						break;
 
 					case param::BOOLEAN:
@@ -544,13 +544,13 @@ OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String assocClass;
 	if (params[1].isSet)
 	{
-		assocClass = params[1].val.toCIMObjectPath().getObjectName();
+		assocClass = params[1].val.toString();
 	}
 
 	OW_String resultClass;
 	if (params[2].isSet)
 	{
-		resultClass = params[2].val.toCIMObjectPath().getObjectName();
+		resultClass = params[2].val.toString();
 	}
 
 	CIMObjectPathXMLOutputter handler(ostr);
@@ -667,13 +667,13 @@ void OW_XMLExecute::associators(ostream& ostr,
 	OW_String assocClass;
 	if (params[1].isSet)
 	{
-		assocClass = params[1].val.toCIMObjectPath().getObjectName();
+		assocClass = params[1].val.toString();
 	}
 
 	OW_String resultClass;
 	if (params[2].isSet)
 	{
-		resultClass = params[2].val.toCIMObjectPath().getObjectName();
+		resultClass = params[2].val.toString();
 	}
 
 
@@ -790,7 +790,7 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String className = params[0].val.toCIMObjectPath().getObjectName();
+	OW_String className = params[0].val.toString();
 
 	hdl.deleteClass(ns.getNameSpace(), className);
 }
@@ -902,7 +902,7 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String className;
 	if (params[0].isSet)
 	{
-		className = params[0].val.toCIMObjectPath().getObjectName();
+		className = params[0].val.toString();
 	}
 
 	CIMClassXMLOutputter handler(ostr, params[2].val.toBool(), params[3].val.toBool(),
@@ -945,7 +945,7 @@ OW_XMLExecute::enumerateInstanceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	params.push_back(param(XMLP_CLASSNAME, false, param::CLASSNAME));
 
 	getParameterValues(parser, params);
-	OW_String className = params[0].val.toCIMObjectPath().getObjectName();
+	OW_String className = params[0].val.toString();
 	OW_String ns = path.getNameSpace();
 	
 	CIMInstanceNameXMLOutputter handler(ostr);
@@ -1013,7 +1013,7 @@ OW_XMLExecute::enumerateInstances(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	OW_String className = params[0].val.toCIMObjectPath().getObjectName();
+	OW_String className = params[0].val.toString();
 
 	OW_StringArray propertyList;
 	OW_StringArray* pPropList = 0;
@@ -1062,7 +1062,8 @@ OW_XMLExecute::enumerateQualifiers(ostream& ostr, OW_CIMXMLParser& /*parser*/,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	CIMQualifierTypeXMLOutputter handler(ostr);
-	hdl.enumQualifierTypes(path, handler);
+	OW_String ns = path.getNameSpace();
+	hdl.enumQualifierTypes(ns, handler);
 }
 
 
@@ -1080,7 +1081,8 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 
 	getParameterValues(parser, params);
 
-	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
+	OW_String ns = path.getNameSpace();
+	OW_String className = params[0].val.toString();
 
 	OW_StringArray propertyList;
 	OW_StringArray* pPropList = 0;
@@ -1096,9 +1098,7 @@ OW_XMLExecute::getClass(ostream& ostr, OW_CIMXMLParser& parser,
 	bool includeClassOrigin = params[3].val.toBool();
 
 
-	path.setObjectName(params[0].val.toCIMObjectPath().getObjectName());
-
-	OW_CIMClass cimClass = hdl.getClass(path, localOnly, includeQualifiers,
+	OW_CIMClass cimClass = hdl.getClass(ns, className, localOnly, includeQualifiers,
 		includeClassOrigin,
 		pPropList);
 	
@@ -1260,7 +1260,7 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String resultClass;
 	if (params[1].isSet)
 	{
-		resultClass = params[1].val.toCIMObjectPath().getObjectName();
+		resultClass = params[1].val.toString();
 	}
 
 	CIMObjectPathXMLOutputter handler(ostr);
@@ -1290,7 +1290,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String resultClass;
 	if (params[1].isSet)
 	{
-		resultClass = params[1].val.toCIMObjectPath().getObjectName();
+		resultClass = params[1].val.toString();
 	}
 
 	OW_StringArray propertyList;

@@ -115,7 +115,7 @@ public:
 	 * @exception	OW_CIMException
 	 */
 	virtual void enumQualifierTypes(
-		const OW_CIMObjectPath& path,
+		const OW_String& ns,
 		OW_CIMQualifierTypeResultHandlerIFC& result,
 		const OW_ACLInfo& aclInfo) = 0;
 
@@ -160,7 +160,9 @@ public:
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
-	virtual OW_CIMClass getClass(const OW_CIMObjectPath& path,
+	virtual OW_CIMClass getClass(
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo) = 0;

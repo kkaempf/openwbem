@@ -31,6 +31,7 @@
 #define OW_CIM_LISTENER_CALLBACK_HPP_
 
 #include "OW_config.h"
+#include "OW_Reference.hpp"
 
 class OW_CIMInstance;
 class OW_String;
@@ -69,5 +70,7 @@ protected:
 	virtual void doIndicationOccurred( OW_CIMInstance& ci,
 		const OW_String& listenerPath ) = 0;
 };
+
+typedef OW_Reference<OW_CIMListenerCallback> OW_CIMListenerCallbackRef;
 
 #endif

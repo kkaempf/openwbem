@@ -616,14 +616,14 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMXMLCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
-		OW_CIMQualifierTypeResultHandlerIFC& result)
+OW_CIMXMLCIMOMHandle::enumQualifierTypes(
+	const OW_String& ns,
+	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	static const char* const commandName = "EnumerateQualifiers";
-	OW_String qualName = path.getObjectName();
 
 	enumQualifierTypesOp op(result);
-	intrinsicMethod(path.getNameSpace(), commandName, op);
+	intrinsicMethod(ns, commandName, op);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -646,13 +646,15 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMXMLCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
+OW_CIMXMLCIMOMHandle::getClass(
+	const OW_String& ns,
+	const OW_String& className,
+	OW_Bool localOnly,
     OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	static const char* const commandName = "GetClass";
 	OW_Array<OW_Param> params;
-	OW_String className = path.getObjectName();
 
 	if (!className.empty())
 	{
@@ -686,7 +688,7 @@ OW_CIMXMLCIMOMHandle::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
 
 	OW_CIMClass rval;
 	getClassOp op(rval);
-	intrinsicMethod(path.getNameSpace(), commandName, op, params, extraStr);
+	intrinsicMethod(ns, commandName, op, params, extraStr);
 	return rval;
 }
 

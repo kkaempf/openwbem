@@ -103,7 +103,7 @@ OW_WQLFilterRep::setQualifierType(const OW_CIMObjectPath &/*name*/,
 ///////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::enumQualifierTypes(
-	const OW_CIMObjectPath &/*path*/,
+	const OW_String&,
 	OW_CIMQualifierTypeResultHandlerIFC&, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
@@ -139,10 +139,13 @@ OW_WQLFilterRep::modifyClass(const OW_CIMObjectPath &/*name*/,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_WQLFilterRep::getClass(const OW_CIMObjectPath& path, OW_Bool b1, OW_Bool b2,
+OW_WQLFilterRep::getClass(
+	const OW_String& ns,
+	const OW_String& className,
+	OW_Bool b1, OW_Bool b2,
 	OW_Bool b3, const OW_StringArray* sap, const OW_ACLInfo& ai)
 {
-	return m_pCIMServer->getClass(path, b1, b2, b3, sap,
+	return m_pCIMServer->getClass(ns, className, b1, b2, b3, sap,
 		ai);
 }
 
@@ -223,8 +226,8 @@ OW_WQLFilterRep::enumInstances(
 			break;
 		}
 		
-		superClassName = m_pCIMServer->getClass(OW_CIMObjectPath(
-			superClassName, ns), false, true, true,
+		superClassName = m_pCIMServer->getClass(ns, superClassName,
+			false, true, true,
 			NULL, aclInfo).getSuperClass();
 	}
 }

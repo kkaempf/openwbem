@@ -288,7 +288,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	const OW_String& ns,
 	const OW_String& filter,
 	const OW_String& querylanguage,
-	OW_CIMListenerCallback& cb)
+	OW_CIMListenerCallbackRef cb)
 {
 	registrationInfo reg;
 
@@ -315,8 +315,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	{
 		try
 		{
-			OW_CIMObjectPath cop("CIM_IndicationHandlerXMLHTTPS", ns);
-			delivery = hdl.getClass(cop);
+			delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTPS");
 		}
 		catch (OW_CIMException& e)
 		{
@@ -331,8 +330,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 
 	if (!useHttps)
 	{
-		OW_CIMObjectPath cop("CIM_IndicationHandlerXMLHTTP", ns);
-		delivery = hdl.getClass(cop);
+		delivery = hdl.getClass(ns, "CIM_IndicationHandlerXMLHTTP");
 		urlPrefix = "http://";
 		listenerPort = m_httpListenPort;
 	}
@@ -379,8 +377,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	}
 	
 	// get class of CIM_IndicationFilter and new instance of it
-	cop = OW_CIMObjectPath("CIM_IndicationFilter", ns);
-	OW_CIMClass cimFilter = hdl.getClass(cop, true);
+	OW_CIMClass cimFilter = hdl.getClass(ns, "CIM_IndicationFilter", true);
 	ci = cimFilter.newInstance();
 
 	// set Query property to query that was passed into function
@@ -401,8 +398,8 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	// get class of CIM_IndicationSubscription and new instance of it.
 	// CIM_IndicationSubscription is an association class that connects
 	// the IndicationFilter to the IndicationHandler.
-	cop.setObjectName("CIM_IndicationSubscription");
-	OW_CIMClass cimClientFilterDelivery = hdl.getClass(cop, true);
+	OW_CIMClass cimClientFilterDelivery = hdl.getClass(ns,
+		"CIM_IndicationSubscription", true);
 	ci = cimClientFilterDelivery.newInstance();
 
 	// set the properties for the filter and the handler
@@ -416,7 +413,7 @@ OW_HTTPXMLCIMListener::registerForIndication(
 	reg.subscription = hdl.createInstance(cop, ci);
 
 	//save info for deletion later and callback delivery
-	reg.callback = &cb;
+	reg.callback = cb;
 	reg.ns = ns;
 
 	m_callbacks[httpPath] = reg;
@@ -447,7 +444,7 @@ void
 OW_HTTPXMLCIMListener::doIndicationOccurred( OW_CIMInstance& ci,
 		const OW_String& listenerPath )
 {
-	OW_CIMListenerCallback* cb;
+	OW_CIMListenerCallbackRef cb;
 	{ // scope for the OW_MutexLock
 		OW_MutexLock lock(m_mutex);
 		callbackMap_t::iterator i = m_callbacks.find(listenerPath);

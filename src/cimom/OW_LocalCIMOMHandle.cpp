@@ -185,22 +185,26 @@ OW_LocalCIMOMHandle::enumInstanceNames(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::enumQualifierTypes(const OW_CIMObjectPath& path,
+OW_LocalCIMOMHandle::enumQualifierTypes(
+	const OW_String& ns,
 	OW_CIMQualifierTypeResultHandlerIFC& result)
 {
 	OW_ReadLock rl = getReadLock();
-	m_pServer->enumQualifierTypes(path, result, m_aclInfo);
+	m_pServer->enumQualifierTypes(ns, result, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_LocalCIMOMHandle::getClass(const OW_CIMObjectPath& name, OW_Bool localOnly,
+OW_LocalCIMOMHandle::getClass(
+	const OW_String& ns,
+	const OW_String& className,
+	OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
 	OW_ReadLock rl = getReadLock();
-	OW_CIMClass cls = m_pServer->getClass(name, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, m_aclInfo);
+	OW_CIMClass cls = m_pServer->getClass(ns, className, localOnly,
+		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 	return cls;
 }
 

@@ -172,11 +172,11 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 				m_env->logDebug("User is SuperUser: checkAccess returning.");
 				return;
 			}
-			OW_CIMObjectPath cop("OpenWBEM_UserACL", "root/security");
 
 			try
 			{
-				OW_CIMClass cc = m_pServer->getClass(cop, false, true, true, NULL,
+				OW_CIMClass cc = m_pServer->getClass("root/security",
+					"OpenWBEM_UserACL", false, true, true, NULL,
 					intACLInfo);
 			}
 			catch(OW_CIMException&)
@@ -185,6 +185,8 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 					" /root/security. ACLs disabled");
 				return;
 			}
+			
+			OW_CIMObjectPath cop("OpenWBEM_UserACL", "root/security");
 			cop.addKey("username", OW_CIMValue(aclInfo.getUserName()));
 			cop.addKey("nspace", OW_CIMValue(lns));
 			OW_CIMInstance ci;
@@ -234,10 +236,10 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 			}
 		}
 		// use default policy for namespace
-		OW_CIMObjectPath cop("OpenWBEM_NamespaceACL", "root/security");
 		try
 		{
-			OW_CIMClass cc = m_pServer->getClass(cop, false, true, true, NULL,
+			OW_CIMClass cc = m_pServer->getClass("root/security",
+				"OpenWBEM_NamespaceACL", false, true, true, NULL,
 				intACLInfo);
 		}
 		catch(OW_CIMException&)
@@ -246,6 +248,7 @@ OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 				" /root/security. namespace ACLs disabled");
 			return;
 		}
+		OW_CIMObjectPath cop("OpenWBEM_NamespaceACL", "root/security");
 		cop.addKey("nspace", OW_CIMValue(lns));
 		OW_CIMInstance ci;
 		try
@@ -462,14 +465,15 @@ OW_CIMServer::getQualifierType(const OW_CIMObjectPath& objPath,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumQualifierTypes(const OW_CIMObjectPath& path,
+OW_CIMServer::enumQualifierTypes(
+	const OW_String& ns,
 	OW_CIMQualifierTypeResultHandlerIFC& result,
 	const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to get a qualifier
-	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, path.getNameSpace(), aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEQUALIFIERS, ns, aclInfo);
 
-	m_mStore.enumQualifierTypes(path.getNameSpace(), result);
+	m_mStore.enumQualifierTypes(ns, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -566,19 +570,20 @@ OW_CIMServer::setQualifierType(const OW_CIMObjectPath& name,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass
-OW_CIMServer::getClass(const OW_CIMObjectPath& path, OW_Bool localOnly,
+OW_CIMServer::getClass(
+	const OW_String& ns, const OW_String& className, OW_Bool localOnly,
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
 {
 	try
 	{
-		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
+		OW_CIMClass theClass = _getNameSpaceClass(className);
 		if(!theClass)
 		{
 			// Check to see if user has rights to get the class
-			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, path.getNameSpace(), aclInfo);
-			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(path.getNameSpace(), path.getObjectName(), theClass);
-			checkGetClassRvalAndThrow(rval, path.getNameSpace(), path.getObjectName());
+			m_accessMgr->checkAccess(OW_AccessMgr::GETCLASS, ns, aclInfo);
+			OW_CIMException::ErrNoType rval = m_mStore.getCIMClass(ns, className, theClass);
+			checkGetClassRvalAndThrow(rval, ns, className);
 		}
 
 		OW_StringArray lpropList;
@@ -1254,7 +1259,8 @@ OW_CIMServer::getInstance(const OW_CIMObjectPath& cop, OW_Bool localOnly,
 	try
 	{
 		// this doesn't use m_mStore because of __Namespace
-		cc = getClass(cop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		cc = getClass(cop.getNameSpace(), cop.getObjectName(),
+			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
 			0, aclInfo);
@@ -1637,7 +1643,8 @@ OW_CIMServer::_instanceExists(const OW_CIMObjectPath& icop,
 	OW_CIMClass cc;
 	try
 	{
-		cc = getClass(icop, OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		cc = getClass(icop.getNameSpace(), icop.getObjectName(),
+			OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
 			OW_CIMOMHandleIFC::INCLUDE_QUALIFIERS,
 			OW_CIMOMHandleIFC::INCLUDE_CLASS_ORIGIN,
 			0, aclInfo);
@@ -2539,11 +2546,16 @@ namespace
 		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath cop = e.getAssociationPath();
+			/* I don't think we need to do this, since a namespace should
+			   never be empty, it defaults to "root"
 			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
 			}
-			OW_CIMClass cc = server.getClass(cop,false,includeQualifiers,includeClassOrigin,propList,aclInfo);
+			*/
+			OW_CIMClass cc = server.getClass(cop.getNameSpace(),
+				cop.getObjectName(), false, includeQualifiers,
+				includeClassOrigin, propList, aclInfo);
 			result.handle(cc);
 		}
 	private:
@@ -2859,11 +2871,16 @@ namespace
 		virtual void doHandle(const OW_AssocDbEntry &e)
 		{
 			OW_CIMObjectPath cop = e.getAssociatedObject();
+			/* I don't think we need to do this, since a namespace should
+			   never be empty, it defaults to "root"
 			if (cop.getNameSpace().empty())
 			{
 				cop.setNameSpace(ns);
 			}
-			OW_CIMClass cc = server.getClass(cop,false,includeQualifiers,includeClassOrigin,propList,aclInfo);
+			*/
+			OW_CIMClass cc = server.getClass(cop.getNameSpace(),
+				cop.getObjectName(), false, includeQualifiers,
+				includeClassOrigin, propList, aclInfo);
 			result.handle(cc);
 		}
 	private:

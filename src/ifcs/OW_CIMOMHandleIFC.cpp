@@ -202,11 +202,11 @@ OW_CIMOMHandleIFC::enumInstanceNamesE(
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierTypeEnumeration
 OW_CIMOMHandleIFC::enumQualifierTypesE(
-		const OW_CIMObjectPath& path)
+	const OW_String& ns)
 {
 	OW_CIMQualifierTypeEnumeration rval;
 	CIMQualifierTypeEnumBuilder handler(rval);
-	enumQualifierTypes(path, handler);
+	enumQualifierTypes(ns, handler);
 	return rval;
 }
 

@@ -88,9 +88,7 @@ long MofCompiler::compile( const OW_String& filename )
             MofCompiler::theErrorHandler->progressMessage("Finished parsing",
                     MofCompiler::theLineInfo);
 
-            OW_CIMNameSpace ns(true);
-            ns.setNameSpace(m_nameSpace);
-            CIMOMVisitor v(m_ch, ns);
+            CIMOMVisitor v(m_ch, m_nameSpace);
             MofCompiler::mofSpecification->Accept(&v);
         }
         catch (const OW_MofParseFatalErrorException&)

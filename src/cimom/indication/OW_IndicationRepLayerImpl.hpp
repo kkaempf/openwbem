@@ -86,11 +86,11 @@ public:
 	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);
 
-	virtual void enumQualifierTypes(const
-		OW_CIMObjectPath &path,
+	virtual void enumQualifierTypes(
+		const OW_String& ns,
 		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo& aclInfo)
 	{
-		m_pServer->enumQualifierTypes(path, result, aclInfo);
+		m_pServer->enumQualifierTypes(ns, result, aclInfo);
 	}
 
 
@@ -129,12 +129,14 @@ public:
 	}
 
 
-	virtual OW_CIMClass getClass(const OW_CIMObjectPath& path,
+	virtual OW_CIMClass getClass(
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_ACLInfo& aclInfo)
 	{
-		return m_pServer->getClass(path, localOnly, includeQualifiers,
+		return m_pServer->getClass(ns, className, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 

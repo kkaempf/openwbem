@@ -179,12 +179,13 @@ void createClass(OW_CIMOMHandleIFC& hdl)
 
 void modifyClass(OW_CIMOMHandleIFC& hdl)
 {
-	OW_CIMObjectPath cop("EXP_IndicationTestComputerSystem", "root/testsuite");
-	OW_CIMClass cimClass = hdl.getClass(cop, false);
+	OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+		"EXP_IndicationTestComputerSystem", false);
 	OW_CIMProperty cimProp(OW_Bool(true));
 	cimProp.setDataType(OW_CIMDataType::STRING);
 	cimProp.setName("BrandNewProperty");
 	cimClass.addProperty(cimProp);
+	OW_CIMObjectPath cop("EXP_IndicationTestComputerSystem", "root/testsuite");
 	hdl.modifyClass(cop, cimClass);
 }
 
@@ -193,32 +194,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 {
 	OW_String fromClass = "EXP_IndicationTestComputerSystem";
 
-	/*OW_CIMPropertyArray keyvect;
-
-	OW_CIMInstance cimInstance(newInstance);
-	cimInstance.setClassName(fromClass);
-	OW_CIMValue cv(fromClass);
-	cimInstance.setProperty("CreationClassName", cv);
-	OW_CIMProperty cp = cimInstance.getProperty("CreationClassName");
-	OW_CIMQualifier cq(OW_CIMQualifier::CIM_QUAL_KEY,
-		OW_CIMQualifierType("Boolean"));
-	cq.setValue(OW_CIMValue(OW_Bool(true)));
-	cp.addQualifier(cq);
-	cp.setValue(cv);
-	keyvect.append(cp);
-
-	cv = OW_CIMValue(newInstance);
-	cimInstance.setProperty("Name", cv);
-	cp = cimInstance.getProperty("CreationClassName");
-	cq = OW_CIMQualifier("Key", OW_CIMQualifierType("Boolean"));
-	cq.setValue(OW_CIMValue(OW_Bool(true)));
-	cp.addQualifier(cq);
-	cp.setValue(cv);
-	keyvect.append(cp);
-	cimInstance.setProperties(keyvect);*/
-
-	OW_CIMObjectPath cop(fromClass, "root/testsuite");
-	OW_CIMClass cimClass = hdl.getClass(cop, false);
+	OW_CIMClass cimClass = hdl.getClass("root/testsuite", fromClass, false);
 
 	OW_CIMInstance newInst = cimClass.newInstance();
 
@@ -228,7 +204,7 @@ void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
 	newInst.setProperty("CreationClassName",
 							  OW_CIMValue(fromClass));
 
-	cop = OW_CIMObjectPath(fromClass, newInst.getKeyValuePairs());
+	OW_CIMObjectPath cop(fromClass, newInst.getKeyValuePairs());
 	cop.setNameSpace("root/testsuite");
 
 	hdl.createInstance(cop, newInst);
@@ -309,13 +285,10 @@ int main(int argc, char* argv[])
 			OW_SocketBaseImpl::setDumpFiles(sockDumpIn.c_str(),
 				sockDumpOut.c_str());
 		}
-		// These callbacks need to be BEFORE the OW_HTTPXMLCIMListener,
-		// so that they will be destructed after, because the listener could
-		// receive an indication in the millisecond between the destruction of
-		//  the callbacks and before it's destroyed, thus causing a segfault.
-		myCallBack mcb;
-		test1CallBack test1cb;
-		test2CallBack test2cb;
+
+		OW_CIMListenerCallbackRef mcb(new myCallBack);
+		OW_CIMListenerCallbackRef test1cb(new test1CallBack);
+		OW_CIMListenerCallbackRef test2cb(new test2CallBack);
 
 		OW_LoggerRef logger(new ListenerLogger);
 

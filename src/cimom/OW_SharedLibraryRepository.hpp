@@ -77,10 +77,10 @@ public:
 	}
 
 	virtual void enumQualifierTypes(
-		const OW_CIMObjectPath &path,
+		const OW_String& ns,
 		OW_CIMQualifierTypeResultHandlerIFC& result, const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->enumQualifierTypes(path, result, aclInfo);
+		return m_ref->enumQualifierTypes(ns, result, aclInfo);
 	}
 
 	virtual void deleteQualifierType(const OW_String& ns, const OW_String& qualName,
@@ -95,12 +95,14 @@ public:
 		m_ref->setQualifierType(name, qt, aclInfo);
 	}
 
-	virtual OW_CIMClass getClass(const OW_CIMObjectPath &path,
+	virtual OW_CIMClass getClass(
+		const OW_String& ns,
+		const OW_String& className,
 		OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray *propertyList,
 		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->getClass(path, localOnly, includeQualifiers,
+		return m_ref->getClass(ns, className, localOnly, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
 

@@ -130,7 +130,7 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	const insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN
 	)
 {
-	OW_CIMClass cc = m_hdl->getClass(OW_CIMObjectPath(m_tableRef, m_ns), false, true, true, 0);
+	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, false, true, true, 0);
 
 	OW_CIMInstance ci = cc.newInstance();
 	OW_CIMPropertyArray cpa = ci.getProperties();
@@ -204,7 +204,7 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 	const insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN
 	)
 {
-	OW_CIMClass cc = m_hdl->getClass(OW_CIMObjectPath(m_tableRef, m_ns), false, true, true, 0);
+	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, false, true, true, 0);
 	if (pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_pcolumnList2->size() !=
 		pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList6->size())
 	{
@@ -1411,8 +1411,7 @@ bool OW_WQLProcessor::classIsDerivedFrom(const OW_String& cls,
 			return true;
 		}
 		// didn't match, so try the superclass of curClassName
-		OW_CIMObjectPath cop(curClassName, m_ns);
-		OW_CIMClass cls2 = m_hdl->getClass(cop);
+		OW_CIMClass cls2 = m_hdl->getClass(m_ns, curClassName);
 		curClassName = cls2.getSuperClass();
 
 	}

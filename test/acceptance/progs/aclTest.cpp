@@ -210,8 +210,8 @@ void getClass(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing getClass() *******\n" << endl;
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BionicComputerSystem", "/root/acltest");
-		OW_CIMClass cimClass = hdl.getClass(cop, false);
+		OW_CIMClass cimClass = hdl.getClass("/root/acltest",
+			"EXP_BionicComputerSystem", false);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}
@@ -409,9 +409,7 @@ void enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumerateQualifier() *******\n" << endl;
 	try
 	{
-		OW_String theClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(theClass, "/root/acltest");
-		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE(cop);
+		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE("/root/acltest");
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

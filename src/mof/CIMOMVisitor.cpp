@@ -41,7 +41,7 @@
 
 #include <assert.h>
 
-CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_CIMNameSpace& ns)
+CIMOMVisitor::CIMOMVisitor(OW_Reference<OW_CIMOMHandleIFC> handle, OW_String& ns)
 : m_curClass(OW_Bool(true))
 , m_curInstance(OW_Bool(true))
 , m_curValue()
@@ -120,7 +120,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("namespace"))
 	{
-		m_namespace.setNameSpace(MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter));
+		m_namespace = MofCompiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocal"))
 	{
@@ -955,9 +955,8 @@ void CIMOMVisitor::VisitDefaultFlavor( const DefaultFlavor *pDefaultFlavor )
 
 void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanceDeclaration )
 {
-	OW_CIMClass cc = m_hdl->getClass(
-		OW_CIMObjectPath(*pInstanceDeclaration->pClassName->pClassName,
-			m_namespace.getNameSpace()), false);
+	OW_CIMClass cc = m_hdl->getClass(m_namespace,
+		*pInstanceDeclaration->pClassName->pClassName, false);
 	m_curInstance = cc.newInstance();
 	if ( pInstanceDeclaration->pQualifier.get() != 0 )
 	{
@@ -997,7 +996,7 @@ void CIMOMVisitor::VisitInstanceDeclaration( const InstanceDeclaration *pInstanc
 						// If the object path doesn't have a : character, then we need to set the namespace on it.
 						if (m_curProperty.getValue().toString().indexOf(':') == -1)
 						{
-							cop.setNameSpace(m_namespace.toString());
+							cop.setNameSpace(m_namespace);
 							castValue = OW_CIMValue(cop);
 						}
 					}
@@ -1136,7 +1135,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 	try
 	{
 		MofCompiler::theErrorHandler->progressMessage(format("Processing class: %1", m_curClass.getName()).c_str(), li);
-		m_hdl->createClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace.getNameSpace()), m_curClass);
+		m_hdl->createClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace), m_curClass);
 		MofCompiler::theErrorHandler->progressMessage(format("Created class: %1", m_curClass.getName()).c_str(), li);
 	}
 	catch (const OW_CIMException& ce)
@@ -1145,7 +1144,7 @@ void CIMOMVisitor::CIMOMcreateClass(const lineInfo& li)
 		{
 			try
 			{
-				m_hdl->modifyClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace.getNameSpace()), m_curClass);
+				m_hdl->modifyClass(OW_CIMObjectPath(m_curClass.getName(), m_namespace), m_curClass);
 				MofCompiler::theErrorHandler->progressMessage(format("Updated class: %1", m_curClass.getName()).c_str(), li);
 			}
 			catch (const OW_CIMException& ce)
@@ -1165,7 +1164,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 	try
 	{
 		MofCompiler::theErrorHandler->progressMessage(format("Setting QualifierType: %1", m_curQualifierType.getName()).c_str(), li);
-		m_hdl->setQualifierType(OW_CIMObjectPath(m_curQualifierType.getName(), m_namespace.getNameSpace()), m_curQualifierType);
+		m_hdl->setQualifierType(OW_CIMObjectPath(m_curQualifierType.getName(), m_namespace), m_curQualifierType);
 		// save it in the cache
 		OW_String lcqualName = m_curQualifierType.getName();
 		lcqualName.toLowerCase();
@@ -1180,7 +1179,7 @@ void CIMOMVisitor::CIMOMsetQualifierType(const lineInfo& li)
 void CIMOMVisitor::CIMOMcreateInstance(const lineInfo& li)
 {
 	OW_CIMObjectPath cop(m_curInstance.getClassName(), m_curInstance.getKeyValuePairs());
-	cop.setNameSpace(m_namespace.getNameSpace());
+	cop.setNameSpace(m_namespace);
 	MofCompiler::theErrorHandler->progressMessage(format("Processing Instance: %1", cop.modelPath()).c_str(), li);
 	try
 	{
@@ -1215,7 +1214,7 @@ OW_CIMQualifierType CIMOMVisitor::CIMOMgetQualifierType(const OW_String& qualNam
 	try
 	{
 		return m_hdl->getQualifierType(
-				OW_CIMObjectPath(qualName, m_namespace.getNameSpace()));
+				OW_CIMObjectPath(qualName, m_namespace));
 	}
 	catch (const OW_CIMException& ce)
 	{
