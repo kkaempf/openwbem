@@ -685,14 +685,14 @@ OW_MetaRepository::adjustClass(const OW_String& ns, OW_CIMClass& childClass,
             if(!parentNode)
             {
                 OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
-                    superID.c_str());
+                    parentName.c_str());
             }
 
             parentClass = _getClassFromNode(parentNode, hdl, ns);
             if(!parentClass)
             {
                 OW_THROWCIMMSG(OW_CIMException::INVALID_SUPERCLASS,
-                    superID.c_str());
+                    parentName.c_str());
             }
         }
 	}
