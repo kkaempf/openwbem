@@ -220,36 +220,41 @@ OW_CIMOMEnvironment::unloadProviders()
 void
 OW_CIMOMEnvironment::startServices()
 {
-	OW_MutexLock ml(m_monitor);
+	{
+		OW_MutexLock ml(m_monitor);
 
-	_createLogger();
-	
-	OW_CIMOMEnvironmentRef eref(this, true);
-	m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
-	m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
-		eref));
+		_createLogger();
 
-	// Add the unloader provider to the provider manager
-	m_providerManager->addCIMOMProvider(OW_CppProviderBaseIFCRef(
-		OW_SharedLibraryRef(), new OW_UnloaderProvider(this)));
+		OW_CIMOMEnvironmentRef eref(this, true);
+		m_providerManager = OW_ProviderManagerRef(new OW_ProviderManager);
+		m_providerManager->init(OW_ProviderIFCLoader::createProviderIFCLoader(
+			eref));
 
-	// Add the name space provider to the provider manager
-	m_providerManager->addCIMOMProvider(OW_CIMServer::NAMESPACE_PROVIDER,
-		OW_CppProviderBaseIFCRef(OW_SharedLibraryRef(),
-		new OW_NameSpaceProvider));
+		// Add the unloader provider to the provider manager
+		m_providerManager->addCIMOMProvider(OW_CppProviderBaseIFCRef(
+			OW_SharedLibraryRef(), new OW_UnloaderProvider(this)));
 
-	m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
-		m_providerManager));
-	m_cimServer->open(getConfigItem(OW_ConfigOpts::DATA_DIR_opt));
+		// Add the name space provider to the provider manager
+		m_providerManager->addCIMOMProvider(OW_CIMServer::NAMESPACE_PROVIDER,
+			OW_CppProviderBaseIFCRef(OW_SharedLibraryRef(),
+			new OW_NameSpaceProvider));
 
-	_createAuthManager();
-	_loadRequestHandlers();
-	_loadServices();
+		m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
+			m_providerManager));
+		m_cimServer->open(getConfigItem(OW_ConfigOpts::DATA_DIR_opt));
 
-	_createPollingManager();
-	_createIndicationServer();
+		_createAuthManager();
+		_loadRequestHandlers();
+		_loadServices();
 
-	m_running = true;
+		_createPollingManager();
+		_createIndicationServer();
+	}
+
+	{
+		OW_MutexLock l(m_runningGuard);
+		m_running = true;
+	}
 
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
@@ -286,7 +291,10 @@ OW_CIMOMEnvironment::shutdown()
 {
 	logDebug("CIMOM Environment shutting down...");
 
-	m_running = false;
+	{
+		OW_MutexLock l(m_runningGuard);
+		m_running = false;
+	}
 
 	OW_MutexLock ml(m_monitor);
 
@@ -376,10 +384,13 @@ OW_CIMOMEnvironment::shutdown()
 OW_ProviderManagerRef
 OW_CIMOMEnvironment::getProviderManager()
 {
-	if (!m_running)
 	{
-		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
-		//return OW_ProviderManagerRef();
+		OW_MutexLock l(m_runningGuard);
+		if (!m_running)
+		{
+			OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+			//return OW_ProviderManagerRef();
+		}
 	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_providerManager);
@@ -652,9 +663,12 @@ OW_Bool
 OW_CIMOMEnvironment::authenticate(OW_String &userName, const OW_String &info,
 	OW_String &details)
 {
-	if (!m_running)
 	{
-		return false;
+		OW_MutexLock l(m_runningGuard);
+		if (!m_running)
+		{
+			return false;
+		}
 	}
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_authManager);
@@ -682,11 +696,14 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
         const OW_ACLInfo& aclInfo)
 {
-	if (!m_running)
 	{
-		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
-		//return OW_CIMOMHandleIFCRef();
+		OW_MutexLock l(m_runningGuard);
+		if (!m_running)
+		{
+			OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		}
 	}
+
 	OW_MutexLock ml(m_monitor);
 	OW_ASSERT(m_cimServer);
 	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(
@@ -699,10 +716,12 @@ OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	OW_Bool doIndications)
 {
-	if (!m_running)
 	{
-		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
-		//return OW_CIMOMHandleIFCRef();
+		OW_MutexLock l(m_runningGuard);
+		if (!m_running)
+		{
+			OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		}
 	}
 
 	OW_MutexLock ml(m_monitor);
@@ -741,10 +760,12 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
 OW_WQLIFCRef
 OW_CIMOMEnvironment::getWQLRef()
 {
-	if (!m_running)
 	{
-		OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
-		//return OW_WQLIFCRef();
+		OW_MutexLock l(m_runningGuard);
+		if (!m_running)
+		{
+			OW_THROW(OW_Exception, "OW_CIMOMEnvironment is shutting down");
+		}
 	}
 
 	OW_MutexLock ml(m_monitor);
@@ -832,9 +853,12 @@ OW_RequestHandlerIFCRef
 OW_CIMOMEnvironment::getRequestHandler(const OW_String &id)
 {
 	OW_RequestHandlerIFCRef ref;
-	if (!m_running)
 	{
-		return ref;
+		OW_MutexLock l(m_runningGuard);
+		if (!m_running)
+		{
+			return ref;
+		}
 	}
 
 

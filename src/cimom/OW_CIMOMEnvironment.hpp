@@ -176,8 +176,9 @@ private:
 	mutable OW_Mutex m_indicationLock;
 	OW_Bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;
-	// TODO: Replace m_running with a condition variable.
-	OW_Bool m_running;
+	
+	bool m_running;
+	OW_Mutex m_runningGuard;
 };
 
 typedef OW_Reference<OW_CIMOMEnvironment> OW_CIMOMEnvironmentRef;
