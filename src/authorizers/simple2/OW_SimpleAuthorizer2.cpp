@@ -358,7 +358,7 @@ bool
 SimpleAuthorizer2::doAllowMethodInvocation(
 	const ServiceEnvironmentIFCRef& env, 
 	const String& ns, 
-	const CIMObjectPath path, 
+	const CIMObjectPath& path, 
 	const String& methodName,
 	OperationContext& context)
 {

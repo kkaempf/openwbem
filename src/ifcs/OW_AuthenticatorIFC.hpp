@@ -63,7 +63,7 @@ public:
 	 * @exception Any exception may be thrown because other classes which
 	 *	derive from this may need to throw exceptions in init() 
 	 */
-	void init(ServiceEnvironmentIFCRef env) { doInit(env); }
+	void init(const ServiceEnvironmentIFCRef& env) { doInit(env); }
 	/**
 	 * Authenticates a user
 	 *

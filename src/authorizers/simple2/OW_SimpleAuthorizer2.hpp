@@ -192,7 +192,7 @@ public:
 	virtual bool doAllowMethodInvocation(
 		const ServiceEnvironmentIFCRef& env, 
 		const String& ns, 
-		const CIMObjectPath path, 
+		const CIMObjectPath& path, 
 		const String& MethodName,
 		OperationContext& context);
 
