@@ -1011,15 +1011,13 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 			if (lhs.str.equalsIgnoreCase("__Class"))
 			{
 				//Find the rhs, but no subclasses.
-				//result will push_back instances with embeded class into newInstances.
-				ClassesEmbeddedInInstancesResultHandler result(newInstances);
-				m_hdl->enumClass(m_ns, rhs.str, result, E_SHALLOW);
+				newInstances.push_back(embedClassInInstance(m_hdl->getClass(m_ns, rhs.str)));
 			}
 			else if (lhs.str.equalsIgnoreCase("__Dynasty"))
 			{
 				//If the rhs isn't a root class, it doesn't define a dynasty.
-				CIMClassArray cl= m_hdl->enumClassA(m_ns, rhs.str, E_SHALLOW);
-				if (cl.size() && cl[0].getSuperClass() == String(""))
+				CIMClass cl= m_hdl->getClass(m_ns, rhs.str);
+				if (cl && cl.getSuperClass() == String(""))
 				{
 					//Find the rhs,and all subclasses.
 					//result will push_back instances with embeded class into newInstances.
