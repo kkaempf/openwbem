@@ -48,6 +48,8 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_HTTPException.hpp"
 
+#include <fstream>
+
 namespace OpenWBEM
 {
 
@@ -56,19 +58,12 @@ using std::istream;
 //////////////////////////////////////////////////////////////////////////////
 HTTPClient::HTTPClient( const String &sURL )
 #ifndef OW_DISABLE_DIGEST
-	: m_sRealm()
-	, m_sDigestNonce()
-	, m_sDigestCNonce()
-	, m_iDigestNonceCount(1)
-	, m_sDigestSessionKey()
-	, m_sDigestResponse() ,
+	: m_iDigestNonceCount(1) ,
 #else
 	:
 #endif
-	 m_serverAddress()
-	, m_url(sURL)
-	, m_responseHeaders(), m_requestHeadersCommon()
-	, m_requestHeadersNew(), m_pIstrReturn(0)
+	 m_url(sURL)
+	, m_pIstrReturn(0)
 	, m_socket(m_url.scheme.endsWith('s') ? SocketFlags::E_SSL : SocketFlags::E_NOT_SSL) // covers https, cimxml.wbems, owbinary.wbems
 	, m_requestMethod("M-POST"), m_authRequired(false)
 	, m_needsConnect(true)
@@ -76,6 +71,7 @@ HTTPClient::HTTPClient( const String &sURL )
 	, m_doDeflateOut(false)
 	, m_retryCount(0)
 	, m_httpPath("/cimom")
+	, m_uselocalAuthentication(false)
 {
 	// turn off exceptions, since we're not coded to handle them.
 	m_istr.exceptions(std::ios::goodbit);
@@ -126,6 +122,50 @@ namespace
 			return false;
 		}
 	}
+
+	String getAuthParam(const String& paramName, const String& authInfo)
+	{
+		String rval;
+		size_t pos = authInfo.indexOf(paramName);
+		if (pos == String::npos)
+		{
+			return rval;
+		}
+
+		pos += paramName.length();
+		if ((pos = authInfo.indexOf('=', pos)) == String::npos)
+		{
+			return rval;
+		}
+
+		if (pos + 1 >= authInfo.length())
+		{
+			return rval;
+		}
+		++pos; // move past =
+
+		if (authInfo[pos] == '"')
+		{
+			size_t endPos = authInfo.indexOf('"', pos + 1);
+			if(endPos != String::npos)
+			{
+				rval = authInfo.substring(pos + 1, endPos - pos - 1); // don't get the quotes.
+			}
+		}
+		else
+		{
+			size_t endPos = authInfo.indexOf(',', pos);
+			if(endPos != String::npos)
+			{
+				rval = authInfo.substring(pos, endPos - pos);
+			}
+			else
+			{
+				rval = authInfo.substring(pos);
+			}
+		}
+		return rval;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::setUrl()
@@ -167,36 +207,20 @@ void HTTPClient::setUrl()
 	{
 		m_serverAddress = SocketAddress::getUDS(HTTPUtils::unescapeForURL(m_url.port));
 	}
+
+	if ((m_url.host == "localhost" || m_url.host == "127.0.0.1") && m_url.principal.empty() && m_url.credential.empty())
+	{
+		m_uselocalAuthentication = true;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 HTTPClient::receiveAuthentication()
 {
-#ifndef OW_DISABLE_DIGEST
-	RandomNumber rn(0, 0x7FFFFFFF);
-	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
-	
 	String authInfo = getHeaderValue("www-authenticate");
-	size_t iBeginIndex = authInfo.indexOf( "realm" ) + 7;
-	if( iBeginIndex >= 7 )
-	{
-		size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-		if( iEndIndex != String::npos )
-		{
-			m_sRealm = authInfo.substring( iBeginIndex, iEndIndex -
-				iBeginIndex );
-		}
-		else
-		{
-			m_sRealm = "";
-		}
-	}
-	else
-	{
-		m_sRealm = "";
-	}
-#endif // #ifndef OW_DISABLE_DIGEST
-	if (m_url.principal.empty())
+	m_sRealm = getAuthParam("realm", authInfo);
+
+	if (m_url.principal.empty() && !m_uselocalAuthentication) // local authentication doesn't use a principal/credential
 	{
 		if (!m_loginCB)
 		{
@@ -205,7 +229,6 @@ HTTPClient::receiveAuthentication()
 		else
 		{
 			String realm;
-#ifndef OW_DISABLE_DIGEST
 			if (m_sRealm.empty())
 			{
 				realm = m_url.toString();
@@ -214,9 +237,6 @@ HTTPClient::receiveAuthentication()
 			{
 				realm = m_sRealm;
 			}
-#else
-			realm = m_url.toString();
-#endif
 			String name, passwd;
 			if (m_loginCB->getCredentials(realm, name, passwd, ""))
 			{
@@ -229,46 +249,42 @@ HTTPClient::receiveAuthentication()
 			}
 		}
 	}
+
 #ifndef OW_DISABLE_DIGEST
+	RandomNumber rn(0, 0x7FFFFFFF);
+	m_sDigestCNonce.format( "%08x", rn.getNextNumber() );
+	
 	if(headerHasKey("authentication-info") && m_sAuthorization=="Digest" )
 	{
 		String authInfo = getHeaderValue("authentication-info");
-		size_t iBeginIndex = authInfo.indexOf( "nextnonce" ) + 11;
-		if( iBeginIndex >= 11 )
-		{
-			size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-			if( iEndIndex != String::npos )
-			{
-				m_sDigestNonce = authInfo.substring( iBeginIndex,
-					iEndIndex - iBeginIndex );
-			}
-		}
+		m_sDigestNonce = getAuthParam("nextnonce", authInfo);
 		HTTPUtils::DigestCalcHA1( "md5", m_url.principal, m_sRealm,
 			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 		m_iDigestNonceCount = 1;
 	}
-	else if( getHeaderValue("www-authenticate").indexOf( "Digest" ) != String::npos )
+	else if( authInfo.indexOf( "Digest" ) != String::npos )
 	{
 		m_sAuthorization = "Digest";
-		String authInfo = getHeaderValue("www-authenticate");
-		size_t iBeginIndex = authInfo.indexOf( "nonce" ) + 7;
-		if( iBeginIndex >= 7 )
-		{
-			size_t iEndIndex = authInfo.indexOf( '"', iBeginIndex );
-			if( iEndIndex != String::npos )
-			{
-				m_sDigestNonce = authInfo.substring( iBeginIndex, iEndIndex -
-					iBeginIndex );
-			}
-		}
+		m_uselocalAuthentication = false;
+		m_sDigestNonce = getAuthParam("nonce", authInfo);
 		HTTPUtils::DigestCalcHA1( "md5", m_url.principal, m_sRealm,
 			m_url.credential, m_sDigestNonce, m_sDigestCNonce, m_sDigestSessionKey );
 	}
 	else
 #endif
-	if( getHeaderValue("www-authenticate").indexOf( "Basic" ) != String::npos )
+	if( authInfo.indexOf( "Basic" ) != String::npos )
 	{
 		m_sAuthorization = "Basic";
+		m_uselocalAuthentication = false;
+	}
+	else if( authInfo.indexOf( "OWLocal" ) != String::npos || m_uselocalAuthentication)
+	{
+		m_sAuthorization = "OWLocal";
+		m_uselocalAuthentication = true;
+
+		m_localNonce = getAuthParam("nonce", authInfo);
+		m_localCookieFile = getAuthParam("cookiefile", authInfo);
+
 	}
 
     if (m_sAuthorization.empty())
@@ -307,6 +323,28 @@ void HTTPClient::sendAuthorization()
 			m_iDigestNonceCount++;
 		}
 #endif
+		else if (m_sAuthorization == "OWLocal")
+		{
+			if (m_localNonce.empty())
+			{
+				// first round - we just send our euid
+				ostr << "uid=" << ::geteuid();
+			}
+			else
+			{
+				// second round - send the nonce and the cookie
+
+				// first try to read the cookie
+				std::ifstream cookieFile(m_localCookieFile.c_str());
+				if (!cookieFile)
+				{
+					OW_THROW_ERRNO_MSG(HTTPException, "Unable to open local authentication file");
+				}
+				String cookie = String::getLine(cookieFile);
+				ostr << "nonce=\"" << m_localNonce << "\", ";
+				ostr << "cookie=\"" << cookie << "\"";
+			}
+		}
 		addHeaderNew("Authorization", ostr.toString());
 	}
 }
@@ -732,7 +770,7 @@ void
 HTTPClient::handleAuth()
 {
 	// add new headers.
-	if (m_authRequired)
+	if (m_authRequired || m_uselocalAuthentication)
 	{
 		receiveAuthentication();
 		sendAuthorization();

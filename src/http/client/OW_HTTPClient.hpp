@@ -191,6 +191,9 @@ class HTTPClient : public CIMProtocolIFC
 		bool m_doDeflateOut;
 		int m_retryCount;
 		String m_httpPath;
+		bool m_uselocalAuthentication;
+		String m_localNonce;
+		String m_localCookieFile;
 
 		bool headerHasKey(const String& key)
 		{
