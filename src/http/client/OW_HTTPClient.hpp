@@ -51,6 +51,9 @@
 namespace OpenWBEM
 {
 
+// TODO: Rewrite this class. It's way too big and convoluted. 
+// Take a look at Apache's HttpClient library: http://jakarta.apache.org/commons/httpclient/index.html
+
 /**
  * HTTPClient encapulates the functionality of a CIM HTTP Client.  It handles the details of the HTTP protocol.
  *
