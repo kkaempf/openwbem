@@ -138,6 +138,7 @@ private:
 		OW_WQLSelectStatement m_selectStmt;
 		OW_WQLCompile m_compiledStmt;
 		OW_StringArray m_classes;
+		OW_String m_filterSourceNameSpace;
 	};
 
 	// They key is IndicationName:SourceInstanceClassName.  SourceInstanceClassName will only be used if the WQL filter contains "SourceInstance ISA ClassName"

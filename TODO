@@ -53,14 +53,14 @@ New features:
           b) There is a provider that can handle the requested 
              IndicationHandler.
       X OW_IndicationServerImpl::modifySubscription
-      - OW_IndicationServerImpl::_processIndication
-        - Create a wql filter property source.
-      - Add example of types of indication providers: 
+      X OW_IndicationServerImpl::_processIndication
+        X Create a wql filter property source.
+      X Add example of types of indication providers: 
         X indication (mustPoll = true) OW_IndicationProviderTest1
         X indication (mustPoll = false) w/ extra thread
         X indication/polled (mustPoll = false) and no extra thread.
         X Remove OW_TriggerProviderTest*.
-        - Fix cimListener.cpp to use the new indication providers.
+      - Fix cimListener.cpp to use the new indication providers.
       - OW_IndicationRepLayer needs an indication provider to interface with
         it to indicate whether it should generate intrinsic indications.
 		- Modifying existing filters will affect the indication server, and

@@ -39,6 +39,8 @@
 #include "OW_ACLInfo.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMValueCast.hpp"
+#include "OW_SortedVectorSet.hpp"
+#include "OW_NULLValueException.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 struct OW_NotifyTrans
@@ -353,7 +355,7 @@ OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 //////////////////////////////////////////////////////////////////////////////
 namespace
 {
-
+// TODO: Put this into it's own file?
 class InstancePropertySource : public OW_WQLPropertySource
 {
 public:
@@ -421,6 +423,10 @@ private:
 				propNames.remove(0);
 				OW_CIMInstance embed;
 				v.get(embed);
+				if (!embed)
+				{
+					return false;
+				}
 				return evaluateISAAux(embed, propNames, className);
 			}
 			default:
@@ -510,6 +516,10 @@ private:
 				propNames.remove(0);
 				OW_CIMInstance embed;
 				v.get(embed);
+				if (!embed)
+				{
+					return false;
+				}
 				return getValueAux(embed, propNames, value);
 			}
 			break;
@@ -526,6 +536,79 @@ private:
 	OW_CIMOMHandleIFCRef m_hdl;
 	OW_String m_ns;
 };
+
+void splitUpProps(const OW_StringArray& props, 
+	OW_HashMap<OW_String, OW_StringArray>& map)
+{
+	for (size_t i = 0; i < props.size(); ++i)
+	{
+		OW_String prop = props[i];
+		int idx = prop.indexOf('.');
+		if (idx == -1)
+		{
+			map[""].push_back(prop);
+		}
+		else
+		{
+			OW_String key = prop.substring(0, idx);
+			key.toLowerCase();
+			OW_String val = prop.substring(idx+1);
+			val.toLowerCase();
+			map[key].push_back(val);
+		}
+	}
+}
+
+OW_CIMInstance filterInstance(const OW_CIMInstance& toFilter, const OW_StringArray& props)
+{
+	OW_CIMInstance rval(toFilter.clone(OW_CIMOMHandleIFC::NOT_LOCAL_ONLY,
+		OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS, 
+		OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN));
+
+	OW_HashMap<OW_String, OW_StringArray> propMap;
+	splitUpProps(props, propMap);
+
+	// find "" and toFilter.getClassName() and keep those properties.
+	OW_StringArray propsToKeepArray(propMap[""]);
+	
+	OW_String lowerClassName(toFilter.getClassName());
+	lowerClassName.toLowerCase();
+	propsToKeepArray.appendArray(propMap[lowerClassName]);
+
+	// create a sorted set to get faster look-up time.
+	OW_SortedVectorSet<OW_String> propsToKeep(propsToKeepArray.begin(), 
+		propsToKeepArray.end());
+
+	OW_CIMPropertyArray propArray = toFilter.getProperties();
+	OW_CIMPropertyArray propArrayToKeep;
+	for (size_t i = 0; i < propArray.size(); ++i)
+	{
+		OW_String lowerPropName(propArray[i].getName());
+		lowerPropName.toLowerCase();
+		if (propsToKeep.count(lowerPropName) > 0)
+		{
+			OW_CIMProperty thePropToKeep(propArray[i]);
+			// if it's an embedded instance, we need to recurse on it.
+			if (thePropToKeep.getDataType().getType() == OW_CIMDataType::EMBEDDEDINSTANCE)
+			{
+				OW_CIMValue v = thePropToKeep.getValue();
+				if (v)
+				{
+					OW_CIMInstance embed;
+					v.get(embed);
+					if (embed)
+					{
+						thePropToKeep.setValue(OW_CIMValue(
+							filterInstance(embed, propsToKeepArray)));
+					}
+				}
+			}
+			propArrayToKeep.push_back(thePropToKeep);
+		}
+	}
+	rval.setProperties(propArrayToKeep);
+	return rval;
+}
 
 } // end anonymous namespace
 
@@ -581,7 +664,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	subscriptions_t::iterator first = range.first;
 	subscriptions_t::iterator last = range.second;
 
-	while(first != last)
+	for( ;first != last; ++first)
 	{
 		try
 		{
@@ -589,6 +672,11 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			OW_CIMInstance filterInst = sub.m_filter;
 
 			OW_String queryLanguage = sub.m_filter.getPropertyT("Filter").getValueT().toString();
+
+			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
+			{
+				continue;
+			}
 
 			//-----------------------------------------------------------------
 			// Here we need to call into the WQL process with the query string
@@ -600,12 +688,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 				continue;
 			}
 
-			// TODO: This won't work for queries that select embedded properties such as: 
-			// "SELECT myClass.embeddedInstance.embeddedPropName ..."
-			OW_CIMInstance filteredInstance(instanceArg.clone(
-				OW_CIMOMHandleIFC::NOT_LOCAL_ONLY, 
-				OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS, 
-				OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN, 
+			OW_CIMInstance filteredInstance(filterInstance(instanceArg,
 				sub.m_selectStmt.getSelectPropertyNames()));
 
 			// Now get the export handler for this indication subscription
@@ -641,7 +724,6 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			m_env->logError(format("Error occurred while exporting indications:"
 				" %1", e).c_str());
 		}
-		++first;
 	}
 }
 
@@ -740,6 +822,28 @@ OW_IndicationServerImpl::deleteSubscription(const OW_String& ns, const OW_CIMObj
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+
+OW_String getSourceNameSpace(const OW_CIMInstance& inst)
+{
+	try
+	{
+		return inst.getPropertyT("SourceNamespace").getValueT().toString();
+	}
+	catch (const OW_NoSuchPropertyException& e)
+	{
+		return "";
+	}
+	catch (const OW_NULLValueException& e)
+	{
+		return "";
+	}
+}
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMInstance& subInst)
 {
@@ -747,6 +851,10 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	OW_CIMOMHandleIFCRef hdl = m_env->getRepositoryCIMOMHandle();
 	OW_CIMObjectPath filterPath = subInst.getProperty("Filter").getValueT().toCIMObjectPath();
 	OW_String filterNS = filterPath.getNameSpace();
+	if (filterNS.empty())
+	{
+		filterNS = ns;
+	}
 	OW_CIMInstance filterInst = hdl->getInstance(filterNS, filterPath);
 	OW_String filterQuery = filterInst.getPropertyT("Query").getValueT().toString();
 
@@ -852,6 +960,19 @@ OW_IndicationServerImpl::createSubscription(const OW_String& ns, const OW_CIMIns
 	sub.m_selectStmt = selectStmt;
 	sub.m_compiledStmt = compiledStmt;
 	sub.m_classes = isaClassNames;
+	
+	// m_filterSourceNamespace is saved so _processIndication can do what the
+	// schema says:
+	//"The path to a local namespace where the Indications "
+	//"originate. If NULL, the namespace of the Filter registration "
+	//"is assumed."
+	// first try to get it from the property
+	OW_String filterSourceNameSpace = getSourceNameSpace(filterInst);
+	if (filterSourceNameSpace.empty())
+	{
+		filterSourceNameSpace = filterNS;
+	}
+	sub.m_filterSourceNameSpace = filterSourceNameSpace;
 
 	// get the lock and put it in m_subscriptions
 	{
