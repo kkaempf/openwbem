@@ -51,7 +51,19 @@ lockfile=${SVIlock:-/var/lock/subsys/$NAME}
 # See how we were called.
 case "$1" in
  start)
-  [ -s $PIDFILE ] && exit 1
+  if [ -s $PIDFILE ]; then
+    PID=`cat $PIDFILE`
+
+    if kill -0 $PID >/dev/null 2>&1; then
+      echo "$NAME ($PID) is already running."
+      exit 1
+    else
+      echo "Stale $NAME pid file ($PIDFILE) found. Removing."
+      rm -f $PIDFILE
+    fi
+  fi
+		  
+			
   # Start daemons.
   echo -n "Starting the $DESCRIPTIVE"
   #ssd -S -n $NAME -x $DAEMON -- $OPTIONS 
