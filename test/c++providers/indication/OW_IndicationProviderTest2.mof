@@ -1,0 +1,6 @@
+ 
+[ Description("This is our test class that is just a dummy device") ]
+class OW_IndicationProviderTest2 : CIM_LogicalDevice
+{
+};
+
