@@ -37,6 +37,7 @@
 #include "OW_Array.hpp"
 #include "OW_FileSystem.hpp"
 #include "OW_Format.hpp"
+#include "OW_LocalAuthenticationCommon.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -63,18 +64,17 @@
 // If the operation was successful, 0 (SUCCESS) is the return value.
 // If the operation failed, an error message is printed to stderr and the return code is != 0.
 
+using std::cerr;
+using std::endl;
+using std::cin;
+using std::cout;
+using namespace OpenWBEM;
+using namespace OpenWBEM::LocalAuthenticationCommon;
+
 namespace
 {
 
-using namespace std;
-using namespace OpenWBEM;
-
 const char* OWCIMOMD_USER_STR = "owcimomd";
-const char* REMOVE_CMD = "remove";
-const char* INITIALIZE_CMD = "initialize";
-const char* CREATE_CMD = "create";
-
-#define LOCAL_AUTH_DIR OW_DEFAULT_STATE_DIR "/openwbem/OWLocal"
 
 const int SUCCESS = 0;
 
@@ -83,9 +83,7 @@ const int INVALID_USER = 2;
 const int NOT_SETUID_ROOT = 3;
 const int INVALID_INPUT = 4;
 const int REMOVE_FAILED = 5;
-const int INITIALIZE_FAILED = 6;
-const int UNEXPECTED_EXCEPTION = 7;
-const int CREATE_FAILED = 8;
+const int UNEXPECTED_EXCEPTION = 6;
 
 bool checkRealUser()
 {
@@ -205,97 +203,6 @@ int processRemove()
 	return SUCCESS;
 }
 
-int processInitialize()
-{
-	StringArray dirParts = String(LOCAL_AUTH_DIR).tokenize(OW_FILENAME_SEPARATOR);
-	String curDir;
-	for (size_t i = 0; i < dirParts.size(); ++i)
-	{
-		// for each intermediary dir, try to create it.
-		curDir += OW_FILENAME_SEPARATOR;
-		curDir += dirParts[i];
-		int rv = ::mkdir(curDir.c_str(), 0755);
-		if (rv == -1 && errno != EEXIST)
-		{
-			perror(Format("owlocalhelper::processInitialize(): mkdir(%1, 0755)", curDir).c_str());
-			return INITIALIZE_FAILED;
-		}
-		if (rv == 0)
-		{
-			// if we actually created the directory, remove the set-group-id bit 
-			// and change the file & group ownership to the real user/group id
-			struct stat statbuf;
-			if (lstat(curDir.c_str(), &statbuf) == -1)
-			{
-				perror(Format("owlocalhelper::processInitialize(): lstat(%1, ...)", curDir).c_str());
-				return INITIALIZE_FAILED;
-			}
-			
-			if (chmod(curDir.c_str(), statbuf.st_mode & ~S_ISGID) == -1)
-			{
-				perror(Format("owlocalhelper::processInitialize(): chmod(%1, ...)", curDir).c_str());
-				return INITIALIZE_FAILED;
-			}
-
-			if (chown(curDir.c_str(), 0, 0) == -1)
-			{
-				perror(Format("owlocalhelper::processInitialize(): chown(%1, 0, 0)", curDir).c_str());
-				return INITIALIZE_FAILED;
-			}
-		}
-
-		// check that all intermediary dirs have at least a+rx perms, otherwise fail.
-		struct stat statbuf;
-		if (lstat(curDir.c_str(), &statbuf) == -1)
-		{
-			perror(Format("owlocalhelper::processInitialize(): lstat(%1, ...)", curDir).c_str());
-			return INITIALIZE_FAILED;
-		}
-
-		int necessaryMask = S_IROTH | S_IXOTH;
-		if (statbuf.st_mode & necessaryMask != necessaryMask)
-		{
-			cerr << "owlocalhelper::processInitialize(): directory permissions on " << curDir 
-				<< " are " << statbuf.st_mode << ". That is insufficient." << endl;
-			return INITIALIZE_FAILED;
-		}
-	}
-
-	// for each file in the dir, check it's creation time and delete it if its more than a day old or newer than the current time.
-	StringArray files;
-	if (!FileSystem::getDirectoryContents(LOCAL_AUTH_DIR, files))
-	{
-		perror(Format("owlocalhelper::processInitialize(): getDirectoryContents(%1, ...) failed", curDir).c_str());
-		return INITIALIZE_FAILED;
-	}
-
-	for (size_t i = 0; i < files.size(); ++i)
-	{
-		struct stat statbuf;
-		String curFilePath = String(LOCAL_AUTH_DIR) + OW_FILENAME_SEPARATOR + files[i];
-		if (lstat(curFilePath.c_str(), &statbuf) == -1)
-		{
-			perror(Format("owlocalhelper::processInitialize(): lstat(%1, ...)", curFilePath).c_str());
-			return INITIALIZE_FAILED;
-		}
-
-		if (S_ISREG(statbuf.st_mode))
-		{
-			time_t curTime = ::time(NULL);
-			const time_t ONE_DAY = 24 * 60 * 60;
-			if ((statbuf.st_ctime < curTime - ONE_DAY) || statbuf.st_ctime > curTime)
-			{
-				if (::unlink(curFilePath.c_str()) == -1)
-				{
-					perror(Format("owlocalhelper::processInitialize(): unlink(%1)", curFilePath).c_str());
-					return INITIALIZE_FAILED;
-				}
-			}
-		}
-	}
-	return SUCCESS;
-}
-
 int processCreate()
 {
 	// Read the uid from stdin
@@ -305,85 +212,16 @@ int processCreate()
 		cerr << "owlocalhelper::processCreate(): expected to get the uid" << endl;
 		return INVALID_INPUT;
 	}
-
-	uid_t userid = ~0;
-	try
-	{
-		if (sizeof(userid) == sizeof(UInt16))
-		{
-			userid = uid.toUInt16();
-		}
-		else if (sizeof(userid) == sizeof(UInt32))
-		{
-			userid = uid.toUInt32();
-		}
-		else if (sizeof(userid) == sizeof(UInt64))
-		{
-			userid = uid.toUInt64();
-		}
-	}
-	catch (StringConversionException& e)
-	{
-		cerr << "owlocalhelper::processCreate(): uid \"" << uid << "\" is not a valid uid_t" << endl;
-		return INVALID_INPUT;
-	}
-
-	//-- Create temporary file for auth process
-	// Some old implementations of mkstemp() create a file with mode 0666.
-	// The fact that the umask is set to 0077 makes this safe from prying eyes.
-	::umask(0077);
-
-	char tfname[1024];
-	int authfd;
-	::snprintf(tfname, sizeof(tfname), "%s/%dXXXXXX", LOCAL_AUTH_DIR, ::getpid());
-	authfd = ::mkstemp(tfname);
-	if (authfd == -1)
-	{
-		perror(Format("owlocalhelper::processCreate(): mkstemp(%1)", tfname).c_str());
-		return CREATE_FAILED;
-	}
-
-	//-- Change file permission on temp file to read/write for user only
-	if (::fchmod(authfd, 0400) == -1)
-	{
-		perror(Format("owlocalhelper::processCreate(): fchmod on %1", tfname).c_str());
-		::close(authfd);
-		::unlink(tfname);
-		return CREATE_FAILED;
-	}
-	
-	//-- Change file so the user connecting is the owner
-	if (::fchown(authfd, userid, static_cast<gid_t>(-1)) == -1)
-	{
-		perror(Format("owlocalhelper::processCreate(): fchown on %1 to %2", tfname, userid).c_str());
-		::close(authfd);
-		::unlink(tfname);
-		return CREATE_FAILED;
-	}
 	
 	// Read a random number from stdin to put in file for client to read
 	String cookie;
 	if (!getLineFromStdin(cookie))
 	{
 		cerr << "owlocalhelper::processCreate(): expected to get the cookie" << endl;
-		::close(authfd);
-		::unlink(tfname);
 		return INVALID_INPUT;
 	}
 
-	// Write the servers random number to the temp file
-	if (::write(authfd, cookie.c_str(), cookie.length()) != static_cast<ssize_t>(cookie.length()))
-	{
-		perror(Format("owlocalhelper::processCreate(): failed to write() the cookie to %1", tfname).c_str());
-		::close(authfd);
-		::unlink(tfname);
-		return CREATE_FAILED;
-	}
-	
-	::close(authfd);
-
-	// caller is looking for this.
-	cout << tfname << endl;
+    cout << createFile(uid, cookie) << endl;
 	
 	return SUCCESS;
 }
@@ -406,7 +244,8 @@ int processStdin()
 	}
 	else if (curLine == INITIALIZE_CMD)
 	{
-		return processInitialize();
+		initializeDir();
+		return SUCCESS;
 	}
 	else if (curLine == CREATE_CMD)
 	{
@@ -442,6 +281,11 @@ int main(int argc, char* argv[])
 		}
 	
 		return processStdin();
+	}
+	catch (LocalAuthenticationException& e)
+	{
+		cerr << e.getMessage() << endl;
+		return e.getErrorCode();
 	}
 	catch (std::exception& e)
 	{

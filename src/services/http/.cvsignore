@@ -11,3 +11,4 @@ lib*dylib*
 *.exp
 *.nlm
 *.nlm.*
+owlocalhelper

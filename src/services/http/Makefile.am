@@ -64,7 +64,9 @@ owlocalhelperbin_PROGRAMS = owlocalhelper
 owlocalhelperbindir = $(libexecdir)/openwbem
 
 owlocalhelper_SOURCES = \
-owlocalhelper_main.cpp
+owlocalhelper_main.cpp \
+OW_LocalAuthenticationCommon.cpp \
+OW_LocalAuthenticationCommon.hpp
 
 owlocalhelper_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
