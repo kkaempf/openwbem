@@ -88,9 +88,10 @@ void
 OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
-	OW_MethodProviderInfoArray& m)
+	OW_MethodProviderInfoArray& m,
+	OW_PropertyProviderInfoArray& p)
 {
-	loadProviders(env, i, a, m);
+	loadProviders(env, i, a, m, p);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -252,7 +253,8 @@ void
 OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
-	OW_MethodProviderInfoArray& methodProviderInfo)
+	OW_MethodProviderInfoArray& methodProviderInfo,
+	OW_PropertyProviderInfoArray& propertyProviderInfo)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -364,7 +366,14 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_mp->getProviderInfo(info);
 				methodProviderInfo.push_back(info);
 			}
-			// TODO: Get info for property providers
+			OW_CppPropertyProviderIFC* p_pp = p->getPropertyProvider();
+			if (p_pp)
+			{
+				OW_PropertyProviderInfo info;
+				info.setProviderName(providerid);
+				p_pp->getProviderInfo(info);
+				propertyProviderInfo.push_back(info);
+			}
 			continue;
 		}
 

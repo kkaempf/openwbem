@@ -70,24 +70,24 @@ class testSharedLibrary: public OW_SharedLibrary
 class TestInstanceProvider : public OW_InstanceProviderIFC
 {
 public:
-	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMInstanceResultHandlerIFC &, const OW_Bool &, const OW_CIMClass &, const OW_Bool &) 
+	virtual void enumInstances(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMInstanceResultHandlerIFC &, const OW_Bool &, const OW_CIMClass &, const OW_Bool &)
 	{
 	}
-	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_Bool &, const OW_CIMClass &) 
+	virtual void enumInstanceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_String &, OW_CIMObjectPathResultHandlerIFC &, const OW_Bool &, const OW_CIMClass &)
 	{
 	}
-	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMClass &, const OW_Bool &) 
+	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMClass &, const OW_Bool &)
 	{
 		return OW_CIMInstance();
 	}
-	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &) 
+	virtual OW_CIMObjectPath createInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
 	{
 		return OW_CIMObjectPath();
 	}
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &) 
+	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMInstance &)
 	{
 	}
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &) 
+	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &)
 	{
 	}
 };
@@ -95,7 +95,7 @@ public:
 class TestMethodProvider : public OW_MethodProviderIFC
 {
 public:
-	virtual OW_CIMValue invokeMethod(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_CIMParamValueArray &, OW_CIMParamValueArray &) 
+	virtual OW_CIMValue invokeMethod(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_CIMParamValueArray &, OW_CIMParamValueArray &)
 	{
 		return OW_CIMValue();
 	}
@@ -104,16 +104,28 @@ public:
 class TestAssociatorProvider : public OW_AssociatorProviderIFC
 {
 public:
-	virtual void associatorNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMObjectPathResultHandlerIFC &, const OW_String &, const OW_String &, const OW_String &) 
+	virtual void associatorNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMObjectPathResultHandlerIFC &, const OW_String &, const OW_String &, const OW_String &)
 	{
 	}
-	virtual void references(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMInstanceResultHandlerIFC &, const OW_String &, const OW_Bool &, const OW_Bool &, const OW_StringArray *) 
+	virtual void references(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMInstanceResultHandlerIFC &, const OW_String &, const OW_Bool &, const OW_Bool &, const OW_StringArray *)
 	{
 	}
-	virtual void referenceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMObjectPathResultHandlerIFC &, const OW_String &) 
+	virtual void referenceNames(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMObjectPathResultHandlerIFC &, const OW_String &)
 	{
 	}
-	virtual void associators(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMInstanceResultHandlerIFC &, const OW_String &, const OW_String &, const OW_String &, const OW_Bool &, const OW_Bool &, const OW_StringArray *) 
+	virtual void associators(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_CIMObjectPath &, OW_CIMInstanceResultHandlerIFC &, const OW_String &, const OW_String &, const OW_String &, const OW_Bool &, const OW_Bool &, const OW_StringArray *)
+	{
+	}
+};
+
+class TestPropertyProvider : public OW_PropertyProviderIFC
+{
+public:
+	virtual OW_CIMValue getPropertyValue(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_String &)
+	{
+		return OW_CIMValue();
+	}
+	virtual void setPropertyValue(const OW_ProviderEnvironmentIFCRef &, const OW_String &, const OW_CIMObjectPath &, const OW_String &, const OW_String &, const OW_CIMValue &)
 	{
 	}
 };
@@ -127,10 +139,12 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		virtual void doInit(const OW_ProviderEnvironmentIFCRef&,
 			OW_InstanceProviderInfoArray& ia,
 			OW_AssociatorProviderInfoArray& aa,
-			OW_MethodProviderInfoArray& ma)
+			OW_MethodProviderInfoArray& ma,
+			OW_PropertyProviderInfoArray& pa)
 		{
 			if (m_name == "lib1")
 			{
+				// instance provider registration
 				{
 					OW_InstanceProviderInfo ipi;
 					ipi.setProviderName("TestInstanceProvider");
@@ -147,6 +161,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					ipi.addInstrumentedClass(ci);
 					ia.push_back(ipi);
 				}
+				// method provider registration
 				{
 					OW_MethodProviderInfo mpi;
 					mpi.setProviderName("TestMethodProvider");
@@ -185,6 +200,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					mpi.addInstrumentedClass(ci);
 					ma.push_back(mpi);
 				}
+				// associator provider registration
 				{
 					OW_AssociatorProviderInfo api;
 					api.setProviderName("TestAssociatorProvider");
@@ -201,6 +217,51 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					api.addInstrumentedClass(ci);
 					aa.push_back(api);
 				}
+				// property provider registration
+				{
+					OW_PropertyProviderInfo ppi;
+					ppi.setProviderName("TestPropertyProvider");
+					OW_StringArray namespaces;
+					OW_StringArray properties;
+					properties.push_back("TestProperty");
+					OW_PropertyProviderInfo::ClassInfo ci("SelfReg", namespaces, properties);
+					ppi.addInstrumentedClass(ci);
+					pa.push_back(ppi);
+				}
+				{
+					OW_PropertyProviderInfo ppi;
+					ppi.setProviderName("TestPropertyProvider");
+					OW_StringArray namespaces;
+					namespaces.push_back("root");
+					namespaces.push_back("root/good");
+					OW_StringArray properties;
+					properties.push_back("TestProperty");
+					OW_PropertyProviderInfo::ClassInfo ci("SelfRegTwoNamespaces", namespaces, properties);
+					ppi.addInstrumentedClass(ci);
+					pa.push_back(ppi);
+				}
+				{
+					OW_PropertyProviderInfo ppi;
+					ppi.setProviderName("TestPropertyProvider");
+					OW_StringArray namespaces;
+					OW_StringArray properties;
+					properties.push_back("TestProperty");
+					OW_PropertyProviderInfo::ClassInfo ci("SelfRegOneProperty", namespaces, properties);
+					ppi.addInstrumentedClass(ci);
+					pa.push_back(ppi);
+				}
+				{
+					OW_PropertyProviderInfo ppi;
+					ppi.setProviderName("TestPropertyProvider");
+					OW_StringArray namespaces;
+					namespaces.push_back("root");
+					OW_StringArray properties;
+					properties.push_back("TestProperty");
+					OW_PropertyProviderInfo::ClassInfo ci("SelfRegOneNamespaceOneProperty", namespaces, properties);
+					ppi.addInstrumentedClass(ci);
+					pa.push_back(ppi);
+				}
+
 			}
 		}
 
@@ -227,6 +288,10 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		virtual OW_PropertyProviderIFCRef doGetPropertyProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
+			if (OW_String(provIdString) == "TestPropertyProvider")
+			{
+				return OW_PropertyProviderIFCRef(new TestPropertyProvider);
+			}
 			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
 

@@ -707,10 +707,10 @@ private:
 	void _getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
 		OW_HDBNode node);
 
-	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns, 
+	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
 		const OW_CIMClass& cls);
 	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cls);
-	OW_PropertyProviderIFCRef _getPropertyProvider(const OW_CIMProperty& cls);
+	OW_PropertyProviderIFCRef _getPropertyProvider(const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& prop);
 
 	void _validatePropagatedKeys(const OW_String& ns,
 		const OW_CIMInstance& ci, const OW_CIMClass& theClass);

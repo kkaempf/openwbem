@@ -106,7 +106,8 @@ void
 OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instInfos,
 	OW_AssociatorProviderInfoArray& assocInfos,
-	OW_MethodProviderInfoArray& methInfos)
+	OW_MethodProviderInfoArray& methInfos,
+	OW_PropertyProviderInfoArray& propInfos)
 {
 	OW_MutexLock l(m_guard);
 	for (ProviderMap::iterator i =  m_cimomProviders.begin(); i != m_cimomProviders.end(); ++i)
@@ -149,7 +150,15 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			pMP->getProviderInfo(provInfo);
 			methInfos.push_back(provInfo);
 		}
-		// TODO: Do property providers too.
+
+		OW_CppPropertyProviderIFC* pPP = it->second.m_pProv->getPropertyProvider();
+		if (pPP)
+		{
+			OW_PropertyProviderInfo provInfo;
+			provInfo.setProviderName(it->first);
+			pPP->getProviderInfo(provInfo);
+			propInfos.push_back(provInfo);
+		}
 	}
 }
 

@@ -45,6 +45,7 @@
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 #include "OW_MethodProviderInfo.hpp"
+#include "OW_PropertyProviderInfo.hpp"
 
 DEFINE_EXCEPTION(NoSuchProvider);
 
@@ -96,9 +97,10 @@ public:
 	void init(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
-		OW_MethodProviderInfoArray& m)
+		OW_MethodProviderInfoArray& m,
+		OW_PropertyProviderInfoArray& p)
 	{
-		doInit(env, i, a, m);
+		doInit(env, i, a, m, p);
 	}
 	/**
 	 * Locate an Instance provider.
@@ -201,7 +203,8 @@ protected:
 	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
-		OW_MethodProviderInfoArray& m) = 0;
+		OW_MethodProviderInfoArray& m,
+		OW_PropertyProviderInfoArray& p) = 0;
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;

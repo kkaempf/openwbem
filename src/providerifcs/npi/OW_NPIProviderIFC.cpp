@@ -86,9 +86,10 @@ void
 OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_InstanceProviderInfoArray&,
 	OW_AssociatorProviderInfoArray&,
-	OW_MethodProviderInfoArray&)
+	OW_MethodProviderInfoArray&,
+	OW_PropertyProviderInfoArray&)
 {
-	return; 
+	return;
 }
 
 //////////////////////////////////////////////////////////////////////////////

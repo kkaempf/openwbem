@@ -74,13 +74,15 @@ void
 OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
-	OW_MethodProviderInfoArray& m)
+	OW_MethodProviderInfoArray& m,
+	OW_PropertyProviderInfoArray& p)
 {
 	// TOOD: modify this and the providers to get the InstanceProviderInfo
 	(void)env;
 	(void)i;
 	(void)a;
 	(void)m;
+	(void)p;
 	return;
 }
 

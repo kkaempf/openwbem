@@ -855,7 +855,7 @@ OW_CIMServer::modifyClass(
 		OW_ASSERT(origClass);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Modified class: %1:%2 from %3 to %4", ns, 
+			m_env->logDebug(format("Modified class: %1:%2 from %3 to %4", ns,
 				cc.getName(), origClass.toMOF(), cc.toMOF()));
 		}
 		return origClass;
@@ -887,7 +887,7 @@ OW_CIMServer::enumClasses(const OW_String& ns,
 			localOnly, includeQualifiers, includeClassOrigin);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Enumerated classes: %1:%2", ns, 
+			m_env->logDebug(format("Enumerated classes: %1:%2", ns,
 				className));
 		}
 	}
@@ -943,7 +943,7 @@ OW_CIMServer::enumClassNames(
 			deep, false, true, true);
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Enumerated class names: %1:%2", ns, 
+			m_env->logDebug(format("Enumerated class names: %1:%2", ns,
 				className));
 		}
 	}
@@ -978,7 +978,7 @@ OW_CIMServer::enumInstanceNames(
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Enumerated instance names: %1:%2", ns, 
+			m_env->logDebug(format("Enumerated instance names: %1:%2", ns,
 				className));
 		}
 		// If this is the namespace class then just return now
@@ -997,7 +997,7 @@ OW_CIMServer::enumInstanceNames(
 			_getCIMInstanceNames(ns, classNames[i], theClass, result, deep, aclInfo);
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
-				m_env->logDebug(format("Enumerated derived instance names: %1:%2", ns, 
+				m_env->logDebug(format("Enumerated derived instance names: %1:%2", ns,
 					classNames[i]));
 			}
 		}
@@ -1094,7 +1094,7 @@ OW_CIMServer::enumInstances(
 		
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
-			m_env->logDebug(format("Enumerated instances: %1:%2", ns, 
+			m_env->logDebug(format("Enumerated instances: %1:%2", ns,
 				className));
 		}
 		// If this is the namespace class then we're done.
@@ -1114,7 +1114,7 @@ OW_CIMServer::enumInstances(
 				includeQualifiers, includeClassOrigin, propertyList, aclInfo);
 			if (m_env->getLogger()->getLogLevel() == DebugLevel)
 			{
-				m_env->logDebug(format("Enumerated derived instances: %1:%2", ns, 
+				m_env->logDebug(format("Enumerated derived instances: %1:%2", ns,
 					classNames[i]));
 			}
 		}
@@ -1755,7 +1755,7 @@ OW_CIMServer::getProperty(
 			propertyName.c_str());
 	}
 
-	OW_PropertyProviderIFCRef propp = _getPropertyProvider(cp);
+	OW_PropertyProviderIFCRef propp = _getPropertyProvider(ns, theClass, cp);
 
 	if(!propp)
 	{
@@ -1819,7 +1819,7 @@ OW_CIMServer::setProperty(
 		}
 	}
 
-	OW_PropertyProviderIFCRef propp = _getPropertyProvider(cp);
+	OW_PropertyProviderIFCRef propp = _getPropertyProvider(ns, theClass, cp);
 	if(!propp)
 	{
 		OW_CIMInstance ci = getInstance(ns, name, false, true, true, NULL,
@@ -1908,8 +1908,15 @@ OW_CIMServer::invokeMethod(
 			intAclInfo, true);
 		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
 			aclInfo, true);
-		methodp = m_provManager->getMethodProvider(
-			createProvEnvRef(internal_ch), ns, cc, methodName);
+		try
+		{
+			methodp = m_provManager->getMethodProvider(
+				createProvEnvRef(internal_ch), ns, cc, method);
+		}
+		catch (const OW_NoSuchProviderException&)
+		{
+		}
+
 		if(!methodp)
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, format("No provider for method %1", methodName).c_str());
@@ -2083,7 +2090,7 @@ OW_CIMServer::invokeMethod(
 	catch(...)
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Caught unknown "
-			"exception while calling provider for method %1", 
+			"exception while calling provider for method %1",
 			methodName).c_str());
 	}
 
@@ -2099,7 +2106,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc)
 	OW_InstanceProviderIFCRef instancep;
 	try
 	{
-		instancep = 
+		instancep =
 			m_provManager->getInstanceProvider(createProvEnvRef(internal_ch), ns, cc);
 	}
 	catch (const OW_NoSuchProviderException&)
@@ -2112,7 +2119,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc)
 		}
 		catch (const OW_NoSuchProviderException& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, 
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				format("Invalid provider: %1", e.getMessage()).c_str());
 		}
 	}
@@ -2141,7 +2148,7 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc)
 		}
 		catch (const OW_NoSuchProviderException& e)
 		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, 
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
 				format("Invalid provider: %1", e.getMessage()).c_str());
 		}
 	}
@@ -2150,28 +2157,22 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PropertyProviderIFCRef
-OW_CIMServer::_getPropertyProvider(const OW_CIMProperty& cc)
+OW_CIMServer::_getPropertyProvider(const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& prop)
 {
-	OW_CIMQualifier cq = cc.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
-	
-	if(cq)
+	OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
+		OW_ACLInfo(), true);
+	OW_PropertyProviderIFCRef propp;
+	try
 	{
-		OW_PropertyProviderIFCRef p;
-		OW_LocalCIMOMHandle internal_ch(m_env, OW_RepositoryIFCRef(this, true),
-			OW_ACLInfo(), true);
-		p =  m_provManager->getPropertyProvider(
-			createProvEnvRef(internal_ch), cq);
-		if(!p)
-		{
-			OW_String msg("Unknown provider: ");
-			msg += cq.getValue().toString();
-			OW_THROWCIMMSG(OW_CIMException::FAILED, msg.c_str());
-		}
-		return p;
+		propp =
+			m_provManager->getPropertyProvider(createProvEnvRef(internal_ch), ns, cc, prop);
 	}
-
-	return OW_PropertyProviderIFCRef();
+	catch (const OW_NoSuchProviderException& e)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			format("Invalid provider: %1", e.getMessage()).c_str());
+	}
+	return propp;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -3162,7 +3163,7 @@ OW_CIMServer::_validatePropagatedKeys(const OW_String& ns,
 		if (!ppropName.empty())
 		{
 			// We need to use the propagated property name, not the property
-			// name on ci.  e.g. Given 
+			// name on ci.  e.g. Given
 			// [Propagated("fooClass.fooPropName")] string myPropName;
 			// we need to check for fooPropName as the key to the propagated
 			// instance, not myPropName.
@@ -3229,7 +3230,7 @@ OW_CIMServer::_setProviderProperties(const OW_String& ns,
 		OW_CIMProperty clsProp = pra[i];
 
 		// Get the provider for the property
-		OW_PropertyProviderIFCRef propp = _getPropertyProvider(clsProp);
+		OW_PropertyProviderIFCRef propp = _getPropertyProvider(ns, theClass, clsProp);
 		if(propp)
 		{	// We have a provider for this property
 			OW_CIMProperty cp = ci.getProperty(clsProp.getName());
@@ -3269,7 +3270,7 @@ OW_CIMServer::_getProviderProperties(const OW_String& ns, const OW_CIMObjectPath
 				continue;
 			}
 		}
-		OW_PropertyProviderIFCRef propp = _getPropertyProvider(clsProp);
+		OW_PropertyProviderIFCRef propp = _getPropertyProvider(ns, theClass, clsProp);
 		if(propp)
 		{	// We have a provider for this property
 			clsProp.setValue(propp->getPropertyValue(

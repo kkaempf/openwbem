@@ -1,6 +1,8 @@
 Tue Dec  3 11:25:46 MST 2002
 - Fixed mof compiler wrt default qualifiers (see cim spec 4.7).  Now the CIM
   2.7 schema imports without errors.
+- Made string constructors of OW_CIMProperty explicit.
+- Finished property provider self-registration.
 
 Sun Dec  1 22:05:05 MST 2002
 - Got provider self-registration working for associator and method providers.
