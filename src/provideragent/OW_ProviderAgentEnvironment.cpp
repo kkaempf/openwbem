@@ -128,6 +128,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 					}
 				}
 			}
+			m_methodProvs["*"] = *iter;
 		}
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		CppAssociatorProviderIFC* assocProv = prov->getAssociatorProvider(); 
@@ -154,6 +155,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 					m_assocProvs[key] = *iter; 
 				}
 			}
+			m_assocProvs["*"] = *iter;
 		}
 #endif
 		CppInstanceProviderIFC* instProv = prov->getInstanceProvider(); 
@@ -180,6 +182,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 					m_instProvs[key] = *iter; 
 				}
 			}
+			m_instProvs["*"] = *iter;
 		}
 		CppSecondaryInstanceProviderIFC* secInstProv = prov->getSecondaryInstanceProvider(); 
 		if (secInstProv)
@@ -205,6 +208,7 @@ ProviderAgentEnvironment::ProviderAgentEnvironment(ConfigFile::ConfigMap configM
 					m_secondaryInstProvs[key] = *iter; 
 				}
 			}
+			m_secondaryInstProvs["*"] = *iter;
 		}
 	}
 

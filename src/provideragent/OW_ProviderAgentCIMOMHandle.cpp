@@ -681,6 +681,13 @@ ProviderAgentCIMOMHandle::getInstanceProvider(const String& ns,
 		OW_ASSERT(rval != 0); 
 		return rval; 
 	}
+	iter = m_instProvs.find("*"); 
+	if (iter != m_instProvs.end())
+	{
+		rval = iter->second->getInstanceProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
 	return rval; 
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -702,6 +709,13 @@ ProviderAgentCIMOMHandle::getSecondaryInstanceProvider(const String& ns,
 	key = String("") + ":" + className; 
 	key.toLowerCase(); 
 	iter = m_secondaryInstProvs.find(key); 
+	if (iter != m_secondaryInstProvs.end())
+	{
+		rval = iter->second->getSecondaryInstanceProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	iter = m_secondaryInstProvs.find("*"); 
 	if (iter != m_secondaryInstProvs.end())
 	{
 		rval = iter->second->getSecondaryInstanceProvider(); 
@@ -736,6 +750,13 @@ ProviderAgentCIMOMHandle::getAssociatorProvider(const String& ns,
 		OW_ASSERT(rval != 0); 
 		return rval; 
 	}
+	iter = m_assocProvs.find("*"); 
+	if (iter != m_assocProvs.end())
+	{
+		rval = iter->second->getAssociatorProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
 	return rval; 
 }
 #endif
@@ -759,6 +780,13 @@ ProviderAgentCIMOMHandle::getMethodProvider(const String& ns,
 	key = String("") + ":" + className + ":" + methodName; 
 	key.toLowerCase(); 
 	iter = m_methodProvs.find(key); 
+	if (iter != m_methodProvs.end())
+	{
+		rval = iter->second->getMethodProvider(); 
+		OW_ASSERT(rval != 0); 
+		return rval; 
+	}
+	iter = m_methodProvs.find("*"); 
 	if (iter != m_methodProvs.end())
 	{
 		rval = iter->second->getMethodProvider(); 
