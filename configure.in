@@ -1060,6 +1060,7 @@ schemas/cim28/Makefile
 src/Makefile
 src/authenticators/Makefile
 src/authenticators/simple/Makefile
+src/authenticators/nonauthenticating/Makefile
 src/authenticators/pam/Makefile
 src/authenticators/pamcl/Makefile
 src/authenticators/aix/Makefile
@@ -1113,6 +1114,7 @@ src/repositories/hdb/Makefile
 src/requesthandlers/Makefile
 src/requesthandlers/binary/Makefile
 src/requesthandlers/cimxml/Makefile
+src/provideragent/Makefile
 src/services/Makefile
 src/services/http/Makefile
 src/tools/Makefile

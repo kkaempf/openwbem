@@ -36,7 +36,26 @@ wqlTest1 \
 wqlTest2 \
 CIMOMLocator \
 fakeclient \
-infiniteClient
+infiniteClient \
+owprovideragent
+
+owprovideragent_SOURCES = \
+owprovideragent.cpp
+
+owprovideragent_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+-L$(top_builddir)/src/provideragent -lowprovideragent \
+-L$(top_builddir)/src/requesthandlers/cimxml -lowrequesthandlercimxml \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
+-L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
+-L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/authenticators/nonauthenticating -lnonauthenticatingauthentication \
+$(SSL_LIBS) $(Z_LIBS) \
+$(BINLINKAPPENDFLAGS)
+
+owprovideragent_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o owprovideragent
 
 
 
@@ -315,5 +334,13 @@ INCLUDES = \
 -I$(top_srcdir)/src/client \
 -I$(top_srcdir)/src/cimxmllistener \
 -I$(top_srcdir)/src/wql \
+-I$(top_srcdir)/src/provideragent \
+-I$(top_srcdir)/src/providerifcs/cpp \
+-I$(top_srcdir)/src/services/http \
+-I$(top_srcdir)/src/authenticators/nonauthenticating \
+-I$(top_srcdir)/src/provider \
+-I$(top_srcdir)/src/requesthandlers/cimxml \
 -I$(top_srcdir)/src/wql/common
+
+
 

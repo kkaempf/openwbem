@@ -31,6 +31,7 @@ client \
  \
 services \
 $(CIMXMLLISTENERDIR) \
+provideragent \
  \
  \
 provider \
