@@ -315,7 +315,7 @@ public:
 		info.addInstrumentedClass(e);
 	}
 
-	// These are the indication provider methods.
+	// These are the instance provider methods.
 	virtual void getProviderInfo(OW_InstanceProviderInfo& info)
 	{
 		// The class we are instrumenting
