@@ -42,7 +42,7 @@
 #include "OW_NonRecursiveMutexLock.hpp"
 #include "OW_Condition.hpp"
 #include "OW_WQLCompile.hpp"
-#include "OW_CIMOMEnvironment.hpp"
+#include "OW_Reference.hpp"
 
 #include <algorithm>
 
@@ -83,13 +83,14 @@ public:
 	// unloaded.  NEVER start a detached thread from a provider.  As soon as
 	// the provider library is unloaded, the CIMOM will crash if the thread
 	// is still running.
-	TestProviderThread(IndicationProviderTest2* pProv)
+	TestProviderThread(IndicationProviderTest2* pProv, const ProviderEnvironmentIFCRef& env)
 		: Thread()
 		, m_shuttingDown(false)
 		, m_creationFilterCount(0)
 		, m_modificationFilterCount(0)
 		, m_deletionFilterCount(0)
 		, m_pProv(pProv)
+		, m_env(env)
 	{
 	}
 
@@ -151,6 +152,7 @@ protected:
 	int m_modificationFilterCount;
 	int m_deletionFilterCount;
 	IndicationProviderTest2* m_pProv;
+	ProviderEnvironmentIFCRef m_env;
 };
 	
 class IndicationProviderTest2 : public CppIndicationProviderIFC, public CppInstanceProviderIFC
@@ -184,7 +186,7 @@ public:
 		if (m_threadStarted == false && !m_thread)
 		{
 			OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "IndicationProviderTest2::activateFilter creating helper thread");
-			m_thread = new TestProviderThread(this);
+			m_thread = new TestProviderThread(this, env->clone());
 		}
 		// eventType contains the name of the indication the listener subscribed to.
 		// this will be one of the class names we indicated in getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -553,7 +555,7 @@ Int32 TestProviderThread::run()
 	while (!m_shuttingDown)
 	{
 		OperationContext context;
-		m_pProv->updateInstancesAndSendIndications(CIMOMEnvironment::instance()->getCIMOMHandle(context), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
+		m_pProv->updateInstancesAndSendIndications(m_env->getCIMOMHandle(), m_creationFilterCount, m_modificationFilterCount, m_deletionFilterCount);
 		// wait one second.  If this were a real provider we would wait on some IPC mechanism.  This has to be done carefully so that we don't block forever.  The provider needs
 		// to be able to stop the thread when the cimom shuts down or restarts.
 		m_cond.timedWait(l, 1);
