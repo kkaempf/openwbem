@@ -40,6 +40,7 @@ OWINCLUDEDIR=@includedir@
 OWPKGLIBDIR=@pkglibdir@
 TOPSRCDIR=../@top_srcdir@
 TESTMOFDONE=0
+STATIC_SERVICES=0
 
 if diff -u /dev/null /dev/null > /dev/null 2>&1; then
 	DIFF="diff -u"
@@ -62,8 +63,17 @@ Install()
 	mkdir $RESULTDIR
 
 	cd ../../
-
-	make DESTDIR=$STAGEDIR install || ExitWithFail "make install didn't work"
+	
+	PROVIDERS="\
+$BUILDDIR/test/c++providers/indication/libindicationtest1.@lib_ext@ \
+$BUILDDIR/test/c++providers/indication/libindicationtest3.@lib_ext@ \
+$BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest1.@lib_ext@ \
+$BUILDDIR/test/c++providers/secondary_instance/libsecondaryinstancetest2.@lib_ext@ \
+$BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@ \
+$BUILDDIR/test/c++providers/instance/libtestinstance.@lib_ext@ \
+$BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@ \
+"
+	make DESTDIR=$STAGEDIR EXTERNAL_PROVIDERS="$PROVIDERS" install || ExitWithFail "make install didn't work"
 
 	cd $STAGEDIR/$OWSYSCONFDIR/openwbem
 	sed \
@@ -104,15 +114,9 @@ Install()
 		$STAGEDIR/$OWSYSCONFDIR/openwbem
 	
 	# for client driver and acl test.
-	ln -sf $BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-
-	ln -sf $BUILDDIR/test/c++providers/instance/libtestinstance.@lib_ext@  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-		
-	ln -sf $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@  \
-		$STAGEDIR/$OWPKGLIBDIR/c++providers/
-		
+	InstallProvider $BUILDDIR/test/c++providers/method/libmethodtest.@lib_ext@
+	InstallProvider $BUILDDIR/test/c++providers/instance/libtestinstance.@lib_ext@
+	InstallProvider $BUILDDIR/test/c++providers/associator/libassociatortest.@lib_ext@
 	
 	if [ "$OWSYMLINKS" = "1" ]; then
 		SwitchToLinks
@@ -360,7 +364,15 @@ RunATest()
 InstallProvider()
 {
 	PROVIDER=$1
-	ln -sf $PROVIDER $STAGEDIR/$OWPKGLIBDIR/c++providers/
+	
+	if [ "$STATIC_SERVICES" = "1" ]; then
+		$TOPSRCDIR/fake_library_creator.sh createProvider $PROVIDER
+		PROVIDER_DIR_NAME=`dirname $PROVIDER`
+		PROVIDER_BASE_NAME=`basename $PROVIDER .@lib_ext@`
+		cp $PROVIDER_DIR_NAME/$PROVIDER_BASE_NAME.fsl $STAGEDIR/$OWPKGLIBDIR/c++providers/$PROVIDER_BASE_NAME.@lib_ext@
+	else
+		ln -sf $PROVIDER $STAGEDIR/$OWPKGLIBDIR/c++providers/
+	fi
 }
 
 #############################################################################

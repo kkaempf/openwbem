@@ -25,6 +25,15 @@ SUFFIXES = .fb
 		-e 's!@''lib_ext''@!$(LIB_EXT)!g' \
 		$< > $@-t
 	@MV@	$@-t $@
+	if [ "x$(STATIC_SERVICES)" != "x" ]; then \
+		@SED@ \
+			-e 's!OWSYMLINKS=1!OWSYMLINKS=0!g' \
+			-e 's!STATIC_SERVICES=0!STATIC_SERVICES=1!g' \
+			-e 's!# turn on symlinks!# disable symlinks: everything is static.!g' \
+			 $@ > $@-t; \
+		@MV@	$@-t $@; \
+	fi
+
 	chmod +x $@
 
 INCLUDES = \
