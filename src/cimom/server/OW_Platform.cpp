@@ -79,7 +79,7 @@ extern "C" {
 static void theSigHandler(int sig);
 }
 
-static int DAEMONIZE_PIPE_TIMEOUT = 25; 
+static const int DAEMONIZE_PIPE_TIMEOUT = 25; 
 
 static Options processCommandLineOptions(int argc, char** argv);
 static void handleSignal(int sig);
