@@ -153,8 +153,9 @@ public:
 			}
 			else
 			{
-				logger->logError("safeLibCreate::create setjmp call"
-					" failed");
+				logger->logError(Format("safeLibCreate::create setjmp call"
+					" returned != 0, we caught a segfault.  "
+					"getOWVersion() or %1() is misbehaving", createFuncName));
 	
 				return 0;
 			}
