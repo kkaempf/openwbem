@@ -263,6 +263,13 @@ protected:
 
 int main(int argc, char* argv[])
 {
+	// these need to be out of the try, so that a potential deadlock won't happen
+	// the problem is that OW_Exception has a mutex, and the OW_HTTPXMLCIMListener
+	// destructor shouldn't run when the OW_Exception mutex is locked.
+	OW_LoggerRef logger(new ListenerLogger);
+
+	OW_HTTPXMLCIMListener hxcl(logger);
+
 	try
 	{
 		if (argc < 2 || argc > 3)
@@ -284,14 +291,6 @@ int main(int argc, char* argv[])
 				sockDumpOut.c_str());
 		}
 
-		OW_CIMListenerCallbackRef mcb(new myCallBack);
-		OW_CIMListenerCallbackRef test1cb(new test1CallBack);
-		OW_CIMListenerCallbackRef test2cb(new test2CallBack);
-
-		OW_LoggerRef logger(new ListenerLogger);
-
-		OW_HTTPXMLCIMListener hxcl(logger);
-
 		OW_String ns("/root/testsuite");
 
 		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
@@ -302,6 +301,10 @@ int main(int argc, char* argv[])
 
 		OW_Array<OW_String> registrationHandles;
 		OW_String handle;
+
+		OW_CIMListenerCallbackRef mcb(new myCallBack);
+		OW_CIMListenerCallbackRef test1cb(new test1CallBack);
+		OW_CIMListenerCallbackRef test2cb(new test2CallBack);
 
 		if (getenv("OWLONGTEST"))
 		{
