@@ -86,10 +86,12 @@ private:
 	static void getParameters(OW_CIMXMLParser& parser,
 		OW_CIMParamValueArray& params);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void associatorNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void associators(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+#endif
 	void createClass(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void createInstance(std::ostream& ostr, OW_CIMXMLParser& parser,
@@ -122,10 +124,12 @@ private:
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void modifyInstance(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void referenceNames(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl) ;
 	void references(std::ostream& ostr, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl) ;
+#endif
 	void setProperty(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,
 		const OW_String& ns, OW_CIMOMHandleIFC& hdl);
 	void setQualifier(std::ostream& /*ostr*/, OW_CIMXMLParser& parser,

@@ -1141,8 +1141,55 @@ namespace
 		OW_CIMObjectPathResultHandlerIFC& result;
 		OW_String ns;
 	};
+
+//////////////////////////////////////////////////////////////////////////////
+	class objectWithPathOp : public OW_ClientOperation
+	{
+	public:
+		objectWithPathOp(
+			OW_CIMInstanceResultHandlerIFC* iresult_,
+			OW_CIMClassResultHandlerIFC* cresult_,
+			OW_String ns_)
+			: iresult(iresult_)
+			, cresult(cresult_)
+			, ns(ns_)
+		{}
+		virtual void operator ()(OW_CIMXMLParser &parser)
+		{
+			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
+			{
+				OW_CIMInstance ci(OW_CIMNULL);
+				OW_CIMClass cc(OW_CIMNULL);
+				OW_CIMObjectPath cop = OW_XMLClass::getObjectWithPath(parser, cc, ci);
+				if (cop)
+				{
+					if (iresult)
+					{
+						if (!ci)
+						{
+							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
+						}
+						iresult->handle(ci);
+					}
+					if (cresult)
+					{
+						if (!cc)
+						{
+							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
+						}
+						cresult->handle(cc);
+					}
+				}
+			}
+		}
+
+		OW_CIMInstanceResultHandlerIFC* iresult;
+		OW_CIMClassResultHandlerIFC* cresult;
+		OW_String ns;
+	};
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::associatorNames(
@@ -1237,55 +1284,6 @@ OW_CIMXMLCIMOMHandle::associatorsClasses(
 
 	associatorsCommon(ns, path, 0, &result, assocClass, resultClass, role,
 		resultRole, includeQualifiers, includeClassOrigin, propertyList);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-namespace
-{
-	class objectWithPathOp : public OW_ClientOperation
-	{
-	public:
-		objectWithPathOp(
-			OW_CIMInstanceResultHandlerIFC* iresult_,
-			OW_CIMClassResultHandlerIFC* cresult_,
-			OW_String ns_)
-			: iresult(iresult_)
-			, cresult(cresult_)
-			, ns(ns_)
-		{}
-		virtual void operator ()(OW_CIMXMLParser &parser)
-		{
-			while (!parser.tokenIs(OW_CIMXMLParser::E_IRETURNVALUE))
-			{
-				OW_CIMInstance ci(OW_CIMNULL);
-				OW_CIMClass cc(OW_CIMNULL);
-				OW_CIMObjectPath cop = OW_XMLClass::getObjectWithPath(parser, cc, ci);
-				if (cop)
-				{
-					if (iresult)
-					{
-						if (!ci)
-						{
-							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an instance.");
-						}
-						iresult->handle(ci);
-					}
-					if (cresult)
-					{
-						if (!cc)
-						{
-							OW_THROWCIMMSG(OW_CIMException::FAILED, "Server did not send an class.");
-						}
-						cresult->handle(cc);
-					}
-				}
-			}
-		}
-
-		OW_CIMInstanceResultHandlerIFC* iresult;
-		OW_CIMClassResultHandlerIFC* cresult;
-		OW_String ns;
-	};
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1480,6 +1478,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(
 	objectWithPathOp op(iresult,cresult,ns);
 	intrinsicMethod(ns, commandName, op, params, extra.toString());
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration

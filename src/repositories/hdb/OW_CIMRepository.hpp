@@ -37,7 +37,9 @@
 
 #include "OW_MetaRepository.hpp"
 #include "OW_InstanceRepository.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssocDb.hpp"
+#endif
 
 // This class is responsible for storing/retrieving the static CIM data.
 class OW_CIMRepository : public OW_RepositoryIFC
@@ -47,8 +49,10 @@ public:
 	static const char* const INST_REPOS_NAME;
 	static const char* const META_REPOS_NAME;
 	static const char* const NS_REPOS_NAME;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	static const char* const CLASS_ASSOC_REPOS_NAME;
 	static const char* const INST_ASSOC_REPOS_NAME;
+#endif
 
 	/**
 	 * Create a new OW_CIMRepository object.
@@ -487,6 +491,7 @@ public:
 		const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 		OW_CIMParamValueArray& outParams, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
@@ -539,7 +544,8 @@ public:
 		const OW_String& role, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo);
-	
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 	/**
 	 *
 	 * @exception OW_CIMException
@@ -581,6 +587,7 @@ private:
 	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval,
 		const OW_String& ns, const OW_String& className);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void _commonAssociators(
 		const OW_String& ns,
 		const OW_CIMObjectPath& path_,
@@ -649,6 +656,7 @@ private:
 		const OW_StringArray* propertyList, OW_CIMObjectPathResultHandlerIFC* popresult,
 		OW_CIMClassResultHandlerIFC* pcresult,
 		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	void _validatePropagatedKeys(const OW_String& ns,
 		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
@@ -656,8 +664,10 @@ private:
 	OW_GenericHDBRepository m_nStore;
 	OW_InstanceRepository m_iStore;
 	OW_MetaRepository m_mStore;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssocDb m_classAssocDb;
 	OW_AssocDb m_instAssocDb;
+#endif
 	OW_ServiceEnvironmentIFCRef m_env;
 
     bool m_checkReferentialIntegrity;

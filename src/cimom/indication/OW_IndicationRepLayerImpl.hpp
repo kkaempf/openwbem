@@ -185,6 +185,16 @@ public:
 		const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo);
 
+	virtual OW_CIMValue getProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
+		const OW_String &propertyName, const OW_UserInfo& aclInfo)
+	{
+		return m_pServer->getProperty(ns, name, propertyName, aclInfo);
+	}
+
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associators(
 		const OW_String& ns,
 		const OW_CIMObjectPath &path,
@@ -210,15 +220,6 @@ public:
 	{
 		m_pServer->associatorsClasses(ns, path, result, assocClass, resultClass, role,
 			resultRole, includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-	}
-
-
-	virtual OW_CIMValue getProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_UserInfo& aclInfo)
-	{
-		return m_pServer->getProperty(ns, name, propertyName, aclInfo);
 	}
 
 
@@ -270,6 +271,7 @@ public:
 	{
 		m_pServer->referenceNames(ns, path, result, resultClass, role, aclInfo);
 	}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	
 	virtual void execQuery(

@@ -29,7 +29,9 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_CppInstanceProviderIFC.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CppAssociatorProviderIFC.hpp"
+#endif
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMException.hpp"
@@ -42,7 +44,10 @@
 namespace OpenWBEM
 {
 
-class CIM_NamespaceInManagerInstProv : public OW_CppInstanceProviderIFC, public OW_CppAssociatorProviderIFC
+class CIM_NamespaceInManagerInstProv : public OW_CppInstanceProviderIFC
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+, public OW_CppAssociatorProviderIFC
+#endif
 {
 public:
 
@@ -232,6 +237,7 @@ public:
         // just ignore deleteInstance.
 	}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Associator provider functions.
 	virtual void getProviderInfo(OW_AssociatorProviderInfo &info) 
 	{
@@ -453,6 +459,7 @@ public:
 		ReferencesFilter handler(objectName, result);
 		enumInstances(env, ns, "CIM_NamespaceInManager", handler, false, true, includeQualifiers, includeClassOrigin, propertyList, theClass, theClass);
 	}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 };
 

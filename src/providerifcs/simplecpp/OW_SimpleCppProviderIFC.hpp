@@ -60,7 +60,9 @@ protected:
 	 */
 	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssociatorProviderInfoArray& a,
+#endif
 		OW_MethodProviderInfoArray& m,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
@@ -81,9 +83,11 @@ protected:
 		const char* provIdString);
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
+#endif
 
 	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
 		const OW_ProviderEnvironmentIFCRef& env,

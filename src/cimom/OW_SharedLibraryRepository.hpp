@@ -34,6 +34,7 @@
 #include "OW_Types.h"
 #include "OW_RepositoryIFC.hpp"
 #include "OW_CIMQualifierType.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 class OW_SharedLibraryRepository : public OW_RepositoryIFC
 {
@@ -199,6 +200,7 @@ public:
 		return m_ref->deleteInstance(ns, cop, aclInfo);
 	}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void references(
 		const OW_String& ns,
 		const OW_CIMObjectPath &path,
@@ -222,6 +224,7 @@ public:
 		m_ref->referencesClasses(ns, path, result, resultClass, role, includeQualifiers,
 			includeClassOrigin, propertyList, aclInfo);
 	}
+#endif
 
 	virtual OW_CIMInstance modifyInstance(
 		const OW_String& ns,
@@ -251,6 +254,7 @@ public:
 		return m_ref->getProperty(ns, name, propertyName, aclInfo);
 	}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath &path,
@@ -300,6 +304,7 @@ public:
 	{
 		m_ref->referenceNames(ns, path, result, resultClass, role, aclInfo);
 	}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	virtual void execQuery(
 		const OW_String& ns,

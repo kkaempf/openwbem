@@ -39,7 +39,9 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_NPIInstanceProviderProxy.hpp"
 #include "OW_NPIMethodProviderProxy.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_NPIAssociatorProviderProxy.hpp"
+#endif
 #include "OW_NPIPolledProviderProxy.hpp"
 #include "OW_NPIIndicationProviderProxy.hpp"
 
@@ -95,7 +97,9 @@ OW_NPIProviderIFC::~OW_NPIProviderIFC()
 void
 OW_NPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_InstanceProviderInfoArray&,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray&,
+#endif
 	OW_MethodProviderInfoArray&,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray&,
@@ -234,6 +238,7 @@ OW_NPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -259,6 +264,7 @@ OW_NPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRef

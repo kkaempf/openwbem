@@ -23,10 +23,16 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_S=
+else
+ASSOCIATION_S= \
+OW_PerlAssociatorProviderProxy.cpp \
+OW_PerlAssociatorProviderProxy.hpp
+endif
 
 libperlprovifc_a_SOURCES = \
-OW_PerlAssociatorProviderProxy.cpp \
-OW_PerlAssociatorProviderProxy.hpp \
+$(ASSOCIATION_S) \
 OW_PerlInstanceProviderProxy.cpp \
 OW_PerlInstanceProviderProxy.hpp \
 OW_PerlMethodProviderProxy.cpp \

@@ -116,6 +116,7 @@ private:
 	void execQuery(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void associators(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
@@ -127,6 +128,7 @@ private:
 
 	void referenceNames(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
+#endif
 
 	void getServerFeatures(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);

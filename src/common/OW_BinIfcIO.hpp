@@ -82,10 +82,12 @@ const OW_UInt8 OW_BIN_MODIFYINST =		35;		// Modify instances
 const OW_UInt8 OW_BIN_CREATEINST =		36;		// Create instance
 const OW_UInt8 OW_BIN_GETPROP =			37;		// Get property
 const OW_UInt8 OW_BIN_SETPROP =			38;		// Set property
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 const OW_UInt8 OW_BIN_ASSOCNAMES =		39;		// Associator names
 const OW_UInt8 OW_BIN_ASSOCIATORS =		40;		// Associators
 const OW_UInt8 OW_BIN_REFNAMES =		41;		// Reference names
 const OW_UInt8 OW_BIN_REFERENCES =		42;		// References
+#endif
 const OW_UInt8 OW_BIN_EXECQUERY =		43;		// Execute query
 const OW_UInt8 OW_BIN_GETSVRFEATURES =	44;		// Get Server Features
 

@@ -7,8 +7,15 @@ else
 PROPERTY_PROVIDER_S=
 endif
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_PROVIDER_S=
+else
+ASSOCIATION_PROVIDER_S= \
+OW_AssociatorProviderIFC.cpp
+endif
+
 libowprovider_a_SOURCES = \
-OW_AssociatorProviderIFC.cpp \
+$(ASSOCIATION_PROVIDER_S) \
 OW_IndicationExportProviderIFC.cpp \
 OW_InstanceProviderIFC.cpp \
 OW_MethodProviderIFC.cpp \
@@ -29,8 +36,16 @@ else
 PROPERTY_PROVIDER_H=
 endif
 
-pkginclude_HEADERS = \
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_PROVIDER_H=
+else
+ASSOCIATION_PROVIDER_H= \
 OW_AssociatorProviderIFC.hpp \
+OW_AssociatorProviderInfo.hpp
+endif
+
+pkginclude_HEADERS = \
+$(ASSOCIATION_PROVIDER_H) \
 OW_IndicationExportProviderIFC.hpp \
 OW_InstanceProviderIFC.hpp \
 OW_MethodProviderIFC.hpp \
@@ -40,7 +55,6 @@ OW_ProviderBaseIFC.hpp \
 OW_ProviderEnvironmentIFC.hpp \
 OW_ProviderIFCBaseIFC.hpp \
 OW_InstanceProviderInfo.hpp \
-OW_AssociatorProviderInfo.hpp \
 OW_MethodProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \
 OW_IndicationProviderInfo.hpp \

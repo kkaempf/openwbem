@@ -61,6 +61,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_enumInstancesE_overloads, OW
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_getClass_overloads, OW_CIMClient::getClass, 1, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_getInstance_overloads, OW_CIMClient::getInstance, 1, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_modifyInstance_overloads, OW_CIMClient::modifyInstance, 1, 3)
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorNames_overloads, OW_CIMClient::associatorNames, 2, 6)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associatorNamesE_overloads, OW_CIMClient::associatorNamesE, 1, 5)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_associators_overloads, OW_CIMClient::associators, 2, 9)
@@ -73,7 +74,7 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_references_overloads, OW_CIM
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesE_overloads, OW_CIMClient::referencesE, 1, 6)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesClasses_overloads, OW_CIMClient::referencesClasses, 2, 7)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(OW_CIMClient_referencesClassesE_overloads, OW_CIMClient::referencesClassesE, 1, 6)
-
+#endif
 
 }
 
@@ -112,6 +113,7 @@ void registerOW_CIMClient()
         .def("createInstance", &OW_CIMClient::createInstance)
         .def("getProperty", &OW_CIMClient::getProperty)
         .def("setProperty", &OW_CIMClient::setProperty)
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
         .def("associatorNames", &OW_CIMClient::associatorNames, OW_CIMClient_associatorNames_overloads(args("assocClass", "resultClass", "role", "resultRole")))
         .def("associatorNamesE", &OW_CIMClient::associatorNamesE, OW_CIMClient_associatorNamesE_overloads(args("assocClass", "resultClass", "role", "resultRole")))
         .def("associators", &OW_CIMClient::associators, OW_CIMClient_associators_overloads(args("assocClass", "resultClass", "role", "resultRole", "includeQualifiers", "includeClassOrigin", "propertyList")))
@@ -124,6 +126,7 @@ void registerOW_CIMClient()
         .def("referencesE", &OW_CIMClient::referencesE, OW_CIMClient_referencesE_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
         .def("referencesClasses", &OW_CIMClient::referencesClasses, OW_CIMClient_referencesClasses_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
         .def("referencesClassesE", &OW_CIMClient::referencesClassesE, OW_CIMClient_referencesClassesE_overloads(args("resultClass", "role", "includeQualifiers", "includeClassOrigin", "propertyList")))
+#endif
         .def("execQuery", &OW_CIMClient::execQuery)
         .def("execQueryE", &OW_CIMClient::execQueryE)
 

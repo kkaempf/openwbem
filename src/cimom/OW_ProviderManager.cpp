@@ -314,13 +314,18 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 	for (size_t i = 0; i < m_IFCArray.size(); ++i)
 	{
 		OW_InstanceProviderInfoArray instanceProviderInfo;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssociatorProviderInfoArray associatorProviderInfo;
+#endif
 		OW_MethodProviderInfoArray methodProviderInfo;
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray propertyProviderInfo;
 #endif
 		OW_IndicationProviderInfoArray indicationProviderInfo;
-		m_IFCArray[i]->init(env, instanceProviderInfo, associatorProviderInfo, 
+		m_IFCArray[i]->init(env, instanceProviderInfo, 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+			associatorProviderInfo,
+#endif
 			methodProviderInfo, 
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 			propertyProviderInfo, 
@@ -328,7 +333,9 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 			indicationProviderInfo);
 
 		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		processProviderInfo(env, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
+#endif
 		processProviderInfo(env, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		processProviderInfo(env, propertyProviderInfo, m_IFCArray[i], m_registeredPropProvs);
@@ -511,6 +518,7 @@ OW_ProviderManager::getPropertyProvider(const OW_ProviderEnvironmentIFCRef& env,
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -548,6 +556,7 @@ OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& en
 	}
 	return OW_AssociatorProviderIFCRef(0);
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray

@@ -650,6 +650,7 @@ OW_BinaryCIMOMHandle::setProperty(
 	checkError(in);
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::associatorNames(
@@ -851,6 +852,7 @@ OW_BinaryCIMOMHandle::referencesClasses(
 	
 	readAndDeliver(in, result);
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration

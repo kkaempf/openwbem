@@ -105,7 +105,9 @@ OW_InternalProviderIFC::addCIMOMProvider(const OW_String& providerNameArg,
 void
 OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instInfos,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray& assocInfos,
+#endif
 	OW_MethodProviderInfoArray& methInfos,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& propInfos,
@@ -136,6 +138,7 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			instInfos.push_back(provInfo);
 		}
 		
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_CppAssociatorProviderIFC* pAP = it->second.m_pProv->getAssociatorProvider();
 		if (pAP)
 		{
@@ -144,6 +147,7 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			pAP->getProviderInfo(provInfo);
 			assocInfos.push_back(provInfo);
 		}
+#endif
 
 		OW_CppMethodProviderIFC* pMP = it->second.m_pProv->getMethodProvider();
 		if (pMP)
@@ -346,6 +350,7 @@ OW_InternalProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_InternalProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -379,6 +384,7 @@ OW_InternalProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCR
 
 	return OW_AssociatorProviderIFCRef(new OW_AssociatorProviderProxy(apRef));
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRef

@@ -54,7 +54,9 @@
 
 typedef struct {
 	::CMPIInstanceMI * instMI;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	::CMPIAssociationMI * assocMI;
+#endif
 	::CMPIIndicationMI * indMI;
 	::CMPIMethodMI * methMI;
 } OW_CompleteMI;

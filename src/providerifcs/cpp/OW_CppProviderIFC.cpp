@@ -86,14 +86,20 @@ OW_CppProviderIFC::~OW_CppProviderIFC()
 void
 OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray& a,
+#endif
 	OW_MethodProviderInfoArray& m,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& p,
 #endif
 	OW_IndicationProviderInfoArray& ind)
 {
-	loadProviders(env, i, a, m, 
+	loadProviders(env, i, 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+		a, 
+#endif
+		m, 
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		p, 
 #endif
@@ -229,6 +235,7 @@ OW_CppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& env
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -255,6 +262,7 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRef
@@ -287,7 +295,9 @@ OW_CppProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& e
 void
 OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
+#endif
 	OW_MethodProviderInfoArray& methodProviderInfo,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& propertyProviderInfo,
@@ -385,6 +395,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_ip->getProviderInfo(info);
 				instanceProviderInfo.push_back(info);
 			}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			OW_CppAssociatorProviderIFC* p_ap = p->getAssociatorProvider();
 			if (p_ap)
 			{
@@ -393,6 +404,7 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				p_ap->getProviderInfo(info);
 				associatorProviderInfo.push_back(info);
 			}
+#endif
 			OW_CppMethodProviderIFC* p_mp = p->getMethodProvider();
 			if (p_mp)
 			{
@@ -606,7 +618,9 @@ OW_CppProviderBaseIFC::~OW_CppProviderBaseIFC() {}
 void OW_CppProviderBaseIFC::updateAccessTime() { m_dt.setToCurrent(); }
 
 OW_CppInstanceProviderIFC::~OW_CppInstanceProviderIFC() {}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 OW_CppAssociatorProviderIFC::~OW_CppAssociatorProviderIFC(){}
+#endif
 OW_CppIndicationExportProviderIFC::~OW_CppIndicationExportProviderIFC(){}
 OW_CppMethodProviderIFC::~OW_CppMethodProviderIFC() {}
 OW_CppPolledProviderIFC::~OW_CppPolledProviderIFC() {}

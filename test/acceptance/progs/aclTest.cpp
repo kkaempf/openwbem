@@ -429,6 +429,7 @@ void getQualifier(OW_CIMOMHandleIFC& hdl)
 	}
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void associatorNames(OW_CIMOMHandleIFC& hdl)
 {
 	cout << "\n ***** Doing associatorNames() ****** " << endl;
@@ -530,6 +531,7 @@ void references(OW_CIMOMHandleIFC& hdl)
 			throw;
 	}
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 void execReadQuery(OW_CIMOMHandleIFC& hdl)
 {
@@ -811,10 +813,12 @@ int main(int argc, char* argv[])
 		enumerateQualifiers(rch);
 		getQualifier(rch);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		associatorNames(rch);
 		associators(rch);
 		referenceNames(rch);
 		references(rch);
+#endif
 		execReadQuery(rch);
 		execWriteQuery(rch);
 

@@ -390,6 +390,7 @@ public:
 		const OW_String& propertyName,
 		const OW_CIMValue& newValue) ;
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This method is used to enumerate the names of CIM Objects (Classes or
 	 * Instances) that are associated to a particular CIM Object.
@@ -717,6 +718,7 @@ public:
 		OW_Bool includeQualifiers=OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
 		OW_Bool includeClassOrigin=OW_CIMOMHandleIFC::EXCLUDE_CLASS_ORIGIN,
 		const OW_StringArray* propertyList=0);
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	/**
 	 * Executes a query to retrieve or modify objects.

@@ -32,7 +32,9 @@
 #define OW_CPPPROXYPROVIDER_HPP_
 
 #include "OW_config.h"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
+#endif
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
@@ -41,7 +43,9 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CppAssociatorProviderIFC.hpp"
+#endif
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
@@ -51,6 +55,7 @@
 #include "OW_CppIndicationExportProviderIFC.hpp"
 #include "OW_CppIndicationProviderIFC.hpp"
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_CppAssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
 public:
@@ -102,6 +107,7 @@ public:
 private:
 	OW_CppAssociatorProviderIFCRef m_pProv;
 };
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 class OW_CppInstanceProviderProxy : public OW_InstanceProviderIFC
 {

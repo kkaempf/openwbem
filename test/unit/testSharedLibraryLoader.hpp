@@ -119,6 +119,7 @@ public:
 	}
 };
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class TestAssociatorProvider : public OW_AssociatorProviderIFC
 {
 public:
@@ -135,6 +136,7 @@ public:
 	{
 	}
 };
+#endif
 
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class TestPropertyProvider : public OW_PropertyProviderIFC
@@ -176,7 +178,9 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		virtual ~testProviderMux() {}
 		virtual void doInit(const OW_ProviderEnvironmentIFCRef&,
 			OW_InstanceProviderInfoArray& ia,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			OW_AssociatorProviderInfoArray& aa,
+#endif
 			OW_MethodProviderInfoArray& ma,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 			OW_PropertyProviderInfoArray& pa,
@@ -241,6 +245,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					mpi.addInstrumentedClass(ci);
 					ma.push_back(mpi);
 				}
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 				// associator provider registration
 				{
 					OW_AssociatorProviderInfo api;
@@ -258,6 +263,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 					api.addInstrumentedClass(ci);
 					aa.push_back(api);
 				}
+#endif
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 				// property provider registration
 				{
@@ -400,6 +406,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 		}
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)
 		{
@@ -409,6 +416,7 @@ class testProviderMux: public OW_ProviderIFCBaseIFC
 			}
 			OW_THROW(OW_NoSuchProviderException, provIdString);
 		}
+#endif
 
 		virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
 			const OW_ProviderEnvironmentIFCRef&, const char* provIdString)

@@ -210,6 +210,7 @@ OW_CIMOMHandleIFC::enumQualifierTypesE(
 }
 
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPathEnumeration
 OW_CIMOMHandleIFC::associatorNamesE(
@@ -316,6 +317,7 @@ OW_CIMOMHandleIFC::referencesClassesE(
 		includeQualifiers, includeClassOrigin, propertyList);	
 	return rval;
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstanceEnumeration

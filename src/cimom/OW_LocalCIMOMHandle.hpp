@@ -365,6 +365,7 @@ public:
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * This operation is used to enumerate CIMInstances
 	 * that are associated to a particular source CIM Object.
@@ -566,6 +567,7 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_String &resultClass,
 		const OW_String &role);
+#endif
 	
 	/**
 	 * Executes a query to retrieve CIM objects.

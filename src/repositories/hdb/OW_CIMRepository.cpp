@@ -50,8 +50,10 @@ OW_CIMRepository::OW_CIMRepository(OW_ServiceEnvironmentIFCRef env)
 	, m_nStore(env)
 	, m_iStore(env)
 	, m_mStore(env)
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	, m_classAssocDb(env)
 	, m_instAssocDb(env)
+#endif
 	, m_env(env)
     , m_checkReferentialIntegrity(false)
 {
@@ -110,8 +112,10 @@ OW_CIMRepository::open(const OW_String& path)
 	m_nStore.open(fname + NS_REPOS_NAME);
 	m_iStore.open(fname + INST_REPOS_NAME);
 	m_mStore.open(fname + META_REPOS_NAME);
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	m_classAssocDb.open(fname + CLASS_ASSOC_REPOS_NAME);
 	m_instAssocDb.open(fname + INST_ASSOC_REPOS_NAME);
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -121,8 +125,10 @@ OW_CIMRepository::close()
 	m_nStore.close();
 	m_iStore.close();
 	m_mStore.close();
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	m_classAssocDb.close();
 	m_instAssocDb.close();
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -334,11 +340,17 @@ namespace
 	{
 	public:
 		CIMClassDeleter(OW_MetaRepository& mr, const OW_String& ns_,
-			OW_InstanceRepository& mi, OW_AssocDb& m_assocDb_)
+			OW_InstanceRepository& mi
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+			, OW_AssocDb& m_assocDb_
+#endif
+			)
 		: m_mStore(mr)
 		, ns(ns_)
 		, m_iStore(mi)
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		, m_assocDb(m_assocDb_)
+#endif
 		{}
 	protected:
 		virtual void doHandle(const OW_CIMClass &c)
@@ -357,19 +369,23 @@ namespace
 			// delete any instances of the class
 			m_iStore.deleteClass(ns, cname);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			// remove class from association index
 			if (c.isAssociation())
 			{
 				OW_AssocDbHandle hdl = m_assocDb.getHandle();
 				hdl.deleteEntries(ns,c);
 			}
+#endif
 
 		}
 	private:
 		OW_MetaRepository& m_mStore;
 		const OW_String& ns;
 		OW_InstanceRepository& m_iStore;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssocDb& m_assocDb;
+#endif
 	};
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -393,7 +409,11 @@ OW_CIMRepository::deleteClass(const OW_String& ns, const OW_String& className,
 		// database that supports transactions.  Either way, a lot of work :-(
 
 		// delete the class and any subclasses
-		CIMClassDeleter ccd(m_mStore, ns, m_iStore, m_classAssocDb);
+		CIMClassDeleter ccd(m_mStore, ns, m_iStore
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+			, m_classAssocDb
+#endif
+			);
 		this->enumClasses(ns, className, ccd,
 			OW_CIMOMHandleIFC::DEEP, OW_CIMOMHandleIFC::LOCAL_ONLY,
 			OW_CIMOMHandleIFC::EXCLUDE_QUALIFIERS,
@@ -436,11 +456,13 @@ OW_CIMRepository::createClass(const OW_String& ns, const OW_CIMClass& cimClass_,
 		// cimClass only contains "unique" items that are added in the child class.
 		cimClass = _getClass(ns, cimClass.getName());
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		if (cimClass.isAssociation())
 		{
 			OW_AssocDbHandle hdl = m_classAssocDb.getHandle();
 			hdl.addEntries(ns,cimClass);
 		}
+#endif
 
 		if (m_env->getLogger()->getLogLevel() == DebugLevel)
 		{
@@ -759,6 +781,7 @@ OW_CIMRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& co
 		OW_CIMInstance oldInst = getInstance(ns, cop, false, true, true, NULL,
 			&theClass, acl);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssocDbHandle hdl = m_instAssocDb.getHandle();
 
 		// Ensure no associations exist for this instance
@@ -780,6 +803,7 @@ OW_CIMRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& co
 		{
 			hdl.deleteEntries(ns, oldInst);
 		}
+#endif
 
 		// Delete the instance from the instance repository
 		m_iStore.deleteInstance(ns, cop, theClass);
@@ -864,11 +888,13 @@ OW_CIMRepository::createInstance(
 		//TODO: _checkRequiredProperties(theClass, ci);
 		m_iStore.createInstance(ns, theClass, ci);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		if(theClass.isAssociation())
 		{
 			OW_AssocDbHandle hdl = m_instAssocDb.getHandle();
 			hdl.addEntries(ns, ci);
 		}
+#endif
 
 		OW_ASSERT(rval);
 		return rval;
@@ -903,6 +929,7 @@ OW_CIMRepository::modifyInstance(
 
 		m_iStore.modifyInstance(ns, cop, theClass, modifiedInstance, oldInst, includeQualifiers, propertyList);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		// TODO: Verify that this code is needed.  Aren't all references keys, and thus can't be changed?  So why update the assoc db?
 		// just create a test to try and break it.
 		if(theClass.isAssociation())
@@ -911,6 +938,7 @@ OW_CIMRepository::modifyInstance(
 			adbHdl.deleteEntries(ns, oldInst);
 			adbHdl.addEntries(ns, modifiedInstance);
 		}
+#endif
 
 		OW_ASSERT(oldInst);
 		return oldInst;
@@ -1037,6 +1065,7 @@ OW_CIMRepository::execQuery(
 	OW_THROWCIM(OW_CIMException::NOT_SUPPORTED);
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMRepository::associators(
@@ -1707,6 +1736,7 @@ OW_CIMRepository::_getAssociationClasses(const OW_String& ns,
 		//m_mStore.getTopLevelAssociations(ns, helper);
 	}
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1894,6 +1924,9 @@ OW_CIMRepository::_validatePropagatedKeys(const OW_String& ns,
 const char* const OW_CIMRepository::INST_REPOS_NAME = "instances";
 const char* const OW_CIMRepository::META_REPOS_NAME = "schema";
 const char* const OW_CIMRepository::NS_REPOS_NAME = "namespaces";
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 const char* const OW_CIMRepository::CLASS_ASSOC_REPOS_NAME = "classassociation";
 const char* const OW_CIMRepository::INST_ASSOC_REPOS_NAME = "instassociation";
+#endif
+
 

@@ -40,7 +40,9 @@
 #include "OW_PropertyProviderIFC.hpp"
 #endif
 #include "OW_InstanceProviderIFC.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
+#endif
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
@@ -48,7 +50,9 @@
 #include "OW_ProviderEnvironmentIFC.hpp"
 
 #include "OW_InstanceProviderInfo.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderInfo.hpp"
+#endif
 #include "OW_MethodProviderInfo.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderInfo.hpp"
@@ -99,7 +103,9 @@ public:
 	 */
 	void init(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssociatorProviderInfoArray& a,
+#endif
 		OW_MethodProviderInfoArray& m,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
@@ -147,6 +153,7 @@ public:
 		const char* provIdString);
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Locate an Associator provider.
 	 *
@@ -159,6 +166,7 @@ public:
 	 */
 	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString);
+#endif
 
 	/**
 	 * @return all available indication export providers from the available
@@ -198,7 +206,9 @@ protected:
 	 */
 	virtual void doInit(const OW_ProviderEnvironmentIFCRef& env,
 		OW_InstanceProviderInfoArray& i,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssociatorProviderInfoArray& a,
+#endif
 		OW_MethodProviderInfoArray& m,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 		OW_PropertyProviderInfoArray& p,
@@ -216,9 +226,11 @@ protected:
 		const char* provIdString) = 0;
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_AssociatorProviderIFCRef doGetAssociatorProvider(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
+#endif
 
 	virtual OW_IndicationExportProviderIFCRefArray doGetIndicationExportProviders(
 		const OW_ProviderEnvironmentIFCRef& env

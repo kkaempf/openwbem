@@ -372,24 +372,6 @@ public:
 		const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo);
 
-	virtual void associators(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMInstanceResultHandlerIFC& result,
-		const OW_String &assocClass, const OW_String &resultClass,
-		const OW_String &role, const OW_String &resultRole,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
-
-	virtual void associatorsClasses(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMClassResultHandlerIFC& result,
-		const OW_String &assocClass, const OW_String &resultClass,
-		const OW_String &role, const OW_String &resultRole,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
-
 	/**
 	 * Set a property value on an OW_CIMInstance.
 	 * @param name				The object path of the instance
@@ -403,13 +385,6 @@ public:
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_UserInfo& aclInfo);
-
-	virtual void referenceNames(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String &resultClass,
-		const OW_String &role, const OW_UserInfo& aclInfo);
 
 	/**
 	 * Get the specified CIM instance property.
@@ -444,6 +419,32 @@ public:
 		const OW_String &methodName, const OW_CIMParamValueArray &inParams,
 		OW_CIMParamValueArray &outParams, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	virtual void associators(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
+		OW_CIMInstanceResultHandlerIFC& result,
+		const OW_String &assocClass, const OW_String &resultClass,
+		const OW_String &role, const OW_String &resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
+
+	virtual void associatorsClasses(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
+		OW_CIMClassResultHandlerIFC& result,
+		const OW_String &assocClass, const OW_String &resultClass,
+		const OW_String &role, const OW_String &resultRole,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
+
+	virtual void referenceNames(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &resultClass,
+		const OW_String &role, const OW_UserInfo& aclInfo);
+
 	virtual void associatorNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath &path,
@@ -467,6 +468,7 @@ public:
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray *propertyList, const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	virtual void execQuery(
 		const OW_String& ns,

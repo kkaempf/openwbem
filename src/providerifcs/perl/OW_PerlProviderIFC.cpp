@@ -39,7 +39,9 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_PerlInstanceProviderProxy.hpp"
 #include "OW_PerlMethodProviderProxy.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_PerlAssociatorProviderProxy.hpp"
+#endif
 #include "OW_PerlPolledProviderProxy.hpp"
 #include "OW_PerlIndicationProviderProxy.hpp"
 // BMMU
@@ -98,7 +100,9 @@ OW_PerlProviderIFC::~OW_PerlProviderIFC()
 void
 OW_PerlProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray& a,
+#endif
 	OW_MethodProviderInfoArray& m,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& p,
@@ -238,6 +242,7 @@ OW_PerlProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& en
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_PerlProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -263,6 +268,7 @@ OW_PerlProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& 
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRef
@@ -296,7 +302,9 @@ OW_PerlProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& 
 void
 OW_PerlProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
+#endif
 	OW_MethodProviderInfoArray& methodProviderInfo,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& propertyProviderInfo,
@@ -393,9 +401,11 @@ OW_PerlProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 		inst_info.setProviderName(guessProvId);
 		instanceProviderInfo.push_back(inst_info);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		OW_AssociatorProviderInfo assoc_info;
 		assoc_info.setProviderName(guessProvId);
 		associatorProviderInfo.push_back(assoc_info);
+#endif
 
 		OW_MethodProviderInfo meth_info;
 		meth_info.setProviderName(guessProvId);

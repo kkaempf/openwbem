@@ -793,6 +793,7 @@ deleteInstance(OW_CIMClient& hdl, const OW_String& ofClass, const OW_String& the
 	testDone();
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 deleteAssociations(OW_CIMClient& hdl)
@@ -810,6 +811,7 @@ deleteAssociations(OW_CIMClient& hdl)
 
 	testDone();
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -894,6 +896,7 @@ getQualifier(OW_CIMClient& hdl)
 	testDone();
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void createAssociation(OW_CIMClient& hdl, const OW_String& assocName,
 		const OW_String& propName1, const OW_CIMObjectPath& cop1,
 		const OW_String& propName2, const OW_CIMObjectPath& cop2)
@@ -1296,6 +1299,7 @@ referencesClasses(OW_CIMClient& hdl,
 
 	testDone();
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1897,6 +1901,7 @@ main(int argc, char* argv[])
 		enumerateQualifiers(rch);
 		getQualifier(rch);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 		if (getenv("OWLONGTEST"))
 		{
 			setupAssociations(rch);
@@ -1991,6 +1996,8 @@ main(int argc, char* argv[])
 			execQuery(rch);
 			deleteAssociations(rch);
 		}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SixMillion");
 		deleteInstance(rch, "EXP_BionicComputerSystem", "SevenMillion");

@@ -1587,9 +1587,10 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 			instancep =
 				m_provManager->getInstanceProvider(createProvEnvRef(intAclInfo, m_env), ns, cc);
 		}
-		catch (const OW_NoSuchProviderException&)
+		catch (const OW_NoSuchProviderException& e)
 		{
 			// if it's not an instance or associator provider, then ERROR!
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			try
 			{
 				m_provManager->getAssociatorProvider(
@@ -1597,9 +1598,12 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 			}
 			catch (const OW_NoSuchProviderException& e)
 			{
+#endif
 				OW_THROWCIMMSG(OW_CIMException::FAILED,
 					format("Invalid provider: %1", e.getMessage()).c_str());
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 			}
+#endif
 		}
 		OW_String parentClassName = cc.getSuperClass();
 		if (parentClassName.empty() || instancep)
@@ -1613,6 +1617,7 @@ OW_CIMServer::_getInstanceProvider(const OW_String& ns, const OW_CIMClass& cc_)
 	return instancep;
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_)
@@ -1655,6 +1660,7 @@ OW_CIMServer::_getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cc_
 	}
 	return ap;
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////
 OW_CIMClass
@@ -1741,6 +1747,7 @@ OW_CIMServer::execQuery(
 	}
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::associators(
@@ -2304,10 +2311,14 @@ OW_CIMServer::_isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc)
 	return _getAssociatorProvider(ns, cc) ? true : false;
 }
 
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 
 const char* const OW_CIMServer::INST_REPOS_NAME = "instances";
 const char* const OW_CIMServer::META_REPOS_NAME = "schema";
 const char* const OW_CIMServer::NS_REPOS_NAME = "namespaces";
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 const char* const OW_CIMServer::CLASS_ASSOC_REPOS_NAME = "classassociation";
 const char* const OW_CIMServer::INST_ASSOC_REPOS_NAME = "instassociation";
+#endif
 const char* const OW_CIMServer::NAMESPACE_PROVIDER = "owcimomd::namespace";

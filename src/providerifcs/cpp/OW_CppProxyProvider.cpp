@@ -35,6 +35,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////		
 OW_CppAssociatorProviderProxy::OW_CppAssociatorProviderProxy(
 	OW_CppAssociatorProviderIFCRef pProv) :
@@ -110,6 +111,7 @@ OW_CppAssociatorProviderProxy::referenceNames(
 	m_pProv->updateAccessTime();
 	m_pProv->referenceNames(env, ns, assocName, objectName, result, role);
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CppInstanceProviderProxy::OW_CppInstanceProviderProxy(

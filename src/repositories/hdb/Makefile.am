@@ -21,9 +21,16 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
-libowrepositoryhdb_a_SOURCES = \
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_S=
+else
+ASSOCIATION_S= \
 OW_AssocDb.cpp \
-OW_AssocDb.hpp \
+OW_AssocDb.hpp
+endif
+
+libowrepositoryhdb_a_SOURCES = \
+$(ASSOCIATION_S) \
 OW_CIMRepository.cpp \
 OW_CIMRepository.hpp \
 OW_GenericHDBRepository.cpp \

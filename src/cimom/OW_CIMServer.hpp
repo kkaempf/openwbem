@@ -57,8 +57,10 @@ public:
 	static const char* const INST_REPOS_NAME;
 	static const char* const META_REPOS_NAME;
 	static const char* const NS_REPOS_NAME;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	static const char* const CLASS_ASSOC_REPOS_NAME;
 	static const char* const INST_ASSOC_REPOS_NAME;
+#endif
 
 	static const char* const NAMESPACE_PROVIDER;
 
@@ -509,6 +511,7 @@ public:
 		const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 		OW_CIMParamValueArray& outParams, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
@@ -561,6 +564,9 @@ public:
 		const OW_String& role, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo);
+
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 	
 	/**
 	 *
@@ -619,9 +625,12 @@ private:
 		const OW_UserInfo& aclInfo);
 
 public:
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_Bool _isDynamicAssoc(const OW_String& ns, const OW_CIMClass& cc);
+#endif
 
 private:
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void _commonAssociators(
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
@@ -659,6 +668,7 @@ private:
 	void _getAssociationClasses(const OW_String& ns,
 		const OW_String& assocClassName, const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result, const OW_String& role);
+#endif
 
 	/**
 	 * Get the special __Namespace class
@@ -670,7 +680,9 @@ private:
 
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
 		const OW_CIMClass& cls);
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cls);
+#endif
 
 private:
 	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className, 

@@ -376,6 +376,7 @@ OW_LocalCIMOMHandle::setProperty(
 	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_LocalCIMOMHandle::associatorNames(
@@ -469,6 +470,7 @@ OW_LocalCIMOMHandle::referencesClasses(
 	m_pServer->referencesClasses(ns, path, result, resultClass, role,
 		includeQualifiers, includeClassOrigin, propertyList, m_aclInfo);
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -497,7 +499,9 @@ OW_LocalCIMOMHandle::getServerFeatures()
 	cf.supportedGroups.push_back("schema-manipulation");
 	cf.supportedGroups.push_back("instance-manipulation");
 	cf.supportedGroups.push_back("qualifier-declaration");
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	cf.supportedGroups.push_back("association-traversal");
+#endif
 	cf.supportedQueryLanguages.clear();
 	cf.supportsBatch = true;
 	cf.validation = OW_String();

@@ -37,7 +37,9 @@
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderIFC.hpp"
 #endif
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
+#endif
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
@@ -141,6 +143,7 @@ public:
 		const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& property) const;
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Locate an Associator provider.
 	 *
@@ -159,6 +162,7 @@ public:
 	 */
 	OW_AssociatorProviderIFCRef getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns, const OW_CIMClass& cc) const;
+#endif
 
 	/**
 	 * @return all available indication export providers from the available
@@ -219,7 +223,9 @@ private:
 	// The key must be: a classname if the provider supports any namespace,
 	// or namespace:classname for a specific namespace.
 	ProvRegMap_t m_registeredInstProvs;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	ProvRegMap_t m_registeredAssocProvs;
+#endif
 
 	// The key must be: [namespace:]className[:methodname]
 	ProvRegMap_t m_registeredMethProvs;

@@ -54,7 +54,9 @@ private:
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	void testGetPropertyProvider();
 #endif
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	void testGetAssociatorProvider();
+#endif
 	void testGetIndicationProvider();
 };
 

@@ -32,7 +32,9 @@
 #define OW_PROXYPROVIDER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
+#endif
 #include "OW_InstanceProviderIFC.hpp"
 #include "OW_MethodProviderIFC.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
@@ -41,7 +43,9 @@
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_IndicationProviderIFC.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CppAssociatorProviderIFC.hpp"
+#endif
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
@@ -54,6 +58,7 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_AssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
 public:
@@ -122,6 +127,7 @@ public:
 private:
 	OW_CppAssociatorProviderIFCRef m_pProv;
 };
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 class OW_InstanceProviderProxy : public OW_InstanceProviderIFC
 {

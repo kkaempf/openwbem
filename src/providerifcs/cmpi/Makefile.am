@@ -27,11 +27,18 @@ clean-local:
 #OW_CMPIIndicationProviderProxy.cpp \
 #OW_CMPIMethodProviderProxy.cpp  
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_PROVIDER_S=
+else
+ASSOCIATION_PROVIDER_S= \
+OW_CMPIAssociatorProviderProxy.cpp \
+OW_CMPIAssociatorProviderProxy.hpp
+endif
+
 libcmpiprovifc_a_SOURCES = \
+$(ASSOCIATION_PROVIDER_S) \
 OW_CMPIInstanceProviderProxy.cpp \
 OW_CMPIInstanceProviderProxy.hpp \
-OW_CMPIAssociatorProviderProxy.cpp \
-OW_CMPIAssociatorProviderProxy.hpp \
 OW_CMPIMethodProviderProxy.hpp  \
 OW_CMPIPolledProviderProxy.hpp  \
 OW_CMPIIndicationProviderProxy.hpp \

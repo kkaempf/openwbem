@@ -40,7 +40,9 @@
 
 class OW_CppInstanceProviderIFC;
 class OW_CppMethodProviderIFC;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_CppAssociatorProviderIFC;
+#endif
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 class OW_CppPropertyProviderIFC;
 #endif
@@ -77,7 +79,9 @@ public:
 
 	virtual OW_CppInstanceProviderIFC* getInstanceProvider() { return 0; }
 	virtual OW_CppMethodProviderIFC* getMethodProvider() { return 0; }
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual OW_CppAssociatorProviderIFC* getAssociatorProvider() { return 0; }
+#endif
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
 #endif

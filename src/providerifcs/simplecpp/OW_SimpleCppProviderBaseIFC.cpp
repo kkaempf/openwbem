@@ -42,9 +42,11 @@ OW_SimpleCppProviderBaseIFC::initialize(const OW_ProviderEnvironmentIFCRef&) {}
 OW_SimpleCppInstanceProviderIFC* 
 OW_SimpleCppProviderBaseIFC::getInstanceProvider() { return 0; }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 ///////////////////////////////////////////////////////////////////////////////
 OW_SimpleCppAssociatorProviderIFC* 
 OW_SimpleCppProviderBaseIFC::getAssociatorProvider() { return 0; }
+#endif
 
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 ///////////////////////////////////////////////////////////////////////////////

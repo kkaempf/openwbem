@@ -39,7 +39,9 @@
 #include "OW_NoSuchProviderException.hpp"
 #include "OW_CMPIInstanceProviderProxy.hpp"
 #include "OW_CMPIMethodProviderProxy.hpp"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_CMPIAssociatorProviderProxy.hpp"
+#endif
 #include "OW_CMPIPolledProviderProxy.hpp"
 #include "OW_CMPIIndicationProviderProxy.hpp"
 
@@ -102,7 +104,9 @@ OW_CMPIProviderIFC::~OW_CMPIProviderIFC()
 void
 OW_CMPIProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef&,
 	OW_InstanceProviderInfoArray&,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray&,
+#endif
 	OW_MethodProviderInfoArray&,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray&,
@@ -247,6 +251,7 @@ OW_CMPIProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRef& en
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_CMPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -276,6 +281,7 @@ OW_CMPIProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& 
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRef
@@ -510,8 +516,10 @@ OW_CMPIProviderIFC::getProvider(
 	CMPI_ContextOnStack eCtx(opc);
 
 	::CMPIInstanceMI * cProvInst = createCMPIInstanceMI(&broker, &eCtx);
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //	::CMPIAssociationMI * cProvAssoc =
 //		 createCMPIAssociationMI(&broker, &eCtx);
+#endif
 //	::CMPIIndicationMI * cProvInd = createCMPIIndicationMI(&broker, &eCtx);
 
 

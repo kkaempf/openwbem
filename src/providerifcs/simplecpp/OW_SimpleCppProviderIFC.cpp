@@ -73,7 +73,9 @@ OW_SimpleCppProviderIFC::~OW_SimpleCppProviderIFC()
 void
 OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	OW_AssociatorProviderInfoArray& a,
+#endif
 	OW_MethodProviderInfoArray& m,
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	OW_PropertyProviderInfoArray& p,
@@ -83,7 +85,9 @@ OW_SimpleCppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	// TOOD: modify this and the providers to get the InstanceProviderInfo
 	(void)env;
 	(void)i;
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	(void)a;
+#endif
 	(void)m;
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 	(void)p;
@@ -172,6 +176,7 @@ OW_SimpleCppProviderIFC::doGetPropertyProvider(const OW_ProviderEnvironmentIFCRe
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 OW_AssociatorProviderIFCRef
 OW_SimpleCppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& env,
@@ -198,6 +203,7 @@ OW_SimpleCppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFC
 
 	OW_THROW(OW_NoSuchProviderException, provIdString);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationProviderIFCRef

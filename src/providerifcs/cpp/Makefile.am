@@ -37,9 +37,16 @@ else
 PROPERTY_PROVIDER_H=
 endif
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_H=
+else
+ASSOCIATION_H=\
+OW_CppAssociatorProviderIFC.hpp
+endif
+
 pkginclude_HEADERS = \
 OW_CppProviderBaseIFC.hpp \
-OW_CppAssociatorProviderIFC.hpp \
+$(ASSOCIATION_H) \
 OW_CppIndicationExportProviderIFC.hpp \
 OW_CppInstanceProviderIFC.hpp \
 OW_CppMethodProviderIFC.hpp \

@@ -23,11 +23,17 @@ clean-local:
 		rm -rf $$i* .$$i.libs; \
 	done
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_S=
+else
+ASSOCIATION_S= \
+OW_NPIAssociatorProviderProxy.cpp \
+OW_NPIAssociatorProviderProxy.hpp
+endif
 
 libnpiprovifc_a_SOURCES = \
 NPIProvider.hpp \
-OW_NPIAssociatorProviderProxy.cpp \
-OW_NPIAssociatorProviderProxy.hpp \
+$(ASSOCIATION_S) \
 OW_NPIInstanceProviderProxy.cpp \
 OW_NPIInstanceProviderProxy.hpp \
 OW_NPIMethodProviderProxy.cpp \

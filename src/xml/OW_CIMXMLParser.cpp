@@ -94,8 +94,7 @@ OW_CIMXMLParser::OW_CIMXMLParser()
 
 
 // This needs to be sorted alphabetically.
-// Also, if you add an entry, make sure and update the size and g_elemsEnd.
-OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[63] =
+OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[] =
 {
 	{ "CIM", OW_CIMXMLParser::E_CIM },
 	{ "CLASS", OW_CIMXMLParser::E_CLASS },
@@ -163,7 +162,8 @@ OW_CIMXMLParser::ElemEntry OW_CIMXMLParser::g_elems[63] =
 };
 
 		
-OW_CIMXMLParser::ElemEntry* OW_CIMXMLParser::g_elemsEnd = &OW_CIMXMLParser::g_elems[62];
+OW_CIMXMLParser::ElemEntry* OW_CIMXMLParser::g_elemsEnd = &OW_CIMXMLParser::g_elems[0] +
+	(sizeof(OW_CIMXMLParser::g_elems)/sizeof(*OW_CIMXMLParser::g_elems)) - 1;
 
 //////////////////////////////////////////////////////////////////////////////
 inline bool

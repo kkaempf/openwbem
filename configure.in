@@ -408,6 +408,16 @@ if test "$enable_digest" = no; then
 fi
 AM_CONDITIONAL(DISABLE_DIGEST, test x$OW_DISABLE_DIGEST = x1)
 
+AC_ARG_ENABLE(associationtraversal,
+[  --disable-associationtraversal     disable association traversal])
+
+OW_DISABLE_ASSOCIATION_TRAVERSAL=0
+if test "$enable_associationtraversal" = no; then
+	AC_DEFINE(DISABLE_ASSOCIATION_TRAVERSAL)
+	OW_DISABLE_ASSOCIATION_TRAVERSAL=1
+fi
+AM_CONDITIONAL(DISABLE_ASSOCIATION_TRAVERSAL, test x$OW_DISABLE_ASSOCIATION_TRAVERSAL = x1)
+
 
 AC_ARG_ENABLE(gnu-pth,
 [  --enable-gnu-pth   use pth library],

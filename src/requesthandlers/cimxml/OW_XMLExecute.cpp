@@ -68,10 +68,13 @@ template<typename T> inline static void checkStream(T& str)
 	}
 }
 
-OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
+OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 {
+	// This list must be kept in alphabetical order!
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	{ "associatornames", &OW_XMLExecute::associatorNames },
 	{ "associators", &OW_XMLExecute::associators },
+#endif
 	{ "createclass", &OW_XMLExecute::createClass },
 	{ "createinstance", &OW_XMLExecute::createInstance },
 	{ "deleteclass", &OW_XMLExecute::deleteClass },
@@ -89,14 +92,17 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[24] =
 	{ "getqualifier", &OW_XMLExecute::getQualifier },
 	{ "modifyclass", &OW_XMLExecute::modifyClass },
 	{ "modifyinstance", &OW_XMLExecute::modifyInstance },
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	{ "referencenames", &OW_XMLExecute::referenceNames },
 	{ "references", &OW_XMLExecute::references },
+#endif
 	{ "setproperty", &OW_XMLExecute::setProperty },
 	{ "setqualifier", &OW_XMLExecute::setQualifier },
 	{ "garbage", 0 }
 };
 
-OW_XMLExecute::FuncEntry* OW_XMLExecute::g_funcsEnd = &OW_XMLExecute::g_funcs[23];
+OW_XMLExecute::FuncEntry* OW_XMLExecute::g_funcsEnd = &OW_XMLExecute::g_funcs[0] + 
+	(sizeof(OW_XMLExecute::g_funcs)/sizeof(*OW_XMLExecute::g_funcs)) - 1;
 
 //////////////////////////////////////////////////////////////////////////////
 bool
@@ -552,6 +558,7 @@ namespace
 }
 
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::associatorNames(ostream& ostr, OW_CIMXMLParser& parser,
@@ -738,6 +745,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	}
 	ostr << "</IRETURNVALUE>";
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
@@ -1252,6 +1260,7 @@ OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 }
 
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::referenceNames(ostream& ostr, OW_CIMXMLParser& parser,
@@ -1335,6 +1344,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	}
 	ostr << "</IRETURNVALUE>";
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -333,6 +333,7 @@ void OW_ProviderManagerTestCases::testGetPropertyProvider()
 }
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 {
 	OW_ProviderManager mgr;
@@ -392,6 +393,7 @@ void OW_ProviderManagerTestCases::testGetAssociatorProvider()
 		createProvEnvRef(hdl), "rooT/fOo", c6);
 	unitAssert(provRef);
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 void OW_ProviderManagerTestCases::testGetIndicationProvider()
 {
@@ -473,9 +475,11 @@ Test* OW_ProviderManagerTestCases::suite()
 			("testGetPropertyProvider",
 			&OW_ProviderManagerTestCases::testGetPropertyProvider));
 #endif
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetAssociatorProvider",
 			&OW_ProviderManagerTestCases::testGetAssociatorProvider));
+#endif
 	testSuite->addTest (new TestCaller <OW_ProviderManagerTestCases>
 			("testGetIndicationProvider",
 			&OW_ProviderManagerTestCases::testGetIndicationProvider));

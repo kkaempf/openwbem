@@ -344,6 +344,20 @@ public:
 		const OW_StringArray* propertyList);
 
 	/**
+	 * Get the specified CIM instance property.
+	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
+	 *								to be accessed
+	 * @param propertyName	The name of the property to retrieve.
+	 * @return The OW_CIMvalue for property identified by propertyName.
+	 * @exception OW_CIMException
+	 */
+	virtual OW_CIMValue getProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
+		const OW_String &propertyName);
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+	/**
 	 * This operation is used to enumerate CIMInstances
 	 * that are associated to a particular source CIM Object.
 	 *
@@ -439,19 +453,6 @@ public:
 		const OW_StringArray* propertyList=0);
 
 	/**
-	 * Get the specified CIM instance property.
-	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
-	 *								to be accessed
-	 * @param propertyName	The name of the property to retrieve.
-	 * @return The OW_CIMvalue for property identified by propertyName.
-	 * @exception OW_CIMException
-	 */
-	virtual OW_CIMValue getProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath &name,
-		const OW_String &propertyName);
-
-	/**
 	 * This operation is used to enumerate the association objects that refer to
 	 * a particular target CIM Object (Class or Instance).
 	 *
@@ -488,6 +489,26 @@ public:
 		const OW_String &resultClass, const OW_String &role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
+
+	/**
+	 * This operation is used to enumerate the association objects that refer to
+	 * a particular target CIM Object (Class or Instance).
+	 * @param objectName		refer to reference method.
+	 * @param resultClass	refer to reference method.
+	 * @param role				refer to reference method.
+	 *
+	 * @return If successful, the method returns the names of zero or more full
+	 * CIM Class paths or Instance paths of Objects meeting the requested
+	 * criteria.
+	 *
+	 * @exception OW_CIMException As defined for associators method.
+	 */
+	virtual void referenceNames(
+		const OW_String& ns,
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		const OW_String &resultClass,
+		const OW_String &role);
 
 	virtual void referencesClasses(
 		const OW_String& ns,
@@ -543,6 +564,7 @@ public:
 		const OW_String &assocClass,
 		const OW_String &resultClass, const OW_String &role,
 		const OW_String &resultRole);
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	/**
 	 * Executes a query to retrieve objects. The WBEM Query Language (WQL) is a
@@ -596,26 +618,6 @@ public:
 		const OW_String& ns,
 		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage);
-
-	/**
-	 * This operation is used to enumerate the association objects that refer to
-	 * a particular target CIM Object (Class or Instance).
-	 * @param objectName		refer to reference method.
-	 * @param resultClass	refer to reference method.
-	 * @param role				refer to reference method.
-	 *
-	 * @return If successful, the method returns the names of zero or more full
-	 * CIM Class paths or Instance paths of Objects meeting the requested
-	 * criteria.
-	 *
-	 * @exception OW_CIMException As defined for associators method.
-	 */
-	virtual void referenceNames(
-		const OW_String& ns,
-		const OW_CIMObjectPath &path,
-		OW_CIMObjectPathResultHandlerIFC& result,
-		const OW_String &resultClass,
-		const OW_String &role);
 
 	virtual OW_CIMFeatures getServerFeatures();
 

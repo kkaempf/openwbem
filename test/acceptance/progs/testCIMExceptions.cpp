@@ -785,6 +785,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Associators
 
 	// CIM_ERR_INVALID_NAMESPACE
@@ -852,7 +853,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 		TEST_ASSERT(e.getErrNo() == OW_CIMException::INVALID_NAMESPACE);
 	}
 	// CIM_ERR_INVALID_PARAMETER
-
+#endif
 
 	// GetProperty
 

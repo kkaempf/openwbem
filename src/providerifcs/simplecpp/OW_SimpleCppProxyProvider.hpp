@@ -32,17 +32,22 @@
 #define OW_SIMPLECPPPROXYPROVIDER_HPP_
 
 #include "OW_config.h"
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_AssociatorProviderIFC.hpp"
+#endif
 #include "OW_InstanceProviderIFC.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_PropertyProviderIFC.hpp"
 #endif
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 #include "OW_SimpleCppAssociatorProviderIFC.hpp"
+#endif
 #include "OW_SimpleCppInstanceProviderIFC.hpp"
 #ifdef OW_ENABLE_PROPERTY_PROVIDERS
 #include "OW_SimpleCppPropertyProviderIFC.hpp"
 #endif
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_SimpleCppAssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
 public:
@@ -94,6 +99,8 @@ public:
 private:
 	OW_SimpleCppAssociatorProviderIFCRef m_pProv;
 };
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 
 class OW_SimpleCppInstanceProviderProxy : public OW_InstanceProviderIFC
 {

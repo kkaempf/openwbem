@@ -240,6 +240,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					execQuery(chdl, *ostrm, *istrm);
 					break;
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 				case OW_BIN_ASSOCIATORS:
 					lgr->logDebug("OW_BinaryRequestHandler associators"
 						" request");
@@ -263,6 +264,7 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 						" request");
 					referenceNames(chdl, *ostrm, *istrm);
 					break;
+#endif
 
 				case OW_BIN_GETSVRFEATURES:
 					lgr->logDebug("OW_BinaryRequestHandler get server"
@@ -788,6 +790,7 @@ OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
@@ -917,6 +920,7 @@ OW_BinaryRequestHandler::referenceNames(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 void

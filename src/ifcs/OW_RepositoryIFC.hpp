@@ -417,6 +417,7 @@ public:
 		const OW_String& methodName, const OW_CIMParamValueArray& inParams,
 		OW_CIMParamValueArray& outParams, const OW_UserInfo& aclInfo) = 0;
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void associatorNames(
 		const OW_String& ns,
 		const OW_CIMObjectPath& path,
@@ -469,6 +470,8 @@ public:
 		const OW_String& role, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+
 	
 	virtual void execQuery(
 		const OW_String& ns,

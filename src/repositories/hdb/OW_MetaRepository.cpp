@@ -908,6 +908,7 @@ OW_MetaRepository::modifyClass(const OW_String& ns,
 	updateCIMObject(cimClass, node, hdl.getHandle());
 }
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
@@ -936,6 +937,7 @@ OW_MetaRepository::getTopLevelAssociations(const OW_String& ns,
 		node = hdl->getNextSibling(node);
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -265,6 +265,40 @@ OW_WQLFilterRep::modifyInstance(const OW_String&, const OW_CIMInstance&,
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_WQLFilterRep::setProperty(
+	const OW_String&,
+	const OW_CIMObjectPath &/*name*/,
+	const OW_String& /*propertyName*/, const OW_CIMValue &/*cv*/,
+	const OW_UserInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue
+OW_WQLFilterRep::getProperty(
+	const OW_String&,
+	const OW_CIMObjectPath &/*name*/,
+	const OW_String &/*propertyName*/, const OW_UserInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue
+OW_WQLFilterRep::invokeMethod(const OW_String&, const OW_CIMObjectPath &/*name*/,
+	const OW_String &/*methodName*/, const OW_CIMParamValueArray &/*inParams*/,
+	OW_CIMParamValueArray &/*outParams*/, const OW_UserInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_WQLFilterRep::associators(
 	const OW_String&,
 	const OW_CIMObjectPath &/*path*/,
@@ -295,45 +329,12 @@ OW_WQLFilterRep::associatorsClasses(
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::setProperty(
-	const OW_String&,
-	const OW_CIMObjectPath &/*name*/,
-	const OW_String& /*propertyName*/, const OW_CIMValue &/*cv*/,
-	const OW_UserInfo& /*aclInfo*/)
-{
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_WQLFilterRep::referenceNames(
 	const OW_String&,
 	const OW_CIMObjectPath &/*path*/,
 	OW_CIMObjectPathResultHandlerIFC&,
 	const OW_String &/*resultClass*/,
 	const OW_String &/*role*/, const OW_UserInfo& /*aclInfo*/)
-{
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_WQLFilterRep::getProperty(
-	const OW_String&,
-	const OW_CIMObjectPath &/*name*/,
-	const OW_String &/*propertyName*/, const OW_UserInfo& /*aclInfo*/)
-{
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_WQLFilterRep::invokeMethod(const OW_String&, const OW_CIMObjectPath &/*name*/,
-	const OW_String &/*methodName*/, const OW_CIMParamValueArray &/*inParams*/,
-	OW_CIMParamValueArray &/*outParams*/, const OW_UserInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
@@ -382,6 +383,7 @@ OW_WQLFilterRep::referencesClasses(
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 //////////////////////////////////////////////////////////////////////////////
 void

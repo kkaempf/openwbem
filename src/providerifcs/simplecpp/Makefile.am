@@ -29,10 +29,16 @@ else
 PROPERTY_PROVIDER_S=
 endif
 
+if DISABLE_ASSOCIATION_TRAVERSAL
+ASSOCIATION_S=
+else
+ASSOCIATION_S= \
+OW_SimpleCppAssociatorProviderIFC.hpp \
+OW_SimpleCppAssociatorProviderIFC.cpp
+endif
 
 libsimplecppprovifc_a_SOURCES = \
-OW_SimpleCppAssociatorProviderIFC.hpp \
-OW_SimpleCppAssociatorProviderIFC.cpp \
+$(ASSOCIATION_S) \
 OW_SimpleCppInstanceProviderIFC.hpp \
 OW_SimpleCppInstanceProviderIFC.cpp \
 $(PROPERTY_PROVIDER_S) \

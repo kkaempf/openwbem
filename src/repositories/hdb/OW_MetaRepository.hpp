@@ -174,6 +174,7 @@ public:
 	OW_StringArray getClassChildren(const OW_String& ns,
 		const OW_String& className);
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**
 	 * Get all top level classes that are associations
 	 * @param ns	The namespace to enumerate
@@ -181,6 +182,7 @@ public:
 	 */
 	void getTopLevelAssociations(const OW_String& ns,
 		OW_CIMClassResultHandlerIFC& result);
+#endif
 
 	/**
 	 * Delete the given namespace and all object contained within it.
