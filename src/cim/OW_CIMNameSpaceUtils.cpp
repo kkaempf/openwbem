@@ -103,8 +103,8 @@ createCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, OW_UI
 	OW_CIMInstance cimInstance = theCIM_NamespaceClass.newInstance();
     cimInstance.setProperty(theObjectManager.getKeyT("SystemCreationClassName"));
     cimInstance.setProperty(theObjectManager.getKeyT("SystemName"));
-    cimInstance.setProperty(theObjectManager.getKeyT("ObjectManagerCreationClassName"));
-    cimInstance.setProperty(theObjectManager.getKeyT("ObjectManagerName"));
+    cimInstance.setProperty("ObjectManagerCreationClassName", theObjectManager.getKeyT("CreationClassName").getValue());
+    cimInstance.setProperty("ObjectManagerName", theObjectManager.getKeyT("Name").getValue());
 	cimInstance.setProperty("CreationClassName", OW_CIMValue("CIM_Namespace"));
 	cimInstance.setProperty("Name", OW_CIMValue(ns));
     cimInstance.setProperty("ClassInfo", OW_CIMValue(classInfo));
@@ -124,13 +124,33 @@ createCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, OW_UI
 
 /////////////////////////////////////////////////////////////////////////////
 void
-deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, const OW_String& interopNs)
+deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, const OW_String& interopNs)
 {
-    (void)hdl;
-    (void)ns;
-    (void)interopNs;
-	// TODO: Write me!
-	OW_THROWCIMMSG(OW_CIMException::FAILED, "OW_CIMNameSpaceUtils::deleteCIM_Namespace not yet implemented.");
+    OW_String ns(prepareNamespace(ns_));
+
+    OW_CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(interopNs, "CIM_ObjectManager");
+    if (e.numberOfElements() != 1)
+    {
+        OW_THROWCIMMSG(OW_CIMException::FAILED, "Failed to get one instance of "
+            "CIM_ObjectManager.  Unable to create an instance of CIM_Namespace");
+    }
+    OW_CIMObjectPath theObjectManager = e.nextElement();
+
+	OW_CIMObjectPath nsPath("CIM_Namespace", interopNs);
+    nsPath.addKey(theObjectManager.getKeyT("SystemCreationClassName"));
+    nsPath.addKey(theObjectManager.getKeyT("SystemName"));
+    nsPath.addKey("ObjectManagerCreationClassName", theObjectManager.getKeyT("CreationClassName").getValue());
+    nsPath.addKey("ObjectManagerName", theObjectManager.getKeyT("Name").getValue());
+	nsPath.addKey("CreationClassName", OW_CIMValue("CIM_Namespace"));
+	nsPath.addKey("Name", OW_CIMValue(ns));
+
+
+    OW_CIMObjectPath theAssoc("CIM_NamespaceInManager", interopNs);
+    theAssoc.addKey("Antecedent", OW_CIMValue(theObjectManager));
+    theAssoc.addKey("Dependent", OW_CIMValue(nsPath));
+
+	hdl->deleteInstance(interopNs, theAssoc);
+	hdl->deleteInstance(interopNs, nsPath);
 }
 
 /////////////////////////////////////////////////////////////////////////////
