@@ -127,13 +127,13 @@ OW_NPIIndicationProviderProxy::authorizeFilter(
 	const OW_StringArray& classes, 
 	const OW_String &owner)
 {
-	env->getLogger()->logDebug("deactivateFilter");
+	env->getLogger()->logDebug("authorizeFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
         	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
-		env->getLogger()->logDebug("deactivateFilter2");
+		env->getLogger()->logDebug("authorizeFilter2");
 
 		OW_ProviderEnvironmentIFCRef env2(env);
 		_npiHandle.thisObject = static_cast<void *>(&env2);
