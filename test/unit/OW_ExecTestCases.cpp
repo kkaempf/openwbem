@@ -41,6 +41,7 @@
 
 #include <utility> // for pair
 #include <cassert>
+#include <csignal>
 
 #if defined(OW_HAVE_SYS_WAIT_H) && defined(OW_WIFEXITED_NEEDS_WAIT_H)
 #include <sys/wait.h>
