@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\cimom\common;$(SrcDir)\common;$(SrcDir)\common\socket;$(SrcDir)\ifcs;$(SrcDir)\cim;$(SrcDir)\cimom\server;$(SrcDir)\provider;$(SrcDir)\repositories\hdb;$(SrcDir)\providerifcs\cpp;$(SrcDir)\wql\common;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\cimom\common;$(OWSrcDir)\common;$(OWSrcDir)\common\socket;$(OWSrcDir)\ifcs;$(OWSrcDir)\cim;$(OWSrcDir)\cimom\server;$(OWSrcDir)\provider;$(OWSrcDir)\repositories\hdb;$(OWSrcDir)\providerifcs\cpp;$(OWSrcDir)\wql\common;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_CIMOMCOMMON_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,8 +35,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OWBin)/$(ProjectName).dll"
 				GenerateDebugInformation="TRUE"
-				SubSystem="2"/>
+				ProgramDatabaseFile="$(OWBin)/$(ProjectName).pdb"
+				SubSystem="2"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool
@@ -66,7 +69,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\cimom\common;$(SrcDir)\common;$(SrcDir)\common\socket;$(SrcDir)\ifcs;$(SrcDir)\cim;$(SrcDir)\cimom\server;$(SrcDir)\provider;$(SrcDir)\repositories\hdb;$(SrcDir)\providerifcs\cpp;$(SrcDir)\wql\common;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\cimom\common;$(OWSrcDir)\common;$(OWSrcDir)\common\socket;$(OWSrcDir)\ifcs;$(OWSrcDir)\cim;$(OWSrcDir)\cimom\server;$(OWSrcDir)\provider;$(OWSrcDir)\repositories\hdb;$(OWSrcDir)\providerifcs\cpp;$(OWSrcDir)\wql\common;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_CIMOMCOMMON_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -80,9 +83,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowcimomcommon.dll"
+				OutputFile="$(OWBin)/libowcimomcommon.dll"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -115,9 +118,6 @@
 			ReferencedProjectIdentifier="{2F07F1E7-F2F0-42FD-A73A-133D910CB9D1}"
 			Name="libopenwbem"/>
 		<ProjectReference
-			ReferencedProjectIdentifier="{87B1E5A1-565C-4200-9CD7-D6FE16A79712}"
-			Name="libowcimomserver"/>
-		<ProjectReference
 			ReferencedProjectIdentifier="{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}"
 			Name="libowcppprovifc"/>
 		<ProjectReference
@@ -129,6 +129,9 @@
 		<ProjectReference
 			ReferencedProjectIdentifier="{28AAF05C-0CE6-4FCE-88CF-C30894A775C0}"
 			Name="libowrepositoryhdb"/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{87B1E5A1-565C-4200-9CD7-D6FE16A79712}"
+			Name="libowserver"/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{12974A83-A411-4C2C-9118-BC3CDD572D17}"
 			Name="libowwqlcommon"/>
@@ -151,7 +154,7 @@
 				RelativePath="..\..\..\..\..\src\cimom\common\OW_IndicationRepLayerMediator.cpp">
 			</File>
 			<File
-				RelativePath="..\..\..\..\..\src\cimom\indication\OW_IndicationServerImpl.cpp">
+				RelativePath="..\..\..\..\..\src\cimom\common\OW_IndicationServer.cpp">
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\src\cimom\indication\OW_LifecycleIndicationPoller.cpp">

@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;$(SrcDir)\xml;$(SrcDir)\services\http;$(SrcDir)\http\common;$(SrcDir)\client;$(SrcDir)\common\socket;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\ifcs;$(OWSrcDir)\xml;$(OWSrcDir)\services\http;$(OWSrcDir)\http\common;$(OWSrcDir)\client;$(OWSrcDir)\common\socket;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_LISTENER_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -36,10 +36,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowhttpxmllistener.dll"
+				OutputFile="$(OWBin)/libowhttpxmllistener.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/libowhttpxmllistener.pdb"
+				ProgramDatabaseFile="$(OWBin)/libowhttpxmllistener.pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/libowhttpxmllistener.lib"
 				TargetMachine="1"/>
@@ -72,7 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;$(SrcDir)\xml;$(SrcDir)\services\http;$(SrcDir)\http\common;$(SrcDir)\client;$(SrcDir)\common\socket;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\ifcs;$(OWSrcDir)\xml;$(OWSrcDir)\services\http;$(OWSrcDir)\http\common;$(OWSrcDir)\client;$(OWSrcDir)\common\socket;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_LISTENER_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -86,9 +86,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowhttpxmllistener.dll"
+				OutputFile="$(OWBin)/libowhttpxmllistener.dll"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(DbDir);$(DbDir)\btree;$(DbDir)\include"
+				AdditionalIncludeDirectories="$(SolutionDir);$(OWDbDir);$(OWDbDir)\btree;$(OWDbDir)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_DB_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -36,10 +36,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowdb.dll"
+				OutputFile="$(OWBin)/libowdb.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/libowdb.pdb"
+				ProgramDatabaseFile="$(OWBin)/libowdb.pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/libowdb.lib"
 				TargetMachine="1"/>
@@ -72,7 +72,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(DbDir);$(DbDir)\btree;$(DbDir)\include"
+				AdditionalIncludeDirectories="$(SolutionDir);$(OWDbDir);$(OWDbDir)\btree;$(OWDbDir)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_DB_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -84,9 +84,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowdb.dll"
+				OutputFile="$(OWBin)/libowdb.dll"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

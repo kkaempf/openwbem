@@ -1,9 +1,18 @@
-SrcDir=$(SolutionDir)\..\..\..\src
-DbDir=$(SolutionDir)\..\..\..\db
+--- local.slnenv is required to have the local build machine paths
+--- Specifically, $(BuildRoot), $(OpenSSL), $(Zlib), $(Flex), $(Bison), $(Sed)
+--- must be defined.  BuildRoot may eventually be taken out
 
-OpenSSL=C:\cygwin\home\Dan\openssl-0.9.7e
-Zlib=C:\cygwin\home\Dan\zlib-1.2.1
+forceinclude $(SolutionDir)\local
 
-Flex=C:\usr\local\wbin\flex
-Bison=C:\usr\local\wbin\bison
-Sed=C:\usr\local\wbin\sed
+OpenWBEM=$(BuildRoot)\openwbem
+OWStage=$(BuildRoot)\owstage
+OWBin=$(OWStage)\Program Files\Vintela\OpenWBEM
+OWProviders=$(OWBin)\c++providers
+OWRequesthandlers=$(OWBin)\requesthandlers
+OWServices=$(OWBin)\services
+OWProvifcs=$(OWBin)\provifcs
+
+OWExtraDir=$(OpenWBEM)\build\vc2003\OpenWBEM
+OWSrcDir=$(OpenWBEM)\src
+OWDbDir=$(OpenWBEM)\db
+

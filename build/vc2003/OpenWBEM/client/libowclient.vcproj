@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SrcDir)\common&quot;;&quot;$(SrcDir)\cim&quot;;&quot;$(SrcDir)\http\client&quot;;&quot;$(SrcDir)\http\common&quot;;&quot;$(SrcDir)\xml&quot;;&quot;$(SrcDir)\ifcs&quot;;&quot;$(SrcDir)\common\socket&quot;;&quot;$(OpenSSL)\include..&quot;;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\http\client;..\..\..\..\src\http\common;..\..\..\..\src\xml;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include;&quot;$(ZLib)&quot;"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\http\client;$(OWSrcDir)\http\common;$(OWSrcDir)\xml;$(OWSrcDir)\ifcs;$(OWSrcDir)\common\socket;$(OpenSSL)\include..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\http\client;..\..\..\..\src\http\common;..\..\..\..\src\xml;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include;$(ZLib)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_CLIENT_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,8 +35,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OWBin)/$(ProjectName).dll"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OWBin)/$(ProjectName).pdb"
 				SubSystem="2"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -67,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)&quot;;&quot;$(SrcDir)\common&quot;;&quot;$(SrcDir)\cim&quot;;&quot;$(SrcDir)\http\client&quot;;&quot;$(SrcDir)\http\common&quot;;&quot;$(SrcDir)\xml&quot;;&quot;$(SrcDir)\ifcs&quot;;&quot;$(SrcDir)\common\socket&quot;;&quot;$(OpenSSL)\include..&quot;;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\http\client;..\..\..\..\src\http\common;..\..\..\..\src\xml;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include;&quot;$(ZLib)&quot;"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\http\client;$(OWSrcDir)\http\common;$(OWSrcDir)\xml;$(OWSrcDir)\ifcs;$(OWSrcDir)\common\socket;$(OpenSSL)\include..;..\..\..\..\src\common;..\..\..\..\src\cim;..\..\..\..\src\http\client;..\..\..\..\src\http\common;..\..\..\..\src\xml;..\..\..\..\src\ifcs;..\..\..\..\src\common\socket;C:\OpenSSL\include;$(ZLib)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_CLIENT_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -80,7 +83,9 @@
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
-				Name="VCLinkerTool"/>
+				Name="VCLinkerTool"
+				OutputFile="$(OWBin)/$(ProjectName).dll"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
 			<Tool

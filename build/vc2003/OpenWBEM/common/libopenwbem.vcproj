@@ -20,7 +20,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;$(SrcDir)\common\socket;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\ifcs;$(OWSrcDir)\common\socket;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_COMMON_BUILD;_LIB"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -41,9 +41,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libeay32.lib ssleay32.lib"
+				OutputFile="$(OWBin)/$(ProjectName).dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(OpenSSL)/out32dll"
+				AdditionalLibraryDirectories="C:\OpenSSL\lib\VC"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OWBin)/$(ProjectName).pdb"
 				GenerateMapFile="TRUE"
 				MapFileName="$(OutDir)/$(ProjectName).map"
 				MapExports="TRUE"
@@ -80,7 +82,7 @@
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;$(SrcDir)\common\socket;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\ifcs;$(OWSrcDir)\common\socket;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_COMMON_BUILD;_LIB"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -96,8 +98,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib libeay32.lib ssleay32.lib"
-				AdditionalLibraryDirectories="$(OpenSSL)/out32dll"
+				OutputFile="$(OWBin)/$(ProjectName).dll"
+				AdditionalLibraryDirectories="C:\OpenSSL\lib\VC"
 				SubSystem="2"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>

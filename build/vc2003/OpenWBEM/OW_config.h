@@ -714,6 +714,13 @@ typedef long off_t;
 #define OW_PROVIDERAGENT_API OW_IMPORT
 #endif
 
+#ifdef OW_WIN32
+#define OW_EXPORT_TEMPLATE(API, TMPL, X) \
+template class API TMPL< X >
+#else
+#define OW_EXPORT_TEMPLATE(API, TMPL, X)
+#endif
+
 #pragma warning (disable: 4297)
 #pragma warning (disable: 4355)
 #pragma warning (disable: 4006)

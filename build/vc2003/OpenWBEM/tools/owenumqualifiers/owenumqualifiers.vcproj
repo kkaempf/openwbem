@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\common\socket;$(SrcDir)\ifcs;$(SrcDir)\http\common;$(SrcDir)\http\client;$(SrcDir)\xml;$(SrcDir)\cim;$(SrcDir)\client;$(SrcDir)\cimxmllistener;$(SrcDir)\services\http;$(SrcDir)\repositories\hdb"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\common\socket;$(OWSrcDir)\ifcs;$(OWSrcDir)\http\common;$(OWSrcDir)\http\client;$(OWSrcDir)\xml;$(OWSrcDir)\cim;$(OWSrcDir)\client;$(OWSrcDir)\cimxmllistener;$(OWSrcDir)\services\http;$(OWSrcDir)\repositories\hdb"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,7 +35,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/owenumqualifiers.exe"
+				OutputFile="$(OWBin)/owenumqualifiers.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/owenumqualifiers.pdb"
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\common\socket;$(SrcDir)\ifcs;$(SrcDir)\http\common;$(SrcDir)\http\client;$(SrcDir)\xml;$(SrcDir)\cim;$(SrcDir)\client;$(SrcDir)\cimxmllistener;$(SrcDir)\services\http;$(SrcDir)\repositories\hdb"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\common\socket;$(OWSrcDir)\ifcs;$(OWSrcDir)\http\common;$(OWSrcDir)\http\client;$(OWSrcDir)\xml;$(OWSrcDir)\cim;$(OWSrcDir)\client;$(OWSrcDir)\cimxmllistener;$(OWSrcDir)\services\http;$(OWSrcDir)\repositories\hdb"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/owenumqualifiers.exe"
+				OutputFile="$(OWBin)/owenumqualifiers.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"

@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\cimom\server;$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\cimom\server;$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\ifcs;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_CIMOMSERVER_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,8 +35,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="$(OWBin)/$(ProjectName).dll"
 				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="$(OWBin)/$(ProjectName).pdb"
 				SubSystem="2"
+				ImportLibrary="$(OutDir)/$(TargetName).lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -67,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\cimom\server;$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\ifcs;"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\cimom\server;$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\ifcs;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_CIMOMSERVER_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -81,9 +84,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowserver.dll"
+				OutputFile="$(OWBin)/libowserver.dll"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -127,6 +130,9 @@
 			<File
 				RelativePath="..\..\..\..\..\src\cimom\server\OW_Platform.cpp">
 			</File>
+			<File
+				RelativePath="..\..\..\..\..\src\cimom\server\OW_PlatformSignal.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -143,6 +149,9 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\..\src\cimom\server\OW_Platform.hpp">
+			</File>
+			<File
+				RelativePath="..\..\..\..\..\src\cimom\server\OW_PlatformSignal.hpp">
 			</File>
 		</Filter>
 		<Filter

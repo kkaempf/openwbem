@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\ifcs;$(SrcDir)\cim;$(SrcDir)\cimom\server;$(SrcDir)\provider;$(SrcDir)\cimom\common;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\ifcs;$(OWSrcDir)\cim;$(OWSrcDir)\cimom\server;$(OWSrcDir)\provider;$(OWSrcDir)\cimom\common;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,10 +35,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/cimom.exe"
+				OutputFile="$(OWBin)/cimom.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/cimom.pdb"
+				ProgramDatabaseFile="$(OWBin)/cimom.pdb"
 				SubSystem="1"
 				TargetMachine="1"/>
 			<Tool
@@ -70,7 +70,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\ifcs;$(SrcDir)\cim;$(SrcDir)\cimom\server;$(SrcDir)\provider;$(SrcDir)\cimom\common;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\ifcs;$(OWSrcDir)\cim;$(OWSrcDir)\cimom\server;$(OWSrcDir)\provider;$(OWSrcDir)\cimom\common;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -84,7 +84,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/cimom.exe"
+				OutputFile="$(OWBin)/cimom.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="TRUE"
 				SubSystem="1"
@@ -120,9 +120,6 @@
 		<ProjectReference
 			ReferencedProjectIdentifier="{F641F778-27CE-4902-8EC1-1A9B46973C36}"
 			Name="libowcimomcommon"/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{84CE7D6A-C85D-4382-A995-EA98EAE18C2B}"
-			Name="libowcppprovifc"/>
 		<ProjectReference
 			ReferencedProjectIdentifier="{C0187E72-355A-475D-BFBB-585B19B64F85}"
 			Name="libowdb"/>

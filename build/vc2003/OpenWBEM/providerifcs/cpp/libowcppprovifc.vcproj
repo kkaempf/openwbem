@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\http\client;$(SrcDir)\http\common;$(SrcDir)\xml;$(SrcDir)\ifcs;$(SrcDir)\common\socket;$(SrcDir)\provider;$(SrcDir)\providerifcs;$(SrcDir)\providerifcs\cpp;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\http\client;$(OWSrcDir)\http\common;$(OWSrcDir)\xml;$(OWSrcDir)\ifcs;$(OWSrcDir)\common\socket;$(OWSrcDir)\provider;$(OWSrcDir)\providerifcs;$(OWSrcDir)\providerifcs\cpp;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;OW_CPPPROVIFC_BUILD"
 				StringPooling="TRUE"
 				MinimalRebuild="TRUE"
@@ -35,10 +35,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowcppprovifc.dll"
+				OutputFile="$(OWBin)/libowcppprovifc.dll"
 				LinkIncremental="2"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="$(OutDir)/libowcppprovifc.pdb"
+				ProgramDatabaseFile="$(OWBin)/libowcppprovifc.pdb"
 				SubSystem="2"
 				ImportLibrary="$(OutDir)/libowcppprovifc.lib"
 				TargetMachine="1"/>
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir);$(SrcDir)\common;$(SrcDir)\cim;$(SrcDir)\http\client;$(SrcDir)\http\common;$(SrcDir)\xml;$(SrcDir)\ifcs;$(SrcDir)\common\socket;$(SrcDir)\provider;$(SrcDir)\providerifcs;$(SrcDir)\providerifcs\cpp;$(OpenSSL)\include"
+				AdditionalIncludeDirectories="$(OWExtraDir);$(OWSrcDir)\common;$(OWSrcDir)\cim;$(OWSrcDir)\http\client;$(OWSrcDir)\http\common;$(OWSrcDir)\xml;$(OWSrcDir)\ifcs;$(OWSrcDir)\common\socket;$(OWSrcDir)\provider;$(OWSrcDir)\providerifcs;$(OWSrcDir)\providerifcs\cpp;$(OpenSSL)\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;OW_CPPPROVIFC_BUILD"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
@@ -85,9 +85,9 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/libowcppprovifc.dll"
+				OutputFile="$(OWBin)/libowcppprovifc.dll"
 				LinkIncremental="1"
-				GenerateDebugInformation="TRUE"
+				GenerateDebugInformation="FALSE"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
