@@ -44,6 +44,14 @@
 
 extern "C"
 {
+#ifdef OW_NETWARE
+/* The NetWare standard libc library is striving to be posix.  According to the documentation
+ * for select, pselect, etc. we must include <sys/select.h> to be posix, whereas earlier
+ * standards required the three includes <sys/time.h>, <sys/types.h> and <unistd.h>
+ */
+#include <sys/select.h>
+#endif
+
 #ifdef OW_HAVE_SYS_TIME_H
  #include <sys/time.h>
 #endif
