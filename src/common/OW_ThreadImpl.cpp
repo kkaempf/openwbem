@@ -99,6 +99,8 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
     initThreads();
     pth_usleep(milliSeconds * 1000);
 #else
+	usleep(milliSeconds * 1000);
+	/*
 	timeval now, end;
 	unsigned long microSeconds = milliSeconds * 1000;
 
@@ -126,6 +128,7 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 		select(0, NULL, NULL, NULL, &tv);
 		gettimeofday(&now, NULL);
 	}
+	*/
 #endif
 }
 
