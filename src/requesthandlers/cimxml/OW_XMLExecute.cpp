@@ -171,8 +171,7 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 
 		if (!node)
 		{
-			OW_THROW(OW_CIMErrorException,
-				"No <SIMPLEREQ> or <MULTIREQ> tag");
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 
 		makeXMLHeader(messageId, *m_ostrEntity);

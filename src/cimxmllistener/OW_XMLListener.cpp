@@ -75,26 +75,24 @@ OW_XMLListener::doProcess(std::istream* istr, std::ostream* ostrEntity,
 		node = parser.parse();
 		if (!node)
 		{
-			OW_THROW(OW_XMLException, "Invalid XML node returned from parser");
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
 		}
 	}
 	catch (OW_XMLException& e)
 	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_valid);
-		// TODO outputerror here.
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
 	}
 
 	node = OW_XMLOperationGeneric::XMLGetCIMElement(node);
 	if (!node)
 	{
-		OW_THROW(OW_CIMErrorException, "failed to find <CIM> tag");
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 	}
 
-	// TODO if debugXML log "cim element obtained"
 	node = node.mustFindElement(OW_XMLNode::XML_ELEMENT_MESSAGE);
 	if (!node)
 	{
-		OW_THROW(OW_CIMErrorException, "failed to find <MESSAGE> tag");
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 	}
 
 	OW_String userName;
@@ -131,8 +129,7 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 
 		if (!node)
 		{
-			OW_THROW(OW_CIMErrorException,
-				"No <SIMPLEEXPREQ> or <MULTIEXPREQ> tag");
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 
 		makeXMLHeader(messageId, *ostrEntity);
@@ -142,8 +139,7 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 			node = node.getChild();
 			if (!node)
 			{
-				OW_THROW(OW_CIMErrorException,
-					"No <SIMPLEEXPREQ> within the <MULTIEXPREQ>");
+				OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 			}
 			while(node)
 			{
@@ -168,8 +164,7 @@ OW_XMLListener::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 		}
 		else
 		{
-			OW_THROW(OW_CIMErrorException,
-				"No <SIMPLEEXPREQ> or <MULTIEXPREQ> tag");
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 
 
@@ -209,8 +204,7 @@ OW_XMLListener::processSimpleExpReq(const OW_XMLNode& startNode,
 		OW_XMLNode node = startNode;
 		if (node.getToken() != OW_XMLNode::XML_ELEMENT_SIMPLEEXPREQ)
 		{
-			OW_THROW(OW_CIMErrorException, format("Expected <SIMPLEEXPREQ>, got %1",
-				node.getNodeName()).c_str());
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 		}
 		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPMETHODCALL);
 //		node = node.mustChildElement(OW_XMLNode::XML_ELEMENT_EXPPARAMVALUE);

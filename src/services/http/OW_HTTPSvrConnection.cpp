@@ -806,10 +806,15 @@ OW_HTTPSvrConnection::processHeaders()
 		if (headerHasKey("Content-Type"))
 		{
 			OW_String ct = getHeaderValue("Content-Type");
+			// strip off the parameters from the content type
+			ct = ct.substring(0, ct.indexOf(';'));
+			
+			// TODO: parse and handle the parameters we may possibly care about.
+
 			m_requestHandler = m_options.env->getRequestHandler(ct);
 			if (m_requestHandler.isNull())
 			{
-				m_errDetails.format("Content-Type \"%1\" is not supported.", ct.c_str());
+				m_errDetails = format("Content-Type \"%1\" is not supported.", ct);
 				return SC_UNSUPPORTED_MEDIA_TYPE;
 			}
 

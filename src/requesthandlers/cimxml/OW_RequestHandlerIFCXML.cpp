@@ -63,26 +63,24 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 		node = parser.parse();
 		if (!node)
 		{
-			OW_THROW(OW_XMLException, "Invalid XML node returned from parser");
+			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
 		}
 	}
 	catch (OW_XMLException& e)
 	{
-		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_valid);
-		// TODO outputerror here.
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_well_formed);
 	}
 
 	node = OW_XMLOperationGeneric::XMLGetCIMElement(node);
 	if (!node)
 	{
-		OW_THROW(OW_CIMErrorException, "failed to find <CIM> tag");
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 	}
 
-	// TODO if debugXML log "cim element obtained"
 	node = node.mustFindElement(OW_XMLNode::XML_ELEMENT_MESSAGE);
 	if (!node)
 	{
-		OW_THROW(OW_CIMErrorException, "failed to find <MESSAGE> tag");
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
 	}
 
 	OW_String userName;

@@ -35,7 +35,6 @@
 #include "OW_XMLParameters.hpp"
 #include "OW_XMLParser.hpp"
 #include "OW_Format.hpp"
-#include "OW_CIMErrorException.hpp"
 #include "OW_XMLEscape.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMClassEnumeration.hpp"

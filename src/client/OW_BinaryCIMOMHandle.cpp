@@ -31,7 +31,6 @@
 #include "OW_config.h"										
 #include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Format.hpp"
-#include "OW_CIMErrorException.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
@@ -241,38 +240,38 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstance& ci)
 {
 	ci = OW_BinIfcIO::readInstance(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPath& cop)
 {
 	cop = OW_BinIfcIO::readObjectPath(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathEnumeration& enu)
 {
 	enu = OW_BinIfcIO::readObjectPathEnum(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassEnumeration& enu)
 {
 	enu = OW_BinIfcIO::readClassEnum(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceEnumeration& arg)
 {
 	arg = OW_BinIfcIO::readInstanceEnum(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierType& arg)
 {
 	arg = OW_BinIfcIO::readQual(*istr);
 }
-static void 
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMQualifierTypeEnumeration& arg)
 {
 	arg = OW_BinIfcIO::readQualifierTypeEnum(*istr);
 }
 
-template<class T> 
+template<class T>
 static T
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 {
@@ -476,7 +475,7 @@ OW_BinaryCIMOMHandle::getQualifierType(const OW_CIMObjectPath& path)
 	OW_BinIfcIO::write(strm, (OW_Int32)OW_BIN_GETQUAL, OW_Bool(true));
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, 
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"GetQualifier", path.getNameSpace());
 	checkError(in);
 
@@ -496,7 +495,7 @@ OW_BinaryCIMOMHandle::setQualifierType(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeQual(strm, qt);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, 
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"SetQualifier", path.getNameSpace());
 	checkError(in);
 }
@@ -513,7 +512,7 @@ OW_BinaryCIMOMHandle::setClass(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeClass(strm, cc);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, 
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ModifyClass", path.getNameSpace());
 	checkError(in);
 }
@@ -530,7 +529,7 @@ OW_BinaryCIMOMHandle::createClass(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeClass(strm, cc);
 
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, 
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"CreateClass", path.getNameSpace());
 	checkError(in);
 }
@@ -547,7 +546,7 @@ OW_BinaryCIMOMHandle::setInstance(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeInstance(strm, ci);
 	
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, 
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"ModifyInstance", path.getNameSpace());
 	checkError(in);
 }
@@ -564,7 +563,7 @@ OW_BinaryCIMOMHandle::createInstance(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeInstance(strm, ci);
 	
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, 
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
 		"CreateInstance", path.getNameSpace());
 	checkError(in);
 	//return OW_BinIfcIO::readObjectPath(*in);
