@@ -163,7 +163,7 @@ XMLNodeImpl::nextElement(const char* elementName, bool throwException) const
 	{
 		if (throwException)
 		{
-			OW_THROWCIMMSG(CIMException::FAILED, "XMLNodeImpl::nextElement found a NULL element");
+			OW_THROWCIMMSG(CIMException::FAILED, Format("XMLNodeImpl::nextElement found a NULL element instead of %1", elementName).c_str());
 		}
 		else
 		{
