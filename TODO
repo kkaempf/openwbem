@@ -19,8 +19,9 @@ Testing:
     - Cleanup/integrate some of the tests under src/*/test subdirs
     - Create a test for mof compiling directly to the repository.
     - Simulate problems:
-      - Out of memory.  Overload new/delete and fail at OW_MEM_LIMIT bytes.
-      - Out of disk space (for repository and/or temp files).
+      - Out of memory.  Use RLIMIT_DATA.
+      - Out of disk space (for repository and/or temp files). Use RLIMIT_FSIZE
+        RLIMIT_NOFILE
       - Random syscall failure.  Send SIGUSR1 to owciomd at random intervals
         while hammerClient is running.
       - Do all this while running under valgrind to detect memory leaks, etc.
@@ -45,6 +46,7 @@ Fix problems:
     - Make xml parser validate incoming utf8 (use a FSM, create unit tests).
     - CIMExport and CIMExportMethod headers should be used for indications.
     - Name dirs/libs such that OW 2.0 and 3.0 can coexist on the same machine.
+    - To prevent DNS attacks, set a limit on incoming data.
     - Fix uri handling to be consistent with the new spec (once it's done.  
       company review version has problems.)
 
