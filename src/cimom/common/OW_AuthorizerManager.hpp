@@ -32,8 +32,8 @@
  * @author Jon Carey
  */
 
-#ifndef __OW_AUTHORIZERMANAGER_HPP__
-#define __OW_AUTHORIZERMANAGER_HPP__
+#ifndef OW_AUTHORIZERMANAGER_HPP_INCLUDE_GUARD_
+#define OW_AUTHORIZERMANAGER_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_ProviderEnvironmentIFC.hpp"
