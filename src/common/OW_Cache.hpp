@@ -123,7 +123,7 @@ Cache<T>::addToCache(const T& cc, const String& key)
 	}
 	typename class_cache_t::iterator i = theCache.insert(theCache.end(),
 		typename class_cache_t::value_type(cc, key));
-	theCacheIndex.insert(cache_index_t::value_type(key, i));
+	theCacheIndex.insert(typename cache_index_t::value_type(key, i));
 }
 //////////////////////////////////////////////////////////////////////////////
 template <typename T>
