@@ -175,7 +175,7 @@ CIMOMEnvironment::~CIMOMEnvironment()
 	{
 		try
 		{
-			if (m_state != E_STATE_SHUTDOWN)
+			if (isLoaded(m_state))
 			{
 				shutdown();
 			}
