@@ -255,15 +255,17 @@ struct OW_HDB_API AssocDbRecHeader
 	UInt32 flags;
 	size_t dataSize;
 };
-#define OW_ASSOCSIGNATURE "OWASSOCIATORFILE"
-#define OW_ASSOCSIGLEN 17
+#define OW_ASSOCSIGNATURE "OWASSOCIATORFI2"
+#define OW_ASSOCSIGLEN 16
 // The following structure represents the file header for the
 // associations database
 struct OW_HDB_API AssocDbHeader
 {
 	char signature[OW_ASSOCSIGLEN];
 	Int32 firstFree;
+	UInt32 version;
 };
+
 class OW_HDB_API AssocDb
 {
 public:

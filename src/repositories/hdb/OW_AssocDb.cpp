@@ -47,9 +47,10 @@
 #include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Logger.hpp"
+#include "OW_HDBCommon.hpp"
 
 #include <cstdio> // for SEEK_END
-#include <algorithm> // for std::find
+#include <algorithm> // for std::find and sort
 
 namespace OpenWBEM
 {
@@ -118,20 +119,98 @@ AssocDbEntry::entry::readObject(istream& istrm)
 	m_associatedObject.readObject(istrm);
 	m_associationPath.readObject(istrm);
 }
+namespace
+{
+
+//////////////////////////////////////////////////////////////////////////////
+class UtilKeyArray
+{
+public:
+	UtilKeyArray(const CIMPropertyArray& props)
+		: m_props(props)
+	{
+		std::sort(m_props.begin(), m_props.end());
+	}
+	void toString(StringBuffer& out);
+private:
+	CIMPropertyArray m_props;
+};
+//////////////////////////////////////////////////////////////////////////////
+void
+UtilKeyArray::toString(StringBuffer& out)
+{
+	for (size_t i = 0; i < m_props.size(); i++)
+	{
+		char c = (i == 0) ? '.' : ',';
+		out += c;
+		out += m_props[i].getName().toLowerCase();
+		out += '=';
+		out += m_props[i].getValue().toString();
+	}
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+makeClassKey(const String& ns_, const String& className, StringBuffer& out)
+{
+	String ns(ns_);
+	while (!ns.empty() && ns[0] == '/')
+	{
+		ns = ns.substring(1);
+	}
+	out += ns;
+	out += ':';
+	String lowerClassName(className);
+	lowerClassName.toLowerCase();
+	out += lowerClassName;
+}
+//////////////////////////////////////////////////////////////////////////////
+void
+makeInstanceKey(const CIMObjectPath& cop, StringBuffer& out)
+{
+	makeClassKey(cop.getNameSpace(), cop.getClassName(), out);
+	// Get keys from object path
+	UtilKeyArray kra(cop.getKeys());
+	kra.toString(out);
+}
+} // end unnamed namespace
 //////////////////////////////////////////////////////////////////////////////
 String
 AssocDbEntry::makeKey(const CIMObjectPath& objectName, const CIMName& role,
 	const CIMName& resultRole)
 {
-	// use # as the separator, because that's not a valid character in an
-	// object path or any CIM identifier
-	String lowerName = objectName.toString();
-	lowerName.toLowerCase();
+	StringBuffer key;
+	if (0)
+	{
+		// This is broken, but we need to handle old versions. Unfortunately there is no version field in the assoc db, so we have no way of really knowing
+		// without going to a lot of work :(
+		String lowerName = objectName.toString();
+		lowerName.toLowerCase();
+		key += lowerName;
+	}
+	else
+	{
+		if (objectName.isClassPath())
+		{
+			makeClassKey(objectName.getNameSpace(), objectName.getClassName(), key);
+		}
+		else
+		{
+			makeInstanceKey(objectName, key);
+		}
+	}
+
 	String lowerRole = role.toString();
 	lowerRole.toLowerCase();
 	String lowerResultRole = resultRole.toString();
 	lowerResultRole.toLowerCase();
-	return lowerName + "#" + lowerRole + "#" + lowerResultRole;
+
+	// use # as the separator, because that's not a valid character in an
+	// object path or any CIM identifier
+	key += '#';
+	key += lowerRole;
+	key += '#';
+	key += lowerResultRole;
+	return key.releaseString();
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -464,7 +543,7 @@ AssocDb::open(const String& fileName)
 bool
 AssocDb::createFile()
 {
-	AssocDbHeader b = { OW_ASSOCSIGNATURE, -1L };
+	AssocDbHeader b = { OW_ASSOCSIGNATURE, -1L, HDBVERSION };
 	m_hdrBlock = b;
 	File f = FileSystem::createFile(m_fileName + ".dat");
 	if (!f)
@@ -503,6 +582,10 @@ AssocDb::checkFile()
 	{
 		OW_THROW(IOException,
 			Format("Invalid Format for Assoc db file: %1", m_fileName).c_str());
+	}
+	if (m_hdrBlock.version < MinHDBVERSION || m_hdrBlock.version > HDBVERSION)
+	{
+		OW_THROW(HDBException, Format("Invalid version (%1) for file (%2). Expected (%3)", m_hdrBlock.version, m_fileName, HDBVERSION).c_str());
 	}
 	m_pIndex = Index::createIndexObject();
 	m_pIndex->open(m_fileName.c_str(), Index::E_ALLDUPLICATES);
