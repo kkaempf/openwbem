@@ -40,7 +40,6 @@
 #include "OW_Map.hpp"
 #include "OW_HTTPUtils.hpp"
 #include "OW_DateTime.hpp"
-#include "OW_MutexLock.hpp"
 #include "OW_Format.hpp"
 #include "OW_MD5.hpp"
 #include "OW_HTTPSvrConnection.hpp"
