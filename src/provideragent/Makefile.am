@@ -25,8 +25,10 @@ libowprovideragent.a
 thelibdir = $(libdir)
 
 libowprovideragent_a_SOURCES = \
-OW_ProviderAgentCIMOMHandle.hpp OW_ProviderAgentCIMOMHandle.cpp \
-OW_ProviderAgentEnvironment.hpp OW_ProviderAgentEnvironment.cpp \
+OW_ProviderAgentCIMOMHandle.hpp \
+OW_ProviderAgentCIMOMHandle.cpp \
+OW_ProviderAgentEnvironment.hpp \
+OW_ProviderAgentEnvironment.cpp \
 OW_ProviderAgentProviderEnvironment.hpp \
 OW_ProviderAgentProviderEnvironment.cpp \
 OW_ProviderAgent.cpp
@@ -44,9 +46,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/http/common \
 -I$(top_srcdir)/src/http/client \
 -I$(top_srcdir)/src/services/http \
--I$(top_srcdir)/src/xml \
 -I$(top_srcdir)/src/providerifcs/cpp \
--I$(top_srcdir)/src/provider \
--I$(top_srcdir)/src/authenticators/nonauthenticating \
--I$(top_srcdir)/src/requesthandlers/cimxml
+-I$(top_srcdir)/src/provider
 

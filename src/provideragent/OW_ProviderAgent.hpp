@@ -38,10 +38,7 @@
 #define OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_String.hpp"
-#include "OW_Map.hpp"
 #include "OW_Reference.hpp"
-#include "OW_URL.hpp"
-#include "OW_CIMObjectPath.hpp"
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ConfigFile.hpp"
@@ -53,7 +50,6 @@ namespace OpenWBEM
 {
 
 class HTTPServer;
-class NonAuthenticatingAuthenticator;
 class Thread;
 class ProviderAgent
 {
@@ -113,19 +109,11 @@ public:
 	 */
 	void shutdownHttpServer();
 private:
-	RequestHandlerIFCRef m_requestHandler;
-	Reference<NonAuthenticatingAuthenticator> m_pLAuthenticator;
 	Reference<HTTPServer> m_httpServer;
-	UInt16 m_httpListenPort;
-	UInt16 m_httpsListenPort;
 	Reference<Thread> m_httpThread;
 	UnnamedPipeRef m_stopHttpPipe;
-	LoggerRef m_logger; 
-	ConfigFile::ConfigMap m_configMap; 
 };
 
 } // end namespace OpenWBEM
-
-typedef OpenWBEM::ProviderAgent OW_ProviderAgent OW_DEPRECATED;
 
 #endif //#ifndef OW_PROVIDERAGENT_HPP_INCLUDE_GUARD_

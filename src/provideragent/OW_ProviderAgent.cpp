@@ -37,36 +37,13 @@
 #include "OW_config.h"
 #include "OW_ProviderAgent.hpp"
 #include "OW_HTTPServer.hpp"
-#include "OW_XMLExecute.hpp"
-#include "OW_HTTPException.hpp"
-#include "OW_Format.hpp"
-#include "OW_NonAuthenticatingAuthenticator.hpp"
-#include "OW_CIMInstance.hpp"
-#include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_CIMProperty.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_ServerSocket.hpp"
 #include "OW_SelectEngine.hpp"
-#include "OW_SelectableIFC.hpp"
 #include "OW_IOException.hpp"
 #include "OW_Thread.hpp"
-#include "OW_Assertion.hpp"
-#include "OW_ProviderAgentCIMOMHandle.hpp"
 #include "OW_ProviderAgentEnvironment.hpp"
-
 #include "OW_CppProviderBaseIFC.hpp"
-#include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_CppMethodProviderIFC.hpp"
-#include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_CppSecondaryInstanceProviderIFC.hpp"
-#include "OW_CppProviderBaseIFC.hpp"
-#include "OW_CIMQualifierType.hpp"
-#include <algorithm> // for std::remove
-#include <iostream>
-
-using namespace std; 
 
 namespace OpenWBEM
 {
@@ -138,8 +115,6 @@ ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap,
 							 LoggerRef logger, 
 							 const String& callbackURL)
 	: m_httpServer(new HTTPServer)
-	, m_httpListenPort(0)
-	, m_httpsListenPort(0)
 {
 	Reference<Array<SelectablePair_t> > 
 			selectables(new Array<SelectablePair_t>);
@@ -151,9 +126,7 @@ ProviderAgent::ProviderAgent(ConfigFile::ConfigMap configMap,
 	// sockets to the environment's selectables, which is really
 	// the selectabls defined above.  We'll give these to the select engine 
 	// thread below which will use them to run the select engine.
-	m_httpListenPort = m_httpServer->getLocalHTTPAddress().getPort();
-	cerr << "listening on: " << m_httpListenPort << endl;
-	m_httpsListenPort = m_httpServer->getLocalHTTPSAddress().getPort();
+	
 	// start a thread to run the http server
 	m_httpThread = new SelectEngineThread(selectables);
 	m_httpThread->start();

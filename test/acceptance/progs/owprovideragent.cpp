@@ -38,32 +38,15 @@
 #include "OW_ProviderAgent.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "OW_CIMException.hpp"
-#include "OW_CIMInstance.hpp"
 #include "OW_ConfigOpts.hpp"
-#include "OW_Semaphore.hpp"
+#include "OW_UnnamedPipe.hpp"
 #include "OW_XMLExecute.hpp"
-#include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_CppSecondaryInstanceProviderIFC.hpp"
-#include "OW_CppAssociatorProviderIFC.hpp"
-#include "OW_CIMValue.hpp"
-#include "OW_CIMObjectPath.hpp"
-#include "OW_CIMQualifier.hpp"
 #include "OW_CIMClass.hpp"
-#include "OW_CIMProperty.hpp"
-#include "OW_NonAuthenticatingAuthenticator.hpp"
 #include "OW_SharedLibraryLoader.hpp"
-#include "OW_SharedLibraryReference.hpp"
 #include "OW_SharedLibrary.hpp"
-#include "OW_SafeLibCreate.hpp"
-#include "OW_CppProviderIFC.hpp"
-#include "OW_ClientAuthCBIFC.hpp"
-#include "OW_CIMProtocolIFC.hpp"
-#include "OW_HTTPClient.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_GetPass.hpp"
-#include <signal.h>
+#include "OW_Format.hpp"
+
+#include <csignal>
 #include <iostream> // for cout and cerr
 
 
@@ -82,13 +65,11 @@ protected:
 	}
 };
 
-// TODO: Using a Semaphore from a signal handler isn't safe.  It could deadlock.
-// Figure out a better way to do it.
-Semaphore shutdownSem;
+UnnamedPipeRef sigPipe;
 extern "C"
 void sig_handler(int)
 {
-	shutdownSem.signal();
+	sigPipe->writeInt(0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -113,7 +94,7 @@ getProvider(const String& libName, LoggerRef logger)
 		logger->logError("C++ provider ifc failed to get shared lib loader");
 		return CppProviderBaseIFCRef();
 	}
-	logger->logDebug(Format("CppProviderIFC::getProvider loading library: %1",
+	logger->logDebug(Format("getProvider loading library: %1",
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName, logger); 
 	if(theLib.isNull())
@@ -137,7 +118,7 @@ getProvider(const String& libName, LoggerRef logger)
 		return CppProviderBaseIFCRef();
 	}
 	ProviderCreationFunc createProvider;
-	String creationFuncName = String(CppProviderIFC::CREATIONFUNC) + provId;
+	String creationFuncName = String("createProvider") + provId;
 	if(!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
 		logger->logError(Format("C++ provider ifc: Libary %1 does not contain"
@@ -164,23 +145,6 @@ getProvider(const String& libName, LoggerRef logger)
 
 
 
-class GetLoginInfo : public ClientAuthCBIFC
-{
-	public:
-		bool getCredentials(const String& realm, String& name,
-				String& passwd, const String& details)
-		{
-			(void)details;
-			cout << "Authentication required for " << realm << endl;
-			cout << "Enter the user name: ";
-			name = String::getLine(cin);
-			passwd = GetPass::getPass("Enter the password for " +
-				name + ": ");
-			return true;
-		}
-};
-
-
 int main(int argc, char* argv[])
 {
 	if (argc < 3)
@@ -190,55 +154,29 @@ int main(int argc, char* argv[])
 	}
 	try
 	{
+		sigPipe = UnnamedPipe::createUnnamedPipe();
 		signal(SIGINT, sig_handler);
+
 		String url(argv[1]);
-		URL owurl(url);
-
-#ifdef OW_HAVE_OPENSSL
-		//SSLCtxMgr::setCertVerifyCallback(ssl_verifycert_callback);
-#endif
-		CIMProtocolIFCRef client(new HTTPClient(url));
-
-
-		ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-
-		client->setLoginCallBack(getLoginInfo);
-
-		CIMOMHandleIFCRef chRef;
-		if (owurl.namespaceName.equalsIgnoreCase("/owbinary"))
-		//cout << "owurl.path = " << owurl.path << endl;
-		//if (owurl.path.equalsIgnoreCase("/binary"))
-		{
-			chRef = new BinaryCIMOMHandle(client);
-		}
-		else
-		{
-			chRef = new CIMXMLCIMOMHandle(client);
-		}
-
-		CIMOMHandleIFC& rch = *chRef;
 
 		LoggerRef logger(new RPALogger);
 		logger->setLogLevel(E_DEBUG_LEVEL);
 
 
 		ConfigFile::ConfigMap cmap; 
-		cmap[ConfigOpts::HTTP_PORT_opt] = String(0);
+		cmap[ConfigOpts::HTTP_PORT_opt] = String(-1);
 		cmap[ConfigOpts::HTTPS_PORT_opt] = String(-1);
 		cmap[ConfigOpts::MAX_CONNECTIONS_opt] = String(10);
-		cmap[ConfigOpts::SINGLE_THREAD_opt] = "false";
 		cmap[ConfigOpts::ENABLE_DEFLATE_opt] = "true";
 		cmap[ConfigOpts::HTTP_USE_DIGEST_opt] = "false";
-		cmap[ConfigOpts::USE_UDS_opt] = "false";
-		cmap[ProviderAgent::DynamicClassRetieval_opt] = "true";
-		cmap[ConfigOpts::DUMP_SOCKET_IO_opt] = "/tmp/"; 
+		cmap[ConfigOpts::USE_UDS_opt] = "true";
 
-		Reference<AuthenticatorIFC> authenticator(new NonAuthenticatingAuthenticator); 
+		cmap[ProviderAgent::DynamicClassRetieval_opt] = "true";
+
+		Reference<AuthenticatorIFC> authenticator; 
 		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 
 		Array<RequestHandlerIFCRef> rha; 
 		rha.push_back(rh); 
-		//CppProviderBaseIFCRef provider(new TestInstance); 
-
 
 		Array<CppProviderBaseIFCRef> pra; 
 		for (int i = 2; i < argc; ++i)
@@ -261,8 +199,11 @@ int main(int argc, char* argv[])
 		CIMClassArray cra; 
 
 		ProviderAgent pa(cmap, pra, cra, rha, authenticator, logger, url);
-		// wait until we get a SIGINT
-		shutdownSem.wait();
+		
+		// wait until we get a SIGINT as a shutdown signal
+		int dummy;
+		sigPipe->readInt(&dummy);
+
 		cout << "Shutting down." << endl;
 		pa.shutdownHttpServer();
 		return 0;
