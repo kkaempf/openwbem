@@ -647,28 +647,28 @@ Real64 CIMValue::toReal64() const
 //////////////////////////////////////////////////////////////////////////////
 CIMDateTime CIMValue::toCIMDateTime() const
 {
-	CIMDateTime rval;
+	CIMDateTime rval(CIMNULL);
 	m_impl->get(rval);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMObjectPath CIMValue::toCIMObjectPath() const
 {
-	CIMObjectPath rval;
+	CIMObjectPath rval(CIMNULL);
 	m_impl->get(rval);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMClass CIMValue::toCIMClass() const
 {
-	CIMClass rval;
+	CIMClass rval(CIMNULL);
 	m_impl->get(rval);
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMInstance CIMValue::toCIMInstance() const
 {
-	CIMInstance rval;
+	CIMInstance rval(CIMNULL);
 	m_impl->get(rval);
 	return rval;
 }
