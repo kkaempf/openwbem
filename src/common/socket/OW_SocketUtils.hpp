@@ -45,8 +45,8 @@ namespace SocketUtils
 	 * @param fd the handle of the socket to wait on.
 	 * @param timeOutSecs the number of seconds to wait.
 	 * @param forInput true if we are waiting for input.
-	 * @return zero if we got input before the timeout expired, non-zero
-	 * 	otherwise.
+	 * @return zero if we got input before the timeout expired, 
+	 *  -1 on error, and ETIMEDOUT on timeout.
 	 */
 	int waitForIO(SocketHandle_t fd, int timeOutSecs, 
 		SocketFlags::EWaitDirectionFlag forInput);
