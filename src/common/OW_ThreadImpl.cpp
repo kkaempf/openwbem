@@ -117,7 +117,7 @@ sleep(UInt32 milliSeconds)
 		if (tv.tv_sec > 0 || tv.tv_usec > loopMicroSeconds)
 		{
 			tv.tv_sec = 0;
-			tv.tv_used = loopMicroSeconds;
+			tv.tv_usec = loopMicroSeconds;
 		}
 		ThreadImpl::testCancel();
 		select(0, NULL, NULL, NULL, &tv);
