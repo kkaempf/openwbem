@@ -28,7 +28,6 @@
 #define OW_WQLCOMPILE_HPP_INCLUDE_GUARD_H_
 #include "OW_config.h"
 #include "OW_Array.hpp"
-#include "OW_Stack.hpp"
 #include "OW_WQLOperation.hpp"
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLSelectStatement.hpp"

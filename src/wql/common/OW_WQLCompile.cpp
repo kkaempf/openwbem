@@ -29,6 +29,7 @@
 #include "OW_WQLOperand.hpp"
 #include "OW_WQLCompile.hpp"
 #include "OW_Format.hpp"
+#include "OW_Stack.hpp"
 #ifdef OW_HAVE_OSTREAM
 #include <ostream>
 #else
