@@ -27,6 +27,11 @@
 
 	* configure.in, openwbem.spec: Changed version to 2.0.11
 
+2003-11-03 10:43  nuffer
+
+	* src/requesthandlers/cimxml/OW_XMLExecute.cpp: Fixed a bug where a
+	  CLASSNAME arg is NULL.
+
 2003-10-29 15:53  nuffer
 
 	* src/cimom/: OW_CIMServer.cpp, OW_MetaRepository.cpp,
