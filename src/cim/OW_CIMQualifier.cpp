@@ -96,6 +96,7 @@ CIMQualifier::CIMQualifier(const CIMQualifierType& cgt) :
 	m_pdata->m_name = cgt.getName();
 	m_pdata->m_qualifierType = cgt;
 	m_pdata->m_qualifierValue = cgt.getDefaultValue();
+	m_pdata->m_flavors = cgt.getFlavors();
 }
 //////////////////////////////////////////////////////////////////////////////
 CIMQualifier::CIMQualifier(const CIMQualifier& x) :
