@@ -34,10 +34,10 @@
 
 #include <new> // for std::bad_alloc
 
-void* operator new(unsigned int size) throw (std::bad_alloc);
-void* operator new[](unsigned int size) throw (std::bad_alloc);
-void* operator new(unsigned int size, char const* file, int line) throw (std::bad_alloc);
-void* operator new[](unsigned int size, char const* file, int line) throw (std::bad_alloc);
+void* operator new(std::size_t size) throw (std::bad_alloc);
+void* operator new[](std::size_t size) throw (std::bad_alloc);
+void* operator new(std::size_t size, char const* file, int line) throw (std::bad_alloc);
+void* operator new[](std::size_t size, char const* file, int line) throw (std::bad_alloc);
 void operator delete(void* p);
 void operator delete[](void* p);
 #ifndef OW_MEMTRACER_CPP_INCLUDE_GUARD_

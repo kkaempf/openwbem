@@ -80,6 +80,7 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.append(String(UNDERRUN));
 	PopenStreams rval = Exec::safePopen(cmd);
 	String er = rval.err()->readAll();
+	rval.getExitStatus();
 	size_t idx = er.indexOf("UNDERRUN");
 	unitAssert(idx != String::npos);
 
@@ -88,6 +89,7 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.append(String(OVERRUN));
 	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
+	rval.getExitStatus();
 	idx = er.indexOf("OVERRUN");
 	unitAssert(idx != String::npos);
 
@@ -96,6 +98,7 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.append(String(UNKNOWN_ADDR));
 	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
+	rval.getExitStatus();
 	idx = er.indexOf("UNKNOWN ADDRESS");
 	unitAssert(idx != String::npos);
 
@@ -104,6 +107,7 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.append(String(DOUBLE_DELETE));
 	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
+	rval.getExitStatus();
 	idx = er.indexOf("DOUBLE DELETE");
 	unitAssert(idx != String::npos);
 
@@ -114,6 +118,7 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.append(String(DOUBLE_DELETE));
 	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
+	rval.getExitStatus();
 	idx = er.indexOf("DOUBLE DELETE (NOFREE)");
 	unitAssert(idx != String::npos);
 
@@ -134,6 +139,7 @@ void OW_MemTracerTestCases::testSomething()
 	cmd.append(String(AGGRESSIVE));
 	rval = Exec::safePopen(cmd);
 	er = rval.err()->readAll();
+	rval.getExitStatus();
 	idx = er.indexOf("OVERRUN");
 	unitAssert(idx != String::npos);
 

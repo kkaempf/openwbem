@@ -75,22 +75,22 @@ int main(int argc, char* argv[])
 			buf--;
 			(*buf) = 's';
 			buf++;
-			delete buf;
+			delete[] buf;
 			break;
 		case 2: // over run
 			buf = new char[10];
 			buf[10] = 's';
-			delete buf;
+			delete[] buf;
 			break;
 		case 4: // double delete
 			buf = new char[10];
-			delete buf; 
-			delete buf;
+			delete[] buf; 
+			delete[] buf;
 			break;
 		case 3: // unknown address
 			buf = new char[10];
 			buf += 5;
-			delete buf; 
+			delete[] buf; 
 			break;
 		case 7:
 			buf = new char[10];

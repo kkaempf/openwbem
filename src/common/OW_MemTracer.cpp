@@ -43,6 +43,39 @@
 namespace OpenWBEM
 {
 
+// need to use our own allocator to avoid a deadlock with the standard allocator locking with a non-recursive mutex.
+template <typename T>
+class MemTracerAllocator
+{
+public:
+	typedef std::size_t size_type;
+	typedef std::ptrdiff_t difference_type;
+	typedef T value_type;
+	typedef value_type* pointer;
+	typedef const value_type* const_pointer;
+	typedef value_type& reference;
+	typedef const value_type& const_reference;
+	template <class U> struct rebind { typedef MemTracerAllocator<U> other; };
+	MemTracerAllocator() throw() {}
+	template <class U> MemTracerAllocator(const MemTracerAllocator<U>& other) throw() {}
+	pointer address(reference r) const { return &r; }
+	const_pointer address(const_reference r) const { return &r; }
+	pointer allocate(size_type n, const_pointer hint = 0)
+	{
+		return static_cast<pointer>(::malloc(n));
+	}
+	void deallocate(pointer p, size_type n)
+	{
+		::free(p);
+	}
+	size_type max_size() const throw() { return static_cast<size_type>(-1); }
+	void construct(pointer p, const_reference val) { new(p) value_type(val); }
+	void destroy(pointer p) { p->~value_type(); }
+	
+};
+
+
+
 static const char* const noFile = "<no file>";
 class MemTracer
 {
@@ -84,7 +117,7 @@ private:
 	private:
 		MemTracer& m_tracer;
 	};
-	typedef std::map<void*, Entry>::iterator iterator;
+	typedef std::map<void*, Entry, std::less<void*>, MemTracerAllocator<Entry> >::iterator iterator;
 	friend class Lock;
 public:
 	MemTracer();
@@ -99,9 +132,10 @@ private:
 	void lock() { m_lockCount++; }
 	void unlock() { m_lockCount--; }
 private:
-	std::map<void*, Entry> m_map;
+	std::map<void*, Entry, std::less<void*>, MemTracerAllocator<Entry> > m_map;
 	int m_lockCount;
 };
+
 static Mutex* memguard = NULL;
 static MemTracer* MemoryTracer = 0;
 static bool _shuttingDown = false;
@@ -135,15 +169,15 @@ processEnv()
 {
 	if (!initialized)
 	{
-		if (getenv("MEM_DISABLE") && getenv("MEM_DISABLE")[0] == '1')
+		if (getenv("OW_MEM_DISABLE") && getenv("OW_MEM_DISABLE")[0] == '1')
 		{
 			disabled = true;
 		}
-		if (getenv("MEM_NOFREE") && getenv("MEM_NOFREE")[0] == '1')
+		if (getenv("OW_MEM_NOFREE") && getenv("OW_MEM_NOFREE")[0] == '1')
 		{
 			noFree = true;
 		}
-		if (getenv("MEM_AGGRESSIVE") && getenv("MEM_AGGRESSIVE")[0] == '1')
+		if (getenv("OW_MEM_AGGRESSIVE") && getenv("OW_MEM_AGGRESSIVE")[0] == '1')
 		{
 			aggressive = true;
 			fprintf(stderr, "MemTracer running in aggressive mode.\n");
@@ -408,6 +442,7 @@ doNew(size_t size, char const* file, int line)
 		{
 			memguard->release();
 		}
+		--internalNewCount;
 		return rval;
 	}
 	allocMemTracer();
@@ -433,30 +468,6 @@ doNew(size_t size, char const* file, int line)
 	owInternal = false;
 	memguard->release();
 	return p;
-}
-//////////////////////////////////////////////////////////////////////////////
-void*
-operator new[](size_t size, char const* file, int line)
-{
-	return doNew(size, file, line);
-}
-//////////////////////////////////////////////////////////////////////////////
-void*
-operator new(size_t size, char const* file, int line)
-{
-	return doNew(size, file, line);
-}
-//////////////////////////////////////////////////////////////////////////////
-void*
-operator new[](size_t size)
-{
-	return doNew(size, NULL, 0);
-}
-//////////////////////////////////////////////////////////////////////////////
-void*
-operator new(size_t size)
-{
-	return doNew(size, NULL, 0);
 }
 //////////////////////////////////////////////////////////////////////////////
 static void
@@ -507,19 +518,44 @@ doDelete(void* p)
 		fprintf(stderr, "delete called\n");
 	}
 }
+
+} // end namespace OpenWBEM
+
 //////////////////////////////////////////////////////////////////////////////
+void*
+operator new[](std::size_t size, char const* file, int line) throw(std::bad_alloc)
+{
+	return OpenWBEM::doNew(size, file, line);
+}
+//////////////////////////////////////////////////////////////////////////////
+void*
+operator new(std::size_t size, char const* file, int line) throw(std::bad_alloc)
+{
+	return OpenWBEM::doNew(size, file, line);
+}
+//////////////////////////////////////////////////////////////////////////////
+void*
+operator new[](std::size_t size) throw(std::bad_alloc)
+{
+	return OpenWBEM::doNew(size, NULL, 0);
+}
+//////////////////////////////////////////////////////////////////////////////
+void*
+operator new(std::size_t size) throw(std::bad_alloc)
+{
+	return OpenWBEM::doNew(size, NULL, 0);
+}
 void
 operator delete(void* p)
 {
-	doDelete(p);
+	OpenWBEM::doDelete(p);
 }
 void
 operator delete[](void* p)
 {
-	doDelete(p);
+	OpenWBEM::doDelete(p);
 }
 
-} // end namespace OpenWBEM
 
 #endif	// OW_DEBUG_MEMORY
 
