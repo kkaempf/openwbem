@@ -56,7 +56,7 @@ class COWReference : private COWReferenceBase
 		template <class U>
 		COWReference(const COWReference<U>& arg);
 		~COWReference();
-		COWReference<T>& operator= (COWReference<T> arg);
+		COWReference<T>& operator= (const COWReference<T>& arg);
 		COWReference<T>& operator= (T* newObj);
 		void swap(COWReference<T>& arg);
 		T* operator->();
@@ -156,9 +156,9 @@ inline void COWReference<T>::getWriteLock()
 }
 //////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline COWReference<T>& COWReference<T>::operator= (COWReference<T> arg)
+inline COWReference<T>& COWReference<T>::operator= (const COWReference<T>& arg)
 {
-	arg.swap(*this);
+	COWReference<T>(arg).swap(*this);
 	return *this;
 }
 //////////////////////////////////////////////////////////////////////////////
