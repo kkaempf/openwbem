@@ -37,6 +37,8 @@
 #include "OW_String.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_Reference.hpp"
+#include "OW_NonRecursiveMutex.hpp"
+#include "OW_Condition.hpp"
 
 
 DECLARE_EXCEPTION(Thread);
@@ -142,10 +144,7 @@ public:
 	/**
 	 * @return true if this thread is currently running. Otherwise false.
 	 */
-	OW_Bool isRunning()
-	{
-		return OW_Bool(m_isRunning == true);
-	}
+	OW_Bool isRunning();
 
 
 	/**
@@ -215,8 +214,18 @@ protected:
 	OW_Thread_t m_id;
 	OW_Bool m_isJoinable;
 	OW_Bool m_deleteSelf;
-	OW_Bool m_isRunning;
-	OW_Bool m_isStarting;
+
+	enum ThreadState
+	{
+		Created,
+		Starting,
+		Running,
+		Finished
+	};
+
+	OW_NonRecursiveMutex m_stateMtx;
+	OW_Condition m_stateCond;
+	ThreadState m_state;
 
 private:
 

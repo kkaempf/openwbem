@@ -32,7 +32,6 @@
 
 #include "OW_config.h"
 #include "OW_CppIndicationExportProviderIFC.hpp"
-#include "OW_Thread.hpp"
 
 class OW_CppIndicationExportXMLHTTPProvider : public OW_CppIndicationExportProviderIFC
 {
