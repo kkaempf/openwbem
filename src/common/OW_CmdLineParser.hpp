@@ -117,7 +117,12 @@ public:
 	 * @param n The 0-based index of the argument.  Valid values are 0 to count()-1.
 	 */
 	String getNonOptionArg(size_t n) const;
- 	
+
+	/**
+	 * Read out the non-option args
+	 */
+	StringArray getNonOptionArgs() const;
+	
 	/**
 	 * Generate a usage string for the options.  e.g.:
 	 * "Options:\n"
@@ -128,8 +133,10 @@ public:
 	 * [arg] is used for E_OPTIONAL_ARG options, and <arg> for E_REQUIRED_ARG options.
 	 * 
 	 * @param options An array of Option terminated by a final entry that has a '\0' shortopt && 0 longopt.
+	 * @param maxColumns Wrap the descriptions so no line of the usage string exceeds the specified 
+	 *   number of columns.
 	 */
-	static String getUsage(const Option* options);
+	static String getUsage(const Option* options, unsigned int maxColumns = 80);
 
 
 private:

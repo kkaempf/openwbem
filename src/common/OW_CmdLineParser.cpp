@@ -184,13 +184,15 @@ CmdLineParser::CmdLineParser(int argc, char const* const* const argv_, const Opt
 /////////////////////////////////////////////////////////////////////////////
 // static
 String
-CmdLineParser::getUsage(const Option* options)
+CmdLineParser::getUsage(const Option* options, unsigned int maxColumns)
 {
 // looks like this:
 //     "Options:\n"
 //     "  -1, --one                 first description\n"
 //     "  -2, --two [arg]           second description (default is optional)\n"
 //     "  -3, --three <arg>         third description\n"
+
+	const unsigned int NUM_OPTION_COLUMNS = 28;
 	StringBuffer usage("Options:\n");
 
 	// m_options is an array terminated by a final entry that has a '\0' shortopt && 0 longOpt.
@@ -222,7 +224,7 @@ CmdLineParser::getUsage(const Option* options)
 			curLine += " [arg]";
 		}
 
-		size_t bufferlen = (curLine.length() >= 27) ? 1 : (28 - curLine.length());
+		size_t bufferlen = (curLine.length() >= NUM_OPTION_COLUMNS-1) ? 1 : (NUM_OPTION_COLUMNS - curLine.length());
 		for (size_t i = 0; i < bufferlen; ++i)
 		{
 			curLine += ' ';
@@ -232,14 +234,56 @@ CmdLineParser::getUsage(const Option* options)
 		{
 			curLine += curOption->description;
 		}
-		
+
 		if (curOption->defaultValue != 0)
 		{
 			curLine += " (default is ";
 			curLine += curOption->defaultValue;
 			curLine += ')';
 		}
-		
+
+		// now if curLine is too long or contains newlines, we need to wrap it.
+		while (curLine.length() > maxColumns || curLine.toString().indexOf('\n') != String::npos)
+		{
+			String curLineStr(curLine.toString());
+			// first we look for a \n to cut at
+			size_t newlineIdx = curLineStr.indexOf('\n');
+
+			// next look for the last space to cut at
+			size_t lastSpaceIdx = curLineStr.lastIndexOf(' ', maxColumns);
+
+			size_t cutIdx = 0;
+			size_t nextLineBeginIdx = 0;
+			if (newlineIdx <= maxColumns)
+			{
+				cutIdx = newlineIdx;
+				nextLineBeginIdx = newlineIdx + 1; // skip the newline
+			}
+			else if (lastSpaceIdx > NUM_OPTION_COLUMNS)
+			{
+				cutIdx = lastSpaceIdx;
+				nextLineBeginIdx = lastSpaceIdx + 1; // skip the space
+			}
+			else
+			{
+				// no space to cut it, just cut it in the middle of a word
+				cutIdx = maxColumns;
+				nextLineBeginIdx = maxColumns;
+			}
+
+			// found a place to cut, so do it.
+			usage += curLineStr.substring(0, cutIdx);
+			usage += '\n';
+
+			// cut out the line from curLine
+			StringBuffer spaces;
+			for (size_t i = 0; i < NUM_OPTION_COLUMNS; ++i)
+			{
+				spaces += ' ';
+			}
+			curLine = spaces.releaseString() + curLineStr.substring(nextLineBeginIdx);
+		}
+
 		curLine += '\n';
 		usage += curLine;
 	}
@@ -292,6 +336,13 @@ String
 CmdLineParser::getNonOptionArg(size_t n) const
 {
 	return m_nonOptionArgs[n];
+}
+
+/////////////////////////////////////////////////////////////////////////////
+StringArray
+CmdLineParser::getNonOptionArgs() const
+{
+	return m_nonOptionArgs;
 }
 
 
