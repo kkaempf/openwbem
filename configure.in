@@ -90,7 +90,7 @@ AC_PATH_PROG(RM, rm, rm)
 AC_PATH_PROG(SED, sed, sed)
 
 dnl BMMU check for perl
-if test "$with_perl" == yes; then
+if test "$with_perl" != no; then
   #PGAC_CHECK_PERL_CONFIGS([archlibexp,privlibexp,useshrplib])
   PGAC_CHECK_PERL_CONFIG(archlibexp)
   PGAC_CHECK_PERL_CONFIG(privlibexp)
