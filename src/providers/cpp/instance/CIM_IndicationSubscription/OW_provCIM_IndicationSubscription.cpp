@@ -55,8 +55,8 @@ public:
 		// get the indication server and save it.
 		if (indicationsEnabled)
 		{
-			indicationServer = CIMOMEnvironment::g_cimomEnvironment->getIndicationServer();
-			if (!indicationServer)
+			CIMOMEnvironment::g_cimomEnvironment->getIndicationServer();
+			if (!CIMOMEnvironment::g_cimomEnvironment->getIndicationServer())
 			{
 				indicationsEnabled = false;
 			}
@@ -73,7 +73,7 @@ public:
 		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->deleteInstance(ns, cop);
 		// tell the indication server it's being deleted.
-		indicationServer->startDeleteSubscription(ns, cop);
+		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->startDeleteSubscription(ns, cop);
 	}
 	virtual CIMObjectPath createInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &cimInstance_)
 	{
@@ -88,7 +88,7 @@ public:
 		}
 		CIMObjectPath rv = env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
 		// Tell the indication server about the new subscription.
-		indicationServer->startCreateSubscription(ns, cimInstance, username);
+		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->startCreateSubscription(ns, cimInstance, username);
 		return rv;
 	}
 	virtual void modifyInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMInstance &modifiedInstance, const CIMInstance &previousInstance,
@@ -104,7 +104,7 @@ public:
 		CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
 		// Tell the indication server about the modified subscription.
-		indicationServer->startModifySubscription(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
+		CIMOMEnvironment::g_cimomEnvironment->getIndicationServer()->startModifySubscription(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
 	}
 #endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual CIMInstance getInstance(const ProviderEnvironmentIFCRef &env, const String &ns, const CIMObjectPath &instanceName, ELocalOnlyFlag localOnly, EIncludeQualifiersFlag includeQualifiers,
@@ -131,7 +131,6 @@ public:
 	}
 private:
 	bool indicationsEnabled;
-	IndicationServerRef indicationServer;
 };
 } // end anonymous namespace
 } // end namespace OpenWBEM
