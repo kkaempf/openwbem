@@ -77,6 +77,13 @@ NPIMethodProviderProxy::invokeMethod(
 				_VectorAddTo(
 					&_npiHandle, parm_in, static_cast<void *> (owpv) );
 			}
+			for (int i = 0, n = out.size(); i < n; i++)
+			{
+				CIMParamValue * owpv = new CIMParamValue(out[i]);
+		_NPIGarbageCan(&_npiHandle, owpv, CIM_PARAMVALUE);
+				_VectorAddTo(
+					&_npiHandle, parm_out, static_cast<void *> (owpv) );
+			}
 			::CIMValue cv = m_ftable->fp_invokeMethod(
 				&_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
 			if (_npiHandle.errorOccurred)
@@ -85,6 +92,7 @@ NPIMethodProviderProxy::invokeMethod(
 					_npiHandle.providerError);
 			}
 			rval = * static_cast<CIMValue *> (cv.ptr);
+			out.clear();
 			for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
 			{
 				CIMParamValue owpv = * static_cast<CIMParamValue *>

@@ -190,7 +190,7 @@ int	CIMParameterGetInteger(npiHandle, cp)
 	NPIHandle * nh = argsfromperl(npiHandle);
 	CIMParameter ccp = {argsfromperl(cp)};
 	CODE:
-	RETVAL = CIMParameterGetInteger(nh, ccp);
+	RETVAL = CIMParameterGetIntegerValue(nh, ccp);
 	OUTPUT:
 	RETVAL
 	

@@ -784,14 +784,78 @@ static Vector referenceNames ( NPIHandle * nh, CIMObjectPath assoc,
     return vec;
 }
 
-static CIMValue invokeMethod ( NPIHandle * nh, CIMObjectPath cop,
-                               const char * a, Vector av, Vector a2v)
-{
-    CIMValue cv = {NULL};
+ static CIMValue invokeMethod ( NPIHandle * nh, CIMObjectPath cop,
+                                const char * a, Vector argsin, 
+                                Vector argsout)
+ {
+     char * args[] = {"",NULL,"invokeMethod"};
+     CIMValue cv = {NULL};
+
+    char script[256];
+    PerlInterpreter * my_perl;
+
+    Vector vec = VectorNew(nh);
+    if (nh->errorOccurred) return cv;
 
     fprintf(stderr,"--- perlProvider(): invokeMethod\n");
 
-    if (cv.ptr == NULL) raiseError(nh,"Could not invoke method"); 
+    /* get name of perl executable */
+    args[1]=setPath(nh,script);
+    my_perl = (PerlInterpreter *) (((PerlContext *)((NPIHandle *)nh->context))->my_perl);
+    PERL_SET_CONTEXT(my_perl);
+
+    //perl_parse(my_perl, xs_init, 2, args, NULL);
+    {
+		dSP;			// initialize perl stack pointer
+        int count;	
+        SV * sva;		// NpiHandle to pass to perl
+        SV * svb;		
+        
+        char * ccc;
+		char * cout;
+		
+        ENTER;			// everything created after here
+        SAVETMPS;		// ...is a temporary variable. 
+
+		/* set all parameters you need back... 
+		returning values via parameter list is quite unperly...
+		...we don't do this here */
+		
+        sva = sv_2mortal(newSVpv((char *)argsforperl(nh),10));
+        svb = sv_2mortal(newSVpv((char *)argsforperl(vec.ptr),10));
+
+        PUSHMARK(SP);	// remember the stack pointer 
+        XPUSHs(sva);	// push the base onto the stack (NPIHandle)
+        XPUSHs(svb);	// push the exponent onto the stack (NPIHandle)
+		XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(cop.ptr),10)));
+		XPUSHs(sv_2mortal(newSVpv(a ,strlen(a))));		// push a onto stack (should be method name)
+		XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(argsin.ptr),10)));
+
+		// do we need to mortalize argsout ??? 
+		XPUSHs(sv_2mortal(newSVpv((char *)argsforperl(argsout.ptr),10)));
+        PUTBACK;
+
+        count = call_pv("invokeMethod", G_EVAL|G_ARRAY);
+
+		SPAGAIN;
+
+	    fprintf(stderr,"--- perlProvider(): invokeMethod: Got back %d values\n", count);
+		if (count != 2)
+            croak ("call_Inc: expected 2 value from 'invokeMethod', got %d\n",
+                  count) ;
+
+	/* Retrieve argsout arguments (first item in return list) */
+	cout = POPp;
+        /* Retrieve return value (second item in return list) */
+        ccc = POPp;
+        cv.ptr = argsfromperl(ccc);
+	argsout.ptr=argsfromperl(cout);
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+    }
+    if (cv.ptr == NULL) raiseError(nh,"invokeMethod returned NULL"); 
     return cv;
 }
 
