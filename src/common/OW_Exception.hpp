@@ -39,6 +39,7 @@
 #include <iosfwd>
 #include <exception>
 #include <new>
+#include <vector>
 
 namespace OpenWBEM
 {
@@ -160,6 +161,51 @@ private:
 
 };
 
+namespace ExceptionDetail
+{
+
+	// Reconciles GNU strerror_r and POSIX strerror_r.
+	//
+	void portable_strerror_r(int errnum, char * buf, unsigned n);
+
+	typedef ::std::vector<char> chvec_t;
+
+	// PROMISE: appends to buf at least one character, with '\0'
+	// the last char appended.
+	//
+	void format_msg(char const * msg, int errnum, chvec_t & buf);
+
+	unsigned const BUFSZ = 1024;
+
+	template <typename exType>
+	struct Errno
+	{
+		static exType simple(char const * file, int line, int errnum)
+		{
+			char buf[BUFSZ];
+			portable_strerror_r(errnum, buf, BUFSZ);
+			return exType(file, line, buf, errnum);
+		}
+
+		template <typename Mtype>
+		static exType format(char const * file, int line,
+		                     Mtype const & msg, int errnum)
+		{
+			return format(file, line, msg.c_str(), errnum);
+		}
+
+		static exType format(char const * file, int line,
+		                     char const * msg, int errnum)
+		{
+			chvec_t buf;
+			format_msg(msg, errnum, buf);
+			// Elements of vector are guaranteed to be contiguous
+			return exType(file, line, &*buf.begin());
+		}
+	}; // struct Errno
+
+} // namespace ExceptionDetail
+
 /**
  * Writes the exception object to the stream in the form: 
  *  <file>: <line> <type>: <message>
@@ -173,12 +219,12 @@ OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
  * @param exType The type of the exception
  * @param msg The exception message.  A string that will be copied.
  */
-#define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, msg)
+#define OW_THROW(exType, msg) throw exType(__FILE__, __LINE__, (msg))
 
 /**
  * This macro is deprecated in 3.1.0.
  */
-#define OW_THROWL(exType, line, msg) throw exType(__FILE__, line, msg)
+#define OW_THROWL(exType, line, msg) throw exType(__FILE__, (line), (msg))
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -187,7 +233,9 @@ OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
  * @param subex A sub-exception. A pointer to it will be passed to the 
  *   exception constructor, which should clone() it.
  */
-#define OW_THROW_SUBEX(exType, msg, subex) throw exType(__FILE__, __LINE__, msg, ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, &subex)
+#define OW_THROW_SUBEX(exType, msg, subex) \
+throw exType(__FILE__, __LINE__, (msg), \
+             ::OpenWBEM::Exception::UNKNOWN_ERROR_CODE, &(subex))
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -195,19 +243,40 @@ OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
  * @param msg The exception message.  A string that will be copied.
  * @param err The error code.
  */
-#define OW_THROW_ERR(exType, msg, err) throw exType(__FILE__, __LINE__, msg, err)
+#define OW_THROW_ERR(exType, msg, err) \
+throw exType(__FILE__, __LINE__, (msg), (err))
 
 /**
  * Throw an exception using __FILE__, __LINE__, errno and strerror(errno)
- * @param exType The type of the exception
+ * @param exType The type of the exception; ctor must take file, line,
+ *               message, and error code.
  */
-#define OW_THROW_ERRNO(exType) throw exType(__FILE__, __LINE__, ::strerror(errno), errno)
+#define OW_THROW_ERRNO(exType) OW_THROW_ERRNO1(exType, errno)
+
+/**
+ * Throw an exception using __FILE__, __LINE__, errnum and strerror(errnum)
+ * @param exType The type of the exception; ctor must take file, line,
+ *               message, and error code.
+ */
+#define OW_THROW_ERRNO1(exType, errnum) \
+throw ExceptionDetail::Errno< exType >::simple(__FILE__, __LINE__, (errnum))
 
 /**
  * Throw an exception using __FILE__, __LINE__, errno and strerror(errno)
- * @param exType The type of the exception
+ * @param exType The type of the exception; ctor must take file, line,
+ *               message, and error code.
  */
-#define OW_THROW_ERRNO_MSG(exType, msg) throw exType(__FILE__, __LINE__, Format("%1: %2(%3)", msg, errno, ::strerror(errno)).c_str(), errno)
+#define OW_THROW_ERRNO_MSG(exType, msg) \
+OW_THROW_ERRNO_MSG1(exType, (msg), errno)
+
+/**
+ * Throw an exception using __FILE__, __LINE__, errnum and strerror(errnum)
+ * @param exType The type of the exception; ctor must take file, line,
+ *               message, and error code.
+ */
+#define OW_THROW_ERRNO_MSG1(exType, msg, errnum) \
+throw ExceptionDetail::Errno< exType >:: \
+      format(__FILE__, __LINE__, (msg), (errnum))
 
 /**
  * Throw an exception using __FILE__ and __LINE__.
@@ -217,7 +286,8 @@ OW_COMMON_API std::ostream& operator<< (std::ostream& os, const Exception& e);
  * @param subex A sub-exception. A point to it will be passed to the 
  *   exception constructor, which should clone() it.
  */
-#define OW_THROW_ERR_SUBEX(exType, msg, err, subex) throw exType(__FILE__, __LINE__, msg, err, &subex)
+#define OW_THROW_ERR_SUBEX(exType, msg, err, subex) \
+throw exType(__FILE__, __LINE__, (msg), (err), &(subex))
 
 /**
  * Declare a new exception class named <NAME>Exception that derives from <BASE>.

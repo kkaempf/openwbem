@@ -49,7 +49,7 @@ OW_DECLARE_APIEXCEPTION(Assertion, OW_COMMON_API);
  * @param CON The condition which will be evaluated.
  */
 #ifdef OW_DEBUG
-#define OW_ASSERT(CON) if (!(CON)) throw AssertionException(__FILE__, __LINE__, \
+#define OW_ASSERT(CON) if (!(CON)) throw ::OpenWBEM::AssertionException(__FILE__, __LINE__, \
 		#CON)
 #else
 #define OW_ASSERT(CON)
@@ -63,7 +63,7 @@ OW_DECLARE_APIEXCEPTION(Assertion, OW_COMMON_API);
  */
 #ifdef OW_DEBUG
 // MSG should be a string
-#define OW_ASSERTMSG(CON, MSG) if (!(CON)) throw AssertionException(__FILE__, __LINE__, \
+#define OW_ASSERTMSG(CON, MSG) if (!(CON)) throw ::OpenWBEM::AssertionException(__FILE__, __LINE__, \
 		#CON ":" MSG)
 #else
 #define OW_ASSERTMSG(CON, MSG)

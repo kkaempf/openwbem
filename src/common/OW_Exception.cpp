@@ -36,10 +36,13 @@
 #include "OW_config.h"
 #include "OW_Exception.hpp"
 #include "OW_StackTrace.hpp"
+#include "OW_Format.hpp"
 #if defined(OW_NON_THREAD_SAFE_EXCEPTION_HANDLING)
 #include "OW_Mutex.hpp"
 #endif
-#include <cstring>
+#include <string.h>
+// Not <cstring>, because strerror_r is not part of C or C++ standard lib,
+// but is a POSIX function defined to be in <string.h>.
 #include <cstdlib>
 #if defined(OW_HAVE_ISTREAM) && defined(OW_HAVE_OSTREAM)
 #include <istream>
@@ -270,6 +273,68 @@ Exception::setErrorCode(int errorCode)
 {
 	m_errorCode = errorCode;
 }
+
+namespace ExceptionDetail
+{
+	typedef int (*posix_fct)(int, char *, ::std::size_t);
+	typedef char * (*gnu_fct)(int, char *, ::std::size_t);
+
+	struct dummy
+	{
+	};
+
+	// We make the two strerror_r_wrap functions into templates so that
+	// code is generated only for the one that gets used.
+
+	template <typename Dummy>
+	inline int 
+	strerror_r_wrap(posix_fct strerror_r, int errnum, char * buf, unsigned n,
+	                Dummy)
+	{
+		return strerror_r(errnum, buf, n);
+	}
+
+	template <typename Dummy>
+	inline int
+	strerror_r_wrap(gnu_fct strerror_r, int errnum, char * buf, unsigned n,
+	                Dummy)
+	{
+		char * errstr = strerror_r(errnum, buf, n);
+		if (errstr != buf)
+		{
+			if (errstr)
+			{
+				::strncpy(buf, errstr, n);
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		return 0;
+	}
+
+	void portable_strerror_r(int errnum, char * buf, unsigned n)
+	{
+		int errc = strerror_r_wrap(&::strerror_r, errnum, buf, n, dummy());
+		if (errc != 0)
+		{
+			::strncpy(buf, "[Could not create error message for error code]", n);
+		}
+		buf[n-1] = '\0'; // just in case...
+	}
+
+	void format_msg(char const * msg, int errnum, chvec_t & buf)
+	{
+		char arr[BUFSZ];
+		portable_strerror_r(errnum, arr, BUFSZ);
+		char const * sarr = static_cast<char const *>(arr);
+		String str = Format("%1: %2(%3)", msg, errnum, sarr).toString();
+		char const * s = str.c_str();
+		buf.assign(s, s + str.length() + 1);
+	}
+
+} // namespace ExceptionDetail
 
 } // end namespace OpenWBEM
 

@@ -63,6 +63,21 @@ namespace OpenWBEM
  *		{
  *			// Valid instance
  *		}
+ *
+ * Providers generally follow these steps to create a CIMInstance object:
+ *
+ * 1. Obtain a CIMOMHandleIFC object hdl.
+ *
+ * 2. Use hdl to create a CIMClass object of the desired CIM class:
+ *
+ * CIMClass cc = hdl.getClass(namespace, class_name);
+ *
+ * 3. Use CIMClass cc to create a CIMInstance of the desired CIM class:
+ *
+ * CIMInstance inst = cc.newInstance();
+ *
+ * 4. Assign properties of inst as desired using setProperty().
+ *  
  */
 class OW_COMMON_API CIMInstance : public CIMElement
 {
