@@ -29,6 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
+#include "OW_FTABLERef.hpp"
 #include "OW_NPIAssociatorProviderProxy.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMException.hpp"
@@ -52,21 +53,21 @@ OW_NPIAssociatorProviderProxy::associatorNames(
 
     if (m_ftable->fp_associatorNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocName);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
-		OW_CIMObjectPath objectNameWithNS(objectName);
-		objectNameWithNS.setNameSpace(ns);
+	OW_CIMObjectPath objectNameWithNS(objectName);
+	objectNameWithNS.setNameSpace(ns);
         CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         ::Vector v =
@@ -74,8 +75,6 @@ OW_NPIAssociatorProviderProxy::associatorNames(
                 resultClass.empty() ? 0 : resultClass.c_str(),
 				role.empty() ? 0 : role.c_str(),
 				resultRole.empty() ? 0 : resultRole.c_str());
-
-        OW_NPIVectorFreer vf1(v);
 
         if (_npiHandle.errorOccurred)
         {
@@ -89,7 +88,7 @@ OW_NPIAssociatorProviderProxy::associatorNames(
             OW_CIMObjectPath ow_cop(*
                 static_cast<OW_CIMObjectPath *>(cop.ptr) );
 
-			result.handle(ow_cop);
+		result.handle(ow_cop);
         }
     }
     else
@@ -118,22 +117,22 @@ OW_NPIAssociatorProviderProxy::associators(
 
     if (m_ftable->fp_associators != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocName);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
-		OW_CIMObjectPath objectNameWithNS(objectName);
-		objectNameWithNS.setNameSpace(ns);
+	OW_CIMObjectPath objectNameWithNS(objectName);
+	objectNameWithNS.setNameSpace(ns);
         CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         int _plLen = 0;
@@ -161,8 +160,6 @@ OW_NPIAssociatorProviderProxy::associators(
         {
             free(const_cast<void*>(static_cast<const void*>(*i)));
         }
-
-        OW_NPIVectorFreer vf1(v);
 
         if (_npiHandle.errorOccurred)
         {
@@ -206,22 +203,22 @@ OW_NPIAssociatorProviderProxy::references(
 
     if (m_ftable->fp_references != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
-		OW_NPIHandleFreer nhf(_npiHandle);
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+	OW_NPIHandleFreer nhf(_npiHandle);
 
-		OW_ProviderEnvironmentIFCRef env2(env);
+	OW_ProviderEnvironmentIFCRef env2(env);
         _npiHandle.thisObject = static_cast<void *>(&env2);
 
         //  may the arguments must be copied verbatim
         //  to avoid locking problems
 
         // initialize association class
-		OW_CIMObjectPath assocName2(assocName);
+	OW_CIMObjectPath assocName2(assocName);
         CIMObjectPath _assoc = { static_cast<void *> (&assocName2)};
 
         // initialize path
-		OW_CIMObjectPath objectNameWithNS(objectName);
-		objectNameWithNS.setNameSpace(ns);
+	OW_CIMObjectPath objectNameWithNS(objectName);
+	objectNameWithNS.setNameSpace(ns);
         CIMObjectPath _path = { static_cast<void *> (&objectNameWithNS)};
 
         int _plLen = 0;
@@ -247,8 +244,6 @@ OW_NPIAssociatorProviderProxy::references(
         {
             free(const_cast<void*>(static_cast<const void*>(*i)));
         }
-
-        OW_NPIVectorFreer vf1(v);
 
         if (_npiHandle.errorOccurred)
         {
@@ -290,7 +285,7 @@ OW_NPIAssociatorProviderProxy::referenceNames(
 
     if (m_ftable->fp_referenceNames != NULL)
     {
-        ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+        ::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -311,8 +306,6 @@ OW_NPIAssociatorProviderProxy::referenceNames(
         ::Vector v =
             m_ftable->fp_referenceNames(&_npiHandle, _assoc, _path,
                     role.empty() ? 0 : role.c_str());
-
-        OW_NPIVectorFreer vf1(v);
 
         if (_npiHandle.errorOccurred)
         {

@@ -43,7 +43,7 @@
 #include "OW_NPIIndicationProviderProxy.hpp"
 
 //typedef OW_NPIProviderBaseIFC* (*ProviderCreationFunc)();
-// the closest approximation of NPIProviderBaseIFCRef is ::FTABLE
+// the closest approximation of NPIProviderBaseIFCRef is ::NPIFTABLE
 
 typedef OW_FTABLERef* (*ProviderCreationFunc)();
 typedef const char* (*versionFunc_t)();
@@ -404,7 +404,10 @@ OW_NPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
 		guessProvId));
 
-        m_noidProviders.append(OW_FTABLERef(theLib, new ::FTABLE(fTable)));
+	::NPIFTABLE * nf = new ::NPIFTABLE();
+	* nf = fTable;
+        //m_noidProviders.append(OW_FTABLERef(theLib, new ::FTABLE(fTable)));
+        m_noidProviders.append(OW_FTABLERef(theLib, nf));
     }
 }
 
@@ -468,12 +471,19 @@ OW_NPIProviderIFC::getProvider(
 		return OW_FTABLERef();
 	}
 
-	::FTABLE fTable = (*createProvider)();
+	::FTABLE fTable_ = (*createProvider)();
+	//NPIFTABLE fTable = fTable_;
+	::NPIFTABLE fTable;
+	memcpy(&fTable, &fTable_, sizeof(::FTABLE));
+
+	fTable.npicontext = new ::NPIContext;
+	fTable.npicontext->scriptName = NULL;
 
 	if(!fTable.fp_initialize)
 	{
 		env->getLogger()->logError(format("NPI provider ifc: Libary %1 - %2 returned null"
 			" initialize function pointer in function table", libName, creationFuncName));
+		delete ((::NPIContext *)fTable.npicontext);
 		return OW_FTABLERef();
 	}
 
@@ -484,12 +494,22 @@ OW_NPIProviderIFC::getProvider(
 	// nothing the provider can do with it, so we'll just pass in 0
 
 	//OW_Reference<NPIEnv> npiHandle(); // TODO: createEnv(...);
-	fTable.fp_initialize(0/*npiHandle.getPtr()*/, ch );	// Let provider initialize itself
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, fTable.npicontext};
+	fTable.fp_initialize(&_npiHandle, ch ); // Let provider initialize itself
+	// take care of the errorOccurred field
+	// that might indicate a buggy provider
+	if (_npiHandle.errorOccurred)
+	{
+		env->getLogger()->logDebug(format("NPI provider ifc loaded library %1. Initialize failed"
+			" for provider %2", libName, provId));
+		delete ((::NPIContext *)fTable.npicontext);
+		return OW_FTABLERef();
+	}
 
 	env->getLogger()->logDebug(format("NPI provider ifc: provider %1 loaded and initialized",
 		provId));
 
-	m_provs[provId] = OW_FTABLERef(theLib, new ::FTABLE(fTable));
+	m_provs[provId] = OW_FTABLERef(theLib, new ::NPIFTABLE(fTable));
 
 	return m_provs[provId];
 }

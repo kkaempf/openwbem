@@ -32,23 +32,10 @@
 #define OW_NPI_PROFIDER_IFC_UTILS_HPP_
 
 #include "OW_config.h"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMParamValue.hpp"
+#include "OW_CIMObjectPath.hpp"
 #include "NPIExternal.hpp"
-
-/*
-class OW_BlobFreer
-{
-public:
-	OW_BlobFreer(OW_Blob* b) : m_blob(b)
-	{
-	}
-	~OW_BlobFreer()
-	{
-		free(static_cast<void*>(m_blob));
-	}
-private:
-	OW_Blob* m_blob;
-};
-*/
 
 
 class OW_NPIVectorFreer
@@ -75,9 +62,53 @@ class OW_NPIHandleFreer
 public:
 	OW_NPIHandleFreer(::NPIHandle& h) : m_handle(h)
 	{
+printf("Garbage array created\n");
 	}
 	~OW_NPIHandleFreer()
 	{
+	   // delete perlcontext garbage first
+	   OW_UInt32 sz = ((NPIContext *)(m_handle.context))->garbage.size();
+//printf("Garbage array size is %x\n", sz);
+	   for (int i= sz-1; i>=0; i--)
+	   {
+              NPIGarbageType pgt =
+	         ((NPIContext *)(m_handle.context))->garbageType[i];
+//printf("Delete Entry %x, Type %x\n", i, pgt);
+	      void * obj_ptr = ((NPIContext *)(m_handle.context))->garbage[i];
+	      switch(pgt)
+	      {
+	         case VECTOR:
+	            delete(static_cast<charVect *>(obj_ptr));
+	            break;
+	         case CIM_VALUE:
+	            delete(static_cast<OW_CIMValue *>(obj_ptr));
+	            break;
+	         case CIM_QUALIFIER:
+	          //delete(static_cast<OW_CIMQualifier *>(
+	          //       ((NPIContext *)(m_handle.context))->garbage[i]) );
+	            break;
+	         case CIM_PARAMVALUE:
+	            delete(static_cast<OW_CIMParamValue *>(obj_ptr));
+	            break;
+	         case CIM_PROPERTY:
+	            delete(static_cast<OW_CIMProperty *>(obj_ptr));
+	            break;
+	         case CIM_INSTANCE:
+	            delete(static_cast<OW_CIMInstance *>(obj_ptr));
+	            break;
+	         case CIM_OBJECTPATH:
+	            delete(static_cast<OW_CIMObjectPath *>(obj_ptr));
+	            break;
+	         case CIM_CLASS:
+	            delete(static_cast<OW_CIMClass *>(obj_ptr));
+	            break;
+	         default:
+	            break;
+	      }
+	   }
+	   ((NPIContext *)(m_handle.context))->garbage.clear();
+	   ((NPIContext *)(m_handle.context))->garbageType.clear();
+
 		if (m_handle.providerError != NULL)
 		{
 			free(const_cast<void*>(static_cast<const void*>(m_handle.providerError)));

@@ -1,8 +1,10 @@
+#include <cstdio>
 #include "OW_config.h"
-#include "NPIProvider.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_Format.hpp"
+
+#include "OW_FTABLERef.hpp"
 
 #include "OW_CIMOMEnvironment.hpp"
 #include "OW_LocalCIMOMHandle.hpp"
@@ -11,24 +13,23 @@
 #include "OW_CIMInstanceEnumeration.hpp"
 
 
+// Garbage Collection helper functions
+void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type)
+{
+   ((NPIContext *)(nh->context))->garbage.append(object);
+   ((NPIContext *)(nh->context))->garbageType.append(type);
+}
+
+void _NPIGarbageRetrieve(NPIHandle * nh, void * object)
+{
+   for(int i = ((NPIContext *)(nh->context))->garbage.size()-1;i >=0;i--)
+   {
+      if ( ((NPIContext *)(nh->context))->garbage[i] == object)
+         ((NPIContext *)(nh->context))->garbageType[i] = NOTHING;
+   }
+}
+
 // administrative functions
-
-//////////////////////////////////////////////////////////////////////////////
-extern "C" NPIenv*
-createEnv(OW_CIMOMHandleIFCRef repository, const OW_String& nameSpace)
-{
-	NPIenv* npienv = new NPIenv;
-	npienv->_cimomhandle = repository;
-	npienv->_nameSpace = nameSpace;
-	return npienv;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-extern "C" void
-deleteEnv(NPIenv* npienv)
-{
-	delete npienv;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" OW_CIMClass
@@ -142,6 +143,7 @@ VectorNew(NPIHandle* npiHandle)
 	(void)npiHandle;
 	Vector v;
 	v.ptr = (void*) new charVect;
+	_NPIGarbageCan(npiHandle, v.ptr, VECTOR);
 	return v;
 }
 
@@ -216,6 +218,8 @@ CIMValueNewString(NPIHandle* npiHandle, const char* val)
 	(void)npiHandle;
 	OW_CIMValue* pcv = new OW_CIMValue(OW_String(val));
 	CIMValue cv = { (void*) pcv};
+
+	 _NPIGarbageCan(npiHandle, (void *) pcv, CIM_VALUE);
 	return cv;
 }
 
@@ -226,6 +230,8 @@ CIMValueNewInteger(NPIHandle* npiHandle, int val)
 	(void)npiHandle;
 	OW_CIMValue* pcv = new OW_CIMValue(val);
 	CIMValue cv = { (void*) pcv};
+
+	 _NPIGarbageCan(npiHandle, (void *) pcv, CIM_VALUE);
 	return cv;
 }
 
@@ -236,6 +242,8 @@ CIMValueNewRef(NPIHandle* npiHandle, CIMObjectPath cop)
 	(void)npiHandle;
 	OW_CIMValue* pcv = new OW_CIMValue(*((OW_CIMObjectPath*)cop.ptr));
 	CIMValue cv = { (void*) pcv};
+
+	 _NPIGarbageCan(npiHandle, (void *) pcv, CIM_VALUE);
 	return cv;
 }
 
@@ -270,6 +278,8 @@ CIMValueGetRef(NPIHandle* npiHandle, CIMValue cv)
 	pcv->get(cref);
 	OW_CIMObjectPath* ncop = new OW_CIMObjectPath(cref);
 	CIMObjectPath cop = {(void*) ncop};
+
+	_NPIGarbageCan(npiHandle, (void *) ncop, CIM_OBJECTPATH);
 	return cop;
 }
 
@@ -336,6 +346,8 @@ CIMParameterNewString(NPIHandle* npiHandle, const char* name, const char* value)
 	OW_CIMParamValue* pcp = new OW_CIMParamValue(OW_String(name),
 		OW_CIMValue(OW_String(value)));
 	mycp.ptr = pcp;
+
+	_NPIGarbageCan(npiHandle, (void *) mycp.ptr, CIM_PARAMVALUE);
 	return mycp;
 }
 
@@ -356,6 +368,8 @@ CIMParameterNewInteger(NPIHandle* npiHandle, const char* name, int value)
 	OW_CIMParamValue * pcp = new OW_CIMParamValue(OW_String(name),
 		OW_CIMValue(OW_Int32(value)));
 	mycp.ptr = pcp;
+
+	_NPIGarbageCan(npiHandle, (void *) mycp.ptr, CIM_PARAMVALUE);
 	return mycp;
 }
 
@@ -375,6 +389,8 @@ CIMParameterNewRef(NPIHandle* npiHandle, const char* name, CIMObjectPath value)
 
 	OW_CIMValue val(*((OW_CIMObjectPath*)value.ptr));
 	mycp.ptr = new OW_CIMParamValue(OW_String(name), val);
+
+	_NPIGarbageCan(npiHandle, (void *) mycp.ptr, CIM_PARAMVALUE);
 	return mycp;
 }
 
@@ -412,6 +428,8 @@ CIMParameterGetRefValue(NPIHandle* npiHandle, CIMParameter cp)
 	val.get(op);
 	OW_CIMObjectPath * pop = new OW_CIMObjectPath(op);
 	CIMObjectPath cop = { (void*) pop};
+
+	_NPIGarbageCan(npiHandle, (void *) pop, CIM_OBJECTPATH);
 	return cop;
 }
 
@@ -427,12 +445,9 @@ CIMClassNewInstance(NPIHandle* npiHandle, CIMClass cc)
 
 	OW_CIMInstance * owci = new OW_CIMInstance(owcc->newInstance());
 
-	// stuff below doesn't work.
-	//OW_CIMInstance * owci = new OW_CIMInstance(owcc->getName());
-	//owci->setKeys(owcc->getKeys());
-
 	CIMInstance ci = {static_cast<void *>(owci)};
 
+	_NPIGarbageCan(npiHandle, (void *) owci, CIM_INSTANCE);
 	return ci;
 }
 
@@ -478,15 +493,14 @@ CIMInstanceSetIntegerProperty(NPIHandle* npiHandle, CIMInstance ci,
 	const char* name, const int value)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (name == NULL) return;
 	if (strlen(name) == 0) return;
 
 	OW_CIMInstance * owci = static_cast<OW_CIMInstance *>(ci.ptr);
 
-
 	owci->setProperty(OW_String(name),OW_CIMValue(value));
-
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -495,6 +509,7 @@ CIMInstanceSetLongProperty(NPIHandle* npiHandle, CIMInstance ci,
 	const char* name, const long long value)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (name == NULL) return;
 	if (strlen(name) == 0) return;
@@ -598,6 +613,7 @@ CIMInstanceGetIntegerValue(NPIHandle* npiHandle, CIMInstance ci,
 		case OW_CIMDataType::SINT32: {OW_Int32 i; cv.get(i); return i; break;}
 		case OW_CIMDataType::UINT64: {OW_UInt64 i; cv.get(i); return i; break;}
 		case OW_CIMDataType::SINT64: {OW_Int64 i; cv.get(i); return i; break;}
+		case OW_CIMDataType::BOOLEAN: {OW_Bool i; cv.get(i); return (i?-1:0); break;}
 		default: return 0;
 	}
 
@@ -626,7 +642,6 @@ CIMInstanceGetRefValue(NPIHandle* npiHandle, CIMInstance ci, const char* name)
 	OW_CIMObjectPath owcop(OW_CIMNULL);
 	cv.get(owcop);
 
-	//cop.ptr = static_cast<void *>(owcop.toBlob());
 	cop.ptr = static_cast<void *>(&owcop);
 
 	return cop;
@@ -646,17 +661,9 @@ CIMObjectPathNew(NPIHandle* npiHandle, const char* classname)
 	OW_CIMObjectPath * ref = new OW_CIMObjectPath(className);
 
 	CIMObjectPath cop = { static_cast<void *> (ref)};
+
+	_NPIGarbageCan(npiHandle, (void *) ref, CIM_OBJECTPATH);
 	return cop;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-extern "C" void
-CIMObjectPathDel(NPIHandle* npiHandle, CIMObjectPath cop)
-{
-	(void)npiHandle;
-	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-
-	delete ref;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -673,10 +680,9 @@ CIMObjectPathFromCIMInstance(NPIHandle* npiHandle, CIMInstance ci)
 
 	OW_CIMObjectPath * ref = new OW_CIMObjectPath(*owci);
 
-	//CIMObjectPath cop = { static_cast<void *> (ref.toBlob()) };
-
 	CIMObjectPath cop = { static_cast<void *>(ref)};
 
+	_NPIGarbageCan(npiHandle, (void *) ref, CIM_OBJECTPATH);
 	return cop;
 }
 
@@ -728,6 +734,7 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	CIMObjectPath cop, const char* key)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (key == NULL) return NULL;
 	if (strlen(key) == 0) return NULL;
@@ -737,14 +744,15 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	OW_CIMPropertyArray props = ref->getKeys();
 	OW_String Key(key);
 
-// FIXME  must I do locking here ??
-	for (int i = 0, n = props.size(); i < n; i++)
+	for (int i = props.size()-1; i >= 0; i--)
 	{
 		OW_CIMProperty cp = props[i];
 		if (cp.getName().equalsIgnoreCase(Key))
 		{
 			OW_CIMValue cv = cp.getValue();
-			if (cv.getType() != OW_CIMDataType::STRING)	return NULL;
+			if (!cv) return NULL;
+			if (cv.getType() != OW_CIMDataType::STRING)
+				return NULL;
 			cv.get(Key);
 			return Key.allocateCString();
 		}
@@ -753,12 +761,38 @@ CIMObjectPathGetStringKeyValue(NPIHandle* npiHandle,
 	return NULL;
 }
 
+/* ====================================================================== */
+void _CIMObjectPathAddKey(OW_CIMObjectPath * ref,
+           const OW_String& Key, const OW_CIMValue & Value)
+{
+   if (ref->getKey(Key))
+   {
+      OW_Bool b = false;
+      OW_CIMPropertyArray cprops = ref->getKeys();
+      for(OW_Int32 i=cprops.size()-1; i >= 0; i--)
+      {
+       if (cprops[i].getName().equalsIgnoreCase(Key))
+        {
+            cprops[i].setValue(Value);
+            b = true;
+         }
+      }
+      if (b)
+      {
+         ref->setKeys(cprops);
+         return;
+      }
+   }
+   ref->addKey(Key,Value);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 extern "C" void
 CIMObjectPathAddStringKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	const char* key, const char* value)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
@@ -770,7 +804,7 @@ CIMObjectPathAddStringKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 
 	OW_CIMValue Value(Val);
 
-	ref->addKey(Key,Value);
+	_CIMObjectPathAddKey(ref, Key, Value);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -779,6 +813,7 @@ CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	CIMObjectPath cop, const char* key)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (key == NULL) return -1;
 	if (strlen(key) == 0) return -1;
@@ -788,14 +823,15 @@ CIMObjectPathGetIntegerKeyValue(NPIHandle* npiHandle,
 	OW_CIMPropertyArray props = ref->getKeys();
 	OW_String Key(key);
 
-// FIXME  must I do locking here ??
-	for (int i = 0, n = props.size(); i < n; i++)
+	//for (int i = 0, n = props.size(); i < n; i++)
+	for (int i = props.size()-1; i >= 0; i--)
 	{
 		OW_CIMProperty cp = props[i];
 		if (cp.getName().equalsIgnoreCase(Key))
 		{
 			OW_CIMValue cv = cp.getValue();
 
+			if (!cv) return 0;
 			switch (cv.getType())
 			{
 				case OW_CIMDataType::UINT8:
@@ -828,6 +864,7 @@ CIMObjectPathAddIntegerKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	const char* key, const int value)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (key == NULL) return;
 	if (strlen(key) == 0) return;
@@ -838,7 +875,7 @@ CIMObjectPathAddIntegerKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 
 	OW_CIMValue Value(value);
 
-	ref->addKey(Key,Value);
+	_CIMObjectPathAddKey(ref, Key, Value);
 }
 
 
@@ -859,14 +896,15 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	OW_CIMPropertyArray props = ref->getKeys();
 	OW_String Key(key);
 
-// FIXME  must I do locking here ??
-	for (int i = 0, n = props.size(); i < n; i++)
+	//for (int i = 0, n = props.size(); i < n; i++)
+	for (int i = props.size()-1; i >= 0; i--)
 	{
 		OW_CIMProperty cp = props[i];
 		if (cp.getName().equalsIgnoreCase(Key))
 		{
 			OW_CIMValue cv = cp.getValue();
 
+			if (!cv) return cop2;
 			if (cv.getType() != OW_CIMDataType::REFERENCE) return cop2;
 
 			OW_CIMObjectPath * ref2 = new OW_CIMObjectPath(OW_CIMNULL);
@@ -874,6 +912,7 @@ CIMObjectPathGetRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 
 			cop2.ptr = (void *) ref;
 
+			_NPIGarbageCan(npiHandle,(void *)ref2,CIM_OBJECTPATH);
 			return cop2;
 		}
 	}
@@ -888,6 +927,7 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 	const char* key, CIMObjectPath cop2)
 {
 	(void)npiHandle;
+
 	// Sanity check
 	if (key == NULL) return;
 
@@ -900,7 +940,7 @@ CIMObjectPathAddRefKeyValue(NPIHandle* npiHandle, CIMObjectPath cop,
 
 	OW_CIMValue Value(*ref2);
 
-	ref->addKey(Key,Value);
+	_CIMObjectPathAddKey(ref, Key, Value);
 }
 
 // SelectExp functions
@@ -923,7 +963,6 @@ CIMOMGetClass(NPIHandle* npiHandle, CIMObjectPath cop, int localOnly)
 {
 	(void)localOnly;
 	OW_CIMObjectPath * ref = static_cast<OW_CIMObjectPath *>(cop.ptr);
-	//ref.fromBlob(static_cast<OW_Blob *>(cop.ptr));
 
 	OW_String nameSpace = ref->getNameSpace();
 
@@ -931,14 +970,11 @@ CIMOMGetClass(NPIHandle* npiHandle, CIMObjectPath cop, int localOnly)
 
 	OW_CIMClass cc = NPI_getmyClass(npiHandle, nameSpace, className);
 
-	//    OW_Blob * myblob = cc.toBlob();
-
-	//CIMClass localcc = { static_cast<void *> (cc.toBlob()) };
-
 	OW_CIMClass * my_cc = new OW_CIMClass(cc);
-	//     my_cc->fromBlob(myblob);
+
 	CIMClass localcc = { static_cast<void *> (my_cc)};
 
+	_NPIGarbageCan(npiHandle, (void *) my_cc, CIM_CLASS);
 	return localcc;
 }
 
@@ -963,6 +999,7 @@ CIMOMEnumInstanceNames(NPIHandle* npiHandle, CIMObjectPath cop, int i)
 	{
 		OW_CIMObjectPath * cowp = new
 			OW_CIMObjectPath(instNames.nextElement());
+		_NPIGarbageCan(npiHandle, (void *) cowp, CIM_OBJECTPATH);
 		_VectorAddTo(npiHandle, v, (void *) cowp);
 	}
 
@@ -989,6 +1026,7 @@ CIMOMEnumInstances(NPIHandle* npiHandle, CIMObjectPath cop, int i, int j)
 	while (insts.hasMoreElements())
 	{
 		OW_CIMInstance * ci = new OW_CIMInstance(insts.nextElement());
+		_NPIGarbageCan(npiHandle, (void *) ci, CIM_INSTANCE);
 		_VectorAddTo(npiHandle, v, (void *) ci);
 	}
 	return v;
@@ -1002,11 +1040,9 @@ CIMOMGetInstance(NPIHandle* npiHandle, CIMObjectPath cop, int i)
 
 	OW_CIMInstance ci = NPI_getmyInstance(npiHandle, *ref, i);
 
-	//OW_Blob * myblob = ci.toBlob();
-
 	OW_CIMInstance * my_ci = new OW_CIMInstance(ci);
-	//my_ci->fromBlob(myblob);
 
+	_NPIGarbageCan(npiHandle, (void *) my_ci, CIM_INSTANCE);
 	CIMInstance localci = { static_cast<void *> (my_ci)};
 
 	return localci;

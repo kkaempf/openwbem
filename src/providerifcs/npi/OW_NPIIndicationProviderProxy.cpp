@@ -49,7 +49,7 @@ OW_NPIIndicationProviderProxy::deActivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("deactivateFilter");
@@ -91,7 +91,7 @@ OW_NPIIndicationProviderProxy::activateFilter(
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -129,7 +129,7 @@ OW_NPIIndicationProviderProxy::authorizeFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("deactivateFilter2");
@@ -168,7 +168,7 @@ OW_NPIIndicationProviderProxy::mustPoll(
 	env->getLogger()->logDebug("mustPoll");
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+        	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("mustPoll2");

@@ -18,25 +18,20 @@
 #ifndef NPIExternal_h
 #define NPIExternal_h
 
-#include "NPIProvider.hpp"
+#include "OW_FTABLERef.hpp"
 
-extern "C" NPIenv*
-createEnv(OW_CIMOMHandleIFCRef repository, const OW_String& nameSpace);
-
-extern "C"
-void deleteEnv(NPIenv* npienv);
+extern "C" 
+void _NPIGarbageCan(NPIHandle * nh, void * object, NPIGarbageType type);
 
 extern "C"  OW_CIMClass NPI_getmyClass(
     NPIHandle* npiHandle,
     const OW_String& nameSpace, const OW_String& className);
 
-//extern "C"  OW_Array<OW_CIMObjectPath>
 extern "C" OW_CIMObjectPathEnumeration
     NPI_enumeratemyInstanceNames(
     NPIHandle* npiHandle,
     const OW_String& nameSpace, const OW_String& className);
 
-//extern "C"  OW_Array<OW_CIMInstance>
 extern "C" OW_CIMInstanceEnumeration
     NPI_enumeratemyInstances(
     NPIHandle* npiHandle,

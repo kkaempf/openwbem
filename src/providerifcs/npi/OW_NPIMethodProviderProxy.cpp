@@ -29,7 +29,6 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "NPIProvider.hpp"
 #include "OW_NPIMethodProviderProxy.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
@@ -56,7 +55,7 @@ OW_NPIMethodProviderProxy::invokeMethod(
 
         if (m_ftable->fp_invokeMethod != NULL)
         {
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
 			OW_ProviderEnvironmentIFCRef env2(env);
@@ -75,12 +74,10 @@ OW_NPIMethodProviderProxy::invokeMethod(
             for (int i = 0, n = in.size(); i < n; i++)
             {
                 OW_CIMParamValue * owpv = new OW_CIMParamValue(in[i]);
+		_NPIGarbageCan(&_npiHandle, owpv, CIM_PARAMVALUE);
                 _VectorAddTo(
                     &_npiHandle, parm_in, static_cast<void *> (owpv) );
             }
-
-            OW_NPIVectorFreer vf1(parm_in);
-            OW_NPIVectorFreer vf2(parm_out);
 
             CIMValue cv = m_ftable->fp_invokeMethod(
                 &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);

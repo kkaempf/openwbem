@@ -31,12 +31,94 @@
 #ifndef OW_FTABLE_REF_HPP_
 #define OW_FTABLE_REF_HPP_
 
+//#include <string.h>
 #include "OW_config.h"
+#include "OW_Bool.hpp"
+#include "OW_CIMOMHandleIFC.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_String.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMObjectPath.hpp"
+#include "OW_CIMParameter.hpp"
+#include "OW_Array.hpp"
+#include "OW_CIMBase.hpp"
+#include "OW_ProviderEnvironmentIFC.hpp"
+//#include <stdlib.h>
+//#include <dlfcn.h>
+//#include "npi.h"
 
 #include "OW_SharedLibraryReference.hpp"
 #include "npi.h"
 
-typedef OW_SharedLibraryReference< ::FTABLE> OW_FTABLERef;
+typedef OW_Array<char *> charVect;
+
+typedef enum {
+  NOTHING,
+  STRING,
+  VECTOR,
+  CIM_VALUE,
+  CIM_QUALIFIER,
+  CIM_PARAMVALUE,
+  CIM_PROPERTY,
+  CIM_INSTANCE,
+  CIM_OBJECTPATH,
+  CIM_CLASS
+} NPIGarbageType;
+
+
+typedef struct {
+        char * scriptName;
+        void * my_perl;
+	OW_Array<void *> garbage;
+	OW_Array<NPIGarbageType> garbageType;
+} NPIContext;
+
+class NPIFTABLE {
+
+public:
+  //CIMProvider;
+  FP_INITIALIZE         fp_initialize;
+  FP_CLEANUP            fp_cleanup;
+  //InstanceProvider;
+  FP_ENUMINSTANCENAMES  fp_enumInstanceNames;
+  FP_ENUMINSTANCES      fp_enumInstances;
+  FP_GETINSTANCE        fp_getInstance;
+  FP_CREATEINSTANCE     fp_createInstance;
+  FP_SETINSTANCE        fp_setInstance;
+  FP_DELETEINSTANCE     fp_deleteInstance;
+  FP_EXECQUERY          fp_execQuery;
+  //AssociatorProvider
+  FP_ASSOCIATORS        fp_associators;
+  FP_ASSOCIATORNAMES    fp_associatorNames;
+  FP_REFERENCES         fp_references;
+  FP_REFERENCENAMES     fp_referenceNames;
+  //MethodProvider
+  FP_INVOKEMETHOD       fp_invokeMethod;
+  //EventProvider
+  FP_AUTHORIZEFILTER    fp_authorizeFilter;
+  FP_MUSTPOLL           fp_mustPoll;
+  FP_ACTIVATEFILTER     fp_activateFilter;
+  FP_DEACTIVATEFILTER   fp_deActivateFilter;
+
+  NPIContext 		* npicontext;
+
+  //NPIFTABLE& operator = (const ::FTABLE& original) {return *this;}
+  NPIFTABLE& operator = (const ::FTABLE& original) 
+  {
+	memcpy(this, &original, sizeof(::FTABLE));
+	return *this;
+  }
+};
+
+
+typedef ::FTABLE (*FP_INIT_FT) (void);
+
+typedef NPIFTABLE (*NPIFP_INIT_FT) (void);
+
+typedef OW_SharedLibraryReference< ::NPIFTABLE> OW_FTABLERef;
 
 #define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)
 

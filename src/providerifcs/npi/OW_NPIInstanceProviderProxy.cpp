@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "NPIProvider.hpp"
+#include "OW_FTABLERef.hpp"
 #include "OW_NPIInstanceProviderProxy.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
@@ -54,7 +54,7 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
 
         if (m_ftable->fp_enumInstanceNames!= NULL)
         {
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
 			OW_ProviderEnvironmentIFCRef env2(env);
@@ -72,8 +72,6 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
             ::Vector v =
                 m_ftable->fp_enumInstanceNames(&_npiHandle,_cop,true,_cc);
 
-            OW_NPIVectorFreer vf1(v);
-
             if (_npiHandle.errorOccurred)
             {
                 OW_THROWCIMMSG(OW_CIMException::FAILED,
@@ -87,9 +85,8 @@ OW_NPIInstanceProviderProxy::enumInstanceNames(
                 OW_CIMObjectPath ow_cop(*
                     static_cast<OW_CIMObjectPath *>(my_cop.ptr) );
 
-// FIXME
                 ow_cop.setObjectName(cimClass.getName());
-				result.handle(ow_cop);
+		result.handle(ow_cop);
             }
 
         }
@@ -122,7 +119,7 @@ OW_NPIInstanceProviderProxy::enumInstances(
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support enumInstances");
 	}
 
-	::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+	::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 	OW_NPIHandleFreer nhf(_npiHandle);
 
 	OW_ProviderEnvironmentIFCRef env2(env);
@@ -142,8 +139,6 @@ OW_NPIInstanceProviderProxy::enumInstances(
 	::Vector v =
 	m_ftable->fp_enumInstances(&_npiHandle, _cop, de, _cc, lo);
 
-	OW_NPIVectorFreer vf1(v);
-
 	if (_npiHandle.errorOccurred)
 	{
 		OW_THROWCIMMSG(OW_CIMException::FAILED,
@@ -157,7 +152,6 @@ OW_NPIInstanceProviderProxy::enumInstances(
 		OW_CIMInstance ow_inst(*
 		static_cast<OW_CIMInstance *>(my_inst.ptr) );
 
-// FIXME
 		ow_inst.setClassName(cimClass.getName());
 
 		result.handle(ow_inst.clone(localOnly,deep,includeQualifiers,
@@ -176,7 +170,7 @@ OW_NPIInstanceProviderProxy::deleteInstance(
 
 	if (m_ftable->fp_deleteInstance!= NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -222,7 +216,7 @@ OW_NPIInstanceProviderProxy::getInstance(
 
 	if (m_ftable->fp_getInstance != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -252,7 +246,6 @@ OW_NPIInstanceProviderProxy::getInstance(
 		OW_CIMInstance ow_inst(*
 			static_cast<OW_CIMInstance *>(my_inst.ptr));
 
-// FIXME:
 		ow_inst.setClassName(cimClass.getName());
 
 		rval = ow_inst;
@@ -281,7 +274,7 @@ OW_NPIInstanceProviderProxy::createInstance(
 
         if (m_ftable->fp_createInstance != NULL)
         {
-            ::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 			OW_NPIHandleFreer nhf(_npiHandle);
 
 			OW_ProviderEnvironmentIFCRef env2(env);
@@ -332,7 +325,7 @@ OW_NPIInstanceProviderProxy::modifyInstance(
 
 	if (m_ftable->fp_setInstance != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);

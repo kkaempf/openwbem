@@ -29,7 +29,6 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "NPIProvider.hpp"
 #include "OW_NPIPolledProviderProxy.hpp"
 #include "NPIExternal.hpp"
 #include "OW_CIMClass.hpp"
@@ -60,7 +59,7 @@ OW_NPIPolledProviderProxy::poll(const OW_ProviderEnvironmentIFCRef &env)
 
 	if (m_ftable->fp_mustPoll != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -89,7 +88,7 @@ void OW_NPIPolledProviderProxy::activateFilter(
 	if (m_ftable->fp_activateFilter != NULL)
 	{
 		env->getLogger()->logDebug("activateFilter2");
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		OW_ProviderEnvironmentIFCRef env2(env);
@@ -119,7 +118,7 @@ void OW_NPIPolledProviderProxy::deactivateFilter(
 	env->getLogger()->logDebug("deactivateFilter");
 	if (m_ftable->fp_deActivateFilter != NULL)
 	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, NULL };
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
 		OW_NPIHandleFreer nhf(_npiHandle);
 
 		env->getLogger()->logDebug("deactivateFilter2");
@@ -144,51 +143,4 @@ void OW_NPIPolledProviderProxy::deactivateFilter(
 		}
 	}
 }
-
-#if 0
-
-
-            //  may the arguments must be copied verbatim
-            //  to avoid locking problems
-
-            OW_CIMObjectPath owcop = path;
-			owcop.setNameSpace(ns);
-            CIMObjectPath _cop= {static_cast<void *> (&owcop)};
-
-            Vector parm_in = VectorNew(&_npiHandle);
-            Vector parm_out = VectorNew(&_npiHandle);
-
-            for (int i = 0, n = in.size(); i < n; i++)
-            {
-                OW_CIMParamValue * owpv = new OW_CIMParamValue(in[i]);
-                _VectorAddTo(
-                    &_npiHandle, parm_in, static_cast<void *> (owpv) );
-            }
-
-            OW_NPIVectorFreer vf1(parm_in);
-            OW_NPIVectorFreer vf2(parm_out);
-
-            CIMValue cv = m_ftable->fp_invokeMethod(
-                &_npiHandle, _cop , methodName.c_str(), parm_in, parm_out);
-
-			if (_npiHandle.errorOccurred)
-			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					_npiHandle.providerError);
-			}
-
-            rval = * static_cast<OW_CIMValue *> (cv.ptr);
-
-            for (int i = 0, n = VectorSize(&_npiHandle, parm_out); i < n; i++)
-            {
-                OW_CIMParamValue owpv = * static_cast<OW_CIMParamValue *>
-                    (_VectorGet(&_npiHandle, parm_out, i));
-                out.append(owpv);
-            }
-        }
-
-        return rval;
-}
-#endif
-
 
