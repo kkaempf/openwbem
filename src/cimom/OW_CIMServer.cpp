@@ -1813,6 +1813,10 @@ CIMServer::_commonReferences(
 		{
 			OW_ASSERT(0);
 		}
+
+		// we need to remove dups from dynamicAssocs
+		std::sort(dynamicAssocs.begin(),  dynamicAssocs.end());
+		dynamicAssocs.erase(std::unique(dynamicAssocs.begin(),  dynamicAssocs.end()), dynamicAssocs.end());
 		// Process all of the association classes with providers
 		_dynamicReferences(path, dynamicAssocs, role, includeQualifiers,
 			includeClassOrigin, propertyList, piresult, popresult, context);
@@ -1979,6 +1983,9 @@ CIMServer::_commonAssociators(
 		{
 			OW_ASSERT(0);
 		}
+		// we need to remove dups from dynamicAssocs
+		std::sort(dynamicAssocs.begin(),  dynamicAssocs.end());
+		dynamicAssocs.erase(std::unique(dynamicAssocs.begin(),  dynamicAssocs.end()), dynamicAssocs.end());
 		// Process all of the association classes with providers
 		_dynamicAssociators(path, dynamicAssocs, resultClass, role, resultRole,
 			includeQualifiers, includeClassOrigin, propertyList, piresult, popresult,
