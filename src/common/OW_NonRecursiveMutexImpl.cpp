@@ -67,7 +67,7 @@ createMutex(NonRecursiveMutex_t& handle)
 #elif OW_USE_WIN32_THREADS
 	handle.thread_id = -1;
 	handle.valid_id = false;
-	return ((handle.sem = CreateSemaphore(NULL, 1, 1, NULL)) == NULL) ? -1 : 0;
+	return ((handle.mutex = CreateSemaphore(NULL, 1, 1, NULL)) == NULL) ? -1 : 0;
 #else
 #error "port me!"
 #endif
@@ -97,10 +97,10 @@ destroyMutex(NonRecursiveMutex_t& handle)
 	}
 	return 0;
 #elif defined (OW_USE_WIN32_THREADS)
-	ReleaseSemaphore(handle.sem, 1, 0);
+	ReleaseSemaphore(handle.mutex, 1, 0);
 	handle.thread_id = 0;
 	handle.valid_id = false;
-	return (CloseHandle(handle.sem) == 0) ? -2 : 0;
+	return (CloseHandle(handle.mutex) == 0) ? -2 : 0;
 #else
 #error "port me!"
 #endif
@@ -121,7 +121,7 @@ acquireMutex(NonRecursiveMutex_t& handle)
 	assert(res == 0);
 	return res;
 #elif defined (OW_USE_WIN32_THREADS)
-    if(WaitForSingleObject(handle.sem, INFINITE) == WAIT_FAILED)
+    if(WaitForSingleObject(handle.mutex, INFINITE) == WAIT_FAILED)
 	{
 		return -1;
 	}
@@ -153,7 +153,7 @@ releaseMutex(NonRecursiveMutex_t& handle)
 		return -1;
 	}
 
-	if(!ReleaseSemaphore(handle.sem, 1, 0))
+	if(!ReleaseSemaphore(handle.mutex, 1, 0))
 	{
 		return -1;
 	}

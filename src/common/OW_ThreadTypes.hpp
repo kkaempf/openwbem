@@ -94,7 +94,7 @@
 		typedef HANDLE NativeMutex_t;
 		struct NonRecursiveMutex_t
 		{
-			HANDLE sem;
+			HANDLE mutex;
 			DWORD thread_id;
 			bool valid_id;
 		};

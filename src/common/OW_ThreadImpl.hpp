@@ -106,7 +106,7 @@ namespace ThreadImpl
 	inline Thread_t currentThread()
 	{
 	#if defined(OW_WIN32)
-		return GetCurrentThreadId();
+		return GetCurrentThread();
 	#else
 		return pthread_self();
 	#endif

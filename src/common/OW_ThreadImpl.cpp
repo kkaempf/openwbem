@@ -118,6 +118,7 @@ yield()
 	ThreadImpl::sleep(1);
 #endif
 }
+
 #ifdef OW_USE_PTHREAD
 namespace {
 struct LocalThreadParm
@@ -129,7 +130,8 @@ extern "C" {
 static void*
 threadStarter(void* arg)
 {
-	// set our cancellation state to asynchronous, so we can actually be killed if need be.
+	// set our cancellation state to asynchronous, so we can actually be
+	// killed if need be.
 	pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 	LocalThreadParm* parg = (LocalThreadParm*)arg;
@@ -142,7 +144,8 @@ threadStarter(void* arg)
 	return prval;
 }
 }
-// The purpose of this class is to retrieve the default stack size only once at library load time and re-use it thereafter.
+// The purpose of this class is to retrieve the default stack size only once
+// at library load time and re-use it thereafter.
 struct default_stack_size
 {
 	default_stack_size()
@@ -328,6 +331,7 @@ void cancel(Thread_t threadID)
 	}
 }
 #endif // #ifdef OW_USE_PTHREAD
+
 #ifdef OW_WIN32
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -354,6 +358,7 @@ destroyThread(Thread_t& )
 int
 setThreadDetached(Thread_t& handle)
 {
+	// No need for this on Win32
 	return 0;
 }
 //////////////////////////////////////////////////////////////////////////////
