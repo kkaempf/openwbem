@@ -64,7 +64,6 @@ public:
 	}
 
 	RPMIP()
-	: _pkgHandler()
 	{
 	}
 
@@ -135,6 +134,26 @@ public:
 
 
 //////////////////////////////////////////////////////////////////////////////
+	struct InstanceCreator : public OW_CIMObjectPathResultHandlerIFC
+	{
+		InstanceCreator(OW_CIMInstanceResultHandlerIFC& result, bool localOnly, const OW_CIMClass& cimClass_) : m_result(result), m_localOnly(localOnly), cimClass(cimClass_) {}
+		void doHandle(const OW_CIMObjectPath& path)
+		{
+			OW_CIMInstance rval = cimClass.newInstance();
+			rval.setProperties(path.getKeys());
+
+			if (!RPMIP::processPkg(rval))
+			{
+				OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
+					"The Instance does not (any longer) exist");
+			}
+			m_result.handle(rval);
+		}
+		OW_CIMInstanceResultHandlerIFC& m_result;
+		bool m_localOnly;
+		OW_CIMClass cimClass;
+	};
+
 	void
 		enumInstances(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -145,38 +164,8 @@ public:
 		const OW_CIMClass& cimClass,
 		const OW_Bool& localOnly )
 	{
-		(void)env;
-		(void)ns;
-		(void)deep;
-		(void)localOnly;
-
-		OW_String cmd = "/bin/ps ax --no-heading -eo pid,comm";
-		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
-		if (pos.getExitStatus() != 0)
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Bad exit status from popen");
-		}
-
-		OW_String output = pos.out()->readAll();
-		OW_StringArray lines = output.tokenize("\n");
-		for (OW_StringArray::const_iterator iter = lines.begin();
-			iter != lines.end(); iter++)
-		{
-			OW_StringArray proc = iter->tokenize();
-			OW_CIMInstance newInst = cimClass.newInstance();
-			newInst.setProperty(OW_String("CreationClassName"),
-				OW_CIMValue(className));
-			newInst.setProperty(OW_String("Handle"), OW_CIMValue(proc[0]));
-			newInst.setProperty(OW_String("OSName"), OW_CIMValue(OW_String("Linux")));
-			newInst.setProperty(OW_String("OSCreationClassName"),
-				OW_CIMValue(OW_String("CIM_OperatingSystem")));
-			newInst.setProperty(OW_String("CSName"),
-				OW_CIMValue(OW_SocketAddress::getAnyLocalHost().getName()));
-			newInst.setProperty(OW_String("CSCreationClassName"),
-				OW_CIMValue(OW_String("CIM_ComputerSystem")));
-			newInst.setProperty(OW_String("Name"), OW_CIMValue(proc[1]));
-			result.handle(newInst);
-		}
+		InstanceCreator handler(result, localOnly, cimClass);
+		enumInstanceNames(env, ns, className, handler, deep, cimClass );
 	}
 
 //////////////////////////////////////////////////////////////////////////////
@@ -197,7 +186,7 @@ public:
 		rval.setProperties(instanceName.getKeys());
 
 
-		if (!processPkg(rval))
+		if (!RPMIP::processPkg(rval))
 		{
 			OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 				"The Instance does not (any longer) exist");
@@ -291,8 +280,9 @@ public:
 
 
 private:
-	OW_String _pkgHandler;
+	static OW_String _pkgHandler;
 
+public:
 	/**
 	 * Fill in the information on a package
 	 *
@@ -302,7 +292,7 @@ private:
 	 * @return True if successful, false if not (like the instance doesn't
 	 *         exist)
 	 */
-	OW_Bool
+	static OW_Bool
 		processPkg(OW_CIMInstance& inst)
 	{
 		OW_String name;
@@ -423,6 +413,7 @@ private:
 	}
 };
 
+OW_String RPMIP::_pkgHandler;
 //////////////////////////////////////////////////////////////////////////////
 
 }
