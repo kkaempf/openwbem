@@ -232,7 +232,7 @@ OW_XMLListener::outputError(const OW_CIMException& ce, ostream& ostr, const OW_S
 
 	errorCode = ce.getErrNo();
 
-	ostr << "<ERROR Code=\"" << errorCode << "\" Description=\"" <<
+	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
 		OW_XMLEscape(ce.getMessage()) <<
 		"\"></ERROR>\r\n";
 

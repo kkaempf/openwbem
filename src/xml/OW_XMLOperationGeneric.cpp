@@ -91,7 +91,7 @@ const char* const OW_XMLOperationGeneric::PROTOCOLVERSION = "PROTOCOLVERSION";
 const char* const OW_XMLOperationGeneric::CIMVERSION_VALUE = "2.0";
 const char* const OW_XMLOperationGeneric::DTDVERSION_VALUE = "2.0";
 const char* const OW_XMLOperationGeneric::PROTOCOLVERSION_VALUE = "1.0";
-const char* const OW_XMLOperationGeneric::paramErrorCode = "Code";
-const char* const OW_XMLOperationGeneric::paramErrorDescription = "Description";
+const char* const OW_XMLOperationGeneric::paramErrorCode = "CODE";
+const char* const OW_XMLOperationGeneric::paramErrorDescription = "DESCRIPTION";
 
 
