@@ -371,6 +371,11 @@ HTTPSvrConnection::beginPostResponse()
 void
 HTTPSvrConnection::initRespStream(ostream*& ostrEntity)
 {
+	OW_ASSERT(ostrEntity == 0);
+
+	// these get deleted in post().  If this logic is changed, make sure you
+	// update post() as well.
+
 	if (m_chunkedOut)
 	{
 		ostrEntity = new HTTPChunkedOStream(m_ostr);
@@ -930,24 +935,41 @@ void
 HTTPSvrConnection::post(istream& istr, OperationContext& context)
 {
 	ostream* ostrEntity = NULL;
-	TempFileStream ostrError(400);
 	initRespStream(ostrEntity);
-	OW_ASSERT(ostrEntity);
-					
-/*
-	TempFileStream ltfs;
-	ltfs << istr.rdbuf();
-	ofstream ofstr("/tmp/HTTPSvrConnectionXMLDump", ios::app);
-	ofstr << "************* New entity **** Size: " << ltfs.getSize() << " Should be: " << getHeaderValue("Content-Length") << endl;
-	ofstr << ltfs.rdbuf();
-	ltfs.rewind();
-*/
-	m_requestHandler->setEnvironment(m_options.env);
-	beginPostResponse();
-	// process the request
+	try
+	{
+		OW_ASSERT(ostrEntity);
+		TempFileStream ostrError(400);
 
-	m_requestHandler->process(&istr, ostrEntity, &ostrError, context);
-	sendPostResponse(ostrEntity, ostrError);
+	/*
+		TempFileStream ltfs;
+		ltfs << istr.rdbuf();
+		ofstream ofstr("/tmp/HTTPSvrConnectionXMLDump", ios::app);
+		ofstr << "************* New entity **** Size: " << ltfs.getSize() << " Should be: " << getHeaderValue("Content-Length") << endl;
+		ofstr << ltfs.rdbuf();
+		ltfs.rewind();
+	*/
+		m_requestHandler->setEnvironment(m_options.env);
+		beginPostResponse();
+		// process the request
+
+		m_requestHandler->process(&istr, ostrEntity, &ostrError, context);
+		sendPostResponse(ostrEntity, ostrError);
+	}
+	catch (...)
+	{
+#ifdef OW_HAVE_ZLIB_H
+		HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>(ostrEntity);
+		if (deflateostr)
+		{
+			ostrEntity = &deflateostr->getOutputStreamOrig();
+			delete deflateostr;
+		}
+#endif // #ifdef OW_HAVE_ZLIB_H
+		delete ostrEntity;
+		throw;
+	}
+
 #ifdef OW_HAVE_ZLIB_H
 	HTTPDeflateOStream* deflateostr = dynamic_cast<HTTPDeflateOStream*>(ostrEntity);
 	if (deflateostr)
