@@ -547,6 +547,22 @@ AC_TRY_COMPILE(
 	AC_DEFINE(INTTYPES_H_DOES_NOT_DEFINE_PRI, 1, [Define to 1 if <inttypes.h> does not define PRIu32 or PRIx32.])
 ])
 				
+dnl See if the C++ compiler supports __PRETTY_FUNCTION__
+AC_MSG_CHECKING(if the C++ compiler supports __PRETTY_FUNCTION__)
+AC_TRY_COMPILE(
+[
+],
+[
+	const char* f = __PRETTY_FUNCTION__;
+],
+[
+	AC_MSG_RESULT(yes)
+	AC_DEFINE(HAVE_UUPRETTY_FUNCTIONUU, 1, [Define to 1 if the C++ compiler supports __PRETTY_FUNCTION__])
+],
+[
+	AC_MSG_RESULT(no)
+])
+
 dnl See if the C++ compiler supports the C99 __func__
 AC_MSG_CHECKING(if the C++ compiler supports the C99 __func__)
 AC_TRY_COMPILE(

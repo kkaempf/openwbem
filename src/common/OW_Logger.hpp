@@ -303,7 +303,7 @@ private: // data
 } // end namespace OpenWBEM
 
 
-#if defined(__GNUC__)
+#if defined(OW_HAVE_UUPRETTY_FUNCTIONUU)
 #define OW_LOGGER_PRETTY_FUNCTION __PRETTY_FUNCTION__
 #elif defined(OW_HAVE_C99_UUFUNCUU)
 #define OW_LOGGER_PRETTY_FUNCTION __func__
