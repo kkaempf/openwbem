@@ -325,7 +325,7 @@ ProviderAgentEnvironment::getRequestHandler(const String& ct)
 			RequestHandlerIFCRef ref = RequestHandlerIFCRef(iter->getLibRef(),
 				(*iter)->clone());
 			ref->setEnvironment(ServiceEnvironmentIFCRef(this));
-			return *iter; 
+			return ref; 
 		}
 	}
 	return RequestHandlerIFCRef(SharedLibraryRef(0), 0);  //TODO need to throw? 
