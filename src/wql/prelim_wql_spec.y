@@ -1,21 +1,6 @@
 %{
-#define YYDEBUG 1
-/*-------------------------------------------------------------------------
- *
- * OW_WQLImpl.yy
- *	  OpenWBEM WQL YACC rules/actions
- *
- * Portions Copyright (c) 1996-2001, PostgreSQL Global Development Group
- * Portions Copyright (c) 1994, Regents of the University of California
- *
- *
- * NOTES
- *	  CAPITALS are used to represent terminal symbols.
- *	  non-capitals are used to represent non-terminals.
- *-------------------------------------------------------------------------*/
 /*******************************************************************************
 * Portions Copyright (C) 2001 Caldera International, Inc All rights reserved.
-	;
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -81,8 +66,6 @@ int yylex();
 %token REF
 %token ASSOCIATEDBY
 %token BETWEEN
-%token DATESPECIFICATION
-%token TIMESPECIFICATION
 %token DEFAULT
 %token ASCENDING
 %token DESCENDING
@@ -99,6 +82,7 @@ int yylex();
 %token SIGN
 %token HEXCONST
 %token BITCONST
+%token DATETIMEVALUE
 /* This shouldn't be a token, I did it to try and resolve the conflicts */
 %token CLASSNAME
 
@@ -335,11 +319,7 @@ association_predicate:
 ;
 
 time_predicate:
-      BETWEEN date_time_value COMMA date_time_value
-;
-
-date_time_value:
-      QUOTE DATESPECIFICATION TIMESPECIFICATION QUOTE
+      BETWEEN DATETIMEVALUE COMMA DATETIMEVALUE
 ;
 
 set_clause_list:
