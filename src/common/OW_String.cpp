@@ -1073,14 +1073,14 @@ String::toDateTime() const
 }
 //////////////////////////////////////////////////////////////////////////////
 StringArray
-String::tokenize(const char* delims, EReturnTokensFlag returnDelimitersAsTokens, EEmptyTokenReturnFlag returnEmptyTokens) const
+String::tokenize(const char* delims, EReturnDelimitersFlag returnDelimitersAsTokens, EEmptyTokenReturnFlag returnEmptyTokens) const
 {
 	StringArray ra;
-	if(length() == 0 || delims == 0)
+	if(empty())
 	{
 		return ra;
 	}
-	if(delims == NULL)
+	if(delims == 0)
 	{
 		ra.append(*this);
 		return ra;
@@ -1105,7 +1105,7 @@ String::tokenize(const char* delims, EReturnTokensFlag returnDelimitersAsTokens,
 			{
 				ra.append(String());
 			}
-			if( returnDelimitersAsTokens == E_RETURN_TOKENS )
+			if( returnDelimitersAsTokens == E_RETURN_DELIMITERS || returnDelimitersAsTokens == E_RETURN_TOKENS )
 			{
 				ra.append(String(*pstr));
 			}			
@@ -1126,6 +1126,8 @@ String::tokenize(const char* delims, EReturnTokensFlag returnDelimitersAsTokens,
 	}
 	return ra;
 }
+
+//////////////////////////////////////////////////////////////////////////////
 #ifdef OW_HAVE_STRTOLL
 long long int
 String::strtoll(const char* nptr, char** endptr, int base)
@@ -1256,6 +1258,8 @@ String::strtoll(const char* nptr, char** endptr, int base)
 	return(acc);
 }
 #endif	// #ifdef OW_HAVE_STRTOLL
+
+//////////////////////////////////////////////////////////////////////////////
 #ifdef OW_HAVE_STRTOULL
 unsigned long long int
 String::strtoull(const char* nptr, char** endptr, int base)
