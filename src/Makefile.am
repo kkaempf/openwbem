@@ -151,7 +151,7 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 	$(CXX) $(CXXBINLINKFLAGS) -o static_cimomd $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
 	rm -rf $(TEMPOBJDIR); \
 	echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
-	$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd; \
+	$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd;
 
 clean-local:
 	rm -f static_cimomd $(OPENWBEM_STATIC_ALL)
