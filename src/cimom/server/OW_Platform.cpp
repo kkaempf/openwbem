@@ -132,7 +132,6 @@ daemonize(bool dbgFlg, const String& daemonName)
 				OW_THROW_ERRNO_MSG(DaemonException,
 					"FAILED TO DETACH FROM THE TERMINAL - First fork");
 			default: 
-#endif
 				int status = DAEMONIZE_FAIL; 
 				if (daemonize_upipe->readInt(&status) < 1 
 						|| status != DAEMONIZE_SUCCESS)
@@ -140,7 +139,6 @@ daemonize(bool dbgFlg, const String& daemonName)
 					cerr << "Error starting CIMOM.  Check the log files." << endl;
 					_exit(1); 
 				}
-#if !defined(OW_NETWARE)
 				_exit(0); // exit the original process
 		}
 		if (setsid() < 0)					  // shoudn't fail on linux
