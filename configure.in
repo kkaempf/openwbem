@@ -243,10 +243,10 @@ case "$host" in
 *-*-linux*)
 	PLATFORMDIR="posix"
 	AC_DEFINE(GNU_LINUX)
-	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
-	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
+	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe -D_REENTRANT"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe -D_REENTRANT"
 	CXXCOMMONLINKFLAGS=""
-	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
+	CXXBINLINKFLAGS="-lpthread -Wl,-Bdynamic $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@ -lpthread'
 	PLAT_OPTFLAGS="-O3"
 	PIDFILEDIR="/var/run"
@@ -476,6 +476,7 @@ AC_SUBST(PACKAGE_PREFIX_D)
 AC_DEFINE_UNQUOTED(PACKAGE_PREFIX, "$PACKAGE_PREFIX")
 
 
+AC_DEFINE(USE_PTHREAD)
 dnl This doesn't work, so I'll comment it out for now.
 dnl AC_ARG_ENABLE(gnu-pth,
 dnl AC_HELP_STRING([--enable-gnu-pth],[use pth library]),

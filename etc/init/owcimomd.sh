@@ -1,21 +1,21 @@
 #!/bin/sh
 #
 ### BEGIN INIT INFO
-# Provides: owcimomd
+# Provides: @PACKAGE_PREFIX@owcimomd
 # Required-Start: $network
 # Required-Stop: $network
 # Default-Start: 2 3 4 5
 # Default-Stop: 0 1 6 
-# Description: owcimomd
+# Description: @PACKAGE_PREFIX@owcimomd
 #       Start/Stop the OpenWBEM CIMOM Daemon
 ### END INIT INFO
 #
 #
 # chkconfig: 2345 36 64
 # description: OpenWBEM CIMOM Daemon
-# processname: owcimomd
+# processname: @PACKAGE_PREFIX@owcimomd
 
-NAME=owcimomd
+NAME=@PACKAGE_PREFIX@owcimomd
 DAEMON=@sbindir@/$NAME
 OPTIONS=
 PIDFILE=/var/run/$NAME.pid
