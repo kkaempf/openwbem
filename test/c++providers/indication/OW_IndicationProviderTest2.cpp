@@ -157,7 +157,7 @@ public:
 
 	~OW_IndicationProviderTest2()
 	{
-		cleanup();
+		do_cleanup();
 	}
 
 	// Indication provider methods
@@ -273,6 +273,7 @@ public:
 			env->getLogger()->logDebug("OW_IndicationProviderTest2::deActivateFilter stopping helper thread");
 			m_thread->shutdown();
 			m_thread->join();
+			m_thread = new OW_TestProviderThread(env->getCIMOMHandle(), this);
 			env->getLogger()->logDebug("OW_IndicationProviderTest2::deActivateFilter helper thread stopped");
 		}
 	}
@@ -421,7 +422,7 @@ public:
 		m_thread = new OW_TestProviderThread(env->getCIMOMHandle(), this);
 	}
 
-	virtual void cleanup() 
+	void do_cleanup() 
 	{
 		using std::cout;
 		using std::endl;
@@ -432,6 +433,7 @@ public:
 			cout << "OW_IndicationProviderTest2::cleanup - stopping thread" << endl;
 			m_thread->shutdown();
 			m_thread->join();
+			m_thread = 0;
 			cout << "OW_IndicationProviderTest2::cleanup - thread stopped" << endl;
 		}
 	}
