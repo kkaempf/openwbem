@@ -281,7 +281,7 @@ void HTTPClient::sendAuthorization()
 }
 //////////////////////////////////////////////////////////////////////////////
 void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
-	const String& methodName, const String& nameSpace )
+	const String& methodName, const String& cimObject )
 {
 	// Make sure our connection is good
 	checkConnection();
@@ -304,8 +304,8 @@ void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
 	}
 	else
 	{
-		addHeaderNew(hp + "CIMMethod", methodName);
-		addHeaderNew(hp + "CIMObject", nameSpace);
+		addHeaderNew(hp + "CIMMethod", HTTPUtils::escapeForURL(methodName));
+		addHeaderNew(hp + "CIMObject", HTTPUtils::escapeForURL(cimObject));
 	}
 	if (m_doDeflateOut)
 	{
@@ -343,15 +343,15 @@ void HTTPClient::sendDataToServer( Reference<TempFileStream> tfs,
 //////////////////////////////////////////////////////////////////////////////
 Reference<std::iostream>
 HTTPClient::beginRequest(const String& methodName,
-	const String& nameSpace)
+	const String& cimObject)
 {
-	(void)methodName; (void)nameSpace;
+	(void)methodName; (void)cimObject;
 	return Reference<std::iostream>(new TempFileStream());
 }
 //////////////////////////////////////////////////////////////////////////////
 Reference<CIMProtocolIStreamIFC>
 HTTPClient::endRequest(Reference<std::iostream> request, const String& methodName,
-			const String& nameSpace)
+			const String& cimObject)
 {
 	Reference<TempFileStream> tfs = request.cast_to<TempFileStream>();
 	OW_ASSERT(tfs);
@@ -375,7 +375,7 @@ HTTPClient::endRequest(Reference<std::iostream> request, const String& methodNam
 	Resp_t rt = RETRY;
 	do
 	{
-		sendDataToServer(tfs, methodName, nameSpace);
+		sendDataToServer(tfs, methodName, cimObject);
 		statusLine = checkResponse(rt);
 	} while(rt == RETRY);
 	if (rt == FATAL)
