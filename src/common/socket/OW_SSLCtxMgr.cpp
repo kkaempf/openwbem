@@ -61,9 +61,13 @@ static void dyn_lock_function(int mode, struct CRYPTO_dynlock_value *l,
 				  const char *, int)
 {
 	if (mode & CRYPTO_LOCK)
+	{
 		l->mutex.acquire();
+	}
 	else
+	{
 		l->mutex.release();
+	}
 }
 static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
 				 const char *, int)
@@ -198,7 +202,9 @@ SSLCtxMgr::loadDHParams(SSL_CTX* ctx, const String& file)
 	BIO_free(bio);
 	{
 		if (SSL_CTX_set_tmp_dh(ctx, ret) < 0)
+		{
 			OW_THROW(SSLException, "Couldn't set DH parameters");
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////////

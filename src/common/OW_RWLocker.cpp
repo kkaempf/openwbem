@@ -168,9 +168,13 @@ RWLocker::releaseWriteLock()
 {
 	NonRecursiveMutexLock l(m_guard);
 	if(m_state == -1)
+	{
 		m_state = 0;
+	}
 	else
+	{
 		OW_THROW(RWLockerException, "A reader is releasing a write lock");
+	}
 	// After a writer is unlocked, we are always back in the unlocked state.
 	//
 	doWakeups();

@@ -183,16 +183,20 @@ isLink(const String& path)
 #ifdef OW_WIN32
 	return false;
 /* This stuff does not compile (_S_IFLNK?) 
-  struct _stat st;
-  if(_stat(path.c_str(), &st) !=0)
-    return false;
-  return ((st.st_mode & _S_IFLNK) != 0);
+	struct _stat st;
+	if(_stat(path.c_str(), &st) !=0)
+	{
+		return false;
+	}
+	return ((st.st_mode & _S_IFLNK) != 0);
 */
 #else
-  struct stat st;
-  if(lstat(path.c_str(), &st) != 0)
-    return false;
-  return S_ISLNK(st.st_mode);
+	struct stat st;
+	if (lstat(path.c_str(), &st) != 0)
+	{
+		return false;
+	}
+	return S_ISLNK(st.st_mode);
 #endif
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -202,12 +206,16 @@ isDirectory(const String& path)
 #ifdef OW_WIN32
 	struct _stat st;
 	if(_stat(path.c_str(), &st) != 0)
+	{
 		return false;
+	}
 	return ((st.st_mode & _S_IFDIR) != 0);
 #else
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
+	{
 		return false;
+	}
 	return S_ISDIR(st.st_mode);
 #endif
 }
@@ -230,11 +238,15 @@ getFileSize(const String& path, off_t& size)
 #ifdef OW_WIN32
 	struct _stat st;
 	if(_stat(path.c_str(), &st) != 0)
+	{
 		return false;
+	}
 #else
 	struct stat st;
 	if(stat(path.c_str(), &st) != 0)
+	{
 		return false;
+	}
 #endif
 	size = st.st_size;
 	return true;

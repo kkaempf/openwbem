@@ -92,7 +92,9 @@ HDBNode::HDBNode(const char* key, HDBHandle& hdl) :
 	}
 	IndexEntry ientry = hdl.findIndexEntry(key);
 	if(!ientry)
+	{
 		return;
+	}
 	read(ientry.offset, hdl);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -268,7 +270,9 @@ bool
 HDBNode::turnFlagsOn(HDBHandle& hdl, UInt32 flags)
 {
 	if(!m_pdata)
+	{
 		return false;
+	}
 	bool cc = false;
 	flags |= m_pdata->m_blk.flags;
 	if(flags != m_pdata->m_blk.flags)
@@ -287,7 +291,9 @@ bool
 HDBNode::turnFlagsOff(HDBHandle& hdl, UInt32 flags)
 {
 	if(!m_pdata)
+	{
 		return false;
+	}
 	bool cc = false;
 	flags = m_pdata->m_blk.flags & (~flags);
 	if(flags != m_pdata->m_blk.flags)

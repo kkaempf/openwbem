@@ -341,7 +341,8 @@ public:
 			if (!queueClosed())
 			{
 				// Make sure the pool is shutdown.
-				shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+				// Specify which shutdown() we want so we don't get undefined behavior calling a virtual function from the destructor.
+				this->FixedSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 			}
 		}
 		catch (...)
@@ -494,8 +495,9 @@ public:
 			// don't need a lock here, because we're the only thread left.
 			if (!queueClosed())
 			{
-				// Make sure the pool is shutdown.
-				shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
+				// Make sure the pool is shutdown. 
+				// Specify which shutdown() we want so we don't get undefined behavior calling a virtual function from the destructor.
+				this->DynamicSizePoolImpl::shutdown(ThreadPool::E_DISCARD_WORK_IN_QUEUE, 1);
 			}
 		}
 		catch (...)

@@ -54,7 +54,9 @@ Logger::logMessage( const ELogLevel l, const String& s ) const
 {
 	MutexLock mtxlck( loggerMutex );
 	if ( l <= m_level )
+	{
 		doLogMessage( s, l );
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void

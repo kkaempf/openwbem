@@ -93,11 +93,6 @@ public:
 	 */
 	HTTPLenLimitIStream(std::istream& istr, Int64 len);
 	/**
-	 * Get the original istream.
-	 * @return the original istream
-	 */
-	std::istream& getInputStreamOrig() const { return m_istr; }
-	/**
 	 * Clear the EOF bit, and set the new length to len
 	 * @param len the new length to read before (re)setting EOF
 	 */

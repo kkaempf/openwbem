@@ -131,9 +131,13 @@ BaseStreamBuffer::overflow(int c)
 	else
 	{
 		if (c != EOF)
+		{
 			return sputc(c);
+		}
 		else
+		{
 			return c;
+		}
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -167,11 +171,17 @@ BaseStreamBuffer::underflow()
 	try
 	{
 		if (gptr() < egptr())
+		{
 			return static_cast<unsigned char>(*gptr());
+		}
 		if (buffer_in() < 0)
+		{
 			return EOF;
+		}
 		else
+		{
 			return static_cast<unsigned char>(*gptr());
+		}
 	}
 	catch (const Exception& e)
 	{

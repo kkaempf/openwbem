@@ -70,14 +70,20 @@ int
 HTTPChunkedOStreamBuffer::buffer_to_device(const char* c, int n)
 {
 	if (n <= 0) // we don't ever want to write a 0 length here.
+	{
 		return 0;
+	}
 	m_ostr << std::hex << n << std::dec << "\r\n";
 	m_ostr.write(c, n);
 	m_ostr.write("\r\n", 2);
 	if (m_ostr.good())
+	{
 		return 0;
+	}
 	else
+	{
 		return -1;
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

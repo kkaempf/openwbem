@@ -1828,8 +1828,10 @@ void
 CIMValue::CIMValueImpl::get(Bool& arg) const
 {
 	if(m_type != CIMDataType::BOOLEAN || isArray())
+	{
 		OW_THROW(ValueCastException,
 			"CIMValue::CIMValueImpl::get - Value is not a BOOLEAN");
+	}
 	arg = (m_obj.m_booleanValue != 0);
 }
 //////////////////////////////////////////////////////////////////////////////

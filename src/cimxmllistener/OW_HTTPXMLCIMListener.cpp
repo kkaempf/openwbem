@@ -134,7 +134,9 @@ public:
 	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious)
 	{
 		if (overwritePrevious || getConfigItem(item) == "")
+		{
 			m_configItems[item] = value;
+		}
 	}
 	
 	virtual RequestHandlerIFCRef getRequestHandler(const String&)

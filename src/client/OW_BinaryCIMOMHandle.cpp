@@ -123,7 +123,10 @@ checkError(CIMProtocolIStreamIFCRef istr, Map<String,String>& trailers)
 	}
 	catch (IOException& e)
 	{
-		while(*istr) istr->get();
+		while(*istr) 
+		{
+			istr->get();
+		}
 		_getHTTPTrailers(istr, trailers);
 		istr->checkForError();
 		throw e;
@@ -186,12 +189,18 @@ readCIMObject(CIMProtocolIStreamIFCRef& istr, Map<String,String>& trailers)
 	}
 	catch (IOException& e)
 	{
-		while(*istr) istr->get();
+		while(*istr) 
+		{
+			istr->get();
+		}
 		_getHTTPTrailers(istr, trailers);
 		istr->checkForError();
 		throw e;
 	}
-	while(*istr) istr->get();
+	while(*istr) 
+	{
+		istr->get();
+	}
 	_getHTTPTrailers(istr, trailers);
 	istr->checkForError();
 	return rval;
@@ -209,12 +218,18 @@ readAndDeliver(CIMProtocolIStreamIFCRef& istr, T& result,
 	}
 	catch (IOException& e)
 	{
-		while(*istr) istr->get();
+		while(*istr) 
+		{
+			istr->get();
+		}
 		_getHTTPTrailers(istr, trailers);
 		istr->checkForError();
 		throw e;
 	}
-	while(*istr) istr->get();
+	while(*istr) 
+	{
+		istr->get();
+	}
 	_getHTTPTrailers(istr, trailers);
 	istr->checkForError();
 }
@@ -421,7 +436,10 @@ BinaryCIMOMHandle::invokeMethod(
 	}
 	catch(IOException& e)
 	{
-		while(*in) in->get();
+		while(*in) 
+		{
+			in->get();
+		}
 		_getHTTPTrailers(in, m_trailers);
 		in->checkForError();
 		throw e;
@@ -690,7 +708,10 @@ BinaryCIMOMHandle::getProperty(
 	}
 	catch (IOException& e)
 	{
-		while(*in) in->get();
+		while(*in) 
+		{
+			in->get();
+		}
 		_getHTTPTrailers(in, m_trailers);
 		in->checkForError();
 		throw e;

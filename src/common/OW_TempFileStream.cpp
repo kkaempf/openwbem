@@ -160,7 +160,9 @@ TempFileBuffer::xsputn(const char* s, std::streamsize n)
 		for (std::streamsize i = 0; i < n; i++)
 		{
 			if (sputc(s[i]) == EOF)
+			{
 				return i;
+			}
 		}
 		return n;
 	}

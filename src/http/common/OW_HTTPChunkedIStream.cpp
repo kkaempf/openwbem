@@ -60,7 +60,9 @@ int
 HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 {
 	if(m_isEOF)
+	{
 		return -1;
+	}
 	int tmpInLen = 0;
 	int offset = 0;
 	int lastRead = 0;
@@ -70,10 +72,16 @@ HTTPChunkedIStreamBuffer::buffer_from_device(char* c, int n)
 		{
 			m_istr >> std::hex >> m_inLen >> std::dec;
 			if (m_istr.fail() || m_istr.bad())
+			{
 				return -1;
+			}
 				//OW_THROW(HTTPChunkException, "Invalid length in chunk header");
 					// skip past the trailing \r\n
-			while(m_istr.get() != '\n' && m_istr.good());
+			while (m_istr.get() != '\n' && m_istr.good())
+			{
+				// do nothing
+			}
+
 			m_inPos = 0;
 			if (m_inLen == 0)
 			{

@@ -134,7 +134,9 @@ bool WQLSelectStatement::appendWherePropertyName(const String& x)
 	for (size_t i = 0, n = _wherePropertyNames.size(); i < n; i++)
 	{
 		if (_wherePropertyNames[i] == x)
+		{
 			return false;
+		}
 	}
 	//
 	// Append the new property.
@@ -154,14 +156,18 @@ static inline void _ResolveProperty(
 		const String& propertyName = op.getPropertyName();
 		// it's up to the source to handle embedded properties.
 		if (!source->getValue(propertyName, op))
+		{
 			OW_THROW(NoSuchPropertyException, propertyName.c_str());
+		}
 	}
 }
 bool WQLSelectStatement::evaluateWhereClause(
 		const WQLPropertySource* source) const
 {
 	if (!hasWhereClause())
+	{
 		return true;
+	}
 	Stack<WQLOperand> stack;
 	//
 	// Process each of the operations:
@@ -234,7 +240,9 @@ bool WQLSelectStatement::evaluateWhereClause(
 						// Check for a type mismatch:
 						//
 						if (rhs.getType() != lhs.getType())
+						{
 							OW_THROW(TypeMismatchException, "");
+						}
 						//
 						// Now that the types are known to be alike, apply the
 						// operation:
@@ -288,7 +296,9 @@ void WQLSelectStatement::print(std::ostream& ostr) const
 	for (size_t i = 0; i < _selectPropertyNames.size(); i++)
 	{
 		if (i == 0)
+		{
 			ostr << '\n';
+		}
 		ostr << "	_selectPropertyNames[" << i << "]: ";
 		ostr << '"' << _selectPropertyNames[i] << '"' << '\n';
 	}
@@ -296,7 +306,9 @@ void WQLSelectStatement::print(std::ostream& ostr) const
 	for (size_t i = 0; i < _operStack.size(); i++)
 	{
 		if (i == 0)
+		{
 			ostr << '\n';
+		}
 		ostr << "	_operStack[" << i << "]: ";
 		ostr << '"' << _operStack[i].toString() << '"' << '\n';
 	}
@@ -327,7 +339,9 @@ String WQLSelectStatement::toString() const
 	for (size_t i = 0; i < _operStack.size(); i++)
 	{
 		if (i == 0)
+		{
 			buf += "\n";
+		}
 		buf += " _operStack[" + String(UInt32(i)) + "]: ";
 		buf += "\"" + _operStack[i].toString() + "\"\n";
 	}

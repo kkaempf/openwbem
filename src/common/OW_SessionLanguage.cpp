@@ -132,8 +132,12 @@ LanguageTag::compareWeight(const LanguageTag& arg) const
 {
 	int v = m_weight - arg.m_weight;
 	if(v == 0)
+	{
 		if(m_explicitQualityValue != arg.m_explicitQualityValue)
+		{
 			v = (arg.m_explicitQualityValue) ? -1 : 1;
+		}
+	}
 
 	return v;
 }
@@ -249,7 +253,9 @@ LanguageTag::setWeight(const char* arg)
 	m_weight = 0;
 	// Skip white space and the ';' character
 	while(*arg && (*arg == ';' || isspace(*arg)))
+	{
 		++arg;
+	}
 
 	// If we didn't encounter a 'q' or 'Q' then its invalid
 	if(*arg != 'q' && *arg != 'Q')
@@ -355,22 +361,30 @@ SessionLanguage::buildLangTags(const char* acceptLangHdrValue)
 	m_langTags.clear();
 	const char* p = skipWhite(acceptLangHdrValue);
 	if(!(*p))
+	{
 		return;
+	}
 
 	LanguageTag ltag;
 	while(*p)
 	{
 		p = ltag.assign(p);
 		if(!p)
+		{
 			break;
+		}
 		m_langTags.append(ltag);
 		if(!*p)
+		{
 			break;
+		}
 		++p;
 	}
 
 	if(!p)
+	{
 		m_langTags.clear();
+	}
 	else
 	{
 		std::sort(m_langTags.begin(), m_langTags.end(), 
@@ -386,9 +400,13 @@ SessionLanguage::langsMatch(const LanguageTag& t1, const LanguageTag& t2,
 {
 	bool matches = subtagsMatch(t1.m_subtag1, t2.m_subtag1);
 	if(level > 1 && matches)
+	{
 		matches = subtagsMatch(t1.m_subtag2, t2.m_subtag2);
+	}
 	if(level > 2 && matches)
+	{
 		matches = subtagsMatch(t1.m_subtag3, t2.m_subtag3);
+	}
 	return matches;
 }
 

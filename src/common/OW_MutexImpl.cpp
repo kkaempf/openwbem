@@ -57,18 +57,24 @@ createMutex(Mutex_t& handle)
 	int res = pthread_mutexattr_init(&attr);
 	assert(res == 0);
 	if (res != 0)
+	{
 		return -1;
+	}
  
 #if defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
 	assert(res == 0);
 	if (res != 0)
+	{
 		return -1;
+	}
 #endif
  
 	res = pthread_mutex_init(&handle.mutex, &attr);
 	if (res != 0)
+	{
 		return -1;
+	}
  
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 	res = pthread_cond_init(&handle.unlocked, 0);
@@ -162,7 +168,9 @@ acquireMutex(Mutex_t& handle)
 #if !defined(OW_HAVE_PTHREAD_MUTEXATTR_SETTYPE)
 	pthread_t tid = pthread_self();
 	if (handle.valid_id && pthread_equal(handle.thread_id, tid))
+	{
 		++handle.count;
+	}
 	else
 	{
 		while (handle.valid_id)

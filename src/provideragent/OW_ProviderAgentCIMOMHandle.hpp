@@ -698,6 +698,10 @@ private:
 		void releaseReadLock();
 		void releaseWriteLock();
 	private: 
+		//non-copyable
+		PALocker(const PALocker&);
+		PALocker& operator=(const PALocker&);
+
 		ProviderAgentEnvironment::LockingType m_lt; 
 		Mutex* m_mutex; 
 		RWLocker* m_rwlocker; 

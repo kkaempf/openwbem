@@ -343,10 +343,14 @@ safeSystem(const Array<String>& command)
 	int status;
 	pid_t pid;
 	if (command.size() == 0)
+	{
 		return 1;
+	}
 	pid = fork();
 	if (pid == -1)
+	{
 		return -1;
+	}
 	if (pid == 0)
 	{
 		// Close all file handle from parent process
@@ -385,7 +389,9 @@ safeSystem(const Array<String>& command)
 		if (waitpid(pid, &status, 0) == -1)
 		{
 			if (errno != EINTR)
+			{
 				return -1;
+			}
 		}
 		else
 		{
@@ -418,7 +424,9 @@ safePopen(const Array<String>& command,
 	}
 	retval.pid ( fork() );
 	if (retval.pid() == -1)
+	{
 		OW_THROW(ExecErrorException, "Platform::safePopen: fork() failed");
+	}
 	if (retval.pid() == 0)
 	{
 		// Close stdin, stdout, and stderr.
@@ -588,9 +596,13 @@ gatherOutput(String& output, PopenStreams& streams, int& processstatus, int time
 					if (readrc == 0)
 					{
 						if (readstream == streams.out())
+						{
 							outIsOpen = false;
+						}
 						else
+						{
 							errIsOpen = false;
+						}
 					}
 					else if (readrc == -1)
 					{

@@ -83,7 +83,9 @@ bool XMLParserCore::next(XMLToken& entry)
 		if (entry.type == XMLToken::START_TAG)
 		{
 			if (m_stack.empty() && m_foundRoot)
+			{
 				OW_THROWXMLLINE(XMLParseException::MULTIPLE_ROOTS, m_line);
+			}
 			m_foundRoot = true;
 			if (!m_tagIsEmpty)
 			{
@@ -93,9 +95,13 @@ bool XMLParserCore::next(XMLToken& entry)
 		else if (entry.type == XMLToken::END_TAG)
 		{
 			if (m_stack.empty())
+			{
 				OW_THROWXMLLINE(XMLParseException::START_END_MISMATCH, m_line);
+			}
 			if (m_stack.top() != entry.text.toString())
+			{
 				OW_THROWXMLLINE(XMLParseException::START_END_MISMATCH, m_line);
+			}
 			m_stack.pop();
 		}
 		return true;
@@ -125,7 +131,9 @@ void XMLParserCore::skipWhitespace()
 	while (isspace(*m_current))
 	{
 		if (*m_current == '\n')
+		{
 			++m_line;
+		}
 		++m_current;
 	}
 }
@@ -139,7 +147,9 @@ inline bool isNameChar(char c)
 bool XMLParserCore::getElementName(XMLToken& entry)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
+	{
 		OW_THROWXMLLINE(XMLParseException::BAD_START_TAG, m_line);
+	}
 	entry.text.reset();
 	while (isNameChar(*m_current))
 	{
@@ -178,8 +188,10 @@ bool XMLParserCore::getOpenElementName(XMLToken& entry, bool& openCloseElement)
 void XMLParserCore::getAttributeNameAndEqual(XMLToken::Attribute& att)
 {
 	if (!isalpha(*m_current) && *m_current != '_')
+	{
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_NAME,
 			m_line, Format("Expected alpha or _; got %1", *m_current).c_str());
+	}
 	att.name.reset();
 	while (isalnum(*m_current) || *m_current == '_' || *m_current == '-' ||
 			 *m_current == ':' || *m_current == '.')
@@ -188,8 +200,10 @@ void XMLParserCore::getAttributeNameAndEqual(XMLToken::Attribute& att)
 	}
 	skipWhitespace();
 	if (*m_current != '=')
+	{
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_NAME,
 			m_line, Format("Expected =; got %1", *m_current).c_str());
+	}
 	m_current++;
 	skipWhitespace();
 }
@@ -197,8 +211,10 @@ void XMLParserCore::getAttributeValue(XMLToken::Attribute& att)
 {
 	// ATTN-B: handle values contained in semiquotes:
 	if (*m_current != '"' && *m_current != '\'')
+	{
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
 			m_line, Format("Expecting \" or '; got %1", *m_current).c_str());
+	}
 	char startChar = *m_current++;
 	att.value.reset();
 	while (*m_current && *m_current != startChar)
@@ -207,8 +223,10 @@ void XMLParserCore::getAttributeValue(XMLToken::Attribute& att)
 	}
 		
 	if (*m_current != startChar)
+	{
 		OW_THROWXMLLINEMSG(XMLParseException::BAD_ATTRIBUTE_VALUE,
 			m_line, Format("Expecting %1; Got %2", startChar, static_cast<int>(*m_current)).c_str());
+	}
 	++m_current;
 }
 void XMLParserCore::getComment()
@@ -267,7 +285,9 @@ void XMLParserCore::getCData(XMLToken& entry)
 			}
 		}
 		if (*m_current == '\n')
+		{
 			++m_line;
+		}
 		entry.text += *m_current;
 	}
 	// If it got this far, then the cdata is unterminated:
@@ -279,10 +299,14 @@ void XMLParserCore::getDocType()
 	for (; *m_current && *m_current != '>'; ++m_current)
 	{
 		if (*m_current == '\n')
+		{
 			++m_line;
+		}
 	}
 	if (*m_current != '>')
+	{
 		OW_THROWXMLLINE(XMLParseException::UNTERMINATED_DOCTYPE, m_line);
+	}
 	m_current++;
 }
 //void XMLParserCore::getContent(XMLToken& entry, bool& isWhiteSpace)
@@ -293,7 +317,9 @@ void XMLParserCore::getContent(XMLToken& entry)
 	while (*m_current && *m_current != '<')
 	{
 		if (*m_current == '\n')
+		{
 			++m_line;
+		}
 		//isWhiteSpace &= isspace(*m_current);
 		//if (isWhiteSpace)
 		//{
@@ -314,7 +340,9 @@ void XMLParserCore::getElement(XMLToken& entry)
 		entry.type = XMLToken::XML_DECLARATION;
 		++m_current;
 		if (getElementName(entry))
+		{
 			return;
+		}
 	}
 	else if (*m_current == '!')
 	{
@@ -339,7 +367,9 @@ void XMLParserCore::getElement(XMLToken& entry)
 			while (*curChar)
 			{
 				if (*curChar++ != *m_current++)
+				{
 					OW_THROWXMLLINE(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line);
+				}
 			}
 			entry.type = XMLToken::CDATA;
 			getCData(entry);
@@ -353,7 +383,9 @@ void XMLParserCore::getElement(XMLToken& entry)
 			while (*curChar)
 			{
 				if (*curChar++ != *m_current++)
+				{
 					OW_THROWXMLLINE(XMLParseException::EXPECTED_COMMENT_OR_CDATA, m_line);
+				}
 			}
 			entry.type = XMLToken::DOCTYPE;
 			getDocType();
@@ -366,7 +398,9 @@ void XMLParserCore::getElement(XMLToken& entry)
 		entry.type = XMLToken::END_TAG;
 		++m_current;
 		if (!getElementName(entry))
+		{
 			OW_THROWXMLLINE(XMLParseException::BAD_END_TAG, m_line);
+		}
 		return;
 	}
 	else if (isalpha(*m_current) || *m_current == '_')
@@ -435,7 +469,9 @@ void XMLParserCore::getElement(XMLToken& entry)
 		getAttributeNameAndEqual(attr);
 		getAttributeValue(attr);
 		if (entry.attributeCount == XMLToken::MAX_ATTRIBUTES)
+		{
 			OW_THROWXMLLINE(XMLParseException::TOO_MANY_ATTRIBUTES, m_line);
+		}
 	}
 }
 

@@ -296,7 +296,9 @@ ProviderAgentEnvironment::setConfigItem(const String& item, const String& value,
 										EOverwritePreviousFlag overwritePrevious)
 {
 	if (overwritePrevious == E_OVERWRITE_PREVIOUS || getConfigItem(item) == "")
+	{
 		m_configItems[item] = value;
+	}
 }
 	
 //////////////////////////////////////////////////////////////////////////////

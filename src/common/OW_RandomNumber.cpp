@@ -82,7 +82,9 @@ RandomNumber::RandomNumber(Int32 lowVal, Int32 highVal)
 			// try to get something from the kernel
 			std::ifstream infile("/dev/urandom", std::ios::in);
 			if (!infile)
+			{
 				infile.open("/dev/random", std::ios::in);
+			}
 			// don't initialize this, we may get random stack
 			// junk in case infile isn't usable.
 			unsigned int dev_rand_input;

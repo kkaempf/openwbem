@@ -111,7 +111,9 @@ operator<<(std::ostream& os, const Format& f)
 void Format::put(const String& t)
 { // t is inserted into oss
 	if (!oss.good())
+	{
 		return;
+	}
 	oss << t;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -120,7 +122,9 @@ void Format::put(type t) \
 { \
 \
 	if (!oss.good()) \
+	{ \
 		return; \
+	} \
 \
 	oss << t; \
 }

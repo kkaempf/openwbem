@@ -54,7 +54,9 @@ ThreadCounter::incThreadCount(UInt32 sTimeout, UInt32 usTimeout)
 	while (m_runCount >= m_maxThreads)
 	{
 		if (!m_runCountCondition.timedWait(l, sTimeout, usTimeout))
+		{
 			OW_THROW(TimeoutException, "ThreadCounter::incThreadCount timedout");
+		}
 	}
 	++m_runCount;
 }
@@ -79,7 +81,9 @@ ThreadCounter::waitForAll(UInt32 sTimeout, UInt32 usTimeout)
 	while(m_runCount > 0)
 	{
 		if (!m_runCountCondition.timedWait(runCountLock, sTimeout, usTimeout))
+		{
 			OW_THROW(TimeoutException, "ThreadCounter::waitForAll timedout");
+		}
 	}
 }
 void

@@ -429,7 +429,7 @@ Int16
 CIMDateTime::getUtc() const {  return m_dptr->m_utc; }
 //////////////////////////////////////////////////////////////////////////////
 bool
-CIMDateTime::isInterval() const {  return bool(m_dptr->m_isInterval != 0);}
+CIMDateTime::isInterval() const {  return m_dptr->m_isInterval != 0;}
 //////////////////////////////////////////////////////////////////////////////
 void
 CIMDateTime::setInterval(bool val) { m_dptr->m_isInterval = val; }

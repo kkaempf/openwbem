@@ -165,12 +165,15 @@ processScope(CIMXMLParser& parser,
 	{
 		return;
 	}
+
 	if(scope.equalsIgnoreCase("true"))
 	{
 		cqt.addScope(CIMScope(scopeValue));
 	}
 	else if(!scope.equalsIgnoreCase("false"))
+	{
 		OW_THROWCIM(CIMException::FAILED);
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 String
@@ -183,12 +186,16 @@ getQualifierName(CIMXMLParser& parser)
 	}
 	String propertyName = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	if(!propertyName.equalsIgnoreCase(CIMXMLParser::P_QualifierName))
+	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Cannot find qualifier name");
+	}
 	parser.getChild();
 	if (!parser.tokenIsId(CIMXMLParser::E_VALUE))
+	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 				"Cannot find value for qualifier name");
+	}
 	parser.mustGetNext();
 	if (!parser.isData())
 	{

@@ -69,9 +69,13 @@ String WQLOperand::toString() const
 		{
 			result = "BOOLEAN_VALUE: ";
 			if (_booleanValue)
+			{
 				result += "TRUE";
+			}
 			else
+			{
 				result += "FALSE";
+			}
 			break;
 		}
 	default:

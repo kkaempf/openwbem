@@ -87,7 +87,9 @@ sleep(UInt32 milliSeconds)
 	wait.tv_sec = milliSeconds / 1000;
 	wait.tv_nsec = (milliSeconds % 1000) * 1000000;
 	while (nanosleep(&wait, &wait) == -1 && errno == EINTR)
+	{
 		ThreadImpl::testCancel();
+	}
 #elif OW_WIN32
 	Sleep(milliSeconds);
 #else
@@ -173,9 +175,13 @@ struct default_stack_size
 #ifdef _POSIX_THREAD_ATTR_STACKSIZE
 		pthread_attr_t stack_size_attr;
 		if (pthread_attr_init(&stack_size_attr) != 0)
+		{
 			return;
+		}
 		if (pthread_attr_getstacksize(&stack_size_attr, &val) != 0)
+		{
 			return;
+		}
 
 		if (val < 1048576) {
 			val = 1048576; // 1 MB
@@ -237,7 +243,9 @@ createThread(Thread_t& handle, ThreadFunction func,
 #if !defined(OW_VALGRIND_SUPPORT) // valgrind doesn't like us to set the stack size
 	// Won't be set to true unless _POSIX_THREAD_ATTR_STACKSIZE is defined
 	if (default_stack_size::needsSetting)
+	{
 		pthread_attr_setstacksize(&attr, default_stack_size::val);
+	}
 #endif
 
 	LocalThreadParm* parg = new LocalThreadParm;

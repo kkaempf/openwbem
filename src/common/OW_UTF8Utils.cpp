@@ -107,7 +107,9 @@ size_t charCount(const char* utf8str)
 		// any chars 0x80-0xBF are extension bytes.  Anything else signals a new char
 		UInt8 c = static_cast<UInt8>(*p);
 		if (c < 0x80 || c > 0xBF)
+		{
 			++count;
+		}
 		++p;
 	}
 	return count;
@@ -117,9 +119,13 @@ UInt16 UTF8toUCS2(const char* utf8char)
 {
 	UInt32 c = UTF8toUCS4(utf8char);
 	if (c > 0xFFFF)
+	{
 		return 0xFFFF;
+	}
 	else
+	{
 		return static_cast<UInt16>(c);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 String UCS2toUTF8(UInt16 ucs2char)
@@ -145,7 +151,9 @@ UInt32 UTF8toUCS4(const char* utf8char)
 		{
 			// check for short (invalid) utf8 sequence
 			if (p[1] == '\0')
+			{
 				return bad;
+			}
 			const UInt32 c1 = static_cast<UInt8>(p[1]);
 			return ((c0 & 0x1fu) << 6) | (c1 & 0x3fu);
 		}
@@ -153,7 +161,9 @@ UInt32 UTF8toUCS4(const char* utf8char)
 		{
 			// check for short (invalid) utf8 sequence
 			if (p[1] == '\0' || p[2] == '\0')
+			{
 				return bad;
+			}
 			const UInt32 c1 = static_cast<UInt8>(p[1]);
 			const UInt32 c2 = static_cast<UInt8>(p[2]);
 			return ((c0 & 0x0fu) << 12) | ((c1 & 0x3fu) << 6) | (c2 & 0x3fu);
@@ -162,7 +172,9 @@ UInt32 UTF8toUCS4(const char* utf8char)
 		{
 			// check for short (invalid) utf8 sequence
 			if (p[1] == '\0' || p[2] == '\0' || p[3] == '\0')
+			{
 				return bad;
+			}
 			
 			const UInt32 c1 = static_cast<UInt8>(p[1]);
 			const UInt32 c2 = static_cast<UInt8>(p[2]);
@@ -240,7 +252,9 @@ Array<UInt16> StringToUCS2(const String& input)
 			{
 				// check for short (invalid) utf8 sequence
 				if (p[1] == '\0')
+				{
 					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				}
 				const UInt32 c1 = static_cast<UInt8>(p[1]);
 				rval.push_back(((c0 & 0x1fu) << 6) | (c1 & 0x3fu));
 				p += 2;
@@ -250,7 +264,9 @@ Array<UInt16> StringToUCS2(const String& input)
 			{
 				// check for short (invalid) utf8 sequence
 				if (p[1] == '\0' || p[2] == '\0')
+				{
 					OW_THROW(InvalidUTF8Exception, Format("Length: %1, input = %2, p = %3", int(SequenceLengthTable[c0]), input.c_str(), p).c_str());
+				}
 				const UInt32 c1 = static_cast<UInt8>(p[1]);
 				const UInt32 c2 = static_cast<UInt8>(p[2]);
 				rval.push_back(((c0 & 0x0fu) << 12) | ((c1 & 0x3fu) << 6) | (c2 & 0x3fu));

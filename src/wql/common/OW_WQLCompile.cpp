@@ -149,42 +149,42 @@ WQLOperation op)
 	switch (lhs.getType())
 	{
 		case WQLOperand::NULL_VALUE:
-			{
-				// return true if the op is WQL_EQ and the rhs is NULL
-				// also if op is WQL_NE and rhs is not NULL
-				return !(op == WQL_EQ) ^ (rhs.getType() == WQLOperand::NULL_VALUE);
-				break;
-			}
+		{
+			// return true if the op is WQL_EQ and the rhs is NULL
+			// also if op is WQL_NE and rhs is not NULL
+			return !(op == WQL_EQ) ^ (rhs.getType() == WQLOperand::NULL_VALUE);
+			break;
+		}
 		case WQLOperand::INTEGER_VALUE:
-			{
-				return _Compare(
-				lhs.getIntegerValue(),
-				rhs.getIntegerValue(),
-				op);
-			}
+		{
+			return _Compare(
+			lhs.getIntegerValue(),
+			rhs.getIntegerValue(),
+			op);
+		}
 		case WQLOperand::DOUBLE_VALUE:
-			{
-				return _Compare(
-				lhs.getDoubleValue(),
-				rhs.getDoubleValue(),
-				op);
-			}
+		{
+			return _Compare(
+			lhs.getDoubleValue(),
+			rhs.getDoubleValue(),
+			op);
+		}
 		case WQLOperand::BOOLEAN_VALUE:
-			{
-				return _Compare(
-				lhs.getBooleanValue(),
-				rhs.getBooleanValue(),
-				op);
-			}
+		{
+			return _Compare(
+			lhs.getBooleanValue(),
+			rhs.getBooleanValue(),
+			op);
+		}
 		case WQLOperand::STRING_VALUE:
-			{
-				return _Compare(
-				lhs.getStringValue(),
-				rhs.getStringValue(),
-				op);
-			}
+		{
+			return _Compare(
+			lhs.getStringValue(),
+			rhs.getStringValue(),
+			op);
+		}
 		default:
-			OW_ASSERT(0);
+		OW_ASSERT(0);
 	}
 	return false;
 }
@@ -203,7 +203,10 @@ WQLCompile::~WQLCompile()
 }
 void WQLCompile::compile(const WQLSelectStatement * wqs)
 {
-	if (!wqs->hasWhereClause())	return;
+	if (!wqs->hasWhereClause())	
+	{
+		return;
+	}
 	_tableau.clear();
 	_buildEvalHeap(wqs);
 	_pushNOTDown();
@@ -211,9 +214,14 @@ void WQLCompile::compile(const WQLSelectStatement * wqs)
 	Array<stack_el> disj;
 	_gatherDisj(disj);
 	if (disj.size() == 0)
+	{
 		if (terminal_heap.size() > 0)
+		{
 			// point to the remaining terminal element
 			disj.append(stack_el(0, TERMINAL_HEAP));
+		}
+	}
+
 	for (UInt32 i=0, n =disj.size(); i< n; i++)
 	{
 		TableauRow tr;
@@ -222,10 +230,14 @@ void WQLCompile::compile(const WQLSelectStatement * wqs)
 		{
 			_gatherConj(conj, disj[i]);
 			for ( UInt32 j=0, m = conj.size(); j < m; j++)
+			{
 				tr.append(terminal_heap[conj[j].opn]);
+			}
 		}
 		else
+		{
 			tr.append(terminal_heap[disj[i].opn]);
+		}
 		_tableau.append(tr);
 	}
 	eval_heap.clear();
@@ -267,17 +279,25 @@ bool WQLCompile::evaluate(const WQLPropertySource& source) const
 				rhs = tr[j].opn2;
 				WQLCompile::_ResolveProperty(rhs,source);
 				if (rhs.getType() != lhs.getType())
+				{
 					OW_THROW(TypeMismatchException, Format("Type mismatch: lhs: %1 rhs: %2", lhs.toString(), rhs.toString()).c_str());
+				}
 				if (!_Evaluate(lhs, rhs, tr[j].op))
 				{
 					b = false;
 					break;
 				}
 				else
+				{
 					b = true;
+				}
 			}
 		}
-		if (b) return true;
+
+		if (b) 
+		{
+			return true;
+		}
 	}
 	return false;
 }
@@ -287,22 +307,36 @@ void WQLCompile::print(std::ostream& ostr)
 	{
 		WQLOperation wop = eval_heap[i].op; 
 		if (wop == WQL_DO_NOTHING)	
+		{
 			continue;
+		}
 		ostr << "Eval element " << i << ": "; 
 		if (eval_heap[i].is_terminal1 == TERMINAL_HEAP) 
+		{
 			ostr << "T(";
+		}
 		else if (eval_heap[i].is_terminal1 == EVAL_HEAP)
+		{
 			ostr << "E(";
+		}
 		else
+		{
 			ostr << "O(";
+		}
 		ostr << eval_heap[i].opn1 << ") "; 
 		ostr << WQLOperationToString(eval_heap[i].op); 
 		if (eval_heap[i].is_terminal2 == TERMINAL_HEAP) 
+		{
 			ostr << " T(";
+		}
 		else if (eval_heap[i].is_terminal2 == EVAL_HEAP)
+		{
 			ostr << "E(";
+		}
 		else
+		{
 			ostr << "O(";
+		}
 		ostr << eval_heap[i].opn2 << ")" << std::endl; 
 	} 
 	for (UInt32 i=0, n=terminal_heap.size();i < n;i++)
@@ -427,16 +461,24 @@ void WQLCompile::_pushNOTDown()
 			{
 				// Test first operand
 				if ((eval_heap[j].is_terminal1 == EVAL_HEAP) && (eval_heap[j].opn1 == i))
+				{
 					eval_heap[j].assign_unary_to_first(eval_heap[i]);
+				}
 				// Test second operand
 				if ((eval_heap[j].is_terminal2 == EVAL_HEAP) && (eval_heap[j].opn2 == i))
+				{
 					eval_heap[j].assign_unary_to_second(eval_heap[i]);
+				}
 			}
 			// Test: Double NOT created by moving down
 			if (eval_heap[i].mark)
+			{
 				eval_heap[i].mark = false;
+			}
 			else
+			{
 				_found = true;
+			}
 			// else indicate a pending NOT to be pushed down further
 		}
 		// Simple NOT created by moving down
@@ -446,9 +488,13 @@ void WQLCompile::_pushNOTDown()
 			// further and switch operators (AND / OR)
 			eval_heap[i].mark=false;
 			if (eval_heap[i].op == WQL_OR) 
+			{
 				eval_heap[i].op = WQL_AND;
+			}
 			else if (eval_heap[i].op == WQL_AND) 
+			{
 				eval_heap[i].op = WQL_OR;
+			}
 			// NOT operator is already ruled out
 			_found = true;
 		}
@@ -458,18 +504,26 @@ void WQLCompile::_pushNOTDown()
 			// First operand
 			int j = eval_heap[i].opn1;
 			if (eval_heap[i].is_terminal1 == TERMINAL_HEAP)
+			{
 				// Flip NOT mark
 				terminal_heap[j].negate();
+			}
 			else if (eval_heap[i].is_terminal1 == EVAL_HEAP)
+			{
 				eval_heap[j].mark = !(eval_heap[j].mark);
+			}
 			//Second operand (if it exists)
 			if ((j = eval_heap[i].opn2) >= 0)
 			{
 				if (eval_heap[i].is_terminal2 == TERMINAL_HEAP)
+				{
 					// Flip NOT mark
 					terminal_heap[j].negate();
+				}
 				else if (eval_heap[i].is_terminal2 == EVAL_HEAP)
+				{
 					eval_heap[j].mark = !(eval_heap[j].mark);
+				}
 			}
 		}
 	}
@@ -488,26 +542,40 @@ void WQLCompile::_factoring()
 			if (eval_heap[i].is_terminal1 == EVAL_HEAP)
 			{
 				index = eval_heap[i].opn1; // remember the index
-				if (eval_heap[index].op == WQL_OR) _found = 1;
+				if (eval_heap[index].op == WQL_OR) 
+				{
+					_found = 1;
+				}
 			}
 			if ((_found == 0) && (eval_heap[i].is_terminal2 == EVAL_HEAP))
 			{
 				index = eval_heap[i].opn2; // remember the index
-				if (eval_heap[index].op == WQL_OR) _found = 2;
+				if (eval_heap[index].op == WQL_OR) 
+				{
+					_found = 2;
+				}
 			}
 			if (_found != 0)
 			{
 				stack_el s;
 				if (_found == 1)
+				{
 					s = eval_heap[i].getSecond();
+				}
 				else
+				{
 					s = eval_heap[i].getFirst();
+				}
 				// insert two new expression before entry i
 				eval_el evl(false, WQL_OR, i+1, EVAL_HEAP, i, EVAL_HEAP);
 				if (i < static_cast<int>(eval_heap.size())-1)
+				{
 					eval_heap.insert(i+1, evl);
+				}
 				else
+				{
 					eval_heap.append(evl);
+				}
 				eval_heap.insert(i+1, evl);
 				for (int j=eval_heap.size()-1; j > i + 2; j--)
 				{
@@ -559,13 +627,17 @@ void WQLCompile::_gather(Array<stack_el>& stk, stack_el sel, bool or_flag)
 	UInt32 i = 0;
 	stk.empty();
 	if ((i = eval_heap.size()) == 0) 
+	{
 		return;
+	}
 	while (eval_heap[i-1].op == WQL_DO_NOTHING)
 	{
 		eval_heap.remove(i-1);
 		i--;
 		if (i == 0)	
+		{
 			return;
+		}
 	}
 	if (or_flag)
 	{
@@ -574,7 +646,9 @@ void WQLCompile::_gather(Array<stack_el>& stk, stack_el sel, bool or_flag)
 	else
 	{
 		if (sel.type != EVAL_HEAP) 
+		{
 			return;
+		}
 		stk.append(sel);
 	}
 	i = 0;
@@ -598,7 +672,9 @@ void WQLCompile::_gather(Array<stack_el>& stk, stack_el sel, bool or_flag)
 				stk[i] = eval_heap[k].getSecond();
 				stk.insert(i, eval_heap[k].getFirst());
 				if (or_flag)
+				{
 					eval_heap[k].op = WQL_DO_NOTHING;
+				}
 			}
 		}
 	}
@@ -640,17 +716,25 @@ void WQLCompile::_sortTableau()
 		for (UInt32 j = 0, m = tr.size(); j < m; j++)
 		{
 			if ((tr[j].opn1.getType() == WQLOperand::PROPERTY_NAME)
-			&& (tr[j].opn2.getType() != WQLOperand::PROPERTY_NAME))
+				&& (tr[j].opn2.getType() != WQLOperand::PROPERTY_NAME))
+			{
 				key1 = tr[j].opn1.getPropertyName();
+			}
 			else
+			{
 				key1.erase();
+			}
 			for (UInt32 k = j; k < m; k++)
 			{
 				if ((tr[k].opn1.getType() == WQLOperand::PROPERTY_NAME)
-				&& (tr[k].opn2.getType() != WQLOperand::PROPERTY_NAME))
+					&& (tr[k].opn2.getType() != WQLOperand::PROPERTY_NAME))
+				{
 					key2 = tr[k].opn1.getPropertyName();
+				}
 				else
+				{
 					key2.erase();
+				}
 				if (key1 > key2)
 				{
 					wop = tr[j].opn1;

@@ -191,9 +191,11 @@ void
 XMLNodeImpl::mustElement(const char* elementName) const
 {
 	if (elementName != getName())
+	{
 		OW_THROWCIMMSG(CIMException::FAILED,
 				Format("XMLNodeImpl::mustElement: elementName did not match "
 				"node. Token id=%1, found=%2", elementName, getName() ).c_str() );
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -291,9 +293,13 @@ XMLNodeImpl::findElementChild(const char* elementName, bool throwException)	cons
 	XMLNodeImplRef tmpRef = findElement(elementName, throwException);
 
 	if (!tmpRef)
+	{
 		return tmpRef;
+	}
 	else
+	{
 		return tmpRef->m_childNode;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -359,7 +365,9 @@ XMLNodeImpl::getChildren() const
 {
 	XMLNodeArray ar;
 	if( !m_childNode )
+	{
 		return ar;
+	}
 	XMLNodeImplRef r = m_childNode;
 	do
 	{

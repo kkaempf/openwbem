@@ -93,11 +93,13 @@ Socket::Socket(SocketHandle_t fd,
 Socket::Socket(const SocketAddress& addr, SocketFlags::ESSLFlag isSSL)
 {
 	if (isSSL == SocketFlags::E_SSL)
+	{
 #ifndef OW_NO_SSL
 		m_impl = SocketBaseImplRef(new SSLSocketImpl(addr));
 #else
 		OW_THROW(SSLException, "Not built with SSL");
 #endif // #ifndef OW_NO_SSL
+	}
 	else
 	{
 		m_impl = SocketBaseImplRef(new SocketImpl(addr));

@@ -57,11 +57,15 @@ createMutex(NonRecursiveMutex_t& handle)
 	int res = pthread_mutexattr_init(&attr);
 	assert(res == 0);
 	if (res != 0)
+	{
 		return -1;
+	}
  
 	res = pthread_mutex_init(&handle.mutex, &attr);
 	if (res != 0)
+	{
 		return -1;
+	}
  
 	return 0;
 #elif defined(OW_WIN32)

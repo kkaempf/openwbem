@@ -629,7 +629,9 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 			try
 			{
 				if (performAuthentication(getHeaderValue("Authorization"), context) < 300 )
-						m_isAuthenticated = true;
+				{
+					m_isAuthenticated = true;
+				}
 			}
 			catch (AuthenticationException& e)
 			{
@@ -1025,7 +1027,9 @@ HTTPSvrConnection::options(OperationContext& context)
 	addHeader("Allow","POST, M-POST, OPTIONS, TRACE");
 #ifdef OW_HAVE_ZLIB_H
 	if (m_options.enableDeflate)
+	{
 		addHeader("Accept-Encoding", "deflate");
+	}
 #endif
 	String hp = HTTPUtils::getCounterStr();
 	CIMFeatures cf;

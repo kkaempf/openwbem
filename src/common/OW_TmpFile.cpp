@@ -243,7 +243,9 @@ TmpFileImpl::releaseFile()
 	if(m_hdl != -1)
 	{
 		if(closeFile(m_hdl) == -1)
+		{
 			OW_THROW(IOException, "Unable to close file");
+		}
 		// work like close, but don't delete the file, it will be given to the
 		// caller
 		delete [] m_filename;

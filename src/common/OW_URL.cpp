@@ -99,7 +99,9 @@ URL::URL(const String& sUrl) // default for all data members is okay.
 	if ( iEndIndex != String::npos )
 	{
 		if ( iEndIndex > 0 )
+		{
 			scheme = sURL.substring( 0, iEndIndex ).toLowerCase();
+		}
 		iBeginIndex = iEndIndex + 3;
 	}
 	// get the userinfo
@@ -111,12 +113,18 @@ URL::URL(const String& sUrl) // default for all data members is okay.
 		if ( iBeginIndex != String::npos )
 		{
 			if ( iBeginIndex > 0 )
+			{
 				principal = sNamePass.substring( 0, iBeginIndex );
+			}
 			if ( iBeginIndex < iEndIndex-1 )
+			{
 				credential = sNamePass.substring( iBeginIndex + 1 );
+			}
 		}
 		else if ( !sNamePass.empty())
+		{
 			principal = sNamePass;
+		}
 		iBeginIndex = iEndIndex + 1;
 	}
 	// get host[:port]

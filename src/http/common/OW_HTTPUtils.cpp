@@ -78,10 +78,12 @@ parseHeader(HTTPHeaderMap& map, Array<String>& array, istream& istr)
 	{ // leading empty lines should be ignored.
 		line = String::getLine(istr);
 	} while ( line.isSpaces() && istr );
+
 	if ( !istr )
 	{
 		return false;
 	}
+	
 	array = line.tokenize();
 	return buildMap(map, istr);
 }
@@ -153,7 +155,7 @@ String date( void )
 		OW_THROW(HTTPException, "DateTimeArray has less than 5 elements.");
 	}
 	String HTTPDateTime = DateTimeArray[ 0 ] + ", " + DateTimeArray[ 2 ] + " " +
-									 DateTimeArray[ 1 ] + " " + DateTimeArray[ 4 ] + " " + DateTimeArray[ 3 ] + " GMT";
+		DateTimeArray[ 1 ] + " " + DateTimeArray[ 4 ] + " " + DateTimeArray[ 3 ] + " GMT";
 	return HTTPDateTime;
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -355,23 +357,33 @@ Array<char> base64Decode(const char* src)
 	while ( (ch = *src++) != '\0' )
 	{
 		if ( isspace(ch) ) // Skip whitespace
+		{
 			continue;
+		}
 		if ( ch == Pad64 )
+		{
 			break;
+		}
 		b64val = char2val(ch);
 		if ( b64val == -1 ) // A non-base64 character
+		{
 			OW_THROW(Base64FormatException, "non-base64 char");
+		}
 		switch ( state )
 		{
 		case 0:
 			if ( destidx >= szdest )
+			{
 				OW_THROW(Base64FormatException, "non-base64 char");
+			}
 			dest[destidx] = b64val << 2;
 			state = 1;
 			break;
 		case 1:
 			if ( destidx + 1 >= szdest )
+			{
 				OW_THROW(Base64FormatException, "non-base64 char");
+			}
 			dest[destidx]   |=  b64val >> 4;
 			dest[destidx+1]  = (b64val & 0x0f) << 4 ;
 			destidx++;
@@ -379,7 +391,9 @@ Array<char> base64Decode(const char* src)
 			break;
 		case 2:
 			if ( destidx + 1 >= szdest )
+			{
 				OW_THROW(Base64FormatException, "non-base64 char");
+			}
 			dest[destidx]   |=  b64val >> 2;
 			dest[destidx+1]  = (b64val & 0x03) << 6;
 			destidx++;
@@ -387,7 +401,9 @@ Array<char> base64Decode(const char* src)
 			break;
 		case 3:
 			if ( destidx >= szdest )
+			{
 				OW_THROW(Base64FormatException, "non-base64 char");
+			}
 			dest[destidx] |= b64val;
 			destidx++;
 			state = 0;
@@ -407,11 +423,17 @@ Array<char> base64Decode(const char* src)
 		case 2:		// Valid, means one byte of info
 			// Skip any number of spaces
 			for ( ; ch != '\0'; ch = *src++ )
+			{
 				if ( !isspace(ch) )
+				{
 					break;
+				}
+			}
 				// Make sure there is another trailing = sign
 			if ( ch != Pad64 )
+			{
 				OW_THROW(Base64FormatException, "non-base64 char");
+			}
 			ch = *src++;		// Skip the =
 			// Fall through to "single trailing =" case
 			// FALLTHROUGH
@@ -419,14 +441,20 @@ Array<char> base64Decode(const char* src)
 			// We know this char is an =.  Is there anything but
 			//	whitespace after it?
 			for ( ; ch != '\0'; ch = *src++ )
+			{
 				if ( !isspace(ch) )
+				{
 					OW_THROW(Base64FormatException, "non-base64 char");
+				}
+			}
 				// Now make sure for cases 2 and 3 that the "extra"
 				//	bits that slopped past the last full byte were
 				//	zeros.  If we don't check them, they become a
 				//	subliminal channel.
 			if ( dest[destidx] != 0 )
+			{
 				OW_THROW(Base64FormatException, "non-base64 char");
+			}
 		}
 	}
 	else
@@ -434,7 +462,9 @@ Array<char> base64Decode(const char* src)
 		// We ended by seeing the end of the string.  Make sure we
 		//	have no partial bytes lying around.
 		if ( state != 0 )
+		{
 			OW_THROW(Base64FormatException, "non-base64 char");
+		}
 	}
 	Array<char> rval(dest.get(), dest.get()+destidx+1);
 	return rval;
@@ -486,7 +516,9 @@ String base64Encode(const UInt8* src, size_t len)
 		a = (cp[0] >> 2);
 		b = (cp[0] << 4) & 0x30;
 		if ( dst + 6 - dest.get() > szdest )
+		{
 			OW_THROW(Base64FormatException, "buffer too small");
+		}
 		sprintf(dst, "%c%c==",Base64[a],Base64[b]);
 		dst+=4;
 	}
@@ -497,7 +529,9 @@ String base64Encode(const UInt8* src, size_t len)
 		b |= (cp[1] >> 4);
 		c = (cp[1] << 2) & 0x3c;
 		if ( dst + 6 - dest.get() > szdest )
+		{
 			OW_THROW(Base64FormatException, "non-base64 char");
+		}
 		sprintf(dst, "%c%c%c=",Base64[a],Base64[b],Base64[c]);
 		dst+=4;
 	}
@@ -638,7 +672,10 @@ addHeader(Array<String>& headers, const String& key, const String& value)
 void
 eatEntity(istream& istr)
 {
-	while ( istr )	istr.get();
+	while ( istr )	
+	{
+		istr.get();
+	}
 }
 void
 decodeBasicCreds(const String& info, String& name, String& password)

@@ -56,7 +56,9 @@ HTTPCounter::getNextCounter()
 	MutexLock myLock(m_mutex);
 	m_counter++;
 	if (m_counter > m_maxValue)
+	{
 		m_counter = 0;
+	}
 	return m_counter;
 }
 

@@ -183,7 +183,7 @@ CIMDataType::operator CIMDataType::safe_bool () const
 	safe_bool cc = 0;
 	if(m_pdata)
 	{
-		cc = int(m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
+		cc = (m_pdata->m_type != CIMNULL && m_pdata->m_type != INVALID)
 			? &CIMDataType::m_pdata : 0;
 	}
 	return cc;

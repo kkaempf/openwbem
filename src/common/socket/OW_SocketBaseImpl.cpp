@@ -472,7 +472,9 @@ SocketBaseImpl::read(void* dataIn, int dataInLen, bool errorAsException)
 	if(rc < 0)
 	{
 		if(errorAsException)
+		{
 			OW_THROW(SocketException, "SocketBaseImpl::read");
+		}
 	}
 	return rc;
 }

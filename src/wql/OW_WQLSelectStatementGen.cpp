@@ -51,7 +51,9 @@ void WQLSelectStatementGen::visit_stmt_selectStmt_optSemicolon(
 {
 	pstmt_selectStmt_optSemicolon->m_pselectStmt1->accept(this);
 	if (pstmt_selectStmt_optSemicolon->m_poptSemicolon2)
+	{
 		pstmt_selectStmt_optSemicolon->m_poptSemicolon2->accept(this);
+	}
 }
 void WQLSelectStatementGen::visit_stmt_updateStmt_optSemicolon(
 	const stmt_updateStmt_optSemicolon*
@@ -128,21 +130,33 @@ void WQLSelectStatementGen::visit_selectStmt(
 {
 	// visit the unused ones, to detect an invalid query
 	if (pselectStmt->m_poptDistinct2)
+	{
 		pselectStmt->m_poptDistinct2->accept(this);
+	}
 	if (pselectStmt->m_poptGroupClause6)
+	{
 		pselectStmt->m_poptGroupClause6->accept(this);
+	}
 	if (pselectStmt->m_poptHavingClause7)
+	{
 		pselectStmt->m_poptHavingClause7->accept(this);
+	}
 	if (pselectStmt->m_poptSortClause8)
+	{
 		pselectStmt->m_poptSortClause8->accept(this);
+	}
 	// start fresh
 	m_stmt.clear();
 	// FROM clause
 	if (pselectStmt->m_poptFromClause4)
+	{
 		pselectStmt->m_poptFromClause4->accept(this);
+	}
 	// WHERE
 	if (pselectStmt->m_poptWhereClause5)
+	{
 		pselectStmt->m_poptWhereClause5->accept(this);
+	}
 	// desired properties
 	for (List<targetEl*>::const_iterator i = pselectStmt->m_ptargetList3->begin();
 		i != pselectStmt->m_ptargetList3->end();
@@ -831,7 +845,9 @@ void WQLSelectStatementGen::visit_cExpr_strColId_optIndirection(
 		m_stmt.appendWherePropertyName(*pcExpr_strColId_optIndirection->m_pstrColId1);
 	}
 	if (pcExpr_strColId_optIndirection->m_poptIndirection2)
+	{
 		pcExpr_strColId_optIndirection->m_poptIndirection2->accept(this);
+	}
 }
 void WQLSelectStatementGen::visit_cExpr_aExprConst(
 	const cExpr_aExprConst* pcExpr_aExprConst
@@ -1084,7 +1100,9 @@ void WQLSelectStatementGen::visit_attr(
 		
 	// TODO: What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
+	{
 		pattr->m_poptIndirection4->accept(this);
+	}
 }
 void WQLSelectStatementGen::visit_attrs_strAttrName(
 	const attrs_strAttrName* pattrs_strAttrName

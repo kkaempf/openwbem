@@ -77,7 +77,9 @@ void WQLProcessor::visit_stmt_selectStmt_optSemicolon(
 {
 	pstmt_selectStmt_optSemicolon->m_pselectStmt1->accept(this);
 	if (pstmt_selectStmt_optSemicolon->m_poptSemicolon2)
+	{
 		pstmt_selectStmt_optSemicolon->m_poptSemicolon2->accept(this);
+	}
 }
 void WQLProcessor::visit_stmt_updateStmt_optSemicolon(
 	const stmt_updateStmt_optSemicolon* pstmt_updateStmt_optSemicolon
@@ -85,7 +87,9 @@ void WQLProcessor::visit_stmt_updateStmt_optSemicolon(
 {
 	pstmt_updateStmt_optSemicolon->m_pupdateStmt1->accept(this);
 	if (pstmt_updateStmt_optSemicolon->m_poptSemicolon2)
+	{
 		pstmt_updateStmt_optSemicolon->m_poptSemicolon2->accept(this);
+	}
 }
 void WQLProcessor::visit_stmt_insertStmt_optSemicolon(
 	const stmt_insertStmt_optSemicolon* pstmt_insertStmt_optSemicolon
@@ -93,7 +97,9 @@ void WQLProcessor::visit_stmt_insertStmt_optSemicolon(
 {
 	pstmt_insertStmt_optSemicolon->m_pinsertStmt1->accept(this);
 	if (pstmt_insertStmt_optSemicolon->m_poptSemicolon2)
+	{
 		pstmt_insertStmt_optSemicolon->m_poptSemicolon2->accept(this);
+	}
 }
 void WQLProcessor::visit_stmt_deleteStmt_optSemicolon(
 	const stmt_deleteStmt_optSemicolon* pstmt_deleteStmt_optSemicolon
@@ -101,7 +107,9 @@ void WQLProcessor::visit_stmt_deleteStmt_optSemicolon(
 {
 	pstmt_deleteStmt_optSemicolon->m_pdeleteStmt1->accept(this);
 	if (pstmt_deleteStmt_optSemicolon->m_poptSemicolon2)
+	{
 		pstmt_deleteStmt_optSemicolon->m_poptSemicolon2->accept(this);
+	}
 }
 void WQLProcessor::visit_optSemicolon_empty(
 	const optSemicolon_empty* poptSemicolon_empty
@@ -271,7 +279,10 @@ void WQLProcessor::visit_deleteStmt(
 #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	populateInstances(*pdeleteStmt->m_pstrRelationName3);
 	if (pdeleteStmt->m_poptWhereClause4)
+	{
 		pdeleteStmt->m_poptWhereClause4->accept(this);
+	}
+
 	// Delete all the instances
 	for (CIMInstanceArray::const_iterator i = instances.begin();
 		 i != instances.end();
@@ -293,7 +304,9 @@ void WQLProcessor::visit_updateStmt(
 	populateInstances(*pupdateStmt->m_pstrRelationName2);
 	// Filter out the instances
 	if (pupdateStmt->m_poptWhereClause5)
+	{
 		pupdateStmt->m_poptWhereClause5->accept(this);
+	}
 	// Gather up the property names and values
 	for (List<updateTargetEl*>::const_iterator i = pupdateStmt->m_pupdateTargetList4->begin();
 		i != pupdateStmt->m_pupdateTargetList4->end();
@@ -377,19 +390,31 @@ void WQLProcessor::visit_selectStmt(
 {
 	m_doingSelect = true;
 	if (pselectStmt->m_poptDistinct2)
+	{
 		pselectStmt->m_poptDistinct2->accept(this);
+	}
 	// FROM clause will populate the instances array
 	if (pselectStmt->m_poptFromClause4)
+	{
 		pselectStmt->m_poptFromClause4->accept(this);
+	}
 	// WHERE will apply filter out the instance array
 	if (pselectStmt->m_poptWhereClause5)
+	{
 		pselectStmt->m_poptWhereClause5->accept(this);
+	}
 	if (pselectStmt->m_poptGroupClause6)
+	{
 		pselectStmt->m_poptGroupClause6->accept(this);
+	}
 	if (pselectStmt->m_poptHavingClause7)
+	{
 		pselectStmt->m_poptHavingClause7->accept(this);
+	}
 	if (pselectStmt->m_poptSortClause8)
+	{
 		pselectStmt->m_poptSortClause8->accept(this);
+	}
 	// Now filter the properties on the instances
 	for (List<targetEl*>::const_iterator i = pselectStmt->m_ptargetList3->begin();
 		i != pselectStmt->m_ptargetList3->end();
@@ -1509,7 +1534,9 @@ void WQLProcessor::visit_cExpr_strColId_optIndirection(
 	m_exprValue = DataType(*pcExpr_strColId_optIndirection->m_pstrColId1, DataType::ColumnNameType);
 	// TODO: What does indirection do? Array index
 	if (pcExpr_strColId_optIndirection->m_poptIndirection2)
+	{
 		pcExpr_strColId_optIndirection->m_poptIndirection2->accept(this);
+	}
 }
 void WQLProcessor::visit_cExpr_aExprConst(
 	const cExpr_aExprConst* pcExpr_aExprConst
@@ -1610,7 +1637,9 @@ void WQLProcessor::visit_cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN(
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (pcExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN->m_poptExtract3)
+	{
 		pcExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN->m_poptExtract3->accept(this);
+	}
 }
 void WQLProcessor::visit_cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN(
 	const cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN* pcExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN
@@ -1625,7 +1654,9 @@ void WQLProcessor::visit_cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN(
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (pcExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN->m_poptSubstrExpr3)
+	{
 		pcExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN->m_poptSubstrExpr3->accept(this);
+	}
 }
 void WQLProcessor::visit_cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN(
 	const cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN* pcExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN
@@ -1659,7 +1690,9 @@ void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBR
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_poptIndirection1)
+	{
 		poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_poptIndirection1->accept(this);
+	}
 	poptIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET->m_paExpr3->accept(this);
 }
 void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET(
@@ -1668,7 +1701,9 @@ void WQLProcessor::visit_optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_a
 {
 	OW_THROWCIMMSG(CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
 	if (poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_poptIndirection1)
+	{
 		poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_poptIndirection1->accept(this);
+	}
 	poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_paExpr3->accept(this);
 	poptIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET->m_paExpr5->accept(this);
 }
@@ -1787,7 +1822,9 @@ void WQLProcessor::visit_attr(
 	pattr->m_pattrs3->accept(this);
 	// TODO: What does indirection mean? Array index
 	if (pattr->m_poptIndirection4)
+	{
 		pattr->m_poptIndirection4->accept(this);
+	}
 }
 void WQLProcessor::visit_attrs_strAttrName(
 	const attrs_strAttrName* pattrs_strAttrName
@@ -1901,8 +1938,10 @@ void WQLProcessor::visit_aExprConst_BITCONST(
 	errno = 0;
 	Int64 val = String::strtoll(p, &endptr, 2);
 	if (*endptr != '\0' || errno == ERANGE)
+	{
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad bitstring integer input '%1'",
 			 p).c_str() );
+	}
 	
 	m_exprValue = DataType(val);
 }
@@ -1915,8 +1954,10 @@ void WQLProcessor::visit_aExprConst_HEXCONST(
 	errno = 0;
 	Int64 val = String::strtoll(p, &endptr, 16);
 	if (*endptr != '\0' || errno == ERANGE)
+	{
 		OW_THROWCIMMSG( CIMException::INVALID_QUERY, Format( "Bad bitstring integer input '%1'",
 			 p).c_str() );
+	}
 	
 	m_exprValue = DataType(val);
 }

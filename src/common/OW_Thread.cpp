@@ -255,7 +255,9 @@ void
 Thread::cooperativeCancel()
 {
 	if (!isRunning())
+	{
 		return;
+	}
 
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();
@@ -281,7 +283,9 @@ bool
 Thread::definitiveCancel(UInt32 waitForCooperativeSecs)
 {
 	if (!isRunning())
+	{
 		return true;
+	}
 
 	// give the thread a chance to clean up a bit or abort the cancellation.
 	doCooperativeCancel();

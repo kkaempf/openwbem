@@ -841,8 +841,8 @@ HTTPClient::checkResponse(Resp_t& rt)
 		do
 		{
 			statusLine = String::getLine(m_istr);
-		}
-		while(statusLine.trim().empty() && m_istr);
+		} while (statusLine.trim().empty() && m_istr);
+		
 		if (!m_istr)
 		{
 			close();

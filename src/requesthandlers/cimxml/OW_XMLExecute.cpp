@@ -732,8 +732,10 @@ XMLExecute::modifyClass(ostream&	/*ostr*/, CIMXMLParser& parser,
 {
 	String name = parser.mustGetAttribute(CIMXMLParser::A_NAME);
 	if (!name.equalsIgnoreCase(CIMXMLParser::P_ModifiedClass))
+	{
 		OW_THROWCIMMSG(CIMException::INVALID_PARAMETER,
 			Format("Parameter name was %1", name).c_str());
+	}
 	parser.mustGetChild();
 	//
 	// Process <CLASS> element
@@ -820,8 +822,10 @@ XMLExecute::deleteInstance(ostream&	/*ostr*/, CIMXMLParser& parser,
 {
 	String name = parser.getAttribute( CIMXMLParser::A_NAME );
 	if ( !name.equalsIgnoreCase( "InstanceName" ) )
+	{
 		OW_THROWCIMMSG( CIMException::INVALID_PARAMETER,
 			String( "Parameter name was " + name ).c_str() );
+	}
 	parser.mustGetChild();
 	CIMObjectPath instPath = XMLCIMFactory::createObjectPath(parser);
 	hdl.deleteInstance( ns, instPath );
@@ -1158,7 +1162,9 @@ XMLExecute::getProperty(ostream& ostr, CIMXMLParser& parser,
 	ostr << "<IRETURNVALUE>";
 	CIMValue cv = hdl.getProperty(ns, instpath, params[1].val.toString());
 	if (cv)
+	{
 		CIMtoXML(cv, ostr);
+	}
 	ostr << "</IRETURNVALUE>";
 }
 #endif // #if !defined(OW_DISABLE_PROPERTY_OPERATIONS)
@@ -1388,16 +1394,26 @@ XMLExecute::outputError(CIMException::ErrNoType errorCode,
 	setError(errorCode, msg);
 	ostr << "<SIMPLERSP>\r\n";
 	if (m_isIntrinsic)
+	{
 		ostr << "<IMETHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
+	}
 	else
+	{
 		ostr << "<METHODRESPONSE NAME=\"" << m_functionName << "\">\r\n";
+	}
+
 	ostr << "<ERROR CODE=\"" << errorCode << "\" DESCRIPTION=\"" <<
 		XMLEscape(msg) <<
 		"\"></ERROR>\r\n";
+
 	if (m_isIntrinsic)
+	{
 		ostr << "</IMETHODRESPONSE>\r\n";
+	}
 	else
+	{
 		ostr << "</METHODRESPONSE>\r\n";
+	}
 	ostr << "</SIMPLERSP>\r\n";
 }
 

@@ -55,6 +55,8 @@ public:
 	XMLPullParser(const String& str);
 	XMLPullParser(std::istream& sb);
 	XMLPullParser();
+	virtual ~XMLPullParser();
+
 	String mustGetAttribute(const char* const attrName)
 	{
 		return getAttribute(attrName, true);

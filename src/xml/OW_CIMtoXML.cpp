@@ -82,13 +82,17 @@ void LocalCIMNameSpacetoXML(CIMNameSpace const& ns, ostream& ostr)
 {
 	String name = ns.getNameSpace();
 	if(name.empty())
+	{
 		OW_THROWCIMMSG(CIMException::FAILED, "Namespace not set");
+	}
 	ostr << "<LOCALNAMESPACEPATH>";
 	for (;;)
 	{
 		size_t index = name.indexOf('/');
 		if (index == String::npos)
+		{
 			break;
+		}
 		if(index != 0)
 		{
 			ostr

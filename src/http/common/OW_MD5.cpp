@@ -126,14 +126,22 @@ MD5::convertBinToHex( const unsigned char sBin[ 16 ])
 	{
 		j = (sBin[i] >> 4) & 0xf;
 		if ( j <= 9 )
+		{
 			Hex[i*2] = (j + '0');
+		}
 		else
+		{
 			Hex[i*2]	= (j + 'a' - 10);
+		}
 		j = sBin[i] & 0xf;
 		if ( j <= 9 )
+		{
 			Hex[i*2+1] = (j + '0');
+		}
 		else
+		{
 			Hex[i*2+1] = (j + 'a' - 10);
+		}
 	};
 	Hex[MD5HASHHEXLEN] = '\0';
 	return String(Hex);
@@ -245,9 +253,10 @@ void
 	/* Compute number of bytes mod 64 */
 	index = ((context->count[0] >> 3) & 0x3F);
 	/* Update number of bits */
-	if ((context->count[0] += (inputLen << 3))
-		< (inputLen << 3))
+	if ((context->count[0] += (inputLen << 3)) < (inputLen << 3))
+	{
 		context->count[1]++;
+	}
 	context->count[1] += (inputLen >> 29);
 	partLen = 64 - index;
 	/* Transform as many times as possible.

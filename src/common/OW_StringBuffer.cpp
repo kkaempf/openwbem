@@ -352,7 +352,9 @@ StringBuffer::getLine(std::istream& is, bool resetBuffer)
 			++count;
 			
 			if(ch == '\n')
+			{
 				break;
+			}
 
 			append(static_cast<char>(ch));
 		}

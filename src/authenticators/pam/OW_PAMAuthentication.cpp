@@ -147,9 +147,13 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 	int rval;
 	rval = pam_start(OW_PACKAGE_PREFIX"openwbem", pUserName, &conv, &pamh);
 	if (rval == PAM_SUCCESS)
+	{
 		rval = pam_authenticate(pamh, 0);	 /* is user really user? */
+	}
 	if (rval == PAM_SUCCESS)
+	{
 		rval = pam_acct_mgmt(pamh, 0);		 /* permitted access? */
+	}
 	if (rval == PAM_CONV_ERR)
 	{
 		pam_end(pamh, rval);
@@ -202,10 +206,14 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 #if !defined(_pam_overwrite)
 #define _pam_overwrite(x)        \
 do {                             \
-     register char *__xx__;      \
-     if ((__xx__=(x)))           \
-          while (*__xx__)        \
-               *__xx__++ = '\0'; \
+	register char *__xx__;       \
+	if ((__xx__=(x)))            \
+	{                            \
+		while (*__xx__)          \
+		{                        \
+			*__xx__++ = '\0';    \
+		}                        \
+	}                            \
 } while (0)
 
 #endif
@@ -225,7 +233,9 @@ PAM_conv(int num_msg, const struct pam_message **msgm, struct pam_response **res
 	int count=0;
 	struct pam_response *reply;
 	if (num_msg <= 0)
+	{
 		return PAM_CONV_ERR;
+	}
 	//D(("allocating empty response structure array."));
 	reply = static_cast<struct pam_response *>(calloc(num_msg, sizeof(struct pam_response)));
 	if (reply == NULL)
