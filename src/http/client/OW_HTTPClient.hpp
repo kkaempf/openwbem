@@ -130,6 +130,16 @@ class HTTPClient : public CIMProtocolIFC
 		 * @param newPath The new HTTP path to use.
 		 */
 		void setHTTPPath(const String& newPath);
+
+		/**
+		 * After calling this function, the next request will (re)connect and 
+		 * send credentials using basic authentication.  This could be a 
+		 * security risk, and should only be used if you understand the
+		 * risks.  Using this avoids the extra round-trip that typically 
+		 * happens with http authentication.
+		 */
+		void assumeBasicAuth();
+
 	private:
 		void setUrl();
 		void cleanUpIStreams();

@@ -835,6 +835,15 @@ HTTPClient::setHTTPPath(const String& newPath)
 	m_httpPath = newPath;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+void HTTPClient::assumeBasicAuth()
+{
+	m_needsConnect = true;
+	// This simulates that the server returned www-authenticate: Basic in 
+	// the previous request which will cause HTTPClient to respond with the
+	// credentials on the next request.
+	m_responseHeaders["www-authenticate"] = "Basic"; 
+}
 
 } // end namespace OpenWBEM
 
