@@ -181,14 +181,15 @@ void OW_FileSystemTestCases::testgetFileLines()
 
 void OW_FileSystemTestCases::testdirname()
 {
-	unitAssert(FileSystem::Path::dirname("/usr/lib") == "/usr");
-	unitAssert(FileSystem::Path::dirname("/usr/lib/") == "/usr");
-	unitAssert(FileSystem::Path::dirname("/usr/") == "/");
-	unitAssert(FileSystem::Path::dirname("/usr") == "/");
-	unitAssert(FileSystem::Path::dirname("usr") == ".");
-	unitAssert(FileSystem::Path::dirname("//usr") == "/");
-	unitAssert(FileSystem::Path::dirname("///usr////") == "/");
+	unitAssert(FileSystem::Path::dirname("/x/y") == "/x");
+	unitAssert(FileSystem::Path::dirname("/x/y/") == "/x");
+	unitAssert(FileSystem::Path::dirname("/x/") == "/");
+	unitAssert(FileSystem::Path::dirname("/x") == "/");
+	unitAssert(FileSystem::Path::dirname("x") == ".");
+	unitAssert(FileSystem::Path::dirname("//x") == "/");
+	unitAssert(FileSystem::Path::dirname("///x////") == "/");
 	unitAssert(FileSystem::Path::dirname("/") == "/");
+	unitAssert(FileSystem::Path::dirname("////") == "/");
 	unitAssert(FileSystem::Path::dirname(".") == ".");
 	unitAssert(FileSystem::Path::dirname("..") == ".");
 	unitAssert(FileSystem::Path::dirname("x/") == ".");
@@ -196,6 +197,69 @@ void OW_FileSystemTestCases::testdirname()
 	unitAssert(FileSystem::Path::dirname("x///") == ".");
 	unitAssert(FileSystem::Path::dirname("x/y") == "x");
 	unitAssert(FileSystem::Path::dirname("x///y") == "x");
+}
+
+
+
+void OW_FileSystemTestCases::testrealPath()
+{
+	using namespace FileSystem::Path;
+
+	symlink("SYMLINK_LOOP", "SYMLINK_LOOP");
+	symlink(".", "SYMLINK_1");
+	symlink("//////./../../etc", "SYMLINK_2");
+	symlink("SYMLINK_1", "SYMLINK_3");
+	symlink("SYMLINK_2", "SYMLINK_4");
+	symlink("doesNotExist", "SYMLINK_5");
+	File f(FileSystem::createFile("doesExist"));
+
+	unitAssert(realPath("/") == "/");
+	unitAssert(realPath("/////////////////////////////////") == "/");
+	unitAssert(realPath("/.././.././.././..///") ==  "/");
+	unitAssert(realPath("/etc") == "/etc");
+	cout << '"' << realPath("/etc/../etc") << '"' << endl;
+	unitAssert(realPath("/etc/../etc") == "/etc");
+	//unitAssertThrows(realPath("/doesNotExist/../etc"));
+	//unitAssert(realPath("././././.") == getCWD());
+	unitAssert(realPath("/././././.") == "/");
+	unitAssert(realPath("/etc/./././.") == "/etc");
+// {"/etc/.//doesNotExist",              0, "/etc/doesNotExist", ENOENT},
+// {"./doesExist",                       "./doesExist"},
+// {"./doesExist/",                      "./doesExist"},
+// /* 10 */
+// {"./doesExist/../doesExist",          "./doesExist"},
+// {"foobar",                            0, "./foobar", ENOENT},
+// {".",                                 "."},
+// {"./foobar",                          0, "./foobar", ENOENT},
+// {"SYMLINK_LOOP",                      0, "./SYMLINK_LOOP", ELOOP},
+// /* 15 */
+// {"./SYMLINK_LOOP",                    0, "./SYMLINK_LOOP", ELOOP},
+// {"SYMLINK_1",                         "."},
+// {"SYMLINK_1/foobar",                  0, "./foobar", ENOENT},
+// {"SYMLINK_2",                         "/etc"},
+// {"SYMLINK_3",                         "."},
+// /* 20 */
+// {"SYMLINK_4",                         "/etc"},
+// {"../stdlib/SYMLINK_1",               "."},
+// {"../stdlib/SYMLINK_2",               "/etc"},
+// {"../stdlib/SYMLINK_3",               "."},
+// {"../stdlib/SYMLINK_4",               "/etc"},
+// /* 25 */
+// {"./SYMLINK_5",                       0, "./doesNotExist", ENOENT},
+// {"SYMLINK_5",                         0, "./doesNotExist", ENOENT},
+// {"SYMLINK_5/foobar",                  0, "./doesNotExist", ENOENT},
+// {"doesExist/../../stdlib/doesExist",  "./doesExist"},
+// {"doesExist/.././../stdlib/.",        "."}
+
+
+
+	FileSystem::removeFile("doesExist");
+	FileSystem::removeFile("SYMLINK_LOOP");
+	FileSystem::removeFile("SYMLINK_1");
+	FileSystem::removeFile("SYMLINK_2");
+	FileSystem::removeFile("SYMLINK_3");
+	FileSystem::removeFile("SYMLINK_4");
+	FileSystem::removeFile("SYMLINK_5");
 }
 
 Test* OW_FileSystemTestCases::suite()
@@ -209,6 +273,7 @@ Test* OW_FileSystemTestCases::suite()
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetFileContents);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testgetFileLines);
 	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testdirname);
+	ADD_TEST_TO_SUITE(OW_FileSystemTestCases, testrealPath);
 
 	return testSuite;
 }

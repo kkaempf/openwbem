@@ -57,6 +57,7 @@ private:
 	void testgetFileContents();
 	void testgetFileLines();
 	void testdirname();
+	void testrealPath();
 };
 
 #endif

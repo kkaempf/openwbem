@@ -502,31 +502,81 @@ String realPath(const String& path)
 #ifdef OW_WIN32
 #error "TODO: port realPath"
 #else
-	return path;
+	String resolvedPath;
+	const char* pathCompBegin(path.c_str());
+	const char* pathCompEnd(pathCompBegin);
+	while (*pathCompBegin != '\0')
+	{
+		// skip bunches of ////
+		while (*pathCompBegin == '/')
+		{
+			++pathCompBegin;
+		}
+
+		// find end of the path
+		pathCompEnd = pathCompBegin;
+		while (*pathCompEnd != '\0' && *pathCompEnd != '/')
+		{
+			++pathCompEnd;
+		}
+
+		if (pathCompEnd - pathCompBegin == 0)
+		{
+			break;
+		}
+		else if (pathCompEnd - pathCompBegin == 1 && pathCompBegin[0] == '.')
+		{
+			;// don't add . to the result
+		}
+		else if (pathCompEnd - pathCompBegin == 2 && pathCompBegin[0] == '.' && pathCompBegin[1] == '.')
+		{
+			// hit .. so remove the last directory from the result
+			size_t lastSlash = resolvedPath.lastIndexOf('/');
+			if (lastSlash != String::npos)
+			{
+				resolvedPath.erase(lastSlash);
+			}
+		}
+		else
+		{
+			resolvedPath += '/';
+			resolvedPath += String(pathCompBegin, pathCompEnd - pathCompBegin);
+		}
+
+		// keep the loop flowing
+		pathCompBegin = pathCompEnd;
+	}
+
+	if (resolvedPath.empty())
+	{
+		resolvedPath = "/";
+	}
+
+	return resolvedPath;
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////////////
-String dirname(const String& dir)
+String dirname(const String& filename)
 {
 #ifdef OW_WIN32
 #error "TODO: port dirname"
 #else
 	// skip over trailing slashes
-	size_t lastSlash = dir.length() - 1;
-	while (lastSlash > 0 && dir[lastSlash] == '/')
+	size_t lastSlash = filename.length() - 1;
+	while (lastSlash > 0 && filename[lastSlash] == '/')
 	{
 		--lastSlash;
 	}
 	
-	lastSlash = dir.lastIndexOf('/', lastSlash);
+	lastSlash = filename.lastIndexOf('/', lastSlash);
 
 	if (lastSlash == String::npos)
 	{
 		return ".";
 	}
 
-	while (lastSlash > 0 && dir[lastSlash - 1] == '/')
+	while (lastSlash > 0 && filename[lastSlash - 1] == '/')
 	{
 		--lastSlash;
 	}
@@ -535,7 +585,7 @@ String dirname(const String& dir)
 	{
 		return "/";
 	}
-	return dir.substring(0, lastSlash);
+	return filename.substring(0, lastSlash);
 #endif
 }
 

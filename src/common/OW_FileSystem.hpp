@@ -248,6 +248,7 @@ namespace FileSystem
 		 * function, however it's easier to use and thread safe.
 		 * @param path The path to canonicalize.
 		 * @return The canonicalized version of path.
+		 * @throws FileSystemException E_ACCESS, E_IO, E_LOOP, E_NOENT, E_NOTDIR
 		 */
 		OW_COMMON_API String realPath(const String& path);
 
@@ -258,8 +259,10 @@ namespace FileSystem
 		 * If path does not contain a '/', then dirname() shall return the 
 		 * string ".". If path an empty string, dirname() shall return the 
 		 * string ".".
+		 * @param filename The file pathname
+		 * @return The pathname of the parent directory of filename.
 		 */
-		OW_COMMON_API String dirname(const String& dir);
+		OW_COMMON_API String dirname(const String& filename);
 
 	} // end namespace Path
 
