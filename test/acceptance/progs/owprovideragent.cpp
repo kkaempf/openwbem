@@ -219,6 +219,7 @@ int main(int argc, char* argv[])
 		CIMOMHandleIFC& rch = *chRef;
 
 		LoggerRef logger(new RPALogger);
+		logger->setLogLevel(E_DEBUG_LEVEL);
 
 
 		ConfigFile::ConfigMap cmap; 
