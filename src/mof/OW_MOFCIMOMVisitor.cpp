@@ -321,9 +321,9 @@ void CIMOMVisitor::VisitAssociationFeatureClassFeature( const AssociationFeature
 }
 void CIMOMVisitor::VisitQualifier( const Qualifier *pQualifier )
 {
-	m_curQualifier = CIMQualifier(*pQualifier->pQualifierName->pQualifierName);
-	CIMQualifierType qt = getQualifierType(m_curQualifier.getName(), pQualifier->theLineInfo);
-	m_curQualifier.setDefaults(qt);
+	CIMQualifierType qt = getQualifierType(*pQualifier->pQualifierName->pQualifierName, pQualifier->theLineInfo);
+	m_curQualifier = CIMQualifier(qt);
+	m_curQualifier.setName(*pQualifier->pQualifierName->pQualifierName);
 	if ( pQualifier->pQualifierParameter.get() != 0 )
 	{
 		pQualifier->pQualifierParameter->Accept( this );
