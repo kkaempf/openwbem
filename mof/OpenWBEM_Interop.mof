@@ -78,4 +78,35 @@ class OpenWBEM_CIMOMStatisticalData : CIM_CIMOMStatisticalData
 };
 
 
+class OpenWBEM_RemoteProviderRegistration
+{
+        [key]
+        string InstanceID;
+
+        [Required]
+        string Namespace;
+
+        [Required]
+        string ClassName;
+
+        [Description (
+                "ProviderTypes identifies the kind of provider."),
+                ValueMap {"1", "2", "3", "4", "5"},
+                Values {"Instance", "Secondary Instance", "Association", "Indication",
+                   "Method"},
+                ArrayType ("Indexed"),
+                Required ]
+        uint16 ProviderTypes[];
+
+
+        [Required]
+        string Url;
+
+        [Required]
+        bool AlwaysSendCredentials = false;
+
+        [Required]
+        bool UseConnectionCredentials = false;
+};
+
 
