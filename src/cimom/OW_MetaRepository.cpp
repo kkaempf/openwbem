@@ -952,7 +952,7 @@ void
 OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result,
 	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin)
+	OW_Bool includeClassOrigin, bool doClassNameOnly)
 {
 	throwIfNotOpen();
 	OW_HDBHandleLock hdl(this, getHandle());
@@ -1008,7 +1008,7 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 		if(!pnode.areAllFlagsOn(OW_HDBNSNODE_FLAG))
 		{
 			_getClassNodes(result, pnode, hdl.getHandle(), deep, localOnly,
-				includeQualifiers, includeClassOrigin);
+				includeQualifiers, includeClassOrigin, doClassNameOnly);
 		}
 
 		pnode = hdl->getNextSibling(pnode);
@@ -1019,11 +1019,23 @@ OW_MetaRepository::enumClass(const OW_String& ns, const OW_String& className,
 void
 OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
 	OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly,
-	OW_Bool includeQualifiers, OW_Bool includeClassOrigin)
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin, bool doClassNameOnly)
 {
-	OW_CIMClass cimCls = _getClassFromNode(node, hdl);
-	result.handle(cimCls.clone(localOnly, includeQualifiers,
-		includeClassOrigin));
+	if (doClassNameOnly)
+	{
+		OW_String name;
+		OW_RepositoryIStream istrm(node.getDataLen(), node.getData());
+		// This is breaking abstraction, and may bite us later if OW_CIMClass::readObject() ever changes..., but in some cases efficiency wins out.
+		OW_CIMBase::readSig( istrm, OW_CIMCLASSSIG );
+		name.readObject(istrm);
+		result.handle(OW_CIMClass(name));
+	}
+	else
+	{
+		OW_CIMClass cimCls = _getClassFromNode(node, hdl);
+		result.handle(cimCls.clone(localOnly, includeQualifiers,
+			includeClassOrigin));
+	}
 
 	if(deep)
 	{
@@ -1031,7 +1043,7 @@ OW_MetaRepository::_getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNod
 		while(node)
 		{
 			_getClassNodes(result, node, hdl, deep, localOnly, includeQualifiers,
-				includeClassOrigin);
+				includeClassOrigin, doClassNameOnly);
 			node = hdl.getNextSibling(node);
 		}
 	}

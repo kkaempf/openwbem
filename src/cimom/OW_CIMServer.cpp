@@ -902,7 +902,7 @@ OW_CIMServer::enumClassNames(
 		OW_CIMObjectPath lcop(className, ns);
 		CIMClassToCIMObjectPathHandler handler(result,lcop);
 		m_mStore.enumClass(ns, className, handler,
-			deep, false, true, true);
+			deep, false, true, true, true);
 	}
 	catch (OW_HDBException&)
 	{

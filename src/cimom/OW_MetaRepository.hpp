@@ -178,7 +178,7 @@ public:
 		const OW_String& className,
 		OW_CIMClassResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin);
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin, bool doClassNameOnly=false);
 
 	/**
 	 * Enumerator the qualifiers in a given namespace
@@ -266,7 +266,7 @@ private:
 
 	void _getClassNodes(OW_CIMClassResultHandlerIFC& result, OW_HDBNode node,
 		OW_HDBHandle hdl, OW_Bool deep, OW_Bool localOnly=false,
-		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true);
+		OW_Bool includeQualifiers=true, OW_Bool includeClassOrigin=true, bool doClassNameOnly=false);
 
 	void _getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
 		OW_HDBHandle hdl);
