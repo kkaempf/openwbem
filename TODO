@@ -19,6 +19,7 @@ Fix problems:
     - On startup of UDS if the UDS already exists, SocketImpl need to figure 
       out if someone else is listening. If so, then fail, otherwise delete it.
       Use fcntl locking (if available, else try flock) to check.
+      Or we could use kernel semaphores (semget semop).
     - OW_File needs to be more C++ish with a destructor, reasonable copy
       semantics, etc.
     - Use kill(pid, 0) to detect a stale pid file.
