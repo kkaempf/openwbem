@@ -50,6 +50,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_Logger.hpp"
 #include "OW_ServiceIFCNames.hpp"
+#include "OW_CIMDateTime.hpp"
 
 namespace OpenWBEM
 {
@@ -91,6 +92,7 @@ IndicationRepLayerImpl::getInstance(
 		{
 			CIMInstance expInst("CIM_InstRead");
 			expInst.setProperty("SourceInstance", CIMValue(theInst));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch (CIMException&)
@@ -148,6 +150,7 @@ IndicationRepLayerImpl::invokeMethod(
 				expInst.setProperty("MethodParameters", CIMValue(ParamsEmbed));
 				expInst.setProperty("PreCall", CIMValue(false));
 				expInst.setProperty("ReturnValue", CIMValue(rval.toString()));
+				expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 				exportIndication(expInst, ns);
 			}
 			catch (CIMException&)
@@ -175,6 +178,7 @@ IndicationRepLayerImpl::modifyClass(const String &ns,
 			CIMInstance expInst("CIM_ClassModification");
 			expInst.setProperty("PreviousClassDefinition", CIMValue(CCOrig));
 			expInst.setProperty("ClassDefinition", CIMValue(cc));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch (CIMException&)
@@ -198,6 +202,7 @@ IndicationRepLayerImpl::createClass(const String& ns,
 		{
 			CIMInstance expInst("CIM_ClassCreation");
 			expInst.setProperty("ClassDefinition", CIMValue(cc));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch(CIMException&)
@@ -219,6 +224,7 @@ IndicationRepLayerImpl::deleteClass(const String& ns, const String& className,
 		{
 			CIMInstance expInst("CIM_ClassDeletion");
 			expInst.setProperty("ClassDefinition", CIMValue(cc));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch (CIMException&)
@@ -252,6 +258,7 @@ IndicationRepLayerImpl::modifyInstance(
 			// Filtering the properties in ss is done per the CIM_Interop
 			// schema MOF by the indication server, we don't need to do it here.
 			expInst.setProperty("SourceInstance", CIMValue(modifiedInstance));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch (CIMException&)
@@ -274,6 +281,7 @@ IndicationRepLayerImpl::createInstance(const String& ns,
 		{
 			CIMInstance expInst("CIM_InstCreation");
 			expInst.setProperty("SourceInstance", CIMValue(ci));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch(CIMException&)
@@ -296,6 +304,7 @@ IndicationRepLayerImpl::deleteInstance(const String& ns, const CIMObjectPath& pa
 		{
 			CIMInstance expInst("CIM_InstDeletion");
 			expInst.setProperty("SourceInstance", CIMValue(instOrig));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			exportIndication(expInst, ns);
 		}
 		catch (CIMException&)

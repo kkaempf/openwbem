@@ -677,21 +677,23 @@ CIMInstance filterInstance(const CIMInstance& toFilter, const StringArray& props
 } // end anonymous namespace
 //////////////////////////////////////////////////////////////////////////////
 void
-IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg_,
+IndicationServerImplThread::_processIndication(const CIMInstance& instanceArg,
 	const String& instNS)
 {
 	OW_LOG_DEBUG(m_logger, Format("IndicationServerImplThread::_processIndication "
-		"instanceArg = %1 instNS = %2", instanceArg_.toString(), instNS));
+		"instanceArg = %1 instNS = %2", instanceArg.toString(), instNS));
 	
 	// If the provider didn't set the IndicationTime property, then we'll set it.
-	CIMInstance instanceArg(instanceArg_);
-	if (!instanceArg.getProperty("IndicationTime"))
-	{
-		DateTime dtm;
-		dtm.setToCurrent();
-		CIMDateTime cdt(dtm);
-		instanceArg.setProperty("IndicationTime", CIMValue(cdt));
-	}
+	// DN 01/25/2005: removing this, since not all indications may have the IndicationTime property, and it's not required anyway. 
+	// The indication producers should set it if necessary.
+	//CIMInstance instanceArg(instanceArg_);
+	//if (!instanceArg.getProperty("IndicationTime"))
+	//{
+	//	DateTime dtm;
+	//	dtm.setToCurrent();
+	//	CIMDateTime cdt(dtm);
+	//	instanceArg.setProperty("IndicationTime", CIMValue(cdt));
+	//}
 
 	CIMName curClassName = instanceArg.getClassName();
 	if (curClassName == CIMName())

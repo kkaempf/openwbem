@@ -222,6 +222,7 @@ public:
 				// set our instance to Started=false
 				m_inst.updatePropertyValue("Started", CIMValue(false));
 				indicationInst.updatePropertyValue("SourceInstance", CIMValue(m_inst));
+				indicationInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 				hdl->exportIndication(indicationInst, interopNS);
 				// Wait a bit to give the indication server time to export it.
 				// Yeah this doesn't guarantee the listeners will receive the indication,

@@ -43,6 +43,7 @@
 #include "OW_ResultHandlerIFC.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_Logger.hpp"
+#include "OW_CIMDateTime.hpp"
 
 namespace OpenWBEM
 {
@@ -215,6 +216,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 				CIMInstance expInst;
 				expInst.setClassName("CIM_InstDeletion");
 				expInst.setProperty("SourceInstance", CIMValue(*pi));
+				expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 				hdl->exportIndication(expInst, m_ns);
 			}
 			++pi;
@@ -227,6 +229,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 				CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
 				expInst.setProperty("SourceInstance", CIMValue(*ci));
+				expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 				hdl->exportIndication(expInst, m_ns);
 			}
 			++ci;
@@ -241,6 +244,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 					expInst.setClassName("CIM_InstModification");
 					expInst.setProperty("PreviousInstance", CIMValue(*pi));
 					expInst.setProperty("SourceInstance", CIMValue(*ci));
+					expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 					hdl->exportIndication(expInst, m_ns);
 				}
 			}
@@ -256,6 +260,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			CIMInstance expInst;
 			expInst.setClassName("CIM_InstDeletion");
 			expInst.setProperty("SourceInstance", CIMValue(*pi));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			hdl->exportIndication(expInst, m_ns);
 		}
 		++pi;
@@ -268,6 +273,7 @@ LifecycleIndicationPoller::poll(const ProviderEnvironmentIFCRef &env)
 			CIMInstance expInst;
 			expInst.setClassName("CIM_InstCreation");
 			expInst.setProperty("SourceInstance", CIMValue(*ci));
+			expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 			hdl->exportIndication(expInst, m_ns);
 		}
 		++ci;

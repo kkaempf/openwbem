@@ -399,6 +399,7 @@ private:
 					CIMInstance expInst;
 					expInst.setClassName("CIM_InstDeletion");
 					expInst.setProperty("SourceInstance", CIMValue(m_insts[i]));
+					expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 					hdl->exportIndication(expInst, "root/testsuite");
 				}
 			}
@@ -420,6 +421,7 @@ private:
 				CIMInstance expInst;
 				expInst.setClassName("CIM_InstCreation");
 				expInst.setProperty("SourceInstance", CIMValue(iToAdd));
+				expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 				hdl->exportIndication(expInst, "root/testsuite");
 			}
 			m_insts.push_back(iToAdd);
@@ -436,6 +438,7 @@ private:
 				expInst.setClassName("CIM_InstModification");
 				expInst.setProperty("PreviousInstance", CIMValue(prevInst));
 				expInst.setProperty("SourceInstance", CIMValue(m_insts[0]));
+				expInst.setProperty("IndicationTime", CIMValue(CIMDateTime(DateTime::getCurrent())));
 				hdl->exportIndication(expInst, "root/testsuite");
 			}
 		}
