@@ -155,7 +155,6 @@ OW_NonRecursiveMutexLock.hpp \
 OW_NetworkTypes.hpp \
 OW_OperationContext.hpp \
 OW_PosixUnnamedPipe.hpp \
-OW_PthDefines.hpp \
 OW_RWLocker.hpp \
 OW_RandomNumber.hpp \
 OW_RefCount.hpp \
