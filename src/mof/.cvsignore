@@ -5,9 +5,10 @@ Makefile
 *.lo
 *.la
 lib*so*
-mofparser.ypp.output
-moflexer.cpp
 owmofc
-mofparser.cpp
-mofparser.tab.h
-mofparser.ypp.tab.h
+moflexer.cc
+mofparser.cc
+mofparser.h
+mofparser.output
+mofparser.tab.cpp
+mofparser.tab.hpp

@@ -290,766 +290,766 @@ int yylex();
 
 stmt:
 	selectStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_selectStmt_optSemicolon($1, $2) }
+	  { $$ = OW_WQLImpl::statement = new stmt_selectStmt_optSemicolon($1, $2); }
 	| updateStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_updateStmt_optSemicolon($1, $2) }
+	  { $$ = OW_WQLImpl::statement = new stmt_updateStmt_optSemicolon($1, $2); }
 	| insertStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_insertStmt_optSemicolon($1, $2) }
+	  { $$ = OW_WQLImpl::statement = new stmt_insertStmt_optSemicolon($1, $2); }
 	| deleteStmt optSemicolon
-	  { $$ = OW_WQLImpl::statement = new stmt_deleteStmt_optSemicolon($1, $2) }
+	  { $$ = OW_WQLImpl::statement = new stmt_deleteStmt_optSemicolon($1, $2); }
 
 
 optSemicolon:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| SEMICOLON
-	  { $$ = new optSemicolon_SEMICOLON($1) }
+	  { $$ = new optSemicolon_SEMICOLON($1); }
 
 
 insertStmt:
 	INSERT INTO strRelationName insertRest
-	  { $$ = new insertStmt($1, $2, $3, $4) }
+	  { $$ = new insertStmt($1, $2, $3, $4); }
 
 
 targetList:
 	targetEl
-	  { $$ = new OW_List<targetEl*>(1, $1) }
+	  { $$ = new OW_List<targetEl*>(1, $1); }
 	| targetList COMMA targetEl
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 columnList:
 	strColumnElem
-	  { $$ = new OW_List<OW_String*>(1, $1) }
+	  { $$ = new OW_List<OW_String*>(1, $1); }
 	| columnList COMMA strColumnElem
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 insertRest:
 	VALUES LEFTPAREN targetList RIGHTPAREN
-	  { $$ = new insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN($1, $2, $3, $4); }
 	| DEFAULT VALUES
-	  { $$ = new insertRest_DEFAULT_VALUES($1, $2) }
+	  { $$ = new insertRest_DEFAULT_VALUES($1, $2); }
 	| LEFTPAREN columnList RIGHTPAREN VALUES LEFTPAREN targetList RIGHTPAREN
-	  { $$ = new insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN($1, $2, $3, $4, $5, $6, $7) }
+	  { $$ = new insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN($1, $2, $3, $4, $5, $6, $7); }
 
 
 strColumnElem:
 	strColId
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 deleteStmt:
 	DELETE FROM strRelationName optWhereClause
-	  { $$ = new deleteStmt($1, $2, $3, $4) }
+	  { $$ = new deleteStmt($1, $2, $3, $4); }
 
 
 updateTargetList:
 	updateTargetEl
-	  { $$ = new OW_List<updateTargetEl*>(1, $1) }
+	  { $$ = new OW_List<updateTargetEl*>(1, $1); }
 	| updateTargetList COMMA updateTargetEl
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 updateStmt:
 	UPDATE strRelationName SET updateTargetList optWhereClause
-	  { $$ = new updateStmt($1, $2, $3, $4, $5) }
+	  { $$ = new updateStmt($1, $2, $3, $4, $5); }
 
 
 selectStmt:
 	SELECT optDistinct targetList optFromClause optWhereClause optGroupClause optHavingClause optSortClause
-	  { $$ = new selectStmt($1, $2, $3, $4, $5, $6, $7, $8) }
+	  { $$ = new selectStmt($1, $2, $3, $4, $5, $6, $7, $8); }
 
 
 exprSeq:
 	aExpr
-	  { $$ = new exprSeq_aExpr($1) }
+	  { $$ = new exprSeq_aExpr($1); }
 	| exprSeq COMMA aExpr
-	  { $$ = new exprSeq_exprSeq_COMMA_aExpr($1, $2, $3) }
+	  { $$ = new exprSeq_exprSeq_COMMA_aExpr($1, $2, $3); }
 	| exprSeq USING aExpr
-	  { $$ = new exprSeq_exprSeq_USING_aExpr($1, $2, $3) }
+	  { $$ = new exprSeq_exprSeq_USING_aExpr($1, $2, $3); }
 
 
 optDistinct:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| DISTINCT
-	  { $$ = new optDistinct_DISTINCT($1) }
+	  { $$ = new optDistinct_DISTINCT($1); }
 	| DISTINCT ON LEFTPAREN exprSeq RIGHTPAREN
-	  { $$ = new optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5) }
+	  { $$ = new optDistinct_DISTINCT_ON_LEFTPAREN_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| ALL
-	  { $$ = new optDistinct_ALL($1) }
+	  { $$ = new optDistinct_ALL($1); }
 
 
 sortbyList:
 	sortby
-	  { $$ = new OW_List<sortby*>(1, $1) }
+	  { $$ = new OW_List<sortby*>(1, $1); }
 	| sortbyList COMMA sortby
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 sortClause:
 	ORDER BY sortbyList
-	  { $$ = new sortClause($1, $2, $3) }
+	  { $$ = new sortClause($1, $2, $3); }
 
 
 optSortClause:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| sortClause
-	  { $$ = new optSortClause_sortClause($1) }
+	  { $$ = new optSortClause_sortClause($1); }
 
 
 sortby:
 	aExpr strOptOrderSpecification
-	  { $$ = new sortby($1, $2) }
+	  { $$ = new sortby($1, $2); }
 
 
 strOptOrderSpecification:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| ASC
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| DESC
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 nameList:
 	strName
-	  { $$ = new OW_List<OW_String*>(1, $1) }
+	  { $$ = new OW_List<OW_String*>(1, $1); }
 	| nameList COMMA strName
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 optGroupClause:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| GROUP BY exprSeq
-	  { $$ = new optGroupClause_GROUP_BY_exprSeq($1, $2, $3) }
+	  { $$ = new optGroupClause_GROUP_BY_exprSeq($1, $2, $3); }
 
 
 optHavingClause:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| HAVING aExpr
-	  { $$ = new optHavingClause_HAVING_aExpr($1, $2) }
+	  { $$ = new optHavingClause_HAVING_aExpr($1, $2); }
 
 
 fromList:
 	tableRef
-	  { $$ = new OW_List<tableRef*>(1, $1) }
+	  { $$ = new OW_List<tableRef*>(1, $1); }
 	| fromList COMMA tableRef
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 optFromClause:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| FROM fromList
-	  { $$ = new optFromClause_FROM_fromList($1, $2) }
+	  { $$ = new optFromClause_FROM_fromList($1, $2); }
 
 
 tableRef:
 	relationExpr
-	  { $$ = new tableRef_relationExpr($1) }
+	  { $$ = new tableRef_relationExpr($1); }
 	| relationExpr aliasClause
-	  { $$ = new tableRef_relationExpr_aliasClause($1, $2) }
+	  { $$ = new tableRef_relationExpr_aliasClause($1, $2); }
 	| joinedTable
-	  { $$ = new tableRef_joinedTable($1) }
+	  { $$ = new tableRef_joinedTable($1); }
 	| LEFTPAREN joinedTable RIGHTPAREN aliasClause
-	  { $$ = new tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause($1, $2, $3, $4) }
+	  { $$ = new tableRef_LEFTPAREN_joinedTable_RIGHTPAREN_aliasClause($1, $2, $3, $4); }
 
 
 joinedTable:
 	LEFTPAREN joinedTable RIGHTPAREN
-	  { $$ = new joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN($1, $2, $3) }
+	  { $$ = new joinedTable_LEFTPAREN_joinedTable_RIGHTPAREN($1, $2, $3); }
 	| tableRef CROSS JOIN tableRef
-	  { $$ = new joinedTable_tableRef_CROSS_JOIN_tableRef($1, $2, $3, $4) }
+	  { $$ = new joinedTable_tableRef_CROSS_JOIN_tableRef($1, $2, $3, $4); }
 	| tableRef UNIONJOIN tableRef
-	  { $$ = new joinedTable_tableRef_UNIONJOIN_tableRef($1, $2, $3) }
+	  { $$ = new joinedTable_tableRef_UNIONJOIN_tableRef($1, $2, $3); }
 	| tableRef joinType JOIN tableRef joinQual
-	  { $$ = new joinedTable_tableRef_joinType_JOIN_tableRef_joinQual($1, $2, $3, $4, $5) }
+	  { $$ = new joinedTable_tableRef_joinType_JOIN_tableRef_joinQual($1, $2, $3, $4, $5); }
 	| tableRef JOIN tableRef joinQual
-	  { $$ = new joinedTable_tableRef_JOIN_tableRef_joinQual($1, $2, $3, $4) }
+	  { $$ = new joinedTable_tableRef_JOIN_tableRef_joinQual($1, $2, $3, $4); }
 	| tableRef NATURAL joinType JOIN tableRef
-	  { $$ = new joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef($1, $2, $3, $4, $5) }
+	  { $$ = new joinedTable_tableRef_NATURAL_joinType_JOIN_tableRef($1, $2, $3, $4, $5); }
 	| tableRef NATURAL JOIN tableRef
-	  { $$ = new joinedTable_tableRef_NATURAL_JOIN_tableRef($1, $2, $3, $4) }
+	  { $$ = new joinedTable_tableRef_NATURAL_JOIN_tableRef($1, $2, $3, $4); }
 
 
 aliasClause:
 	AS strColId LEFTPAREN nameList RIGHTPAREN
-	  { $$ = new aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4, $5) }
+	  { $$ = new aliasClause_AS_strColId_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| AS strColId
-	  { $$ = new aliasClause_AS_strColId($1, $2) }
+	  { $$ = new aliasClause_AS_strColId($1, $2); }
 	| strColId LEFTPAREN nameList RIGHTPAREN
-	  { $$ = new aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new aliasClause_strColId_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4); }
 	| strColId
-	  { $$ = new aliasClause_strColId($1) }
+	  { $$ = new aliasClause_strColId($1); }
 
 
 joinType:
 	FULL strOptJoinOuter
-	  { $$ = new joinType_FULL_strOptJoinOuter($1, $2) }
+	  { $$ = new joinType_FULL_strOptJoinOuter($1, $2); }
 	| LEFT strOptJoinOuter
-	  { $$ = new joinType_LEFT_strOptJoinOuter($1, $2) }
+	  { $$ = new joinType_LEFT_strOptJoinOuter($1, $2); }
 	| RIGHT strOptJoinOuter
-	  { $$ = new joinType_RIGHT_strOptJoinOuter($1, $2) }
+	  { $$ = new joinType_RIGHT_strOptJoinOuter($1, $2); }
 	| INNERP
-	  { $$ = new joinType_INNERP($1) }
+	  { $$ = new joinType_INNERP($1); }
 
 
 strOptJoinOuter:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| OUTERP
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 joinQual:
 	USING LEFTPAREN nameList RIGHTPAREN
-	  { $$ = new joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new joinQual_USING_LEFTPAREN_nameList_RIGHTPAREN($1, $2, $3, $4); }
 	| ON aExpr
-	  { $$ = new joinQual_ON_aExpr($1, $2) }
+	  { $$ = new joinQual_ON_aExpr($1, $2); }
 
 
 relationExpr:
 	strRelationName
-	  { $$ = new relationExpr_strRelationName($1) }
+	  { $$ = new relationExpr_strRelationName($1); }
 	| strRelationName ASTERISK
-	  { $$ = new relationExpr_strRelationName_ASTERISK($1, $2) }
+	  { $$ = new relationExpr_strRelationName_ASTERISK($1, $2); }
 	| ONLY strRelationName
-	  { $$ = new relationExpr_ONLY_strRelationName($1, $2) }
+	  { $$ = new relationExpr_ONLY_strRelationName($1, $2); }
 
 
 optWhereClause:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| WHERE aExpr
-	  { $$ = new optWhereClause_WHERE_aExpr($1, $2) }
+	  { $$ = new optWhereClause_WHERE_aExpr($1, $2); }
 
 
 strDatetime:
 	YEARP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| MONTHP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| DAYP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| HOURP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| MINUTEP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SECONDP
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 rowExpr:
 	LEFTPAREN rowDescriptor RIGHTPAREN strAllOp LEFTPAREN rowDescriptor RIGHTPAREN
-	  { $$ = new rowExpr($1, $2, $3, $4, $5, $6, $7) }
+	  { $$ = new rowExpr($1, $2, $3, $4, $5, $6, $7); }
 
 
 rowList:
 	aExpr
-	  { $$ = new OW_List<aExpr*>(1, $1) }
+	  { $$ = new OW_List<aExpr*>(1, $1); }
 	| rowList COMMA aExpr
 	  { $1->push_back($3); delete $2; $$ = $1; }
 
 
 rowDescriptor:
 	rowList COMMA aExpr
-	  { $$ = new rowDescriptor($1, $2, $3) }
+	  { $$ = new rowDescriptor($1, $2, $3); }
 
 
 strAllOp:
 	PLUS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| MINUS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ASTERISK
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SOLIDUS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| PERCENT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| LESSTHAN
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| LESSTHANOREQUALS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| GREATERTHAN
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| GREATERTHANOREQUALS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| EQUALS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NOTEQUALS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| CONCATENATION
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| BITAND
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| BITOR
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| BITSHIFTLEFT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| BITSHIFTRIGHT
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 aExpr:
 	cExpr
-	  { $$ = new aExpr_cExpr($1) }
+	  { $$ = new aExpr_cExpr($1); }
 	| aExpr AT TIME ZONE cExpr
-	  { $$ = new aExpr_aExpr_AT_TIME_ZONE_cExpr($1, $2, $3, $4, $5) }
+	  { $$ = new aExpr_aExpr_AT_TIME_ZONE_cExpr($1, $2, $3, $4, $5); }
 	| PLUS aExpr %prec UMINUS
-	  { $$ = new aExpr_PLUS_aExpr($1, $2) }
+	  { $$ = new aExpr_PLUS_aExpr($1, $2); }
 	| MINUS aExpr %prec UMINUS
-	  { $$ = new aExpr_MINUS_aExpr($1, $2) }
+	  { $$ = new aExpr_MINUS_aExpr($1, $2); }
 	| BITINVERT aExpr %prec UMINUS
-	  { $$ = new aExpr_BITINVERT_aExpr($1, $2) }
+	  { $$ = new aExpr_BITINVERT_aExpr($1, $2); }
 	| aExpr PLUS aExpr
-	  { $$ = new aExpr_aExpr_PLUS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_PLUS_aExpr($1, $2, $3); }
 	| aExpr MINUS aExpr
-	  { $$ = new aExpr_aExpr_MINUS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_MINUS_aExpr($1, $2, $3); }
 	| aExpr ASTERISK aExpr
-	  { $$ = new aExpr_aExpr_ASTERISK_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_ASTERISK_aExpr($1, $2, $3); }
 	| aExpr SOLIDUS aExpr
-	  { $$ = new aExpr_aExpr_SOLIDUS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_SOLIDUS_aExpr($1, $2, $3); }
 	| aExpr PERCENT aExpr
-	  { $$ = new aExpr_aExpr_PERCENT_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_PERCENT_aExpr($1, $2, $3); }
 	| aExpr BITAND aExpr
-	  { $$ = new aExpr_aExpr_BITAND_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_BITAND_aExpr($1, $2, $3); }
 	| aExpr BITOR aExpr
-	  { $$ = new aExpr_aExpr_BITOR_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_BITOR_aExpr($1, $2, $3); }
 	| aExpr BITSHIFTLEFT aExpr
-	  { $$ = new aExpr_aExpr_BITSHIFTLEFT_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_BITSHIFTLEFT_aExpr($1, $2, $3); }
 	| aExpr BITSHIFTRIGHT aExpr
-	  { $$ = new aExpr_aExpr_BITSHIFTRIGHT_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_BITSHIFTRIGHT_aExpr($1, $2, $3); }
 	| aExpr LESSTHAN aExpr
-	  { $$ = new aExpr_aExpr_LESSTHAN_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_LESSTHAN_aExpr($1, $2, $3); }
 	| aExpr LESSTHANOREQUALS aExpr
-	  { $$ = new aExpr_aExpr_LESSTHANOREQUALS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_LESSTHANOREQUALS_aExpr($1, $2, $3); }
 	| aExpr GREATERTHAN aExpr
-	  { $$ = new aExpr_aExpr_GREATERTHAN_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_GREATERTHAN_aExpr($1, $2, $3); }
 	| aExpr GREATERTHANOREQUALS aExpr
-	  { $$ = new aExpr_aExpr_GREATERTHANOREQUALS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_GREATERTHANOREQUALS_aExpr($1, $2, $3); }
 	| aExpr EQUALS aExpr
-	  { $$ = new aExpr_aExpr_EQUALS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_EQUALS_aExpr($1, $2, $3); }
 	| aExpr NOTEQUALS aExpr
-	  { $$ = new aExpr_aExpr_NOTEQUALS_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_NOTEQUALS_aExpr($1, $2, $3); }
 	| aExpr AND aExpr
-	  { $$ = new aExpr_aExpr_AND_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_AND_aExpr($1, $2, $3); }
 	| aExpr OR aExpr
-	  { $$ = new aExpr_aExpr_OR_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_OR_aExpr($1, $2, $3); }
 	| NOT aExpr
-	  { $$ = new aExpr_NOT_aExpr($1, $2) }
+	  { $$ = new aExpr_NOT_aExpr($1, $2); }
 	| aExpr CONCATENATION aExpr
-	  { $$ = new aExpr_aExpr_CONCATENATION_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_CONCATENATION_aExpr($1, $2, $3); }
 	| aExpr LIKE aExpr
-	  { $$ = new aExpr_aExpr_LIKE_aExpr($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_LIKE_aExpr($1, $2, $3); }
 	| aExpr LIKE aExpr ESCAPE aExpr
-	  { $$ = new aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr($1, $2, $3, $4, $5) }
+	  { $$ = new aExpr_aExpr_LIKE_aExpr_ESCAPE_aExpr($1, $2, $3, $4, $5); }
 	| aExpr NOT LIKE aExpr
-	  { $$ = new aExpr_aExpr_NOT_LIKE_aExpr($1, $2, $3, $4) }
+	  { $$ = new aExpr_aExpr_NOT_LIKE_aExpr($1, $2, $3, $4); }
 	| aExpr NOT LIKE aExpr ESCAPE aExpr
-	  { $$ = new aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr($1, $2, $3, $4, $5, $6) }
+	  { $$ = new aExpr_aExpr_NOT_LIKE_aExpr_ESCAPE_aExpr($1, $2, $3, $4, $5, $6); }
 	| aExpr ISNULL
-	  { $$ = new aExpr_aExpr_ISNULL($1, $2) }
+	  { $$ = new aExpr_aExpr_ISNULL($1, $2); }
 	| aExpr IS NULLP
-	  { $$ = new aExpr_aExpr_IS_NULLP($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_IS_NULLP($1, $2, $3); }
 	| aExpr NOTNULL
-	  { $$ = new aExpr_aExpr_NOTNULL($1, $2) }
+	  { $$ = new aExpr_aExpr_NOTNULL($1, $2); }
 	| aExpr IS NOT NULLP
-	  { $$ = new aExpr_aExpr_IS_NOT_NULLP($1, $2, $3, $4) }
+	  { $$ = new aExpr_aExpr_IS_NOT_NULLP($1, $2, $3, $4); }
 	| aExpr IS TRUEP
-	  { $$ = new aExpr_aExpr_IS_TRUEP($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_IS_TRUEP($1, $2, $3); }
 	| aExpr IS NOT FALSEP
-	  { $$ = new aExpr_aExpr_IS_NOT_FALSEP($1, $2, $3, $4) }
+	  { $$ = new aExpr_aExpr_IS_NOT_FALSEP($1, $2, $3, $4); }
 	| aExpr IS FALSEP
-	  { $$ = new aExpr_aExpr_IS_FALSEP($1, $2, $3) }
+	  { $$ = new aExpr_aExpr_IS_FALSEP($1, $2, $3); }
 	| aExpr IS NOT TRUEP
-	  { $$ = new aExpr_aExpr_IS_NOT_TRUEP($1, $2, $3, $4) }
+	  { $$ = new aExpr_aExpr_IS_NOT_TRUEP($1, $2, $3, $4); }
 	| rowExpr
-	  { $$ = new aExpr_rowExpr($1) }
+	  { $$ = new aExpr_rowExpr($1); }
 
 
 bExpr:
 	cExpr
-	  { $$ = new bExpr_cExpr($1) }
+	  { $$ = new bExpr_cExpr($1); }
 	| PLUS bExpr %prec UMINUS
-	  { $$ = new bExpr_PLUS_bExpr($1, $2) }
+	  { $$ = new bExpr_PLUS_bExpr($1, $2); }
 	| MINUS bExpr %prec UMINUS
-	  { $$ = new bExpr_MINUS_bExpr($1, $2) }
+	  { $$ = new bExpr_MINUS_bExpr($1, $2); }
 	| BITINVERT bExpr %prec UMINUS
-	  { $$ = new bExpr_BITINVERT_bExpr($1, $2) }
+	  { $$ = new bExpr_BITINVERT_bExpr($1, $2); }
 	| bExpr PLUS bExpr
-	  { $$ = new bExpr_bExpr_PLUS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_PLUS_bExpr($1, $2, $3); }
 	| bExpr MINUS bExpr
-	  { $$ = new bExpr_bExpr_MINUS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_MINUS_bExpr($1, $2, $3); }
 	| bExpr ASTERISK bExpr
-	  { $$ = new bExpr_bExpr_ASTERISK_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_ASTERISK_bExpr($1, $2, $3); }
 	| bExpr SOLIDUS bExpr
-	  { $$ = new bExpr_bExpr_SOLIDUS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_SOLIDUS_bExpr($1, $2, $3); }
 	| bExpr PERCENT bExpr
-	  { $$ = new bExpr_bExpr_PERCENT_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_PERCENT_bExpr($1, $2, $3); }
 	| bExpr BITAND bExpr
-	  { $$ = new bExpr_bExpr_BITAND_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_BITAND_bExpr($1, $2, $3); }
 	| bExpr BITOR bExpr
-	  { $$ = new bExpr_bExpr_BITOR_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_BITOR_bExpr($1, $2, $3); }
 	| bExpr BITSHIFTLEFT bExpr
-	  { $$ = new bExpr_bExpr_BITSHIFTLEFT_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_BITSHIFTLEFT_bExpr($1, $2, $3); }
 	| bExpr BITSHIFTRIGHT bExpr
-	  { $$ = new bExpr_bExpr_BITSHIFTRIGHT_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_BITSHIFTRIGHT_bExpr($1, $2, $3); }
 	| bExpr LESSTHAN bExpr
-	  { $$ = new bExpr_bExpr_LESSTHAN_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_LESSTHAN_bExpr($1, $2, $3); }
 	| bExpr LESSTHANOREQUALS bExpr
-	  { $$ = new bExpr_bExpr_LESSTHANOREQUALS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_LESSTHANOREQUALS_bExpr($1, $2, $3); }
 	| bExpr GREATERTHAN bExpr
-	  { $$ = new bExpr_bExpr_GREATERTHAN_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_GREATERTHAN_bExpr($1, $2, $3); }
 	| bExpr GREATERTHANOREQUALS bExpr
-	  { $$ = new bExpr_bExpr_GREATERTHANOREQUALS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_GREATERTHANOREQUALS_bExpr($1, $2, $3); }
 	| bExpr EQUALS bExpr
-	  { $$ = new bExpr_bExpr_EQUALS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_EQUALS_bExpr($1, $2, $3); }
 	| bExpr NOTEQUALS bExpr
-	  { $$ = new bExpr_bExpr_NOTEQUALS_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_NOTEQUALS_bExpr($1, $2, $3); }
 	| bExpr CONCATENATION bExpr
-	  { $$ = new bExpr_bExpr_CONCATENATION_bExpr($1, $2, $3) }
+	  { $$ = new bExpr_bExpr_CONCATENATION_bExpr($1, $2, $3); }
 
 
 cExpr:
 	attr
-	  { $$ = new cExpr_attr($1) }
+	  { $$ = new cExpr_attr($1); }
 	| strColId optIndirection
-	  { $$ = new cExpr_strColId_optIndirection($1, $2) }
+	  { $$ = new cExpr_strColId_optIndirection($1, $2); }
 	| aExprConst
-	  { $$ = new cExpr_aExprConst($1) }
+	  { $$ = new cExpr_aExprConst($1); }
 	| LEFTPAREN aExpr RIGHTPAREN
-	  { $$ = new cExpr_LEFTPAREN_aExpr_RIGHTPAREN($1, $2, $3) }
+	  { $$ = new cExpr_LEFTPAREN_aExpr_RIGHTPAREN($1, $2, $3); }
 	| strFuncName LEFTPAREN RIGHTPAREN
-	  { $$ = new cExpr_strFuncName_LEFTPAREN_RIGHTPAREN($1, $2, $3) }
+	  { $$ = new cExpr_strFuncName_LEFTPAREN_RIGHTPAREN($1, $2, $3); }
 	| strFuncName LEFTPAREN exprSeq RIGHTPAREN
-	  { $$ = new cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_strFuncName_LEFTPAREN_exprSeq_RIGHTPAREN($1, $2, $3, $4); }
 	| strFuncName LEFTPAREN ALL exprSeq RIGHTPAREN
-	  { $$ = new cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5) }
+	  { $$ = new cExpr_strFuncName_LEFTPAREN_ALL_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| strFuncName LEFTPAREN DISTINCT exprSeq RIGHTPAREN
-	  { $$ = new cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5) }
+	  { $$ = new cExpr_strFuncName_LEFTPAREN_DISTINCT_exprSeq_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| strFuncName LEFTPAREN ASTERISK RIGHTPAREN
-	  { $$ = new cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_strFuncName_LEFTPAREN_ASTERISK_RIGHTPAREN($1, $2, $3, $4); }
 	| CURRENTDATE
-	  { $$ = new cExpr_CURRENTDATE($1) }
+	  { $$ = new cExpr_CURRENTDATE($1); }
 	| CURRENTTIME
-	  { $$ = new cExpr_CURRENTTIME($1) }
+	  { $$ = new cExpr_CURRENTTIME($1); }
 	| CURRENTTIME LEFTPAREN ICONST RIGHTPAREN
-	  { $$ = new cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_CURRENTTIME_LEFTPAREN_ICONST_RIGHTPAREN($1, $2, $3, $4); }
 	| CURRENTTIMESTAMP
-	  { $$ = new cExpr_CURRENTTIMESTAMP($1) }
+	  { $$ = new cExpr_CURRENTTIMESTAMP($1); }
 	| CURRENTTIMESTAMP LEFTPAREN ICONST RIGHTPAREN
-	  { $$ = new cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_CURRENTTIMESTAMP_LEFTPAREN_ICONST_RIGHTPAREN($1, $2, $3, $4); }
 	| CURRENTUSER
-	  { $$ = new cExpr_CURRENTUSER($1) }
+	  { $$ = new cExpr_CURRENTUSER($1); }
 	| SESSIONUSER
-	  { $$ = new cExpr_SESSIONUSER($1) }
+	  { $$ = new cExpr_SESSIONUSER($1); }
 	| USER
-	  { $$ = new cExpr_USER($1) }
+	  { $$ = new cExpr_USER($1); }
 	| EXTRACT LEFTPAREN optExtract RIGHTPAREN
-	  { $$ = new cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_EXTRACT_LEFTPAREN_optExtract_RIGHTPAREN($1, $2, $3, $4); }
 	| POSITION LEFTPAREN positionExpr RIGHTPAREN
-	  { $$ = new cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_POSITION_LEFTPAREN_positionExpr_RIGHTPAREN($1, $2, $3, $4); }
 	| SUBSTRING LEFTPAREN optSubstrExpr RIGHTPAREN
-	  { $$ = new cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_SUBSTRING_LEFTPAREN_optSubstrExpr_RIGHTPAREN($1, $2, $3, $4); }
 	| TRIM LEFTPAREN LEADING trimExpr RIGHTPAREN
-	  { $$ = new cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN($1, $2, $3, $4, $5) }
+	  { $$ = new cExpr_TRIM_LEFTPAREN_LEADING_trimExpr_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| TRIM LEFTPAREN TRAILING trimExpr RIGHTPAREN
-	  { $$ = new cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN($1, $2, $3, $4, $5) }
+	  { $$ = new cExpr_TRIM_LEFTPAREN_TRAILING_trimExpr_RIGHTPAREN($1, $2, $3, $4, $5); }
 	| TRIM LEFTPAREN trimExpr RIGHTPAREN
-	  { $$ = new cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN($1, $2, $3, $4) }
+	  { $$ = new cExpr_TRIM_LEFTPAREN_trimExpr_RIGHTPAREN($1, $2, $3, $4); }
 
 
 optIndirection:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| optIndirection LEFTBRACKET aExpr RIGHTBRACKET
-	  { $$ = new optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET($1, $2, $3, $4) }
+	  { $$ = new optIndirection_optIndirection_LEFTBRACKET_aExpr_RIGHTBRACKET($1, $2, $3, $4); }
 	| optIndirection LEFTBRACKET aExpr COLON aExpr RIGHTBRACKET
-	  { $$ = new optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET($1, $2, $3, $4, $5, $6) }
+	  { $$ = new optIndirection_optIndirection_LEFTBRACKET_aExpr_COLON_aExpr_RIGHTBRACKET($1, $2, $3, $4, $5, $6); }
 
 
 optExtract:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| strExtractArg FROM aExpr
-	  { $$ = new optExtract_strExtractArg_FROM_aExpr($1, $2, $3) }
+	  { $$ = new optExtract_strExtractArg_FROM_aExpr($1, $2, $3); }
 
 
 strExtractArg:
 	strDatetime
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SCONST
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| IDENT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TIMEZONEHOUR
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TIMEZONEMINUTE
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 positionExpr:
 	bExpr IN bExpr
-	  { $$ = new positionExpr_bExpr_IN_bExpr($1, $2, $3) }
+	  { $$ = new positionExpr_bExpr_IN_bExpr($1, $2, $3); }
 	| /* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 
 
 optSubstrExpr:
 	/* EMPTY */
-	  { $$ = 0 }
+	  { $$ = 0; }
 	| aExpr substrFrom substrFor
-	  { $$ = new optSubstrExpr_aExpr_substrFrom_substrFor($1, $2, $3) }
+	  { $$ = new optSubstrExpr_aExpr_substrFrom_substrFor($1, $2, $3); }
 	| aExpr substrFor substrFrom
-	  { $$ = new optSubstrExpr_aExpr_substrFor_substrFrom($1, $2, $3) }
+	  { $$ = new optSubstrExpr_aExpr_substrFor_substrFrom($1, $2, $3); }
 	| aExpr substrFrom
-	  { $$ = new optSubstrExpr_aExpr_substrFrom($1, $2) }
+	  { $$ = new optSubstrExpr_aExpr_substrFrom($1, $2); }
 	| aExpr substrFor
-	  { $$ = new optSubstrExpr_aExpr_substrFor($1, $2) }
+	  { $$ = new optSubstrExpr_aExpr_substrFor($1, $2); }
 	| exprSeq
-	  { $$ = new optSubstrExpr_exprSeq($1) }
+	  { $$ = new optSubstrExpr_exprSeq($1); }
 
 
 substrFrom:
 	FROM aExpr
-	  { $$ = new substrFrom($1, $2) }
+	  { $$ = new substrFrom($1, $2); }
 
 
 substrFor:
 	FOR aExpr
-	  { $$ = new substrFor($1, $2) }
+	  { $$ = new substrFor($1, $2); }
 
 
 trimExpr:
 	aExpr FROM exprSeq
-	  { $$ = new trimExpr_aExpr_FROM_exprSeq($1, $2, $3) }
+	  { $$ = new trimExpr_aExpr_FROM_exprSeq($1, $2, $3); }
 	| FROM exprSeq
-	  { $$ = new trimExpr_FROM_exprSeq($1, $2) }
+	  { $$ = new trimExpr_FROM_exprSeq($1, $2); }
 	| exprSeq
-	  { $$ = new trimExpr_exprSeq($1) }
+	  { $$ = new trimExpr_exprSeq($1); }
 
 
 attr:
 	strRelationName PERIOD attrs optIndirection
-	  { $$ = new attr($1, $2, $3, $4) }
+	  { $$ = new attr($1, $2, $3, $4); }
 
 
 attrs:
 	strAttrName
-	  { $$ = new attrs_strAttrName($1) }
+	  { $$ = new attrs_strAttrName($1); }
 	| attrs PERIOD strAttrName
-	  { $$ = new attrs_attrs_PERIOD_strAttrName($1, $2, $3) }
+	  { $$ = new attrs_attrs_PERIOD_strAttrName($1, $2, $3); }
 	| attrs PERIOD ASTERISK
-	  { $$ = new attrs_attrs_PERIOD_ASTERISK($1, $2, $3) }
+	  { $$ = new attrs_attrs_PERIOD_ASTERISK($1, $2, $3); }
 
 
 targetEl:
 	aExpr AS strColLabel
-	  { $$ = new targetEl_aExpr_AS_strColLabel($1, $2, $3) }
+	  { $$ = new targetEl_aExpr_AS_strColLabel($1, $2, $3); }
 	| aExpr
-	  { $$ = new targetEl_aExpr($1) }
+	  { $$ = new targetEl_aExpr($1); }
 	| strRelationName PERIOD ASTERISK
-	  { $$ = new targetEl_strRelationName_PERIOD_ASTERISK($1, $2, $3) }
+	  { $$ = new targetEl_strRelationName_PERIOD_ASTERISK($1, $2, $3); }
 	| ASTERISK
-	  { $$ = new targetEl_ASTERISK($1) }
+	  { $$ = new targetEl_ASTERISK($1); }
 
 
 updateTargetEl:
 	strColId optIndirection EQUALS aExpr
-	  { $$ = new updateTargetEl($1, $2, $3, $4) }
+	  { $$ = new updateTargetEl($1, $2, $3, $4); }
 
 
 strRelationName:
 	strColId
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 strName:
 	strColId
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 strAttrName:
 	strColId
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 strFuncName:
 	strColId
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| IN
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| IS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ISNULL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| LIKE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NOTNULL
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 aExprConst:
 	ICONST
-	  { $$ = new aExprConst_ICONST($1) }
+	  { $$ = new aExprConst_ICONST($1); }
 	| FCONST
-	  { $$ = new aExprConst_FCONST($1) }
+	  { $$ = new aExprConst_FCONST($1); }
 	| SCONST
-	  { $$ = new aExprConst_SCONST($1) }
+	  { $$ = new aExprConst_SCONST($1); }
 	| BITCONST
-	  { $$ = new aExprConst_BITCONST($1) }
+	  { $$ = new aExprConst_BITCONST($1); }
 	| HEXCONST
-	  { $$ = new aExprConst_HEXCONST($1) }
+	  { $$ = new aExprConst_HEXCONST($1); }
 	| TRUEP
-	  { $$ = new aExprConst_TRUEP($1) }
+	  { $$ = new aExprConst_TRUEP($1); }
 	| FALSEP
-	  { $$ = new aExprConst_FALSEP($1) }
+	  { $$ = new aExprConst_FALSEP($1); }
 	| NULLP
-	  { $$ = new aExprConst_NULLP($1) }
+	  { $$ = new aExprConst_NULLP($1); }
 
 
 strColId:
 	IDENT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| strDatetime
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| AT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| BY
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| DELETE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ESCAPE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| INSERT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SET
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TIMEZONEHOUR
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TIMEZONEMINUTE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| UPDATE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| VALUES
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ZONE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| INTERVAL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NATIONAL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TIME
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TIMESTAMP
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 
 strColLabel:
 	strColId
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ALL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| AND
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ASC
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| CROSS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| CURRENTDATE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| CURRENTTIME
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| CURRENTTIMESTAMP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| CURRENTUSER
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| DEFAULT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| DESC
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| DISTINCT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| EXTRACT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| FALSEP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| FOR
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| FROM
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| FULL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| GROUP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| HAVING
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| IN
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| INNERP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| INTO
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| IS
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ISNULL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| JOIN
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| LEADING
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| LEFT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| LIKE
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NATURAL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NOT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NOTNULL
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| NULLP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ON
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ONLY
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| OR
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| ORDER
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| OUTERP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| POSITION
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| RIGHT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SELECT
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SESSIONUSER
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| SUBSTRING
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TRAILING
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TRIM
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| TRUEP
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| UNION
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| USER
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| USING
-	  { $$ = $1 }
+	  { $$ = $1; }
 	| WHERE
-	  { $$ = $1 }
+	  { $$ = $1; }
 
 %%
 

@@ -193,17 +193,17 @@ mofSpecification:
 		}
 	;
 
-mofProductionList: /* empty */ {$$ = new OW_List<MOFProduction*>}
+mofProductionList: /* empty */ {$$ = new OW_List<MOFProduction*>; }
 	| mofProductionList mofProduction {$1->push_back($2); $$ = $1;}
 	;
 
 mofProduction:
-	compilerDirective {$$ = new MOFProductionCompilerDirective($1)}
-	| classDeclaration {$$ = new MOFProductionClassDeclaration($1)}
-	| assocDeclaration {$$ = new MOFProductionAssocDeclaration($1)}
-	| indicDeclaration {$$ = new MOFProductionIndicDeclaration($1)}
-	| qualifierDeclaration {$$ = new MOFProductionQualifierDeclaration($1)}
-	| instanceDeclaration {$$ = new MOFProductionInstanceDeclaration($1)}
+	compilerDirective {$$ = new MOFProductionCompilerDirective($1); }
+	| classDeclaration {$$ = new MOFProductionClassDeclaration($1); }
+	| assocDeclaration {$$ = new MOFProductionAssocDeclaration($1); }
+	| indicDeclaration {$$ = new MOFProductionIndicDeclaration($1); }
+	| qualifierDeclaration {$$ = new MOFProductionQualifierDeclaration($1); }
+	| instanceDeclaration {$$ = new MOFProductionInstanceDeclaration($1); }
 	;
 
 compilerDirective:
@@ -221,11 +221,11 @@ compilerDirective:
 	;
 
 pragmaName:
-	IDENTIFIER {$$ = new PragmaName($1)}
+	IDENTIFIER {$$ = new PragmaName($1); }
 	;
 
 pragmaParameter:
-	stringValue {$$ = new PragmaParameter($1)}
+	stringValue {$$ = new PragmaParameter($1); }
 	;
 
 classDeclaration:
@@ -295,7 +295,7 @@ classDeclaration:
         }
 	;
 
-classFeatureList: /* empty */ {$$ = new OW_List<ClassFeature*>}
+classFeatureList: /* empty */ {$$ = new OW_List<ClassFeature*>; }
 	| classFeatureList classFeature {$1->push_back($2); $$ = $1;}
 	;
 
@@ -346,12 +346,12 @@ assocDeclaration:
         }
 	;
 	
-qualifierListEmpty: /* empty */ {$$ = new OW_List<Qualifier*>}
+qualifierListEmpty: /* empty */ {$$ = new OW_List<Qualifier*>; }
 	| qualifierListEmpty COMMA_TOK qualifier
         {$1->push_back($3); $$ = $1; delete $2; }
 	;
 
-associationFeatureList: /* empty */ {$$ = new OW_List<AssociationFeature*>}
+associationFeatureList: /* empty */ {$$ = new OW_List<AssociationFeature*>; }
 	| associationFeatureList associationFeature {$1->push_back($2); $$ = $1;}
 	;
 
@@ -403,7 +403,7 @@ indicDeclaration:
 	;
 
 className:
-	IDENTIFIER {$$ = new ClassName($1)}
+	IDENTIFIER {$$ = new ClassName($1); }
 	;
 
 alias:
@@ -423,13 +423,13 @@ superClass:
 	;
 
 classFeature:
-	propertyDeclaration {$$ = new ClassFeaturePropertyDeclaration($1)}
-	| methodDeclaration {$$ = new ClassFeatureMethodDeclaration($1)}
-	| referenceDeclaration {$$ = new ClassFeatureReferenceDeclaration($1)}
+	propertyDeclaration {$$ = new ClassFeaturePropertyDeclaration($1); }
+	| methodDeclaration {$$ = new ClassFeatureMethodDeclaration($1); }
+	| referenceDeclaration {$$ = new ClassFeatureReferenceDeclaration($1); }
 	;
 
 associationFeature:
-	classFeature {$$ = new AssociationFeatureClassFeature($1)}
+	classFeature {$$ = new AssociationFeatureClassFeature($1); }
 	/*	| referenceDeclaration */
 	;
 
@@ -439,13 +439,13 @@ qualifierList:
 	;
 
 qualifier:
-	qualifierName {$$ = new Qualifier($1, 0, 0, MofCompiler::theLineInfo)}
+	qualifierName {$$ = new Qualifier($1, 0, 0, MofCompiler::theLineInfo); }
 	| qualifierName COLON_TOK flavorList
         {
                 $$ = new Qualifier($1, 0, $3, MofCompiler::theLineInfo);
                 delete $2;
         }
-	| qualifierName qualifierParameter{$$ = new Qualifier($1, $2, 0, MofCompiler::theLineInfo)}
+	| qualifierName qualifierParameter{$$ = new Qualifier($1, $2, 0, MofCompiler::theLineInfo); }
 	| qualifierName qualifierParameter COLON_TOK flavorList
 	{
                 $$ = new Qualifier($1, $2, $4, MofCompiler::theLineInfo);
@@ -454,7 +454,7 @@ qualifier:
 	;
 
 flavorList:
-	flavor {$$ = new OW_List<Flavor*>(1, $1)}
+	flavor {$$ = new OW_List<Flavor*>(1, $1); }
 	| flavorList flavor {$1->push_back($2); $$ = $1;}
 	;
 
@@ -465,15 +465,15 @@ qualifierParameter:
                 delete $1;
                 delete $3;
         }
-	| arrayInitializer {$$ = new QualifierParameterArrayInitializer($1, MofCompiler::theLineInfo)}
+	| arrayInitializer {$$ = new QualifierParameterArrayInitializer($1, MofCompiler::theLineInfo); }
 	;
 
 flavor:
-	ENABLEOVERRIDE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo)}
-	| DISABLEOVERRIDE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo)}
-	| RESTRICTED_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo)}
-	| TOSUBCLASS_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo)}
-	| TRANSLATABLE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo)}
+	ENABLEOVERRIDE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
+	| DISABLEOVERRIDE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
+	| RESTRICTED_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
+	| TOSUBCLASS_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
+	| TRANSLATABLE_TOK {$$ = new Flavor($1, MofCompiler::theLineInfo); }
 	;
 
 propertyDeclaration:
@@ -574,32 +574,32 @@ methodDeclaration:
 	;
 
 propertyName:
-	IDENTIFIER {$$ = new PropertyName($1)}
+	IDENTIFIER {$$ = new PropertyName($1); }
 	;
 
 referenceName:
-	IDENTIFIER {$$ = new ReferenceName($1)}
+	IDENTIFIER {$$ = new ReferenceName($1); }
 	;
 
 methodName:
-	IDENTIFIER {$$ = new MethodName($1)}
+	IDENTIFIER {$$ = new MethodName($1); }
 	;
 
 dataType:
-	DT_UINT8_TOK {$$ = new DataType($1)}
-	| DT_SINT8_TOK {$$ = new DataType($1)}
-	| DT_UINT16_TOK {$$ = new DataType($1)}
-	| DT_SINT16_TOK {$$ = new DataType($1)}
-	| DT_UINT32_TOK {$$ = new DataType($1)}
-	| DT_SINT32_TOK {$$ = new DataType($1)}
-	| DT_UINT64_TOK {$$ = new DataType($1)}
-	| DT_SINT64_TOK {$$ = new DataType($1)}
-	| DT_REAL32_TOK {$$ = new DataType($1)}
-	| DT_REAL64_TOK {$$ = new DataType($1)}
-	| DT_CHAR16_TOK {$$ = new DataType($1)}
-	| DT_STR_TOK {$$ = new DataType($1)}
-	| DT_BOOL_TOK {$$ = new DataType($1)}
-	| DT_DATETIME_TOK {$$ = new DataType($1)}
+	DT_UINT8_TOK {$$ = new DataType($1); }
+	| DT_SINT8_TOK {$$ = new DataType($1); }
+	| DT_UINT16_TOK {$$ = new DataType($1); }
+	| DT_SINT16_TOK {$$ = new DataType($1); }
+	| DT_UINT32_TOK {$$ = new DataType($1); }
+	| DT_SINT32_TOK {$$ = new DataType($1); }
+	| DT_UINT64_TOK {$$ = new DataType($1); }
+	| DT_SINT64_TOK {$$ = new DataType($1); }
+	| DT_REAL32_TOK {$$ = new DataType($1); }
+	| DT_REAL64_TOK {$$ = new DataType($1); }
+	| DT_CHAR16_TOK {$$ = new DataType($1); }
+	| DT_STR_TOK {$$ = new DataType($1); }
+	| DT_BOOL_TOK {$$ = new DataType($1); }
+	| DT_DATETIME_TOK {$$ = new DataType($1); }
 	;
 
 objectRef:
@@ -607,31 +607,31 @@ objectRef:
 	;
 
 parameterList:
-	parameter {$$ = new OW_List<Parameter*>(1, $1)}
+	parameter {$$ = new OW_List<Parameter*>(1, $1); }
 	| parameterList COMMA_TOK parameter {$1->push_back($3); $$=$1; delete $2;}
 	;
 
 parameter:
 	dataType parameterName
-		{$$ = new ParameterDataType(0, $1, $2, 0)}
+		{$$ = new ParameterDataType(0, $1, $2, 0); }
 	| dataType parameterName array
-		{$$ = new ParameterDataType(0, $1, $2, $3)}
+		{$$ = new ParameterDataType(0, $1, $2, $3); }
 	| qualifierList dataType parameterName
-		{$$ = new ParameterDataType($1, $2, $3, 0)}
+		{$$ = new ParameterDataType($1, $2, $3, 0); }
 	| qualifierList dataType parameterName array
-		{$$ = new ParameterDataType($1, $2, $3, $4)}
+		{$$ = new ParameterDataType($1, $2, $3, $4); }
 	| objectRef parameterName
-		{$$ = new ParameterObjectRef(0, $1, $2, 0)}
+		{$$ = new ParameterObjectRef(0, $1, $2, 0); }
 	| objectRef parameterName array
-		{$$ = new ParameterObjectRef(0, $1, $2, $3)}
+		{$$ = new ParameterObjectRef(0, $1, $2, $3); }
 	| qualifierList objectRef parameterName
-		{$$ = new ParameterObjectRef($1, $2, $3, 0)}
+		{$$ = new ParameterObjectRef($1, $2, $3, 0); }
 	| qualifierList objectRef parameterName array
-		{$$ = new ParameterObjectRef($1, $2, $3, $4)}
+		{$$ = new ParameterObjectRef($1, $2, $3, $4); }
 	;
 
 parameterName:
-	IDENTIFIER {$$ = new ParameterName($1)}
+	IDENTIFIER {$$ = new ParameterName($1); }
 	;
 
 array:
@@ -645,9 +645,9 @@ defaultValue:
 	;
 
 initializer:
-	constantValue {$$ = new InitializerConstantValue($1)}
-	| arrayInitializer {$$ = new InitializerArrayInitializer($1)}
-	| referenceInitializer {$$ = new InitializerReferenceInitializer($1)}
+	constantValue {$$ = new InitializerConstantValue($1); }
+	| arrayInitializer {$$ = new InitializerArrayInitializer($1); }
+	| referenceInitializer {$$ = new InitializerReferenceInitializer($1); }
 	;
 
 arrayInitializer:
@@ -656,34 +656,34 @@ arrayInitializer:
 	;
 
 constantValueList:
-	constantValue {$$ = new OW_List<ConstantValue*>(1, $1)}
+	constantValue {$$ = new OW_List<ConstantValue*>(1, $1); }
 	| constantValueList COMMA_TOK constantValue
 		{$1->push_back($3); $$ = $1; delete $2;}
 	;
 
 constantValue:
-	integerValue {$$ = new ConstantValueIntegerValue($1)}
-	| floatValue {$$ = new ConstantValueFloatValue($1)}
-	| charValue {$$ = new ConstantValueCharValue($1)}
-	| stringValue {$$ = new ConstantValueStringValue($1)}
-	| booleanValue {$$ = new ConstantValueBooleanValue($1)}
-	| nullValue {$$ = new ConstantValueNullValue($1)}
+	integerValue {$$ = new ConstantValueIntegerValue($1); }
+	| floatValue {$$ = new ConstantValueFloatValue($1); }
+	| charValue {$$ = new ConstantValueCharValue($1); }
+	| stringValue {$$ = new ConstantValueStringValue($1); }
+	| booleanValue {$$ = new ConstantValueBooleanValue($1); }
+	| nullValue {$$ = new ConstantValueNullValue($1); }
 	;
 
 integerValue:
-	binaryValue {$$ = new IntegerValueBinaryValue($1)}
-	| octalValue {$$ = new IntegerValueOctalValue($1)}
-	| decimalValue {$$ = new IntegerValueDecimalValue($1)}
-	| hexValue {$$ = new IntegerValueHexValue($1)}
+	binaryValue {$$ = new IntegerValueBinaryValue($1); }
+	| octalValue {$$ = new IntegerValueOctalValue($1); }
+	| decimalValue {$$ = new IntegerValueDecimalValue($1); }
+	| hexValue {$$ = new IntegerValueHexValue($1); }
 	;
 
 referenceInitializer:
-	objectHandle {$$ = new ReferenceInitializerObjectHandle($1)}
-	| aliasIdentifier {$$ = new ReferenceInitializerAliasIdentifier($1)}
+	objectHandle {$$ = new ReferenceInitializerObjectHandle($1); }
+	| aliasIdentifier {$$ = new ReferenceInitializerAliasIdentifier($1); }
 	;
 
 objectHandle:
-	IDENTIFIER {$$ = new ObjectHandle($1)}
+	IDENTIFIER {$$ = new ObjectHandle($1); }
 	;
 /*
 referenceInitializer:
@@ -731,7 +731,7 @@ qualifierDeclaration:
 	;
 
 qualifierName:
-	IDENTIFIER {$$ = new QualifierName($1)}
+	IDENTIFIER {$$ = new QualifierName($1); }
 	;
 
 qualifierType:
@@ -769,22 +769,22 @@ scope:
 	;
 
 metaElementList:
-	metaElement {$$ = new OW_List<MetaElement*>(1, $1)}
+	metaElement {$$ = new OW_List<MetaElement*>(1, $1); }
 	| metaElementList COMMA_TOK metaElement
 		{$1->push_back($3); $$ = $1; delete $2; }
 	;
 
 metaElement:
-	SCHEMA_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| CLASS_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| ASSOCIATION_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| INDICATION_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| QUALIFIER_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| PROPERTY_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| REFERENCE_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| METHOD_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| PARAMETER_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
-	| ANY_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo)}
+	SCHEMA_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| CLASS_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| ASSOCIATION_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| INDICATION_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| QUALIFIER_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| PROPERTY_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| REFERENCE_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| METHOD_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| PARAMETER_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
+	| ANY_TOK {$$ = new MetaElement($1, MofCompiler::theLineInfo); }
 	;
 
 defaultFlavor:
@@ -799,7 +799,7 @@ defaultFlavor:
 	;
 
 flavorListWithComma:
-	flavor {$$ = new OW_List<Flavor*>(1, $1)}
+	flavor {$$ = new OW_List<Flavor*>(1, $1); }
 	| flavorListWithComma COMMA_TOK flavor
 	{
 		$1->push_back($3); $$ = $1;
@@ -847,7 +847,7 @@ instanceDeclaration:
 	;
 
 valueInitializerList:
-	valueInitializer {$$ = new OW_List<ValueInitializer*>(1, $1)}
+	valueInitializer {$$ = new OW_List<ValueInitializer*>(1, $1); }
 	| valueInitializerList valueInitializer
 		{$1->push_back($2); $$ = $1;}
 	;

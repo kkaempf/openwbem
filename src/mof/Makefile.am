@@ -32,8 +32,8 @@ libowmofc_a_SOURCES = \
 Visitor.cpp \
 mofparser.cpp \
 moflexer.cpp \
-mofparser.ypp \
-moflexer.lpp \
+mofparser.yy \
+moflexer.ll \
 CIMOMVisitor.cpp \
 MofCompiler.cpp
 
@@ -50,15 +50,20 @@ LineInfo.hpp
 
 #libowmofc_a_LIBADD = -lopenwbem
 
-BUILT_SOURCES = mofparser.cpp moflexer.cpp mofparser.tab.h
-EXTRA_DIST = $(BUILT_SOURCES) \
+
+EXTRA_DIST = \
+$(top_builddir)/src/mof/mofparser.cc \
+$(top_builddir)/src/mof/moflexer.cc \
+$(top_builddir)/src/mof/mofparser.h \
 DebugVisitor.cpp \
 DebugVisitor.h
 
+#debug versions
+#AM_YFLAGS = -d -t -v
+#AM_LFLAGS = -d -i
 
-$(srcdir)/mofparser.tab.h $(srcdir)/mofparser.cpp: $(srcdir)/mofparser.ypp
-	bison -d -v $(srcdir)/mofparser.ypp && mv $(srcdir)/mofparser.ypp.tab.c $(srcdir)/mofparser.cpp && mv $(srcdir)/mofparser.ypp.tab.h $(srcdir)/mofparser.tab.h
 
-$(srcdir)/moflexer.cpp: $(srcdir)/moflexer.lpp
-	flex -i -Cfe $(srcdir)/moflexer.lpp && mv lex.yy.c $(srcdir)/moflexer.cpp
+AM_YFLAGS = -d
+AM_LFLAGS = -i -Cfe
+
 
