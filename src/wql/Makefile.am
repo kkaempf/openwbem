@@ -1,3 +1,5 @@
+SUBDIRS = common
+
 include $(top_srcdir)/Makefile-shared-lib.inc
 
 OW_SHARED_LIBS = libowwql.so

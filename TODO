@@ -21,6 +21,7 @@ Fix problems:
     - Add an option for user to control SO_REUSEADDR
     - Add an option for user to specify which interfaces to listen on.
     - Fix memory leak in openssl (when restarting) & in wql & in npi.
+    - Man pages aren't getting included in the rpm.
 
 New features:
     - Write an event Provider interface.  Create intrinsic providers for

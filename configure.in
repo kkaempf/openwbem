@@ -653,6 +653,7 @@ AC_OUTPUT(./Makefile
 ./src/tools/Makefile
 ./src/tools/owmofc/Makefile
 ./src/wql/Makefile
+./src/wql/common/Makefile
 ./src/xml/Makefile
 ./test/Makefile
 ./test/CppUnit/Makefile
