@@ -53,6 +53,7 @@ namespace OpenWBEM
 			: result(result_)
 			, cop(className, ns)
 			{
+				cop.addKey("Name", OW_CIMValue(""));
 				cop.addKey("SystemCreationClassName", OW_CIMValue(sccn));
 				cop.addKey("SystemName", OW_CIMValue(sn));
 				cop.addKey("ObjectManagerCreationClassName", OW_CIMValue(omccn));
@@ -62,7 +63,15 @@ namespace OpenWBEM
 	
 			void doHandle(const OW_String& s)
 			{
-				cop.addKey("Name", OW_CIMValue(s));
+				OW_CIMPropertyArray keys = cop.getKeys();
+				for (size_t i = 0; i < keys.size(); ++i)
+				{
+					if (keys[i].getName() == "Name")
+					{
+						keys[i].setValue(OW_CIMValue(s));
+					}
+				}
+				cop.setKeys(keys);
 				result.handle(cop);
 			}
 		private:
