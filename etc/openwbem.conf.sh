@@ -350,8 +350,10 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
 # responses.  This option controls whether it will acutally use it or not.
+# Performance tests on a 100Mbit lan have shown that enabling deflate is slower 
+# than if it is disabled.
 # The default is true
-;http_server.enable_deflate = true
+http_server.enable_deflate = false
 
 ################################################################################
 # http_server.listen_addresses option specifies the local addresses to listen
