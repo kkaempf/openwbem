@@ -321,13 +321,13 @@ TempFileBuffer::usingTempFile() const
 }
 //////////////////////////////////////////////////////////////////////////////
 TempFileStream::TempFileStream(size_t bufSize)
-: iostream(new TempFileBuffer(bufSize))
+: std::basic_iostream<char, std::char_traits<char> >(new TempFileBuffer(bufSize))
 , m_buffer(dynamic_cast<TempFileBuffer*>(rdbuf()))
 {
 }
 //////////////////////////////////////////////////////////////////////////////
 TempFileStream::TempFileStream(String const& filename, size_t bufSize)
-: iostream(new TempFileBuffer(filename, bufSize))
+: std::basic_iostream<char, std::char_traits<char> >(new TempFileBuffer(filename, bufSize))
 , m_buffer(dynamic_cast<TempFileBuffer*>(rdbuf()))
 {
 }

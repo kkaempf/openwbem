@@ -179,7 +179,7 @@ HTTPDeflateOStreamBuffer::termOutput()
 //////////////////////////////////////////////////////////////////////////////
 HTTPDeflateOStream::HTTPDeflateOStream(ostream& ostr)
 	: HTTPDeflateOStreamBase(ostr)
-	, ostream(&m_strbuf)
+	, std::basic_ostream<char, std::char_traits<char> >(&m_strbuf)
 	, m_ostr(ostr)
 {
 }

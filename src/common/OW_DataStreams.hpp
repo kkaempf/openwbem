@@ -82,7 +82,8 @@ class OW_COMMON_API DataIStream : private DataIStreamBase, public std::istream
 {
 public:
 	DataIStream(int dataLen, const unsigned char* data)
-	: DataIStreamBase(dataLen, data), std::istream(&m_strbuf)	{}
+	: DataIStreamBase(dataLen, data) 
+	, std::basic_istream<char, std::char_traits<char> >(&m_strbuf)	{}
 };
 //////////////////////////////////////////////////////////////////////////////
 class OW_COMMON_API DataOStreamBuf : public std::streambuf
@@ -113,7 +114,7 @@ class OW_COMMON_API DataOStream : private DataOStreamBase, public std::ostream
 public:
 	DataOStream(size_t initialSize = 256)
 		: DataOStreamBase(initialSize)
-		, std::ostream(&m_buf)
+		, std::basic_ostream<char, std::char_traits<char> >(&m_buf)
 	{}
 	const unsigned char* getData() const { return m_buf.getData(); }
 	int length() const { return m_buf.length();  }

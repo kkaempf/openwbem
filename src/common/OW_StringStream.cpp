@@ -86,7 +86,8 @@ OStringStreamBase::OStringStreamBase(size_t sz)
 }
 ///////////////////////////////////////////////////////////////////////////////
 OStringStream::OStringStream(size_t size)
-	: OStringStreamBase(size), std::ostream(&m_buf)
+	: OStringStreamBase(size)
+	, std::basic_ostream<char, std::char_traits<char> >(&m_buf)
 {
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,7 +101,8 @@ OStringStream::OStringStream(const OStringStream& ostr)
 #else
 	: std::ios() // gcc 2.95.x broken library.
 #endif
-	, OStringStreamBase(ostr.length()),  std::ostream(&m_buf)
+	, OStringStreamBase(ostr.length())
+	, std::basic_ostream<char, std::char_traits<char> >(&m_buf)
 {
 	*this << ostr.toString();
 }

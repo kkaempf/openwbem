@@ -89,7 +89,7 @@ HTTPChunkedOStreamBuffer::buffer_to_device(const char* c, int n)
 //////////////////////////////////////////////////////////////////////////////
 HTTPChunkedOStream::HTTPChunkedOStream(ostream& ostr) :
 	HTTPChunkedOStreamBase(ostr),
-	ostream(&m_strbuf),
+	std::basic_ostream<char, std::char_traits<char> >(&m_strbuf),
 	m_ostr(ostr)
 {
 }
