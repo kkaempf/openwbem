@@ -234,11 +234,14 @@ HTTPSvrConnection::run()
 				sendError(m_resCode);
 				return;
 			}
+
+			// Set IP address in context
+			context.setStringData(OperationContext::CLIENT_IPADDR, m_socket.getPeerAddress().toString());
+			context.setStringData(OperationContext::HTTP_PATH, m_requestLine[1]);
+
 			//
 			// Process Headers
 			//
-			context.setStringData(OperationContext::HTTP_PATH, m_requestLine[1]);
-
 			m_resCode = processHeaders(context);
 			istrToReadFrom = convertToFiniteStream(m_istr);
 			if (m_resCode >= 300)	// problem with request detected in headers.
@@ -247,6 +250,7 @@ HTTPSvrConnection::run()
 				sendError(m_resCode);
 				return;
 			}
+			
 			//
 			// Set up input stream to read entity
 			//

@@ -152,6 +152,7 @@ const char* const OperationContext::CURUSER_UIDKEY = "CURUSER_UIDKEY";
 const char* const OperationContext::BYPASS_LOCKERKEY = "BYPASS_LOCKER"; 
 const char* const OperationContext::SESSION_LANGUAGE_KEY = "SESSION_LANGUAGE_KEY";
 const char* const OperationContext::HTTP_ACCEPT_LANGUAGE_KEY = "HTTP_ACCEPT_LANGUAGE_KEY";
+const char* const OperationContext::CLIENT_IPADDR = "CLIENT_IPADDR"; 
 
 
 } // end namespace OpenWBEM
