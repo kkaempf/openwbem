@@ -294,7 +294,7 @@ CIMInstance::_buildKeys()
 		CIMProperty cp = m_pdata->m_properties[i];
 		if(cp.isKey())
 		{
-			m_pdata->m_keys.append(cp.clone(E_INCLUDE_QUALIFIERS, E_INCLUDE_CLASS_ORIGIN));
+			m_pdata->m_keys.append(cp);
 		}
 	}
 }
