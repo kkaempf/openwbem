@@ -305,7 +305,7 @@ void
 OW_PollingManager::TriggerRunner::run()
 {
 	m_indServer->m_runCount.signal();
-	long nextInterval = m_itp->poll(createProvEnvRef(m_lch, m_env));
+	OW_Int32 nextInterval = m_itp->poll(createProvEnvRef(m_lch, m_env));
 
 	if(nextInterval == 0)
 	{

@@ -86,8 +86,8 @@ void
 OW_GenericHDBRepository::freeHandle(OW_HDBHandle& hdl)
 {
 	OW_MutexLock ml(m_guard);
-	long uv = hdl.getUserValue();
-	if(uv > HDL_NOTINUSE && uv < long(m_handles.size()))
+	OW_Int32 uv = hdl.getUserValue();
+	if(uv > HDL_NOTINUSE && uv < OW_Int32(m_handles.size()))
 	{
 		// Handle is from the cache, so flag it as not in use.
 		hdl.flush();

@@ -98,7 +98,7 @@ OW_HDBNode::OW_HDBNode(const char* key, OW_HDBHandle& hdl) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_HDBNode::OW_HDBNode(long offset, OW_HDBHandle& hdl) :
+OW_HDBNode::OW_HDBNode(OW_Int32 offset, OW_HDBHandle& hdl) :
 	m_pdata(NULL)
 {
 	if(!hdl || offset <= 0)
@@ -148,7 +148,7 @@ OW_HDBNode::OW_HDBNode(const OW_String& key, int dataLen,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDBNode::read(long offset, OW_HDBHandle& hdl)
+OW_HDBNode::read(OW_Int32 offset, OW_HDBHandle& hdl)
 {
 	if(offset <= 0 || !hdl)
 	{
@@ -229,7 +229,7 @@ OW_HDBNode::reload(OW_HDBHandle& hdl)
 
 	OW_File file = hdl.getFile();
 	OW_HDBBlock fblk;
-	long offset = m_pdata->m_offset;
+	OW_Int32 offset = m_pdata->m_offset;
 
 	if(OW_HDB::readBlock(fblk, file, offset) != SZ(fblk))
 	{
@@ -382,7 +382,7 @@ OW_HDBNode::updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-long
+OW_Int32
 OW_HDBNode::write(OW_HDBHandle& hdl, OW_Bool onlyHeader)
 {
 	if(m_pdata.isNull())
@@ -465,7 +465,7 @@ OW_HDBNode::write(OW_HDBHandle& hdl, OW_Bool onlyHeader)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, long offset)
+OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset)
 {
 	if(offset <= 0L || m_pdata.isNull() || !hdl)
 	{
@@ -543,7 +543,7 @@ OW_HDBNode::updateOffsets(OW_HDBHandle& hdl, long offset)
 	}
 
 	// Now update the parent offset on all children
-	long coffset = m_pdata->m_blk.firstChild;
+	OW_Int32 coffset = m_pdata->m_blk.firstChild;
 	while(coffset > 0)
 	{
 		if(OW_HDB::readBlock(fblk, file, coffset) != SZ(fblk))
@@ -603,7 +603,7 @@ OW_HDBNode::addChild(OW_HDBHandle& hdl, OW_HDBNode& arg)
 	arg.m_pdata->m_blk.nextSib = -1;
 	arg.m_pdata->m_blk.parent = m_pdata->m_offset;
 
-	long newNodeOffset = arg.write(hdl);
+	OW_Int32 newNodeOffset = arg.write(hdl);
 	OW_File file = hdl.getFile();
 
 	// If this node already had children, then update the last node in the
@@ -650,8 +650,8 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 	OW_HDBBlock fblk;
 
 	// Remove all children
-	long coffset = m_pdata->m_blk.lastChild;
-	long toffset;
+	OW_Int32 coffset = m_pdata->m_blk.lastChild;
+	OW_Int32 toffset;
 	while(coffset > 0)
 	{
 		if(OW_HDB::readBlock(fblk, file, coffset) != SZ(fblk))
@@ -772,13 +772,13 @@ OW_HDBNode::remove(OW_HDBHandle& hdl)
 // optimizations are welcome.
 #define LMAX(a, b)	((int(a) > int(b)) ? (a) : (b))
 void
-OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
+OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset)
 {
 	OW_AutoPtrVec<unsigned char>
 		pbfr(new unsigned char[LMAX(SZ(fblk), fblk.keyLength)]);
 
 	OW_File file = hdl.getFile();
-	long coffset = fblk.lastChild;
+	OW_Int32 coffset = fblk.lastChild;
 	if(coffset > 0)
 	{
 		while(coffset > 0)
@@ -790,7 +790,7 @@ OW_HDBNode::removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset)
 			}
 
 			// Save current offset for call to removeBlock
-			long toffset = coffset;
+			OW_Int32 toffset = coffset;
 
 			// Get pointer to previous sibling
 			coffset = ((OW_HDBBlock*)pbfr.get())->prevSib;

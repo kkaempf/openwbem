@@ -278,7 +278,7 @@ OW_DateTime::toStringGMT() const
 void
 OW_DateTime::writeObject(ostream &ostrm) const /*throw (OW_IOException)*/
 {
-	long v = OW_hton32(m_time);
+	OW_Int32 v = OW_hton32(m_time);
 	if(!ostrm.write((const char*)&v, sizeof(v)))
 		OW_THROW(OW_IOException, "OW_DateTime failed to write data");
 }

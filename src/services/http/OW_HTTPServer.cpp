@@ -47,33 +47,6 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SocketBaseImpl.hpp" // for setDumpFiles()
 
-#ifdef OW_HAVE_SLP_H
-#ifdef OW_GNU_LINUX
-#define OW_STRPLATFORM "Linux"
-#endif
-
-#ifdef OW_OPENUNIX
-#define OW_STRPLATFORM "OpenUnix"
-#endif
-
-#ifdef OW_SOLARIS
-#define OW_STRPLATFORM "Solaris"
-#endif
-
-#ifdef OW_OPENSERVER
-#define OW_STRPLATFORM "OpenServer"
-#endif
-
-#ifndef OW_STRPLATFORM
-#error "OW_STRPLATFORM is undefined"
-#endif
-
-static const long POLLING_INTERVAL = 60 * 5;
-static const long INITIAL_POLLING_INTERVAL = 5;
-
-#endif	// OW_HAVE_SLP_H
-
-
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPServer::OW_HTTPServer()
 	: m_options()

@@ -62,8 +62,8 @@ extern "C"
 #include <slp.h>
 }
 
-static const long POLLING_INTERVAL = 60 * 5;
-static const long INITIAL_POLLING_INTERVAL = 5;
+static const OW_Int32 POLLING_INTERVAL = 60 * 5;
+static const OW_Int32 INITIAL_POLLING_INTERVAL = 5;
 
 extern "C"
 {

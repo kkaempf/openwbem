@@ -163,7 +163,7 @@ OW_HDB::checkFile()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-long
+OW_Int32
 OW_HDB::incVersion()
 {
 	OW_MutexLock l(m_guard);
@@ -201,8 +201,8 @@ OW_HDB::decHandleCount()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDB::setOffsets(OW_File file, long firstRootOffset, long lastRootOffset,
-	long firstFreeOffset)
+OW_HDB::setOffsets(OW_File file, OW_Int32 firstRootOffset, OW_Int32 lastRootOffset,
+	OW_Int32 firstFreeOffset)
 {
 	OW_MutexLock l(m_guard);
 	m_hdrBlock.firstRoot = firstRootOffset;
@@ -216,21 +216,21 @@ OW_HDB::setOffsets(OW_File file, long firstRootOffset, long lastRootOffset,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDB::setFirstRootOffSet(OW_File file, long offset)
+OW_HDB::setFirstRootOffSet(OW_File file, OW_Int32 offset)
 {
 	setOffsets(file, offset, m_hdrBlock.lastRoot, m_hdrBlock.firstFree);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDB::setLastRootOffset(OW_File file, long offset)
+OW_HDB::setLastRootOffset(OW_File file, OW_Int32 offset)
 {
 	setOffsets(file, m_hdrBlock.firstRoot, offset, m_hdrBlock.firstFree);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_HDB::setFirstFreeOffSet(OW_File file, long offset)
+OW_HDB::setFirstFreeOffSet(OW_File file, OW_Int32 offset)
 {
 	setOffsets(file, m_hdrBlock.firstRoot, m_hdrBlock.lastRoot, offset);
 }
@@ -239,18 +239,18 @@ OW_HDB::setFirstFreeOffSet(OW_File file, long offset)
 // Find a block in the free list that is large enough to hold the given
 // size. If no block in the free list is large enough or the free list
 // is empty, then the offset to the end of the file is returned
-long
+OW_Int32
 OW_HDB::findBlock(OW_File file, OW_Int32 size)
 {
 	OW_MutexLock l(m_guard);
-	long offset = -1;
+	OW_Int32 offset = -1;
 	OW_HDBBlock fblk;
 
 	// If the free list is not empty, then search it for a block
 	// big enough to hold the given size
 	if(m_hdrBlock.firstFree != -1)
 	{
-		long coffset = m_hdrBlock.firstFree;
+		OW_Int32 coffset = m_hdrBlock.firstFree;
 		while(true)
 		{
 			if(readBlock(fblk, file, coffset) != sizeof(fblk))
@@ -352,7 +352,7 @@ OW_HDB::removeBlockFromFreeList(OW_File file, OW_HDBBlock& fblk)
 // Add a block to the free list.
 void
 OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
-	long offset)
+	OW_Int32 offset)
 {
 	OW_MutexLock l(m_guard);
 	OW_HDBBlock fblk = parmblk;
@@ -376,8 +376,8 @@ OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
 
 	OW_HDBBlock cblk;
 	cblk.size = 0;
-	long coffset = m_hdrBlock.firstFree;
-	long loffset = 0;
+	OW_Int32 coffset = m_hdrBlock.firstFree;
+	OW_Int32 loffset = 0;
 
 	// Find insertion point in free list
 	while(coffset != -1)
@@ -457,7 +457,7 @@ OW_HDB::addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
 // Upon return the file pointer should be positioned immediately after
 // the given node in the file.
 void
-OW_HDB::addRootNode(OW_File file, OW_HDBBlock& fblk, long offset)
+OW_HDB::addRootNode(OW_File file, OW_HDBBlock& fblk, OW_Int32 offset)
 {
 	OW_MutexLock l(m_guard);
 	fblk.parent = -1;
@@ -496,7 +496,7 @@ OW_HDB::addRootNode(OW_File file, OW_HDBBlock& fblk, long offset)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 int
-OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, long offset)
+OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 {
 	fblk.chkSum = 0;
 	OW_UInt32 chkSum = calcCheckSum((unsigned char*)&fblk, sizeof(fblk));
@@ -514,7 +514,7 @@ OW_HDB::writeBlock(OW_HDBBlock& fblk, OW_File file, long offset)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC	
 int
-OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, long offset)
+OW_HDB::readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset)
 {
 	int cc = file.read(&fblk, sizeof(fblk), offset);
 	if(cc != sizeof(fblk))
@@ -586,7 +586,7 @@ OW_HDB::findIndexEntry(const char* key)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_HDB::addIndexEntry(const char* key, long offset)
+OW_HDB::addIndexEntry(const char* key, OW_Int32 offset)
 {
 	if(!m_opened)
 	{
@@ -611,7 +611,7 @@ OW_HDB::removeIndexEntry(const char* key)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_HDB::updateIndexEntry(const char* key, long newOffset)
+OW_HDB::updateIndexEntry(const char* key, OW_Int32 newOffset)
 {
 	if(!m_opened)
 	{
@@ -668,7 +668,7 @@ OW_HDBHandle::OW_HDBHandle(OW_HDB* pdb, OW_File file) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-long
+OW_Int32
 OW_HDBHandle::registerWrite()
 {
 	m_pdata->m_writeDone = true;
@@ -1000,7 +1000,7 @@ OW_HDBHandle::findIndexEntry(const char* key)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_HDBHandle::addIndexEntry(const char* key, long offset)
+OW_HDBHandle::addIndexEntry(const char* key, OW_Int32 offset)
 {
 	return m_pdata->m_pdb->addIndexEntry(key, offset);
 }
@@ -1014,7 +1014,7 @@ OW_HDBHandle::removeIndexEntry(const char* key)
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
-OW_HDBHandle::updateIndexEntry(const char* key, long newOffset)
+OW_HDBHandle::updateIndexEntry(const char* key, OW_Int32 newOffset)
 {
 	return m_pdata->m_pdb->updateIndexEntry(key, newOffset);
 }

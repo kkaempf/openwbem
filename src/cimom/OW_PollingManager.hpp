@@ -70,7 +70,7 @@ private:
 		OW_PolledProviderIFCRef m_itp;
 		time_t m_nextPoll;
 		OW_Bool m_isRunning;
-		long m_pollInterval;
+		OW_Int32 m_pollInterval;
 		OW_PollingManager* m_indServer;
 		OW_CIMOMHandleIFCRef m_lch;
 		OW_CIMOMEnvironmentRef m_env;

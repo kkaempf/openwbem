@@ -30,9 +30,9 @@ public:
 	virtual OW_IndexEntry findNext();
 	virtual OW_IndexEntry findPrev();
 	virtual OW_IndexEntry find(const char* key);
-	virtual bool add(const char* key, long offset);
-	virtual bool remove(const char* key, long offset=-1L);
-	virtual bool update(const char* key, long newOffset);
+	virtual bool add(const char* key, OW_Int32 offset);
+	virtual bool remove(const char* key, OW_Int32 offset=-1L);
+	virtual bool update(const char* key, OW_Int32 newOffset);
 	virtual void flush();
 	void reopen();
 
@@ -165,10 +165,9 @@ OW_IndexImpl::find(const char* key)
 	{
 		if(!::strcmp((const char*)theKey.data, key))
 		{
-			long tmp;
-			memcpy(&tmp, theRec.data, sizeof(long));
+			OW_Int32 tmp;
+			memcpy(&tmp, theRec.data, sizeof(tmp));
 			return OW_IndexEntry((const char*)theKey.data, tmp);
-//			return OW_IndexEntry((const char*)theKey.data, *((long*)theRec.data));
 		}
 	}
 
@@ -177,7 +176,7 @@ OW_IndexImpl::find(const char* key)
 
 //////////////////////////////////////////////////////////////////////////////	
 bool
-OW_IndexImpl::add(const char* key, long offset)
+OW_IndexImpl::add(const char* key, OW_Int32 offset)
 {
 	if(m_pDB == NULL)
 	{
@@ -194,7 +193,7 @@ OW_IndexImpl::add(const char* key, long offset)
 
 //////////////////////////////////////////////////////////////////////////////	
 bool
-OW_IndexImpl::remove(const char* key, long offset)
+OW_IndexImpl::remove(const char* key, OW_Int32 offset)
 {
 	if(m_pDB == NULL)
 	{
@@ -226,7 +225,7 @@ OW_IndexImpl::remove(const char* key, long offset)
 
 //////////////////////////////////////////////////////////////////////////////	
 bool
-OW_IndexImpl::update(const char* key, long newOffset) /*throw (OW_IndexImplException)*/
+OW_IndexImpl::update(const char* key, OW_Int32 newOffset) /*throw (OW_IndexImplException)*/
 {
 	if(m_pDB == NULL)
 	{
@@ -271,8 +270,8 @@ OW_IndexImpl::findFirst(const char* key)
 	int cc = m_pDB->seq(m_pDB, &theKey, &theRec, op);
 	if(cc == 0)
 	{
-		long tmp;
-		memcpy(&tmp, theRec.data, sizeof(long));
+		OW_Int32 tmp;
+		memcpy(&tmp, theRec.data, sizeof(tmp));
 		return OW_IndexEntry((const char*)theKey.data, tmp);
 	}
 
@@ -291,8 +290,8 @@ OW_IndexImpl::findNext()
 	DBT theRec, theKey;
 	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_NEXT) == 0)
 	{
-		long tmp;
-		memcpy(&tmp, theRec.data, sizeof(long));
+		OW_Int32 tmp;
+		memcpy(&tmp, theRec.data, sizeof(tmp));
 		return OW_IndexEntry((const char*)theKey.data, tmp);
 	}
 
@@ -311,8 +310,8 @@ OW_IndexImpl::findPrev()
 	DBT theRec, theKey;
 	if(m_pDB->seq(m_pDB, &theKey, &theRec, R_PREV) == 0)
 	{
-		long tmp;
-		memcpy(&tmp, theRec.data, sizeof(long));
+		OW_Int32 tmp;
+		memcpy(&tmp, theRec.data, sizeof(tmp));
 		return OW_IndexEntry((const char*)theKey.data, tmp);
 	}
 

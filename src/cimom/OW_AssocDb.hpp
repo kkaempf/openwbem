@@ -90,8 +90,8 @@ public:
 	void writeObject(std::ostream& ostrm) const;
 	void readObject(std::istream& istrm);
 
-	long getOffset() const { return m_offset; }
-	void setOffset(long offset) { m_offset = offset; }
+	OW_Int32 getOffset() const { return m_offset; }
+	void setOffset(OW_Int32 offset) { m_offset = offset; }
 
 	operator void* () const { return (void*) m_targetObject.length(); }
 	
@@ -111,7 +111,7 @@ private:
 	/** Key to the association instance */
 	OW_String m_assocKey;
 
-	long m_offset;
+	OW_Int32 m_offset;
 };
 
 std::ostream& operator << (std::ostream& ostrm, const OW_AssocDbEntry& arg);
@@ -260,7 +260,7 @@ struct AssocDbRecHeader
 struct OW_AssocDbHeader
 {
 	char signature[OW_ASSOCSIGLEN];
-	long firstFree;
+	OW_Int32 firstFree;
 };
 
 class OW_AssocDb

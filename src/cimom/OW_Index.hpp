@@ -121,7 +121,7 @@ public:
 	 * the index entry was already on file.
 	 * @exception OW_IndexException If the index file hasn't been opened.
 	 */
-	virtual bool add(const char* key, long offset) = 0;
+	virtual bool add(const char* key, OW_Int32 offset) = 0;
 
 	/**
 	 * Remove an entry from the index.
@@ -133,7 +133,7 @@ public:
 	 * the index entry could not be found.
 	 * @exception OW_IndexException If the index file hasn't been opened.
 	 */
-	virtual bool remove(const char* key, long offset=-1L) = 0;
+	virtual bool remove(const char* key, OW_Int32 offset=-1L) = 0;
 
 	/**
 	 * Update an index entry.
@@ -143,7 +143,7 @@ public:
 	 * found.
 	 * @exception OW_IndexException If the index file hasn't been opened.
 	 */
-	virtual bool update(const char* key, long newOffset) = 0;
+	virtual bool update(const char* key, OW_Int32 newOffset) = 0;
 
 	/**
 	 * Flush all changes to the underlying index file.
@@ -177,7 +177,7 @@ public:
 	 * @param k	The key for this index entry.
 	 * @param o	The offset associated with the given key.
 	 */
-	OW_IndexEntry(const OW_String& k, long o) :
+	OW_IndexEntry(const OW_String& k, OW_Int32 o) :
 		key(k), offset(o) {}
 
 	/**
@@ -214,7 +214,7 @@ public:
 	 * The offset associated with this index entry. If this is -1L, this should
 	 * be considered an invalid OW_IndexEntry.
 	 */
-	long offset;
+	OW_Int32 offset;
 };
 
 #endif	// __OW_INDEX_HPP__

@@ -66,7 +66,7 @@ private:
 		OW_HDB* m_pdb;
 		OW_File m_file;
 		OW_Bool m_writeDone;
-		long m_userVal;	// Handle user can store any long data here
+		OW_Int32 m_userVal;	// Handle user can store any long data here
 	};
 
 public:
@@ -228,13 +228,13 @@ public:
 	 * OW_HDBHandle object.
 	 * @param value	The new value for the user data field.
 	 */
-	void setUserValue(long value) { m_pdata->m_userVal = value; }
+	void setUserValue(OW_Int32 value) { m_pdata->m_userVal = value; }
 
 	/**
 	 * @return The user value for this OW_HDBHandle object.
 	 * @see setUserValue
 	 */
-	long getUserValue() const { return m_pdata->m_userVal; }
+	OW_Int32 getUserValue() const { return m_pdata->m_userVal; }
 
 	/**
 	 * @return true if the is a valid OW_HDBHandle. Otherwise false.
@@ -247,15 +247,15 @@ private:
 
 	OW_File getFile() { return m_pdata->m_file; }
 	OW_HDB* getHDB() { return m_pdata->m_pdb; }
-	long registerWrite();
+	OW_Int32 registerWrite();
 
 	OW_IndexEntry findFirstIndexEntry(const char* key=NULL);
 	OW_IndexEntry findNextIndexEntry();
 	OW_IndexEntry findPrevIndexEntry();
 	OW_IndexEntry findIndexEntry(const char* key);
-	OW_Bool addIndexEntry(const char* key, long offset);
+	OW_Bool addIndexEntry(const char* key, OW_Int32 offset);
 	OW_Bool removeIndexEntry(const char* key);
-	OW_Bool updateIndexEntry(const char* key, long newOffset);
+	OW_Bool updateIndexEntry(const char* key, OW_Int32 newOffset);
 
 	friend class OW_HDB;
 	friend class OW_HDBNode;
@@ -321,7 +321,7 @@ public:
 	 * @param offset	The offset to write the block to.
 	 * @return The number of bytes written on success. Otherwise -1
 	 */
-	static int writeBlock(OW_HDBBlock& fblk, OW_File file, long offset);
+	static int writeBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
 
 	/**
 	 * Read the given OW_HDBBlock.
@@ -331,42 +331,42 @@ public:
 	 * @return The number of bytes read on success. Otherwise -1
 	 * @exception OW_HDBException
 	 */
-	static int readBlock(OW_HDBBlock& fblk, OW_File file, long offset);
+	static int readBlock(OW_HDBBlock& fblk, OW_File file, OW_Int32 offset);
 
 private:
 
 	OW_Bool createFile();
 	OW_Bool checkFile();
-	void setOffsets(OW_File file, long firstRootOffset, long lastRootOffset,
-		long firstFreeOffset);
-	void setFirstRootOffSet(OW_File file, long offset);
-	void setLastRootOffset(OW_File file, long offset);
-	void setFirstFreeOffSet(OW_File file, long offset);
-	long getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
-	long getLastRootOffset() { return m_hdrBlock.lastRoot; }
-	long getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
-	long findBlock(OW_File file, int size);
+	void setOffsets(OW_File file, OW_Int32 firstRootOffset, OW_Int32 lastRootOffset,
+		OW_Int32 firstFreeOffset);
+	void setFirstRootOffSet(OW_File file, OW_Int32 offset);
+	void setLastRootOffset(OW_File file, OW_Int32 offset);
+	void setFirstFreeOffSet(OW_File file, OW_Int32 offset);
+	OW_Int32 getFirstRootOffSet() { return m_hdrBlock.firstRoot; }
+	OW_Int32 getLastRootOffset() { return m_hdrBlock.lastRoot; }
+	OW_Int32 getFirstFreeOffSet() { return m_hdrBlock.firstFree; }
+	OW_Int32 findBlock(OW_File file, int size);
 	void removeBlockFromFreeList(OW_File file, OW_HDBBlock& fblk);
-	void addRootNode(OW_File file, OW_HDBBlock& fblk, long offset);
+	void addRootNode(OW_File file, OW_HDBBlock& fblk, OW_Int32 offset);
 	void addBlockToFreeList(OW_File file, const OW_HDBBlock& parmblk,
-		long offset);
+		OW_Int32 offset);
 
-	long getVersion() { return m_version; }
-	long incVersion();
+	OW_Int32 getVersion() { return m_version; }
+	OW_Int32 incVersion();
 	void decHandleCount();
 
 	OW_IndexEntry findFirstIndexEntry(const char* key=NULL);
 	OW_IndexEntry findNextIndexEntry();
 	OW_IndexEntry findPrevIndexEntry();
 	OW_IndexEntry findIndexEntry(const char* key);
-	OW_Bool addIndexEntry(const char* key, long offset);
+	OW_Bool addIndexEntry(const char* key, OW_Int32 offset);
 	OW_Bool removeIndexEntry(const char* key);
-	OW_Bool updateIndexEntry(const char* key, long newOffset);
+	OW_Bool updateIndexEntry(const char* key, OW_Int32 newOffset);
 	void flushIndex();
 
 	OW_HDBHeaderBlock m_hdrBlock;
 	OW_String m_fileName;
-	long m_version;
+	OW_Int32 m_version;
 	int m_hdlCount;
 	OW_Bool m_opened;
 	OW_IndexRef m_pindex;

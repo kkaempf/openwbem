@@ -199,19 +199,19 @@ public:
 private:
 
 	OW_HDBNode(const char* key, OW_HDBHandle& hdl);
-	OW_HDBNode(long offset, OW_HDBHandle& hdl);
-	void read(long offset, OW_HDBHandle& hdl);
+	OW_HDBNode(OW_Int32 offset, OW_HDBHandle& hdl);
+	void read(OW_Int32 offset, OW_HDBHandle& hdl);
 	OW_Bool reload(OW_HDBHandle& hdl);
-	long write(OW_HDBHandle& hdl, OW_Bool onlyHeader=false);
-	void updateOffsets(OW_HDBHandle& hdl, long offset);
-	long getParentOffset() const { return m_pdata->m_blk.parent; }
-	long getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
-	long getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
-	long getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
-	long getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
-	long getOffset() { return m_pdata->m_offset; }
+	OW_Int32 write(OW_HDBHandle& hdl, OW_Bool onlyHeader=false);
+	void updateOffsets(OW_HDBHandle& hdl, OW_Int32 offset);
+	OW_Int32 getParentOffset() const { return m_pdata->m_blk.parent; }
+	OW_Int32 getFirstChildOffset() const { return m_pdata->m_blk.firstChild; }
+	OW_Int32 getLastChildOffset() const { return m_pdata->m_blk.lastChild; }
+	OW_Int32 getNextSiblingOffset() const { return m_pdata->m_blk.nextSib; }
+	OW_Int32 getPrevSiblingOffset() const { return m_pdata->m_blk.prevSib; }
+	OW_Int32 getOffset() { return m_pdata->m_offset; }
 	OW_Bool remove(OW_HDBHandle& hdl);
-	void removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, long offset);
+	void removeBlock(OW_HDBHandle& hdl, OW_HDBBlock& fblk, OW_Int32 offset);
 	void addChild(OW_HDBHandle& hdl, OW_HDBNode& arg);
 	OW_Bool updateData(OW_HDBHandle& hdl, int dataLen, unsigned char* data);
 

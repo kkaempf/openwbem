@@ -193,7 +193,7 @@ public:
 
 	/**
 	 * Set this OW_DateTime object with a time_t value.
-	 * @param t A long value that represents the number of seconds from
+	 * @param t A time_t value that represents the number of seconds from
 	 *		Jan 1, 1970.
 	 */
 	void set(time_t t)

@@ -45,8 +45,8 @@ using std::endl;
 //////////////////////////////////////////////////////////////////////////////
 // Local functions
 static OW_UInt32 calcCheckSum(unsigned char* src, OW_Int32 len);
-static void writeRecHeader(AssocDbRecHeader& rh, long offset, OW_File file);
-static void readRecHeader(AssocDbRecHeader& rh, long offset, OW_File file);
+static void writeRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file);
+static void readRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file);
 
 //////////////////////////////////////////////////////////////////////////////
 OW_AssocDbEntry::OW_AssocDbEntry(istream& istrm) :
@@ -655,7 +655,7 @@ OW_AssocDb::getNewBlock(OW_Int32& offset, OW_UInt32 blkSize,
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-writeRecHeader(AssocDbRecHeader& rh, long offset, OW_File file)
+writeRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file)
 {
 	rh.chkSum = calcCheckSum((unsigned char*)&rh.nextFree,
 		sizeof(rh) - sizeof(rh.chkSum));
@@ -668,7 +668,7 @@ writeRecHeader(AssocDbRecHeader& rh, long offset, OW_File file)
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-readRecHeader(AssocDbRecHeader& rh, long offset, OW_File file)
+readRecHeader(AssocDbRecHeader& rh, OW_Int32 offset, OW_File file)
 {
 	if(file.read(&rh, sizeof(rh), offset) != sizeof(rh))
 	{
