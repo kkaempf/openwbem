@@ -86,17 +86,6 @@ public:
 			const OW_CIMClass& cimClass );
 	
 	/**
-	 * This method deletes the instance specified in the object path
-	 *
-	 * @param cop The instance to be deleted
-	 *
-	 * @throws OW_CIMException
-	 */
-	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop);
-
-	/**
 	 * This method retrieves the instance specified in the object path.
 	 *
 	 * @param cop The name of the instance to be retrieved.
@@ -123,6 +112,7 @@ public:
 		const OW_StringArray* propertyList, 
 		const OW_CIMClass& cimClass);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * This method creates the instance specified in the object path.  If the
 	 * instance does exist an OW_CIMException with ID CIM_ERR_ALREADY_EXISTS
@@ -161,6 +151,18 @@ public:
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList,
 		const OW_CIMClass& theClass);
+
+	/**
+	 * This method deletes the instance specified in the object path
+	 *
+	 * @param cop The instance to be deleted
+	 *
+	 * @throws OW_CIMException
+	 */
+	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
+		const OW_String& ns,
+		const OW_CIMObjectPath& cop);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 private:
 	OW_FTABLERef m_ftable;

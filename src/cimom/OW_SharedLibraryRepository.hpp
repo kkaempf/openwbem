@@ -55,6 +55,7 @@ public:
 		return m_ref->getEnvironment();
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void createNameSpace(const OW_String& ns,
 		const OW_UserInfo &aclInfo)
 	{
@@ -66,6 +67,7 @@ public:
 	{
 		m_ref->deleteNameSpace(ns, aclInfo);
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
 		const OW_UserInfo &aclInfo)
@@ -113,11 +115,40 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns, const OW_CIMInstance &ci,
 		const OW_UserInfo &aclInfo)
 	{
 		return m_ref->createInstance(ns, ci, aclInfo);
 	}
+
+	virtual OW_CIMInstance modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_UserInfo &aclInfo)
+	{
+		return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
+			propertyList, aclInfo);
+	}
+
+	virtual void setProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
+		const OW_String &propertyName, const OW_CIMValue &cv,
+		const OW_UserInfo &aclInfo)
+	{
+		m_ref->setProperty(ns, name, propertyName, cv, aclInfo);
+	}
+
+	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
+		const OW_UserInfo &aclInfo)
+	{
+		return m_ref->deleteInstance(ns, cop, aclInfo);
+	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
 
 	virtual void enumInstances(
 		const OW_String& ns,
@@ -201,12 +232,6 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 
-	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->deleteInstance(ns, cop, aclInfo);
-	}
-
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	virtual void references(
 		const OW_String& ns,
@@ -232,26 +257,6 @@ public:
 			includeClassOrigin, propertyList, aclInfo);
 	}
 #endif
-
-	virtual OW_CIMInstance modifyInstance(
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		OW_Bool includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_UserInfo &aclInfo)
-	{
-		return m_ref->modifyInstance(ns, modifiedInstance, includeQualifiers,
-			propertyList, aclInfo);
-	}
-
-	virtual void setProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_CIMValue &cv,
-		const OW_UserInfo &aclInfo)
-	{
-		m_ref->setProperty(ns, name, propertyName, cv, aclInfo);
-	}
 
 	virtual OW_CIMValue getProperty(
 		const OW_String& ns,

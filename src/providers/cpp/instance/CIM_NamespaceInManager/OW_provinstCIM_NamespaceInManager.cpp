@@ -192,6 +192,7 @@ public:
 		return inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
 	virtual OW_CIMObjectPath createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -236,6 +237,7 @@ public:
 		(void)cop;
         // just ignore deleteInstance.
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	// Associator provider functions.

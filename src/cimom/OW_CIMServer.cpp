@@ -378,6 +378,7 @@ OW_CIMServer::close()
 {
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::createNameSpace(const OW_String& ns,
@@ -402,6 +403,7 @@ OW_CIMServer::deleteNameSpace(const OW_String& ns,
 
 	m_cimRepository->deleteNameSpace(ns,aclInfo);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1058,6 +1060,7 @@ OW_CIMServer::getInstance(
 	return ci;
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_CIMServer::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
@@ -1196,6 +1199,7 @@ OW_CIMServer::modifyInstance(
 	return oldInst;
 
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_Bool
@@ -1253,6 +1257,7 @@ OW_CIMServer::getProperty(
 	return prop.getValue();
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMServer::setProperty(
@@ -1316,6 +1321,7 @@ OW_CIMServer::setProperty(
 	ci.setProperty(cp);
 	modifyInstance(ns, ci, true, 0, intAclInfo);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue

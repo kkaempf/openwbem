@@ -39,10 +39,12 @@
 class OW_ClientCIMOMHandle : public OW_CIMOMHandleIFC
 {
 public:
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
     /** This method is deprecated.  Use OW_CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void createNameSpace(const OW_String& ns);
     /** This method is deprecated.  Use OW_CIMNameSpaceUtils::deleteCIM_Namespace() instead. */
 	virtual void deleteNameSpace(const OW_String& ns);
+#endif
     /** This method is deprecated.  Use OW_CIMNameSpaceUtils::createCIM_Namespace() instead. */
 	virtual void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC &result, OW_Bool deep);

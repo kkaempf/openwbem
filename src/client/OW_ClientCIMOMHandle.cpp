@@ -34,6 +34,7 @@
 
 
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
@@ -102,6 +103,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns_)
 	deleteInstance(parentPath, path);
     */
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

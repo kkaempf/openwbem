@@ -105,6 +105,7 @@ public:
 			const OW_CIMObjectPath& instanceName,
 			const OW_CIMClass& cimClass);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * This method creates the instance specified in the object path.  If the
 	 * instance does exist an OW_CIMException with ID CIM_ERR_ALREADY_EXISTS
@@ -150,6 +151,7 @@ public:
 	virtual void deleteInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_CIMObjectPath& cop);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	virtual OW_SimpleCppInstanceProviderIFC* getInstanceProvider() { return this; }
 };

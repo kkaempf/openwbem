@@ -1,0 +1,53 @@
+When all these options are used, and unneeded libraries are removed, the cimom has been reduced to only 3920K of disk space.  That was with the openwbem binary protocol handler.  If CIM/XML is used instead, the size was 4522K.
+
+Run "strip --strip-unneeded" on all the binaryies and libraries to get rid of excess debug information.
+
+Options that you can pass to the configure script:
+
+--disable-zlib  Disable zlib usage.  zlib is used for http compression.  It can make a big difference in the size of a CIM-XML payload.
+
+--disable-openslp  Disable slp.  The slp provider won't be built.  This doesn't have any effect on the cimom.
+
+--disable-acls  Disable ACL checking.  This will speed up the cimom as well as remove some code.
+
+--disable-check-null-references  By default, pointers are checked for NULL before being dereferenced.  This option will turn off that checking.  With this option, the cimom will segfault, otherwise an exception would have been thrown and the cimom would keep running.  It is only recommended that you turn off this option in extreme cases where performance and size are critical.
+
+--disable-check-array-indexing  By default, array accesses are checked for valid indexes.  The option will turn off that checking.  With this option, the cimom will segfault, otherwise an exception would have been thrown and the cimom would keep running.  It is only recommended that you turn off this option in extreme cases where performance and size are critical.
+
+--disable-digest  This option will remove the code to perform http digest authorization.
+
+The next 4 options deal with the functional profiles defined in the WBEM specification.  Each option disables the corresponding profile.  If you want a spec compliant server, you should be careful to respect the dependencies outlined in the spec.  OpenWBEM doesn't care about the dependencies, you can disable any profile you want.
+--disable-association-traversal 
+--disable-qualifier-declaration (with the exception of GetQualifier.  IMHO, GetQualifier belongs in Basic Read and shouldn't ever be disabled.)
+--disable-schema-manipulation 
+--disable-instance-manipulation (This also disables the "Basic Write" profile, since SetProperty is really Instance Manipulation, and depends on it in the internal OpenWBEM implementation.)
+
+--disable-ssl  Disable integration with SSL.  SSL is used to secure the http connection.  If you are concerned about security, you should use either SSL and/or digest authentication.  If you don't use either, the username and password will be sent in plaintext over the network and can be intercepted. 41K disk footprint.  
+
+
+Files that can be removed:
+include/* - Header files needed for OpenWBEM client or provider development.
+man/* - Man pages describing command line usage of various programs.
+libowclient, libhttpclient - Client libraries. The cimom uses them for exporting indications via cim/xml.  Can be removed if indications are disabled or if they will be delivered via some other mechanism (custom indication export provider).
+libowxml - xml library.  Can be removed if the cimom isn't going to support cim/xml, and the OpenWBEM binary protocol will be used instead.
+libowwqlcommon - WQL code used by the indication server and indication providers.  Can be removed if indication support is disabled.
+libowwql - WQL processor.  Used to handle ExecQuery calls.  Also used by the indication server.  Can be removed if indication and wql support is disabled.
+libsimpleauthentication - Simple authentication module.  Probably won't be used by anyone.  It's more of an example of how to create an authentication module, and can also be used for testing/development.
+libpamauthentication - PAM authentication module.  Can be removed if PAM authentication isn't needed.
+libpamclauthentication - PAM command line authentication module.  Certain systems have a memory leak in the pam library, so this module works around this problem by putting the leaky code into an external binary (OW_PAMAuth).  Use this if your system has a leaky pam library.
+libowrequesthandlercimxml - The CIM/XML protocol decoder.  Can be removed if the cimom doesn't need to support CIM/XML.
+libowrequesthandlerbinary - The OpenWBEM binary procotol decoder.  Can be removed if the cimom doesn't need to support the OpenWBEM binary protocol.
+libnpiprovifc, libnpisupport - Libaries to support the NPI provider interface.  If you aren't going to use NPI providers, then you can delete these.
+libcmpiprovifc, libcmpisupport - Libraries to support the CMPI provider interface.  If you aren't going to use CMPI providers, then you don't need these.
+libperlprovifc - The perl provider interface.  You don't need this if you aren't going to write providers in perl.
+libcppindicationexportxmlhttpprovider - Used to export indications via CIM/XML.  Not necessarily needed for indication support if you have another way of exporting indications from the cimom (SNMP, syslog, custom, etc. - You'll have to write your own indication export provider, otherwise the indication support is useless)
+libowprovCIM_IndicationSubscription, libowprovinstCIM_IndicationFilter, libowprovindIndicationRepLayer, libowindicationserver, libowindicationreplayer - Necessary for indication support.
+libowprovinstOpenWBEM_ObjectManager, libowprovinstCIM_Namespace, libowprovinstCIM_NamespaceInManager - Providers to support the CIM Interop schema.  Not strictly necessary, but recommended for standards compliance.
+OW_PAMAuth - Used by the libpamclauthentication authentication module.
+owdigestgenpass - Used to create digest password files.  Only needed if you are using the http digest authentication scheme.
+bin/* - Various client programs that aren't necessary for a server, but they can be useful for troubleshooting and/or development.
+
+
+Note that if you build openwbem with --disable-qualifier-declaration or --disable-schema-manipulation, you won't be able to import mof into the running cimom.  You will have to create the repository using the "direct repository compile" option of the mof compiler, which will bypass the cimom.
+
+If you configure with --disable-qualifier-declaration, --disable-schema-manipulation, or --disable-instance-manipulation, the mof compiler won't be built.  If you're going to use these options, it's best to build a copy of everything with nothing disabled.  This will get you a mof compiler and other tools.  Then use the mof compiler to build the repository.  Build the cimom and helper libraries with the --disable-* flags you desire and then deploy it along with the repository files you created earlier.

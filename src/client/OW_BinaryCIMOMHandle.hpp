@@ -134,16 +134,6 @@ public:
 		OW_Bool deep=true);
 
 	/**
-	 * Deletes the CIM instance specified by the CIM object path.
-	 * A CIM object path consists of two  parts: namespace + model path. The
-	 * model path is created by concatenating the properties of a class that are
-	 * qualified with the KEY qualifier.
-	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
-	 * @exception OW_CIMException If the instance does not exist.
-	 */
-	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path);
-
-	/**
 	 * Gets the CIM instance for the specified CIM object path.
 	 *
 	 * @param name			the OW_CIMObjectPath that identifies this CIM instance
@@ -308,6 +298,7 @@ public:
 	virtual void deleteClass(const OW_String& ns, const OW_String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Add the specified CIM instance to the specified namespace.
 	 * @param name	The OW_CIMObjectPath that identifies the CIM instance to be
@@ -319,19 +310,6 @@ public:
 	 */
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci);
-
-	/**
-	 * Set the specified CIM instance property.
-	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
-	 *								to be accessed
-	 * @param propertyName	The name of the property to set the value on.
-	 * @param newValue		The new value for property propertyName.
-	 * @exception OW_CIMException
-	 */
-	virtual void setProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath &name,
-		const OW_String &propertyName, const OW_CIMValue &cv);
 
 	/**
 	 * Update the specified CIM instance associated with the specified
@@ -346,6 +324,30 @@ public:
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList);
+
+	/**
+	 * Deletes the CIM instance specified by the CIM object path.
+	 * A CIM object path consists of two  parts: namespace + model path. The
+	 * model path is created by concatenating the properties of a class that are
+	 * qualified with the KEY qualifier.
+	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
+	 * @exception OW_CIMException If the instance does not exist.
+	 */
+	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path);
+
+	/**
+	 * Set the specified CIM instance property.
+	 * @param name				An OW_CIMObjectPath that identifies the CIM instance
+	 *								to be accessed
+	 * @param propertyName	The name of the property to set the value on.
+	 * @param newValue		The new value for property propertyName.
+	 * @exception OW_CIMException
+	 */
+	virtual void setProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath &name,
+		const OW_String &propertyName, const OW_CIMValue &cv);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Get the specified CIM instance property.

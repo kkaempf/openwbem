@@ -113,8 +113,10 @@ OW_GenericHDBRepository::open(const OW_String& path)
 	m_hdb.open(path.c_str());
 	m_opened = true;
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	// Create root namespace
     createNameSpace("root");
+#endif
 	//OW_HDBHandleLock hdl(this, getHandle());
 	//OW_String contk("root");
 	//contk.toLowerCase();
@@ -180,6 +182,7 @@ OW_GenericHDBRepository::getNameSpaceNode(OW_HDBHandleLock& hdl,
 	return node;
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 int
 OW_GenericHDBRepository::createNameSpace(OW_String ns)
@@ -250,6 +253,7 @@ OW_GenericHDBRepository::deleteNameSpace(OW_String key)
 		OW_THROWCIMMSG(OW_CIMException::FAILED, format("Unable to delete namespace %1", key).c_str());
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 bool

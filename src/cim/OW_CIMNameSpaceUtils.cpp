@@ -99,6 +99,7 @@ prepareNamespace(OW_String ns)
 	return ns;
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
 createCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, OW_UInt16 classInfo, const OW_String& descriptionOfClassInfo, const OW_String& interopNs)
@@ -168,6 +169,7 @@ deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_, const
 	hdl->deleteInstance(interopNs, theAssoc);
 	hdl->deleteInstance(interopNs, nsPath);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 /////////////////////////////////////////////////////////////////////////////
 OW_StringArray
@@ -188,6 +190,7 @@ enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl,
 	hdl->enumInstanceNames(interopNs, "CIM_Namespace", handler);
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 void
 create__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
@@ -236,6 +239,7 @@ delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns_)
 	OW_CIMObjectPath path(OW_CIMClass::NAMESPACECLASS, v);
 	hdl->deleteInstance(parentPath, path);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 /////////////////////////////////////////////////////////////////////////////
 OW_StringArray

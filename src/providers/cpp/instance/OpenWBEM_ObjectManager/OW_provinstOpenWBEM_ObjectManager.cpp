@@ -162,6 +162,7 @@ public:
 		return m_inst.clone(localOnly,includeQualifiers,includeClassOrigin,propertyList);
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
 	virtual OW_CIMObjectPath createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -205,6 +206,7 @@ public:
 		(void)cop;
         OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
 };

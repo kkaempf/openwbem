@@ -122,17 +122,6 @@ OW_CppInstanceProviderProxy::OW_CppInstanceProviderProxy(
 
 //////////////////////////////////////////////////////////////////////////////		
 void
-OW_CppInstanceProviderProxy::deleteInstance(
-		const OW_ProviderEnvironmentIFCRef& env,
-		const OW_String& ns,
-		const OW_CIMObjectPath& cop)
-{
-	m_pProv->updateAccessTime();
-	m_pProv->deleteInstance(env, ns, cop);
-}
-
-//////////////////////////////////////////////////////////////////////////////		
-void
 OW_CppInstanceProviderProxy::enumInstanceNames(
 		const OW_ProviderEnvironmentIFCRef& env,
 		const OW_String& ns,
@@ -182,6 +171,7 @@ OW_CppInstanceProviderProxy::getInstance(
 		includeQualifiers, includeClassOrigin, propertyList, cimClass);
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////		
 OW_CIMObjectPath
 OW_CppInstanceProviderProxy::createInstance(
@@ -208,6 +198,18 @@ OW_CppInstanceProviderProxy::modifyInstance(
 	m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, 
 		includeQualifiers, propertyList, theClass);
 }
+
+//////////////////////////////////////////////////////////////////////////////		
+void
+OW_CppInstanceProviderProxy::deleteInstance(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const OW_String& ns,
+		const OW_CIMObjectPath& cop)
+{
+	m_pProv->updateAccessTime();
+	m_pProv->deleteInstance(env, ns, cop);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////		
 OW_CppMethodProviderProxy::OW_CppMethodProviderProxy(OW_CppMethodProviderIFCRef pProv) :

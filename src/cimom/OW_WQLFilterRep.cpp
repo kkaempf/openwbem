@@ -63,6 +63,7 @@ OW_WQLFilterRep::enumNameSpace(
 		"is supported in the WQLCIMOMHandle.");
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::createNameSpace(const OW_String& /*ns*/,
@@ -80,6 +81,7 @@ OW_WQLFilterRep::deleteNameSpace(const OW_String& /*ns*/,
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_CIMQualifierType
@@ -172,15 +174,6 @@ OW_WQLFilterRep::getInstance(const OW_String&, const OW_CIMObjectPath&, OW_Bool,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
-OW_WQLFilterRep::deleteInstance(const OW_String& /*ns*/, const OW_CIMObjectPath &/*cop*/,
-	const OW_UserInfo& /*aclInfo*/)
-{
-	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
-		"is supported in the WQLCIMOMHandle.");
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::enumClasses(const OW_String&,
 	const OW_String&,
@@ -249,6 +242,7 @@ OW_WQLFilterRep::enumInstanceNames(
 		"is supported in the WQLCIMOMHandle.");
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_WQLFilterRep::createInstance(const OW_String&,
@@ -268,6 +262,15 @@ OW_WQLFilterRep::modifyInstance(const OW_String&, const OW_CIMInstance&,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance
+OW_WQLFilterRep::deleteInstance(const OW_String& /*ns*/, const OW_CIMObjectPath &/*cop*/,
+	const OW_UserInfo& /*aclInfo*/)
+{
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
+		"is supported in the WQLCIMOMHandle.");
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_WQLFilterRep::setProperty(
 	const OW_String&,
@@ -278,6 +281,7 @@ OW_WQLFilterRep::setProperty(
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "
 		"is supported in the WQLCIMOMHandle.");
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMValue

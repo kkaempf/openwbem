@@ -39,6 +39,7 @@
 
 namespace OW_CIMNameSpaceUtils
 {
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace by creating an instance of the CIM_Namespace 
 	 * class.
@@ -83,6 +84,7 @@ namespace OW_CIMNameSpaceUtils
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	void deleteCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns, const OW_String& interopNs = "root");
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the
@@ -116,6 +118,7 @@ namespace OW_CIMNameSpaceUtils
 	void enumCIM_Namespace(const OW_CIMOMHandleIFCRef& hdl,
 		OW_StringResultHandlerIFC& result, const OW_String& interopNs = "root");
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace by creating an instance of the __Namespace 
 	 * class.  This method has been deprecated in the CIM Ops spec.
@@ -137,6 +140,7 @@ namespace OW_CIMNameSpaceUtils
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	void delete__Namespace(const OW_CIMOMHandleIFCRef& hdl, const OW_String& ns);
+#endif
 
 	/**
 	 * Gets a list of the namespaces by enumerating the instances of the

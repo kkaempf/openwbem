@@ -14,18 +14,25 @@ else
 ENUMQUALPROG= owenumqualifiers
 endif
 
+if DISABLE_INSTANCE_MANIPULATION
+NAMESPACE_MANIPULATION_PROGS=
+else
+NAMESPACE_MANIPULATION_PROGS= \
+owcreatenamespace \
+owdeletenamespace \
+owcimindicationlistener
+endif
+
 SUBDIRS = $(MOFC_DIR)
 
 sbin_PROGRAMS = owdigestgenpass 
 bin_PROGRAMS = \
 owexecwql \
-owcreatenamespace \
-owdeletenamespace \
 owenumnamespace \
+$(NAMESPACE_MANIPULATION_PROGS) \
 $(ENUMQUALPROG) \
 owenumclassnames \
-owenumclasses \
-owcimindicationlistener
+owenumclasses
 
 ### owdigestgenpass
 owdigestgenpass_SOURCES = OW_DigestPasswdGen.cpp
@@ -94,8 +101,6 @@ owenumnamespace_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumnamespace
 
-if DISABLE_QUALIFIER_DECLARATION
-else
 ### owenumqualifiers
 owenumqualifiers_SOURCES = owenumqualifiers.cpp
 
@@ -109,7 +114,6 @@ owenumqualifiers_LDADD = \
 owenumqualifiers_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owenumqualifiers
-endif
 
 ### owenumclassnames
 owenumclassnames_SOURCES = owenumclassnames.cpp

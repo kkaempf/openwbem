@@ -1078,6 +1078,7 @@ OW_MetaRepository::_getClassChildNames(OW_StringArray& ra, OW_HDBNode node,
 	}
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_MetaRepository::deleteNameSpace(const OW_String& nsName)
@@ -1114,6 +1115,7 @@ OW_MetaRepository::createNameSpace(OW_String ns)
     // TODO: If the second create fails, we need to undo the first one.
 	return OW_GenericHDBRepository::createNameSpace(QUAL_CONTAINER + "/" + ns);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::OW_MetaRepository(OW_ServiceEnvironmentIFCRef env)

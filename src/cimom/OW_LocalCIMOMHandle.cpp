@@ -156,15 +156,6 @@ OW_LocalCIMOMHandle::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path)
-{
-	OW_CIMServerSchemaReadLocker srl(this);
-	OW_CIMServerInstanceWriteLocker iwl(this);
-	m_pServer->deleteInstance(ns, path, m_aclInfo);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_LocalCIMOMHandle::enumClass(const OW_String& ns,
 	const OW_String& className,
 	OW_CIMClassResultHandlerIFC& result, OW_Bool deep,
@@ -332,6 +323,7 @@ OW_LocalCIMOMHandle::deleteClass(const OW_String& ns, const OW_String& className
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_LocalCIMOMHandle::modifyInstance(
@@ -357,15 +349,12 @@ OW_LocalCIMOMHandle::createInstance(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_LocalCIMOMHandle::getProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& name,
-	const OW_String& propertyName)
+void
+OW_LocalCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path)
 {
 	OW_CIMServerSchemaReadLocker srl(this);
-	OW_CIMServerInstanceReadLocker irl(this);
-	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
+	OW_CIMServerInstanceWriteLocker iwl(this);
+	m_pServer->deleteInstance(ns, path, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -378,6 +367,19 @@ OW_LocalCIMOMHandle::setProperty(
 	OW_CIMServerSchemaReadLocker srl(this);
 	OW_CIMServerInstanceWriteLocker iwl(this);
 	m_pServer->setProperty(ns, name, propertyName, cv, m_aclInfo);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue
+OW_LocalCIMOMHandle::getProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& name,
+	const OW_String& propertyName)
+{
+	OW_CIMServerSchemaReadLocker srl(this);
+	OW_CIMServerInstanceReadLocker irl(this);
+	return m_pServer->getProperty(ns, name, propertyName, m_aclInfo);
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

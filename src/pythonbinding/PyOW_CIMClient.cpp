@@ -85,11 +85,12 @@ void registerOW_CIMClient()
     class_<OW_CIMClient>("OW_CIMClient", init<const OW_String&, const OW_String&, optional<const OW_ClientAuthCBIFCRef&> >())
         .def("setNameSpace", &OW_CIMClient::setNameSpace)
         .def("getNameSpace", &OW_CIMClient::getNameSpace)
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
         .def("createNameSpace", &OW_CIMClient::createNameSpace)
         .def("deleteNameSpace", &OW_CIMClient::deleteNameSpace)
+#endif
         .def("enumNameSpaceE", &OW_CIMClient::enumNameSpaceE, OW_CIMClient_enumNameSpaceE_overloads(args("deep")))
         .def("enumNameSpace", &OW_CIMClient::enumNameSpace, OW_CIMClient_enumNameSpace_overloads(args("deep")))
-        .def("deleteInstance", &OW_CIMClient::deleteInstance)
         .def("enumClass", &OW_CIMClient::enumClass, OW_CIMClient_enumClass_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin")))
         .def("enumClassE", &OW_CIMClient::enumClassE, OW_CIMClient_enumClassE_overloads(args("deep", "localOnly", "includeQualifiers", "includeClassOrigin")))
         .def("enumClassNames", &OW_CIMClient::enumClassNames, OW_CIMClient_enumClassNames_overloads(args("deep")))
@@ -113,8 +114,11 @@ void registerOW_CIMClient()
         .def("createClass", &OW_CIMClient::createClass)
         .def("deleteClass", &OW_CIMClient::deleteClass)
 #endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
         .def("modifyInstance", &OW_CIMClient::modifyInstance, OW_CIMClient_modifyInstance_overloads(args("includeQualifiers", "propertyList")))
         .def("createInstance", &OW_CIMClient::createInstance)
+        .def("deleteInstance", &OW_CIMClient::deleteInstance)
+#endif
         .def("getProperty", &OW_CIMClient::getProperty)
         .def("setProperty", &OW_CIMClient::setProperty)
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

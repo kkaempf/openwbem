@@ -95,6 +95,7 @@ OW_SimpleCppInstanceProviderIFC::getInstance(
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support getInstance");
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_SimpleCppInstanceProviderIFC::createInstance(
@@ -121,5 +122,6 @@ OW_SimpleCppInstanceProviderIFC::deleteInstance(
 {
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 

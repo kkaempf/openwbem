@@ -76,10 +76,6 @@ public:
 	}
 
 
-	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path,
-		const OW_UserInfo& aclInfo);
-
-
 	virtual OW_CIMInstance getInstance(
 		const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
@@ -171,8 +167,19 @@ public:
 
 
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual OW_CIMObjectPath createInstance(const OW_String& ns,
 		const OW_CIMInstance &ci, const OW_UserInfo& aclInfo);
+
+	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &path,
+		const OW_UserInfo& aclInfo);
+
+	virtual OW_CIMInstance modifyInstance(
+		const OW_String& ns,
+		const OW_CIMInstance& modifiedInstance,
+		OW_Bool includeQualifiers,
+		const OW_StringArray* propertyList,
+		const OW_UserInfo& aclInfo);
 
 	virtual void setProperty(
 		const OW_String& ns,
@@ -182,14 +189,7 @@ public:
 	{
 		m_pServer->setProperty(ns, name, propertyName, cv, aclInfo);
 	}
-
-
-	virtual OW_CIMInstance modifyInstance(
-		const OW_String& ns,
-		const OW_CIMInstance& modifiedInstance,
-		OW_Bool includeQualifiers,
-		const OW_StringArray* propertyList,
-		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	virtual OW_CIMValue getProperty(
 		const OW_String& ns,
@@ -290,6 +290,7 @@ public:
 	}
 
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete a specified namespace.
 	 * @param ns	The namespace to delete.
@@ -310,6 +311,7 @@ public:
 	{
 		m_pServer->createNameSpace(ns, aclInfo);
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
 	/**

@@ -67,13 +67,21 @@ private:
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void createInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void enumClasses(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void deleteInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
-	void deleteInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+	void modifyInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+		std::istream& istrm);
+
+	void setProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
+		std::istream& istrm);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+	void enumClasses(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 
 	void getClass(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
@@ -95,12 +103,6 @@ private:
 	void deleteQual(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);
 #endif // #ifndef OW_DISABLE_QUALIFIER_DECLARATION
-
-	void modifyInstance(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-		std::istream& istrm);
-
-	void setProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
-		std::istream& istrm);
 
 	void getProperty(OW_CIMOMHandleIFCRef chdl, std::ostream& ostrm,
 		std::istream& istrm);

@@ -131,6 +131,7 @@ OW_CIMRepository::close()
 #endif
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMRepository::createNameSpace(const OW_String& ns,
@@ -177,6 +178,7 @@ OW_CIMRepository::deleteNameSpace(const OW_String& ns,
 		m_env->getLogger()->logDebug(format("OW_CIMRepository deleted namespace: %1", ns));
 	}
 }
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -765,6 +767,7 @@ OW_CIMRepository::getInstance(
 	return ci;
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_CIMRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop_,
@@ -959,35 +962,6 @@ OW_CIMRepository::modifyInstance(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMValue
-OW_CIMRepository::getProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& name,
-	const OW_String& propertyName, const OW_UserInfo& aclInfo)
-{
-
-	OW_CIMClass theClass = _instGetClass(ns,name.getObjectName());
-
-	OW_CIMProperty cp = theClass.getProperty(propertyName);
-	if(!cp)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
-			propertyName.c_str());
-	}
-
-	OW_CIMInstance ci = getInstance(ns, name, false, true, true, NULL,
-		NULL, aclInfo);
-	OW_CIMProperty prop = ci.getProperty(propertyName);
-	if(!prop)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
-			propertyName.c_str());
-	}
-
-	return prop.getValue();
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMRepository::setProperty(
 	const OW_String& ns,
@@ -1045,6 +1019,37 @@ OW_CIMRepository::setProperty(
 	cp.setValue(cv);
 	ci.setProperty(cp);
 	modifyInstance(ns, ci, true, 0, aclInfo);
+}
+
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMValue
+OW_CIMRepository::getProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& name,
+	const OW_String& propertyName, const OW_UserInfo& aclInfo)
+{
+
+	OW_CIMClass theClass = _instGetClass(ns,name.getObjectName());
+
+	OW_CIMProperty cp = theClass.getProperty(propertyName);
+	if(!cp)
+	{
+		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
+			propertyName.c_str());
+	}
+
+	OW_CIMInstance ci = getInstance(ns, name, false, true, true, NULL,
+		NULL, aclInfo);
+	OW_CIMProperty prop = ci.getProperty(propertyName);
+	if(!prop)
+	{
+		OW_THROWCIMMSG(OW_CIMException::NO_SUCH_PROPERTY,
+			propertyName.c_str());
+	}
+
+	return prop.getValue();
 }
 
 //////////////////////////////////////////////////////////////////////////////

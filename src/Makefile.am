@@ -1,13 +1,22 @@
+if DISABLE_INSTANCE_MANIPULATION
+MOFDIR=
+else
 if DISABLE_SCHEMA_MANIPULATION
-DIRS_THAT_NEED_QUAL_DECL=
+MOFDIR=
 else
 if DISABLE_QUALIFIER_DECLARATION
-DIRS_THAT_NEED_QUAL_DECL=
+MOFDIR=
 else
-DIRS_THAT_NEED_QUAL_DECL= mof
+MOFDIR= mof
+endif
 endif
 endif
 
+if DISABLE_INSTANCE_MANIPULATION
+CIMXMLLISTENERDIR=
+else
+CIMXMLLISTENERDIR= cimxmllistener
+endif
 
 SUBDIRS = \
 cim \
@@ -16,7 +25,7 @@ common \
  \
 client \
  \
-cimxmllistener \
+$(CIMXMLLISTENERDIR) \
  \
 http \
  \
@@ -34,6 +43,6 @@ providers \
 repositories \
 cimom \
  \
-$(DIRS_THAT_NEED_QUAL_DECL) \
+$(MOFDIR) \
 tools
 

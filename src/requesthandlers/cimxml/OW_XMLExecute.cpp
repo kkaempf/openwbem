@@ -78,11 +78,15 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "createclass", &OW_XMLExecute::createClass },
 #endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	{ "createinstance", &OW_XMLExecute::createInstance },
+#endif
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "deleteclass", &OW_XMLExecute::deleteClass },
 #endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	{ "deleteinstance", &OW_XMLExecute::deleteInstance },
+#endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "deletequalifier", &OW_XMLExecute::deleteQualifier },
 #endif
@@ -101,12 +105,16 @@ OW_XMLExecute::FuncEntry OW_XMLExecute::g_funcs[] =
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	{ "modifyclass", &OW_XMLExecute::modifyClass },
 #endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	{ "modifyinstance", &OW_XMLExecute::modifyInstance },
+#endif
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	{ "referencenames", &OW_XMLExecute::referenceNames },
 	{ "references", &OW_XMLExecute::references },
 #endif
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	{ "setproperty", &OW_XMLExecute::setProperty },
+#endif
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 	{ "setqualifier", &OW_XMLExecute::setQualifier },
 #endif
@@ -803,6 +811,7 @@ void OW_XMLExecute::deleteClass(ostream& /*ostr*/, OW_CIMXMLParser& parser,
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
@@ -827,7 +836,7 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 				"Name property not specified for new namespace");
 		}
 
-		// If the name property didn't come acrossed as a key, then
+		// If the name property didn't come across as a key, then
 		// set the name property as the key
 		if (!prop.isKey())
 		{
@@ -846,6 +855,34 @@ void OW_XMLExecute::createInstance(ostream& ostr, OW_CIMXMLParser& parser,
 
 //////////////////////////////////////////////////////////////////////////////
 void
+OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
+{
+	OW_Array<param> params;
+	params.push_back(param(XMLP_MODIFIED_INSTANCE, false, param::NAMEDINSTANCE));
+	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(true)));
+	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
+	
+	getParameterValues(parser, params);
+	
+	OW_StringArray propertyList;
+	OW_StringArray* pPropList = 0;
+	if (params[2].isSet)
+	{
+		propertyList = params[2].val.toStringArray();
+		pPropList = &propertyList;
+	}
+	
+	bool includeQualifiers = params[1].val.toBool();
+
+	OW_CIMInstance modifiedInstance(OW_CIMNULL);
+	params[0].val.get(modifiedInstance);
+
+	hdl.modifyInstance(ns, modifiedInstance, includeQualifiers, pPropList);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
 {
@@ -859,6 +896,24 @@ OW_XMLExecute::deleteInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
 	OW_CIMObjectPath instPath = OW_XMLCIMFactory::createObjectPath(parser);
 	hdl.deleteInstance( ns, instPath );
 }
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
+	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
+{
+	OW_Array<param> params;
+	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
+	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, OW_CIMValue("")));
+	params.push_back(param(XMLP_NEWVALUE, true, param::PROPERTYVALUE));
+
+	getParameterValues(parser, params);
+
+	OW_CIMObjectPath instpath = params[0].val.toCIMObjectPath();
+
+	hdl.setProperty(ns, instpath, params[1].val.toString(), params[2].val);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
 //////////////////////////////////////////////////////////////////////////////
@@ -1269,34 +1324,6 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_CIMXMLParser& parser,
 	ostr << "</IRETURNVALUE>";
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLExecute::modifyInstance(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
-{
-	OW_Array<param> params;
-	params.push_back(param(XMLP_MODIFIED_INSTANCE, false, param::NAMEDINSTANCE));
-	params.push_back(param(XMLP_INCLUDEQUALIFIERS, true, param::BOOLEAN, OW_CIMValue(true)));
-	params.push_back(param(XMLP_PROPERTYLIST, true, param::STRINGARRAY, OW_CIMValue(OW_CIMNULL)));
-	
-	getParameterValues(parser, params);
-	
-	OW_StringArray propertyList;
-	OW_StringArray* pPropList = 0;
-	if (params[2].isSet)
-	{
-		propertyList = params[2].val.toStringArray();
-		pPropList = &propertyList;
-	}
-	
-	bool includeQualifiers = params[1].val.toBool();
-
-	OW_CIMInstance modifiedInstance(OW_CIMNULL);
-	params[0].val.get(modifiedInstance);
-
-	hdl.modifyInstance(ns, modifiedInstance, includeQualifiers, pPropList);
-}
-
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////
@@ -1383,23 +1410,6 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	ostr << "</IRETURNVALUE>";
 }
 #endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_CIMXMLParser& parser,
-	const OW_String& ns, OW_CIMOMHandleIFC& hdl)
-{
-	OW_Array<param> params;
-	params.push_back(param(XMLP_INSTANCENAME, false, param::INSTANCENAME));
-	params.push_back(param(XMLP_PROPERTYNAME, false, param::STRING, OW_CIMValue("")));
-	params.push_back(param(XMLP_NEWVALUE, true, param::PROPERTYVALUE));
-
-	getParameterValues(parser, params);
-
-	OW_CIMObjectPath instpath = params[0].val.toCIMObjectPath();
-
-	hdl.setProperty(ns, instpath, params[1].val.toString(), params[2].val);
-}
 
 //////////////////////////////////////////////////////////////////////////////
 namespace

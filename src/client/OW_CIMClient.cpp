@@ -80,6 +80,7 @@ OW_CIMClient::OW_CIMClient(const OW_String& url, const OW_String& ns,
 
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void OW_CIMClient::createNameSpace(const OW_String& ns)
 {
@@ -107,6 +108,7 @@ void OW_CIMClient::deleteNameSpace(const OW_String& ns)
         OW_CIMNameSpaceUtils::delete__Namespace(m_ch,ns);
     }
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_StringArray 
@@ -121,13 +123,6 @@ OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result,
 	OW_Bool deep)
 {
 	OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-void 
-	OW_CIMClient::deleteInstance(const OW_CIMObjectPath& path)
-{
-	m_ch->deleteInstance(m_namespace, path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -317,6 +312,7 @@ void
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 ///////////////////////////////////////////////////////////////////////////////
 void 
 	OW_CIMClient::modifyInstance(const OW_CIMInstance& modifiedInstance,
@@ -335,12 +331,10 @@ OW_CIMObjectPath
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_CIMValue 
-	OW_CIMClient::getProperty(
-	const OW_CIMObjectPath& instanceName,
-	const OW_String& propertyName)
+void 
+	OW_CIMClient::deleteInstance(const OW_CIMObjectPath& path)
 {
-	return m_ch->getProperty(m_namespace, instanceName, propertyName);
+	m_ch->deleteInstance(m_namespace, path);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -351,6 +345,16 @@ void
 	const OW_CIMValue& newValue) 
 {
 	m_ch->setProperty(m_namespace, instanceName, propertyName, newValue);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+///////////////////////////////////////////////////////////////////////////////
+OW_CIMValue 
+	OW_CIMClient::getProperty(
+	const OW_CIMObjectPath& instanceName,
+	const OW_String& propertyName)
+{
+	return m_ch->getProperty(m_namespace, instanceName, propertyName);
 }
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL

@@ -68,6 +68,8 @@ public:
 	void setNameSpace(const OW_String& arg) { m_namespace = arg; }
 
 	OW_String getNameSpace() const { return m_namespace; }
+	
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace name to be created.
@@ -81,6 +83,7 @@ public:
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	void deleteNameSpace(const OW_String& ns);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM
@@ -97,16 +100,6 @@ public:
 
 	void enumNameSpace(OW_StringResultHandlerIFC& result, 
 		OW_Bool deep=OW_CIMOMHandleIFC::DEEP);
-
-	/**
-	 * Deletes the CIM instance specified by the CIM object path.
-	 * A CIM object path consists of two  parts: namespace + model path. The
-	 * model path is created by concatenating the properties of a class that are
-	 * qualified with the KEY qualifier.
-	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
-	 * @exception OW_CIMException If the instance does not exist.
-	 */
-	void deleteInstance(const OW_CIMObjectPath& path);
 
 	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
@@ -348,6 +341,7 @@ public:
 	void deleteClass(const OW_String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Update the specified CIM instance associated with the specified
 	 * namespace.
@@ -370,16 +364,14 @@ public:
 	OW_CIMObjectPath createInstance(const OW_CIMInstance& instance) ;
 
 	/**
-	 * Get the specified CIM instance property.
-	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance to be
-	 *		accessed
-	 * @param propertyName	The name of the property to retrieve.
-	 * @return The OW_CIMvalue for property identified by propertyName.
-	 * @exception OW_CIMException
+	 * Deletes the CIM instance specified by the CIM object path.
+	 * A CIM object path consists of two  parts: namespace + model path. The
+	 * model path is created by concatenating the properties of a class that are
+	 * qualified with the KEY qualifier.
+	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
+	 * @exception OW_CIMException If the instance does not exist.
 	 */
-	OW_CIMValue getProperty(
-		const OW_CIMObjectPath& instanceName,
-		const OW_String& propertyName);
+	void deleteInstance(const OW_CIMObjectPath& path);
 
 	/**
 	 * Set the specified CIM instance property.
@@ -393,6 +385,19 @@ public:
 		const OW_CIMObjectPath& instanceName,
 		const OW_String& propertyName,
 		const OW_CIMValue& newValue) ;
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+	/**
+	 * Get the specified CIM instance property.
+	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance to be
+	 *		accessed
+	 * @param propertyName	The name of the property to retrieve.
+	 * @return The OW_CIMvalue for property identified by propertyName.
+	 * @exception OW_CIMException
+	 */
+	OW_CIMValue getProperty(
+		const OW_CIMObjectPath& instanceName,
+		const OW_String& propertyName);
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**

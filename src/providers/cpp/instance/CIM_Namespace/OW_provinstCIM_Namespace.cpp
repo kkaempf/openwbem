@@ -328,6 +328,7 @@ public:
 		}
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	////////////////////////////////////////////////////////////////////////////
 	virtual OW_CIMObjectPath createInstance(
 		const OW_ProviderEnvironmentIFCRef& env,
@@ -403,6 +404,7 @@ public:
 			OW_THROWCIMMSG(OW_CIMException::FAILED, e.getMessage());
 		}
 	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
 };

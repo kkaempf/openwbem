@@ -188,6 +188,7 @@ public:
 		OW_CIMClassResultHandlerIFC& result);
 #endif
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete the given namespace and all object contained within it.
 	 * @param nsName	The name of the namespace
@@ -202,6 +203,8 @@ public:
 	 * exists.
 	 */
 	virtual int createNameSpace(OW_String ns);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
 
 private:
 

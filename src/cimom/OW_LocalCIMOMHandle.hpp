@@ -131,15 +131,6 @@ public:
 		OW_Bool deep=true);
 
 	/**
-	 * Deletes the CIM instance specified by the CIM object path.
-	 * A CIM object path consists of two  parts: namespace + model path. The
-	 * model path is created by concatenating the properties of a class that are
-	 * qualified with the KEY qualifier.
-	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
-	 */
-	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path);
-
-	/**
 	 * Gets the CIM qualifier type specified in the CIM object path.
 	 * @param name	The OW_CIMObjectPath that identifies the CIM qualifier type.
 	 * @return An OW_CIMQualifierType identified by name.
@@ -323,6 +314,7 @@ public:
 	virtual void deleteClass(const OW_String& ns, const OW_String& className);
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Add the specified CIM instance to the specified namespace.
 	 * @param name	The OW_CIMObjectPath that identifies the CIM instance to be
@@ -357,6 +349,17 @@ public:
 		const OW_CIMInstance& modifiedInstance,
 		OW_Bool includeQualifiers,
 		const OW_StringArray* propertyList);
+	
+	/**
+	 * Deletes the CIM instance specified by the CIM object path.
+	 * A CIM object path consists of two  parts: namespace + model path. The
+	 * model path is created by concatenating the properties of a class that are
+	 * qualified with the KEY qualifier.
+	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
+	 */
+	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path);
+
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Get the specified CIM instance property.

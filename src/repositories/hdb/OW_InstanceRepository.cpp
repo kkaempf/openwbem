@@ -358,6 +358,7 @@ OW_InstanceRepository::getCIMInstance(
 	return ci;
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& cop,
@@ -417,6 +418,7 @@ OW_InstanceRepository::createInstance(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// TODO: Is this function actually used?
 OW_Bool
 OW_InstanceRepository::classHasInstances(const OW_CIMObjectPath& classPath)
 {
@@ -515,41 +517,6 @@ OW_InstanceRepository::modifyInstance(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_InstanceRepository::instanceExists(const OW_String& ns,
-	const OW_CIMObjectPath& cop,
-	const OW_CIMClass& theClass)
-{
-	throwIfNotOpen();
-	OW_Bool cc = false;
-	OW_String instanceKey;
-	try
-	{
-		 instanceKey = makeInstanceKey(ns, cop, theClass);
-	}
-	catch (const OW_CIMException&)
-	{
-		return false;
-	}
-
-	OW_HDBHandleLock hdl(this, getHandle());
-	OW_HDBNode node = hdl->getNode(instanceKey);
-	if(node)
-	{
-		/*
-		// Ensure this node is actually an OW_CIMInstance.
-		// If not, an exception will be thrown
-		OW_CIMInstance verifyInst(OW_CIMNULL);
-		nodeToCIMObject(verifyInst, node);
-		*/
-
-		cc = true;
-	}
-
-	return cc;
-}
-
-//////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::deleteNameSpace(const OW_String& nsName)
 {
@@ -565,6 +532,7 @@ OW_InstanceRepository::createNameSpace(OW_String ns)
 {
 	return OW_GenericHDBRepository::createNameSpace(ns);
 }
+#endif
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
@@ -616,6 +584,7 @@ OW_InstanceRepository::deleteClass(const OW_String& ns,
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
 	const OW_CIMClass& theClass)
@@ -665,6 +634,7 @@ void OW_InstanceRepository::_removeDuplicatedQualifiers(OW_CIMInstance& inst,
 	}
 	inst.setProperties(props);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 
 

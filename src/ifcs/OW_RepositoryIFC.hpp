@@ -57,6 +57,7 @@ public:
 
 	virtual OW_ServiceEnvironmentIFCRef getEnvironment() const = 0;
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace to be created.
@@ -74,6 +75,7 @@ public:
 	 */
 	virtual void deleteNameSpace(const OW_String& ns,
 		const OW_UserInfo& aclInfo) = 0;
+#endif
 
 	/**
 	 * Gets a list of the namespaces.
@@ -329,6 +331,7 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		const OW_UserInfo& aclInfo) = 0;
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete an existing instance from the store
 	 *
@@ -389,6 +392,7 @@ public:
 		const OW_CIMObjectPath& name,
 		const OW_String& propertyName, const OW_CIMValue& cv,
 		const OW_UserInfo& aclInfo) = 0;
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Get the specified CIM instance property.

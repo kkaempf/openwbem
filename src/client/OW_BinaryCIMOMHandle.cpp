@@ -194,22 +194,6 @@ OW_BinaryCIMOMHandle::OW_BinaryCIMOMHandle(OW_CIMProtocolIFCRef prot)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns_, const OW_CIMObjectPath& inst)
-{
-    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"DeleteInstance", ns);;
-	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_DELETEINST);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, inst);
-
-	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", ns));
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
 OW_BinaryCIMOMHandle::enumClassNames(
 	const OW_String& ns_,
 	const OW_String& className,
@@ -541,6 +525,7 @@ OW_BinaryCIMOMHandle::deleteClass(const OW_String& ns_, const OW_String& classNa
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryCIMOMHandle::modifyInstance(
@@ -587,6 +572,52 @@ OW_BinaryCIMOMHandle::createInstance(const OW_String& ns_,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::deleteInstance(const OW_String& ns_, const OW_CIMObjectPath& inst)
+{
+    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"DeleteInstance", ns);;
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
+	OW_BinIfcIO::write(strm, OW_BIN_DELETEINST);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeObjectPath(strm, inst);
+
+	checkError(m_protocol->endRequest(strmRef, "DeleteInstance", ns));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryCIMOMHandle::setProperty(
+	const OW_String& ns_,
+	const OW_CIMObjectPath& path,
+	const OW_String& propName,
+	const OW_CIMValue& cv)
+{
+    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
+	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
+		"SetProperty", ns);
+	std::iostream& strm = *strmRef;
+	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
+	OW_BinIfcIO::write(strm, OW_BIN_SETPROP);
+	OW_BinIfcIO::writeString(strm, ns);
+	OW_BinIfcIO::writeObjectPath(strm, path);
+	OW_BinIfcIO::writeString(strm, propName);
+	OW_Bool isValue = (cv) ? true : false;
+	OW_BinIfcIO::writeBool(strm, isValue);
+	if(isValue)
+	{
+		OW_BinIfcIO::writeValue(strm, cv);
+	}
+
+	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
+		"SetProperty", ns);
+	checkError(in);
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+//////////////////////////////////////////////////////////////////////////////
 OW_CIMValue
 OW_BinaryCIMOMHandle::getProperty(
 	const OW_String& ns_,
@@ -626,34 +657,6 @@ OW_BinaryCIMOMHandle::getProperty(
 	return cv;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryCIMOMHandle::setProperty(
-	const OW_String& ns_,
-	const OW_CIMObjectPath& path,
-	const OW_String& propName,
-	const OW_CIMValue& cv)
-{
-    OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"SetProperty", ns);
-	std::iostream& strm = *strmRef;
-	OW_BinIfcIO::write(strm, OW_BinaryProtocolVersion);
-	OW_BinIfcIO::write(strm, OW_BIN_SETPROP);
-	OW_BinIfcIO::writeString(strm, ns);
-	OW_BinIfcIO::writeObjectPath(strm, path);
-	OW_BinIfcIO::writeString(strm, propName);
-	OW_Bool isValue = (cv) ? true : false;
-	OW_BinIfcIO::writeBool(strm, isValue);
-	if(isValue)
-	{
-		OW_BinIfcIO::writeValue(strm, cv);
-	}
-
-	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef,
-		"SetProperty", ns);
-	checkError(in);
-}
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 //////////////////////////////////////////////////////////////////////////////

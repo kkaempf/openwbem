@@ -327,10 +327,11 @@ AC_ARG_ENABLE(debug-mode,
 AC_ARG_ENABLE(openslp,
 [  --disable-openslp     disable openslp integration])
 
+OW_HAVE_SLP=0
 if test "$enable_openslp" != no; then
 	AC_CHECK_HEADERS(slp.h, LIBS="$LIBS -lslp"; OW_HAVE_SLP=1)
-	AM_CONDITIONAL(HAVE_SLP, test "x$OW_HAVE_SLP" = "x1")
 fi
+AM_CONDITIONAL(HAVE_SLP, test "x$OW_HAVE_SLP" = "x1")
 
 AC_ARG_ENABLE(acls,
 [  --disable-acls     disable acls])
@@ -431,7 +432,7 @@ AM_CONDITIONAL(DISABLE_QUALIFIER_DECLARATION, test x$OW_DISABLE_QUALIFIER_DECLAR
 
 
 AC_ARG_ENABLE(schema-manipulation,
-[  --disable-schema-manipulation     disable schema_manipulation])
+[  --disable-schema-manipulation     disable schema manipulation])
 
 OW_DISABLE_SCHEMA_MANIPULATION=0
 if test "$enable_schema_manipulation" = no; then
@@ -439,6 +440,17 @@ if test "$enable_schema_manipulation" = no; then
 	OW_DISABLE_SCHEMA_MANIPULATION=1
 fi
 AM_CONDITIONAL(DISABLE_SCHEMA_MANIPULATION, test x$OW_DISABLE_SCHEMA_MANIPULATION = x1)
+
+
+AC_ARG_ENABLE(instance-manipulation,
+[  --disable-instance-manipulation     disable instance manipulation])
+
+OW_DISABLE_INSTANCE_MANIPULATION=0
+if test "$enable_instance_manipulation" = no; then
+	AC_DEFINE(DISABLE_INSTANCE_MANIPULATION)
+	OW_DISABLE_INSTANCE_MANIPULATION=1
+fi
+AM_CONDITIONAL(DISABLE_INSTANCE_MANIPULATION, test x$OW_DISABLE_INSTANCE_MANIPULATION = x1)
 
 
 AC_ARG_ENABLE(gnu-pth,

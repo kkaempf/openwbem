@@ -70,6 +70,7 @@ public:
 	virtual void enumNameSpace(OW_StringResultHandlerIFC& result,
 		const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace to be created.
@@ -86,6 +87,7 @@ public:
 	 */
 	virtual void deleteNameSpace(const OW_String& ns,
 		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Get an existing qualifier type from the repository.
@@ -232,20 +234,6 @@ public:
 		const OW_UserInfo& aclInfo);
 
 	/**
-	 * Delete an existing instance from the store
-	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
-	 * @param aclInfo ACL object describing user making request.
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
-	 * @return an OW_CIMInstance representing the Instance just deleted.
-	 *		This is likely usefull only for creating CIM_InstDeletion indications;
-	 */
-	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
-		const OW_UserInfo& aclInfo);
-
-	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param path The OW_CIMObjectPath identifying the class to be enumerated.
 	 * @param deep If set to OW_CIMClient::DEEP, the enumeration returned will
@@ -343,6 +331,7 @@ public:
 		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Creates a instance in the store
 	 *
@@ -378,6 +367,20 @@ public:
 		const OW_UserInfo& aclInfo);
 
 	/**
+	 * Delete an existing instance from the store
+	 *
+	 * @param cop	The OW_CIMObectPath that specifies the instance
+	 * @param aclInfo ACL object describing user making request.
+	 * @exception OW_HDBException
+	 * @exception OW_CIMException
+	 * @exception OW_IOException
+	 * @return an OW_CIMInstance representing the Instance just deleted.
+	 *		This is likely usefull only for creating CIM_InstDeletion indications;
+	 */
+	virtual OW_CIMInstance deleteInstance(const OW_String& ns, const OW_CIMObjectPath &cop,
+		const OW_UserInfo& aclInfo);
+
+	/**
 	 * Set a property value on an OW_CIMInstance.
 	 * @param name				The object path of the instance
 	 * @param propertyName	The name of the property to update
@@ -390,6 +393,7 @@ public:
 		const OW_CIMObjectPath &name,
 		const OW_String &propertyName, const OW_CIMValue &cv,
 		const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Get the specified CIM instance property.

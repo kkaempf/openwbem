@@ -173,51 +173,6 @@ OW_CMPIInstanceProviderProxy::enumInstances(
 }
 	
 /////////////////////////////////////////////////////////////////////////////
-void
-OW_CMPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns, const OW_CIMObjectPath& cop)
-{
-        env->getLogger()->
-            logDebug("OW_CMPIInstanceProviderProxy::deleteInstance()");
-
-        if (m_ftable->instMI->ft->deleteInstance!= NULL)
-        {
-		CMPI_ThreadContext thr;
-		CMPIStatus rc = {CMPI_RC_OK, NULL};
-
-		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
-		CMPI_ContextOnStack eCtx(context);
-		OW_CIMObjectPath copWithNS(cop);
-		copWithNS.setNameSpace(ns);
-
-		CMPI_ObjectPathOnStack eRef(copWithNS);
-		//CMPI_ResultOnStack eRes(result);
-		CMPI_ResultOnStack eRes;
-
-		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
-			(CMPIValue*)&flgs,CMPI_uint32);
-
-		::CMPIInstanceMI *mi = m_ftable->instMI;
-
-		rc = m_ftable->instMI->ft->deleteInstance(
-					mi, &eCtx, &eRes, &eRef);
-
-		if (rc.rc == CMPI_RC_OK) return;
-		else
-		{
-                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
-		}
-        }
-        else
-        {
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
-        }
-}
-
-/////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_CMPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
@@ -295,6 +250,52 @@ OW_CMPIInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &en
         }
 
         return rval;
+}
+
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+/////////////////////////////////////////////////////////////////////////////
+void
+OW_CMPIInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
+	const OW_String& ns, const OW_CIMObjectPath& cop)
+{
+        env->getLogger()->
+            logDebug("OW_CMPIInstanceProviderProxy::deleteInstance()");
+
+        if (m_ftable->instMI->ft->deleteInstance!= NULL)
+        {
+		CMPI_ThreadContext thr;
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
+
+		::OperationContext context;
+		context.cimom = env;
+		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+		CMPI_ContextOnStack eCtx(context);
+		OW_CIMObjectPath copWithNS(cop);
+		copWithNS.setNameSpace(ns);
+
+		CMPI_ObjectPathOnStack eRef(copWithNS);
+		//CMPI_ResultOnStack eRes(result);
+		CMPI_ResultOnStack eRes;
+
+		CMPIFlags flgs=0;
+		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
+			(CMPIValue*)&flgs,CMPI_uint32);
+
+		::CMPIInstanceMI *mi = m_ftable->instMI;
+
+		rc = m_ftable->instMI->ft->deleteInstance(
+					mi, &eCtx, &eRes, &eRef);
+
+		if (rc.rc == CMPI_RC_OK) return;
+		else
+		{
+                	OW_THROWCIMMSG(OW_CIMException::FAILED, CMGetCharPtr(rc.msg));
+		}
+        }
+        else
+        {
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+        }
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -411,5 +412,6 @@ OW_CMPIInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef 
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 

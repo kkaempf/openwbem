@@ -173,43 +173,6 @@ OW_PerlInstanceProviderProxy::enumInstances(
 }
 	
 /////////////////////////////////////////////////////////////////////////////
-void
-OW_PerlInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
-	const OW_String& ns, const OW_CIMObjectPath& cop)
-{
-	env->getLogger()->
-		logDebug("OW_PerlInstanceProviderProxy::deleteInstance()");
-
-	if (m_ftable->fp_deleteInstance!= NULL)
-	{
-		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
-		OW_NPIHandleFreer nhf(_npiHandle);
-
-		OW_ProviderEnvironmentIFCRef env2(env);
-		_npiHandle.thisObject = static_cast<void *>(&env2);
-
-		//  may the arguments must be copied verbatim
-		//  to avoid locking problems
-
-		OW_CIMObjectPath copWithNS(cop);
-		copWithNS.setNameSpace(ns);
-		CIMObjectPath _cop = { static_cast<void *> (&copWithNS)};
-
-		m_ftable->fp_deleteInstance(&_npiHandle, _cop);
-
-		if (_npiHandle.errorOccurred)
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				_npiHandle.providerError);
-		}
-	}
-	else
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_PerlInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &env,
 	const OW_String& ns,
@@ -272,6 +235,7 @@ OW_PerlInstanceProviderProxy::getInstance(const OW_ProviderEnvironmentIFCRef &en
         return rval;
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 /////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_PerlInstanceProviderProxy::createInstance(
@@ -367,5 +331,43 @@ OW_PerlInstanceProviderProxy::modifyInstance(const OW_ProviderEnvironmentIFCRef 
 		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support modifyInstance");
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+void
+OW_PerlInstanceProviderProxy::deleteInstance(const OW_ProviderEnvironmentIFCRef &env,
+	const OW_String& ns, const OW_CIMObjectPath& cop)
+{
+	env->getLogger()->
+		logDebug("OW_PerlInstanceProviderProxy::deleteInstance()");
+
+	if (m_ftable->fp_deleteInstance!= NULL)
+	{
+		::NPIHandle _npiHandle = { 0, 0, 0, 0, m_ftable->npicontext};
+		OW_NPIHandleFreer nhf(_npiHandle);
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		_npiHandle.thisObject = static_cast<void *>(&env2);
+
+		//  may the arguments must be copied verbatim
+		//  to avoid locking problems
+
+		OW_CIMObjectPath copWithNS(cop);
+		copWithNS.setNameSpace(ns);
+		CIMObjectPath _cop = { static_cast<void *> (&copWithNS)};
+
+		m_ftable->fp_deleteInstance(&_npiHandle, _cop);
+
+		if (_npiHandle.errorOccurred)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				_npiHandle.providerError);
+		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED, "Provider does not support deleteInstance");
+	}
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 

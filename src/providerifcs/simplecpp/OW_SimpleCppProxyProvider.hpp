@@ -107,11 +107,6 @@ class OW_SimpleCppInstanceProviderProxy : public OW_InstanceProviderIFC
 public:
 	OW_SimpleCppInstanceProviderProxy(OW_SimpleCppInstanceProviderIFCRef pProv);
 
-	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop);
-
 	virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
@@ -142,6 +137,7 @@ public:
 			const OW_StringArray* propertyList, 
 			const OW_CIMClass& cimClass);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
@@ -155,6 +151,12 @@ public:
 			OW_Bool includeQualifiers,
 			const OW_StringArray* propertyList,
 			const OW_CIMClass& theClass);
+	
+	virtual void deleteInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
+			const OW_CIMObjectPath& cop);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 private:
 	OW_SimpleCppInstanceProviderIFCRef m_pProv;

@@ -75,6 +75,7 @@ public:
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete an existing instance from the store
 	 *
@@ -118,18 +119,6 @@ public:
 		const OW_StringArray* propertyList);
 
 	/**
-	 * Determines if an instance already exists
-	 *
-	 * @param cop	The OW_CIMObectPath that specifies the instance
-	 * @param theClass The CIM class the instance belongs to
-	 * @exception OW_HDBException
-	 * @exception OW_CIMException
-	 * @exception OW_IOException
-	 */
-	OW_Bool instanceExists(const OW_String& ns, const OW_CIMObjectPath& cop,
-		const OW_CIMClass& theClass);
-
-	/**
 	 * Determin if a given class has instances.
 	 * @param classPath	The object path for the class to check.
 	 * @return true if the class specified has instances.
@@ -150,6 +139,7 @@ public:
 	 * exists.
 	 */
 	virtual int createNameSpace(OW_String ns);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 	/**
@@ -176,7 +166,9 @@ private:
 	OW_String makeInstanceKey(const OW_String& ns, const OW_CIMObjectPath& cop,
 		const OW_CIMClass& theClass);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	void _removeDuplicatedQualifiers(OW_CIMInstance& inst, const OW_CIMClass& theClass);
+#endif
 
 };
 

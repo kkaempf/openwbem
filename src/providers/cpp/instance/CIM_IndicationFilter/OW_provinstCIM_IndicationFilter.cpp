@@ -67,6 +67,7 @@ public:
 		info.addInstrumentedClass("CIM_IndicationFilter");
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual void deleteInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &cop)
 	{
 		// delete it from the repository
@@ -83,6 +84,24 @@ public:
 
 		return env->getRepositoryCIMOMHandle()->createInstance(ns, cimInstance);
 	}
+
+	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance,
+			OW_Bool includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
+	{
+		(void)previousInstance;
+		(void)theClass;
+		if (!indicationsEnabled)
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
+		}
+
+		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
+		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
+		// Tell the indication server about the modified subscription.
+		indicationServer->modifyFilter(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
+
+	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	virtual OW_CIMInstance getInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMObjectPath &instanceName, OW_Bool localOnly, OW_Bool includeQualifiers,
 			OW_Bool includeClassOrigin, const OW_StringArray *propertyList, const OW_CIMClass &cimClass)
@@ -105,23 +124,6 @@ public:
 		(void)cimClass;
 		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
 		rephdl->enumInstanceNames(ns,className,result);
-	}
-
-	virtual void modifyInstance(const OW_ProviderEnvironmentIFCRef &env, const OW_String &ns, const OW_CIMInstance &modifiedInstance, const OW_CIMInstance &previousInstance,
-			OW_Bool includeQualifiers, const OW_StringArray *propertyList, const OW_CIMClass &theClass)
-	{
-		(void)previousInstance;
-		(void)theClass;
-		if (!indicationsEnabled)
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED, "Indication are disabled.  Filter creation is not allowed.");
-		}
-
-		OW_CIMOMHandleIFCRef rephdl = env->getRepositoryCIMOMHandle();
-		rephdl->modifyInstance(ns, modifiedInstance, includeQualifiers, propertyList);
-		// Tell the indication server about the modified subscription.
-		indicationServer->modifyFilter(ns, modifiedInstance.createModifiedInstance(previousInstance,includeQualifiers,propertyList,theClass));
-
 	}
 
 private:

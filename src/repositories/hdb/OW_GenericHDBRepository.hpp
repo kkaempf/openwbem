@@ -72,6 +72,7 @@ public:
 	 */
 	virtual void close();
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create the necessary containers to make a valid path. Fail if the
 	 * last container already exists.
@@ -88,6 +89,7 @@ public:
 	 * @exception OW_HDBException
 	 */
 	void deleteNameSpace(OW_String key);
+#endif
 
 	/**
 	 * Check whether a namespace exists

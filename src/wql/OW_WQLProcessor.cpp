@@ -129,6 +129,7 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	const insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN
 	)
 {
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, false, true, true, 0);
 
 	OW_CIMInstance ci = cc.newInstance();
@@ -187,6 +188,11 @@ void OW_WQLProcessor::visit_insertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN(
 	m_hdl->createInstance(m_ns, ci);
 	instances.clear();
 	instances.push_back(ci);
+#else
+	(void)pinsertRest_VALUES_LEFTPAREN_targetList_RIGHTPAREN;
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
 }
 
 void OW_WQLProcessor::visit_insertRest_DEFAULT_VALUES(
@@ -201,6 +207,7 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 	const insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN* pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN
 	)
 {
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	OW_CIMClass cc = m_hdl->getClass(m_ns, m_tableRef, false, true, true, 0);
 	if (pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_pcolumnList2->size() !=
 		pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN->m_ptargetList6->size())
@@ -267,12 +274,17 @@ void OW_WQLProcessor::visit_insertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LE
 	m_hdl->createInstance(m_ns, ci);
 	instances.clear();
 	instances.push_back(ci);
+#else
+	(void)pinsertRest_LEFTPAREN_columnList_RIGHTPAREN_VALUES_LEFTPAREN_targetList_RIGHTPAREN;
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 }
 
 void OW_WQLProcessor::visit_deleteStmt(
 	const deleteStmt* pdeleteStmt
 	)
 {
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	populateInstances(*pdeleteStmt->m_pstrRelationName3);
 
 	if (pdeleteStmt->m_poptWhereClause4)
@@ -287,12 +299,17 @@ void OW_WQLProcessor::visit_deleteStmt(
 		//OW_LOGDEBUG(format("Deleting instance:\n%1", cop.toString()));
 		m_hdl->deleteInstance(m_ns, cop);
 	}
+#else
+	(void)pdeleteStmt;
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 }
 
 void OW_WQLProcessor::visit_updateStmt(
 	const updateStmt* pupdateStmt
 	)
 {
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	populateInstances(*pupdateStmt->m_pstrRelationName2);
 
 	// Filter out the instances
@@ -367,6 +384,10 @@ void OW_WQLProcessor::visit_updateStmt(
 		//OW_LOGDEBUG(format("About to update instance: %1\nObjectPath = %2", ci.toString(), cop.toString()));
 		m_hdl->modifyInstance(m_ns, ci);
 	}
+#else
+	(void)pupdateStmt;
+	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Internal Parser Error: unimplemented functionality");
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	
 }
 

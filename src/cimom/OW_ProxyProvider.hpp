@@ -58,6 +58,8 @@
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+// TODO: Uninline these virtual functions, they just cause bloat.
+
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 class OW_AssociatorProviderProxy : public OW_AssociatorProviderIFC
 {
@@ -138,14 +140,6 @@ public:
 	{}
 
 
-	virtual void deleteInstance(
-			const OW_ProviderEnvironmentIFCRef& env,
-			const OW_String& ns,
-			const OW_CIMObjectPath& cop)
-	{
-		m_pProv->deleteInstance(env, ns, cop);
-	}
-
 	virtual void enumInstanceNames(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
@@ -188,6 +182,7 @@ public:
 			includeQualifiers, includeClassOrigin, propertyList, cimClass);
 	}
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	virtual OW_CIMObjectPath createInstance(
 			const OW_ProviderEnvironmentIFCRef& env,
 			const OW_String& ns,
@@ -207,6 +202,15 @@ public:
 	{
 		m_pProv->modifyInstance(env, ns, modifiedInstance, previousInstance, includeQualifiers, propertyList, theClass);
 	}
+
+	virtual void deleteInstance(
+			const OW_ProviderEnvironmentIFCRef& env,
+			const OW_String& ns,
+			const OW_CIMObjectPath& cop)
+	{
+		m_pProv->deleteInstance(env, ns, cop);
+	}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 private:
 	OW_CppInstanceProviderIFCRef m_pProv;

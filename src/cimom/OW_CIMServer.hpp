@@ -87,6 +87,7 @@ public:
 	 */
 	virtual void close();
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Create a cim namespace.
 	 * @param ns 	The namespace to be created.
@@ -102,6 +103,7 @@ public:
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
 	virtual void deleteNameSpace(const OW_String& ns, const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Gets a list of the namespaces.
@@ -409,6 +411,7 @@ public:
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
 		OW_CIMClass* pOutClass, const OW_UserInfo& aclInfo);
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Delete an existing instance from the store
 	 *
@@ -482,6 +485,7 @@ public:
 		const OW_String& ns,
 		const OW_CIMObjectPath& name, const OW_String& propertyName,
 		const OW_CIMValue& cv, const OW_UserInfo& aclInfo);
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 	/**
 	 * Get the specified CIM instance property.

@@ -106,14 +106,6 @@ public:
 	virtual void close() = 0;
 
 	/**
-	 * Deletes the CIM instance specified by path in namespace ns.
-	 * @param ns The namespace containing the instance
-	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
-	 * @exception OW_CIMException If the instance does not exist.
-	 */
-	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path) = 0;
-
-	/**
 	 * Enumerates the class specified by the OW_CIMObjectPath.
 	 * @param ns The namespace.
 	 * @param className The class to be enumerated.
@@ -414,6 +406,7 @@ public:
 	virtual void deleteClass(const OW_String& ns, const OW_String& className) = 0;
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 	/**
 	 * Update the specified CIM instance associated with the specified
 	 * namespace.
@@ -442,18 +435,12 @@ public:
 		const OW_CIMInstance& instance) = 0;
 
 	/**
-	 * Get the specified CIM instance property.
-	 * @param ns The namespace
-	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance to be
-	 *		accessed
-	 * @param propertyName	The name of the property to retrieve.
-	 * @return The OW_CIMvalue for property identified by propertyName.
-	 * @exception OW_CIMException
+	 * Deletes the CIM instance specified by path in namespace ns.
+	 * @param ns The namespace containing the instance
+	 * @param path	The OW_CIMObjectPath identifying the instance to delete.
+	 * @exception OW_CIMException If the instance does not exist.
 	 */
-	virtual OW_CIMValue getProperty(
-		const OW_String& ns,
-		const OW_CIMObjectPath& instanceName,
-		const OW_String& propertyName) = 0;
+	virtual void deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path) = 0;
 
 	/**
 	 * Set the specified CIM instance property.
@@ -469,6 +456,21 @@ public:
 		const OW_CIMObjectPath& instanceName,
 		const OW_String& propertyName,
 		const OW_CIMValue& newValue) = 0;
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+	/**
+	 * Get the specified CIM instance property.
+	 * @param ns The namespace
+	 * @param instanceName An OW_CIMObjectPath that identifies the CIM instance to be
+	 *		accessed
+	 * @param propertyName	The name of the property to retrieve.
+	 * @return The OW_CIMvalue for property identified by propertyName.
+	 * @exception OW_CIMException
+	 */
+	virtual OW_CIMValue getProperty(
+		const OW_String& ns,
+		const OW_CIMObjectPath& instanceName,
+		const OW_String& propertyName) = 0;
 
 #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	/**

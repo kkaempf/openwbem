@@ -178,16 +178,17 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					enumClasses(chdl, *ostrm, *istrm);
 					break;
 
-				case OW_BIN_CREATEINST:
-					lgr->logDebug("OW_BinaryRequestHandler create instance"
-						" request");
-					createInstance(chdl, *ostrm, *istrm);
-					break;
-
 				case OW_BIN_GETINST:
 					lgr->logDebug("OW_BinaryRequestHandler get instance"
 						" request");
 					getInstance(chdl, *ostrm, *istrm);
+					break;
+
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+				case OW_BIN_CREATEINST:
+					lgr->logDebug("OW_BinaryRequestHandler create instance"
+						" request");
+					createInstance(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_MODIFYINST:
@@ -202,16 +203,17 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 					deleteInstance(chdl, *ostrm, *istrm);
 					break;
 
-				case OW_BIN_GETPROP:
-					lgr->logDebug("OW_BinaryRequestHandler get property"
-						" request");
-					getProperty(chdl, *ostrm, *istrm);
-					break;
-
 				case OW_BIN_SETPROP:
 					lgr->logDebug("OW_BinaryRequestHandler set property"
 						" request");
 					setProperty(chdl, *ostrm, *istrm);
+					break;
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+				case OW_BIN_GETPROP:
+					lgr->logDebug("OW_BinaryRequestHandler get property"
+						" request");
+					getProperty(chdl, *ostrm, *istrm);
 					break;
 
 				case OW_BIN_ENUMCLSNAMES:
@@ -355,68 +357,6 @@ OW_BinaryRequestHandler::deleteClass(OW_CIMOMHandleIFCRef chdl,
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
-	std::ostream& ostrm, std::istream& istrm)
-{
-	OW_String ns(OW_BinIfcIO::readString(istrm));
-	OW_CIMInstance cimInstance(OW_BinIfcIO::readInstance(istrm));
-
-	OW_String className = cimInstance.getClassName();
-	//OW_CIMObjectPath realPath(className, path.getNameSpace());
-
-	// Special treatment for __Namespace class
-	if(className.equals(OW_CIMClass::NAMESPACECLASS))
-	{
-		OW_CIMProperty prop = cimInstance.getProperty(
-			OW_CIMProperty::NAME_PROPERTY);
-
-		// Need the name property since it contains the name of the new
-		// name space
-		if (!prop)
-		{
-			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-				"Name property not specified for new namespace");
-		}
-
-		// If the name property didn't come acrossed as a key, then
-		// set the name property as the key
-		if(!prop.isKey())
-		{
-			prop.addQualifier(OW_CIMQualifier::createKeyQualifier());
-		}
-
-		cimInstance.setProperty(prop);
-	}
-
-	/* This should be done in the CIM Server
-	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
-	if (keys.size() == 0)
-	{
-		OW_THROWCIMMSG(OW_CIMException::FAILED,"Instance doesn't have keys");
-	}
-
-	for (size_t i = 0; i < keys.size(); ++i)
-	{
-		OW_CIMProperty key = keys[i];
-		if (!key.getValue())
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				format("Key must be provided!  Property \"%1\" does not have a "
-					"valid value.", key.getName()).c_str());
-		}
-	}
-
-	realPath.setKeys(keys);
-	*/
-
-	OW_CIMObjectPath newPath = chdl->createInstance(ns, cimInstance);
-
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	OW_BinIfcIO::writeObjectPath(ostrm, newPath);
-}
-
-//////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class BinaryCIMClassWriter : public OW_CIMClassResultHandlerIFC
@@ -502,17 +442,6 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
-	std::ostream& ostrm, std::istream& istrm)
-{
-	OW_String ns(OW_BinIfcIO::readString(istrm));
-	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
-	chdl->deleteInstance(ns, op);
-	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
 
 #ifndef OW_DISABLE_QUALIFIER_DECLARATION
@@ -621,6 +550,80 @@ OW_BinaryRequestHandler::getQual(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::writeQual(ostrm, qt);
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryRequestHandler::createInstance(OW_CIMOMHandleIFCRef chdl,
+	std::ostream& ostrm, std::istream& istrm)
+{
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_CIMInstance cimInstance(OW_BinIfcIO::readInstance(istrm));
+
+	OW_String className = cimInstance.getClassName();
+	//OW_CIMObjectPath realPath(className, path.getNameSpace());
+
+	// Special treatment for __Namespace class
+	if(className.equals(OW_CIMClass::NAMESPACECLASS))
+	{
+		OW_CIMProperty prop = cimInstance.getProperty(
+			OW_CIMProperty::NAME_PROPERTY);
+
+		// Need the name property since it contains the name of the new
+		// name space
+		if (!prop)
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
+				"Name property not specified for new namespace");
+		}
+
+		// If the name property didn't come acrossed as a key, then
+		// set the name property as the key
+		if(!prop.isKey())
+		{
+			prop.addQualifier(OW_CIMQualifier::createKeyQualifier());
+		}
+
+		cimInstance.setProperty(prop);
+	}
+
+	/* This should be done in the CIM Server
+	OW_CIMPropertyArray keys = cimInstance.getKeyValuePairs();
+	if (keys.size() == 0)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,"Instance doesn't have keys");
+	}
+
+	for (size_t i = 0; i < keys.size(); ++i)
+	{
+		OW_CIMProperty key = keys[i];
+		if (!key.getValue())
+		{
+			OW_THROWCIMMSG(OW_CIMException::FAILED,
+				format("Key must be provided!  Property \"%1\" does not have a "
+					"valid value.", key.getName()).c_str());
+		}
+	}
+
+	realPath.setKeys(keys);
+	*/
+
+	OW_CIMObjectPath newPath = chdl->createInstance(ns, cimInstance);
+
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+	OW_BinIfcIO::writeObjectPath(ostrm, newPath);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_BinaryRequestHandler::deleteInstance(OW_CIMOMHandleIFCRef chdl,
+	std::ostream& ostrm, std::istream& istrm)
+{
+	OW_String ns(OW_BinIfcIO::readString(istrm));
+	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
+	chdl->deleteInstance(ns, op);
+	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_BinaryRequestHandler::modifyInstance(OW_CIMOMHandleIFCRef chdl,
@@ -660,6 +663,7 @@ OW_BinaryRequestHandler::setProperty(OW_CIMOMHandleIFCRef chdl,
 	chdl->setProperty(ns, op, propName, cv);
     OW_BinIfcIO::write(ostrm, OW_BIN_OK);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

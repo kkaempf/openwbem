@@ -124,6 +124,8 @@ namespace
 	}
 
 }
+
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_NameSpaceProvider::deleteInstance(
@@ -173,6 +175,7 @@ OW_NameSpaceProvider::deleteInstance(
 
 	env->getRepository()->deleteNameSpace(newns, acl);
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 namespace
 {
@@ -324,6 +327,7 @@ OW_NameSpaceProvider::getInstance(
 	OW_THROWCIM(OW_CIMException::NOT_FOUND);
 }
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMObjectPath
 OW_NameSpaceProvider::createInstance(
@@ -368,6 +372,7 @@ OW_NameSpaceProvider::modifyInstance(
 {
 	OW_THROWCIMMSG(OW_CIMException::FAILED, "Modifying a __Namespace instance is not allowed");
 }
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 void

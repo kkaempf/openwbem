@@ -114,7 +114,6 @@ protected:
 
 
 
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 void createClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", "Key");
@@ -186,7 +185,6 @@ void modifyClass(OW_CIMOMHandleIFC& hdl)
 	cimClass.addProperty(cimProp);
 	hdl.modifyClass("root/testsuite", cimClass);
 }
-#endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
 
 void createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& newInstance)
@@ -247,14 +245,11 @@ void deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 }
 
 
-
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 void deleteClass(OW_CIMOMHandleIFC& hdl)
 {
 	OW_String delClass = "EXP_IndicationTestComputerSystem";
 	hdl.deleteClass("root/testsuite", delClass);
 }
-#endif
 
 class ListenerLogger : public OW_Logger
 {
@@ -366,7 +361,6 @@ int main(int argc, char* argv[])
 			OW_MutexLock guard2(coutMutex);
 			cout << e.getMessage() << endl;
 		}
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		try
 		{
 			deleteClass(rch);
@@ -376,7 +370,6 @@ int main(int argc, char* argv[])
 			OW_MutexLock guard3(coutMutex);
 			cout << e.getMessage() << endl;
 		}
-#endif
 
 		handle = hxcl.registerForIndication(url, ns, "select * from CIM_ClassIndication", "wql1", "root/testsuite", mcb);
 		registrationHandles.append(handle);
@@ -410,10 +403,8 @@ int main(int argc, char* argv[])
 		//registrationHandles.append(handle);
 
 
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		//cout << "Executing createClass()" << endl;
 		createClass(rch);
-#endif
 		//cout << "Executing createInstance()" << endl;
 		createInstance(rch, "MyInstance");
 		//cout << "Executing modifyInstance()" << endl;
@@ -422,12 +413,10 @@ int main(int argc, char* argv[])
 		getInstance(rch, "MyInstance");
 		//cout << "Executing deleteInstance()" << endl;
 		deleteInstance(rch, "MyInstance");
-#ifndef OW_DISABLE_SCHEMA_MANIPULATION
 		//cout << "Executing modifyClass()" << endl;
 		modifyClass(rch);
 		//cout << "Executing deleteClass()" << endl;
 		deleteClass(rch);
-#endif
 		//cout << "Done running intrinsic methods." << endl;
 		//invokeMethod(rch, 2); // TODO
 

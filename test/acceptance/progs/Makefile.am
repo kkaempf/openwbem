@@ -1,16 +1,23 @@
-noinst_PROGRAMS = \
-cimlistener \
-wqlTest1 \
-wqlTest2 \
-aclTest \
-CIMOMLocator \
+if DISABLE_INSTANCE_MANIPULATION
+PROGS=
+else
+PROGS= \
 owcimclientcl \
-fakeclient \
-testinstprov \
 testCIMExceptions \
-infiniteClient \
+testinstprov \
+aclTest \
+cimlistener \
 testNamespaces \
 testMisc
+endif
+
+noinst_PROGRAMS = \
+$(PROGS) \
+wqlTest1 \
+wqlTest2 \
+CIMOMLocator \
+fakeclient \
+infiniteClient
 
 
 

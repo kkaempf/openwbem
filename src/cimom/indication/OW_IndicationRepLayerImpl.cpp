@@ -57,35 +57,6 @@ OW_IndicationRepLayer::~OW_IndicationRepLayer()
 											
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
-OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path,
-	const OW_UserInfo& aclInfo)
-{
-	OW_CIMInstance instOrig = m_pServer->deleteInstance(ns, path, aclInfo);
-
-	if (m_pEnv->getIndicationRepLayerMediator()->getInstDeletionSubscriptionCount() > 0)
-	{
-		OW_UserInfo intAclInfo;
-	
-		try
-		{
-			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_InstDeletion",
-				false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
-			expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
-			exportIndication(expInst, ns);
-		}
-		catch (OW_CIMException&)
-		{
-			m_pEnv->logDebug("Unable to export indication for deleteInstance"
-				" because CIM_InstDeletion does not exist");
-		}
-	}
-	return instOrig;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-OW_CIMInstance
 OW_IndicationRepLayerImpl::getInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
@@ -272,6 +243,7 @@ OW_IndicationRepLayerImpl::deleteClass(const OW_String& ns, const OW_String& cla
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMInstance
 OW_IndicationRepLayerImpl::modifyInstance(
@@ -335,6 +307,36 @@ OW_IndicationRepLayerImpl::createInstance(const OW_String& ns,
 	}
 	return rval;
 }
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstance
+OW_IndicationRepLayerImpl::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& path,
+	const OW_UserInfo& aclInfo)
+{
+	OW_CIMInstance instOrig = m_pServer->deleteInstance(ns, path, aclInfo);
+
+	if (m_pEnv->getIndicationRepLayerMediator()->getInstDeletionSubscriptionCount() > 0)
+	{
+		OW_UserInfo intAclInfo;
+	
+		try
+		{
+			OW_CIMClass expCC = m_pServer->getClass(ns, "CIM_InstDeletion",
+				false, true, true, NULL,
+				intAclInfo);
+			OW_CIMInstance expInst = expCC.newInstance();
+			expInst.setProperty("SourceInstance", OW_CIMValue(instOrig));
+			exportIndication(expInst, ns);
+		}
+		catch (OW_CIMException&)
+		{
+			m_pEnv->logDebug("Unable to export indication for deleteInstance"
+				" because CIM_InstDeletion does not exist");
+		}
+	}
+	return instOrig;
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
 
 //////////////////////////////////////////////////////////////////////////////
 extern "C" OW_IndicationRepLayer*

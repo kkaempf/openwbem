@@ -337,18 +337,6 @@ instanceNameToKey(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& inst)
-{
-	static const char* const commandName = "DeleteInstance";
-	OW_Array<OW_Param> params;
-
-	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params,
-						 instanceNameToKey(inst, "InstanceName"));
-}
-
-//////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class enumClassNamesOp : public OW_ClientOperation
@@ -952,6 +940,7 @@ OW_CIMXMLCIMOMHandle::deleteClass(const OW_String& nameSpace, const OW_String& c
 }
 #endif // #ifndef OW_DISABLE_SCHEMA_MANIPULATION
 
+#ifndef OW_DISABLE_INSTANCE_MANIPULATION
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::modifyInstance(
@@ -1049,6 +1038,39 @@ OW_CIMXMLCIMOMHandle::createInstance(const OW_String& ns,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::deleteInstance(const OW_String& ns, const OW_CIMObjectPath& inst)
+{
+	static const char* const commandName = "DeleteInstance";
+	OW_Array<OW_Param> params;
+
+	voidRetValOp op;
+	intrinsicMethod(ns, commandName, op, params,
+						 instanceNameToKey(inst, "InstanceName"));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
+OW_CIMXMLCIMOMHandle::setProperty(
+	const OW_String& ns,
+	const OW_CIMObjectPath& path,
+	const OW_String& propName,
+	const OW_CIMValue& cv)
+{
+	static const char* const commandName = "SetProperty";
+	OW_Array<OW_Param> params;
+	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
+	OW_StringStream ostr;
+	OW_CIMtoXML(cv, ostr);
+	params.push_back(OW_Param(XMLP_NEWVALUE, OW_Param::VALUESET, ostr.toString()));
+
+	voidRetValOp op;
+	intrinsicMethod(ns, commandName, op, params,
+		instanceNameToKey(path,"InstanceName"));
+}
+#endif // #ifndef OW_DISABLE_INSTANCE_MANIPULATION
+
+//////////////////////////////////////////////////////////////////////////////
 namespace
 {
 	class getPropertyOp : public OW_ClientOperation
@@ -1088,26 +1110,6 @@ OW_CIMXMLCIMOMHandle::getProperty(
 	intrinsicMethod(ns, commandName, op, params,
 		instanceNameToKey(path,"InstanceName"));
 	return rval;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-void
-OW_CIMXMLCIMOMHandle::setProperty(
-	const OW_String& ns,
-	const OW_CIMObjectPath& path,
-	const OW_String& propName,
-	const OW_CIMValue& cv)
-{
-	static const char* const commandName = "SetProperty";
-	OW_Array<OW_Param> params;
-	params.push_back(OW_Param(XMLP_PROPERTYNAME, propName));
-	OW_StringStream ostr;
-	OW_CIMtoXML(cv, ostr);
-	params.push_back(OW_Param(XMLP_NEWVALUE, OW_Param::VALUESET, ostr.toString()));
-
-	voidRetValOp op;
-	intrinsicMethod(ns, commandName, op, params,
-		instanceNameToKey(path,"InstanceName"));
 }
 
 //////////////////////////////////////////////////////////////////////////////
