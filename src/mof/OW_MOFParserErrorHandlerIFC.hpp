@@ -47,17 +47,17 @@ public:
 	ParserErrorHandlerIFC();
 	virtual ~ParserErrorHandlerIFC();
 	void fatalError( const char* error, const lineInfo& li );
-	enum ParserAction
+	enum EParserAction
 	{
-		Abort,
-		Ignore
+		E_ABORT,
+		E_IGNORE
 	};
 	void recoverableError( const char* error, const lineInfo& li );
 	void progressMessage( const char* message, const lineInfo& li );
 	long errorCount();
 protected:
 	virtual void doFatalError( const char* error, const lineInfo& li ) = 0;
-	virtual ParserAction doRecoverableError( const char* error, const lineInfo & li ) = 0;
+	virtual EParserAction doRecoverableError( const char* error, const lineInfo & li ) = 0;
 	virtual void doProgressMessage( const char* message, const lineInfo& li ) = 0;
 private:
 	long m_errorCount;

@@ -46,6 +46,8 @@ namespace OpenWBEM
 
 OW_DECLARE_EXCEPTION(MOFCompiler)
 
+class CIMInstance;
+
 namespace MOF
 {
 
@@ -57,24 +59,18 @@ public:
 	struct Options
 	{
 		Options() 
-			: m_useCimRepository(false)
-			, m_createNamespaces(false)
+			: m_createNamespaces(false)
 			, m_checkSyntaxOnly(false)
 			, m_remove(false)
 			, m_preserve(false)
 			, m_upgrade(true)
 			, m_ignoreDoubleIncludes(false)
 		{}
-		Options(bool useCimRepository, const String& repositoryDir, 
-			const String& url, const String& namespace_, const String& encoding, 
+		Options(const String& namespace_,
 			bool createNamespaces, bool checkSyntaxOnly, const String& dumpXmlFile,
 			bool remove, bool preserve, bool upgrade, const StringArray& includeDirs,
 			bool ignoreDoubleIncludes)
-			: m_useCimRepository(useCimRepository)
-			, m_repositoryDir(repositoryDir)
-			, m_url(url)
-			, m_namespace(namespace_)
-			, m_encoding(encoding)
+			: m_namespace(namespace_)
 			, m_createNamespaces(createNamespaces)
 			, m_checkSyntaxOnly(checkSyntaxOnly)
 			, m_dumpXmlFile(dumpXmlFile)
@@ -86,11 +82,7 @@ public:
 		{
 		}
 
-		bool m_useCimRepository;
-		String m_repositoryDir;
-		String m_url;
 		String m_namespace;
-		String m_encoding;
 		bool m_createNamespaces;
 		bool m_checkSyntaxOnly;
 		String m_dumpXmlFile;
@@ -136,6 +128,10 @@ private:
 	Reference<CIMOMHandleIFC> m_ch;
 	Options m_opts;
 };
+
+
+CIMInstance compileInstanceFromMOF(const String& instMOF);
+
 
 } // end namespace MOF
 } // end namespace OpenWBEM

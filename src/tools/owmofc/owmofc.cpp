@@ -86,10 +86,10 @@ protected:
 	{
 		cerr << "Fatal error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
 	}
-	virtual ParserAction doRecoverableError(const char *error, const lineInfo& li )
+	virtual EParserAction doRecoverableError(const char *error, const lineInfo& li )
 	{
 		cerr << "Recoverable error in file: " << li.filename << " on line: " << li.lineNum << ": " << error << endl;
-		return Ignore;
+		return E_IGNORE;
 	}
 	virtual void doProgressMessage( const char* message, const lineInfo& li )
 	{
@@ -102,8 +102,12 @@ static const char* const def_namespace_arg = "root/cimv2";
 static const char* const def_encoding_arg = "cimxml";
 
 
-static Compiler::Options opts;
-static StringArray filelist;
+static Compiler::Options g_opts;
+static bool g_useCimRepository;
+static String g_repositoryDir;
+static String g_url;
+static String g_encoding;
+static StringArray g_filelist;
 
 #ifdef OW_HAVE_GETOPT_LONG
 //////////////////////////////////////////////////////////////////////////////
@@ -136,16 +140,16 @@ processCommandLineOptions(int argc, char** argv)
 	// TODO: This is deprecated, remove it post 3.0
 	if (argc == 4 && argv[1][0] != '-' && argv[2][0] != '-' && argv[3][0] != '-')
 	{
-		opts.m_url = argv[1];
-		opts.m_namespace = argv[2];
-		filelist.push_back(argv[3]);
+		g_url = argv[1];
+		g_opts.m_namespace = argv[2];
+		g_filelist.push_back(argv[3]);
 		return 0;
 	}
 
 	// Set defaults
-	opts.m_url = def_url_arg;
-	opts.m_namespace = def_namespace_arg;
-	opts.m_encoding = def_encoding_arg;
+	g_url = def_url_arg;
+	g_opts.m_namespace = def_namespace_arg;
+	g_encoding = def_encoding_arg;
 
 #ifdef OW_HAVE_GETOPT_LONG
 	int optndx = 0;
@@ -160,20 +164,20 @@ processCommandLineOptions(int argc, char** argv)
 		switch(c)
 		{
 			case 'd':
-				opts.m_useCimRepository = true;
-				opts.m_repositoryDir = optarg;
+				g_useCimRepository = true;
+				g_repositoryDir = optarg;
 				break;
 			case 'u':
-				opts.m_url = optarg;
+				g_url = optarg;
 				break;
 			case 'n':
-				opts.m_namespace = optarg;
+				g_opts.m_namespace = optarg;
 				break;
 			case 'e':
-				opts.m_encoding = optarg;
+				g_encoding = optarg;
 				break;
 			case 'c':
-				opts.m_createNamespaces = true;
+				g_opts.m_createNamespaces = true;
 				break;
 			default:
 				return -1;
@@ -187,7 +191,7 @@ processCommandLineOptions(int argc, char** argv)
 	if (optind < argc)
 	{
 		while (optind < argc)
-			filelist.push_back(argv[optind++]);
+			g_filelist.push_back(argv[optind++]);
 	}
 	return 0;
 }
@@ -269,25 +273,25 @@ int main(int argc, char** argv)
 		Reference<ParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);
 		Reference<OperationContext> context;
 		Reference<CIMOMHandleIFC> handle;
-		if (opts.m_useCimRepository)
+		if (g_useCimRepository)
 		{
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(mofCompEnvironment));
-			cimRepository->open(opts.m_repositoryDir);
+			cimRepository->open(g_repositoryDir);
 			context = Reference<OperationContext>(new OperationContext(""));
 			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
 		}
 		else
 		{
-			URL url(opts.m_url);
+			URL url(g_url);
 			CIMProtocolIFCRef client;
-			client = new HTTPClient(opts.m_url);
+			client = new HTTPClient(g_url);
 			// TODO: The /owbinary path part is deprecated, remove it post 3.0
-			if(opts.m_encoding == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
+			if(g_encoding == "owbinary" || url.path.equalsIgnoreCase("/owbinary"))
 			{
 				handle = CIMOMHandleIFCRef(new BinaryCIMOMHandle(client));
 			}
-			else if (opts.m_encoding == "cimxml")
+			else if (g_encoding == "cimxml")
 			{
 				handle = CIMOMHandleIFCRef(new CIMXMLCIMOMHandle(client));
 			}
@@ -298,17 +302,17 @@ int main(int argc, char** argv)
 			}
 			client->setLoginCallBack(ClientAuthCBIFCRef(new GetLoginInfo));
 		}
-		Compiler theCompiler(handle, opts, theErrorHandler);
-		if (filelist.empty())
+		Compiler theCompiler(handle, g_opts, theErrorHandler);
+		if (g_filelist.empty())
 		{
 			// don't do this, it's too confusing
-			// filelist.push_back("-"); // if they didn't specify a file, read from stdin.
+			// g_filelist.push_back("-"); // if they didn't specify a file, read from stdin.
 			usage();
 			return 1;
 		}
-		for (size_t i = 0; i < filelist.size(); ++i)
+		for (size_t i = 0; i < g_filelist.size(); ++i)
 		{
-			errors += theCompiler.compile(filelist[i]);
+			errors += theCompiler.compile(g_filelist[i]);
 		}
 		cout
 			<< "Compilation finished.  "

@@ -62,7 +62,7 @@ void ParserErrorHandlerIFC::fatalError( const char* error, const lineInfo& li )
 void ParserErrorHandlerIFC::recoverableError( const char* error, const lineInfo& li )
 {
 	++m_errorCount;
-	if ( doRecoverableError(error,li) == Abort )
+	if ( doRecoverableError(error,li) == E_ABORT )
 		OW_THROW(ParseFatalErrorException, "");
 }
 /////////////////////////////////////////////////////////////////////////////// 
