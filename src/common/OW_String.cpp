@@ -140,6 +140,7 @@ OW_String::OW_String(OW_Bool parm) :
 
 //////////////////////////////////////////////////////////////////////////////
 // ATTN: UTF8
+// TODO: FIXME this is broken wrt i18n
 OW_String::OW_String(const OW_Char16& parm) :
 	m_buf(NULL)
 {
@@ -222,7 +223,7 @@ OW_String::OW_String(const char* str) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_String::OW_String(OW_Bool /*takeOwnerShipTag*/, char* allocatedMemory, size_t len) :
+OW_String::OW_String(ETakeOwnershipFlag, char* allocatedMemory, size_t len) :
 	m_buf(NULL)
 {
 	OW_ASSERT(allocatedMemory != 0);
@@ -270,6 +271,7 @@ OW_String::OW_String(const OW_CIMObjectPath& parm) :
 
 //////////////////////////////////////////////////////////////////////////////
 // ATTN: UTF8
+// TODO: FIXME this is broken wrt i18n
 OW_String::OW_String(const OW_Char16Array& ra) :
 	m_buf(NULL)
 {
@@ -291,7 +293,6 @@ OW_String::OW_String(const OW_Char16Array& ra) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// ATTN: UTF8 ?
 OW_String::OW_String(char c) :
 	m_buf(NULL)
 {
@@ -462,8 +463,8 @@ OW_String::concat(char arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
+bool
+OW_String::endsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase) const
 {
 	if(arg.empty())
 	{
@@ -477,7 +478,7 @@ OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 		return false;
 	}
 
-	OW_Bool cc;
+	bool cc;
 	
 	const char* lhs = "";
 	const char* rhs = "";
@@ -503,14 +504,14 @@ OW_String::endsWith(const OW_String& arg, OW_Bool ignoreCase) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_String::equals(const OW_String& arg) const
 {
 	return(compareTo(arg) == 0);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_String::equalsIgnoreCase(const OW_String& arg) const
 {
 	return(compareToIgnoreCase(arg) == 0);
@@ -660,10 +661,10 @@ OW_String::lastIndexOf(const OW_String& arg, size_t fromIndex) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_String::startsWith(const OW_String& arg, OW_Bool ignoreCase) const
+bool
+OW_String::startsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase) const
 {
-	OW_Bool cc = false;
+	bool cc = false;
 
 	if(arg.empty())
 	{
@@ -722,7 +723,7 @@ OW_String::substring(size_t beginIndex, size_t len) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_String::isSpaces() const
 {
 	if (!m_buf)
@@ -849,6 +850,8 @@ OW_String::erase(size_t idx, size_t len)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// ATTN: UTF8 ?
+// TODO: FIXME this is broken wrt i18n
 OW_String&
 OW_String::toLowerCase()
 {
@@ -865,6 +868,8 @@ OW_String::toLowerCase()
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// ATTN: UTF8 ?
+// TODO: FIXME this is broken wrt i18n
 OW_String&
 OW_String::toUpperCase()
 {
@@ -985,6 +990,7 @@ throwStringConversion(const char* str, const char* type)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// TODO: FIXME this is broken wrt i18n
 OW_Char16
 OW_String::toChar16() const
 {
@@ -992,7 +998,7 @@ OW_String::toChar16() const
 	{
 		throwStringConversion(c_str(), "OW_Char16");
 	}
-	return charAt(0);
+	return OW_Char16(charAt(0));
 }
 
 template <typename T>
@@ -1034,7 +1040,7 @@ OW_String::toReal64() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_String::toBool() const
 {
 	if (equalsIgnoreCase("true"))
@@ -1047,7 +1053,7 @@ OW_String::toBool() const
 	}
 	else
 	{
-		throwStringConversion(c_str(), "OW_Bool");
+		throwStringConversion(c_str(), "bool");
 	}
 	return false; // to make compiler happy
 }
@@ -1173,7 +1179,7 @@ OW_String::toDateTime() const
 
 //////////////////////////////////////////////////////////////////////////////
 OW_StringArray
-OW_String::tokenize(const char* delims, OW_Bool returnTokens) const
+OW_String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 {
 	OW_StringArray ra;
 

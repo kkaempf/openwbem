@@ -68,7 +68,7 @@ class OW_LinuxPAMAuthentication : public OW_AuthenticatorIFC
 	 *   True if user is authenticated
 	 */
 private:
-	virtual OW_Bool doAuthenticate(OW_String &userName, const OW_String &info,
+	virtual bool doAuthenticate(OW_String &userName, const OW_String &info,
 		OW_String &details);
 	
 	virtual void doInit(OW_ServiceEnvironmentIFCRef env);
@@ -79,13 +79,13 @@ private:
 // See misc_conv.c in libpam for an example.
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details)
 {
 	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_Array<OW_String> allowedUsers = m_allowedUsers.tokenize();
@@ -102,7 +102,7 @@ OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &
 	if (!nameFound)
 	{
 		details = "You must authenticate to access this resource";
-		return OW_Bool(false);
+		return false;
 	}
 
 	char* pPasswd = strdup(info.c_str());
@@ -142,7 +142,7 @@ OW_LinuxPAMAuthentication::doAuthenticate(OW_String &userName, const OW_String &
 
 	free(pUserName);
 
-	OW_Bool retval = ( rval == PAM_SUCCESS ? true : false ); /* indicate success */
+	bool retval = ( rval == PAM_SUCCESS ? true : false ); /* indicate success */
 
 	return retval;
 }
@@ -168,7 +168,7 @@ OW_PAM_conv(int num_msg, const struct pam_message **msgm,
 		//D(("no memory for responses"));
 		return PAM_CONV_ERR;
 	}
-	OW_Bool failed = false;
+	bool failed = false;
 
 	//D(("entering conversation function."));
 

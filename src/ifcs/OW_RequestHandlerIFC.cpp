@@ -56,7 +56,7 @@ void OW_RequestHandlerIFC::process(std::istream* istr, std::ostream* ostrEntity,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_RequestHandlerIFC::hasError(OW_Int32& errCode, OW_String& errDescr)
 {
 	if (m_hasError)

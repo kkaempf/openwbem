@@ -58,7 +58,7 @@ public:
 protected:
 
 	virtual void doInit(OW_ServiceEnvironmentIFCRef);
-	OW_Bool doAuthenticate(OW_String& userName,
+	bool doAuthenticate(OW_String& userName,
 		const OW_String& info, OW_String& details);
 
 
@@ -72,7 +72,7 @@ private:
     */
 	void loadPasswordFile(OW_ServiceEnvironmentIFCRef env);
 
-	OW_Bool doAuthenticate(const OW_String& userName, const OW_String& passwd);
+	bool doAuthenticate(const OW_String& userName, const OW_String& passwd);
 
 };
 
@@ -88,11 +88,11 @@ OW_SimpleAuthenticator::doInit(OW_ServiceEnvironmentIFCRef env)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_SimpleAuthenticator::doAuthenticate(OW_String& userName,
 		const OW_String& info, OW_String& details)
 {
-	OW_Bool rval = false;
+	bool rval = false;
 
 	if (info.empty())
 	{
@@ -109,11 +109,11 @@ OW_SimpleAuthenticator::doAuthenticate(OW_String& userName,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_SimpleAuthenticator::doAuthenticate(const OW_String& userName,
 	const OW_String& passwd)
 {
-	OW_Bool rval;
+	bool rval;
 
 	if (m_passwords.count(userName) < 1) // user not found in password file
 	{

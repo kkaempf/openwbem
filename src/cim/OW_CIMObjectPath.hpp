@@ -36,7 +36,6 @@
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"
-#include "OW_Bool.hpp"
 #include "OW_CIMNULL.hpp"
 
 /**
@@ -259,13 +258,9 @@ public:
 	/**
 	 * Compare this object path with another.
 	 * @param op The object path to compare to this one.
-	 * @param ignoreClasOrigins If true class origins are ignored
 	 * @return true if the object paths are equal. Otherwise false.
-	 *
-	 * unclear why classorigins would ever be checked!
 	 */
-	OW_Bool equals(const OW_CIMObjectPath& op,
-		OW_Bool ignoreClassOrigins=true) const;
+	bool equals(const OW_CIMObjectPath& op) const;
 
 	/**
 	 * @return true if this is not a null object.
@@ -289,9 +284,9 @@ public:
 	 * @param op The object path to compare to this one.
 	 * @return true if the object paths are equal. Otherwise false.
 	 */
-	OW_Bool operator== (const OW_CIMObjectPath& op) const
+	bool operator== (const OW_CIMObjectPath& op) const
 	{
-		return equals(op, true);
+		return equals(op);
 	}
 
 	/**

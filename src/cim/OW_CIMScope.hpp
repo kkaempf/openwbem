@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_Bool.hpp"
 
 /**
  * The OW_CIMScope class encapsulated the data and functionality the is
@@ -108,7 +107,7 @@ public:
 	 * @param arg The scope to check for equality against.
 	 * @return true if arg is equal to this scope. Otherwise false.
 	 */
-	OW_Bool equals(const OW_CIMScope& arg) const
+	bool equals(const OW_CIMScope& arg) const
 	{
 		return (m_val == arg.m_val);
 	}
@@ -118,7 +117,7 @@ public:
 	 * @param arg The scope to check for equality against.
 	 * @return true if arg is equal to this scope. Otherwise false.
 	 */
-	OW_Bool operator == (const OW_CIMScope& arg) const
+	bool operator == (const OW_CIMScope& arg) const
 	{
 		return equals(arg);
 	}
@@ -128,7 +127,7 @@ public:
 	 * @param arg The scope to check for inequality against.
 	 * @return true if arg is not equal to this scope. Otherwise false.
 	 */
-	OW_Bool operator != (const OW_CIMScope& arg) const
+	bool operator != (const OW_CIMScope& arg) const
 	{
 		return !equals(arg);
 	}
@@ -174,7 +173,7 @@ public:
 
 private:
 
-	static OW_Bool validScope(Scope val)
+	static bool validScope(Scope val)
 	{
 		return (val > BAD && val < MAXSCOPE);
 	}

@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_Bool.hpp"
 #include <iosfwd>
 
 /**
@@ -74,7 +73,7 @@ public:
 	 * @return true if the given integral value is a valid flavor. Otherwise
 	 * false.
 	 */
-	static OW_Bool validFlavor(OW_Int32 iflavor)
+	static bool validFlavor(OW_Int32 iflavor)
 	{
 		return(iflavor > INVALID && iflavor < LASTVALUE);
 	}
@@ -151,7 +150,7 @@ public:
 	/**
 	 * @return true if this OW_CIMFlavor is valid. Otherwise false.
 	 */
-	OW_Bool isValid()
+	bool isValid()
 	{
 		return (m_flavor != INVALID);
 	}
@@ -162,7 +161,7 @@ public:
 	 * @return true if the given OW_CIMFlavor object has the same flavor value
 	 * as this one.
 	 */
-	OW_Bool equals(const OW_CIMFlavor& arg)
+	bool equals(const OW_CIMFlavor& arg)
 	{
 		return (m_flavor == arg.m_flavor);
 	}
@@ -173,7 +172,7 @@ public:
 	 * @return true if the given OW_CIMFlavor object has the same flavor value
 	 * as this one.
 	 */
-	OW_Bool operator== (const OW_CIMFlavor& arg)
+	bool operator== (const OW_CIMFlavor& arg)
 	{
 		return equals(arg);
 	}
@@ -184,7 +183,7 @@ public:
 	 * @return true if the given OW_CIMFlavor object has a different flavor
 	 * value than this one.
 	 */
-	OW_Bool operator!= (const OW_CIMFlavor& arg)
+	bool operator!= (const OW_CIMFlavor& arg)
 	{
 		return (equals(arg) == false);
 	}
@@ -219,7 +218,7 @@ public:
 
 private:
 
-	static OW_Bool validScope(OW_Int32 iflavor)
+	static bool validScope(OW_Int32 iflavor)
 	{
 		//
 		// NOTE: has implicit knowledge of flavor values!

@@ -283,9 +283,8 @@ OW_CIMObjectPath::setClassName(const OW_String& className)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
-OW_CIMObjectPath::equals(const OW_CIMObjectPath& cop,
-	OW_Bool /*ignoreClassOrigins*/) const
+bool
+OW_CIMObjectPath::equals(const OW_CIMObjectPath& cop) const
 {
 	if(m_pdata.isNull() && cop.m_pdata.isNull())
 	{
@@ -315,7 +314,7 @@ OW_CIMObjectPath::equals(const OW_CIMObjectPath& cop,
 	for(int i = 0; i < maxNoKeys; i++)
 	{
 		OW_CIMProperty cp1 = m_pdata->m_keys[i];
-		OW_Bool found = false;
+		bool found = false;
 		for(int j = 0; j < maxNoKeys; j++)
 		{
 			OW_CIMProperty cp2 = cop.m_pdata->m_keys[j];

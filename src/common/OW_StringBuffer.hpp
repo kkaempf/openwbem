@@ -83,7 +83,7 @@ public:
 	OW_StringBuffer& operator += (char c)
 		{ return append(c); }
 	OW_StringBuffer& operator += (OW_Char16 c)
-		{ return append(char(c)); }
+		{ return append(c.toUTF8()); }
 	OW_StringBuffer& operator += (const char* str)
 		{ return append(str); }
 	OW_StringBuffer& operator += (const OW_String& arg)
@@ -116,7 +116,7 @@ public:
 	{
 		char * bfr = m_bfr;
 		m_bfr = 0;
-		return OW_String(true, bfr, m_len);
+		return OW_String(OW_String::E_TAKE_OWNERSHIP, bfr, m_len);
 	}
 
 	size_t length() const {  return m_len; }

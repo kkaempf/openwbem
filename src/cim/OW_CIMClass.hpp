@@ -33,7 +33,6 @@
 
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
-#include "OW_Bool.hpp"
 #include "OW_CIMElement.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_String.hpp"
@@ -116,21 +115,21 @@ public:
 	/**
 	 * @return true if this OW_CIMClass object has key properties.
 	 */
-	OW_Bool isKeyed() const;
+	bool isKeyed() const;
 
 	/**
 	 * Set the flag that indicates this OW_CIMClass is an association.
 	 * @param isKeyedParm If true this class will be flagged as an association.
 	 * @return a reference to *this
 	 */
-	OW_CIMClass& setIsAssociation(OW_Bool isAssocFlag);
+	OW_CIMClass& setIsAssociation(bool isAssocFlag);
 
 	/**
 	 * Set the flag that indicates this OW_CIMClass has keys.
 	 * @param isKeyedParm If true this class is flagged as having keys.
 	 * @return a reference to *this
 	 */
-	OW_CIMClass& setIsKeyed(OW_Bool isKeyedParm=true);
+	OW_CIMClass& setIsKeyed(bool isKeyedParm=true);
 
 	/**
 	 * @return The properties that are flagged as keys for this OW_CIMClass as
@@ -194,7 +193,7 @@ public:
 	/**
 	 * @return true if this OW_CIMClass is an association.
 	 */
-	OW_Bool isAssociation() const;
+	bool isAssociation() const;
 
 	/**
 	 * @return The qualifiers associated with the OW_CIMClass object.
@@ -261,7 +260,7 @@ public:
 	 * @param qual The OW_CIMQualifier to check the existence of.
 	 * @return true if this class has the qualifer. Otherwise false.
 	 */
-	OW_Bool hasQualifier(const OW_CIMQualifier& qual) const;
+	bool hasQualifier(const OW_CIMQualifier& qual) const;
 
 	/**
 	 * @return The number of the qualifiers for this class.
@@ -273,21 +272,21 @@ public:
 	 * @param qual The qualifier to remove from this class.
 	 * @return true if the qualifier was removed. Otherwise false.
 	 */
-	OW_Bool removeQualifier(const OW_CIMQualifier& qual);
+	bool removeQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Remove a qualifier from this class.
 	 * @param name The name of the qualifier to remove from this class.
 	 * @return true if the qualifier was removed. Otherwise false.
 	 */
-	OW_Bool removeQualifier(const OW_String& name);
+	bool removeQualifier(const OW_String& name);
 
 	/**
 	 * Remove a property from this class.
 	 * @param name The name of the property to remove from this class.
 	 * @return true if the property was removed. Otherwise false.
 	 */
-	OW_Bool removeProperty(const OW_String& name);
+	bool removeProperty(const OW_String& name);
 
 	/**
 	 * Set the qualifiers for this class. The old qualifiers will be removed.
@@ -351,7 +350,7 @@ public:
 		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers = OW_WBEMFlags::E_INCLUDE_QUALIFIERS,
 		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin = OW_WBEMFlags::E_INCLUDE_CLASS_ORIGIN,
 		const OW_StringArray& propertyList=OW_StringArray(),
-		OW_Bool noProps=false) const;
+		bool noProps=false) const;
 
 	/**
 	 * Create a OW_CIMClass that contains properties from this OW_CIMClass that

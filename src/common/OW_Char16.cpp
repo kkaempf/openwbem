@@ -60,6 +60,7 @@ OW_Char16::OW_Char16(const OW_String& x) :
 //////////////////////////////////////////////////////////////////////////////
 // ATTN: UTF8 support?
 // STATIC
+/*
 const char*
 OW_Char16::xmlExcape(OW_UInt16 c16, char bfr[20])
 {
@@ -77,10 +78,19 @@ OW_Char16::xmlExcape(OW_UInt16 c16, char bfr[20])
 
 	return bfr;
 }
+*/
+
+//////////////////////////////////////////////////////////////////////////////
+OW_String
+OW_Char16::toUTF8() const
+{
+	// TODO: implement this correctly (possibly use iconv())
+	return OW_String(m_value);
+}
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Char16::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
+OW_Char16::writeObject(ostream& ostrm) const
 {
 	OW_UInt16 v = OW_hton16(m_value);
 	OW_BinarySerialization::write(ostrm, &v, sizeof(v));
@@ -88,7 +98,7 @@ OW_Char16::writeObject(ostream& ostrm) const /*throw (OW_IOException)*/
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_Char16::readObject(istream& istrm) /*throw (OW_IOException)*/
+OW_Char16::readObject(istream& istrm)
 {
 	OW_BinarySerialization::read(istrm, &m_value, sizeof(m_value));
 	m_value = OW_ntoh16(m_value);

@@ -664,12 +664,11 @@ static void raToXmlSA(ostream& out, const OW_Array<OW_String>& ra)
 
 static void raToXmlChar16(ostream& out, const OW_Array<OW_Char16>& ra)
 {
-	char bfr[20];
 	out << "<VALUE.ARRAY>";
 	for(size_t i = 0; i < ra.size(); i++)
 	{
 		out << "<VALUE>";
-		out << OW_Char16::xmlExcape(ra[i].getValue(), bfr);
+		out << OW_XMLEscape(ra[i].toUTF8());
 		out << "</VALUE>";
 	}
 	out << "</VALUE.ARRAY>";
@@ -912,10 +911,9 @@ void OW_CIMtoXML(OW_CIMValue const& cv, ostream& out)
 
 			case OW_CIMDataType::CHAR16:
 			{
-				char bfr[20];
 				OW_Char16 a;
 				cv.get(a);
-				out << OW_Char16::xmlExcape(a.getValue(), bfr);
+				out << OW_XMLEscape(a.toUTF8());
 				break;
 			}
 

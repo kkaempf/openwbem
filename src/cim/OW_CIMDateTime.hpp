@@ -35,8 +35,8 @@
 #include "OW_Types.h"
 #include "OW_COWReference.hpp"
 #include "OW_CIMException.hpp"
-#include "OW_Bool.hpp"
 #include "OW_CIMNULL.hpp"
+#include "OW_String.hpp"
 
 class OW_CIMDateTimeException : OW_CIMException
 {
@@ -237,7 +237,7 @@ public:
 	 * @return true if the given OW_CIMDateTime object is equal to this one.
 	 * Otherwise false.
 	 */
-	OW_Bool equal(const OW_CIMDateTime& arg) const;
+	bool equal(const OW_CIMDateTime& arg) const;
 
 	/**
 	 * Equality operator
@@ -245,7 +245,7 @@ public:
 	 * @return true if the given OW_CIMDateTime object is equal to this one.
 	 * Otherwise false.
 	 */
-	OW_Bool operator== (const OW_CIMDateTime& arg) const
+	bool operator== (const OW_CIMDateTime& arg) const
 			{  return equal(arg); }
 
 	/**
@@ -315,7 +315,7 @@ public:
 	 * @return true if this OW_CIMDateTime object represents an interval type
 	 * of CIM date time.
 	 */
-	OW_Bool isInterval() const {  return OW_Bool(bool(m_dptr->m_isInterval != 0));}
+	bool isInterval() const {  return bool(m_dptr->m_isInterval != 0);}
 
 	/**
 	 * Read this object from an input stream.

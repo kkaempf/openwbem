@@ -62,7 +62,7 @@ public:
 
 protected:
 
-	virtual OW_Bool doAuthenticate(OW_String& userName,
+	virtual bool doAuthenticate(OW_String& userName,
 		const OW_String& info, OW_String& details);
 
 	/**

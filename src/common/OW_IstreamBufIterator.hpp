@@ -31,7 +31,6 @@
 #ifndef OW_ISTREAMBUFITERATOR_HPP_INCLUDE_GUARD_
 #define OW_ISTREAMBUFITERATOR_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 #if defined(OW_HAVE_ISTREAM)
 #include <istream>
 #else
@@ -103,7 +102,7 @@ public:
 		}
 	}
 	
-	OW_Bool equal(const OW_IstreamBufIterator& b) const
+	bool equal(const OW_IstreamBufIterator& b) const
 	{
 		if (((m_sbuf == 0) && (b.m_sbuf == 0)) || ((m_sbuf != 0) && (b.m_sbuf != 0)))
 		{
@@ -120,12 +119,12 @@ private:
 };
 
 
-inline OW_Bool operator==(const OW_IstreamBufIterator& lhs, const OW_IstreamBufIterator& rhs)
+inline bool operator==(const OW_IstreamBufIterator& lhs, const OW_IstreamBufIterator& rhs)
 {
 	return lhs.equal(rhs);
 }
 
-inline OW_Bool operator!=(const OW_IstreamBufIterator& lhs, const OW_IstreamBufIterator& rhs)
+inline bool operator!=(const OW_IstreamBufIterator& lhs, const OW_IstreamBufIterator& rhs)
 {
 	return !lhs.equal(rhs);
 }

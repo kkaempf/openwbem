@@ -328,7 +328,7 @@ OW_CIMInstance::updatePropertyValues(const OW_CIMPropertyArray& props)
 OW_CIMInstance&
 OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 {
-	OW_Bool buildTheKeys = false;
+	bool buildTheKeys = false;
 
 	if(prop)
 	{
@@ -477,7 +477,7 @@ OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EInc
 	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray* propertyList) const
 {
 	OW_StringArray lproplist;
-	OW_Bool noprops = false;
+	bool noprops = false;
 	if(propertyList)
 	{
 		if(propertyList->size() == 0)
@@ -498,7 +498,7 @@ OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EInc
 OW_CIMInstance
 OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
-	OW_Bool noProps) const
+	bool noProps) const
 {
 	OW_CIMInstance ci;
 	ci.m_pdata->m_owningClassName = m_pdata->m_owningClassName;
@@ -627,9 +627,9 @@ OW_CIMInstance::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EDee
 OW_CIMInstance
 OW_CIMInstance::filterProperties(const OW_StringArray& propertyList,
 	OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-	OW_Bool ignorePropertyList) const
+	bool ignorePropertyList) const
 {
-	OW_Bool noprops(propertyList.size() == 0 && ignorePropertyList == false);
+	bool noprops(propertyList.size() == 0 && ignorePropertyList == false);
 	return clone(E_NOT_LOCAL_ONLY, includeQualifiers, includeClassOrigin, propertyList,
 		noprops);
 }
@@ -706,7 +706,7 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 	// and qualifiers
 	for(size_t i = 0; i < classProps.size(); i++)
 	{
-		OW_Bool found = false;
+		bool found = false;
 		OW_CIMProperty cprop = classProps[i];
 		propName = cprop.getName();
 		for(size_t j = 0; j < instProps.size(); j++)

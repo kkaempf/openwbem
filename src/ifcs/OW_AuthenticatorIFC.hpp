@@ -58,22 +58,22 @@ public:
 	 */
 	void init(OW_ServiceEnvironmentIFCRef env) { doInit(env); }
 
-    /**
-     * Authenticates a user
-     *
+	/**
+	 * Authenticates a user
+	 *
 	 * @param userName
 	 *   The name of the of the user being authenticated
-     * @param type
+	 * @param type
 	 *   A string describing the type of authentication
 	 * @param info
-     *   The authentication credentials
-     * @param details
+	 *   The authentication credentials
+	 * @param details
 	 *	An out parameter used to provide information as to why the
 	 *   authentication failed.
-     * @return
-     *   True if user is authenticated
-     */
-	OW_Bool authenticate(OW_String& userName, const OW_String& info,
+	 * @return
+	 *   True if user is authenticated
+	 */
+	bool authenticate(OW_String& userName, const OW_String& info,
 		OW_String& details)
 	{
 		OW_MutexLock lock(m_mutex);
@@ -97,7 +97,7 @@ protected:
 	 * @return
 	 *   True if user is authenticated
 	 */
-	virtual OW_Bool doAuthenticate(OW_String& userName,
+	virtual bool doAuthenticate(OW_String& userName,
 		const OW_String& info, OW_String& details) = 0;
 
 	/**

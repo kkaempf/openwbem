@@ -34,7 +34,6 @@
 #include "OW_CppSimpleInstanceProviderIFC.hpp"
 #include "OW_Format.hpp"
 #include "OW_String.hpp"
-#include "OW_Bool.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMInstanceEnumeration.hpp"

@@ -53,13 +53,13 @@ extern "C"
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 OW_UnnamedPipeRef
-OW_UnnamedPipe::createUnnamedPipe(OW_Bool doOpen)
+OW_UnnamedPipe::createUnnamedPipe(EOpen doOpen)
 {
 	return OW_UnnamedPipeRef(new OW_PosixUnnamedPipe(doOpen));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_PosixUnnamedPipe::OW_PosixUnnamedPipe(OW_Bool doOpen)
+OW_PosixUnnamedPipe::OW_PosixUnnamedPipe(EOpen doOpen)
 {
 	m_fds[0] = m_fds[1] = -1;
 	if(doOpen)
@@ -76,7 +76,7 @@ OW_PosixUnnamedPipe::~OW_PosixUnnamedPipe()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_PosixUnnamedPipe::setOutputBlocking(OW_Bool outputIsBlocking)
+OW_PosixUnnamedPipe::setOutputBlocking(bool outputIsBlocking)
 {
 	// If not opened, ignore?
 	if(m_fds[1] == -1)
@@ -85,6 +85,7 @@ OW_PosixUnnamedPipe::setOutputBlocking(OW_Bool outputIsBlocking)
 	}
 
 #ifdef OW_WIN32
+	// TODO: use outputIsBlocking?
 	unsigned long argp = 0;
 	if (ioctlsocket(m_fds[1], FIONBIO, &argp) != 0)
 		OW_THROW(OW_IOException, "Failed to set pipe to non-blocking");

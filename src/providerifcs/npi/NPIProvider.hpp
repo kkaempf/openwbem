@@ -18,7 +18,6 @@
 #define PegasusProvider_NPIProvider_h
 
 
-#include "OW_Bool.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMProperty.hpp"

@@ -35,7 +35,6 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_COWReference.hpp"
-#include "OW_Bool.hpp"
 #include "OW_CIMNULL.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,14 +134,14 @@ public:
 	 * @param arg The OW_CIMUrl object to check for equality against.
 	 * @return true If arg is equal to this OW_CIMUrl object. Otherwise false.
 	 */
-	OW_Bool equals(const OW_CIMUrl& arg) const;
+	bool equals(const OW_CIMUrl& arg) const;
 
 	/**
 	 * Equality operator
 	 * @param arg The OW_CIMUrl object to check for equality against.
 	 * @return true If arg is equal to this OW_CIMUrl object. Otherwise false.
 	 */
-	OW_Bool operator== (const OW_CIMUrl& arg) const
+	bool operator== (const OW_CIMUrl& arg) const
 			{  return equals(arg); }
 
 	/**
@@ -151,7 +150,7 @@ public:
 	 * @return true If arg is non equal to this OW_CIMUrl object.
 	 * Otherwise false.
 	 */
-	OW_Bool operator!= (const OW_CIMUrl& arg) const
+	bool operator!= (const OW_CIMUrl& arg) const
 		{  return !equals(arg); }
 
 	/**
@@ -205,12 +204,12 @@ public:
 	 *	@param arg The OW_CIMUrl object to compare the file component of.
 	 * @return true if this file component are the same. Otherwise false.
 	 */
-	OW_Bool sameFile(const OW_CIMUrl& arg) const;
+	bool sameFile(const OW_CIMUrl& arg) const;
 
 	/**
 	 * @return true if this URL reference a resource on the local machine.
 	 */
-	OW_Bool isLocal() const;
+	bool isLocal() const;
 
 	/**
 	 * Read this object from an input stream.

@@ -303,14 +303,14 @@ OW_CIMMethod::clone(OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 
 //////////////////////////////////////////////////////////////////////////////													
 OW_CIMMethod&
-OW_CIMMethod::setPropagated(OW_Bool propagated)
+OW_CIMMethod::setPropagated(bool propagated)
 {
 	m_pdata->m_propagated = propagated;
 	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-OW_Bool
+bool
 OW_CIMMethod::getPropagated() const
 {
 	return m_pdata->m_propagated;

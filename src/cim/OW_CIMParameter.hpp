@@ -192,7 +192,7 @@ public:
 	 * @param name	The name of the qualifier to test.
 	 * @return true if the qualifier exists and has a value of true.
 	 */
-	OW_Bool hasTrueQualifier(const OW_String& name) const;
+	bool hasTrueQualifier(const OW_String& name) const;
 
 private:
 

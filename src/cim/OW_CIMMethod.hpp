@@ -228,13 +228,13 @@ public:
 	 * @param propagated If true method is propagated. Otherwise false.
 	 * @return a reference to *this
 	 */
-	OW_CIMMethod& setPropagated(OW_Bool propagated=true);
+	OW_CIMMethod& setPropagated(bool propagated=true);
 
 	/**
 	 * Get the propagated flag.
 	 * @return true if this method is propagated. Otherwise false.
 	 */
-	OW_Bool getPropagated() const;
+	bool getPropagated() const;
 
 	/**
 	 * Create an OW_CIMMethod object based on this one, using the criteria

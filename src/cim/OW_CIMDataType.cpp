@@ -125,14 +125,14 @@ OW_CIMDataType::operator = (const OW_CIMDataType& arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDataType::isArrayType() const
 {
 	return (m_pdata->m_sizeRange != SIZE_SINGLE);
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDataType::isNumericType() const
 {
 	return isNumericType(m_pdata->m_type);
@@ -140,7 +140,7 @@ OW_CIMDataType::isNumericType() const
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_Bool
+bool
 OW_CIMDataType::isNumericType(OW_CIMDataType::Type type)
 {
 	switch(type)
@@ -164,7 +164,7 @@ OW_CIMDataType::isNumericType(OW_CIMDataType::Type type)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDataType::isReferenceType() const
 {
 	return (m_pdata->m_type == REFERENCE);
@@ -218,7 +218,7 @@ OW_CIMDataType::operator!() const
 
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDataType::setToArrayType(OW_Int32 size)
 {
 	m_pdata->m_numberOfElements = (size < 1) ? -1 : size;
@@ -228,13 +228,13 @@ OW_CIMDataType::setToArrayType(OW_Int32 size)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDataType::syncWithValue(const OW_CIMValue& value)
 {
 	if(!value && !(*this))
 		return false;
 
-	OW_Bool rv(false);
+	bool rv(false);
 
 	if(m_pdata.isNull())
 	{
@@ -275,7 +275,7 @@ OW_CIMDataType::OW_CIMDataType(const OW_String& refClassName) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDataType::equals(const OW_CIMDataType& arg) const
 {
 	return (m_pdata->m_type == arg.m_pdata->m_type

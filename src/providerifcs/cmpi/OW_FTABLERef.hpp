@@ -35,7 +35,6 @@
 #define OW_FTABLE_REF_HPP_
 
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMDataType.hpp"
 #include "OW_CIMProperty.hpp"

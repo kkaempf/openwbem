@@ -33,7 +33,6 @@
 #define OW_REQUESTHANDLERIFC_HPP_
 
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_SortedVectorMap.hpp"
@@ -80,8 +79,8 @@ public:
 	 * @return true if an error occurred.
 	 */
 
-	OW_Bool hasError(OW_Int32& errCode, OW_String& errDescr);
-	OW_Bool hasError() { return m_hasError; }
+	bool hasError(OW_Int32& errCode, OW_String& errDescr);
+	bool hasError() { return m_hasError; }
 
 	/**
 	 * What options are available for a particular path?
@@ -144,7 +143,7 @@ protected:
 private:
 
 	// set these through setError() and clearError()
-	OW_Bool m_hasError;
+	bool m_hasError;
 	OW_Int32 m_errorCode;
 	OW_String m_errorDescription;
 

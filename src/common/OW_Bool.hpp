@@ -144,6 +144,11 @@ public:
 		return b1.m_val < b2.m_val;
 	}
 
+	friend bool operator!=(bool b1, OW_Bool b2)
+	{
+		return b1 < b2.m_val;
+	}
+
 private:
 
 	// These are private/unimplemented to help prevent unintended errors of

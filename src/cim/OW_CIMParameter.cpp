@@ -266,7 +266,7 @@ bool operator<(const OW_CIMParameter& x, const OW_CIMParameter& y)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool 
+bool 
 OW_CIMParameter::hasTrueQualifier(const OW_String& name) const
 {
 	OW_CIMQualifier q = getQualifier(name);

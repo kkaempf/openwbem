@@ -178,7 +178,7 @@ OW_HDBNode::read(OW_Int32 offset, OW_HDBHandle& hdl)
 
 	// Let OW_String take ownership of the allocated memory. It will
 	// delete it later
-	OW_String key(true, kbfr, fblk.keyLength - 1);
+	OW_String key(OW_String::E_TAKE_OWNERSHIP, kbfr, fblk.keyLength - 1);
 
 	unsigned char* bfr = NULL;
 	int dataLen = fblk.dataLength - fblk.keyLength;

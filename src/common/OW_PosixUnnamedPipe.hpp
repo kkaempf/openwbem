@@ -38,7 +38,7 @@
 class OW_PosixUnnamedPipe : public OW_UnnamedPipe
 {
 public:
-	OW_PosixUnnamedPipe(OW_Bool doOpen=true);
+	OW_PosixUnnamedPipe(EOpen doOpen=E_OPEN);
 	virtual ~OW_PosixUnnamedPipe();
 	virtual int write(const void* data, int dataLen, bool errorAsException=false);
 	virtual int read(void* buffer, int bufferLen, bool errorAsException=false);
@@ -48,7 +48,7 @@ public:
 	virtual int close();
 	int closeInputHandle();
 	int closeOutputHandle();
-	void setOutputBlocking(OW_Bool outputIsBlocking=true);
+	void setOutputBlocking(bool outputIsBlocking=true);
 	OW_Select_t getSelectObj() const;
 
 private:

@@ -35,7 +35,6 @@
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Array.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Bool.hpp"
 
 DECLARE_EXCEPTION(Select)
 
@@ -51,7 +50,7 @@ public:
 private:
 	OW_Array<OW_SelectableIFCRef> m_selectableObjs;
 	OW_Array<OW_SelectableCallbackIFCRef> m_callbacks;
-	OW_Bool m_stopFlag;
+	bool m_stopFlag;
 };
 
 

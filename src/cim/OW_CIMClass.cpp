@@ -125,7 +125,7 @@ OW_CIMClass::setSuperClass(const OW_String& pname)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMClass::isKeyed() const
 {
 	return m_pdata->m_isKeyed;
@@ -133,7 +133,7 @@ OW_CIMClass::isKeyed() const
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass&
-OW_CIMClass::setIsKeyed(OW_Bool isKeyedParm)
+OW_CIMClass::setIsKeyed(bool isKeyedParm)
 {
 	m_pdata->m_isKeyed = isKeyedParm;
 	return *this;
@@ -271,7 +271,7 @@ OW_CIMClass::getMethod(const OW_String& name,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMClass::isAssociation() const
 {
 	return m_pdata->m_associationFlag;
@@ -279,7 +279,7 @@ OW_CIMClass::isAssociation() const
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMClass&
-OW_CIMClass::setIsAssociation(OW_Bool isAssocFlag)
+OW_CIMClass::setIsAssociation(bool isAssocFlag)
 {
 	m_pdata->m_associationFlag = isAssocFlag;
 	return *this;
@@ -467,7 +467,7 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMClass::hasQualifier(const OW_CIMQualifier& qual) const
 {
 	if(qual)
@@ -492,10 +492,10 @@ OW_CIMClass::numberOfQualifiers() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMClass::removeQualifier(const OW_CIMQualifier& qual)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 
 	if(qual)
 	{
@@ -515,10 +515,10 @@ OW_CIMClass::removeQualifier(const OW_CIMQualifier& qual)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMClass::removeQualifier(const OW_String& name)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 	{
@@ -535,10 +535,10 @@ OW_CIMClass::removeQualifier(const OW_String& name)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMClass::removeProperty(const OW_String& name)
 {
-	OW_Bool cc = false;
+	bool cc = false;
 
 	for(size_t i = 0; i < m_pdata->m_properties.size(); i++)
 	{
@@ -568,7 +568,7 @@ OW_CIMClass::setQualifier(const OW_CIMQualifier& qual)
 {
 	if(qual)
 	{
-		OW_Bool found = false;
+		bool found = false;
 
 		for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
 		{
@@ -631,7 +631,7 @@ OW_CIMClass::filterProperties(const OW_StringArray& propertyList,
 OW_CIMClass
 OW_CIMClass::clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 	OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin, const OW_StringArray& propertyList,
-	OW_Bool noProps) const
+	bool noProps) const
 {
 	if(m_pdata.isNull())
 	{

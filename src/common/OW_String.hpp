@@ -151,18 +151,23 @@ public:
 	 */
 	explicit OW_String(const OW_CIMObjectPath& parm);
 
+	enum ETakeOwnershipFlag
+	{
+		E_TAKE_OWNERSHIP
+	};
+
 	/**
 	 * Create a new string object from a dynamically allocated buffer.
 	 * The buffer is assumed to contain a valid c string and be
 	 * previously allocated with the new operator. The memory given by the
 	 * allocatedMemory parameter will be deallocated by the OW_String class.
 	 * @param takeOwnerShipTag This parm is not used. It is here to differentiate
-	 *									this constructor from the others.
-	 * @param allocatedMemory	The dynamically allocated string that will be
-	 *									used by this OW_String.  Must not be NULL.
+	 *  this constructor from the others.
+	 * @param allocatedMemory The dynamically allocated string that will be
+	 *  used by this OW_String.  Must not be NULL.
 	 * @param len The length of the string allocatedMemory.
 	 */
-	explicit OW_String(OW_Bool takeOwnerShipTag, char* allocatedMemory, size_t len);
+	explicit OW_String(ETakeOwnershipFlag, char* allocatedMemory, size_t len);
 
 	/**
 	 * Create s new OW_String object that will contain a copy of the given
@@ -208,7 +213,7 @@ public:
 	/**
 	 * @return True if empty string, false otherwise
 	 */
-	OW_Bool empty() const { return length() == 0; }
+	bool empty() const { return length() == 0; }
 
 	/**
 	 * Format this string according to the given format and variable
@@ -220,6 +225,12 @@ public:
 	 */
 	int format(const char* fmt, ...);
 
+	enum EReturnTokensFlag
+	{
+		E_DISCARD_TOKENS,
+		E_RETURN_TOKENS
+	};
+
 	/**
 	 * Tokenize this OW_String object using the given delimeters.
 	 * @param delims	A pointer to a char array of delimeters that separate
@@ -230,7 +241,7 @@ public:
 	 * object. If there are no tokens the OW_StringArray will be empty.
 	 */
 	OW_StringArray tokenize(const char* delims = " \n\r\t\v",
-		OW_Bool returnTokens=false) const;
+		EReturnTokensFlag returnTokens = E_DISCARD_TOKENS) const;
 
 	/**
 	 * @return The c string representation of this OW_String object. This
@@ -283,6 +294,12 @@ public:
 	 */
 	OW_String& concat(char arg);
 
+	enum EIgnoreCaseFlag
+	{
+		E_CASE_SENSITIVE,
+		E_CASE_INSENSITIVE
+	};
+
 	/**
 	 * Determine if this OW_String object ends with the same string
 	 * represented by another OW_String object.
@@ -292,7 +309,7 @@ public:
 	 * @return true if this OW_String ends with the given OW_String. Otherwise
 	 * return false.
 	 */
-	OW_Bool endsWith(const OW_String& arg, OW_Bool ignoreCase=false) const;
+	bool endsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
 
 	/**
 	 * Determine if another OW_String object is equal to this OW_String object.
@@ -301,7 +318,7 @@ public:
 	 * @return true if this OW_String object is equal to the given OW_String
 	 * object. Otherwise return false.
 	 */
-	OW_Bool equals(const OW_String& arg) const;
+	bool equals(const OW_String& arg) const;
 
 	/**
 	 * Determine if another OW_String object is equal to this OW_String object,
@@ -311,7 +328,7 @@ public:
 	 * @return true if this OW_String object is equal to the given OW_String
 	 * object. Otherwise return false.
 	 */
-	OW_Bool equalsIgnoreCase(const OW_String& arg) const;
+	bool equalsIgnoreCase(const OW_String& arg) const;
 
 	/**
 	 * @return a 32 bit hashcode of this OW_String object.
@@ -365,7 +382,7 @@ public:
 	 * @return true if this OW_String object starts with the given string.
 	 * Otherwise false.
 	 */
-	OW_Bool startsWith(const OW_String& arg, OW_Bool ignoreCase=false) const;
+	bool startsWith(const OW_String& arg, EIgnoreCaseFlag ignoreCase = E_CASE_SENSITIVE) const;
 
 	/**
 	 * Create another OW_String object that is comprised of a substring of this
@@ -382,7 +399,7 @@ public:
 	 * @return true if this OW_String object contains nothing but space
 	 * characters.
 	 */
-	OW_Bool isSpaces() const;
+	bool isSpaces() const;
 
 	/**
 	 * Convert this OW_String object to lower case characters.
@@ -503,7 +520,7 @@ public:
 	 * assumed to be the value of "TRUE"/"FALSE" ignoring case.
 	 * @throws OW_StringConversionException if the conversion is impossible.
 	 */
-	OW_Bool toBool() const;
+	bool toBool() const;
 
 	/**
 	 * @return The OW_UInt8 value of this OW_String object.
@@ -616,109 +633,109 @@ OW_String operator + (const OW_String& s, const char* p);
 OW_String operator + (char c, const OW_String& s);
 OW_String operator + (const OW_String& s, char c);
 
-inline OW_Bool
+inline bool
 operator == (const OW_String& s1, const OW_String& s2)
 {
 	return (s1.compareTo(s2) == 0);
 }
 
-inline OW_Bool
+inline bool
 operator == (const OW_String& s, const char* p)
 {
 	return (s.compareTo(p) == 0);
 }
 
-inline OW_Bool
+inline bool
 operator == (const char* p, const OW_String& s)
 {
 	return (s.compareTo(p) == 0);
 }
 
-inline OW_Bool
+inline bool
 operator != (const OW_String& s1, const OW_String& s2)
 {
 	return (s1.compareTo(s2) != 0);
 }
 
-inline OW_Bool
+inline bool
 operator != (const OW_String& s, const char* p)
 {
 	return (s.compareTo(p) != 0);
 }
 
-inline OW_Bool
+inline bool
 operator != (const char* p, const OW_String& s)
 {
 	return (s.compareTo(p) != 0);
 }
 
-inline OW_Bool
+inline bool
 operator < (const OW_String& s1, const OW_String& s2)
 {
 	return (s1.compareTo(s2) < 0);
 }
 
-inline OW_Bool
+inline bool
 operator < (const OW_String& s, const char* p)
 {
 	return (s.compareTo(p) < 0);
 }
 
-inline OW_Bool
+inline bool
 operator < (const char* p, const OW_String& s)
 {
 	return (OW_String(p).compareTo(s) < 0);
 }
 
-inline OW_Bool
+inline bool
 operator <= (const OW_String& s1, const OW_String& s2)
 {
 	return (s1.compareTo(s2) <= 0);
 }
 
-inline OW_Bool
+inline bool
 operator <= (const OW_String& s, const char* p)
 {
 	return (s.compareTo(p) <= 0);
 }
 
-inline OW_Bool
+inline bool
 operator <= (const char* p, const OW_String& s)
 {
 	return (OW_String(p).compareTo(s) <= 0);
 }
 
-inline OW_Bool
+inline bool
 operator > (const OW_String& s1, const OW_String& s2)
 {
 	return (s1.compareTo(s2) > 0);
 }
 
-inline OW_Bool
+inline bool
 operator > (const OW_String& s, const char* p)
 {
 	return (s.compareTo(p) > 0);
 }
 
-inline OW_Bool
+inline bool
 operator > (const char* p, const OW_String& s)
 {
 	return (OW_String(p).compareTo(s) > 0);
 }
 
-inline OW_Bool
+inline bool
 operator >= (const OW_String& s1, const OW_String& s2)
 {
 	return (s1.compareTo(s2) >= 0);
 }
 
-inline OW_Bool
+inline bool
 operator >= (const OW_String& s, const char* p)
 {
 	return (s.compareTo(p) >= 0);
 }
 
-inline OW_Bool
+inline bool
 operator >= (const char* p, const OW_String& s)
 {
 	return (OW_String(p).compareTo(s) >= 0);

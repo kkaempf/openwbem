@@ -45,11 +45,11 @@ OW_ListenerAuthenticator::~OW_ListenerAuthenticator()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_ListenerAuthenticator::doAuthenticate(OW_String& userName,
 		const OW_String& info, OW_String& details)
 {
-	OW_Bool rval = false;
+	bool rval = false;
 	if (info.empty()) // no "Authorization" header
 	{
 		details = "You must authenticate to access this resource";

@@ -34,7 +34,6 @@
 #include "OW_config.h"
 #include "OW_SelectableIFC.hpp"
 #include "OW_Exception.hpp"
-#include "OW_Bool.hpp"
 #include "OW_BaseStreamBuffer.hpp"
 #include "OW_Reference.hpp"
 #include "OW_IOIFC.hpp"
@@ -66,9 +65,15 @@ public:
 
 	virtual void open() = 0;
 	virtual int close() = 0;
-	virtual void setOutputBlocking(OW_Bool outputIsBlocking=true) = 0;
+	virtual void setOutputBlocking(bool outputIsBlocking=true) = 0;
 
-	static OW_UnnamedPipeRef createUnnamedPipe(OW_Bool doOpen=true);
+	enum EOpen
+	{
+		E_DONT_OPEN,
+		E_OPEN
+	};
+
+	static OW_UnnamedPipeRef createUnnamedPipe(EOpen doOpen=E_OPEN);
 
 protected:
 	OW_UnnamedPipe()

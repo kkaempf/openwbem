@@ -51,7 +51,7 @@ class OW_LinuxPAMAuthenticationCL : public OW_AuthenticatorIFC
 	 *   True if user is authenticated
 	 */
 private:
-	virtual OW_Bool doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details);
+	virtual bool doAuthenticate(OW_String &userName, const OW_String &info, OW_String &details);
 	
 	virtual void doInit(OW_ServiceEnvironmentIFCRef env);
 
@@ -60,14 +60,14 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
 	const OW_String &info, OW_String &details)
 {
 	if (info.empty())
 	{
 		details = "You must authenticate to access this resource";
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_Array<OW_String> allowedUsers = m_allowedUsers.tokenize();
@@ -83,14 +83,14 @@ OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
 	}
 	if (!nameFound)
 	{
-		return OW_Bool(false);
+		return false;
 	}
 
 	OW_String pathToPamAuth = m_libexecdir + "/OW_PAMAuth";
 	OW_Array<OW_String> commandLine;
 	commandLine.push_back(pathToPamAuth);
 
-	OW_Bool rval;
+	bool rval;
 	OW_PopenStreams ps = OW_Exec::safePopen(commandLine,
 		userName + " " + info + "\n");
 
@@ -103,7 +103,7 @@ OW_LinuxPAMAuthenticationCL::doAuthenticate(OW_String &userName,
 		rval = false;
 	}
 
-	return OW_Bool(rval);
+	return rval;
 }
 
 void

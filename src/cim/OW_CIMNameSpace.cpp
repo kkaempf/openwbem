@@ -180,7 +180,7 @@ OW_CIMNameSpace::getFileName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMNameSpace::isLocal() const
 {
 	return m_pdata->m_url.isLocal();

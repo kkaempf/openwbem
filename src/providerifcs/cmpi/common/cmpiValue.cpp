@@ -28,7 +28,7 @@
 #include "OW_CIMDateTime.hpp"
 
 #define CopyToArray(pt,ct) { pt##Array ar##pt(aSize); \
-   for (int i=0; i<aSize; i++) ar##pt[i]=aData[i].value.ct; \
+   for (int i=0; i<aSize; i++) ar##pt[i]=pt(aData[i].value.ct); \
    v.set(OW_CIMValue(ar##pt)); }
 
 #define CopyToStringArray(pt,ct) { OW_Array<pt> ar##pt(aSize); \

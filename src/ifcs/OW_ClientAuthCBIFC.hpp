@@ -32,7 +32,6 @@
 #define OW_CLIENTAUTHCBIFC_HPP_
 
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 #include "OW_String.hpp"
 #include "OW_Reference.hpp"
 
@@ -61,7 +60,7 @@ public:
 	 * 		callback, and to http client has no reason to retry the
 	 * 		request.
 	 */
-	virtual OW_Bool getCredentials(const OW_String& realm, OW_String& name,
+	virtual bool getCredentials(const OW_String& realm, OW_String& name,
 			OW_String& passwd, const OW_String& details) = 0;
 	virtual ~OW_ClientAuthCBIFC();
 };

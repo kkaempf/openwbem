@@ -36,7 +36,6 @@
 #include "OW_AutoPtr.hpp"
 #include "OW_Map.hpp"
 #include "OW_HTTPUtils.hpp"
-#include "OW_Bool.hpp"
 #include "OW_CIMProtocolIFC.hpp"
 #include "OW_URL.hpp"
 
@@ -103,7 +102,7 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		void cleanUpIStreams();
 		void receiveAuthentication();
 		void sendAuthorization();
-		OW_Bool receiveOptions( void );
+		bool receiveOptions( void );
 		
 		OW_String m_sAuthorization;
 		
@@ -137,11 +136,11 @@ class OW_HTTPClient : public OW_CIMProtocolIFC
 		mutable bool m_needsConnect;
 		std::istream& m_istr;
 		std::ostream& m_ostr;
-		OW_Bool m_doDeflateOut;
+		bool m_doDeflateOut;
 		int m_retryCount;
 
 
-		OW_Bool headerHasKey(const OW_String& key)
+		bool headerHasKey(const OW_String& key)
 		{
 			return OW_HTTPUtils::headerHasKey(m_responseHeaders, key);
 		}

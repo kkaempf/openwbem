@@ -274,7 +274,7 @@ public:
 	 */
 	OW_CIMInstance filterProperties(const OW_StringArray& propertyList,
 		OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers, OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
-		OW_Bool ignorePropertyList=false) const;
+		bool ignorePropertyList=false) const;
 
 	/**
 	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified
@@ -294,7 +294,7 @@ public:
 	OW_CIMInstance clone(OW_WBEMFlags::ELocalOnlyFlag localOnly, OW_WBEMFlags::EIncludeQualifiersFlag includeQualifiers,
 		OW_WBEMFlags::EIncludeClassOriginFlag includeClassOrigin,
 		const OW_StringArray& propertyList=OW_StringArray(),
-		OW_Bool noProps=false) const;
+		bool noProps=false) const;
 
 	/**
 	 * Create a new OW_CIMInstance from this OW_CIMInstance using the specified

@@ -32,7 +32,6 @@
 #define OW_CIMELEMENT_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_CIMBase.hpp"
-#include "OW_Bool.hpp"
 #include "OW_String.hpp"
 
 /**

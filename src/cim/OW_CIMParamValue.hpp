@@ -31,7 +31,6 @@
 #define OW_CIMPARAMVALUE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMFwd.hpp"

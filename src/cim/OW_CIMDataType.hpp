@@ -31,7 +31,6 @@
 #define OW_CIMDATATYPE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 #include "OW_COWReference.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_CIMNULL.hpp"
@@ -143,7 +142,7 @@ public:
 	 * Otherwise false indicates this OW_CIMDataType already represented the
 	 * given value.
 	 */
-	OW_Bool syncWithValue(const OW_CIMValue& value);
+	bool syncWithValue(const OW_CIMValue& value);
 
 	/**
 	 * Set this datatype to an array type
@@ -151,23 +150,23 @@ public:
 	 *		Otherwise the size is set at the given size.
 	 * @return true on success. Otherwise false.
 	 */
-	OW_Bool setToArrayType(OW_Int32 size);
+	bool setToArrayType(OW_Int32 size);
 
 	/**
 	 * @return true if this data type represents an array type.
 	 */
-	OW_Bool isArrayType() const;
+	bool isArrayType() const;
 
 
 	/**
 	 * @return true if this data type represents a numeric data type
 	 */
-	OW_Bool isNumericType() const;
+	bool isNumericType() const;
 
 	/**
 	 * @return true if this data type represents a reference data type.
 	 */
-	OW_Bool isReferenceType() const;
+	bool isReferenceType() const;
 
 	/**
 	 * @return the type of this OW_CIMDataType
@@ -221,7 +220,7 @@ public:
 	 * @param arg The OW_CIMDataType to compare with this one.
 	 * @return true if the given OW_CIMDataType is equal to this one.
 	 */
-	OW_Bool equals(const OW_CIMDataType& arg) const;
+	bool equals(const OW_CIMDataType& arg) const;
 
 	/**
 	 * Read this OW_CIMDataType from an inputstream.
@@ -250,7 +249,7 @@ public:
 	 * @param type The data type to check
 	 * @return true if 'type' is a numeric data type.
 	 */
-	static OW_Bool isNumericType(Type type);
+	static bool isNumericType(Type type);
 
 private:
 

@@ -76,7 +76,7 @@ usage(const char* name)
 class GetLoginInfo : public OW_ClientAuthCBIFC
 {
 	public:
-		OW_Bool getCredentials(const OW_String& realm, OW_String& name,
+		bool getCredentials(const OW_String& realm, OW_String& name,
 				OW_String& passwd, const OW_String& details)
 		{
 			(void)details;
@@ -85,7 +85,7 @@ class GetLoginInfo : public OW_ClientAuthCBIFC
 			name = OW_String::getLine(cin);
 			passwd = OW_GetPass::getPass("Enter the password for " +
 				name + ": ");
-			return OW_Bool(true);
+			return true;
 		}
 };
 

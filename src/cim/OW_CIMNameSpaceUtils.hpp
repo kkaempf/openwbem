@@ -35,7 +35,6 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "OW_Bool.hpp"
 
 namespace OW_CIMNameSpaceUtils
 {

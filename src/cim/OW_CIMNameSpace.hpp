@@ -164,7 +164,7 @@ public:
 	 * @return true if this namespace refers to a namespace hosted by the local
 	 * CIMOM.
 	 */
-	OW_Bool isLocal() const;
+	bool isLocal() const;
 
 	/**
 	 * Set the namespace component of this OW_CIMNameSpace object.

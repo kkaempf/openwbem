@@ -256,7 +256,7 @@ OW_CIMDateTime::setUtc(OW_Int16 arg)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMDateTime::equal(const OW_CIMDateTime& arg) const
 {
 	return (::memcmp(arg.m_dptr.getPtr(), m_dptr.getPtr(),

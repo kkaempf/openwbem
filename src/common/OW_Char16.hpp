@@ -42,8 +42,6 @@ class OW_String;
 
 /**
  * The OW_Char16 class is an abstraction for a double byte character.
- * No operation involving double byte character have been check in OpenWBEM.
- * Currently they are treated like single byte characters.
  */
 class OW_Char16
 {
@@ -64,17 +62,19 @@ public:
 	 * Create a new OW_Char16 object from a single byte character.
 	 * @param c The character this OW_Char16 object will contain.
 	 */
-	OW_Char16(char c) : m_value(c) {}
+	explicit OW_Char16(char c) : m_value(c) {}
 
 	/**
 	 * Create a new OW_Char16 object from the 1st byte of a string.
 	 * @param x The string to take the character from that will be contained by
 	 *		this OW_Char16 object.
 	 */
-	OW_Char16(const OW_String& x);
+	explicit OW_Char16(const OW_String& x);
 
 	/**
 	 * Create a new OW_Char16 object of an unsigned 16 bit value.
+	 * Note that this constructor is explicitly non-explicit :-)
+	 * IOW, implicit conversion from OW_UInt16 is desireable for this class.
 	 * @param val The unsigned 16 bit value this object will contain.
 	 */
 	OW_Char16(OW_UInt16 val) : m_value(val) {}
@@ -83,66 +83,71 @@ public:
 	 * Create a new OW_Char16 object of an signed 16 bit value.
 	 * @param val The signed 16 bit value this object will contain.
 	 */
-	OW_Char16(OW_Int16 val) : m_value(val) {}
+	explicit OW_Char16(OW_Int16 val) : m_value(val) {}
 
 	/**
 	 * Create a new OW_Char16 object of an unsigned 8 bit value.
 	 * @param val The unsigned 8 bit value this object will contain.
 	 */
-	OW_Char16(OW_UInt8 val) : m_value(val) {}
+	explicit OW_Char16(OW_UInt8 val) : m_value(val) {}
 
 	/**
 	 * Create a new OW_Char16 object of an signed 8 bit value.
 	 * @param val The signed 8 bit value this object will contain.
 	 */
-	OW_Char16(OW_Int8 val) : m_value(val) {}
+	explicit OW_Char16(OW_Int8 val) : m_value(val) {}
 
 	/**
 	 * Create a new OW_Char16 object of an unsigned 32 bit value.
 	 * @param val The unsigned 32 bit value this object will contain.
 	 */
-	OW_Char16(OW_UInt32 val) : m_value(val) {}
+	explicit OW_Char16(OW_UInt32 val) : m_value(val) {}
 
 	/**
 	 * Create a new OW_Char16 object of an signed 32 bit value.
 	 * @param val The signed 32 bit value this object will contain.
 	 */
-	OW_Char16(OW_Int32 val) : m_value(val) {}
+	explicit OW_Char16(OW_Int32 val) : m_value(val) {}
 
 	/**
 	 * Create a new OW_Char16 object of an unsigned 64 bit value.
 	 * @param val The unsigned 64 bit value this object will contain.
 	 */
-	OW_Char16(OW_UInt64 val) : m_value(static_cast<OW_UInt16>(val)) {}
+	explicit OW_Char16(OW_UInt64 val) : m_value(static_cast<OW_UInt16>(val)) {}
 
 	/**
 	 * Create a new OW_Char16 object of an signed 64 bit value.
 	 * @param val The signed 64 bit value this object will contain.
 	 */
-	OW_Char16(OW_Int64 val) : m_value(static_cast<OW_UInt16>(val)) {}
+	explicit OW_Char16(OW_Int64 val) : m_value(static_cast<OW_UInt16>(val)) {}
 
 	/**
 	 * Create a new OW_Char16 object from a real 32 value.
 	 * @param val The real 32 value this object will contain.
 	 */
-	OW_Char16(OW_Real32 val) : m_value(static_cast<OW_UInt16>(val)) {}
+	explicit OW_Char16(OW_Real32 val) : m_value(static_cast<OW_UInt16>(val)) {}
 
 	/**
 	 * Create a new OW_Char16 object from a real 64 value.
 	 * @param val The real 64 value this object will contain.
 	 */
-	OW_Char16(OW_Real64 val) : m_value(static_cast<OW_UInt16>(val)) {}
+	explicit OW_Char16(OW_Real64 val) : m_value(static_cast<OW_UInt16>(val)) {}
 
 	/**
 	 * Create a new OW_Char16 object from a boolean value.
 	 * @param val The boolean value this object will contain.
 	 */
-	OW_Char16(OW_Bool val) : m_value(val) {}
+	explicit OW_Char16(OW_Bool val) : m_value(val) {}
 
 	/**
 	 * @return The value of this object as a unsigned 16 bit value.
 	 */
 	OW_UInt16 getValue() const { return m_value; }
+
+	/**
+	 * @return The value of this object as a unsigned 16 bit value.
+	 */
+	operator OW_UInt16() const { return getValue(); }
 
 	/**
 	 * Assignment operator
@@ -160,7 +165,7 @@ public:
 	 * @param arg The OW_Char16 object to compare this object with.
 	 * @return true if the given OW_Char16 object is equal to this one.
 	 */
-	OW_Bool operator== (const OW_Char16& arg) const
+	bool operator== (const OW_Char16& arg) const
 	{
 		return m_value == arg.m_value;
 	}
@@ -170,7 +175,7 @@ public:
 	 * @param arg The OW_Char16 object to compare this object with.
 	 * @return true if the given OW_Char16 object is not equal to this one.
 	 */
-	OW_Bool operator!= (const OW_Char16& arg) const
+	bool operator!= (const OW_Char16& arg) const
 	{
 		return m_value != arg.m_value;
 	}
@@ -180,7 +185,7 @@ public:
 	 * @param arg The OW_Char16 object to compare this object with.
 	 * @return true if this object is less than the given OW_Char16 object.
 	 */
-	OW_Bool operator< (const OW_Char16& arg) const
+	bool operator< (const OW_Char16& arg) const
 	{
 		return m_value < arg.m_value;
 	}
@@ -191,7 +196,7 @@ public:
 	 * @return true if this object is less than or equal to the given OW_Char16
 	 * object.
 	 */
-	OW_Bool operator<= (const OW_Char16& arg) const
+	bool operator<= (const OW_Char16& arg) const
 	{
 		return m_value <= arg.m_value;
 	}
@@ -201,7 +206,7 @@ public:
 	 * @param arg The OW_Char16 object to compare this object with.
 	 * @return true if this object is greater than the given OW_Char16 object.
 	 */
-	OW_Bool operator> (const OW_Char16& arg) const
+	bool operator> (const OW_Char16& arg) const
 	{
 		return m_value > arg.m_value;
 	}
@@ -212,7 +217,7 @@ public:
 	 * @return true if this object is greater than or equal to the given
 	 * OW_Char16 object.
 	 */
-	OW_Bool operator>= (const OW_Char16& arg) const
+	bool operator>= (const OW_Char16& arg) const
 	{
 		return m_value >= arg.m_value;
 	}
@@ -261,16 +266,6 @@ public:
 		return *this;
 	}
 
-	/**
-	 * @return The unsigned 16 bit value of this object.
-	 */
-	operator OW_UInt16() const { return m_value; }
-
-	/**
-	 * @return The single character value of this object.
-	 */
-	operator char() const { return static_cast<char>(m_value); }
-
 private:
 	struct dummy
 	{
@@ -286,58 +281,9 @@ public:
 		{  return (m_value) ? 0: &dummy::nonnull; }
 
 	/**
-	 * @return The unsigned 8 bit value of this object.
+	 * Convert this to UTF8
 	 */
-	operator OW_UInt8() const { return static_cast<OW_UInt8>(m_value); }
-
-	/**
-	 * @return The signed 8 bit value of this object.
-	 */
-	operator OW_Int8() const { return static_cast<OW_Int8>(m_value); }
-
-	/**
-	 * @return The signed 16 bit value of this object.
-	 */
-	operator OW_Int16() const { return m_value; }
-
-	/**
-	 * @return The unsigned 32 bit value of this object.
-	 */
-	operator OW_UInt32() const { return m_value; }
-
-	/**
-	 * @return The signed 32 bit value of this object.
-	 */
-	operator OW_Int32() const { return m_value; }
-
-	/**
-	 * @return The unsigned 64 bit value of this object.
-	 */
-	operator OW_UInt64() const { return m_value; }
-
-	/**
-	 * @return The signed 64 bit value of this object.
-	 */
-	operator OW_Int64() const { return m_value; }
-
-	/**
-	 * @return The real 32 value of this object.
-	 */
-	operator OW_Real32() const { return m_value; }
-
-	/**
-	 * @return The real 64 value of this object.
-	 */
-	operator OW_Real64() const { return m_value; }
-
-	/**
-	 * Escape an OW_Char16 object for XML output
-	 * @param c16 The OW_Char16 object to escape.
-	 * @param bfr The buffer to place the output of the escape operation.
-	 * @return A pointer to the beginning of buffer on success. Otherwise NULL.
-	 * ATTN: UTF8 support
-	 */
-	static const char* xmlExcape(OW_UInt16 c16, char bfr[20]);
+	OW_String toUTF8() const;
 
 	/**
 	 * Write this object to an output stream.
@@ -356,54 +302,54 @@ private:
 	OW_UInt16 m_value;
 };
 
-inline OW_Bool operator== (char c, const OW_Char16& arg)
+inline bool operator== (char c, const OW_Char16& arg)
 {
-	return c == char(arg);
+	return OW_Char16(c) == arg;
 }
 
-inline OW_Bool operator== (const OW_Char16& arg, int v)
+inline bool operator== (const OW_Char16& arg, int v)
 {
 	return (arg.getValue() == v);
 }
 
-inline OW_Bool operator== (int v, const OW_Char16& arg)
+inline bool operator== (int v, const OW_Char16& arg)
 {
 	return (arg.getValue() == v);
 }
 
-inline OW_Bool operator!= (const OW_Char16& arg, int v)
+inline bool operator!= (const OW_Char16& arg, int v)
 {
 	return (arg.getValue() != v);
 }
 
-inline OW_Bool operator!= (int v, const OW_Char16& arg)
+inline bool operator!= (int v, const OW_Char16& arg)
 {
 	return (arg.getValue() != v);
 }
 
-inline OW_Bool operator!= (char c, const OW_Char16& arg)
+inline bool operator!= (char c, const OW_Char16& arg)
 {
-	return c != char(arg);
+	return OW_Char16(c) != arg;
 }
 
-inline OW_Bool operator< (char c, const OW_Char16& arg)
+inline bool operator< (char c, const OW_Char16& arg)
 {
-	return c < char(arg);
+	return OW_Char16(c) < arg;
 }
 
-inline OW_Bool operator<= (char c, const OW_Char16& arg)
+inline bool operator<= (char c, const OW_Char16& arg)
 {
-	return c <= char(arg);
+	return OW_Char16(c) <= arg;
 }
 
-inline OW_Bool operator> (char c, const OW_Char16& arg)
+inline bool operator> (char c, const OW_Char16& arg)
 {
-	return c > char(arg);
+	return OW_Char16(c) > arg;
 }
 
-inline OW_Bool operator>= (char c, const OW_Char16& arg)
+inline bool operator>= (char c, const OW_Char16& arg)
 {
-	return c >= char(arg);
+	return OW_Char16(c) >= arg;
 }
 
 inline OW_Char16 operator+ (const OW_Char16& arg1, const OW_Char16& arg2)

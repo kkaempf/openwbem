@@ -31,7 +31,6 @@
 #define OW_DATETIME_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_Bool.hpp"
 
 class OW_String;
 
@@ -88,7 +87,7 @@ public:
 	/**
 	 * @return true if this OW_DateTime represents an interval.
 	 */
-	OW_Bool isInterval() const {  return m_isInterval; }
+	bool isInterval() const {  return m_isInterval; }
 
 	/**
 	 * Get the hour of the day for this OW_DateTime object 0-23
@@ -266,7 +265,7 @@ public:
 	 * @param tm The OW_DateTime object to compare this one to.
 	 * @return true if this object is less than the given OW_DateTime object.
 	 */
-	OW_Bool operator< ( const OW_DateTime& tm ) const
+	bool operator< ( const OW_DateTime& tm ) const
 	{
 		return m_time < tm.m_time;
 	}
@@ -276,7 +275,7 @@ public:
 	 * @param tm The OW_DateTime object to compare this one to.
 	 * @return true if this object is greater than the given OW_DateTime object.
 	 */
-	OW_Bool operator> ( const OW_DateTime& tm ) const
+	bool operator> ( const OW_DateTime& tm ) const
 	{
 		return m_time > tm.m_time;
 	}
@@ -286,7 +285,7 @@ public:
 	 * @param tm The OW_DateTime object to compare this one to.
 	 * @return true if this object is equal to the given OW_DateTime object.
 	 */
-	OW_Bool operator== ( const OW_DateTime& tm ) const
+	bool operator== ( const OW_DateTime& tm ) const
 	{
 		return m_time == tm.m_time;
 	}
@@ -296,7 +295,7 @@ public:
 	 * @param tm The OW_DateTime object to compare this one to.
 	 * @return true if this object is not equal to the given OW_DateTime object.
 	 */
-	OW_Bool operator!= ( const OW_DateTime& tm ) const
+	bool operator!= ( const OW_DateTime& tm ) const
 	{
 		return m_time != tm.m_time;
 	}
@@ -307,7 +306,7 @@ public:
 	 * @return true if this object is less than or equal to the given OW_DateTime
 	 * object.
 	 */
-	OW_Bool operator<= ( const OW_DateTime& tm ) const
+	bool operator<= ( const OW_DateTime& tm ) const
 	{
 		return m_time <= tm.m_time;
 	}
@@ -318,7 +317,7 @@ public:
 	 * @return true if this object is greater than or equal to the given
 	 * OW_DateTime object.
 	 */
-	OW_Bool operator>= ( const OW_DateTime& tm ) const
+	bool operator>= ( const OW_DateTime& tm ) const
 	{
 		return m_time >= tm.m_time;
 	}

@@ -181,7 +181,7 @@ OW_String
 OW_CIMUrl::getRef() const {  return m_pdata->m_ref; }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_Bool
+bool
 OW_CIMUrl::isLocal() const {  return m_pdata->m_localHost; }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ OW_CIMUrl::setProtocol(const OW_String& protocol)
 
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
-OW_Bool
+bool
 OW_CIMUrl::equals(const OW_CIMUrl& arg) const
 {
 	return (m_pdata->m_protocol == arg.m_pdata->m_protocol
@@ -264,7 +264,7 @@ OW_CIMUrl::equals(const OW_CIMUrl& arg) const
 
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
-OW_Bool
+bool
 OW_CIMUrl::sameFile(const OW_CIMUrl& arg) const
 {
 	return (m_pdata->m_protocol == arg.m_pdata->m_protocol
