@@ -60,6 +60,10 @@ extern "C"
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>
 #endif
+#ifdef OW_USE_PTHREAD
+#include <pthread.h>
+#include <limits.h> // for PTHREAD_KEYS_MAX
+#endif
 }
 
 namespace OW_ThreadImpl {
