@@ -33,25 +33,18 @@
 #include "OW_RandomNumber.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_ThreadImpl.hpp"
 
-#ifdef OW_GNU_LINUX
 #include <fstream>
-#else
-extern "C"
-{
 #include <sys/types.h>
-#include <time.h>
-}
-#endif
-
-extern "C"
-{
+#include <sys/time.h>
 #include <stdlib.h>
-}
 
 static OW_Mutex guard;
 
-OW_RandomNumber::OW_RandomNumber(int lowVal, int highVal)
+static unsigned int seed = 0;
+
+OW_RandomNumber::OW_RandomNumber(OW_Int32 lowVal, OW_Int32 highVal)
 : m_lowVal(lowVal), m_highVal(highVal)
 {
 	if(lowVal > highVal)
@@ -60,34 +53,44 @@ OW_RandomNumber::OW_RandomNumber(int lowVal, int highVal)
 		m_highVal = lowVal;
 	}
 
-	OW_MutexLock lock(guard);
-// #ifdef OW_HAVE_DEV_URANDOM // need to write this configure test
-#ifdef OW_GNU_LINUX
-    static int seed = 0;
-    if (!seed)
-    {
-        std::ifstream infile("/dev/urandom", std::ios::in);
-        OW_ASSERT(infile);
-        infile.read(reinterpret_cast<char*>(&seed), sizeof(seed));
-        infile.close();
-
-        srandom(seed);
-    }
-#else
-	static time_t seed = 0;
-	if (!seed)
+	// double-checked locking pattern. See Pattern-Oriented Software Architecture Vol. 2, pp. 353-363
+	OW_ThreadImpl::memoryBarrier();
+	if (seed == 0)
 	{
-		time(&seed);
+		OW_MutexLock lock(guard);
+		if (seed == 0)
+		{
+			// use the time as part of the seed
+			struct timeval tv;
+			gettimeofday(&tv, 0);
+
+			// try to get something from the kernel
+			std::ifstream infile("/dev/urandom", std::ios::in);
+			if (!infile)
+				infile.open("/dev/random", std::ios::in);
+
+			// don't initialize this, we may get random stack
+			// junk in case infile isn't usable.
+			unsigned int dev_rand_input;
+			if (infile)
+			{
+				infile.read(reinterpret_cast<char*>(&dev_rand_input), sizeof(dev_rand_input));
+				infile.close();
+			}
+
+			// Build the seed. Take into account our pid and uid.
+			seed = dev_rand_input ^ (getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec;
+
 #ifdef OW_HAVE_SRANDOM
-		srandom(seed);
+			srandom(seed);
 #else
-		srand(seed);
+			srand(seed);
 #endif
+		}
 	}
-#endif
 }
 	
-int
+OW_Int32
 OW_RandomNumber::getNextNumber()
 {
 	OW_MutexLock lock(guard);

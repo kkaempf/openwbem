@@ -35,14 +35,17 @@
 #include "OW_config.h"
 #include "OW_Types.h"
 
+#include <stdlib.h> // for RAND_MAX
+
 class OW_RandomNumber
 {
 public:
-	OW_RandomNumber(OW_Int32 lowVal, OW_Int32 highVal);
+	// Precondition: lowVal < highVal
+	OW_RandomNumber(OW_Int32 lowVal = 0, OW_Int32 highVal = RAND_MAX);
 	OW_Int32 getNextNumber();
 	
-protected:
-   OW_Int32 m_lowVal;
+private:
+	OW_Int32 m_lowVal;
 	OW_Int32 m_highVal;
 };
 
