@@ -796,7 +796,14 @@ HTTPSvrConnection::processHeaders(OperationContext& context)
 		//{
 		//	m_chunkedOut = true;
 		//}
-		m_chunkedOut = true;
+		if (getHeaderValue("User-Agent") == "RPT-HTTPClient/0.3-2") // SNIA browser says it can handle trailers when it really can't.
+		{
+			m_chunkedOut = false;
+		}
+		else
+		{
+			m_chunkedOut = true;
+		}
 
 
 		// now we need to see if the client is an 2.0.x version of OW which
