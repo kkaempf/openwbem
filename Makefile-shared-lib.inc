@@ -2,7 +2,6 @@
 SO_EXT = $(OPENWBEM_VERSION)
 SOFILENAME = $@.$(SO_EXT)
 TMPLIBDIR = .$@.libs
-BNDLIBDIR = /tmp/.openwbem.bundle
 
 
 # Here's what this does:  It finds all symbols in each object file that are one
@@ -32,21 +31,29 @@ CREATE_EXPORTS=nm -BCpg $(TMPLIBDIR)/*.o | \
 	chmod +x $(SOFILENAME)
 
 # Rules for Darwin so we can get the plugable modules built
-# at the same time, then we sort them out later.
+# at the same time. Requires that either MAKEDYLIB or MAKEBUNDLE
+# be inserted into Makefile.am in the appropriate directory.
+# In the case of the four libraries that have to be both loadable
+# and linkable, we FIXME EDGE
 
 %.dylib : %.a
 	rm -rf $(TMPLIBDIR)
 	mkdir $(TMPLIBDIR)
-	if [ ! -d $(BNDLIBDIR) ]; then mkdir $(BNDLIBDIR); fi
 	cd $(TMPLIBDIR) && \
 	$(AR) x ../$< 
-	$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
-	$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(BNDLIBDIR)/$(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD)
+	if [ "x$(MAKEDYLIB)" = "x1" ]; then \
+		$(CXXLINK) $(CXXSHAREDLIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+	fi;
+	if [ "x$(MAKEBUNDLE)" = "x1" ]; then \
+		if [ "x$(MAKEDYLIB)" = "x1" ]; then \
+		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(SOFILENAME).bundle $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+		else \
+		$(CXXLINK) $(CXXBUNDLELIBLINKFLAGS) -o $(SOFILENAME) $(TMPLIBDIR)/*.o $(SHAREDLIBADD); \
+		fi; \
+	fi;
 	rm -rf $@ $(TMPLIBDIR) $(@:%.so=%.exp)
 	ln -s $(SOFILENAME) $@
 	chmod +x $(SOFILENAME)
-	ln -s $(BNDLIBDIR)/$(SOFILENAME) $(BNDLIBDIR)/$@
-	chmod +x $(BNDLIBDIR)/$(SOFILENAME)
 
 
 all-ow-shared-libs: $(OW_SHARED_LIBS)

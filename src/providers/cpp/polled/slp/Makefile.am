@@ -1,3 +1,4 @@
+MAKEBUNDLE=1
 if HAVE_SLP
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs

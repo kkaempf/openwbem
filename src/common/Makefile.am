@@ -1,3 +1,4 @@
+MAKEDYLIB=1
 SUBDIRS = socket
 
 include $(top_srcdir)/Makefile-shared-lib.inc

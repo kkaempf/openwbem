@@ -1,3 +1,4 @@
+MAKEBUNDLE=1
 SUBDIRS = perlProvider
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs

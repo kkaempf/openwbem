@@ -1,3 +1,4 @@
+MAKEDYLIB=1
 SUBDIRS = test
 
 include $(top_srcdir)/Makefile-shared-lib.inc

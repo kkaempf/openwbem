@@ -1,3 +1,5 @@
+MAKEDYLIB=1
+MAKEDBUNDLE=1
 SUBDIRS = common
 
 include $(top_srcdir)/Makefile-shared-lib.inc

@@ -1,3 +1,4 @@
+MAKEBUNDLE=1
 if USE_PAM
 include $(top_srcdir)/Makefile-shared-lib.inc
 all-local : all-ow-shared-libs
