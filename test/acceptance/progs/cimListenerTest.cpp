@@ -72,10 +72,12 @@ protected:
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
+		{
 		MutexLock lock(coutMutex);
 		++m_count;
 		cout << "\nmyCallBack::doIndicationOccurred: Got indication: " << m_count << "\n";
 		cout << ci.toString() << "\n";
+		}
 		sem.signal();
 	}
 private:
@@ -92,9 +94,11 @@ protected:
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
+		{
 		MutexLock lock(coutMutex);
 		cout << "\ntest1CallBack::doIndicationOccurred: Got indication:\n";
 		cout << ci.toString() << "\n";
+		}
 		test1sem.signal();
 	}
 };
@@ -109,9 +113,11 @@ protected:
 		// remove time property so output will always look alike (and allow
 		// a diff in the acceptance script).
 		ci.removeProperty("IndicationTime");
+		{
 		MutexLock lock(coutMutex);
 		cout << "\ntest2CallBack::doIndicationOccurred: Got indication:\n";
 		cout << ci.toString() << "\n";
+		}
 		test2sem.signal();
 	}
 };
