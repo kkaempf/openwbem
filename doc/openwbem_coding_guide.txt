@@ -264,4 +264,50 @@ public:
   int toInt();
 };
 -----------------------------------------------------------------------------
+Testing.
+Before you modify or write any new code, make a test for it.  There are 2
+types of tests in OpenWBEM: unit tests and acceptance tests.  The unit tests
+are under test/unit, and are organized by class.  You can create a new test by
+running the newtest.sh script and passing in as the first argument the
+old-style classname, which is also the header filename, minus the .hpp.  So if
+you're writing a new class called OpenWBEM::Foo, you'd put it in
+OW_Foo.{hpp,cpp}, you'd run ./newtest OW_Foo.  Rename testSomething to be
+something meaningful, and create a new test function (don't forget to add it
+to the suite) for each different type of functionality that you're going to
+test.  There is also the acceptance test (also known as integration or system
+test).  It's a script and associated programs under test/acceptance.  This
+tests the overall functionality of the cimom and client api & applications.
+If something is too complicated to test in the unit tests, make sure you get
+it covered by the acceptance test.
+-----------------------------------------------------------------------------
+Creating a new class.
+When you create a new class, make sure you define and document the following:
+- Class invariant.
+- Thread safety: 
+   non-reentrant (need a mutex protecting it)
+   reentrant (need a mutex protecting it)
+   read threadsafe (multiple readers are okay, need a rw lock protecting it)
+   read/write threadsafe (don't need any mutex protection)
+- Copy semantics:
+   Value (copies make a full deep copy)
+   Copy On Write (uses COWReference to store implementation.  Copies are fast, 
+    calling a non-const method will make a deep copy if needed to make it
+    unique.  It can be passed as parameters and returned from functions will
+    little overhead.)
+   Pointer (class probably uses Reference to store a pointer to the
+    implementation.  Copies are fast.  All copies refer to the same
+    implementation.)
+   Non-copyable (copy ctor and operator= are private.  Use Reference if you
+    need to refer to the class in multiple places.)
+- Exception safety (document the lowest level of all the member functions for
+   the class, and document each member function as well)
+   Fubared (If an exception was thrown, the function may have leaked memory
+    and/or left the instance in a non-usable inconsistent state)
+   Basic (If an exception was thrown, the function didn't leak memory, the
+    instance is still in a usable consistent state, but the operation may be
+    partially completed)
+   Strong (If an exception was thrown, the instance is in the state it was in
+    before the method was called. Basically commit/rollback semantics.)
+   No-throw (The method will never throw an exception)
+-----------------------------------------------------------------------------
 
