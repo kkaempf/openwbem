@@ -45,9 +45,9 @@
 namespace OWBI1
 {
 
-namespace ExceptionIds = ::OpenWBEM::ExceptionIds;
 
 #ifdef OWBI1_CHECK_NULL_REFERENCES
+namespace ExceptionIds = ::OpenWBEM::ExceptionIds;
 OWBI1_DECLARE_EXCEPTION(NULLCOWReference);
 OWBI1_DEFINE_EXCEPTION_WITH_ID(NULLCOWReference);
 
