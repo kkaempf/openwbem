@@ -1435,7 +1435,7 @@ OW_CIMServer::createInstance(
 		OW_InstanceProviderIFCRef instancep = _getInstanceProvider(theClass);
 		if (instancep)
 		{
-			rval = instancep->createInstance(createProvEnvRef(real_ch), ns, ci);
+			rval = instancep->createInstance(createProvEnvRef(real_ch), ns, lci);
 		}
 		else
 		{
