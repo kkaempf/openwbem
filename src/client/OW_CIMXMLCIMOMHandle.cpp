@@ -75,6 +75,7 @@ OW_CIMXMLCIMOMHandle::OW_CIMXMLCIMOMHandle(OW_CIMProtocolIFCRef prot)
 	m_protocol->setContentType("application/xml");
 }
 
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_CIMXMLCIMOMHandle::sendIntrinsicXMLHeader( const OW_String &sMethod,
@@ -1479,7 +1480,8 @@ OW_CIMXMLCIMOMHandle::execQuery(
 	const OW_String& ns,
 	const OW_String& query, int wqlLevel)
 {
-	return execQueryE(ns, query, OW_String("WQL") + OW_String(wqlLevel));
+	return OW_CIMOMHandleIFC::execQueryE(ns, query, 
+		OW_String("WQL") + OW_String(wqlLevel));
 }
 
 //////////////////////////////////////////////////////////////////////////////

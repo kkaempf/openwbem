@@ -37,6 +37,7 @@
 #include "OW_CIMClassEnumeration.hpp"
 #include "OW_CIMObjectPathEnumeration.hpp"
 #include "OW_CIMQualifierEnumeration.hpp"
+#include "OW_CIMValue.hpp"
 
 const OW_Bool OW_CIMOMHandleIFC::DEEP(true);
 const OW_Bool OW_CIMOMHandleIFC::SHALLOW(false);

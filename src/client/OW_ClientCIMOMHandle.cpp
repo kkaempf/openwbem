@@ -42,11 +42,11 @@
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
+	OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 {
 	int index = ns.lastIndexOf('/');
 
-	if(index==-1)
+	if (index==-1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 			"A Namespace must only be created in an existing Namespace");
@@ -55,7 +55,8 @@ OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 	OW_String parentPath = ns.substring(0, index);
 	OW_String newNameSpace = ns.substring(index + 1);
 
-	OW_CIMClass cimClass = getClass(parentPath, OW_CIMClass::NAMESPACECLASS, false);
+	OW_CIMClass cimClass = getClass(parentPath, 
+		OW_String(OW_CIMClass::NAMESPACECLASS), false);
 
 	OW_CIMInstance cimInstance = cimClass.newInstance();
 	OW_CIMValue cv(newNameSpace);
@@ -66,12 +67,12 @@ OW_ClientCIMOMHandle::createNameSpace(const OW_String& ns)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
+	OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
 {
 	OW_String parentPath;
 	int index = ns.lastIndexOf('/');
 
-	if(index == -1)
+	if (index == -1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
 			"A Namespace must only be created in an existing Namespace");
@@ -92,7 +93,7 @@ OW_ClientCIMOMHandle::deleteNameSpace(const OW_String& ns)
 
 //////////////////////////////////////////////////////////////////////////////
 static void
-enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
+	enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
 	const OW_String& ns,
 	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
@@ -100,22 +101,22 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
 	// throws a wrench in the works.  Each CIM Method call has to finish
 	// before another one can begin.
 	OW_CIMInstanceEnumeration en = hdl->enumInstancesE(ns,
-		OW_CIMClass::NAMESPACECLASS, false, true);
+		OW_String(OW_CIMClass::NAMESPACECLASS), false, true);
 	while (en.hasMoreElements())
 	{
 		OW_CIMInstance i = en.nextElement();
 		OW_CIMProperty nameProp;
 
 		OW_CIMPropertyArray keys = i.getKeyValuePairs();
-		if(keys.size() == 1)
+		if (keys.size() == 1)
 		{
 			nameProp = keys[0];
 		}
 		else
 		{
-			for(size_t i = 0; i < keys.size(); i++)
+			for (size_t i = 0; i < keys.size(); i++)
 			{
-				if(keys[i].getName().equalsIgnoreCase("Name"))
+				if (keys[i].getName().equalsIgnoreCase("Name"))
 				{
 					nameProp = keys[i];
 					break;
@@ -129,7 +130,7 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
 		OW_String tmp;
 		nameProp.getValue().get(tmp);
 		result.handle(ns + "/" + tmp);
-		if(deep)
+		if (deep)
 		{
 			enumNameSpaceAux(hdl, ns + "/" + tmp, result, deep);
 		}
@@ -138,10 +139,11 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns,
+	OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns,
 	OW_StringResultHandlerIFC &result, OW_Bool deep)
 {
 	result.handle(ns);
 	enumNameSpaceAux(this, ns, result, deep);
 }
-				
+
+

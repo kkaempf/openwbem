@@ -317,7 +317,7 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	try
 	{
 		subscriptions = hdl->enumInstancesE(instNS,
-			"CIM_IndicationSubscription", true);
+			OW_String("CIM_IndicationSubscription"), true);
 	}
 	catch(OW_CIMException& e)
 	{

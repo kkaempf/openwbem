@@ -28,10 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_HTTPClient.hpp"
-#include "OW_CIMXMLCIMOMHandle.hpp"
-#include "OW_BinaryCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_CIMClient.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMValueCast.hpp"
@@ -51,6 +49,9 @@
 #include "OW_CIMException.hpp"
 #include "OW_XMLPrettyPrint.hpp"
 #include "OW_CIMParamValue.hpp"
+#include "OW_Socket.hpp"
+#include "OW_URL.hpp"
+#include <openssl/ssl.h>
 
 #include <iostream>
 #include <algorithm> // for sort
@@ -100,14 +101,14 @@ struct sorter
 
 //////////////////////////////////////////////////////////////////////////////
 void
-createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
+createClass(OW_CIMClient& hdl, const OW_String& name)
 {
 	testStart("createClass");
 
 	try
 	{
 		OW_String cqtPath("Key");
-		OW_CIMQualifierType cqt = hdl.getQualifierType("root/testsuite", cqtPath);
+		OW_CIMQualifierType cqt = hdl.getQualifierType( cqtPath);
 		OW_CIMQualifier cimQualifierKey(cqt);
 
 		cimQualifierKey.setValue(OW_CIMValue(OW_Bool(true)));
@@ -162,7 +163,7 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 			cimClass.addProperty(cimProp);
 		}
 
-		hdl.createClass("root/testsuite", cimClass);
+		hdl.createClass( cimClass);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -174,13 +175,13 @@ createClass(OW_CIMOMHandleIFC& hdl, const OW_String& name)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumClassNames(OW_CIMOMHandleIFC& hdl)
+enumClassNames(OW_CIMClient& hdl)
 {
 	testStart("enumClassNames");
 
 	try
 	{
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE("root/testsuite", "", true);
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE( "", true);
 		while (enu.hasMoreElements())
 		{
 			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
@@ -195,7 +196,7 @@ enumClassNames(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE("root/testsuite", "", false);
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE( "", false);
 		while (enu.hasMoreElements())
 		{
 			cout << "CIMClass: " << enu.nextElement().getObjectName() << endl;
@@ -211,14 +212,14 @@ enumClassNames(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumClasses(OW_CIMOMHandleIFC& hdl)
+enumClasses(OW_CIMClient& hdl)
 {
 	testStart("enumClasses");
 
 	cout << "deep = true, localOnly = false" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", true, false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", true, false);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -240,7 +241,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = false, localOnly = false" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", false, false);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", false, false);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -262,7 +263,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = false, localOnly = true" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", false, true);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", false, true);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -284,7 +285,7 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 	cout << "deep = true, localOnly = true" << endl;
 	try
 	{
-		OW_CIMClassEnumeration enu = hdl.enumClassE("root/testsuite", "", true, true);
+		OW_CIMClassEnumeration enu = hdl.enumClassE( "", true, true);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMClass c = enu.nextElement();
@@ -308,13 +309,13 @@ enumClasses(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-modifyClass(OW_CIMOMHandleIFC& hdl)
+modifyClass(OW_CIMClient& hdl)
 {
 	testStart("modifyClass");
 
 	try
 	{
-		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+		OW_CIMClass cimClass = hdl.getClass(
 			"EXP_BionicComputerSystem", false);
 		cout << "CIMClass before: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -328,9 +329,9 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 		cimProp.setDataType(OW_CIMDataType::STRING);
 		cimProp.setName("BrandNewProperty");
 		cimClass.addProperty(cimProp);
-		hdl.modifyClass("root/testsuite", cimClass);
+		hdl.modifyClass( cimClass);
 
-		cimClass = hdl.getClass("root/testsuite", "EXP_BionicComputerSystem", false);
+		cimClass = hdl.getClass( "EXP_BionicComputerSystem", false);
 		cout << "CIMClass after: " << cimClass.toMOF() << endl;
 		tfs.reset();
 		OW_CIMtoXML(cimClass,tfs,OW_CIMtoXMLFlags::notLocalOnly,
@@ -351,14 +352,14 @@ modifyClass(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getClass(OW_CIMOMHandleIFC& hdl)
+getClass(OW_CIMClient& hdl)
 {
 	testStart("getClass");
 
 	cout << "localOnly = false" << endl;
 	try
 	{
-		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+		OW_CIMClass cimClass = hdl.getClass(
 			"EXP_BionicComputerSystem", false);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -377,7 +378,7 @@ getClass(OW_CIMOMHandleIFC& hdl)
 	cout << "localOnly = true" << endl;
 	try
 	{
-		OW_CIMClass cimClass = hdl.getClass("root/testsuite",
+		OW_CIMClass cimClass = hdl.getClass(
 			"EXP_BionicComputerSystem", true);
 		cout << "CIMClass: " << cimClass.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -398,21 +399,21 @@ getClass(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-testDynInstances(OW_CIMOMHandleIFC& hdl)
+testDynInstances(OW_CIMClient& hdl)
 {
 	testStart("testDynInstances");
 	try
 	{
-		OW_CIMClass cc = hdl.getClass("root/testsuite", "testinstance");
+		OW_CIMClass cc = hdl.getClass( "testinstance");
 		OW_CIMInstance ci = cc.newInstance();
 		ci.setProperty("name", OW_CIMValue(OW_String("one")));
 		OW_StringArray params;
 		params.push_back("one");
 		params.push_back("two");
 		ci.setProperty("params", OW_CIMValue(params));
-		hdl.createInstance("root/testsuite", ci);
+		hdl.createInstance( ci);
 		OW_CIMObjectPath cop1(ci);
-		ci = hdl.getInstance("root/testsuite", cop1);
+		ci = hdl.getInstance( cop1);
 		OW_TempFileStream tfs;
 		tfs << "<CIM>";
 		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
@@ -431,9 +432,9 @@ testDynInstances(OW_CIMOMHandleIFC& hdl)
 		params.push_back("B");
 		params.push_back("C");
 		ci.setProperty("params", OW_CIMValue(params));
-		hdl.createInstance("root/testsuite", ci);
+		hdl.createInstance( ci);
 		OW_CIMObjectPath cop2(ci);
-		ci = hdl.getInstance("root/testsuite", cop2);
+		ci = hdl.getInstance( cop2);
 		tfs.reset();
 		tfs << "<CIM>";
 		OW_CIMtoXML(ci, tfs, cop2, OW_CIMtoXMLFlags::isNotInstanceName,
@@ -451,8 +452,8 @@ testDynInstances(OW_CIMOMHandleIFC& hdl)
 		ci = cc.newInstance();
 		ci.setProperty("name", OW_CIMValue(OW_String("one")));
 		ci.setProperty("params", OW_CIMValue(params));
-		hdl.modifyInstance("root/testsuite", ci);
-		ci = hdl.getInstance("root/testsuite", cop1);
+		hdl.modifyInstance( ci);
+		ci = hdl.getInstance( cop1);
 		tfs.reset();
 		tfs << "<CIM>";
 		OW_CIMtoXML(ci, tfs, cop1, OW_CIMtoXMLFlags::isNotInstanceName,
@@ -464,16 +465,16 @@ testDynInstances(OW_CIMOMHandleIFC& hdl)
 		tfs.rewind();
 		cout << OW_XMLPrettyPrint(tfs);
 
-		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("root/testsuite",
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(
 			"testinstance");
 		OW_ASSERT(enu.numberOfElements() == 2);
 
-		hdl.deleteInstance("root/testsuite", cop1);
-		enu = hdl.enumInstancesE("root/testsuite", "testinstance");
+		hdl.deleteInstance( cop1);
+		enu = hdl.enumInstancesE( "testinstance");
 		OW_ASSERT(enu.numberOfElements() == 1);
 
-		hdl.deleteInstance("root/testsuite", cop2);
-		enu = hdl.enumInstancesE("root/testsuite", "testinstance");
+		hdl.deleteInstance( cop2);
+		enu = hdl.enumInstancesE( "testinstance");
 		OW_ASSERT(enu.numberOfElements() == 0);
 		
 	}
@@ -486,13 +487,13 @@ testDynInstances(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_String& newInstance)
+createInstance(OW_CIMClient& hdl, const OW_String& fromClass, const OW_String& newInstance)
 {
 	testStart("createInstance");
 
 	try
 	{
-		OW_CIMClass cimClass = hdl.getClass("root/testsuite", fromClass, false);
+		OW_CIMClass cimClass = hdl.getClass( fromClass, false);
 
 		OW_CIMInstance newInst = cimClass.newInstance();
 
@@ -502,7 +503,7 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 		newInst.setProperty("CreationClassName",
 								  OW_CIMValue(fromClass));
 
-		hdl.createInstance("root/testsuite", newInst);
+		hdl.createInstance( newInst);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -514,14 +515,14 @@ createInstance(OW_CIMOMHandleIFC& hdl, const OW_String& fromClass, const OW_Stri
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
+enumerateInstanceNames(OW_CIMClient& hdl)
 {
 	testStart("enumInstanceNames");
 
 	try
 	{
 		OW_String ofClass = "CIM_ComputerSystem";
-		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE("root/testsuite", ofClass);
+		OW_CIMObjectPathEnumeration enu = hdl.enumInstanceNamesE( ofClass);
 		while (enu.hasMoreElements())
 		{
 			OW_CIMObjectPath cop = enu.nextElement();
@@ -542,7 +543,7 @@ enumerateInstanceNames(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_Bool localOnly,
+enumerateInstances(OW_CIMClient& hdl, OW_String ofClass, OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
 {
@@ -555,7 +556,7 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_B
 
 	try
 	{
-		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE("root/testsuite", ofClass, deep, localOnly,
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE( ofClass, deep, localOnly,
 				includeQualifiers, includeClassOrigin, propertyList);
 
 		while (enu.hasMoreElements())
@@ -581,7 +582,7 @@ enumerateInstances(OW_CIMOMHandleIFC& hdl, OW_String ofClass, OW_Bool deep, OW_B
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
+getInstance(OW_CIMClient& hdl, const OW_String& theInstance,
 		OW_Bool localOnly=false,
 		OW_Bool includeQualifiers=false,
 		OW_Bool includeClassOrigin=false,
@@ -600,7 +601,7 @@ getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, localOnly, includeQualifiers,
+		OW_CIMInstance in = hdl.getInstance( cop, localOnly, includeQualifiers,
 				includeClassOrigin, propertyList);
 		OW_TempFileStream tfs;
 		OW_CIMtoXML(in, tfs, OW_CIMObjectPath(),
@@ -620,7 +621,7 @@ getInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
+modifyInstance(OW_CIMClient& hdl, const OW_String& theInstance)
 {
 	testStart("modifyInstance");
 
@@ -631,7 +632,7 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
 
-		OW_CIMInstance in = hdl.getInstance("root/testsuite", cop, false);
+		OW_CIMInstance in = hdl.getInstance( cop, false);
 
 		in.setProperty(OW_CIMProperty("BrandNewProperty",
 			OW_CIMValue(OW_String("true"))));
@@ -640,7 +641,7 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 		// we'll have to set them so modifyInstance will work.
 		in.setKeys(cop.getKeys());
 
-		hdl.modifyInstance("root/testsuite", in);
+		hdl.modifyInstance( in);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -652,16 +653,16 @@ modifyInstance(OW_CIMOMHandleIFC& hdl, const OW_String& theInstance)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& ofClass, const OW_String& theInstance)
+deleteInstance(OW_CIMClient& hdl, const OW_String& ofClass, const OW_String& theInstance)
 {
 	testStart("deleteInstance");
 
 	try
 	{
-		OW_CIMObjectPath cop(ofClass, "root/testsuite");
+		OW_CIMObjectPath cop(ofClass );
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(theInstance));
-		hdl.deleteInstance("root/testsuite", cop);
+		hdl.deleteInstance( cop);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -673,14 +674,13 @@ deleteInstance(OW_CIMOMHandleIFC& hdl, const OW_String& ofClass, const OW_String
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteAssociations(OW_CIMOMHandleIFC& hdl)
+deleteAssociations(OW_CIMClient& hdl)
 {
 	testStart("deleteAssociations");
 
 	try
 	{
-		hdl.execQueryE("root/testsuite",
-			"delete from CIM_SystemComponent", "wql1");
+		hdl.execQueryE( "delete from CIM_SystemComponent", "wql1");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -692,7 +692,7 @@ deleteAssociations(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-setQualifier(OW_CIMOMHandleIFC& hdl)
+setQualifier(OW_CIMClient& hdl)
 {
 	testStart("setQualifier");
 
@@ -711,7 +711,7 @@ setQualifier(OW_CIMOMHandleIFC& hdl)
 		qt.addFlavor(OW_CIMFlavor::DISABLEOVERRIDE);
 
 
-		hdl.setQualifierType("root/testsuite", qt);
+		hdl.setQualifierType( qt);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -723,13 +723,13 @@ setQualifier(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
+enumerateQualifiers(OW_CIMClient& hdl)
 {
 	testStart("enumerateQualifiers");
 
 	try
 	{
-		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE("root/testsuite");
+		OW_CIMQualifierTypeEnumeration enu = hdl.enumQualifierTypesE();
 		while (enu.hasMoreElements())
 		{
 			OW_CIMQualifierType cqt = enu.nextElement();
@@ -751,13 +751,13 @@ enumerateQualifiers(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getQualifier(OW_CIMOMHandleIFC& hdl)
+getQualifier(OW_CIMClient& hdl)
 {
 	testStart("getQualifier");
 
 	try
 	{
-		OW_CIMQualifierType qt = hdl.getQualifierType("root/testsuite", "borgishness");
+		OW_CIMQualifierType qt = hdl.getQualifierType( "borgishness");
 		cout << "Got Qualifier: " << qt.getName() << endl;
 		cout << qt.toMOF() << endl;
 		OW_TempFileStream tfs;
@@ -773,24 +773,24 @@ getQualifier(OW_CIMOMHandleIFC& hdl)
 	testDone();
 }
 
-void createAssociation(OW_CIMOMHandleIFC& hdl, const OW_String& assocName,
+void createAssociation(OW_CIMClient& hdl, const OW_String& assocName,
 		const OW_String& propName1, const OW_CIMObjectPath& cop1,
 		const OW_String& propName2, const OW_CIMObjectPath& cop2)
 {
 
-		OW_CIMClass cc = hdl.getClass("root/testsuite", assocName);
+		OW_CIMClass cc = hdl.getClass( assocName);
 		OW_CIMInstance inst = cc.newInstance();
 			
 		inst.setProperty(propName1, OW_CIMValue(cop1));
 
 		inst.setProperty(propName2, OW_CIMValue(cop2));
 
-		hdl.createInstance("root/testsuite", inst);
+		hdl.createInstance( inst);
 
 }
 //////////////////////////////////////////////////////////////////////////////
 void
-setupAssociations(OW_CIMOMHandleIFC& hdl)
+setupAssociations(OW_CIMClient& hdl)
 {
 	testStart("setupAssociations");
 
@@ -831,7 +831,7 @@ setupAssociations(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
+associatorNames(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole)
 {
@@ -848,7 +848,7 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
 		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(
-			"root/testsuite", cop, assocClass, resultClass, role, resultRole);
+			cop, assocClass, resultClass, role, resultRole);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
@@ -870,7 +870,7 @@ associatorNames(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
+associatorNamesClass(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole)
 {
@@ -884,7 +884,7 @@ associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 		
 		OW_CIMObjectPathEnumeration enu = hdl.associatorNamesE(
-			"root/testsuite", cop, assocClass, resultClass, role, resultRole);
+			 cop, assocClass, resultClass, role, resultRole);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
 			OW_Enumeration_input_iterator<OW_CIMObjectPath>(enu),
@@ -906,7 +906,7 @@ associatorNamesClass(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
+associators(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
@@ -927,7 +927,7 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.associatorsE("root/testsuite", cop,
+		OW_CIMInstanceEnumeration enu = hdl.associatorsE( cop,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
 
@@ -959,7 +959,7 @@ associators(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
+associatorsClasses(OW_CIMClient& hdl, const OW_String& assocClass,
 		const OW_String& resultClass, const OW_String& role,
 		const OW_String& resultRole, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
@@ -975,7 +975,7 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 	try
 	{
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
-		OW_CIMClassEnumeration enu = hdl.associatorsClassesE("root/testsuite", cop,
+		OW_CIMClassEnumeration enu = hdl.associatorsClassesE( cop,
 			assocClass, resultClass, role, resultRole, includeQualifiers,
 			includeClassOrigin, propertyList);
 
@@ -1006,7 +1006,7 @@ associatorsClasses(OW_CIMOMHandleIFC& hdl, const OW_String& assocClass,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-referenceNames(OW_CIMOMHandleIFC& hdl,
+referenceNames(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role)
 {
 	OW_String pstr;
@@ -1021,7 +1021,7 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE("root/testsuite", cop,
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE( cop,
 				resultClass, role);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
@@ -1044,7 +1044,7 @@ referenceNames(OW_CIMOMHandleIFC& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-referenceNamesClass(OW_CIMOMHandleIFC& hdl,
+referenceNamesClass(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role)
 {
 	OW_String pstr;
@@ -1056,7 +1056,7 @@ referenceNamesClass(OW_CIMOMHandleIFC& hdl,
 		OW_String ofClass = "EXP_BionicComputerSystem";
 		OW_CIMObjectPath cop(ofClass);
 
-		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE("root/testsuite", cop,
+		OW_CIMObjectPathEnumeration enu = hdl.referenceNamesE( cop,
 				resultClass, role);
 
 		std::vector<OW_CIMObjectPath> v = std::vector<OW_CIMObjectPath>(
@@ -1079,7 +1079,7 @@ referenceNamesClass(OW_CIMOMHandleIFC& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-references(OW_CIMOMHandleIFC& hdl,
+references(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
@@ -1098,7 +1098,7 @@ references(OW_CIMOMHandleIFC& hdl,
 					  OW_CIMValue(OW_String("EXP_BionicComputerSystem")));
 		cop.addKey("Name", OW_CIMValue(OW_String("SevenMillion")));
 
-		OW_CIMInstanceEnumeration enu = hdl.referencesE("root/testsuite", cop,
+		OW_CIMInstanceEnumeration enu = hdl.referencesE( cop,
 				resultClass, role, includeQualifiers, includeClassOrigin,
 				propertyList);
 
@@ -1130,7 +1130,7 @@ references(OW_CIMOMHandleIFC& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-referencesClasses(OW_CIMOMHandleIFC& hdl,
+referencesClasses(OW_CIMClient& hdl,
 		const OW_String& resultClass, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList)
@@ -1146,7 +1146,7 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 	{
 		OW_CIMObjectPath cop("EXP_BionicComputerSystem");
 
-		OW_CIMClassEnumeration enu = hdl.referencesClassesE("root/testsuite", cop,
+		OW_CIMClassEnumeration enu = hdl.referencesClassesE( cop,
 				resultClass, role, includeQualifiers, includeClassOrigin,
 				propertyList);
 
@@ -1178,13 +1178,13 @@ referencesClasses(OW_CIMOMHandleIFC& hdl,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-execQuery(OW_CIMOMHandleIFC& hdl)
+execQuery(OW_CIMClient& hdl)
 {
 	testStart("execQuery");
 
 	try
 	{
-		OW_CIMInstanceEnumeration cie = hdl.execQueryE("root/testsuite",
+		OW_CIMInstanceEnumeration cie = hdl.execQueryE(
 			"select * from EXP_BionicComputerSystem", "wql1");
 		while (cie.hasMoreElements())
 		{
@@ -1210,13 +1210,13 @@ execQuery(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteQualifier(OW_CIMOMHandleIFC& hdl)
+deleteQualifier(OW_CIMClient& hdl)
 {
 	testStart("deleteQualifier");
 
 	try
 	{
-		hdl.deleteQualifierType("root/testsuite", "borgishness");
+		hdl.deleteQualifierType( "borgishness");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1228,13 +1228,13 @@ deleteQualifier(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteClass(OW_CIMOMHandleIFC& hdl, const OW_String& delClass)
+deleteClass(OW_CIMClient& hdl, const OW_String& delClass)
 {
 	testStart("deleteClass");
 
 	try
 	{
-		hdl.deleteClass("root/testsuite", delClass);
+		hdl.deleteClass( delClass);
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1282,7 +1282,7 @@ prepareGetStateParams(OW_CIMParamValueArray& in, const OW_CIMObjectPath& cop)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
+invokeMethod(OW_CIMClient& hdl, int num)
 {
 	testStart("invokeMethod");
 
@@ -1300,13 +1300,13 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
                       OW_CIMValue(OW_String("EXP_BartComputerSystem")));
                 cop.addKey("Name", OW_CIMValue(OW_String("test")));
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
-				hdl.invokeMethod("root/testsuite", cop, "setstate", in, out);
+				hdl.invokeMethod( cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
 				break;
 			case 2:
 			{
 				prepareGetStateParams(in,cop);
-				cv = hdl.invokeMethod("root/testsuite", cop, "getstate", in, out);
+				cv = hdl.invokeMethod( cop, "getstate", in, out);
 				cv.get(rval);
 
 				cout << "invokeMethod: getstate(): " << rval << endl;
@@ -1318,23 +1318,23 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 				break;
 			}
 			case 3:
-				hdl.invokeMethod("root/testsuite", cop, "togglestate", in, out);
+				hdl.invokeMethod( cop, "togglestate", in, out);
 				cout << "invokeMethod: togglestate()" << endl;
 				break;
 			case 4:
 				prepareGetStateParams(in,cop);
-				cv = hdl.invokeMethod("root/testsuite", cop, "getstate", in, out);
+				cv = hdl.invokeMethod( cop, "getstate", in, out);
 				cv.get(rval);
 				cout << "invokeMethod: getstate(): " << rval << endl;
 				break;
 			case 5:
 				in.push_back(OW_CIMParamValue("newState", OW_CIMValue(OW_String("off"))));
-				hdl.invokeMethod("root/testsuite", cop, "setstate", in, out);
+				hdl.invokeMethod( cop, "setstate", in, out);
 				cout << "invokeMethod: setstate(\"off\")" << endl;
 				break;
 			case 6:
 				prepareGetStateParams(in,cop);
-				cv = hdl.invokeMethod("root/testsuite", cop, "getstate", in, out);
+				cv = hdl.invokeMethod( cop, "getstate", in, out);
 				cv.get(rval);
 				cout << "invokeMethod: getstate(): " << rval << endl;
 				break;
@@ -1352,7 +1352,7 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-createNameSpace(OW_CIMOMHandleIFC& hdl)
+createNameSpace(OW_CIMClient& hdl)
 {
 	testStart("createNameSpace");
 
@@ -1371,21 +1371,21 @@ createNameSpace(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-enumNameSpace(OW_CIMOMHandleIFC& hdl)
+enumNameSpace(OW_CIMClient& hdl)
 {
 	testStart("enumNamespace");
 
 	try
 	{
 		cout << "deep = false" << endl;
-		OW_StringArray rval = hdl.enumNameSpaceE("root/testsuite", OW_Bool(false));
+		OW_StringArray rval = hdl.enumNameSpaceE( OW_Bool(false));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
 		}
 		
 		cout << "deep = true" << endl;
-		rval = hdl.enumNameSpaceE("root/testsuite", OW_Bool(true));
+		rval = hdl.enumNameSpaceE( OW_Bool(true));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
@@ -1401,7 +1401,7 @@ enumNameSpace(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-deleteNameSpace(OW_CIMOMHandleIFC& hdl)
+deleteNameSpace(OW_CIMClient& hdl)
 {
 	testStart("deleteNameSpace");
 
@@ -1419,7 +1419,7 @@ deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
+getProperty(OW_CIMClient& hdl, const OW_String& instName)
 {
 	testStart("getProperty");
 
@@ -1430,7 +1430,7 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String(instName)));
 
-		OW_CIMValue v = hdl.getProperty("root/testsuite", cop, "OptionalArg");
+		OW_CIMValue v = hdl.getProperty( cop, "OptionalArg");
 		// with xml, this is a string.  we want a bool.
 		v = OW_CIMValueCast::castValueToDataType(v, OW_CIMDataType::BOOLEAN);
 		cout << "** getProperty returned. CIMValue: " << v.toMOF() << endl;
@@ -1449,7 +1449,7 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-setProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
+setProperty(OW_CIMClient& hdl, const OW_String& instName)
 {
 	testStart("setProperty");
 
@@ -1460,7 +1460,7 @@ setProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(instName));
 
-		hdl.setProperty("root/testsuite", cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
+		hdl.setProperty( cop, "OptionalArg", OW_CIMValue(OW_Bool(true)));
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1561,22 +1561,6 @@ main(int argc, char* argv[])
 		 * and the CIM Server requires authentication, a callback may
 		 * be provided to retrieve authentication credentials.
 		 **********************************************************************/
-
-		OW_CIMProtocolIFCRef client(new OW_HTTPClient(url));
-
-
-		/**********************************************************************
-		 * Create an instance of our authentication callback class.
-		 **********************************************************************/
-		
-		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
-
-		/**********************************************************************
-		 * Assign our callback to the HTTP Client.
-		 **********************************************************************/
-
-		client->setLoginCallBack(getLoginInfo);
-
 		/**********************************************************************
 		 * Here we create a OW_CIMXMLCIMOMHandle and have it use the
 		 * OW_HTTPClient we've created.  OW_CIMXMLCIMOMHandle takes
@@ -1587,19 +1571,13 @@ main(int argc, char* argv[])
 		 * last copy goes out of scope (reference count goes to zero).
 		 **********************************************************************/
 
-		OW_CIMOMHandleIFCRef chRef;
-		if (owurl.path.equalsIgnoreCase("/owbinary"))
-		//cout << "owurl.path = " << owurl.path << endl;
-		//if (owurl.path.equalsIgnoreCase("/binary"))
-		{
-			chRef = new OW_BinaryCIMOMHandle(client);
-		}
-		else
-		{
-			chRef = new OW_CIMXMLCIMOMHandle(client);
-		}
+		/**********************************************************************
+		 * Create an instance of our authentication callback class.
+		 **********************************************************************/
+		OW_ClientAuthCBIFCRef getLoginInfo(new GetLoginInfo);
+		OW_CIMClient rch(url, "root/testsuite", getLoginInfo);
 
-		OW_CIMOMHandleIFC& rch = *chRef;
+
 
 		/**********************************************************************
 		 * Now we have essentially established a "connection" to the CIM
@@ -1609,7 +1587,6 @@ main(int argc, char* argv[])
 		 * authentication, compression, SSL, chunking, etc.
 		 **********************************************************************/
 
-		//foobar(rch);
 
 		createNameSpace(rch);
 		enumNameSpace(rch);
