@@ -8,6 +8,7 @@ $(CXXBINLINKFLAGS) \
 
 TimeString_LDADD = \
 -L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS)\
 $(BINLINKAPPENDFLAGS)
 
 TimeString_SOURCES = \
