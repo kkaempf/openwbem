@@ -77,6 +77,10 @@ extern "C"
 	#define _RMDIR rmdir
 	#define _UNLINK unlink
 
+#ifdef OW_NETWARE
+#define MAXSYMLINKS 20
+#endif
+
 #endif
 
 #include <sys/stat.h>
@@ -86,6 +90,7 @@ extern "C"
 
 #include <cstdio> // for rename
 #include <fstream>
+#include <cerrno>
 
 namespace OpenWBEM
 {
@@ -519,7 +524,7 @@ namespace Path
 //////////////////////////////////////////////////////////////////////////////
 String realPath(const String& path)
 {
-#ifdef OW_WIN32
+#if defined(OW_WIN32)
 #error "TODO: port realPath"
 #else
 	String workingPath(path);
@@ -574,11 +579,16 @@ String realPath(const String& path)
 
 			// now check the path actually exists
 			struct stat pathStats;
+#ifdef OW_NETWARE
+			if (::stat(resolvedPath.c_str(), &pathStats) < 0)
+			{
+				OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
+			}
+#else
 			if (::lstat(resolvedPath.c_str(), &pathStats) < 0)
 			{
 				OW_THROW_ERRNO_MSG(FileSystemException, resolvedPath);
 			}
-
 			if (S_ISLNK(pathStats.st_mode))
 			{
 				++numLinks;
@@ -610,6 +620,7 @@ String realPath(const String& path)
 				pathCompBegin = pathCompEnd = workingPath.c_str();
 				resolvedPath.erase();
 			}
+#endif
 		}
 
 		// keep the loop flowing
