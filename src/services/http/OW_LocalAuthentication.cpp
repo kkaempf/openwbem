@@ -333,7 +333,7 @@ LocalAuthentication::generateNewCookieFile(const String& uid, String& cookieFile
 		::close(authfd);
 		::unlink(tfname);
 		OW_THROW(LocalAuthenticationException,
-			format("IPC Authenticate: Failed writing to temp file %1  "
+			Format("IPC Authenticate: Failed writing to temp file %1  "
 				"error: %2", tfname, ::strerror(lerrno)).c_str());
 	}
 

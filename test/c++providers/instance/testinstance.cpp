@@ -257,7 +257,7 @@ public:
 				env->getLogger()->logDebug("TestInstance::procAcceptLanguage"
 					" setting content-language in SessionLanguage object");
 				String cl = slref->getContentLanguage();
-				env->getLogger()->logDebug(format(
+				env->getLogger()->logDebug(Format(
 					"TestInstance::procAcceptLanguage content-language"
 					" now is %1", cl).c_str());
 			}
