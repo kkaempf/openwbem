@@ -37,13 +37,13 @@ namespace OpenWBEM
 
 shlSharedLibrary::~shlSharedLibrary()
 {
-	shl_unload( m_libhandle );
+	::shl_unload( m_libhandle );
 }
 bool shlSharedLibrary::doGetFunctionPointer(const String& functionName,
 		void** fp) const
 {
 	void *symaddr = NULL;
-	int status = shl_findsym( &m_libhandle, functionName.c_str(), TYPE_PROCEDURE, &symaddr );
+	int status = ::shl_findsym( &m_libhandle, functionName.c_str(), TYPE_PROCEDURE, &symaddr );
 	if (status == -1 || symaddr == NULL)
 	{
 		return false;

@@ -44,15 +44,23 @@ SharedLibraryRef
 shlSharedLibraryLoader::loadSharedLibrary(const String& filename,
 	LoggerRef logger) const
 {
-	shl_t libhandle = shl_load(filename.c_str(), BIND_IMMEDIATE, 0L);
+	shl_t libhandle = ::shl_load(filename.c_str(), BIND_IMMEDIATE, 0L);
 	if (libhandle)
 	{
-		return SharedLibraryRef( new shlSharedLibrary(libhandle,
-			filename));
+		try
+		{
+			return SharedLibraryRef( new shlSharedLibrary(libhandle,
+				filename));
+		}
+		catch (...)
+		{
+			::shl_unload(libhandle);
+			throw;
+		}
 	}
 	else
 	{
-		logger->logError(format("shlSharedLibraryLoader::loadSharedLibrary "
+		logger->logError(Format("shlSharedLibraryLoader::loadSharedLibrary "
 			"shl_load returned NULL.  Error is: %1(%2)", errno, strerror(errno)));
 		return SharedLibraryRef( 0 );
 	}

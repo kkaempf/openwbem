@@ -52,15 +52,6 @@ public:
 	virtual ~dyldSharedLibrary();
 
 protected:
-	/**
-	 * Derived classes have to override this function to implement
-	 * the symbol loading.  The symbol to be looked up is contained in
-	 * functionName, and the pointer to the function should be written
-	 * into *fp.  Return true if the function succeeded, false otherwise.
-	 * @param functionName	The name of the function to resolve.
-	 * @param fp				Where to store the function pointer.
-	 * @return true if function succeeded, false otherwise.
-	 */
 	virtual bool doGetFunctionPointer( const String& functionName,
 											  void** fp ) const;
 private:

@@ -52,15 +52,25 @@ public:
 	}
 	/**
 	 * Load a shared library specified by filename.  If the operation fails,
-	 * the return value will be null ref counted pointer.
+	 * the return value will be null ref counted pointer, and 
+	 * logger->logError() will be called to report the details of the error.
+	 * Exception safety: Strong
+	 * @param filename The name of the shared library to load.
+	 * @param logger If an error occurs, logger->logError() will be passed
+	 *  a description.
+	 * @return SharedLibraryRef owning representing the shared library 
+	 *  identified by filename.  NULL on failure.
 	 */
 	virtual SharedLibraryRef loadSharedLibrary(const String& filename,
 		LoggerRef logger) const = 0;
+
 	/**
 	 * @return A reference to an SharedLibraryLoader object.
 	 *
 	 * Note: The implementation of createSharedLibraryLoader is contained
-	 * in the platform specific branch of the source tree.
+	 * in the platforms specific source file.  Only one type of 
+	 * SharedLibraryLoader exists for a given system.  The build system selects
+	 * the correct one to build.
 	 */
 	static SharedLibraryLoaderRef createSharedLibraryLoader();
 };

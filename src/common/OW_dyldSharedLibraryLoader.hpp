@@ -38,16 +38,16 @@ namespace OpenWBEM
 
 /**
  * dyldSharedLibraryLoader is the class for loading
- * shared libraries on dl.
+ * shared libraries on Mac OS X.
+ * Invariants: None, the class has no state.
+ * Thread safety: read/write
+ * Copy semantics: Value
+ * Exception safety: Strong
  */
 class dyldSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~dyldSharedLibraryLoader();
-		/**
-		 * Load a shared library specified by filename.  If the operation fails,
-		 * the return value will be null ref counted pointer.
-		 */
 		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
 			LoggerRef logger) const;
 };

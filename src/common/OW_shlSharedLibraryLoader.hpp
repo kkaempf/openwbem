@@ -38,16 +38,16 @@ namespace OpenWBEM
 
 /**
  * shlSharedLibraryLoader is the class for loading
- * shared libraries with shl_load().
+ * shared libraries with shl_load() on HP-UX.
+ * Invariants: None, the class has no state.
+ * Thread safety: read/write
+ * Copy semantics: Value
+ * Exception safety: Strong
  */
 class shlSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~shlSharedLibraryLoader();
-		/**
-		 * Load a shared library specified by filename.  If the operation fails,
-		 * the return value will be null ref counted pointer.
-		 */
 		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
 			LoggerRef logger) const;
 };

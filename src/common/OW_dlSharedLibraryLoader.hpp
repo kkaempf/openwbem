@@ -38,16 +38,16 @@ namespace OpenWBEM
 
 /**
  * dlSharedLibraryLoader is the class for loading
- * shared libraries on dl.
+ * shared libraries on systems with the dl functions.
+ * Invariants: None, the class has no state.
+ * Thread safety: read/write
+ * Copy semantics: Value
+ * Exception safety: Strong
  */
 class dlSharedLibraryLoader : public SharedLibraryLoader
 {
 	public:
 		virtual ~dlSharedLibraryLoader();
-		/**
-		 * Load a shared library specified by filename.  If the operation fails,
-		 * the return value will be null ref counted pointer.
-		 */
 		virtual SharedLibraryRef loadSharedLibrary(const String& filename,
 			LoggerRef logger) const;
 };

@@ -44,7 +44,7 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
     NSObjectFileImage image;
     NSObjectFileImageReturnCode dsoerr = NSCreateObjectFileImageFromFile(filename.c_str(), &image);
 	const char* err_msg = NULL;
-	void* libhandle = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
+	void* libhandle = NULL;
 
     if (dsoerr == NSObjectFileImageSuccess) 
 	{
@@ -73,8 +73,16 @@ dyldSharedLibraryLoader::loadSharedLibrary(const String& filename,
 
 	if (libhandle)
 	{
-		return SharedLibraryRef( new dyldSharedLibrary(libhandle,
-			filename));
+		try
+		{
+			return SharedLibraryRef( new dyldSharedLibrary(libhandle,
+				filename));
+		}
+		catch (...)
+		{
+			NSUnLinkModule(m_libhandle, FALSE);
+			throw;
+		}
 	}
 	else
 	{
