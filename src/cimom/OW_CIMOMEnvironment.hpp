@@ -55,7 +55,6 @@ class ServiceIFC;
 class CIMInstance;
 class ProviderManager;
 class WQLIFC;
-class UserInfo;
 class CIMNameSpace;
 class HTTPServer;
 class AuthManager;
@@ -86,8 +85,10 @@ typedef SharedLibraryReference<RepositoryIFCRef>
 	SharedLibraryRepositoryIFCRef;
 typedef Reference<IndicationRepLayerMediator>
 	IndicationRepLayerMediatorRef;
+
 class CIMOMEnvironment;
 typedef Reference<CIMOMEnvironment> CIMOMEnvironmentRef;
+
 class CIMOMEnvironment : public ServiceEnvironmentIFC
 {
 public:
