@@ -92,6 +92,10 @@ SocketAddress::getUDS(const String& filename)
 	rval.m_UDSNativeAddress.sun_len = filename.length() + 1;
 	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path) +
 		offsetof(struct sockaddr_un, sun_path) + 1;	
+#elif defined OW_FREEBSD
+	rval.m_nativeSize = ::strlen(rval.m_UDSNativeAddress.sun_path)
+		+ sizeof(rval.m_UDSNativeAddress.sun_len)
+		+ sizeof(rval.m_UDSNativeAddress.sun_family);
 #else
 	rval.m_nativeSize = sizeof(rval.m_UDSNativeAddress.sun_family) +
 		 ::strlen(rval.m_UDSNativeAddress.sun_path);
