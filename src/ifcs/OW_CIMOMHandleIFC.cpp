@@ -35,6 +35,7 @@
 #include "OW_CIMNameSpace.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMClassEnumeration.hpp"
+#include "OW_CIMObjectPathEnumeration.hpp"
 
 const OW_Bool OW_CIMOMHandleIFC::DEEP(true);
 const OW_Bool OW_CIMOMHandleIFC::SHALLOW(false);
@@ -75,6 +76,7 @@ namespace
 	private:
 		OW_CIMClassEnumeration& m_e;
 	};
+	
 	class StringArrayBuilder : public OW_StringResultHandlerIFC
 	{
 	public:
@@ -86,6 +88,19 @@ namespace
 		}
 	private:
 		OW_StringArray& m_a;
+	};
+	
+	class CIMObjectPathEnumBuilder : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		CIMObjectPathEnumBuilder(OW_CIMObjectPathEnumeration& e) : m_e(e) {}
+	protected:
+		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		{
+			m_e.addElement(cop);
+		}
+	private:
+		OW_CIMObjectPathEnumeration& m_e;
 	};
 }
 
@@ -109,6 +124,16 @@ OW_CIMOMHandleIFC::enumNameSpaceE(const OW_CIMNameSpace& ns,
 	OW_StringArray rval;
 	StringArrayBuilder handler(rval);
 	enumNameSpace(ns, handler, deep);
+	return rval;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMObjectPathEnumeration
+OW_CIMOMHandleIFC::enumClassNamesE(const OW_CIMObjectPath& path, OW_Bool deep)
+{
+	OW_CIMObjectPathEnumeration rval;
+	CIMObjectPathEnumBuilder handler(rval);
+	enumClassNames(path, handler, deep);
 	return rval;
 }
 

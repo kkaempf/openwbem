@@ -212,10 +212,16 @@ public:
 	 * @return An enumeration of OW_CIMObjectPath objects
 	 *		(OW_CIMObjectPathEnumeration)
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be foundl
+	 *											cannot be found
 	 */
-	virtual OW_CIMObjectPathEnumeration enumClassNames(
-		const OW_CIMObjectPath& path, OW_Bool deep=DEEP) = 0;
+	virtual void enumClassNames(
+		const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep=DEEP) = 0;
+
+	virtual OW_CIMObjectPathEnumeration enumClassNamesE(
+		const OW_CIMObjectPath& path,
+		OW_Bool deep=DEEP);
 
 	/**
 	 * Returns all instances (the whole instance and not just the names)

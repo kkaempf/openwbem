@@ -150,8 +150,10 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual OW_CIMObjectPathEnumeration enumClassNames(
-		const OW_CIMObjectPath& path, OW_Bool deep=true);
+	virtual void enumClassNames(
+		const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep=true);
 
 	/**
 	 * Deletes the CIM instance specified by the CIM object path.

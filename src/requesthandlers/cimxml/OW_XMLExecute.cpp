@@ -691,6 +691,23 @@ OW_XMLExecute::deleteQualifier(ostream& /*ostr*/, OW_XMLNode& qualNode,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class ClassNameXMLWriter : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		ClassNameXMLWriter(std::ostream& ostr_) : ostr(ostr_) {}
+	protected:
+		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		{
+			ostr << "<CLASSNAME NAME=\"" << cop.getObjectName() <<
+				"\"/>\r\n";
+		}
+	private:
+		std::ostream& ostr;
+	};
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -704,16 +721,8 @@ OW_XMLExecute::enumerateClassNames(ostream& ostr, OW_XMLNode& node,
 
 	path.setObjectName(className);
 
-	OW_CIMObjectPathEnumeration enu = hdl.enumClassNames(path, deepInheritance);
-
-	while (enu.hasMoreElements())
-	{
-		//
-		// Note, we assume a class name won't need escaping
-		//
-		ostr << "<CLASSNAME NAME=\"" << enu.nextElement().getObjectName() <<
-			"\"/>\r\n";
-	}
+	ClassNameXMLWriter handler(ostr);
+	hdl.enumClassNames(path, handler, deepInheritance);
 }
 
 //////////////////////////////////////////////////////////////////////////////

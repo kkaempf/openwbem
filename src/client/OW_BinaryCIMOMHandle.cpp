@@ -111,6 +111,11 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClass& cc)
 	cc = OW_BinIfcIO::readClass(*istr);
 }
 static void
+readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassResultHandlerIFC& result)
+{
+	OW_BinIfcIO::readClassEnum(*istr, result);
+}
+static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstance& ci)
 {
 	ci = OW_BinIfcIO::readInstance(*istr);
@@ -123,7 +128,13 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPath& cop)
 static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathEnumeration& enu)
 {
+	// TODO: remove me
 	enu = OW_BinIfcIO::readObjectPathEnum(*istr);
+}
+static void
+readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathResultHandlerIFC& result)
+{
+	OW_BinIfcIO::readObjectPathEnum(*istr, result);
 }
 static void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceEnumeration& arg)
@@ -170,12 +181,15 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr)
 	return rval;
 }
 
-void readAndDeliverCIMClasses(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMClassResultHandlerIFC& result)
+template<class T>
+static void
+readAndDeliver(OW_CIMProtocolIStreamIFCRef& istr, T& result)
 {
 	try
 	{
 		checkError(istr);
-		OW_BinIfcIO::readClassEnum(*istr, result);
+		//OW_BinIfcIO::readClassEnum(*istr, result);
+		readCIMObject(istr,result);
 	}
 	catch (OW_IOException& e)
 	{
@@ -358,8 +372,9 @@ OW_BinaryCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_BinaryCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
@@ -369,7 +384,8 @@ OW_BinaryCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 	OW_BinIfcIO::writeObjectPath(strm, path);
 	OW_BinIfcIO::writeBool(strm, deep);
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "EnumerateClassNames", path.getNameSpace());
-	return readCIMObject<OW_CIMObjectPathEnumeration>(in);
+
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -391,7 +407,7 @@ OW_BinaryCIMOMHandle::enumClass(const OW_CIMObjectPath& path,
 	OW_CIMProtocolIStreamIFCRef in = m_protocol->endRequest(strmRef,
 		"EnumerateClasses", path.getNameSpace());
 
-	return readAndDeliverCIMClasses(in, result);
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

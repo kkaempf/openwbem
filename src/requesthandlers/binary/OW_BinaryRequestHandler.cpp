@@ -404,6 +404,21 @@ namespace
 	private:
 		std::ostream& ostrm;
 	};
+
+	class BinaryCIMObjectPathWriter : public OW_CIMObjectPathResultHandlerIFC
+	{
+	public:
+		BinaryCIMObjectPathWriter(std::ostream& ostrm_)
+		: ostrm(ostrm_)
+		{}
+	protected:
+		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
+		{
+			OW_BinIfcIO::writeObjectPath(ostrm, cop);
+		}
+	private:
+		std::ostream& ostrm;
+	};
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -426,25 +441,6 @@ OW_BinaryRequestHandler::enumClasses(OW_CIMOMHandleIFCRef chdl,
 	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 	OW_BinIfcIO::write(ostrm, OW_END_CLSENUM);
 
-//     OW_Bool enumWritten = false;
-//     if(ccenum.usingTempFile() && m_userId != OW_UserId(-1))
-//     {
-//         OW_String tfileName = ccenum.releaseFile();
-//         if(!(enumWritten = writeFileName(ostrm, tfileName)))
-//         {
-//             ccenum = OW_CIMClassEnumeration(tfileName);
-//         }
-//     }
-//
-//     if(!enumWritten)
-//     {
-//         OW_BinIfcIO::write(ostrm, OW_Int32(ccenum.numberOfElements()));
-//
-//         while(ccenum.hasMoreElements())
-//         {
-//             OW_BinIfcIO::writeClass(ostrm, ccenum.nextElement());
-//         }
-//     }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -624,9 +620,14 @@ OW_BinaryRequestHandler::enumClassNames(OW_CIMOMHandleIFCRef chdl,
 	OW_CIMObjectPath op(OW_BinIfcIO::readObjectPath(istrm));
 	OW_Bool deep(OW_BinIfcIO::readBool(istrm));
 
-	OW_CIMObjectPathEnumeration en = chdl->enumClassNames(op, deep);
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	writeObjectPathEnum(ostrm, en);
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_OPENUM);
+	BinaryCIMObjectPathWriter handler(ostrm);
+	chdl->enumClassNames(op, handler, deep);
+
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_OPENUM);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -334,7 +334,7 @@ OW_BinIfcIO::readStringArray(std::istream& istrm)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 OW_CIMObjectPathEnumeration
-OW_BinIfcIO::readObjectPathEnum(std::istream& istrm)
+OW_BinIfcIO::readObjectPathEnum(std::istream& istrm) // TODO: Remove me
 {
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_OPENUM);
 	OW_CIMObjectPathEnumeration en;
@@ -361,26 +361,32 @@ OW_BinIfcIO::readObjectPathEnum(std::istream& istrm)
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
 void
+OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
+{
+	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_OPENUM);
+	bool done = false;
+	while (!done)
+	{
+		try
+		{
+			result.handleObjectPath(OW_BinIfcIO::readObjectPath(istrm));
+		}
+		catch (const OW_BadCIMSignatureException& e)
+		{
+			// OW_CIMObjectPath::readObject threw because we've read all the classes
+			OW_BinIfcIO::verifySignature(istrm, OW_END_OPENUM);
+			done = true;
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+// STATIC
+void
 OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result)
 {
 	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_CLSENUM);
-//	OW_Int32 size;
-//	OW_BinIfcIO::read(istrm, size);
-//	if(size == -1)
-//	{
-//		OW_String fname = OW_BinIfcIO::readString(istrm);
-//		en = OW_CIMClassEnumeration(fname);
-//	}
-//	else
-//	{
-//		while(size)
-//		{
-//			en.addElement(OW_BinIfcIO::readClass(istrm));
-//			size--;
-//		}
-//	}
-
-//	return en;
 	bool done = false;
 	while (!done)
 	{

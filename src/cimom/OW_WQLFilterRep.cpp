@@ -184,8 +184,9 @@ OW_WQLFilterRep::enumClasses(const OW_CIMObjectPath&,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_WQLFilterRep::enumClassNames(const OW_CIMObjectPath &/*path*/,
+	OW_CIMObjectPathResultHandlerIFC&,
 	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
 {
 	OW_THROWCIMMSG(OW_CIMException::INVALID_QUERY, "Only EnumInstances() "

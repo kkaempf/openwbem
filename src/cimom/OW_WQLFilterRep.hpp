@@ -280,8 +280,10 @@ public:
 	 * @exception OW_CIMException  	If the specified CIMObjectPath object
 	 *											cannot be foundl
 	 */
-	virtual OW_CIMObjectPathEnumeration enumClassNames(
-		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo& aclInfo);
+	virtual void enumClassNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular

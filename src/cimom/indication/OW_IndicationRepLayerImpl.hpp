@@ -67,8 +67,10 @@ public:
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
 		OW_Bool includeClassOrigin, const OW_ACLInfo& aclInfo);
 
-	virtual OW_CIMObjectPathEnumeration enumClassNames(
-		const OW_CIMObjectPath &path, OW_Bool deep, const OW_ACLInfo& aclInfo);
+	virtual void enumClassNames(
+		const OW_CIMObjectPath &path,
+		OW_CIMObjectPathResultHandlerIFC& result,
+		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	virtual OW_CIMInstance deleteInstance(const OW_CIMObjectPath &path,
 		const OW_ACLInfo& aclInfo);

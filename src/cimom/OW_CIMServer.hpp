@@ -297,7 +297,8 @@ public:
 	 *		CIM_ERR_INVALID_CLASS
 	 *		CIM_ERR_FAILED
 	 */
-	OW_CIMObjectPathEnumeration enumClassNames(const OW_CIMObjectPath& path,
+	void enumClassNames(const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
 
 	/**

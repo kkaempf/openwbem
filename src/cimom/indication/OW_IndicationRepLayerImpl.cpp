@@ -42,6 +42,9 @@
 
 #include <iostream>
 
+											
+// TODO: inline some of these 1-line pass-thru functions.											
+											
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationRepLayerImpl::OW_IndicationRepLayerImpl(OW_CIMServer* pRepos) :
 	OW_IndicationRepLayer(), m_pServer(pRepos)
@@ -170,11 +173,12 @@ OW_IndicationRepLayerImpl::enumClasses(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_IndicationRepLayerImpl::enumClassNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
 	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->enumClassNames(path, deep, aclInfo);
+	m_pServer->enumClassNames(path, result, deep, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -147,7 +147,7 @@ void enumClassNames(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMObjectPath cop("", "/root/acltest");
-		OW_CIMObjectPathEnumeration enu = hdl.enumClassNames(cop, true);
+		OW_CIMObjectPathEnumeration enu = hdl.enumClassNamesE(cop, true);
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

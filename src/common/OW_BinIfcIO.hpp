@@ -104,7 +104,8 @@ public:
 
 	static OW_StringArray readStringArray(std::istream& istrm);
 
-	static OW_CIMObjectPathEnumeration readObjectPathEnum(std::istream& istrm);
+	static OW_CIMObjectPathEnumeration readObjectPathEnum(std::istream& istrm); // TODO: remove me
+	static void readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result);
 
 	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
 
@@ -168,6 +169,7 @@ const OW_Int32 OW_BINSIG_VALUEARRAY =	0xa000000e;
 const OW_Int32 OW_BINSIG_INSTARRAY =	0xa000000f;
 
 const OW_Int32 OW_END_CLSENUM =			0x00001001;
+const OW_Int32 OW_END_OPENUM =			0x00001002;
 
 #endif	// OW_BINIFCIO_HPP_
 

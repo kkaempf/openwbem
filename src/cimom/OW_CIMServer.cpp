@@ -842,22 +842,6 @@ namespace
 		OW_CIMObjectPath& lcop;
 	};
 
-	class CIMObjectPathEnumerationBuilder : public OW_CIMObjectPathResultHandlerIFC
-	{
-	public:
-		CIMObjectPathEnumerationBuilder(OW_CIMObjectPathEnumeration& enu_)
-		: enu(enu_)
-		{}
-
-	protected:
-		virtual void doHandleObjectPath(const OW_CIMObjectPath &cop)
-		{
-			enu.addElement(cop);
-		}
-	private:
-		OW_CIMObjectPathEnumeration& enu;
-	};
-	
 	class CIMClassEnumerationBuilder : public OW_CIMClassResultHandlerIFC
 	{
 	public:
@@ -876,33 +860,21 @@ namespace
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
-OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path, OW_Bool deep,
-	const OW_ACLInfo& aclInfo)
+void
+OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path,
+	OW_CIMObjectPathResultHandlerIFC& result,
+	OW_Bool deep, const OW_ACLInfo& aclInfo)
 {
 	// Check to see if user has rights to enumerate classes
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSNAMES, path, aclInfo);
 
 	try
 	{
-		OW_CIMObjectPathEnumeration openum;
-		CIMObjectPathEnumerationBuilder enumHandler(openum);
-
 		OW_CIMObjectPath lcop(path);
 		lcop.setKeys(OW_CIMPropertyArray());
-		CIMClassToCIMObjectPathHandler handler(enumHandler,lcop);
+		CIMClassToCIMObjectPathHandler handler(result,lcop);
 		m_mStore.enumClass(path.getNameSpace(), path.getObjectName(), handler,
 			deep, false, true, true);
-
-
-//         while(cenum.hasMoreElements())
-//         {
-//             OW_CIMClass cc = cenum.nextElement();
-//             lcop.setObjectName(cc.getName());
-//             openum.addElement(lcop);
-//         }
-
-		return openum;
 	}
 	catch (OW_HDBException&)
 	{

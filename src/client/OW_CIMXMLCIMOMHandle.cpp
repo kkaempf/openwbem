@@ -488,8 +488,9 @@ OW_CIMXMLCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMObjectPathEnumeration
+void
 OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
+		OW_CIMObjectPathResultHandlerIFC& result,
 		OW_Bool deep)
 {
 	static const char* const commandName = "EnumerateClassNames";
@@ -511,17 +512,13 @@ OW_CIMXMLCIMOMHandle::enumClassNames(const OW_CIMObjectPath& path,
 	}
 
 	node = node.getChild();
-	OW_CIMObjectPathEnumeration retval;
 
 	while (node)
 	{
-		//OW_CIMObjectPath cop(node);
 		OW_CIMObjectPath cop = OW_XMLCIMFactory::createObjectPath(node);
-		retval.addElement(cop);
+		result.handleObjectPath(cop);
 		node = node.getNext();
 	}
-
-	return retval;
 }
 
 //////////////////////////////////////////////////////////////////////////////
