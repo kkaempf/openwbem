@@ -12,8 +12,12 @@ Makefile-shared-lib-inst.inc \
 openwbem.spec \
 generic-company-openwbem.spec.in
 
-CLEANFILES = Doxyfile $(PACKAGE_PREFIX_D)openwbem.spec
+CLEANFILES = Doxyfile
 
+clean-local:
+	if [ -n "$(PACKAGE_PREFIX_D)" ]; then \
+		rm -f $(PACKAGE_PREFIX_D)openwbem.spec; \
+	fi
 
 SUFFIXES = .sh 
 
