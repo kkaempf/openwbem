@@ -279,7 +279,7 @@ case "$host" in
 *-*-freebsd*)
 	AC_DEFINE(FREEBSD)
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
-	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread -Wno-deprecated"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
 	CXXCOMMONLINKFLAGS="-pthread"
 	CXXBINLINKFLAGS="-Wl,-Bdynamic $LDFLAGS"
 	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@'
