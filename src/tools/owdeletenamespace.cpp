@@ -114,11 +114,8 @@ int main(int argc, char* argv[])
 			rch = new OW_CIMXMLCIMOMHandle(client);
 		}
 
-		OW_CIMUrl nsurl(url);
-		OW_CIMNameSpace toCreate(url, ns);
-
 		cout << "Deleting namespace (" << ns << ")" << endl;
-		rch->deleteNameSpace(toCreate);
+		rch->deleteNameSpace(ns);
 
 		return 0;
 	}

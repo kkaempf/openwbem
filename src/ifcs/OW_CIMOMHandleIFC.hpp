@@ -119,11 +119,10 @@ public:
 
 	/**
 	 * Delete a specified namespace.
-	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
-	 *					to delete.
+	 * @param ns	The namespace to delete.
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
-	virtual void deleteNameSpace(const OW_CIMNameSpace& ns) = 0;
+	virtual void deleteNameSpace(const OW_String& ns) = 0;
 
 	/**
 	 * Gets a list of the namespaces within the namespace specified by the CIM

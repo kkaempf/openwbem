@@ -252,11 +252,10 @@ public:
 
 	/**
 	 * Delete a specified namespace.
-	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
-	 *					to delete.
+	 * @param ns	The namespace to delete.
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
-	void deleteNameSpace(const OW_CIMNameSpace &ns, const OW_ACLInfo& aclInfo)
+	void deleteNameSpace(const OW_String &ns, const OW_ACLInfo& aclInfo)
 	{
 		m_pServer->deleteNameSpace(ns, aclInfo);
 	}

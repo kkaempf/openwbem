@@ -577,7 +577,7 @@ public:
 	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
 	 *					to delete.
 	 */
-	virtual void deleteNameSpace(const OW_CIMNameSpace &ns);
+	virtual void deleteNameSpace(const OW_String &ns);
 
 	/**
 	 * Create a cim namespace.

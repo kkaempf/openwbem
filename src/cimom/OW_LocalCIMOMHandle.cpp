@@ -96,7 +96,7 @@ OW_LocalCIMOMHandle::close()
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::deleteNameSpace(const OW_CIMNameSpace& ns)
+OW_LocalCIMOMHandle::deleteNameSpace(const OW_String& ns)
 {
 	OW_WriteLock wl = getWriteLock();
 	m_pServer->deleteNameSpace(ns, m_aclInfo);

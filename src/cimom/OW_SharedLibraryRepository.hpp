@@ -63,7 +63,7 @@ public:
 		m_ref->createNameSpace(ns, aclInfo);
 	}
 
-	virtual void deleteNameSpace(const OW_CIMNameSpace &ns,
+	virtual void deleteNameSpace(const OW_String& ns,
 		const OW_ACLInfo &aclInfo)
 	{
 		m_ref->deleteNameSpace(ns, aclInfo);

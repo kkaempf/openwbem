@@ -89,12 +89,11 @@ public:
 
 	/**
 	 * Delete a specified namespace.
-	 * @param ns	The OW_CIMNameSpace object that identifies the namespace
-	 *					to delete.
+	 * @param ns	The namespace to delete.
 	 * @param aclInfo ACL object describing user making request.
 	 * @exception OW_CIMException If the namespace does not exist.
 	 */
-	virtual void deleteNameSpace(const OW_CIMNameSpace& ns, const OW_ACLInfo& aclInfo);
+	virtual void deleteNameSpace(const OW_String& ns, const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Get an existing qualifier type from the repository.

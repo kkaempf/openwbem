@@ -449,22 +449,20 @@ OW_CIMServer::createNameSpace(const OW_String& ns,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::deleteNameSpace(const OW_CIMNameSpace& ns,
+OW_CIMServer::deleteNameSpace(const OW_String& ns,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_String nsName = ns.getNameSpace();
-
 	// Check to see if user has rights to delete the namespace
-	m_accessMgr->checkAccess(OW_AccessMgr::DELETENAMESPACE, nsName, aclInfo);
+	m_accessMgr->checkAccess(OW_AccessMgr::DELETENAMESPACE, ns, aclInfo);
 
-	if(nsName.length() == 0)
+	if(ns.length() == 0)
 	{
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
 
-	m_nStore.deleteNameSpace(nsName);
-	m_iStore.deleteNameSpace(nsName);
-	m_mStore.deleteNameSpace(nsName);
+	m_nStore.deleteNameSpace(ns);
+	m_iStore.deleteNameSpace(ns);
+	m_mStore.deleteNameSpace(ns);
 }
 
 //////////////////////////////////////////////////////////////////////////////

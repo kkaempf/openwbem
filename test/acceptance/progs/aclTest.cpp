@@ -705,9 +705,7 @@ void deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing deleteNameSpace() *******\n" << endl;
 	try
 	{
-		OW_CIMNameSpace ns(true);
-		ns.setNameSpace("/root/acltest/Caldera");
-		hdl.deleteNameSpace(ns);
+		hdl.deleteNameSpace("/root/acltest/Caldera");
 		if (mode != "w" && mode != "rw")
 			assert(0);
 	}

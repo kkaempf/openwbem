@@ -57,23 +57,21 @@ OW_NameSpaceProvider::deleteInstance(
 			"root namespace cannot be deleted");
 	}
 
-	OW_CIMNameSpace ns = cop.getFullNameSpace();
-	OW_String nsName;
-
-	for(size_t i = 0; i < pra.size(); i++)
+	OW_CIMProperty nameProp = cop.getKey(OW_CIMProperty::NAME_PROPERTY);
+	if (!nameProp)
 	{
-		if(pra[i].getName().equalsIgnoreCase(OW_CIMProperty::NAME_PROPERTY))
-		{
-			OW_CIMValue cv = pra[i].getValue();
-			if(!cv)
-			{
-				OW_THROWCIMMSG(OW_CIMException::FAILED,
-					"Name property doesn't have a value");
-			}
-			cv.get(nsName);
-			break;
-		}
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Name property not found");
 	}
+	
+	OW_CIMValue cv = nameProp.getValue();
+	if(!cv)
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Name property doesn't have a value");
+	}
+	OW_String nsName;
+	cv.get(nsName);
 
 	if(nsName.length() == 0)
 	{
@@ -81,10 +79,9 @@ OW_NameSpaceProvider::deleteInstance(
 			"Name property contains an empty value");
 	}
 
-	nsName = ns.getNameSpace() + "/" + nsName;
-	ns.setNameSpace(nsName);
+	OW_String newns = cop.getNameSpace() + "/" + nsName;
 
-	env->getCIMOMHandle()->deleteNameSpace(ns);
+	env->getCIMOMHandle()->deleteNameSpace(newns);
 }
 
 namespace

@@ -1341,9 +1341,7 @@ deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace ns(true);
-		ns.setNameSpace("/root/Caldera");
-		hdl.deleteNameSpace(ns);
+		hdl.deleteNameSpace("/root/Caldera");
 	}
 	catch (OW_CIMException& e)
 	{
