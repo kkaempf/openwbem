@@ -190,15 +190,15 @@ int PopenStreamsImpl::getExitStatus()
 	// then this will cause it to get a SIGPIPE, and it may be able to clean
 	// up after itself.
 	UnnamedPipeRef upr;
-	if (upr = in()) 
+	if (upr = in())
 	{
 		upr->close();
 	}
-	if (upr = out()) 
+	if (upr = out())
 	{
 		upr->close();
 	}
-	if (upr = err()) 
+	if (upr = err())
 	{
 		upr->close();
 	}
@@ -616,7 +616,7 @@ executeProcessAndGatherOutput(const Array<String>& command,
 	SingleStringInputCallback singleStringInputCallback(input);
 
 	StringOutputGatherer gatherer(output, outputLimit);
-	gatherOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
+	processInputOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
 
 	if (processStatuses[0].hasExited())
 	{
@@ -638,7 +638,7 @@ gatherOutput(String& output, PopenStreams& stream, int& processStatus, int timeo
 
 	StringOutputGatherer gatherer(output, outputLimit);
 	SingleStringInputCallback singleStringInputCallback = SingleStringInputCallback(String());
-	gatherOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
+	processInputOutput(gatherer, streams, processStatuses, singleStringInputCallback, timeoutSecs);
 	if (processStatuses[0].hasExited())
 	{
 		processStatus = processStatuses[0].getStatus();
@@ -691,7 +691,7 @@ namespace
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses, InputCallback& input, int timeoutsecs)
+processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses, InputCallback& input, int timeoutsecs)
 {
 	processStatuses.clear();
 	processStatuses.resize(streams.size());
@@ -878,7 +878,7 @@ gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<Process
 					else
 					{
 						buff[readrc] = '\0';
-						output.handleData(buff, readrc, readstream == streams[streamIndex].out() ? E_STDOUT : E_STDERR, streams[streamIndex], 
+						output.handleData(buff, readrc, readstream == streams[streamIndex].out() ? E_STDOUT : E_STDERR, streams[streamIndex],
 							streamIndex, inputs[streamIndex]);
 					}
 				}

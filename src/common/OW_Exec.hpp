@@ -277,15 +277,17 @@ namespace Exec
 	};
 
 	/**
-	 * Wait for output from child processes.  The function returns when the
+	 * Send input and wait for output from child processes.  The function returns when the
 	 * processes have exited. In the case that a child process doesn't exit, if a
 	 * timout is specified, then an ExecTimeoutException is thrown.
+	 * If an exception is thrown by the OutputCallback or InputCallback, it will not be
+	 * caught.
 	 *
 	 * @param output A callback, whenever data is received from a process, it will
 	 *  be passed to output.handleData().
-	 * 
+	 *
 	 * @param streams The connections to the child processes.
-	 * 
+	 *
 	 * @param processstatus An out parameter, which will contain a enum flag
 	 *  indicating if the process has exited, and if it has, the processes'
 	 *  status. The ProcessStatus::status value, if ProcessStatus::running == E_PROCESS_RUNNING,
@@ -295,13 +297,13 @@ namespace Exec
 	 *  If processStatuses.size() != streams.size(), it will be resized.
 	 *  Each element will be set to (E_PROCESS_RUNNING, 0) or else
 	 *  (E_PROCESS_EXITED, the status of the exited process).
-	 * 
+	 *
 	 * @param timeoutSecs Specifies the number of seconds to wait for all the
 	 *  processes to exit. If no output has been received and all the processes
 	 *  haven't exited after timeoutSecs seconds, an ExecTimeoutException will
 	 *  be thrown. If timeoutSecs == INFINITE_TIMEOUT, the timeout will be infinite, and no
 	 *  exception will ever be thrown.
-	 * 
+	 *
 	 * @param input Callback to provide data to be written to the process(es) standard input.
 	 *  input.getData() will be called once for each stream, and subsequently once every time
 	 *  data has been written to a process. output.handleData() may also provide input data
@@ -310,7 +312,7 @@ namespace Exec
 	 * @throws ExecErrorException on error.
 	 * @throws ExecTimeoutException if the process hasn't finished within timeoutSecs.
 	 */
-	OW_COMMON_API void gatherOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses,
+	OW_COMMON_API void processInputOutput(OutputCallback& output, Array<PopenStreams>& streams, Array<ProcessStatus>& processStatuses,
 		InputCallback& input, int timeoutSecs = INFINITE_TIMEOUT);
 	
 	/**
@@ -340,31 +342,31 @@ namespace Exec
 	 * @param command
 	 *  command[0] is the binary to be executed.
 	 *  command[1] .. command[n] are the command line parameters to the command.
-	 * 
+	 *
 	 * @param output An out parameter, the process output will be appended to
 	 *  this string.
-	 * 
+	 *
 	 * @param streams The connection to the child process.
-	 * 
+	 *
 	 * @param processstatus An out parameter, which will contain the process
 	 *  status.  It is only valid if the funtion returns. In the case an
 	 *  exception is thrown, it's undefined. It should be evaluated using the
 	 *  family of macros (WIFEXITED(), WEXITSTATUS(), etc.) from "sys/wait.h"
-	 * 
+	 *
 	 * @param timeoutsecs Specifies the number of seconds to wait for the
 	 *  process to exit. If the process hasn't exited after timeoutsecs seconds,
 	 *  an ExecTimeoutException will be thrown, and the process will be
 	 *  killed.
 	 *  If timeoutsecs == INFINITE_TIMEOUT, the timeout will be infinite, and a
 	 *  ExecTimeoutException will not be thrown.
-	 * 
+	 *
 	 * @param outputlimit Specifies the maximum size of the parameter output,
 	 *  in order to constrain possible memory usage.  If the process outputs
 	 *  more data than will fit into output, then an ExecBufferFullException
 	 *  is thrown, and the process will be killed.
 	 *  If outputlimit < 0, the limit will be infinite, and an
 	 *  ExecBufferFullException will not be thrown.
-	 * 
+	 *
 	 * @param input Data to be written to the child's stdin. After the data has been
 	 *  written, stdin will be closed.
 	 *

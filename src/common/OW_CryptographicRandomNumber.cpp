@@ -560,7 +560,7 @@ class RandomTimerThread : public Thread
 } // end unnamed namespace
 
 /////////////////////////////////////////////////////////////////////////////
-void 
+void
 CryptographicRandomNumber::initRandomness()
 {
 	// with OpenSSL 0.9.7 calling RAND_status() will try to load sufficient randomness, so hopefully we won't have to do anything.
@@ -690,7 +690,7 @@ CryptographicRandomNumber::initRandomness()
 	const int RANDOM_COMMAND_TIMEOUT = 10;
 	try
 	{
-		gatherOutput(randomOutputGatherer, streams, processStatuses, randomInputCallback, RANDOM_COMMAND_TIMEOUT);
+		Exec::processInputOutput(randomOutputGatherer, streams, processStatuses, randomInputCallback, RANDOM_COMMAND_TIMEOUT);
 	}
 	catch (ExecTimeoutException&)
 	{

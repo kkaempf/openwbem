@@ -230,7 +230,7 @@ void OW_ExecTestCases::testgatherOutput()
 
 		TestOutputGatherer testOutputGatherer(outputs);
 		Array<Exec::ProcessStatus> processStatuses;
-		gatherOutput(testOutputGatherer, streams, processStatuses, inputs, Exec::INFINITE_TIMEOUT);
+		processInputOutput(testOutputGatherer, streams, processStatuses, inputs, Exec::INFINITE_TIMEOUT);
 		unitAssert(processStatuses.size() == size_t(TEST_PROC_COUNT));
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{
@@ -255,7 +255,7 @@ void OW_ExecTestCases::testgatherOutput()
 			PopenStreams curStream(Exec::safePopen(String("/bin/cat").tokenize()));
 			streams.push_back(curStream);
 			outputs.push_back(make_pair(curStream, String()));
-			String num(i); 
+			String num(i);
 			num += '\n';
 			inputData.push_back(Array<char>(num.c_str(), num.c_str() + num.length()));
 		}
@@ -263,7 +263,7 @@ void OW_ExecTestCases::testgatherOutput()
 
 		TestOutputGatherer testOutputGatherer(outputs);
 		Array<Exec::ProcessStatus> processStatuses;
-		gatherOutput(testOutputGatherer, streams, processStatuses, inputs, Exec::INFINITE_TIMEOUT);
+		processInputOutput(testOutputGatherer, streams, processStatuses, inputs, Exec::INFINITE_TIMEOUT);
 		unitAssert(processStatuses.size() == size_t(TEST_PROC_COUNT));
 		for (int i = 0; i < TEST_PROC_COUNT; ++i)
 		{
@@ -301,7 +301,7 @@ void OW_ExecTestCases::testgatherOutput()
 		Array<Exec::ProcessStatus> processStatuses;
 		try
 		{
-			gatherOutput(testOutputGatherer, streams, processStatuses, inputs, TEST_TIMEOUT);
+			processInputOutput(testOutputGatherer, streams, processStatuses, inputs, TEST_TIMEOUT);
 			unitAssert(0);
 		}
 		catch (ExecTimeoutException& e)
