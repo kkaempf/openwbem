@@ -406,9 +406,9 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	{
 		ostr << "<QUALIFIER NAME=\"ASSOCIATION\" TYPE=\"boolean\" ";
 		OW_CIMQualifierArray::const_iterator iter = std::find(
-			cc.getQualifiers().begin(), cc.getQualifiers().end(), 
+			cc.getQualifiers().begin(), cc.getQualifiers().end(),
 			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
-		if (iter == cc.getQualifiers().end() && !localOnly)
+		if (iter == cc.getQualifiers().end() && localOnly == OW_CIMtoXMLFlags::localOnly)
 		{
 			ostr << "PROPAGATED=\"true\" ";
 		}

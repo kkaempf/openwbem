@@ -125,26 +125,6 @@ OW_Exception&
 OW_Exception::operator=( const OW_Exception& rhs )
 {
 	OW_Exception(rhs).swap(*this);
-	/*
-	if (this != &rhs)
-	{
-		freeBuf(&m_file);
-		freeBuf(&m_msg);
-
-		if(rhs.m_file)
-		{
-			m_file = new char[strlen(rhs.m_file)+1];
-			strcpy(m_file, rhs.m_file);
-		}
-
-		if(rhs.m_msg)
-		{
-			m_msg = new char[strlen(rhs.m_msg)+1];
-			strcpy(m_msg, rhs.m_msg);
-		}
-
-	}
-	*/
 	return *this;
 }
 

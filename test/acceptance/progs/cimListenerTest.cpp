@@ -377,6 +377,9 @@ int main(int argc, char* argv[])
 		OW_Array<OW_String> registrationHandles;
 		OW_String handle;
 
+		if (getenv("OWLONGTEST"))
+		{
+		}
 		
 		handle = hxcl.registerForIndication(url, cop,
 			"select * from OW_TestIndication1 where TheClass ISA "

@@ -184,7 +184,7 @@ OW_IndicationExporter::checkNodeForCIMError(OW_XMLNode reply,
 	OW_XMLNode tempReply =
 		reply.findElement(OW_XMLNode::XML_ELEMENT_EXPMETHODRESPONSE);
 
-	OW_String nameOfMethod = reply.getAttribute("NAME");
+	OW_String nameOfMethod = reply.getAttribute(OW_XMLAttribute::NAME);
 	if (nameOfMethod.length() < 1)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,

@@ -224,8 +224,8 @@ OW_XMLNodeImpl::getAttribute(const OW_String& name, OW_Bool throwException)
 	{
 		OW_XMLAttribute attr = m_XMLAttrArray[i];
 
-		// TODO:  Should this be case insensentive?
-		if (attr.getName().equalsIgnoreCase(name))
+		// Should this be case insensentive? NO
+		if (attr.getName().equals(name))
 		{
 			return attr.getValue();
 		}
@@ -506,8 +506,8 @@ OW_XMLNodeImpl::extractParameterStringArray(const OW_String& value, OW_Bool& fou
 		for (unsigned int j = 0; j < nodeattrs.size(); j++)
 		{
 			nattr = nodeattrs[j];
-			if (nattr.getName().equalsIgnoreCase(OW_XMLOperationGeneric::paramName)
-				 && nattr.getValue().equalsIgnoreCase(value))
+			if (nattr.getName().equals(OW_XMLOperationGeneric::paramName)
+				 && nattr.getValue().equals(value))
 			{
 				node = node.getChild();
 				if (!node)
@@ -551,7 +551,7 @@ OW_XMLNodeImpl::extractParameterValueAttr(const OW_String& iparamName,
 
 		OW_String attr = tmpNode.getAttribute(OW_XMLOperationGeneric::paramName);
 
-		if (!attr.equalsIgnoreCase(iparamName))
+		if (!attr.equals(iparamName))
 		{
 			continue;
 		}
@@ -616,8 +616,8 @@ OW_XMLNodeImpl::extractParameterValue(const OW_String& value,
 		for (unsigned int j = 0; j < nodeattrs.size(); j++)
 		{
 			nattr = nodeattrs[j];
-			if (nattr.getName().equalsIgnoreCase(OW_XMLOperationGeneric::paramName)
-				 && nattr.getValue().equalsIgnoreCase(value))
+			if (nattr.getName().equals(OW_XMLOperationGeneric::paramName)
+				 && nattr.getValue().equals(value))
 			{
 				node = node.getChild();
 				if (!node)
@@ -654,8 +654,8 @@ OW_XMLNodeImpl::findElementAndParameter(const OW_String& nameOfParameter)
 		for (unsigned int j = 0; j < nodeattrs.size(); j++)
 		{
 			OW_XMLAttribute nattr = nodeattrs[j];
-			if (nattr.getName().equalsIgnoreCase(OW_XMLOperationGeneric::paramName)
-				 && nattr.getValue().equalsIgnoreCase(nameOfParameter))
+			if (nattr.getName().equals(OW_XMLOperationGeneric::paramName)
+				 && nattr.getValue().equals(nameOfParameter))
 				return(node.getChild().m_impl);
 		}
 	}

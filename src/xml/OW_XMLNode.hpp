@@ -480,18 +480,15 @@ public:
 		OW_Bool& found);
 
 	OW_String extractParameterValueAttr(const OW_String& iparamName,
-			tokenId tokenid, const OW_String& attrName)
-		/*throw (OW_CIMException)*/;
+			tokenId tokenid, const OW_String& attrName);
 
 	OW_Bool extractParameterValue(const OW_String& value, OW_Bool defaultValue);
 
 	OW_String extractParameterValue(const OW_String& value,
-			const OW_String& defaultValue) /*throw (OW_CIMException)*/;
-	OW_XMLNode findElementAndParameter(const OW_String& nameOfParameter)
-		/*throw (OW_CIMException)*/;
+			const OW_String& defaultValue);
+	OW_XMLNode findElementAndParameter(const OW_String& nameOfParameter);
 
 	OW_String mustExtractParameterValue(const OW_String& value);
-	//throw(OW_CIMException);
 
 private:
 	void setNodeType(OW_String nodeName);

@@ -463,7 +463,7 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 							cop = createObjectPath(valueNode);
 							break;
 						case OW_XMLNode::XML_ELEMENT_CLASSNAME:
-							cop.setObjectName(node.mustGetAttribute("Name"));
+							cop.setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME));
 							break;
 						case OW_XMLNode::XML_ELEMENT_INSTANCENAME:
 							OW_XMLClass::getInstanceName(valueNode, cop);
@@ -495,7 +495,7 @@ OW_XMLCIMFactory::createValue(OW_XMLNode const& nodeArg,
 						cop = createObjectPath(valueNode);
 						break;
 					case OW_XMLNode::XML_ELEMENT_CLASSNAME:
-						cop.setObjectName(node.mustGetAttribute("Name"));
+						cop.setObjectName(node.mustGetAttribute(OW_XMLAttribute::NAME));
 						break;
 					case OW_XMLNode::XML_ELEMENT_INSTANCENAME:
 						OW_XMLClass::getInstanceName(valueNode, cop);

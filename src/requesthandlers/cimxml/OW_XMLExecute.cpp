@@ -915,7 +915,12 @@ OW_XMLExecute::getClass(ostream& ostr, OW_XMLNode& node,
 	includeClassOrigin = node.extractParameterValue(XMLP_ORIGIN, OW_Bool(false));
 
 	path.setObjectName(className);
-	cimClass = hdl.getClass(path, localOnly);
+
+	cimClass = hdl.getClass(path, localOnly, includeQualifiers,
+		includeClassOrigin,
+		isPropertyList ? &propertyList : 0);
+	//OW_CIMClasstoXML(cimClass, ostr);
+	// Unfortunately this causes problems... Need to fix them.
 
 
 	OW_CIMtoXML(cimClass, ostr,
@@ -973,15 +978,9 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
 	path = OW_XMLCIMFactory::createObjectPath(node);
 	path.setNameSpace(ns);
 
-	OW_CIMInstance cimInstance = hdl.getInstance(path, localOnly);
-	if(!cimInstance)
-	{
-		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND,
-			format("Path=%1", path.toString()).c_str());
-	}
-
-	OW_CIMClass cc = hdl.getClass(path, false);
-	cimInstance.syncWithClass(cc, includeQualifiers);
+	OW_CIMInstance cimInstance = hdl.getInstance(path, localOnly,
+		includeQualifiers, includeClassOrigin,
+		isPropertyList ? &propertyList : 0);
 
 	OW_CIMtoXML(cimInstance, ostr, OW_CIMObjectPath(),
 		localOnly ? OW_CIMtoXMLFlags::localOnly : OW_CIMtoXMLFlags::notLocalOnly,
@@ -989,9 +988,6 @@ OW_XMLExecute::getInstance(ostream& ostr, OW_XMLNode& node,
 		includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 		propertyList,
 		(isPropertyList && propertyList.size() == 0));
-	//cimInstance.toXML(ostr, OW_CIMObjectPath(), localOnly,
-	//	includeQualifiers, includeClassOrigin, propertyList,
-	//	(isPropertyList && propertyList.size() == 0));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1001,7 +997,7 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
 {
 	OW_String propertyName=propNode.mustExtractParameterValue(XMLP_PROPERTYNAME);
 
-	propNode=propNode.findElementAndParameter(XMLP_INSTANCENAME);
+	propNode=propNode.findElementAndParameter("InstanceName");
 	if (!propNode)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -1016,7 +1012,6 @@ OW_XMLExecute::getProperty(ostream& ostr, OW_XMLNode& propNode,
 
 	if (cv)
 		OW_CIMtoXML(cv, ostr);
-		//cv.toXML(ostr);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1031,7 +1026,6 @@ OW_XMLExecute::getQualifier(ostream& ostr, OW_XMLNode& node,
 	if (qual)
 	{
 		OW_CIMtoXML(qual, ostr);
-		//qual.toXML(ostr);
 	}
 }
 
@@ -1135,7 +1129,6 @@ OW_XMLExecute::referenceNames(ostream& ostr, OW_XMLNode& node,
 		OW_CIMObjectPath cop = enu.nextElement();
 
 		OW_CIMtoXML(cop, ostr, OW_CIMtoXMLFlags::isNotInstanceName);
-		//cop.toXML(ostr);
 	}
 }
 
@@ -1145,7 +1138,6 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
 {
 	OW_String className;
-	// OW_CIMOMHandleIFC::Enumeration enumerate; // TODO not impl
 	OW_Bool isPropertyList;
 	OW_Array<OW_String> propertyList;
 	OW_Bool includeQualifiers;
@@ -1203,10 +1195,6 @@ OW_XMLExecute::references(ostream& ostr, OW_XMLNode& node,
 			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 			propertyList, (isPropertyList && propertyList.size() == 0));
-		//ci.toXML(ostr, OW_CIMObjectPath(ci.getClassName(),ci.
-		//	getKeyValuePairs()), false, includeQualifiers, includeClassOrigin,
-		//	propertyList, (isPropertyList && propertyList.size() == 0));
-
 
 		ostr << "</VALUE.OBJECTWITHPATH>\r\n";
 	}
@@ -1240,7 +1228,7 @@ OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
 		propValue = OW_XMLCIMFactory::createValue(valueNode, valueType);
 	}
 
-	propNode = propNode.findElementAndParameter(XMLP_INSTANCENAME);
+	propNode = propNode.findElementAndParameter("InstanceName");
 	if(!propNode)
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
@@ -1286,7 +1274,6 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 			OW_CIMtoXMLFlags::includeQualifiers,
 			OW_CIMtoXMLFlags::includeClassOrigin,
 			OW_StringArray());
-		//cimInstance.toXML(ostr, cop);
 	}
 }
 
@@ -1348,7 +1335,7 @@ OW_XMLExecute::processSimpleReq(OW_XMLNode& node, ostream& ostrEntity,
 				"No <METHODCALL> or <IMETHODCALL> element");
 		}
 
-		m_functionName = newnode.mustGetAttribute("NAME");
+		m_functionName = newnode.mustGetAttribute(OW_XMLAttribute::NAME);
 
 		newnode = newnode.getChild();
 
@@ -1421,8 +1408,6 @@ void
 OW_XMLExecute::doOptions(OW_CIMFeatures& cf,
 	const OW_SortedVector<OW_String, OW_String>& /*handlerVars*/)
 {
-	//OW_ACLInfo acl("");
-	//cf = OW_Environment::getCIMOMHandle(acl, false).getServerFeatures();
 	cf = this->getEnvironment()->getCIMOMHandle("", false)->getServerFeatures();
 }
 

@@ -201,6 +201,18 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	}
 
 	// CIM_ERR_NOT_FOUND
+	try
+	{
+		OW_CIMObjectPath cop("CIM_PhysicalElement", "root");
+		cop.addKey("CreationClassName", OW_CIMValue(OW_String("fooKeyValue")));
+		cop.addKey("Tag", OW_CIMValue(OW_String("fooKeyValue")));
+		hdl->getInstance(cop);
+		assert(0);
+	}
+	catch (const OW_CIMException& e)
+	{
+		assert(e.getErrNo() == OW_CIMException::NOT_FOUND);
+	}
 
 }
 
