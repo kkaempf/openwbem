@@ -311,7 +311,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		{
 			_closeSocket(m_sockfd);
 			OW_THROW(SocketException,
-				Format("Failed to connect to: %1: %2(%3)", addr.getAddress(),
+				Format("Failed to connect to: %1: %2(%3)", addr.toString(),
 				lastError, SocketUtils::getLastErrorMsg()).c_str());
 		}
 

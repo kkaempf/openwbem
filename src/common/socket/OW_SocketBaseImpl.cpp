@@ -208,7 +208,7 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		{
 			::close(m_sockfd);
 			OW_THROW(SocketException,
-				Format("Failed to connect to: %1: %2(%3)", addr.getAddress(), errno, strerror(errno)).c_str());
+				Format("Failed to connect to: %1: %2(%3)", addr.toString(), errno, strerror(errno)).c_str());
 		}
 	}
 	if(n == -1) 
