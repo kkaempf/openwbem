@@ -183,6 +183,8 @@ CIMOMEnvironment::init()
 	_clearSelectables();
 	setConfigItem(ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, E_PRESERVE_PREVIOUS);
 	_loadConfigItemsFromFile(getConfigItem(ConfigOpts::CONFIG_FILE_opt));
+
+	// TODO: All these should go away, and the corresponding calls to getConfigItem should use the default.
 	setConfigItem(ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR, E_PRESERVE_PREVIOUS);
 	setConfigItem(ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR, E_PRESERVE_PREVIOUS);
 	// Location of log file
@@ -212,8 +214,8 @@ CIMOMEnvironment::init()
 		OW_DEFAULT_REQ_HANDLER_TTL, E_PRESERVE_PREVIOUS);
 
 	// Default Content-Language
-	setConfigItem(ConfigOpts::DEFAULT_CONTENT_LANGUAGE_opt, 
-		OW_DEFAULT_CONTENT_LANGUAGE, E_PRESERVE_PREVIOUS);
+	setConfigItem(ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, 
+		OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE, E_PRESERVE_PREVIOUS);
 }
 //////////////////////////////////////////////////////////////////////////////
 void

@@ -17,7 +17,7 @@
 ################################################################################
 # If owcimomd.allow_anonymous is set to true anonymous logins are allowed by
 # owcimomd, authentication is disabled and no user name or password is required.
-# The default for this option is false
+# The default is false
 ;owcimomd.allow_anonymous = false
 
 ################################################################################
@@ -26,8 +26,8 @@
 # all messages through the syslog interface (Recommended). If this option
 # is set to null, logging will be disabled completely.  If this option
 # is set to anything else, it is assumed it is an absolute path to a file
-# that owcimomd will write its log messages to. The default for this option
-# is syslog.
+# that owcimomd will write its log messages to. 
+# The default is syslog
 ;owcimomd.log_location = syslog
 
 ################################################################################
@@ -43,7 +43,7 @@
 # owcimomd.wql_lib specifies the location where the wql processor library
 # will be loaded from.
 # To disable WQL, either set this option to empty or comment it out.
-# The default for this option is "@libdir@/libowwql.@lib_ext@"
+# The default is "@libdir@/libowwql.@lib_ext@"
 owcimomd.wql_lib = @libdir@/libowwql.@lib_ext@
 
 ################################################################################
@@ -100,7 +100,8 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 
 ################################################################################
 # When this variable is set to true, the cimom will not attempt to
-# deliver indications.  The default value is false.
+# deliver indications.  
+# The default is false
 ;owcimomd.disable_indications = false
 
 ################################################################################
@@ -114,8 +115,8 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 ################################################################################
 # owcimomd.request_handler_TTL specifies how many minutes the request
 # handlers will stay loaded after they are accessed.  If the value of this
-# option is -1, the request handlers will never be unloaded.  The default
-# value is 5 minutes.
+# option is -1, the request handlers will never be unloaded.  
+# The default is 5
 ;owcimomd.request_handler_TTL = 5
 
 ################################################################################
@@ -124,7 +125,7 @@ simple_auth.password_file = @sysconfdir@/openwbem/simple_auth.passwd
 # associations and propagated keys.  Since these checks can add overhead,
 # it is recommended to enable this option during development and debugging
 # and disable it in production if the overhead is too expensive.
-# The default is false.
+# The default is false
 ;owcimomd.check_referential_integrity = false
 
 ################################################################################
@@ -169,7 +170,8 @@ owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@lib_ext@
 
 ################################################################################
 # owcimomd.interop_schema_namespace specifies the namespace which contains the
-# CIM Interop schema. The default is root.
+# CIM Interop schema. 
+# The default is root
 ;owcimomd.interop_schema_namespace = root
 
 ################################################################################
@@ -177,54 +179,59 @@ owcimomd.authorization2_lib = @libdir@/openwbem/libowsimpleauthorizer2.@lib_ext@
 # will keep a provider in memory.  If a provider has not been accessed for
 # longer than this value, it will be unloaded and the memory associated with
 # it will be freed.  If the value of this option is -1, the providers will
-# never be unloaded.  The default value is 5 minutes.
+# never be unloaded.  
+# The default is 5
 ;cppprovifc.prov_TTL = 5
 
 ################################################################################
 # The remote provider interface uses a connection pool to re-use remote 
 # connections. remoteprovifc.max_connections_per_url specifies the maximum
 # number of connections per url that will be pooled.  The value must be a
-# non-negative integer.  The default value is 5.
+# non-negative integer.  
+# The default is 5
 ;remoteprovifc.max_connections_per_url = 5
 
 ################################################################################
 # If OpenWBEM is built with zlib, it can use deflate compression in the HTTP
 # responses.  This option controls whether it will acutally use it or not.
-# The default is true.
+# The default is true
 ;http_server.enable_deflate = true
 
 ################################################################################
 # http_server.listen_addresses option specifies the local addresses to listen
 # on.  The option is a space delimited list.  Each item is either a hostname
-# or an IP address.  The value 0.0.0.0 means to listen on all local addresses,
-# and is the default.
+# or an IP address.  The value 0.0.0.0 means to listen on all local addresses.
+# The default is 0.0.0.0
 ;http_server.listen_addresses = 0.0.0.0
 
 ################################################################################
 # http_server.http_port option specifies the port number owcimomd will listen
-# on for all HTTP communications. The default for this option is 5988.
+# on for all HTTP communications.
 # Set this to -1 if you do not want to support HTTP connections (for
 # instance, you only want to support HTTPS connections).  If a value of 0
 # is given, a port will be dynamically assigned at run-time.
+# The default is 5988
 ;http_server.http_port = 5988
 
 ################################################################################
 # http_server.https_port specifies the port number owcimomd will listen on
-# for all HTTPS communications. The default for this option is 5989
+# for all HTTPS communications.
 # Set this to -1 if you do not want to support HTTPS connections.
 # If a value of 0 is given, a port will be dynamically assigned at run-time.
+# The default is 5989
 ;http_server.https_port = 5989
 
 ################################################################################
 # http_server.max_connections specifies the maximum number of concurrent
-# connections owcimomd will handle. The default for this option is 30
+# connections owcimomd will handle.
+# The default is 30
 ;http_server.max_connections = 30
 
 ################################################################################
 # http_server.SSL_cert specifies the location of the file that contains the
 # host's private key and certificate that will be used by Open SSL for HTTPS
-# communications. The default for this option is
-# @sysconfdir@/openwbem/hostkey+cert.pem
+# communications. 
+# The default is @sysconfdir@/openwbem/hostkey+cert.pem
 http_server.SSL_cert = @sysconfdir@/openwbem/hostkey+cert.pem
 
 ################################################################################
@@ -235,7 +242,7 @@ http_server.SSL_cert = @sysconfdir@/openwbem/hostkey+cert.pem
 # owcimomd.authentication_module config item.
 # If this option is true, then Basic will not be used.
 # If this option is false, then Basic will be used.
-# The default for this option is true.
+# The default is true
 http_server.use_digest = false
 
 ################################################################################
@@ -248,19 +255,21 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # local authentication allows a local system user to authenticate without
 # supplying a password, instead relying on filesystem permissions.  This can
 # be enabled in conjunction with either http Basic or Digest.
-# The default for this option is false.
+# The default is false
 ;http_server.allow_local_authentication = false
 
 ################################################################################
 # http_server.single_thread specifies whether or not owcimomd process connection
 # in a separate thread or in the same thread as the server. This option is
 # really only for debug purposes and should not be of any use to the
-# typical user. The default for this option is false.
+# typical user. 
+# The default is false
 ;http_server.single_thread = false
 
 ################################################################################
 # http_server.use_UDS specifies whether the http server will listen on a
-# Unix Domain Socket.  The default value is true.
+# Unix Domain Socket.  
+# The default is true
 ;http_server.use_UDS = true
 
 ################################################################################
@@ -276,24 +285,25 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # If you specify interfaces to listen on other than 0.0.0.0 using the 
 # http_server.listen_addresses option, then there is no security problem with
 # enabling this option.
-# The default value is true.
+# The default is true
 ;http_server.reuse_addr = true
 
 ################################################################################
 # http_server.timeout specifies the number of seconds that the server will use
 # as a timeout when communicting with clients. The value must be > 0.
-# The default for this option is 300 (5 minutes).
+# The default is 300 (5 minutes).
 ;http_server.timeout = 300;
 
 ################################################################################
 # http.default_content_language specified the default content-laguage that
 # will be returned to an HTTP client when the accept-language header was used
 # on the request and a provider has not explicity set the content-language.
-;http.default_content_language = en
+# The default is en
+;http_server.default_content_language = en
 
 ################################################################################
 # slp.enable_advertisement controls whether the slp provider advertises with SLP
-# The default is true.
+# The default is true
 ;slp.enable_advertisement = true
 
 ################################################################################
@@ -305,21 +315,21 @@ http_server.digest_password_file = @sysconfdir@/openwbem/digest_auth.passwd
 # owcimomd.services_path Specifies the directory containing the services
 # shared libraries to be loaded by the CIMOM.
 # You probably don't need to modify this option.
-# The default for is option is "@libdir@/openwbem/services"
+# The default is "@libdir@/openwbem/services"
 owcimomd.services_path = @libdir@/openwbem/services
 
 ################################################################################
 # owcimomd.request_handler_path Specifies the directory containing the
 # request handler shared libraries to be loaded by the CIMOM.
 # You probably don't need to modify this option.
-# The default for is option is "@libdir@/openwbem/requesthandlers"
+# The default is "@libdir@/openwbem/requesthandlers"
 owcimomd.request_handler_path = @libdir@/openwbem/requesthandlers
 
 ################################################################################
 # owcimomd.libexecdir specifies the locaction of the libexec directory.
 # Binaries that owcimomd relies on are expected to be in this directory.
 # You probably don't need to modify this option.
-# The default for is option is "@libexecdir@/openwbem"
+# The default is "@libexecdir@/openwbem"
 owcimomd.libexecdir = @libexecdir@/openwbem
 
 ################################################################################
@@ -327,60 +337,60 @@ owcimomd.libexecdir = @libexecdir@/openwbem
 # Dynamically loaded libraries that owcimomd relies on are expected to be in
 # this directory.
 # You probably don't need to modify this option.
-# The default for is option is "@libdir@/openwbem"
+# The default is "@libdir@/openwbem"
 owcimomd.owlibdir = @libdir@/openwbem
 
 ################################################################################
 # owcimomd.datadir specifies the directory where owcimomd will place its data
 # file (repositories). 
 # You probably don't need to modify this option.
-# The default for this option is "@localstatedir@/openwbem"
+# The default is "@localstatedir@/openwbem"
 owcimomd.datadir = @localstatedir@/openwbem
 
 ################################################################################
 # owcimomd.provider_ifc_libs specifies the location where all the provider
 # interfaces will be loaded from. owcimomd assumes all shared libraries in
 # this directory are provider interfaces. If a shared library in this directory
-# does not support the provider interface api, it will be rejected. The default
-# for this option is "@libdir@/openwbem/provifcs"
+# does not support the provider interface api, it will be rejected. 
 # You probably don't need to modify this option.
+# The default is "@libdir@/openwbem/provifcs"
 owcimomd.provider_ifc_libs = @libdir@/openwbem/provifcs
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the C++ provider
 # interface. The cppprovifc.prov_location option specifies where the C++
 # provider interface will load it's providers from.  Multiple directories
-# can be specified, separated by ':' or ';'.  The default for this option
-# is "@libdir@/openwbem/c++providers"
+# can be specified, separated by ':' or ';'.  
 # You probably don't need to modify this option.
+# The default is "@libdir@/openwbem/c++providers"
 cppprovifc.prov_location = @libdir@/openwbem/c++providers
 
 ################################################################################
 # http_server.uds_filename specifies the name of the unix domain socket the
 # http server will listen on.
 # You probably don't need to modify this option.
-# The default value is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
+# The default is /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 ;http_server.uds_filename = /tmp/OW@LCL@APIIPC_72859_Xq47Bf_P9r761-5_J-7_Q@PACKAGE_PREFIX@
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the NPI provider
 # interface. The npiprovifc.prov_location option specifies where the NPI
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/npiproviders"
+# provider interface will load it's providers from. 
+# The default is "@libdir@/openwbem/npiproviders"
 npiprovifc.prov_location = @libdir@/openwbem/npiproviders
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the CMPI provider
 # interface. The cmpiprovifc.prov_location option specifies where the CMPI
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/cmpiproviders"
+# provider interface will load it's providers from. 
+# The default is "@libdir@/openwbem/cmpiproviders"
 cmpiprovifc.prov_location = @libdir@/openwbem/cmpiproviders
 
 ################################################################################
 # One of the provider interfaces provided with owcimomd is the perl provider
 # interface. The perlprovifc.prov_location option specifies where the perl
-# provider interface will load it's providers from. The default for this option
-# is "@libdir@/openwbem/perlproviders"
+# provider interface will load it's providers from. 
+# The default is "@libdir@/openwbem/perlproviders"
 perlprovifc.prov_location = @libdir@/openwbem/perlproviders
 
 

@@ -169,16 +169,17 @@
 #ifndef OW_DEFAULT_ALLOWED_USERS
 #define OW_DEFAULT_ALLOWED_USERS "*"
 #endif
-#ifndef OW_DEFAULT_CONTENT_LANGUAGE
-#define OW_DEFAULT_CONTENT_LANGUAGE "en"
+#ifndef OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE
+#define OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE "en"
 #endif
 
 namespace OpenWBEM
 {
 namespace ConfigOpts
 {
-	// naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
-	// If the options begins with something else, it must be part of the all caps name.
+	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
+	// If the options begins with something else, the prefix must be part of the all caps name.
+	// TODO: Fix up the ones that are misnamed.
 	static const char* const DEBUG_opt = "owcimomd.debugflag";
 	static const char* const CONFIG_FILE_opt = "owcimomd.config_file";
 	static const char* const LOG_LOCATION_opt = "owcimomd.log_location";
@@ -233,7 +234,10 @@ namespace ConfigOpts
 	static const char* const HTTP_ALLOW_LOCAL_AUTHENTICATION_opt = "http_server.allow_local_authentication";
 	static const char* const REMOTEPROVIFC_MAX_CONNECTIONS_PER_URL_opt = "remoteprovifc.max_connections_per_url";
 	static const char* const ALLOWED_USERS_opt = "owcimomd.allowed_users";
-	static const char* const DEFAULT_CONTENT_LANGUAGE_opt = "http.default_content_language";
+	static const char* const HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt = "http_server.default_content_language";
+	// Naming rule: if the option begins with owcimomd, name is just all caps w/out owcimomd and _opt.
+	// If the options begins with something else, the prefix must be part of the all caps name.
+
 } // end namespace ConfigOpts
 } // end namespace OpenWBEM
 
