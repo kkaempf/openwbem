@@ -25,7 +25,8 @@
 
 
 static CMPIStatus refRelease(CMPIObjectPath* eRef) {
-   //cout<<"--- refRelease()"<<endl;
+
+   std::cout << "--- refRelease()" << std::endl;
    OW_CIMObjectPath* ref=(OW_CIMObjectPath*)eRef->hdl;
    if (ref) {
       delete ref;
@@ -40,7 +41,7 @@ static CMPIStatus refReleaseNop(CMPIObjectPath* eRef) {
 }
 
 static CMPIObjectPath* refClone(CMPIObjectPath* eRef, CMPIStatus* rc) {
-   //cout<<"--- refClone()"<<endl;
+   std::cout << "--- refClone()" << std::endl;
    OW_CIMObjectPath *ref=(OW_CIMObjectPath*)eRef->hdl;
    //OW_CIMObjectPath *nRef=new OW_CIMObjectPath(ref->getObjectName(),
    //                                       ref->getNameSpace());

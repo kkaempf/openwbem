@@ -21,7 +21,6 @@
 
 
 #include "cmpisrv.h"
-//#include <string.h>
 #include "OW_String.hpp"
 
 CMPI_String* string2CMPIString(const OW_String &s) {
@@ -33,7 +32,7 @@ CMPI_String* string2CMPIString(const OW_String &s) {
 
 static CMPIStatus stringRelease(CMPIString *eStr) {
    (void) eStr;
-   //cout<<"--- stringRelease()"<<endl;
+   std::cout << "--- stringRelease()" << std::endl;
    CMReturn(CMPI_RC_OK);
 }
 

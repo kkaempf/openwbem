@@ -205,7 +205,7 @@ CMPI_ResultOnStack::CMPI_ResultOnStack() {
 }
 
 CMPI_ResultOnStack::~CMPI_ResultOnStack() {
-//      cout<<"--- ~CMPI_ResultOnStack()"<<endl;
+	std::cout << "--- ~CMPI_ResultOnStack()" << std::endl;
       //if (flags & RESULT_set==0)  ((ResponseHandler*)hdl)->processing();
       //if (flags & RESULT_done==0) ((ResponseHandler*)hdl)->complete();
   }

@@ -468,7 +468,7 @@ extern "C" {
    typedef struct _CMPIInstanceMI {
       void *hdl;
       CMPIInstanceMIFT *ft;
-      void *cimom;
+      //void *cimom;
    } CMPIInstanceMI;
 
    struct _CMPIInstanceMIFT {
@@ -505,6 +505,7 @@ extern "C" {
    typedef struct _CMPIAssociationMI {
       void *hdl;
       CMPIAssociationMIFT *ft;
+      //void *cimom;
    } CMPIAssociationMI;
 
    struct _CMPIAssociationMIFT {
@@ -534,6 +535,7 @@ extern "C" {
    typedef struct _CMPIMethodMI {
       void *hdl;
       CMPIMethodMIFT *ft;
+      //void *cimom;
    } CMPIMethodMI;
 
    struct _CMPIMethodMIFT {
@@ -552,6 +554,7 @@ extern "C" {
    typedef struct _CMPIPropertyMI {
       void *hdl;
       CMPIPropertyMIFT *ft;
+      //void *cimom;
    } CMPIPropertyMI;
 
    struct _CMPIPropertyMIFT {
@@ -573,6 +576,7 @@ extern "C" {
    typedef struct _CMPIIndicationMI {
       void *hdl;
       CMPIIndicationMIFT *ft;
+      //void *cimom;
    } CMPIIndicationMI;
 
    struct _CMPIIndicationMIFT {

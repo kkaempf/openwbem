@@ -21,9 +21,7 @@
 
 #include <iostream>
 #include "cmpisrv.h"
-//#include <Pegasus/Common/CIMName.h>
-//#include <Pegasus/Common/CIMPropertyList.h>
-//#include <Pegasus/Provider/CIMOMHandle.h>
+#include "OW_CIMException.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_CIMOMEnvironment.hpp"
@@ -50,7 +48,7 @@ static CMPIObjectPath* mbEncNewObjectPath(CMPIBroker* mb, char *cls, char *ns,
                   CMPIStatus *rc) {
    (void) mb;
 
-   //cout<<"--- mbEncNewObjectPath()"<<endl;
+   std::cout<<"--- mbEncNewObjectPath()"<<std::endl;
    OW_String className(cls);
    OW_String nameSpace(ns);
    OW_CIMObjectPath * cop =
@@ -96,7 +94,7 @@ extern CMPIDateTime *newDateTime();
 static CMPIDateTime* mbEncNewDateTime(CMPIBroker* mb, CMPIStatus *rc) {
    (void) mb;
 
-   //cout<<"--- mbEncNewDateTime()"<<endl;
+   std::cout<<"--- mbEncNewDateTime()"<<std::endl;
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return newDateTime();
 }
@@ -107,7 +105,7 @@ static CMPIDateTime* mbEncNewDateTimeFromBinary(CMPIBroker* mb, CMPIUint64 time,
       CMPIBoolean interval ,CMPIStatus *rc) {
    (void) mb;
 
-   //cout<<"--- mbEncNewDateTimeFromBinary()"<<endl;
+   std::cout<<"--- mbEncNewDateTimeFromBinary()"<<std::endl;
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return newDateTime(time,interval);
 }
@@ -117,7 +115,7 @@ extern CMPIDateTime *newDateTime(char*);
 static CMPIDateTime* mbEncNewDateTimeFromString(CMPIBroker* mb, char *t ,CMPIStatus *rc) {
    (void) mb;
 
-   //cout<<"--- mbEncNewDateTimeFromString()"<<endl;
+   std::cout<<"--- mbEncNewDateTimeFromString()"<<std::endl;
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return newDateTime(t);
 }
@@ -226,8 +224,10 @@ OW_StringArray * getList(char ** l) {
 static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
                  CMPIObjectPath *cop, char **properties, CMPIStatus *rc) {
    (void) mb;
-   //cout<<"--- mbGetInstance()"<<endl;
+
+   std::cout << "--- mbGetInstance()" << std::endl;
    CMPIFlags flgs=ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
+
    //OW_PropertyArray *props=getList(properties);
    OW_StringArray *props=getList(properties);
    OW_CIMObjectPath ocop(*CM_ObjectPath(cop));
@@ -242,15 +242,18 @@ static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
 		CM_LocalOnly(flgs),
 		CM_IncludeQualifiers(flgs),CM_ClassOrigin(flgs),
 		props);
-      //cout<<"--- mbGetInstance() back"<<endl;
+      std::cout << "--- mbGetInstance() back" << std::endl;
       delete props;
       if (rc) CMSetStatus(rc,CMPI_RC_OK);
       return (CMPIInstance*)new CMPI_Object(new OW_CIMInstance(ci));
    }
-   //catch (const OW_CIMException &e) {
+   catch (const OW_CIMException &e) {
+      std::cout << "### exception: " <<e.getMessage() << std::endl;
+      std::exit(39);
+   }
    catch (...) {
-      //cout<<"### exception: "<<e.getMessage()<<endl;
-      exit(39);
+      std::cout << "### exception: " << std::endl;
+      std::exit(39);
    }
    delete props;
    return NULL;
