@@ -672,7 +672,7 @@ TestMof()
 	RestartDaemon
 	CreateNameSpace testsuite
 	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
-			$TOPSRCDIR/src/mof/testfiles/CIM_Schema25.mof || \
+			$TOPSRCDIR/schemas/cim25/CIM_Schema25.mof || \
 			ExitWithFail "MOF compiler test: owmofc exited with error."
 	$STAGEDIR/$OWBINDIR/owmofc ipc://test1:pass1@localhost/owbinary /root/testsuite \
 		$TOPSRCDIR/test/acceptance/testfiles/indicationTest.mof || \

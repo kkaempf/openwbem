@@ -100,6 +100,7 @@ int main(int argc, char** argv)
 			return 1;
 		}
 
+		OW_SocketBaseImpl::setDumpFiles("/tmp/owmofcIn", "/tmp/owmofcOut");
 		OW_URL url(argv[1]);
 		OW_Reference<OW_CIMOMHandleIFC> handle;
 		OW_Reference<OW_MofParserErrorHandlerIFC> theErrorHandler(new TheErrorHandler);

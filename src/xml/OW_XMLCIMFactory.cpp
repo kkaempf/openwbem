@@ -666,30 +666,6 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 					OW_CIMObjectPath cop = createObjectPath(parser);
 					parser.mustGetEndTag(); // pass </VALUE.REFERENCE>
 
-					/*
-					parser.getNext();
-	
-					token = parser.getToken();
-					switch(token)
-					{
-						case OW_CIMXMLParser::E_CLASSPATH:
-						case OW_CIMXMLParser::E_LOCALCLASSPATH:
-						case OW_CIMXMLParser::E_INSTANCEPATH:
-						case OW_CIMXMLParser::E_LOCALINSTANCEPATH:
-							cop = createObjectPath(parser);
-							break;
-						case OW_CIMXMLParser::E_CLASSNAME:
-							cop.setObjectName(parser.mustGetAttribute(OW_CIMXMLParser::A_NAME));
-							break;
-						case OW_CIMXMLParser::E_INSTANCENAME:
-							getInstanceName(parser, cop);
-							break;
-						default:
-							OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
-								"Attempting to extract object path");
-					}
-					*/
-	
 					rval = OW_CIMValue(cop);
 					break;
 				}
@@ -702,7 +678,16 @@ OW_XMLCIMFactory::createValue(OW_CIMXMLParser& parser,
 	}
 	catch (const OW_StringConversionException& e)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, e.getMessage());
+		if (parser.getData().equalsIgnoreCase("NULL"))
+		{
+			rval = OW_CIMValue();
+			parser.getNext();
+			parser.mustGetEndTag(); // pass <VALUE.REFARRAY>
+		}
+		else
+		{
+			OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, e.getMessage());
+		}
 	}
 
 	return rval;

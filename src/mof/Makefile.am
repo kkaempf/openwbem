@@ -1,7 +1,5 @@
 include $(top_srcdir)/Makefile-shared-lib.inc
 
-SUBDIRS = testfiles
-
 noinst_LIBRARIES = libowmofc.a 
 thelibdir = $(libdir)
 

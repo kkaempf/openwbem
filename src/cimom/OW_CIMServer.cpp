@@ -2746,8 +2746,10 @@ OW_CIMServer::_commonAssociators(
 	{
 		assocClassNames.append(staticAssocs[i].getName());
 	}
-	OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(), assocClassNames.end());
-	OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
+	OW_SortedVectorSet<OW_String> assocClassNamesSet(assocClassNames.begin(), 
+			assocClassNames.end());
+	OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), 
+			resultClassNames.end());
 
 	if (path.getKeys().size() == 0)
 	{
