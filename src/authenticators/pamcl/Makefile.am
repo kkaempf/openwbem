@@ -18,7 +18,7 @@ $(CXXBINLINKFLAGS) \
 
 owpamauthbindir = $(libexecdir)/openwbem
 OW_PAMAuth_SOURCES = OW_PAMAuthSA.cpp
-OW_PAMAuth_LDADD = -lpam $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+OW_PAMAuth_LDADD = -lpam $(DL_LIB) $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 OW_SHARED_LIBS = libpamclauthentication.$(LIB_EXT)
 SHAREDLIBADD = -lpam -L$(top_builddir)/src/common/ -lopenwbem

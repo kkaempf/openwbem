@@ -10,7 +10,7 @@ install-exec-local : install-ow-shared-libs
 uninstall-local : uninstall-ow-shared-libs
 
 OW_SHARED_LIBS = libopenwbem.$(LIB_EXT) 
-SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS) $(EXTRA_SSL_LIBS)
+SHAREDLIBADD = $(DL_LIB) $(SSL_LIBS)
 
 
 

@@ -1104,6 +1104,7 @@ then
 		EXTRA_SSL_LIBS=`pkg-config openssl --libs`
 		EXTRA_SSL_INCLUDES=`pkg-config openssl --cflags`
 		CPPFLAGS="$CPPFLAGS $EXTRA_SSL_INCLUDES"
+		SSL_LIBS="$SSL_LIBS $EXTRA_SSL_LIBS"
 		AC_MSG_RESULT("$EXTRA_SSL_INCLUDES $EXTRA_SSL_LIBS");
 	else
 		AC_MSG_RESULT("None")
@@ -1113,7 +1114,6 @@ else
 fi
 
 AC_SUBST(SSL_LIBS)
-AC_SUBST(EXTRA_SSL_LIBS)
 
 dnl End of the ssl check
 

@@ -17,7 +17,8 @@ owcimomd_LDADD = \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/provider -lowprovider \
 -L$(top_builddir)/src/common -lopenwbem \
--L$(top_builddir)/db/db -lowdb $(SSL_LIBS) $(BINLINKAPPENDFLAGS)
+-L$(top_builddir)/db/db -lowdb \
+$(SSL_LIBS) $(BINLINKAPPENDFLAGS)
 
 owcimomd_SOURCES = \
 owcimomd_main.cpp 

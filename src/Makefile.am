@@ -176,7 +176,7 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL) owcimomd.def
 				  (substr($$3,1,1) != ".")) \
 				{ print $$3 } }' | \
 			sort -u | $(SED) '$$!s/$$/,/' > owcimomd.exp; \
-	$(CXX) $(CXXBINLINKFLAGS) -o owcimomd.nlm -Wl,--def-file,owcimomd.def $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(EXTRA_SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
+	$(CXX) $(CXXBINLINKFLAGS) -o owcimomd.nlm -Wl,--def-file,owcimomd.def $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
 	rm -rf $(TEMPOBJDIR); \
 	echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
 	$(INSTALL_PROGRAM) owcimomd.nlm $(DESTDIR)$(sbindir)/owcimomd.nlm;
@@ -197,7 +197,7 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
 	mkdir $(TEMPOBJDIR); \
 	cd $(TEMPOBJDIR) && ar x ../$(OPENWBEM_STATIC_ALL); \
 	cd ..; \
-	$(CXX) $(CXXBINLINKFLAGS) -o static_cimomd $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(EXTRA_SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
+	$(CXX) $(CXXBINLINKFLAGS) -o static_cimomd $(TEMPOBJDIR)/*.o $(CIMOMD_MAIN) $(SSL_LIBS) $(DYNAMIC_EXPORT_FLAG) $(STATIC_SERVICE_FLAGS) $(BINLINKAPPENDFLAGS); \
 	rm -rf $(TEMPOBJDIR); \
 	echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
 	$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd;
