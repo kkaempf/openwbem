@@ -33,16 +33,22 @@
 
 #include "OW_config.h"
 #include "OW_RepositoryIFC.hpp"
-#include "OW_MetaRepository.hpp"
-#include "OW_InstanceRepository.hpp"
 #include "OW_ProviderManager.hpp"
-#include "OW_AssocDb.hpp"
 #include "OW_Map.hpp"
-#include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_CIMOMEnvironment.hpp"
 #include "OW_CIMClass.hpp"
+#include "OW_SortedVectorSet.hpp" // fwd?
+#include "OW_CIMException.hpp"
+
 
 class OW_AccessMgr;
 
+// This class is responsible for:
+// 1. calling either providers/or the CIM Repository
+// 2. interpreting the parameters to the intrinsic CIM methods (such as
+//    localOnly, deep, etc.) from providers.  Otherwise, the repository
+//    is responsible for handling these flags.
+// 3. Access control
 class OW_CIMServer : public OW_RepositoryIFC
 {
 public:
@@ -59,7 +65,8 @@ public:
 	 * Create a new OW_CIMServer object.
 	 */
 	OW_CIMServer(OW_CIMOMEnvironmentRef env,
-		OW_ProviderManagerRef providerManager);
+		const OW_ProviderManagerRef& providerManager,
+		const OW_RepositoryIFCRef& repository);
 
 	/**
 	 * Destroy this OW_CIMServer object.
@@ -70,7 +77,7 @@ public:
 	 * Open this OW_CIMServer.
 	 * @exception OW_IOException
 	 */
-	void open(const OW_String& path);
+	virtual void open(const OW_String& path);
 
 	/**
 	 * Close this OW_GenericHDBRepository.
@@ -336,7 +343,8 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
+		const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Retrieve an enumeration of instances object paths (OW_CIMObjectPath)
@@ -590,12 +598,22 @@ public:
 
 	OW_CIMOMEnvironmentRef getEnvironment() const { return m_env; }
 
-private:
+public:
 
 	void _getCIMInstanceNames(const OW_String& ns, const OW_String& className,
 		const OW_CIMClass& theClass, OW_CIMObjectPathResultHandlerIFC& result,
 		const OW_ACLInfo& aclInfo);
 
+	void _getCIMInstances(
+		const OW_String& ns,
+		const OW_String& className,
+		const OW_CIMClass& theTopClass,
+		const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
+		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
+		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
+		const OW_ACLInfo& aclInfo);
+
+private:
 	/**
 	 * Determines if an instance already exists
 	 *
@@ -622,35 +640,12 @@ private:
 		OW_CIMClassResultHandlerIFC* pcresult,
 		const OW_ACLInfo& aclInfo);
 
-	void _staticAssociators(const OW_CIMObjectPath& path,
-		const OW_SortedVectorSet<OW_String>* passocClasses,
-		const OW_SortedVectorSet<OW_String>* presultClasses,
-		const OW_String& role, const OW_String& resultRole,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList,
-		OW_CIMInstanceResultHandlerIFC& result);
-
-	void _staticAssociators(const OW_CIMObjectPath& path,
-		const OW_SortedVectorSet<OW_String>* passocClasses,
-		const OW_SortedVectorSet<OW_String>* presultClasses,
-		const OW_String& role, const OW_String& resultRole,
-		OW_CIMObjectPathResultHandlerIFC& result);
-
 	void _dynamicAssociators(const OW_CIMObjectPath& path,
 		const OW_CIMClassArray& assocClasses, const OW_String& resultClass,
 		const OW_String& role, const OW_String& resultRole,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
-
-	void _staticAssociatorsClass(const OW_CIMObjectPath& path,
-		const OW_SortedVectorSet<OW_String>* assocClassNames,
-		const OW_SortedVectorSet<OW_String>* resultClasses,
-		const OW_String& role, const OW_String& resultRole,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList,
-		OW_CIMObjectPathResultHandlerIFC* popresult,
-		OW_CIMClassResultHandlerIFC* pcresult);
 
 	void _commonReferences(
 		const OW_String& ns,
@@ -662,31 +657,11 @@ private:
 		OW_CIMClassResultHandlerIFC* pcresult,
 		const OW_ACLInfo& aclInfo);
 
-	void _staticReferences(const OW_CIMObjectPath& path,
-		const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC& result);
-
-	void _staticReferences(const OW_CIMObjectPath& path,
-		const OW_SortedVectorSet<OW_String>* refClasses, const OW_String& role,
-		OW_CIMObjectPathResultHandlerIFC& result);
-
-	void _staticReferencesClass(const OW_CIMObjectPath& path,
-		const OW_SortedVectorSet<OW_String>* resultClasses,
-		const OW_String& role,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList,
-		OW_CIMObjectPathResultHandlerIFC* popresult,
-		OW_CIMClassResultHandlerIFC* pcresult);
-
-
 	void _dynamicReferences(const OW_CIMObjectPath& path,
 		const OW_CIMClassArray& dynamicAssocs, const OW_String& role,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 		const OW_StringArray* propertyList, OW_CIMInstanceResultHandlerIFC* piresult,
 		OW_CIMObjectPathResultHandlerIFC* popresult, const OW_ACLInfo& aclInfo);
-
-	OW_Bool _isInStringArray(const OW_StringArray& sra, const OW_String& val);
 
 	void _getAssociationClasses(const OW_String& ns,
 		const OW_String& assocClassName, const OW_String& className,
@@ -700,55 +675,32 @@ private:
 	 */
 	OW_CIMClass _getNameSpaceClass(const OW_String& className);
 
-	void _getCIMInstances(
-		const OW_String& ns,
-		const OW_String& className,
-		const OW_CIMClass& theTopClass,
-		const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
-		OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-		const OW_ACLInfo& aclInfo);
-
-	void _getChildKeys(OW_HDBHandle hdl, OW_StringResultHandlerIFC& result,
-		OW_HDBNode node);
-
 	OW_InstanceProviderIFCRef _getInstanceProvider(const OW_String& ns,
 		const OW_CIMClass& cls);
 	OW_AssociatorProviderIFCRef _getAssociatorProvider(const OW_String& ns, const OW_CIMClass& cls);
-	OW_PropertyProviderIFCRef _getPropertyProvider(const OW_String& ns, const OW_CIMClass& cc, const OW_CIMProperty& prop);
 
 	void _validatePropagatedKeys(const OW_String& ns,
 		const OW_CIMInstance& ci, const OW_CIMClass& theClass);
 
-	void _setProviderProperties(const OW_String& ns,
-		const OW_CIMInstance& ci, const OW_CIMClass& theClass,
-		const OW_ACLInfo& aclInfo);
-
-public:
-	void _getProviderProperties(const OW_String& ns, const OW_CIMObjectPath& cop,
-		OW_CIMInstance& ci, const OW_CIMClass& theClass,
-		const OW_ACLInfo& aclInfo, const OW_StringArray* propList);
-
 private:
-	void checkGetClassRvalAndThrow(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);
-	void checkGetClassRvalAndThrowInst(OW_CIMException::ErrNoType rval, const OW_String& ns, const OW_String& className);
-	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className);
-	OW_CIMClass _instGetClass(const OW_String& ns, const OW_String& className);
+	OW_CIMClass _getClass(const OW_String& ns, const OW_String& className, 
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+	OW_CIMClass _instGetClass(const OW_String& ns, const OW_String& className,
+		OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
 
-	OW_GenericHDBRepository m_nStore;
-	OW_InstanceRepository m_iStore;
-	OW_MetaRepository m_mStore;
 	OW_ProviderManagerRef m_provManager;
-	OW_AssocDb m_classAssocDb;
-	OW_AssocDb m_instAssocDb;
 	mutable OW_RWLocker m_rwSchemaLocker;
 	mutable OW_RWLocker m_rwInstanceLocker;
 	OW_Reference<OW_AccessMgr> m_accessMgr;
 	OW_CIMClass m_nsClass__Namespace;
 	OW_CIMClass m_nsClassCIM_Namespace;
 	OW_CIMOMEnvironmentRef m_env;
+	OW_RepositoryIFCRef m_cimRepository;
 
-	friend class OW_InstanceRepository;
 };
 
 #endif	// __OW_CIMSERVER_HPP__

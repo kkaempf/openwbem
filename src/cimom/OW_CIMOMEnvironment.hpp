@@ -93,10 +93,10 @@ public:
 	virtual OW_String getConfigItem(const OW_String &name) const;
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username,
-		const OW_Bool doIndications=false);
+		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false);
 
 	OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_ACLInfo& aclinfo,
-		OW_Bool doIndications=false);
+		OW_Bool doIndications=false, const OW_Bool bypassProviders = false);
 
 	OW_CIMOMHandleIFCRef getCIMOMHandle();
 
@@ -143,7 +143,7 @@ private:
 	void _createAuthManager();
 	void _createPollingManager();
 	void _createIndicationServer();
-	OW_SharedLibraryRepositoryIFCRef _getIndicationRepLayer();
+	OW_SharedLibraryRepositoryIFCRef _getIndicationRepLayer(const OW_RepositoryIFCRef& rref);
 	void _clearSelectables();
 
 	// Types
@@ -160,6 +160,7 @@ private:
 	typedef OW_SortedVectorMap<OW_String, ReqHandlerData> ReqHandlerMap;
 
 	mutable OW_Mutex m_monitor;
+	OW_RepositoryIFCRef m_cimRepository;
 	OW_RepositoryIFCRef m_cimServer;
 	OW_AuthManagerRef m_authManager;
 	OW_LoggerRef m_Logger;

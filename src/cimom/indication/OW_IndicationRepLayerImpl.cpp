@@ -40,6 +40,7 @@
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 											
 //////////////////////////////////////////////////////////////////////////////

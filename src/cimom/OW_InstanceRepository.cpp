@@ -29,7 +29,7 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIMServer.hpp"
+#include "OW_InstanceRepository.hpp"
 #include "OW_RepositoryStreams.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMException.hpp"
@@ -254,15 +254,17 @@ OW_InstanceRepository::getInstanceNames(const OW_String& ns,
 	}
 }
 
+#include <iostream>
+using namespace std;
+
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_InstanceRepository::getCIMInstances(
 	const OW_String& ns,
 	const OW_String& className,
 	const OW_CIMClass& theClass, OW_CIMInstanceResultHandlerIFC& result,
-	OW_Bool includeQualifiers,
-	OW_Bool includeClassOrigin, const OW_StringArray* propertyList,
-	OW_CIMServer* pServer, const OW_ACLInfo* pACLInfo)
+	OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
+	OW_Bool includeClassOrigin, const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
 
@@ -284,17 +286,60 @@ OW_InstanceRepository::getCIMInstances(
 	{
 		OW_CIMInstance ci;
 		nodeToCIMObject(ci, node);
+cout << "ci Before filtering: " << ci.toMOF() << endl;
 		ci.syncWithClass(theClass, true);
 
-		if(pServer && pACLInfo)
-		{
-			OW_CIMObjectPath lcop(ci);
-			pServer->_getProviderProperties(ns, lcop, ci, theClass, *pACLInfo,
-				propertyList);
-		}
+		ci = ci.clone(false, includeQualifiers,
+			includeClassOrigin, propertyList);
 
-		result.handle(ci.clone(false, includeQualifiers,
-			includeClassOrigin, propertyList));
+		// do processing of deep & localOnly
+		// don't filter anything if (deep == true && localOnly == false) 
+		if (deep != true || localOnly != false)
+		{
+			OW_CIMPropertyArray props = ci.getProperties();
+			OW_CIMPropertyArray newprops;
+			OW_CIMInstance newInst(ci);
+			OW_String requestedClassName = theClass.getName();
+			for (size_t i = 0; i < props.size(); ++i)
+			{
+				OW_CIMProperty p = props[i];
+				OW_CIMProperty clsp = theClass.getProperty(p.getName());
+				if (clsp)
+				{
+					if (clsp.getOriginClass().equalsIgnoreCase(requestedClassName))
+					{
+						newprops.push_back(p);
+						continue;
+					}
+				}
+				if (deep == true)
+				{
+					if (!clsp
+						|| !p.getOriginClass().equalsIgnoreCase(clsp.getOriginClass()))
+					{
+						// the property is from a derived class
+						newprops.push_back(p);
+						continue;
+					}
+				}
+				if (localOnly == false)
+				{
+					if (clsp)
+					{
+						// the property has to be from a superclass
+						newprops.push_back(p);
+						continue;
+					}
+				}
+
+			}
+			newInst.setProperties(newprops);
+			newInst.setKeys(ci.getKeyValuePairs());
+			ci = newInst;
+		}
+cout << "ci After filtering: " << ci.toMOF() << endl;
+
+		result.handle(ci);
 		node = hdl->getNextSibling(node);
 	}
 }
@@ -304,7 +349,9 @@ OW_CIMInstance
 OW_InstanceRepository::getCIMInstance(
 	const OW_String& ns,
 	const OW_CIMObjectPath& instanceName,
-	const OW_CIMClass& theClass)
+	const OW_CIMClass& theClass, OW_Bool localOnly,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList)
 {
 	throwIfNotOpen();
 	OW_String instanceKey = makeInstanceKey(ns, instanceName, theClass);
@@ -320,6 +367,16 @@ OW_InstanceRepository::getCIMInstance(
 
 	OW_CIMInstance ci;
 	nodeToCIMObject(ci, node);
+
+	ci.syncWithClass(theClass, true);
+	
+	// only filter if we need to
+	if (propertyList || localOnly == true || includeQualifiers == false || includeClassOrigin == false)
+	{
+		ci = ci.clone(localOnly, includeQualifiers, includeClassOrigin,
+			propertyList);
+	}
+	
 	return ci;
 }
 

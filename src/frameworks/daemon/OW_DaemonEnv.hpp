@@ -46,7 +46,7 @@ static const char* const OW_DAEMON_NAME = "newdaemon";
 class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
 {
 	public:
-		virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications);
+		virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username, const OW_Bool doIndications, const OW_Bool bypassProviders);
 		virtual OW_LoggerRef getLogger() const;
 		virtual OW_Bool authenticate(OW_String &userName, const OW_String &info, OW_String &details);
 		virtual OW_RequestHandlerIFCRef getRequestHandler(const OW_String& id) ;

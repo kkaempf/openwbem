@@ -242,7 +242,7 @@ OW_LocalCIMOMHandle::enumInstances(
 	OW_CIMServerSchemaReadLocker srl(this);
 	OW_CIMServerInstanceReadLocker irl(this);
 	m_pServer->enumInstances(ns, className, result, deep, localOnly, includeQualifiers,
-		includeClassOrigin, propertyList, m_aclInfo);
+		includeClassOrigin, propertyList, true, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

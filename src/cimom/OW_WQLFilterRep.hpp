@@ -321,7 +321,8 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo);
+		const OW_StringArray* propertyList, OW_Bool enumSubClasses, 
+		const OW_ACLInfo& aclInfo);
 
 	/**
 	 * Retrieve an enumeration of instances (OW_CIMInstance) for a particular

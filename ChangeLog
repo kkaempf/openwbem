@@ -1,3 +1,9 @@
+Wed Dec 25 11:40:26 MST 2002
+- Done: SelectExp classes that event providers can use to easily
+  examine queries, and so pre-parsed queries can be stored by
+  OW_IndicationServerImpl.
+- Write an event Provider interface.  
+ 
 Sun Dec 15 21:10:19 MST 2002
 - Added wqlTest2 to the acceptance test suite.
 

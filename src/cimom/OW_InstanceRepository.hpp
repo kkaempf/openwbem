@@ -34,8 +34,7 @@
 #include "OW_config.h"
 #include "OW_GenericHDBRepository.hpp"
 #include "OW_CIMFwd.hpp"
-
-class OW_CIMServer;
+#include "OW_ResultHandlerIFC.hpp"
 
 class OW_InstanceRepository : public OW_GenericHDBRepository
 {
@@ -51,9 +50,8 @@ public:
 		const OW_String& ns,
 		const OW_String& className, const OW_CIMClass& theClass,
 		OW_CIMInstanceResultHandlerIFC& result,
-		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray* propertyList=NULL, OW_CIMServer* pServer = NULL,
-		const OW_ACLInfo* pACLInfo=NULL);
+		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList=NULL);
 
 	void getInstanceNames(const OW_String& ns, const OW_CIMClass& theClass,
 		OW_CIMObjectPathResultHandlerIFC& result);
@@ -71,7 +69,9 @@ public:
 	 */
 	OW_CIMInstance getCIMInstance(const OW_String& ns,
 		const OW_CIMObjectPath& instanceName,
-		const OW_CIMClass& theClass);
+		const OW_CIMClass& theClass, OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList);
 
 	/**
 	 * Delete an existing instance from the store
@@ -173,7 +173,6 @@ private:
 
 	void _removeDuplicatedQualifiers(OW_CIMInstance& inst, const OW_CIMClass& theClass);
 
-	friend class OW_CIMServer;
 };
 
 #endif	// __OW_INSTANCEREPOSITORY_HPP__

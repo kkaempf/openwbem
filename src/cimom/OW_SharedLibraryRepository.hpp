@@ -126,10 +126,11 @@ public:
 		OW_CIMInstanceResultHandlerIFC& result,
 		OW_Bool deep, OW_Bool localOnly,
 		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-		const OW_StringArray *propertyList, const OW_ACLInfo &aclInfo)
+		const OW_StringArray *propertyList, OW_Bool enumSubClasses, 
+		const OW_ACLInfo &aclInfo)
 	{
 		return m_ref->enumInstances(ns, className, result, deep, localOnly,includeQualifiers,
-			includeClassOrigin, propertyList, aclInfo);
+			includeClassOrigin, propertyList, enumSubClasses, aclInfo);
 	}
 
 	virtual void createClass(const OW_String& ns,

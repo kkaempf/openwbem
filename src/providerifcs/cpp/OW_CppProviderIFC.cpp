@@ -89,9 +89,10 @@ OW_CppProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& i,
 	OW_AssociatorProviderInfoArray& a,
 	OW_MethodProviderInfoArray& m,
-	OW_PropertyProviderInfoArray& p)
+	OW_PropertyProviderInfoArray& p,
+	OW_IndicationProviderInfoArray& ind)
 {
-	loadProviders(env, i, a, m, p);
+	loadProviders(env, i, a, m, p, ind);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -249,12 +250,40 @@ OW_CppProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCRef& e
 }
 
 //////////////////////////////////////////////////////////////////////////////
+OW_IndicationProviderIFCRef
+OW_CppProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+	const char* provIdString)
+{
+	OW_CppProviderBaseIFCRef pProv = getProvider(env, provIdString);
+	if(pProv)
+	{
+		OW_CppIndicationProviderIFC* pAP = pProv->getIndicationProvider();
+		if(pAP)
+		{
+			env->getLogger()->logDebug(format("OW_CPPProviderIFC found indication provider %1",
+				provIdString));
+			OW_CppIndicationProviderIFCRef apRef(pProv.getLibRef(), pAP);
+			apRef.useRefCountOf(pProv);
+
+			return OW_IndicationProviderIFCRef(new
+				OW_CppIndicationProviderProxy(apRef));
+		}
+
+		env->getLogger()->logError(format("Provider %1 is not an indication provider",
+			provIdString));
+	}
+
+	OW_THROW(OW_NoSuchProviderException, provIdString);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instanceProviderInfo,
 	OW_AssociatorProviderInfoArray& associatorProviderInfo,
 	OW_MethodProviderInfoArray& methodProviderInfo,
-	OW_PropertyProviderInfoArray& propertyProviderInfo)
+	OW_PropertyProviderInfoArray& propertyProviderInfo,
+	OW_IndicationProviderInfoArray& indicationProviderInfo)
 {
 	OW_MutexLock ml(m_guard);
 
@@ -373,6 +402,14 @@ OW_CppProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 				info.setProviderName(providerid);
 				p_pp->getProviderInfo(info);
 				propertyProviderInfo.push_back(info);
+			}
+			OW_CppIndicationProviderIFC* p_indp = p->getIndicationProvider();
+			if (p_indp)
+			{
+				OW_IndicationProviderInfo info;
+				info.setProviderName(providerid);
+				p_indp->getProviderInfo(info);
+				indicationProviderInfo.push_back(info);
 			}
 			continue;
 		}

@@ -129,7 +129,7 @@ public:
 	}
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& /*username*/,
-		const OW_Bool /*doIndications*/)
+		const OW_Bool /*doIndications*/, const OW_Bool /*bypassProviders*/)
 	{
 		OW_THROW(OW_Exception, "Not implemented");
 	}

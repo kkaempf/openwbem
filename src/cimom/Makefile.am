@@ -58,7 +58,9 @@ OW_HDB.hpp \
 OW_HDBCommon.hpp \
 OW_HDBNode.hpp \
 OW_InternalProviderIFC.cpp \
-OW_InternalProviderIFC.hpp
+OW_InternalProviderIFC.hpp \
+OW_CIMRepository.hpp \
+OW_CIMRepository.cpp
 
 INCLUDES = \
 -I$(top_srcdir)/src/provider \

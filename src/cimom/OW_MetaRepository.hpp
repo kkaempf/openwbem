@@ -98,7 +98,10 @@ public:
 	 * @exception OW_HDBException An error occurred in the database.
 	 * @exception OW_IOException Couldn't read class object from file.
 	 */
-	OW_CIMException::ErrNoType getCIMClass(const OW_String& ns, const OW_String& className,
+	OW_CIMException::ErrNoType getCIMClass(const OW_String& ns, 
+		const OW_String& className, OW_Bool localOnly,
+		OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+		const OW_StringArray* propertyList,
 		OW_CIMClass& cc);
 
 	/**

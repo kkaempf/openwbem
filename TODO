@@ -37,8 +37,25 @@ Fix problems:
       "pass-thru" providers.  They store their instances in the repository,
       but perform operations as the instances are accessed.  The
       CIM_Indication* providers will need this functionality.
+      This is also a replacement for property providers.  Instead of property
+      providers, an instance provider can be created, which will store parts
+      of its instances in the repository and will dynamically add other
+      properties.
+      - Move handling of flags as low as possible-into {Meta,Inst}Repository
+        and providersifc/providers
+      - Fix association/reference processing so OW_CIMServer uses
+        OW_CIMRepository private _static* methods, to avoid unnecessary
+        work.  Maybe create a public interface for this? OW_StaticCIMRepository
 
 New features:
+    - Create intrinsic providers for
+      CIM_IndicationSubscription that interfaces with the providers.
+      - Create a polling class/thread, so if the provider is lazy, the
+        cimom will check for differences (by calling enumInstances) and send 
+		out the appropriate lifecycle indications.  This will be used if the 
+		provider responds true to the mustPoll() call.
+      - Indication providers must also indicate what class they are 
+        instrumenting if they are a lifecycle type.
     - Add an option to the mof compiler to output provider skeleton code for
       a MOF class.
     - Add an option to the mof compiler to output a client class that wraps
@@ -49,11 +66,6 @@ New features:
       cimom handles.
     - Add a virtual log message to the thread counter class so we can output
       information about threads starting and exiting.
-    - Write an event Provider interface.  Create intrinsic providers for
-      CIM_IndicationSubscription that interfaces with the providers.
-    - Write some SelectExp classes that event providers can use to easily
-      examine queries, and so pre-parsed queries can be stored by
-      OW_IndicationServerImpl.
     - Providers/Provider interfaces in a different process. Implement with 
       fork/exec/pipes for communication?
     - Internationalization.
@@ -96,7 +108,8 @@ New features:
       indications.)
     - Create a CIM class & provider to control the provider manager (re-scan
       providers, reload/unload providers, register new providers, etc.)
-    - Deprecated property providers.
+    - Deprecated property providers. Add an option to enable them, but leave
+      them disabled by default.  Maybe remove the code in 2.2 (3.0?)
     - Make OW_Cpp*ProviderIFC method virtual (non-pure), so providers don't
       have to override non-implemented methods.
 
@@ -140,3 +153,5 @@ Optimizations:
       the property list based on local-only, propertyList, deep, etc. Also,
       pass all the parameters (localOnly, deep, propertyList, etc.) to the
       generic *ProviderIFC, so that various interfaces can make use of them.
+      Change OW_CIMServer to not do anything with the parameters when calling
+      a provider.  Let the provider ifc/provider do all the work.

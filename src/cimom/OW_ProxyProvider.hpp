@@ -38,12 +38,14 @@
 #include "OW_PropertyProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
+#include "OW_IndicationProviderIFC.hpp"
 #include "OW_CppAssociatorProviderIFC.hpp"
 #include "OW_CppInstanceProviderIFC.hpp"
 #include "OW_CppMethodProviderIFC.hpp"
 #include "OW_CppPropertyProviderIFC.hpp"
 #include "OW_CppPolledProviderIFC.hpp"
 #include "OW_CppIndicationExportProviderIFC.hpp"
+#include "OW_CppIndicationProviderIFC.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMObjectPath.hpp"
@@ -278,6 +280,55 @@ public:
 
 private:
 	OW_CppPolledProviderIFCRef m_pProv;
+};
+
+class OW_IndicationProviderProxy : public OW_IndicationProviderIFC
+{
+public:
+	OW_IndicationProviderProxy(OW_CppIndicationProviderIFCRef pProv)
+		: m_pProv(pProv) {}
+
+	virtual void deActivateFilter(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath, 
+		bool lastActivation) 
+	{
+		m_pProv->deActivateFilter(env,filter,eventType,classPath,lastActivation);
+	}
+
+	virtual void activateFilter(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath, 
+		bool firstActivation) 
+	{
+		m_pProv->activateFilter(env,filter,eventType,classPath,firstActivation);
+	}
+
+	virtual void authorizeFilter(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath, 
+		const OW_String &owner) 
+	{
+		m_pProv->authorizeFilter(env,filter,eventType,classPath,owner);
+	}
+
+	virtual int mustPoll(
+		const OW_ProviderEnvironmentIFCRef &env, 
+		const OW_WQLSelectStatement &filter, 
+		const OW_String &eventType, 
+		const OW_CIMObjectPath &classPath)
+	{
+		return m_pProv->mustPoll(env,filter,eventType,classPath);
+	}
+
+private:
+	OW_CppIndicationProviderIFCRef m_pProv;
 };
 
 #endif	// __OW_PROXYPROVIDER_HPP__

@@ -80,6 +80,26 @@ void registerProviderInfo(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// Overloaded of the map type.  Indication registrations use a multi-map, since
+// multiple indication providers can register for the same class.
+void registerProviderInfo(
+	const OW_ProviderEnvironmentIFCRef& env,
+	const OW_String& name_,
+	const OW_ProviderIFCBaseIFCRef& ifc,
+	const OW_String& providerName,
+	OW_ProviderManager::IndProvRegMap_t& regMap)
+{
+	OW_String name(name_);
+	name.toLowerCase();
+	env->getLogger()->logDebug(format("Registering provider %1::%2 for %3", ifc->getName(), providerName, name));
+	// now save it so we can look it up quickly when needed
+	OW_ProviderManager::ProvReg reg;
+	reg.ifc = ifc;
+	reg.provName = providerName;
+	regMap.insert(std::make_pair(name, reg));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 void processProviderClassMethodInfo(
 	const OW_ProviderEnvironmentIFCRef& env,
 	const OW_String& name,
@@ -110,12 +130,13 @@ void processProviderClassMethodInfo(
 }
 
 //////////////////////////////////////////////////////////////////////////////
+template <typename RegMapT>
 void processProviderClassInfo(
 	const OW_ProviderEnvironmentIFCRef& env,
 	const OW_InstanceProviderInfo::ClassInfo& classInfo,
 	const OW_ProviderIFCBaseIFCRef& ifc,
 	const OW_String& providerName,
-	OW_ProviderManager::ProvRegMap_t& regMap)
+	RegMapT& regMap)
 {
 	if (classInfo.namespaces.empty())
 	{
@@ -171,14 +192,14 @@ void processProviderClassInfo(
 
 
 //////////////////////////////////////////////////////////////////////////////
-template <typename ProviderInfoT>
+template <typename ProviderInfoT, typename RegMapT>
 void processProviderInfo(
 	const OW_ProviderEnvironmentIFCRef& env,
 	const OW_Array<ProviderInfoT>& providerInfo,
 	const OW_ProviderIFCBaseIFCRef& ifc,
-	OW_ProviderManager::ProvRegMap_t& regMap)
+	RegMapT& regMap)
 {
-	// process the instance provider info.  Each provider may have added an entry.
+	// process the provider info.  Each provider may have added an entry.
 	for (size_t j = 0; j < providerInfo.size(); ++j)
 	{
 		// make sure the ifc or provider set a name.
@@ -214,12 +235,15 @@ void OW_ProviderManager::init(const OW_ProviderEnvironmentIFCRef& env)
 		OW_AssociatorProviderInfoArray associatorProviderInfo;
 		OW_MethodProviderInfoArray methodProviderInfo;
 		OW_PropertyProviderInfoArray propertyProviderInfo;
-		m_IFCArray[i]->init(env, instanceProviderInfo, associatorProviderInfo, methodProviderInfo, propertyProviderInfo);
+		OW_IndicationProviderInfoArray indicationProviderInfo;
+		m_IFCArray[i]->init(env, instanceProviderInfo, associatorProviderInfo, 
+			methodProviderInfo, propertyProviderInfo, indicationProviderInfo);
 
 		processProviderInfo(env, instanceProviderInfo, m_IFCArray[i], m_registeredInstProvs);
 		processProviderInfo(env, associatorProviderInfo, m_IFCArray[i], m_registeredAssocProvs);
 		processProviderInfo(env, methodProviderInfo, m_IFCArray[i], m_registeredMethProvs);
 		processProviderInfo(env, propertyProviderInfo, m_IFCArray[i], m_registeredPropProvs);
+		processProviderInfo(env, indicationProviderInfo, m_IFCArray[i], m_registeredIndProvs);
 	}
 }
 
@@ -435,8 +459,8 @@ OW_ProviderManager::getAssociatorProvider(const OW_ProviderEnvironmentIFCRef& en
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationExportProviderIFCRefArray
-OW_ProviderManager::getIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env
-	)
+OW_ProviderManager::getIndicationExportProviders(
+	const OW_ProviderEnvironmentIFCRef& env) const
 {
 	OW_IndicationExportProviderIFCRefArray rv;
 
@@ -454,8 +478,8 @@ OW_ProviderManager::getIndicationExportProviders(const OW_ProviderEnvironmentIFC
 
 //////////////////////////////////////////////////////////////////////////////
 OW_PolledProviderIFCRefArray
-OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
-	)
+OW_ProviderManager::getPolledProviders(
+	const OW_ProviderEnvironmentIFCRef& env) const
 {
 	OW_PolledProviderIFCRefArray rv;
 
@@ -471,6 +495,43 @@ OW_ProviderManager::getPolledProviders(const OW_ProviderEnvironmentIFCRef& env
 	}
 
 	return rv;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndicationProviderIFCRefArray
+OW_ProviderManager::getIndicationProviders(const OW_ProviderEnvironmentIFCRef& env, 
+	const OW_String& ns, const OW_String& indicationClassName) const
+{
+	// lookup just the class name to see if a provider registered for the
+	// class in all namespaces.
+	OW_String lowerName = indicationClassName;
+	lowerName.toLowerCase();
+	std::pair<IndProvRegMap_t::const_iterator, IndProvRegMap_t::const_iterator>
+		range = m_registeredIndProvs.equal_range(lowerName);
+	IndProvRegMap_t::const_iterator lci = range.first;
+	IndProvRegMap_t::const_iterator uci = range.second;
+	if (lci == m_registeredIndProvs.end())
+	{
+		// didn't find any, so
+		// next lookup namespace:classname to see if we've got one for the
+		// specific namespace
+		OW_String nsAndClassName = ns + ':' + lowerName;
+		nsAndClassName.toLowerCase();
+		range = m_registeredAssocProvs.equal_range(nsAndClassName);
+		lci = range.first;
+		uci = range.second;
+	}
+
+	OW_IndicationProviderIFCRefArray rval;
+	if (lci != m_registeredAssocProvs.end())
+	{
+		// loop through the matching range and put them in rval
+		for (IndProvRegMap_t::const_iterator tci = lci; tci != uci; ++tci)
+		{
+			rval.push_back(tci->second.ifc->getIndicationProvider(env, tci->second.provName.c_str()));
+		}
+	}
+	return rval;
 }
 
 //////////////////////////////////////////////////////////////////////////////

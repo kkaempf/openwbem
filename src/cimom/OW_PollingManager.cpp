@@ -118,7 +118,7 @@ OW_PollingManager::run()
 		itpra.size()));
 
 	{
-		// Get initial polling interval from mall trigger providers
+		// Get initial polling interval from all polled providers
 		OW_MutexLock ml(m_triggerGuard);
 
 		for (size_t i = 0; i < itpra.size(); ++i)

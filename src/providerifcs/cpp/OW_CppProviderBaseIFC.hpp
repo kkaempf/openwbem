@@ -44,6 +44,7 @@ class OW_CppAssociatorProviderIFC;
 class OW_CppPropertyProviderIFC;
 class OW_CppIndicationExportProviderIFC;
 class OW_CppPolledProviderIFC;
+class OW_CppIndicationProviderIFC;
 
 /**
  * This is the base class implemented by all providers that are loaded
@@ -87,6 +88,7 @@ public:
 	virtual OW_CppPropertyProviderIFC* getPropertyProvider() { return 0; }
 	virtual OW_CppIndicationExportProviderIFC* getIndicationExportProvider() { return 0; }
 	virtual OW_CppPolledProviderIFC* getPolledProvider() { return 0; }
+	virtual OW_CppIndicationProviderIFC* getIndicationProvider() { return 0; }
 
 	OW_DateTime getLastAccessTime() const  { return m_dt; }
 

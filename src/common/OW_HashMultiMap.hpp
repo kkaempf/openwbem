@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2002 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,23 +28,24 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_HASH_MAP_HPP_INCLUDE_GUARD_
-#define OW_HASH_MAP_HPP_INCLUDE_GUARD_
+#ifndef OW_HASH_MULTI_MAP_HPP_INCLUDE_GUARD_
+#define OW_HASH_MULTI_MAP_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 
 #ifdef OW_HAVE_HASH_MAP
-	#include <hash_map> // hash_map is better for the cache than OW_SortedVectorMap
+	#include <hash_map>
 	#define OW_HASH_MAP_NS std
-	#define OW_HashMap std::hash_map
+	#define OW_HashMultiMap std::hash_multimap
 #elif OW_HAVE_EXT_HASH_MAP
-	#include <ext/hash_map> // hash_map is better for the cache than OW_SortedVectorMap
+	#include <ext/hash_map>
 	#define OW_HASH_MAP_NS __gnu_cxx
-	#define OW_HashMap __gnu_cxx::hash_map
+	#define OW_HashMultiMap __gnu_cxx::hash_multimap
 #else
-	#include "OW_SortedVectorMap.hpp"
-	#define OW_HASH_MAP_NS
-	#define OW_HashMap OW_SortedVectorMap
+	// TODO: Write a real hash multi map
+	#include <multimap>
+	#define OW_HASH_MAP_NS std
+	#define OW_HashMultiMap multimap
 #endif
 
 #ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_

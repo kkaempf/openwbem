@@ -35,6 +35,7 @@
 #include "OW_CIMClass.hpp"
 #include "OW_CIMServer.hpp"
 #include "OW_CIMValue.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_WQLFilterRep::OW_WQLFilterRep(const OW_CIMInstance& inst,
@@ -207,7 +208,7 @@ OW_WQLFilterRep::enumInstances(
 	OW_CIMInstanceResultHandlerIFC& result,
 	OW_Bool deep,
 	OW_Bool localOnly, OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	const OW_StringArray* propertyList, const OW_ACLInfo& aclInfo)
+	const OW_StringArray* propertyList, OW_Bool enumSubClasses, const OW_ACLInfo& aclInfo)
 {
 	OW_String superClassName = m_inst.getClassName();
 
@@ -219,7 +220,7 @@ OW_WQLFilterRep::enumInstances(
 			//result.handleInstance(m_inst.clone(localOnly, includeQualifiers,
 			//	includeClassOrigin, propertyList));
 			(void)deep; (void)localOnly; (void)includeQualifiers;
-			(void)includeClassOrigin; (void)propertyList;
+			(void)includeClassOrigin; (void)propertyList; (void)enumSubClasses;
 			// This is more efficient
 			result.handle(m_inst);
 			break;

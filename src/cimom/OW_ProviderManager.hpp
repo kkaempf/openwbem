@@ -38,14 +38,12 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
-#include "OW_CppInstanceProviderIFC.hpp"
-#include "OW_CppMethodProviderIFC.hpp"
-#include "OW_CppPropertyProviderIFC.hpp"
-#include "OW_CppAssociatorProviderIFC.hpp"
+#include "OW_IndicationProviderIFC.hpp"
 #include "OW_ProviderIFCLoader.hpp"
 #include "OW_Mutex.hpp"
 #include "OW_InternalProviderIFC.hpp"
 #include "OW_HashMap.hpp"
+#include "OW_HashMultiMap.hpp"
 
 
 /**
@@ -163,14 +161,23 @@ public:
 	 * provider interfaces.
 	 */
 	OW_IndicationExportProviderIFCRefArray
-		getIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env);
+		getIndicationExportProviders(const OW_ProviderEnvironmentIFCRef& env) const;
 
 	/**
 	 * @return all available indication trigger providers from the available
 	 * provider interfaces.
 	 */
 	OW_PolledProviderIFCRefArray
-		getPolledProviders(const OW_ProviderEnvironmentIFCRef& env);
+		getPolledProviders(const OW_ProviderEnvironmentIFCRef& env) const;
+
+	/**
+	 * @return all available indication providers from the available
+	 * provider interfaces, which are interested in exporting indications of
+	 * indicationClassName in namespace ns.
+	 */
+	OW_IndicationProviderIFCRefArray
+		getIndicationProviders(const OW_ProviderEnvironmentIFCRef& env, 
+			const OW_String& ns, const OW_String& indicationClassName) const;
 
 	/**
 	 * Call into each ProviderIFC to unload providers which haven't been
@@ -201,6 +208,7 @@ public:	// so free functions in cpp file can access them.
 	};
 
 	typedef OW_HashMap<OW_String, ProvReg> ProvRegMap_t;
+	typedef OW_HashMultiMap<OW_String, ProvReg> IndProvRegMap_t;
 	
 private:
 	// The key must be: a classname if the provider supports any namespace,
@@ -214,6 +222,9 @@ private:
 	// The key must be: [namespace:]className[:propertyname]
 	ProvRegMap_t m_registeredPropProvs;
 
+	// The key must be: a classname if the provider supports any namespace,
+	// or namespace:classname for a specific namespace.
+	IndProvRegMap_t m_registeredIndProvs;
 };
 
 typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;

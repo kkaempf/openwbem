@@ -1,5 +1,6 @@
+
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2002 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,44 +29,15 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_HASH_MAP_HPP_INCLUDE_GUARD_
-#define OW_HASH_MAP_HPP_INCLUDE_GUARD_
+#ifndef OW_INDICATION_PROVIDER_INFO_HPP_INCLUDE_GUARD_
+#define OW_INDICATION_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
+#include "OW_InstanceProviderInfo.hpp"
 
-#ifdef OW_HAVE_HASH_MAP
-	#include <hash_map> // hash_map is better for the cache than OW_SortedVectorMap
-	#define OW_HASH_MAP_NS std
-	#define OW_HashMap std::hash_map
-#elif OW_HAVE_EXT_HASH_MAP
-	#include <ext/hash_map> // hash_map is better for the cache than OW_SortedVectorMap
-	#define OW_HASH_MAP_NS __gnu_cxx
-	#define OW_HashMap __gnu_cxx::hash_map
-#else
-	#include "OW_SortedVectorMap.hpp"
-	#define OW_HASH_MAP_NS
-	#define OW_HashMap OW_SortedVectorMap
-#endif
-
-#ifndef OW_HASH_SPECIALIZED_INCLUDE_GUARD_
-#define OW_HASH_SPECIALIZED_INCLUDE_GUARD_
-#if defined(OW_HAVE_HASH_MAP) || defined(OW_HAVE_EXT_HASH_MAP)
-#include "OW_String.hpp"
-// need to specialize hash
-namespace OW_HASH_MAP_NS
-{
-template<> struct hash<OW_String>
-{
-	size_t operator()(const OW_String& s) const
-	{
-		return hash<const char*>()(s.c_str());
-	}
-};
-}
-#endif
-#endif
-
-#undef OW_HASH_MAP_NS
+// may need to make this a separate class
+typedef OW_InstanceProviderInfo OW_IndicationProviderInfo;
+typedef OW_Array<OW_IndicationProviderInfo> OW_IndicationProviderInfoArray;
 
 #endif
 

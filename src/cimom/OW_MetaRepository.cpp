@@ -397,6 +397,9 @@ OW_MetaRepository::setQualifierType(const OW_String& ns,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMException::ErrNoType
 OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
+	OW_Bool localOnly,
+	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
+	const OW_StringArray* propertyList,
 	OW_CIMClass& cc)
 {
 	throwIfNotOpen();
@@ -419,6 +422,31 @@ OW_MetaRepository::getCIMClass(const OW_String& ns, const OW_String& className,
 		else
 		{
 			return OW_CIMException::NOT_FOUND;
+		}
+	}
+
+	// now do some filtering
+	if (propertyList || localOnly == true || includeQualifiers == false || includeClassOrigin == false)
+	{ // only clone if we have to
+
+		OW_StringArray lpropList;
+		OW_Bool noProps = false;
+		if(propertyList)
+		{
+			if(propertyList->size() == 0)
+			{
+				noProps = true;
+			}
+			else
+			{
+				lpropList = *propertyList;
+			}
+		}
+		cc = cc.clone(localOnly, includeQualifiers, includeClassOrigin,
+			lpropList, noProps);
+		if (!cc) // clone doesn't throw
+		{
+			return OW_CIMException::FAILED;
 		}
 	}
 	return OW_CIMException::SUCCESS;

@@ -40,12 +40,14 @@
 #include "OW_AssociatorProviderIFC.hpp"
 #include "OW_IndicationExportProviderIFC.hpp"
 #include "OW_PolledProviderIFC.hpp"
+#include "OW_IndicationProviderIFC.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
 #include "OW_Exception.hpp"
 #include "OW_InstanceProviderInfo.hpp"
 #include "OW_AssociatorProviderInfo.hpp"
 #include "OW_MethodProviderInfo.hpp"
 #include "OW_PropertyProviderInfo.hpp"
+#include "OW_IndicationProviderInfo.hpp"
 
 DEFINE_EXCEPTION(NoSuchProvider);
 
@@ -98,9 +100,10 @@ public:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
-		OW_PropertyProviderInfoArray& p)
+		OW_PropertyProviderInfoArray& p,
+		OW_IndicationProviderInfoArray& ind)
 	{
-		doInit(env, i, a, m, p);
+		doInit(env, i, a, m, p, ind);
 	}
 	/**
 	 * Locate an Instance provider.
@@ -195,6 +198,22 @@ public:
 		doUnloadProviders(env);
 	}
 
+	/**
+	 * Locate an Indication provider.
+	 *
+	 * @param provIdString	The provider interface specific string. The provider
+	 *								interface will use this to identify the provider
+	 *								being requested.
+	 *
+	 * @returns A ref counted OW_IndicationProvider. If the provider is not
+	 * found, then an OW_NoSuchProviderException is thrown.
+	 */
+	OW_IndicationProviderIFCRef getIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+		const char* provIdString)
+	{
+		return  doGetIndicationProvider(env, provIdString);
+	}
+
 protected:
 	/**
 	 * The derived classes must override these functions to implement the
@@ -204,7 +223,8 @@ protected:
 		OW_InstanceProviderInfoArray& i,
 		OW_AssociatorProviderInfoArray& a,
 		OW_MethodProviderInfoArray& m,
-		OW_PropertyProviderInfoArray& p) = 0;
+		OW_PropertyProviderInfoArray& p,
+		OW_IndicationProviderInfoArray& ind) = 0;
 
 	virtual OW_InstanceProviderIFCRef doGetInstanceProvider(const OW_ProviderEnvironmentIFCRef& env,
 		const char* provIdString) = 0;
@@ -226,6 +246,10 @@ protected:
 	virtual OW_PolledProviderIFCRefArray doGetPolledProviders(
 		const OW_ProviderEnvironmentIFCRef& env
 		) = 0;
+
+	virtual OW_IndicationProviderIFCRef doGetIndicationProvider(
+		const OW_ProviderEnvironmentIFCRef& env,
+		const char* provIdString) = 0;
 
 	virtual void doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env) = 0;
 };

@@ -123,10 +123,11 @@ OW_DaemonEnv::shutdown()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
-OW_DaemonEnv::getCIMOMHandle(const OW_String& username, OW_Bool doIndications)
+OW_DaemonEnv::getCIMOMHandle(const OW_String& username, const OW_Bool doIndications, const OW_Bool bypassProviders)
 {
 	(void)username;
 	(void)doIndications;
+	(void)bypassProviders;
 	OW_CIMProtocolIFCRef client;
 	client = new OW_HTTPClient("ipc://localhost/owbinary");
 

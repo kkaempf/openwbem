@@ -36,6 +36,7 @@
 #include "OW_SafeLibCreate.hpp"
 #include "OW_SelectEngine.hpp"
 #include "OW_CIMServer.hpp"
+#include "OW_CIMRepository.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_ServiceIFC.hpp"
@@ -119,6 +120,7 @@ private:
 OW_CIMOMEnvironment::OW_CIMOMEnvironment()
 	: OW_ServiceEnvironmentIFC()
 	, m_monitor()
+	, m_cimRepository(0)
 	, m_cimServer(0)
 	, m_authManager(0)
 	, m_Logger(0)
@@ -269,9 +271,11 @@ OW_CIMOMEnvironment::startServices()
 			OW_CppProviderBaseIFCRef(OW_SharedLibraryRef(),
 			new OW_NameSpaceProvider));
 
+		m_cimRepository = OW_RepositoryIFCRef(new OW_CIMRepository(eref));
+		m_cimRepository->open(getConfigItem(OW_ConfigOpts::DATA_DIR_opt));
+
 		m_cimServer = OW_RepositoryIFCRef(new OW_CIMServer(eref,
-			m_providerManager));
-		m_cimServer->open(getConfigItem(OW_ConfigOpts::DATA_DIR_opt));
+			m_providerManager, m_cimRepository));
 
 		_createAuthManager();
 		_loadRequestHandlers();
@@ -396,14 +400,20 @@ OW_CIMOMEnvironment::shutdown()
 	// Shutdown the cim server and delete it
 	if(m_cimServer)
 	{
+		m_cimServer = 0;
+	}
+
+	// Shutdown the cim repository and delete it
+	if(m_cimRepository)
+	{
 		try
 		{
-			m_cimServer->close();
+			m_cimRepository->close();
 		}
 		catch (...)
 		{
 		}
-		m_cimServer = 0;
+		m_cimRepository = 0;
 	}
 
 	// Delete the provider manager
@@ -746,7 +756,7 @@ OW_CIMOMEnvironment::getWQLFilterCIMOMHandle(const OW_CIMInstance& inst,
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
-	OW_Bool doIndications)
+	OW_Bool doIndications, const OW_Bool bypassProviders)
 {
 	{
 		OW_MutexLock l(m_runningGuard);
@@ -761,38 +771,47 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 
 
 	OW_CIMOMEnvironmentRef eref(this, true);
+	OW_RepositoryIFCRef rref;
+	if (bypassProviders)
+	{
+		rref = m_cimRepository;
+	}
+	else
+	{
+		rref = m_cimServer;
+	}
 
 	if(doIndications
 	   && m_indicationServer
 	   && !m_indicationsDisabled)
 	{
-		OW_SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer();
+		OW_SharedLibraryRepositoryIFCRef irl = _getIndicationRepLayer(rref);
 
 		if(irl)
 		{
-			OW_RepositoryIFCRef rref(new OW_SharedLibraryRepository(irl));
-			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
+			OW_RepositoryIFCRef rref2(new OW_SharedLibraryRepository(irl));
+			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref2,
 				aclInfo));
 		}
 	}
 
-	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, m_cimServer,
+	return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
 		aclInfo));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle(const OW_String &username,
-	const OW_Bool doIndications)
+	const OW_Bool doIndications, const OW_Bool bypassProviders)
 {
-	return getCIMOMHandle(OW_ACLInfo(username), doIndications);
+	return getCIMOMHandle(OW_ACLInfo(username), doIndications, bypassProviders);
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMOMHandleIFCRef
 OW_CIMOMEnvironment::getCIMOMHandle()
 {
-	return getCIMOMHandle(OW_ACLInfo(), false);
+	return getCIMOMHandle(OW_ACLInfo(), false, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -832,7 +851,7 @@ OW_CIMOMEnvironment::getWQLRef()
 
 //////////////////////////////////////////////////////////////////////////////
 OW_SharedLibraryRepositoryIFCRef
-OW_CIMOMEnvironment::_getIndicationRepLayer()
+OW_CIMOMEnvironment::_getIndicationRepLayer(const OW_RepositoryIFCRef& rref)
 {
 	OW_SharedLibraryRepositoryIFCRef retref;
 
@@ -873,7 +892,7 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 
 		if(pirep)
 		{
-			pirep->setCIMServer(m_cimServer);
+			pirep->setCIMServer(rref);
 			retref = OW_SharedLibraryRepositoryIFCRef(m_indicationRepLayerLib,
 				OW_RepositoryIFCRef(pirep));
 		}

@@ -72,7 +72,7 @@ public:
 		const OW_String& info, OW_String& details) = 0;
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String& username,
-		const OW_Bool doIndications) = 0;
+		const OW_Bool doIndications = true, const OW_Bool bypassProviders = false) = 0;
 };
 
 #endif	// __OW_SERVICE_ENVIRONMENTIFC_HPP__

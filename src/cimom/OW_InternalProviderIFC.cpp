@@ -34,6 +34,7 @@
 #include "OW_Format.hpp"
 #include "OW_Assertion.hpp"
 
+
 ///////////////////////////////////////////////////////////////////////////////
 OW_InternalProviderIFC::~OW_InternalProviderIFC()
 {
@@ -107,7 +108,8 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 	OW_InstanceProviderInfoArray& instInfos,
 	OW_AssociatorProviderInfoArray& assocInfos,
 	OW_MethodProviderInfoArray& methInfos,
-	OW_PropertyProviderInfoArray& propInfos)
+	OW_PropertyProviderInfoArray& propInfos,
+	OW_IndicationProviderInfoArray& indInfos)
 {
 	OW_MutexLock l(m_guard);
 	for (ProviderMap::iterator i =  m_cimomProviders.begin(); i != m_cimomProviders.end(); ++i)
@@ -158,6 +160,15 @@ OW_InternalProviderIFC::doInit(const OW_ProviderEnvironmentIFCRef& env,
 			provInfo.setProviderName(it->first);
 			pPP->getProviderInfo(provInfo);
 			propInfos.push_back(provInfo);
+		}
+
+		OW_CppIndicationProviderIFC* pIndP = it->second.m_pProv->getIndicationProvider();
+		if (pIndP)
+		{
+			OW_IndicationProviderInfo provInfo;
+			provInfo.setProviderName(it->first);
+			pIndP->getProviderInfo(provInfo);
+			indInfos.push_back(provInfo);
 		}
 	}
 }
@@ -362,6 +373,40 @@ OW_InternalProviderIFC::doGetAssociatorProvider(const OW_ProviderEnvironmentIFCR
 	OW_CppAssociatorProviderIFCRef apRef(it->second.m_pProv.getLibRef(), pAP);
 
 	return OW_AssociatorProviderIFCRef(new OW_AssociatorProviderProxy(apRef));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+OW_IndicationProviderIFCRef
+OW_InternalProviderIFC::doGetIndicationProvider(const OW_ProviderEnvironmentIFCRef& env,
+	const char *provIdString)
+{
+	OW_MutexLock ml(m_guard);
+
+	ProviderMap::iterator it = m_cimomProviders.find(OW_String(provIdString));
+
+	if(it == m_cimomProviders.end())
+	{
+		OW_THROW(OW_NoSuchProviderException, provIdString);
+	}
+
+	OW_CppIndicationProviderIFC* pAP = it->second.m_pProv->getIndicationProvider();
+	if(!pAP)
+	{
+		env->getLogger()->logError(format(
+			"Provider Manager - not an indication provider: %1", provIdString));
+
+		OW_THROW(OW_NoSuchProviderException, provIdString);
+	}
+
+	if(!it->second.m_initDone)
+	{
+		it->second.m_pProv->initialize(env);
+		it->second.m_initDone = true;
+	}
+
+	OW_CppIndicationProviderIFCRef apRef(it->second.m_pProv.getLibRef(), pAP);
+
+	return OW_IndicationProviderIFCRef(new OW_IndicationProviderProxy(apRef));
 }
 
 
