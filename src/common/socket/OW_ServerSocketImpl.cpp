@@ -101,8 +101,16 @@ Select_t
 ServerSocketImpl::getSelectObj() const
 {
 #if defined(OW_WIN32)
-	::WSAEventSelect(m_sockfd, m_event, FD_ACCEPT);
-	return m_event;
+	if(::WSAEventSelect(m_sockfd, m_event, FD_ACCEPT) != 0)
+	{
+		OW_THROW(SocketException, 
+			Format("WSAEventSelect failed in getSelectObj: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
+	Select_t st;
+	st.event = m_event;
+	st.sockfd = m_sockfd;
+	return st;
 #else
 	return m_sockfd;
 #endif
@@ -178,7 +186,12 @@ ServerSocketImpl::accept(int timeoutSecs)
 	}
 
 	// Register interest in FD_ACCEPT events
-	::WSAEventSelect(m_sockfd, m_event, FD_ACCEPT);
+	if(::WSAEventSelect(m_sockfd, m_event, FD_ACCEPT) != 0)
+	{
+		OW_THROW(SocketException, 
+			Format("WSAEventSelect failed in accept: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
 
 	SOCKET clntfd;
 	socklen_t clntlen;
@@ -199,6 +212,12 @@ ServerSocketImpl::accept(int timeoutSecs)
 
 		if (::WSAGetLastError() != WSAEWOULDBLOCK)
 		{
+			if(::WSAEventSelect(m_sockfd, m_event, 0) != 0)
+			{
+				OW_THROW(SocketException, 
+					Format("Resetting socket with WSAEventSelect failed: %1",
+					System::lastErrorMsg(true)).c_str());
+			}
 			OW_THROW(SocketException, Format("ServerSocketImpl: %1",
 				System::lastErrorMsg(true)).c_str());
 		}
@@ -216,8 +235,12 @@ ServerSocketImpl::accept(int timeoutSecs)
 		}
 	}
 
-	unsigned long cmdArg = 1;
-	::ioctlsocket(clntfd, FIONBIO, &cmdArg);
+	if(::WSAEventSelect(m_sockfd, m_event, 0) != 0)
+	{
+		OW_THROW(SocketException, 
+			Format("Resetting socket with WSAEventSelect failed: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
 	return Socket(clntfd, m_localAddress.getType(), m_isSSL);
 }
 #else

@@ -67,7 +67,10 @@ Select_t
 SocketImpl::getSelectObj() const
 {
 #if defined(OW_WIN32)
-	return m_event;
+	Select_t st;
+	st.event = m_event;
+	st.sockfd = m_sockfd;
+	return st;
 #else
 	return m_sockfd;
 #endif

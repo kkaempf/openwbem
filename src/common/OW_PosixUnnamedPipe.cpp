@@ -432,9 +432,9 @@ Select_t
 PosixUnnamedPipe::getSelectObj() const
 {
 #ifdef OW_WIN32
-	// Can't select on this in unnamed pipe
+	// Can't select on an unnamed pipe
 	OW_ASSERT(false);
-	return HANDLE(NULL);
+	return Select_t();
 #else
 	return m_fds[0];
 #endif

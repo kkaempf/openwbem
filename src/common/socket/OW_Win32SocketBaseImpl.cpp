@@ -290,7 +290,10 @@ SocketBaseImpl::~SocketBaseImpl()
 Select_t
 SocketBaseImpl::getSelectObj() const
 {
-	return m_event;
+	Select_t st;
+	st.event = m_event;
+	st.sockfd = m_sockfd;
+	return st;
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -318,7 +321,12 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 	WSANETWORKEVENTS networkEvents;
 
 	// Connect non-blocking
-	::WSAEventSelect(m_sockfd, m_event, FD_CONNECT);
+	if(::WSAEventSelect(m_sockfd, m_event, FD_CONNECT) != 0)
+	{
+		OW_THROW(SocketException, 
+			Format("WSAEventSelect Failed: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
 
 	if (::connect(m_sockfd, addr.getNativeForm(), addr.getNativeFormSize())
 		== SOCKET_ERROR)
@@ -385,15 +393,20 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 		}	// while (true) - waiting for connection event
 	}	// if SOCKET_ERROR on connect
 
+	// Set socket back to blocking
+	if(::WSAEventSelect(m_sockfd, m_event, 0) != 0)
+	{
+		_closeSocket(m_sockfd);
+		OW_THROW(SocketException, 
+			Format("Resetting socket with WSAEventSelect Failed: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
+
 	m_isConnected = true;
-	if (addr.getType() == SocketAddress::INET)
-	{
-		fillInetAddrParms();
-	}
-	else
-	{
-		OW_ASSERT(0);
-	}
+
+	OW_ASSERT(addr.getType() == SocketAddress::INET);
+
+	fillInetAddrParms();
 }
 
 //////////////////////////////////////////////////////////////////////////////

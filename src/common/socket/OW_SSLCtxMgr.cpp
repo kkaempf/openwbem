@@ -376,7 +376,7 @@ SSLCtxMgr::uninit()
 	uninitServer();
 	if (m_bio_err)
 	{
-		free(m_bio_err);
+		BIO_free(m_bio_err);
 		m_bio_err = NULL;
 		
 		// free up memory allocated in SSL_library_init()
@@ -393,7 +393,7 @@ SSLCtxMgr::uninitClient()
 {
 	if (m_ctxClient)
 	{
-		free(m_ctxClient);
+		SSL_CTX_free(m_ctxClient);
 		m_ctxClient = NULL;
 	}
 }

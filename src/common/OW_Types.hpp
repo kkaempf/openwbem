@@ -86,10 +86,31 @@ typedef double						Real32;
 typedef off_t	off_t;
 
 #ifdef OW_WIN32
+
 #define OW_SHAREDLIB_EXTENSION ".dll"
 #define OW_FILENAME_SEPARATOR "\\"
 #define OW_PATHNAME_SEPARATOR ";"
-typedef HANDLE Select_t;
+// OW_Select_t is the type of object that can be used in
+// synchronous I/O multiplexing (i.e. select).
+struct Select_t
+{
+	Select_t() 
+		: event(NULL)
+		, sockfd(INVALID_SOCKET)
+	{
+	}
+
+	Select_t(const Select_t& arg)
+		: event(arg.event)
+		, sockfd(arg.sockfd)
+	{
+	}
+	
+	HANDLE event;
+	SOCKET sockfd;
+};
+
+//typedef HANDLE Select_t;
 #else
 // Select_t is the type of object that can be used in
 // synchronous I/O multiplexing (i.e. select). There is a

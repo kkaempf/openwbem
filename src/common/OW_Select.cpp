@@ -77,7 +77,7 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 
 	for (size_t i = 0; i < hcount; i++)
 	{
-		hdls[i] = selarray[i];
+		hdls[i] = selarray[i].event;
 	}
 
 	DWORD timeout = (ms != ~0U) ? ms : INFINITE;
@@ -95,6 +95,13 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 			break;
 		default:
 			rc = cc - WAIT_OBJECT_0;
+			// If this is a socket, set it back to 
+			// blocking mode
+			if(selarray[rc].sockfd != INVALID_SOCKET)
+			{
+				WSAEventSelect(selarray[rc].sockfd, 
+					selarray[rc].event, 0);
+			}
 			break;
 	}
 

@@ -103,7 +103,12 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 
 	if (networkEvents != -1L)
 	{
-		::WSAEventSelect(fd, eventArg, networkEvents);
+		if(::WSAEventSelect(fd, eventArg, networkEvents) != 0)
+		{
+			OW_THROW(SocketException, 
+				Format("WSAEventSelect failed in waitForIO: %1",
+				System::lastErrorMsg(true)).c_str());
+		}
 	}
 
 	int cc;
@@ -160,6 +165,13 @@ waitForIO(SocketHandle_t fd, HANDLE eventArg, int timeOutSecs,
 		}
 	}
 
+	// Set socket back to blocking
+	if(::WSAEventSelect(fd, eventArg, 0) != 0)
+	{
+		OW_THROW(SocketException, 
+			Format("Resetting socket with WSAEventSelect failed: %1",
+			System::lastErrorMsg(true)).c_str());
+	}
 	return cc;
 }
 

@@ -41,6 +41,7 @@
 #include "OW_SSLSocketImpl.hpp"
 #ifdef OW_HAVE_OPENSSL
 #include <openssl/err.h>
+#include <OW_Format.hpp>
 
 namespace OpenWBEM
 {
@@ -114,7 +115,10 @@ Select_t
 SSLSocketImpl::getSelectObj() const
 {
 #if defined(OW_WIN32)
-	return m_event;
+	Select_t st;
+	st.event = m_event;
+	st.sockfd = m_sockfd;
+	return st;
 #else
 	return m_sockfd;
 #endif
@@ -143,9 +147,18 @@ SSLSocketImpl::connectSSL()
 		OW_THROW(SSLException, "BIO_new_socket failed");
 	}
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
-	if (SSL_connect(m_ssl) <= 0)
+	int cc = SSL_ERROR_WANT_READ;
+	while(cc == SSL_ERROR_WANT_READ || cc == SSL_ERROR_WANT_WRITE)
 	{
-		OW_THROW(SSLException, "SSL connect error");
+		cc = SSL_connect(m_ssl);
+		cc = SSL_get_error(m_ssl, cc);
+	}
+
+	if(cc != SSL_ERROR_NONE)
+	{
+		OW_THROW(SSLException, 
+			format("SSL connect error: %1", cc).c_str());
+			
 	}
 	if (!SSLCtxMgr::checkServerCert(m_ssl, m_peerAddress.getName()))
 	{
