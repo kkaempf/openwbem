@@ -52,6 +52,7 @@
 #include "OW_CIMQualifierType.hpp"
 #include "OW_CIMQualifier.hpp"
 #include "OW_SocketUtils.hpp"
+#include "OW_SocketException.hpp"
 
 DECLARE_EXCEPTION(BadStream)
 DEFINE_EXCEPTION(BadStream)
@@ -350,9 +351,16 @@ namespace
 
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
 			OW_CIMObjectPath cop(cop_);
-            if (cop.getFullNameSpace().isLocal())
+			if (cop.getFullNameSpace().isLocal())
 			{
-				cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+				try
+				{
+					// TODO: Cache this value?
+					cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+				}
+				catch (const OW_SocketException& e)
+				{
+				}
 			}
 
 			if (cop.isClassPath())
@@ -656,7 +664,14 @@ namespace
 			OW_CIMObjectPath cop( ci );
 			cop.setNameSpace( ns );
 			// Make sure all outgoing object paths have our host name, instead of 127.0.0.1
-			cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+			try
+			{
+				// TODO: Cache this value?
+				cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
+			}
+			catch (const OW_SocketException& e)
+			{
+			}
 
 			OW_CIMtoXML(ci, ostr, cop,
 				OW_CIMtoXMLFlags::isNotInstanceName,
