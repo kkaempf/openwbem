@@ -168,16 +168,16 @@ WaitForLogResults()
   echo "Waiting up to $MAX_WAIT seconds for \"$TEXT\"".
 
   sleep 1
-  let WAIT_LEFT=$MAX_WAIT
+  WAIT_LEFT=$MAX_WAIT
   while [ $WAIT_LEFT -gt 0 ]
   do
     tail -n $LINES_TO_SEARCH $RESULTDIR/owcimomd.output 2>/dev/null | grep -- "$TEXT" >/dev/null 2>/dev/null
     if [ $? -ne 0 ]; then
       sleep 1
-      let WAIT_LEFT-=1
+      WAIT_LEFT=`expr $WAIT_LEFT - 1`
     else
-      let SECONDS_WAITED=$MAX_WAIT-$WAIT_LEFT
       WAIT_RESULTS=0
+      SECONDS_WAITED=`expr $MAX_WAIT - $WAIT_LEFT`
       echo "Found text (waited $SECONDS_WAITED seconds)."
       break
     fi
