@@ -14,7 +14,7 @@ case $# in
    sed 's~\(	// add tests to runner -- DO NOT EDIT THIS COMMENT\)~\1\
 	runner.addTest( "'"$1"'", '"$1"'TestCases::suite());~g' < UnitMain.cpp > tmp
    mv tmp UnitMain.cpp
-   sed 's~^unitMain_SOURCES = \(.*\)$~unitMain_SOURCES = \1 '"$1"'TestCases.cpp '"$1"'TestCases.hpp~g' < Makefile.am > tmp
+   sed 's~^unitMain_SOURCES = \\$~unitMain_SOURCES = \\\n'"$1"'TestCases.cpp \\\n'"$1"'TestCases.hpp \\~g' < Makefile.am > tmp
    mv tmp Makefile.am
    cvs add $1TestCases.*
    ;;

@@ -12,6 +12,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/common/socket \
 -I$(top_srcdir)/src/repositories/hdb
 
+#-I$(top_srcdir)/src/repositories/tdbcr
+
 owmofc_SOURCES = \
 owmofc.cpp \
 OW_MOFCompCIMOMHandle.cpp \
@@ -21,13 +23,20 @@ owmofc_LDFLAGS = \
 $(CXXBINLINKFLAGS) \
 -o owmofc$(EXEEXT) 
 
+if ENABLE_DB4_REPOSITORY
+REPLIBFLAGS=-L$(top_builddir)/src/repositories/tdbcr -lowrepositorytdbcr
+else
+REPLIBFLAGS=-L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb
+endif
+
+
 owmofc_LDADD = \
 -L$(top_builddir)/src/mof -lowmofc \
 -L$(top_builddir)/src/client -lowclient \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/http/client -lowhttpclient \
 -L$(top_builddir)/src/http/common -lowhttpcommon \
--L$(top_builddir)/src/repositories/hdb -lowrepositoryhdb \
+$(REPLIBFLAGS) \
 -L$(top_builddir)/db/db -lowdb \
 -L$(top_builddir)/src/common -lopenwbem \
 $(Z_LIBS) $(SSL_LIBS) \

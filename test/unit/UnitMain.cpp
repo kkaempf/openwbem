@@ -47,6 +47,7 @@
 #include "OW_BinarySerializationTestCases.hpp"
 #include "OperationContextTestCases.hpp"
 #include "MOFCompilerTestCases.hpp"
+#include "CIMRepository2TestCases.hpp"
 #include "OW_HTTPUtilsTestCases.hpp"
 #include "OW_CIMDateTimeTestCases.hpp"
 #include "OW_DateTimeTestCases.hpp"
@@ -108,6 +109,9 @@ int main( int argc, char *argv[])
 	runner.addTest( "OW_BinarySerialization", OW_BinarySerializationTestCases::suite());
 	runner.addTest( "OperationContext", OperationContextTestCases::suite());
 	runner.addTest( "MOFCompiler", MOFCompilerTestCases::suite());
+#ifdef OW_ENABLE_DB4_REPOSITORY
+	runner.addTest( "CIMRepository2", CIMRepository2TestCases::suite());
+#endif
 	runner.addTest( "OW_HTTPUtils", OW_HTTPUtilsTestCases::suite());
 	runner.addTest( "OW_CIMDateTime", OW_CIMDateTimeTestCases::suite());
 	runner.addTest( "OW_DateTime", OW_DateTimeTestCases::suite());

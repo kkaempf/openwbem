@@ -42,10 +42,17 @@
 #include "OW_GetPass.hpp"
 #include "OW_ClientAuthCBIFC.hpp"
 #include "OW_MOFCompCIMOMHandle.hpp"
+
+#ifdef OW_ENABLE_DB4_REPOSITORY
+#include "OW_CIMRepository2.hpp"
+#else
 #include "OW_CIMRepository.hpp"
+#endif
+
 #include "OW_RequestHandlerIFC.hpp"
 #include "OW_OperationContext.hpp"
 #include "OW_URL.hpp"
+#include "OW_Logger.hpp"
 #include "OW_Reference.hpp"
 #include "OW_CmdLineParser.hpp"
 
@@ -450,7 +457,11 @@ int main(int argc, char** argv)
 		if (g_useCimRepository)
 		{
 			ServiceEnvironmentIFCRef mofCompEnvironment(new MOFCompEnvironment());
+#ifdef OW_ENABLE_DB4_REPOSITORY
+			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository2(mofCompEnvironment));
+#else
 			RepositoryIFCRef cimRepository = RepositoryIFCRef(new CIMRepository(mofCompEnvironment));
+#endif
 			cimRepository->open(g_repositoryDir);
 			context = Reference<OperationContext>(new OperationContext);
 			handle = CIMOMHandleIFCRef(new MOFCompCIMOMHandle(cimRepository, *context));
