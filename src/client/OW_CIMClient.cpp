@@ -114,6 +114,7 @@ void OW_CIMClient::deleteNameSpace(const OW_String& ns)
 OW_StringArray 
 OW_CIMClient::enumNameSpaceE(OW_Bool deep)
 {
+	// TODO: try using CIM_Namespace first
 	return OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, deep);
 }
 
@@ -122,6 +123,7 @@ void
 OW_CIMClient::enumNameSpace(OW_StringResultHandlerIFC& result, 
 	OW_Bool deep)
 {
+	// TODO: try using CIM_Namespace first
 	OW_CIMNameSpaceUtils::enum__Namespace(m_ch, m_namespace, result, deep);
 }
 
