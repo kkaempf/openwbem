@@ -56,6 +56,10 @@ Fix problems:
     - Indication server needs to call deActivateFilter on all active providers
       when shutting down.
     - Change all cmd line utilities to use the CmdLineParser class and support --help and --version
+    - All libs should be installed in $(libdir) and links created in $(libdir)/openwbem/*/
+      This is necessary for listener and provider agent support.
+    - Enum on CIM_IndicationSubscription broken: http://sourceforge.net/mailarchive/forum.php?thread_id=5696976&forum_id=1848
+	- CMAddArg() broken.
 
 New features:
     - Providers provide their schema at startup in the for of mof, which the cimom compiles and caches.
