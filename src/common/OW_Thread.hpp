@@ -37,6 +37,7 @@
 #include "OW_String.hpp"
 #include "OW_ThreadImpl.hpp"
 #include "OW_Reference.hpp"
+#include "OW_Assertion.hpp"
 
 
 DECLARE_EXCEPTION(Thread);
@@ -127,6 +128,7 @@ public:
 	 */
 	void setSelfDelete(OW_Bool selfDelete=true)
 	{
+		OW_ASSERT(!m_isJoinable); // a joinable thread can't be set to self-delete.
 		m_deleteSelf = selfDelete;
 	}
 
@@ -153,6 +155,8 @@ public:
 	 * thread for this method to be called. This method must be called at on
 	 * all joinable threads. If this OW_Thread object is executing, this method
 	 * will block until this OW_Thread's run method returns.
+	 * join() should not be called until after start() has returned.  It may
+	 * be called by a different thread.
 	 * @exception OW_ThreadException
 	 */
 	void join() /*throw (OW_ThreadException)*/;
