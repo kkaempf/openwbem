@@ -46,6 +46,7 @@
 #include <OW_Format.hpp>
 #include <OW_SocketUtils.hpp>
 
+#include <iostream>
 
 namespace OpenWBEM
 {
@@ -217,10 +218,11 @@ SSLSocketImpl::~SSLSocketImpl()
 	if (m_sockfd != -1 && m_isConnected)
 #endif
 	{
+		disconnect(); 
 		if (m_ssl)
 		{
-			shutdownSSL(m_ssl);
 			SSL_free(m_ssl);
+			m_ssl = 0; 
 		}
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
@@ -252,6 +254,11 @@ SSLSocketImpl::connectSSL()
 	m_isConnected = false;
 	//m_ssl = SSL_new(SSLCtxMgr::getSSLCtxClient());
 	OW_ASSERT(m_sslCtx); 
+	if (m_ssl)
+	{
+		SSL_free(m_ssl); 
+		m_ssl = 0;
+	}
 	m_ssl = SSL_new(m_sslCtx->getSSLCtx()); 
 	
 	if (!m_ssl)
@@ -288,14 +295,18 @@ SSLSocketImpl::disconnect()
 	if (m_sockfd != -1 && m_isConnected)
 #endif
 	{
+		// probably not the best to call disconnect on the base class before
+		// SSL_shutdown, but if we don't SSL_shutdown hangs if the peer isn't
+		// ready to shutdown yet (server waiting on read() from a persistance 
+		// connection, for example. 
+		SocketBaseImpl::disconnect();
 		if (m_ssl)
 		{
+			std::cerr << "************** doing shutdownSSL(m_ssl)" << std::endl;
 			shutdownSSL(m_ssl);
-			SSL_free(m_ssl);
+			std::cerr << "************** done shutdownSSL(m_ssl)" << std::endl;
 		}
-		ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
-	SocketBaseImpl::disconnect();
 }
 //////////////////////////////////////////////////////////////////////////////
 int 
