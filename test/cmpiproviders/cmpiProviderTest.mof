@@ -1,0 +1,21 @@
+
+ [Description("CMPI sample provider"),
+  provider("cmpi:CMPISample1")
+ ]
+class CMPISample1
+{
+ [ key ]
+ string Identifier;
+ string data;
+ string array[];
+
+ [ provider("cmpi:CMPISample1") ]
+ string mount([IN] string dir , [IN] string type);
+
+};
+
+[association, provider("cmpi:CMPISample1")]
+class CMPIRef1
+{
+  CMPISample1 REF refed;
+};

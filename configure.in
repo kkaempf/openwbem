@@ -721,6 +721,7 @@ AC_OUTPUT(./Makefile
 ./test/c++providers/instance/Makefile
 ./test/c++providers/indication/Makefile
 ./test/npiproviders/Makefile
+./test/cmpiproviders/Makefile
 ./test/unit/Makefile)
 
 AC_CREATE_PREFIX_CONFIG_H([${srcdir}/src/common/OW_config.h], OW, [config.h])

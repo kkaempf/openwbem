@@ -78,12 +78,18 @@ int remFromStore(CMPIString *k)
 
 CMPIStatus testProvCleanup
                 (CMPIInstanceMI* cThis, CMPIContext *ctx) {
+   (void) cThis;
+   (void) ctx;
+
    CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus testProvEnumInstanceNames
                 (CMPIInstanceMI* cThis, CMPIContext* ctx,CMPIResult* rslt,
                  CMPIObjectPath* ref) {
+   (void) cThis;
+   (void) ctx;
+
    int i;
    CMPIStatus rc;
    CMPIObjectPath *cop, *copClone;
@@ -109,6 +115,10 @@ CMPIStatus testProvEnumInstanceNames
 CMPIStatus testProvEnumInstances
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* ref, char** props) {
+   (void) cThis;
+   (void) ctx;
+   (void) props;
+
    int i;
    CMPIStatus rc;
    CMPIObjectPath *cop, *copClone;
@@ -135,6 +145,10 @@ CMPIStatus testProvEnumInstances
 CMPIStatus testProvGetInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop, char** props) {
+   (void) cThis;
+   (void) ctx;
+   (void) props;
+
    CMPIString *k;
    struct data *dat;
    CMPIStatus rc;
@@ -162,6 +176,9 @@ CMPIStatus testProvGetInstance
 CMPIStatus testProvCreateInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop, CMPIInstance* inst) {
+   (void) cThis;
+   (void) ctx;
+
    CMPIString *k,*d;
    CMPIArray *a;
    CMPIStatus rc;
@@ -187,13 +204,23 @@ CMPIStatus testProvCreateInstance
 
 CMPIStatus testProvSetInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
-                 CMPIObjectPath* cop, CMPIInstance* inst) {
+                 CMPIObjectPath* cop, CMPIInstance* inst, char ** msg) {
+   (void) cThis;
+   (void) ctx;
+   (void) rslt;
+   (void) cop;
+   (void) inst;
+   (void) msg;
+
    CMReturn(CMPI_RC_OK);
 }
 
 CMPIStatus testProvDeleteInstance
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
                  CMPIObjectPath* cop) {
+   (void) cThis;
+   (void) rslt;
+
    CMPIString *k;
    CMPIStatus rc;
    //CMPIObjectPath *nx;
@@ -217,7 +244,14 @@ CMPIStatus testProvDeleteInstance
 
 CMPIStatus testProvExecQuery
                 (CMPIInstanceMI* cThis, CMPIContext* ctx, CMPIResult* rslt,
-                 CMPIObjectPath* cop, char* lang, char* query, char** props) {
+                 CMPIObjectPath* cop, char* lang, char* query) {
+   (void) cThis;
+   (void) ctx;
+   (void) rslt;
+   (void) cop;
+   (void) lang;
+   (void) query;
+
    CMReturn(CMPI_RC_OK);
 }
 
@@ -245,9 +279,11 @@ static CMPIInstanceMIFT instMIFT={
 };
 
 CMPIInstanceMI* cmpiTestProvider_Create_InstanceMI(CMPIBroker* brkr, CMPIContext *ctx) {
+   (void) ctx;
    static CMPIInstanceMI mi={
       NULL,
       &instMIFT,
+      NULL
    };
    broker=brkr;
    fprintf(stderr,"+++ TestProvider_Create_InstanceMI(): called\n");
