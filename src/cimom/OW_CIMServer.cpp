@@ -35,11 +35,16 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_CIMRepository.hpp"
 #include "OW_NoSuchProviderException.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMQualifier.hpp"
+#include "OW_CIMMethod.hpp"
+#include "OW_CIMParameter.hpp"
 
 #if !defined(OW_DISABLE_ACLS)
 class OW_AccessMgr

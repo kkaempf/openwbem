@@ -34,11 +34,13 @@
 #include "OW_BinaryRequestHandler.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_Format.hpp"
-#include "OW_CIM.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_CIMFeatures.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_SocketUtils.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMQualifier.hpp"
 
 #include <exception>
 

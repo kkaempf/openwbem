@@ -31,8 +31,6 @@
 #ifndef OW_CIM_HPP_INCLUDE_GUARD_
 #define OW_CIM_HPP_INCLUDE_GUARD_
 
-// TODO: Get rid of this file!
-
 #include "OW_config.h"
 #include "OW_Array.hpp"
 #include "OW_Char16.hpp"

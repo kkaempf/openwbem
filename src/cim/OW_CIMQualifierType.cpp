@@ -29,11 +29,15 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMQualifierType.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_CIMScope.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMFlavor.hpp"
+#include "OW_CIMValue.hpp"
 
 #include <algorithm> // for std::sort
 

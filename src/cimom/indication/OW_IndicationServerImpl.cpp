@@ -29,7 +29,6 @@
 *******************************************************************************/
 #include "OW_config.h"
 #include "OW_IndicationServerImpl.hpp"
-#include "OW_CIM.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Format.hpp"
@@ -46,6 +45,7 @@
 #include "OW_Platform.hpp"
 #include "OW_CIMNameSpaceUtils.hpp"
 #include "OW_MutexLock.hpp"
+#include "OW_CIMClass.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationServer::~OW_IndicationServer() 

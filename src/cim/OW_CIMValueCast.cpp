@@ -29,9 +29,13 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
 #include "OW_CIMValueCast.hpp"
 #include "OW_Format.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMException.hpp"
+#include "OW_CIMDateTime.hpp"
+#include "OW_CIMObjectPath.hpp"
 
 static OW_Bool isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to);
 

@@ -29,12 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_CIMObjectPath.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_CIMValueCast.hpp" // for OW_ValueCastException
+#include "OW_CIMDateTime.hpp"
 
 #include <new>
 #include <cassert>

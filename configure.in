@@ -794,6 +794,7 @@ AC_OUTPUT(./Makefile
 ./src/providers/cpp/instance/OpenWBEM_ObjectManager/Makefile
 ./src/providers/cpp/instance/CIM_Namespace/Makefile
 ./src/providers/cpp/instance/CIM_NamespaceInManager/Makefile
+./src/providers/cpp/instance/CIM_ObjectManagerCommunicationMechanism/Makefile
 ./src/providers/cpp/indication/Makefile
 ./src/providers/cpp/indication/IndicationRepLayer/Makefile
 ./src/repositories/Makefile

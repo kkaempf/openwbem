@@ -1176,5 +1176,12 @@ OW_CIMOMEnvironment::getRepository() const
 	return m_cimRepository;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceArray
+OW_CIMOMEnvironment::getCommunicationMechanisms() const
+{
+	return m_communicationMechanisms;
+}
+
 
 

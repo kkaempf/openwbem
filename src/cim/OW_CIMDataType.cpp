@@ -31,7 +31,6 @@
 #include "OW_config.h"
 #include "OW_CIMDataType.hpp"
 #include "OW_StringStream.hpp"
-#include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_StrictWeakOrdering.hpp"

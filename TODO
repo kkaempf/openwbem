@@ -13,6 +13,7 @@ Testing:
     - Test case insensitivity (eg. try to add a disk and DISK class)
     - Test storing 1 million instances.
     - Test that failed OW_ASSERT(foo) comes across the wire correctly.
+    - Test that enumerates all classes & instances, and then does a getInstance on each instance.  This is just to sanity-check all the built-in providers.
 
 Fix problems:
     - Man pages aren't getting included in the rpm.
@@ -26,8 +27,16 @@ New features:
     - Handle the various options in the CIM_IndicationSubscription and
       CIM_IndicationHandler classes.
     - Implement the CIM_Interop27 build-in providers.
-        - New model for provider registration.
-        - Do the rest of them.
+      - CIM_CIMXMLCommunicationMechanism
+      - OpenWBEM_BinaryCommunicationMechanism
+      - CIM_CommMechanismForManager
+      Optional:
+      - CIM_ProtocolAdapter
+      - CIM_CommMechanismForAdapter
+      - CIM_SystemIdentification
+      - CIM_SystemInNamespace
+      - CIM_IdentificationOfManagedSystem
+      - CIM_CIMOMStatisticalData
     - Update SLP provider to use the new standard template.
       - config item for interop namespace
     - Don't load the authentication provider if allow_anonymous is turned on.

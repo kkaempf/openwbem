@@ -43,6 +43,7 @@
 #include "OW_SharedLibraryReference.hpp"
 #include "OW_DateTime.hpp"
 #include "OW_Mutex.hpp"
+#include "OW_CIMInstance.hpp"
 
 class OW_CIMServer;
 class OW_CIMOMHandleIFC;
@@ -151,6 +152,8 @@ public:
 
 	OW_RepositoryIFCRef getRepository() const;
 
+	OW_CIMInstanceArray getCommunicationMechanisms() const;
+
 	// do not use this variable unless absolutely necessary!
 	static OW_CIMOMEnvironmentRef g_cimomEnvironment;
 private:
@@ -202,6 +205,8 @@ private:
 	bool m_running;
 	OW_Mutex m_runningGuard;
 	OW_IndicationRepLayerMediatorRef m_indicationRepLayerMediatorRef;
+
+	OW_CIMInstanceArray m_communicationMechanisms;
 };
 
 #endif

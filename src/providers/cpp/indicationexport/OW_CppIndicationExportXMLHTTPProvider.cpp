@@ -28,12 +28,14 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_CIM.hpp"
 #include "OW_CppIndicationExportXMLHTTPProvider.hpp"
 #include "OW_HTTPClient.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_IndicationExporter.hpp"
 #include "OW_Format.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMValue.hpp"
 
 namespace
 {

@@ -37,12 +37,17 @@
 #include "OW_ConfigOpts.hpp"
 #include "OW_Format.hpp"
 #include "OW_WQLIFC.hpp"
-#include "OW_CIM.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_IOException.hpp"
 #include "OW_CIMParamValue.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_Map.hpp"
+#include "OW_CIMQualifierType.hpp"
+#include "OW_CIMClass.hpp"
+#include "OW_CIMInstance.hpp"
+#include "OW_CIMProperty.hpp"
+#include "OW_CIMValue.hpp"
+#include "OW_CIMQualifier.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
 OW_CIMRepository::OW_CIMRepository(OW_ServiceEnvironmentIFCRef env)

@@ -29,10 +29,12 @@
 *******************************************************************************/
 
 #include "OW_config.h"
-#include "OW_CIM.hpp"
+#include "OW_CIMParameter.hpp"
 #include "OW_StringBuffer.hpp"
 #include "OW_BinIfcIO.hpp"
 #include "OW_StrictWeakOrdering.hpp"
+#include "OW_CIMDataType.hpp"
+#include "OW_CIMQualifier.hpp"
 
 using std::istream;
 using std::ostream;
