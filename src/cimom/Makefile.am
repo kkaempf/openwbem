@@ -34,7 +34,10 @@ install-exec-local: install-static-cimom-main
 	${INSTALL} -d ${DESTDIR}/@localstatedir@/openwbem
 
 install-static-cimom-main : $(owcimomd_OBJECTS)
-	if test "x$(STATIC_SERVICES)" != "x"; then \
+	@if test "x$(STATIC_SERVICES)" != "x"; then \
+		echo "Building library \"libowcimomd_main.a\" for later linking"; \
 		ar cru libowcimomd_main.a $^; \
 		$(INSTALL_PROGRAM) libowcimomd_main.a $(DESTDIR)$(libdir); \
 	fi
+
+# FIXME! Add a clean rule to remove: libowcimomd_main.a

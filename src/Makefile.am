@@ -120,9 +120,23 @@ OPENWBEM_STATIC_ALL=libopenwbem_all.a
 EXTERNAL_PROVIDER_FILES=$(filter %.a,$(sort $(EXTERNAL_PROVIDERS:%.so=%.a) $(EXTERNAL_PROVIDERS:%.dylib=%.a) $(EXTERNAL_PROVIDERS:%.sl=%.a)))
 
 $(OPENWBEM_STATIC_ALL): $(STATIC_CIMOM_FILES) $(STATIC_SERVICE_FILES) $(STATIC_PROVIDER_FILES) $(STATIC_CLIENT_FILES) $(STATIC_IFC_FILES) $(EXTERNAL_PROVIDER_FILES)
-	if test "x$(STATIC_SERVICES)" != "x"; then \
+	@if test "x$(STATIC_SERVICES)" != "x"; then \
 		echo "External providers: $(EXTERNAL_PROVIDER_FILES)"; \
 		$(AR) cru $@ $^; \
+		if [ "x$(EXTERNAL_PROVIDER_FILES)" != "x" ]; then \
+			for i in $(EXTERNAL_PROVIDER_FILES) ""; do \
+				$(SHELL) $(top_srcdir)/fake_library_creator.sh $(EXPORT_PREFIX) $$i; \
+				LIB_BASE=`echo $$i | cut -f1 -d'.'`; \
+				FSL="$$LIB_BASE.fsl"; \
+				if [ -e "$$FSL" ]; then \
+					echo "Installing fake library for $$i"; \
+					$(INSTALL_PROGRAM) $FSL $(DESTDIR)$(thelibdir)/$$LIB_BASE.so; \
+					rm -f "$$FSL"; \
+				else \
+					echo "Not installing $$i because no exports were found."; \
+				fi; \
+			done; \
+		fi \
 	else \
 		touch $@; \
 	fi
@@ -134,8 +148,8 @@ install-ow-static-lib: $(OPENWBEM_STATIC_ALL)
 
 TEMPOBJDIR=$@.libs
 CIMOMD_MAIN=$(top_builddir)/src/cimom/libowcimomd_main.a
-install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL) $(CIMOMD_MAIN)
-	if test "x$(STATIC_SERVICES)" != "x"; then \
+install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL)
+	@if test "x$(STATIC_SERVICES)" != "x"; then \
 		rm -rf $(TEMPOBJDIR); \
 		mkdir $(TEMPOBJDIR); \
 		cd $(TEMPOBJDIR) && ar x ../$(OPENWBEM_STATIC_ALL); \
@@ -145,3 +159,5 @@ install-ow-static-cimomd: $(OPENWBEM_STATIC_ALL) $(CIMOMD_MAIN)
 		echo 'REPLACING THE DYNAMIC CIMOM WITH A STATIC VERSION!'; \
 		$(INSTALL_PROGRAM) static_cimomd $(DESTDIR)$(sbindir)/owcimomd; \
 	fi
+
+# FIXME! Add a clean rule to remove: static_cimomd $(OPENWBEM_STATIC_ALL)
