@@ -539,7 +539,7 @@ public:
 	 * parsing the query string. WQL levels 1 and 2 are the only currently supported
 	 * query language.
 	 *
-	 * @return OW_CIMInstanceArray A deep enumeration of all instances of the specified
+	 * @return OW_CIMInstanceEnumeration A deep enumeration of all instances of the specified
 	 * class and all classes derived from the specified class, that match the
 	 * query string.
 	 *
@@ -548,7 +548,7 @@ public:
 	 *		The requested query language is not supported.
 	 *		The query specifies a class that does not exist.
 	 */
-	OW_CIMInstanceArray execQuery(const OW_CIMNameSpace &path,
+	OW_CIMInstanceEnumeration execQuery(const OW_CIMNameSpace &path,
 		const OW_String &query, int wqlLevel);
 
 	/**
@@ -571,7 +571,8 @@ public:
 	 *		The requested query language is not supported.
 	 *		The query specifies a class that does not exist.
 	 */
-	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace& path,
+	virtual void execQuery(const OW_CIMNameSpace& path,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage);
 
 	/**

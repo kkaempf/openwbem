@@ -2008,8 +2008,10 @@ OW_CIMServer::_getNameSpaceClass(const OW_String& className)
 }
 
 //////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
-OW_CIMServer::execQuery(const OW_CIMNameSpace& ns, const OW_String &query,
+void
+OW_CIMServer::execQuery(const OW_CIMNameSpace& ns,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String &query,
 	const OW_String& queryLanguage, const OW_ACLInfo& aclInfo)
 {
 	OW_WQLIFCRef wql = m_env->getWQLRef();
@@ -2018,10 +2020,9 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns, const OW_String &query,
 		OW_CIMOMHandleIFCRef lch(new OW_LocalCIMOMHandle(m_env,
 			OW_RepositoryIFCRef(this, true), aclInfo, true));
 
-		OW_CIMInstanceArray rval;
 		try
 		{
-			rval = wql->evaluate(ns, query, queryLanguage, lch);
+			wql->evaluate(ns, result, query, queryLanguage, lch);
 		}
 		catch (const OW_CIMException& ce)
 		{
@@ -2044,8 +2045,6 @@ OW_CIMServer::execQuery(const OW_CIMNameSpace& ns, const OW_String &query,
 				throw ce;
 			}
 		}
-
-		return rval;
 	}
 	else
 	{

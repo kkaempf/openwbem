@@ -565,7 +565,7 @@ deleteAssociations(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMNameSpace path("/root");
-		OW_CIMInstanceArray cia = hdl.execQuery(path,
+		hdl.execQueryE(path,
 			"delete from CIM_SystemComponent", "wql1");
 	}
 	catch (OW_CIMException& e)
@@ -891,11 +891,11 @@ execQuery(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMNameSpace path("/root");
-		OW_CIMInstanceArray cia = hdl.execQuery(path,
+		OW_CIMInstanceEnumeration cie = hdl.execQueryE(path,
 			"select * from EXP_BionicComputerSystem", "wql1");
-		for (size_t i = 0; i < cia.size(); ++i)
+		while (cie.hasMoreElements())
 		{
-			cout << "Instance from Query: " << cia[i].toMOF() << endl;
+			cout << "Instance from Query: " << cie.nextElement().toMOF() << endl;
 		}
 	}
 	catch (OW_CIMException& e)

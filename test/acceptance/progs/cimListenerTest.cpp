@@ -32,7 +32,7 @@
 #include "OW_HTTPXMLCIMListener.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_Semaphore.hpp"
-#include "OW_CIMInstance.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
 #include "OW_CIMXMLCIMOMHandle.hpp"
@@ -369,7 +369,7 @@ int main(int argc, char* argv[])
 		OW_CIMProtocolIFCRef httpClient(new OW_HTTPClient(url));
 		OW_CIMXMLCIMOMHandle rch(httpClient);
 
-		rch.execQuery(path, "delete from CIM_IndicationSubscription", "wql2");
+		rch.execQueryE(path, "delete from CIM_IndicationSubscription", "wql2");
 
 
 		OW_Array<OW_String> registrationHandles;

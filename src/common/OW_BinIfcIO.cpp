@@ -333,33 +333,6 @@ OW_BinIfcIO::readStringArray(std::istream& istrm)
 
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
-OW_CIMObjectPathEnumeration
-OW_BinIfcIO::readObjectPathEnum(std::istream& istrm) // TODO: Remove me
-{
-	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_OPENUM);
-	OW_CIMObjectPathEnumeration en;
-	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size);
-
-	if(size == -1)
-	{
-		OW_String fname = OW_BinIfcIO::readString(istrm);
-		en = OW_CIMObjectPathEnumeration(fname);
-	}
-	else
-	{
-		while(size)
-		{
-			en.addElement(OW_BinIfcIO::readObjectPath(istrm));
-			size--;
-		}
-	}
-
-	return en;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
 void
 OW_BinIfcIO::readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result)
 {
@@ -401,32 +374,6 @@ OW_BinIfcIO::readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& res
 			done = true;
 		}
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// STATIC
-OW_CIMInstanceEnumeration
-OW_BinIfcIO::readInstanceEnum(std::istream& istrm)
-{
-	OW_BinIfcIO::verifySignature(istrm, OW_BINSIG_INSTENUM);
-	OW_CIMInstanceEnumeration en;
-	OW_Int32 size;
-	OW_BinIfcIO::read(istrm, size);
-	if(size == -1)
-	{
-		OW_String fname = OW_BinIfcIO::readString(istrm);
-		en = OW_CIMInstanceEnumeration(fname);
-	}
-	else
-	{
-		while(size)
-		{
-			en.addElement(OW_BinIfcIO::readInstance(istrm));
-			size--;
-		}
-	}
-
-	return en;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -45,9 +45,10 @@ public:
 	{
 	}
 
-	OW_CIMInstanceArray evaluate(const OW_CIMNameSpace& nameSpace,
+	void evaluate(const OW_CIMNameSpace& nameSpace,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage,
-                OW_Reference<OW_CIMOMHandleIFC> hdl);
+        OW_Reference<OW_CIMOMHandleIFC> hdl);
 
 	OW_Bool supportsQueryLanguage(const OW_String& lang);
 

@@ -4,7 +4,7 @@
 #include "OW_Assertion.hpp"
 #include "OW_CIMProperty.hpp"
 #include "OW_CIMValue.hpp"
-#include "OW_CIMInstance.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
 
 #include <iostream>
@@ -24,13 +24,15 @@ OW_CIMInstanceArray testQuery(OW_CIMOMHandleIFCRef& rch, const char* query, int 
 	++queryCount;
 	cout << "\nExecuting query " << queryCount << ": " << query << endl;
 	OW_CIMNameSpace path("/root");
-	OW_CIMInstanceArray cia;
-	cia = rch->execQuery(path, query, "wql2");
-	cout << "Got back " << cia.size() << " instances.  Expected " <<
+	OW_CIMInstanceEnumeration cie = rch->execQueryE(path, query, "wql2");
+	cout << "Got back " << cie.numberOfElements() << " instances.  Expected " <<
 		expectedSize << endl;
-	for (size_t i = 0; i < cia.size(); ++i)
+	OW_CIMInstanceArray cia;
+	while (cie.hasMoreElements())
 	{
-        cout << cia[i].toMOF() << endl;
+		OW_CIMInstance i = cie.nextElement();
+		cia.push_back(i);
+        cout << i.toMOF() << endl;
 	}
 	if (expectedSize >= 0)
 	{

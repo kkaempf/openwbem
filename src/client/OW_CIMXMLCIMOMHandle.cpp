@@ -1233,16 +1233,17 @@ OW_CIMXMLCIMOMHandle::references(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
+OW_CIMInstanceEnumeration
 OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 	const OW_String& query, int wqlLevel)
 {
-	return execQuery(path, query, OW_String("WQL") + OW_String(wqlLevel));
+	return execQueryE(path, query, OW_String("WQL") + OW_String(wqlLevel));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
+void
 OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage)
 {
 	static const char* const commandName = "ExecQuery";
@@ -1258,7 +1259,7 @@ OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 	{
 		OW_THROWCIM(OW_CIMException::FAILED);
 	}
-	OW_CIMInstanceArray retVal;
+	
 	node = node.getChild();
 	while (node)
 	{
@@ -1268,11 +1269,10 @@ OW_CIMXMLCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 		{
 			OW_CIMInstance ci = OW_XMLCIMFactory::createInstance(node);
 			ci.setKeys(iop.getKeys());
-			retVal.push_back(ci);
+			result.handleInstance(ci);
 			node = node.getNext();
 		}
 	}
-	return retVal;
 }
 
 //////////////////////////////////////////////////////////////////////////////

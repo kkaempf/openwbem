@@ -248,11 +248,12 @@ public:
 		m_ref->referenceNames(path, result, resultClass, role, aclInfo);
 	}
 
-	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace &ns,
+	virtual void execQuery(const OW_CIMNameSpace &ns,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String &queryLanguage,
 		const OW_ACLInfo &aclInfo)
 	{
-		return m_ref->execQuery(ns, query, queryLanguage, aclInfo);
+		m_ref->execQuery(ns, result, query, queryLanguage, aclInfo);
 	}
 
 	virtual OW_ReadLock getReadLock()

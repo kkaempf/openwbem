@@ -126,21 +126,9 @@ readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPath& cop)
 	cop = OW_BinIfcIO::readObjectPath(*istr);
 }
 static inline void
-readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathEnumeration& enu)
-{
-	// TODO: remove me
-	enu = OW_BinIfcIO::readObjectPathEnum(*istr);
-}
-static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMObjectPathResultHandlerIFC& result)
 {
 	OW_BinIfcIO::readObjectPathEnum(*istr, result);
-}
-static inline void
-readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceEnumeration& arg)
-{
-	// TODO: remove me
-	arg = OW_BinIfcIO::readInstanceEnum(*istr);
 }
 static inline void
 readCIMObject(OW_CIMProtocolIStreamIFCRef& istr, OW_CIMInstanceResultHandlerIFC& result)
@@ -738,20 +726,21 @@ OW_BinaryCIMOMHandle::references(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
+OW_CIMInstanceEnumeration
 OW_BinaryCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 	const OW_String& query, int wqlLevel)
 {
-	return execQuery(path, query, OW_String("WQL") + OW_String(wqlLevel));
+	return execQueryE(path, query, OW_String("WQL") + OW_String(wqlLevel));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
+void
 OW_BinaryCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage)
 {
 	OW_Reference<std::iostream> strmRef = m_protocol->beginRequest(
-		"ExecQuery", path.getNameSpace());;
+		"ExecQuery", path.getNameSpace());
 	std::iostream& strm = *strmRef;
 	OW_BinIfcIO::write(strm, OW_BIN_EXECQUERY);
 	OW_BinIfcIO::writeNameSpace(strm, path);
@@ -759,34 +748,8 @@ OW_BinaryCIMOMHandle::execQuery(const OW_CIMNameSpace& path,
 	OW_BinIfcIO::writeString(strm, queryLanguage);
 
 	OW_Reference<OW_CIMProtocolIStreamIFC> in = m_protocol->endRequest(strmRef, "ExecQuery", path.getNameSpace());
-	checkError(in);
 
-	OW_CIMInstanceArray ira;
-	try
-	{
-		OW_BinIfcIO::verifySignature(*in, OW_BINSIG_INSTARRAY);
-		OW_Int32 size;
-		OW_BinIfcIO::read(*in, size);
-		while(size)
-		{
-			ira.append(OW_BinIfcIO::readInstance(*in));
-			size--;
-		}
-	}
-	catch(OW_IOException& e)
-	{
-		while(*in) in->get();
-		if (in->getError().length() > 0)
-		{
-			checkError(in);
-		}
-		else
-		{
-			throw e;
-		}
-	}
-
-	return ira;
+	readAndDeliver(in, result);
 }
 
 //////////////////////////////////////////////////////////////////////////////

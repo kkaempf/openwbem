@@ -775,15 +775,13 @@ OW_BinaryRequestHandler::execQuery(OW_CIMOMHandleIFCRef chdl,
 	OW_String query(OW_BinIfcIO::readString(istrm));
 	OW_String queryLang(OW_BinIfcIO::readString(istrm));
 
-	OW_CIMInstanceArray instra = chdl->execQuery(path, query, queryLang);
-
 	OW_BinIfcIO::write(ostrm, OW_BIN_OK);
-	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTARRAY);
-	OW_BinIfcIO::write(ostrm, instra.size());
-	for(size_t i = 0; i < instra.size(); i++)
-	{
-		OW_BinIfcIO::writeInstance(ostrm, instra[i]);
-	}
+	OW_BinIfcIO::write(ostrm, OW_BINSIG_INSTENUM);
+	BinaryCIMInstanceWriter handler(ostrm);
+	chdl->execQuery(path, handler, query, queryLang);
+
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
+	OW_BinIfcIO::write(ostrm, OW_END_INSTENUM);
 }
 
 //////////////////////////////////////////////////////////////////////////////

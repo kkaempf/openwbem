@@ -554,7 +554,7 @@ void execReadQuery(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMNameSpace path("/root/acltest");
-		OW_CIMInstanceArray cia = hdl.execQuery(path,
+		hdl.execQueryE(path,
 			"select * from EXP_BionicComputerSystem", "wql1");
 		if (mode != "r" && mode != "rw")
 			assert(0);
@@ -574,7 +574,7 @@ void execWriteQuery(OW_CIMOMHandleIFC& hdl)
 	try
 	{
 		OW_CIMNameSpace path("/root/acltest");
-		OW_CIMInstanceArray cia = hdl.execQuery(path,
+		hdl.execQueryE(path,
 			"UPDATE EXP_BionicComputerSystem2 SET OptionalArg=false", "wql2");
 		if (mode != "rw")
 			assert(0);

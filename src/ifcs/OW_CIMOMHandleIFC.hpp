@@ -717,11 +717,17 @@ public:
 	 *		The requested query language is not supported.
 	 *		The query specifies a class that does not exist.
 	 */
-	virtual OW_CIMInstanceArray execQuery(
+	virtual void execQuery(
 		const OW_CIMNameSpace& ns,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query,
 		const OW_String& queryLanguage) = 0;
 
+	virtual OW_CIMInstanceEnumeration execQueryE(
+		const OW_CIMNameSpace& ns,
+		const OW_String& query,
+		const OW_String& queryLanguage);
+	
 	/**
 	 * @return The features of the CIMOM this OW_CIMOMHandleIFC is connected to as
 	 * an OW_CIMFeatures object.

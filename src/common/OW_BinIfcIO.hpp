@@ -106,12 +106,10 @@ public:
 
 	static OW_StringArray readStringArray(std::istream& istrm);
 
-	static OW_CIMObjectPathEnumeration readObjectPathEnum(std::istream& istrm); // TODO: remove me
 	static void readObjectPathEnum(std::istream& istrm, OW_CIMObjectPathResultHandlerIFC& result);
 
 	static void readClassEnum(std::istream& istrm, OW_CIMClassResultHandlerIFC& result);
 
-	static OW_CIMInstanceEnumeration readInstanceEnum(std::istream& istrm); // TODO: remove me
 	static void readInstanceEnum(std::istream& istrm, OW_CIMInstanceResultHandlerIFC& result);
 
 	static void readQualifierTypeEnum(std::istream& istrm, OW_CIMQualifierTypeResultHandlerIFC& result);
@@ -169,7 +167,6 @@ const OW_Int32 OW_BINSIG_OPENUM =		0xa000000b;
 const OW_Int32 OW_BINSIG_INSTENUM =		0xa000000c;
 const OW_Int32 OW_BINSIG_QUALENUM =		0xa000000d;
 const OW_Int32 OW_BINSIG_VALUEARRAY =	0xa000000e;
-const OW_Int32 OW_BINSIG_INSTARRAY =	0xa000000f;
 
 const OW_Int32 OW_END_CLSENUM =			0x00001001;
 const OW_Int32 OW_END_OPENUM =			0x00001002;

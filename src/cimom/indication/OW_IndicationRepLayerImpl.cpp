@@ -532,12 +532,13 @@ OW_IndicationRepLayerImpl::references(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
+void
 OW_IndicationRepLayerImpl::execQuery(const OW_CIMNameSpace& ns,
+	OW_CIMInstanceResultHandlerIFC& result,
 	const OW_String& query, const OW_String& queryLanguage,
 	const OW_ACLInfo& aclInfo)
 {
-	return m_pServer->execQuery(ns, query, queryLanguage, aclInfo);
+	m_pServer->execQuery(ns, result, query, queryLanguage, aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -156,7 +156,8 @@ public:
 		const OW_String &resultClass,
 		const OW_String &role, const OW_ACLInfo& aclInfo);
 	
-	virtual OW_CIMInstanceArray execQuery(const OW_CIMNameSpace &cop,
+	virtual void execQuery(const OW_CIMNameSpace &cop,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String &query, const OW_String& queryLanguage,
 		const OW_ACLInfo& aclInfo);
 

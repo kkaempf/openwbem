@@ -270,3 +270,17 @@ OW_CIMOMHandleIFC::referencesE(
 	return rval;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+OW_CIMInstanceEnumeration
+OW_CIMOMHandleIFC::execQueryE(
+	const OW_CIMNameSpace& ns,
+	const OW_String& query,
+	const OW_String& queryLanguage)
+{
+	OW_CIMInstanceEnumeration rval;
+	CIMInstanceEnumBuilder handler(rval);
+	execQuery(ns,handler,query,queryLanguage);
+	return rval;
+}
+
+

@@ -355,12 +355,14 @@ OW_LocalCIMOMHandle::references(const OW_CIMObjectPath& path,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
-OW_LocalCIMOMHandle::execQuery(const OW_CIMNameSpace& ns, const OW_String& query,
+void
+OW_LocalCIMOMHandle::execQuery(const OW_CIMNameSpace& ns,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& query,
 	const OW_String& queryLanguage)
 {
 	OW_WriteLock wl = getWriteLock();
-	return m_pServer->execQuery(ns, query, queryLanguage, m_aclInfo);
+	m_pServer->execQuery(ns, result, query, queryLanguage, m_aclInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////////

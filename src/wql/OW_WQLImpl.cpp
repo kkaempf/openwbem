@@ -38,7 +38,9 @@ OW_Mutex OW_WQLImpl::classLock;
 const char* OW_WQLImpl::parserInput;
 stmt* OW_WQLImpl::statement;
 
-OW_CIMInstanceArray OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace, const OW_String& query, const OW_String& queryLanguage,
+void OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace,
+	OW_CIMInstanceResultHandlerIFC& result,
+	const OW_String& query, const OW_String& queryLanguage,
 	OW_Reference<OW_CIMOMHandleIFC> hdl)
 {
 	(void)queryLanguage;
@@ -74,7 +76,10 @@ OW_CIMInstanceArray OW_WQLImpl::evaluate(const OW_CIMNameSpace& nameSpace, const
 	{
 		//OW_LOGDEBUG("pAST was NULL!");
 	}
-	return p.instances;
+	for (size_t i = 0; i < p.instances.size(); ++i)
+	{
+		result.handleInstance(p.instances[i]);
+	}
 }
 
 OW_Bool OW_WQLImpl::supportsQueryLanguage(const OW_String& lang)

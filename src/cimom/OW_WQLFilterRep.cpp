@@ -355,8 +355,9 @@ OW_WQLFilterRep::references(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_CIMInstanceArray
+void
 OW_WQLFilterRep::execQuery(const OW_CIMNameSpace& /*ns*/,
+	OW_CIMInstanceResultHandlerIFC&,
 	const OW_String &/*query*/, const OW_String &/*queryLanguage*/,
 	const OW_ACLInfo& /*aclInfo*/)
 {

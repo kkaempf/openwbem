@@ -1312,6 +1312,35 @@ OW_XMLExecute::setProperty(ostream&	/*ostr*/, OW_XMLNode& propNode,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class execQueryXMLOutputter : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		execQueryXMLOutputter(std::ostream& ostr_, const OW_String& ns_)
+		: ostr(ostr_)
+		, ns(ns_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &i)
+		{
+			OW_CIMObjectPath cop(i.getClassName(),
+				i.getKeyValuePairs() );
+
+			cop.setNameSpace(ns);
+
+			OW_CIMtoXML(i, ostr, cop,
+				OW_CIMtoXMLFlags::notLocalOnly,
+				OW_CIMtoXMLFlags::includeQualifiers,
+				OW_CIMtoXMLFlags::includeClassOrigin,
+				OW_StringArray());
+		}
+	private:
+		std::ostream& ostr;
+		const OW_String& ns;
+	};
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 	OW_CIMObjectPath& path, OW_CIMOMHandleIFC& hdl)
@@ -1325,26 +1354,8 @@ OW_XMLExecute::execQuery(ostream& ostr, OW_XMLNode& node,
 		OW_THROWCIM(OW_CIMException::INVALID_PARAMETER);
 	}
 
-	OW_CIMInstanceArray cia = hdl.execQuery(path.getFullNameSpace(), query, queryLanguage);
-
-	//
-	// Build result
-	//
-	for (size_t i = 0; i < cia.size(); ++i)
-	{
-		OW_CIMInstance cimInstance = cia[i];
-
-		OW_CIMObjectPath cop(cimInstance.getClassName(),
-			cimInstance.getKeyValuePairs() );
-
-		cop.setNameSpace(path.getNameSpace());
-
-		OW_CIMtoXML(cimInstance, ostr, cop,
-			OW_CIMtoXMLFlags::notLocalOnly,
-			OW_CIMtoXMLFlags::includeQualifiers,
-			OW_CIMtoXMLFlags::includeClassOrigin,
-			OW_StringArray());
-	}
+	execQueryXMLOutputter handler(ostr, path.getNameSpace());
+	hdl.execQuery(path.getFullNameSpace(), handler, query, queryLanguage);
 }
 
 //////////////////////////////////////////////////////////////////////////////

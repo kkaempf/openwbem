@@ -33,7 +33,7 @@
 #include "OW_CIMXMLCIMOMHandle.hpp"
 #include "OW_Assertion.hpp"
 #include "OW_GetPass.hpp"
-#include "OW_CIMInstance.hpp"
+#include "OW_CIMInstanceEnumeration.hpp"
 #include "OW_CIMNameSpace.hpp"
 #include "OW_BinaryCIMOMHandle.hpp"
 
@@ -136,13 +136,13 @@ int main(int argc, char* argv[])
 		// end of stuff cut'n'pasted from client driver.
 
 		cout << "Executing query (" << query << ") on server" << endl;
-		OW_CIMInstanceArray cia = rch->execQuery(OW_CIMNameSpace(ns), query, "wql2");
+		OW_CIMInstanceEnumeration cie = rch->execQueryE(OW_CIMNameSpace(ns), query, "wql2");
 
-		cout << "Got response: " << cia.size() << " CIMInstances\n";
-		for (size_t i = 0; i < cia.size(); ++i)
+		cout << "Got response: " << cie.numberOfElements() << " CIMInstances\n";
+		for (size_t i = 0; cie.hasMoreElements(); ++i)
 		{
 			cout << "CIMInstance " << (i + 1) << ":\n";
-			cout << cia[i].toString() << '\n';
+			cout << cie.nextElement().toString() << '\n';
 		}
 
 		return 0;

@@ -797,7 +797,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_NAMESPACE
 	try
 	{
-		hdl->execQuery(OW_CIMNameSpace("badNameSpace"), "select * from junk", "wql1");
+		hdl->execQueryE(OW_CIMNameSpace("badNameSpace"), "select * from junk", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -809,7 +809,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_QUERY_LANGUAGE_NOT_SUPPORTED
 	try
 	{
-		hdl->execQuery(OW_CIMNameSpace("root"), "select * from junk", "badql");
+		hdl->execQueryE(OW_CIMNameSpace("root"), "select * from junk", "badql");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -820,7 +820,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 	// CIM_ERR_INVALID_QUERY
 	try
 	{
-		hdl->execQuery(OW_CIMNameSpace("root"), "xxx", "wql1");
+		hdl->execQueryE(OW_CIMNameSpace("root"), "xxx", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)
@@ -830,7 +830,7 @@ void runTests(const OW_CIMOMHandleIFCRef& hdl)
 
 	try
 	{
-		hdl->execQuery(OW_CIMNameSpace("root"), "select * from junk", "wql1");
+		hdl->execQueryE(OW_CIMNameSpace("root"), "select * from junk", "wql1");
 		assert(0);
 	}
 	catch (const OW_CIMException& e)

@@ -44,7 +44,8 @@ public:
 	{
 	}
 
-	virtual OW_CIMInstanceArray evaluate(const OW_CIMNameSpace& nameSpace,
+	virtual void evaluate(const OW_CIMNameSpace& nameSpace,
+		OW_CIMInstanceResultHandlerIFC& result,
 		const OW_String& query, const OW_String& queryLanguage,
                 OW_Reference<OW_CIMOMHandleIFC> hdl) = 0;
 

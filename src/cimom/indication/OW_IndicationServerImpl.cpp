@@ -265,6 +265,24 @@ OW_IndicationServerImpl::processIndication(const OW_CIMInstance& instanceArg,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+namespace
+{
+	class CIMInstanceArrayBuilder : public OW_CIMInstanceResultHandlerIFC
+	{
+	public:
+		CIMInstanceArrayBuilder(OW_CIMInstanceArray& cia_)
+		: cia(cia_)
+		{}
+	protected:
+		virtual void doHandleInstance(const OW_CIMInstance &i)
+		{
+			cia.push_back(i);
+		}
+	private:
+		OW_CIMInstanceArray& cia;
+	};
+}
+//////////////////////////////////////////////////////////////////////////////
 void
 OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 	const OW_CIMNameSpace& instNS)
@@ -344,8 +362,9 @@ OW_IndicationServerImpl::_processIndication(const OW_CIMInstance& instanceArg,
 			//-----------------------------------------------------------------
 			if (wqlRef->supportsQueryLanguage(queryLanguage))
 			{
-				OW_CIMInstanceArray cia =
-					wqlRef->evaluate(instNS, query,
+				OW_CIMInstanceArray cia;
+				CIMInstanceArrayBuilder handler(cia);
+				wqlRef->evaluate(instNS, handler, query,
 					queryLanguage, wqllch);
 
 				if(cia.size() != 1)
