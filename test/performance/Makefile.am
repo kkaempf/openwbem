@@ -1,5 +1,6 @@
 noinst_PROGRAMS = \
-TimeString
+TimeString \
+TimeFile
 
 # TimeString
 TimeString_LDFLAGS = \
@@ -13,6 +14,20 @@ $(BINLINKAPPENDFLAGS)
 
 TimeString_SOURCES = \
 TimeString.cpp
+
+
+# TimeFile
+TimeFile_LDFLAGS = \
+$(CXXBINLINKFLAGS) \
+-o TimeFile$(EXEEXT)
+
+TimeFile_LDADD = \
+-L$(top_builddir)/src/common -lopenwbem \
+$(Z_LIBS) $(SSL_LIBS)\
+$(BINLINKAPPENDFLAGS)
+
+TimeFile_SOURCES = \
+TimeFile.cpp
 
 
 INCLUDES = \
