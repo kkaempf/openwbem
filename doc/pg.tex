@@ -13,7 +13,7 @@
 The OpenWBEM Client API can be used to create CIM Client applications.  
 A CIM Client application can come in many forms.  It could be a management
 console, or a controlling agent managing multiple CIMOMs.  A CIM Client 
-developed with the OpenWBEM CIM Client API can communicator with any 
+developed with the OpenWBEM CIM Client API can communicate with any 
 CIMOM, not just the OpenWBEM CIMOM.  
 \subsection{Selecting a Protocol}
 The first step is to define the means of communication between the
@@ -35,7 +35,8 @@ and password can be obtained through a callback which will be described
 shortly.  The hostname is the name or IP address of the computer where 
 the CIMOM is running.  If the port is not given, 5988 is assumed if 
 the protocol is http, and 5989 is assumed if the protocol is https.  
-The path is currently ignored.  
+The path specifies the location of the CIM Server.  This is normally /cimom.
+The OpenWBEM cimom ignores the path, but it may matter to some others.
 
 At this point a callback can be provided to obtain a username and 
 password if the CIM Server requests authentication.  A callback for 
