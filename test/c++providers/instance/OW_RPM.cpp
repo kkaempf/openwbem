@@ -166,6 +166,8 @@ public:
 		const OW_CIMClass& requestedClass,
 		const OW_CIMClass& cimClass )
 	{
+		(void) env;
+
 		OW_String cmd = "/usr/bin/apt-cache search .*";
 		OW_PopenStreams pos = OW_Exec::safePopen(cmd.tokenize());
 
