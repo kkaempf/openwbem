@@ -35,7 +35,6 @@
 
 #include "OW_config.h"
 #include "OW_NonAuthenticatingAuthenticator.hpp"
-#include "OW_RandomNumber.hpp"
 
 namespace OW_NAMESPACE
 {
