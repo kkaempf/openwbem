@@ -38,6 +38,7 @@
 #include "OW_Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_ThreadCancelledException.hpp"
 
 using std::istream;
 using std::ostream;
@@ -108,6 +109,12 @@ OW_RequestHandlerIFCXML::doProcess(istream* istr, ostream* ostrEntity,
 			OW_LOGDEBUG(format("OW_RequestHandlerIFCXML::doProcess caught std exception: %1"
 				, e.what()));
 			outputError(OW_CIMException::FAILED, e.what(), *ostrError);
+		}
+		catch (OW_ThreadCancelledException&)
+		{
+			OW_LOGDEBUG("OW_RequestHandlerIFCXML::doProcess caught Thread Cancelled exception.");
+			outputError(OW_CIMException::FAILED, "thread cancelled", *ostrError);
+			throw;
 		}
 		catch (...)
 		{

@@ -43,6 +43,7 @@
 #include "OW_Mutex.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_SocketException.hpp"
+#include "OW_ThreadCancelledException.hpp"
 
 extern "C"
 {
@@ -342,6 +343,13 @@ OW_BinaryRequestHandler::doProcess(std::istream* istrm, std::ostream *ostrm,
 			e.what()));
 		writeError(*ostrError, format("OW_BinaryRequestHandler caught exception: %1", e.what()).c_str());
 		setError(OW_CIMException::FAILED, e.what());
+	}
+	catch (OW_ThreadCancelledException&)
+	{
+		lgr->logError("Thread cancelled in OW_BinaryRequestHandler");
+		writeError(*ostrError, "Thread cancelled");
+		setError(OW_CIMException::FAILED, "Thread cancelled");
+		throw;
 	}
 	catch(...)
 	{

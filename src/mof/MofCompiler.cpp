@@ -33,6 +33,7 @@
 #include "MofParserDecls.hpp"
 #include "CIMOMVisitor.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_ThreadCancelledException.hpp"
 #include <assert.h>
 #include <cctype>
 
@@ -105,6 +106,11 @@ long MofCompiler::compile( const OW_String& filename )
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), theLineInfo);
 		}
+		catch (OW_ThreadCancelledException&)
+		{
+			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", theLineInfo);
+			throw;
+		}
 		catch(...)
 		{
 			theErrorHandler->fatalError( "INTERNAL COMPILER ERROR: Unknown exception", theLineInfo);
@@ -169,6 +175,11 @@ long MofCompiler::compileString( const OW_String& mof )
 		catch (std::exception& e)
 		{
 			theErrorHandler->fatalError(format( "INTERNAL COMPILER ERROR: %1", e.what() ).c_str(), lineInfo("(none)", 0));
+		}
+		catch (OW_ThreadCancelledException&)
+		{
+			theErrorHandler->fatalError("INTERNAL COMPILER ERROR: Thread cancelled", theLineInfo);
+			throw;
 		}
 		catch(...)
 		{

@@ -32,6 +32,7 @@
 #include "OW_Format.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_SafeLibCreate.hpp"
+#include "OW_ThreadCancelledException.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_AuthManager::OW_AuthManager()
@@ -78,6 +79,10 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				e.getMessage()));
 
 			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
+		}
+		catch (OW_ThreadCancelledException&)
+		{
+			throw;
 		}
 		catch(...)
 		{

@@ -50,6 +50,7 @@
 #include "OW_CIMOMHandleIFC.hpp"
 #include "OW_SortedVectorMap.hpp"
 #include "OW_StringBuffer.hpp"
+#include "OW_ThreadCancelledException.hpp"
 
 using std::ios;
 using std::istream;
@@ -316,6 +317,14 @@ OW_HTTPSvrConnection::run()
 		OW_LOGERROR(m_errDetails);
 		cleanUpIStreams(istrToReadFrom);
 		sendError(SC_INTERNAL_SERVER_ERROR);
+	}
+	catch (OW_ThreadCancelledException&)
+	{
+		OW_LOGERROR("Got Thread Cancelled Exception in OW_HTTPSvrConnection::run()");
+		m_errDetails = "HTTP Server thread cancelled";
+		cleanUpIStreams(istrToReadFrom);
+		sendError(SC_INTERNAL_SERVER_ERROR);
+		throw;
 	}
 	catch (...)
 	{
