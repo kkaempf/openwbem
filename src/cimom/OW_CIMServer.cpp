@@ -1150,7 +1150,12 @@ OW_CIMServer::createInstance(
 		rval = m_cimRepository->createInstance(ns, lci, aclInfo);
 	}
 
-	OW_ASSERT(rval);
+	// Prevent lazy providers from causing a problem.
+	if (!rval)
+	{
+		rval = OW_CIMObjectPath(lci);
+	}
+
 	return rval;
 }
 
