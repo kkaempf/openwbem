@@ -16,6 +16,7 @@ interoperability
 code coverage
 valgrind
 benchmarks (w/comparisons from last run to detect regressions or improvements)
+code size (with history) graph
 stress tests
 build & run on different os's
 build on one os and run tests on all "compatible" os's.
