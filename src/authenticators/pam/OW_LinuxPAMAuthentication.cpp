@@ -95,7 +95,8 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info, Str
 	bool nameFound = false;
 	for (size_t i = 0; i < allowedUsers.size(); i++)
 	{
-		if (allowedUsers[i].equals(userName))
+		if (allowedUsers[i].equals(userName) 
+                    || allowedUsers[i].equals("*"))
 		{
 			nameFound = true;
 			break;

@@ -113,6 +113,8 @@ owcimomd.authentication_module = @libdir@/openwbem/authentication/libpamauthenti
 
 ################################################################################
 # a space delimited list of system users who are allowed to acces the CIMOM
+# Set this value to * to allow all users to authenticate (for instance, if 
+# you choose to control access with ACLs instead). 
 pam.allowed_users = root
 
 ################################################################################

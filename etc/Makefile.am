@@ -1,11 +1,11 @@
 SUBDIRS = init sysconfig pam.d
 
-openwbemconf_DATA = openwbem.conf
+openwbemconf_DATA = openwbem.conf ssleay.cnf owgencert
 openwbemconfdir = $(sysconfdir)/openwbem
 
-EXTRA_DIST = openwbem.conf.sh
+EXTRA_DIST = openwbem.conf.sh owgencert.sh ssleay.cnf
 
-CLEANFILES = openwbem.conf
+CLEANFILES = openwbem.conf owgencert
 
 SUFFIXES = .sh
 
