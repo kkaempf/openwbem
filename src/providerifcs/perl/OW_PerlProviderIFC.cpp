@@ -317,13 +317,8 @@ OW_PerlProviderIFC::loadProviders(const OW_ProviderEnvironmentIFCRef& env,
 	m_loadDone = true;
 
 	OW_String libPath = env->getConfigItem(
-		OW_ConfigOpts::PERLIFC_PROV_LOC_opt);
+		OW_ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 
-	if(libPath.empty())
-	{
-		libPath = DEFAULT_PERL_PROVIDER_LOCATION;
-	}
-	
 	OW_SharedLibraryLoaderRef ldr =
 		 OW_SharedLibraryLoader::createSharedLibraryLoader();
 
@@ -443,12 +438,7 @@ OW_PerlProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
    m_loadDone = true;
 
-   OW_String libPath = env->getConfigItem(OW_ConfigOpts::PERLIFC_PROV_LOC_opt);
-
-   if(libPath.empty())
-   {
-      libPath = DEFAULT_PERL_PROVIDER_LOCATION;
-   }
+   OW_String libPath = env->getConfigItem(OW_ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 
    env->getLogger()->logError("LoadNoIDproviders 2");
    OW_SharedLibraryLoaderRef ldr =
@@ -588,12 +578,7 @@ OW_PerlProviderIFC::getProvider(
 	}
 
 	OW_String libPath = env->getConfigItem(
-		OW_ConfigOpts::PERLIFC_PROV_LOC_opt);
-
-	if(libPath.empty())
-	{
-		libPath = DEFAULT_PERL_PROVIDER_LOCATION;
-	}
+		OW_ConfigOpts::PERLIFC_PROV_LOC_opt, OW_DEFAULT_PERL_PROVIDER_LOCATION);
 
 	OW_SharedLibraryLoaderRef ldr =
 		OW_SharedLibraryLoader::createSharedLibraryLoader();

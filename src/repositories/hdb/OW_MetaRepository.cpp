@@ -1112,14 +1112,14 @@ OW_MetaRepository::createNameSpace(OW_String ns)
 OW_MetaRepository::OW_MetaRepository(OW_ServiceEnvironmentIFCRef env)
 	: OW_GenericHDBRepository(env)
 {
-	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt);
+	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt, OW_DEFAULT_MAX_CLASS_CACHE_SIZE_S);
 	try
 	{
 		m_classCache.setMaxCacheSize(maxCacheSizeOpt.toUInt32());
 	}
 	catch (const OW_StringConversionException&)
 	{
-		m_classCache.setMaxCacheSize(DEFAULT_MAX_CLASS_CACHE_SIZE);
+		m_classCache.setMaxCacheSize(OW_DEFAULT_MAX_CLASS_CACHE_SIZE);
 	}
 }
 

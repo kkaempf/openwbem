@@ -570,7 +570,7 @@ namespace
 			return m_logger;
 		}
 
-		virtual OW_String getConfigItem(const OW_String &) const
+		virtual OW_String getConfigItem(const OW_String &, const OW_String&) const
 		{
 			return "";
 		}

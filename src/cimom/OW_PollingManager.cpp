@@ -85,9 +85,9 @@ namespace
 			return m_env->getRepository();
 		}
 
-		virtual OW_String getConfigItem(const OW_String& name) const
+		virtual OW_String getConfigItem(const OW_String& name, const OW_String& defRetVal="") const
 		{
-			return m_env->getConfigItem(name);
+			return m_env->getConfigItem(name, defRetVal);
 		}
 		
 		virtual OW_LoggerRef getLogger() const

@@ -223,12 +223,7 @@ OW_SimpleCppProviderIFC::getProvider(
 	}
 
 	OW_String libPath = env->getConfigItem(
-		OW_ConfigOpts::SIMPLECPPIFC_PROV_LOC_opt);
-
-	if(libPath.empty())
-	{
-		libPath = DEFAULT_SIMPLE_CPP_PROVIDER_LOCATION;
-	}
+		OW_ConfigOpts::SIMPLECPPIFC_PROV_LOC_opt, OW_DEFAULT_SIMPLE_CPP_PROVIDER_LOCATION);
 
 	OW_SharedLibraryLoaderRef ldr =
 		OW_SharedLibraryLoader::createSharedLibraryLoader();
@@ -310,11 +305,7 @@ OW_SimpleCppProviderIFC::getProvider(
 void
 OW_SimpleCppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& env)
 {
-	OW_String timeWindow = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_TTL_opt);
-	if (timeWindow.empty())
-	{
-		timeWindow = DEFAULT_CPPIFC_PROV_TTL;
-	}
+	OW_String timeWindow = env->getConfigItem(OW_ConfigOpts::CPPIFC_PROV_TTL_opt, OW_DEFAULT_CPPIFC_PROV_TTL);
 
 	OW_Int32 iTimeWindow;
 	try
@@ -323,7 +314,7 @@ OW_SimpleCppProviderIFC::doUnloadProviders(const OW_ProviderEnvironmentIFCRef& e
 	}
     catch (const OW_StringConversionException&)
 	{
-		iTimeWindow = OW_String(DEFAULT_CPPIFC_PROV_TTL).toInt32();
+		iTimeWindow = OW_String(OW_DEFAULT_CPPIFC_PROV_TTL).toInt32();
 	}
 	if (iTimeWindow < 0)
 	{

@@ -52,7 +52,7 @@ class OW_ServiceEnvironmentIFC
 public:
 	virtual ~OW_ServiceEnvironmentIFC();
 
-	virtual OW_String getConfigItem(const OW_String& name) const = 0;
+	virtual OW_String getConfigItem(const OW_String& name, const OW_String& defRetVal="") const = 0;
 
 	virtual void setConfigItem(const OW_String& item,
 		const OW_String& value, OW_Bool overwritePrevious=true) = 0;

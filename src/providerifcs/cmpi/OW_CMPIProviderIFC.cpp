@@ -322,12 +322,7 @@ OW_CMPIProviderIFC::loadNoIdProviders(const OW_ProviderEnvironmentIFCRef& env)
 
    m_loadDone = true;
 
-   OW_String libPath = env->getConfigItem(OW_ConfigOpts::CMPIIFC_PROV_LOC_opt);
-
-   if(libPath.empty())
-   {
-      libPath = DEFAULT_CMPI_PROVIDER_LOCATION;
-   }
+   OW_String libPath = env->getConfigItem(OW_ConfigOpts::CMPIIFC_PROV_LOC_opt, OW_DEFAULT_CMPI_PROVIDER_LOCATION);
 
    env->getLogger()->logError("LoadNoIDproviders 2");
    OW_SharedLibraryLoaderRef ldr =
@@ -452,12 +447,7 @@ OW_CMPIProviderIFC::getProvider(
 	}
 
 	OW_String libPath = env->getConfigItem(
-		OW_ConfigOpts::CMPIIFC_PROV_LOC_opt);
-
-	if(libPath.empty())
-	{
-		libPath = DEFAULT_CMPI_PROVIDER_LOCATION;
-	}
+		OW_ConfigOpts::CMPIIFC_PROV_LOC_opt, OW_DEFAULT_CMPI_PROVIDER_LOCATION);
 
 	OW_SharedLibraryLoaderRef ldr =
 		OW_SharedLibraryLoader::createSharedLibraryLoader();

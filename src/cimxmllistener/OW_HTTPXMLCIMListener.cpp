@@ -102,7 +102,7 @@ public:
 			std::make_pair(obj, cb)), m_selectables->end());
 	}
 
-	virtual OW_String getConfigItem(const OW_String &name) const
+	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const
 	{
 		OW_Map<OW_String, OW_String>::const_iterator i =
 			m_configItems.find(name);
@@ -112,7 +112,7 @@ public:
 		}
 		else
 		{
-			return OW_String();
+			return defRetVal;
 		}
 	}
 

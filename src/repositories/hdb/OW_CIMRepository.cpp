@@ -55,7 +55,8 @@ OW_CIMRepository::OW_CIMRepository(OW_ServiceEnvironmentIFCRef env)
 	, m_env(env)
     , m_checkReferentialIntegrity(false)
 {
-    if (m_env->getConfigItem(OW_ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt).equalsIgnoreCase("true"))
+    if (m_env->getConfigItem(OW_ConfigOpts::CHECK_REFERENTIAL_INTEGRITY_opt, 
+		OW_DEFAULT_CHECK_REFERENTIAL_INTEGRITY).equalsIgnoreCase("true"))
     {
         m_checkReferentialIntegrity = true;
     }
@@ -1618,6 +1619,7 @@ OW_CIMRepository::_staticReferencesClass(const OW_CIMObjectPath& path,
 	OW_CIMObjectPath curPath = path;
 	while (!curClsName.empty())
 	{
+		m_env->getLogger()->logDebug(format("curPath = %1", curPath.toString()));
 		if (popresult != 0)
 		{
 			staticReferencesObjectPathResultHandler handler(*popresult);

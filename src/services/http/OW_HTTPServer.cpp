@@ -126,57 +126,29 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 {
 	try
 	{
-		OW_String item = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt);
-		if (item.empty())
-		{
-			item = DEFAULT_HTTP_PORT;
-		}
+		OW_String item = env->getConfigItem(OW_ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT);
 		m_options.httpPort = item.toInt32();
 
-		item = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt);
-		if (item.empty())
-		{
-			item = DEFAULT_HTTPS_PORT;
-		}
+		item = env->getConfigItem(OW_ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT);
 		m_options.httpsPort = item.toInt32();
 
-		item = env->getConfigItem(OW_ConfigOpts::USE_UDS_opt);
-		if (item.empty())
-		{
-			item = DEFAULT_USE_UDS;
-		}
+		item = env->getConfigItem(OW_ConfigOpts::USE_UDS_opt, OW_DEFAULT_USE_UDS);
 		m_options.useUDS = item.equalsIgnoreCase("true");
 
-		item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt);
-		if (item.empty())
-		{
-			item = DEFAULT_MAX_CONNECTIONS;
-		}
+		item = env->getConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt, OW_DEFAULT_MAX_CONNECTIONS);
 		m_options.maxConnections = item.toInt32() + 1;
 		m_threadCount->setMax(m_options.maxConnections);
 
-		item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt);
-		if (item.empty())
-		{
-			item = "false";
-		}
+		item = env->getConfigItem(OW_ConfigOpts::SINGLE_THREAD_opt, OW_DEFAULT_SINGLE_THREAD);
 		m_options.isSepThread = !item.equalsIgnoreCase("true");
 
-		item = env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt);
-		if (item.empty())
-		{
-			item = "true";
-		}
+		item = env->getConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt, OW_DEFAULT_ENABLE_DEFLATE);
 		m_options.enableDeflate = !item.equalsIgnoreCase("false");
 
-		item = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt);
-		if (item.empty())
-		{
-			item = "true";
-		}
+		item = env->getConfigItem(OW_ConfigOpts::HTTP_USE_DIGEST_opt, OW_DEFAULT_USE_DIGEST);
 		m_options.useDigest = !item.equalsIgnoreCase("false");
 
-		item = env->getConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt);
+		item = env->getConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt, OW_DEFAULT_ALLOW_ANONYMOUS);
 		m_options.allowAnonymous = item.equalsIgnoreCase("true");
 
 		m_options.env = env;
@@ -184,7 +156,7 @@ OW_HTTPServer::setServiceEnvironment(OW_ServiceEnvironmentIFCRef env)
 		if (m_options.useDigest)
 		{
 			OW_String passwdFile = env->getConfigItem(
-				OW_ConfigOpts::DIGEST_AUTH_FILE_opt);
+				OW_ConfigOpts::DIGEST_AUTH_FILE_opt, OW_DEFAULT_DIGEST_PASSWD_FILE);
 
 			m_digestAuth = OW_Reference<OW_DigestAuthentication>(
 				new OW_DigestAuthentication(passwdFile));

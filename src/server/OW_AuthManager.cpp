@@ -51,12 +51,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 	m_authenticator.setNull();
 
 	OW_String authLib = env->getConfigItem(
-		OW_ConfigOpts::AUTH_MOD_opt);
-
-	if(authLib.empty())
-	{
-		authLib = DEFAULT_AUTH_MOD;
-	}
+		OW_ConfigOpts::AUTH_MOD_opt, OW_DEFAULT_AUTH_MOD);
 
 	env->getLogger()->logCustInfo(format("Authentication Manager: Loading"
 		" authentication module %1", authLib));

@@ -56,33 +56,33 @@ using std::ifstream;
 void
 OW_DaemonEnv::init()
 {
-	setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, DEFAULT_CONFIG_FILE, false);
+	setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, false);
 
 	loadConfigItemsFromFile(getConfigItem( OW_ConfigOpts::CONFIG_FILE_opt ));
 
-	setConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt, DEFAULT_LIBEXEC_DIR, false);
+	setConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR, false);
 
-	setConfigItem(OW_ConfigOpts::OWLIB_DIR_opt, DEFAULT_OWLIB_DIR, false);
+	setConfigItem(OW_ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR, false);
 
 	// HTTP Port number
-	setConfigItem(OW_ConfigOpts::HTTP_PORT_opt, DEFAULT_HTTP_PORT, false);
+	setConfigItem(OW_ConfigOpts::HTTP_PORT_opt, OW_DEFAULT_HTTP_PORT, false);
 
 	// HTTPS Port number
-	setConfigItem(OW_ConfigOpts::HTTPS_PORT_opt, DEFAULT_HTTPS_PORT, false);
+	setConfigItem(OW_ConfigOpts::HTTPS_PORT_opt, OW_DEFAULT_HTTPS_PORT, false);
 
 	// Location of log file
-	setConfigItem(OW_ConfigOpts::LOG_LOCATION_opt, DEFAULT_LOG_FILE, false);
+	setConfigItem(OW_ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE, false);
 
 	// Allow anonymous connections to cimom
 	setConfigItem(OW_ConfigOpts::ALLOW_ANONYMOUS_opt,
-		DEFAULT_ALLOW_ANONYMOUS, false);
+		OW_DEFAULT_ALLOW_ANONYMOUS, false);
 
 	// Max allowed concurrent connections
 	setConfigItem(OW_ConfigOpts::MAX_CONNECTIONS_opt,
-		DEFAULT_MAX_CONNECTIONS, false);
+		OW_DEFAULT_MAX_CONNECTIONS, false);
 
 	setConfigItem(OW_ConfigOpts::ENABLE_DEFLATE_opt,
-		DEFAULT_ENABLE_DEFLATE, false);
+		OW_DEFAULT_ENABLE_DEFLATE, false);
 
 	createLogger();
 

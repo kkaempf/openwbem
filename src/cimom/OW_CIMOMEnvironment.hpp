@@ -97,7 +97,7 @@ public:
 	virtual OW_Bool authenticate(OW_String &userName, const OW_String &info,
 		OW_String &details);
 
-	virtual OW_String getConfigItem(const OW_String &name) const;
+	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const;
 
 	virtual OW_CIMOMHandleIFCRef getCIMOMHandle(const OW_String &username,
 		const OW_Bool doIndications=false, const OW_Bool bypassProviders = false);

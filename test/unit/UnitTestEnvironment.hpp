@@ -52,13 +52,13 @@ public:
 	virtual OW_LoggerRef getLogger() const {
 		return OW_LoggerRef(new OW_TestLogger);
 	}
-	virtual OW_String getConfigItem(const OW_String &name) const {
+	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal) const {
 		if (config.find(name) != config.end())
 		{
 			return config.find(name)->second;
 		}
 		else
-			return "";
+			return defRetVal;
 	}
 	virtual void setConfigItem(const OW_String &item, const OW_String &value, OW_Bool overwritePrevious=true) {
 		OW_Map<OW_String, OW_String>::iterator it = config.find(item);

@@ -55,7 +55,7 @@ public:
 	virtual OW_RepositoryIFCRef getRepository() const = 0;
 
 	virtual OW_LoggerRef getLogger() const = 0;
-	virtual OW_String getConfigItem(const OW_String &name) const = 0;
+	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const = 0;
     virtual OW_String getUserName() const = 0;
 };
 

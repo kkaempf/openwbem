@@ -78,9 +78,9 @@ namespace
 			: m_pCenv(pCenv)
 		{}
 
-		virtual OW_String getConfigItem(const OW_String &name) const
+		virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const
 		{
-			return m_pCenv->getConfigItem(name);
+			return m_pCenv->getConfigItem(name, defRetVal);
 		}
 
 		virtual OW_CIMOMHandleIFCRef getCIMOMHandle() const
@@ -173,45 +173,45 @@ OW_CIMOMEnvironment::init()
 	OW_MutexLock ml(m_monitor);
 
 	_clearSelectables();
-	setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, DEFAULT_CONFIG_FILE, false);
+	setConfigItem(OW_ConfigOpts::CONFIG_FILE_opt, OW_DEFAULT_CONFIG_FILE, false);
 
 	_loadConfigItemsFromFile(getConfigItem(OW_ConfigOpts::CONFIG_FILE_opt));
 
-	setConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt, DEFAULT_LIBEXEC_DIR, false);
-	setConfigItem(OW_ConfigOpts::OWLIB_DIR_opt, DEFAULT_OWLIB_DIR, false);
+	setConfigItem(OW_ConfigOpts::LIBEXEC_DIR_opt, OW_DEFAULT_OWLIBEXEC_DIR, false);
+	setConfigItem(OW_ConfigOpts::OWLIB_DIR_opt, OW_DEFAULT_OWLIB_DIR, false);
 
 	// Location of log file
-	setConfigItem(OW_ConfigOpts::LOG_LOCATION_opt, DEFAULT_LOG_FILE, false);
+	setConfigItem(OW_ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_FILE, false);
 
 	// Location for data files
 	setConfigItem(OW_ConfigOpts::DATA_DIR_opt,
-		DEFAULT_DATA_DIR, false);
+		OW_DEFAULT_DATA_DIR, false);
 
 	// Provider interface location
 	setConfigItem(OW_ConfigOpts::PROVIDER_IFC_LIBS_opt,
-		DEFAULT_IFC_LIBS, false);
+		OW_DEFAULT_IFC_LIBS, false);
 
 	// This config item should be handled in the C++ provider interface
 	// C++ provider interface - provider location
 	setConfigItem(OW_ConfigOpts::CPPIFC_PROV_LOC_opt,
-		DEFAULT_CPP_PROVIDER_LOCATION, false);
+		OW_DEFAULT_CPP_PROVIDER_LOCATION, false);
 
 	// Authorization module
 	setConfigItem(OW_ConfigOpts::AUTH_MOD_opt,
-		DEFAULT_AUTH_MOD, false);
+		OW_DEFAULT_AUTH_MOD, false);
 
 	// This config item should be handled in the simple auth module
 	setConfigItem(OW_ConfigOpts::SIMPLE_AUTH_FILE_opt,
-		DEFAULT_SIMPLE_PASSWD_FILE, false);
+		OW_DEFAULT_SIMPLE_PASSWD_FILE, false);
 
 	setConfigItem(OW_ConfigOpts::DISABLE_INDICATIONS_opt,
-		DEFAULT_DISABLE_INDICATIONS, false);
+		OW_DEFAULT_DISABLE_INDICATIONS, false);
 	
 	setConfigItem(OW_ConfigOpts::WQL_LIB_opt,
-		DEFAULT_WQL_LIB, false);
+		OW_DEFAULT_WQL_LIB, false);
 
 	setConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt,
-		DEFAULT_REQ_HANDLER_TTL, false);
+		OW_DEFAULT_REQ_HANDLER_TTL, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -250,9 +250,9 @@ public:
 		return env->getLogger();
 	}
 
-	virtual OW_String getConfigItem(const OW_String &name) const 
+	virtual OW_String getConfigItem(const OW_String &name, const OW_String& defRetVal="") const 
 	{
-		return env->getConfigItem(name);
+		return env->getConfigItem(name, defRetVal);
 	}
 
     virtual OW_String getUserName() const
@@ -517,12 +517,7 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 {
 	m_reqHandlers.clear();
 	OW_String libPath = getConfigItem(
-		OW_ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt);
-
-	if(libPath.empty())
-	{
-		libPath = DEFAULT_CIMOM_REQHANDLER_LOCATION;
-	}
+		OW_ConfigOpts::CIMOM_REQUEST_HANDLER_LOCATION_opt, OW_DEFAULT_CIMOM_REQHANDLER_LOCATION);
 
 	if(!libPath.endsWith("/"))
 	{
@@ -594,12 +589,7 @@ OW_CIMOMEnvironment::_loadServices()
 {
 	m_services.clear();
 	OW_String libPath = getConfigItem(
-		OW_ConfigOpts::CIMOM_SERVICES_LOCATION_opt);
-
-	if(libPath.empty())
-	{
-		libPath = DEFAULT_CIMOM_SERVICES_LOCATION;
-	}
+		OW_ConfigOpts::CIMOM_SERVICES_LOCATION_opt, OW_DEFAULT_CIMOM_SERVICES_LOCATION);
 
 	if(!libPath.endsWith("/"))
 	{
@@ -737,7 +727,7 @@ OW_CIMOMEnvironment::authenticate(OW_String &userName, const OW_String &info,
 
 //////////////////////////////////////////////////////////////////////////////
 OW_String
-OW_CIMOMEnvironment::getConfigItem(const OW_String &name) const
+OW_CIMOMEnvironment::getConfigItem(const OW_String &name, const OW_String& defRetVal) const
 {
 	ConfigMap::const_iterator i = m_configItems->find(name);
 
@@ -747,7 +737,7 @@ OW_CIMOMEnvironment::getConfigItem(const OW_String &name) const
 	}
 	else
 	{
-		return OW_String();
+		return defRetVal;
 	}
 }
 
@@ -990,7 +980,7 @@ OW_CIMOMEnvironment::unloadReqHandlers()
 		logError(format("Invalid value (%1) for %2 config item.  Using default.",
             getConfigItem(OW_ConfigOpts::REQ_HANDLER_TTL_opt),
 			OW_ConfigOpts::REQ_HANDLER_TTL_opt));
-		ttl = OW_String(DEFAULT_REQ_HANDLER_TTL).toInt32();
+		ttl = OW_String(OW_DEFAULT_REQ_HANDLER_TTL).toInt32();
 	}
 	if (ttl < 0)
 	{
