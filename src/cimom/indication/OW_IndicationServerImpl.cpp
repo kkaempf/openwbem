@@ -1188,9 +1188,10 @@ createIndicationServer()
 	return new OpenWBEM::IndicationServerImpl();
 }
 //////////////////////////////////////////////////////////////////////////////
+#if !defined(OW_STATIC_SERVICES)
 extern "C" const char*
 getOWVersion()
 {
 	return OW_VERSION;
 }
-
+#endif /* !defined(OW_STATIC_SERVICES) */

@@ -508,10 +508,12 @@ createIndicationRepLayer()
 	return new OpenWBEM::IndicationRepLayerImpl;
 }
 //////////////////////////////////////////////////////////////////////////////
+#if !defined(OW_STATIC_SERVICES)
 extern "C" const char*
 getOWVersion()
 {
 	return OW_VERSION;
 }
+#endif /* !defined(OW_STATIC_SERVICES) */
 
 
