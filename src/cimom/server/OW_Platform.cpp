@@ -267,16 +267,18 @@ void rerunDaemon()
 		i = std::min<int>(rl.rlim_max, i);
 	  }
 	}
+
+	struct flock lck;
+	::memset (&lck, '\0', sizeof (lck));
+	lck.l_type = F_UNLCK;       // unlock
+	lck.l_whence = 0;           // 0 offset for l_start
+	lck.l_start = 0L;           // lock starts at BOF
+	lck.l_len = 0L;             // extent is entire file
+
 	while (i > 2)
 	{
 		// clear any file locks - this shouldn't technically be necessary, but it seems on some systems, even though we restart, the locks persist,
 		// either because of bugs in the kernel or somehow things still hang around...
-		struct flock lck;
-		::memset (&lck, '\0', sizeof (lck));
-		lck.l_type = F_UNLCK;       // unlock
-		lck.l_whence = 0;           // 0 offset for l_start
-		lck.l_start = 0L;           // lock starts at BOF
-		lck.l_len = 0L;             // extent is entire file
 		::fcntl(i, F_SETLK, &lck);
 
 		// set it for close on exec
