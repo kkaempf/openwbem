@@ -47,6 +47,16 @@ public:
 	{
 	}
 	virtual ~dlSharedLibrary();
+
+	/** 
+	 * on some platforms (e.g. glibc 2.2.x), there are bugs in the dl* functions, 
+	 * and the workaround is to not call dlclose.  Setting this variable to 0
+	 * will cause dlclose to never be called.  Doing this has some problems:
+	 * memory mapped to the shared library will never be freed up. New versions
+	 * of the library can't be loaded (i.e. a provider is updated)
+	 */
+	static int m_call_dlclose;
+
 protected:
 	/**
 	 * Derived classes have to override this function to implement

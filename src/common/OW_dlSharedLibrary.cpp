@@ -37,10 +37,16 @@
 namespace OpenWBEM
 {
 
+// static
+int dlSharedLibrary::m_call_dlclose = 1;
+
 Mutex dlSharedLibrary_guard;
 dlSharedLibrary::~dlSharedLibrary()
 {
-//	dlclose( m_libhandle );
+	if (m_call_dlclose)
+	{
+		dlclose( m_libhandle );
+	}
 }
 bool dlSharedLibrary::doGetFunctionPointer(const String& functionName,
 		void** fp) const
