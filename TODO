@@ -41,3 +41,58 @@ x long and short versions of make check
 - change XML parser to be lazy. 
 - add a test for the matrix on the bottom of
   http://www.dmtf.org/standards/documents/WBEM/DSP200.html#AppendixC
+- Fix race condition in shutdown of polling manager:
+
+Thread 1:
+#0  0x403bde51 in __kill () from /lib/libc.so.6
+#1  0x4002cd7c in pthread_kill () from /lib/libpthread.so.0
+#2  0x4002d266 in raise () from /lib/libpthread.so.0
+#3  0x403bf386 in abort () from /lib/libc.so.6
+#4  0x4035c8d8 in __default_terminate () from /usr/lib/libstdc++-libc6.2-2.so.3
+#5  0x4035c8fd in __terminate () from /usr/lib/libstdc++-libc6.2-2.so.3
+#6  0x4012febb in __pure_virtual ()
+   from /usr/local/code/openwbem20/test/acceptance/stage//usr/local/lib/libopenwbem.so
+#7  0x4018beee in OW_RunnableThread::run (this=0x81d96d8) at OW_Thread.cpp:53
+#8  0x4012a421 in OW_Thread::threadRunner (paramPtr=0x81d96d8)
+    at OW_Thread.cpp:222
+#9  0x4012af08 in threadStarter (arg=0x81cf9f0) at OW_ThreadImpl.cpp:193
+#10 0x40029e28 in pthread_start_thread () from /lib/libpthread.so.0
+(gdb) frame 7
+#7  0x4018beee in OW_RunnableThread::run (this=0x81d96d8) at OW_Thread.cpp:53
+53                              m_runnable->run();
+
+Thread 2:
+#0  0x403bdf5e in sigsuspend () from /lib/libc.so.6
+#1  0x4002c750 in __pthread_wait_for_restart_signal ()
+   from /lib/libpthread.so.0
+#2  0x40028eb2 in pthread_cond_wait () from /lib/libpthread.so.0
+#3  0x4012b87f in OW_ThreadEventImpl::waitForThreadEventSignal (
+    handle=@0x40813e40, ms=0) at OW_ThreadImpl.cpp:518
+#4  0x4012aba1 in OW_ThreadEvent::ThreadEvent::waitForSignal (this=0x40813e40,
+    ms=0) at OW_ThreadEvent.cpp:58
+#5  0x0813d3f7 in OW_ThreadEvent::waitForSignal (this=0x40813d78, ms=0)
+    at ../../src/common/OW_ThreadEvent.hpp:119
+#6  0x4063fd52 in OW_IndicationServerImpl::run (this=0x40813d30)
+    at OW_IndicationServerImpl.cpp:201
+#7  0x4012a421 in OW_Thread::threadRunner (paramPtr=0x40813d30)
+    at OW_Thread.cpp:222
+#8  0x4012af08 in threadStarter (arg=0x40812070) at OW_ThreadImpl.cpp:193
+#9  0x40029e28 in pthread_start_thread () from /lib/libpthread.so.0
+
+
+Thread 3:
+#0  0x4002e929 in __pthread_alt_lock () from /lib/libpthread.so.0
+#1  0x4002ad62 in pthread_mutex_lock () from /lib/libpthread.so.0
+#2  0x4040336b in free () from /lib/libc.so.6
+#3  0x4035eea4 in __builtin_delete (ptr=0x40811ad0) at ../../gcc/cp/new2.cc:54
+#4  0x080fc97b in OW_RefCount::~OW_RefCount (this=0x40811ad0, __in_chrg=3)
+    at ../../src/common/OW_Reference.hpp:185
+#5  0x08104696 in OW_Reference<OW_PollingManager>::decRef (this=0x81b2170)
+    at ../../src/common/OW_Reference.hpp:185
+#6  0x08106e48 in OW_Reference<OW_PollingManager>::operator= (this=0x81b2170,
+    newObj=0x0) at ../../src/common/OW_Reference.hpp:239
+#7  0x080a95b4 in OW_CIMOMEnvironment::shutdown (this=0x81b2110)
+    at OW_CIMOMEnvironment.cpp:264
+#8  0x080a5ef0 in main (argc=4, argv=0xbffff8b4) at owcimomd_main.cpp:95
+#9  0x403adccf in __libc_start_main () from /lib/libc.so.6
+

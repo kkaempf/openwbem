@@ -277,6 +277,7 @@ private:
 	cache_t theCache;
 	OW_Mutex cacheGuard;
 	OW_UInt32 maxCacheSize;
+	OW_UInt32 m_cacheAccessCount;
 	void addClassToCache(const OW_CIMClass& cc, const OW_String& key);
 
 	OW_CIMClass getClassFromCache(const OW_String& key);

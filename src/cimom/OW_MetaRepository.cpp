@@ -59,7 +59,7 @@ struct OW_MetaRepository::ClassCacheRec
 		lastAccess(0) {}
 
 	OW_CIMClass cc;
-	time_t lastAccess;
+	OW_UInt32 lastAccess;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -81,12 +81,15 @@ OW_MetaRepository::addClassToCache(const OW_CIMClass& cc, const OW_String& key)
 
 	ClassCacheRec cr;
 	cr.cc = cc;
-	cr.lastAccess = time(NULL);
-	if(theCache.size() > maxCacheSize)
+	cr.lastAccess = m_cacheAccessCount++;
+	if(theCache.size() >= maxCacheSize)
 	{
 		cache_t::iterator toRem =
 			std::min_element(theCache.begin(), theCache.end(), lruCompare());
-		theCache.erase(toRem);
+		if (toRem != theCache.end())
+		{
+			theCache.erase(toRem);
+		}
 	}
 
 	theCache.insert(cache_t::value_type(key, cr));
@@ -98,10 +101,11 @@ OW_MetaRepository::getClassFromCache(const OW_String& key)
 {
 	OW_MutexLock l(cacheGuard);
 	OW_CIMClass cc;
-	cache_t::const_iterator i = theCache.find(key);
+	cache_t::iterator i = theCache.find(key);
 	if (i != theCache.end())
 	{
-		cc = (*i).second.cc;
+		cc = i->second.cc;
+		i->second.lastAccess = m_cacheAccessCount++;
 	}
 
 	return cc;
@@ -1172,6 +1176,7 @@ OW_MetaRepository::_throwIfBadClass(const OW_CIMClass& cc, const OW_CIMClass& pa
 //////////////////////////////////////////////////////////////////////////////
 OW_MetaRepository::OW_MetaRepository(OW_CIMOMEnvironmentRef env)
 	: OW_GenericHDBRepository(env)
+	, m_cacheAccessCount(1)
 {
 	OW_String maxCacheSizeOpt = env->getConfigItem(OW_ConfigOpts::MAX_CLASS_CACHE_SIZE_opt);
 	try
