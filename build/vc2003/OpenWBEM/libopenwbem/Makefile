@@ -161,7 +161,9 @@ IFCOBJS = \
 	$(OBJDIR)\OW_ServiceEnvironmentIFC.obj \
 	$(OBJDIR)\OW_ServiceIFC.obj 
 
-$(TARGETDIR)\$(TARGET): $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS)
+TARGETDIR = Debug
+
+$(TARGETDIR)\$(TARGET): $(TARGETDIR) $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) $(MAP2DEF)
 	link /OUT:"$(TARGETDIR)\$(TARGET)" /NOLOGO /LIBPATH:"C:\OpenSSL\lib\vc" /DLL /DEBUG \
 		/MAP:"$(TARGETDIR)\libopenwbem.map" /MAPINFO:EXPORTS /SUBSYSTEM:WINDOWS \
 		/IMPLIB:"$(TARGETDIR)\libopenwbem.lib" $(COMMONOBJS) $(CIMOBJS) $(SOCKETOBJS) $(IFCOBJS) \
@@ -178,6 +180,12 @@ clean:
 	del $(OBJDIR)\*.map
 	del $(OBJDIR)\*.def
 	del $(OBJDIR)\*.dll
+
+$(TARGETDIR):
+	IF NOT EXIST $(TARGETDIR) (md $(TARGETDIR))
+
+$(MAP2DEF): $(TOOLSDIR)\owmap2def.cpp
+	cl /EHsc /Fe"$(TOOLSDIR)\owmap2def.exe" $(TOOLSDIR)\owmap2def.cpp dbghelp.lib
 
 
 ###############################################################################
