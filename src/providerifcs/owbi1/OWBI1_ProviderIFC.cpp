@@ -489,7 +489,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
 	{
-		const char* msg = "C++ provider ifc failed to get shared lib loader";
+		const char* msg = "OWBI1 provider ifc failed to get shared lib loader";
 		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 		OW_THROW(BI1ProviderIFCException, msg);
 	}
@@ -507,9 +507,8 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 		OpenWBEM::StringArray dirEntries;
 		if (!FileSystem::getDirectoryContents(paths[i1], dirEntries))
 		{
-			OpenWBEM::String msg(Format("C++ provider ifc failed getting contents of directory: %1", paths[i1]));
-			OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
-			OW_THROW(BI1ProviderIFCException, msg.c_str());
+			OpenWBEM::String msg(Format("OWBI1 provider ifc failed getting contents of directory: %1", paths[i1]));
+			OW_LOG_INFO(env->getLogger(COMPONENT_NAME), msg);
 		}
 		for (size_t i = 0; i < dirEntries.size(); i++)
 		{
@@ -534,7 +533,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 				env->getLogger(COMPONENT_NAME));
 			if (!theLib)
 			{
-				OpenWBEM::String msg(Format("C++ provider ifc failed to load library: %1", libName));
+				OpenWBEM::String msg(Format("OWBI1 provider ifc failed to load library: %1", libName));
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), msg);
 				OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), "****************************************");
@@ -549,7 +548,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 
 			if (!p)
 			{
-				OpenWBEM::String msg(Format("C++ provider ifc: Libary %1 does not load", libName));
+				OpenWBEM::String msg(Format("OWBI1 provider ifc: Libary %1 does not load", libName));
 				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "****************************************");
 				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), msg);
 				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), "****************************************");
@@ -564,7 +563,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 			if (p_polledProv)
 			{
 				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
-					Format("C++ provider ifc loaded polled provider from lib: %1 - initializing", libName));
+					Format("OWBI1 provider ifc loaded polled provider from lib: %1 - initializing", libName));
 
 				if (!p2)
 				{
@@ -581,7 +580,7 @@ BI1ProviderIFC::loadProviders(const OpenWBEM::ProviderEnvironmentIFCRef& env,
 			if (p_indExpProv)
 			{
 				OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
-					Format("C++ provider ifc loaded indication export provider from lib: %1 - initializing", libName));
+					Format("OWBI1 provider ifc loaded indication export provider from lib: %1 - initializing", libName));
 
 				if (!p2)
 				{
@@ -654,7 +653,7 @@ BI1ProviderIFC::loadProvider(const OpenWBEM::String& libName, OpenWBEM::LoggerRe
 	SharedLibraryLoaderRef ldr = SharedLibraryLoader::createSharedLibraryLoader();
 	if (!ldr)
 	{
-		OW_LOG_ERROR(logger, "C++ provider ifc FAILED to get shared lib loader");
+		OW_LOG_ERROR(logger, "OWBI1 provider ifc FAILED to get shared lib loader");
 		return BI1ProviderBaseIFCRef();
 	}
 
@@ -665,14 +664,14 @@ BI1ProviderIFC::loadProvider(const OpenWBEM::String& libName, OpenWBEM::LoggerRe
 	versionFunc_t versFunc;
 	if (!theLib->getFunctionPointer("getOWVersion", versFunc))
 	{
-		OW_LOG_ERROR(logger, Format("C++ provider ifc failed getting function pointer to \"getOWVersion\" from library %1.", libName));
+		OW_LOG_ERROR(logger, Format("OWBI1 provider ifc failed getting function pointer to \"getOWVersion\" from library %1.", libName));
 		return BI1ProviderBaseIFCRef();
 	}
 	const char* strVer = (*versFunc)();
 	if (strcmp(strVer, OW_VERSION))
 	{
-		OW_LOG_ERROR(logger, "C++ provider ifc got invalid version from provider");
-		OW_LOG_ERROR(logger, Format("C++ provider ifc version: %1  provider version: %2  library: %3",
+		OW_LOG_ERROR(logger, "OWBI1 provider ifc got invalid version from provider");
+		OW_LOG_ERROR(logger, Format("OWBI1 provider ifc version: %1  provider version: %2  library: %3",
 					OW_VERSION, strVer, libName));
 		return BI1ProviderBaseIFCRef();
 	}
@@ -681,7 +680,7 @@ BI1ProviderIFC::loadProvider(const OpenWBEM::String& libName, OpenWBEM::LoggerRe
 	OpenWBEM::String creationFuncName = OpenWBEM::String(CREATIONFUNC) + provId;
 	if (!theLib->getFunctionPointer(creationFuncName, createProvider))
 	{
-		OW_LOG_ERROR(logger, Format("C++ provider ifc: Libary %1 does not contain %2 function.",
+		OW_LOG_ERROR(logger, Format("OWBI1 provider ifc: Libary %1 does not contain %2 function.",
 			libName, creationFuncName));
 		return BI1ProviderBaseIFCRef();
 	}
@@ -690,14 +689,14 @@ BI1ProviderIFC::loadProvider(const OpenWBEM::String& libName, OpenWBEM::LoggerRe
 
 	if (!pProv)
 	{
-		OW_LOG_ERROR(logger, Format("C++ provider ifc: Libary %1 -"
+		OW_LOG_ERROR(logger, Format("OWBI1 provider ifc: Libary %1 -"
 			" %2 returned null provider. Not loaded.", libName, creationFuncName));
 		return BI1ProviderBaseIFCRef();
 	}
 
 	BI1ProviderBaseIFCRef rval(theLib, pProv);
 
-	OW_LOG_DEBUG(logger, Format("C++ provider ifc successfully loaded library %1 for provider %2", libName, provId));
+	OW_LOG_DEBUG(logger, Format("OWBI1 provider ifc successfully loaded library %1 for provider %2", libName, provId));
 
 	return rval;
 }
@@ -764,7 +763,7 @@ BI1ProviderIFC::getProvider(
 	if (!rval)
 	{
 		OW_LOG_ERROR(env->getLogger(COMPONENT_NAME), 
-			Format("C++ provider ifc failed to load library: %1 for provider id %2. Skipping.", libName, provId));
+			Format("OWBI1 provider ifc failed to load library: %1 for provider id %2. Skipping.", libName, provId));
 		return rval;
 	}
 
@@ -778,7 +777,7 @@ BI1ProviderIFC::getProvider(
 		ml.release();
 
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
-			Format("C++ provider ifc calling initialize for provider %1", provId));
+			Format("OWBI1 provider ifc calling initialize for provider %1", provId));
 
 		try
 		{
@@ -793,13 +792,13 @@ BI1ProviderIFC::getProvider(
 		}
 
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
-			Format("C++ provider ifc: provider %1 loaded and initialized", provId));
+			Format("OWBI1 provider ifc: provider %1 loaded and initialized", provId));
 
 	}
 	else
 	{
 		OW_LOG_DEBUG(env->getLogger(COMPONENT_NAME), 
-			Format("C++ provider ifc: provider %1 loaded but not initialized", provId));
+			Format("OWBI1 provider ifc: provider %1 loaded but not initialized", provId));
 	}
 
 	return rval;
