@@ -36,6 +36,8 @@
 #include "OW_CMPIProviderIFCUtils.hpp"
 #include "cmpisrv.h"
 
+#include <alloca.h>
+
 // debugging
 #define DDD(X) // X
 

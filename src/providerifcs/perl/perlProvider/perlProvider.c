@@ -18,6 +18,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <alloca.h>
 
 //#ifdef PERLIFC
 
