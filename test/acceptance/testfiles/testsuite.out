@@ -19,7 +19,7 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name;
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -146,6 +146,11 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true">
@@ -391,7 +396,7 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name;
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -519,6 +524,11 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true">
@@ -768,7 +778,7 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name;
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -896,6 +906,11 @@ class EXP_BionicComputerSystem:CIM_ComputerSystem
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" CLASSORIGIN="CIM_ComputerSystem" PROPAGATED="true">
@@ -2122,7 +2137,7 @@ INSTANCE OF EXP_BionicComputerSystem2
 *** Doing enumInstances(ofClass = CIM_ComputerSystem, deep = true, localOnly = false, includeQualifiers = true, includeClassOrigin = false, propertyList? 0) ***
 INSTANCE OF EXP_BartComputerSystem
 {
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -2207,6 +2222,11 @@ INSTANCE OF EXP_BartComputerSystem
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
@@ -2496,7 +2516,7 @@ INSTANCE OF EXP_BionicComputerSystem
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name="SixMillion";
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -2625,6 +2645,11 @@ INSTANCE OF EXP_BionicComputerSystem
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
@@ -2871,7 +2896,7 @@ INSTANCE OF EXP_BionicComputerSystem
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name="SevenMillion";
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -3000,6 +3025,11 @@ INSTANCE OF EXP_BionicComputerSystem
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
@@ -3246,7 +3276,7 @@ INSTANCE OF EXP_BionicComputerSystem2
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name="SixMillion";
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -3374,6 +3404,11 @@ INSTANCE OF EXP_BionicComputerSystem2
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
@@ -3618,7 +3653,7 @@ INSTANCE OF EXP_BionicComputerSystem2
   [Key(true),MaxLen(256),Override("Name"),Description("The inherited Name serves as key of a System instance in an enterprise environment.")]
   string Name="SevenMillion";
   boolean OptionalArg;
-  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"})]
+  [Override("NameFormat"),Description("The ComputerSystem object and its derivatives are Top Level Objects of CIM. They provide the scope for numerous components. Having unique System keys is required. A heuristic is defined to create the ComputerSystem Name to attempt to always generate the same Name, independent of discovery protocol. This prevents inventory and management problems where the same asset or entity is discovered multiple times, but can not be resolved to a single object. Use of the heuristic is optional, but recommended.\n\nThe NameFormat property identifies how the ComputerSystem Name is generated, using a heuristic. The heuristic is outlined, in detail, in the CIM V2 System Model spec. It assumes that the documented rules are traversed in order, to determine and assign a Name. The NameFormat Values list defines the precedence order for assigning the ComputerSystem Name. Several rules do map to the same Value.\n\nNote that the ComputerSystem Name calculated using the heuristic is the System's key value. Other names can be assigned and used for the ComputerSystem, that better suit a business, using Aliases."),ValueMap({"Other","IP","Dial","HID","NWA","HWA","X25","ISDN","IPX","DCC","ICD","E.164","SNA","OID/OSI"}),MaxLen(64)]
   string NameFormat;
   [MaxLen(256),ArrayType("Indexed"),Description("OtherIdentifyingInfo captures additional data, beyond System Name information, that could be used to identify a ComputerSystem. One example would be to hold the Fibre Channel World-Wide Name (WWN) of a node. Note that if only the Fibre Channel name is available and is unique (able to be used as the System key), then this property would be NULL and the WWN would become the System key, its data placed in the Name property."),ModelCorrespondence({"CIM_ComputerSystem.IdentifyingDescriptions"})]
   string OtherIdentifyingInfo;
@@ -3746,6 +3781,11 @@ INSTANCE OF EXP_BionicComputerSystem2
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
@@ -5589,6 +5629,11 @@ INSTANCE OF Example_C3
           OID/OSI
         </VALUE>
       </VALUE.ARRAY>
+    </QUALIFIER>
+    <QUALIFIER NAME="MaxLen" TYPE="uint32">
+      <VALUE>
+        64
+      </VALUE>
     </QUALIFIER>
   </PROPERTY>
   <PROPERTY.ARRAY NAME="OtherIdentifyingInfo" TYPE="string" PROPAGATED="true">
