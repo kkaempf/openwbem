@@ -61,6 +61,7 @@
 #include "OW_CIMNameSpaceUtils.hpp"
 
 #include <iterator>
+#include <set>
 
 namespace OpenWBEM
 {
@@ -499,10 +500,18 @@ IndicationServerImplThread::run()
 void
 IndicationServerImplThread::deactivateAllSubscriptions()
 {
+	typedef std::set<SubscriptionRef> SubSet;
+	SubSet uniqueSubscriptions;
+
 	for (subscriptions_t::iterator curSubscription = m_subscriptions.begin();
 		  curSubscription != m_subscriptions.end(); ++curSubscription)
 	{
-		Subscription& sub(curSubscription->second);
+		uniqueSubscriptions.insert(curSubscription->second);
+	}
+
+	for (SubSet::iterator curSubscription = uniqueSubscriptions.begin(); curSubscription != uniqueSubscriptions.end(); ++curSubscription)
+	{
+		Subscription& sub(**curSubscription);
 		IndicationProviderIFCRefArray& providers(sub.m_providers);
 		for (IndicationProviderIFCRefArray::iterator curProvider = providers.begin();
 			  curProvider != providers.end(); ++curProvider)
@@ -758,7 +767,7 @@ IndicationServerImplThread::_processIndicationRange(
 	{
 		try
 		{
-			Subscription& sub = first->second;
+			Subscription& sub = *(first->second);
 			CIMInstance filterInst = sub.m_filter;
 			String queryLanguage = sub.m_filter.getPropertyT("QueryLanguage").getValueT().toString();
 			if (!sub.m_filterSourceNameSpace.equalsIgnoreCase(instNS))
@@ -851,83 +860,98 @@ IndicationServerImplThread::deleteSubscription(const String& ns, const CIMObject
 	cop.setNameSpace(ns);
 	OW_LOG_DEBUG(m_logger, Format("cop = %1", cop));
 	
-	MutexLock l(m_subGuard);
-	for (subscriptions_t::iterator iter = m_subscriptions.begin(); iter != m_subscriptions.end();)
+	typedef std::set<SubscriptionRef> SubSet;
+	SubSet uniqueSubscriptions;
+
+	// The hash map m_subscriptions has duplicate entries for the same subscription, so we have to create a unique set, which
+	// should end up containing only one entry for the subscription that is being deleted.
 	{
-		OW_LOG_DEBUG(m_logger, Format("subPath = %1", iter->second.m_subPath));
-		if (cop.equals(iter->second.m_subPath))
+		MutexLock l(m_subGuard);
+		subscriptions_t::iterator curSubscription = m_subscriptions.begin();
+		while (curSubscription != m_subscriptions.end())
 		{
-			OW_LOG_DEBUG(m_logger, "found a match");
-			Subscription& sub = iter->second;
-			for (size_t i = 0; i < sub.m_providers.size(); ++i)
+			OW_LOG_DEBUG(m_logger, Format("subPath = %1", curSubscription->second->m_subPath));
+			if (cop.equals(curSubscription->second->m_subPath))
 			{
-				try
+				OW_LOG_DEBUG(m_logger, "found a match");
+				uniqueSubscriptions.insert(curSubscription->second);
+				m_subscriptions.erase(curSubscription++);
+			}
+			else
+			{
+				++curSubscription;
+			}
+		}
+	}
+
+	OW_ASSERT(uniqueSubscriptions.size() == 1);
+
+	for (SubSet::iterator curSubscription = uniqueSubscriptions.begin(); curSubscription != uniqueSubscriptions.end(); ++curSubscription)
+	{
+		Subscription& sub(**curSubscription);
+		for (size_t i = 0; i < sub.m_providers.size(); ++i)
+		{
+			try
+			{
+				if (sub.m_isPolled[i])
 				{
-					if (sub.m_isPolled[i])
+					// loop through all the classes in the subscription.
+					// TODO: This is slightly less than optimal, since
+					// m_classes may contain a class that isn't handled by
+					// the provider
+					for (size_t j = 0; j < sub.m_classes.size(); ++j)
 					{
-						// loop through all the classes in the subscription.
-						// TODO: This is slightly less than optimal, since
-						// m_classes may contain a class that isn't handled by
-						// the provider
-						for (size_t j = 0; j < sub.m_classes.size(); ++j)
+						CIMName key = sub.m_classes[j];
+						poller_map_t::iterator iter = m_pollers.find(key);
+						if (iter != m_pollers.end())
 						{
-							CIMName key = sub.m_classes[j];
-							poller_map_t::iterator iter = m_pollers.find(key);
-							if (iter != m_pollers.end())
+							LifecycleIndicationPollerRef p = iter->second;
+							CIMName subClsName = sub.m_selectStmt.getClassName();
+							bool removePoller = false;
+							if (subClsName == "CIM_InstCreation")
 							{
-								LifecycleIndicationPollerRef p = iter->second;
-								CIMName subClsName = sub.m_selectStmt.getClassName();
-								bool removePoller = false;
-								if (subClsName == "CIM_InstCreation")
-								{
-									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-								}
-								else if (subClsName == "CIM_InstModification")
-								{
-									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-								}
-								else if (subClsName == "CIM_InstDeletion")
-								{
-									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-								}
-								else if (subClsName == "CIM_InstIndication" || subClsName == "CIM_Indication")
-								{
-									p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
-									p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
-									removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
-								}
-								if (removePoller)
-								{
-									m_pollers.erase(iter);
-								}
+								removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+							}
+							else if (subClsName == "CIM_InstModification")
+							{
+								removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+							}
+							else if (subClsName == "CIM_InstDeletion")
+							{
+								removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+							}
+							else if (subClsName == "CIM_InstIndication" || subClsName == "CIM_Indication")
+							{
+								p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_CREATION);
+								p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_MODIFICATION);
+								removePoller = p->removePollOp(LifecycleIndicationPoller::POLL_FOR_INSTANCE_DELETION);
+							}
+							if (removePoller)
+							{
+								m_pollers.erase(iter);
 							}
 						}
 					}
-					else
-					{
-						IndicationProviderIFCRef p = sub.m_providers[i];
-						p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes);
-					}
-					
 				}
-				catch (const Exception& e)
+				else
 				{
-					OW_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter for provider: %1", e));
+					IndicationProviderIFCRef p = sub.m_providers[i];
+					p->deActivateFilter(createProvEnvRef(m_env), sub.m_selectStmt, sub.m_selectStmt.getClassName(), ns, sub.m_classes);
 				}
-				catch(ThreadCancelledException&)
-				{
-					throw;
-				}
-				catch (...)
-				{
-					OW_LOG_ERROR(m_logger, "Caught unknown exception while calling deActivateFilter for provider");
-				}
+				
 			}
-			m_subscriptions.erase(iter++);
-		}
-		else
-		{
-			++iter;
+			catch (const Exception& e)
+			{
+				OW_LOG_ERROR(m_logger, Format("Caught exception while calling deActivateFilter for provider: %1", e));
+			}
+			catch(ThreadCancelledException&)
+			{
+				throw;
+			}
+			catch (...)
+			{
+				OW_LOG_ERROR(m_logger, "Caught unknown exception while calling deActivateFilter for provider");
+			}
 		}
 	}
 }
@@ -1253,15 +1277,15 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	}
 
 	// create a subscription (save the compiled filter and other info)
-	Subscription sub;
-	sub.m_subPath = CIMObjectPath(ns, subInst);
-	sub.m_sub = subInst;
-	sub.m_providers = providers;
-	sub.m_isPolled = isPolled;
-	sub.m_filter = filterInst;
-	sub.m_selectStmt = selectStmt;
-	sub.m_compiledStmt = compiledStmt;
-	sub.m_classes = strIsaClassNames;
+	SubscriptionRef sub(new Subscription);
+	sub->m_subPath = CIMObjectPath(ns, subInst);
+	sub->m_sub = subInst;
+	sub->m_providers = providers;
+	sub->m_isPolled = isPolled;
+	sub->m_filter = filterInst;
+	sub->m_selectStmt = selectStmt;
+	sub->m_compiledStmt = compiledStmt;
+	sub->m_classes = strIsaClassNames;
 
 	// m_filterSourceNamespace is saved so _processIndication can do what the
 	// schema says:
@@ -1269,7 +1293,7 @@ IndicationServerImplThread::createSubscription(const String& ns, const CIMInstan
 	//"originate. If NULL, the namespace of the Filter registration "
 	//"is assumed."
 	// first try to get it from the property
-	sub.m_filterSourceNameSpace = filterSourceNameSpace;
+	sub->m_filterSourceNameSpace = filterSourceNameSpace;
 
 	// get the lock and put it in m_subscriptions
 	{
@@ -1354,13 +1378,11 @@ IndicationServerImplThread::modifySubscription(const String& ns, const CIMInstan
 	for (subscriptions_t::iterator iter = m_subscriptions.begin();
 		 iter != m_subscriptions.end(); ++iter)
 	{
-		if (cop.equals(iter->second.m_subPath))
+		Subscription& sub = *(iter->second);
+		if (cop.equals(sub.m_subPath))
 		{
-			Subscription& sub = iter->second;
-			for (size_t i = 0; i < sub.m_providers.size(); ++i)
-			{
-				sub.m_sub = subInst;
-			}
+			sub.m_sub = subInst;
+			break; // should only be one subscription to update
 		}
 	}
 }
