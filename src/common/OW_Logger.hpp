@@ -35,7 +35,7 @@
 #ifndef OW_LOGGER_HPP_INCLUDE_GUARD_
 #define OW_LOGGER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include "OW_String.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_IntrusiveCountableBase.hpp"

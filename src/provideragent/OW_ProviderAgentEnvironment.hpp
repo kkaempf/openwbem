@@ -47,6 +47,7 @@
 #include "OW_CppProviderBaseIFC.hpp"
 #include "OW_Reference.hpp"
 #include "OW_ProviderAgentLockerIFC.hpp"
+#include "OW_Array.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -61,7 +62,7 @@ class ProviderAgentEnvironment : public ServiceEnvironmentIFC
 public:
 	enum EClassRetrievalFlag
 	{
-		E_DONT_RETRIEVE_CLASSES, 
+		E_DONT_RETRIEVE_CLASSES,
 		E_RETRIEVE_CLASSES
 	};
 
@@ -72,19 +73,19 @@ public:
 	};
 
 	ProviderAgentEnvironment(const ConfigFile::ConfigMap& configMap,
-		const Array<CppProviderBaseIFCRef>& providers, 
-		const Array<CIMClass>& cimClasses, 
+		const Array<CppProviderBaseIFCRef>& providers,
+		const Array<CIMClass>& cimClasses,
 		const AuthenticatorIFCRef& authenticator,
-		const Array<RequestHandlerIFCRef>& requestHandlers, 
+		const Array<RequestHandlerIFCRef>& requestHandlers,
 		const LoggerRef& logger,
-        const String& callbackURL, 
+        const String& callbackURL,
 		const Reference<Array<SelectablePair_t> >& selectables,
-		const ProviderAgentLockerIFCRef& locker); 
-	virtual ~ProviderAgentEnvironment(); 
+		const ProviderAgentLockerIFCRef& locker);
+	virtual ~ProviderAgentEnvironment();
 	virtual bool authenticate(String &userName,
-		const String &info, String &details, OperationContext& context); 
+		const String &info, String &details, OperationContext& context);
 	virtual void addSelectable(const SelectableIFCRef& obj,
-		const SelectableCallbackIFCRef& cb); 
+		const SelectableCallbackIFCRef& cb);
 
 	struct selectableFinder
 	{
@@ -97,37 +98,37 @@ public:
 		const SelectableIFCRef& m_obj;
 	};
 
-	virtual void removeSelectable(const SelectableIFCRef& obj); 
-	virtual String getConfigItem(const String &name, const String& defRetVal="") const; 
-	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious); 
+	virtual void removeSelectable(const SelectableIFCRef& obj);
+	virtual String getConfigItem(const String &name, const String& defRetVal="") const;
+	virtual void setConfigItem(const String& item, const String& value, EOverwritePreviousFlag overwritePrevious);
 
-	virtual CIMInstanceArray getInteropInstances(const String& className)const ; 
-	virtual void setInteropInstance(const CIMInstance& inst); 
+	virtual CIMInstanceArray getInteropInstances(const String& className)const ;
+	virtual void setInteropInstance(const CIMInstance& inst);
 	
-	virtual RequestHandlerIFCRef getRequestHandler(const String& ct); 
+	virtual RequestHandlerIFCRef getRequestHandler(const String& ct);
 	virtual CIMOMHandleIFCRef getCIMOMHandle(OperationContext&,
 		ESendIndicationsFlag /*doIndications*/,
-		EBypassProvidersFlag /*bypassProviders*/); 
-	virtual LoggerRef getLogger() const; 
+		EBypassProvidersFlag /*bypassProviders*/);
+	virtual LoggerRef getLogger() const;
 	virtual LoggerRef getLogger(const String& componentName) const;
 
 private:
 	ConfigFile::ConfigMap m_configItems;
 	AuthenticatorIFCRef m_authenticator;
 	LoggerRef m_logger;
-	String m_callbackURL; 
-	Array<RequestHandlerIFCRef> m_requestHandlers; 
+	String m_callbackURL;
+	Array<RequestHandlerIFCRef> m_requestHandlers;
 	Reference<Array<SelectablePair_t> > m_selectables;
-	Map<String, CppProviderBaseIFCRef> m_assocProvs; 
-	Map<String, CppProviderBaseIFCRef> m_instProvs; 
-	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs; 
-	Map<String, CppProviderBaseIFCRef> m_methodProvs; 
+	Map<String, CppProviderBaseIFCRef> m_assocProvs;
+	Map<String, CppProviderBaseIFCRef> m_instProvs;
+	Map<String, CppProviderBaseIFCRef> m_secondaryInstProvs;
+	Map<String, CppProviderBaseIFCRef> m_methodProvs;
 	// TODO Refactor me.  ProviderAgentCIMOMHandles get a reference
-	// (&, not Reference) to m_cimClasses, and modify it. 
-	Cache<CIMClass> m_cimClasses; 
+	// (&, not Reference) to m_cimClasses, and modify it.
+	Cache<CIMClass> m_cimClasses;
 	ProviderAgentLockerIFCRef m_locker;
-	EClassRetrievalFlag m_classRetrieval; 
-	ClientCIMOMHandleConnectionPool m_connectionPool; 
+	EClassRetrievalFlag m_classRetrieval;
+	ClientCIMOMHandleConnectionPool m_connectionPool;
 	ProviderAgentEnvironment::EConnectionCredentialsUsageFlag m_useConnectionCredentials;
 
 };

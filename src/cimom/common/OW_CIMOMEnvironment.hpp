@@ -53,65 +53,18 @@
 #include "OW_ConfigFile.hpp"
 #include "OW_HashMap.hpp"
 #include "OW_SortedVectorSet.hpp"
+#include "OW_CimomCommonFwd.hpp"
+#include "OW_CIMFwd.hpp"
 
 namespace OpenWBEM
 {
 
-class CIMServer;
-class CIMOMHandleIFC;
-class RequestHandlerIFC;
-class ServiceIFC;
-class CIMInstance;
-class ProviderManager;
-class WQLIFC;
-class CIMNameSpace;
-class HTTPServer;
 class AuthManager;
-class Authenticator;
-
-class SelectableIFC;
-typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
-class SelectableCallbackIFC;
-typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
-
-class Logger;
-typedef IntrusiveReference<Logger> LoggerRef;
-typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
-
-class WQLIFC;
-typedef SharedLibraryReference<IntrusiveReference<WQLIFC> > WQLIFCRef;
-
-class ProviderManager;
-typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
-
-class RepositoryIFC;
-typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
 typedef IntrusiveReference<AuthManager> AuthManagerRef;
 
-class PollingManager;
-typedef IntrusiveReference<PollingManager> PollingManagerRef;
 
-class IndicationRepLayer;
-class IndicationServer;
-typedef SharedLibraryReference<IntrusiveReference<IndicationServer> > IndicationServerRef;
 
-typedef SharedLibraryReference<IntrusiveReference<ServiceIFC> > ServiceIFCRef;
-typedef SharedLibraryReference<IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
-typedef SharedLibraryReference<RepositoryIFCRef>
-	SharedLibraryRepositoryIFCRef;
 
-class AuthorizerIFC;
-typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
-
-class AuthorizerManager;
-typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
-
-class IndicationRepLayerMediator;
-typedef IntrusiveReference<IndicationRepLayerMediator>
-	IndicationRepLayerMediatorRef;
-
-class CIMOMEnvironment;
-typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 
 class CIMOMEnvironment : public ServiceEnvironmentIFC
 {

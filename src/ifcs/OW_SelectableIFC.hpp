@@ -37,8 +37,7 @@
 #define OW_SELECTABLEIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_Array.hpp"
-#include "OW_IntrusiveReference.hpp"
+#include "OW_IfcsFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 
 namespace OpenWBEM
@@ -50,7 +49,6 @@ public:
    virtual ~SelectableIFC();
    virtual Select_t getSelectObj() const = 0;
 };
-typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
 
 } // end namespace OpenWBEM
 

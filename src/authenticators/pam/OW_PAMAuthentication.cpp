@@ -37,6 +37,7 @@
 #include "OW_String.hpp"
 #include "OW_ConfigOpts.hpp"
 #include "OW_AuthenticatorIFC.hpp"
+#include "OW_Array.hpp"
 
 #include <string.h>
 
@@ -55,7 +56,7 @@
 
 extern "C"
 {
-#if defined OW_HAVE_PAM_PAM_APPL_H 
+#if defined OW_HAVE_PAM_PAM_APPL_H
 #include <pam/pam_appl.h>
 #elif defined OW_HAVE_SECURITY_PAM_APPL_H
 #include <security/pam_appl.h>
@@ -121,7 +122,7 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 	bool nameFound = false;
 	for (size_t i = 0; i < allowedUsers.size(); i++)
 	{
-		if (allowedUsers[i].equals(userName) 
+		if (allowedUsers[i].equals(userName)
                     || allowedUsers[i].equals("*"))
 		{
 			nameFound = true;

@@ -38,12 +38,12 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_SerializableIFC.hpp"
+#include "OW_CommonFwd.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
 {
 
-class String;
 /**
  * The CIMBase class is used as the base class for all CIM related classes.
  * (i.e. CIMClass, CIMInstance, etc...). It ensures that all derived

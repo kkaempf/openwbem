@@ -32,44 +32,32 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_FILE_APPENDER_HPP_INCLUDE_GUARD_
-#define OW_FILE_APPENDER_HPP_INCLUDE_GUARD_
+#ifndef OW_CIMOM_COMMON_FWD_HPP_INCLUDE_GUARD_
+#define OW_CIMOM_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_String.hpp"
+#include "OW_IntrusiveReference.hpp"
 
 namespace OpenWBEM
 {
 
-/**
- * This class sends log messges to a file
- */
-class FileAppender : public LogAppender
-{
-public:
-	static const unsigned int NO_MAX_LOG_SIZE = 0;
+class CIMServer;
+class ProviderManager;
+typedef IntrusiveReference<ProviderManager> ProviderManagerRef;
+class PollingManager;
+typedef IntrusiveReference<PollingManager> PollingManagerRef;
+class IndicationRepLayer;
+class IndicationServer;
+typedef SharedLibraryReference<IntrusiveReference<IndicationServer> > IndicationServerRef;
+class AuthorizerManager;
+typedef IntrusiveReference<AuthorizerManager> AuthorizerManagerRef;
+class IndicationRepLayerMediator;
+typedef IntrusiveReference<IndicationRepLayerMediator> IndicationRepLayerMediatorRef;
+class CIMOMEnvironment;
+typedef IntrusiveReference<CIMOMEnvironment> CIMOMEnvironmentRef;
 
-	FileAppender(const StringArray& components,
-		const StringArray& categories,
-		const char* filename,
-		const String& pattern,
-		UInt64 maxFileSize,
-		unsigned int maxBackupIndex);
-	virtual ~FileAppender();
 
-	static const String STR_DEFAULT_MESSAGE_PATTERN;
-
-protected:
-	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const;
-private:
-	String m_filename;
-	UInt64 m_maxFileSize;
-	unsigned int m_maxBackupIndex;
-};
 
 } // end namespace OpenWBEM
 
 #endif
-
 

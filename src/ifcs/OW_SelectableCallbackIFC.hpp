@@ -36,9 +36,8 @@
 #ifndef OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
 #define OW_SELECTABLE_CALLBACKIFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_IntrusiveReference.hpp"
+#include "OW_IfcsFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
-#include "OW_SelectableIFC.hpp"
 
 // The classes and functions defined in this file are not meant for general
 // use, they are internal implementation details.  They may change at any time.
@@ -57,7 +56,6 @@ public:
 protected:
 	virtual void doSelected(SelectableIFCRef& selectedObject) = 0;
 };
-typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
 
 } // end namespace OpenWBEM
 

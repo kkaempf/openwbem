@@ -38,7 +38,7 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_COWIntrusiveReference.hpp"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include "OW_CIMFwd.hpp"
 #include "OW_Exception.hpp"
 #include <iosfwd>
@@ -731,10 +731,10 @@ public:
 	 */
 	static String getLine(std::istream& istr);
 
-#if defined(OW_AIX)  
+#if defined(OW_AIX)
 	static const size_t npos;
 #else
-	static const size_t npos = ~0;  
+	static const size_t npos = ~0;
 #endif // OW_AIX
 
 #ifdef OW_WIN32

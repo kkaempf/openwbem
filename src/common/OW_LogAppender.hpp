@@ -35,7 +35,7 @@
 #ifndef OW_LOG_APPENDER_IFC_HPP_INCLUDE_GUARD_
 #define OW_LOG_APPENDER_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include "OW_IntrusiveCountableBase.hpp"
 #include "OW_SortedVectorSet.hpp"
 #include "OW_LogLevel.hpp"

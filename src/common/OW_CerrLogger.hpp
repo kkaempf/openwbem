@@ -37,7 +37,7 @@
 
 #include "OW_config.h"
 #include "OW_Logger.hpp"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {

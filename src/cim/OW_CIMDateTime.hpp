@@ -41,13 +41,12 @@
 #include "OW_CIMException.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_String.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
 OW_DECLARE_APIEXCEPTION(CIMDateTime, OW_COMMON_API);
-
-class DateTime;
 
 // TODO: Document valid ranges for values in the class and add asserts for them.
 

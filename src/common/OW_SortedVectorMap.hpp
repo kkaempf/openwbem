@@ -37,7 +37,7 @@
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
 #include "OW_vector.hpp"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include <utility> // for std::pair
 #include <functional> // for std::less
 #include <algorithm>
@@ -278,7 +278,7 @@ private:
 	bool equivalent(const key_type& x, const key_type& y) const
 	{
 		// Strict weak ordering: Two objects x and y are equivalent if both f(x, y) and f(y, x) are false.
-		return (!Compare()(x, y) && !Compare()(y, x)); 
+		return (!Compare()(x, y) && !Compare()(y, x));
 	}
 };
 template<class Key, class T, class Compare>

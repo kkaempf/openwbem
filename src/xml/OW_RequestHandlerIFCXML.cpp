@@ -45,6 +45,7 @@
 #include "OW_XMLParseException.hpp"
 #include "OW_Logger.hpp"
 #include "OW_OperationContext.hpp"
+#include "OW_Array.hpp"
 
 #define OW_LOGDEBUG(msg) OW_LOG_DEBUG(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)
 #define OW_LOGINFO(msg) OW_LOG_INFO(this->getEnvironment()->getLogger(COMPONENT_NAME), msg)

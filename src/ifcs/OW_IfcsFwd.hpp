@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,47 +32,37 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_COMMON_FWD_HPP_INCLUDE_GUARD_
-#define OW_COMMON_FWD_HPP_INCLUDE_GUARD_
+#ifndef OW_IFCS_FWD_HPP_INCLUDE_GUARD_
+#define OW_IFCS_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_ArrayFwd.hpp"
 #include "OW_IntrusiveReference.hpp"
-
-namespace std
-{
-	template <typename T> class less;
-}
+#include "OW_SharedLibraryReference.hpp"
 
 namespace OpenWBEM
 {
 
-struct LogMessage;
-class Logger;
-typedef IntrusiveReference<Logger> LoggerRef;
+class CIMOMHandleIFC;
+typedef IntrusiveReference<CIMOMHandleIFC> CIMOMHandleIFCRef;
+class RequestHandlerIFC;
+typedef SharedLibraryReference<IntrusiveReference<RequestHandlerIFC> > RequestHandlerIFCRef;
+class ServiceIFC;
+typedef SharedLibraryReference<IntrusiveReference<ServiceIFC> > ServiceIFCRef;
+class WQLIFC;
+typedef SharedLibraryReference<IntrusiveReference<WQLIFC> > WQLIFCRef;
+class SelectableIFC;
+typedef IntrusiveReference<SelectableIFC> SelectableIFCRef;
+class SelectableCallbackIFC;
+typedef IntrusiveReference<SelectableCallbackIFC> SelectableCallbackIFCRef;
+class RepositoryIFC;
+typedef IntrusiveReference<RepositoryIFC> RepositoryIFCRef;
+typedef SharedLibraryReference<RepositoryIFCRef> SharedLibraryRepositoryIFCRef;
+class AuthorizerIFC;
+typedef SharedLibraryReference<IntrusiveReference<AuthorizerIFC> > AuthorizerIFCRef;
 
-class LogAppender;
-typedef IntrusiveReference<LogAppender> LogAppenderRef;
 
-class String;
-typedef Array<String> StringArray;
-
-class Char16;
-typedef Array<Char16> Char16Array;
-
-template <class Key, class T, class Compare>
-class SortedVectorMapDataCompare;
-
-template<class Key, class T, class Compare = SortedVectorMapDataCompare<Key, T, std::less<Key> > >
-class SortedVectorMap;
-
-namespace ConfigFile
-{
-	typedef SortedVectorMap<String, String> ConfigMap;
-}
-
-class StringBuffer;
 
 } // end namespace OpenWBEM
 
 #endif
+
 

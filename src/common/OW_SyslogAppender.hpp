@@ -35,7 +35,7 @@
 #ifndef OW_SYSLOG_APPENDER_HPP_INCLUDE_GUARD_
 #define OW_SYSLOG_APPENDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include "OW_LogAppender.hpp"
 
 namespace OpenWBEM

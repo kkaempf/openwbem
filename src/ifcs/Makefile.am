@@ -29,6 +29,7 @@ OW_CIMOMHandleIFC.hpp \
 OW_CIMProtocolIFC.hpp \
 OW_CIMProtocolIStreamIFC.hpp \
 OW_ClientAuthCBIFC.hpp \
+OW_IfcsFwd.hpp \
 OW_IOIFC.hpp \
 OW_RepositoryIFC.hpp \
 OW_RequestHandlerIFC.hpp \

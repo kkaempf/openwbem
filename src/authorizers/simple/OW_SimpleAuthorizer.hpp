@@ -41,6 +41,7 @@
 namespace OpenWBEM
 {
 
+// defined in the .cpp
 class AccessMgr;
 
 // This class is responsible for Access control.

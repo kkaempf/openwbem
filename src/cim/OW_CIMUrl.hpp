@@ -40,12 +40,11 @@
 #include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_Types.hpp"
+#include "OW_CommonFwd.hpp"
 
 namespace OpenWBEM
 {
 
-//////////////////////////////////////////////////////////////////////////////
-class IOException;
 /**
  * The CIMUrl is an abstract data type that represents a Uniform resource
  * locator. CIMUrl objects are ref counted and copy on write.

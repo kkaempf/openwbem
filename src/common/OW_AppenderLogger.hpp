@@ -35,7 +35,7 @@
 #ifndef OW_APPENDER_LOGGER_HPP_INCLUDE_GUARD_
 #define OW_APPENDER_LOGGER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_commonFwd.hpp"
+#include "OW_CommonFwd.hpp"
 #include "OW_LogLevel.hpp"
 #include "OW_Logger.hpp"
 #include "OW_Array.hpp"

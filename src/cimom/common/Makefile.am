@@ -35,6 +35,7 @@ owstatlibdir = $(thelibdir)
 
 
 libowcimomcommon_a_SOURCES =	\
+OW_CimomCommonFwd.hpp \
 OW_CIMOMEnvironment.cpp \
 OW_CIMOMEnvironment.hpp \
 OW_CIMServer.cpp \

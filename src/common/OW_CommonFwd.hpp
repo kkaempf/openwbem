@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,44 +32,50 @@
  * @author Dan Nuffer
  */
 
-#ifndef OW_FILE_APPENDER_HPP_INCLUDE_GUARD_
-#define OW_FILE_APPENDER_HPP_INCLUDE_GUARD_
+#ifndef OW_COMMON_FWD_HPP_INCLUDE_GUARD_
+#define OW_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_CommonFwd.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_String.hpp"
+#include "OW_ArrayFwd.hpp"
+#include "OW_IntrusiveReference.hpp"
+
+// Yeah I know this is forbidden by the standard, but what am I gonna do?  #include <algorithm> ? I think not.
+// If it causes a problem on some compiler, just #ifdef a fix in.
+namespace std
+{
+	template <typename T> class less;
+}
 
 namespace OpenWBEM
 {
 
-/**
- * This class sends log messges to a file
- */
-class FileAppender : public LogAppender
+struct LogMessage;
+class Logger;
+typedef IntrusiveReference<Logger> LoggerRef;
+
+class LogAppender;
+typedef IntrusiveReference<LogAppender> LogAppenderRef;
+
+class String;
+typedef Array<String> StringArray;
+
+class Char16;
+typedef Array<Char16> Char16Array;
+
+template <class Key, class T, class Compare>
+class SortedVectorMapDataCompare;
+
+template<class Key, class T, class Compare = SortedVectorMapDataCompare<Key, T, std::less<Key> > >
+class SortedVectorMap;
+
+namespace ConfigFile
 {
-public:
-	static const unsigned int NO_MAX_LOG_SIZE = 0;
+	typedef SortedVectorMap<String, String> ConfigMap;
+}
 
-	FileAppender(const StringArray& components,
-		const StringArray& categories,
-		const char* filename,
-		const String& pattern,
-		UInt64 maxFileSize,
-		unsigned int maxBackupIndex);
-	virtual ~FileAppender();
-
-	static const String STR_DEFAULT_MESSAGE_PATTERN;
-
-protected:
-	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const;
-private:
-	String m_filename;
-	UInt64 m_maxFileSize;
-	unsigned int m_maxBackupIndex;
-};
+class StringBuffer;
+class DateTime;
 
 } // end namespace OpenWBEM
 
 #endif
-
 
