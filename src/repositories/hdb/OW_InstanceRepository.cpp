@@ -159,6 +159,7 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 			format("Model path is missing keys: %1", cop.toString()).c_str());
 	}
 
+	// TODO: Is this necessary?
 	if(pra.size() == 1)
 	{
 		// If only one key property in object path, ensure it is
@@ -202,6 +203,16 @@ OW_InstanceRepository::makeInstanceKey(const OW_String& ns, const OW_CIMObjectPa
 			{
 				OW_CIMValue cv = OW_CIMValueCast::castValueToDataType(
 					pra[i].getValue(), kprops[j].getDataType());
+
+				if (cv.getType() == OW_CIMDataType::REFERENCE)
+				{
+					OW_CIMObjectPath cop(cv.toCIMObjectPath());
+					if (cop.getNameSpace().empty())
+					{
+						cop.setNameSpace(ns);
+						cv = OW_CIMValue(cop);
+					}
+				}
 
 				pra[i].setValue(cv);
 				break;
