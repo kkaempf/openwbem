@@ -159,17 +159,19 @@ OW_CIMQualifier::getValue() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifier&
 OW_CIMQualifier::setValue(const OW_CIMValue& value)
 {
 	m_pdata->m_qualifierValue = value;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifier&
 OW_CIMQualifier::setDefaults(const OW_CIMQualifierType& qtype)
 {
 	m_pdata->m_qualifierType = qtype;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -199,7 +201,7 @@ OW_CIMQualifier::hasFlavor(const OW_CIMFlavor& flavor) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifier&
 OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 {
 	if(flavor)
@@ -214,7 +216,7 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 		{
 			if(m_pdata->m_flavors[i].getFlavor() == flavorValue)
 			{
-				return;
+				return *this;
 			}
 		}
 
@@ -238,10 +240,11 @@ OW_CIMQualifier::addFlavor(const OW_CIMFlavor& flavor)
 
 		m_pdata->m_flavors.append(flavor);
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifier&
 OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 {
 	for(size_t i = 0; i < m_pdata->m_flavors.size(); i++)
@@ -251,6 +254,7 @@ OW_CIMQualifier::removeFlavor(OW_Int32 flavor)
 			m_pdata->m_flavors.remove(i--);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -275,10 +279,11 @@ OW_CIMQualifier::getFlavor() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifier&
 OW_CIMQualifier::setPropagated(OW_Bool propagated)
 {
 	m_pdata->m_propagated = propagated;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

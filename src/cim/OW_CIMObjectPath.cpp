@@ -149,7 +149,7 @@ OW_CIMObjectPath::operator= (const OW_CIMObjectPath& x)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath&
 OW_CIMObjectPath::addKey(const OW_String& keyname, const OW_CIMValue& value)
 {
 	if(value)
@@ -161,6 +161,7 @@ OW_CIMObjectPath::addKey(const OW_String& keyname, const OW_CIMValue& value)
 			m_pdata->m_keys.append(cp);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -196,17 +197,19 @@ OW_CIMObjectPath::getKeyT(const OW_String& keyName) const
 	return p;
 }
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath&
 OW_CIMObjectPath::setKeys(const OW_CIMPropertyArray& newKeys)
 {
 	m_pdata->m_keys = newKeys;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath&
 OW_CIMObjectPath::setKeys(const OW_CIMInstance& instance)
 {
 	m_pdata->m_keys = instance.getKeyValuePairs();
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,24 +234,27 @@ OW_CIMObjectPath::getObjectName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath&
 OW_CIMObjectPath::setHost(const OW_String& host)
 {
 	m_pdata->m_nameSpace.setHost(host);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath&
 OW_CIMObjectPath::setNameSpace(const OW_String& ns)
 {
 	m_pdata->m_nameSpace.setNameSpace(ns);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMObjectPath&
 OW_CIMObjectPath::setObjectName(const OW_String& objectName)
 {
 	m_pdata->m_objectName = objectName;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

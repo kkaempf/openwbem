@@ -86,10 +86,10 @@ public:
 	OW_CIMParamValue& operator = (const OW_CIMParamValue& arg);
 
 	OW_String getName() const;
-	void setName(const OW_String& name);
+	OW_CIMParamValue& setName(const OW_String& name);
 
 	OW_CIMValue getValue() const;
-	void setValue(const OW_CIMValue& val);
+	OW_CIMParamValue& setValue(const OW_CIMValue& val);
 
 	/**
 	 * @return true if this OW_CIMParamValue is a valid CIM data type

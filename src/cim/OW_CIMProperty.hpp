@@ -152,8 +152,9 @@ public:
 	 * Set the qualifiers for this property object.
 	 * @param quals	An OW_CIMQualifierArray with the new qualifiers for this
 	 *						property object.
+	 * @return a reference to *this
 	 */
-	void setQualifiers(const OW_CIMQualifierArray& quals);
+	OW_CIMProperty& setQualifiers(const OW_CIMQualifierArray& quals);
 
 	/**
 	 * Get the origin class for this property.
@@ -164,14 +165,16 @@ public:
 	/**
 	 * Set the origin class for this property.
 	 * @param originCls	The name of the origin class of this property.
+	 * @return a reference to *this
 	 */
-	void setOriginClass(const OW_String& originCls);
+	OW_CIMProperty& setOriginClass(const OW_String& originCls);
 
 	/**
 	 * Set the value of this property.
 	 * @param val	The OW_CIMValue for this property.
+	 * @return a reference to *this
 	 */
-	void setValue(const OW_CIMValue& val);
+	OW_CIMProperty& setValue(const OW_CIMValue& val);
 
 	/**
 	 * @return The OW_CIMValue object for this property.  The value may be NULL.
@@ -187,14 +190,16 @@ public:
 	/**
 	 * Set the data type for this property.
 	 * @param type	The OW_CIMDataType for this property
+	 * @return a reference to *this
 	 */
-	void setDataType(const OW_CIMDataType& type);
+	OW_CIMProperty& setDataType(const OW_CIMDataType& type);
 
 	/**
 	 * Set the data type for this property.
 	 * @param type	The OW_CIMDataType::Type for this property
+	 * @return a reference to *this
 	 */
-	void setDataType(const OW_CIMDataType::Type& type);
+	OW_CIMProperty& setDataType(const OW_CIMDataType::Type& type);
 
 	/**
 	 * @return The OW_CIMDataType for this property.
@@ -209,14 +214,16 @@ public:
 	/**
 	 * Set the size of the data for this property.
 	 * @param size	The size of the data associated with property.
+	 * @return a reference to *this
 	 */
-	void setDataSize(OW_Int32 size);
+	OW_CIMProperty& setDataSize(OW_Int32 size);
 
 	/**
 	 * Set the overriding property name.
 	 * @param opname	The name of the overriding property.
+	 * @return a reference to *this
 	 */
-	void setOverridingProperty(const OW_String& opname);
+	OW_CIMProperty& setOverridingProperty(const OW_String& opname);
 
 	/**
 	 * @return The name of the overriding property.
@@ -247,8 +254,9 @@ public:
 	/**
 	 * Add a qualifier to this property.
 	 * @param qual	The OW_CIMQualifier to add to this property.
+	 * @return a reference to *this
 	 */
-	void addQualifier(const OW_CIMQualifier& qual);
+	OW_CIMProperty& addQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Remove a qualifier from this property.
@@ -275,8 +283,9 @@ public:
 	/**
 	 * Set the propagated flag on this property.
 	 * @param propagated	If true this property is propagated. Otherwise false.
+	 * @return a reference to *this
 	 */
-	void setPropagated(OW_Bool propagated=true);
+	OW_CIMProperty& setPropagated(OW_Bool propagated=true);
 
 	/**
 	 * Get the propagated flag for this property.
@@ -286,8 +295,9 @@ public:
 
 	/**
 	 * Clear all qualifier from property.
+	 * @return a reference to *this
 	 */
-	void clearQualifiers();
+	OW_CIMProperty& clearQualifiers();
 
 	/**
 	 * @return The name of this OW_CIMProperty

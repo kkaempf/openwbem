@@ -93,12 +93,6 @@ public:
 	explicit OW_CIMInstance(const char* name);
 
 	/**
-	 * Create an OW_CIMInstance from an OW_XMLNode.
-	 * @param node	The OW_XMLNode that contains the infor for this instance.
-	 */
-	//OW_CIMInstance(const OW_XMLNode& node);
-
-	/**
 	 * Destroy this OW_CIMInstance object.
 	 */
 	~OW_CIMInstance();
@@ -123,14 +117,16 @@ public:
 
 	/**
 	 * Set the keys for this instance
+	 * @return a reference to *this
 	 */
-	void setKeys(const OW_CIMPropertyArray& keys);
+	OW_CIMInstance& setKeys(const OW_CIMPropertyArray& keys);
 
 	/**
 	 * Sets the class name for this instance.
 	 * @param name	The new class name for this instance.
+	 * @return a reference to *this
 	 */
-	void setClassName(const OW_String& name);
+	OW_CIMInstance& setClassName(const OW_String& name);
 
 	/**
 	 * @return The qualifiers for this instance as an array of OW_CIMQualifiers.
@@ -148,21 +144,24 @@ public:
 	/**
 	 * Remove the named qualifier from this OW_CIMInstance.
 	 * @param qualName The name of the qualifier to remove.
+	 * @return a reference to *this
 	 */
-	void removeQualifier(const OW_String& qualName);
+	OW_CIMInstance& removeQualifier(const OW_String& qualName);
 
 	/**
 	 * Set the qualifiers for this instance. Any old qualifiers will removed.
 	 * @param quals An OW_CIMQualifierArray with the new qualifers for this
 	 *		instance.
+	 * @return a reference to *this
 	 */
-	void setQualifiers(const OW_CIMQualifierArray& quals);
+	OW_CIMInstance& setQualifiers(const OW_CIMQualifierArray& quals);
 
 	/**
 	 * Set/Add a qualifier to this instance's qualifier list
 	 * @param qual	The qualifier to add to this instance.
+	 * @return a reference to *this
 	 */
-	void setQualifier(const OW_CIMQualifier& qual);
+	OW_CIMInstance& setQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Get all the properties of a specific datatype from this instance.
@@ -180,8 +179,9 @@ public:
 	 * Set the properties associated with this instance.
 	 * @param props An OW_CIMPropertyArray that contains the new properties for
 	 * 	this instance.
+	 * @return a reference to *this
 	 */
-	void setProperties(const OW_CIMPropertyArray& props);
+	OW_CIMInstance& setProperties(const OW_CIMPropertyArray& props);
 
 	/**
 	 * Get the property identified by a given name and origin class.
@@ -219,8 +219,9 @@ public:
 	/**
 	 * Set the alias name for this instance.
 	 * @param aliasName The new alias name for this instance.
+	 * @return a reference to *this
 	 */
-	void setAlias(const OW_String& aliasName);
+	OW_CIMInstance& setAlias(const OW_String& aliasName);
 
 	/**
 	 * @return An OW_CIMPropertyArray that contains all of the keys for this
@@ -232,35 +233,40 @@ public:
 	 * Update the property values for this instance
 	 * @param props An OW_CIMPropertyArray that contains the properties to update
 	 *		this instance's properties with.
+	 * @return a reference to *this
 	 */
-	void updatePropertyValues(const OW_CIMPropertyArray& props);
+	OW_CIMInstance& updatePropertyValues(const OW_CIMPropertyArray& props);
 
 	/**
 	 * Update a single property value.
 	 * @param prop	The OW_CIMProperty to update in this instance. This
 	 *		OW_CIMProperty with contain the new value.
+	 * @return a reference to *this
 	 */
-	void updatePropertyValue(const OW_CIMProperty& prop);
+	OW_CIMInstance& updatePropertyValue(const OW_CIMProperty& prop);
 
 	/**
 	 * Update the value of a property if it exists. Otherwise add a new one.
 	 * @param name	The name of the property to add or update.
 	 * @param cv The OW_CIMValue that contains the new value for the property.
+	 * @return a reference to *this
 	 */
-	void setProperty(const OW_String& name, const OW_CIMValue& cv);
+	OW_CIMInstance& setProperty(const OW_String& name, const OW_CIMValue& cv);
 
 	/**
 	 * Update a property in the property list if it exists. Otherwise add a
 	 * new one.
 	 * @param prop The property to add or update.
+	 * @return a reference to *this
 	 */
-	void setProperty(const OW_CIMProperty& prop);
+	OW_CIMInstance& setProperty(const OW_CIMProperty& prop);
 
 	/**
 	 * Remove a property from this OW_CIMInstance
 	 * @param propName The name of the property to remove.
+	 * @return a reference to *this
 	 */
-	void removeProperty(const OW_String& propName);
+	OW_CIMInstance& removeProperty(const OW_String& propName);
 
 	/**
 	 * Create an OW_CIMInstance with properties and qualifiers from this
@@ -358,8 +364,9 @@ public:
 	 *		relevant qualifiers are copied from the class to the instance.
 	 * @param localOnly If true, only non-propagated properties,qualifier are
 	 *		kept in the instance.
+	 * @return a reference to *this
 	 */
-	void syncWithClass(const OW_CIMClass& cc, OW_Bool includeQualifiers=false);
+	OW_CIMInstance& syncWithClass(const OW_CIMClass& cc, OW_Bool includeQualifiers=false);
 
 	/**
 	 * Create an instance with the set of changes that will occur for a 

@@ -185,7 +185,7 @@ OW_CIMNameSpace::toString() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMNameSpace&
 OW_CIMNameSpace::setNameSpace(const OW_String& nameSpace)
 {
 	// Remove any preceeding '/' chars or spaces
@@ -198,27 +198,31 @@ OW_CIMNameSpace::setNameSpace(const OW_String& nameSpace)
 	}
 
 	m_pdata->m_nameSpace = p;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMNameSpace&
 OW_CIMNameSpace::setHostUrl(const OW_CIMUrl& hostUrl)
 {
 	m_pdata->m_url = hostUrl;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMNameSpace&
 OW_CIMNameSpace::setHost(const OW_String& host)
 {
 	m_pdata->m_url.setHost(host);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMNameSpace&
 OW_CIMNameSpace::setProtocol(const OW_String& protocol)
 {
 	m_pdata->m_url.setProtocol(protocol);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

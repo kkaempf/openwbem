@@ -108,8 +108,9 @@ public:
 	/**
 	 * Set the name of the parent CIM class for this OW_CIMClass object.
 	 * @param pname The name of the parent CIM class for this object.
+	 * @return a reference to *this
 	 */
-	void setSuperClass(const OW_String& pname);
+	OW_CIMClass& setSuperClass(const OW_String& pname);
 
 	/**
 	 * @return true if this OW_CIMClass object has key properties.
@@ -119,14 +120,16 @@ public:
 	/**
 	 * Set the flag that indicates this OW_CIMClass is an association.
 	 * @param isKeyedParm If true this class will be flagged as an association.
+	 * @return a reference to *this
 	 */
-	void setIsAssociation(OW_Bool isAssocFlag);
+	OW_CIMClass& setIsAssociation(OW_Bool isAssocFlag);
 
 	/**
 	 * Set the flag that indicates this OW_CIMClass has keys.
 	 * @param isKeyedParm If true this class is flagged as having keys.
+	 * @return a reference to *this
 	 */
-	void setIsKeyed(OW_Bool isKeyedParm=true);
+	OW_CIMClass& setIsKeyed(OW_Bool isKeyedParm=true);
 
 	/**
 	 * @return The properties that are flagged as keys for this OW_CIMClass as
@@ -220,8 +223,9 @@ public:
 	/**
 	 * Add a property to this class.
 	 * @param prop The property to add to this class.
+	 * @return a reference to *this
 	 */
-	void addProperty(const OW_CIMProperty& prop);
+	OW_CIMClass& addProperty(const OW_CIMProperty& prop);
 
 	/**
 	 * @return The number of properties for this class.
@@ -232,21 +236,24 @@ public:
 	 * Set the properties for this class. All of the old properties are removed.
 	 * @param props An OW_CIMPropertyArray containing the new properties for
 	 * 	this OW_CIMClass object.
+	 * @return a reference to *this
 	 */
-	void setProperties(const OW_CIMPropertyArray& props);
+	OW_CIMClass& setProperties(const OW_CIMPropertyArray& props);
 
 	/**
 	 * Update a property on this OW_CIMClass if it exists. If it doesn't exist,
 	 * this add it.
 	 * @param prop The property to update/add on this class.
+	 * @return a reference to *this
 	 */
-	void setProperty(const OW_CIMProperty& prop);
+	OW_CIMClass& setProperty(const OW_CIMProperty& prop);
 
 	/**
 	 * Add a qualifier to this class.
 	 * @param qual The OW_CIMQualifier to add to this class.
+	 * @return a reference to *this
 	 */
-	void addQualifier(const OW_CIMQualifier& qual);
+	OW_CIMClass& addQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Check for the existence of a qualifier in this class.
@@ -285,34 +292,39 @@ public:
 	 * Set the qualifiers for this class. The old qualifiers will be removed.
 	 * @param quals An OW_CIMQualifierArray that contains the new
 	 * 	qualifiers.
+	 * @return a reference to *this
 	 */
-	void setQualifiers(const OW_CIMQualifierArray& quals);
+	OW_CIMClass& setQualifiers(const OW_CIMQualifierArray& quals);
 
 	/**
 	 * Set the given qualifier on this OW_CIMClass if it is present. If it
 	 * is not, then add it.
 	 * @param qual The qualifier to set or add to this OW_CIMClass.
+	 * @return a reference to *this
 	 */
-	void setQualifier(const OW_CIMQualifier& qual);
+	OW_CIMClass& setQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Add a method to this class
 	 * @param meth The OW_CIMMethod to add to this class
+	 * @return a reference to *this
 	 */
-	void addMethod(const OW_CIMMethod& meth);
+	OW_CIMClass& addMethod(const OW_CIMMethod& meth);
 
 	/**
 	 * Set the methods for this class. The old methods will be removed.
 	 * @param meths An OW_CIMMethodArray containing the new methods for this
 	 *		class.
+	 * @return a reference to *this
 	 */
-	void setMethods(const OW_CIMMethodArray& meths);
+	OW_CIMClass& setMethods(const OW_CIMMethodArray& meths);
 
 	/**
 	 * Update/add a method on this OW_CIMClass object.
 	 * @param meth The method to add/update on this class.
+	 * @return a reference to *this
 	 */
-	void setMethod(const OW_CIMMethod& meth);
+	OW_CIMClass& setMethod(const OW_CIMMethod& meth);
 
 	/**
 	 * Create a new instance of this CIM Class. Properties on the instance will

@@ -168,14 +168,16 @@ public:
 	/**
 	 * Set the value for this qualifier
 	 * @param value The OW_CIMValue for this qualifier.
+	 * @return a reference to *this
 	 */
-	void setValue(const OW_CIMValue& value);
+	OW_CIMQualifier& setValue(const OW_CIMValue& value);
 
 	/**
 	 * Set default type for this qualifier
 	 * @param qtype The qualifier type that this qualifier is based upon.
+	 * @return a reference to *this
 	 */
-	void setDefaults(const OW_CIMQualifierType& qtype);
+	OW_CIMQualifier& setDefaults(const OW_CIMQualifierType& qtype);
 
 	/**
 	 * Get default type for this qualifier
@@ -193,15 +195,17 @@ public:
 	/**
 	 * Add an OW_CIMFlavor to this qualifier
 	 * @param newFlavor The flavor to add to this qualifier
+	 * @return a reference to *this
 	 */
-	void addFlavor(const OW_CIMFlavor& flavor);
+	OW_CIMQualifier& addFlavor(const OW_CIMFlavor& flavor);
 
 	/**
 	 * Remove a flavor from this OW_CIMQualifier.
 	 * @param flavor The integral value of the flavor to remove from this
 	 * 	qualifier.
+	 * @return a reference to *this
 	 */
-	void removeFlavor(OW_Int32 flavor);
+	OW_CIMQualifier& removeFlavor(OW_Int32 flavor);
 
 	/**
 	 * @return true if this qualifier has a value. Otherwise false.
@@ -224,8 +228,9 @@ public:
 	/**
 	 * Flag this qualifier as being propagated.
 	 * @param propagated	If true, then qualifier is flagged as propagated.
+	 * @return a reference to *this
 	 */
-	void setPropagated(OW_Bool propagated=true);
+	OW_CIMQualifier& setPropagated(OW_Bool propagated=true);
 
 	/**
 	 * @return true if qualifier is propagated. Otherwise false.

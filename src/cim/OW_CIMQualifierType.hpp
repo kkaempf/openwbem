@@ -116,26 +116,30 @@ public:
 	/**
 	 * Set the data type for this OW_CIMQualifierType object.
 	 * @param dataType	The OW_CIMDataType for this OW_CIMQualifierType object.
+	 * @return a reference to *this
 	 */
-	void setDataType(const OW_CIMDataType& dataType);
+	OW_CIMQualifierType& setDataType(const OW_CIMDataType& dataType);
 
 	/**
 	 * Set the data type for this OW_CIMQualifierType object.
 	 * @param dataType	The OW_CIMDataType::Type for this OW_CIMQualifierType object.
+	 * @return a reference to *this
 	 */
-	void setDataType(const OW_CIMDataType::Type& dataType);
+	OW_CIMQualifierType& setDataType(const OW_CIMDataType::Type& dataType);
 
 	/**
 	 * Set the default value for this OW_CIMQualifierType object.
 	 * @param defValue	The default value for this OW_CIMQualifierType.
+	 * @return a reference to *this
 	 */
-	void setDefaultValue(const OW_CIMValue& defValue);
+	OW_CIMQualifierType& setDefaultValue(const OW_CIMValue& defValue);
 
 	/**
 	 * Add a scope to this OW_CIMQualifierType object.
 	 * @param newScope	The scope to add to this OW_CIMQualifierType.
+	 * @return a reference to *this
 	 */
-	void addScope(const OW_CIMScope& newScope);
+	OW_CIMQualifierType& addScope(const OW_CIMScope& newScope);
 
 	/**
 	 * Determine if this OW_CIMQualifierType has a specified scope.
@@ -156,14 +160,16 @@ public:
 	/**
 	 * Add a flavor to this OW_CIMQualifierType object.
 	 * @param newFlavor	The flavor to add to this OW_CIMQualifierType object.
+	 * @return a reference to *this
 	 */
-	void addFlavor(const OW_CIMFlavor& newFlavor);
+	OW_CIMQualifierType& addFlavor(const OW_CIMFlavor& newFlavor);
 
 	/**
 	 * Remove a flavor from this OW_CIMQualifierType.
 	 * @param flavor The integral value of the flavor to remove.
+	 * @return a reference to *this
 	 */
-	void removeFlavor(const OW_Int32 flavor);
+	OW_CIMQualifierType& removeFlavor(const OW_Int32 flavor);
 
 	/**
 	 * @return The flavors for this OW_CIMQualifierType object.

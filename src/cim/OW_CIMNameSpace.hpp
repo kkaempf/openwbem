@@ -167,26 +167,30 @@ public:
 	/**
 	 * Set the namespace component of this OW_CIMNameSpace object.
 	 * @param nameSpace The namespace for this object as an OW_String
+	 * @return a reference to *this
 	 */
-	void setNameSpace(const OW_String& nameSpace);
+	OW_CIMNameSpace& setNameSpace(const OW_String& nameSpace);
 
 	/**
 	 * Set the host url component of this OW_CIMNameSpace object.
 	 * @param hostUrl The new host url for this OW_CIMNameSpace.
+	 * @return a reference to *this
 	 */
-	void setHostUrl(const OW_CIMUrl& hostUrl);
+	OW_CIMNameSpace& setHostUrl(const OW_CIMUrl& hostUrl);
 
 	/**
 	 * Set the host of the url component for this OW_CIMNameSpace object.
 	 * @param host The new host for the url component of this object.
+	 * @return a reference to *this
 	 */
-	void setHost(const OW_String& host);
+	OW_CIMNameSpace& setHost(const OW_String& host);
 
 	/**
 	 * Set the protocol
 	 * @param protocol The protocol component of the url for the name space
+	 * @return a reference to *this
 	 */
-	void setProtocol(const OW_String& protocol);
+	OW_CIMNameSpace& setProtocol(const OW_String& protocol);
 
 	/**
 	 * Read this object from an input stream.

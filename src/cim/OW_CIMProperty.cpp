@@ -213,10 +213,11 @@ OW_CIMProperty::getQualifiers() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setQualifiers(const OW_CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -227,17 +228,19 @@ OW_CIMProperty::getOriginClass() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setOriginClass(const OW_String& originCls)
 {
 	m_pdata->m_originClass = originCls;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setValue(const OW_CIMValue& val)
 {
 	m_pdata->m_cimValue = val;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -259,7 +262,7 @@ OW_CIMProperty::getValueT() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setDataType(const OW_CIMDataType& type)
 {
 	m_pdata->m_propertyDataType = type;
@@ -273,13 +276,14 @@ OW_CIMProperty::setDataType(const OW_CIMDataType& type)
 				m_pdata->m_cimValue, m_pdata->m_propertyDataType);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setDataType(const OW_CIMDataType::Type& type)
 {
-	setDataType(OW_CIMDataType(type));
+	return setDataType(OW_CIMDataType(type));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -297,17 +301,19 @@ OW_CIMProperty::getSize() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setDataSize(OW_Int32 size)
 {
 	m_pdata->m_sizeDataType = size;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setOverridingProperty(const OW_String& opname)
 {
 	m_pdata->m_override = opname;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -367,7 +373,7 @@ OW_CIMProperty::setQualifier(const OW_CIMQualifier& qual)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::addQualifier(const OW_CIMQualifier& qual)
 {
 	size_t tsize = m_pdata->m_qualifiers.size();
@@ -384,6 +390,7 @@ OW_CIMProperty::addQualifier(const OW_CIMQualifier& qual)
 		}
 	}
 	m_pdata->m_qualifiers.append(qual);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -449,10 +456,11 @@ OW_CIMProperty::filter(OW_Bool localOnly, OW_Bool includeQualifiers) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::setPropagated(OW_Bool propagated)
 {
 	m_pdata->m_propagated = propagated;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -477,10 +485,11 @@ OW_CIMProperty::setName(const OW_String& name)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMProperty&
 OW_CIMProperty::clearQualifiers()
 {
 	m_pdata->m_qualifiers.clear();
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

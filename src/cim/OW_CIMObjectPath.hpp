@@ -147,8 +147,9 @@ public:
 	 * Add another key to this object path (for instance paths).
 	 * @param keyname The name of the key property
 	 * @param value The value for the key property
+	 * @return a reference to *this
 	 */
-	void addKey(const OW_String& keyname, const OW_CIMValue& value);
+	OW_CIMObjectPath& addKey(const OW_String& keyname, const OW_CIMValue& value);
 
 	/**
 	 * Get the keys for this object path
@@ -177,15 +178,17 @@ public:
 	 * Set the keys of this object path
 	 * @param newKeys	An OW_CIMPropertyArray that contains the keys for this
 	 * 	object path.
+	 * @return a reference to *this
 	 */
-	void setKeys(const OW_CIMPropertyArray& newKeys);
+	OW_CIMObjectPath& setKeys(const OW_CIMPropertyArray& newKeys);
 
 
 	/**
 	 * Set the keys of this object path from the key properties of an instance.
 	 * @param instance The CIM instance to get the key properties from.
+	 * @return a reference to *this
 	 */
-	void setKeys(const OW_CIMInstance& instance);
+	OW_CIMObjectPath& setKeys(const OW_CIMInstance& instance);
 
 	/**
 	 * @return The namespace component of the OW_CIMNameSpace for this object path
@@ -218,20 +221,23 @@ public:
 	/**
 	 * Set the host name on the name space for this object path.
 	 * @param host	The new name of the host to set on the underlying name space.
+	 * @return a reference to *this
 	 */
-	void setHost(const OW_String& host);
+	OW_CIMObjectPath& setHost(const OW_String& host);
 
 	/**
 	 * Set the namespace for this object path.
 	 * @param ns	The string representation of the namespace.
+	 * @return a reference to *this
 	 */
-	void setNameSpace(const OW_String& ns);
+	OW_CIMObjectPath& setNameSpace(const OW_String& ns);
 
 	/**
 	 * Assign an object name to this object path.
 	 * @param objectName	The name of the object to assign to this object path.
+	 * @return a reference to *this
 	 */
-	void setObjectName(const OW_String& objectName);
+	OW_CIMObjectPath& setObjectName(const OW_String& objectName);
 
 	/**
 	 * Compare this object path with another.

@@ -251,56 +251,65 @@ public:
 	/**
 	 * Set the year component of the OW_CIMDateTime object.
 	 * @param arg The new year for this object.
+	 * @return a reference to *this
 	 */
-	void setYear(OW_UInt16 arg);
+	OW_CIMDateTime& setYear(OW_UInt16 arg);
 
 	/**
 	 * Set the month component of the OW_CIMDateTime object.
 	 * @param arg The new month for this object.
+	 * @return a reference to *this
 	 */
-	void setMonth(OW_UInt8 arg);
+	OW_CIMDateTime& setMonth(OW_UInt8 arg);
 
 	/**
 	 * Set the days component of the OW_CIMDateTime object.
 	 * @param arg The new days value for this object.
+	 * @return a reference to *this
 	 */
-	void setDays(OW_UInt32 arg);
+	OW_CIMDateTime& setDays(OW_UInt32 arg);
 
 	/**
 	 * Set the day component of the OW_CIMDateTime object.
 	 * @param arg The new day for this object.
+	 * @return a reference to *this
 	 */
-	void setDay(OW_UInt32 arg);
+	OW_CIMDateTime& setDay(OW_UInt32 arg);
 
 	/**
 	 * Set the hours component of the OW_CIMDateTime object.
 	 * @param arg The new hours value for this object.
+	 * @return a reference to *this
 	 */
-	void setHours(OW_UInt8 arg);
+	OW_CIMDateTime& setHours(OW_UInt8 arg);
 
 	/**
 	 * Set the minutes component of the OW_CIMDateTime object.
 	 * @param arg The new minutes value for this object.
+	 * @return a reference to *this
 	 */
-	void setMinutes(OW_UInt8 arg);
+	OW_CIMDateTime& setMinutes(OW_UInt8 arg);
 
 	/**
 	 * Set the seconds component of the OW_CIMDateTime object.
 	 * @param arg The new seconds value for this object.
+	 * @return a reference to *this
 	 */
-	void setSeconds(OW_UInt8 arg);
+	OW_CIMDateTime& setSeconds(OW_UInt8 arg);
 
 	/**
 	 * Set the microseconds component of the OW_CIMDateTime object.
 	 * @param arg The new microseconds value for this object.
+	 * @return a reference to *this
 	 */
-	void setMicroSeconds(OW_UInt32 arg);
+	OW_CIMDateTime& setMicroSeconds(OW_UInt32 arg);
 
 	/**
 	 * Set the utc offset component of the OW_CIMDateTime object.
 	 * @param arg The new utc offset for this object.
+	 * @return a reference to *this
 	 */
-	void setUtc(OW_Int16 arg);
+	OW_CIMDateTime& setUtc(OW_Int16 arg);
 
 	/**
 	 * @return true if this OW_CIMDateTime object represents an interval type

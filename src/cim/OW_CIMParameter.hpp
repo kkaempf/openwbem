@@ -115,8 +115,9 @@ public:
 	 * Set the qualifiers for this parameter
 	 * @param quals An OW_CIMQualifierArray that contains the qualifiers for
 	 * 	this parameter.
+	 * @return a reference to *this
 	 */
-	void setQualifiers(const OW_CIMQualifierArray& quals);
+	OW_CIMParameter& setQualifiers(const OW_CIMQualifierArray& quals);
 
 	/**
 	 * Get the qualifiers for this parameter.
@@ -128,8 +129,9 @@ public:
 	/**
 	 * Set the data type for this parameter.
 	 * @param type	The OW_CIMDataType for this parameter.
+	 * @return a reference to *this
 	 */
-	void setDataType(const OW_CIMDataType& type);
+	OW_CIMParameter& setDataType(const OW_CIMDataType& type);
 
 	/**
 	 * Get the data type for this parameter.

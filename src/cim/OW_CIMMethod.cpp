@@ -142,17 +142,19 @@ OW_CIMMethod::operator= (const OW_CIMMethod& x)
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::addQualifier(const OW_CIMQualifier& qual)
 {
 	m_pdata->m_qualifiers.append(qual);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::setQualifiers(const OW_CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
@@ -186,25 +188,28 @@ OW_CIMMethod::getOriginClass() const
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::setOriginClass(const OW_String& originCls)
 {
 	m_pdata->m_originClass = originCls;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::addParameter(const OW_CIMParameter& param)
 {
 	m_pdata->m_parameters.append(param);
+	return *this;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::setParameters(const OW_CIMParameterArray& inParms)
 {
 	m_pdata->m_parameters = inParms;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
@@ -245,10 +250,11 @@ OW_CIMMethod::getOUTParameters() const
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::setReturnType(const OW_CIMDataType& type)
 {
 	m_pdata->m_returnDatatype = type;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
@@ -266,10 +272,11 @@ OW_CIMMethod::getReturnDataSize() const
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::setOverridingMethod(const OW_String& omname)
 {
 	m_pdata->m_override = omname;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													
@@ -310,10 +317,11 @@ OW_CIMMethod::clone(OW_Bool includeQualifiers,
 }
 
 //////////////////////////////////////////////////////////////////////////////													
-void
+OW_CIMMethod&
 OW_CIMMethod::setPropagated(OW_Bool propagated)
 {
 	m_pdata->m_propagated = propagated;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////													

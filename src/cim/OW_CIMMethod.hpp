@@ -118,14 +118,16 @@ public:
 	 * Set the qualifiers for this method.
 	 * @param quals An OW_CIMQualifierArray that contains the qualifiers for
 	 *		this OW_CIMInstance.
+	 * @return a reference to *this
 	 */
-	void setQualifiers(const OW_CIMQualifierArray& quals);
+	OW_CIMMethod& setQualifiers(const OW_CIMQualifierArray& quals);
 
 	/**
 	 * Add a qualifier to this OW_CIMMethod.
 	 * @param qual The OW_CIMQualifier to add to this method.
+	 * @return a reference to *this
 	 */
-	void addQualifier(const OW_CIMQualifier& qual);
+	OW_CIMMethod& addQualifier(const OW_CIMQualifier& qual);
 
 	/**
 	 * Get the qualifiers for this method.
@@ -151,21 +153,24 @@ public:
 	/**
 	 * Set thr origin class for this method.
 	 * @param originCls	The name of the origin class for this method.
+	 * @return a reference to *this
 	 */
-	void setOriginClass(const OW_String& originCls);
+	OW_CIMMethod& setOriginClass(const OW_String& originCls);
 	
 	/**
 	 * Add a parameter to this OW_CIMMethod.
 	 * @param param The OW_CIMParameter to add to this method.
+	 * @return a reference to *this
 	 */
-	void addParameter(const OW_CIMParameter& param);
+	OW_CIMMethod& addParameter(const OW_CIMParameter& param);
 
 	/**
 	 * Set the parameters for this method
 	 * @param inParms	An OW_CIMParameterArray that contains the parameters for
 	 * 	this method.
+	 * @return a reference to *this
 	 */
-	void setParameters(const OW_CIMParameterArray& inParms);
+	OW_CIMMethod& setParameters(const OW_CIMParameterArray& inParms);
 
 	/**
 	 * Get the parameters for this method.
@@ -191,8 +196,9 @@ public:
 	/**
 	 * Set the return data type for this parameter
 	 * @param type	An OW_CIMDataType object that represents the type.
+	 * @return a reference to *this
 	 */
-	void setReturnType(const OW_CIMDataType& type);
+	OW_CIMMethod& setReturnType(const OW_CIMDataType& type);
 
 	/**
 	 * @return The return data type for this method.
@@ -207,8 +213,9 @@ public:
 	/**
 	 * Set name of overriding method.
 	 * @param omname The name of the overriding method.
+	 * @return a reference to *this
 	 */
-	void setOverridingMethod(const OW_String& omname);
+	OW_CIMMethod& setOverridingMethod(const OW_String& omname);
 
 	/**
 	 * @return The name of the overriding method.
@@ -218,8 +225,9 @@ public:
 	/**
 	 * Set the propagated flag for this method.
 	 * @param propagated If true method is propagated. Otherwise false.
+	 * @return a reference to *this
 	 */
-	void setPropagated(OW_Bool propagated=true);
+	OW_CIMMethod& setPropagated(OW_Bool propagated=true);
 
 	/**
 	 * Get the propagated flag.

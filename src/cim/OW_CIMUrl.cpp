@@ -224,20 +224,22 @@ OW_CIMUrl::setDefaultValues()
 
 //////////////////////////////////////////////////////////////////////////////
 // PUBLIC
-void
+OW_CIMUrl&
 OW_CIMUrl::setHost(const OW_String& host)
 {
 	m_pdata->m_host = host;
 	setLocalHost();
 	buildSpec();
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMUrl&
 OW_CIMUrl::setProtocol(const OW_String& protocol)
 {
 	m_pdata->m_protocol = protocol;
 	buildSpec();
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -169,33 +169,34 @@ OW_CIMQualifierType::getDefaultValue() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifierType&
 OW_CIMQualifierType::setDataType(const OW_CIMDataType& dataType)
 {
-	try
-	{
+	//try
+	//{
 		m_pdata->m_dataType = dataType;
 		if(m_pdata->m_defaultValue)
 		{
 			m_pdata->m_defaultValue = OW_CIMValueCast::castValueToDataType(
 				m_pdata->m_defaultValue, m_pdata->m_dataType);
 		}
-	}
-	catch(...)
-	{
+	//}
+	//catch(...)
+	//{
 		// Ignore?
-	}
+	//}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifierType&
 OW_CIMQualifierType::setDataType(const OW_CIMDataType::Type& dataType)
 {
-	setDataType(OW_CIMDataType(dataType));
+	return setDataType(OW_CIMDataType(dataType));
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifierType&
 OW_CIMQualifierType::setDefaultValue(const OW_CIMValue& defValue)
 {
 	m_pdata->m_defaultValue = defValue;
@@ -204,10 +205,11 @@ OW_CIMQualifierType::setDefaultValue(const OW_CIMValue& defValue)
 		m_pdata->m_defaultValue = OW_CIMValueCast::castValueToDataType(
 			m_pdata->m_defaultValue, m_pdata->m_dataType);
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifierType&
 OW_CIMQualifierType::addScope(const OW_CIMScope& newScope)
 {
 	if(newScope)
@@ -221,6 +223,7 @@ OW_CIMQualifierType::addScope(const OW_CIMScope& newScope)
 			m_pdata->m_scope.append(newScope);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -258,7 +261,7 @@ OW_CIMQualifierType::hasFlavor(const OW_CIMFlavor& flavorArg) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifierType&
 OW_CIMQualifierType::addFlavor(const OW_CIMFlavor& newFlavor)
 {
 	OW_Int32 flavor = newFlavor.getFlavor();
@@ -287,10 +290,11 @@ OW_CIMQualifierType::addFlavor(const OW_CIMFlavor& newFlavor)
 			m_pdata->m_flavor.append(newFlavor);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMQualifierType&
 OW_CIMQualifierType::removeFlavor(const OW_Int32 flavor)
 {
 	for(size_t i = 0; i < m_pdata->m_flavor.size(); i++)
@@ -300,6 +304,7 @@ OW_CIMQualifierType::removeFlavor(const OW_Int32 flavor)
 			m_pdata->m_flavor.remove(i--);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

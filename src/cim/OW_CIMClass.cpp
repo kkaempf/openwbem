@@ -135,10 +135,11 @@ OW_CIMClass::getSuperClass() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setSuperClass(const OW_String& pname)
 {
 	m_pdata->m_parentClassName = pname;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -149,10 +150,11 @@ OW_CIMClass::isKeyed() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setIsKeyed(OW_Bool isKeyedParm)
 {
 	m_pdata->m_isKeyed = isKeyedParm;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -294,10 +296,11 @@ OW_CIMClass::isAssociation() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setIsAssociation(OW_Bool isAssocFlag)
 {
 	m_pdata->m_associationFlag = isAssocFlag;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -378,7 +381,7 @@ OW_CIMClass::getMethods() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::addProperty(const OW_CIMProperty& prop)
 {
 	if(prop)
@@ -389,6 +392,7 @@ OW_CIMClass::addProperty(const OW_CIMProperty& prop)
 			m_pdata->m_isKeyed = true;
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -399,14 +403,15 @@ OW_CIMClass::numberOfProperties() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setProperties(const OW_CIMPropertyArray& props)
 {
 	m_pdata->m_properties = props;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setProperty(const OW_CIMProperty& prop)
 {
 	OW_String argName = prop.getName();
@@ -415,16 +420,17 @@ OW_CIMClass::setProperty(const OW_CIMProperty& prop)
 		if(argName.equalsIgnoreCase(m_pdata->m_properties[i].getName()))
 		{
 			m_pdata->m_properties[i] = prop;
-			return;
+			return *this;
 		}
 	}
 
 	m_pdata->m_properties.append(prop);
+	return *this;
 }
 
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setMethod(const OW_CIMMethod& meth)
 {
 	OW_String argName = meth.getName();
@@ -433,20 +439,21 @@ OW_CIMClass::setMethod(const OW_CIMMethod& meth)
 		if(argName.equalsIgnoreCase(m_pdata->m_methods[i].getName()))
 		{
 			m_pdata->m_methods[i] = meth;
-			return;
+			return *this;
 		}
 	}
 
 	m_pdata->m_methods.append(meth);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 {
 	if(!qual)
 	{
-		return;
+		return *this;
 	}
 
 
@@ -480,6 +487,7 @@ OW_CIMClass::addQualifier(const OW_CIMQualifier& qual)
 		}
 	}
 	m_pdata->m_qualifiers.append(qual);
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -571,14 +579,15 @@ OW_CIMClass::removeProperty(const OW_String& name)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setQualifiers(const OW_CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setQualifier(const OW_CIMQualifier& qual)
 {
 	if(qual)
@@ -601,23 +610,26 @@ OW_CIMClass::setQualifier(const OW_CIMQualifier& qual)
 			m_pdata->m_qualifiers.append(qual);
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::addMethod(const OW_CIMMethod& meth)
 {
 	if(meth)
 	{
 		m_pdata->m_methods.append(meth);
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMClass&
 OW_CIMClass::setMethods(const OW_CIMMethodArray& meths)
 {
 	m_pdata->m_methods = meths;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

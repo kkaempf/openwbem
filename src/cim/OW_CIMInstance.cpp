@@ -132,10 +132,11 @@ OW_CIMInstance& OW_CIMInstance::operator= (const OW_CIMInstance& x)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setKeys(const OW_CIMPropertyArray& keys)
 {
 	m_pdata->m_keys = keys;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -146,10 +147,11 @@ OW_CIMInstance::getClassName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setClassName(const OW_String& name)
 {
 	m_pdata->m_owningClassName = name;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -176,7 +178,7 @@ OW_CIMInstance::getQualifier(const OW_String& qualName) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::removeQualifier(const OW_String& qualName)
 {
 	for(size_t i = 0; i < m_pdata->m_qualifiers.size(); i++)
@@ -187,10 +189,11 @@ OW_CIMInstance::removeQualifier(const OW_String& qualName)
 			break;
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setQualifier(const OW_CIMQualifier& qual)
 {
 	if(qual)
@@ -201,18 +204,20 @@ OW_CIMInstance::setQualifier(const OW_CIMQualifier& qual)
 			if(m_pdata->m_qualifiers[i].getName().equalsIgnoreCase(qualName))
 			{
 				m_pdata->m_qualifiers[i] = qual;
-				return;
+				return *this;
 			}
 		}
 		m_pdata->m_qualifiers.append(qual);
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setQualifiers(const OW_CIMQualifierArray& quals)
 {
 	m_pdata->m_qualifiers = quals;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -238,11 +243,12 @@ OW_CIMInstance::getProperties(OW_Int32 valueDataType) const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setProperties(const OW_CIMPropertyArray& props)
 {
 	m_pdata->m_properties = props;
 	_buildKeys();
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -305,10 +311,11 @@ OW_CIMInstance::getAlias() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setAlias(const OW_String& aliasName)
 {
 	m_pdata->m_aliasName = aliasName;
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -337,7 +344,7 @@ OW_CIMInstance::getKeyValuePairs() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::updatePropertyValues(const OW_CIMPropertyArray& props)
 {
 	int tsize = props.size();
@@ -345,10 +352,11 @@ OW_CIMInstance::updatePropertyValues(const OW_CIMPropertyArray& props)
 	{
 		updatePropertyValue(props[i]);
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 {
 	OW_Bool buildTheKeys = false;
@@ -384,10 +392,11 @@ OW_CIMInstance::updatePropertyValue(const OW_CIMProperty& prop)
 			_buildKeys();
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 {
 	int tsize = m_pdata->m_properties.size();
@@ -404,7 +413,7 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 			{
 				_buildKeys();
 			}
-			return;
+			return *this;
 		}
 	}
 
@@ -427,10 +436,11 @@ OW_CIMInstance::setProperty(const OW_String& name, const OW_CIMValue& cv)
 	// We don't worry about building the keys here, because the
 	// property doesn't have the key qualifier (or any other for that matter)
 	//
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 {
 	if(prop)
@@ -453,7 +463,7 @@ OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 				{
 					_buildKeys();
 				}
-				return;
+				return *this;
 			}
 		}
 
@@ -466,10 +476,11 @@ OW_CIMInstance::setProperty(const OW_CIMProperty& prop)
 			_buildKeys();
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::removeProperty(const OW_String& propName)
 {
 	int tsize = m_pdata->m_properties.size();
@@ -488,6 +499,7 @@ OW_CIMInstance::removeProperty(const OW_String& propName)
 			break;
 		}
 	}
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -663,13 +675,13 @@ OW_CIMInstance::getName() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void
+OW_CIMInstance&
 OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 	OW_Bool includeQualifiers)
 {
 	if(!theClass)
 	{
-		return;
+		return *this;
 	}
 /*
 	if(includeQualifiers)
@@ -769,6 +781,8 @@ OW_CIMInstance::syncWithClass(const OW_CIMClass& theClass,
 			m_pdata->m_properties[i].clearQualifiers();
 		}
 	}
+
+	return *this;
 }
 
 //////////////////////////////////////////////////////////////////////////////

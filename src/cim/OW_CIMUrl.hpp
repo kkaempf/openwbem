@@ -165,8 +165,9 @@ public:
 	/**
 	 * Set the protocol component of the url
 	 * @param protocol The new protocol component for the url
+	 * @return a reference to *this
 	 */
-	void setProtocol(const OW_String& protocol);
+	OW_CIMUrl& setProtocol(const OW_String& protocol);
 
 
 	/**
@@ -177,8 +178,9 @@ public:
 	/**
 	 * Set the host component of the URL
 	 * @param host The new host component for this OW_CIMUrl object.
+	 * @return a reference to *this
 	 */
-	void setHost(const OW_String& host);
+	OW_CIMUrl& setHost(const OW_String& host);
 
 	/**
 	 * @return The port component of the URL
