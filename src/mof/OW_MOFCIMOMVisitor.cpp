@@ -102,6 +102,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("instancelocale"))
 	{
+		theErrorHandler->recoverableError("#pragma instancelocale is unimplemented", pCompilerDirective->theLineInfo);
 		m_instanceLocale = Compiler::fixParsedString(*pCompilerDirective->pPragmaParameter->pPragmaParameter);
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("locale"))
@@ -114,6 +115,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocal"))
 	{
+		theErrorHandler->recoverableError("#pragma nonlocal is unimplemented", pCompilerDirective->theLineInfo);
 		if (!m_nonLocalType.empty())
 		{
 			// report an error, both nonlocal and nonlocaltype cannot be set.
@@ -124,6 +126,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("nonlocaltype"))
 	{
+		theErrorHandler->recoverableError("#pragma nonlocaltype is unimplemented", pCompilerDirective->theLineInfo);
 		if (!m_nonLocal.empty())
 		{
 			// report an error, both nonlocal and nonlocaltype cannot be set.
@@ -134,6 +137,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("source"))
 	{
+		theErrorHandler->recoverableError("#pragma source is unimplemented", pCompilerDirective->theLineInfo);
 		if (!m_sourceType.empty())
 		{
 			// report an error, both source and sourcetype cannot be set
@@ -144,6 +148,7 @@ void CIMOMVisitor::VisitCompilerDirective( const CompilerDirective *pCompilerDir
 	}
 	else if (pCompilerDirective->pPragmaName->pPragmaName->equalsIgnoreCase("sourcetype"))
 	{
+		theErrorHandler->recoverableError("#pragma sourcetype is unimplemented", pCompilerDirective->theLineInfo);
 		if (!m_source.empty())
 		{
 			// report an error, both source and sourcetype cannot be set
