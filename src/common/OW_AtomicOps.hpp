@@ -57,6 +57,44 @@ inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
 	return c != 0;
 }
 
+#elif defined(__ppc__) && defined(__GNUC__)
+// use fast inline assembly versions
+typedef struct { volatile int val; } OW_Atomic_t;
+
+#define OW_ATOMIC(i)	{ (i) }
+
+inline void OW_AtomicInc(OW_Atomic_t &v)
+{
+	int t;
+
+	__asm__ __volatile__(
+		"1:	lwarx   %0,0,%2         # OW_AtomicInc\n"
+		"	addic   %0,%0,1\n"
+		"	stwcx.  %0,0,%2\n"
+		"	bne-    1b"
+		: "=&r" (t), "=m" (v.val)
+		: "r" (&v.val), "m" (v.val)
+		: "cc");
+
+}
+
+inline bool OW_AtomicDecAndTest(OW_Atomic_t &v)
+{
+	int c;
+
+	__asm__ __volatile__(
+		"1:	lwarx   %0,0,%1         # OW_AtomicDecAndTest\n"
+		"	addic   %0,%0,-1\n"
+		"	stwcx.  %0,0,%1\n"
+		"	bne-    1b\n"
+		"	isync"
+		: "=&r" (c)
+		: "r" (&v.val)
+		: "cc", "memory");
+
+	return c == 0;
+}
+
 #else
 // use slow mutex protected versions
 #define OW_USE_DEFAULT_ATOMIC_OPS // used in OW_AtomicOps.cpp
