@@ -264,7 +264,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 	}
 	for(size_t i = 0; i < dirEntries.size(); i++)
 	{
-		if(!dirEntries[i].endsWith(".so"))
+		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			continue;
 		}
@@ -304,7 +304,7 @@ CppProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 			// try and load it as an id provider
 			String providerid = dirEntries[i];
 			// chop off lib and .so
-			providerid = providerid.substring(3,providerid.length()-6);
+			providerid = providerid.substring(3, providerid.length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
 			CppProviderBaseIFCRef p = getProvider(env,providerid.c_str(), 
 				dontStoreProvider, dontInitializeProvider);
 			if (!p)
@@ -407,7 +407,7 @@ CppProviderIFC::getProvider(
 	libName += OW_FILENAME_SEPARATOR;
 	libName += "lib";
 	libName += provId;
-	libName += ".so";
+	libName += OW_SHAREDLIB_EXTENSION;
 	env->getLogger()->logDebug(format("CppProviderIFC::getProvider loading library: %1",
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,

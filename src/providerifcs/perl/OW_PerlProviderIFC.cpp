@@ -278,7 +278,7 @@ PerlProviderIFC::loadProviders(const ProviderEnvironmentIFCRef& env,
 		}
 		String libName = libPath;
 		libName += OW_FILENAME_SEPARATOR;
-		libName += String("libperlProvider.so");
+		libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
 		SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 		String guessProvId = dirEntries[i];
@@ -380,7 +380,7 @@ PerlProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  String libName = libPath;
 	  libName += OW_FILENAME_SEPARATOR;
 	  //libName += dirEntries[i];
-	  libName += String("libperlProvider.so");
+	  libName += String("libperlProvider"OW_SHAREDLIB_EXTENSION);
 	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
 	  String guessProvId = dirEntries[i];
@@ -479,7 +479,7 @@ PerlProviderIFC::getProvider(
 	}
 	String libName(libPath);
 	libName += OW_FILENAME_SEPARATOR;
-	libName += "libperlProvider.so";
+	libName += "libperlProvider"OW_SHAREDLIB_EXTENSION;
 	env->getLogger()->logDebug(format("PerlProviderIFC::getProvider loading library: %1",
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,

@@ -103,7 +103,7 @@ writePid(const char *pidfile)
 		return -1;
 	}
 	// TODO: replace this with the locking code in OW_File
-#ifdef OW_GNU_LINUX
+#if defined (OW_GNU_LINUX) || defined (OW_DARWIN)
 	if(flock(fd, LOCK_EX|LOCK_NB) == -1)
 #elif defined(OW_OPENSERVER)
 	if(lockf(fd, F_TLOCK, 0) == -1)
@@ -126,7 +126,7 @@ writePid(const char *pidfile)
 		return -1;
 	}
 	fflush(f);
-#ifdef OW_GNU_LINUX
+#if defined (OW_GNU_LINUX) || defined (OW_DARWIN)
 	if(flock(fd, LOCK_UN) == -1)
 	{
 		lerrno = errno;

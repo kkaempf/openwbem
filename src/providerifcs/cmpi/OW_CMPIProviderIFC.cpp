@@ -336,7 +336,7 @@ CMPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
-		if(!dirEntries[i].endsWith(".so"))
+		if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 		{
 			 continue;
 		}
@@ -385,7 +385,7 @@ CMPIProviderIFC::getProvider(
 	libName += OW_FILENAME_SEPARATOR;
 	libName += "lib";
 	libName += provId;
-	libName += ".so";
+	libName += OW_SHAREDLIB_EXTENSION;
 	env->getLogger()->logDebug(format("CMPIProviderIFC::getProvider loading library: %1",
 		libName));
 

@@ -264,7 +264,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
    env->getLogger()->logError("LoadNoIDproviders 3");
    for(size_t i = 0; i < dirEntries.size(); i++)
    {
-	  if(!dirEntries[i].endsWith(".so"))
+	  if(!dirEntries[i].endsWith(OW_SHAREDLIB_EXTENSION))
 	  {
 		 continue;
 	  }
@@ -273,7 +273,7 @@ NPIProviderIFC::loadNoIdProviders(const ProviderEnvironmentIFCRef& env)
 	  libName += dirEntries[i];
 	  SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,
 			env->getLogger());
-	  String guessProvId = dirEntries[i].substring(3,dirEntries[i].length()-6);
+	  String guessProvId = dirEntries[i].substring(3, dirEntries[i].length() - (strlen(OW_SHAREDLIB_EXTENSION) + 3));
 	  if(theLib.isNull())
 	  {
 		 env->getLogger()->logError(format("NPI provider %1 ifc failed to load"
@@ -356,7 +356,7 @@ NPIProviderIFC::getProvider(
 	libName += OW_FILENAME_SEPARATOR;
 	libName += "lib";
 	libName += provId;
-	libName += ".so";
+	libName += OW_SHAREDLIB_EXTENSION;
 	env->getLogger()->logDebug(format("NPIProviderIFC::getProvider loading library: %1",
 		libName));
 	SharedLibraryRef theLib = ldr->loadSharedLibrary(libName,

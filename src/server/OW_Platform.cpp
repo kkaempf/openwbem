@@ -224,7 +224,7 @@ processCommandLineOptions(int argc, char** argv)
 	return rval;
 }
 //////////////////////////////////////////////////////////////////////////////
-#ifdef OW_FREEBSD
+#if defined (OW_FREEBSD) || defined (OW_DARWIN)
 typedef void (*sighandler_t)(int);
 #endif
 
