@@ -104,6 +104,7 @@ private:
 	 */
 	virtual int writeAux(const void* dataOut, int dataOutLen);
 	void connectSSL();
+	virtual bool waitForInput(int timeOutSecs=-1);
 	SSL* m_ssl;
 	BIO* m_sbio;
 

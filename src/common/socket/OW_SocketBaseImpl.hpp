@@ -83,7 +83,7 @@ public:
 			bool errorAsException=false);
 	int read(void* dataIn, int dataInLen,
 			bool errorAsException=false);
-	bool waitForInput(int timeOutSecs=-1);
+	virtual bool waitForInput(int timeOutSecs=-1);
 	bool waitForOutput(int timeOutSecs=-1);
 	std::istream& getInputStream();
 	std::ostream& getOutputStream();

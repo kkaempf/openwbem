@@ -332,6 +332,17 @@ SSLSocketImpl::peerCertVerified() const
     return (m_owctx.peerCertPassedVerify == OWSSLContext::VERIFY_PASS); 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// SSL buffer can contain the data therefore select
+// does not work !!!
+bool
+SSLSocketImpl::waitForInput(int timeOutSecs)
+{
+   // SSL buffer contains data -> read them
+   if (SSL_pending(m_ssl)) return false;
+   return SocketBaseImpl::waitForInput(timeOutSecs);
+}
+//////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OpenWBEM
 
