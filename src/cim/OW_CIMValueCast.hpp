@@ -36,18 +36,9 @@
 #include "OW_Exception.hpp"
 
 //////////////////////////////////////////////////////////////////////////////
-class OW_ValueCastException : public OW_Exception
-{
-public:
-	OW_ValueCastException() : OW_Exception() {}
-	OW_ValueCastException(const char* file, int line, const char* msg)
-	: OW_Exception(file, line, msg) {}
-	OW_ValueCastException(const char* msg) : OW_Exception(msg)
-		{  }
-	virtual const char* type() const
-		{  return "OW_ValueCastException"; }
-};
+DECLARE_EXCEPTION(ValueCast);
 
+//////////////////////////////////////////////////////////////////////////////
 class OW_CIMValueCast
 {
 public:
@@ -56,10 +47,10 @@ public:
 	 * represents the given OW_CIMDataType.
 	 * @param value		The OW_CIMValue object to be converted.
 	 * @param dataType	The data type to convert the value to.
-	 * @exception OW_CIMException if the convertion is not possible.
+	 * @throws OW_ValueCastException if the convertion is not possible.
 	 */
 	static OW_CIMValue castValueToDataType(const OW_CIMValue& value,
-		const OW_CIMDataType& dataType) /*throw (OW_CIMException)*/;
+		const OW_CIMDataType& dataType);
 };
 
 #endif

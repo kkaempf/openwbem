@@ -37,6 +37,8 @@
 #include "OW_CIMDateTime.hpp"
 #include "OW_CIMObjectPath.hpp"
 
+DEFINE_EXCEPTION(ValueCast);
+
 static bool isCompatible(OW_CIMDataType::Type from, OW_CIMDataType::Type to);
 
 static void makeValueArray(OW_CIMValue& theValue);
