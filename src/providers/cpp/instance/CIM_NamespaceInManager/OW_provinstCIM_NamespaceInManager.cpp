@@ -352,7 +352,8 @@ public:
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(assocClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager"))
+		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager") 
+			|| objectName.getClassName().equalsIgnoreCase("CIM_ObjectManager"))
 		{
 			if (!role.empty() && !role.equalsIgnoreCase("Antecedent"))
 			{
@@ -418,7 +419,8 @@ public:
 		// This assert should only fail if someone created a subclass of
 		// CIM_NamespaceInManager and didn't create a provider for it.
 		OW_ASSERT(resultClass.equalsIgnoreCase("CIM_NamespaceInManager"));
-		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager"))
+		if (objectName.getClassName().equalsIgnoreCase("OpenWBEM_ObjectManager")
+			|| objectName.getClassName().equalsIgnoreCase("CIM_ObjectManager"))
 		{
 			if (!role.empty() && !role.equalsIgnoreCase("Antecedent"))
 			{

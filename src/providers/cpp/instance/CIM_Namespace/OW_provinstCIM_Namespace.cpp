@@ -113,17 +113,28 @@ public:
 		(void)propertiesFlag;
 		env->getLogger()->logDebug("In CIM_NamespaceInstProv::enumInstances");
 		CIMOMHandleIFCRef hdl = env->getCIMOMHandle();
-		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "OpenWBEM_ObjectManager");
+		CIMObjectPathEnumeration e = hdl->enumInstanceNamesE(ns, "CIM_ObjectManager");
+		String sccn;
+		String sn;
+		String omccn;
+		String omn;
 		if (e.numberOfElements() < 1)
 		{
-			return;
+			// no CIM_ObjectManager... we'll just make these up then.
+			sccn = "CIM_System";
+			sn = "unknown";
+			omccn = "CIM_ObjectManager";
+			omn = "OpenWBEM";
 		}
-		// assume there'll only be one OpenWBEM_ObjectManager.
-		CIMObjectPath objectManager = e.nextElement();
-		String sccn = objectManager.getKeyT("SystemCreationClassName").getValueT().toString();
-		String sn = objectManager.getKeyT("SystemName").getValueT().toString();
-		String omccn = objectManager.getKeyT("CreationClassName").getValueT().toString();
-		String omn = objectManager.getKeyT("Name").getValueT().toString();
+		else
+		{
+			// assume there'll only be one OpenWBEM_ObjectManager.
+			CIMObjectPath objectManager = e.nextElement();
+			sccn = objectManager.getKeyT("SystemCreationClassName").getValueT().toString();
+			sn = objectManager.getKeyT("SystemName").getValueT().toString();
+			omccn = objectManager.getKeyT("CreationClassName").getValueT().toString();
+			omn = objectManager.getKeyT("Name").getValueT().toString();
+		}
 		
 		NSHandlerInst nshandler(result, cimClass, sccn, sn, omccn, omn);
 		RepositoryIFCRef rep = env->getRepository();
