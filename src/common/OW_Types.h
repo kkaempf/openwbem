@@ -93,7 +93,11 @@ typedef off_t	OW_off_t;
 // a platform we don't yet support.
 typedef int 						OW_Select_t;
 
+#if defined OW_DARWIN
+#define OW_SHAREDLIB_EXTENSION ".dylib"
+#else
 #define OW_SHAREDLIB_EXTENSION ".so"
+#endif
 #define OW_FILENAME_SEPARATOR "/"
 #define OW_PATHNAME_SEPARATOR ":"
 
