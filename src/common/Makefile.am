@@ -89,6 +89,7 @@ OW_BaseStreamBuffer.hpp \
 OW_BinIfcIO.hpp \
 OW_Bool.hpp \
 OW_ByteSwap.hpp \
+OW_Cache.hpp \
 OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
