@@ -28,8 +28,8 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 #include "OW_config.h"
-#include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
+#include "OW_ConfigOpts.hpp"
 #include "OW_AuthenticatorIFC.hpp"
 
 #include <string.h>
@@ -166,8 +166,8 @@ LinuxPAMAuthentication::doAuthenticate(String &userName, const String &info,
 
 		if(useruid != cimomuid)
 		{
-			context.setStringData(CIMOM_UIDKEY, String(UInt32(cimomuid)));
-			context.setStringData(CURUSER_UIDKEY, String(UInt32(useruid)));
+			context.setStringData(OperationContext::CIMOM_UIDKEY, String(UInt32(cimomuid)));
+			context.setStringData(OperationContext::CURUSER_UIDKEY, String(UInt32(useruid)));
 		}
 	}
 #endif

@@ -31,7 +31,6 @@
 #include "OW_ProviderProxies.hpp"
 #ifdef OW_SETUID_PROVIDERS
 
-#include "OW_ConfigOpts.hpp"
 #include "OW_CIMValue.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
@@ -971,13 +970,13 @@ namespace
 		try
 		{
 			String wk = env->getOperationContext().getStringData(
-				CIMOM_UIDKEY);
+				OperationContext::CIMOM_UIDKEY);
 
 			if(!wk.empty())
 			{
 				cimomuid = wk.toUInt32();
 				wk = env->getOperationContext().getStringData(
-					CURUSER_UIDKEY);
+					OperationContext::CURUSER_UIDKEY);
 				if(!wk.empty())
 				{
 					useruid = wk.toUInt32();

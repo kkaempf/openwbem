@@ -120,6 +120,8 @@ OperationContext::getStringData(const String& key) const
 
 const char* const OperationContext::USER_NAME = "USER_NAME";
 const char* const OperationContext::HTTP_PATH = "HTTP_PATH";
+const char* const OperationContext::CIMOM_UIDKEY = "CIMOM_UIDKEY";
+const char* const OperationContext::CURUSER_UIDKEY = "CURUSER_UIDKEY";
 
 
 } // end namespace OpenWBEM

@@ -141,9 +141,6 @@
 
 namespace OpenWBEM
 {
-	static const char* const CIMOM_UIDKEY = "cimomuid";
-	static const char* const CURUSER_UIDKEY = "currentuseruid";
-
 namespace ConfigOpts
 {
 	static const char* const DEBUG_opt = "owcimomd.debugflag";

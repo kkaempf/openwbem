@@ -79,6 +79,10 @@ public:
 	// Keys values we use.
 	static const char* const USER_NAME;
 	static const char* const HTTP_PATH;
+	static const char* const CIMOM_UIDKEY;
+	static const char* const CURUSER_UIDKEY;
+
+
 
 	UserInfo getUserInfo() const;
 
