@@ -55,6 +55,10 @@ namespace OpenWBEM
 
 OW_DEFINE_EXCEPTION(ThreadPool);
 
+
+#define OW_POOL_LOG_DEBUG(logger, arg) OW_LOG_DEBUG(logger, m_poolName + ": " + arg)
+#define OW_POOL_LOG_FATAL_ERROR(logger, arg) OW_LOG_FATAL_ERROR(logger, m_poolName + ": " + arg)
+
 /////////////////////////////////////////////////////////////////////////////
 class ThreadPoolImpl : public IntrusiveCountableBase
 {
@@ -141,11 +145,11 @@ protected:
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
-			OW_LOG_DEBUG(m_logger, "Queue is already closed.  Why are you trying to shutdown again?");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is already closed.  Why are you trying to shutdown again?");
 			return false;
 		}
 		m_queueClosed = true;
-		OW_LOG_DEBUG(m_logger, "Queue closed");
+		OW_POOL_LOG_DEBUG(m_logger, "Queue closed");
 		
 		if (finishWorkInQueue)
 		{
@@ -153,15 +157,15 @@ protected:
 			{
 				if (shutdownSecs < 0)
 				{
-					OW_LOG_DEBUG(m_logger, "Waiting forever for queue to empty");
+					OW_POOL_LOG_DEBUG(m_logger, "Waiting forever for queue to empty");
 					m_queueEmpty.wait(l);
 				}
 				else
 				{
-					OW_LOG_DEBUG(m_logger, "Waiting w/timout for queue to empty");
+					OW_POOL_LOG_DEBUG(m_logger, "Waiting w/timout for queue to empty");
 					if (!m_queueEmpty.timedWait(l, shutdownSecs))
 					{
-						OW_LOG_DEBUG(m_logger, "Wait timed out. Work in queue will be discarded.");
+						OW_POOL_LOG_DEBUG(m_logger, "Wait timed out. Work in queue will be discarded.");
 						break; // timed out
 					}
 				}
@@ -176,10 +180,10 @@ protected:
 		NonRecursiveMutexLock l(m_queueLock);
 		while (m_queue.size() != 0)
 		{
-			OW_LOG_DEBUG(m_logger, "Waiting for empty queue");
+			OW_POOL_LOG_DEBUG(m_logger, "Waiting for empty queue");
 			m_queueEmpty.wait(l);
 		}
-		OW_LOG_DEBUG(m_logger, "Queue empty: the wait is over");
+		OW_POOL_LOG_DEBUG(m_logger, "Queue empty: the wait is over");
 	}
 	
 	void shutdownThreads(ThreadPool::EShutdownQueueFlag finishWorkInQueue, int shutdownSecs)
@@ -198,25 +202,25 @@ protected:
 			// Set cooperative thread cancellation flag
 			for (UInt32 i = 0; i < m_threads.size(); ++i)
 			{
-				OW_LOG_DEBUG(m_logger, Format("Calling cooperativeCancel on thread %1", i));
+				OW_POOL_LOG_DEBUG(m_logger, Format("Calling cooperativeCancel on thread %1", i));
 				m_threads[i]->cooperativeCancel();
 			}
 			// If any still haven't shut down, definitiveCancel will kill them.
 			for (UInt32 i = 0; i < m_threads.size(); ++i)
 			{
-				OW_LOG_DEBUG(m_logger, Format("Calling definitiveCancel on thread %1", i));
+				OW_POOL_LOG_DEBUG(m_logger, Format("Calling definitiveCancel on thread %1", i));
 				if (!m_threads[i]->definitiveCancel(shutdownSecs))
 				{
-					OW_LOG_FATAL_ERROR(m_logger, Format("Thread %1 was forcibly cancelled.", i));
+					OW_POOL_LOG_FATAL_ERROR(m_logger, Format("Thread %1 was forcibly cancelled.", i));
 				}
 			}
 		}
 		// Clean up after the threads and/or wait for them to exit.
 		for (UInt32 i = 0; i < m_threads.size(); ++i)
 		{
-			OW_LOG_DEBUG(m_logger, Format("calling join() on thread %1", i));
+			OW_POOL_LOG_DEBUG(m_logger, Format("calling join() on thread %1", i));
 			m_threads[i]->join();
-			OW_LOG_DEBUG(m_logger, Format("join() finished for thread %1", i));
+			OW_POOL_LOG_DEBUG(m_logger, Format("join() finished for thread %1", i));
 		}
 	}
 
@@ -227,7 +231,7 @@ protected:
 		{
 			if (waitForWork)
 			{
-				OW_LOG_DEBUG(m_logger, "Waiting for work");
+				OW_POOL_LOG_DEBUG(m_logger, "Waiting for work");
 				m_queueNotEmpty.wait(l);
 			}
 			else
@@ -236,7 +240,7 @@ protected:
 				// of single requests.
 				if (!m_queueNotEmpty.timedWait(l,1))
 				{
-					OW_LOG_DEBUG(m_logger, "No work after 1 sec. I'm not waiting any longer");
+					OW_POOL_LOG_DEBUG(m_logger, "No work after 1 sec. I'm not waiting any longer");
 					return RunnableRef();
 				}
 			}
@@ -244,7 +248,7 @@ protected:
 		// check to see if a shutdown started while the thread was sleeping
 		if (m_shutdown)
 		{
-			OW_LOG_DEBUG(m_logger, "The pool is shutdown, not getting any more work");
+			OW_POOL_LOG_DEBUG(m_logger, "The pool is shutdown, not getting any more work");
 			return RunnableRef();
 		}
 
@@ -260,7 +264,7 @@ protected:
 		{
 			m_queueEmpty.notifyAll();
 		}
-		OW_LOG_DEBUG(m_logger, "A thread got some work to do");
+		OW_POOL_LOG_DEBUG(m_logger, "A thread got some work to do");
 		return work;
 	}
 
@@ -295,7 +299,7 @@ public:
 		{
 			m_threads[i]->start();
 		}
-		OW_LOG_DEBUG(m_logger, "Threads are started and ready to go");
+		OW_POOL_LOG_DEBUG(m_logger, "Threads are started and ready to go");
 	}
 	// returns true if work is placed in the queue to be run and false if not.
 	virtual bool addWork(const RunnableRef& work, bool blockWhenFull)
@@ -303,24 +307,24 @@ public:
 		// check precondition: work != NULL
 		if (!work)
 		{
-			OW_LOG_DEBUG(m_logger, "Trying to add NULL work! Shame on you.");
+			OW_POOL_LOG_DEBUG(m_logger, "Trying to add NULL work! Shame on you.");
 			return false;
 		}
 		NonRecursiveMutexLock l(m_queueLock);
 		if (!blockWhenFull && queueIsFull())
 		{
-			OW_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
 			return false;
 		}
 		while ( queueIsFull() && !queueClosed() )
 		{
-			OW_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
 			m_queueNotFull.wait(l);
 		}
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
-			OW_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
 			return false;
 		}
 		m_queue.push_back(work);
@@ -328,11 +332,11 @@ public:
 		// if the queue was empty, there may be workers just sitting around, so we need to wake them up!
 		if (m_queue.size() == 1)
 		{
-			OW_LOG_DEBUG(m_logger, "Waking up sleepy workers");
+			OW_POOL_LOG_DEBUG(m_logger, "Waking up sleepy workers");
 			m_queueNotEmpty.notifyAll();
 		}
 
-		OW_LOG_DEBUG(m_logger, "Work has been added to the queue");
+		OW_POOL_LOG_DEBUG(m_logger, "Work has been added to the queue");
 		return true;
 	}
 
@@ -467,29 +471,29 @@ public:
 		// check precondition: work != NULL
 		if (!work)
 		{
-			OW_LOG_DEBUG(m_logger, "Trying to add NULL work! Shame on you.");
+			OW_POOL_LOG_DEBUG(m_logger, "Trying to add NULL work! Shame on you.");
 			return false;
 		}
 		NonRecursiveMutexLock l(m_queueLock);
 		if (!blockWhenFull && queueIsFull())
 		{
-			OW_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Not adding work and returning false");
 			return false;
 		}
 		while ( queueIsFull() && !queueClosed() )
 		{
-			OW_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue is full. Waiting until a spot opens up so we can add some work");
 			m_queueNotFull.wait(l);
 		}
 		// the pool is in the process of being destroyed
 		if (queueClosed())
 		{
-			OW_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
+			OW_POOL_LOG_DEBUG(m_logger, "Queue was closed out from underneath us. Not adding work and returning false");
 			return false;
 		}
 		m_queue.push_back(work);
 		
-		OW_LOG_DEBUG(m_logger, "Work has been added to the queue");
+		OW_POOL_LOG_DEBUG(m_logger, "Work has been added to the queue");
 
 		// Release the lock and wake up a thread waiting for work in the queue
 		// This bit of code is a race condition with the thread,
@@ -508,7 +512,7 @@ public:
 		{
 			if (!m_threads[i]->isRunning())
 			{
-				OW_LOG_DEBUG(m_logger, Format("Thread %1 is finished. Cleaning up it's remains.", i));
+				OW_POOL_LOG_DEBUG(m_logger, Format("Thread %1 is finished. Cleaning up it's remains.", i));
 				m_threads[i]->join();
 				m_threads.remove(i);
 			}
@@ -523,9 +527,9 @@ public:
 		{
 			ThreadRef theThread(new DynamicSizePoolWorkerThread(this));
 			m_threads.push_back(theThread);
-			OW_LOG_DEBUG(m_logger, "About to start a new thread");
+			OW_POOL_LOG_DEBUG(m_logger, "About to start a new thread");
 			theThread->start();
-			OW_LOG_DEBUG(m_logger, "New thread started");
+			OW_POOL_LOG_DEBUG(m_logger, "New thread started");
 		}
 		return true;
 	}
