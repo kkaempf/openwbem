@@ -36,7 +36,6 @@
 #include "OW_SSLCtxMgr.hpp"
 #include "OW_String.hpp"
 #include "OW_Thread.hpp"
-#include "OW_ThreadEvent.hpp"
 #include "OW_Map.hpp"
 #include "OW_UnnamedPipe.hpp"
 #include "OW_RequestHandlerIFC.hpp"
