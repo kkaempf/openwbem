@@ -251,7 +251,7 @@ SSLCtxMgr::initServer(const String& keyfile)
 	SSL_CTX_set_verify(m_ctxServer,
 		SSL_VERIFY_PEER /*| SSL_VERIFY_FAIL_IF_NO_PEER_CERT*/, NULL);
 	/*
-	// grabbed this from volutionlwc.  may need to use it. 
+	// grabbed this from volutionlwc.  may need to use it (Filename issue on Win32)
 	if (!SSL_CTX_load_verify_locations(ctx,VOL_CONFIG_DIR"/cacerts/volution-authority.cacert",NULL))
 	{
 		fprintf(stderr, "Couldn't set load_verify_location\n");

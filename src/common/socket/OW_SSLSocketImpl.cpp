@@ -62,6 +62,7 @@ SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd,
 	{
 		OW_THROW(SSLException, "SSL_new failed");
 	}
+
 	m_sbio = BIO_new_socket(fd, BIO_NOCLOSE);
 	if (!m_sbio)
 	{
@@ -94,7 +95,11 @@ SSLSocketImpl::SSLSocketImpl(const SocketAddress& addr)
 //////////////////////////////////////////////////////////////////////////////
 SSLSocketImpl::~SSLSocketImpl()
 {
+#if defined(OW_WIN32)
+	if(m_sockfd != INVALID_SOCKET && m_isConnected)
+#else
 	if(m_sockfd != -1 && m_isConnected)
+#endif
 	{
 		if (m_ssl)
 		{
@@ -108,7 +113,11 @@ SSLSocketImpl::~SSLSocketImpl()
 Select_t
 SSLSocketImpl::getSelectObj() const
 {
+#if defined(OW_WIN32)
+	return m_event;
+#else
 	return m_sockfd;
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 void 
@@ -148,7 +157,11 @@ SSLSocketImpl::connectSSL()
 void
 SSLSocketImpl::disconnect()
 {
+#if defined(OW_WIN32)
+	if(m_sockfd != INVALID_SOCKET && m_isConnected)
+#else
 	if(m_sockfd != -1 && m_isConnected)
+#endif
 	{
 		if (m_ssl)
 		{

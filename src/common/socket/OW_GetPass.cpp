@@ -41,12 +41,41 @@ extern "C"
 #ifdef OW_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+
+#if defined(OW_WIN32)
+#include <conio.h>
+#include <stdio.h>
+#endif
 }
 
 namespace OpenWBEM
 {
 
-#if !defined(OW_WIN32)
+#if defined(OW_WIN32)
+#define MAXPASSWORD 128
+String
+GetPass::getPass(const String& prompt)
+{
+	int ch, len = 0;
+	char bfr[MAXPASSWORD+1];
+
+	bfr[0] = 0;
+	_cputs(prompt.c_str());
+
+	do
+	{
+		ch = _getch();
+		if(ch != '\r' && len < MAXPASSWORD)
+		{
+			bfr[len++] = ch;
+			bfr[len] = 0;
+			_putch('*');
+		}
+	} while(ch != '\r');
+	printf("\n");
+	return String(bfr);
+}
+#else
 String
 GetPass::getPass(const String& prompt)
 {

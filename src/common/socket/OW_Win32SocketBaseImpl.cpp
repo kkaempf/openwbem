@@ -228,6 +228,7 @@ SocketBaseImpl::SocketBaseImpl()
 	, m_sockfd(INVALID_SOCKET)
 	, m_localAddress()
 	, m_peerAddress()
+	, m_event(NULL)
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -236,7 +237,6 @@ SocketBaseImpl::SocketBaseImpl()
 	, m_recvTimeout(-1)
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
-	, m_event(NULL)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -252,6 +252,7 @@ SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
 	, m_sockfd(fd)
 	, m_localAddress(SocketAddress::getAnyLocalHost())
 	, m_peerAddress(SocketAddress::allocEmptyAddress(addrType))
+	, m_event(NULL)
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -260,7 +261,6 @@ SocketBaseImpl::SocketBaseImpl(SocketHandle_t fd,
 	, m_recvTimeout(-1)
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
-	, m_event(NULL)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);
@@ -283,6 +283,7 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	, m_sockfd(INVALID_SOCKET)
 	, m_localAddress(SocketAddress::getAnyLocalHost())
 	, m_peerAddress(addr)
+	, m_event(NULL)
 	, m_recvTimeoutExprd(false)
 	, m_streamBuf(this)
 	, m_in(&m_streamBuf)
@@ -291,7 +292,6 @@ SocketBaseImpl::SocketBaseImpl(const SocketAddress& addr)
 	, m_recvTimeout(-1)
 	, m_sendTimeout(-1)
 	, m_connectTimeout(0)
-	, m_event(NULL)
 {
 	m_out.exceptions(std::ios::badbit);
 	m_inout.exceptions(std::ios::badbit);

@@ -66,18 +66,31 @@ SocketImpl::~SocketImpl()
 Select_t
 SocketImpl::getSelectObj() const
 {
+#if defined(OW_WIN32)
+	return m_event;
+#else
 	return m_sockfd;
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int SocketImpl::readAux(void* dataIn, int dataInLen) 
 {
+#if defined(OW_WIN32)
+	return ::recv(m_sockfd, static_cast<char*>(dataIn), dataInLen, 0);
+#else
 	return ::read(m_sockfd, dataIn, dataInLen);
+#endif
 }
 //////////////////////////////////////////////////////////////////////////////
 int SocketImpl::writeAux(const void* dataOut, int dataOutLen)
 {
+#if defined(OW_WIN32)
+	return ::send(m_sockfd, static_cast<const char*>(dataOut), dataOutLen, 0);
+#else
 	return ::write(m_sockfd, dataOut, dataOutLen);
+#endif
 }
+
 //////////////////////////////////////////////////////////////////////////////
 
 } // end namespace OpenWBEM

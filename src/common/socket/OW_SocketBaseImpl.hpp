@@ -98,6 +98,9 @@ protected:
 	SocketHandle_t m_sockfd;
 	SocketAddress m_localAddress;
 	SocketAddress m_peerAddress;
+#if defined(OW_WIN32)
+	HANDLE m_event;
+#endif
 
 private:
 	void fillInetAddrParms();
@@ -106,6 +109,9 @@ private:
 #endif
 	SocketBaseImpl(const SocketBaseImpl& arg);
 	SocketBaseImpl& operator= (const SocketBaseImpl& arg);
+#if defined(OW_WIN32)
+	static int waitForEvent(HANDLE event, int secsToTimeout=-1);
+#endif
 
 	bool m_recvTimeoutExprd;
 	SocketStreamBuffer m_streamBuf;
@@ -115,16 +121,9 @@ private:
 	int m_recvTimeout;
 	int m_sendTimeout;
 	int m_connectTimeout;
-#if defined(OW_WIN32)
-	HANDLE m_event;
-
-	static int waitForEvent(HANDLE event, int secsToTimeout=-1);
-#endif
 	
 	static String m_traceFileOut;
 	static String m_traceFileIn;
-
-
 };
 
 } // end namespace OpenWBEM
