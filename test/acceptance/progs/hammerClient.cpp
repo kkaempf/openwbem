@@ -52,6 +52,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <typeinfo>
 
 // TODO list:
 // cover *all* read operations
