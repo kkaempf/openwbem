@@ -61,7 +61,8 @@ OW_DECLARE_EXCEPTION(DateTime)
  * DateTime represented will be 1 second before the Epoch (23:59:59 UTC, 
  * December 31, 1969)
  *
- * This class implementation relies on the global variable timezone 
+ * If the non-standard function timegm() is available, it will be used, 
+ * otherwise this class' implementation relies on the global variable timezone 
  * (from time.h) which reflects the system's timezone.
  */
 class DateTime

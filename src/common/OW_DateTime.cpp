@@ -376,10 +376,14 @@ DateTime::setTime(tm& tmarg, ETimeOffset timeOffset)
 	}
 	else // timeOffset == E_UTC_TIME
 	{
+#ifdef OW_HAVE_TIMEGM
+		m_time = ::timegm(&tmarg);
+#else
 		// timezone is a global that is set by mktime() which is "the 
 		// difference, in seconds, between Coordinated Universal Time 
 		// (UTC) and local standard time."
 		m_time = ::mktime(&tmarg) - ::timezone;
+#endif
 	}
 }
 //////////////////////////////////////////////////////////////////////////////									
