@@ -28,11 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-/**
- * @author Dan Nuffer
- */
-
-
 #include "TestSuite.hpp"
 #include "TestCaller.hpp"
 #include "OW_ExecTestCases.hpp"
@@ -76,14 +71,22 @@ void OW_ExecTestCases::testExecuteProcessAndGatherOutput()
 {
 	String output;
 	int processstatus(0);
+#ifndef OW_DARWIN
 	Exec::executeProcessAndGatherOutput(String("/bin/true").tokenize(), output, processstatus);
+#else
+	Exec::executeProcessAndGatherOutput(String("/usr/bin/true").tokenize(), output, processstatus);
+#endif
 	unitAssert(output.empty());
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 0);
 
 	processstatus = 0;
 	output.erase();
+#ifndef OW_DARWIN
 	Exec::executeProcessAndGatherOutput(String("/bin/false").tokenize(), output, processstatus);
+#else
+	Exec::executeProcessAndGatherOutput(String("/usr/bin/false").tokenize(), output, processstatus);
+#endif
 	unitAssert(output.empty());
 	unitAssert(WIFEXITED(processstatus));
 	unitAssert(WEXITSTATUS(processstatus) == 1);
