@@ -192,7 +192,7 @@ OW_IPCConnectionHandler::run()
 		OW_RequestHandlerIFCRef handler = m_env->getRequestHandler(
 			OW_BINARY_ID);
 
-		if(!handler.getPtr())
+		if(!handler)
 		{
 			lgr->logError(format("IPC Service is unable to process connection"
 				" for %1: No Request Handler Available", m_conn.getUserName()));

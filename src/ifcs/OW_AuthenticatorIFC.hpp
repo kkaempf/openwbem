@@ -35,6 +35,7 @@
 #include "OW_Exception.hpp"
 #include "OW_MutexLock.hpp"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 DEFINE_EXCEPTION(Authentication);
 
@@ -109,7 +110,7 @@ protected:
 	OW_Mutex m_mutex;
 };
 
-typedef OW_Reference<OW_AuthenticatorIFC> OW_AuthenticatorIFCRef;
+typedef OW_SharedLibraryReference<OW_AuthenticatorIFC> OW_AuthenticatorIFCRef;
 
 #define OW_AUTHENTICATOR_FACTORY(derived) \
 extern "C" OW_AuthenticatorIFC* \

@@ -41,7 +41,7 @@ class OW_BinaryRequestHandler : public OW_RequestHandlerIFC
 public:
 	OW_BinaryRequestHandler();
 
-	virtual OW_RequestHandlerIFCRef clone() const;
+	virtual OW_RequestHandlerIFC* clone() const;
 
 	virtual void doProcess(std::istream *istr, std::ostream *ostrEntity,
             std::ostream *ostrError, const OW_String &userName);

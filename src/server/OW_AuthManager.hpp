@@ -49,7 +49,6 @@ public:
 private:
 
 	OW_AuthenticatorIFCRef m_authenticator;
-	OW_SharedLibraryRef m_sharedLib;
 };
 
 typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;

@@ -361,7 +361,8 @@ OW_DaemonEnv::authenticate(OW_String &userName, const OW_String &info, OW_String
 OW_RequestHandlerIFCRef
 OW_DaemonEnv::getRequestHandler(const OW_String&) const
 {
-	return m_requestHandler->clone();
+	return OW_RequestHandlerIFCRef(m_requestHandler.getLibRef(),
+		m_requestHandler->clone());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -380,17 +381,20 @@ OW_DaemonEnv::createAuthManager()
 void
 OW_DaemonEnv::createService()
 {
-	OW_ASSERT( m_service == 0 );
-
+	OW_ASSERT(m_service == 0);
 	OW_String libname = getConfigItem(OW_ConfigOpts::SERVICE_LIB_PATH_opt);
-	OW_SafeLibCreate<OW_ServiceIFC>::return_type r =
-		OW_SafeLibCreate<OW_ServiceIFC>::loadAndCreate(libname, "createService",
-			getLogger());
-	m_serviceLib = r.second;
-	m_service = r.first;
-
-	OW_ServiceEnvironmentIFCRef env(this, true); // no-delete reference
-	m_service->setServiceEnvironment(env);
+	m_service = OW_SafeLibCreate<OW_ServiceIFC>::loadAndCreateObject(libname,
+		"createService", getLogger());
+	if(m_service)
+	{
+		OW_ServiceEnvironmentIFCRef env(this, true); // no-delete reference
+		m_service->setServiceEnvironment(env);
+	}
+	else
+	{
+		m_Logger->logError(format("%1 failed to load service from library %2",
+			OW_DAEMON_NAME, libname));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -400,12 +404,14 @@ OW_DaemonEnv::createRequestHandler()
 	OW_ASSERT( m_requestHandler == 0 );
 
 	OW_String libname = getConfigItem(OW_ConfigOpts::REQUEST_HANDLER_LIB_PATH_opt);
-	OW_SafeLibCreate<OW_RequestHandlerIFC>::return_type r =
-		OW_SafeLibCreate<OW_RequestHandlerIFC>::loadAndCreate(libname, "createRequestHandler",
-			getLogger());
-	m_requestHandlerLib = r.second;
-	m_requestHandler = r.first;
-
+	m_requestHandler = 
+		OW_SafeLibCreate<OW_RequestHandlerIFC>::loadAndCreateObject(libname,
+			"createRequestHandler", getLogger());
+	if(!m_requestHandler)
+	{
+		m_Logger->logError(format("%1 failed to load request handler from"
+			" library %2", OW_DAEMON_NAME, libname));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -440,15 +446,14 @@ OW_DaemonEnv::deleteService()
 		m_service->shutdown();
 		OW_Thread::yield();
 	}
-	m_service = 0;
-	m_serviceLib = 0;
+	m_service.setNull();
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void
 OW_DaemonEnv::deleteRequestHandler()
 {
-	m_requestHandler = 0;
+	m_requestHandler.setNull();
 }
 
 

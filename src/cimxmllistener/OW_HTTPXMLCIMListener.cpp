@@ -191,14 +191,15 @@ private:
 //////////////////////////////////////////////////////////////////////////////
 OW_HTTPXMLCIMListener::OW_HTTPXMLCIMListener(OW_LoggerRef logger)
 	: m_callbacks()
-	, m_XMLListener(new OW_XMLListener(this))
+	, m_XMLListener(OW_SharedLibraryRef(0), new OW_XMLListener(this))
 	, m_pLAuthenticator(new OW_ListenerAuthenticator)
 	, m_httpServer(new OW_HTTPServer)
 	, m_httpListenPort(0)
 	, m_httpsListenPort(0)
 	, m_mutex()
 {
-	OW_Reference<OW_Array<SelectablePair_t> > selectables(new OW_Array<SelectablePair_t>);
+	OW_Reference<OW_Array<SelectablePair_t> >
+		selectables(new OW_Array<SelectablePair_t>);
 
 	OW_ServiceEnvironmentIFCRef env(new OW_HTTPXMLCIMListenerServiceEnvironment(
 		m_pLAuthenticator, m_XMLListener, logger, selectables));

@@ -94,8 +94,6 @@ class OW_DaemonEnv : public OW_ServiceEnvironmentIFC
 		OW_ServiceIFCRef m_service;
 		OW_AuthManagerRef m_authManager;
 		OW_RequestHandlerIFCRef m_requestHandler;
-		OW_SharedLibraryRef m_serviceLib, m_requestHandlerLib;
-
 };
 
 #endif // OW_ENVIRONMENT_HPP_

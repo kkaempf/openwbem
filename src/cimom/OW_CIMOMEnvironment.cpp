@@ -87,7 +87,7 @@ OW_CIMOMEnvironment::OW_CIMOMEnvironment()
 	, m_Logger(0)
 	, m_configItems(new ConfigMap)
 	, m_providerManager(0)
-	, m_wqlLib(0)
+	, m_wqlLib()
 	, m_indicationRepLayerLib(0)
 	, m_pollingManager(0)
 	, m_indicationServer()
@@ -175,7 +175,7 @@ OW_CIMOMEnvironment::startServices()
 	_loadServices();
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
-		m_services[i].m_obj->startService();
+		m_services[i]->startService();
 	}
 
 	_createPollingManager();
@@ -203,7 +203,7 @@ OW_CIMOMEnvironment::shutdown()
 	// Shutdown any loaded services
 	for(size_t i = 0; i < m_services.size(); i++)
 	{
-		m_services[i].m_obj->shutdown();
+		m_services[i]->shutdown();
 	}
 
 	// Unload all services
@@ -354,17 +354,21 @@ OW_CIMOMEnvironment::_loadRequestHandlers()
 		OW_String libName = libPath;
 		libName += dirEntries[i];
 
-		OW_SafeLibCreate<OW_RequestHandlerIFC>::return_type r =
-			OW_SafeLibCreate<OW_RequestHandlerIFC>::loadAndCreate(libName,
-				"createRequestHandler", getLogger());
+		OW_RequestHandlerIFCRef rh =
+			OW_SafeLibCreate<OW_RequestHandlerIFC>::loadAndCreateObject(
+				libName, "createRequestHandler", getLogger());
 
-		if(r.first)
+		if(rh)
 		{
-			ReqHandlerEntry re(r.first, r.second);
-			re.m_obj->setEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
-			m_reqHandlers.append(re);
-			m_Logger->logCustInfo(format("CIMOM loaded request handler from"
-				" file: %1", libName));
+			rh->setEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
+			m_reqHandlers.append(rh);
+			logCustInfo(format("CIMOM loaded request handler from file: %1",
+				libName));
+		}
+		else
+		{
+			logError(format("CIMOM failed to load request handler from file:"
+				" %1", libName));
 		}
 	}
 
@@ -411,23 +415,25 @@ OW_CIMOMEnvironment::_loadServices()
 		OW_String libName = libPath;
 		libName += dirEntries[i];
 
-		OW_SafeLibCreate<OW_ServiceIFC>::return_type r =
-			OW_SafeLibCreate<OW_ServiceIFC>::loadAndCreate(libName,
+		OW_ServiceIFCRef srv = 
+			OW_SafeLibCreate<OW_ServiceIFC>::loadAndCreateObject(libName,
 				"createService", getLogger());
 
-		if(r.first)
+		if(srv)
 		{
-			ServiceEntry se(r.first, r.second);
-			se.m_obj->setServiceEnvironment(OW_ServiceEnvironmentIFCRef(this,
-				true));
-			m_services.append(se);
+			srv->setServiceEnvironment(OW_ServiceEnvironmentIFCRef(this, true));
+			m_services.append(srv);
 
-			m_Logger->logCustInfo(format("CIMOM loaded service from file: %1",
+			logCustInfo(format("CIMOM loaded service from file: %1", libName));
+		}
+		else
+		{
+			logError(format("CIMOM failed to load service from library: %1",
 				libName));
 		}
 	}
 
-	m_Logger->logCustInfo(format("CIMOM: Number of services loaded: %1",
+	logCustInfo(format("CIMOM: Number of services loaded: %1",
 		m_services.size()));
 }
 
@@ -555,11 +561,12 @@ OW_CIMOMEnvironment::getCIMOMHandle(const OW_ACLInfo& aclInfo,
 	   && m_indicationServer
 	   && !m_indicationsDisabled)
 	{
-		OW_Reference<OW_IndicationRepLayer> irl = _getIndicationRepLayer();
+		OW_IndicationRepLayerRef irl = _getIndicationRepLayer();
 		if(irl)
 		{
 			irl->setCIMServer(m_cimServer.getPtr());
-			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, irl,
+			OW_RepositoryIFCRef rref(new OW_IndicationRepository(irl));
+			return OW_CIMOMHandleIFCRef(new OW_LocalCIMOMHandle(eref, rref,
 				aclInfo));
 		}
 	}
@@ -588,25 +595,26 @@ OW_CIMOMEnvironment::getWQLRef()
 
 		logDebug(format("CIMOM loading wql library %1", libname));
 
-        std::pair<OW_WQLIFCRef, OW_SharedLibraryRef> rv =
-            OW_SafeLibCreate<OW_WQLIFC>::loadAndCreate(libname, "createWQL",
-                getLogger());
+		OW_SharedLibraryLoaderRef sll =
+			OW_SharedLibraryLoader::createSharedLibraryLoader();
 
-        m_wqlLib = rv.second;
-        return rv.first;
+		m_wqlLib = sll->loadSharedLibrary(libname, m_Logger);
+		if(!m_wqlLib)
+		{
+			logError(format("CIMOM Failed to load WQL Libary: %1", libname));
+			return OW_WQLIFCRef();
+		}
     }
 
-	OW_WQLIFC* ptr = 0;
-	ptr = OW_SafeLibCreate<OW_WQLIFC>::create(m_wqlLib, "createWQL",
-		getLogger());
-	return OW_WQLIFCRef(ptr);
+	return  OW_WQLIFCRef(m_wqlLib, OW_SafeLibCreate<OW_WQLIFC>::createObj(
+		m_wqlLib, "createWQL", m_Logger));
 }
 
 //////////////////////////////////////////////////////////////////////////////
 OW_IndicationRepLayerRef
 OW_CIMOMEnvironment::_getIndicationRepLayer()
 {
-	OW_IndicationRepLayerRef retref(0);
+	OW_IndicationRepLayerRef retref;
 
 	if(!m_indicationRepLayerDisabled)
 	{
@@ -619,27 +627,29 @@ OW_CIMOMEnvironment::_getIndicationRepLayer()
 			m_Logger->logDebug(format("CIMOM loading indication libary %1",
 				libname));
 
-			std::pair<OW_Reference<OW_IndicationRepLayer>, OW_SharedLibraryRef>
-				rv = OW_SafeLibCreate<OW_IndicationRepLayer>::loadAndCreate(
-					libname, "createIndicationRepLayer", getLogger());
-
-			m_indicationRepLayerLib = rv.second;
-			if(!rv.first)
+			OW_SharedLibraryLoaderRef sll =
+				OW_SharedLibraryLoader::createSharedLibraryLoader();
+			if(!sll)
 			{
 				m_indicationRepLayerDisabled = true;
+				logError(format("CIMOM failed to load indication rep layer"
+					" library %1", libname));
+				return retref;
 			}
 
-			retref = rv.first;
+			m_indicationRepLayerLib = sll->loadSharedLibrary(libname, m_Logger);
+			if(!m_indicationRepLayerLib);
+			{
+				m_indicationRepLayerDisabled = true;
+				logError(format("CIMOM failed to load indication rep layer"
+					" library %1", libname));
+				return retref;
+			}
 		}
-		else
-		{
-			OW_IndicationRepLayer* ptr = 0;
-			ptr = OW_SafeLibCreate<OW_IndicationRepLayer>::create(
-				m_indicationRepLayerLib, "createIndicationRepLayer",
-				getLogger());
 
-			retref = OW_IndicationRepLayerRef(ptr);
-		}
+		retref = OW_IndicationRepLayerRef(m_indicationRepLayerLib,
+			OW_SafeLibCreate<OW_IndicationRepLayer>::createObj(
+				m_indicationRepLayerLib, "createIndicationRepLayer", m_Logger));
 
 		if(!retref)
 		{
@@ -657,12 +667,14 @@ OW_CIMOMEnvironment::getRequestHandler(const OW_String &id) const
 {
 	OW_MutexLock ml(m_monitor);
 
-	OW_RequestHandlerIFCRef ref(0);
+	OW_RequestHandlerIFCRef ref;
 	for(size_t i = 0; i < m_reqHandlers.size(); i++)
 	{
-		if(m_reqHandlers[i].m_obj->getId().equals(id))
+		if(m_reqHandlers[i]->getId().equals(id))
 		{
-			ref = m_reqHandlers[i].m_obj->clone();
+			ref = OW_RequestHandlerIFCRef(m_reqHandlers[i].getLibRef(),
+				m_reqHandlers[i]->clone());
+
 			ref->setEnvironment(OW_ServiceEnvironmentIFCRef(
 				const_cast<OW_CIMOMEnvironment*>(this), true));
 			break;

@@ -33,7 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_CIMFwd.hpp"
-#include "OW_Reference.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include "OW_CIMOMHandleIFC.hpp"
 
 
@@ -52,7 +52,7 @@ public:
 
 };
 
-typedef OW_Reference<OW_WQLIFC> OW_WQLIFCRef;
+typedef OW_SharedLibraryReference<OW_WQLIFC> OW_WQLIFCRef;
 		
 #define OW_WQLFACTORY(derived) \
 extern "C" const char* \

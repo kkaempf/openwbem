@@ -53,7 +53,7 @@ public:
 
 	std::ostream* ostrError, const OW_String& userName);
 
-	virtual OW_RequestHandlerIFCRef clone() const;
+	virtual OW_RequestHandlerIFC* clone() const;
 
 protected:
 	virtual void doOptions(OW_CIMFeatures& cf);

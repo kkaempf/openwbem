@@ -35,24 +35,20 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_AuthManager::OW_AuthManager()
-	: m_authenticator(0)
-	, m_sharedLib(0)
+	: m_authenticator()
 {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 OW_AuthManager::~OW_AuthManager()
 {
-	m_authenticator = 0;
-	m_sharedLib = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void
 OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 {
-	m_authenticator = 0;
-	m_sharedLib = 0;
+	m_authenticator.setNull();
 
 	OW_String authLib = env->getConfigItem(
 		OW_ConfigOpts::AUTH_MOD_opt);
@@ -65,17 +61,12 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 	env->getLogger()->logCustInfo(format("Authentication Manager: Loading"
 		" authentication module %1", authLib));
 
-	std::pair<OW_Reference<OW_AuthenticatorIFC>, OW_SharedLibraryRef> rv =
-		OW_SafeLibCreate<OW_AuthenticatorIFC>::loadAndCreate(authLib,
+	m_authenticator =
+		OW_SafeLibCreate<OW_AuthenticatorIFC>::loadAndCreateObject(authLib,
 			"createAuthenticator", env->getLogger());
 
-	if(rv.first)
+	if(m_authenticator)
 	{
-		m_authenticator = rv.first;
-		m_sharedLib = rv.second;
-		rv.first = 0;
-		rv.second = 0;
-
 		try
 		{
 			m_authenticator->init(env);
@@ -91,8 +82,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				" [No Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
 
-			m_authenticator = 0;
-			m_sharedLib = 0;
+			m_authenticator.setNull();
 		}
 		catch(...)
 		{
@@ -100,8 +90,7 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				" to initialize: Unknown Exception Caught"
 				" [No Authentication Mechanism Available!]", authLib));
 
-			m_authenticator = 0;
-			m_sharedLib = 0;
+			m_authenticator.setNull();
 		}
 	}
 	else

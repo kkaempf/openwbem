@@ -53,9 +53,9 @@ public:
 	OW_XMLListener(OW_CIMListenerCallback* callback);
 	virtual ~OW_XMLListener() {}
 
-	virtual OW_RequestHandlerIFCRef clone() const
+	virtual OW_RequestHandlerIFC* clone() const
 	{
-		return OW_RequestHandlerIFCRef(new OW_XMLListener(*this));
+		return new OW_XMLListener(*this);
 	}
 
 protected:

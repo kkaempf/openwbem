@@ -36,6 +36,7 @@
 #include "OW_SelectableIFC.hpp"
 #include "OW_SelectableCallbackIFC.hpp"
 #include "OW_Logger.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 class OW_CIMOMHandleIFC;
 typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
@@ -44,7 +45,7 @@ class OW_ServiceEnvironmentIFC;
 typedef OW_Reference<OW_ServiceEnvironmentIFC> OW_ServiceEnvironmentIFCRef;
 
 class OW_RequestHandlerIFC;
-typedef OW_Reference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
+typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 
 class OW_ServiceEnvironmentIFC
 {

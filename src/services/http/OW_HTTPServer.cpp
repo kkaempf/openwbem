@@ -285,16 +285,16 @@ public:
 				 socket.getPeerAddress().toString()));
 
 			m_HTTPServer->incThreadCount();
-cout << "got past incThreadCount" << endl;
-			OW_RequestHandlerIFCRef newRequestHandler(m_HTTPServer->m_options.requestHandler->clone());
-cout << "got past 2" << endl;
+
+			OW_RequestHandlerIFCRef newRequestHandler(
+				m_HTTPServer->m_options.requestHandler.getLibRef(), 
+				m_HTTPServer->m_options.requestHandler->clone());
+
 			OW_HTTPServer::Options newOpts = m_HTTPServer->m_options;
-cout << "got past 3" << endl;
 			// create a wrapper environment that will report the path to the
 			// request handler
 			OW_ServiceEnvironmentIFCRef wrapperEnv(new PathWrapperEnv(
 				newOpts.env));
-cout << "got past 4" << endl;
 
 			newOpts.env = wrapperEnv;
 
@@ -302,10 +302,8 @@ cout << "got past 4" << endl;
 			newOpts.requestHandler->setEnvironment(wrapperEnv);
 			OW_RunnableRef rref(new OW_HTTPSvrConnection(socket,
 				 m_HTTPServer, m_HTTPServer->m_upipe, newOpts));
-cout << "got past 5" << endl;
 
 			OW_Thread::run(rref, m_HTTPServer->m_options.isSepThread);
-cout << "got past 6" << endl;
 		}
 		catch (OW_SSLException& se)
 		{

@@ -54,10 +54,10 @@ OW_BinaryRequestHandler::OW_BinaryRequestHandler()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_RequestHandlerIFCRef
+OW_RequestHandlerIFC*
 OW_BinaryRequestHandler::clone() const
 {
-	return OW_RequestHandlerIFCRef(new OW_BinaryRequestHandler());
+	return new OW_BinaryRequestHandler();
 }
 
 //////////////////////////////////////////////////////////////////////////////

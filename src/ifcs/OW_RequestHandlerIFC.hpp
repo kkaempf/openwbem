@@ -35,6 +35,7 @@
 #include "OW_config.h"
 #include "OW_Bool.hpp"
 #include "OW_String.hpp"
+#include "OW_SharedLibraryReference.hpp"
 #include <iosfwd>
 
 class OW_CIMFeatures;
@@ -50,7 +51,7 @@ typedef OW_Reference<OW_ServiceEnvironmentIFC> OW_ServiceEnvironmentIFCRef;
  */
 
 class OW_RequestHandlerIFC;
-typedef OW_Reference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
+typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 
 class OW_RequestHandlerIFC
 {
@@ -93,7 +94,7 @@ public:
 	 */
 	OW_String getId() const;
 
-	virtual OW_RequestHandlerIFCRef clone() const = 0;
+	virtual OW_RequestHandlerIFC* clone() const = 0;
 
 	OW_ServiceEnvironmentIFCRef getEnvironment() const;
 

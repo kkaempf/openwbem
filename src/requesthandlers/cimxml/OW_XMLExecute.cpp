@@ -1428,12 +1428,12 @@ OW_XMLExecute::doOptions(OW_CIMFeatures& cf)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-OW_RequestHandlerIFCRef
+OW_RequestHandlerIFC*
 OW_XMLExecute::clone() const
 {
 	OW_ASSERT(!m_ostrEntity);
 	OW_ASSERT(!m_ostrError);
-	return OW_RequestHandlerIFCRef(new OW_XMLExecute(*this));
+	return new OW_XMLExecute(*this);
 }
 
 

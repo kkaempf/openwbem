@@ -67,43 +67,16 @@ typedef OW_Reference<OW_SelectableIFC> OW_SelectableIFCRef;
 typedef OW_Reference<OW_SelectableCallbackIFC> OW_SelectableCallbackIFCRef;
 typedef OW_Reference<OW_Logger> OW_LoggerRef;
 typedef OW_Reference<OW_CIMOMHandleIFC> OW_CIMOMHandleIFCRef;
-typedef OW_Reference<OW_WQLIFC> OW_WQLIFCRef;
+typedef OW_SharedLibraryReference<OW_WQLIFC> OW_WQLIFCRef;
 typedef OW_Reference<OW_ProviderManager> OW_ProviderManagerRef;
-typedef OW_Reference<OW_IndicationRepLayer> OW_IndicationRepLayerRef;
+typedef OW_SharedLibraryReference<OW_IndicationRepLayer> OW_IndicationRepLayerRef;
 typedef OW_Reference<OW_RepositoryIFC> OW_RepositoryIFCRef;
 typedef OW_Reference<OW_AuthManager> OW_AuthManagerRef;
 typedef OW_Reference<OW_PollingManager> OW_PollingManagerRef;
 typedef OW_SharedLibraryReference<OW_IndicationServer> OW_IndicationServerRef;
-typedef OW_Reference<OW_ServiceIFC> OW_ServiceIFCRef;
-typedef OW_Reference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
+typedef OW_SharedLibraryReference<OW_ServiceIFC> OW_ServiceIFCRef;
+typedef OW_SharedLibraryReference<OW_RequestHandlerIFC> OW_RequestHandlerIFCRef;
 
-template<class T> class OW_LibEntry
-{
-public:
-
-	OW_LibEntry() : m_obj(0), m_lib(0) {}
-	OW_LibEntry(const OW_LibEntry<T>& x) : m_obj(x.m_obj), m_lib(x.m_lib) {}
-	OW_LibEntry(OW_Reference<T> xobj, OW_SharedLibraryRef lib)
-		: m_obj(xobj)
-		, m_lib(lib) {}
-
-	~OW_LibEntry()
-	{
-		m_obj = 0;
-		m_lib = 0;
-	}
-
-	OW_LibEntry<T>& operator= (const OW_LibEntry<T>& arg)
-	{
-		m_obj = arg.m_obj;
-		m_lib = arg.m_lib;
-		return *this;
-	}
-
-	OW_Reference<T> m_obj;
-	OW_SharedLibraryRef m_lib;
-};
-				
 class OW_CIMOMEnvironment : public OW_ServiceEnvironmentIFC
 {
 public:
@@ -194,8 +167,6 @@ private:
 	// Types
 	typedef OW_Map<OW_String, OW_String> ConfigMap;
 	typedef OW_Reference<ConfigMap> ConfigMapRef;
-	typedef OW_LibEntry<OW_ServiceIFC> ServiceEntry;
-	typedef OW_LibEntry<OW_RequestHandlerIFC> ReqHandlerEntry;
 
 	mutable OW_Mutex m_monitor;
 	OW_RepositoryIFCRef m_cimServer;
@@ -210,8 +181,8 @@ private:
 	OW_Bool m_indicationsDisabled;
 	OW_Array<OW_SelectableIFCRef> m_selectables;
 	OW_Array<OW_SelectableCallbackIFCRef> m_selectableCallbacks;
-	OW_Array<ServiceEntry> m_services;
-	OW_Array<ReqHandlerEntry> m_reqHandlers;
+	OW_Array<OW_ServiceIFCRef> m_services;
+	OW_Array<OW_RequestHandlerIFCRef> m_reqHandlers;
 	mutable OW_Mutex m_indicationLock;
 	OW_Bool m_indicationRepLayerDisabled;
 	mutable OW_Mutex m_selectableLock;

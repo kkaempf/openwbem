@@ -33,6 +33,7 @@
 
 #include "OW_config.h"
 #include "OW_ServiceEnvironmentIFC.hpp"
+#include "OW_SharedLibraryReference.hpp"
 
 // This class is a base interface for any services for Openwbem.
 class OW_ServiceIFC
@@ -45,7 +46,7 @@ public:
 	virtual void shutdown() = 0;
 };
 
-typedef OW_Reference<OW_ServiceIFC> OW_ServiceIFCRef;
+typedef OW_SharedLibraryReference<OW_ServiceIFC> OW_ServiceIFCRef;
 
 #define OW_SERVICE_FACTORY(derived) \
 extern "C" OW_ServiceIFC* \
@@ -58,7 +59,6 @@ getOWVersion() \
 { \
 	return OW_VERSION; \
 }
-
 
 #endif	// __OW_SERVICEIFC_HPP__
 

@@ -57,6 +57,11 @@ public:
 		m_sharedLib = 0;
 	}
 
+	OW_SharedLibraryRef getLibRef() const
+	{
+		return m_sharedLib;
+	}
+
 	T* operator->() const
 	{
 		return &*m_obj;

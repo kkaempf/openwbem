@@ -52,6 +52,7 @@ public:
 	// If a logger specified then it will receive log messages, otherwise
 	// all log messages will be discarded.
 	OW_HTTPXMLCIMListener(OW_LoggerRef logger = OW_LoggerRef(0));
+
 	~OW_HTTPXMLCIMListener();
 
 
@@ -104,7 +105,7 @@ private:
 	typedef OW_Map< OW_String, registrationInfo > callbackMap_t;
 
 	callbackMap_t m_callbacks;
-	OW_Reference<OW_RequestHandlerIFC> m_XMLListener;
+	OW_RequestHandlerIFCRef m_XMLListener;
 	OW_Reference<OW_ListenerAuthenticator> m_pLAuthenticator;
 	OW_Reference<OW_HTTPServer> m_httpServer;
 	OW_UInt16 m_httpListenPort;
