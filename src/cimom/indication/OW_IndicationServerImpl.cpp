@@ -793,7 +793,7 @@ IndicationServerImplThread::_processIndicationRange(
 	IndicationServerImplThread::subscriptions_iterator last)
 {
 	OperationContext context;
-	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context);
+	CIMOMHandleIFCRef hdl = m_env->getCIMOMHandle(context, CIMOMEnvironment::E_DONT_SEND_INDICATIONS);
 	for ( ;first != last; ++first)
 	{
 		try

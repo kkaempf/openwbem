@@ -78,6 +78,20 @@ public:
 		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
 		ELockingFlag locking = E_LOCKING) const;
 
+	enum ESendIndicationsFlag
+	{
+		E_DONT_SEND_INDICATIONS,
+		E_SEND_INDICATIONS
+	};
+
+	/**
+	 * WARNING: The return value is valid only for the lifetime of context.
+	 */
+	CIMOMHandleIFCRef getCIMOMHandle(OperationContext& context,
+		ESendIndicationsFlag sendIndications,
+		EBypassProvidersFlag bypassProviders = E_USE_PROVIDERS,
+		ELockingFlag locking = E_LOCKING) const;
+
 	/**
 	 * WARNING: The return value is valid only for the lifetime of context.
 	 */
