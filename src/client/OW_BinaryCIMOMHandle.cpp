@@ -704,7 +704,7 @@ OW_BinaryCIMOMHandle::associators(
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	if (path.getKeys().size() == 0)
+	if (!path.isInstancePath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"associators requires an instance path not a class path");
@@ -743,7 +743,7 @@ OW_BinaryCIMOMHandle::associatorsClasses(
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	if (path.getKeys().size() > 0)
+	if (!path.isClassPath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"associatorsClasses requires a class path not an instance path");
@@ -806,7 +806,7 @@ OW_BinaryCIMOMHandle::references(
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	if (path.getKeys().size() == 0)
+	if (!path.isInstancePath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"references requires an instance path not a class path");
@@ -842,7 +842,7 @@ OW_BinaryCIMOMHandle::referencesClasses(
 	const OW_StringArray* propertyList)
 {
     OW_String ns(OW_CIMNameSpaceUtils::prepareNamespace(ns_));
-	if (path.getKeys().size() > 0)
+	if (!path.isClassPath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"referencesClasses requires a class path not an instance path");

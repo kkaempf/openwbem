@@ -322,7 +322,7 @@ outputKEYVALUE(ostream& ostr, const OW_CIMProperty& cp)
 //////////////////////////////////////////////////////////////////////////////
 void OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 {
-    if (cop.getKeys().size() != 0)
+    if (!cop.isClassPath())
     {
         OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "cop is an instance path, not a class path as expected.");
     }
@@ -345,7 +345,7 @@ void OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 // This isn't used.  If we ever need it we can uncomment it.
 // void OW_CIMLocalClassPathtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 // {
-//     if (cop.getKeys().size() != 0)
+//     if (!cop.isClassPath())
 //     {
 //         OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "cop is an instance path, not a class path as expected.");
 //     }
@@ -368,7 +368,7 @@ void OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 // void
 // OW_CIMClassPathtoXML(OW_CIMObjectPath const& cop, std::ostream& ostr)
 // {
-//     if (cop.getKeys().size() != 0)
+//     if (!cop.isClassPath())
 //     {
 //         OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER, "cop is an instance path, not a class path as expected.");
 //     }
@@ -413,15 +413,14 @@ void OW_CIMInstanceNametoXML(OW_CIMObjectPath const& cop, ostream& ostr)
 	ostr << cop.getObjectName() << "\">";
 
 
-	size_t numkeys = cop.getKeys().size();
-
 	//
 	// If keys > 1 then must use KEYBINDING - we also use it for
 	// the key == 1 case - most implementations can't cope with
 	// a single KEYVALUE without a KEYBINDING element
 	//
-	if(numkeys > 0)
+	if(cop.isInstancePath())
 	{
+		size_t numkeys = cop.getKeys().size();
 		for(size_t i = 0; i < numkeys; i++)
 		{
 			OW_CIMProperty cp = cop.getKeys()[i];

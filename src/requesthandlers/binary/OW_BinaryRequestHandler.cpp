@@ -877,7 +877,7 @@ OW_BinaryRequestHandler::associators(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	if (op.getKeys().size() == 0)
+	if (op.isClassPath())
 	{
 		// class path
 		OW_BinarySerialization::write(ostrm, OW_BINSIG_CLSENUM);
@@ -943,7 +943,7 @@ OW_BinaryRequestHandler::references(OW_CIMOMHandleIFCRef chdl,
 	}
 
 	OW_BinarySerialization::write(ostrm, OW_BIN_OK);
-	if (op.getKeys().size() == 0)
+	if (op.isClassPath())
 	{
 		// class path
 		OW_BinarySerialization::write(ostrm, OW_BINSIG_CLSENUM);

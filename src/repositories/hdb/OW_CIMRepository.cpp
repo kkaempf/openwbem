@@ -1289,9 +1289,8 @@ OW_CIMRepository::_commonReferences(
 	}
 	OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(), resultClassNames.end());
 
-	if (path.getKeys().size() == 0)
+	if (path.isClassPath())
 	{
-		// it's a class path
 		// Process all of the association classes without providers
 		_staticReferencesClass(path,
 			resultClass.empty() ? 0 : &resultClassNamesSet,
@@ -1526,9 +1525,8 @@ OW_CIMRepository::_commonAssociators(
 	OW_SortedVectorSet<OW_String> resultClassNamesSet(resultClassNames.begin(),
 			resultClassNames.end());
 
-	if (path.getKeys().size() == 0)
+	if (path.isClassPath())
 	{
-		// it's a class path
 		// Process all of the association classes without providers
 		_staticAssociatorsClass(path, assocClassName.empty() ? 0 : &assocClassNamesSet,
 			resultClass.empty() ? 0 : &resultClassNamesSet,

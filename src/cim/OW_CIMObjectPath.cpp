@@ -769,3 +769,16 @@ bool operator<(const OW_CIMObjectPath& lhs, const OW_CIMObjectPath& rhs)
 	//return lhs.toString() < rhs.toString();
 }
 
+//////////////////////////////////////////////////////////////////////////////
+bool OW_CIMObjectPath::isClassPath() const
+{
+	return getKeys().size() == 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+bool OW_CIMObjectPath::isInstancePath() const
+{
+	return getKeys().size() != 0;
+}
+
+

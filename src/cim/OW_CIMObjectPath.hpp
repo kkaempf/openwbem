@@ -306,6 +306,16 @@ public:
 	OW_CIMNameSpace getFullNameSpace() const;
 
 	/**
+	 * @return true if this object is a class path
+	 */
+	bool isClassPath() const;
+
+	/**
+	 * @return true if this object is an instance path
+	 */
+	bool isInstancePath() const;
+
+	/**
 	 * @return The string representation of this OW_CIMObjectPath.
 	 */
 	virtual OW_String toString() const;

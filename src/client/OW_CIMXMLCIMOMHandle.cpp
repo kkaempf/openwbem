@@ -116,7 +116,7 @@ OW_CIMXMLCIMOMHandle::sendExtrinsicXMLHeader( const OW_String &sMethod,
 	ostr << "<SIMPLEREQ>";
 	OW_CIMNameSpace nameSpace(ns);
 	ostr << "<METHODCALL NAME=\"" << sMethod << "\">";
-	if (path.getKeys().size() > 0) // it's an instance
+	if (path.isInstancePath())
 	{
 		ostr << "<LOCALINSTANCEPATH>";
 		OW_CIMtoXML(nameSpace, ostr, OW_CIMtoXMLFlags::doLocal);
@@ -1219,7 +1219,7 @@ OW_CIMXMLCIMOMHandle::associatorNames(
 		params.push_back(OW_Param(XMLP_RESULTROLE, resultRole));
 	}
 
-	if (path.getKeys().size() > 0)
+	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMInstanceNametoXML(path, extra);
@@ -1262,7 +1262,7 @@ OW_CIMXMLCIMOMHandle::associators(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	if (path.getKeys().size() == 0)
+	if (!path.isInstancePath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"associators requires an instance path not a class path");
@@ -1283,7 +1283,7 @@ OW_CIMXMLCIMOMHandle::associatorsClasses(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	if (path.getKeys().size() > 0)
+	if (!path.isClassPath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"associatorsClasses requires a class path not an instance path");
@@ -1323,7 +1323,7 @@ OW_CIMXMLCIMOMHandle::associatorsCommon(
 
 	generatePropertyListXML(extra,propertyList);
 
-	if (path.getKeys().size() > 0)
+	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMInstanceNametoXML(path, extra);
@@ -1372,7 +1372,7 @@ OW_CIMXMLCIMOMHandle::referenceNames(
 		params.push_back(OW_Param(XMLP_ROLE, role));
 	}
 
-	if (path.getKeys().size() > 0)
+	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMInstanceNametoXML(path, extra);
@@ -1406,7 +1406,7 @@ OW_CIMXMLCIMOMHandle::references(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	if (path.getKeys().size() == 0)
+	if (!path.isInstancePath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"references requires an instance path not a class path");
@@ -1426,7 +1426,7 @@ OW_CIMXMLCIMOMHandle::referencesClasses(
 	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
 	const OW_StringArray* propertyList)
 {
-	if (path.getKeys().size() > 0)
+	if (!path.isClassPath())
 	{
 		OW_THROWCIMMSG(OW_CIMException::INVALID_PARAMETER,
 			"referencesClasses requires a class path not an instance path");
@@ -1462,7 +1462,7 @@ OW_CIMXMLCIMOMHandle::referencesCommon(
 
 	generatePropertyListXML(extra,propertyList);
 
-	if (path.getKeys().size() > 0)
+	if (path.isInstancePath())
 	{
 		extra << "<IPARAMVALUE NAME=\"" << XMLP_OBJECTNAME << "\">";
 		OW_CIMInstanceNametoXML(path, extra);

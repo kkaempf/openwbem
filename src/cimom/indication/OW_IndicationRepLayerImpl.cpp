@@ -99,7 +99,7 @@ OW_IndicationRepLayerImpl::invokeMethod(
 
 	if (m_pEnv->getIndicationRepLayerMediator()->getInstMethodCallSubscriptionCount() > 0)
 	{
-		if (path.getKeys().size() > 0) // process the indication only if instance.
+		if (path.isInstancePath()) // process the indication only if instance.
 		{
 			try
 			{

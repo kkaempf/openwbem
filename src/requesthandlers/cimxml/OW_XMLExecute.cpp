@@ -355,7 +355,14 @@ namespace
 				cop.setHost(OW_SocketUtils::getFullyQualifiedHostName());
 			}
 
-			OW_CIMInstancePathtoXML(cop, ostr);
+			if (cop.isClassPath())
+			{
+				OW_CIMClassPathtoXML(cop, ostr);
+			}
+			else
+			{
+				OW_CIMInstancePathtoXML(cop, ostr);
+			}
 			ostr << "</OBJECTPATH>";
 			checkStream(ostr);
 		}
@@ -754,7 +761,7 @@ void OW_XMLExecute::associators(ostream& ostr,
 	OW_String resultRole = params[4].val.toString();
 
 	ostr << "<IRETURNVALUE>";
-	if (objectName.getKeys().size() == 0)
+	if (objectName.isClassPath())
 	{
 		// class path
 		AssocCIMClassXMLOutputter handler(ostr, includeQualifiers,
@@ -1401,7 +1408,7 @@ OW_XMLExecute::references(ostream& ostr, OW_CIMXMLParser& parser,
 	OW_String role = params[2].val.toString();
 	
 	ostr << "<IRETURNVALUE>";
-	if (path.getKeys().size() == 0)
+	if (path.isClassPath())
 	{
 		// It's a class
 		AssocCIMClassXMLOutputter handler(ostr, includeQualifiers,

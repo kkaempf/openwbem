@@ -1952,9 +1952,8 @@ OW_CIMServer::_commonReferences(
 	assocClassSeparator assocClassResult(!m_realRepository || resultClass.empty() ? 0 : &resultClassNames, dynamicAssocs, *this, aclInfo, ns, m_env->getLogger());
 	_getAssociationClasses(ns, resultClass, path.getObjectName(), assocClassResult, role);
 
-	if (path.getKeys().size() == 0)
+	if (path.isClassPath())
 	{
-		// it's a class path
 		// Process all of the association classes without providers
 		if (m_realRepository)
 		{
@@ -2154,9 +2153,8 @@ OW_CIMServer::_commonAssociators(
 		resultClassNames.append(resultClass);
 	}
 
-	if (path.getKeys().size() == 0)
+	if (path.isClassPath())
 	{
-		// it's a class path
 		// Process all of the association classes without providers
 		if (m_realRepository)
 		{
