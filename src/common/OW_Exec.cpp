@@ -202,7 +202,7 @@ int PopenStreamsImpl::getExitStatus()
 	}
 	// Now make sure the process has exited. We do everything possible to make
 	// sure the sub-process dies.
-	if (m_pid != -1) // it's set to -1 if we already sucessfully waited for it.
+	if (m_pid > 0 && m_pid != ::getpid()) // it's set to -1 if we already sucessfully waited for it.
 	{
 		pid_t waitpidrv;
 		
