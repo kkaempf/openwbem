@@ -53,6 +53,10 @@ Fix problems:
       CIM Repository.  If a qualifier won't work, then it can query the
       provider.  This will necessitate a change to the provider interface
       interface, so don't forget to tell Jason Long.
+    - Provider environments should throw exceptions after they are no longer 
+      valid. Indication provider environments can be saved.
+    - Indication server needs to call deActivateFilter on all active providers
+      when shutting down.
 
 New features:
     - Start to use __attribute__ ((warn_unused_result)) where applicable.
