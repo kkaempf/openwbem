@@ -40,20 +40,26 @@ struct OW_RefCount
 {
 	OW_RefCount()
 		: m_count(1)
-    {
-    }
+	{
+	}
 
-    void inc()
-    {
-        OW_AtomicInc(m_count);
-    }
+	OW_RefCount(OW_Atomic_t c)
+		: m_count(c)
+	{
+	}
 
-    bool decAndTest()
-    {
-        return OW_AtomicDecAndTest(m_count);
-    }
+	void inc()
+	{
+		OW_AtomicInc(m_count);
+	}
 
-private:
+	bool decAndTest()
+	{
+		return OW_AtomicDecAndTest(m_count);
+	}
+
+
+	private:
 	OW_Atomic_t m_count;
 };
 
