@@ -2,7 +2,6 @@
 #
 #	@(#)run.test	8.10 (Berkeley) 7/26/94
 #
-export DYLD_LIBRARY_PATH=../../db/db
 # db regression tests
 main()
 {
@@ -306,5 +305,6 @@ test13()
 
 LD_LIBRARY_PATH="$LD_LIBRARY_PATH:../db"
 LIBPATH="$LIBPATH:../db"
-export LD_LIBRARY_PATH LIBPATH
+DYLD_LIBRARY_PATH="DYLD_LIBRARY_PATH:../db"
+export LD_LIBRARY_PATH LIBPATH DYLD_LIBRARY_PATH
 main $*
