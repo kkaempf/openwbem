@@ -1412,6 +1412,7 @@ CIMOMEnvironment::_sortServicesForDependencies()
 
 	// first build the graph
 	ServiceDependencyGraph depGraph;
+	// step 1 insert all the nodes and handle the no-names.
 	for (size_t i = 0; i < m_services.size(); ++i)
 	{
 		String name = m_services[i]->getName();
@@ -1428,6 +1429,16 @@ CIMOMEnvironment::_sortServicesForDependencies()
 			{
 				OW_THROW(CIMOMEnvironmentException, Format("Invalid: 2 services with the same name: %1", name).c_str());
 			}
+			
+		}
+	}
+
+	// step 2 insert all the dependencies
+	for (size_t i = 0; i < m_services.size(); ++i)
+	{
+		String name = m_services[i]->getName();
+		if (name != "")
+		{
 			StringArray deps(m_services[i]->getDependencies());
 			for (size_t j = 0; j < deps.size(); ++j)
 			{
@@ -1435,6 +1446,17 @@ CIMOMEnvironment::_sortServicesForDependencies()
 				if (!depGraph.addDependency(name, deps[j]))
 				{
 					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", name, deps[j]).c_str());
+				}
+			}
+
+			// these are just the opposite direction than the dependencies
+			StringArray dependentServices(m_services[i]->getDependentServices());
+			for (size_t j = 0; j < dependentServices.size(); ++j)
+			{
+				OW_LOG_DEBUG(m_Logger, Format("Adding dependency for service %1:%2", dependentServices[j], name));
+				if (!depGraph.addDependency(dependentServices[j], name))
+				{
+					OW_THROW(CIMOMEnvironmentException, Format("Invalid: service %1 has duplicate dependencies: %2", dependentServices[j], name).c_str());
 				}
 			}
 		}

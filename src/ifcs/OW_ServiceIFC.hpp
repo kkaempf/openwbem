@@ -61,11 +61,24 @@ public:
 	virtual String getName() const;
 
 	/**
-	 * Get the list of services this service depends on.  Services names returned will be started before and
-	 * shutdown after this service.  If a dependent service doesn't exist, then the cimom startup will fail.
+	 * Get the list of services this service depends on. The returned services will be started before and
+	 * shutdown after this service. It is an error to return the name of a non-existent service, and the
+	 * cimom startup will fail.
 	 * The default is to have no dependencies.
 	 */
 	virtual StringArray getDependencies() const;
+
+	/**
+	 * Get the list of services that depend on this service which don't return this service's name from
+	 * getDependencies().  It is an error to return a service's name if that service returns this service's
+	 * name from getDependencies().
+	 * The returned services will be started after and shutdown before this service.  It is an error to
+	 * return the name of a non-existent service, and the cimom startup will fail.
+	 * This mechanism allows a service to be initialized before another service, even if the other service didn't
+	 * specify the name of this service as a dependency.
+	 * The default is to have no dependent services.
+	 */
+	virtual StringArray getDependentServices() const;
 
 	/**
 	 * init() will be called to give the derived class an opportunity to initialize itself.
