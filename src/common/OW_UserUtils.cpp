@@ -55,7 +55,7 @@ String getEffectiveUserId()
 #ifdef OW_WIN32
 #error "port me!"
 #else
-	return String(::geteuid());
+	return String(Int64(::geteuid()));
 #endif
 }
 
