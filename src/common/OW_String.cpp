@@ -38,6 +38,7 @@
 #include "OW_Format.hpp"
 #include "OW_BinarySerialization.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_AutoPtr.hpp"
 
 #include <cstdio>
 #include <cstdlib>
@@ -119,7 +120,7 @@ public:
 	size_t length() const { return m_len; }
 	char* data() const { return m_buf; }
 
-    ByteBuf* clone() const { return new ByteBuf(*this); }
+	ByteBuf* clone() const { return new ByteBuf(*this); }
 
 private:
 	size_t m_len;
@@ -139,15 +140,10 @@ OW_String::OW_String(OW_Bool parm) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// ATTN: UTF8
-// TODO: FIXME this is broken wrt i18n
 OW_String::OW_String(const OW_Char16& parm) :
 	m_buf(NULL)
 {
-	char bfr[2];
-	bfr[0] = static_cast<char>(parm.getValue());
-	bfr[1] = '\0';
-	m_buf = new ByteBuf(bfr);
+	this->m_buf = parm.toUTF8().m_buf;
 }
 
 #if defined(OW_WIN32)
@@ -159,9 +155,9 @@ OW_String::OW_String(OW_Int32 val) :
 {
 	char tmpbuf[32];
 	int len = snprintf(tmpbuf, sizeof(tmpbuf), "%d", val);
-	char* bfr = new char[len+1];
-	::snprintf(bfr, len+1, "%d", val);
-	m_buf = new ByteBuf(bfr, len);
+	OW_AutoPtrVec<char> bfr(new char[len+1]);
+	::snprintf(bfr.get(), len+1, "%d", val);
+	m_buf = new ByteBuf(bfr.release(), len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -170,9 +166,9 @@ OW_String::OW_String(OW_UInt32 val) :
 {
 	char tmpbuf[32];
 	int len = ::snprintf(tmpbuf, sizeof(tmpbuf), "%u", val);
-	char* bfr = new char[len+1];
-	::snprintf(bfr, len+1, "%u", val);
-	m_buf = new ByteBuf(bfr, len);
+	OW_AutoPtrVec<char> bfr(new char[len+1]);
+	::snprintf(bfr.get(), len+1, "%u", val);
+	m_buf = new ByteBuf(bfr.release(), len);
 }
 #if defined(OW_WIN32)
 #undef snprintf
@@ -240,10 +236,10 @@ OW_String::OW_String(const char* str, size_t len) :
 	}
 	else
 	{
-		char* bfr = new char[len+1];
-		::memcpy(bfr, str, len);
+		OW_AutoPtrVec<char> bfr(new char[len+1]);
+		::memcpy(bfr.get(), str, len);
 		bfr[len] = '\0';
-		m_buf = new ByteBuf(bfr, len);
+		m_buf = new ByteBuf(bfr.release(), len);
 	}
 }
 
@@ -270,21 +266,18 @@ OW_String::OW_String(const OW_CIMObjectPath& parm) :
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// ATTN: UTF8
-// TODO: FIXME this is broken wrt i18n
 OW_String::OW_String(const OW_Char16Array& ra) :
 	m_buf(NULL)
 {
 	size_t sz = ra.size();
 	if(sz > 0)
 	{
-		char* bfr = new char[sz+1];
+		OW_StringBuffer buf(sz * 2);
 		for(size_t i = 0; i < sz; i++)
 		{
-			bfr[i] = static_cast<char>(ra[i].getValue());
+			buf += ra[i].toUTF8();
 		}
-		bfr[sz] = '\0';
-		m_buf = new ByteBuf(bfr, sz);
+		m_buf = buf.releaseString().m_buf;
 	}
 	else
 	{
@@ -339,6 +332,15 @@ OW_String::length() const
 }
 
 //////////////////////////////////////////////////////////////////////////////
+size_t
+OW_String::UTF8Length() const
+{
+// ATTN: UTF8 ?
+// TODO: FIXME this is broken wrt i18n
+	return length();
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 #ifdef OW_WIN32
 #define vsnprintf _vsnprintf // stupid windoze
@@ -348,26 +350,20 @@ int
 OW_String::format(const char* fmt, ...)
 {
 	int n, size = 64;
-	char *p;
-	char *np;
+	OW_AutoPtrVec<char> p(new char[size]);
 	
 	va_list ap;
-
-	if ((p = new char[size]) == NULL)
-	{
-		return -1;
-	}
 	
 	// Try to print in the allocated space
 	while(true)
 	{
 		va_start(ap, fmt);
-		n = vsnprintf(p, size, fmt, ap);
+		n = vsnprintf(p.get(), size, fmt, ap);
 		va_end(ap);                // If that worked, return the string.
 
 		if(n > -1 && n < size)
 		{
-			m_buf = new ByteBuf(p, n);
+			m_buf = new ByteBuf(p.release(), n);
 			return static_cast<int>(length());
 		}
 
@@ -376,13 +372,7 @@ OW_String::format(const char* fmt, ...)
 		else           // glibc 2.0
 			size *= 2;  // twice the old size
 
-		delete [] p;
-		if((np = new char[size]) == NULL)
-		{
-			return -1;
-		}
-
-		p = np;
+		p = new char[size];
 	}
 }
 #ifdef OW_WIN32
@@ -439,17 +429,17 @@ OW_String::concat(const OW_String& arg)
 	if(!arg.empty())
 	{
 		size_t len = length() + arg.length();
-		char* bfr = new char[len+1];
+		OW_AutoPtrVec<char> bfr(new char[len+1]);
 		bfr[0] = 0;
 		if (m_buf)
 		{
-			::strcpy(bfr, m_buf->data());
+			::strcpy(bfr.get(), m_buf->data());
 		}
 		if (arg.m_buf)
 		{
-			::strcat(bfr, arg.m_buf->data());
+			::strcat(bfr.get(), arg.m_buf->data());
 		}
-		m_buf = new ByteBuf(bfr, len);
+		m_buf = new ByteBuf(bfr.release(), len);
 	}
 
 	return *this;
@@ -892,11 +882,11 @@ OW_String::readObject(istream& istrm) /*throw (OW_IOException)*/
 	OW_UInt32 len;
 	OW_BinarySerialization::readLen(istrm, len);
 
-	char* bfr = new char[len+1];
-	OW_BinarySerialization::read(istrm, bfr, len);
+	OW_AutoPtrVec<char> bfr(new char[len+1]);
+	OW_BinarySerialization::read(istrm, bfr.get(), len);
 	bfr[len] = '\0';
 
-	m_buf = new ByteBuf(bfr, len);
+	m_buf = new ByteBuf(bfr.release(), len);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -990,15 +980,14 @@ throwStringConversion(const char* str, const char* type)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// TODO: FIXME this is broken wrt i18n
 OW_Char16
 OW_String::toChar16() const
 {
-	if(length() != 1)
+	if(UTF8Length() != 1)
 	{
 		throwStringConversion(c_str(), "OW_Char16");
 	}
-	return OW_Char16(charAt(0));
+	return OW_Char16(*this);
 }
 
 template <typename T>
@@ -1197,7 +1186,7 @@ OW_String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 	// Don't need to check m_buf for NULL, because if length() == 0,
 	// this code won't be executed.
 	char* pstr = m_buf->data();
-	char* data = new char[m_buf->length()+1];
+	OW_AutoPtrVec<char> data(new char[m_buf->length()+1]);
 	data[0] = 0;
 
 	int i = 0;
@@ -1207,7 +1196,7 @@ OW_String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 		{
 			if(data[0] != 0)
 			{
-				ra.append(OW_String(data));
+				ra.append(OW_String(data.get()));
 				data[0] = 0;
 			}
 
@@ -1229,10 +1218,9 @@ OW_String::tokenize(const char* delims, EReturnTokensFlag returnTokens) const
 
 	if(data[0] != 0)
 	{
-		ra.append(OW_String(data));
+		ra.append(OW_String(data.get()));
 	}
 
-	delete [] data;
 	return ra;
 }
 
@@ -1577,5 +1565,3 @@ OW_String::strchr(const char* theStr, int c)
 	return ((*tmpChar) == c ? tmpChar : 0);
 }
 
-
-template class OW_Array<OW_String>;

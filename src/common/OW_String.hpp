@@ -56,6 +56,13 @@ DECLARE_EXCEPTION(StringConversion);
  * This OW_String class is an abstract data type that represents as NULL
  * terminated string of characters. OW_String objects are ref counted and
  * copy on write.
+ * Internal representation is UTF-8.  Conversion to/from OW_Char16 (UCS-2) is
+ * performed correctly.
+ * All operations that return/take an offset are based on the character array
+ * as if this were an ASCII string.
+ * The class does not enforce or maintain the integrity of any UTF-8 chars.
+ * length() returns the size in bytes of the string.  Use UTF8Length() to
+ * get the number of chars in the string.
  */
 class OW_String
 {
@@ -115,7 +122,6 @@ public:
 	OW_String(const char* str);
 
 	/**
-	 * ATTN: UTF8
 	 * Create a new OW_String object that will contain a single byte character
 	 * representation of the OW_Char16Array.
 	 * @param ra	The OW_Char16Array to use to construct the string
@@ -130,7 +136,6 @@ public:
 	explicit OW_String(OW_Bool parm);
 
 	/**
-	 * ATTN: UTF8
 	 * Create a new OW_String object that will contain the representation of
 	 * an OW_Char16 object
 	 * @param parm	The OW_Char16 object this string will represent.
@@ -206,9 +211,14 @@ public:
 	char* allocateCString() const;
 
 	/**
-	 * @return The length of this OW_String.
+	 * @return The number of bytes in this OW_String.
 	 */
 	size_t length() const;
+
+	/**
+	 * @return The number of UTF-8 chars in this OW_String.
+	 */
+	size_t UTF8Length() const;
 
 	/**
 	 * @return True if empty string, false otherwise
