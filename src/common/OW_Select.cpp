@@ -36,6 +36,7 @@
 #include "OW_config.h"
 #include "OW_Select.hpp"
 #include "OW_Assertion.hpp"
+#include "OW_Thread.hpp" // for testCancel()
 
 #if defined(OW_WIN32)
 #include "OW_AutoPtr.hpp"
@@ -113,28 +114,38 @@ select(const SelectTypeArray& selarray, UInt32 ms)
 int
 select(const SelectTypeArray& selarray, UInt32 ms)
 {
-	fd_set rfds;
-	struct timeval tv;
 	int rc;
-	int maxfd = 0;
-	FD_ZERO(&rfds);
-	for (size_t i = 0; i < selarray.size(); i++)
+	fd_set rfds;
+	// here we spin checking for thread cancellation every so often.
+	UInt32 remainingWait = ms;
+	do
 	{
-		OW_ASSERT(selarray[i] >= 0);
-		if (maxfd < selarray[i])
+		int maxfd = 0;
+		FD_ZERO(&rfds);
+		for (size_t i = 0; i < selarray.size(); i++)
 		{
-			maxfd = selarray[i];
+			OW_ASSERT(selarray[i] >= 0);
+			if (maxfd < selarray[i])
+			{
+				maxfd = selarray[i];
+			}
+			FD_SET(selarray[i], &rfds);
 		}
-		FD_SET(selarray[i], &rfds);
-	}
-	struct timeval* ptv = NULL;
-	if (ms != ~0U)
-	{
-		ptv = &tv;
-		tv.tv_sec = ms / 1000;
-		tv.tv_usec = (ms % 1000) * 1000;
-	}
-	rc = ::select(maxfd+1, &rfds, NULL, NULL, ptv);
+
+		const UInt32 waitMs = 100; // 1/10 of a second
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = std::min((waitMs % 1000) * 1000, remainingWait);
+
+		rc = ::select(maxfd+1, &rfds, NULL, NULL, &tv);
+
+		Thread::testCancel();
+		if (ms != ~0U)
+		{
+			remainingWait -= std::min(waitMs, remainingWait);
+		}
+	} while (rc == 0 && remainingWait > 0);
+	
 	if (rc < 0)
 	{
 		if (errno == EINTR)

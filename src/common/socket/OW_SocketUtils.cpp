@@ -189,8 +189,6 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 	fd_set readfds;
 	fd_set writefds;
 	int rc;
-	struct timeval *ptimeval = 0;
-	struct timeval timeout;
 	PosixUnnamedPipeRef lUPipe;
 	int pipefd = -1;
 	if (Socket::getShutDownMechanism())
@@ -200,35 +198,44 @@ waitForIO(SocketHandle_t fd, int timeOutSecs, SocketFlags::EWaitDirectionFlag wa
 		OW_ASSERT(lUPipe);
 		pipefd = lUPipe->getInputHandle();
 	}
-	FD_ZERO(&readfds);
-	FD_ZERO(&writefds);
-	if (timeOutSecs != -1)
+	// here we spin checking for thread cancellation every so often.
+	UInt32 remainingMsWait = timeOutSecs != -1 ? timeOutSecs * 1000 : ~0U;
+	do
 	{
-		timeout.tv_sec = timeOutSecs;
-		timeout.tv_usec = 0;
-		ptimeval = &timeout;
-	}
-	int maxfd = fd;
-	if (pipefd != -1)
-	{
-		FD_SET(pipefd, &readfds);
-		maxfd = MAX(fd, pipefd);
-	}
-	if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
-	{
-		FD_SET(fd, &readfds);
-	}
-	else if (waitFlag == SocketFlags::E_WAIT_FOR_OUTPUT)
-	{
-		FD_SET(fd, &writefds);
-	}
-	else
-	{
-		FD_SET(fd, &readfds);
-		FD_SET(fd, &writefds);
-	}
-	rc = ::select(maxfd + 1, &readfds, &writefds,
-					  NULL, ptimeval);
+		FD_ZERO(&readfds);
+		FD_ZERO(&writefds);
+		int maxfd = fd;
+		if (pipefd != -1)
+		{
+			FD_SET(pipefd, &readfds);
+			maxfd = MAX(fd, pipefd);
+		}
+		if (waitFlag == SocketFlags::E_WAIT_FOR_INPUT)
+		{
+			FD_SET(fd, &readfds);
+		}
+		else if (waitFlag == SocketFlags::E_WAIT_FOR_OUTPUT)
+		{
+			FD_SET(fd, &writefds);
+		}
+		else
+		{
+			FD_SET(fd, &readfds);
+			FD_SET(fd, &writefds);
+		}
+
+		const UInt32 waitMs = 100; // 1/10 of a second
+		struct timeval tv;
+		tv.tv_sec = 0;
+		tv.tv_usec = std::min((waitMs % 1000) * 1000, remainingMsWait);
+		Thread::testCancel();
+		rc = ::select(maxfd+1, &readfds, &writefds, NULL, &tv);
+		if (timeOutSecs != -1)
+		{
+			remainingMsWait -= std::min(waitMs, remainingMsWait);
+		}
+	} while (rc == 0 && remainingMsWait > 0);
+
 	switch (rc)
 	{
 		case 0:

@@ -225,29 +225,40 @@ SocketBaseImpl::connect(const SocketAddress& addr)
 			pipefd = lUPipe->getInputHandle();
 		}
 		fd_set rset, wset;
-		struct timeval tval;
-		FD_ZERO(&rset);
-		FD_SET(m_sockfd, &rset);
-		if (pipefd != -1)
+		// here we spin checking for thread cancellation every so often.
+		UInt32 remainingMsWait = m_connectTimeout != -1 ? m_connectTimeout * 1000 : ~0U;
+		do
 		{
-			FD_SET(pipefd, &rset);
-		}
-		FD_ZERO(&wset);
-		FD_SET(m_sockfd, &wset);
-		struct timeval* ptval = 0;
-		if (m_connectTimeout > 0)
-		{
-			tval.tv_sec = m_connectTimeout;
-			tval.tv_usec = 0;
-			ptval = &tval;
-		}
-		int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
-		if ((n = ::select(maxfd+1, &rset, &wset, NULL, ptval)) == 0)
+			FD_ZERO(&rset);
+			FD_SET(m_sockfd, &rset);
+			if (pipefd != -1)
+			{
+				FD_SET(pipefd, &rset);
+			}
+			FD_ZERO(&wset);
+			FD_SET(m_sockfd, &wset);
+			int maxfd = m_sockfd > pipefd ? m_sockfd : pipefd;
+
+			const UInt32 waitMs = 100; // 1/10 of a second
+			struct timeval tv;
+			tv.tv_sec = 0;
+			tv.tv_usec = std::min((waitMs % 1000) * 1000, remainingMsWait);
+
+			Thread::testCancel();
+			n = ::select(maxfd+1, &rset, &wset, NULL, &tv);
+
+			if (m_connectTimeout != -1)
+			{
+				remainingMsWait -= std::min(waitMs, remainingMsWait);
+			}
+		} while (n == 0 && remainingMsWait > 0);
+
+		if (n == 0)
 		{
 			::close(m_sockfd);
 			OW_THROW(SocketException, "SocketBaseImpl::connect() select timedout");
 		}
-		if (n == -1)
+		else if (n == -1)
 		{
 			::close(m_sockfd);
 			if (errno == EINTR)
