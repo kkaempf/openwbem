@@ -31,8 +31,14 @@ CMPIString* string2CMPIString(const OpenWBEM::String &s)
 
 static CMPIStatus stringRelease(CMPIString *eStr)
 {
-	(void) eStr;
 	//std::cout << "****** stringRelease()" << std::endl;
+
+	if(eStr->hdl)
+	{
+		::free(eStr->hdl);
+		((CMPI_Object*)eStr)->unlinkAndDelete();
+	}
+
 	CMReturn(CMPI_RC_OK);
 }
 
@@ -42,7 +48,7 @@ static CMPIString* stringClone(CMPIString *eStr, CMPIStatus* rc)
 	return (CMPIString*) new CMPI_Object((char*) eStr->hdl);
 }
 
-static char * stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc)
+static char* stringGetCharPtr(CMPIString *eStr, CMPIStatus* rc)
 {
 	char* ptr = (char*) eStr->hdl;
 	CMSetStatus(rc,CMPI_RC_OK);
