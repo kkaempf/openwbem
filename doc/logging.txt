@@ -32,7 +32,7 @@ message format
 -----------------------------------------------------------------------------
 Feature requirements & Use case list:
 
-- Existing functionality to log all messages at or below a threshold into a log.
+- Ability to log all messages at or below a threshold (one of the 4 predefined categories) into a log.
 
 - Ability to configure a log for each component.  e.g. A specific provider's messages all go to a log. The log only contains the provider's messages.
 
@@ -217,3 +217,21 @@ white       \x1b[1;37;40m
 dark white  \x1b[0;37;40m
 gray        \x1b[0;37;40m
 reset color \x1b[0;37;40m
+
+-----------------------------------------------------------------------------
+syslog
+
+If configured to use syslog, the syslog ident (which is prepended to every
+message) is: OW_PACKAGE_PREFIX "openwbem"
+OW_PACKAGE_PREFIX is "" by default or else the value of the
+--with-package-prefix= configure option.
+
+The syslog facility is LOG_DAEMON.
+
+The log categories are mapped to syslog levels thusly:
+FatalError -> LOG_CRIT
+Error      -> LOG_ERR
+Info       -> LOG_INFO
+Debug      -> LOG_DEBUG
+*          -> LOG_INFO
+ 
