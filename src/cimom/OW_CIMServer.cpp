@@ -167,6 +167,7 @@ void
 OW_AccessMgr::checkAccess(int op, const OW_String& ns,
 	const OW_ACLInfo& aclInfo)
 {
+	// TODO: This function plays fast and loose with NULL Properties and Values.  FIXME!!!
 	if (aclInfo.m_internal)
 	{
 		return;
@@ -1952,6 +1953,17 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 			orderedParams.push_back(inParams2[paramIdx]);
 			inParams2.erase(inParams2.begin() + paramIdx);
 
+			// make sure the type is right
+			OW_CIMValue v = orderedParams[i].getValue();
+			if (v)
+			{
+				if (methodInParams[i].getType().getType() != v.getType())
+				{
+					orderedParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+						v, methodInParams[i].getType()));
+				}
+			}
+
 			// if the in param is also an out param, assign the value to the out
 			// params array
 			if (methodInParams[i].getQualifier(OW_CIMQualifier::CIM_QUAL_OUT))
@@ -2009,6 +2021,20 @@ OW_CIMServer::invokeMethod(const OW_CIMObjectPath& name,
 			createProvEnvRef(real_ch),
 				name, methodName, orderedParams, outParams);
 		
+		// make sure the type is right on the outParams
+		for (size_t i = 0; i < methodOutParams.size(); ++i)
+		{
+			OW_CIMValue v = outParams[i].getValue();
+			if (v)
+			{
+				if (methodOutParams[i].getType().getType() != v.getType())
+				{
+					outParams[i].setValue(OW_CIMValueCast::castValueToDataType(
+						v, methodOutParams[i].getType()));
+				}
+			}
+		}
+
 		methodStr.reset();
 		methodStr += "OW_CIMServer finished invoking extrinsic method provider: ";
 		methodStr += cq.getValue().toString();

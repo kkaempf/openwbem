@@ -137,7 +137,15 @@ OW_CIMParamValue::writeObject(ostream &ostrm) const
 {
 	OW_CIMBase::writeSig( ostrm, OW_CIMPARAMVALUESIG );
 	m_pdata->m_name.writeObject(ostrm);
-	m_pdata->m_val.writeObject(ostrm);
+	if (m_pdata->m_val)
+	{
+		OW_Bool(true).writeObject(ostrm);
+		m_pdata->m_val.writeObject(ostrm);
+	}
+	else
+	{
+		OW_Bool(false).writeObject(ostrm);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -149,7 +157,12 @@ OW_CIMParamValue::readObject(istream &istrm)
 
 	OW_CIMBase::readSig( istrm, OW_CIMPARAMVALUESIG );
 	name.readObject(istrm);
-	val.readObject(istrm);
+	OW_Bool b;
+	b.readObject(istrm);
+	if (b)
+	{
+		val.readObject(istrm);
+	}
 
 	OW_MutexLock l = m_pdata.getWriteLock();
 	m_pdata->m_name = name;
