@@ -98,9 +98,12 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 #ifdef OW_USE_GNU_PTH
     initThreads();
     pth_usleep(milliSeconds * 1000);
+#elif defined(OW_HAVE_NANOSLEEP)
+	struct timespec wait;
+	wait.tv_sec = milliSeconds / 1000;
+	wait.tv_nsec = (milliSeconds & 1000) * 1000000;
+	while (nanosleep(&wait, &wait) == -1 && errno == EINTR);
 #else
-	usleep(milliSeconds * 1000);
-	/*
 	timeval now, end;
 	unsigned long microSeconds = milliSeconds * 1000;
 
@@ -128,7 +131,6 @@ OW_ThreadImpl::sleep(OW_UInt32 milliSeconds)
 		select(0, NULL, NULL, NULL, &tv);
 		gettimeofday(&now, NULL);
 	}
-	*/
 #endif
 }
 
