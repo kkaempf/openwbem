@@ -402,13 +402,15 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	 * we probably should do the same with indications, but currently
 	 * have no isIndication() flag!  TODO
 	 */
-	if (cc.isAssociation())
+	//OW_CIMQualifierArray::const_iterator iter = std::find(
+	//	cc.getQualifiers().begin(), cc.getQualifiers().end(),
+	//	OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
+	if (cc.isAssociation() &&
+		std::find(cc.getQualifiers().begin(), cc.getQualifiers().end(),
+		OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION)) == cc.getQualifiers().end())
 	{
-		ostr << "<QUALIFIER NAME=\"ASSOCIATION\" TYPE=\"boolean\" ";
-		OW_CIMQualifierArray::const_iterator iter = std::find(
-			cc.getQualifiers().begin(), cc.getQualifiers().end(),
-			OW_CIMQualifier(OW_CIMQualifier::CIM_QUAL_ASSOCIATION));
-		if (iter == cc.getQualifiers().end() && localOnly == OW_CIMtoXMLFlags::localOnly)
+		ostr << "<QUALIFIER NAME=\"Association\" TYPE=\"boolean\" ";
+		if (localOnly == OW_CIMtoXMLFlags::localOnly)
 		{
 			ostr << "PROPAGATED=\"true\" ";
 		}
@@ -418,12 +420,22 @@ void OW_CIMtoXML(OW_CIMClass const& cc, ostream& ostr,
 	{
 		for(size_t i = 0; i < cc.getQualifiers().size(); i++)
 		{
-			if (cc.getQualifiers()[i].getName().equalsIgnoreCase("ASSOCIATION"))
+			OW_CIMQualifier q(cc.getQualifiers()[i]);
+			/*
+			if (q.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 			{
-				continue;
+				if (q.getValue() && q.getValue().getType() == OW_CIMDataType::BOOLEAN)
+				{
+					OW_Bool b;
+					q.getValue.get(b);
+					if (b)
+					{
+						continue;
+					}
+				}
 			}
-			//m_pdata->m_qualifiers[i].toXML(ostr, localOnly);
-			OW_CIMtoXML(cc.getQualifiers()[i], ostr, localOnly);
+			*/
+			OW_CIMtoXML(q, ostr, localOnly);
 		}
 	}
 
@@ -989,9 +1001,10 @@ OW_CIMtoXML(OW_CIMQualifier const& cq, ostream& ostr,
 
 	//
 	// If only local definitions are required and this is a propagated
-	// qualifier then nothing to return
+	// qualifier then nothing to return. Never ignore the association qualifier.
 	//
-	if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated())
+	if(localOnly == OW_CIMtoXMLFlags::localOnly && cq.getPropagated() &&
+	   !cq.getName().equalsIgnoreCase(OW_CIMQualifier::CIM_QUAL_ASSOCIATION))
 	{
 		return;
 	}
