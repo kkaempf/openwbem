@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001 Caldera International, Inc All rights reserved.
+* Copyright (C) 2003 Caldera International, Inc All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -28,24 +28,68 @@
 * POSSIBILITY OF SUCH DAMAGE.
 *******************************************************************************/
 
-#ifndef OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
-#define OW_INSTANCE_PROVIDER_INFO_HPP_INCLUDE_GUARD_
+#ifndef OW_PROVIDER_INFO_BASE_HPP_INCLUDE_GUARD_
+#define OW_PROVIDER_INFO_BASE_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "OW_ProviderInfoBase.hpp"
 
-class OW_InstanceProviderInfo : public OW_ProviderInfoBase
+class OW_ProviderInfoBase
 {
 public:
-	// pull the names into this class
-	using OW_ProviderInfoBase::ClassInfo;
-	using OW_ProviderInfoBase::ClassInfoArray;
+	struct ClassInfo
+	{
+		explicit ClassInfo(OW_String const& className_)
+			: className(className_)
+		{}
+		ClassInfo(OW_String const& className_, OW_StringArray const& namespaces_)
+			: className(className_)
+			, namespaces(namespaces_)
+		{}
+		OW_String className;
+		OW_StringArray namespaces;
+	};
+
+	typedef OW_Array<ClassInfo> ClassInfoArray;
+
+	virtual ~OW_ProviderInfoBase() {}
+
+	/**
+	 * Add a class name to the list of instrumented classes for the provider.
+	 * This will not have a specific namespace associated with it, it will be
+	 * associated to all namespaces.
+	 * @param className The class name.
+	 */
+	void addInstrumentedClass(OW_String const& className)
+	{
+		m_instrumentedClasses.push_back(ClassInfo(className));
+	}
+	void addInstrumentedClass(ClassInfo const& classInfo)
+	{
+		m_instrumentedClasses.push_back(classInfo);
+	}
+	
+	const ClassInfoArray& getClassInfo() const
+	{
+		return m_instrumentedClasses;
+	}
+
+	void setProviderName(OW_String const& name)
+	{
+		m_name = name;
+	}
+
+	OW_String getProviderName() const
+	{
+		return m_name;
+	}
+
+private:
+	ClassInfoArray m_instrumentedClasses;
+	OW_String m_name;
 
 };
-
-typedef OW_Array<OW_InstanceProviderInfo> OW_InstanceProviderInfoArray;
 
 #endif
 

@@ -33,10 +33,18 @@
 #define OW_INDICATION_PROVIDER_INFO_HPP_INCLUDE_GUARD_
 
 #include "OW_config.h"
-#include "OW_InstanceProviderInfo.hpp"
+#include "OW_ProviderInfoBase.hpp"
 
 // may need to make this a separate class
-typedef OW_InstanceProviderInfo OW_IndicationProviderInfo;
+class OW_IndicationProviderInfo : public OW_ProviderInfoBase
+{
+public:
+	// pull the names into this class
+	using OW_ProviderInfoBase::ClassInfo;
+	using OW_ProviderInfoBase::ClassInfoArray;
+
+};
+
 typedef OW_Array<OW_IndicationProviderInfo> OW_IndicationProviderInfoArray;
 
 #endif

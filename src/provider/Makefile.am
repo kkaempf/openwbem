@@ -13,5 +13,6 @@ OW_AssociatorProviderInfo.hpp \
 OW_MethodProviderInfo.hpp \
 OW_PropertyProviderInfo.hpp \
 OW_IndicationProviderIFC.hpp \
-OW_IndicationProviderInfo.hpp
+OW_IndicationProviderInfo.hpp \
+OW_ProviderInfoBase.hpp
 
