@@ -56,7 +56,9 @@ extern "C"
 #include <paths.h>
 #include <sys/mdi.h>
 #else
+#ifdef OW_HAVE_STROPTS_H
 #include <stropts.h>
+#endif
 #include <net/if.h>
 #include <netinet/in.h>
 #if defined (OW_HAVE_SYS_SOCKIO_H)
@@ -65,6 +67,7 @@ extern "C"
 #include <strings.h>
 #include <fcntl.h>
 #endif
+#include <string.h>
 } // extern "C"
 // These need to be after the system includes because of some weird openserver
 // include order problem
