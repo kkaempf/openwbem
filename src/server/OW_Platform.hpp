@@ -92,6 +92,8 @@ public:
 	{
 		return plat_upipe;
 	}
+
+    static OW_String getCurrentUserName();
 private:
 	OW_Platform(); // prevent instantiation.
 	static OW_Reference<OW_UnnamedPipe> plat_upipe;

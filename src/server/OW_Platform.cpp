@@ -51,6 +51,7 @@ extern "C"
 #ifdef OW_USE_GNU_PTH
 #include <pth.h>
 #endif
+#include <pwd.h>
 }
 
 #include <iostream>
@@ -350,4 +351,16 @@ setupSigHandler(const OW_Bool& dbgFlg)
 	//handleSignal(SIGSTKFLT);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// static
+OW_String OW_Platform::getCurrentUserName()
+{
+    uid_t uid = getuid();
+    struct passwd* p = getpwuid(uid);
+    if (p)
+    {
+        return p->pw_name;
+    }
 
+    return "";
+}
