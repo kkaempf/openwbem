@@ -62,7 +62,9 @@ class OpenWBEM_ObjectManagerInstProv
 	: public CppReadOnlyInstanceProviderIFC
 	, public CppSimpleInstanceProviderIFC
 	, public CppIndicationProviderIFC
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	, public CppSimpleAssociatorProviderIFC
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 {
 private:
 	// Only have one Object Manager
@@ -84,11 +86,13 @@ public:
 		info.addInstrumentedClass(CLASS_OpenWBEM_HostedObjectManager);
 	}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	////////////////////////////////////////////////////////////////////////////
 	virtual void getAssociatorProviderInfo(AssociatorProviderInfo& info)
 	{
 		info.addInstrumentedClass(CLASS_OpenWBEM_HostedObjectManager);
 	}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 
 	////////////////////////////////////////////////////////////////////////////
 	virtual void getIndicationProviderInfo(IndicationProviderInfo& info)
@@ -299,6 +303,7 @@ public:
 		}
 	}
 
+#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 	////////////////////////////////////////////////////////////////////////////
 	void doReferences(const ProviderEnvironmentIFCRef &env,
 		CIMInstanceResultHandlerIFC &result,
@@ -311,6 +316,7 @@ public:
 	{
 		doSimpleEnumInstances(env, ns, assocClass, result, E_ALL_PROPERTIES);
 	}
+#endif // #ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 };
 
 } // end namespace OpenWBEM
