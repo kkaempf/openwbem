@@ -40,6 +40,7 @@ Fix problems:
     - The new redhat pthread_cancel() throws an exception that seems to clobber 
       owcimomd.  Need to figure out how to prevent this from happening.
     - Domain socket is only openable by root.
+    - Add tests in configure.in for -W flags supported.
 
 New features:
     - Handle the various options in the CIM_IndicationSubscription and
