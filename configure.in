@@ -194,8 +194,8 @@ case "$host" in
 	PIDFILEDIR="/var/locks"
 	LIB_EXT="so"
 	;;
-*-*-cygwin*)
-	;;
+#*-*-cygwin*)
+#	;;
 *-*-darwin*)
 	PLATFORMDIR="posix"
 	AC_DEFINE(DARWIN, 1, Target OS is DARWIN)
@@ -210,10 +210,10 @@ case "$host" in
 	CXX="g++"
 	LIB_EXT="dylib"
 	;;
-*-*-dgux*)
-	;;
-*-*-hpux10*)
-	;;
+#*-*-dgux*)
+#	;;
+#*-*-hpux10*)
+#	;;
 *-*-hpux11*)
 	AC_DEFINE(HPUX)
 	LIBS="$LIBS -lxnet -lpthread -lrt"
@@ -228,14 +228,14 @@ case "$host" in
 	LIB_EXT="sl"
 	RPATH_LINK_FLAG="-Wl,+s -Wl,+b"
 	;;
-*-*-irix5*)
-	;;
-*-*-irix6*)
-	;;
+#*-*-irix5*)
+#	;;
+#*-*-irix6*)
+#	;;
 *-*-linux*)
 	AC_DEFINE(GNU_LINUX)
-	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe -D_REENTRANT"
-	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe -D_REENTRANT"
+	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
 	CXXCOMMONLINKFLAGS=""
 	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
 	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
@@ -258,8 +258,8 @@ case "$host" in
 	CXXBINLINKFLAGS="-lstubs"
 	CXXSHAREDLIBLINKFLAGS="-lstubs"
 	;;
-*-*-netbsd*)
-	;;
+#*-*-netbsd*)
+#	;;
 *-*-freebsd*)
 	AC_DEFINE(FREEBSD)
 	PLAT_CFLAGS="-fPIC -D_REENTRANT -pipe -pthread"
@@ -283,6 +283,24 @@ case "$host" in
 	PIDFILEDIR="/var/run"
 	RPATH_LINK_FLAG="-R"
 	LIB_EXT="so"
+	;;
+*)
+	AC_MSG_WARN(***************************************************************************)
+	AC_MSG_WARN(Unknown platform ($host). The build may fail. Using linux/gcc build flags.)
+	AC_MSG_WARN(***************************************************************************)
+	PLAT_CFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
+	PLAT_CXXFLAGS="-fPIC -D_REENTRANT -D_GNU_SOURCE -pipe"
+	CXXCOMMONLINKFLAGS=""
+	CXXBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
+	CBINLINKFLAGS="-Wl,-Bdynamic -lpthread $LDFLAGS"
+	CXXSHAREDLIBLINKFLAGS='-shared -fPIC -Wl,-soname -Wl,$@ -lpthread'
+	PLAT_OPTFLAGS="-O3"
+	PIDFILEDIR="/var/run"
+	LIB_EXT="so"
+	STATIC_LINK_FLAGS="-Wl,-Bstatic"
+	DYNAMIC_LINK_FLAGS="-Wl,-Bdynamic"
+	DYNAMIC_EXPORT_FLAG=-Wl,--export-dynamic
+	RPATH_LINK_FLAG="-Wl,-rpath="
 	;;
 esac
 
