@@ -220,6 +220,7 @@ namespace ConfigOpts
 	static const char* const MAX_INDICATION_EXPORT_THREADS_opt = "owcimomd.max_indication_export_threads";
 	static const char* const RESTART_ON_ERROR_opt = "owcimomd.restart_on_error";
 	static const char* const AUTHORIZATION_LIB_opt = "owcimomd.authorization_lib";
+	static const char* const AUTHORIZATION2_LIB_opt = "owcimomd.authorization2_lib";
 	static const char* const LISTEN_ADDRESSES_opt = "http_server.listen_addresses";
 	static const char* const INTEROP_SCHEMA_NAMESPACE_opt = "owcimomd.interop_schema_namespace";
 	static const char* const UDS_FILENAME_opt = "http_server.uds_filename";
