@@ -91,7 +91,7 @@ New features:
       made, then batch export can be used for greater efficiency.
       To prevent a set of busy handlers from causing starvation of others 
       beyond the number of processing threads, set a maximum limit on
-      the time one can stay around.
+      the time (or number of indications processed) one can stay around.
     - Don't load the authentication provider if allow_anonymous is turned on.
     - client batch support
     - Add support for running under inetd
@@ -105,7 +105,8 @@ New features:
     - Add an option to the CIM Listener to run in single threaded mode.
     - Add support for TCP wrappers (/etc/{hosts.allow,hosts.deny}).
     - rewrite the repository with libdb 3 or 4 with support for transactions
-      and recovery.
+      and recovery. Also take a look at SQLite (www.sqlite.org), which has a better 
+      license and looks easier to use than libdb.
     - Add an option to run as a different user and drop privelidges on startup.
       This will be dependent on the new repository.  With the current
       repository it's necessary to open/close it for each operation.
