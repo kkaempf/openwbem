@@ -55,11 +55,13 @@ public:
 	int getOutputHandle() { return m_fds[1]; }
 	virtual void open();
 	virtual int close();
+	virtual bool isOpen() const;
 	int closeInputHandle();
 	int closeOutputHandle();
 	virtual void setOutputBlocking(bool outputIsBlocking=true) OW_DEPRECATED; // in 3.0.0
 	virtual void setBlocking(EBlockingMode outputIsBlocking=E_BLOCKING);
 	virtual Select_t getSelectObj() const;
+	virtual Select_t getWriteSelectObj() const;
 private:
 	int m_fds[2];
 #ifdef OW_WIN32

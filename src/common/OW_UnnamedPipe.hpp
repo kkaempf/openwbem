@@ -157,6 +157,17 @@ public:
 	 */
 	virtual int close() = 0;
 
+	/**
+	 * Is the pipe open or closed?
+	 */
+	virtual bool isOpen() const = 0;
+
+	/**
+	 * Get a write select object
+	 */
+	virtual Select_t getWriteSelectObj() const = 0;
+
+
 	enum EBlockingMode
 	{
 		E_NONBLOCKING,

@@ -416,6 +416,13 @@ PosixUnnamedPipe::close()
 	return rc;
 }
 //////////////////////////////////////////////////////////////////////////////
+bool
+PosixUnnamedPipe::isOpen() const
+{
+	return (m_fds[0] != -1) || (m_fds[1] != -1);
+}
+
+//////////////////////////////////////////////////////////////////////////////
 int
 PosixUnnamedPipe::closeInputHandle()
 {
@@ -568,9 +575,23 @@ Select_t
 PosixUnnamedPipe::getSelectObj() const
 {
 #ifdef OW_WIN32
-//	// Can't select on an unnamed pipe
-//	OW_ASSERT(false);
-//	return Select_t();
+	Select_t selectObj;
+	selectObj.event = (HANDLE)m_events[0];
+	selectObj.sockfd = INVALID_SOCKET;
+	selectObj.networkevents = 0;
+	selectObj.doreset = false;
+
+	return selectObj;
+#else
+	return m_fds[0];
+#endif
+}
+
+//////////////////////////////////////////////////////////////////////////////
+Select_t
+PosixUnnamedPipe::getWriteSelectObj() const
+{
+#ifdef OW_WIN32
 	Select_t selectObj;
 	selectObj.event = (HANDLE)m_events[1];
 	selectObj.sockfd = INVALID_SOCKET;
@@ -579,7 +600,7 @@ PosixUnnamedPipe::getSelectObj() const
 
 	return selectObj;
 #else
-	return m_fds[0];
+	return m_fds[1];
 #endif
 }
 
