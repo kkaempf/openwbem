@@ -77,7 +77,6 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				" [No Authentication Mechanism Available!]", authLib, e.type(),
 				e.getMessage()));
 
-			m_authenticator.setNull();
 			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
 		}
 		catch(...)
@@ -86,7 +85,6 @@ OW_AuthManager::init(OW_ServiceEnvironmentIFCRef env)
 				" to initialize: Unknown Exception Caught"
 				" [No Authentication Mechanism Available!]", authLib));
 
-			m_authenticator.setNull();
 			OW_THROW(OW_Exception, "No Authentication Mechanism Available");
 		}
 	}
