@@ -38,7 +38,7 @@
 #define OW_CIMDATETIME_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
 #include "OW_Types.hpp"
-#include "OW_COWReference.hpp"
+#include "OW_COWIntrusiveReference.hpp"
 #include "OW_CIMException.hpp"
 #include "OW_CIMNULL.hpp"
 #include "OW_String.hpp"
@@ -326,7 +326,7 @@ public:
 	operator safe_bool () const;
 	safe_bool operator!() const;
 private:
-	COWReference<DateTimeData> m_dptr;
+	COWIntrusiveReference<DateTimeData> m_dptr;
 	friend bool operator<(const CIMDateTime& x, const CIMDateTime& y);
 };
 std::ostream& operator<< (std::ostream& ostr, const CIMDateTime& arg);
