@@ -38,7 +38,7 @@
 
 OW_Mutex OW_Exception::m_mutex;
 
-//////////////////////////////////////////////////////////////////////////////					 
+//////////////////////////////////////////////////////////////////////////////					
 static void freeBuf(char** ptr)
 {
 	if(*ptr)
@@ -48,7 +48,7 @@ static void freeBuf(char** ptr)
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
+//////////////////////////////////////////////////////////////////////////////					
 static char* dupString(const char* str)
 {
 	char* rv = new char[strlen(str)+1];
@@ -56,18 +56,24 @@ static char* dupString(const char* str)
 	return rv;
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-OW_Exception::OW_Exception() : 
-	m_file(0), m_line(0), m_msg(0), 
-	m_stackTrace(OW_StackTrace::getStackTrace())
+//////////////////////////////////////////////////////////////////////////////					
+OW_Exception::OW_Exception()
+	: std::exception()
+	, m_file(0)
+	, m_line(0)
+	, m_msg(0)
+	, m_stackTrace(OW_StackTrace::getStackTrace())
 {
 	m_mutex.acquire();
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-OW_Exception::OW_Exception(const char* file, int line, const char* msg) :
-	m_file(0), m_line(line), m_msg(0),
-	m_stackTrace(OW_StackTrace::getStackTrace())
+//////////////////////////////////////////////////////////////////////////////					
+OW_Exception::OW_Exception(const char* file, int line, const char* msg)
+	: std::exception()
+	, m_file(0)
+	, m_line(line)
+	, m_msg(0)
+	, m_stackTrace(OW_StackTrace::getStackTrace())
 {
 	m_mutex.acquire();
 	if(file)
@@ -81,10 +87,13 @@ OW_Exception::OW_Exception(const char* file, int line, const char* msg) :
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-OW_Exception::OW_Exception(const char* msg) : 
-	m_file(0), m_line(0), m_msg(0),
-	m_stackTrace(OW_StackTrace::getStackTrace())
+//////////////////////////////////////////////////////////////////////////////					
+OW_Exception::OW_Exception(const char* msg)
+	: std::exception()
+	, m_file(0)
+	, m_line(0)
+	, m_msg(0)
+	, m_stackTrace(OW_StackTrace::getStackTrace())
 {
 	m_mutex.acquire();
 	if(msg)
@@ -93,10 +102,13 @@ OW_Exception::OW_Exception(const char* msg) :
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-OW_Exception::OW_Exception( const OW_Exception& e ) : 
-	m_file(0), m_line(e.m_line), m_msg(0),
-	m_stackTrace(0)
+//////////////////////////////////////////////////////////////////////////////					
+OW_Exception::OW_Exception( const OW_Exception& e )
+	: std::exception(e)
+	, m_file(0)
+	, m_line(e.m_line)
+	, m_msg(0)
+	, m_stackTrace(0)
 {
 	m_mutex.acquire();
 	if(e.m_file)
@@ -115,7 +127,7 @@ OW_Exception::OW_Exception( const OW_Exception& e ) :
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
+//////////////////////////////////////////////////////////////////////////////					
 OW_Exception::~OW_Exception()
 {
 	freeBuf(&m_file);
@@ -124,8 +136,8 @@ OW_Exception::~OW_Exception()
 	m_mutex.release();
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-OW_Exception& 
+//////////////////////////////////////////////////////////////////////////////					
+OW_Exception&
 OW_Exception::operator=( const OW_Exception& rhs )
 {
 	if (this != &rhs)
@@ -155,29 +167,29 @@ OW_Exception::operator=( const OW_Exception& rhs )
 	return *this;
 }
 		
-//////////////////////////////////////////////////////////////////////////////					 
-const char* 
-OW_Exception::getMessage() const 
-{ 
+//////////////////////////////////////////////////////////////////////////////					
+const char*
+OW_Exception::getMessage() const
+{
 	return (m_msg != NULL) ? m_msg : "";
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-const char* 
-OW_Exception::getFile() const 
-{ 
+//////////////////////////////////////////////////////////////////////////////					
+const char*
+OW_Exception::getFile() const
+{
 	return (m_file != NULL) ? m_file : "";
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-const char* 
-OW_Exception::getStackTrace() const 
-{ 
+//////////////////////////////////////////////////////////////////////////////					
+const char*
+OW_Exception::getStackTrace() const
+{
 	return (m_stackTrace != NULL) ? m_stackTrace->c_str() : "";
 }
 
-//////////////////////////////////////////////////////////////////////////////					 
-std::ostream& 
+//////////////////////////////////////////////////////////////////////////////					
+std::ostream&
 operator<<(std::ostream& os, const OW_Exception& e)
 {
 	if(*e.getFile() == '\0')
@@ -215,5 +227,12 @@ operator<<(std::ostream& os, const OW_Exception& e)
 	}
 
 	return os;
+}
+
+//////////////////////////////////////////////////////////////////////////////					
+const char*
+OW_Exception::what() const throw()
+{
+	return getMessage();
 }
 

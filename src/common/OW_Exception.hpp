@@ -34,10 +34,11 @@
 #include "OW_config.h"
 #include "OW_Mutex.hpp"
 #include <iosfwd>
+#include <exception>
 
 class OW_StackTrace;
 
-class OW_Exception
+class OW_Exception : public std::exception
 {
 public:
 	OW_Exception();
@@ -51,6 +52,8 @@ public:
 	const char* getFile() const;
 	const char* getStackTrace() const;
 	int getLine() const {  return m_line; }
+
+	virtual const char* what() const throw();
 
 protected:
 	char* m_file;
