@@ -128,123 +128,6 @@ namespace
 		return String(arrayString.toString());
 	}
 
-	bool classNameIsAbsolute(String const& possiblyQualifiedClassName)
-	{
-		return possiblyQualifiedClassName.length() > 0
-			&& possiblyQualifiedClassName[0] == '/';
-	}
-
-	String extractNameSpaceQualifier(String const& possiblyQualifiedClassName)
-	{
-		size_t slashIndex= possiblyQualifiedClassName.lastIndexOf('/');
-		if (slashIndex == String::npos)
-		{
-			OW_WQL_LOG_DEBUG(Format("%1 contains no namespace qualifier."
-					, possiblyQualifiedClassName));
-			return "";
-		}
-		else
-		{
-			return possiblyQualifiedClassName.substring(0, slashIndex);
-		}
-	}
-
-	String ensureTrailingSlash(String const& baseNameSpace)
-	{
-		if (baseNameSpace.endsWith('/'))
-		{
-			OW_WQL_LOG_DEBUG(Format("%1 has trailing slash.", baseNameSpace));
-			return baseNameSpace;
-		}
-		else
-		{
-			OW_WQL_LOG_DEBUG(Format("%1 does not have trailing slash.", baseNameSpace));
-			return baseNameSpace + "/";
-		}
-	}
-
-	String removeTrailingSlash(String const& baseNameSpace)
-	{
-		OW_WQL_LOG_DEBUG(Format("baseNameSpace: %1",baseNameSpace));
-		StringBuffer name(baseNameSpace);
-		while(name.endsWith('/')){name.chop();}
-		OW_WQL_LOG_DEBUG(Format("Returning %1", name));
-		return name.c_str();
-	}
-
-	/*
-	 CIMOMHandleIFCRef::getClass() has an appalling misbehavior such
-    	 that leading slashes get removed when getClass is called from a
-    	 local WQL query, but do not get removed when getClass is called
-    	 from a remote WQL query. So we use this function to remove
-    	 leading slashes from the namespace.
-	*/
-	String removeLeadingSlash(String const& baseNameSpace)
-	{
-		OW_WQL_LOG_DEBUG(Format("baseNameSpace: %1",baseNameSpace));
-		String name(baseNameSpace);
-		while(name.startsWith('/')){name= name.substring(1);}
-		OW_WQL_LOG_DEBUG(Format("Returning %1", name));
-		return name;
-	}
-
-	String extractUnqualifiedClassName(String const& possiblyQualifiedClassName)
-	{
-		OW_WQL_LOG_DEBUG(Format("possiblyQualifiedClassName: %1"
-				, possiblyQualifiedClassName));
-		size_t slashIndex= possiblyQualifiedClassName.lastIndexOf('/');
-		OW_WQL_LOG_DEBUG(Format("slashIndex: %1", slashIndex));
-		if (slashIndex == String::npos)
-		{
-			OW_WQL_LOG_DEBUG(Format("%1 is not qualified.", possiblyQualifiedClassName));
-			return possiblyQualifiedClassName;
-		}
-		else
-		{
-			return possiblyQualifiedClassName.substring
-				(slashIndex + 1);
-		}
-	}
-
-	/**
-	
-	 @param baseNameSpace If possiblyQualifiedClassName is relative, it
-	     is relative to baseNameSpace. If possiblyQualifiedClassName is
-	     not relative, baseNameSpace is ignored.
-
-	 @param possiblyQualifiedClassName A class name which may be
-    	 relative or absolute, qualified or unqualified.
-
-	 @param absoluteNamespace Used to return the absolute namespace of
-    	 possiblyQualifiedClassName.
-
-	 @param unqualifiedClassName Used to return 
-	*/
-	void getAbsoluteNamespaceAndUnqualifiedClassName
-		( String const& baseNameSpace,
-			String const& possiblyQualifiedClassName,
-			String& absoluteNamespace,
-			String& unqualifiedClassName
-	  )
-	{
-		OW_WQL_LOG_DEBUG(Format("baseNameSpace: %1 , possiblyQualifiedClassName %2", baseNameSpace, possiblyQualifiedClassName));
-		if (classNameIsAbsolute(possiblyQualifiedClassName))
-		{
-			OW_WQL_LOG_DEBUG("possiblyQualifiedClassName is absolute.");
-			absoluteNamespace= extractNameSpaceQualifier
-				(possiblyQualifiedClassName);
-		}
-		else
-		{
-			OW_WQL_LOG_DEBUG("possiblyQualifiedClassName is not absolute.");
-			absoluteNamespace= ensureTrailingSlash(baseNameSpace)
-				+ extractNameSpaceQualifier(possiblyQualifiedClassName);
-		}
-		absoluteNamespace= removeLeadingSlash(removeTrailingSlash(absoluteNamespace));
-		unqualifiedClassName= extractUnqualifiedClassName
-			(possiblyQualifiedClassName);
-	}
-	
 	const char * typeStrings[] =
 	{
 		"CIMInstanceArray",
@@ -1171,10 +1054,9 @@ void WQLProcessor::visit_aExpr_aExpr_EQUALS_aExpr(
 		if (rhs.type == DataType::StringType)
 		{
 			CIMInstanceArray newInstances;
-			String nameSpace;
-			String className;
-			getAbsoluteNamespaceAndUnqualifiedClassName(m_ns, rhs.str, nameSpace, className);
-			OW_WQL_LOG_DEBUG(Format("absolute namespace: %1 , unqualified class name: %2", nameSpace, className));
+			String nameSpace= m_ns;
+			String className= rhs.str;
+			OW_WQL_LOG_DEBUG(Format("namespace: %1 , class name: %2", nameSpace, className));
 			//If this is a schema query, the lhs must be '__Dynasty', __Class, etc.
 			if (lhs.str.equalsIgnoreCase("__Class"))
 			{
@@ -1603,9 +1485,8 @@ void WQLProcessor::visit_aExpr_aExpr_ISA_aExpr(
 			OW_WQL_LOG_DEBUG(Format("Found %1", lhs.str));
 			if (rhs.type == DataType::StringType)
 			{
-				String nameSpace;
-				getAbsoluteNamespaceAndUnqualifiedClassName(m_ns, rhs.str, nameSpace, className);
-				OW_WQL_LOG_DEBUG(Format("absolute namespace: %1 , unqualified class name: %2", nameSpace, className));
+				String nameSpace= m_ns;
+				OW_WQL_LOG_DEBUG(Format("namespace: %1 , class name: %2", nameSpace, className));
 				//Find the rhs and all its subclasses.
 				CIMInstance rhsClass= embedClassInInstance(m_hdl->getClass(nameSpace, className));
 				OW_WQL_LOG_DEBUG(Format("Found class: %1", rhsClass.toString()));

@@ -221,12 +221,6 @@ namespace testSchemaQuery
 		rch->createClass(ns, CIMClass("ClassWithNoChildren"));
 		rch->createClass(ns, CIMClass("ClassWithManyChildren"));
 		rch->createClass(ns, CIMClass("ClassWithManyChildren2Level"));
-		LOG_DEBUG("Creating test namespaces absoluteNs and relativeNs.");
-		CIMNameSpaceUtils::createCIM_Namespace(*rch, "/absoluteNs");
-		CIMNameSpaceUtils::createCIM_Namespace(*rch, "/root/testsuite/relativeNs");
-		LOG_DEBUG("Adding test classes to namespace absoluteNs .");
-		rch->createClass("/absoluteNs", CIMClass("ClassWithNoChildren"));
-		rch->createClass(ns + "/relativeNs", CIMClass("ClassWithNoChildren"));
 		mkChildren(rch, ns.c_str(), "ClassWithManyChildren");
 		mkChildren2Level(rch, ns.c_str(), "ClassWithManyChildren2Level");
 	}
@@ -312,19 +306,6 @@ namespace testSchemaQuery
 			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"Child1OfClassWithManyChildren2Level\" ", 4);
 		}
-
-		void absoluteNs(CIMOMHandleIFCRef& rch)
-		{
-			LOG_DEBUG("");
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"/absoluteNs/ClassWithNoChildren\" ", 1);
-		}
-
-		void relativeNs(CIMOMHandleIFCRef& rch)
-		{
-			LOG_DEBUG("");
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __this ISA \"relativeNs/ClassWithNoChildren\" ", 1);
-		}
-		
 	}
 	namespace classTests
 	{
@@ -363,18 +344,6 @@ namespace testSchemaQuery
 		{
 			LOG_DEBUG("");
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"Child1OfClassWithManyChildren2Level\" ", 1);
-		}
-		
-		void absoluteNs(CIMOMHandleIFCRef& rch)
-		{
-			LOG_DEBUG("");
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"/absoluteNs/ClassWithNoChildren\" ", 1);
-		}
-
-		void relativeNs(CIMOMHandleIFCRef& rch)
-		{
-			LOG_DEBUG("");
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __class = \"relativeNs/ClassWithNoChildren\" ", 1);
 		}
 		
 	}
@@ -417,18 +386,6 @@ namespace testSchemaQuery
 			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"Child1OfClassWithManyChildren2Level\" ", 0);
 		}
 		
-		void absoluteNs(CIMOMHandleIFCRef& rch)
-		{
-			LOG_DEBUG("");
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"/absoluteNs/ClassWithNoChildren\" ", 1);
-		}
-
-		void relativeNs(CIMOMHandleIFCRef& rch)
-		{
-			LOG_DEBUG("");
-			testQuery(rch, "SELECT \"*\" FROM meta_class WHERE __dynasty = \"relativeNs/ClassWithNoChildren\" ", 1);
-		}
-		
 	}
 	void testThis(CIMOMHandleIFCRef& rch)
 	{
@@ -441,8 +398,6 @@ namespace testSchemaQuery
 		thisTests::manyChildren(rch);
 		thisTests::manyLevelsOfChildren(rch);
 		thisTests::notRoot(rch);
-		thisTests::absoluteNs(rch);
-		thisTests::relativeNs(rch);
 	}
 
 	void testClass(CIMOMHandleIFCRef& rch)
@@ -455,8 +410,6 @@ namespace testSchemaQuery
 		classTests::manyChildren(rch);
 		classTests::manyLevelsOfChildren(rch);
 		classTests::notRoot(rch);
-		classTests::absoluteNs(rch);
-		classTests::relativeNs(rch);
 	}
 
 	void testDynasty(CIMOMHandleIFCRef& rch)
@@ -468,8 +421,6 @@ namespace testSchemaQuery
 		noChildren(rch, "=", "__dynasty");
 		dynastyTests::manyChildren(rch);
 		dynastyTests::manyLevelsOfChildren(rch);
-		dynastyTests::absoluteNs(rch);
-		dynastyTests::relativeNs(rch);
 		//For __dynasty, notRoot *must* fail.
 		try
 		{
