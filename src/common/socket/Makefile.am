@@ -12,6 +12,7 @@ OW_SocketBaseImpl.cpp \
 OW_SocketImpl.cpp \
 OW_NwIface.cpp \
 OW_SSLCtxMgr.cpp \
+OW_SSLException.cpp \
 OW_SocketStreamBuffer.cpp \
 OW_SocketUtils.cpp
 

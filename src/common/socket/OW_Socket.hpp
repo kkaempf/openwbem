@@ -72,7 +72,7 @@ public:
 	 * Construct a Socket
 	 * @param sslCtx The SSL client context. If null, the socket will not use SSL.
 	 */
-	Socket(SSLClientCtxRef sslCtx);
+	Socket(const SSLClientCtxRef& sslCtx);
 	/**
 	 * Allocate a new  Socket
 	 * @param isSSL is it an ssl socket?
@@ -279,7 +279,7 @@ private:
 	 * @param isSSL is it an SSL socket?
 	 */
 	Socket(SocketHandle_t fd, SocketAddress::AddressType addrType,
-		SSLServerCtxRef sslCtx);
+		const SSLServerCtxRef& sslCtx);
 
 #ifdef OW_WIN32
 #pragma warning (push)

@@ -60,7 +60,7 @@ Socket::Socket()
 {
 }
 //////////////////////////////////////////////////////////////////////////////
-Socket::Socket(SSLClientCtxRef sslCtx)
+Socket::Socket(const SSLClientCtxRef& sslCtx)
 {
 	if (sslCtx)
 	{
@@ -112,7 +112,7 @@ Socket::Socket(SocketHandle_t fd,
 //////////////////////////////////////////////////////////////////////////////
 // Used by ServerSocket2::accept()
 Socket::Socket(SocketHandle_t fd,
-	SocketAddress::AddressType addrType, SSLServerCtxRef sslCtx)
+	SocketAddress::AddressType addrType, const SSLServerCtxRef& sslCtx)
 {
 	if (sslCtx)
 	{

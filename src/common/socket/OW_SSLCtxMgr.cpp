@@ -52,6 +52,7 @@
 #include <openssl/err.h>
 #include <cstring>
 #include <csignal>
+#include <cerrno>
 #ifndef OW_WIN32
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -123,7 +124,7 @@ static void dyn_destroy_function(struct CRYPTO_dynlock_value *l,
 
 static unsigned long id_function()
 {
-	return (unsigned long)OW_NAMESPACE::ThreadImpl::thread_t_ToUInt64(OW_NAMESPACE::ThreadImpl::currentThread());
+	return static_cast<unsigned long>(OW_NAMESPACE::ThreadImpl::thread_t_ToUInt64(OW_NAMESPACE::ThreadImpl::currentThread()));
 }
 
 static void locking_function(int mode, int n, const char*, int)
@@ -139,6 +140,23 @@ static void locking_function(int mode, int n, const char*, int)
 }
 } // end extern "C"
 
+class X509Freer
+{
+public:
+	X509Freer(X509* x509)
+		: m_x509(x509)
+	{
+	}
+	~X509Freer()
+	{
+		if (m_x509 != 0)
+		{
+			X509_free(m_x509);
+		}
+	}
+private:
+	X509* m_x509;
+};
 
 } // end unnamed namespace
 
@@ -146,22 +164,47 @@ SSL_CTX* SSLCtxMgr::m_ctxClient = 0;
 SSL_CTX* SSLCtxMgr::m_ctxServer = 0;
 certVerifyFuncPtr_t SSLCtxMgr::m_clientCertVerifyCB = 0;
 certVerifyFuncPtr_t SSLCtxMgr::m_serverCertVerifyCB = 0;
+
+/////////////////////////////////////////////////////////////////////////////
+// static
+String
+SSLCtxMgr::getOpenSSLErrorDescription()
+{
+	BIO* bio = BIO_new(BIO_s_mem());
+	if (!bio)
+	{
+		return String();
+	}
+	ERR_print_errors(bio);
+	char* p = 0;
+	long len = BIO_get_mem_data(bio, &p);
+	String rval(p, len);
+	int freerv = BIO_free(bio);
+	OW_ASSERT(freerv == 1);
+	return rval;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 SSL_CTX*
 SSLCtxMgr::initCtx(const String& keyfile)
 {
+	ERR_clear_error();
 	SSL_CTX* ctx = SSL_CTX_new(SSLv23_method());
+	if (ctx == 0)
+	{
+		OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): SSL_CTX_new returned 0: %1", getOpenSSLErrorDescription()).c_str());
+	}
 	SSL_CTX_set_default_passwd_cb(ctx, pem_passwd_cb);
 	if (!keyfile.empty())
 	{
 		if (SSL_CTX_use_certificate_chain_file(ctx, keyfile.c_str()) != 1)
 		{
-			OW_THROW(SSLException, Format("Couldn't read certificate file: %1",
-				keyfile).c_str());
+			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read certificate file: %1: %2",
+				keyfile, getOpenSSLErrorDescription()).c_str());
 		}
 		if (SSL_CTX_use_PrivateKey_file(ctx, keyfile.c_str(), SSL_FILETYPE_PEM) != 1)
 		{
-			OW_THROW(SSLException, "Couldn't read key file");
+			OW_THROW(SSLException, Format("SSLCtxMgr::initCtx(): Couldn't read key file: %1", getOpenSSLErrorDescription()).c_str());
 		}
 	}
 
@@ -216,29 +259,39 @@ SSLGlobalWork g_sslGLobalWork;
 void
 SSLCtxMgr::loadDHParams(SSL_CTX* ctx, const String& file)
 {
-	DH* ret = 0;
-	BIO* bio = BIO_new_file(file.c_str(),"r");
+	OW_ASSERT(ctx != 0);
+	ERR_clear_error();
+	BIO* bio = BIO_new_file(file.c_str(), "r");
 	if (bio == NULL)
 	{
-		OW_THROW(SSLException, "Couldn't open DH file");
+		OW_THROW(SSLException, Format("SSLCtxMgr::loadDHParams(): Couldn't open DH file %1: %2", file, getOpenSSLErrorDescription()).c_str());
 	}
-	ret = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
+	DH* ret = PEM_read_bio_DHparams(bio, NULL, NULL, NULL);
 	BIO_free(bio);
-	if (SSL_CTX_set_tmp_dh(ctx, ret) < 0)
+	if (ret == 0)
 	{
-		OW_THROW(SSLException, "Couldn't set DH parameters");
+		OW_THROW(SSLException, Format("SSLCtxMgr::loadDHParams(): PEM_read_bio_DHparams failed: %1", getOpenSSLErrorDescription()).c_str());
+	}
+	if (SSL_CTX_set_tmp_dh(ctx, ret) != 1)
+	{
+		OW_THROW(SSLException, Format("SSLCtxMgr::loadDHParams(): Couldn't set DH parameters because SSL_CTX_set_tmp_dh failed: %1", getOpenSSLErrorDescription()).c_str());
 	}
 }
 //////////////////////////////////////////////////////////////////////////////
 void
 SSLCtxMgr::generateEphRSAKey(SSL_CTX* ctx)
 {
-	RSA* rsa;
-	rsa = RSA_generate_key(512, RSA_F4, NULL, NULL);
-	if (!SSL_CTX_set_tmp_rsa(ctx, rsa))
+	OW_ASSERT(ctx != 0);
+	ERR_clear_error();
+	RSA* rsa = RSA_generate_key(512, RSA_F4, NULL, NULL);
+	if (rsa == 0)
+	{
+		OW_THROW(SSLException, Format("SSLCtxMgr::generateEphRSAKey(): RSA_generate_key failed: %1", getOpenSSLErrorDescription()).c_str());
+	}
+	if (SSL_CTX_set_tmp_rsa(ctx, rsa) != 1)
 	{
 		RSA_free(rsa);
-		OW_THROW(SSLException,"Couldn't set RSA key");
+		OW_THROW(SSLException, Format("SSLCtxMgr::generateEphRSAKey(): SSL_CTX_set_tmp_rsa failed. Couldn't set RSA key: %1", getOpenSSLErrorDescription()).c_str());
 	}
 	RSA_free(rsa);
 }
@@ -250,20 +303,7 @@ SSLCtxMgr::initClient(const String& keyfile)
 	{
 		uninitClient();
 	}
-	//String keyfile = Environment::getConfigItem(
-	//		Environment::SSL_CERT_opt);
 	m_ctxClient = initCtx(keyfile);
-	/*
-	if (!SSL_CTX_get_certificate(m_ctxClient))
-	{
-		std::cerr << "******** SSL_CTX has no cert!" << std::endl;
-	}
-	else
-	{
-		std::cerr << "******* SSL_CTX cert hash: " << std::hex << X509_subject_name_hash(SSL_CTX_get_certificate(m_ctxClient)) << std:: endl;
-	}
-	*/
-
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -273,31 +313,21 @@ SSLCtxMgr::initServer(const String& keyfile)
 	{
 		uninitServer();
 	}
-	//String keyfile = Environment::getConfigItem(
-	//		Environment::SSL_CERT_opt);
 	m_ctxServer = initCtx(keyfile);
-	//String dhfile = "certs/dh1024.pem"; // TODO = GlobalConfig.getSSLDHFile();
 	//loadDHParams(m_ctx, dhfile);
 	generateEphRSAKey(m_ctxServer);
 	String sessID("SSL_SESSION_");
 	CryptographicRandomNumber rn(0, 10000);
 	sessID += String(static_cast<UInt32>(rn.getNextNumber()));
 	int sessIDLen =
-		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length() * sizeof(char))) ?
-		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length() * sizeof(char));
-	SSL_CTX_set_session_id_context(m_ctxServer,
-			reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen);
-	SSL_CTX_set_verify(m_ctxServer,
-		SSL_VERIFY_PEER /*| SSL_VERIFY_FAIL_IF_NO_PEER_CERT*/, NULL);
-	/*
-	// grabbed this from volutionlwc.  may need to use it (Filename issue on Win32)
-	if (!SSL_CTX_load_verify_locations(ctx,VOL_CONFIG_DIR"/cacerts/volution-authority.cacert",NULL))
+		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length())) ?
+		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length());
+	ERR_clear_error();
+	if (SSL_CTX_set_session_id_context(m_ctxServer, reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen) != 1)
 	{
-		fprintf(stderr, "Couldn't set load_verify_location\n");
-		exit(1);
+		OW_THROW(SSLException, Format("SSLCtxMgr::initServer(): SSL_CTX_set_session_id_context failed: %1", getOpenSSLErrorDescription()).c_str());
 	}
-	SSL_CTX_set_verify_depth(ctx,1);
-	*/
+	SSL_CTX_set_verify(m_ctxServer, SSL_VERIFY_PEER /*| SSL_VERIFY_FAIL_IF_NO_PEER_CERT*/, NULL);
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -305,17 +335,12 @@ int
 SSLCtxMgr::pem_passwd_cb(char* buf, int size, int /*rwflag*/,
 	void* /*userData*/)
 {
-	String passwd;
-	// TODO String = GlobalConfig.getSSLCertificatePassword();
-	
-	if (passwd.empty())
-	{
-		passwd = GetPass::getPass(
-			"Enter the password for the SSL certificate: ");
-	}
-	strncpy(buf, passwd.c_str(), passwd.length());
+	String passwd = GetPass::getPass("Enter the password for the SSL certificate: ");
+
+	strncpy(buf, passwd.c_str(), size);
 	buf[size - 1] = '\0';
-	return(passwd.length());
+
+	return passwd.length();
 }
 //////////////////////////////////////////////////////////////////////////////
 // STATIC
@@ -337,6 +362,8 @@ bool
 SSLCtxMgr::checkCert(SSL* ssl, const String& hostName,
 	certVerifyFuncPtr_t certVerifyCB)
 {
+	OW_ASSERT(ssl != 0);
+
 	/* TODO this isn't working.
 	if (SSL_get_verify_result(ssl)!=X509_V_OK)
 	{
@@ -349,8 +376,13 @@ SSLCtxMgr::checkCert(SSL* ssl, const String& hostName,
 	  set the verify depth in the ctx */
 	/*Check the common name*/
 	X509 *peer = SSL_get_peer_certificate(ssl);
+	X509Freer x509freer(peer);
 	if (certVerifyCB)
 	{
+		if (peer == 0)
+		{
+			return false;
+		}
 		if (certVerifyCB(peer, hostName) == 0)
 		{
 			return false;
@@ -369,7 +401,7 @@ SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len)
 {
 	int cc = SSL_ERROR_WANT_READ;
 	int r, retries = 0;
-	while(cc == SSL_ERROR_WANT_READ && retries < OW_SSL_RETRY_LIMIT)
+	while (cc == SSL_ERROR_WANT_READ && retries < OW_SSL_RETRY_LIMIT)
 	{
 		r = SSL_read(ssl, buf, len);
 		cc = SSL_get_error(ssl, r);
@@ -381,10 +413,8 @@ SSLCtxMgr::sslRead(SSL* ssl, char* buf, int len)
 		case SSL_ERROR_NONE:
 			return r;
 		case SSL_ERROR_ZERO_RETURN:
-			// TODO should this be an exception???
 			return -1;
 		default:
-			//OW_THROW(SSLException, "SSL read problem");
 			return -1;
 	}
 }
@@ -460,13 +490,22 @@ extern "C"
 {
 static int verify_callback(int ok, X509_STORE_CTX *store)
 {
-    char data[256];
-    SSL* ssl =
-        (SSL*) X509_STORE_CTX_get_ex_data(store,
-                                          SSL_get_ex_data_X509_STORE_CTX_idx());
-    OWSSLContext* owctx =
-        (OWSSLContext*) SSL_get_ex_data(ssl, SSLServerCtx::SSL_DATA_INDEX);
+	int index = SSL_get_ex_data_X509_STORE_CTX_idx();
+	if (index < 0)
+	{
+		return 0;
+	}
+    SSL* ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(store, index));
+	if (ssl == 0)
+	{
+		return 0;
+	}
+    OWSSLContext* owctx = static_cast<OWSSLContext*>(SSL_get_ex_data(ssl, SSLServerCtx::SSL_DATA_INDEX));
     OW_ASSERT(owctx);
+	if (owctx == 0)
+	{
+		return 0;
+	}
 
 	/**
 	 * This callback is called multiple times while processing a cert.
@@ -518,58 +557,31 @@ static int verify_callback(int ok, X509_STORE_CTX *store)
 SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	: m_ctx(0)
 {
-	m_ctx = SSL_CTX_new(SSLv23_method());
-	SSL_CTX_set_default_passwd_cb(m_ctx, SSLCtxMgr::pem_passwd_cb); // TODO cb func moved elsewhere?
-	if (!opts.keyfile.empty())
-	{
-		if (!(SSL_CTX_use_certificate_chain_file(m_ctx, opts.keyfile.c_str())))
-		{
-			OW_THROW(SSLException, Format("Couldn't read certificate file: %1",
-				opts.keyfile).c_str());
-		}
-		if (!(SSL_CTX_use_PrivateKey_file(m_ctx, opts.keyfile.c_str(), SSL_FILETYPE_PEM)))
-		{
-			OW_THROW(SSLException, "Couldn't read key file");
-		}
-	}
-	/*String CAFile = Environment::getConfigItem("SSL_CAFile");
-	String CAPath;
-	char* CAFileStr = NULL;
-	char* CAPathStr = NULL;
-	if (CAFile.length() > 0)
-		CAFileStr = strdup(CAFile.c_str());
-	if (CAPath.length() > 0)
-		CAPathStr = const_cast<char*>(CAPath.c_str());
-	if (!(SSL_CTX_load_verify_locations(ctx, CAFileStr, CAPathStr)))
-		OW_THROW(SSLException, "Couldn't read CA list");
-	free(CAFileStr);*/ // TODO do we need this?
-	//String dhfile = "certs/dh1024.pem"; // TODO = GlobalConfig.getSSLDHFile();
-	//loadDHParams(m_ctx, dhfile);
-
-	CryptographicRandomNumber::initRandomness();
-
+	m_ctx = SSLCtxMgr::initCtx(opts.keyfile);
+	
 	SSLCtxMgr::generateEphRSAKey(m_ctx); // TODO what the heck is this?
 	String sessID("SSL_SESSION_");
 	CryptographicRandomNumber rn(0, 10000);
 	sessID += String(static_cast<UInt32>(rn.getNextNumber()));
 	int sessIDLen =
-		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length() * sizeof(char))) ?
-		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length() * sizeof(char));
-	SSL_CTX_set_session_id_context(m_ctx,
-			reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen);
-
+		(SSL_MAX_SSL_SESSION_ID_LENGTH < (sessID.length())) ?
+		SSL_MAX_SSL_SESSION_ID_LENGTH : (sessID.length());
+	ERR_clear_error();
+	if (SSL_CTX_set_session_id_context(m_ctx, reinterpret_cast<const unsigned char*>(sessID.c_str()), sessIDLen) != 1)
+	{
+		OW_THROW(SSLException, Format("SSLCtxMgr::initServer(): SSL_CTX_set_session_id_context failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
+	}
 
 	if (opts.verifyMode != SSLOpts::MODE_DISABLED && !opts.trustStore.empty())
 	{
-		if (!OW_NAMESPACE::FileSystem::exists(opts.trustStore) )
+		if (!FileSystem::exists(opts.trustStore))
 		{
 			OW_THROW(SSLException, Format("Error loading truststore %1",
 										  opts.trustStore).c_str());
 		}
 		if (SSL_CTX_load_verify_locations(m_ctx,0,opts.trustStore.c_str()) != 1)
 		{
-			OW_THROW(SSLException, Format("Error loading truststore %1",
-										  opts.trustStore).c_str());
+			OW_THROW(SSLException, Format("Error loading truststore %1: %2", opts.trustStore, SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 		}
 	}
 	/* TODO remove.
@@ -581,20 +593,17 @@ SSLCtxBase::SSLCtxBase(const SSLOpts& opts)
 	switch (opts.verifyMode)
 	{
 	case SSLOpts::MODE_DISABLED:
-		SSL_CTX_set_verify(m_ctx,
-			SSL_VERIFY_NONE, 0);
+		SSL_CTX_set_verify(m_ctx, SSL_VERIFY_NONE, 0);
 		break;
 	case SSLOpts::MODE_REQUIRED:
-		SSL_CTX_set_verify(m_ctx,
-			SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, 0);
+		SSL_CTX_set_verify(m_ctx, SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT, 0);
 		break;
 	case SSLOpts::MODE_OPTIONAL:
 	case SSLOpts::MODE_AUTOUPDATE:
-		SSL_CTX_set_verify(m_ctx,
-			SSL_VERIFY_PEER, verify_callback);
+		SSL_CTX_set_verify(m_ctx, SSL_VERIFY_PEER, verify_callback);
 		break;
 	default:
-		OW_ASSERT("Bad option, shouldn't happen" == 0);
+		OW_ASSERTMSG(false, "Bad option, shouldn't happen");
 		break;
 	}
 
@@ -671,11 +680,7 @@ SSLTrustStore::addCertificate(X509* cert, const String& user, const String& uid)
 	OW_ASSERT(cert);
 	OStringStream ss;
 	unsigned long hash = X509_subject_name_hash(cert);
-	if (hash == 0)
-	{
-		OW_THROW(SSLException, "Unable to extract hash from certificate");
-	}
-	ss << std::hex << hash << std::ends;
+	ss << std::hex << hash;
 	String filename = m_store + "/" + ss.toString() + ".";
 	int i = 0;
 	for (i = 0; i < numtries; ++i)
@@ -695,13 +700,16 @@ SSLTrustStore::addCertificate(X509* cert, const String& user, const String& uid)
 	FILE* fp = fopen(filename.c_str(), "w");
 	if (!fp)
 	{
-		OW_THROW(SSLException, Format("Unable to open new cert file for writing: %1", filename).c_str());
+		OW_THROW_ERRNO_MSG(SSLException, Format("Unable to open new cert file for writing: %1", filename).c_str());
 	}
+
+	ERR_clear_error();
 	// Undocumented function in OpenSSL.  We assume it returns 1 on success
 	// like most OpenSSL funcs.
 	if (PEM_write_X509(fp, cert) != 1)
 	{
-		OW_THROW(SSLException, Format("SSL error while writing certificate to: %1", filename).c_str());
+		fclose(fp);
+		OW_THROW(SSLException, Format("SSL error while writing certificate to %1: %2", filename, SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 	fclose(fp);
 
@@ -731,8 +739,7 @@ SSLTrustStore::writeMap()
 	std::ofstream f(m_mapfile.c_str(), std::ios::out);
 	if (!f)
 	{
-		OW_THROW(SSLException, Format("SSL error opening map file: %1",
-									  m_mapfile).c_str());
+		OW_THROW_ERRNO_MSG(SSLException, Format("SSL error opening map file: %1", m_mapfile).c_str());
 	}
 	for (Map<String, UserInfo>::const_iterator iter = m_map.begin();
 		  iter != m_map.end(); ++iter)
@@ -750,8 +757,7 @@ SSLTrustStore::readMap()
 	std::ifstream f(m_mapfile.c_str(), std::ios::in);
 	if (!f)
 	{
-		OW_THROW(SSLException, Format("SSL error opening map file: %1",
-									  m_mapfile).c_str());
+		OW_THROW_ERRNO_MSG(SSLException, Format("SSL error opening map file: %1", m_mapfile).c_str());
 	}
 	int lineno = 0;
 	while (f)
@@ -765,8 +771,7 @@ SSLTrustStore::readMap()
 		StringArray toks = line.tokenize();
 		if (toks.size() != 3 && toks.size() != 2)
 		{
-			OW_THROW(SSLException, Format("Error processing user map %1 at line %2",
-										  m_mapfile, lineno).c_str());
+			OW_THROW(SSLException, Format("Error processing user map %1 at line %2", m_mapfile, lineno).c_str());
 		}
 		UserInfo info;
 		info.user = toks[1];

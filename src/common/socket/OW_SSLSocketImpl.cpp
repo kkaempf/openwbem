@@ -34,7 +34,7 @@
  * @author Dan Nuffer
  *
  * @description
- *		Implementation file for the OW_SSLSocketImpl class.
+ *		Implementation file for the SSLSocketImpl class.
  */
 
 #include "OW_config.h"
@@ -72,24 +72,22 @@ void sslWaitForIO(SocketBaseImpl& s, int type)
 	}
 }
 
-int shutdownSSL(SSL* ssl)
+void shutdownSSL(SSL* ssl)
 {
-	int cc = SSL_shutdown(ssl);
-	/* // we're not going to reuse the SSL context, so we do a 
-	// unidirectional shutdown. 
-	int retries = 0;
-	while(cc == 0 && retries < OW_SSL_RETRY_LIMIT)
-	{	// 0=shutdown not complete, call again
-		retries++;
-		cc = SSL_shutdown(ssl);
+	OW_ASSERT(ssl != 0);
+	if (SSL_shutdown(ssl) == -1)
+	{
+		// do nothing, since we're probably cleaning up.  If we had a logger we should log the reason why this failed....
 	}
-	*/
-	return (cc == 1) ? 0 : -1;
+	// we're not going to reuse the SSL context, so we do a 
+	// unidirectional shutdown, and don't need to call it twice
 }
 
-int connectWithSSL(SSL* ssl, SocketBaseImpl& s)
+void connectWithSSL(SSL* ssl, SocketBaseImpl& s)
 {
+	OW_ASSERT(ssl != 0);
 	int retries = 0;
+	ERR_clear_error();
 	int cc = SSL_connect(ssl);
 	cc = SSL_get_error(ssl, cc);
 	while((cc == SSL_ERROR_WANT_READ 
@@ -97,28 +95,41 @@ int connectWithSSL(SSL* ssl, SocketBaseImpl& s)
 		&& retries < OW_SSL_RETRY_LIMIT)
 	{
 		sslWaitForIO(s, cc);
+		ERR_clear_error();
 		cc = SSL_connect(ssl);
 		cc = SSL_get_error(ssl, cc);
 		retries++;
 	}
 
-
-	return (cc == SSL_ERROR_NONE) ? 0 : -1;
+	if (cc != SSL_ERROR_NONE)
+	{
+		OW_THROW(SSLException, Format("SSL connect error: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
+	}
 }
 
-int acceptSSL(SSL* ssl, SocketBaseImpl& s)
+int acceptSSL(SSL* ssl, SocketBaseImpl& s, String& errorDescription)
 {
+	OW_ASSERT(ssl != 0);
 	int retries = 0;
 	int cc = SSL_ERROR_WANT_READ;
 	while((cc == SSL_ERROR_WANT_READ || cc == SSL_ERROR_WANT_WRITE)
 		&& retries < OW_SSL_RETRY_LIMIT)
 	{
 		sslWaitForIO(s, cc);
+		ERR_clear_error();
 		cc = SSL_accept(ssl);
 		cc = SSL_get_error(ssl, cc);
 		retries++;
 	}
-	return (cc == SSL_ERROR_NONE) ? 0 : -1;
+	if (cc == SSL_ERROR_NONE)
+	{
+		return 0;
+	}
+	else
+	{
+		errorDescription = SSLCtxMgr::getOpenSSLErrorDescription();
+		return -1;
+	}
 }
 
 }	// End of unnamed namespace
@@ -132,38 +143,41 @@ SSLSocketImpl::SSLSocketImpl()
 }
 //////////////////////////////////////////////////////////////////////////////
 SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd, 
-	SocketAddress::AddressType addrType, SSLServerCtxRef sslCtx) 
+	SocketAddress::AddressType addrType, const SSLServerCtxRef& sslCtx) 
 	: SocketBaseImpl(fd, addrType)
 {
-	OW_ASSERT(sslCtx); 
+	OW_ASSERT(sslCtx);
+	ERR_clear_error();
 	m_ssl = SSL_new(sslCtx->getSSLCtx());
-        SSL_set_ex_data(m_ssl, SSLServerCtx::SSL_DATA_INDEX, &m_owctx); 
-
 	if (!m_ssl)
 	{
-		OW_THROW(SSLException, "SSL_new failed");
+		OW_THROW(SSLException, Format("SSL_new failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
+	}
+
+	if (SSL_set_ex_data(m_ssl, SSLServerCtx::SSL_DATA_INDEX, &m_owctx) == 0)
+	{
+		OW_THROW(SSLException, Format("SSL_set_ex_data failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 
 	BIO* bio = BIO_new_socket(fd, BIO_NOCLOSE);
 	if (!bio)
 	{
 		SSL_free(m_ssl);
-		OW_THROW(SSLException, "BIO_new_socket failed");
+		OW_THROW(SSLException, Format("BIO_new_socket failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 		
 	SSL_set_bio(m_ssl, bio, bio);
-	int rval = SSL_accept(m_ssl); 
-	if (rval <= 0)
+	String errorDescription;
+	if (acceptSSL(m_ssl, *this, errorDescription) != 0)
 	{
-		String msg = String("SSL accept error: ") + String(SSL_get_error(m_ssl, rval)); 
-		SSL_shutdown(m_ssl);
+		shutdownSSL(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
-		OW_THROW(SSLException, msg.c_str());
+		OW_THROW(SSLException, Format("SSLSocketImpl ctor: SSL accept error while connecting to %1: %2", m_peerAddress.toString(), errorDescription).c_str());
 	}
 	if (!SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
 	{
-		SSL_shutdown(m_ssl);
+		shutdownSSL(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
 		OW_THROW(SSLException, "SSL failed to authenticate client");
@@ -176,26 +190,28 @@ SSLSocketImpl::SSLSocketImpl(SocketHandle_t fd,
 	SocketAddress::AddressType addrType) 
 	: SocketBaseImpl(fd, addrType)
 {
+	ERR_clear_error();
 	m_ssl = SSL_new(SSLCtxMgr::getSSLCtxServer());
 	if (!m_ssl)
 	{
-		OW_THROW(SSLException, "SSL_new failed");
+		OW_THROW(SSLException, Format("SSL_new failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 
 	m_sbio = BIO_new_socket(fd, BIO_NOCLOSE);
 	if (!m_sbio)
 	{
 		SSL_free(m_ssl);
-		OW_THROW(SSLException, "BIO_new_socket failed");
+		OW_THROW(SSLException, Format("BIO_new_socket failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 		
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
-	if(acceptSSL(m_ssl, *this))
+	String errorDescription;
+	if (acceptSSL(m_ssl, *this, errorDescription) != 0)
 	{
 		shutdownSSL(m_ssl);
 		SSL_free(m_ssl);
 		ERR_remove_state(0); // cleanup memory SSL may have allocated
-		OW_THROW(SSLException, "SSL accept error");
+		OW_THROW(SSLException, Format("SSLSocketImpl ctor: SSL accept error while connecting to %1: %2", m_peerAddress.toString(), errorDescription).c_str());
 	}
 	if (!SSLCtxMgr::checkClientCert(m_ssl, m_peerAddress.getName()))
 	{
@@ -214,13 +230,20 @@ SSLSocketImpl::SSLSocketImpl(const SocketAddress& addr)
 //////////////////////////////////////////////////////////////////////////////
 SSLSocketImpl::~SSLSocketImpl()
 {
-	disconnect(); 
-	if (m_ssl)
+	try
 	{
-	    SSL_free(m_ssl);
-	    m_ssl = 0; 
+		disconnect(); 
+		if (m_ssl)
+		{
+			SSL_free(m_ssl);
+			m_ssl = 0; 
+		}
+		ERR_remove_state(0); // cleanup memory SSL may have allocated
 	}
-	ERR_remove_state(0); // cleanup memory SSL may have allocated
+	catch (...)
+	{
+		// no exceptions allowed out of destructors.
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 Select_t
@@ -249,32 +272,28 @@ void
 SSLSocketImpl::connectSSL()
 {
 	m_isConnected = false;
-	//m_ssl = SSL_new(SSLCtxMgr::getSSLCtxClient());
 	OW_ASSERT(m_sslCtx); 
 	if (m_ssl)
 	{
 		SSL_free(m_ssl); 
 		m_ssl = 0;
 	}
+	ERR_clear_error();
 	m_ssl = SSL_new(m_sslCtx->getSSLCtx()); 
 	
 	if (!m_ssl)
 	{
-		OW_THROW(SSLException, "SSL_new failed");
+		OW_THROW(SSLException, Format("SSL_new failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 	m_sbio = BIO_new_socket(m_sockfd, BIO_NOCLOSE);
 	if (!m_sbio)
 	{
 		SSL_free(m_ssl);
-		OW_THROW(SSLException, "BIO_new_socket failed");
+		OW_THROW(SSLException, Format("BIO_new_socket failed: %1", SSLCtxMgr::getOpenSSLErrorDescription()).c_str());
 	}
 	SSL_set_bio(m_ssl, m_sbio, m_sbio);
 
-
-	if(connectWithSSL(m_ssl, *this))
-	{
-		OW_THROW(SSLException, "SSL connect error");
-	}
+	connectWithSSL(m_ssl, *this);
 
 	if (!SSLCtxMgr::checkServerCert(m_ssl, m_peerAddress.getName()))
 	{
@@ -329,12 +348,15 @@ SSLSocketImpl::peerCertVerified() const
 
 //////////////////////////////////////////////////////////////////////////////
 // SSL buffer can contain the data therefore select
-// does not work !!!
+// does not work without checking SSL_pending() first.
 bool
 SSLSocketImpl::waitForInput(int timeOutSecs)
 {
    // SSL buffer contains data -> read them
-   if (SSL_pending(m_ssl)) return false;
+   if (SSL_pending(m_ssl))
+   {
+	   return false;
+   }
    return SocketBaseImpl::waitForInput(timeOutSecs);
 }
 //////////////////////////////////////////////////////////////////////////////

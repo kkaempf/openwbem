@@ -160,7 +160,13 @@ public:
 	 * @throws SSLException
 	 */
 	static void generateEphRSAKey(SSL_CTX* ctx);
+
+	static String getOpenSSLErrorDescription();
+
 private:
+
+	friend class SSLCtxBase;
+
 	static SSL_CTX* m_ctxClient;
 	static SSL_CTX* m_ctxServer;
 	static certVerifyFuncPtr_t m_clientCertVerifyCB;

@@ -52,6 +52,7 @@ OW_DEFINE_EXCEPTION_WITH_ID(CryptographicRandomNumber);
 #include "OW_MutexLock.hpp"
 #include "OW_String.hpp"
 #include "OW_Array.hpp"
+#include "OW_SSLCtxMgr.hpp"
 
 #include <vector>
 #include <climits>
@@ -84,24 +85,6 @@ namespace OW_NAMESPACE
 
 namespace
 {
-
-/////////////////////////////////////////////////////////////////////////////
-String
-getOpenSSLErrorDescription()
-{
-	BIO* bio = BIO_new(BIO_s_mem());
-	if (!bio)
-	{
-		return String();
-	}
-	ERR_print_errors(bio);
-	char* p = 0;
-	long len = BIO_get_mem_data(bio, &p);
-	String rval(p, len);
-	int freerv = BIO_free(bio);
-	OW_ASSERT(freerv == 1);
-	return rval;
-}
 
 /////////////////////////////////////////////////////////////////////////////
 int getNumBits(Int32 num)
@@ -140,11 +123,11 @@ CryptographicRandomNumber::getNextNumber()
 	Int32 randNum = 0;
 	do
 	{
-		::ERR_clear_error();
-		int rv = ::RAND_bytes(reinterpret_cast<unsigned char*>(&randNum), sizeof(randNum));
+		ERR_clear_error();
+		int rv = RAND_bytes(reinterpret_cast<unsigned char*>(&randNum), sizeof(randNum));
 		if (rv != 1)
 		{
-			OW_THROW(CryptographicRandomNumberException, getOpenSSLErrorDescription().c_str());
+			OW_THROW(CryptographicRandomNumberException, SSLCtxMgr::getOpenSSLErrorDescription().c_str());
 		}
 		// make it positive
 		randNum = randNum < 0 ? -randNum : randNum;

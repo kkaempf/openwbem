@@ -63,7 +63,7 @@ public:
 	 * accept().
 	 */
 	SSLSocketImpl(SocketHandle_t fd, SocketAddress::AddressType addrType, 
-				   SSLServerCtxRef sslCtx);
+				   const SSLServerCtxRef& sslCtx);
 	/**
 	 * This constructor is to be used only for server sockets.
 	 * @param fd A socket handle, presumably created by a ServerSocket's

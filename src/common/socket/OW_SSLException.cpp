@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2005 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -29,20 +29,18 @@
 *******************************************************************************/
 
 /**
- * @author Bart Whiteley
  * @author Dan Nuffer
  */
 
-#ifndef OW_SSLEXCEPTION_HPP_INCLUDE_GUARD_
-#define OW_SSLEXCEPTION_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_SocketException.hpp"
+#include "OW_SSLException.hpp"
+#include "OW_ExceptionIds.hpp"
 
 namespace OW_NAMESPACE
 {
 
-OW_DECLARE_APIEXCEPTION2(SSL, SocketException, OW_COMMON_API);
+OW_DEFINE_EXCEPTION_WITH_BASE_AND_ID(SSL, SocketException);
 
 } // end namespace OW_NAMESPACE
 
-#endif
+

@@ -94,6 +94,7 @@ namespace OW_NAMESPACE
 		static const int LogMessagePatternFormatterExceptionId = 48;
 		static const int CIMDateTimeExceptionId = 49;
 		static const int CryptographicRandomNumberExceptionId = 50;
+		static const int SSLExceptionId = 51;
 
 		// http
 		static const int Base64FormatExceptionId = 1001;
