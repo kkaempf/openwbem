@@ -375,7 +375,7 @@ OW_HTTPClient::endRequest(OW_Reference<std::iostream> request, const OW_String& 
 	addHeaderCommon("Content-Length", OW_String(len));
 
 	// TODO uncomment this when the dmtf accepts the CR for Trailers.
-	//addHeaderCommon("TE", "trailers");
+	addHeaderCommon("TE", "trailers");
 
 #ifdef OW_HAVE_ZLIB_H
 	addHeaderCommon("Accept-Encoding", "deflate");

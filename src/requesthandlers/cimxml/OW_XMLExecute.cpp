@@ -163,69 +163,62 @@ OW_XMLExecute::executeXML(OW_XMLNode& node, ostream* ostrEntity,
 	m_ostrEntity = ostrEntity;
 	m_ostrError = ostrError;
 	m_isIntrinsic = false;
-	try
-	{
-		OW_String messageId = node.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
+	OW_String messageId = node.mustGetAttribute(OW_XMLOperationGeneric::MSG_ID);
 
+	node = node.getChild();
+
+	if (!node)
+	{
+		OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
+	}
+
+	makeXMLHeader(messageId, *m_ostrEntity);
+
+	if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIREQ)
+	{
+		(*m_ostrEntity) << "<MULTIRSP>\r\n";
 		node = node.getChild();
 
-		if (!node)
+		while (node)
 		{
-			OW_THROW(OW_CIMErrorException, OW_CIMErrorException::request_not_loosely_valid);
-		}
-
-		makeXMLHeader(messageId, *m_ostrEntity);
-
-		if (node.getToken() == OW_XMLNode::XML_ELEMENT_MULTIREQ)
-		{
-			(*m_ostrEntity) << "<MULTIRSP>\r\n";
-			node = node.getChild();
-
-			while (node)
+			if (node.getToken() != OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
 			{
-				if (node.getToken() != OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
-				{
-					OW_THROW(OW_XMLException, format("Expected <SIMPLEREQ>, "
-						"got %1", node.getNodeName()).c_str());
-				}
-				OW_TempFileStream ostrEnt, ostrErr(500);
-				processSimpleReq(node, ostrEnt, ostrErr, userName);
-				if (m_hasError)
-				{
-					(*m_ostrEntity) << ostrErr.rdbuf();
-					m_hasError = false;
-				}
-				else
-				{
-					(*m_ostrEntity) << ostrEnt.rdbuf();
-				}
-				node = node.getNext();
-			} // while
-
-			(*m_ostrEntity) << "</MULTIRSP>\r\n";
-		} // if MULTIRSP
-		else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
-		{
-			makeXMLHeader(messageId, *m_ostrError);
-			processSimpleReq(node, *m_ostrEntity, *m_ostrError, userName);
+				OW_THROW(OW_XMLException, format("Expected <SIMPLEREQ>, "
+					"got %1", node.getNodeName()).c_str());
+			}
+			OW_TempFileStream ostrEnt, ostrErr(500);
+			processSimpleReq(node, ostrEnt, ostrErr, userName);
 			if (m_hasError)
 			{
-				(*m_ostrError) << "</MESSAGE></CIM>\r\n";
+				(*m_ostrEntity) << ostrErr.rdbuf();
+				m_hasError = false;
 			}
-		}
-		else
-		{
-			OW_THROWCIMMSG(OW_CIMException::FAILED,
-				"No <SIMPLEREQ> or <MULTIREQ> tag");
-		}
+			else
+			{
+				(*m_ostrEntity) << ostrEnt.rdbuf();
+			}
+			node = node.getNext();
+		} // while
 
-		(*m_ostrEntity) << "</MESSAGE></CIM>\r\n";
-
-	}
-	catch (OW_CIMException& e)
+		(*m_ostrEntity) << "</MULTIRSP>\r\n";
+	} // if MULTIRSP
+	else if (node.getToken() == OW_XMLNode::XML_ELEMENT_SIMPLEREQ)
 	{
-		// TODO
+		makeXMLHeader(messageId, *m_ostrError);
+		processSimpleReq(node, *m_ostrEntity, *m_ostrError, userName);
+		if (m_hasError)
+		{
+			(*m_ostrError) << "</MESSAGE></CIM>\r\n";
+		}
 	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"No <SIMPLEREQ> or <MULTIREQ> tag");
+	}
+
+	(*m_ostrEntity) << "</MESSAGE></CIM>\r\n";
+
 
 	return 0; // TODO should we keep previous value instead?
 }

@@ -155,15 +155,62 @@ OW_HTTPChunkedIStream::buildTrailerMap()
 OW_String 
 OW_HTTPChunkedIStream::getError() const
 {
-	OW_Map<OW_String, OW_String> trailers = getTrailers();
-	for (OW_Map<OW_String, OW_String>::const_iterator iter = trailers.begin();
-		  iter != trailers.end(); ++iter)
+	for (OW_Map<OW_String, OW_String>::const_iterator iter = m_trailerMap.begin();
+		  iter != m_trailerMap.end(); ++iter)
 	{
-		if (iter->first.substring(3).equalsIgnoreCase("CIM-Error"))
+		if (iter->first.substring(3).equalsIgnoreCase("CIMError"))
 		{
 			return iter->second;
 		}
 	}
 	return OW_String("");
+}
+
+OW_UInt32
+OW_HTTPChunkedIStream::getError(std::ostream& ostr) const
+{
+	OW_String errorStr = getError();
+	OW_UInt32 rc = 0;
+	for (size_t i = 0; i < errorStr.length(); ++i)
+	{
+		switch (errorStr[i])
+		{
+			case '\\':
+				if (i + 1 == errorStr.length())
+				{
+					// last char was '\\'
+					OW_THROW(OW_HTTPException, "Invalid Trailer");
+				}
+				++i;
+				switch (errorStr[i])
+				{
+					case '0':
+						ostr << '\0';
+						++rc;
+						break;
+					case 'n':
+						ostr << '\n';
+						++rc;
+						break;
+					case 'r':
+						ostr << '\r';
+						++rc;
+						break;
+					case '\\':
+						ostr << '\\';
+						++rc;
+						break;
+					default:
+						OW_THROW(OW_HTTPException, "Invalid escape in trailer");
+				}
+				break;
+
+			default:
+				ostr << errorStr[i];
+				++rc;
+				break;
+		}
+	}
+	return rc;
 }
 

@@ -54,6 +54,7 @@ public:
 	OW_CIMProtocolIStreamIFC() : istream() {}
 	OW_CIMProtocolIStreamIFC(std::streambuf* strbuf) : istream(strbuf) {}
 	virtual OW_String getError() const { return ""; }
+	virtual OW_UInt32 getError(std::ostream& ostr) const { (void)ostr; return 0; }
 	virtual ~OW_CIMProtocolIStreamIFC() {}
 };
 

@@ -162,47 +162,11 @@ OW_CIMXMLCIMOMHandle::doSendRequest(OW_Reference<std::iostream> ostrRef, const O
 			throw xmlE;
 		}
 	}
-	OW_String errorStr = istr->getError();
-	if (errorStr.length() > 0)
+	if (istr->getError().length() > 0)
 	{
 		// The trailer is escaped, so first unescape it
 		OW_TempFileStream error(500);
-		for (size_t i = 0; i < errorStr.length(); ++i)
-		{
-			switch (errorStr[i])
-			{
-				case '\\':
-					if (i + 1 == errorStr.length())
-					{
-						// last char was '\\'
-						OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid Trailer");
-					}
-					switch (errorStr[i + 1])
-					{
-						case '0':
-							error << '\0';
-							break;
-						case 'n':
-							error << '\n';
-							break;
-						case 'r':
-							error << '\r';
-							break;
-						case '\\':
-							error << '\\';
-							break;
-						default:
-							OW_THROWCIMMSG(OW_CIMException::FAILED, "Invalid escape in trailer");
-					}
-					break;
-
-				default:
-					error << errorStr[i];
-					break;
-			}
-		}
-
-		//error << trailers.begin()->second;
+		istr->getError(error);
 		OW_XMLParser errorParser(&error);
 		OW_XMLNode errNode = errorParser.parse();
 		return checkNodeForCIMError(errNode, methodName);
