@@ -24,7 +24,7 @@
 static CMPIStatus resultReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType type) {
    CMPIrc rc;
    OW_CIMValue v=value2CIMValue(data,type,&rc);
-   if (eRes->ft==CMPI_ResultMeth_Ftab) {
+   if (eRes->ft==CMPI_ResultMethOnStack_Ftab) {
       CMPIValueValueResultHandler* res=(CMPIValueValueResultHandler*)eRes->hdl;
       if (((CMPI_Result*)eRes)->flags & RESULT_set==0) {
          //res->processing();
@@ -48,6 +48,16 @@ static CMPIStatus resultReturnInstance(CMPIResult* eRes, CMPIInstance* eInst) {
 	static_cast<OW_CIMInstanceResultHandlerIFC *> (eRes->hdl);
    const OW_CIMInstance& inst= * (static_cast<OW_CIMInstance *>(eInst->hdl));
 	std::cout << "inst to handle " << inst.toMOF() << std::endl;
+   res->handle(inst);
+   CMReturn(CMPI_RC_OK);
+}
+
+static CMPIStatus resultReturnObject(CMPIResult* eRes, CMPIInstance* eInst) {
+   OW_CIMInstanceResultHandlerIFC * res =
+	static_cast<OW_CIMInstanceResultHandlerIFC *> (eRes->hdl);
+   const OW_CIMInstance& inst= * (static_cast<OW_CIMInstance *>(eInst->hdl));
+	std::cout << "inst to handle " << inst.toMOF() << std::endl;
+   // BMMU - turn instance into object
    res->handle(inst);
    CMReturn(CMPI_RC_OK);
 }
@@ -83,6 +93,11 @@ static CMPIStatus resultReturnMethDone(CMPIResult* eRes) {
    (void) eRes;
    CMReturn(CMPI_RC_OK);
 }
+static CMPIStatus resultReturnObjDone(CMPIResult* eRes) {
+   (void) eRes;
+   CMReturn(CMPI_RC_OK);
+}
+
 
 static CMPIStatus resultBadReturnData(CMPIResult* eRes, CMPIValue* data, CMPIType type) {
    (void) eRes;
@@ -103,20 +118,30 @@ static CMPIStatus resultBadReturnObjectPath(CMPIResult* eRes, CMPIObjectPath* eR
    CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
 }
 
-static CMPIResultFT resultMeth_FT={
+static CMPIResultFT resultMethOnStack_FT={
      CMPICurrentVersion,
-     NULL,		// release
-     NULL,		// clone
+     NULL,
+     NULL,
      resultReturnData,
      resultBadReturnInstance,
      resultBadReturnObjectPath,
      resultReturnMethDone,
 };
 
+static CMPIResultFT resultObjOnStack_FT={
+     CMPICurrentVersion,
+     NULL,
+     NULL,
+     resultBadReturnData,
+     resultReturnObject,
+     resultBadReturnObjectPath,
+     resultReturnObjDone,
+};
+
 static CMPIResultFT resultData_FT={
      CMPICurrentVersion,
-     NULL,		// release
-     NULL,		// clone
+     NULL,
+     NULL,
      resultReturnData,
      resultBadReturnInstance,
      resultBadReturnObjectPath,
@@ -125,18 +150,18 @@ static CMPIResultFT resultData_FT={
 
 static CMPIResultFT resultInstOnStack_FT={
      CMPICurrentVersion,
-     NULL,		// release
-     NULL,		// clone
+     NULL,
+     NULL,
      resultBadReturnData,
      resultReturnInstance,
      resultBadReturnObjectPath,
      resultReturnInstDone,
 };
-
+                                                                                
 static CMPIResultFT resultRefOnStack_FT={
      CMPICurrentVersion,
-     NULL,		// release
-     NULL,		// clone
+     NULL,
+     NULL,
      resultBadReturnData,
      resultBadReturnInstance,
      resultReturnObjectPath,
@@ -145,19 +170,24 @@ static CMPIResultFT resultRefOnStack_FT={
 
 static CMPIResultFT resultResponseOnStack_FT={
      CMPICurrentVersion,
-     NULL,		// release
-     NULL,		// clone
+     NULL,
+     NULL,
      resultBadReturnData,
-     resultReturnInstance,
-     resultReturnObjectPath,
+     resultBadReturnInstance,
+     resultBadReturnObjectPath,
      resultReturnDataDone,
 };
+                                                                                
+//
 
-CMPIResultFT *CMPI_ResultMeth_Ftab=&resultMeth_FT;
+CMPIResultFT *CMPI_ResultMeth_Ftab=&resultMethOnStack_FT;
 CMPIResultFT *CMPI_ResultData_Ftab=&resultData_FT;
+CMPIResultFT *CMPI_ResultMethOnStack_Ftab=&resultMethOnStack_FT;
 CMPIResultFT *CMPI_ResultInstOnStack_Ftab=&resultInstOnStack_FT;
+CMPIResultFT *CMPI_ResultObjOnStack_Ftab=&resultObjOnStack_FT;
 CMPIResultFT *CMPI_ResultRefOnStack_Ftab=&resultRefOnStack_FT;
 CMPIResultFT *CMPI_ResultResponseOnStack_Ftab=&resultResponseOnStack_FT;
+
 
 CMPI_ResultOnStack::CMPI_ResultOnStack(
 	const OW_CIMObjectPathResultHandlerIFC & handler) {
@@ -174,10 +204,18 @@ CMPI_ResultOnStack::CMPI_ResultOnStack(
    }
 
 #if 0
+// ObjectResponseHandler
 CMPI_ResultOnStack::CMPI_ResultOnStack(
-	const MethodResultResultHandlerIFC & handler) {
+	const OW_CIMInstanceResultHandlerIFC & handler) {
       hdl= (void *)(&handler);
       ft=CMPI_ResultInstOnStack_Ftab;
+      flags=RESULT_Instance;
+   }
+
+CMPI_ResultOnStack::CMPI_ResultOnStack(
+	const OW_MethodResultResultHandlerIFC & handler) {
+      hdl= (void *)(&handler);
+      ft=CMPI_ResultMethOnStack_Ftab;
       flags=RESULT_Method;
    }
 #endif

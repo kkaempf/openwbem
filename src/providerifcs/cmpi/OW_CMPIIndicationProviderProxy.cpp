@@ -40,46 +40,63 @@
 void
 OW_CMPIIndicationProviderProxy::deActivateFilter(
 	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_WQLSelectStatement &filter, 
-	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
-	bool lastActivation)
+	const OW_WQLSelectStatement &filter,
+	const OW_String &eventType,
+	const OW_String& nameSpace,
+	const OW_StringArray& classes)
 {
+	bool lastActivation = (--m_activationCount == 0);
+
 	env->getLogger()->logDebug("deactivateFilter");
 
-	if (m_ftable->indMI->ft->fp_deActivateFilter != NULL)
+	if (m_ftable->miVector.indMI->ft->deActivateFilter != NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
 		::OperationContext context;
-		context.cimom = env;
 
-		env->getLogger()->logDebug("deactivateFilter 2");
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
+		CMPI_ResultOnStack eRes;
 
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ObjectPathOnStack eRef(classPath);
-		CMPI_ResultOnStack eRes(result);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		//OW_CIMObjectPath mutablePath(classPath);
-		//SelectExp exp = {&mutableFilter};
-		//CIMObjectPath cop = {&mutablePath};
 
-		CMPIFlags flgs = 0;
+		OW_CIMObjectPath mutablePath;
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
 
-		::CMPIIndicationMI * mi = m_ftable->indMI;
+		CMPI_ObjectPathOnStack eRef(mutablePath);
 
-		rc = m_ftable->indMI->ft->deActivateFilter(mi, &eCtx, &eRes,
+		CMPISelectExp exp; // = {&mutableFilter};
 
-			exp, 
-		 , exp, eventType.c_str(), cop, lastActivation);
+		//CMPIFlags flgs = 0;
 
-		if (_npiHandle.errorOccurred)
+		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
+
+		char * _eventType = eventType.allocateCString();
+		rc = m_ftable->miVector.indMI->ft->deActivateFilter(
+			mi, &eCtx, &eRes,
+			&exp, 
+		 	_eventType, &eRef, lastActivation);
+
+		if (_eventType) delete _eventType;
+
+		if (rc.rc == CMPI_RC_OK) return;
+		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
-			_npiHandle.providerError);
+				 rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Provider does not support deactivateFilter");
 	}
 }
 
@@ -87,32 +104,63 @@ OW_CMPIIndicationProviderProxy::deActivateFilter(
 void
 OW_CMPIIndicationProviderProxy::activateFilter(
 	const OW_ProviderEnvironmentIFCRef &env, 
-	const OW_WQLSelectStatement &filter, 
-	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
-	bool firstActivation)
+	const OW_WQLSelectStatement &filter,
+	const OW_String &eventType,
+	const OW_String& nameSpace,
+	const OW_StringArray& classes)
 {
-	env->getLogger()->logDebug("activateFilter");
-	if (m_ftable->fp_activateFilter != NULL)
-	{
-		env->getLogger()->logDebug("activateFilter2");
-		::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
-		OW_CMPIHandleFreer nhf(_npiHandle);
+	bool firstActivation = (m_activationCount++ == 0);
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+	env->getLogger()->logDebug("activateFilter");
+
+	if (m_ftable->miVector.indMI->ft->activateFilter != NULL)
+	{
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
+
+		::OperationContext context;
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
+		CMPI_ResultOnStack eRes;
+
+		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
-		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
 
-		m_ftable->fp_activateFilter( &_npiHandle, exp, eventType.c_str(), cop, firstActivation);
+		OW_CIMObjectPath mutablePath;
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
 
-		if (_npiHandle.errorOccurred)
+		CMPI_ObjectPathOnStack eRef(mutablePath);
+
+		CMPISelectExp exp; // = {&mutableFilter};
+
+		//CMPIFlags flgs = 0;
+
+		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
+
+		char * _eventType = eventType.allocateCString();
+		rc = m_ftable->miVector.indMI->ft->activateFilter(
+			mi, &eCtx, &eRes,
+			&exp, 
+		 	_eventType, &eRef, firstActivation);
+
+		if (_eventType) delete _eventType;
+
+		if (rc.rc == CMPI_RC_OK) return;
+		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
-			_npiHandle.providerError);
+				 rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
+	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Provider does not support activateFilter");
 	}
 }
 
@@ -122,33 +170,65 @@ OW_CMPIIndicationProviderProxy::authorizeFilter(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath, 
+	const OW_String &nameSpace, 
+	const OW_StringArray &classes, 
 	const OW_String &owner)
 {
-	env->getLogger()->logDebug("deactivateFilter");
-	if (m_ftable->fp_deActivateFilter != NULL)
+	env->getLogger()->logDebug("authorizeFilter");
+
+	if (m_ftable->miVector.indMI->ft->authorizeFilter != NULL)
 	{
-		::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
-		OW_CMPIHandleFreer nhf(_npiHandle);
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
-		env->getLogger()->logDebug("deactivateFilter2");
+		::OperationContext context;
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
+		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
+		CMPI_ResultOnStack eRes;
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
-		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
 
-		m_ftable->fp_authorizeFilter( &_npiHandle, exp, eventType.c_str(), cop, owner.c_str());
+		OW_CIMObjectPath mutablePath;
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
 
-		if (_npiHandle.errorOccurred)
+		CMPI_ObjectPathOnStack eRef(mutablePath);
+
+		CMPISelectExp exp; // = {&mutableFilter};
+
+		//CMPIFlags flgs = 0;
+
+		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
+
+		char * _eventType = eventType.allocateCString();
+		char * _owner = owner.allocateCString();
+
+		rc = m_ftable->miVector.indMI->ft->authorizeFilter(
+			mi, &eCtx, &eRes,
+			&exp, _eventType, &eRef, _owner);
+
+		if (_eventType) delete _eventType;
+		if (_owner) delete _owner;
+
+		if (rc.rc == CMPI_RC_OK) return;
+		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
-			_npiHandle.providerError);
+				 rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Provider does not support authorizeFilter");
+	}
 }
+
 
 /////////////////////////////////////////////////////////////////////////////
 int
@@ -156,38 +236,59 @@ OW_CMPIIndicationProviderProxy::mustPoll(
 	const OW_ProviderEnvironmentIFCRef &env, 
 	const OW_WQLSelectStatement &filter, 
 	const OW_String &eventType, 
-	const OW_CIMObjectPath &classPath)
+	const OW_String &nameSpace, 
+	const OW_StringArray &classes)
 {
 	env->getLogger()->logDebug("mustPoll");
-	if (m_ftable->fp_mustPoll != NULL)
+
+	if (m_ftable->miVector.indMI->ft->mustPoll != NULL)
 	{
-		::CMPIHandle _npiHandle = { 0, 0, 0, 0, NULL};
-		OW_CMPIHandleFreer nhf(_npiHandle);
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
-		env->getLogger()->logDebug("mustPoll2");
+		::OperationContext context;
 
-		_npiHandle.thisObject = (void *) static_cast<const void *>(&env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
+		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
+		CMPI_ResultOnStack eRes;
 
 		OW_WQLSelectStatement mutableFilter(filter);
-		OW_CIMObjectPath mutablePath(classPath);
-		SelectExp exp = {&mutableFilter};
-		CIMObjectPath cop = {&mutablePath};
 
-		int rval = m_ftable->fp_mustPoll( &_npiHandle, exp, eventType.c_str(), cop);
+		OW_CIMObjectPath mutablePath;
+		mutablePath.setNameSpace(nameSpace);
+		if (!classes.empty())
+			mutablePath.setObjectName(classes[0]);
 
-		if (_npiHandle.errorOccurred)
+		CMPI_ObjectPathOnStack eRef(mutablePath);
+
+		CMPISelectExp exp; // = {&mutableFilter};
+
+		//CMPIFlags flgs = 0;
+
+		::CMPIIndicationMI * mi = m_ftable->miVector.indMI;
+
+		char * _eventType = eventType.allocateCString();
+
+		rc = m_ftable->miVector.indMI->ft->mustPoll(
+			mi, &eCtx, &eRes,
+			&exp, _eventType, &eRef);
+
+		if (_eventType) delete _eventType;
+
+		if (rc.rc == CMPI_RC_OK) return 5*60;
+		else
 		{
 			OW_THROWCIMMSG(OW_CIMException::FAILED,
-			_npiHandle.providerError);
-		}
-		// CMPI providers only return 0 or 1 for mustPoll.
-		// OpenWBEM expects mustPoll to return the polling interval,
-		// so we'll return a reasonable polling interval (5 mins.)  
-		if (rval > 0)
-		{
-			return 5 * 60;
+				 rc.msg ? CMGetCharPtr(rc.msg) : "");
 		}
 	}
-	return 0;
+	else
+	{
+		OW_THROWCIMMSG(OW_CIMException::FAILED,
+			"Provider does not support mustPoll");
+	}
 }
 

@@ -34,6 +34,7 @@ OW_CMPIInstanceProviderProxy.hpp \
 OW_CMPIMethodProviderProxy.cpp  \
 OW_CMPIMethodProviderProxy.hpp  \
 OW_CMPIPolledProviderProxy.hpp  \
+OW_CMPIIndicationProviderProxy.cpp \
 OW_CMPIIndicationProviderProxy.hpp \
 OW_CMPIProviderIFC.cpp \
 OW_CMPIProviderIFC.hpp \

@@ -31,7 +31,7 @@ static const unsigned long NOKEY = PTHREAD_KEYS_MAX+1;
 volatile unsigned long CMPI_ThreadContext::theKey=NOKEY;
 static OW_NonRecursiveMutex keyGuard;
 
-CMPI_ThreadContext* CMPI_ThreadContext::getContext()
+CMPI_ThreadContext* CMPI_ThreadContext::getThreadContext()
 {
 	return (CMPI_ThreadContext*)pthread_getspecific(theKey);
 }
@@ -77,7 +77,7 @@ void CMPI_ThreadContext::setThreadContext()
 	// another context already exists or existed
 
 	// if we get one, then one exists
-	m_prev=getContext();
+	m_prev=getThreadContext();
 
 	// set this as the context
 	int rc = pthread_setspecific(theKey,this);
@@ -94,7 +94,7 @@ void CMPI_ThreadContext::add(CMPI_Object *o)
 
 void CMPI_ThreadContext::addObject(CMPI_Object* o)
 {
-	CMPI_ThreadContext* ctx=getContext();
+	CMPI_ThreadContext* ctx=getThreadContext();
 	ctx->add(o);
 }
 
@@ -105,14 +105,34 @@ void CMPI_ThreadContext::remove(CMPI_Object *o)
 
 void CMPI_ThreadContext::remObject(CMPI_Object* o)
 {
-	CMPI_ThreadContext* ctx=getContext();
+	CMPI_ThreadContext* ctx=getThreadContext();
 	ctx->remove(o);
+}
+
+CMPIBroker * CMPI_ThreadContext::getBroker()
+{
+	return getThreadContext()->broker;
+}
+
+CMPIContext * CMPI_ThreadContext::getContext()
+{
+	return getThreadContext()->context;
 }
 
 CMPI_ThreadContext::CMPI_ThreadContext()
 	: m_prev(0)
 	, CIMfirst(0)
 	, CIMlast(0)
+{
+	setThreadContext();
+}
+
+CMPI_ThreadContext::CMPI_ThreadContext(CMPIBroker * mb, CMPIContext * ctx)
+	: m_prev(0)
+	, CIMfirst(0)
+	, CIMlast(0)
+	, broker(mb)
+	, context(ctx)
 {
 	setThreadContext();
 }

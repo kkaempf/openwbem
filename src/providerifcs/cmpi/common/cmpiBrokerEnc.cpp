@@ -15,7 +15,7 @@
  * Author:        Adrian Schuur <schuur@de.ibm.com>
  * Contributors:
  *
- * Description: CMPIClass support
+ * Description: CMPIBroker Encapsulated type factory support
  *
  */
 
@@ -35,11 +35,30 @@ static CMPIInstance* mbEncNewInstance(CMPIBroker* mb, CMPIObjectPath* eCop, CMPI
 
    OW_CIMObjectPath * cop = static_cast<OW_CIMObjectPath *>(eCop->hdl);
    std::cout<<"--- mbEncNewInstance() of name " << cop->getObjectName() << std::endl;
-   OW_CIMInstance * ci = new OW_CIMInstance();
-   ci->setClassName(cop->getObjectName());
-   std::cout<<"--- mbEncNewInstance() with name " << ci->getClassName() << std::endl;
+   OW_CIMClass *cls=mbGetClass(mb,*cop);
 
-   CMPIInstance * neInst = (CMPIInstance *)new CMPI_Object(ci);
+   OW_CIMInstance ci;
+
+   //std::cout<<"--- mbEncNewInstance() with name " << ci.getClassName() << std::endl;
+   if (cls) {
+       //CMPIContext *ctx=CMPI_ThreadContext::getContext();
+
+       //CMPIFlags flgs=ctx->ft->getEntry(ctx,CMPIInvocationFlags,rc).value.uint32;
+       ci = cls->newInstance();
+
+       /* cloning without include qualifiers means losing key properties */
+       //ci = ci.clone(((flgs & CMPI_FLAG_LocalOnly)!=0),
+       //              ((flgs & CMPI_FLAG_IncludeQualifiers)!=0),
+       //              ((flgs & CMPI_FLAG_IncludeClassOrigin)!=0));
+   }
+   else
+      ci.setClassName(cop->getObjectName());
+
+   //std::cout << "----mbNewInstance has generated " << std::endl;
+   //std::cout << ci.toMOF() << std::endl;
+
+   CMPIInstance * neInst = (CMPIInstance *)new CMPI_Object(
+         new OW_CIMInstance(ci));
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return neInst;
 }
@@ -72,6 +91,10 @@ static CMPIString* mbEncNewString(CMPIBroker* mb, char *cStr, CMPIStatus *rc) {
 
    if (rc) CMSetStatus(rc,CMPI_RC_OK);
    return (CMPIString*)new CMPI_Object(cStr);
+}
+
+CMPIString* mbIntNewString(char *s) {
+   return mbEncNewString(NULL,s,NULL);
 }
 
 static CMPIArray* mbEncNewArray(CMPIBroker* mb, CMPICount count, CMPIType type,
@@ -171,308 +194,169 @@ static CMPIString* mbEncToString(CMPIBroker * mb,void * o, CMPIStatus * rc) {
    return (CMPIString*) new CMPI_Object(OW_String(msg)+str);
 }
 
-static CMPIBoolean mbEncIsA(CMPIBroker *mb, void *obj, char *type, CMPIStatus *rc) {
-   (void) mb;
-   (void) obj;
-   (void) type;
+static CMPIBoolean mbEncClassPathIsA(CMPIBroker *mb, CMPIObjectPath *eCp,
+                                     char *type, CMPIStatus *rc)
+{
    (void) rc;
+
+   OW_CIMObjectPath* cop=static_cast<OW_CIMObjectPath *>(eCp->hdl);
+
+   OW_String tcn(type);
+ 
+   if (tcn == cop->getClassName()) return 1;
+ 
+   OW_CIMClass *cc=mbGetClass(mb,*cop);
+   OW_CIMObjectPath  scp(*cop);
+   scp.setClassName(cc->getSuperClass());
+                                                                                
+   for (; !scp.getClassName().empty(); ) {
+      cc=mbGetClass(mb,scp);
+      if (cc->getName()==tcn) return 1;
+      scp.setClassName(cc->getSuperClass());
+   };
    return 0;
 }
 
-static CMPIString* mbEncGetType(CMPIBroker *mb, void *obj, CMPIStatus *rc) {
-   (void) mb;
-   (void) obj;
-   (void) rc;
+CMPIBoolean mbEncIsOfType(CMPIBroker *mb, void *o, char *type, CMPIStatus *rc) {
+   CMPI_Object *obj=(CMPI_Object*)o;
+   char msg[128];
+   if (obj==NULL) {
+      sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
+      if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+      return 0;
+   }
+                                                                                
+   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+ 
+   if (obj->ftab==(void*)CMPI_Instance_Ftab &&
+         strcmp(type,"CMPIInstance")==0) return 1;
+   if (obj->ftab!=(void*)CMPI_ObjectPath_Ftab &&
+         strcmp(type,"CMPIObjectPath")==0) return 1;
+/* if (obj->ftab!=(void*)CMPI_SelectExp_Ftab &&
+         strcmp(type,"CMPISelectExp")==0) return 1;
+   if (obj->ftab!=(void*)CMPI_SelectCondDoc_Ftab &&
+         strcmp(type,"CMPISelectCondDoc")==0) return 1;
+   if (obj->ftab!=(void*)CMPI_SelectCondCod_Ftab &&
+         strcmp(type,"CMPISelectCondCod")==0) return 1;
+   if (obj->ftab!=(void*)CMPI_SubCond_Ftab &&
+         strcmp(type,"CMPISubCond")==0) return 1;
+   if (obj->ftab!=(void*)CMPI_Predicate_Ftab &&
+         strcmp(type,"CMPIPredicate")==0) return 1;
+*/ if (obj->ftab!=(void*)CMPI_Array_Ftab &&
+         strcmp(type,"CMPIArray")==0) return 1;
+                                                                                
+   sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
+   if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+   return 0;
+}
+
+
+static CMPIString* mbEncGetType(CMPIBroker *mb, void *o, CMPIStatus *rc) {
+   CMPI_Object *obj=(CMPI_Object*)o;
+   char msg[128];
+   if (obj==NULL) {
+      sprintf(msg,"** Null object ptr (0x%x) **",(int)o);
+      if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
+      return NULL;
+   }
+                                                                                
+   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+                                                                                
+   if (obj->ftab==(void*)CMPI_Instance_Ftab)
+         return mb->eft->newString(mb,"CMPIInstance",rc);
+   if (obj->ftab!=(void*)CMPI_ObjectPath_Ftab)
+         return mb->eft->newString(mb,"CMPIObjectPath",rc);
+/* if (obj->ftab!=(void*)CMPI_SelectExp_Ftab)
+         return mb->eft->newString(mb,"CMPISelectExp",rc);
+   if (obj->ftab!=(void*)CMPI_SelectCondDoc_Ftab)
+         return mb->eft->newString(mb,"CMPISelectCondDo",rc);
+   if (obj->ftab!=(void*)CMPI_SelectCondCod_Ftab)
+         return mb->eft->newString(mb,"CMPISelectCondCod",rc);
+   if (obj->ftab!=(void*)CMPI_SubCond_Ftab)
+         return mb->eft->newString(mb,"CMPISubCond",rc);
+   if (obj->ftab!=(void*)CMPI_Predicate_Ftab)
+       return mb->eft->newString(mb,"CMPIPredicate",rc);
+*/ if (obj->ftab!=(void*)CMPI_Array_Ftab)
+         return mb->eft->newString(mb,"CMPIArray",rc);
+                                                                                
+   sprintf(msg,"** Object not recognized (0x%x) **",(int)o);
+   if (rc) { CMSetStatusWithChars(mb,rc,CMPI_RC_ERR_FAILED,msg); }
    return NULL;
 }
-// BMMU
-// Cheating again - retrieve the LocalCIMOMHandle from the operation context;
-OW_CIMOMHandleIFCRef CM_CIMOM(CMPIContext * ctx)
-{
-   CMPI_ContextOnStack * sCtx = (CMPI_ContextOnStack *)ctx;
-   OW_ProviderEnvironmentIFCRef provenv = sCtx->ctx->cimom;
-   OW_CIMOMHandleIFCRef lch = provenv->getCIMOMHandle();
-   return lch;
-}
-//#define CM_CIMOM(mb) ((OW_LocalCIMOMHandle*)mb->hdl)
 
-#define CM_Context(ctx) ((OperationContext*)ctx->hdl)
-#define CM_ObjectPath(cop) ((OW_CIMObjectPath*)cop->hdl)
-#define CM_LocalOnly(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_LocalOnly)!=0)
-#define CM_ClassOrigin(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_IncludeClassOrigin)!=0)
-#define CM_IncludeQualifiers(flgs) (OW_Bool)(((flgs) & CMPI_FLAG_IncludeQualifiers)!=0)
-#define CM_DeepInheritance(flgs) (((flgs) & CMPI_FLAG_DeepInheritance)!=0)
-
-// Broker function section
-
-class OW_ArrayBuilder : public OW_CIMObjectPathResultHandlerIFC
-{
-public:
-	OW_ArrayBuilder(OW_CIMObjectPathArray& a_)
-	: a(a_)
-	{
-	}
-private:
-	void doHandle(const OW_CIMObjectPath& x)
-	{
-		a.push_back(x);
-	}
-	OW_CIMObjectPathArray a;
-};
-
-static CMPIEnumeration* mbEnumInstanceNames(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, CMPIStatus *rc) 
-{
-	(void)mb;
-   try {
-      OW_Array<OW_CIMObjectPath> en;
-	  OW_ArrayBuilder ab(en);
-	  CM_CIMOM(ctx)->enumInstanceNames(
-          CM_ObjectPath(cop)->getNameSpace(),
-          CM_ObjectPath(cop)->getObjectName(),
-		  ab
-		  );
-      if (rc) CMSetStatus(rc,CMPI_RC_OK);
-      return new CMPI_OpEnumeration(new OW_Array<OW_CIMObjectPath>(en));
+#if defined (CMPI_VER_85)
+static Formatter::Arg formatValue(va_list *argptr, CMPIStatus *rc) {
+                                                                                
+   CMPIValue *val=va_arg(*argptr,CMPIValue*);
+   CMPIType type=va_arg(*argptr,int);
+   if (rc) CMSetStatus(rc,CMPI_RC_OK);
+                                                                                
+   if ((type & (CMPI_UINT|CMPI_SINT))==CMPI_UINT) {
+     CMPIUint64 u64;
+      switch (type) {
+      case CMPI_uint8:  u64=(CMPIUint64)val->uint8;  break;
+      case CMPI_uint16: u64=(CMPIUint64)val->uint16; break;
+      case CMPI_uint32: u64=(CMPIUint64)val->uint32; break;
+      case CMPI_uint64: u64=(CMPIUint64)val->uint64; break;
+      }
+      return Formatter::Arg(u64);
    }
-   catch (OW_CIMException &e) {
-	   std::cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<std::endl;
-      if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
+   else if ((type & (CMPI_UINT|CMPI_SINT))==CMPI_SINT) {
+    CMPISint64 s64;
+     switch (type) {
+      case CMPI_sint8:  s64=(CMPISint64)val->sint8;  break;
+      case CMPI_sint16: s64=(CMPISint64)val->sint16; break;
+      case CMPI_sint32: s64=(CMPISint64)val->sint32; break;
+      case CMPI_sint64: s64=(CMPISint64)val->sint64; break;
+      }
+      return Formatter::Arg(s64);
    }
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-   return NULL;
-
-
-
+   else if (type==CMPI_chars) return Formatter::Arg((const char*)val);
+   else if (type==CMPI_string)
+      return Formatter::Arg((const char*)CMGetCharsPtr(val->string,NULL));
+   else if (type==CMPI_real32)  return Formatter::Arg((CMPIReal64)val->real32);
+                                                                                
+   else if (type==CMPI_real64)  return Formatter::Arg(val->real64);
+   else if (type==CMPI_boolean) return Formatter::Arg((Boolean)val->boolean);
+                                                                                
+   if (rc) CMSetStatus(rc,CMPI_RC_ERR_INVALID_PARAMETER);
+   return Formatter::Arg((Boolean)0);
 }
-
-#if 0
-OW_CIMPropertyArray *getList(char** l) {
-   (void) l;
-   return new OW_CIMPropertyArray;
+ 
+CMPIString* mbEncGetMessage(CMPIBroker *mb, char *msgId, char *defMsg,
+            CMPIStatus* rc, unsigned int count, ...) {
+   MessageLoaderParms parms(msgId,defMsg);
+   cerr<<"::: mbEncGetMessage() count: "<<count<<endl;
+   if (count>0) {
+      va_list argptr;
+      va_start(argptr,count);
+      for (;;) {
+         if (count>0) parms.arg0=formatValue(&argptr,rc);
+         else break;
+         if (count>1) parms.arg1=formatValue(&argptr,rc);
+         else break;
+         if (count>2) parms.arg2=formatValue(&argptr,rc);
+         else break;
+         if (count>3) parms.arg3=formatValue(&argptr,rc);
+         else break;
+         if (count>4) parms.arg4=formatValue(&argptr,rc);
+         else break;
+         if (count>5) parms.arg5=formatValue(&argptr,rc);
+         else break;
+         if (count>6) parms.arg6=formatValue(&argptr,rc);
+         else break;
+         if (count>7) parms.arg7=formatValue(&argptr,rc);
+         else break;
+         if (count>8) parms.arg8=formatValue(&argptr,rc);
+         else break;
+         if (count>9) parms.arg9=formatValue(&argptr,rc);
+         break;
+      }
+   }
+   String nMsg=MessageLoader::getMessage(parms);
+   return string2CMPIString(nMsg);
 }
 #endif
-OW_StringArray * getList(char ** l) {
-   (void) l;
-   return new OW_StringArray;
-}
-
-static CMPIInstance* mbGetInstance(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char **properties, CMPIStatus *rc) {
-   (void) mb;
-
-   std::cout << "--- mbGetInstance()" << std::endl;
-   CMPIFlags flgs=ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
-
-   //OW_PropertyArray *props=getList(properties);
-   OW_StringArray *props=getList(properties);
-   OW_CIMObjectPath ocop(*CM_ObjectPath(cop));
-
-// BMMU 
-   try {
-      OW_CIMInstance ci=CM_CIMOM(ctx)->getInstance( 
-      //OW_CIMInstance ci=CM_CIMOM(mb)->getInstance( 
-                  //OperationContext(*CM_Context(ctx)),
-   		CM_ObjectPath(cop)->getNameSpace(),
-		ocop,
-		CM_LocalOnly(flgs),
-		CM_IncludeQualifiers(flgs),CM_ClassOrigin(flgs),
-		props);
-      std::cout << "--- mbGetInstance() back" << std::endl;
-      delete props;
-      if (rc) CMSetStatus(rc,CMPI_RC_OK);
-      return (CMPIInstance*)new CMPI_Object(new OW_CIMInstance(ci));
-   }
-   catch (const OW_CIMException &e) {
-      std::cout << "### exception: " <<e.getMessage() << std::endl;
-      std::exit(39);
-   }
-   catch (...) {
-      std::cout << "### exception: " << std::endl;
-      std::exit(39);
-   }
-   delete props;
-   return NULL;
-}
-
-static CMPIObjectPath* mbCreateInstance(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *op, CMPIInstance *ci, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) op;
-   (void) ci;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
-}
-
-static CMPIStatus mbSetInstance(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *op, CMPIInstance *ci) {
-   (void) mb;
-   (void) ctx;
-   (void) op;
-   (void) ci;
-   CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
-}
-
-static CMPIStatus mbDeleteInstance (CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
-}
-
-static CMPIEnumeration* mbExecQuery(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *query, char *lang, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) query;
-   (void) lang;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
-}
-
-class OW_CIMInstanceArrayBuilder : public OW_CIMInstanceResultHandlerIFC
-{
-public:
-	OW_CIMInstanceArrayBuilder(OW_CIMInstanceArray& a_)
-	: a(a_)
-	{
-	}
-private:
-	void doHandle(const OW_CIMInstance& x)
-	{
-		a.push_back(x);
-	}
-	OW_CIMInstanceArray a;
-};
-
-static CMPIEnumeration* mbEnumInstances(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char **properties, CMPIStatus *rc) 
-{
-	(void)mb;
-	CMPIFlags flgs=ctx->ft->getEntry(ctx,CMPIInvocationFlags,NULL).value.uint32;
-	OW_StringArray *props=getList(properties);
-	try {
-	   OW_CIMInstanceArray en;
-	   OW_CIMInstanceArrayBuilder iab(en);
-	   CM_CIMOM(ctx)->enumInstances(
-		   CM_ObjectPath(cop)->getNameSpace(),
-		   CM_ObjectPath(cop)->getObjectName(),
-		   iab,
-		   CM_DeepInheritance(flgs),
-		   CM_LocalOnly(flgs),
-		   CM_IncludeQualifiers(flgs),
-		   CM_ClassOrigin(flgs),
-		   props);
-	   if (rc) CMSetStatus(rc,CMPI_RC_ERROR);
-	   delete props;
-	   return new CMPI_InstEnumeration(new OW_CIMInstanceArray(en));
-	}
-	catch (OW_CIMException &e) {
-		std::cout<<"### exception: mbEnumInstances - code: "<<e.getErrNo()<<" msg: "<<e.getMessage()<<std::endl;
-	   if (rc) CMSetStatus(rc,(CMPIrc)e.getErrNo());
-	}
-	if (rc) CMSetStatus(rc,CMPI_RC_ERR_FAILED);
-	delete props;
-	return NULL;
-
-}
-
-static CMPIEnumeration* mbAssociators(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *assocClass, char *resultClass,
-                 char *role, char *resultRole, char **properties, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) assocClass;
-   (void) resultClass;
-   (void) role;
-   (void) resultRole;
-   (void) properties;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
-}
-
-static CMPIEnumeration* mbAssociatorNames(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *assocClass, char *resultClass,
-		 char *role, char *resultRole, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) assocClass;
-   (void) resultClass;
-   (void) role;
-   (void) resultRole;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
-}
-
-static CMPIEnumeration* mbReferences(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *role , char *resultRole, char **properties,
-                 CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) role;
-   (void) resultRole;
-   (void) properties;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
-}
-
-static CMPIEnumeration* mbReferenceNames(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *role, char *resultRole,
-                 CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) role;
-   (void) resultRole;
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return NULL;
-}
-
-static CMPIData mbInvokeMethod(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *method, CMPIArgs *in, CMPIArgs *out,
-		 CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) method;
-   (void) in;
-   (void) out;
-
-   CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return data;
-}
-
-static CMPIStatus mbSetProperty(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop, char *name, CMPIValue *val,
-                 CMPIType type) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) name;
-   (void) val;
-   (void) type;
-   CMReturn(CMPI_RC_ERR_NOT_SUPPORTED);
-}
-
-static CMPIData mbGetProperty(CMPIBroker *mb, CMPIContext *ctx,
-                 CMPIObjectPath *cop,char *name, CMPIStatus *rc) {
-   (void) mb;
-   (void) ctx;
-   (void) cop;
-   (void) name;
-   CMPIData data={(CMPIType) 0, CMPI_nullValue, CMPIValue() };
-   if (rc) CMSetStatus(rc,CMPI_RC_ERR_NOT_SUPPORTED);
-   return data;
-}
-
-
 
 
 
@@ -487,35 +371,13 @@ static CMPIBrokerEncFT brokerEnc_FT={
      mbEncNewDateTimeFromBinary,
      mbEncNewDateTimeFromString,
      NULL,
-     NULL,
+     mbEncClassPathIsA,
      mbEncToString,
-     mbEncIsA,
+     mbEncIsOfType,
      mbEncGetType,
+#if defined (CMPI_VER_85)
+     mbEncGetMessage,
+#endif
 };
 
-static CMPIBrokerFT broker_FT={
-     0, // brokerClassification;
-     0, // brokerVersion;
-     "OpenWBEM",
-     NULL, 		// prepareAttachThread
-     NULL,		// attachThread
-     NULL,		// detachThread
-     NULL,		// deliverIndication
-     mbEnumInstanceNames,
-     mbGetInstance,
-     mbCreateInstance,
-     mbSetInstance,
-     mbDeleteInstance,
-     mbExecQuery,
-     mbEnumInstances,
-     mbAssociators,
-     mbAssociatorNames,
-     mbReferences,
-     mbReferenceNames,
-     mbInvokeMethod,
-     mbSetProperty,
-     mbGetProperty,
-};
-
-CMPIBrokerFT *CMPI_Broker_Ftab=& broker_FT;
 CMPIBrokerEncFT *CMPI_BrokerEnc_Ftab=&brokerEnc_FT;

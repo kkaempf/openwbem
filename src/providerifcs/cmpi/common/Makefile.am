@@ -15,6 +15,7 @@ thelibdir = $(libdir)
 
 libcmpisupport_a_SOURCES = \
 cmpiArray.cpp \
+cmpiBroker.cpp \
 cmpiBrokerEnc.cpp \
 cmpiContextArgs.cpp \
 cmpiDateTime.cpp \

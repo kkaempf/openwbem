@@ -36,15 +36,24 @@ class CMPI_ThreadContext {
    static volatile unsigned long theKey;
    CMPI_ThreadContext* m_prev;
    CMPI_Object *CIMfirst,*CIMlast;
+
+   CMPIBroker * broker;
+   CMPIContext * context;
+
    void add(CMPI_Object *o);
    void remove(CMPI_Object *o);
    void setThreadContext();
    void setContext();
-   static CMPI_ThreadContext* getContext();
+
   public:
    static void addObject(CMPI_Object*);
    static void remObject(CMPI_Object*);
+
+   static CMPI_ThreadContext* getThreadContext();
+   static CMPIBroker* getBroker();
+   static CMPIContext* getContext();
    CMPI_ThreadContext();
+   CMPI_ThreadContext(CMPIBroker*,CMPIContext*);
    ~CMPI_ThreadContext();
 };
 

@@ -45,23 +45,16 @@
 #include "OW_Array.hpp"
 #include "OW_CIMBase.hpp"
 #include "OW_ProviderEnvironmentIFC.hpp"
-//#include <stdlib.h>
-//#include <dlfcn.h>
-#include "cmpisrv.h"
-
 #include "OW_SharedLibraryReference.hpp"
 #include "cmpift.h"
+#include "cmpisrv.h"
+
 
 typedef struct {
-	::CMPIInstanceMI * instMI;
-#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
-	::CMPIAssociationMI * assocMI;
-#endif
-	::CMPIIndicationMI * indMI;
-	::CMPIMethodMI * methMI;
-} OW_CompleteMI;
+	::MIs miVector;
+	::CMPI_Broker broker;
+} OW_CompleteMI; 
 
-//typedef OW_SharedLibraryReference< ::CMPIInstanceMI> OW_CMPIFTABLERef;
 typedef OW_SharedLibraryReference<OW_CompleteMI> OW_CMPIFTABLERef;
 
 #define OW_NOIDPROVIDERFACTORY(prov) OW_PROVIDERFACTORY(prov, NO_ID)

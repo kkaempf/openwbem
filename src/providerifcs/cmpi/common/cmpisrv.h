@@ -31,6 +31,7 @@
 #include "cmpift.h"
 
 #include "OW_config.h"
+#include "OW_Cache.hpp"
 #include "OW_CIMClass.hpp"
 #include "OW_CIMInstance.hpp"
 #include "OW_CIMProperty.hpp"
@@ -50,11 +51,13 @@ typedef struct {
 
 
 #define RESULT_Instance   1
-#define RESULT_ObjectPath 2
-#define RESULT_Value      4
-#define RESULT_Method     8
-#define RESULT_Indication 16
-#define RESULT_Response   32
+
+#define RESULT_Object     2
+#define RESULT_ObjectPath 4
+#define RESULT_Value      8
+#define RESULT_Method     16
+#define RESULT_Indication 32
+#define RESULT_Response   64
 #define RESULT_set        128
 #define RESULT_done       256
 
@@ -66,6 +69,44 @@ typedef struct {
 #define DEQ_FROM_LIST(i,f,l,n,p) \
                     { if (i->n) i->n->p=i->p; else l=i->p; \
                       if (i->p) i->p->n=i->n; else f=i->n;}
+
+#define CMPI_MIType_Instance    1
+#define CMPI_MIType_Association 2
+#define CMPI_MIType_Method      4
+#define CMPI_MIType_Property    8
+#define CMPI_MIType_Indication 16
+
+typedef CMPIInstanceMI*        (*CREATE_INST_MI)(CMPIBroker*,CMPIContext*);
+typedef CMPIAssociationMI*     (*CREATE_ASSOC_MI)(CMPIBroker*,CMPIContext*);
+typedef CMPIMethodMI*          (*CREATE_METH_MI)(CMPIBroker*,CMPIContext*);
+typedef CMPIPropertyMI*        (*CREATE_PROP_MI)(CMPIBroker*,CMPIContext*);
+typedef CMPIIndicationMI*      (*CREATE_IND_MI)(CMPIBroker*,CMPIContext*);
+
+typedef CMPIInstanceMI*    (*CREATE_GEN_INST_MI)(CMPIBroker*,CMPIContext*,const char*);
+typedef CMPIAssociationMI* (*CREATE_GEN_ASSOC_MI)(CMPIBroker*,CMPIContext*,const char*);
+typedef CMPIMethodMI*      (*CREATE_GEN_METH_MI)(CMPIBroker*,CMPIContext*,const char*);
+typedef CMPIPropertyMI*    (*CREATE_GEN_PROP_MI)(CMPIBroker*,CMPIContext*,const char*);
+typedef CMPIIndicationMI*  (*CREATE_GEN_IND_MI)(CMPIBroker*,CMPIContext*,const char*);
+
+typedef struct {
+   int                 miTypes;
+   int                 genericMode;
+   CMPIInstanceMI      *instMI;
+   CMPIAssociationMI   *assocMI;
+   CMPIMethodMI        *methMI;
+   CMPIPropertyMI      *propMI;
+   CMPIIndicationMI    *indMI;
+   CREATE_INST_MI      createInstMI;
+   CREATE_ASSOC_MI     createAssocMI;
+   CREATE_METH_MI      createMethMI;
+   CREATE_PROP_MI      createPropMI;
+   CREATE_IND_MI       createIndMI;
+   CREATE_GEN_INST_MI  createGenInstMI;
+   CREATE_GEN_ASSOC_MI         createGenAssocMI;
+   CREATE_GEN_METH_MI  createGenMethMI;
+   CREATE_GEN_PROP_MI  createGenPropMI;
+   CREATE_GEN_IND_MI   createGenIndMI;
+} MIs;
 
 
 typedef struct _CMPIResultRefFT : public CMPIResultFT {
@@ -92,7 +133,7 @@ extern CMPIContextFT *CMPI_ContextOnStack_Ftab;
 extern CMPIResultFT *CMPI_ResultRefOnStack_Ftab;
 extern CMPIResultFT *CMPI_ResultInstOnStack_Ftab;
 extern CMPIResultFT *CMPI_ResultData_Ftab;
-extern CMPIResultFT *CMPI_ResultMeth_Ftab;
+extern CMPIResultFT *CMPI_ResultMethOnStack_Ftab;
 extern CMPIResultFT *CMPI_ResultResponseOnStack_Ftab;
 
 extern CMPIDateTimeFT *CMPI_DateTime_Ftab;
@@ -105,6 +146,8 @@ extern CMPIBrokerEncFT *CMPI_BrokerEnc_Ftab;
 extern CMPIEnumerationFT *CMPI_ObjEnumeration_Ftab;
 extern CMPIEnumerationFT *CMPI_InstEnumeration_Ftab;
 extern CMPIEnumerationFT *CMPI_OpEnumeration_Ftab;
+
+struct CMPI_Broker;
 
 struct CMPI_Object {
    void *hdl;
@@ -169,11 +212,13 @@ typedef CMPISingleValueResultHandler<OW_CIMValue> CMPIValueValueResultHandler;
 struct CMPI_Result : CMPIResult {
    CMPI_Object *next,*prev;
    long flags;
+   CMPI_Broker *xBroker;
 };
 
 struct CMPI_ResultOnStack : CMPIResult {
    CMPI_Object *next,*prev;
    long flags;
+   CMPI_Broker *xBroker;
    CMPI_ResultOnStack(const OW_CIMObjectPathResultHandlerIFC & handler);
    CMPI_ResultOnStack(const OW_CIMInstanceResultHandlerIFC& handler);
    CMPI_ResultOnStack(const CMPIObjectPathValueResultHandler & handler);
@@ -215,6 +260,7 @@ struct CMPI_DateTime : CMPIDateTime {
 struct CMPI_ObjEnumeration : CMPIEnumeration {
    CMPI_Object *next,*prev;
    int max,cursor;
+   //CMPI_ObjEnumeration(OW_Array<OW_CIMBase>* ia);
    CMPI_ObjEnumeration(OW_Array<OW_CIMInstance>* ia);
 };
 
@@ -230,6 +276,16 @@ struct CMPI_OpEnumeration : CMPIEnumeration {
    CMPI_OpEnumeration(OW_Array<OW_CIMObjectPath>* opa);
 };
 
+//typedef HashTable<String, CIMClass *,
+//      EqualFunc<String>,  HashFunc<String> > ClassCache;
+
+typedef OW_Cache<OW_CIMClass> ClassCache;
+
+struct CMPI_Broker : CMPIBroker {
+   ClassCache * clsCache;
+   static  CMPIBroker *staticBroker;
+};
+
 
 #include "cmpiThreadContext.h"
 
@@ -239,6 +295,8 @@ OW_CIMValue value2CIMValue(CMPIValue* data, CMPIType type, CMPIrc *rc);
 CMPIrc key2CMPIData(const OW_String& v, OW_CIMDataType t, CMPIData *data);
 //CMPIrc key2CMPIData(const OW_String& v, KeyBinding::Type t, CMPIData *data);
 CMPIrc value2CMPIData(const OW_CIMValue&,CMPIType,CMPIData *data);
+
+OW_CIMClass *mbGetClass(CMPIBroker *mb, const OW_CIMObjectPath &cop);
 
 #endif
 

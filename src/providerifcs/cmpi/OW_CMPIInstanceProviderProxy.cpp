@@ -60,16 +60,20 @@ void
 	env->getLogger()->
 		logDebug("OW_CMPIInstanceProviderProxy::enumInstanceNames()");
 
-	if (m_ftable->instMI->ft->enumInstanceNames!= NULL)
+	if (m_ftable->miVector.instMI->ft->enumInstanceNames!= NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
 		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+
+		//m_ftable->broker.hdl = 
+		//	new OW_ProviderEnvironmentIFCRef(env);
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
 
 		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
@@ -78,10 +82,12 @@ void
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 
-		::CMPIInstanceMI *mi = m_ftable->instMI;
+		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
-		rc = m_ftable->instMI->ft->enumInstanceNames(
+		rc = m_ftable->miVector.instMI->ft->enumInstanceNames(
 			mi, &eCtx, &eRes, &eRef);
+
+		//delete ((OW_ProviderEnvironmentIFCRef *)(m_ftable->broker.hdl));
 
 		if (rc.rc == CMPI_RC_OK) return;
 		else
@@ -118,17 +124,20 @@ void
 	env->getLogger()->
 		logDebug("OW_CMPIInstanceProviderProxy::enumInstances()");
 
-	if (m_ftable->instMI->ft->enumInstances!= NULL)
+	if (m_ftable->miVector.instMI->ft->enumInstances!= NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
 		int pCount = 0;
 
 		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
 		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath cop(className, ns);
 		CMPI_ObjectPathOnStack eRef(cop);
 		CMPI_ResultOnStack eRes(result);
@@ -154,9 +163,9 @@ void
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 
-		::CMPIInstanceMI *mi = m_ftable->instMI;
+		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
-		rc = m_ftable->instMI->ft->enumInstances(
+		rc = m_ftable->miVector.instMI->ft->enumInstances(
 			mi, &eCtx, &eRes, &eRef, (char **)props);
 
 		if (props && pCount)
@@ -192,17 +201,20 @@ OW_CIMInstance
 	env->getLogger()->
 		logDebug("OW_CMPIInstanceProviderProxy::getInstance()");
 
-	if (m_ftable->instMI->ft->getInstance!= NULL)
+	if (m_ftable->miVector.instMI->ft->getInstance!= NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char **props = NULL;
 		int pCount = 0;
 
 		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
 		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath copWithNS(instanceName);
 		copWithNS.setNameSpace(ns);
 
@@ -232,9 +244,9 @@ OW_CIMInstance
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 
-		::CMPIInstanceMI *mi = m_ftable->instMI;
+		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
-		rc = m_ftable->instMI->ft->getInstance(
+		rc = m_ftable->miVector.instMI->ft->getInstance(
 			mi, &eCtx, &eRes, &eRef, (char **)props);
 
 		if (rc.rc == CMPI_RC_OK)
@@ -263,29 +275,31 @@ void
 	env->getLogger()->
 		logDebug("OW_CMPIInstanceProviderProxy::deleteInstance()");
 
-	if (m_ftable->instMI->ft->deleteInstance!= NULL)
+	if (m_ftable->miVector.instMI->ft->deleteInstance!= NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
 		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
 		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath copWithNS(cop);
 		copWithNS.setNameSpace(ns);
 
 		CMPI_ObjectPathOnStack eRef(copWithNS);
-		//CMPI_ResultOnStack eRes(result);
 		CMPI_ResultOnStack eRes;
 
 		CMPIFlags flgs=0;
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 
-		::CMPIInstanceMI *mi = m_ftable->instMI;
+		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
-		rc = m_ftable->instMI->ft->deleteInstance(
+		rc = m_ftable->miVector.instMI->ft->deleteInstance(
 			mi, &eCtx, &eRes, &eRef);
 
 		if (rc.rc == CMPI_RC_OK) return;
@@ -311,15 +325,18 @@ OW_CIMObjectPath
 	env->getLogger()->
 		logDebug(format("OW_CMPIInstanceProviderProxy::createInstance() %1", cimInstance));
 
-	if (m_ftable->instMI->ft->createInstance!= NULL)
+	if (m_ftable->miVector.instMI->ft->createInstance!= NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
 		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
 		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath cop(cimInstance);
 		cop.setNameSpace(ns);
 
@@ -332,9 +349,9 @@ OW_CIMObjectPath
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 
-		::CMPIInstanceMI *mi = m_ftable->instMI;
+		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 // Cheating
-		rc = m_ftable->instMI->ft->createInstance(
+		rc = m_ftable->miVector.instMI->ft->createInstance(
 			mi, &eCtx, &eRes, &eRef, &eInst);
 
 		if (rc.rc == CMPI_RC_OK)
@@ -371,17 +388,20 @@ void
 	env->getLogger()->
 		logDebug("OW_CMPIInstanceProviderProxy::modifyInstance()");
 
-	if (m_ftable->instMI->ft->setInstance!= NULL)
+	if (m_ftable->miVector.instMI->ft->setInstance!= NULL)
 	{
-		CMPI_ThreadContext thr;
 		CMPIStatus rc = {CMPI_RC_OK, NULL};
 		const char ** props = NULL;
 		int pCount = 0;
 
 		::OperationContext context;
-		context.cimom = env;
-		//	(void *) new OW_ProviderEnvironmentIFCRef(env);
+
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+
 		CMPI_ContextOnStack eCtx(context);
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath instRef(previousInstance);
 		instRef.setNameSpace(ns);
 
@@ -395,9 +415,9 @@ void
 		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
 			(CMPIValue*)&flgs,CMPI_uint32);
 
-		::CMPIInstanceMI *mi = m_ftable->instMI;
+		::CMPIInstanceMI *mi = m_ftable->miVector.instMI;
 
-		rc = m_ftable->instMI->ft->setInstance(
+		rc = m_ftable->miVector.instMI->ft->setInstance(
 			mi, &eCtx, &eRes, &eRef, &eInst, (char **)props);
 
 		if (props && pCount)

@@ -61,15 +61,18 @@ OW_CMPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
 	env->getLogger()->
 		logDebug("OW_CMPIInstanceProviderProxy::invokeMethod()");
 
-	if (m_ftable->methMI->ft->invokeMethod != NULL)
+	if (m_ftable->miVector.methMI->ft->invokeMethod != NULL)
 	{
-		CMPIStatus rc;
+		CMPIStatus rc = {CMPI_RC_OK, NULL};
 
 		::OperationContext context;
-		context.cimom = env;
 
+		OW_ProviderEnvironmentIFCRef env2(env);
+		m_ftable->broker.hdl = static_cast<void *>(&env2);
+                                                                                
 		CMPI_ContextOnStack eCtx(context);
-		CMPI_ThreadContext thr;
+		CMPI_ThreadContext thr(&(m_ftable->broker), &eCtx);
+
 		OW_CIMObjectPath objectReference = path;
 		objectReference.setNameSpace(ns);
 		CMPI_ObjectPathOnStack eRef(objectReference);
@@ -80,10 +83,12 @@ OW_CMPIMethodProviderProxy::invokeMethod(const OW_ProviderEnvironmentIFCRef &env
 		char* mName=methodName.allocateCString();
 
 		CMPIFlags flgs=0;
-		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,(CMPIValue*)&flgs,CMPI_uint32);
+		eCtx.ft->addEntry(&eCtx,CMPIInvocationFlags,
+			(CMPIValue*)&flgs,CMPI_uint32);
 
-		rc=m_ftable->methMI->ft->invokeMethod(
-			m_ftable->methMI,&eCtx,&eRes,&eRef,mName,&eArgsIn,&eArgsOut);
+		rc=m_ftable->miVector.methMI->ft->invokeMethod(
+			m_ftable->miVector.methMI,&eCtx,&eRes,&eRef,
+			mName,&eArgsIn,&eArgsOut);
 
 		if (rc.rc == CMPI_RC_OK)
 			return handler.getValue();

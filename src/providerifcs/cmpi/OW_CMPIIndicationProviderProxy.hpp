@@ -40,6 +40,7 @@ class OW_CMPIIndicationProviderProxy : public OW_IndicationProviderIFC
 public:
 	OW_CMPIIndicationProviderProxy(const OW_CMPIFTABLERef& f)
 	: m_ftable(f)
+	, m_activationCount(0)
 	{
 	}
 
@@ -82,6 +83,7 @@ public:
 
 private:
 	OW_CMPIFTABLERef m_ftable;
+	unsigned int m_activationCount;
 };
 
 #endif

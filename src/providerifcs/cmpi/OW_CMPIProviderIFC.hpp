@@ -47,7 +47,7 @@
  * This class implements a bridge from the CIMOM's OW_ProviderManager to the
  * C++ providers.  It's main function is location and creation of providers.
  */
-static ::CMPIBroker broker;
+//static ::CMPIBroker broker;
 
 class OW_CMPIProviderIFC : public OW_ProviderIFCBaseIFC
 {
@@ -119,6 +119,10 @@ private:
 	OW_Mutex m_guard;
 	LoadedProviderArray m_noidProviders;
 	OW_Bool m_loadDone;
+
+// BMMU
+	MIs miVector;
+	::CMPI_Broker _broker;
 };
 
 typedef OW_SharedLibraryReference<OW_CMPIProviderIFC> OW_CMPIProviderIFCRef;
