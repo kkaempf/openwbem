@@ -1,5 +1,5 @@
 AC_PREREQ([2.57])
-AC_INIT(OpenWBEM, 3.1.0.pre1, openwbem-public@lists.sourceforge.net)
+AC_INIT(OpenWBEM, 3.1.0.pre2, openwbem-public@lists.sourceforge.net)
 dnl When we implement --help and --version for all installed binaries, use the std-options option
 dnl AM_INIT_AUTOMAKE([foreign dist-bzip2 std-options 1.6.3])
 
