@@ -366,39 +366,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this OW_CIMInstance to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
-	 * Write the XML representation of this OW_CIMInstance to an output stream
-	 * along with the instance name (obect path).
-	 * @param ostr The output stream to write the XML to.
-	 * @param cop	The OW_CIMObjectPath to use when generating the XML.
-	 */
-	//void toXML(std::ostream& ostr, const OW_CIMObjectPath& cop) const;
-
-	/**
-	 * Write the XML representation of this OW_CIMInstance to an output stream
-	 * along with the instance name (obect path).
-	 * @param ostr The output stream to write the XML to.
-	 * @param cop	The OW_CIMObjectPath to use when generating the XML.
-	 * @param localOnly If true, all inherited properties and qualifiers will be
-	 *		omitted.
-	 * @param includeQualifiers If true, all quailifiers will be omitted.
-	 * @param includeClassOrigin If true, all element names will include the
-	 *		class origin.
-	 * @param propertyList An array of property names that specifies the only
-	 *		properties to be included in the XML.
-	 * @param noProps If true, all properties will be omitted from the XML,
-	 *		regardless of the property list parameter.
-	 */
-	//void toXML(std::ostream& ostr, const OW_CIMObjectPath& cop, OW_Bool localOnly,
-	//	OW_Bool includeQualifiers, OW_Bool includeClassOrigin,
-	//	const OW_StringArray& propertyList, OW_Bool noProps=false) const;
-
-	/**
 	 * @return The string representation of the OW_CIMInstance object.
 	 */
 	virtual OW_String toString() const;

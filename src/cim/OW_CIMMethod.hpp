@@ -255,25 +255,6 @@ public:
 	virtual OW_String toMOF() const;
 
 	/**
-	 * Write the XML representation of this object to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 */
-	//virtual void toXML(std::ostream& ostr) const;
-
-	/**
-	 * Write the XML representation of this object to an output stream.
-	 * @param ostr The output stream to write the XML to.
-	 * @param localOnly If true and this method was inherited from another class,
-	 *		no XML will be generated for this method.
-	 * @param includeQualifiers If true the qualifiers for this method will be
-	 *		included in the XML. Otherwise they are omitted.
-	 * @param includeClassOrigin If true, the class origin for this method will
-	 *		be included in the XML. Otherwise it is omitted.
-	 */
-	//void toXML(std::ostream& ostr, OW_Bool localOnly, OW_Bool includeQualifiers,
-	//	OW_Bool includeClassOrigin) const;
-
-	/**
 	 * @return The string representation of this method as an OW_String.
 	 */
 	virtual OW_String toString() const;

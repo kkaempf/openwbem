@@ -144,16 +144,17 @@ public:
 #define OW_CIMINSTANCESIG				"INST"	// OW_CIMInstance
 #define OW_CIMMETHODSIG					"METH"	// OW_CIMMethod
 #define OW_CIMPARAMETERSIG				"PARM"	// OW_CIMParameter
+#define OW_CIMPARAMVALSIG				"PVAL"	// OW_CIMParamValue
 #define OW_CIMPROPERTYSIG				"PROP"	// OW_CIMProperty
 #define OW_CIMQUALIFIERSIG				"QUAL"	// OW_CIMQualifier
-#define OW_CIMQUALIFIERTYPESIG		"QTYP"	// OW_CIMQualifierType
+#define OW_CIMQUALIFIERTYPESIG			"QTYP"	// OW_CIMQualifierType
 #define OW_CIMDATATYPESIG				"DTYP"	// OW_CIMDataType
 #define OW_CIMFLAVORSIG					"FLAV"	// OW_CIMFlavor
 #define OW_CIMNAMESPACESIG				"NMSP"	// OW_CIMNameSpace
-#define OW_CIMOBJECTPATHSIG			"OPTH"	// OW_CIMObjectPath
+#define OW_CIMOBJECTPATHSIG				"OPTH"	// OW_CIMObjectPath
 #define OW_CIMSCOPESIG					"SCOP"	// OW_CIMScope
 #define OW_CIMVALUESIG					"VALU"	// OW_CIMValue
-#define OW_CIMURLSIG						"CURL"	// OW_CIMUrl
+#define OW_CIMURLSIG					"CURL"	// OW_CIMUrl
 #define OW_INTERNNAMESPACESIG			"INNS"	// Internval namespace class
 
 #endif	// OW_CIMBASE_HPP_
