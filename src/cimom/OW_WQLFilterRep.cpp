@@ -65,7 +65,7 @@ OW_WQLFilterRep::getQualifierType(const OW_CIMObjectPath &/*objPath*/,
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-OW_WQLFilterRep::enumNameSpace(const OW_CIMNameSpace& /*path*/,
+OW_WQLFilterRep::enumNameSpace(const OW_String& /*path*/,
 	OW_StringResultHandlerIFC&,
 	OW_Bool /*deep*/, const OW_ACLInfo& /*aclInfo*/)
 {

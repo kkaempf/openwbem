@@ -41,7 +41,7 @@ class OW_ClientCIMOMHandle : public OW_CIMOMHandleIFC
 public:
 	virtual void createNameSpace(const OW_String& ns);
 	virtual void deleteNameSpace(const OW_String& ns);
-	virtual void enumNameSpace(const OW_CIMNameSpace &ns,
+	virtual void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC &result, OW_Bool deep);
 };
 

@@ -136,10 +136,10 @@ public:
 	 * @exception OW_CIMException If the namespace does not exist or the object
 	 *		cannot be found in the specified namespace.
 	 */
-	virtual OW_StringArray enumNameSpaceE(const OW_CIMNameSpace& ns,
+	virtual OW_StringArray enumNameSpaceE(const OW_String& ns,
 		OW_Bool deep=DEEP);
 
-	virtual void enumNameSpace(const OW_CIMNameSpace& ns,
+	virtual void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC& result,
 		OW_Bool deep=DEEP) = 0;
 

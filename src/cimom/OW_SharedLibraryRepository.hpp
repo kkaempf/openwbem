@@ -69,7 +69,7 @@ public:
 		m_ref->deleteNameSpace(ns, aclInfo);
 	}
 
-	virtual void enumNameSpace(const OW_CIMNameSpace &ns,
+	virtual void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC& result,
 		OW_Bool deep, const OW_ACLInfo &aclInfo)
 	{

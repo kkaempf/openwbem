@@ -286,7 +286,7 @@ public:
 	 * @exception 	OW_CIMException If the namespace does not exist or the object
 	 *					cannot be found in the specified namespace.
 	 */
-	void enumNameSpace(const OW_CIMNameSpace& ns,
+	void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC& result,
 		OW_Bool deep,
 		const OW_ACLInfo& aclInfo)

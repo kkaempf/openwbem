@@ -686,8 +686,7 @@ void enumNameSpace(OW_CIMOMHandleIFC& hdl)
 	cout << "\n\n******* Doing enumNameSpace() *******\n" << endl;
 	try
 	{
-		OW_CIMNameSpace path("/root/acltest");
-		OW_StringArray rval = hdl.enumNameSpaceE(path, OW_Bool(true));
+		OW_StringArray rval = hdl.enumNameSpaceE("/root/acltest", OW_Bool(true));
 		if (mode != "r" && mode != "rw")
 			assert(0);
 	}

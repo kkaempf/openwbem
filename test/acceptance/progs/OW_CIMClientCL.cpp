@@ -602,7 +602,7 @@ deleteAssociations(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("/root");
+		OW_CIMNameSpace path("root");
 		hdl.execQueryE(path,
 			"delete from CIM_SystemComponent", "wql1");
 	}
@@ -1114,7 +1114,7 @@ execQuery(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("/root");
+		OW_CIMNameSpace path("root");
 		OW_CIMInstanceEnumeration cie = hdl.execQueryE(path,
 			"select * from EXP_BionicComputerSystem", "wql1");
 		while (cie.hasMoreElements())
@@ -1221,7 +1221,7 @@ invokeMethod(OW_CIMOMHandleIFC& hdl, int num)
 
 	try
 	{
-		OW_CIMObjectPath cop("EXP_BartComputerSystem", "/root");
+		OW_CIMObjectPath cop("EXP_BartComputerSystem", "root");
 
 		OW_String rval;
 		OW_CIMParamValueArray in, out;
@@ -1291,8 +1291,8 @@ createNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		hdl.createNameSpace("/root/Caldera");
-		hdl.createNameSpace("/root/Caldera/test");
+		hdl.createNameSpace("root/Caldera");
+		hdl.createNameSpace("root/Caldera/test");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1310,16 +1310,15 @@ enumNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		OW_CIMNameSpace path("/root");
 		cout << "deep = false" << endl;
-		OW_StringArray rval = hdl.enumNameSpaceE(path, OW_Bool(false));
+		OW_StringArray rval = hdl.enumNameSpaceE("root", OW_Bool(false));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
 		}
 		
 		cout << "deep = true" << endl;
-		rval = hdl.enumNameSpaceE(path, OW_Bool(true));
+		rval = hdl.enumNameSpaceE("root", OW_Bool(true));
 		for (size_t i = 0; i < rval.size(); i++)
 		{
 			cout << "Namespace: " << rval[i] << endl;
@@ -1341,7 +1340,7 @@ deleteNameSpace(OW_CIMOMHandleIFC& hdl)
 
 	try
 	{
-		hdl.deleteNameSpace("/root/Caldera");
+		hdl.deleteNameSpace("root/Caldera");
 	}
 	catch (OW_CIMException& e)
 	{
@@ -1360,7 +1359,7 @@ getProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root");
+		OW_CIMObjectPath cop(ofClass, "root");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(OW_String(instName)));
 
@@ -1390,7 +1389,7 @@ setProperty(OW_CIMOMHandleIFC& hdl, const OW_String& instName)
 	try
 	{
 		OW_String ofClass = "EXP_BionicComputerSystem";
-		OW_CIMObjectPath cop(ofClass, "/root");
+		OW_CIMObjectPath cop(ofClass, "root");
 		cop.addKey("CreationClassName", OW_CIMValue(ofClass));
 		cop.addKey("Name", OW_CIMValue(instName));
 

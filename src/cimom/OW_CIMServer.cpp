@@ -493,11 +493,12 @@ OW_CIMServer::enumQualifierTypes(const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_CIMServer::enumNameSpace(const OW_CIMNameSpace& ns,
+OW_CIMServer::enumNameSpace(const OW_String& nsName_,
 	OW_StringResultHandlerIFC& result, OW_Bool deep,
 	const OW_ACLInfo& aclInfo)
 {
-	OW_String nsName(ns.getNameSpace());
+	// TODO: Do we need this toLowerCase?
+	OW_String nsName(nsName_);
 	nsName.toLowerCase();
 
 	// Check to see if user has rights to enumerate the namespace

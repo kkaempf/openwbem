@@ -116,12 +116,10 @@ int main(int argc, char* argv[])
 			rch = new OW_CIMXMLCIMOMHandle(client);
 		}
 
-		OW_CIMNameSpace path(ns);
-
 		cout << "Enumerating namespace (" << ns << ")" << endl;
         bool deep = true; // TODO: get this from a command line argument
 		
-		OW_StringArray rval = rch->enumNameSpaceE(path, deep);
+		OW_StringArray rval = rch->enumNameSpaceE(ns, deep);
         copy(rval.begin(), rval.end(), std::ostream_iterator<OW_String>(cout, "\n"));
 
 		return 0;

@@ -172,7 +172,7 @@ OW_NameSpaceProvider::enumInstances(
 {
 	NameSpaceEnumBuilder handler(result, cimClass);
 	env->getCIMOMHandle()->enumNameSpace(
-		cop.getFullNameSpace(), handler, false);
+		cop.getNameSpace(), handler, false);
 }
 
 //////////////////////////////////////////////////////////////////////////////

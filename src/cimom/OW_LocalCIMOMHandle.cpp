@@ -128,7 +128,7 @@ OW_LocalCIMOMHandle::deleteQualifierType(const OW_CIMObjectPath& path)
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_LocalCIMOMHandle::enumNameSpace(const OW_CIMNameSpace& ns,
+OW_LocalCIMOMHandle::enumNameSpace(const OW_String& ns,
 	OW_StringResultHandlerIFC& result, OW_Bool deep)
 {
 	OW_ReadLock rl = getReadLock();

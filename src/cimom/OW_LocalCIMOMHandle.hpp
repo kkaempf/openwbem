@@ -595,7 +595,7 @@ public:
 	 *		enumerated namespace.
 	 * @return An Array of namespace names as strings.
 	 */
-	virtual void enumNameSpace(const OW_CIMNameSpace& ns,
+	virtual void enumNameSpace(const OW_String& ns,
 		OW_StringResultHandlerIFC& result,
 		OW_Bool deep);
 	

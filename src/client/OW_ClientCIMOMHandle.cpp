@@ -150,11 +150,11 @@ enumNameSpaceAux(OW_CIMOMHandleIFC* hdl, const OW_CIMObjectPath& path,
 
 //////////////////////////////////////////////////////////////////////////////
 void
-OW_ClientCIMOMHandle::enumNameSpace(const OW_CIMNameSpace &ns,
+OW_ClientCIMOMHandle::enumNameSpace(const OW_String& ns,
 	OW_StringResultHandlerIFC &result, OW_Bool deep)
 {
-	OW_CIMObjectPath cop(OW_CIMClass::NAMESPACECLASS, ns.getNameSpace());
-	result.handle(ns.getNameSpace());
+	OW_CIMObjectPath cop(OW_CIMClass::NAMESPACECLASS, ns);
+	result.handle(ns);
 	enumNameSpaceAux(this, cop, result, deep);
 }
 				
