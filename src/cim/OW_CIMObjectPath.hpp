@@ -259,6 +259,16 @@ public:
 	{
 		return equals(op);
 	}
+
+	/**
+	 * Not Equal operator
+	 * @param op The object path to compare to this one.
+	 * @return true if the object paths are not equal. Otherwise false.
+	 */
+	bool operator!= (const CIMObjectPath& op) const
+	{
+		return !equals(op);
+	}
 	/**
 	 * @return The full namespace for this object path
 	 */
