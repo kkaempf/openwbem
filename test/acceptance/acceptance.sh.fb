@@ -712,7 +712,7 @@ TestAuth()
 	echo "1. Testing Allow Anonymous"
 	RestartDaemon
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
-		> $RESULTDIR/AuthTest.out 2>&1
+		>> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "0" ] || ExitWithFail "1. Allow Anonymous Failed"
 
 	# disable allow_anonymous
@@ -746,7 +746,7 @@ TestAuth()
 	echo "Simple Authentication module and GetFeatures Passed"
 	
 	if grep "define OW_DISABLE_DIGEST" $TOPSRCDIR/src/common/OW_config.h > /dev/null 2>&1; then
-		:
+		echo "OpenWBEM was not build with Digest support"
 	else
 		EditConfig "s!http_server.use_digest = false!http_server.use_digest = true!g" 
 		echo "5. Testing Digest Authentication"
@@ -799,7 +799,7 @@ TestAuth()
 		# if we have a pam username/password, then try it out
 		if [ ! -z "$OWPAMUSERNAME" ] && [ ! -z "$OWPAMPASS" ]; then
 			$BUILDDIR/test/acceptance/progs/fakeclient http://${OWPAMUSERNAME}:${OWPAMPASS}@localhost:30926 \
-				 > $RESULTDIR/GetFeatures.out 2>&1
+				 >> $RESULTDIR/AuthTest.out 2>&1
 			RVAL=$?
 			[ "$RVAL" = "0" ] || \
 			ExitWithFail "10. Authentication test (pam): fakeclient return wrong code. $RVAL != 0"
@@ -811,6 +811,20 @@ TestAuth()
 	else
 		echo "OpenWBEM was not build with pam support"
 	fi
+
+	# enable http_server.allow_local_authentication
+	EditConfig "s!;http_server.allow_local_authentication = false!http_server.allow_local_authentication = true!g" 
+	
+	echo "11. Testing Local Authentication"
+	RestartDaemon
+	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
+		>> $RESULTDIR/AuthTest.out 2>&1
+	[ "$?" = "0" ] || ExitWithFail "11. Local Authentication Failed"
+
+	# disable http_server.allow_local_authentication
+	EditConfig "s!http_server.allow_local_authentication = true!;http_server.allow_local_authentication = false!g" 
+	RestartDaemon
+
 }
 
 #############################################################################
