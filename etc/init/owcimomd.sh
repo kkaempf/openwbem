@@ -91,7 +91,7 @@ case "$1" in
 
   for num in 1 2 3 4 5 6 7
   do
-    if [ -e /proc/$PID ]
+    if kill -0 $PID >/dev/null 2>&1
     then
       echo -n "."
     else
@@ -102,7 +102,7 @@ case "$1" in
     fi
     sleep 2
   done
-  if [ -e /proc/$PID ]
+  if kill -0 $PID >/dev/null 2>&1
   then
     kill -s SIGKILL $PID
     sleep 2
@@ -137,7 +137,7 @@ case "$1" in
  status)
   if [ -f $PIDFILE ]; then
     PID=`cat $PIDFILE`
-    if [ -e /proc/$PID ]; then
+    if kill -0 $PID >/dev/null 2>&1; then
       echo "$NAME ($PID) is running."
       exit 0
     else
