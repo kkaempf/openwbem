@@ -116,7 +116,7 @@ bool AIXAuthentication::doAuthenticate(String &userName, const String &info,
 	int result, reenter;
 	// FIXME! Allow variable attemps, or possibly find a way to re-request the password.
 	int attempts_left = 3;
-	char* message;
+	char* message = NULL;
 
 	char* pPasswd = strdup(info.c_str());
 	char* pUserName = strdup(userName.c_str());
