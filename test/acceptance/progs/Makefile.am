@@ -43,15 +43,15 @@ owprovideragent_SOURCES = \
 owprovideragent.cpp
 
 owprovideragent_LDADD = \
--L$(top_builddir)/src/common -lopenwbem \
 -L$(top_builddir)/src/provideragent -lowprovideragent \
 -L$(top_builddir)/src/requesthandlers/cimxml -lowrequesthandlercimxml \
--L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/providerifcs/cpp -lowcppprovifc \
 -L$(top_builddir)/src/services/http -lowservicehttp \
+-L$(top_builddir)/src/http/common -lowhttpcommon \
 -L$(top_builddir)/src/authenticators/nonauthenticating -lnonauthenticatingauthentication \
 -L$(top_builddir)/src/xml -lowxml \
 -L$(top_builddir)/src/provider -lowprovider \
+-L$(top_builddir)/src/common -lopenwbem \
 $(SSL_LIBS) $(Z_LIBS) \
 $(BINLINKAPPENDFLAGS)
 
