@@ -122,12 +122,12 @@ SwitchToLinks()
 	cd $STAGEDIR
 	LISTTOSWITCH=`find . -perm -0111 ! -type d ! -type l`
 	for i in $LISTTOSWITCH; do
-		rm $i
+		rm -f $i
 		BASENAME=`basename $i`
 		FNAME=`find $TOPSRCDIR -name $BASENAME -perm -0111 ! -type d ! -type l`
 		FNAME=$STAGEDIR/$FNAME
 		echo "Creating symbolic link: $i -> $FNAME"
-		ln -s $FNAME $i
+		ln -sf $FNAME $i
 	done
 }
 
