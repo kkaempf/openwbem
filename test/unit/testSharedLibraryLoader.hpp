@@ -516,6 +516,11 @@ namespace
 {
 	class DummyLogger : public Logger
 	{
+	public:
+		DummyLogger()
+			: Logger("testSharedLibraryLoader", E_ERROR_LEVEL)
+		{
+		}
 	protected:
 		virtual void doLogMessage(const String &message, const ELogLevel) const
 		{

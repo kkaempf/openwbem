@@ -65,6 +65,8 @@
 #include "OW_AuthorizerManager.hpp"
 #include "OW_AuthorizerIFC.hpp"
 #include "OW_Socket.hpp"
+#include "OW_LogAppender.hpp"
+#include "OW_AppenderLogger.hpp"
 
 #include <iostream>
 
@@ -215,7 +217,7 @@ CIMOMEnvironment::init()
 		OW_DEFAULT_REQ_HANDLER_TTL, E_PRESERVE_PREVIOUS);
 
 	// Default Content-Language
-	setConfigItem(ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt, 
+	setConfigItem(ConfigOpts::HTTP_SERVER_DEFAULT_CONTENT_LANGUAGE_opt,
 		OW_DEFAULT_HTTP_SERVER_CONTENT_LANGUAGE, E_PRESERVE_PREVIOUS);
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -639,11 +641,134 @@ CIMOMEnvironment::_loadServices()
 void
 CIMOMEnvironment::_createLogger()
 {
-	bool debugFlag = getConfigItem(
-		ConfigOpts::DEBUG_opt).equalsIgnoreCase("true");
-	m_Logger = LoggerRef(Logger::createLogger(getConfigItem(
-		ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION), debugFlag));
-	m_Logger->setLogLevel(getConfigItem(ConfigOpts::LOG_LEVEL_opt, OW_DEFAULT_LOG_LEVEL));
+	using namespace ConfigOpts;
+	Array<LogAppenderRef> appenders;
+	
+	StringArray additionalLogs = getConfigItem(ADDITIONAL_LOGS_opt).tokenize();
+
+	// this also gets set if owcimomd is run with -d
+	bool debugFlag = getConfigItem(DEBUG_opt).equalsIgnoreCase("true");
+	if ( debugFlag )
+	{
+		// stick it at the beginning as a possible slight logging performance optimization
+		additionalLogs.insert(additionalLogs.begin(), LOG_DEBUG_LOG_NAME);
+	}
+
+	for (size_t i = 0; i < additionalLogs.size(); ++i)
+	{
+		const String& logName(additionalLogs[i]);
+
+		String logMainType = getConfigItem(Format(LOG_1_TYPE_opt, logName), OW_DEFAULT_LOG_1_TYPE);
+		String logMainComponents = getConfigItem(Format(LOG_1_COMPONENTS_opt, logName), OW_DEFAULT_LOG_1_COMPONENTS);
+		String logMainCategories = getConfigItem(Format(LOG_1_CATEGORIES_opt, logName));
+		if (logMainCategories.empty())
+		{
+			// convert level into categories
+			String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
+			if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
+			{
+				logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			}
+			else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
+			{
+				logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			}
+			else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
+			{
+				logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+			}
+			else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
+			{
+				logMainCategories = Logger::STR_FATAL_CATEGORY;
+			}
+		}
+		String logMainFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
+
+		appenders.push_back(LogAppender::createLogAppender(logName, logMainComponents.tokenize(), logMainCategories.tokenize(),
+			logMainFormat, logMainType, *m_configItems));
+	}
+
+
+	// This one will eventually be handled the same as all other logs by just sticking "main" in the additionalLogs array
+	// but we need to handle deprecated options for now, so it needs special treatment.
+	String logName(LOG_MAIN_LOG_NAME);
+	String logMainType = getConfigItem(Format(LOG_1_TYPE_opt, logName));
+	String logMainComponents = getConfigItem(Format(LOG_1_COMPONENTS_opt, logName), OW_DEFAULT_LOG_1_COMPONENTS);
+	String logMainCategories = getConfigItem(Format(LOG_1_CATEGORIES_opt, logName));
+	String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName));
+	String logMainFormat = getConfigItem(Format(LOG_1_FORMAT_opt, logName), OW_DEFAULT_LOG_1_FORMAT);
+
+	// map the old log_location onto log.main.type and log.main.location if necessary
+	if (logMainType.empty())
+	{
+		String deprecatedLogLocation = getConfigItem(ConfigOpts::LOG_LOCATION_opt);
+		if (deprecatedLogLocation.empty() || deprecatedLogLocation.equalsIgnoreCase("syslog"))
+		{
+			logMainType = "syslog";
+		}
+		else if (deprecatedLogLocation.equalsIgnoreCase("null"))
+		{
+			logMainType = "null";
+		}
+		else
+		{
+			logMainType = "file";
+			setConfigItem(Format(LOG_1_LOCATION_opt, logName), deprecatedLogLocation);
+		}
+	}
+
+	// map the old log_level onto log.main.level if necessary
+	if (logMainCategories.empty() && logMainLevel.empty())
+	{
+		String deprecatedLogLevel = getConfigItem(ConfigOpts::LOG_LEVEL_opt);
+		if (deprecatedLogLevel.empty())
+		{
+			logMainLevel = OW_DEFAULT_LOG_1_LEVEL;
+		}
+		else
+		{
+			// old used "fatalerror", now we just use FATAL
+			if (deprecatedLogLevel.equalsIgnoreCase("fatalerror"))
+			{
+				logMainLevel = Logger::STR_FATAL_CATEGORY;
+			}
+			else
+			{
+				deprecatedLogLevel.toUpperCase();
+				logMainLevel = deprecatedLogLevel;
+			}
+		}
+	}
+	
+	// convert level into categories
+	if (logMainCategories.empty())
+	{
+		// convert level into categories
+		String logMainLevel = getConfigItem(Format(LOG_1_LEVEL_opt, logName), OW_DEFAULT_LOG_1_LEVEL);
+		if (logMainLevel.equalsIgnoreCase(Logger::STR_DEBUG_CATEGORY))
+		{
+			logMainCategories = Logger::STR_DEBUG_CATEGORY + " " + Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+		}
+		else if (logMainLevel.equalsIgnoreCase(Logger::STR_INFO_CATEGORY))
+		{
+			logMainCategories = Logger::STR_INFO_CATEGORY + " " + Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+		}
+		else if (logMainLevel.equalsIgnoreCase(Logger::STR_ERROR_CATEGORY))
+		{
+			logMainCategories = Logger::STR_ERROR_CATEGORY + " " + Logger::STR_FATAL_CATEGORY;
+		}
+		else if (logMainLevel.equalsIgnoreCase(Logger::STR_FATAL_CATEGORY))
+		{
+			logMainCategories = Logger::STR_FATAL_CATEGORY;
+		}
+	}
+
+	appenders.push_back(LogAppender::createLogAppender(logName, logMainComponents.tokenize(), logMainCategories.tokenize(),
+		logMainFormat, logMainType, *m_configItems));
+
+
+	String defaultComponent("owcimomd");
+	m_Logger = new AppenderLogger(defaultComponent, appenders);
 }
 //////////////////////////////////////////////////////////////////////////////
 void
@@ -1171,7 +1296,7 @@ CIMOMEnvironment::getRepository() const
 	return m_cimRepository;
 }
 //////////////////////////////////////////////////////////////////////////////
-AuthorizerManagerRef 
+AuthorizerManagerRef
 CIMOMEnvironment::getAuthorizerManager() const
 {
 	return m_authorizerManager;
@@ -1189,7 +1314,7 @@ CIMInstanceArray CIMOMEnvironment::getInteropInstances(const String& className) 
 	return CIMInstanceArray(citer->second.begin(), citer->second.end());
 }
 //////////////////////////////////////////////////////////////////////////////
-void 
+void
 CIMOMEnvironment::setInteropInstance(const CIMInstance& inst)
 {
 	String className = inst.getClassName();

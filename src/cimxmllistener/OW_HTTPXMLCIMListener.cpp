@@ -225,6 +225,12 @@ private:
 	Reference<Array<SelectablePair_t> > m_selectables;
 	class DummyLogger : public Logger
 	{
+	public:
+		DummyLogger()
+			: Logger("Dummy", E_FATAL_ERROR_LEVEL)
+		{
+		}
+
 	protected:
 		virtual void doLogMessage(const String &, const ELogLevel) const
 		{

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -33,39 +33,57 @@
  */
 
 #include "OW_config.h"
-#include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
+#include "OW_CerrAppender.hpp"
 #include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
 
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
+#include <iostream>
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+/////////////////////////////////////////////////////////////////////////////
+CerrAppender::CerrAppender(const StringArray& components,
+	const StringArray& categories,
+	const String& pattern)
+	: LogAppender(components, categories, pattern)
+{
+}
 
 /////////////////////////////////////////////////////////////////////////////
+CerrAppender::~CerrAppender()
+{
+}
 
+/////////////////////////////////////////////////////////////////////////////
+void
+CerrAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
+{
+	std::cerr << formattedMessage << std::endl;
+}
 
+/////////////////////////////////////////////////////////////////////////////
+// const char* red = "\x1b[1;31;40m";
+// const char* darkRed = "\x1b[0;31;40m";
+// const char* green = "\x1b[1;32;40m";
+// const char* darkGreen = "\x1b[0;32;40m";
+// const char* yellow = "\x1b[1;33;40m";
+// const char* darkYellow = "\x1b[0;33;40m";
+// const char* blue = "\x1b[1;34;40m";
+// const char* darkBlue = "\x1b[0;34;40m";
+// const char* purple = "\x1b[1;35;40m";
+// const char* darkPurple = "\x1b[0;35;40m";
+// const char* cyan = "\x1b[1;36;40m";
+// const char* darkCyan = "\x1b[0;36;40m";
+// const char* white = "\x1b[1;37;40m";
+// const char* darkWhite = "\x1b[0;37;40m";
+// const char* gray = "\x1b[0;37;40m";
+// const char* resetColor = "\x1b[0;37;40m";
 
-
+// colorized version: const String CerrAppender::STR_DEFAULT_MESSAGE_PATTERN("\x1b[1;37;40m[\x1b[1;31;40m%-.6t\x1b[1;37;40m]\x1b[1;32;40m %m\x1b[0;37;40m");
+const String CerrAppender::STR_DEFAULT_MESSAGE_PATTERN("[%-.6t] %m");
 
 
 } // end namespace OpenWBEM
+
+
 

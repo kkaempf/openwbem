@@ -32,40 +32,47 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_COMMON_FWD_HPP_INCLUDE_GUARD_
+#define OW_COMMON_FWD_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
+#include "OW_ArrayFwd.hpp"
 #include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
 
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
+namespace std
+{
+	template <typename T> class less;
+}
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+struct LogMessage;
+class Logger;
+typedef IntrusiveReference<Logger> LoggerRef;
 
-/////////////////////////////////////////////////////////////////////////////
+class LogAppender;
+typedef IntrusiveReference<LogAppender> LogAppenderRef;
 
+class String;
+typedef Array<String> StringArray;
 
+class Char16;
+typedef Array<Char16> Char16Array;
 
+template <class Key, class T, class Compare>
+class SortedVectorMapDataCompare;
 
+template<class Key, class T, class Compare = SortedVectorMapDataCompare<Key, T, std::less<Key> > >
+class SortedVectorMap;
 
+namespace ConfigFile
+{
+	typedef SortedVectorMap<String, String> ConfigMap;
+}
+
+class StringBuffer;
 
 } // end namespace OpenWBEM
+
+#endif
 

@@ -37,6 +37,7 @@
 #include "OW_config.h"
 #include "OW_COWReference.hpp"
 #include "OW_vector.hpp"
+#include "OW_commonFwd.hpp"
 #include <utility> // for std::pair
 #include <functional> // for std::less
 #include <algorithm>
@@ -78,9 +79,6 @@ private:
 
 // forward declarations are necessary for template friends.
 template<class Key, class T, class Compare>
-class SortedVectorMap;
-
-template<class Key, class T, class Compare>
 inline bool operator==(const SortedVectorMap<Key, T, Compare>& x,
 	const SortedVectorMap<Key, T, Compare>& y);
 
@@ -92,7 +90,7 @@ template <class Key, class T, class Compare>
 inline void swap(SortedVectorMap<Key, T, Compare>& x,
 	SortedVectorMap<Key, T, Compare>& y);
 
-template<class Key, class T, class Compare = SortedVectorMapDataCompare<Key, T, std::less<Key> > >
+template<class Key, class T, class Compare>
 class SortedVectorMap
 {
 	typedef std::pair<Key, T> Data;

@@ -35,6 +35,7 @@
 #include "Guards.hpp"
 #include "Test.hpp"
 #include "CppUnitException.hpp"
+#include <iostream>
 
 class TestResult;
 
@@ -197,7 +198,7 @@ private:
 	#define unitAssertNoThrow(condition)\
 	try{condition;\
 	} catch (const CppUnitException& e){throw e;} \
-			catch( const std::exception& e ){ this->assertImplementation( false, #condition, __LINE__, __FILE__);} \
+	catch( const std::exception& e ){ std::cout << "Caught exception " << e.what() << std::endl; this->assertImplementation( false, #condition, __LINE__, __FILE__);} \
 	catch (...) { this->assertImplementation( false, #condition,\
 			__LINE__, __FILE__);}
 

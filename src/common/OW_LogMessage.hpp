@@ -32,40 +32,34 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_LOG_MESSAGE_HPP_INCLUDE_GUARD_
+#define OW_LOG_MESSAGE_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
 #include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
-
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+struct OW_COMMON_API LogMessage
+{
+	LogMessage(const String& component_, const String& category_, const String& message_, const char* filename_, int fileline_)
+		: component(component_)
+		, category(category_)
+		, message(message_)
+		, filename(filename_)
+		, fileline(fileline_)
+	{
+	}
 
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-
+	String component;
+	String category;
+	String message;
+	const char* filename;
+	int fileline;
+};
 
 
 } // end namespace OpenWBEM
+
+#endif
 

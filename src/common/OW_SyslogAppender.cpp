@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -33,39 +33,70 @@
  */
 
 #include "OW_config.h"
+#include "OW_SyslogAppender.hpp"
 #include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
 #include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
-
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
+#include <syslog.h>
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+/////////////////////////////////////////////////////////////////////////////
+SyslogAppender::SyslogAppender(const StringArray& components,
+	const StringArray& categories,
+	const String& pattern)
+	: LogAppender(components, categories, pattern)
+{
+	if (!calledOpenLog)
+	{
+		openlog( OW_PACKAGE_PREFIX"openwbem", LOG_CONS, LOG_DAEMON );
+		calledOpenLog = true;
+	}
+}
 
 /////////////////////////////////////////////////////////////////////////////
+SyslogAppender::~SyslogAppender() {}
 
+/////////////////////////////////////////////////////////////////////////////
+void
+SyslogAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
+{
+	int syslogPriority;
+	if (message.category == Logger::STR_FATAL_CATEGORY)
+	{
+		syslogPriority = LOG_CRIT;
+	}
+	else if (message.category == Logger::STR_ERROR_CATEGORY)
+	{
+		syslogPriority = LOG_ERR;
+	}
+	else if (message.category == Logger::STR_INFO_CATEGORY)
+	{
+		syslogPriority = LOG_INFO;
+	}
+	else if (message.category == Logger::STR_DEBUG_CATEGORY)
+	{
+		syslogPriority = LOG_DEBUG;
+	}
+	else
+	{
+		syslogPriority = LOG_INFO;
+	}
 
+	StringArray a = formattedMessage.tokenize("\n");
+	for (size_t i = 0; i < a.size(); ++i)
+	{
+		syslog( syslogPriority, "%s", a[i].c_str() );
+	}
+}
 
-
+/////////////////////////////////////////////////////////////////////////////
+bool SyslogAppender::calledOpenLog = false;
+const String SyslogAppender::STR_DEFAULT_MESSAGE_PATTERN("[%t]%m");
 
 
 } // end namespace OpenWBEM
+
+
+
 

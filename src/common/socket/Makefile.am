@@ -35,4 +35,5 @@ OW_SocketFlags.hpp
 # Shouldn't depend on anything not in common. DON'T ADD ANYTHING TO THIS LIST!
 INCLUDES = \
 -I$(top_srcdir)/src/common \
--I$(top_srcdir)/src/ifcs
+-I$(top_srcdir)/src/ifcs \
+-I$(top_srcdir)/src/cim

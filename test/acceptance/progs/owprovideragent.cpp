@@ -47,6 +47,9 @@
 #include "OW_Format.hpp"
 #include "OW_CmdLineParser.hpp"
 #include "OW_CppProviderIFC.hpp"
+#include "OW_Logger.hpp"
+#include "OW_LogAppender.hpp"
+#include "OW_AppenderLogger.hpp"
 
 #include <csignal>
 #include <iostream> // for cout and cerr
@@ -65,6 +68,9 @@ void sig_handler(int)
 	sigPipe->writeInt(0);
 }
 
+namespace
+{
+
 enum
 {
 	HELP_OPT,
@@ -77,7 +83,7 @@ enum
 	PROVIDER_OPT
 };
 
-CmdLineParser::Option g_options[] = 
+CmdLineParser::Option g_options[] =
 {
 	{HELP_OPT, 'h', "help", CmdLineParser::E_NO_ARG, 0, "Show help about options."},
 	{VERSION_OPT, 'v', "version", CmdLineParser::E_NO_ARG, 0, "Show version information."},
@@ -95,6 +101,37 @@ void Usage()
 	cerr << "Usage: owprovideragent [options]\n\n";
 	cerr << CmdLineParser::getUsage(g_options) << endl;
 }
+
+LoggerRef
+createLogger(const String& type_)
+{
+	String type(type_);
+	StringArray components;
+	components.push_back("*");
+
+	StringArray categories;
+	categories.push_back(Logger::STR_FATAL_CATEGORY);
+	categories.push_back(Logger::STR_ERROR_CATEGORY);
+
+	ConfigFile::ConfigMap configItems;
+
+	// TODO: Fix this to use the new logging configuration scheme
+	String filename = type;
+	if (type != "syslog")
+	{
+		type = "file";
+		configItems["log.test.location"] = filename;
+	}
+
+	LogAppenderRef logAppender = LogAppender::createLogAppender("", components, categories,
+		LogMessagePatternFormatter::STR_DEFAULT_MESSAGE_PATTERN, type, configItems);
+
+	return LoggerRef(new AppenderLogger("owcimomd", E_ERROR_LEVEL, logAppender));
+
+}
+
+} // end anonymous namespace
+
 
 int main(int argc, char* argv[])
 {
@@ -119,7 +156,7 @@ int main(int argc, char* argv[])
 			return 0;
 		}
 
-		ConfigFile::ConfigMap cmap; 
+		ConfigFile::ConfigMap cmap;
 
 		String configFile = parser.getOptionValue(CONFIG_OPT);
 		if (!configFile.empty())
@@ -144,15 +181,15 @@ int main(int argc, char* argv[])
 
 		bool debugMode = false;
 
-		LoggerRef logger = Logger::createLogger(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION), debugMode);
+		LoggerRef logger = createLogger(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LOCATION_opt, OW_DEFAULT_LOG_LOCATION));
 		logger->setLogLevel(ConfigFile::getConfigItem(cmap, ConfigOpts::LOG_LEVEL_opt, OW_DEFAULT_LOG_LEVEL));
 
 		// TODO: set the http server timeout
 
-		AuthenticatorIFCRef authenticator; 
-		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute); 
-		Array<RequestHandlerIFCRef> rha; 
-		rha.push_back(rh); 
+		AuthenticatorIFCRef authenticator;
+		RequestHandlerIFCRef rh(SharedLibraryRef(0), new XMLExecute);
+		Array<RequestHandlerIFCRef> rha;
+		rha.push_back(rh);
 
 		Array<CppProviderBaseIFCRef> pra;
 		StringArray providers = parser.getOptionValueList(PROVIDER_OPT);
@@ -164,9 +201,9 @@ int main(int argc, char* argv[])
 		}
 		for (size_t i = 0; i < providers.size(); ++i)
 		{
-			String libName(providers[i]); 
-			CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, logger); 
-			if (!provider->getInstanceProvider() 
+			String libName(providers[i]);
+			CppProviderBaseIFCRef provider = CppProviderIFC::loadProvider(libName, logger);
+			if (!provider->getInstanceProvider()
 				&& !provider->getSecondaryInstanceProvider()
 	#ifndef OW_DISABLE_ASSOCIATION_TRAVERSAL
 				&& !provider->getAssociatorProvider()
@@ -174,12 +211,12 @@ int main(int argc, char* argv[])
 				&& !provider->getMethodProvider())
 			{
 				cerr << "Error: Provider " << libName << " is not a supported type" << endl;
-				return 1; 
+				return 1;
 			}
-			pra.push_back(provider); 
+			pra.push_back(provider);
 		}
 
-		CIMClassArray cra; 
+		CIMClassArray cra;
 
 		ProviderAgent pa(cmap, pra, cra, rha, authenticator, logger, url);
 		

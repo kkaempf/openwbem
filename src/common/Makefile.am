@@ -28,12 +28,14 @@ INCLUDES = \
 
 
 libopenwbem_a_SOURCES =	\
+OW_AppenderLogger.cpp \
 OW_Array.cpp \
 OW_Assertion.cpp \
 OW_AtomicOps.cpp \
 OW_BaseStreamBuffer.cpp \
 OW_BinarySerialization.cpp \
 OW_Bool.cpp \
+OW_CerrAppender.cpp \
 OW_Char16.cpp \
 OW_CIMErrorException.cpp \
 OW_CmdLineParser.cpp \
@@ -52,12 +54,14 @@ OW_dyldSharedLibraryLoader.cpp \
 OW_EnumerationException.cpp \
 OW_Exception.cpp \
 OW_Exec.cpp \
+OW_FileAppender.cpp \
 OW_Format.cpp \
 OW_IntrusiveCountableBase.cpp \
 OW_IOException.cpp \
 OW_IOIFCStreamBuffer.cpp \
+OW_LogAppender.cpp \
 OW_Logger.cpp \
-OW_LoggerImpls.cpp \
+OW_LogMessagePatternFormatter.cpp \
 OW_MD5.cpp \
 OW_MemTracer.cpp \
 OW_Mutex.cpp \
@@ -67,6 +71,7 @@ OW_NonRecursiveMutexImpl.cpp \
 OW_NoSuchPropertyException.cpp \
 OW_NoSuchProviderException.cpp \
 OW_NoSuchQualifierException.cpp \
+OW_NullAppender.cpp \
 OW_NULLValueException.cpp \
 OW_OperationContext.cpp \
 OW_OutOfBoundsException.cpp \
@@ -91,6 +96,7 @@ OW_StackTrace.cpp \
 OW_StringBuffer.cpp \
 OW_String.cpp \
 OW_StringStream.cpp \
+OW_SyslogAppender.cpp \
 OW_TempFileEnumerationImplBase.cpp \
 OW_TempFileStream.cpp \
 OW_ThreadBarrier.cpp \
@@ -112,6 +118,7 @@ OW_System.cpp \
 OW_UUID.cpp
 
 pkginclude_HEADERS =	\
+OW_AppenderLogger.hpp \
 OW_ArrayFwd.hpp \
 OW_Array.hpp \
 OW_ArrayImpl.hpp \
@@ -123,10 +130,12 @@ OW_BinarySerialization.hpp \
 OW_Bool.hpp \
 OW_ByteSwap.hpp \
 OW_Cache.hpp \
+OW_CerrAppender.hpp \
 OW_Char16.hpp \
 OW_CIMErrorException.hpp \
 OW_CIMFeatures.hpp \
 OW_CmdLineParser.hpp \
+OW_commonFwd.hpp \
 OW_Condition.hpp \
 OW_ConfigException.hpp \
 OW_ConfigFile.hpp \
@@ -148,6 +157,7 @@ OW_Exception.hpp \
 OW_ExceptionIds.hpp \
 OW_Exec.hpp \
 OW_File.hpp \
+OW_FileAppender.hpp \
 OW_FileSystem.hpp \
 OW_Format.hpp \
 OW_FuncNamePrinter.hpp \
@@ -159,8 +169,11 @@ OW_IOException.hpp \
 OW_IOIFCStreamBuffer.hpp \
 OW_IstreamBufIterator.hpp \
 OW_List.hpp \
+OW_LogAppender.hpp \
 OW_Logger.hpp \
 OW_LogLevel.hpp \
+OW_LogMessage.hpp \
+OW_LogMessagePatternFormatter.hpp \
 OW_Map.hpp \
 OW_MD5.hpp \
 OW_MemTracer.hpp \
@@ -174,6 +187,7 @@ OW_NonRecursiveMutexLock.hpp \
 OW_NoSuchPropertyException.hpp \
 OW_NoSuchProviderException.hpp \
 OW_NoSuchQualifierException.hpp \
+OW_NullAppender.hpp \
 OW_NULLValueException.hpp \
 OW_OperationContext.hpp \
 OW_PosixUnnamedPipe.hpp \
@@ -206,6 +220,7 @@ OW_StringBuffer.hpp \
 OW_StringEnumeration.hpp \
 OW_String.hpp \
 OW_StringStream.hpp \
+OW_SyslogAppender.hpp \
 OW_TempFileEnumerationImplBase.hpp \
 OW_TempFileStream.hpp \
 OW_ThreadBarrier.hpp \

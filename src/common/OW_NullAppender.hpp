@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,40 +32,31 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_NULL_APPENDER_HPP_INCLUDE_GUARD_
+#define OW_NULL_APPENDER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Logger.hpp"
+#include "OW_commonFwd.hpp"
 #include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
-
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+/**
+ * This class sends log messges to the bit bucket
+ */
+class NullAppender : public LogAppender
+{
+public:
+	NullAppender(const StringArray& components,
+		const StringArray& categories,
+		const String& pattern);
 
-/////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
+	virtual ~NullAppender();
+	static const String STR_DEFAULT_MESSAGE_PATTERN;
+protected:
+	virtual void doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const;
+};
 
 } // end namespace OpenWBEM
 
+#endif

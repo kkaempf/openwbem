@@ -265,6 +265,11 @@ void deleteClass(CIMOMHandleIFC& hdl)
 
 class ListenerLogger : public Logger
 {
+public:
+	ListenerLogger()
+		: Logger("cimListenerTest", E_DEBUG_LEVEL)
+	{
+	}
 protected:
 	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{

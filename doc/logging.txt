@@ -1,0 +1,101 @@
+Definitions:
+log
+	n. The end-point that log messages are sent to.  Examples include a log file, syslog and the console.
+	v. The act of generating and outputting a message. e.g. The error message was logged.
+
+logger
+	A C++ instance of a class derived from Logger, which is used by the OW code to output log messages.
+
+component
+	A string identifying the logical grouping of code within OW that generated a log message. 
+	It is useful to organize components hierarchially, using a "." to separate ancestor and descendent. 
+	The hierarchy is meaningless to OW from a configuration or API point of view, but it is helpful for log processing.
+	The component "*" is reserved for configuration to mean all possible components.
+	Examples include "owcimomd", "owcimomd.http_server", "owcimomd.http_server.local_auth", "vintela.computer_system_provider".
+
+category
+	Associated with a message to indicate attributes of the log message.
+	Also commonly refered to as log levels.
+	The category "*" is reserved for configuration to mean all possible categories.
+	Examples include Debug, Info, Warn, Error, FatalError, Trace, AuthenticationFailure, etc.
+	The 4 categories "Debug", "Info", "Error", "FatalError" are treated as levels for configuration purposes. 
+	If a log is configured for Debug, all 4 categories will be output.
+	Otherwise there is no relationship between categories.
+
+message
+	The text of a message. A message has the following attributes: component, category, source filename, source line number, date/time, process id, thread id.
+
+message format
+	A pattern which indicates the format of the log message and associated attributes.
+
+Feature requirements & Use case list:
+
+- Existing functionality to log all messages at or below a threshold into a log.
+
+- Ability to configure a log for each component.  e.g. A specific provider's messages all go to a log. The log only contains the provider's messages.
+
+- Set different thresholds for different components of the cimom. e.g. If I'm interested in debugging one specific component, I can turn on debug logging for that specific component (say my provider I'm working on) and not have to wade through tons of other unwanted debug messsages.
+
+- Ability to configure a log for a specific category.  e.g. The error messages from all components go to a log.
+
+- Ability to configure a log with a "component"/"message category" combination. e.g. auditing of authentication: it would be nice to be able configure logging of all authentication failures and/or successes, and nothing else, to a certain log.
+
+- User-defined logfile formats. Use the same formatting rules as log4j
+(or log4perl, like specified at
+http://search.cpan.org/~mschilli/Log-Log4perl-0.48/lib/Log/Log4perl/Layout/PatternLayout.pm)
+Available data includes: [date and time] [pid/thread-id] [category] [component] [log message]
+
+- Ability to output to a log that can be processed by log4j compatible log
+  processing tools (e.g. Chainsaw)
+
+- Ability to configure the console logging when the cimom is run in debug mode
+  (with -d)
+
+On to the design:
+
+Each log message will have an associated component, category, source filename, source line number, date/time, process id, thread id.
+
+{ "Debug", "Info", "Error", "FatalError" } are the set of predefined message categories.  This set may be treated as levels, so that a message with a higher level category is also considered matching a lower level category (i.e. a FatalError is also categorized as a Debug level). Additional categories may be used, but they are independent of any other category. They are also the most commonly used, so the API will have convenience functions for them.
+
+A log is configured with a name, components, categories, format, type and any specific logger information such as a filename. If a component == "*", then it will match all components.  If a category == "*", then it will match all message categories.
+
+For owcimomd, there is a predefined log named "main". The owcimomd.log_level and owcimomd.log_location config items will be deprecated but still supported, and they will affect this log if set.
+
+For owcimomd, there is a predefined log named "debug". This log will be
+enabled when owcimomd is run with a -d.  The default will be all categories
+and levels.
+
+When a message is sent to a logger, it will be evaluated against each log's configuration and if it matches, the message will be formatted according to the format configuration and output to the log.
+
+Configuration
+A config item ("owcimomd.logs" ? ) will contain a space separated list of names for each additional log to configure.  For each log name, the following config items will apply:
+
+log.<log name>.components
+contains a space delimited list of the components the log will output.  "*" means all components.  Default is "*" if not specified.
+
+log.<log name>.categories
+contains a space delimited list of the categories the log will output. "*" means all categories. If specified in this item, the predefined categores are not treated as levels, but as independent categories. No default is available, and if not set, no categories will be logged, and the level config item must be set.
+
+log.<log name>.level
+If set, the log will output all predefined categories at and above the specified log_level.  If not set, the categories config item must be set.
+
+log.<log name>.format
+Specifies the format of the log messages. If not set, "%m%n" is the default.
+
+log.<log name>.type
+Specifies the type of the log.  If not set, "syslog" is the default. Possible values: "syslog", "file", "stderr"
+
+log.<log name>.location
+Only applicable/required for if the type == "file". Specifies the filename of the log.
+
+
+Code modifications:
+- ProviderEnvironment/ServiceEnvironment changed to pass component to
+  getLogger()
+- Internal parts use component names.
+- Switch log statements to use the logging macros.
+- Redo all subclasses of LoggerIFC to use LogAppenderIFC and LoggerIFC::createLogger()
+- Deprecate old broken interfaces
+  - Fix all code using them.
+- Uninline all the junk in the headers.
+

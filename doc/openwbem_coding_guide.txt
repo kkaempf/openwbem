@@ -349,9 +349,10 @@ When you create a new class, make sure you design and document the following:
 
 - Exception safety: (document the lowest level of all the member functions for
    the class, and document each member function as well)
-   Fubared (If an exception was thrown, the function may have leaked memory
+   Exception safety levels include:
+   Buggy (If an exception was thrown, the function may have leaked memory
     and/or left the instance in a non-usable inconsistent state (the invariant
-    is probably broken))
+    is probably broken)). This is considered a bug and must be fixed.
    Basic (If an exception was thrown, the function didn't leak memory, the
     instance is still in a usable consistent state (the invariant is still
     valid), but the operation may be partially completed)

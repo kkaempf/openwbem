@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -33,39 +33,56 @@
  */
 
 #include "OW_config.h"
-#include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
+#include "OW_FileAppender.hpp"
 #include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
-#include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
+#include "OW_Logger.hpp"
+#include "OW_LogMessage.hpp"
 
 #include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+/////////////////////////////////////////////////////////////////////////////
+FileAppender::FileAppender(const StringArray& components,
+	const StringArray& categories,
+	const char* filename,
+	const String& pattern )
+	: LogAppender(components, categories, pattern)
+	, m_filename(filename)
+{
+	std::ofstream log(m_filename.c_str(), std::ios::out | std::ios::app);
+	if (!log)
+	{
+		OW_THROW(LoggerException, Format("FileAppender: Unable to open file: %1", m_filename).toString().c_str() );
+	}
+}
 
 /////////////////////////////////////////////////////////////////////////////
+FileAppender::~FileAppender()
+{
+}
 
+/////////////////////////////////////////////////////////////////////////////
+void
+FileAppender::doProcessLogMessage(const String& formattedMessage, const LogMessage& message) const
+{
+	std::ofstream log(m_filename.c_str(), std::ios::out | std::ios::app);
+	if (!log)
+	{
+		// hmm, not much we can do here.  doProcessLogMessage can't throw.
+	}
+	else
+	{
+		log << formattedMessage << std::endl;
+	}
+}
 
-
-
-
+/////////////////////////////////////////////////////////////////////////////
+const String FileAppender::STR_DEFAULT_MESSAGE_PATTERN("%d{%a %b %d %H:%M:%S %Y} [%t]: %m");
 
 } // end namespace OpenWBEM
+
+
+
 

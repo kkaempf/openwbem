@@ -32,40 +32,41 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_APPENDER_LOGGER_HPP_INCLUDE_GUARD_
+#define OW_APPENDER_LOGGER_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
+#include "OW_commonFwd.hpp"
+#include "OW_LogLevel.hpp"
 #include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
 #include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
-
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+/**
+ * This implementation of Logger is used to send a Log message to multiple LogAppenders
+ */
+class AppenderLogger : public Logger
+{
+public:
+	AppenderLogger(const String& defaultComponent, ELogLevel level, const LogAppenderRef& appender);
+	AppenderLogger(const String& defaultComponent, const Array<LogAppenderRef>& appenders);
+	virtual ~AppenderLogger();
 
-/////////////////////////////////////////////////////////////////////////////
+private:
+	virtual bool useDeprecatedDoLogMessage() const;
+	virtual void doProcessLogMessage(const LogMessage& message) const;
+	bool doComponentAndCategoryAreEnabled(const String& component, const String& category) const;
+	bool doCategoryIsEnabled(const String& category) const;
+	static ELogLevel getLevel(const Array<LogAppenderRef>& appenders);
 
-
-
-
-
+private:
+	Array<LogAppenderRef> m_appenders;
+};
 
 } // end namespace OpenWBEM
+
+#endif
+
+
 

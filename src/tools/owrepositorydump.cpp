@@ -60,6 +60,11 @@ namespace
 
 class coutLogger : public Logger
 {
+public:
+	coutLogger()
+		: Logger("owrepositorydump", E_ERROR_LEVEL)
+	{
+	}
 	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{
 		cout << message << endl;

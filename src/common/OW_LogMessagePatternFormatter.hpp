@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (C) 2001-2004 Vintela, Inc. All rights reserved.
+* Copyright (C) 2004 Vintela, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are met:
@@ -32,40 +32,55 @@
  * @author Dan Nuffer
  */
 
+#ifndef OW_LOG_MESSAGE_PATTERN_FORMATTER_IFC_HPP_INCLUDE_GUARD_
+#define OW_LOG_MESSAGE_PATTERN_FORMATTER_IFC_HPP_INCLUDE_GUARD_
 #include "OW_config.h"
-#include "OW_Logger.hpp"
-#include "OW_LogAppender.hpp"
-#include "OW_LogMessage.hpp"
-#include "OW_Exception.hpp"
-#include "OW_Format.hpp"
-#include "OW_AutoPtr.hpp"
-#include "OW_DateTime.hpp"
-#include "OW_ConfigOpts.hpp"
-#include "OW_String.hpp"
+#include "OW_commonFwd.hpp"
 #include "OW_Array.hpp"
-#include "OW_ThreadImpl.hpp"
-#include "OW_ConfigFile.hpp"
-#include "OW_IntrusiveReference.hpp"
-#include "OW_AppenderLogger.hpp"
-
-#include <fstream>
-#include <iostream> // for cerr
-
-#ifndef OW_WIN32
-#endif
+#include "OW_Exception.hpp"
 
 namespace OpenWBEM
 {
 
-using std::ofstream;
-using std::endl;
+OW_DECLARE_APIEXCEPTION(LogMessagePatternFormatter, OW_COMMON_API);
 
-/////////////////////////////////////////////////////////////////////////////
+class OW_COMMON_API LogMessagePatternFormatter
+{
+public:
 
+	static const String STR_DEFAULT_MESSAGE_PATTERN;
 
+	enum EErrorCodes
+	{
+		E_INVALID_PATTERN_NO_DIGIT_AFTER_DOT,
+		E_INVALID_PATTERN_PRECISION_NOT_AN_INTEGER,
+		E_INVALID_PATTERN_UNSUPPORTED_CONVERSION
+	};
 
+	/**
+	 * @throws LogMessagePatternFormatterException if the pattern is invalid.
+	 */
+	LogMessagePatternFormatter(const String& pattern);
+	~LogMessagePatternFormatter();
 
+	void formatMessage(const LogMessage& message, StringBuffer& output) const;
 
+public: // implementation details
+	class Converter;
+	typedef IntrusiveReference<Converter> ConverterRef;
+
+private:
+
+	Array<ConverterRef> m_patternConverters;
+
+	// non-copyable
+	LogMessagePatternFormatter(const LogMessagePatternFormatter&);
+	LogMessagePatternFormatter& operator=(const LogMessagePatternFormatter&);
+};
 
 } // end namespace OpenWBEM
+
+#endif
+
+
 

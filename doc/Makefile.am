@@ -11,6 +11,7 @@ openwbem-faq.html \
 pg.tex \
 PerlIFC.sxw \
 remote_providers.txt \
-local_authentication.txt
+local_authentication.txt \
+logging.txt
 
 

@@ -308,6 +308,12 @@ processCommandLineOptions(int argc, char** argv)
 
 class coutLogger : public Logger
 {
+public:
+	coutLogger()
+		: Logger("owmofc", E_ERROR_LEVEL)
+	{
+	}
+
 	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{
 		cout << message << endl;

@@ -67,6 +67,11 @@ protected:
 };
 class ListenerLogger : public Logger
 {
+public:
+	ListenerLogger()
+		: Logger("owcimindicationlistener", E_ERROR_LEVEL)
+	{
+	}
 protected:
 	virtual void doLogMessage(const String &message, const ELogLevel) const
 	{

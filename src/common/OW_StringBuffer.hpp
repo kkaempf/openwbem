@@ -81,10 +81,10 @@ public:
 	}
 	StringBuffer& append(const char* str, const size_t len);
 	StringBuffer& append(const String& arg) 	
-		{ return append(arg.c_str()); }
+		{ return append(arg.c_str(), arg.length()); }
 	StringBuffer& append(const StringBuffer& arg)
 	{
-		return append(arg.c_str());
+		return append(arg.c_str(), arg.length());
 	}
 	StringBuffer& operator += (char c)
 		{ return append(c); }

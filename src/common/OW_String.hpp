@@ -38,20 +38,13 @@
 #include "OW_config.h"
 #include "OW_Types.hpp"
 #include "OW_COWIntrusiveReference.hpp"
-#include "OW_ArrayFwd.hpp"
+#include "OW_commonFwd.hpp"
+#include "OW_CIMFwd.hpp"
 #include "OW_Exception.hpp"
 #include <iosfwd>
 
 namespace OpenWBEM
 {
-
-class Char16;
-typedef Array<Char16> Char16Array;
-class CIMDateTime;
-class CIMObjectPath;
-class String;
-typedef Array<String> StringArray;
-class Bool;
 
 OW_DECLARE_APIEXCEPTION(StringConversion, OW_COMMON_API);
 

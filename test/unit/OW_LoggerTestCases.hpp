@@ -54,6 +54,11 @@ private:
 	void testCreateSyslogLogger();
 	void testFileLogging();
 	void testSyslogLogging();
+	void testComponentLog();
+	void testCategoryLog();
+	void testComponentCategoryLog();
+	void testMultipleComponentLogs();
+	void testLogMessageFormat();
 
 
 

@@ -91,6 +91,7 @@ namespace OpenWBEM
 		static const int InvalidUTF8ExceptionId = 45;
 		static const int CmdLineParserExceptionId = 46;
 		static const int NULLCOWIntrusiveReferenceExceptionId = 47;
+		static const int LogMessagePatternFormatterExceptionId = 48;
 
 		// http
 		static const int Base64FormatExceptionId = 1001;

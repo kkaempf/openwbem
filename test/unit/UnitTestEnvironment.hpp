@@ -48,6 +48,11 @@ using namespace OpenWBEM;
 
 class TestLogger : public Logger
 {
+public:
+	TestLogger()
+		: Logger("UnitTest", E_ERROR_LEVEL)
+	{
+	}
 protected:
 	virtual void doLogMessage(const String &message, const ELogLevel) const {
 		std::cout << message << std::endl;
