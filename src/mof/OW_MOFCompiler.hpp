@@ -43,6 +43,11 @@
 #include "OW_MOFLineInfo.hpp"
 #include "OW_MOFGrammar.hpp"
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 // these 2 need to be at global scope because flex also declares them.
 struct owmof_buffer_state;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
@@ -147,5 +152,9 @@ OW_MOF_API CIMInstanceArray compileInstancesFromMOF(const String& instMOF, const
 
 } // end namespace MOF
 } // end namespace OpenWBEM
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
 
 #endif // MOF_COMPILER_HPP_

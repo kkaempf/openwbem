@@ -151,6 +151,11 @@ private:
 	CIMMethod m_curMethod;
 	CIMParameter m_curParameter;
 
+#ifdef OW_WIN32
+#pragma warning (push)
+#pragma warning (disable: 4251)
+#endif
+
 	// connection to the rest of the world
 	CIMOMHandleIFCRef m_hdl;
 	RepositoryCIMOMHandleRef m_rephdl;
@@ -176,6 +181,11 @@ private:
 	CIMQualifierType getQualifierType(const String& qualName, const lineInfo& li);
 
 	Cache<CIMClass> m_classCache;
+
+#ifdef OW_WIN32
+#pragma warning (pop)
+#endif
+
 	CIMClass getClass(const String& className, const lineInfo& li);
 	
 	CIMValue convertValuesIntoValueArray( const CIMValueArray& values );

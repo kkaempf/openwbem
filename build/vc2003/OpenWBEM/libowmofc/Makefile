@@ -1,15 +1,10 @@
-DEBUG = 1
-WARNLEVEL = 0
+!include ..\common.mk
 
-BUILDTYPE = Debug
 LIBNAME = libowmofc
+BASEDIR = ..
 
 TARGET = $(LIBNAME).dll
-BASEDIR = ..
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
-
-CPP = cl
-LINK = link
 
 SRCDIR = ..\..\..\..\src
 
@@ -101,8 +96,9 @@ OW_MOFParser.cpp: $(MOFSRCDIR)\OW_MOFParser.yy
 	-@del OW_MOFParser.cpp
 	-@del OW_MOFParser.h
 	bison -y -d -powmof $(MOFSRCDIR)\OW_MOFParser.yy
-	rename y.tab.c OW_MOFParser.cpp
+	sed "/\#line/d" y.tab.c >> OW_MOFParser.cpp
 	rename y.tab.h OW_MOFParser.h
+	-@del y.tab.c
 
 OW_MOFLexer.cpp: $(MOFSRCDIR)\OW_MOFLexer.ll
 	-@del OW_MOFLexer.cpp

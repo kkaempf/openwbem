@@ -1,19 +1,15 @@
-DEBUG = 1
-WARNLEVEL = /W0
-BASEDIR = ..
+!include ..\common.mk
 
-BUILDTYPE = Debug
 LIBNAME = libowdb
+BASEDIR = ..
 
 TARGET = $(LIBNAME).dll
-BASEDIR = ..
 TARGETDIR = $(BASEDIR)\$(BUILDTYPE)
 
 CC = cl
 LINK = link
 
 SRCDIR = ..\..\..\..\src
-TOOLSDIR = ..\tools
 
 INCS = \
 /I".." \
@@ -32,12 +28,12 @@ libopenwbem.lib
 
 !IFDEF DEBUG
 CCDEFS = /D"OW_DB_BUILD" /D"_DEBUG" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS" 
-CCFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR $(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
+CCFLAGS = /GF /GX /RTC1 /Z7 /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /D"_DEBUG" /MDd /c /Fo"$@"
 OBJDIR = Debug
 LINKDBG = /DEBUG
 !ELSE
 CCDEFS = /D"OW_DB_BUILD" /D"WIN32" /D"_WINDOWS" /D"_USRDLL" /D"_LIB" /D"_WINDLL" /D"_MBCS"
-CCFLAGS = /GF /GX /Zc:forScope /GR $(WARNLEVL) /nologo /Wp64 /MD /c
+CCFLAGS = /GF /GX /Zc:forScope /GR /W$(WARNLEVEL) /nologo /Wp64 /MD /c
 OBJDIR = Release
 LINKDBG = 
 !ENDIF
