@@ -237,8 +237,10 @@ public:
 	 *		CIM_ERR_NOT_SUPPORTED
 	 *		CIM_ERR_INVALID_NAMESPACE
 	 *		CIM_ERR_INVALID_PARAMETER
-	 *		CIM_ERR_ALREADY_EXISTS
+	 *		CIM_ERR_NOT_FOUND
 	 *		CIM_ERR_INVALID_SUPERCLASS
+	 *		CIM_ERR_CLASS_HAS_CHILDREN
+	 *		CIM_ERR_CLASS_HAS_INSTANCES
 	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMClass modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
@@ -259,8 +261,13 @@ public:
 	 *		be returned on all appropriate components.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An enumeration of OW_CIMClass objects (OW_CIMClassEnumeration)
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be foundl
+	 * @exception OW_CIMException  	
+ 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMClassEnumeration enumClasses(const OW_CIMObjectPath& path,
 		OW_Bool deep, OW_Bool localOnly, OW_Bool includeQualifiers,
@@ -280,8 +287,13 @@ public:
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An enumeration of OW_CIMObjectPath objects
 	 * 		(OW_CIMObjectPathEnumeration)
-	 * @exception OW_CIMException  	If the specified CIMObjectPath object
-	 *											cannot be foundl
+	 * @exception OW_CIMException  	
+ 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMObjectPathEnumeration enumClassNames(const OW_CIMObjectPath& path,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
@@ -308,9 +320,13 @@ public:
 	 *		properties will be returned.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An OW_CIMInstanceEnumeration object.
-	 * @exception OW_HDBException
 	 * @exception OW_CIMException
-	 * @exception OW_IOException
+ 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_FAILED
 	 */
 	virtual OW_CIMInstanceEnumeration enumInstances(
 		const OW_CIMObjectPath& path, OW_Bool deep, OW_Bool localOnly,
@@ -330,9 +346,13 @@ public:
 	 *							to the specified class are returned.
 	 * @param aclInfo ACL object describing user making request.
 	 * @return An OW_CIMObjectPathEnumeration object.
-	 * @exception OW_HDBException
 	 * @exception OW_CIMException
-	 * @exception OW_IOException
+ 	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMObjectPathEnumeration enumInstanceNames(const OW_CIMObjectPath& path,
 		OW_Bool deep, const OW_ACLInfo& aclInfo);
@@ -414,9 +434,14 @@ public:
 	 * @return a OW_CIMInstance representing the state of the instance prior
 	 * 	to the update.  This is likely usefull only for creating
 	 *		CIM_InstModification indications.
-	 * @exception OW_HDBException
 	 * @exception OW_CIMException
-	 * @exception OW_IOException
+	 *		CIM_ERR_ACCESS_DENIED
+	 *		CIM_ERR_NOT_SUPPORTED
+	 *		CIM_ERR_INVALID_NAMESPACE
+	 *		CIM_ERR_INVALID_PARAMETER
+	 *		CIM_ERR_INVALID_CLASS
+	 *		CIM_ERR_NOT_FOUND
+	 *		CIM_ERR_FAILED
 	 */
 	OW_CIMInstance modifyInstance(const OW_CIMObjectPath& cop,
 		OW_CIMInstance& ci, const OW_ACLInfo& aclInfo);

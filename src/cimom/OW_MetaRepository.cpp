@@ -887,7 +887,7 @@ OW_MetaRepository::modifyClass(const OW_String& ns,
 	OW_HDBNode node = hdl->getNode(ckey);
 	if(!node)
 	{
-		OW_THROWCIMMSG(OW_CIMException::INVALID_CLASS, ckey.c_str());
+		OW_THROWCIMMSG(OW_CIMException::NOT_FOUND, ckey.c_str());
 	}
 
 	// Create an OW_CIMClass object out of the node we just read to ensure

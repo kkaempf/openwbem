@@ -764,8 +764,6 @@ OW_XMLExecute::enumerateClasses( ostream& ostr, OW_XMLNode& node,
 			includeQualifiers ? OW_CIMtoXMLFlags::includeQualifiers : OW_CIMtoXMLFlags::dontIncludeQualifiers,
 			includeClassOrigin ? OW_CIMtoXMLFlags::includeClassOrigin : OW_CIMtoXMLFlags::dontIncludeClassOrigin,
 			OW_StringArray());
-		//cimClass.toXML(ostr, localOnly, includeQualifiers,
-		//	includeClassOrigin, OW_StringArray());
 	}
 }
 

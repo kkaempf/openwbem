@@ -354,25 +354,22 @@ OW_IndicationRepLayerImpl::modifyClass(const OW_CIMObjectPath& name,
 {
 	OW_CIMClass lcc(cc);
 	OW_CIMClass CCOrig = m_pServer->modifyClass(name, lcc, aclInfo);
-	if (CCOrig)
-	{
-		OW_ACLInfo intAclInfo;
+	OW_ACLInfo intAclInfo;
 
-		try
-		{
-			OW_CIMClass expCC = m_pServer->getClass(
-				OW_CIMObjectPath("CIM_ClassModification"), false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
-			expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
-			expInst.setProperty("ClassDefinition", OW_CIMValue(lcc));
-			exportIndication(expInst, name.getFullNameSpace());
-		}
-		catch (OW_CIMException&)
-		{
-			getEnvironment()->logError("Unable to export indication for setClass"
-				" because CIM_ClassModification does not exist");
-		}
+	try
+	{
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_ClassModification"), false, true, true, NULL,
+			intAclInfo);
+		OW_CIMInstance expInst = expCC.newInstance();
+		expInst.setProperty("PreviousClassDefinition", OW_CIMValue(CCOrig));
+		expInst.setProperty("ClassDefinition", OW_CIMValue(lcc));
+		exportIndication(expInst, name.getFullNameSpace());
+	}
+	catch (OW_CIMException&)
+	{
+		getEnvironment()->logError("Unable to export indication for setClass"
+			" because CIM_ClassModification does not exist");
 	}
 	return CCOrig;
 }
@@ -409,26 +406,23 @@ OW_IndicationRepLayerImpl::modifyInstance(const OW_CIMObjectPath& name,
 {
 	OW_CIMInstance lci(ci);
 	OW_CIMInstance ciOrig = m_pServer->modifyInstance(name, lci, aclInfo);
-	if (ciOrig)
-	{
-		OW_ACLInfo intAclInfo;
+	OW_ACLInfo intAclInfo;
 
-		try
-		{
-			OW_CIMClass expCC = m_pServer->getClass(
-				OW_CIMObjectPath("CIM_InstModification"), false, true, true, NULL,
-				intAclInfo);
-			OW_CIMInstance expInst = expCC.newInstance();
-			expInst.setProperty("PreviousInstance", OW_CIMValue(ciOrig));
-			// TODO refer to MOF.  What about filtering the properties in ss?
-			expInst.setProperty("SourceInstance", OW_CIMValue(lci));
-			exportIndication(expInst, name.getFullNameSpace());
-		}
-		catch (OW_CIMException&)
-		{
-			getEnvironment()->logError("Unable to export indication for createClass"
-				" because CIM_InstModification does not exist");
-		}
+	try
+	{
+		OW_CIMClass expCC = m_pServer->getClass(
+			OW_CIMObjectPath("CIM_InstModification"), false, true, true, NULL,
+			intAclInfo);
+		OW_CIMInstance expInst = expCC.newInstance();
+		expInst.setProperty("PreviousInstance", OW_CIMValue(ciOrig));
+		// TODO refer to MOF.  What about filtering the properties in ss?
+		expInst.setProperty("SourceInstance", OW_CIMValue(lci));
+		exportIndication(expInst, name.getFullNameSpace());
+	}
+	catch (OW_CIMException&)
+	{
+		getEnvironment()->logError("Unable to export indication for createClass"
+			" because CIM_InstModification does not exist");
 	}
 	return ciOrig;
 }

@@ -716,16 +716,28 @@ OW_CIMServer::modifyClass(const OW_CIMObjectPath& name, OW_CIMClass& cc,
 		OW_THROW(OW_Exception, "Calling updateClass with a NULL class");
 	}
 
-	OW_CIMClass origClass;
-	int rval = m_mStore.getCIMClass(name, origClass);
-
-	if (rval != 0)
+	try
 	{
-		OW_THROWCIM(rval);
-	}
+		OW_CIMClass origClass;
+		int rval = m_mStore.getCIMClass(name, origClass);
 
-	m_mStore.modifyClass(name.getNameSpace(), cc);
-	return origClass;
+		if (rval != 0)
+		{
+			OW_THROWCIM(rval);
+		}
+
+		m_mStore.modifyClass(name.getNameSpace(), cc);
+		OW_ASSERT(origClass);
+		return origClass;
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -736,8 +748,19 @@ OW_CIMServer::enumClasses(const OW_CIMObjectPath& path,
 {
 	// Check to see if user has rights to enumerate classes
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSES, path, aclInfo);
-	return m_mStore.enumClass(path.getNameSpace(), path.getObjectName(), deep,
-		localOnly, includeQualifiers, includeClassOrigin);
+	try
+	{
+		return m_mStore.enumClass(path.getNameSpace(), path.getObjectName(), deep,
+			localOnly, includeQualifiers, includeClassOrigin);
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -748,21 +771,32 @@ OW_CIMServer::enumClassNames(const OW_CIMObjectPath& path, OW_Bool deep,
 	// Check to see if user has rights to enumerate classes
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATECLASSNAMES, path, aclInfo);
 
-	OW_CIMClassEnumeration cenum = m_mStore.enumClass(path.getNameSpace(),
-        path.getObjectName(), deep, false, true, true);
-
-	OW_CIMObjectPath lcop(path);
-	lcop.setKeys(OW_CIMPropertyArray());
-
-	OW_CIMObjectPathEnumeration openum;
-	while(cenum.hasMoreElements())
+	try
 	{
-		OW_CIMClass cc = cenum.nextElement();
-		lcop.setObjectName(cc.getName());
-		openum.addElement(lcop);
-	}
+		OW_CIMClassEnumeration cenum = m_mStore.enumClass(path.getNameSpace(),
+			  path.getObjectName(), deep, false, true, true);
 
-	return openum;
+		OW_CIMObjectPath lcop(path);
+		lcop.setKeys(OW_CIMPropertyArray());
+
+		OW_CIMObjectPathEnumeration openum;
+		while(cenum.hasMoreElements())
+		{
+			OW_CIMClass cc = cenum.nextElement();
+			lcop.setObjectName(cc.getName());
+			openum.addElement(lcop);
+		}
+
+		return openum;
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -774,48 +808,59 @@ OW_CIMServer::enumInstanceNames(const OW_CIMObjectPath& path, OW_Bool deep,
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCENAMES, path,
 		aclInfo);
 
-	OW_ACLInfo intAclInfo;
-	OW_CIMObjectPathEnumeration en;
-	OW_CIMObjectPath lcop(path);
-	OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
-	if(!theClass)
+	try
 	{
-		int rval = m_mStore.getCIMClass(lcop, theClass);
-
-		if(rval != 0)
+		OW_ACLInfo intAclInfo;
+		OW_CIMObjectPathEnumeration en;
+		OW_CIMObjectPath lcop(path);
+		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
+		if(!theClass)
 		{
-			OW_THROWCIM(rval);
-		}
-	}
+			int rval = m_mStore.getCIMClass(lcop, theClass);
 
-	_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
-
-	// If this is the namespace class then just return now
-	if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
-		|| !deep)
-	{
-		return en;
-	}
-
-	OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
-		theClass.getName());
-
-	for(size_t i = 0; i < classNames.size(); i++)
-	{
-		lcop.setObjectName(classNames[i]);
-		int rval = m_mStore.getCIMClass(lcop, theClass);
-
-		if(rval != 0)
-		{
-			OW_String msg("Invalid class in repository: ");
-			msg += classNames[i];
-			OW_THROWCIMMSG(rval, msg.c_str());
+			if(rval != 0)
+			{
+				OW_THROWCIM(rval);
+			}
 		}
 
 		_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
-	}
 
-	return en;
+		// If this is the namespace class then just return now
+		if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
+			|| !deep)
+		{
+			return en;
+		}
+
+		OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
+			theClass.getName());
+
+		for(size_t i = 0; i < classNames.size(); i++)
+		{
+			lcop.setObjectName(classNames[i]);
+			int rval = m_mStore.getCIMClass(lcop, theClass);
+
+			if(rval != 0)
+			{
+				OW_String msg("Invalid class in repository: ");
+				msg += classNames[i];
+				OW_THROWCIMMSG(rval, msg.c_str());
+			}
+
+			_getCIMInstanceNames(lcop, theClass, en, deep, aclInfo);
+		}
+
+		return en;
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 namespace
@@ -912,64 +957,75 @@ OW_CIMServer::enumInstances(const OW_CIMObjectPath& path, OW_Bool deep,
 	// Check to see if user has rights to enumerate instances
 	m_accessMgr->checkAccess(OW_AccessMgr::ENUMERATEINSTANCES, path, aclInfo);
 
-	OW_ACLInfo intAclInfo;
-	OW_CIMInstanceEnumeration en;
-	OW_CIMObjectPath lcop(path);
-	OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
-	if(!theClass)
+	try
 	{
-		int rval = m_mStore.getCIMClass(lcop, theClass);
-		if(rval != 0)
+		OW_ACLInfo intAclInfo;
+		OW_CIMInstanceEnumeration en;
+		OW_CIMObjectPath lcop(path);
+		OW_CIMClass theClass = _getNameSpaceClass(path.getObjectName());
+		if(!theClass)
 		{
-			OW_THROWCIMMSG(rval, lcop.getObjectName().c_str());
+			int rval = m_mStore.getCIMClass(lcop, theClass);
+			if(rval != 0)
+			{
+				OW_THROWCIMMSG(rval, lcop.getObjectName().c_str());
+			}
 		}
-	}
 
-	OW_Bool deepHonored = _getCIMInstances(lcop, theClass, en, deep, localOnly,
-		includeQualifiers, includeClassOrigin, propertyList, aclInfo);
-	// DEBUG
-	//OW_ASSERT(en.numberOfElements() == 1);
-	//OW_CIMInstance debugInst = en.nextElement();
-	//en.addElement(debugInst);
-	//OW_CIMPropertyArray debugProps = debugInst.getKeyValuePairs();
-	//cerr << "*** number of properties: " << debugProps.size() << endl;
-	//OW_CIMProperty debugProp = debugProps[0];
-	//cerr << "*** property name: " << debugProp.getName() << " value: " << debugProp.getValue() << endl;
-	// end of DEBUG
+		OW_Bool deepHonored = _getCIMInstances(lcop, theClass, en, deep, localOnly,
+			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		// DEBUG
+		//OW_ASSERT(en.numberOfElements() == 1);
+		//OW_CIMInstance debugInst = en.nextElement();
+		//en.addElement(debugInst);
+		//OW_CIMPropertyArray debugProps = debugInst.getKeyValuePairs();
+		//cerr << "*** number of properties: " << debugProps.size() << endl;
+		//OW_CIMProperty debugProp = debugProps[0];
+		//cerr << "*** property name: " << debugProp.getName() << " value: " << debugProp.getValue() << endl;
+		// end of DEBUG
 
-	// If this is the namespace class or we're not going deep or the deep flag
-	// was already honored, then we're done
-	if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
-		|| !deep
-		|| deepHonored)
-	{
+		// If this is the namespace class or we're not going deep or the deep flag
+		// was already honored, then we're done
+		if(theClass.getName().equals(OW_CIMClass::NAMESPACECLASS)
+			|| !deep
+			|| deepHonored)
+		{
+			return en;
+		}
+
+		// Now set the deep flag to false, because we are going to enumerate all
+		// the child class instances explicitly. We don't want the instance
+		// providers to go deep now.
+		deep = false;
+
+		OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
+			theClass.getName());
+
+		for(size_t i = 0; i < classNames.size(); i++)
+		{
+			lcop.setObjectName(classNames[i]);
+			int rc = m_mStore.getCIMClass(lcop, theClass);
+			if(rc != 0)
+			{
+				OW_String msg("Invalid class in repository: ");
+				msg += classNames[i];
+				OW_THROWCIMMSG(rc, msg.c_str());
+			}
+
+			_getCIMInstances(lcop, theClass, en, deep, localOnly,
+				includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		}
+
 		return en;
 	}
-
-	// Now set the deep flag to false, because we are going to enumerate all
-	// the child class instances explicitly. We don't want the instance
-	// providers to go deep now.
-	deep = false;
-
-	OW_StringArray classNames = m_mStore.getClassChildren(lcop.getNameSpace(),
-		theClass.getName());
-
-	for(size_t i = 0; i < classNames.size(); i++)
+	catch (OW_HDBException&)
 	{
-		lcop.setObjectName(classNames[i]);
-		int rc = m_mStore.getCIMClass(lcop, theClass);
-		if(rc != 0)
-		{
-			OW_String msg("Invalid class in repository: ");
-			msg += classNames[i];
-			OW_THROWCIMMSG(rc, msg.c_str());
-		}
-
-		_getCIMInstances(lcop, theClass, en, deep, localOnly,
-			includeQualifiers, includeClassOrigin, propertyList, aclInfo);
+		OW_THROWCIM(OW_CIMException::FAILED);
 	}
-
-	return en;
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -1353,67 +1409,76 @@ OW_CIMServer::modifyInstance(const OW_CIMObjectPath& cop, OW_CIMInstance& ci,
 	// Check to see if user has rights to modify the instance
 	m_accessMgr->checkAccess(OW_AccessMgr::MODIFYINSTANCE, cop, aclInfo);
 
-	OW_ACLInfo intAclInfo;
-	OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
-		NULL, intAclInfo);
-
-	if (!oldInst)
+	try
 	{
-		OW_THROWCIM(OW_CIMException::NOT_FOUND);
-	}
+		OW_ACLInfo intAclInfo;
+		OW_CIMInstance oldInst = getInstance(cop, false, true, true, NULL,
+			NULL, intAclInfo);
 
-	OW_CIMClass theClass;
-	int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), theClass);
+		OW_CIMClass theClass;
+		int rc = m_mStore.getCIMClass(cop.getNameSpace(), ci.getClassName(), 
+			theClass);
 
-	if(rc != 0)
-	{
-		OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
-	}
+		if(rc != 0)
+		{
+			OW_THROWCIMMSG(rc, cop.getObjectName().c_str());
+		}
 
-	OW_CIMQualifier cq = theClass.getQualifier(
-		OW_CIMQualifier::CIM_QUAL_PROVIDER);
+		OW_CIMQualifier cq = theClass.getQualifier(
+			OW_CIMQualifier::CIM_QUAL_PROVIDER);
 
-	OW_InstanceProviderIFCRef instancep(0);
-	if(cq)
-	{
-		instancep = _getInstanceProvider(cop, aclInfo);
-	}
-
-	if(!instancep)
-	{
-		// No instance provider qualifier found
-		m_iStore.modifyInstance(cop, theClass, ci);
-	}
-	else
-	{
-		// Look for dynamic instances
-		OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
-			aclInfo, true);
-		instancep->setInstance(createProvEnvRef(real_ch), cop, ci);
-	}
-
-	if(theClass.isAssociation())
-	{
-		OW_LocalCIMOMHandle ch(m_env, OW_RepositoryIFCRef(this, true),
-			OW_ACLInfo(), true);
-		OW_AssociatorProviderIFCRef assocP(0);
-
+		OW_InstanceProviderIFCRef instancep(0);
 		if(cq)
 		{
-			assocP = m_provManager->getAssociatorProvider(
-				createProvEnvRef(ch), cq);
+			instancep = _getInstanceProvider(cop, aclInfo);
 		}
 
-		if(!assocP)
+		if(!instancep)
 		{
-			OW_AssocDbHandle adbHdl = m_assocDb.getHandle();
-			adbHdl.deleteEntries(cop, oldInst);
-			adbHdl.addEntries(cop, ci);
+			// No instance provider qualifier found
+			m_iStore.modifyInstance(cop, theClass, ci);
 		}
+		else
+		{
+			// Look for dynamic instances
+			OW_LocalCIMOMHandle real_ch(m_env, OW_RepositoryIFCRef(this, true),
+				aclInfo, true);
+			instancep->setInstance(createProvEnvRef(real_ch), cop, ci);
+		}
+
+		if(theClass.isAssociation())
+		{
+			OW_LocalCIMOMHandle ch(m_env, OW_RepositoryIFCRef(this, true),
+				OW_ACLInfo(), true);
+			OW_AssociatorProviderIFCRef assocP(0);
+
+			if(cq)
+			{
+				assocP = m_provManager->getAssociatorProvider(
+					createProvEnvRef(ch), cq);
+			}
+
+			if(!assocP)
+			{
+				OW_AssocDbHandle adbHdl = m_assocDb.getHandle();
+				adbHdl.deleteEntries(cop, oldInst);
+				adbHdl.addEntries(cop, ci);
+			}
+		}
+
+		_setProviderProperties(cop, ci, theClass, aclInfo);
+		OW_ASSERT(oldInst);
+		return oldInst;
+	}
+	catch (OW_HDBException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
+	}
+	catch (OW_IOException&)
+	{
+		OW_THROWCIM(OW_CIMException::FAILED);
 	}
 
-	_setProviderProperties(cop, ci, theClass, aclInfo);
-	return oldInst;
 }
 
 //////////////////////////////////////////////////////////////////////////////

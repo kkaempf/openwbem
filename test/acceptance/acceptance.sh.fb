@@ -485,7 +485,6 @@ TestAuth()
 	EditConfig "s!http_server.use_digest = true!http_server.use_digest = false!g" 
 	echo "Testing Simple Authentication Module and GetFeatures"
 	RestartDaemon
-	echo "Daemon restarted."
 	$BUILDDIR/test/acceptance/progs/fakeclient http://localhost:30926 \
 		> $RESULTDIR/AuthTest.out 2>&1
 	[ "$?" = "2" ] || \
@@ -727,10 +726,6 @@ Install
 
 cd $STAGEDIR
 
-if [ "$OWLONGTEST" = "1" ]; then
-  TestInstalledHeadersOneByOne
-fi
-
 TestAuth
 
 if [ "$OWLONGTEST" = "1" ]; then
@@ -756,6 +751,10 @@ TestMultiReq
 StopDaemon
 
 TestInstalledHeaders
+
+if [ "$OWLONGTEST" = "1" ]; then
+  TestInstalledHeadersOneByOne
+fi
 
 CoreCheck
 
