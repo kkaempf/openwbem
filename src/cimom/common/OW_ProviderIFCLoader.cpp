@@ -81,7 +81,7 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 	if(libs.size() == 0)
 	{
 		env->getLogger()->logDebug("ProviderIFCBaseIFCLoaderBase::loadIFCs did not find any"
-			" provider interfacess");
+			" provider interfaces");
 		return;
 	}
 	int ifcCount = 0;
@@ -92,10 +92,10 @@ ProviderIFCLoader::loadIFCs(Array<ProviderIFCBaseIFCRef>& ifcs) const
 			continue;
 		}
 #ifdef OW_DARWIN
-                if(libs[i].indexOf(OW_VERSION) != String::npos)
-                {
-                        continue;
-                }
+		if(libs[i].indexOf(OW_VERSION) != String::npos)
+		{
+				continue;
+		}
 #endif // OW_DARWIN
 		try
 		{
