@@ -489,6 +489,58 @@ testDynInstances(OW_CIMClient& hdl)
 
 //////////////////////////////////////////////////////////////////////////////
 void
+testModifyProviderQualifier(OW_CIMClient& hdl)
+{
+	testStart("testModifyProviderQualifier");
+	try
+	{
+		OW_CIMClass cc = hdl.getClass( "testinstance");
+		OW_CIMInstance ci = cc.newInstance();
+		ci.setProperty("name", OW_CIMValue(OW_String("one")));
+		OW_StringArray params;
+		params.push_back("one");
+		params.push_back("two");
+		ci.setProperty("params", OW_CIMValue(params));
+		hdl.createInstance( ci);
+		OW_CIMObjectPath cop1(ci);
+		ci = hdl.getInstance( cop1);
+
+        OW_CIMQualifier provQual = cc.getQualifier("provider");
+        cc.removeQualifier(provQual);
+        hdl.modifyClass(cc);
+
+        try
+        {
+            // this should fail since the qualifier is now gone.
+            ci = hdl.getInstance(cop1);
+            OW_ASSERT(0);
+        }
+        catch (OW_CIMException& e)
+        {
+            OW_ASSERT(e.getErrNo() == OW_CIMException::NOT_FOUND);
+        }
+
+        cc.addQualifier(provQual);
+        hdl.modifyClass(cc);
+
+		OW_CIMInstanceEnumeration enu = hdl.enumInstancesE(
+			"testinstance");
+		OW_ASSERT(enu.numberOfElements() == 1);
+
+		hdl.deleteInstance( cop1);
+		enu = hdl.enumInstancesE( "testinstance");
+		OW_ASSERT(enu.numberOfElements() == 0);
+		
+	}
+	catch (OW_CIMException& e)
+	{
+		cerr << e << endl;
+	}
+	testDone();
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void
 createInstance(OW_CIMClient& hdl, const OW_String& fromClass, const OW_String& newInstance)
 {
 	testStart("createInstance");
@@ -1822,6 +1874,7 @@ main(int argc, char* argv[])
 		deleteQualifier(rch);
 
 		testDynInstances(rch);
+        testModifyProviderQualifier(rch);
 
 		invokeMethod(rch, 1);
 		invokeMethod(rch, 2);

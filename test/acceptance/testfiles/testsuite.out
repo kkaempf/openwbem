@@ -6598,6 +6598,7 @@ Qualifier borgishness : string = "", Scope(class,property), Flavor(DisableOverri
   
 
 </CIM>
+*** Doing testModifyProviderQualifier() ***
 *** Doing invokeMethod() ***
 invokeMethod: setstate("off")
 *** Doing invokeMethod() ***
